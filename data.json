@@ -1,0 +1,8577 @@
+[
+  {
+    "id": "1",
+    "formatted_no": "001",
+    "name_cn": "妙蛙種子",
+    "name_en": "Bulbasaur",
+    "name_jp": "フシギダネ",
+    "type": "草",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "11",
+    "ingredient_rate": "25.70%",
+    "skill_rate": "1.90%",
+    "interval": "01:13:20",
+    "main_skill": "食材獲取S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/001.png",
+    "ingredients": {
+      "ing1": {
+        "name": "甜甜蜜",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "好眠番茄",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "6"
+      }
+    }
+  },
+  {
+    "id": "2",
+    "formatted_no": "002",
+    "name_cn": "妙蛙草",
+    "name_en": "Ivysaur",
+    "name_jp": "フシギソウ",
+    "type": "草",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "19",
+    "ingredient_rate": "25.50%",
+    "skill_rate": "1.90%",
+    "interval": "00:55:00",
+    "main_skill": "食材獲取S",
+    "evo_req": "Lv.12 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/002.png",
+    "ingredients": {
+      "ing1": {
+        "name": "甜甜蜜",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "好眠番茄",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "6"
+      }
+    }
+  },
+  {
+    "id": "3",
+    "formatted_no": "003",
+    "name_cn": "妙蛙花",
+    "name_en": "Venusaur",
+    "name_jp": "フシギバナ",
+    "type": "草",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "27",
+    "ingredient_rate": "26.60%",
+    "skill_rate": "2.10%",
+    "interval": "00:46:40",
+    "main_skill": "食材獲取S",
+    "evo_req": "Lv.24 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png",
+    "ingredients": {
+      "ing1": {
+        "name": "甜甜蜜",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "好眠番茄",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "6"
+      }
+    }
+  },
+  {
+    "id": "4",
+    "formatted_no": "004",
+    "name_cn": "小火龍",
+    "name_en": "Charmander",
+    "name_jp": "ヒトカゲ",
+    "type": "火",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "12",
+    "ingredient_rate": "20.10%",
+    "skill_rate": "1.10%",
+    "interval": "00:58:20",
+    "main_skill": "食材獲取S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/004.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "火辣香草",
+        "l60": "6"
+      }
+    }
+  },
+  {
+    "id": "5",
+    "formatted_no": "005",
+    "name_cn": "火恐龍",
+    "name_en": "Charmeleon",
+    "name_jp": "リザード",
+    "type": "火",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "20",
+    "ingredient_rate": "22.70%",
+    "skill_rate": "1.60%",
+    "interval": "00:50:00",
+    "main_skill": "食材獲取S",
+    "evo_req": "Lv.12 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/005.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "火辣香草",
+        "l60": "6"
+      }
+    }
+  },
+  {
+    "id": "6",
+    "formatted_no": "006",
+    "name_cn": "噴火龍",
+    "name_en": "Charizard",
+    "name_jp": "リザードン",
+    "type": "火",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "29",
+    "ingredient_rate": "22.40%",
+    "skill_rate": "1.60%",
+    "interval": "00:40:00",
+    "main_skill": "食材獲取S",
+    "evo_req": "Lv.27 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "火辣香草",
+        "l60": "6"
+      }
+    }
+  },
+  {
+    "id": "7",
+    "formatted_no": "007",
+    "name_cn": "傑尼龜",
+    "name_en": "Squirtle",
+    "name_jp": "ゼニガメ",
+    "type": "水",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "10",
+    "ingredient_rate": "27.10%",
+    "skill_rate": "2.00%",
+    "interval": "01:15:00",
+    "main_skill": "食材獲取S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/007.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "7"
+      }
+    }
+  },
+  {
+    "id": "8",
+    "formatted_no": "008",
+    "name_cn": "卡咪龜",
+    "name_en": "Wartortle",
+    "name_jp": "カメール",
+    "type": "水",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "19",
+    "ingredient_rate": "27.10%",
+    "skill_rate": "2.00%",
+    "interval": "00:56:40",
+    "main_skill": "食材獲取S",
+    "evo_req": "Lv.12 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/008.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "7"
+      }
+    }
+  },
+  {
+    "id": "9",
+    "formatted_no": "009",
+    "name_cn": "卡咪龜",
+    "name_en": "Blastoise",
+    "name_jp": "カメックス",
+    "type": "水",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "27",
+    "ingredient_rate": "27.50%",
+    "skill_rate": "2.10%",
+    "interval": "00:46:40",
+    "main_skill": "食材獲取S",
+    "evo_req": "Lv.27 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/009.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "7"
+      }
+    }
+  },
+  {
+    "id": "10",
+    "formatted_no": "010",
+    "name_cn": "綠毛蟲",
+    "name_en": "Caterpie",
+    "name_jp": "キャタピー",
+    "type": "蟲",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "11",
+    "ingredient_rate": "17.90%",
+    "skill_rate": "0.80%",
+    "interval": "01:13:20",
+    "main_skill": "食材獲取S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/010.png",
+    "ingredients": {
+      "ing1": {
+        "name": "甜甜蜜",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "好眠番茄",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "11",
+    "formatted_no": "011",
+    "name_cn": "鐵甲蛹",
+    "name_en": "Metapod",
+    "name_jp": "トランセル",
+    "type": "蟲",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "18",
+    "ingredient_rate": "20.80%",
+    "skill_rate": "1.80%",
+    "interval": "01:10:00",
+    "main_skill": "食材獲取S",
+    "evo_req": "Lv.5 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/011.png",
+    "ingredients": {
+      "ing1": {
+        "name": "甜甜蜜",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "好眠番茄",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "12",
+    "formatted_no": "012",
+    "name_cn": "巴大蝶",
+    "name_en": "Butterfree",
+    "name_jp": "バタフリー",
+    "type": "蟲",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "31",
+    "ingredient_rate": "19.70%",
+    "skill_rate": "1.40%",
+    "interval": "00:41:40",
+    "main_skill": "食材獲取S",
+    "evo_req": "Lv.8 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/012.png",
+    "ingredients": {
+      "ing1": {
+        "name": "甜甜蜜",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "好眠番茄",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "19",
+    "formatted_no": "019",
+    "name_cn": "小拉達",
+    "name_en": "Rattata",
+    "name_jp": "コラッタ",
+    "type": "一般",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "10",
+    "ingredient_rate": "23.70%",
+    "skill_rate": "3.00%",
+    "interval": "01:21:40",
+    "main_skill": "活力填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/019.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "20",
+    "formatted_no": "020",
+    "name_cn": "拉達",
+    "name_en": "Raticate",
+    "name_jp": "ラッタ",
+    "type": "一般",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "21",
+    "ingredient_rate": "23.70%",
+    "skill_rate": "3.00%",
+    "interval": "00:49:10",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.15 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/020.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "23",
+    "formatted_no": "023",
+    "name_cn": "阿柏蛇",
+    "name_en": "Ekans",
+    "name_jp": "アーボ",
+    "type": "毒",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "10",
+    "ingredient_rate": "23.50%",
+    "skill_rate": "3.30%",
+    "interval": "01:23:20",
+    "main_skill": "活力填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/023.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蛋",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "火辣香草",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "24",
+    "formatted_no": "024",
+    "name_cn": "阿柏怪",
+    "name_en": "Arbok",
+    "name_jp": "アーボック",
+    "type": "毒",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "19",
+    "ingredient_rate": "26.40%",
+    "skill_rate": "5.70%",
+    "interval": "00:56:40",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.17 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/024.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蛋",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "火辣香草",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "172",
+    "formatted_no": "172",
+    "name_cn": "皮丘",
+    "name_en": "Pichu",
+    "name_jp": "ピチュー",
+    "type": "電",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "10",
+    "ingredient_rate": "21.00%",
+    "skill_rate": "2.30%",
+    "interval": "01:11:40",
+    "main_skill": "能量填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/172.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "25",
+    "formatted_no": "025",
+    "name_cn": "皮卡丘",
+    "name_en": "Pikachu",
+    "name_jp": "ピカチュウ",
+    "type": "電",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "22",
+    "ingredient_rate": "20.70%",
+    "skill_rate": "2.10%",
+    "interval": "00:45:00",
+    "main_skill": "能量填充S",
+    "evo_req": "睡 50 小時 + 20 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/025.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "9001",
+    "formatted_no": "9001",
+    "name_cn": "皮卡丘（萬聖節）",
+    "name_en": "Pikachu (Halloween)",
+    "name_jp": "ピカチュウ (ハロウィン)",
+    "type": "電",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "18",
+    "ingredient_rate": "21.80%",
+    "skill_rate": "2.80%",
+    "interval": "00:41:40",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/9001.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "9002",
+    "formatted_no": "9002",
+    "name_cn": "皮卡丘（佳節）",
+    "name_en": "Pikachu (Holiday)",
+    "name_jp": "ピカチュウ (ホリデー)",
+    "type": "電",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "20",
+    "ingredient_rate": "13.10%",
+    "skill_rate": "4.20%",
+    "interval": "00:41:40",
+    "main_skill": "夢之碎片獲取S",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/9002.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "9003",
+    "formatted_no": "9003",
+    "name_cn": "皮卡丘（船長）",
+    "name_en": "Pikachu (Captin)",
+    "name_jp": "ピカチュウ (キャプテン)",
+    "type": "電",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "",
+    "ingredient_rate": "",
+    "skill_rate": "",
+    "interval": "",
+    "main_skill": "",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/9003.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "26",
+    "formatted_no": "026",
+    "name_cn": "雷丘",
+    "name_en": "Raichu",
+    "name_jp": "ライチュウ",
+    "type": "電",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "31",
+    "ingredient_rate": "22.40%",
+    "skill_rate": "3.20%",
+    "interval": "00:36:40",
+    "main_skill": "能量填充S",
+    "evo_req": "雷之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/026.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "27",
+    "formatted_no": "027",
+    "name_cn": "穿山鼠",
+    "name_en": "Sandshrew",
+    "name_jp": "サンド",
+    "type": "地面",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "11",
+    "ingredient_rate": "10.00%",
+    "skill_rate": "4.60%",
+    "interval": "01:28:20",
+    "main_skill": "食材精選S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/027.png",
+    "ingredients": {
+      "ing1": {
+        "name": "沉甸甸南瓜",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "7"
+      }
+    }
+  },
+  {
+    "id": "28",
+    "formatted_no": "028",
+    "name_cn": "穿山王",
+    "name_en": "Sandslash",
+    "name_jp": "サンドパン",
+    "type": "地面",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "22",
+    "ingredient_rate": "10.80%",
+    "skill_rate": "4.30%",
+    "interval": "00:46:40",
+    "main_skill": "食材精選S",
+    "evo_req": "Lv.17 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/028.png",
+    "ingredients": {
+      "ing1": {
+        "name": "沉甸甸南瓜",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "7"
+      }
+    }
+  },
+  {
+    "id": "173",
+    "formatted_no": "173",
+    "name_cn": "皮寶寶",
+    "name_en": "Cleffa",
+    "name_jp": "ピィ",
+    "type": "妖精",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "10",
+    "ingredient_rate": "16.40%",
+    "skill_rate": "3.40%",
+    "interval": "01:33:20",
+    "main_skill": "揮指",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/173.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "甜甜蜜",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "35",
+    "formatted_no": "035",
+    "name_cn": "皮皮",
+    "name_en": "Clefairy",
+    "name_jp": "ピッピ",
+    "type": "妖精",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "21",
+    "ingredient_rate": "16.80%",
+    "skill_rate": "3.60%",
+    "interval": "01:06:40",
+    "main_skill": "揮指",
+    "evo_req": "睡 50 小時 + 20 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/035.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "甜甜蜜",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "36",
+    "formatted_no": "036",
+    "name_cn": "皮可西",
+    "name_en": "Clefable",
+    "name_jp": "ピクシー",
+    "type": "妖精",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "34",
+    "ingredient_rate": "16.80%",
+    "skill_rate": "3.60%",
+    "interval": "00:46:40",
+    "main_skill": "揮指",
+    "evo_req": "月之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/036.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "甜甜蜜",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "37",
+    "formatted_no": "037",
+    "name_cn": "六尾",
+    "name_en": "Vulpix",
+    "name_jp": "ロコン",
+    "type": "火",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "13",
+    "ingredient_rate": "16.80%",
+    "skill_rate": "3.20%",
+    "interval": "01:18:20",
+    "main_skill": "活力療癒S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/037.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠大豆",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "7006",
+    "formatted_no": "7006",
+    "name_cn": "六尾（阿羅拉的樣子）",
+    "name_en": "Vulpix (Alolan Form)",
+    "name_jp": "ロコン (アローラのすがた)",
+    "type": "冰",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "10",
+    "ingredient_rate": "23.00%",
+    "skill_rate": "2.80%",
+    "interval": "01:33:20",
+    "main_skill": "幫手支援S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/7006.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠大豆",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "38",
+    "formatted_no": "038",
+    "name_cn": "九尾",
+    "name_en": "Ninetales",
+    "name_jp": "キュウコン",
+    "type": "火",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "28",
+    "ingredient_rate": "16.40%",
+    "skill_rate": "2.90%",
+    "interval": "00:43:20",
+    "main_skill": "活力療癒S",
+    "evo_req": "火之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/038.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠大豆",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "7007",
+    "formatted_no": "7007",
+    "name_cn": "九尾（阿羅拉的樣子）",
+    "name_en": "Ninetales (Alolan Form)",
+    "name_jp": "キュウコン (アローラのすがた)",
+    "type": "冰",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "25",
+    "ingredient_rate": "23.20%",
+    "skill_rate": "2.80%",
+    "interval": "00:48:20",
+    "main_skill": "幫手支援S",
+    "evo_req": "冰之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/7007.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠大豆",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "174",
+    "formatted_no": "174",
+    "name_cn": "寶寶丁",
+    "name_en": "Igglybuff",
+    "name_jp": "ププリン",
+    "type": "妖精",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "8",
+    "ingredient_rate": "17.00%",
+    "skill_rate": "3.80%",
+    "interval": "01:26:40",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/174.png",
+    "ingredients": {
+      "ing1": {
+        "name": "甜甜蜜",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "純粹油",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "放鬆可可",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "39",
+    "formatted_no": "039",
+    "name_cn": "胖丁",
+    "name_en": "Jigglypuff",
+    "name_jp": "プリン",
+    "type": "妖精",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "14",
+    "ingredient_rate": "18.20%",
+    "skill_rate": "4.30%",
+    "interval": "01:05:00",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "睡 50 小時 + 20 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/039.png",
+    "ingredients": {
+      "ing1": {
+        "name": "甜甜蜜",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "純粹油",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "放鬆可可",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "40",
+    "formatted_no": "040",
+    "name_cn": "胖可丁",
+    "name_en": "Wigglytuff",
+    "name_jp": "プクリン",
+    "type": "妖精",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "32",
+    "ingredient_rate": "17.40%",
+    "skill_rate": "4.00%",
+    "interval": "00:48:20",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "月之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/040.png",
+    "ingredients": {
+      "ing1": {
+        "name": "甜甜蜜",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "純粹油",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "放鬆可可",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "50",
+    "formatted_no": "050",
+    "name_cn": "地鼠",
+    "name_en": "Diglett",
+    "name_jp": "ディグダ",
+    "type": "地面",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "10",
+    "ingredient_rate": "19.20%",
+    "skill_rate": "2.10%",
+    "interval": "01:11:40",
+    "main_skill": "能量填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/050.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "粗枝大蔥",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "51",
+    "formatted_no": "051",
+    "name_cn": "三地鼠",
+    "name_en": "Dugtrio",
+    "name_jp": "ダグトリオ",
+    "type": "地面",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "21",
+    "ingredient_rate": "19.00%",
+    "skill_rate": "2.00%",
+    "interval": "00:44:10",
+    "main_skill": "能量填充S",
+    "evo_req": "Lv.20 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/051.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "粗枝大蔥",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "52",
+    "formatted_no": "052",
+    "name_cn": "喵喵",
+    "name_en": "Meowth",
+    "name_jp": "ニャース",
+    "type": "一般",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "9",
+    "ingredient_rate": "16.30%",
+    "skill_rate": "4.20%",
+    "interval": "01:13:20",
+    "main_skill": "夢之碎片獲取S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/052.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "53",
+    "formatted_no": "053",
+    "name_cn": "貓老大",
+    "name_en": "Persian",
+    "name_jp": "ペルシアン",
+    "type": "一般",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "17",
+    "ingredient_rate": "16.90%",
+    "skill_rate": "4.40%",
+    "interval": "00:46:40",
+    "main_skill": "夢之碎片獲取S",
+    "evo_req": "Lv.21 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/053.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "54",
+    "formatted_no": "054",
+    "name_cn": "可達鴨",
+    "name_en": "Psyduck",
+    "name_jp": "コダック",
+    "type": "水",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "8",
+    "ingredient_rate": "13.60%",
+    "skill_rate": "12.60%",
+    "interval": "01:30:00",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/054.png",
+    "ingredients": {
+      "ing1": {
+        "name": "放鬆可可",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蘋果",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "55",
+    "formatted_no": "055",
+    "name_cn": "哥達鴨",
+    "name_en": "Golduck",
+    "name_jp": "ゴルダック",
+    "type": "水",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "19",
+    "ingredient_rate": "16.20%",
+    "skill_rate": "12.50%",
+    "interval": "00:56:40",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "Lv.25 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/055.png",
+    "ingredients": {
+      "ing1": {
+        "name": "放鬆可可",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蘋果",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "56",
+    "formatted_no": "056",
+    "name_cn": "猴怪",
+    "name_en": "Mankey",
+    "name_jp": "マンキー",
+    "type": "格鬥",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "12",
+    "ingredient_rate": "19.70%",
+    "skill_rate": "2.20%",
+    "interval": "01:10:00",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/056.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "品鮮蘑菇",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "甜甜蜜",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "57",
+    "formatted_no": "057",
+    "name_cn": "火爆猴",
+    "name_en": "Primeape",
+    "name_jp": "オコリザル",
+    "type": "格鬥",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "22",
+    "ingredient_rate": "20.00%",
+    "skill_rate": "2.40%",
+    "interval": "00:46:40",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "Lv.21 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/057.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "品鮮蘑菇",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "甜甜蜜",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "58",
+    "formatted_no": "058",
+    "name_cn": "卡蒂狗",
+    "name_en": "Growlithe",
+    "name_jp": "ガーディ",
+    "type": "火",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "8",
+    "ingredient_rate": "13.80%",
+    "skill_rate": "5.00%",
+    "interval": "01:11:40",
+    "main_skill": "幫手支援S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/058.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "哞哞鮮奶",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "59",
+    "formatted_no": "059",
+    "name_cn": "風速狗",
+    "name_en": "Arcanine",
+    "name_jp": "ウインディ",
+    "type": "火",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "21",
+    "ingredient_rate": "13.60%",
+    "skill_rate": "4.90%",
+    "interval": "00:41:40",
+    "main_skill": "幫手支援S",
+    "evo_req": "火之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/059.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "哞哞鮮奶",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "69",
+    "formatted_no": "069",
+    "name_cn": "喇叭芽",
+    "name_en": "Bellsprout",
+    "name_jp": "マダツボミ",
+    "type": "草",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "8",
+    "ingredient_rate": "23.30%",
+    "skill_rate": "3.90%",
+    "interval": "01:26:40",
+    "main_skill": "活力填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/069.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "70",
+    "formatted_no": "070",
+    "name_cn": "口呆花",
+    "name_en": "Weepinbell",
+    "name_jp": "ウツドン",
+    "type": "草",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "17",
+    "ingredient_rate": "23.50%",
+    "skill_rate": "4.00%",
+    "interval": "01:03:20",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.16 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/070.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "71",
+    "formatted_no": "071",
+    "name_cn": "大食花",
+    "name_en": "Victreebel",
+    "name_jp": "ウツボット",
+    "type": "草",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "27",
+    "ingredient_rate": "23.30%",
+    "skill_rate": "3.90%",
+    "interval": "00:46:40",
+    "main_skill": "活力填充S",
+    "evo_req": "葉之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/071.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "74",
+    "formatted_no": "074",
+    "name_cn": "小拳石",
+    "name_en": "Geodude",
+    "name_jp": "イシツブテ",
+    "type": "岩石",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "9",
+    "ingredient_rate": "28.10%",
+    "skill_rate": "5.20%",
+    "interval": "01:35:00",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/074.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠大豆",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "75",
+    "formatted_no": "075",
+    "name_cn": "隆隆石",
+    "name_en": "Graveler",
+    "name_jp": "ゴローン",
+    "type": "岩石",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "17",
+    "ingredient_rate": "27.20%",
+    "skill_rate": "4.80%",
+    "interval": "01:06:40",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "Lv.19 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/075.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠大豆",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "76",
+    "formatted_no": "076",
+    "name_cn": "隆隆岩",
+    "name_en": "Golem",
+    "name_jp": "ゴローニャ",
+    "type": "岩石",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "26",
+    "ingredient_rate": "28.00%",
+    "skill_rate": "5.20%",
+    "interval": "00:51:40",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "聯繫繩 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/076.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠大豆",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "79",
+    "formatted_no": "079",
+    "name_cn": "呆呆獸",
+    "name_en": "Slowpoke",
+    "name_jp": "ヤドン",
+    "type": "水",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "9",
+    "ingredient_rate": "15.10%",
+    "skill_rate": "7.80%",
+    "interval": "01:35:00",
+    "main_skill": "活力療癒S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/079.png",
+    "ingredients": {
+      "ing1": {
+        "name": "放鬆可可",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "美味尾巴",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "好眠番茄",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "80",
+    "formatted_no": "080",
+    "name_cn": "呆殼獸",
+    "name_en": "Slowbro",
+    "name_jp": "ヤドラン",
+    "type": "水",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "21",
+    "ingredient_rate": "19.70%",
+    "skill_rate": "8.00%",
+    "interval": "01:03:20",
+    "main_skill": "活力療癒S",
+    "evo_req": "Lv.28 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/080.png",
+    "ingredients": {
+      "ing1": {
+        "name": "放鬆可可",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "美味尾巴",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "好眠番茄",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "199",
+    "formatted_no": "199",
+    "name_cn": "呆呆王",
+    "name_en": "Slowking",
+    "name_jp": "ヤドキング",
+    "type": "水",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "22",
+    "ingredient_rate": "16.60%",
+    "skill_rate": "8.70%",
+    "interval": "00:56:40",
+    "main_skill": "活力療癒S",
+    "evo_req": "王者之證 + 聯繫繩 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/199.png",
+    "ingredients": {
+      "ing1": {
+        "name": "放鬆可可",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "美味尾巴",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "好眠番茄",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "81",
+    "formatted_no": "081",
+    "name_cn": "小磁怪",
+    "name_en": "Magnemite",
+    "name_jp": "コイル",
+    "type": "鋼",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "8",
+    "ingredient_rate": "18.20%",
+    "skill_rate": "6.40%",
+    "interval": "01:36:40",
+    "main_skill": "料理強化S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/081.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "火辣香草",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "火辣香草",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "82",
+    "formatted_no": "082",
+    "name_cn": "三合一磁怪",
+    "name_en": "Magneton",
+    "name_jp": "レアコイル",
+    "type": "鋼",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "16",
+    "ingredient_rate": "18.20%",
+    "skill_rate": "6.30%",
+    "interval": "01:06:40",
+    "main_skill": "料理強化S",
+    "evo_req": "Lv.23 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/082.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "火辣香草",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "火辣香草",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "462",
+    "formatted_no": "462",
+    "name_cn": "自爆磁怪",
+    "name_en": "Magnezone",
+    "name_jp": "ジバコイル",
+    "type": "鋼",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "23",
+    "ingredient_rate": "17.90%",
+    "skill_rate": "6.20%",
+    "interval": "00:51:40",
+    "main_skill": "料理強化S",
+    "evo_req": "雷之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/462.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "火辣香草",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "火辣香草",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "83",
+    "formatted_no": "083",
+    "name_cn": "大蔥鴨",
+    "name_en": "Farfetch'd",
+    "name_jp": "カモネギ",
+    "type": "飛行",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "18",
+    "ingredient_rate": "16.00%",
+    "skill_rate": "4.30%",
+    "interval": "00:50:00",
+    "main_skill": "能量填充S",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/083.png",
+    "ingredients": {
+      "ing1": {
+        "name": "粗枝大蔥",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "8",
+        "l60": "13"
+      },
+      "ing3": {
+        "name": "暖暖薑",
+        "l60": "12"
+      }
+    }
+  },
+  {
+    "id": "84",
+    "formatted_no": "084",
+    "name_cn": "嘟嘟",
+    "name_en": "Doduo",
+    "name_jp": "ドードー",
+    "type": "飛行",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "13",
+    "ingredient_rate": "18.40%",
+    "skill_rate": "2.00%",
+    "interval": "01:03:20",
+    "main_skill": "活力填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/084.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠大豆",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "85",
+    "formatted_no": "085",
+    "name_cn": "嘟嘟利",
+    "name_en": "Dodrio",
+    "name_jp": "ドードリオ",
+    "type": "飛行",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "26",
+    "ingredient_rate": "18.40%",
+    "skill_rate": "2.00%",
+    "interval": "00:38:20",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.23 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/085.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠大豆",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "92",
+    "formatted_no": "092",
+    "name_cn": "鬼斯",
+    "name_en": "Gastly",
+    "name_jp": "ゴース",
+    "type": "幽靈",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "10",
+    "ingredient_rate": "14.40%",
+    "skill_rate": "1.50%",
+    "interval": "01:03:20",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/092.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "品鮮蘑菇",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "93",
+    "formatted_no": "093",
+    "name_cn": "鬼斯通",
+    "name_en": "Haunter",
+    "name_jp": "ゴースト",
+    "type": "幽靈",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "19",
+    "ingredient_rate": "15.70%",
+    "skill_rate": "2.20%",
+    "interval": "00:50:00",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "Lv.19 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/093.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "品鮮蘑菇",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "94",
+    "formatted_no": "094",
+    "name_cn": "耿鬼",
+    "name_en": "Gengar",
+    "name_jp": "ゲンガー",
+    "type": "幽靈",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "28",
+    "ingredient_rate": "16.10%",
+    "skill_rate": "2.40%",
+    "interval": "00:36:40",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "聯繫繩 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "品鮮蘑菇",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "95",
+    "formatted_no": "095",
+    "name_cn": "大岩蛇",
+    "name_en": "Onix",
+    "name_jp": "イワーク",
+    "type": "岩石",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "22",
+    "ingredient_rate": "13.20%",
+    "skill_rate": "2.30%",
+    "interval": "00:51:40",
+    "main_skill": "食材獲取S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/095.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "208",
+    "formatted_no": "208",
+    "name_cn": "大綱蛇",
+    "name_en": "Steelix",
+    "name_jp": "ハガネール",
+    "type": "鋼",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "30",
+    "ingredient_rate": "15.40%",
+    "skill_rate": "3.20%",
+    "interval": "00:50:00",
+    "main_skill": "食材獲取S",
+    "evo_req": "聯繫繩 + 金屬膜 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/208.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "104",
+    "formatted_no": "104",
+    "name_cn": "卡拉卡拉",
+    "name_en": "Cubone",
+    "name_jp": "カラカラ",
+    "type": "地面",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "10",
+    "ingredient_rate": "22.30%",
+    "skill_rate": "4.40%",
+    "interval": "01:20:00",
+    "main_skill": "活力填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/104.png",
+    "ingredients": {
+      "ing1": {
+        "name": "暖暖薑",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "放鬆可可",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "105",
+    "formatted_no": "105",
+    "name_cn": "嘎啦嘎啦",
+    "name_en": "Marowak",
+    "name_jp": "ガラガラ",
+    "type": "地面",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "20",
+    "ingredient_rate": "22.50%",
+    "skill_rate": "4.50%",
+    "interval": "00:55:00",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.21 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/105.png",
+    "ingredients": {
+      "ing1": {
+        "name": "暖暖薑",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "放鬆可可",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "440",
+    "formatted_no": "440",
+    "name_cn": "小福蛋",
+    "name_en": "Happiny",
+    "name_jp": "ピンプク",
+    "type": "一般",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "7",
+    "ingredient_rate": "21.00%",
+    "skill_rate": "1.30%",
+    "interval": "01:30:00",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/440.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "甜甜蜜",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "113",
+    "formatted_no": "113",
+    "name_cn": "吉利蛋",
+    "name_en": "Chansey",
+    "name_jp": "ラッキー",
+    "type": "一般",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "20",
+    "ingredient_rate": "23.60%",
+    "skill_rate": "2.30%",
+    "interval": "00:55:00",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "渾圓之石 + 06:00 ~ 18:00 + 80 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/113.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "甜甜蜜",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "242",
+    "formatted_no": "242",
+    "name_cn": "幸福蛋",
+    "name_en": "Blissey",
+    "name_jp": "ハピナス",
+    "type": "一般",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "31",
+    "ingredient_rate": "23.80%",
+    "skill_rate": "2.30%",
+    "interval": "00:51:40",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "睡 150 小時 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/242.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "甜甜蜜",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "115",
+    "formatted_no": "115",
+    "name_cn": "袋獸",
+    "name_en": "Kangaskhan",
+    "name_jp": "ガルーラ",
+    "type": "一般",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "21",
+    "ingredient_rate": "22.20%",
+    "skill_rate": "3.20%",
+    "interval": "00:44:10",
+    "main_skill": "食材獲取S",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/115.png",
+    "ingredients": {
+      "ing1": {
+        "name": "暖暖薑",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "439",
+    "formatted_no": "439",
+    "name_cn": "魔尼尼",
+    "name_en": "Mime Jr.",
+    "name_jp": "マネネ",
+    "type": "超能力",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "10",
+    "ingredient_rate": "20.10%",
+    "skill_rate": "3.20%",
+    "interval": "01:11:40",
+    "main_skill": "模仿（技能複製）",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/439.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "122",
+    "formatted_no": "122",
+    "name_cn": "魔牆人偶",
+    "name_en": "Mr. Mime",
+    "name_jp": "バリヤード",
+    "type": "超能力",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "22",
+    "ingredient_rate": "21.60%",
+    "skill_rate": "3.90%",
+    "interval": "00:46:40",
+    "main_skill": "模仿（技能複製）",
+    "evo_req": "Lv.12 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/122.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "127",
+    "formatted_no": "127",
+    "name_cn": "凱羅斯",
+    "name_en": "Pinsir",
+    "name_jp": "カイロス",
+    "type": "蟲",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "24",
+    "ingredient_rate": "21.60%",
+    "skill_rate": "3.10%",
+    "interval": "00:40:00",
+    "main_skill": "能量填充M",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/127.png",
+    "ingredients": {
+      "ing1": {
+        "name": "甜甜蜜",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "特選蘋果",
+        "l30": "5",
+        "l60": "8"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "7"
+      }
+    }
+  },
+  {
+    "id": "132",
+    "formatted_no": "132",
+    "name_cn": "百變怪",
+    "name_en": "Ditto",
+    "name_jp": "メタモン",
+    "type": "一般",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "17",
+    "ingredient_rate": "20.10%",
+    "skill_rate": "3.60%",
+    "interval": "00:58:20",
+    "main_skill": "變身（技能複製）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/132.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "粗枝大蔥",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "美味尾巴",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "133",
+    "formatted_no": "133",
+    "name_cn": "伊布",
+    "name_en": "Eevee",
+    "name_jp": "イーブイ",
+    "type": "一般",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "12",
+    "ingredient_rate": "19.20%",
+    "skill_rate": "5.50%",
+    "interval": "01:01:40",
+    "main_skill": "食材獲取S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/133.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "9004",
+    "formatted_no": "9004",
+    "name_cn": "伊布（佳節）",
+    "name_en": "Eevee (Holiday)",
+    "name_jp": "イーブイ (ホリデー)",
+    "type": "一般",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "20",
+    "ingredient_rate": "15.60%",
+    "skill_rate": "3.20%",
+    "interval": "00:51:40",
+    "main_skill": "夢之碎片獲取S",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/9004.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "9005",
+    "formatted_no": "9005",
+    "name_cn": "伊布（萬聖節）",
+    "name_en": "Eevee (Halloween)",
+    "name_jp": "イーブイ (ハロウィン)",
+    "type": "一般",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "18",
+    "ingredient_rate": "12.00%",
+    "skill_rate": "4.60%",
+    "interval": "00:53:20",
+    "main_skill": "食材獲取S",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/9005.png",
+    "ingredients": {
+      "ing1": {
+        "name": "沉甸甸南瓜",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "哞哞鮮奶",
+        "l60": "9"
+      }
+    }
+  },
+  {
+    "id": "134",
+    "formatted_no": "134",
+    "name_cn": "水伊布",
+    "name_en": "Vaporeon",
+    "name_jp": "シャワーズ",
+    "type": "水",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "18",
+    "ingredient_rate": "21.20%",
+    "skill_rate": "6.10%",
+    "interval": "00:51:40",
+    "main_skill": "食材獲取S",
+    "evo_req": "水之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/134.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "135",
+    "formatted_no": "135",
+    "name_cn": "雷伊布",
+    "name_en": "Jolteon",
+    "name_jp": "サンダース",
+    "type": "電",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "22",
+    "ingredient_rate": "15.10%",
+    "skill_rate": "3.90%",
+    "interval": "00:36:40",
+    "main_skill": "幫手支援S",
+    "evo_req": "雷之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/135.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "136",
+    "formatted_no": "136",
+    "name_cn": "火伊布",
+    "name_en": "Flareon",
+    "name_jp": "ブースター",
+    "type": "火",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "19",
+    "ingredient_rate": "18.50%",
+    "skill_rate": "5.20%",
+    "interval": "00:45:00",
+    "main_skill": "料理強化S",
+    "evo_req": "火之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/136.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "196",
+    "formatted_no": "196",
+    "name_cn": "太陽伊布",
+    "name_en": "Espeon",
+    "name_jp": "エーフィ",
+    "type": "超能力",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "21",
+    "ingredient_rate": "16.40%",
+    "skill_rate": "4.40%",
+    "interval": "00:40:00",
+    "main_skill": "能量填充M",
+    "evo_req": "睡 150 小時 + 06:00 ~ 18:00 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/196.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "197",
+    "formatted_no": "197",
+    "name_cn": "月亮伊布",
+    "name_en": "Umbreon",
+    "name_jp": "ブラッキー",
+    "type": "惡",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "19",
+    "ingredient_rate": "21.90%",
+    "skill_rate": "10.10%",
+    "interval": "00:53:20",
+    "main_skill": "月光（活力填充S）",
+    "evo_req": "睡 150 小時 + 18:00 ~ 06:00 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/197.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "470",
+    "formatted_no": "470",
+    "name_cn": "葉伊布",
+    "name_en": "Leafeon",
+    "name_jp": "リーフィア",
+    "type": "草",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "18",
+    "ingredient_rate": "20.50%",
+    "skill_rate": "6.90%",
+    "interval": "00:50:00",
+    "main_skill": "活力療癒S",
+    "evo_req": "葉之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/470.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "471",
+    "formatted_no": "471",
+    "name_cn": "冰伊布",
+    "name_en": "Glaceon",
+    "name_jp": "グレイシア",
+    "type": "冰",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "17",
+    "ingredient_rate": "21.90%",
+    "skill_rate": "6.30%",
+    "interval": "00:53:20",
+    "main_skill": "料理強化S",
+    "evo_req": "冰之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/471.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "700",
+    "formatted_no": "700",
+    "name_cn": "仙子伊布",
+    "name_en": "Sylveon",
+    "name_jp": "ニンフィア",
+    "type": "妖精",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "20",
+    "ingredient_rate": "17.80%",
+    "skill_rate": "4.00%",
+    "interval": "00:43:20",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "睡 150 小時 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/700.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "147",
+    "formatted_no": "147",
+    "name_cn": "迷你龍",
+    "name_en": "Dratini",
+    "name_jp": "ミニリュウ",
+    "type": "龍",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "9",
+    "ingredient_rate": "25.00%",
+    "skill_rate": "2.00%",
+    "interval": "01:23:20",
+    "main_skill": "活力填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/147.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "148",
+    "formatted_no": "148",
+    "name_cn": "哈克龍",
+    "name_en": "Dragonair",
+    "name_jp": "ハクリュー",
+    "type": "龍",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "17",
+    "ingredient_rate": "26.20%",
+    "skill_rate": "2.50%",
+    "interval": "01:03:20",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.23 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/148.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "149",
+    "formatted_no": "149",
+    "name_cn": "快龍",
+    "name_en": "Dragonite",
+    "name_jp": "カイリュー",
+    "type": "龍",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "30",
+    "ingredient_rate": "26.40%",
+    "skill_rate": "2.60%",
+    "interval": "00:43:20",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.41 + 100 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/149.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "151",
+    "formatted_no": "151",
+    "name_cn": "夢幻",
+    "name_en": "Mew",
+    "name_jp": "ミュウ",
+    "type": "超能力",
+    "specialty": "全部",
+    "sleep_type": "安然入睡",
+    "carry": "26",
+    "ingredient_rate": "20.00%",
+    "skill_rate": "4.00%",
+    "interval": "00:48:20",
+    "main_skill": "十項全能（揮指）[可替換]",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/151.png",
+    "ingredients": {
+      "ing1": {
+        "name": "",
+        "l1": "",
+        "l30": "",
+        "l60": ""
+      },
+      "ing2": {
+        "name": "",
+        "l30": "",
+        "l60": ""
+      },
+      "ing3": {
+        "name": "",
+        "l60": ""
+      }
+    }
+  },
+  {
+    "id": "152",
+    "formatted_no": "152",
+    "name_cn": "菊草葉",
+    "name_en": "Chikorita",
+    "name_jp": "チコリータ",
+    "type": "草",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "12",
+    "ingredient_rate": "16.90%",
+    "skill_rate": "3.90%",
+    "interval": "01:13:20",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/152.png",
+    "ingredients": {
+      "ing1": {
+        "name": "放鬆可可",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "甜甜蜜",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "153",
+    "formatted_no": "153",
+    "name_cn": "月桂葉",
+    "name_en": "Bayleef",
+    "name_jp": "ベイリーフ",
+    "type": "草",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "22",
+    "ingredient_rate": "16.80%",
+    "skill_rate": "3.80%",
+    "interval": "00:55:00",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "Lv.12 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/153.png",
+    "ingredients": {
+      "ing1": {
+        "name": "放鬆可可",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "甜甜蜜",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "154",
+    "formatted_no": "154",
+    "name_cn": "大竺葵",
+    "name_en": "Meganium",
+    "name_jp": "メガニウム",
+    "type": "草",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "30",
+    "ingredient_rate": "17.50%",
+    "skill_rate": "4.60%",
+    "interval": "00:46:40",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "Lv.24 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/154.png",
+    "ingredients": {
+      "ing1": {
+        "name": "放鬆可可",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "甜甜蜜",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "155",
+    "formatted_no": "155",
+    "name_cn": "火球鼠",
+    "name_en": "Cyndaquil",
+    "name_jp": "ヒノアラシ",
+    "type": "火",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "14",
+    "ingredient_rate": "18.60%",
+    "skill_rate": "2.10%",
+    "interval": "00:58:20",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/155.png",
+    "ingredients": {
+      "ing1": {
+        "name": "暖暖薑",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "火辣香草",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "156",
+    "formatted_no": "156",
+    "name_cn": "火岩鼠",
+    "name_en": "Quilava",
+    "name_jp": "マグマラシ",
+    "type": "火",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "23",
+    "ingredient_rate": "21.10%",
+    "skill_rate": "4.10%",
+    "interval": "00:50:00",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "Lv.11 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/156.png",
+    "ingredients": {
+      "ing1": {
+        "name": "暖暖薑",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "火辣香草",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "157",
+    "formatted_no": "157",
+    "name_cn": "火爆獸",
+    "name_en": "Typhlosion",
+    "name_jp": "バクフーン",
+    "type": "火",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "33",
+    "ingredient_rate": "20.80%",
+    "skill_rate": "3.90%",
+    "interval": "00:40:00",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "Lv.27 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/157.png",
+    "ingredients": {
+      "ing1": {
+        "name": "暖暖薑",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "火辣香草",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "158",
+    "formatted_no": "158",
+    "name_cn": "小鋸鱷",
+    "name_en": "Totodile",
+    "name_jp": "ワニノコ",
+    "type": "水",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "11",
+    "ingredient_rate": "25.30%",
+    "skill_rate": "2.20%",
+    "interval": "01:15:00",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/158.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "純粹油",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "159",
+    "formatted_no": "159",
+    "name_cn": "藍鱷",
+    "name_en": "Croconaw",
+    "name_jp": "アリゲイツ",
+    "type": "水",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "20",
+    "ingredient_rate": "25.30%",
+    "skill_rate": "5.20%",
+    "interval": "00:56:40",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "Lv.14 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/159.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "純粹油",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "160",
+    "formatted_no": "160",
+    "name_cn": "大力鱷",
+    "name_en": "Feraligatr",
+    "name_jp": "オーダイル",
+    "type": "水",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "29",
+    "ingredient_rate": "25.70%",
+    "skill_rate": "5.50%",
+    "interval": "00:46:40",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "Lv.23 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/160.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "純粹油",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "175",
+    "formatted_no": "175",
+    "name_cn": "波克比",
+    "name_en": "Togepi",
+    "name_jp": "トゲピー",
+    "type": "妖精",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "8",
+    "ingredient_rate": "15.10%",
+    "skill_rate": "4.90%",
+    "interval": "01:20:00",
+    "main_skill": "揮指",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/175.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "放鬆可可",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "176",
+    "formatted_no": "176",
+    "name_cn": "波克基古",
+    "name_en": "Togetic",
+    "name_jp": "トゲチック",
+    "type": "妖精",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "15",
+    "ingredient_rate": "16.30%",
+    "skill_rate": "5.60%",
+    "interval": "01:03:20",
+    "main_skill": "揮指",
+    "evo_req": "睡 50 小時 + 20 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/176.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "放鬆可可",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "468",
+    "formatted_no": "468",
+    "name_cn": "波克基斯",
+    "name_en": "Togekiss",
+    "name_jp": "トゲキッス",
+    "type": "妖精",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "26",
+    "ingredient_rate": "15.80%",
+    "skill_rate": "5.30%",
+    "interval": "00:43:20",
+    "main_skill": "揮指",
+    "evo_req": "光之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/468.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "放鬆可可",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "177",
+    "formatted_no": "177",
+    "name_cn": "天然雀",
+    "name_en": "Natu",
+    "name_jp": "ネイティ",
+    "type": "超能力",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "11",
+    "ingredient_rate": "18.50%",
+    "skill_rate": "1.60%",
+    "interval": "01:15:00",
+    "main_skill": "食材獲取S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/177.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "特選蘋果",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "178",
+    "formatted_no": "178",
+    "name_cn": "天然鳥",
+    "name_en": "Xatu",
+    "name_jp": "ネイティオ",
+    "type": "超能力",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "24",
+    "ingredient_rate": "19.10%",
+    "skill_rate": "2.50%",
+    "interval": "00:41:40",
+    "main_skill": "食材獲取S",
+    "evo_req": "Lv.19 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/178.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "特選蘋果",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "179",
+    "formatted_no": "179",
+    "name_cn": "咩利羊",
+    "name_en": "Mareep",
+    "name_jp": "メリープ",
+    "type": "電",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "9",
+    "ingredient_rate": "12.80%",
+    "skill_rate": "4.70%",
+    "interval": "01:16:40",
+    "main_skill": "能量填充M",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/179.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蛋",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "180",
+    "formatted_no": "180",
+    "name_cn": "茸茸羊",
+    "name_en": "Flaaffy",
+    "name_jp": "モココ",
+    "type": "電",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "16",
+    "ingredient_rate": "12.70%",
+    "skill_rate": "4.60%",
+    "interval": "00:55:00",
+    "main_skill": "能量填充M",
+    "evo_req": "Lv.11 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/180.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蛋",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "181",
+    "formatted_no": "181",
+    "name_cn": "電龍",
+    "name_en": "Ampharos",
+    "name_jp": "デンリュウ",
+    "type": "電",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "25",
+    "ingredient_rate": "13.00%",
+    "skill_rate": "4.70%",
+    "interval": "00:41:40",
+    "main_skill": "能量填充M",
+    "evo_req": "Lv.23 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/181.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蛋",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "438",
+    "formatted_no": "438",
+    "name_cn": "盆才怪",
+    "name_en": "Bonsly",
+    "name_jp": "ウソハチ",
+    "type": "岩石",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "8",
+    "ingredient_rate": "18.90%",
+    "skill_rate": "6.10%",
+    "interval": "01:45:00",
+    "main_skill": "能量填充M",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/438.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "185",
+    "formatted_no": "185",
+    "name_cn": "樹才怪",
+    "name_en": "Sudowoodo",
+    "name_jp": "ウソッキー",
+    "type": "岩石",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "21",
+    "ingredient_rate": "21.70%",
+    "skill_rate": "7.20%",
+    "interval": "01:06:40",
+    "main_skill": "能量填充M",
+    "evo_req": "Lv.12 + 20 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/185.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "194",
+    "formatted_no": "194",
+    "name_cn": "烏波",
+    "name_en": "Wooper",
+    "name_jp": "ウパー",
+    "type": "水",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "10",
+    "ingredient_rate": "20.10%",
+    "skill_rate": "3.80%",
+    "interval": "01:38:20",
+    "main_skill": "活力填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/194.png",
+    "ingredients": {
+      "ing1": {
+        "name": "品鮮蘑菇",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "6",
+        "l60": "10"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "12"
+      }
+    }
+  },
+  {
+    "id": "7054",
+    "formatted_no": "7054",
+    "name_cn": "烏波（阿羅拉的樣子）",
+    "name_en": "Wooper (Paldea Form)",
+    "name_jp": "ウパー  (パルデアのすがた)",
+    "type": "毒",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "9",
+    "ingredient_rate": "20.90%",
+    "skill_rate": "5.60%",
+    "interval": "01:46:40",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.15 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/7054.png",
+    "ingredients": {
+      "ing1": {
+        "name": "放鬆可可",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "醒腦咖啡豆",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "9"
+      }
+    }
+  },
+  {
+    "id": "195",
+    "formatted_no": "195",
+    "name_cn": "沼王",
+    "name_en": "Quagsire",
+    "name_jp": "ヌオー",
+    "type": "水",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "21",
+    "ingredient_rate": "19.00%",
+    "skill_rate": "3.20%",
+    "interval": "00:56:40",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.15 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/195.png",
+    "ingredients": {
+      "ing1": {
+        "name": "品鮮蘑菇",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "6",
+        "l60": "10"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "12"
+      }
+    }
+  },
+  {
+    "id": "980",
+    "formatted_no": "980",
+    "name_cn": "土王",
+    "name_en": "Clodsire",
+    "name_jp": "ドオー",
+    "type": "毒",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "25",
+    "ingredient_rate": "20.80%",
+    "skill_rate": "5.50%",
+    "interval": "00:58:20",
+    "main_skill": "活力填充S",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/980.png",
+    "ingredients": {
+      "ing1": {
+        "name": "放鬆可可",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "醒腦咖啡豆",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "9"
+      }
+    }
+  },
+  {
+    "id": "198",
+    "formatted_no": "198",
+    "name_cn": "黑暗鴉",
+    "name_en": "Murkrow",
+    "name_jp": "ヤミカラス",
+    "type": "惡",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "13",
+    "ingredient_rate": "14.10%",
+    "skill_rate": "6.20%",
+    "interval": "01:00:00",
+    "main_skill": "超幸運（食材精選S）",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/198.png",
+    "ingredients": {
+      "ing1": {
+        "name": "醒腦咖啡豆",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "3",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "火辣香草",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "430",
+    "formatted_no": "430",
+    "name_cn": "烏鴉頭頭",
+    "name_en": "Honchkrow",
+    "name_jp": "ドンカラス",
+    "type": "惡",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "23",
+    "ingredient_rate": "14.30%",
+    "skill_rate": "6.70%",
+    "interval": "00:53:20",
+    "main_skill": "超幸運（食材精選S）",
+    "evo_req": "暗之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/430.png",
+    "ingredients": {
+      "ing1": {
+        "name": "醒腦咖啡豆",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "3",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "火辣香草",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "360",
+    "formatted_no": "360",
+    "name_cn": "小果然",
+    "name_en": "Wynaut",
+    "name_jp": "ソーナノ",
+    "type": "超能力",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "7",
+    "ingredient_rate": "21.30%",
+    "skill_rate": "7.40%",
+    "interval": "01:36:40",
+    "main_skill": "活力療癒S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/360.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "品鮮蘑菇",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "202",
+    "formatted_no": "202",
+    "name_cn": "果然翁",
+    "name_en": "Wobbuffet",
+    "name_jp": "ソーナンス",
+    "type": "超能力",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "21",
+    "ingredient_rate": "21.10%",
+    "skill_rate": "8.20%",
+    "interval": "00:58:20",
+    "main_skill": "活力療癒S",
+    "evo_req": "Lv.11 + 20 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/202.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "品鮮蘑菇",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "213",
+    "formatted_no": "213",
+    "name_cn": "壺壺",
+    "name_en": "Shuckle",
+    "name_jp": "ツボツボ",
+    "type": "蟲",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "16",
+    "ingredient_rate": "20.50%",
+    "skill_rate": "5.90%",
+    "interval": "01:00:00",
+    "main_skill": "樹果汁（活力全體療癒S）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/213.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "醒腦咖啡豆",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "甜甜蜜",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "214",
+    "formatted_no": "214",
+    "name_cn": "赫拉克羅斯",
+    "name_en": "Heracross",
+    "name_jp": "ヘラクロス",
+    "type": "蟲",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "20",
+    "ingredient_rate": "15.80%",
+    "skill_rate": "4.70%",
+    "interval": "00:38:20",
+    "main_skill": "健美（料理輔助S）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/214.png",
+    "ingredients": {
+      "ing1": {
+        "name": "甜甜蜜",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "品鮮蘑菇",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "215",
+    "formatted_no": "215",
+    "name_cn": "狃拉",
+    "name_en": "Sneasel",
+    "name_jp": "ニューラ",
+    "type": "惡",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "17",
+    "ingredient_rate": "25.50%",
+    "skill_rate": "1.90%",
+    "interval": "00:53:20",
+    "main_skill": "料理成功S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/215.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蛋",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "461",
+    "formatted_no": "461",
+    "name_cn": "瑪狃拉",
+    "name_en": "Weavile",
+    "name_jp": "マニューラ",
+    "type": "惡",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "26",
+    "ingredient_rate": "25.10%",
+    "skill_rate": "1.80%",
+    "interval": "00:45:00",
+    "main_skill": "料理成功S",
+    "evo_req": "18:00 ~ 06:00 + 銳利之爪 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/461.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蛋",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "225",
+    "formatted_no": "225",
+    "name_cn": "信使鳥",
+    "name_en": "Delibird",
+    "name_jp": "デリバード",
+    "type": "飛行",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "20",
+    "ingredient_rate": "18.80%",
+    "skill_rate": "3.00%",
+    "interval": "00:41:40",
+    "main_skill": "禮物（食材獲取S）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/225.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "特選蘋果",
+        "l30": "6",
+        "l60": "9"
+      },
+      "ing3": {
+        "name": "放鬆可可",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "228",
+    "formatted_no": "228",
+    "name_cn": "戴魯比",
+    "name_en": "Houndour",
+    "name_jp": "デルビル",
+    "type": "惡",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "10",
+    "ingredient_rate": "20.10%",
+    "skill_rate": "3.70%",
+    "interval": "01:21:40",
+    "main_skill": "能量填充M",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/228.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "229",
+    "formatted_no": "229",
+    "name_cn": "黑魯加",
+    "name_en": "Houndoom",
+    "name_jp": "ヘルガー",
+    "type": "惡",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "21",
+    "ingredient_rate": "20.30%",
+    "skill_rate": "4.00%",
+    "interval": "00:55:00",
+    "main_skill": "能量填充M",
+    "evo_req": "Lv.18 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/229.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "243",
+    "formatted_no": "243",
+    "name_cn": "雷公",
+    "name_en": "Raikou",
+    "name_jp": "ライコウ",
+    "type": "電",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "22",
+    "ingredient_rate": "19.20%",
+    "skill_rate": "1.90%",
+    "interval": "00:35:00",
+    "main_skill": "幫手加速（電）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/243.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "火辣香草",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "244",
+    "formatted_no": "244",
+    "name_cn": "炎帝",
+    "name_en": "Entei",
+    "name_jp": "エンテイ",
+    "type": "火",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "19",
+    "ingredient_rate": "18.70%",
+    "skill_rate": "2.30%",
+    "interval": "00:40:00",
+    "main_skill": "幫手加速（火）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/244.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "好眠番茄",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "245",
+    "formatted_no": "245",
+    "name_cn": "水君",
+    "name_en": "Suicune",
+    "name_jp": "スイクン",
+    "type": "水",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "17",
+    "ingredient_rate": "27.70%",
+    "skill_rate": "2.60%",
+    "interval": "00:45:00",
+    "main_skill": "幫手加速（水）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/245.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "純粹油",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "萌綠玉米",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "246",
+    "formatted_no": "246",
+    "name_cn": "幼基拉斯",
+    "name_en": "Larvitar",
+    "name_jp": "ヨーギラス",
+    "type": "岩石",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "9",
+    "ingredient_rate": "23.80%",
+    "skill_rate": "4.10%",
+    "interval": "01:20:00",
+    "main_skill": "活力填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/246.png",
+    "ingredients": {
+      "ing1": {
+        "name": "暖暖薑",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "5",
+        "l60": "8"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "247",
+    "formatted_no": "247",
+    "name_cn": "沙基拉斯",
+    "name_en": "Pupitar",
+    "name_jp": "サナギラス",
+    "type": "岩石",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "18",
+    "ingredient_rate": "24.70%",
+    "skill_rate": "4.50%",
+    "interval": "01:00:00",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.23 + 40 糖，EXP 需求 1.5 倍",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/247.png",
+    "ingredients": {
+      "ing1": {
+        "name": "暖暖薑",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "5",
+        "l60": "8"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "248",
+    "formatted_no": "248",
+    "name_cn": "班基拉斯",
+    "name_en": "Tyranitar",
+    "name_jp": "バンギラス",
+    "type": "惡",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "29",
+    "ingredient_rate": "26.60%",
+    "skill_rate": "5.20%",
+    "interval": "00:45:00",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.41 + 100 糖，EXP 需求 1.5 倍",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png",
+    "ingredients": {
+      "ing1": {
+        "name": "暖暖薑",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "5",
+        "l60": "8"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "252",
+    "formatted_no": "252",
+    "name_cn": "木守宮",
+    "name_en": "Treecko",
+    "name_jp": "キモリ",
+    "type": "草",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "8",
+    "ingredient_rate": "17.20%",
+    "skill_rate": "3.50%",
+    "interval": "01:15:00",
+    "main_skill": "樹果遽增",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/252.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "醒腦咖啡豆",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "253",
+    "formatted_no": "253",
+    "name_cn": "森林蜥蜴",
+    "name_en": "Grovyle",
+    "name_jp": "ジュプトル",
+    "type": "草",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "16",
+    "ingredient_rate": "15.00%",
+    "skill_rate": "3.50%",
+    "interval": "00:55:00",
+    "main_skill": "樹果遽增",
+    "evo_req": "Lv.12 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/253.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "醒腦咖啡豆",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "254",
+    "formatted_no": "254",
+    "name_cn": "蜥蜴王",
+    "name_en": "Sceptile",
+    "name_jp": "ジュカイン",
+    "type": "草",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "27",
+    "ingredient_rate": "10.70%",
+    "skill_rate": "3.00%",
+    "interval": "00:38:20",
+    "main_skill": "樹果遽增",
+    "evo_req": "Lv.27 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/254.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "醒腦咖啡豆",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "255",
+    "formatted_no": "255",
+    "name_cn": "火稚雞",
+    "name_en": "Torchic",
+    "name_jp": "アチャモ",
+    "type": "火",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "12",
+    "ingredient_rate": "16.00%",
+    "skill_rate": "4.40%",
+    "interval": "01:11:40",
+    "main_skill": "活力填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/255.png",
+    "ingredients": {
+      "ing1": {
+        "name": "品鮮蘑菇",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "256",
+    "formatted_no": "256",
+    "name_cn": "力壯雞",
+    "name_en": "Combusken",
+    "name_jp": "ワカシャモ",
+    "type": "格鬥",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "21",
+    "ingredient_rate": "17.00%",
+    "skill_rate": "5.20%",
+    "interval": "00:56:40",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.12 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/256.png",
+    "ingredients": {
+      "ing1": {
+        "name": "品鮮蘑菇",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "257",
+    "formatted_no": "257",
+    "name_cn": "火焰雞",
+    "name_en": "Blaziken",
+    "name_jp": "バシャーモ",
+    "type": "格鬥",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "32",
+    "ingredient_rate": "15.30%",
+    "skill_rate": "4.90%",
+    "interval": "00:43:20",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.27 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/257.png",
+    "ingredients": {
+      "ing1": {
+        "name": "品鮮蘑菇",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "258",
+    "formatted_no": "258",
+    "name_cn": "水躍魚",
+    "name_en": "Mudkip",
+    "name_jp": "ミズゴロウ",
+    "type": "水",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "11",
+    "ingredient_rate": "19.20%",
+    "skill_rate": "2.40%",
+    "interval": "01:18:20",
+    "main_skill": "料理成功S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/258.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠玉米",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "哞哞鮮奶",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "259",
+    "formatted_no": "259",
+    "name_cn": "沼躍魚",
+    "name_en": "Marshtomp",
+    "name_jp": "ヌマクロー",
+    "type": "地面",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "21",
+    "ingredient_rate": "19.00%",
+    "skill_rate": "2.70%",
+    "interval": "00:58:20",
+    "main_skill": "料理成功S",
+    "evo_req": "Lv.12 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/259.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠玉米",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "哞哞鮮奶",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "260",
+    "formatted_no": "260",
+    "name_cn": "巨沼怪",
+    "name_en": "Swampert",
+    "name_jp": "ラグラージ",
+    "type": "地面",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "30",
+    "ingredient_rate": "14.60%",
+    "skill_rate": "3.40%",
+    "interval": "00:46:40",
+    "main_skill": "料理成功S",
+    "evo_req": "Lv.27 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/260.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠玉米",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "哞哞鮮奶",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "280",
+    "formatted_no": "280",
+    "name_cn": "拉魯拉絲",
+    "name_en": "Ralts",
+    "name_jp": "ラルトス",
+    "type": "超能力",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "9",
+    "ingredient_rate": "14.50%",
+    "skill_rate": "4.30%",
+    "interval": "01:20:00",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/280.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "281",
+    "formatted_no": "281",
+    "name_cn": "奇鲁莉安",
+    "name_en": "Kirlia",
+    "name_jp": "キルリア",
+    "type": "超能力",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "18",
+    "ingredient_rate": "14.60%",
+    "skill_rate": "4.30%",
+    "interval": "00:58:20",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "Lv.15 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/281.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "282",
+    "formatted_no": "282",
+    "name_cn": "沙奈朵",
+    "name_en": "Gardevoir",
+    "name_jp": "サーナイト",
+    "type": "超能力",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "28",
+    "ingredient_rate": "14.40%",
+    "skill_rate": "4.20%",
+    "interval": "00:40:00",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "Lv.23 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/282.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "475",
+    "formatted_no": "475",
+    "name_cn": "艾路雷朵",
+    "name_en": "Gallade",
+    "name_jp": "エルレイド",
+    "type": "格鬥",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "29",
+    "ingredient_rate": "14.70%",
+    "skill_rate": "5.40%",
+    "interval": "00:40:00",
+    "main_skill": "幫手支援S",
+    "evo_req": "雄性 + 覺醒之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/475.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "287",
+    "formatted_no": "287",
+    "name_cn": "懶人獺",
+    "name_en": "Slakoth",
+    "name_jp": "ナマケロ",
+    "type": "一般",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "7",
+    "ingredient_rate": "21.60%",
+    "skill_rate": "1.90%",
+    "interval": "01:21:40",
+    "main_skill": "食材獲取S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/287.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "甜甜蜜",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "特選蘋果",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "288",
+    "formatted_no": "288",
+    "name_cn": "過動猿",
+    "name_en": "Vigoroth",
+    "name_jp": "ヤルキモノ",
+    "type": "一般",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "14",
+    "ingredient_rate": "20.40%",
+    "skill_rate": "1.50%",
+    "interval": "00:53:20",
+    "main_skill": "食材獲取S",
+    "evo_req": "Lv.14 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/288.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "甜甜蜜",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "特選蘋果",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "289",
+    "formatted_no": "289",
+    "name_cn": "請假王",
+    "name_en": "Slaking",
+    "name_jp": "ケッキング",
+    "type": "一般",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "26",
+    "ingredient_rate": "33.90%",
+    "skill_rate": "6.70%",
+    "interval": "01:00:00",
+    "main_skill": "食材獲取S",
+    "evo_req": "Lv.27 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/289.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "甜甜蜜",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "特選蘋果",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "302",
+    "formatted_no": "302",
+    "name_cn": "勾魂眼",
+    "name_en": "Sableye",
+    "name_jp": "ヤミラミ",
+    "type": "惡",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "16",
+    "ingredient_rate": "18.80%",
+    "skill_rate": "6.80%",
+    "interval": "01:00:00",
+    "main_skill": "夢之碎片獲取S（隨機）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/302.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "品鮮蘑菇",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "放鬆可可",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "303",
+    "formatted_no": "303",
+    "name_cn": "大嘴娃",
+    "name_en": "Mawile",
+    "name_jp": "クチート",
+    "type": "鋼",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "17",
+    "ingredient_rate": "20.40%",
+    "skill_rate": "3.80%",
+    "interval": "00:53:20",
+    "main_skill": "怪力钳（食材精選S）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/303.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "好眠番茄",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "304",
+    "formatted_no": "304",
+    "name_cn": "可可多拉",
+    "name_en": "Aron",
+    "name_jp": "ココドラ",
+    "type": "鋼",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "10",
+    "ingredient_rate": "27.30%",
+    "skill_rate": "4.60%",
+    "interval": "01:35:00",
+    "main_skill": "活力填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/304.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "醒腦咖啡豆",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "7"
+      }
+    }
+  },
+  {
+    "id": "305",
+    "formatted_no": "305",
+    "name_cn": "可多拉",
+    "name_en": "Lairon",
+    "name_jp": "コドラ",
+    "type": "鋼",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "18",
+    "ingredient_rate": "27.70%",
+    "skill_rate": "4.80%",
+    "interval": "01:10:00",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.24 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/305.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "醒腦咖啡豆",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "7"
+      }
+    }
+  },
+  {
+    "id": "306",
+    "formatted_no": "306",
+    "name_cn": "波士可多拉",
+    "name_en": "Aggron",
+    "name_jp": "ボスゴドラ",
+    "type": "鋼",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "28",
+    "ingredient_rate": "28.50%",
+    "skill_rate": "5.20%",
+    "interval": "00:50:00",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.32 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/306.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "醒腦咖啡豆",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "7"
+      }
+    }
+  },
+  {
+    "id": "311",
+    "formatted_no": "311",
+    "name_cn": "正電拍拍",
+    "name_en": "Plusle",
+    "name_jp": "プラスル",
+    "type": "電",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "16",
+    "ingredient_rate": "10.30%",
+    "skill_rate": "4.90%",
+    "interval": "00:40:00",
+    "main_skill": "正電（食材獲取S）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/311.png",
+    "ingredients": {
+      "ing1": {
+        "name": "醒腦咖啡豆",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "粗枝大蔥",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "哞哞鮮奶",
+        "l60": "6"
+      }
+    }
+  },
+  {
+    "id": "312",
+    "formatted_no": "312",
+    "name_cn": "負電拍拍",
+    "name_en": "Minun",
+    "name_jp": "マイナン",
+    "type": "電",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "16",
+    "ingredient_rate": "17.40%",
+    "skill_rate": "4.90%",
+    "interval": "00:40:00",
+    "main_skill": "負電（料理強化S）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/312.png",
+    "ingredients": {
+      "ing1": {
+        "name": "甜甜蜜",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蛋",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "哞哞鮮奶",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "316",
+    "formatted_no": "316",
+    "name_cn": "溶食獸",
+    "name_en": "Gulpin",
+    "name_jp": "ゴクリン",
+    "type": "毒",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "8",
+    "ingredient_rate": "21.40%",
+    "skill_rate": "6.30%",
+    "interval": "01:38:20",
+    "main_skill": "夢之碎片獲取S（隨機）",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/316.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠大豆",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "品鮮蘑菇",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "甜甜蜜",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "317",
+    "formatted_no": "317",
+    "name_cn": "吞食獸",
+    "name_en": "Swalot",
+    "name_jp": "マルノーム",
+    "type": "毒",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "24",
+    "ingredient_rate": "21.00%",
+    "skill_rate": "7.00%",
+    "interval": "00:58:20",
+    "main_skill": "夢之碎片獲取S（隨機）",
+    "evo_req": "Lv.20 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/317.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠大豆",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "品鮮蘑菇",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "甜甜蜜",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "328",
+    "formatted_no": "328",
+    "name_cn": "大顎蟻",
+    "name_en": "Trapinch",
+    "name_jp": "ナックラー",
+    "type": "地面",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "8",
+    "ingredient_rate": "15.20%",
+    "skill_rate": "3.10%",
+    "interval": "01:23:20",
+    "main_skill": "能量填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/328.png",
+    "ingredients": {
+      "ing1": {
+        "name": "嫩亮酪梨",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "火辣香草",
+        "l30": "6",
+        "l60": "9"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "12"
+      }
+    }
+  },
+  {
+    "id": "329",
+    "formatted_no": "329",
+    "name_cn": "超音波幼蟲",
+    "name_en": "Vibrava",
+    "name_jp": "ビブラーバ",
+    "type": "地面",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "17",
+    "ingredient_rate": "15.50%",
+    "skill_rate": "3.40%",
+    "interval": "01:01:40",
+    "main_skill": "能量填充S",
+    "evo_req": "Lv.26 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/329.png",
+    "ingredients": {
+      "ing1": {
+        "name": "嫩亮酪梨",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "火辣香草",
+        "l30": "6",
+        "l60": "9"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "12"
+      }
+    }
+  },
+  {
+    "id": "330",
+    "formatted_no": "330",
+    "name_cn": "沙漠蜻蜓",
+    "name_en": "Flygon",
+    "name_jp": "フライゴン",
+    "type": "地面",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "27",
+    "ingredient_rate": "17.20%",
+    "skill_rate": "3.90%",
+    "interval": "00:45:00",
+    "main_skill": "能量填充S",
+    "evo_req": "Lv.34 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/330.png",
+    "ingredients": {
+      "ing1": {
+        "name": "嫩亮酪梨",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "火辣香草",
+        "l30": "6",
+        "l60": "9"
+      },
+      "ing3": {
+        "name": "萌綠大豆",
+        "l60": "12"
+      }
+    }
+  },
+  {
+    "id": "333",
+    "formatted_no": "333",
+    "name_cn": "青綿鳥",
+    "name_en": "Swablu",
+    "name_jp": "チルット",
+    "type": "飛行",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "12",
+    "ingredient_rate": "17.70%",
+    "skill_rate": "3.20%",
+    "interval": "01:10:00",
+    "main_skill": "活力填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/333.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "特選蘋果",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "334",
+    "formatted_no": "334",
+    "name_cn": "七夕青鳥",
+    "name_en": "Altaria",
+    "name_jp": "チルタリス",
+    "type": "龍",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "19",
+    "ingredient_rate": "25.80%",
+    "skill_rate": "6.10%",
+    "interval": "00:58:20",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.26 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/334.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "特選蘋果",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "353",
+    "formatted_no": "353",
+    "name_cn": "怨影娃娃",
+    "name_en": "Shuppet",
+    "name_jp": "カゲボウズ",
+    "type": "幽靈",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "11",
+    "ingredient_rate": "17.10%",
+    "skill_rate": "2.60%",
+    "interval": "01:05:00",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/353.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "354",
+    "formatted_no": "354",
+    "name_cn": "詛咒娃娃",
+    "name_en": "Banette",
+    "name_jp": "ジュペッタ",
+    "type": "幽靈",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "24",
+    "ingredient_rate": "17.90%",
+    "skill_rate": "3.30%",
+    "interval": "00:43:20",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "Lv.28 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/354.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "359",
+    "formatted_no": "359",
+    "name_cn": "阿勃梭魯",
+    "name_en": "Absol",
+    "name_jp": "アブソル",
+    "type": "惡",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "21",
+    "ingredient_rate": "17.80%",
+    "skill_rate": "3.80%",
+    "interval": "00:49:10",
+    "main_skill": "能量填充M",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/359.png",
+    "ingredients": {
+      "ing1": {
+        "name": "放鬆可可",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "特選蘋果",
+        "l30": "8",
+        "l60": "12"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "7"
+      }
+    }
+  },
+  {
+    "id": "363",
+    "formatted_no": "363",
+    "name_cn": "海豹球",
+    "name_en": "Spheal",
+    "name_jp": "タマザラシ",
+    "type": "冰",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "9",
+    "ingredient_rate": "22.40%",
+    "skill_rate": "2.30%",
+    "interval": "01:33:20",
+    "main_skill": "食材獲取S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/363.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "暖暖薑",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "9006",
+    "formatted_no": "9006",
+    "name_cn": "海豹球（佳節）",
+    "name_en": "Spheal (Holiday)",
+    "name_jp": "タマザラシ (ホリデー)",
+    "type": "冰",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "20",
+    "ingredient_rate": "21.40%",
+    "skill_rate": "5.00%",
+    "interval": "00:55:00",
+    "main_skill": "料理成功S",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/9006.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "暖暖薑",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "364",
+    "formatted_no": "364",
+    "name_cn": "海魔獅",
+    "name_en": "Sealeo",
+    "name_jp": "トドグラー",
+    "type": "冰",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "18",
+    "ingredient_rate": "22.10%",
+    "skill_rate": "2.10%",
+    "interval": "01:06:40",
+    "main_skill": "食材獲取S",
+    "evo_req": "Lv.24 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/364.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "暖暖薑",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "365",
+    "formatted_no": "365",
+    "name_cn": "帝牙海獅",
+    "name_en": "Walrein",
+    "name_jp": "トドゼルガ",
+    "type": "冰",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "28",
+    "ingredient_rate": "22.30%",
+    "skill_rate": "2.20%",
+    "interval": "00:50:00",
+    "main_skill": "食材獲取S",
+    "evo_req": "Lv.33 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/365.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "暖暖薑",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "371",
+    "formatted_no": "371",
+    "name_cn": "寶貝龍",
+    "name_en": "Bagon",
+    "name_jp": "タツベイ",
+    "type": "龍",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "9",
+    "ingredient_rate": "20.90%",
+    "skill_rate": "2.70%",
+    "interval": "01:28:20",
+    "main_skill": "料理強化S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/371.png",
+    "ingredients": {
+      "ing1": {
+        "name": "窩心洋芋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "372",
+    "formatted_no": "372",
+    "name_cn": "甲殼龍",
+    "name_en": "Shelgon",
+    "name_jp": "コモルー",
+    "type": "龍",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "19",
+    "ingredient_rate": "20.60%",
+    "skill_rate": "2.70%",
+    "interval": "01:03:20",
+    "main_skill": "料理強化S",
+    "evo_req": "Lv.23 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/372.png",
+    "ingredients": {
+      "ing1": {
+        "name": "窩心洋芋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "373",
+    "formatted_no": "373",
+    "name_cn": "暴飛龍",
+    "name_en": "Salamence",
+    "name_jp": "ボーマンダ",
+    "type": "龍",
+    "specialty": "樹果",
+    "sleep_type": "淺淺入夢",
+    "carry": "32",
+    "ingredient_rate": "21.70%",
+    "skill_rate": "3.40%",
+    "interval": "00:46:40",
+    "main_skill": "料理強化S",
+    "evo_req": "Lv.38 + 100 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/373.png",
+    "ingredients": {
+      "ing1": {
+        "name": "窩心洋芋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "380",
+    "formatted_no": "380",
+    "name_cn": "拉帝亞斯",
+    "name_en": "Latias",
+    "name_jp": "ラティアス",
+    "type": "龍",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "19",
+    "ingredient_rate": "11.40%",
+    "skill_rate": "4.90%",
+    "interval": "00:46:40",
+    "main_skill": "治癒波動（活力療癒S）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/380.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "沉甸甸南瓜",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "381",
+    "formatted_no": "381",
+    "name_cn": "拉帝歐斯",
+    "name_en": "Latios",
+    "name_jp": "ラティオス",
+    "type": "龍",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "19",
+    "ingredient_rate": "19.80%",
+    "skill_rate": "3.00%",
+    "interval": "00:46:40",
+    "main_skill": "流星群（樹果遽增）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/381.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蛋",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "哞哞鮮奶",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "387",
+    "formatted_no": "387",
+    "name_cn": "草苗龜",
+    "name_en": "Turtwig",
+    "name_jp": "ナエトル",
+    "type": "草",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "12",
+    "ingredient_rate": "13.20%",
+    "skill_rate": "4.10%",
+    "interval": "01:15:00",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/387.png",
+    "ingredients": {
+      "ing1": {
+        "name": "品鮮蘑菇",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "暖暖薑",
+        "l60": "6"
+      }
+    }
+  },
+  {
+    "id": "388",
+    "formatted_no": "388",
+    "name_cn": "樹林龜",
+    "name_en": "Grotle",
+    "name_jp": "ハヤシガメ",
+    "type": "草",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "19",
+    "ingredient_rate": "15.00%",
+    "skill_rate": "4.60%",
+    "interval": "01:01:40",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "Lv.14 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/388.png",
+    "ingredients": {
+      "ing1": {
+        "name": "品鮮蘑菇",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "暖暖薑",
+        "l60": "6"
+      }
+    }
+  },
+  {
+    "id": "389",
+    "formatted_no": "389",
+    "name_cn": "土台龜",
+    "name_en": "Torterra",
+    "name_jp": "ドダイトス",
+    "type": "地面",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "27",
+    "ingredient_rate": "15.60%",
+    "skill_rate": "4.80%",
+    "interval": "00:48:20",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "Lv.24 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/389.png",
+    "ingredients": {
+      "ing1": {
+        "name": "品鮮蘑菇",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "暖暖薑",
+        "l60": "6"
+      }
+    }
+  },
+  {
+    "id": "390",
+    "formatted_no": "390",
+    "name_cn": "小火焰猴",
+    "name_en": "Chimchar",
+    "name_jp": "ヒコザル",
+    "type": "火",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "10",
+    "ingredient_rate": "11.40%",
+    "skill_rate": "3.30%",
+    "interval": "01:08:20",
+    "main_skill": "樹果遽增",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/390.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "醒腦咖啡豆",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "391",
+    "formatted_no": "391",
+    "name_cn": "猛火猴",
+    "name_en": "Monferno",
+    "name_jp": "モウカザル",
+    "type": "格鬥",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "19",
+    "ingredient_rate": "11.40%",
+    "skill_rate": "3.30%",
+    "interval": "00:51:40",
+    "main_skill": "樹果遽增",
+    "evo_req": "Lv.11 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/391.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "醒腦咖啡豆",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "392",
+    "formatted_no": "392",
+    "name_cn": "烈焰猴",
+    "name_en": "Infernape",
+    "name_jp": "ゴウカザル",
+    "type": "格鬥",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "28",
+    "ingredient_rate": "10.60%",
+    "skill_rate": "3.30%",
+    "interval": "00:40:00",
+    "main_skill": "樹果遽增",
+    "evo_req": "Lv.27 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/392.png",
+    "ingredients": {
+      "ing1": {
+        "name": "火辣香草",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "醒腦咖啡豆",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "393",
+    "formatted_no": "393",
+    "name_cn": "波加曼",
+    "name_en": "Piplup",
+    "name_jp": "ポッチャマ",
+    "type": "水",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "11",
+    "ingredient_rate": "15.90%",
+    "skill_rate": "2.60%",
+    "interval": "01:15:00",
+    "main_skill": "幫手支援S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/393.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "粗枝大蔥",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "甜甜蜜",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "394",
+    "formatted_no": "394",
+    "name_cn": "波皇子",
+    "name_en": "Prinplup",
+    "name_jp": "ポッタイシ",
+    "type": "水",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "20",
+    "ingredient_rate": "16.30%",
+    "skill_rate": "3.50%",
+    "interval": "01:01:40",
+    "main_skill": "幫手支援S",
+    "evo_req": "Lv.12 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/394.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "粗枝大蔥",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "甜甜蜜",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "395",
+    "formatted_no": "395",
+    "name_cn": "帝王拿波",
+    "name_en": "Empoleon",
+    "name_jp": "エンペルト",
+    "type": "鋼",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "28",
+    "ingredient_rate": "16.80%",
+    "skill_rate": "3.80%",
+    "interval": "00:53:20",
+    "main_skill": "幫手支援S",
+    "evo_req": "Lv.27 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/395.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蛋",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "粗枝大蔥",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "甜甜蜜",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "403",
+    "formatted_no": "403",
+    "name_cn": "小貓怪",
+    "name_en": "Shinx",
+    "name_jp": "コリンク",
+    "type": "電",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "11",
+    "ingredient_rate": "18.10%",
+    "skill_rate": "1.80%",
+    "interval": "01:13:20",
+    "main_skill": "料理強化S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/403.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "純粹油",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "醒腦咖啡豆",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "404",
+    "formatted_no": "404",
+    "name_cn": "勒克貓",
+    "name_en": "Luxio",
+    "name_jp": "ルクシオ",
+    "type": "電",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "21",
+    "ingredient_rate": "18.20%",
+    "skill_rate": "1.80%",
+    "interval": "00:53:20",
+    "main_skill": "料理強化S",
+    "evo_req": "Lv.11 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/404.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "純粹油",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "醒腦咖啡豆",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "405",
+    "formatted_no": "405",
+    "name_cn": "倫琴貓",
+    "name_en": "Luxray",
+    "name_jp": "レントラー",
+    "type": "電",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "31",
+    "ingredient_rate": "20.00%",
+    "skill_rate": "2.30%",
+    "interval": "00:40:00",
+    "main_skill": "料理強化S",
+    "evo_req": "Lv.23 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/405.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "純粹油",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "醒腦咖啡豆",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "425",
+    "formatted_no": "425",
+    "name_cn": "飄飄球",
+    "name_en": "Drifloon",
+    "name_jp": "フワンテ",
+    "type": "幽靈",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "9",
+    "ingredient_rate": "13.70%",
+    "skill_rate": "7.10%",
+    "interval": "01:20:00",
+    "main_skill": "蓄力（能量填充S）",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/425.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠玉米",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "純粹油",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "426",
+    "formatted_no": "426",
+    "name_cn": "隨風球",
+    "name_en": "Drifblim",
+    "name_jp": "フワライド",
+    "type": "幽靈",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "22",
+    "ingredient_rate": "12.80%",
+    "skill_rate": "6.30%",
+    "interval": "00:41:40",
+    "main_skill": "蓄力（能量填充S）",
+    "evo_req": "Lv.21 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/426.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠玉米",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "純粹油",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "442",
+    "formatted_no": "442",
+    "name_cn": "花岩怪",
+    "name_en": "Spiritomb",
+    "name_jp": "ミカルゲ",
+    "type": "惡",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "27",
+    "ingredient_rate": "19.80%",
+    "skill_rate": "3.60%",
+    "interval": "00:58:20",
+    "main_skill": "幫手支援S",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/442.png",
+    "ingredients": {
+      "ing1": {
+        "name": "品鮮蘑菇",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "沉甸甸南瓜",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "6"
+      }
+    }
+  },
+  {
+    "id": "447",
+    "formatted_no": "447",
+    "name_cn": "利歐路",
+    "name_en": "Riolu",
+    "name_jp": "リオル",
+    "type": "格鬥",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "9",
+    "ingredient_rate": "12.60%",
+    "skill_rate": "3.80%",
+    "interval": "01:10:00",
+    "main_skill": "夢之碎片獲取S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/447.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "448",
+    "formatted_no": "448",
+    "name_cn": "路卡利歐",
+    "name_en": "Lucario",
+    "name_jp": "ルカリオ",
+    "type": "格鬥",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "19",
+    "ingredient_rate": "15.00%",
+    "skill_rate": "5.10%",
+    "interval": "00:43:20",
+    "main_skill": "夢之碎片獲取S",
+    "evo_req": "睡 150 小時 + 06:00 ~ 18:00 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/448.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "453",
+    "formatted_no": "453",
+    "name_cn": "不良蛙",
+    "name_en": "Croagunk",
+    "name_jp": "グレッグル",
+    "type": "毒",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "10",
+    "ingredient_rate": "22.80%",
+    "skill_rate": "4.20%",
+    "interval": "01:33:20",
+    "main_skill": "能量填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/453.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "5",
+        "l60": "8"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "454",
+    "formatted_no": "454",
+    "name_cn": "毒骷蛙",
+    "name_en": "Toxicroak",
+    "name_jp": "ドクロッグ",
+    "type": "毒",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "19",
+    "ingredient_rate": "22.90%",
+    "skill_rate": "4.30%",
+    "interval": "00:56:40",
+    "main_skill": "能量填充S",
+    "evo_req": "Lv.28 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/454.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "5",
+        "l60": "8"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "459",
+    "formatted_no": "459",
+    "name_cn": "雪笠怪",
+    "name_en": "Snover",
+    "name_jp": "ユキカブリ",
+    "type": "冰",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "10",
+    "ingredient_rate": "25.10%",
+    "skill_rate": "4.40%",
+    "interval": "01:33:20",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/459.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "特選蛋",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "460",
+    "formatted_no": "460",
+    "name_cn": "暴雪王",
+    "name_en": "Abomasnow",
+    "name_jp": "ユキノオー",
+    "type": "冰",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "26",
+    "ingredient_rate": "25.00%",
+    "skill_rate": "4.40%",
+    "interval": "00:50:00",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "Lv.30 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/460.png",
+    "ingredients": {
+      "ing1": {
+        "name": "好眠番茄",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "特選蛋",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "488",
+    "formatted_no": "488",
+    "name_cn": "克雷色利亞",
+    "name_en": "Cresselia",
+    "name_jp": "クレセリア",
+    "type": "超能力",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "22",
+    "ingredient_rate": "23.90%",
+    "skill_rate": "4.10%",
+    "interval": "00:38:20",
+    "main_skill": "新月祈禱（活力全體療癒S）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/488.png",
+    "ingredients": {
+      "ing1": {
+        "name": "暖暖薑",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "好眠番茄",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "491",
+    "formatted_no": "491",
+    "name_cn": "達克萊伊",
+    "name_en": "Darkrai",
+    "name_jp": "ダークライ",
+    "type": "惡",
+    "specialty": "全部",
+    "sleep_type": "淺淺入夢",
+    "carry": "28",
+    "ingredient_rate": "19.20%",
+    "skill_rate": "2.30%",
+    "interval": "00:48:20",
+    "main_skill": "夢魘（能量填充M）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/491.png",
+    "ingredients": {
+      "ing1": {
+        "name": "",
+        "l1": "",
+        "l30": "",
+        "l60": ""
+      },
+      "ing2": {
+        "name": "",
+        "l30": "",
+        "l60": ""
+      },
+      "ing3": {
+        "name": "",
+        "l60": ""
+      }
+    }
+  },
+  {
+    "id": "517",
+    "formatted_no": "517",
+    "name_cn": "食夢夢",
+    "name_en": "Munna",
+    "name_jp": "ムンナ",
+    "type": "超能力",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "12",
+    "ingredient_rate": "19.70%",
+    "skill_rate": "4.30%",
+    "interval": "01:35:00",
+    "main_skill": "夢之碎片獲取S（隨機）",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/517.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "甜甜蜜",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "醒腦咖啡豆",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "518",
+    "formatted_no": "518",
+    "name_cn": "夢夢蝕",
+    "name_en": "Musharna",
+    "name_jp": "ムシャーナ",
+    "type": "超能力",
+    "specialty": "樹果",
+    "sleep_type": "安然入睡",
+    "carry": "29",
+    "ingredient_rate": "18.80%",
+    "skill_rate": "4.10%",
+    "interval": "00:46:40",
+    "main_skill": "夢之碎片獲取S（隨機）",
+    "evo_req": "月之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/518.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "甜甜蜜",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "醒腦咖啡豆",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "557",
+    "formatted_no": "557",
+    "name_cn": "石居蟹",
+    "name_en": "Dwebble",
+    "name_jp": "イシズマイ",
+    "type": "蟲",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "8",
+    "ingredient_rate": "17.50%",
+    "skill_rate": "5.40%",
+    "interval": "01:11:40",
+    "main_skill": "食材精選S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/557.png",
+    "ingredients": {
+      "ing1": {
+        "name": "嫩亮酪梨",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "558",
+    "formatted_no": "558",
+    "name_cn": "岩殿居蟹",
+    "name_en": "Crustle",
+    "name_jp": "イワパレス",
+    "type": "蟲",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "22",
+    "ingredient_rate": "23.90%",
+    "skill_rate": "6.40%",
+    "interval": "00:53:20",
+    "main_skill": "食材精選S",
+    "evo_req": "Lv.26 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/558.png",
+    "ingredients": {
+      "ing1": {
+        "name": "嫩亮酪梨",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "3",
+        "l60": "5"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "627",
+    "formatted_no": "627",
+    "name_cn": "毛頭小鷹",
+    "name_en": "Rufflet",
+    "name_jp": "ワシボン",
+    "type": "飛行",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "10",
+    "ingredient_rate": "12.50%",
+    "skill_rate": "3.10%",
+    "interval": "01:03:20",
+    "main_skill": "樹果遽增",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/627.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "醒腦咖啡豆",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "628",
+    "formatted_no": "628",
+    "name_cn": "勇士雄鷹",
+    "name_en": "Braviary",
+    "name_jp": "ウォーグル",
+    "type": "飛行",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "23",
+    "ingredient_rate": "12.10%",
+    "skill_rate": "3.50%",
+    "interval": "00:40:00",
+    "main_skill": "樹果遽增",
+    "evo_req": "Lv.41 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/628.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "萌綠玉米",
+        "l30": "2",
+        "l60": "3"
+      },
+      "ing3": {
+        "name": "醒腦咖啡豆",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "696",
+    "formatted_no": "696",
+    "name_cn": "寶寶暴龍",
+    "name_en": "Tyrunt",
+    "name_jp": "チゴラス",
+    "type": "岩石",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "11",
+    "ingredient_rate": "20.30%",
+    "skill_rate": "2.40%",
+    "interval": "01:26:40",
+    "main_skill": "料理強化S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/696.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蘋果",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "697",
+    "formatted_no": "697",
+    "name_cn": "怪顎龍",
+    "name_en": "Tyrantrum",
+    "name_jp": "ガチゴラス",
+    "type": "岩石",
+    "specialty": "樹果",
+    "sleep_type": "深深入眠",
+    "carry": "28",
+    "ingredient_rate": "17.80%",
+    "skill_rate": "2.90%",
+    "interval": "00:46:40",
+    "main_skill": "料理強化S",
+    "evo_req": "Lv29 + 06:00 ~ 18:00 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/697.png",
+    "ingredients": {
+      "ing1": {
+        "name": "豆製肉",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蘋果",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "702",
+    "formatted_no": "702",
+    "name_cn": "咚咚鼠",
+    "name_en": "Dedenne",
+    "name_jp": "デデンネ",
+    "type": "電",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "19",
+    "ingredient_rate": "17.70%",
+    "skill_rate": "4.50%",
+    "interval": "00:41:40",
+    "main_skill": "料理成功S",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/702.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "放鬆可可",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "萌綠玉米",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "710",
+    "formatted_no": "710",
+    "name_cn": "南瓜精 (小顆種)",
+    "name_en": "Pumpkaboo (Small Variety)",
+    "name_jp": "バケッチャ (こだましゅ)",
+    "type": "幽靈",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "7",
+    "ingredient_rate": "12.00%",
+    "skill_rate": "4.90%",
+    "interval": "01:28:20",
+    "main_skill": "能量填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/710.png",
+    "ingredients": {
+      "ing1": {
+        "name": "沉甸甸南瓜",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "11",
+        "l60": "18"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "15"
+      }
+    }
+  },
+  {
+    "id": "710",
+    "formatted_no": "710",
+    "name_cn": "南瓜精 (中顆種)",
+    "name_en": "Pumpkaboo (Medium Variety)",
+    "name_jp": "バケッチャ (ちゅうだましゅ)",
+    "type": "幽靈",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "11",
+    "ingredient_rate": "12.00%",
+    "skill_rate": "4.90%",
+    "interval": "01:30:00",
+    "main_skill": "能量填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/710.png",
+    "ingredients": {
+      "ing1": {
+        "name": "沉甸甸南瓜",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "11",
+        "l60": "18"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "15"
+      }
+    }
+  },
+  {
+    "id": "710",
+    "formatted_no": "710",
+    "name_cn": "南瓜精 (大顆種)",
+    "name_en": "Pumpkaboo (Large Variety)",
+    "name_jp": "バケッチャ (おおだましゅ)",
+    "type": "幽靈",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "15",
+    "ingredient_rate": "12.00%",
+    "skill_rate": "4.90%",
+    "interval": "01:31:40",
+    "main_skill": "能量填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/710.png",
+    "ingredients": {
+      "ing1": {
+        "name": "沉甸甸南瓜",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "11",
+        "l60": "18"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "15"
+      }
+    }
+  },
+  {
+    "id": "710",
+    "formatted_no": "710",
+    "name_cn": "南瓜精 (巨顆種)",
+    "name_en": "Pumpkaboo (Jumbo Variety)",
+    "name_jp": "バケッチャ (ギガだましゅ)",
+    "type": "幽靈",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "21",
+    "ingredient_rate": "12.00%",
+    "skill_rate": "4.90%",
+    "interval": "01:33:20",
+    "main_skill": "能量填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/710.png",
+    "ingredients": {
+      "ing1": {
+        "name": "沉甸甸南瓜",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "11",
+        "l60": "18"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "15"
+      }
+    }
+  },
+  {
+    "id": "711",
+    "formatted_no": "711",
+    "name_cn": "南瓜怪人 (小顆種)",
+    "name_en": "Gourgeist (Small Variety)",
+    "name_jp": "パンプジン (こだましゅ)",
+    "type": "幽靈",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "15",
+    "ingredient_rate": "13.00%",
+    "skill_rate": "4.90%",
+    "interval": "00:51:40",
+    "main_skill": "能量填充S",
+    "evo_req": "聯繫繩 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
+    "ingredients": {
+      "ing1": {
+        "name": "沉甸甸南瓜",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "11",
+        "l60": "18"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "15"
+      }
+    }
+  },
+  {
+    "id": "711",
+    "formatted_no": "711",
+    "name_cn": "南瓜怪人 (中顆種)",
+    "name_en": "Gourgeist (Medium Variety)",
+    "name_jp": "パンプジン (ちゅうだましゅ)",
+    "type": "幽靈",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "19",
+    "ingredient_rate": "13.00%",
+    "skill_rate": "4.90%",
+    "interval": "00:53:20",
+    "main_skill": "能量填充S",
+    "evo_req": "聯繫繩 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
+    "ingredients": {
+      "ing1": {
+        "name": "沉甸甸南瓜",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "11",
+        "l60": "18"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "15"
+      }
+    }
+  },
+  {
+    "id": "711",
+    "formatted_no": "711",
+    "name_cn": "南瓜怪人 (大顆種)",
+    "name_en": "Gourgeist (Large Variety)",
+    "name_jp": "パンプジン (おおだましゅ)",
+    "type": "幽靈",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "24",
+    "ingredient_rate": "13.00%",
+    "skill_rate": "4.90%",
+    "interval": "00:55:00",
+    "main_skill": "能量填充S",
+    "evo_req": "聯繫繩 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
+    "ingredients": {
+      "ing1": {
+        "name": "沉甸甸南瓜",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "11",
+        "l60": "18"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "15"
+      }
+    }
+  },
+  {
+    "id": "711",
+    "formatted_no": "711",
+    "name_cn": "南瓜怪人 (巨顆種)",
+    "name_en": "Gourgeist (Jumbo Variety)",
+    "name_jp": "パンプジン (ギガだましゅ)",
+    "type": "幽靈",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "30",
+    "ingredient_rate": "13.00%",
+    "skill_rate": "4.90%",
+    "interval": "00:56:40",
+    "main_skill": "能量填充S",
+    "evo_req": "聯繫繩 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
+    "ingredients": {
+      "ing1": {
+        "name": "沉甸甸南瓜",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "萌綠大豆",
+        "l30": "11",
+        "l60": "18"
+      },
+      "ing3": {
+        "name": "窩心洋芋",
+        "l60": "15"
+      }
+    }
+  },
+  {
+    "id": "714",
+    "formatted_no": "714",
+    "name_cn": "嗡蝠",
+    "name_en": "Noibat",
+    "name_jp": "オンバット",
+    "type": "龍",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "7",
+    "ingredient_rate": "19.80%",
+    "skill_rate": "4.80%",
+    "interval": "01:25:00",
+    "main_skill": "能量填充M",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/714.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "粗枝大蔥",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "715",
+    "formatted_no": "715",
+    "name_cn": "音波龍",
+    "name_en": "Noivern",
+    "name_jp": "オンバーン",
+    "type": "龍",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "23",
+    "ingredient_rate": "19.50%",
+    "skill_rate": "4.80%",
+    "interval": "00:45:00",
+    "main_skill": "能量填充M",
+    "evo_req": "Lv.36 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/715.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "粗枝大蔥",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "3"
+      }
+    }
+  },
+  {
+    "id": "736",
+    "formatted_no": "736",
+    "name_cn": "強顎雞母蟲",
+    "name_en": "Grubbin",
+    "name_jp": "アゴジムシ",
+    "type": "蟲",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "11",
+    "ingredient_rate": "15.50%",
+    "skill_rate": "2.90%",
+    "interval": "01:16:40",
+    "main_skill": "能量填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/736.png",
+    "ingredients": {
+      "ing1": {
+        "name": "醒腦咖啡豆",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "品鮮蘑菇",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "甜甜蜜",
+        "l60": "11"
+      }
+    }
+  },
+  {
+    "id": "737",
+    "formatted_no": "737",
+    "name_cn": "蟲電寶",
+    "name_en": "Charjabug",
+    "name_jp": "デンヂムシ",
+    "type": "蟲",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "20",
+    "ingredient_rate": "15.40%",
+    "skill_rate": "2.80%",
+    "interval": "00:55:00",
+    "main_skill": "能量填充S",
+    "evo_req": "Lv.15 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/737.png",
+    "ingredients": {
+      "ing1": {
+        "name": "醒腦咖啡豆",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "品鮮蘑菇",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "甜甜蜜",
+        "l60": "11"
+      }
+    }
+  },
+  {
+    "id": "738",
+    "formatted_no": "738",
+    "name_cn": "鍬農炮蟲",
+    "name_en": "Vikavolt",
+    "name_jp": "クワガノン",
+    "type": "蟲",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "29",
+    "ingredient_rate": "19.40%",
+    "skill_rate": "5.10%",
+    "interval": "00:46:40",
+    "main_skill": "能量填充S",
+    "evo_req": "雷之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/738.png",
+    "ingredients": {
+      "ing1": {
+        "name": "醒腦咖啡豆",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "品鮮蘑菇",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "甜甜蜜",
+        "l60": "11"
+      }
+    }
+  },
+  {
+    "id": "742",
+    "formatted_no": "742",
+    "name_cn": "萌虻",
+    "name_en": "Cutiefly",
+    "name_jp": "アブリー",
+    "type": "妖精",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "9",
+    "ingredient_rate": "19.90%",
+    "skill_rate": "1.90%",
+    "interval": "01:15:00",
+    "main_skill": "食材精選S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/742.png",
+    "ingredients": {
+      "ing1": {
+        "name": "甜甜蜜",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "純粹油",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "萌綠玉米",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "743",
+    "formatted_no": "743",
+    "name_cn": "蝶結萌虻",
+    "name_en": "Ribombee",
+    "name_jp": "アブリボン",
+    "type": "妖精",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "24",
+    "ingredient_rate": "19.40%",
+    "skill_rate": "2.50%",
+    "interval": "00:38:20",
+    "main_skill": "食材精選S",
+    "evo_req": "Lv.19 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/743.png",
+    "ingredients": {
+      "ing1": {
+        "name": "甜甜蜜",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "純粹油",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "萌綠玉米",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "759",
+    "formatted_no": "759",
+    "name_cn": "童偶熊",
+    "name_en": "Stufful",
+    "name_jp": "ヌイコグマ",
+    "type": "格鬥",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "13",
+    "ingredient_rate": "22.50%",
+    "skill_rate": "1.10%",
+    "interval": "01:08:20",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/759.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠玉米",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "6",
+        "l60": "10"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "9"
+      }
+    }
+  },
+  {
+    "id": "760",
+    "formatted_no": "760",
+    "name_cn": "穿著熊",
+    "name_en": "Bewear",
+    "name_jp": "キテルグマ",
+    "type": "格鬥",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "25",
+    "ingredient_rate": "22.90%",
+    "skill_rate": "1.30%",
+    "interval": "00:46:40",
+    "main_skill": "能量填充S（隨機）",
+    "evo_req": "Lv.20 + 40 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/760.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠玉米",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "6",
+        "l60": "10"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "9"
+      }
+    }
+  },
+  {
+    "id": "764",
+    "formatted_no": "764",
+    "name_cn": "花療環環",
+    "name_en": "Comfey",
+    "name_jp": "キュワワー",
+    "type": "妖精",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "20",
+    "ingredient_rate": "16.70%",
+    "skill_rate": "3.50%",
+    "interval": "00:41:40",
+    "main_skill": "活力療癒S",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/764.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠玉米",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "暖暖薑",
+        "l30": "6",
+        "l60": "9"
+      },
+      "ing3": {
+        "name": "放鬆可可",
+        "l60": "7"
+      }
+    }
+  },
+  {
+    "id": "777",
+    "formatted_no": "777",
+    "name_cn": "托戈德瑪爾",
+    "name_en": "Togedemaru",
+    "name_jp": "トゲデマル",
+    "type": "鋼",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "18",
+    "ingredient_rate": "16.90%",
+    "skill_rate": "5.40%",
+    "interval": "00:45:00",
+    "main_skill": "蹭蹭臉頰（活力療癒S）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/777.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "嫩亮酪梨",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "放鬆可可",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "778",
+    "formatted_no": "778",
+    "name_cn": "謎擬Q",
+    "name_en": "Mimikyu",
+    "name_jp": "ミミッキュ",
+    "type": "幽靈",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "19",
+    "ingredient_rate": "15.30%",
+    "skill_rate": "3.50%",
+    "interval": "00:41:40",
+    "main_skill": "畫皮（樹果遽增）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/778.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "醒腦咖啡豆",
+        "l30": "1",
+        "l60": "2"
+      },
+      "ing3": {
+        "name": "品鮮蘑菇",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "780",
+    "formatted_no": "780",
+    "name_cn": "老翁龍",
+    "name_en": "Drampa",
+    "name_jp": "ジジーロン",
+    "type": "龍",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "25",
+    "ingredient_rate": "29.40%",
+    "skill_rate": "4.60%",
+    "interval": "00:58:20",
+    "main_skill": "料理成功S",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/780.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠大豆",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "嫩亮酪梨",
+        "l30": "3",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "豆製肉",
+        "l60": "7"
+      }
+    }
+  },
+  {
+    "id": "845",
+    "formatted_no": "845",
+    "name_cn": "古月鳥",
+    "name_en": "Cramorant",
+    "name_jp": "ウッウ",
+    "type": "飛行",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "19",
+    "ingredient_rate": "16.50%",
+    "skill_rate": "3.90%",
+    "interval": "00:45:00",
+    "main_skill": "料理成功S",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/845.png",
+    "ingredients": {
+      "ing1": {
+        "name": "純粹油",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "窩心洋芋",
+        "l30": "4",
+        "l60": "7"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "848",
+    "formatted_no": "848",
+    "name_cn": "毒電嬰",
+    "name_en": "Toxel",
+    "name_jp": "エレズン",
+    "type": "毒",
+    "specialty": "技能",
+    "sleep_type": "深深入眠",
+    "carry": "6",
+    "ingredient_rate": "20.90%",
+    "skill_rate": "4.80%",
+    "interval": "01:33:20",
+    "main_skill": "食材獲取S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/848.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蘋果",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "849",
+    "formatted_no": "849",
+    "name_cn": "顫弦蠑螈（高調的樣子）",
+    "name_en": "Toxtricity (Amped Form)",
+    "name_jp": "ストリンダー (ハイなすがた)",
+    "type": "毒",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "23",
+    "ingredient_rate": "23.90%",
+    "skill_rate": "6.40%",
+    "interval": "00:51:40",
+    "main_skill": "正電（食材獲取S）",
+    "evo_req": "指定性格 + Lv.23 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/849.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蘋果",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "8001",
+    "formatted_no": "8001",
+    "name_cn": "顫弦蠑螈（低調的樣子）",
+    "name_en": "Toxtricity (Low Key Form)",
+    "name_jp": "ストリンダー (ローなすがた)",
+    "type": "毒",
+    "specialty": "技能",
+    "sleep_type": "淺淺入夢",
+    "carry": "23",
+    "ingredient_rate": "23.90%",
+    "skill_rate": "6.40%",
+    "interval": "00:51:40",
+    "main_skill": "負電（料理強化S）",
+    "evo_req": "指定性格 + Lv.23 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/8001.png",
+    "ingredients": {
+      "ing1": {
+        "name": "哞哞鮮奶",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "特選蘋果",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "粗枝大蔥",
+        "l60": "2"
+      }
+    }
+  },
+  {
+    "id": "906",
+    "formatted_no": "906",
+    "name_cn": "新葉喵",
+    "name_en": "Sprigatito",
+    "name_jp": "ニャオハ",
+    "type": "草",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "10",
+    "ingredient_rate": "20.80%",
+    "skill_rate": "2.30%",
+    "interval": "01:16:40",
+    "main_skill": "料理強化S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/906.png",
+    "ingredients": {
+      "ing1": {
+        "name": "窩心洋芋",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "哞哞鮮奶",
+        "l30": "6",
+        "l60": "9"
+      },
+      "ing3": {
+        "name": "暖暖薑",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "907",
+    "formatted_no": "907",
+    "name_cn": "蒂蕾喵",
+    "name_en": "Floragato",
+    "name_jp": "ニャローテ",
+    "type": "草",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "19",
+    "ingredient_rate": "20.90%",
+    "skill_rate": "2.30%",
+    "interval": "00:58:20",
+    "main_skill": "料理強化S",
+    "evo_req": "Lv.12 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/907.png",
+    "ingredients": {
+      "ing1": {
+        "name": "窩心洋芋",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "哞哞鮮奶",
+        "l30": "6",
+        "l60": "9"
+      },
+      "ing3": {
+        "name": "暖暖薑",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "908",
+    "formatted_no": "908",
+    "name_cn": "魔幻假面喵",
+    "name_en": "Meowscarada",
+    "name_jp": "マスカーニャ",
+    "type": "惡",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "28",
+    "ingredient_rate": "19.00%",
+    "skill_rate": "2.20%",
+    "interval": "00:43:20",
+    "main_skill": "料理強化S",
+    "evo_req": "Lv.27 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/908.png",
+    "ingredients": {
+      "ing1": {
+        "name": "窩心洋芋",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "哞哞鮮奶",
+        "l30": "6",
+        "l60": "9"
+      },
+      "ing3": {
+        "name": "暖暖薑",
+        "l60": "8"
+      }
+    }
+  },
+  {
+    "id": "909",
+    "formatted_no": "909",
+    "name_cn": "呆火鱷",
+    "name_en": "Fuecoco",
+    "name_jp": "ホゲータ",
+    "type": "火",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "11",
+    "ingredient_rate": "25.40%",
+    "skill_rate": "5.30%",
+    "interval": "01:10:00",
+    "main_skill": "活力填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/909.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "火辣香草",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "910",
+    "formatted_no": "910",
+    "name_cn": "炙燙鱷",
+    "name_en": "Crocalor",
+    "name_jp": "アチゲータ",
+    "type": "火",
+    "specialty": "食材",
+    "sleep_type": "安然入睡",
+    "carry": "21",
+    "ingredient_rate": "24.70%",
+    "skill_rate": "5.00%",
+    "interval": "00:51:40",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.12 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/910.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "火辣香草",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "911",
+    "formatted_no": "911",
+    "name_cn": "骨紋巨聲鱷",
+    "name_en": "Skeledirge",
+    "name_jp": "ラウドボーン",
+    "type": "幽靈",
+    "specialty": "食材",
+    "sleep_type": "淺淺入夢",
+    "carry": "29",
+    "ingredient_rate": "26.80%",
+    "skill_rate": "6.20%",
+    "interval": "00:45:00",
+    "main_skill": "活力填充S",
+    "evo_req": "Lv.27 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/911.png",
+    "ingredients": {
+      "ing1": {
+        "name": "特選蘋果",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "4",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "火辣香草",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "912",
+    "formatted_no": "912",
+    "name_cn": "潤水鴨",
+    "name_en": "Quaxly",
+    "name_jp": "クワッス",
+    "type": "水",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "10",
+    "ingredient_rate": "26.10%",
+    "skill_rate": "2.80%",
+    "interval": "01:20:00",
+    "main_skill": "能量填充M",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/912.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠大豆",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "粗枝大蔥",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "6"
+      }
+    }
+  },
+  {
+    "id": "913",
+    "formatted_no": "913",
+    "name_cn": "湧躍鴨",
+    "name_en": "Quaxwell",
+    "name_jp": "ウェルカモ",
+    "type": "水",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "19",
+    "ingredient_rate": "25.90%",
+    "skill_rate": "2.70%",
+    "interval": "01:00:00",
+    "main_skill": "能量填充M",
+    "evo_req": "Lv.12 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/913.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠大豆",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "粗枝大蔥",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "6"
+      }
+    }
+  },
+  {
+    "id": "914",
+    "formatted_no": "914",
+    "name_cn": "狂歡浪舞鴨",
+    "name_en": "Quaquaval",
+    "name_jp": "ウェーニバル",
+    "type": "格鬥",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "29",
+    "ingredient_rate": "23.20%",
+    "skill_rate": "2.40%",
+    "interval": "00:43:20",
+    "main_skill": "能量填充M",
+    "evo_req": "Lv.27 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/914.png",
+    "ingredients": {
+      "ing1": {
+        "name": "萌綠大豆",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "粗枝大蔥",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing3": {
+        "name": "純粹油",
+        "l60": "6"
+      }
+    }
+  },
+  {
+    "id": "921",
+    "formatted_no": "921",
+    "name_cn": "布撥",
+    "name_en": "Pawmi",
+    "name_jp": "パモ",
+    "type": "電",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "9",
+    "ingredient_rate": "11.10%",
+    "skill_rate": "3.60%",
+    "interval": "01:16:40",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/921.png",
+    "ingredients": {
+      "ing1": {
+        "name": "放鬆可可",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "哞哞鮮奶",
+        "l30": "3",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "922",
+    "formatted_no": "922",
+    "name_cn": "布土撥",
+    "name_en": "Pawmo",
+    "name_jp": "パモット",
+    "type": "電",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "17",
+    "ingredient_rate": "10.90%",
+    "skill_rate": "3.60%",
+    "interval": "00:55:00",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "Lv.14 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/922.png",
+    "ingredients": {
+      "ing1": {
+        "name": "放鬆可可",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "哞哞鮮奶",
+        "l30": "3",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "923",
+    "formatted_no": "923",
+    "name_cn": "巴布土撥",
+    "name_en": "Pawmot",
+    "name_jp": "パーモット",
+    "type": "電",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "28",
+    "ingredient_rate": "14.10%",
+    "skill_rate": "3.90%",
+    "interval": "00:40:00",
+    "main_skill": "活力全體療癒S",
+    "evo_req": "睡 150 小時 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/923.png",
+    "ingredients": {
+      "ing1": {
+        "name": "放鬆可可",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      "ing2": {
+        "name": "哞哞鮮奶",
+        "l30": "3",
+        "l60": "6"
+      },
+      "ing3": {
+        "name": "特選蛋",
+        "l60": "5"
+      }
+    }
+  },
+  {
+    "id": "957",
+    "formatted_no": "957",
+    "name_cn": "小鍛匠",
+    "name_en": "Tinkatink",
+    "name_jp": "カヌチャン",
+    "type": "妖精",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "",
+    "ingredient_rate": "",
+    "skill_rate": "",
+    "interval": "",
+    "main_skill": "樹果遽增?",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/957.png",
+    "ingredients": {
+      "ing1": {
+        "name": "",
+        "l1": "",
+        "l30": "",
+        "l60": ""
+      },
+      "ing2": {
+        "name": "",
+        "l30": "",
+        "l60": ""
+      },
+      "ing3": {
+        "name": "",
+        "l60": ""
+      }
+    }
+  },
+  {
+    "id": "958",
+    "formatted_no": "958",
+    "name_cn": "巧鍛匠",
+    "name_en": "Tinkatuff",
+    "name_jp": "ナカヌチャン",
+    "type": "妖精",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "",
+    "ingredient_rate": "",
+    "skill_rate": "",
+    "interval": "",
+    "main_skill": "樹果遽增?",
+    "evo_req": "Lv.18 + 40 糖",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/958.png",
+    "ingredients": {
+      "ing1": {
+        "name": "",
+        "l1": "",
+        "l30": "",
+        "l60": ""
+      },
+      "ing2": {
+        "name": "",
+        "l30": "",
+        "l60": ""
+      },
+      "ing3": {
+        "name": "",
+        "l60": ""
+      }
+    }
+  },
+  {
+    "id": "959",
+    "formatted_no": "959",
+    "name_cn": "巨鍛匠",
+    "name_en": "Tinkaton",
+    "name_jp": "デカヌチャン",
+    "type": "妖精",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "",
+    "ingredient_rate": "",
+    "skill_rate": "",
+    "interval": "",
+    "main_skill": "樹果遽增?",
+    "evo_req": "Lv.29 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/959.png",
+    "ingredients": {
+      "ing1": {
+        "name": "",
+        "l1": "",
+        "l30": "",
+        "l60": ""
+      },
+      "ing2": {
+        "name": "",
+        "l30": "",
+        "l60": ""
+      },
+      "ing3": {
+        "name": "",
+        "l60": ""
+      }
+    }
+  },
+  {
+    "id": "974",
+    "formatted_no": "974",
+    "name_cn": "走鯨",
+    "name_en": "Cetoddle",
+    "name_jp": "アルクジラ",
+    "type": "冰",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "12",
+    "ingredient_rate": "22.30%",
+    "skill_rate": "4.20%",
+    "interval": "01:25:00",
+    "main_skill": "活力填充S",
+    "evo_req": "",
+    "is_final": "",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/974.png",
+    "ingredients": {
+      "ing1": {
+        "name": "窩心洋芋",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "5",
+        "l60": "9"
+      },
+      "ing3": {
+        "name": "沉甸甸南瓜",
+        "l60": "4"
+      }
+    }
+  },
+  {
+    "id": "975",
+    "formatted_no": "975",
+    "name_cn": "浩大鯨",
+    "name_en": "Cetitan",
+    "name_jp": "ハルクジラ",
+    "type": "冰",
+    "specialty": "食材",
+    "sleep_type": "深深入眠",
+    "carry": "30",
+    "ingredient_rate": "20.90%",
+    "skill_rate": "4.20%",
+    "interval": "00:46:40",
+    "main_skill": "活力填充S",
+    "evo_req": "冰之石 + 80 糖",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/975.png",
+    "ingredients": {
+      "ing1": {
+        "name": "窩心洋芋",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      "ing2": {
+        "name": "豆製肉",
+        "l30": "5",
+        "l60": "9"
+      },
+      "ing3": {
+        "name": "沉甸甸南瓜",
+        "l60": "4"
+      }
+    }
+  }
+]

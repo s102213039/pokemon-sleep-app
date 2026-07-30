@@ -1,0 +1,15 @@
+# Secret files - never commit these
+.gh_token
+*.token
+.env
+.env.*
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Agent briefing files
+.agents/
+
+# Deploy temp dirs
+deploy_gh_pages*/
