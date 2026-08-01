@@ -214,24 +214,12 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </div>
             <div class="ingredient-list">
-              ${p.ingredients.ing1.name ? `
+              ${p.ingredients.map(ing => ing.name ? `
                 <div class="ingredient-row">
-                  <span class="ing-name">① ${p.ingredients.ing1.name}</span>
-                  <span class="ing-counts">1: ${p.ingredients.ing1.l1 || 0} | 30: ${p.ingredients.ing1.l30 || 0} | 60: ${p.ingredients.ing1.l60 || 0}</span>
+                  ${ing.icon ? `<img class="ing-icon" src="${ing.icon}" alt="${ing.name}" loading="lazy" onerror="this.style.display='none';">` : ''}
+                  <span class="ing-name">${ing.name}</span>
                 </div>
-              ` : ''}
-              ${p.ingredients.ing2.name ? `
-                <div class="ingredient-row">
-                  <span class="ing-name">② ${p.ingredients.ing2.name}</span>
-                  <span class="ing-counts">30: ${p.ingredients.ing2.l30 || 0} | 60: ${p.ingredients.ing2.l60 || 0}</span>
-                </div>
-              ` : ''}
-              ${p.ingredients.ing3.name ? `
-                <div class="ingredient-row">
-                  <span class="ing-name">③ ${p.ingredients.ing3.name}</span>
-                  <span class="ing-counts">60: ${p.ingredients.ing3.l60 || 0}</span>
-                </div>
-              ` : ''}
+              ` : '').join('')}
             </div>
           </div>
         `).join('')}
@@ -272,9 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><span class="type-badge" style="background-color:var(--type-${p.type}, #64748b);">${p.type || '一般'}</span></td>
                 <td>${p.specialty || '--'}</td>
                 <td>${p.carry || '--'}</td>
-                <td>${p.ingredients.ing1.name ? `${p.ingredients.ing1.name}<br><small>${p.ingredients.ing1.l1}/${p.ingredients.ing1.l30}/${p.ingredients.ing1.l60}</small>` : '--'}</td>
-                <td>${p.ingredients.ing2.name ? `${p.ingredients.ing2.name}<br><small>${p.ingredients.ing2.l30}/${p.ingredients.ing2.l60}</small>` : '--'}</td>
-                <td>${p.ingredients.ing3.name ? `${p.ingredients.ing3.name}<br><small>${p.ingredients.ing3.l60}</small>` : '--'}</td>
+                <td>${p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${p.ingredients[0].name}" loading="lazy" onerror="this.style.display='none';">` : ''}<span>${p.ingredients[0].name}</span></div>` : '--'}</td>
+                <td>${p.ingredients[1] ? `<div class="ing-cell">${p.ingredients[1].icon ? `<img class="ing-icon" src="${p.ingredients[1].icon}" alt="${p.ingredients[1].name}" loading="lazy" onerror="this.style.display='none';">` : ''}<span>${p.ingredients[1].name}</span></div>` : '--'}</td>
+                <td>${p.ingredients[2] ? `<div class="ing-cell">${p.ingredients[2].icon ? `<img class="ing-icon" src="${p.ingredients[2].icon}" alt="${p.ingredients[2].name}" loading="lazy" onerror="this.style.display='none';">` : ''}<span>${p.ingredients[2].name}</span></div>` : '--'}</td>
                 <td style="font-weight:700;">${p.ingredient_rate || '--'}</td>
                 <td>${p.skill_rate || '--'}</td>
                 <td>${p.interval || '--'}</td>
