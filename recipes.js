@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ${recipes.map(r => `
               <tr>
                 <td>
-                  <img src="${r.icon}" width="48" height="48" alt="${r.name_cn}" loading="lazy" style="border-radius:8px;">
+                  <img src="${r.icon}" width="52" height="52" alt="${r.name_cn}" loading="lazy" style="border-radius:10px;object-fit:contain;background:rgba(0,0,0,0.25);padding:4px;border:1px solid rgba(255,255,255,0.1);">
                 </td>
                 <td style="font-weight:700;font-size:15px;color:var(--text-main);">
                   ${r.name_cn}
@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     `).join('')}
                   </div>
                 </td>
-                <td style="font-weight:700;color:%23fbbf24;font-family:monospace;font-size:16px;">
+                <td style="font-weight:700;color:#fbbf24;font-family:monospace;font-size:16px;">
                   ⚡ ${r.base_energy.toLocaleString()}
                 </td>
               </tr>
