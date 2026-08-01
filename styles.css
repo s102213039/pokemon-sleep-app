@@ -252,15 +252,21 @@ header {
 
 .sort-select {
   width: 100%;
-  padding: 12px 16px;
+  padding: 12px 36px 12px 16px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: 14px;
+  font-family: inherit;
   outline: none;
   cursor: pointer;
   transition: all 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
 }
 
 .sort-select:focus {
@@ -271,6 +277,7 @@ header {
 .sort-select option {
   background-color: var(--bg-dark);
   color: var(--text-primary);
+  font-family: inherit;
 }
 
 .filter-section {
@@ -865,17 +872,7 @@ footer {
   background: var(--accent-color);
 }
 
-/* Select Dropdown Styling according to Global Layout Rules */
-select.select-input, .sort-select {
-  padding-right: 36px !important;
-  background-position: right 18px center !important;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background-color: var(--bg-card);
-  color: var(--text-primary);
-  font-size: 14px;
-  cursor: pointer;
-}
+
 
 /* Recipe Badge & Category Styles */
 .recipe-cat-badge {
