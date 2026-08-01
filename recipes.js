@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentSearch = '';
   let sortOption = 'pot-asc';
   let viewMode = 'table';
+  let minBonus = 0; // 0 = show all
 
   const searchInput = document.getElementById('recipe-search-input');
   const sortSelect = document.getElementById('recipe-sort-select');
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const contentArea = document.getElementById('recipe-content-area');
   const toggleGridBtn = document.getElementById('toggle-grid');
   const toggleTableBtn = document.getElementById('toggle-table');
+  const bonusFilterContainer = document.getElementById('bonus-filter-tags');
 
   // Load recipes.json
   fetch('recipes.json')
@@ -23,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
       allRecipes = data;
       initCategoryFilters();
+      initBonusFilter();
       initIngredientPicker();
       render();
     })
@@ -31,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
       contentArea.innerHTML = `<div style="text-align:center; padding: 40px; color: #ef4444;">載入 recipes.json 失敗，請確認檔案存在。</div>`;
     });
 
+  /* ─── Category Filter ──────────────────────────────── */
   function initCategoryFilters() {
     const categories = ['ALL', '咖哩', '沙拉', '甜點'];
     categoryContainer.innerHTML = categories.map(cat => `
@@ -49,14 +53,55 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ─── Bonus % Filter ───────────────────────────────── */
+  function initBonusFilter() {
+    const bonusOptions = [
+      { label: '全部', value: 0 },
+      { label: '≥ 23%', value: 23 },
+      { label: '≥ 27%', value: 27 },
+      { label: '≥ 33%', value: 33 },
+      { label: '≥ 40%', value: 40 },
+    ];
+
+    bonusFilterContainer.innerHTML = bonusOptions.map(opt => `
+      <button class="tag-btn bonus-filter-btn ${opt.value === minBonus ? 'active' : ''}"
+              data-bonus="${opt.value}"
+              style="${opt.value >= 33 ? 'border-color:rgba(251,191,36,0.5);' : ''}">
+        ${opt.value === 0 ? '🍽️ ' : getBonusEmoji(opt.value)}${opt.label}
+      </button>
+    `).join('');
+
+    bonusFilterContainer.addEventListener('click', (e) => {
+      const btn = e.target.closest('.bonus-filter-btn');
+      if (btn) {
+        minBonus = parseInt(btn.getAttribute('data-bonus'), 10);
+        bonusFilterContainer.querySelectorAll('.bonus-filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
+      }
+    });
+  }
+
+  function getBonusEmoji(pct) {
+    if (pct >= 40) return '🔥';
+    if (pct >= 33) return '⭐';
+    if (pct >= 27) return '✨';
+    return '💫';
+  }
+
+  function getBonusBadgeStyle(pct) {
+    if (pct >= 40) return 'background:rgba(239,68,68,0.2);color:#f87171;border:1px solid rgba(239,68,68,0.5);';
+    if (pct >= 33) return 'background:rgba(251,191,36,0.2);color:#fbbf24;border:1px solid rgba(251,191,36,0.5);';
+    if (pct >= 27) return 'background:rgba(167,139,250,0.2);color:#a78bfa;border:1px solid rgba(167,139,250,0.4);';
+    return 'background:rgba(96,165,250,0.15);color:#93c5fd;border:1px solid rgba(96,165,250,0.35);';
+  }
+
+  /* ─── Ingredient Picker ────────────────────────────── */
   function initIngredientPicker() {
-    // Extract unique ingredient names & icons
     const ingMap = new Map();
     allRecipes.forEach(r => {
       r.ingredients.forEach(ing => {
-        if (!ingMap.has(ing.name)) {
-          ingMap.set(ing.name, ing.icon || '');
-        }
+        if (!ingMap.has(ing.name)) ingMap.set(ing.name, ing.icon || '');
       });
     });
 
@@ -100,6 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ─── Search & Sort listeners ──────────────────────── */
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       currentSearch = e.target.value.trim().toLowerCase();
@@ -130,34 +176,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ─── Filtering & Sorting ──────────────────────────── */
   function getFilteredRecipes() {
     return allRecipes.filter(recipe => {
       // Category filter
-      if (selectedCategory !== 'ALL' && recipe.category !== selectedCategory) {
-        return false;
-      }
+      if (selectedCategory !== 'ALL' && recipe.category !== selectedCategory) return false;
+
+      // Bonus % filter
+      if (minBonus > 0 && (recipe.bonus_pct || 0) < minBonus) return false;
 
       // Search query
       if (currentSearch) {
         const nameCN = (recipe.name_cn || '').toLowerCase();
         const nameEN = (recipe.name_en || '').toLowerCase();
         const ingMatch = recipe.ingredients.some(ing => ing.name.toLowerCase().includes(currentSearch));
-        if (!nameCN.includes(currentSearch) && !nameEN.includes(currentSearch) && !ingMatch) {
-          return false;
-        }
+        if (!nameCN.includes(currentSearch) && !nameEN.includes(currentSearch) && !ingMatch) return false;
       }
 
       // Ingredient selector filter
       if (selectedIngredients.size > 0) {
         const recipeIngNames = recipe.ingredients.map(i => i.name);
         if (matchMode === 'all') {
-          // Recipe must only contain ingredients that are selected
-          const allMatch = recipeIngNames.every(name => selectedIngredients.has(name));
-          if (!allMatch) return false;
+          if (!recipeIngNames.every(name => selectedIngredients.has(name))) return false;
         } else {
-          // Recipe must contain at least one selected ingredient
-          const anyMatch = recipeIngNames.some(name => selectedIngredients.has(name));
-          if (!anyMatch) return false;
+          if (!recipeIngNames.some(name => selectedIngredients.has(name))) return false;
         }
       }
 
@@ -167,11 +209,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (sortOption === 'pot-desc') return b.pot_size - a.pot_size;
       if (sortOption === 'energy-desc') return b.base_energy - a.base_energy;
       if (sortOption === 'energy-asc') return a.base_energy - b.base_energy;
+      if (sortOption === 'bonus-desc') return (b.bonus_pct || 0) - (a.bonus_pct || 0);
       if (sortOption === 'name-asc') return a.name_cn.localeCompare(b.name_cn, 'zh-TW');
       return 0;
     });
   }
 
+  /* ─── Render ───────────────────────────────────────── */
   function render() {
     const filtered = getFilteredRecipes();
     countBadge.textContent = `共顯示 ${filtered.length} 筆食譜 (總計 ${allRecipes.length} 筆)`;
@@ -185,13 +229,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    if (viewMode === 'table') {
-      renderTable(filtered);
-    } else {
-      renderGrid(filtered);
-    }
+    if (viewMode === 'table') renderTable(filtered);
+    else renderGrid(filtered);
   }
 
+  /* ─── Table View ───────────────────────────────────── */
   function renderTable(recipes) {
     contentArea.innerHTML = `
       <div class="table-container">
@@ -201,16 +243,22 @@ document.addEventListener('DOMContentLoaded', () => {
               <th>圖示</th>
               <th>料理名稱</th>
               <th>分類</th>
+              <th>食材加成</th>
               <th>所需容量</th>
-              <th>食材需求數量</th>
+              <th>食材需求</th>
               <th>基礎能量</th>
             </tr>
           </thead>
           <tbody>
-            ${recipes.map(r => `
+            ${recipes.map(r => {
+              const bp = r.bonus_pct || 19;
+              const badgeStyle = getBonusBadgeStyle(bp);
+              const emoji = getBonusEmoji(bp);
+              return `
               <tr>
                 <td>
-                  <img src="${r.icon}" width="52" height="52" alt="${r.name_cn}" loading="lazy" style="border-radius:10px;object-fit:contain;background:rgba(0,0,0,0.25);padding:4px;border:1px solid rgba(255,255,255,0.1);">
+                  <img src="${r.icon}" width="52" height="52" alt="${r.name_cn}" loading="lazy"
+                    style="border-radius:10px;object-fit:contain;background:rgba(0,0,0,0.25);padding:4px;border:1px solid rgba(255,255,255,0.1);">
                 </td>
                 <td style="font-weight:700;font-size:15px;color:var(--text-main);">
                   ${r.name_cn}
@@ -218,6 +266,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>
                 <td>
                   <span class="recipe-cat-badge cat-${r.category}">${r.category}</span>
+                </td>
+                <td>
+                  <span class="bonus-badge" style="${badgeStyle}padding:4px 10px;border-radius:20px;font-weight:700;font-size:13px;white-space:nowrap;display:inline-block;">
+                    ${emoji} +${bp}%
+                  </span>
                 </td>
                 <td>
                   <span class="pot-badge">🍲 ${r.pot_size}</span>
@@ -236,23 +289,31 @@ document.addEventListener('DOMContentLoaded', () => {
                   ⚡ ${r.base_energy.toLocaleString()}
                 </td>
               </tr>
-            `).join('')}
+            `}).join('')}
           </tbody>
         </table>
       </div>
     `;
   }
 
+  /* ─── Grid View ────────────────────────────────────── */
   function renderGrid(recipes) {
     contentArea.innerHTML = `
       <div class="pokemon-grid">
-        ${recipes.map(r => `
+        ${recipes.map(r => {
+          const bp = r.bonus_pct || 19;
+          const badgeStyle = getBonusBadgeStyle(bp);
+          const emoji = getBonusEmoji(bp);
+          return `
           <div class="pokemon-card">
             <div class="card-header" style="align-items:center;">
               <img class="card-icon" src="${r.icon}" alt="${r.name_cn}" style="width:56px;height:56px;border-radius:10px;">
               <div class="card-title-group">
                 <h3 class="pokemon-name">${r.name_cn}</h3>
-                <span class="recipe-cat-badge cat-${r.category}">${r.category}</span>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
+                  <span class="recipe-cat-badge cat-${r.category}">${r.category}</span>
+                  <span style="${badgeStyle}padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700;">${emoji} +${bp}%</span>
+                </div>
               </div>
             </div>
             <div class="card-stats" style="grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;">
@@ -277,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </div>
           </div>
-        `).join('')}
+        `}).join('')}
       </div>
     `;
   }

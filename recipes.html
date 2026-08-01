@@ -52,6 +52,7 @@
             <option value="pot-desc">鍋子容量 (大 ➔ 小)</option>
             <option value="energy-desc">基礎能量 (高 ➔ 低)</option>
             <option value="energy-asc">基礎能量 (低 ➔ 高)</option>
+            <option value="bonus-desc">食材加成 (高 ➔ 低)</option>
             <option value="name-asc">名稱排序</option>
           </select>
         </div>
@@ -61,6 +62,15 @@
       <div class="filter-tags-group">
         <span class="filter-label">料理分類：</span>
         <div id="category-filter-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+      </div>
+
+      <!-- Bonus % Filter -->
+      <div class="filter-tags-group">
+        <span class="filter-label">食材加成篩選：</span>
+        <div id="bonus-filter-tags" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;"></div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">
+          💡 加成百分比由食譜食材種類數量決定：1種=+19%、2種=+23%、3種=+27%、4種=+33%、5種=+40%
+        </div>
       </div>
 
       <!-- Interactive Ingredient Selector -->
