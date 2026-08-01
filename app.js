@@ -169,6 +169,23 @@ document.addEventListener('DOMContentLoaded', () => {
     return p.icon_url || `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png`;
   }
 
+  // Build quantity chips for an ingredient (no level labels, just the numbers in order)
+  function ingQtyBadges(ing, idx) {
+    const qtys = [];
+    if (idx === 0) {
+      if (ing.l1)  qtys.push(ing.l1);
+      if (ing.l30) qtys.push(ing.l30);
+      if (ing.l60) qtys.push(ing.l60);
+    } else if (idx === 1) {
+      if (ing.l30) qtys.push(ing.l30);
+      if (ing.l60) qtys.push(ing.l60);
+    } else {
+      if (ing.l60) qtys.push(ing.l60);
+    }
+    if (!qtys.length) return '';
+    return `<span class="ing-qty-group">${qtys.map(q => `<span class="ing-qty">${q}</span>`).join('<span class="ing-arrow">→</span>')}</span>`;
+  }
+
   function renderGrid(data) {
     contentArea.innerHTML = `
       <div class="pokemon-grid">
@@ -214,10 +231,11 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </div>
             <div class="ingredient-list">
-              ${p.ingredients.map(ing => ing.name ? `
+              ${p.ingredients.map((ing, i) => ing.name ? `
                 <div class="ingredient-row">
                   ${ing.icon ? `<img class="ing-icon" src="${ing.icon}" alt="${ing.name}" loading="lazy" onerror="this.style.display='none';">` : ''}
                   <span class="ing-name">${ing.name}</span>
+                  ${ingQtyBadges(ing, i)}
                 </div>
               ` : '').join('')}
             </div>
@@ -239,9 +257,9 @@ document.addEventListener('DOMContentLoaded', () => {
               <th>屬性</th>
               <th>得意</th>
               <th>持有</th>
-              <th>食材1 (1/30/60)</th>
-              <th>食材2 (30/60)</th>
-              <th>食材3 (60)</th>
+              <th>食材 ①</th>
+              <th>食材 ②</th>
+              <th>食材 ③</th>
               <th>食材率</th>
               <th>技能率</th>
               <th>幫忙間隔</th>
@@ -260,9 +278,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><span class="type-badge" style="background-color:var(--type-${p.type}, #64748b);">${p.type || '一般'}</span></td>
                 <td>${p.specialty || '--'}</td>
                 <td>${p.carry || '--'}</td>
-                <td>${p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${p.ingredients[0].name}" loading="lazy" onerror="this.style.display='none';">` : ''}<span>${p.ingredients[0].name}</span></div>` : '--'}</td>
-                <td>${p.ingredients[1] ? `<div class="ing-cell">${p.ingredients[1].icon ? `<img class="ing-icon" src="${p.ingredients[1].icon}" alt="${p.ingredients[1].name}" loading="lazy" onerror="this.style.display='none';">` : ''}<span>${p.ingredients[1].name}</span></div>` : '--'}</td>
-                <td>${p.ingredients[2] ? `<div class="ing-cell">${p.ingredients[2].icon ? `<img class="ing-icon" src="${p.ingredients[2].icon}" alt="${p.ingredients[2].name}" loading="lazy" onerror="this.style.display='none';">` : ''}<span>${p.ingredients[2].name}</span></div>` : '--'}</td>
+                <td>${p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${p.ingredients[0].name}" loading="lazy" onerror="this.style.display='none';">` : ''}<span class="ing-name">${p.ingredients[0].name}</span>${ingQtyBadges(p.ingredients[0],0)}</div>` : '--'}</td>
+                <td>${p.ingredients[1] ? `<div class="ing-cell">${p.ingredients[1].icon ? `<img class="ing-icon" src="${p.ingredients[1].icon}" alt="${p.ingredients[1].name}" loading="lazy" onerror="this.style.display='none';">` : ''}<span class="ing-name">${p.ingredients[1].name}</span>${ingQtyBadges(p.ingredients[1],1)}</div>` : '--'}</td>
+                <td>${p.ingredients[2] ? `<div class="ing-cell">${p.ingredients[2].icon ? `<img class="ing-icon" src="${p.ingredients[2].icon}" alt="${p.ingredients[2].name}" loading="lazy" onerror="this.style.display='none';">` : ''}<span class="ing-name">${p.ingredients[2].name}</span>${ingQtyBadges(p.ingredients[2],2)}</div>` : '--'}</td>
                 <td style="font-weight:700;">${p.ingredient_rate || '--'}</td>
                 <td>${p.skill_rate || '--'}</td>
                 <td>${p.interval || '--'}</td>
