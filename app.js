@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentSearch = '';
   let selectedType = 'ALL';
   let selectedSpecialty = 'ALL';
-  let viewMode = 'grid';
+  let viewMode = 'table';
 
   const searchInput = document.getElementById('search-input');
   const typeFilterContainer = document.getElementById('type-filter-tags');

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pokémon Sleep 料理食譜大全</title>
+  <meta name="description" content="Pokémon Sleep 官方料理食譜資料庫，提供三大分類食譜檢索、鍋子容量計算與進階食材組合勾選過濾。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-logo">🍲</div>
+        <div>
+          <h1 class="brand-title">Pokémon Sleep 食譜大全</h1>
+          <div class="brand-subtitle">料理分類、食材需求與鍋子容量線上檢索</div>
+        </div>
+      </div>
+      <nav class="nav-tabs">
+        <a href="index.html" class="nav-tab">⚡ 寶可夢圖鑑</a>
+        <a href="recipes.html" class="nav-tab active">🍲 料理食譜大全</a>
+      </nav>
+      <div class="header-actions">
+        <div class="view-mode-toggle">
+          <button id="toggle-grid" class="toggle-btn">🎴 卡片</button>
+          <button id="toggle-table" class="toggle-btn active">📊 表格</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Controls -->
+    <section class="controls-container" aria-label="Recipe Search and Filter Controls">
+      <div class="search-filter-row" style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
+        <div class="search-box" style="flex:1;min-width:280px;">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="recipe-search-input" class="search-input"
+            placeholder="搜尋食譜名稱 (中/英) 或食材關鍵字..."
+            aria-label="搜尋食譜">
+        </div>
+        <div class="sort-wrapper">
+          <label for="recipe-sort-select" style="font-size:13px;color:var(--text-muted);margin-right:6px;">排序：</label>
+          <select id="recipe-sort-select" class="select-input" aria-label="食譜排序">
+            <option value="pot-asc">鍋子容量 (小 ➔ 大)</option>
+            <option value="pot-desc">鍋子容量 (大 ➔ 小)</option>
+            <option value="energy-desc">基礎能量 (高 ➔ 低)</option>
+            <option value="energy-asc">基礎能量 (低 ➔ 高)</option>
+            <option value="name-asc">名稱排序</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Category Filter Tags -->
+      <div class="filter-tags-group">
+        <span class="filter-label">料理分類：</span>
+        <div id="category-filter-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+      </div>
+
+      <!-- Interactive Ingredient Selector -->
+      <div class="filter-tags-group" style="background:rgba(255,255,255,0.02);padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span class="filter-label" style="font-weight:700;color:var(--accent-color);">🛒 現有食材勾選器：</span>
+          <button id="clear-ingredients-btn" style="background:transparent;border:1px solid rgba(255,255,255,0.2);color:var(--text-muted);padding:2px 8px;border-radius:4px;font-size:12px;cursor:pointer;">清除全選</button>
+        </div>
+        <div id="ingredient-picker-tags" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+        <div style="margin-top:10px;font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:12px;">
+          <label style="cursor:pointer;display:flex;align-items:center;gap:4px;">
+            <input type="radio" name="ingredient-match-mode" value="any" checked> 包含任一勾選食材 (Match Any)
+          </label>
+          <label style="cursor:pointer;display:flex;align-items:center;gap:4px;">
+            <input type="radio" name="ingredient-match-mode" value="all"> 材料全部符合才顯示 (Match All)
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <span id="recipe-count-badge">載入食譜中...</span>
+      <div style="font-size:12px;color:var(--text-muted);">
+        提示：點擊上方食材標籤可動態對比現有食材可製作的食譜與所需鍋子大小
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <section id="recipe-content-area">
+      <div style="text-align:center;padding:60px;color:var(--text-muted);">
+        食譜資料載入中，請稍候...
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      Pokémon Sleep 料理食譜線上資料庫 &copy; 2026 ·
+      <a href="https://github.com/s102213039/pokemon-sleep-app" target="_blank">GitHub 原始碼</a> ·
+      <a href="index.html">返回寶可夢圖鑑</a>
+    </p>
+  </footer>
+
+  <script src="recipes.js"></script>
+</body>
+</html>
