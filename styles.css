@@ -932,21 +932,31 @@ footer {
 
 .ing-badge {
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 3px;
   background: rgba(30, 41, 59, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 13px;
-  color: var(--text-primary);
+  padding: 6px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-color);
+  min-width: 48px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.ing-badge:hover {
+  border-color: rgba(255,255,255,0.3);
 }
 
 .ing-badge-icon {
-  width: 20px;
-  height: 20px;
+  width: 34px;
+  height: 34px;
   object-fit: contain;
   flex-shrink: 0;
+  image-rendering: auto;
 }
 
 /* Ingredient Picker Buttons */

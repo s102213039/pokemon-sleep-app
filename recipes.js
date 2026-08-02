@@ -311,9 +311,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>
                   <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
                     ${r.ingredients.map(ing => `
-                      <span class="ing-badge">
+                      <span class="ing-badge" title="${ing.name} ×${ing.count}">
                         ${ing.icon ? `<img src="${ing.icon}" class="ing-badge-icon" alt="${ing.name}">` : ''}
-                        ${ing.name} <strong style="color:var(--accent-color);">x${ing.count}</strong>
+                        <span>×${ing.count}</span>
                       </span>
                     `).join('')}
                   </div>
@@ -361,11 +361,11 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="ingredient-list" style="margin-top:12px;">
               <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">材料需求：</div>
-              <div style="display:flex;flex-wrap:wrap;gap:4px;">
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
                 ${r.ingredients.map(ing => `
-                  <span class="ing-badge">
+                  <span class="ing-badge" title="${ing.name} ×${ing.count}">
                     ${ing.icon ? `<img src="${ing.icon}" class="ing-badge-icon" alt="${ing.name}">` : ''}
-                    ${ing.name} x${ing.count}
+                    <span>×${ing.count}</span>
                   </span>
                 `).join('')}
               </div>
