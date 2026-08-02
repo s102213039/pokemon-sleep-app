@@ -233,8 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="ingredient-list">
               ${p.ingredients.map((ing, i) => ing.name ? `
                 <div class="ingredient-row">
-                  ${ing.icon ? `<img class="ing-icon" src="${ing.icon}" alt="${ing.name}" loading="lazy" onerror="this.style.display='none';">` : ''}
-                  <span class="ing-name">${ing.name}</span>
+                  ${ing.icon ? `<img class="ing-icon" src="${ing.icon}" alt="${ing.name}" loading="lazy" title="${ing.name}" onerror="this.style.display='none';">` : ''}
                   ${ingQtyBadges(ing, i)}
                 </div>
               ` : '').join('')}
@@ -278,9 +277,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><span class="type-badge" style="background-color:var(--type-${p.type}, #64748b);">${p.type || '一般'}</span></td>
                 <td>${p.specialty || '--'}</td>
                 <td>${p.carry || '--'}</td>
-                <td>${p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${p.ingredients[0].name}" loading="lazy" onerror="this.style.display='none';">` : ''}<span class="ing-name">${p.ingredients[0].name}</span>${ingQtyBadges(p.ingredients[0],0)}</div>` : '--'}</td>
-                <td>${p.ingredients[1] ? `<div class="ing-cell">${p.ingredients[1].icon ? `<img class="ing-icon" src="${p.ingredients[1].icon}" alt="${p.ingredients[1].name}" loading="lazy" onerror="this.style.display='none';">` : ''}<span class="ing-name">${p.ingredients[1].name}</span>${ingQtyBadges(p.ingredients[1],1)}</div>` : '--'}</td>
-                <td>${p.ingredients[2] ? `<div class="ing-cell">${p.ingredients[2].icon ? `<img class="ing-icon" src="${p.ingredients[2].icon}" alt="${p.ingredients[2].name}" loading="lazy" onerror="this.style.display='none';">` : ''}<span class="ing-name">${p.ingredients[2].name}</span>${ingQtyBadges(p.ingredients[2],2)}</div>` : '--'}</td>
+                <td>${p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${p.ingredients[0].name}" loading="lazy" title="${p.ingredients[0].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[0],0)}</div>` : '--'}</td>
+                <td>${p.ingredients[1] ? `<div class="ing-cell">${p.ingredients[1].icon ? `<img class="ing-icon" src="${p.ingredients[1].icon}" alt="${p.ingredients[1].name}" loading="lazy" title="${p.ingredients[1].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[1],1)}</div>` : '--'}</td>
+                <td>${p.ingredients[2] ? `<div class="ing-cell">${p.ingredients[2].icon ? `<img class="ing-icon" src="${p.ingredients[2].icon}" alt="${p.ingredients[2].name}" loading="lazy" title="${p.ingredients[2].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[2],2)}</div>` : '--'}</td>
                 <td style="font-weight:700;">${p.ingredient_rate || '--'}</td>
                 <td>${p.skill_rate || '--'}</td>
                 <td>${p.interval || '--'}</td>

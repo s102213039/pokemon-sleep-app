@@ -31,14 +31,15 @@
           <button id="toggle-grid" class="toggle-btn">🎴 卡片</button>
           <button id="toggle-table" class="toggle-btn active">📊 表格</button>
         </div>
-        <a href="index.html" class="sync-btn" style="text-decoration:none;">⚡ 寶可夢圖鑑</a>
       </div>
     </div>
   </header>
 
   <main>
-    <!-- Controls -->
+    <!-- Controls — 仿照 raenonx.cc 布局 -->
     <section class="controls-container" aria-label="Recipe Search and Filter Controls">
+
+      <!-- 第一行：搜尋 + 排序 -->
       <div class="search-filter-row">
         <div class="search-box">
           <span class="search-icon">🔍</span>
@@ -48,54 +49,102 @@
         </div>
         <div class="sort-box">
           <select id="recipe-sort-select" class="sort-select" aria-label="食譜排序">
+            <option value="energy-desc">食譜基礎能量 ↓</option>
+            <option value="energy-asc">食譜基礎能量 ↑</option>
             <option value="pot-asc">鍋子容量 (小 ➔ 大)</option>
             <option value="pot-desc">鍋子容量 (大 ➔ 小)</option>
-            <option value="energy-desc">基礎能量 (高 ➔ 低)</option>
-            <option value="energy-asc">基礎能量 (低 ➔ 高)</option>
             <option value="bonus-desc">食材加成 (高 ➔ 低)</option>
             <option value="name-asc">名稱排序</option>
           </select>
         </div>
       </div>
 
-      <!-- Category Filter Tags -->
-      <div class="filter-tags-group">
-        <span class="filter-label">料理分類：</span>
-        <div id="category-filter-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-      </div>
+      <!-- 第二行：類似 raenonx 的 inline filter bar -->
+      <div class="raenonx-filter-bar">
 
-      <!-- Bonus % Filter -->
-      <div class="filter-tags-group">
-        <span class="filter-label">食材加成篩選：</span>
-        <div id="bonus-filter-tags" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;"></div>
-        <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">
-          💡 食材加成為每道食譜的<strong>固定數值</strong>，會乘算在食譜必要食材的基礎能量上（額外填鍋食材不受加成）
+        <!-- 料理種類 -->
+        <div class="rf-group">
+          <span class="rf-label">料理種類</span>
+          <div id="category-filter-tags" class="rf-tags"></div>
         </div>
+
+        <!-- 最低食譜加成 (dropdown) -->
+        <div class="rf-group">
+          <span class="rf-label">最低食譜加成</span>
+          <div class="rf-select-wrap">
+            <select id="bonus-filter-select" class="rf-select">
+              <option value="0">全部</option>
+              <option value="19">≥ 19%</option>
+              <option value="20">≥ 20%</option>
+              <option value="21">≥ 21%</option>
+              <option value="25">≥ 25%</option>
+              <option value="35">≥ 35%</option>
+              <option value="48">≥ 48%</option>
+              <option value="61">≥ 61%</option>
+              <option value="78">≥ 78%</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 食譜等級 -->
+        <div class="rf-group">
+          <span class="rf-label">食譜等級</span>
+          <div class="rf-select-wrap">
+            <select id="recipe-level-select" class="rf-select">
+              <option value="1">Lv. 1</option>
+              <option value="10">Lv. 10</option>
+              <option value="20">Lv. 20</option>
+              <option value="30">Lv. 30</option>
+              <option value="40">Lv. 40</option>
+              <option value="50">Lv. 50</option>
+              <option value="55">Lv. 55</option>
+              <option value="60">Lv. 60</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 最低鍋子容量 -->
+        <div class="rf-group">
+          <span class="rf-label">最低鍋子容量</span>
+          <div class="rf-select-wrap">
+            <select id="pot-filter-select" class="rf-select">
+              <option value="0">全部</option>
+              <option value="15">≥ 15（初始）</option>
+              <option value="21">≥ 21</option>
+              <option value="30">≥ 30</option>
+              <option value="50">≥ 50</option>
+              <option value="70">≥ 70</option>
+              <option value="100">≥ 100（頂級）</option>
+            </select>
+          </div>
+        </div>
+
       </div>
 
-      <!-- Interactive Ingredient Selector -->
-      <div class="filter-tags-group">
+      <!-- 第三行：食材勾選器 -->
+      <div class="filter-tags-group" style="margin-top:0;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <span class="filter-label">🛒 現有食材勾選器</span>
-          <button id="clear-ingredients-btn" class="tag-btn">清除全選</button>
+          <span class="filter-label">🛒 食材篩選器</span>
+          <div style="display:flex;gap:12px;align-items:center;font-size:12px;color:var(--text-muted);">
+            <label style="cursor:pointer;display:flex;align-items:center;gap:5px;">
+              <input type="radio" name="ingredient-match-mode" value="any" checked> 含任一
+            </label>
+            <label style="cursor:pointer;display:flex;align-items:center;gap:5px;">
+              <input type="radio" name="ingredient-match-mode" value="all"> 全部符合
+            </label>
+            <button id="clear-ingredients-btn" class="tag-btn" style="padding:3px 10px;font-size:12px;">清除</button>
+          </div>
         </div>
-        <div id="ingredient-picker-tags" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
-        <div style="margin-top:12px;font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:16px;">
-          <label style="cursor:pointer;display:flex;align-items:center;gap:6px;">
-            <input type="radio" name="ingredient-match-mode" value="any" checked> 包含任一勾選食材 (Match Any)
-          </label>
-          <label style="cursor:pointer;display:flex;align-items:center;gap:6px;">
-            <input type="radio" name="ingredient-match-mode" value="all"> 材料全部符合才顯示 (Match All)
-          </label>
-        </div>
+        <div id="ingredient-picker-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
       </div>
+
     </section>
 
     <!-- Stats Bar -->
     <div class="stats-bar">
       <span id="recipe-count-badge" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">載入食譜中...</span>
       <div style="font-size:12px;color:var(--text-muted);">
-        💡 點擊食材標籤可篩選可製作的食譜，搭配鍋子容量計算最佳料理策略
+        💡 食材加成為每道食譜的<strong>固定數值</strong>，食譜等級越高加成越大（僅乘算於必要食材能量）
       </div>
     </div>
 

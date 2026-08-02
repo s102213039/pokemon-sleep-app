@@ -1066,4 +1066,132 @@ footer {
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.5);
 }
 
+/* ─── Raenonx-style filter bar ──────────────────────── */
+.raenonx-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.rf-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.rf-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.rf-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.rf-select-wrap {
+  position: relative;
+}
+
+.rf-select {
+  appearance: none;
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 36px 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  transition: border-color 0.2s;
+}
+
+.rf-select:hover, .rf-select:focus {
+  border-color: rgba(99,102,241,0.6);
+  outline: none;
+}
+
+/* ─── Recipe ingredient inline chips ─────────────────── */
+.recipe-ing-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+
+.recipe-ing-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 3px 6px 3px 3px;
+  white-space: nowrap;
+  transition: border-color 0.15s;
+}
+
+.recipe-ing-chip:hover {
+  border-color: rgba(255,255,255,0.25);
+}
+
+.recipe-ing-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.recipe-ing-count {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
+/* ─── Ingredient picker (icon only, compact) ─────────── */
+.ing-picker-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30, 41, 59, 0.75);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  width: 40px;
+  height: 40px;
+}
+
+.ing-picker-btn:hover {
+  border-color: rgba(99,102,241,0.5);
+  background: rgba(99,102,241,0.1);
+}
+
+.ing-picker-btn.active {
+  background: rgba(99,102,241,0.25);
+  border-color: rgba(99,102,241,0.8);
+  box-shadow: 0 0 8px rgba(99,102,241,0.3);
+}
+
+.ing-picker-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
 
