@@ -37,17 +37,32 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ─── Category Filter ──────────────────────────────── */
   function initCategoryFilters() {
     const categories = ['ALL', '咖哩', '沙拉', '甜點'];
-    categoryContainer.innerHTML = categories.map(cat => `
-      <button class="tag-btn ${cat === selectedCategory ? 'active' : ''}" data-category="${cat}">
-        ${cat === 'ALL' ? '全部料理' : cat}
-      </button>
-    `).join('');
+    const catEmoji = { 'ALL': '🍽️', '咖哩': '🍛', '沙拉': '🥗', '甜點': '🍰' };
+
+    function buildCategoryHTML() {
+      const catCounts = {};
+      categories.slice(1).forEach(cat => {
+        catCounts[cat] = allRecipes.filter(r => r.category === cat).length;
+      });
+      categoryContainer.innerHTML = categories.map(cat => {
+        const count = cat === 'ALL' ? allRecipes.length : catCounts[cat];
+        return `
+          <button class="tag-btn ${cat === selectedCategory ? 'active' : ''}" data-category="${cat}">
+            ${catEmoji[cat]} ${cat === 'ALL' ? '全部料理' : cat}
+            <span style="margin-left:4px;opacity:0.7;font-size:11px;">(${count}種)</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    buildCategoryHTML();
 
     categoryContainer.addEventListener('click', (e) => {
-      if (e.target.classList.contains('tag-btn')) {
-        selectedCategory = e.target.getAttribute('data-category');
-        categoryContainer.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('active'));
-        e.target.classList.add('active');
+      const btn = e.target.closest('.tag-btn');
+      if (btn && btn.hasAttribute('data-category')) {
+        selectedCategory = btn.getAttribute('data-category');
+        categoryContainer.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
         render();
       }
     });
@@ -218,7 +233,25 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ─── Render ───────────────────────────────────────── */
   function render() {
     const filtered = getFilteredRecipes();
-    countBadge.textContent = `共顯示 ${filtered.length} 筆食譜 (總計 ${allRecipes.length} 筆)`;
+
+    // Build category breakdown
+    const catBreakdown = {};
+    ['咖哩', '沙拉', '甜點'].forEach(cat => {
+      const total = allRecipes.filter(r => r.category === cat).length;
+      const shown = filtered.filter(r => r.category === cat).length;
+      catBreakdown[cat] = { total, shown };
+    });
+
+    const isFiltered = filtered.length < allRecipes.length;
+    const breakdownHTML = Object.entries(catBreakdown)
+      .map(([cat, { total, shown }]) => {
+        const emoji = cat === '咖哩' ? '🍛' : cat === '沙拉' ? '🥗' : '🍰';
+        return `<span style="margin:0 6px;opacity:0.8;">` +
+               `${emoji}${cat} <strong>${isFiltered ? shown + '/' : ''}${total}</strong>種</span>`;
+      }).join('<span style="opacity:0.3;">|</span>');
+
+    countBadge.innerHTML = `顯示 <strong>${filtered.length}</strong>/${allRecipes.length} 筆食譜
+      <span style="margin-left:12px;font-size:12px;color:var(--text-muted);">${breakdownHTML}</span>`;
 
     if (filtered.length === 0) {
       contentArea.innerHTML = `
