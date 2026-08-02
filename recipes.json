@@ -8,7 +8,11 @@
     "base_energy": 663,
     "icon": "https://www.serebii.net/pokemonsleep/meals/fancyapplecurry.png",
     "ingredients": [
-      { "name": "特選蘋果", "count": 7, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" }
+      {
+        "name": "特選蘋果",
+        "count": 7,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      }
     ],
     "bonus_pct": 19
   },
@@ -21,7 +25,11 @@
     "base_energy": 749,
     "icon": "https://www.serebii.net/pokemonsleep/meals/mildhoneycurry.png",
     "ingredients": [
-      { "name": "甜甜蜜", "count": 7, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" }
+      {
+        "name": "甜甜蜜",
+        "count": 7,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      }
     ],
     "bonus_pct": 19
   },
@@ -34,7 +42,11 @@
     "base_energy": 764,
     "icon": "https://www.serebii.net/pokemonsleep/meals/beanburgercurry.png",
     "ingredients": [
-      { "name": "豆製肉", "count": 7, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" }
+      {
+        "name": "豆製肉",
+        "count": 7,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      }
     ],
     "bonus_pct": 19
   },
@@ -47,10 +59,18 @@
     "base_energy": 1943,
     "icon": "https://www.serebii.net/pokemonsleep/meals/solarpowertomatocurry.png",
     "ingredients": [
-      { "name": "好眠番茄", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" },
-      { "name": "火辣香草", "count": 5, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png" }
+      {
+        "name": "好眠番茄",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png"
+      },
+      {
+        "name": "火辣香草",
+        "count": 5,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 20
   },
   {
     "id": 5,
@@ -61,7 +81,11 @@
     "base_energy": 727,
     "icon": "https://www.serebii.net/pokemonsleep/meals/simplechowder.png",
     "ingredients": [
-      { "name": "哞哞鮮奶", "count": 7, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" }
+      {
+        "name": "哞哞鮮奶",
+        "count": 7,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      }
     ],
     "bonus_pct": 19
   },
@@ -74,10 +98,18 @@
     "base_energy": 1881,
     "icon": "https://www.serebii.net/pokemonsleep/meals/droughtkatsucurry.png",
     "ingredients": [
-      { "name": "豆製肉", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" },
-      { "name": "純粹油", "count": 5, "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" }
+      {
+        "name": "豆製肉",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      },
+      {
+        "name": "純粹油",
+        "count": 5,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 20
   },
   {
     "id": 7,
@@ -88,10 +120,18 @@
     "base_energy": 2009,
     "icon": "https://www.serebii.net/pokemonsleep/meals/meltyomelettecurry.png",
     "ingredients": [
-      { "name": "特選蛋", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
-      { "name": "好眠番茄", "count": 6, "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" }
+      {
+        "name": "特選蛋",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
+      },
+      {
+        "name": "好眠番茄",
+        "count": 6,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 20
   },
   {
     "id": 8,
@@ -102,10 +142,18 @@
     "base_energy": 1785,
     "icon": "https://www.serebii.net/pokemonsleep/meals/heartycheeseburgercurry.png",
     "ingredients": [
-      { "name": "哞哞鮮奶", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" },
-      { "name": "豆製肉", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" }
+      {
+        "name": "哞哞鮮奶",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      },
+      {
+        "name": "豆製肉",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 20
   },
   {
     "id": 9,
@@ -116,11 +164,23 @@
     "base_energy": 2419,
     "icon": "https://www.serebii.net/pokemonsleep/meals/softpotatochowder.png",
     "ingredients": [
-      { "name": "哞哞鮮奶", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" },
-      { "name": "窩心洋芋", "count": 7, "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" },
-      { "name": "品鮮蘑菇", "count": 4, "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" }
+      {
+        "name": "哞哞鮮奶",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      },
+      {
+        "name": "窩心洋芋",
+        "count": 7,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png"
+      },
+      {
+        "name": "品鮮蘑菇",
+        "count": 4,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 21
   },
   {
     "id": 10,
@@ -131,10 +191,18 @@
     "base_energy": 4041,
     "icon": "https://www.serebii.net/pokemonsleep/meals/sporemushroomcurry.png",
     "ingredients": [
-      { "name": "品鮮蘑菇", "count": 14, "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" },
-      { "name": "窩心洋芋", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" }
+      {
+        "name": "品鮮蘑菇",
+        "count": 14,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png"
+      },
+      {
+        "name": "窩心洋芋",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 21
   },
   {
     "id": 11,
@@ -145,12 +213,28 @@
     "base_energy": 3021,
     "icon": "https://www.serebii.net/pokemonsleep/meals/bulkupbeancurry.png",
     "ingredients": [
-      { "name": "萌綠大豆", "count": 12, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" },
-      { "name": "豆製肉", "count": 6, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" },
-      { "name": "火辣香草", "count": 4, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png" },
-      { "name": "特選蛋", "count": 4, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" }
+      {
+        "name": "萌綠大豆",
+        "count": 12,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png"
+      },
+      {
+        "name": "豆製肉",
+        "count": 6,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      },
+      {
+        "name": "火辣香草",
+        "count": 4,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png"
+      },
+      {
+        "name": "特選蛋",
+        "count": 4,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 25
   },
   {
     "id": 12,
@@ -161,11 +245,23 @@
     "base_energy": 3878,
     "icon": "https://www.serebii.net/pokemonsleep/meals/spicyleekcurry.png",
     "ingredients": [
-      { "name": "粗枝大蔥", "count": 14, "icon": "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png" },
-      { "name": "暖暖薑", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" },
-      { "name": "火辣香草", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png" }
+      {
+        "name": "粗枝大蔥",
+        "count": 14,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png"
+      },
+      {
+        "name": "暖暖薑",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      },
+      {
+        "name": "火辣香草",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 25
   },
   {
     "id": 13,
@@ -176,10 +272,18 @@
     "base_energy": 7483,
     "icon": "https://www.serebii.net/pokemonsleep/meals/grilledtailcurry.png",
     "ingredients": [
-      { "name": "呆呆獸尾巴", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png" },
-      { "name": "火辣香草", "count": 25, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png" }
+      {
+        "name": "呆呆獸尾巴",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png"
+      },
+      {
+        "name": "火辣香草",
+        "count": 25,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 25
   },
   {
     "id": 14,
@@ -190,12 +294,28 @@
     "base_energy": 4523,
     "icon": "https://www.serebii.net/pokemonsleep/meals/eggbombcurry.png",
     "ingredients": [
-      { "name": "甜甜蜜", "count": 12, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" },
-      { "name": "特選蘋果", "count": 11, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" },
-      { "name": "特選蛋", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
-      { "name": "窩心洋芋", "count": 4, "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" }
+      {
+        "name": "甜甜蜜",
+        "count": 12,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      },
+      {
+        "name": "特選蘋果",
+        "count": 11,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      },
+      {
+        "name": "特選蛋",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
+      },
+      {
+        "name": "窩心洋芋",
+        "count": 4,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 35
   },
   {
     "id": 15,
@@ -206,12 +326,28 @@
     "base_energy": 6165,
     "icon": "https://www.serebii.net/pokemonsleep/meals/ninjacurry.png",
     "ingredients": [
-      { "name": "萌綠大豆", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" },
-      { "name": "豆製肉", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" },
-      { "name": "粗枝大蔥", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png" },
-      { "name": "品鮮蘑菇", "count": 5, "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" }
+      {
+        "name": "萌綠大豆",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png"
+      },
+      {
+        "name": "豆製肉",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      },
+      {
+        "name": "粗枝大蔥",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png"
+      },
+      {
+        "name": "品鮮蘑菇",
+        "count": 5,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 35
   },
   {
     "id": 16,
@@ -222,11 +358,23 @@
     "base_energy": 4670,
     "icon": "https://www.serebii.net/pokemonsleep/meals/limbercornstew.png",
     "ingredients": [
-      { "name": "萌綠玉米", "count": 14, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" },
-      { "name": "哞哞鮮奶", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" },
-      { "name": "窩心洋芋", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" }
+      {
+        "name": "萌綠玉米",
+        "count": 14,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      },
+      {
+        "name": "窩心洋芋",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 25
   },
   {
     "id": 17,
@@ -237,12 +385,28 @@
     "base_energy": 9010,
     "icon": "https://www.serebii.net/pokemonsleep/meals/dreameaterbuttercurry.png",
     "ingredients": [
-      { "name": "窩心洋芋", "count": 18, "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" },
-      { "name": "好眠番茄", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" },
-      { "name": "放鬆可可", "count": 12, "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" },
-      { "name": "哞哞鮮奶", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" }
+      {
+        "name": "窩心洋芋",
+        "count": 18,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png"
+      },
+      {
+        "name": "好眠番茄",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png"
+      },
+      {
+        "name": "放鬆可可",
+        "count": 12,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 48
   },
   {
     "id": 18,
@@ -253,12 +417,28 @@
     "base_energy": 13690,
     "icon": "https://www.serebii.net/pokemonsleep/meals/infernocornkeemacurry.png",
     "ingredients": [
-      { "name": "火辣香草", "count": 27, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png" },
-      { "name": "豆製肉", "count": 14, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" },
-      { "name": "萌綠玉米", "count": 14, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" },
-      { "name": "暖暖薑", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" }
+      {
+        "name": "火辣香草",
+        "count": 27,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png"
+      },
+      {
+        "name": "豆製肉",
+        "count": 14,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      },
+      {
+        "name": "萌綠玉米",
+        "count": 14,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png"
+      },
+      {
+        "name": "暖暖薑",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 48
   },
   {
     "id": 19,
@@ -269,11 +449,23 @@
     "base_energy": 5280,
     "icon": "https://www.serebii.net/pokemonsleep/meals/dizzypunchspicycurry.png",
     "ingredients": [
-      { "name": "提神咖啡", "count": 11, "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png" },
-      { "name": "火辣香草", "count": 11, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png" },
-      { "name": "甜甜蜜", "count": 11, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" }
+      {
+        "name": "提神咖啡",
+        "count": 11,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png"
+      },
+      {
+        "name": "火辣香草",
+        "count": 11,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png"
+      },
+      {
+        "name": "甜甜蜜",
+        "count": 11,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 25
   },
   {
     "id": 20,
@@ -284,12 +476,28 @@
     "base_energy": 17500,
     "icon": "https://www.serebii.net/pokemonsleep/meals/hiddenpowerperk-upstew.png",
     "ingredients": [
-      { "name": "萌綠大豆", "count": 28, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" },
-      { "name": "好眠番茄", "count": 25, "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" },
-      { "name": "品鮮蘑菇", "count": 23, "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" },
-      { "name": "提神咖啡", "count": 16, "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png" }
+      {
+        "name": "萌綠大豆",
+        "count": 28,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png"
+      },
+      {
+        "name": "好眠番茄",
+        "count": 25,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png"
+      },
+      {
+        "name": "品鮮蘑菇",
+        "count": 23,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png"
+      },
+      {
+        "name": "提神咖啡",
+        "count": 16,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 61
   },
   {
     "id": 21,
@@ -300,12 +508,28 @@
     "base_energy": 20500,
     "icon": "https://www.serebii.net/pokemonsleep/meals/cutsukiyakicurry.png",
     "ingredients": [
-      { "name": "粗枝大蔥", "count": 27, "icon": "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png" },
-      { "name": "豆製肉", "count": 26, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" },
-      { "name": "甜甜蜜", "count": 26, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" },
-      { "name": "特選蛋", "count": 22, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" }
+      {
+        "name": "粗枝大蔥",
+        "count": 27,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png"
+      },
+      {
+        "name": "豆製肉",
+        "count": 26,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      },
+      {
+        "name": "甜甜蜜",
+        "count": 26,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      },
+      {
+        "name": "特選蛋",
+        "count": 22,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 78
   },
   {
     "id": 22,
@@ -316,12 +540,28 @@
     "base_energy": 13200,
     "icon": "https://www.serebii.net/pokemonsleep/meals/roleplaypumpkaboostew.png",
     "ingredients": [
-      { "name": "品鮮蘑菇", "count": 25, "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" },
-      { "name": "窩心洋芋", "count": 18, "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" },
-      { "name": "豆製肉", "count": 16, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" },
-      { "name": "胖胖南瓜", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png" }
+      {
+        "name": "品鮮蘑菇",
+        "count": 25,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png"
+      },
+      {
+        "name": "窩心洋芋",
+        "count": 18,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png"
+      },
+      {
+        "name": "豆製肉",
+        "count": 16,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      },
+      {
+        "name": "胖胖南瓜",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 48
   },
   {
     "id": 23,
@@ -332,12 +572,28 @@
     "base_energy": 22800,
     "icon": "https://www.serebii.net/pokemonsleep/meals/overgrowavocadogratin.png",
     "ingredients": [
-      { "name": "哞哞鮮奶", "count": 41, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" },
-      { "name": "純粹油", "count": 32, "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" },
-      { "name": "光澤酪梨", "count": 22, "icon": "https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png" },
-      { "name": "窩心洋芋", "count": 20, "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" }
+      {
+        "name": "哞哞鮮奶",
+        "count": 41,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      },
+      {
+        "name": "純粹油",
+        "count": 32,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png"
+      },
+      {
+        "name": "光澤酪梨",
+        "count": 22,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png"
+      },
+      {
+        "name": "窩心洋芋",
+        "count": 20,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 78
   },
   {
     "id": 24,
@@ -348,7 +604,11 @@
     "base_energy": 764,
     "icon": "https://www.serebii.net/pokemonsleep/meals/fancyapplesalad.png",
     "ingredients": [
-      { "name": "特選蘋果", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" }
+      {
+        "name": "特選蘋果",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      }
     ],
     "bonus_pct": 19
   },
@@ -361,7 +621,11 @@
     "base_energy": 978,
     "icon": "https://www.serebii.net/pokemonsleep/meals/beanhamsalad.png",
     "ingredients": [
-      { "name": "豆製肉", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" }
+      {
+        "name": "豆製肉",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      }
     ],
     "bonus_pct": 19
   },
@@ -374,7 +638,11 @@
     "base_energy": 1045,
     "icon": "https://www.serebii.net/pokemonsleep/meals/snoozytomatosalad.png",
     "ingredients": [
-      { "name": "好眠番茄", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" }
+      {
+        "name": "好眠番茄",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png"
+      }
     ],
     "bonus_pct": 19
   },
@@ -387,10 +655,18 @@
     "base_energy": 1760,
     "icon": "https://www.serebii.net/pokemonsleep/meals/immunityleeksalad.png",
     "ingredients": [
-      { "name": "粗枝大蔥", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png" },
-      { "name": "暖暖薑", "count": 5, "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" }
+      {
+        "name": "粗枝大蔥",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png"
+      },
+      {
+        "name": "暖暖薑",
+        "count": 5,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 20
   },
   {
     "id": 28,
@@ -401,10 +677,18 @@
     "base_energy": 1976,
     "icon": "https://www.serebii.net/pokemonsleep/meals/heatwavetofusalad.png",
     "ingredients": [
-      { "name": "萌綠大豆", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" },
-      { "name": "火辣香草", "count": 6, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png" }
+      {
+        "name": "萌綠大豆",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png"
+      },
+      {
+        "name": "火辣香草",
+        "count": 6,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 20
   },
   {
     "id": 29,
@@ -415,10 +699,18 @@
     "base_energy": 1898,
     "icon": "https://www.serebii.net/pokemonsleep/meals/snowcloakcaesarsalad.png",
     "ingredients": [
-      { "name": "哞哞鮮奶", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" },
-      { "name": "豆製肉", "count": 6, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" }
+      {
+        "name": "哞哞鮮奶",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      },
+      {
+        "name": "豆製肉",
+        "count": 6,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 20
   },
   {
     "id": 30,
@@ -429,10 +721,18 @@
     "base_energy": 2578,
     "icon": "https://www.serebii.net/pokemonsleep/meals/dazzlingapplecheesesalad.png",
     "ingredients": [
-      { "name": "特選蘋果", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" },
-      { "name": "哞哞鮮奶", "count": 5, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" }
+      {
+        "name": "特選蘋果",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 5,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 21
   },
   {
     "id": 31,
@@ -443,11 +743,23 @@
     "base_energy": 8169,
     "icon": "https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png",
     "ingredients": [
-      { "name": "呆呆獸尾巴", "count": 12, "icon": "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png" },
-      { "name": "火辣香草", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png" },
-      { "name": "純粹油", "count": 5, "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" }
+      {
+        "name": "呆呆獸尾巴",
+        "count": 12,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png"
+      },
+      {
+        "name": "火辣香草",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png"
+      },
+      {
+        "name": "純粹油",
+        "count": 5,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 25
   },
   {
     "id": 32,
@@ -458,12 +770,28 @@
     "base_energy": 3046,
     "icon": "https://www.serebii.net/pokemonsleep/meals/superpowerextremesalad.png",
     "ingredients": [
-      { "name": "豆製肉", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" },
-      { "name": "暖暖薑", "count": 6, "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" },
-      { "name": "特選蛋", "count": 5, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
-      { "name": "窩心洋芋", "count": 3, "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" }
+      {
+        "name": "豆製肉",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      },
+      {
+        "name": "暖暖薑",
+        "count": 6,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      },
+      {
+        "name": "特選蛋",
+        "count": 5,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
+      },
+      {
+        "name": "窩心洋芋",
+        "count": 3,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 21
   },
   {
     "id": 33,
@@ -474,11 +802,23 @@
     "base_energy": 2856,
     "icon": "https://www.serebii.net/pokemonsleep/meals/moomoocapresesalad.png",
     "ingredients": [
-      { "name": "哞哞鮮奶", "count": 12, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" },
-      { "name": "好眠番茄", "count": 6, "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" },
-      { "name": "純粹油", "count": 5, "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" }
+      {
+        "name": "哞哞鮮奶",
+        "count": 12,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      },
+      {
+        "name": "好眠番茄",
+        "count": 6,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png"
+      },
+      {
+        "name": "純粹油",
+        "count": 5,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 21
   },
   {
     "id": 34,
@@ -489,10 +829,18 @@
     "base_energy": 3558,
     "icon": "https://www.serebii.net/pokemonsleep/meals/contrarychocolatemeatsalad.png",
     "ingredients": [
-      { "name": "放鬆可可", "count": 14, "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" },
-      { "name": "豆製肉", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" }
+      {
+        "name": "放鬆可可",
+        "count": 14,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png"
+      },
+      {
+        "name": "豆製肉",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 21
   },
   {
     "id": 35,
@@ -503,10 +851,18 @@
     "base_energy": 3113,
     "icon": "https://www.serebii.net/pokemonsleep/meals/waterveiltofusalad.png",
     "ingredients": [
-      { "name": "萌綠大豆", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" },
-      { "name": "好眠番茄", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" }
+      {
+        "name": "萌綠大豆",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png"
+      },
+      {
+        "name": "好眠番茄",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 25
   },
   {
     "id": 36,
@@ -517,10 +873,18 @@
     "base_energy": 2785,
     "icon": "https://www.serebii.net/pokemonsleep/meals/furyattackcornsalad.png",
     "ingredients": [
-      { "name": "萌綠玉米", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" },
-      { "name": "純粹油", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" }
+      {
+        "name": "萌綠玉米",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png"
+      },
+      {
+        "name": "純粹油",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 21
   },
   {
     "id": 37,
@@ -531,11 +895,23 @@
     "base_energy": 5225,
     "icon": "https://www.serebii.net/pokemonsleep/meals/overheatgingersalad.png",
     "ingredients": [
-      { "name": "火辣香草", "count": 17, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png" },
-      { "name": "暖暖薑", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" },
-      { "name": "好眠番茄", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" }
+      {
+        "name": "火辣香草",
+        "count": 17,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png"
+      },
+      {
+        "name": "暖暖薑",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      },
+      {
+        "name": "好眠番茄",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 35
   },
   {
     "id": 38,
@@ -546,12 +922,28 @@
     "base_energy": 5040,
     "icon": "https://www.serebii.net/pokemonsleep/meals/gluttonypotatosalad.png",
     "ingredients": [
-      { "name": "窩心洋芋", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" },
-      { "name": "特選蛋", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
-      { "name": "特選蘋果", "count": 6, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" },
-      { "name": "豆製肉", "count": 6, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" }
+      {
+        "name": "窩心洋芋",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png"
+      },
+      {
+        "name": "特選蛋",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
+      },
+      {
+        "name": "特選蘋果",
+        "count": 6,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      },
+      {
+        "name": "豆製肉",
+        "count": 6,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 25
   },
   {
     "id": 39,
@@ -562,11 +954,23 @@
     "base_energy": 7800,
     "icon": "https://www.serebii.net/pokemonsleep/meals/calmmindfruitsalad.png",
     "ingredients": [
-      { "name": "特選蘋果", "count": 21, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" },
-      { "name": "甜甜蜜", "count": 16, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" },
-      { "name": "萌綠玉米", "count": 12, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" }
+      {
+        "name": "特選蘋果",
+        "count": 21,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      },
+      {
+        "name": "甜甜蜜",
+        "count": 16,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      },
+      {
+        "name": "萌綠玉米",
+        "count": 12,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 35
   },
   {
     "id": 40,
@@ -577,12 +981,28 @@
     "base_energy": 5340,
     "icon": "https://www.serebii.net/pokemonsleep/meals/greengrasssalad.png",
     "ingredients": [
-      { "name": "純粹油", "count": 14, "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" },
-      { "name": "萌綠玉米", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" },
-      { "name": "好眠番茄", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" },
-      { "name": "窩心洋芋", "count": 6, "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" }
+      {
+        "name": "純粹油",
+        "count": 14,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png"
+      },
+      {
+        "name": "萌綠玉米",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png"
+      },
+      {
+        "name": "好眠番茄",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png"
+      },
+      {
+        "name": "窩心洋芋",
+        "count": 6,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 35
   },
   {
     "id": 41,
@@ -593,12 +1013,28 @@
     "base_energy": 9180,
     "icon": "https://www.serebii.net/pokemonsleep/meals/crosschopsalad.png",
     "ingredients": [
-      { "name": "特選蛋", "count": 20, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
-      { "name": "豆製肉", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" },
-      { "name": "萌綠玉米", "count": 11, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" },
-      { "name": "好眠番茄", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" }
+      {
+        "name": "特選蛋",
+        "count": 20,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
+      },
+      {
+        "name": "豆製肉",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      },
+      {
+        "name": "萌綠玉米",
+        "count": 11,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png"
+      },
+      {
+        "name": "好眠番茄",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 48
   },
   {
     "id": 42,
@@ -609,12 +1045,28 @@
     "base_energy": 10095,
     "icon": "https://www.serebii.net/pokemonsleep/meals/ninjasalad.png",
     "ingredients": [
-      { "name": "粗枝大蔥", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png" },
-      { "name": "萌綠大豆", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" },
-      { "name": "品鮮蘑菇", "count": 12, "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" },
-      { "name": "暖暖薑", "count": 11, "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" }
+      {
+        "name": "粗枝大蔥",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png"
+      },
+      {
+        "name": "萌綠大豆",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png"
+      },
+      {
+        "name": "品鮮蘑菇",
+        "count": 12,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png"
+      },
+      {
+        "name": "暖暖薑",
+        "count": 11,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 48
   },
   {
     "id": 43,
@@ -625,12 +1077,28 @@
     "base_energy": 11200,
     "icon": "https://www.serebii.net/pokemonsleep/meals/petalblizzardlayeredsalad.png",
     "ingredients": [
-      { "name": "特選蛋", "count": 25, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
-      { "name": "純粹油", "count": 17, "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" },
-      { "name": "窩心洋芋", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" },
-      { "name": "豆製肉", "count": 12, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" }
+      {
+        "name": "特選蛋",
+        "count": 25,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
+      },
+      {
+        "name": "純粹油",
+        "count": 17,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png"
+      },
+      {
+        "name": "窩心洋芋",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png"
+      },
+      {
+        "name": "豆製肉",
+        "count": 12,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 48
   },
   {
     "id": 44,
@@ -641,11 +1109,23 @@
     "base_energy": 7200,
     "icon": "https://www.serebii.net/pokemonsleep/meals/lusciousavocadosalad.png",
     "ingredients": [
-      { "name": "萌綠大豆", "count": 18, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" },
-      { "name": "光澤酪梨", "count": 14, "icon": "https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png" },
-      { "name": "純粹油", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" }
+      {
+        "name": "萌綠大豆",
+        "count": 18,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png"
+      },
+      {
+        "name": "光澤酪梨",
+        "count": 14,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png"
+      },
+      {
+        "name": "純粹油",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 35
   },
   {
     "id": 45,
@@ -656,12 +1136,28 @@
     "base_energy": 19500,
     "icon": "https://www.serebii.net/pokemonsleep/meals/defiantcoffee-dressedsalad.png",
     "ingredients": [
-      { "name": "提神咖啡", "count": 28, "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png" },
-      { "name": "豆製肉", "count": 28, "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" },
-      { "name": "純粹油", "count": 22, "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" },
-      { "name": "窩心洋芋", "count": 22, "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" }
+      {
+        "name": "提神咖啡",
+        "count": 28,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png"
+      },
+      {
+        "name": "豆製肉",
+        "count": 28,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      },
+      {
+        "name": "純粹油",
+        "count": 22,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png"
+      },
+      {
+        "name": "窩心洋芋",
+        "count": 22,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 78
   },
   {
     "id": 46,
@@ -672,12 +1168,28 @@
     "base_energy": 19800,
     "icon": "https://www.serebii.net/pokemonsleep/meals/appleacidyogurt-dressedsalad.png",
     "ingredients": [
-      { "name": "特選蛋", "count": 35, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
-      { "name": "特選蘋果", "count": 28, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" },
-      { "name": "好眠番茄", "count": 23, "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" },
-      { "name": "哞哞鮮奶", "count": 18, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" }
+      {
+        "name": "特選蛋",
+        "count": 35,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
+      },
+      {
+        "name": "特選蘋果",
+        "count": 28,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      },
+      {
+        "name": "好眠番茄",
+        "count": 23,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 18,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 78
   },
   {
     "id": 47,
@@ -688,12 +1200,28 @@
     "base_energy": 20100,
     "icon": "https://www.serebii.net/pokemonsleep/meals/bulldozeguacamoleandchips.png",
     "ingredients": [
-      { "name": "火辣香草", "count": 30, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png" },
-      { "name": "光澤酪梨", "count": 28, "icon": "https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png" },
-      { "name": "萌綠玉米", "count": 25, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" },
-      { "name": "萌綠大豆", "count": 22, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" }
+      {
+        "name": "火辣香草",
+        "count": 30,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png"
+      },
+      {
+        "name": "光澤酪梨",
+        "count": 28,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png"
+      },
+      {
+        "name": "萌綠玉米",
+        "count": 25,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png"
+      },
+      {
+        "name": "萌綠大豆",
+        "count": 22,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 78
   },
   {
     "id": 48,
@@ -704,12 +1232,28 @@
     "base_energy": 18400,
     "icon": "https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png",
     "ingredients": [
-      { "name": "窩心洋芋", "count": 30, "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" },
-      { "name": "品鮮蘑菇", "count": 27, "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" },
-      { "name": "胖胖南瓜", "count": 20, "icon": "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png" },
-      { "name": "萌綠玉米", "count": 18, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" }
+      {
+        "name": "窩心洋芋",
+        "count": 30,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png"
+      },
+      {
+        "name": "品鮮蘑菇",
+        "count": 27,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png"
+      },
+      {
+        "name": "胖胖南瓜",
+        "count": 20,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png"
+      },
+      {
+        "name": "萌綠玉米",
+        "count": 18,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 61
   },
   {
     "id": 49,
@@ -720,7 +1264,11 @@
     "base_energy": 763,
     "icon": "https://www.serebii.net/pokemonsleep/meals/fancyapplejuice.png",
     "ingredients": [
-      { "name": "特選蘋果", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" }
+      {
+        "name": "特選蘋果",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      }
     ],
     "bonus_pct": 19
   },
@@ -733,7 +1281,11 @@
     "base_energy": 727,
     "icon": "https://www.serebii.net/pokemonsleep/meals/warmmoomoomilk.png",
     "ingredients": [
-      { "name": "哞哞鮮奶", "count": 7, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" }
+      {
+        "name": "哞哞鮮奶",
+        "count": 7,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      }
     ],
     "bonus_pct": 19
   },
@@ -746,7 +1298,11 @@
     "base_energy": 964,
     "icon": "https://www.serebii.net/pokemonsleep/meals/craftsodapop.png",
     "ingredients": [
-      { "name": "甜甜蜜", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" }
+      {
+        "name": "甜甜蜜",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      }
     ],
     "bonus_pct": 19
   },
@@ -759,10 +1315,18 @@
     "base_energy": 1788,
     "icon": "https://www.serebii.net/pokemonsleep/meals/embergingertea.png",
     "ingredients": [
-      { "name": "暖暖薑", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" },
-      { "name": "特選蘋果", "count": 7, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" }
+      {
+        "name": "暖暖薑",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      },
+      {
+        "name": "特選蘋果",
+        "count": 7,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 20
   },
   {
     "id": 53,
@@ -773,10 +1337,18 @@
     "base_energy": 1798,
     "icon": "https://www.serebii.net/pokemonsleep/meals/stalwartvegetablejuice.png",
     "ingredients": [
-      { "name": "好眠番茄", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" },
-      { "name": "特選蘋果", "count": 7, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" }
+      {
+        "name": "好眠番茄",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png"
+      },
+      {
+        "name": "特選蘋果",
+        "count": 7,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 20
   },
   {
     "id": 54,
@@ -787,10 +1359,18 @@
     "base_energy": 1798,
     "icon": "https://www.serebii.net/pokemonsleep/meals/cloudninesoycake.png",
     "ingredients": [
-      { "name": "特選蛋", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
-      { "name": "萌綠大豆", "count": 7, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" }
+      {
+        "name": "特選蛋",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
+      },
+      {
+        "name": "萌綠大豆",
+        "count": 7,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 20
   },
   {
     "id": 55,
@@ -801,11 +1381,23 @@
     "base_energy": 3280,
     "icon": "https://www.serebii.net/pokemonsleep/meals/sweetscentchocolatecake.png",
     "ingredients": [
-      { "name": "甜甜蜜", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" },
-      { "name": "放鬆可可", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" },
-      { "name": "哞哞鮮奶", "count": 7, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" }
+      {
+        "name": "甜甜蜜",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      },
+      {
+        "name": "放鬆可可",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 7,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 25
   },
   {
     "id": 56,
@@ -816,11 +1408,23 @@
     "base_energy": 4560,
     "icon": "https://www.serebii.net/pokemonsleep/meals/neroli'srestorativetea.png",
     "ingredients": [
-      { "name": "特選蘋果", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" },
-      { "name": "暖暖薑", "count": 11, "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" },
-      { "name": "品鮮蘑菇", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" }
+      {
+        "name": "特選蘋果",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      },
+      {
+        "name": "暖暖薑",
+        "count": 11,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      },
+      {
+        "name": "品鮮蘑菇",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 35
   },
   {
     "id": 57,
@@ -831,10 +1435,18 @@
     "base_energy": 3168,
     "icon": "https://www.serebii.net/pokemonsleep/meals/hustleproteinsmoothie.png",
     "ingredients": [
-      { "name": "萌綠大豆", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" },
-      { "name": "放鬆可可", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" }
+      {
+        "name": "萌綠大豆",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png"
+      },
+      {
+        "name": "放鬆可可",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 21
   },
   {
     "id": 58,
@@ -845,12 +1457,28 @@
     "base_energy": 4920,
     "icon": "https://www.serebii.net/pokemonsleep/meals/lovelykisssmoothie.png",
     "ingredients": [
-      { "name": "特選蘋果", "count": 11, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" },
-      { "name": "哞哞鮮奶", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" },
-      { "name": "放鬆可可", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" },
-      { "name": "甜甜蜜", "count": 7, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" }
+      {
+        "name": "特選蘋果",
+        "count": 11,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      },
+      {
+        "name": "放鬆可可",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png"
+      },
+      {
+        "name": "甜甜蜜",
+        "count": 7,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 35
   },
   {
     "id": 59,
@@ -861,10 +1489,18 @@
     "base_energy": 1930,
     "icon": "https://www.serebii.net/pokemonsleep/meals/luckychantapplepie.png",
     "ingredients": [
-      { "name": "特選蘋果", "count": 12, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" },
-      { "name": "哞哞鮮奶", "count": 4, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" }
+      {
+        "name": "特選蘋果",
+        "count": 12,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 4,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 20
   },
   {
     "id": 60,
@@ -875,12 +1511,28 @@
     "base_energy": 8400,
     "icon": "https://www.serebii.net/pokemonsleep/meals/jigglypuff'sfruityflan.png",
     "ingredients": [
-      { "name": "甜甜蜜", "count": 20, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" },
-      { "name": "特選蛋", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
-      { "name": "哞哞鮮奶", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" },
-      { "name": "特選蘋果", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" }
+      {
+        "name": "甜甜蜜",
+        "count": 20,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      },
+      {
+        "name": "特選蛋",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      },
+      {
+        "name": "特選蘋果",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 48
   },
   {
     "id": 61,
@@ -891,11 +1543,23 @@
     "base_energy": 2972,
     "icon": "https://www.serebii.net/pokemonsleep/meals/bigmalasada.png",
     "ingredients": [
-      { "name": "純粹油", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" },
-      { "name": "哞哞鮮奶", "count": 7, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" },
-      { "name": "甜甜蜜", "count": 6, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" }
+      {
+        "name": "純粹油",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 7,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      },
+      {
+        "name": "甜甜蜜",
+        "count": 6,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 21
   },
   {
     "id": 62,
@@ -906,11 +1570,23 @@
     "base_energy": 5280,
     "icon": "https://www.serebii.net/pokemonsleep/meals/hugepowersoydonuts.png",
     "ingredients": [
-      { "name": "純粹油", "count": 14, "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" },
-      { "name": "萌綠大豆", "count": 13, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" },
-      { "name": "放鬆可可", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" }
+      {
+        "name": "純粹油",
+        "count": 14,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png"
+      },
+      {
+        "name": "萌綠大豆",
+        "count": 13,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png"
+      },
+      {
+        "name": "放鬆可可",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 35
   },
   {
     "id": 63,
@@ -921,12 +1597,28 @@
     "base_energy": 4785,
     "icon": "https://www.serebii.net/pokemonsleep/meals/scaryfacepancakes.png",
     "ingredients": [
-      { "name": "甜甜蜜", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" },
-      { "name": "哞哞鮮奶", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" },
-      { "name": "特選蛋", "count": 6, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
-      { "name": "特選蘋果", "count": 6, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" }
+      {
+        "name": "甜甜蜜",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      },
+      {
+        "name": "特選蛋",
+        "count": 6,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
+      },
+      {
+        "name": "特選蘋果",
+        "count": 6,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 35
   },
   {
     "id": 64,
@@ -937,11 +1629,23 @@
     "base_energy": 4975,
     "icon": "https://www.serebii.net/pokemonsleep/meals/explosionpopcorn.png",
     "ingredients": [
-      { "name": "萌綠玉米", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" },
-      { "name": "純粹油", "count": 14, "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" },
-      { "name": "哞哞鮮奶", "count": 7, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" }
+      {
+        "name": "萌綠玉米",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png"
+      },
+      {
+        "name": "純粹油",
+        "count": 14,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 7,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 35
   },
   {
     "id": 65,
@@ -952,10 +1656,18 @@
     "base_energy": 3100,
     "icon": "https://www.serebii.net/pokemonsleep/meals/petaldancechocolatetart.png",
     "ingredients": [
-      { "name": "特選蘋果", "count": 14, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" },
-      { "name": "放鬆可可", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" }
+      {
+        "name": "特選蘋果",
+        "count": 14,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      },
+      {
+        "name": "放鬆可可",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 21
   },
   {
     "id": 66,
@@ -966,12 +1678,28 @@
     "base_energy": 8460,
     "icon": "https://www.serebii.net/pokemonsleep/meals/teatimecornscones.png",
     "ingredients": [
-      { "name": "特選蘋果", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" },
-      { "name": "暖暖薑", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" },
-      { "name": "萌綠玉米", "count": 12, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" },
-      { "name": "哞哞鮮奶", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" }
+      {
+        "name": "特選蘋果",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      },
+      {
+        "name": "暖暖薑",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      },
+      {
+        "name": "萌綠玉米",
+        "count": 12,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 48
   },
   {
     "id": 67,
@@ -982,12 +1710,28 @@
     "base_energy": 5360,
     "icon": "https://www.serebii.net/pokemonsleep/meals/steadfastgingercookies.png",
     "ingredients": [
-      { "name": "甜甜蜜", "count": 12, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" },
-      { "name": "暖暖薑", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" },
-      { "name": "放鬆可可", "count": 8, "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" },
-      { "name": "特選蛋", "count": 5, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" }
+      {
+        "name": "甜甜蜜",
+        "count": 12,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      },
+      {
+        "name": "暖暖薑",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      },
+      {
+        "name": "放鬆可可",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png"
+      },
+      {
+        "name": "特選蛋",
+        "count": 5,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 35
   },
   {
     "id": 68,
@@ -998,12 +1742,28 @@
     "base_energy": 13834,
     "icon": "https://www.serebii.net/pokemonsleep/meals/flowergiftmacarons.png",
     "ingredients": [
-      { "name": "放鬆可可", "count": 25, "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" },
-      { "name": "特選蛋", "count": 25, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
-      { "name": "甜甜蜜", "count": 20, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" },
-      { "name": "哞哞鮮奶", "count": 17, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" }
+      {
+        "name": "放鬆可可",
+        "count": 25,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png"
+      },
+      {
+        "name": "特選蛋",
+        "count": 25,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
+      },
+      {
+        "name": "甜甜蜜",
+        "count": 20,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 17,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 61
   },
   {
     "id": 69,
@@ -1014,11 +1774,23 @@
     "base_energy": 6300,
     "icon": "https://www.serebii.net/pokemonsleep/meals/earlybirdcoffeejelly.png",
     "ingredients": [
-      { "name": "提神咖啡", "count": 20, "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png" },
-      { "name": "哞哞鮮奶", "count": 13, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" },
-      { "name": "甜甜蜜", "count": 9, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" }
+      {
+        "name": "提神咖啡",
+        "count": 20,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 13,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      },
+      {
+        "name": "甜甜蜜",
+        "count": 9,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 35
   },
   {
     "id": 70,
@@ -1029,12 +1801,28 @@
     "base_energy": 14200,
     "icon": "https://www.serebii.net/pokemonsleep/meals/zingzapspicedcola.png",
     "ingredients": [
-      { "name": "特選蘋果", "count": 26, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" },
-      { "name": "暖暖薑", "count": 24, "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" },
-      { "name": "粗枝大蔥", "count": 21, "icon": "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png" },
-      { "name": "提神咖啡", "count": 16, "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png" }
+      {
+        "name": "特選蘋果",
+        "count": 26,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      },
+      {
+        "name": "暖暖薑",
+        "count": 24,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      },
+      {
+        "name": "粗枝大蔥",
+        "count": 21,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png"
+      },
+      {
+        "name": "提神咖啡",
+        "count": 16,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 61
   },
   {
     "id": 71,
@@ -1045,11 +1833,23 @@
     "base_energy": 6120,
     "icon": "https://www.serebii.net/pokemonsleep/meals/moldbreakercorntiramisu.png",
     "ingredients": [
-      { "name": "提神咖啡", "count": 15, "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png" },
-      { "name": "萌綠玉米", "count": 14, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" },
-      { "name": "哞哞鮮奶", "count": 11, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" }
+      {
+        "name": "提神咖啡",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png"
+      },
+      {
+        "name": "萌綠玉米",
+        "count": 14,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 11,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 35
   },
   {
     "id": 72,
@@ -1060,12 +1860,28 @@
     "base_energy": 19600,
     "icon": "https://www.serebii.net/pokemonsleep/meals/clodsireeclair.png",
     "ingredients": [
-      { "name": "放鬆可可", "count": 32, "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" },
-      { "name": "哞哞鮮奶", "count": 29, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" },
-      { "name": "提神咖啡", "count": 24, "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png" },
-      { "name": "甜甜蜜", "count": 17, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" }
+      {
+        "name": "放鬆可可",
+        "count": 32,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 29,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      },
+      {
+        "name": "提神咖啡",
+        "count": 24,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png"
+      },
+      {
+        "name": "甜甜蜜",
+        "count": 17,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 78
   },
   {
     "id": 73,
@@ -1076,12 +1892,28 @@
     "base_energy": 19800,
     "icon": "https://www.serebii.net/pokemonsleep/meals/scaryfacepancakes2.png",
     "ingredients": [
-      { "name": "甜甜蜜", "count": 32, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" },
-      { "name": "好眠番茄", "count": 29, "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" },
-      { "name": "特選蛋", "count": 24, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
-      { "name": "胖胖南瓜", "count": 18, "icon": "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png" }
+      {
+        "name": "甜甜蜜",
+        "count": 32,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      },
+      {
+        "name": "好眠番茄",
+        "count": 29,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png"
+      },
+      {
+        "name": "特選蛋",
+        "count": 24,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png"
+      },
+      {
+        "name": "胖胖南瓜",
+        "count": 18,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 78
   },
   {
     "id": 74,
@@ -1092,11 +1924,23 @@
     "base_energy": 7600,
     "icon": "https://www.serebii.net/pokemonsleep/meals/leaftornadosmoothie.png",
     "ingredients": [
-      { "name": "光澤酪梨", "count": 18, "icon": "https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png" },
-      { "name": "好眠番茄", "count": 16, "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" },
-      { "name": "哞哞鮮奶", "count": 14, "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" }
+      {
+        "name": "光澤酪梨",
+        "count": 18,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png"
+      },
+      {
+        "name": "好眠番茄",
+        "count": 16,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png"
+      },
+      {
+        "name": "哞哞鮮奶",
+        "count": 14,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 35
   },
   {
     "id": 75,
@@ -1107,12 +1951,28 @@
     "base_energy": 22600,
     "icon": "https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png",
     "ingredients": [
-      { "name": "甜甜蜜", "count": 35, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" },
-      { "name": "萌綠玉米", "count": 32, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" },
-      { "name": "純粹油", "count": 27, "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" },
-      { "name": "放鬆可可", "count": 21, "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" }
+      {
+        "name": "甜甜蜜",
+        "count": 35,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      },
+      {
+        "name": "萌綠玉米",
+        "count": 32,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png"
+      },
+      {
+        "name": "純粹油",
+        "count": 27,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png"
+      },
+      {
+        "name": "放鬆可可",
+        "count": 21,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png"
+      }
     ],
-    "bonus_pct": 33
+    "bonus_pct": 78
   },
   {
     "id": 76,
@@ -1123,11 +1983,23 @@
     "base_energy": 5900,
     "icon": "https://www.serebii.net/pokemonsleep/meals/leaftornadogreensmoothie.png",
     "ingredients": [
-      { "name": "特選蘋果", "count": 18, "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" },
-      { "name": "萌綠大豆", "count": 12, "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" },
-      { "name": "暖暖薑", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" }
+      {
+        "name": "特選蘋果",
+        "count": 18,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png"
+      },
+      {
+        "name": "萌綠大豆",
+        "count": 12,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png"
+      },
+      {
+        "name": "暖暖薑",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      }
     ],
-    "bonus_pct": 27
+    "bonus_pct": 35
   },
   {
     "id": 77,
@@ -1138,9 +2010,17 @@
     "base_energy": 3050,
     "icon": "https://www.serebii.net/pokemonsleep/meals/steadfastgingercookies.png",
     "ingredients": [
-      { "name": "甜甜蜜", "count": 12, "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png" },
-      { "name": "暖暖薑", "count": 10, "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" }
+      {
+        "name": "甜甜蜜",
+        "count": 12,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png"
+      },
+      {
+        "name": "暖暖薑",
+        "count": 10,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      }
     ],
-    "bonus_pct": 23
+    "bonus_pct": 21
   }
 ]

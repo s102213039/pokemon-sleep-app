@@ -68,20 +68,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ─── Bonus % Filter ───────────────────────────────── */
+  /* ─── Bonus % Filter ────────────────────────────────── */
   function initBonusFilter() {
     const bonusOptions = [
       { label: '全部', value: 0 },
-      { label: '≥ 23%', value: 23 },
-      { label: '≥ 27%', value: 27 },
-      { label: '≥ 33%', value: 33 },
-      { label: '≥ 40%', value: 40 },
+      { label: '≥19%', value: 19 },
+      { label: '≥20%', value: 20 },
+      { label: '≥21%', value: 21 },
+      { label: '≥25%', value: 25 },
+      { label: '≥35%', value: 35 },
+      { label: '≥48%', value: 48 },
+      { label: '≥61%', value: 61 },
+      { label: '≥78%', value: 78 },
     ];
 
     bonusFilterContainer.innerHTML = bonusOptions.map(opt => `
       <button class="tag-btn bonus-filter-btn ${opt.value === minBonus ? 'active' : ''}"
               data-bonus="${opt.value}"
-              style="${opt.value >= 33 ? 'border-color:rgba(251,191,36,0.5);' : ''}">
+              style="${opt.value >= 78 ? 'border-color:rgba(251,191,36,0.7);' : opt.value >= 48 ? 'border-color:rgba(167,139,250,0.5);' : ''}">
         ${opt.value === 0 ? '🍽️ ' : getBonusEmoji(opt.value)}${opt.label}
       </button>
     `).join('');
@@ -98,17 +102,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getBonusEmoji(pct) {
-    if (pct >= 40) return '🔥';
-    if (pct >= 33) return '⭐';
-    if (pct >= 27) return '✨';
-    return '💫';
+    if (pct >= 78) return '🏆';
+    if (pct >= 61) return '🔥';
+    if (pct >= 48) return '⭐';
+    if (pct >= 35) return '✨';
+    if (pct >= 25) return '💧';
+    if (pct >= 21) return '💫';
+    if (pct >= 20) return '💦';
+    return '•';
   }
 
   function getBonusBadgeStyle(pct) {
-    if (pct >= 40) return 'background:rgba(239,68,68,0.2);color:#f87171;border:1px solid rgba(239,68,68,0.5);';
-    if (pct >= 33) return 'background:rgba(251,191,36,0.2);color:#fbbf24;border:1px solid rgba(251,191,36,0.5);';
-    if (pct >= 27) return 'background:rgba(167,139,250,0.2);color:#a78bfa;border:1px solid rgba(167,139,250,0.4);';
-    return 'background:rgba(96,165,250,0.15);color:#93c5fd;border:1px solid rgba(96,165,250,0.35);';
+    if (pct >= 78) return 'background:rgba(251,191,36,0.25);color:#fbbf24;border:1px solid rgba(251,191,36,0.7);';
+    if (pct >= 61) return 'background:rgba(239,68,68,0.2);color:#f87171;border:1px solid rgba(239,68,68,0.6);';
+    if (pct >= 48) return 'background:rgba(167,139,250,0.2);color:#c4b5fd;border:1px solid rgba(167,139,250,0.5);';
+    if (pct >= 35) return 'background:rgba(52,211,153,0.15);color:#6ee7b7;border:1px solid rgba(52,211,153,0.4);';
+    if (pct >= 25) return 'background:rgba(56,189,248,0.15);color:#7dd3fc;border:1px solid rgba(56,189,248,0.4);';
+    if (pct >= 21) return 'background:rgba(148,163,184,0.15);color:#cbd5e1;border:1px solid rgba(148,163,184,0.35);';
+    if (pct >= 20) return 'background:rgba(148,163,184,0.1);color:#94a3b8;border:1px solid rgba(148,163,184,0.25);';
+    return 'background:rgba(100,116,139,0.1);color:#64748b;border:1px solid rgba(100,116,139,0.2);';
   }
 
   /* ─── Ingredient Picker ────────────────────────────── */
