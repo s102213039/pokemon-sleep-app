@@ -14,14 +14,29 @@ document.addEventListener('DOMContentLoaded', () => {
   let viewMode        = 'table';
   let minBonus        = 0;
   let minPot          = 0;
-  let recipeLevel     = 1;       // 1-65
+  let recipeLevel     = 1;       // 1-70
   let islandBonus     = 0;       // 0-85 (%)
 
-  /* ─── 等級能量乘數表 (Lv.1-65)
-     公式：每級 +2% 於基礎，即 mult(N) = 1 + (N-1) * 0.02
-     此為遊戲內近似值，可依官方數據更新 */
-  function levelMult(lv) {
-    return 1 + (lv - 1) * 0.02;  // Lv.1→1.00x, Lv.65→2.28x
+  /* ─── 食譜等級加成倉率表（Lv.1-70）
+     資料來源：ポケモンスリープ攻略・検証 Wiki (wikiwiki.jp/poke_sleep)
+     Ver.3.6.0 更新：等級上限 70、最大加成 258% (×3.58)
+     注：此加成為「等級加成」，不包含食材數量加成（bonus_pct）
+  */
+  const LEVEL_BONUS_TABLE = {
+     1:   0,  2:   2,  3:   4,  4:   6,  5:   8,  6:   9,  7:  11,  8:  13,
+     9:  16, 10:  18, 11:  19, 12:  21, 13:  23, 14:  24, 15:  26, 16:  28,
+    17:  30, 18:  31, 19:  33, 20:  35, 21:  37, 22:  40, 23:  42, 24:  45,
+    25:  47, 26:  50, 27:  52, 28:  55, 29:  58, 30:  61, 31:  64, 32:  67,
+    33:  70, 34:  74, 35:  77, 36:  81, 37:  84, 38:  88, 39:  92, 40:  96,
+    41: 100, 42: 104, 43: 108, 44: 113, 45: 117, 46: 122, 47: 127, 48: 132,
+    49: 137, 50: 142, 51: 148, 52: 153, 53: 159, 54: 165, 55: 171, 56: 177,
+    57: 183, 58: 190, 59: 197, 60: 203, 61: 209, 62: 215, 63: 221, 64: 227,
+    65: 234, 66: 239, 67: 243, 68: 248, 69: 252, 70: 258
+  };
+
+  /* 取得指定等級的加成偉率 (百分比) */
+  function getLevelBonus(lv) {
+    return LEVEL_BONUS_TABLE[Math.min(Math.max(lv, 1), 70)] || 0;
   }
 
   /* ─── LocalStorage 鍵值 ─────────────────────────────── */
@@ -85,8 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ─── 初始化滑桿顯示 ─────────────────────────────────── */
   function syncLevelUI() {
     levelSlider.value = recipeLevel;
-    levelBadge.textContent = `Lv. ${recipeLevel}`;
-    updateSliderFill(levelSlider, 1, 65);
+    const bonusPct = getLevelBonus(recipeLevel);
+    levelBadge.textContent = `Lv.${recipeLevel}  +${bonusPct}%`;
+    updateSliderFill(levelSlider, 1, 70);
   }
 
   function syncIslandUI() {
@@ -291,21 +307,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ─── 能量計算 ──────────────────────────────────────── */
-  /**
-   * 最終能量計算公式：
-   *   finalEnergy = base_energy × (1 + bonus_pct/100 + (level-1)×0.02) × (1 + islandBonus/100)
-   *
-   * 說明：
-   *   1. base_energy：食譜原始基礎能量（Lv.1，無任何加成）
-   *   2. bonus_pct：食材加成（固定，依鍋子容量決定）
-   *   3. (level-1)×0.02：食譜等級加成（每升1級約+2%）
-   *   4. (1 + islandBonus/100)：島嶼能量加成（×1.00 ～ ×1.85）
-   */
-  function calcEnergy(base, bonus_pct, level, islandBonusPct) {
-    const lvMultiplier     = 1 + (bonus_pct / 100) + (level - 1) * 0.02;
-    const islandMultiplier = 1 + islandBonusPct / 100;
+
+  /* ─── 能量計算（正確公式）────────────────────────────────
+     來源：wikiwiki.jp/poke_sleep 料理頁面
+     公式：base_energy × (1 + levelBonus/100) × (1 + islandBonus/100)
+     - base_energy：recipes.json 內含食材數量加成的顯示能量
+     - levelBonus ：由 LEVEL_BONUS_TABLE 查表（非線性，官方資料）
+     - islandBonus：玩家島嶼加成 0-85%
+  */
+  function calcEnergy(base, level, islandBonusPct) {
+    const lvMultiplier     = 1 + (getLevelBonus(level) / 100);
+    const islandMultiplier = 1 + (islandBonusPct / 100);
     return Math.round(base * lvMultiplier * islandMultiplier);
   }
+
 
   /* ─── 篩選 + 排序 ───────────────────────────────────── */
   function getFilteredRecipes() {
@@ -331,8 +346,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
       })
       .sort((a, b) => {
-        const eA = calcEnergy(a.base_energy, a.bonus_pct || 19, recipeLevel, islandBonus);
-        const eB = calcEnergy(b.base_energy, b.bonus_pct || 19, recipeLevel, islandBonus);
+        const eA = calcEnergy(a.base_energy, recipeLevel, islandBonus);
+        const eB = calcEnergy(b.base_energy, recipeLevel, islandBonus);
         if (sortOption === 'energy-desc')  return eB - eA;
         if (sortOption === 'energy-asc')   return eA - eB;
         if (sortOption === 'pot-asc')      return a.pot_size - b.pot_size;
@@ -434,8 +449,8 @@ document.addEventListener('DOMContentLoaded', () => {
               const bp         = r.bonus_pct || 19;
               const badgeStyle = getBonusBadgeStyle(bp);
               const emoji      = getBonusEmoji(bp);
-              const finalE     = calcEnergy(r.base_energy, bp, recipeLevel, islandBonus);
-              const baseE      = calcEnergy(r.base_energy, bp, recipeLevel, 0); // 無島嶼時
+              const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus);
+              const baseE      = calcEnergy(r.base_energy, recipeLevel, 0); // 無島嶼時
               return `
               <tr>
                 <td>
@@ -478,7 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const bp         = r.bonus_pct || 19;
           const badgeStyle = getBonusBadgeStyle(bp);
           const emoji      = getBonusEmoji(bp);
-          const finalE     = calcEnergy(r.base_energy, bp, recipeLevel, islandBonus);
+          const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus);
           const islandMult = (1 + islandBonus / 100).toFixed(2);
           return `
           <div class="pokemon-card">
