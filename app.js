@@ -15,55 +15,100 @@ document.addEventListener('DOMContentLoaded', () => {
   const syncBtn = document.getElementById('sync-btn');
   const syncStatus = document.getElementById('sync-status');
 
-  // Sync Button Logic
-  const SYNC_SERVER = 'http://localhost:18765';
+  // ─── GitHub Actions Sync Button ───────────────────────────
+  // Repo info
+  const GH_OWNER    = 's102213039';
+  const GH_REPO     = 'pokemon-sleep-app';
+  const GH_WORKFLOW = 'update-data.yml';
+  const GH_API_BASE = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}`;
+  const GH_PAT_KEY  = 'pksleep_gh_pat';
 
-  async function checkSyncServer() {
-    try {
-      const res = await fetch(`${SYNC_SERVER}/status`, { method: 'GET' });
-      if (res.ok) return true;
-    } catch (e) {}
-    return false;
+  // Load PAT from localStorage
+  let ghPat = localStorage.getItem(GH_PAT_KEY) || '';
+
+  // ── PAT Config Modal ──
+  const syncConfigBtn  = document.getElementById('sync-config-btn');
+  const syncConfigModal = document.getElementById('sync-config-modal');
+  const ghPatInput     = document.getElementById('gh-pat-input');
+  const savePatBtn     = document.getElementById('save-pat-btn');
+  const closeConfigBtn = document.getElementById('close-config-btn');
+
+  if (syncConfigBtn && syncConfigModal) {
+    syncConfigBtn.addEventListener('click', () => {
+      if (ghPatInput) ghPatInput.value = ghPat || '';
+      syncConfigModal.style.display = 'flex';
+    });
+    closeConfigBtn && closeConfigBtn.addEventListener('click', () => {
+      syncConfigModal.style.display = 'none';
+    });
+    savePatBtn && savePatBtn.addEventListener('click', () => {
+      const val = ghPatInput ? ghPatInput.value.trim() : '';
+      if (val) {
+        ghPat = val;
+        localStorage.setItem(GH_PAT_KEY, val);
+        syncConfigModal.style.display = 'none';
+        syncStatus.innerHTML = `<span style="color:#4ade80;">✅ PAT Token 已儲存！現在可以點擊同步資料。</span>`;
+      } else {
+        syncStatus.innerHTML = `<span style="color:#fbbf24;">⚠️ 請輸入有效的 PAT Token</span>`;
+      }
+    });
+    // Close on backdrop click
+    syncConfigModal.addEventListener('click', (e) => {
+      if (e.target === syncConfigModal) syncConfigModal.style.display = 'none';
+    });
   }
 
+  // ── Sync Button (trigger GitHub Actions workflow_dispatch) ──
   if (syncBtn) {
     syncBtn.addEventListener('click', async () => {
-      syncBtn.disabled = true;
-      syncBtn.textContent = '⏳ 檢查同步伺服器...';
-      syncStatus.textContent = '';
-
-      const serverUp = await checkSyncServer();
-
-      if (!serverUp) {
-        syncBtn.disabled = false;
-        syncBtn.textContent = '🔄 同步資料';
+      if (!ghPat) {
         syncStatus.innerHTML = `
-          <span style="color:#fbbf24;">⚠️ 本地同步伺服器未啟動。</span><br>
-          請在終端機執行：<code style="background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;">python sync_server.py</code>
+          <span style="color:#fbbf24;">⚠️ 尚未設定 GitHub PAT Token。</span><br>
+          請先點擊 <strong>⚙️ 設定</strong> 並填入你的 GitHub PAT。
         `;
         return;
       }
 
-      syncBtn.textContent = '⏳ 同步中...';
-      syncStatus.innerHTML = `<span style="color:#38bdf8;">⏳ 同步正在執行，約需 30-60 秒...</span>`;
+      syncBtn.disabled = true;
+      syncBtn.textContent = '⏳ 觸發同步中...';
+      syncStatus.textContent = '';
 
       try {
-        const res = await fetch(`${SYNC_SERVER}/sync`, { method: 'POST' });
-        const data = await res.json();
+        // Trigger GitHub Actions workflow_dispatch
+        const res = await fetch(
+          `${GH_API_BASE}/actions/workflows/${GH_WORKFLOW}/dispatches`,
+          {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/vnd.github+json',
+              'Authorization': `Bearer ${ghPat}`,
+              'X-GitHub-Api-Version': '2022-11-28',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ref: 'main', inputs: { sync_type: 'full' } })
+          }
+        );
 
-        setTimeout(() => {
-          syncStatus.innerHTML = `<span style="color:#4ade80;">✅ ${data.message} 頁面將在 60 秒後更新至 GitHub Pages！</span>`;
-          syncBtn.disabled = false;
-          syncBtn.textContent = '🔄 同步資料';
-
-          // Reload data.json after sync
-          setTimeout(() => {
-            location.reload();
-          }, 65000);
-        }, 500);
-
+        if (res.status === 204) {
+          // 204 = success (no content)
+          syncStatus.innerHTML = `
+            <span style="color:#4ade80;">✅ GitHub Actions 同步已觸發！</span><br>
+            <span style="font-size:12px;color:#94a3b8;">約 60-120 秒後資料更新至 GitHub Pages。
+              <a href="https://github.com/${GH_OWNER}/${GH_REPO}/actions" target="_blank"
+                style="color:#38bdf8;">查看進度 ↗</a>
+            </span>
+          `;
+          // Auto-reload page after 90 seconds
+          setTimeout(() => location.reload(), 90000);
+        } else if (res.status === 401 || res.status === 403) {
+          syncStatus.innerHTML = `<span style="color:#ef4444;">❌ PAT Token 無效或權限不足，請重新設定。</span>`;
+        } else {
+          const body = await res.text();
+          syncStatus.innerHTML = `<span style="color:#fbbf24;">⚠️ 回應 ${res.status}：${body.slice(0, 120)}</span>`;
+        }
       } catch (e) {
-        syncStatus.innerHTML = `<span style="color:#ef4444;">❌ 同步失敗：${e.message}</span>`;
+        syncStatus.innerHTML = `<span style="color:#ef4444;">❌ 網路錯誤：${e.message}</span>`;
+      } finally {
         syncBtn.disabled = false;
         syncBtn.textContent = '🔄 同步資料';
       }

@@ -33,12 +33,34 @@
         </div>
         <a href="recipes.html" class="sync-btn" style="text-decoration:none;">🍲 食譜大全</a>
         <div class="sync-wrapper">
-          <button id="sync-btn" class="sync-btn">🔄 同步資料</button>
+          <button id="sync-btn" class="sync-btn" title="觸發 GitHub Actions 同步最新寶可夢與食譜資料">🔄 同步資料</button>
           <div id="sync-status" class="sync-status"></div>
         </div>
+        <button id="sync-config-btn" class="toggle-btn" title="設定 GitHub PAT Token" style="padding:6px 10px;font-size:12px;">⚙️ 設定</button>
       </div>
     </div>
   </header>
+
+  <!-- GitHub Actions Sync Config Modal -->
+  <div id="sync-config-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+    <div style="background:#1e293b;border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:28px 32px;max-width:480px;width:90%;">
+      <h3 style="font-size:16px;margin-bottom:12px;">⚙️ 同步設定 — GitHub Actions</h3>
+      <p style="font-size:13px;color:#94a3b8;margin-bottom:16px;line-height:1.6;">
+        同步功能透過 <strong>GitHub Actions</strong> 自動更新資料。<br>
+        需要提供一個具有 <code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px;">workflow</code> 權限的 GitHub Personal Access Token。
+      </p>
+      <label style="display:block;font-size:12px;color:#94a3b8;margin-bottom:6px;">GitHub PAT Token（儲存於本地，不會上傳）</label>
+      <input type="password" id="gh-pat-input" placeholder="ghp_xxxxxxxxxxxxxxxxxx"
+        style="width:100%;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:10px 14px;color:#f8fafc;font-size:13px;outline:none;">
+      <div style="margin-top:16px;display:flex;gap:10px;">
+        <button id="save-pat-btn" style="flex:1;padding:10px;background:linear-gradient(135deg,#38bdf8,#818cf8);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;">💾 儲存</button>
+        <button id="close-config-btn" style="flex:1;padding:10px;background:rgba(255,255,255,0.08);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);border-radius:8px;cursor:pointer;">取消</button>
+      </div>
+      <p style="margin-top:12px;font-size:11px;color:#64748b;">
+        💡 <a href="https://github.com/settings/tokens/new?scopes=workflow" target="_blank" style="color:#38bdf8;">點此建立 GitHub PAT</a>（勾選 workflow 權限）
+      </p>
+    </div>
+  </div>
 
   <main>
     <!-- Quick Nav Banner -->
@@ -96,7 +118,8 @@
       Powered by <a href="https://www.serebii.net/" target="_blank">Serebii.net</a>
     </p>
     <p style="margin-top:8px;color:var(--text-muted);font-size:11px;">
-      同步功能需搭配本地同步伺服器：<code style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;">python sync_server.py</code>
+      🔄 同步功能透過 GitHub Actions 執行，點擊「同步資料」後約需 60-120 秒生效。
+      需先在「⚙️ 設定」中填入 GitHub PAT Token。
     </p>
   </footer>
 

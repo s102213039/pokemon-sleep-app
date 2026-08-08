@@ -49,17 +49,17 @@
         </div>
         <div class="sort-box">
           <select id="recipe-sort-select" class="sort-select" aria-label="食譜排序">
-            <option value="energy-desc">食譜基礎能量 ↓</option>
-            <option value="energy-asc">食譜基礎能量 ↑</option>
-            <option value="pot-asc">鍋子容量 (小 ➔ 大)</option>
-            <option value="pot-desc">鍋子容量 (大 ➔ 小)</option>
-            <option value="bonus-desc">食材加成 (高 ➔ 低)</option>
+            <option value="energy-desc">食譜能量 ↓（高→低）</option>
+            <option value="energy-asc">食譜能量 ↑（低→高）</option>
+            <option value="pot-asc">鍋子容量 ↑（小→大）</option>
+            <option value="pot-desc">鍋子容量 ↓（大→小）</option>
+            <option value="bonus-desc">食材加成 ↓（高→低）</option>
             <option value="name-asc">名稱排序</option>
           </select>
         </div>
       </div>
 
-      <!-- 第二行：類似 raenonx 的 inline filter bar -->
+      <!-- 第二行：raenonx 風格 filter bar -->
       <div class="raenonx-filter-bar">
 
         <!-- 料理種類 -->
@@ -86,23 +86,6 @@
           </div>
         </div>
 
-        <!-- 食譜等級 -->
-        <div class="rf-group">
-          <span class="rf-label">食譜等級</span>
-          <div class="rf-select-wrap">
-            <select id="recipe-level-select" class="rf-select">
-              <option value="1">Lv. 1</option>
-              <option value="10">Lv. 10</option>
-              <option value="20">Lv. 20</option>
-              <option value="30">Lv. 30</option>
-              <option value="40">Lv. 40</option>
-              <option value="50">Lv. 50</option>
-              <option value="55">Lv. 55</option>
-              <option value="60">Lv. 60</option>
-            </select>
-          </div>
-        </div>
-
         <!-- 最低鍋子容量 -->
         <div class="rf-group">
           <span class="rf-label">最低鍋子容量</span>
@@ -121,7 +104,48 @@
 
       </div>
 
-      <!-- 第三行：食材勾選器 -->
+      <!-- 第三行：食譜等級滑桿 + 島嶼加成滑桿 -->
+      <div class="raenonx-filter-bar" style="gap:24px; flex-wrap:wrap;">
+
+        <!-- 食譜等級滑桿 -->
+        <div class="rf-group-vertical" style="flex:1; min-width:200px;">
+          <div class="slider-label-row">
+            <span class="rf-label">📖 食譜等級</span>
+            <span id="level-badge" class="slider-value-badge">Lv. 1</span>
+          </div>
+          <div class="slider-row">
+            <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">Lv.1</span>
+            <input type="range" id="recipe-level-slider" class="rf-slider"
+              min="1" max="65" step="1" value="1"
+              aria-label="食譜等級">
+            <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">Lv.65</span>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;">
+            每升1級能量約 +2%，共65級
+          </div>
+        </div>
+
+        <!-- 島嶼加成滑桿 -->
+        <div class="rf-group-vertical" style="flex:1; min-width:200px;">
+          <div class="slider-label-row">
+            <span class="rf-label">🏝️ 島嶼能量加成</span>
+            <span id="island-bonus-badge" class="slider-value-badge island-bonus-badge">+0% (×1.00)</span>
+          </div>
+          <div class="slider-row">
+            <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">0%</span>
+            <input type="range" id="island-bonus-slider" class="rf-slider island-slider"
+              min="0" max="85" step="5" value="0"
+              aria-label="島嶼能量加成">
+            <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">85%</span>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;">
+            0%→85%，每格 +5%（即 ×1.00 ～ ×1.85 倍）
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 第四行：食材勾選器 -->
       <div class="filter-tags-group" style="margin-top:0;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
           <span class="filter-label">🛒 食材篩選器</span>
@@ -144,7 +168,7 @@
     <div class="stats-bar">
       <span id="recipe-count-badge" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">載入食譜中...</span>
       <div style="font-size:12px;color:var(--text-muted);">
-        💡 食材加成為每道食譜的<strong>固定數值</strong>，食譜等級越高加成越大（僅乘算於必要食材能量）
+        💡 食材加成為每道食譜的<strong>固定數值</strong>，等級越高加成越大；島嶼加成額外乘算於最終能量
       </div>
     </div>
 
