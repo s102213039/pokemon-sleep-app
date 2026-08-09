@@ -145,10 +145,10 @@
 
       </div>
 
-      <!-- 第四行：食材勾選器 -->
+      <!-- 第四行：包含食材篩選器 -->
       <div class="filter-tags-group" style="margin-top:0;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <span class="filter-label">🛒 食材篩選器</span>
+          <span class="filter-label">🟢 包含食材篩選</span>
           <div style="display:flex;gap:12px;align-items:center;font-size:12px;color:var(--text-muted);">
             <label style="cursor:pointer;display:flex;align-items:center;gap:5px;">
               <input type="radio" name="ingredient-match-mode" value="any" checked> 含任一
@@ -156,10 +156,28 @@
             <label style="cursor:pointer;display:flex;align-items:center;gap:5px;">
               <input type="radio" name="ingredient-match-mode" value="all"> 全部符合
             </label>
-            <button id="clear-ingredients-btn" class="tag-btn" style="padding:3px 10px;font-size:12px;">清除</button>
+            <button id="clear-ingredients-btn" class="tag-btn" style="padding:3px 10px;font-size:12px;">全部清除</button>
           </div>
         </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">
+          點擊食材圖示，只顯示<strong>包含</strong>該食材的食譜
+        </div>
         <div id="ingredient-picker-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+      </div>
+
+      <!-- 第五行：排除食材篩選器 -->
+      <div class="filter-tags-group" style="margin-top:0;border-top:1px solid rgba(255,255,255,0.06);padding-top:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span class="filter-label">🔴 排除食材篩選</span>
+          <div style="display:flex;gap:12px;align-items:center;font-size:12px;color:var(--text-muted);">
+            <span style="font-size:11px;color:rgba(239,68,68,0.7);">點選食材後，含該食材的食譜將被隱藏</span>
+            <button id="clear-excluded-btn" class="tag-btn" style="padding:3px 10px;font-size:12px;background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);">清除排除</button>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">
+          點擊食材圖示，<strong>隱藏</strong>包含該食材的食譜（與「包含食材」互斥）
+        </div>
+        <div id="excluded-ingredient-picker-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
       </div>
 
     </section>

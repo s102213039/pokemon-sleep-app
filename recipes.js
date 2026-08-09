@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ─── 狀態變數 ──────────────────────────────────────── */
   let allRecipes      = [];
   let selectedCategory = 'ALL';
-  let selectedIngredients = new Set();
+  let selectedIngredients = new Set();   // 包含食材篩選
+  let excludedIngredients = new Set();   // 排除食材篩選
   let matchMode       = 'any';
   let currentSearch   = '';
   let sortOption      = 'energy-desc';
@@ -55,6 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
       matchMode        = saved.matchMode || 'any';
       const savedIngs  = saved.selectedIngredients || [];
       selectedIngredients = new Set(savedIngs);
+      const savedExcl  = saved.excludedIngredients || [];
+      excludedIngredients = new Set(savedExcl);
     } catch (e) {}
   }
 
@@ -69,7 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sortOption,
         viewMode,
         matchMode,
-        selectedIngredients: [...selectedIngredients]
+        selectedIngredients: [...selectedIngredients],
+        excludedIngredients:  [...excludedIngredients],
       }));
     } catch (e) {}
   }
@@ -217,6 +221,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const ingNames = Array.from(ingMap.keys()).sort();
+
+    // ── 建立「包含食材」標籤 ──
     ingredientPickerContainer.innerHTML = ingNames.map(name => {
       const icon   = ingMap.get(name);
       const active = selectedIngredients.has(name) ? 'active' : '';
@@ -229,6 +235,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const btn = e.target.closest('.ing-picker-btn');
       if (btn) {
         const name = btn.getAttribute('data-name');
+        // 若該食材在「排除」裡，先移除（兩個篩選器互斥）
+        if (excludedIngredients.has(name)) {
+          excludedIngredients.delete(name);
+          const exBtn = excludedPickerContainer.querySelector(`[data-name="${CSS.escape(name)}"]`);
+          if (exBtn) exBtn.classList.remove('active');
+        }
         if (selectedIngredients.has(name)) {
           selectedIngredients.delete(name);
           btn.classList.remove('active');
@@ -241,15 +253,68 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    // ── 建立「排除食材」標籤 ──
+    const excludedPickerContainer = document.getElementById('excluded-ingredient-picker-tags');
+    if (excludedPickerContainer) {
+      excludedPickerContainer.innerHTML = ingNames.map(name => {
+        const icon   = ingMap.get(name);
+        const active = excludedIngredients.has(name) ? 'active-exclude' : '';
+        return `<button class="ing-picker-btn ${active}" data-name="${name}" title="${name}">
+          ${icon ? `<img src="${icon}" class="ing-picker-icon" alt="${name}">` : ''}
+        </button>`;
+      }).join('');
+
+      excludedPickerContainer.addEventListener('click', e => {
+        const btn = e.target.closest('.ing-picker-btn');
+        if (btn) {
+          const name = btn.getAttribute('data-name');
+          // 若該食材在「包含」裡，先移除（互斥）
+          if (selectedIngredients.has(name)) {
+            selectedIngredients.delete(name);
+            const incBtn = ingredientPickerContainer.querySelector(`[data-name="${CSS.escape(name)}"]`);
+            if (incBtn) incBtn.classList.remove('active');
+          }
+          if (excludedIngredients.has(name)) {
+            excludedIngredients.delete(name);
+            btn.classList.remove('active-exclude');
+          } else {
+            excludedIngredients.add(name);
+            btn.classList.add('active-exclude');
+          }
+          savePrefs();
+          render();
+        }
+      });
+    }
+
+    // ── 清除按鈕（全部清除：包含 + 排除） ──
     if (clearIngredientsBtn) {
       clearIngredientsBtn.addEventListener('click', () => {
         selectedIngredients.clear();
+        excludedIngredients.clear();
         ingredientPickerContainer.querySelectorAll('.ing-picker-btn').forEach(b => b.classList.remove('active'));
+        if (excludedPickerContainer) {
+          excludedPickerContainer.querySelectorAll('.ing-picker-btn').forEach(b => b.classList.remove('active-exclude'));
+        }
         savePrefs();
         render();
       });
     }
 
+    // ── 清除排除按鈕（只清除排除篩選器） ──
+    const clearExcludedBtn = document.getElementById('clear-excluded-btn');
+    if (clearExcludedBtn) {
+      clearExcludedBtn.addEventListener('click', () => {
+        excludedIngredients.clear();
+        if (excludedPickerContainer) {
+          excludedPickerContainer.querySelectorAll('.ing-picker-btn').forEach(b => b.classList.remove('active-exclude'));
+        }
+        savePrefs();
+        render();
+      });
+    }
+
+    // ── 配對模式 radio ──
     document.querySelectorAll('input[name="ingredient-match-mode"]').forEach(radio => {
       if (radio.value === matchMode) radio.checked = true;
       radio.addEventListener('change', e => {
@@ -259,6 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
 
   /* ─── 視圖切換 ──────────────────────────────────────── */
   function initViewToggle() {
@@ -335,13 +401,21 @@ document.addEventListener('DOMContentLoaded', () => {
           const ingMatch = recipe.ingredients.some(ing => ing.name.toLowerCase().includes(currentSearch));
           if (!nameCN.includes(currentSearch) && !nameEN.includes(currentSearch) && !ingMatch) return false;
         }
+        // 包含食材筌選器
         if (selectedIngredients.size > 0) {
           const recipeIngNames = recipe.ingredients.map(i => i.name);
           if (matchMode === 'all') {
-            if (!recipeIngNames.every(name => selectedIngredients.has(name))) return false;
+            // 「全部符合」：選定的每一對食材都必須在食譜中出現
+            if (![...selectedIngredients].every(name => recipeIngNames.includes(name))) return false;
           } else {
+            // 「含任一」：食譜中至少有一种食材在選定集合裡
             if (!recipeIngNames.some(name => selectedIngredients.has(name))) return false;
           }
+        }
+        // 排除食材筌選器：食譜不能包含任何被排除的食材
+        if (excludedIngredients.size > 0) {
+          const recipeIngNames = recipe.ingredients.map(i => i.name);
+          if (recipeIngNames.some(name => excludedIngredients.has(name))) return false;
         }
         return true;
       })

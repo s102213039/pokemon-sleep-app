@@ -1008,6 +1008,34 @@ footer {
   box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
 }
 
+/* 排除食材：紅色高亮 */
+.ing-picker-btn.active-exclude {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: #ef4444;
+  color: #f87171;
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+  position: relative;
+}
+
+.ing-picker-btn.active-exclude::after {
+  content: '✕';
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 14px;
+  height: 14px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 900;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
 .ing-picker-icon {
   width: 26px;
   height: 26px;
