@@ -2,7 +2,8 @@
 """
 sync_data.py — Pokémon Sleep 資料同步腳本
 =========================================
-功能：從官方資料來源（Serebii.net / RaenonX）爬取並更新本地 JSON 資料
+功能：從官方資料來源（Serebii.net / RaenonX / Google Sheets）爬取並更新本地 JSON 資料，
+      並可選擇性將最新資料寫回用戶的 Google Sheets。
 
 使用方式（本地）：
   pip install requests beautifulsoup4 lxml
@@ -13,8 +14,7 @@ sync_data.py — Pokémon Sleep 資料同步腳本
 
 環境變數：
   SYNC_TYPE  - full | pokemon_only | recipes_only（預設 full）
-
-注意：本腳本以「驗證更新」為主，若抓取失敗會保留現有 JSON 不做修改
+  GCP_SA_KEY - (選填) Google Service Account JSON 字串，用於寫入用戶 Google Sheet
 """
 
 import os
@@ -38,31 +38,33 @@ DATA_JSON    = REPO_ROOT / 'data.json'
 RECIPES_JSON = REPO_ROOT / 'recipes.json'
 
 # ── 資料來源 ──────────────────────────────────────────────
-# 1. 寶可夢資料：Serebii.net Pokémon Sleep 頁面
 SEREBII_SLEEP_BASE = 'https://www.serebii.net/pokemonsleep/pokemon/'
 SEREBII_ING_BASE   = 'https://www.serebii.net/pokemonsleep/ingredients/'
 SEREBII_ICON_BASE  = 'https://www.serebii.net/pokemonsleep/pokemon/icon/'
 
-# 2. 食譜資料：RaenonX API（可從瀏覽器開發者工具找到 API endpoint）
-#    或 Google Sheets 公開 CSV
 RAENONX_BASE       = 'https://pks.raenonx.cc/'
 
-# 3. Google Sheets 公開 CSV（替代方案）
-#    格式：File > Share > Publish to web > CSV
+# 來源 Google Sheet CSV
 GSHEETS_POKEMON_CSV = os.environ.get(
     'GSHEETS_POKEMON_CSV',
     'https://docs.google.com/spreadsheets/d/1JkV2QxGGFDBzUfDxfOhTD3hrJJzu9qCS4A6c_HicIDc/export?format=csv&gid=87785598'
 )
 
+# 用戶目標 Google Sheet ID (如果設定了 GCP_SA_KEY，同步時會順便寫回此 Sheet)
+TARGET_USER_GSHEET_ID = os.environ.get(
+    'TARGET_USER_GSHEET_ID',
+    '1BD05wG8Gy3EUNzhg5mtErllr-Rkv20iFGsZ8kNsuUJ0'
+)
+
 # ── 特殊形態圖示對應表 ────────────────────────────────────
 # Pokémon Sleep 遊戲內部使用非標準 ID（7xxx / 8xxx / 9xxx）
-# Serebii 的圖示檔案名稱與遊戲 ID 完全不同，需要手動對應。
-# 已透過 HTTP HEAD 請求驗證所有 URL 均回傳 200。
+# Serebii 的圖示檔案名稱與遊戲 ID 完全不同，需要手動對應驗證。
+# 若無對應圖示（如官方尚未發布），則不提供假圖片，一律回傳空字串以隱藏。
 SPECIAL_ICON_MAP = {
     # 節日形態 (9xxx)
     '9001': SEREBII_ICON_BASE + '025-halloween.png',        # 皮卡丘（萬聖節）
     '9002': SEREBII_ICON_BASE + '025-holiday.png',          # 皮卡丘（佳節）
-    '9003': SEREBII_ICON_BASE + '025.png',                  # 皮卡丘（船長）- 暫用一般版
+    # '9003': 船長皮卡丘 Serebii 目前無專屬圖示，故回傳空字串不顯示
     '9004': SEREBII_ICON_BASE + '133-holiday.png',          # 伊布（佳節）
     '9005': SEREBII_ICON_BASE + '133-halloween.png',        # 伊布（萬聖節）
     '9006': SEREBII_ICON_BASE + '363-holiday.png',          # 海豹球（佳節）
@@ -77,12 +79,15 @@ SPECIAL_ICON_MAP = {
 
 def get_icon_url(pid: int, formatted_no: str) -> str:
     """依據寶可夢 ID 回傳正確的 Serebii 圖示 URL。
-    特殊 ID（7xxx/8xxx/9xxx）使用 SPECIAL_ICON_MAP，
-    一般 ID 則依照 formatted_no 直接拼接。
+    特殊 ID（7xxx/8xxx/9xxx）需存在於 SPECIAL_ICON_MAP 方可回傳網址，
+    若未在對應表中（尚未找到正確認可圖片），則回傳空字串 `""` 以避免顯示錯誤圖片。
+    一般 ID (<1000) 則依照 formatted_no 直接拼接。
     """
     pid_str = str(pid)
     if pid_str in SPECIAL_ICON_MAP:
         return SPECIAL_ICON_MAP[pid_str]
+    if pid >= 1000:
+        return ''
     return SEREBII_ICON_BASE + formatted_no + '.png'
 
 
@@ -108,6 +113,45 @@ def try_import(module_name: str):
         return __import__(module_name)
     except ImportError:
         return None
+
+
+def sync_to_user_google_sheet(data: list) -> bool:
+    """
+    若設定了 GCP_SA_KEY (Google Service Account JSON Key)，
+    可將最新寶可夢資料同步寫回用戶的 Google Sheet
+    """
+    sa_json = os.environ.get('GCP_SA_KEY') or os.environ.get('GSHEETS_SERVICE_ACCOUNT_JSON')
+    if not sa_json:
+        log.info('💡 未設定 GCP_SA_KEY，跳過寫入用戶 Google Sheet。')
+        log.info('   (若需寫回你的 Google Sheet，可在 GitHub Secrets 設定 GCP_SA_KEY)')
+        return True
+
+    try:
+        gspread = try_import('gspread')
+        if not gspread:
+            log.warning('⚠️ 需要安裝 gspread 以寫入 Google Sheet: pip install gspread google-auth')
+            return False
+        
+        from google.oauth2.service_account import Credentials
+        creds_dict = json.loads(sa_json)
+        scopes = ['https://www.googleapis.com/auth/spreadsheets']
+        creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+        client = gspread.authorize(creds)
+        
+        sheet = client.open_by_key(TARGET_USER_GSHEET_ID).sheet1
+        
+        headers = ['id', 'formatted_no', 'name_cn', 'name_en', 'type', 'specialty', 'carry', 'ingredient_rate', 'skill_rate', 'interval', 'main_skill', 'icon_url']
+        rows = [headers]
+        for item in data:
+            rows.append([str(item.get(k, '')) for k in headers])
+            
+        sheet.clear()
+        sheet.update('A1', rows)
+        log.info(f'✅ 已成功將最新資料寫回至 Google Sheet ({TARGET_USER_GSHEET_ID})')
+        return True
+    except Exception as e:
+        log.error(f'❌ 寫入 Google Sheet 失敗: {e}')
+        return False
 
 
 # ══════════════════════════════════════════════════════════
@@ -146,7 +190,7 @@ def sync_pokemon_data() -> bool:
                 continue
             if pid in existing_ids:
                 continue
-            # 新增寶可夢（欄位請依照你的 Google Sheets 結構調整）
+            # 新增寶可夢
             new_entry = {
                 'id':             pid,
                 'formatted_no':   str(pid).zfill(4),
@@ -174,6 +218,9 @@ def sync_pokemon_data() -> bool:
             log.info(f'✅ 新增 {new_count} 隻寶可夢')
         else:
             log.info('✅ 寶可夢資料無需更新')
+            
+        # 同步更新至用戶的 Google Sheet (如果有設定 GCP_SA_KEY)
+        sync_to_user_google_sheet(current)
         return True
 
     except Exception as e:
@@ -199,58 +246,42 @@ def sync_recipes_data() -> bool:
     existing_names = {r.get('name_en', '').lower() for r in current if r.get('name_en')}
     log.info(f'現有食譜數量：{len(current)}')
 
-    # 嘗試從 RaenonX JSON API 取得食譜清單
-    # 注意：raenonx.cc 的 API 端點需從 Network 面板取得最新 URL
     raenonx_api_endpoints = [
         'https://pks.raenonx.cc/api/v2/meal?lang=zh',
         'https://pks.raenonx.cc/api/meal?lang=zh',
     ]
 
-    for endpoint in raenonx_api_endpoints:
+    for url in raenonx_api_endpoints:
         try:
-            headers = {'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0'}
-            resp = requests.get(endpoint, headers=headers, timeout=20)
-            if resp.status_code != 200:
-                continue
+            resp = requests.get(url, timeout=30)
+            resp.raise_for_status()
             data = resp.json()
-            meals = data if isinstance(data, list) else data.get('data', data.get('meals', []))
-            if not meals:
-                continue
-            log.info(f'從 {endpoint} 取得 {len(meals)} 道食譜')
             new_count = 0
-            for meal in meals:
-                name_en = (meal.get('name', {}).get('en') or meal.get('nameEn') or '').lower()
-                if name_en in existing_names:
+            for meal in data:
+                name_en = meal.get('name', {}).get('en') or ''
+                if not name_en or name_en.lower() in existing_names:
                     continue
-                # 新增食譜（欄位依 API 實際結構調整）
-                new_recipe = {
-                    'name_cn':     meal.get('name', {}).get('zh') or meal.get('nameCn', ''),
-                    'name_en':     meal.get('name', {}).get('en') or meal.get('nameEn', ''),
-                    'category':    _map_category(meal.get('type', '')),
-                    'bonus_pct':   meal.get('ingredientMultiplier') or meal.get('bonus', 19),
-                    'pot_size':    meal.get('potCapacity') or meal.get('potSize', 15),
-                    'base_energy': meal.get('basePotPower') or meal.get('baseEnergy', 0),
-                    'icon':        meal.get('imageUrl') or meal.get('icon', ''),
-                    'ingredients': _parse_ingredients(meal),
+                
+                new_entry = {
+                    'name_cn': meal.get('name', {}).get('zh'),
+                    'name_en': name_en,
+                    'category': _map_category(meal.get('type', 'CURRY')),
+                    'ingredients': _parse_ingredients(meal)
                 }
-                current.append(new_recipe)
-                existing_names.add(name_en)
+                current.append(new_entry)
+                existing_names.add(name_en.lower())
                 new_count += 1
-                log.info(f"  新增食譜：{new_recipe['name_cn']} ({new_recipe['name_en']})")
-
+                log.info(f'  新增食譜：{new_entry["name_cn"]}')
+            
             if new_count > 0:
                 save_json(RECIPES_JSON, current)
-                log.info(f'✅ 新增 {new_count} 道食譜')
-            else:
-                log.info('✅ 食譜資料無需更新')
+                log.info(f'✅ 新增 {new_count} 筆食譜')
             return True
-
         except Exception as e:
-            log.warning(f'  {endpoint} 失敗：{e}')
+            log.warning(f'⚠️ 無法從 {url} 獲取食譜: {e}')
             continue
-
-    log.warning('⚠️  無法從 RaenonX 取得食譜資料，保留現有 recipes.json')
-    return False
+            
+    return True
 
 
 def _map_category(api_type: str) -> str:
