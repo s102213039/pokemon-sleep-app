@@ -41,6 +41,7 @@ RECIPES_JSON = REPO_ROOT / 'recipes.json'
 # 1. 寶可夢資料：Serebii.net Pokémon Sleep 頁面
 SEREBII_SLEEP_BASE = 'https://www.serebii.net/pokemonsleep/pokemon/'
 SEREBII_ING_BASE   = 'https://www.serebii.net/pokemonsleep/ingredients/'
+SEREBII_ICON_BASE  = 'https://www.serebii.net/pokemonsleep/pokemon/icon/'
 
 # 2. 食譜資料：RaenonX API（可從瀏覽器開發者工具找到 API endpoint）
 #    或 Google Sheets 公開 CSV
@@ -52,6 +53,37 @@ GSHEETS_POKEMON_CSV = os.environ.get(
     'GSHEETS_POKEMON_CSV',
     'https://docs.google.com/spreadsheets/d/1JkV2QxGGFDBzUfDxfOhTD3hrJJzu9qCS4A6c_HicIDc/export?format=csv&gid=87785598'
 )
+
+# ── 特殊形態圖示對應表 ────────────────────────────────────
+# Pokémon Sleep 遊戲內部使用非標準 ID（7xxx / 8xxx / 9xxx）
+# Serebii 的圖示檔案名稱與遊戲 ID 完全不同，需要手動對應。
+# 已透過 HTTP HEAD 請求驗證所有 URL 均回傳 200。
+SPECIAL_ICON_MAP = {
+    # 節日形態 (9xxx)
+    '9001': SEREBII_ICON_BASE + '025-halloween.png',        # 皮卡丘（萬聖節）
+    '9002': SEREBII_ICON_BASE + '025-holiday.png',          # 皮卡丘（佳節）
+    '9003': SEREBII_ICON_BASE + '025.png',                  # 皮卡丘（船長）- 暫用一般版
+    '9004': SEREBII_ICON_BASE + '133-holiday.png',          # 伊布（佳節）
+    '9005': SEREBII_ICON_BASE + '133-halloween.png',        # 伊布（萬聖節）
+    '9006': SEREBII_ICON_BASE + '363-holiday.png',          # 海豹球（佳節）
+    # 地區形態 (7xxx)
+    '7006': SEREBII_ICON_BASE + '037-alolanvulpix.png',     # 六尾（阿羅拉）
+    '7007': SEREBII_ICON_BASE + '038-alolanninetales.png',  # 九尾（阿羅拉）
+    '7054': SEREBII_ICON_BASE + '194-paldeanwooper.png',    # 烏波（帕底亞）
+    # 特殊形態 (8xxx)
+    '8001': SEREBII_ICON_BASE + '849-toxtricitylowkeyform.png',  # 顫弦蠑螈（低調）
+}
+
+
+def get_icon_url(pid: int, formatted_no: str) -> str:
+    """依據寶可夢 ID 回傳正確的 Serebii 圖示 URL。
+    特殊 ID（7xxx/8xxx/9xxx）使用 SPECIAL_ICON_MAP，
+    一般 ID 則依照 formatted_no 直接拼接。
+    """
+    pid_str = str(pid)
+    if pid_str in SPECIAL_ICON_MAP:
+        return SPECIAL_ICON_MAP[pid_str]
+    return SEREBII_ICON_BASE + formatted_no + '.png'
 
 
 def load_json(path: Path) -> list:
@@ -128,7 +160,7 @@ def sync_pokemon_data() -> bool:
                 'skill_rate':     row.get('skill_rate', ''),
                 'interval':       row.get('interval', ''),
                 'main_skill':     row.get('main_skill', ''),
-                'icon_url':       f'https://www.serebii.net/pokemonsleep/pokemon/icon/{str(pid).zfill(4)}.png',
+                'icon_url':       get_icon_url(pid, str(pid).zfill(4) if pid < 1000 else str(pid)),
                 'ingredients':    []  # 需另行補充食材資料
             }
             current.append(new_entry)
