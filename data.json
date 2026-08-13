@@ -960,7 +960,7 @@
     "sleep_type": "安然入睡",
     "carry": "21",
     "ingredient_rate": "16.80%",
-    "skill_rate": "3.60%",
+    "skill_rate": "4.00%",
     "interval": "01:06:40",
     "main_skill": "揮指",
     "evo_req": "睡 50 小時 + 20 糖",
@@ -3342,6 +3342,25 @@
         "l60": "8"
       }
     ]
+  },
+  {
+    "id": "150",
+    "formatted_no": "150",
+    "name_cn": "超夢",
+    "name_en": "Mewtwo",
+    "name_jp": "ミュウツー",
+    "type": "超能力",
+    "specialty": "技能",
+    "sleep_type": "安然入睡",
+    "carry": "",
+    "ingredient_rate": "",
+    "skill_rate": "",
+    "interval": "",
+    "main_skill": "精神擊破（樹果領域）",
+    "evo_req": "",
+    "is_final": "〇",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/150.png",
+    "ingredients": []
   },
   {
     "id": "151",
@@ -7099,7 +7118,7 @@
     "ingredient_rate": "15.00%",
     "skill_rate": "5.10%",
     "interval": "00:43:20",
-    "main_skill": "夢之碎片獲取S",
+    "main_skill": "波導彈（夢之碎片獲取S）",
     "evo_req": "睡 150 小時 + 06:00 ~ 18:00 + 80 糖",
     "is_final": "〇",
     "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/448.png",
@@ -7644,17 +7663,36 @@
     "name_en": "Hawlucha",
     "name_jp": "ルチャブル",
     "type": "飛行",
-    "specialty": "",
+    "specialty": "技能",
     "sleep_type": "深深入眠",
-    "carry": "",
-    "ingredient_rate": "",
-    "skill_rate": "",
-    "interval": "",
-    "main_skill": "",
+    "carry": "21",
+    "ingredient_rate": "15.20%",
+    "skill_rate": "5.20%",
+    "interval": "00:40:00",
+    "main_skill": "食材精選S",
     "evo_req": "",
     "is_final": "〇",
     "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/701.png",
-    "ingredients": []
+    "ingredients": [
+      {
+        "name": "火辣香草",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      {
+        "name": "暖暖薑",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png",
+        "l30": "3",
+        "l60": "4"
+      },
+      {
+        "name": "豆製肉",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png",
+        "l60": "5"
+      }
+    ]
   },
   {
     "id": "702",
