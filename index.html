@@ -22,16 +22,12 @@
           <div class="brand-subtitle">機率、食材與屬性完整線上檢索</div>
         </div>
       </div>
-      <nav class="nav-tabs">
-        <a href="index.html" class="nav-tab active">⚡ 寶可夢圖鑑</a>
-        <a href="recipes.html" class="nav-tab">🍲 料理食譜大全</a>
-      </nav>
       <div class="header-actions">
         <div class="view-mode-toggle">
           <button id="toggle-grid" class="toggle-btn">🎴 卡片</button>
           <button id="toggle-table" class="toggle-btn active">📊 表格</button>
+          <a href="recipes.html" class="toggle-btn" style="text-decoration:none;">🍲 食譜大全</a>
         </div>
-        <a href="recipes.html" class="sync-btn" style="text-decoration:none;">🍲 食譜大全</a>
         <div class="sync-wrapper">
           <button id="sync-btn" class="sync-btn" title="觸發 GitHub Actions 同步最新寶可夢與食譜資料">🔄 同步資料</button>
           <div id="sync-status" class="sync-status"></div>
@@ -63,15 +59,6 @@
   </div>
 
   <main>
-    <!-- Quick Nav Banner -->
-    <div class="quick-nav-banner">
-      <div class="quick-nav-text">
-        <span class="quick-nav-icon">🍲</span>
-        <span>想要查找全料理食譜、食材需求與現有食材勾選比對嗎？</span>
-      </div>
-      <a href="recipes.html" class="quick-nav-btn">切換至 🍲 料理食譜大全 ➔</a>
-    </div>
-
     <!-- Controls -->
     <section class="controls-container" aria-label="Search and Filter Controls">
       <div class="search-filter-row">
@@ -81,6 +68,7 @@
             placeholder="搜尋寶可夢名稱 (中/英/日) 或 No. 編號..."
             aria-label="搜尋寶可夢">
         </div>
+        <select id="sort-select" style="display:none;"></select>
       </div>
       <div class="filter-tags-group">
         <span class="filter-label">屬性：</span>
