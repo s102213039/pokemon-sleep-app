@@ -16,17 +16,18 @@ import urllib.request
 import csv
 import io
 
-sys.path.append(r'c:\Users\chiu\.gemini\antigravity\scratch\google_sheets_sync')
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
-WEBAPP_DIR = r'c:\Users\chiu\.gemini\antigravity\scratch\pokemon_sleep_webapp'
-SYNC_SCRIPT = r'c:\Users\chiu\.gemini\antigravity\scratch\google_sheets_sync\pokemon_sleep_sync.py'
-DATA_BUILDER = r'C:\Users\chiu\.gemini\antigravity\brain\0f55996c-1979-483f-b841-b662ec74dce3\scratch\build_webapp_data.py'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+WEBAPP_DIR = BASE_DIR
+SYNC_SCRIPT = os.path.join(BASE_DIR, 'pokemon_sleep_sync.py')
+DATA_BUILDER = os.path.join(BASE_DIR, 'build_webapp_data.py')
+
 # Token loaded from environment variable GH_PAT or local config file (never hardcoded)
 GH_TOKEN = os.environ.get('GH_PAT', '')
 if not GH_TOKEN:
-    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.gh_token')
+    config_path = os.path.join(BASE_DIR, '.gh_token')
     if os.path.exists(config_path):
         with open(config_path, 'r') as f:
             GH_TOKEN = f.read().strip()
@@ -41,7 +42,7 @@ def step1_sync_google_sheet():
     log("Step 1: Syncing reference → target Google Sheet...")
     res = subprocess.run(
         [sys.executable, SYNC_SCRIPT],
-        cwd=r'c:\Users\chiu\.gemini\antigravity\scratch\google_sheets_sync',
+        cwd=BASE_DIR,
         capture_output=False
     )
     if res.returncode == 0:
@@ -53,7 +54,7 @@ def step2_rebuild_webapp_data():
     log("Step 2: Rebuilding webapp data.json from reference sheet...")
     res = subprocess.run(
         [sys.executable, DATA_BUILDER],
-        cwd=r'c:\Users\chiu\.gemini\antigravity\scratch\google_sheets_sync',
+        cwd=BASE_DIR,
         capture_output=False
     )
     if res.returncode == 0:

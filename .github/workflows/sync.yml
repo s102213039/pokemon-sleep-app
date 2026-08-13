@@ -1,0 +1,52 @@
+name: Google Sheets Auto Sync & Data Update
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib
+
+      - name: Write Secret Credentials & Token
+        env:
+          G_CREDENTIALS: ${{ secrets.G_CREDENTIALS }}
+          G_TOKEN: ${{ secrets.G_TOKEN }}
+        run: |
+          echo "$G_CREDENTIALS" > credentials.json
+          echo "$G_TOKEN" > token.json
+
+      - name: Run Full Sync
+        run: |
+          python sync_all.py
+
+      - name: Clean secrets
+        if: always()
+        run: |
+          rm -f credentials.json token.json
+
+      - name: Commit & Push updated data.json
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          if git diff --staged --quiet; then
+            echo "No changes in data.json"
+          else
+            git commit -m "Automated Sync: Update Pokémon Sleep data"
+            git push
+          fi
