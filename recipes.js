@@ -86,8 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearIngredientsBtn  = document.getElementById('clear-ingredients-btn');
   const countBadge           = document.getElementById('recipe-count-badge');
   const contentArea          = document.getElementById('recipe-content-area');
-  const toggleGridBtn        = document.getElementById('toggle-grid');
-  const toggleTableBtn       = document.getElementById('toggle-table');
+  const toggleGridBtn        = document.getElementById('recipe-toggle-grid') || document.getElementById('toggle-grid');
+  const toggleTableBtn       = document.getElementById('recipe-toggle-table') || document.getElementById('toggle-table');
   const bonusSelect          = document.getElementById('bonus-filter-select');
   const potSelect            = document.getElementById('pot-filter-select');
   const levelSlider          = document.getElementById('recipe-level-slider');
@@ -97,12 +97,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ─── 滑桿顏色 fill 更新 ────────────────────────────── */
   function updateSliderFill(slider, min, max) {
+    if (!slider) return;
     const pct = ((slider.value - min) / (max - min)) * 100;
     slider.style.setProperty('--slider-fill', pct + '%');
   }
 
   /* ─── 初始化滑桿顯示 ─────────────────────────────────── */
   function syncLevelUI() {
+    if (!levelSlider || !levelBadge) return;
     levelSlider.value = recipeLevel;
     const bonusPct = getLevelBonus(recipeLevel);
     levelBadge.textContent = `Lv.${recipeLevel}  +${bonusPct}%`;
@@ -110,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function syncIslandUI() {
+    if (!islandSlider || !islandBadge) return;
     islandSlider.value = islandBonus;
     const mult = (1 + islandBonus / 100).toFixed(2);
     islandBadge.textContent = `+${islandBonus}% (×${mult})`;
@@ -134,11 +137,14 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .catch(err => {
       console.error('Error loading recipes.json:', err);
-      contentArea.innerHTML = `<div style="text-align:center;padding:40px;color:#ef4444;">載入 recipes.json 失敗，請確認檔案存在。</div>`;
+      if (contentArea) {
+        contentArea.innerHTML = `<div style="text-align:center;padding:40px;color:#ef4444;">載入 recipes.json 失敗，請確認檔案存在。</div>`;
+      }
     });
 
   /* ─── 料理種類 Filter ────────────────────────────────── */
   function initCategoryFilters() {
+    if (!categoryContainer) return;
     const categories = ['ALL', '咖哩', '沙拉', '甜點'];
     const catEmoji   = { ALL:'🍽️', '咖哩':'🍛', '沙拉':'🥗', '甜點':'🍰' };
     const catCounts  = {};
@@ -149,16 +155,15 @@ document.addEventListener('DOMContentLoaded', () => {
     categoryContainer.innerHTML = categories.map(cat => {
       const count = cat === 'ALL' ? allRecipes.length : catCounts[cat];
       const active = cat === selectedCategory ? 'active' : '';
-      return `<button class="tag-btn ${active}" data-category="${cat}">
-        ${catEmoji[cat]} ${cat === 'ALL' ? '全部' : cat}
-        <span style="margin-left:3px;opacity:0.65;font-size:11px;">(${count})</span>
+      return `<button class="tag-btn ${active}" data-cat="${cat}">
+        ${catEmoji[cat]} ${cat === 'ALL' ? '全部種類' : cat} (${count})
       </button>`;
     }).join('');
 
     categoryContainer.addEventListener('click', e => {
       const btn = e.target.closest('.tag-btn');
-      if (btn && btn.hasAttribute('data-category')) {
-        selectedCategory = btn.getAttribute('data-category');
+      if (btn) {
+        selectedCategory = btn.getAttribute('data-cat');
         categoryContainer.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         savePrefs();
@@ -167,32 +172,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ─── Select Filters (bonus / pot) ─────────────────── */
+  /* ─── Dropdown 選擇器 ───────────────────────────────── */
   function initSelectFilters() {
     if (bonusSelect) {
-      bonusSelect.value = String(minBonus);
+      bonusSelect.value = minBonus;
       bonusSelect.addEventListener('change', () => {
-        minBonus = parseInt(bonusSelect.value, 10);
+        minBonus = Number(bonusSelect.value);
         savePrefs();
         render();
       });
     }
+
     if (potSelect) {
-      potSelect.value = String(minPot);
+      potSelect.value = minPot;
       potSelect.addEventListener('change', () => {
-        minPot = parseInt(potSelect.value, 10);
+        minPot = Number(potSelect.value);
         savePrefs();
         render();
       });
-    }
-    if (sortSelect) {
-      sortSelect.value = sortOption;
     }
   }
 
-  /* ─── 等級 + 島嶼加成 滑桿 ──────────────────────────── */
+  /* ─── 滑桿 ───────────────────────────────────────────── */
   function initSliders() {
-    // 等級滑桿
+    if (!levelSlider || !islandSlider) return;
+
     syncLevelUI();
     levelSlider.addEventListener('input', () => {
       recipeLevel = parseInt(levelSlider.value, 10);
@@ -201,7 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
       render();
     });
 
-    // 島嶼加成滑桿
     syncIslandUI();
     islandSlider.addEventListener('input', () => {
       islandBonus = parseInt(islandSlider.value, 10);
@@ -213,6 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ─── 食材選擇器 ─────────────────────────────────────── */
   function initIngredientPicker() {
+    if (!ingredientPickerContainer) return;
     const ingMap = new Map();
     allRecipes.forEach(r => {
       r.ingredients.forEach(ing => {
@@ -222,7 +226,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const ingNames = Array.from(ingMap.keys()).sort();
 
-    // ── 建立「包含食材」標籤 ──
     ingredientPickerContainer.innerHTML = ingNames.map(name => {
       const icon   = ingMap.get(name);
       const active = selectedIngredients.has(name) ? 'active' : '';
@@ -235,10 +238,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const btn = e.target.closest('.ing-picker-btn');
       if (btn) {
         const name = btn.getAttribute('data-name');
-        // 若該食材在「排除」裡，先移除（兩個篩選器互斥）
         if (excludedIngredients.has(name)) {
           excludedIngredients.delete(name);
-          const exBtn = excludedPickerContainer.querySelector(`[data-name="${CSS.escape(name)}"]`);
+          const exBtn = excludedPickerContainer && excludedPickerContainer.querySelector(`[data-name="${CSS.escape(name)}"]`);
           if (exBtn) exBtn.classList.remove('active');
         }
         if (selectedIngredients.has(name)) {
@@ -253,7 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // ── 建立「排除食材」標籤 ──
     const excludedPickerContainer = document.getElementById('excluded-ingredient-picker-tags');
     if (excludedPickerContainer) {
       excludedPickerContainer.innerHTML = ingNames.map(name => {
@@ -268,7 +269,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const btn = e.target.closest('.ing-picker-btn');
         if (btn) {
           const name = btn.getAttribute('data-name');
-          // 若該食材在「包含」裡，先移除（互斥）
           if (selectedIngredients.has(name)) {
             selectedIngredients.delete(name);
             const incBtn = ingredientPickerContainer.querySelector(`[data-name="${CSS.escape(name)}"]`);
@@ -287,7 +287,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // ── 清除按鈕（全部清除：包含 + 排除） ──
     if (clearIngredientsBtn) {
       clearIngredientsBtn.addEventListener('click', () => {
         selectedIngredients.clear();
@@ -301,7 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // ── 清除排除按鈕（只清除排除篩選器） ──
     const clearExcludedBtn = document.getElementById('clear-excluded-btn');
     if (clearExcludedBtn) {
       clearExcludedBtn.addEventListener('click', () => {
@@ -314,7 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // ── 配對模式 radio ──
     document.querySelectorAll('input[name="ingredient-match-mode"]').forEach(radio => {
       if (radio.value === matchMode) radio.checked = true;
       radio.addEventListener('change', e => {
@@ -324,7 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
-
 
   /* ─── 視圖切換 ──────────────────────────────────────── */
   function initViewToggle() {
@@ -373,20 +369,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ─── 能量計算 ──────────────────────────────────────── */
-
-  /* ─── 能量計算（正確公式）────────────────────────────────
-     來源：wikiwiki.jp/poke_sleep 料理頁面
-     公式：base_energy × (1 + levelBonus/100) × (1 + islandBonus/100)
-     - base_energy：recipes.json 內含食材數量加成的顯示能量
-     - levelBonus ：由 LEVEL_BONUS_TABLE 查表（非線性，官方資料）
-     - islandBonus：玩家島嶼加成 0-85%
-  */
   function calcEnergy(base, level, islandBonusPct) {
     const lvMultiplier     = 1 + (getLevelBonus(level) / 100);
     const islandMultiplier = 1 + (islandBonusPct / 100);
     return Math.round(base * lvMultiplier * islandMultiplier);
   }
-
 
   /* ─── 篩選 + 排序 ───────────────────────────────────── */
   function getFilteredRecipes() {
@@ -401,18 +388,14 @@ document.addEventListener('DOMContentLoaded', () => {
           const ingMatch = recipe.ingredients.some(ing => ing.name.toLowerCase().includes(currentSearch));
           if (!nameCN.includes(currentSearch) && !nameEN.includes(currentSearch) && !ingMatch) return false;
         }
-        // 包含食材筌選器
         if (selectedIngredients.size > 0) {
           const recipeIngNames = recipe.ingredients.map(i => i.name);
           if (matchMode === 'all') {
-            // 「全部符合」：選定的每一對食材都必須在食譜中出現
             if (![...selectedIngredients].every(name => recipeIngNames.includes(name))) return false;
           } else {
-            // 「含任一」：食譜中至少有一种食材在選定集合裡
             if (!recipeIngNames.some(name => selectedIngredients.has(name))) return false;
           }
         }
-        // 排除食材筌選器：食譜不能包含任何被排除的食材
         if (excludedIngredients.size > 0) {
           const recipeIngNames = recipe.ingredients.map(i => i.name);
           if (recipeIngNames.some(name => excludedIngredients.has(name))) return false;
@@ -453,7 +436,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return 'background:rgba(100,116,139,0.1);color:#64748b;border:1px solid rgba(100,116,139,0.2);';
   }
 
-  /* ─── 食材顯示（圖示+數量，inline） ────────────────── */
   function renderIngRow(ingredients) {
     return `<div class="recipe-ing-row">${
       ingredients.map(ing => `
@@ -465,8 +447,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }</div>`;
   }
 
-  /* ─── Render ──────────────────────────────────────── */
   function render() {
+    if (!contentArea || !countBadge) return;
     const filtered    = getFilteredRecipes();
     const isFiltered  = filtered.length < allRecipes.length;
 
@@ -499,7 +481,6 @@ document.addEventListener('DOMContentLoaded', () => {
     else renderGrid(filtered);
   }
 
-  /* ─── 表格視圖 ──────────────────────────────────────── */
   function renderTable(recipes) {
     contentArea.innerHTML = `
       <div class="table-container">
@@ -524,7 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
               const badgeStyle = getBonusBadgeStyle(bp);
               const emoji      = getBonusEmoji(bp);
               const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus);
-              const baseE      = calcEnergy(r.base_energy, recipeLevel, 0); // 無島嶼時
+              const baseE      = calcEnergy(r.base_energy, recipeLevel, 0);
               return `
               <tr>
                 <td>
@@ -559,7 +540,6 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  /* ─── 卡片視圖 ──────────────────────────────────────── */
   function renderGrid(recipes) {
     contentArea.innerHTML = `
       <div class="pokemon-grid">

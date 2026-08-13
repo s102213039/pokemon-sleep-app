@@ -30,10 +30,6 @@
       </div>
 
       <div class="header-actions">
-        <div class="view-mode-toggle">
-          <button id="toggle-grid" class="toggle-btn">🎴 卡片</button>
-          <button id="toggle-table" class="toggle-btn active">📊 表格</button>
-        </div>
         <div class="sync-wrapper">
           <button id="sync-btn" class="sync-btn" title="觸發 GitHub Actions 同步最新寶可夢與食譜資料">🔄 同步資料</button>
           <div id="sync-status" class="sync-status"></div>
@@ -76,6 +72,11 @@
               placeholder="搜尋寶可夢名稱 (中/英/日) 或 No. 編號..."
               aria-label="搜尋寶可夢">
           </div>
+          <!-- 頁面內容裡面的 卡片/表格 切換按鈕 -->
+          <div class="view-mode-toggle">
+            <button id="toggle-grid" class="toggle-btn">🎴 卡片</button>
+            <button id="toggle-table" class="toggle-btn active">📊 表格</button>
+          </div>
           <select id="sort-select" style="display:none;"></select>
         </div>
         <div class="filter-tags-group">
@@ -111,13 +112,18 @@
     <div id="panel-recipes" class="view-panel" style="display:none;">
       <!-- Controls -->
       <section class="controls-container" aria-label="Recipe Search and Filter Controls">
-        <!-- 第一行：搜尋 + 排序 -->
+        <!-- 第一行：搜尋 + 頁面內容 卡片/表格 切換 + 排序 -->
         <div class="search-filter-row">
           <div class="search-box">
             <span class="search-icon">🔍</span>
             <input type="text" id="recipe-search-input" class="search-input"
               placeholder="搜尋食譜名稱 (中/英) 或食材關鍵字..."
               aria-label="搜尋食譜">
+          </div>
+          <!-- 頁面內容裡面的 卡片/表格 切換按鈕 -->
+          <div class="view-mode-toggle">
+            <button id="recipe-toggle-grid" class="toggle-btn">🎴 卡片</button>
+            <button id="recipe-toggle-table" class="toggle-btn active">📊 表格</button>
           </div>
           <div class="sort-box">
             <select id="recipe-sort-select" class="sort-select" aria-label="食譜排序">
@@ -273,7 +279,7 @@
     </p>
   </footer>
 
-  <script src="app.js?v=20260813_03"></script>
-  <script src="recipes.js?v=20260813_03"></script>
+  <script src="app.js?v=20260813_04"></script>
+  <script src="recipes.js?v=20260813_04"></script>
 </body>
 </html>
