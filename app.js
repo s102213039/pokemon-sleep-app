@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Repo info
   const GH_OWNER    = 's102213039';
   const GH_REPO     = 'pokemon-sleep-app';
-  const GH_WORKFLOW = 'update-data.yml';
+  const GH_WORKFLOW = 'sync.yml';
   const GH_API_BASE = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}`;
   const GH_PAT_KEY  = 'pksleep_gh_pat';
 
