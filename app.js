@@ -115,10 +115,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Load data.json (use same-origin path)
-  const dataPath = window.location.protocol === 'file:' ? 'data.json' : 'data.json';
-  fetch(dataPath)
-    .then(res => res.json())
+  // Load data.json
+  fetch('data.json')
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
     .then(data => {
       allPokemons = data;
       initFilters();
@@ -126,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .catch(err => {
       console.error('Error loading data.json:', err);
-      contentArea.innerHTML = `<div style="text-align:center; padding: 40px; color: #ef4444;">Failed to load data.json. Make sure the file exists.</div>`;
+      contentArea.innerHTML = `<div style="text-align:center; padding: 40px; color: #ef4444;">載入 data.json 失敗：${err.message}</div>`;
     });
 
   function initFilters() {
@@ -210,14 +212,121 @@ document.addEventListener('DOMContentLoaded', () => {
     else renderTable(filtered);
   }
 
+  function getIconUrl(p) {
+    return p.icon_url || `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png`;
+  }
 
+  function ingQtyBadges(ing, idx) {
+    if (!ing) return '';
+    const qtys = [];
+    if (idx === 0) {
+      if (ing.l1)  qtys.push(ing.l1);
+      if (ing.l30) qtys.push(ing.l30);
+      if (ing.l60) qtys.push(ing.l60);
+    } else if (idx === 1) {
+      if (ing.l30) qtys.push(ing.l30);
+      if (ing.l60) qtys.push(ing.l60);
+    } else {
+      if (ing.l60) qtys.push(ing.l60);
+    }
+    if (!qtys.length) return `<span class="ing-name">${ing.name || ''}</span>`;
+    return `<div class="ing-wrapper"><span class="ing-name">${ing.name}</span> <span class="ing-qty-group">${qtys.map(q => `<span class="ing-qty">${q}</span>`).join('<span class="ing-arrow">→</span>')}</span></div>`;
+  }
+
+  function renderGrid(data) {
+    contentArea.innerHTML = `
+      <div class="pokemon-grid">
+        ${data.map(p => `
+          <div class="pokemon-card">
+            <div class="card-header">
+              <img class="pokemon-icon"
+                src="${getIconUrl(p)}"
+                alt="${p.name_cn}"
+                loading="lazy"
+                onerror="this.onerror=null;this.style.display='none';">
+              <div class="card-title-group">
+                <div class="pokemon-no">No.${p.formatted_no}</div>
+                <div class="pokemon-name">${p.name_cn}</div>
+                <div class="pokemon-name-en">${p.name_en || ''}</div>
+                <span class="type-badge" style="background-color: var(--type-${p.type}, #64748b);">${p.type || '一般'}</span>
+              </div>
+            </div>
+            <div class="card-stats">
+              <div class="stat-item">
+                <span class="stat-label">得意</span>
+                <span class="stat-value">${p.specialty || '--'}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">持有</span>
+                <span class="stat-value">${p.carry || '--'}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">食材率</span>
+                <span class="stat-value">${p.ingredient_rate || '--'}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">技能率</span>
+                <span class="stat-value">${p.skill_rate || '--'}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">間隔</span>
+                <span class="stat-value">${p.interval || '--'}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">主技能</span>
+                <span class="stat-value" style="font-size:10px;">${p.main_skill || '--'}</span>
+              </div>
+            </div>
+            <div class="ingredient-list">
+              ${p.ingredients ? p.ingredients.map((ing, i) => ing.name ? `
+                <div class="ingredient-row">
+                  ${ing.icon ? `<img class="ing-icon" src="${ing.icon}" alt="${ing.name}" loading="lazy" title="${ing.name}" onerror="this.style.display='none';">` : ''}
+                  ${ingQtyBadges(ing, i)}
+                </div>
+              ` : '').join('') : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderTable(data) {
+    contentArea.innerHTML = `
+      <div class="table-container">
+        <table class="pokemon-table">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>圖示</th>
+              <th>寶可夢</th>
+              <th>屬性</th>
+              <th>得意</th>
+              <th>持有</th>
+              <th>食材 ①</th>
+              <th>食材 ②</th>
+              <th>食材 ③</th>
+              <th>食材率</th>
+              <th>技能率</th>
+              <th>幫忙間隔</th>
+              <th>主技能</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data.map(p => `
+              <tr>
+                <td style="font-weight:700;color:var(--accent-color);font-family:monospace;">${p.formatted_no}</td>
+                <td>
+                  <img src="${getIconUrl(p)}" width="40" height="40" alt="${p.name_cn}" loading="lazy"
+                    onerror="this.style.display='none';">
+                </td>
                 <td style="font-weight:700;">${p.name_cn}<br><small style="color:var(--text-muted)">${p.name_en || ''}</small></td>
                 <td><span class="type-badge" style="background-color:var(--type-${p.type}, #64748b);">${p.type || '一般'}</span></td>
                 <td>${p.specialty || '--'}</td>
                 <td>${p.carry || '--'}</td>
-                <td>${p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${p.ingredients[0].name}" loading="lazy" title="${p.ingredients[0].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[0],0)}</div>` : '--'}</td>
-                <td>${p.ingredients[1] ? `<div class="ing-cell">${p.ingredients[1].icon ? `<img class="ing-icon" src="${p.ingredients[1].icon}" alt="${p.ingredients[1].name}" loading="lazy" title="${p.ingredients[1].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[1],1)}</div>` : '--'}</td>
-                <td>${p.ingredients[2] ? `<div class="ing-cell">${p.ingredients[2].icon ? `<img class="ing-icon" src="${p.ingredients[2].icon}" alt="${p.ingredients[2].name}" loading="lazy" title="${p.ingredients[2].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[2],2)}</div>` : '--'}</td>
+                <td>${p.ingredients && p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${p.ingredients[0].name}" loading="lazy" title="${p.ingredients[0].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[0],0)}</div>` : '--'}</td>
+                <td>${p.ingredients && p.ingredients[1] ? `<div class="ing-cell">${p.ingredients[1].icon ? `<img class="ing-icon" src="${p.ingredients[1].icon}" alt="${p.ingredients[1].name}" loading="lazy" title="${p.ingredients[1].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[1],1)}</div>` : '--'}</td>
+                <td>${p.ingredients && p.ingredients[2] ? `<div class="ing-cell">${p.ingredients[2].icon ? `<img class="ing-icon" src="${p.ingredients[2].icon}" alt="${p.ingredients[2].name}" loading="lazy" title="${p.ingredients[2].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[2],2)}</div>` : '--'}</td>
                 <td style="font-weight:700;">${p.ingredient_rate || '--'}</td>
                 <td>${p.skill_rate || '--'}</td>
                 <td>${p.interval || '--'}</td>
