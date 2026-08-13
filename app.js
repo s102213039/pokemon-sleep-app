@@ -156,32 +156,93 @@ if (typeof document !== 'undefined') {
           ghPat = val;
           localStorage.setItem(GH_PAT_KEY, val);
           syncConfigModal.style.display = 'none';
-          syncStatus.innerHTML = `<span style="color:#4ade80;">✅ PAT Token 已儲存！現在可以點擊同步資料。</span>`;
+          if (syncStatus) syncStatus.innerHTML = `<span style="color:#4ade80;">✅ PAT Token 已儲存！現在可以點擊同步資料。</span>`;
         } else {
-          syncStatus.innerHTML = `<span style="color:#fbbf24;">⚠️ 請輸入有效的 PAT Token</span>`;
+          if (syncStatus) syncStatus.innerHTML = `<span style="color:#fbbf24;">⚠️ 請輸入有效的 PAT Token</span>`;
         }
       });
       syncConfigModal.addEventListener('click', (e) => {
         if (e.target === syncConfigModal) syncConfigModal.style.display = 'none';
       });
+    }
 
+    if (syncBtn) {
+      syncBtn.addEventListener('click', async () => {
+        if (!ghPat) {
+          if (syncStatus) {
+            syncStatus.innerHTML = `
+              <span style="color:#fbbf24;">⚠️ 尚未設定 GitHub PAT Token。</span><br>
+              請先點擊 <strong>⚙️ 設定</strong> 並填入你的 GitHub PAT。
+            `;
+          }
+          return;
+        }
+
+        syncBtn.disabled = true;
+        syncBtn.textContent = '⏳ 觸發同步中...';
+        if (syncStatus) syncStatus.textContent = '';
+
+        try {
+          const res = await fetch(
+            `${GH_API_BASE}/actions/workflows/${GH_WORKFLOW}/dispatches`,
+            {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/vnd.github+json',
+                'Authorization': `Bearer ${ghPat}`,
+                'X-GitHub-Api-Version': '2022-11-28',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ ref: 'main' })
+            }
+          );
+
+          if (res.status === 204) {
+            if (syncStatus) {
+              syncStatus.innerHTML = `
+                <span style="color:#4ade80;">✅ GitHub Actions 同步已觸發！</span><br>
+                <span style="font-size:12px;color:#94a3b8;">約 60-120 秒後資料更新至 GitHub Pages。
+                  <a href="https://github.com/${GH_OWNER}/${GH_REPO}/actions" target="_blank"
+                    style="color:#38bdf8;">查看進度 ↗</a>
+                </span>
+              `;
+            }
+            setTimeout(() => location.reload(), 90000);
+          } else if (res.status === 401 || res.status === 403) {
+            if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">❌ PAT Token 無效或權限不足，請重新設定。</span>`;
+          } else {
+            const body = await res.text();
+            if (syncStatus) syncStatus.innerHTML = `<span style="color:#fbbf24;">⚠️ 回應 ${res.status}：${body.slice(0, 120)}</span>`;
+          }
+        } catch (e) {
+          if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">❌ 網路錯誤：${e.message}</span>`;
+        } finally {
+          syncBtn.disabled = false;
+          syncBtn.textContent = '🔄 同步資料';
+        }
+      });
+    }
+
+    function initSpaTabs() {
+      const tabPokemon = document.getElementById('tab-pokemon');
       const tabRecipes = document.getElementById('tab-recipes');
       const panelPokemon = document.getElementById('panel-pokemon');
       const panelRecipes = document.getElementById('panel-recipes');
 
+      if (!tabPokemon || !tabRecipes || !panelPokemon || !panelRecipes) return;
+
       function switchMainTab(target) {
-        if (!panelPokemon || !panelRecipes) return;
         if (target === 'recipes') {
-          tabPokemon && tabPokemon.classList.remove('active');
-          tabRecipes && tabRecipes.classList.add('active');
+          tabPokemon.classList.remove('active');
+          tabRecipes.classList.add('active');
           panelPokemon.style.display = 'none';
           panelRecipes.style.display = 'block';
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#recipes');
           }
         } else {
-          tabRecipes && tabRecipes.classList.remove('active');
-          tabPokemon && tabPokemon.classList.add('active');
+          tabRecipes.classList.remove('active');
+          tabPokemon.classList.add('active');
           panelRecipes.style.display = 'none';
           panelPokemon.style.display = 'block';
           if (window.history && window.history.replaceState) {
@@ -190,8 +251,8 @@ if (typeof document !== 'undefined') {
         }
       }
 
-      tabPokemon && tabPokemon.addEventListener('click', () => switchMainTab('pokemon'));
-      tabRecipes && tabRecipes.addEventListener('click', () => switchMainTab('recipes'));
+      tabPokemon.addEventListener('click', () => switchMainTab('pokemon'));
+      tabRecipes.addEventListener('click', () => switchMainTab('recipes'));
 
       if (window.location.hash === '#recipes') {
         switchMainTab('recipes');
@@ -213,10 +274,11 @@ if (typeof document !== 'undefined') {
       })
       .catch(err => {
         console.error('Error loading data.json:', err);
-        contentArea.innerHTML = `<div style="text-align:center; padding: 40px; color: #ef4444;">載入 data.json 失敗：${err.message}</div>`;
+        if (contentArea) contentArea.innerHTML = `<div style="text-align:center; padding: 40px; color: #ef4444;">載入 data.json 失敗：${err.message}</div>`;
       });
 
     function initFilters() {
+      if (!typeFilterContainer || !specialtyFilterContainer) return;
       const types = ['ALL', ...new Set(allPokemons.map(p => p.type).filter(Boolean))];
       const specialties = ['ALL', ...new Set(allPokemons.map(p => p.specialty).filter(Boolean))];
 
@@ -246,24 +308,30 @@ if (typeof document !== 'undefined') {
         }
       });
 
-      searchInput.addEventListener('input', (e) => {
-        currentSearch = e.target.value.trim().toLowerCase();
-        renderUI();
-      });
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          currentSearch = e.target.value.trim().toLowerCase();
+          renderUI();
+        });
+      }
 
-      toggleGridBtn.addEventListener('click', () => {
-        viewMode = 'grid';
-        toggleGridBtn.classList.add('active');
-        toggleTableBtn.classList.remove('active');
-        renderUI();
-      });
+      if (toggleGridBtn) {
+        toggleGridBtn.addEventListener('click', () => {
+          viewMode = 'grid';
+          toggleGridBtn.classList.add('active');
+          if (toggleTableBtn) toggleTableBtn.classList.remove('active');
+          renderUI();
+        });
+      }
 
-      toggleTableBtn.addEventListener('click', () => {
-        viewMode = 'table';
-        toggleTableBtn.classList.add('active');
-        toggleGridBtn.classList.remove('active');
-        renderUI();
-      });
+      if (toggleTableBtn) {
+        toggleTableBtn.addEventListener('click', () => {
+          viewMode = 'table';
+          toggleTableBtn.classList.add('active');
+          if (toggleGridBtn) toggleGridBtn.classList.remove('active');
+          renderUI();
+        });
+      }
     }
 
     function filterData() {
@@ -285,8 +353,9 @@ if (typeof document !== 'undefined') {
     }
 
     function renderUI() {
+      if (!contentArea) return;
       const filtered = filterData();
-      countBadge.textContent = `共 ${filtered.length} 隻寶可夢`;
+      if (countBadge) countBadge.textContent = `共 ${filtered.length} 隻寶可夢`;
 
       if (filtered.length === 0) {
         contentArea.innerHTML = `<div style="text-align:center; padding: 60px; color: var(--text-muted); font-size: 16px;">查無符合條件的寶可夢</div>`;
