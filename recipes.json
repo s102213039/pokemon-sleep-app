@@ -1919,5 +1919,67 @@
         "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png"
       }
     ]
+  },
+  {
+    "name_cn": "萌綠咖哩麵包",
+    "name_en": "Greengrass Curry Bread",
+    "category": "咖哩",
+    "pot_size": 63,
+    "base_energy": 10945,
+    "bonus_pct": 48,
+    "icon": "https://www.serebii.net/pokemonsleep/meals/greengrasscurrybread.png",
+    "ingredients": [
+      {
+        "name": "生薑",
+        "count": 20,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      },
+      {
+        "name": "火辣香草",
+        "count": 20,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png"
+      },
+      {
+        "name": "萌綠大豆",
+        "count": 8,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png"
+      },
+      {
+        "name": "純油",
+        "count": 15,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png"
+      }
+    ]
+  },
+  {
+    "name_cn": "彈跳咖哩烏龍麵",
+    "name_en": "Bounce Curry Udon",
+    "category": "咖哩",
+    "pot_size": 112,
+    "base_energy": 25539,
+    "bonus_pct": 78,
+    "icon": "https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png",
+    "ingredients": [
+      {
+        "name": "生薑",
+        "count": 39,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png"
+      },
+      {
+        "name": "品鮮蘑菇",
+        "count": 31,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png"
+      },
+      {
+        "name": "火辣香草",
+        "count": 22,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png"
+      },
+      {
+        "name": "豆製肉",
+        "count": 20,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png"
+      }
+    ]
   }
 ]

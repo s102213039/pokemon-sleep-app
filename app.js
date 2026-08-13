@@ -164,63 +164,7 @@ if (typeof document !== 'undefined') {
       syncConfigModal.addEventListener('click', (e) => {
         if (e.target === syncConfigModal) syncConfigModal.style.display = 'none';
       });
-    }
 
-    if (syncBtn) {
-      syncBtn.addEventListener('click', async () => {
-        if (!ghPat) {
-          syncStatus.innerHTML = `
-            <span style="color:#fbbf24;">⚠️ 尚未設定 GitHub PAT Token。</span><br>
-            請先點擊 <strong>⚙️ 設定</strong> 並填入你的 GitHub PAT。
-          `;
-          return;
-        }
-
-        syncBtn.disabled = true;
-        syncBtn.textContent = '⏳ 觸發同步中...';
-        syncStatus.textContent = '';
-
-        try {
-          const res = await fetch(
-            `${GH_API_BASE}/actions/workflows/${GH_WORKFLOW}/dispatches`,
-            {
-              method: 'POST',
-              headers: {
-                'Accept': 'application/vnd.github+json',
-                'Authorization': `Bearer ${ghPat}`,
-                'X-GitHub-Api-Version': '2022-11-28',
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ ref: 'main', inputs: { sync_type: 'full' } })
-            }
-          );
-
-          if (res.status === 204) {
-            syncStatus.innerHTML = `
-              <span style="color:#4ade80;">✅ GitHub Actions 同步已觸發！</span><br>
-              <span style="font-size:12px;color:#94a3b8;">約 60-120 秒後資料更新至 GitHub Pages。
-                <a href="https://github.com/${GH_OWNER}/${GH_REPO}/actions" target="_blank"
-                  style="color:#38bdf8;">查看進度 ↗</a>
-              </span>
-            `;
-            setTimeout(() => location.reload(), 90000);
-          } else if (res.status === 401 || res.status === 403) {
-            syncStatus.innerHTML = `<span style="color:#ef4444;">❌ PAT Token 無效或權限不足，請重新設定。</span>`;
-          } else {
-            const body = await res.text();
-            syncStatus.innerHTML = `<span style="color:#fbbf24;">⚠️ 回應 ${res.status}：${body.slice(0, 120)}</span>`;
-          }
-        } catch (e) {
-          syncStatus.innerHTML = `<span style="color:#ef4444;">❌ 網路錯誤：${e.message}</span>`;
-        } finally {
-          syncBtn.disabled = false;
-          syncBtn.textContent = '🔄 同步資料';
-        }
-      });
-    }
-
-    function initSpaTabs() {
-      const tabPokemon = document.getElementById('tab-pokemon');
       const tabRecipes = document.getElementById('tab-recipes');
       const panelPokemon = document.getElementById('panel-pokemon');
       const panelRecipes = document.getElementById('panel-recipes');

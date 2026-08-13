@@ -4,7 +4,7 @@ Pokemon Sleep 全同步腳本 sync_all.py
 執行後會自動：
 1. 從參考表抓取最新數據
 2. 寫入目標 Google Sheet (1BD05wG8Gy3EUNzhg5mtErllr-Rkv20iFGsZ8kNsuUJ0)
-3. 重新產生 webapp/data.json
+3. 重新產生 webapp/data.json 與 recipes.json
 4. 推送到 GitHub Pages (s102213039.github.io/pokemon-sleep-app)
 """
 import sys
@@ -23,6 +23,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 WEBAPP_DIR = BASE_DIR
 SYNC_SCRIPT = os.path.join(BASE_DIR, 'pokemon_sleep_sync.py')
 DATA_BUILDER = os.path.join(BASE_DIR, 'build_webapp_data.py')
+RECIPE_SYNC = os.path.join(BASE_DIR, 'scripts', 'sync_data.py')
 
 # Token loaded from environment variable GH_PAT or local config file (never hardcoded)
 GH_TOKEN = os.environ.get('GH_PAT', '')
@@ -51,20 +52,21 @@ def step1_sync_google_sheet():
         log(f"Step 1 Warning: Google Sheet sync exited with code {res.returncode}")
 
 def step2_rebuild_webapp_data():
-    log("Step 2: Rebuilding webapp data.json from reference sheet...")
-    res = subprocess.run(
-        [sys.executable, DATA_BUILDER],
-        cwd=BASE_DIR,
-        capture_output=False
-    )
-    if res.returncode == 0:
-        log("Step 2 Done: data.json rebuilt!")
+    log("Step 2: Rebuilding webapp data.json & recipes.json...")
+    res1 = subprocess.run([sys.executable, DATA_BUILDER], cwd=BASE_DIR, capture_output=False)
+    res2 = subprocess.run([sys.executable, RECIPE_SYNC], cwd=BASE_DIR, capture_output=False)
+    if res1.returncode == 0 and res2.returncode == 0:
+        log("Step 2 Done: data.json & recipes.json rebuilt!")
     else:
-        log(f"Step 2 Failed: data.json rebuild exited with code {res.returncode}")
+        log(f"Step 2 Warning: data.json ({res1.returncode}), recipes.json ({res2.returncode})")
 
 def step3_push_to_github():
     log("Step 3: Pushing updated site to GitHub Pages...")
     token = GH_TOKEN
+    if not token:
+        log("Step 3 Warning: No GH_TOKEN found, skipping manual push step in local runner.")
+        return
+
     remote_url = f"https://x-access-token:{token}@github.com/{GH_USERNAME}/{GH_REPO}.git"
 
     try:
@@ -72,7 +74,7 @@ def step3_push_to_github():
         subprocess.run(["git", "remote", "add", "origin", remote_url], cwd=WEBAPP_DIR, check=True)
         subprocess.run(["git", "add", "."], cwd=WEBAPP_DIR, check=True)
         subprocess.run(
-            ["git", "commit", "-m", "Sync: Update Pokémon Sleep data"],
+            ["git", "commit", "-m", "Sync: Update Pokémon Sleep data & recipes"],
             cwd=WEBAPP_DIR,
             capture_output=True
         )
