@@ -1,0 +1,82 @@
+name: 🔄 Pokémon Sleep Data Sync
+
+on:
+  # 手動觸發（按鈕點擊從網站 dispatch）
+  workflow_dispatch:
+    inputs:
+      sync_type:
+        description: '同步類型'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - full          # 全部同步（寶可夢 + 食譜）
+          - pokemon_only  # 只同步寶可夢資料
+          - recipes_only  # 只同步食譜資料
+
+  # 每週一早上自動同步
+  schedule:
+    - cron: '0 2 * * 1'  # 每週一 02:00 UTC（台灣 10:00）
+
+jobs:
+  sync-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 Checkout 儲存庫
+        uses: actions/checkout@v4
+
+      - name: 🐍 設定 Python 環境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 安裝相依套件
+        run: |
+          pip install requests beautifulsoup4 lxml
+
+      - name: 🔍 確認輸入類型
+        run: |
+          echo "Sync type: ${{ github.event.inputs.sync_type || 'full' }}"
+
+      - name: 🔄 執行資料同步腳本
+        env:
+          SYNC_TYPE: ${{ github.event.inputs.sync_type || 'full' }}
+          # 若要從 Google Sheets 同步，在 Secrets 設定:
+          # GOOGLE_SHEETS_KEY: ${{ secrets.GOOGLE_SHEETS_KEY }}
+        run: |
+          python scripts/sync_data.py
+
+      - name: 📊 確認資料完整性
+        run: |
+          python - <<'EOF'
+          import json, sys
+          try:
+              with open('data.json', 'r', encoding='utf-8') as f:
+                  d = json.load(f)
+              print(f"✅ data.json: {len(d)} 隻寶可夢")
+          except Exception as e:
+              print(f"⚠️  data.json 無法載入或不存在: {e}")
+
+          try:
+              with open('recipes.json', 'r', encoding='utf-8') as f:
+                  r = json.load(f)
+              print(f"✅ recipes.json: {len(r)} 道食譜")
+          except Exception as e:
+              print(f"⚠️  recipes.json 無法載入或不存在: {e}")
+          EOF
+
+      - name: 📝 Git commit & push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.json recipes.json
+          if git diff --cached --quiet; then
+            echo "✅ 資料無變化，不需要 commit"
+          else
+            git commit -m "🔄 Auto-sync: Update Pokémon Sleep data [$(date '+%Y-%m-%d %H:%M')]"
+            git push
+            echo "✅ 已推送最新資料到 GitHub Pages！"
+          fi
