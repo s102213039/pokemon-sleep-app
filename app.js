@@ -219,6 +219,43 @@ if (typeof document !== 'undefined') {
       });
     }
 
+    function initSpaTabs() {
+      const tabPokemon = document.getElementById('tab-pokemon');
+      const tabRecipes = document.getElementById('tab-recipes');
+      const panelPokemon = document.getElementById('panel-pokemon');
+      const panelRecipes = document.getElementById('panel-recipes');
+
+      function switchMainTab(target) {
+        if (!panelPokemon || !panelRecipes) return;
+        if (target === 'recipes') {
+          tabPokemon && tabPokemon.classList.remove('active');
+          tabRecipes && tabRecipes.classList.add('active');
+          panelPokemon.style.display = 'none';
+          panelRecipes.style.display = 'block';
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState(null, '', '#recipes');
+          }
+        } else {
+          tabRecipes && tabRecipes.classList.remove('active');
+          tabPokemon && tabPokemon.classList.add('active');
+          panelRecipes.style.display = 'none';
+          panelPokemon.style.display = 'block';
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState(null, '', '#pokemon');
+          }
+        }
+      }
+
+      tabPokemon && tabPokemon.addEventListener('click', () => switchMainTab('pokemon'));
+      tabRecipes && tabRecipes.addEventListener('click', () => switchMainTab('recipes'));
+
+      if (window.location.hash === '#recipes') {
+        switchMainTab('recipes');
+      }
+    }
+
+    initSpaTabs();
+
     fetch('data.json')
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
