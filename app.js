@@ -428,19 +428,19 @@ if (typeof document !== 'undefined') {
           <table class="pokemon-table">
             <thead>
               <tr>
-                <th style="white-space:nowrap;">No.</th>
-                <th style="white-space:nowrap;">圖示</th>
-                <th style="white-space:nowrap;">寶可夢</th>
-                <th style="white-space:nowrap;">屬性</th>
-                <th style="white-space:nowrap;">得意</th>
-                <th style="white-space:nowrap;">持有</th>
-                <th style="white-space:nowrap;">食材 ①</th>
-                <th style="white-space:nowrap;">食材 ②</th>
-                <th style="white-space:nowrap;">食材 ③</th>
-                <th style="white-space:nowrap;">食材率</th>
-                <th style="white-space:nowrap;">技能率</th>
-                <th style="white-space:nowrap;">幫忙間隔</th>
-                <th style="white-space:nowrap;">主技能</th>
+                <th class="th-no">No.</th>
+                <th class="th-icon">圖示</th>
+                <th class="th-name">寶可夢</th>
+                <th class="th-type">屬性</th>
+                <th class="th-spec">得意</th>
+                <th class="th-carry">持有</th>
+                <th class="th-ing">食材 ①</th>
+                <th class="th-ing">食材 ②</th>
+                <th class="th-ing">食材 ③</th>
+                <th class="th-rate">食材率</th>
+                <th class="th-rate">技能率</th>
+                <th class="th-interval">幫忙間隔</th>
+                <th class="th-skill">主技能</th>
               </tr>
             </thead>
             <tbody>
@@ -448,21 +448,21 @@ if (typeof document !== 'undefined') {
                 const iconUrl = getIconUrl(p);
                 return `
                 <tr>
-                  <td style="font-weight:700;color:var(--accent-color);font-family:monospace;white-space:nowrap;">${p.formatted_no}</td>
-                  <td>
-                    ${iconUrl ? `<img src="${iconUrl}" width="40" height="40" alt="${p.name_cn}" loading="lazy" onerror="this.style.display='none';">` : ''}
+                  <td class="td-no">${p.formatted_no}</td>
+                  <td class="td-icon">
+                    ${iconUrl ? `<img src="${iconUrl}" width="34" height="34" class="table-icon" alt="${p.name_cn}" loading="lazy" onerror="this.style.display='none';">` : ''}
                   </td>
-                  <td style="font-weight:700;white-space:nowrap;">${p.name_cn}<br><small style="color:var(--text-muted);font-weight:400;">${p.name_en || ''}</small></td>
-                  <td style="white-space:nowrap;"><span class="type-badge" style="background-color:var(--type-${p.type}, #64748b);">${p.type || '一般'}</span></td>
-                  <td style="white-space:nowrap;">${p.specialty || '--'}</td>
-                  <td style="white-space:nowrap;">${p.carry || '--'}</td>
-                  <td style="white-space:nowrap;">${p.ingredients && p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${p.ingredients[0].name}" loading="lazy" title="${p.ingredients[0].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[0],0)}</div>` : '--'}</td>
-                  <td style="white-space:nowrap;">${p.ingredients && p.ingredients[1] ? `<div class="ing-cell">${p.ingredients[1].icon ? `<img class="ing-icon" src="${p.ingredients[1].icon}" alt="${p.ingredients[1].name}" loading="lazy" title="${p.ingredients[1].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[1],1)}</div>` : '--'}</td>
-                  <td style="white-space:nowrap;">${p.ingredients && p.ingredients[2] ? `<div class="ing-cell">${p.ingredients[2].icon ? `<img class="ing-icon" src="${p.ingredients[2].icon}" alt="${p.ingredients[2].name}" loading="lazy" title="${p.ingredients[2].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[2],2)}</div>` : '--'}</td>
-                  <td style="font-weight:700;white-space:nowrap;">${p.ingredient_rate || '--'}</td>
-                  <td style="white-space:nowrap;">${p.skill_rate || '--'}</td>
-                  <td style="white-space:nowrap;">${p.interval || '--'}</td>
-                  <td style="font-size:11px;white-space:nowrap;">${p.main_skill || '--'}</td>
+                  <td class="td-name pokemon-name-cell">${p.name_cn}</td>
+                  <td class="td-type"><span class="type-badge" style="background-color:var(--type-${p.type}, #64748b);">${p.type || '一般'}</span></td>
+                  <td class="td-spec">${p.specialty || '--'}</td>
+                  <td class="td-carry">${p.carry || '--'}</td>
+                  <td class="td-ing">${p.ingredients && p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${p.ingredients[0].name}" loading="lazy" title="${p.ingredients[0].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[0],0)}</div>` : '--'}</td>
+                  <td class="td-ing">${p.ingredients && p.ingredients[1] ? `<div class="ing-cell">${p.ingredients[1].icon ? `<img class="ing-icon" src="${p.ingredients[1].icon}" alt="${p.ingredients[1].name}" loading="lazy" title="${p.ingredients[1].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[1],1)}</div>` : '--'}</td>
+                  <td class="td-ing">${p.ingredients && p.ingredients[2] ? `<div class="ing-cell">${p.ingredients[2].icon ? `<img class="ing-icon" src="${p.ingredients[2].icon}" alt="${p.ingredients[2].name}" loading="lazy" title="${p.ingredients[2].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[2],2)}</div>` : '--'}</td>
+                  <td class="td-rate">${p.ingredient_rate || '--'}</td>
+                  <td class="td-rate">${p.skill_rate || '--'}</td>
+                  <td class="td-interval">${p.interval || '--'}</td>
+                  <td class="td-skill">${p.main_skill || '--'}</td>
                 </tr>
               `}).join('')}
             </tbody>
