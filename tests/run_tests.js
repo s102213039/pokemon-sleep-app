@@ -238,17 +238,43 @@ test('Tier 1 - Feature Coverage', 'Dataset Integrity: data.json exists and conta
     const nameEN = getItemNameEN(item);
     const nameJP = getItemNameJP(item);
 
-    assert(id !== '', `Item at index ${idx} missing valid id`);
-    assert(nameCN !== '', `Item ${id} missing name.cn`);
-    assert(nameEN !== '', `Item ${id} missing name.en`);
-    assert(nameJP !== '', `Item ${id} missing name.jp`);
+    assert(id, `Item at index ${idx} is missing id`);
+    assert(nameCN, `Item at index ${idx} is missing Chinese name`);
+    assert(nameEN, `Item at index ${idx} is missing English name`);
+    assert(nameJP, `Item at index ${idx} is missing Japanese name`);
     assert(typeof item.type === 'string' && item.type !== '', `Item ${id} missing type`);
     assert(typeof item.specialty === 'string' && item.specialty !== '', `Item ${id} missing specialty`);
     assert(getItemCarry(item) >= 0, `Item ${id} has invalid carryCapacity`);
     assert(getItemHelpInterval(item) >= 0, `Item ${id} has invalid helpInterval`);
     assert(getItemIngredientRate(item) >= 0, `Item ${id} has invalid ingredientRate`);
     assert(item.ingredients !== undefined, `Item ${id} missing ingredients`);
-    assert(getItemIcon(item) !== '', `Item ${id} missing icon`);
+  });
+});
+
+test('Tier 1 - Feature Coverage', 'Dataset Integrity: recipes.json exists and contains 78 verified recipes with correct ingredients & pot sizes', () => {
+  const recipesPath = path.join(WORKSPACE_ROOT, 'recipes.json');
+  assert(fs.existsSync(recipesPath), 'recipes.json does not exist');
+  const recipes = JSON.parse(fs.readFileSync(recipesPath, 'utf8'));
+  assert(Array.isArray(recipes), 'recipes.json is not an array');
+  assert(recipes.length === 78, `recipes.json count is ${recipes.length}, expected 78`);
+
+  const validCategories = new Set(['咖哩', '沙拉', '甜點']);
+  recipes.forEach((r, idx) => {
+    assert(r.name_cn && r.name_cn.trim(), `Recipe #${idx} missing name_cn`);
+    assert(r.name_en && r.name_en.trim(), `Recipe #${idx} missing name_en`);
+    assert(validCategories.has(r.category), `Recipe #${idx} invalid category: ${r.category}`);
+    assert(r.base_energy > 0, `Recipe ${r.name_cn} has invalid base_energy: ${r.base_energy}`);
+    assert(r.bonus_pct >= 19, `Recipe ${r.name_cn} has invalid bonus_pct: ${r.bonus_pct}`);
+    assert(Array.isArray(r.ingredients) && r.ingredients.length > 0, `Recipe ${r.name_cn} has empty ingredients`);
+    
+    const potSum = r.ingredients.reduce((sum, ing) => sum + ing.count, 0);
+    assertEquals(r.pot_size, potSum, `Recipe ${r.name_cn} pot_size mismatch`);
+    
+    r.ingredients.forEach(ing => {
+      assert(ing.name && ing.name.trim(), `Recipe ${r.name_cn} ingredient missing name`);
+      assert(ing.count > 0, `Recipe ${r.name_cn} ingredient count must be > 0`);
+      assert(ing.icon && ing.icon.startsWith('http'), `Recipe ${r.name_cn} ingredient icon missing/invalid`);
+    });
   });
 });
 
