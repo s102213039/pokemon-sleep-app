@@ -76,7 +76,7 @@ body {
 header {
   background: rgba(15, 23, 42, 0.85);
   border-bottom: 1px solid var(--border-color);
-  padding: 14px 0;
+  padding: 16px 0;
   backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
@@ -84,9 +84,9 @@ header {
 }
 
 .header-container {
-  max-width: 96%;
+  max-width: 92%;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -224,17 +224,17 @@ header {
 
 /* Controls Container */
 .controls-container {
-  max-width: 96%;
-  margin: 24px auto 16px;
-  padding: 0 12px;
+  max-width: 92%;
+  margin: 28px auto 20px;
+  padding: 0 24px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 
 .search-filter-row {
   display: flex;
-  gap: 16px;
+  gap: 18px;
   flex-wrap: wrap;
   align-items: center;
 }
@@ -247,7 +247,7 @@ header {
 
 .search-input {
   width: 100%;
-  padding: 12px 16px 12px 42px;
+  padding: 12px 18px 12px 42px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -309,17 +309,17 @@ header {
 .filter-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   background: rgba(30, 41, 59, 0.4);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 16px 20px;
+  padding: 20px 24px;
 }
 
 .filter-tags-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .filter-header {
@@ -338,12 +338,12 @@ header {
 .tag-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
 }
 
 .tag-btn {
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: 20px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -381,23 +381,23 @@ header {
 
 /* Stats Bar */
 .stats-bar {
-  max-width: 96%;
-  margin: 0 auto 16px;
-  padding: 0 12px;
+  max-width: 92%;
+  margin: 0 auto 20px;
+  padding: 0 24px;
   font-size: 13px;
   color: var(--text-secondary);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 12px;
 }
 
 .count-badge {
   background: rgba(56, 189, 248, 0.15);
   color: var(--accent-blue);
   border: 1px solid rgba(56, 189, 248, 0.3);
-  padding: 4px 12px;
+  padding: 5px 14px;
   border-radius: 20px;
   font-weight: 700;
   font-size: 13px;
@@ -410,19 +410,19 @@ header {
 
 /* Grid View Layout */
 .pokemon-grid {
-  max-width: 96%;
+  max-width: 92%;
   margin: 0 auto;
-  padding: 0 12px;
+  padding: 0 24px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 24px;
 }
 
 .pokemon-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 18px;
+  padding: 22px;
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow-lg);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -441,8 +441,8 @@ header {
 .card-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 14px;
+  margin-bottom: 14px;
 }
 
 .pokemon-icon {
@@ -495,7 +495,7 @@ header {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .type-badge {
@@ -554,11 +554,11 @@ header {
 .card-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  gap: 8px;
   background: rgba(15, 23, 42, 0.6);
-  padding: 10px 8px;
+  padding: 12px 10px;
   border-radius: var(--radius-md);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -566,7 +566,7 @@ header {
 .stat-item {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 
 .stat-label {
@@ -584,7 +584,7 @@ header {
 .card-detail-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   font-size: 12px;
   margin-top: auto;
 }
@@ -594,7 +594,7 @@ header {
   align-items: center;
   gap: 6px;
   background: rgba(255, 255, 255, 0.04);
-  padding: 5px 8px;
+  padding: 6px 10px;
   border-radius: var(--radius-sm);
   border: 1px solid rgba(255,255,255,0.04);
 }
@@ -622,7 +622,7 @@ header {
 .ing-qty-group {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
   margin-left: auto;
   flex-shrink: 0;
 }
@@ -648,7 +648,7 @@ header {
 
 .skill-box {
   background: rgba(255, 255, 255, 0.03);
-  padding: 6px 10px;
+  padding: 8px 12px;
   border-radius: var(--radius-sm);
   border: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
@@ -669,12 +669,12 @@ header {
 
 .ingredients-box {
   background: rgba(255, 255, 255, 0.03);
-  padding: 8px 10px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
   border: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .ingredients-title {
@@ -686,12 +686,12 @@ header {
 .ingredient-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
 }
 
 .ing-chip {
   background: rgba(255, 255, 255, 0.06);
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 4px;
   font-size: 11px;
   color: var(--text-secondary);
@@ -705,9 +705,9 @@ header {
 /* Detailed Table Layout */
 .pokemon-table-container,
 .table-container {
-  max-width: 96%;
+  max-width: 92%;
   margin: 0 auto;
-  padding: 0 12px;
+  padding: 0 24px;
   overflow-x: auto;
 }
 
@@ -728,7 +728,7 @@ header {
   background: #0f172a;
   color: var(--text-secondary);
   font-weight: 700;
-  padding: 12px 14px;
+  padding: 14px 18px;
   text-align: left;
   border-bottom: 2px solid var(--border-color);
   font-size: 12px;
@@ -754,7 +754,7 @@ header {
 }
 
 .pokemon-table td {
-  padding: 10px 14px;
+  padding: 12px 18px;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
   font-size: 13px;
@@ -852,9 +852,9 @@ header {
 
 /* Footer */
 footer {
-  max-width: 96%;
-  margin: 40px auto 0;
-  padding: 24px 12px;
+  max-width: 92%;
+  margin: 48px auto 0;
+  padding: 32px 24px;
   text-align: center;
   border-top: 1px solid var(--border-color);
   color: var(--text-muted);
@@ -1015,9 +1015,9 @@ footer {
 .raenonx-filter-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
   align-items: flex-start;
-  padding: 14px 16px;
+  padding: 18px 24px;
   background: rgba(15, 23, 42, 0.6);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 12px;
@@ -1027,7 +1027,7 @@ footer {
 .rf-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
@@ -1041,7 +1041,7 @@ footer {
 .rf-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 6px;
 }
 
 .rf-select-wrap {
@@ -1055,7 +1055,7 @@ footer {
   color: var(--text-primary);
   font-size: 13px;
   font-weight: 600;
-  padding: 6px 36px 6px 12px;
+  padding: 6px 36px 6px 14px;
   border-radius: 8px;
   cursor: pointer;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
@@ -1073,18 +1073,18 @@ footer {
 .recipe-ing-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 6px;
   align-items: center;
 }
 
 .recipe-ing-chip {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   background: rgba(30, 41, 59, 0.7);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 8px;
-  padding: 3px 6px 3px 3px;
+  padding: 4px 8px 4px 4px;
   white-space: nowrap;
   transition: border-color 0.15s;
 }
@@ -1110,14 +1110,14 @@ footer {
 .slider-filter-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   min-width: 160px;
 }
 
 .slider-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .slider-label-row {
@@ -1229,8 +1229,20 @@ input[type=range].rf-slider.island-slider {
 /* Responsive Rules */
 @media (max-width: 768px) {
   .header-container {
+    max-width: 100%;
+    padding: 0 16px;
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .controls-container,
+  .stats-bar,
+  .pokemon-grid,
+  .pokemon-table-container,
+  .table-container,
+  footer {
+    max-width: 100%;
+    padding: 0 16px;
   }
 
   .search-filter-row {
@@ -1244,6 +1256,7 @@ input[type=range].rf-slider.island-slider {
 
   .pokemon-grid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
   }
 
   .card-stats {
