@@ -93,6 +93,13 @@ for idx, r in enumerate(rows_ref):
 
     name_jp = r[3].strip() if len(r) > 3 else ""
     name_en = r[4].strip() if len(r) > 4 else ""
+
+    # Fix known typos from reference sheet
+    if no == 9 or name_en == 'Blastoise':
+        name_cn = '水箭龜'
+    if no == 9003 and name_en == 'Pikachu (Captin)':
+        name_en = 'Pikachu (Captain)'
+
     sleep_type = r[6].strip() if len(r) > 6 else ""
     type_attr = r[7].strip() if len(r) > 7 else ""
     specialty = sync.clean_val(r[sync.REF_MAPPING['得意']])

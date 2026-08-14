@@ -2,10 +2,16 @@ import os
 import sys
 import json
 import re
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
-from google.auth.transport.requests import Request
-from google_auth_oauthlib.flow import InstalledAppFlow
+try:
+    from google.oauth2.credentials import Credentials
+    from googleapiclient.discovery import build
+    from google.auth.transport.requests import Request
+    from google_auth_oauthlib.flow import InstalledAppFlow
+except ImportError:
+    Credentials = None
+    build = None
+    Request = None
+    InstalledAppFlow = None
 
 SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets',

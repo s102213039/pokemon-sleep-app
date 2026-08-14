@@ -719,8 +719,9 @@ header {
 
 .th-ing, .td-ing {
   min-width: 96px;
-  text-align: left;
+  text-align: center;
   padding-left: 6px !important;
+  padding-right: 6px !important;
 }
 
 .th-rate, .td-rate {
@@ -748,6 +749,7 @@ header {
 .ing-cell {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 3px;
   flex-wrap: nowrap;
   white-space: nowrap;
@@ -1085,6 +1087,10 @@ footer {
   flex-wrap: wrap;
   gap: 5px;
   align-items: center;
+}
+
+.pokemon-table .recipe-ing-row {
+  justify-content: center;
 }
 
 .recipe-ing-chip {
