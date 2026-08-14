@@ -84,7 +84,8 @@ header {
 }
 
 .header-container {
-  max-width: 92%;
+  max-width: 1200px;
+  width: 90%;
   margin: 0 auto;
   padding: 0 24px;
   display: flex;
@@ -224,8 +225,9 @@ header {
 
 /* Controls Container */
 .controls-container {
-  max-width: 92%;
-  margin: 28px auto 20px;
+  max-width: 1200px;
+  width: 90%;
+  margin: 32px auto 20px;
   padding: 0 24px;
   display: flex;
   flex-direction: column;
@@ -381,7 +383,8 @@ header {
 
 /* Stats Bar */
 .stats-bar {
-  max-width: 92%;
+  max-width: 1200px;
+  width: 90%;
   margin: 0 auto 20px;
   padding: 0 24px;
   font-size: 13px;
@@ -410,7 +413,8 @@ header {
 
 /* Grid View Layout */
 .pokemon-grid {
-  max-width: 92%;
+  max-width: 1200px;
+  width: 90%;
   margin: 0 auto;
   padding: 0 24px;
   display: grid;
@@ -705,7 +709,8 @@ header {
 /* Detailed Table Layout */
 .pokemon-table-container,
 .table-container {
-  max-width: 92%;
+  max-width: 1200px;
+  width: 90%;
   margin: 0 auto;
   padding: 0 24px;
   overflow-x: auto;
@@ -852,7 +857,8 @@ header {
 
 /* Footer */
 footer {
-  max-width: 92%;
+  max-width: 1200px;
+  width: 90%;
   margin: 48px auto 0;
   padding: 32px 24px;
   text-align: center;
@@ -1230,6 +1236,7 @@ input[type=range].rf-slider.island-slider {
 @media (max-width: 768px) {
   .header-container {
     max-width: 100%;
+    width: 100%;
     padding: 0 16px;
     flex-direction: column;
     align-items: flex-start;
@@ -1242,6 +1249,7 @@ input[type=range].rf-slider.island-slider {
   .table-container,
   footer {
     max-width: 100%;
+    width: 100%;
     padding: 0 16px;
   }
 
