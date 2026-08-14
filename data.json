@@ -699,7 +699,7 @@
     "main_skill": "能量填充S（隨機）",
     "evo_req": "",
     "is_final": "〇",
-    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/9001.png",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png",
     "ingredients": [
       {
         "name": "特選蘋果",
@@ -737,7 +737,7 @@
     "main_skill": "夢之碎片獲取S",
     "evo_req": "",
     "is_final": "〇",
-    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/9002.png",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png",
     "ingredients": [
       {
         "name": "特選蘋果",
@@ -775,7 +775,7 @@
     "main_skill": "",
     "evo_req": "",
     "is_final": "〇",
-    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/9003.png",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png",
     "ingredients": [
       {
         "name": "特選蘋果",
@@ -1079,7 +1079,7 @@
     "main_skill": "幫手支援S",
     "evo_req": "",
     "is_final": "",
-    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/7006.png",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/037-alolanvulpix.png",
     "ingredients": [
       {
         "name": "萌綠大豆",
@@ -1155,7 +1155,7 @@
     "main_skill": "幫手支援S",
     "evo_req": "冰之石 + 80 糖",
     "is_final": "〇",
-    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/7007.png",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png",
     "ingredients": [
       {
         "name": "萌綠大豆",
@@ -2865,7 +2865,7 @@
     "main_skill": "夢之碎片獲取S",
     "evo_req": "",
     "is_final": "〇",
-    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/9004.png",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png",
     "ingredients": [
       {
         "name": "哞哞鮮奶",
@@ -2903,7 +2903,7 @@
     "main_skill": "食材獲取S",
     "evo_req": "",
     "is_final": "〇",
-    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/9005.png",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png",
     "ingredients": [
       {
         "name": "沉甸甸南瓜",
@@ -3359,7 +3359,7 @@
     "main_skill": "精神擊破（樹果領域）",
     "evo_req": "",
     "is_final": "〇",
-    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/150.png",
+    "icon_url": "https://www.serebii.net/pokedex-sv/icon/150.png",
     "ingredients": []
   },
   {
@@ -4157,7 +4157,7 @@
     "main_skill": "活力填充S",
     "evo_req": "Lv.15 + 40 糖",
     "is_final": "",
-    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/7054.png",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png",
     "ingredients": [
       {
         "name": "放鬆可可",
@@ -6209,7 +6209,7 @@
     "main_skill": "料理成功S",
     "evo_req": "",
     "is_final": "〇",
-    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/9006.png",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png",
     "ingredients": [
       {
         "name": "純粹油",
@@ -8660,7 +8660,7 @@
     "main_skill": "負電（料理強化S）",
     "evo_req": "指定性格 + Lv.23 + 80 糖",
     "is_final": "〇",
-    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/8001.png",
+    "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png",
     "ingredients": [
       {
         "name": "哞哞鮮奶",

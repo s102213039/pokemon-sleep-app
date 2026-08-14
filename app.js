@@ -6,8 +6,41 @@ const GH_PAT_KEY  = 'pksleep_gh_pat';
 
 const DEFAULT_SVG_ICON = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%2338bdf8"/></svg>';
 
+const SPECIAL_ICON_MAP = {
+  '9001': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png',
+  '9002': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png',
+  '9003': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png',
+  '9004': 'https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png',
+  '9005': 'https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png',
+  '9006': 'https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png',
+  '7006': 'https://www.serebii.net/pokemonsleep/pokemon/icon/037-alolanvulpix.png',
+  '7007': 'https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png',
+  '7054': 'https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png',
+  '8001': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png',
+  '150':  'https://www.serebii.net/pokedex-sv/icon/150.png',
+  '皮卡丘（萬聖節）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png',
+  '皮卡丘（佳節）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png',
+  '皮卡丘（船長）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png',
+  '六尾（阿羅拉的樣子）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/037-alolanvulpix.png',
+  '六尾（阿羅拉）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/037-alolanvulpix.png',
+  '九尾（阿羅拉的樣子）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png',
+  '九尾（阿羅拉）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png',
+  '伊布（佳節）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png',
+  '伊布（萬聖節）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png',
+  '烏波（阿羅拉的樣子）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png',
+  '烏波（帕底亞的樣子）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png',
+  '烏波（帕底亞）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png',
+  '海豹球（佳節）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png',
+  '顫弦蠑螈（低調的樣子）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png',
+  '顫弦蠑螈（低調）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png',
+  '超夢': 'https://www.serebii.net/pokedex-sv/icon/150.png'
+};
+
 function getIconUrl(p) {
   if (!p) return DEFAULT_SVG_ICON;
+  const idStr = String(p.id || p.formatted_no || '');
+  if (SPECIAL_ICON_MAP[idStr]) return SPECIAL_ICON_MAP[idStr];
+  if (p.name_cn && SPECIAL_ICON_MAP[p.name_cn]) return SPECIAL_ICON_MAP[p.name_cn];
   if (p.icon && typeof p.icon === 'string' && p.icon.trim() !== '') return p.icon;
   if (p.icon_url && typeof p.icon_url === 'string' && p.icon_url.trim() !== '') return p.icon_url;
   if (p.formatted_no) return `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png`;

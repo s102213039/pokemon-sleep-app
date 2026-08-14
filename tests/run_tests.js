@@ -384,6 +384,18 @@ test('Tier 2 - Boundary & Corner Cases', 'Fallback icon validation: missing/empt
   assert(icon.startsWith('data:image/svg+xml'), 'Empty icon should fallback to SVG data URI');
 });
 
+test('Tier 2 - Boundary & Corner Cases', 'Special Pokemon icon resolution (9001-9006, 7006, 7007, 7054, 8001, 150) maps to valid Serebii URLs', () => {
+  const specialIds = ['9001', '9002', '9003', '9004', '9005', '9006', '7006', '7007', '7054', '8001', '150'];
+  specialIds.forEach(id => {
+    const item = dataset.find(p => String(p.id) === id);
+    if (item) {
+      const icon = getItemIcon(item);
+      assert(icon && icon.startsWith('https://www.serebii.net/'), `Special item #${id} icon missing or not Serebii URL: ${icon}`);
+      assert(!icon.includes(`pokemonsleep/pokemon/icon/${id}.png`), `Special item #${id} must not use naive numerical path pokemonsleep/pokemon/icon/${id}.png`);
+    }
+  });
+});
+
 // -------------------------------------------------------------------
 // Tier 3 - Cross-Feature Combinations
 // -------------------------------------------------------------------

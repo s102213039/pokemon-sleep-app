@@ -128,7 +128,24 @@ for idx, r in enumerate(rows_ref):
     is_final = sync.clean_val(r[sync.REF_MAPPING['最終']])
 
     icon_no = sync.format_no(no)
-    icon_url = f"https://www.serebii.net/pokemonsleep/pokemon/icon/{icon_no}.png"
+    
+    # Check special icon mappings first
+    special_icons_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'special_icons.json')
+    special_map = {}
+    if os.path.exists(special_icons_file):
+        try:
+            with open(special_icons_file, 'r', encoding='utf-8') as sf:
+                special_map = json.load(sf)
+        except Exception:
+            pass
+
+    pid_str = str(no)
+    if pid_str in special_map:
+        icon_url = special_map[pid_str]
+    elif name_cn in special_map:
+        icon_url = special_map[name_cn]
+    else:
+        icon_url = f"https://www.serebii.net/pokemonsleep/pokemon/icon/{icon_no}.png"
 
     # Build ingredients list - only include non-empty ones
     ingredients = []
