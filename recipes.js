@@ -638,9 +638,15 @@ document.addEventListener('DOMContentLoaded', () => {
                   <span class="stat-value" style="color:#fbbf24;font-size:15px;font-family:monospace;font-weight:700;">⚡ ${finalE.toLocaleString()}</span>
                 </div>
                 ${showTasty ? `
-                  <div class="card-tasty-scores" style="display:flex;justify-content:space-between;margin-top:4px;padding-top:4px;border-top:1px dashed rgba(255,255,255,0.1);font-size:12px;font-family:monospace;">
-                    <span style="color:#f472b6;font-weight:700;">✨ 2x: ${(finalE * 2).toLocaleString()}</span>
-                    <span style="color:#c084fc;font-weight:700;">🌟 3x: ${(finalE * 3).toLocaleString()}</span>
+                  <div class="card-tasty-group">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">✨ 漂亮 (2x)</span>
+                      <span class="card-score-2x">✨ ${(finalE * 2).toLocaleString()}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">🌟 漂亮 (3x)</span>
+                      <span class="card-score-3x">🌟 ${(finalE * 3).toLocaleString()}</span>
+                    </div>
                   </div>
                 ` : ''}
               </div>
