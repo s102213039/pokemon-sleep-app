@@ -200,10 +200,120 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ─── 自訂下拉選單系統（嚴格向下展開對齊） ────────── */
+  function setupCustomSelect(selectElement) {
+    if (!selectElement || selectElement._customized) return;
+    selectElement._customized = true;
+
+    selectElement.style.display = 'none';
+
+    const container = document.createElement('div');
+    container.className = 'custom-select-container';
+    if (selectElement.classList.contains('sort-select')) {
+      container.classList.add('custom-select-sort');
+    } else {
+      container.classList.add('custom-select-rf');
+    }
+
+    const triggerBtn = document.createElement('button');
+    triggerBtn.type = 'button';
+    triggerBtn.className = 'custom-select-trigger';
+    triggerBtn.setAttribute('aria-haspopup', 'listbox');
+    triggerBtn.setAttribute('aria-expanded', 'false');
+
+    const labelSpan = document.createElement('span');
+    labelSpan.className = 'custom-select-label';
+
+    const arrowSpan = document.createElement('span');
+    arrowSpan.className = 'custom-select-arrow';
+    arrowSpan.innerHTML = `<svg viewBox="0 0 12 8" width="12" height="8"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M1 1.5L6 6.5L11 1.5"/></svg>`;
+
+    triggerBtn.appendChild(labelSpan);
+    triggerBtn.appendChild(arrowSpan);
+
+    const menuDiv = document.createElement('div');
+    menuDiv.className = 'custom-select-menu';
+    menuDiv.setAttribute('role', 'listbox');
+
+    function syncUI() {
+      const selected = selectElement.options[selectElement.selectedIndex] || selectElement.options[0];
+      labelSpan.textContent = selected ? selected.text : '';
+
+      menuDiv.innerHTML = '';
+      Array.from(selectElement.options).forEach(opt => {
+        const item = document.createElement('div');
+        item.className = 'custom-select-item';
+        if (opt.value === selectElement.value) {
+          item.classList.add('active');
+        }
+        item.setAttribute('role', 'option');
+        item.setAttribute('data-value', opt.value);
+        item.innerHTML = `
+          <span class="custom-select-item-text">${opt.text}</span>
+          ${opt.value === selectElement.value ? '<span class="custom-select-check">✓</span>' : ''}
+        `;
+
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          selectElement.value = opt.value;
+          container.classList.remove('open');
+          triggerBtn.setAttribute('aria-expanded', 'false');
+          syncUI();
+          selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+
+        menuDiv.appendChild(item);
+      });
+    }
+
+    syncUI();
+
+    triggerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = container.classList.contains('open');
+      document.querySelectorAll('.custom-select-container.open').forEach(c => {
+        c.classList.remove('open');
+        const btn = c.querySelector('.custom-select-trigger');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) {
+        container.classList.add('open');
+        triggerBtn.setAttribute('aria-expanded', 'true');
+      }
+    });
+
+    selectElement.addEventListener('sync-ui', syncUI);
+
+    container.appendChild(triggerBtn);
+    container.appendChild(menuDiv);
+    selectElement.parentNode.insertBefore(container, selectElement.nextSibling);
+  }
+
+  // 全域點擊外部關閉所有下拉選單
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.custom-select-container.open').forEach(c => {
+      c.classList.remove('open');
+      const btn = c.querySelector('.custom-select-trigger');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // ESC 鍵關閉所有下拉選單
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.custom-select-container.open').forEach(c => {
+        c.classList.remove('open');
+        const btn = c.querySelector('.custom-select-trigger');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+    }
+  });
+
   /* ─── Dropdown 選擇器 ───────────────────────────────── */
   function initSelectFilters() {
     if (bonusSelect) {
       bonusSelect.value = minBonus;
+      setupCustomSelect(bonusSelect);
       bonusSelect.addEventListener('change', () => {
         minBonus = Number(bonusSelect.value);
         savePrefs();
@@ -213,6 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (potSelect) {
       potSelect.value = minPot;
+      setupCustomSelect(potSelect);
       potSelect.addEventListener('change', () => {
         minPot = Number(potSelect.value);
         savePrefs();
@@ -400,6 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function initSort() {
     if (!sortSelect) return;
     sortSelect.value = sortOption;
+    setupCustomSelect(sortSelect);
     sortSelect.addEventListener('change', () => {
       sortOption = sortSelect.value;
       savePrefs();
