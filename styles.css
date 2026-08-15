@@ -2224,3 +2224,642 @@ input[type=range].rf-slider.event-slider {
   border-color: rgba(56, 189, 248, 0.4);
 }
 
+/* =========================================================
+   📦 我的寶可夢倉庫 (My Pokémon Box & Screenshot Scanner)
+   ========================================================= */
+
+.box-top-banner {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.box-banner-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.box-banner-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.box-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.box-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  text-decoration: none;
+  user-select: none;
+}
+
+.box-btn-primary {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.box-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(56, 189, 248, 0.45);
+}
+
+.box-btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-secondary);
+}
+
+.box-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* 截圖拖曳與掃描區 (Dropzone) */
+.box-dropzone {
+  border: 2px dashed rgba(56, 189, 248, 0.4);
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.box-dropzone:hover,
+.box-dropzone.dragover {
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.08);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+  transform: scale(1.005);
+}
+
+.box-dropzone-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.box-dropzone-icon {
+  font-size: 32px;
+  background: rgba(56, 189, 248, 0.15);
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.box-dropzone-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.box-dropzone-title kbd {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-family: inherit;
+}
+
+.box-dropzone-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.box-scanner-status {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 8px;
+  color: #38bdf8;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 倉庫內容清單區 */
+.box-content-container {
+  max-width: 1240px;
+  width: 92%;
+  margin: 0 auto 40px;
+  padding: 0 16px;
+}
+
+.box-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.box-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.box-card:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.box-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
+}
+
+.box-card-img-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.box-card-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.box-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.box-card-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.box-card-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.box-card-level {
+  font-size: 12px;
+  font-weight: 800;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+.box-card-nickname {
+  font-size: 11.5px;
+  color: var(--accent-purple);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.box-card-tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.box-spec-tag {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.box-card-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.box-action-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-secondary);
+}
+
+.box-action-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  transform: scale(1.08);
+}
+
+.box-card-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.box-section-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+}
+
+.box-ing-slots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.box-ing-slot {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 4px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.box-ing-lvl {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.box-ing-val {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 副技能膠囊標籤 */
+.box-subskill-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.box-subskill-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  user-select: none;
+}
+
+.subskill-lvl {
+  font-size: 9.5px;
+  opacity: 0.8;
+  font-weight: 600;
+}
+
+.subskill-gold {
+  background: rgba(234, 179, 8, 0.18);
+  color: #fef08a;
+  border: 1px solid rgba(234, 179, 8, 0.45);
+  box-shadow: 0 0 6px rgba(234, 179, 8, 0.2);
+}
+
+.subskill-blue {
+  background: rgba(56, 189, 248, 0.16);
+  color: #bae6fd;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.subskill-white {
+  background: rgba(255, 255, 255, 0.07);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* 性格展示 */
+.box-nature-badge {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  flex-wrap: wrap;
+}
+
+.nature-buff {
+  color: #f87171;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.nature-debuff {
+  color: #60a5fa;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+/* 倉庫空狀態 */
+.box-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: rgba(30, 41, 59, 0.3);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  margin-top: 10px;
+}
+
+.box-empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.box-empty-state h3 {
+  font-size: 17px;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.box-empty-state p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* 📸 倉庫編輯與核對彈窗 */
+.box-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.box-modal-dialog {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+}
+
+.box-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.box-modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.box-modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.box-modal-close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.box-modal-body {
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+}
+
+.box-modal-preview-col {
+  width: 180px;
+  flex-shrink: 0;
+}
+
+.box-screenshot-preview-wrap {
+  position: sticky;
+  top: 0;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 8px;
+  text-align: center;
+}
+
+.box-screenshot-preview-tag {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #38bdf8;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.box-screenshot-img {
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.box-modal-form {
+  flex: 1;
+}
+
+.box-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.box-full-width {
+  grid-column: 1 / -1;
+}
+
+.box-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.box-form-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.box-form-input,
+.box-form-select {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #ffffff;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.box-form-input:focus,
+.box-form-select:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+.box-ing-form-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.box-ing-form-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.box-ing-lvl-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.box-subskill-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.box-subskill-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.subskill-lvl-tag {
+  width: 48px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.box-modal-footer {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .box-modal-body {
+    flex-direction: column;
+  }
+  .box-modal-preview-col {
+    width: 100%;
+  }
+  .box-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .box-ing-form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+

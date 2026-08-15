@@ -256,27 +256,37 @@ if (typeof document !== 'undefined') {
       });
     }
 
+    window.getItemIcon = getIconUrl;
+
     function initSpaTabs() {
       const tabPokemon = document.getElementById('tab-pokemon');
       const tabRecipes = document.getElementById('tab-recipes');
+      const tabBox     = document.getElementById('tab-box');
       const tabNews    = document.getElementById('tab-news');
       const panelPokemon = document.getElementById('panel-pokemon');
       const panelRecipes = document.getElementById('panel-recipes');
+      const panelBox     = document.getElementById('panel-box');
       const panelNews    = document.getElementById('panel-news');
 
       if (!tabPokemon || !tabRecipes || !panelPokemon || !panelRecipes) return;
 
       function switchMainTab(target) {
         // 移除所有 tab active 狀態
-        [tabPokemon, tabRecipes, tabNews].forEach(t => t && t.classList.remove('active'));
+        [tabPokemon, tabRecipes, tabBox, tabNews].forEach(t => t && t.classList.remove('active'));
         // 隱藏所有 panels
-        [panelPokemon, panelRecipes, panelNews].forEach(p => p && (p.style.display = 'none'));
+        [panelPokemon, panelRecipes, panelBox, panelNews].forEach(p => p && (p.style.display = 'none'));
 
         if (target === 'news' && panelNews && tabNews) {
           tabNews.classList.add('active');
           panelNews.style.display = 'block';
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#news');
+          }
+        } else if (target === 'box' && panelBox && tabBox) {
+          tabBox.classList.add('active');
+          panelBox.style.display = 'block';
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState(null, '', '#box');
           }
         } else if (target === 'recipes') {
           tabRecipes.classList.add('active');
@@ -295,11 +305,14 @@ if (typeof document !== 'undefined') {
 
       tabPokemon.addEventListener('click', () => switchMainTab('pokemon'));
       tabRecipes.addEventListener('click', () => switchMainTab('recipes'));
+      if (tabBox) tabBox.addEventListener('click', () => switchMainTab('box'));
       if (tabNews) tabNews.addEventListener('click', () => switchMainTab('news'));
 
       // 依網址 hash 載入預設 tab
       if (window.location.hash === '#news') {
         switchMainTab('news');
+      } else if (window.location.hash === '#box') {
+        switchMainTab('box');
       } else if (window.location.hash === '#recipes') {
         switchMainTab('recipes');
       }
@@ -317,6 +330,9 @@ if (typeof document !== 'undefined') {
         PokemonApp.init(data);
         initFilters();
         renderUI();
+        if (window.initUserBox) {
+          window.initUserBox(data);
+        }
       })
       .catch(err => {
         console.error('Error loading data.json:', err);

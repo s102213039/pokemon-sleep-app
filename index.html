@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260815_13">
+  <link rel="stylesheet" href="styles.css?v=20260815_14">
 </head>
 <body>
 
@@ -26,10 +26,11 @@
         </div>
       </div>
 
-      <!-- 中央 SPA 切換 Switch Button (寶可夢圖鑑 <-> 料理食譜大全 <-> 最新更新與新聞) -->
+      <!-- 中央 SPA 切換 Switch Button (寶可夢圖鑑 <-> 料理食譜大全 <-> 我的寶可夢倉庫 <-> 最新更新與新聞) -->
       <div class="main-tab-toggle">
         <button id="tab-pokemon" class="toggle-btn active">⚡ 寶可夢圖鑑</button>
         <button id="tab-recipes" class="toggle-btn">🍲 料理食譜大全</button>
+        <button id="tab-box" class="toggle-btn">📦 我的寶可夢倉庫</button>
         <button id="tab-news" class="toggle-btn">📰 最新更新與新聞</button>
       </div>
 
@@ -300,7 +301,70 @@
       </section>
     </div>
 
-    <!-- Panel 3: 最新更新與新聞 -->
+    <!-- Panel 3: 我的寶可夢倉庫 -->
+    <div id="panel-box" class="view-panel" style="display:none;">
+      <section class="controls-container" aria-label="Box Controls">
+        <!-- 頂部智能錄入與備份功能區 -->
+        <div class="box-top-banner">
+          <div class="box-banner-text">
+            <h2 class="box-banner-title">📦 我的寶可夢倉庫 & 截圖智能辨識</h2>
+            <p class="box-banner-desc">支援上傳遊戲截圖自動辨識等級、食材組合、副技能與性格，亦可隨時手動錄入與編輯。</p>
+          </div>
+          <div class="box-banner-actions">
+            <input type="file" id="box-file-input" accept="image/*" style="display:none;">
+            <button type="button" id="box-manual-add-btn" class="box-btn box-btn-primary">➕ 手動新增寶可夢</button>
+            <button type="button" id="box-export-btn" class="box-btn box-btn-secondary" title="匯出個人倉庫為 JSON 備份檔">💾 匯出備份</button>
+            <label class="box-btn box-btn-secondary" style="cursor:pointer;margin:0;" title="從 JSON 檔案匯入還原倉庫">
+              📥 匯入還原
+              <input type="file" id="box-import-input" accept=".json" style="display:none;">
+            </label>
+          </div>
+        </div>
+
+        <!-- 截圖拖曳與剪貼簿貼上區 -->
+        <div id="box-dropzone" class="box-dropzone">
+          <div class="box-dropzone-inner">
+            <span class="box-dropzone-icon">📸</span>
+            <div class="box-dropzone-content">
+              <div class="box-dropzone-title">點擊或拖曳「寶可夢資料截圖」至此，或直接按 <kbd>Ctrl+V</kbd> / <kbd>Cmd+V</kbd> 貼上</div>
+              <div class="box-dropzone-sub">自動辨識：寶可夢名稱 · 等級 · Lv.1/30/60 食材組合 · 5 格副技能 · 性格加成</div>
+            </div>
+          </div>
+          <div id="box-scanner-status" class="box-scanner-status" style="display:none;"></div>
+        </div>
+
+        <!-- 篩選與搜尋列 -->
+        <div class="search-filter-row">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="box-search-input" class="search-input" placeholder="搜尋倉庫寶可夢名稱、暱稱、性格、副技能..." aria-label="搜尋個人倉庫">
+          </div>
+          <div class="sort-box">
+            <select id="box-sort-select" class="sort-select" style="display:inline-block;background:var(--bg-card);border:1px solid var(--border-color);color:#fff;padding:8px 14px;border-radius:10px;font-size:13px;outline:none;">
+              <option value="created-desc">📅 最近加入</option>
+              <option value="level-desc">⚡ 等級由高到低</option>
+              <option value="level-asc">🌱 等級由低到高</option>
+              <option value="id-asc">🔢 全國圖鑑編號</option>
+            </select>
+          </div>
+          <div class="view-mode-toggle">
+            <button id="box-toggle-grid" class="toggle-btn active">🎴 卡片</button>
+            <button id="box-toggle-table" class="toggle-btn">📊 表格</button>
+          </div>
+        </div>
+
+        <div class="stats-bar" style="margin-top:0;">
+          <span id="box-count-badge">載入倉庫中...</span>
+        </div>
+      </section>
+
+      <!-- Box Content Area -->
+      <section class="box-content-container">
+        <div id="box-content-area"></div>
+      </section>
+    </div>
+
+    <!-- Panel 4: 最新更新與新聞 -->
     <div id="panel-news" class="view-panel" style="display:none;">
       <section class="controls-container" aria-label="News Search and Category Controls">
         <div class="news-filter-card">
@@ -339,6 +403,101 @@
     </div>
   </main>
 
+  <!-- 📸 我的寶可夢倉庫：截圖辨識核對與手動編輯彈窗 -->
+  <div id="box-edit-modal" class="box-modal-backdrop" style="display:none;">
+    <div class="box-modal-dialog">
+      <div class="box-modal-header">
+        <h3 id="box-modal-title" class="box-modal-title">📸 截圖辨識確認入庫</h3>
+        <button type="button" id="box-modal-close-btn" class="box-modal-close" aria-label="關閉">✕</button>
+      </div>
+
+      <div class="box-modal-body">
+        <!-- 截圖預覽側欄（若有上傳） -->
+        <div id="box-modal-screenshot-preview" class="box-modal-preview-col" style="display:none;"></div>
+
+        <!-- 編輯表單 -->
+        <form id="box-edit-form" class="box-modal-form">
+          <div class="box-form-grid">
+            <!-- 寶可夢選擇 -->
+            <div class="box-form-group">
+              <label class="box-form-label" for="modal-poke-name">寶可夢名稱 <span style="color:#ef4444;">*</span></label>
+              <select id="modal-poke-name" class="box-form-select" required></select>
+            </div>
+
+            <!-- 等級 -->
+            <div class="box-form-group">
+              <label class="box-form-label" for="modal-poke-level">等級 (Lv.1 ~ 70) <span style="color:#ef4444;">*</span></label>
+              <input type="number" id="modal-poke-level" class="box-form-input" min="1" max="70" value="30" required>
+            </div>
+
+            <!-- 自訂暱稱 -->
+            <div class="box-form-group box-full-width">
+              <label class="box-form-label" for="modal-poke-nickname">自訂暱稱 (選填)</label>
+              <input type="text" id="modal-poke-nickname" class="box-form-input" placeholder="例如：首隻樹果S神坦、全蘋果隊長...">
+            </div>
+
+            <!-- 食材組合 (Lv.1, Lv.30, Lv.60) -->
+            <div class="box-form-group box-full-width">
+              <label class="box-form-label">🍲 解鎖食材組合 (Lv.1 / Lv.30 / Lv.60)</label>
+              <div class="box-ing-form-row">
+                <div class="box-ing-form-col">
+                  <span class="box-ing-lvl-badge">Lv.1</span>
+                  <select id="modal-ing1" class="box-form-select"></select>
+                </div>
+                <div class="box-ing-form-col">
+                  <span class="box-ing-lvl-badge">Lv.30</span>
+                  <select id="modal-ing2" class="box-form-select"></select>
+                </div>
+                <div class="box-ing-form-col">
+                  <span class="box-ing-lvl-badge">Lv.60</span>
+                  <select id="modal-ing3" class="box-form-select"></select>
+                </div>
+              </div>
+            </div>
+
+            <!-- 性格 (Nature) -->
+            <div class="box-form-group box-full-width">
+              <label class="box-form-label" for="modal-poke-nature">🧠 性格 (Nature) <span style="color:#ef4444;">*</span></label>
+              <select id="modal-poke-nature" class="box-form-select" required></select>
+            </div>
+
+            <!-- 5 格副技能 (Lv.10, 25, 50, 75, 100) -->
+            <div class="box-form-group box-full-width">
+              <label class="box-form-label">⚡ 副技能配置 (Lv.10 ~ 100)</label>
+              <div class="box-subskill-form-grid">
+                <div class="box-subskill-input-row">
+                  <span class="subskill-lvl-tag">Lv.10</span>
+                  <select id="modal-subskill-1" class="box-form-select"></select>
+                </div>
+                <div class="box-subskill-input-row">
+                  <span class="subskill-lvl-tag">Lv.25</span>
+                  <select id="modal-subskill-2" class="box-form-select"></select>
+                </div>
+                <div class="box-subskill-input-row">
+                  <span class="subskill-lvl-tag">Lv.50</span>
+                  <select id="modal-subskill-3" class="box-form-select"></select>
+                </div>
+                <div class="box-subskill-input-row">
+                  <span class="subskill-lvl-tag">Lv.75</span>
+                  <select id="modal-subskill-4" class="box-form-select"></select>
+                </div>
+                <div class="box-subskill-input-row">
+                  <span class="subskill-lvl-tag">Lv.100</span>
+                  <select id="modal-subskill-5" class="box-form-select"></select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="box-modal-footer">
+            <button type="button" id="box-modal-cancel-btn" class="box-btn box-btn-secondary">取消</button>
+            <button type="submit" id="box-modal-submit-btn" class="box-btn box-btn-primary">💾 確認儲存入庫</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <footer>
     <p>
       Pokémon Sleep 寶可夢資料庫 &copy; 2026 ·
@@ -351,8 +510,10 @@
     </p>
   </footer>
 
-  <script src="app.js?v=20260815_13"></script>
-  <script src="recipes.js?v=20260815_13"></script>
-  <script src="news.js?v=20260815_13"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="app.js?v=20260815_14"></script>
+  <script src="recipes.js?v=20260815_14"></script>
+  <script src="box.js?v=20260815_14"></script>
+  <script src="news.js?v=20260815_14"></script>
 </body>
 </html>

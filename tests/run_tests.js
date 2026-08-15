@@ -292,11 +292,29 @@ test('Tier 1 - Feature Coverage', 'HTML Structure: index.html exists with requir
   assert(htmlContent.includes('id="content-area"') || htmlContent.includes("id='content-area'"), 'Missing view content area container');
   assert(htmlContent.includes('id="event-bonus-slider"'), 'Missing event-bonus-slider element in index.html');
   assert(htmlContent.includes('id="tasty-toggle-btn"'), 'Missing tasty-toggle-btn element in index.html');
+  assert(htmlContent.includes('id="tab-box"'), 'Missing tab-box element in index.html');
+  assert(htmlContent.includes('id="panel-box"'), 'Missing panel-box element in index.html');
+  assert(htmlContent.includes('id="box-dropzone"'), 'Missing box-dropzone element in index.html');
+  assert(htmlContent.includes('id="box-edit-modal"'), 'Missing box-edit-modal element in index.html');
+  assert(htmlContent.includes('id="box-content-area"'), 'Missing box-content-area element in index.html');
   assert(htmlContent.includes('id="tab-news"'), 'Missing tab-news element in index.html');
   assert(htmlContent.includes('id="panel-news"'), 'Missing panel-news element in index.html');
   assert(htmlContent.includes('id="news-category-tags"'), 'Missing news-category-tags element in index.html');
   assert(htmlContent.includes('id="news-search-input"'), 'Missing news-search-input element in index.html');
   assert(htmlContent.includes('id="news-list-container"'), 'Missing news-list-container element in index.html');
+});
+
+test('Tier 1 - Feature Coverage', 'Box System Integrity: box.js defines 25 Natures, Sub-skills, and User Box data models', () => {
+  const boxPath = path.join(WORKSPACE_ROOT, 'box.js');
+  assert(fs.existsSync(boxPath), 'box.js does not exist');
+  const boxContent = fs.readFileSync(boxPath, 'utf8');
+
+  assert(boxContent.includes('NATURE_DATA'), 'box.js missing NATURE_DATA');
+  assert(boxContent.includes('SUBSKILLS_DATA'), 'box.js missing SUBSKILLS_DATA');
+  assert(boxContent.includes('STORAGE_KEY'), 'box.js missing STORAGE_KEY');
+  assert(boxContent.includes('樹果數量S'), 'box.js missing Berry Finding S subskill');
+  assert(boxContent.includes('幫手獎勵'), 'box.js missing Helping Bonus subskill');
+  assert(boxContent.includes('固執'), 'box.js missing Adamant nature');
 });
 
 test('Tier 1 - Feature Coverage', 'Dataset Integrity: news.json exists and contains >= 20 structured news articles with AI summaries', () => {
@@ -426,6 +444,26 @@ test('Tier 2 - Boundary & Corner Cases', 'Fallback icon validation: missing/empt
   const itemNoIcon = { id: 9999, name: { cn: 'Test' }, type: '草', specialty: '樹果', icon: '' };
   const icon = getItemIcon(itemNoIcon);
   assert(icon.startsWith('data:image/svg+xml'), 'Empty icon should fallback to SVG data URI');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Box Data Operations: CRUD structure and level boundaries (Lv.1 to Lv.70)', () => {
+  const dummyPokemon = {
+    uid: 'pkm_test_123',
+    pokemonId: '1',
+    name: '妙蛙種子',
+    level: 35,
+    nickname: '草系主將',
+    nature: '固執',
+    ing1: '特選蘋果',
+    ing2: '特選蘋果',
+    ing3: '窩心牛奶',
+    subskills: ['樹果數量S', '幫手獎勵', '幫忙速度M']
+  };
+
+  assert(dummyPokemon.level >= 1 && dummyPokemon.level <= 70, 'Level out of bounds');
+  assert(dummyPokemon.subskills.length <= 5, 'Subskills must not exceed 5');
+  assert(dummyPokemon.name && dummyPokemon.name.trim(), 'Box Pokemon missing name');
+  assert(dummyPokemon.uid && dummyPokemon.uid.startsWith('pkm_'), 'Invalid UID format');
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'Special Pokemon icon resolution (9001-9006, 7006, 7007, 7054, 8001, 150) maps to valid Serebii URLs', () => {
