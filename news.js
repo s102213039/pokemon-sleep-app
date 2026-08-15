@@ -135,8 +135,32 @@
       const isExpanded = expandedMap.has(item.id);
       const isLatest = index === 0 && currentCategory === 'ALL' && !searchQuery;
 
-      const highlightsHTML = (item.highlights && item.highlights.length > 0)
-        ? `
+      // 渲染多維度 AI 智能摘要區塊 (Sections)
+      let aiSectionsHTML = '';
+      if (item.sections && item.sections.length > 0) {
+        aiSectionsHTML = `
+          <div class="news-ai-dashboard">
+            <div class="news-ai-dashboard-header">
+              <span class="news-ai-sparkle">🤖</span>
+              <span class="news-ai-dashboard-title">AI 智能深度重點整理</span>
+            </div>
+            <div class="news-ai-sections-grid">
+              ${item.sections.map(sec => `
+                <div class="news-ai-section-box news-sec-${sec.key || 'general'}">
+                  <div class="news-ai-section-title">
+                    <span>${sec.icon || '📌'}</span>
+                    <span>${sec.title}</span>
+                  </div>
+                  <ul class="news-ai-section-list">
+                    ${sec.items.map(it => `<li>${escapeHtml(it)}</li>`).join('')}
+                  </ul>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (item.highlights && item.highlights.length > 0) {
+        aiSectionsHTML = `
           <div class="news-ai-highlights">
             <div class="news-ai-title">
               <span class="news-ai-sparkle">🤖</span>
@@ -146,8 +170,8 @@
               ${item.highlights.map(h => `<li>${escapeHtml(h)}</li>`).join('')}
             </ul>
           </div>
-        `
-        : '';
+        `;
+      }
 
       const previewHTML = item.content_preview
         ? `
@@ -183,7 +207,7 @@
 
           <p class="news-overview-text">${escapeHtml(item.overview || '')}</p>
 
-          ${highlightsHTML}
+          ${aiSectionsHTML}
 
           ${previewHTML}
 
