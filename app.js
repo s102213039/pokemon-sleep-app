@@ -259,24 +259,33 @@ if (typeof document !== 'undefined') {
     function initSpaTabs() {
       const tabPokemon = document.getElementById('tab-pokemon');
       const tabRecipes = document.getElementById('tab-recipes');
+      const tabNews    = document.getElementById('tab-news');
       const panelPokemon = document.getElementById('panel-pokemon');
       const panelRecipes = document.getElementById('panel-recipes');
+      const panelNews    = document.getElementById('panel-news');
 
       if (!tabPokemon || !tabRecipes || !panelPokemon || !panelRecipes) return;
 
       function switchMainTab(target) {
-        if (target === 'recipes') {
-          tabPokemon.classList.remove('active');
+        // 移除所有 tab active 狀態
+        [tabPokemon, tabRecipes, tabNews].forEach(t => t && t.classList.remove('active'));
+        // 隱藏所有 panels
+        [panelPokemon, panelRecipes, panelNews].forEach(p => p && (p.style.display = 'none'));
+
+        if (target === 'news' && panelNews && tabNews) {
+          tabNews.classList.add('active');
+          panelNews.style.display = 'block';
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState(null, '', '#news');
+          }
+        } else if (target === 'recipes') {
           tabRecipes.classList.add('active');
-          panelPokemon.style.display = 'none';
           panelRecipes.style.display = 'block';
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#recipes');
           }
         } else {
-          tabRecipes.classList.remove('active');
           tabPokemon.classList.add('active');
-          panelRecipes.style.display = 'none';
           panelPokemon.style.display = 'block';
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#pokemon');
@@ -286,8 +295,12 @@ if (typeof document !== 'undefined') {
 
       tabPokemon.addEventListener('click', () => switchMainTab('pokemon'));
       tabRecipes.addEventListener('click', () => switchMainTab('recipes'));
+      if (tabNews) tabNews.addEventListener('click', () => switchMainTab('news'));
 
-      if (window.location.hash === '#recipes') {
+      // 依網址 hash 載入預設 tab
+      if (window.location.hash === '#news') {
+        switchMainTab('news');
+      } else if (window.location.hash === '#recipes') {
         switchMainTab('recipes');
       }
     }

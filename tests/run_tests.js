@@ -292,6 +292,28 @@ test('Tier 1 - Feature Coverage', 'HTML Structure: index.html exists with requir
   assert(htmlContent.includes('id="content-area"') || htmlContent.includes("id='content-area'"), 'Missing view content area container');
   assert(htmlContent.includes('id="event-bonus-slider"'), 'Missing event-bonus-slider element in index.html');
   assert(htmlContent.includes('id="tasty-toggle-btn"'), 'Missing tasty-toggle-btn element in index.html');
+  assert(htmlContent.includes('id="tab-news"'), 'Missing tab-news element in index.html');
+  assert(htmlContent.includes('id="panel-news"'), 'Missing panel-news element in index.html');
+  assert(htmlContent.includes('id="news-category-tags"'), 'Missing news-category-tags element in index.html');
+  assert(htmlContent.includes('id="news-search-input"'), 'Missing news-search-input element in index.html');
+  assert(htmlContent.includes('id="news-list-container"'), 'Missing news-list-container element in index.html');
+});
+
+test('Tier 1 - Feature Coverage', 'Dataset Integrity: news.json exists and contains >= 20 structured news articles with AI summaries', () => {
+  const newsPath = path.join(WORKSPACE_ROOT, 'news.json');
+  assert(fs.existsSync(newsPath), 'news.json does not exist');
+  const newsData = JSON.parse(fs.readFileSync(newsPath, 'utf8'));
+  assert(Array.isArray(newsData), 'news.json must be an array');
+  assert(newsData.length >= 20, `news.json should contain >= 20 articles (got ${newsData.length})`);
+
+  newsData.forEach(item => {
+    assert(item.id, 'News item missing id');
+    assert(item.url && item.url.startsWith('http'), `News item ${item.id} missing/invalid url`);
+    assert(item.date && /^\d{4}-\d{2}-\d{2}$/.test(item.date), `News item ${item.id} invalid date format: ${item.date}`);
+    assert(item.title && item.title.trim(), `News item ${item.id} missing title`);
+    assert(item.overview && item.overview.trim(), `News item ${item.id} missing overview`);
+    assert(Array.isArray(item.highlights) && item.highlights.length > 0, `News item ${item.id} missing AI highlights`);
+  });
 });
 
 test('Tier 1 - Feature Coverage', 'Recipe Energy Formula: Level + Island Bonus + Event Multiplier (1.00x - 2.50x) + Tasty (2x/3x)', () => {

@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260815_06">
+  <link rel="stylesheet" href="styles.css?v=20260815_07">
 </head>
 <body>
 
@@ -26,10 +26,11 @@
         </div>
       </div>
 
-      <!-- 中央 SPA 切換 Switch Button (寶可夢圖鑑 <-> 料理食譜大全) -->
+      <!-- 中央 SPA 切換 Switch Button (寶可夢圖鑑 <-> 料理食譜大全 <-> 最新更新與新聞) -->
       <div class="main-tab-toggle view-mode-toggle">
         <button id="tab-pokemon" class="toggle-btn active">⚡ 寶可夢圖鑑</button>
         <button id="tab-recipes" class="toggle-btn">🍲 料理食譜大全</button>
+        <button id="tab-news" class="toggle-btn">📰 最新更新與新聞</button>
       </div>
 
       <div class="header-actions">
@@ -298,6 +299,44 @@
         </div>
       </section>
     </div>
+
+    <!-- Panel 3: 最新更新與新聞 -->
+    <div id="panel-news" class="view-panel" style="display:none;">
+      <section class="controls-container" aria-label="News Search and Category Controls">
+        <div class="news-filter-card">
+          <div class="news-top-bar">
+            <!-- 分類標籤按鈕 -->
+            <div id="news-category-tags" class="news-category-tags">
+              <!-- 由 news.js 動態生成 -->
+            </div>
+
+            <!-- 搜尋框 -->
+            <div class="news-search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="news-search-input" class="news-search-input" placeholder="搜尋公告標題、關鍵字、寶可夢..." aria-label="搜尋新聞公告">
+            </div>
+          </div>
+
+          <div class="news-info-bar">
+            <div id="news-count-badge" class="result-count">
+              載入最新官方消息中...
+            </div>
+            <div class="news-source-hint">
+              🤖 由 AI 自動提煉核心亮點 · 來源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 繁體中文官方網站</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- News List Container -->
+      <section class="news-content-container">
+        <div id="news-list-container" class="news-list-grid">
+          <div style="text-align:center;padding:60px;color:var(--text-muted);">
+            最新新聞與公告載入中...
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
 
   <footer>
@@ -312,7 +351,8 @@
     </p>
   </footer>
 
-  <script src="app.js?v=20260815_06"></script>
-  <script src="recipes.js?v=20260815_06"></script>
+  <script src="app.js?v=20260815_07"></script>
+  <script src="recipes.js?v=20260815_07"></script>
+  <script src="news.js?v=20260815_07"></script>
 </body>
 </html>

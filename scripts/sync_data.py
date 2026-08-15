@@ -454,6 +454,15 @@ def main():
         if not sync_recipes_data():
             success = False
 
+    if sync_type in ('full', 'news_only'):
+        try:
+            import build_news
+            log.info('--- 開始同步官方新聞與更新 ---')
+            build_news.main()
+            log.info('✅ 官方新聞與更新同步完成')
+        except Exception as e:
+            log.error(f'❌ 同步官方新聞失敗：{e}')
+
     if success:
         log.info('=== 同步完成 ✅ ===')
     else:
