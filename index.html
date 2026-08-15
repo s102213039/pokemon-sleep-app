@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260815_04">
+  <link rel="stylesheet" href="styles.css?v=20260815_05">
 </head>
 <body>
 
@@ -233,15 +233,17 @@
             </div>
           </div>
 
-          <!-- 漂亮成功分數開關 -->
-          <div class="rf-group-vertical" style="flex:0 0 auto; justify-content:center; align-self:center; min-width:180px;">
-            <div class="tasty-switch-container">
-              <button id="tasty-toggle-btn" class="tasty-toggle-btn" type="button" title="切換是否展示 2倍(漂亮) 與 3倍(大成功) 的分數">
+          <!-- 漂亮成功分數開關 (SwitchButton 樣式) -->
+          <div class="rf-group-vertical" style="flex:0 0 auto; justify-content:center; align-self:center;">
+            <button id="tasty-toggle-btn" class="tasty-switch-btn" type="button" role="switch" aria-checked="false" title="切換是否展示漂亮成功分數">
+              <span class="tasty-switch-label">
                 <span class="tasty-toggle-icon">✨</span>
-                <span class="tasty-toggle-text">漂亮成功分數 (2x / 3x)</span>
-                <span id="tasty-status-badge" class="tasty-status-badge">關閉</span>
-              </button>
-            </div>
+                <span class="tasty-toggle-text">漂亮成功分數</span>
+              </span>
+              <span class="tasty-switch-track">
+                <span class="tasty-switch-thumb"></span>
+              </span>
+            </button>
           </div>
         </div>
 
@@ -310,7 +312,7 @@
     </p>
   </footer>
 
-  <script src="app.js?v=20260815_04"></script>
-  <script src="recipes.js?v=20260815_04"></script>
+  <script src="app.js?v=20260815_05"></script>
+  <script src="recipes.js?v=20260815_05"></script>
 </body>
 </html>

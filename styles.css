@@ -1250,57 +1250,84 @@ input[type=range].rf-slider.event-slider {
   );
 }
 
-/* ─── 漂亮成功分數切換按鈕 ─────────────────────────────── */
-.tasty-switch-container {
-  display: flex;
-  align-items: center;
-}
-
-.tasty-toggle-btn {
+/* ─── 漂亮成功分數 Switch Button 樣式 ─────────────────────────── */
+.tasty-switch-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   background: rgba(30, 41, 59, 0.75);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   padding: 8px 14px;
-  border-radius: 10px;
-  font-size: 13px;
+  border-radius: 12px;
+  font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   user-select: none;
 }
 
-.tasty-toggle-btn:hover {
-  border-color: rgba(236,72,153,0.5);
-  background: rgba(236,72,153,0.1);
+.tasty-switch-btn:hover {
+  border-color: rgba(236,72,153,0.45);
+  background: rgba(30, 41, 59, 0.95);
 }
 
-.tasty-toggle-btn.active {
-  background: linear-gradient(135deg, rgba(236,72,153,0.2), rgba(168,85,247,0.2));
-  border-color: #ec4899;
-  color: #fdf2f8;
-  box-shadow: 0 0 12px rgba(236,72,153,0.25);
+.tasty-switch-btn.active {
+  border-color: rgba(236,72,153,0.6);
+  background: rgba(236,72,153,0.12);
+  box-shadow: 0 0 14px rgba(236,72,153,0.2);
+}
+
+.tasty-switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .tasty-toggle-icon {
-  font-size: 15px;
+  font-size: 16px;
 }
 
-.tasty-status-badge {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 6px;
-  background: rgba(255,255,255,0.08);
-  color: var(--text-muted);
-  transition: all 0.2s ease;
+.tasty-toggle-text {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
 }
 
-.tasty-status-badge.active {
-  background: #ec4899;
-  color: #ffffff;
+/* Switch Track & Sliding Thumb */
+.tasty-switch-track {
+  display: inline-flex;
+  align-items: center;
+  width: 38px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 9999px;
+  padding: 2px;
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.tasty-switch-thumb {
+  display: block;
+  width: 18px;
+  height: 18px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  transform: translateX(0);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s ease;
+}
+
+.tasty-switch-btn.active .tasty-switch-track {
+  background: linear-gradient(135deg, #ec4899, #f43f5e);
+  box-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
+}
+
+.tasty-switch-btn.active .tasty-switch-thumb {
+  transform: translateX(16px);
 }
 
 /* ─── 漂亮分數垂直上下排列堆疊 (3欄精密格點對齊) ───────── */

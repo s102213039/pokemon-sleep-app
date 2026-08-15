@@ -103,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const eventSlider          = document.getElementById('event-bonus-slider');
   const eventBadge           = document.getElementById('event-bonus-badge');
   const tastyToggleBtn       = document.getElementById('tasty-toggle-btn');
-  const tastyStatusBadge     = document.getElementById('tasty-status-badge');
 
   /* ─── 滑桿顏色 fill 更新 ────────────────────────────── */
   function updateSliderFill(slider, min, max) {
@@ -137,15 +136,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function syncTastyUI() {
-    if (!tastyToggleBtn || !tastyStatusBadge) return;
+    if (!tastyToggleBtn) return;
     if (showTasty) {
       tastyToggleBtn.classList.add('active');
-      tastyStatusBadge.textContent = '開啟 (2x/3x)';
-      tastyStatusBadge.classList.add('active');
+      tastyToggleBtn.setAttribute('aria-checked', 'true');
     } else {
       tastyToggleBtn.classList.remove('active');
-      tastyStatusBadge.textContent = '關閉';
-      tastyStatusBadge.classList.remove('active');
+      tastyToggleBtn.setAttribute('aria-checked', 'false');
     }
   }
 
