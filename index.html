@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260815_14">
+  <link rel="stylesheet" href="styles.css?v=20260815_15">
 </head>
 <body>
 
@@ -341,9 +341,11 @@
           </div>
           <div class="sort-box">
             <select id="box-sort-select" class="sort-select" style="display:inline-block;background:var(--bg-card);border:1px solid var(--border-color);color:#fff;padding:8px 14px;border-radius:10px;font-size:13px;outline:none;">
+              <option value="pr-desc">👑 PR 評分由高到低</option>
               <option value="created-desc">📅 最近加入</option>
               <option value="level-desc">⚡ 等級由高到低</option>
               <option value="level-asc">🌱 等級由低到高</option>
+              <option value="pr-asc">📉 PR 評分由低到高</option>
               <option value="id-asc">🔢 全國圖鑑編號</option>
             </select>
           </div>
@@ -367,6 +369,9 @@
     <!-- Panel 4: 最新更新與新聞 -->
     <div id="panel-news" class="view-panel" style="display:none;">
       <section class="controls-container" aria-label="News Search and Category Controls">
+        <!-- ⏰ 官方活動日程時間軸看板 -->
+        <div id="news-event-timeline" class="news-timeline-container"></div>
+
         <div class="news-filter-card">
           <div class="news-top-bar">
             <!-- 分類標籤按鈕 -->
@@ -511,9 +516,9 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260815_14"></script>
-  <script src="recipes.js?v=20260815_14"></script>
-  <script src="box.js?v=20260815_14"></script>
-  <script src="news.js?v=20260815_14"></script>
+  <script src="app.js?v=20260815_15"></script>
+  <script src="recipes.js?v=20260815_15"></script>
+  <script src="box.js?v=20260815_15"></script>
+  <script src="news.js?v=20260815_15"></script>
 </body>
 </html>

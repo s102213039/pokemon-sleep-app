@@ -78,6 +78,7 @@
   /* ─── 初始化與資料載入 ───────────────────────────────────── */
   function loadUserBox() {
     try {
+      if (typeof localStorage === 'undefined') return;
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         userBox = JSON.parse(raw);
@@ -93,6 +94,7 @@
 
   function saveUserBox() {
     try {
+      if (typeof localStorage === 'undefined') return;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(userBox));
     } catch (e) {
       console.error('Failed to save user box:', e);
@@ -109,6 +111,125 @@
       p.name_cn === idOrName ||
       p.name_en === idOrName
     ) || null;
+  }
+
+  /* ─── 👑 RaenonX 級潛力 PR 評分演算法 ───────────────────────── */
+  function calculatePokemonPR(pkm, baseData = null) {
+    const base = baseData || findPokemonBase(pkm.pokemonId || pkm.name);
+    const specialty = (base && base.specialty) || pkm.specialty || '樹果';
+    const nature = pkm.nature || '坦率';
+    const subskills = pkm.subskills || [];
+
+    const natureObj = NATURE_DATA.find(n => n.name === nature) || { buffType: 'none', debuffType: 'none' };
+    const buff = natureObj.buffType;
+    const debuff = natureObj.debuffType;
+
+    let score = 0;
+    const highlights = [];
+
+    // 1. 性格權重評分
+    if (specialty === '樹果') {
+      if (buff === 'speed') { score += 25; highlights.push('幫忙速度▲▲'); }
+      if (debuff === 'speed') { score -= 25; }
+      if (debuff === 'ingredient') { score += 10; highlights.push('食材機率▼▼ (極限樹果流)'); }
+      if (buff === 'ingredient') { score -= 6; }
+    } else if (specialty === '食材') {
+      if (buff === 'ingredient') { score += 28; highlights.push('食材機率▲▲'); }
+      if (debuff === 'ingredient') { score -= 28; }
+      if (buff === 'speed') { score += 16; highlights.push('幫忙速度▲▲'); }
+      if (debuff === 'speed') { score -= 16; }
+    } else { // 技能
+      if (buff === 'skill') { score += 30; highlights.push('主技能機率▲▲'); }
+      if (debuff === 'skill') { score -= 30; }
+      if (buff === 'speed') { score += 15; highlights.push('幫忙速度▲▲'); }
+      if (debuff === 'speed') { score -= 15; }
+    }
+
+    // 2. 副技能解鎖權重 (Lv.10 > Lv.25 > Lv.50 > Lv.75 > Lv.100)
+    const slotWeights = [0.35, 0.30, 0.20, 0.10, 0.05];
+
+    subskills.forEach((skName, idx) => {
+      const w = slotWeights[idx] || 0.05;
+      let skScore = 0;
+
+      if (skName === '樹果數量S') {
+        skScore = specialty === '樹果' ? 100 : 40;
+        if (idx <= 1) highlights.push(`Lv.${[10, 25][idx]} 樹果S`);
+      } else if (skName === '幫手獎勵') {
+        skScore = 65;
+        if (idx <= 1) highlights.push('幫手獎勵');
+      } else if (skName === '食材機率提升M') {
+        skScore = specialty === '食材' ? 85 : 20;
+        if (idx <= 1 && specialty === '食材') highlights.push('食材機率M');
+      } else if (skName === '食材機率提升S') {
+        skScore = specialty === '食材' ? 45 : 10;
+      } else if (skName === '技能機率提升M') {
+        skScore = specialty === '技能' ? 85 : 20;
+        if (idx <= 1 && specialty === '技能') highlights.push('技能機率M');
+      } else if (skName === '技能機率提升S') {
+        skScore = specialty === '技能' ? 45 : 10;
+      } else if (skName === '技能等級提升M') {
+        skScore = specialty === '技能' ? 60 : 15;
+      } else if (skName === '技能等級提升S') {
+        skScore = specialty === '技能' ? 30 : 10;
+      } else if (skName === '幫忙速度M') {
+        skScore = 50;
+        if (idx <= 1) highlights.push('幫忙速度M');
+      } else if (skName === '幫忙速度S') {
+        skScore = 25;
+      } else if (skName === '持有上限提升L') {
+        skScore = specialty === '食材' ? 40 : 20;
+      } else if (skName === '持有上限提升M') {
+        skScore = specialty === '食材' ? 26 : 14;
+      } else if (skName === '持有上限提升S') {
+        skScore = specialty === '食材' ? 14 : 7;
+      } else if (skName === '睡眠EXP獎勵' || skName === '活力回復獎勵') {
+        skScore = 18;
+      } else {
+        skScore = 8;
+      }
+
+      score += skScore * w;
+    });
+
+    // 3. 正規化至 PR 百分位數 [1 ~ 100]
+    const minBenchmark = -12;
+    const maxBenchmark = 75;
+    let pr = Math.round(((score - minBenchmark) / (maxBenchmark - minBenchmark)) * 100);
+    pr = Math.min(100, Math.max(1, pr));
+
+    // 評級判定
+    let tier = 'C';
+    let tierBadgeClass = 'pr-tier-c';
+
+    if (pr >= 90) {
+      tier = 'S+';
+      tierBadgeClass = 'pr-tier-splus';
+    } else if (pr >= 75) {
+      tier = 'S';
+      tierBadgeClass = 'pr-tier-s';
+    } else if (pr >= 50) {
+      tier = 'A';
+      tierBadgeClass = 'pr-tier-a';
+    } else if (pr >= 30) {
+      tier = 'B';
+      tierBadgeClass = 'pr-tier-b';
+    }
+
+    let summaryNote = '';
+    if (highlights.length > 0) {
+      summaryNote = highlights.slice(0, 3).join(' · ');
+    } else {
+      summaryNote = '能力均衡，中規中矩';
+    }
+
+    return {
+      pr,
+      tier,
+      tierBadgeClass,
+      summaryNote,
+      score: Math.round(score * 10) / 10
+    };
   }
 
   /* ─── 渲染倉庫清單 ─────────────────────────────────────── */
@@ -135,6 +256,8 @@
       }
       return true;
     }).sort((a, b) => {
+      if (sortBy === 'pr-desc') return calculatePokemonPR(b).pr - calculatePokemonPR(a).pr;
+      if (sortBy === 'pr-asc') return calculatePokemonPR(a).pr - calculatePokemonPR(b).pr;
       if (sortBy === 'level-desc') return (b.level || 1) - (a.level || 1);
       if (sortBy === 'level-asc') return (a.level || 1) - (b.level || 1);
       if (sortBy === 'id-asc') return (parseInt(a.pokemonId || 0, 10)) - (parseInt(b.pokemonId || 0, 10));
@@ -199,6 +322,7 @@
           const base = findPokemonBase(p.pokemonId || p.name);
           const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
           const natureObj = NATURE_DATA.find(n => n.name === p.nature);
+          const prInfo = calculatePokemonPR(p, base);
 
           return `
             <div class="box-card" data-uid="${p.uid}">
@@ -210,6 +334,9 @@
                   <div class="box-card-name-row">
                     <span class="box-card-name">${escapeHtml(p.name || (base ? base.name_cn : '未知'))}</span>
                     <span class="box-card-level">Lv.${p.level || 1}</span>
+                    <span class="box-pr-badge ${prInfo.tierBadgeClass}" title="PR 百分位評分：${prInfo.pr}/100">
+                      ${prInfo.tier === 'S+' ? '👑' : (prInfo.tier === 'S' ? '🌟' : '')} PR ${prInfo.pr} · ${prInfo.tier}
+                    </span>
                   </div>
                   ${p.nickname ? `<div class="box-card-nickname">🏷️ ${escapeHtml(p.nickname)}</div>` : ''}
                   <div class="box-card-tags">
@@ -223,6 +350,12 @@
                   <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="編輯寶可夢">✏️</button>
                   <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="刪除寶可夢">🗑️</button>
                 </div>
+              </div>
+
+              <!-- PR 智能簡評 -->
+              <div class="box-pr-summary-bar">
+                <span class="box-pr-summary-label">潛力評價：</span>
+                <span class="box-pr-summary-text">${escapeHtml(prInfo.summaryNote)}</span>
               </div>
 
               <!-- 食材插槽組合 -->
@@ -291,6 +424,7 @@
               <th>圖示</th>
               <th>寶可夢 / 暱稱</th>
               <th>等級</th>
+              <th>PR 評分</th>
               <th>屬性</th>
               <th>得意</th>
               <th>Lv.1 食材</th>
@@ -306,6 +440,7 @@
               const base = findPokemonBase(p.pokemonId || p.name);
               const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
               const natureObj = NATURE_DATA.find(n => n.name === p.nature);
+              const prInfo = calculatePokemonPR(p, base);
 
               return `
                 <tr data-uid="${p.uid}">
@@ -319,6 +454,11 @@
                     ${p.nickname ? `<div style="font-size:11px;color:var(--accent-color);">🏷️ ${escapeHtml(p.nickname)}</div>` : ''}
                   </td>
                   <td><span class="box-table-lvl">Lv.${p.level || 1}</span></td>
+                  <td>
+                    <span class="box-pr-badge ${prInfo.tierBadgeClass}">
+                      ${prInfo.tier === 'S+' ? '👑' : ''} PR ${prInfo.pr} · ${prInfo.tier}
+                    </span>
+                  </td>
                   <td>
                     <span class="type-badge" style="background-color: var(--type-${(base && base.type) || p.type || '一般'}, #64748b);">
                       ${(base && base.type) || p.type || '一般'}
@@ -848,17 +988,28 @@
     }
   }
 
-  // 接收外部 data.json 參照
-  window.initUserBox = function (pokemons) {
-    allPokemonsRef = pokemons || [];
-    initBoxEvents();
-    renderBox();
-  };
+  if (typeof window !== 'undefined') {
+    window.initUserBox = function (pokemons) {
+      allPokemonsRef = pokemons || [];
+      initBoxEvents();
+      renderBox();
+    };
 
-  window.PokemonBoxApp = {
-    getUserBox: () => userBox,
-    setUserBox: (box) => { userBox = box; saveUserBox(); renderBox(); },
-    NATURE_DATA,
-    SUBSKILLS_DATA
-  };
+    window.PokemonBoxApp = {
+      getUserBox: () => userBox,
+      setUserBox: (box) => { userBox = box; saveUserBox(); renderBox(); },
+      calculatePokemonPR,
+      NATURE_DATA,
+      SUBSKILLS_DATA
+    };
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      PokemonBoxApp: typeof window !== 'undefined' ? window.PokemonBoxApp : { calculatePokemonPR, NATURE_DATA, SUBSKILLS_DATA },
+      calculatePokemonPR,
+      NATURE_DATA,
+      SUBSKILLS_DATA
+    };
+  }
 })();

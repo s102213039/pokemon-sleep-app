@@ -12,10 +12,11 @@
   const expandedMap = new Set();
 
   // DOM 元素
-  const newsCategoryContainer = document.getElementById('news-category-tags');
-  const newsSearchInput       = document.getElementById('news-search-input');
-  const newsCountBadge        = document.getElementById('news-count-badge');
-  const newsListContainer     = document.getElementById('news-list-container');
+  const newsCategoryContainer = typeof document !== 'undefined' ? document.getElementById('news-category-tags') : null;
+  const newsSearchInput       = typeof document !== 'undefined' ? document.getElementById('news-search-input') : null;
+  const newsCountBadge        = typeof document !== 'undefined' ? document.getElementById('news-count-badge') : null;
+  const newsListContainer     = typeof document !== 'undefined' ? document.getElementById('news-list-container') : null;
+  const newsTimelineContainer = typeof document !== 'undefined' ? document.getElementById('news-event-timeline') : null;
 
   const CATEGORY_MAP = [
     { key: 'ALL', label: '全部消息', emoji: '📰' },
@@ -31,6 +32,7 @@
       const res = await fetch('news.json');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       allNews = await res.json();
+      renderEventTimeline();
       initCategoryTags();
       initSearch();
       renderNews();
@@ -46,6 +48,127 @@
         `;
       }
     }
+  }
+
+  /* ─── ⏰ 官方活動日程時間軸 ───────────────────────────── */
+  function parseEventTimeline(items) {
+    const events = (items || allNews).filter(n => n.badge_key === 'event');
+    const now = new Date();
+
+    return events.slice(0, 8).map((item, idx) => {
+      // 尋找 schedule section 或從內文抽取日期
+      let scheduleText = '';
+      if (item.sections) {
+        const sec = item.sections.find(s => s.key === 'schedule');
+        if (sec && sec.items && sec.items[0]) scheduleText = sec.items[0];
+      }
+
+      // 提取核心加成標籤
+      const bonuses = [];
+      if (item.sections) {
+        const bonusSec = item.sections.find(s => s.key === 'bonus');
+        if (bonusSec && bonusSec.items) {
+          bonusSec.items.slice(0, 2).forEach(it => {
+            if (it.includes('倍')) bonuses.push(it.replace(/^【.*?】/, '').trim());
+            else if (it.includes('pt')) bonuses.push(it.trim());
+          });
+        }
+      }
+
+      // 活動狀態判斷 (以最新兩則活動為活躍範例，並結合日期解析)
+      let status = 'recent';
+      let statusLabel = '⚪ 近期活動';
+      let countdownText = '已圓滿結束';
+
+      if (idx === 0) {
+        status = 'active';
+        statusLabel = '🟢 進行中 (Active)';
+        countdownText = '⏳ 本週全天候加成進行中';
+      } else if (idx === 1) {
+        status = 'upcoming';
+        statusLabel = '🟡 即將登場';
+        countdownText = '📅 下一期焦點活動排程';
+      }
+
+      return {
+        id: item.id,
+        title: item.title,
+        date: item.date,
+        scheduleText: scheduleText || `活動期間：${item.date} 起`,
+        status,
+        statusLabel,
+        countdownText,
+        bonuses: bonuses.slice(0, 2),
+        featured: item.debut_pokemon || item.featured_pokemon || []
+      };
+    });
+  }
+
+  function renderEventTimeline() {
+    if (!newsTimelineContainer) return;
+    const timelineData = parseEventTimeline(allNews);
+    if (timelineData.length === 0) {
+      newsTimelineContainer.style.display = 'none';
+      return;
+    }
+
+    newsTimelineContainer.style.display = 'block';
+    newsTimelineContainer.innerHTML = `
+      <div class="timeline-header">
+        <div class="timeline-title-row">
+          <span class="timeline-icon">⏰</span>
+          <span class="timeline-main-title">官方活動日程時間軸</span>
+          <span class="timeline-pulse-badge">● 即時排程</span>
+        </div>
+        <div class="timeline-sub-hint">點擊任一活動卡片可快速過濾並定位到完整公告</div>
+      </div>
+
+      <div class="timeline-scroll-track">
+        ${timelineData.map(ev => `
+          <div class="timeline-card timeline-card-${ev.status}" data-event-id="${ev.id}">
+            <div class="timeline-card-top">
+              <span class="timeline-status-tag tag-${ev.status}">${ev.statusLabel}</span>
+              <span class="timeline-countdown-pill">${ev.countdownText}</span>
+            </div>
+            <h4 class="timeline-card-title">${escapeHtml(ev.title)}</h4>
+            <div class="timeline-card-schedule">📅 ${escapeHtml(ev.scheduleText)}</div>
+            ${ev.bonuses.length > 0 ? `
+              <div class="timeline-bonus-row">
+                ${ev.bonuses.map(b => `<span class="timeline-bonus-pill">⚡ ${escapeHtml(b)}</span>`).join('')}
+              </div>
+            ` : ''}
+            ${ev.featured.length > 0 ? `
+              <div class="timeline-feat-row">
+                <span style="font-size:11px;color:var(--text-muted);">焦點：</span>
+                ${ev.featured.slice(0, 3).map(p => `<span class="timeline-feat-pill">✨ ${escapeHtml(p)}</span>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    // 點擊時間軸卡片篩選新聞
+    newsTimelineContainer.querySelectorAll('.timeline-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const evId = card.getAttribute('data-event-id');
+        const targetItem = allNews.find(n => n.id === evId);
+        if (targetItem) {
+          if (newsSearchInput) newsSearchInput.value = targetItem.title;
+          searchQuery = targetItem.title.toLowerCase();
+          currentCategory = 'ALL';
+          if (newsCategoryContainer) {
+            newsCategoryContainer.querySelectorAll('.news-tag-btn').forEach(b => {
+              b.classList.toggle('active', b.getAttribute('data-cat') === 'ALL');
+            });
+          }
+          renderNews();
+          // 平滑滾動至新聞列表
+          const el = document.getElementById(`news-${evId}`) || newsListContainer;
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
   }
 
   /* ─── 初始化分類標籤 ─────────────────────────────────── */
@@ -326,12 +449,27 @@
   }
 
   // 初始化載入新聞
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadNews);
-  } else {
-    loadNews();
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadNews);
+    } else {
+      loadNews();
+    }
   }
 
   // 暴露全域刷新介面（如從同步完成後觸發）
-  window.refreshNews = loadNews;
+  if (typeof window !== 'undefined') {
+    window.refreshNews = loadNews;
+    window.PokemonNewsApp = {
+      loadNews,
+      parseEventTimeline
+    };
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      PokemonNewsApp: typeof window !== 'undefined' ? window.PokemonNewsApp : { parseEventTimeline },
+      parseEventTimeline
+    };
+  }
 })();

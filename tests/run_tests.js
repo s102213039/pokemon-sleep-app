@@ -466,6 +466,60 @@ test('Tier 2 - Boundary & Corner Cases', 'Box Data Operations: CRUD structure an
   assert(dummyPokemon.uid && dummyPokemon.uid.startsWith('pkm_'), 'Invalid UID format');
 });
 
+test('Tier 2 - Boundary & Corner Cases', 'RaenonX PR Calculation: Accurate percentile ranking across Berry, Ingredient & Skill archetypes', () => {
+  const boxModule = require(path.join(WORKSPACE_ROOT, 'box.js'));
+  const calcPR = boxModule.calculatePokemonPR;
+  assert(typeof calcPR === 'function', 'calculatePokemonPR must be a function');
+
+  // 1. Berry God Pokemon (Raichu / Rattata: Adamant + BFS + HB + HelpSpeedM)
+  const berryGod = {
+    name: '小拉達',
+    specialty: '樹果',
+    nature: '固執', // speed ++, ing --
+    subskills: ['樹果數量S', '幫手獎勵', '幫忙速度M']
+  };
+  const berryResult = calcPR(berryGod, { specialty: '樹果' });
+  assert(berryResult.pr >= 90, `Berry God PR should be >= 90 (got ${berryResult.pr})`);
+  assertEquals(berryResult.tier, 'S+', 'Berry God should be S+ tier');
+  assert(berryResult.summaryNote.includes('樹果S') || berryResult.summaryNote.includes('幫忙速度'), 'Summary should highlight BFS');
+
+  // 2. Ingredient Specialist (Bulbasaur: Modest + IngFinderM + HelpBonus)
+  const ingSpecialist = {
+    name: '妙蛙種子',
+    specialty: '食材',
+    nature: '內斂', // ing ++, speed --
+    subskills: ['食材機率提升M', '幫手獎勵', '食材機率提升S']
+  };
+  const ingResult = calcPR(ingSpecialist, { specialty: '食材' });
+  assert(ingResult.pr >= 80, `Ingredient Specialist PR should be >= 80 (got ${ingResult.pr})`);
+  assert(ingResult.tier === 'S+' || ingResult.tier === 'S', `Ingredient Specialist tier should be S/S+ (got ${ingResult.tier})`);
+
+  // 3. Sub-optimal Pokemon (Berry Pokemon with Modest nature and no relevant subskills)
+  const poorPokemon = {
+    name: '小拉達',
+    specialty: '樹果',
+    nature: '內斂', // ing ++, speed -- (terrible for berry)
+    subskills: ['持有上限提升S', '活力回復提升S']
+  };
+  const poorResult = calcPR(poorPokemon, { specialty: '樹果' });
+  assert(poorResult.pr < 50, `Poor Pokemon PR should be < 50 (got ${poorResult.pr})`);
+  assert(poorResult.tier === 'B' || poorResult.tier === 'C', `Poor Pokemon tier should be B or C (got ${poorResult.tier})`);
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Event Timeline Parser: Identifies Active and Upcoming events from news dataset', () => {
+  const newsPath = path.join(WORKSPACE_ROOT, 'news.json');
+  const newsData = JSON.parse(fs.readFileSync(newsPath, 'utf8'));
+  const newsModule = require(path.join(WORKSPACE_ROOT, 'news.js'));
+
+  const timeline = newsModule.parseEventTimeline(newsData);
+  assert(Array.isArray(timeline), 'parseEventTimeline must return an array');
+  assert(timeline.length > 0, 'Timeline should contain event items');
+
+  const activeOrUpcoming = timeline.filter(ev => ev.status === 'active' || ev.status === 'upcoming');
+  assert(activeOrUpcoming.length > 0, 'Timeline should have active or upcoming events');
+  assert(timeline[0].statusLabel && timeline[0].countdownText, 'Timeline items should have status label and countdown');
+});
+
 test('Tier 2 - Boundary & Corner Cases', 'Special Pokemon icon resolution (9001-9006, 7006, 7007, 7054, 8001, 150) maps to valid Serebii URLs', () => {
   const specialIds = ['9001', '9002', '9003', '9004', '9005', '9006', '7006', '7007', '7054', '8001', '150'];
   specialIds.forEach(id => {
