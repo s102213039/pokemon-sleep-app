@@ -161,9 +161,10 @@ header {
 
 .main-tab-toggle .toggle-btn.active {
   background: var(--accent-gradient);
-  color: #0f172a;
+  color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(56, 189, 248, 0.35);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .header-actions {
@@ -183,12 +184,13 @@ header {
   background: var(--accent-gradient);
   border: none;
   border-radius: 10px;
-  color: #0f172a;
+  color: #ffffff;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
 }
 
@@ -242,9 +244,10 @@ header {
 
 .view-mode-toggle .toggle-btn.active {
   background: var(--accent-gradient);
-  color: #0f172a;
+  color: #ffffff;
   border-radius: 7px;
   box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .toggle-btn {
@@ -268,8 +271,9 @@ header {
 
 .toggle-btn.active {
   background: var(--accent-gradient);
-  color: #0f172a;
+  color: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 /* Controls Container */
@@ -390,11 +394,12 @@ header {
 }
 
 .tag-btn.active {
-  background: var(--accent-color);
-  color: #0f172a;
-  border-color: var(--accent-color);
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border-color: transparent;
   box-shadow: 0 2px 8px rgba(56, 189, 248, 0.35);
   font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .type-dot {
@@ -945,11 +950,12 @@ footer {
 
 /* Bonus filter active states */
 .bonus-filter-btn.active {
-  background: var(--accent-color);
-  color: #0f172a;
-  border-color: var(--accent-color);
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border-color: transparent;
   box-shadow: 0 2px 8px rgba(56, 189, 248, 0.35);
   font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .ing-badge {
@@ -1221,7 +1227,7 @@ footer {
 
 .custom-select-item.active {
   background: rgba(99, 102, 241, 0.28);
-  color: #818cf8;
+  color: #ffffff;
   font-weight: 700;
 }
 
