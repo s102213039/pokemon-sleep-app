@@ -153,8 +153,8 @@ if (typeof document !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
     let allPokemons = [];
     let currentSearch = '';
-    let selectedType = 'ALL';
-    let selectedSpecialty = 'ALL';
+    const selectedTypes = new Set();
+    const selectedSpecialties = new Set();
     let viewMode = 'table';
 
     const searchInput = document.getElementById('search-input');
@@ -328,30 +328,55 @@ if (typeof document !== 'undefined') {
       const types = ['ALL', ...new Set(allPokemons.map(p => p.type).filter(Boolean))];
       const specialties = ['ALL', ...new Set(allPokemons.map(p => p.specialty).filter(Boolean))];
 
-      typeFilterContainer.innerHTML = types.map(t => `
-        <button class="tag-btn ${t === selectedType ? 'active' : ''}" data-type="${t}">${t === 'ALL' ? '全部屬性' : t}</button>
-      `).join('');
+      function renderTypeButtons() {
+        typeFilterContainer.innerHTML = types.map(t => {
+          const isActive = t === 'ALL' ? selectedTypes.size === 0 : selectedTypes.has(t);
+          return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" data-type="${t}">${t === 'ALL' ? '全部屬性' : t}</button>`;
+        }).join('');
+      }
 
-      specialtyFilterContainer.innerHTML = specialties.map(s => `
-        <button class="tag-btn ${s === selectedSpecialty ? 'active' : ''}" data-specialty="${s}">${s === 'ALL' ? '全部得意' : s}</button>
-      `).join('');
+      function renderSpecialtyButtons() {
+        specialtyFilterContainer.innerHTML = specialties.map(s => {
+          const isActive = s === 'ALL' ? selectedSpecialties.size === 0 : selectedSpecialties.has(s);
+          return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" data-specialty="${s}">${s === 'ALL' ? '全部得意' : s}</button>`;
+        }).join('');
+      }
+
+      renderTypeButtons();
+      renderSpecialtyButtons();
 
       typeFilterContainer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('tag-btn')) {
-          selectedType = e.target.getAttribute('data-type');
-          document.querySelectorAll('#type-filter-tags .tag-btn').forEach(btn => btn.classList.remove('active'));
-          e.target.classList.add('active');
-          renderUI();
+        const btn = e.target.closest('.tag-btn');
+        if (!btn) return;
+        const type = btn.getAttribute('data-type');
+        if (type === 'ALL') {
+          selectedTypes.clear();
+        } else {
+          if (selectedTypes.has(type)) {
+            selectedTypes.delete(type);
+          } else {
+            selectedTypes.add(type);
+          }
         }
+        renderTypeButtons();
+        renderUI();
       });
 
       specialtyFilterContainer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('tag-btn')) {
-          selectedSpecialty = e.target.getAttribute('data-specialty');
-          document.querySelectorAll('#specialty-filter-tags .tag-btn').forEach(btn => btn.classList.remove('active'));
-          e.target.classList.add('active');
-          renderUI();
+        const btn = e.target.closest('.tag-btn');
+        if (!btn) return;
+        const specialty = btn.getAttribute('data-specialty');
+        if (specialty === 'ALL') {
+          selectedSpecialties.clear();
+        } else {
+          if (selectedSpecialties.has(specialty)) {
+            selectedSpecialties.delete(specialty);
+          } else {
+            selectedSpecialties.add(specialty);
+          }
         }
+        renderSpecialtyButtons();
+        renderUI();
       });
 
       if (searchInput) {
@@ -382,8 +407,8 @@ if (typeof document !== 'undefined') {
 
     function filterData() {
       return allPokemons.filter(p => {
-        if (selectedType !== 'ALL' && p.type !== selectedType) return false;
-        if (selectedSpecialty !== 'ALL' && p.specialty !== selectedSpecialty) return false;
+        if (selectedTypes.size > 0 && !selectedTypes.has(p.type)) return false;
+        if (selectedSpecialties.size > 0 && !selectedSpecialties.has(p.specialty)) return false;
         if (currentSearch) {
           const q = currentSearch;
           return (
