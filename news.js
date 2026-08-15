@@ -279,7 +279,13 @@
     if (!text) return '';
     let formatted = escapeHtml(text);
 
-    // 1. 新登場寶可夢高亮（粉紅微光發光標籤）
+    // 1. 機率分級標題高亮（中幅提升通常為新登場焦點）
+    formatted = formatted.replace(/【\s*機率中幅提升\s*】/g, '<span class="hl-rateup-mid">【機率中幅提升 🔥 新登場/焦點】</span>');
+    formatted = formatted.replace(/【\s*機率大幅提升\s*】/g, '<span class="hl-rateup-large">【機率大幅提升 🌟 超絕UP】</span>');
+    formatted = formatted.replace(/【\s*機率小幅提升\s*】/g, '<span class="hl-rateup-small">【機率小幅提升】</span>');
+    formatted = formatted.replace(/【\s*新登場\s*】/g, '<span class="hl-rateup-mid">【新登場 ✨】</span>');
+
+    // 2. 新登場 / 機率中幅提升寶可夢高亮（粉紅微光發光標籤）
     const debutList = item.debut_pokemon || [];
     debutList.forEach(name => {
       if (!name) return;
@@ -287,7 +293,7 @@
       formatted = formatted.replace(re, `<span class="hl-poke-new">✨ ${name}</span>`);
     });
 
-    // 2. 焦點 / 機率提升寶可夢高亮（金黃微光標籤）
+    // 3. 焦點 / 機率提升寶可夢高亮（金黃微光標籤）
     const featList = item.featured_pokemon || [];
     featList.forEach(name => {
       if (!name || debutList.includes(name)) return;
@@ -295,10 +301,10 @@
       formatted = formatted.replace(re, `<span class="hl-poke-feat">⭐ ${name}</span>`);
     });
 
-    // 3. 關鍵倍率與數值高亮 (如 1.25倍、2.5倍、3.75倍、2倍、3倍、+1,000pt、250鑽石)
+    // 4. 關鍵倍率與數值高亮 (如 1.25倍、2.5倍、3.75倍、2倍、3倍、+1,000pt、250鑽石)
     formatted = formatted.replace(/([1-4](?:\.\d+)?倍|\+\d{1,3}(?:,\d{3})*pt|\d+鑽石)/g, '<span class="hl-mult">$1</span>');
 
-    // 4. 島嶼 / 營地名稱高亮
+    // 5. 島嶼 / 營地名稱高亮
     formatted = formatted.replace(/(萌綠之島EX|天青沙灘EX|萌綠之島|天青沙灘|灰褐洞窟|白花雪原|寶藍湖畔|黃金舊發電廠|琥褐溪谷)/g, '<span class="hl-island">🏝️ $1</span>');
 
     return formatted;

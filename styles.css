@@ -1897,6 +1897,47 @@ input[type=range].rf-slider.event-slider {
 }
 
 /* 內文醒目高亮標籤 (Inline Highlights) */
+.hl-rateup-mid {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.28), rgba(244, 63, 94, 0.32));
+  color: #fce7f3;
+  border: 1px solid rgba(244, 114, 182, 0.65);
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.35);
+  text-shadow: 0 0 4px rgba(236, 72, 153, 0.5);
+  margin: 0 2px;
+}
+
+.hl-rateup-large {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.28), rgba(234, 88, 12, 0.32));
+  color: #fef3c7;
+  border: 1px solid rgba(251, 191, 36, 0.65);
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.35);
+  margin: 0 2px;
+}
+
+.hl-rateup-small {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(148, 163, 184, 0.15);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin: 0 2px;
+}
+
 .hl-poke-new {
   display: inline-block;
   background: rgba(236, 72, 153, 0.22);

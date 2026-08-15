@@ -9,6 +9,7 @@
     "badge_color": "#f59e0b",
     "title": "【活動】第38次「好眠日」",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [
       "皮皮",
       "皮可西",
@@ -57,6 +58,7 @@
     "badge_color": "#f59e0b",
     "title": "「好眠日限定包vol.38」介紹",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [],
     "overview": "「好眠日限定包vol.38」介紹",
     "highlights": [
@@ -96,6 +98,7 @@
     "badge_color": "#8b5cf6",
     "title": "【來獲得小鍛匠的薰香吧！】合作紀念包",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [
       "皮卡丘（船長）",
       "小鍛匠"
@@ -150,6 +153,7 @@
     "badge_color": "#8b5cf6",
     "title": "【來獲得主技能種子（小鍛匠）吧！】寶可夢培育包（小鍛匠）vol.1",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [
       "小鍛匠",
       "巧鍛匠",
@@ -201,13 +205,18 @@
     "badge_color": "#f59e0b",
     "title": "【企畫】「寶可夢動畫合作週」",
     "debut_pokemon": [
-      "小鍛匠"
-    ],
-    "featured_pokemon": [
       "皮卡丘（船長）",
+      "小鍛匠",
       "巧鍛匠",
       "巨鍛匠"
     ],
+    "mid_rateup_pokemon": [
+      "皮卡丘（船長）",
+      "小鍛匠",
+      "巧鍛匠",
+      "巨鍛匠"
+    ],
+    "featured_pokemon": [],
     "overview": "為慶祝與電視動畫「寶可夢」展開合作，《Pokémon Sleep》將舉辦「寶可夢動畫合作週」！",
     "highlights": [
       "舉辦期間：8/17 (週一) 4:00 ～ 8/24 (週一) 3:59",
@@ -279,6 +288,7 @@
       "巧鍛匠",
       "巨鍛匠"
     ],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [],
     "overview": "或許是受到各位研究者持續進行睡眠研究的影響，有目擊報告指出在特定的營地附近發現了至今尚未遇見過的寶可夢的蹤影。",
     "highlights": [
@@ -319,6 +329,7 @@
     "badge_color": "#3b82f6",
     "title": "關於Ver.3.7.1的更新內容",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [],
     "overview": "關於Ver.3.7.1的更新內容",
     "highlights": [
@@ -348,6 +359,7 @@
     "badge_color": "#8b5cf6",
     "title": "異常問題通知",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
@@ -377,6 +389,7 @@
     "badge_color": "#8b5cf6",
     "title": "異常問題通知",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
@@ -404,6 +417,7 @@
     "badge_color": "#8b5cf6",
     "title": "關於EX模式",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [
       "雷公",
       "水君"
@@ -434,6 +448,7 @@
     "badge_color": "#3b82f6",
     "title": "關於Ver.3.7.0的更新內容",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [
       "皮可西"
     ],
@@ -465,6 +480,7 @@
     "badge_color": "#8b5cf6",
     "title": "有關「主技能種子」的通知",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [
       "摔角鷹人"
     ],
@@ -514,6 +530,7 @@
     "badge_color": "#8b5cf6",
     "title": "【來獲得主技能種子（摔角鷹人）吧！】寶可夢培育包（摔角鷹人）vol.1",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [
       "摔角鷹人"
     ],
@@ -563,6 +580,7 @@
     "badge_color": "#8b5cf6",
     "title": "【來獲得摔角鷹人的薰香吧！】夏日嘉年華2026同樂包",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [
       "摔角鷹人"
     ],
@@ -616,6 +634,7 @@
     "badge_color": "#f59e0b",
     "title": "【預告】2026年9月確定舉辦「超夢活動」！",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [
       "超夢",
       "夢幻"
@@ -650,6 +669,7 @@
     "badge_color": "#f59e0b",
     "title": "【活動】第16次「新月日」",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [
       "夢幻"
     ],
@@ -681,6 +701,7 @@
     "badge_color": "#8b5cf6",
     "title": "【來獲得沙布蕾吧！】新月日限定包vol.16",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
@@ -718,10 +739,13 @@
     "badge_label": "🏆 活動企劃",
     "badge_color": "#f59e0b",
     "title": "【企畫】「夏日嘉年華2026」",
-    "debut_pokemon": [],
-    "featured_pokemon": [
+    "debut_pokemon": [
       "摔角鷹人"
     ],
+    "mid_rateup_pokemon": [
+      "摔角鷹人"
+    ],
+    "featured_pokemon": [],
     "overview": "炎炎夏日更要大口開吃！吃飽飽讓能量全力衝刺吧！夏日嘉年華！",
     "highlights": [
       "舉辦期間：8/10 (週一) 4:00 ～ 8/17 (週一) 3:59",
@@ -790,6 +814,7 @@
     "debut_pokemon": [
       "摔角鷹人"
     ],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [],
     "overview": "或許是受到各位研究者持續進行睡眠研究的影響，有目擊報告指出在特定的營地附近發現了至今尚未遇見過的寶可夢的蹤影。",
     "highlights": [
@@ -828,6 +853,7 @@
     "badge_color": "#8b5cf6",
     "title": "異常問題修復通知",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
@@ -857,6 +883,7 @@
     "badge_color": "#3b82f6",
     "title": "關於Ver.3.6.3的更新內容",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [],
     "overview": "關於Ver.3.6.3的更新內容",
     "highlights": [
@@ -886,6 +913,7 @@
     "badge_color": "#3b82f6",
     "title": "關於Ver.3.6.2的更新內容",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [],
     "overview": "關於Ver.3.6.2的更新內容",
     "highlights": [
@@ -915,6 +943,7 @@
     "badge_color": "#f59e0b",
     "title": "【歡慶！3週年紀念資訊➀】關於特別合作企畫",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [
       "小鍛匠",
       "巧鍛匠",
@@ -948,6 +977,7 @@
     "badge_color": "#8b5cf6",
     "title": "【歡慶！3週年紀念資訊②】關於天青沙灘EX",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [],
     "overview": "自 8/10 起， 新EX營地 「 天青沙灘EX 」將會登場！",
     "highlights": [
@@ -975,6 +1005,7 @@
     "badge_color": "#8b5cf6",
     "title": "【歡慶！3週年紀念資訊③】《Pokémon Sleep》3週年紀念禮物",
     "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
     "featured_pokemon": [],
     "overview": "7/20 這一天， 是《Pokémon Sleep》全球上線的日子！",
     "highlights": [
