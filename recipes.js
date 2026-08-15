@@ -564,8 +564,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 energyCellHTML = `
                   <td style="white-space:nowrap;text-align:center;padding:8px 6px;">
                     <div class="tasty-energy-stack">
-                      <div class="tasty-row tasty-row-normal" title="平時一般能量">
-                        <span class="tasty-tag">平時</span>⚡ ${finalE.toLocaleString()}
+                      <div class="tasty-row tasty-row-normal" title="一般能量 (1x)">
+                        <span class="tasty-tag">1x</span>⚡ ${finalE.toLocaleString()}
                       </div>
                       <div class="tasty-row tasty-row-2x" title="漂亮成功 (2倍)">
                         <span class="tasty-tag">2x</span>✨ ${(finalE * 2).toLocaleString()}
@@ -640,11 +640,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${showTasty ? `
                   <div class="card-tasty-group">
                     <div style="display:flex;justify-content:space-between;align-items:center;">
-                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">✨ 漂亮 (2x)</span>
+                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">✨ 2x (漂亮)</span>
                       <span class="card-score-2x">✨ ${(finalE * 2).toLocaleString()}</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
-                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">🌟 漂亮 (3x)</span>
+                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">🌟 3x (超成功)</span>
                       <span class="card-score-3x">🌟 ${(finalE * 3).toLocaleString()}</span>
                     </div>
                   </div>

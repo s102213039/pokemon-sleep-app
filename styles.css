@@ -1327,10 +1327,13 @@ input[type=range].rf-slider.event-slider {
   font-family: var(--font-main, sans-serif);
   font-size: 11px;
   font-weight: 700;
-  padding: 1px 5px;
+  padding: 1px 4px;
   border-radius: 4px;
   display: inline-block;
   line-height: 1.2;
+  min-width: 22px;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .tasty-row-normal {
