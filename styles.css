@@ -1164,6 +1164,12 @@ footer {
   border: 1px solid rgba(52,211,153,0.3);
 }
 
+.event-bonus-badge {
+  color: #f43f5e;
+  background: rgba(244,63,94,0.12);
+  border: 1px solid rgba(244,63,94,0.35);
+}
+
 /* Range slider base */
 input[type=range].rf-slider {
   -webkit-appearance: none;
@@ -1199,6 +1205,11 @@ input[type=range].rf-slider.island-slider::-webkit-slider-thumb {
   box-shadow: 0 2px 6px rgba(16,185,129,0.5);
 }
 
+input[type=range].rf-slider.event-slider::-webkit-slider-thumb {
+  background: linear-gradient(135deg, #fb7185, #f43f5e);
+  box-shadow: 0 2px 6px rgba(244,63,94,0.5);
+}
+
 input[type=range].rf-slider::-moz-range-thumb {
   width: 18px;
   height: 18px;
@@ -1227,6 +1238,154 @@ input[type=range].rf-slider.island-slider {
     rgba(255,255,255,0.12) var(--slider-fill, 0%),
     rgba(255,255,255,0.12) 100%
   );
+}
+
+input[type=range].rf-slider.event-slider {
+  background: linear-gradient(
+    to right,
+    rgba(244,63,94,0.7) 0%,
+    rgba(244,63,94,0.7) var(--slider-fill, 0%),
+    rgba(255,255,255,0.12) var(--slider-fill, 0%),
+    rgba(255,255,255,0.12) 100%
+  );
+}
+
+/* ─── 漂亮成功分數切換按鈕 ─────────────────────────────── */
+.tasty-switch-container {
+  display: flex;
+  align-items: center;
+}
+
+.tasty-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(30, 41, 59, 0.75);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.tasty-toggle-btn:hover {
+  border-color: rgba(236,72,153,0.5);
+  background: rgba(236,72,153,0.1);
+}
+
+.tasty-toggle-btn.active {
+  background: linear-gradient(135deg, rgba(236,72,153,0.2), rgba(168,85,247,0.2));
+  border-color: #ec4899;
+  color: #fdf2f8;
+  box-shadow: 0 0 12px rgba(236,72,153,0.25);
+}
+
+.tasty-toggle-icon {
+  font-size: 15px;
+}
+
+.tasty-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.08);
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+}
+
+.tasty-status-badge.active {
+  background: #ec4899;
+  color: #ffffff;
+}
+
+/* ─── 漂亮分數垂直上下排列堆疊 ──────────────────────────── */
+.tasty-energy-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+}
+
+.tasty-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.tasty-tag {
+  font-family: var(--font-main, sans-serif);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 4px;
+  display: inline-block;
+  line-height: 1.2;
+}
+
+.tasty-row-normal {
+  color: #fbbf24;
+  font-size: 14px;
+}
+.tasty-row-normal .tasty-tag {
+  background: rgba(251,191,36,0.18);
+  color: #fbbf24;
+  border: 1px solid rgba(251,191,36,0.3);
+}
+
+.tasty-row-2x {
+  color: #f472b6;
+}
+.tasty-row-2x .tasty-tag {
+  background: rgba(244,114,182,0.18);
+  color: #f472b6;
+  border: 1px solid rgba(244,114,182,0.3);
+}
+
+.tasty-row-3x {
+  color: #c084fc;
+}
+.tasty-row-3x .tasty-tag {
+  background: rgba(192,132,252,0.18);
+  color: #c084fc;
+  border: 1px solid rgba(192,132,252,0.3);
+}
+
+/* 卡片視圖中的漂亮分數 */
+.card-tasty-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: monospace;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(255,255,255,0.1);
+}
+
+.card-score-normal {
+  color: #fbbf24;
+  font-weight: 700;
+  font-size: 13.5px;
+}
+.card-score-2x {
+  color: #f472b6;
+  font-weight: 700;
+  font-size: 12px;
+}
+.card-score-3x {
+  color: #c084fc;
+  font-weight: 700;
+  font-size: 12px;
 }
 
 /* RF group vertical variant */

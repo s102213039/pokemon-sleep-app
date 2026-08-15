@@ -1,22 +1,24 @@
 /**
  * recipes.js — Pokémon Sleep 料理食譜大全
- * 功能：篩選、排序、等級滑桿、島嶼加成、localStorage 記憶
+ * 功能：篩選、排序、等級滑桿、島嶼加成、活動加成、漂亮成功分數、localStorage 記憶
  */
 document.addEventListener('DOMContentLoaded', () => {
 
   /* ─── 狀態變數 ──────────────────────────────────────── */
-  let allRecipes      = [];
-  let selectedCategory = 'ALL';
+  let allRecipes          = [];
+  let selectedCategory    = 'ALL';
   let selectedIngredients = new Set();   // 包含食材篩選
   let excludedIngredients = new Set();   // 排除食材篩選
-  let matchMode       = 'any';
-  let currentSearch   = '';
-  let sortOption      = 'energy-desc';
-  let viewMode        = 'table';
-  let minBonus        = 0;
-  let minPot          = 0;
-  let recipeLevel     = 1;       // 1-70
-  let islandBonus     = 0;       // 0-85 (%)
+  let matchMode           = 'any';
+  let currentSearch       = '';
+  let sortOption          = 'energy-desc';
+  let viewMode            = 'table';
+  let minBonus            = 0;
+  let minPot              = 0;
+  let recipeLevel         = 1;       // 1-70
+  let islandBonus         = 0;       // 0-85 (%)
+  let eventBonus          = 1.0;     // 1.00 - 2.50 (step 0.25)
+  let showTasty           = false;   // 漂亮成功 (2x / 3x) 開關
 
   /* ─── 食譜等級加成倉率表（Lv.1-70）
      資料來源：ポケモンスリープ攻略・検証 Wiki (wikiwiki.jp/poke_sleep)
@@ -41,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ─── LocalStorage 鍵值 ─────────────────────────────── */
-  const LS_KEY = 'pksleep_recipe_prefs_v2';
+  const LS_KEY = 'pksleep_recipe_prefs_v3';
 
   function loadPrefs() {
     try {
@@ -51,6 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
       minPot           = Number(saved.minPot)   || 0;
       recipeLevel      = Number(saved.recipeLevel) || 1;
       islandBonus      = Number(saved.islandBonus) || 0;
+      eventBonus       = saved.eventBonus !== undefined ? Number(saved.eventBonus) : 1.0;
+      showTasty        = Boolean(saved.showTasty);
       sortOption       = saved.sortOption || 'energy-desc';
       viewMode         = saved.viewMode || 'table';
       matchMode        = saved.matchMode || 'any';
@@ -69,6 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
         minPot,
         recipeLevel,
         islandBonus,
+        eventBonus,
+        showTasty,
         sortOption,
         viewMode,
         matchMode,
@@ -94,6 +100,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const levelBadge           = document.getElementById('level-badge');
   const islandSlider         = document.getElementById('island-bonus-slider');
   const islandBadge          = document.getElementById('island-bonus-badge');
+  const eventSlider          = document.getElementById('event-bonus-slider');
+  const eventBadge           = document.getElementById('event-bonus-badge');
+  const tastyToggleBtn       = document.getElementById('tasty-toggle-btn');
+  const tastyStatusBadge     = document.getElementById('tasty-status-badge');
 
   /* ─── 滑桿顏色 fill 更新 ────────────────────────────── */
   function updateSliderFill(slider, min, max) {
@@ -102,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     slider.style.setProperty('--slider-fill', pct + '%');
   }
 
-  /* ─── 初始化滑桿顯示 ─────────────────────────────────── */
+  /* ─── 初始化滑桿與開關顯示 ─────────────────────────────── */
   function syncLevelUI() {
     if (!levelSlider || !levelBadge) return;
     levelSlider.value = recipeLevel;
@@ -119,6 +129,26 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSliderFill(islandSlider, 0, 85);
   }
 
+  function syncEventUI() {
+    if (!eventSlider || !eventBadge) return;
+    eventSlider.value = eventBonus;
+    eventBadge.textContent = `×${Number(eventBonus).toFixed(2)}`;
+    updateSliderFill(eventSlider, 1.0, 2.5);
+  }
+
+  function syncTastyUI() {
+    if (!tastyToggleBtn || !tastyStatusBadge) return;
+    if (showTasty) {
+      tastyToggleBtn.classList.add('active');
+      tastyStatusBadge.textContent = '開啟 (2x/3x)';
+      tastyStatusBadge.classList.add('active');
+    } else {
+      tastyToggleBtn.classList.remove('active');
+      tastyStatusBadge.textContent = '關閉';
+      tastyStatusBadge.classList.remove('active');
+    }
+  }
+
   /* ─── 載入 recipes.json ─────────────────────────────── */
   loadPrefs();
 
@@ -129,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
       initCategoryFilters();
       initSelectFilters();
       initSliders();
+      initTastyToggle();
       initIngredientPicker();
       initViewToggle();
       initSort();
@@ -193,9 +224,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  /* ─── 滑桿 ───────────────────────────────────────────── */
+  /* ─── 滑桿控制 ───────────────────────────────────────── */
   function initSliders() {
-    if (!levelSlider || !islandSlider) return;
+    if (!levelSlider || !islandSlider || !eventSlider) return;
 
     syncLevelUI();
     levelSlider.addEventListener('input', () => {
@@ -209,6 +240,26 @@ document.addEventListener('DOMContentLoaded', () => {
     islandSlider.addEventListener('input', () => {
       islandBonus = parseInt(islandSlider.value, 10);
       syncIslandUI();
+      savePrefs();
+      render();
+    });
+
+    syncEventUI();
+    eventSlider.addEventListener('input', () => {
+      eventBonus = parseFloat(eventSlider.value);
+      syncEventUI();
+      savePrefs();
+      render();
+    });
+  }
+
+  /* ─── 漂亮成功開關 ───────────────────────────────────── */
+  function initTastyToggle() {
+    if (!tastyToggleBtn) return;
+    syncTastyUI();
+    tastyToggleBtn.addEventListener('click', () => {
+      showTasty = !showTasty;
+      syncTastyUI();
       savePrefs();
       render();
     });
@@ -369,10 +420,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ─── 能量計算 ──────────────────────────────────────── */
-  function calcEnergy(base, level, islandBonusPct) {
+  function calcEnergy(base, level, islandBonusPct, eventBonusMult = 1.0) {
     const lvMultiplier     = 1 + (getLevelBonus(level) / 100);
     const islandMultiplier = 1 + (islandBonusPct / 100);
-    return Math.round(base * lvMultiplier * islandMultiplier);
+    return Math.round(base * lvMultiplier * islandMultiplier * eventBonusMult);
   }
 
   /* ─── 篩選 + 排序 ───────────────────────────────────── */
@@ -403,8 +454,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
       })
       .sort((a, b) => {
-        const eA = calcEnergy(a.base_energy, recipeLevel, islandBonus);
-        const eB = calcEnergy(b.base_energy, recipeLevel, islandBonus);
+        const eA = calcEnergy(a.base_energy, recipeLevel, islandBonus, eventBonus);
+        const eB = calcEnergy(b.base_energy, recipeLevel, islandBonus, eventBonus);
         if (sortOption === 'energy-desc')  return eB - eA;
         if (sortOption === 'energy-asc')   return eA - eB;
         if (sortOption === 'pot-asc')      return a.pot_size - b.pot_size;
@@ -428,49 +479,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getBonusBadgeStyle(pct) {
     if (pct >= 78) return 'background:rgba(251,191,36,0.25);color:#fbbf24;border:1px solid rgba(251,191,36,0.7);';
-    if (pct >= 61) return 'background:rgba(239,68,68,0.2);color:#f87171;border:1px solid rgba(239,68,68,0.6);';
-    if (pct >= 48) return 'background:rgba(167,139,250,0.2);color:#c4b5fd;border:1px solid rgba(167,139,250,0.5);';
-    if (pct >= 35) return 'background:rgba(52,211,153,0.15);color:#6ee7b7;border:1px solid rgba(52,211,153,0.4);';
-    if (pct >= 25) return 'background:rgba(56,189,248,0.15);color:#7dd3fc;border:1px solid rgba(56,189,248,0.4);';
-    if (pct >= 21) return 'background:rgba(148,163,184,0.15);color:#cbd5e1;border:1px solid rgba(148,163,184,0.35);';
-    return 'background:rgba(100,116,139,0.1);color:#64748b;border:1px solid rgba(100,116,139,0.2);';
+    if (pct >= 61) return 'background:rgba(239,68,68,0.2);color:#f87171;border:1px solid rgba(239,68,68,0.5);';
+    if (pct >= 48) return 'background:rgba(168,85,247,0.2);color:#c084fc;border:1px solid rgba(168,85,247,0.5);';
+    if (pct >= 35) return 'background:rgba(59,130,246,0.2);color:#60a5fa;border:1px solid rgba(59,130,246,0.5);';
+    if (pct >= 25) return 'background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.5);';
+    return 'background:rgba(255,255,255,0.08);color:var(--text-main);border:1px solid rgba(255,255,255,0.15);';
   }
 
   function renderIngRow(ingredients) {
-    return `<div class="recipe-ing-row">${
-      ingredients.map(ing => `
-        <span class="recipe-ing-chip" title="${ing.name} ×${ing.count}">
-          ${ing.icon ? `<img src="${ing.icon}" class="recipe-ing-icon" alt="${ing.name}" loading="lazy">` : ''}
-          <span class="recipe-ing-count">×${ing.count}</span>
-        </span>
-      `).join('')
-    }</div>`;
+    return `<div class="recipe-ing-row">
+      ${ingredients.map(i => `
+        <div class="recipe-ing-chip" title="${i.name} × ${i.count}">
+          ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${i.name}" loading="lazy">` : ''}
+          <span class="recipe-ing-count">×${i.count}</span>
+        </div>
+      `).join('')}
+    </div>`;
   }
 
+  /* ─── 渲染主入口 ────────────────────────────────────── */
   function render() {
     if (!contentArea || !countBadge) return;
-    const filtered    = getFilteredRecipes();
-    const isFiltered  = filtered.length < allRecipes.length;
+    const filtered = getFilteredRecipes();
 
-    const catBreakdown = {};
-    ['咖哩', '沙拉', '甜點'].forEach(cat => {
-      catBreakdown[cat] = {
-        total: allRecipes.filter(r => r.category === cat).length,
-        shown: filtered.filter(r => r.category === cat).length
-      };
-    });
-
-    const catEmoji = { '咖哩':'🍛', '沙拉':'🥗', '甜點':'🍰' };
-    const breakdownHTML = Object.entries(catBreakdown)
-      .map(([cat, { total, shown }]) =>
-        `<span style="margin:0 6px;opacity:0.8;">${catEmoji[cat]}${cat} <strong>${isFiltered ? shown + '/' : ''}${total}</strong></span>`
-      ).join('<span style="opacity:0.3;">|</span>');
+    const catCounts = {};
+    filtered.forEach(r => { catCounts[r.category] = (catCounts[r.category] || 0) + 1; });
+    const breakdownHTML = Object.entries(catCounts).map(([cat, c]) => `${cat} <strong>${c}</strong>`).join(' · ');
 
     const islandMult = (1 + islandBonus / 100).toFixed(2);
+    const eventText  = eventBonus > 1.0 ? `<span style="margin-left:6px;font-size:12px;color:#f43f5e;">🎉 ×${eventBonus.toFixed(2)}</span>` : '';
+    const tastyText  = showTasty ? `<span style="margin-left:6px;font-size:12px;color:#ec4899;font-weight:600;">✨ 漂亮分數中</span>` : '';
+
     countBadge.innerHTML = `顯示 <strong>${filtered.length}</strong>/${allRecipes.length} 筆
       <span style="margin-left:12px;font-size:12px;color:var(--text-muted);">${breakdownHTML}</span>
       <span style="margin-left:10px;font-size:12px;color:#fbbf24;">Lv.${recipeLevel}</span>
-      <span style="margin-left:6px;font-size:12px;color:#6ee7b7;">🏝️ ×${islandMult}</span>`;
+      <span style="margin-left:6px;font-size:12px;color:#6ee7b7;">🏝️ ×${islandMult}</span>
+      ${eventText}
+      ${tastyText}`;
 
     if (filtered.length === 0) {
       contentArea.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-muted);">🔍 未找到符合條件的料理食譜</div>`;
@@ -482,6 +527,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderTable(recipes) {
+    const islandMult = (1 + islandBonus / 100).toFixed(2);
+    const eventSub = eventBonus > 1.0 ? ` · 🎉×${eventBonus.toFixed(2)}` : '';
     contentArea.innerHTML = `
       <div class="table-container">
         <table class="pokemon-table">
@@ -493,9 +540,9 @@ document.addEventListener('DOMContentLoaded', () => {
               <th>食材加成</th>
               <th>鍋子容量</th>
               <th>食材需求</th>
-              <th style="white-space:nowrap;">
+              <th style="white-space:nowrap;min-width:115px;text-align:center;">
                 能量<br>
-                <small style="color:#fbbf24;font-weight:500;">Lv.${recipeLevel} ×${(1 + islandBonus/100).toFixed(2)}</small>
+                <small style="color:#fbbf24;font-weight:500;">Lv.${recipeLevel} · 🏝️×${islandMult}${eventSub}</small>
               </th>
             </tr>
           </thead>
@@ -504,8 +551,33 @@ document.addEventListener('DOMContentLoaded', () => {
               const bp         = r.bonus_pct || 19;
               const badgeStyle = getBonusBadgeStyle(bp);
               const emoji      = getBonusEmoji(bp);
-              const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus);
-              const baseE      = calcEnergy(r.base_energy, recipeLevel, 0);
+              const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
+
+              let energyCellHTML = '';
+              if (!showTasty) {
+                energyCellHTML = `
+                  <td style="font-weight:700;color:#fbbf24;font-family:monospace;font-size:15px;white-space:nowrap;text-align:center;">
+                    ⚡ ${finalE.toLocaleString()}
+                  </td>
+                `;
+              } else {
+                energyCellHTML = `
+                  <td style="white-space:nowrap;text-align:center;padding:8px 6px;">
+                    <div class="tasty-energy-stack">
+                      <div class="tasty-row tasty-row-normal" title="平時一般能量">
+                        <span class="tasty-tag">平時</span>⚡ ${finalE.toLocaleString()}
+                      </div>
+                      <div class="tasty-row tasty-row-2x" title="漂亮成功 (2倍)">
+                        <span class="tasty-tag">2x</span>✨ ${(finalE * 2).toLocaleString()}
+                      </div>
+                      <div class="tasty-row tasty-row-3x" title="超成功 / 漂亮 (3倍)">
+                        <span class="tasty-tag">3x</span>🌟 ${(finalE * 3).toLocaleString()}
+                      </div>
+                    </div>
+                  </td>
+                `;
+              }
+
               return `
               <tr>
                 <td>
@@ -524,14 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>
                 <td><span class="pot-badge">🍲 ${r.pot_size}</span></td>
                 <td>${renderIngRow(r.ingredients)}</td>
-                <td style="font-weight:700;color:#fbbf24;font-family:monospace;font-size:15px;white-space:nowrap;">
-                  ⚡ ${finalE.toLocaleString()}
-                  ${islandBonus > 0 || recipeLevel > 1 ? `
-                    <br><small style="color:var(--text-muted);font-size:10px;font-weight:400;">
-                      基礎 ${r.base_energy.toLocaleString()}
-                      ${recipeLevel > 1 ? ` · Lv.${recipeLevel} ${baseE.toLocaleString()}` : ''}
-                    </small>` : ''}
-                </td>
+                ${energyCellHTML}
               </tr>
             `}).join('')}
           </tbody>
@@ -541,14 +606,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderGrid(recipes) {
+    const islandMult = (1 + islandBonus / 100).toFixed(2);
+    const eventSub = eventBonus > 1.0 ? ` · 🎉×${eventBonus.toFixed(2)}` : '';
     contentArea.innerHTML = `
       <div class="pokemon-grid">
         ${recipes.map(r => {
           const bp         = r.bonus_pct || 19;
           const badgeStyle = getBonusBadgeStyle(bp);
           const emoji      = getBonusEmoji(bp);
-          const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus);
-          const islandMult = (1 + islandBonus / 100).toFixed(2);
+          const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
           return `
           <div class="pokemon-card">
             <div class="card-header" style="align-items:center;">
@@ -561,14 +627,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
               </div>
             </div>
-            <div class="card-stats" style="grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
-              <div class="stat-item">
-                <span class="stat-label">鍋子容量</span>
+            <div class="card-stats" style="grid-template-columns:1fr;gap:8px;margin-top:10px;">
+              <div class="stat-item" style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="stat-label">🍲 鍋子容量</span>
                 <span class="stat-value" style="color:var(--accent-color);">🍲 ${r.pot_size}</span>
               </div>
-              <div class="stat-item">
-                <span class="stat-label">⚡ Lv.${recipeLevel} ×${islandMult}</span>
-                <span class="stat-value" style="color:#fbbf24;">${finalE.toLocaleString()}</span>
+              <div class="stat-item" style="display:flex;flex-direction:column;gap:4px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span class="stat-label">⚡ 能量 (Lv.${recipeLevel} · 🏝️×${islandMult}${eventSub})</span>
+                  <span class="stat-value" style="color:#fbbf24;font-size:15px;font-family:monospace;font-weight:700;">⚡ ${finalE.toLocaleString()}</span>
+                </div>
+                ${showTasty ? `
+                  <div class="card-tasty-scores" style="display:flex;justify-content:space-between;margin-top:4px;padding-top:4px;border-top:1px dashed rgba(255,255,255,0.1);font-size:12px;font-family:monospace;">
+                    <span style="color:#f472b6;font-weight:700;">✨ 2x: ${(finalE * 2).toLocaleString()}</span>
+                    <span style="color:#c084fc;font-weight:700;">🌟 3x: ${(finalE * 3).toLocaleString()}</span>
+                  </div>
+                ` : ''}
               </div>
             </div>
             <div style="margin-top:10px;">

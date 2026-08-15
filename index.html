@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260814_08">
+  <link rel="stylesheet" href="styles.css?v=20260815_01">
 </head>
 <body>
 
@@ -180,9 +180,9 @@
           </div>
         </div>
 
-        <!-- 第三行：食譜等級滑桿 + 島嶼加成滑桿 -->
-        <div class="raenonx-filter-bar" style="gap:24px; flex-wrap:wrap;">
-          <div class="rf-group-vertical" style="flex:1; min-width:200px;">
+        <!-- 第三行：食譜等級滑桿 + 島嶼加成滑桿 + 活動加成滑桿 + 漂亮成功開關 -->
+        <div class="raenonx-filter-bar" style="gap:20px; flex-wrap:wrap;">
+          <div class="rf-group-vertical" style="flex:1; min-width:180px;">
             <div class="slider-label-row">
               <span class="rf-label">📖 食譜等級</span>
               <span id="level-badge" class="slider-value-badge">Lv. 1</span>
@@ -195,11 +195,11 @@
               <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">Lv.70</span>
             </div>
             <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;">
-              等級加成非線性，Lv.70 最高可達 +258%（倉率×3.58）
+              等級加成非線性，Lv.70 最高可達 +258%
             </div>
           </div>
 
-          <div class="rf-group-vertical" style="flex:1; min-width:200px;">
+          <div class="rf-group-vertical" style="flex:1; min-width:180px;">
             <div class="slider-label-row">
               <span class="rf-label">🏝️ 島嶼能量加成</span>
               <span id="island-bonus-badge" class="slider-value-badge island-bonus-badge">+0% (×1.00)</span>
@@ -212,7 +212,35 @@
               <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">85%</span>
             </div>
             <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;">
-              0%→85%，每格 +5%（即 ×1.00 ～ ×1.85 倍）
+              0%→85%，每格 +5%（×1.00 ～ ×1.85）
+            </div>
+          </div>
+
+          <div class="rf-group-vertical" style="flex:1; min-width:180px;">
+            <div class="slider-label-row">
+              <span class="rf-label">🎉 活動能量加成</span>
+              <span id="event-bonus-badge" class="slider-value-badge event-bonus-badge">×1.00</span>
+            </div>
+            <div class="slider-row">
+              <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">1.00x</span>
+              <input type="range" id="event-bonus-slider" class="rf-slider event-slider"
+                min="1.0" max="2.5" step="0.25" value="1.0"
+                aria-label="活動能量加成">
+              <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">2.50x</span>
+            </div>
+            <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;">
+              1.00x→2.50x，每格 +0.25x（活動限定倍率）
+            </div>
+          </div>
+
+          <!-- 漂亮成功分數開關 -->
+          <div class="rf-group-vertical" style="flex:0 0 auto; justify-content:center; align-self:center; min-width:180px;">
+            <div class="tasty-switch-container">
+              <button id="tasty-toggle-btn" class="tasty-toggle-btn" type="button" title="切換是否展示 2倍(漂亮) 與 3倍(大成功) 的分數">
+                <span class="tasty-toggle-icon">✨</span>
+                <span class="tasty-toggle-text">漂亮成功分數 (2x / 3x)</span>
+                <span id="tasty-status-badge" class="tasty-status-badge">關閉</span>
+              </button>
             </div>
           </div>
         </div>
@@ -257,7 +285,7 @@
       <div class="stats-bar">
         <span id="recipe-count-badge" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">載入食譜中...</span>
         <div style="font-size:12px;color:var(--text-muted);">
-          💡 食材加成為每道食譜的<strong>固定數值</strong>，等級越高加成越大；島嶼加成額外乘算於最終能量
+          💡 食材加成為每道食譜的<strong>固定數值</strong>；等級、島嶼與活動加成乘算於最終能量
         </div>
       </div>
 
@@ -282,7 +310,7 @@
     </p>
   </footer>
 
-  <script src="app.js?v=20260814_08"></script>
-  <script src="recipes.js?v=20260814_08"></script>
+  <script src="app.js?v=20260815_01"></script>
+  <script src="recipes.js?v=20260815_01"></script>
 </body>
 </html>

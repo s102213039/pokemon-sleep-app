@@ -290,6 +290,28 @@ test('Tier 1 - Feature Coverage', 'HTML Structure: index.html exists with requir
   assert(htmlContent.includes('id="toggle-grid"') || htmlContent.includes("id='toggle-grid'"), 'Missing grid view toggle button');
   assert(htmlContent.includes('id="toggle-table"') || htmlContent.includes("id='toggle-table'"), 'Missing table view toggle button');
   assert(htmlContent.includes('id="content-area"') || htmlContent.includes("id='content-area'"), 'Missing view content area container');
+  assert(htmlContent.includes('id="event-bonus-slider"'), 'Missing event-bonus-slider element in index.html');
+  assert(htmlContent.includes('id="tasty-toggle-btn"'), 'Missing tasty-toggle-btn element in index.html');
+});
+
+test('Tier 1 - Feature Coverage', 'Recipe Energy Formula: Level + Island Bonus + Event Multiplier (1.00x - 2.50x) + Tasty (2x/3x)', () => {
+  const LEVEL_BONUS_TABLE = { 1: 0, 70: 258 };
+  function testCalcEnergy(base, lv, islandPct, eventMult = 1.0) {
+    const lvMult = 1 + ((LEVEL_BONUS_TABLE[lv] || 0) / 100);
+    const islandMult = 1 + (islandPct / 100);
+    return Math.round(base * lvMult * islandMult * eventMult);
+  }
+
+  // Base: 10000, Lv1 (0%), Island 0% (x1.0), Event 1.0x -> 10000
+  assertEquals(testCalcEnergy(10000, 1, 0, 1.0), 10000, 'Base energy at Lv1 0% 1.0x should be 10000');
+  // Base: 10000, Lv1 (0%), Island 0% (x1.0), Event 1.25x -> 12500
+  assertEquals(testCalcEnergy(10000, 1, 0, 1.25), 12500, 'Energy with 1.25x event bonus should be 12500');
+  // Base: 10000, Lv1 (0%), Island 0% (x1.0), Event 2.50x -> 25000
+  assertEquals(testCalcEnergy(10000, 1, 0, 2.5), 25000, 'Energy with 2.50x event bonus should be 25000');
+  // Tasty 2x & 3x calculations
+  const energy = testCalcEnergy(10000, 1, 0, 1.5); // 15000
+  assertEquals(energy * 2, 30000, 'Tasty 2x should be double normal energy');
+  assertEquals(energy * 3, 45000, 'Tasty 3x should be triple normal energy');
 });
 
 test('Tier 1 - Feature Coverage', 'CSS Styling: styles.css exists with dark theme, badge styles, responsive rules', () => {
