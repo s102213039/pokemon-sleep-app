@@ -308,6 +308,48 @@ def determine_badge_type(category, title):
     else:
         return 'notice', '📢 重要通知', '#8b5cf6'
 
+def extract_pokemon_highlights(title, clean_text):
+    debut_pokes = []
+    featured_pokes = []
+
+    # 1. 新登場寶可夢
+    if '新登場' in title or '新登場' in clean_text:
+        m = re.findall(r'(?:新登場[的：:\s]*|【新登場】\s*)([^\n，,。！!]+)', title + ' ' + clean_text)
+        for cand in m:
+            cand_pokes = [p.strip() for p in re.split(r'[,、\s]+', cand) if len(p.strip()) >= 2 and not any(k in p for k in ['活動', '企畫', '企劃', '通知', '資訊', '包', 'NEW', '能新遇見', '特別'])]
+            debut_pokes.extend(cand_pokes)
+
+    debut_match = re.search(r'能新遇見的寶可夢\s*(.*?)(?:敬請期待|注意事項|$)', clean_text, re.DOTALL)
+    if debut_match:
+        for line in debut_match.group(1).split('\n'):
+            p_name = re.sub(r'^[・\-\*]\s*', '', line).split('（')[0].strip()
+            if p_name and len(p_name) >= 2 and '寶可夢' not in p_name and 'NEW' not in p_name:
+                debut_pokes.append(p_name)
+
+    # 2. 焦點 / 機率提升寶可夢
+    rateup_match = re.search(r'【\s*機率(?:中幅|大幅)提升\s*】\s*([^\n【]+)', clean_text)
+    if rateup_match:
+        for p in re.split(r'[,、\s]+', rateup_match.group(1)):
+            p = p.strip()
+            if len(p) >= 2:
+                featured_pokes.append(p)
+
+    for key_p in ['皮卡丘（船長）', '小鍛匠', '巧鍛匠', '巨鍛匠', '摔角鷹人', '超夢', '夢幻', '炎帝', '雷公', '水君', '皮皮', '皮可西', '皮寶寶']:
+        if (key_p in title or key_p in clean_text) and key_p not in featured_pokes and key_p not in debut_pokes:
+            featured_pokes.append(key_p)
+
+    debut_clean = []
+    for p in debut_pokes:
+        if p and p not in debut_clean and len(p) <= 12:
+            debut_clean.append(p)
+
+    featured_clean = []
+    for p in featured_pokes:
+        if p and p not in featured_clean and p not in debut_clean and len(p) <= 12:
+            featured_clean.append(p)
+
+    return debut_clean, featured_clean
+
 def parse_article(url):
     html = fetch_url(url)
     if not html:
@@ -347,6 +389,7 @@ def parse_article(url):
     # 深度 AI 結構化總結
     ai_result = deep_ai_extract_sections(category, title, clean_text)
     badge_key, badge_label, badge_color = determine_badge_type(category, title)
+    debut_pokes, featured_pokes = extract_pokemon_highlights(title, clean_text)
 
     # 擷取文章預覽（前 360 字）
     preview = clean_text[:360].strip() + ("..." if len(clean_text) > 360 else "")
@@ -360,6 +403,8 @@ def parse_article(url):
         "badge_label": badge_label,
         "badge_color": badge_color,
         "title": title,
+        "debut_pokemon": debut_pokes,
+        "featured_pokemon": featured_pokes,
         "overview": ai_result["overview"],
         "highlights": ai_result["highlights"],
         "sections": ai_result["sections"],

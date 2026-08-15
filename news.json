@@ -8,6 +8,12 @@
     "badge_label": "🏆 活動企劃",
     "badge_color": "#f59e0b",
     "title": "【活動】第38次「好眠日」",
+    "debut_pokemon": [],
+    "featured_pokemon": [
+      "皮皮",
+      "皮可西",
+      "皮寶寶"
+    ],
     "overview": "在滿月高掛的夜晚，睡個香甜的好覺吧！",
     "highlights": [
       "舉辦期間：8/27 (週四) 4:00 ～ 8/30 (週日) 3:59",
@@ -50,6 +56,8 @@
     "badge_label": "🏆 活動企劃",
     "badge_color": "#f59e0b",
     "title": "「好眠日限定包vol.38」介紹",
+    "debut_pokemon": [],
+    "featured_pokemon": [],
     "overview": "「好眠日限定包vol.38」介紹",
     "highlights": [
       "銷售期間： 2026/8/26 4:00 ～ 2026/8/31 3:59",
@@ -87,6 +95,11 @@
     "badge_label": "📢 重要通知",
     "badge_color": "#8b5cf6",
     "title": "【來獲得小鍛匠的薰香吧！】合作紀念包",
+    "debut_pokemon": [],
+    "featured_pokemon": [
+      "皮卡丘（船長）",
+      "小鍛匠"
+    ],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
       "銷售期間： 2026/8/17 6:00 ～ 2026/8/25 3:59",
@@ -136,6 +149,12 @@
     "badge_label": "📢 重要通知",
     "badge_color": "#8b5cf6",
     "title": "【來獲得主技能種子（小鍛匠）吧！】寶可夢培育包（小鍛匠）vol.1",
+    "debut_pokemon": [],
+    "featured_pokemon": [
+      "小鍛匠",
+      "巧鍛匠",
+      "巨鍛匠"
+    ],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
       "銷售期間： 2026/8/17 6:00 ～ 2026/8/25 3:59",
@@ -181,6 +200,14 @@
     "badge_label": "🏆 活動企劃",
     "badge_color": "#f59e0b",
     "title": "【企畫】「寶可夢動畫合作週」",
+    "debut_pokemon": [
+      "小鍛匠"
+    ],
+    "featured_pokemon": [
+      "皮卡丘（船長）",
+      "巧鍛匠",
+      "巨鍛匠"
+    ],
     "overview": "為慶祝與電視動畫「寶可夢」展開合作，《Pokémon Sleep》將舉辦「寶可夢動畫合作週」！",
     "highlights": [
       "舉辦期間：8/17 (週一) 4:00 ～ 8/24 (週一) 3:59",
@@ -247,6 +274,12 @@
     "badge_label": "📢 重要通知",
     "badge_color": "#8b5cf6",
     "title": "【新登場】小鍛匠、 巧鍛匠、 巨鍛匠",
+    "debut_pokemon": [
+      "小鍛匠",
+      "巧鍛匠",
+      "巨鍛匠"
+    ],
+    "featured_pokemon": [],
     "overview": "或許是受到各位研究者持續進行睡眠研究的影響，有目擊報告指出在特定的營地附近發現了至今尚未遇見過的寶可夢的蹤影。",
     "highlights": [
       "開始出現的時間 2026/8/17 15:00",
@@ -285,6 +318,8 @@
     "badge_label": "⚙️ 版本更新",
     "badge_color": "#3b82f6",
     "title": "關於Ver.3.7.1的更新內容",
+    "debut_pokemon": [],
+    "featured_pokemon": [],
     "overview": "關於Ver.3.7.1的更新內容",
     "highlights": [
       "📌 關於Ver.3.7.1的更新內容",
@@ -312,6 +347,8 @@
     "badge_label": "📢 重要通知",
     "badge_color": "#8b5cf6",
     "title": "異常問題通知",
+    "debut_pokemon": [],
+    "featured_pokemon": [],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
       "📌 異常問題通知",
@@ -339,6 +376,8 @@
     "badge_label": "📢 重要通知",
     "badge_color": "#8b5cf6",
     "title": "異常問題通知",
+    "debut_pokemon": [],
+    "featured_pokemon": [],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
       "錯誤代碼「000500」"
@@ -364,6 +403,11 @@
     "badge_label": "📢 重要通知",
     "badge_color": "#8b5cf6",
     "title": "關於EX模式",
+    "debut_pokemon": [],
+    "featured_pokemon": [
+      "雷公",
+      "水君"
+    ],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
       "🍬 遇見寶可夢睡姿所需的睡意之力會大幅增加，但相對地在研究各種睡姿時可以獲得更多的「研究EXP」、「夢之碎片」與「寶可夢的糖果」。"
@@ -389,6 +433,10 @@
     "badge_label": "⚙️ 版本更新",
     "badge_color": "#3b82f6",
     "title": "關於Ver.3.7.0的更新內容",
+    "debut_pokemon": [],
+    "featured_pokemon": [
+      "皮可西"
+    ],
     "overview": "關於Ver.3.7.0的更新內容",
     "highlights": [
       "✨ ✨ 新增功能：準備新活動、新企畫；「夏日嘉年華2026」；追加新的EX營地；EX模式將於 2026/8/10 4:00 新增「天青沙灘EX」。",
@@ -416,6 +464,10 @@
     "badge_label": "📢 重要通知",
     "badge_color": "#8b5cf6",
     "title": "有關「主技能種子」的通知",
+    "debut_pokemon": [],
+    "featured_pokemon": [
+      "摔角鷹人"
+    ],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
       "發放期間： 2026/8/10 6:00 ～ 2026/10/9 3:59",
@@ -461,6 +513,10 @@
     "badge_label": "📢 重要通知",
     "badge_color": "#8b5cf6",
     "title": "【來獲得主技能種子（摔角鷹人）吧！】寶可夢培育包（摔角鷹人）vol.1",
+    "debut_pokemon": [],
+    "featured_pokemon": [
+      "摔角鷹人"
+    ],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
       "銷售期間： 2026/8/10 6:00 ～ 2026/8/18 3:59",
@@ -506,6 +562,10 @@
     "badge_label": "📢 重要通知",
     "badge_color": "#8b5cf6",
     "title": "【來獲得摔角鷹人的薰香吧！】夏日嘉年華2026同樂包",
+    "debut_pokemon": [],
+    "featured_pokemon": [
+      "摔角鷹人"
+    ],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
       "銷售期間： 2026/8/10 6:00 ～ 2026/8/18 3:59",
@@ -555,6 +615,11 @@
     "badge_label": "🏆 活動企劃",
     "badge_color": "#f59e0b",
     "title": "【預告】2026年9月確定舉辦「超夢活動」！",
+    "debut_pokemon": [],
+    "featured_pokemon": [
+      "超夢",
+      "夢幻"
+    ],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
       "在活動期間，不只是 超能力屬性的幫手寶可夢 會有特別亮眼的表現，幻之寶可夢 夢幻 似乎也對超夢很感興趣！",
@@ -584,6 +649,10 @@
     "badge_label": "🏆 活動企劃",
     "badge_color": "#f59e0b",
     "title": "【活動】第16次「新月日」",
+    "debut_pokemon": [],
+    "featured_pokemon": [
+      "夢幻"
+    ],
     "overview": "在新月的夜晚，來場特別的邂逅吧！",
     "highlights": [
       "舉辦期間：8/12 (週三) 4:00 ～ 8/15 (週六) 3:59",
@@ -611,6 +680,8 @@
     "badge_label": "📢 重要通知",
     "badge_color": "#8b5cf6",
     "title": "【來獲得沙布蕾吧！】新月日限定包vol.16",
+    "debut_pokemon": [],
+    "featured_pokemon": [],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
       "銷售期間： 2026/8/11 4:00 ～ 2026/8/16 3:59",
@@ -647,6 +718,10 @@
     "badge_label": "🏆 活動企劃",
     "badge_color": "#f59e0b",
     "title": "【企畫】「夏日嘉年華2026」",
+    "debut_pokemon": [],
+    "featured_pokemon": [
+      "摔角鷹人"
+    ],
     "overview": "炎炎夏日更要大口開吃！吃飽飽讓能量全力衝刺吧！夏日嘉年華！",
     "highlights": [
       "舉辦期間：8/10 (週一) 4:00 ～ 8/17 (週一) 3:59",
@@ -712,6 +787,10 @@
     "badge_label": "📢 重要通知",
     "badge_color": "#8b5cf6",
     "title": "【新登場】摔角鷹人",
+    "debut_pokemon": [
+      "摔角鷹人"
+    ],
+    "featured_pokemon": [],
     "overview": "或許是受到各位研究者持續進行睡眠研究的影響，有目擊報告指出在特定的營地附近發現了至今尚未遇見過的寶可夢的蹤影。",
     "highlights": [
       "開始出現的時間 2026/8/10 15:00",
@@ -748,6 +827,8 @@
     "badge_label": "📢 重要通知",
     "badge_color": "#8b5cf6",
     "title": "異常問題修復通知",
+    "debut_pokemon": [],
+    "featured_pokemon": [],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
       "📌 異常問題修復通知",
@@ -775,6 +856,8 @@
     "badge_label": "⚙️ 版本更新",
     "badge_color": "#3b82f6",
     "title": "關於Ver.3.6.3的更新內容",
+    "debut_pokemon": [],
+    "featured_pokemon": [],
     "overview": "關於Ver.3.6.3的更新內容",
     "highlights": [
       "📌 關於Ver.3.6.3的更新內容",
@@ -802,6 +885,8 @@
     "badge_label": "⚙️ 版本更新",
     "badge_color": "#3b82f6",
     "title": "關於Ver.3.6.2的更新內容",
+    "debut_pokemon": [],
+    "featured_pokemon": [],
     "overview": "關於Ver.3.6.2的更新內容",
     "highlights": [
       "📌 關於Ver.3.6.2的更新內容",
@@ -829,6 +914,12 @@
     "badge_label": "🏆 活動企劃",
     "badge_color": "#f59e0b",
     "title": "【歡慶！3週年紀念資訊➀】關於特別合作企畫",
+    "debut_pokemon": [],
+    "featured_pokemon": [
+      "小鍛匠",
+      "巧鍛匠",
+      "巨鍛匠"
+    ],
     "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
     "highlights": [
       "【歡慶！3週年紀念資訊➀】關於特別合作企畫",
@@ -856,6 +947,8 @@
     "badge_label": "📢 重要通知",
     "badge_color": "#8b5cf6",
     "title": "【歡慶！3週年紀念資訊②】關於天青沙灘EX",
+    "debut_pokemon": [],
+    "featured_pokemon": [],
     "overview": "自 8/10 起， 新EX營地 「 天青沙灘EX 」將會登場！",
     "highlights": [
       "🍬 此外，在EX模式下，遇見寶可夢睡姿所需的睡意之力會大幅增加，但相對地在研究各種睡姿時可以獲得更多的「研究EXP」、「夢之碎片」與「寶可夢的糖果」。"
@@ -881,6 +974,8 @@
     "badge_label": "📢 重要通知",
     "badge_color": "#8b5cf6",
     "title": "【歡慶！3週年紀念資訊③】《Pokémon Sleep》3週年紀念禮物",
+    "debut_pokemon": [],
+    "featured_pokemon": [],
     "overview": "7/20 這一天， 是《Pokémon Sleep》全球上線的日子！",
     "highlights": [
       "睡眠點數×2,000"

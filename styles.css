@@ -1829,11 +1829,119 @@ input[type=range].rf-slider.event-slider {
   color: #38bdf8;
 }
 
-.news-overview-text {
-  margin: 0;
-  font-size: 13.5px;
-  color: var(--text-secondary);
-  line-height: 1.6;
+/* 🦄 新登場 / 焦點寶可夢頂部橫條 */
+.news-debut-banner,
+.news-featured-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+.news-debut-banner {
+  background: linear-gradient(90deg, rgba(236, 72, 153, 0.15), rgba(168, 85, 247, 0.1));
+  border: 1px solid rgba(236, 72, 153, 0.4);
+}
+
+.news-featured-banner {
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), rgba(234, 88, 12, 0.1));
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.news-banner-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f472b6;
+  white-space: nowrap;
+}
+
+.news-featured-banner .news-banner-title {
+  color: #fbbf24;
+}
+
+.news-poke-pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.news-poke-pill-new {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(219, 39, 119, 0.35));
+  border: 1px solid rgba(244, 114, 182, 0.6);
+  color: #fce7f3;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 9999px;
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.3);
+  text-shadow: 0 0 4px rgba(236, 72, 153, 0.5);
+}
+
+.news-poke-pill-featured {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.35));
+  border: 1px solid rgba(251, 191, 36, 0.6);
+  color: #fef3c7;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 9999px;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
+/* 內文醒目高亮標籤 (Inline Highlights) */
+.hl-poke-new {
+  display: inline-block;
+  background: rgba(236, 72, 153, 0.22);
+  color: #f472b6;
+  border: 1px solid rgba(236, 72, 153, 0.5);
+  font-weight: 700;
+  padding: 0 6px;
+  border-radius: 4px;
+  box-shadow: 0 0 6px rgba(236, 72, 153, 0.3);
+  margin: 0 2px;
+}
+
+.hl-poke-feat {
+  display: inline-block;
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  font-weight: 700;
+  padding: 0 6px;
+  border-radius: 4px;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.25);
+  margin: 0 2px;
+}
+
+.hl-mult {
+  display: inline-block;
+  background: rgba(251, 191, 36, 0.18);
+  color: #fde047;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  font-weight: 800;
+  padding: 0 5px;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  margin: 0 2px;
+}
+
+.hl-island {
+  display: inline-block;
+  background: rgba(16, 185, 129, 0.18);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  font-weight: 700;
+  padding: 0 5px;
+  border-radius: 4px;
+  margin: 0 2px;
 }
 
 /* 🤖 AI 智能深度重點儀表板 */

@@ -135,6 +135,28 @@
       const isExpanded = expandedMap.has(item.id);
       const isLatest = index === 0 && currentCategory === 'ALL' && !searchQuery;
 
+      // 新登場寶可夢 / 焦點寶可夢頂部橫條
+      let debutBannerHTML = '';
+      if (item.debut_pokemon && item.debut_pokemon.length > 0) {
+        debutBannerHTML = `
+          <div class="news-debut-banner">
+            <span class="news-debut-label">🦄 新登場寶可夢：</span>
+            <div class="news-poke-pill-group">
+              ${item.debut_pokemon.map(p => `<span class="news-poke-pill-new">✨ ${escapeHtml(p)}</span>`).join('')}
+            </div>
+          </div>
+        `;
+      } else if (item.featured_pokemon && item.featured_pokemon.length > 0 && item.badge_key === 'event') {
+        debutBannerHTML = `
+          <div class="news-featured-banner">
+            <span class="news-featured-label">⭐ 焦點寶可夢：</span>
+            <div class="news-poke-pill-group">
+              ${item.featured_pokemon.map(p => `<span class="news-poke-pill-featured">🔥 ${escapeHtml(p)}</span>`).join('')}
+            </div>
+          </div>
+        `;
+      }
+
       // 渲染多維度 AI 智能摘要區塊 (Sections)
       let aiSectionsHTML = '';
       if (item.sections && item.sections.length > 0) {
@@ -152,7 +174,7 @@
                     <span>${sec.title}</span>
                   </div>
                   <ul class="news-ai-section-list">
-                    ${sec.items.map(it => `<li>${escapeHtml(it)}</li>`).join('')}
+                    ${sec.items.map(it => `<li>${formatAiListItem(it, item)}</li>`).join('')}
                   </ul>
                 </div>
               `).join('')}
@@ -167,7 +189,7 @@
               <span>AI 智能重點萃取</span>
             </div>
             <ul class="news-ai-list">
-              ${item.highlights.map(h => `<li>${escapeHtml(h)}</li>`).join('')}
+              ${item.highlights.map(h => `<li>${formatAiListItem(h, item)}</li>`).join('')}
             </ul>
           </div>
         `;
@@ -204,6 +226,8 @@
           <h3 class="news-card-title">
             <a href="${item.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a>
           </h3>
+
+          ${debutBannerHTML}
 
           <p class="news-overview-text">${escapeHtml(item.overview || '')}</p>
 
@@ -248,6 +272,40 @@
         }
       });
     });
+  }
+
+  /* ─── 關鍵字高亮格式化 ─────────────────────────────────── */
+  function formatAiListItem(text, item) {
+    if (!text) return '';
+    let formatted = escapeHtml(text);
+
+    // 1. 新登場寶可夢高亮（粉紅微光發光標籤）
+    const debutList = item.debut_pokemon || [];
+    debutList.forEach(name => {
+      if (!name) return;
+      const re = new RegExp(escapeRegExp(name), 'g');
+      formatted = formatted.replace(re, `<span class="hl-poke-new">✨ ${name}</span>`);
+    });
+
+    // 2. 焦點 / 機率提升寶可夢高亮（金黃微光標籤）
+    const featList = item.featured_pokemon || [];
+    featList.forEach(name => {
+      if (!name || debutList.includes(name)) return;
+      const re = new RegExp(escapeRegExp(name), 'g');
+      formatted = formatted.replace(re, `<span class="hl-poke-feat">⭐ ${name}</span>`);
+    });
+
+    // 3. 關鍵倍率與數值高亮 (如 1.25倍、2.5倍、3.75倍、2倍、3倍、+1,000pt、250鑽石)
+    formatted = formatted.replace(/([1-4](?:\.\d+)?倍|\+\d{1,3}(?:,\d{3})*pt|\d+鑽石)/g, '<span class="hl-mult">$1</span>');
+
+    // 4. 島嶼 / 營地名稱高亮
+    formatted = formatted.replace(/(萌綠之島EX|天青沙灘EX|萌綠之島|天青沙灘|灰褐洞窟|白花雪原|寶藍湖畔|黃金舊發電廠|琥褐溪谷)/g, '<span class="hl-island">🏝️ $1</span>');
+
+    return formatted;
+  }
+
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
   /* ─── XSS 防護 ───────────────────────────────────────── */
