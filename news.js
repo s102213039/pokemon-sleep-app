@@ -50,108 +50,203 @@
     }
   }
 
-  /* ─── ⏰ 官方活動日程時間軸 ───────────────────────────── */
-  function parseEventTimeline(items) {
-    const events = (items || allNews).filter(n => n.badge_key === 'event');
-    const now = new Date();
+  /* ─── 📅 官方活動與禮包甘特圖時程 (Gantt Schedule Timeline) ─── */
+  function extractEventSchedule(item) {
+    let text = '';
+    if (item.sections) {
+      const s = item.sections.find(sec => sec.key === 'schedule' || sec.key === 'shop');
+      if (s && s.items) text = s.items.join(' ');
+    }
+    if (!text && item.highlights) text = item.highlights.join(' ');
+    if (!text) text = item.content_preview || '';
 
-    return events.slice(0, 8).map((item, idx) => {
-      // 尋找 schedule section 或從內文抽取日期
-      let scheduleText = '';
-      if (item.sections) {
-        const sec = item.sections.find(s => s.key === 'schedule');
-        if (sec && sec.items && sec.items[0]) scheduleText = sec.items[0];
-      }
-
-      // 提取核心加成標籤
-      const bonuses = [];
-      if (item.sections) {
-        const bonusSec = item.sections.find(s => s.key === 'bonus');
-        if (bonusSec && bonusSec.items) {
-          bonusSec.items.slice(0, 2).forEach(it => {
-            if (it.includes('倍')) bonuses.push(it.replace(/^【.*?】/, '').trim());
-            else if (it.includes('pt')) bonuses.push(it.trim());
-          });
-        }
-      }
-
-      // 活動狀態判斷 (以最新兩則活動為活躍範例，並結合日期解析)
-      let status = 'recent';
-      let statusLabel = '⚪ 近期活動';
-      let countdownText = '已圓滿結束';
-
-      if (idx === 0) {
-        status = 'active';
-        statusLabel = '🟢 進行中 (Active)';
-        countdownText = '⏳ 本週全天候加成進行中';
-      } else if (idx === 1) {
-        status = 'upcoming';
-        statusLabel = '🟡 即將登場';
-        countdownText = '📅 下一期焦點活動排程';
-      }
-
+    const m = text.match(/(?:2026\/)?(\d{1,2})\/(\d{1,2})(?:\s*\([^\)]+\))?\s*(?:(\d{1,2}):(\d{2}))?\s*～\s*(?:2026\/)?(\d{1,2})\/(\d{1,2})(?:\s*\([^\)]+\))?\s*(?:(\d{1,2}):(\d{2}))?/);
+    if (m) {
+      const startM = parseInt(m[1], 10), startD = parseInt(m[2], 10), startH = m[3] ? m[3].padStart(2, '0') : '04';
+      const endM = parseInt(m[5], 10), endD = parseInt(m[6], 10), endH = m[7] ? m[7].padStart(2, '0') : '03';
       return {
-        id: item.id,
-        title: item.title,
-        date: item.date,
-        scheduleText: scheduleText || `活動期間：${item.date} 起`,
-        status,
-        statusLabel,
-        countdownText,
-        bonuses: bonuses.slice(0, 2),
-        featured: item.debut_pokemon || item.featured_pokemon || []
+        startMonth: startM,
+        startDay: startD,
+        startHour: startH,
+        endMonth: endM,
+        endDay: endD,
+        endHour: endH,
+        startStr: `${String(startM).padStart(2, '0')}-${String(startD).padStart(2, '0')} ${startH}`,
+        endStr: `${String(endM).padStart(2, '0')}-${String(endD).padStart(2, '0')} ${endH}`,
+        startDate: new Date(2026, startM - 1, startD, parseInt(startH, 10)),
+        endDate: new Date(2026, endM - 1, endD, parseInt(endH, 10))
       };
+    }
+    return null;
+  }
+
+  function parseEventTimeline(items) {
+    const newsList = items || allNews;
+    const ganttItems = [];
+    const baseStart = new Date(2026, 7, 7, 0, 0, 0); // 8月7日
+    const totalDays = 27;
+
+    newsList.forEach(item => {
+      const isEvent = item.badge_key === 'event' || (item.title && item.title.includes('活動')) || (item.title && item.title.includes('企畫'));
+      const isPack = (item.title && (item.title.includes('包') || item.title.includes('限定包') || item.title.includes('培育包') || item.title.includes('同樂包') || item.title.includes('紀念包')));
+
+      if (!isEvent && !isPack) return;
+
+      const schedule = extractEventSchedule(item);
+      if (!schedule) return;
+
+      const diffStartMs = schedule.startDate.getTime() - baseStart.getTime();
+      const diffEndMs = schedule.endDate.getTime() - baseStart.getTime();
+
+      let startCol = Math.floor(diffStartMs / (1000 * 60 * 60 * 24)) + 1;
+      let endCol = Math.floor(diffEndMs / (1000 * 60 * 60 * 24)) + 1;
+
+      startCol = Math.max(1, Math.min(totalDays, startCol));
+      endCol = Math.max(startCol, Math.min(totalDays, endCol));
+      const spanCols = Math.max(1, endCol - startCol + 1);
+
+      let cleanTitle = item.title
+        .replace(/【[^】]+】/g, '')
+        .replace(/「|」/g, '')
+        .replace(/介紹$/g, '')
+        .replace(/資訊$/g, '')
+        .trim();
+
+      let typeLabel = '活動列表';
+      let typeClass = 'gantt-bar-event';
+      if (item.title.includes('培育包')) {
+        typeLabel = '培育包';
+        typeClass = 'gantt-bar-pack';
+      } else if (isPack) {
+        typeLabel = '活動禮包';
+        typeClass = 'gantt-bar-pack';
+      }
+
+      ganttItems.push({
+        id: item.id,
+        title: cleanTitle,
+        fullTitle: item.title,
+        typeLabel,
+        typeClass,
+        startStr: schedule.startStr,
+        endStr: schedule.endStr,
+        startCol,
+        spanCols,
+        startDate: schedule.startDate,
+        endDate: schedule.endDate
+      });
+    });
+
+    return ganttItems.sort((a, b) => {
+      if (a.typeClass !== b.typeClass) {
+        return a.typeClass === 'gantt-bar-event' ? -1 : 1;
+      }
+      return a.startDate - b.startDate;
     });
   }
 
   function renderEventTimeline() {
     if (!newsTimelineContainer) return;
-    const timelineData = parseEventTimeline(allNews);
-    if (timelineData.length === 0) {
+    const ganttData = parseEventTimeline(allNews);
+    if (ganttData.length === 0) {
       newsTimelineContainer.style.display = 'none';
       return;
     }
 
     newsTimelineContainer.style.display = 'block';
-    newsTimelineContainer.innerHTML = `
-      <div class="timeline-header">
-        <div class="timeline-title-row">
-          <span class="timeline-icon">⏰</span>
-          <span class="timeline-main-title">官方活動日程時間軸</span>
-          <span class="timeline-pulse-badge">● 即時排程</span>
-        </div>
-        <div class="timeline-sub-hint">點擊任一活動卡片可快速過濾並定位到完整公告</div>
-      </div>
 
-      <div class="timeline-scroll-track">
-        ${timelineData.map(ev => `
-          <div class="timeline-card timeline-card-${ev.status}" data-event-id="${ev.id}">
-            <div class="timeline-card-top">
-              <span class="timeline-status-tag tag-${ev.status}">${ev.statusLabel}</span>
-              <span class="timeline-countdown-pill">${ev.countdownText}</span>
+    // 建立 8/7 ~ 9/2 共 27 天的日期標題
+    const dayCols = [];
+    const todayIndex = 10; // 8/16 (從 8/7 起算第 10 天)
+
+    for (let d = 7; d <= 31; d++) {
+      const dateObj = new Date(2026, 7, d);
+      const dayOfWeek = dateObj.getDay(); // 0: Sun, 6: Sat
+      const isToday = d === 16;
+      let dayClass = 'gantt-day-normal';
+      if (dayOfWeek === 6) dayClass = 'gantt-day-sat';
+      else if (dayOfWeek === 0) dayClass = 'gantt-day-sun';
+      if (isToday) dayClass += ' gantt-day-today';
+
+      dayCols.push({
+        label: String(d).padStart(2, '0'),
+        month: '2026-08',
+        dayClass,
+        isToday
+      });
+    }
+    // 9/1, 9/2
+    [1, 2].forEach(d => {
+      const dateObj = new Date(2026, 8, d);
+      const dayOfWeek = dateObj.getDay();
+      let dayClass = 'gantt-day-normal';
+      if (dayOfWeek === 6) dayClass = 'gantt-day-sat';
+      else if (dayOfWeek === 0) dayClass = 'gantt-day-sun';
+      dayCols.push({
+        label: String(d).padStart(2, '0'),
+        month: '2026-09',
+        dayClass,
+        isToday: false
+      });
+    });
+
+    newsTimelineContainer.innerHTML = `
+      <div class="gantt-wrapper">
+        <div class="gantt-top-bar">
+          <div class="gantt-title-row">
+            <span class="gantt-icon">📅</span>
+            <span class="gantt-title">活動與禮包時程</span>
+            <div class="gantt-legend">
+              <span class="gantt-legend-item"><span class="gantt-dot dot-event"></span> 活動列表</span>
+              <span class="gantt-legend-item"><span class="gantt-dot dot-pack"></span> 活動禮包 / 培育包</span>
             </div>
-            <h4 class="timeline-card-title">${escapeHtml(ev.title)}</h4>
-            <div class="timeline-card-schedule">📅 ${escapeHtml(ev.scheduleText)}</div>
-            ${ev.bonuses.length > 0 ? `
-              <div class="timeline-bonus-row">
-                ${ev.bonuses.map(b => `<span class="timeline-bonus-pill">⚡ ${escapeHtml(b)}</span>`).join('')}
-              </div>
-            ` : ''}
-            ${ev.featured.length > 0 ? `
-              <div class="timeline-feat-row">
-                <span style="font-size:11px;color:var(--text-muted);">焦點：</span>
-                ${ev.featured.slice(0, 3).map(p => `<span class="timeline-feat-pill">✨ ${escapeHtml(p)}</span>`).join('')}
-              </div>
-            ` : ''}
           </div>
-        `).join('')}
+          <div class="gantt-hint">💡 點擊任一時程條可快速定位完整公告</div>
+        </div>
+
+        <div class="gantt-scroll-container">
+          <div class="gantt-chart-grid">
+            <!-- 1. 月份標題列 -->
+            <div class="gantt-month-row">
+              <div class="gantt-month-label" style="grid-column: 1 / span 25;">2026-08</div>
+              <div class="gantt-month-label" style="grid-column: 26 / span 2;">2026-09</div>
+            </div>
+
+            <!-- 2. 日期刻度列 -->
+            <div class="gantt-days-row">
+              ${dayCols.map((dc, i) => `
+                <div class="gantt-day-cell ${dc.dayClass}" title="${dc.month}-${dc.label}${dc.isToday ? ' (今日)' : ''}">
+                  ${dc.label}
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- 3. 今日垂直指示線 -->
+            <div class="gantt-today-line" style="grid-column: ${todayIndex};" title="今日 (8/16)"></div>
+
+            <!-- 4. 時程長條 Bars -->
+            <div class="gantt-bars-container">
+              ${ganttData.map(item => `
+                <div class="gantt-bar-row">
+                  <div class="gantt-bar ${item.typeClass}"
+                       style="grid-column: ${item.startCol} / span ${item.spanCols};"
+                       data-event-id="${item.id}"
+                       title="${escapeHtml(item.fullTitle)} (${item.startStr} ~ ${item.endStr})">
+                    <div class="gantt-bar-time">${item.startStr} ~ ${item.endStr} <span class="gantt-badge">${item.typeLabel}</span></div>
+                    <div class="gantt-bar-name">${escapeHtml(item.title)}</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
       </div>
     `;
 
-    // 點擊時間軸卡片篩選新聞
-    newsTimelineContainer.querySelectorAll('.timeline-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const evId = card.getAttribute('data-event-id');
+    // 點擊甘特圖時程條跳轉至新聞
+    newsTimelineContainer.querySelectorAll('.gantt-bar').forEach(bar => {
+      bar.addEventListener('click', () => {
+        const evId = bar.getAttribute('data-event-id');
         const targetItem = allNews.find(n => n.id === evId);
         if (targetItem) {
           if (newsSearchInput) newsSearchInput.value = targetItem.title;
@@ -163,7 +258,6 @@
             });
           }
           renderNews();
-          // 平滑滾動至新聞列表
           const el = document.getElementById(`news-${evId}`) || newsListContainer;
           if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }

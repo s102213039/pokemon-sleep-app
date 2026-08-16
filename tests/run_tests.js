@@ -518,7 +518,7 @@ test('Tier 2 - Boundary & Corner Cases', 'RaenonX PR Calculation: Fast-Exit Base
   assert(poorIngResult.summaryNote.includes('⚠️'), 'Should fail baseline due to Ing debuff');
 });
 
-test('Tier 2 - Boundary & Corner Cases', 'Event Timeline Parser: Identifies Active and Upcoming events from news dataset', () => {
+test('Tier 2 - Boundary & Corner Cases', 'Event Gantt Timeline Parser: Identifies Events and Bundles with column grid spans and date ranges', () => {
   const newsPath = path.join(WORKSPACE_ROOT, 'news.json');
   const newsData = JSON.parse(fs.readFileSync(newsPath, 'utf8'));
   const newsModule = require(path.join(WORKSPACE_ROOT, 'news.js'));
@@ -527,9 +527,17 @@ test('Tier 2 - Boundary & Corner Cases', 'Event Timeline Parser: Identifies Acti
   assert(Array.isArray(timeline), 'parseEventTimeline must return an array');
   assert(timeline.length > 0, 'Timeline should contain event items');
 
-  const activeOrUpcoming = timeline.filter(ev => ev.status === 'active' || ev.status === 'upcoming');
-  assert(activeOrUpcoming.length > 0, 'Timeline should have active or upcoming events');
-  assert(timeline[0].statusLabel && timeline[0].countdownText, 'Timeline items should have status label and countdown');
+  const firstItem = timeline[0];
+  assert(firstItem.title, 'Timeline item missing title');
+  assert(firstItem.startStr && firstItem.endStr, 'Timeline item missing startStr or endStr');
+  assert(typeof firstItem.startCol === 'number' && typeof firstItem.spanCols === 'number', 'Timeline item missing grid column spans');
+  assert(firstItem.typeLabel && firstItem.typeClass, 'Timeline item missing type label');
+
+  // Verify events & packs both exist
+  const events = timeline.filter(t => t.typeClass === 'gantt-bar-event');
+  const packs = timeline.filter(t => t.typeClass === 'gantt-bar-pack');
+  assert(events.length > 0, 'Gantt timeline should parse events');
+  assert(packs.length > 0, 'Gantt timeline should parse bundle packs');
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'Special Pokemon icon resolution (9001-9006, 7006, 7007, 7054, 8001, 150) maps to valid Serebii URLs', () => {
