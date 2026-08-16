@@ -284,8 +284,9 @@ test('Tier 1 - Feature Coverage', 'HTML Structure: index.html exists with requir
   const htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
   assert(htmlContent.includes('id="search-input"') || htmlContent.includes("id='search-input'"), 'Missing search input element');
-  assert(htmlContent.includes('id="type-filter-tags"') || htmlContent.includes("id='type-filter-tags'"), 'Missing type filter container');
+  assert(htmlContent.includes('id="berry-filter-tags"') || htmlContent.includes("id='berry-filter-tags'"), 'Missing berry filter container');
   assert(htmlContent.includes('id="specialty-filter-tags"') || htmlContent.includes("id='specialty-filter-tags'"), 'Missing specialty filter container');
+  assert(htmlContent.includes('id="detail-subfilters-container"'), 'Missing detail subfilters container');
   assert(htmlContent.includes('id="sort-select"') || htmlContent.includes("id='sort-select'"), 'Missing sort selector element');
   assert(htmlContent.includes('id="toggle-grid"') || htmlContent.includes("id='toggle-grid'"), 'Missing grid view toggle button');
   assert(htmlContent.includes('id="toggle-table"') || htmlContent.includes("id='toggle-table'"), 'Missing table view toggle button');
@@ -464,14 +465,27 @@ test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient
     assert(hasHoney, `Item ${p.name_cn} should have 甜甜蜜 in its ingredients`);
   });
 
-  // 3. Main Skill multi-select filter (食材獲取S, 活力全體療癒S)
+  // 3. Main Skill multi-select filter (食材獲取S, 料理成功S) with composite matching
   PokemonApp.selectedIngredients.clear();
-  PokemonApp.selectedSkills = new Set(['食材獲取S', '活力全體療癒S']);
-  const skillFiltered = PokemonApp.filterData();
-  assert(skillFiltered.length > 0, 'Skill filter should return results');
-  skillFiltered.forEach(p => {
-    assert(p.main_skill === '食材獲取S' || p.main_skill === '活力全體療癒S', `Item ${p.name_cn} skill '${p.main_skill}' should match selected skills`);
-  });
+  PokemonApp.selectedSkills = new Set(['料理成功S']);
+  const tastyFiltered = PokemonApp.filterData();
+  assert(tastyFiltered.length > 0, 'Skill filter for 料理成功S should return results');
+  const heracross = tastyFiltered.find(p => p.name_cn === '赫拉克羅斯');
+  assert(heracross !== undefined, '赫拉克羅斯 (健美) should match 料理成功S');
+
+  // Heracross should also match 食材獲取S
+  PokemonApp.selectedSkills = new Set(['食材獲取S']);
+  const ingSkillFiltered = PokemonApp.filterData();
+  const heracrossIng = ingSkillFiltered.find(p => p.name_cn === '赫拉克羅斯');
+  assert(heracrossIng !== undefined, '赫拉克羅斯 (健美) should also match 食材獲取S');
+  const delibird = ingSkillFiltered.find(p => p.name_cn === '信使鳥');
+  assert(delibird !== undefined, '信使鳥 (禮物) should match 食材獲取S');
+
+  // Mimikyu (畫皮) should match 樹果遽增
+  PokemonApp.selectedSkills = new Set(['樹果遽增']);
+  const berrySkillFiltered = PokemonApp.filterData();
+  const mimikyu = berrySkillFiltered.find(p => p.name_cn === '謎擬Q');
+  assert(mimikyu !== undefined, '謎擬Q (畫皮) should match 樹果遽增');
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'Fallback icon validation: missing/empty icon property defaults to SVG placeholder', () => {

@@ -122,6 +122,97 @@ BERRY_DATA.forEach(b => {
   TYPE_TO_BERRY[b.type] = b.name;
 });
 
+/* ─── ⚡ 基礎主技能與複合/專屬技能映射系統 ─────────── */
+const BASE_SKILLS = [
+  { key: '食材獲取S', label: '食材獲取S', icon: '🍎' },
+  { key: '食材精選S', label: '食材精選S', icon: '🥗' },
+  { key: '活力全體療癒S', label: '活力全體療癒S', icon: '💚' },
+  { key: '活力療癒S', label: '活力療癒S', icon: '💖' },
+  { key: '活力填充S', label: '活力填充S', icon: '🔋' },
+  { key: '能量填充M', label: '能量填充M', icon: '⚡' },
+  { key: '能量填充S', label: '能量填充S', icon: '⚡' },
+  { key: '料理強化S', label: '料理強化S', icon: '🍲' },
+  { key: '料理成功S', label: '料理成功S', icon: '✨' },
+  { key: '幫手支援S', label: '幫手支援S', icon: '🤝' },
+  { key: '幫手加速', label: '幫手加速', icon: '🚀' },
+  { key: '樹果遽增', label: '樹果遽增', icon: '🫐' },
+  { key: '夢之碎片獲取S', label: '夢之碎片獲取S', icon: '💎' },
+  { key: '揮指', label: '揮指', icon: '🎲' },
+  { key: '技能複製', label: '技能複製', icon: '🎭' }
+];
+
+const COMPOSITE_SKILL_MAP = {
+  // 健美：料理成功S + 食材獲取S + 料理強化S (赫拉克羅斯)
+  '健美（料理輔助S）': ['料理成功S', '食材獲取S', '料理強化S'],
+  
+  // 樹果汁：活力全體療癒S + 食材獲取S (壺壺)
+  '樹果汁（活力全體療癒S）': ['活力全體療癒S', '食材獲取S'],
+  
+  // 禮物：食材獲取S + 夢之碎片獲取S (信使鳥)
+  '禮物（食材獲取S）': ['食材獲取S', '夢之碎片獲取S'],
+  
+  // 正電 / 負電
+  '正電（食材獲取S）': ['食材獲取S'],
+  '負電（料理強化S）': ['料理強化S'],
+  
+  // 月光 (月亮伊布)
+  '月光（活力填充S）': ['活力填充S'],
+  
+  // 精神擊破 (超夢)
+  '精神擊破（樹果領域）': ['樹果遽增', '能量填充M'],
+  
+  // 十項全能 (夢幻)
+  '十項全能（揮指）[可替換]': ['揮指'],
+  
+  // 超幸運 (黑暗鴉, 烏鴉頭頭) / 怪力钳 (大嘴娃)
+  '超幸運（食材精選S）': ['食材精選S'],
+  '怪力钳（食材精選S）': ['食材精選S'],
+  
+  // 治癒波動 (拉帝亞斯) / 蹭蹭臉頰 (托戈德瑪爾)
+  '治癒波動（活力療癒S）': ['活力療癒S'],
+  '蹭蹭臉頰（活力療癒S）': ['活力療癒S'],
+  
+  // 新月祈禱 (克雷色利亞)
+  '新月祈禱（活力全體療癒S）': ['活力全體療癒S'],
+  
+  // 流星群 (拉帝歐斯) / 畫皮 (謎擬Q) / 樹果遽增? (巨鍛匠家族)
+  '流星群（樹果遽增）': ['樹果遽增'],
+  '畫皮（樹果遽增）': ['樹果遽增'],
+  '樹果遽增?': ['樹果遽增'],
+  
+  // 蓄力 (飄飄球, 隨風球)
+  '蓄力（能量填充S）': ['能量填充S', '能量填充M'],
+  
+  // 波導彈 (路卡利歐)
+  '波導彈（夢之碎片獲取S）': ['夢之碎片獲取S'],
+  
+  // 夢魘 (達克萊伊)
+  '夢魘（能量填充M）': ['能量填充M'],
+  
+  // 能量填充隨機變體
+  '能量填充S（隨機）': ['能量填充S'],
+  
+  // 夢之碎片隨機變體
+  '夢之碎片獲取S（隨機）': ['夢之碎片獲取S'],
+  
+  // 幫手加速屬性系列
+  '幫手加速（電）': ['幫手加速', '幫手支援S'],
+  '幫手加速（火）': ['幫手加速', '幫手支援S'],
+  '幫手加速（水）': ['幫手加速', '幫手支援S'],
+  
+  // 技能複製
+  '模仿（技能複製）': ['技能複製'],
+  '變身（技能複製）': ['技能複製']
+};
+
+function matchesSkill(pokemonSkill, targetBaseSkill) {
+  if (!pokemonSkill) return false;
+  if (pokemonSkill === targetBaseSkill) return true;
+  const mapped = COMPOSITE_SKILL_MAP[pokemonSkill];
+  if (mapped && mapped.includes(targetBaseSkill)) return true;
+  return false;
+}
+
 const PokemonApp = {
   allPokemons: [],
   currentSearch: '',
@@ -164,9 +255,16 @@ const PokemonApp = {
         if (!hasIng) return false;
       }
 
-      // 技能細節篩選
+      // 技能細節篩選 (支援基礎技能與複合技能自動關聯)
       if (this.selectedSkills && this.selectedSkills.size > 0) {
-        if (!p.main_skill || !this.selectedSkills.has(p.main_skill)) return false;
+        let hasMatchedSkill = false;
+        for (const targetSkill of this.selectedSkills) {
+          if (matchesSkill(p.main_skill, targetSkill)) {
+            hasMatchedSkill = true;
+            break;
+          }
+        }
+        if (!hasMatchedSkill) return false;
       }
 
       if (this.currentSearch) {
@@ -407,7 +505,7 @@ if (typeof document !== 'undefined') {
       });
 
     function initFilters() {
-      if (!typeFilterContainer || !specialtyFilterContainer) return;
+      if (!specialtyFilterContainer) return;
       const types = ['ALL', ...new Set(allPokemons.map(p => p.type).filter(Boolean))];
       const specialties = ['ALL', ...new Set(allPokemons.map(p => p.specialty).filter(Boolean))];
 
@@ -424,16 +522,14 @@ if (typeof document !== 'undefined') {
       });
       const uniqueIngredients = Array.from(uniqueIngredientsMap.entries()).map(([name, icon]) => ({ name, icon }));
 
-      // 從資料庫動態收集所有主技能（依出現頻率排序）
-      const skillFreq = {};
-      allPokemons.forEach(p => {
-        if (p.main_skill) {
-          skillFreq[p.main_skill] = (skillFreq[p.main_skill] || 0) + 1;
-        }
+      // 計算 15 種基礎主技能對應的寶可夢數量（含複合技能與專屬變體技能）
+      const baseSkillCounts = {};
+      BASE_SKILLS.forEach(b => {
+        baseSkillCounts[b.key] = allPokemons.filter(p => matchesSkill(p.main_skill, b.key)).length;
       });
-      const uniqueSkills = Object.keys(skillFreq).sort((a, b) => skillFreq[b] - skillFreq[a]);
 
       function renderTypeButtons() {
+        if (!typeFilterContainer) return;
         typeFilterContainer.innerHTML = types.map(t => {
           const isActive = t === 'ALL' ? selectedTypes.size === 0 : selectedTypes.has(t);
           return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" data-type="${t}">${t === 'ALL' ? '全部屬性' : t}</button>`;
@@ -483,13 +579,13 @@ if (typeof document !== 'undefined') {
 
       function renderSkillButtons() {
         if (!skillFilterContainer) return;
-        skillFilterContainer.innerHTML = uniqueSkills.map(skill => {
-          const isActive = selectedSkills.has(skill);
-          const count = skillFreq[skill] || 0;
+        skillFilterContainer.innerHTML = BASE_SKILLS.map(skillItem => {
+          const isActive = selectedSkills.has(skillItem.key);
+          const count = baseSkillCounts[skillItem.key] || 0;
           return `
-            <button type="button" class="subfilter-tag-btn subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skill}" title="${skill} (${count}隻)">
-              <span class="subfilter-skill-dot">⚡</span>
-              <span class="subfilter-btn-text">${skill}</span>
+            <button type="button" class="subfilter-tag-btn subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${skillItem.label} (${count}隻)">
+              <span class="subfilter-skill-dot">${skillItem.icon || '⚡'}</span>
+              <span class="subfilter-btn-text">${skillItem.label}</span>
               <span class="subfilter-skill-count">${count}</span>
             </button>
           `;
@@ -521,22 +617,24 @@ if (typeof document !== 'undefined') {
       renderSkillButtons();
       updateSubfilterVisibility();
 
-      typeFilterContainer.addEventListener('click', (e) => {
-        const btn = e.target.closest('.tag-btn');
-        if (!btn) return;
-        const type = btn.getAttribute('data-type');
-        if (type === 'ALL') {
-          selectedTypes.clear();
-        } else {
-          if (selectedTypes.has(type)) {
-            selectedTypes.delete(type);
+      if (typeFilterContainer) {
+        typeFilterContainer.addEventListener('click', (e) => {
+          const btn = e.target.closest('.tag-btn');
+          if (!btn) return;
+          const type = btn.getAttribute('data-type');
+          if (type === 'ALL') {
+            selectedTypes.clear();
           } else {
-            selectedTypes.add(type);
+            if (selectedTypes.has(type)) {
+              selectedTypes.delete(type);
+            } else {
+              selectedTypes.add(type);
+            }
           }
-        }
-        renderTypeButtons();
-        renderUI();
-      });
+          renderTypeButtons();
+          renderUI();
+        });
+      }
 
       specialtyFilterContainer.addEventListener('click', (e) => {
         const btn = e.target.closest('.tag-btn');
@@ -696,9 +794,16 @@ if (typeof document !== 'undefined') {
           if (!hasIng) return false;
         }
 
-        // 技能細節篩選 (多選)
+        // 技能細節篩選 (多選，支援基礎技能與複合技能自動關聯)
         if (selectedSkills.size > 0) {
-          if (!p.main_skill || !selectedSkills.has(p.main_skill)) return false;
+          let hasMatchedSkill = false;
+          for (const targetSkill of selectedSkills) {
+            if (matchesSkill(p.main_skill, targetSkill)) {
+              hasMatchedSkill = true;
+              break;
+            }
+          }
+          if (!hasMatchedSkill) return false;
         }
 
         if (currentSearch) {
@@ -848,6 +953,9 @@ if (typeof module !== 'undefined' && module.exports) {
     getItemIngredientRate: (p) => getItemIngredientRate(p),
     getItemHelpInterval: (p) => getItemHelpInterval(p),
     DEFAULT_SVG_ICON,
-    PokemonApp
+    PokemonApp,
+    BASE_SKILLS,
+    COMPOSITE_SKILL_MAP,
+    matchesSkill
   };
 }
