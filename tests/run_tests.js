@@ -573,8 +573,18 @@ test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Ho
     'Heracross skill description must match official in-game text'
   );
 
-  // 2. Test pure base skills (like 能量填充S, 食材獲取S) - MUST NOT have tooltips or special badges
-  const pureBaseSkills = ['能量填充S', '能量填充M', '食材獲取S', '活力全體療癒S', '料理強化S', '幫手支援S'];
+  // 2. Test pure base skills (like 能量填充S, 夢之碎片獲取S, 能量填充S（隨機）, 夢之碎片獲取S（隨機）) - MUST NOT have tooltips or special badges
+  const pureBaseSkills = [
+    '能量填充S',
+    '能量填充M',
+    '能量填充S（隨機）',
+    '夢之碎片獲取S',
+    '夢之碎片獲取S（隨機）',
+    '食材獲取S',
+    '活力全體療癒S',
+    '料理強化S',
+    '幫手支援S'
+  ];
   pureBaseSkills.forEach(skill => {
     const rendered = renderSkillWithTooltip(skill);
     assertEquals(rendered, skill, `Pure base skill ${skill} should be rendered as plain text without tooltip or badge`);
