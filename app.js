@@ -97,30 +97,45 @@ function ingQtyBadges(ing, idx) {
 
 /* ─── 🫐 樹果與屬性對應字典 (Berry & Type Mapping) ───────── */
 const BERRY_DATA = [
-  { name: '柿仔果', type: '一般', icon: 'https://www.serebii.net/pokemonsleep/berries/persimberry.png' },
-  { name: '蘋野果', type: '火',   icon: 'https://www.serebii.net/pokemonsleep/berries/leppaberry.png' },
-  { name: '橙橙果', type: '水',   icon: 'https://www.serebii.net/pokemonsleep/berries/oranberry.png' },
-  { name: '異奇果', type: '電',   icon: 'https://www.serebii.net/pokemonsleep/berries/grepaberry.png' },
-  { name: '墨莓果', type: '草',   icon: 'https://www.serebii.net/pokemonsleep/berries/durinberry.png' },
-  { name: '生薑果', type: '冰',   icon: 'https://www.serebii.net/pokemonsleep/berries/rawstberry.png' },
-  { name: '櫻子果', type: '格鬥', icon: 'https://www.serebii.net/pokemonsleep/berries/cheriberry.png' },
-  { name: '桃桃果', type: '毒',   icon: 'https://www.serebii.net/pokemonsleep/berries/pechaberry.png' },
-  { name: '零餘果', type: '地面', icon: 'https://www.serebii.net/pokemonsleep/berries/figyberry.png' },
-  { name: '椰木果', type: '飛行', icon: 'https://www.serebii.net/pokemonsleep/berries/pamtreberry.png' },
+  { name: '柿仔果', type: '一般',   icon: 'https://www.serebii.net/pokemonsleep/berries/persimberry.png' },
+  { name: '蘋野果', type: '火',     icon: 'https://www.serebii.net/pokemonsleep/berries/leppaberry.png' },
+  { name: '橙橙果', type: '水',     icon: 'https://www.serebii.net/pokemonsleep/berries/oranberry.png' },
+  { name: '異奇果', type: '電',     icon: 'https://www.serebii.net/pokemonsleep/berries/grepaberry.png' },
+  { name: '墨莓果', type: '草',     icon: 'https://www.serebii.net/pokemonsleep/berries/durinberry.png' },
+  { name: '生薑果', type: '冰',     icon: 'https://www.serebii.net/pokemonsleep/berries/rawstberry.png' },
+  { name: '櫻子果', type: '格鬥',   icon: 'https://www.serebii.net/pokemonsleep/berries/cheriberry.png' },
+  { name: '零餘果', type: '毒',     icon: 'https://www.serebii.net/pokemonsleep/berries/chestoberry.png' },
+  { name: '勿花果', type: '地面',   icon: 'https://www.serebii.net/pokemonsleep/berries/figyberry.png' },
+  { name: '椰木果', type: '飛行',   icon: 'https://www.serebii.net/pokemonsleep/berries/pamtreberry.png' },
   { name: '芒念果', type: '超能力', icon: 'https://www.serebii.net/pokemonsleep/berries/magoberry.png' },
-  { name: '芭亞果', type: '蟲',   icon: 'https://www.serebii.net/pokemonsleep/berries/lumberry.png' },
-  { name: '萄葡果', type: '岩石', icon: 'https://www.serebii.net/pokemonsleep/berries/sitrusberry.png' },
-  { name: '檬果',   type: '幽靈', icon: 'https://www.serebii.net/pokemonsleep/berries/blukberry.png' },
-  { name: '巧可果', type: '龍',   icon: 'https://www.serebii.net/pokemonsleep/berries/yacheberry.png' },
-  { name: '芭拉果', type: '惡',   icon: 'https://www.serebii.net/pokemonsleep/berries/wikiberry.png' },
-  { name: '霹靂果', type: '鋼',   icon: 'https://www.serebii.net/pokemonsleep/berries/belueberry.png' },
-  { name: '佩卡果', type: '妖精', icon: 'https://www.serebii.net/pokemonsleep/berries/magostberry.png' }
+  { name: '芭亞果', type: '蟲',     icon: 'https://www.serebii.net/pokemonsleep/berries/lumberry.png' },
+  { name: '文柚果', type: '岩石',   icon: 'https://www.serebii.net/pokemonsleep/berries/sitrusberry.png' },
+  { name: '檬果',   type: '幽靈',   icon: 'https://www.serebii.net/pokemonsleep/berries/blukberry.png' },
+  { name: '巧可果', type: '龍',     icon: 'https://www.serebii.net/pokemonsleep/berries/yacheberry.png' },
+  { name: '芭拉果', type: '惡',     icon: 'https://www.serebii.net/pokemonsleep/berries/wikiberry.png' },
+  { name: '靛莓果', type: '鋼',     icon: 'https://www.serebii.net/pokemonsleep/berries/belueberry.png' },
+  { name: '桃桃果', type: '妖精',   icon: 'https://www.serebii.net/pokemonsleep/berries/pechaberry.png' }
 ];
 
 const TYPE_TO_BERRY = {};
 BERRY_DATA.forEach(b => {
   TYPE_TO_BERRY[b.type] = b.name;
 });
+// 屬性名稱相容簡稱映射
+TYPE_TO_BERRY['妖'] = '桃桃果';
+TYPE_TO_BERRY['妖精'] = '桃桃果';
+TYPE_TO_BERRY['鬥'] = '櫻子果';
+TYPE_TO_BERRY['格鬥'] = '櫻子果';
+TYPE_TO_BERRY['地'] = '勿花果';
+TYPE_TO_BERRY['地面'] = '勿花果';
+TYPE_TO_BERRY['岩'] = '文柚果';
+TYPE_TO_BERRY['岩石'] = '文柚果';
+TYPE_TO_BERRY['鬼'] = '檬果';
+TYPE_TO_BERRY['幽靈'] = '檬果';
+TYPE_TO_BERRY['超'] = '芒念果';
+TYPE_TO_BERRY['超能力'] = '芒念果';
+TYPE_TO_BERRY['飛'] = '椰木果';
+TYPE_TO_BERRY['飛行'] = '椰木果';
 
 /* ─── ⚡ 基礎主技能與複合/專屬技能映射系統 ─────────── */
 const BASE_SKILLS = [
@@ -274,7 +289,12 @@ const PokemonApp = {
       const pType = p.type || '';
       const pSpec = p.specialty || '';
       if (this.selectedTypes.size > 0 && !this.selectedTypes.has('ALL') && !this.selectedTypes.has(pType)) return false;
-      if (this.selectedSpecialties.size > 0 && !this.selectedSpecialties.has('ALL') && !this.selectedSpecialties.has(pSpec)) return false;
+
+      // 類型篩選 (樹果、食材、技能；若都沒選則展示全部；夢幻 specialty === '全部' 在任何選取下均展示)
+      if (this.selectedSpecialties && this.selectedSpecialties.size > 0 && !this.selectedSpecialties.has('ALL')) {
+        const isMewAll = pSpec === '全部' || pSpec === 'ALL';
+        if (!isMewAll && !this.selectedSpecialties.has(pSpec)) return false;
+      }
 
       // 👑 僅最終進化篩選 (Only Final Evolution)
       if (this.onlyFinal) {
@@ -547,8 +567,7 @@ if (typeof document !== 'undefined') {
 
     function initFilters() {
       if (!specialtyFilterContainer) return;
-      const types = ['ALL', ...new Set(allPokemons.map(p => p.type).filter(Boolean))];
-      const specialties = ['ALL', ...new Set(allPokemons.map(p => p.specialty).filter(Boolean))];
+      const specialties = ['樹果', '食材', '技能'];
 
       // 從資料庫動態收集所有食材與其圖示
       const uniqueIngredientsMap = new Map();
@@ -579,8 +598,8 @@ if (typeof document !== 'undefined') {
 
       function renderSpecialtyButtons() {
         specialtyFilterContainer.innerHTML = specialties.map(s => {
-          const isActive = s === 'ALL' ? selectedSpecialties.size === 0 : selectedSpecialties.has(s);
-          return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" data-specialty="${s}">${s === 'ALL' ? '全部得意' : s}</button>`;
+          const isActive = selectedSpecialties.has(s);
+          return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" data-specialty="${s}">${s}</button>`;
         }).join('');
       }
 
@@ -676,14 +695,11 @@ if (typeof document !== 'undefined') {
         const btn = e.target.closest('.tag-btn');
         if (!btn) return;
         const specialty = btn.getAttribute('data-specialty');
-        if (specialty === 'ALL') {
-          selectedSpecialties.clear();
+        if (!specialty) return;
+        if (selectedSpecialties.has(specialty)) {
+          selectedSpecialties.delete(specialty);
         } else {
-          if (selectedSpecialties.has(specialty)) {
-            selectedSpecialties.delete(specialty);
-          } else {
-            selectedSpecialties.add(specialty);
-          }
+          selectedSpecialties.add(specialty);
         }
         renderSpecialtyButtons();
         updateSubfilterVisibility();

@@ -436,7 +436,7 @@ test('Tier 2 - Boundary & Corner Cases', 'Multi-select type combinations (e.g. [
   });
 });
 
-test('Tier 2 - Boundary & Corner Cases', 'Multi-select specialty combinations (e.g. ["樹果", "食材"])', () => {
+test('Tier 2 - Boundary & Corner Cases', 'Multi-select specialty combinations (e.g. ["樹果", "食材"]) and Mew all-specialty inclusion', () => {
   PokemonApp.init([...dataset]);
   PokemonApp.currentSearch = '';
   PokemonApp.selectedTypes.clear();
@@ -445,8 +445,20 @@ test('Tier 2 - Boundary & Corner Cases', 'Multi-select specialty combinations (e
   const res = PokemonApp.filterData();
   assert(res.length > 0, 'Multi-specialty filter should return items');
   res.forEach(item => {
-    assert(item.specialty === '樹果' || item.specialty === '食材', `Item ${item.id} specialty '${item.specialty}' not in ['樹果', '食材']`);
+    assert(item.specialty === '樹果' || item.specialty === '食材' || item.specialty === '全部', `Item ${item.id} specialty '${item.specialty}' not in ['樹果', '食材', '全部']`);
   });
+
+  // Verify Mew (夢幻) with specialty '全部' is included under any specialty
+  const mew = res.find(p => p.name_cn === '夢幻');
+  assert(mew !== undefined, 'Mew (夢幻) must be included when filtering by 樹果/食材');
+
+  // Verify Fairy berry (桃桃果) mapping
+  PokemonApp.selectedSpecialties.clear();
+  PokemonApp.selectedBerries = new Set(['桃桃果']);
+  const fairyFiltered = PokemonApp.filterData();
+  assert(fairyFiltered.length > 0, 'Fairy berry filter (桃桃果) should return Fairy-type Pokémon');
+  const fairyPkm = fairyFiltered.find(p => p.name_cn === '皮可西' || p.name_cn === '胖可丁' || p.name_cn === '仙子伊布');
+  assert(fairyPkm !== undefined, 'Clefable/Wigglytuff/Sylveon should match Fairy berry 桃桃果');
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient, and Skill multi-select filtering', () => {
