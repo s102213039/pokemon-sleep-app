@@ -589,9 +589,8 @@ if (typeof document !== 'undefined') {
         berryFilterContainer.innerHTML = BERRY_DATA.map(b => {
           const isActive = selectedBerries.has(b.name);
           return `
-            <button type="button" class="subfilter-tag-btn ${isActive ? 'active' : ''}" data-berry="${b.name}" title="${b.name} (${b.type}屬性)">
-              ${b.icon ? `<img src="${b.icon}" class="subfilter-btn-icon" alt="${b.name}" loading="lazy" onerror="this.style.display='none';">` : '🫐'}
-              <span class="subfilter-btn-text">${b.name} <small style="opacity:0.75;">(${b.type})</small></span>
+            <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-berry="${b.name}" title="${b.name} (${b.type}屬性)" aria-label="${b.name}">
+              ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" alt="${b.name}" loading="lazy" onerror="this.style.display='none';">` : '🫐'}
             </button>
           `;
         }).join('');
@@ -606,9 +605,8 @@ if (typeof document !== 'undefined') {
         ingredientFilterContainer.innerHTML = uniqueIngredients.map(ing => {
           const isActive = selectedIngredients.has(ing.name);
           return `
-            <button type="button" class="subfilter-tag-btn ${isActive ? 'active' : ''}" data-ing="${ing.name}" title="包含 ${ing.name}">
-              ${ing.icon ? `<img src="${ing.icon}" class="subfilter-btn-icon" alt="${ing.name}" loading="lazy" onerror="this.style.display='none';">` : '🥗'}
-              <span class="subfilter-btn-text">${ing.name}</span>
+            <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-ing="${ing.name}" title="包含 ${ing.name}" aria-label="${ing.name}">
+              ${ing.icon ? `<img src="${ing.icon}" class="subfilter-icon-img" alt="${ing.name}" loading="lazy" onerror="this.style.display='none';">` : '🥗'}
             </button>
           `;
         }).join('');
@@ -622,12 +620,9 @@ if (typeof document !== 'undefined') {
         if (!skillFilterContainer) return;
         skillFilterContainer.innerHTML = BASE_SKILLS.map(skillItem => {
           const isActive = selectedSkills.has(skillItem.key);
-          const count = baseSkillCounts[skillItem.key] || 0;
           return `
-            <button type="button" class="subfilter-tag-btn subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${skillItem.label} (${count}隻)">
-              <span class="subfilter-skill-dot">${skillItem.icon || '⚡'}</span>
-              <span class="subfilter-btn-text">${skillItem.label}</span>
-              <span class="subfilter-skill-count">${count}</span>
+            <button type="button" class="subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${skillItem.label}">
+              <span class="subfilter-skill-name">${skillItem.label}</span>
             </button>
           `;
         }).join('');
@@ -646,9 +641,9 @@ if (typeof document !== 'undefined') {
         const showIngredient = showAll || selectedSpecialties.has('食材') || selectedIngredients.size > 0;
         const showSkill = showAll || selectedSpecialties.has('技能') || selectedSkills.size > 0;
 
-        if (subfilterBerryGroup) subfilterBerryGroup.style.display = showBerry ? 'block' : 'none';
-        if (subfilterIngredientGroup) subfilterIngredientGroup.style.display = showIngredient ? 'block' : 'none';
-        if (subfilterSkillGroup) subfilterSkillGroup.style.display = showSkill ? 'block' : 'none';
+        if (subfilterBerryGroup) subfilterBerryGroup.style.display = showBerry ? 'flex' : 'none';
+        if (subfilterIngredientGroup) subfilterIngredientGroup.style.display = showIngredient ? 'flex' : 'none';
+        if (subfilterSkillGroup) subfilterSkillGroup.style.display = showSkill ? 'flex' : 'none';
       }
 
       renderTypeButtons();
@@ -698,7 +693,7 @@ if (typeof document !== 'undefined') {
       // 樹果細節點擊
       if (berryFilterContainer) {
         berryFilterContainer.addEventListener('click', (e) => {
-          const btn = e.target.closest('.subfilter-tag-btn');
+          const btn = e.target.closest('.subfilter-icon-btn, .subfilter-tag-btn');
           if (!btn) return;
           const berry = btn.getAttribute('data-berry');
           if (!berry) return;
@@ -715,7 +710,7 @@ if (typeof document !== 'undefined') {
       // 食材細節點擊
       if (ingredientFilterContainer) {
         ingredientFilterContainer.addEventListener('click', (e) => {
-          const btn = e.target.closest('.subfilter-tag-btn');
+          const btn = e.target.closest('.subfilter-icon-btn, .subfilter-tag-btn');
           if (!btn) return;
           const ing = btn.getAttribute('data-ing');
           if (!ing) return;
@@ -732,7 +727,7 @@ if (typeof document !== 'undefined') {
       // 技能細節點擊
       if (skillFilterContainer) {
         skillFilterContainer.addEventListener('click', (e) => {
-          const btn = e.target.closest('.subfilter-tag-btn');
+          const btn = e.target.closest('.subfilter-skill-btn, .subfilter-tag-btn');
           if (!btn) return;
           const skill = btn.getAttribute('data-skill');
           if (!skill) return;
@@ -768,6 +763,23 @@ if (typeof document !== 'undefined') {
       if (clearSkillsBtn) {
         clearSkillsBtn.addEventListener('click', () => {
           selectedSkills.clear();
+          renderSkillButtons();
+          updateSubfilterVisibility();
+          renderUI();
+        });
+      }
+
+      // 側邊欄「全部重設」按鈕
+      const sidebarResetAllBtn = document.getElementById('sidebar-reset-all-btn');
+      if (sidebarResetAllBtn) {
+        sidebarResetAllBtn.addEventListener('click', () => {
+          selectedSpecialties.clear();
+          selectedBerries.clear();
+          selectedIngredients.clear();
+          selectedSkills.clear();
+          renderSpecialtyButtons();
+          renderBerryButtons();
+          renderIngredientButtons();
           renderSkillButtons();
           updateSubfilterVisibility();
           renderUI();

@@ -517,119 +517,268 @@ header {
 }
 
 /* =========================================================
-   🔍 寶可夢圖鑑動態細節篩選器 (Pokédex Dynamic Detail Sub-Filters)
+   🎛️ 寶可夢圖鑑左側懸浮固定篩選器 (Pokédex Left Fixed Floating Filter Sidebar)
    ========================================================= */
 
-.detail-subfilters-container {
+.pokemon-layout-view {
+  position: relative;
+  width: 100%;
+}
+
+.pokemon-filter-sidebar {
+  position: fixed;
+  top: 80px;
+  left: 20px;
+  bottom: 20px;
+  width: 275px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.7), 0 0 20px rgba(56, 189, 248, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 6px;
+  z-index: 90;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.subfilter-group {
-  background: rgba(15, 23, 42, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-md, 10px);
+.sidebar-header {
   padding: 12px 14px;
-  transition: all 0.25s ease;
-}
-
-.subfilter-header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.subfilter-tags-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.subfilter-tag-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  color: var(--text-secondary, #94a3b8);
-  font-size: 12.5px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  user-select: none;
-  line-height: 1.3;
-}
-
-.subfilter-tag-btn:hover {
-  background: rgba(45, 60, 85, 0.9);
-  border-color: rgba(99, 102, 241, 0.45);
-  color: #ffffff;
-  transform: translateY(-1px);
-}
-
-.subfilter-tag-btn.active {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(56, 189, 248, 0.5));
-  border-color: #38bdf8;
-  color: #ffffff !important;
-  font-weight: 700;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-}
-
-.subfilter-btn-icon {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(30, 41, 59, 0.45);
   flex-shrink: 0;
-  pointer-events: none;
 }
 
-.subfilter-btn-text {
-  white-space: nowrap;
+.sidebar-title-group {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #ffffff;
 }
 
-.subfilter-skill-btn {
-  padding: 4px 9px;
-  font-size: 12px;
-  background: rgba(20, 29, 47, 0.8);
-}
-
-.subfilter-skill-dot {
-  color: #ffd833;
-  font-size: 11px;
-}
-
-.subfilter-skill-count {
-  font-size: 10px;
-  opacity: 0.7;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 1px 5px;
-  border-radius: 10px;
-  margin-left: 2px;
-}
-
-.subfilter-clear-btn {
+.sidebar-reset-btn {
   background: rgba(239, 68, 68, 0.12);
-  color: #f87171;
+  color: #fca5a5;
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 6px;
-  padding: 2px 8px;
+  padding: 3px 8px;
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.subfilter-clear-btn:hover {
-  background: rgba(239, 68, 68, 0.3);
+.sidebar-reset-btn:hover {
+  background: rgba(239, 68, 68, 0.35);
   color: #ffffff;
+  border-color: #ef4444;
+}
+
+.sidebar-scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* 輕量美觀自訂滾動條 */
+.sidebar-scrollable-content::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-scrollable-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+.sidebar-scrollable-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  letter-spacing: 0.3px;
+}
+
+.sidebar-section-clear-btn {
+  background: transparent;
+  color: #94a3b8;
+  border: none;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: color 0.2s ease;
+}
+
+.sidebar-section-clear-btn:hover {
+  color: #ef4444;
+}
+
+/* 得意專長標籤 */
+.sidebar-specialty-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.sidebar-specialty-tags .tag-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+/* 純圖示極簡網格（樹果與食材） */
+.sidebar-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+
+.subfilter-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: rgba(30, 41, 59, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 3px;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.subfilter-icon-btn:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.5);
+  transform: scale(1.1);
+  z-index: 2;
+}
+
+.subfilter-icon-btn.active {
+  background: rgba(2, 132, 199, 0.4);
+  border: 1.5px solid #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
+  transform: scale(1.06);
+  z-index: 1;
+}
+
+.subfilter-icon-img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
+}
+
+/* 主技能清單（純名稱平鋪） */
+.sidebar-skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.subfilter-skill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  background: rgba(30, 41, 59, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+  line-height: 1.3;
+}
+
+.subfilter-skill-btn:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #ffffff;
+}
+
+.subfilter-skill-btn.active {
+  background: rgba(2, 132, 199, 0.35);
+  border-color: #38bdf8;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.35);
+}
+
+.subfilter-skill-name {
+  white-space: nowrap;
+}
+
+/* ➡️ 右側主要內容區 (Right Main Content Area) */
+.pokemon-main-content {
+  margin-left: 310px;
+  padding-right: 20px;
+  min-height: calc(100vh - 120px);
+}
+
+.pokemon-main-content .controls-container,
+.pokemon-main-content .stats-bar,
+.pokemon-main-content .table-container,
+.pokemon-main-content .pokemon-table-container,
+.pokemon-main-content .pokemon-grid {
+  max-width: 100%;
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* 響應式佈局 (Mobile & Tablet) */
+@media (max-width: 960px) {
+  .pokemon-filter-sidebar {
+    position: static;
+    width: 92%;
+    margin: 12px auto 16px;
+    max-height: none;
+    height: auto;
+  }
+  .pokemon-main-content {
+    margin-left: 0;
+    padding-right: 0;
+  }
+  .pokemon-main-content .controls-container,
+  .pokemon-main-content .stats-bar,
+  .pokemon-main-content .table-container,
+  .pokemon-main-content .pokemon-table-container,
+  .pokemon-main-content .pokemon-grid {
+    width: 92%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }
 
 /* Stats Bar */

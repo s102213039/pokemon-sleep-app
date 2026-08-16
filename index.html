@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260817_05">
+  <link rel="stylesheet" href="styles.css?v=20260817_06">
 </head>
 <body>
 
@@ -67,84 +67,105 @@
 
   <main>
     <!-- Panel 1: 寶可夢圖鑑 -->
-    <div id="panel-pokemon" class="view-panel">
-      <!-- Controls -->
-      <section class="controls-container" aria-label="Search and Filter Controls">
-        <div class="search-filter-row">
-          <div class="search-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="search-input" class="search-input"
-              placeholder="搜尋寶可夢名稱 (中/英/日) 或 No. 編號..."
-              aria-label="搜尋寶可夢">
-            <button type="button" id="pokemon-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
+    <!-- Panel 1: 寶可夢圖鑑 -->
+    <div id="panel-pokemon" class="view-panel pokemon-layout-view">
+      <!-- ⬅️ 左側懸浮固定篩選器 (Left Floating Fixed Filter Sidebar) -->
+      <aside id="pokemon-filter-sidebar" class="pokemon-filter-sidebar" aria-label="寶可夢圖鑑篩選器">
+        <div class="sidebar-header">
+          <div class="sidebar-title-group">
+            <span class="sidebar-icon">🎛️</span>
+            <span class="sidebar-title">圖鑑篩選器</span>
           </div>
-          <!-- 👑 僅展示最終進化 Switch Button -->
-          <label class="final-evo-switch-label" for="final-evo-toggle" title="只展示最終進化或無後續進化可能的寶可夢">
-            <input type="checkbox" id="final-evo-toggle" class="switch-checkbox" checked>
-            <span class="switch-slider"></span>
-            <span class="switch-text">👑 僅最終進化</span>
-          </label>
-
-          <!-- 頁面內容裡面的 卡片/表格 切換按鈕 -->
-          <div class="view-mode-toggle">
-            <button id="toggle-grid" class="toggle-btn">🎴 卡片</button>
-            <button id="toggle-table" class="toggle-btn active">📊 表格</button>
-          </div>
-          <select id="sort-select" style="display:none;"></select>
-        </div>
-        <div class="filter-tags-group">
-          <span class="filter-label">得意（可複選）：</span>
-          <div id="specialty-filter-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+          <button type="button" id="sidebar-reset-all-btn" class="sidebar-reset-btn" title="重設所有篩選條件">全部重設</button>
         </div>
 
-        <!-- 動態細節篩選器 (Dynamic Sub-Filters based on Specialty) -->
-        <div id="detail-subfilters-container" class="detail-subfilters-container">
-          <!-- 1. 樹果細節篩選 (Berry Sub-Filter) -->
-          <div id="subfilter-berry-group" class="subfilter-group" style="display:none;">
-            <div class="subfilter-header">
-              <span class="filter-label">🫐 產出樹果（可複選）：</span>
-              <button type="button" id="clear-berries-btn" class="subfilter-clear-btn" style="display:none;">清空樹果選擇</button>
+        <div class="sidebar-scrollable-content">
+          <!-- 1. 得意篩選 (Specialty) -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">得意專長</span>
             </div>
-            <div id="berry-filter-tags" class="subfilter-tags-grid"></div>
+            <div id="specialty-filter-tags" class="sidebar-specialty-tags"></div>
           </div>
 
-          <!-- 2. 食材細節篩選 (Ingredient Sub-Filter) -->
-          <div id="subfilter-ingredient-group" class="subfilter-group" style="display:none;">
-            <div class="subfilter-header">
-              <span class="filter-label">🥗 產出食材（可複選）：</span>
-              <button type="button" id="clear-ingredients-pkm-btn" class="subfilter-clear-btn" style="display:none;">清空食材選擇</button>
+          <!-- 動態細節篩選器 (Dynamic Sub-Filters based on Specialty) -->
+          <div id="detail-subfilters-container" class="detail-subfilters-container">
+            <!-- 2. 樹果細節篩選 (Berry Sub-Filter - Icon Only) -->
+            <div id="subfilter-berry-group" class="sidebar-section" style="display:none;">
+              <div class="sidebar-section-header">
+                <span class="sidebar-section-title">產出樹果</span>
+                <button type="button" id="clear-berries-btn" class="sidebar-section-clear-btn" style="display:none;">清空</button>
+              </div>
+              <div id="berry-filter-tags" class="sidebar-icon-grid"></div>
             </div>
-            <div id="ingredient-pkm-filter-tags" class="subfilter-tags-grid"></div>
-          </div>
 
-          <!-- 3. 主技能細節篩選 (Main Skill Sub-Filter) -->
-          <div id="subfilter-skill-group" class="subfilter-group" style="display:none;">
-            <div class="subfilter-header">
-              <span class="filter-label">⚡ 持有主技能（平鋪多選）：</span>
-              <button type="button" id="clear-skills-btn" class="subfilter-clear-btn" style="display:none;">清空技能選擇</button>
+            <!-- 3. 食材細節篩選 (Ingredient Sub-Filter - Icon Only) -->
+            <div id="subfilter-ingredient-group" class="sidebar-section" style="display:none;">
+              <div class="sidebar-section-header">
+                <span class="sidebar-section-title">產出食材</span>
+                <button type="button" id="clear-ingredients-pkm-btn" class="sidebar-section-clear-btn" style="display:none;">清空</button>
+              </div>
+              <div id="ingredient-pkm-filter-tags" class="sidebar-icon-grid"></div>
             </div>
-            <div id="skill-filter-tags" class="subfilter-tags-grid subfilter-skills-grid"></div>
+
+            <!-- 4. 主技能細節篩選 (Main Skill Sub-Filter - Name Only) -->
+            <div id="subfilter-skill-group" class="sidebar-section" style="display:none;">
+              <div class="sidebar-section-header">
+                <span class="sidebar-section-title">持有主技能</span>
+                <button type="button" id="clear-skills-btn" class="sidebar-section-clear-btn" style="display:none;">清空</button>
+              </div>
+              <div id="skill-filter-tags" class="sidebar-skills-list"></div>
+            </div>
           </div>
         </div>
-      </section>
+      </aside>
 
-      <!-- Stats Bar -->
-      <div class="stats-bar">
-        <span id="count-badge">載入中...</span>
-        <div style="display:flex;gap:12px;align-items:center;">
-          <a href="https://docs.google.com/spreadsheets/d/1JkV2QxGGFDBzUfDxfOhTD3hrJJzu9qCS4A6c_HicIDc/edit#gid=87785598"
-             target="_blank" style="color:var(--accent-color);text-decoration:none;font-size:12px;">📊 參考資料來源</a>
-          <a href="https://docs.google.com/spreadsheets/d/1BD05wG8Gy3EUNzhg5mtErllr-Rkv20iFGsZ8kNsuUJ0/edit"
-             target="_blank" style="color:var(--accent-color);text-decoration:none;font-size:12px;">📋 目標試算表</a>
+      <!-- ➡️ 右側主要內容區 (Right Main Content Area) -->
+      <div class="pokemon-main-content">
+        <!-- Controls (Search, Final Evo Toggle, View Mode Toggle) -->
+        <section class="controls-container" aria-label="Search and Filter Controls">
+          <div class="search-filter-row">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="search-input" class="search-input"
+                placeholder="搜尋寶可夢名稱 (中/英/日) 或 No. 編號..."
+                aria-label="搜尋寶可夢">
+              <button type="button" id="pokemon-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
+            </div>
+            <!-- 👑 僅展示最終進化 Switch Button -->
+            <label class="final-evo-switch-label" for="final-evo-toggle" title="只展示最終進化或無後續進化可能的寶可夢">
+              <input type="checkbox" id="final-evo-toggle" class="switch-checkbox" checked>
+              <span class="switch-slider"></span>
+              <span class="switch-text">👑 僅最終進化</span>
+            </label>
+
+            <!-- 頁面內容裡面的 卡片/表格 切換按鈕 -->
+            <div class="view-mode-toggle">
+              <button id="toggle-grid" class="toggle-btn">🎴 卡片</button>
+              <button id="toggle-table" class="toggle-btn active">📊 表格</button>
+            </div>
+            <select id="sort-select" style="display:none;"></select>
+          </div>
+        </section>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+          <span id="count-badge">載入中...</span>
+          <div style="display:flex;gap:12px;align-items:center;">
+            <a href="https://docs.google.com/spreadsheets/d/1JkV2QxGGFDBzUfDxfOhTD3hrJJzu9qCS4A6c_HicIDc/edit#gid=87785598"
+               target="_blank" style="color:var(--accent-color);text-decoration:none;font-size:12px;">📊 參考資料來源</a>
+            <a href="https://docs.google.com/spreadsheets/d/1BD05wG8Gy3EUNzhg5mtErllr-Rkv20iFGsZ8kNsuUJ0/edit"
+               target="_blank" style="color:var(--accent-color);text-decoration:none;font-size:12px;">📋 目標試算表</a>
+          </div>
         </div>
+
+        <!-- Content Area -->
+        <section id="content-area">
+          <div style="text-align:center;padding:60px;color:var(--text-muted);">
+            資料載入中，請稍候...
+          </div>
+        </section>
       </div>
-
-      <!-- Content Area -->
-      <section id="content-area">
-        <div style="text-align:center;padding:60px;color:var(--text-muted);">
-          資料載入中，請稍候...
-        </div>
-      </section>
     </div>
 
     <!-- Panel 2: 料理食譜大全 -->
@@ -553,9 +574,9 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260817_05"></script>
-  <script src="recipes.js?v=20260817_05"></script>
-  <script src="box.js?v=20260817_05"></script>
-  <script src="news.js?v=20260817_05"></script>
+  <script src="app.js?v=20260817_06"></script>
+  <script src="recipes.js?v=20260817_06"></script>
+  <script src="box.js?v=20260817_06"></script>
+  <script src="news.js?v=20260817_06"></script>
 </body>
 </html>
