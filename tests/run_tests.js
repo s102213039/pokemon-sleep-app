@@ -380,18 +380,20 @@ test('Tier 1 - Feature Coverage', 'JS Logic: app.js contains state management, m
 // -------------------------------------------------------------------
 console.log('\n--- Tier 2 - Boundary & Corner Cases ---');
 
-test('Tier 2 - Boundary & Corner Cases', 'Empty search string returns all items', () => {
+test('Tier 2 - Boundary & Corner Cases', 'Empty search string returns all items (with onlyFinal=false)', () => {
   PokemonApp.init([...dataset]);
+  PokemonApp.onlyFinal = false;
   PokemonApp.currentSearch = '';
   PokemonApp.selectedTypes.clear();
   PokemonApp.selectedSpecialties.clear();
 
   const filtered = PokemonApp.filterData();
-  assertEquals(filtered.length, dataset.length, 'Empty search should return all items');
+  assertEquals(filtered.length, dataset.length, 'Empty search with onlyFinal=false should return all items');
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'ID search formats (#0001, 1, 01) correctly match Bulbasaur', () => {
   PokemonApp.init([...dataset]);
+  PokemonApp.onlyFinal = false;
   PokemonApp.selectedTypes.clear();
   PokemonApp.selectedSpecialties.clear();
 
@@ -406,6 +408,7 @@ test('Tier 2 - Boundary & Corner Cases', 'ID search formats (#0001, 1, 01) corre
 
 test('Tier 2 - Boundary & Corner Cases', 'Case-insensitive search (bulbasaur, Bulbasaur, BULBASAUR)', () => {
   PokemonApp.init([...dataset]);
+  PokemonApp.onlyFinal = false;
   PokemonApp.selectedTypes.clear();
   PokemonApp.selectedSpecialties.clear();
 
@@ -506,7 +509,7 @@ test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient
   assert(mewtwo !== undefined, '超夢 (精神擊破) should match 樹果遽增');
 });
 
-test('Tier 2 - Boundary & Corner Cases', 'Final Evolution Filter: onlyFinal excludes unevolved stages and includes final/single stages', () => {
+test('Tier 2 - Boundary & Corner Cases', 'Final Evolution Filter: onlyFinal defaults to TRUE and correctly filters final/single stages', () => {
   PokemonApp.init([...dataset]);
   PokemonApp.currentSearch = '';
   PokemonApp.selectedTypes.clear();
@@ -515,29 +518,28 @@ test('Tier 2 - Boundary & Corner Cases', 'Final Evolution Filter: onlyFinal excl
   PokemonApp.selectedIngredients.clear();
   PokemonApp.selectedSkills.clear();
 
-  // 1. When onlyFinal is FALSE (default)
-  PokemonApp.onlyFinal = false;
-  assertEquals(PokemonApp.filterData().length, dataset.length, 'onlyFinal=false should return all 247 items');
-
-  // 2. When onlyFinal is TRUE
-  PokemonApp.onlyFinal = true;
-  const finals = PokemonApp.filterData();
-  assert(finals.length > 0 && finals.length < dataset.length, 'Finals count should be subset of all items');
-  assertEquals(finals.length, 127, 'Total final/single stage Pokémon should be exactly 127');
+  // 1. By default, onlyFinal MUST be TRUE
+  assertEquals(PokemonApp.onlyFinal, true, 'PokemonApp.onlyFinal should default to true');
+  const defaultFinals = PokemonApp.filterData();
+  assertEquals(defaultFinals.length, 127, 'Default filter should return exactly 127 final/single stage Pokémon');
 
   // Must EXCLUDE pre-evolutions: Bulbasaur (#001), Ivysaur (#002), Charmander (#004), Charmeleon (#005), Squirtle (#007), Wartortle (#008)
   const preEvos = ['妙蛙種子', '妙蛙草', '小火龍', '火恐龍', '傑尼龜', '卡咪龜', '皮丘', '皮卡丘'];
   preEvos.forEach(name => {
-    const found = finals.find(p => p.name_cn === name);
+    const found = defaultFinals.find(p => p.name_cn === name);
     assert(found === undefined, `Pre-evolution ${name} should NOT be in final evolution list`);
   });
 
   // Must INCLUDE final stages and single stages: Venusaur, Charizard, Blastoise, Raichu, Pinsir, Heracross, Mewtwo, Mew
   const finalStages = ['妙蛙花', '噴火龍', '水箭龜', '雷丘', '凱羅斯', '赫拉克羅斯', '超夢', '夢幻'];
   finalStages.forEach(name => {
-    const found = finals.find(p => p.name_cn === name);
+    const found = defaultFinals.find(p => p.name_cn === name);
     assert(found !== undefined, `Final stage ${name} MUST be in final evolution list`);
   });
+
+  // 2. When onlyFinal is toggled to FALSE
+  PokemonApp.onlyFinal = false;
+  assertEquals(PokemonApp.filterData().length, dataset.length, 'onlyFinal=false should return all 247 items');
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Hover tooltips only on special skills matching official in-game text', () => {
@@ -737,8 +739,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Full application workflow sim
 
   // Step 1: Load Data
   PokemonApp.init([...dataset]);
+  PokemonApp.onlyFinal = false;
   const initialItems = PokemonApp.render();
-  assert(initialItems.length >= 247, 'Initial load should contain >= 247 items');
+  assert(initialItems.length >= 247, 'Initial load with onlyFinal=false should contain >= 247 items');
 
   // Step 2: Filter CN name (e.g. '皮卡丘' or '妙蛙')
   PokemonApp.currentSearch = '妙蛙';

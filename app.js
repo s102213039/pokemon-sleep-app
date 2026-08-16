@@ -249,7 +249,7 @@ function matchesSkill(pokemonSkill, targetBaseSkill) {
 const PokemonApp = {
   allPokemons: [],
   currentSearch: '',
-  onlyFinal: false,
+  onlyFinal: true,
   selectedTypes: new Set(),
   selectedSpecialties: new Set(),
   selectedBerries: new Set(),
@@ -261,7 +261,7 @@ const PokemonApp = {
   init(data) {
     this.allPokemons = data || [];
     this.currentSearch = '';
-    this.onlyFinal = false;
+    this.onlyFinal = true;
     this.selectedTypes = new Set();
     this.selectedSpecialties = new Set();
     this.selectedBerries = new Set();
@@ -343,7 +343,8 @@ if (typeof document !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
     let allPokemons = [];
     let currentSearch = '';
-    let onlyFinal = false;
+    const finalEvoToggle = document.getElementById('final-evo-toggle');
+    let onlyFinal = finalEvoToggle ? finalEvoToggle.checked : true;
     const selectedTypes = new Set();
     const selectedSpecialties = new Set();
     const selectedBerries = new Set();
@@ -352,7 +353,6 @@ if (typeof document !== 'undefined') {
     let viewMode = 'table';
 
     const searchInput = document.getElementById('search-input');
-    const finalEvoToggle = document.getElementById('final-evo-toggle');
     const typeFilterContainer = document.getElementById('type-filter-tags');
     const specialtyFilterContainer = document.getElementById('specialty-filter-tags');
 
