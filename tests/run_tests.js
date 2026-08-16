@@ -213,7 +213,7 @@ const {
   getItemIngredientRate,
   getItemHelpInterval,
   DEFAULT_SVG_ICON,
-  SKILL_DETAILS,
+  SPECIAL_SKILL_DETAILS,
   renderSkillWithTooltip
 } = require(appPath);
 
@@ -540,11 +540,11 @@ test('Tier 2 - Boundary & Corner Cases', 'Final Evolution Filter: onlyFinal excl
   });
 });
 
-test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Hover tooltips with comprehensive descriptions for composite and special skills', () => {
-  assert(typeof SKILL_DETAILS === 'object', 'SKILL_DETAILS dictionary is missing');
+test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Hover tooltips only on special skills matching official in-game text', () => {
+  assert(typeof SPECIAL_SKILL_DETAILS === 'object', 'SPECIAL_SKILL_DETAILS dictionary is missing');
   assert(typeof renderSkillWithTooltip === 'function', 'renderSkillWithTooltip function is missing');
 
-  // Test special skills
+  // 1. Test special/composite/variant skills (MUST have special badge, sparkle icon, and in-game description)
   const specialSkills = [
     '健美（料理輔助S）',
     '月光（活力填充S）',
@@ -557,17 +557,26 @@ test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Ho
   ];
 
   specialSkills.forEach(skill => {
-    assert(SKILL_DETAILS[skill] !== undefined, `Missing SKILL_DETAILS entry for ${skill}`);
+    assert(SPECIAL_SKILL_DETAILS[skill] !== undefined, `Missing SPECIAL_SKILL_DETAILS entry for ${skill}`);
     const html = renderSkillWithTooltip(skill);
-    assert(html.includes('special-skill'), `Rendered badge for ${skill} should have 'special-skill' class`);
-    assert(html.includes('title='), `Rendered badge for ${skill} should have title attribute for tooltip`);
+    assert(html.includes('special-skill-badge'), `Rendered badge for ${skill} should have 'special-skill-badge' class`);
+    assert(html.includes('data-skill-detail='), `Rendered badge for ${skill} should have data-skill-detail attribute`);
     assert(html.includes('✨'), `Rendered badge for ${skill} should include sparkle icon indicator`);
   });
 
-  // Test standard base skill
-  const baseHtml = renderSkillWithTooltip('食材獲取S');
-  assert(baseHtml.includes('title='), `Base skill badge should include title tooltip`);
-  assert(!baseHtml.includes('special-skill'), `Base skill should not be marked as special-skill`);
+  // Verify Heracross official in-game text
+  assertEquals(
+    SPECIAL_SKILL_DETAILS['健美（料理輔助S）'],
+    '隨機獲得多個食材，並提升下次料理漂亮成功（大成功）的機率。',
+    'Heracross skill description must match official in-game text'
+  );
+
+  // 2. Test pure base skills (like 能量填充S, 食材獲取S) - MUST NOT have tooltips or special badges
+  const pureBaseSkills = ['能量填充S', '能量填充M', '食材獲取S', '活力全體療癒S', '料理強化S', '幫手支援S'];
+  pureBaseSkills.forEach(skill => {
+    const rendered = renderSkillWithTooltip(skill);
+    assertEquals(rendered, skill, `Pure base skill ${skill} should be rendered as plain text without tooltip or badge`);
+  });
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'Fallback icon validation: missing/empty icon property defaults to SVG placeholder', () => {

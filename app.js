@@ -195,65 +195,45 @@ const COMPOSITE_SKILL_MAP = {
   '變身（技能複製）': ['技能複製']
 };
 
-/* ─── 📖 主技能詳細效果字典 (Main Skill Detailed Descriptions) ─ */
-const SKILL_DETAILS = {
+/* ─── 📖 特殊主技能官方詳細說明字典 (Special Main Skill Official In-Game Descriptions) ─ */
+const SPECIAL_SKILL_DETAILS = {
   // 🌟 真正複合主技能 (True Composite Skills)
-  '健美（料理輔助S）': '【複合主技能】發動時隨機獲得多個食材，並提升下次料理大成功機率（食材獲取S + 料理成功S）',
-  '月光（活力填充S）': '【複合主技能】回復自身活力；若發生漂亮大成功時，額外隨機讓隊伍中 1 隻隊友回復活力（活力填充S + 活力療癒S）',
-  '樹果汁（活力全體療癒S）': '【複合主技能】回復隊伍全員活力；有時額外獲得可供單隻回復 20 活力的「樹果汁」道具（活力全體療癒S + 活力療癒S）',
+  '健美（料理輔助S）': '隨機獲得多個食材，並提升下次料理漂亮成功（大成功）的機率。',
+  '月光（活力填充S）': '讓自己回復活力；若發生「漂亮成功」時，額外隨機讓隊伍中的 1 隻寶可夢稍微回復活力。',
+  '樹果汁（活力全體療癒S）': '讓幫手隊伍的所有寶可夢回復活力，同時有機會額外獲得可讓單隻寶可夢回復 20 活力的「樹果汁」道具（最多持有 5 個）。',
 
   // 🏷️ 專屬命名與變體主技能 (Named Variant Skills)
-  '正電（食材獲取S）': '【特色技能】隨機獲得指定數量的食材；隊伍中有「負電」隊員時獲得量額外提升',
-  '負電（料理強化S）': '【特色技能】擴大下次料理時鍋子的容量上限；隊伍中有「正電」隊員時擴大量額外提升',
-  '禮物（食材獲取S）': '【專屬技能】隨機獲得指定數量的食材（信使鳥專屬）',
-  '超幸運（食材精選S）': '【專屬技能】隨機獲得該寶可夢自身可產出的食材（烏鴉頭頭專屬）',
-  '怪力钳（食材精選S）': '【專屬技能】隨機獲得該寶可夢自身可產出的食材（大嘴娃專屬）',
-  '新月祈禱（活力全體療癒S）': '【傳說專屬】恢復隊伍全員的活力（克雷色利亞專屬強力群體活力療癒）',
-  '治癒波動（活力療癒S）': '【傳說專屬】隨機恢復隊伍中 1 隻寶可夢的活力（拉帝亞斯專屬）',
-  '蹭蹭臉頰（活力療癒S）': '【專屬技能】隨機恢復隊伍中 1 隻寶可夢的活力（托戈德瑪爾專屬）',
-  '蓄力（能量填充S）': '【專屬技能】增加卡比獸能量；隨蓄力次數提升，發動時可爆發大量能量（飄飄球家族專屬）',
-  '能量填充S（隨機）': '【隨機技能】隨機浮動增加卡比獸能量（數值於一定範圍內隨機變動）',
-  '夢魘（能量填充M）': '【傳說專屬】固定增加大量卡比獸能量（達克萊伊專屬）',
-  '精神擊破（樹果領域）': '【傳說專屬】爆發產出自身大量樹果（超夢專屬）',
-  '流星群（樹果遽增）': '【傳說專屬】爆發產出自身大量樹果（拉帝歐斯專屬）',
-  '畫皮（樹果遽增）': '【專屬技能】爆發產出自身大量樹果（謎擬Q專屬）',
-  '樹果遽增?': '【專屬技能】爆發產出自身大量樹果（巨鍛匠家族專屬）',
-  '波導彈（夢之碎片獲取S）': '【專屬技能】獲得指定數量夢之碎片（路卡利歐專屬）',
-  '夢之碎片獲取S（隨機）': '【隨機技能】隨機浮動獲得夢之碎片（數值於一定範圍內隨機變動）',
-  '幫手加速（電）': '【傳說專屬】立即獲得隊伍中所有電屬性寶可夢數次幫忙產出（雷公專屬）',
-  '幫手加速（火）': '【傳說專屬】立即獲得隊伍中所有火屬性寶可夢數次幫忙產出（炎帝專屬）',
-  '幫手加速（水）': '【傳說專屬】立即獲得隊伍中所有水屬性寶可夢數次幫忙產出（水君專屬）',
-  '十項全能（揮指）[可替換]': '【幻之專屬】隨機發動全遊戲中任一主技能，並具備技能替換機制（夢幻專屬）',
-  '模仿（技能複製）': '【特色技能】複製前一位隊友發動之主技能（魔牆人偶家族專屬）',
-  '變身（技能複製）': '【特色技能】變身為隊友並複製其技能產出（百變怪專屬）',
-
-  // 🎯 基礎主技能 (Base Skills)
-  '食材獲取S': '隨機獲得指定數量的食材',
-  '食材精選S': '隨機獲得該寶可夢自身可產出的食材',
-  '活力全體療癒S': '恢復隊伍全員的活力 (HP)',
-  '活力療癒S': '隨機恢復隊伍中 1 隻寶可夢的活力',
-  '活力填充S': '恢復自身活力',
-  '能量填充M': '固定增加大量卡比獸能量',
-  '能量填充S': '固定增加卡比獸能量',
-  '料理強化S': '擴大下次料理時鍋子的容量上限',
-  '料理成功S': '提升下次料理漂亮成功 (Extra Tasty) 的機率',
-  '幫手支援S': '立即獲得隊友數次幫忙產出（樹果與食材）',
-  '幫手加速': '立即獲得同屬性隊員全體數次幫忙產出',
-  '樹果遽增': '立即獲得大量樹果',
-  '夢之碎片獲取S': '獲得指定數量的夢之碎片',
-  '揮指': '隨機發動全遊戲中任一主技能'
+  '正電（食材獲取S）': '隨機獲得食材；若隊伍中還有 1 隻以上主技能是「正電」或「負電」的寶可夢，則發動時額外獲得更多食材。',
+  '負電（料理強化S）': '擴大下次料理時鍋子的容量上限；若隊伍中還有 1 隻以上主技能是「正電」或「負電」的寶可夢，發動時額外隨機讓隊伍中 1 隻寶可夢回復活力。',
+  '禮物（食材獲取S）': '隨機獲得多個食材；有時除了食材之外，還會額外隨機獲得隊伍中 1 隻寶可夢的糖果。',
+  '超幸運（食材精選S）': '從該寶可夢自身可產出的特定食材中隨機獲得 1 種；少數情況下會獲得大量的夢之碎片而不是食材。',
+  '怪力钳（食材精選S）': '從該寶可夢自身可產出的特定食材中隨機獲得 1 種；有時候會額外獲得更多的食材。',
+  '新月祈禱（活力全體療癒S）': '讓幫手隊伍的所有寶可夢回復活力，並額外獲得隊伍中所有寶可夢撿來的樹果（超能力屬性隊員越多，樹果數量越多）。',
+  '治癒波動（活力療癒S）': '隨機讓隊伍中的 2 隻寶可夢回復活力，並讓牠們立刻完成一定次數的幫忙（若隊伍中有拉帝歐斯，立即幫忙次數增加）。',
+  '蹭蹭臉頰（活力療癒S）': '隨機讓隊伍中的 1 隻寶可夢回復活力；幸運時該寶可夢還會獲得「主技能發動獎勵」，可額外多發動 1 次主技能。',
+  '蓄力（能量填充S）': '隨機發動「蓄積」或「噴放」；連續蓄積次數越多，噴放時為卡比獸增加的能量就越多。',
+  '能量填充S（隨機）': '隨機浮動增加卡比獸能量（數值於一定範圍內隨機變動）。',
+  '夢魘（能量填充M）': '固定增加大量卡比獸能量；發動時會降低隊伍中「惡屬性以外」寶可夢的活力。',
+  '精神擊破（樹果領域）': '增加卡比獸能量，並在營地展開「樹果領域」，期間透過芒芒果（超能力屬性）獲得的能量提升。',
+  '流星群（樹果遽增）': '獲得自己以及隊伍中寶可夢撿來的樹果（龍屬性隊員越多數量越多；若隊伍中有拉帝亞斯數量進一步增加）。',
+  '畫皮（樹果遽增）': '獲得一定數量的樹果，並額外獲得隊伍中寶可夢撿來的樹果；少數情況下會發生「漂亮成功」獲得大量樹果。',
+  '樹果遽增?': '揮舞巨錘爆發產出自身大量樹果。',
+  '波導彈（夢之碎片獲取S）': '獲得夢之碎片，並同時增加卡比獸的能量。',
+  '夢之碎片獲取S（隨機）': '隨機浮動獲得夢之碎片（數值於一定範圍內隨機變動）。',
+  '幫手加速（電）': '立即獲得隊伍中所有電屬性幫手寶可夢數次幫忙產出（隊伍中電屬性寶可夢種類越多，幫忙次數越多）。',
+  '幫手加速（火）': '立即獲得隊伍中所有火屬性幫手寶可夢數次幫忙產出（隊伍中火屬性寶可夢種類越多，幫忙次數越多）。',
+  '幫手加速（水）': '立即獲得隊伍中所有水屬性幫手寶可夢數次幫忙產出（隊伍中水屬性寶可夢種類越多，幫忙次數越多）。',
+  '十項全能（揮指）[可替換]': '發動設置的主技能效果，並額外獲得隊伍中 1 隻寶可夢的糖果；可使用「靈感種子」自由切換學習到的主技能。',
+  '模仿（技能複製）': '複製並發動隊伍中前一位幫手寶可夢所發動的主技能。',
+  '變身（技能複製）': '變身為隊友並複製其技能產出與幫忙效果。'
 };
 
 function renderSkillWithTooltip(skillName) {
   if (!skillName) return '--';
-  const detail = SKILL_DETAILS[skillName];
-  const isSpecial = Boolean(COMPOSITE_SKILL_MAP[skillName]);
-  
-  if (isSpecial) {
-    return `<span class="skill-tooltip-badge special-skill" title="${detail || skillName}"><span class="skill-sparkle">✨</span>${skillName}</span>`;
-  }
+  const detail = SPECIAL_SKILL_DETAILS[skillName];
+  // 僅針對特殊/變體/複合主技能展示標籤與詳細說明，純基礎主技能（如能量填充S）保持純文字不展示說明
   if (detail) {
-    return `<span class="skill-tooltip-badge" title="${detail}">${skillName}</span>`;
+    return `<span class="special-skill-badge" data-skill="${skillName}" data-skill-detail="${detail}" title="${detail}"><span class="skill-sparkle" aria-hidden="true">✨</span><span class="skill-name-text">${skillName}</span></span>`;
   }
   return skillName;
 }
@@ -1015,6 +995,70 @@ if (typeof document !== 'undefined') {
         </div>
       `;
     }
+
+    function initSkillTooltips() {
+      let tooltipEl = document.getElementById('global-skill-tooltip');
+      if (!tooltipEl) {
+        tooltipEl = document.createElement('div');
+        tooltipEl.id = 'global-skill-tooltip';
+        tooltipEl.className = 'global-skill-tooltip';
+        document.body.appendChild(tooltipEl);
+      }
+
+      document.addEventListener('mouseover', (e) => {
+        const badge = e.target.closest('.special-skill-badge');
+        if (badge && tooltipEl) {
+          const skillName = badge.dataset.skill || '';
+          const detail = badge.dataset.skillDetail || badge.getAttribute('title') || '';
+          if (!detail) return;
+
+          // Temporarily suppress native browser title to avoid tiny double tooltip
+          badge.dataset.nativeTitle = badge.getAttribute('title') || '';
+          badge.removeAttribute('title');
+
+          tooltipEl.innerHTML = `
+            <div class="tooltip-header">
+              <span class="tooltip-sparkle">✨</span>
+              <strong class="tooltip-title">${skillName}</strong>
+              <span class="tooltip-tag">特殊主技能</span>
+            </div>
+            <div class="tooltip-body">${detail}</div>
+          `;
+          tooltipEl.style.display = 'block';
+
+          const rect = badge.getBoundingClientRect();
+          const tooltipRect = tooltipEl.getBoundingClientRect();
+
+          let top = rect.top - tooltipRect.height - 10;
+          let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+
+          if (top < 10) {
+            top = rect.bottom + 10;
+          }
+          if (left < 14) left = 14;
+          if (left + tooltipRect.width > window.innerWidth - 14) {
+            left = window.innerWidth - tooltipRect.width - 14;
+          }
+
+          tooltipEl.style.top = `${top}px`;
+          tooltipEl.style.left = `${left}px`;
+          tooltipEl.classList.add('visible');
+        }
+      });
+
+      document.addEventListener('mouseout', (e) => {
+        const badge = e.target.closest('.special-skill-badge');
+        if (badge && tooltipEl) {
+          if (badge.dataset.nativeTitle) {
+            badge.setAttribute('title', badge.dataset.nativeTitle);
+          }
+          tooltipEl.classList.remove('visible');
+          tooltipEl.style.display = 'none';
+        }
+      });
+    }
+
+    initSkillTooltips();
   });
 }
 
@@ -1033,7 +1077,7 @@ if (typeof module !== 'undefined' && module.exports) {
     PokemonApp,
     BASE_SKILLS,
     COMPOSITE_SKILL_MAP,
-    SKILL_DETAILS,
+    SPECIAL_SKILL_DETAILS,
     matchesSkill,
     renderSkillWithTooltip
   };

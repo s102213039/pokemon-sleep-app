@@ -997,46 +997,106 @@ header {
 }
 
 /* =========================================================
-   ✨ 主技能詳細說明提示 (Skill Tooltips & Special Badges)
+   ✨ 特殊主技能詳細說明提示 (Skill Tooltips & Special Badges)
    ========================================================= */
-.skill-tooltip-badge {
+.special-skill-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  cursor: help;
-  position: relative;
-  text-decoration: none;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  user-select: none;
-}
-
-.skill-tooltip-badge.special-skill {
   background: rgba(56, 189, 248, 0.12);
-  border: 1px dashed rgba(56, 189, 248, 0.45);
+  border: 1px dashed rgba(56, 189, 248, 0.5);
   border-radius: 6px;
-  padding: 1px 6px;
+  padding: 2px 7px;
   color: #7dd3fc;
   font-weight: 600;
+  font-size: 12px;
+  cursor: help;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
 }
 
-.skill-tooltip-badge.special-skill:hover {
-  background: rgba(56, 189, 248, 0.25);
+.special-skill-badge:hover {
+  background: rgba(56, 189, 248, 0.28);
   border-color: #38bdf8;
   color: #ffffff;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
   transform: translateY(-1px);
 }
 
-.skill-sparkle {
+.special-skill-badge .skill-sparkle {
   font-size: 11px;
-  filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.6));
+  filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.7));
 }
 
 .skill-stat-val {
-  font-size: 11px !important;
+  font-size: 11.5px !important;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* 全域懸停詳細說明浮動框 (Prominent, High-contrast, Legible Tooltip) */
+.global-skill-tooltip {
+  position: fixed;
+  z-index: 999999;
+  background: rgba(15, 23, 42, 0.96);
+  border: 1.5px solid rgba(56, 189, 248, 0.5);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: #f8fafc;
+  font-size: 13.5px;
+  line-height: 1.55;
+  max-width: 340px;
+  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.8), 0 0 16px rgba(56, 189, 248, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.global-skill-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.global-skill-tooltip .tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 5px;
+}
+
+.global-skill-tooltip .tooltip-sparkle {
+  font-size: 13px;
+}
+
+.global-skill-tooltip .tooltip-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.global-skill-tooltip .tooltip-tag {
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 600;
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+.global-skill-tooltip .tooltip-body {
+  font-size: 13.5px;
+  color: #e2e8f0;
+  font-weight: 400;
+  letter-spacing: 0.2px;
 }
 
 /* Ingredients layout */
