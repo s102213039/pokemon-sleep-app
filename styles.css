@@ -996,6 +996,49 @@ header {
   padding-left: 8px !important;
 }
 
+/* =========================================================
+   ✨ 主技能詳細說明提示 (Skill Tooltips & Special Badges)
+   ========================================================= */
+.skill-tooltip-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: help;
+  position: relative;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.skill-tooltip-badge.special-skill {
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px dashed rgba(56, 189, 248, 0.45);
+  border-radius: 6px;
+  padding: 1px 6px;
+  color: #7dd3fc;
+  font-weight: 600;
+}
+
+.skill-tooltip-badge.special-skill:hover {
+  background: rgba(56, 189, 248, 0.25);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+  transform: translateY(-1px);
+}
+
+.skill-sparkle {
+  font-size: 11px;
+  filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.6));
+}
+
+.skill-stat-val {
+  font-size: 11px !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Ingredients layout */
 .ing-cell {
   display: inline-flex;

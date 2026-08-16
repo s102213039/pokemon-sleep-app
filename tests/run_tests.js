@@ -212,7 +212,9 @@ const {
   getItemCarry,
   getItemIngredientRate,
   getItemHelpInterval,
-  DEFAULT_SVG_ICON
+  DEFAULT_SVG_ICON,
+  SKILL_DETAILS,
+  renderSkillWithTooltip
 } = require(appPath);
 
 const dataPath = path.join(WORKSPACE_ROOT, 'data.json');
@@ -536,6 +538,36 @@ test('Tier 2 - Boundary & Corner Cases', 'Final Evolution Filter: onlyFinal excl
     const found = finals.find(p => p.name_cn === name);
     assert(found !== undefined, `Final stage ${name} MUST be in final evolution list`);
   });
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Hover tooltips with comprehensive descriptions for composite and special skills', () => {
+  assert(typeof SKILL_DETAILS === 'object', 'SKILL_DETAILS dictionary is missing');
+  assert(typeof renderSkillWithTooltip === 'function', 'renderSkillWithTooltip function is missing');
+
+  // Test special skills
+  const specialSkills = [
+    '健美（料理輔助S）',
+    '月光（活力填充S）',
+    '樹果汁（活力全體療癒S）',
+    '精神擊破（樹果領域）',
+    '畫皮（樹果遽增）',
+    '新月祈禱（活力全體療癒S）',
+    '正電（食材獲取S）',
+    '負電（料理強化S）'
+  ];
+
+  specialSkills.forEach(skill => {
+    assert(SKILL_DETAILS[skill] !== undefined, `Missing SKILL_DETAILS entry for ${skill}`);
+    const html = renderSkillWithTooltip(skill);
+    assert(html.includes('special-skill'), `Rendered badge for ${skill} should have 'special-skill' class`);
+    assert(html.includes('title='), `Rendered badge for ${skill} should have title attribute for tooltip`);
+    assert(html.includes('✨'), `Rendered badge for ${skill} should include sparkle icon indicator`);
+  });
+
+  // Test standard base skill
+  const baseHtml = renderSkillWithTooltip('食材獲取S');
+  assert(baseHtml.includes('title='), `Base skill badge should include title tooltip`);
+  assert(!baseHtml.includes('special-skill'), `Base skill should not be marked as special-skill`);
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'Fallback icon validation: missing/empty icon property defaults to SVG placeholder', () => {

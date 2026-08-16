@@ -195,6 +195,69 @@ const COMPOSITE_SKILL_MAP = {
   '變身（技能複製）': ['技能複製']
 };
 
+/* ─── 📖 主技能詳細效果字典 (Main Skill Detailed Descriptions) ─ */
+const SKILL_DETAILS = {
+  // 🌟 真正複合主技能 (True Composite Skills)
+  '健美（料理輔助S）': '【複合主技能】發動時隨機獲得多個食材，並提升下次料理大成功機率（食材獲取S + 料理成功S）',
+  '月光（活力填充S）': '【複合主技能】回復自身活力；若發生漂亮大成功時，額外隨機讓隊伍中 1 隻隊友回復活力（活力填充S + 活力療癒S）',
+  '樹果汁（活力全體療癒S）': '【複合主技能】回復隊伍全員活力；有時額外獲得可供單隻回復 20 活力的「樹果汁」道具（活力全體療癒S + 活力療癒S）',
+
+  // 🏷️ 專屬命名與變體主技能 (Named Variant Skills)
+  '正電（食材獲取S）': '【特色技能】隨機獲得指定數量的食材；隊伍中有「負電」隊員時獲得量額外提升',
+  '負電（料理強化S）': '【特色技能】擴大下次料理時鍋子的容量上限；隊伍中有「正電」隊員時擴大量額外提升',
+  '禮物（食材獲取S）': '【專屬技能】隨機獲得指定數量的食材（信使鳥專屬）',
+  '超幸運（食材精選S）': '【專屬技能】隨機獲得該寶可夢自身可產出的食材（烏鴉頭頭專屬）',
+  '怪力钳（食材精選S）': '【專屬技能】隨機獲得該寶可夢自身可產出的食材（大嘴娃專屬）',
+  '新月祈禱（活力全體療癒S）': '【傳說專屬】恢復隊伍全員的活力（克雷色利亞專屬強力群體活力療癒）',
+  '治癒波動（活力療癒S）': '【傳說專屬】隨機恢復隊伍中 1 隻寶可夢的活力（拉帝亞斯專屬）',
+  '蹭蹭臉頰（活力療癒S）': '【專屬技能】隨機恢復隊伍中 1 隻寶可夢的活力（托戈德瑪爾專屬）',
+  '蓄力（能量填充S）': '【專屬技能】增加卡比獸能量；隨蓄力次數提升，發動時可爆發大量能量（飄飄球家族專屬）',
+  '能量填充S（隨機）': '【隨機技能】隨機浮動增加卡比獸能量（數值於一定範圍內隨機變動）',
+  '夢魘（能量填充M）': '【傳說專屬】固定增加大量卡比獸能量（達克萊伊專屬）',
+  '精神擊破（樹果領域）': '【傳說專屬】爆發產出自身大量樹果（超夢專屬）',
+  '流星群（樹果遽增）': '【傳說專屬】爆發產出自身大量樹果（拉帝歐斯專屬）',
+  '畫皮（樹果遽增）': '【專屬技能】爆發產出自身大量樹果（謎擬Q專屬）',
+  '樹果遽增?': '【專屬技能】爆發產出自身大量樹果（巨鍛匠家族專屬）',
+  '波導彈（夢之碎片獲取S）': '【專屬技能】獲得指定數量夢之碎片（路卡利歐專屬）',
+  '夢之碎片獲取S（隨機）': '【隨機技能】隨機浮動獲得夢之碎片（數值於一定範圍內隨機變動）',
+  '幫手加速（電）': '【傳說專屬】立即獲得隊伍中所有電屬性寶可夢數次幫忙產出（雷公專屬）',
+  '幫手加速（火）': '【傳說專屬】立即獲得隊伍中所有火屬性寶可夢數次幫忙產出（炎帝專屬）',
+  '幫手加速（水）': '【傳說專屬】立即獲得隊伍中所有水屬性寶可夢數次幫忙產出（水君專屬）',
+  '十項全能（揮指）[可替換]': '【幻之專屬】隨機發動全遊戲中任一主技能，並具備技能替換機制（夢幻專屬）',
+  '模仿（技能複製）': '【特色技能】複製前一位隊友發動之主技能（魔牆人偶家族專屬）',
+  '變身（技能複製）': '【特色技能】變身為隊友並複製其技能產出（百變怪專屬）',
+
+  // 🎯 基礎主技能 (Base Skills)
+  '食材獲取S': '隨機獲得指定數量的食材',
+  '食材精選S': '隨機獲得該寶可夢自身可產出的食材',
+  '活力全體療癒S': '恢復隊伍全員的活力 (HP)',
+  '活力療癒S': '隨機恢復隊伍中 1 隻寶可夢的活力',
+  '活力填充S': '恢復自身活力',
+  '能量填充M': '固定增加大量卡比獸能量',
+  '能量填充S': '固定增加卡比獸能量',
+  '料理強化S': '擴大下次料理時鍋子的容量上限',
+  '料理成功S': '提升下次料理漂亮成功 (Extra Tasty) 的機率',
+  '幫手支援S': '立即獲得隊友數次幫忙產出（樹果與食材）',
+  '幫手加速': '立即獲得同屬性隊員全體數次幫忙產出',
+  '樹果遽增': '立即獲得大量樹果',
+  '夢之碎片獲取S': '獲得指定數量的夢之碎片',
+  '揮指': '隨機發動全遊戲中任一主技能'
+};
+
+function renderSkillWithTooltip(skillName) {
+  if (!skillName) return '--';
+  const detail = SKILL_DETAILS[skillName];
+  const isSpecial = Boolean(COMPOSITE_SKILL_MAP[skillName]);
+  
+  if (isSpecial) {
+    return `<span class="skill-tooltip-badge special-skill" title="${detail || skillName}"><span class="skill-sparkle">✨</span>${skillName}</span>`;
+  }
+  if (detail) {
+    return `<span class="skill-tooltip-badge" title="${detail}">${skillName}</span>`;
+  }
+  return skillName;
+}
+
 function matchesSkill(pokemonSkill, targetBaseSkill) {
   if (!pokemonSkill) return false;
   if (pokemonSkill === targetBaseSkill) return true;
@@ -887,7 +950,7 @@ if (typeof document !== 'undefined') {
                 </div>
                 <div class="stat-item">
                   <span class="stat-label">主技能</span>
-                  <span class="stat-value" style="font-size:10px;white-space:nowrap;">${p.main_skill || '--'}</span>
+                  <span class="stat-value skill-stat-val">${renderSkillWithTooltip(p.main_skill)}</span>
                 </div>
               </div>
               <div class="ingredient-list">
@@ -944,7 +1007,7 @@ if (typeof document !== 'undefined') {
                   <td class="td-rate">${p.ingredient_rate || '--'}</td>
                   <td class="td-rate">${p.skill_rate || '--'}</td>
                   <td class="td-interval">${p.interval || '--'}</td>
-                  <td class="td-skill">${p.main_skill || '--'}</td>
+                  <td class="td-skill">${renderSkillWithTooltip(p.main_skill)}</td>
                 </tr>
               `}).join('')}
             </tbody>
@@ -970,6 +1033,8 @@ if (typeof module !== 'undefined' && module.exports) {
     PokemonApp,
     BASE_SKILLS,
     COMPOSITE_SKILL_MAP,
-    matchesSkill
+    SKILL_DETAILS,
+    matchesSkill,
+    renderSkillWithTooltip
   };
 }
