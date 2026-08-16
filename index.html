@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260817_07">
+  <link rel="stylesheet" href="styles.css?v=20260817_08">
 </head>
 <body>
 
@@ -80,6 +80,17 @@
         </div>
 
         <div class="sidebar-scrollable-content">
+          <!-- 👑 僅展示最終進化 Switch Button -->
+          <div class="sidebar-section">
+            <label class="sidebar-final-evo-label" for="final-evo-toggle" title="只展示最終進化或無後續進化可能的寶可夢">
+              <span class="sidebar-final-evo-text">👑 僅最終進化</span>
+              <div class="sidebar-switch-wrapper">
+                <input type="checkbox" id="final-evo-toggle" class="switch-checkbox" checked>
+                <span class="switch-slider"></span>
+              </div>
+            </label>
+          </div>
+
           <!-- 1. 得意篩選 (Specialty) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
@@ -108,7 +119,7 @@
               <div id="ingredient-pkm-filter-tags" class="sidebar-icon-grid"></div>
             </div>
 
-            <!-- 4. 主技能細節篩選 (Main Skill Sub-Filter - Name Only) -->
+            <!-- 4. 主技能細節篩選 (Main Skill Sub-Filter - Name Only, 2-Column Grid) -->
             <div id="subfilter-skill-group" class="sidebar-section" style="display:none;">
               <div class="sidebar-section-header">
                 <span class="sidebar-section-title">持有主技能</span>
@@ -122,7 +133,7 @@
 
       <!-- ➡️ 右側主要內容區 (Right Main Content Area) -->
       <div class="pokemon-main-content">
-        <!-- Controls (Search, Final Evo Toggle, View Mode Toggle) -->
+        <!-- Controls (Search, View Mode Toggle) -->
         <section class="controls-container" aria-label="Search and Filter Controls">
           <div class="search-filter-row">
             <div class="search-box">
@@ -132,12 +143,6 @@
                 aria-label="搜尋寶可夢">
               <button type="button" id="pokemon-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
             </div>
-            <!-- 👑 僅展示最終進化 Switch Button -->
-            <label class="final-evo-switch-label" for="final-evo-toggle" title="只展示最終進化或無後續進化可能的寶可夢">
-              <input type="checkbox" id="final-evo-toggle" class="switch-checkbox" checked>
-              <span class="switch-slider"></span>
-              <span class="switch-text">👑 僅最終進化</span>
-            </label>
 
             <!-- 頁面內容裡面的 卡片/表格 切換按鈕 -->
             <div class="view-mode-toggle">
@@ -574,9 +579,9 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260817_07"></script>
-  <script src="recipes.js?v=20260817_07"></script>
-  <script src="box.js?v=20260817_07"></script>
-  <script src="news.js?v=20260817_07"></script>
+  <script src="app.js?v=20260817_08"></script>
+  <script src="recipes.js?v=20260817_08"></script>
+  <script src="box.js?v=20260817_08"></script>
+  <script src="news.js?v=20260817_08"></script>
 </body>
 </html>
