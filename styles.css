@@ -361,7 +361,7 @@ header {
 }
 
 .sort-select {
-  display: none;
+  width: 100%;
 }
 
 /* Filter Sections */
@@ -1153,7 +1153,7 @@ footer {
 }
 
 .custom-select-sort .custom-select-trigger {
-  padding: 10px 36px 10px 14px;
+  padding: 9px 42px 9px 14px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -1163,7 +1163,7 @@ footer {
 }
 
 .custom-select-rf .custom-select-trigger {
-  padding: 6px 36px 6px 12px;
+  padding: 6px 40px 6px 12px;
   background: rgba(30, 41, 59, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
@@ -1189,7 +1189,7 @@ footer {
 
 .custom-select-arrow {
   position: absolute;
-  right: 14px;
+  right: 18px; /* 向左內縮 18px，箭頭與右邊框保留充足視覺間距 */
   top: 50%;
   transform: translateY(-50%);
   color: #94a3b8;
@@ -2810,8 +2810,7 @@ input[type=range].rf-slider.event-slider {
   color: var(--text-secondary);
 }
 
-.box-form-input,
-.box-form-select {
+.box-form-input {
   background: rgba(15, 23, 42, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
@@ -2824,10 +2823,58 @@ input[type=range].rf-slider.event-slider {
   box-sizing: border-box;
 }
 
-.box-form-input:focus,
-.box-form-select:focus {
+.box-form-input:focus {
   border-color: #38bdf8;
   box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+select,
+.box-form-select,
+.sort-select,
+.rf-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: rgba(15, 23, 42, 0.85);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 12px 8px;
+  padding: 8px 42px 8px 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+select:hover,
+.box-form-select:hover,
+.sort-select:hover {
+  border-color: rgba(99, 102, 241, 0.6);
+  background-color: rgba(30, 41, 59, 0.95);
+}
+
+select:focus,
+.box-form-select:focus,
+.sort-select:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+select option,
+select optgroup,
+.box-form-select option,
+.sort-select option {
+  background-color: #1e293b;
+  color: #ffffff;
+  padding: 10px 14px;
+  font-size: 13px;
 }
 
 .box-ing-form-row {

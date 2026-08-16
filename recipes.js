@@ -289,6 +289,8 @@ document.addEventListener('DOMContentLoaded', () => {
     selectElement.parentNode.insertBefore(container, selectElement.nextSibling);
   }
 
+  window.setupCustomSelect = setupCustomSelect;
+
   // 全域點擊外部關閉所有下拉選單
   document.addEventListener('click', () => {
     document.querySelectorAll('.custom-select-container.open').forEach(c => {

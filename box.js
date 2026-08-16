@@ -1045,6 +1045,9 @@
 
     const sortSelect = document.getElementById('box-sort-select');
     if (sortSelect) {
+      if (typeof window.setupCustomSelect === 'function') {
+        window.setupCustomSelect(sortSelect);
+      }
       sortSelect.addEventListener('change', (e) => {
         sortBy = e.target.value;
         renderBox();
