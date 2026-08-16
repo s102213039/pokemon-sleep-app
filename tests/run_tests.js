@@ -473,7 +473,7 @@ test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient
   const heracross = tastyFiltered.find(p => p.name_cn === '赫拉克羅斯');
   assert(heracross !== undefined, '赫拉克羅斯 (健美) should match 料理成功S');
 
-  // Heracross should also match 食材獲取S
+  // Heracross should also match 食材獲取S, but NOT 料理強化S
   PokemonApp.selectedSkills = new Set(['食材獲取S']);
   const ingSkillFiltered = PokemonApp.filterData();
   const heracrossIng = ingSkillFiltered.find(p => p.name_cn === '赫拉克羅斯');
@@ -481,11 +481,26 @@ test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient
   const delibird = ingSkillFiltered.find(p => p.name_cn === '信使鳥');
   assert(delibird !== undefined, '信使鳥 (禮物) should match 食材獲取S');
 
-  // Mimikyu (畫皮) should match 樹果遽增
+  PokemonApp.selectedSkills = new Set(['料理強化S']);
+  const potSkillFiltered = PokemonApp.filterData();
+  const heracrossPot = potSkillFiltered.find(p => p.name_cn === '赫拉克羅斯');
+  assert(heracrossPot === undefined, '赫拉克羅斯 (健美) should NOT match 料理強化S');
+
+  // Umbreon (月光) should match 活力填充S and 活力療癒S
+  PokemonApp.selectedSkills = new Set(['活力療癒S']);
+  const healSkillFiltered = PokemonApp.filterData();
+  const umbreon = healSkillFiltered.find(p => p.name_cn === '月亮伊布');
+  assert(umbreon !== undefined, '月亮伊布 (月光) should match 活力療癒S');
+  const shuckle = healSkillFiltered.find(p => p.name_cn === '壺壺');
+  assert(shuckle !== undefined, '壺壺 (樹果汁) should match 活力療癒S');
+
+  // Mimikyu (畫皮) & Mewtwo (精神擊破) should match 樹果遽增
   PokemonApp.selectedSkills = new Set(['樹果遽增']);
   const berrySkillFiltered = PokemonApp.filterData();
   const mimikyu = berrySkillFiltered.find(p => p.name_cn === '謎擬Q');
   assert(mimikyu !== undefined, '謎擬Q (畫皮) should match 樹果遽增');
+  const mewtwo = berrySkillFiltered.find(p => p.name_cn === '超夢');
+  assert(mewtwo !== undefined, '超夢 (精神擊破) should match 樹果遽增');
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'Fallback icon validation: missing/empty icon property defaults to SVG placeholder', () => {
