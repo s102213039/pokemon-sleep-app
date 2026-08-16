@@ -525,27 +525,28 @@ header {
   width: 100%;
 }
 
+/* ⬅️ 精緻緊湊型左側懸浮固定篩選面板 */
 .pokemon-filter-sidebar {
   position: fixed;
-  top: 80px;
-  left: 20px;
-  bottom: 20px;
-  width: 275px;
-  background: rgba(15, 23, 42, 0.92);
+  top: 85px;
+  left: max(12px, calc((100vw - 1240px) / 2 - 218px));
+  width: 205px;
+  max-height: calc(100vh - 105px);
+  background: rgba(15, 23, 42, 0.88);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.7), 0 0 20px rgba(56, 189, 248, 0.12);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 189, 248, 0.1);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   display: flex;
   flex-direction: column;
   z-index: 90;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-header {
-  padding: 12px 14px;
+  padding: 8px 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -557,19 +558,23 @@ header {
 .sidebar-title-group {
   display: flex;
   align-items: center;
-  gap: 7px;
-  font-size: 13.5px;
+  gap: 5px;
+  font-size: 12px;
   font-weight: 700;
   color: #ffffff;
+}
+
+.sidebar-icon {
+  font-size: 12px;
 }
 
 .sidebar-reset-btn {
   background: rgba(239, 68, 68, 0.12);
   color: #fca5a5;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 6px;
-  padding: 3px 8px;
-  font-size: 11px;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 10.5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -584,15 +589,15 @@ header {
 .sidebar-scrollable-content {
   flex: 1;
   overflow-y: auto;
-  padding: 12px 14px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 }
 
 /* 輕量美觀自訂滾動條 */
 .sidebar-scrollable-content::-webkit-scrollbar {
-  width: 4px;
+  width: 3px;
 }
 .sidebar-scrollable-content::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
@@ -605,7 +610,7 @@ header {
 .sidebar-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 5px;
 }
 
 .sidebar-section-header {
@@ -615,7 +620,7 @@ header {
 }
 
 .sidebar-section-title {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--accent-blue);
   letter-spacing: 0.3px;
@@ -625,9 +630,9 @@ header {
   background: transparent;
   color: #94a3b8;
   border: none;
-  font-size: 11px;
+  font-size: 10.5px;
   cursor: pointer;
-  padding: 0 4px;
+  padding: 0 2px;
   transition: color 0.2s ease;
 }
 
@@ -639,20 +644,20 @@ header {
 .sidebar-specialty-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 4px;
 }
 
 .sidebar-specialty-tags .tag-btn {
-  padding: 4px 10px;
-  font-size: 12px;
-  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  border-radius: 5px;
 }
 
 /* 純圖示極簡網格（樹果與食材） */
 .sidebar-icon-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 5px;
+  gap: 4px;
 }
 
 .subfilter-icon-btn {
@@ -663,58 +668,58 @@ header {
   aspect-ratio: 1 / 1;
   background: rgba(30, 41, 59, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  padding: 3px;
-  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 2px;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
 
 .subfilter-icon-btn:hover {
   background: rgba(56, 189, 248, 0.2);
   border-color: rgba(56, 189, 248, 0.5);
-  transform: scale(1.1);
+  transform: scale(1.12);
   z-index: 2;
 }
 
 .subfilter-icon-btn.active {
   background: rgba(2, 132, 199, 0.4);
   border: 1.5px solid #38bdf8;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.45);
   transform: scale(1.06);
   z-index: 1;
 }
 
 .subfilter-icon-img {
-  width: 26px;
-  height: 26px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
   pointer-events: none;
-  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
 }
 
 /* 主技能清單（純名稱平鋪） */
 .sidebar-skills-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 4px;
 }
 
 .subfilter-skill-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 8px;
+  padding: 3px 6px;
   background: rgba(30, 41, 59, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
+  border-radius: 5px;
   color: var(--text-secondary);
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: all 0.15s ease;
   user-select: none;
-  line-height: 1.3;
+  line-height: 1.2;
 }
 
 .subfilter-skill-btn:hover {
@@ -728,17 +733,17 @@ header {
   border-color: #38bdf8;
   color: #ffffff;
   font-weight: 700;
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.35);
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.35);
 }
 
 .subfilter-skill-name {
   white-space: nowrap;
 }
 
-/* ➡️ 右側主要內容區 (Right Main Content Area) */
+/* ➡️ 主要內容區：維持原本居中對齊與標準邊距 (Maintain Original Centered Margins) */
 .pokemon-main-content {
-  margin-left: 310px;
-  padding-right: 20px;
+  width: 100%;
+  margin: 0 auto;
   min-height: calc(100vh - 120px);
 }
 
@@ -747,37 +752,21 @@ header {
 .pokemon-main-content .table-container,
 .pokemon-main-content .pokemon-table-container,
 .pokemon-main-content .pokemon-grid {
-  max-width: 100%;
-  width: 100%;
-  margin-left: 0;
-  margin-right: 0;
-  padding-left: 0;
-  padding-right: 0;
+  max-width: 1240px;
+  width: 92%;
+  margin: 0 auto 16px;
+  padding: 0 16px;
 }
 
-/* 響應式佈局 (Mobile & Tablet) */
-@media (max-width: 960px) {
+/* 響應式佈局 (Mobile & Smaller Displays) */
+@media (max-width: 1200px) {
   .pokemon-filter-sidebar {
     position: static;
     width: 92%;
+    max-width: 1240px;
     margin: 12px auto 16px;
     max-height: none;
     height: auto;
-  }
-  .pokemon-main-content {
-    margin-left: 0;
-    padding-right: 0;
-  }
-  .pokemon-main-content .controls-container,
-  .pokemon-main-content .stats-bar,
-  .pokemon-main-content .table-container,
-  .pokemon-main-content .pokemon-table-container,
-  .pokemon-main-content .pokemon-grid {
-    width: 92%;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 16px;
-    padding-right: 16px;
   }
 }
 
