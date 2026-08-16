@@ -1016,13 +1016,31 @@
       });
     }
 
-    // 3. 倉庫搜尋與篩選
+    // 3. 倉庫搜尋與一鍵清空
     const searchInput = document.getElementById('box-search-input');
+    const boxSearchClear = document.getElementById('box-search-clear');
+
+    function updateBoxClearBtn() {
+      if (!boxSearchClear || !searchInput) return;
+      boxSearchClear.style.display = searchInput.value.trim() ? 'flex' : 'none';
+    }
+
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         currentSearch = e.target.value;
+        updateBoxClearBtn();
         renderBox();
       });
+
+      if (boxSearchClear) {
+        boxSearchClear.addEventListener('click', () => {
+          searchInput.value = '';
+          currentSearch = '';
+          updateBoxClearBtn();
+          searchInput.focus();
+          renderBox();
+        });
+      }
     }
 
     const sortSelect = document.getElementById('box-sort-select');

@@ -395,11 +395,29 @@ if (typeof document !== 'undefined') {
         renderUI();
       });
 
+      const pokemonSearchClear = document.getElementById('pokemon-search-clear');
       if (searchInput) {
+        const updatePkmClear = () => {
+          if (pokemonSearchClear) {
+            pokemonSearchClear.style.display = searchInput.value.trim() ? 'flex' : 'none';
+          }
+        };
+
         searchInput.addEventListener('input', (e) => {
           currentSearch = e.target.value.trim().toLowerCase();
+          updatePkmClear();
           renderUI();
         });
+
+        if (pokemonSearchClear) {
+          pokemonSearchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            currentSearch = '';
+            updatePkmClear();
+            searchInput.focus();
+            renderUI();
+          });
+        }
       }
 
       if (toggleGridBtn) {

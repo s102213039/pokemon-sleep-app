@@ -302,7 +302,7 @@ header {
 
 .search-input {
   width: 100%;
-  padding: 10px 16px 10px 38px;
+  padding: 10px 36px 10px 38px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -310,6 +310,7 @@ header {
   font-size: 14px;
   outline: none;
   transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .search-input:focus {
@@ -324,6 +325,35 @@ header {
   transform: translateY(-50%);
   color: var(--text-muted);
   font-size: 15px;
+  pointer-events: none;
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.15);
+  color: #94a3b8;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 5;
+  padding: 0;
+  line-height: 1;
+}
+
+.search-clear-btn:hover {
+  background: rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  transform: translateY(-50%) scale(1.1);
 }
 
 .sort-box {
@@ -1725,7 +1755,7 @@ input[type=range].rf-slider.event-slider {
 
 .news-search-input {
   width: 100%;
-  padding: 8px 14px 8px 36px;
+  padding: 8px 36px 8px 36px;
   background: rgba(15, 23, 42, 0.6);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);

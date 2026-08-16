@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260816_02">
+  <link rel="stylesheet" href="styles.css?v=20260816_03">
 </head>
 <body>
 
@@ -76,6 +76,7 @@
             <input type="text" id="search-input" class="search-input"
               placeholder="搜尋寶可夢名稱 (中/英/日) 或 No. 編號..."
               aria-label="搜尋寶可夢">
+            <button type="button" id="pokemon-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
           </div>
           <!-- 頁面內容裡面的 卡片/表格 切換按鈕 -->
           <div class="view-mode-toggle">
@@ -124,6 +125,7 @@
             <input type="text" id="recipe-search-input" class="search-input"
               placeholder="搜尋食譜名稱 (中/英) 或食材關鍵字..."
               aria-label="搜尋食譜">
+            <button type="button" id="recipe-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
           </div>
           <!-- 頁面內容裡面的 卡片/表格 切換按鈕 -->
           <div class="view-mode-toggle">
@@ -338,6 +340,7 @@
           <div class="search-box">
             <span class="search-icon">🔍</span>
             <input type="text" id="box-search-input" class="search-input" placeholder="搜尋倉庫寶可夢名稱、暱稱、性格、副技能..." aria-label="搜尋個人倉庫">
+            <button type="button" id="box-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
           </div>
           <div class="sort-box">
             <select id="box-sort-select" class="sort-select" style="display:inline-block;background:var(--bg-card);border:1px solid var(--border-color);color:#fff;padding:8px 14px;border-radius:10px;font-size:13px;outline:none;">
@@ -383,6 +386,7 @@
             <div class="news-search-box">
               <span class="search-icon">🔍</span>
               <input type="text" id="news-search-input" class="news-search-input" placeholder="搜尋公告標題、關鍵字、寶可夢..." aria-label="搜尋新聞公告">
+              <button type="button" id="news-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
             </div>
           </div>
 
@@ -516,9 +520,9 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260816_02"></script>
-  <script src="recipes.js?v=20260816_02"></script>
-  <script src="box.js?v=20260816_02"></script>
-  <script src="news.js?v=20260816_02"></script>
+  <script src="app.js?v=20260816_03"></script>
+  <script src="recipes.js?v=20260816_03"></script>
+  <script src="box.js?v=20260816_03"></script>
+  <script src="news.js?v=20260816_03"></script>
 </body>
 </html>

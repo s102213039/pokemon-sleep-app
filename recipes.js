@@ -519,13 +519,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ─── 搜尋 ──────────────────────────────────────────── */
+  /* ─── 搜尋與一鍵清空 ─────────────────────────────────── */
+  const recipeSearchClear = document.getElementById('recipe-search-clear');
+
+  function updateRecipeClearBtn() {
+    if (!recipeSearchClear || !searchInput) return;
+    recipeSearchClear.style.display = searchInput.value.trim() ? 'flex' : 'none';
+  }
+
   function initSearch() {
     if (!searchInput) return;
     searchInput.addEventListener('input', e => {
       currentSearch = e.target.value.trim().toLowerCase();
+      updateRecipeClearBtn();
       render();
     });
+
+    if (recipeSearchClear) {
+      recipeSearchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        currentSearch = '';
+        updateRecipeClearBtn();
+        searchInput.focus();
+        render();
+      });
+    }
   }
 
   /* ─── 能量計算 ──────────────────────────────────────── */

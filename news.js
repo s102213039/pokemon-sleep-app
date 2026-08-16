@@ -14,6 +14,7 @@
   // DOM 元素
   const newsCategoryContainer = typeof document !== 'undefined' ? document.getElementById('news-category-tags') : null;
   const newsSearchInput       = typeof document !== 'undefined' ? document.getElementById('news-search-input') : null;
+  const newsSearchClear       = typeof document !== 'undefined' ? document.getElementById('news-search-clear') : null;
   const newsCountBadge        = typeof document !== 'undefined' ? document.getElementById('news-count-badge') : null;
   const newsListContainer     = typeof document !== 'undefined' ? document.getElementById('news-list-container') : null;
   const newsTimelineContainer = typeof document !== 'undefined' ? document.getElementById('news-event-timeline') : null;
@@ -249,7 +250,10 @@
         const evId = bar.getAttribute('data-event-id');
         const targetItem = allNews.find(n => n.id === evId);
         if (targetItem) {
-          if (newsSearchInput) newsSearchInput.value = targetItem.title;
+          if (newsSearchInput) {
+            newsSearchInput.value = targetItem.title;
+            if (newsSearchClear) newsSearchClear.style.display = 'flex';
+          }
           searchQuery = targetItem.title.toLowerCase();
           currentCategory = 'ALL';
           if (newsCategoryContainer) {
@@ -297,13 +301,30 @@
     });
   }
 
-  /* ─── 初始化搜尋功能 ─────────────────────────────────── */
+  /* ─── 初始化搜尋功能與一鍵清空 ─────────────────────────── */
+  function updateClearBtn() {
+    if (!newsSearchClear || !newsSearchInput) return;
+    newsSearchClear.style.display = newsSearchInput.value.trim() ? 'flex' : 'none';
+  }
+
   function initSearch() {
     if (!newsSearchInput) return;
+
     newsSearchInput.addEventListener('input', e => {
       searchQuery = e.target.value.trim().toLowerCase();
+      updateClearBtn();
       renderNews();
     });
+
+    if (newsSearchClear) {
+      newsSearchClear.addEventListener('click', () => {
+        newsSearchInput.value = '';
+        searchQuery = '';
+        updateClearBtn();
+        newsSearchInput.focus();
+        renderNews();
+      });
+    }
   }
 
   /* ─── 篩選新聞清單 ───────────────────────────────────── */
