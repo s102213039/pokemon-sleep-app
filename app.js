@@ -95,11 +95,41 @@ function ingQtyBadges(ing, idx) {
   return `<span class="ing-qty-group" title="${ing.name || ''}">${qtys.map(q => `<span class="ing-qty">${q}</span>`).join('<span class="ing-arrow">→</span>')}</span>`;
 }
 
+/* ─── 🫐 樹果與屬性對應字典 (Berry & Type Mapping) ───────── */
+const BERRY_DATA = [
+  { name: '柿仔果', type: '一般', icon: 'https://www.serebii.net/pokemonsleep/berries/persimberry.png' },
+  { name: '蘋野果', type: '火',   icon: 'https://www.serebii.net/pokemonsleep/berries/leppaberry.png' },
+  { name: '橙橙果', type: '水',   icon: 'https://www.serebii.net/pokemonsleep/berries/oranberry.png' },
+  { name: '異奇果', type: '電',   icon: 'https://www.serebii.net/pokemonsleep/berries/grepaberry.png' },
+  { name: '墨莓果', type: '草',   icon: 'https://www.serebii.net/pokemonsleep/berries/durinberry.png' },
+  { name: '生薑果', type: '冰',   icon: 'https://www.serebii.net/pokemonsleep/berries/rawstberry.png' },
+  { name: '櫻子果', type: '格鬥', icon: 'https://www.serebii.net/pokemonsleep/berries/cheriberry.png' },
+  { name: '桃桃果', type: '毒',   icon: 'https://www.serebii.net/pokemonsleep/berries/pechaberry.png' },
+  { name: '零餘果', type: '地面', icon: 'https://www.serebii.net/pokemonsleep/berries/figyberry.png' },
+  { name: '椰木果', type: '飛行', icon: 'https://www.serebii.net/pokemonsleep/berries/pamtreberry.png' },
+  { name: '芒念果', type: '超能力', icon: 'https://www.serebii.net/pokemonsleep/berries/magoberry.png' },
+  { name: '芭亞果', type: '蟲',   icon: 'https://www.serebii.net/pokemonsleep/berries/lumberry.png' },
+  { name: '萄葡果', type: '岩石', icon: 'https://www.serebii.net/pokemonsleep/berries/sitrusberry.png' },
+  { name: '檬果',   type: '幽靈', icon: 'https://www.serebii.net/pokemonsleep/berries/blukberry.png' },
+  { name: '巧可果', type: '龍',   icon: 'https://www.serebii.net/pokemonsleep/berries/yacheberry.png' },
+  { name: '芭拉果', type: '惡',   icon: 'https://www.serebii.net/pokemonsleep/berries/wikiberry.png' },
+  { name: '霹靂果', type: '鋼',   icon: 'https://www.serebii.net/pokemonsleep/berries/belueberry.png' },
+  { name: '佩卡果', type: '妖精', icon: 'https://www.serebii.net/pokemonsleep/berries/magostberry.png' }
+];
+
+const TYPE_TO_BERRY = {};
+BERRY_DATA.forEach(b => {
+  TYPE_TO_BERRY[b.type] = b.name;
+});
+
 const PokemonApp = {
   allPokemons: [],
   currentSearch: '',
   selectedTypes: new Set(),
   selectedSpecialties: new Set(),
+  selectedBerries: new Set(),
+  selectedIngredients: new Set(),
+  selectedSkills: new Set(),
   currentSort: 'no-asc',
   viewMode: 'table',
 
@@ -108,6 +138,9 @@ const PokemonApp = {
     this.currentSearch = '';
     this.selectedTypes = new Set();
     this.selectedSpecialties = new Set();
+    this.selectedBerries = new Set();
+    this.selectedIngredients = new Set();
+    this.selectedSkills = new Set();
     this.currentSort = 'no-asc';
     this.viewMode = 'table';
   },
@@ -118,6 +151,24 @@ const PokemonApp = {
       const pSpec = p.specialty || '';
       if (this.selectedTypes.size > 0 && !this.selectedTypes.has('ALL') && !this.selectedTypes.has(pType)) return false;
       if (this.selectedSpecialties.size > 0 && !this.selectedSpecialties.has('ALL') && !this.selectedSpecialties.has(pSpec)) return false;
+
+      // 樹果細節篩選
+      if (this.selectedBerries && this.selectedBerries.size > 0) {
+        const berryName = TYPE_TO_BERRY[pType];
+        if (!berryName || !this.selectedBerries.has(berryName)) return false;
+      }
+
+      // 食材細節篩選
+      if (this.selectedIngredients && this.selectedIngredients.size > 0) {
+        const hasIng = p.ingredients && p.ingredients.some(ing => ing.name && this.selectedIngredients.has(ing.name));
+        if (!hasIng) return false;
+      }
+
+      // 技能細節篩選
+      if (this.selectedSkills && this.selectedSkills.size > 0) {
+        if (!p.main_skill || !this.selectedSkills.has(p.main_skill)) return false;
+      }
+
       if (this.currentSearch) {
         const q = this.currentSearch.toLowerCase().trim();
         const idStr = String(p.id || p.formatted_no || '');
@@ -155,11 +206,27 @@ if (typeof document !== 'undefined') {
     let currentSearch = '';
     const selectedTypes = new Set();
     const selectedSpecialties = new Set();
+    const selectedBerries = new Set();
+    const selectedIngredients = new Set();
+    const selectedSkills = new Set();
     let viewMode = 'table';
 
     const searchInput = document.getElementById('search-input');
     const typeFilterContainer = document.getElementById('type-filter-tags');
     const specialtyFilterContainer = document.getElementById('specialty-filter-tags');
+
+    const subfilterBerryGroup = document.getElementById('subfilter-berry-group');
+    const subfilterIngredientGroup = document.getElementById('subfilter-ingredient-group');
+    const subfilterSkillGroup = document.getElementById('subfilter-skill-group');
+
+    const berryFilterContainer = document.getElementById('berry-filter-tags');
+    const ingredientFilterContainer = document.getElementById('ingredient-pkm-filter-tags');
+    const skillFilterContainer = document.getElementById('skill-filter-tags');
+
+    const clearBerriesBtn = document.getElementById('clear-berries-btn');
+    const clearIngredientsBtn = document.getElementById('clear-ingredients-pkm-btn');
+    const clearSkillsBtn = document.getElementById('clear-skills-btn');
+
     const countBadge = document.getElementById('count-badge');
     const contentArea = document.getElementById('content-area');
     const toggleGridBtn = document.getElementById('toggle-grid');
@@ -344,6 +411,28 @@ if (typeof document !== 'undefined') {
       const types = ['ALL', ...new Set(allPokemons.map(p => p.type).filter(Boolean))];
       const specialties = ['ALL', ...new Set(allPokemons.map(p => p.specialty).filter(Boolean))];
 
+      // 從資料庫動態收集所有食材與其圖示
+      const uniqueIngredientsMap = new Map();
+      allPokemons.forEach(p => {
+        if (p.ingredients) {
+          p.ingredients.forEach(ing => {
+            if (ing.name && !uniqueIngredientsMap.has(ing.name)) {
+              uniqueIngredientsMap.set(ing.name, ing.icon || '');
+            }
+          });
+        }
+      });
+      const uniqueIngredients = Array.from(uniqueIngredientsMap.entries()).map(([name, icon]) => ({ name, icon }));
+
+      // 從資料庫動態收集所有主技能（依出現頻率排序）
+      const skillFreq = {};
+      allPokemons.forEach(p => {
+        if (p.main_skill) {
+          skillFreq[p.main_skill] = (skillFreq[p.main_skill] || 0) + 1;
+        }
+      });
+      const uniqueSkills = Object.keys(skillFreq).sort((a, b) => skillFreq[b] - skillFreq[a]);
+
       function renderTypeButtons() {
         typeFilterContainer.innerHTML = types.map(t => {
           const isActive = t === 'ALL' ? selectedTypes.size === 0 : selectedTypes.has(t);
@@ -358,8 +447,79 @@ if (typeof document !== 'undefined') {
         }).join('');
       }
 
+      function renderBerryButtons() {
+        if (!berryFilterContainer) return;
+        berryFilterContainer.innerHTML = BERRY_DATA.map(b => {
+          const isActive = selectedBerries.has(b.name);
+          return `
+            <button type="button" class="subfilter-tag-btn ${isActive ? 'active' : ''}" data-berry="${b.name}" title="${b.name} (${b.type}屬性)">
+              ${b.icon ? `<img src="${b.icon}" class="subfilter-btn-icon" alt="${b.name}" loading="lazy" onerror="this.style.display='none';">` : '🫐'}
+              <span class="subfilter-btn-text">${b.name} <small style="opacity:0.75;">(${b.type})</small></span>
+            </button>
+          `;
+        }).join('');
+
+        if (clearBerriesBtn) {
+          clearBerriesBtn.style.display = selectedBerries.size > 0 ? 'inline-block' : 'none';
+        }
+      }
+
+      function renderIngredientButtons() {
+        if (!ingredientFilterContainer) return;
+        ingredientFilterContainer.innerHTML = uniqueIngredients.map(ing => {
+          const isActive = selectedIngredients.has(ing.name);
+          return `
+            <button type="button" class="subfilter-tag-btn ${isActive ? 'active' : ''}" data-ing="${ing.name}" title="包含 ${ing.name}">
+              ${ing.icon ? `<img src="${ing.icon}" class="subfilter-btn-icon" alt="${ing.name}" loading="lazy" onerror="this.style.display='none';">` : '🥗'}
+              <span class="subfilter-btn-text">${ing.name}</span>
+            </button>
+          `;
+        }).join('');
+
+        if (clearIngredientsBtn) {
+          clearIngredientsBtn.style.display = selectedIngredients.size > 0 ? 'inline-block' : 'none';
+        }
+      }
+
+      function renderSkillButtons() {
+        if (!skillFilterContainer) return;
+        skillFilterContainer.innerHTML = uniqueSkills.map(skill => {
+          const isActive = selectedSkills.has(skill);
+          const count = skillFreq[skill] || 0;
+          return `
+            <button type="button" class="subfilter-tag-btn subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skill}" title="${skill} (${count}隻)">
+              <span class="subfilter-skill-dot">⚡</span>
+              <span class="subfilter-btn-text">${skill}</span>
+              <span class="subfilter-skill-count">${count}</span>
+            </button>
+          `;
+        }).join('');
+
+        if (clearSkillsBtn) {
+          clearSkillsBtn.style.display = selectedSkills.size > 0 ? 'inline-block' : 'none';
+        }
+      }
+
+      function updateSubfilterVisibility() {
+        // 若未選取特定得意（即全部得意），則全部展示以便直接檢索細節
+        // 若選取特定得意，則僅展示與該得意相關之細節篩選器（若有細節被選取則持續展示）
+        const showAll = selectedSpecialties.size === 0;
+
+        const showBerry = showAll || selectedSpecialties.has('樹果') || selectedBerries.size > 0;
+        const showIngredient = showAll || selectedSpecialties.has('食材') || selectedIngredients.size > 0;
+        const showSkill = showAll || selectedSpecialties.has('技能') || selectedSkills.size > 0;
+
+        if (subfilterBerryGroup) subfilterBerryGroup.style.display = showBerry ? 'block' : 'none';
+        if (subfilterIngredientGroup) subfilterIngredientGroup.style.display = showIngredient ? 'block' : 'none';
+        if (subfilterSkillGroup) subfilterSkillGroup.style.display = showSkill ? 'block' : 'none';
+      }
+
       renderTypeButtons();
       renderSpecialtyButtons();
+      renderBerryButtons();
+      renderIngredientButtons();
+      renderSkillButtons();
+      updateSubfilterVisibility();
 
       typeFilterContainer.addEventListener('click', (e) => {
         const btn = e.target.closest('.tag-btn');
@@ -392,8 +552,88 @@ if (typeof document !== 'undefined') {
           }
         }
         renderSpecialtyButtons();
+        updateSubfilterVisibility();
         renderUI();
       });
+
+      // 樹果細節點擊
+      if (berryFilterContainer) {
+        berryFilterContainer.addEventListener('click', (e) => {
+          const btn = e.target.closest('.subfilter-tag-btn');
+          if (!btn) return;
+          const berry = btn.getAttribute('data-berry');
+          if (!berry) return;
+          if (selectedBerries.has(berry)) {
+            selectedBerries.delete(berry);
+          } else {
+            selectedBerries.add(berry);
+          }
+          renderBerryButtons();
+          renderUI();
+        });
+      }
+
+      // 食材細節點擊
+      if (ingredientFilterContainer) {
+        ingredientFilterContainer.addEventListener('click', (e) => {
+          const btn = e.target.closest('.subfilter-tag-btn');
+          if (!btn) return;
+          const ing = btn.getAttribute('data-ing');
+          if (!ing) return;
+          if (selectedIngredients.has(ing)) {
+            selectedIngredients.delete(ing);
+          } else {
+            selectedIngredients.add(ing);
+          }
+          renderIngredientButtons();
+          renderUI();
+        });
+      }
+
+      // 技能細節點擊
+      if (skillFilterContainer) {
+        skillFilterContainer.addEventListener('click', (e) => {
+          const btn = e.target.closest('.subfilter-tag-btn');
+          if (!btn) return;
+          const skill = btn.getAttribute('data-skill');
+          if (!skill) return;
+          if (selectedSkills.has(skill)) {
+            selectedSkills.delete(skill);
+          } else {
+            selectedSkills.add(skill);
+          }
+          renderSkillButtons();
+          renderUI();
+        });
+      }
+
+      // 清空按鈕
+      if (clearBerriesBtn) {
+        clearBerriesBtn.addEventListener('click', () => {
+          selectedBerries.clear();
+          renderBerryButtons();
+          updateSubfilterVisibility();
+          renderUI();
+        });
+      }
+
+      if (clearIngredientsBtn) {
+        clearIngredientsBtn.addEventListener('click', () => {
+          selectedIngredients.clear();
+          renderIngredientButtons();
+          updateSubfilterVisibility();
+          renderUI();
+        });
+      }
+
+      if (clearSkillsBtn) {
+        clearSkillsBtn.addEventListener('click', () => {
+          selectedSkills.clear();
+          renderSkillButtons();
+          updateSubfilterVisibility();
+          renderUI();
+        });
+      }
 
       const pokemonSearchClear = document.getElementById('pokemon-search-clear');
       if (searchInput) {
@@ -443,6 +683,24 @@ if (typeof document !== 'undefined') {
       return allPokemons.filter(p => {
         if (selectedTypes.size > 0 && !selectedTypes.has(p.type)) return false;
         if (selectedSpecialties.size > 0 && !selectedSpecialties.has(p.specialty)) return false;
+
+        // 樹果細節篩選 (多選)
+        if (selectedBerries.size > 0) {
+          const berryName = TYPE_TO_BERRY[p.type];
+          if (!berryName || !selectedBerries.has(berryName)) return false;
+        }
+
+        // 食材細節篩選 (多選)
+        if (selectedIngredients.size > 0) {
+          const hasIng = p.ingredients && p.ingredients.some(ing => ing.name && selectedIngredients.has(ing.name));
+          if (!hasIng) return false;
+        }
+
+        // 技能細節篩選 (多選)
+        if (selectedSkills.size > 0) {
+          if (!p.main_skill || !selectedSkills.has(p.main_skill)) return false;
+        }
+
         if (currentSearch) {
           const q = currentSearch;
           return (

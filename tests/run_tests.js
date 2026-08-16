@@ -440,6 +440,40 @@ test('Tier 2 - Boundary & Corner Cases', 'Multi-select specialty combinations (e
   });
 });
 
+test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient, and Skill multi-select filtering', () => {
+  PokemonApp.init([...dataset]);
+  PokemonApp.currentSearch = '';
+  PokemonApp.selectedTypes.clear();
+  PokemonApp.selectedSpecialties.clear();
+
+  // 1. Berry multi-select filter (墨莓果 -> 草屬性, 蘋野果 -> 火屬性)
+  PokemonApp.selectedBerries = new Set(['墨莓果', '蘋野果']);
+  const berryFiltered = PokemonApp.filterData();
+  assert(berryFiltered.length > 0, 'Berry filter should return results');
+  berryFiltered.forEach(p => {
+    assert(p.type === '草' || p.type === '火', `Item ${p.id} type '${p.type}' should match 墨莓果/蘋野果`);
+  });
+
+  // 2. Ingredient multi-select filter (甜甜蜜)
+  PokemonApp.selectedBerries.clear();
+  PokemonApp.selectedIngredients = new Set(['甜甜蜜']);
+  const ingFiltered = PokemonApp.filterData();
+  assert(ingFiltered.length > 0, 'Ingredient filter should return results');
+  ingFiltered.forEach(p => {
+    const hasHoney = p.ingredients && p.ingredients.some(ing => ing.name === '甜甜蜜');
+    assert(hasHoney, `Item ${p.name_cn} should have 甜甜蜜 in its ingredients`);
+  });
+
+  // 3. Main Skill multi-select filter (食材獲取S, 活力全體療癒S)
+  PokemonApp.selectedIngredients.clear();
+  PokemonApp.selectedSkills = new Set(['食材獲取S', '活力全體療癒S']);
+  const skillFiltered = PokemonApp.filterData();
+  assert(skillFiltered.length > 0, 'Skill filter should return results');
+  skillFiltered.forEach(p => {
+    assert(p.main_skill === '食材獲取S' || p.main_skill === '活力全體療癒S', `Item ${p.name_cn} skill '${p.main_skill}' should match selected skills`);
+  });
+});
+
 test('Tier 2 - Boundary & Corner Cases', 'Fallback icon validation: missing/empty icon property defaults to SVG placeholder', () => {
   const itemNoIcon = { id: 9999, name: { cn: 'Test' }, type: '草', specialty: '樹果', icon: '' };
   const icon = getItemIcon(itemNoIcon);

@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260816_04">
+  <link rel="stylesheet" href="styles.css?v=20260816_05">
 </head>
 <body>
 
@@ -92,6 +92,36 @@
         <div class="filter-tags-group">
           <span class="filter-label">得意（可複選）：</span>
           <div id="specialty-filter-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+        </div>
+
+        <!-- 動態細節篩選器 (Dynamic Sub-Filters based on Specialty) -->
+        <div id="detail-subfilters-container" class="detail-subfilters-container">
+          <!-- 1. 樹果細節篩選 (Berry Sub-Filter) -->
+          <div id="subfilter-berry-group" class="subfilter-group" style="display:none;">
+            <div class="subfilter-header">
+              <span class="filter-label">🫐 產出樹果（可複選）：</span>
+              <button type="button" id="clear-berries-btn" class="subfilter-clear-btn" style="display:none;">清空樹果選擇</button>
+            </div>
+            <div id="berry-filter-tags" class="subfilter-tags-grid"></div>
+          </div>
+
+          <!-- 2. 食材細節篩選 (Ingredient Sub-Filter) -->
+          <div id="subfilter-ingredient-group" class="subfilter-group" style="display:none;">
+            <div class="subfilter-header">
+              <span class="filter-label">🥗 產出食材（可複選）：</span>
+              <button type="button" id="clear-ingredients-pkm-btn" class="subfilter-clear-btn" style="display:none;">清空食材選擇</button>
+            </div>
+            <div id="ingredient-pkm-filter-tags" class="subfilter-tags-grid"></div>
+          </div>
+
+          <!-- 3. 主技能細節篩選 (Main Skill Sub-Filter) -->
+          <div id="subfilter-skill-group" class="subfilter-group" style="display:none;">
+            <div class="subfilter-header">
+              <span class="filter-label">⚡ 持有主技能（平鋪多選）：</span>
+              <button type="button" id="clear-skills-btn" class="subfilter-clear-btn" style="display:none;">清空技能選擇</button>
+            </div>
+            <div id="skill-filter-tags" class="subfilter-tags-grid subfilter-skills-grid"></div>
+          </div>
         </div>
       </section>
 
@@ -520,9 +550,9 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260816_04"></script>
-  <script src="recipes.js?v=20260816_04"></script>
-  <script src="box.js?v=20260816_04"></script>
-  <script src="news.js?v=20260816_04"></script>
+  <script src="app.js?v=20260816_05"></script>
+  <script src="recipes.js?v=20260816_05"></script>
+  <script src="box.js?v=20260816_05"></script>
+  <script src="news.js?v=20260816_05"></script>
 </body>
 </html>
