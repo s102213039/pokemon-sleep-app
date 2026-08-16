@@ -446,27 +446,27 @@ test('Tier 2 - Boundary & Corner Cases', 'Fallback icon validation: missing/empt
   assert(icon.startsWith('data:image/svg+xml'), 'Empty icon should fallback to SVG data URI');
 });
 
-test('Tier 2 - Boundary & Corner Cases', 'Box Data Operations: CRUD structure and level boundaries (Lv.1 to Lv.70)', () => {
+test('Tier 2 - Boundary & Corner Cases', 'Box Data Operations: CRUD structure and level boundaries (Lv.1 to Lv.80)', () => {
   const dummyPokemon = {
     uid: 'pkm_test_123',
     pokemonId: '1',
     name: '妙蛙種子',
-    level: 35,
+    level: 80,
     nickname: '草系主將',
     nature: '固執',
     ing1: '特選蘋果',
     ing2: '特選蘋果',
     ing3: '窩心牛奶',
-    subskills: ['樹果數量S', '幫手獎勵', '幫忙速度M']
+    subskills: ['樹果數量S', '幫手獎勵', '幫忙速度M', '持有上限提升L', '技能機率提升M']
   };
 
-  assert(dummyPokemon.level >= 1 && dummyPokemon.level <= 70, 'Level out of bounds');
+  assert(dummyPokemon.level >= 1 && dummyPokemon.level <= 80, 'Level out of bounds (1~80)');
   assert(dummyPokemon.subskills.length <= 5, 'Subskills must not exceed 5');
   assert(dummyPokemon.name && dummyPokemon.name.trim(), 'Box Pokemon missing name');
   assert(dummyPokemon.uid && dummyPokemon.uid.startsWith('pkm_'), 'Invalid UID format');
 });
 
-test('Tier 2 - Boundary & Corner Cases', 'RaenonX PR Calculation: Accurate percentile ranking across Berry, Ingredient & Skill archetypes', () => {
+test('Tier 2 - Boundary & Corner Cases', 'RaenonX PR Calculation: Fast-Exit Baseline Filter & Lv.70/Lv.80 Sub-skill coverage', () => {
   const boxModule = require(path.join(WORKSPACE_ROOT, 'box.js'));
   const calcPR = boxModule.calculatePokemonPR;
   assert(typeof calcPR === 'function', 'calculatePokemonPR must be a function');
@@ -476,7 +476,7 @@ test('Tier 2 - Boundary & Corner Cases', 'RaenonX PR Calculation: Accurate perce
     name: '小拉達',
     specialty: '樹果',
     nature: '固執', // speed ++, ing --
-    subskills: ['樹果數量S', '幫手獎勵', '幫忙速度M']
+    subskills: ['樹果數量S', '幫手獎勵', '幫忙速度M', '技能等級提升M', '持有上限提升L']
   };
   const berryResult = calcPR(berryGod, { specialty: '樹果' });
   assert(berryResult.pr >= 90, `Berry God PR should be >= 90 (got ${berryResult.pr})`);
@@ -488,22 +488,34 @@ test('Tier 2 - Boundary & Corner Cases', 'RaenonX PR Calculation: Accurate perce
     name: '妙蛙種子',
     specialty: '食材',
     nature: '內斂', // ing ++, speed --
-    subskills: ['食材機率提升M', '幫手獎勵', '食材機率提升S']
+    subskills: ['食材機率提升M', '幫手獎勵', '食材機率提升S', '持有上限提升M', '幫忙速度M']
   };
   const ingResult = calcPR(ingSpecialist, { specialty: '食材' });
   assert(ingResult.pr >= 80, `Ingredient Specialist PR should be >= 80 (got ${ingResult.pr})`);
   assert(ingResult.tier === 'S+' || ingResult.tier === 'S', `Ingredient Specialist tier should be S/S+ (got ${ingResult.tier})`);
 
-  // 3. Sub-optimal Pokemon (Berry Pokemon with Modest nature and no relevant subskills)
-  const poorPokemon = {
+  // 3. Fast-Exit Baseline: Berry Pokemon with Modest nature and no relevant subskills
+  const poorBerry = {
     name: '小拉達',
     specialty: '樹果',
-    nature: '內斂', // ing ++, speed -- (terrible for berry)
+    nature: '內斂', // ing ++, speed -- (speed debuff + no BFS/HB)
     subskills: ['持有上限提升S', '活力回復提升S']
   };
-  const poorResult = calcPR(poorPokemon, { specialty: '樹果' });
+  const poorResult = calcPR(poorBerry, { specialty: '樹果' });
   assert(poorResult.pr < 50, `Poor Pokemon PR should be < 50 (got ${poorResult.pr})`);
   assert(poorResult.tier === 'B' || poorResult.tier === 'C', `Poor Pokemon tier should be B or C (got ${poorResult.tier})`);
+  assert(poorResult.summaryNote.includes('⚠️') && poorResult.summaryNote.includes('未達'), 'Summary note should indicate baseline failure');
+
+  // 4. Fast-Exit Baseline: Ingredient Pokemon with Adamant nature (Ing down) and no Ing Finder M
+  const poorIng = {
+    name: '妙蛙種子',
+    specialty: '食材',
+    nature: '固執', // speed ++, ing --
+    subskills: ['幫忙速度S', '睡眠EXP獎勵']
+  };
+  const poorIngResult = calcPR(poorIng, { specialty: '食材' });
+  assert(poorIngResult.pr < 50, `Poor Ingredient PR should be < 50 (got ${poorIngResult.pr})`);
+  assert(poorIngResult.summaryNote.includes('⚠️'), 'Should fail baseline due to Ing debuff');
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'Event Timeline Parser: Identifies Active and Upcoming events from news dataset', () => {

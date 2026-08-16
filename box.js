@@ -113,7 +113,7 @@
     ) || null;
   }
 
-  /* ─── 👑 RaenonX 級潛力 PR 評分演算法 ───────────────────────── */
+  /* ─── 👑 RaenonX 級潛力 PR 評分演算法 (含核心及格線快速檢驗與 Lv.70/80 覆蓋) ─── */
   function calculatePokemonPR(pkm, baseData = null) {
     const base = baseData || findPokemonBase(pkm.pokemonId || pkm.name);
     const specialty = (base && base.specialty) || pkm.specialty || '樹果';
@@ -124,14 +124,81 @@
     const buff = natureObj.buffType;
     const debuff = natureObj.debuffType;
 
+    // 前三格核心技能 (Lv.10, Lv.25, Lv.50)
+    const earlySubskills = subskills.slice(0, 3);
+
+    // ─── 階段 1：核心及格線快速判定 (Fast-Exit Baseline Filter) ───
+    let passedBaseline = true;
+    let baselineFailReason = '';
+
+    if (specialty === '樹果') {
+      const hasEarlyBFS = earlySubskills.includes('樹果數量S');
+      const hasEarlyHB = earlySubskills.includes('幫手獎勵');
+      const hasEarlySpeedM = earlySubskills.includes('幫忙速度M');
+      const isSpeedDown = debuff === 'speed';
+      const isSpeedUp = buff === 'speed';
+
+      if (isSpeedDown && !hasEarlyBFS && !hasEarlyHB) {
+        passedBaseline = false;
+        baselineFailReason = '性格減慢幫忙速度，未達樹果手及格線（且前三格無樹果S/幫手獎勵補救）';
+      } else if (!hasEarlyBFS && !hasEarlyHB && !hasEarlySpeedM && !isSpeedUp) {
+        passedBaseline = false;
+        baselineFailReason = '前三格缺乏樹果S/速度加成，未達樹果手及格線';
+      }
+    } else if (specialty === '食材') {
+      const hasEarlyIngM = earlySubskills.includes('食材機率提升M');
+      const hasEarlyIngS = earlySubskills.includes('食材機率提升S');
+      const hasEarlyHB = earlySubskills.includes('幫手獎勵');
+      const isIngDown = debuff === 'ingredient';
+      const isIngUp = buff === 'ingredient';
+
+      if (isIngDown && !hasEarlyIngM) {
+        passedBaseline = false;
+        baselineFailReason = '性格減少食材機率，未達食材手及格線';
+      } else if (!hasEarlyIngM && !hasEarlyIngS && !hasEarlyHB && !isIngUp) {
+        passedBaseline = false;
+        baselineFailReason = '缺乏食材機率加成，未達食材手及格線';
+      }
+    } else { // 技能型
+      const hasEarlySkillM = earlySubskills.includes('技能機率提升M');
+      const hasEarlySkillS = earlySubskills.includes('技能機率提升S');
+      const hasEarlySkillLvlM = earlySubskills.includes('技能等級提升M');
+      const hasEarlyHB = earlySubskills.includes('幫手獎勵');
+      const isSkillDown = debuff === 'skill';
+      const isSkillUp = buff === 'skill';
+
+      if (isSkillDown && !hasEarlySkillM) {
+        passedBaseline = false;
+        baselineFailReason = '性格減少主技能機率，未達技能手及格線';
+      } else if (!hasEarlySkillM && !hasEarlySkillS && !hasEarlySkillLvlM && !hasEarlyHB && !isSkillUp) {
+        passedBaseline = false;
+        baselineFailReason = '缺乏技能發動率加成，未達技能手及格線';
+      }
+    }
+
+    // 若未通過及格線：快速出口 (Fast-Exit) 歸類為 B/C 級，免去多餘高階比對
+    if (!passedBaseline) {
+      let failScore = 15;
+      if (earlySubskills.length > 0) failScore += 10;
+      let pr = Math.min(42, Math.max(12, failScore));
+      return {
+        pr,
+        tier: pr >= 30 ? 'B' : 'C',
+        tierBadgeClass: pr >= 30 ? 'pr-tier-b' : 'pr-tier-c',
+        summaryNote: `⚠️ ${baselineFailReason}`,
+        score: failScore
+      };
+    }
+
+    // ─── 階段 2：及格線以上的高階精確評分 (覆蓋 Lv.10, 25, 50, 70, 80) ───
     let score = 0;
     const highlights = [];
 
-    // 1. 性格權重評分
+    // 1. 性格評分
     if (specialty === '樹果') {
       if (buff === 'speed') { score += 25; highlights.push('幫忙速度▲▲'); }
       if (debuff === 'speed') { score -= 25; }
-      if (debuff === 'ingredient') { score += 10; highlights.push('食材機率▼▼ (極限樹果流)'); }
+      if (debuff === 'ingredient') { score += 12; highlights.push('食材▼▼ (樹果極限流)'); }
       if (buff === 'ingredient') { score -= 6; }
     } else if (specialty === '食材') {
       if (buff === 'ingredient') { score += 28; highlights.push('食材機率▲▲'); }
@@ -145,36 +212,39 @@
       if (debuff === 'speed') { score -= 15; }
     }
 
-    // 2. 副技能解鎖權重 (Lv.10 > Lv.25 > Lv.50 > Lv.75 > Lv.100)
-    const slotWeights = [0.35, 0.30, 0.20, 0.10, 0.05];
+    // 2. 5 格副技能解鎖權重 (Lv.10: 30%, Lv.25: 30%, Lv.50: 20%, Lv.70: 12%, Lv.80: 8%)
+    const slotWeights = [0.30, 0.30, 0.20, 0.12, 0.08];
+    const lvlLabels = [10, 25, 50, 70, 80];
 
     subskills.forEach((skName, idx) => {
-      const w = slotWeights[idx] || 0.05;
+      const w = slotWeights[idx] || 0.08;
+      const lvl = lvlLabels[idx] || 10;
       let skScore = 0;
 
       if (skName === '樹果數量S') {
         skScore = specialty === '樹果' ? 100 : 40;
-        if (idx <= 1) highlights.push(`Lv.${[10, 25][idx]} 樹果S`);
+        highlights.push(`Lv.${lvl} 樹果S`);
       } else if (skName === '幫手獎勵') {
         skScore = 65;
-        if (idx <= 1) highlights.push('幫手獎勵');
+        highlights.push(`Lv.${lvl} 幫手獎勵`);
       } else if (skName === '食材機率提升M') {
         skScore = specialty === '食材' ? 85 : 20;
-        if (idx <= 1 && specialty === '食材') highlights.push('食材機率M');
+        if (specialty === '食材') highlights.push(`Lv.${lvl} 食材機率M`);
       } else if (skName === '食材機率提升S') {
         skScore = specialty === '食材' ? 45 : 10;
       } else if (skName === '技能機率提升M') {
         skScore = specialty === '技能' ? 85 : 20;
-        if (idx <= 1 && specialty === '技能') highlights.push('技能機率M');
+        if (specialty === '技能') highlights.push(`Lv.${lvl} 技能機率M`);
       } else if (skName === '技能機率提升S') {
         skScore = specialty === '技能' ? 45 : 10;
       } else if (skName === '技能等級提升M') {
         skScore = specialty === '技能' ? 60 : 15;
+        if (specialty === '技能') highlights.push(`Lv.${lvl} 技能等級M`);
       } else if (skName === '技能等級提升S') {
         skScore = specialty === '技能' ? 30 : 10;
       } else if (skName === '幫忙速度M') {
         skScore = 50;
-        if (idx <= 1) highlights.push('幫忙速度M');
+        highlights.push(`Lv.${lvl} 幫忙速度M`);
       } else if (skName === '幫忙速度S') {
         skScore = 25;
       } else if (skName === '持有上限提升L') {
@@ -192,15 +262,15 @@
       score += skScore * w;
     });
 
-    // 3. 正規化至 PR 百分位數 [1 ~ 100]
-    const minBenchmark = -12;
+    // 3. 正規化至 PR 百分位數 [50 ~ 100] (及格線以上個體)
+    const minPassBenchmark = 10;
     const maxBenchmark = 75;
-    let pr = Math.round(((score - minBenchmark) / (maxBenchmark - minBenchmark)) * 100);
-    pr = Math.min(100, Math.max(1, pr));
+    let pr = 50 + Math.round(((score - minPassBenchmark) / (maxBenchmark - minPassBenchmark)) * 50);
+    pr = Math.min(100, Math.max(50, pr));
 
     // 評級判定
-    let tier = 'C';
-    let tierBadgeClass = 'pr-tier-c';
+    let tier = 'A';
+    let tierBadgeClass = 'pr-tier-a';
 
     if (pr >= 90) {
       tier = 'S+';
@@ -208,19 +278,13 @@
     } else if (pr >= 75) {
       tier = 'S';
       tierBadgeClass = 'pr-tier-s';
-    } else if (pr >= 50) {
-      tier = 'A';
-      tierBadgeClass = 'pr-tier-a';
-    } else if (pr >= 30) {
-      tier = 'B';
-      tierBadgeClass = 'pr-tier-b';
     }
 
     let summaryNote = '';
     if (highlights.length > 0) {
       summaryNote = highlights.slice(0, 3).join(' · ');
     } else {
-      summaryNote = '能力均衡，中規中矩';
+      summaryNote = '及格主力，基礎能力扎實';
     }
 
     return {
@@ -384,7 +448,7 @@
                   ${(p.subskills || []).map((skName, idx) => {
                     const sk = SUBSKILLS_DATA.find(s => s.name === skName);
                     const tier = sk ? sk.tier : 'white';
-                    const lvlTag = [10, 25, 50, 75, 100][idx] || '';
+                    const lvlTag = [10, 25, 50, 70, 80][idx] || '';
                     return `
                       <span class="box-subskill-pill subskill-${tier}" title="Lv.${lvlTag} ${sk ? sk.desc : ''}">
                         <span class="subskill-lvl">Lv.${lvlTag}</span>
@@ -430,7 +494,7 @@
               <th>Lv.1 食材</th>
               <th>Lv.30 食材</th>
               <th>Lv.60 食材</th>
-              <th>副技能 (Lv.10 ~ 100)</th>
+              <th>副技能 (Lv.10 ~ 80)</th>
               <th>性格</th>
               <th>操作</th>
             </tr>
