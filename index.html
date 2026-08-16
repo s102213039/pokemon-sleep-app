@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260816_07">
+  <link rel="stylesheet" href="styles.css?v=20260817_01">
 </head>
 <body>
 
@@ -78,6 +78,13 @@
               aria-label="搜尋寶可夢">
             <button type="button" id="pokemon-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
           </div>
+          <!-- 👑 僅展示最終進化 Switch Button -->
+          <label class="final-evo-switch-label" for="final-evo-toggle" title="只展示最終進化或無後續進化可能的寶可夢">
+            <input type="checkbox" id="final-evo-toggle" class="switch-checkbox">
+            <span class="switch-slider"></span>
+            <span class="switch-text">👑 僅最終進化</span>
+          </label>
+
           <!-- 頁面內容裡面的 卡片/表格 切換按鈕 -->
           <div class="view-mode-toggle">
             <button id="toggle-grid" class="toggle-btn">🎴 卡片</button>
@@ -546,9 +553,9 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260816_07"></script>
-  <script src="recipes.js?v=20260816_07"></script>
-  <script src="box.js?v=20260816_07"></script>
-  <script src="news.js?v=20260816_07"></script>
+  <script src="app.js?v=20260817_01"></script>
+  <script src="recipes.js?v=20260817_01"></script>
+  <script src="box.js?v=20260817_01"></script>
+  <script src="news.js?v=20260817_01"></script>
 </body>
 </html>

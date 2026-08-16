@@ -206,6 +206,7 @@ function matchesSkill(pokemonSkill, targetBaseSkill) {
 const PokemonApp = {
   allPokemons: [],
   currentSearch: '',
+  onlyFinal: false,
   selectedTypes: new Set(),
   selectedSpecialties: new Set(),
   selectedBerries: new Set(),
@@ -217,6 +218,7 @@ const PokemonApp = {
   init(data) {
     this.allPokemons = data || [];
     this.currentSearch = '';
+    this.onlyFinal = false;
     this.selectedTypes = new Set();
     this.selectedSpecialties = new Set();
     this.selectedBerries = new Set();
@@ -232,6 +234,12 @@ const PokemonApp = {
       const pSpec = p.specialty || '';
       if (this.selectedTypes.size > 0 && !this.selectedTypes.has('ALL') && !this.selectedTypes.has(pType)) return false;
       if (this.selectedSpecialties.size > 0 && !this.selectedSpecialties.has('ALL') && !this.selectedSpecialties.has(pSpec)) return false;
+
+      // 👑 僅最終進化篩選 (Only Final Evolution)
+      if (this.onlyFinal) {
+        const isFinal = p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1';
+        if (!isFinal) return false;
+      }
 
       // 樹果細節篩選
       if (this.selectedBerries && this.selectedBerries.size > 0) {
@@ -292,6 +300,7 @@ if (typeof document !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
     let allPokemons = [];
     let currentSearch = '';
+    let onlyFinal = false;
     const selectedTypes = new Set();
     const selectedSpecialties = new Set();
     const selectedBerries = new Set();
@@ -300,6 +309,7 @@ if (typeof document !== 'undefined') {
     let viewMode = 'table';
 
     const searchInput = document.getElementById('search-input');
+    const finalEvoToggle = document.getElementById('final-evo-toggle');
     const typeFilterContainer = document.getElementById('type-filter-tags');
     const specialtyFilterContainer = document.getElementById('specialty-filter-tags');
 
@@ -765,12 +775,26 @@ if (typeof document !== 'undefined') {
           renderUI();
         });
       }
+
+      if (finalEvoToggle) {
+        finalEvoToggle.addEventListener('change', (e) => {
+          onlyFinal = e.target.checked;
+          PokemonApp.onlyFinal = onlyFinal;
+          renderUI();
+        });
+      }
     }
 
     function filterData() {
       return allPokemons.filter(p => {
         if (selectedTypes.size > 0 && !selectedTypes.has(p.type)) return false;
         if (selectedSpecialties.size > 0 && !selectedSpecialties.has(p.specialty)) return false;
+
+        // 👑 僅最終進化篩選 (Only Final Evolution)
+        if (onlyFinal) {
+          const isFinal = p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1';
+          if (!isFinal) return false;
+        }
 
         // 樹果細節篩選 (多選)
         if (selectedBerries.size > 0) {

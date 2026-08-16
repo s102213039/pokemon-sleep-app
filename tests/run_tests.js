@@ -284,6 +284,7 @@ test('Tier 1 - Feature Coverage', 'HTML Structure: index.html exists with requir
   const htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
   assert(htmlContent.includes('id="search-input"') || htmlContent.includes("id='search-input'"), 'Missing search input element');
+  assert(htmlContent.includes('id="final-evo-toggle"'), 'Missing final-evo-toggle switch element');
   assert(htmlContent.includes('id="berry-filter-tags"') || htmlContent.includes("id='berry-filter-tags'"), 'Missing berry filter container');
   assert(htmlContent.includes('id="specialty-filter-tags"') || htmlContent.includes("id='specialty-filter-tags'"), 'Missing specialty filter container');
   assert(htmlContent.includes('id="detail-subfilters-container"'), 'Missing detail subfilters container');
@@ -501,6 +502,40 @@ test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient
   assert(mimikyu !== undefined, '謎擬Q (畫皮) should match 樹果遽增');
   const mewtwo = berrySkillFiltered.find(p => p.name_cn === '超夢');
   assert(mewtwo !== undefined, '超夢 (精神擊破) should match 樹果遽增');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Final Evolution Filter: onlyFinal excludes unevolved stages and includes final/single stages', () => {
+  PokemonApp.init([...dataset]);
+  PokemonApp.currentSearch = '';
+  PokemonApp.selectedTypes.clear();
+  PokemonApp.selectedSpecialties.clear();
+  PokemonApp.selectedBerries.clear();
+  PokemonApp.selectedIngredients.clear();
+  PokemonApp.selectedSkills.clear();
+
+  // 1. When onlyFinal is FALSE (default)
+  PokemonApp.onlyFinal = false;
+  assertEquals(PokemonApp.filterData().length, dataset.length, 'onlyFinal=false should return all 247 items');
+
+  // 2. When onlyFinal is TRUE
+  PokemonApp.onlyFinal = true;
+  const finals = PokemonApp.filterData();
+  assert(finals.length > 0 && finals.length < dataset.length, 'Finals count should be subset of all items');
+  assertEquals(finals.length, 127, 'Total final/single stage Pokémon should be exactly 127');
+
+  // Must EXCLUDE pre-evolutions: Bulbasaur (#001), Ivysaur (#002), Charmander (#004), Charmeleon (#005), Squirtle (#007), Wartortle (#008)
+  const preEvos = ['妙蛙種子', '妙蛙草', '小火龍', '火恐龍', '傑尼龜', '卡咪龜', '皮丘', '皮卡丘'];
+  preEvos.forEach(name => {
+    const found = finals.find(p => p.name_cn === name);
+    assert(found === undefined, `Pre-evolution ${name} should NOT be in final evolution list`);
+  });
+
+  // Must INCLUDE final stages and single stages: Venusaur, Charizard, Blastoise, Raichu, Pinsir, Heracross, Mewtwo, Mew
+  const finalStages = ['妙蛙花', '噴火龍', '水箭龜', '雷丘', '凱羅斯', '赫拉克羅斯', '超夢', '夢幻'];
+  finalStages.forEach(name => {
+    const found = finals.find(p => p.name_cn === name);
+    assert(found !== undefined, `Final stage ${name} MUST be in final evolution list`);
+  });
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'Fallback icon validation: missing/empty icon property defaults to SVG placeholder', () => {
