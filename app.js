@@ -141,7 +141,7 @@ TYPE_TO_BERRY['飛行'] = '椰木果';
 const BASE_SKILLS = [
   { key: '食材獲取S', label: '食材獲取S', icon: '🍎' },
   { key: '食材精選S', label: '食材精選S', icon: '🥗' },
-  { key: '活力全體療癒S', label: '活力全體療癒S', icon: '💚' },
+  { key: '活力全體療癒S', label: '全體療癒S', icon: '💚' },
   { key: '活力療癒S', label: '活力療癒S', icon: '💖' },
   { key: '活力填充S', label: '活力填充S', icon: '🔋' },
   { key: '能量填充M', label: '能量填充M', icon: '⚡' },
@@ -151,7 +151,7 @@ const BASE_SKILLS = [
   { key: '幫手支援S', label: '幫手支援S', icon: '🤝' },
   { key: '幫手加速', label: '幫手加速', icon: '🚀' },
   { key: '樹果遽增', label: '樹果遽增', icon: '🫐' },
-  { key: '夢之碎片獲取S', label: '夢之碎片獲取S', icon: '💎' },
+  { key: '夢之碎片獲取S', label: '碎片獲取S', icon: '💎' },
   { key: '揮指', label: '揮指', icon: '🎲' },
   { key: '技能複製', label: '技能複製', icon: '🎭' }
 ];
@@ -640,7 +640,7 @@ if (typeof document !== 'undefined') {
         skillFilterContainer.innerHTML = BASE_SKILLS.map(skillItem => {
           const isActive = selectedSkills.has(skillItem.key);
           return `
-            <button type="button" class="subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${skillItem.label}">
+            <button type="button" class="subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${skillItem.key}">
               <span class="subfilter-skill-name">${skillItem.label}</span>
             </button>
           `;
