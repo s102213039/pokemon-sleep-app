@@ -263,6 +263,7 @@ const PokemonApp = {
   allPokemons: [],
   currentSearch: '',
   onlyFinal: true,
+  onlyInitialIng: false,
   selectedTypes: new Set(),
   selectedSpecialties: new Set(),
   selectedBerries: new Set(),
@@ -275,6 +276,7 @@ const PokemonApp = {
     this.allPokemons = data || [];
     this.currentSearch = '';
     this.onlyFinal = true;
+    this.onlyInitialIng = false;
     this.selectedTypes = new Set();
     this.selectedSpecialties = new Set();
     this.selectedBerries = new Set();
@@ -308,10 +310,15 @@ const PokemonApp = {
         if (!berryName || !this.selectedBerries.has(berryName)) return false;
       }
 
-      // 食材細節篩選
+      // 食材細節篩選 (若開啟「僅初始食材」則只比對 Lv.1 初始食材 p.ingredients[0]，否則比對任意食材)
       if (this.selectedIngredients && this.selectedIngredients.size > 0) {
-        const hasIng = p.ingredients && p.ingredients.some(ing => ing.name && this.selectedIngredients.has(ing.name));
-        if (!hasIng) return false;
+        if (this.onlyInitialIng) {
+          const initialIng = p.ingredients && p.ingredients[0] && p.ingredients[0].name ? p.ingredients[0].name : '';
+          if (!initialIng || !this.selectedIngredients.has(initialIng)) return false;
+        } else {
+          const hasIng = p.ingredients && p.ingredients.some(ing => ing.name && this.selectedIngredients.has(ing.name));
+          if (!hasIng) return false;
+        }
       }
 
       // 技能細節篩選 (支援基礎技能與複合技能自動關聯)
@@ -363,6 +370,8 @@ if (typeof document !== 'undefined') {
     let currentSearch = '';
     const finalEvoToggle = document.getElementById('final-evo-toggle');
     let onlyFinal = finalEvoToggle ? finalEvoToggle.checked : true;
+    const initialIngToggle = document.getElementById('initial-ing-toggle');
+    let onlyInitialIng = initialIngToggle ? initialIngToggle.checked : false;
     const selectedTypes = new Set();
     const selectedSpecialties = new Set();
     const selectedBerries = new Set();
@@ -845,12 +854,25 @@ if (typeof document !== 'undefined') {
           renderUI();
         });
       }
+
+      if (initialIngToggle) {
+        initialIngToggle.addEventListener('change', (e) => {
+          onlyInitialIng = e.target.checked;
+          PokemonApp.onlyInitialIng = onlyInitialIng;
+          renderUI();
+        });
+      }
     }
 
     function filterData() {
       return allPokemons.filter(p => {
         if (selectedTypes.size > 0 && !selectedTypes.has(p.type)) return false;
-        if (selectedSpecialties.size > 0 && !selectedSpecialties.has(p.specialty)) return false;
+
+        // 類型篩選 (樹果、食材、技能；若都沒選則展示全部；夢幻 specialty === '全部' 在任何選取下均展示)
+        if (selectedSpecialties.size > 0) {
+          const isMewAll = p.specialty === '全部' || p.specialty === 'ALL';
+          if (!isMewAll && !selectedSpecialties.has(p.specialty)) return false;
+        }
 
         // 👑 僅最終進化篩選 (Only Final Evolution)
         if (onlyFinal) {
@@ -864,10 +886,15 @@ if (typeof document !== 'undefined') {
           if (!berryName || !selectedBerries.has(berryName)) return false;
         }
 
-        // 食材細節篩選 (多選)
+        // 食材細節篩選 (若開啟「僅初始食材」則只比對 Lv.1 初始食材 p.ingredients[0]，否則比對任意食材)
         if (selectedIngredients.size > 0) {
-          const hasIng = p.ingredients && p.ingredients.some(ing => ing.name && selectedIngredients.has(ing.name));
-          if (!hasIng) return false;
+          if (onlyInitialIng) {
+            const initialIng = p.ingredients && p.ingredients[0] && p.ingredients[0].name ? p.ingredients[0].name : '';
+            if (!initialIng || !selectedIngredients.has(initialIng)) return false;
+          } else {
+            const hasIng = p.ingredients && p.ingredients.some(ing => ing.name && selectedIngredients.has(ing.name));
+            if (!hasIng) return false;
+          }
         }
 
         // 技能細節篩選 (多選，支援基礎技能與複合技能自動關聯)

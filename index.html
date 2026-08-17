@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260817_13">
+  <link rel="stylesheet" href="styles.css?v=20260817_14">
 </head>
 <body>
 
@@ -91,6 +91,17 @@
             </label>
           </div>
 
+          <!-- 🥗 僅初始食材 Switch Button -->
+          <div class="sidebar-section">
+            <label class="sidebar-final-evo-label" for="initial-ing-toggle" title="只展示初始食材（Lv.1 食材）與選中食材相符的寶可夢">
+              <span class="sidebar-final-evo-text">🥗 僅初始食材</span>
+              <div class="sidebar-switch-wrapper">
+                <input type="checkbox" id="initial-ing-toggle" class="switch-checkbox">
+                <span class="switch-slider"></span>
+              </div>
+            </label>
+          </div>
+
           <!-- 1. 類型篩選 (Specialty) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
@@ -104,7 +115,7 @@
             <!-- 2. 樹果細節篩選 (Berry Sub-Filter - Icon Only, Always Open) -->
             <div id="subfilter-berry-group" class="sidebar-section">
               <div class="sidebar-section-header">
-                <span class="sidebar-section-title">產出樹果</span>
+                <span class="sidebar-section-title">樹果</span>
                 <button type="button" id="clear-berries-btn" class="sidebar-section-clear-btn" style="display:none;">清空</button>
               </div>
               <div id="berry-filter-tags" class="sidebar-icon-grid"></div>
@@ -113,7 +124,7 @@
             <!-- 3. 食材細節篩選 (Ingredient Sub-Filter - Icon Only, Always Open) -->
             <div id="subfilter-ingredient-group" class="sidebar-section">
               <div class="sidebar-section-header">
-                <span class="sidebar-section-title">產出食材</span>
+                <span class="sidebar-section-title">食材</span>
                 <button type="button" id="clear-ingredients-pkm-btn" class="sidebar-section-clear-btn" style="display:none;">清空</button>
               </div>
               <div id="ingredient-pkm-filter-tags" class="sidebar-icon-grid"></div>
@@ -122,7 +133,7 @@
             <!-- 4. 主技能細節篩選 (Main Skill Sub-Filter - Name Only, 2-Column Grid, Always Open) -->
             <div id="subfilter-skill-group" class="sidebar-section">
               <div class="sidebar-section-header">
-                <span class="sidebar-section-title">持有主技能</span>
+                <span class="sidebar-section-title">主技能</span>
                 <button type="button" id="clear-skills-btn" class="sidebar-section-clear-btn" style="display:none;">清空</button>
               </div>
               <div id="skill-filter-tags" class="sidebar-skills-list"></div>
@@ -579,9 +590,9 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260817_13"></script>
-  <script src="recipes.js?v=20260817_13"></script>
-  <script src="box.js?v=20260817_13"></script>
-  <script src="news.js?v=20260817_13"></script>
+  <script src="app.js?v=20260817_14"></script>
+  <script src="recipes.js?v=20260817_14"></script>
+  <script src="box.js?v=20260817_14"></script>
+  <script src="news.js?v=20260817_14"></script>
 </body>
 </html>

@@ -287,6 +287,7 @@ test('Tier 1 - Feature Coverage', 'HTML Structure: index.html exists with requir
 
   assert(htmlContent.includes('id="search-input"') || htmlContent.includes("id='search-input'"), 'Missing search input element');
   assert(htmlContent.includes('id="final-evo-toggle"'), 'Missing final-evo-toggle switch element');
+  assert(htmlContent.includes('id="initial-ing-toggle"'), 'Missing initial-ing-toggle switch element');
   assert(htmlContent.includes('id="pokemon-filter-sidebar"'), 'Missing pokemon-filter-sidebar element in index.html');
   assert(htmlContent.includes('id="sidebar-reset-all-btn"'), 'Missing sidebar-reset-all-btn element in index.html');
   assert(htmlContent.includes('id="berry-filter-tags"') || htmlContent.includes("id='berry-filter-tags'"), 'Missing berry filter container');
@@ -484,6 +485,17 @@ test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient
     const hasHoney = p.ingredients && p.ingredients.some(ing => ing.name === '甜甜蜜');
     assert(hasHoney, `Item ${p.name_cn} should have 甜甜蜜 in its ingredients`);
   });
+
+  // 2b. Initial Ingredient only filter (僅初始食材)
+  PokemonApp.onlyInitialIng = true;
+  PokemonApp.selectedIngredients = new Set(['特選蘋果']);
+  const initialIngFiltered = PokemonApp.filterData();
+  assert(initialIngFiltered.length > 0, 'Initial ingredient filter should return results');
+  initialIngFiltered.forEach(p => {
+    const initialName = p.ingredients && p.ingredients[0] ? p.ingredients[0].name : '';
+    assert(initialName === '特選蘋果', `Item ${p.name_cn} initial ingredient (${initialName}) must be 特選蘋果 when onlyInitialIng is true`);
+  });
+  PokemonApp.onlyInitialIng = false;
 
   // 3. Main Skill multi-select filter (食材獲取S, 料理成功S) with composite matching
   PokemonApp.selectedIngredients.clear();
