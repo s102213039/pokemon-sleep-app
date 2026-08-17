@@ -525,13 +525,14 @@ header {
   width: 100%;
 }
 
-/* ⬅️ 精緻緊湊型左側懸浮固定篩選面板 */
+/* ⬅️ 精緻緊湊型左側懸浮固定篩選面板（垂直上下置中） */
 .pokemon-filter-sidebar {
   position: fixed;
-  top: 85px;
+  top: calc(50% + 30px);
+  transform: translateY(-50%);
   left: max(12px, calc((100vw - 1240px) / 2 - 235px));
   width: 220px;
-  max-height: calc(100vh - 105px);
+  max-height: min(720px, calc(100vh - 100px));
   background: rgba(15, 23, 42, 0.9);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -542,7 +543,7 @@ header {
   flex-direction: column;
   z-index: 90;
   overflow: hidden;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.25s ease, box-shadow 0.25s ease;
 }
 
 .sidebar-header {
@@ -823,6 +824,8 @@ header {
 @media (max-width: 1200px) {
   .pokemon-filter-sidebar {
     position: static;
+    transform: none;
+    top: auto;
     width: 92%;
     max-width: 1240px;
     margin: 12px auto 16px;
