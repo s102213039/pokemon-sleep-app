@@ -652,17 +652,10 @@ if (typeof document !== 'undefined') {
       }
 
       function updateSubfilterVisibility() {
-        // 若未選取特定得意（即全部得意），則全部展示以便直接檢索細節
-        // 若選取特定得意，則僅展示與該得意相關之細節篩選器（若有細節被選取則持續展示）
-        const showAll = selectedSpecialties.size === 0;
-
-        const showBerry = showAll || selectedSpecialties.has('樹果') || selectedBerries.size > 0;
-        const showIngredient = showAll || selectedSpecialties.has('食材') || selectedIngredients.size > 0;
-        const showSkill = showAll || selectedSpecialties.has('技能') || selectedSkills.size > 0;
-
-        if (subfilterBerryGroup) subfilterBerryGroup.style.display = showBerry ? 'flex' : 'none';
-        if (subfilterIngredientGroup) subfilterIngredientGroup.style.display = showIngredient ? 'flex' : 'none';
-        if (subfilterSkillGroup) subfilterSkillGroup.style.display = showSkill ? 'flex' : 'none';
+        // 所有篩選器全面開放自由組合（樹果、食材、技能隨時皆可直接選取）
+        if (subfilterBerryGroup) subfilterBerryGroup.style.display = 'flex';
+        if (subfilterIngredientGroup) subfilterIngredientGroup.style.display = 'flex';
+        if (subfilterSkillGroup) subfilterSkillGroup.style.display = 'flex';
       }
 
       renderTypeButtons();

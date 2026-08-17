@@ -521,6 +521,15 @@ test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient
   assert(mimikyu !== undefined, '謎擬Q (畫皮) should match 樹果遽增');
   const mewtwo = berrySkillFiltered.find(p => p.name_cn === '超夢');
   assert(mewtwo !== undefined, '超夢 (精神擊破) should match 樹果遽增');
+
+  // 4. Cross-Combination: 食材類型 + 蘋野果 (火屬性樹果) -> e.g. 噴火龍 (Charizard)
+  PokemonApp.selectedSkills.clear();
+  PokemonApp.selectedSpecialties = new Set(['食材']);
+  PokemonApp.selectedBerries = new Set(['蘋野果']);
+  const crossFiltered = PokemonApp.filterData();
+  assert(crossFiltered.length > 0, 'Cross filter for 食材 specialty + 蘋野果 should return results');
+  const charizard = crossFiltered.find(p => p.name_cn === '噴火龍');
+  assert(charizard !== undefined, '噴火龍 should match 食材 specialty + 蘋野果 (火樹果)');
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'Final Evolution Filter: onlyFinal defaults to TRUE and correctly filters final/single stages', () => {
