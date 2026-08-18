@@ -525,61 +525,86 @@ header {
   width: 100%;
 }
 
-/* Header Filter Toggle Button & Brand Group */
-.brand-group {
+/* 🔖 側邊欄垂直中央書籤標籤 (Vertically Centered Bookmark Drawer Handle) */
+.sidebar-bookmark-handle {
+  position: absolute;
+  top: 50%;
+  right: -38px;
+  transform: translateY(-50%);
+  width: 38px;
+  min-height: 84px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-left: none;
+  border-radius: 0 12px 12px 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
-}
-
-.header-filter-toggle-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(30, 41, 59, 0.85);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  padding: 6px 12px;
-  color: var(--text-primary);
-  font-size: 13px;
-  font-weight: 600;
+  justify-content: center;
+  gap: 3px;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  flex-shrink: 0;
-  user-select: none;
-  height: 36px;
-  box-sizing: border-box;
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.45), 0 0 12px rgba(56, 189, 248, 0.15);
+  z-index: 151;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text-primary);
+  padding: 6px 0;
 }
 
-.header-filter-toggle-btn:hover {
-  background: rgba(56, 189, 248, 0.18);
-  border-color: rgba(56, 189, 248, 0.5);
-  color: #ffffff;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
-}
-
-.header-filter-toggle-btn.active {
-  background: rgba(2, 132, 199, 0.35);
-  border-color: #38bdf8;
+.sidebar-bookmark-handle:hover {
+  background: rgba(15, 23, 42, 0.92);
+  border-color: rgba(56, 189, 248, 0.75);
   color: #38bdf8;
+  box-shadow: 6px 0 20px rgba(56, 189, 248, 0.3);
+  right: -40px;
 }
 
-.filter-badge-pill {
+.bookmark-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.bookmark-text {
+  font-size: 11px;
+  font-weight: 700;
+  color: #38bdf8;
+  writing-mode: vertical-lr;
+  letter-spacing: 2px;
+  line-height: 1;
+  margin: 2px 0;
+}
+
+.bookmark-arrow {
+  font-size: 10px;
+  color: #94a3b8;
+  transition: transform 0.3s ease;
+  line-height: 1;
+}
+
+.pokemon-filter-sidebar.collapsed .bookmark-arrow {
+  transform: rotate(180deg);
+}
+
+.sidebar-bookmark-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
   min-width: 17px;
   height: 17px;
-  padding: 0 5px;
+  padding: 0 4px;
   border-radius: 9px;
   background: #38bdf8;
   color: #0f172a;
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
 }
 
-/* ⬅️ 左側抽屜式滑動側邊欄 (Left Sliding Sidebar - 上到下佔滿全屏 100vh、精緻透明毛玻璃背景) */
+/* ⬅️ 左側抽屜式滑動側邊欄 (Left Sliding Sidebar - 上到下佔滿全屏 100vh、高通透純粹毛玻璃背景) */
 .pokemon-filter-sidebar {
   position: fixed;
   top: 0;
@@ -587,15 +612,15 @@ header {
   bottom: 0;
   width: 232px;
   height: 100vh;
-  background: rgba(15, 23, 42, 0.72);
+  background: rgba(11, 19, 41, 0.32);
   border-right: 1px solid rgba(255, 255, 255, 0.1);
   border-top: none;
   border-left: none;
   border-bottom: none;
   border-radius: 0;
-  box-shadow: 4px 0 28px rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 6px 0 32px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
   display: flex;
   flex-direction: column;
   z-index: 150;
@@ -615,9 +640,9 @@ header {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(15, 23, 42, 0.5);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(11, 19, 41, 0.25);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   flex-shrink: 0;
   box-sizing: border-box;
 }
@@ -642,9 +667,9 @@ header {
 }
 
 .sidebar-reset-btn {
-  background: rgba(239, 68, 68, 0.12);
+  background: rgba(239, 68, 68, 0.15);
   color: #fca5a5;
-  border: 1px solid rgba(239, 68, 68, 0.28);
+  border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 5px;
   padding: 3px 8px;
   font-size: 11.5px;
@@ -660,7 +685,7 @@ header {
 }
 
 .sidebar-close-btn {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.08);
   color: #94a3b8;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 5px;
@@ -712,8 +737,8 @@ header {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  background: rgba(30, 41, 59, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 7px;
   padding: 7px 9px;
   cursor: pointer;
@@ -723,7 +748,7 @@ header {
 }
 
 .sidebar-final-evo-label:hover {
-  background: rgba(45, 60, 85, 0.85);
+  background: rgba(255, 255, 255, 0.1);
   border-color: rgba(56, 189, 248, 0.4);
 }
 
@@ -806,6 +831,8 @@ header {
   font-size: 13px;
   font-weight: 600;
   border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   text-align: center;
   box-sizing: border-box;
 }
@@ -823,8 +850,8 @@ header {
   justify-content: center;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: rgba(30, 41, 59, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 6px;
   cursor: pointer;
   padding: 3.5px;
@@ -840,7 +867,7 @@ header {
 }
 
 .subfilter-icon-btn.active {
-  background: rgba(2, 132, 199, 0.4);
+  background: rgba(2, 132, 199, 0.45);
   border: 1.5px solid #38bdf8;
   box-shadow: 0 0 8px rgba(56, 189, 248, 0.45);
   transform: scale(1.04);
@@ -869,8 +896,8 @@ header {
   justify-content: center;
   width: 100%;
   padding: 7px 4px;
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 6px;
   color: var(--text-secondary);
   font-size: 12.5px;
@@ -884,17 +911,17 @@ header {
 }
 
 .subfilter-skill-btn:hover {
-  background: rgba(56, 189, 248, 0.18);
-  border-color: rgba(56, 189, 248, 0.45);
+  background: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.5);
   color: #ffffff;
 }
 
 .subfilter-skill-btn.active {
-  background: linear-gradient(135deg, rgba(2, 132, 199, 0.5), rgba(56, 189, 248, 0.5));
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.6), rgba(56, 189, 248, 0.6));
   border-color: #38bdf8;
   color: #ffffff;
   font-weight: 700;
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.45);
 }
 
 .subfilter-skill-name {

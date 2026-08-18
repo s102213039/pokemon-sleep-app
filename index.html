@@ -11,27 +11,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260818_04">
+  <link rel="stylesheet" href="styles.css?v=20260818_05">
 </head>
 <body>
 
   <!-- Header -->
   <header>
     <div class="header-container">
-      <div class="brand-group">
-        <!-- 🎛️ Header 左側篩選器開關按鈕 (Filter Toggle Button on Left of Header) -->
-        <button type="button" id="pokemon-filter-toggle-btn" class="header-filter-toggle-btn" title="展開 / 收合篩選側邊欄" aria-label="切換篩選側邊欄">
-          <span class="pill-icon">🎛️</span>
-          <span class="pill-text">篩選</span>
-          <span id="filter-badge-pill" class="filter-badge-pill" style="display:none;"></span>
-        </button>
-
-        <div class="brand">
-          <div class="brand-logo">⚡</div>
-          <div>
-            <h1 class="brand-title">Pokémon Sleep 資料庫</h1>
-            <div class="brand-subtitle">機率、食材與屬性完整線上檢索</div>
-          </div>
+      <div class="brand">
+        <div class="brand-logo">⚡</div>
+        <div>
+          <h1 class="brand-title">Pokémon Sleep 資料庫</h1>
+          <div class="brand-subtitle">機率、食材與屬性完整線上檢索</div>
         </div>
       </div>
 
@@ -80,6 +71,14 @@
     <div id="panel-pokemon" class="view-panel pokemon-layout-view">
       <!-- ⬅️ 左側抽屜式側邊欄 (Left Sliding Sidebar Filter) -->
       <aside id="pokemon-filter-sidebar" class="pokemon-filter-sidebar" aria-label="寶可夢圖鑑篩選器">
+        <!-- 🔖 側邊欄垂直中央書籤標籤 (Vertically Centered Bookmark Drawer Handle) -->
+        <button type="button" id="sidebar-bookmark-handle" class="sidebar-bookmark-handle" title="展開 / 收合篩選側邊欄" aria-label="切換篩選側邊欄">
+          <span class="bookmark-icon">🎛️</span>
+          <span class="bookmark-text">篩選</span>
+          <span class="bookmark-arrow">◀</span>
+          <span id="sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
+        </button>
+
         <div class="sidebar-header">
           <div class="sidebar-title-group">
             <span class="sidebar-icon">🎛️</span>
@@ -605,9 +604,9 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260818_04"></script>
-  <script src="recipes.js?v=20260818_04"></script>
-  <script src="box.js?v=20260818_04"></script>
-  <script src="news.js?v=20260818_04"></script>
+  <script src="app.js?v=20260818_05"></script>
+  <script src="recipes.js?v=20260818_05"></script>
+  <script src="box.js?v=20260818_05"></script>
+  <script src="news.js?v=20260818_05"></script>
 </body>
 </html>

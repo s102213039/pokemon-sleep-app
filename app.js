@@ -565,14 +565,14 @@ if (typeof document !== 'undefined') {
         // 隱藏所有 panels
         [panelPokemon, panelRecipes, panelBox, panelNews].forEach(p => p && (p.style.display = 'none'));
 
-        const filterToggleBtn = document.getElementById('pokemon-filter-toggle-btn');
         const filterSidebar = document.getElementById('pokemon-filter-sidebar');
+        const bookmarkHandle = document.getElementById('sidebar-bookmark-handle');
         const backdrop = document.getElementById('sidebar-backdrop');
 
         if (target === 'news' && panelNews && tabNews) {
           tabNews.classList.add('active');
           panelNews.style.display = 'block';
-          if (filterToggleBtn) filterToggleBtn.style.display = 'none';
+          if (bookmarkHandle) bookmarkHandle.style.display = 'none';
           if (filterSidebar) filterSidebar.classList.add('collapsed');
           if (backdrop) backdrop.classList.remove('active');
           if (window.history && window.history.replaceState) {
@@ -581,7 +581,7 @@ if (typeof document !== 'undefined') {
         } else if (target === 'box' && panelBox && tabBox) {
           tabBox.classList.add('active');
           panelBox.style.display = 'block';
-          if (filterToggleBtn) filterToggleBtn.style.display = 'none';
+          if (bookmarkHandle) bookmarkHandle.style.display = 'none';
           if (filterSidebar) filterSidebar.classList.add('collapsed');
           if (backdrop) backdrop.classList.remove('active');
           if (window.history && window.history.replaceState) {
@@ -590,7 +590,7 @@ if (typeof document !== 'undefined') {
         } else if (target === 'recipes') {
           tabRecipes.classList.add('active');
           panelRecipes.style.display = 'block';
-          if (filterToggleBtn) filterToggleBtn.style.display = 'none';
+          if (bookmarkHandle) bookmarkHandle.style.display = 'none';
           if (filterSidebar) filterSidebar.classList.add('collapsed');
           if (backdrop) backdrop.classList.remove('active');
           if (window.history && window.history.replaceState) {
@@ -599,7 +599,7 @@ if (typeof document !== 'undefined') {
         } else {
           tabPokemon.classList.add('active');
           panelPokemon.style.display = 'block';
-          if (filterToggleBtn) filterToggleBtn.style.display = 'inline-flex';
+          if (bookmarkHandle) bookmarkHandle.style.display = 'flex';
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#pokemon');
           }
@@ -933,10 +933,10 @@ if (typeof document !== 'undefined') {
 
       // ⬅️ 左側抽屜式側邊欄展開與收合控制 (Left Sliding Sidebar Controller)
       const sidebar = document.getElementById('pokemon-filter-sidebar');
-      const filterToggleBtn = document.getElementById('pokemon-filter-toggle-btn');
+      const bookmarkHandle = document.getElementById('sidebar-bookmark-handle');
       const closeBtn = document.getElementById('sidebar-close-btn');
       const backdrop = document.getElementById('sidebar-backdrop');
-      const filterBadgePill = document.getElementById('filter-badge-pill');
+      const bookmarkBadge = document.getElementById('sidebar-bookmark-badge');
 
       function updateActiveFilterBadge() {
         let count = 0;
@@ -946,12 +946,12 @@ if (typeof document !== 'undefined') {
         if (selectedSkills && selectedSkills.size > 0) count += selectedSkills.size;
         if (onlyInitialIng) count += 1;
         
-        if (filterBadgePill) {
+        if (bookmarkBadge) {
           if (count > 0) {
-            filterBadgePill.textContent = count;
-            filterBadgePill.style.display = 'inline-flex';
+            bookmarkBadge.textContent = count;
+            bookmarkBadge.style.display = 'inline-flex';
           } else {
-            filterBadgePill.style.display = 'none';
+            bookmarkBadge.style.display = 'none';
           }
         }
       }
@@ -964,24 +964,24 @@ if (typeof document !== 'undefined') {
         if (shouldCollapse) {
           sidebar.classList.add('collapsed');
           if (backdrop) backdrop.classList.remove('active');
-          if (filterToggleBtn) {
-            filterToggleBtn.classList.remove('active');
-            filterToggleBtn.setAttribute('aria-expanded', 'false');
+          if (bookmarkHandle) {
+            bookmarkHandle.setAttribute('aria-expanded', 'false');
+            bookmarkHandle.title = '展開篩選側邊欄';
           }
         } else {
           sidebar.classList.remove('collapsed');
           if (window.innerWidth <= 1024 && backdrop) {
             backdrop.classList.add('active');
           }
-          if (filterToggleBtn) {
-            filterToggleBtn.classList.add('active');
-            filterToggleBtn.setAttribute('aria-expanded', 'true');
+          if (bookmarkHandle) {
+            bookmarkHandle.setAttribute('aria-expanded', 'true');
+            bookmarkHandle.title = '收合篩選側邊欄';
           }
         }
       }
 
-      if (filterToggleBtn) {
-        filterToggleBtn.addEventListener('click', () => toggleSidebar());
+      if (bookmarkHandle) {
+        bookmarkHandle.addEventListener('click', () => toggleSidebar());
       }
       if (closeBtn) {
         closeBtn.addEventListener('click', () => toggleSidebar(false));
