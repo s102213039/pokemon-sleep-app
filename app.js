@@ -565,27 +565,41 @@ if (typeof document !== 'undefined') {
         // 隱藏所有 panels
         [panelPokemon, panelRecipes, panelBox, panelNews].forEach(p => p && (p.style.display = 'none'));
 
+        const filterToggleBtn = document.getElementById('pokemon-filter-toggle-btn');
+        const filterSidebar = document.getElementById('pokemon-filter-sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+
         if (target === 'news' && panelNews && tabNews) {
           tabNews.classList.add('active');
           panelNews.style.display = 'block';
+          if (filterToggleBtn) filterToggleBtn.style.display = 'none';
+          if (filterSidebar) filterSidebar.classList.add('collapsed');
+          if (backdrop) backdrop.classList.remove('active');
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#news');
           }
         } else if (target === 'box' && panelBox && tabBox) {
           tabBox.classList.add('active');
           panelBox.style.display = 'block';
+          if (filterToggleBtn) filterToggleBtn.style.display = 'none';
+          if (filterSidebar) filterSidebar.classList.add('collapsed');
+          if (backdrop) backdrop.classList.remove('active');
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#box');
           }
         } else if (target === 'recipes') {
           tabRecipes.classList.add('active');
           panelRecipes.style.display = 'block';
+          if (filterToggleBtn) filterToggleBtn.style.display = 'none';
+          if (filterSidebar) filterSidebar.classList.add('collapsed');
+          if (backdrop) backdrop.classList.remove('active');
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#recipes');
           }
         } else {
           tabPokemon.classList.add('active');
           panelPokemon.style.display = 'block';
+          if (filterToggleBtn) filterToggleBtn.style.display = 'inline-flex';
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#pokemon');
           }

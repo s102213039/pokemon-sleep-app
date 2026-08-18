@@ -525,24 +525,80 @@ header {
   width: 100%;
 }
 
-/* ⬅️ 左側抽屜式滑動側邊欄 (Left Sliding Sidebar - 無感知無縫配色) */
+/* Header Filter Toggle Button & Brand Group */
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-filter-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  flex-shrink: 0;
+  user-select: none;
+  height: 36px;
+  box-sizing: border-box;
+}
+
+.header-filter-toggle-btn:hover {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: rgba(56, 189, 248, 0.5);
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+}
+
+.header-filter-toggle-btn.active {
+  background: rgba(2, 132, 199, 0.35);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+.filter-badge-pill {
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #38bdf8;
+  color: #0f172a;
+  font-size: 10.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ⬅️ 左側抽屜式滑動側邊欄 (Left Sliding Sidebar - 上到下佔滿全屏 100vh、精緻透明毛玻璃背景) */
 .pokemon-filter-sidebar {
   position: fixed;
-  top: 60px;
+  top: 0;
   left: 0;
   bottom: 0;
-  width: 228px;
-  height: calc(100vh - 60px);
-  background: #0f172a;
-  border-right: 1px solid var(--border-color);
+  width: 232px;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.72);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
   border-top: none;
   border-left: none;
   border-bottom: none;
   border-radius: 0;
-  box-shadow: 3px 0 16px rgba(0, 0, 0, 0.5);
+  box-shadow: 4px 0 28px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   display: flex;
   flex-direction: column;
-  z-index: 100;
+  z-index: 150;
   transform: translateX(0);
   transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -553,41 +609,45 @@ header {
 }
 
 .sidebar-header {
-  padding: 10px 12px;
+  height: 64px;
+  padding: 0 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--border-color);
-  background: #0f172a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .sidebar-title-group {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 13px;
+  gap: 6px;
+  font-size: 14px;
   font-weight: 700;
   color: #ffffff;
 }
 
 .sidebar-icon {
-  font-size: 13.5px;
+  font-size: 15px;
 }
 
 .sidebar-header-actions {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 
 .sidebar-reset-btn {
   background: rgba(239, 68, 68, 0.12);
   color: #fca5a5;
   border: 1px solid rgba(239, 68, 68, 0.28);
-  border-radius: 4px;
-  padding: 2.5px 7px;
-  font-size: 10.5px;
+  border-radius: 5px;
+  padding: 3px 8px;
+  font-size: 11.5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -600,35 +660,35 @@ header {
 }
 
 .sidebar-close-btn {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.06);
   color: #94a3b8;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  width: 24px;
-  height: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 5px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .sidebar-close-btn:hover {
-  background: rgba(56, 189, 248, 0.15);
+  background: rgba(56, 189, 248, 0.18);
   color: #38bdf8;
-  border-color: rgba(56, 189, 248, 0.4);
+  border-color: rgba(56, 189, 248, 0.45);
 }
 
 .sidebar-scrollable-content {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 10px 10px 24px;
+  padding: 16px 12px 40px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  background: #0f172a;
+  gap: 14px;
+  background: transparent;
 }
 
 /* 輕量美觀自訂滾動條 */
@@ -636,11 +696,11 @@ header {
   width: 3.5px;
 }
 .sidebar-scrollable-content::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 4px;
 }
 .sidebar-scrollable-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(56, 189, 248, 0.45);
+  background: rgba(56, 189, 248, 0.5);
 }
 .sidebar-scrollable-content::-webkit-scrollbar-track {
   background: transparent;
@@ -654,8 +714,8 @@ header {
   width: 100%;
   background: rgba(30, 41, 59, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  padding: 6px 8px;
+  border-radius: 7px;
+  padding: 7px 9px;
   cursor: pointer;
   user-select: none;
   transition: all 0.2s ease;
@@ -668,7 +728,7 @@ header {
 }
 
 .sidebar-final-evo-text {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
@@ -680,7 +740,7 @@ header {
 }
 
 .sidebar-switch-wrapper .switch-slider {
-  width: 28px;
+  width: 29px;
   height: 15px;
 }
 
@@ -692,13 +752,13 @@ header {
 }
 
 .sidebar-switch-wrapper .switch-checkbox:checked + .switch-slider::before {
-  transform: translateX(13px);
+  transform: translateX(14px);
 }
 
 .sidebar-section {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
 }
 
 .sidebar-section-header {
@@ -709,7 +769,7 @@ header {
 }
 
 .sidebar-section-title {
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--accent-blue);
   letter-spacing: 0.3px;
@@ -719,7 +779,7 @@ header {
   background: transparent;
   color: #94a3b8;
   border: none;
-  font-size: 11px;
+  font-size: 11.5px;
   cursor: pointer;
   padding: 0 2px;
   transition: color 0.2s ease;
@@ -733,7 +793,7 @@ header {
 .sidebar-specialty-tags {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
+  gap: 5px;
   width: 100%;
 }
 
@@ -742,8 +802,8 @@ header {
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 5.5px 0;
-  font-size: 12px;
+  padding: 6.5px 0;
+  font-size: 13px;
   font-weight: 600;
   border-radius: 6px;
   text-align: center;
@@ -754,7 +814,7 @@ header {
 .sidebar-icon-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 3.5px;
+  gap: 4px;
 }
 
 .subfilter-icon-btn {
@@ -765,9 +825,9 @@ header {
   aspect-ratio: 1 / 1;
   background: rgba(30, 41, 59, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
-  padding: 3px;
+  padding: 3.5px;
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
@@ -788,18 +848,18 @@ header {
 }
 
 .subfilter-icon-img {
-  width: 20px;
-  height: 20px;
+  width: 21px;
+  height: 21px;
   object-fit: contain;
   pointer-events: none;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
 }
 
-/* ⚡ 主技能清單（雙列等寬） */
+/* ⚡ 主技能清單（雙列等寬、邊距與文字加大） */
 .sidebar-skills-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 4px;
+  gap: 6px;
   width: 100%;
 }
 
@@ -808,12 +868,12 @@ header {
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 5.5px 3px;
+  padding: 7px 4px;
   background: rgba(30, 41, 59, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 5px;
+  border-radius: 6px;
   color: var(--text-secondary);
-  font-size: 11.5px;
+  font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
@@ -841,66 +901,19 @@ header {
   white-space: nowrap;
 }
 
-/* 🎛️ 工具列篩選器切換按鈕 (Filter Toggle Button in Search Bar) */
-.filter-toggle-pill-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 8px 14px;
-  color: var(--text-primary);
-  font-size: 13.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  flex-shrink: 0;
-  user-select: none;
-  height: 40px;
-  box-sizing: border-box;
-}
-
-.filter-toggle-pill-btn:hover {
-  background: rgba(56, 189, 248, 0.15);
-  border-color: rgba(56, 189, 248, 0.5);
-  color: #ffffff;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
-}
-
-.filter-toggle-pill-btn.active {
-  background: rgba(2, 132, 199, 0.3);
-  border-color: #38bdf8;
-  color: #38bdf8;
-}
-
-.filter-badge-pill {
-  min-width: 17px;
-  height: 17px;
-  padding: 0 5px;
-  border-radius: 9px;
-  background: #38bdf8;
-  color: #0f172a;
-  font-size: 10.5px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* 手機與平板端半透明遮罩 */
+/* 手機與平板端半透明遮罩 (全屏覆蓋) */
 .sidebar-backdrop {
   display: none;
   position: fixed;
-  top: 60px;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
-  z-index: 99;
+  z-index: 149;
   opacity: 0;
   transition: opacity 0.28s ease;
   pointer-events: none;
