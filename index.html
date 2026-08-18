@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260818_11">
+  <link rel="stylesheet" href="styles.css?v=20260818_12">
 </head>
 <body>
 
@@ -611,14 +611,89 @@
             <span class="skill-max-lv-badge">上限 Lv.7</span>
           </div>
 
-          <p class="skill-desc-text">發動時會蓄積或噴放能量。在噴放能量時，會根據蓄積次數（0~10 次）大幅增加卡比獸能量。</p>
+          <p class="skill-desc-text">發動時蓄積或噴放能量。噴放時依蓄積次數（0~10次）暴增能量，最高達 82,386 能量！</p>
           
 
           <div class="skill-values-container">
             
-          <div class="skill-matrix-section">
-            <div class="skill-matrix-header">蓄力次數與等級對照矩陣 (0~10 次蓄力)：</div>
-            <div class="wiki-table-wrapper">
+          <div class="skill-interactive-section">
+            <div class="stack-selector-row">
+              <span class="stack-selector-label">🎯 蓄力次數切換：</span>
+              <div class="stack-chips-group" id="charge-stack-chips">
+                
+                  <button type="button" class="stack-chip-btn " data-stack-target="0">0次</button>
+                
+                  <button type="button" class="stack-chip-btn " data-stack-target="1">1次</button>
+                
+                  <button type="button" class="stack-chip-btn " data-stack-target="2">2次</button>
+                
+                  <button type="button" class="stack-chip-btn " data-stack-target="3">3次</button>
+                
+                  <button type="button" class="stack-chip-btn " data-stack-target="4">4次</button>
+                
+                  <button type="button" class="stack-chip-btn " data-stack-target="5">5次</button>
+                
+                  <button type="button" class="stack-chip-btn " data-stack-target="6">6次</button>
+                
+                  <button type="button" class="stack-chip-btn " data-stack-target="7">7次</button>
+                
+                  <button type="button" class="stack-chip-btn " data-stack-target="8">8次</button>
+                
+                  <button type="button" class="stack-chip-btn " data-stack-target="9">9次</button>
+                
+                  <button type="button" class="stack-chip-btn active" data-stack-target="10">10次</button>
+                
+              </div>
+            </div>
+
+            <!-- 即時動態等級卡片 (預設為 10次蓄力) -->
+            <div id="charge-stock-dynamic-levels" class="skill-levels-grid" style="margin-top: 8px;">
+              
+                <div class="skill-level-chip highlight-gold">
+                  <span class="level-tag">Lv.1</span>
+                  <span class="level-val">10,980 能量</span>
+                </div>
+              
+                <div class="skill-level-chip highlight-gold">
+                  <span class="level-tag">Lv.2</span>
+                  <span class="level-val">15,610 能量</span>
+                </div>
+              
+                <div class="skill-level-chip highlight-gold">
+                  <span class="level-tag">Lv.3</span>
+                  <span class="level-val">21,540 能量</span>
+                </div>
+              
+                <div class="skill-level-chip highlight-gold">
+                  <span class="level-tag">Lv.4</span>
+                  <span class="level-val">29,740 能量</span>
+                </div>
+              
+                <div class="skill-level-chip highlight-gold">
+                  <span class="level-tag">Lv.5</span>
+                  <span class="level-val">41,047 能量</span>
+                </div>
+              
+                <div class="skill-level-chip highlight-gold">
+                  <span class="level-tag">Lv.6</span>
+                  <span class="level-val">56,712 能量</span>
+                </div>
+              
+                <div class="skill-level-chip highlight-gold">
+                  <span class="level-tag">Lv.7</span>
+                  <span class="level-val">82,386 能量</span>
+                </div>
+              
+            </div>
+
+            <!-- 展開完整對照表按鈕 -->
+            <div style="margin-top: 8px;">
+              <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="charge-matrix-table">
+                📊 展開 / 收合完整 0~10 次蓄力數值表
+              </button>
+            </div>
+
+            <div id="charge-matrix-table" class="wiki-table-wrapper" style="display: none; margin-top: 8px;">
               <table class="wiki-mini-table">
                 <thead>
                   <tr>
@@ -628,58 +703,58 @@
                 </thead>
                 <tbody>
                   
-                    <tr>
-                      <td class="font-bold text-accent">0 次蓄力</td>
+                    <tr class="">
+                      <td class="font-bold text-accent">0 次</td>
                       <td>600</td><td>853</td><td>1,177</td><td>1,625</td><td>2,243</td><td>3,099</td><td>4,502</td>
                     </tr>
                   
-                    <tr>
-                      <td class="font-bold text-accent">1 次蓄力</td>
+                    <tr class="">
+                      <td class="font-bold text-accent">1 次</td>
                       <td>1,020</td><td>1,450</td><td>2,001</td><td>2,763</td><td>3,813</td><td>5,268</td><td>7,653</td>
                     </tr>
                   
-                    <tr>
-                      <td class="font-bold text-accent">2 次蓄力</td>
+                    <tr class="">
+                      <td class="font-bold text-accent">2 次</td>
                       <td>1,500</td><td>2,132</td><td>2,943</td><td>4,063</td><td>5,607</td><td>7,747</td><td>11,255</td>
                     </tr>
                   
-                    <tr>
-                      <td class="font-bold text-accent">3 次蓄力</td>
+                    <tr class="">
+                      <td class="font-bold text-accent">3 次</td>
                       <td>2,040</td><td>2,900</td><td>4,002</td><td>5,526</td><td>7,626</td><td>10,536</td><td>15,307</td>
                     </tr>
                   
-                    <tr>
-                      <td class="font-bold text-accent">4 次蓄力</td>
+                    <tr class="">
+                      <td class="font-bold text-accent">4 次</td>
                       <td>2,640</td><td>3,753</td><td>5,179</td><td>7,151</td><td>9,869</td><td>13,635</td><td>19,809</td>
                     </tr>
                   
-                    <tr>
-                      <td class="font-bold text-accent">5 次蓄力</td>
+                    <tr class="">
+                      <td class="font-bold text-accent">5 次</td>
                       <td>3,300</td><td>4,691</td><td>6,474</td><td>8,939</td><td>12,336</td><td>17,044</td><td>24,761</td>
                     </tr>
                   
-                    <tr>
-                      <td class="font-bold text-accent">6 次蓄力</td>
+                    <tr class="">
+                      <td class="font-bold text-accent">6 次</td>
                       <td>4,020</td><td>5,715</td><td>7,886</td><td>10,889</td><td>15,028</td><td>20,763</td><td>30,163</td>
                     </tr>
                   
-                    <tr>
-                      <td class="font-bold text-accent">7 次蓄力</td>
+                    <tr class="">
+                      <td class="font-bold text-accent">7 次</td>
                       <td>4,920</td><td>6,995</td><td>9,652</td><td>13,327</td><td>18,393</td><td>25,412</td><td>36,916</td>
                     </tr>
                   
-                    <tr>
-                      <td class="font-bold text-accent">8 次蓄力</td>
+                    <tr class="">
+                      <td class="font-bold text-accent">8 次</td>
                       <td>6,180</td><td>8,786</td><td>12,124</td><td>16,740</td><td>23,103</td><td>31,920</td><td>46,370</td>
                     </tr>
                   
-                    <tr>
-                      <td class="font-bold text-accent">9 次蓄力</td>
+                    <tr class="">
+                      <td class="font-bold text-accent">9 次</td>
                       <td>7,980</td><td>11,345</td><td>15,655</td><td>21,615</td><td>29,832</td><td>41,217</td><td>59,876</td>
                     </tr>
                   
-                    <tr>
-                      <td class="font-bold text-accent">10 次蓄力</td>
+                    <tr class="row-highlight">
+                      <td class="font-bold text-accent">10 次</td>
                       <td>10,980</td><td>15,610</td><td>21,540</td><td>29,740</td><td>41,047</td><td>56,712</td><td>82,386</td>
                     </tr>
                   
@@ -988,49 +1063,109 @@
             <span class="skill-max-lv-badge">上限 Lv.6</span>
           </div>
 
-          <p class="skill-desc-text">雷公/炎帝/水君專屬招式。隊伍中所有同屬性寶可夢立刻完成幫忙。隊伍中同屬性不同種類的寶可夢越多，效果進一步提升！</p>
+          <p class="skill-desc-text">雷公/炎帝/水君專屬招式。隊伍中所有同屬性寶可夢立刻完成幫忙。同屬性不同種類越多效果越強！</p>
           
 
           <div class="skill-values-container">
             
-          <div class="skill-matrix-section">
-            <div class="skill-matrix-header">同屬性不同種類隊友數量對照矩陣 (0~5 種類)：</div>
-            <div class="wiki-table-wrapper">
+          <div class="skill-interactive-section">
+            <div class="stack-selector-row">
+              <span class="stack-selector-label">⚡ 同屬性種類數：</span>
+              <div class="stack-chips-group" id="helper-boost-chips">
+                
+                  <button type="button" class="stack-chip-btn " data-boost-kind="0">0種類</button>
+                
+                  <button type="button" class="stack-chip-btn " data-boost-kind="1">1種類</button>
+                
+                  <button type="button" class="stack-chip-btn " data-boost-kind="2">2種類</button>
+                
+                  <button type="button" class="stack-chip-btn " data-boost-kind="3">3種類</button>
+                
+                  <button type="button" class="stack-chip-btn " data-boost-kind="4">4種類</button>
+                
+                  <button type="button" class="stack-chip-btn active" data-boost-kind="5">5種類</button>
+                
+              </div>
+            </div>
+
+            <!-- 即時動態等級卡片 (預設為 5種類) -->
+            <div id="helper-boost-dynamic-levels" class="skill-levels-grid" style="margin-top: 8px;">
+              
+                <div class="skill-level-chip highlight-blue">
+                  <span class="level-tag">Lv.1</span>
+                  <span class="level-val">6 次幫忙</span>
+                </div>
+              
+                <div class="skill-level-chip highlight-blue">
+                  <span class="level-tag">Lv.2</span>
+                  <span class="level-val">7 次幫忙</span>
+                </div>
+              
+                <div class="skill-level-chip highlight-blue">
+                  <span class="level-tag">Lv.3</span>
+                  <span class="level-val">8 次幫忙</span>
+                </div>
+              
+                <div class="skill-level-chip highlight-blue">
+                  <span class="level-tag">Lv.4</span>
+                  <span class="level-val">9 次幫忙</span>
+                </div>
+              
+                <div class="skill-level-chip highlight-blue">
+                  <span class="level-tag">Lv.5</span>
+                  <span class="level-val">10 次幫忙</span>
+                </div>
+              
+                <div class="skill-level-chip highlight-blue">
+                  <span class="level-tag">Lv.6</span>
+                  <span class="level-val">11 次幫忙</span>
+                </div>
+              
+            </div>
+
+            <!-- 展開完整對照表按鈕 -->
+            <div style="margin-top: 8px;">
+              <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="helper-boost-table">
+                📊 展開 / 收合完整 0~5 種類對照表
+              </button>
+            </div>
+
+            <div id="helper-boost-table" class="wiki-table-wrapper" style="display: none; margin-top: 8px;">
               <table class="wiki-mini-table">
                 <thead>
                   <tr>
-                    <th>種類數</th>
+                    <th>同屬種類</th>
                     <th>Lv.1</th><th>Lv.2</th><th>Lv.3</th><th>Lv.4</th><th>Lv.5</th><th>Lv.6</th>
                   </tr>
                 </thead>
                 <tbody>
                   
-                    <tr>
+                    <tr class="">
                       <td class="font-bold text-accent">0 種類</td>
                       <td>2 次</td><td>3 次</td><td>3 次</td><td>4 次</td><td>4 次</td><td>5 次</td>
                     </tr>
                   
-                    <tr>
+                    <tr class="">
                       <td class="font-bold text-accent">1 種類</td>
                       <td>2 次</td><td>3 次</td><td>3 次</td><td>4 次</td><td>4 次</td><td>5 次</td>
                     </tr>
                   
-                    <tr>
+                    <tr class="">
                       <td class="font-bold text-accent">2 種類</td>
                       <td>2 次</td><td>3 次</td><td>3 次</td><td>4 次</td><td>5 次</td><td>6 次</td>
                     </tr>
                   
-                    <tr>
+                    <tr class="">
                       <td class="font-bold text-accent">3 種類</td>
                       <td>3 次</td><td>4 次</td><td>5 次</td><td>6 次</td><td>7 次</td><td>8 次</td>
                     </tr>
                   
-                    <tr>
+                    <tr class="">
                       <td class="font-bold text-accent">4 種類</td>
                       <td>4 次</td><td>5 次</td><td>6 次</td><td>7 次</td><td>8 次</td><td>9 次</td>
                     </tr>
                   
-                    <tr>
+                    <tr class="row-highlight">
                       <td class="font-bold text-accent">5 種類</td>
                       <td>6 次</td><td>7 次</td><td>8 次</td><td>9 次</td><td>10 次</td><td>11 次</td>
                     </tr>
@@ -1441,7 +1576,7 @@
             <span class="skill-max-lv-badge">上限 Lv.6</span>
           </div>
 
-          <p class="skill-desc-text">基拉祈專屬招式。讓全隊回復活力，還會額外獲得自己與隊友撿來的樹果（依不同種類同屬隊友數加成）。</p>
+          <p class="skill-desc-text">基拉祈專屬招式。全隊回復活力，還會額外獲得撿來的樹果（依不同種類同屬隊友數加成）。</p>
           
 
           <div class="skill-values-container">
@@ -1524,7 +1659,7 @@
             
             <div class="calc-inputs-row">
               <div class="calc-input-group">
-                <label class="calc-label">副技能組合：</label>
+                <label class="calc-label" for="calc-subskill-select">副技能組合：</label>
                 <select id="calc-subskill-select" class="calc-select">
                   <option value="0">無技能機率副技能 (0%)</option>
                   <option value="0.18">技能機率提升 S (+18%)</option>
@@ -1534,7 +1669,7 @@
               </div>
 
               <div class="calc-input-group">
-                <label class="calc-label">性格主技能機率：</label>
+                <label class="calc-label" for="calc-nature-select">性格主技能機率：</label>
                 <select id="calc-nature-select" class="calc-select">
                   <option value="1.2" selected>▲▲ 技能機率上升 (x 1.20)</option>
                   <option value="1.0">無修正 / 其它性格 (x 1.00)</option>
@@ -1545,7 +1680,7 @@
               <div class="calc-result-box">
                 <div class="calc-result-label">綜合發動機率倍率</div>
                 <div id="calc-result-val" class="calc-result-val">1.848 倍</div>
-                <div id="calc-result-badge" class="calc-result-badge grade-sss">SSS (發動極限)</div>
+                <div id="calc-result-badge" class="calc-result-badge grade-sss">SSS (頂級發動極限)</div>
               </div>
             </div>
 
@@ -2159,12 +2294,12 @@
             
             <div class="calc-inputs-row">
               <div class="calc-input-group">
-                <label class="calc-label">目前等級：</label>
+                <label class="calc-label" for="calc-sleep-cur-lv">目前等級：</label>
                 <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="59">
               </div>
 
               <div class="calc-input-group">
-                <label class="calc-label">目標等級：</label>
+                <label class="calc-label" for="calc-sleep-target-lv">目標等級：</label>
                 <input type="number" id="calc-sleep-target-lv" class="calc-input-num" value="30" min="2" max="60">
               </div>
 
@@ -3447,10 +3582,10 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260818_11"></script>
-  <script src="recipes.js?v=20260818_11"></script>
-  <script src="wiki.js?v=20260818_11"></script>
-  <script src="box.js?v=20260818_11"></script>
-  <script src="news.js?v=20260818_11"></script>
+  <script src="app.js?v=20260818_12"></script>
+  <script src="recipes.js?v=20260818_12"></script>
+  <script src="wiki.js?v=20260818_12"></script>
+  <script src="box.js?v=20260818_12"></script>
+  <script src="news.js?v=20260818_12"></script>
 </body>
 </html>

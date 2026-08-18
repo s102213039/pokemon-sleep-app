@@ -4213,6 +4213,107 @@ select optgroup,
   font-weight: 600;
 }
 
+.skill-interactive-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stack-selector-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+
+.stack-selector-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #38bdf8;
+  white-space: nowrap;
+}
+
+.stack-chips-group {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.stack-chip-btn {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.stack-chip-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.stack-chip-btn.active {
+  background: #0284c7;
+  border-color: #38bdf8;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.4);
+}
+
+.skill-level-chip.highlight-gold {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.skill-level-chip.highlight-gold .level-tag {
+  color: #fde047;
+}
+
+.skill-level-chip.highlight-gold .level-val {
+  color: #fef08a;
+  font-weight: 700;
+}
+
+.skill-level-chip.highlight-blue {
+  background: rgba(2, 132, 199, 0.18);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.wiki-toggle-detail-btn {
+  background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #94a3b8;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.wiki-toggle-detail-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #38bdf8;
+  border-color: #38bdf8;
+}
+
+.row-highlight {
+  background: rgba(245, 158, 11, 0.12);
+  font-weight: 700;
+}
+
 .skill-matrix-section {
   width: 100%;
 }
