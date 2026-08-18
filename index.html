@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260818_10">
+  <link rel="stylesheet" href="styles.css?v=20260818_11">
 </head>
 <body>
 
@@ -387,7 +387,2848 @@
     </div>
 
     <!-- Panel 3: 數據百科與攻略知識庫 -->
-    <div id="panel-wiki" class="view-panel" style="display:none;"></div>
+    <div id="panel-wiki" class="view-panel" style="display:none;">
+
+      <div class="wiki-main-container">
+        <!-- Wiki 頂部橫幅與子分頁切換 -->
+        <div class="wiki-header-card">
+          <div class="wiki-title-group">
+            <h2 class="wiki-main-title">📚 數據百科與攻略知識庫</h2>
+            <p class="wiki-subtitle">包含官方最新主技能 Lv.1~8 全數值矩陣、副技能與性格發動率計算機、三大專長評級榜及 Lv.60 食材天梯</p>
+          </div>
+
+          <!-- 二級子分頁導航 (Sub-tabs) -->
+          <div class="wiki-subnav-tabs" role="tablist">
+            <button type="button" class="wiki-subtab-btn active" data-subtab="skills">⚡ 主技能數值庫</button>
+            <button type="button" class="wiki-subtab-btn" data-subtab="subskills">🧩 副技能與性格指南</button>
+            <button type="button" class="wiki-subtab-btn" data-subtab="ratings">🎓 培育與評級指南</button>
+            <button type="button" class="wiki-subtab-btn" data-subtab="ingredients">🥗 Lv.60 食材天梯榜</button>
+          </div>
+        </div>
+
+        <!-- 子分頁 1：⚡ 主技能數值庫 (Main Skills) -->
+        <div id="wiki-subpanel-skills" class="wiki-subpanel active">
+          <div class="wiki-control-bar">
+            <div class="wiki-filter-pills">
+              <span class="wiki-pill-label">技能類型：</span>
+              <button type="button" class="wiki-pill-btn active" data-skill-cat="all">全部技能 (22)</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="energy">⚡ 能量系</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="energy_heal">💖 活力系</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="ingredient">🥗 食材與料理</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="special">👑 神獸與特殊專屬</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="shards">💎 夢之碎片</button>
+            </div>
+          </div>
+
+          <div id="wiki-skills-grid" class="wiki-skills-grid">
+            
+        <div class="wiki-skill-card" data-category="energy">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">⚡</span>
+              <div>
+                <h4 class="skill-name-text">能量填充S (固定值)</h4>
+                <span class="skill-cat-tag cat-energy">能量系</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.7</span>
+          </div>
+
+          <p class="skill-desc-text">增加卡比獸的能量（固定數值）。</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-levels-grid">
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.1</span>
+                <span class="level-val">400 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.2</span>
+                <span class="level-val">569 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.3</span>
+                <span class="level-val">785 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.4</span>
+                <span class="level-val">1,083 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.5</span>
+                <span class="level-val">1,496 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.6</span>
+                <span class="level-val">2,066 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.7</span>
+                <span class="level-val">3,002 能量</span>
+              </div>
+            
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="energy">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">🎲</span>
+              <div>
+                <h4 class="skill-name-text">能量填充S (隨機/變動值)</h4>
+                <span class="skill-cat-tag cat-energy">能量系</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.7</span>
+          </div>
+
+          <p class="skill-desc-text">隨機增加卡比獸的能量（在最小~最大區間浮動）。</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-levels-grid">
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.1</span>
+                <span class="level-val">200 ~ 800 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.2</span>
+                <span class="level-val">285 ~ 1138 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.3</span>
+                <span class="level-val">393 ~ 1570 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.4</span>
+                <span class="level-val">542 ~ 2166 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.5</span>
+                <span class="level-val">748 ~ 2992 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.6</span>
+                <span class="level-val">1033 ~ 4132 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.7</span>
+                <span class="level-val">1501 ~ 6004 能量</span>
+              </div>
+            
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="energy">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">🔥</span>
+              <div>
+                <h4 class="skill-name-text">能量填充M (固定值)</h4>
+                <span class="skill-cat-tag cat-energy">能量系</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.7</span>
+          </div>
+
+          <p class="skill-desc-text">大量增加卡比獸的能量（固定數值）。</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-levels-grid">
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.1</span>
+                <span class="level-val">880 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.2</span>
+                <span class="level-val">1,251 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.3</span>
+                <span class="level-val">1,726 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.4</span>
+                <span class="level-val">2,383 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.5</span>
+                <span class="level-val">3,290 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.6</span>
+                <span class="level-val">4,546 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.7</span>
+                <span class="level-val">6,409 能量</span>
+              </div>
+            
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="energy">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">🔋</span>
+              <div>
+                <h4 class="skill-name-text">蓄力 (能量填充S)</h4>
+                <span class="skill-cat-tag cat-energy">能量系 (複合)</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.7</span>
+          </div>
+
+          <p class="skill-desc-text">發動時會蓄積或噴放能量。在噴放能量時，會根據蓄積次數（0~10 次）大幅增加卡比獸能量。</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-matrix-section">
+            <div class="skill-matrix-header">蓄力次數與等級對照矩陣 (0~10 次蓄力)：</div>
+            <div class="wiki-table-wrapper">
+              <table class="wiki-mini-table">
+                <thead>
+                  <tr>
+                    <th>蓄力次數</th>
+                    <th>Lv.1</th><th>Lv.2</th><th>Lv.3</th><th>Lv.4</th><th>Lv.5</th><th>Lv.6</th><th>Lv.7</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">0 次蓄力</td>
+                      <td>600</td><td>853</td><td>1,177</td><td>1,625</td><td>2,243</td><td>3,099</td><td>4,502</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">1 次蓄力</td>
+                      <td>1,020</td><td>1,450</td><td>2,001</td><td>2,763</td><td>3,813</td><td>5,268</td><td>7,653</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">2 次蓄力</td>
+                      <td>1,500</td><td>2,132</td><td>2,943</td><td>4,063</td><td>5,607</td><td>7,747</td><td>11,255</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">3 次蓄力</td>
+                      <td>2,040</td><td>2,900</td><td>4,002</td><td>5,526</td><td>7,626</td><td>10,536</td><td>15,307</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">4 次蓄力</td>
+                      <td>2,640</td><td>3,753</td><td>5,179</td><td>7,151</td><td>9,869</td><td>13,635</td><td>19,809</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">5 次蓄力</td>
+                      <td>3,300</td><td>4,691</td><td>6,474</td><td>8,939</td><td>12,336</td><td>17,044</td><td>24,761</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">6 次蓄力</td>
+                      <td>4,020</td><td>5,715</td><td>7,886</td><td>10,889</td><td>15,028</td><td>20,763</td><td>30,163</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">7 次蓄力</td>
+                      <td>4,920</td><td>6,995</td><td>9,652</td><td>13,327</td><td>18,393</td><td>25,412</td><td>36,916</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">8 次蓄力</td>
+                      <td>6,180</td><td>8,786</td><td>12,124</td><td>16,740</td><td>23,103</td><td>31,920</td><td>46,370</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">9 次蓄力</td>
+                      <td>7,980</td><td>11,345</td><td>15,655</td><td>21,615</td><td>29,832</td><td>41,217</td><td>59,876</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">10 次蓄力</td>
+                      <td>10,980</td><td>15,610</td><td>21,540</td><td>29,740</td><td>41,047</td><td>56,712</td><td>82,386</td>
+                    </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="special">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">🌑</span>
+              <div>
+                <h4 class="skill-name-text">夢魘 (能量填充M)</h4>
+                <span class="skill-cat-tag cat-special">神獸/特殊</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.6</span>
+          </div>
+
+          <p class="skill-desc-text">達克萊伊專屬招式。卡比獸能量超大幅增加，但會讓幫手隊伍中【惡屬性以外】的寶可夢活力下降 12 點。</p>
+          <div class="skill-penalty-banner">⚠️ 副作用：惡屬性以外全體隊友活力 -12</div>
+
+          <div class="skill-values-container">
+            
+          <div class="skill-levels-grid">
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.1</span>
+                <span class="level-val">2,640 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.2</span>
+                <span class="level-val">3,753 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.3</span>
+                <span class="level-val">5,178 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.4</span>
+                <span class="level-val">7,149 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.5</span>
+                <span class="level-val">9,870 能量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.6</span>
+                <span class="level-val">13,638 能量</span>
+              </div>
+            
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="ingredient">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">🥗</span>
+              <div>
+                <h4 class="skill-name-text">食材獲取S</h4>
+                <span class="skill-cat-tag cat-ingredient">食材與料理</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.7</span>
+          </div>
+
+          <p class="skill-desc-text">隨機獲得已解鎖的食材。</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-levels-grid">
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.1</span>
+                <span class="level-val">6 個食材</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.2</span>
+                <span class="level-val">8 個食材</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.3</span>
+                <span class="level-val">11 個食材</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.4</span>
+                <span class="level-val">14 個食材</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.5</span>
+                <span class="level-val">17 個食材</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.6</span>
+                <span class="level-val">21 個食材</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.7</span>
+                <span class="level-val">24 個食材</span>
+              </div>
+            
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="ingredient">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">🍲</span>
+              <div>
+                <h4 class="skill-name-text">料理強化S (擴充鍋子容量)</h4>
+                <span class="skill-cat-tag cat-ingredient">食材與料理</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.7</span>
+          </div>
+
+          <p class="skill-desc-text">增加下一次烹調時鍋子的食材上限容量（效果持續到料理漂亮成功或移動營地為止）。</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-levels-grid">
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.1</span>
+                <span class="level-val">7 個容量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.2</span>
+                <span class="level-val">10 個容量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.3</span>
+                <span class="level-val">12 個容量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.4</span>
+                <span class="level-val">17 個容量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.5</span>
+                <span class="level-val">22 個容量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.6</span>
+                <span class="level-val">27 個容量</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.7</span>
+                <span class="level-val">31 個容量</span>
+              </div>
+            
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="ingredient">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">✨</span>
+              <div>
+                <h4 class="skill-name-text">料理成功S (漂亮成功率提升)</h4>
+                <span class="skill-cat-tag cat-ingredient">食材與料理</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.6</span>
+          </div>
+
+          <p class="skill-desc-text">料理漂亮成功（爆擊）的機率提升。效果持續累積到料理漂亮成功或移動營地為止。</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-levels-grid">
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.1</span>
+                <span class="level-val">4%</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.2</span>
+                <span class="level-val">5%</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.3</span>
+                <span class="level-val">6%</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.4</span>
+                <span class="level-val">7%</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.5</span>
+                <span class="level-val">8%</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.6</span>
+                <span class="level-val">10%</span>
+              </div>
+            
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="special">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">🤝</span>
+              <div>
+                <h4 class="skill-name-text">幫手支援S</h4>
+                <span class="skill-cat-tag cat-special">神獸/特殊</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.7</span>
+          </div>
+
+          <p class="skill-desc-text">幫手寶可夢中的某 1 隻會立刻完成幫忙多次。</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-levels-grid">
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.1</span>
+                <span class="level-val">5 次幫忙</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.2</span>
+                <span class="level-val">6 次幫忙</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.3</span>
+                <span class="level-val">7 次幫忙</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.4</span>
+                <span class="level-val">8 次幫忙</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.5</span>
+                <span class="level-val">9 次幫忙</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.6</span>
+                <span class="level-val">10 次幫忙</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.7</span>
+                <span class="level-val">11 次幫忙</span>
+              </div>
+            
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="special">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">⚡</span>
+              <div>
+                <h4 class="skill-name-text">幫手加速 (屬性) (神獸專屬)</h4>
+                <span class="skill-cat-tag cat-special">神獸/特殊</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.6</span>
+          </div>
+
+          <p class="skill-desc-text">雷公/炎帝/水君專屬招式。隊伍中所有同屬性寶可夢立刻完成幫忙。隊伍中同屬性不同種類的寶可夢越多，效果進一步提升！</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-matrix-section">
+            <div class="skill-matrix-header">同屬性不同種類隊友數量對照矩陣 (0~5 種類)：</div>
+            <div class="wiki-table-wrapper">
+              <table class="wiki-mini-table">
+                <thead>
+                  <tr>
+                    <th>種類數</th>
+                    <th>Lv.1</th><th>Lv.2</th><th>Lv.3</th><th>Lv.4</th><th>Lv.5</th><th>Lv.6</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">0 種類</td>
+                      <td>2 次</td><td>3 次</td><td>3 次</td><td>4 次</td><td>4 次</td><td>5 次</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">1 種類</td>
+                      <td>2 次</td><td>3 次</td><td>3 次</td><td>4 次</td><td>4 次</td><td>5 次</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">2 種類</td>
+                      <td>2 次</td><td>3 次</td><td>3 次</td><td>4 次</td><td>5 次</td><td>6 次</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">3 種類</td>
+                      <td>3 次</td><td>4 次</td><td>5 次</td><td>6 次</td><td>7 次</td><td>8 次</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">4 種類</td>
+                      <td>4 次</td><td>5 次</td><td>6 次</td><td>7 次</td><td>8 次</td><td>9 次</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">5 種類</td>
+                      <td>6 次</td><td>7 次</td><td>8 次</td><td>9 次</td><td>10 次</td><td>11 次</td>
+                    </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="special">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">🫐</span>
+              <div>
+                <h4 class="skill-name-text">樹果遽增</h4>
+                <span class="skill-cat-tag cat-special">神獸/特殊</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.6</span>
+          </div>
+
+          <p class="skill-desc-text">帕路奇亞專屬招式。自身獲得大量樹果，另外還會獲得隊伍成員撿來的樹果。</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-dual-levels">
+            <div class="dual-row">
+              <span class="dual-label text-success font-bold">自身獲得：</span>
+              <span class="dual-val-badge">Lv.1: <strong>11</strong> 個樹果</span><span class="dual-val-badge">Lv.2: <strong>14</strong> 個樹果</span><span class="dual-val-badge">Lv.3: <strong>21</strong> 個樹果</span><span class="dual-val-badge">Lv.4: <strong>24</strong> 個樹果</span><span class="dual-val-badge">Lv.5: <strong>27</strong> 個樹果</span><span class="dual-val-badge">Lv.6: <strong>30</strong> 個樹果</span>
+            </div>
+            <div class="dual-row">
+              <span class="dual-label text-accent font-bold">隊伍成員獲得：</span>
+              <span class="dual-val-badge">Lv.1: <strong>1</strong> 個樹果</span><span class="dual-val-badge">Lv.2: <strong>2</strong> 個樹果</span><span class="dual-val-badge">Lv.3: <strong>2</strong> 個樹果</span><span class="dual-val-badge">Lv.4: <strong>3</strong> 個樹果</span><span class="dual-val-badge">Lv.5: <strong>4</strong> 個樹果</span><span class="dual-val-badge">Lv.6: <strong>5</strong> 個樹果</span>
+            </div>
+            
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="special">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">🎭</span>
+              <div>
+                <h4 class="skill-name-text">畫皮 (樹果遽增)</h4>
+                <span class="skill-cat-tag cat-special">神獸/特殊</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.6</span>
+          </div>
+
+          <p class="skill-desc-text">謎擬Ｑ專屬招式。自身與隊伍成員獲得樹果。漂亮成功時獲得 3 倍樹果，且至下次睡眠研究為止不會再發動。</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-dual-levels">
+            <div class="dual-row">
+              <span class="dual-label text-success font-bold">自身獲得：</span>
+              <span class="dual-val-badge">Lv.1: <strong>8</strong> 個樹果</span><span class="dual-val-badge">Lv.2: <strong>10</strong> 個樹果</span><span class="dual-val-badge">Lv.3: <strong>15</strong> 個樹果</span><span class="dual-val-badge">Lv.4: <strong>17</strong> 個樹果</span><span class="dual-val-badge">Lv.5: <strong>19</strong> 個樹果</span><span class="dual-val-badge">Lv.6: <strong>21</strong> 個樹果</span>
+            </div>
+            <div class="dual-row">
+              <span class="dual-label text-accent font-bold">隊伍成員獲得：</span>
+              <span class="dual-val-badge">Lv.1: <strong>1</strong> 個樹果</span><span class="dual-val-badge">Lv.2: <strong>2</strong> 個樹果</span><span class="dual-val-badge">Lv.3: <strong>2</strong> 個樹果</span><span class="dual-val-badge">Lv.4: <strong>3</strong> 個樹果</span><span class="dual-val-badge">Lv.5: <strong>4</strong> 個樹果</span><span class="dual-val-badge">Lv.6: <strong>5</strong> 個樹果</span>
+            </div>
+            <div class="skill-special-note">✨ 漂亮成功為 3 倍樹果</div>
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="shards">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">💎</span>
+              <div>
+                <h4 class="skill-name-text">夢之碎片獲取S (固定值)</h4>
+                <span class="skill-cat-tag cat-shards">夢碎系</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.8</span>
+          </div>
+
+          <p class="skill-desc-text">獲得夢之碎片（固定數量）。最高支援至 Lv.8！</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-levels-grid">
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.1</span>
+                <span class="level-val">240 碎片</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.2</span>
+                <span class="level-val">340 碎片</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.3</span>
+                <span class="level-val">480 碎片</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.4</span>
+                <span class="level-val">670 碎片</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.5</span>
+                <span class="level-val">920 碎片</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.6</span>
+                <span class="level-val">1,260 碎片</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.7</span>
+                <span class="level-val">1,800 碎片</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.8</span>
+                <span class="level-val">2,500 碎片</span>
+              </div>
+            
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="shards">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">🎰</span>
+              <div>
+                <h4 class="skill-name-text">夢之碎片獲取S (隨機/變動值)</h4>
+                <span class="skill-cat-tag cat-shards">夢碎系</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.8</span>
+          </div>
+
+          <p class="skill-desc-text">隨機獲得夢之碎片（浮動區間）。最高支援至 Lv.8！</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-levels-grid">
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.1</span>
+                <span class="level-val">120 ~ 480 碎片</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.2</span>
+                <span class="level-val">170 ~ 680 碎片</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.3</span>
+                <span class="level-val">240 ~ 960 碎片</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.4</span>
+                <span class="level-val">335 ~ 1340 碎片</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.5</span>
+                <span class="level-val">460 ~ 1840 碎片</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.6</span>
+                <span class="level-val">630 ~ 2520 碎片</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.7</span>
+                <span class="level-val">900 ~ 3600 碎片</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.8</span>
+                <span class="level-val">1150 ~ 4600 碎片</span>
+              </div>
+            
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="energy_heal">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">🔋</span>
+              <div>
+                <h4 class="skill-name-text">活力充填S</h4>
+                <span class="skill-cat-tag cat-energy_heal">活力系</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.6</span>
+          </div>
+
+          <p class="skill-desc-text">讓自身回復活力。</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-levels-grid">
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.1</span>
+                <span class="level-val">12 點活力</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.2</span>
+                <span class="level-val">16 點活力</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.3</span>
+                <span class="level-val">21 點活力</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.4</span>
+                <span class="level-val">26 點活力</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.5</span>
+                <span class="level-val">33 點活力</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.6</span>
+                <span class="level-val">43 點活力</span>
+              </div>
+            
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="energy_heal">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">💚</span>
+              <div>
+                <h4 class="skill-name-text">活力療癒S</h4>
+                <span class="skill-cat-tag cat-energy_heal">活力系</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.6</span>
+          </div>
+
+          <p class="skill-desc-text">隨機讓隊伍中的某 1 隻隊友寶可夢回復活力。</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-levels-grid">
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.1</span>
+                <span class="level-val">14 點活力</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.2</span>
+                <span class="level-val">17 點活力</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.3</span>
+                <span class="level-val">22 點活力</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.4</span>
+                <span class="level-val">28 點活力</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.5</span>
+                <span class="level-val">38 點活力</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.6</span>
+                <span class="level-val">50 點活力</span>
+              </div>
+            
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="energy_heal">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">💖</span>
+              <div>
+                <h4 class="skill-name-text">活力全體療癒S</h4>
+                <span class="skill-cat-tag cat-energy_heal">活力系 (補師)</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.6</span>
+          </div>
+
+          <p class="skill-desc-text">讓全體隊友寶可夢回復活力（主力隊伍必備核心補師招式）。</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-levels-grid">
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.1</span>
+                <span class="level-val">5 點活力</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.2</span>
+                <span class="level-val">7 點活力</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.3</span>
+                <span class="level-val">9 點活力</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.4</span>
+                <span class="level-val">11 點活力</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.5</span>
+                <span class="level-val">15 點活力</span>
+              </div>
+            
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.6</span>
+                <span class="level-val">18 點活力</span>
+              </div>
+            
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="energy_heal">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">🌙</span>
+              <div>
+                <h4 class="skill-name-text">月光 (活力填充S)</h4>
+                <span class="skill-cat-tag cat-energy_heal">活力系 (神獸)</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.6</span>
+          </div>
+
+          <p class="skill-desc-text">克雷色利亞專屬招式。自己回復活力，有時還會隨機讓隊伍中 1 隻隊友回復活力。</p>
+          
+
+          <div class="skill-values-container">
+            
+          <div class="skill-dual-levels">
+            <div class="dual-row">
+              <span class="dual-label text-success font-bold">自身活力：</span>
+              <span class="dual-val-badge">Lv.1: <strong>12</strong> 點活力</span><span class="dual-val-badge">Lv.2: <strong>16</strong> 點活力</span><span class="dual-val-badge">Lv.3: <strong>21</strong> 點活力</span><span class="dual-val-badge">Lv.4: <strong>26</strong> 點活力</span><span class="dual-val-badge">Lv.5: <strong>33</strong> 點活力</span><span class="dual-val-badge">Lv.6: <strong>43</strong> 點活力</span>
+            </div>
+            <div class="dual-row">
+              <span class="dual-label text-accent font-bold">隨機1隻隊友：</span>
+              <span class="dual-val-badge">Lv.1: <strong>6</strong> 點活力</span><span class="dual-val-badge">Lv.2: <strong>7</strong> 點活力</span><span class="dual-val-badge">Lv.3: <strong>10</strong> 點活力</span><span class="dual-val-badge">Lv.4: <strong>13</strong> 點活力</span><span class="dual-val-badge">Lv.5: <strong>17</strong> 點活力</span><span class="dual-val-badge">Lv.6: <strong>22</strong> 點活力</span>
+            </div>
+            
+          </div>
+        
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="energy_heal">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">🌠</span>
+              <div>
+                <h4 class="skill-name-text">新月祈禱 (活力全體療癒S)</h4>
+                <span class="skill-cat-tag cat-energy_heal">活力系 (神獸)</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.6</span>
+          </div>
+
+          <p class="skill-desc-text">基拉祈專屬招式。讓全隊回復活力，還會額外獲得自己與隊友撿來的樹果（依不同種類同屬隊友數加成）。</p>
+          
+
+          <div class="skill-values-container">
+            <div class="skill-level-chip"><span class="level-val"> 點活力 + 樹果</span></div>
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="special">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">🧬</span>
+              <div>
+                <h4 class="skill-name-text">變身 (技能複製)</h4>
+                <span class="skill-cat-tag cat-special">特殊機制</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.7</span>
+          </div>
+
+          <p class="skill-desc-text">百變怪專屬。隨機複製隊伍中 1 隻寶可夢的主技能發動（部分神獸技能無法複製，但會改為給予少量卡比獸能量）。</p>
+          
+
+          <div class="skill-values-container">
+            <div class="skill-level-chip"><span class="level-val">比照複製招式等級</span></div>
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="special">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">🎪</span>
+              <div>
+                <h4 class="skill-name-text">模仿 (技能複製)</h4>
+                <span class="skill-cat-tag cat-special">特殊機制</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.7</span>
+          </div>
+
+          <p class="skill-desc-text">魔牆人偶專屬。隨機複製隊伍中 1 隻寶可夢的主技能發動（部分特殊技能無法複製，但會改為給予少量卡比獸能量）。</p>
+          
+
+          <div class="skill-values-container">
+            <div class="skill-level-chip"><span class="level-val">比照複製招式等級</span></div>
+          </div>
+        </div>
+      
+        <div class="wiki-skill-card" data-category="special">
+          <div class="skill-card-top">
+            <div class="skill-icon-name">
+              <span class="skill-main-icon">☝️</span>
+              <div>
+                <h4 class="skill-name-text">揮指</h4>
+                <span class="skill-cat-tag cat-special">特殊機制</span>
+              </div>
+            </div>
+            <span class="skill-max-lv-badge">上限 Lv.7</span>
+          </div>
+
+          <p class="skill-desc-text">波克比家族專屬。從多種主技能中隨機抽選 1 種發動（蓄力、變身、模仿無法被揮指抽中）。</p>
+          
+
+          <div class="skill-values-container">
+            <div class="skill-level-chip"><span class="level-val">Lv.1~7 隨機發動</span></div>
+          </div>
+        </div>
+      
+          </div>
+        </div>
+
+        <!-- 子分頁 2：🧩 副技能與性格指南 (Sub-Skills & Natures) -->
+        <div id="wiki-subpanel-subskills" class="wiki-subpanel">
+          <!-- 互動式主技能發動機率計算機 (Image 4 實體化) -->
+          <div class="wiki-card wiki-calc-card">
+            <div class="wiki-card-header">
+              <span class="wiki-card-icon">🧮</span>
+              <h3 class="wiki-card-title">主技能發動機率計算機（副技能 × 性格乘算矩陣）</h3>
+            </div>
+            <p class="wiki-card-desc">依據遊戲底層乘法公式：<code>(1 + 副技能提升%) × 性格倍率</code> 即時計算您的寶可夢發動率加成。</p>
+            
+            <div class="calc-inputs-row">
+              <div class="calc-input-group">
+                <label class="calc-label">副技能組合：</label>
+                <select id="calc-subskill-select" class="calc-select">
+                  <option value="0">無技能機率副技能 (0%)</option>
+                  <option value="0.18">技能機率提升 S (+18%)</option>
+                  <option value="0.36">技能機率提升 M (+36%)</option>
+                  <option value="0.54" selected>STM (+36%) + STS (+18%) 雙發動 (+54%)</option>
+                </select>
+              </div>
+
+              <div class="calc-input-group">
+                <label class="calc-label">性格主技能機率：</label>
+                <select id="calc-nature-select" class="calc-select">
+                  <option value="1.2" selected>▲▲ 技能機率上升 (x 1.20)</option>
+                  <option value="1.0">無修正 / 其它性格 (x 1.00)</option>
+                  <option value="0.8">▼▼ 技能機率下降 (x 0.80)</option>
+                </select>
+              </div>
+
+              <div class="calc-result-box">
+                <div class="calc-result-label">綜合發動機率倍率</div>
+                <div id="calc-result-val" class="calc-result-val">1.848 倍</div>
+                <div id="calc-result-badge" class="calc-result-badge grade-sss">SSS (發動極限)</div>
+              </div>
+            </div>
+
+            <!-- 速查對照表 -->
+            <div class="wiki-table-wrapper" style="margin-top: 18px;">
+              <table class="wiki-data-table">
+                <thead>
+                  <tr>
+                    <th>加成與修正組合</th>
+                    <th>綜合倍率</th>
+                    <th>評級</th>
+                    <th>計算算式</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                    <tr>
+                      <td class="font-bold text-white">STM (+36%) + STS (+18%) + 性格▲▲ (x1.2)</td>
+                      <td class="text-accent font-bold">1.848 倍</td>
+                      <td><span class="wiki-tier-badge tier-s">SSS (發動極限)</span></td>
+                      <td class="text-muted">1.54 × 1.2</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">STM (+36%) + 性格▲▲ (x1.2)</td>
+                      <td class="text-accent font-bold">1.632 倍</td>
+                      <td><span class="wiki-tier-badge tier-s">SS (優秀極限)</span></td>
+                      <td class="text-muted">1.36 × 1.2</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">STM (+36%) + STS (+18%)</td>
+                      <td class="text-accent font-bold">1.530 倍</td>
+                      <td><span class="wiki-tier-badge tier-s">S (雙副技無性格)</span></td>
+                      <td class="text-muted">1.54 × 1.0</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">STS (+18%) + 性格▲▲ (x1.2)</td>
+                      <td class="text-accent font-bold">1.416 倍</td>
+                      <td><span class="wiki-tier-badge tier-a">A (單副技+性格)</span></td>
+                      <td class="text-muted">1.18 × 1.2</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">STM (+36%)</td>
+                      <td class="text-accent font-bold">1.360 倍</td>
+                      <td><span class="wiki-tier-badge tier-a">A (單STM無性格)</span></td>
+                      <td class="text-muted">1.36 × 1.0</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">STM (+36%) + STS (+18%) + 性格▼▼ (x0.8)</td>
+                      <td class="text-accent font-bold">1.232 倍</td>
+                      <td><span class="wiki-tier-badge tier-b">B (雙副技補回性格)</span></td>
+                      <td class="text-muted">1.54 × 0.8</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">性格▲▲ (x1.2)</td>
+                      <td class="text-accent font-bold">1.200 倍</td>
+                      <td><span class="wiki-tier-badge tier-b">B (純性格無副技)</span></td>
+                      <td class="text-muted">1.00 × 1.2</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">STS (+18%)</td>
+                      <td class="text-accent font-bold">1.180 倍</td>
+                      <td><span class="wiki-tier-badge tier-b">B (純STS無性格)</span></td>
+                      <td class="text-muted">1.18 × 1.0</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">STM (+36%) + 性格▼▼ (x0.8)</td>
+                      <td class="text-accent font-bold">1.088 倍</td>
+                      <td><span class="wiki-tier-badge tier-c">C (STM抵銷性格下修)</span></td>
+                      <td class="text-muted">1.36 × 0.8</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">無任何加成/修正 (Baseline)</td>
+                      <td class="text-accent font-bold">1.000 倍</td>
+                      <td><span class="wiki-tier-badge tier-基">基準線 (1.00x)</span></td>
+                      <td class="text-muted">1.00 × 1.0</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">STS (+18%) + 性格▼▼ (x0.8)</td>
+                      <td class="text-accent font-bold">0.944 倍</td>
+                      <td><span class="wiki-tier-badge tier-d">D (微幅受阻)</span></td>
+                      <td class="text-muted">1.18 × 0.8</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">性格▼▼ (x0.8)</td>
+                      <td class="text-accent font-bold">0.800 倍</td>
+                      <td><span class="wiki-tier-badge tier-e">E (嚴重削弱)</span></td>
+                      <td class="text-muted">1.00 × 0.8</td>
+                    </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 副技能完整階級與數值說明表格 (Image 5 & 1 實體化) -->
+          <div class="wiki-card" style="margin-top: 24px;">
+            <div class="wiki-card-header">
+              <span class="wiki-card-icon">📋</span>
+              <h3 class="wiki-card-title">副技能階級與數值完整一覽表</h3>
+            </div>
+            <div class="wiki-rule-banner">
+              ⚠️ <strong>重要規則</strong>：副技能幫忙速度（幫手獎勵 5% + 幫速M 14% + 幫速S 7%）<strong>合計上限為 35%</strong>。
+            </div>
+            <div class="wiki-table-wrapper">
+              <table class="wiki-data-table">
+                <thead>
+                  <tr>
+                    <th>專長分類</th>
+                    <th>階級 1 (S)</th>
+                    <th>階級 2 (M)</th>
+                    <th>階級 3 (L)</th>
+                    <th>詳細效果說明</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                    <tr>
+                      <td class="font-bold">採集型</td>
+                      <td><span class="wiki-skill-badge skill-badge-white">持有上限提升 S <span class="skill-badge-val">+6 個</span></span></td>
+                      <td><span class="wiki-skill-badge skill-badge-blue">持有上限提升 M <span class="skill-badge-val">+12 個</span></span></td>
+                      <td><span class="wiki-skill-badge skill-badge-blue">持有上限提升 L <span class="skill-badge-val">+18 個</span></span></td>
+                      <td class="text-secondary">該寶可夢可持有的樹果或材料上限提升 6 / 12 / 18 個</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold">採集型</td>
+                      <td><span class="wiki-skill-badge skill-badge-white">幫忙速度 S <span class="skill-badge-val">-7%</span></span></td>
+                      <td><span class="wiki-skill-badge skill-badge-blue">幫忙速度 M <span class="skill-badge-val">-14%</span></span></td>
+                      <td><span class="wiki-skill-badge skill-badge-blue">幫忙速度 L <span class="badge-unreleased">(未開放)</span> <span class="skill-badge-val">-21%</span></span></td>
+                      <td class="text-secondary">該寶可夢提供幫助所需要的時間減少 7 / 14 / 21 % (※ 副技能幫速合計上限 35%)</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold">採集型</td>
+                      <td><span class="wiki-skill-badge skill-badge-white">技能機率提升 S <span class="skill-badge-val">+18%</span></span></td>
+                      <td><span class="wiki-skill-badge skill-badge-blue">技能機率提升 M <span class="skill-badge-val">+36%</span></span></td>
+                      <td><span class="wiki-skill-badge skill-badge-blue">技能機率提升 L <span class="badge-unreleased">(未開放)</span> <span class="skill-badge-val">+54%</span></span></td>
+                      <td class="text-secondary">該寶可夢主技能發動機率提升 18 / 36 / 54 %</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold">採集型</td>
+                      <td><span class="wiki-skill-badge skill-badge-white">食材機率提升 S <span class="skill-badge-val">+18%</span></span></td>
+                      <td><span class="wiki-skill-badge skill-badge-blue">食材機率提升 M <span class="skill-badge-val">+36%</span></span></td>
+                      <td><span class="wiki-skill-badge skill-badge-blue">食材機率提升 L <span class="badge-unreleased">(未開放)</span> <span class="skill-badge-val">+54%</span></span></td>
+                      <td class="text-secondary">該寶可夢發現食材的機率提升 18 / 36 / 54 %</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold">採集型</td>
+                      <td><span class="wiki-skill-badge skill-badge-gold">樹果數量 S <span class="skill-badge-val">+1 個</span></span></td>
+                      <td><span class="wiki-skill-badge skill-badge-gold">樹果數量 M <span class="badge-unreleased">(未開放)</span> <span class="skill-badge-val">+2 個</span></span></td>
+                      <td><span class="wiki-skill-badge skill-badge-gold">樹果數量 L <span class="badge-unreleased">(未開放)</span> <span class="skill-badge-val">+3 個</span></span></td>
+                      <td class="text-secondary">該寶可夢每次找到樹果的數量提升 1 / 2 / 3 個</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold">技能型</td>
+                      <td><span class="wiki-skill-badge skill-badge-blue">技能等級提升 S <span class="skill-badge-val">+1 級</span></span></td>
+                      <td><span class="wiki-skill-badge skill-badge-gold">技能等級提升 M <span class="skill-badge-val">+2 級</span></span></td>
+                      <td><span class="wiki-skill-badge skill-badge-gold">技能等級提升 L <span class="badge-unreleased">(未開放)</span> <span class="skill-badge-val">+3 級</span></span></td>
+                      <td class="text-secondary">該寶可夢主技能等級提升 1 / 2 / 3 級 (省下主技能金種子)</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold">採集型 (全隊)</td>
+                      <td><span class="text-muted">-</span></td>
+                      <td><span class="wiki-skill-badge skill-badge-gold">幫手獎勵 <span class="skill-badge-val">全隊 -5%</span></span></td>
+                      <td><span class="text-muted">-</span></td>
+                      <td class="text-secondary">寶可夢團隊提供幫助的時間減少 5 % (全隊最多疊加 5 隻 = 25%)</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold">恢復型 (全隊)</td>
+                      <td><span class="text-muted">-</span></td>
+                      <td><span class="wiki-skill-badge skill-badge-gold">活力恢復獎勵 <span class="skill-badge-val">全隊 1.12x</span></span></td>
+                      <td><span class="text-muted">-</span></td>
+                      <td class="text-secondary">寶可夢團隊從睡眠中恢復的能量提高 1.12 倍 (可彌補活力下降性格隊友)</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold">獎勵型</td>
+                      <td><span class="text-muted">-</span></td>
+                      <td><span class="wiki-skill-badge skill-badge-gold">夢之碎片獎勵 <span class="skill-badge-val">+6%</span></span></td>
+                      <td><span class="text-muted">-</span></td>
+                      <td class="text-secondary">睡眠後該寶可夢獲得夢之碎片的數量提高 6 % (活動日/幸運薰香可大量收穫)</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold">獎勵型</td>
+                      <td><span class="text-muted">-</span></td>
+                      <td><span class="wiki-skill-badge skill-badge-gold">研究 EXP 獎勵 <span class="skill-badge-val">+6%</span></span></td>
+                      <td><span class="text-muted">-</span></td>
+                      <td class="text-secondary">睡眠後玩家獲得的研究 EXP 提高 6 % (加快提升研究等級)</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold">獎勵型 (全隊)</td>
+                      <td><span class="text-muted">-</span></td>
+                      <td><span class="wiki-skill-badge skill-badge-gold">睡眠 EXP 獎勵 <span class="skill-badge-val">+14%</span></span></td>
+                      <td><span class="text-muted">-</span></td>
+                      <td class="text-secondary">睡眠後寶可夢團隊獲得的 EXP 提高 14 % (大幅加速全隊養成成長)</td>
+                    </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 性格五維加成倍率表 (Image 2 實體化) -->
+          <div class="wiki-card" style="margin-top: 24px;">
+            <div class="wiki-card-header">
+              <span class="wiki-card-icon">🧬</span>
+              <h3 class="wiki-card-title">性格五維屬性增減倍率表</h3>
+            </div>
+            <div class="wiki-table-wrapper">
+              <table class="wiki-data-table">
+                <thead>
+                  <tr>
+                    <th>屬性項目</th>
+                    <th>▲▲ 增加性格 (上升效果)</th>
+                    <th>▼▼ 下降性格 (下降效果)</th>
+                    <th>影響機制說明</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                    <tr>
+                      <td class="font-bold text-white">幫忙速度</td>
+                      <td class="text-success font-bold">▲▲ 1.10 倍 (時間 ÷1.10)</td>
+                      <td class="text-danger font-bold">▼▼ 0.90 倍 (時間 ×1.10)</td>
+                      <td class="text-secondary">影響所有樹果、食材與技能判定頻率</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">活力回復量</td>
+                      <td class="text-success font-bold">▲▲ 1.20 倍</td>
+                      <td class="text-danger font-bold">▼▼ 0.88 倍 (v1.3.0 修正)</td>
+                      <td class="text-secondary">影響睡眠與隊伍補師補血量</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">食材發現率</td>
+                      <td class="text-success font-bold">▲▲ 1.20 倍</td>
+                      <td class="text-danger font-bold">▼▼ 0.80 倍</td>
+                      <td class="text-secondary">每次幫忙時判定為食材的機率</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">主技能機率</td>
+                      <td class="text-success font-bold">▲▲ 1.20 倍</td>
+                      <td class="text-danger font-bold">▼▼ 0.80 倍</td>
+                      <td class="text-secondary">每次幫忙時判定發動主技能的機率</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">EXP 獲得量</td>
+                      <td class="text-success font-bold">▲▲ 1.18 倍 (5顆糖多賺1顆)</td>
+                      <td class="text-danger font-bold">▼▼ 0.82 倍 (5顆糖被吃1顆)</td>
+                      <td class="text-secondary">影響糖果升級與睡眠結算經驗值</td>
+                    </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 子分頁 3：🎓 培育與評級指南 (Ratings & Growth) -->
+        <div id="wiki-subpanel-ratings" class="wiki-subpanel">
+          <!-- 培育週期與核心思維 -->
+          <div class="wiki-card">
+            <div class="wiki-card-header">
+              <span class="wiki-card-icon">🎯</span>
+              <h3 class="wiki-card-title">新手與進階養成核心週期指引</h3>
+            </div>
+            <div class="wiki-strategy-grid">
+              <div class="strategy-item">
+                <div class="strategy-badge">前期目標</div>
+                <div class="strategy-title">優先放置在 Lv.30</div>
+                <div class="strategy-desc">先看性格與 Lv.10 & Lv.25 副技能，無課/微課約養成 2~4 個月即可解鎖第 2 種食材，成為中流砥柱。</div>
+              </div>
+              <div class="strategy-item">
+                <div class="strategy-badge">後期投資</div>
+                <div class="strategy-title">慎選投入 Lv.50~60</div>
+                <div class="strategy-desc">確認副技能與性格皆達 Ⓢ/Ⓐ 畢業級再投入大量糖果與金種子（約需 5~10 個月養成時間）。</div>
+              </div>
+              <div class="strategy-item">
+                <div class="strategy-badge">活力核心</div>
+                <div class="strategy-title">優先養成一隻主力補師</div>
+                <div class="strategy-desc">全體活力維持在 80% 以上可享受 2.2x~2.5x 幫忙速度！建議先練：胖可丁、仙子伊布、沙奈朵或巴布土撥。</div>
+              </div>
+              <div class="strategy-item">
+                <div class="strategy-badge">種子機制</div>
+                <div class="strategy-title">主技能與副技能種子規則</div>
+                <div class="strategy-desc">每次進化主技能+1、持有上限+5。副技能不能同時存在相同名稱技能（如已有S與M，則S無法再升階為M）。</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 三大專長畢業評級榜 (Image 2 實體化) -->
+          <div class="wiki-ratings-container" style="margin-top: 24px;">
+            
+      <div class="wiki-card wiki-rating-card">
+        <div class="wiki-card-header">
+          <h3 class="wiki-card-title">🍊 樹果寵 【樹果 2 個、食材 1 個】</h3>
+        </div>
+        <p class="wiki-card-desc">以高頻率產出大量樹果累積卡比獸能量為最高目標。</p>
+        
+        <div class="rating-subsections">
+          <div class="rating-col">
+            <h4 class="rating-col-title">👑 副技能推薦梯度</h4>
+            <div class="rating-list">
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓢ">Ⓢ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">樹果數量S</span>
+                    <span class="rating-item-detail text-secondary">樹果數量+1，能量直接翻倍（容易滿包需常收取）</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓐ">Ⓐ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">幫手獎勵</span>
+                    <span class="rating-item-detail text-secondary">全隊 -5% 幫忙時間（5隻疊加 25%）</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓐ">Ⓐ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">幫忙速度M</span>
+                    <span class="rating-item-detail text-secondary">自己 -14% 幫忙時間</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓑ">Ⓑ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">幫忙速度S</span>
+                    <span class="rating-item-detail text-secondary">自己 -7% 幫忙時間（可用銀種子升階為 M 升至 Ⓐ）</span>
+                  </div>
+                </div>
+              
+            </div>
+          </div>
+
+          <div class="rating-col">
+            <h4 class="rating-col-title">🧬 性格推薦梯度</h4>
+            <div class="rating-list">
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓢ">Ⓢ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">幫忙速度 ▲▲</span>
+                    <span class="rating-item-detail text-secondary">全方位提升樹果產出速度</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓐ">Ⓐ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">食材發現率 ▼▼</span>
+                    <span class="rating-item-detail text-secondary">食材率降低，變相提高樹果產出機率（加分項）</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓑ">Ⓑ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">主技能機率 ▲▲ / ▼▼</span>
+                    <span class="rating-item-detail text-secondary">技能對樹果寵非首要，發動機率高低影響不大</span>
+                  </div>
+                </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    
+            
+      <div class="wiki-card wiki-rating-card">
+        <div class="wiki-card-header">
+          <h3 class="wiki-card-title">🥩 食材寵 【樹果 1 個、食材 2 個】</h3>
+        </div>
+        <p class="wiki-card-desc">以穩定供給高階食譜所需的高價值食材為核心職責。</p>
+        
+        <div class="rating-subsections">
+          <div class="rating-col">
+            <h4 class="rating-col-title">👑 副技能推薦梯度</h4>
+            <div class="rating-list">
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓢ">Ⓢ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">食材機率提升M</span>
+                    <span class="rating-item-detail text-secondary">+36% 食材機率，食材寵畢業核心</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓐ">Ⓐ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">幫手獎勵</span>
+                    <span class="rating-item-detail text-secondary">全隊 -5% 幫忙時間</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓐ">Ⓐ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">食材機率提升S</span>
+                    <span class="rating-item-detail text-secondary">+18% 食材機率（可用銀種子升階為 M 升至 Ⓢ）</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓐ">Ⓐ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">幫忙速度M</span>
+                    <span class="rating-item-detail text-secondary">自己 -14% 幫忙時間</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓑ">Ⓑ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">幫忙速度S</span>
+                    <span class="rating-item-detail text-secondary">自己 -7% 幫忙時間</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓑ">Ⓑ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">持有上限提升 M/L</span>
+                    <span class="rating-item-detail text-secondary">防止睡覺滿包停止產出食材</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓑ">Ⓑ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">樹果數量S + 持有上限</span>
+                    <span class="rating-item-detail text-secondary">需搭配持有上限擴充，並保持頻繁收取</span>
+                  </div>
+                </div>
+              
+            </div>
+          </div>
+
+          <div class="rating-col">
+            <h4 class="rating-col-title">🧬 性格推薦梯度</h4>
+            <div class="rating-list">
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓢ">Ⓢ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">食材發現率 ▲▲</span>
+                    <span class="rating-item-detail text-secondary">食材產出量大幅提升</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓐ">Ⓐ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">幫忙速度 ▲▲</span>
+                    <span class="rating-item-detail text-secondary">提高整體幫忙與食材判定頻率</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓑ">Ⓑ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">主技能機率 ▲▲ / ▼▼</span>
+                    <span class="rating-item-detail text-secondary">若有自補/料理強化可加分，其餘技能影響不大</span>
+                  </div>
+                </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    
+            
+      <div class="wiki-card wiki-rating-card">
+        <div class="wiki-card-header">
+          <h3 class="wiki-card-title">⚡ 技能寵 【樹果 1 個、食材 1 個】</h3>
+        </div>
+        <p class="wiki-card-desc">以高頻率觸發核心主技能（全體補血、神獸加速、高額能量、料理擴鍋）為核心職責。</p>
+        
+        <div class="rating-subsections">
+          <div class="rating-col">
+            <h4 class="rating-col-title">👑 副技能推薦梯度</h4>
+            <div class="rating-list">
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓢ">Ⓢ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">技能機率提升M</span>
+                    <span class="rating-item-detail text-secondary">+36% 技能發動機率，技能寵畢業核心</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓐ">Ⓐ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">幫手獎勵</span>
+                    <span class="rating-item-detail text-secondary">全隊 -5% 幫忙時間</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓐ">Ⓐ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">幫忙速度M</span>
+                    <span class="rating-item-detail text-secondary">自己 -14% 幫忙時間</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓐ">Ⓐ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">技能機率提升S</span>
+                    <span class="rating-item-detail text-secondary">+18% 技能發動機率（可用銀種子升階為 M 升至 Ⓢ）</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓑ">Ⓑ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">樹果數量S + 持有上限</span>
+                    <span class="rating-item-detail text-secondary">補足基本能量產出，需常收取</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓑ">Ⓑ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">技能等級提升M</span>
+                    <span class="rating-item-detail text-secondary">主技能等級+2，節省金種子珍貴資源</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓒ">Ⓒ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">技能等級提升S</span>
+                    <span class="rating-item-detail text-secondary">主技能等級+1（可用銀種子升階）</span>
+                  </div>
+                </div>
+              
+            </div>
+          </div>
+
+          <div class="rating-col">
+            <h4 class="rating-col-title">🧬 性格推薦梯度</h4>
+            <div class="rating-list">
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓢ">Ⓢ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">主技能發動機率 ▲▲</span>
+                    <span class="rating-item-detail text-secondary">技能寵靈魂性格，觸發次數最大化</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓐ">Ⓐ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">幫忙速度 ▲▲</span>
+                    <span class="rating-item-detail text-secondary">提高幫忙判定頻率</span>
+                  </div>
+                </div>
+              
+                <div class="rating-item">
+                  <span class="rating-tier-tag tier-ⓐ">Ⓐ</span>
+                  <div class="rating-item-content">
+                    <span class="rating-item-name font-bold text-white">食材發現率 ▼▼</span>
+                    <span class="rating-item-detail text-secondary">降低食材掉落，無副作用（技能寵只看技能與速度）</span>
+                  </div>
+                </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    
+          </div>
+
+          <!-- 睡眠天數升級試算器 (Image 2 實體化) -->
+          <div class="wiki-card wiki-calc-card" style="margin-top: 24px;">
+            <div class="wiki-card-header">
+              <span class="wiki-card-icon">🌙</span>
+              <h3 class="wiki-card-title">寶可夢睡眠升級天數計算器</h3>
+            </div>
+            <p class="wiki-card-desc">依據每日睡滿 100 分（100 EXP 基礎），計算從目前等級升至目標等級所需睡眠天數與經驗值。</p>
+            
+            <div class="calc-inputs-row">
+              <div class="calc-input-group">
+                <label class="calc-label">目前等級：</label>
+                <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="59">
+              </div>
+
+              <div class="calc-input-group">
+                <label class="calc-label">目標等級：</label>
+                <input type="number" id="calc-sleep-target-lv" class="calc-input-num" value="30" min="2" max="60">
+              </div>
+
+              <div class="calc-input-group">
+                <label class="calc-label">加成條件：</label>
+                <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 4px;">
+                  <label><input type="checkbox" id="calc-sleep-exp-subskill"> 睡眠EXP獎勵 (+14%)</label>
+                  <label><input type="checkbox" id="calc-sleep-incense"> 成長薰香 (2x)</label>
+                  <select id="calc-sleep-nature-select" class="calc-select" style="width: auto; padding: 4px 8px;">
+                    <option value="1.0">性格無 EXP 修正</option>
+                    <option value="1.18">性格 EXP ▲▲ (+18%)</option>
+                    <option value="0.82">性格 EXP ▼▼ (-18%)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="calc-result-box">
+                <div class="calc-result-label">預估所需睡眠天數</div>
+                <div id="calc-sleep-days-result" class="calc-result-val">120 天</div>
+                <div id="calc-sleep-exp-result" class="calc-result-badge">約需 12,000 EXP</div>
+              </div>
+            </div>
+
+            <!-- 基準天數對照表 -->
+            <div class="wiki-table-wrapper" style="margin-top: 18px;">
+              <table class="wiki-data-table">
+                <thead>
+                  <tr>
+                    <th>目標等級</th>
+                    <th>累計所需 EXP</th>
+                    <th>無加成睡眠天數 (每天100EXP)</th>
+                    <th>里程碑意義</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">Lv. 10</td>
+                      <td class="font-bold">1,600 EXP</td>
+                      <td class="text-success font-bold">16 天 (搭配活動約 8 天)</td>
+                      <td class="text-secondary">解鎖第一個副技能，新手初期門檻</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">Lv. 25</td>
+                      <td class="font-bold">8,700 EXP</td>
+                      <td class="text-success font-bold">87 天 (搭配活動約 44 天)</td>
+                      <td class="text-secondary">解鎖第二個副技能，中階關鍵戰力</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">Lv. 30</td>
+                      <td class="font-bold">12,000 EXP</td>
+                      <td class="text-success font-bold">120 天 (搭配活動約 60 天)</td>
+                      <td class="text-secondary">解鎖第二種食材，前期核心目標（約 2~4 個月）</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">Lv. 50</td>
+                      <td class="font-bold">30,000 EXP</td>
+                      <td class="text-success font-bold">300 天 (搭配活動約 150 天)</td>
+                      <td class="text-secondary">解鎖第三個副技能，後期主力培育（約 5~10 個月）</td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-accent">Lv. 60</td>
+                      <td class="font-bold">51,500 EXP</td>
+                      <td class="text-success font-bold">515 天 (搭配活動約 258 天)</td>
+                      <td class="text-secondary">解鎖第三種食材，頂級完全體</td>
+                    </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 子分頁 4：🥗 Lv.60 食材天梯榜 (Lv.60 Ingredients Ladder) -->
+        <div id="wiki-subpanel-ingredients" class="wiki-subpanel">
+          <div class="wiki-card">
+            <div class="wiki-card-header">
+              <span class="wiki-card-icon">🥗</span>
+              <h3 class="wiki-card-title">Lv.60 各食材單日產量天梯榜（無補正基準）</h3>
+            </div>
+            <p class="wiki-card-desc">依據 @SwabluPksl 與 RaenonX 實測統計，展示各寶可夢在 Lv.60 滿等、無副技能與性格修正下的基礎單日產量排行榜。</p>
+
+            <!-- 食材快速篩選 Pills -->
+            <div class="wiki-filter-pills" style="margin: 16px 0 20px;">
+              <span class="wiki-pill-label">選擇食材：</span>
+              <button type="button" class="wiki-pill-btn active" data-ing-filter="all">全部食材 (18)</button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="tail">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">粗擺尾巴
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="apple">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">特選蘋果
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="ginger">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">暖暖薑
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="milk">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">哞哞鮮奶
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="honey">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/honey.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">甜甜蜜
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="sausage">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">豆香香腸
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="soybeans">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">幼芽大豆
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="tomato">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">熟透番茄
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="corn">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">甜甜玉米
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="egg">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">純白蛋
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="potato">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">鬆脆馬鈴薯
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="mushroom">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">烤蘑菇
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="oil">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">純油
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="coffee">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">猛烈咖啡
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="cacao">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">堅硬可可
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="leek">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/largeleek.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">美味洋蔥 (大蔥)
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="herb">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">活力香草
+                </button>
+              
+                <button type="button" class="wiki-pill-btn" data-ing-filter="pumpkin">
+                  <img src="https://www.serebii.net/pokemonsleep/ingredients/specialpumpkin.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">特選南瓜
+                </button>
+              
+            </div>
+
+            <!-- 食材天梯卡片清單 -->
+            <div id="wiki-ingredient-ladder-grid" class="wiki-ladder-grid">
+              
+      <div class="ladder-card" data-ladder-ing="tail">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png" class="ladder-icon" alt="粗擺尾巴">
+            <h4 class="ladder-name">粗擺尾巴</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 20 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">呆呆獸 / 呆殼獸 / 呆呆王</span>
+                <span class="ladder-count text-accent font-bold">14~18 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 85%"></div>
+              </div>
+              <div class="ladder-note text-muted">尾巴唯一專屬來源，解鎖後亦可透過食材獲取S隨機抽得</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="apple">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" class="ladder-icon" alt="特選蘋果">
+            <h4 class="ladder-name">特選蘋果</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 110 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">大甲 (凱羅斯)</span>
+                <span class="ladder-count text-accent font-bold">100~108 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 95%"></div>
+              </div>
+              <div class="ladder-note text-muted">AAA 蘋果最高產量霸主</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">魔牆人偶</span>
+                <span class="ladder-count text-accent font-bold">78~84 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 75%"></div>
+              </div>
+              <div class="ladder-note text-muted">高產量蘋果供給手</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">信使鳥</span>
+                <span class="ladder-count text-accent font-bold">70~76 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 70%"></div>
+              </div>
+              <div class="ladder-note text-muted">飛行系高產手</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">皮卡丘 / 雷丘</span>
+                <span class="ladder-count text-accent font-bold">50~56 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 50%"></div>
+              </div>
+              <div class="ladder-note text-muted">樹果型兼顧蘋果</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="ginger">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" class="ladder-icon" alt="暖暖薑">
+            <h4 class="ladder-name">暖暖薑</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 100 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">班基拉斯 (老班)</span>
+                <span class="ladder-count text-accent font-bold">92~98 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 95%"></div>
+              </div>
+              <div class="ladder-note text-muted">暖暖薑第一巨頭</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">袋獸 (袋龍)</span>
+                <span class="ladder-count text-accent font-bold">80~86 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 82%"></div>
+              </div>
+              <div class="ladder-note text-muted">單段強勢薑手</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">噴火龍</span>
+                <span class="ladder-count text-accent font-bold">72~78 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 75%"></div>
+              </div>
+              <div class="ladder-note text-muted">AAA 薑爆發產出</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">皮可西 / 胖可丁</span>
+                <span class="ladder-count text-accent font-bold">40~46 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 45%"></div>
+              </div>
+              <div class="ladder-note text-muted">副產物</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="milk">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" class="ladder-icon" alt="哞哞鮮奶">
+            <h4 class="ladder-name">哞哞鮮奶</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 105 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">水箭龜</span>
+                <span class="ladder-count text-accent font-bold">96~104 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 98%"></div>
+              </div>
+              <div class="ladder-note text-muted">牛奶絕對王者，甜點/咖哩核心主力</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">仙子伊布</span>
+                <span class="ladder-count text-accent font-bold">58~64 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 60%"></div>
+              </div>
+              <div class="ladder-note text-muted">補師兼顧牛奶</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">大奶罐 (預備)</span>
+                <span class="ladder-count text-accent font-bold">52~58 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 55%"></div>
+              </div>
+              <div class="ladder-note text-muted">牛奶專屬</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">雷伊布 / 太陽伊布</span>
+                <span class="ladder-count text-accent font-bold">40~46 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 42%"></div>
+              </div>
+              <div class="ladder-note text-muted">副產物</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="honey">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/honey.png" class="ladder-icon" alt="甜甜蜜">
+            <h4 class="ladder-name">甜甜蜜</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 100 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">妙蛙花</span>
+                <span class="ladder-count text-accent font-bold">90~98 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 95%"></div>
+              </div>
+              <div class="ladder-note text-muted">甜蜜蜜天花板，甜點咖哩必備</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">大針蜂</span>
+                <span class="ladder-count text-accent font-bold">78~84 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 80%"></div>
+              </div>
+              <div class="ladder-note text-muted">高速蜂蜜產出</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">蝶結萌虻</span>
+                <span class="ladder-count text-accent font-bold">70~76 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 72%"></div>
+              </div>
+              <div class="ladder-note text-muted">蟲系高產蜂蜜</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">巴大蝶</span>
+                <span class="ladder-count text-accent font-bold">48~54 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 50%"></div>
+              </div>
+              <div class="ladder-note text-muted">樹果型兼顧蜂蜜</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="sausage">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" class="ladder-icon" alt="豆香香腸">
+            <h4 class="ladder-name">豆香香腸</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 95 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">噴火龍</span>
+                <span class="ladder-count text-accent font-bold">88~94 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 95%"></div>
+              </div>
+              <div class="ladder-note text-muted">香腸天花板霸主</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">黑魯加</span>
+                <span class="ladder-count text-accent font-bold">62~68 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 70%"></div>
+              </div>
+              <div class="ladder-note text-muted">惡系香腸手</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">風速狗</span>
+                <span class="ladder-count text-accent font-bold">50~56 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 55%"></div>
+              </div>
+              <div class="ladder-note text-muted">火系技能兼顧</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="soybeans">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" class="ladder-icon" alt="幼芽大豆">
+            <h4 class="ladder-name">幼芽大豆</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 95 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">隆隆岩</span>
+                <span class="ladder-count text-accent font-bold">86~92 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 94%"></div>
+              </div>
+              <div class="ladder-note text-muted">大豆產量絕對天花板</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">多多冰 (雙倍多多冰)</span>
+                <span class="ladder-count text-accent font-bold">70~76 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 75%"></div>
+              </div>
+              <div class="ladder-note text-muted">冰系大豆高產手</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">三地鼠</span>
+                <span class="ladder-count text-accent font-bold">60~66 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 65%"></div>
+              </div>
+              <div class="ladder-note text-muted">地面系大豆手</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">班基拉斯</span>
+                <span class="ladder-count text-accent font-bold">48~54 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 52%"></div>
+              </div>
+              <div class="ladder-note text-muted">副產物</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="tomato">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" class="ladder-icon" alt="熟透番茄">
+            <h4 class="ladder-name">熟透番茄</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 90 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">大食花</span>
+                <span class="ladder-count text-accent font-bold">82~88 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 95%"></div>
+              </div>
+              <div class="ladder-note text-muted">番茄第一把交椅</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">魔牆人偶</span>
+                <span class="ladder-count text-accent font-bold">68~74 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 80%"></div>
+              </div>
+              <div class="ladder-note text-muted">番茄高產手</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">胡說樹</span>
+                <span class="ladder-count text-accent font-bold">50~56 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 60%"></div>
+              </div>
+              <div class="ladder-note text-muted">副產物</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="corn">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" class="ladder-icon" alt="甜甜玉米">
+            <h4 class="ladder-name">甜甜玉米</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 90 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">穿著熊</span>
+                <span class="ladder-count text-accent font-bold">80~86 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 95%"></div>
+              </div>
+              <div class="ladder-note text-muted">玉米頂級霸主，格鬥島核心</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">快龍</span>
+                <span class="ladder-count text-accent font-bold">68~74 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 82%"></div>
+              </div>
+              <div class="ladder-note text-muted">龍系高產玉米</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">向日花怪</span>
+                <span class="ladder-count text-accent font-bold">58~64 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 70%"></div>
+              </div>
+              <div class="ladder-note text-muted">草系玉米手</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="egg">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" class="ladder-icon" alt="純白蛋">
+            <h4 class="ladder-name">純白蛋</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 90 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">信使鳥</span>
+                <span class="ladder-count text-accent font-bold">80~86 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 95%"></div>
+              </div>
+              <div class="ladder-note text-muted">純白蛋第一產出巨頭</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">吉利蛋 / 幸福蛋</span>
+                <span class="ladder-count text-accent font-bold">68~75 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 82%"></div>
+              </div>
+              <div class="ladder-note text-muted">高耐力產蛋專家</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">波克基斯</span>
+                <span class="ladder-count text-accent font-bold">50~56 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 60%"></div>
+              </div>
+              <div class="ladder-note text-muted">技能型兼顧蛋</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">阿柏怪</span>
+                <span class="ladder-count text-accent font-bold">38~44 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 45%"></div>
+              </div>
+              <div class="ladder-note text-muted">副產物</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="potato">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" class="ladder-icon" alt="鬆脆馬鈴薯">
+            <h4 class="ladder-name">鬆脆馬鈴薯</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 85 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">大食花</span>
+                <span class="ladder-count text-accent font-bold">78~84 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 95%"></div>
+              </div>
+              <div class="ladder-note text-muted">馬鈴薯頂級供給手</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">隆隆岩</span>
+                <span class="ladder-count text-accent font-bold">70~76 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 85%"></div>
+              </div>
+              <div class="ladder-note text-muted">岩石高產馬鈴薯</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">魔牆人偶</span>
+                <span class="ladder-count text-accent font-bold">58~64 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 72%"></div>
+              </div>
+              <div class="ladder-note text-muted">副產物</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">袋獸</span>
+                <span class="ladder-count text-accent font-bold">48~54 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 60%"></div>
+              </div>
+              <div class="ladder-note text-muted">副產物</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="mushroom">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" class="ladder-icon" alt="烤蘑菇">
+            <h4 class="ladder-name">烤蘑菇</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 75 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">耿鬼</span>
+                <span class="ladder-count text-accent font-bold">66~72 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 95%"></div>
+              </div>
+              <div class="ladder-note text-muted">蘑菇唯一超高速王者</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">沼王</span>
+                <span class="ladder-count text-accent font-bold">52~58 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 75%"></div>
+              </div>
+              <div class="ladder-note text-muted">水系蘑菇主力</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">霸王花</span>
+                <span class="ladder-count text-accent font-bold">44~50 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 62%"></div>
+              </div>
+              <div class="ladder-note text-muted">副產物</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="oil">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" class="ladder-icon" alt="純油">
+            <h4 class="ladder-name">純油</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 80 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">毒骷蛙</span>
+                <span class="ladder-count text-accent font-bold">72~78 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 95%"></div>
+              </div>
+              <div class="ladder-note text-muted">純油天花板</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">大甲</span>
+                <span class="ladder-count text-accent font-bold">62~68 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 82%"></div>
+              </div>
+              <div class="ladder-note text-muted">副產物高產手</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">海三地鼠</span>
+                <span class="ladder-count text-accent font-bold">52~58 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 70%"></div>
+              </div>
+              <div class="ladder-note text-muted">水系純油手</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">百變怪</span>
+                <span class="ladder-count text-accent font-bold">40~46 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 55%"></div>
+              </div>
+              <div class="ladder-note text-muted">副產物</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="coffee">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png" class="ladder-icon" alt="猛烈咖啡">
+            <h4 class="ladder-name">猛烈咖啡</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 80 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">巴布土撥</span>
+                <span class="ladder-count text-accent font-bold">70~76 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 95%"></div>
+              </div>
+              <div class="ladder-note text-muted">咖啡第一把交椅，高階提神料理必備</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">呆火鱷 (骨紋一族)</span>
+                <span class="ladder-count text-accent font-bold">60~66 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 82%"></div>
+              </div>
+              <div class="ladder-note text-muted">火系咖啡高產手</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">強石怪 (岩石系)</span>
+                <span class="ladder-count text-accent font-bold">50~56 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 68%"></div>
+              </div>
+              <div class="ladder-note text-muted">副產物</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="cacao">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" class="ladder-icon" alt="堅硬可可">
+            <h4 class="ladder-name">堅硬可可</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 75 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">水箭龜</span>
+                <span class="ladder-count text-accent font-bold">66~72 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 95%"></div>
+              </div>
+              <div class="ladder-note text-muted">可可頂級霸主</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">阿勃梭魯 (災獸)</span>
+                <span class="ladder-count text-accent font-bold">58~64 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 85%"></div>
+              </div>
+              <div class="ladder-note text-muted">惡系可可高產手</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">仙子伊布 / 雷伊布</span>
+                <span class="ladder-count text-accent font-bold">36~42 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 50%"></div>
+              </div>
+              <div class="ladder-note text-muted">副產物</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="leek">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/largeleek.png" class="ladder-icon" alt="美味洋蔥 (大蔥)">
+            <h4 class="ladder-name">美味洋蔥 (大蔥)</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 70 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">三地鼠</span>
+                <span class="ladder-count text-accent font-bold">60~66 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 95%"></div>
+              </div>
+              <div class="ladder-note text-muted">大蔥第一產量手</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">百變怪</span>
+                <span class="ladder-count text-accent font-bold">48~54 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 78%"></div>
+              </div>
+              <div class="ladder-note text-muted">大蔥副產專員</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">大蔥鴨</span>
+                <span class="ladder-count text-accent font-bold">42~48 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 68%"></div>
+              </div>
+              <div class="ladder-note text-muted">原廠大蔥手</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="herb">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png" class="ladder-icon" alt="活力香草">
+            <h4 class="ladder-name">活力香草</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 75 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">黑魯加</span>
+                <span class="ladder-count text-accent font-bold">66~72 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 95%"></div>
+              </div>
+              <div class="ladder-note text-muted">香草第一產量巨頭</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">耿鬼</span>
+                <span class="ladder-count text-accent font-bold">56~62 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 82%"></div>
+              </div>
+              <div class="ladder-note text-muted">香草副產高產手</div>
+            </div>
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">快龍</span>
+                <span class="ladder-count text-accent font-bold">48~54 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 70%"></div>
+              </div>
+              <div class="ladder-note text-muted">龍系高產副產物</div>
+            </div>
+          
+        </div>
+      </div>
+    
+      <div class="ladder-card" data-ladder-ing="pumpkin">
+        <div class="ladder-header">
+          <div class="ladder-title-group">
+            <img src="https://www.serebii.net/pokemonsleep/ingredients/specialpumpkin.png" class="ladder-icon" alt="特選南瓜">
+            <h4 class="ladder-name">特選南瓜</h4>
+          </div>
+          <span class="ladder-max-badge">最高日產 ~ 60 顆</span>
+        </div>
+
+        <div class="ladder-tiers-list">
+          
+            <div class="ladder-tier-row">
+              <div class="ladder-tier-info">
+                <span class="ladder-pkm-name font-bold">南瓜精 / 南瓜怪人</span>
+                <span class="ladder-count text-accent font-bold">52~58 顆/天</span>
+              </div>
+              <div class="ladder-progress-bar">
+                <div class="ladder-progress-fill" style="width: 95%"></div>
+              </div>
+              <div class="ladder-note text-muted">南瓜唯一專屬來源，萬聖節料理主力</div>
+            </div>
+          
+        </div>
+      </div>
+    
+            </div>
+          </div>
+        </div>
+      </div>
+    
+    </div>
 
     <!-- Panel 4: 寶可夢倉庫 -->
     <div id="panel-box" class="view-panel" style="display:none;">
@@ -606,10 +3447,10 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260818_10"></script>
-  <script src="recipes.js?v=20260818_10"></script>
-  <script src="wiki.js?v=20260818_10"></script>
-  <script src="box.js?v=20260818_10"></script>
-  <script src="news.js?v=20260818_10"></script>
+  <script src="app.js?v=20260818_11"></script>
+  <script src="recipes.js?v=20260818_11"></script>
+  <script src="wiki.js?v=20260818_11"></script>
+  <script src="box.js?v=20260818_11"></script>
+  <script src="news.js?v=20260818_11"></script>
 </body>
 </html>
