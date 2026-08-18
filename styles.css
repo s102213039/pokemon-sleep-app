@@ -865,11 +865,12 @@ header {
   font-weight: 700;
 }
 
-/* 純圖示極簡網格（樹果與食材，6 列排版） */
+/* 純圖示極簡網格（樹果與食材，6 列排版，一行寬度鋪滿） */
 .sidebar-icon-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 4px;
+  gap: 5px;
+  width: 100%;
 }
 
 .subfilter-icon-btn {
@@ -882,9 +883,10 @@ header {
   border: 1px solid var(--border-color);
   border-radius: 6px;
   cursor: pointer;
-  padding: 3px;
+  padding: 4px;
   transition: border-color 0.15s ease, background-color 0.15s ease;
   position: relative;
+  box-sizing: border-box;
 }
 
 .subfilter-icon-btn:hover {
@@ -898,8 +900,8 @@ header {
 }
 
 .subfilter-icon-img {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   object-fit: contain;
   pointer-events: none;
 }
