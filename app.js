@@ -919,13 +919,12 @@ if (typeof document !== 'undefined') {
 
       // ⬅️ 左側抽屜式側邊欄展開與收合控制 (Left Sliding Sidebar Controller)
       const sidebar = document.getElementById('pokemon-filter-sidebar');
-      const toggleHandle = document.getElementById('sidebar-toggle-handle');
+      const filterToggleBtn = document.getElementById('pokemon-filter-toggle-btn');
       const closeBtn = document.getElementById('sidebar-close-btn');
       const backdrop = document.getElementById('sidebar-backdrop');
-      const filterBadge = document.getElementById('sidebar-active-filter-badge');
+      const filterBadgePill = document.getElementById('filter-badge-pill');
 
       function updateActiveFilterBadge() {
-        if (!filterBadge) return;
         let count = 0;
         if (selectedSpecialties && selectedSpecialties.size > 0) count += selectedSpecialties.size;
         if (selectedBerries && selectedBerries.size > 0) count += selectedBerries.size;
@@ -933,11 +932,13 @@ if (typeof document !== 'undefined') {
         if (selectedSkills && selectedSkills.size > 0) count += selectedSkills.size;
         if (onlyInitialIng) count += 1;
         
-        if (count > 0) {
-          filterBadge.textContent = count;
-          filterBadge.style.display = 'flex';
-        } else {
-          filterBadge.style.display = 'none';
+        if (filterBadgePill) {
+          if (count > 0) {
+            filterBadgePill.textContent = count;
+            filterBadgePill.style.display = 'inline-flex';
+          } else {
+            filterBadgePill.style.display = 'none';
+          }
         }
       }
 
@@ -949,24 +950,24 @@ if (typeof document !== 'undefined') {
         if (shouldCollapse) {
           sidebar.classList.add('collapsed');
           if (backdrop) backdrop.classList.remove('active');
-          if (toggleHandle) {
-            toggleHandle.setAttribute('aria-expanded', 'false');
-            toggleHandle.title = '展開篩選側邊欄';
+          if (filterToggleBtn) {
+            filterToggleBtn.classList.remove('active');
+            filterToggleBtn.setAttribute('aria-expanded', 'false');
           }
         } else {
           sidebar.classList.remove('collapsed');
           if (window.innerWidth <= 1024 && backdrop) {
             backdrop.classList.add('active');
           }
-          if (toggleHandle) {
-            toggleHandle.setAttribute('aria-expanded', 'true');
-            toggleHandle.title = '收合篩選側邊欄';
+          if (filterToggleBtn) {
+            filterToggleBtn.classList.add('active');
+            filterToggleBtn.setAttribute('aria-expanded', 'true');
           }
         }
       }
 
-      if (toggleHandle) {
-        toggleHandle.addEventListener('click', () => toggleSidebar());
+      if (filterToggleBtn) {
+        filterToggleBtn.addEventListener('click', () => toggleSidebar());
       }
       if (closeBtn) {
         closeBtn.addEventListener('click', () => toggleSidebar(false));

@@ -525,28 +525,26 @@ header {
   width: 100%;
 }
 
-/* ⬅️ 左側抽屜式滑動側邊欄 (Left Sliding Sidebar) */
+/* ⬅️ 左側抽屜式滑動側邊欄 (Left Sliding Sidebar - 無感知無縫配色) */
 .pokemon-filter-sidebar {
   position: fixed;
   top: 60px;
   left: 0;
   bottom: 0;
-  width: 260px;
+  width: 228px;
   height: calc(100vh - 60px);
-  background: rgba(15, 23, 42, 0.95);
+  background: #0f172a;
   border-right: 1px solid var(--border-color);
   border-top: none;
   border-left: none;
   border-bottom: none;
   border-radius: 0;
-  box-shadow: 4px 0 24px -2px rgba(0, 0, 0, 0.65), 0 0 20px rgba(56, 189, 248, 0.08);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 3px 0 16px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   z-index: 100;
   transform: translateX(0);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pokemon-filter-sidebar.collapsed {
@@ -554,108 +552,42 @@ header {
   box-shadow: none;
 }
 
-/* 側邊欄展開/收合懸浮把手標籤 (Attached Toggle Tab on Sidebar Edge) */
-.sidebar-toggle-handle {
-  position: absolute;
-  top: 72px;
-  right: -42px;
-  width: 42px;
-  height: 52px;
-  background: rgba(15, 23, 42, 0.94);
-  border: 1px solid var(--border-color);
-  border-left: none;
-  border-radius: 0 10px 10px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  cursor: pointer;
-  box-shadow: 4px 0 14px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  z-index: 101;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--text-primary);
-  padding: 0;
-}
-
-.sidebar-toggle-handle:hover {
-  background: rgba(30, 41, 59, 0.98);
-  border-color: rgba(56, 189, 248, 0.6);
-  color: #38bdf8;
-  box-shadow: 6px 0 18px rgba(56, 189, 248, 0.25);
-}
-
-.handle-icon {
-  font-size: 15px;
-  line-height: 1;
-}
-
-.handle-arrow {
-  font-size: 10px;
-  color: #94a3b8;
-  transition: transform 0.3s ease;
-}
-
-.pokemon-filter-sidebar.collapsed .handle-arrow {
-  transform: rotate(180deg);
-}
-
-.sidebar-filter-badge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  min-width: 17px;
-  height: 17px;
-  padding: 0 4px;
-  border-radius: 9px;
-  background: #38bdf8;
-  color: #0f172a;
-  font-size: 10px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
-}
-
 .sidebar-header {
-  padding: 12px 14px;
+  padding: 10px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(30, 41, 59, 0.55);
+  border-bottom: 1px solid var(--border-color);
+  background: #0f172a;
   flex-shrink: 0;
 }
 
 .sidebar-title-group {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13.5px;
+  gap: 5px;
+  font-size: 13px;
   font-weight: 700;
   color: #ffffff;
 }
 
 .sidebar-icon {
-  font-size: 14px;
+  font-size: 13.5px;
 }
 
 .sidebar-header-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .sidebar-reset-btn {
   background: rgba(239, 68, 68, 0.12);
   color: #fca5a5;
   border: 1px solid rgba(239, 68, 68, 0.28);
-  border-radius: 5px;
-  padding: 3px 8px;
-  font-size: 11px;
+  border-radius: 4px;
+  padding: 2.5px 7px;
+  font-size: 10.5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -668,10 +600,10 @@ header {
 }
 
 .sidebar-close-btn {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
   color: #94a3b8;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
   width: 24px;
   height: 24px;
   display: flex;
@@ -683,37 +615,38 @@ header {
 }
 
 .sidebar-close-btn:hover {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.4);
 }
 
 .sidebar-scrollable-content {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 14px 14px 30px;
+  padding: 10px 10px 24px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
+  background: #0f172a;
 }
 
 /* 輕量美觀自訂滾動條 */
 .sidebar-scrollable-content::-webkit-scrollbar {
-  width: 4px;
+  width: 3.5px;
 }
 .sidebar-scrollable-content::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.18);
   border-radius: 4px;
 }
 .sidebar-scrollable-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(56, 189, 248, 0.5);
+  background: rgba(56, 189, 248, 0.45);
 }
 .sidebar-scrollable-content::-webkit-scrollbar-track {
   background: transparent;
 }
 
-/* 👑 側邊欄開關卡片 (Sidebar Switch Cards - 寬鬆舒適) */
+/* 👑 側邊欄開關卡片 (Sidebar Switch Cards) */
 .sidebar-final-evo-label {
   display: flex;
   align-items: center;
@@ -721,8 +654,8 @@ header {
   width: 100%;
   background: rgba(30, 41, 59, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 8px 10px;
+  border-radius: 6px;
+  padding: 6px 8px;
   cursor: pointer;
   user-select: none;
   transition: all 0.2s ease;
@@ -735,7 +668,7 @@ header {
 }
 
 .sidebar-final-evo-text {
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
@@ -747,48 +680,48 @@ header {
 }
 
 .sidebar-switch-wrapper .switch-slider {
-  width: 30px;
-  height: 16px;
+  width: 28px;
+  height: 15px;
 }
 
 .sidebar-switch-wrapper .switch-slider::before {
-  height: 12px;
-  width: 12px;
+  height: 11px;
+  width: 11px;
   left: 2px;
   bottom: 2px;
 }
 
 .sidebar-switch-wrapper .switch-checkbox:checked + .switch-slider::before {
-  transform: translateX(14px);
+  transform: translateX(13px);
 }
 
 .sidebar-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .sidebar-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2px;
+  padding: 0 1px;
 }
 
 .sidebar-section-title {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   color: var(--accent-blue);
-  letter-spacing: 0.4px;
+  letter-spacing: 0.3px;
 }
 
 .sidebar-section-clear-btn {
   background: transparent;
   color: #94a3b8;
   border: none;
-  font-size: 11.5px;
+  font-size: 11px;
   cursor: pointer;
-  padding: 1px 4px;
+  padding: 0 2px;
   transition: color 0.2s ease;
 }
 
@@ -796,11 +729,11 @@ header {
   color: #ef4444;
 }
 
-/* 類型標籤（一行 3 等分鋪滿整行，寬鬆美觀） */
+/* 類型標籤（一行 3 等分鋪滿整行） */
 .sidebar-specialty-tags {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  gap: 4px;
   width: 100%;
 }
 
@@ -809,19 +742,19 @@ header {
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 7px 0;
-  font-size: 12.5px;
+  padding: 5.5px 0;
+  font-size: 12px;
   font-weight: 600;
-  border-radius: 7px;
+  border-radius: 6px;
   text-align: center;
   box-sizing: border-box;
 }
 
-/* 純圖示極簡網格（樹果與食材，6 列排版寬鬆舒適） */
+/* 純圖示極簡網格（樹果與食材，6 列排版） */
 .sidebar-icon-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 5px;
+  gap: 3.5px;
 }
 
 .subfilter-icon-btn {
@@ -832,10 +765,10 @@ header {
   aspect-ratio: 1 / 1;
   background: rgba(30, 41, 59, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 7px;
+  border-radius: 5px;
   cursor: pointer;
-  padding: 4px;
-  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 3px;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
 
@@ -855,18 +788,18 @@ header {
 }
 
 .subfilter-icon-img {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
   pointer-events: none;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
 }
 
-/* ⚡ 主技能清單（雙列等寬、寬鬆舒適易點擊） */
+/* ⚡ 主技能清單（雙列等寬） */
 .sidebar-skills-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
+  gap: 4px;
   width: 100%;
 }
 
@@ -875,15 +808,15 @@ header {
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 7px 4px;
+  padding: 5.5px 3px;
   background: rgba(30, 41, 59, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 7px;
+  border-radius: 5px;
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
   text-align: center;
   line-height: 1.25;
@@ -908,6 +841,54 @@ header {
   white-space: nowrap;
 }
 
+/* 🎛️ 工具列篩選器切換按鈕 (Filter Toggle Button in Search Bar) */
+.filter-toggle-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  flex-shrink: 0;
+  user-select: none;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.filter-toggle-pill-btn:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.5);
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+}
+
+.filter-toggle-pill-btn.active {
+  background: rgba(2, 132, 199, 0.3);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+.filter-badge-pill {
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #38bdf8;
+  color: #0f172a;
+  font-size: 10.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* 手機與平板端半透明遮罩 */
 .sidebar-backdrop {
   display: none;
@@ -921,7 +902,7 @@ header {
   -webkit-backdrop-filter: blur(2px);
   z-index: 99;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.28s ease;
   pointer-events: none;
 }
 

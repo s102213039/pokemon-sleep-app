@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260818_02">
+  <link rel="stylesheet" href="styles.css?v=20260818_03">
 </head>
 <body>
 
@@ -71,13 +71,6 @@
     <div id="panel-pokemon" class="view-panel pokemon-layout-view">
       <!-- ⬅️ 左側抽屜式側邊欄 (Left Sliding Sidebar Filter) -->
       <aside id="pokemon-filter-sidebar" class="pokemon-filter-sidebar" aria-label="寶可夢圖鑑篩選器">
-        <!-- 側邊欄邊緣展開/收合標籤 (Attached Toggle Tab on Sidebar Edge) -->
-        <button type="button" id="sidebar-toggle-handle" class="sidebar-toggle-handle" title="展開 / 收合篩選側邊欄" aria-label="切換篩選側邊欄">
-          <span class="handle-icon">🎛️</span>
-          <span class="handle-arrow">◀</span>
-          <span id="sidebar-active-filter-badge" class="sidebar-filter-badge" style="display:none;"></span>
-        </button>
-
         <div class="sidebar-header">
           <div class="sidebar-title-group">
             <span class="sidebar-icon">🎛️</span>
@@ -160,6 +153,13 @@
         <!-- Controls (Search, View Mode Toggle) -->
         <section class="controls-container" aria-label="Search and Filter Controls">
           <div class="search-filter-row">
+            <!-- 🎛️ 側邊欄展開/收合切換按鈕 (Subtle Toolbar Filter Toggle) -->
+            <button type="button" id="pokemon-filter-toggle-btn" class="filter-toggle-pill-btn" title="展開 / 收合篩選側邊欄" aria-label="切換篩選側邊欄">
+              <span class="pill-icon">🎛️</span>
+              <span class="pill-text">篩選</span>
+              <span id="filter-badge-pill" class="filter-badge-pill" style="display:none;"></span>
+            </button>
+
             <div class="search-box">
               <span class="search-icon">🔍</span>
               <input type="text" id="search-input" class="search-input"
@@ -603,9 +603,9 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260818_02"></script>
-  <script src="recipes.js?v=20260818_02"></script>
-  <script src="box.js?v=20260818_02"></script>
-  <script src="news.js?v=20260818_02"></script>
+  <script src="app.js?v=20260818_03"></script>
+  <script src="recipes.js?v=20260818_03"></script>
+  <script src="box.js?v=20260818_03"></script>
+  <script src="news.js?v=20260818_03"></script>
 </body>
 </html>
