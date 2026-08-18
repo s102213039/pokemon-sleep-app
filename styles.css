@@ -525,7 +525,7 @@ header {
   width: 100%;
 }
 
-/* 🔖 側邊欄垂直中央書籤標籤（僅在收合時顯示，展開時隱藏；扁平極簡設計） */
+/* 🔖 側邊欄垂直中央書籤標籤（僅在收合時顯示，展開時隱藏） */
 .sidebar-bookmark-handle {
   display: none;
   position: absolute;
@@ -534,8 +534,10 @@ header {
   transform: translateY(-50%);
   width: 36px;
   min-height: 80px;
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
   border-left: none;
   border-radius: 0 8px 8px 0;
   flex-direction: column;
@@ -543,7 +545,7 @@ header {
   justify-content: center;
   gap: 4px;
   cursor: pointer;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.4);
   z-index: 151;
   transition: background-color 0.15s ease, border-color 0.15s ease;
   color: #f8fafc;
@@ -555,8 +557,8 @@ header {
 }
 
 .sidebar-bookmark-handle:hover {
-  background: #334155;
-  border-color: #475569;
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(56, 189, 248, 0.5);
   color: #38bdf8;
 }
 
@@ -606,7 +608,7 @@ header {
   justify-content: center;
 }
 
-/* ⬅️ 左側抽屜式滑動側邊欄 (Left Sliding Sidebar - 扁平極簡深色設計) */
+/* ⬅️ 左側抽屜式滑動側邊欄 (Left Sliding Sidebar - 完美對齊頂部 Header 與頁面背景) */
 .pokemon-filter-sidebar {
   position: fixed;
   top: 0;
@@ -614,8 +616,13 @@ header {
   bottom: 0;
   width: 232px;
   height: 100vh;
-  background: #0f172a;
-  border-right: 1px solid #334155;
+  background-color: #0f172a;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(129, 140, 248, 0.15) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(15, 23, 42, 0.95) 0px, transparent 50%);
+  background-attachment: fixed;
+  border-right: 1px solid var(--border-color);
   border-top: none;
   border-left: none;
   border-bottom: none;
@@ -633,14 +640,17 @@ header {
   box-shadow: none;
 }
 
+/* 側邊欄頂部 Header：高度與背景跟頂部導航列完全一致 */
 .sidebar-header {
-  height: 56px;
-  padding: 0 12px;
+  height: 69px;
+  padding: 0 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #334155;
-  background: #1e293b;
+  border-bottom: 1px solid var(--border-color);
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   flex-shrink: 0;
   box-sizing: border-box;
   gap: 8px;
@@ -648,10 +658,10 @@ header {
 
 /* 最左側收合箭頭按鈕 */
 .sidebar-close-btn {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.05);
   color: #94a3b8;
-  border: 1px solid #334155;
-  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
   width: 28px;
   height: 28px;
   display: flex;
@@ -664,9 +674,9 @@ header {
 }
 
 .sidebar-close-btn:hover {
-  background: #334155;
+  background: rgba(255, 255, 255, 0.1);
   color: #f8fafc;
-  border-color: #475569;
+  border-color: rgba(56, 189, 248, 0.5);
 }
 
 .sidebar-title-group {
@@ -684,11 +694,11 @@ header {
 }
 
 .sidebar-reset-btn {
-  background: #334155;
+  background: rgba(239, 68, 68, 0.12);
   color: #f87171;
-  border: 1px solid #475569;
-  border-radius: 4px;
-  padding: 3px 8px;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  border-radius: 6px;
+  padding: 3.5px 8px;
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -702,15 +712,16 @@ header {
   border-color: #ef4444;
 }
 
+/* 側邊欄內容：向下對齊到頁面主內容起始位置 (padding-top: 24px 對齊 main 的 margin-top: 24px) */
 .sidebar-scrollable-content {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 12px 10px 30px;
+  padding: 24px 12px 40px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: #0f172a;
+  background: transparent;
 }
 
 /* 輕量極簡滾動條 */
@@ -718,34 +729,35 @@ header {
   width: 3.5px;
 }
 .sidebar-scrollable-content::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 2px;
 }
 .sidebar-scrollable-content::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: rgba(56, 189, 248, 0.5);
 }
 .sidebar-scrollable-content::-webkit-scrollbar-track {
   background: transparent;
 }
 
-/* 👑 側邊欄開關卡片 (Sidebar Switch Cards) - 扁平俐落 */
+/* 👑 側邊欄開關卡片 (Sidebar Switch Cards) */
 .sidebar-final-evo-label {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 6px 8px;
   cursor: pointer;
   user-select: none;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease;
   box-sizing: border-box;
 }
 
 .sidebar-final-evo-label:hover {
-  border-color: #475569;
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(56, 189, 248, 0.4);
 }
 
 .sidebar-final-evo-text {
@@ -810,11 +822,11 @@ header {
   color: #ef4444;
 }
 
-/* 類型標籤（一行 3 等分鋪滿整行） - 扁平設計 */
+/* 類型標籤（一行 3 等分鋪滿整行） */
 .sidebar-specialty-tags {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
+  gap: 5px;
   width: 100%;
 }
 
@@ -823,12 +835,12 @@ header {
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 6px 0;
+  padding: 6.5px 0;
   font-size: 12.5px;
   font-weight: 600;
-  border-radius: 4px;
-  background: #1e293b;
-  border: 1px solid #334155;
+  border-radius: 6px;
+  background: rgba(30, 41, 59, 0.65);
+  border: 1px solid var(--border-color);
   color: #94a3b8;
   text-align: center;
   box-sizing: border-box;
@@ -836,8 +848,8 @@ header {
 }
 
 .sidebar-specialty-tags .tag-btn:hover {
-  background: #334155;
-  border-color: #475569;
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(56, 189, 248, 0.4);
   color: #f8fafc;
 }
 
@@ -848,7 +860,7 @@ header {
   font-weight: 700;
 }
 
-/* 純圖示極簡網格（樹果與食材，6 列排版） - 扁平設計 */
+/* 純圖示極簡網格（樹果與食材，6 列排版） */
 .sidebar-icon-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -861,9 +873,9 @@ header {
   justify-content: center;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 4px;
+  background: rgba(30, 41, 59, 0.65);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
   cursor: pointer;
   padding: 3px;
   transition: border-color 0.15s ease, background-color 0.15s ease;
@@ -871,8 +883,8 @@ header {
 }
 
 .subfilter-icon-btn:hover {
-  background: #334155;
-  border-color: #475569;
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(56, 189, 248, 0.4);
 }
 
 .subfilter-icon-btn.active {
@@ -887,7 +899,7 @@ header {
   pointer-events: none;
 }
 
-/* ⚡ 主技能清單（雙列等寬） - 扁平設計 */
+/* ⚡ 主技能清單（雙列等寬） */
 .sidebar-skills-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -901,9 +913,9 @@ header {
   justify-content: center;
   width: 100%;
   padding: 6px 3px;
-  background: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 4px;
+  background: rgba(30, 41, 59, 0.65);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
   color: #cbd5e1;
   font-size: 12px;
   font-weight: 600;
@@ -916,8 +928,8 @@ header {
 }
 
 .subfilter-skill-btn:hover {
-  background: #334155;
-  border-color: #475569;
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(56, 189, 248, 0.4);
   color: #ffffff;
 }
 
