@@ -211,6 +211,7 @@ const {
   getItemNameJP,
   getItemCarry,
   getItemIngredientRate,
+  getItemSkillRate,
   getItemHelpInterval,
   DEFAULT_SVG_ICON,
   SPECIAL_SKILL_DETAILS,
@@ -736,6 +737,43 @@ test('Tier 2 - Boundary & Corner Cases', 'Special Pokemon icon resolution (9001-
       assert(!icon.includes(`pokemonsleep/pokemon/icon/${id}.png`), `Special item #${id} must not use naive numerical path pokemonsleep/pokemon/icon/${id}.png`);
     }
   });
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Table column sort: carry/ingredient/skill default desc, interval default asc; same-col toggles; switching col uses that col default', () => {
+  PokemonApp.init([...dataset]);
+  PokemonApp.onlyFinal = false;
+
+  assertEquals(PokemonApp.toggleColumnSort('carry'), 'carry-desc', '持有 first click should be desc');
+  let list = PokemonApp.render();
+  for (let i = 0; i < list.length - 1; i++) {
+    assert(getItemCarry(list[i]) >= getItemCarry(list[i + 1]), '持有 should sort desc');
+  }
+
+  assertEquals(PokemonApp.toggleColumnSort('carry'), 'carry-asc', '持有 second click should toggle to asc');
+  list = PokemonApp.render();
+  for (let i = 0; i < list.length - 1; i++) {
+    assert(getItemCarry(list[i]) <= getItemCarry(list[i + 1]), '持有 should sort asc after toggle');
+  }
+
+  assertEquals(PokemonApp.toggleColumnSort('ingredientRate'), 'ingredientRate-desc', '食材率 first click from other col should be desc');
+  list = PokemonApp.render();
+  for (let i = 0; i < list.length - 1; i++) {
+    assert(getItemIngredientRate(list[i]) >= getItemIngredientRate(list[i + 1]), '食材率 should sort desc');
+  }
+
+  assertEquals(PokemonApp.toggleColumnSort('skillRate'), 'skillRate-desc', '技能率 first click from other col should be desc');
+  list = PokemonApp.render();
+  for (let i = 0; i < list.length - 1; i++) {
+    assert(getItemSkillRate(list[i]) >= getItemSkillRate(list[i + 1]), '技能率 should sort desc');
+  }
+
+  assertEquals(PokemonApp.toggleColumnSort('interval'), 'interval-asc', '幫忙間隔 first click should be asc');
+  list = PokemonApp.render();
+  for (let i = 0; i < list.length - 1; i++) {
+    assert(getItemHelpInterval(list[i]) <= getItemHelpInterval(list[i + 1]), '幫忙間隔 should sort asc');
+  }
+
+  assertEquals(PokemonApp.toggleColumnSort('interval'), 'interval-desc', '幫忙間隔 second click should toggle to desc');
 });
 
 // -------------------------------------------------------------------

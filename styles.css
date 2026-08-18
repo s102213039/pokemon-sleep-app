@@ -1082,6 +1082,21 @@ header {
   text-align: center;
 }
 
+.pokemon-table th.th-sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.pokemon-table th.th-sortable:hover {
+  color: var(--text-primary);
+}
+
+.pokemon-table .sort-arrow {
+  margin-left: 3px;
+  font-size: 10px;
+  color: var(--accent-color);
+}
+
 .pokemon-table td {
   padding: 13px 8px;
   text-align: center;

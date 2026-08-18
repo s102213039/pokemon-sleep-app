@@ -78,6 +78,49 @@ function getItemCarry(p) {
   return isNaN(parsed) ? 0 : parsed;
 }
 
+function getItemSkillRate(p) {
+  if (!p) return 0;
+  if (typeof p.skillRate === 'number') return p.skillRate;
+  if (typeof p.skill_rate === 'number') return p.skill_rate;
+  const parsed = parseFloat(p.skill_rate || p.skillRate || '0');
+  return isNaN(parsed) ? 0 : parsed;
+}
+
+const SORT_GETTERS = {
+  carry: getItemCarry,
+  ingredientRate: getItemIngredientRate,
+  skillRate: getItemSkillRate,
+  interval: getItemHelpInterval
+};
+const SORT_DEFAULT_DIR = { carry: 'desc', ingredientRate: 'desc', skillRate: 'desc', interval: 'asc' };
+
+function parseTableSort(sortKey) {
+  if (!sortKey) return { col: null, dir: null };
+  const i = sortKey.lastIndexOf('-');
+  if (i <= 0) return { col: null, dir: null };
+  const col = sortKey.slice(0, i);
+  const dir = sortKey.slice(i + 1);
+  if (!SORT_GETTERS[col] || (dir !== 'asc' && dir !== 'desc')) return { col: null, dir: null };
+  return { col, dir };
+}
+
+function nextColumnSort(currentSort, col) {
+  if (!SORT_DEFAULT_DIR[col]) return currentSort;
+  const parsed = parseTableSort(currentSort);
+  if (parsed.col === col) return `${col}-${parsed.dir === 'desc' ? 'asc' : 'desc'}`;
+  return `${col}-${SORT_DEFAULT_DIR[col]}`;
+}
+
+function sortPokemonList(list, sortKey) {
+  const out = [...(list || [])];
+  const { col, dir } = parseTableSort(sortKey);
+  const getter = col && SORT_GETTERS[col];
+  if (!getter) return out;
+  const mul = dir === 'desc' ? -1 : 1;
+  out.sort((a, b) => (getter(a) - getter(b)) * mul);
+  return out;
+}
+
 function ingQtyBadges(ing, idx) {
   if (!ing) return '';
   const qtys = [];
@@ -351,11 +394,12 @@ const PokemonApp = {
   },
 
   sortData(data) {
-    const list = [...(data || this.filterData())];
-    if (this.currentSort === 'ingredientRate-desc') {
-      list.sort((a, b) => getItemIngredientRate(b) - getItemIngredientRate(a));
-    }
-    return list;
+    return sortPokemonList(data || this.filterData(), this.currentSort);
+  },
+
+  toggleColumnSort(col) {
+    this.currentSort = nextColumnSort(this.currentSort, col);
+    return this.currentSort;
   },
 
   render() {
@@ -378,6 +422,7 @@ if (typeof document !== 'undefined') {
     const selectedIngredients = new Set();
     const selectedSkills = new Set();
     let viewMode = 'table';
+    let currentSort = 'no-asc';
 
     const searchInput = document.getElementById('search-input');
     const typeFilterContainer = document.getElementById('type-filter-tags');
@@ -397,6 +442,15 @@ if (typeof document !== 'undefined') {
 
     const countBadge = document.getElementById('count-badge');
     const contentArea = document.getElementById('content-area');
+    if (contentArea) {
+      contentArea.addEventListener('click', (e) => {
+        const th = e.target.closest('th[data-sort]');
+        if (!th) return;
+        currentSort = nextColumnSort(currentSort, th.dataset.sort);
+        PokemonApp.currentSort = currentSort;
+        renderUI();
+      });
+    }
     const toggleGridBtn = document.getElementById('toggle-grid');
     const toggleTableBtn = document.getElementById('toggle-table');
     const syncBtn = document.getElementById('sync-btn');
@@ -923,9 +977,17 @@ if (typeof document !== 'undefined') {
       });
     }
 
+    function sortableTh(col, label, cls) {
+      const parsed = parseTableSort(currentSort);
+      const on = parsed.col === col;
+      const arrow = on ? (parsed.dir === 'desc' ? '▼' : '▲') : '';
+      const aria = on ? (parsed.dir === 'desc' ? 'descending' : 'ascending') : 'none';
+      return `<th class="${cls} th-sortable" data-sort="${col}" aria-sort="${aria}">${label}${arrow ? `<span class="sort-arrow" aria-hidden="true">${arrow}</span>` : ''}</th>`;
+    }
+
     function renderUI() {
       if (!contentArea) return;
-      const filtered = filterData();
+      const filtered = sortPokemonList(filterData(), currentSort);
       if (countBadge) countBadge.textContent = `共 ${filtered.length} 隻寶可夢`;
 
       if (filtered.length === 0) {
@@ -1004,13 +1066,13 @@ if (typeof document !== 'undefined') {
                 <th class="th-name">寶可夢</th>
                 <th class="th-type">屬性</th>
                 <th class="th-spec">得意</th>
-                <th class="th-carry">持有</th>
+                ${sortableTh('carry', '持有', 'th-carry')}
                 <th class="th-ing">食材 ①</th>
                 <th class="th-ing">食材 ②</th>
                 <th class="th-ing">食材 ③</th>
-                <th class="th-rate">食材率</th>
-                <th class="th-rate">技能率</th>
-                <th class="th-interval">幫忙間隔</th>
+                ${sortableTh('ingredientRate', '食材率', 'th-rate')}
+                ${sortableTh('skillRate', '技能率', 'th-rate')}
+                ${sortableTh('interval', '幫忙間隔', 'th-interval')}
                 <th class="th-skill">主技能</th>
               </tr>
             </thead>
@@ -1118,6 +1180,7 @@ if (typeof module !== 'undefined' && module.exports) {
     getItemNameJP: (p) => (p.name && p.name.jp) || p.name_jp || '',
     getItemCarry: (p) => getItemCarry(p),
     getItemIngredientRate: (p) => getItemIngredientRate(p),
+    getItemSkillRate: (p) => getItemSkillRate(p),
     getItemHelpInterval: (p) => getItemHelpInterval(p),
     DEFAULT_SVG_ICON,
     PokemonApp,
