@@ -550,10 +550,12 @@ if (typeof document !== 'undefined') {
     function initSpaTabs() {
       const tabPokemon = document.getElementById('tab-pokemon');
       const tabRecipes = document.getElementById('tab-recipes');
+      const tabWiki    = document.getElementById('tab-wiki');
       const tabBox     = document.getElementById('tab-box');
       const tabNews    = document.getElementById('tab-news');
       const panelPokemon = document.getElementById('panel-pokemon');
       const panelRecipes = document.getElementById('panel-recipes');
+      const panelWiki    = document.getElementById('panel-wiki');
       const panelBox     = document.getElementById('panel-box');
       const panelNews    = document.getElementById('panel-news');
 
@@ -561,9 +563,9 @@ if (typeof document !== 'undefined') {
 
       function switchMainTab(target) {
         // 移除所有 tab active 狀態
-        [tabPokemon, tabRecipes, tabBox, tabNews].forEach(t => t && t.classList.remove('active'));
+        [tabPokemon, tabRecipes, tabWiki, tabBox, tabNews].forEach(t => t && t.classList.remove('active'));
         // 隱藏所有 panels
-        [panelPokemon, panelRecipes, panelBox, panelNews].forEach(p => p && (p.style.display = 'none'));
+        [panelPokemon, panelRecipes, panelWiki, panelBox, panelNews].forEach(p => p && (p.style.display = 'none'));
 
         const filterSidebar = document.getElementById('pokemon-filter-sidebar');
         const bookmarkHandle = document.getElementById('sidebar-bookmark-handle');
@@ -587,6 +589,18 @@ if (typeof document !== 'undefined') {
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#box');
           }
+        } else if (target === 'wiki' && panelWiki && tabWiki) {
+          tabWiki.classList.add('active');
+          panelWiki.style.display = 'block';
+          if (bookmarkHandle) bookmarkHandle.style.display = 'none';
+          if (filterSidebar) filterSidebar.classList.add('collapsed');
+          if (backdrop) backdrop.classList.remove('active');
+          if (window.WikiDB && typeof window.WikiDB.init === 'function') {
+            window.WikiDB.init();
+          }
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState(null, '', '#wiki');
+          }
         } else if (target === 'recipes') {
           tabRecipes.classList.add('active');
           panelRecipes.style.display = 'block';
@@ -608,6 +622,7 @@ if (typeof document !== 'undefined') {
 
       tabPokemon.addEventListener('click', () => switchMainTab('pokemon'));
       tabRecipes.addEventListener('click', () => switchMainTab('recipes'));
+      if (tabWiki) tabWiki.addEventListener('click', () => switchMainTab('wiki'));
       if (tabBox) tabBox.addEventListener('click', () => switchMainTab('box'));
       if (tabNews) tabNews.addEventListener('click', () => switchMainTab('news'));
 
@@ -616,6 +631,8 @@ if (typeof document !== 'undefined') {
         switchMainTab('news');
       } else if (window.location.hash === '#box') {
         switchMainTab('box');
+      } else if (window.location.hash === '#wiki') {
+        switchMainTab('wiki');
       } else if (window.location.hash === '#recipes') {
         switchMainTab('recipes');
       }

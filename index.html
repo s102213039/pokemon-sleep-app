@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260818_09">
+  <link rel="stylesheet" href="styles.css?v=20260818_10">
 </head>
 <body>
 
@@ -26,12 +26,13 @@
         </div>
       </div>
 
-      <!-- 中央 SPA 切換 Switch Button (寶可夢圖鑑 <-> 料理食譜大全 <-> 我的寶可夢倉庫 <-> 最新更新與新聞) -->
+      <!-- 中央 SPA 切換 Switch Button (寶可夢圖鑑 <-> 料理食譜 <-> 數據百科 <-> 寶可夢倉庫 <-> 最新公告) -->
       <div class="main-tab-toggle">
         <button id="tab-pokemon" class="toggle-btn active">⚡ 寶可夢圖鑑</button>
-        <button id="tab-recipes" class="toggle-btn">🍲 料理食譜大全</button>
-        <button id="tab-box" class="toggle-btn">📦 我的寶可夢倉庫</button>
-        <button id="tab-news" class="toggle-btn">📰 最新更新與新聞</button>
+        <button id="tab-recipes" class="toggle-btn">🍲 料理食譜</button>
+        <button id="tab-wiki" class="toggle-btn">📚 數據百科</button>
+        <button id="tab-box" class="toggle-btn">📦 寶可夢倉庫</button>
+        <button id="tab-news" class="toggle-btn">📰 最新公告</button>
       </div>
 
       <div class="header-actions">
@@ -385,7 +386,10 @@
       </section>
     </div>
 
-    <!-- Panel 3: 我的寶可夢倉庫 -->
+    <!-- Panel 3: 數據百科與攻略知識庫 -->
+    <div id="panel-wiki" class="view-panel" style="display:none;"></div>
+
+    <!-- Panel 4: 寶可夢倉庫 -->
     <div id="panel-box" class="view-panel" style="display:none;">
       <section class="controls-container" aria-label="Box Controls">
         <!-- 頂部智能錄入與備份功能區 -->
@@ -602,9 +606,10 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260818_09"></script>
-  <script src="recipes.js?v=20260818_09"></script>
-  <script src="box.js?v=20260818_09"></script>
-  <script src="news.js?v=20260818_09"></script>
+  <script src="app.js?v=20260818_10"></script>
+  <script src="recipes.js?v=20260818_10"></script>
+  <script src="wiki.js?v=20260818_10"></script>
+  <script src="box.js?v=20260818_10"></script>
+  <script src="news.js?v=20260818_10"></script>
 </body>
 </html>

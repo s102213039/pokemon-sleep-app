@@ -302,6 +302,8 @@ test('Tier 1 - Feature Coverage', 'HTML Structure: index.html exists with requir
   assert(htmlContent.includes('id="content-area"') || htmlContent.includes("id='content-area'"), 'Missing view content area container');
   assert(htmlContent.includes('id="event-bonus-slider"'), 'Missing event-bonus-slider element in index.html');
   assert(htmlContent.includes('id="tasty-toggle-btn"'), 'Missing tasty-toggle-btn element in index.html');
+  assert(htmlContent.includes('id="tab-wiki"'), 'Missing tab-wiki element in index.html');
+  assert(htmlContent.includes('id="panel-wiki"'), 'Missing panel-wiki element in index.html');
   assert(htmlContent.includes('id="tab-box"'), 'Missing tab-box element in index.html');
   assert(htmlContent.includes('id="panel-box"'), 'Missing panel-box element in index.html');
   assert(htmlContent.includes('id="box-dropzone"'), 'Missing box-dropzone element in index.html');
@@ -312,6 +314,21 @@ test('Tier 1 - Feature Coverage', 'HTML Structure: index.html exists with requir
   assert(htmlContent.includes('id="news-category-tags"'), 'Missing news-category-tags element in index.html');
   assert(htmlContent.includes('id="news-search-input"'), 'Missing news-search-input element in index.html');
   assert(htmlContent.includes('id="news-list-container"'), 'Missing news-list-container element in index.html');
+});
+
+test('Tier 1 - Feature Coverage', 'Wiki Database Integrity: wiki.js defines skills, sub-skills, matrix, ratings, and ingredient ladder', () => {
+  const wikiPath = path.join(WORKSPACE_ROOT, 'wiki.js');
+  assert(fs.existsSync(wikiPath), 'wiki.js does not exist');
+  const wikiContent = fs.readFileSync(wikiPath, 'utf8');
+
+  assert(wikiContent.includes('MAIN_SKILLS_DATA'), 'wiki.js missing MAIN_SKILLS_DATA');
+  assert(wikiContent.includes('SUB_SKILLS_DATA'), 'wiki.js missing SUB_SKILLS_DATA');
+  assert(wikiContent.includes('TRIGGER_CHANCE_MATRIX'), 'wiki.js missing TRIGGER_CHANCE_MATRIX');
+  assert(wikiContent.includes('RATINGS_GUIDE_DATA'), 'wiki.js missing RATINGS_GUIDE_DATA');
+  assert(wikiContent.includes('LV60_INGREDIENTS_LADDER'), 'wiki.js missing LV60_INGREDIENTS_LADDER');
+  assert(wikiContent.includes('蓄力 (能量填充S)'), 'wiki.js missing Charge Stock skill data');
+  assert(wikiContent.includes('幫手加速 (屬性)'), 'wiki.js missing Helper Boost skill data');
+  assert(wikiContent.includes('1.848'), 'wiki.js missing 1.848x trigger chance multiplier');
 });
 
 test('Tier 1 - Feature Coverage', 'Box System Integrity: box.js defines 25 Natures, Sub-skills, and User Box data models', () => {
