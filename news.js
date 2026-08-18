@@ -30,7 +30,7 @@
   /* ─── 載入新聞資料 ───────────────────────────────────── */
   async function loadNews() {
     try {
-      const res = await fetch('news.json');
+      const res = await fetch(`news.json?t=${Date.now()}`, { cache: 'no-store' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       allNews = await res.json();
       renderEventTimeline();

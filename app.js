@@ -609,7 +609,7 @@ if (typeof document !== 'undefined') {
 
     initSpaTabs();
 
-    fetch('data.json')
+    fetch(`data.json?t=${Date.now()}`, { cache: 'no-store' })
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();

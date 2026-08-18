@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ─── 載入 recipes.json ─────────────────────────────── */
   loadPrefs();
 
-  fetch('recipes.json')
+  fetch(`recipes.json?t=${Date.now()}`, { cache: 'no-store' })
     .then(res => res.json())
     .then(data => {
       allRecipes = data;
