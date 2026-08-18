@@ -290,6 +290,8 @@ test('Tier 1 - Feature Coverage', 'HTML Structure: index.html exists with requir
   assert(htmlContent.includes('id="final-evo-toggle"'), 'Missing final-evo-toggle switch element');
   assert(htmlContent.includes('id="initial-ing-toggle"'), 'Missing initial-ing-toggle switch element');
   assert(htmlContent.includes('id="pokemon-filter-sidebar"'), 'Missing pokemon-filter-sidebar element in index.html');
+  assert(htmlContent.includes('id="sidebar-toggle-handle"'), 'Missing sidebar-toggle-handle element in index.html');
+  assert(htmlContent.includes('id="sidebar-close-btn"'), 'Missing sidebar-close-btn element in index.html');
   assert(htmlContent.includes('id="sidebar-reset-all-btn"'), 'Missing sidebar-reset-all-btn element in index.html');
   assert(htmlContent.includes('id="berry-filter-tags"') || htmlContent.includes("id='berry-filter-tags'"), 'Missing berry filter container');
   assert(htmlContent.includes('id="specialty-filter-tags"') || htmlContent.includes("id='specialty-filter-tags'"), 'Missing specialty filter container');

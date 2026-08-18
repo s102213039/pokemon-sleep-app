@@ -916,6 +916,96 @@ if (typeof document !== 'undefined') {
           renderUI();
         });
       }
+
+      // ⬅️ 左側抽屜式側邊欄展開與收合控制 (Left Sliding Sidebar Controller)
+      const sidebar = document.getElementById('pokemon-filter-sidebar');
+      const toggleHandle = document.getElementById('sidebar-toggle-handle');
+      const closeBtn = document.getElementById('sidebar-close-btn');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      const filterBadge = document.getElementById('sidebar-active-filter-badge');
+
+      function updateActiveFilterBadge() {
+        if (!filterBadge) return;
+        let count = 0;
+        if (selectedSpecialties && selectedSpecialties.size > 0) count += selectedSpecialties.size;
+        if (selectedBerries && selectedBerries.size > 0) count += selectedBerries.size;
+        if (selectedIngredients && selectedIngredients.size > 0) count += selectedIngredients.size;
+        if (selectedSkills && selectedSkills.size > 0) count += selectedSkills.size;
+        if (onlyInitialIng) count += 1;
+        
+        if (count > 0) {
+          filterBadge.textContent = count;
+          filterBadge.style.display = 'flex';
+        } else {
+          filterBadge.style.display = 'none';
+        }
+      }
+
+      function toggleSidebar(forceState) {
+        if (!sidebar) return;
+        const isCurrentlyCollapsed = sidebar.classList.contains('collapsed');
+        const shouldCollapse = forceState !== undefined ? !forceState : !isCurrentlyCollapsed;
+
+        if (shouldCollapse) {
+          sidebar.classList.add('collapsed');
+          if (backdrop) backdrop.classList.remove('active');
+          if (toggleHandle) {
+            toggleHandle.setAttribute('aria-expanded', 'false');
+            toggleHandle.title = '展開篩選側邊欄';
+          }
+        } else {
+          sidebar.classList.remove('collapsed');
+          if (window.innerWidth <= 1024 && backdrop) {
+            backdrop.classList.add('active');
+          }
+          if (toggleHandle) {
+            toggleHandle.setAttribute('aria-expanded', 'true');
+            toggleHandle.title = '收合篩選側邊欄';
+          }
+        }
+      }
+
+      if (toggleHandle) {
+        toggleHandle.addEventListener('click', () => toggleSidebar());
+      }
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => toggleSidebar(false));
+      }
+      if (backdrop) {
+        backdrop.addEventListener('click', () => toggleSidebar(false));
+      }
+
+      // Touch swipe gestures (左滑收合、右滑展開)
+      let touchStartX = 0;
+      let touchStartY = 0;
+
+      document.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchend', (e) => {
+        if (!e.changedTouches || !e.changedTouches[0]) return;
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+        const diffX = touchEndX - touchStartX;
+        const diffY = touchEndY - touchStartY;
+
+        // 判斷是否為水平滑動（水平位移 > 50px 且大於垂直位移）
+        if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.3) {
+          if (diffX < -50 && sidebar && !sidebar.classList.contains('collapsed')) {
+            // 向左滑動 ➜ 收合側邊欄
+            toggleSidebar(false);
+          } else if (diffX > 50 && touchStartX < 60 && sidebar && sidebar.classList.contains('collapsed')) {
+            // 從螢幕左邊緣向右滑動 ➜ 展開側邊欄
+            toggleSidebar(true);
+          }
+        }
+      }, { passive: true });
+
+      window.updateActiveFilterBadge = updateActiveFilterBadge;
     }
 
     function filterData() {
@@ -987,6 +1077,7 @@ if (typeof document !== 'undefined') {
 
     function renderUI() {
       if (!contentArea) return;
+      if (typeof updateActiveFilterBadge === 'function') updateActiveFilterBadge();
       const filtered = sortPokemonList(filterData(), currentSort);
       if (countBadge) countBadge.textContent = `共 ${filtered.length} 隻寶可夢`;
 

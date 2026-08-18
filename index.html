@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260818_01">
+  <link rel="stylesheet" href="styles.css?v=20260818_02">
 </head>
 <body>
 
@@ -69,14 +69,24 @@
     <!-- Panel 1: 寶可夢圖鑑 -->
     <!-- Panel 1: 寶可夢圖鑑 -->
     <div id="panel-pokemon" class="view-panel pokemon-layout-view">
-      <!-- ⬅️ 左側懸浮固定篩選器 (Left Floating Fixed Filter Sidebar) -->
+      <!-- ⬅️ 左側抽屜式側邊欄 (Left Sliding Sidebar Filter) -->
       <aside id="pokemon-filter-sidebar" class="pokemon-filter-sidebar" aria-label="寶可夢圖鑑篩選器">
+        <!-- 側邊欄邊緣展開/收合標籤 (Attached Toggle Tab on Sidebar Edge) -->
+        <button type="button" id="sidebar-toggle-handle" class="sidebar-toggle-handle" title="展開 / 收合篩選側邊欄" aria-label="切換篩選側邊欄">
+          <span class="handle-icon">🎛️</span>
+          <span class="handle-arrow">◀</span>
+          <span id="sidebar-active-filter-badge" class="sidebar-filter-badge" style="display:none;"></span>
+        </button>
+
         <div class="sidebar-header">
           <div class="sidebar-title-group">
             <span class="sidebar-icon">🎛️</span>
             <span class="sidebar-title">圖鑑篩選器</span>
           </div>
-          <button type="button" id="sidebar-reset-all-btn" class="sidebar-reset-btn" title="重設所有篩選條件">全部重設</button>
+          <div class="sidebar-header-actions">
+            <button type="button" id="sidebar-reset-all-btn" class="sidebar-reset-btn" title="重設所有篩選條件">全部重設</button>
+            <button type="button" id="sidebar-close-btn" class="sidebar-close-btn" title="收合側邊欄" aria-label="收合側邊欄">◀</button>
+          </div>
         </div>
 
         <div class="sidebar-scrollable-content">
@@ -141,6 +151,9 @@
           </div>
         </div>
       </aside>
+
+      <!-- 側邊欄半透明遮罩 (Mobile / Tablet Backdrop) -->
+      <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
 
       <!-- ➡️ 右側主要內容區 (Right Main Content Area) -->
       <div class="pokemon-main-content">
@@ -590,9 +603,9 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260818_01"></script>
-  <script src="recipes.js?v=20260818_01"></script>
-  <script src="box.js?v=20260818_01"></script>
-  <script src="news.js?v=20260818_01"></script>
+  <script src="app.js?v=20260818_02"></script>
+  <script src="recipes.js?v=20260818_02"></script>
+  <script src="box.js?v=20260818_02"></script>
+  <script src="news.js?v=20260818_02"></script>
 </body>
 </html>
