@@ -5252,47 +5252,134 @@ select optgroup,
   border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
-.values-section-sub {
-  font-size: 12px;
-  font-weight: 600;
-  color: #94a3b8;
+/* 樹果動態試算控制列 (等級滑桿與順果 2x 開關) */
+.berry-calc-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.values-energy-arrow-guide {
+.berry-control-group {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
+}
+
+.berry-control-label {
+  font-size: 12px;
   font-weight: 700;
   color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.guide-arrow {
-  width: 60px;
-  height: 2px;
-  background: linear-gradient(90deg, #38bdf8 0%, #a855f7 100%);
-  position: relative;
-  border-radius: 2px;
+.berry-level-tag {
+  color: #38bdf8;
+  font-weight: 800;
+  font-size: 13px;
+  font-feature-settings: 'tnum';
+  min-width: 42px;
 }
 
-.guide-arrow.ing-arrow {
-  background: linear-gradient(90deg, #fbbf24 0%, #f472b6 100%);
+.berry-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 120px;
+  height: 6px;
+  background: rgba(56, 189, 248, 0.2);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
 }
 
-.guide-arrow::after {
-  content: '';
+.berry-slider:hover {
+  background: rgba(56, 189, 248, 0.35);
+}
+
+.berry-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #38bdf8;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
+  transition: transform 0.1s ease;
+}
+
+.berry-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.berry-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #38bdf8;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
+}
+
+.berry-switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.berry-switch-label input {
   position: absolute;
-  right: -2px;
-  top: -3px;
+  opacity: 0;
   width: 0;
   height: 0;
-  border-top: 4px solid transparent;
-  border-bottom: 4px solid transparent;
-  border-left: 6px solid #a855f7;
 }
 
-.guide-arrow.ing-arrow::after {
-  border-left-color: #f472b6;
+.berry-switch-slider {
+  position: relative;
+  display: inline-block;
+  width: 32px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
+  transition: background-color 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.berry-switch-slider::before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.berry-switch-label input:checked + .berry-switch-slider {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+}
+
+.berry-switch-label input:checked + .berry-switch-slider::before {
+  transform: translateX(14px);
+}
+
+.berry-switch-text {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #fbbf24;
 }
 
 .values-compact-grid {

@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260819_11">
+  <link rel="stylesheet" href="styles.css?v=20260819_12">
 </head>
 <body>
 
@@ -5542,111 +5542,125 @@
             <div style="margin-top: 20px;">
               
       <div class="values-horizontal-container">
-        <!-- 區塊 1：樹果基礎能量庫 (24 ~ 35) -->
+        <!-- 區塊 1：樹果基礎能量庫 (Lv.1 ~ Lv.70 動態試算) -->
         <div class="values-horizontal-section">
           <div class="values-section-header">
             <div class="values-section-title-group">
-              <span class="values-section-badge berry-badge">🫐 樹果基礎能量庫</span>
-              <span class="values-section-sub">基礎能量 24 ➔ 35</span>
+              <span class="values-section-badge berry-badge">🫐 樹果能量庫</span>
+              <span class="values-section-sub">基礎能量 (Lv.1: 24 ➔ 35)</span>
             </div>
-            <div class="values-energy-arrow-guide">
-              <span>由少到多</span>
-              <div class="guide-arrow"></div>
+
+            <!-- 等級滑桿與順果 2x 控制器 -->
+            <div class="berry-calc-controls">
+              <div class="berry-control-group">
+                <label for="berry-level-slider" class="berry-control-label">
+                  寶可夢等級：<span id="berry-level-display" class="berry-level-tag">Lv. 1</span>
+                </label>
+                <input type="range" id="berry-level-slider" min="1" max="70" value="1" step="1" class="berry-slider" oninput="window.WikiDB.updateBerryLevel(this.value)">
+              </div>
+
+              <div class="berry-control-group">
+                <label class="berry-switch-label" title="卡比獸喜愛樹果 (順果) 能量翻倍 (2x)">
+                  <input type="checkbox" id="berry-favorite-toggle"  onchange="window.WikiDB.toggleBerryFavorite(this.checked)">
+                  <span class="berry-switch-slider"></span>
+                  <span class="berry-switch-text">🎯 順果 2x 加倍</span>
+                </label>
+              </div>
             </div>
           </div>
 
-          <div class="values-compact-grid values-berry-grid">
+          <div id="values-berry-grid" class="values-compact-grid values-berry-grid">
             
-              <div class="value-compact-node" title="零餘果 - 基礎能量 24">
-                <img src="https://www.serebii.net/pokemonsleep/berries/persimberry.png" class="value-compact-icon" alt="零餘果">
-                <span class="value-compact-energy berry-val">24</span>
-              </div>
-            
-              <div class="value-compact-node" title="椰木果 - 基礎能量 24">
-                <img src="https://www.serebii.net/pokemonsleep/berries/lumberry.png" class="value-compact-icon" alt="椰木果">
-                <span class="value-compact-energy berry-val">24</span>
-              </div>
-            
-              <div class="value-compact-node" title="橙橙果 - 基礎能量 25">
-                <img src="https://www.serebii.net/pokemonsleep/berries/oranberry.png" class="value-compact-icon" alt="橙橙果">
-                <span class="value-compact-energy berry-val">25</span>
-              </div>
-            
-              <div class="value-compact-node" title="蘋野果 - 基礎能量 26">
-                <img src="https://www.serebii.net/pokemonsleep/berries/leppaberry.png" class="value-compact-icon" alt="蘋野果">
-                <span class="value-compact-energy berry-val">26</span>
-              </div>
-            
-              <div class="value-compact-node" title="墨莓果 - 基礎能量 26">
-                <img src="https://www.serebii.net/pokemonsleep/berries/durinberry.png" class="value-compact-icon" alt="墨莓果">
-                <span class="value-compact-energy berry-val">26</span>
-              </div>
-            
-              <div class="value-compact-node" title="勿忘果 - 基礎能量 26">
-                <img src="https://www.serebii.net/pokemonsleep/berries/chestoberry.png" class="value-compact-icon" alt="勿忘果">
-                <span class="value-compact-energy berry-val">26</span>
-              </div>
-            
-              <div class="value-compact-node" title="櫻子果 - 基礎能量 27">
-                <img src="https://www.serebii.net/pokemonsleep/berries/cheriberry.png" class="value-compact-icon" alt="櫻子果">
-                <span class="value-compact-energy berry-val">27</span>
-              </div>
-            
-              <div class="value-compact-node" title="桃桃果 - 基礎能量 27">
-                <img src="https://www.serebii.net/pokemonsleep/berries/pechaberry.png" class="value-compact-icon" alt="桃桃果">
-                <span class="value-compact-energy berry-val">27</span>
-              </div>
-            
-              <div class="value-compact-node" title="文柚果 - 基礎能量 28">
-                <img src="https://www.serebii.net/pokemonsleep/berries/sitrusberry.png" class="value-compact-icon" alt="文柚果">
-                <span class="value-compact-energy berry-val">28</span>
-              </div>
-            
-              <div class="value-compact-node" title="蔓莓果 - 基礎能量 29">
-                <img src="https://www.serebii.net/pokemonsleep/berries/blukberry.png" class="value-compact-icon" alt="蔓莓果">
-                <span class="value-compact-energy berry-val">29</span>
-              </div>
-            
-              <div class="value-compact-node" title="芭亞果 - 基礎能量 30">
-                <img src="https://www.serebii.net/pokemonsleep/berries/wikiberry.png" class="value-compact-icon" alt="芭亞果">
-                <span class="value-compact-energy berry-val">30</span>
-              </div>
-            
-              <div class="value-compact-node" title="芒芒果 - 基礎能量 30">
-                <img src="https://www.serebii.net/pokemonsleep/berries/magoberry.png" class="value-compact-icon" alt="芒芒果">
-                <span class="value-compact-energy berry-val">30</span>
-              </div>
-            
-              <div class="value-compact-node" title="樂芭果 - 基礎能量 31">
-                <img src="https://www.serebii.net/pokemonsleep/berries/yacheberry.png" class="value-compact-icon" alt="樂芭果">
-                <span class="value-compact-energy berry-val">31</span>
-              </div>
-            
-              <div class="value-compact-node" title="異奇果 - 基礎能量 31">
-                <img src="https://www.serebii.net/pokemonsleep/berries/figyberry.png" class="value-compact-icon" alt="異奇果">
-                <span class="value-compact-energy berry-val">31</span>
-              </div>
-            
-              <div class="value-compact-node" title="巧可果 - 基礎能量 32">
-                <img src="https://www.serebii.net/pokemonsleep/berries/pamtreberry.png" class="value-compact-icon" alt="巧可果">
-                <span class="value-compact-energy berry-val">32</span>
-              </div>
-            
-              <div class="value-compact-node" title="椰查果 - 基礎能量 33">
-                <img src="https://www.serebii.net/pokemonsleep/berries/belueberry.png" class="value-compact-icon" alt="椰查果">
-                <span class="value-compact-energy berry-val">33</span>
-              </div>
-            
-              <div class="value-compact-node" title="榴石果 - 基礎能量 35">
-                <img src="https://www.serebii.net/pokemonsleep/berries/grepaberry.png" class="value-compact-icon" alt="榴石果">
-                <span class="value-compact-energy berry-val">35</span>
-              </div>
-            
-              <div class="value-compact-node" title="苦莓果 - 基礎能量 35">
-                <img src="https://www.serebii.net/pokemonsleep/berries/rawstberry.png" class="value-compact-icon" alt="苦莓果">
-                <span class="value-compact-energy berry-val">35</span>
-              </div>
-            
+                <div class="value-compact-node" title="零餘果 (一般屬性) - Lv.1 能量 24">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/persimberry.png" class="value-compact-icon" alt="零餘果">
+                  <span class="value-compact-energy berry-val">24</span>
+                </div>
+              
+                <div class="value-compact-node" title="椰木果 (蟲屬性) - Lv.1 能量 24">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/lumberry.png" class="value-compact-icon" alt="椰木果">
+                  <span class="value-compact-energy berry-val">24</span>
+                </div>
+              
+                <div class="value-compact-node" title="橙橙果 (水屬性) - Lv.1 能量 25">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/oranberry.png" class="value-compact-icon" alt="橙橙果">
+                  <span class="value-compact-energy berry-val">25</span>
+                </div>
+              
+                <div class="value-compact-node" title="蘋野果 (火屬性) - Lv.1 能量 26">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/leppaberry.png" class="value-compact-icon" alt="蘋野果">
+                  <span class="value-compact-energy berry-val">26</span>
+                </div>
+              
+                <div class="value-compact-node" title="墨莓果 (草屬性) - Lv.1 能量 26">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/durinberry.png" class="value-compact-icon" alt="墨莓果">
+                  <span class="value-compact-energy berry-val">26</span>
+                </div>
+              
+                <div class="value-compact-node" title="勿忘果 (鋼屬性) - Lv.1 能量 26">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/chestoberry.png" class="value-compact-icon" alt="勿忘果">
+                  <span class="value-compact-energy berry-val">26</span>
+                </div>
+              
+                <div class="value-compact-node" title="櫻子果 (格鬥屬性) - Lv.1 能量 27">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/cheriberry.png" class="value-compact-icon" alt="櫻子果">
+                  <span class="value-compact-energy berry-val">27</span>
+                </div>
+              
+                <div class="value-compact-node" title="桃桃果 (妖精屬性) - Lv.1 能量 27">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/pechaberry.png" class="value-compact-icon" alt="桃桃果">
+                  <span class="value-compact-energy berry-val">27</span>
+                </div>
+              
+                <div class="value-compact-node" title="文柚果 (超能力屬性) - Lv.1 能量 28">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/sitrusberry.png" class="value-compact-icon" alt="文柚果">
+                  <span class="value-compact-energy berry-val">28</span>
+                </div>
+              
+                <div class="value-compact-node" title="蔓莓果 (幽靈屬性) - Lv.1 能量 29">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/blukberry.png" class="value-compact-icon" alt="蔓莓果">
+                  <span class="value-compact-energy berry-val">29</span>
+                </div>
+              
+                <div class="value-compact-node" title="芭亞果 (惡屬性) - Lv.1 能量 30">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/wikiberry.png" class="value-compact-icon" alt="芭亞果">
+                  <span class="value-compact-energy berry-val">30</span>
+                </div>
+              
+                <div class="value-compact-node" title="芒芒果 (飛行屬性) - Lv.1 能量 30">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/magoberry.png" class="value-compact-icon" alt="芒芒果">
+                  <span class="value-compact-energy berry-val">30</span>
+                </div>
+              
+                <div class="value-compact-node" title="樂芭果 (龍屬性) - Lv.1 能量 31">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/yacheberry.png" class="value-compact-icon" alt="樂芭果">
+                  <span class="value-compact-energy berry-val">31</span>
+                </div>
+              
+                <div class="value-compact-node" title="異奇果 (毒屬性) - Lv.1 能量 31">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/figyberry.png" class="value-compact-icon" alt="異奇果">
+                  <span class="value-compact-energy berry-val">31</span>
+                </div>
+              
+                <div class="value-compact-node" title="巧可果 (地面屬性) - Lv.1 能量 32">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/pamtreberry.png" class="value-compact-icon" alt="巧可果">
+                  <span class="value-compact-energy berry-val">32</span>
+                </div>
+              
+                <div class="value-compact-node" title="椰查果 (岩石屬性) - Lv.1 能量 33">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/belueberry.png" class="value-compact-icon" alt="椰查果">
+                  <span class="value-compact-energy berry-val">33</span>
+                </div>
+              
+                <div class="value-compact-node" title="榴石果 (電屬性) - Lv.1 能量 35">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/grepaberry.png" class="value-compact-icon" alt="榴石果">
+                  <span class="value-compact-energy berry-val">35</span>
+                </div>
+              
+                <div class="value-compact-node" title="苦莓果 (冰屬性) - Lv.1 能量 35">
+                  <img src="https://www.serebii.net/pokemonsleep/berries/rawstberry.png" class="value-compact-icon" alt="苦莓果">
+                  <span class="value-compact-energy berry-val">35</span>
+                </div>
+              
           </div>
         </div>
 
@@ -5655,11 +5669,7 @@
           <div class="values-section-header">
             <div class="values-section-title-group">
               <span class="values-section-badge ing-badge">🍲 食材基礎能量庫</span>
-              <span class="values-section-sub">基礎能量 90 ➔ 342</span>
-            </div>
-            <div class="values-energy-arrow-guide">
-              <span>由少到多</span>
-              <div class="guide-arrow ing-arrow"></div>
+              <span class="values-section-sub">基礎能量 90 ➔ 342 (料理關鍵基礎分)</span>
             </div>
           </div>
 
@@ -5983,10 +5993,10 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260819_11"></script>
-  <script src="recipes.js?v=20260819_11"></script>
-  <script src="wiki.js?v=20260819_11"></script>
-  <script src="box.js?v=20260819_11"></script>
-  <script src="news.js?v=20260819_11"></script>
+  <script src="app.js?v=20260819_12"></script>
+  <script src="recipes.js?v=20260819_12"></script>
+  <script src="wiki.js?v=20260819_12"></script>
+  <script src="box.js?v=20260819_12"></script>
+  <script src="news.js?v=20260819_12"></script>
 </body>
 </html>

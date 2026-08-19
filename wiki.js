@@ -941,6 +941,45 @@
     }
   }
 
+  // 5.1 樹果能量動態等級 (Lv.1 ~ Lv.70) 與 順果 2x 計算
+  let currentBerryLevel = 1;
+  let isFavoriteBerry2x = false;
+
+  function calcBerryEnergy(base, lv, isFav) {
+    const raw = Math.round(Math.max(base + (lv - 1), base * Math.pow(1.025, lv - 1)));
+    return isFav ? raw * 2 : raw;
+  }
+
+  function updateBerryLevel(val) {
+    currentBerryLevel = Math.min(Math.max(parseInt(val, 10) || 1, 1), 70);
+    const displayEl = document.getElementById('berry-level-display');
+    if (displayEl) displayEl.textContent = `Lv. ${currentBerryLevel}`;
+    const sliderEl = document.getElementById('berry-level-slider');
+    if (sliderEl && parseInt(sliderEl.value, 10) !== currentBerryLevel) {
+      sliderEl.value = currentBerryLevel;
+    }
+    refreshBerryNodes();
+  }
+
+  function toggleBerryFavorite(checked) {
+    isFavoriteBerry2x = !!checked;
+    refreshBerryNodes();
+  }
+
+  function refreshBerryNodes() {
+    const grid = document.getElementById('values-berry-grid');
+    if (!grid) return;
+    grid.innerHTML = BERRY_VALUES_DATA.map(b => {
+      const energy = calcBerryEnergy(b.energy, currentBerryLevel, isFavoriteBerry2x);
+      return `
+        <div class="value-compact-node" title="${b.name} (${b.type}屬性) - Lv.${currentBerryLevel}${isFavoriteBerry2x ? ' 順果2x' : ''} 能量 ${energy}">
+          <img src="${b.icon}" class="value-compact-icon" alt="${b.name}">
+          <span class="value-compact-energy berry-val">${energy}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
   // 6. 展開/收合詳細對照表
   function toggleDetailTable(targetId) {
     const targetEl = document.getElementById(targetId);
@@ -1202,11 +1241,17 @@
       if (e.target && (e.target.id === 'calc-sleep-exp-subskill' || e.target.id === 'calc-sleep-incense' || e.target.id === 'calc-sleep-nature-select')) {
         recalcSleepDays();
       }
+      if (e.target && e.target.id === 'berry-favorite-toggle') {
+        toggleBerryFavorite(e.target.checked);
+      }
     });
 
     document.addEventListener('input', (e) => {
       if (e.target && (e.target.id === 'calc-sleep-cur-lv' || e.target.id === 'calc-sleep-target-lv')) {
         recalcSleepDays();
+      }
+      if (e.target && e.target.id === 'berry-level-slider') {
+        updateBerryLevel(e.target.value);
       }
     });
   }
@@ -1417,30 +1462,47 @@
     `;
   }
 
-  // 渲染樹果與食材基礎能量看板 (極簡無名無滾輪 18 格全展開版)
+  // 渲染樹果與食材基礎能量看板 (極簡無名無滾輪 18 格全展開版 + 等級滑桿與順果 2x 開關)
   function renderValuesBoard() {
     return `
       <div class="values-horizontal-container">
-        <!-- 區塊 1：樹果基礎能量庫 (24 ~ 35) -->
+        <!-- 區塊 1：樹果基礎能量庫 (Lv.1 ~ Lv.70 動態試算) -->
         <div class="values-horizontal-section">
           <div class="values-section-header">
             <div class="values-section-title-group">
-              <span class="values-section-badge berry-badge">🫐 樹果基礎能量庫</span>
-              <span class="values-section-sub">基礎能量 24 ➔ 35</span>
+              <span class="values-section-badge berry-badge">🫐 樹果能量庫</span>
+              <span class="values-section-sub">基礎能量 (Lv.1: 24 ➔ 35)</span>
             </div>
-            <div class="values-energy-arrow-guide">
-              <span>由少到多</span>
-              <div class="guide-arrow"></div>
+
+            <!-- 等級滑桿與順果 2x 控制器 -->
+            <div class="berry-calc-controls">
+              <div class="berry-control-group">
+                <label for="berry-level-slider" class="berry-control-label">
+                  寶可夢等級：<span id="berry-level-display" class="berry-level-tag">Lv. ${currentBerryLevel}</span>
+                </label>
+                <input type="range" id="berry-level-slider" min="1" max="70" value="${currentBerryLevel}" step="1" class="berry-slider" oninput="window.WikiDB.updateBerryLevel(this.value)">
+              </div>
+
+              <div class="berry-control-group">
+                <label class="berry-switch-label" title="卡比獸喜愛樹果 (順果) 能量翻倍 (2x)">
+                  <input type="checkbox" id="berry-favorite-toggle" ${isFavoriteBerry2x ? 'checked' : ''} onchange="window.WikiDB.toggleBerryFavorite(this.checked)">
+                  <span class="berry-switch-slider"></span>
+                  <span class="berry-switch-text">🎯 順果 2x 加倍</span>
+                </label>
+              </div>
             </div>
           </div>
 
-          <div class="values-compact-grid values-berry-grid">
-            ${BERRY_VALUES_DATA.map(b => `
-              <div class="value-compact-node" title="${b.name} - 基礎能量 ${b.energy}">
-                <img src="${b.icon}" class="value-compact-icon" alt="${b.name}">
-                <span class="value-compact-energy berry-val">${b.energy}</span>
-              </div>
-            `).join('')}
+          <div id="values-berry-grid" class="values-compact-grid values-berry-grid">
+            ${BERRY_VALUES_DATA.map(b => {
+              const energy = calcBerryEnergy(b.energy, currentBerryLevel, isFavoriteBerry2x);
+              return `
+                <div class="value-compact-node" title="${b.name} (${b.type}屬性) - Lv.${currentBerryLevel}${isFavoriteBerry2x ? ' 順果2x' : ''} 能量 ${energy}">
+                  <img src="${b.icon}" class="value-compact-icon" alt="${b.name}">
+                  <span class="value-compact-energy berry-val">${energy}</span>
+                </div>
+              `;
+            }).join('')}
           </div>
         </div>
 
@@ -1449,11 +1511,7 @@
           <div class="values-section-header">
             <div class="values-section-title-group">
               <span class="values-section-badge ing-badge">🍲 食材基礎能量庫</span>
-              <span class="values-section-sub">基礎能量 90 ➔ 342</span>
-            </div>
-            <div class="values-energy-arrow-guide">
-              <span>由少到多</span>
-              <div class="guide-arrow ing-arrow"></div>
+              <span class="values-section-sub">基礎能量 90 ➔ 342 (料理關鍵基礎分)</span>
             </div>
           </div>
 
@@ -2045,6 +2103,8 @@
     switchStack: switchChargeStock,
     switchBoost: switchHelperBoost,
     toggleDetail: toggleDetailTable,
+    updateBerryLevel: updateBerryLevel,
+    toggleBerryFavorite: toggleBerryFavorite,
     recalcTriggerChance: recalcTriggerChance,
     recalcSleepDays: recalcSleepDays
   };
@@ -2059,6 +2119,8 @@
   window.switchChargeStock = switchChargeStock;
   window.switchHelperBoost = switchHelperBoost;
   window.toggleDetailTable = toggleDetailTable;
+  window.updateBerryLevel = updateBerryLevel;
+  window.toggleBerryFavorite = toggleBerryFavorite;
   window.recalcTriggerChance = recalcTriggerChance;
   window.recalcSleepDays = recalcSleepDays;
 
