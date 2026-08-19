@@ -404,18 +404,123 @@
 
   // 主技能機率矩陣速查表 (副技能 × 性格全排列)
   const TRIGGER_CHANCE_MATRIX = [
-    { subskills: "STM (+36%) + STS (+18%)", subskillMult: "1.54x", nature: "▲▲ 技能機率上升 (+20%)", natureMult: "1.20x", calc: "1.54 × 1.20", multiplier: 1.848, grade: "SSS (頂級極限)" },
-    { subskills: "STM (+36%)", subskillMult: "1.36x", nature: "▲▲ 技能機率上升 (+20%)", natureMult: "1.20x", calc: "1.36 × 1.20", multiplier: 1.632, grade: "SS (優秀極限)" },
-    { subskills: "STM (+36%) + STS (+18%)", subskillMult: "1.54x", nature: "無修正 / 其它性格", natureMult: "1.00x", calc: "1.54 × 1.00", multiplier: 1.530, grade: "S (雙副技無性格)" },
-    { subskills: "STS (+18%)", subskillMult: "1.18x", nature: "▲▲ 技能機率上升 (+20%)", natureMult: "1.20x", calc: "1.18 × 1.20", multiplier: 1.416, grade: "A (單副技+性格)" },
-    { subskills: "STM (+36%)", subskillMult: "1.36x", nature: "無修正 / 其它性格", natureMult: "1.00x", calc: "1.36 × 1.00", multiplier: 1.360, grade: "A (單STM無性格)" },
-    { subskills: "STM (+36%) + STS (+18%)", subskillMult: "1.54x", nature: "▼▼ 技能機率下降 (-20%)", natureMult: "0.80x", calc: "1.54 × 0.80", multiplier: 1.232, grade: "B (雙副技補回性格)" },
-    { subskills: "無技能機率副技能", subskillMult: "1.00x", nature: "▲▲ 技能機率上升 (+20%)", natureMult: "1.20x", calc: "1.00 × 1.20", multiplier: 1.200, grade: "B (純性格無副技)" },
-    { subskills: "STS (+18%)", subskillMult: "1.18x", nature: "無修正 / 其它性格", natureMult: "1.00x", calc: "1.18 × 1.00", multiplier: 1.180, grade: "B (純STS無性格)" },
-    { subskills: "STM (+36%)", subskillMult: "1.36x", nature: "▼▼ 技能機率下降 (-20%)", natureMult: "0.80x", calc: "1.36 × 0.80", multiplier: 1.088, grade: "C (STM抵銷性格下修)" },
-    { subskills: "無技能機率副技能", subskillMult: "1.00x", nature: "無修正 / 其它性格", natureMult: "1.00x", calc: "1.00 × 1.00", multiplier: 1.000, grade: "基準線 (1.00x)" },
-    { subskills: "STS (+18%)", subskillMult: "1.18x", nature: "▼▼ 技能機率下降 (-20%)", natureMult: "0.80x", calc: "1.18 × 0.80", multiplier: 0.944, grade: "D (微幅受阻)" },
-    { subskills: "無技能機率副技能", subskillMult: "1.00x", nature: "▼▼ 技能機率下降 (-20%)", natureMult: "0.80x", calc: "1.00 × 0.80", multiplier: 0.800, grade: "E (嚴重削弱)" }
+    {
+      subskills: [
+        { name: "技能機率提升M", color: "blue" },
+        { name: "技能機率提升S", color: "white" }
+      ],
+      nature: "▲▲ 技能機率上升",
+      natureBadge: "up",
+      calc: "1.54 × 1.20",
+      multiplier: 1.848,
+      grade: "SSS (頂級極限)"
+    },
+    {
+      subskills: [
+        { name: "技能機率提升M", color: "blue" }
+      ],
+      nature: "▲▲ 技能機率上升",
+      natureBadge: "up",
+      calc: "1.36 × 1.20",
+      multiplier: 1.632,
+      grade: "SS (優秀極限)"
+    },
+    {
+      subskills: [
+        { name: "技能機率提升M", color: "blue" },
+        { name: "技能機率提升S", color: "white" }
+      ],
+      nature: "無修正 / 其它性格",
+      natureBadge: "neutral",
+      calc: "1.54 × 1.00",
+      multiplier: 1.530,
+      grade: "S (雙副技無性格)"
+    },
+    {
+      subskills: [
+        { name: "技能機率提升S", color: "white" }
+      ],
+      nature: "▲▲ 技能機率上升",
+      natureBadge: "up",
+      calc: "1.18 × 1.20",
+      multiplier: 1.416,
+      grade: "A (單副技+性格)"
+    },
+    {
+      subskills: [
+        { name: "技能機率提升M", color: "blue" }
+      ],
+      nature: "無修正 / 其它性格",
+      natureBadge: "neutral",
+      calc: "1.36 × 1.00",
+      multiplier: 1.360,
+      grade: "A (單STM無性格)"
+    },
+    {
+      subskills: [
+        { name: "技能機率提升M", color: "blue" },
+        { name: "技能機率提升S", color: "white" }
+      ],
+      nature: "▼▼ 技能機率下降",
+      natureBadge: "down",
+      calc: "1.54 × 0.80",
+      multiplier: 1.232,
+      grade: "B (雙副技補回性格)"
+    },
+    {
+      subskills: [],
+      nature: "▲▲ 技能機率上升",
+      natureBadge: "up",
+      calc: "1.00 × 1.20",
+      multiplier: 1.200,
+      grade: "B (純性格無副技)"
+    },
+    {
+      subskills: [
+        { name: "技能機率提升S", color: "white" }
+      ],
+      nature: "無修正 / 其它性格",
+      natureBadge: "neutral",
+      calc: "1.18 × 1.00",
+      multiplier: 1.180,
+      grade: "B (純STS無性格)"
+    },
+    {
+      subskills: [
+        { name: "技能機率提升M", color: "blue" }
+      ],
+      nature: "▼▼ 技能機率下降",
+      natureBadge: "down",
+      calc: "1.36 × 0.80",
+      multiplier: 1.088,
+      grade: "C (STM抵銷性格下修)"
+    },
+    {
+      subskills: [],
+      nature: "無修正 / 其它性格",
+      natureBadge: "neutral",
+      calc: "1.00 × 1.00",
+      multiplier: 1.000,
+      grade: "基準線 (1.00x)"
+    },
+    {
+      subskills: [
+        { name: "技能機率提升S", color: "white" }
+      ],
+      nature: "▼▼ 技能機率下降",
+      natureBadge: "down",
+      calc: "1.18 × 0.80",
+      multiplier: 0.944,
+      grade: "D (微幅受阻)"
+    },
+    {
+      subskills: [],
+      nature: "▼▼ 技能機率下降",
+      natureBadge: "down",
+      calc: "1.00 × 0.80",
+      multiplier: 0.800,
+      grade: "E (嚴重削弱)"
+    }
   ];
 
   // 性格五維倍率表 (包含官方最新數值與下降懲罰減輕修正)
@@ -2575,16 +2680,28 @@
                 <tbody>
                   ${TRIGGER_CHANCE_MATRIX.map(row => `
                     <tr>
-                      <td class="font-bold text-white">${row.subskills}</td>
-                      <td class="text-secondary">${row.nature}</td>
-                      <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">${row.calc}</code></td>
-                      <td>
+                      <td style="vertical-align: middle;">
+                        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                          ${row.subskills && row.subskills.length > 0 
+                            ? row.subskills.map(s => `<span class="wiki-skill-badge skill-badge-${s.color}">${s.name}</span>`).join('') 
+                            : '<span class="text-muted" style="font-size: 12px; font-weight: 500;">無技能機率副技能</span>'}
+                        </div>
+                      </td>
+                      <td style="vertical-align: middle;">
+                        ${row.natureBadge === 'up' 
+                          ? '<span style="color: #34d399; font-weight: 700; font-size: 12.5px;">▲▲ 技能機率上升</span>' 
+                          : (row.natureBadge === 'down' 
+                            ? '<span style="color: #f87171; font-weight: 700; font-size: 12.5px;">▼▼ 技能機率下降</span>' 
+                            : '<span class="text-secondary" style="font-size: 12.5px;">無修正 / 其它性格</span>')}
+                      </td>
+                      <td style="vertical-align: middle;"><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">${row.calc}</code></td>
+                      <td style="vertical-align: middle;">
                         <span class="text-accent font-bold" style="font-size: 13.5px;">${row.multiplier.toFixed(3)} 倍</span>
                         <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: ${row.multiplier >= 1 ? '#34d399' : '#f87171'};">
                           (${row.multiplier >= 1 ? '+' : ''}${((row.multiplier - 1) * 100).toFixed(1)}%)
                         </span>
                       </td>
-                      <td><span class="wiki-tier-badge tier-${row.grade[0].toLowerCase()}">${row.grade}</span></td>
+                      <td style="vertical-align: middle;"><span class="wiki-tier-badge tier-${row.grade[0].toLowerCase()}">${row.grade}</span></td>
                     </tr>
                   `).join('')}
                 </tbody>
