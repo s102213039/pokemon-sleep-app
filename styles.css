@@ -3965,37 +3965,27 @@ select optgroup,
    ========================================================= */
 
 .wiki-main-container {
-  max-width: 1240px;
-  width: 92%;
-  margin: 32px auto 40px;
-  padding: 0 16px;
+  max-width: 1400px;
+  width: 96%;
+  margin: 14px auto 24px;
+  padding: 0 12px;
   box-sizing: border-box;
 }
 
-.wiki-header-card {
+.wiki-header-card,
+.wiki-subnav-bar {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 24px 28px 20px;
+  padding: 8px 12px;
   box-shadow: var(--shadow-sm);
-  margin-bottom: 24px;
+  margin-bottom: 14px;
+  backdrop-filter: blur(8px);
 }
 
-.wiki-main-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
+.wiki-main-title,
 .wiki-subtitle {
-  font-size: 13.5px;
-  color: var(--text-secondary);
-  line-height: 1.5;
-  margin-bottom: 18px;
+  display: none !important;
 }
 
 /* 二級子分頁切換按鈕 */
@@ -4003,17 +3993,18 @@ select optgroup,
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 16px;
+  border-top: none;
+  padding-top: 0;
+  align-items: center;
 }
 
 .wiki-subtab-btn {
-  padding: 8px 18px;
+  padding: 6px 14px;
   background: rgba(30, 41, 59, 0.7);
   border: 1px solid var(--border-color);
   border-radius: 20px;
   color: var(--text-secondary);
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;

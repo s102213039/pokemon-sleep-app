@@ -2669,18 +2669,12 @@
     }).join('');
   }
 
-  // 渲染 Wiki 主佈局與 4 大子分頁
+  // 渲染 Wiki 主佈局與 5 大子分頁 (精簡二級選單列)
   function renderWikiLayout(container) {
     container.innerHTML = `
       <div class="wiki-main-container">
-        <!-- Wiki 頂部橫幅與子分頁切換 -->
-        <div class="wiki-header-card">
-          <div class="wiki-title-group">
-            <h2 class="wiki-main-title">📚 數據百科與攻略知識庫</h2>
-            <p class="wiki-subtitle">包含官方最新主技能 Lv.1~8 全數值矩陣、副技能與性格發動率計算機、三大專長評級榜及 Lv.60 食材天梯</p>
-          </div>
-
-          <!-- 二級子分頁導航 (Sub-tabs) -->
+        <!-- 二級子分頁導航 (Sub-tabs) - 精簡無大標題橫幅 -->
+        <div class="wiki-subnav-bar">
           <div class="wiki-subnav-tabs" role="tablist">
             <button type="button" class="wiki-subtab-btn active" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">⚡ 主技能數值庫</button>
             <button type="button" class="wiki-subtab-btn" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">🧩 副技能與性格指南</button>
