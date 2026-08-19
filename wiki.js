@@ -159,9 +159,11 @@
       desc: "帕路奇亞專屬招式。自身獲得大量樹果，另外還會獲得隊伍成員撿來的樹果。",
       maxLevel: 6,
       hasDualValues: true,
+      selfShort: "自身",
+      teamShort: "隊友",
       selfValues: [11, 14, 21, 24, 27, 30],
       teamValues: [1, 2, 2, 3, 4, 5],
-      unit: " 個樹果"
+      unit: " 個"
     },
     {
       id: "disguise_berry_burst",
@@ -172,10 +174,12 @@
       desc: "謎擬Ｑ專屬招式。自身與隊伍成員獲得樹果。漂亮成功時獲得 3 倍樹果，且至下次睡眠研究為止不會再發動。",
       maxLevel: 6,
       hasDualValues: true,
+      selfShort: "自身",
+      teamShort: "隊友",
       selfValues: [8, 10, 15, 17, 19, 21],
       teamValues: [1, 2, 2, 3, 4, 5],
       specialNote: "✨ 漂亮成功為 3 倍樹果",
-      unit: " 個樹果"
+      unit: " 個"
     },
     {
       id: "dream_shard_magnet_s_fixed",
@@ -250,8 +254,8 @@
       desc: "月亮伊布 (#197) 專屬招式。讓自己回復活力；若發生「漂亮成功（大成功）」時，額外隨機讓隊伍中的 1 隻寶可夢稍微回復活力。",
       maxLevel: 6,
       hasDualValues: true,
-      selfLabel: "🌟 自身活力",
-      teamLabel: "✨ 大成功隊友",
+      selfShort: "自身",
+      teamShort: "大成功",
       selfValues: [12, 16, 21, 26, 33, 43],
       teamValues: [6, 7, 10, 13, 17, 22],
       unit: " 點"
@@ -266,6 +270,7 @@
       maxLevel: 6,
       hasLunarPrayerMatrix: true,
       healValues: [3, 4, 5, 7, 9, 11],
+      berryRange: ["5~16", "9~22", "13~28", "17~34", "21~37", "25~41"],
       berryMatrix: [
         { kinds: "1 種類", vals: ["5+1", "9+1", "13+1", "17+1", "21+1", "25+1"] },
         { kinds: "2 種類", vals: ["7+1", "12+1", "17+1", "19+2", "24+2", "29+2"] },
@@ -1276,25 +1281,13 @@
         `;
       } else if (skill.hasLunarPrayerMatrix) {
         valuesHtml = `
-          <div class="skill-level-table-wrapper">
-            <table class="wiki-level-table">
-              <thead>
-                <tr>
-                  <th style="min-width: 110px;">效果項目</th>
-                  ${[1, 2, 3, 4, 5, 6].map(lv => `<th>Lv.${lv}</th>`).join('')}
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="row-label text-success font-bold">💚 全隊活力回復</td>
-                  ${skill.healValues.map(v => `<td class="font-bold text-white">${v} 點</td>`).join('')}
-                </tr>
-                <tr>
-                  <td class="row-label text-accent font-bold">🫐 樹果 (5種類極限)</td>
-                  ${skill.berryMatrix[4].vals.map(v => `<td class="font-bold text-accent">${v} 顆</td>`).join('')}
-                </tr>
-              </tbody>
-            </table>
+          <div class="skill-levels-grid">
+            ${skill.healValues.map((v, i) => `
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.${i + 1}</span>
+                <span class="level-val">全隊 ${v}點 + 樹果 ${skill.berryRange[i]}</span>
+              </div>
+            `).join('')}
           </div>
 
           <!-- 展開完整 1~5 種類超能力隊友樹果對照表按鈕 -->
@@ -1324,31 +1317,16 @@
           </div>
         `;
       } else if (skill.hasDualValues) {
-        const selfL = skill.selfLabel || '自身獲得';
-        const teamL = skill.teamLabel || '隊伍成員獲得';
-        const maxLv = Math.max(skill.selfValues.length, skill.teamValues.length);
-        const lvs = Array.from({ length: maxLv }, (_, i) => i + 1);
-
+        const selfShort = skill.selfShort || '自身';
+        const teamShort = skill.teamShort || '隊友';
         valuesHtml = `
-          <div class="skill-level-table-wrapper">
-            <table class="wiki-level-table">
-              <thead>
-                <tr>
-                  <th style="min-width: 100px;">效果項目</th>
-                  ${lvs.map(lv => `<th>Lv.${lv}</th>`).join('')}
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="row-label text-success font-bold">${selfL}</td>
-                  ${skill.selfValues.map(v => `<td class="font-bold text-white">${v}${skill.unit}</td>`).join('')}
-                </tr>
-                <tr>
-                  <td class="row-label text-accent font-bold">${teamL}</td>
-                  ${skill.teamValues.map(v => `<td class="font-bold text-accent">${v}${skill.unit}</td>`).join('')}
-                </tr>
-              </tbody>
-            </table>
+          <div class="skill-levels-grid">
+            ${skill.selfValues.map((v, i) => `
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.${i + 1}</span>
+                <span class="level-val">${selfShort} ${v} + ${teamShort} ${skill.teamValues[i]}${skill.unit}</span>
+              </div>
+            `).join('')}
           </div>
           ${skill.specialNote ? `<div class="skill-special-note">${skill.specialNote}</div>` : ''}
         `;
