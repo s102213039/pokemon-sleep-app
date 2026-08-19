@@ -1417,54 +1417,53 @@
     `;
   }
 
-  // 渲染樹果與食材基礎能量看板 (Image 1 實體化)
+  // 渲染樹果與食材基礎能量看板 (極簡橫向由左至右、由少到多)
   function renderValuesBoard() {
     return `
-      <div class="values-board-container">
-        <!-- 左欄：樹果基礎能量庫 -->
-        <div class="values-col values-col-berry">
-          <div class="values-header-box">
-            <div class="values-box-title">BERRIES 🫐 樹果能量庫</div>
-            <div class="values-box-desc">
-              樹果產出後直接增加卡比獸能量。各樹果基礎能量由其屬性決定，並隨寶可夢等級（Lv.1 ~ Lv.60+）與島嶼加成（0% ~ 85%）持續倍增。
+      <div class="values-horizontal-container">
+        <!-- 區塊 1：樹果基礎能量庫 (24 ~ 35) -->
+        <div class="values-horizontal-section">
+          <div class="values-section-header">
+            <div class="values-section-title-group">
+              <span class="values-section-badge berry-badge">🫐 樹果基礎能量庫</span>
+              <span class="values-section-sub">基礎能量 24 ➔ 35 (隨等級與島嶼倍增)</span>
+            </div>
+            <div class="values-energy-arrow-guide">
+              <span>由少到多</span>
+              <div class="guide-arrow"></div>
             </div>
           </div>
 
-          <div class="values-grid">
+          <div class="values-horizontal-track values-berry-track">
             ${BERRY_VALUES_DATA.map(b => `
-              <div class="value-item-card" title="${b.name} (${b.type}屬性) - 基礎能量 ${b.energy}">
-                <img src="${b.icon}" class="value-item-icon" alt="${b.name}">
-                <span class="value-item-name">${b.name}</span>
-                <span class="value-item-type">${b.type}系 · ${b.enName}</span>
-                <span class="value-item-energy">${b.energy}</span>
+              <div class="value-mini-card" title="${b.name} - 基礎能量 ${b.energy}">
+                <img src="${b.icon}" class="value-mini-icon" alt="${b.name}">
+                <span class="value-mini-name">${b.name}</span>
+                <span class="value-mini-energy berry-val">${b.energy}</span>
               </div>
             `).join('')}
           </div>
         </div>
 
-        <!-- 中間：垂直強度標尺 -->
-        <div class="values-center-strength-arrow">
-          <div class="strength-arrow-shaft"></div>
-          <span class="strength-text">STRENGTH 能量遞增</span>
-          <div class="strength-arrow-head"></div>
-        </div>
-
-        <!-- 右欄：食材基礎能量庫 -->
-        <div class="values-col values-col-ing">
-          <div class="values-header-box">
-            <div class="values-box-title">INGREDIENTS 🍲 食材能量庫</div>
-            <div class="values-box-desc">
-              料理總能量由食譜基礎能量、料理等級加成、額外添加食材能量與島嶼加成共同決定。高階食材能賦予料理極高的爆發基礎分。
+        <!-- 區塊 2：食材基礎能量庫 (90 ~ 342) -->
+        <div class="values-horizontal-section">
+          <div class="values-section-header">
+            <div class="values-section-title-group">
+              <span class="values-section-badge ing-badge">🍲 食材基礎能量庫</span>
+              <span class="values-section-sub">基礎能量 90 ➔ 342 (料理額外加分關鍵)</span>
+            </div>
+            <div class="values-energy-arrow-guide">
+              <span>由少到多</span>
+              <div class="guide-arrow ing-arrow"></div>
             </div>
           </div>
 
-          <div class="values-grid">
+          <div class="values-horizontal-track values-ing-track">
             ${INGREDIENT_VALUES_DATA.map(ing => `
-              <div class="value-item-card" title="${ing.name} - 基礎能量 ${ing.energy}">
-                <img src="${ing.icon}" class="value-item-icon" alt="${ing.name}">
-                <span class="value-item-name">${ing.name}</span>
-                <span class="value-item-type">${ing.enName}</span>
-                <span class="value-item-energy">${ing.energy}</span>
+              <div class="value-mini-card ${ing.id === 'tail' ? 'value-tail-highlight' : ''}" title="${ing.name} - 基礎能量 ${ing.energy}">
+                <img src="${ing.icon}" class="value-mini-icon" alt="${ing.name}">
+                <span class="value-mini-name">${ing.name}</span>
+                <span class="value-mini-energy ing-val">${ing.energy}</span>
               </div>
             `).join('')}
           </div>
