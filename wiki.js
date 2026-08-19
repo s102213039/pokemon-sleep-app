@@ -315,110 +315,116 @@
     }
   ];
 
-  // --- 2. 副技能完整階級與數值資料庫 (Sub-Skills Data) ---
+  // --- 2. 副技能完整階級與數值資料庫 (Sub-Skills Data - 僅列出官方已開放副技能) ---
   const SUB_SKILLS_DATA = [
     {
-      category: "採集型",
-      s: { name: "持有上限提升 S", color: "white", val: "+6 個" },
-      m: { name: "持有上限提升 M", color: "blue", val: "+12 個" },
-      l: { name: "持有上限提升 L", color: "blue", val: "+18 個", status: "open" },
-      desc: "該寶可夢可持有的樹果或材料上限提升 6 / 12 / 18 個"
+      category: "持有上限",
+      skills: [
+        { name: "持有上限提升 S", color: "white", val: "+6 個" },
+        { name: "持有上限提升 M", color: "blue", val: "+12 個" },
+        { name: "持有上限提升 L", color: "blue", val: "+18 個" }
+      ],
+      desc: "可持有的樹果與食材上限提升 +6 / +12 / +18 個（避免睡眠溢出）"
     },
     {
-      category: "採集型",
-      s: { name: "幫忙速度 S", color: "white", val: "-7%" },
-      m: { name: "幫忙速度 M", color: "blue", val: "-14%" },
-      l: { name: "幫忙速度 L", color: "blue", val: "-21%", status: "unreleased" },
-      desc: "該寶可夢提供幫助所需要的時間減少 7 / 14 / 21 % (※ 副技能幫速合計上限 35%)"
+      category: "幫忙速度",
+      skills: [
+        { name: "幫忙速度 S", color: "white", val: "-7%" },
+        { name: "幫忙速度 M", color: "blue", val: "-14%" }
+      ],
+      desc: "提供幫助所需的時間減少 7% / 14%（副技能幫速合計上限 35%）"
     },
     {
-      category: "採集型",
-      s: { name: "技能機率提升 S", color: "white", val: "+18%" },
-      m: { name: "技能機率提升 M", color: "blue", val: "+36%" },
-      l: { name: "技能機率提升 L", color: "blue", val: "+54%", status: "unreleased" },
-      desc: "該寶可夢主技能發動機率提升 18 / 36 / 54 %"
+      category: "技能機率",
+      skills: [
+        { name: "技能機率提升 S", color: "white", val: "+18%" },
+        { name: "技能機率提升 M", color: "blue", val: "+36%" }
+      ],
+      desc: "主技能發動機率提升 18% / 36%（技能型寶可夢核心畢業副技）"
     },
     {
-      category: "採集型",
-      s: { name: "食材機率提升 S", color: "white", val: "+18%" },
-      m: { name: "食材機率提升 M", color: "blue", val: "+36%" },
-      l: { name: "食材機率提升 L", color: "blue", val: "+54%", status: "unreleased" },
-      desc: "該寶可夢發現食材的機率提升 18 / 36 / 54 %"
+      category: "食材機率",
+      skills: [
+        { name: "食材機率提升 S", color: "white", val: "+18%" },
+        { name: "食材機率提升 M", color: "blue", val: "+36%" }
+      ],
+      desc: "發現食材的機率提升 18% / 36%（食材型寶可夢核心畢業副技）"
     },
     {
-      category: "採集型",
-      s: { name: "樹果數量 S", color: "gold", val: "+1 個" },
-      m: { name: "樹果數量 M", color: "gold", val: "+2 個", status: "unreleased" },
-      l: { name: "樹果數量 L", color: "gold", val: "+3 個", status: "unreleased" },
-      desc: "該寶可夢每次找到樹果的數量提升 1 / 2 / 3 個"
+      category: "樹果數量",
+      skills: [
+        { name: "樹果數量 S", color: "gold", val: "+1 個" }
+      ],
+      desc: "每次找到樹果的數量 +1 個（樹果型寶可夢最強 T0 核心）"
     },
     {
-      category: "技能型",
-      s: { name: "技能等級提升 S", color: "blue", val: "+1 級" },
-      m: { name: "技能等級提升 M", color: "gold", val: "+2 級" },
-      l: { name: "技能等級提升 L", color: "gold", val: "+3 級", status: "unreleased" },
-      desc: "該寶可夢主技能等級提升 1 / 2 / 3 級 (省下主技能金種子)"
+      category: "技能等級",
+      skills: [
+        { name: "技能等級提升 S", color: "blue", val: "+1 級" },
+        { name: "技能等級提升 M", color: "gold", val: "+2 級" }
+      ],
+      desc: "主技能等級提升 1 / 2 級（省下主技能金種子珍貴資源）"
     },
     {
-      category: "採集型 (全隊)",
-      s: { name: "-", color: "", val: "" },
-      m: { name: "幫手獎勵", color: "gold", val: "全隊 -5%" },
-      l: { name: "-", color: "", val: "" },
-      desc: "寶可夢團隊提供幫助的時間減少 5 % (全隊最多疊加 5 隻 = 25%)"
+      category: "全隊幫忙",
+      skills: [
+        { name: "幫手獎勵", color: "gold", val: "全隊 -5%" }
+      ],
+      desc: "全隊提供幫助時間減少 5%（隊伍最多疊加 5 隻 = 25%）"
     },
     {
-      category: "恢復型 (全隊)",
-      s: { name: "-", color: "", val: "" },
-      m: { name: "活力恢復獎勵", color: "gold", val: "全隊 1.12x" },
-      l: { name: "-", color: "", val: "" },
-      desc: "寶可夢團隊從睡眠中恢復的能量提高 1.12 倍 (可彌補活力下降性格隊友)"
+      category: "全隊活力",
+      skills: [
+        { name: "活力恢復獎勵", color: "gold", val: "全隊 1.12x" }
+      ],
+      desc: "全隊睡眠活力恢復量提高 1.12 倍（可彌補性格活力下降隊友）"
     },
     {
-      category: "獎勵型",
-      s: { name: "-", color: "", val: "" },
-      m: { name: "夢之碎片獎勵", color: "gold", val: "+6%" },
-      l: { name: "-", color: "", val: "" },
-      desc: "睡眠後該寶可夢獲得夢之碎片的數量提高 6 % (活動日/幸運薰香可大量收穫)"
+      category: "全隊經驗",
+      skills: [
+        { name: "睡眠 EXP 獎勵", color: "gold", val: "全隊 +14%" }
+      ],
+      desc: "全隊睡眠結算獲得 EXP 提高 14%（大幅加速全隊成長）"
     },
     {
-      category: "獎勵型",
-      s: { name: "-", color: "", val: "" },
-      m: { name: "研究 EXP 獎勵", color: "gold", val: "+6%" },
-      l: { name: "-", color: "", val: "" },
-      desc: "睡眠後玩家獲得的研究 EXP 提高 6 % (加快提升研究等級)"
+      category: "研究經驗",
+      skills: [
+        { name: "研究 EXP 獎勵", color: "gold", val: "個人 +6%" }
+      ],
+      desc: "玩家睡眠結算獲得的研究 EXP 提高 6%（加快研究等級升級）"
     },
     {
-      category: "獎勵型 (全隊)",
-      s: { name: "-", color: "", val: "" },
-      m: { name: "睡眠 EXP 獎勵", color: "gold", val: "+14%" },
-      l: { name: "-", color: "", val: "" },
-      desc: "睡眠後寶可夢團隊獲得的 EXP 提高 14 % (大幅加速全隊養成成長)"
+      category: "夢之碎片",
+      skills: [
+        { name: "夢之碎片獎勵", color: "gold", val: "個人 +6%" }
+      ],
+      desc: "睡眠結算獲得夢之碎片數量提高 6%（可與幸運薰香疊加）"
     }
   ];
 
-  // 主技能機率矩陣速查表 (Image 4)
+  // 主技能機率矩陣速查表 (副技能 × 性格全排列)
   const TRIGGER_CHANCE_MATRIX = [
-    { combo: "STM (+36%) + STS (+18%) + 性格▲▲ (x1.2)", multiplier: 1.848, grade: "SSS (發動極限)", desc: "1.54 × 1.2" },
-    { combo: "STM (+36%) + 性格▲▲ (x1.2)", multiplier: 1.632, grade: "SS (優秀極限)", desc: "1.36 × 1.2" },
-    { combo: "STM (+36%) + STS (+18%)", multiplier: 1.530, grade: "S (雙副技無性格)", desc: "1.54 × 1.0" },
-    { combo: "STS (+18%) + 性格▲▲ (x1.2)", multiplier: 1.416, grade: "A (單副技+性格)", desc: "1.18 × 1.2" },
-    { combo: "STM (+36%)", multiplier: 1.360, grade: "A (單STM無性格)", desc: "1.36 × 1.0" },
-    { combo: "STM (+36%) + STS (+18%) + 性格▼▼ (x0.8)", multiplier: 1.232, grade: "B (雙副技補回性格)", desc: "1.54 × 0.8" },
-    { combo: "性格▲▲ (x1.2)", multiplier: 1.200, grade: "B (純性格無副技)", desc: "1.00 × 1.2" },
-    { combo: "STS (+18%)", multiplier: 1.180, grade: "B (純STS無性格)", desc: "1.18 × 1.0" },
-    { combo: "STM (+36%) + 性格▼▼ (x0.8)", multiplier: 1.088, grade: "C (STM抵銷性格下修)", desc: "1.36 × 0.8" },
-    { combo: "無任何加成/修正 (Baseline)", multiplier: 1.000, grade: "基準線 (1.00x)", desc: "1.00 × 1.0" },
-    { combo: "STS (+18%) + 性格▼▼ (x0.8)", multiplier: 0.944, grade: "D (微幅受阻)", desc: "1.18 × 0.8" },
-    { combo: "性格▼▼ (x0.8)", multiplier: 0.800, grade: "E (嚴重削弱)", desc: "1.00 × 0.8" }
+    { subskills: "STM (+36%) + STS (+18%)", subskillMult: "1.54x", nature: "▲▲ 技能機率上升 (+20%)", natureMult: "1.20x", calc: "1.54 × 1.20", multiplier: 1.848, grade: "SSS (頂級極限)" },
+    { subskills: "STM (+36%)", subskillMult: "1.36x", nature: "▲▲ 技能機率上升 (+20%)", natureMult: "1.20x", calc: "1.36 × 1.20", multiplier: 1.632, grade: "SS (優秀極限)" },
+    { subskills: "STM (+36%) + STS (+18%)", subskillMult: "1.54x", nature: "無修正 / 其它性格", natureMult: "1.00x", calc: "1.54 × 1.00", multiplier: 1.530, grade: "S (雙副技無性格)" },
+    { subskills: "STS (+18%)", subskillMult: "1.18x", nature: "▲▲ 技能機率上升 (+20%)", natureMult: "1.20x", calc: "1.18 × 1.20", multiplier: 1.416, grade: "A (單副技+性格)" },
+    { subskills: "STM (+36%)", subskillMult: "1.36x", nature: "無修正 / 其它性格", natureMult: "1.00x", calc: "1.36 × 1.00", multiplier: 1.360, grade: "A (單STM無性格)" },
+    { subskills: "STM (+36%) + STS (+18%)", subskillMult: "1.54x", nature: "▼▼ 技能機率下降 (-20%)", natureMult: "0.80x", calc: "1.54 × 0.80", multiplier: 1.232, grade: "B (雙副技補回性格)" },
+    { subskills: "無技能機率副技能", subskillMult: "1.00x", nature: "▲▲ 技能機率上升 (+20%)", natureMult: "1.20x", calc: "1.00 × 1.20", multiplier: 1.200, grade: "B (純性格無副技)" },
+    { subskills: "STS (+18%)", subskillMult: "1.18x", nature: "無修正 / 其它性格", natureMult: "1.00x", calc: "1.18 × 1.00", multiplier: 1.180, grade: "B (純STS無性格)" },
+    { subskills: "STM (+36%)", subskillMult: "1.36x", nature: "▼▼ 技能機率下降 (-20%)", natureMult: "0.80x", calc: "1.36 × 0.80", multiplier: 1.088, grade: "C (STM抵銷性格下修)" },
+    { subskills: "無技能機率副技能", subskillMult: "1.00x", nature: "無修正 / 其它性格", natureMult: "1.00x", calc: "1.00 × 1.00", multiplier: 1.000, grade: "基準線 (1.00x)" },
+    { subskills: "STS (+18%)", subskillMult: "1.18x", nature: "▼▼ 技能機率下降 (-20%)", natureMult: "0.80x", calc: "1.18 × 0.80", multiplier: 0.944, grade: "D (微幅受阻)" },
+    { subskills: "無技能機率副技能", subskillMult: "1.00x", nature: "▼▼ 技能機率下降 (-20%)", natureMult: "0.80x", calc: "1.00 × 0.80", multiplier: 0.800, grade: "E (嚴重削弱)" }
   ];
 
-  // 性格五維倍率表
+  // 性格五維倍率表 (包含官方最新數值與下降懲罰減輕修正)
   const NATURES_EFFECT_DATA = [
-    { stat: "幫忙速度", up: "▲▲ 1.10 倍 (時間 ÷1.10)", down: "▼▼ 0.90 倍 (時間 ×1.10)", desc: "影響所有樹果、食材與技能判定頻率" },
-    { stat: "活力回復量", up: "▲▲ 1.20 倍", down: "▼▼ 0.88 倍 (v1.3.0 修正)", desc: "影響睡眠與隊伍補師補血量" },
-    { stat: "食材發現率", up: "▲▲ 1.20 倍", down: "▼▼ 0.80 倍", desc: "每次幫忙時判定為食材的機率" },
-    { stat: "主技能機率", up: "▲▲ 1.20 倍", down: "▼▼ 0.80 倍", desc: "每次幫忙時判定發動主技能的機率" },
-    { stat: "EXP 獲得量", up: "▲▲ 1.18 倍 (5顆糖多賺1顆)", down: "▼▼ 0.82 倍 (5顆糖被吃1顆)", desc: "影響糖果升級與睡眠結算經驗值" }
+    { stat: "幫忙速度", up: "▲▲ +10% (間隔 ÷1.10 = 0.909x)", down: "▼▼ -7.5% (間隔 ×1.075 = 0.925x)", desc: "影響所有樹果、食材與技能判定頻率（官方已將下降懲罰調輕至 -7.5%）" },
+    { stat: "活力回復量", up: "▲▲ +20% (1.20 倍)", down: "▼▼ -12% (0.88 倍)", desc: "影響睡眠與隊伍補師回復量（Ver 1.0.13 已將下降懲罰調輕至 -12%）" },
+    { stat: "食材發現率", up: "▲▲ +20% (1.20 倍)", down: "▼▼ -20% (0.80 倍)", desc: "每次幫忙時判定獲得食材的機率" },
+    { stat: "主技能機率", up: "▲▲ +20% (1.20 倍)", down: "▼▼ -20% (0.80 倍)", desc: "每次幫忙時判定觸發主技能的機率" },
+    { stat: "EXP 獲得量", up: "▲▲ +18% (1.18 倍)", down: "▼▼ -18% (0.82 倍)", desc: "影響睡眠結算與糖果升級經驗值（5 顆糖多/少約 1 顆）" }
   ];
 
   // --- 3. 培育與評級指南資料庫 (Image 2) ---
@@ -1434,59 +1440,39 @@
 
         <!-- 子分頁 2：🧩 副技能與性格指南 (Sub-Skills & Natures) -->
         <div id="wiki-subpanel-subskills" class="wiki-subpanel">
-          <!-- 互動式主技能發動機率計算機 (Image 4 實體化) -->
-          <div class="wiki-card wiki-calc-card">
+          <!-- 主技能發動機率矩陣速查表 -->
+          <div class="wiki-card">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">🧮</span>
-              <h3 class="wiki-card-title">主技能發動機率計算機（副技能 × 性格乘算矩陣）</h3>
+              <h3 class="wiki-card-title">主技能發動機率矩陣對照表（副技能 × 性格乘算）</h3>
             </div>
-            <p class="wiki-card-desc">依據遊戲底層乘法公式：<code>(1 + 副技能提升%) × 性格倍率</code> 即時計算您的寶可夢發動率加成。</p>
-            
-            <div class="calc-inputs-row">
-              <div class="calc-input-group">
-                <label class="calc-label" for="calc-subskill-select">副技能組合：</label>
-                <select id="calc-subskill-select" class="calc-select" onchange="window.WikiDB.recalcTriggerChance()">
-                  <option value="0">無技能機率副技能 (0%)</option>
-                  <option value="0.18">技能機率提升 S (+18%)</option>
-                  <option value="0.36">技能機率提升 M (+36%)</option>
-                  <option value="0.54" selected>STM (+36%) + STS (+18%) 雙發動 (+54%)</option>
-                </select>
-              </div>
-
-              <div class="calc-input-group">
-                <label class="calc-label" for="calc-nature-select">性格主技能機率：</label>
-                <select id="calc-nature-select" class="calc-select" onchange="window.WikiDB.recalcTriggerChance()">
-                  <option value="1.2" selected>▲▲ 技能機率上升 (x 1.20)</option>
-                  <option value="1.0">無修正 / 其它性格 (x 1.00)</option>
-                  <option value="0.8">▼▼ 技能機率下降 (x 0.80)</option>
-                </select>
-              </div>
-
-              <div class="calc-result-box">
-                <div class="calc-result-label">綜合發動機率倍率</div>
-                <div id="calc-result-val" class="calc-result-val">1.848 倍</div>
-                <div id="calc-result-badge" class="calc-result-badge grade-sss">SSS (頂級發動極限)</div>
-              </div>
-            </div>
+            <p class="wiki-card-desc">依據遊戲底層乘法公式：<code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>，展示所有組合狀況的計算過程與最終總倍率速查。</p>
 
             <!-- 速查對照表 -->
-            <div class="wiki-table-wrapper" style="margin-top: 18px;">
+            <div class="wiki-table-wrapper" style="margin-top: 14px;">
               <table class="wiki-data-table">
                 <thead>
                   <tr>
-                    <th>加成與修正組合</th>
-                    <th>綜合倍率</th>
-                    <th>評級</th>
-                    <th>計算算式</th>
+                    <th>副技能組合</th>
+                    <th>性格主技能機率</th>
+                    <th>乘算計算式</th>
+                    <th>最終綜合總倍率</th>
+                    <th>發動強度評級</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${TRIGGER_CHANCE_MATRIX.map(row => `
                     <tr>
-                      <td class="font-bold text-white">${row.combo}</td>
-                      <td class="text-accent font-bold">${row.multiplier.toFixed(3)} 倍</td>
+                      <td class="font-bold text-white">${row.subskills}</td>
+                      <td class="text-secondary">${row.nature}</td>
+                      <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">${row.calc}</code></td>
+                      <td>
+                        <span class="text-accent font-bold" style="font-size: 13.5px;">${row.multiplier.toFixed(3)} 倍</span>
+                        <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: ${row.multiplier >= 1 ? '#34d399' : '#f87171'};">
+                          (${row.multiplier >= 1 ? '+' : ''}${((row.multiplier - 1) * 100).toFixed(1)}%)
+                        </span>
+                      </td>
                       <td><span class="wiki-tier-badge tier-${row.grade[0].toLowerCase()}">${row.grade}</span></td>
-                      <td class="text-muted">${row.desc}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -1494,11 +1480,11 @@
             </div>
           </div>
 
-          <!-- 副技能完整階級與數值說明表格 (Image 5 & 1 實體化) -->
-          <div class="wiki-card" style="margin-top: 24px;">
+          <!-- 副技能完整階級與數值說明表格 (僅已開放副技能) -->
+          <div class="wiki-card" style="margin-top: 20px;">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">📋</span>
-              <h3 class="wiki-card-title">副技能階級與數值完整一覽表</h3>
+              <h3 class="wiki-card-title">副技能階級與數值完整一覽表（已開放副技能）</h3>
             </div>
             <div class="wiki-rule-banner">
               ⚠️ <strong>重要規則</strong>：副技能幫忙速度（幫手獎勵 5% + 幫速M 14% + 幫速S 7%）<strong>合計上限為 35%</strong>。
@@ -1507,20 +1493,20 @@
               <table class="wiki-data-table">
                 <thead>
                   <tr>
-                    <th>專長分類</th>
-                    <th>階級 1 (S)</th>
-                    <th>階級 2 (M)</th>
-                    <th>階級 3 (L)</th>
+                    <th style="min-width: 90px;">專長分類</th>
+                    <th style="min-width: 220px;">已開放階級與技能標籤</th>
                     <th>詳細效果說明</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${SUB_SKILLS_DATA.map(row => `
                     <tr>
-                      <td class="font-bold">${row.category}</td>
-                      <td>${renderSkillBadge(row.s)}</td>
-                      <td>${renderSkillBadge(row.m)}</td>
-                      <td>${renderSkillBadge(row.l)}</td>
+                      <td class="font-bold text-accent">${row.category}</td>
+                      <td>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                          ${row.skills.map(s => renderSkillBadge(s)).join('')}
+                        </div>
+                      </td>
                       <td class="text-secondary">${row.desc}</td>
                     </tr>
                   `).join('')}
@@ -1529,11 +1515,11 @@
             </div>
           </div>
 
-          <!-- 性格五維加成倍率表 (Image 2 實體化) -->
-          <div class="wiki-card" style="margin-top: 24px;">
+          <!-- 性格五維加成倍率表 (官方最新補正) -->
+          <div class="wiki-card" style="margin-top: 20px;">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">🧬</span>
-              <h3 class="wiki-card-title">性格五維屬性增減倍率表</h3>
+              <h3 class="wiki-card-title">性格五維屬性增減倍率表（官方最新補正）</h3>
             </div>
             <div class="wiki-table-wrapper">
               <table class="wiki-data-table">

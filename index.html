@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260819_06">
+  <link rel="stylesheet" href="styles.css?v=20260819_07">
 </head>
 <body>
 
@@ -1795,136 +1795,182 @@
 
         <!-- 子分頁 2：🧩 副技能與性格指南 (Sub-Skills & Natures) -->
         <div id="wiki-subpanel-subskills" class="wiki-subpanel">
-          <!-- 互動式主技能發動機率計算機 (Image 4 實體化) -->
-          <div class="wiki-card wiki-calc-card">
+          <!-- 主技能發動機率矩陣速查表 -->
+          <div class="wiki-card">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">🧮</span>
-              <h3 class="wiki-card-title">主技能發動機率計算機（副技能 × 性格乘算矩陣）</h3>
+              <h3 class="wiki-card-title">主技能發動機率矩陣對照表（副技能 × 性格乘算）</h3>
             </div>
-            <p class="wiki-card-desc">依據遊戲底層乘法公式：<code>(1 + 副技能提升%) × 性格倍率</code> 即時計算您的寶可夢發動率加成。</p>
-            
-            <div class="calc-inputs-row">
-              <div class="calc-input-group">
-                <label class="calc-label" for="calc-subskill-select">副技能組合：</label>
-                <select id="calc-subskill-select" class="calc-select" onchange="window.WikiDB.recalcTriggerChance()">
-                  <option value="0">無技能機率副技能 (0%)</option>
-                  <option value="0.18">技能機率提升 S (+18%)</option>
-                  <option value="0.36">技能機率提升 M (+36%)</option>
-                  <option value="0.54" selected>STM (+36%) + STS (+18%) 雙發動 (+54%)</option>
-                </select>
-              </div>
-
-              <div class="calc-input-group">
-                <label class="calc-label" for="calc-nature-select">性格主技能機率：</label>
-                <select id="calc-nature-select" class="calc-select" onchange="window.WikiDB.recalcTriggerChance()">
-                  <option value="1.2" selected>▲▲ 技能機率上升 (x 1.20)</option>
-                  <option value="1.0">無修正 / 其它性格 (x 1.00)</option>
-                  <option value="0.8">▼▼ 技能機率下降 (x 0.80)</option>
-                </select>
-              </div>
-
-              <div class="calc-result-box">
-                <div class="calc-result-label">綜合發動機率倍率</div>
-                <div id="calc-result-val" class="calc-result-val">1.848 倍</div>
-                <div id="calc-result-badge" class="calc-result-badge grade-sss">SSS (頂級發動極限)</div>
-              </div>
-            </div>
+            <p class="wiki-card-desc">依據遊戲底層乘法公式：<code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>，展示所有組合狀況的計算過程與最終總倍率速查。</p>
 
             <!-- 速查對照表 -->
-            <div class="wiki-table-wrapper" style="margin-top: 18px;">
+            <div class="wiki-table-wrapper" style="margin-top: 14px;">
               <table class="wiki-data-table">
                 <thead>
                   <tr>
-                    <th>加成與修正組合</th>
-                    <th>綜合倍率</th>
-                    <th>評級</th>
-                    <th>計算算式</th>
+                    <th>副技能組合</th>
+                    <th>性格主技能機率</th>
+                    <th>乘算計算式</th>
+                    <th>最終綜合總倍率</th>
+                    <th>發動強度評級</th>
                   </tr>
                 </thead>
                 <tbody>
                   
                     <tr>
-                      <td class="font-bold text-white">STM (+36%) + STS (+18%) + 性格▲▲ (x1.2)</td>
-                      <td class="text-accent font-bold">1.848 倍</td>
-                      <td><span class="wiki-tier-badge tier-s">SSS (發動極限)</span></td>
-                      <td class="text-muted">1.54 × 1.2</td>
-                    </tr>
-                  
-                    <tr>
-                      <td class="font-bold text-white">STM (+36%) + 性格▲▲ (x1.2)</td>
-                      <td class="text-accent font-bold">1.632 倍</td>
-                      <td><span class="wiki-tier-badge tier-s">SS (優秀極限)</span></td>
-                      <td class="text-muted">1.36 × 1.2</td>
-                    </tr>
-                  
-                    <tr>
                       <td class="font-bold text-white">STM (+36%) + STS (+18%)</td>
-                      <td class="text-accent font-bold">1.530 倍</td>
-                      <td><span class="wiki-tier-badge tier-s">S (雙副技無性格)</span></td>
-                      <td class="text-muted">1.54 × 1.0</td>
-                    </tr>
-                  
-                    <tr>
-                      <td class="font-bold text-white">STS (+18%) + 性格▲▲ (x1.2)</td>
-                      <td class="text-accent font-bold">1.416 倍</td>
-                      <td><span class="wiki-tier-badge tier-a">A (單副技+性格)</span></td>
-                      <td class="text-muted">1.18 × 1.2</td>
+                      <td class="text-secondary">▲▲ 技能機率上升 (+20%)</td>
+                      <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">1.54 × 1.20</code></td>
+                      <td>
+                        <span class="text-accent font-bold" style="font-size: 13.5px;">1.848 倍</span>
+                        <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: #34d399;">
+                          (+84.8%)
+                        </span>
+                      </td>
+                      <td><span class="wiki-tier-badge tier-s">SSS (頂級極限)</span></td>
                     </tr>
                   
                     <tr>
                       <td class="font-bold text-white">STM (+36%)</td>
-                      <td class="text-accent font-bold">1.360 倍</td>
-                      <td><span class="wiki-tier-badge tier-a">A (單STM無性格)</span></td>
-                      <td class="text-muted">1.36 × 1.0</td>
+                      <td class="text-secondary">▲▲ 技能機率上升 (+20%)</td>
+                      <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">1.36 × 1.20</code></td>
+                      <td>
+                        <span class="text-accent font-bold" style="font-size: 13.5px;">1.632 倍</span>
+                        <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: #34d399;">
+                          (+63.2%)
+                        </span>
+                      </td>
+                      <td><span class="wiki-tier-badge tier-s">SS (優秀極限)</span></td>
                     </tr>
                   
                     <tr>
-                      <td class="font-bold text-white">STM (+36%) + STS (+18%) + 性格▼▼ (x0.8)</td>
-                      <td class="text-accent font-bold">1.232 倍</td>
-                      <td><span class="wiki-tier-badge tier-b">B (雙副技補回性格)</span></td>
-                      <td class="text-muted">1.54 × 0.8</td>
-                    </tr>
-                  
-                    <tr>
-                      <td class="font-bold text-white">性格▲▲ (x1.2)</td>
-                      <td class="text-accent font-bold">1.200 倍</td>
-                      <td><span class="wiki-tier-badge tier-b">B (純性格無副技)</span></td>
-                      <td class="text-muted">1.00 × 1.2</td>
+                      <td class="font-bold text-white">STM (+36%) + STS (+18%)</td>
+                      <td class="text-secondary">無修正 / 其它性格</td>
+                      <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">1.54 × 1.00</code></td>
+                      <td>
+                        <span class="text-accent font-bold" style="font-size: 13.5px;">1.530 倍</span>
+                        <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: #34d399;">
+                          (+53.0%)
+                        </span>
+                      </td>
+                      <td><span class="wiki-tier-badge tier-s">S (雙副技無性格)</span></td>
                     </tr>
                   
                     <tr>
                       <td class="font-bold text-white">STS (+18%)</td>
-                      <td class="text-accent font-bold">1.180 倍</td>
+                      <td class="text-secondary">▲▲ 技能機率上升 (+20%)</td>
+                      <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">1.18 × 1.20</code></td>
+                      <td>
+                        <span class="text-accent font-bold" style="font-size: 13.5px;">1.416 倍</span>
+                        <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: #34d399;">
+                          (+41.6%)
+                        </span>
+                      </td>
+                      <td><span class="wiki-tier-badge tier-a">A (單副技+性格)</span></td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">STM (+36%)</td>
+                      <td class="text-secondary">無修正 / 其它性格</td>
+                      <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">1.36 × 1.00</code></td>
+                      <td>
+                        <span class="text-accent font-bold" style="font-size: 13.5px;">1.360 倍</span>
+                        <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: #34d399;">
+                          (+36.0%)
+                        </span>
+                      </td>
+                      <td><span class="wiki-tier-badge tier-a">A (單STM無性格)</span></td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">STM (+36%) + STS (+18%)</td>
+                      <td class="text-secondary">▼▼ 技能機率下降 (-20%)</td>
+                      <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">1.54 × 0.80</code></td>
+                      <td>
+                        <span class="text-accent font-bold" style="font-size: 13.5px;">1.232 倍</span>
+                        <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: #34d399;">
+                          (+23.2%)
+                        </span>
+                      </td>
+                      <td><span class="wiki-tier-badge tier-b">B (雙副技補回性格)</span></td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">無技能機率副技能</td>
+                      <td class="text-secondary">▲▲ 技能機率上升 (+20%)</td>
+                      <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">1.00 × 1.20</code></td>
+                      <td>
+                        <span class="text-accent font-bold" style="font-size: 13.5px;">1.200 倍</span>
+                        <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: #34d399;">
+                          (+20.0%)
+                        </span>
+                      </td>
+                      <td><span class="wiki-tier-badge tier-b">B (純性格無副技)</span></td>
+                    </tr>
+                  
+                    <tr>
+                      <td class="font-bold text-white">STS (+18%)</td>
+                      <td class="text-secondary">無修正 / 其它性格</td>
+                      <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">1.18 × 1.00</code></td>
+                      <td>
+                        <span class="text-accent font-bold" style="font-size: 13.5px;">1.180 倍</span>
+                        <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: #34d399;">
+                          (+18.0%)
+                        </span>
+                      </td>
                       <td><span class="wiki-tier-badge tier-b">B (純STS無性格)</span></td>
-                      <td class="text-muted">1.18 × 1.0</td>
                     </tr>
                   
                     <tr>
-                      <td class="font-bold text-white">STM (+36%) + 性格▼▼ (x0.8)</td>
-                      <td class="text-accent font-bold">1.088 倍</td>
+                      <td class="font-bold text-white">STM (+36%)</td>
+                      <td class="text-secondary">▼▼ 技能機率下降 (-20%)</td>
+                      <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">1.36 × 0.80</code></td>
+                      <td>
+                        <span class="text-accent font-bold" style="font-size: 13.5px;">1.088 倍</span>
+                        <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: #34d399;">
+                          (+8.8%)
+                        </span>
+                      </td>
                       <td><span class="wiki-tier-badge tier-c">C (STM抵銷性格下修)</span></td>
-                      <td class="text-muted">1.36 × 0.8</td>
                     </tr>
                   
                     <tr>
-                      <td class="font-bold text-white">無任何加成/修正 (Baseline)</td>
-                      <td class="text-accent font-bold">1.000 倍</td>
+                      <td class="font-bold text-white">無技能機率副技能</td>
+                      <td class="text-secondary">無修正 / 其它性格</td>
+                      <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">1.00 × 1.00</code></td>
+                      <td>
+                        <span class="text-accent font-bold" style="font-size: 13.5px;">1.000 倍</span>
+                        <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: #34d399;">
+                          (+0.0%)
+                        </span>
+                      </td>
                       <td><span class="wiki-tier-badge tier-基">基準線 (1.00x)</span></td>
-                      <td class="text-muted">1.00 × 1.0</td>
                     </tr>
                   
                     <tr>
-                      <td class="font-bold text-white">STS (+18%) + 性格▼▼ (x0.8)</td>
-                      <td class="text-accent font-bold">0.944 倍</td>
+                      <td class="font-bold text-white">STS (+18%)</td>
+                      <td class="text-secondary">▼▼ 技能機率下降 (-20%)</td>
+                      <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">1.18 × 0.80</code></td>
+                      <td>
+                        <span class="text-accent font-bold" style="font-size: 13.5px;">0.944 倍</span>
+                        <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: #f87171;">
+                          (-5.6%)
+                        </span>
+                      </td>
                       <td><span class="wiki-tier-badge tier-d">D (微幅受阻)</span></td>
-                      <td class="text-muted">1.18 × 0.8</td>
                     </tr>
                   
                     <tr>
-                      <td class="font-bold text-white">性格▼▼ (x0.8)</td>
-                      <td class="text-accent font-bold">0.800 倍</td>
+                      <td class="font-bold text-white">無技能機率副技能</td>
+                      <td class="text-secondary">▼▼ 技能機率下降 (-20%)</td>
+                      <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">1.00 × 0.80</code></td>
+                      <td>
+                        <span class="text-accent font-bold" style="font-size: 13.5px;">0.800 倍</span>
+                        <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: #f87171;">
+                          (-20.0%)
+                        </span>
+                      </td>
                       <td><span class="wiki-tier-badge tier-e">E (嚴重削弱)</span></td>
-                      <td class="text-muted">1.00 × 0.8</td>
                     </tr>
                   
                 </tbody>
@@ -1932,11 +1978,11 @@
             </div>
           </div>
 
-          <!-- 副技能完整階級與數值說明表格 (Image 5 & 1 實體化) -->
-          <div class="wiki-card" style="margin-top: 24px;">
+          <!-- 副技能完整階級與數值說明表格 (僅已開放副技能) -->
+          <div class="wiki-card" style="margin-top: 20px;">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">📋</span>
-              <h3 class="wiki-card-title">副技能階級與數值完整一覽表</h3>
+              <h3 class="wiki-card-title">副技能階級與數值完整一覽表（已開放副技能）</h3>
             </div>
             <div class="wiki-rule-banner">
               ⚠️ <strong>重要規則</strong>：副技能幫忙速度（幫手獎勵 5% + 幫速M 14% + 幫速S 7%）<strong>合計上限為 35%</strong>。
@@ -1945,101 +1991,121 @@
               <table class="wiki-data-table">
                 <thead>
                   <tr>
-                    <th>專長分類</th>
-                    <th>階級 1 (S)</th>
-                    <th>階級 2 (M)</th>
-                    <th>階級 3 (L)</th>
+                    <th style="min-width: 90px;">專長分類</th>
+                    <th style="min-width: 220px;">已開放階級與技能標籤</th>
                     <th>詳細效果說明</th>
                   </tr>
                 </thead>
                 <tbody>
                   
                     <tr>
-                      <td class="font-bold">採集型</td>
-                      <td><span class="wiki-skill-badge skill-badge-white">持有上限提升 S <span class="skill-badge-val">+6 個</span></span></td>
-                      <td><span class="wiki-skill-badge skill-badge-blue">持有上限提升 M <span class="skill-badge-val">+12 個</span></span></td>
-                      <td><span class="wiki-skill-badge skill-badge-blue">持有上限提升 L <span class="skill-badge-val">+18 個</span></span></td>
-                      <td class="text-secondary">該寶可夢可持有的樹果或材料上限提升 6 / 12 / 18 個</td>
+                      <td class="font-bold text-accent">持有上限</td>
+                      <td>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                          <span class="wiki-skill-badge skill-badge-white">持有上限提升 S <span class="skill-badge-val">+6 個</span></span><span class="wiki-skill-badge skill-badge-blue">持有上限提升 M <span class="skill-badge-val">+12 個</span></span><span class="wiki-skill-badge skill-badge-blue">持有上限提升 L <span class="skill-badge-val">+18 個</span></span>
+                        </div>
+                      </td>
+                      <td class="text-secondary">可持有的樹果與食材上限提升 +6 / +12 / +18 個（避免睡眠溢出）</td>
                     </tr>
                   
                     <tr>
-                      <td class="font-bold">採集型</td>
-                      <td><span class="wiki-skill-badge skill-badge-white">幫忙速度 S <span class="skill-badge-val">-7%</span></span></td>
-                      <td><span class="wiki-skill-badge skill-badge-blue">幫忙速度 M <span class="skill-badge-val">-14%</span></span></td>
-                      <td><span class="wiki-skill-badge skill-badge-blue">幫忙速度 L <span class="badge-unreleased">(未開放)</span> <span class="skill-badge-val">-21%</span></span></td>
-                      <td class="text-secondary">該寶可夢提供幫助所需要的時間減少 7 / 14 / 21 % (※ 副技能幫速合計上限 35%)</td>
+                      <td class="font-bold text-accent">幫忙速度</td>
+                      <td>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                          <span class="wiki-skill-badge skill-badge-white">幫忙速度 S <span class="skill-badge-val">-7%</span></span><span class="wiki-skill-badge skill-badge-blue">幫忙速度 M <span class="skill-badge-val">-14%</span></span>
+                        </div>
+                      </td>
+                      <td class="text-secondary">提供幫助所需的時間減少 7% / 14%（副技能幫速合計上限 35%）</td>
                     </tr>
                   
                     <tr>
-                      <td class="font-bold">採集型</td>
-                      <td><span class="wiki-skill-badge skill-badge-white">技能機率提升 S <span class="skill-badge-val">+18%</span></span></td>
-                      <td><span class="wiki-skill-badge skill-badge-blue">技能機率提升 M <span class="skill-badge-val">+36%</span></span></td>
-                      <td><span class="wiki-skill-badge skill-badge-blue">技能機率提升 L <span class="badge-unreleased">(未開放)</span> <span class="skill-badge-val">+54%</span></span></td>
-                      <td class="text-secondary">該寶可夢主技能發動機率提升 18 / 36 / 54 %</td>
+                      <td class="font-bold text-accent">技能機率</td>
+                      <td>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                          <span class="wiki-skill-badge skill-badge-white">技能機率提升 S <span class="skill-badge-val">+18%</span></span><span class="wiki-skill-badge skill-badge-blue">技能機率提升 M <span class="skill-badge-val">+36%</span></span>
+                        </div>
+                      </td>
+                      <td class="text-secondary">主技能發動機率提升 18% / 36%（技能型寶可夢核心畢業副技）</td>
                     </tr>
                   
                     <tr>
-                      <td class="font-bold">採集型</td>
-                      <td><span class="wiki-skill-badge skill-badge-white">食材機率提升 S <span class="skill-badge-val">+18%</span></span></td>
-                      <td><span class="wiki-skill-badge skill-badge-blue">食材機率提升 M <span class="skill-badge-val">+36%</span></span></td>
-                      <td><span class="wiki-skill-badge skill-badge-blue">食材機率提升 L <span class="badge-unreleased">(未開放)</span> <span class="skill-badge-val">+54%</span></span></td>
-                      <td class="text-secondary">該寶可夢發現食材的機率提升 18 / 36 / 54 %</td>
+                      <td class="font-bold text-accent">食材機率</td>
+                      <td>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                          <span class="wiki-skill-badge skill-badge-white">食材機率提升 S <span class="skill-badge-val">+18%</span></span><span class="wiki-skill-badge skill-badge-blue">食材機率提升 M <span class="skill-badge-val">+36%</span></span>
+                        </div>
+                      </td>
+                      <td class="text-secondary">發現食材的機率提升 18% / 36%（食材型寶可夢核心畢業副技）</td>
                     </tr>
                   
                     <tr>
-                      <td class="font-bold">採集型</td>
-                      <td><span class="wiki-skill-badge skill-badge-gold">樹果數量 S <span class="skill-badge-val">+1 個</span></span></td>
-                      <td><span class="wiki-skill-badge skill-badge-gold">樹果數量 M <span class="badge-unreleased">(未開放)</span> <span class="skill-badge-val">+2 個</span></span></td>
-                      <td><span class="wiki-skill-badge skill-badge-gold">樹果數量 L <span class="badge-unreleased">(未開放)</span> <span class="skill-badge-val">+3 個</span></span></td>
-                      <td class="text-secondary">該寶可夢每次找到樹果的數量提升 1 / 2 / 3 個</td>
+                      <td class="font-bold text-accent">樹果數量</td>
+                      <td>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                          <span class="wiki-skill-badge skill-badge-gold">樹果數量 S <span class="skill-badge-val">+1 個</span></span>
+                        </div>
+                      </td>
+                      <td class="text-secondary">每次找到樹果的數量 +1 個（樹果型寶可夢最強 T0 核心）</td>
                     </tr>
                   
                     <tr>
-                      <td class="font-bold">技能型</td>
-                      <td><span class="wiki-skill-badge skill-badge-blue">技能等級提升 S <span class="skill-badge-val">+1 級</span></span></td>
-                      <td><span class="wiki-skill-badge skill-badge-gold">技能等級提升 M <span class="skill-badge-val">+2 級</span></span></td>
-                      <td><span class="wiki-skill-badge skill-badge-gold">技能等級提升 L <span class="badge-unreleased">(未開放)</span> <span class="skill-badge-val">+3 級</span></span></td>
-                      <td class="text-secondary">該寶可夢主技能等級提升 1 / 2 / 3 級 (省下主技能金種子)</td>
+                      <td class="font-bold text-accent">技能等級</td>
+                      <td>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                          <span class="wiki-skill-badge skill-badge-blue">技能等級提升 S <span class="skill-badge-val">+1 級</span></span><span class="wiki-skill-badge skill-badge-gold">技能等級提升 M <span class="skill-badge-val">+2 級</span></span>
+                        </div>
+                      </td>
+                      <td class="text-secondary">主技能等級提升 1 / 2 級（省下主技能金種子珍貴資源）</td>
                     </tr>
                   
                     <tr>
-                      <td class="font-bold">採集型 (全隊)</td>
-                      <td><span class="text-muted">-</span></td>
-                      <td><span class="wiki-skill-badge skill-badge-gold">幫手獎勵 <span class="skill-badge-val">全隊 -5%</span></span></td>
-                      <td><span class="text-muted">-</span></td>
-                      <td class="text-secondary">寶可夢團隊提供幫助的時間減少 5 % (全隊最多疊加 5 隻 = 25%)</td>
+                      <td class="font-bold text-accent">全隊幫忙</td>
+                      <td>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                          <span class="wiki-skill-badge skill-badge-gold">幫手獎勵 <span class="skill-badge-val">全隊 -5%</span></span>
+                        </div>
+                      </td>
+                      <td class="text-secondary">全隊提供幫助時間減少 5%（隊伍最多疊加 5 隻 = 25%）</td>
                     </tr>
                   
                     <tr>
-                      <td class="font-bold">恢復型 (全隊)</td>
-                      <td><span class="text-muted">-</span></td>
-                      <td><span class="wiki-skill-badge skill-badge-gold">活力恢復獎勵 <span class="skill-badge-val">全隊 1.12x</span></span></td>
-                      <td><span class="text-muted">-</span></td>
-                      <td class="text-secondary">寶可夢團隊從睡眠中恢復的能量提高 1.12 倍 (可彌補活力下降性格隊友)</td>
+                      <td class="font-bold text-accent">全隊活力</td>
+                      <td>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                          <span class="wiki-skill-badge skill-badge-gold">活力恢復獎勵 <span class="skill-badge-val">全隊 1.12x</span></span>
+                        </div>
+                      </td>
+                      <td class="text-secondary">全隊睡眠活力恢復量提高 1.12 倍（可彌補性格活力下降隊友）</td>
                     </tr>
                   
                     <tr>
-                      <td class="font-bold">獎勵型</td>
-                      <td><span class="text-muted">-</span></td>
-                      <td><span class="wiki-skill-badge skill-badge-gold">夢之碎片獎勵 <span class="skill-badge-val">+6%</span></span></td>
-                      <td><span class="text-muted">-</span></td>
-                      <td class="text-secondary">睡眠後該寶可夢獲得夢之碎片的數量提高 6 % (活動日/幸運薰香可大量收穫)</td>
+                      <td class="font-bold text-accent">全隊經驗</td>
+                      <td>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                          <span class="wiki-skill-badge skill-badge-gold">睡眠 EXP 獎勵 <span class="skill-badge-val">全隊 +14%</span></span>
+                        </div>
+                      </td>
+                      <td class="text-secondary">全隊睡眠結算獲得 EXP 提高 14%（大幅加速全隊成長）</td>
                     </tr>
                   
                     <tr>
-                      <td class="font-bold">獎勵型</td>
-                      <td><span class="text-muted">-</span></td>
-                      <td><span class="wiki-skill-badge skill-badge-gold">研究 EXP 獎勵 <span class="skill-badge-val">+6%</span></span></td>
-                      <td><span class="text-muted">-</span></td>
-                      <td class="text-secondary">睡眠後玩家獲得的研究 EXP 提高 6 % (加快提升研究等級)</td>
+                      <td class="font-bold text-accent">研究經驗</td>
+                      <td>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                          <span class="wiki-skill-badge skill-badge-gold">研究 EXP 獎勵 <span class="skill-badge-val">個人 +6%</span></span>
+                        </div>
+                      </td>
+                      <td class="text-secondary">玩家睡眠結算獲得的研究 EXP 提高 6%（加快研究等級升級）</td>
                     </tr>
                   
                     <tr>
-                      <td class="font-bold">獎勵型 (全隊)</td>
-                      <td><span class="text-muted">-</span></td>
-                      <td><span class="wiki-skill-badge skill-badge-gold">睡眠 EXP 獎勵 <span class="skill-badge-val">+14%</span></span></td>
-                      <td><span class="text-muted">-</span></td>
-                      <td class="text-secondary">睡眠後寶可夢團隊獲得的 EXP 提高 14 % (大幅加速全隊養成成長)</td>
+                      <td class="font-bold text-accent">夢之碎片</td>
+                      <td>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                          <span class="wiki-skill-badge skill-badge-gold">夢之碎片獎勵 <span class="skill-badge-val">個人 +6%</span></span>
+                        </div>
+                      </td>
+                      <td class="text-secondary">睡眠結算獲得夢之碎片數量提高 6%（可與幸運薰香疊加）</td>
                     </tr>
                   
                 </tbody>
@@ -2047,11 +2113,11 @@
             </div>
           </div>
 
-          <!-- 性格五維加成倍率表 (Image 2 實體化) -->
-          <div class="wiki-card" style="margin-top: 24px;">
+          <!-- 性格五維加成倍率表 (官方最新補正) -->
+          <div class="wiki-card" style="margin-top: 20px;">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">🧬</span>
-              <h3 class="wiki-card-title">性格五維屬性增減倍率表</h3>
+              <h3 class="wiki-card-title">性格五維屬性增減倍率表（官方最新補正）</h3>
             </div>
             <div class="wiki-table-wrapper">
               <table class="wiki-data-table">
@@ -2067,37 +2133,37 @@
                   
                     <tr>
                       <td class="font-bold text-white">幫忙速度</td>
-                      <td class="text-success font-bold">▲▲ 1.10 倍 (時間 ÷1.10)</td>
-                      <td class="text-danger font-bold">▼▼ 0.90 倍 (時間 ×1.10)</td>
-                      <td class="text-secondary">影響所有樹果、食材與技能判定頻率</td>
+                      <td class="text-success font-bold">▲▲ +10% (間隔 ÷1.10 = 0.909x)</td>
+                      <td class="text-danger font-bold">▼▼ -7.5% (間隔 ×1.075 = 0.925x)</td>
+                      <td class="text-secondary">影響所有樹果、食材與技能判定頻率（官方已將下降懲罰調輕至 -7.5%）</td>
                     </tr>
                   
                     <tr>
                       <td class="font-bold text-white">活力回復量</td>
-                      <td class="text-success font-bold">▲▲ 1.20 倍</td>
-                      <td class="text-danger font-bold">▼▼ 0.88 倍 (v1.3.0 修正)</td>
-                      <td class="text-secondary">影響睡眠與隊伍補師補血量</td>
+                      <td class="text-success font-bold">▲▲ +20% (1.20 倍)</td>
+                      <td class="text-danger font-bold">▼▼ -12% (0.88 倍)</td>
+                      <td class="text-secondary">影響睡眠與隊伍補師回復量（Ver 1.0.13 已將下降懲罰調輕至 -12%）</td>
                     </tr>
                   
                     <tr>
                       <td class="font-bold text-white">食材發現率</td>
-                      <td class="text-success font-bold">▲▲ 1.20 倍</td>
-                      <td class="text-danger font-bold">▼▼ 0.80 倍</td>
-                      <td class="text-secondary">每次幫忙時判定為食材的機率</td>
+                      <td class="text-success font-bold">▲▲ +20% (1.20 倍)</td>
+                      <td class="text-danger font-bold">▼▼ -20% (0.80 倍)</td>
+                      <td class="text-secondary">每次幫忙時判定獲得食材的機率</td>
                     </tr>
                   
                     <tr>
                       <td class="font-bold text-white">主技能機率</td>
-                      <td class="text-success font-bold">▲▲ 1.20 倍</td>
-                      <td class="text-danger font-bold">▼▼ 0.80 倍</td>
-                      <td class="text-secondary">每次幫忙時判定發動主技能的機率</td>
+                      <td class="text-success font-bold">▲▲ +20% (1.20 倍)</td>
+                      <td class="text-danger font-bold">▼▼ -20% (0.80 倍)</td>
+                      <td class="text-secondary">每次幫忙時判定觸發主技能的機率</td>
                     </tr>
                   
                     <tr>
                       <td class="font-bold text-white">EXP 獲得量</td>
-                      <td class="text-success font-bold">▲▲ 1.18 倍 (5顆糖多賺1顆)</td>
-                      <td class="text-danger font-bold">▼▼ 0.82 倍 (5顆糖被吃1顆)</td>
-                      <td class="text-secondary">影響糖果升級與睡眠結算經驗值</td>
+                      <td class="text-success font-bold">▲▲ +18% (1.18 倍)</td>
+                      <td class="text-danger font-bold">▼▼ -18% (0.82 倍)</td>
+                      <td class="text-secondary">影響睡眠結算與糖果升級經驗值（5 顆糖多/少約 1 顆）</td>
                     </tr>
                   
                 </tbody>
@@ -3728,10 +3794,10 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260819_06"></script>
-  <script src="recipes.js?v=20260819_06"></script>
-  <script src="wiki.js?v=20260819_06"></script>
-  <script src="box.js?v=20260819_06"></script>
-  <script src="news.js?v=20260819_06"></script>
+  <script src="app.js?v=20260819_07"></script>
+  <script src="recipes.js?v=20260819_07"></script>
+  <script src="wiki.js?v=20260819_07"></script>
+  <script src="box.js?v=20260819_07"></script>
+  <script src="news.js?v=20260819_07"></script>
 </body>
 </html>
