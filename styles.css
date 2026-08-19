@@ -5198,19 +5198,19 @@ select optgroup,
   border: 1px solid rgba(251, 191, 36, 0.35);
 }
 
-/* --- 樹果與食材基礎能量一覽 (簡約橫向由左至右、由少到多) --- */
+/* --- 樹果與食材基礎能量一覽 (極簡無名、無滾輪 18 格全展開) --- */
 .values-horizontal-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  margin-top: 16px;
+  gap: 16px;
+  margin-top: 14px;
 }
 
 .values-horizontal-section {
   background: rgba(15, 23, 42, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 16px 18px 20px;
+  border-radius: 12px;
+  padding: 14px 16px 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
@@ -5218,8 +5218,8 @@ select optgroup,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
-  padding-bottom: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -5231,10 +5231,10 @@ select optgroup,
 }
 
 .values-section-badge {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
-  padding: 4px 12px;
-  border-radius: 8px;
+  padding: 3px 10px;
+  border-radius: 6px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -5262,13 +5262,13 @@ select optgroup,
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
   color: #94a3b8;
 }
 
 .guide-arrow {
-  width: 70px;
+  width: 60px;
   height: 2px;
   background: linear-gradient(90deg, #38bdf8 0%, #a855f7 100%);
   position: relative;
@@ -5295,109 +5295,93 @@ select optgroup,
   border-left-color: #f472b6;
 }
 
-.values-horizontal-track {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding: 4px 4px 10px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(56, 189, 248, 0.3) rgba(15, 23, 42, 0.6);
+.values-compact-grid {
+  display: grid;
+  grid-template-columns: repeat(18, 1fr);
+  gap: 4px;
+  width: 100%;
+  padding: 4px 0 2px;
 }
 
-.values-horizontal-track::-webkit-scrollbar {
-  height: 6px;
-}
-
-.values-horizontal-track::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
-  border-radius: 4px;
-}
-
-.values-horizontal-track::-webkit-scrollbar-thumb {
-  background: rgba(56, 189, 248, 0.3);
-  border-radius: 4px;
-}
-
-.values-ing-track::-webkit-scrollbar-thumb {
-  background: rgba(251, 191, 36, 0.3);
-}
-
-.value-mini-card {
-  flex: 0 0 auto;
-  width: 66px;
-  min-width: 66px;
-  background: rgba(30, 41, 59, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 8px 4px;
+.value-compact-node {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 2px;
+  background: rgba(30, 41, 59, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
   transition: all 0.15s ease;
-  cursor: default;
-  text-align: center;
+  cursor: pointer;
+  position: relative;
+  min-width: 0;
 }
 
-.value-mini-card:hover {
-  transform: translateY(-2px);
-  background: rgba(30, 41, 59, 0.9);
-  border-color: rgba(56, 189, 248, 0.45);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+.value-compact-node:hover {
+  transform: translateY(-3px) scale(1.08);
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(56, 189, 248, 0.6);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 5;
 }
 
-.values-ing-track .value-mini-card:hover {
-  border-color: rgba(251, 191, 36, 0.45);
+.values-ing-grid .value-compact-node:hover {
+  border-color: rgba(251, 191, 36, 0.6);
 }
 
-.value-mini-icon {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
-}
-
-.value-mini-name {
-  font-size: 11px;
-  font-weight: 700;
-  color: #f1f5f9;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.value-compact-icon {
+  width: 28px;
+  height: 28px;
   max-width: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
 }
 
-.value-mini-energy {
-  font-size: 13px;
+.value-compact-energy {
+  font-size: 11.5px;
   font-weight: 800;
   font-feature-settings: 'tnum';
-  border-radius: 6px;
-  padding: 1px 6px;
-  line-height: 1.2;
+  border-radius: 4px;
+  padding: 1px 3px;
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
 }
 
-.value-mini-energy.berry-val {
+.value-compact-energy.berry-val {
   color: #38bdf8;
   background: rgba(56, 189, 248, 0.12);
 }
 
-.value-mini-energy.ing-val {
+.value-compact-energy.ing-val {
   color: #fbbf24;
   background: rgba(245, 158, 11, 0.12);
 }
 
-.value-tail-highlight {
+.value-compact-node.value-tail-highlight {
   border-color: rgba(244, 114, 182, 0.4);
   background: rgba(244, 114, 182, 0.1);
 }
 
-.value-tail-highlight .value-mini-name {
-  color: #f472b6;
-}
-
-.value-tail-highlight .value-mini-energy {
+.value-compact-node.value-tail-highlight .value-compact-energy {
   color: #f472b6;
   background: rgba(244, 114, 182, 0.2);
+}
+
+@media (max-width: 900px) {
+  .values-compact-grid {
+    grid-template-columns: repeat(9, 1fr);
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .values-compact-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+  }
 }
 
 @media (max-width: 768px) {

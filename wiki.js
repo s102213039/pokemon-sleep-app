@@ -1417,7 +1417,7 @@
     `;
   }
 
-  // 渲染樹果與食材基礎能量看板 (極簡橫向由左至右、由少到多)
+  // 渲染樹果與食材基礎能量看板 (極簡無名無滾輪 18 格全展開版)
   function renderValuesBoard() {
     return `
       <div class="values-horizontal-container">
@@ -1426,7 +1426,7 @@
           <div class="values-section-header">
             <div class="values-section-title-group">
               <span class="values-section-badge berry-badge">🫐 樹果基礎能量庫</span>
-              <span class="values-section-sub">基礎能量 24 ➔ 35 (隨等級與島嶼倍增)</span>
+              <span class="values-section-sub">基礎能量 24 ➔ 35</span>
             </div>
             <div class="values-energy-arrow-guide">
               <span>由少到多</span>
@@ -1434,12 +1434,11 @@
             </div>
           </div>
 
-          <div class="values-horizontal-track values-berry-track">
+          <div class="values-compact-grid values-berry-grid">
             ${BERRY_VALUES_DATA.map(b => `
-              <div class="value-mini-card" title="${b.name} - 基礎能量 ${b.energy}">
-                <img src="${b.icon}" class="value-mini-icon" alt="${b.name}">
-                <span class="value-mini-name">${b.name}</span>
-                <span class="value-mini-energy berry-val">${b.energy}</span>
+              <div class="value-compact-node" title="${b.name} - 基礎能量 ${b.energy}">
+                <img src="${b.icon}" class="value-compact-icon" alt="${b.name}">
+                <span class="value-compact-energy berry-val">${b.energy}</span>
               </div>
             `).join('')}
           </div>
@@ -1450,7 +1449,7 @@
           <div class="values-section-header">
             <div class="values-section-title-group">
               <span class="values-section-badge ing-badge">🍲 食材基礎能量庫</span>
-              <span class="values-section-sub">基礎能量 90 ➔ 342 (料理額外加分關鍵)</span>
+              <span class="values-section-sub">基礎能量 90 ➔ 342</span>
             </div>
             <div class="values-energy-arrow-guide">
               <span>由少到多</span>
@@ -1458,12 +1457,11 @@
             </div>
           </div>
 
-          <div class="values-horizontal-track values-ing-track">
+          <div class="values-compact-grid values-ing-grid">
             ${INGREDIENT_VALUES_DATA.map(ing => `
-              <div class="value-mini-card ${ing.id === 'tail' ? 'value-tail-highlight' : ''}" title="${ing.name} - 基礎能量 ${ing.energy}">
-                <img src="${ing.icon}" class="value-mini-icon" alt="${ing.name}">
-                <span class="value-mini-name">${ing.name}</span>
-                <span class="value-mini-energy ing-val">${ing.energy}</span>
+              <div class="value-compact-node ${ing.id === 'tail' ? 'value-tail-highlight' : ''}" title="${ing.name} - 基礎能量 ${ing.energy}">
+                <img src="${ing.icon}" class="value-compact-icon" alt="${ing.name}">
+                <span class="value-compact-energy ing-val">${ing.energy}</span>
               </div>
             `).join('')}
           </div>
