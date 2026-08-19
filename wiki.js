@@ -27,7 +27,7 @@
       icon: "🎲",
       category: "energy",
       catName: "能量系",
-      desc: "隨機增加卡比獸的能量（在最小~最大區間浮動）。",
+      desc: "隨機增加卡比獸能量（在最小~最大區間浮動）。",
       maxLevel: 7,
       ranges: [
         { min: 200, max: 800 },
@@ -38,6 +38,7 @@
         { min: 1033, max: 4132 },
         { min: 1501, max: 6004 }
       ],
+      specialNote: "🎲 浮動機制：每次發動隨機給予區間內能量",
       unit: " 能量"
     },
     {
@@ -57,7 +58,7 @@
       icon: "🔋",
       category: "energy",
       catName: "能量系 (複合)",
-      desc: "發動時蓄積或噴放能量。噴放時依蓄積次數（0~10次）暴增能量，最高達 82,386 能量！",
+      desc: "發動蓄積或噴放。依蓄積次數（0~10次）暴增能量，最高達 82,386 能量！",
       maxLevel: 7,
       hasStackMatrix: true,
       matrix: [
@@ -81,10 +82,10 @@
       icon: "🌑",
       category: "special",
       catName: "神獸/特殊",
-      desc: "達克萊伊專屬招式。卡比獸能量超大幅增加，但會讓幫手隊伍中【惡屬性以外】的寶可夢活力下降 12 點。",
+      desc: "達克萊伊專屬招式。卡比獸能量超大幅增加，但非惡屬性隊友活力下降。",
       maxLevel: 6,
       values: [2640, 3753, 5178, 7149, 9870, 13638],
-      penaltyNote: "⚠️ 副作用：惡屬性以外全體隊友活力 -12",
+      penaltyNote: "⚠️ 副作用：非惡屬性隊友全員活力 -12",
       unit: " 能量"
     },
     {
@@ -104,7 +105,7 @@
       icon: "🍲",
       category: "ingredient",
       catName: "食材與料理",
-      desc: "增加下一次烹調時鍋子的食材上限容量（效果持續到料理漂亮成功或移動營地為止）。",
+      desc: "增加下次烹調時鍋子容量上限，效果持續到料理大成功或換營地。",
       maxLevel: 7,
       values: [7, 10, 12, 17, 22, 27, 31],
       unit: " 個容量"
@@ -115,9 +116,10 @@
       icon: "✨",
       category: "ingredient",
       catName: "食材與料理",
-      desc: "料理漂亮成功（爆擊）的機率提升。效果持續累積到料理漂亮成功或移動營地為止。",
+      desc: "料理漂亮成功（大成功）機率提升，可持續疊加直到大成功為止。",
       maxLevel: 6,
       values: [4, 5, 6, 7, 8, 10],
+      specialNote: "✨ 機率累加：大成功時發動雙倍/三倍能量，成功後機率重設",
       unit: "%"
     },
     {
@@ -126,7 +128,7 @@
       icon: "🤝",
       category: "special",
       catName: "神獸/特殊",
-      desc: "幫手寶可夢中的某 1 隻會立刻完成幫忙多次。",
+      desc: "隨機 1 隻隊友立刻完成多次幫忙產出。",
       maxLevel: 7,
       values: [5, 6, 7, 8, 9, 10, 11],
       unit: " 次幫忙"
@@ -137,7 +139,7 @@
       icon: "⚡",
       category: "special",
       catName: "神獸/特殊",
-      desc: "雷公/炎帝/水君專屬招式。隊伍中所有同屬性寶可夢立刻完成幫忙。同屬性不同種類越多效果越強！",
+      desc: "雷公/炎帝/水君專屬。隊伍同屬寶可夢立刻幫忙，同屬不同種類越多越強！",
       maxLevel: 6,
       hasTypeKindsMatrix: true,
       matrix: [
@@ -156,11 +158,11 @@
       icon: "🫐",
       category: "special",
       catName: "神獸/特殊",
-      desc: "帕路奇亞專屬招式。自身獲得大量樹果，另外還會獲得隊伍成員撿來的樹果。",
+      desc: "帕路奇亞專屬招式。獲得自身產出的樹果，並額外獲得隊友撿來的樹果。",
       maxLevel: 6,
       hasDualValues: true,
-      selfShort: "自身",
-      teamShort: "隊友",
+      selfShort: "自",
+      teamShort: "他",
       selfValues: [11, 14, 21, 24, 27, 30],
       teamValues: [1, 2, 2, 3, 4, 5],
       unit: " 個"
@@ -171,14 +173,14 @@
       icon: "🎭",
       category: "special",
       catName: "神獸/特殊",
-      desc: "謎擬Ｑ專屬招式。自身與隊伍成員獲得樹果。漂亮成功時獲得 3 倍樹果，且至下次睡眠研究為止不會再發動。",
+      desc: "謎擬Ｑ專屬招式。獲得自身與隊友的樹果。大成功時獲得 3 倍樹果。",
       maxLevel: 6,
       hasDualValues: true,
-      selfShort: "自身",
-      teamShort: "隊友",
+      selfShort: "自",
+      teamShort: "他",
       selfValues: [8, 10, 15, 17, 19, 21],
       teamValues: [1, 2, 2, 3, 4, 5],
-      specialNote: "✨ 漂亮成功為 3 倍樹果",
+      specialNote: "✨ 機率觸發：大成功時獲得 3 倍樹果（至下次睡眠研究前不重複發動）",
       unit: " 個"
     },
     {
@@ -198,7 +200,7 @@
       icon: "🎰",
       category: "shards",
       catName: "夢碎系",
-      desc: "隨機獲得夢之碎片（浮動區間）。最高支援至 Lv.8！",
+      desc: "隨機獲得夢之碎片（在最小~最大區間浮動）。最高支援至 Lv.8！",
       maxLevel: 8,
       ranges: [
         { min: 120, max: 480 },
@@ -210,6 +212,7 @@
         { min: 900, max: 3600 },
         { min: 1150, max: 4600 }
       ],
+      specialNote: "🎲 浮動機制：每次發動隨機給予區間內碎片",
       unit: " 碎片"
     },
     {
@@ -229,7 +232,7 @@
       icon: "💚",
       category: "energy_heal",
       catName: "活力系",
-      desc: "隨機讓隊伍中的某 1 隻隊友寶可夢回復活力。",
+      desc: "隨機讓隊伍中的 1 隻隊友回復活力。",
       maxLevel: 6,
       values: [14, 17, 22, 28, 38, 50],
       unit: " 點活力"
@@ -240,7 +243,7 @@
       icon: "💖",
       category: "energy_heal",
       catName: "活力系 (補師)",
-      desc: "讓全體隊友寶可夢回復活力（主力隊伍必備核心補師招式）。",
+      desc: "讓全體隊友回復活力（主力補師核心招式）。",
       maxLevel: 6,
       values: [5, 7, 9, 11, 15, 18],
       unit: " 點活力"
@@ -251,13 +254,12 @@
       icon: "🌙",
       category: "energy_heal",
       catName: "活力系 (伊布專屬)",
-      desc: "月亮伊布 (#197) 專屬招式。讓自己回復活力；若發生「漂亮成功（大成功）」時，額外隨機讓隊伍中的 1 隻寶可夢稍微回復活力。",
+      desc: "月亮伊布 (#197) 專屬。自己回復活力；大成功時額外隨機讓 1 隻隊友回復活力。",
       maxLevel: 6,
-      hasDualValues: true,
-      selfShort: "自身",
-      teamShort: "大成功",
+      hasMoonlightChips: true,
       selfValues: [12, 16, 21, 26, 33, 43],
       teamValues: [6, 7, 10, 13, 17, 22],
+      specialNote: "✨ 機率觸發：大成功（漂亮成功）時額外隨機讓 1 隻隊友回復活力",
       unit: " 點"
     },
     {
@@ -266,11 +268,12 @@
       icon: "🌠",
       category: "energy_heal",
       catName: "活力系 (神獸專屬)",
-      desc: "克雷色利亞 (#488) 專屬招式。讓幫手隊伍全員回復活力，並額外獲得撿來的樹果（超能力屬性隊員種類越多，樹果數量越多）。",
+      desc: "克雷色利亞 (#488) 專屬。全隊回復活力，並額外獲得隊友撿來的樹果。",
       maxLevel: 6,
       hasLunarPrayerMatrix: true,
       healValues: [3, 4, 5, 7, 9, 11],
       berryRange: ["5~16", "9~22", "13~28", "17~34", "21~37", "25~41"],
+      specialNote: "🔮 額外樹果：依隊伍中超能屬性隊友種類數（1~5 種）加成獲取",
       berryMatrix: [
         { kinds: "1 種類", vals: ["5+1", "9+1", "13+1", "17+1", "21+1", "25+1"] },
         { kinds: "2 種類", vals: ["7+1", "12+1", "17+1", "19+2", "24+2", "29+2"] },
@@ -286,7 +289,7 @@
       icon: "🧬",
       category: "special",
       catName: "特殊機制",
-      desc: "百變怪專屬。隨機複製隊伍中 1 隻寶可夢的主技能發動（部分神獸技能無法複製，但會改為給予少量卡比獸能量）。",
+      desc: "百變怪專屬。隨機複製隊伍中 1 隻隊友的主技能發動。",
       maxLevel: 7,
       unit: "比照複製招式等級"
     },
@@ -296,7 +299,7 @@
       icon: "🎪",
       category: "special",
       catName: "特殊機制",
-      desc: "魔牆人偶專屬。隨機複製隊伍中 1 隻寶可夢的主技能發動（部分特殊技能無法複製，但會改為給予少量卡比獸能量）。",
+      desc: "魔牆人偶專屬。隨機複製隊伍中 1 隻隊友的主技能發動。",
       maxLevel: 7,
       unit: "比照複製招式等級"
     },
@@ -306,7 +309,7 @@
       icon: "☝️",
       category: "special",
       catName: "特殊機制",
-      desc: "波克比家族專屬。從多種主技能中隨機抽選 1 種發動（蓄力、變身、模仿無法被揮指抽中）。",
+      desc: "波克比家族等專屬。從全主技能庫中隨機抽選 1 種發動。",
       maxLevel: 7,
       unit: "Lv.1~7 隨機發動"
     }
@@ -1279,21 +1282,34 @@
             </div>
           </div>
         `;
+      } else if (skill.hasMoonlightChips) {
+        valuesHtml = `
+          <div class="skill-levels-grid">
+            ${skill.selfValues.map((v, i) => `
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.${i + 1}</span>
+                <span class="level-val">自 ${v} · 他+${skill.teamValues[i]}${skill.unit}</span>
+              </div>
+            `).join('')}
+          </div>
+          ${skill.specialNote ? `<div class="skill-special-note">${skill.specialNote}</div>` : ''}
+        `;
       } else if (skill.hasLunarPrayerMatrix) {
         valuesHtml = `
           <div class="skill-levels-grid">
             ${skill.healValues.map((v, i) => `
               <div class="skill-level-chip">
                 <span class="level-tag">Lv.${i + 1}</span>
-                <span class="level-val">全隊 ${v}點 + 樹果 ${skill.berryRange[i]}</span>
+                <span class="level-val">全隊 ${v}點 · 樹果 ${skill.berryRange[i]}</span>
               </div>
             `).join('')}
           </div>
+          ${skill.specialNote ? `<div class="skill-special-note">${skill.specialNote}</div>` : ''}
 
           <!-- 展開完整 1~5 種類超能力隊友樹果對照表按鈕 -->
           <div style="margin-top: 8px;">
             <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="lunar-prayer-table" onclick="window.WikiDB.toggleDetail('lunar-prayer-table')">
-              📊 展開 / 收合完整 1~5 種類超能力隊友樹果表
+              📊 展開 / 收合完整 1~5 種類超能隊友樹果表
             </button>
           </div>
 
@@ -1317,8 +1333,8 @@
           </div>
         `;
       } else if (skill.hasDualValues) {
-        const selfShort = skill.selfShort || '自身';
-        const teamShort = skill.teamShort || '隊友';
+        const selfShort = skill.selfShort || '自';
+        const teamShort = skill.teamShort || '他';
         valuesHtml = `
           <div class="skill-levels-grid">
             ${skill.selfValues.map((v, i) => `
@@ -1340,6 +1356,7 @@
               </div>
             `).join('')}
           </div>
+          ${skill.specialNote ? `<div class="skill-special-note">${skill.specialNote}</div>` : ''}
         `;
       } else if (skill.values) {
         valuesHtml = `
@@ -1351,6 +1368,7 @@
               </div>
             `).join('')}
           </div>
+          ${skill.specialNote ? `<div class="skill-special-note">${skill.specialNote}</div>` : ''}
         `;
       } else {
         valuesHtml = `<div class="skill-level-chip"><span class="level-val">${skill.unit}</span></div>`;
