@@ -4937,9 +4937,73 @@ select optgroup,
   display: flex;
   align-items: center;
   height: 52px;
+/* 橫向天梯座標圖 (精簡緊湊單屏呈現) */
+.wiki-coordinate-ladder-wrapper {
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.wiki-coordinate-ladder {
+  min-width: 680px;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 6px 8px;
+}
+
+.ladder-ruler-header {
+  display: flex;
+  align-items: center;
+  height: 20px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ladder-ruler-spacer {
+  width: 36px;
+  min-width: 36px;
+}
+
+.ladder-ruler-scale {
+  flex: 1;
+  position: relative;
+  height: 100%;
+  margin: 0 10px;
+}
+
+.ladder-ruler-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tick-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #64748b;
+  line-height: 1;
+}
+
+.tick-line {
+  width: 1px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  margin-top: 2px;
+}
+
+.ladder-track-row {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  min-height: 36px;
+  margin-bottom: 2px;
   background: rgba(15, 23, 42, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  border-radius: 6px;
   transition: all 0.15s ease;
   position: relative;
 }
@@ -4949,15 +5013,10 @@ select optgroup,
   border-color: rgba(56, 189, 248, 0.25);
 }
 
-.ladder-ruler-spacer {
-  width: 44px;
-  min-width: 44px;
-}
-
 .ladder-track-header {
-  width: 44px;
-  min-width: 44px;
-  padding: 0 4px;
+  width: 36px;
+  min-width: 36px;
+  padding: 0 2px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4966,8 +5025,8 @@ select optgroup,
 }
 
 .ladder-ing-icon {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   object-fit: contain;
   flex-shrink: 0;
   cursor: pointer;
@@ -4975,7 +5034,7 @@ select optgroup,
 }
 
 .ladder-track-header:hover .ladder-ing-icon {
-  transform: scale(1.18);
+  transform: scale(1.2);
 }
 
 .ladder-track-canvas {
@@ -4984,7 +5043,7 @@ select optgroup,
   height: 100%;
   display: flex;
   align-items: center;
-  margin: 0 12px;
+  margin: 0 10px;
 }
 
 .ladder-grid-lines {
@@ -5027,31 +5086,32 @@ select optgroup,
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  transition: transform 0.15s ease, z-index 0.15s ease;
+  transition: transform 0.15s ease, z-index 0.15s ease, left 0.25s ease;
 }
 
 .ladder-node:hover {
-  transform: translate(-50%, -55%) scale(1.18);
+  transform: translate(-50%, -55%) scale(1.2);
   z-index: 60 !important;
 }
 
 .node-recipe-tag {
-  font-size: 8px;
+  font-size: 7.5px;
   font-weight: 800;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.95);
   color: #38bdf8;
-  padding: 0 3px;
-  border-radius: 3px;
+  padding: 0 2px;
+  border-radius: 2px;
   margin-bottom: -3px;
   z-index: 2;
   border: 1px solid rgba(56, 189, 248, 0.3);
   letter-spacing: 0.2px;
+  line-height: 1.1;
 }
 
 .node-avatar-wrapper {
   position: relative;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
 }
 
 .node-avatar-img {
@@ -5060,33 +5120,34 @@ select optgroup,
   border-radius: 50%;
   background: #1e293b;
   border: 1.5px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
   object-fit: contain;
 }
 
 .ladder-node.node-top1 .node-avatar-img {
   border: 2px solid #eab308;
-  box-shadow: 0 0 10px rgba(234, 179, 8, 0.7);
+  box-shadow: 0 0 8px rgba(234, 179, 8, 0.7);
 }
 
 .node-crown {
   position: absolute;
-  top: -8px;
-  right: -6px;
-  font-size: 11px;
+  top: -7px;
+  right: -5px;
+  font-size: 9px;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
 }
 
 .node-count-badge {
-  font-size: 9.5px;
+  font-size: 8.5px;
   font-weight: 700;
   color: #f1f5f9;
-  background: rgba(15, 23, 42, 0.9);
-  padding: 0 3px;
-  border-radius: 3px;
+  background: rgba(15, 23, 42, 0.95);
+  padding: 0 2px;
+  border-radius: 2px;
   margin-top: -3px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   font-feature-settings: 'tnum';
+  line-height: 1.1;
 }
 
 .ladder-node.node-top1 .node-count-badge {
@@ -5139,13 +5200,76 @@ select optgroup,
   padding-top: 2px;
 }
 
-/* 尾巴專屬獨立刻度區 */
-.ladder-tail-special-card {
-  margin-top: 12px;
-  background: rgba(244, 114, 182, 0.05);
-  border: 1px solid rgba(244, 114, 182, 0.25);
-  border-radius: 10px;
-  padding: 10px 12px;
+/* 天梯頂部控制列與開關按鈕 */
+.ladder-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ladder-switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.ladder-switch-label input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ladder-switch-slider {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  transition: background-color 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ladder-switch-slider::before {
+  position: absolute;
+  content: "";
+  height: 10px;
+  width: 10px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.ladder-switch-label input:checked + .ladder-switch-slider {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+}
+
+.ladder-switch-label input:checked + .ladder-switch-slider::before {
+  transform: translateX(14px);
+}
+
+.ladder-switch-text {
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.ladder-switch-text.ing-m-text {
+  color: #fbbf24;
+}
+
+.ladder-switch-text.speed-m-text {
+  color: #38bdf8;
 }
 
 /* 🫐 樹果與食材基礎能量看板 (Image 1 實體化) */

@@ -1738,7 +1738,7 @@
       }
     });
 
-    const allLadderCards = document.querySelectorAll('.ladder-card, .ladder-track-row, .ladder-tail-special-card');
+    const allLadderCards = document.querySelectorAll('.ladder-card, .ladder-track-row');
     allLadderCards.forEach(card => {
       const cardIng = card.getAttribute('data-ladder-ing');
       if (ingId === 'all' || cardIng === ingId) {
@@ -1747,6 +1747,34 @@
         card.style.setProperty('display', 'none', 'important');
       }
     });
+  }
+
+  // 3.0 食材天梯榜即時副技能補正開關 (食材機率提升M + 幫忙速度M)
+  let isLadderIngM = false;
+  let isLadderSpeedM = false;
+
+  function getLadderMultiplier() {
+    let mult = 1.0;
+    if (isLadderIngM) mult *= 1.36;
+    if (isLadderSpeedM) mult *= (1.0 / 0.86); // -14% 間隔 = 約 1.16279 倍
+    return mult;
+  }
+
+  function toggleLadderIngM(checked) {
+    isLadderIngM = !!checked;
+    refreshCoordinateLadder();
+  }
+
+  function toggleLadderSpeedM(checked) {
+    isLadderSpeedM = !!checked;
+    refreshCoordinateLadder();
+  }
+
+  function refreshCoordinateLadder() {
+    const container = document.getElementById('wiki-ingredient-ladder-coordinate');
+    if (container) {
+      container.innerHTML = renderCoordinateLadder(LV60_COORDINATE_LADDER_DATA);
+    }
   }
 
   // 3.1 切換天梯圖呈現模式 (coordinate: 橫向視覺天梯座標圖 / list: 卡片清單列表)
@@ -2141,6 +2169,12 @@
       if (e.target && e.target.id === 'berry-favorite-toggle') {
         toggleBerryFavorite(e.target.checked);
       }
+      if (e.target && e.target.id === 'ladder-ing-m-toggle') {
+        toggleLadderIngM(e.target.checked);
+      }
+      if (e.target && e.target.id === 'ladder-speed-m-toggle') {
+        toggleLadderSpeedM(e.target.checked);
+      }
     });
 
     document.addEventListener('input', (e) => {
@@ -2224,17 +2258,34 @@
     `;
   }
 
-  // 渲染橫向視覺座標天梯圖 (Image 2 實體化)
-  // 渲染橫向視覺座標天梯圖 (極簡圖示、18種全食材單軌、含尾巴全整合)
+  // 渲染橫向視覺座標天梯圖 (極簡圖示、18種全食材單軌、含尾巴全整合、支援即時副技能補正)
   function renderCoordinateLadder(ladderData) {
-    const ticks = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-    const minVal = 10;
-    const maxVal = 105;
+    const mult = getLadderMultiplier();
+    
+    // 依據是否開啟副技能加成動態調整刻度上限
+    let ticks = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    let minVal = 10;
+    let maxVal = 105;
+
+    if (isLadderIngM && isLadderSpeedM) {
+      ticks = [10, 30, 60, 90, 120, 150, 180];
+      maxVal = 175;
+    } else if (isLadderIngM) {
+      ticks = [10, 30, 50, 70, 90, 110, 130, 150];
+      maxVal = 148;
+    } else if (isLadderSpeedM) {
+      ticks = [10, 25, 50, 75, 100, 125];
+      maxVal = 125;
+    }
 
     function getPosPct(val) {
       const clamped = Math.min(Math.max(val, minVal), maxVal);
       return ((clamped - minVal) / (maxVal - minVal) * 100).toFixed(2);
     }
+
+    const boostLabel = (isLadderIngM && isLadderSpeedM) 
+      ? ' (含 食材M + 幫速M 補正)' 
+      : (isLadderIngM ? ' (含 食材M 補正)' : (isLadderSpeedM ? ' (含 幫速M 補正)' : ''));
 
     return `
       <div class="wiki-coordinate-ladder-wrapper">
@@ -2267,23 +2318,26 @@
                 <div class="ladder-track-line"></div>
 
                 <div class="ladder-nodes-container">
-                  ${ing.pokemon.map((p, idx) => `
-                    <div class="ladder-node ${p.isTop ? 'node-top1' : ''}" style="left: ${getPosPct(p.count)}%; z-index: ${30 - idx};" data-pkm="${p.name}">
-                      <div class="node-recipe-tag">${p.recipe}</div>
-                      <div class="node-avatar-wrapper">
-                        <img src="${p.icon}" class="node-avatar-img" alt="${p.name}">
-                        ${p.isTop ? '<span class="node-crown">👑</span>' : ''}
+                  ${ing.pokemon.map((p, idx) => {
+                    const scaledCount = Math.round(p.count * mult);
+                    return `
+                      <div class="ladder-node ${p.isTop ? 'node-top1' : ''}" style="left: ${getPosPct(scaledCount)}%; z-index: ${30 - idx};" data-pkm="${p.name}">
+                        <div class="node-recipe-tag">${p.recipe}</div>
+                        <div class="node-avatar-wrapper">
+                          <img src="${p.icon}" class="node-avatar-img" alt="${p.name}">
+                          ${p.isTop ? '<span class="node-crown">👑</span>' : ''}
+                        </div>
+                        <div class="node-count-badge">${scaledCount}</div>
+                        
+                        <div class="ladder-node-tooltip">
+                          <div class="tooltip-title">${p.isTop ? '👑 產量 TOP 1 ' : (idx === 1 ? '🥈 TOP 2 ' : (idx === 2 ? '🥉 TOP 3 ' : ''))}${p.name}</div>
+                          <div class="tooltip-detail">食材組合：<span class="text-accent font-bold">${p.recipe}</span></div>
+                          <div class="tooltip-detail">預估日產：<span class="text-success font-bold">${scaledCount} 顆/天</span>${boostLabel}</div>
+                          <div class="tooltip-note">${p.note || ''}</div>
+                        </div>
                       </div>
-                      <div class="node-count-badge">${p.count}</div>
-                      
-                      <div class="ladder-node-tooltip">
-                        <div class="tooltip-title">${p.isTop ? '👑 產量 TOP 1 ' : (idx === 1 ? '🥈 TOP 2 ' : (idx === 2 ? '🥉 TOP 3 ' : ''))}${p.name}</div>
-                        <div class="tooltip-detail">食材組合：<span class="text-accent font-bold">${p.recipe}</span></div>
-                        <div class="tooltip-detail">日產量：<span class="text-success font-bold">${p.count} 顆/天</span></div>
-                        <div class="tooltip-note">${p.note || ''}</div>
-                      </div>
-                    </div>
-                  `).join('')}
+                    `;
+                  }).join('')}
                 </div>
               </div>
             </div>
@@ -2882,38 +2936,40 @@
         <!-- 子分頁 4：🥗 Lv.60 食材天梯榜 (Lv.60 Ingredients Ladder) -->
         <div id="wiki-subpanel-ingredients" class="wiki-subpanel">
           <div class="wiki-card">
-            <div class="wiki-card-header">
-              <span class="wiki-card-icon">🥗</span>
-              <h3 class="wiki-card-title">Lv.60 各食材單日產量天梯榜（無補正基準）</h3>
-            </div>
-            <p class="wiki-card-desc">依據 @SwabluPksl 與 RaenonX 實測統計，展示各寶可夢在 Lv.60 滿等、無副技能與性格修正、無睡眠緞帶、全天維持滿活力（100% Energy）下的純基礎單日產量天梯圖。</p>
-
-            <!-- 視圖切換與篩選工具列 -->
-            <div class="ladder-view-toggle-bar">
-              <div class="ladder-mode-btns">
-                <button type="button" class="ladder-mode-btn active" data-ladder-view="coordinate" onclick="window.WikiDB.switchLadderView('coordinate')">📈 橫向視覺天梯圖</button>
-                <button type="button" class="ladder-mode-btn" data-ladder-view="list" onclick="window.WikiDB.switchLadderView('list')">📋 卡片清單列表</button>
+            <div class="wiki-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="wiki-card-icon">🥗</span>
+                <h3 class="wiki-card-title" style="margin: 0;">Lv.60 各食材單日產量天梯榜</h3>
               </div>
 
-              <!-- 食材快速篩選 Pills -->
-              <div class="wiki-filter-pills" style="margin: 0;">
-                <span class="wiki-pill-label">選擇食材：</span>
-                <button type="button" class="wiki-pill-btn active" data-ing-filter="all" onclick="window.WikiDB.filterIngredients('all')">全部食材 (${LV60_COORDINATE_LADDER_DATA.length})</button>
-                ${LV60_COORDINATE_LADDER_DATA.map(ing => `
-                  <button type="button" class="wiki-pill-btn" data-ing-filter="${ing.id}" onclick="window.WikiDB.filterIngredients('${ing.id}')">
-                    <img src="${ing.icon}" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">${ing.name}
-                  </button>
-                `).join('')}
+              <!-- 水平正右側控制列：[ 視覺天梯圖 | 卡片清單 ] + [ 食材機率M ] + [ 幫速M ] -->
+              <div class="ladder-header-controls">
+                <div class="ladder-mode-btns" style="margin: 0;">
+                  <button type="button" class="ladder-mode-btn active" data-ladder-view="coordinate" onclick="window.WikiDB.switchLadderView('coordinate')">📈 視覺天梯圖</button>
+                  <button type="button" class="ladder-mode-btn" data-ladder-view="list" onclick="window.WikiDB.switchLadderView('list')">📋 卡片清單</button>
+                </div>
+
+                <label class="ladder-switch-label" title="食材發現機率提升M (+36%)">
+                  <input type="checkbox" id="ladder-ing-m-toggle" ${isLadderIngM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderIngM(this.checked)">
+                  <span class="ladder-switch-slider"></span>
+                  <span class="ladder-switch-text ing-m-text">🥩 食材機率M (+36%)</span>
+                </label>
+
+                <label class="ladder-switch-label" title="幫忙速度M (-14% 間隔時間，約 +16.3% 幫忙次數)">
+                  <input type="checkbox" id="ladder-speed-m-toggle" ${isLadderSpeedM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSpeedM(this.checked)">
+                  <span class="ladder-switch-slider"></span>
+                  <span class="ladder-switch-text speed-m-text">⚡ 幫速M (+16.3%)</span>
+                </label>
               </div>
             </div>
 
-            <!-- 橫向視覺天梯座標圖 (Image 2 實體化，預設顯示) -->
-            <div id="wiki-ingredient-ladder-coordinate">
+            <!-- 橫向視覺天梯座標圖 (預設顯示) -->
+            <div id="wiki-ingredient-ladder-coordinate" style="margin-top: 8px;">
               ${renderCoordinateLadder(LV60_COORDINATE_LADDER_DATA)}
             </div>
 
             <!-- 食材天梯卡片清單 (列表檢視，預設隱藏) -->
-            <div id="wiki-ingredient-ladder-grid" class="wiki-ladder-grid" style="display: none;">
+            <div id="wiki-ingredient-ladder-grid" class="wiki-ladder-grid" style="display: none; margin-top: 8px;">
               ${renderIngredientLadders(LV60_INGREDIENTS_LADDER)}
             </div>
           </div>
@@ -2961,6 +3017,9 @@
     updateBerryLevel: updateBerryLevel,
     updateBerryIsland: updateBerryIsland,
     toggleBerryFavorite: toggleBerryFavorite,
+    toggleLadderIngM: toggleLadderIngM,
+    toggleLadderSpeedM: toggleLadderSpeedM,
+    refreshCoordinateLadder: refreshCoordinateLadder,
     recalcTriggerChance: recalcTriggerChance,
     recalcSleepDays: recalcSleepDays
   };
@@ -2978,6 +3037,9 @@
   window.updateBerryLevel = updateBerryLevel;
   window.updateBerryIsland = updateBerryIsland;
   window.toggleBerryFavorite = toggleBerryFavorite;
+  window.toggleLadderIngM = toggleLadderIngM;
+  window.toggleLadderSpeedM = toggleLadderSpeedM;
+  window.refreshCoordinateLadder = refreshCoordinateLadder;
   window.recalcTriggerChance = recalcTriggerChance;
   window.recalcSleepDays = recalcSleepDays;
 
