@@ -497,7 +497,7 @@
     { id: "lum", name: "椰木果", enName: "Lum Berry", type: "蟲", energy: 24, icon: "https://www.serebii.net/pokemonsleep/berries/lumberry.png" },
     { id: "oran", name: "橙橙果", enName: "Oran Berry", type: "水", energy: 25, icon: "https://www.serebii.net/pokemonsleep/berries/oranberry.png" },
     { id: "leppa", name: "蘋野果", enName: "Leppa Berry", type: "火", energy: 26, icon: "https://www.serebii.net/pokemonsleep/berries/leppaberry.png" },
-    { id: "razz", name: "墨莓果", enName: "Razz Berry", type: "草", energy: 26, icon: "https://www.serebii.net/pokemonsleep/berries/razzberry.png" },
+    { id: "durin", name: "墨莓果", enName: "Durin Berry", type: "草", energy: 26, icon: "https://www.serebii.net/pokemonsleep/berries/durinberry.png" },
     { id: "chesto", name: "勿忘果", enName: "Chesto Berry", type: "鋼", energy: 26, icon: "https://www.serebii.net/pokemonsleep/berries/chestoberry.png" },
     { id: "cheri", name: "櫻子果", enName: "Cheri Berry", type: "格鬥", energy: 27, icon: "https://www.serebii.net/pokemonsleep/berries/cheriberry.png" },
     { id: "pecha", name: "桃桃果", enName: "Pecha Berry", type: "妖精", energy: 27, icon: "https://www.serebii.net/pokemonsleep/berries/pechaberry.png" },
@@ -505,9 +505,9 @@
     { id: "bluk", name: "蔓莓果", enName: "Bluk Berry", type: "幽靈", energy: 29, icon: "https://www.serebii.net/pokemonsleep/berries/blukberry.png" },
     { id: "wiki", name: "芭亞果", enName: "Wiki Berry", type: "惡", energy: 30, icon: "https://www.serebii.net/pokemonsleep/berries/wikiberry.png" },
     { id: "mago", name: "芒芒果", enName: "Mago Berry", type: "飛行", energy: 30, icon: "https://www.serebii.net/pokemonsleep/berries/magoberry.png" },
-    { id: "aguav", name: "樂芭果", enName: "Aguav Berry", type: "龍", energy: 31, icon: "https://www.serebii.net/pokemonsleep/berries/aguavberry.png" },
-    { id: "iapapa", name: "異奇果", enName: "Iapapa Berry", type: "毒", energy: 31, icon: "https://www.serebii.net/pokemonsleep/berries/iapapaberry.png" },
-    { id: "colbur", name: "巧可果", enName: "Colbur Berry", type: "地面", energy: 32, icon: "https://www.serebii.net/pokemonsleep/berries/colburberry.png" },
+    { id: "yache", name: "樂芭果", enName: "Yache Berry", type: "龍", energy: 31, icon: "https://www.serebii.net/pokemonsleep/berries/yacheberry.png" },
+    { id: "figy", name: "異奇果", enName: "Figy Berry", type: "毒", energy: 31, icon: "https://www.serebii.net/pokemonsleep/berries/figyberry.png" },
+    { id: "pamtre", name: "巧可果", enName: "Pamtre Berry", type: "地面", energy: 32, icon: "https://www.serebii.net/pokemonsleep/berries/pamtreberry.png" },
     { id: "belue", name: "椰查果", enName: "Belue Berry", type: "岩石", energy: 33, icon: "https://www.serebii.net/pokemonsleep/berries/belueberry.png" },
     { id: "grepa", name: "榴石果", enName: "Grepa Berry", type: "電", energy: 35, icon: "https://www.serebii.net/pokemonsleep/berries/grepaberry.png" },
     { id: "rawst", name: "苦莓果", enName: "Rawst Berry", type: "冰", energy: 35, icon: "https://www.serebii.net/pokemonsleep/berries/rawstberry.png" }
@@ -530,7 +530,7 @@
     { id: "coffee", name: "甦醒咖啡", enName: "Rousing Coffee", energy: 153, icon: "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png" },
     { id: "mushroom", name: "芳香蘑菇", enName: "Tasty Mushroom", energy: 167, icon: "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" },
     { id: "leek", name: "粗擺大蔥", enName: "Large Leek", energy: 185, icon: "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png" },
-    { id: "pumpkin", name: "特選南瓜", enName: "Special Pumpkin", energy: 200, icon: "https://www.serebii.net/pokemonsleep/ingredients/specialpumpkin.png" },
+    { id: "pumpkin", name: "特選南瓜", enName: "Plump Pumpkin", energy: 200, icon: "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png" },
     { id: "tail", name: "粗擺尾巴", enName: "Slowpoke Tail", energy: 342, icon: "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png" }
   ];
 
@@ -574,7 +574,7 @@
         { name: "班基拉斯", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png", count: 98, recipe: "AAA", isTop: true, note: "老班暖暖薑第一巨頭" },
         { name: "袋獸", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/115.png", count: 84, recipe: "AAA", note: "單段強力暖薑手" },
         { name: "噴火龍", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png", count: 76, recipe: "AAB", note: "火系高產薑" },
-        { name: "刺甲貝", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/091.png", count: 68, recipe: "ABB", note: "冰系暖薑手" },
+        { name: "耿鬼", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png", count: 68, recipe: "ABB", note: "幽靈高速薑手" },
         { name: "雷伊布", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/135.png", count: 52, recipe: "AAC", note: "副產物" }
       ]
     },
@@ -588,7 +588,7 @@
         { name: "水箭龜", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/009.png", count: 102, recipe: "AAA", isTop: true, note: "牛奶絕對王者，甜點/咖哩主力" },
         { name: "仙子伊布", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/700.png", count: 82, recipe: "AAB", note: "補師兼顧牛奶高產" },
         { name: "水伊布", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/134.png", count: 80, recipe: "AAB", note: "技能型兼顧牛奶" },
-        { name: "椰蛋樹", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/103.png", count: 68, recipe: "ABB", note: "草系產奶手" },
+        { name: "樹才怪", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/185.png", count: 68, recipe: "ABB", note: "岩石產奶手" },
         { name: "雷伊布", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/135.png", count: 56, recipe: "AAC", note: "副產物" }
       ]
     },
@@ -601,7 +601,6 @@
       pokemon: [
         { name: "妙蛙花", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png", count: 98, recipe: "AAA", isTop: true, note: "甜蜜蜜絕對天花板" },
         { name: "凱羅斯", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/127.png", count: 86, recipe: "AAB", note: "大甲蜂蜜副產極高" },
-        { name: "大針蜂", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/015.png", count: 82, recipe: "AAA", note: "高速蜂蜜產出" },
         { name: "蝶結萌虻", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/743.png", count: 76, recipe: "AAB", note: "蟲系高產蜂蜜" },
         { name: "巴大蝶", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/012.png", count: 52, recipe: "ABB", note: "樹果兼顧蜂蜜" }
       ]
@@ -615,7 +614,6 @@
       pokemon: [
         { name: "噴火龍", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png", count: 94, recipe: "AAA", isTop: true, note: "香腸第一天花板霸主" },
         { name: "隆隆岩", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/076.png", count: 88, recipe: "AAB", note: "岩石香腸巨頭" },
-        { name: "烈咬陸鯊", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/445.png", count: 72, recipe: "ABB", note: "龍系香腸主力" },
         { name: "黑魯加", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/229.png", count: 68, recipe: "AAA", note: "惡系香腸手" },
         { name: "風速狗", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/059.png", count: 54, recipe: "AAC", note: "技能型兼顧香腸" }
       ]
@@ -629,9 +627,8 @@
       pokemon: [
         { name: "隆隆岩", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/076.png", count: 92, recipe: "AAA", isTop: true, note: "大豆產量絕對天花板" },
         { name: "班基拉斯", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png", count: 88, recipe: "AAB", note: "老班高產大豆" },
-        { name: "雙倍多多冰", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/584.png", count: 76, recipe: "AAA", note: "冰系大豆高產手" },
         { name: "三地鼠", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/051.png", count: 64, recipe: "ABB", note: "地面系大豆手" },
-        { name: "差不多娃娃", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/531.png", count: 50, recipe: "AAC", note: "副產物" }
+        { name: "胖可丁", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/040.png", count: 50, recipe: "AAC", note: "副產物" }
       ]
     },
     {
@@ -644,8 +641,7 @@
         { name: "大食花", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/071.png", count: 88, recipe: "AAA", isTop: true, note: "番茄第一把交椅" },
         { name: "魔牆人偶", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/122.png", count: 80, recipe: "AAB", note: "超能番茄高產手" },
         { name: "妙蛙花", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png", count: 72, recipe: "ABB", note: "草系高產番茄" },
-        { name: "胡說樹", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/185.png", count: 54, recipe: "AAC", note: "副產物" },
-        { name: "差不多娃娃", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/531.png", count: 50, recipe: "AAC", note: "副產物" }
+        { name: "樹才怪", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/185.png", count: 54, recipe: "AAC", note: "副產物" }
       ]
     },
     {
@@ -657,7 +653,7 @@
       pokemon: [
         { name: "穿著熊", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/760.png", count: 86, recipe: "AAA", isTop: true, note: "玉米頂級霸主，格鬥島主力" },
         { name: "快龍", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/149.png", count: 74, recipe: "AAB", note: "龍系高產玉米" },
-        { name: "向日花怪", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/192.png", count: 64, recipe: "AAA", note: "草系玉米手" },
+        { name: "妙蛙花", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png", count: 64, recipe: "AAA", note: "草系玉米手" },
         { name: "胖可丁", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/040.png", count: 50, recipe: "ABB", note: "補師副產玉米" }
       ]
     },
@@ -696,9 +692,9 @@
       energy: 153,
       icon: "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png",
       pokemon: [
-        { name: "巨鉗螳螂", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/212.png", count: 76, recipe: "AAA", isTop: true, note: "咖啡第一產量天花板" },
-        { name: "巴布土撥", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/923.png", count: 72, recipe: "AAA", note: "電系高產咖啡手" },
-        { name: "呆火鱷", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/909.png", count: 64, recipe: "AAB", note: "火系咖啡主力" },
+        { name: "巴布土撥", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/923.png", count: 76, recipe: "AAA", isTop: true, note: "咖啡第一產量天花板" },
+        { name: "呆火鱷", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/909.png", count: 68, recipe: "AAB", note: "火系高產咖啡手" },
+        { name: "噴火龍", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png", count: 62, recipe: "ABB", note: "火系兼顧咖啡" },
         { name: "班基拉斯", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png", count: 54, recipe: "ABB", note: "老班兼顧咖啡" }
       ]
     },
@@ -738,8 +734,8 @@
       pokemon: [
         { name: "耿鬼", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png", count: 64, recipe: "AAA", isTop: true, note: "蘑菇唯一超高速王者" },
         { name: "沼王", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/195.png", count: 54, recipe: "AAB", note: "水系蘑菇主力" },
-        { name: "霸王花", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/045.png", count: 48, recipe: "ABB", note: "草系蘑菇手" },
-        { name: "差不多娃娃", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/531.png", count: 42, recipe: "AAC", note: "副產物" }
+        { name: "大食花", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/071.png", count: 48, recipe: "ABB", note: "草系蘑菇手" },
+        { name: "呆殼獸", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/080.png", count: 42, recipe: "AAC", note: "副產物" }
       ]
     },
     {
@@ -757,12 +753,13 @@
     {
       id: "pumpkin",
       name: "特選南瓜",
-      enName: "Special Pumpkin",
+      enName: "Plump Pumpkin",
       energy: 200,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/specialpumpkin.png",
+      icon: "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png",
       pokemon: [
         { name: "南瓜怪人", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png", count: 56, recipe: "AAA", isTop: true, note: "南瓜唯一專屬來源，萬聖料理主力" },
-        { name: "隨風球", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/426.png", count: 44, recipe: "AAB", note: "幽靈系副產" }
+        { name: "隨風球", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/426.png", count: 44, recipe: "AAB", note: "幽靈系副產" },
+        { name: "耿鬼", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png", count: 40, recipe: "AAC", note: "幽靈兼顧南瓜" }
       ]
     },
     {
