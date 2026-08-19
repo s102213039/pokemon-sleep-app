@@ -493,24 +493,24 @@
 
   // --- 4. 樹果與食材基礎能量資料庫 (Image 1 實體化 - Berry & Ingredient Values) ---
   const BERRY_VALUES_DATA = [
-    { id: "persim", name: "零餘果", enName: "Persim Berry", type: "一般", energy: 24, icon: "https://www.serebii.net/pokemonsleep/berries/persimberry.png" },
-    { id: "lum", name: "椰木果", enName: "Lum Berry", type: "蟲", energy: 24, icon: "https://www.serebii.net/pokemonsleep/berries/lumberry.png" },
-    { id: "oran", name: "橙橙果", enName: "Oran Berry", type: "水", energy: 25, icon: "https://www.serebii.net/pokemonsleep/berries/oranberry.png" },
-    { id: "leppa", name: "蘋野果", enName: "Leppa Berry", type: "火", energy: 26, icon: "https://www.serebii.net/pokemonsleep/berries/leppaberry.png" },
-    { id: "durin", name: "墨莓果", enName: "Durin Berry", type: "草", energy: 26, icon: "https://www.serebii.net/pokemonsleep/berries/durinberry.png" },
-    { id: "chesto", name: "勿忘果", enName: "Chesto Berry", type: "鋼", energy: 26, icon: "https://www.serebii.net/pokemonsleep/berries/chestoberry.png" },
-    { id: "cheri", name: "櫻子果", enName: "Cheri Berry", type: "格鬥", energy: 27, icon: "https://www.serebii.net/pokemonsleep/berries/cheriberry.png" },
-    { id: "pecha", name: "桃桃果", enName: "Pecha Berry", type: "妖精", energy: 27, icon: "https://www.serebii.net/pokemonsleep/berries/pechaberry.png" },
-    { id: "sitrus", name: "文柚果", enName: "Sitrus Berry", type: "超能力", energy: 28, icon: "https://www.serebii.net/pokemonsleep/berries/sitrusberry.png" },
-    { id: "bluk", name: "蔓莓果", enName: "Bluk Berry", type: "幽靈", energy: 29, icon: "https://www.serebii.net/pokemonsleep/berries/blukberry.png" },
-    { id: "wiki", name: "芭亞果", enName: "Wiki Berry", type: "惡", energy: 30, icon: "https://www.serebii.net/pokemonsleep/berries/wikiberry.png" },
-    { id: "mago", name: "芒芒果", enName: "Mago Berry", type: "飛行", energy: 30, icon: "https://www.serebii.net/pokemonsleep/berries/magoberry.png" },
-    { id: "yache", name: "樂芭果", enName: "Yache Berry", type: "龍", energy: 31, icon: "https://www.serebii.net/pokemonsleep/berries/yacheberry.png" },
-    { id: "figy", name: "異奇果", enName: "Figy Berry", type: "毒", energy: 31, icon: "https://www.serebii.net/pokemonsleep/berries/figyberry.png" },
-    { id: "pamtre", name: "巧可果", enName: "Pamtre Berry", type: "地面", energy: 32, icon: "https://www.serebii.net/pokemonsleep/berries/pamtreberry.png" },
-    { id: "belue", name: "椰查果", enName: "Belue Berry", type: "岩石", energy: 33, icon: "https://www.serebii.net/pokemonsleep/berries/belueberry.png" },
-    { id: "grepa", name: "榴石果", enName: "Grepa Berry", type: "電", energy: 35, icon: "https://www.serebii.net/pokemonsleep/berries/grepaberry.png" },
-    { id: "rawst", name: "苦莓果", enName: "Rawst Berry", type: "冰", energy: 35, icon: "https://www.serebii.net/pokemonsleep/berries/rawstberry.png" }
+    { id: 'pamtre', name: '巧可果', type: '飛行', energy: 24, icon: 'https://www.serebii.net/pokemonsleep/berries/pamtreberry.png' },
+    { id: 'lum',    name: '椰木果', type: '蟲',   energy: 24, icon: 'https://www.serebii.net/pokemonsleep/berries/lumberry.png' },
+    { id: 'grepa',  name: '榴石果', type: '電',   energy: 25, icon: 'https://www.serebii.net/pokemonsleep/berries/grepaberry.png' },
+    { id: 'bluk',   name: '蔓莓果', type: '幽靈', energy: 26, icon: 'https://www.serebii.net/pokemonsleep/berries/blukberry.png' },
+    { id: 'pecha',  name: '桃桃果', type: '妖精', energy: 26, icon: 'https://www.serebii.net/pokemonsleep/berries/pechaberry.png' },
+    { id: 'mago',   name: '芒芒果', type: '超能', energy: 26, icon: 'https://www.serebii.net/pokemonsleep/berries/magoberry.png' },
+    { id: 'leppa',  name: '蘋野果', type: '火',   energy: 27, icon: 'https://www.serebii.net/pokemonsleep/berries/leppaberry.png' },
+    { id: 'cheri',  name: '櫻子果', type: '格鬥', energy: 27, icon: 'https://www.serebii.net/pokemonsleep/berries/cheriberry.png' },
+    { id: 'persim', name: '零餘果', type: '一般', energy: 28, icon: 'https://www.serebii.net/pokemonsleep/berries/persimberry.png' },
+    { id: 'figy',   name: '異奇果', type: '地面', energy: 29, icon: 'https://www.serebii.net/pokemonsleep/berries/figyberry.png' },
+    { id: 'sitrus', name: '文柚果', type: '岩石', energy: 30, icon: 'https://www.serebii.net/pokemonsleep/berries/sitrusberry.png' },
+    { id: 'durin',  name: '墨莓果', type: '草',   energy: 30, icon: 'https://www.serebii.net/pokemonsleep/berries/durinberry.png' },
+    { id: 'oran',   name: '橙橙果', type: '水',   energy: 31, icon: 'https://www.serebii.net/pokemonsleep/berries/oranberry.png' },
+    { id: 'wiki',   name: '芭亞果', type: '惡',   energy: 31, icon: 'https://www.serebii.net/pokemonsleep/berries/wikiberry.png' },
+    { id: 'chesto', name: '勿忘果', type: '毒',   energy: 32, icon: 'https://www.serebii.net/pokemonsleep/berries/chestoberry.png' },
+    { id: 'rawst',  name: '苦莓果', type: '冰',   energy: 32, icon: 'https://www.serebii.net/pokemonsleep/berries/rawstberry.png' },
+    { id: 'belue',  name: '椰查果', type: '鋼',   energy: 33, icon: 'https://www.serebii.net/pokemonsleep/berries/belueberry.png' },
+    { id: 'yache',  name: '樂芭果', type: '龍',   energy: 35, icon: 'https://www.serebii.net/pokemonsleep/berries/yacheberry.png' }
   ];
 
   const INGREDIENT_VALUES_DATA = [
@@ -537,246 +537,1022 @@
   // --- 5. Lv.60 視覺橫向天梯座標圖資料庫 (Image 2 實體化 - Coordinate Ladder Data) ---
   const LV60_COORDINATE_LADDER_DATA = [
     {
-      id: "herb",
-      name: "激辣辣椒",
-      enName: "Fiery Herb",
-      energy: 130,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png",
-      pokemon: [
-        { name: "快龍", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/149.png", count: 103, recipe: "AAA", isTop: true, note: "AAA 辣椒最高產出霸主" },
-        { name: "耿鬼", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png", count: 75, recipe: "AAB", note: "高速辣椒副產手" },
-        { name: "噴火龍", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png", count: 70, recipe: "ABB", note: "火系辣椒爆發" },
-        { name: "穿著熊", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/760.png", count: 54, recipe: "AAC", note: "格鬥兼顧辣椒" },
-        { name: "火爆獸", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/157.png", count: 50, recipe: "AAC", note: "樹果型副產" }
-      ]
+        "id": "apple",
+        "name": "特選蘋果",
+        "energy": 90,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png",
+        "pokemon": [
+            {
+                "name": "骨紋巨聲鱷",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/911.png",
+                "recipe": "AAA",
+                "count": 91,
+                "note": "👑 TOP 1 AAA 特選蘋果 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "阿勃梭魯",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/359.png",
+                "recipe": "ABB",
+                "count": 86,
+                "note": "ABB 特選蘋果 主力產出"
+            },
+            {
+                "name": "凱羅斯",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/127.png",
+                "recipe": "ABB",
+                "count": 68,
+                "note": "ABB 特選蘋果 主力產出"
+            },
+            {
+                "name": "信使鳥",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/225.png",
+                "recipe": "ABB",
+                "count": 68,
+                "note": "ABB 特選蘋果 主力產出"
+            },
+            {
+                "name": "水君",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/245.png",
+                "recipe": "AAA",
+                "count": 47,
+                "note": "AAA 特選蘋果 兼顧"
+            },
+            {
+                "name": "拉達",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/020.png",
+                "recipe": "AAA",
+                "count": 40,
+                "note": "AAA 特選蘋果 兼顧"
+            },
+            {
+                "name": "哥達鴨",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/055.png",
+                "recipe": "ABB",
+                "count": 39,
+                "note": "ABB 特選蘋果 兼顧"
+            }
+        ]
     },
     {
-      id: "apple",
-      name: "特選蘋果",
-      enName: "Fancy Apple",
-      energy: 90,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png",
-      pokemon: [
-        { name: "凱羅斯", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/127.png", count: 104, recipe: "AAA", isTop: true, note: "大甲 AAA 蘋果最高天花板" },
-        { name: "魔牆人偶", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/122.png", count: 82, recipe: "AAA", note: "超能蘋果高產手" },
-        { name: "信使鳥", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/225.png", count: 76, recipe: "AAB", note: "飛行系高產手" },
-        { name: "耿鬼", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png", count: 70, recipe: "AAC", note: "幽靈兼顧蘋果" },
-        { name: "雷丘", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/026.png", count: 52, recipe: "ABB", note: "樹果型兼顧蘋果" }
-      ]
+        "id": "milk",
+        "name": "哞哞鮮奶",
+        "energy": 98,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png",
+        "pokemon": [
+            {
+                "name": "水箭龜",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/009.png",
+                "recipe": "AAA",
+                "count": 93,
+                "note": "👑 TOP 1 AAA 哞哞鮮奶 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "魔幻假面喵",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/908.png",
+                "recipe": "ABB",
+                "count": 69,
+                "note": "ABB 哞哞鮮奶 主力產出"
+            },
+            {
+                "name": "顫弦蠑螈",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/849.png",
+                "recipe": "AAA",
+                "count": 40,
+                "note": "AAA 哞哞鮮奶 兼顧"
+            },
+            {
+                "name": "月亮伊布",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/197.png",
+                "recipe": "AAA",
+                "count": 37,
+                "note": "AAA 哞哞鮮奶 兼顧"
+            },
+            {
+                "name": "冰伊布",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/471.png",
+                "recipe": "AAA",
+                "count": 37,
+                "note": "AAA 哞哞鮮奶 兼顧"
+            },
+            {
+                "name": "水伊布",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/134.png",
+                "recipe": "AAA",
+                "count": 36,
+                "note": "AAA 哞哞鮮奶 兼顧"
+            },
+            {
+                "name": "葉伊布",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/470.png",
+                "recipe": "AAA",
+                "count": 35,
+                "note": "AAA 哞哞鮮奶 兼顧"
+            }
+        ]
     },
     {
-      id: "ginger",
-      name: "暖暖薑",
-      enName: "Warming Ginger",
-      energy: 109,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png",
-      pokemon: [
-        { name: "班基拉斯", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png", count: 98, recipe: "AAA", isTop: true, note: "老班暖暖薑第一巨頭" },
-        { name: "袋獸", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/115.png", count: 84, recipe: "AAA", note: "單段強力暖薑手" },
-        { name: "噴火龍", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png", count: 76, recipe: "AAB", note: "火系高產薑" },
-        { name: "耿鬼", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png", count: 68, recipe: "ABB", note: "幽靈高速薑手" },
-        { name: "雷伊布", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/135.png", count: 52, recipe: "AAC", note: "副產物" }
-      ]
+        "id": "soybeans",
+        "name": "萌綠大豆",
+        "energy": 100,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png",
+        "pokemon": [
+            {
+                "name": "老翁龍",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/780.png",
+                "recipe": "AAA",
+                "count": 99,
+                "note": "👑 TOP 1 AAA 萌綠大豆 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "隆隆岩",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/076.png",
+                "recipe": "AAA",
+                "count": 95,
+                "note": "AAA 萌綠大豆 專精產出"
+            },
+            {
+                "name": "南瓜怪人",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
+                "recipe": "ABB",
+                "count": 91,
+                "note": "ABB 萌綠大豆 主力產出"
+            },
+            {
+                "name": "班基拉斯",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png",
+                "recipe": "ABB",
+                "count": 84,
+                "note": "ABB 萌綠大豆 主力產出"
+            },
+            {
+                "name": "狂歡浪舞鴨",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/914.png",
+                "recipe": "AAA",
+                "count": 78,
+                "note": "AAA 萌綠大豆 專精產出"
+            },
+            {
+                "name": "沙漠蜻蜓",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/330.png",
+                "recipe": "AAC",
+                "count": 50,
+                "note": "AAC 萌綠大豆 解鎖"
+            },
+            {
+                "name": "波士可多拉",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/306.png",
+                "recipe": "AAC",
+                "count": 48,
+                "note": "AAC 萌綠大豆 解鎖"
+            }
+        ]
     },
     {
-      id: "milk",
-      name: "哞哞鮮奶",
-      enName: "Moomoo Milk",
-      energy: 98,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png",
-      pokemon: [
-        { name: "水箭龜", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/009.png", count: 102, recipe: "AAA", isTop: true, note: "牛奶絕對王者，甜點/咖哩主力" },
-        { name: "仙子伊布", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/700.png", count: 82, recipe: "AAB", note: "補師兼顧牛奶高產" },
-        { name: "水伊布", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/134.png", count: 80, recipe: "AAB", note: "技能型兼顧牛奶" },
-        { name: "樹才怪", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/185.png", count: 68, recipe: "ABB", note: "岩石產奶手" },
-        { name: "雷伊布", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/135.png", count: 56, recipe: "AAC", note: "副產物" }
-      ]
+        "id": "honey",
+        "name": "甜甜蜜",
+        "energy": 101,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png",
+        "pokemon": [
+            {
+                "name": "妙蛙花",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png",
+                "recipe": "AAA",
+                "count": 90,
+                "note": "👑 TOP 1 AAA 甜甜蜜 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "凱羅斯",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/127.png",
+                "recipe": "AAA",
+                "count": 73,
+                "note": "AAA 甜甜蜜 專精產出"
+            },
+            {
+                "name": "蝶結萌虻",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/743.png",
+                "recipe": "AAA",
+                "count": 66,
+                "note": "AAA 甜甜蜜 專精產出"
+            },
+            {
+                "name": "鍬農炮蟲",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/738.png",
+                "recipe": "AAC",
+                "count": 52,
+                "note": "AAC 甜甜蜜 解鎖"
+            },
+            {
+                "name": "請假王",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/289.png",
+                "recipe": "ABB",
+                "count": 49,
+                "note": "ABB 甜甜蜜 兼顧"
+            },
+            {
+                "name": "吉利蛋",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/113.png",
+                "recipe": "AAC",
+                "count": 46,
+                "note": "AAC 甜甜蜜 解鎖"
+            },
+            {
+                "name": "幸福蛋",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/242.png",
+                "recipe": "AAC",
+                "count": 46,
+                "note": "AAC 甜甜蜜 解鎖"
+            }
+        ]
     },
     {
-      id: "honey",
-      name: "甜甜蜜",
-      enName: "Honey",
-      energy: 101,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/honey.png",
-      pokemon: [
-        { name: "妙蛙花", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png", count: 98, recipe: "AAA", isTop: true, note: "甜蜜蜜絕對天花板" },
-        { name: "凱羅斯", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/127.png", count: 86, recipe: "AAB", note: "大甲蜂蜜副產極高" },
-        { name: "蝶結萌虻", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/743.png", count: 76, recipe: "AAB", note: "蟲系高產蜂蜜" },
-        { name: "巴大蝶", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/012.png", count: 52, recipe: "ABB", note: "樹果兼顧蜂蜜" }
-      ]
+        "id": "sausage",
+        "name": "豆製肉",
+        "energy": 103,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png",
+        "pokemon": [
+            {
+                "name": "波士可多拉",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/306.png",
+                "recipe": "AAA",
+                "count": 96,
+                "note": "👑 TOP 1 AAA 豆製肉 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "穿著熊",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/760.png",
+                "recipe": "ABB",
+                "count": 89,
+                "note": "ABB 豆製肉 主力產出"
+            },
+            {
+                "name": "大蔥鴨",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/083.png",
+                "recipe": "ABB",
+                "count": 81,
+                "note": "ABB 豆製肉 主力產出"
+            },
+            {
+                "name": "噴火龍",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png",
+                "recipe": "AAA",
+                "count": 76,
+                "note": "AAA 豆製肉 專精產出"
+            },
+            {
+                "name": "毒骷蛙",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/454.png",
+                "recipe": "ABB",
+                "count": 72,
+                "note": "ABB 豆製肉 主力產出"
+            },
+            {
+                "name": "浩大鯨",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/975.png",
+                "recipe": "ABB",
+                "count": 71,
+                "note": "ABB 豆製肉 主力產出"
+            },
+            {
+                "name": "骨紋巨聲鱷",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/911.png",
+                "recipe": "ABB",
+                "count": 65,
+                "note": "ABB 豆製肉 主力產出"
+            }
+        ]
     },
     {
-      id: "sausage",
-      name: "豆香香腸",
-      enName: "Bean Sausage",
-      energy: 103,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png",
-      pokemon: [
-        { name: "噴火龍", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png", count: 94, recipe: "AAA", isTop: true, note: "香腸第一天花板霸主" },
-        { name: "隆隆岩", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/076.png", count: 88, recipe: "AAB", note: "岩石香腸巨頭" },
-        { name: "黑魯加", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/229.png", count: 68, recipe: "AAA", note: "惡系香腸手" },
-        { name: "風速狗", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/059.png", count: 54, recipe: "AAC", note: "技能型兼顧香腸" }
-      ]
+        "id": "ginger",
+        "name": "暖暖薑",
+        "energy": 109,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png",
+        "pokemon": [
+            {
+                "name": "班基拉斯",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png",
+                "recipe": "AAA",
+                "count": 90,
+                "note": "👑 TOP 1 AAA 暖暖薑 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "袋獸",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/115.png",
+                "recipe": "AAA",
+                "count": 75,
+                "note": "AAA 暖暖薑 專精產出"
+            },
+            {
+                "name": "花療環環",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/764.png",
+                "recipe": "ABB",
+                "count": 61,
+                "note": "ABB 暖暖薑 主力產出"
+            },
+            {
+                "name": "噴火龍",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png",
+                "recipe": "ABB",
+                "count": 60,
+                "note": "ABB 暖暖薑 主力產出"
+            },
+            {
+                "name": "大蔥鴨",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/083.png",
+                "recipe": "AAC",
+                "count": 46,
+                "note": "AAC 暖暖薑 解鎖"
+            },
+            {
+                "name": "克雷色利亞",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/488.png",
+                "recipe": "AAA",
+                "count": 40,
+                "note": "AAA 暖暖薑 兼顧"
+            },
+            {
+                "name": "嘎啦嘎啦",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/105.png",
+                "recipe": "AAA",
+                "count": 38,
+                "note": "AAA 暖暖薑 兼顧"
+            }
+        ]
     },
     {
-      id: "soybeans",
-      name: "幼芽大豆",
-      enName: "Greengrass Soybeans",
-      energy: 100,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png",
-      pokemon: [
-        { name: "隆隆岩", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/076.png", count: 92, recipe: "AAA", isTop: true, note: "大豆產量絕對天花板" },
-        { name: "班基拉斯", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png", count: 88, recipe: "AAB", note: "老班高產大豆" },
-        { name: "三地鼠", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/051.png", count: 64, recipe: "ABB", note: "地面系大豆手" },
-        { name: "胖可丁", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/040.png", count: 50, recipe: "AAC", note: "副產物" }
-      ]
+        "id": "tomato",
+        "name": "好眠番茄",
+        "energy": 110,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png",
+        "pokemon": [
+            {
+                "name": "暴雪王",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/460.png",
+                "recipe": "AAA",
+                "count": 85,
+                "note": "👑 TOP 1 AAA 好眠番茄 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "大食花",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/071.png",
+                "recipe": "AAA",
+                "count": 79,
+                "note": "AAA 好眠番茄 專精產出"
+            },
+            {
+                "name": "魔牆人偶",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/122.png",
+                "recipe": "AAA",
+                "count": 73,
+                "note": "AAA 好眠番茄 專精產出"
+            },
+            {
+                "name": "妙蛙花",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png",
+                "recipe": "ABB",
+                "count": 71,
+                "note": "ABB 好眠番茄 主力產出"
+            },
+            {
+                "name": "倫琴貓",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/405.png",
+                "recipe": "AAA",
+                "count": 68,
+                "note": "AAA 好眠番茄 專精產出"
+            },
+            {
+                "name": "三地鼠",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/051.png",
+                "recipe": "AAA",
+                "count": 64,
+                "note": "AAA 好眠番茄 專精產出"
+            },
+            {
+                "name": "請假王",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/289.png",
+                "recipe": "AAA",
+                "count": 57,
+                "note": "AAA 好眠番茄 兼顧"
+            }
+        ]
     },
     {
-      id: "tomato",
-      name: "熟透番茄",
-      enName: "Snoozy Tomato",
-      energy: 110,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png",
-      pokemon: [
-        { name: "大食花", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/071.png", count: 88, recipe: "AAA", isTop: true, note: "番茄第一把交椅" },
-        { name: "魔牆人偶", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/122.png", count: 80, recipe: "AAB", note: "超能番茄高產手" },
-        { name: "妙蛙花", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png", count: 72, recipe: "ABB", note: "草系高產番茄" },
-        { name: "樹才怪", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/185.png", count: 54, recipe: "AAC", note: "副產物" }
-      ]
+        "id": "egg",
+        "name": "特選蛋",
+        "energy": 115,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png",
+        "pokemon": [
+            {
+                "name": "幸福蛋",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/242.png",
+                "recipe": "AAA",
+                "count": 81,
+                "note": "👑 TOP 1 AAA 特選蛋 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "吉利蛋",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/113.png",
+                "recipe": "AAA",
+                "count": 80,
+                "note": "AAA 特選蛋 專精產出"
+            },
+            {
+                "name": "暴雪王",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/460.png",
+                "recipe": "ABB",
+                "count": 66,
+                "note": "ABB 特選蛋 主力產出"
+            },
+            {
+                "name": "信使鳥",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/225.png",
+                "recipe": "AAA",
+                "count": 64,
+                "note": "AAA 特選蛋 專精產出"
+            },
+            {
+                "name": "穿著熊",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/760.png",
+                "recipe": "AAC",
+                "count": 50,
+                "note": "AAC 特選蛋 解鎖"
+            },
+            {
+                "name": "七夕青鳥",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/334.png",
+                "recipe": "AAA",
+                "count": 44,
+                "note": "AAA 特選蛋 兼顧"
+            },
+            {
+                "name": "阿柏怪",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/024.png",
+                "recipe": "ABB",
+                "count": 32,
+                "note": "ABB 特選蛋 兼顧"
+            }
+        ]
     },
     {
-      id: "corn",
-      name: "甜甜玉米",
-      enName: "Greengrass Corn",
-      energy: 140,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png",
-      pokemon: [
-        { name: "穿著熊", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/760.png", count: 86, recipe: "AAA", isTop: true, note: "玉米頂級霸主，格鬥島主力" },
-        { name: "快龍", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/149.png", count: 74, recipe: "AAB", note: "龍系高產玉米" },
-        { name: "妙蛙花", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png", count: 64, recipe: "AAA", note: "草系玉米手" },
-        { name: "胖可丁", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/040.png", count: 50, recipe: "ABB", note: "補師副產玉米" }
-      ]
+        "id": "oil",
+        "name": "純粹油",
+        "energy": 121,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png",
+        "pokemon": [
+            {
+                "name": "毒骷蛙",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/454.png",
+                "recipe": "AAA",
+                "count": 77,
+                "note": "👑 TOP 1 AAA 純粹油 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "大嘴娃",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/303.png",
+                "recipe": "AAA",
+                "count": 69,
+                "note": "AAA 純粹油 專精產出"
+            },
+            {
+                "name": "百變怪",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/132.png",
+                "recipe": "AAA",
+                "count": 68,
+                "note": "AAA 純粹油 專精產出"
+            },
+            {
+                "name": "古月鳥",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/845.png",
+                "recipe": "AAA",
+                "count": 56,
+                "note": "AAA 純粹油 專精產出"
+            },
+            {
+                "name": "倫琴貓",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/405.png",
+                "recipe": "ABB",
+                "count": 53,
+                "note": "ABB 純粹油 主力產出"
+            },
+            {
+                "name": "快龍",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/149.png",
+                "recipe": "AAC",
+                "count": 51,
+                "note": "AAC 純粹油 解鎖"
+            },
+            {
+                "name": "蝶結萌虻",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/743.png",
+                "recipe": "ABB",
+                "count": 47,
+                "note": "ABB 純粹油 主力產出"
+            }
+        ]
     },
     {
-      id: "egg",
-      name: "純白蛋",
-      enName: "Fancy Egg",
-      energy: 115,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png",
-      pokemon: [
-        { name: "信使鳥", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/225.png", count: 86, recipe: "AAA", isTop: true, note: "純白蛋第一產出巨頭" },
-        { name: "幸福蛋", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/242.png", count: 74, recipe: "AAA", note: "高耐力產蛋專家" },
-        { name: "吉利蛋", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/113.png", count: 70, recipe: "AAB", note: "穩定產蛋手" },
-        { name: "波克基斯", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/468.png", count: 58, recipe: "ABB", note: "技能型兼顧蛋" },
-        { name: "阿柏怪", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/024.png", count: 50, recipe: "AAC", note: "毒系兼顧蛋" }
-      ]
+        "id": "potato",
+        "name": "窩心洋芋",
+        "energy": 124,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png",
+        "pokemon": [
+            {
+                "name": "烏波",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/194.png",
+                "recipe": "ABB",
+                "count": 78,
+                "note": "👑 TOP 1 ABB 窩心洋芋 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "沼王",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/195.png",
+                "recipe": "ABB",
+                "count": 73,
+                "note": "ABB 窩心洋芋 主力產出"
+            },
+            {
+                "name": "浩大鯨",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/975.png",
+                "recipe": "AAA",
+                "count": 71,
+                "note": "AAA 窩心洋芋 專精產出"
+            },
+            {
+                "name": "隆隆岩",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/076.png",
+                "recipe": "ABB",
+                "count": 68,
+                "note": "ABB 窩心洋芋 主力產出"
+            },
+            {
+                "name": "魔幻假面喵",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/908.png",
+                "recipe": "AAA",
+                "count": 64,
+                "note": "AAA 窩心洋芋 專精產出"
+            },
+            {
+                "name": "吉利蛋",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/113.png",
+                "recipe": "ABB",
+                "count": 63,
+                "note": "ABB 窩心洋芋 主力產出"
+            },
+            {
+                "name": "幸福蛋",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/242.png",
+                "recipe": "ABB",
+                "count": 63,
+                "note": "ABB 窩心洋芋 主力產出"
+            }
+        ]
     },
     {
-      id: "potato",
-      name: "鬆脆馬鈴薯",
-      enName: "Soft Potato",
-      energy: 124,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png",
-      pokemon: [
-        { name: "魔幻假面喵", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/908.png", count: 80, recipe: "AAA", isTop: true, note: "馬鈴薯最新頂級產出霸主" },
-        { name: "大食花", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/071.png", count: 72, recipe: "AAB", note: "草系馬鈴薯主力" },
-        { name: "隆隆岩", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/076.png", count: 68, recipe: "ABB", note: "岩石高產馬鈴薯" },
-        { name: "呆殼獸", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/080.png", count: 56, recipe: "AAC", note: "副產物" },
-        { name: "袋獸", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/115.png", count: 48, recipe: "AAC", note: "副產物" }
-      ]
+        "id": "herb",
+        "name": "火辣香草",
+        "energy": 130,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png",
+        "pokemon": [
+            {
+                "name": "快龍",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/149.png",
+                "recipe": "AAA",
+                "count": 89,
+                "note": "👑 TOP 1 AAA 火辣香草 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "沙漠蜻蜓",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/330.png",
+                "recipe": "ABB",
+                "count": 62,
+                "note": "ABB 火辣香草 主力產出"
+            },
+            {
+                "name": "耿鬼",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png",
+                "recipe": "AAA",
+                "count": 54,
+                "note": "AAA 火辣香草 專精產出"
+            },
+            {
+                "name": "黑魯加",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/229.png",
+                "recipe": "AAA",
+                "count": 34,
+                "note": "AAA 火辣香草 兼顧"
+            },
+            {
+                "name": "噴火龍",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png",
+                "recipe": "AAC",
+                "count": 32,
+                "note": "AAC 火辣香草 解鎖"
+            },
+            {
+                "name": "骨紋巨聲鱷",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/911.png",
+                "recipe": "AAC",
+                "count": 32,
+                "note": "AAC 火辣香草 解鎖"
+            },
+            {
+                "name": "摔角鷹人",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/701.png",
+                "recipe": "AAA",
+                "count": 26,
+                "note": "AAA 火辣香草 兼顧"
+            }
+        ]
     },
     {
-      id: "coffee",
-      name: "甦醒咖啡",
-      enName: "Rousing Coffee",
-      energy: 153,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png",
-      pokemon: [
-        { name: "巴布土撥", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/923.png", count: 76, recipe: "AAA", isTop: true, note: "咖啡第一產量天花板" },
-        { name: "呆火鱷", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/909.png", count: 68, recipe: "AAB", note: "火系高產咖啡手" },
-        { name: "噴火龍", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png", count: 62, recipe: "ABB", note: "火系兼顧咖啡" },
-        { name: "班基拉斯", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png", count: 54, recipe: "ABB", note: "老班兼顧咖啡" }
-      ]
+        "id": "corn",
+        "name": "萌綠玉米",
+        "energy": 140,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png",
+        "pokemon": [
+            {
+                "name": "穿著熊",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/760.png",
+                "recipe": "AAA",
+                "count": 77,
+                "note": "👑 TOP 1 AAA 萌綠玉米 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "快龍",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/149.png",
+                "recipe": "ABB",
+                "count": 70,
+                "note": "ABB 萌綠玉米 主力產出"
+            },
+            {
+                "name": "花療環環",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/764.png",
+                "recipe": "AAA",
+                "count": 56,
+                "note": "AAA 萌綠玉米 專精產出"
+            },
+            {
+                "name": "大嘴娃",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/303.png",
+                "recipe": "ABB",
+                "count": 49,
+                "note": "ABB 萌綠玉米 主力產出"
+            },
+            {
+                "name": "土王",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png",
+                "recipe": "ABB",
+                "count": 28,
+                "note": "ABB 萌綠玉米 兼顧"
+            },
+            {
+                "name": "穿山王",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/028.png",
+                "recipe": "ABB",
+                "count": 26,
+                "note": "ABB 萌綠玉米 兼顧"
+            },
+            {
+                "name": "巨沼怪",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/260.png",
+                "recipe": "AAA",
+                "count": 25,
+                "note": "AAA 萌綠玉米 兼顧"
+            }
+        ]
     },
     {
-      id: "oil",
-      name: "清純油",
-      enName: "Pure Oil",
-      energy: 121,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png",
-      pokemon: [
-        { name: "毒骷蛙", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/454.png", count: 72, recipe: "AAA", isTop: true, note: "純油第一天花板" },
-        { name: "凱羅斯", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/127.png", count: 66, recipe: "AAB", note: "大甲純油副產高產手" },
-        { name: "三地鼠", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/051.png", count: 60, recipe: "ABB", note: "地面系純油手" },
-        { name: "哥達鴨", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/055.png", count: 52, recipe: "AAC", note: "技能型兼顧純油" },
-        { name: "百變怪", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/132.png", count: 44, recipe: "AAC", note: "副產物" }
-      ]
+        "id": "cacao",
+        "name": "放鬆可可",
+        "energy": 151,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png",
+        "pokemon": [
+            {
+                "name": "土王",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/980.png",
+                "recipe": "AAA",
+                "count": 70,
+                "note": "👑 TOP 1 AAA 放鬆可可 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "阿勃梭魯",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/359.png",
+                "recipe": "AAA",
+                "count": 60,
+                "note": "AAA 放鬆可可 專精產出"
+            },
+            {
+                "name": "水箭龜",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/009.png",
+                "recipe": "ABB",
+                "count": 53,
+                "note": "ABB 放鬆可可 主力產出"
+            },
+            {
+                "name": "呆殼獸",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/080.png",
+                "recipe": "AAA",
+                "count": 33,
+                "note": "AAA 放鬆可可 兼顧"
+            },
+            {
+                "name": "大竺葵",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/154.png",
+                "recipe": "AAA",
+                "count": 30,
+                "note": "AAA 放鬆可可 兼顧"
+            },
+            {
+                "name": "伊布（萬聖節）",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png",
+                "recipe": "ABB",
+                "count": 29,
+                "note": "ABB 放鬆可可 兼顧"
+            },
+            {
+                "name": "克雷色利亞",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/488.png",
+                "recipe": "ABB",
+                "count": 29,
+                "note": "ABB 放鬆可可 兼顧"
+            }
+        ]
     },
     {
-      id: "cacao",
-      name: "美味可可",
-      enName: "Soothing Cacao",
-      energy: 151,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png",
-      pokemon: [
-        { name: "阿勃梭魯", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/359.png", count: 68, recipe: "AAA", isTop: true, note: "災獸可可頂級霸主" },
-        { name: "水箭龜", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/009.png", count: 64, recipe: "AAB", note: "水箭龜副產可可極高" },
-        { name: "仙子伊布", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/700.png", count: 50, recipe: "ABB", note: "補師兼顧可可" },
-        { name: "呆呆王", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/199.png", count: 42, recipe: "AAC", note: "副產物" }
-      ]
+        "id": "coffee",
+        "name": "醒腦咖啡豆",
+        "energy": 153,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png",
+        "pokemon": [
+            {
+                "name": "鍬農炮蟲",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/738.png",
+                "recipe": "AAA",
+                "count": 66,
+                "note": "👑 TOP 1 AAA 醒腦咖啡豆 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "土王",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/980.png",
+                "recipe": "ABB",
+                "count": 55,
+                "note": "ABB 醒腦咖啡豆 主力產出"
+            },
+            {
+                "name": "波士可多拉",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/306.png",
+                "recipe": "ABB",
+                "count": 55,
+                "note": "ABB 醒腦咖啡豆 主力產出"
+            },
+            {
+                "name": "壺壺",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/213.png",
+                "recipe": "ABB",
+                "count": 25,
+                "note": "ABB 醒腦咖啡豆 兼顧"
+            },
+            {
+                "name": "烏鴉頭頭",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/430.png",
+                "recipe": "AAA",
+                "count": 24,
+                "note": "AAA 醒腦咖啡豆 兼顧"
+            },
+            {
+                "name": "倫琴貓",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/405.png",
+                "recipe": "AAC",
+                "count": 24,
+                "note": "AAC 醒腦咖啡豆 解鎖"
+            },
+            {
+                "name": "正電拍拍",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/311.png",
+                "recipe": "AAA",
+                "count": 17,
+                "note": "AAA 醒腦咖啡豆 兼顧"
+            }
+        ]
     },
     {
-      id: "mushroom",
-      name: "芳香蘑菇",
-      enName: "Tasty Mushroom",
-      energy: 167,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png",
-      pokemon: [
-        { name: "耿鬼", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png", count: 64, recipe: "AAA", isTop: true, note: "蘑菇唯一超高速王者" },
-        { name: "沼王", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/195.png", count: 54, recipe: "AAB", note: "水系蘑菇主力" },
-        { name: "大食花", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/071.png", count: 48, recipe: "ABB", note: "草系蘑菇手" },
-        { name: "呆殼獸", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/080.png", count: 42, recipe: "AAC", note: "副產物" }
-      ]
+        "id": "mushroom",
+        "name": "品鮮蘑菇",
+        "energy": 167,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png",
+        "pokemon": [
+            {
+                "name": "烏波",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/194.png",
+                "recipe": "AAA",
+                "count": 68,
+                "note": "👑 TOP 1 AAA 品鮮蘑菇 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "花岩怪",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/442.png",
+                "recipe": "AAA",
+                "count": 67,
+                "note": "AAA 品鮮蘑菇 專精產出"
+            },
+            {
+                "name": "沼王",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/195.png",
+                "recipe": "AAA",
+                "count": 64,
+                "note": "AAA 品鮮蘑菇 專精產出"
+            },
+            {
+                "name": "鍬農炮蟲",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/738.png",
+                "recipe": "ABB",
+                "count": 52,
+                "note": "ABB 品鮮蘑菇 主力產出"
+            },
+            {
+                "name": "耿鬼",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png",
+                "recipe": "ABB",
+                "count": 39,
+                "note": "ABB 品鮮蘑菇 主力產出"
+            },
+            {
+                "name": "阿勃梭魯",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/359.png",
+                "recipe": "AAC",
+                "count": 30,
+                "note": "AAC 品鮮蘑菇 解鎖"
+            },
+            {
+                "name": "暴雪王",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/460.png",
+                "recipe": "AAC",
+                "count": 30,
+                "note": "AAC 品鮮蘑菇 解鎖"
+            }
+        ]
     },
     {
-      id: "leek",
-      name: "粗擺大蔥",
-      enName: "Large Leek",
-      energy: 185,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png",
-      pokemon: [
-        { name: "三地鼠", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/051.png", count: 62, recipe: "AAA", isTop: true, note: "大蔥第一產量手" },
-        { name: "百變怪", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/132.png", count: 52, recipe: "AAB", note: "大蔥副產專員" },
-        { name: "大蔥鴨", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/083.png", count: 46, recipe: "ABB", note: "原廠大蔥手" }
-      ]
+        "id": "leek",
+        "name": "粗枝大蔥",
+        "energy": 185,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png",
+        "pokemon": [
+            {
+                "name": "大蔥鴨",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/083.png",
+                "recipe": "AAA",
+                "count": 54,
+                "note": "👑 TOP 1 AAA 粗枝大蔥 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "百變怪",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/132.png",
+                "recipe": "ABB",
+                "count": 39,
+                "note": "ABB 粗枝大蔥 主力產出"
+            },
+            {
+                "name": "狂歡浪舞鴨",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/914.png",
+                "recipe": "ABB",
+                "count": 34,
+                "note": "ABB 粗枝大蔥 主力產出"
+            },
+            {
+                "name": "三地鼠",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/051.png",
+                "recipe": "ABB",
+                "count": 32,
+                "note": "ABB 粗枝大蔥 主力產出"
+            },
+            {
+                "name": "花岩怪",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/442.png",
+                "recipe": "AAC",
+                "count": 29,
+                "note": "AAC 粗枝大蔥 解鎖"
+            },
+            {
+                "name": "大食花",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/071.png",
+                "recipe": "AAC",
+                "count": 23,
+                "note": "AAC 粗枝大蔥 解鎖"
+            },
+            {
+                "name": "魔牆人偶",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/122.png",
+                "recipe": "AAC",
+                "count": 21,
+                "note": "AAC 粗枝大蔥 解鎖"
+            }
+        ]
     },
     {
-      id: "pumpkin",
-      name: "特選南瓜",
-      enName: "Plump Pumpkin",
-      energy: 200,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png",
-      pokemon: [
-        { name: "南瓜怪人", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png", count: 56, recipe: "AAA", isTop: true, note: "南瓜唯一專屬來源，萬聖料理主力" },
-        { name: "隨風球", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/426.png", count: 44, recipe: "AAB", note: "幽靈系副產" },
-        { name: "耿鬼", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png", count: 40, recipe: "AAC", note: "幽靈兼顧南瓜" }
-      ]
+        "id": "pumpkin",
+        "name": "沉甸甸南瓜",
+        "energy": 200,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png",
+        "pokemon": [
+            {
+                "name": "南瓜怪人",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
+                "recipe": "AAA",
+                "count": 44,
+                "note": "👑 TOP 1 AAA 沉甸甸南瓜 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "花岩怪",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/442.png",
+                "recipe": "ABB",
+                "count": 38,
+                "note": "ABB 沉甸甸南瓜 主力產出"
+            },
+            {
+                "name": "伊布（萬聖節）",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png",
+                "recipe": "AAA",
+                "count": 20,
+                "note": "AAA 沉甸甸南瓜 兼顧"
+            },
+            {
+                "name": "浩大鯨",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/975.png",
+                "recipe": "AAC",
+                "count": 20,
+                "note": "AAC 沉甸甸南瓜 解鎖"
+            },
+            {
+                "name": "穿山王",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/028.png",
+                "recipe": "AAA",
+                "count": 18,
+                "note": "AAA 沉甸甸南瓜 兼顧"
+            },
+            {
+                "name": "拉帝亞斯",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/380.png",
+                "recipe": "ABB",
+                "count": 8,
+                "note": "ABB 沉甸甸南瓜 兼顧"
+            }
+        ]
     },
     {
-      id: "tail",
-      name: "粗擺尾巴",
-      enName: "Slowpoke Tail",
-      energy: 342,
-      isSpecialScale: true,
-      icon: "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png",
-      pokemon: [
-        { name: "呆呆王", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/199.png", count: 18, recipe: "AAA", isTop: true, note: "尾巴最高產量王者 (18 顆/天)" },
-        { name: "呆殼獸", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/080.png", count: 16, recipe: "AAB", note: "水系尾巴高產手 (16 顆/天)" },
-        { name: "呆呆獸", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/079.png", count: 14, recipe: "AAA", note: "未進化尾巴手 (14 顆/天)" },
-        { name: "百變怪", icon: "https://www.serebii.net/pokemonsleep/pokemon/icon/132.png", count: 12, recipe: "AAC", note: "複製尾巴手 (12 顆/天)" }
-      ]
+        "id": "tail",
+        "name": "美味尾巴",
+        "energy": 342,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png",
+        "pokemon": [
+            {
+                "name": "百變怪",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/132.png",
+                "recipe": "AAC",
+                "count": 15,
+                "note": "👑 TOP 1 AAC 美味尾巴 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "呆殼獸",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/080.png",
+                "recipe": "ABB",
+                "count": 14,
+                "note": "ABB 美味尾巴 兼顧"
+            },
+            {
+                "name": "呆呆王",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/199.png",
+                "recipe": "ABB",
+                "count": 12,
+                "note": "ABB 美味尾巴 兼顧"
+            },
+            {
+                "name": "呆呆獸",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/079.png",
+                "recipe": "ABB",
+                "count": 11,
+                "note": "ABB 美味尾巴 兼顧"
+            }
+        ]
     }
-  ];
+];
 
   // 舊版清單資料 (提供切換至列表檢視時使用)
   const LV60_INGREDIENTS_LADDER = LV60_COORDINATE_LADDER_DATA.map(d => ({
@@ -941,13 +1717,16 @@
     }
   }
 
-  // 5.1 樹果能量動態等級 (Lv.1 ~ Lv.70) 與 順果 2x 計算
+  // 5.1 樹果能量動態等級 (Lv.1 ~ Lv.70)、島嶼加成 (0% ~ 85%) 與 順果 2x 計算
   let currentBerryLevel = 1;
+  let currentIslandBonus = 0;
   let isFavoriteBerry2x = false;
 
-  function calcBerryEnergy(base, lv, isFav) {
-    const raw = Math.round(Math.max(base + (lv - 1), base * Math.pow(1.025, lv - 1)));
-    return isFav ? raw * 2 : raw;
+  function calcBerryEnergy(base, lv, islandBonus, isFav) {
+    const baseAtLv = Math.round(Math.max(base + (lv - 1), base * Math.pow(1.025, lv - 1)));
+    const islandFactor = 1 + ((parseInt(islandBonus, 10) || 0) / 100);
+    const favFactor = isFav ? 2 : 1;
+    return Math.round(baseAtLv * islandFactor * favFactor);
   }
 
   function updateBerryLevel(val) {
@@ -961,6 +1740,17 @@
     refreshBerryNodes();
   }
 
+  function updateBerryIsland(val) {
+    currentIslandBonus = Math.min(Math.max(parseInt(val, 10) || 0, 0), 85);
+    const displayEl = document.getElementById('berry-island-display');
+    if (displayEl) displayEl.textContent = `+${currentIslandBonus}%`;
+    const sliderEl = document.getElementById('berry-island-slider');
+    if (sliderEl && parseInt(sliderEl.value, 10) !== currentIslandBonus) {
+      sliderEl.value = currentIslandBonus;
+    }
+    refreshBerryNodes();
+  }
+
   function toggleBerryFavorite(checked) {
     isFavoriteBerry2x = !!checked;
     refreshBerryNodes();
@@ -970,9 +1760,11 @@
     const grid = document.getElementById('values-berry-grid');
     if (!grid) return;
     grid.innerHTML = BERRY_VALUES_DATA.map(b => {
-      const energy = calcBerryEnergy(b.energy, currentBerryLevel, isFavoriteBerry2x);
+      const energy = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, isFavoriteBerry2x);
+      const bonusStr = currentIslandBonus > 0 ? ` +${currentIslandBonus}%島嶼` : '';
+      const favStr = isFavoriteBerry2x ? ' 順果2x' : '';
       return `
-        <div class="value-compact-node" title="${b.name} (${b.type}屬性) - Lv.${currentBerryLevel}${isFavoriteBerry2x ? ' 順果2x' : ''} 能量 ${energy}">
+        <div class="value-compact-node" title="${b.name} (${b.type}屬性) - Lv.${currentBerryLevel}${bonusStr}${favStr} 能量 ${energy}">
           <img src="${b.icon}" class="value-compact-icon" alt="${b.name}">
           <span class="value-compact-energy berry-val">${energy}</span>
         </div>
@@ -1253,6 +2045,9 @@
       if (e.target && e.target.id === 'berry-level-slider') {
         updateBerryLevel(e.target.value);
       }
+      if (e.target && e.target.id === 'berry-island-slider') {
+        updateBerryIsland(e.target.value);
+      }
     });
   }
 
@@ -1325,9 +2120,10 @@
   }
 
   // 渲染橫向視覺座標天梯圖 (Image 2 實體化)
+  // 渲染橫向視覺座標天梯圖 (極簡圖示、18種全食材單軌、含尾巴全整合)
   function renderCoordinateLadder(ladderData) {
-    const ticks = [20, 30, 40, 50, 60, 70, 80, 90, 100];
-    const minVal = 20;
+    const ticks = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    const minVal = 10;
     const maxVal = 105;
 
     function getPosPct(val) {
@@ -1335,17 +2131,12 @@
       return ((clamped - minVal) / (maxVal - minVal) * 100).toFixed(2);
     }
 
-    const standardIngs = ladderData.filter(d => !d.isSpecialScale);
-    const specialIngs = ladderData.filter(d => d.isSpecialScale);
-
     return `
       <div class="wiki-coordinate-ladder-wrapper">
         <div class="wiki-coordinate-ladder">
           <!-- 頂部刻度標尺 -->
           <div class="ladder-ruler-header">
-            <div class="ladder-ruler-spacer">
-              <span style="font-size: 11.5px; font-weight: 700; color: #94a3b8;">食材項目 (基礎能量)</span>
-            </div>
+            <div class="ladder-ruler-spacer"></div>
             <div class="ladder-ruler-scale">
               ${ticks.map(t => `
                 <div class="ladder-ruler-tick" style="left: ${getPosPct(t)}%;">
@@ -1356,15 +2147,11 @@
             </div>
           </div>
 
-          <!-- 各食材軌道 (17種標準食材) -->
-          ${standardIngs.map(ing => `
+          <!-- 各食材軌道 (18種食材完整一覽) -->
+          ${ladderData.map(ing => `
             <div class="ladder-track-row" data-ladder-ing="${ing.id}">
-              <div class="ladder-track-header">
+              <div class="ladder-track-header" title="${ing.name} (基礎能量 ${ing.energy})">
                 <img src="${ing.icon}" class="ladder-ing-icon" alt="${ing.name}">
-                <div class="ladder-ing-info">
-                  <span class="ladder-ing-name">${ing.name}</span>
-                  <span class="ladder-ing-energy">${ing.energy} 能量</span>
-                </div>
               </div>
 
               <div class="ladder-track-canvas">
@@ -1396,77 +2183,16 @@
               </div>
             </div>
           `).join('')}
-
-          <!-- 粗擺尾巴專屬獨立刻度區 (0 ~ 20 顆) -->
-          ${specialIngs.map(tail => `
-            <div class="ladder-tail-special-card" data-ladder-ing="${tail.id}">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <img src="${tail.icon}" style="width: 24px; height: 24px;" alt="${tail.name}">
-                  <span style="font-size: 13px; font-weight: 700; color: #f472b6;">${tail.name}（專屬刻度 0 ~ 20 顆/天）</span>
-                </div>
-                <span style="font-size: 11px; font-weight: 700; color: #fbbf24; background: rgba(245, 158, 11, 0.15); padding: 2px 8px; border-radius: 8px;">基礎 ${tail.energy} 能量 (全食材之冠)</span>
-              </div>
-
-              <!-- 尾巴刻度標尺 -->
-              <div class="ladder-ruler-header" style="height: 20px;">
-                <div class="ladder-ruler-spacer" style="width: 150px; min-width: 150px;"></div>
-                <div class="ladder-ruler-scale">
-                  ${[0, 5, 10, 15, 20].map(val => `
-                    <div class="ladder-ruler-tick" style="left: ${(val / 20 * 100).toFixed(2)}%;">
-                      <span class="tick-label">${val}</span>
-                      <div class="tick-line"></div>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-
-              <div class="ladder-track-row" style="background: rgba(15, 23, 42, 0.7); height: 50px;">
-                <div class="ladder-track-header" style="width: 150px; min-width: 150px;">
-                  <img src="${tail.icon}" class="ladder-ing-icon" alt="${tail.name}">
-                  <div class="ladder-ing-info">
-                    <span class="ladder-ing-name" style="color: #f472b6;">${tail.name}</span>
-                    <span class="ladder-ing-energy">${tail.energy} 能量</span>
-                  </div>
-                </div>
-                <div class="ladder-track-canvas">
-                  <div class="ladder-grid-lines">
-                    ${[0, 5, 10, 15, 20].map(val => `<div class="ladder-grid-line" style="left: ${(val / 20 * 100).toFixed(2)}%;"></div>`).join('')}
-                  </div>
-                  <div class="ladder-track-line" style="background: linear-gradient(90deg, rgba(244, 114, 182, 0.3) 0%, rgba(244, 114, 182, 0.8) 100%);"></div>
-                  <div class="ladder-nodes-container">
-                    ${tail.pokemon.map((p, idx) => `
-                      <div class="ladder-node ${p.isTop ? 'node-top1' : ''}" style="left: ${(p.count / 20 * 100).toFixed(2)}%; z-index: ${30 - idx};" data-pkm="${p.name}">
-                        <div class="node-recipe-tag">${p.recipe}</div>
-                        <div class="node-avatar-wrapper">
-                          <img src="${p.icon}" class="node-avatar-img" alt="${p.name}">
-                          ${p.isTop ? '<span class="node-crown">👑</span>' : ''}
-                        </div>
-                        <div class="node-count-badge">${p.count}</div>
-
-                        <div class="ladder-node-tooltip">
-                          <div class="tooltip-title">${p.isTop ? '👑 尾巴 TOP 1 ' : ''}${p.name}</div>
-                          <div class="tooltip-detail">食材組合：<span class="text-accent font-bold">${p.recipe}</span></div>
-                          <div class="tooltip-detail">日產量：<span class="text-success font-bold">${p.count} 顆/天</span></div>
-                          <div class="tooltip-note">${p.note || ''}</div>
-                        </div>
-                      </div>
-                    `).join('')}
-                  </div>
-                </div>
-              </div>
-            </div>
-          `).join('')}
         </div>
       </div>
     `;
   }
 
-  // 渲染樹果與食材基礎能量看板 (極簡無名無滾輪 18 格全展開版 + 等級滑桿與順果 2x 開關)
+  // 渲染樹果與食材基礎能量看板 (極簡無名無滾輪 18 格全展開版 + 等級滑桿、島嶼加成與順果 2x 開關)
   function renderValuesBoard() {
     return `
       <div class="values-horizontal-container">
-        <!-- 區塊 1：樹果基礎能量庫 (Lv.1 ~ Lv.70 動態試算) -->
+        <!-- 區塊 1：樹果基礎能量庫 (Lv.1 ~ Lv.70 + 島嶼加成 0~85% 動態試算) -->
         <div class="values-horizontal-section">
           <div class="values-section-header">
             <div class="values-section-title-group">
@@ -1474,20 +2200,30 @@
               <span class="values-section-sub">基礎能量 (Lv.1: 24 ➔ 35)</span>
             </div>
 
-            <!-- 等級滑桿與順果 2x 控制器 -->
+            <!-- 等級滑桿、島嶼加成與順果 2x 控制器 -->
             <div class="berry-calc-controls">
+              <!-- 寶可夢等級滑桿 (1 ~ 70) -->
               <div class="berry-control-group">
                 <label for="berry-level-slider" class="berry-control-label">
-                  寶可夢等級：<span id="berry-level-display" class="berry-level-tag">Lv. ${currentBerryLevel}</span>
+                  等級：<span id="berry-level-display" class="berry-level-tag">Lv. ${currentBerryLevel}</span>
                 </label>
                 <input type="range" id="berry-level-slider" min="1" max="70" value="${currentBerryLevel}" step="1" class="berry-slider" oninput="window.WikiDB.updateBerryLevel(this.value)">
               </div>
 
+              <!-- 島嶼加成滑桿 (0% ~ 85%) -->
+              <div class="berry-control-group">
+                <label for="berry-island-slider" class="berry-control-label">
+                  島嶼加成：<span id="berry-island-display" class="berry-island-tag">+${currentIslandBonus}%</span>
+                </label>
+                <input type="range" id="berry-island-slider" min="0" max="85" value="${currentIslandBonus}" step="5" class="berry-slider island-slider" oninput="window.WikiDB.updateBerryIsland(this.value)">
+              </div>
+
+              <!-- 順果 2x 開關 -->
               <div class="berry-control-group">
                 <label class="berry-switch-label" title="卡比獸喜愛樹果 (順果) 能量翻倍 (2x)">
                   <input type="checkbox" id="berry-favorite-toggle" ${isFavoriteBerry2x ? 'checked' : ''} onchange="window.WikiDB.toggleBerryFavorite(this.checked)">
                   <span class="berry-switch-slider"></span>
-                  <span class="berry-switch-text">🎯 順果 2x 加倍</span>
+                  <span class="berry-switch-text">🎯 順果 2x</span>
                 </label>
               </div>
             </div>
@@ -1495,9 +2231,11 @@
 
           <div id="values-berry-grid" class="values-compact-grid values-berry-grid">
             ${BERRY_VALUES_DATA.map(b => {
-              const energy = calcBerryEnergy(b.energy, currentBerryLevel, isFavoriteBerry2x);
+              const energy = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, isFavoriteBerry2x);
+              const bonusStr = currentIslandBonus > 0 ? ` +${currentIslandBonus}%島嶼` : '';
+              const favStr = isFavoriteBerry2x ? ' 順果2x' : '';
               return `
-                <div class="value-compact-node" title="${b.name} (${b.type}屬性) - Lv.${currentBerryLevel}${isFavoriteBerry2x ? ' 順果2x' : ''} 能量 ${energy}">
+                <div class="value-compact-node" title="${b.name} (${b.type}屬性) - Lv.${currentBerryLevel}${bonusStr}${favStr} 能量 ${energy}">
                   <img src="${b.icon}" class="value-compact-icon" alt="${b.name}">
                   <span class="value-compact-energy berry-val">${energy}</span>
                 </div>
@@ -2104,6 +2842,7 @@
     switchBoost: switchHelperBoost,
     toggleDetail: toggleDetailTable,
     updateBerryLevel: updateBerryLevel,
+    updateBerryIsland: updateBerryIsland,
     toggleBerryFavorite: toggleBerryFavorite,
     recalcTriggerChance: recalcTriggerChance,
     recalcSleepDays: recalcSleepDays
@@ -2120,6 +2859,7 @@
   window.switchHelperBoost = switchHelperBoost;
   window.toggleDetailTable = toggleDetailTable;
   window.updateBerryLevel = updateBerryLevel;
+  window.updateBerryIsland = updateBerryIsland;
   window.toggleBerryFavorite = toggleBerryFavorite;
   window.recalcTriggerChance = recalcTriggerChance;
   window.recalcSleepDays = recalcSleepDays;

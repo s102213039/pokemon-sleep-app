@@ -4949,44 +4949,33 @@ select optgroup,
   border-color: rgba(56, 189, 248, 0.25);
 }
 
+.ladder-ruler-spacer {
+  width: 44px;
+  min-width: 44px;
+}
+
 .ladder-track-header {
-  width: 150px;
-  min-width: 150px;
-  padding: 0 10px;
+  width: 44px;
+  min-width: 44px;
+  padding: 0 4px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
   border-right: 1px solid rgba(255, 255, 255, 0.06);
   height: 100%;
 }
 
 .ladder-ing-icon {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
   flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.15s ease;
 }
 
-.ladder-ing-info {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  overflow: hidden;
-}
-
-.ladder-ing-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: #ffffff;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.ladder-ing-energy {
-  font-size: 10.5px;
-  color: #38bdf8;
-  font-weight: 600;
+.ladder-track-header:hover .ladder-ing-icon {
+  transform: scale(1.18);
 }
 
 .ladder-track-canvas {
@@ -5280,13 +5269,21 @@ select optgroup,
   font-weight: 800;
   font-size: 13px;
   font-feature-settings: 'tnum';
+  min-width: 38px;
+}
+
+.berry-island-tag {
+  color: #34d399;
+  font-weight: 800;
+  font-size: 13px;
+  font-feature-settings: 'tnum';
   min-width: 42px;
 }
 
 .berry-slider {
   -webkit-appearance: none;
   appearance: none;
-  width: 120px;
+  width: 100px;
   height: 6px;
   background: rgba(56, 189, 248, 0.2);
   border-radius: 3px;
@@ -5323,6 +5320,24 @@ select optgroup,
   cursor: pointer;
   border: none;
   box-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
+}
+
+.island-slider {
+  background: rgba(52, 211, 153, 0.2);
+}
+
+.island-slider:hover {
+  background: rgba(52, 211, 153, 0.35);
+}
+
+.island-slider::-webkit-slider-thumb {
+  background: #34d399;
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.7);
+}
+
+.island-slider::-moz-range-thumb {
+  background: #34d399;
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.7);
 }
 
 .berry-switch-label {
