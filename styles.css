@@ -4844,7 +4844,500 @@ select optgroup,
   line-height: 1.3;
 }
 
+/* 📈 橫向視覺座標天梯圖 (Visual Coordinate Ladder System) */
+.ladder-view-toggle-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ladder-mode-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.ladder-mode-btn {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ladder-mode-btn.active,
+.ladder-mode-btn:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+}
+
+.wiki-coordinate-ladder-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: rgba(10, 15, 30, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px 14px;
+}
+
+.wiki-coordinate-ladder {
+  min-width: 820px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ladder-ruler-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  height: 24px;
+}
+
+.ladder-ruler-spacer {
+  width: 150px;
+  min-width: 150px;
+}
+
+.ladder-ruler-scale {
+  flex: 1;
+  position: relative;
+  height: 100%;
+}
+
+.ladder-ruler-tick {
+  position: absolute;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.ladder-ruler-tick .tick-line {
+  width: 1px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.2);
+  margin-top: 2px;
+}
+
+.ladder-track-row {
+  display: flex;
+  align-items: center;
+  height: 52px;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.ladder-track-row:hover {
+  background: rgba(30, 41, 59, 0.65);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+.ladder-track-header {
+  width: 150px;
+  min-width: 150px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  height: 100%;
+}
+
+.ladder-ing-icon {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.ladder-ing-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  overflow: hidden;
+}
+
+.ladder-ing-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.ladder-ing-energy {
+  font-size: 10.5px;
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.ladder-track-canvas {
+  flex: 1;
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin: 0 12px;
+}
+
+.ladder-grid-lines {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+.ladder-grid-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  border-left: 1px dashed rgba(255, 255, 255, 0.05);
+}
+
+.ladder-track-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0%, rgba(56, 189, 248, 0.35) 40%, rgba(56, 189, 248, 0.6) 100%);
+  border-radius: 2px;
+}
+
+.ladder-nodes-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.ladder-node {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, z-index 0.15s ease;
+}
+
+.ladder-node:hover {
+  transform: translate(-50%, -55%) scale(1.18);
+  z-index: 60 !important;
+}
+
+.node-recipe-tag {
+  font-size: 8px;
+  font-weight: 800;
+  background: rgba(15, 23, 42, 0.9);
+  color: #38bdf8;
+  padding: 0 3px;
+  border-radius: 3px;
+  margin-bottom: -3px;
+  z-index: 2;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  letter-spacing: 0.2px;
+}
+
+.node-avatar-wrapper {
+  position: relative;
+  width: 28px;
+  height: 28px;
+}
+
+.node-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #1e293b;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  object-fit: contain;
+}
+
+.ladder-node.node-top1 .node-avatar-img {
+  border: 2px solid #eab308;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.7);
+}
+
+.node-crown {
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  font-size: 11px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+}
+
+.node-count-badge {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #f1f5f9;
+  background: rgba(15, 23, 42, 0.9);
+  padding: 0 3px;
+  border-radius: 3px;
+  margin-top: -3px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-feature-settings: 'tnum';
+}
+
+.ladder-node.node-top1 .node-count-badge {
+  color: #fbbf24;
+  border-color: rgba(234, 179, 8, 0.4);
+}
+
+.ladder-node-tooltip {
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f172a;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11.5px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ladder-node:hover .ladder-node-tooltip {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.tooltip-title {
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 12px;
+}
+
+.tooltip-detail {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.tooltip-note {
+  font-size: 10.5px;
+  color: #cbd5e1;
+  margin-top: 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 2px;
+}
+
+/* 尾巴專屬獨立刻度區 */
+.ladder-tail-special-card {
+  margin-top: 12px;
+  background: rgba(244, 114, 182, 0.05);
+  border: 1px solid rgba(244, 114, 182, 0.25);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+/* 🫐 樹果與食材基礎能量看板 (Image 1 實體化) */
+.values-board-container {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+  justify-content: center;
+  width: 100%;
+}
+
+.values-col {
+  flex: 1;
+  max-width: 520px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.values-header-box {
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.values-col-berry .values-header-box {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.35);
+}
+
+.values-col-ing .values-header-box {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+}
+
+.values-box-title {
+  font-size: 16px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.values-col-berry .values-box-title { color: #34d399; }
+.values-col-ing .values-box-title { color: #fbbf24; }
+
+.values-box-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.value-item-card {
+  background: rgba(30, 41, 59, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.value-item-card:hover {
+  transform: translateY(-2px);
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.value-item-icon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.value-item-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.value-item-type {
+  font-size: 10.5px;
+  color: #94a3b8;
+}
+
+.value-item-energy {
+  font-size: 15px;
+  font-weight: 800;
+  color: #38bdf8;
+  font-feature-settings: 'tnum';
+  margin-top: 2px;
+}
+
+.values-col-ing .value-item-energy {
+  color: #fbbf24;
+}
+
+.values-center-strength-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  padding: 40px 0;
+  gap: 12px;
+}
+
+.strength-text {
+  writing-mode: vertical-rl;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.strength-arrow-shaft {
+  width: 3px;
+  flex: 1;
+  background: linear-gradient(180deg, #38bdf8 0%, #a855f7 50%, #f97316 100%);
+  border-radius: 3px;
+  min-height: 120px;
+}
+
+.strength-arrow-head {
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 10px solid #f97316;
+}
+
 /* 響應式調整 */
+@media (max-width: 900px) {
+  .values-board-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .values-center-strength-arrow {
+    flex-direction: row;
+    width: 100%;
+    height: 36px;
+    padding: 0;
+  }
+
+  .strength-text {
+    writing-mode: horizontal-tb;
+    letter-spacing: 2px;
+  }
+
+  .strength-arrow-shaft {
+    height: 3px;
+    width: 100px;
+    min-height: auto;
+    background: linear-gradient(90deg, #38bdf8 0%, #f97316 100%);
+  }
+
+  .strength-arrow-head {
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-left: 10px solid #f97316;
+  }
+}
+
 @media (max-width: 768px) {
   .wiki-skills-grid,
   .wiki-ladder-grid {
@@ -4858,6 +5351,10 @@ select optgroup,
 
   .rating-subsections {
     grid-template-columns: 1fr;
+  }
+
+  .values-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
