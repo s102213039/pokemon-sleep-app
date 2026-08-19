@@ -1292,7 +1292,6 @@
               </div>
             `).join('')}
           </div>
-          ${skill.specialNote ? `<div class="skill-special-note">${skill.specialNote}</div>` : ''}
         `;
       } else if (skill.hasLunarPrayerMatrix) {
         valuesHtml = `
@@ -1304,16 +1303,15 @@
               </div>
             `).join('')}
           </div>
-          ${skill.specialNote ? `<div class="skill-special-note">${skill.specialNote}</div>` : ''}
 
           <!-- 展開完整 1~5 種類超能力隊友樹果對照表按鈕 -->
-          <div style="margin-top: 8px;">
+          <div style="margin-top: 6px;">
             <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="lunar-prayer-table" onclick="window.WikiDB.toggleDetail('lunar-prayer-table')">
-              📊 展開 / 收合完整 1~5 種類超能隊友樹果表
+              📊 展開 / 收合 1~5 種類超能樹果表
             </button>
           </div>
 
-          <div id="lunar-prayer-table" class="wiki-table-wrapper" style="display: none; margin-top: 8px;">
+          <div id="lunar-prayer-table" class="wiki-table-wrapper" style="display: none; margin-top: 6px;">
             <table class="wiki-mini-table">
               <thead>
                 <tr>
@@ -1344,7 +1342,6 @@
               </div>
             `).join('')}
           </div>
-          ${skill.specialNote ? `<div class="skill-special-note">${skill.specialNote}</div>` : ''}
         `;
       } else if (skill.ranges) {
         valuesHtml = `
@@ -1356,7 +1353,6 @@
               </div>
             `).join('')}
           </div>
-          ${skill.specialNote ? `<div class="skill-special-note">${skill.specialNote}</div>` : ''}
         `;
       } else if (skill.values) {
         valuesHtml = `
@@ -1368,7 +1364,6 @@
               </div>
             `).join('')}
           </div>
-          ${skill.specialNote ? `<div class="skill-special-note">${skill.specialNote}</div>` : ''}
         `;
       } else {
         valuesHtml = `<div class="skill-level-chip"><span class="level-val">${skill.unit}</span></div>`;
@@ -1377,18 +1372,18 @@
       return `
         <div class="wiki-skill-card" data-category="${skill.category}">
           <div class="skill-card-top">
-            <div class="skill-icon-name">
-              <span class="skill-main-icon">${skill.icon}</span>
-              <div>
-                <h4 class="skill-name-text">${skill.name}</h4>
-                <span class="skill-cat-tag cat-${skill.category}">${skill.catName}</span>
-              </div>
+            <div class="skill-title-badges">
+              <h4 class="skill-name-text">${skill.name}</h4>
+              <span class="skill-cat-tag cat-${skill.category}">${skill.catName}</span>
             </div>
             <span class="skill-max-lv-badge">上限 Lv.${skill.maxLevel}</span>
           </div>
 
-          <p class="skill-desc-text">${skill.desc}</p>
-          ${skill.penaltyNote ? `<div class="skill-penalty-banner">${skill.penaltyNote}</div>` : ''}
+          <p class="skill-desc-text">
+            ${skill.desc}
+            ${skill.specialNote ? `<span class="skill-note-inline">${skill.specialNote}</span>` : ''}
+            ${skill.penaltyNote ? `<span class="skill-penalty-inline">${skill.penaltyNote}</span>` : ''}
+          </p>
 
           <div class="skill-values-container">
             ${valuesHtml}
