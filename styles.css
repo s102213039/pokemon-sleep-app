@@ -4880,63 +4880,6 @@ select optgroup,
   color: #38bdf8;
 }
 
-.wiki-coordinate-ladder-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  background: rgba(10, 15, 30, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px 14px;
-}
-
-.wiki-coordinate-ladder {
-  min-width: 820px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.ladder-ruler-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 6px;
-  height: 24px;
-}
-
-.ladder-ruler-spacer {
-  width: 150px;
-  min-width: 150px;
-}
-
-.ladder-ruler-scale {
-  flex: 1;
-  position: relative;
-  height: 100%;
-}
-
-.ladder-ruler-tick {
-  position: absolute;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 11.5px;
-  font-weight: 700;
-  color: #94a3b8;
-}
-
-.ladder-ruler-tick .tick-line {
-  width: 1px;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.2);
-  margin-top: 2px;
-}
-
-.ladder-track-row {
-  display: flex;
-  align-items: center;
-  height: 52px;
 /* 橫向天梯座標圖 (精簡緊湊單屏呈現) */
 .wiki-coordinate-ladder-wrapper {
   overflow-x: auto;
