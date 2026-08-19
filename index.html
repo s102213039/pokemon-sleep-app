@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260818_13">
+  <link rel="stylesheet" href="styles.css?v=20260819_01">
 </head>
 <body>
 
@@ -399,10 +399,10 @@
 
           <!-- 二級子分頁導航 (Sub-tabs) -->
           <div class="wiki-subnav-tabs" role="tablist">
-            <button type="button" class="wiki-subtab-btn active" data-subtab="skills">⚡ 主技能數值庫</button>
-            <button type="button" class="wiki-subtab-btn" data-subtab="subskills">🧩 副技能與性格指南</button>
-            <button type="button" class="wiki-subtab-btn" data-subtab="ratings">🎓 培育與評級指南</button>
-            <button type="button" class="wiki-subtab-btn" data-subtab="ingredients">🥗 Lv.60 食材天梯榜</button>
+            <button type="button" class="wiki-subtab-btn active" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">⚡ 主技能數值庫</button>
+            <button type="button" class="wiki-subtab-btn" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">🧩 副技能與性格指南</button>
+            <button type="button" class="wiki-subtab-btn" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">🎓 培育與評級指南</button>
+            <button type="button" class="wiki-subtab-btn" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">🥗 Lv.60 食材天梯榜</button>
           </div>
         </div>
 
@@ -411,12 +411,12 @@
           <div class="wiki-control-bar">
             <div class="wiki-filter-pills">
               <span class="wiki-pill-label">技能類型：</span>
-              <button type="button" class="wiki-pill-btn active" data-skill-cat="all">全部技能 (22)</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="energy">⚡ 能量系</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="energy_heal">💖 活力系</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="ingredient">🥗 食材與料理</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="special">👑 神獸與特殊專屬</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="shards">💎 夢之碎片</button>
+              <button type="button" class="wiki-pill-btn active" data-skill-cat="all" onclick="window.WikiDB.filterSkills('all')">全部技能 (22)</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="energy" onclick="window.WikiDB.filterSkills('energy')">⚡ 能量系</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="energy_heal" onclick="window.WikiDB.filterSkills('energy_heal')">💖 活力系</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="ingredient" onclick="window.WikiDB.filterSkills('ingredient')">🥗 食材與料理</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="special" onclick="window.WikiDB.filterSkills('special')">👑 神獸與特殊專屬</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="shards" onclick="window.WikiDB.filterSkills('shards')">💎 夢之碎片</button>
             </div>
           </div>
 
@@ -621,27 +621,27 @@
               <span class="stack-selector-label">🎯 蓄力次數切換：</span>
               <div class="stack-chips-group" id="charge-stack-chips">
                 
-                  <button type="button" class="stack-chip-btn " data-stack-target="0">0次</button>
+                  <button type="button" class="stack-chip-btn " data-stack-target="0" onclick="window.WikiDB.switchStack(0)">0次</button>
                 
-                  <button type="button" class="stack-chip-btn " data-stack-target="1">1次</button>
+                  <button type="button" class="stack-chip-btn " data-stack-target="1" onclick="window.WikiDB.switchStack(1)">1次</button>
                 
-                  <button type="button" class="stack-chip-btn " data-stack-target="2">2次</button>
+                  <button type="button" class="stack-chip-btn " data-stack-target="2" onclick="window.WikiDB.switchStack(2)">2次</button>
                 
-                  <button type="button" class="stack-chip-btn " data-stack-target="3">3次</button>
+                  <button type="button" class="stack-chip-btn " data-stack-target="3" onclick="window.WikiDB.switchStack(3)">3次</button>
                 
-                  <button type="button" class="stack-chip-btn " data-stack-target="4">4次</button>
+                  <button type="button" class="stack-chip-btn " data-stack-target="4" onclick="window.WikiDB.switchStack(4)">4次</button>
                 
-                  <button type="button" class="stack-chip-btn " data-stack-target="5">5次</button>
+                  <button type="button" class="stack-chip-btn " data-stack-target="5" onclick="window.WikiDB.switchStack(5)">5次</button>
                 
-                  <button type="button" class="stack-chip-btn " data-stack-target="6">6次</button>
+                  <button type="button" class="stack-chip-btn " data-stack-target="6" onclick="window.WikiDB.switchStack(6)">6次</button>
                 
-                  <button type="button" class="stack-chip-btn " data-stack-target="7">7次</button>
+                  <button type="button" class="stack-chip-btn " data-stack-target="7" onclick="window.WikiDB.switchStack(7)">7次</button>
                 
-                  <button type="button" class="stack-chip-btn " data-stack-target="8">8次</button>
+                  <button type="button" class="stack-chip-btn " data-stack-target="8" onclick="window.WikiDB.switchStack(8)">8次</button>
                 
-                  <button type="button" class="stack-chip-btn " data-stack-target="9">9次</button>
+                  <button type="button" class="stack-chip-btn " data-stack-target="9" onclick="window.WikiDB.switchStack(9)">9次</button>
                 
-                  <button type="button" class="stack-chip-btn active" data-stack-target="10">10次</button>
+                  <button type="button" class="stack-chip-btn active" data-stack-target="10" onclick="window.WikiDB.switchStack(10)">10次</button>
                 
               </div>
             </div>
@@ -688,7 +688,7 @@
 
             <!-- 展開完整對照表按鈕 -->
             <div style="margin-top: 8px;">
-              <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="charge-matrix-table">
+              <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="charge-matrix-table" onclick="window.WikiDB.toggleDetail('charge-matrix-table')">
                 📊 展開 / 收合完整 0~10 次蓄力數值表
               </button>
             </div>
@@ -1073,17 +1073,17 @@
               <span class="stack-selector-label">⚡ 同屬性種類數：</span>
               <div class="stack-chips-group" id="helper-boost-chips">
                 
-                  <button type="button" class="stack-chip-btn " data-boost-kind="0">0種類</button>
+                  <button type="button" class="stack-chip-btn " data-boost-kind="0" onclick="window.WikiDB.switchBoost(0)">0種類</button>
                 
-                  <button type="button" class="stack-chip-btn " data-boost-kind="1">1種類</button>
+                  <button type="button" class="stack-chip-btn " data-boost-kind="1" onclick="window.WikiDB.switchBoost(1)">1種類</button>
                 
-                  <button type="button" class="stack-chip-btn " data-boost-kind="2">2種類</button>
+                  <button type="button" class="stack-chip-btn " data-boost-kind="2" onclick="window.WikiDB.switchBoost(2)">2種類</button>
                 
-                  <button type="button" class="stack-chip-btn " data-boost-kind="3">3種類</button>
+                  <button type="button" class="stack-chip-btn " data-boost-kind="3" onclick="window.WikiDB.switchBoost(3)">3種類</button>
                 
-                  <button type="button" class="stack-chip-btn " data-boost-kind="4">4種類</button>
+                  <button type="button" class="stack-chip-btn " data-boost-kind="4" onclick="window.WikiDB.switchBoost(4)">4種類</button>
                 
-                  <button type="button" class="stack-chip-btn active" data-boost-kind="5">5種類</button>
+                  <button type="button" class="stack-chip-btn active" data-boost-kind="5" onclick="window.WikiDB.switchBoost(5)">5種類</button>
                 
               </div>
             </div>
@@ -1125,7 +1125,7 @@
 
             <!-- 展開完整對照表按鈕 -->
             <div style="margin-top: 8px;">
-              <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="helper-boost-table">
+              <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="helper-boost-table" onclick="window.WikiDB.toggleDetail('helper-boost-table')">
                 📊 展開 / 收合完整 0~5 種類對照表
               </button>
             </div>
@@ -1648,7 +1648,7 @@
         </div>
 
         <!-- 子分頁 2：🧩 副技能與性格指南 (Sub-Skills & Natures) -->
-        <div id="wiki-subpanel-subskills" class="wiki-subpanel" style="display: none;">
+        <div id="wiki-subpanel-subskills" class="wiki-subpanel">
           <!-- 互動式主技能發動機率計算機 (Image 4 實體化) -->
           <div class="wiki-card wiki-calc-card">
             <div class="wiki-card-header">
@@ -1660,7 +1660,7 @@
             <div class="calc-inputs-row">
               <div class="calc-input-group">
                 <label class="calc-label" for="calc-subskill-select">副技能組合：</label>
-                <select id="calc-subskill-select" class="calc-select">
+                <select id="calc-subskill-select" class="calc-select" onchange="window.WikiDB.recalcTriggerChance()">
                   <option value="0">無技能機率副技能 (0%)</option>
                   <option value="0.18">技能機率提升 S (+18%)</option>
                   <option value="0.36">技能機率提升 M (+36%)</option>
@@ -1670,7 +1670,7 @@
 
               <div class="calc-input-group">
                 <label class="calc-label" for="calc-nature-select">性格主技能機率：</label>
-                <select id="calc-nature-select" class="calc-select">
+                <select id="calc-nature-select" class="calc-select" onchange="window.WikiDB.recalcTriggerChance()">
                   <option value="1.2" selected>▲▲ 技能機率上升 (x 1.20)</option>
                   <option value="1.0">無修正 / 其它性格 (x 1.00)</option>
                   <option value="0.8">▼▼ 技能機率下降 (x 0.80)</option>
@@ -1961,7 +1961,7 @@
         </div>
 
         <!-- 子分頁 3：🎓 培育與評級指南 (Ratings & Growth) -->
-        <div id="wiki-subpanel-ratings" class="wiki-subpanel" style="display: none;">
+        <div id="wiki-subpanel-ratings" class="wiki-subpanel">
           <!-- 培育週期與核心思維 -->
           <div class="wiki-card">
             <div class="wiki-card-header">
@@ -2295,20 +2295,20 @@
             <div class="calc-inputs-row">
               <div class="calc-input-group">
                 <label class="calc-label" for="calc-sleep-cur-lv">目前等級：</label>
-                <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="59">
+                <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="59" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
               </div>
 
               <div class="calc-input-group">
                 <label class="calc-label" for="calc-sleep-target-lv">目標等級：</label>
-                <input type="number" id="calc-sleep-target-lv" class="calc-input-num" value="30" min="2" max="60">
+                <input type="number" id="calc-sleep-target-lv" class="calc-input-num" value="30" min="2" max="60" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
               </div>
 
               <div class="calc-input-group">
                 <label class="calc-label">加成條件：</label>
                 <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 4px;">
-                  <label><input type="checkbox" id="calc-sleep-exp-subskill"> 睡眠EXP獎勵 (+14%)</label>
-                  <label><input type="checkbox" id="calc-sleep-incense"> 成長薰香 (2x)</label>
-                  <select id="calc-sleep-nature-select" class="calc-select" style="width: auto; padding: 4px 8px;">
+                  <label><input type="checkbox" id="calc-sleep-exp-subskill" onchange="window.WikiDB.recalcSleepDays()"> 睡眠EXP獎勵 (+14%)</label>
+                  <label><input type="checkbox" id="calc-sleep-incense" onchange="window.WikiDB.recalcSleepDays()"> 成長薰香 (2x)</label>
+                  <select id="calc-sleep-nature-select" class="calc-select" style="width: auto; padding: 4px 8px;" onchange="window.WikiDB.recalcSleepDays()">
                     <option value="1.0">性格無 EXP 修正</option>
                     <option value="1.18">性格 EXP ▲▲ (+18%)</option>
                     <option value="0.82">性格 EXP ▼▼ (-18%)</option>
@@ -2378,7 +2378,7 @@
         </div>
 
         <!-- 子分頁 4：🥗 Lv.60 食材天梯榜 (Lv.60 Ingredients Ladder) -->
-        <div id="wiki-subpanel-ingredients" class="wiki-subpanel" style="display: none;">
+        <div id="wiki-subpanel-ingredients" class="wiki-subpanel">
           <div class="wiki-card">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">🥗</span>
@@ -2389,77 +2389,77 @@
             <!-- 食材快速篩選 Pills -->
             <div class="wiki-filter-pills" style="margin: 16px 0 20px;">
               <span class="wiki-pill-label">選擇食材：</span>
-              <button type="button" class="wiki-pill-btn active" data-ing-filter="all">全部食材 (18)</button>
+              <button type="button" class="wiki-pill-btn active" data-ing-filter="all" onclick="window.WikiDB.filterIngredients('all')">全部食材 (18)</button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="tail">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="tail" onclick="window.WikiDB.filterIngredients('tail')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">粗擺尾巴
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="apple">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="apple" onclick="window.WikiDB.filterIngredients('apple')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">特選蘋果
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="ginger">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="ginger" onclick="window.WikiDB.filterIngredients('ginger')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">暖暖薑
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="milk">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="milk" onclick="window.WikiDB.filterIngredients('milk')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">哞哞鮮奶
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="honey">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="honey" onclick="window.WikiDB.filterIngredients('honey')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/honey.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">甜甜蜜
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="sausage">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="sausage" onclick="window.WikiDB.filterIngredients('sausage')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">豆香香腸
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="soybeans">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="soybeans" onclick="window.WikiDB.filterIngredients('soybeans')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">幼芽大豆
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="tomato">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="tomato" onclick="window.WikiDB.filterIngredients('tomato')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">熟透番茄
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="corn">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="corn" onclick="window.WikiDB.filterIngredients('corn')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">甜甜玉米
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="egg">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="egg" onclick="window.WikiDB.filterIngredients('egg')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">純白蛋
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="potato">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="potato" onclick="window.WikiDB.filterIngredients('potato')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">鬆脆馬鈴薯
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="mushroom">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="mushroom" onclick="window.WikiDB.filterIngredients('mushroom')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">烤蘑菇
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="oil">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="oil" onclick="window.WikiDB.filterIngredients('oil')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">純油
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="coffee">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="coffee" onclick="window.WikiDB.filterIngredients('coffee')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">猛烈咖啡
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="cacao">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="cacao" onclick="window.WikiDB.filterIngredients('cacao')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">堅硬可可
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="leek">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="leek" onclick="window.WikiDB.filterIngredients('leek')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/largeleek.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">美味洋蔥 (大蔥)
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="herb">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="herb" onclick="window.WikiDB.filterIngredients('herb')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">活力香草
                 </button>
               
-                <button type="button" class="wiki-pill-btn" data-ing-filter="pumpkin">
+                <button type="button" class="wiki-pill-btn" data-ing-filter="pumpkin" onclick="window.WikiDB.filterIngredients('pumpkin')">
                   <img src="https://www.serebii.net/pokemonsleep/ingredients/specialpumpkin.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">特選南瓜
                 </button>
               
@@ -3582,10 +3582,10 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260818_13"></script>
-  <script src="recipes.js?v=20260818_13"></script>
-  <script src="wiki.js?v=20260818_13"></script>
-  <script src="box.js?v=20260818_13"></script>
-  <script src="news.js?v=20260818_13"></script>
+  <script src="app.js?v=20260819_01"></script>
+  <script src="recipes.js?v=20260819_01"></script>
+  <script src="wiki.js?v=20260819_01"></script>
+  <script src="box.js?v=20260819_01"></script>
+  <script src="news.js?v=20260819_01"></script>
 </body>
 </html>

@@ -4043,7 +4043,7 @@ select optgroup,
 }
 
 .wiki-subpanel.active {
-  display: block;
+  display: block !important;
   animation: fadeIn 0.25s ease forwards;
 }
 
