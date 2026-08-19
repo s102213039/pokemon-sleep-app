@@ -914,6 +914,7 @@
     document.querySelectorAll('.wiki-subtab-btn').forEach(btn => {
       btn.onclick = function (e) {
         e.preventDefault();
+        e.stopPropagation();
         const tab = this.getAttribute('data-subtab');
         switchWikiSubTab(tab);
       };
@@ -923,6 +924,7 @@
     document.querySelectorAll('[data-skill-cat]').forEach(btn => {
       btn.onclick = function (e) {
         e.preventDefault();
+        e.stopPropagation();
         const cat = this.getAttribute('data-skill-cat');
         filterWikiSkills(cat);
       };
@@ -932,6 +934,7 @@
     document.querySelectorAll('[data-ing-filter]').forEach(btn => {
       btn.onclick = function (e) {
         e.preventDefault();
+        e.stopPropagation();
         const ing = this.getAttribute('data-ing-filter');
         filterWikiIngredients(ing);
       };
@@ -941,6 +944,7 @@
     document.querySelectorAll('[data-stack-target]').forEach(btn => {
       btn.onclick = function (e) {
         e.preventDefault();
+        e.stopPropagation();
         const num = parseInt(this.getAttribute('data-stack-target'), 10) || 0;
         switchChargeStock(num);
       };
@@ -950,6 +954,7 @@
     document.querySelectorAll('[data-boost-kind]').forEach(btn => {
       btn.onclick = function (e) {
         e.preventDefault();
+        e.stopPropagation();
         const num = parseInt(this.getAttribute('data-boost-kind'), 10) || 0;
         switchHelperBoost(num);
       };
@@ -959,6 +964,7 @@
     document.querySelectorAll('[data-toggle-target]').forEach(btn => {
       btn.onclick = function (e) {
         e.preventDefault();
+        e.stopPropagation();
         const targetId = this.getAttribute('data-toggle-target');
         toggleDetailTable(targetId);
       };
