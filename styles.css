@@ -5457,10 +5457,17 @@ select optgroup,
 
 .values-compact-grid {
   display: grid;
-  grid-template-columns: repeat(18, 1fr);
   gap: 4px;
   width: 100%;
   padding: 4px 0 2px;
+}
+
+.values-berry-grid {
+  grid-template-columns: repeat(18, minmax(0, 1fr));
+}
+
+.values-ing-grid {
+  grid-template-columns: repeat(19, minmax(0, 1fr));
 }
 
 .value-compact-node {

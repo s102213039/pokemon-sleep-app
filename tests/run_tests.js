@@ -331,6 +331,61 @@ test('Tier 1 - Feature Coverage', 'Wiki Database Integrity: wiki.js defines skil
   assert(wikiContent.includes('1.848'), 'wiki.js missing 1.848x trigger chance multiplier');
 });
 
+
+test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js matches Serebii Separate Base Power (19 ingredients, 18 berries Lv.1)', () => {
+  const wikiPath = path.join(WORKSPACE_ROOT, 'wiki.js');
+  const wikiContent = fs.readFileSync(wikiPath, 'utf8');
+
+  const SEREbii_ING = {
+    '特選蘋果': 90, '哞哞鮮奶': 98, '萌綠大豆': 100, '甜甜蜜': 101, '豆製肉': 103,
+    '暖暖薑': 109, '好眠番茄': 110, '特選蛋': 115, '純粹油': 121, '窩心洋芋': 124,
+    '火辣香草': 130, '萌綠玉米': 140, '放鬆可可': 151, '醒腦咖啡豆': 153, '嫩亮酪梨': 162,
+    '品鮮蘑菇': 167, '粗枝大蔥': 185, '沉甸甸南瓜': 250, '美味尾巴': 342
+  };
+  const SEREbii_BERRY_LV1 = {
+    '椰木果': 24, '木子果': 24, '異奇果': 25, '檬果': 26, '桃桃果': 26, '芒念果': 26,
+    '蘋野果': 27, '櫻子果': 27, '柿仔果': 28, '勿花果': 29, '文柚果': 30, '榴石果': 30,
+    '橙橙果': 31, '芭拉果': 31, '零餘果': 32, '生薑果': 32, '靛莓果': 33, '巧可果': 35
+  };
+
+  const ingBlock = wikiContent.match(/const INGREDIENT_VALUES_DATA = \[([\s\S]*?)\];/);
+  const berryBlock = wikiContent.match(/const BERRY_VALUES_DATA = \[([\s\S]*?)\];/);
+  assert(ingBlock, 'INGREDIENT_VALUES_DATA not found');
+  assert(berryBlock, 'BERRY_VALUES_DATA not found');
+
+  const parseEntries = (block) => [...block.matchAll(/name:\s*['"]([^'"]+)['"][\s\S]*?energy:\s*(\d+)/g)]
+    .map(m => ({ name: m[1], energy: +m[2] }));
+
+  const ings = parseEntries(ingBlock[1]);
+  const berries = parseEntries(berryBlock[1]);
+
+  assertEquals(ings.length, 19, 'INGREDIENT_VALUES_DATA should have 19 entries');
+  assertEquals(berries.length, 18, 'BERRY_VALUES_DATA should have 18 entries');
+
+  ings.forEach(({ name, energy }) => {
+    assert(SEREbii_ING[name] !== undefined, `Unknown ingredient in wiki: ${name}`);
+    assertEquals(energy, SEREbii_ING[name], `Ingredient ${name} base energy mismatch`);
+  });
+
+  berries.forEach(({ name, energy }) => {
+    assert(SEREbii_BERRY_LV1[name] !== undefined, `Unknown berry in wiki: ${name}`);
+    assertEquals(energy, SEREbii_BERRY_LV1[name], `Berry ${name} Lv.1 base energy mismatch`);
+  });
+
+  const ladderBlock = wikiContent.match(/const LV60_COORDINATE_LADDER_DATA = \[([\s\S]*?)\];\s*\n\s*\/\/ 舊版清單資料/);
+  assert(ladderBlock, 'LV60_COORDINATE_LADDER_DATA not found');
+  const ladderEnergies = [...ladderBlock[1].matchAll(/"energy": (\d+)/g)].map(m => +m[1]).sort((a,b)=>a-b);
+  const ingEnergies = Object.values(SEREbii_ING).sort((a,b)=>a-b);
+  assertEquals(ladderEnergies.length, 19, 'LV60 ladder should cover all 19 ingredients');
+  assertEquals(ladderEnergies.join(','), ingEnergies.join(','), 'Ladder ingredient energies should match INGREDIENT_VALUES_DATA');
+
+  assert(!wikiContent.includes('energy: 200') && !wikiContent.match(/"energy": 200/), 'Residual pumpkin energy 200 should not exist');
+  const pumpkin = ings.find(i => i.name === '沉甸甸南瓜');
+  assertEquals(pumpkin.energy, 250, 'Plump Pumpkin must be 250');
+  const avo = ings.find(i => i.name === '嫩亮酪梨');
+  assertEquals(avo.energy, 162, 'Glossy Avocado must be 162');
+});
+
 test('Tier 1 - Feature Coverage', 'Box System Integrity: box.js defines 25 Natures, Sub-skills, and User Box data models', () => {
   const boxPath = path.join(WORKSPACE_ROOT, 'box.js');
   assert(fs.existsSync(boxPath), 'box.js does not exist');

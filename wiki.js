@@ -598,45 +598,46 @@
 
   // --- 4. 樹果與食材基礎能量資料庫 (Image 1 實體化 - Berry & Ingredient Values) ---
   const BERRY_VALUES_DATA = [
-    { id: 'pamtre', name: '巧可果', type: '飛行', energy: 24, icon: 'https://www.serebii.net/pokemonsleep/berries/pamtreberry.png' },
-    { id: 'lum',    name: '椰木果', type: '蟲',   energy: 24, icon: 'https://www.serebii.net/pokemonsleep/berries/lumberry.png' },
-    { id: 'grepa',  name: '榴石果', type: '電',   energy: 25, icon: 'https://www.serebii.net/pokemonsleep/berries/grepaberry.png' },
-    { id: 'bluk',   name: '蔓莓果', type: '幽靈', energy: 26, icon: 'https://www.serebii.net/pokemonsleep/berries/blukberry.png' },
+    { id: 'pamtre', name: '椰木果', type: '飛行', energy: 24, icon: 'https://www.serebii.net/pokemonsleep/berries/pamtreberry.png' },
+    { id: 'lum',    name: '木子果', type: '蟲',   energy: 24, icon: 'https://www.serebii.net/pokemonsleep/berries/lumberry.png' },
+    { id: 'grepa',  name: '異奇果', type: '電',   energy: 25, icon: 'https://www.serebii.net/pokemonsleep/berries/grepaberry.png' },
+    { id: 'bluk',   name: '檬果',   type: '幽靈', energy: 26, icon: 'https://www.serebii.net/pokemonsleep/berries/blukberry.png' },
     { id: 'pecha',  name: '桃桃果', type: '妖精', energy: 26, icon: 'https://www.serebii.net/pokemonsleep/berries/pechaberry.png' },
-    { id: 'mago',   name: '芒芒果', type: '超能', energy: 26, icon: 'https://www.serebii.net/pokemonsleep/berries/magoberry.png' },
+    { id: 'mago',   name: '芒念果', type: '超能', energy: 26, icon: 'https://www.serebii.net/pokemonsleep/berries/magoberry.png' },
     { id: 'leppa',  name: '蘋野果', type: '火',   energy: 27, icon: 'https://www.serebii.net/pokemonsleep/berries/leppaberry.png' },
     { id: 'cheri',  name: '櫻子果', type: '格鬥', energy: 27, icon: 'https://www.serebii.net/pokemonsleep/berries/cheriberry.png' },
-    { id: 'persim', name: '零餘果', type: '一般', energy: 28, icon: 'https://www.serebii.net/pokemonsleep/berries/persimberry.png' },
-    { id: 'figy',   name: '異奇果', type: '地面', energy: 29, icon: 'https://www.serebii.net/pokemonsleep/berries/figyberry.png' },
+    { id: 'persim', name: '柿仔果', type: '一般', energy: 28, icon: 'https://www.serebii.net/pokemonsleep/berries/persimberry.png' },
+    { id: 'figy',   name: '勿花果', type: '地面', energy: 29, icon: 'https://www.serebii.net/pokemonsleep/berries/figyberry.png' },
     { id: 'sitrus', name: '文柚果', type: '岩石', energy: 30, icon: 'https://www.serebii.net/pokemonsleep/berries/sitrusberry.png' },
-    { id: 'durin',  name: '墨莓果', type: '草',   energy: 30, icon: 'https://www.serebii.net/pokemonsleep/berries/durinberry.png' },
+    { id: 'durin',  name: '榴石果', type: '草',   energy: 30, icon: 'https://www.serebii.net/pokemonsleep/berries/durinberry.png' },
     { id: 'oran',   name: '橙橙果', type: '水',   energy: 31, icon: 'https://www.serebii.net/pokemonsleep/berries/oranberry.png' },
-    { id: 'wiki',   name: '芭亞果', type: '惡',   energy: 31, icon: 'https://www.serebii.net/pokemonsleep/berries/wikiberry.png' },
-    { id: 'chesto', name: '勿忘果', type: '毒',   energy: 32, icon: 'https://www.serebii.net/pokemonsleep/berries/chestoberry.png' },
-    { id: 'rawst',  name: '苦莓果', type: '冰',   energy: 32, icon: 'https://www.serebii.net/pokemonsleep/berries/rawstberry.png' },
-    { id: 'belue',  name: '椰查果', type: '鋼',   energy: 33, icon: 'https://www.serebii.net/pokemonsleep/berries/belueberry.png' },
-    { id: 'yache',  name: '樂芭果', type: '龍',   energy: 35, icon: 'https://www.serebii.net/pokemonsleep/berries/yacheberry.png' }
+    { id: 'wiki',   name: '芭拉果', type: '惡',   energy: 31, icon: 'https://www.serebii.net/pokemonsleep/berries/wikiberry.png' },
+    { id: 'chesto', name: '零餘果', type: '毒',   energy: 32, icon: 'https://www.serebii.net/pokemonsleep/berries/chestoberry.png' },
+    { id: 'rawst',  name: '生薑果', type: '冰',   energy: 32, icon: 'https://www.serebii.net/pokemonsleep/berries/rawstberry.png' },
+    { id: 'belue',  name: '靛莓果', type: '鋼',   energy: 33, icon: 'https://www.serebii.net/pokemonsleep/berries/belueberry.png' },
+    { id: 'yache',  name: '巧可果', type: '龍',   energy: 35, icon: 'https://www.serebii.net/pokemonsleep/berries/yacheberry.png' }
   ];
 
   const INGREDIENT_VALUES_DATA = [
     { id: "apple", name: "特選蘋果", enName: "Fancy Apple", energy: 90, icon: "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png" },
     { id: "milk", name: "哞哞鮮奶", enName: "Moomoo Milk", energy: 98, icon: "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png" },
-    { id: "soybeans", name: "幼芽大豆", enName: "Greengrass Soybeans", energy: 100, icon: "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" },
+    { id: "soybeans", name: "萌綠大豆", enName: "Greengrass Soybeans", energy: 100, icon: "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png" },
     { id: "honey", name: "甜甜蜜", enName: "Honey", energy: 101, icon: "https://www.serebii.net/pokemonsleep/ingredients/honey.png" },
-    { id: "sausage", name: "豆香香腸", enName: "Bean Sausage", energy: 103, icon: "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" },
+    { id: "sausage", name: "豆製肉", enName: "Bean Sausage", energy: 103, icon: "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png" },
     { id: "ginger", name: "暖暖薑", enName: "Warming Ginger", energy: 109, icon: "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png" },
-    { id: "tomato", name: "熟透番茄", enName: "Snoozy Tomato", energy: 110, icon: "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" },
-    { id: "egg", name: "純白蛋", enName: "Fancy Egg", energy: 115, icon: "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
-    { id: "oil", name: "清純油", enName: "Pure Oil", energy: 121, icon: "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" },
-    { id: "potato", name: "鬆脆馬鈴薯", enName: "Soft Potato", energy: 124, icon: "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" },
-    { id: "herb", name: "激辣辣椒", enName: "Fiery Herb", energy: 130, icon: "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png" },
-    { id: "corn", name: "甜甜玉米", enName: "Greengrass Corn", energy: 140, icon: "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" },
-    { id: "cacao", name: "美味可可", enName: "Soothing Cacao", energy: 151, icon: "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" },
-    { id: "coffee", name: "甦醒咖啡", enName: "Rousing Coffee", energy: 153, icon: "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png" },
-    { id: "mushroom", name: "芳香蘑菇", enName: "Tasty Mushroom", energy: 167, icon: "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" },
-    { id: "leek", name: "粗擺大蔥", enName: "Large Leek", energy: 185, icon: "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png" },
-    { id: "pumpkin", name: "特選南瓜", enName: "Plump Pumpkin", energy: 200, icon: "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png" },
-    { id: "tail", name: "粗擺尾巴", enName: "Slowpoke Tail", energy: 342, icon: "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png" }
+    { id: "tomato", name: "好眠番茄", enName: "Snoozy Tomato", energy: 110, icon: "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png" },
+    { id: "egg", name: "特選蛋", enName: "Fancy Egg", energy: 115, icon: "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png" },
+    { id: "oil", name: "純粹油", enName: "Pure Oil", energy: 121, icon: "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png" },
+    { id: "potato", name: "窩心洋芋", enName: "Soft Potato", energy: 124, icon: "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png" },
+    { id: "herb", name: "火辣香草", enName: "Fiery Herb", energy: 130, icon: "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png" },
+    { id: "corn", name: "萌綠玉米", enName: "Greengrass Corn", energy: 140, icon: "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png" },
+    { id: "cacao", name: "放鬆可可", enName: "Soothing Cacao", energy: 151, icon: "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png" },
+    { id: "coffee", name: "醒腦咖啡豆", enName: "Rousing Coffee", energy: 153, icon: "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png" },
+    { id: "glossyavocado", name: "嫩亮酪梨", enName: "Glossy Avocado", energy: 162, icon: "https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png" },
+    { id: "mushroom", name: "品鮮蘑菇", enName: "Tasty Mushroom", energy: 167, icon: "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png" },
+    { id: "leek", name: "粗枝大蔥", enName: "Large Leek", energy: 185, icon: "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png" },
+    { id: "pumpkin", name: "沉甸甸南瓜", enName: "Plump Pumpkin", energy: 250, icon: "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png" },
+    { id: "tail", name: "美味尾巴", enName: "Slowpoke Tail", energy: 342, icon: "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png" }
   ];
 
   // --- 5. Lv.60 視覺橫向天梯座標圖資料庫 (Image 2 實體化 - Coordinate Ladder Data) ---
@@ -1454,6 +1455,57 @@
         ]
     },
     {
+        "id": "glossyavocado",
+        "name": "嫩亮酪梨",
+        "energy": 162,
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png",
+        "pokemon": [
+            {
+                "name": "沙漠蜻蜓",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/330.png",
+                "recipe": "AAA",
+                "count": 38,
+                "note": "👑 TOP 1 AAA 嫩亮酪梨 產量之王",
+                "isTop": true
+            },
+            {
+                "name": "老翁龍",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/780.png",
+                "recipe": "ABB",
+                "count": 30,
+                "note": "ABB 嫩亮酪梨 主力產出"
+            },
+            {
+                "name": "岩殿居蟹",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/558.png",
+                "recipe": "AAA",
+                "count": 26,
+                "note": "AAA 嫩亮酪梨 主力產出"
+            },
+            {
+                "name": "超音波幼蟲",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/329.png",
+                "recipe": "AAA",
+                "count": 25,
+                "note": "AAA 嫩亮酪梨 兼顧"
+            },
+            {
+                "name": "大顎蟻",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/328.png",
+                "recipe": "AAA",
+                "count": 18,
+                "note": "AAA 嫩亮酪梨 兼顧"
+            },
+            {
+                "name": "石居蟹",
+                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/557.png",
+                "recipe": "AAA",
+                "count": 14,
+                "note": "AAA 嫩亮酪梨 解鎖"
+            }
+        ]
+    },
+    {
         "id": "mushroom",
         "name": "品鮮蘑菇",
         "energy": 167,
@@ -1572,7 +1624,7 @@
     {
         "id": "pumpkin",
         "name": "沉甸甸南瓜",
-        "energy": 200,
+        "energy": 250,
         "icon": "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png",
         "pokemon": [
             {
@@ -2204,6 +2256,8 @@
 
     recalcTriggerChance();
     recalcSleepDays();
+    refreshCoordinateLadder();
+    refreshBerryNodes();
   }
 
   // 渲染副技能標籤
@@ -2303,7 +2357,7 @@
             </div>
           </div>
 
-          <!-- 各食材軌道 (18種食材完整一覽) -->
+          <!-- 各食材軌道 (19種食材完整一覽) -->
           ${ladderData.map(ing => `
             <div class="ladder-track-row" data-ladder-ing="${ing.id}">
               <div class="ladder-track-header" title="${ing.name} (基礎能量 ${ing.energy})">
@@ -2976,7 +3030,7 @@
               <span class="wiki-card-icon">🫐</span>
               <h3 class="wiki-card-title">樹果與食材基礎能量一覽表（BERRY & INGREDIENT VALUES）</h3>
             </div>
-            <p class="wiki-card-desc">依據官方遊戲底層能量設定，完整展示 18 種屬性樹果基礎能量（24~35）與 18 種料理食材基礎能量（90~342）。</p>
+            <p class="wiki-card-desc">依據官方遊戲底層能量設定，完整展示 18 種屬性樹果基礎能量（24~35）與 19 種料理食材基礎能量（90~342）。</p>
 
             <div style="margin-top: 20px;">
               ${renderValuesBoard()}
