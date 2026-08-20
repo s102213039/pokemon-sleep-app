@@ -5008,6 +5008,37 @@ select optgroup,
   border-radius: 2px;
 }
 
+.ladder-spans-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+.ladder-pkm-span-line {
+  position: absolute;
+  top: 50%;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.25) 0%, rgba(56, 189, 248, 0.6) 50%, rgba(234, 179, 8, 0.7) 100%);
+  border-radius: 3px;
+  transform: translateY(-50%);
+  pointer-events: auto;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 4;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.3);
+}
+
+.ladder-pkm-span-line:hover,
+.ladder-pkm-span-line.group-hover-active {
+  height: 5px;
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.7) 0%, rgba(56, 189, 248, 0.95) 50%, rgba(234, 179, 8, 1) 100%);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.8), 0 0 4px #ffffff;
+  z-index: 50;
+}
+
 .ladder-nodes-container {
   position: relative;
   width: 100%;
@@ -5025,9 +5056,15 @@ select optgroup,
   transition: transform 0.15s ease, z-index 0.15s ease, left 0.25s ease;
 }
 
-.ladder-node:hover {
-  transform: translate(-50%, -55%) scale(1.2);
-  z-index: 60 !important;
+.ladder-node:hover,
+.ladder-node.group-hover-active {
+  transform: translate(-50%, -55%) scale(1.22);
+  z-index: 10000 !important;
+}
+
+.ladder-node.group-hover-active .node-avatar-img {
+  border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.9);
 }
 
 .node-recipe-tag {
@@ -5042,6 +5079,31 @@ select optgroup,
   border: 1px solid rgba(56, 189, 248, 0.3);
   letter-spacing: 0.2px;
   line-height: 1.1;
+}
+
+.recipe-tag-aaa {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.95), rgba(56, 189, 248, 0.95));
+  color: #0f172a;
+  border-color: rgba(234, 179, 8, 0.6);
+  font-weight: 800;
+}
+
+.recipe-tag-abb {
+  background: rgba(2, 132, 199, 0.95);
+  color: #ffffff;
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+.recipe-tag-aac {
+  background: rgba(124, 58, 237, 0.95);
+  color: #ffffff;
+  border-color: rgba(168, 85, 247, 0.5);
+}
+
+.recipe-tag-abc {
+  background: rgba(51, 65, 85, 0.95);
+  color: #cbd5e1;
+  border-color: rgba(148, 163, 184, 0.4);
 }
 
 .node-avatar-wrapper {
