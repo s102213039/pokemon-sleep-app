@@ -3388,7 +3388,8 @@ input[type=range].rf-slider.event-slider {
 .box-spec-tag {
   font-size: 11px;
   color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -3399,8 +3400,8 @@ input[type=range].rf-slider.event-slider {
 }
 
 .box-action-btn {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   width: 28px;
   height: 28px;
@@ -3414,8 +3415,9 @@ input[type=range].rf-slider.event-slider {
 }
 
 .box-action-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  color: #ffffff;
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--accent-color);
   transform: scale(1.08);
 }
 
@@ -6056,6 +6058,51 @@ select optgroup,
 .value-compact-node.value-tail-highlight .value-compact-energy {
   color: var(--color-accent-rose);
   background: rgba(244, 114, 182, 0.2);
+}
+
+/* 亮色主題細部元件適配 (Dawn & Emerald Theme Polish) */
+[data-theme="dawn"] .ladder-switch-label,
+[data-theme="emerald"] .ladder-switch-label,
+[data-theme="dawn"] .berry-switch-label,
+[data-theme="emerald"] .berry-switch-label {
+  color: var(--text-primary);
+}
+
+[data-theme="dawn"] .ladder-switch-slider,
+[data-theme="emerald"] .ladder-switch-slider,
+[data-theme="dawn"] .berry-switch-slider,
+[data-theme="emerald"] .berry-switch-slider {
+  background: var(--bg-card-inner);
+  border-color: var(--border-color);
+}
+
+[data-theme="dawn"] .berry-control-label,
+[data-theme="emerald"] .berry-control-label {
+  color: var(--text-secondary);
+}
+
+[data-theme="dawn"] .berry-switch-text,
+[data-theme="emerald"] .berry-switch-text {
+  color: var(--color-accent-gold);
+}
+
+[data-theme="dawn"] .ladder-node-tooltip,
+[data-theme="emerald"] .ladder-node-tooltip {
+  background: var(--bg-card-solid);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dawn"] .ladder-node-tooltip .tooltip-title,
+[data-theme="emerald"] .ladder-node-tooltip .tooltip-title {
+  color: var(--text-primary);
+}
+
+[data-theme="dawn"] .box-dropzone-title kbd,
+[data-theme="emerald"] .box-dropzone-title kbd {
+  background: var(--bg-card-inner);
+  border-color: var(--border-color);
+  color: var(--text-primary);
 }
 
 @media (max-width: 900px) {
