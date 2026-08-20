@@ -172,8 +172,8 @@ header {
 }
 
 .header-container {
-  max-width: 1240px;
-  width: 92%;
+  max-width: 1400px;
+  width: 95%;
   height: 100%;
   margin: 0 auto;
   padding: 0 16px;
@@ -1069,8 +1069,8 @@ header {
 }
 
 .pokemon-main-content .controls-container {
-  max-width: 1240px;
-  width: 92%;
+  max-width: 1400px;
+  width: 95%;
   margin: 32px auto 16px;
   padding: 0 16px;
 }
@@ -1079,8 +1079,8 @@ header {
 .pokemon-main-content .table-container,
 .pokemon-main-content .pokemon-table-container,
 .pokemon-main-content .pokemon-grid {
-  max-width: 1240px;
-  width: 92%;
+  max-width: 1400px;
+  width: 95%;
   margin: 0 auto 16px;
   padding: 0 16px;
 }
@@ -1095,8 +1095,8 @@ header {
 
 /* Stats Bar */
 .stats-bar {
-  max-width: 1240px;
-  width: 92%;
+  max-width: 1400px;
+  width: 95%;
   margin: 0 auto 16px;
   padding: 0 16px;
   font-size: 13.5px;
@@ -1322,10 +1322,10 @@ header {
    ========================================================= */
 .pokemon-table-container,
 .table-container {
-  max-width: 1240px;
-  width: 92%;
+  max-width: 1400px;
+  width: 95%;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 8px;
   overflow-x: auto;
 }
 
@@ -1338,7 +1338,7 @@ header {
   overflow: hidden;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-color);
-  font-size: 13.5px;
+  font-size: 13px;
 }
 
 .pokemon-table th {
@@ -1347,9 +1347,9 @@ header {
   background: #0f172a;
   color: var(--text-secondary);
   font-weight: 700;
-  padding: 14px 8px;
+  padding: 12px 5px;
   border-bottom: 2px solid var(--border-color);
-  font-size: 13px;
+  font-size: 12.5px;
   white-space: nowrap;
   z-index: 10;
   text-align: center;
@@ -1371,10 +1371,10 @@ header {
 }
 
 .pokemon-table td {
-  padding: 13px 8px;
+  padding: 10px 5px;
   text-align: center;
   border-bottom: 1px solid var(--border-color);
-  font-size: 13.5px;
+  font-size: 13px;
   vertical-align: middle;
 }
 
@@ -1388,23 +1388,23 @@ header {
 
 /* Table Column Widths & Alignments */
 .th-no, .td-no {
-  width: 48px;
+  width: 44px;
   text-align: center;
   font-weight: 700;
   color: var(--accent-color);
   font-family: monospace;
-  font-size: 13px;
+  font-size: 12.5px;
 }
 
 .th-icon, .td-icon {
-  width: 50px;
+  width: 44px;
   text-align: center;
 }
 
 .table-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   object-fit: contain;
   background: rgba(255, 255, 255, 0.05);
   padding: 2px;
@@ -1412,64 +1412,64 @@ header {
 }
 
 .th-name, .td-name {
-  min-width: 90px;
+  min-width: 85px;
   text-align: left;
-  padding-left: 8px !important;
+  padding-left: 6px !important;
 }
 
 .pokemon-name-cell {
   font-weight: 700;
   color: var(--text-primary);
-  font-size: 14.5px;
+  font-size: 13.5px;
   line-height: 1.35;
   white-space: nowrap;
   text-align: left;
 }
 
 .th-type, .td-type {
-  width: 55px;
+  width: 50px;
   text-align: center;
 }
 
 .th-spec, .td-spec {
-  width: 55px;
+  width: 50px;
   text-align: center;
-  font-size: 13px;
+  font-size: 12.5px;
 }
 
 .th-carry, .td-carry {
-  width: 46px;
+  width: 42px;
   text-align: center;
   font-family: monospace;
-  font-size: 13px;
+  font-size: 12.5px;
 }
 
 .th-ing, .td-ing {
-  min-width: 96px;
+  min-width: 84px;
   text-align: center;
-  padding-left: 6px !important;
-  padding-right: 6px !important;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
 }
 
 .th-rate, .td-rate {
-  width: 68px;
+  width: 62px;
   text-align: center;
-  font-size: 13px;
+  font-size: 12.5px;
 }
 
 .th-interval, .td-interval {
-  width: 78px;
+  width: 72px;
   text-align: center;
-  font-size: 13px;
+  font-size: 12.5px;
   font-family: monospace;
 }
 
 .th-skill, .td-skill {
-  min-width: 100px;
+  min-width: 96px;
   text-align: left;
-  font-size: 12.5px;
+  font-size: 12px;
   line-height: 1.35;
-  padding-left: 8px !important;
+  padding-left: 6px !important;
 }
 
 /* =========================================================

@@ -59,17 +59,20 @@
 
       // Table Headers
       'th.icon': '圖示',
-      'th.name': '寶可夢名稱',
+      'th.name': '寶可夢',
       'th.type': '屬性',
-      'th.specialty': '得意專長',
+      'th.specialty': '得意',
       'th.interval': '幫忙間隔',
-      'th.carry': '攜帶上限',
+      'th.carry': '持有',
       'th.friendship': '友情點數',
-      'th.ingredient_rate': '食材機率',
-      'th.skill_rate': '技能機率',
-      'th.berry': '產出樹果',
-      'th.main_skill': '主技能名稱',
-      'th.ingredients': '解鎖食材 (Lv.1/30/60)',
+      'th.ingredient_rate': '食材率',
+      'th.skill_rate': '技能率',
+      'th.berry': '樹果',
+      'th.main_skill': '主技能',
+      'th.ing1': '食材1',
+      'th.ing2': '食材2',
+      'th.ing3': '食材3',
+      'th.ingredients': '食材',
       'th.actions': '操作',
 
       // Specialties
@@ -176,17 +179,20 @@
 
       // Table Headers
       'th.icon': 'Icon',
-      'th.name': 'Name',
+      'th.name': 'Pokémon',
       'th.type': 'Type',
       'th.specialty': 'Specialty',
       'th.interval': 'Frequency',
-      'th.carry': 'Carry Limit',
-      'th.friendship': 'Friendship Points',
+      'th.carry': 'Carry',
+      'th.friendship': 'Friendship',
       'th.ingredient_rate': 'Ing. Rate',
       'th.skill_rate': 'Skill Rate',
       'th.berry': 'Berry',
       'th.main_skill': 'Main Skill',
-      'th.ingredients': 'Ingredients (Lv.1/30/60)',
+      'th.ing1': 'Ing 1',
+      'th.ing2': 'Ing 2',
+      'th.ing3': 'Ing 3',
+      'th.ingredients': 'Ingredients',
       'th.actions': 'Actions',
 
       // Specialties

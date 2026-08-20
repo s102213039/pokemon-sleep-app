@@ -1286,9 +1286,9 @@ if (typeof document !== 'undefined') {
                 <th class="th-type">${t('th.type', '屬性')}</th>
                 <th class="th-spec">${t('th.specialty', '得意')}</th>
                 ${sortableTh('carry', t('th.carry', '持有'), 'th-carry')}
-                <th class="th-ing">${t('th.ingredients', '食材')} ①</th>
-                <th class="th-ing">${t('th.ingredients', '食材')} ②</th>
-                <th class="th-ing">${t('th.ingredients', '食材')} ③</th>
+                <th class="th-ing">${t('th.ing1', '食材1')}</th>
+                <th class="th-ing">${t('th.ing2', '食材2')}</th>
+                <th class="th-ing">${t('th.ing3', '食材3')}</th>
                 ${sortableTh('ingredientRate', t('th.ingredient_rate', '食材率'), 'th-rate')}
                 ${sortableTh('skillRate', t('th.skill_rate', '技能率'), 'th-rate')}
                 ${sortableTh('interval', t('th.interval', '幫忙間隔'), 'th-interval')}
