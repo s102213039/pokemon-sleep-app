@@ -149,8 +149,17 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ─── 載入 recipes.json ─────────────────────────────── */
   loadPrefs();
 
-  fetch(`recipes.json?t=${Date.now()}`, { cache: 'no-store' })
-    .then(res => res.json())
+  const fetchRecipesWithFallback = async (primaryUrl, fallbackUrl) => {
+    try {
+      const res = await fetch(primaryUrl, { cache: 'no-store' });
+      if (res.ok) return res.json();
+    } catch (e) {}
+    const fallbackRes = await fetch(fallbackUrl, { cache: 'no-store' });
+    if (!fallbackRes.ok) throw new Error(`HTTP ${fallbackRes.status}`);
+    return fallbackRes.json();
+  };
+
+  fetchRecipesWithFallback(`data/recipes.json?t=${Date.now()}`, `recipes.json?t=${Date.now()}`)
     .then(data => {
       allRecipes = data;
       initCategoryFilters();

@@ -21,7 +21,7 @@ from datetime import datetime
 
 BASE_URL = "https://www.pokemonsleep.net"
 NEWS_LIST_URL = f"{BASE_URL}/zh/news/page/"
-OUTPUT_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "news.json")
+OUTPUT_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "news.json")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",

@@ -719,11 +719,17 @@ if (typeof document !== 'undefined') {
 
     initSpaTabs();
 
-    fetch(`data.json?t=${Date.now()}`, { cache: 'no-store' })
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
+    const fetchDataWithFallback = async (primaryUrl, fallbackUrl) => {
+      try {
+        const res = await fetch(primaryUrl, { cache: 'no-store' });
+        if (res.ok) return res.json();
+      } catch (e) {}
+      const fallbackRes = await fetch(fallbackUrl, { cache: 'no-store' });
+      if (!fallbackRes.ok) throw new Error(`HTTP ${fallbackRes.status}`);
+      return fallbackRes.json();
+    };
+
+    fetchDataWithFallback(`data/data.json?t=${Date.now()}`, `data.json?t=${Date.now()}`)
       .then(data => {
         allPokemons = data;
         window.allPokemons = data;

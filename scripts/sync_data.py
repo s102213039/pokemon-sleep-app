@@ -34,8 +34,8 @@ log = logging.getLogger(__name__)
 
 # ── 路徑設定 ──────────────────────────────────────────────
 REPO_ROOT    = Path(__file__).parent.parent
-DATA_JSON    = REPO_ROOT / 'data.json'
-RECIPES_JSON = REPO_ROOT / 'recipes.json'
+DATA_JSON    = REPO_ROOT / 'data' / 'data.json'
+RECIPES_JSON = REPO_ROOT / 'data' / 'recipes.json'
 
 # ── 資料來源 ──────────────────────────────────────────────
 SEREBII_SLEEP_BASE = 'https://www.serebii.net/pokemonsleep/pokemon/'

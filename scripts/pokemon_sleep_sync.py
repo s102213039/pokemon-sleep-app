@@ -293,8 +293,11 @@ def main():
     
     # A. 載入 B 欄特殊自訂圖示設定檔
     special_icons = {}
-    if os.path.exists('special_icons.json'):
-        with open('special_icons.json', 'r', encoding='utf-8') as f:
+    spec_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'special_icons.json')
+    if not os.path.exists(spec_path):
+        spec_path = 'special_icons.json'
+    if os.path.exists(spec_path):
+        with open(spec_path, 'r', encoding='utf-8') as f:
             special_icons = json.load(f)
         print(f"成功自本地載入 {len(special_icons)} 個特殊圖示保護設定。")
     norm_special_icons = {normalize_name(k): v for k, v in special_icons.items()}

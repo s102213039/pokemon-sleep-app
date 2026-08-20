@@ -130,7 +130,7 @@ for idx, r in enumerate(rows_ref):
     icon_no = sync.format_no(no)
     
     # Check special icon mappings first
-    special_icons_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'special_icons.json')
+    special_icons_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'special_icons.json')
     special_map = {}
     if os.path.exists(special_icons_file):
         try:
@@ -177,7 +177,7 @@ for idx, r in enumerate(rows_ref):
     }
     pokemons.append(entry)
 
-target_dir = os.path.dirname(os.path.abspath(__file__))
+target_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
 out_file = os.path.join(target_dir, "data.json")
 
 with open(out_file, "w", encoding="utf-8") as f:

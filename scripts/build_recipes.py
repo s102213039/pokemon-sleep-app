@@ -204,10 +204,11 @@ def main():
 
     print(f'Total dishes constructed: {len(all_dishes)}')
 
-    with open('recipes.json', 'w', encoding='utf-8') as f:
+    out_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'recipes.json')
+    with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(all_dishes, f, ensure_ascii=False, indent=2)
 
-    print('Successfully saved recipes.json!')
+    print('Successfully saved data/recipes.json!')
 
 if __name__ == '__main__':
     main()

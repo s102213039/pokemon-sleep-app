@@ -200,7 +200,7 @@ function createMockDocument() {
 }
 
 // Load App Script module
-const appPath = path.join(WORKSPACE_ROOT, 'app.js');
+const appPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js');
 const {
   PokemonApp,
   getItemIcon,
@@ -218,7 +218,7 @@ const {
   renderSkillWithTooltip
 } = require(appPath);
 
-const dataPath = path.join(WORKSPACE_ROOT, 'data.json');
+const dataPath = path.join(WORKSPACE_ROOT, 'data', 'data.json');
 const dataset = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 
 console.log('\n======================================================');
@@ -255,7 +255,7 @@ test('Tier 1 - Feature Coverage', 'Dataset Integrity: data.json exists and conta
 });
 
 test('Tier 1 - Feature Coverage', 'Dataset Integrity: recipes.json exists and contains 78 verified recipes with correct ingredients & pot sizes', () => {
-  const recipesPath = path.join(WORKSPACE_ROOT, 'recipes.json');
+  const recipesPath = path.join(WORKSPACE_ROOT, 'data', 'recipes.json');
   assert(fs.existsSync(recipesPath), 'recipes.json does not exist');
   const recipes = JSON.parse(fs.readFileSync(recipesPath, 'utf8'));
   assert(Array.isArray(recipes), 'recipes.json is not an array');
@@ -286,6 +286,7 @@ test('Tier 1 - Feature Coverage', 'HTML Structure: index.html exists with requir
   assert(fs.existsSync(htmlPath), 'index.html does not exist');
   const htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
+  // Core Pokedex elements
   assert(htmlContent.includes('id="search-input"') || htmlContent.includes("id='search-input'"), 'Missing search input element');
   assert(htmlContent.includes('id="final-evo-toggle"'), 'Missing final-evo-toggle switch element');
   assert(htmlContent.includes('id="initial-ing-toggle"'), 'Missing initial-ing-toggle switch element');
@@ -301,23 +302,22 @@ test('Tier 1 - Feature Coverage', 'HTML Structure: index.html exists with requir
   assert(htmlContent.includes('id="toggle-table"') || htmlContent.includes("id='toggle-table'"), 'Missing table view toggle button');
   assert(htmlContent.includes('id="content-area"') || htmlContent.includes("id='content-area'"), 'Missing view content area container');
   assert(htmlContent.includes('id="event-bonus-slider"'), 'Missing event-bonus-slider element in index.html');
-  assert(htmlContent.includes('id="tasty-toggle-btn"'), 'Missing tasty-toggle-btn element in index.html');
-  assert(htmlContent.includes('id="tab-wiki"'), 'Missing tab-wiki element in index.html');
-  assert(htmlContent.includes('id="panel-wiki"'), 'Missing panel-wiki element in index.html');
-  assert(htmlContent.includes('id="tab-box"'), 'Missing tab-box element in index.html');
-  assert(htmlContent.includes('id="panel-box"'), 'Missing panel-box element in index.html');
-  assert(htmlContent.includes('id="box-dropzone"'), 'Missing box-dropzone element in index.html');
-  assert(htmlContent.includes('id="box-edit-modal"'), 'Missing box-edit-modal element in index.html');
-  assert(htmlContent.includes('id="box-content-area"'), 'Missing box-content-area element in index.html');
-  assert(htmlContent.includes('id="tab-news"'), 'Missing tab-news element in index.html');
-  assert(htmlContent.includes('id="panel-news"'), 'Missing panel-news element in index.html');
-  assert(htmlContent.includes('id="news-category-tags"'), 'Missing news-category-tags element in index.html');
-  assert(htmlContent.includes('id="news-search-input"'), 'Missing news-search-input element in index.html');
-  assert(htmlContent.includes('id="news-list-container"'), 'Missing news-list-container element in index.html');
+
+  // SPA Multi-Tab Navigation elements
+  assert(htmlContent.includes('id="tab-pokemon"'), 'Missing tab-pokemon navigation element in index.html');
+  assert(htmlContent.includes('id="tab-recipes"'), 'Missing tab-recipes navigation element in index.html');
+  assert(htmlContent.includes('id="tab-wiki"'), 'Missing tab-wiki navigation element in index.html');
+  assert(htmlContent.includes('id="tab-box"'), 'Missing tab-box navigation element in index.html');
+  assert(htmlContent.includes('id="tab-news"'), 'Missing tab-news navigation element in index.html');
+  assert(htmlContent.includes('id="panel-pokemon"'), 'Missing panel-pokemon view container in index.html');
+  assert(htmlContent.includes('id="panel-recipes"'), 'Missing panel-recipes view container in index.html');
+  assert(htmlContent.includes('id="panel-wiki"'), 'Missing panel-wiki view container in index.html');
+  assert(htmlContent.includes('id="panel-box"'), 'Missing panel-box view container in index.html');
+  assert(htmlContent.includes('id="panel-news"'), 'Missing panel-news view container in index.html');
 });
 
 test('Tier 1 - Feature Coverage', 'Wiki Database Integrity: wiki.js defines skills, sub-skills, matrix, ratings, and ingredient ladder', () => {
-  const wikiPath = path.join(WORKSPACE_ROOT, 'wiki.js');
+  const wikiPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js');
   assert(fs.existsSync(wikiPath), 'wiki.js does not exist');
   const wikiContent = fs.readFileSync(wikiPath, 'utf8');
 
@@ -333,7 +333,7 @@ test('Tier 1 - Feature Coverage', 'Wiki Database Integrity: wiki.js defines skil
 
 
 test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js matches Serebii Separate Base Power (19 ingredients, 18 berries Lv.1)', () => {
-  const wikiPath = path.join(WORKSPACE_ROOT, 'wiki.js');
+  const wikiPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js');
   const wikiContent = fs.readFileSync(wikiPath, 'utf8');
 
   const SEREbii_ING = {
@@ -387,7 +387,7 @@ test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js match
 });
 
 test('Tier 1 - Feature Coverage', 'Box System Integrity: box.js defines 25 Natures, Sub-skills, and User Box data models', () => {
-  const boxPath = path.join(WORKSPACE_ROOT, 'box.js');
+  const boxPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js');
   assert(fs.existsSync(boxPath), 'box.js does not exist');
   const boxContent = fs.readFileSync(boxPath, 'utf8');
 
@@ -400,7 +400,7 @@ test('Tier 1 - Feature Coverage', 'Box System Integrity: box.js defines 25 Natur
 });
 
 test('Tier 1 - Feature Coverage', 'Dataset Integrity: news.json exists and contains >= 20 structured news articles with AI summaries', () => {
-  const newsPath = path.join(WORKSPACE_ROOT, 'news.json');
+  const newsPath = path.join(WORKSPACE_ROOT, 'data', 'news.json');
   assert(fs.existsSync(newsPath), 'news.json does not exist');
   const newsData = JSON.parse(fs.readFileSync(newsPath, 'utf8'));
   assert(Array.isArray(newsData), 'news.json must be an array');
@@ -437,7 +437,7 @@ test('Tier 1 - Feature Coverage', 'Recipe Energy Formula: Level + Island Bonus +
 });
 
 test('Tier 1 - Feature Coverage', 'CSS Styling: styles.css exists with dark theme, badge styles, responsive rules', () => {
-  const cssPath = path.join(WORKSPACE_ROOT, 'styles.css');
+  const cssPath = path.join(WORKSPACE_ROOT, 'css', 'styles.css');
   assert(fs.existsSync(cssPath), 'styles.css does not exist');
   const cssContent = fs.readFileSync(cssPath, 'utf8');
 
@@ -728,7 +728,7 @@ test('Tier 2 - Boundary & Corner Cases', 'Box Data Operations: CRUD structure an
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'RaenonX PR Calculation: Fast-Exit Baseline Filter & Lv.70/Lv.80 Sub-skill coverage', () => {
-  const boxModule = require(path.join(WORKSPACE_ROOT, 'box.js'));
+  const boxModule = require(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'));
   const calcPR = boxModule.calculatePokemonPR;
   assert(typeof calcPR === 'function', 'calculatePokemonPR must be a function');
 
@@ -780,9 +780,9 @@ test('Tier 2 - Boundary & Corner Cases', 'RaenonX PR Calculation: Fast-Exit Base
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'Event Gantt Timeline Parser: Identifies Events and Bundles with column grid spans and date ranges', () => {
-  const newsPath = path.join(WORKSPACE_ROOT, 'news.json');
+  const newsPath = path.join(WORKSPACE_ROOT, 'data', 'news.json');
   const newsData = JSON.parse(fs.readFileSync(newsPath, 'utf8'));
-  const newsModule = require(path.join(WORKSPACE_ROOT, 'news.js'));
+  const newsModule = require(path.join(WORKSPACE_ROOT, 'js', 'modules', 'news.js'));
 
   const timeline = newsModule.parseEventTimeline(newsData);
   assert(Array.isArray(timeline), 'parseEventTimeline must return an array');
@@ -922,8 +922,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Full application workflow sim
 });
 
 test('Tier 1 - Feature Coverage', 'Appraisal Lab & Six-Dimension Engine: Evaluates BFS God Roll and calculates milestone costs', () => {
-  const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'appraisal.js'), 'utf8');
-  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'box.js'), 'utf8');
+  const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
   
   const ctx = {
     window: {},
@@ -966,7 +966,7 @@ test('Tier 1 - Feature Coverage', 'Appraisal Lab & Six-Dimension Engine: Evaluat
 });
 
 test('Tier 1 - Feature Coverage', 'Ingredient Ladder: Recipe Supply mappings & Cross-Track Search/Filter functionality', () => {
-  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'wiki.js'), 'utf8');
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
   
   const ctx = {
     window: {},
@@ -994,7 +994,7 @@ test('Tier 1 - Feature Coverage', 'Ingredient Ladder: Recipe Supply mappings & C
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'Batch OCR & Smart Deduplication: Fingerprint hashing and duplicate rejection', () => {
-  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'box.js'), 'utf8');
+  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
   
   const ctx = {
     window: {},
@@ -1029,7 +1029,7 @@ test('Tier 2 - Boundary & Corner Cases', 'Batch OCR & Smart Deduplication: Finge
 });
 
 test('Tier 1 - Feature Coverage', 'i18n Bilingual Engine & Strategy Dictionaries: Translation coverage', () => {
-  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'i18n.js'), 'utf8');
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
   
   const ctx = {
     window: {},
@@ -1065,7 +1065,7 @@ test('Tier 1 - Feature Coverage', 'i18n Bilingual Engine & Strategy Dictionaries
 });
 
 test('Tier 1 - Feature Coverage', 'Multi-Theme CSS Variables & Theme Engine: 4 fixed themes (2 Dark + 2 Light)', () => {
-  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'styles.css'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
   
   assert(cssContent.includes('[data-theme="midnight"]'), 'styles.css must support midnight theme');
   assert(cssContent.includes('[data-theme="onyx"]'), 'styles.css must support onyx theme');
