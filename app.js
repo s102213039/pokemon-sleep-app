@@ -458,33 +458,106 @@ if (typeof document !== 'undefined') {
 
     let ghPat = localStorage.getItem(GH_PAT_KEY) || '';
 
-    const syncConfigBtn  = document.getElementById('sync-config-btn');
-    const syncConfigModal = document.getElementById('sync-config-modal');
-    const ghPatInput     = document.getElementById('gh-pat-input');
-    const savePatBtn     = document.getElementById('save-pat-btn');
-    const closeConfigBtn = document.getElementById('close-config-btn');
+    /* ─── 🎨 主題與外觀系統 (Theme System - 4 Themes: 2 Dark + 2 Light) ─── */
+    const STORAGE_KEY_THEME = 'user_theme';
+    let currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'midnight';
+    
+    function applyTheme(theme) {
+      if (!['midnight', 'onyx', 'dawn', 'emerald'].includes(theme)) {
+        theme = 'midnight';
+      }
+      currentTheme = theme;
+      document.documentElement.setAttribute('data-theme', theme);
+      try {
+        localStorage.setItem(STORAGE_KEY_THEME, theme);
+      } catch (e) {}
 
-    if (syncConfigBtn && syncConfigModal) {
-      syncConfigBtn.addEventListener('click', () => {
-        if (ghPatInput) ghPatInput.value = ghPat || '';
-        syncConfigModal.style.display = 'flex';
-      });
-      closeConfigBtn && closeConfigBtn.addEventListener('click', () => {
-        syncConfigModal.style.display = 'none';
-      });
-      savePatBtn && savePatBtn.addEventListener('click', () => {
-        const val = ghPatInput ? ghPatInput.value.trim() : '';
-        if (val) {
-          ghPat = val;
-          localStorage.setItem(GH_PAT_KEY, val);
-          syncConfigModal.style.display = 'none';
-          if (syncStatus) syncStatus.innerHTML = `<span style="color:#4ade80;">✅ PAT Token 已儲存！現在可以點擊同步資料。</span>`;
+      // 更新彈窗內的選中卡片
+      document.querySelectorAll('.theme-card-btn').forEach(btn => {
+        if (btn.getAttribute('data-theme-val') === theme) {
+          btn.classList.add('active');
         } else {
-          if (syncStatus) syncStatus.innerHTML = `<span style="color:#fbbf24;">⚠️ 請輸入有效的 PAT Token</span>`;
+          btn.classList.remove('active');
         }
       });
-      syncConfigModal.addEventListener('click', (e) => {
-        if (e.target === syncConfigModal) syncConfigModal.style.display = 'none';
+    }
+
+    // 初始化主題
+    applyTheme(currentTheme);
+    PokemonApp.applyTheme = applyTheme;
+    PokemonApp.getCurrentTheme = () => currentTheme;
+
+    // 綁定主題卡片點擊
+    document.querySelectorAll('.theme-card-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const themeVal = btn.getAttribute('data-theme-val');
+        if (themeVal) {
+          applyTheme(themeVal);
+        }
+      });
+    });
+
+    /* ─── 🌐 語言系統 (Language System) ─── */
+    function updateLangButtons() {
+      const currentLang = window.I18N ? window.I18N.getLanguage() : 'zh-TW';
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        if (btn.getAttribute('data-lang-val') === currentLang) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const langVal = btn.getAttribute('data-lang-val');
+        if (langVal && window.I18N) {
+          window.I18N.setLanguage(langVal);
+          updateLangButtons();
+        }
+      });
+    });
+
+    updateLangButtons();
+
+    /* ─── ⚙️ 設定彈窗控制 ─── */
+    const syncConfigBtn    = document.getElementById('sync-config-btn');
+    const settingsModal    = document.getElementById('settings-modal');
+    const settingsCloseBtn = document.getElementById('settings-modal-close-btn');
+    const ghPatInput       = document.getElementById('gh-pat-input');
+    const savePatBtn       = document.getElementById('save-pat-btn');
+
+    if (syncConfigBtn && settingsModal) {
+      syncConfigBtn.addEventListener('click', () => {
+        if (ghPatInput) ghPatInput.value = ghPat || '';
+        applyTheme(currentTheme);
+        updateLangButtons();
+        settingsModal.style.display = 'flex';
+      });
+
+      if (settingsCloseBtn) {
+        settingsCloseBtn.addEventListener('click', () => {
+          settingsModal.style.display = 'none';
+        });
+      }
+
+      if (savePatBtn) {
+        savePatBtn.addEventListener('click', () => {
+          const val = ghPatInput ? ghPatInput.value.trim() : '';
+          if (val) {
+            ghPat = val;
+            localStorage.setItem(GH_PAT_KEY, val);
+            settingsModal.style.display = 'none';
+            if (syncStatus) syncStatus.innerHTML = `<span style="color:#4ade80;">✅ PAT Token 已儲存！現在可以點擊同步資料。</span>`;
+          } else {
+            settingsModal.style.display = 'none';
+          }
+        });
+      }
+
+      settingsModal.addEventListener('click', (e) => {
+        if (e.target === settingsModal) settingsModal.style.display = 'none';
       });
     }
 
@@ -1124,44 +1197,51 @@ if (typeof document !== 'undefined') {
     }
 
     function renderGrid(data) {
+      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+      const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+
       contentArea.innerHTML = `
         <div class="pokemon-grid">
           ${data.map(p => {
             const iconUrl = getIconUrl(p);
+            const pkmName = isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en);
+            const typeName = window.I18N ? window.I18N.getTypeName(p.type) : (p.type || '一般');
+            const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
+
             return `
             <div class="pokemon-card">
               <div class="card-header">
-                ${iconUrl ? `<img class="pokemon-icon" src="${iconUrl}" alt="${p.name_cn}" loading="lazy" onerror="this.style.display='none';">` : ''}
+                ${iconUrl ? `<img class="pokemon-icon" src="${iconUrl}" alt="${pkmName}" loading="lazy" onerror="this.style.display='none';">` : ''}
                 <div class="card-title-group">
                   <div class="pokemon-no">No.${p.formatted_no}</div>
-                  <div class="pokemon-name" style="white-space:nowrap;">${p.name_cn}</div>
-                  <div class="pokemon-name-en" style="white-space:nowrap;">${p.name_en || ''}</div>
-                  <span class="type-badge" style="background-color: var(--type-${p.type}, #64748b);white-space:nowrap;">${p.type || '一般'}</span>
+                  <div class="pokemon-name" style="white-space:nowrap;">${pkmName}</div>
+                  <div class="pokemon-name-en" style="white-space:nowrap;">${isEN ? (p.name_cn || '') : (p.name_en || '')}</div>
+                  <span class="type-badge" style="background-color: var(--type-${p.type}, #64748b);white-space:nowrap;">${typeName}</span>
                 </div>
               </div>
               <div class="card-stats">
                 <div class="stat-item">
-                  <span class="stat-label">得意</span>
-                  <span class="stat-value" style="white-space:nowrap;">${p.specialty || '--'}</span>
+                  <span class="stat-label">${t('th.specialty', '得意')}</span>
+                  <span class="stat-value" style="white-space:nowrap;">${specName}</span>
                 </div>
                 <div class="stat-item">
-                  <span class="stat-label">持有</span>
+                  <span class="stat-label">${t('th.carry', '持有')}</span>
                   <span class="stat-value" style="white-space:nowrap;">${p.carry || '--'}</span>
                 </div>
                 <div class="stat-item">
-                  <span class="stat-label">食材率</span>
+                  <span class="stat-label">${t('th.ingredient_rate', '食材率')}</span>
                   <span class="stat-value" style="white-space:nowrap;">${p.ingredient_rate || '--'}</span>
                 </div>
                 <div class="stat-item">
-                  <span class="stat-label">技能率</span>
+                  <span class="stat-label">${t('th.skill_rate', '技能率')}</span>
                   <span class="stat-value" style="white-space:nowrap;">${p.skill_rate || '--'}</span>
                 </div>
                 <div class="stat-item">
-                  <span class="stat-label">間隔</span>
+                  <span class="stat-label">${t('th.interval', '間隔')}</span>
                   <span class="stat-value" style="white-space:nowrap;">${p.interval || '--'}</span>
                 </div>
                 <div class="stat-item">
-                  <span class="stat-label">主技能</span>
+                  <span class="stat-label">${t('th.main_skill', '主技能')}</span>
                   <span class="stat-value skill-stat-val">${renderSkillWithTooltip(p.main_skill)}</span>
                 </div>
               </div>
@@ -1180,38 +1260,45 @@ if (typeof document !== 'undefined') {
     }
 
     function renderTable(data) {
+      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+      const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+
       contentArea.innerHTML = `
         <div class="table-container">
           <table class="pokemon-table">
             <thead>
               <tr>
                 <th class="th-no">No.</th>
-                <th class="th-icon">圖示</th>
-                <th class="th-name">寶可夢</th>
-                <th class="th-type">屬性</th>
-                <th class="th-spec">得意</th>
-                ${sortableTh('carry', '持有', 'th-carry')}
-                <th class="th-ing">食材 ①</th>
-                <th class="th-ing">食材 ②</th>
-                <th class="th-ing">食材 ③</th>
-                ${sortableTh('ingredientRate', '食材率', 'th-rate')}
-                ${sortableTh('skillRate', '技能率', 'th-rate')}
-                ${sortableTh('interval', '幫忙間隔', 'th-interval')}
-                <th class="th-skill">主技能</th>
+                <th class="th-icon">${t('th.icon', '圖示')}</th>
+                <th class="th-name">${t('th.name', '寶可夢')}</th>
+                <th class="th-type">${t('th.type', '屬性')}</th>
+                <th class="th-spec">${t('th.specialty', '得意')}</th>
+                ${sortableTh('carry', t('th.carry', '持有'), 'th-carry')}
+                <th class="th-ing">${t('th.ingredients', '食材')} ①</th>
+                <th class="th-ing">${t('th.ingredients', '食材')} ②</th>
+                <th class="th-ing">${t('th.ingredients', '食材')} ③</th>
+                ${sortableTh('ingredientRate', t('th.ingredient_rate', '食材率'), 'th-rate')}
+                ${sortableTh('skillRate', t('th.skill_rate', '技能率'), 'th-rate')}
+                ${sortableTh('interval', t('th.interval', '幫忙間隔'), 'th-interval')}
+                <th class="th-skill">${t('th.main_skill', '主技能')}</th>
               </tr>
             </thead>
             <tbody>
               ${data.map(p => {
                 const iconUrl = getIconUrl(p);
+                const pkmName = isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en);
+                const typeName = window.I18N ? window.I18N.getTypeName(p.type) : (p.type || '一般');
+                const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
+
                 return `
                 <tr>
                   <td class="td-no">${p.formatted_no}</td>
                   <td class="td-icon">
-                    ${iconUrl ? `<img src="${iconUrl}" width="34" height="34" class="table-icon" alt="${p.name_cn}" loading="lazy" onerror="this.style.display='none';">` : ''}
+                    ${iconUrl ? `<img src="${iconUrl}" width="34" height="34" class="table-icon" alt="${pkmName}" loading="lazy" onerror="this.style.display='none';">` : ''}
                   </td>
-                  <td class="td-name pokemon-name-cell">${p.name_cn}</td>
-                  <td class="td-type"><span class="type-badge" style="background-color:var(--type-${p.type}, #64748b);">${p.type || '一般'}</span></td>
-                  <td class="td-spec">${p.specialty || '--'}</td>
+                  <td class="td-name pokemon-name-cell">${pkmName}</td>
+                  <td class="td-type"><span class="type-badge" style="background-color:var(--type-${p.type}, #64748b);">${typeName}</span></td>
+                  <td class="td-spec">${specName}</td>
                   <td class="td-carry">${p.carry || '--'}</td>
                   <td class="td-ing">${p.ingredients && p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${p.ingredients[0].name}" loading="lazy" title="${p.ingredients[0].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[0],0)}</div>` : '--'}</td>
                   <td class="td-ing">${p.ingredients && p.ingredients[1] ? `<div class="ing-cell">${p.ingredients[1].icon ? `<img class="ing-icon" src="${p.ingredients[1].icon}" alt="${p.ingredients[1].name}" loading="lazy" title="${p.ingredients[1].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[1],1)}</div>` : '--'}</td>

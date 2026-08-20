@@ -1028,6 +1028,53 @@ test('Tier 2 - Boundary & Corner Cases', 'Batch OCR & Smart Deduplication: Finge
   assert(fpA1 !== fpB, 'Fingerprint should distinguish different levels');
 });
 
+test('Tier 1 - Feature Coverage', 'i18n Bilingual Engine & Strategy Dictionaries: Translation coverage', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'i18n.js'), 'utf8');
+  
+  const ctx = {
+    window: {},
+    document: { 
+      documentElement: { setAttribute: () => {} },
+      querySelectorAll: () => []
+    },
+    localStorage: { getItem: () => null, setItem: () => {} },
+    console: console
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+
+  const I18N = ctx.window.I18N;
+  assert(I18N, 'I18N module must be exposed on window');
+  
+  // Default is zh-TW
+  assertEquals(I18N.getLanguage(), 'zh-TW', 'Default language should be zh-TW');
+  assertEquals(I18N.t('brand.title'), 'Pokémon Sleep 資料庫', 'zh-TW brand.title match');
+  assertEquals(I18N.getTypeName('草'), '草', 'zh-TW type name match');
+  assertEquals(I18N.getSpecialtyName('樹果'), '樹果', 'zh-TW specialty name match');
+  assertEquals(I18N.getNatureName('固執'), '固執', 'zh-TW nature name match');
+
+  // Switch to en-US
+  I18N.setLanguage('en-US');
+  assertEquals(I18N.getLanguage(), 'en-US', 'Language should switch to en-US');
+  assertEquals(I18N.t('brand.title'), 'Pokémon Sleep Database', 'en-US brand.title match');
+  assertEquals(I18N.getTypeName('草'), 'Grass', 'en-US type name match');
+  assertEquals(I18N.getSpecialtyName('樹果'), 'Berries', 'en-US specialty name match');
+  assertEquals(I18N.getNatureName('固執'), 'Adamant', 'en-US nature name match');
+  assertEquals(I18N.getIngredientName('特選蘋果'), 'Fancy Apple', 'en-US ingredient name match');
+});
+
+test('Tier 1 - Feature Coverage', 'Multi-Theme CSS Variables & Theme Engine: 4 fixed themes (2 Dark + 2 Light)', () => {
+  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'styles.css'), 'utf8');
+  
+  assert(cssContent.includes('[data-theme="midnight"]'), 'styles.css must support midnight theme');
+  assert(cssContent.includes('[data-theme="onyx"]'), 'styles.css must support onyx theme');
+  assert(cssContent.includes('[data-theme="dawn"]'), 'styles.css must support dawn light theme');
+  assert(cssContent.includes('[data-theme="emerald"]'), 'styles.css must support emerald light theme');
+  assert(cssContent.includes('.theme-picker-grid'), 'styles.css must style theme picker grid');
+  assert(cssContent.includes('.lang-switcher-row'), 'styles.css must style language switcher');
+});
+
 
 // Final Summary Output
 console.log('\n======================================================');
