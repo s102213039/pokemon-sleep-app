@@ -784,44 +784,162 @@
     renderBox();
   }
 
-  /* ─── 📸 截圖智能分析與 OCR 引擎 ───────────────────────── */
+  /* ─── 📸 截圖智能分析與 OCR 引擎 (支援單圖與多圖連續批次辨識) ───────────────────────── */
+  function makePokemonFingerprint(p) {
+    if (!p) return '';
+    const sks = (p.subskills || []).slice().sort().join(',');
+    return `${p.name || p.pokemonId || ''}_Lv${p.level || 1}_${p.nature || ''}_${sks}_${p.ing1 || ''}_${p.ing2 || ''}_${p.ing3 || ''}`;
+  }
+
   async function handleScreenshotFiles(files) {
     if (!files || files.length === 0) return;
 
-    const file = files[0];
-    if (!file.type.startsWith('image/')) {
+    const imageFiles = Array.from(files).filter(f => f && f.type && f.type.startsWith('image/'));
+    if (imageFiles.length === 0) {
       alert('請上傳圖片檔案 (PNG, JPG, WebP)！');
       return;
     }
 
     const scannerStatus = document.getElementById('box-scanner-status');
-    if (scannerStatus) {
-      scannerStatus.style.display = 'flex';
-      scannerStatus.innerHTML = `<span>⚡ 正在智能解析截圖中，請稍候...</span>`;
+
+    // 1. 單張截圖流程 (保留單張確認彈窗)
+    if (imageFiles.length === 1) {
+      const file = imageFiles[0];
+      if (scannerStatus) {
+        scannerStatus.style.display = 'flex';
+        scannerStatus.innerHTML = `<span>⚡ 正在智能解析截圖中，請稍候...</span>`;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const imgSrc = e.target.result;
+        try {
+          const parsedData = await parsePokemonScreenshot(imgSrc);
+          if (scannerStatus) scannerStatus.style.display = 'none';
+          openBoxEditModal(parsedData, imgSrc);
+        } catch (err) {
+          console.error('Screenshot parse failed:', err);
+          if (scannerStatus) scannerStatus.style.display = 'none';
+          openBoxEditModal(null, imgSrc);
+        }
+      };
+      reader.readAsDataURL(file);
+      return;
     }
 
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const imgSrc = e.target.result;
-      try {
-        const parsedData = await parsePokemonScreenshot(imgSrc);
-        if (scannerStatus) scannerStatus.style.display = 'none';
-        openBoxEditModal(parsedData, imgSrc);
-      } catch (err) {
-        console.error('Screenshot parse failed:', err);
-        if (scannerStatus) scannerStatus.style.display = 'none';
-        // 辨識失敗時仍打開彈窗讓使用者對照截圖手動填寫
-        openBoxEditModal(null, imgSrc);
+    // 2. 多圖批次辨識入庫流程 (Batch OCR Multi-Import & Smart Deduplication)
+    const total = imageFiles.length;
+    let importedCount = 0;
+    let duplicateCount = 0;
+    const importedNames = [];
+
+    // 建立既有特徵指紋集合
+    const existingFingerprints = new Set(userBox.map(makePokemonFingerprint));
+
+    if (scannerStatus) {
+      scannerStatus.style.display = 'flex';
+      scannerStatus.innerHTML = `
+        <div class="batch-ocr-progress-card">
+          <div class="batch-ocr-header">
+            <span class="batch-ocr-title">⚡ 批次智能辨識入庫中...</span>
+            <span id="batch-ocr-counter" class="batch-ocr-counter">0 / ${total}</span>
+          </div>
+          <div class="batch-ocr-bar-bg">
+            <div id="batch-ocr-bar-fill" class="batch-ocr-bar-fill" style="width: 0%;"></div>
+          </div>
+          <div id="batch-ocr-status-text" class="batch-ocr-status-text">初始化 OCR 引擎中...</div>
+        </div>
+      `;
+    }
+
+    let sharedWorker = null;
+    try {
+      if (window.Tesseract) {
+        sharedWorker = await window.Tesseract.createWorker('chi_tra+eng');
       }
-    };
-    reader.readAsDataURL(file);
+    } catch (e) {
+      console.warn('Could not initialize shared Tesseract worker:', e);
+    }
+
+    for (let i = 0; i < total; i++) {
+      const file = imageFiles[i];
+      const statusText = document.getElementById('batch-ocr-status-text');
+      const counterEl = document.getElementById('batch-ocr-counter');
+      const barFill = document.getElementById('batch-ocr-bar-fill');
+
+      if (statusText) statusText.textContent = `正在辨識：${file.name} (${i + 1}/${total})...`;
+      if (counterEl) counterEl.textContent = `${i + 1} / ${total}`;
+      if (barFill) barFill.style.width = `${Math.round(((i + 1) / total) * 100)}%`;
+
+      try {
+        const imgSrc = await readFileAsDataURL(file);
+        const parsed = await parsePokemonScreenshotWithWorker(imgSrc, sharedWorker);
+
+        // 防重保護檢測
+        const fp = makePokemonFingerprint(parsed);
+        if (existingFingerprints.has(fp)) {
+          duplicateCount++;
+        } else {
+          existingFingerprints.add(fp);
+          parsed.uid = 'pkm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+          parsed.createdAt = Date.now();
+          userBox.push(parsed);
+          importedCount++;
+          importedNames.push(parsed.name || '寶可夢');
+        }
+      } catch (err) {
+        console.error(`Error parsing file ${file.name}:`, err);
+      }
+    }
+
+    if (sharedWorker) {
+      try {
+        await sharedWorker.terminate();
+      } catch (e) {}
+    }
+
+    if (scannerStatus) {
+      scannerStatus.style.display = 'none';
+    }
+
+    if (importedCount > 0) {
+      saveUserBox();
+      renderBox();
+    }
+
+    // 彈出 Toast 通知
+    showBoxToast(
+      '📸 批次辨識入庫完成！',
+      `成功入庫 ${importedCount} 隻寶可夢${duplicateCount > 0 ? ` (已略過 ${duplicateCount} 隻重複截圖)` : ''}${importedNames.length > 0 ? `：${importedNames.slice(0, 5).join('、')}${importedNames.length > 5 ? ' 等' : ''}` : ''}。`,
+      importedCount > 0 ? 'success' : 'info'
+    );
   }
 
-  /**
-   * 截圖解析核心演算法：
-   * 結合 Canvas 幾何區域採樣、色彩分析與 Tesseract OCR 文字比對
-   */
+  function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
   async function parsePokemonScreenshot(imageSrc) {
+    let worker = null;
+    try {
+      if (window.Tesseract) {
+        worker = await window.Tesseract.createWorker('chi_tra+eng');
+      }
+      const res = await parsePokemonScreenshotWithWorker(imageSrc, worker);
+      if (worker) await worker.terminate();
+      return res;
+    } catch (e) {
+      if (worker) try { await worker.terminate(); } catch (err) {}
+      throw e;
+    }
+  }
+
+  async function parsePokemonScreenshotWithWorker(imageSrc, worker) {
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = async () => {
@@ -836,22 +954,22 @@
         };
 
         try {
-          // 動態載入 Tesseract.js (若可用) 或本地模糊幾何解析
-          if (window.Tesseract) {
-            const worker = await window.Tesseract.createWorker('chi_tra+eng');
+          if (worker) {
             const ret = await worker.recognize(img);
-            await worker.terminate();
-
             const text = ret.data.text || '';
-            console.log('[OCR Raw Text]:', text);
 
-            // 1. 辨識寶可夢名稱 (比對 data.json)
+            // 1. 辨識寶可夢名稱
             for (const p of allPokemonsRef) {
               if (text.includes(p.name_cn) || text.includes(p.formatted_no)) {
                 result.name = p.name_cn;
                 result.pokemonId = p.id;
                 result.type = p.type;
                 result.specialty = p.specialty;
+                if (p.ingredients) {
+                  result.ing1 = p.ingredients[0] ? p.ingredients[0].name : '';
+                  result.ing2 = p.ingredients[1] ? p.ingredients[1].name : (p.ingredients[0] ? p.ingredients[0].name : '');
+                  result.ing3 = p.ingredients[2] ? p.ingredients[2].name : (p.ingredients[0] ? p.ingredients[0].name : '');
+                }
                 break;
               }
             }
@@ -862,7 +980,7 @@
               result.level = Math.min(70, Math.max(1, parseInt(lvlMatch[1], 10)));
             }
 
-            // 3. 辨識性格 (比對 25 種性格)
+            // 3. 辨識性格
             for (const n of NATURE_DATA) {
               if (text.includes(n.name)) {
                 result.nature = n.name;
@@ -885,12 +1003,45 @@
         if (!result.name && allPokemonsRef.length > 0) {
           result.name = allPokemonsRef[0].name_cn;
           result.pokemonId = allPokemonsRef[0].id;
+          result.type = allPokemonsRef[0].type;
+          result.specialty = allPokemonsRef[0].specialty;
         }
 
         resolve(result);
       };
       img.src = imageSrc;
     });
+  }
+
+  /* ─── 浮動 Toast 系統 ─────────────────────────────────────── */
+  function showBoxToast(title, message, type = 'success') {
+    let container = document.getElementById('box-toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'box-toast-container';
+      container.className = 'box-toast-container';
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `box-toast-item toast-${type}`;
+    toast.innerHTML = `
+      <div class="box-toast-icon">${type === 'success' ? '✅' : (type === 'warning' ? '⚠️' : 'ℹ️')}</div>
+      <div class="box-toast-body">
+        <div class="box-toast-title">${escapeHtml(title)}</div>
+        <div class="box-toast-msg">${escapeHtml(message)}</div>
+      </div>
+      <button type="button" class="box-toast-close" onclick="this.parentElement.remove()">✕</button>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      if (toast.parentElement) {
+        toast.classList.add('toast-fadeout');
+        setTimeout(() => toast.remove(), 300);
+      }
+    }, 4500);
   }
 
   /* ─── 備份匯出與匯入 ─────────────────────────────────────── */
@@ -986,18 +1137,20 @@
       });
     }
 
-    // 全域剪貼簿貼上監聽 (Ctrl+V / Cmd+V 截圖入庫)
+    // 全域剪貼簿貼上監聽 (Ctrl+V / Cmd+V 支援單張或多張截圖連續入庫)
     window.addEventListener('paste', (e) => {
       const panelBox = document.getElementById('panel-box');
       if (panelBox && panelBox.style.display !== 'none') {
         const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        const imageBlobs = [];
         for (let index in items) {
           const item = items[index];
           if (item.kind === 'file' && item.type.startsWith('image/')) {
-            const blob = item.getAsFile();
-            handleScreenshotFiles([blob]);
-            break;
+            imageBlobs.push(item.getAsFile());
           }
+        }
+        if (imageBlobs.length > 0) {
+          handleScreenshotFiles(imageBlobs);
         }
       }
     });

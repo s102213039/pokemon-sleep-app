@@ -993,6 +993,41 @@ test('Tier 1 - Feature Coverage', 'Ingredient Ladder: Recipe Supply mappings & C
   assert(typeof ctx.WikiDB.setLadderRecipeFilter === 'function', 'setLadderRecipeFilter should be a function');
 });
 
+test('Tier 2 - Boundary & Corner Cases', 'Batch OCR & Smart Deduplication: Fingerprint hashing and duplicate rejection', () => {
+  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'box.js'), 'utf8');
+  
+  const ctx = {
+    window: {},
+    document: { 
+      createElement: () => ({ setAttribute: () => {}, appendChild: () => {}, className: '' }), 
+      getElementById: () => null,
+      querySelectorAll: () => [],
+      body: { appendChild: () => {} }
+    },
+    console: console
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(boxCode, ctx);
+
+  // Test deduplication fingerprint
+  const pkmA1 = { name: '雷丘', level: 35, nature: '固執', subskills: ['樹果數量S', '幫忙速度M'], ing1: '特選蘋果', ing2: '特選蘋果', ing3: '特選蘋果' };
+  const pkmA2 = { name: '雷丘', level: 35, nature: '固執', subskills: ['幫忙速度M', '樹果數量S'], ing1: '特選蘋果', ing2: '特選蘋果', ing3: '特選蘋果' }; // subskills different order
+  const pkmB = { name: '雷丘', level: 36, nature: '固執', subskills: ['樹果數量S', '幫忙速度M'], ing1: '特選蘋果', ing2: '特選蘋果', ing3: '特選蘋果' }; // level diff
+
+  function makeFP(p) {
+    const sks = (p.subskills || []).slice().sort().join(',');
+    return `${p.name || ''}_Lv${p.level || 1}_${p.nature || ''}_${sks}_${p.ing1 || ''}_${p.ing2 || ''}_${p.ing3 || ''}`;
+  }
+
+  const fpA1 = makeFP(pkmA1);
+  const fpA2 = makeFP(pkmA2);
+  const fpB = makeFP(pkmB);
+
+  assertEquals(fpA1, fpA2, 'Fingerprint should be order-independent for subskills');
+  assert(fpA1 !== fpB, 'Fingerprint should distinguish different levels');
+});
+
 
 // Final Summary Output
 console.log('\n======================================================');

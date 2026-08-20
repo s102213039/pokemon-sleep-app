@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260820_06">
+  <link rel="stylesheet" href="styles.css?v=20260820_07">
 </head>
 <body>
 
@@ -13614,7 +13614,7 @@
             <p class="box-banner-desc">支援上傳遊戲截圖自動辨識等級、食材組合、副技能與性格，亦可隨時手動錄入與編輯。</p>
           </div>
           <div class="box-banner-actions">
-            <input type="file" id="box-file-input" accept="image/*" style="display:none;">
+            <input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
             <button type="button" id="box-appraisal-lab-btn" class="box-btn" style="background: linear-gradient(135deg, #8b5cf6, #38bdf8); color: #ffffff; border: 1px solid rgba(168, 85, 247, 0.4); font-weight: 700;" onclick="window.AppraisalLab.toggleLab()" title="開啟/收合 寶可夢六維深度診斷評測實驗室">🔮 深度評測室</button>
             <button type="button" id="box-manual-add-btn" class="box-btn box-btn-primary">➕ 手動新增寶可夢</button>
             <button type="button" id="box-export-btn" class="box-btn box-btn-secondary" title="匯出個人倉庫為 JSON 備份檔">💾 匯出備份</button>
@@ -13633,12 +13633,15 @@
           <div class="box-dropzone-inner">
             <span class="box-dropzone-icon">📸</span>
             <div class="box-dropzone-content">
-              <div class="box-dropzone-title">點擊或拖曳「寶可夢資料截圖」至此，或直接按 <kbd>Ctrl+V</kbd> / <kbd>Cmd+V</kbd> 貼上</div>
-              <div class="box-dropzone-sub">自動辨識：寶可夢名稱 · 等級 · Lv.1/30/60 食材組合 · 5 格副技能 · 性格加成</div>
+              <div class="box-dropzone-title">點擊或多選/批次拖曳「寶可夢資料截圖」至此，或直接按 <kbd>Ctrl+V</kbd> / <kbd>Cmd+V</kbd> 貼上</div>
+              <div class="box-dropzone-sub">自動批次辨識：寶可夢名稱 · 等級 · Lv.1/30/60 食材組合 · 5 格副技能 · 性格加成 · 智能防重保護</div>
             </div>
           </div>
           <div id="box-scanner-status" class="box-scanner-status" style="display:none;"></div>
         </div>
+
+        <!-- 🔔 倉庫專屬浮動 Toast 通知容器 -->
+        <div id="box-toast-container" class="box-toast-container"></div>
 
         <!-- 篩選與搜尋列 -->
         <div class="search-filter-row">
@@ -13825,11 +13828,11 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260820_06"></script>
-  <script src="recipes.js?v=20260820_06"></script>
-  <script src="wiki.js?v=20260820_06"></script>
-  <script src="box.js?v=20260820_06"></script>
-  <script src="news.js?v=20260820_06"></script>
-  <script src="appraisal.js?v=20260820_06"></script>
+  <script src="app.js?v=20260820_07"></script>
+  <script src="recipes.js?v=20260820_07"></script>
+  <script src="wiki.js?v=20260820_07"></script>
+  <script src="box.js?v=20260820_07"></script>
+  <script src="news.js?v=20260820_07"></script>
+  <script src="appraisal.js?v=20260820_07"></script>
 </body>
 </html>
