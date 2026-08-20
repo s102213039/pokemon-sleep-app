@@ -63,6 +63,8 @@
       'pokedex.no_results': '沒有符合篩選條件的寶可夢',
       'pokedex.no_results_desc': '找不到符合條件的寶可夢，請調整篩選條件或重置搜尋。',
       'pokedex.count_label': '隻寶可夢',
+      'pokedex.ref_data': '📊 參考資料來源',
+      'pokedex.target_sheet': '📋 目標試算表',
 
       // Table Headers & Card Labels
       'th.icon': '圖示',
@@ -110,6 +112,8 @@
       'recipe.bonus_label': '最低食譜加成',
       'recipe.pot_label': '最低鍋子容量',
       'recipe.all': '全部',
+      'recipe.pot_15': '≥ 15（初始）',
+      'recipe.pot_100': '≥ 100（頂級）',
       'recipe.cat_curry': '🍛 咖哩/濃湯',
       'recipe.cat_salad': '🥗 沙拉',
       'recipe.cat_dessert': '🍰 點心/飲料',
@@ -128,6 +132,8 @@
       'recipe.clear_excluded': '清除排除',
       'recipe.included_hint': '點擊食材圖示，只顯示<strong>包含</strong>該食材的食譜',
       'recipe.excluded_hint': '點擊食材圖示，<strong>隱藏</strong>包含該食材的食譜（與「包含食材」互斥）',
+      'recipe.excluded_warn': '點選食材後，含該食材的食譜將被隱藏',
+      'recipe.stats_tip': '💡 食材加成為每道食譜的<strong>固定數值</strong>；等級、島嶼與活動加成乘算於最終能量',
       'recipe.count_badge': '道食譜',
       'recipe.th_dish': '料理名稱',
       'recipe.th_category': '種類',
@@ -139,6 +145,11 @@
 
       // Wiki Panel
       'wiki.title': '📚 數據百科與攻略知識庫',
+      'wiki.subtab_skills': '⚡ 主技能數值庫',
+      'wiki.subtab_subskills': '🧩 副技能與性格指南',
+      'wiki.subtab_ratings': '🎓 培育與評級指南',
+      'wiki.subtab_ingredients': '🥗 Lv.60 食材天梯榜',
+      'wiki.subtab_values': '🫐 樹果與食材能量',
       'wiki.tab_skills': '⚡ 主技能數值庫',
       'wiki.tab_subskills': '🧩 副技能與性格指南',
       'wiki.tab_ratings': '🎓 培育與評級指南',
@@ -161,10 +172,16 @@
       // Box & Appraisal
       'box.title': '📦 我的寶可夢倉庫 & 截圖智能辨識',
       'box.desc': '支援上傳遊戲截圖自動辨識等級、食材組合、副技能與性格，亦可隨時手動錄入與編輯。',
+      'box.banner_title': '📦 我的寶可夢倉庫 & 截圖智能辨識',
+      'box.banner_desc': '支援上傳遊戲截圖自動辨識等級、食材組合、副技能與性格，亦可隨時手動錄入與編輯。',
       'box.appraisal_lab_btn': '🔮 深度評測室',
+      'box.appraisal_lab': '🔮 深度評測室',
       'box.manual_add': '➕ 手動新增寶可夢',
+      'box.add_pokemon': '➕ 手動新增寶可夢',
       'box.export': '💾 匯出備份',
+      'box.export_backup': '💾 匯出備份',
       'box.import': '📥 匯入還原',
+      'box.import_backup': '📥 匯入還原',
       'box.dropzone_title': '點擊或多選/批次拖曳「寶可夢資料截圖」至此，或直接按 Ctrl+V / Cmd+V 貼上',
       'box.dropzone_sub': '自動批次辨識：寶可夢名稱 · 等級 · Lv.1/30/60 食材組合 · 5 格副技能 · 性格加成 · 智能防重保護',
       'box.search_placeholder': '搜尋倉庫寶可夢名稱、暱稱、性格、副技能...',
@@ -195,7 +212,8 @@
       'news.cat_maintenance': '系統維護',
       'news.cat_update': '遊戲更新',
       'news.cat_bundle': '禮包資訊',
-      'news.source_hint': '🤖 由 AI 自動提煉核心亮點 · 來源：'
+      'news.source_hint': '🤖 由 AI 自動提煉核心亮點 · 來源：',
+      'news.source_full_hint': '🤖 由 AI 自動提煉核心亮點 · 來源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 繁體中文官方網站</a>'
     },
 
     'en-US': {
@@ -251,6 +269,8 @@
       'pokedex.no_results': 'No Pokémon Found',
       'pokedex.no_results_desc': 'Please adjust your search criteria or reset filters.',
       'pokedex.count_label': 'Pokémon',
+      'pokedex.ref_data': '📊 Reference Data',
+      'pokedex.target_sheet': '📋 Target Sheet',
 
       // Table Headers & Card Labels
       'th.icon': 'Icon',
@@ -298,6 +318,8 @@
       'recipe.bonus_label': 'Min Bonus',
       'recipe.pot_label': 'Min Pot Size',
       'recipe.all': 'All',
+      'recipe.pot_15': '≥ 15 (Initial)',
+      'recipe.pot_100': '≥ 100 (Max)',
       'recipe.cat_curry': '🍛 Curry',
       'recipe.cat_salad': '🥗 Salad',
       'recipe.cat_dessert': '🍰 Dessert',
@@ -316,6 +338,8 @@
       'recipe.clear_excluded': 'Clear Excluded',
       'recipe.included_hint': 'Click ingredient to show dishes containing it',
       'recipe.excluded_hint': 'Click ingredient to hide dishes containing it',
+      'recipe.excluded_warn': 'Dishes with selected ingredients will be hidden',
+      'recipe.stats_tip': '💡 Recipe bonus is a fixed value per recipe; Level, island, and event bonuses multiply final energy',
       'recipe.count_badge': 'Dishes',
       'recipe.th_dish': 'Dish',
       'recipe.th_category': 'Category',
@@ -327,6 +351,11 @@
 
       // Wiki Panel
       'wiki.title': '📚 Strategy & Encyclopedia Knowledge Base',
+      'wiki.subtab_skills': '⚡ Main Skills',
+      'wiki.subtab_subskills': '🧩 Sub-Skills & Natures',
+      'wiki.subtab_ratings': '🎓 Tier Lists',
+      'wiki.subtab_ingredients': '🥗 Ing. Ladder',
+      'wiki.subtab_values': '🫐 Base Power',
       'wiki.tab_skills': '⚡ Main Skills',
       'wiki.tab_subskills': '🧩 Sub-Skills & Natures',
       'wiki.tab_ratings': '🎓 Tier Lists',
@@ -349,10 +378,16 @@
       // Box & Appraisal
       'box.title': '📦 My Pokémon Box & Smart OCR Scanner',
       'box.desc': 'Batch auto-recognize Level, Ingredients, Sub-skills, and Nature from screenshots or manual entry.',
+      'box.banner_title': '📦 My Pokémon Box & OCR Scanner',
+      'box.banner_desc': 'Batch auto-recognize Level, Ingredients, Sub-skills, and Nature from screenshots or manual entry.',
       'box.appraisal_lab_btn': '🔮 Appraisal Lab',
+      'box.appraisal_lab': '🔮 Appraisal Lab',
       'box.manual_add': '➕ Add Pokémon',
+      'box.add_pokemon': '➕ Add Pokémon',
       'box.export': '💾 Export',
+      'box.export_backup': '💾 Export JSON',
       'box.import': '📥 Import',
+      'box.import_backup': '📥 Import JSON',
       'box.dropzone_title': 'Click or batch drag & drop screenshots here, or paste with Ctrl+V / Cmd+V',
       'box.dropzone_sub': 'Auto-detect: Name · Level · Lv.1/30/60 Ingredients · 5 Sub-skills · Nature · Deduplication',
       'box.search_placeholder': 'Search box Pokémon by name, nickname, nature, sub-skill...',
@@ -383,7 +418,8 @@
       'news.cat_maintenance': 'Maintenance',
       'news.cat_update': 'Updates',
       'news.cat_bundle': 'Bundles',
-      'news.source_hint': '🤖 Summarized by AI · Source: '
+      'news.source_hint': '🤖 Summarized by AI · Source: ',
+      'news.source_full_hint': '🤖 AI Highlights Summary · Source: <a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep Official Website</a>'
     }
   };
 
@@ -657,6 +693,13 @@
       }
     });
 
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const key = el.getAttribute('data-i18n-html');
+      if (key) {
+        el.innerHTML = t(key, el.innerHTML);
+      }
+    });
+
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
       const key = el.getAttribute('data-i18n-placeholder');
       if (key) {
@@ -669,6 +712,10 @@
       if (key) {
         el.setAttribute('title', t(key, el.getAttribute('title')));
       }
+    });
+
+    document.querySelectorAll('select').forEach(sel => {
+      sel.dispatchEvent(new Event('sync-ui'));
     });
   }
 

@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=20260820_16">
+  <link rel="stylesheet" href="css/styles.css?v=20260820_17">
 </head>
 <body>
 
@@ -286,18 +286,18 @@
 
         <!-- Stats Bar -->
         <div class="stats-bar">
-          <span id="count-badge">載入中...</span>
+          <span id="count-badge" data-i18n="pokedex.loading">載入中...</span>
           <div style="display:flex;gap:12px;align-items:center;">
             <a href="https://docs.google.com/spreadsheets/d/1JkV2QxGGFDBzUfDxfOhTD3hrJJzu9qCS4A6c_HicIDc/edit#gid=87785598"
-               target="_blank" style="color:var(--accent-color);text-decoration:none;font-size:12px;">📊 參考資料來源</a>
+               target="_blank" data-i18n="pokedex.ref_data" style="color:var(--accent-color);text-decoration:none;font-size:12px;">📊 參考資料來源</a>
             <a href="https://docs.google.com/spreadsheets/d/1BD05wG8Gy3EUNzhg5mtErllr-Rkv20iFGsZ8kNsuUJ0/edit"
-               target="_blank" style="color:var(--accent-color);text-decoration:none;font-size:12px;">📋 目標試算表</a>
+               target="_blank" data-i18n="pokedex.target_sheet" style="color:var(--accent-color);text-decoration:none;font-size:12px;">📋 目標試算表</a>
           </div>
         </div>
 
         <!-- Content Area -->
         <section id="content-area">
-          <div style="text-align:center;padding:60px;color:var(--text-muted);">
+          <div style="text-align:center;padding:60px;color:var(--text-muted);" data-i18n="pokedex.loading">
             資料載入中，請稍候...
           </div>
         </section>
@@ -338,15 +338,15 @@
         <!-- 第二行：raenonx 風格 filter bar -->
         <div class="raenonx-filter-bar">
           <div class="rf-group">
-            <span class="rf-label" data-i18n="recipe.filter_category">料理種類</span>
+            <span class="rf-label" data-i18n="recipe.category_label">料理種類</span>
             <div id="category-filter-tags" class="rf-tags"></div>
           </div>
 
           <div class="rf-group">
-            <span class="rf-label" data-i18n="recipe.filter_bonus">最低食譜加成</span>
+            <span class="rf-label" data-i18n="recipe.bonus_label">最低食譜加成</span>
             <div class="rf-select-wrap">
               <select id="bonus-filter-select" class="rf-select">
-                <option value="0">全部</option>
+                <option value="0" data-i18n="recipe.all">全部</option>
                 <option value="19">≥ 19%</option>
                 <option value="20">≥ 20%</option>
                 <option value="21">≥ 21%</option>
@@ -360,16 +360,16 @@
           </div>
 
           <div class="rf-group">
-            <span class="rf-label" data-i18n="recipe.filter_pot">最低鍋子容量</span>
+            <span class="rf-label" data-i18n="recipe.pot_label">最低鍋子容量</span>
             <div class="rf-select-wrap">
               <select id="pot-filter-select" class="rf-select">
-                <option value="0">全部</option>
-                <option value="15">≥ 15（初始）</option>
+                <option value="0" data-i18n="recipe.all">全部</option>
+                <option value="15" data-i18n="recipe.pot_15">≥ 15（初始）</option>
                 <option value="21">≥ 21</option>
                 <option value="30">≥ 30</option>
                 <option value="50">≥ 50</option>
                 <option value="70">≥ 70</option>
-                <option value="100">≥ 100（頂級）</option>
+                <option value="100" data-i18n="recipe.pot_100">≥ 100（頂級）</option>
               </select>
             </div>
           </div>
@@ -389,7 +389,7 @@
                 aria-label="食譜等級">
               <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">Lv.70</span>
             </div>
-            <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;">
+            <div data-i18n="recipe.slider_level_desc" style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;">
               等級加成非線性，Lv.70 最高可達 +258%
             </div>
           </div>
@@ -406,7 +406,7 @@
                 aria-label="島嶼能量加成">
               <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">85%</span>
             </div>
-            <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;">
+            <div data-i18n="recipe.slider_island_desc" style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;">
               0%→85%，每格 +5%（×1.00 ～ ×1.85）
             </div>
           </div>
@@ -423,7 +423,7 @@
                 aria-label="活動能量加成">
               <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">2.50x</span>
             </div>
-            <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;">
+            <div data-i18n="recipe.slider_event_desc" style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;">
               1.00x→2.50x，每格 +0.25x（活動限定倍率）
             </div>
           </div>
@@ -445,18 +445,18 @@
         <!-- 第四行：包含食材篩選器 -->
         <div class="filter-tags-group" style="margin-top:0;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-            <span class="filter-label" data-i18n="recipe.filter_ing_include">🟢 包含食材篩選</span>
+            <span class="filter-label" data-i18n="recipe.filter_included">🟢 包含食材篩選</span>
             <div style="display:flex;gap:12px;align-items:center;font-size:12px;color:var(--text-muted);">
               <label style="cursor:pointer;display:flex;align-items:center;gap:5px;">
-                <input type="radio" name="ingredient-match-mode" value="any" checked> 含任一
+                <input type="radio" name="ingredient-match-mode" value="any" checked> <span data-i18n="recipe.match_any">含任一</span>
               </label>
               <label style="cursor:pointer;display:flex;align-items:center;gap:5px;">
-                <input type="radio" name="ingredient-match-mode" value="all"> 全部符合
+                <input type="radio" name="ingredient-match-mode" value="all"> <span data-i18n="recipe.match_all">全部符合</span>
               </label>
-              <button id="clear-ingredients-btn" class="tag-btn" style="padding:3px 10px;font-size:12px;">全部清除</button>
+              <button id="clear-ingredients-btn" class="tag-btn" data-i18n="recipe.clear_all" style="padding:3px 10px;font-size:12px;">全部清除</button>
             </div>
           </div>
-          <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">
+          <div data-i18n-html="recipe.included_hint" style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">
             點擊食材圖示，只顯示<strong>包含</strong>該食材的食譜
           </div>
           <div id="ingredient-picker-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
@@ -465,13 +465,13 @@
         <!-- 第五行：排除食材篩選器 -->
         <div class="filter-tags-group" style="margin-top:0;border-top:1px solid rgba(255,255,255,0.06);padding-top:14px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-            <span class="filter-label">🔴 排除食材篩選</span>
+            <span class="filter-label" data-i18n="recipe.filter_excluded">🔴 排除食材篩選</span>
             <div style="display:flex;gap:12px;align-items:center;font-size:12px;color:var(--text-muted);">
-              <span style="font-size:11px;color:rgba(239,68,68,0.7);">點選食材後，含該食材的食譜將被隱藏</span>
-              <button id="clear-excluded-btn" class="tag-btn" style="padding:3px 10px;font-size:12px;background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);">清除排除</button>
+              <span data-i18n="recipe.excluded_warn" style="font-size:11px;color:rgba(239,68,68,0.7);">點選食材後，含該食材的食譜將被隱藏</span>
+              <button id="clear-excluded-btn" class="tag-btn" data-i18n="recipe.clear_excluded" style="padding:3px 10px;font-size:12px;background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);">清除排除</button>
             </div>
           </div>
-          <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">
+          <div data-i18n-html="recipe.excluded_hint" style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">
             點擊食材圖示，<strong>隱藏</strong>包含該食材的食譜（與「包含食材」互斥）
           </div>
           <div id="excluded-ingredient-picker-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
@@ -481,7 +481,7 @@
       <!-- Stats Bar -->
       <div class="stats-bar">
         <span id="recipe-count-badge" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">載入食譜中...</span>
-        <div style="font-size:12px;color:var(--text-muted);">
+        <div data-i18n-html="recipe.stats_tip" style="font-size:12px;color:var(--text-muted);">
           💡 食材加成為每道食譜的<strong>固定數值</strong>；等級、島嶼與活動加成乘算於最終能量
         </div>
       </div>

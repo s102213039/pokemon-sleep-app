@@ -648,6 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ─── 渲染主入口 ────────────────────────────────────── */
   function render() {
     if (!contentArea || !countBadge) return;
+    initCategoryFilters();
     const filtered = getFilteredRecipes();
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
