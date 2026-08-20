@@ -4873,7 +4873,7 @@ select optgroup,
 
 /* 橫向天梯座標圖 (精簡緊湊單屏呈現) */
 .wiki-coordinate-ladder-wrapper {
-  overflow-x: auto;
+  overflow: visible;
   padding-bottom: 4px;
 }
 
@@ -4940,11 +4940,13 @@ select optgroup,
   border-radius: 6px;
   transition: all 0.15s ease;
   position: relative;
+  z-index: 1;
 }
 
 .ladder-track-row:hover {
-  background: rgba(30, 41, 59, 0.65);
-  border-color: rgba(56, 189, 248, 0.25);
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(56, 189, 248, 0.4);
+  z-index: 9999;
 }
 
 .ladder-track-header {
@@ -5091,28 +5093,34 @@ select optgroup,
 
 .ladder-node-tooltip {
   position: absolute;
-  bottom: 110%;
+  bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  background: #0f172a;
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  border-radius: 6px;
-  padding: 6px 10px;
+  background: #090d16;
+  border: 1px solid rgba(56, 189, 248, 0.6);
+  border-radius: 8px;
+  padding: 8px 12px;
   font-size: 11.5px;
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.15s ease;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
-  z-index: 100;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.9), 0 0 14px rgba(56, 189, 248, 0.25);
+  z-index: 999999;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
+}
+
+/* 第一行與第二行（最靠近頂部邊界）：浮窗改為向下展開，保證永遠在最高層且不被頂部卡片遮蔽裁切 */
+.ladder-track-row:first-of-type .ladder-node-tooltip,
+.ladder-track-row:nth-of-type(2) .ladder-node-tooltip {
+  bottom: auto;
+  top: calc(100% + 8px);
 }
 
 .ladder-node:hover .ladder-node-tooltip {
   opacity: 1;
-  pointer-events: auto;
 }
 
 .tooltip-title {
