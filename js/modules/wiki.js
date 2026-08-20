@@ -3810,10 +3810,11 @@
     const dynamicContainer = document.getElementById('helper-boost-dynamic-levels');
     if (boostSkill && dynamicContainer && boostSkill.matrix && boostSkill.matrix[kindNum]) {
       const vals = boostSkill.matrix[kindNum].vals;
+      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       dynamicContainer.innerHTML = vals.map((v, i) => `
         <div class="skill-level-chip highlight-blue">
           <span class="level-tag">Lv.${i + 1}</span>
-          <span class="level-val">${v} 次幫忙</span>
+          <span class="level-val">${v} ${isEN ? 'Helps' : '次幫忙'}</span>
         </div>
       `).join('');
     }
@@ -3861,13 +3862,16 @@
   function refreshBerryNodes() {
     const grid = document.getElementById('values-berry-grid');
     if (!grid) return;
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     grid.innerHTML = BERRY_VALUES_DATA.map(b => {
       const energy = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, isFavoriteBerry2x);
-      const bonusStr = currentIslandBonus > 0 ? ` +${currentIslandBonus}%島嶼` : '';
-      const favStr = isFavoriteBerry2x ? ' 順果2x' : '';
+      const bName = isEN ? (window.I18N.getBerryName(b.name) || b.name) : b.name;
+      const bType = isEN ? (window.I18N.getTypeName(b.type) || b.type) : b.type;
+      const bonusStr = currentIslandBonus > 0 ? (isEN ? ` +${currentIslandBonus}% Island` : ` +${currentIslandBonus}%島嶼`) : '';
+      const favStr = isFavoriteBerry2x ? (isEN ? ' Fav 2x' : ' 順果2x') : '';
       return `
-        <div class="value-compact-node" title="${b.name} (${b.type}屬性) - Lv.${currentBerryLevel}${bonusStr}${favStr} 能量 ${energy}">
-          <img src="${b.icon}" class="value-compact-icon" alt="${b.name}">
+        <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr}${favStr} ${isEN ? 'Energy' : '能量'} ${energy}">
+          <img src="${b.icon}" class="value-compact-icon" alt="${bName}">
           <span class="value-compact-energy berry-val">${energy}</span>
         </div>
       `;
@@ -3896,34 +3900,35 @@
     const natureMult    = parseFloat(natureSelect.value) || 1.0;
     const totalMult     = (1 + subskillBonus) * natureMult;
 
-    resultVal.textContent = totalMult.toFixed(3) + ' 倍';
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    resultVal.textContent = totalMult.toFixed(3) + (isEN ? 'x' : ' 倍');
 
-    let grade = 'A (良好)';
+    let grade = isEN ? 'A (Good)' : 'A (良好)';
     let gradeCls = 'grade-a';
 
     if (totalMult >= 1.8) {
-      grade = 'SSS (頂級發動極限)';
+      grade = isEN ? 'SSS (God Tier Max)' : 'SSS (頂級發動極限)';
       gradeCls = 'grade-sss';
     } else if (totalMult >= 1.6) {
-      grade = 'SS (優秀極限)';
+      grade = isEN ? 'SS (Excellent Max)' : 'SS (優秀極限)';
       gradeCls = 'grade-ss';
     } else if (totalMult >= 1.5) {
-      grade = 'S (雙副技極高)';
+      grade = isEN ? 'S (Dual Sub-Skills Very High)' : 'S (雙副技極高)';
       gradeCls = 'grade-s';
     } else if (totalMult >= 1.35) {
-      grade = 'A (單STM無性格)';
+      grade = isEN ? 'A (Single STM Neutral Nature)' : 'A (單STM無性格)';
       gradeCls = 'grade-a';
     } else if (totalMult >= 1.15) {
-      grade = 'B (微幅加成)';
+      grade = isEN ? 'B (Moderate Boost)' : 'B (微幅加成)';
       gradeCls = 'grade-b';
     } else if (totalMult >= 1.0) {
-      grade = 'C (基準線附近)';
+      grade = isEN ? 'C (Baseline)' : 'C (基準線附近)';
       gradeCls = 'grade-c';
     } else if (totalMult >= 0.9) {
-      grade = 'D (受性格下修影響)';
+      grade = isEN ? 'D (Impacted by Nature Down)' : 'D (受性格下修影響)';
       gradeCls = 'grade-d';
     } else {
-      grade = 'E (嚴重受阻)';
+      grade = isEN ? 'E (Severely Hindered)' : 'E (嚴重受阻)';
       gradeCls = 'grade-e';
     }
 
@@ -3969,9 +3974,12 @@
     dailyExp *= natureFactor;
 
     const daysNeeded = Math.ceil(baseExpNeeded / dailyExp);
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
-    daysResult.textContent = daysNeeded.toLocaleString() + ' 天';
-    expResult.textContent = `約需 ${baseExpNeeded.toLocaleString()} EXP (每日約 ${Math.round(dailyExp)} EXP)`;
+    daysResult.textContent = daysNeeded.toLocaleString() + (isEN ? ' Days' : ' 天');
+    expResult.textContent = isEN 
+      ? `Approx. ${baseExpNeeded.toLocaleString()} EXP (~${Math.round(dailyExp)} EXP/Day)` 
+      : `約需 ${baseExpNeeded.toLocaleString()} EXP (每日約 ${Math.round(dailyExp)} EXP)`;
   }
 
   // --- 綁定直接節點事件 (Direct DOM Event Listeners) ---
@@ -4164,9 +4172,7 @@
     const wikiContainer = document.getElementById('panel-wiki');
     if (!wikiContainer) return;
 
-    if (!wikiContainer.querySelector('.wiki-main-container')) {
-      renderWikiLayout(wikiContainer);
-    }
+    renderWikiLayout(wikiContainer);
 
     bindAllEvents();
     bindGlobalDelegationFallback();
@@ -4180,48 +4186,71 @@
   // 渲染副技能標籤
   function renderSkillBadge(skill) {
     if (!skill || !skill.name || skill.name === '-') return '<span class="text-muted">-</span>';
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const displayName = isEN ? (window.I18N.getSubSkillName(skill.name) || skill.name) : skill.name;
     const cls = skill.color ? `skill-badge-${skill.color}` : '';
-    const statusNote = skill.status === 'unreleased' ? ' <span class="badge-unreleased">(未開放)</span>' : '';
-    return `<span class="wiki-skill-badge ${cls}">${skill.name}${statusNote} <span class="skill-badge-val">${skill.val}</span></span>`;
+    const statusNote = skill.status === 'unreleased' ? (isEN ? ' <span class="badge-unreleased">(Unreleased)</span>' : ' <span class="badge-unreleased">(未開放)</span>') : '';
+    return `<span class="wiki-skill-badge ${cls}">${displayName}${statusNote} <span class="skill-badge-val">${skill.val}</span></span>`;
   }
 
   // 渲染專長評級卡片
   function renderRatingCard(data) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    let title = data.title;
+    let desc = data.desc;
+
+    if (isEN) {
+      if (data.type === 'berry') {
+        title = '🍊 Berry Specialists';
+        desc = 'Focuses on massive berry production. Berry Finding S (BFS) and Helping Speed are mandatory core skills.';
+      } else if (data.type === 'ingredient') {
+        title = '🍲 Ingredient Specialists';
+        desc = 'Focuses on steady ingredient output. Prioritizes AAA/ABB combinations and Ingredient Finder M/S.';
+      } else if (data.type === 'skill') {
+        title = '⚡ Skill Specialists';
+        desc = 'Focuses on frequent main skill activation. Skill Trigger M/S and Main Skill Chance Up nature are top tier.';
+      }
+    }
+
     return `
       <div class="wiki-card wiki-rating-card">
         <div class="wiki-card-header">
-          <h3 class="wiki-card-title">${data.title}</h3>
+          <h3 class="wiki-card-title">${title}</h3>
         </div>
-        <p class="wiki-card-desc">${data.desc}</p>
+        <p class="wiki-card-desc">${desc}</p>
         
         <div class="rating-subsections">
           <div class="rating-col">
-            <h4 class="rating-col-title">👑 副技能推薦梯度</h4>
+            <h4 class="rating-col-title">${isEN ? '👑 Sub-Skill Priority' : '👑 副技能推薦梯度'}</h4>
             <div class="rating-list">
-              ${data.subskills.map(s => `
+              ${data.subskills.map(s => {
+                const sName = isEN ? (window.I18N.getSubSkillName(s.name) || s.name) : s.name;
+                return `
                 <div class="rating-item">
                   <span class="rating-tier-tag tier-${s.grade.toLowerCase()}">${s.grade}</span>
                   <div class="rating-item-content">
-                    <span class="rating-item-name font-bold text-white">${s.name}</span>
+                    <span class="rating-item-name font-bold text-white">${sName}</span>
                     <span class="rating-item-detail text-secondary">${s.detail}</span>
                   </div>
                 </div>
-              `).join('')}
+              `;}).join('')}
             </div>
           </div>
 
           <div class="rating-col">
-            <h4 class="rating-col-title">🧬 性格推薦梯度</h4>
+            <h4 class="rating-col-title">${isEN ? '🧬 Nature Priority' : '🧬 性格推薦梯度'}</h4>
             <div class="rating-list">
-              ${data.natures.map(n => `
+              ${data.natures.map(n => {
+                const nName = isEN ? (window.I18N.getNatureName(n.name) || n.name) : n.name;
+                return `
                 <div class="rating-item">
                   <span class="rating-tier-tag tier-${n.grade.toLowerCase()}">${n.grade}</span>
                   <div class="rating-item-content">
-                    <span class="rating-item-name font-bold text-white">${n.name}</span>
+                    <span class="rating-item-name font-bold text-white">${nName}</span>
                     <span class="rating-item-detail text-secondary">${n.detail}</span>
                   </div>
                 </div>
-              `).join('')}
+              `;}).join('')}
             </div>
           </div>
         </div>
@@ -4232,6 +4261,7 @@
   // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、大菜供應能力評定、跨軌道搜尋聚焦)
   function renderCoordinateLadder(ladderData) {
     const mult = getLadderMultiplier();
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     
     // 依據是否開啟副技能加成動態調整刻度上限
     let ticks = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
@@ -4255,8 +4285,8 @@
     }
 
     const boostLabel = (isLadderIngM && isLadderSpeedM) 
-      ? ' (含 食材M + 幫速M 補正)' 
-      : (isLadderIngM ? ' (含 食材M 補正)' : (isLadderSpeedM ? ' (含 幫速M 補正)' : ''));
+      ? (isEN ? ' (incl. Ing. Finder M + Help Speed M)' : ' (含 食材M + 幫速M 補正)') 
+      : (isLadderIngM ? (isEN ? ' (incl. Ing. Finder M)' : ' (含 食材M 補正)') : (isLadderSpeedM ? (isEN ? ' (incl. Help Speed M)' : ' (含 幫速M 補正)') : ''));
 
     return `
       <div class="wiki-coordinate-ladder-wrapper">
@@ -4276,12 +4306,13 @@
 
           <!-- 各食材軌道 (19種食材完整一覽) -->
           ${ladderData.map(ing => {
-            const dishInfo = TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { name: '高階料理', need: 20, type: '料理', secondary: '' };
+            const dishInfo = TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { name: isEN ? 'High Tier Dish' : '高階料理', need: 20, type: isEN ? 'Dish' : '料理', secondary: '' };
+            const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
 
             return `
             <div class="ladder-track-row" data-ladder-ing="${ing.id}">
-              <div class="ladder-track-header" title="${ing.name} (基礎能量 ${ing.energy}) · 核心大菜：${dishInfo.name} (${dishInfo.need}顆/餐)">
-                <img src="${ing.icon}" class="ladder-ing-icon" alt="${ing.name}">
+              <div class="ladder-track-header" title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isEN ? 'Key Dish:' : '核心大菜：'}${dishInfo.name} (${dishInfo.need}${isEN ? '/meal' : '顆/餐'})">
+                <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">
               </div>
 
               <div class="ladder-track-canvas">
@@ -4291,9 +4322,10 @@
 
                 <div class="ladder-track-line"></div>
 
-                <!-- 跨度連接線容器 (同一寶可夢多型態間的落差跨度線) -->
+                <!-- 跨度連接線容器 -->
                 <div class="ladder-spans-container">
                   ${ing.pokemon.map(p => {
+                    const pkmDisplayName = isEN ? (p.name_en || p.name) : p.name;
                     let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
                     if (ladderRecipeFilter === 'AAA') {
                       variants = variants.filter(v => v.recipe === 'AAA');
@@ -4311,7 +4343,7 @@
                       <div class="ladder-pkm-span-line" 
                            data-pkm-group="${p.name}" 
                            style="left: ${minPct}%; width: ${widthPct}%;"
-                           title="${p.name} 配方跨度：${minCount} ~ ${maxCount} 顆/天">
+                           title="${pkmDisplayName} ${isEN ? 'Range:' : '配方跨度：'}${minCount} ~ ${maxCount} ${isEN ? '/day' : '顆/天'}">
                       </div>
                     `;
                   }).join('')}
@@ -4320,6 +4352,7 @@
                 <!-- 寶可夢型態節點容器 (Nodes Container) -->
                 <div class="ladder-nodes-container">
                   ${ing.pokemon.flatMap((p, pIdx) => {
+                    const pkmDisplayName = isEN ? (p.name_en || p.name) : p.name;
                     let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
                     if (ladderRecipeFilter === 'AAA') {
                       variants = variants.filter(v => v.recipe === 'AAA');
@@ -4337,13 +4370,13 @@
                       let dishTag = '';
                       let dishBadgeClass = '';
                       if (mealsPerDay >= 3.0) {
-                        dishTag = `✨ 滿載 3 餐大菜 (${mealsPerDay} 餐/天)`;
+                        dishTag = isEN ? `✨ Full 3 Meals (${mealsPerDay} meals/day)` : `✨ 滿載 3 餐大菜 (${mealsPerDay} 餐/天)`;
                         dishBadgeClass = 'dish-badge-full';
                       } else if (mealsPerDay >= 1.8) {
-                        dishTag = `⚡ 充足供應 2 餐大菜 (${mealsPerDay} 餐/天)`;
+                        dishTag = isEN ? `⚡ Solid 2 Meals (${mealsPerDay} meals/day)` : `⚡ 充足供應 2 餐大菜 (${mealsPerDay} 餐/天)`;
                         dishBadgeClass = 'dish-badge-high';
                       } else {
-                        dishTag = `💡 輔助支援 (${mealsPerDay} 餐/天)`;
+                        dishTag = isEN ? `💡 Auxiliary Support (${mealsPerDay} meals/day)` : `💡 輔助支援 (${mealsPerDay} 餐/天)`;
                         dishBadgeClass = 'dish-badge-assist';
                       }
 
@@ -4355,19 +4388,19 @@
                              style="left: ${getPosPct(scaledCount)}%; z-index: ${zIndex};">
                           <div class="node-recipe-tag recipe-tag-${v.recipe.toLowerCase()}">${v.recipe}</div>
                           <div class="node-avatar-wrapper">
-                            <img src="${p.icon}" class="node-avatar-img" alt="${p.name}">
+                            <img src="${p.icon}" class="node-avatar-img" alt="${pkmDisplayName}">
                             ${isTopNode ? '<span class="node-crown">👑</span>' : ''}
                           </div>
                           <div class="node-count-badge">${scaledCount}</div>
                           
                           <div class="ladder-node-tooltip">
-                            <div class="tooltip-title">${isTopNode ? '👑 產量 TOP 1 ' : ''}${p.name} (${v.recipe})</div>
-                            <div class="tooltip-detail">食材組合：<span class="text-accent font-bold">${v.recipe}</span></div>
-                            <div class="tooltip-detail">預估日產：<span class="text-success font-bold">${scaledCount} 顆/天</span>${boostLabel}</div>
+                            <div class="tooltip-title">${isTopNode ? (isEN ? '👑 Top 1 Yield ' : '👑 產量 TOP 1 ') : ''}${pkmDisplayName} (${v.recipe})</div>
+                            <div class="tooltip-detail">${isEN ? 'Ingredient Combo: ' : '食材組合：'}<span class="text-accent font-bold">${v.recipe}</span></div>
+                            <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估日產：'}<span class="text-success font-bold">${scaledCount} ${isEN ? '/day' : '顆/天'}</span>${boostLabel}</div>
                             
                             <!-- 🍲 頂級大菜供貨能力指標 -->
                             <div class="tooltip-dish-box">
-                              <div class="tooltip-dish-title">🍲 核心大菜：<span class="text-white font-bold">${dishInfo.name}</span> (${dishInfo.need}顆/餐)</div>
+                              <div class="tooltip-dish-title">🍲 ${isEN ? 'Key Dish: ' : '核心大菜：'}<span class="text-white font-bold">${dishInfo.name}</span> (${dishInfo.need}${isEN ? '/meal' : '顆/餐'})</div>
                               <div class="tooltip-dish-badge ${dishBadgeClass}">${dishTag}</div>
                             </div>
 
@@ -4389,14 +4422,15 @@
 
   // 渲染樹果與食材基礎能量看板 (極簡無名無滾輪 18 格全展開版 + 等級滑桿、島嶼加成與順果 2x 開關)
   function renderValuesBoard() {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     return `
       <div class="values-horizontal-container">
         <!-- 區塊 1：樹果基礎能量庫 (Lv.1 ~ Lv.70 + 島嶼加成 0~85% 動態試算) -->
         <div class="values-horizontal-section">
           <div class="values-section-header">
             <div class="values-section-title-group">
-              <span class="values-section-badge berry-badge">🫐 樹果能量庫</span>
-              <span class="values-section-sub">基礎能量 (Lv.1: 24 ➔ 35)</span>
+              <span class="values-section-badge berry-badge">${isEN ? '🫐 Berry Base Power' : '🫐 樹果能量庫'}</span>
+              <span class="values-section-sub">${isEN ? 'Base Energy (Lv.1: 24 ➔ 35)' : '基礎能量 (Lv.1: 24 ➔ 35)'}</span>
             </div>
 
             <!-- 等級滑桿、島嶼加成與順果 2x 控制器 -->
@@ -4404,7 +4438,7 @@
               <!-- 寶可夢等級滑桿 (1 ~ 70) -->
               <div class="berry-control-group">
                 <label for="berry-level-slider" class="berry-control-label">
-                  等級：<span id="berry-level-display" class="berry-level-tag">Lv. ${currentBerryLevel}</span>
+                  ${isEN ? 'Level:' : '等級：'}<span id="berry-level-display" class="berry-level-tag">Lv. ${currentBerryLevel}</span>
                 </label>
                 <input type="range" id="berry-level-slider" min="1" max="70" value="${currentBerryLevel}" step="1" class="berry-slider" oninput="window.WikiDB.updateBerryLevel(this.value)">
               </div>
@@ -4412,17 +4446,17 @@
               <!-- 島嶼加成滑桿 (0% ~ 85%) -->
               <div class="berry-control-group">
                 <label for="berry-island-slider" class="berry-control-label">
-                  島嶼加成：<span id="berry-island-display" class="berry-island-tag">+${currentIslandBonus}%</span>
+                  ${isEN ? 'Island Bonus:' : '島嶼加成：'}<span id="berry-island-display" class="berry-island-tag">+${currentIslandBonus}%</span>
                 </label>
                 <input type="range" id="berry-island-slider" min="0" max="85" value="${currentIslandBonus}" step="5" class="berry-slider island-slider" oninput="window.WikiDB.updateBerryIsland(this.value)">
               </div>
 
               <!-- 順果 2x 開關 -->
               <div class="berry-control-group">
-                <label class="berry-switch-label" title="卡比獸喜愛樹果 (順果) 能量翻倍 (2x)">
+                <label class="berry-switch-label" title="${isEN ? 'Favorite Berry 2x Energy Multiplier' : '卡比獸喜愛樹果 (順果) 能量翻倍 (2x)'}">
                   <input type="checkbox" id="berry-favorite-toggle" ${isFavoriteBerry2x ? 'checked' : ''} onchange="window.WikiDB.toggleBerryFavorite(this.checked)">
                   <span class="berry-switch-slider"></span>
-                  <span class="berry-switch-text">🎯 順果 2x</span>
+                  <span class="berry-switch-text">${isEN ? '🎯 Favorite 2x' : '🎯 順果 2x'}</span>
                 </label>
               </div>
             </div>
@@ -4431,11 +4465,13 @@
           <div id="values-berry-grid" class="values-compact-grid values-berry-grid">
             ${BERRY_VALUES_DATA.map(b => {
               const energy = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, isFavoriteBerry2x);
-              const bonusStr = currentIslandBonus > 0 ? ` +${currentIslandBonus}%島嶼` : '';
-              const favStr = isFavoriteBerry2x ? ' 順果2x' : '';
+              const bName = isEN ? (window.I18N.getBerryName(b.name) || b.name) : b.name;
+              const bType = isEN ? (window.I18N.getTypeName(b.type) || b.type) : b.type;
+              const bonusStr = currentIslandBonus > 0 ? (isEN ? ` +${currentIslandBonus}% Island` : ` +${currentIslandBonus}%島嶼`) : '';
+              const favStr = isFavoriteBerry2x ? (isEN ? ' Fav 2x' : ' 順果2x') : '';
               return `
-                <div class="value-compact-node" title="${b.name} (${b.type}屬性) - Lv.${currentBerryLevel}${bonusStr}${favStr} 能量 ${energy}">
-                  <img src="${b.icon}" class="value-compact-icon" alt="${b.name}">
+                <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr}${favStr} ${isEN ? 'Energy' : '能量'} ${energy}">
+                  <img src="${b.icon}" class="value-compact-icon" alt="${bName}">
                   <span class="value-compact-energy berry-val">${energy}</span>
                 </div>
               `;
@@ -4447,18 +4483,20 @@
         <div class="values-horizontal-section">
           <div class="values-section-header">
             <div class="values-section-title-group">
-              <span class="values-section-badge ing-badge">🍲 食材基礎能量庫</span>
-              <span class="values-section-sub">基礎能量 90 ➔ 342 (料理關鍵基礎分)</span>
+              <span class="values-section-badge ing-badge">${isEN ? '🍲 Ingredient Base Power' : '🍲 食材基礎能量庫'}</span>
+              <span class="values-section-sub">${isEN ? 'Base Energy 90 ➔ 342 (Dish Base Scoring)' : '基礎能量 90 ➔ 342 (料理關鍵基礎分)'}</span>
             </div>
           </div>
 
           <div class="values-compact-grid values-ing-grid">
-            ${INGREDIENT_VALUES_DATA.map(ing => `
-              <div class="value-compact-node ${ing.id === 'tail' ? 'value-tail-highlight' : ''}" title="${ing.name} - 基礎能量 ${ing.energy}">
-                <img src="${ing.icon}" class="value-compact-icon" alt="${ing.name}">
+            ${INGREDIENT_VALUES_DATA.map(ing => {
+              const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
+              return `
+              <div class="value-compact-node ${ing.id === 'tail' ? 'value-tail-highlight' : ''}" title="${ingName} - ${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}">
+                <img src="${ing.icon}" class="value-compact-icon" alt="${ingName}">
                 <span class="value-compact-energy ing-val">${ing.energy}</span>
               </div>
-            `).join('')}
+            `;}).join('')}
           </div>
         </div>
       </div>
@@ -4467,6 +4505,7 @@
 
   // 渲染食材天梯榜卡片 (舊版清單檢視)
   function renderIngredientLadders(ladders) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     return ladders.map(ing => `
       <div class="ladder-card" data-ladder-ing="${ing.id}">
         <div class="ladder-header">
@@ -4474,7 +4513,7 @@
             <img src="${ing.icon}" class="ladder-icon" alt="${ing.name}">
             <h4 class="ladder-name">${ing.name}</h4>
           </div>
-          <span class="ladder-max-badge">最高日產 ~ ${ing.maxDaily} 顆</span>
+          <span class="ladder-max-badge">${isEN ? 'Max Daily ~ ' : '最高日產 ~ '}${ing.maxDaily} ${isEN ? '/day' : '顆'}</span>
         </div>
 
         <div class="ladder-tiers-list">
@@ -4497,17 +4536,30 @@
 
   // 渲染技能卡片 (精簡緊湊設計，蓄力與屬性加速採用互動式切換)
   function renderSkillsCards(skills) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+
+    const catNameMap = {
+      energy: isEN ? 'Strength' : '能量系',
+      energy_heal: isEN ? 'Energy Heal' : '活力系',
+      ingredient: isEN ? 'Ingredients' : '食材與料理',
+      special: isEN ? 'Special/Legend' : '神獸與特殊專屬',
+      shards: isEN ? 'Dream Shards' : '夢之碎片'
+    };
+
     return skills.map(skill => {
       let valuesHtml = '';
+      const skillName = isEN ? (window.I18N.getMainSkillName(skill.id) || skill.name) : skill.name;
+      const catLabel = catNameMap[skill.category] || skill.catName;
+      const unitLabel = isEN ? (skill.unit_en || (skill.unit.includes('能量') ? ' Strength' : (skill.unit.includes('食材') ? ' Ingredients' : (skill.unit.includes('次') ? ' Helps' : (skill.unit.includes('點') ? ' Energy' : skill.unit))))) : skill.unit;
 
       if (skill.hasStackMatrix) {
         valuesHtml = `
           <div class="skill-interactive-section">
             <div class="stack-selector-row">
-              <span class="stack-selector-label">🎯 蓄力次數切換：</span>
+              <span class="stack-selector-label">${isEN ? '🎯 Stack Count:' : '🎯 蓄力次數切換：'}</span>
               <div class="stack-chips-group" id="charge-stack-chips">
                 ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(s => `
-                  <button type="button" class="stack-chip-btn ${s === 10 ? 'active' : ''}" data-stack-target="${s}" onclick="window.WikiDB.switchStack(${s})">${s}次</button>
+                  <button type="button" class="stack-chip-btn ${s === 10 ? 'active' : ''}" data-stack-target="${s}" onclick="window.WikiDB.switchStack(${s})">${s}${isEN ? 'x' : '次'}</button>
                 `).join('')}
               </div>
             </div>
@@ -4517,7 +4569,7 @@
               ${skill.matrix[10].vals.map((v, i) => `
                 <div class="skill-level-chip highlight-gold">
                   <span class="level-tag">Lv.${i + 1}</span>
-                  <span class="level-val">${v.toLocaleString()} 能量</span>
+                  <span class="level-val">${v.toLocaleString()} ${unitLabel}</span>
                 </div>
               `).join('')}
             </div>
@@ -4525,7 +4577,7 @@
             <!-- 展開完整對照表按鈕 -->
             <div style="margin-top: 8px;">
               <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="charge-matrix-table" onclick="window.WikiDB.toggleDetail('charge-matrix-table')">
-                📊 展開 / 收合完整 0~10 次蓄力數值表
+                ${isEN ? '📊 Toggle 0~10 Stack Value Matrix' : '📊 展開 / 收合完整 0~10 次蓄力數值表'}
               </button>
             </div>
 
@@ -4533,14 +4585,14 @@
               <table class="wiki-mini-table">
                 <thead>
                   <tr>
-                    <th>蓄力次數</th>
+                    <th>${isEN ? 'Stacks' : '蓄力次數'}</th>
                     ${[1, 2, 3, 4, 5, 6, 7].map(lv => `<th>Lv.${lv}</th>`).join('')}
                   </tr>
                 </thead>
                 <tbody>
                   ${skill.matrix.map(m => `
                     <tr class="${m.stacks === 10 ? 'row-highlight' : ''}">
-                      <td class="font-bold text-accent">${m.stacks} 次</td>
+                      <td class="font-bold text-accent">${m.stacks} ${isEN ? 'Stacks' : '次'}</td>
                       ${m.vals.map(v => `<td>${v.toLocaleString()}</td>`).join('')}
                     </tr>
                   `).join('')}
@@ -4553,10 +4605,10 @@
         valuesHtml = `
           <div class="skill-interactive-section">
             <div class="stack-selector-row">
-              <span class="stack-selector-label">⚡ 同屬性種類數：</span>
+              <span class="stack-selector-label">${isEN ? '⚡ Same-type Species:' : '⚡ 同屬性種類數：'}</span>
               <div class="stack-chips-group" id="helper-boost-chips">
                 ${[0, 1, 2, 3, 4, 5].map(k => `
-                  <button type="button" class="stack-chip-btn ${k === 5 ? 'active' : ''}" data-boost-kind="${k}" onclick="window.WikiDB.switchBoost(${k})">${k}種類</button>
+                  <button type="button" class="stack-chip-btn ${k === 5 ? 'active' : ''}" data-boost-kind="${k}" onclick="window.WikiDB.switchBoost(${k})">${k} ${isEN ? 'Types' : '種類'}</button>
                 `).join('')}
               </div>
             </div>
@@ -4566,7 +4618,7 @@
               ${skill.matrix[5].vals.map((v, i) => `
                 <div class="skill-level-chip highlight-blue">
                   <span class="level-tag">Lv.${i + 1}</span>
-                  <span class="level-val">${v} 次幫忙</span>
+                  <span class="level-val">${v} ${isEN ? 'Helps' : '次幫忙'}</span>
                 </div>
               `).join('')}
             </div>
@@ -4574,7 +4626,7 @@
             <!-- 展開完整對照表按鈕 -->
             <div style="margin-top: 8px;">
               <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="helper-boost-table" onclick="window.WikiDB.toggleDetail('helper-boost-table')">
-                📊 展開 / 收合完整 0~5 種類對照表
+                ${isEN ? '📊 Toggle 0~5 Types Comparison Table' : '📊 展開 / 收合完整 0~5 種類對照表'}
               </button>
             </div>
 
@@ -4582,7 +4634,7 @@
               <table class="wiki-mini-table">
                 <thead>
                   <tr>
-                    <th>同屬種類</th>
+                    <th>${isEN ? 'Same-Type' : '同屬種類'}</th>
                     ${[1, 2, 3, 4, 5, 6].map(lv => `<th>Lv.${lv}</th>`).join('')}
                   </tr>
                 </thead>
@@ -4590,7 +4642,7 @@
                   ${skill.matrix.map(m => `
                     <tr class="${m.kinds === '5 種類' ? 'row-highlight' : ''}">
                       <td class="font-bold text-accent">${m.kinds}</td>
-                      ${m.vals.map(v => `<td>${v} 次</td>`).join('')}
+                      ${m.vals.map(v => `<td>${v} ${isEN ? 'Helps' : '次'}</td>`).join('')}
                     </tr>
                   `).join('')}
                 </tbody>
@@ -4604,7 +4656,7 @@
             ${skill.selfValues.map((v, i) => `
               <div class="skill-level-chip">
                 <span class="level-tag">Lv.${i + 1}</span>
-                <span class="level-val">自 ${v} · 他+${skill.teamValues[i]}${skill.unit}</span>
+                <span class="level-val">${isEN ? `Self ${v} · Ally +${skill.teamValues[i]}` : `自 ${v} · 他+${skill.teamValues[i]}`}${unitLabel}</span>
               </div>
             `).join('')}
           </div>
@@ -4615,7 +4667,7 @@
             ${skill.healValues.map((v, i) => `
               <div class="skill-level-chip">
                 <span class="level-tag">Lv.${i + 1}</span>
-                <span class="level-val">全隊 ${v}點 · 樹果 ${skill.berryRange[i]}</span>
+                <span class="level-val">${isEN ? `All ${v} · Berries ${skill.berryRange[i]}` : `全隊 ${v}點 · 樹果 ${skill.berryRange[i]}`}</span>
               </div>
             `).join('')}
           </div>
@@ -4623,7 +4675,7 @@
           <!-- 展開完整 1~5 種類超能力隊友樹果對照表按鈕 -->
           <div style="margin-top: 6px;">
             <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="lunar-prayer-table" onclick="window.WikiDB.toggleDetail('lunar-prayer-table')">
-              📊 展開 / 收合 1~5 種類超能樹果表
+              ${isEN ? '📊 Toggle 1~5 Psychic Types Table' : '📊 展開 / 收合 1~5 種類超能樹果表'}
             </button>
           </div>
 
@@ -4631,7 +4683,7 @@
             <table class="wiki-mini-table">
               <thead>
                 <tr>
-                  <th>超能種類</th>
+                  <th>${isEN ? 'Psychic Types' : '超能種類'}</th>
                   ${[1, 2, 3, 4, 5, 6].map(lv => `<th>Lv.${lv}</th>`).join('')}
                 </tr>
               </thead>
@@ -4639,7 +4691,7 @@
                 ${skill.berryMatrix.map((m, idx) => `
                   <tr class="${idx === 4 ? 'row-highlight' : ''}">
                     <td class="font-bold text-accent">${m.kinds}</td>
-                    ${m.vals.map(v => `<td>${v} 顆</td>`).join('')}
+                    ${m.vals.map(v => `<td>${v} ${isEN ? 'Berries' : '顆'}</td>`).join('')}
                   </tr>
                 `).join('')}
               </tbody>
@@ -4647,14 +4699,14 @@
           </div>
         `;
       } else if (skill.hasDualValues) {
-        const selfShort = skill.selfShort || '自';
-        const teamShort = skill.teamShort || '他';
+        const selfShort = isEN ? 'Self' : (skill.selfShort || '自');
+        const teamShort = isEN ? 'Ally' : (skill.teamShort || '他');
         valuesHtml = `
           <div class="skill-levels-grid">
             ${skill.selfValues.map((v, i) => `
               <div class="skill-level-chip">
                 <span class="level-tag">Lv.${i + 1}</span>
-                <span class="level-val">${selfShort} ${v} + ${teamShort} ${skill.teamValues[i]}${skill.unit}</span>
+                <span class="level-val">${selfShort} ${v} + ${teamShort} ${skill.teamValues[i]}${unitLabel}</span>
               </div>
             `).join('')}
           </div>
@@ -4665,7 +4717,7 @@
             ${skill.ranges.map((r, i) => `
               <div class="skill-level-chip">
                 <span class="level-tag">Lv.${i + 1}</span>
-                <span class="level-val">${r.min.toLocaleString()}~${r.max.toLocaleString()}${skill.unit}</span>
+                <span class="level-val">${r.min.toLocaleString()}~${r.max.toLocaleString()}${unitLabel}</span>
               </div>
             `).join('')}
           </div>
@@ -4676,23 +4728,23 @@
             ${skill.values.map((v, i) => `
               <div class="skill-level-chip">
                 <span class="level-tag">Lv.${i + 1}</span>
-                <span class="level-val">${typeof v === 'number' ? v.toLocaleString() : v}${skill.unit}</span>
+                <span class="level-val">${typeof v === 'number' ? v.toLocaleString() : v}${unitLabel}</span>
               </div>
             `).join('')}
           </div>
         `;
       } else {
-        valuesHtml = `<div class="skill-level-chip"><span class="level-val">${skill.unit}</span></div>`;
+        valuesHtml = `<div class="skill-level-chip"><span class="level-val">${unitLabel}</span></div>`;
       }
 
       return `
         <div class="wiki-skill-card" data-category="${skill.category}">
           <div class="skill-card-top">
             <div class="skill-title-badges">
-              <h4 class="skill-name-text">${skill.name}</h4>
-              <span class="skill-cat-tag cat-${skill.category}">${skill.catName}</span>
+              <h4 class="skill-name-text">${skillName}</h4>
+              <span class="skill-cat-tag cat-${skill.category}">${catLabel}</span>
             </div>
-            <span class="skill-max-lv-badge">上限 Lv.${skill.maxLevel}</span>
+            <span class="skill-max-lv-badge">${isEN ? 'Max Lv.' : '上限 Lv.'}${skill.maxLevel}</span>
           </div>
 
           <p class="skill-desc-text">
@@ -4711,16 +4763,18 @@
 
   // 渲染 Wiki 主佈局與 5 大子分頁 (精簡二級選單列)
   function renderWikiLayout(container) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+
     container.innerHTML = `
       <div class="wiki-main-container">
         <!-- 二級子分頁導航 (Sub-tabs) - 精簡無大標題橫幅 -->
         <div class="wiki-subnav-bar">
           <div class="wiki-subnav-tabs" role="tablist">
-            <button type="button" class="wiki-subtab-btn active" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">⚡ 主技能數值庫</button>
-            <button type="button" class="wiki-subtab-btn" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">🧩 副技能與性格指南</button>
-            <button type="button" class="wiki-subtab-btn" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">🎓 培育與評級指南</button>
-            <button type="button" class="wiki-subtab-btn" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">🥗 Lv.60 食材天梯榜</button>
-            <button type="button" class="wiki-subtab-btn" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">🫐 樹果與食材能量</button>
+            <button type="button" class="wiki-subtab-btn active" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${isEN ? '⚡ Main Skills DB' : '⚡ 主技能數值庫'}</button>
+            <button type="button" class="wiki-subtab-btn" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${isEN ? '🧩 Sub-Skills & Natures' : '🧩 副技能與性格指南'}</button>
+            <button type="button" class="wiki-subtab-btn" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isEN ? '🎓 Growth & Tier Guide' : '🎓 培育與評級指南'}</button>
+            <button type="button" class="wiki-subtab-btn" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isEN ? '🥗 Lv.60 Ingredient Ladder' : '🥗 Lv.60 食材天梯榜'}</button>
+            <button type="button" class="wiki-subtab-btn" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isEN ? '🫐 Berry & Ing. Values' : '🫐 樹果與食材能量'}</button>
           </div>
         </div>
 
@@ -4728,13 +4782,13 @@
         <div id="wiki-subpanel-skills" class="wiki-subpanel active">
           <div class="wiki-control-bar">
             <div class="wiki-filter-pills">
-              <span class="wiki-pill-label">技能類型：</span>
-              <button type="button" class="wiki-pill-btn active" data-skill-cat="all" onclick="window.WikiDB.filterSkills('all')">全部技能 (${MAIN_SKILLS_DATA.length})</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="energy" onclick="window.WikiDB.filterSkills('energy')">⚡ 能量系</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="energy_heal" onclick="window.WikiDB.filterSkills('energy_heal')">💖 活力系</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="ingredient" onclick="window.WikiDB.filterSkills('ingredient')">🥗 食材與料理</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="special" onclick="window.WikiDB.filterSkills('special')">👑 神獸與特殊專屬</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="shards" onclick="window.WikiDB.filterSkills('shards')">💎 夢之碎片</button>
+              <span class="wiki-pill-label">${isEN ? 'Skill Type:' : '技能類型：'}</span>
+              <button type="button" class="wiki-pill-btn active" data-skill-cat="all" onclick="window.WikiDB.filterSkills('all')">${isEN ? 'All Skills' : '全部技能'} (${MAIN_SKILLS_DATA.length})</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="energy" onclick="window.WikiDB.filterSkills('energy')">${isEN ? '⚡ Strength' : '⚡ 能量系'}</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="energy_heal" onclick="window.WikiDB.filterSkills('energy_heal')">${isEN ? '💖 Energy Recovery' : '💖 活力系'}</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="ingredient" onclick="window.WikiDB.filterSkills('ingredient')">${isEN ? '🥗 Ingredients' : '🥗 食材與料理'}</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="special" onclick="window.WikiDB.filterSkills('special')">${isEN ? '👑 Legend & Special' : '👑 神獸與特殊專屬'}</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="shards" onclick="window.WikiDB.filterSkills('shards')">${isEN ? '💎 Dream Shards' : '💎 夢之碎片'}</button>
             </div>
           </div>
 
@@ -4749,9 +4803,9 @@
           <div class="wiki-card">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">🧮</span>
-              <h3 class="wiki-card-title">主技能發動機率矩陣對照表（副技能 × 性格乘算）</h3>
+              <h3 class="wiki-card-title">${isEN ? 'Main Skill Trigger Chance Matrix (Sub-Skills × Nature)' : '主技能發動機率矩陣對照表（副技能 × 性格乘算）'}</h3>
             </div>
-            <p class="wiki-card-desc">依據遊戲底層乘法公式：<code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>，展示所有組合狀況的計算過程與最終總倍率速查。</p>
+            <p class="wiki-card-desc">${isEN ? 'Calculated via official in-game formula: <code>(1 + Sub-Skill %) × Nature Multiplier = Final Multiplier</code>.' : '依據遊戲底層乘法公式：<code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>，展示所有組合狀況的計算過程與最終總倍率速查。'}</p>
 
             <!-- 速查對照表 -->
             <div class="wiki-table-wrapper" style="margin-top: 14px;">
@@ -4973,7 +5027,7 @@
             <div class="wiki-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span class="wiki-card-icon">🥗</span>
-                <h3 class="wiki-card-title" style="margin: 0;">Lv.60 各食材單日產量天梯榜</h3>
+                <h3 class="wiki-card-title" style="margin: 0;">${isEN ? 'Lv.60 Daily Ingredient Yield Ladder' : 'Lv.60 各食材單日產量天梯榜'}</h3>
               </div>
 
               <!-- 水平正右側控制列：[ 跨軌道搜尋 ] + [ 型態篩選膠囊 ] + [ 視覺天梯圖 | 卡片清單 ] + [ 食材機率M ] + [ 幫速M ] -->
@@ -4981,32 +5035,32 @@
                 <!-- 跨軌道微型搜尋框 -->
                 <div class="ladder-search-box">
                   <span class="ladder-search-icon">🔍</span>
-                  <input type="text" id="ladder-pkm-search-input" class="ladder-search-input" placeholder="跨軌道搜尋寶可夢..." value="${ladderSearchQuery}" oninput="window.WikiDB.onLadderSearch(this.value)">
-                  <button type="button" class="ladder-search-clear" id="ladder-search-clear-btn" style="${ladderSearchQuery ? 'display:flex;' : 'display:none;'}" onclick="window.WikiDB.clearLadderSearch()" title="清空搜尋">✕</button>
+                  <input type="text" id="ladder-pkm-search-input" class="ladder-search-input" placeholder="${isEN ? 'Search Pokémon across tracks...' : '跨軌道搜尋寶可夢...'}" value="${ladderSearchQuery}" oninput="window.WikiDB.onLadderSearch(this.value)">
+                  <button type="button" class="ladder-search-clear" id="ladder-search-clear-btn" style="${ladderSearchQuery ? 'display:flex;' : 'display:none;'}" onclick="window.WikiDB.clearLadderSearch()" title="${isEN ? 'Clear Search' : '清空搜尋'}">✕</button>
                 </div>
 
                 <!-- 型態篩選膠囊 -->
                 <div class="ladder-filter-capsules">
-                  <button type="button" class="ladder-filter-capsule ${ladderRecipeFilter === 'ALL' ? 'active' : ''}" data-recipe-filter="ALL" onclick="window.WikiDB.setLadderRecipeFilter('ALL')">全部</button>
-                  <button type="button" class="ladder-filter-capsule ${ladderRecipeFilter === 'AAA' ? 'active' : ''}" data-recipe-filter="AAA" onclick="window.WikiDB.setLadderRecipeFilter('AAA')">👑 僅看 AAA</button>
-                  <button type="button" class="ladder-filter-capsule ${ladderRecipeFilter === 'TOP' ? 'active' : ''}" data-recipe-filter="TOP" onclick="window.WikiDB.setLadderRecipeFilter('TOP')">🥈 僅看 TOP 1-2</button>
+                  <button type="button" class="ladder-filter-capsule ${ladderRecipeFilter === 'ALL' ? 'active' : ''}" data-recipe-filter="ALL" onclick="window.WikiDB.setLadderRecipeFilter('ALL')">${isEN ? 'All' : '全部'}</button>
+                  <button type="button" class="ladder-filter-capsule ${ladderRecipeFilter === 'AAA' ? 'active' : ''}" data-recipe-filter="AAA" onclick="window.WikiDB.setLadderRecipeFilter('AAA')">${isEN ? '👑 AAA Only' : '👑 僅看 AAA'}</button>
+                  <button type="button" class="ladder-filter-capsule ${ladderRecipeFilter === 'TOP' ? 'active' : ''}" data-recipe-filter="TOP" onclick="window.WikiDB.setLadderRecipeFilter('TOP')">${isEN ? '🥈 TOP 1-2 Only' : '🥈 僅看 TOP 1-2'}</button>
                 </div>
 
                 <div class="ladder-mode-btns" style="margin: 0;">
-                  <button type="button" class="ladder-mode-btn active" data-ladder-view="coordinate" onclick="window.WikiDB.switchLadderView('coordinate')">📈 視覺天梯圖</button>
-                  <button type="button" class="ladder-mode-btn" data-ladder-view="list" onclick="window.WikiDB.switchLadderView('list')">📋 卡片清單</button>
+                  <button type="button" class="ladder-mode-btn active" data-ladder-view="coordinate" onclick="window.WikiDB.switchLadderView('coordinate')">${isEN ? '📈 Visual Ladder' : '📈 視覺天梯圖'}</button>
+                  <button type="button" class="ladder-mode-btn" data-ladder-view="list" onclick="window.WikiDB.switchLadderView('list')">${isEN ? '📋 Card List' : '📋 卡片清單'}</button>
                 </div>
 
-                <label class="ladder-switch-label" title="食材發現機率提升M (+36%)">
+                <label class="ladder-switch-label" title="${isEN ? 'Ingredient Finder M (+36%)' : '食材發現機率提升M (+36%)'}">
                   <input type="checkbox" id="ladder-ing-m-toggle" ${isLadderIngM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderIngM(this.checked)">
                   <span class="ladder-switch-slider"></span>
-                  <span class="ladder-switch-text ing-m-text">🥩 食材機率M (+36%)</span>
+                  <span class="ladder-switch-text ing-m-text">${isEN ? '🥩 Ing. Finder M (+36%)' : '🥩 食材機率M (+36%)'}</span>
                 </label>
 
-                <label class="ladder-switch-label" title="幫忙速度M (-14% 間隔時間，約 +16.3% 幫忙次數)">
+                <label class="ladder-switch-label" title="${isEN ? 'Helping Speed M (+16.3% helps)' : '幫忙速度M (-14% 間隔時間，約 +16.3% 幫忙次數)'}">
                   <input type="checkbox" id="ladder-speed-m-toggle" ${isLadderSpeedM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSpeedM(this.checked)">
                   <span class="ladder-switch-slider"></span>
-                  <span class="ladder-switch-text speed-m-text">⚡ 幫速M (+16.3%)</span>
+                  <span class="ladder-switch-text speed-m-text">${isEN ? '⚡ Helping Speed M (+16.3%)' : '⚡ 幫速M (+16.3%)'}</span>
                 </label>
               </div>
             </div>
@@ -5028,9 +5082,9 @@
           <div class="wiki-card">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">🫐</span>
-              <h3 class="wiki-card-title">樹果與食材基礎能量一覽表（BERRY & INGREDIENT VALUES）</h3>
+              <h3 class="wiki-card-title">${isEN ? 'Berry & Ingredient Base Power Table' : '樹果與食材基礎能量一覽表（BERRY & INGREDIENT VALUES）'}</h3>
             </div>
-            <p class="wiki-card-desc">依據官方遊戲底層能量設定，完整展示 18 種屬性樹果基礎能量（24~35）與 19 種料理食材基礎能量（90~342）。</p>
+            <p class="wiki-card-desc">${isEN ? 'Official in-game base power values for 18 Berries (24~35) and 19 Ingredients (90~342).' : '依據官方遊戲底層能量設定，完整展示 18 種屬性樹果基礎能量（24~35）與 19 種料理食材基礎能量（90~342）。'}</p>
 
             <div style="margin-top: 20px;">
               ${renderValuesBoard()}

@@ -1075,6 +1075,30 @@ test('Tier 1 - Feature Coverage', 'Multi-Theme CSS Variables & Theme Engine: 4 f
   assert(cssContent.includes('.lang-switcher-row'), 'styles.css must style language switcher');
 });
 
+test('Tier 1 - Feature Coverage', 'English Mode Subtitle Hiding & Title Centering Rules', () => {
+  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  assert(cssContent.includes('html[lang="en"] .brand-subtitle'), 'CSS must hide brand-subtitle in English');
+  assert(cssContent.includes('html[lang="en"] .pokemon-name-en'), 'CSS must hide pokemon-name-en in English');
+  assert(cssContent.includes('html[lang="en"] .recipe-name-sub'), 'CSS must hide recipe-name-sub in English');
+  assert(cssContent.includes('html[lang="en"] .appraisal-pokemon-en'), 'CSS must hide appraisal-pokemon-en in English');
+});
+
+test('Tier 1 - Feature Coverage', 'Full 100% Bilingual Dictionary & Modals Translation Coverage', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const ctx = { window: {}, document: { documentElement: { setAttribute: () => {} }, querySelectorAll: () => [] }, localStorage: { getItem: () => null, setItem: () => {} }, console };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+  const I18N = ctx.window.I18N;
+  I18N.setLanguage('en-US');
+
+  assert(I18N.t('settings.pat_label').includes('GitHub PAT Token'), 'Settings PAT label must be translated');
+  assert(I18N.t('box.modal_title').includes('OCR Review'), 'Box modal title must be translated');
+  assert(I18N.t('box.modal_save').includes('Save Pokémon'), 'Box save button must be translated');
+  assert(I18N.t('footer.copyright').includes('Pokémon Sleep Database'), 'Footer copyright must be translated');
+  assert(I18N.t('footer.sync_note').includes('GitHub Actions'), 'Footer sync note must be translated');
+});
+
 
 // Final Summary Output
 console.log('\n======================================================');

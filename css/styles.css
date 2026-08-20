@@ -292,6 +292,41 @@ header {
   color: var(--text-secondary);
 }
 
+/* 英文模式下隱藏 subtitle 並確保標題上下垂直置中 (English Mode Subtitle Hiding & Centering) */
+html[lang="en"] .brand-subtitle,
+[data-lang="en"] .brand-subtitle,
+html[lang="en"] .pokemon-name-en,
+[data-lang="en"] .pokemon-name-en,
+html[lang="en"] .recipe-name-sub,
+[data-lang="en"] .recipe-name-sub,
+html[lang="en"] .appraisal-pokemon-en,
+[data-lang="en"] .appraisal-pokemon-en {
+  display: none !important;
+}
+
+html[lang="en"] .brand,
+[data-lang="en"] .brand {
+  align-items: center;
+}
+
+html[lang="en"] .card-title-group,
+[data-lang="en"] .card-title-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+html[lang="en"] .pokemon-name-cell,
+[data-lang="en"] .pokemon-name-cell {
+  vertical-align: middle !important;
+}
+
+html[lang="en"] .appraisal-pokemon-title,
+[data-lang="en"] .appraisal-pokemon-title {
+  display: flex;
+  align-items: center;
+}
+
 /* SPA Main Navigation Tabs */
 .main-tab-toggle {
   display: inline-flex;

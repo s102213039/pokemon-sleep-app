@@ -73,10 +73,10 @@
                   <span class="theme-dot" style="background:#1e293b;"></span>
                   <span class="theme-dot" style="background:#38bdf8;"></span>
                 </div>
-                <span class="theme-card-badge">✓ 使用中</span>
+                <span class="theme-card-badge" data-i18n="settings.theme_active">✓ 使用中</span>
               </div>
               <div class="theme-card-name" data-i18n="settings.theme_midnight">🌌 深邃夜空</div>
-              <div class="theme-card-sub">科技深藍黑 · 霓虹青紫點綴</div>
+              <div class="theme-card-sub" data-i18n="settings.theme_midnight_sub">科技深藍黑 · 霓虹青紫點綴</div>
             </button>
 
             <!-- Onyx (深色 2 - OLED 高對比) -->
@@ -87,10 +87,10 @@
                   <span class="theme-dot" style="background:#18181b;"></span>
                   <span class="theme-dot" style="background:#fbbf24;"></span>
                 </div>
-                <span class="theme-card-badge">✓ 使用中</span>
+                <span class="theme-card-badge" data-i18n="settings.theme_active">✓ 使用中</span>
               </div>
               <div class="theme-card-name" data-i18n="settings.theme_onyx">🌑 曜石暗影</div>
-              <div class="theme-card-sub">OLED 純粹黑 · 琥珀流金點綴</div>
+              <div class="theme-card-sub" data-i18n="settings.theme_onyx_sub">OLED 純粹黑 · 琥珀流金點綴</div>
             </button>
 
             <!-- Dawn (明亮 1 - 晨曦暖陽) -->
@@ -101,10 +101,10 @@
                   <span class="theme-dot" style="background:#ffffff;"></span>
                   <span class="theme-dot" style="background:#0284c7;"></span>
                 </div>
-                <span class="theme-card-badge">✓ 使用中</span>
+                <span class="theme-card-badge" data-i18n="settings.theme_active">✓ 使用中</span>
               </div>
               <div class="theme-card-name" data-i18n="settings.theme_dawn">☀️ 晨曦暖陽</div>
-              <div class="theme-card-sub">溫潤奶油白 · 蔚藍暖陽點綴</div>
+              <div class="theme-card-sub" data-i18n="settings.theme_dawn_sub">溫潤奶油白 · 蔚藍暖陽點綴</div>
             </button>
 
             <!-- Emerald (明亮 2 - 萌綠森林) -->
@@ -115,10 +115,10 @@
                   <span class="theme-dot" style="background:#ffffff;"></span>
                   <span class="theme-dot" style="background:#16a34a;"></span>
                 </div>
-                <span class="theme-card-badge">✓ 使用中</span>
+                <span class="theme-card-badge" data-i18n="settings.theme_active">✓ 使用中</span>
               </div>
               <div class="theme-card-name" data-i18n="settings.theme_emerald">🍃 萌綠森林</div>
-              <div class="theme-card-sub">清新薄荷白 · 翠綠草木點綴</div>
+              <div class="theme-card-sub" data-i18n="settings.theme_emerald_sub">清新薄荷白 · 翠綠草木點綴</div>
             </button>
           </div>
         </div>
@@ -156,7 +156,7 @@
           </div>
 
           <div>
-            <label style="display:block;font-size:11.5px;color:var(--text-secondary);margin-bottom:6px;">GitHub PAT Token（儲存於本地 LocalStorage，不會上傳）</label>
+            <label style="display:block;font-size:11.5px;color:var(--text-secondary);margin-bottom:6px;" data-i18n="settings.pat_label">GitHub PAT Token（儲存於本地 LocalStorage，不會上傳）</label>
             <input type="password" id="gh-pat-input" placeholder="ghp_xxxxxxxxxxxxxxxxxx"
               style="width:100%;background:var(--bg-input);border:1px solid var(--border-color);border-radius:8px;padding:10px 14px;color:var(--text-main);font-size:13px;outline:none;">
           </div>
@@ -165,7 +165,7 @@
             <button type="button" id="save-pat-btn" style="flex:1;padding:10px;background:var(--accent-gradient);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;" data-i18n="settings.save">💾 儲存設定</button>
           </div>
           <p style="font-size:11px;color:var(--text-muted);margin-top:2px;">
-            💡 <a href="https://github.com/settings/tokens/new?scopes=workflow" target="_blank" style="color:var(--accent-color);">點此建立 GitHub PAT</a>（勾選 workflow 權限）
+            <a href="https://github.com/settings/tokens/new?scopes=workflow" target="_blank" style="color:var(--accent-color);" data-i18n="settings.pat_link">💡 點此建立 GitHub PAT（勾選 workflow 權限）</a>
           </p>
         </div>
       </div>
@@ -13741,8 +13741,8 @@
           <div class="box-dropzone-inner">
             <span class="box-dropzone-icon">📸</span>
             <div class="box-dropzone-content">
-              <div class="box-dropzone-title">點擊或多選/批次拖曳「寶可夢資料截圖」至此，或直接按 <kbd>Ctrl+V</kbd> / <kbd>Cmd+V</kbd> 貼上</div>
-              <div class="box-dropzone-sub">自動批次辨識：寶可夢名稱 · 等級 · Lv.1/30/60 食材組合 · 5 格副技能 · 性格加成 · 智能防重保護</div>
+              <div class="box-dropzone-title" data-i18n="box.dropzone_title">點擊或多選/批次拖曳「寶可夢資料截圖」至此，或直接按 <kbd>Ctrl+V</kbd> / <kbd>Cmd+V</kbd> 貼上</div>
+              <div class="box-dropzone-sub" data-i18n="box.dropzone_sub">自動批次辨識：寶可夢名稱 · 等級 · Lv.1/30/60 食材組合 · 5 格副技能 · 性格加成 · 智能防重保護</div>
             </div>
           </div>
           <div id="box-scanner-status" class="box-scanner-status" style="display:none;"></div>
@@ -13816,7 +13816,7 @@
             <div id="news-count-badge" class="result-count">
               載入最新官方消息中...
             </div>
-            <div class="news-source-hint">
+            <div class="news-source-hint" data-i18n-html="news.source_full_hint">
               🤖 由 AI 自動提煉核心亮點 · 來源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 繁體中文官方網站</a>
             </div>
           </div>
@@ -13838,7 +13838,7 @@
   <div id="box-edit-modal" class="box-modal-backdrop" style="display:none;">
     <div class="box-modal-dialog">
       <div class="box-modal-header">
-        <h3 id="box-modal-title" class="box-modal-title">📸 截圖辨識確認入庫</h3>
+        <h3 id="box-modal-title" class="box-modal-title" data-i18n="box.modal_title">📸 截圖辨識確認入庫</h3>
         <button type="button" id="box-modal-close-btn" class="box-modal-close" aria-label="關閉">✕</button>
       </div>
 
@@ -13851,25 +13851,25 @@
           <div class="box-form-grid">
             <!-- 寶可夢選擇 -->
             <div class="box-form-group">
-              <label class="box-form-label" for="modal-poke-name">寶可夢名稱 <span style="color:#ef4444;">*</span></label>
+              <label class="box-form-label" for="modal-poke-name" data-i18n="box.modal_poke_name">寶可夢名稱 <span style="color:#ef4444;">*</span></label>
               <select id="modal-poke-name" class="box-form-select" required></select>
             </div>
 
             <!-- 等級 -->
             <div class="box-form-group">
-              <label class="box-form-label" for="modal-poke-level">等級 (Lv.1 ~ 80) <span style="color:#ef4444;">*</span></label>
+              <label class="box-form-label" for="modal-poke-level" data-i18n="box.modal_poke_level">等級 (Lv.1 ~ 80) <span style="color:#ef4444;">*</span></label>
               <input type="number" id="modal-poke-level" class="box-form-input" min="1" max="80" value="30" required>
             </div>
 
             <!-- 自訂暱稱 -->
             <div class="box-form-group box-full-width">
-              <label class="box-form-label" for="modal-poke-nickname">自訂暱稱 (選填)</label>
-              <input type="text" id="modal-poke-nickname" class="box-form-input" placeholder="例如：首隻樹果S神坦、全蘋果隊長...">
+              <label class="box-form-label" for="modal-poke-nickname" data-i18n="box.modal_poke_nickname">自訂暱稱 (選填)</label>
+              <input type="text" id="modal-poke-nickname" class="box-form-input" placeholder="例如：首隻樹果S神坦、全蘋果隊長..." data-i18n-placeholder="box.modal_nickname_placeholder">
             </div>
 
             <!-- 食材組合 (Lv.1, Lv.30, Lv.60) -->
             <div class="box-form-group box-full-width">
-              <label class="box-form-label">🍲 解鎖食材組合 (Lv.1 / Lv.30 / Lv.60)</label>
+              <label class="box-form-label" data-i18n="box.modal_poke_ing">🍲 解鎖食材組合 (Lv.1 / Lv.30 / Lv.60)</label>
               <div class="box-ing-form-row">
                 <div class="box-ing-form-col">
                   <span class="box-ing-lvl-badge">Lv.1</span>
@@ -13888,13 +13888,13 @@
 
             <!-- 性格 (Nature) -->
             <div class="box-form-group box-full-width">
-              <label class="box-form-label" for="modal-poke-nature">🧠 性格 (Nature) <span style="color:#ef4444;">*</span></label>
+              <label class="box-form-label" for="modal-poke-nature" data-i18n="box.modal_poke_nature">🧠 性格 (Nature) <span style="color:#ef4444;">*</span></label>
               <select id="modal-poke-nature" class="box-form-select" required></select>
             </div>
 
             <!-- 5 格副技能 (Lv.10, 25, 50, 70, 80) -->
             <div class="box-form-group box-full-width">
-              <label class="box-form-label">⚡ 副技能配置 (Lv.10 ~ 80)</label>
+              <label class="box-form-label" data-i18n="box.modal_poke_subskills">⚡ 副技能配置 (Lv.10 ~ 80)</label>
               <div class="box-subskill-form-grid">
                 <div class="box-subskill-input-row">
                   <span class="subskill-lvl-tag">Lv.10</span>
@@ -13921,8 +13921,8 @@
           </div>
 
           <div class="box-modal-footer">
-            <button type="button" id="box-modal-cancel-btn" class="box-btn box-btn-secondary">取消</button>
-            <button type="submit" id="box-modal-submit-btn" class="box-btn box-btn-primary">💾 確認儲存入庫</button>
+            <button type="button" id="box-modal-cancel-btn" class="box-btn box-btn-secondary" data-i18n="box.modal_cancel">取消</button>
+            <button type="submit" id="box-modal-submit-btn" class="box-btn box-btn-primary" data-i18n="box.modal_save">💾 確認儲存入庫</button>
           </div>
         </form>
       </div>
@@ -13930,12 +13930,12 @@
   </div>
 
   <footer>
-    <p>
+    <p data-i18n-html="footer.copyright">
       Pokémon Sleep 寶可夢資料庫 &copy; 2026 ·
       <a href="https://github.com/s102213039/pokemon-sleep-app" target="_blank">GitHub 原始碼</a> ·
       Powered by <a href="https://www.serebii.net/" target="_blank">Serebii.net</a>
     </p>
-    <p style="margin-top:8px;color:var(--text-muted);font-size:11px;">
+    <p style="margin-top:8px;color:var(--text-muted);font-size:11px;" data-i18n="footer.sync_note">
       🔄 同步功能透過 GitHub Actions 執行，點擊「同步資料」後約需 60-120 秒生效。
       需先在「⚙️ 設定」中填入 GitHub PAT Token。
     </p>

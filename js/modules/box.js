@@ -616,7 +616,9 @@
         e.stopPropagation();
         const uid = btn.getAttribute('data-uid');
         const item = userBox.find(p => p.uid === uid);
-        if (item && confirm(`確定要從倉庫刪除「${item.name || '這隻寶可夢'}」嗎？`)) {
+        const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+        const msg = isEN ? `Are you sure you want to delete "${item.name || 'this Pokémon'}" from your Box?` : `確定要從倉庫刪除「${item.name || '這隻寶可夢'}」嗎？`;
+        if (item && confirm(msg)) {
           userBox = userBox.filter(p => p.uid !== uid);
           saveUserBox();
           renderBox();
@@ -630,9 +632,14 @@
     const modal = document.getElementById('box-edit-modal');
     if (!modal) return;
 
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isEdit = !!existingItem;
     const titleEl = document.getElementById('box-modal-title');
-    if (titleEl) titleEl.textContent = isEdit ? '✏️ 編輯個人寶可夢' : (screenshotSrc ? '📸 截圖辨識確認入庫' : '➕ 手動新增寶可夢');
+    if (titleEl) {
+      titleEl.textContent = isEdit 
+        ? (isEN ? '✏️ Edit Pokémon' : '✏️ 編輯個人寶可夢') 
+        : (screenshotSrc ? (isEN ? '📸 Confirm OCR Entry' : '📸 截圖辨識確認入庫') : (isEN ? '➕ Add Pokémon' : '➕ 手動新增寶可夢'));
+    }
 
     // 填寫預設值
     const form = document.getElementById('box-edit-form');
@@ -646,8 +653,8 @@
       if (screenshotSrc) {
         previewContainer.innerHTML = `
           <div class="box-screenshot-preview-wrap">
-            <span class="box-screenshot-preview-tag">📸 原始截圖對照</span>
-            <img src="${screenshotSrc}" alt="截圖預覽" class="box-screenshot-img">
+            <span class="box-screenshot-preview-tag">${isEN ? '📸 Original Screenshot' : '📸 原始截圖對照'}</span>
+            <img src="${screenshotSrc}" alt="Screenshot" class="box-screenshot-img">
           </div>
         `;
         previewContainer.style.display = 'block';
@@ -660,11 +667,15 @@
     // 寶可夢名稱選單
     const nameSelect = document.getElementById('modal-poke-name');
     if (nameSelect && allPokemonsRef.length > 0) {
-      nameSelect.innerHTML = allPokemonsRef.map(p => `
+      nameSelect.innerHTML = allPokemonsRef.map(p => {
+        const pkmDisplayName = isEN ? (p.name_en || p.name_cn) : p.name_cn;
+        const typeName = window.I18N ? window.I18N.getTypeName(p.type) : p.type;
+        const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : p.specialty;
+        return `
         <option value="${escapeHtml(p.name_cn)}" data-id="${p.id}" ${existingItem && (existingItem.pokemonId === p.id || existingItem.name === p.name_cn) ? 'selected' : ''}>
-          No.${p.formatted_no} ${p.name_cn} (${p.type} · ${p.specialty})
+          No.${p.formatted_no} ${pkmDisplayName} (${typeName} · ${specName})
         </option>
-      `).join('');
+      `;}).join('');
     }
 
     // 等級
@@ -678,11 +689,13 @@
     // 性格選單
     const natureSelect = document.getElementById('modal-poke-nature');
     if (natureSelect) {
-      natureSelect.innerHTML = NATURE_DATA.map(n => `
+      natureSelect.innerHTML = NATURE_DATA.map(n => {
+        const natDisplayName = window.I18N ? window.I18N.getNatureName(n.name) : n.name;
+        return `
         <option value="${n.name}" ${existingItem && existingItem.nature === n.name ? 'selected' : (n.name === '固執' && !existingItem ? 'selected' : '')}>
-          ${n.name} (${n.buff}${n.debuff ? ' / ' + n.debuff : ''})
+          ${natDisplayName} (${n.buff}${n.debuff ? ' / ' + n.debuff : ''})
         </option>
-      `).join('');
+      `;}).join('');
     }
 
     // 食材選單 (Slot 1, Slot 2, Slot 3)
@@ -701,21 +714,24 @@
       if (selectEl) {
         const curVal = existingItem && existingItem.subskills && existingItem.subskills[slot - 1] ? existingItem.subskills[slot - 1] : '';
         selectEl.innerHTML = `
-          <option value="">-- 未解鎖 / 無 --</option>
-          <optgroup label="🌟 金色技能">
-            ${SUBSKILLS_DATA.filter(s => s.tier === 'gold').map(s => `
-              <option value="${s.name}" ${curVal === s.name ? 'selected' : ''}>${s.name}</option>
-            `).join('')}
+          <option value="">${isEN ? '-- Unlocked / None --' : '-- 未解鎖 / 無 --'}</option>
+          <optgroup label="${isEN ? '🌟 Gold Sub-Skills' : '🌟 金色技能'}">
+            ${SUBSKILLS_DATA.filter(s => s.tier === 'gold').map(s => {
+              const sName = window.I18N ? window.I18N.getSubSkillName(s.name) : s.name;
+              return `<option value="${s.name}" ${curVal === s.name ? 'selected' : ''}>${sName}</option>`;
+            }).join('')}
           </optgroup>
-          <optgroup label="🔷 藍色技能">
-            ${SUBSKILLS_DATA.filter(s => s.tier === 'blue').map(s => `
-              <option value="${s.name}" ${curVal === s.name ? 'selected' : ''}>${s.name}</option>
-            `).join('')}
+          <optgroup label="${isEN ? '🔷 Blue Sub-Skills' : '🔷 藍色技能'}">
+            ${SUBSKILLS_DATA.filter(s => s.tier === 'blue').map(s => {
+              const sName = window.I18N ? window.I18N.getSubSkillName(s.name) : s.name;
+              return `<option value="${s.name}" ${curVal === s.name ? 'selected' : ''}>${sName}</option>`;
+            }).join('')}
           </optgroup>
-          <optgroup label="⚪ 白色技能">
-            ${SUBSKILLS_DATA.filter(s => s.tier === 'white').map(s => `
-              <option value="${s.name}" ${curVal === s.name ? 'selected' : ''}>${s.name}</option>
-            `).join('')}
+          <optgroup label="${isEN ? '⚪ White Sub-Skills' : '⚪ 白色技能'}">
+            ${SUBSKILLS_DATA.filter(s => s.tier === 'white').map(s => {
+              const sName = window.I18N ? window.I18N.getSubSkillName(s.name) : s.name;
+              return `<option value="${s.name}" ${curVal === s.name ? 'selected' : ''}>${sName}</option>`;
+            }).join('')}
           </optgroup>
         `;
       }
@@ -725,6 +741,7 @@
   }
 
   function updateIngredientOptions(existingItem = null) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const nameSelect = document.getElementById('modal-poke-name');
     const selectedName = nameSelect ? nameSelect.value : '';
     const base = findPokemonBase(selectedName);
@@ -738,11 +755,13 @@
       if (!sel) return;
       const curVal = existingItem ? existingItem[slotKey] : (ingList[idx] ? ingList[idx].name : ingList[0].name);
 
-      sel.innerHTML = ingList.map(ing => `
+      sel.innerHTML = ingList.map(ing => {
+        const ingDisplayName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
+        return `
         <option value="${escapeHtml(ing.name)}" ${curVal === ing.name ? 'selected' : ''}>
-          🍲 ${escapeHtml(ing.name)}
+          🍲 ${escapeHtml(ingDisplayName)}
         </option>
-      `).join('');
+      `;}).join('');
     });
   }
 

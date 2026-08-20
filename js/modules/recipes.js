@@ -708,7 +708,7 @@ document.addEventListener('DOMContentLoaded', () => {
               const emoji      = getBonusEmoji(bp);
               const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
               const primaryName = isEN ? (r.name_en || r.name_cn) : r.name_cn;
-              const secondaryName = isEN ? (r.name_cn || '') : (r.name_en || '');
+              const secondaryName = isEN ? '' : (r.name_en || '');
 
               let energyCellHTML = '';
               if (!showTasty) {

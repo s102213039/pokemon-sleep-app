@@ -398,7 +398,7 @@
       if (item.debut_pokemon && item.debut_pokemon.length > 0) {
         debutBannerHTML = `
           <div class="news-debut-banner">
-            <span class="news-debut-label">🦄 新登場寶可夢：</span>
+            <span class="news-debut-label">${isEN ? '🦄 New Pokémon Debut: ' : '🦄 新登場寶可夢：'}</span>
             <div class="news-poke-pill-group">
               ${item.debut_pokemon.map(p => `<span class="news-poke-pill-new">✨ ${escapeHtml(p)}</span>`).join('')}
             </div>
@@ -407,7 +407,7 @@
       } else if (item.featured_pokemon && item.featured_pokemon.length > 0 && item.badge_key === 'event') {
         debutBannerHTML = `
           <div class="news-featured-banner">
-            <span class="news-featured-label">⭐ 焦點寶可夢：</span>
+            <span class="news-featured-label">${isEN ? '⭐ Featured Pokémon: ' : '⭐ 焦點寶可夢：'}</span>
             <div class="news-poke-pill-group">
               ${item.featured_pokemon.map(p => `<span class="news-poke-pill-featured">🔥 ${escapeHtml(p)}</span>`).join('')}
             </div>
@@ -422,7 +422,7 @@
           <div class="news-ai-dashboard">
             <div class="news-ai-dashboard-header">
               <span class="news-ai-sparkle">🤖</span>
-              <span class="news-ai-dashboard-title">AI 智能深度重點整理</span>
+              <span class="news-ai-dashboard-title">${isEN ? 'AI Key Highlights & Insights' : 'AI 智能深度重點整理'}</span>
             </div>
             <div class="news-ai-sections-grid">
               ${item.sections.map(sec => `
@@ -444,7 +444,7 @@
           <div class="news-ai-highlights">
             <div class="news-ai-title">
               <span class="news-ai-sparkle">🤖</span>
-              <span>AI 智能重點萃取</span>
+              <span>${isEN ? 'AI Key Highlights' : 'AI 智能重點萃取'}</span>
             </div>
             <ul class="news-ai-list">
               ${item.highlights.map(h => `<li>${formatAiListItem(h, item)}</li>`).join('')}
@@ -461,18 +461,25 @@
         `
         : '';
 
+      const categoryLabels = {
+        event: isEN ? 'Event' : '活動企劃',
+        update: isEN ? 'Update' : '版本更新',
+        maintenance: isEN ? 'Maintenance' : '維護公告',
+        notice: isEN ? 'Notice' : '重要通知'
+      };
+
       return `
         <article class="news-card ${isLatest ? 'news-card-featured' : ''}" data-id="${item.id}">
           <div class="news-card-header">
             <div class="news-meta-left">
               <span class="news-date-badge">📅 ${item.date}</span>
               <span class="news-badge news-badge-${item.badge_key || 'notice'}" style="--badge-color:${item.badge_color || '#8b5cf6'};">
-                ${item.badge_label || item.category || '📢 公告'}
+                ${categoryLabels[item.badge_key] || item.badge_label || item.category || (isEN ? 'Notice' : '📢 公告')}
               </span>
               ${isLatest ? '<span class="news-latest-tag">NEW 🔥</span>' : ''}
             </div>
-            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-source-link" title="前往官方公告原文">
-              <span>官方原文</span>
+            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-source-link" title="${isEN ? 'Official Post' : '前往官方公告原文'}">
+              <span>${isEN ? 'Official Post' : '官方原文'}</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                 <polyline points="15 3 21 3 21 9"></polyline>
@@ -496,12 +503,12 @@
           <div class="news-card-footer">
             ${item.content_preview ? `
               <button type="button" class="news-expand-btn ${isExpanded ? 'expanded' : ''}" data-target="${item.id}">
-                <span>${isExpanded ? '收起預覽' : '📖 查看原文預覽'}</span>
+                <span>${isExpanded ? (isEN ? 'Collapse Preview' : '收起預覽') : (isEN ? '📖 Preview Content' : '📖 查看原文預覽')}</span>
                 <span class="news-expand-arrow">${isExpanded ? '▲' : '▼'}</span>
               </button>
             ` : '<span></span>'}
             <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-read-more-btn">
-              <span>完整官方公告 ↗</span>
+              <span>${isEN ? 'Official Post ↗' : '完整官方公告 ↗'}</span>
             </a>
           </div>
         </article>
@@ -519,13 +526,13 @@
           expandedMap.delete(id);
           previewEl.classList.remove('expanded');
           btn.classList.remove('expanded');
-          btn.querySelector('span:first-child').textContent = '📖 查看原文預覽';
+          btn.querySelector('span:first-child').textContent = isEN ? '📖 Preview Content' : '📖 查看原文預覽';
           btn.querySelector('.news-expand-arrow').textContent = '▼';
         } else {
           expandedMap.add(id);
           previewEl.classList.add('expanded');
           btn.classList.add('expanded');
-          btn.querySelector('span:first-child').textContent = '收起預覽';
+          btn.querySelector('span:first-child').textContent = isEN ? 'Collapse Preview' : '收起預覽';
           btn.querySelector('.news-expand-arrow').textContent = '▲';
         }
       });

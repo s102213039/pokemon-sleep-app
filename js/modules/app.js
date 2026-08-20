@@ -1235,7 +1235,7 @@ if (typeof document !== 'undefined') {
                 <div class="card-title-group">
                   <div class="pokemon-no">No.${p.formatted_no}</div>
                   <div class="pokemon-name" style="white-space:nowrap;">${pkmName}</div>
-                  <div class="pokemon-name-en" style="white-space:nowrap;">${isEN ? (p.name_cn || '') : (p.name_en || '')}</div>
+                  ${!isEN && p.name_en ? `<div class="pokemon-name-en" style="white-space:nowrap;">${p.name_en}</div>` : ''}
                 </div>
                 <div class="card-header-ingredients">
                   ${p.ingredients ? p.ingredients.map((ing, i) => ing.name ? `

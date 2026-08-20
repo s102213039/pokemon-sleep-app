@@ -27,15 +27,22 @@
       'settings.theme_section': '🎨 外觀主題風格',
       'settings.theme_desc': '提供 2 組深色與 2 組明亮主題，適配各種光線環境。',
       'settings.theme_midnight': '🌌 深邃夜空 (Midnight Navy)',
+      'settings.theme_midnight_sub': '科技深藍黑 · 霓虹青紫點綴',
       'settings.theme_onyx': '🌑 曜石暗影 (Onyx Black)',
+      'settings.theme_onyx_sub': 'OLED 純粹黑 · 琥珀流金點綴',
       'settings.theme_dawn': '☀️ 晨曦暖陽 (Dawn Amber)',
+      'settings.theme_dawn_sub': '溫潤奶油白 · 蔚藍暖陽點綴',
       'settings.theme_emerald': '🍃 萌綠森林 (Emerald Forest)',
+      'settings.theme_emerald_sub': '清新薄荷白 · 翠綠草木點綴',
+      'settings.theme_active': '✓ 使用中',
       'settings.lang_section': '🌐 介面語言 (Language)',
       'settings.lang_desc': '切換全站介面文字與寶可夢資料顯示語系。',
       'settings.lang_zh': '繁體中文 (Traditional Chinese)',
       'settings.lang_en': 'English (US)',
       'settings.sync_section': '🔄 GitHub Actions 資料同步',
       'settings.sync_desc': '設定具有 workflow 權限的 GitHub PAT Token 觸發線上自動抓取。',
+      'settings.pat_label': 'GitHub PAT Token（儲存於本地 LocalStorage，不會上傳）',
+      'settings.pat_link': '💡 點此建立 GitHub PAT（勾選 workflow 權限）',
       'settings.save': '💾 儲存設定',
       'settings.close': '關閉',
 
@@ -195,6 +202,16 @@
       'box.view_table': '📊 表格',
       'box.empty_title': '您的寶可夢倉庫目前是空的',
       'box.empty_desc': '請拖曳截圖至上方辨識區，或點擊「手動新增」開始記錄！',
+      'box.modal_title': '📸 截圖辨識確認入庫',
+      'box.modal_poke_name': '寶可夢名稱',
+      'box.modal_poke_level': '等級 (Lv.1 ~ 80)',
+      'box.modal_poke_nickname': '自訂暱稱 (選填)',
+      'box.modal_nickname_placeholder': '例如：首隻樹果S神坦、全蘋果隊長...',
+      'box.modal_poke_ing': '🍲 解鎖食材組合 (Lv.1 / Lv.30 / Lv.60)',
+      'box.modal_poke_nature': '🧠 性格 (Nature)',
+      'box.modal_poke_subskills': '⚡ 副技能配置 (Lv.10 ~ 80)',
+      'box.modal_cancel': '取消',
+      'box.modal_save': '💾 確認儲存入庫',
       'appraisal.title': '🔮 寶可夢生涯診斷評測報告書',
       'appraisal.radar_berry': '樹果產能',
       'appraisal.radar_ing': '食材產能',
@@ -202,6 +219,10 @@
       'appraisal.radar_speed': '幫忙速度',
       'appraisal.radar_growth': '後期成長',
       'appraisal.radar_roi': '資源效益',
+
+      // Footer
+      'footer.copyright': 'Pokémon Sleep 寶可夢資料庫 &copy; 2026 · <a href="https://github.com/s102213039/pokemon-sleep-app" target="_blank">GitHub 原始碼</a> · Powered by <a href="https://www.serebii.net/" target="_blank">Serebii.net</a>',
+      'footer.sync_note': '🔄 同步功能透過 GitHub Actions 執行，點擊「同步資料」後約需 60-120 秒生效。需先在「⚙️ 設定」中填入 GitHub PAT Token。',
 
       // News & Timeline
       'news.title': '📰 最新活動與官方更新公告',
@@ -233,15 +254,22 @@
       'settings.theme_section': '🎨 Theme',
       'settings.theme_desc': 'Select from 2 Dark and 2 Light themes tailored for any lighting condition.',
       'settings.theme_midnight': '🌌 Midnight Navy (Dark)',
+      'settings.theme_midnight_sub': 'Deep Navy & Cyan · Neon Accents',
       'settings.theme_onyx': '🌑 Onyx Black (OLED Dark)',
+      'settings.theme_onyx_sub': 'Pure OLED Black · Amber Gold Accents',
       'settings.theme_dawn': '☀️ Dawn Amber (Warm Light)',
+      'settings.theme_dawn_sub': 'Warm Cream White · Cyan Sun Accents',
       'settings.theme_emerald': '🍃 Emerald Forest (Fresh Light)',
+      'settings.theme_emerald_sub': 'Fresh Mint White · Forest Green Accents',
+      'settings.theme_active': '✓ Active',
       'settings.lang_section': '🌐 Language',
       'settings.lang_desc': 'Switch interface display language.',
       'settings.lang_zh': '繁體中文 (Traditional Chinese)',
       'settings.lang_en': 'English (US)',
       'settings.sync_section': '🔄 GitHub Actions Sync',
       'settings.sync_desc': 'Configure a GitHub PAT with workflow scope to trigger automatic live updates.',
+      'settings.pat_label': 'GitHub PAT Token (Stored locally in LocalStorage, never uploaded)',
+      'settings.pat_link': '💡 Click to create GitHub PAT (select workflow scope)',
       'settings.save': '💾 Save Settings',
       'settings.close': 'Close',
 
@@ -401,6 +429,16 @@
       'box.view_table': '📊 Table',
       'box.empty_title': 'Your Pokémon Box is empty',
       'box.empty_desc': 'Drag & drop screenshots above or click "Add Pokémon" to get started.',
+      'box.modal_title': '📸 OCR Review & Confirm Entry',
+      'box.modal_poke_name': 'Pokémon Species',
+      'box.modal_poke_level': 'Level (Lv.1 ~ 80)',
+      'box.modal_poke_nickname': 'Custom Nickname (Optional)',
+      'box.modal_nickname_placeholder': 'e.g., BFS God Tank, Triple Apple...',
+      'box.modal_poke_ing': '🍲 Ingredients (Lv.1 / Lv.30 / Lv.60)',
+      'box.modal_poke_nature': '🧠 Nature',
+      'box.modal_poke_subskills': '⚡ Sub-Skills Config (Lv.10 ~ 80)',
+      'box.modal_cancel': 'Cancel',
+      'box.modal_save': '💾 Save Pokémon',
       'appraisal.title': '🔮 Pokémon Career Appraisal Report',
       'appraisal.radar_berry': 'Berry Output',
       'appraisal.radar_ing': 'Ingredient Output',
@@ -408,6 +446,10 @@
       'appraisal.radar_speed': 'Helping Speed',
       'appraisal.radar_growth': 'Late Game',
       'appraisal.radar_roi': 'Resource ROI',
+
+      // Footer
+      'footer.copyright': 'Pokémon Sleep Database &copy; 2026 · <a href="https://github.com/s102213039/pokemon-sleep-app" target="_blank">GitHub Source</a> · Powered by <a href="https://www.serebii.net/" target="_blank">Serebii.net</a>',
+      'footer.sync_note': '🔄 Sync via GitHub Actions takes ~60-120 seconds. Requires a GitHub PAT configured in Settings.',
 
       // News & Timeline
       'news.title': '📰 Latest Events & Official News',
@@ -624,14 +666,18 @@
       if (window.RecipesApp && typeof window.RecipesApp.render === 'function') {
         window.RecipesApp.render();
       }
-      if (window.WikiDB && typeof window.WikiDB.refreshCoordinateLadder === 'function') {
-        window.WikiDB.refreshCoordinateLadder();
+      if (window.WikiDB && typeof window.WikiDB.init === 'function') {
+        window.WikiDB.init();
       }
       if (window.PokemonBoxApp && typeof window.PokemonBoxApp.renderBox === 'function') {
         window.PokemonBoxApp.renderBox();
       }
       if (window.NewsApp && typeof window.NewsApp.render === 'function') {
         window.NewsApp.render();
+      }
+      if (window.AppraisalLab && typeof window.AppraisalLab.renderLab === 'function') {
+        const labCont = document.getElementById('appraisal-lab-container');
+        if (labCont) window.AppraisalLab.renderLab(labCont);
       }
     }
   }
