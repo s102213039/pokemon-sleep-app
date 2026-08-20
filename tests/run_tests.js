@@ -965,6 +965,34 @@ test('Tier 1 - Feature Coverage', 'Appraisal Lab & Six-Dimension Engine: Evaluat
   assert(costs.handyCandyS > 0, 'Cost should calculate Handy Candy S equivalents');
 });
 
+test('Tier 1 - Feature Coverage', 'Ingredient Ladder: Recipe Supply mappings & Cross-Track Search/Filter functionality', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'wiki.js'), 'utf8');
+  
+  const ctx = {
+    window: {},
+    document: { 
+      createElement: () => ({ setAttribute: () => {}, appendChild: () => {} }), 
+      getElementById: () => null,
+      querySelectorAll: () => []
+    },
+    console: console
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(wikiCode, ctx);
+
+  assert(ctx.WikiDB && ctx.WikiDB.TOP_RECIPES_FOR_INGREDIENTS, 'WikiDB should export TOP_RECIPES_FOR_INGREDIENTS');
+  const recipes = ctx.WikiDB.TOP_RECIPES_FOR_INGREDIENTS;
+  assert(Object.keys(recipes).length === 19, 'Should define top recipes for all 19 ingredients');
+  assert(recipes.corn.name === '煉獄玉米乾酪咖哩', 'Corn top recipe should be Inferno Corn Keema Curry');
+  assert(recipes.corn.need === 27, 'Corn requirement per meal should be 27');
+
+  // Verify search & filter methods
+  assert(typeof ctx.WikiDB.onLadderSearch === 'function', 'onLadderSearch should be a function');
+  assert(typeof ctx.WikiDB.clearLadderSearch === 'function', 'clearLadderSearch should be a function');
+  assert(typeof ctx.WikiDB.setLadderRecipeFilter === 'function', 'setLadderRecipeFilter should be a function');
+});
+
 
 // Final Summary Output
 console.log('\n======================================================');

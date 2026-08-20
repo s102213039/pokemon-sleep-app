@@ -3625,9 +3625,33 @@
     });
   }
 
-  // 3.0 食材天梯榜即時副技能補正開關 (食材機率提升M + 幫忙速度M)
+  // 3.0 食材天梯榜即時副技能補正開關與跨軌道搜尋/篩選狀態
   let isLadderIngM = false;
   let isLadderSpeedM = false;
+  let ladderSearchQuery = '';
+  let ladderRecipeFilter = 'ALL'; // 'ALL' | 'AAA' | 'TOP'
+
+  const TOP_RECIPES_FOR_INGREDIENTS = {
+    apple: { name: '熟成甜薯沙拉', need: 14, type: '沙拉', secondary: '花漾馬卡龍 (25)' },
+    milk: { name: '煉獄玉米乾酪咖哩', need: 20, type: '咖哩', secondary: '花漾馬卡龍 (15)' },
+    soybeans: { name: '冷靜豆漿沙拉', need: 15, type: '沙拉', secondary: '忍者沙拉 (15)' },
+    honey: { name: '花漾馬卡龍', need: 20, type: '甜點', secondary: '太妃糖豆漿拿鐵 (15)' },
+    sausage: { name: '炙烤尾巴咖哩', need: 25, type: '咖哩', secondary: '重磅多汁漢堡排 (18)' },
+    ginger: { name: '煉獄玉米乾酪咖哩', need: 24, type: '咖哩', secondary: '太妃糖豆漿拿鐵 (20)' },
+    tomato: { name: '大文字披薩', need: 20, type: '甜點', secondary: '忍者沙拉 (17)' },
+    egg: { name: '花漾馬卡龍', need: 25, type: '甜點', secondary: '早安起司沙拉 (14)' },
+    oil: { name: '大文字披薩', need: 18, type: '甜點', secondary: '油封豆腐 (15)' },
+    potato: { name: '早安起司沙拉', need: 18, type: '沙拉', secondary: '忍者咖哩 (16)' },
+    herb: { name: '煉獄玉米乾酪咖哩', need: 27, type: '咖哩', secondary: '大文字披薩 (15)' },
+    corn: { name: '煉獄玉米乾酪咖哩', need: 27, type: '咖哩', secondary: '爆鳴爆米花 (22)' },
+    cacao: { name: '花漾馬卡龍', need: 25, type: '甜點', secondary: '冷靜豆漿沙拉 (18)' },
+    coffee: { name: '太妃糖豆漿拿鐵', need: 35, type: '甜點', secondary: '超極致黑咖啡 (28)' },
+    glossyavocado: { name: '酪梨鮮蝦三明治', need: 22, type: '沙拉', secondary: '海味酪梨溫沙拉 (18)' },
+    mushroom: { name: '忍者沙拉', need: 12, type: '沙拉', secondary: '孢子濃湯 (14)' },
+    leek: { name: '忍者沙拉', need: 15, type: '沙拉', secondary: '蔥燒炙烤牛排 (16)' },
+    pumpkin: { name: '萬聖節南瓜濃湯', need: 20, type: '咖哩', secondary: '南瓜派 (18)' },
+    tail: { name: '炙烤尾巴咖哩', need: 8, type: '咖哩', secondary: '慢燉尾巴濃湯 (8)' }
+  };
 
   function getLadderMultiplier() {
     let mult = 1.0;
@@ -3646,10 +3670,79 @@
     refreshCoordinateLadder();
   }
 
+  function onLadderSearch(val) {
+    ladderSearchQuery = (val || '').trim();
+    const clearBtn = document.getElementById('ladder-search-clear-btn');
+    if (clearBtn) clearBtn.style.display = ladderSearchQuery ? 'flex' : 'none';
+    applyLadderFiltersInPlace();
+  }
+
+  function clearLadderSearch() {
+    ladderSearchQuery = '';
+    const input = document.getElementById('ladder-pkm-search-input');
+    if (input) input.value = '';
+    const clearBtn = document.getElementById('ladder-search-clear-btn');
+    if (clearBtn) clearBtn.style.display = 'none';
+    applyLadderFiltersInPlace();
+  }
+
+  function setLadderRecipeFilter(filterType) {
+    ladderRecipeFilter = filterType;
+    document.querySelectorAll('.ladder-filter-capsule').forEach(btn => {
+      if (btn.getAttribute('data-recipe-filter') === filterType) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+    refreshCoordinateLadder();
+  }
+
+  function applyLadderFiltersInPlace() {
+    const q = ladderSearchQuery.toLowerCase();
+    const nodes = document.querySelectorAll('.ladder-node');
+    const spans = document.querySelectorAll('.ladder-pkm-span-line');
+
+    if (!q) {
+      nodes.forEach(n => {
+        n.classList.remove('ladder-node-dimmed', 'ladder-node-spotlight');
+      });
+      spans.forEach(s => {
+        s.classList.remove('ladder-span-dimmed', 'ladder-span-spotlight');
+      });
+      return;
+    }
+
+    nodes.forEach(n => {
+      const pkmName = (n.getAttribute('data-pkm') || '').toLowerCase();
+      if (pkmName.includes(q)) {
+        n.classList.remove('ladder-node-dimmed');
+        n.classList.add('ladder-node-spotlight');
+      } else {
+        n.classList.remove('ladder-node-spotlight');
+        n.classList.add('ladder-node-dimmed');
+      }
+    });
+
+    spans.forEach(s => {
+      const pkmGroup = (s.getAttribute('data-pkm-group') || '').toLowerCase();
+      if (pkmGroup.includes(q)) {
+        s.classList.remove('ladder-span-dimmed');
+        s.classList.add('ladder-span-spotlight');
+      } else {
+        s.classList.remove('ladder-span-spotlight');
+        s.classList.add('ladder-span-dimmed');
+      }
+    });
+  }
+
   function refreshCoordinateLadder() {
     const container = document.getElementById('wiki-ingredient-ladder-coordinate');
     if (container) {
       container.innerHTML = renderCoordinateLadder(LV60_COORDINATE_LADDER_DATA);
+      if (ladderSearchQuery) {
+        applyLadderFiltersInPlace();
+      }
     }
   }
 
@@ -4136,7 +4229,7 @@
     `;
   }
 
-  // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、極簡圖示、含即時副技能補正)
+  // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、大菜供應能力評定、跨軌道搜尋聚焦)
   function renderCoordinateLadder(ladderData) {
     const mult = getLadderMultiplier();
     
@@ -4182,9 +4275,12 @@
           </div>
 
           <!-- 各食材軌道 (19種食材完整一覽) -->
-          ${ladderData.map(ing => `
+          ${ladderData.map(ing => {
+            const dishInfo = TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { name: '高階料理', need: 20, type: '料理', secondary: '' };
+
+            return `
             <div class="ladder-track-row" data-ladder-ing="${ing.id}">
-              <div class="ladder-track-header" title="${ing.name} (基礎能量 ${ing.energy})">
+              <div class="ladder-track-header" title="${ing.name} (基礎能量 ${ing.energy}) · 核心大菜：${dishInfo.name} (${dishInfo.need}顆/餐)">
                 <img src="${ing.icon}" class="ladder-ing-icon" alt="${ing.name}">
               </div>
 
@@ -4198,7 +4294,12 @@
                 <!-- 跨度連接線容器 (同一寶可夢多型態間的落差跨度線) -->
                 <div class="ladder-spans-container">
                   ${ing.pokemon.map(p => {
-                    const variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
+                    let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
+                    if (ladderRecipeFilter === 'AAA') {
+                      variants = variants.filter(v => v.recipe === 'AAA');
+                    } else if (ladderRecipeFilter === 'TOP') {
+                      variants = variants.slice(0, 2);
+                    }
                     if (variants.length < 2) return '';
                     const scaledCounts = variants.map(v => Math.round(v.count * mult));
                     const minCount = Math.min(...scaledCounts);
@@ -4219,11 +4320,33 @@
                 <!-- 寶可夢型態節點容器 (Nodes Container) -->
                 <div class="ladder-nodes-container">
                   ${ing.pokemon.flatMap((p, pIdx) => {
-                    const variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
+                    let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
+                    if (ladderRecipeFilter === 'AAA') {
+                      variants = variants.filter(v => v.recipe === 'AAA');
+                    } else if (ladderRecipeFilter === 'TOP') {
+                      variants = variants.slice(0, 2);
+                    }
+
                     return variants.map((v, vIdx) => {
                       const scaledCount = Math.round(v.count * mult);
                       const isTopNode = v.isTop || (p.isTop && v.recipe === p.recipe);
                       const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
+
+                      // 🍲 大菜供應能力試算
+                      const mealsPerDay = (scaledCount / dishInfo.need).toFixed(1);
+                      let dishTag = '';
+                      let dishBadgeClass = '';
+                      if (mealsPerDay >= 3.0) {
+                        dishTag = `✨ 滿載 3 餐大菜 (${mealsPerDay} 餐/天)`;
+                        dishBadgeClass = 'dish-badge-full';
+                      } else if (mealsPerDay >= 1.8) {
+                        dishTag = `⚡ 充足供應 2 餐大菜 (${mealsPerDay} 餐/天)`;
+                        dishBadgeClass = 'dish-badge-high';
+                      } else {
+                        dishTag = `💡 輔助支援 (${mealsPerDay} 餐/天)`;
+                        dishBadgeClass = 'dish-badge-assist';
+                      }
+
                       return `
                         <div class="ladder-node ${isTopNode ? 'node-top1' : ''} recipe-${v.recipe.toLowerCase()}" 
                              data-pkm-group="${p.name}"
@@ -4241,6 +4364,13 @@
                             <div class="tooltip-title">${isTopNode ? '👑 產量 TOP 1 ' : ''}${p.name} (${v.recipe})</div>
                             <div class="tooltip-detail">食材組合：<span class="text-accent font-bold">${v.recipe}</span></div>
                             <div class="tooltip-detail">預估日產：<span class="text-success font-bold">${scaledCount} 顆/天</span>${boostLabel}</div>
+                            
+                            <!-- 🍲 頂級大菜供貨能力指標 -->
+                            <div class="tooltip-dish-box">
+                              <div class="tooltip-dish-title">🍲 核心大菜：<span class="text-white font-bold">${dishInfo.name}</span> (${dishInfo.need}顆/餐)</div>
+                              <div class="tooltip-dish-badge ${dishBadgeClass}">${dishTag}</div>
+                            </div>
+
                             <div class="tooltip-note">${v.note || ''}</div>
                           </div>
                         </div>
@@ -4250,7 +4380,8 @@
                 </div>
               </div>
             </div>
-          `).join('')}
+          `;
+          }).join('')}
         </div>
       </div>
     `;
@@ -4941,14 +5072,17 @@
     toggleDetail: toggleDetailTable,
     updateBerryLevel: updateBerryLevel,
     updateBerryIsland: updateBerryIsland,
-    toggleBerryFavorite: toggleBerryFavorite,
     toggleLadderIngM: toggleLadderIngM,
     toggleLadderSpeedM: toggleLadderSpeedM,
+    onLadderSearch: onLadderSearch,
+    clearLadderSearch: clearLadderSearch,
+    setLadderRecipeFilter: setLadderRecipeFilter,
     refreshCoordinateLadder: refreshCoordinateLadder,
     handleLadderGroupHover: handleLadderGroupHover,
     handleLadderGroupHoverOut: handleLadderGroupHoverOut,
     recalcTriggerChance: recalcTriggerChance,
-    recalcSleepDays: recalcSleepDays
+    recalcSleepDays: recalcSleepDays,
+    TOP_RECIPES_FOR_INGREDIENTS: TOP_RECIPES_FOR_INGREDIENTS
   };
 
   window.WikiDB = WikiDBExport;
@@ -4966,6 +5100,9 @@
   window.toggleBerryFavorite = toggleBerryFavorite;
   window.toggleLadderIngM = toggleLadderIngM;
   window.toggleLadderSpeedM = toggleLadderSpeedM;
+  window.onLadderSearch = onLadderSearch;
+  window.clearLadderSearch = clearLadderSearch;
+  window.setLadderRecipeFilter = setLadderRecipeFilter;
   window.refreshCoordinateLadder = refreshCoordinateLadder;
   window.handleLadderGroupHover = handleLadderGroupHover;
   window.handleLadderGroupHoverOut = handleLadderGroupHoverOut;
