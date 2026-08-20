@@ -4976,8 +4976,22 @@
                 <h3 class="wiki-card-title" style="margin: 0;">Lv.60 各食材單日產量天梯榜</h3>
               </div>
 
-              <!-- 水平正右側控制列：[ 視覺天梯圖 | 卡片清單 ] + [ 食材機率M ] + [ 幫速M ] -->
+              <!-- 水平正右側控制列：[ 跨軌道搜尋 ] + [ 型態篩選膠囊 ] + [ 視覺天梯圖 | 卡片清單 ] + [ 食材機率M ] + [ 幫速M ] -->
               <div class="ladder-header-controls">
+                <!-- 跨軌道微型搜尋框 -->
+                <div class="ladder-search-box">
+                  <span class="ladder-search-icon">🔍</span>
+                  <input type="text" id="ladder-pkm-search-input" class="ladder-search-input" placeholder="跨軌道搜尋寶可夢..." value="${ladderSearchQuery}" oninput="window.WikiDB.onLadderSearch(this.value)">
+                  <button type="button" class="ladder-search-clear" id="ladder-search-clear-btn" style="${ladderSearchQuery ? 'display:flex;' : 'display:none;'}" onclick="window.WikiDB.clearLadderSearch()" title="清空搜尋">✕</button>
+                </div>
+
+                <!-- 型態篩選膠囊 -->
+                <div class="ladder-filter-capsules">
+                  <button type="button" class="ladder-filter-capsule ${ladderRecipeFilter === 'ALL' ? 'active' : ''}" data-recipe-filter="ALL" onclick="window.WikiDB.setLadderRecipeFilter('ALL')">全部</button>
+                  <button type="button" class="ladder-filter-capsule ${ladderRecipeFilter === 'AAA' ? 'active' : ''}" data-recipe-filter="AAA" onclick="window.WikiDB.setLadderRecipeFilter('AAA')">👑 僅看 AAA</button>
+                  <button type="button" class="ladder-filter-capsule ${ladderRecipeFilter === 'TOP' ? 'active' : ''}" data-recipe-filter="TOP" onclick="window.WikiDB.setLadderRecipeFilter('TOP')">🥈 僅看 TOP 1-2</button>
+                </div>
+
                 <div class="ladder-mode-btns" style="margin: 0;">
                   <button type="button" class="ladder-mode-btn active" data-ladder-view="coordinate" onclick="window.WikiDB.switchLadderView('coordinate')">📈 視覺天梯圖</button>
                   <button type="button" class="ladder-mode-btn" data-ladder-view="list" onclick="window.WikiDB.switchLadderView('list')">📋 卡片清單</button>
