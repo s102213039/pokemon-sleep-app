@@ -172,8 +172,8 @@ header {
 }
 
 .header-container {
-  max-width: 1400px;
-  width: 95%;
+  max-width: 1200px;
+  width: 92%;
   height: 100%;
   margin: 0 auto;
   padding: 0 16px;
@@ -368,7 +368,7 @@ header {
 
 /* Controls Container */
 .controls-container {
-  max-width: 1240px;
+  max-width: 1200px;
   width: 92%;
   margin: 24px auto 16px;
   padding: 0 16px;
@@ -701,11 +701,11 @@ header {
 /* ⬅️ 左側抽屜式滑動側邊欄 (Left Sliding Sidebar - 完美對齊頂部 Header 與頁面背景) */
 .pokemon-filter-sidebar {
   position: fixed;
-  top: 0;
+  top: 70px;
   left: 0;
   bottom: 0;
   width: 232px;
-  height: 100vh;
+  height: calc(100vh - 70px);
   background-color: #0f172a;
   background-image: 
     radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
@@ -720,7 +720,7 @@ header {
   box-shadow: 4px 0 16px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
-  z-index: 150;
+  z-index: 95;
   transform: translateX(0);
   transition: transform 0.25s ease;
 }
@@ -730,9 +730,9 @@ header {
   box-shadow: none;
 }
 
-/* 側邊欄頂部 Header：高度與背景跟頂部導航列完全一致 */
+/* 側邊欄頂部 Header：在頂部導航列下方 */
 .sidebar-header {
-  height: 70px;
+  height: 52px;
   padding: 0 14px;
   display: flex;
   align-items: center;
@@ -1040,15 +1040,15 @@ header {
 .sidebar-backdrop {
   display: none;
   position: fixed;
-  top: 0;
+  top: 70px;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 100vh;
+  height: calc(100vh - 70px);
   background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
-  z-index: 149;
+  z-index: 94;
   opacity: 0;
   transition: opacity 0.28s ease;
   pointer-events: none;
@@ -1069,9 +1069,9 @@ header {
 }
 
 .pokemon-main-content .controls-container {
-  max-width: 1400px;
-  width: 95%;
-  margin: 32px auto 16px;
+  max-width: 1200px;
+  width: 92%;
+  margin: 24px auto 16px;
   padding: 0 16px;
 }
 
@@ -1079,8 +1079,8 @@ header {
 .pokemon-main-content .table-container,
 .pokemon-main-content .pokemon-table-container,
 .pokemon-main-content .pokemon-grid {
-  max-width: 1400px;
-  width: 95%;
+  max-width: 1200px;
+  width: 92%;
   margin: 0 auto 16px;
   padding: 0 16px;
 }
@@ -1095,8 +1095,8 @@ header {
 
 /* Stats Bar */
 .stats-bar {
-  max-width: 1400px;
-  width: 95%;
+  max-width: 1200px;
+  width: 92%;
   margin: 0 auto 16px;
   padding: 0 16px;
   font-size: 13.5px;
@@ -1322,10 +1322,10 @@ header {
    ========================================================= */
 .pokemon-table-container,
 .table-container {
-  max-width: 1400px;
-  width: 95%;
+  max-width: 1200px;
+  width: 92%;
   margin: 0 auto;
-  padding: 0 8px;
+  padding: 0 16px;
   overflow-x: auto;
 }
 
@@ -1693,7 +1693,7 @@ header {
 
 /* Footer */
 footer {
-  max-width: 1240px;
+  max-width: 1200px;
   width: 92%;
   margin: 40px auto 0;
   padding: 28px 16px;
@@ -2569,7 +2569,7 @@ input[type=range].rf-slider.event-slider {
 }
 
 .news-content-container {
-  max-width: 1240px;
+  max-width: 1200px;
   width: 92%;
   margin: 0 auto 40px;
   padding: 0 16px;
@@ -3183,7 +3183,7 @@ input[type=range].rf-slider.event-slider {
 
 /* 倉庫內容清單區 */
 .box-content-container {
-  max-width: 1240px;
+  max-width: 1200px;
   width: 92%;
   margin: 0 auto 40px;
   padding: 0 16px;
@@ -4050,10 +4050,10 @@ select optgroup,
    ========================================================= */
 
 .wiki-main-container {
-  max-width: 1400px;
-  width: 96%;
+  max-width: 1200px;
+  width: 92%;
   margin: 14px auto 24px;
-  padding: 0 12px;
+  padding: 0 16px;
   box-sizing: border-box;
 }
 
