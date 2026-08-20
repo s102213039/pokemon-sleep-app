@@ -1228,10 +1228,21 @@ if (typeof document !== 'undefined') {
                   <div class="pokemon-no">No.${p.formatted_no}</div>
                   <div class="pokemon-name" style="white-space:nowrap;">${pkmName}</div>
                   <div class="pokemon-name-en" style="white-space:nowrap;">${isEN ? (p.name_cn || '') : (p.name_en || '')}</div>
-                  <span class="type-badge" style="background-color: var(--type-${p.type}, #64748b);white-space:nowrap;">${typeName}</span>
+                </div>
+                <div class="card-header-ingredients">
+                  ${p.ingredients ? p.ingredients.map((ing, i) => ing.name ? `
+                    <div class="card-header-ing-row" title="${ing.name}">
+                      ${ing.icon ? `<img class="card-header-ing-icon" src="${ing.icon}" alt="${ing.name}" loading="lazy" onerror="this.style.display='none';">` : ''}
+                      ${ingQtyBadges(ing, i)}
+                    </div>
+                  ` : '').join('') : ''}
                 </div>
               </div>
               <div class="card-stats">
+                <div class="stat-item">
+                  <span class="stat-label">${t('th.type', '屬性')}</span>
+                  <span class="stat-value"><span class="type-badge-mini" style="background-color: var(--type-${p.type}, #64748b);">${typeName}</span></span>
+                </div>
                 <div class="stat-item">
                   <span class="stat-label">${t('th.specialty', '得意')}</span>
                   <span class="stat-value" style="white-space:nowrap;">${specName}</span>
@@ -1249,21 +1260,13 @@ if (typeof document !== 'undefined') {
                   <span class="stat-value" style="white-space:nowrap;">${p.skill_rate || '--'}</span>
                 </div>
                 <div class="stat-item">
-                  <span class="stat-label">${t('th.interval', '間隔')}</span>
+                  <span class="stat-label">${t('th.interval', '幫忙間隔')}</span>
                   <span class="stat-value" style="white-space:nowrap;">${p.interval || '--'}</span>
                 </div>
-                <div class="stat-item">
-                  <span class="stat-label">${t('th.main_skill', '主技能')}</span>
-                  <span class="stat-value skill-stat-val">${renderSkillWithTooltip(p.main_skill)}</span>
-                </div>
               </div>
-              <div class="ingredient-list">
-                ${p.ingredients ? p.ingredients.map((ing, i) => ing.name ? `
-                  <div class="ingredient-row" style="white-space:nowrap;">
-                    ${ing.icon ? `<img class="ing-icon" src="${ing.icon}" alt="${ing.name}" loading="lazy" title="${ing.name}" onerror="this.style.display='none';">` : ''}
-                    ${ingQtyBadges(ing, i)}
-                  </div>
-                ` : '').join('') : ''}
+              <div class="card-skill-footer">
+                <span class="card-skill-label">⚡ ${t('th.main_skill', '主技能')}</span>
+                <span class="card-skill-value">${renderSkillWithTooltip(p.main_skill)}</span>
               </div>
             </div>
           `}).join('')}
