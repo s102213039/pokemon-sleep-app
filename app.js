@@ -328,7 +328,13 @@ const PokemonApp = {
     this.currentSort = 'no-asc';
     this.viewMode = 'table';
   },
+};
 
+if (typeof window !== 'undefined') {
+  window.PokemonApp = PokemonApp;
+}
+
+Object.assign(PokemonApp, {
   filterData() {
     return this.allPokemons.filter(p => {
       const pType = p.type || '';
@@ -406,7 +412,7 @@ const PokemonApp = {
     const filtered = this.filterData();
     return this.sortData(filtered);
   }
-};
+});
 
 if (typeof document !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
