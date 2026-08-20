@@ -921,6 +921,51 @@ test('Tier 4 - Real-World Application Scenarios', 'Full application workflow sim
   }
 });
 
+test('Tier 1 - Feature Coverage', 'Appraisal Lab & Six-Dimension Engine: Evaluates BFS God Roll and calculates milestone costs', () => {
+  const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'appraisal.js'), 'utf8');
+  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'box.js'), 'utf8');
+  
+  const ctx = {
+    window: {},
+    document: { createElement: () => ({ setAttribute: () => {}, appendChild: () => {} }), body: { appendChild: () => {} } },
+    console: console
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(boxCode, ctx);
+  vm.runInContext(appraisalCode, ctx);
+
+  const sampleRaichu = {
+    id: '26',
+    name_cn: '雷丘',
+    specialty: '樹果',
+    type: '電',
+    interval: '00:36:40'
+  };
+
+  // Evaluation with BFS Lv.10 + Helping Speed M
+  const result = ctx.AppraisalLab.evaluatePokemon(sampleRaichu, 30, '固執', ['樹果數量S', '幫忙速度M', '幫手獎勵', '技能機率提升M', '睡眠EXP獎勵'], ['特選蘋果', '特選蘋果', '特選蘋果']);
+  
+  assert(result !== null, 'Evaluation should return non-null object');
+  assert(result.scores.berry >= 90, 'Raichu with BFS and Adamant should have berry score >= 90');
+  assert(result.scores.speed >= 80, 'Raichu with fast interval and Adamant should have speed score >= 80');
+  assert(result.grade === 'S+' || result.grade === 'S', 'Raichu God Roll should achieve S+ or S rank');
+  assert(result.pros.length >= 2, 'Should generate multiple pro highlights for top rolls');
+
+  // SVG Radar Chart verification
+  const svg = ctx.AppraisalLab.renderRadarChartSVG(result.scores, 280);
+  assert(svg.includes('<svg'), 'Radar chart should be a valid SVG string');
+  assert(svg.includes('<polygon'), 'Radar chart should include polygon elements');
+  assert(svg.includes('樹果產能'), 'Radar chart should include dimension labels');
+
+  // Milestone costs
+  const costs = ctx.AppraisalLab.calculateMilestoneCost(10, 30, { buffType: 'none', debuffType: 'none' });
+  assert(costs.candies > 0, 'Cost to Lv.30 should require candies');
+  assert(costs.shards > 0, 'Cost to Lv.30 should require dream shards');
+  assert(costs.handyCandyS > 0, 'Cost should calculate Handy Candy S equivalents');
+});
+
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

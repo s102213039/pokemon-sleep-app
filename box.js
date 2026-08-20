@@ -411,6 +411,7 @@
                   </div>
                 </div>
                 <div class="box-card-actions">
+                  <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="🔮 深度診斷報告書與六維雷達圖">🔮</button>
                   <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="編輯寶可夢">✏️</button>
                   <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="刪除寶可夢">🗑️</button>
                 </div>
@@ -547,6 +548,7 @@
                   </td>
                   <td>
                     <div style="display:flex;gap:6px;">
+                      <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="🔮 深度診斷報告">🔮</button>
                       <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="編輯">✏️</button>
                       <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="刪除">🗑️</button>
                     </div>
@@ -563,6 +565,24 @@
   }
 
   function bindCardActions(container) {
+    container.querySelectorAll('.btn-appraise').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const uid = btn.getAttribute('data-uid');
+        const item = userBox.find(p => p.uid === uid);
+        if (item && window.AppraisalLab) {
+          const base = findPokemonBase(item.pokemonId || item.name);
+          window.AppraisalLab.openModal({
+            pkm: base,
+            level: item.level || 30,
+            nature: item.nature || '坦率',
+            subskills: item.subskills || [],
+            ingredients: [item.ing1, item.ing2, item.ing3]
+          });
+        }
+      });
+    });
+
     container.querySelectorAll('.btn-edit').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1080,20 +1100,28 @@
       renderBox();
     };
 
+    const NATURE_DICT = {};
+    NATURE_DATA.forEach(n => { NATURE_DICT[n.name] = n; });
+
     window.PokemonBoxApp = {
       getUserBox: () => userBox,
       setUserBox: (box) => { userBox = box; saveUserBox(); renderBox(); },
       calculatePokemonPR,
       NATURE_DATA,
+      NATURE_DICT,
       SUBSKILLS_DATA
     };
+    window.UserBox = window.PokemonBoxApp;
   }
 
   if (typeof module !== 'undefined' && module.exports) {
+    const NATURE_DICT = {};
+    NATURE_DATA.forEach(n => { NATURE_DICT[n.name] = n; });
     module.exports = {
-      PokemonBoxApp: typeof window !== 'undefined' ? window.PokemonBoxApp : { calculatePokemonPR, NATURE_DATA, SUBSKILLS_DATA },
+      PokemonBoxApp: typeof window !== 'undefined' ? window.PokemonBoxApp : { calculatePokemonPR, NATURE_DATA, NATURE_DICT, SUBSKILLS_DATA },
       calculatePokemonPR,
       NATURE_DATA,
+      NATURE_DICT,
       SUBSKILLS_DATA
     };
   }

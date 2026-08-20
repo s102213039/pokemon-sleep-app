@@ -5641,5 +5641,686 @@ select optgroup,
   }
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   🔮 寶可夢深度診斷評測室與六維雷達圖 (Appraisal Lab & Radar Chart)
+   ═══════════════════════════════════════════════════════════════ */
 
+/* 診斷報告彈窗 Backdrop */
+.appraisal-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(4, 7, 15, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  padding: 16px;
+  overflow-y: auto;
+}
 
+/* 診斷報告主卡片容器 */
+.appraisal-modal-container {
+  background: #0f172a;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 960px;
+  max-height: 92vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(56, 189, 248, 0.15);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  animation: appraisalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes appraisalFadeIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.appraisal-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.appraisal-header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.appraisal-modal-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(168, 85, 247, 0.2);
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  color: #d8b4fe;
+}
+
+.appraisal-pokemon-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.appraisal-pokemon-en {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.appraisal-close-btn {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #94a3b8;
+  font-size: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.appraisal-close-btn:hover {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
+.appraisal-modal-body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* 左欄：基本卡片與評級 */
+.appraisal-left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.appraisal-profile-card {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.appraisal-avatar-wrapper {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  margin-bottom: 12px;
+}
+
+.appraisal-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+}
+
+.appraisal-level-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: #0284c7;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.appraisal-specialty-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.appraisal-type-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.appraisal-spec-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(234, 179, 8, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.appraisal-config-section {
+  width: 100%;
+  margin-top: 10px;
+  text-align: left;
+}
+
+.appraisal-config-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.appraisal-nature-badge {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.appraisal-subskills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.appraisal-subskill-pill {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.subskill-lv-tag {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+/* 評級結果盒 */
+.appraisal-verdict-box {
+  background: rgba(15, 23, 42, 0.7);
+  border: 2px solid #38bdf8;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.appraisal-grade-large {
+  font-size: 40px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 4px;
+  text-shadow: 0 0 15px currentColor;
+}
+
+.appraisal-grade-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.appraisal-composite-score {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* 右欄：雷達圖 + 量表 + 深度分析 */
+.appraisal-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.appraisal-chart-flex {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 16px;
+  align-items: center;
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.appraisal-radar-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radar-svg-chart {
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.appraisal-scores-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.appraisal-section-heading {
+  margin: 0 0 6px 0;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.appraisal-dim-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.appraisal-dim-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.appraisal-dim-bar-bg {
+  height: 6px;
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.appraisal-dim-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0284c7, #38bdf8);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+/* 點評卡片 */
+.appraisal-analysis-card,
+.appraisal-costs-card {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.appraisal-pros-list,
+.appraisal-cons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.appraisal-pro-item {
+  font-size: 12px;
+  color: #e2e8f0;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  padding: 6px 10px;
+  border-radius: 6px;
+  line-height: 1.4;
+}
+
+.appraisal-con-item {
+  font-size: 12px;
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 6px 10px;
+  border-radius: 6px;
+  line-height: 1.4;
+}
+
+/* 里程碑成本格 */
+.appraisal-costs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.appraisal-cost-block {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cost-milestone-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: #fbbf24;
+  margin-bottom: 2px;
+}
+
+.cost-milestone-sub {
+  font-size: 10px;
+  font-weight: normal;
+  color: #94a3b8;
+}
+
+.cost-achieved {
+  font-size: 12px;
+  font-weight: 700;
+  color: #10b981;
+  padding: 4px 0;
+}
+
+.cost-detail-row {
+  font-size: 11px;
+  color: #cbd5e1;
+}
+
+.cost-val {
+  font-weight: 800;
+  color: #38bdf8;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🔮 獨立評測實驗室 (Appraisal Lab)
+   ═══════════════════════════════════════════════════════════════ */
+.appraisal-lab-card {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(168, 85, 247, 0.15);
+}
+
+.appraisal-lab-header {
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
+}
+
+.appraisal-lab-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.appraisal-lab-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(168, 85, 247, 0.25);
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  color: #d8b4fe;
+}
+
+.appraisal-lab-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.appraisal-lab-desc {
+  margin: 0;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.appraisal-lab-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 20px;
+}
+
+.appraisal-lab-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.lab-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lab-control-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #cbd5e1;
+}
+
+.lab-select {
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #ffffff;
+  padding: 6px 36px 6px 10px;
+  font-size: 12px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 14px;
+}
+
+.lab-slider {
+  width: 100%;
+  accent-color: #38bdf8;
+}
+
+.lab-subskills-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.lab-subskill-slot {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 6px;
+  align-items: center;
+}
+
+.slot-lv-label {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  padding: 4px 6px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.lab-select-subskill {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #e2e8f0;
+  padding: 4px 34px 4px 8px;
+  font-size: 11.5px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+}
+
+/* 實驗室右側預覽 */
+.appraisal-lab-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: rgba(30, 41, 59, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.lab-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 10px;
+}
+
+.lab-preview-pokemon-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lab-preview-icon {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+.lab-preview-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.lab-preview-spec {
+  font-size: 11.5px;
+  color: #94a3b8;
+}
+
+.lab-preview-verdict {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1.5px solid #38bdf8;
+  padding: 4px 12px;
+  border-radius: 8px;
+}
+
+.lab-grade-char {
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.lab-grade-title {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.lab-preview-chart-row {
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.lab-chart-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lab-scores-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lab-scores-title {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #38bdf8;
+  margin-bottom: 2px;
+}
+
+.lab-dim-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: #cbd5e1;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.lab-pros-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lab-bullet-item {
+  font-size: 11.5px;
+  color: #e2e8f0;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  padding: 5px 8px;
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .appraisal-modal-body,
+  .appraisal-chart-flex,
+  .appraisal-lab-layout,
+  .lab-preview-chart-row,
+  .appraisal-costs-grid {
+    grid-template-columns: 1fr;
+  }
+}

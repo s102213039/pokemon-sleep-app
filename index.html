@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260820_04">
+  <link rel="stylesheet" href="styles.css?v=20260820_05">
 </head>
 <body>
 
@@ -11585,6 +11585,7 @@
           </div>
           <div class="box-banner-actions">
             <input type="file" id="box-file-input" accept="image/*" style="display:none;">
+            <button type="button" id="box-appraisal-lab-btn" class="box-btn" style="background: linear-gradient(135deg, #8b5cf6, #38bdf8); color: #ffffff; border: 1px solid rgba(168, 85, 247, 0.4); font-weight: 700;" onclick="window.AppraisalLab.toggleLab()" title="開啟/收合 寶可夢六維深度診斷評測實驗室">🔮 深度評測室</button>
             <button type="button" id="box-manual-add-btn" class="box-btn box-btn-primary">➕ 手動新增寶可夢</button>
             <button type="button" id="box-export-btn" class="box-btn box-btn-secondary" title="匯出個人倉庫為 JSON 備份檔">💾 匯出備份</button>
             <label class="box-btn box-btn-secondary" style="cursor:pointer;margin:0;" title="從 JSON 檔案匯入還原倉庫">
@@ -11593,6 +11594,9 @@
             </label>
           </div>
         </div>
+
+        <!-- 🔮 寶可夢六維深度評測實驗室容器 (Appraisal Lab) -->
+        <div id="appraisal-lab-container" style="display:none; margin-bottom: 20px;"></div>
 
         <!-- 截圖拖曳與剪貼簿貼上區 -->
         <div id="box-dropzone" class="box-dropzone">
@@ -11791,10 +11795,11 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="app.js?v=20260820_04"></script>
-  <script src="recipes.js?v=20260820_04"></script>
-  <script src="wiki.js?v=20260820_04"></script>
-  <script src="box.js?v=20260820_04"></script>
-  <script src="news.js?v=20260820_04"></script>
+  <script src="app.js?v=20260820_05"></script>
+  <script src="recipes.js?v=20260820_05"></script>
+  <script src="wiki.js?v=20260820_05"></script>
+  <script src="box.js?v=20260820_05"></script>
+  <script src="news.js?v=20260820_05"></script>
+  <script src="appraisal.js?v=20260820_05"></script>
 </body>
 </html>
