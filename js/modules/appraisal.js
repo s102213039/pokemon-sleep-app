@@ -671,10 +671,10 @@
           <div class="appraisal-lab-preview">
             <div class="lab-preview-header">
               <div class="lab-preview-pokemon-info">
-                <img src="${currentPkm.icon_url}" class="lab-preview-icon" alt="${currentPkm.name_cn}">
+                <img src="${currentPkm.icon_url}" class="lab-preview-icon" alt="${displayName}">
                 <div>
-                  <div class="lab-preview-name">${currentPkm.name_cn}</div>
-                  <div class="lab-preview-spec">${currentPkm.type}屬性 · ${currentPkm.specialty}專長</div>
+                  <div class="lab-preview-name">${displayName}</div>
+                  <div class="lab-preview-spec">${isEN ? `${typeName} · ${specName}` : `${currentPkm.type}屬性 · ${currentPkm.specialty}專長`}</div>
                 </div>
               </div>
 
@@ -690,9 +690,9 @@
               </div>
 
               <div class="lab-scores-box">
-                <div class="lab-scores-title">六維數值評分</div>
+                <div class="lab-scores-title">${isEN ? '6-Dim Quantitative Scores' : '六維數值評分'}</div>
                 ${SIX_DIM_META.map(function(m) {
-                  return '<div class="lab-dim-item"><span>' + m.icon + ' ' + m.label + '</span><span class="font-bold text-accent">' + evaluation.scores[m.key] + ' 分</span></div>';
+                  return '<div class="lab-dim-item"><span>' + m.icon + ' ' + m.label + '</span><span class="font-bold text-accent">' + evaluation.scores[m.key] + (isEN ? ' pts' : ' 分') + '</span></div>';
                 }).join('')}
               </div>
             </div>

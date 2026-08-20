@@ -119,13 +119,14 @@
         .replace(/資訊$/g, '')
         .trim();
 
-      let typeLabel = '活動列表';
+      const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+      let typeLabel = isEN ? 'Event' : '活動列表';
       let typeClass = 'gantt-bar-event';
       if (item.title.includes('培育包')) {
-        typeLabel = '培育包';
+        typeLabel = isEN ? 'Growth Pack' : '培育包';
         typeClass = 'gantt-bar-pack';
       } else if (isPack) {
-        typeLabel = '活動禮包';
+        typeLabel = isEN ? 'Event Bundle' : '活動禮包';
         typeClass = 'gantt-bar-pack';
       }
 
@@ -154,6 +155,7 @@
 
   function renderEventTimeline() {
     if (!newsTimelineContainer) return;
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const ganttData = parseEventTimeline(allNews);
     if (ganttData.length === 0) {
       newsTimelineContainer.style.display = 'none';
@@ -202,13 +204,13 @@
         <div class="gantt-top-bar">
           <div class="gantt-title-row">
             <span class="gantt-icon">📅</span>
-            <span class="gantt-title">活動與禮包時程</span>
+            <span class="gantt-title">${isEN ? 'Event & Bundle Schedule' : '活動與禮包時程'}</span>
             <div class="gantt-legend">
-              <span class="gantt-legend-item"><span class="gantt-dot dot-event"></span> 活動列表</span>
-              <span class="gantt-legend-item"><span class="gantt-dot dot-pack"></span> 活動禮包 / 培育包</span>
+              <span class="gantt-legend-item"><span class="gantt-dot dot-event"></span> ${isEN ? 'Events' : '活動列表'}</span>
+              <span class="gantt-legend-item"><span class="gantt-dot dot-pack"></span> ${isEN ? 'Bundles / Packs' : '活動禮包 / 培育包'}</span>
             </div>
           </div>
-          <div class="gantt-hint">💡 點擊任一時程條可快速定位完整公告</div>
+          <div class="gantt-hint">${isEN ? '💡 Click any timeline bar to locate the full announcement' : '💡 點擊任一時程條可快速定位完整公告'}</div>
         </div>
 
         <div class="gantt-scroll-container">
@@ -222,14 +224,14 @@
             <!-- 2. 日期刻度列 -->
             <div class="gantt-days-row">
               ${dayCols.map((dc, i) => `
-                <div class="gantt-day-cell ${dc.dayClass}" title="${dc.month}-${dc.label}${dc.isToday ? ' (今日)' : ''}">
+                <div class="gantt-day-cell ${dc.dayClass}" title="${dc.month}-${dc.label}${dc.isToday ? (isEN ? ' (Today)' : ' (今日)') : ''}">
                   ${dc.label}
                 </div>
               `).join('')}
             </div>
 
             <!-- 3. 今日垂直指示線 -->
-            <div class="gantt-today-line" style="grid-column: ${todayIndex};" title="今日 (8/16)"></div>
+            <div class="gantt-today-line" style="grid-column: ${todayIndex};" title="${isEN ? 'Today (8/16)' : '今日 (8/16)'}"></div>
 
             <!-- 4. 時程長條 Bars -->
             <div class="gantt-bars-container">
