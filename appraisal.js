@@ -553,8 +553,11 @@
   function renderAppraisalLabContainer(targetElement) {
     if (!targetElement) return;
 
-    const pokemons = window.allPokemons || [];
-    if (pokemons.length === 0) return;
+    const pokemons = window.allPokemons || (window.PokemonApp && window.PokemonApp.allPokemons) || [];
+    if (pokemons.length === 0) {
+      targetElement.innerHTML = '<div style="padding:20px;text-align:center;color:#94a3b8;">載入圖鑑資料中...</div>';
+      return;
+    }
 
     const currentPkm = pokemons.find(function(p) { return p.id === labState.selectedPkmId; }) || pokemons[0];
     const natures = (window.UserBox && window.UserBox.NATURE_DATA) || [];

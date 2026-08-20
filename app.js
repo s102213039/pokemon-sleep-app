@@ -647,6 +647,7 @@ if (typeof document !== 'undefined') {
       })
       .then(data => {
         allPokemons = data;
+        window.allPokemons = data;
         PokemonApp.init(data);
         initFilters();
         renderUI();
