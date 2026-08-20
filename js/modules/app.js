@@ -286,12 +286,13 @@ const SPECIAL_SKILL_DETAILS = {
 
 function renderSkillWithTooltip(skillName) {
   if (!skillName) return '--';
+  const displayName = (typeof window !== 'undefined' && window.I18N) ? window.I18N.getMainSkillName(skillName) : skillName;
   const detail = SPECIAL_SKILL_DETAILS[skillName];
   // 僅針對特殊/變體/複合主技能展示標籤與詳細說明，純基礎主技能（如能量填充S）保持純文字不展示說明
   if (detail) {
-    return `<span class="special-skill-badge" data-skill="${skillName}" data-skill-detail="${detail}" title="${detail}"><span class="skill-sparkle" aria-hidden="true">✨</span><span class="skill-name-text">${skillName}</span></span>`;
+    return `<span class="special-skill-badge" data-skill="${skillName}" data-skill-detail="${detail}" title="${detail}"><span class="skill-sparkle" aria-hidden="true">✨</span><span class="skill-name-text">${displayName}</span></span>`;
   }
-  return skillName;
+  return displayName;
 }
 
 function matchesSkill(pokemonSkill, targetBaseSkill) {
@@ -777,9 +778,11 @@ if (typeof document !== 'undefined') {
       }
 
       function renderSpecialtyButtons() {
+        if (!specialtyFilterContainer) return;
         specialtyFilterContainer.innerHTML = specialties.map(s => {
           const isActive = selectedSpecialties.has(s);
-          return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" data-specialty="${s}">${s}</button>`;
+          const label = window.I18N ? window.I18N.getSpecialtyName(s) : s;
+          return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" data-specialty="${s}">${label}</button>`;
         }).join('');
       }
 
@@ -787,9 +790,10 @@ if (typeof document !== 'undefined') {
         if (!berryFilterContainer) return;
         berryFilterContainer.innerHTML = BERRY_DATA.map(b => {
           const isActive = selectedBerries.has(b.name);
+          const berryName = window.I18N ? window.I18N.getBerryName(b.name) : b.name;
           return `
-            <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-berry="${b.name}" title="${b.name} (${b.type}屬性)" aria-label="${b.name}">
-              ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" alt="${b.name}" loading="lazy" onerror="this.style.display='none';">` : '🫐'}
+            <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-berry="${b.name}" title="${berryName} (${b.type})" aria-label="${berryName}">
+              ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" alt="${berryName}" loading="lazy" onerror="this.style.display='none';">` : '🫐'}
             </button>
           `;
         }).join('');
@@ -803,9 +807,10 @@ if (typeof document !== 'undefined') {
         if (!ingredientFilterContainer) return;
         ingredientFilterContainer.innerHTML = uniqueIngredients.map(ing => {
           const isActive = selectedIngredients.has(ing.name);
+          const ingName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
           return `
-            <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-ing="${ing.name}" title="包含 ${ing.name}" aria-label="${ing.name}">
-              ${ing.icon ? `<img src="${ing.icon}" class="subfilter-icon-img" alt="${ing.name}" loading="lazy" onerror="this.style.display='none';">` : '🥗'}
+            <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-ing="${ing.name}" title="${ingName}" aria-label="${ingName}">
+              ${ing.icon ? `<img src="${ing.icon}" class="subfilter-icon-img" alt="${ingName}" loading="lazy" onerror="this.style.display='none';">` : '🥗'}
             </button>
           `;
         }).join('');
@@ -819,9 +824,10 @@ if (typeof document !== 'undefined') {
         if (!skillFilterContainer) return;
         skillFilterContainer.innerHTML = BASE_SKILLS.map(skillItem => {
           const isActive = selectedSkills.has(skillItem.key);
+          const label = window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label;
           return `
-            <button type="button" class="subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${skillItem.key}">
-              <span class="subfilter-skill-name">${skillItem.label}</span>
+            <button type="button" class="subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${label}">
+              <span class="subfilter-skill-name">${label}</span>
             </button>
           `;
         }).join('');
@@ -1197,10 +1203,12 @@ if (typeof document !== 'undefined') {
       if (!contentArea) return;
       if (typeof updateActiveFilterBadge === 'function') updateActiveFilterBadge();
       const filtered = sortPokemonList(filterData(), currentSort);
-      if (countBadge) countBadge.textContent = `共 ${filtered.length} 隻寶可夢`;
+      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+      const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+      if (countBadge) countBadge.textContent = isEN ? `${filtered.length} ${t('pokedex.count_label', 'Pokémon')}` : `共 ${filtered.length} 隻寶可夢`;
 
       if (filtered.length === 0) {
-        contentArea.innerHTML = `<div style="text-align:center; padding: 60px; color: var(--text-muted); font-size: 16px;">查無符合條件的寶可夢</div>`;
+        contentArea.innerHTML = `<div style="text-align:center; padding: 60px; color: var(--text-muted); font-size: 16px;">${t('pokedex.no_results', '查無符合條件的寶可夢')}</div>`;
         return;
       }
 
@@ -1329,6 +1337,14 @@ if (typeof document !== 'undefined') {
         </div>
       `;
     }
+
+    PokemonApp.render = function() {
+      if (typeof renderSpecialtyButtons === 'function') renderSpecialtyButtons();
+      if (typeof renderBerryButtons === 'function') renderBerryButtons();
+      if (typeof renderIngredientButtons === 'function') renderIngredientButtons();
+      if (typeof renderSkillButtons === 'function') renderSkillButtons();
+      if (typeof renderUI === 'function') renderUI();
+    };
 
     function initSkillTooltips() {
       let tooltipEl = document.getElementById('global-skill-tooltip');

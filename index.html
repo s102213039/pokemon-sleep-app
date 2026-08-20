@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=20260820_15">
+  <link rel="stylesheet" href="css/styles.css?v=20260820_16">
 </head>
 <body>
 
@@ -181,7 +181,7 @@
         <!-- 🔖 側邊欄垂直中央書籤標籤 (Vertically Centered Bookmark Drawer Handle) -->
         <button type="button" id="sidebar-bookmark-handle" class="sidebar-bookmark-handle" title="展開 / 收合篩選側邊欄" aria-label="切換篩選側邊欄">
           <span class="bookmark-icon">🎛️</span>
-          <span class="bookmark-text">篩選</span>
+          <span class="bookmark-text" data-i18n="pokedex.filter_bookmark">篩選</span>
           <span class="bookmark-arrow">◀</span>
           <span id="sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
         </button>
@@ -190,16 +190,16 @@
           <button type="button" id="sidebar-close-btn" class="sidebar-close-btn" title="收合側邊欄" aria-label="收合側邊欄">◀</button>
           <div class="sidebar-title-group">
             <span class="sidebar-icon">🎛️</span>
-            <span class="sidebar-title">圖鑑篩選器</span>
+            <span class="sidebar-title" data-i18n="pokedex.filter_sidebar_title">圖鑑篩選器</span>
           </div>
-          <button type="button" id="sidebar-reset-all-btn" class="sidebar-reset-btn" title="重設所有篩選條件">全部重設</button>
+          <button type="button" id="sidebar-reset-all-btn" class="sidebar-reset-btn" title="重設所有篩選條件" data-i18n="pokedex.reset_all">全部重設</button>
         </div>
 
         <div class="sidebar-scrollable-content">
           <!-- 👑 僅展示最終進化 Switch Button -->
           <div class="sidebar-section">
             <label class="sidebar-final-evo-label" for="final-evo-toggle" title="只展示最終進化或無後續進化可能的寶可夢">
-              <span class="sidebar-final-evo-text">👑 僅最終進化</span>
+              <span class="sidebar-final-evo-text" data-i18n="pokedex.only_final">👑 僅最終進化</span>
               <div class="sidebar-switch-wrapper">
                 <input type="checkbox" id="final-evo-toggle" class="switch-checkbox" checked>
                 <span class="switch-slider"></span>
@@ -210,7 +210,7 @@
           <!-- 🥗 僅初始食材 Switch Button -->
           <div class="sidebar-section">
             <label class="sidebar-final-evo-label" for="initial-ing-toggle" title="只展示初始食材（Lv.1 食材）與選中食材相符的寶可夢">
-              <span class="sidebar-final-evo-text">🥗 僅初始食材</span>
+              <span class="sidebar-final-evo-text" data-i18n="pokedex.only_initial_ing">🥗 僅初始食材</span>
               <div class="sidebar-switch-wrapper">
                 <input type="checkbox" id="initial-ing-toggle" class="switch-checkbox">
                 <span class="switch-slider"></span>
@@ -221,7 +221,7 @@
           <!-- 1. 類型篩選 (Specialty) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
-              <span class="sidebar-section-title">類型</span>
+              <span class="sidebar-section-title" data-i18n="pokedex.specialty_title">專長類型</span>
             </div>
             <div id="specialty-filter-tags" class="sidebar-specialty-tags"></div>
           </div>
@@ -231,8 +231,8 @@
             <!-- 2. 樹果細節篩選 (Berry Sub-Filter - Icon Only, Always Open) -->
             <div id="subfilter-berry-group" class="sidebar-section">
               <div class="sidebar-section-header">
-                <span class="sidebar-section-title">樹果</span>
-                <button type="button" id="clear-berries-btn" class="sidebar-section-clear-btn" style="display:none;">清空</button>
+                <span class="sidebar-section-title" data-i18n="pokedex.berry_title">樹果類型</span>
+                <button type="button" id="clear-berries-btn" class="sidebar-section-clear-btn" style="display:none;" data-i18n="pokedex.clear">清空</button>
               </div>
               <div id="berry-filter-tags" class="sidebar-icon-grid"></div>
             </div>
@@ -240,8 +240,8 @@
             <!-- 3. 食材細節篩選 (Ingredient Sub-Filter - Icon Only, Always Open) -->
             <div id="subfilter-ingredient-group" class="sidebar-section">
               <div class="sidebar-section-header">
-                <span class="sidebar-section-title">食材</span>
-                <button type="button" id="clear-ingredients-pkm-btn" class="sidebar-section-clear-btn" style="display:none;">清空</button>
+                <span class="sidebar-section-title" data-i18n="pokedex.ingredient_title">出產食材</span>
+                <button type="button" id="clear-ingredients-pkm-btn" class="sidebar-section-clear-btn" style="display:none;" data-i18n="pokedex.clear">清空</button>
               </div>
               <div id="ingredient-pkm-filter-tags" class="sidebar-icon-grid"></div>
             </div>
@@ -249,8 +249,8 @@
             <!-- 4. 主技能細節篩選 (Main Skill Sub-Filter - Name Only, 2-Column Grid, Always Open) -->
             <div id="subfilter-skill-group" class="sidebar-section">
               <div class="sidebar-section-header">
-                <span class="sidebar-section-title">主技能</span>
-                <button type="button" id="clear-skills-btn" class="sidebar-section-clear-btn" style="display:none;">清空</button>
+                <span class="sidebar-section-title" data-i18n="pokedex.skill_title">主技能</span>
+                <button type="button" id="clear-skills-btn" class="sidebar-section-clear-btn" style="display:none;" data-i18n="pokedex.clear">清空</button>
               </div>
               <div id="skill-filter-tags" class="sidebar-skills-list"></div>
             </div>
@@ -270,14 +270,15 @@
               <span class="search-icon">🔍</span>
               <input type="text" id="search-input" class="search-input"
                 placeholder="搜尋寶可夢名稱 (中/英/日) 或 No. 編號..."
+                data-i18n-placeholder="pokedex.search_placeholder"
                 aria-label="搜尋寶可夢">
               <button type="button" id="pokemon-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
             </div>
 
             <!-- 頁面內容裡面的 卡片/表格 切換按鈕 -->
             <div class="view-mode-toggle">
-              <button id="toggle-grid" class="toggle-btn">🎴 卡片</button>
-              <button id="toggle-table" class="toggle-btn active">📊 表格</button>
+              <button id="toggle-grid" class="toggle-btn" data-i18n="pokedex.view_cards">🎴 卡片</button>
+              <button id="toggle-table" class="toggle-btn active" data-i18n="pokedex.view_table">📊 表格</button>
             </div>
             <select id="sort-select" style="display:none;"></select>
           </div>
@@ -313,22 +314,23 @@
             <span class="search-icon">🔍</span>
             <input type="text" id="recipe-search-input" class="search-input"
               placeholder="搜尋食譜名稱 (中/英) 或食材關鍵字..."
+              data-i18n-placeholder="recipe.search_placeholder"
               aria-label="搜尋食譜">
             <button type="button" id="recipe-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
           </div>
           <!-- 頁面內容裡面的 卡片/表格 切換按鈕 -->
           <div class="view-mode-toggle">
-            <button id="recipe-toggle-grid" class="toggle-btn">🎴 卡片</button>
-            <button id="recipe-toggle-table" class="toggle-btn active">📊 表格</button>
+            <button id="recipe-toggle-grid" class="toggle-btn" data-i18n="pokedex.view_cards">🎴 卡片</button>
+            <button id="recipe-toggle-table" class="toggle-btn active" data-i18n="pokedex.view_table">📊 表格</button>
           </div>
           <div class="sort-box">
             <select id="recipe-sort-select" class="sort-select" aria-label="食譜排序">
-              <option value="energy-desc">食譜能量 ↓（高→低）</option>
-              <option value="energy-asc">食譜能量 ↑（低→高）</option>
-              <option value="pot-asc">鍋子容量 ↑（小→大）</option>
-              <option value="pot-desc">鍋子容量 ↓（大→小）</option>
-              <option value="bonus-desc">食材加成 ↓（高→低）</option>
-              <option value="name-asc">名稱排序</option>
+              <option value="energy-desc" data-i18n="recipe.sort_energy_desc">食譜能量 ↓（高→低）</option>
+              <option value="energy-asc" data-i18n="recipe.sort_energy_asc">食譜能量 ↑（低→高）</option>
+              <option value="pot-asc" data-i18n="recipe.sort_pot_asc">鍋子容量 ↑（小→大）</option>
+              <option value="pot-desc" data-i18n="recipe.sort_pot_desc">鍋子容量 ↓（大→小）</option>
+              <option value="bonus-desc" data-i18n="recipe.sort_bonus_desc">食材加成 ↓（高→低）</option>
+              <option value="name-asc" data-i18n="recipe.sort_name_asc">名稱排序</option>
             </select>
           </div>
         </div>
@@ -336,12 +338,12 @@
         <!-- 第二行：raenonx 風格 filter bar -->
         <div class="raenonx-filter-bar">
           <div class="rf-group">
-            <span class="rf-label">料理種類</span>
+            <span class="rf-label" data-i18n="recipe.filter_category">料理種類</span>
             <div id="category-filter-tags" class="rf-tags"></div>
           </div>
 
           <div class="rf-group">
-            <span class="rf-label">最低食譜加成</span>
+            <span class="rf-label" data-i18n="recipe.filter_bonus">最低食譜加成</span>
             <div class="rf-select-wrap">
               <select id="bonus-filter-select" class="rf-select">
                 <option value="0">全部</option>
@@ -358,7 +360,7 @@
           </div>
 
           <div class="rf-group">
-            <span class="rf-label">最低鍋子容量</span>
+            <span class="rf-label" data-i18n="recipe.filter_pot">最低鍋子容量</span>
             <div class="rf-select-wrap">
               <select id="pot-filter-select" class="rf-select">
                 <option value="0">全部</option>
@@ -377,7 +379,7 @@
         <div class="raenonx-filter-bar" style="gap:20px; flex-wrap:wrap;">
           <div class="rf-group-vertical" style="flex:1; min-width:180px;">
             <div class="slider-label-row">
-              <span class="rf-label">📖 食譜等級</span>
+              <span class="rf-label" data-i18n="recipe.slider_level">📖 食譜等級</span>
               <span id="level-badge" class="slider-value-badge">Lv. 1</span>
             </div>
             <div class="slider-row">
@@ -394,7 +396,7 @@
 
           <div class="rf-group-vertical" style="flex:1; min-width:180px;">
             <div class="slider-label-row">
-              <span class="rf-label">🏝️ 島嶼能量加成</span>
+              <span class="rf-label" data-i18n="recipe.slider_island">🏝️ 島嶼能量加成</span>
               <span id="island-bonus-badge" class="slider-value-badge island-bonus-badge">+0% (×1.00)</span>
             </div>
             <div class="slider-row">
@@ -411,7 +413,7 @@
 
           <div class="rf-group-vertical" style="flex:1; min-width:180px;">
             <div class="slider-label-row">
-              <span class="rf-label">🎉 活動能量加成</span>
+              <span class="rf-label" data-i18n="recipe.slider_event">🎉 活動能量加成</span>
               <span id="event-bonus-badge" class="slider-value-badge event-bonus-badge">×1.00</span>
             </div>
             <div class="slider-row">
@@ -431,7 +433,7 @@
             <button id="tasty-toggle-btn" class="tasty-switch-btn" type="button" role="switch" aria-checked="false" title="切換是否展示漂亮成功分數">
               <span class="tasty-switch-label">
                 <span class="tasty-toggle-icon">✨</span>
-                <span class="tasty-toggle-text">漂亮成功分數</span>
+                <span class="tasty-toggle-text" data-i18n="recipe.tasty_toggle">漂亮成功分數</span>
               </span>
               <span class="tasty-switch-track">
                 <span class="tasty-switch-thumb"></span>
@@ -443,7 +445,7 @@
         <!-- 第四行：包含食材篩選器 -->
         <div class="filter-tags-group" style="margin-top:0;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-            <span class="filter-label">🟢 包含食材篩選</span>
+            <span class="filter-label" data-i18n="recipe.filter_ing_include">🟢 包含食材篩選</span>
             <div style="display:flex;gap:12px;align-items:center;font-size:12px;color:var(--text-muted);">
               <label style="cursor:pointer;display:flex;align-items:center;gap:5px;">
                 <input type="radio" name="ingredient-match-mode" value="any" checked> 含任一
@@ -499,11 +501,11 @@
         <!-- 二級子分頁導航 (Sub-tabs) - 精簡無大標題橫幅 -->
         <div class="wiki-subnav-bar">
           <div class="wiki-subnav-tabs" role="tablist">
-            <button type="button" class="wiki-subtab-btn active" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">⚡ 主技能數值庫</button>
-            <button type="button" class="wiki-subtab-btn" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">🧩 副技能與性格指南</button>
-            <button type="button" class="wiki-subtab-btn" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">🎓 培育與評級指南</button>
-            <button type="button" class="wiki-subtab-btn" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">🥗 Lv.60 食材天梯榜</button>
-            <button type="button" class="wiki-subtab-btn" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">🫐 樹果與食材能量</button>
+            <button type="button" class="wiki-subtab-btn active" data-subtab="skills" data-i18n="wiki.subtab_skills" onclick="window.WikiDB.switchSubTab('skills')">⚡ 主技能數值庫</button>
+            <button type="button" class="wiki-subtab-btn" data-subtab="subskills" data-i18n="wiki.subtab_subskills" onclick="window.WikiDB.switchSubTab('subskills')">🧩 副技能與性格指南</button>
+            <button type="button" class="wiki-subtab-btn" data-subtab="ratings" data-i18n="wiki.subtab_ratings" onclick="window.WikiDB.switchSubTab('ratings')">🎓 培育與評級指南</button>
+            <button type="button" class="wiki-subtab-btn" data-subtab="ingredients" data-i18n="wiki.subtab_ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">🥗 Lv.60 食材天梯榜</button>
+            <button type="button" class="wiki-subtab-btn" data-subtab="values" data-i18n="wiki.subtab_values" onclick="window.WikiDB.switchSubTab('values')">🫐 樹果與食材能量</button>
           </div>
         </div>
 
@@ -13716,15 +13718,15 @@
         <!-- 頂部智能錄入與備份功能區 -->
         <div class="box-top-banner">
           <div class="box-banner-text">
-            <h2 class="box-banner-title">📦 我的寶可夢倉庫 & 截圖智能辨識</h2>
-            <p class="box-banner-desc">支援上傳遊戲截圖自動辨識等級、食材組合、副技能與性格，亦可隨時手動錄入與編輯。</p>
+            <h2 class="box-banner-title" data-i18n="box.banner_title">📦 我的寶可夢倉庫 & 截圖智能辨識</h2>
+            <p class="box-banner-desc" data-i18n="box.banner_desc">支援上傳遊戲截圖自動辨識等級、食材組合、副技能與性格，亦可隨時手動錄入與編輯。</p>
           </div>
           <div class="box-banner-actions">
             <input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
-            <button type="button" id="box-appraisal-lab-btn" class="box-btn" style="background: linear-gradient(135deg, #8b5cf6, #38bdf8); color: #ffffff; border: 1px solid rgba(168, 85, 247, 0.4); font-weight: 700;" onclick="window.AppraisalLab.toggleLab()" title="開啟/收合 寶可夢六維深度診斷評測實驗室">🔮 深度評測室</button>
-            <button type="button" id="box-manual-add-btn" class="box-btn box-btn-primary">➕ 手動新增寶可夢</button>
-            <button type="button" id="box-export-btn" class="box-btn box-btn-secondary" title="匯出個人倉庫為 JSON 備份檔">💾 匯出備份</button>
-            <label class="box-btn box-btn-secondary" style="cursor:pointer;margin:0;" title="從 JSON 檔案匯入還原倉庫">
+            <button type="button" id="box-appraisal-lab-btn" class="box-btn" style="background: linear-gradient(135deg, #8b5cf6, #38bdf8); color: #ffffff; border: 1px solid rgba(168, 85, 247, 0.4); font-weight: 700;" onclick="window.AppraisalLab.toggleLab()" title="開啟/收合 寶可夢六維深度診斷評測實驗室" data-i18n="box.appraisal_lab">🔮 深度評測室</button>
+            <button type="button" id="box-manual-add-btn" class="box-btn box-btn-primary" data-i18n="box.add_pokemon">➕ 手動新增寶可夢</button>
+            <button type="button" id="box-export-btn" class="box-btn box-btn-secondary" title="匯出個人倉庫為 JSON 備份檔" data-i18n="box.export_backup">💾 匯出備份</button>
+            <label class="box-btn box-btn-secondary" style="cursor:pointer;margin:0;" title="從 JSON 檔案匯入還原倉庫" data-i18n="box.import_backup">
               📥 匯入還原
               <input type="file" id="box-import-input" accept=".json" style="display:none;">
             </label>
@@ -13753,22 +13755,25 @@
         <div class="search-filter-row">
           <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" id="box-search-input" class="search-input" placeholder="搜尋倉庫寶可夢名稱、暱稱、性格、副技能..." aria-label="搜尋個人倉庫">
+            <input type="text" id="box-search-input" class="search-input"
+              placeholder="搜尋倉庫寶可夢名稱、暱稱、性格、副技能..."
+              data-i18n-placeholder="box.search_placeholder"
+              aria-label="搜尋個人倉庫">
             <button type="button" id="box-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
           </div>
           <div class="sort-box">
             <select id="box-sort-select" class="sort-select" aria-label="倉庫排序">
-              <option value="pr-desc">👑 PR 評分由高到低</option>
-              <option value="created-desc">📅 最近加入</option>
-              <option value="level-desc">⚡ 等級由高到低</option>
-              <option value="level-asc">🌱 等級由低到高</option>
-              <option value="pr-asc">📉 PR 評分由低到高</option>
-              <option value="id-asc">🔢 全國圖鑑編號</option>
+              <option value="pr-desc" data-i18n="box.sort_pr_desc">👑 PR 評分由高到低</option>
+              <option value="created-desc" data-i18n="box.sort_recent">📅 最近加入</option>
+              <option value="level-desc" data-i18n="box.sort_level_desc">⚡ 等級由高到低</option>
+              <option value="level-asc" data-i18n="box.sort_level_asc">🌱 等級由低到高</option>
+              <option value="pr-asc" data-i18n="box.sort_pr_asc">📉 PR 評分由低到高</option>
+              <option value="id-asc" data-i18n="box.sort_dex_asc">🔢 全國圖鑑編號</option>
             </select>
           </div>
           <div class="view-mode-toggle">
-            <button id="box-toggle-grid" class="toggle-btn active">🎴 卡片</button>
-            <button id="box-toggle-table" class="toggle-btn">📊 表格</button>
+            <button id="box-toggle-grid" class="toggle-btn active" data-i18n="pokedex.view_cards">🎴 卡片</button>
+            <button id="box-toggle-table" class="toggle-btn" data-i18n="pokedex.view_table">📊 表格</button>
           </div>
         </div>
 
@@ -13799,7 +13804,10 @@
             <!-- 搜尋框 -->
             <div class="news-search-box">
               <span class="search-icon">🔍</span>
-              <input type="text" id="news-search-input" class="news-search-input" placeholder="搜尋公告標題、關鍵字、寶可夢..." aria-label="搜尋新聞公告">
+              <input type="text" id="news-search-input" class="news-search-input"
+                placeholder="搜尋公告標題、關鍵字、寶可夢..."
+                data-i18n-placeholder="news.search_placeholder"
+                aria-label="搜尋新聞公告">
               <button type="button" id="news-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
             </div>
           </div>

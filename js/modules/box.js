@@ -336,9 +336,12 @@
     if (!container) return;
 
     const filtered = getFilteredBox();
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
     if (countBadge) {
-      countBadge.innerHTML = `已登錄 <strong>${userBox.length}</strong> 隻寶可夢 (顯示 ${filtered.length} 隻)`;
+      countBadge.innerHTML = isEN
+        ? `Registered <strong>${userBox.length}</strong> Pokémon (${filtered.length} shown)`
+        : `已登錄 <strong>${userBox.length}</strong> 隻寶可夢 (顯示 ${filtered.length} 隻)`;
     }
 
     if (filtered.length === 0) {
@@ -346,11 +349,11 @@
         container.innerHTML = `
           <div class="box-empty-state">
             <div class="box-empty-icon">📸</div>
-            <h3>您的寶可夢倉庫還是空的</h3>
-            <p>點擊上方「<strong>📸 截圖智能辨識</strong>」上傳遊戲截圖，或點擊「<strong>➕ 手動新增</strong>」開始登錄你的幫手寶可夢！</p>
+            <h3>${isEN ? 'Your Pokémon Box is empty' : '您的寶可夢倉庫還是空的'}</h3>
+            <p>${isEN ? 'Click "📸 Scan Screenshots" above to upload images, or click "➕ Add Pokémon" to get started!' : '點擊上方「<strong>📸 截圖智能辨識</strong>」上傳遊戲截圖，或點擊「<strong>➕ 手動新增</strong>」開始登錄你的幫手寶可夢！'}</p>
             <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;">
-              <button type="button" class="sync-btn" id="empty-scan-btn" style="background:var(--accent-gradient);color:#fff;">📸 上傳截圖辨識</button>
-              <button type="button" class="toggle-btn" id="empty-manual-btn" style="border:1px solid rgba(255,255,255,0.2);padding:8px 16px;">➕ 手動新增</button>
+              <button type="button" class="sync-btn" id="empty-scan-btn" style="background:var(--accent-gradient);color:#fff;">📸 ${isEN ? 'Scan Screenshots' : '上傳截圖辨識'}</button>
+              <button type="button" class="toggle-btn" id="empty-manual-btn" style="border:1px solid var(--border-color);padding:8px 16px;">➕ ${isEN ? 'Add Manually' : '手動新增'}</button>
             </div>
           </div>
         `;
@@ -364,8 +367,8 @@
         container.innerHTML = `
           <div class="box-empty-state">
             <div class="box-empty-icon">🔍</div>
-            <h3>查無符合篩選條件的寶可夢</h3>
-            <p>請嘗試更換搜尋關鍵字，或切換屬性與得意篩選標籤。</p>
+            <h3>${isEN ? 'No Pokémon matched the filter' : '查無符合篩選條件的寶可夢'}</h3>
+            <p>${isEN ? 'Try searching different keywords or adjusting filter tags.' : '請嘗試更換搜尋關鍵字，或切換屬性與得意篩選標籤。'}</p>
           </div>
         `;
       }
@@ -380,6 +383,7 @@
   }
 
   function renderBoxGrid(list, container) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     container.innerHTML = `
       <div class="box-grid">
         ${list.map(p => {
@@ -387,117 +391,127 @@
           const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
           const natureObj = NATURE_DATA.find(n => n.name === p.nature);
           const prInfo = calculatePokemonPR(p, base);
+          const pkmDisplayName = isEN ? (base ? (base.name_en || base.name_cn) : p.name) : (p.name || (base ? base.name_cn : '未知'));
+          const typeName = window.I18N ? window.I18N.getTypeName((base && base.type) || p.type || '一般') : ((base && base.type) || p.type || '一般');
+          const specName = window.I18N ? window.I18N.getSpecialtyName((base && base.specialty) || p.specialty || '--') : ((base && base.specialty) || p.specialty || '--');
+          const natureDisplayName = window.I18N ? window.I18N.getNatureName(p.nature) : p.nature;
 
           return `
             <div class="box-card" data-uid="${p.uid}">
               <div class="box-card-header">
                 <div class="box-card-img-wrap">
-                  ${iconUrl ? `<img src="${iconUrl}" alt="${p.name}" class="box-card-icon" onerror="this.style.display='none';">` : '⚡'}
+                  ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="box-card-icon" onerror="this.style.display='none';">` : '⚡'}
                 </div>
                 <div class="box-card-info">
                   <div class="box-card-name-row">
-                    <span class="box-card-name">${escapeHtml(p.name || (base ? base.name_cn : '未知'))}</span>
+                    <span class="box-card-name">${escapeHtml(pkmDisplayName)}</span>
                     <span class="box-card-level">Lv.${p.level || 1}</span>
-                    <span class="box-pr-badge ${prInfo.tierBadgeClass}" title="PR 百分位評分：${prInfo.pr}/100">
+                    <span class="box-pr-badge ${prInfo.tierBadgeClass}" title="PR: ${prInfo.pr}/100">
                       ${prInfo.tier === 'S+' ? '👑' : (prInfo.tier === 'S' ? '🌟' : '')} PR ${prInfo.pr} · ${prInfo.tier}
                     </span>
                   </div>
                   ${p.nickname ? `<div class="box-card-nickname">🏷️ ${escapeHtml(p.nickname)}</div>` : ''}
                   <div class="box-card-tags">
                     <span class="type-badge" style="background-color: var(--type-${(base && base.type) || p.type || '一般'}, #64748b);">
-                      ${(base && base.type) || p.type || '一般'}
+                      ${typeName}
                     </span>
-                    <span class="box-spec-tag">${(base && base.specialty) || p.specialty || '--'}</span>
+                    <span class="box-spec-tag">${specName}</span>
                   </div>
                 </div>
                 <div class="box-card-actions">
-                  <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="🔮 深度診斷報告書與六維雷達圖">🔮</button>
-                  <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="編輯寶可夢">✏️</button>
-                  <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="刪除寶可夢">🗑️</button>
+                  <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${isEN ? 'Appraisal Report' : '🔮 深度診斷報告書與六維雷達圖'}">🔮</button>
+                  <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="${isEN ? 'Edit' : '編輯寶可夢'}">✏️</button>
+                  <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="${isEN ? 'Delete' : '刪除寶可夢'}">🗑️</button>
                 </div>
               </div>
 
               <!-- PR 智能簡評 -->
               <div class="box-pr-summary-bar">
-                <span class="box-pr-summary-label">潛力評價：</span>
+                <span class="box-pr-summary-label">${isEN ? 'PR Rating:' : '潛力評價：'}</span>
                 <span class="box-pr-summary-text">${escapeHtml(prInfo.summaryNote)}</span>
               </div>
 
               <!-- 食材插槽組合 -->
               <div class="box-card-section">
-                <div class="box-section-title">🍲 食材組合</div>
+                <div class="box-section-title">🍲 ${isEN ? 'Ingredients' : '食材組合'}</div>
                 <div class="box-ing-slots">
                   <div class="box-ing-slot">
-                    <span class="box-ing-lvl">Lv.1</span>
-                    <span class="box-ing-val">${escapeHtml(p.ing1 || (base && base.ingredients && base.ingredients[0] ? base.ingredients[0].name : '--'))}</span>
+                    <span class="box-slot-tag">Lv.1</span>
+                    <span class="box-slot-val">${escapeHtml(window.I18N ? window.I18N.getIngredientName(p.ing1) : (p.ing1 || '--'))}</span>
                   </div>
                   <div class="box-ing-slot">
-                    <span class="box-ing-lvl">Lv.30</span>
-                    <span class="box-ing-val">${escapeHtml(p.ing2 || (base && base.ingredients && base.ingredients[1] ? base.ingredients[1].name : '--'))}</span>
+                    <span class="box-slot-tag">Lv.30</span>
+                    <span class="box-slot-val">${escapeHtml(window.I18N ? window.I18N.getIngredientName(p.ing2) : (p.ing2 || '--'))}</span>
                   </div>
                   <div class="box-ing-slot">
-                    <span class="box-ing-lvl">Lv.60</span>
-                    <span class="box-ing-val">${escapeHtml(p.ing3 || (base && base.ingredients && base.ingredients[2] ? base.ingredients[2].name : '--'))}</span>
+                    <span class="box-slot-tag">Lv.60</span>
+                    <span class="box-slot-val">${escapeHtml(window.I18N ? window.I18N.getIngredientName(p.ing3) : (p.ing3 || '--'))}</span>
                   </div>
                 </div>
               </div>
 
-              <!-- 副技能 (Sub-skills) -->
+              <!-- 副技能清單 -->
               <div class="box-card-section">
-                <div class="box-section-title">⚡ 副技能</div>
-                <div class="box-subskill-pills">
-                  ${(p.subskills || []).map((skName, idx) => {
+                <div class="box-section-title">🧩 ${isEN ? 'Sub-Skills' : '副技能組合'}</div>
+                <div class="box-subskills-grid">
+                  ${[10, 25, 50, 75, 100].map((lv, idx) => {
+                    const skName = (p.subskills && p.subskills[idx]) || '';
                     const sk = SUBSKILLS_DATA.find(s => s.name === skName);
-                    const tier = sk ? sk.tier : 'white';
-                    const lvlTag = [10, 25, 50, 70, 80][idx] || '';
+                    const tier = sk ? sk.tier : 'empty';
+                    const displaySkName = skName ? (window.I18N ? window.I18N.getSubSkillName(skName) : skName) : '--';
                     return `
-                      <span class="box-subskill-pill subskill-${tier}" title="Lv.${lvlTag} ${sk ? sk.desc : ''}">
-                        <span class="subskill-lvl">Lv.${lvlTag}</span>
-                        <span>${escapeHtml(skName)}</span>
-                      </span>
+                      <div class="box-subskill-pill subskill-${tier}" title="${sk ? sk.desc : ''}">
+                        <span class="subskill-lv-badge">Lv.${lv}</span>
+                        <span class="subskill-name">${escapeHtml(displaySkName)}</span>
+                      </div>
                     `;
-                  }).join('') || '<span style="color:var(--text-muted);font-size:12px;">尚未設定副技能</span>'}
+                  }).join('')}
                 </div>
               </div>
 
-              <!-- 性格 (Nature) -->
-              <div class="box-card-section box-nature-section">
-                <div class="box-section-title">🧠 性格</div>
-                <div class="box-nature-badge">
-                  <strong style="color:#ffffff;">${escapeHtml(p.nature || '坦率')}</strong>
-                  ${natureObj && natureObj.buff ? `
-                    <span class="nature-buff">${natureObj.buff}</span>
-                    ${natureObj.debuff ? `<span class="nature-debuff">${natureObj.debuff}</span>` : ''}
-                  ` : ''}
+              <!-- 性格與修正 -->
+              <div class="box-card-footer">
+                <div class="box-nature-info">
+                  <span class="box-nature-label">${isEN ? 'Nature:' : '性格：'}</span>
+                  <span class="box-nature-badge">${escapeHtml(natureDisplayName || (isEN ? 'Hardy' : '坦率'))}</span>
                 </div>
+                ${natureObj && natureObj.buff ? `
+                  <div class="box-nature-effects">
+                    ${natureObj.buff !== '無增減' ? `
+                      <span class="nature-buff">${natureObj.buff}</span>
+                      <span class="nature-debuff">${natureObj.debuff}</span>
+                    ` : `<span class="nature-neutral">${isEN ? 'No Modifiers' : '無修正'}</span>`}
+                  </div>
+                ` : ''}
               </div>
             </div>
           `;
         }).join('')}
       </div>
     `;
-
     bindCardActions(container);
   }
 
   function renderBoxTable(list, container) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
     container.innerHTML = `
       <div class="table-container">
         <table class="pokemon-table box-table">
           <thead>
             <tr>
-              <th>圖示</th>
-              <th>寶可夢 / 暱稱</th>
-              <th>等級</th>
-              <th>PR 評分</th>
-              <th>屬性</th>
-              <th>得意</th>
-              <th>Lv.1 食材</th>
-              <th>Lv.30 食材</th>
-              <th>Lv.60 食材</th>
-              <th>副技能 (Lv.10 ~ 80)</th>
-              <th>性格</th>
-              <th>操作</th>
+              <th>${t('th.icon', '圖示')}</th>
+              <th>${isEN ? 'Name / Nickname' : '寶可夢 / 暱稱'}</th>
+              <th>${isEN ? 'Level' : '等級'}</th>
+              <th>${isEN ? 'PR Rank' : 'PR 評分'}</th>
+              <th>${t('th.type', '屬性')}</th>
+              <th>${t('th.specialty', '得意')}</th>
+              <th>${t('th.ing1', 'Lv.1 食材')}</th>
+              <th>${t('th.ing2', 'Lv.30 食材')}</th>
+              <th>${t('th.ing3', 'Lv.60 食材')}</th>
+              <th>${isEN ? 'Sub-Skills' : '副技能 (Lv.10 ~ 80)'}</th>
+              <th>${isEN ? 'Nature' : '性格'}</th>
+              <th>${t('th.actions', '操作')}</th>
             </tr>
           </thead>
           <tbody>
@@ -506,16 +520,20 @@
               const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
               const natureObj = NATURE_DATA.find(n => n.name === p.nature);
               const prInfo = calculatePokemonPR(p, base);
+              const pkmDisplayName = isEN ? (base ? (base.name_en || base.name_cn) : p.name) : (p.name || (base ? base.name_cn : '未知'));
+              const typeName = window.I18N ? window.I18N.getTypeName((base && base.type) || p.type || '一般') : ((base && base.type) || p.type || '一般');
+              const specName = window.I18N ? window.I18N.getSpecialtyName((base && base.specialty) || p.specialty || '--') : ((base && base.specialty) || p.specialty || '--');
+              const natureDisplayName = window.I18N ? window.I18N.getNatureName(p.nature) : p.nature;
 
               return `
                 <tr data-uid="${p.uid}">
                   <td>
                     <div class="table-icon-wrapper">
-                      ${iconUrl ? `<img src="${iconUrl}" alt="${p.name}" class="table-icon" onerror="this.style.display='none';">` : '⚡'}
+                      ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="table-icon" onerror="this.style.display='none';">` : '⚡'}
                     </div>
                   </td>
                   <td>
-                    <div class="table-name-cn">${escapeHtml(p.name || (base ? base.name_cn : '未知'))}</div>
+                    <div class="table-name-cn">${escapeHtml(pkmDisplayName)}</div>
                     ${p.nickname ? `<div style="font-size:11px;color:var(--accent-color);">🏷️ ${escapeHtml(p.nickname)}</div>` : ''}
                   </td>
                   <td><span class="box-table-lvl">Lv.${p.level || 1}</span></td>
@@ -526,31 +544,32 @@
                   </td>
                   <td>
                     <span class="type-badge" style="background-color: var(--type-${(base && base.type) || p.type || '一般'}, #64748b);">
-                      ${(base && base.type) || p.type || '一般'}
+                      ${typeName}
                     </span>
                   </td>
-                  <td>${(base && base.specialty) || p.specialty || '--'}</td>
-                  <td>${escapeHtml(p.ing1 || '--')}</td>
-                  <td>${escapeHtml(p.ing2 || '--')}</td>
-                  <td>${escapeHtml(p.ing3 || '--')}</td>
+                  <td>${specName}</td>
+                  <td>${escapeHtml(window.I18N ? window.I18N.getIngredientName(p.ing1) : (p.ing1 || '--'))}</td>
+                  <td>${escapeHtml(window.I18N ? window.I18N.getIngredientName(p.ing2) : (p.ing2 || '--'))}</td>
+                  <td>${escapeHtml(window.I18N ? window.I18N.getIngredientName(p.ing3) : (p.ing3 || '--'))}</td>
                   <td>
                     <div style="display:flex;flex-wrap:wrap;gap:4px;">
                       ${(p.subskills || []).map((skName) => {
                         const sk = SUBSKILLS_DATA.find(s => s.name === skName);
                         const tier = sk ? sk.tier : 'white';
-                        return `<span class="box-subskill-pill subskill-${tier}" style="font-size:11px;padding:1px 6px;">${escapeHtml(skName)}</span>`;
+                        const displaySkName = window.I18N ? window.I18N.getSubSkillName(skName) : skName;
+                        return `<span class="box-subskill-pill subskill-${tier}" style="font-size:11px;padding:1px 6px;">${escapeHtml(displaySkName)}</span>`;
                       }).join('')}
                     </div>
                   </td>
                   <td>
-                    <div><strong>${escapeHtml(p.nature || '坦率')}</strong></div>
+                    <div><strong>${escapeHtml(natureDisplayName || (isEN ? 'Hardy' : '坦率'))}</strong></div>
                     ${natureObj && natureObj.buff ? `<div style="font-size:10.5px;" class="nature-buff">${natureObj.buff} ${natureObj.debuff}</div>` : ''}
                   </td>
                   <td>
                     <div style="display:flex;gap:6px;">
-                      <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="🔮 深度診斷報告">🔮</button>
-                      <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="編輯">✏️</button>
-                      <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="刪除">🗑️</button>
+                      <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${isEN ? 'Appraisal Report' : '🔮 深度診斷報告'}">🔮</button>
+                      <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="${isEN ? 'Edit' : '編輯'}">✏️</button>
+                      <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="${isEN ? 'Delete' : '刪除'}">🗑️</button>
                     </div>
                   </td>
                 </tr>
@@ -1259,6 +1278,7 @@
     window.PokemonBoxApp = {
       getUserBox: () => userBox,
       setUserBox: (box) => { userBox = box; saveUserBox(); renderBox(); },
+      renderBox: renderBox,
       calculatePokemonPR,
       NATURE_DATA,
       NATURE_DICT,

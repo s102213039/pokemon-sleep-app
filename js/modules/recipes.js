@@ -182,31 +182,41 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ─── 料理種類 Filter ────────────────────────────────── */
   function initCategoryFilters() {
     if (!categoryContainer) return;
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const categories = ['ALL', '咖哩', '沙拉', '甜點'];
     const catEmoji   = { ALL:'🍽️', '咖哩':'🍛', '沙拉':'🥗', '甜點':'🍰' };
+    const catLabels  = {
+      ALL: isEN ? 'All' : '全部種類',
+      '咖哩': isEN ? 'Curries' : '咖哩',
+      '沙拉': isEN ? 'Salads' : '沙拉',
+      '甜點': isEN ? 'Desserts' : '甜點'
+    };
     const catCounts  = {};
     categories.slice(1).forEach(cat => {
       catCounts[cat] = allRecipes.filter(r => r.category === cat).length;
     });
 
     categoryContainer.innerHTML = categories.map(cat => {
-      const count = cat === 'ALL' ? allRecipes.length : catCounts[cat];
+      const count = cat === 'ALL' ? allRecipes.length : (catCounts[cat] || 0);
       const active = cat === selectedCategory ? 'active' : '';
       return `<button class="tag-btn ${active}" data-cat="${cat}">
-        ${catEmoji[cat]} ${cat === 'ALL' ? '全部種類' : cat} (${count})
+        ${catEmoji[cat]} ${catLabels[cat] || cat} (${count})
       </button>`;
     }).join('');
 
-    categoryContainer.addEventListener('click', e => {
-      const btn = e.target.closest('.tag-btn');
-      if (btn) {
-        selectedCategory = btn.getAttribute('data-cat');
-        categoryContainer.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        savePrefs();
-        render();
-      }
-    });
+    if (!categoryContainer._hasListener) {
+      categoryContainer._hasListener = true;
+      categoryContainer.addEventListener('click', e => {
+        const btn = e.target.closest('.tag-btn');
+        if (btn) {
+          selectedCategory = btn.getAttribute('data-cat');
+          categoryContainer.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          savePrefs();
+          render();
+        }
+      });
+    }
   }
 
   /* ─── 自訂下拉選單系統（嚴格向下展開對齊） ────────── */
@@ -639,24 +649,27 @@ document.addEventListener('DOMContentLoaded', () => {
   function render() {
     if (!contentArea || !countBadge) return;
     const filtered = getFilteredRecipes();
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
 
+    const catLabels = { '咖哩': isEN ? 'Curry' : '咖哩', '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : '甜點' };
     const catCounts = {};
     filtered.forEach(r => { catCounts[r.category] = (catCounts[r.category] || 0) + 1; });
-    const breakdownHTML = Object.entries(catCounts).map(([cat, c]) => `${cat} <strong>${c}</strong>`).join(' · ');
+    const breakdownHTML = Object.entries(catCounts).map(([cat, c]) => `${catLabels[cat] || cat} <strong>${c}</strong>`).join(' · ');
 
     const islandMult = (1 + islandBonus / 100).toFixed(2);
-    const eventText  = eventBonus > 1.0 ? `<span style="margin-left:6px;font-size:12px;color:#f43f5e;">🎉 ×${eventBonus.toFixed(2)}</span>` : '';
-    const tastyText  = showTasty ? `<span style="margin-left:6px;font-size:12px;color:#ec4899;font-weight:600;">✨ 漂亮分數中</span>` : '';
+    const eventText  = eventBonus > 1.0 ? `<span style="margin-left:6px;font-size:12px;color:var(--color-accent-rose);">🎉 ×${eventBonus.toFixed(2)}</span>` : '';
+    const tastyText  = showTasty ? `<span style="margin-left:6px;font-size:12px;color:var(--color-accent-rose);font-weight:600;">✨ Extra Tasty</span>` : '';
 
-    countBadge.innerHTML = `顯示 <strong>${filtered.length}</strong>/${allRecipes.length} 筆
+    countBadge.innerHTML = `${isEN ? `Showing <strong>${filtered.length}</strong>/${allRecipes.length} dishes` : `顯示 <strong>${filtered.length}</strong>/${allRecipes.length} 筆`}
       <span style="margin-left:12px;font-size:12px;color:var(--text-muted);">${breakdownHTML}</span>
-      <span style="margin-left:10px;font-size:12px;color:#fbbf24;">Lv.${recipeLevel}</span>
-      <span style="margin-left:6px;font-size:12px;color:#6ee7b7;">🏝️ ×${islandMult}</span>
+      <span style="margin-left:10px;font-size:12px;color:var(--color-accent-gold);">Lv.${recipeLevel}</span>
+      <span style="margin-left:6px;font-size:12px;color:var(--color-accent-green);">🏝️ ×${islandMult}</span>
       ${eventText}
       ${tastyText}`;
 
     if (filtered.length === 0) {
-      contentArea.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-muted);">🔍 未找到符合條件的料理食譜</div>`;
+      contentArea.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-muted);">🔍 ${isEN ? 'No matching recipes found' : '未找到符合條件的料理食譜'}</div>`;
       return;
     }
 
@@ -665,6 +678,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderTable(recipes) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+    const catLabels = { '咖哩': isEN ? 'Curry' : '咖哩', '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : '甜點' };
     const islandMult = (1 + islandBonus / 100).toFixed(2);
     const eventSub = eventBonus > 1.0 ? ` · 🎉×${eventBonus.toFixed(2)}` : '';
     contentArea.innerHTML = `
@@ -672,15 +688,15 @@ document.addEventListener('DOMContentLoaded', () => {
         <table class="pokemon-table">
           <thead>
             <tr>
-              <th>圖示</th>
-              <th>料理名稱</th>
-              <th>分類</th>
-              <th>食材加成</th>
-              <th>鍋子容量</th>
-              <th>食材需求</th>
+              <th>${t('th.icon', '圖示')}</th>
+              <th>${t('recipe.th_dish', '料理名稱')}</th>
+              <th>${t('recipe.th_category', '分類')}</th>
+              <th>${t('recipe.th_bonus', '食材加成')}</th>
+              <th>${t('recipe.th_pot', '鍋子容量')}</th>
+              <th>${t('recipe.th_ingredients', '食材需求')}</th>
               <th style="white-space:nowrap;min-width:115px;text-align:center;">
-                能量<br>
-                <small style="color:#fbbf24;font-weight:500;">Lv.${recipeLevel} · 🏝️×${islandMult}${eventSub}</small>
+                ${t('recipe.th_final_energy', '能量')}<br>
+                <small style="color:var(--color-accent-gold);font-weight:500;">Lv.${recipeLevel} · 🏝️×${islandMult}${eventSub}</small>
               </th>
             </tr>
           </thead>
@@ -690,11 +706,13 @@ document.addEventListener('DOMContentLoaded', () => {
               const badgeStyle = getBonusBadgeStyle(bp);
               const emoji      = getBonusEmoji(bp);
               const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
+              const primaryName = isEN ? (r.name_en || r.name_cn) : r.name_cn;
+              const secondaryName = isEN ? (r.name_cn || '') : (r.name_en || '');
 
               let energyCellHTML = '';
               if (!showTasty) {
                 energyCellHTML = `
-                  <td style="font-weight:700;color:#fbbf24;font-family:monospace;font-size:15px;white-space:nowrap;text-align:center;">
+                  <td style="font-weight:700;color:var(--color-accent-gold);font-family:monospace;font-size:15px;white-space:nowrap;text-align:center;">
                     ⚡ ${finalE.toLocaleString()}
                   </td>
                 `;
@@ -725,14 +743,14 @@ document.addEventListener('DOMContentLoaded', () => {
               return `
               <tr>
                 <td>
-                  <img src="${r.icon}" width="52" height="52" alt="${r.name_cn}" loading="lazy"
-                    style="border-radius:10px;object-fit:contain;background:rgba(0,0,0,0.25);padding:4px;border:1px solid rgba(255,255,255,0.1);">
+                  <img src="${r.icon}" width="52" height="52" alt="${primaryName}" loading="lazy"
+                    style="border-radius:10px;object-fit:contain;background:var(--bg-card-inner);padding:4px;border:1px solid var(--border-color);">
                 </td>
                 <td style="font-weight:700;font-size:15px;color:var(--text-main);white-space:nowrap;">
-                  ${r.name_cn}
-                  <br><small style="color:var(--text-muted);font-size:11px;font-weight:400;">${r.name_en || ''}</small>
+                  ${primaryName}
+                  ${secondaryName ? `<br><small style="color:var(--text-muted);font-size:11px;font-weight:400;">${secondaryName}</small>` : ''}
                 </td>
-                <td><span class="recipe-cat-badge cat-${r.category}">${r.category}</span></td>
+                <td><span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span></td>
                 <td>
                   <span style="${badgeStyle}padding:4px 10px;border-radius:20px;font-weight:700;font-size:13px;white-space:nowrap;display:inline-block;">
                     ${emoji} +${bp}%
@@ -750,6 +768,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderGrid(recipes) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+    const catLabels = { '咖哩': isEN ? 'Curry' : '咖哩', '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : '甜點' };
     const islandMult = (1 + islandBonus / 100).toFixed(2);
     const eventSub = eventBonus > 1.0 ? ` · 🎉×${eventBonus.toFixed(2)}` : '';
     contentArea.innerHTML = `
@@ -759,36 +780,37 @@ document.addEventListener('DOMContentLoaded', () => {
           const badgeStyle = getBonusBadgeStyle(bp);
           const emoji      = getBonusEmoji(bp);
           const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
+          const primaryName = isEN ? (r.name_en || r.name_cn) : r.name_cn;
           return `
           <div class="pokemon-card">
             <div class="card-header" style="align-items:center;">
-              <img class="card-icon" src="${r.icon}" alt="${r.name_cn}" style="width:56px;height:56px;border-radius:10px;">
+              <img class="card-icon" src="${r.icon}" alt="${primaryName}" style="width:56px;height:56px;border-radius:10px;">
               <div class="card-title-group">
-                <h3 class="pokemon-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.name_cn}</h3>
+                <h3 class="pokemon-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${primaryName}</h3>
                 <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
-                  <span class="recipe-cat-badge cat-${r.category}">${r.category}</span>
+                  <span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span>
                   <span style="${badgeStyle}padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap;">${emoji} +${bp}%</span>
                 </div>
               </div>
             </div>
             <div class="card-stats" style="grid-template-columns:1fr;gap:8px;margin-top:10px;">
               <div class="stat-item" style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="stat-label">🍲 鍋子容量</span>
+                <span class="stat-label">🍲 ${t('recipe.th_pot', '鍋子容量')}</span>
                 <span class="stat-value" style="color:var(--accent-color);">🍲 ${r.pot_size}</span>
               </div>
               <div class="stat-item" style="display:flex;flex-direction:column;gap:4px;">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span class="stat-label">⚡ 能量 (Lv.${recipeLevel} · 🏝️×${islandMult}${eventSub})</span>
-                  <span class="stat-value" style="color:#fbbf24;font-size:15px;font-family:monospace;font-weight:700;">⚡ ${finalE.toLocaleString()}</span>
+                  <span class="stat-label">⚡ ${t('recipe.th_final_energy', '能量')} (Lv.${recipeLevel} · 🏝️×${islandMult}${eventSub})</span>
+                  <span class="stat-value" style="color:var(--color-accent-gold);font-size:15px;font-family:monospace;font-weight:700;">⚡ ${finalE.toLocaleString()}</span>
                 </div>
                 ${showTasty ? `
                   <div class="card-tasty-group">
                     <div style="display:flex;justify-content:space-between;align-items:center;">
-                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">✨ 2x (漂亮)</span>
+                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">✨ 2x</span>
                       <span class="card-score-2x">✨ ${(finalE * 2).toLocaleString()}</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
-                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">🌟 3x (超成功)</span>
+                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">🌟 3x</span>
                       <span class="card-score-3x">🌟 ${(finalE * 3).toLocaleString()}</span>
                     </div>
                   </div>
@@ -796,7 +818,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </div>
             <div style="margin-top:10px;">
-              <div style="font-size:11px;color:var(--text-muted);margin-bottom:5px;">材料需求</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:5px;">${t('recipe.th_ingredients', '材料需求')}</div>
               ${renderIngRow(r.ingredients)}
             </div>
           </div>
@@ -804,4 +826,11 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
   }
+
+  window.RecipesApp = {
+    render: function() {
+      initCategoryFilters();
+      render();
+    }
+  };
 });

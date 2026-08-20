@@ -278,6 +278,14 @@
   /* ─── 初始化分類標籤 ─────────────────────────────────── */
   function initCategoryTags() {
     if (!newsCategoryContainer) return;
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const labels = {
+      ALL: isEN ? 'All' : '全部消息',
+      event: isEN ? 'Events' : '活動企劃',
+      update: isEN ? 'Updates' : '版本更新',
+      maintenance: isEN ? 'Maintenance' : '維護公告',
+      notice: isEN ? 'Notices' : '重要通知'
+    };
 
     // 計算各分類數量
     const counts = { ALL: allNews.length };
@@ -290,21 +298,24 @@
       const count = counts[cat.key] || 0;
       return `
         <button type="button" class="news-tag-btn ${active}" data-cat="${cat.key}">
-          <span>${cat.emoji} ${cat.label}</span>
+          <span>${cat.emoji} ${labels[cat.key] || cat.label}</span>
           <span class="news-tag-count">${count}</span>
         </button>
       `;
     }).join('');
 
-    newsCategoryContainer.addEventListener('click', e => {
-      const btn = e.target.closest('.news-tag-btn');
-      if (btn) {
-        currentCategory = btn.getAttribute('data-cat');
-        newsCategoryContainer.querySelectorAll('.news-tag-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderNews();
-      }
-    });
+    if (!newsCategoryContainer._hasListener) {
+      newsCategoryContainer._hasListener = true;
+      newsCategoryContainer.addEventListener('click', e => {
+        const btn = e.target.closest('.news-tag-btn');
+        if (btn) {
+          currentCategory = btn.getAttribute('data-cat');
+          newsCategoryContainer.querySelectorAll('.news-tag-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderNews();
+        }
+      });
+    }
   }
 
   /* ─── 初始化搜尋功能與一鍵清空 ─────────────────────────── */
@@ -358,18 +369,21 @@
   function renderNews() {
     if (!newsListContainer) return;
     const filtered = getFilteredNews();
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
     // 更新統計數量徽章
     if (newsCountBadge) {
-      newsCountBadge.innerHTML = `顯示 <strong>${filtered.length}</strong> / ${allNews.length} 則最新消息`;
+      newsCountBadge.innerHTML = isEN
+        ? `Showing <strong>${filtered.length}</strong> / ${allNews.length} news items`
+        : `顯示 <strong>${filtered.length}</strong> / ${allNews.length} 則最新消息`;
     }
 
     if (filtered.length === 0) {
       newsListContainer.innerHTML = `
         <div class="empty-state" style="padding: 50px 20px; text-align: center;">
           <div style="font-size: 40px; margin-bottom: 12px;">🔍</div>
-          <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">找不到符合的新聞或公告</div>
-          <div style="font-size: 13px; color: var(--text-muted);">請嘗試更換搜尋關鍵字，或切換至「全部消息」分類。</div>
+          <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">${isEN ? 'No matching news or updates found' : '找不到符合的新聞或公告'}</div>
+          <div style="font-size: 13px; color: var(--text-muted);">${isEN ? 'Try different keywords or switch to the "All" category.' : '請嘗試更換搜尋關鍵字，或切換至「全部消息」分類。'}</div>
         </div>
       `;
       return;
@@ -584,6 +598,13 @@
     window.PokemonNewsApp = {
       loadNews,
       parseEventTimeline
+    };
+    window.NewsApp = {
+      render: function() {
+        initCategoryTags();
+        renderNews();
+        renderEventTimeline();
+      }
     };
   }
 
