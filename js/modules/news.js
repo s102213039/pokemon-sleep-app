@@ -406,7 +406,7 @@
             <span class="news-debut-label">${isEN ? '🦄 New Pokémon Debut: ' : '🦄 新登場寶可夢：'}</span>
             <div class="news-poke-pill-group">
               ${item.debut_pokemon.map(p => {
-                const pName = isEN && window.I18N ? window.I18N.getPokemonName(p) : p;
+                const pName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : p;
                 return `<span class="news-poke-pill-new">✨ ${escapeHtml(pName)}</span>`;
               }).join('')}
             </div>
@@ -418,7 +418,7 @@
             <span class="news-featured-label">${isEN ? '⭐ Featured Pokémon: ' : '⭐ 焦點寶可夢：'}</span>
             <div class="news-poke-pill-group">
               ${item.featured_pokemon.map(p => {
-                const pName = isEN && window.I18N ? window.I18N.getPokemonName(p) : p;
+                const pName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : p;
                 return `<span class="news-poke-pill-featured">🔥 ${escapeHtml(pName)}</span>`;
               }).join('')}
             </div>

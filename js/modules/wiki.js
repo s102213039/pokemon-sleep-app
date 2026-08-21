@@ -4677,7 +4677,7 @@
 
         <div class="ladder-tiers-list">
           ${ing.tiers.map(t => {
-            const pkmName = isEN ? (window.I18N.getPokemonName(t.name) || t.name) : t.name;
+            const pkmName = isEN ? ((window.I18N && typeof window.I18N.getPokemonName === 'function' ? window.I18N.getPokemonName(t.name) : '') || t.name) : t.name;
             return `
             <div class="ladder-tier-row">
               <div class="ladder-tier-info">

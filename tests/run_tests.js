@@ -1221,6 +1221,42 @@ test('Tier 2 - Boundary & Corner Cases', 'Sidebar Filter UI Tokens (Ing.1 only &
   assert(initialIngText === '🥗 Ing.1 only', `pokedex.only_initial_ing in English must be "🥗 Ing.1 only", got "${initialIngText}"`);
 });
 
+test('Tier 1 - Feature Coverage', 'I18N.getPokemonName API & Coverage across all 247 Pokemon', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const data = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'data.json'), 'utf8'));
+  const ctx = {
+    window: {
+      location: { hash: '#pokemon' },
+      localStorage: { getItem: () => 'en-US', setItem: () => {} }
+    }
+  };
+  ctx.window.window = ctx.window;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+
+  assert(typeof ctx.window.I18N.getPokemonName === 'function', 'I18N.getPokemonName must be an exported function');
+
+  // Test in EN mode
+  ctx.window.I18N.setLanguage('en-US');
+  assert(ctx.window.I18N.getPokemonName('妙蛙種子') === 'Bulbasaur', '妙蛙種子 -> Bulbasaur');
+  assert(ctx.window.I18N.getPokemonName('皮卡丘') === 'Pikachu', '皮卡丘 -> Pikachu');
+  assert(ctx.window.I18N.getPokemonName('巨鍛匠') === 'Tinkaton', '巨鍛匠 -> Tinkaton');
+  assert(ctx.window.I18N.getPokemonName({ name_cn: '耿鬼', name_en: 'Gengar' }) === 'Gengar', 'Object input -> Gengar');
+
+  // Test all 247 Pokemon in data.json
+  data.forEach(p => {
+    if (p.name_cn && p.name_en) {
+      const translated = ctx.window.I18N.getPokemonName(p.name_cn);
+      assert(translated === p.name_en, `Expected ${p.name_cn} -> ${p.name_en}, got ${translated}`);
+    }
+  });
+
+  // Test in zh-TW mode
+  ctx.window.I18N.setLanguage('zh-TW');
+  assert(ctx.window.I18N.getPokemonName('妙蛙種子') === '妙蛙種子', 'zh-TW mode should return CN name');
+  assert(ctx.window.I18N.getPokemonName({ name_cn: '耿鬼', name_en: 'Gengar' }) === '耿鬼', 'Object in zh-TW -> 耿鬼');
+});
+
 
 // Final Summary Output
 console.log('\n======================================================');
