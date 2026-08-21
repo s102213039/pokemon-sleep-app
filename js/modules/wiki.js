@@ -4319,6 +4319,9 @@
       renderWikiLayout(wikiContainer);
     } catch (e) {
       console.error('Error rendering Wiki layout:', e);
+      if (typeof window.__renderInPlaceError === 'function') {
+        window.__renderInPlaceError('panel-wiki', '數據百科佈局渲染異常', e);
+      }
     }
 
     try {

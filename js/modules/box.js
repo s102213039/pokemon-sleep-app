@@ -336,8 +336,9 @@
     const countBadge = document.getElementById('box-count-badge');
     if (!container) return;
 
-    const filtered = getFilteredBox();
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    try {
+      const filtered = getFilteredBox();
+      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
     if (countBadge) {
       countBadge.innerHTML = isEN
@@ -376,10 +377,16 @@
       return;
     }
 
-    if (boxViewMode === 'grid') {
-      renderBoxGrid(filtered, container);
-    } else {
-      renderBoxTable(filtered, container);
+      if (boxViewMode === 'grid') {
+        renderBoxGrid(filtered, container);
+      } else {
+        renderBoxTable(filtered, container);
+      }
+    } catch (err) {
+      console.error('Error rendering Box:', err);
+      if (typeof window.__renderInPlaceError === 'function') {
+        window.__renderInPlaceError('box-content-area', '寶可夢倉庫渲染異常', err);
+      }
     }
   }
 

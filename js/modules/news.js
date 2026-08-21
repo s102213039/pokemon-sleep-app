@@ -45,11 +45,13 @@
       renderNews();
     } catch (err) {
       console.error('Failed to load news.json:', err);
-      if (newsListContainer) {
+      if (typeof window.__renderInPlaceError === 'function') {
+        window.__renderInPlaceError('news-list-container', '最新新聞與公告載入失敗 (news.json)', err);
+      } else if (newsListContainer) {
         newsListContainer.innerHTML = `
           <div class="empty-state" style="padding: 40px 20px; text-align: center;">
             <div style="font-size: 36px; margin-bottom: 12px;">⚠️</div>
-            <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">新聞資料載入中或暫時無法讀取</div>
+            <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">新聞資料載入失敗：${err.message}</div>
             <div style="font-size: 13px; color: var(--text-muted);">請稍後重整頁面，或點擊頂部「同步資料」更新最新官方新聞。</div>
           </div>
         `;

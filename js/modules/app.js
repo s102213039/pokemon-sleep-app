@@ -896,7 +896,11 @@ if (typeof document !== 'undefined') {
       })
       .catch(err => {
         console.error('Error loading data.json:', err);
-        if (contentArea) contentArea.innerHTML = `<div style="text-align:center; padding: 40px; color: #ef4444;">載入 data.json 失敗：${err.message}</div>`;
+        if (typeof window.__renderInPlaceError === 'function') {
+          window.__renderInPlaceError('content-area', '寶可夢資料庫載入失敗 (data.json)', err);
+        } else if (contentArea) {
+          contentArea.innerHTML = `<div style="text-align:center; padding: 40px; color: #ef4444;">載入 data.json 失敗：${err.message}</div>`;
+        }
       });
 
     function initFilters() {
@@ -1356,19 +1360,26 @@ if (typeof document !== 'undefined') {
 
     function renderUI() {
       if (!contentArea) return;
-      if (typeof updateActiveFilterBadge === 'function') updateActiveFilterBadge();
-      const filtered = sortPokemonList(filterData(), currentSort);
-      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-      const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-      if (countBadge) countBadge.textContent = isEN ? `${filtered.length} ${t('pokedex.count_label', 'Pokémon')}` : `共 ${filtered.length} 隻寶可夢`;
+      try {
+        if (typeof updateActiveFilterBadge === 'function') updateActiveFilterBadge();
+        const filtered = sortPokemonList(filterData(), currentSort);
+        const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+        const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+        if (countBadge) countBadge.textContent = isEN ? `${filtered.length} ${t('pokedex.count_label', 'Pokémon')}` : `共 ${filtered.length} 隻寶可夢`;
 
-      if (filtered.length === 0) {
-        contentArea.innerHTML = `<div style="text-align:center; padding: 60px; color: var(--text-muted); font-size: 16px;">${t('pokedex.no_results', '查無符合條件的寶可夢')}</div>`;
-        return;
+        if (filtered.length === 0) {
+          contentArea.innerHTML = `<div style="text-align:center; padding: 60px; color: var(--text-muted); font-size: 16px;">${t('pokedex.no_results', '查無符合條件的寶可夢')}</div>`;
+          return;
+        }
+
+        if (viewMode === 'grid') renderGrid(filtered);
+        else renderTable(filtered);
+      } catch (err) {
+        console.error('Error in renderUI:', err);
+        if (typeof window.__renderInPlaceError === 'function') {
+          window.__renderInPlaceError('content-area', '圖鑑畫面渲染異常', err);
+        }
       }
-
-      if (viewMode === 'grid') renderGrid(filtered);
-      else renderTable(filtered);
     }
 
     function renderGrid(data) {
