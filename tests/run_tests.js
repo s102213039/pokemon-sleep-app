@@ -1148,6 +1148,50 @@ test('Tier 1 - Feature Coverage', 'Low Saturation Recipe Badges Tokens & Classes
   assert(cssContent.includes('.recipe-name-wrapper'), 'styles.css missing .recipe-name-wrapper');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'SPA Tab Lifecycle, Hashchange Routing & Wiki Rendering In Both Languages', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+
+  // Test Wiki layout rendering in zh-TW and en-US
+  ['zh-TW', 'en-US'].forEach(lang => {
+    const mockContainer = {
+      innerHTML: '',
+      style: { display: '' }
+    };
+    const ctx = {
+      window: {
+        location: { hash: '#wiki' },
+        localStorage: { getItem: () => lang, setItem: () => {} },
+        addEventListener: () => {},
+        history: { replaceState: () => {} }
+      },
+      document: {
+        readyState: 'complete',
+        documentElement: { setAttribute: () => {} },
+        getElementById: () => null,
+        querySelectorAll: () => [],
+        addEventListener: () => {}
+      },
+      console: console,
+      setTimeout: setTimeout
+    };
+    ctx.window.window = ctx.window;
+    ctx.window.document = ctx.document;
+    vm.createContext(ctx);
+    vm.runInContext(i18nCode, ctx);
+    vm.runInContext(wikiCode, ctx);
+
+    assert(typeof ctx.window.WikiDB.renderWikiLayout === 'function', 'WikiDB.renderWikiLayout should be a function');
+    ctx.window.WikiDB.renderWikiLayout(mockContainer);
+    assert(mockContainer.innerHTML.length > 50000, `Wiki HTML should be rendered for ${lang}, got length ${mockContainer.innerHTML.length}`);
+    assert(mockContainer.innerHTML.includes('wiki-subpanel-skills'), 'Wiki should contain skills subpanel');
+    assert(mockContainer.innerHTML.includes('wiki-subpanel-subskills'), 'Wiki should contain subskills subpanel');
+    assert(mockContainer.innerHTML.includes('wiki-subpanel-ratings'), 'Wiki should contain ratings subpanel');
+    assert(mockContainer.innerHTML.includes('wiki-subpanel-ingredients'), 'Wiki should contain ingredients subpanel');
+    assert(mockContainer.innerHTML.includes('wiki-subpanel-values'), 'Wiki should contain values subpanel');
+  });
+});
+
 
 // Final Summary Output
 console.log('\n======================================================');

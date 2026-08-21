@@ -866,6 +866,8 @@ if (typeof document !== 'undefined') {
         switchMainTab('wiki');
       } else if (window.location.hash === '#recipes') {
         switchMainTab('recipes');
+      } else {
+        switchMainTab('pokemon');
       }
     }
 
@@ -898,7 +900,7 @@ if (typeof document !== 'undefined') {
       });
 
     function initFilters() {
-      if (!specialtyFilterContainer) return;
+      const types = ['ALL', '一般', '格鬥', '飛行', '毒', '地面', '岩石', '蟲', '幽靈', '鋼', '火', '水', '草', '電', '超能力', '冰', '龍', '惡', '妖精'];
       const specialties = ['樹果', '食材', '技能'];
 
       // 從資料庫動態收集所有食材與其圖示

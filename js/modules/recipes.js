@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ─── 自訂下拉選單系統（嚴格向下展開對齊） ────────── */
   function setupCustomSelect(selectElement) {
-    if (!selectElement || selectElement._customized) return;
+    if (!selectElement || selectElement._customized || !selectElement.parentNode) return;
     selectElement._customized = true;
 
     selectElement.style.display = 'none';
@@ -255,11 +255,12 @@ document.addEventListener('DOMContentLoaded', () => {
     menuDiv.setAttribute('role', 'listbox');
 
     function syncUI() {
-      const selected = selectElement.options[selectElement.selectedIndex] || selectElement.options[0];
+      const options = selectElement.options ? Array.from(selectElement.options) : [];
+      const selected = (selectElement.selectedIndex >= 0 && options[selectElement.selectedIndex]) || options[0] || null;
       labelSpan.textContent = selected ? selected.text : '';
 
       menuDiv.innerHTML = '';
-      Array.from(selectElement.options).forEach(opt => {
+      options.forEach(opt => {
         const item = document.createElement('div');
         item.className = 'custom-select-item';
         if (opt.value === selectElement.value) {
@@ -305,7 +306,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     container.appendChild(triggerBtn);
     container.appendChild(menuDiv);
-    selectElement.parentNode.insertBefore(container, selectElement.nextSibling);
+    if (selectElement.parentNode) {
+      selectElement.parentNode.insertBefore(container, selectElement.nextSibling);
+    }
   }
 
   window.setupCustomSelect = setupCustomSelect;
