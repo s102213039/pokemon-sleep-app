@@ -366,22 +366,36 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
+function shortenSkillName(name) {
+  if (!name) return '';
+  return name
+    .replace(/\bIngredient\b/g, 'Ingr.')
+    .replace(/\bIngredients\b/g, 'Ingr.')
+    .replace(/\bStrength\b/g, 'Str.')
+    .replace(/\bEveryone\b/g, 'All')
+    .replace(/\bElectric\b/g, 'Elec.')
+    .replace(/\[Customizable\]/g, '[Custom]');
+}
+
 function formatSkillNameHtml(displayName, isEN) {
   if (!displayName) return '';
   if (!isEN) {
     return escapeHtml(displayName);
   }
 
-  // 1. 如果有括號或括弧（例如 (Fixed), (Random), (Charge Energy S), [Customizable] 等）拆為兩行
-  const parenMatch = displayName.match(/^(.+?)\s*([(\[].+[)\]])$/);
+  // 縮短英文主技能名稱（例如 Ingredient -> Ingr., Strength -> Str., Everyone -> All 等）
+  const shortName = shortenSkillName(displayName);
+
+  // 1. 如果有括號或括弧（例如 (Fixed), (Random), (Charge Energy S), [Custom] 等）拆為兩行
+  const parenMatch = shortName.match(/^(.+?)\s*([(\[].+[)\]])$/);
   if (parenMatch) {
     const mainPart = parenMatch[1].trim();
     const subPart = parenMatch[2].trim();
     return `<span class="skill-line-1">${escapeHtml(mainPart)}</span><span class="skill-line-2">${escapeHtml(subPart)}</span>`;
   }
 
-  // 2. 標準主技能（如 Ingredient Magnet S、Energy for Everyone S、Dream Shard Magnet S 等）單行完整展示
-  return `<span class="skill-single-line">${escapeHtml(displayName)}</span>`;
+  // 2. 標準主技能（如 Ingr. Magnet S、Charge Str. S、Energy for All S 等）單行完整展示
+  return `<span class="skill-single-line">${escapeHtml(shortName)}</span>`;
 }
 
 function renderSkillWithTooltip(skillName) {
@@ -937,9 +951,13 @@ if (typeof document !== 'undefined') {
 
       function renderSkillButtons() {
         if (!skillFilterContainer) return;
+        const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
         skillFilterContainer.innerHTML = BASE_SKILLS.map(skillItem => {
           const isActive = selectedSkills.has(skillItem.key);
-          const label = window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label;
+          let label = window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label;
+          if (isEN) {
+            label = shortenSkillName(label);
+          }
           return `
             <button type="button" class="subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${label}">
               <span class="subfilter-skill-name">${label}</span>

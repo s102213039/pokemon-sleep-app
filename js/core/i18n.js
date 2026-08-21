@@ -895,6 +895,22 @@
 
   initLanguage();
 
+  function shortenSkillName(name) {
+    if (!name) return '';
+    return name
+      .replace(/\bIngredient\b/g, 'Ingr.')
+      .replace(/\bIngredients\b/g, 'Ingr.')
+      .replace(/\bStrength\b/g, 'Str.')
+      .replace(/\bEveryone\b/g, 'All')
+      .replace(/\bElectric\b/g, 'Elec.')
+      .replace(/\[Customizable\]/g, '[Custom]');
+  }
+
+  function getShortMainSkillName(skill) {
+    const full = getMainSkillName(skill);
+    return currentLang === 'en-US' ? shortenSkillName(full) : full;
+  }
+
   const I18NExport = {
     t,
     getLanguage,
@@ -905,6 +921,8 @@
     getBerryName,
     getNatureName,
     getMainSkillName,
+    getShortMainSkillName,
+    shortenSkillName,
     getSubSkillName,
     updatePageTranslations,
     DICTIONARY,
