@@ -1352,6 +1352,45 @@ test('Tier 1 - Feature Coverage', 'I18N Item & Island & Nature & Subskill Biling
   });
 });
 
+test('Tier 1 - Feature Coverage', 'Centralized Scalable I18N Dynamic Translator & Fuzzy Matching', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const ctx = {
+    window: { localStorage: { getItem: () => 'en-US', setItem: () => {} }, addEventListener: () => {} },
+    document: {
+      documentElement: { setAttribute: () => {} },
+      getElementById: () => null,
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    console: console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+
+  ctx.window.I18N.setLanguage('en-US');
+
+  // Test 1: Fuzzy subskill matching (spaces and variations)
+  assert(ctx.window.I18N.getSubSkillName('幫忙速度 S') === 'Helping Speed S', '幫忙速度 S with space -> Helping Speed S');
+  assert(ctx.window.I18N.getSubSkillName('技能機率提升 S') === 'Skill Trigger S', '技能機率提升 S -> Skill Trigger S');
+  assert(ctx.window.I18N.getSubSkillName('活力恢復獎勵') === 'Energy Recovery Bonus', '活力恢復獎勵 (恢) -> Energy Recovery Bonus');
+  assert(ctx.window.I18N.getSubSkillName('睡眠 EXP 獎勵') === 'Sleep EXP Bonus', '睡眠 EXP 獎勵 -> Sleep EXP Bonus');
+
+  // Test 2: Dynamic text translation engine
+  const ladderNote = '👑 TOP 1 AAA 特選蘋果 產量之王';
+  const translatedNote = ctx.window.I18N.translateDynamicText(ladderNote);
+  assert(translatedNote === '👑 TOP 1 AAA Fancy Apple Production King', `Ladder note translation failed: ${translatedNote}`);
+
+  const eventSentence = '舉辦期間：8/27 (週四) 4:00 ～ 8/30 (週日) 3:59';
+  const translatedEvent = ctx.window.I18N.translateDynamicText(eventSentence);
+  assert(translatedEvent === 'Event Period: 8/27 (Thu) 4:00 ~ 8/30 (Sun) 3:59', `Event schedule translation failed: ${translatedEvent}`);
+
+  const bundleSentence = '🛍️ 「好眠日限定包vol.38」（1,500鑽石） ：超級沙布蕾×9、幸運薰香×2、成長薰香×2、專注薰香×2';
+  const translatedBundle = ctx.window.I18N.translateDynamicText(bundleSentence);
+  assert(translatedBundle.includes('Great Biscuit') && translatedBundle.includes('Luck Incense') && translatedBundle.includes('Focus Incense'), `Bundle translation failed: ${translatedBundle}`);
+});
+
 
 // Final Summary Output
 console.log('\n======================================================');

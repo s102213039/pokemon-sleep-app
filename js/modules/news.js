@@ -663,6 +663,11 @@
     processed = processed.replace(/^([\u{1F300}-\u{1F9FF}✨🔥⭐🛍️⏰⚡🏝️💡⚙️🍬])\s*\1\s*/u, '$1 ');
 
     if (isEN) {
+      // 0. 優先調用中央 I18N 動態翻譯引擎 (單一來源規範)
+      if (window.I18N && typeof window.I18N.translateDynamicText === 'function') {
+        processed = window.I18N.translateDynamicText(processed);
+      }
+
       // 1. 執行語句與通用模式替換
       GAME_PHRASE_RULES.forEach(([regex, repl]) => {
         processed = processed.replace(regex, repl);

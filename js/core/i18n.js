@@ -504,6 +504,7 @@
   const INGREDIENT_NAMES = {
     '特選蘋果': { 'zh-TW': '特選蘋果', 'en-US': 'Fancy Apple' },
     '哞哞鮮奶': { 'zh-TW': '哞哞鮮奶', 'en-US': 'Moomoo Milk' },
+    '純粹鮮奶': { 'zh-TW': '純粹鮮奶', 'en-US': 'Moomoo Milk' },
     '萌綠大豆': { 'zh-TW': '萌綠大豆', 'en-US': 'Greengrass Soybeans' },
     '甜甜蜜': { 'zh-TW': '甜甜蜜', 'en-US': 'Honey' },
     '豆製肉': { 'zh-TW': '豆製肉', 'en-US': 'Bean Sausage' },
@@ -752,6 +753,9 @@
     '友好薰香': { 'zh-TW': '友好薰香', 'en-US': 'Friend Incense' },
     '成長薰香': { 'zh-TW': '成長薰香', 'en-US': 'Growth Incense' },
     '幸運薰香': { 'zh-TW': '幸運薰香', 'en-US': 'Luck Incense' },
+    '專注薰香': { 'zh-TW': '專注薰香', 'en-US': 'Focus Incense' },
+    '通透薰香': { 'zh-TW': '通透薰香', 'en-US': 'Pure Incense' },
+    '回復薰香': { 'zh-TW': '回復薰香', 'en-US': 'Recovery Incense' },
     '專用薰香': { 'zh-TW': '專用薰香', 'en-US': 'Specific Incense' },
     '薰香': { 'zh-TW': '薰香', 'en-US': 'Incense' },
     '糖果': { 'zh-TW': '糖果', 'en-US': 'Candy' },
@@ -927,8 +931,121 @@
 
   function getSubSkillName(subskill) {
     if (!subskill) return '';
-    const item = SUBSKILL_NAMES[subskill];
-    return item ? (item[currentLang] || subskill) : subskill;
+    const trimmed = String(subskill).trim();
+    if (SUBSKILL_NAMES[trimmed]) {
+      return SUBSKILL_NAMES[trimmed][currentLang] || trimmed;
+    }
+    const normalized = trimmed.replace(/\s+/g, '').replace(/恢復/g, '回復').replace(/恢/g, '回');
+    if (SUBSKILL_NAMES[normalized]) {
+      return SUBSKILL_NAMES[normalized][currentLang] || trimmed;
+    }
+    for (const key in SUBSKILL_NAMES) {
+      const normKey = key.replace(/\s+/g, '').replace(/恢復/g, '回復').replace(/恢/g, '回');
+      if (normKey === normalized) {
+        return SUBSKILL_NAMES[key][currentLang] || trimmed;
+      }
+    }
+    return trimmed;
+  }
+
+  function translateDynamicText(text) {
+    if (!text || typeof text !== 'string') return text;
+    if (currentLang !== 'en-US') return text;
+
+    let res = text;
+
+    // 1. 標點與空格規範
+    res = res
+      .replace(/：/g, ': ')
+      .replace(/、/g, ', ')
+      .replace(/～/g, ' ~ ')
+      .replace(/〜/g, ' ~ ')
+      .replace(/\s+/g, ' ');
+
+    // 2. 營地與活動排程語句
+    res = res
+      .replace(/舉辦期間\s*[:：]?\s*/gi, 'Event Period: ')
+      .replace(/銷售期間\s*[:：]?\s*/gi, 'Sale Period: ')
+      .replace(/活動期間\s*[:：]?\s*/gi, 'Event Period: ')
+      .replace(/【適用營地】[・\s]*所有營地/gi, '【Applicable Areas】 All Areas')
+      .replace(/【適用營地】[・\s]*/gi, '【Applicable Areas】 ')
+      .replace(/【注意事項】[・\s]*/gi, '【Important Notes】 ')
+      .replace(/\(週一\)/g, '(Mon)')
+      .replace(/\(週二\)/g, '(Tue)')
+      .replace(/\(週三\)/g, '(Wed)')
+      .replace(/\(週四\)/g, '(Thu)')
+      .replace(/\(週五\)/g, '(Fri)')
+      .replace(/\(週六\)/g, '(Sat)')
+      .replace(/\(週日\)/g, '(Sun)');
+
+    // 3. 好眠日與睡意之力活動規則
+    res = res
+      .replace(/睡意之力\s*[:：]?\s*(\d+(\.\d+)?)倍/gi, 'Drowsy Power: $1x')
+      .replace(/睡意之力的倍率/g, 'Drowsy Power Multiplier')
+      .replace(/睡意之力/g, 'Drowsy Power')
+      .replace(/在好眠日的[「"]?[^」"]+[」"]?生效的[「"]?(?:Drowsy Power Multiplier|Drowsy Power的倍率|睡意之力的倍率)[」"]?[,，]\s*將會根據\s*[^是]+是週幾而有所變化\s*。?/g, 'The Drowsy Power multiplier on Full Moon Day varies depending on the day of the week.')
+      .replace(/■[「"]?[^」"]+[」"]?的[「"]?(?:Drowsy Power|睡意之力)[」"]?倍率/g, '■ Full Moon Day Drowsy Power Multiplier')
+      .replace(/※不論.+?皆為\s*1\.5倍\s*。?/g, '※Regardless of the day of the week, the Drowsy Power multiplier on other event days is 1.5x.')
+      .replace(/滿月之日/g, 'Full Moon Day')
+      .replace(/滿月/g, 'Full Moon');
+
+    // 4. 商城禮包與同樂包
+    res = res
+      .replace(/「好眠日限定包\s*vol\.?(\d+)」/gi, '"Good Sleep Day Bundle Vol.$1" ')
+      .replace(/「(.+?)限定包」/g, '"$1 Limited Bundle" ')
+      .replace(/「(.+?)同樂包」/g, '"$1 Celebration Bundle" ')
+      .replace(/！\s*:\s*/g, ': ')
+      .replace(/（(\d+[\d,]*)\s*(?:鑽石|Diamonds)）/gi, ' ($1 Diamonds)')
+      .replace(/\((\d+[\d,]*)\s*(?:鑽石|Diamonds)\)/gi, ' ($1 Diamonds)')
+      .replace(/介紹\s*[:：]\s*《Pokémon Sleep》將配合「好眠日」推出/g, 'Details: Special bundle available in Pokémon Sleep for Good Sleep Day')
+      .replace(/介紹\s*[:：]/g, 'Details: ')
+      .replace(/專門迎接\s*⭐?\s*(.+?)\s*成為夥伴並且培育牠的道具\s*，?\s*歡迎選購。?/g, 'Items tailored for befriending and raising $1.')
+      .replace(/在\s*⭐?\s*(.+?)\s*會出現的營地使用薰香\s*，?\s*與牠相遇吧！?/g, 'Use incenses at areas where $1 appears to encounter them!');
+
+    // 5. 替換全域道具名稱
+    for (const [cn, item] of Object.entries(ITEM_NAMES)) {
+      if (item['en-US']) {
+        res = res.replaceAll(cn, item['en-US']);
+      }
+    }
+
+    // 6. 替換全域食材名稱
+    for (const [cn, item] of Object.entries(INGREDIENT_NAMES)) {
+      if (item['en-US']) {
+        res = res.replaceAll(cn, item['en-US']);
+      }
+    }
+
+    // 7. 替換全域島嶼與營地名稱
+    for (const [cn, item] of Object.entries(ISLAND_NAMES)) {
+      if (item['en-US']) {
+        res = res.replaceAll(cn, item['en-US']);
+      }
+    }
+
+    // 8. 替換天梯與點評用語
+    res = res
+      .replace(/👑\s*TOP 1 AAA\s*(.+?)\s*產量之王/g, '👑 TOP 1 AAA $1 Production King')
+      .replace(/👑\s*TOP 1\s*(.+?)\s*產量之王/g, '👑 TOP 1 $1 Production King')
+      .replace(/AAA\s*(.+?)\s*專精產出/g, 'AAA $1 Specialized Output')
+      .replace(/ABB\s*(.+?)\s*主力產出/g, 'ABB $1 Main Output')
+      .replace(/AAA\s*(.+?)\s*兼顧/g, 'AAA $1 Flex Output')
+      .replace(/AAC\s*雙(.+?)\s*二階解鎖/g, 'AAC Dual $1 Lv.30 Unlock')
+      .replace(/AAC\s*(.+?)\s*解鎖/g, 'AAC $1 Lv.30 Unlock')
+      .replace(/ABB\s*單(.+?)\s*混產/g, 'ABB Single $1 Mixed Output')
+      .replace(/產量之王/g, 'Production King')
+      .replace(/專精產出/g, 'Specialized Output')
+      .replace(/主力產出/g, 'Main Output')
+      .replace(/兼顧/g, 'Flex Output')
+      .replace(/二階解鎖/g, 'Lv.30 Unlock')
+      .replace(/解鎖/g, 'Unlock')
+      .replace(/混產/g, 'Mixed Output')
+      .replace(/顆\/天/g, '/day')
+      .replace(/顆/g, 'items')
+      .replace(/餐\/天/g, 'meals/day')
+      .replace(/鑽石/g, 'Diamonds');
+
+    return res.trim();
   }
 
   function updatePageTranslations() {
@@ -1011,6 +1128,7 @@
     getShortMainSkillName,
     shortenSkillName,
     getSubSkillName,
+    translateDynamicText,
     getItemName,
     getIslandName,
     updatePageTranslations,

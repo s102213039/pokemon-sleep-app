@@ -3681,8 +3681,10 @@
     icon: d.icon,
     maxDaily: d.pokemon[0] ? d.pokemon[0].count : 100,
     tiers: d.pokemon.map(p => ({
-      name: p.name + ` (${p.recipe})`,
-      count: p.count + " 顆/天",
+      name: p.name,
+      recipe: p.recipe,
+      rawCount: p.count,
+      count: p.count,
       rate: Math.min(Math.round((p.count / (d.isSpecialScale ? 20 : 105)) * 100), 100),
       note: p.note
     }))
@@ -4403,15 +4405,10 @@
   }
 
   function formatLadderNote(note, isEN) {
-    if (!note || !isEN) return note || '';
-    return note
-      .replace(/👑\s*TOP 1 AAA\s*(.+?)\s*產量之王/g, '👑 TOP 1 AAA $1 Production King')
-      .replace(/AAC\s*雙(.+?)\s*二階解鎖/g, 'AAC Dual $1 Unlocks at Lv.30')
-      .replace(/AAC\s*(.+?)\s*解鎖/g, 'AAC $1 Unlocks at Lv.30')
-      .replace(/ABB\s*單(.+?)\s*混產/g, 'ABB Single $1 Mixed Output')
-      .replace(/ABB\s*(.+?)\s*主力產出/g, 'ABB $1 Main Output')
-      .replace(/ABC\s*(.+?)\s*兼顧/g, 'ABC $1 Balanced Output')
-      .replace(/AAA\s*(.+?)\s*產量之王/g, 'AAA $1 Top Production');
+    if (!note) return '';
+    return (window.I18N && typeof window.I18N.translateDynamicText === 'function') 
+      ? window.I18N.translateDynamicText(note) 
+      : note;
   }
 
   // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、大菜供應能力評定、跨軌道搜尋聚焦)
@@ -4482,7 +4479,7 @@
                 <!-- 跨度連接線容器 -->
                 <div class="ladder-spans-container">
                   ${ing.pokemon.map(p => {
-                    const pkmDisplayName = isEN ? (p.name_en || p.name) : p.name;
+                    const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
                     let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
                     if (ladderRecipeFilter === 'AAA') {
                       variants = variants.filter(v => v.recipe === 'AAA');
@@ -4509,7 +4506,7 @@
                 <!-- 寶可夢型態節點容器 (Nodes Container) -->
                 <div class="ladder-nodes-container">
                   ${ing.pokemon.flatMap((p, pIdx) => {
-                    const pkmDisplayName = isEN ? (p.name_en || p.name) : p.name;
+                    const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
                     let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
                     if (ladderRecipeFilter === 'AAA') {
                       variants = variants.filter(v => v.recipe === 'AAA');
@@ -4672,22 +4669,27 @@
             <img src="${ing.icon}" class="ladder-icon" alt="${ingName}">
             <h4 class="ladder-name">${ingName}</h4>
           </div>
-          <span class="ladder-max-badge">${isEN ? 'Max Daily ~ ' : '最高日產 ~ '}${ing.maxDaily} ${isEN ? '/day' : '顆'}</span>
+          <span class="ladder-max-badge">${isEN ? 'Max Daily ~ ' : '最高日產 ~ '}${ing.maxDaily} ${isEN ? '/day' : '顆/天'}</span>
         </div>
 
         <div class="ladder-tiers-list">
           ${ing.tiers.map(t => {
-            const pkmName = isEN ? ((window.I18N && typeof window.I18N.getPokemonName === 'function' ? window.I18N.getPokemonName(t.name) : '') || t.name) : t.name;
+            const rawName = t.name || '';
+            const translatedPkm = isEN ? ((window.I18N && window.I18N.getPokemonName(rawName)) || rawName) : rawName;
+            const pkmDisplayName = `${translatedPkm} (${t.recipe || 'AAA'})`;
+            const noteText = isEN ? (window.I18N ? window.I18N.translateDynamicText(t.note) : t.note) : t.note;
+            const displayCount = t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count);
+
             return `
             <div class="ladder-tier-row">
               <div class="ladder-tier-info">
-                <span class="ladder-pkm-name font-bold">${pkmName}</span>
-                <span class="ladder-count text-accent font-bold">${t.count} ${isEN ? '/day' : '顆'}</span>
+                <span class="ladder-pkm-name font-bold">${pkmDisplayName}</span>
+                <span class="ladder-count text-accent font-bold">${displayCount} ${isEN ? '/day' : '顆/天'}</span>
               </div>
               <div class="ladder-progress-bar">
                 <div class="ladder-progress-fill" style="width: ${t.rate}%"></div>
               </div>
-              <div class="ladder-note text-muted">${t.note}</div>
+              <div class="ladder-note text-muted">${noteText}</div>
             </div>
           `;}).join('')}
         </div>
