@@ -1,0 +1,144 @@
+# 🔒 Pokémon Sleep App — 程式碼狀態快照
+
+> **建立時間**：2026-08-21
+> **目的**：記錄當前已確認正常運作的所有功能與設定，後續修改任何需求時，以下條目必須保持不變。
+
+---
+
+## 📌 當前穩定版本
+
+| 項目 | 值 |
+|---|---|
+| **Git Commit** | `2c15a7c8545aca5f058c50910f63207be700ca23` |
+| **JS/CSS 版本號** | `v=20260821_02` |
+| **最後確認** | 2026-08-21 |
+
+---
+
+## 📁 檔案結構與行數（不得無故大量增減）
+
+| 檔案 | 行數 |
+|---|---|
+| `index.html` | 738 |
+| `css/styles.css` | 7494 |
+| `js/core/i18n.js` | 927 |
+| `js/modules/app.js` | 1531 |
+| `js/modules/wiki.js` | 5333 |
+| `js/modules/box.js` | 1321 |
+| `js/modules/recipes.js` | 830 |
+| `js/modules/news.js` | 626 |
+| `js/modules/appraisal.js` | 761 |
+
+---
+
+## ✅ 已確認正常運作的功能（不得破壞）
+
+### 🔖 1. 篩選器側邊欄書籤
+
+**正確行為**：
+- 圖鑑頁 展開狀態 → 書籤 **隱藏**
+- 圖鑑頁 收合狀態 → 書籤 **顯示**
+- 其他頁面（Wiki / Box / Recipes / News）→ 書籤 **完全隱藏**
+
+**位置**：`js/modules/app.js` — `switchMainTab()` 函數
+
+**不得修改的關鍵程式碼**：
+```js
+// 圖鑑頁（else 分支）—— 絕對禁止改回 style.display = 'flex'
+if (bookmarkHandle) bookmarkHandle.style.display = '';
+// 讓 CSS 的 .collapsed class 控制顯示/隱藏
+```
+
+**CSS 規則**（`css/styles.css`）：
+```css
+.sidebar-bookmark-handle { display: none; }
+.pokemon-filter-sidebar.collapsed .sidebar-bookmark-handle { display: flex; }
+```
+
+---
+
+### 🌐 2. 雙語系統語言持久化
+
+**正確行為**：
+- 選擇語言 → 重新整理頁面 → 仍保持選擇的語言
+- 儲存位置：`localStorage`，key = `user_lang`
+
+**位置**：`js/core/i18n.js`
+
+**不得移除的 Wiki 重新渲染邏輯**（`setLanguage` 函數內）：
+```js
+if (window.WikiDB && typeof window.WikiDB.renderWikiLayout === 'function') {
+  const wikiPanel = document.getElementById('panel-wiki');
+  if (wikiPanel) {
+    window.WikiDB.renderWikiLayout(wikiPanel);
+    if (typeof window.WikiDB.recalcTriggerChance === 'function') window.WikiDB.recalcTriggerChance();
+    if (typeof window.WikiDB.recalcSleepDays === 'function') window.WikiDB.recalcSleepDays();
+    if (typeof window.WikiDB.refreshCoordinateLadder === 'function') window.WikiDB.refreshCoordinateLadder();
+  }
+}
+```
+
+---
+
+### 🔑 3. Box 排序 i18n Key 對照
+
+HTML 使用的 data-i18n key 與字典定義必須一致：
+
+| HTML key | zh-TW | en-US |
+|---|---|---|
+| `box.sort_recent` | 📅 最近加入 | 📅 Recently Added |
+| `box.sort_dex_asc` | 🔢 全國圖鑑編號 | 🔢 Pokedex No. |
+
+兩個 key 在 zh-TW section（line ~195）和 en-US section（line ~424）均已定義。
+
+---
+
+### 📜 4. Script 載入順序（不得更改）
+
+```html
+<script src="js/core/i18n.js?v=..."></script>      <!-- 必須最先 -->
+<script src="js/modules/app.js?v=..."></script>
+<script src="js/modules/recipes.js?v=..."></script>
+<script src="js/modules/wiki.js?v=..."></script>
+<script src="js/modules/box.js?v=..."></script>
+<script src="js/modules/news.js?v=..."></script>
+<script src="js/modules/appraisal.js?v=..."></script>
+```
+
+> ⚠️ 每次修改 JS/CSS 後，必須同時更新版本號（如 v=20260821_03）強制清除快取。
+
+---
+
+### 🎨 5. 主題系統
+
+儲存於 `localStorage`，key = `user_theme`，支援：`midnight`、`onyx`、`dawn`、`emerald`
+
+---
+
+### 🗂️ 6. Tab 導航與書籤對應
+
+| Tab | Hash | 書籤 |
+|---|---|---|
+| Dex | `#pokemon` | 依收合狀態 |
+| Dishes | `#recipes` | 隱藏 |
+| Wiki | `#wiki` | 隱藏 |
+| Box | `#box` | 隱藏 |
+| News | `#news` | 隱藏 |
+
+---
+
+### 🔽 7. 下拉選單規範
+
+- 箭頭 `background-position: right 18px center`
+- `padding-right: 36px` 防止文字覆蓋箭頭
+
+---
+
+## 🚨 每次修改前必查清單
+
+- [ ] 書籤在圖鑑頁展開時是否隱藏？收合時是否顯示？
+- [ ] 切換語言後 Wiki 頁是否完整重新渲染？
+- [ ] 重新整理頁面後語言設定是否保持？
+- [ ] Box 排序在英文模式是否正確顯示英文？
+- [ ] 是否已更新版本號？
+- [ ] Script 載入順序 i18n.js 是否仍在最前？
