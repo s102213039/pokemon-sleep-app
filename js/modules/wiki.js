@@ -4314,15 +4314,23 @@
     const wikiContainer = document.getElementById('panel-wiki');
     if (!wikiContainer) return;
 
-    renderWikiLayout(wikiContainer);
+    try {
+      renderWikiLayout(wikiContainer);
+    } catch (e) {
+      console.error('Error rendering Wiki layout:', e);
+    }
 
-    bindAllEvents();
-    bindGlobalDelegationFallback();
+    try {
+      bindAllEvents();
+      bindGlobalDelegationFallback();
+    } catch (e) {
+      console.error('Error binding Wiki events:', e);
+    }
 
-    recalcTriggerChance();
-    recalcSleepDays();
-    refreshCoordinateLadder();
-    refreshBerryNodes();
+    try { recalcTriggerChance(); } catch (e) {}
+    try { recalcSleepDays(); } catch (e) {}
+    try { refreshCoordinateLadder(); } catch (e) {}
+    try { refreshBerryNodes(); } catch (e) {}
   }
 
   // 渲染副技能標籤

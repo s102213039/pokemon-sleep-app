@@ -123,6 +123,7 @@
     const natureObj = NATURE_DATA.find(n => n.name === nature) || { buffType: 'none', debuffType: 'none' };
     const buff = natureObj.buffType;
     const debuff = natureObj.debuffType;
+    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
 
     // 前三格核心技能 (Lv.10, Lv.25, Lv.50)
     const earlySubskills = subskills.slice(0, 3);
@@ -140,10 +141,10 @@
 
       if (isSpeedDown && !hasEarlyBFS && !hasEarlyHB) {
         passedBaseline = false;
-        baselineFailReason = '性格減慢幫忙速度，未達樹果手及格線（且前三格無樹果S/幫手獎勵補救）';
+        baselineFailReason = isEN ? 'Speed down nature without BFS / HB to compensate' : '性格減慢幫忙速度，未達樹果手及格線（且前三格無樹果S/幫手獎勵補救）';
       } else if (!hasEarlyBFS && !hasEarlyHB && !hasEarlySpeedM && !isSpeedUp) {
         passedBaseline = false;
-        baselineFailReason = '前三格缺乏樹果S/速度加成，未達樹果手及格線';
+        baselineFailReason = isEN ? 'Lacks BFS or speed boost in first 3 slots' : '前三格缺乏樹果S/速度加成，未達樹果手及格線';
       }
     } else if (specialty === '食材') {
       const hasEarlyIngM = earlySubskills.includes('食材機率提升M');
@@ -154,10 +155,10 @@
 
       if (isIngDown && !hasEarlyIngM) {
         passedBaseline = false;
-        baselineFailReason = '性格減少食材機率，未達食材手及格線';
+        baselineFailReason = isEN ? 'Ingredient down nature without Ingredient Finder M' : '性格減少食材機率，未達食材手及格線';
       } else if (!hasEarlyIngM && !hasEarlyIngS && !hasEarlyHB && !isIngUp) {
         passedBaseline = false;
-        baselineFailReason = '缺乏食材機率加成，未達食材手及格線';
+        baselineFailReason = isEN ? 'Lacks ingredient finder boost in first 3 slots' : '缺乏食材機率加成，未達食材手及格線';
       }
     } else { // 技能型
       const hasEarlySkillM = earlySubskills.includes('技能機率提升M');
@@ -169,10 +170,10 @@
 
       if (isSkillDown && !hasEarlySkillM) {
         passedBaseline = false;
-        baselineFailReason = '性格減少主技能機率，未達技能手及格線';
+        baselineFailReason = isEN ? 'Skill down nature without Skill Trigger M' : '性格減少主技能機率，未達技能手及格線';
       } else if (!hasEarlySkillM && !hasEarlySkillS && !hasEarlySkillLvlM && !hasEarlyHB && !isSkillUp) {
         passedBaseline = false;
-        baselineFailReason = '缺乏技能發動率加成，未達技能手及格線';
+        baselineFailReason = isEN ? 'Lacks skill trigger boost in first 3 slots' : '缺乏技能發動率加成，未達技能手及格線';
       }
     }
 
@@ -196,19 +197,19 @@
 
     // 1. 性格評分
     if (specialty === '樹果') {
-      if (buff === 'speed') { score += 25; highlights.push('幫忙速度▲▲'); }
+      if (buff === 'speed') { score += 25; highlights.push(isEN ? 'Speed ▲▲' : '幫忙速度▲▲'); }
       if (debuff === 'speed') { score -= 25; }
-      if (debuff === 'ingredient') { score += 12; highlights.push('食材▼▼ (樹果極限流)'); }
+      if (debuff === 'ingredient') { score += 12; highlights.push(isEN ? 'Ing. ▼▼ (Pure Berry)' : '食材▼▼ (樹果極限流)'); }
       if (buff === 'ingredient') { score -= 6; }
     } else if (specialty === '食材') {
-      if (buff === 'ingredient') { score += 28; highlights.push('食材機率▲▲'); }
+      if (buff === 'ingredient') { score += 28; highlights.push(isEN ? 'Ing. Rate ▲▲' : '食材機率▲▲'); }
       if (debuff === 'ingredient') { score -= 28; }
-      if (buff === 'speed') { score += 16; highlights.push('幫忙速度▲▲'); }
+      if (buff === 'speed') { score += 16; highlights.push(isEN ? 'Speed ▲▲' : '幫忙速度▲▲'); }
       if (debuff === 'speed') { score -= 16; }
     } else { // 技能
-      if (buff === 'skill') { score += 30; highlights.push('主技能機率▲▲'); }
+      if (buff === 'skill') { score += 30; highlights.push(isEN ? 'Skill Trigger ▲▲' : '主技能機率▲▲'); }
       if (debuff === 'skill') { score -= 30; }
-      if (buff === 'speed') { score += 15; highlights.push('幫忙速度▲▲'); }
+      if (buff === 'speed') { score += 15; highlights.push(isEN ? 'Speed ▲▲' : '幫忙速度▲▲'); }
       if (debuff === 'speed') { score -= 15; }
     }
 
@@ -223,28 +224,28 @@
 
       if (skName === '樹果數量S') {
         skScore = specialty === '樹果' ? 100 : 40;
-        highlights.push(`Lv.${lvl} 樹果S`);
+        highlights.push(isEN ? `Lv.${lvl} BFS` : `Lv.${lvl} 樹果S`);
       } else if (skName === '幫手獎勵') {
         skScore = 65;
-        highlights.push(`Lv.${lvl} 幫手獎勵`);
+        highlights.push(isEN ? `Lv.${lvl} Helping Bonus` : `Lv.${lvl} 幫手獎勵`);
       } else if (skName === '食材機率提升M') {
         skScore = specialty === '食材' ? 85 : 20;
-        if (specialty === '食材') highlights.push(`Lv.${lvl} 食材機率M`);
+        if (specialty === '食材') highlights.push(isEN ? `Lv.${lvl} Ing. Finder M` : `Lv.${lvl} 食材機率M`);
       } else if (skName === '食材機率提升S') {
         skScore = specialty === '食材' ? 45 : 10;
       } else if (skName === '技能機率提升M') {
         skScore = specialty === '技能' ? 85 : 20;
-        if (specialty === '技能') highlights.push(`Lv.${lvl} 技能機率M`);
+        if (specialty === '技能') highlights.push(isEN ? `Lv.${lvl} Skill Trigger M` : `Lv.${lvl} 技能機率M`);
       } else if (skName === '技能機率提升S') {
         skScore = specialty === '技能' ? 45 : 10;
       } else if (skName === '技能等級提升M') {
         skScore = specialty === '技能' ? 60 : 15;
-        if (specialty === '技能') highlights.push(`Lv.${lvl} 技能等級M`);
+        if (specialty === '技能') highlights.push(isEN ? `Lv.${lvl} Skill Level M` : `Lv.${lvl} 技能等級M`);
       } else if (skName === '技能等級提升S') {
         skScore = specialty === '技能' ? 30 : 10;
       } else if (skName === '幫忙速度M') {
         skScore = 50;
-        highlights.push(`Lv.${lvl} 幫忙速度M`);
+        highlights.push(isEN ? `Lv.${lvl} Speed M` : `Lv.${lvl} 幫忙速度M`);
       } else if (skName === '幫忙速度S') {
         skScore = 25;
       } else if (skName === '持有上限提升L') {
@@ -284,7 +285,7 @@
     if (highlights.length > 0) {
       summaryNote = highlights.slice(0, 3).join(' · ');
     } else {
-      summaryNote = '及格主力，基礎能力扎實';
+      summaryNote = isEN ? 'Solid baseline starter' : '及格主力，基礎能力扎實';
     }
 
     return {

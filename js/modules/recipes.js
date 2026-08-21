@@ -625,13 +625,13 @@ document.addEventListener('DOMContentLoaded', () => {
     return '•';
   }
 
-  function getBonusBadgeStyle(pct) {
-    if (pct >= 78) return 'background:rgba(251,191,36,0.25);color:#fbbf24;border:1px solid rgba(251,191,36,0.7);';
-    if (pct >= 61) return 'background:rgba(239,68,68,0.2);color:#f87171;border:1px solid rgba(239,68,68,0.5);';
-    if (pct >= 48) return 'background:rgba(168,85,247,0.2);color:#c084fc;border:1px solid rgba(168,85,247,0.5);';
-    if (pct >= 35) return 'background:rgba(59,130,246,0.2);color:#60a5fa;border:1px solid rgba(59,130,246,0.5);';
-    if (pct >= 25) return 'background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.5);';
-    return 'background:rgba(255,255,255,0.08);color:var(--text-main);border:1px solid rgba(255,255,255,0.15);';
+  function getBonusBadgeClass(pct) {
+    if (pct >= 78) return 'bonus-badge-78';
+    if (pct >= 61) return 'bonus-badge-61';
+    if (pct >= 48) return 'bonus-badge-48';
+    if (pct >= 35) return 'bonus-badge-35';
+    if (pct >= 25) return 'bonus-badge-25';
+    return 'bonus-badge-default';
   }
 
   function renderIngRow(ingredients) {
@@ -658,16 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
     filtered.forEach(r => { catCounts[r.category] = (catCounts[r.category] || 0) + 1; });
     const breakdownHTML = Object.entries(catCounts).map(([cat, c]) => `${catLabels[cat] || cat} <strong>${c}</strong>`).join(' · ');
 
-    const islandMult = (1 + islandBonus / 100).toFixed(2);
-    const eventText  = eventBonus > 1.0 ? `<span style="margin-left:6px;font-size:12px;color:var(--color-accent-rose);">🎉 ×${eventBonus.toFixed(2)}</span>` : '';
-    const tastyText  = showTasty ? `<span style="margin-left:6px;font-size:12px;color:var(--color-accent-rose);font-weight:600;">✨ Extra Tasty</span>` : '';
-
-    countBadge.innerHTML = `${isEN ? `Showing <strong>${filtered.length}</strong>/${allRecipes.length} dishes` : `顯示 <strong>${filtered.length}</strong>/${allRecipes.length} 筆`}
-      <span style="margin-left:12px;font-size:12px;color:var(--text-muted);">${breakdownHTML}</span>
-      <span style="margin-left:10px;font-size:12px;color:var(--color-accent-gold);">Lv.${recipeLevel}</span>
-      <span style="margin-left:6px;font-size:12px;color:var(--color-accent-green);">🏝️ ×${islandMult}</span>
-      ${eventText}
-      ${tastyText}`;
+    countBadge.innerHTML = isEN ? `Dishes <strong>${filtered.length}</strong> (${breakdownHTML})` : `食譜 <strong>${filtered.length}</strong> 道（${breakdownHTML}）`;
 
     if (filtered.length === 0) {
       contentArea.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-muted);">🔍 ${isEN ? 'No matching recipes found' : '未找到符合條件的料理食譜'}</div>`;
@@ -704,7 +695,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <tbody>
             ${recipes.map(r => {
               const bp         = r.bonus_pct || 19;
-              const badgeStyle = getBonusBadgeStyle(bp);
+              const badgeClass = getBonusBadgeClass(bp);
               const emoji      = getBonusEmoji(bp);
               const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
               const primaryName = isEN ? (r.name_en || r.name_cn) : r.name_cn;
@@ -713,13 +704,13 @@ document.addEventListener('DOMContentLoaded', () => {
               let energyCellHTML = '';
               if (!showTasty) {
                 energyCellHTML = `
-                  <td style="font-weight:700;color:var(--color-accent-gold);font-family:monospace;font-size:15px;white-space:nowrap;text-align:center;">
+                  <td style="font-weight:700;color:var(--color-accent-gold);font-family:monospace;font-size:15px;white-space:nowrap;text-align:center;vertical-align:middle;">
                     ⚡ ${finalE.toLocaleString()}
                   </td>
                 `;
               } else {
                 energyCellHTML = `
-                  <td style="white-space:nowrap;text-align:center;padding:8px 8px;">
+                  <td style="white-space:nowrap;text-align:center;padding:8px 8px;vertical-align:middle;">
                     <div class="tasty-energy-stack">
                       <div class="tasty-row tasty-row-normal" title="${isEN ? 'Normal Energy (1x)' : '一般能量 (1x)'}">
                         <span class="tasty-tag">1x</span>
@@ -743,22 +734,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
               return `
               <tr>
-                <td>
+                <td style="vertical-align:middle;text-align:center;">
                   <img src="${r.icon}" width="52" height="52" alt="${primaryName}" loading="lazy"
-                    style="border-radius:10px;object-fit:contain;background:var(--bg-card-inner);padding:4px;border:1px solid var(--border-color);">
+                    style="border-radius:10px;object-fit:contain;background:var(--bg-card-inner);padding:4px;border:1px solid var(--border-color);display:block;margin:0 auto;">
                 </td>
-                <td style="font-weight:700;font-size:15px;color:var(--text-main);white-space:nowrap;">
-                  ${primaryName}
-                  ${secondaryName ? `<br><small style="color:var(--text-muted);font-size:11px;font-weight:400;">${secondaryName}</small>` : ''}
+                <td class="recipe-name-cell" style="vertical-align:middle;">
+                  <div class="recipe-name-wrapper" style="display:flex;flex-direction:column;justify-content:center;min-height:52px;">
+                    <span class="recipe-name-primary" style="font-weight:700;font-size:15px;color:var(--text-main);line-height:1.3;">${primaryName}</span>
+                    ${secondaryName ? `<span class="recipe-name-sub" style="color:var(--text-muted);font-size:11px;font-weight:400;margin-top:2px;line-height:1.2;">${secondaryName}</span>` : ''}
+                  </div>
                 </td>
-                <td><span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span></td>
-                <td>
-                  <span style="${badgeStyle}padding:4px 10px;border-radius:20px;font-weight:700;font-size:13px;white-space:nowrap;display:inline-block;">
+                <td style="vertical-align:middle;"><span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span></td>
+                <td style="vertical-align:middle;">
+                  <span class="bonus-badge ${badgeClass}">
                     ${emoji} +${bp}%
                   </span>
                 </td>
-                <td><span class="pot-badge">🍲 ${r.pot_size}</span></td>
-                <td>${renderIngRow(r.ingredients)}</td>
+                <td style="vertical-align:middle;"><span class="pot-badge">🍲 ${r.pot_size}</span></td>
+                <td style="vertical-align:middle;">${renderIngRow(r.ingredients)}</td>
                 ${energyCellHTML}
               </tr>
             `}).join('')}
@@ -778,7 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="pokemon-grid">
         ${recipes.map(r => {
           const bp         = r.bonus_pct || 19;
-          const badgeStyle = getBonusBadgeStyle(bp);
+          const badgeClass = getBonusBadgeClass(bp);
           const emoji      = getBonusEmoji(bp);
           const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
           const primaryName = isEN ? (r.name_en || r.name_cn) : r.name_cn;
@@ -790,7 +783,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h3 class="pokemon-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${primaryName}</h3>
                 <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
                   <span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span>
-                  <span style="${badgeStyle}padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap;">${emoji} +${bp}%</span>
+                  <span class="bonus-badge ${badgeClass}" style="font-size:11px;padding:3px 8px;">${emoji} +${bp}%</span>
                 </div>
               </div>
             </div>

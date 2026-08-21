@@ -677,8 +677,11 @@ test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Ho
   });
 
   // Verify Heracross official in-game text
+  const heracrossDetail = typeof SPECIAL_SKILL_DETAILS['健美（料理輔助S）'] === 'object'
+    ? SPECIAL_SKILL_DETAILS['健美（料理輔助S）']['zh-TW']
+    : SPECIAL_SKILL_DETAILS['健美（料理輔助S）'];
   assertEquals(
-    SPECIAL_SKILL_DETAILS['健美（料理輔助S）'],
+    heracrossDetail,
     '隨機獲得多個食材，並提升下次料理漂亮成功（大成功）的機率。',
     'Heracross skill description must match official in-game text'
   );
@@ -1083,7 +1086,7 @@ test('Tier 1 - Feature Coverage', 'English Mode Subtitle Hiding & Title Centerin
   assert(cssContent.includes('html[lang="en"] .appraisal-pokemon-en'), 'CSS must hide appraisal-pokemon-en in English');
 });
 
-test('Tier 1 - Feature Coverage', 'Full 100% Bilingual Dictionary & Modals Translation Coverage', () => {
+test('Tier 1 - Feature Coverage', 'All 38+ Main Skill Variants & Aliases 100% English Translated in I18N', () => {
   const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
   const ctx = { window: {}, document: { documentElement: { setAttribute: () => {} }, querySelectorAll: () => [] }, localStorage: { getItem: () => null, setItem: () => {} }, console };
   ctx.window = ctx;
@@ -1092,11 +1095,57 @@ test('Tier 1 - Feature Coverage', 'Full 100% Bilingual Dictionary & Modals Trans
   const I18N = ctx.window.I18N;
   I18N.setLanguage('en-US');
 
-  assert(I18N.t('settings.pat_label').includes('GitHub PAT Token'), 'Settings PAT label must be translated');
-  assert(I18N.t('box.modal_title').includes('OCR Review'), 'Box modal title must be translated');
-  assert(I18N.t('box.modal_save').includes('Save Pokémon'), 'Box save button must be translated');
-  assert(I18N.t('footer.copyright').includes('Pokémon Sleep Database'), 'Footer copyright must be translated');
-  assert(I18N.t('footer.sync_note').includes('GitHub Actions'), 'Footer sync note must be translated');
+  // Verify all main skills in dataset
+  const datasetSkills = Array.from(new Set(dataset.map(p => p.mainSkill).filter(Boolean)));
+  datasetSkills.forEach(skill => {
+    const enName = I18N.getMainSkillName(skill);
+    assert(enName && typeof enName === 'string', `Main skill "${skill}" missing English translation`);
+    assert(!/[\u4e00-\u9fa5]/.test(enName), `Main skill translation for "${skill}" still contains Chinese: "${enName}"`);
+  });
+
+  // Verify specific aliases and legendary skills
+  const testSkills = [
+    '能量填充S', '能量填充S（隨機）', '能量填充M', '食材獲取S', '料理強化S', '料理成功S',
+    '活力充填S', '活力療癒S', '全體療癒S', '活力全體療癒S', '幫手加速', '幫手加速（電）',
+    '幫手加速（火）', '幫手加速（水）', '夢之碎片獲取S', '夢之碎片獲取S（隨機）',
+    '變身（技能複製）', '模仿（技能複製）', '揮指', '月光（活力填充S）', '新月祈禱（活力全體療癒S）',
+    '健美（料理輔助S）', '蹭蹭臉頰（活力療癒S）', '精神擊破（樹果領域）', '畫皮（樹果遽增）'
+  ];
+
+  testSkills.forEach(skill => {
+    const enName = I18N.getMainSkillName(skill);
+    assert(enName && !/[\u4e00-\u9fa5]/.test(enName), `Skill "${skill}" failed translation, got "${enName}"`);
+  });
+
+  // Verify official Pokémon Sleep in-game skill names
+  assert(I18N.getMainSkillName('幫手支援S') === 'Extra Helpful S', '幫手支援S should be Extra Helpful S');
+  assert(I18N.getMainSkillName('料理成功S') === 'Tasty Chance S', '料理成功S should be Tasty Chance S');
+  assert(I18N.getMainSkillName('活力療癒S') === 'Energizing Cheer S', '活力療癒S should be Energizing Cheer S');
+  assert(I18N.getMainSkillName('料理強化S') === 'Cooking Power-Up S', '料理強化S should be Cooking Power-Up S');
+  assert(I18N.getMainSkillName('新月祈禱（活力全體療癒S）') === 'Lunar Prayer (Energy for Everyone S)', '新月祈禱 should be Lunar Prayer (Energy for Everyone S)');
+  assert(I18N.getMainSkillName('十項全能（揮指）[可替換]') === 'All-Rounder (Metronome) [Customizable]', '十項全能 should be All-Rounder (Metronome) [Customizable]');
+});
+
+test('Tier 1 - Feature Coverage', 'Low Saturation Recipe Badges Tokens & Classes Defined for 4 Themes', () => {
+  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  
+  // Theme variables
+  const requiredTokens = [
+    '--badge-cat-curry-bg', '--badge-cat-salad-bg', '--badge-cat-dessert-bg',
+    '--badge-pot-bg', '--badge-bonus-78-bg', '--badge-bonus-61-bg',
+    '--badge-bonus-48-bg', '--badge-bonus-35-bg', '--badge-bonus-25-bg'
+  ];
+  requiredTokens.forEach(token => {
+    assert(cssContent.includes(token), `styles.css missing token ${token}`);
+  });
+
+  // Badge classes
+  assert(cssContent.includes('.recipe-cat-badge.cat-咖哩'), 'styles.css missing cat-咖哩');
+  assert(cssContent.includes('.pot-badge'), 'styles.css missing pot-badge');
+  assert(cssContent.includes('.bonus-badge.bonus-badge-78'), 'styles.css missing bonus-badge-78');
+  assert(cssContent.includes('.bonus-badge.bonus-badge-61'), 'styles.css missing bonus-badge-61');
+  assert(cssContent.includes('.recipe-name-cell'), 'styles.css missing .recipe-name-cell');
+  assert(cssContent.includes('.recipe-name-wrapper'), 'styles.css missing .recipe-name-wrapper');
 });
 
 

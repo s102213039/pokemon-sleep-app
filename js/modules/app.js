@@ -780,6 +780,9 @@ if (typeof document !== 'undefined') {
           if (bookmarkHandle) bookmarkHandle.style.display = 'none';
           if (filterSidebar) filterSidebar.classList.add('collapsed');
           if (backdrop) backdrop.classList.remove('active');
+          if (window.NewsApp && typeof window.NewsApp.render === 'function') {
+            try { window.NewsApp.render(); } catch (e) {}
+          }
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#news');
           }
@@ -790,6 +793,9 @@ if (typeof document !== 'undefined') {
           if (bookmarkHandle) bookmarkHandle.style.display = 'none';
           if (filterSidebar) filterSidebar.classList.add('collapsed');
           if (backdrop) backdrop.classList.remove('active');
+          if (window.PokemonBoxApp && typeof window.PokemonBoxApp.renderBox === 'function') {
+            try { window.PokemonBoxApp.renderBox(); } catch (e) {}
+          }
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#box');
           }
@@ -801,18 +807,21 @@ if (typeof document !== 'undefined') {
           if (filterSidebar) filterSidebar.classList.add('collapsed');
           if (backdrop) backdrop.classList.remove('active');
           if (window.WikiDB && typeof window.WikiDB.init === 'function') {
-            window.WikiDB.init();
+            try { window.WikiDB.init(); } catch (e) { console.error('WikiDB.init error:', e); }
           }
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#wiki');
           }
-        } else if (target === 'recipes') {
+        } else if (target === 'recipes' && panelRecipes && tabRecipes) {
           tabRecipes.classList.add('active');
           panelRecipes.style.display = 'block';
           // 非圖鑑頁：隱藏書籤，強制收合側邊欄
           if (bookmarkHandle) bookmarkHandle.style.display = 'none';
           if (filterSidebar) filterSidebar.classList.add('collapsed');
           if (backdrop) backdrop.classList.remove('active');
+          if (window.RecipesApp && typeof window.RecipesApp.render === 'function') {
+            try { window.RecipesApp.render(); } catch (e) {}
+          }
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#recipes');
           }
@@ -823,17 +832,30 @@ if (typeof document !== 'undefined') {
           // 展開時 .sidebar-bookmark-handle { display: none }
           // 收合時 .pokemon-filter-sidebar.collapsed .sidebar-bookmark-handle { display: flex }
           if (bookmarkHandle) bookmarkHandle.style.display = '';
+          if (window.PokemonApp && typeof window.PokemonApp.render === 'function') {
+            try { window.PokemonApp.render(); } catch (e) {}
+          }
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#pokemon');
           }
         }
       }
 
+      window.switchMainTab = switchMainTab;
+
       tabPokemon.addEventListener('click', () => switchMainTab('pokemon'));
       tabRecipes.addEventListener('click', () => switchMainTab('recipes'));
       if (tabWiki) tabWiki.addEventListener('click', () => switchMainTab('wiki'));
       if (tabBox) tabBox.addEventListener('click', () => switchMainTab('box'));
       if (tabNews) tabNews.addEventListener('click', () => switchMainTab('news'));
+
+      // 監聽網址 hash 變更 (SPA 路由)
+      window.addEventListener('hashchange', () => {
+        const hash = window.location.hash.replace(/^#/, '');
+        if (['pokemon', 'recipes', 'wiki', 'box', 'news'].includes(hash)) {
+          switchMainTab(hash);
+        }
+      });
 
       // 依網址 hash 載入預設 tab
       if (window.location.hash === '#news') {
