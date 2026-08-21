@@ -366,6 +366,32 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
+function formatSkillNameHtml(displayName, isEN) {
+  if (!displayName) return '';
+  if (!isEN) {
+    return escapeHtml(displayName);
+  }
+
+  // 1. 如果有括號或括弧（例如 (Fixed), (Random), (Charge Energy S), [Customizable] 等）拆為兩行
+  const parenMatch = displayName.match(/^(.+?)\s*([(\[].+[)\]])$/);
+  if (parenMatch) {
+    const mainPart = parenMatch[1].trim();
+    const subPart = parenMatch[2].trim();
+    return `<span class="skill-line-1">${escapeHtml(mainPart)}</span><span class="skill-line-2">${escapeHtml(subPart)}</span>`;
+  }
+
+  // 2. 多單詞主技能（3 個單詞以上折為兩行）
+  const words = displayName.trim().split(/\s+/);
+  if (words.length >= 3) {
+    const mid = Math.floor(words.length / 2);
+    const line1 = words.slice(0, mid).join(' ');
+    const line2 = words.slice(mid).join(' ');
+    return `<span class="skill-line-1">${escapeHtml(line1)}</span><span class="skill-line-2">${escapeHtml(line2)}</span>`;
+  }
+
+  return `<span class="skill-single-line">${escapeHtml(displayName)}</span>`;
+}
+
 function renderSkillWithTooltip(skillName) {
   if (!skillName) return '--';
   const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
@@ -373,9 +399,14 @@ function renderSkillWithTooltip(skillName) {
   const rawDetail = SPECIAL_SKILL_DETAILS[skillName] || SPECIAL_SKILL_DETAILS[skillName.replace(/\(/g, '（').replace(/\)/g, '）')];
   const detail = rawDetail ? (typeof rawDetail === 'object' ? (rawDetail[isEN ? 'en-US' : 'zh-TW'] || rawDetail['zh-TW']) : rawDetail) : '';
   
+  const contentHtml = formatSkillNameHtml(displayName, isEN);
+
   // 僅針對特殊/變體/複合主技能展示標籤與詳細說明，純基礎主技能（如能量填充S）保持純文字不展示說明
   if (detail) {
-    return `<span class="special-skill-badge" data-skill="${escapeHtml(skillName)}" data-skill-detail="${escapeHtml(detail)}" title="${escapeHtml(detail)}"><span class="skill-sparkle" aria-hidden="true">✨</span><span class="skill-name-text">${escapeHtml(displayName)}</span></span>`;
+    return `<span class="special-skill-badge" data-skill="${escapeHtml(skillName)}" data-skill-detail="${escapeHtml(detail)}" title="${escapeHtml(detail)}"><span class="skill-sparkle" aria-hidden="true">✨</span><span class="skill-name-text">${contentHtml}</span></span>`;
+  }
+  if (isEN) {
+    return `<span class="main-skill-text">${contentHtml}</span>`;
   }
   return escapeHtml(displayName);
 }

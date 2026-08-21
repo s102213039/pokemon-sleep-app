@@ -10,7 +10,7 @@
 | 項目 | 值 |
 |---|---|
 | **Git Commit** | `2c15a7c8545aca5f058c50910f63207be700ca23` |
-| **JS/CSS 版本號** | `v=20260821_02` |
+| **JS/CSS 版本號** | `v=20260821_03` |
 | **最後確認** | 2026-08-21 |
 
 ---
@@ -20,9 +20,9 @@
 | 檔案 | 行數 |
 |---|---|
 | `index.html` | 738 |
-| `css/styles.css` | 7494 |
+| `css/styles.css` | 7556 |
 | `js/core/i18n.js` | 927 |
-| `js/modules/app.js` | 1531 |
+| `js/modules/app.js` | 1561 |
 | `js/modules/wiki.js` | 5333 |
 | `js/modules/box.js` | 1321 |
 | `js/modules/recipes.js` | 830 |
@@ -80,7 +80,16 @@ if (window.WikiDB && typeof window.WikiDB.renderWikiLayout === 'function') {
 
 ---
 
-### 🔑 3. Box 排序 i18n Key 對照
+### ⚡ 3. 主技能英文兩行排版與無橫向滾動條規範
+
+**正確行為**：
+- 英文版本主技能過長時（包含括號如 `(Random)`、`(Fixed)`、`[Customizable]` 或 3 個單詞以上如 `Ingredient Magnet S`、`Energy for Everyone S`），自動折為兩行展示
+- 中文版本保持簡潔一行展示
+- 圖鑑表格容器隱藏滾動條（`scrollbar-width: none` 與 `::-webkit-scrollbar { display: none; }`），防止難看的滾輪 bar
+
+---
+
+### 🔑 4. Box 排序 i18n Key 對照
 
 HTML 使用的 data-i18n key 與字典定義必須一致：
 
@@ -93,7 +102,7 @@ HTML 使用的 data-i18n key 與字典定義必須一致：
 
 ---
 
-### 📜 4. Script 載入順序（不得更改）
+### 📜 5. Script 載入順序（不得更改）
 
 ```html
 <script src="js/core/i18n.js?v=..."></script>      <!-- 必須最先 -->
@@ -109,13 +118,13 @@ HTML 使用的 data-i18n key 與字典定義必須一致：
 
 ---
 
-### 🎨 5. 主題系統
+### 🎨 6. 主題系統
 
 儲存於 `localStorage`，key = `user_theme`，支援：`midnight`、`onyx`、`dawn`、`emerald`
 
 ---
 
-### 🗂️ 6. Tab 導航與書籤對應
+### 🗂️ 7. Tab 導航與書籤對應
 
 | Tab | Hash | 書籤 |
 |---|---|---|
@@ -127,7 +136,7 @@ HTML 使用的 data-i18n key 與字典定義必須一致：
 
 ---
 
-### 🔽 7. 下拉選單規範
+### 🔽 8. 下拉選單規範
 
 - 箭頭 `background-position: right 18px center`
 - `padding-right: 36px` 防止文字覆蓋箭頭
@@ -140,5 +149,6 @@ HTML 使用的 data-i18n key 與字典定義必須一致：
 - [ ] 切換語言後 Wiki 頁是否完整重新渲染？
 - [ ] 重新整理頁面後語言設定是否保持？
 - [ ] Box 排序在英文模式是否正確顯示英文？
+- [ ] 英文主技能是否整齊兩行展示且不出現橫向滾動條？
 - [ ] 是否已更新版本號？
 - [ ] Script 載入順序 i18n.js 是否仍在最前？
