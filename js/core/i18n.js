@@ -771,7 +771,16 @@
       if (window.RecipesApp && typeof window.RecipesApp.render === 'function') {
         window.RecipesApp.render();
       }
-      if (window.WikiDB && typeof window.WikiDB.init === 'function') {
+      if (window.WikiDB && typeof window.WikiDB.renderWikiLayout === 'function') {
+        const wikiPanel = document.getElementById('panel-wiki');
+        if (wikiPanel) {
+          window.WikiDB.renderWikiLayout(wikiPanel);
+          // 重新渲染後執行必要的計算
+          if (typeof window.WikiDB.recalcTriggerChance === 'function') window.WikiDB.recalcTriggerChance();
+          if (typeof window.WikiDB.recalcSleepDays === 'function') window.WikiDB.recalcSleepDays();
+          if (typeof window.WikiDB.refreshCoordinateLadder === 'function') window.WikiDB.refreshCoordinateLadder();
+        }
+      } else if (window.WikiDB && typeof window.WikiDB.init === 'function') {
         window.WikiDB.init();
       }
       if (window.PokemonBoxApp && typeof window.PokemonBoxApp.renderBox === 'function') {
