@@ -182,21 +182,21 @@ TYPE_TO_BERRY['飛行'] = '椰木果';
 
 /* ─── ⚡ 基礎主技能與複合/專屬技能映射系統 ─────────── */
 const BASE_SKILLS = [
-  { key: '食材獲取S', label: '食材獲取S', icon: '🍎' },
-  { key: '食材精選S', label: '食材精選S', icon: '🥗' },
-  { key: '活力全體療癒S', label: '全體療癒S', icon: '💚' },
-  { key: '活力療癒S', label: '活力療癒S', icon: '💖' },
-  { key: '活力填充S', label: '活力填充S', icon: '🔋' },
-  { key: '能量填充M', label: '能量填充M', icon: '⚡' },
-  { key: '能量填充S', label: '能量填充S', icon: '⚡' },
-  { key: '料理強化S', label: '料理強化S', icon: '🍲' },
-  { key: '料理成功S', label: '料理成功S', icon: '✨' },
-  { key: '幫手支援S', label: '幫手支援S', icon: '🤝' },
-  { key: '幫手加速', label: '幫手加速', icon: '🚀' },
-  { key: '樹果遽增', label: '樹果遽增', icon: '🫐' },
-  { key: '夢之碎片獲取S', label: '碎片獲取S', icon: '💎' },
-  { key: '揮指', label: '揮指', icon: '🎲' },
-  { key: '技能複製', label: '技能複製', icon: '🎭' }
+  { key: '食材獲取S', label: '食材獲取S', label_en: 'Ingr. Mag. S', icon: '🍎' },
+  { key: '食材精選S', label: '食材精選S', label_en: 'Ingr. Select S', icon: '🥗' },
+  { key: '活力全體療癒S', label: '全體療癒S', label_en: 'Energy All S', icon: '💚' },
+  { key: '活力療癒S', label: '活力療癒S', label_en: 'Energy Cheer S', icon: '💖' },
+  { key: '活力填充S', label: '活力填充S', label_en: 'Charge Ene. S', icon: '🔋' },
+  { key: '能量填充M', label: '能量填充M', label_en: 'Charge Str. M', icon: '⚡' },
+  { key: '能量填充S', label: '能量填充S', label_en: 'Charge Str. S', icon: '⚡' },
+  { key: '料理強化S', label: '料理強化S', label_en: 'Cook Power S', icon: '🍲' },
+  { key: '料理成功S', label: '料理成功S', label_en: 'Tasty Chance S', icon: '✨' },
+  { key: '幫手支援S', label: '幫手支援S', label_en: 'Extra Help S', icon: '🤝' },
+  { key: '幫手加速', label: '幫手加速', label_en: 'Helper Boost', icon: '🚀' },
+  { key: '樹果遽增', label: '樹果遽增', label_en: 'Berry Burst', icon: '🫐' },
+  { key: '夢之碎片獲取S', label: '碎片獲取S', label_en: 'Dream Shard S', icon: '💎' },
+  { key: '揮指', label: '揮指', label_en: 'Metronome', icon: '🎲' },
+  { key: '技能複製', label: '技能複製', label_en: 'Skill Copy', icon: '🎭' }
 ];
 
 const COMPOSITE_SKILL_MAP = {
@@ -954,12 +954,10 @@ if (typeof document !== 'undefined') {
         const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
         skillFilterContainer.innerHTML = BASE_SKILLS.map(skillItem => {
           const isActive = selectedSkills.has(skillItem.key);
-          let label = window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label;
-          if (isEN) {
-            label = shortenSkillName(label);
-          }
+          const label = isEN ? (skillItem.label_en || skillItem.label) : (window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label);
+          const fullTitle = window.I18N ? window.I18N.getMainSkillName(skillItem.key) : skillItem.label;
           return `
-            <button type="button" class="subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${label}">
+            <button type="button" class="subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${fullTitle}">
               <span class="subfilter-skill-name">${label}</span>
             </button>
           `;
