@@ -161,7 +161,7 @@
         ],
         "items_en": [
           "Sale Period: 2026/8/17 6:00 ~ 2026/8/25 3:59",
-          "【Applicable Areas】 使用Incense，與牠相遇吧！"
+          "【Applicable Areas】 Use incenses at applicable areas to encounter them!:"
         ],
         "title_en": "Event Schedule & Areas"
       },
@@ -173,7 +173,7 @@
           "🍬 小鍛匠的糖果×50"
         ],
         "items_en": [
-          "🍬 小鍛匠的Candy×50"
+          "🍬 Tinkatink Candy×50"
         ],
         "title_en": "Key Rewards & Multipliers"
       },
@@ -188,10 +188,10 @@
           "🛍️ 「合作紀念包L」（3,000鑽石） ：高級沙布蕾×3、超級沙布蕾×10、成長薰香×3、小鍛匠的薰香×4、小鍛匠的糖果×110、萬能糖果M×2"
         ],
         "items_en": [
-          "🛍️ 「合作紀念包」（S, M, L）: 本商品裡裝有 Items tailored for befriending and raising 小鍛匠., Use incenses at areas where 小鍛匠 appears to encounter them!, Sale Period: 2026/8/17 6:00 ~ 2026/8/25 3:59",
-          "🛍️ 「合作紀念包S」  (250 Diamonds) : Poké Biscuit×5, 皮卡丘（船長）的Incense×1",
-          "🛍️ 「合作紀念包M」  (1,200 Diamonds) : Great Biscuit×6, Poké Biscuit×6, 小鍛匠的Incense×2, 小鍛匠的Candy×50",
-          "🛍️ 「合作紀念包L」  (3,000 Diamonds) : Ultra Biscuit×3, Great Biscuit×10, Growth Incense×3, 小鍛匠的Incense×4, 小鍛匠的Candy×110, Handy Candy M×2"
+          "🛍️ \"Collaboration Commemorative Bundle\" （S, M, L）: Contains items tailored for befriending and raising Tinkatink., Use incenses at areas where Tinkatink appears to encounter them!: , Sale Period: 2026/8/17 6:00 ~ 2026/8/25 3:59",
+          "🛍️ \"Collaboration Commemorative Bundle S\"   (250 Diamonds) : Poké Biscuit×5, Pikachu (Captain) Incense×1",
+          "🛍️ \"Collaboration Commemorative Bundle M\"   (1,200 Diamonds) : Great Biscuit×6, Poké Biscuit×6, Tinkatink Incense×2, Tinkatink Candy×50",
+          "🛍️ \"Collaboration Commemorative Bundle L\"   (3,000 Diamonds) : Ultra Biscuit×3, Great Biscuit×10, Growth Incense×3, Tinkatink Incense×4, Tinkatink Candy×110, Handy Candy M×2"
         ],
         "title_en": "Bundles & Special Item Packs"
       }
@@ -251,7 +251,7 @@
           "🍬 商品裡裝有「 超級沙布蕾 」、「 小鍛匠的糖果 」，以及「 主技能種子（小鍛匠） 」等 能夠培育小鍛匠的道具 。"
         ],
         "items_en": [
-          "🍬 商品裡裝有「 Great Biscuit 」, 「 小鍛匠的Candy 」，以及「 Main Skill Seed（小鍛匠） 」等 能夠培育小鍛匠的道具 。"
+          "🍬 Contains Great Biscuit\", \"Tinkatink Candy\"，and\"Main Skill Seed (Tinkatink) and other items to raise Tinkatink."
         ],
         "title_en": "Key Rewards & Multipliers"
       },
@@ -264,8 +264,8 @@
           "🛍️ 「寶可夢培育包（小鍛匠）vol.1」（1,200鑽石） ：超級沙布蕾×4、成長薰香×2、主技能種子（小鍛匠）×1、小鍛匠的糖果×70"
         ],
         "items_en": [
-          "🛍️ 「寶可夢培育包（小鍛匠）vol.1」: 小鍛匠, 巧鍛匠, 巨鍛匠, Sale Period: 2026/8/17 6:00 ~ 2026/8/25 3:59",
-          "🛍️ 「寶可夢培育包（小鍛匠）vol.1」  (1,200 Diamonds) : Great Biscuit×4, Growth Incense×2, Main Skill Seed（小鍛匠）×1, 小鍛匠的Candy×70"
+          "🛍️ \"Pokémon Growth Bundle (Tinkatink) Vol.1\" : Tinkatink, Tinkatuff, Tinkaton, Sale Period: 2026/8/17 6:00 ~ 2026/8/25 3:59",
+          "🛍️ \"Pokémon Growth Bundle (Tinkatink) Vol.1\"   (1,200 Diamonds) : Great Biscuit×4, Growth Incense×2, Main Skill Seed (Tinkatink)×1, Tinkatink Candy×70"
         ],
         "title_en": "Bundles & Special Item Packs"
       }
@@ -322,7 +322,7 @@
         ],
         "items_en": [
           "Event Period: 8/17 (Mon) 4:00 ~ 8/24 (Mon) 3:59",
-          "任務期間: 8/17 (Mon) 4:00 ~ 8/24 (Mon) 3:59",
+          "Mission Period: 8/17 (Mon) 4:00 ~ 8/24 (Mon) 3:59",
           "【Applicable Areas】 All Areas"
         ],
         "title_en": "Event Schedule & Areas"
@@ -338,10 +338,10 @@
           "💤 幫手寶可夢的睡眠EXP： 1.25倍"
         ],
         "items_en": [
-          "🍲 料理的最終能量為 1.25倍 （ 漂亮成功時為2.5倍，在週日漂亮成功時為3.75倍 ）。",
+          "🍲 Final Cooking Energy: 1.25x (2.5x on Extra Tasty, 3.75x on Sunday Extra Tasty)。",
           "🌕 Drowsy Power: 1.3x",
-          "😋 不僅如此，在當天第1次的點心時間， 必定有1隻寶可夢會處於貪吃狀態 。",
-          "💤 幫手寶可夢的睡眠EXP: 1.25倍"
+          "😋 At least 1 Pokémon is guaranteed to be Hungry during the first snack time each day.",
+          "💤 Helper Pokémon Sleep EXP: 1.25x"
         ],
         "title_en": "Key Rewards & Multipliers"
       },
@@ -354,8 +354,8 @@
           "【機率小幅提升】小火龍、火恐龍、噴火龍、吉利蛋、迷你龍、哈克龍、快龍、烏波、沼王、幸福蛋、勾魂眼、小福蛋、利歐路、路卡利歐、新葉喵、蒂蕾喵、魔幻假面喵、呆火鱷、炙燙鱷、骨紋巨聲鱷、潤水鴨、湧躍鴨、狂歡浪舞鴨"
         ],
         "items_en": [
-          "【機率中幅提升】皮卡丘（船長）, 小鍛匠, 巧鍛匠, 巨鍛匠",
-          "【機率小幅提升】小火龍, 火恐龍, 噴火龍, 吉利蛋, 迷你龍, 哈克龍, 快龍, 烏波, 沼王, 幸福蛋, 勾魂眼, 小福蛋, 利歐路, 路卡利歐, 新葉喵, 蒂蕾喵, 魔幻假面喵, 呆火鱷, 炙燙鱷, 骨紋巨聲鱷, 潤水鴨, 湧躍鴨, 狂歡浪舞鴨"
+          "【Medium Rate-Up】 Pikachu (Captain), Tinkatink, Tinkatuff, Tinkaton",
+          "【Minor Rate-Up】 Charmander, Charmeleon, Charizard, Chansey, Dratini, Dragonair, Dragonite, Wooper, Quagsire, Blissey, Sableye, Happiny, Riolu, Lucario, Sprigatito, Floragato, Meowscarada, Fuecoco, Crocalor, Skeledirge, Quaxly, Quaxwell, Quaquaval"
         ],
         "title_en": "Appearance Rate Boosted Pokémon"
       },
@@ -375,14 +375,14 @@
         ],
         "title_en": "Featured Pokémon by Area",
         "items_en": [
-          "🏝️ Greengrass Isle: 小火龍, 火恐龍, 噴火龍, 皮卡丘（船長）, 吉利蛋, 烏波, 沼王, 幸福蛋, 小福蛋, 利歐路, 新葉喵, 蒂蕾喵, 魔幻假面喵, 呆火鱷, 潤水鴨, 小鍛匠, 巧鍛匠, 巨鍛匠",
-          "🏝️ Cyan Beach: 皮卡丘（船長）, 烏波, 沼王, 呆火鱷, 炙燙鱷, 骨紋巨聲鱷, 小鍛匠, 巧鍛匠, 巨鍛匠",
-          "🏝️ Taupe Hollow: 小火龍, 火恐龍, 噴火龍, 皮卡丘（船長）, 勾魂眼, 利歐路, 呆火鱷, 炙燙鱷, 骨紋巨聲鱷",
-          "🏝️ Snowdrop Tundra: 皮卡丘（船長）, 吉利蛋, 幸福蛋, 小福蛋, 利歐路, 路卡利歐",
-          "🏝️ Lapis Lakeside: 皮卡丘（船長）, 迷你龍, 哈克龍, 快龍, 新葉喵, 蒂蕾喵, 魔幻假面喵, 潤水鴨, 湧躍鴨, 狂歡浪舞鴨",
-          "🏝️ Old Gold Power Plant: 皮卡丘（船長）, 小鍛匠, 巧鍛匠, 巨鍛匠",
-          "🏝️ Amber Canyon: 皮卡丘（船長）, 吉利蛋, 幸福蛋, 小福蛋",
-          "🏝️ Greengrass IsleEX: 小火龍, 火恐龍, 噴火龍, 皮卡丘（船長）, 吉利蛋, 幸福蛋, 勾魂眼, 小福蛋, 新葉喵, 蒂蕾喵, 魔幻假面喵, 呆火鱷, 炙燙鱷, 骨紋巨聲鱷, 潤水鴨, 湧躍鴨, 狂歡浪舞鴨, 小鍛匠, 巧鍛匠, 巨鍛匠"
+          "🏝️ Greengrass Isle: Charmander, Charmeleon, Charizard, Pikachu (Captain), Chansey, Wooper, Quagsire, Blissey, Happiny, Riolu, Sprigatito, Floragato, Meowscarada, Fuecoco, Quaxly, Tinkatink, Tinkatuff, Tinkaton",
+          "🏝️ Cyan Beach: Pikachu (Captain), Wooper, Quagsire, Fuecoco, Crocalor, Skeledirge, Tinkatink, Tinkatuff, Tinkaton",
+          "🏝️ Taupe Hollow: Charmander, Charmeleon, Charizard, Pikachu (Captain), Sableye, Riolu, Fuecoco, Crocalor, Skeledirge",
+          "🏝️ Snowdrop Tundra: Pikachu (Captain), Chansey, Blissey, Happiny, Riolu, Lucario",
+          "🏝️ Lapis Lakeside: Pikachu (Captain), Dratini, Dragonair, Dragonite, Sprigatito, Floragato, Meowscarada, Quaxly, Quaxwell, Quaquaval",
+          "🏝️ Old Gold Power Plant: Pikachu (Captain), Tinkatink, Tinkatuff, Tinkaton",
+          "🏝️ Amber Canyon: Pikachu (Captain), Chansey, Blissey, Happiny",
+          "🏝️ Greengrass IsleEX: Charmander, Charmeleon, Charizard, Pikachu (Captain), Chansey, Blissey, Sableye, Happiny, Sprigatito, Floragato, Meowscarada, Fuecoco, Crocalor, Skeledirge, Quaxly, Quaxwell, Quaquaval, Tinkatink, Tinkatuff, Tinkaton"
         ]
       }
     ],
@@ -430,7 +430,7 @@
           "【適用營地】萌綠之島、 天青沙灘、 黃金舊發電廠、 萌綠之島EX、 天青沙灘EX"
         ],
         "items_en": [
-          "開始出現的時間 2026/8/17 15:00",
+          "Debut Time: 2026/8/17 15:00",
           "【Applicable Areas】 Greengrass Isle, Cyan Beach, Old Gold Power Plant, Greengrass IsleEX, Cyan BeachEX"
         ],
         "title_en": "Event Schedule & Areas"
@@ -444,8 +444,8 @@
           "💤 睡眠類型：小鍛匠：安然入睡 · 巧鍛匠：安然入睡 · 巨鍛匠：安然入睡"
         ],
         "items_en": [
-          "✨ 登場寶可夢: 小鍛匠（妖精屬性）, 巧鍛匠（妖精屬性）, 巨鍛匠（妖精屬性）",
-          "💤 睡眠類型: 小鍛匠: 安然入睡 · 巧鍛匠: 安然入睡 · 巨鍛匠: 安然入睡"
+          "✨ Debut Pokémon: Tinkatink (Fairy Type), Tinkatuff (Fairy Type), Tinkaton (Fairy Type)",
+          "💤 Sleep Type: Tinkatink: Dozing · Tinkatuff: Dozing · Tinkaton: Dozing"
         ],
         "title_en": "New Debut Pokémon Info"
       }
@@ -487,8 +487,8 @@
           "💡 詳情請參閱官方公告內容與說明"
         ],
         "items_en": [
-          "📌 關於Ver.3.7.1的更新內容",
-          "💡 詳情請參閱官方公告內容與說明"
+          "📌 Ver.3.7.1 Update Details",
+          "💡 Please check the official announcement for full details."
         ],
         "title_en": "Core Highlights Summary"
       }
@@ -528,8 +528,8 @@
           "💡 詳情請參閱官方公告內容與說明"
         ],
         "items_en": [
-          "📌 異常問題通知",
-          "💡 詳情請參閱官方公告內容與說明"
+          "📌 Issue Notice",
+          "💡 Please check the official announcement for full details."
         ],
         "title_en": "Core Highlights Summary"
       }
@@ -567,7 +567,7 @@
           "錯誤代碼「000500」"
         ],
         "items_en": [
-          "錯誤代碼「000500」"
+          "Error Code \"000500\""
         ],
         "title_en": "Core Highlights Summary"
       }
@@ -607,7 +607,7 @@
           "🍬 遇見寶可夢睡姿所需的睡意之力會大幅增加，但相對地在研究各種睡姿時可以獲得更多的「研究EXP」、「夢之碎片」與「寶可夢的糖果」。"
         ],
         "items_en": [
-          "🍬 遇見寶可夢睡姿所需的Drowsy Power會大幅增加，但相對地在研究各種睡姿時可以獲得更多的「研究EXP」, 「Dream Shards」與「寶可夢的Candy」。"
+          "🍬 In EX mode, required Drowsy Power increases significantly, but grants more Research EXP, Dream Shards, and Pokémon Candies."
         ],
         "title_en": "Key Rewards & Multipliers"
       }
@@ -648,8 +648,8 @@
           "⚖️ ⚖️ 平衡調整與技能變更：變更部分幫手寶可夢的主技能。；路卡利歐；（變更前）夢之碎片獲取S；（變更後） 波導彈（夢之碎片獲取S）"
         ],
         "items_en": [
-          "✨ ✨ 新增功能: 準備新活動, 新企畫；「夏日嘉年華2026」；追加新的EX營地；EX模式將於 2026/8/10 4:00 新增「Cyan BeachEX」。",
-          "⚖️ ⚖️ 平衡調整與技能變更: 變更部分幫手寶可夢的主技能。；路卡利歐；（變更前）Dream Shards獲取S；（變更後） 波導彈（Dream Shards獲取S）"
+          "✨ New Features: Preparing new event: \"Summer Festival2026\", EX Mode will add \"Cyan BeachEX\" starting 2026/8/10 4:00 .",
+          "⚖️ Balance Adjustments & Skill Changes: Adjusted Main Skill for Lucario: (Before) Dream Shard Magnet S -> (After) Aura Sphere（Dream Shard Magnet S）"
         ],
         "title_en": "Updates & Balance Adjustments"
       }
@@ -693,8 +693,8 @@
           "發放期間登入遊戲的玩家。"
         ],
         "items_en": [
-          "發放期間: 2026/8/10 6:00 ~ 2026/10/9 3:59",
-          "發放期間登入遊戲的玩家。"
+          "Distribution Period: 2026/8/10 6:00 ~ 2026/10/9 3:59",
+          "Applicable to all players who log in during the event period."
         ],
         "title_en": "Event Schedule & Areas"
       },
@@ -707,7 +707,7 @@
         ],
         "title_en": "Key Rewards & Multipliers",
         "items_en": [
-          "🍬 ※此道具與「寶可夢的Candy」相同，對道具名稱中所標示的寶可夢的不同樣子，以及皮卡丘（萬聖節）等有著特別裝扮的寶可夢也可使用。"
+          "🍬 ※Similar to Pokémon Candy, this item can also be used on different forms and special costume Pokémon."
         ]
       },
       {
@@ -719,7 +719,7 @@
         ],
         "title_en": "Updates & Balance Adjustments",
         "items_en": [
-          "✨ ✨ 新增功能: 的長期開發計畫，透過此功能，玩家將 能獲得包含Main Skill Seed在內的各種道具 。；此外，自下週起全新的「Main Skill Seed」將會登場。；各寶可夢專用的新「Main Skill Seed」；各寶可夢專用的全新「Main Skill Seed」將自 2026/8/10 6:00 起登場。"
+          "✨ New Features: Long-term development plan allowing players to obtain various items including Main Skill Seeds.；Brand new Main Skill Seeds will debut next week.；New Pokémon-specific Main Skill Seeds；New Pokémon-specific Main Skill Seeds will debut starting 2026/8/10 6:00 ."
         ]
       }
     ],
@@ -775,7 +775,7 @@
           "🍬 商品裡裝有「 超級沙布蕾 」、「 摔角鷹人的糖果 」，以及「 主技能種子（摔角鷹人） 」等 能夠培育摔角鷹人的道具 。"
         ],
         "items_en": [
-          "🍬 商品裡裝有「 Great Biscuit 」, 「 摔角鷹人的Candy 」，以及「 Main Skill Seed（摔角鷹人） 」等 能夠培育摔角鷹人的道具 。"
+          "🍬 Contains Great Biscuit\", \"Hawlucha Candy\"，and\"Main Skill Seed (Hawlucha) and other items to raise Hawlucha."
         ],
         "title_en": "Key Rewards & Multipliers"
       },
@@ -789,8 +789,8 @@
         ],
         "title_en": "Bundles & Special Item Packs",
         "items_en": [
-          "🛍️ 「寶可夢培育包（摔角鷹人）vol.1」: 摔角鷹人, Sale Period: 2026/8/10 6:00 ~ 2026/8/18 3:59",
-          "🛍️ 「寶可夢培育包（摔角鷹人）vol.1」  (1,200 Diamonds) : Great Biscuit×4, Growth Incense×2, Main Skill Seed（摔角鷹人）×1, 摔角鷹人的Candy×70"
+          "🛍️ \"Pokémon Growth Bundle (Hawlucha) Vol.1\" : Hawlucha, Sale Period: 2026/8/10 6:00 ~ 2026/8/18 3:59",
+          "🛍️ \"Pokémon Growth Bundle (Hawlucha) Vol.1\"   (1,200 Diamonds) : Great Biscuit×4, Growth Incense×2, Main Skill Seed (Hawlucha)×1, Hawlucha Candy×70"
         ]
       }
     ],
@@ -837,7 +837,7 @@
         ],
         "items_en": [
           "Sale Period: 2026/8/10 6:00 ~ 2026/8/18 3:59",
-          "【Applicable Areas】 使用Incense，與牠相遇吧！"
+          "【Applicable Areas】 Use incenses at applicable areas to encounter them!:"
         ],
         "title_en": "Event Schedule & Areas"
       },
@@ -865,10 +865,10 @@
         ],
         "title_en": "Bundles & Special Item Packs",
         "items_en": [
-          "🛍️ \"夏日嘉年華2026 Celebration Bundle\" （S, M, L）: 本商品裡裝有 Items tailored for befriending and raising 摔角鷹人., Use incenses at areas where 摔角鷹人 appears to encounter them!, Sale Period: 2026/8/10 6:00 ~ 2026/8/18 3:59",
-          "🛍️ 「夏日嘉年華2026同樂包S」  (250 Diamonds) : Poké Biscuit×3, Friend Incense×1, Handy Candy S×2, Dream Cluster S×2",
-          "🛍️ 「夏日嘉年華2026同樂包M」  (1,200 Diamonds) : Great Biscuit×5, Poké Biscuit×5, 摔角鷹人的Incense×2, 摔角鷹人的Candy×50, Dream Cluster M×1",
-          "🛍️ 「夏日嘉年華2026同樂包L」  (3,000 Diamonds) : Ultra Biscuit×3, Great Biscuit×9, Main Skill Seed×1, 摔角鷹人的Incense×4, 摔角鷹人的Candy×90, Dream Cluster M×2"
+          "🛍️ \"Summer Festival2026 Celebration Bundle\" （S, M, L）: Contains items tailored for befriending and raising Hawlucha., Use incenses at areas where Hawlucha appears to encounter them!: , Sale Period: 2026/8/10 6:00 ~ 2026/8/18 3:59",
+          "🛍️ \"Summer Festival2026 Celebration Bundle S\"   (250 Diamonds) : Poké Biscuit×3, Friend Incense×1, Handy Candy S×2, Dream Cluster S×2",
+          "🛍️ \"Summer Festival2026 Celebration Bundle M\"   (1,200 Diamonds) : Great Biscuit×5, Poké Biscuit×5, Hawlucha Incense×2, Hawlucha Candy×50, Dream Cluster M×1",
+          "🛍️ \"Summer Festival2026 Celebration Bundle L\"   (3,000 Diamonds) : Ultra Biscuit×3, Great Biscuit×9, Main Skill Seed×1, Hawlucha Incense×4, Hawlucha Candy×90, Dream Cluster M×2"
         ]
       }
     ],
@@ -915,10 +915,10 @@
           "※每次主技能發動時，「樹果領域」的效果都會疊加，直到達到上限為止。"
         ],
         "items_en": [
-          "在Event Period: ，不只是 超能力屬性的幫手寶可夢 會有特別亮眼的表現，幻之寶可夢 夢幻 似乎也對超夢很感興趣！",
-          "藉由精神擊破（樹果領域）展開「樹果領域」的期間，透過芒芒果（超能力屬性）獲得的能量會提升。",
-          "※「樹果領域」一旦展開，就會在移動營地前持續發揮效果。即使將超夢從幫手隊伍移除，「樹果領域」的效果也不會消失。",
-          "※每次主技能發動時，「樹果領域」的效果都會疊加，直到達到上限為止。"
+          "During the event period, Psychic-type Helper Pokémon will shine, and Mythical Pokémon Mew seems interested in Mewtwo!",
+          "While Berry Field is active via Psystrike (Berry Field), energy gained from Mago Berries (Psychic Type) will increase.",
+          "※Once active, Berry Field remains effective until moving to a new camp, even if Mewtwo is removed from the team.",
+          "※Each time the Main Skill triggers, Berry Field effect stacks until reaching the maximum cap."
         ],
         "title_en": "Core Highlights Summary"
       }
@@ -1014,8 +1014,8 @@
           "🛍️ 「新月日限定包vol.16」（1,200鑽石） ：高級沙布蕾×1、超級沙布蕾×3、寶可沙布蕾×10、友好薰香×3"
         ],
         "items_en": [
-          "🛍️ \"新月日 Limited Bundle\" 正適合本次活動，裡面裝滿了能讓寶可夢成為夥伴的道具，歡迎選購。 : 在新月日期間，把沙布蕾給肚子比平時更餓的寶可夢們，和牠們變得友好吧！, Sale Period: 2026/8/11 4:00 ~ 2026/8/16 3:59",
-          "🛍️ 「新月日限定包vol.16」  (1,200 Diamonds) : Ultra Biscuit×1, Great Biscuit×3, Poké Biscuit×10, Friend Incense×3"
+          "🛍️ \"New Moon Day Limited Bundle\" is filled with items to befriend Pokémon:  During New Moon Day, give biscuits to hungry Pokémon to become friends!: , Sale Period: 2026/8/11 4:00 ~ 2026/8/16 3:59",
+          "🛍️ \"New Moon Day Limited Bundle Vol.16\"   (1,200 Diamonds) : Ultra Biscuit×1, Great Biscuit×3, Poké Biscuit×10, Friend Incense×3"
         ],
         "title_en": "Bundles & Special Item Packs"
       }
@@ -1065,7 +1065,7 @@
         ],
         "items_en": [
           "Event Period: 8/10 (Mon) 4:00 ~ 8/17 (Mon) 3:59",
-          "任務期間: 8/10 (Mon) 4:00 ~ 8/17 (Mon) 3:59",
+          "Mission Period: 8/10 (Mon) 4:00 ~ 8/17 (Mon) 3:59",
           "【Applicable Areas】 All Areas"
         ],
         "title_en": "Event Schedule & Areas"
@@ -1080,9 +1080,9 @@
           "🍬 消耗「夢之碎片」並放入 40個 持有的寶可夢的糖果， 就能隨機獲得1種「屬性糖果M×1」。"
         ],
         "items_en": [
-          "🍲 本企畫為期一週，在這特別的期間， 給卡比獸吃的料理必定會是「咖哩, 濃湯」，且料理的最終能量會變成1.5倍 ！",
-          "🍲 料理的最終能量為 1.5倍 （ 漂亮成功時為3倍，在週日漂亮成功時為4.5倍 ）。",
-          "🍬 消耗「Dream Shards」並放入 40個 持有的寶可夢的Candy， 就能隨機獲得1種「屬性CandyM×1」。"
+          "🍲 During this 1-week event, Snorlax requested dishes are guaranteed to be Curries/Stews, and final Cooking Energy will be boosted to 1.5x!",
+          "🍲 Final Cooking Energy: 1.5x (3x on Extra Tasty, 4.5x on Sunday Extra Tasty)。",
+          "🍬 Consume Dream Shards and 40 Pokémon Candies to randomly obtain 1x Type Candy M."
         ],
         "title_en": "Key Rewards & Multipliers"
       },
@@ -1096,8 +1096,8 @@
         ],
         "title_en": "Appearance Rate Boosted Pokémon",
         "items_en": [
-          "【機率中幅提升】摔角鷹人",
-          "【機率小幅提升】傑尼龜, 綠毛蟲, 可達鴨, 呆呆獸, 大蔥鴨, 嘟嘟, 凱羅斯, 小鋸鱷, 烏波, 壺壺, 赫拉克羅斯, 信使鳥, 水躍魚, 青綿鳥, 波加曼, 石居蟹, 毛頭小鷹, 強顎雞母蟲, 古月鳥, 潤水鴨"
+          "【Medium Rate-Up】 Hawlucha",
+          "【Minor Rate-Up】 Squirtle, Caterpie, Psyduck, Slowpoke, Farfetch'd, Doduo, Pinsir, Totodile, Wooper, Shuckle, Heracross, Delibird, Mudkip, Swablu, Piplup, Dwebble, Rufflet, Grubbin, Cramorant, Quaxly"
         ]
       },
       {
@@ -1116,14 +1116,14 @@
         ],
         "title_en": "Featured Pokémon by Area",
         "items_en": [
-          "🏝️ Greengrass Isle: 傑尼龜, 綠毛蟲, 可達鴨, 呆呆獸, 大蔥鴨, 嘟嘟, 凱羅斯, 小鋸鱷, 烏波, 壺壺, 赫拉克羅斯, 信使鳥, 水躍魚, 青綿鳥, 波加曼, 毛頭小鷹, 摔角鷹人, 古月鳥, 潤水鴨",
-          "🏝️ Cyan Beach: 傑尼龜, 綠毛蟲, 可達鴨, 呆呆獸, 大蔥鴨, 凱羅斯, 小鋸鱷, 烏波, 壺壺, 赫拉克羅斯, 波加曼, 毛頭小鷹, 摔角鷹人, 古月鳥",
-          "🏝️ Taupe Hollow: 壺壺, 水躍魚",
-          "🏝️ Snowdrop Tundra: 信使鳥, 青綿鳥, 波加曼, 古月鳥",
-          "🏝️ Lapis Lakeside: 嘟嘟, 摔角鷹人, 潤水鴨",
-          "🏝️ Old Gold Power Plant: 綠毛蟲, 大蔥鴨, 強顎雞母蟲",
-          "🏝️ Amber Canyon: 凱羅斯, 赫拉克羅斯, 石居蟹, 毛頭小鷹",
-          "🏝️ Greengrass IsleEX: 傑尼龜, 綠毛蟲, 大蔥鴨, 嘟嘟, 凱羅斯, 小鋸鱷, 壺壺, 赫拉克羅斯, 信使鳥, 水躍魚, 青綿鳥, 波加曼, 毛頭小鷹, 摔角鷹人, 古月鳥, 潤水鴨"
+          "🏝️ Greengrass Isle: Squirtle, Caterpie, Psyduck, Slowpoke, Farfetch'd, Doduo, Pinsir, Totodile, Wooper, Shuckle, Heracross, Delibird, Mudkip, Swablu, Piplup, Rufflet, Hawlucha, Cramorant, Quaxly",
+          "🏝️ Cyan Beach: Squirtle, Caterpie, Psyduck, Slowpoke, Farfetch'd, Pinsir, Totodile, Wooper, Shuckle, Heracross, Piplup, Rufflet, Hawlucha, Cramorant",
+          "🏝️ Taupe Hollow: Shuckle, Mudkip",
+          "🏝️ Snowdrop Tundra: Delibird, Swablu, Piplup, Cramorant",
+          "🏝️ Lapis Lakeside: Doduo, Hawlucha, Quaxly",
+          "🏝️ Old Gold Power Plant: Caterpie, Farfetch'd, Grubbin",
+          "🏝️ Amber Canyon: Pinsir, Heracross, Dwebble, Rufflet",
+          "🏝️ Greengrass IsleEX: Squirtle, Caterpie, Farfetch'd, Doduo, Pinsir, Totodile, Shuckle, Heracross, Delibird, Mudkip, Swablu, Piplup, Rufflet, Hawlucha, Cramorant, Quaxly"
         ]
       }
     ],
@@ -1168,7 +1168,7 @@
           "【適用營地】萌綠之島、 天青沙灘、 寶藍湖畔、 萌綠之島EX、 天青沙灘EX"
         ],
         "items_en": [
-          "開始出現的時間 2026/8/10 15:00",
+          "Debut Time: 2026/8/10 15:00",
           "【Applicable Areas】 Greengrass Isle, Cyan Beach, Lapis Lakeside, Greengrass IsleEX, Cyan BeachEX"
         ],
         "title_en": "Event Schedule & Areas"
@@ -1182,7 +1182,7 @@
         ],
         "title_en": "New Debut Pokémon Info",
         "items_en": [
-          "✨ 登場寶可夢: 摔角鷹人（飛行屬性）"
+          "✨ Debut Pokémon: Hawlucha (Flying Type)"
         ]
       }
     ],
@@ -1222,8 +1222,8 @@
           "💡 詳情請參閱官方公告內容與說明"
         ],
         "items_en": [
-          "📌 異常問題修復通知",
-          "💡 詳情請參閱官方公告內容與說明"
+          "📌 Bug Fix Notice",
+          "💡 Please check the official announcement for full details."
         ],
         "title_en": "Core Highlights Summary"
       }
@@ -1263,8 +1263,8 @@
           "💡 詳情請參閱官方公告內容與說明"
         ],
         "items_en": [
-          "📌 關於Ver.3.6.3的更新內容",
-          "💡 詳情請參閱官方公告內容與說明"
+          "📌 Ver.3.6.3 Update Details",
+          "💡 Please check the official announcement for full details."
         ],
         "title_en": "Core Highlights Summary"
       }
@@ -1304,8 +1304,8 @@
           "💡 詳情請參閱官方公告內容與說明"
         ],
         "items_en": [
-          "📌 關於Ver.3.6.2的更新內容",
-          "💡 詳情請參閱官方公告內容與說明"
+          "📌 Ver.3.6.2 Update Details",
+          "💡 Please check the official announcement for full details."
         ],
         "title_en": "Core Highlights Summary"
       }
@@ -1349,8 +1349,8 @@
           "《Pokémon Sleep》將在 2026年8月 舉辦特別合作企畫。"
         ],
         "items_en": [
-          "【歡慶！3週年紀念資訊➀】關於特別合作企畫",
-          "《Pokémon Sleep》將在 2026年8月 舉辦特別合作企畫。"
+          "【3rd Anniversary Celebration Info ①】Special Collaboration Event",
+          "Pokémon Sleep will hold a Special Collaboration Event in August 2026."
         ],
         "title_en": "Core Highlights Summary"
       }
@@ -1388,7 +1388,7 @@
           "🍬 此外，在EX模式下，遇見寶可夢睡姿所需的睡意之力會大幅增加，但相對地在研究各種睡姿時可以獲得更多的「研究EXP」、「夢之碎片」與「寶可夢的糖果」。"
         ],
         "items_en": [
-          "🍬 此外，在EX模式下，遇見寶可夢睡姿所需的Drowsy Power會大幅增加，但相對地在研究各種睡姿時可以獲得更多的「研究EXP」, 「Dream Shards」與「寶可夢的Candy」。"
+          "🍬 In EX mode, required Drowsy Power increases significantly, but grants more Research EXP, Dream Shards, and Pokémon Candies."
         ],
         "title_en": "Key Rewards & Multipliers"
       }
