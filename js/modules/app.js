@@ -256,43 +256,128 @@ const COMPOSITE_SKILL_MAP = {
 /* ─── 📖 特殊主技能官方詳細說明字典 (Special Main Skill Official In-Game Descriptions) ─ */
 const SPECIAL_SKILL_DETAILS = {
   // 🌟 真正複合主技能 (True Composite Skills)
-  '健美（料理輔助S）': '隨機獲得多個食材，並提升下次料理漂亮成功（大成功）的機率。',
-  '月光（活力填充S）': '讓自己回復活力；若發生「漂亮成功」時，額外隨機讓隊伍中的 1 隻寶可夢稍微回復活力。',
-  '樹果汁（活力全體療癒S）': '讓幫手隊伍的所有寶可夢回復活力，同時有機會額外獲得可讓單隻寶可夢回復 20 活力的「樹果汁」道具（最多持有 5 個）。',
+  '健美（料理輔助S）': {
+    'zh-TW': '隨機獲得多個食材，並提升下次料理漂亮成功（大成功）的機率。',
+    'en-US': 'Randomly get multiple ingredients, and increases the chance of an Extra Tasty dish next cook.'
+  },
+  '月光（活力填充S）': {
+    'zh-TW': '讓自己回復活力；若發生「漂亮成功」時，額外隨機讓隊伍中的 1 隻寶可夢稍微回復活力。',
+    'en-US': 'Restores energy to self. On Extra Tasty triggers, also restores energy to a random teammate.'
+  },
+  '樹果汁（活力全體療癒S）': {
+    'zh-TW': '讓幫手隊伍的所有寶可夢回復活力，同時有機會額外獲得可讓單隻寶可夢回復 20 活力的「樹果汁」道具（最多持有 5 個）。',
+    'en-US': 'Restores energy to all teammates, with a chance to obtain Berry Juice items (restores 20 energy, max 5).'
+  },
 
   // 🏷️ 專屬命名與變體主技能 (Named Variant Skills)
-  '正電（食材獲取S）': '隨機獲得食材；若隊伍中還有 1 隻以上主技能是「正電」或「負電」的寶可夢，則發動時額外獲得更多食材。',
-  '負電（料理強化S）': '擴大下次料理時鍋子的容量上限；若隊伍中還有 1 隻以上主技能是「正電」或「負電」的寶可夢，發動時額外隨機讓隊伍中 1 隻寶可夢回復活力。',
-  '禮物（食材獲取S）': '隨機獲得多個食材；有時除了食材之外，還會額外隨機獲得隊伍中 1 隻寶可夢的糖果。',
-  '超幸運（食材精選S）': '從該寶可夢自身可產出的特定食材中隨機獲得 1 種；少數情況下會獲得大量的夢之碎片而不是食材。',
-  '怪力钳（食材精選S）': '從該寶可夢自身可產出的特定食材中隨機獲得 1 種；有時候會額外獲得更多的食材。',
-  '新月祈禱（活力全體療癒S）': '讓幫手隊伍的所有寶可夢回復活力，並額外獲得隊伍中所有寶可夢撿來的樹果（超能力屬性隊員越多，樹果數量越多）。',
-  '治癒波動（活力療癒S）': '隨機讓隊伍中的 2 隻寶可夢回復活力，並讓牠們立刻完成一定次數的幫忙（若隊伍中有拉帝歐斯，立即幫忙次數增加）。',
-  '蹭蹭臉頰（活力療癒S）': '隨機讓隊伍中的 1 隻寶可夢回復活力；幸運時該寶可夢還會獲得「主技能發動獎勵」，可額外多發動 1 次主技能。',
-  '蓄力（能量填充S）': '隨機發動「蓄積」或「噴放」；連續蓄積次數越多，噴放時為卡比獸增加的能量就越多。',
-  '夢魘（能量填充M）': '固定增加大量卡比獸能量；發動時會降低隊伍中「惡屬性以外」寶可夢的活力。',
-  '精神擊破（樹果領域）': '增加卡比獸能量，並在營地展開「樹果領域」，期間透過芒芒果（超能力屬性）獲得的能量提升。',
-  '流星群（樹果遽增）': '獲得自己以及隊伍中寶可夢撿來的樹果（龍屬性隊員越多數量越多；若隊伍中有拉帝亞斯數量進一步增加）。',
-  '畫皮（樹果遽增）': '獲得一定數量的樹果，並額外獲得隊伍中寶可夢撿來的樹果；少數情況下會發生「漂亮成功」獲得大量樹果。',
-  '樹果遽增?': '揮舞巨錘爆發產出自身大量樹果。',
-  '波導彈（夢之碎片獲取S）': '獲得夢之碎片，並同時增加卡比獸的能量。',
-  '幫手加速（電）': '立即獲得隊伍中所有電屬性幫手寶可夢數次幫忙產出（隊伍中電屬性寶可夢種類越多，幫忙次數越多）。',
-  '幫手加速（火）': '立即獲得隊伍中所有火屬性幫手寶可夢數次幫忙產出（隊伍中火屬性寶可夢種類越多，幫忙次數越多）。',
-  '幫手加速（水）': '立即獲得隊伍中所有水屬性幫手寶可夢數次幫忙產出（隊伍中水屬性寶可夢種類越多，幫忙次數越多）。',
-  '十項全能（揮指）[可替換]': '發動設置的主技能效果，並額外獲得隊伍中 1 隻寶可夢的糖果；可使用「靈感種子」自由切換學習到的主技能。',
-  '模仿（技能複製）': '複製並發動隊伍中前一位幫手寶可夢所發動的主技能。',
-  '變身（技能複製）': '變身為隊友並複製其技能產出與幫忙效果。'
+  '正電（食材獲取S）': {
+    'zh-TW': '隨機獲得食材；若隊伍中還有 1 隻以上主技能是「正電」或「負電」的寶可夢，則發動時額外獲得更多食材。',
+    'en-US': 'Randomly obtains ingredients. Obtains even more if teammates have Plus or Minus skills.'
+  },
+  '負電（料理強化S）': {
+    'zh-TW': '擴大下次料理時鍋子的容量上限；若隊伍中還有 1 隻以上主技能是「正電」或「負電」的寶可夢，發動時額外隨機讓隊伍中 1 隻寶可夢回復活力。',
+    'en-US': 'Expands cooking pot size. If teammates have Plus or Minus, also restores energy to a random teammate.'
+  },
+  '禮物（食材獲取S）': {
+    'zh-TW': '隨機獲得多個食材；有時除了食材之外，還會額外隨機獲得隊伍中 1 隻寶可夢的糖果。',
+    'en-US': 'Randomly obtains ingredients, and occasionally grants candies for a random team member.'
+  },
+  '超幸運（食材精選S）': {
+    'zh-TW': '從該寶可夢自身可產出的特定食材中隨機獲得 1 種；少數情況下會獲得大量的夢之碎片而不是食材。',
+    'en-US': 'Obtains one of its droppable ingredients; rarely awards large amounts of Dream Shards instead.'
+  },
+  '怪力钳（食材精選S）': {
+    'zh-TW': '從該寶可夢自身可產出的特定食材中隨機獲得 1 種；有時候會額外獲得更多的食材。',
+    'en-US': 'Obtains one of its droppable ingredients; sometimes awards extra amounts.'
+  },
+  '新月祈禱（活力全體療癒S）': {
+    'zh-TW': '讓幫手隊伍的所有寶可夢回復活力，並額外獲得隊伍中所有寶可夢撿來的樹果（超能力屬性隊員越多，樹果數量越多）。',
+    'en-US': 'Restores energy to all teammates and gathers berries from them (more berries with more Psychic types).'
+  },
+  '治癒波動（活力療癒S）': {
+    'zh-TW': '隨機讓隊伍中的 2 隻寶可夢回復活力，並讓牠們立刻完成一定次數的幫忙（若隊伍中有拉帝歐斯，立即幫忙次數增加）。',
+    'en-US': 'Restores energy to 2 teammates and instantly performs helps (more helps if Latios is on team).'
+  },
+  '蹭蹭臉頰（活力療癒S）': {
+    'zh-TW': '隨機讓隊伍中的 1 隻寶可夢回復活力；幸運時該寶可夢還會獲得「主技能發動獎勵」，可額外多發動 1 次主技能。',
+    'en-US': 'Restores energy to a teammate; when lucky, grants a bonus main skill trigger to that Pokémon.'
+  },
+  '蓄力（能量填充S）': {
+    'zh-TW': '隨機發動「蓄積」或「噴放」；連續蓄積次數越多，噴放時為卡比獸增加的能量就越多。',
+    'en-US': 'Stockpiles or spits energy; more consecutive stockpiles result in greater Snorlax Strength gained.'
+  },
+  '夢魘（能量填充M）': {
+    'zh-TW': '固定增加大量卡比獸能量；發動時會降低隊伍中「惡屬性以外」寶可夢的活力。',
+    'en-US': 'Significantly increases Snorlax Strength, but reduces energy of non-Dark type teammates.'
+  },
+  '精神擊破（樹果領域）': {
+    'zh-TW': '增加卡比獸能量，並在營地展開「樹果領域」，期間透過芒芒果（超能力屬性）獲得的能量提升。',
+    'en-US': 'Increases Strength and deploys a Berry Field, boosting energy gained from Mago Berries.'
+  },
+  '流星群（樹果遽增）': {
+    'zh-TW': '獲得自己以及隊伍中寶可夢撿來的樹果（龍屬性隊員越多數量越多；若隊伍中有拉帝亞斯數量進一步增加）。',
+    'en-US': 'Gathers berries from self and teammates (scaled with Dragon types, increased if Latias is in party).'
+  },
+  '畫皮（樹果遽增）': {
+    'zh-TW': '獲得一定數量的樹果，並額外獲得隊伍中寶可夢撿來的樹果；少數情況下會發生「漂亮成功」獲得大量樹果。',
+    'en-US': 'Gathers berries from self and teammates; rarely triggers Extra Tasty for a massive berry burst.'
+  },
+  '樹果遽增?': {
+    'zh-TW': '揮舞巨錘爆發產出自身大量樹果。',
+    'en-US': 'Swings a massive hammer to burst a large amount of own berries.'
+  },
+  '波導彈（夢之碎片獲取S）': {
+    'zh-TW': '獲得夢之碎片，並同時增加卡比獸的能量。',
+    'en-US': 'Gathers Dream Shards while simultaneously increasing Snorlax Strength.'
+  },
+  '幫手加速（電）': {
+    'zh-TW': '立即獲得隊伍中所有電屬性幫手寶可夢數次幫忙產出（隊伍中電屬性寶可夢種類越多，幫忙次數越多）。',
+    'en-US': 'Instantly gathers helps from all Electric helpers on the team (scales with number of distinct Electric species).'
+  },
+  '幫手加速（火）': {
+    'zh-TW': '立即獲得隊伍中所有火屬性幫手寶可夢數次幫忙產出（隊伍中火屬性寶可夢種類越多，幫忙次數越多）。',
+    'en-US': 'Instantly gathers helps from all Fire helpers on the team (scales with number of distinct Fire species).'
+  },
+  '幫手加速（水）': {
+    'zh-TW': '立即獲得隊伍中所有水屬性幫手寶可夢數次幫忙產出（隊伍中水屬性寶可夢種類越多，幫忙次數越多）。',
+    'en-US': 'Instantly gathers helps from all Water helpers on the team (scales with number of distinct Water species).'
+  },
+  '十項全能（揮指）[可替換]': {
+    'zh-TW': '發動設置的主技能效果，並額外獲得隊伍中 1 隻寶可夢的糖果；可使用「靈感種子」自由切換學習到的主技能。',
+    'en-US': 'Triggers equipped main skill and grants candy for a teammate; customizable via Inspiration Seeds.'
+  },
+  '模仿（技能複製）': {
+    'zh-TW': '複製並發動隊伍中前一位幫手寶可夢所發動的主技能。',
+    'en-US': 'Copies and triggers the main skill used by the preceding teammate.'
+  },
+  '變身（技能複製）': {
+    'zh-TW': '變身為隊友並複製其技能產出與幫忙效果。',
+    'en-US': 'Transforms into a teammate, copying its skill and helping effects.'
+  }
 };
+
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 
 function renderSkillWithTooltip(skillName) {
   if (!skillName) return '--';
+  const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
   const displayName = (typeof window !== 'undefined' && window.I18N) ? window.I18N.getMainSkillName(skillName) : skillName;
-  const detail = SPECIAL_SKILL_DETAILS[skillName];
+  const rawDetail = SPECIAL_SKILL_DETAILS[skillName] || SPECIAL_SKILL_DETAILS[skillName.replace(/\(/g, '（').replace(/\)/g, '）')];
+  const detail = rawDetail ? (typeof rawDetail === 'object' ? (rawDetail[isEN ? 'en-US' : 'zh-TW'] || rawDetail['zh-TW']) : rawDetail) : '';
+  
   // 僅針對特殊/變體/複合主技能展示標籤與詳細說明，純基礎主技能（如能量填充S）保持純文字不展示說明
   if (detail) {
-    return `<span class="special-skill-badge" data-skill="${skillName}" data-skill-detail="${detail}" title="${detail}"><span class="skill-sparkle" aria-hidden="true">✨</span><span class="skill-name-text">${displayName}</span></span>`;
+    return `<span class="special-skill-badge" data-skill="${escapeHtml(skillName)}" data-skill-detail="${escapeHtml(detail)}" title="${escapeHtml(detail)}"><span class="skill-sparkle" aria-hidden="true">✨</span><span class="skill-name-text">${escapeHtml(displayName)}</span></span>`;
   }
-  return displayName;
+  return escapeHtml(displayName);
 }
 
 function matchesSkill(pokemonSkill, targetBaseSkill) {
@@ -654,6 +739,7 @@ if (typeof document !== 'undefined') {
         if (target === 'news' && panelNews && tabNews) {
           tabNews.classList.add('active');
           panelNews.style.display = 'block';
+          // 非圖鑑頁：隱藏書籤，強制收合側邊欄
           if (bookmarkHandle) bookmarkHandle.style.display = 'none';
           if (filterSidebar) filterSidebar.classList.add('collapsed');
           if (backdrop) backdrop.classList.remove('active');
@@ -663,6 +749,7 @@ if (typeof document !== 'undefined') {
         } else if (target === 'box' && panelBox && tabBox) {
           tabBox.classList.add('active');
           panelBox.style.display = 'block';
+          // 非圖鑑頁：隱藏書籤，強制收合側邊欄
           if (bookmarkHandle) bookmarkHandle.style.display = 'none';
           if (filterSidebar) filterSidebar.classList.add('collapsed');
           if (backdrop) backdrop.classList.remove('active');
@@ -672,6 +759,7 @@ if (typeof document !== 'undefined') {
         } else if (target === 'wiki' && panelWiki && tabWiki) {
           tabWiki.classList.add('active');
           panelWiki.style.display = 'block';
+          // 非圖鑑頁：隱藏書籤，強制收合側邊欄
           if (bookmarkHandle) bookmarkHandle.style.display = 'none';
           if (filterSidebar) filterSidebar.classList.add('collapsed');
           if (backdrop) backdrop.classList.remove('active');
@@ -684,6 +772,7 @@ if (typeof document !== 'undefined') {
         } else if (target === 'recipes') {
           tabRecipes.classList.add('active');
           panelRecipes.style.display = 'block';
+          // 非圖鑑頁：隱藏書籤，強制收合側邊欄
           if (bookmarkHandle) bookmarkHandle.style.display = 'none';
           if (filterSidebar) filterSidebar.classList.add('collapsed');
           if (backdrop) backdrop.classList.remove('active');
@@ -693,7 +782,10 @@ if (typeof document !== 'undefined') {
         } else {
           tabPokemon.classList.add('active');
           panelPokemon.style.display = 'block';
-          if (bookmarkHandle) bookmarkHandle.style.display = 'flex';
+          // 圖鑑頁：清除 inline style，讓 CSS 的 .collapsed 類控制書籤顯示/隱藏
+          // 展開時 .sidebar-bookmark-handle { display: none }
+          // 收合時 .pokemon-filter-sidebar.collapsed .sidebar-bookmark-handle { display: flex }
+          if (bookmarkHandle) bookmarkHandle.style.display = '';
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#pokemon');
           }
@@ -1339,6 +1431,7 @@ if (typeof document !== 'undefined') {
     }
 
     PokemonApp.render = function() {
+      if (typeof renderTypeButtons === 'function') renderTypeButtons();
       if (typeof renderSpecialtyButtons === 'function') renderSpecialtyButtons();
       if (typeof renderBerryButtons === 'function') renderBerryButtons();
       if (typeof renderIngredientButtons === 'function') renderIngredientButtons();
@@ -1366,11 +1459,14 @@ if (typeof document !== 'undefined') {
           badge.dataset.nativeTitle = badge.getAttribute('title') || '';
           badge.removeAttribute('title');
 
+          const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+          const titleName = (typeof window !== 'undefined' && window.I18N) ? window.I18N.getMainSkillName(skillName) : skillName;
+
           tooltipEl.innerHTML = `
             <div class="tooltip-header">
               <span class="tooltip-sparkle">✨</span>
-              <strong class="tooltip-title">${skillName}</strong>
-              <span class="tooltip-tag">特殊主技能</span>
+              <strong class="tooltip-title">${titleName}</strong>
+              <span class="tooltip-tag">${isEN ? 'Special Main Skill' : '特殊主技能'}</span>
             </div>
             <div class="tooltip-body">${detail}</div>
           `;

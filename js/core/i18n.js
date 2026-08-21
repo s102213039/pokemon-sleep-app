@@ -194,10 +194,12 @@
       'box.search_placeholder': '搜尋倉庫寶可夢名稱、暱稱、性格、副技能...',
       'box.sort_pr_desc': '👑 PR 評分由高到低',
       'box.sort_created_desc': '📅 最近加入',
+      'box.sort_recent': '📅 最近加入',
       'box.sort_level_desc': '⚡ 等級由高到低',
       'box.sort_level_asc': '🌱 等級由低到高',
       'box.sort_pr_asc': '📉 PR 評分由低到高',
       'box.sort_id_asc': '🔢 全國圖鑑編號',
+      'box.sort_dex_asc': '🔢 全國圖鑑編號',
       'box.view_cards': '🎴 卡片',
       'box.view_table': '📊 表格',
       'box.empty_title': '您的寶可夢倉庫目前是空的',
@@ -379,27 +381,27 @@
 
       // Wiki Panel
       'wiki.title': '📚 Strategy & Encyclopedia Knowledge Base',
-      'wiki.subtab_skills': '⚡ Main Skills',
+      'wiki.subtab_skills': '⚡ Main Skills DB',
       'wiki.subtab_subskills': '🧩 Sub-Skills & Natures',
-      'wiki.subtab_ratings': '🎓 Tier Lists',
-      'wiki.subtab_ingredients': '🥗 Ing. Ladder',
-      'wiki.subtab_values': '🫐 Base Power',
-      'wiki.tab_skills': '⚡ Main Skills',
+      'wiki.subtab_ratings': '🎓 Growth & Tier Guide',
+      'wiki.subtab_ingredients': '🥗 Lv.60 Ingredient Ladder',
+      'wiki.subtab_values': '🫐 Berry & Ing. Values',
+      'wiki.tab_skills': '⚡ Main Skills DB',
       'wiki.tab_subskills': '🧩 Sub-Skills & Natures',
-      'wiki.tab_ratings': '🎓 Tier Lists',
-      'wiki.tab_ladder': '🥗 Ing. Ladder',
-      'wiki.tab_values': '🫐 Base Power',
+      'wiki.tab_ratings': '🎓 Growth & Tier Guide',
+      'wiki.tab_ladder': '🥗 Lv.60 Ingredient Ladder',
+      'wiki.tab_values': '🫐 Berry & Ing. Values',
       'wiki.skill_type_label': 'Category:',
-      'wiki.skill_all': 'All (22)',
-      'wiki.skill_energy': '⚡ Charge Energy',
+      'wiki.skill_all': 'All Skills (22)',
+      'wiki.skill_energy': '⚡ Strength',
       'wiki.skill_energy_heal': '💖 Energy Recovery',
-      'wiki.skill_ingredient': '🥗 Ingredients & Pot',
-      'wiki.skill_special': '👑 Specials & Boosts',
+      'wiki.skill_ingredient': '🥗 Ingredients',
+      'wiki.skill_special': '👑 Legend & Special',
       'wiki.skill_shards': '💎 Dream Shards',
       'ladder.search_placeholder': 'Search Pokémon across tracks...',
       'ladder.filter_all': 'All',
-      'ladder.filter_aaa': '👑 AAA Mono',
-      'ladder.filter_top': '🥈 TOP 1-2',
+      'ladder.filter_aaa': '👑 AAA Only',
+      'ladder.filter_top': '🥈 TOP 1-2 Only',
       'ladder.ing_m_toggle': '🥩 Ing. Finder M (+36%)',
       'ladder.speed_m_toggle': '⚡ Helping Speed M (+16.3%)',
 
@@ -421,10 +423,12 @@
       'box.search_placeholder': 'Search box Pokémon by name, nickname, nature, sub-skill...',
       'box.sort_pr_desc': '👑 PR Rank (High to Low)',
       'box.sort_created_desc': '📅 Recently Added',
+      'box.sort_recent': '📅 Recently Added',
       'box.sort_level_desc': '⚡ Level (High to Low)',
       'box.sort_level_asc': '🌱 Level (Low to High)',
       'box.sort_pr_asc': '📉 PR Rank (Low to High)',
       'box.sort_id_asc': '🔢 Pokedex No.',
+      'box.sort_dex_asc': '🔢 Pokedex No.',
       'box.view_cards': '🎴 Cards',
       'box.view_table': '📊 Table',
       'box.empty_title': 'Your Pokémon Box is empty',
@@ -444,40 +448,41 @@
       'appraisal.radar_ing': 'Ingredient Output',
       'appraisal.radar_skill': 'Skill Power',
       'appraisal.radar_speed': 'Helping Speed',
-      'appraisal.radar_growth': 'Late Game',
+      'appraisal.radar_growth': 'Late Growth',
       'appraisal.radar_roi': 'Resource ROI',
 
       // Footer
       'footer.copyright': 'Pokémon Sleep Database &copy; 2026 · <a href="https://github.com/s102213039/pokemon-sleep-app" target="_blank">GitHub Source</a> · Powered by <a href="https://www.serebii.net/" target="_blank">Serebii.net</a>',
-      'footer.sync_note': '🔄 Sync via GitHub Actions takes ~60-120 seconds. Requires a GitHub PAT configured in Settings.',
+      'footer.sync_note': '🔄 Sync is executed via GitHub Actions. Takes 60-120s after clicking. Requires GitHub PAT Token in Settings.',
 
       // News & Timeline
       'news.title': '📰 Latest Events & Official News',
       'news.timeline_title': '⏰ Official Event Schedule Timeline',
-      'news.search_placeholder': 'Search news by title, keyword, Pokémon...',
-      'news.cat_all': 'All',
+      'news.search_placeholder': 'Search news titles, keywords, Pokémon...',
+      'news.cat_all': 'All News',
       'news.cat_event': 'Events',
       'news.cat_maintenance': 'Maintenance',
-      'news.cat_update': 'Updates',
-      'news.cat_bundle': 'Bundles',
-      'news.source_hint': '🤖 Summarized by AI · Source: ',
-      'news.source_full_hint': '🤖 AI Highlights Summary · Source: <a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep Official Website</a>'
+      'news.cat_update': 'Game Updates',
+      'news.cat_bundle': 'Bundles & Packs',
+      'news.source_hint': '🤖 AI Summarized Highlights · Source: ',
+      'news.source_full_hint': '🤖 AI Summarized Highlights · Source: <a href="https://www.pokemonsleep.net/en/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep Official Website</a>'
     }
   };
 
-  // 屬性名稱對照
+  // 屬性名稱官方英中對照
   const TYPE_NAMES = {
     '一般': { 'zh-TW': '一般', 'en-US': 'Normal' },
-    '草': { 'zh-TW': '草', 'en-US': 'Grass' },
     '火': { 'zh-TW': '火', 'en-US': 'Fire' },
     '水': { 'zh-TW': '水', 'en-US': 'Water' },
     '電': { 'zh-TW': '電', 'en-US': 'Electric' },
+    '草': { 'zh-TW': '草', 'en-US': 'Grass' },
     '冰': { 'zh-TW': '冰', 'en-US': 'Ice' },
     '格鬥': { 'zh-TW': '格鬥', 'en-US': 'Fighting' },
     '毒': { 'zh-TW': '毒', 'en-US': 'Poison' },
     '地面': { 'zh-TW': '地面', 'en-US': 'Ground' },
     '飛行': { 'zh-TW': '飛行', 'en-US': 'Flying' },
     '超能力': { 'zh-TW': '超能力', 'en-US': 'Psychic' },
+    '超能': { 'zh-TW': '超能', 'en-US': 'Psychic' },
     '蟲': { 'zh-TW': '蟲', 'en-US': 'Bug' },
     '岩石': { 'zh-TW': '岩石', 'en-US': 'Rock' },
     '幽靈': { 'zh-TW': '幽靈', 'en-US': 'Ghost' },
@@ -487,7 +492,7 @@
     '妖精': { 'zh-TW': '妖精', 'en-US': 'Fairy' }
   };
 
-  // 專長名稱對照
+  // 專長類型官方英中對照
   const SPECIALTY_NAMES = {
     '樹果': { 'zh-TW': '樹果', 'en-US': 'Berries' },
     '食材': { 'zh-TW': '食材', 'en-US': 'Ingredients' },
@@ -495,7 +500,7 @@
     '全能': { 'zh-TW': '全能', 'en-US': 'All-Rounder' }
   };
 
-  // 食材名稱對照 (19 種官方食材)
+  // 食材名稱官方英中對照 (19種食材全收錄)
   const INGREDIENT_NAMES = {
     '特選蘋果': { 'zh-TW': '特選蘋果', 'en-US': 'Fancy Apple' },
     '哞哞鮮奶': { 'zh-TW': '哞哞鮮奶', 'en-US': 'Moomoo Milk' },
@@ -518,33 +523,36 @@
     '美味尾巴': { 'zh-TW': '美味尾巴', 'en-US': 'Slowpoke Tail' }
   };
 
-  // 樹果名稱對照 (18 種官方樹果)
+  // 樹果名稱官方英中對照 (18種屬性樹果全收錄)
   const BERRY_NAMES = {
-    '蘋野果': { 'zh-TW': '蘋野果', 'en-US': 'Leppa Berry' },
-    '橙橙果': { 'zh-TW': '橙橙果', 'en-US': 'Oran Berry' },
-    '零餘果': { 'zh-TW': '零餘果', 'en-US': 'Chesto Berry' },
+    '藍異果': { 'zh-TW': '藍異果', 'en-US': 'Pamtre Berry' },
     '木子果': { 'zh-TW': '木子果', 'en-US': 'Lum Berry' },
-    '文柚果': { 'zh-TW': '文柚果', 'en-US': 'Sitrus Berry' },
-    '柿仔果': { 'zh-TW': '柿仔果', 'en-US': 'Persim Berry' },
-    '櫻子果': { 'zh-TW': '櫻子果', 'en-US': 'Cheri Berry' },
-    '佩利果': { 'zh-TW': '佩利果', 'en-US': 'Pecha Berry' },
-    '生薑果': { 'zh-TW': '生薑果', 'en-US': 'Rawst Berry' },
-    '異奇果': { 'zh-TW': '異奇果', 'en-US': 'Iapapa Berry' },
+    '椰木果': { 'zh-TW': '椰木果', 'en-US': 'Pamtre Berry' },
+    '異奇果': { 'zh-TW': '異奇果', 'en-US': 'Grepa Berry' },
+    '檬果': { 'zh-TW': '檬果', 'en-US': 'Bluk Berry' },
+    '桃桃果': { 'zh-TW': '桃桃果', 'en-US': 'Pecha Berry' },
+    '芒念果': { 'zh-TW': '芒念果', 'en-US': 'Mago Berry' },
     '芒芒果': { 'zh-TW': '芒芒果', 'en-US': 'Mago Berry' },
-    '芭亞果': { 'zh-TW': '芭亞果', 'en-US': 'Aguav Berry' },
-    '椰木果': { 'zh-TW': '椰木果', 'en-US': 'Wiki Berry' },
-    '文達果': { 'zh-TW': '文達果', 'en-US': 'Belue Berry' },
-    '番荔果': { 'zh-TW': '番荔果', 'en-US': 'Yache Berry' },
-    '哈密果': { 'zh-TW': '哈密果', 'en-US': 'Grepa Berry' },
-    '巧可果': { 'zh-TW': '巧可果', 'en-US': 'Bluk Berry' },
-    '墨莓果': { 'zh-TW': '墨莓果', 'en-US': 'Razz Berry' }
+    '蘋野果': { 'zh-TW': '蘋野果', 'en-US': 'Leppa Berry' },
+    '櫻子果': { 'zh-TW': '櫻子果', 'en-US': 'Cheri Berry' },
+    '柿仔果': { 'zh-TW': '柿仔果', 'en-US': 'Persim Berry' },
+    '勿花果': { 'zh-TW': '勿花果', 'en-US': 'Figy Berry' },
+    '文柚果': { 'zh-TW': '文柚果', 'en-US': 'Sitrus Berry' },
+    '榴石果': { 'zh-TW': '榴石果', 'en-US': 'Durin Berry' },
+    '橙橙果': { 'zh-TW': '橙橙果', 'en-US': 'Oran Berry' },
+    '芭拉果': { 'zh-TW': '芭拉果', 'en-US': 'Wiki Berry' },
+    '零餘果': { 'zh-TW': '零餘果', 'en-US': 'Chesto Berry' },
+    '生薑果': { 'zh-TW': '生薑果', 'en-US': 'Rawst Berry' },
+    '靛莓果': { 'zh-TW': '靛莓果', 'en-US': 'Belue Berry' },
+    '巧可果': { 'zh-TW': '巧可果', 'en-US': 'Yache Berry' },
+    '番荔果': { 'zh-TW': '番荔果', 'en-US': 'Magost Berry' }
   };
 
-  // 性格名稱對照 (25 種官方性格)
+  // 性格名稱官方英中對照 (25種全收錄)
   const NATURE_NAMES = {
     '固執': { 'zh-TW': '固執', 'en-US': 'Adamant' },
-    '怕寂寞': { 'zh-TW': '怕寂寞', 'en-US': 'Lonely' },
     '勇敢': { 'zh-TW': '勇敢', 'en-US': 'Brave' },
+    '怕寂寞': { 'zh-TW': '怕寂寞', 'en-US': 'Lonely' },
     '頑皮': { 'zh-TW': '頑皮', 'en-US': 'Naughty' },
     '大膽': { 'zh-TW': '大膽', 'en-US': 'Bold' },
     '淘氣': { 'zh-TW': '淘氣', 'en-US': 'Impish' },
@@ -569,41 +577,116 @@
     '勤奮': { 'zh-TW': '勤奮', 'en-US': 'Serious' }
   };
 
-  // 主技能官方英中對照
+  // 主技能官方英中對照 (包含基礎名稱、變體招式與神獸專屬 - 嚴格遵照官方 Sleep 英文命名)
   const MAIN_SKILL_NAMES = {
+    // 基礎主技能系列
+    '能量填充S': { 'zh-TW': '能量填充S', 'en-US': 'Charge Strength S' },
     '能量填充S (固定值)': { 'zh-TW': '能量填充S (固定值)', 'en-US': 'Charge Strength S (Fixed)' },
     '能量填充S (隨機/變動值)': { 'zh-TW': '能量填充S (隨機/變動值)', 'en-US': 'Charge Strength S (Random)' },
-    '能量填充S': { 'zh-TW': '能量填充S', 'en-US': 'Charge Strength S' },
-    '能量填充M (固定值)': { 'zh-TW': '能量填充M (固定值)', 'en-US': 'Charge Strength M (Fixed)' },
+    '能量填充S (隨機)': { 'zh-TW': '能量填充S (隨機)', 'en-US': 'Charge Strength S (Random)' },
+    '能量填充S（隨機）': { 'zh-TW': '能量填充S（隨機）', 'en-US': 'Charge Strength S (Random)' },
     '能量填充M': { 'zh-TW': '能量填充M', 'en-US': 'Charge Strength M' },
-    '蓄力 (能量填充S)': { 'zh-TW': '蓄力 (能量填充S)', 'en-US': 'Stockpile (Charge Strength S)' },
-    '蓄力': { 'zh-TW': '蓄力', 'en-US': 'Stockpile' },
-    '夢魘 (能量填充M)': { 'zh-TW': '夢魘 (能量填充M)', 'en-US': 'Nightmare (Charge Strength M)' },
-    '夢魘': { 'zh-TW': '夢魘', 'en-US': 'Nightmare' },
+    '能量填充M (固定值)': { 'zh-TW': '能量填充M (固定值)', 'en-US': 'Charge Strength M (Fixed)' },
+    
     '食材獲取S': { 'zh-TW': '食材獲取S', 'en-US': 'Ingredient Magnet S' },
     '食材獲取M': { 'zh-TW': '食材獲取M', 'en-US': 'Ingredient Magnet M' },
-    '料理成功率提升S': { 'zh-TW': '料理成功率提升S', 'en-US': 'Extra Tasty S' },
-    '料理擴大S': { 'zh-TW': '料理擴大S', 'en-US': 'Cooking Power Up S' },
-    '幫手獎勵': { 'zh-TW': '幫手獎勵', 'en-US': 'Helping Bonus' },
-    '幫手支援S': { 'zh-TW': '幫手支援S', 'en-US': 'Helper Boost S' },
-    '全體能量回復S': { 'zh-TW': '全體能量回復S', 'en-US': 'Energy for Everyone S' },
-    '活力療癒S': { 'zh-TW': '活力療癒S', 'en-US': 'Energy Cheer S' },
+    '食材精選S': { 'zh-TW': '食材精選S', 'en-US': 'Ingredient Magnet S' },
+    '食材隨機S': { 'zh-TW': '食材隨機S', 'en-US': 'Random Ingredients S' },
+    
+    '料理強化S': { 'zh-TW': '料理強化S', 'en-US': 'Cooking Power-Up S' },
+    '料理擴大S': { 'zh-TW': '料理擴大S', 'en-US': 'Cooking Power-Up S' },
+    '料理成功S': { 'zh-TW': '料理成功S', 'en-US': 'Tasty Chance S' },
+    '料理成功率提升S': { 'zh-TW': '料理成功率提升S', 'en-US': 'Tasty Chance S' },
+    
+    '活力填充S': { 'zh-TW': '活力填充S', 'en-US': 'Charge Energy S' },
+    '活力充填S': { 'zh-TW': '活力充填S', 'en-US': 'Charge Energy S' },
     '自體活力回復S': { 'zh-TW': '自體活力回復S', 'en-US': 'Charge Energy S' },
+    '活力療癒S': { 'zh-TW': '活力療癒S', 'en-US': 'Energizing Cheer S' },
     '活力充沛S': { 'zh-TW': '活力充沛S', 'en-US': 'Energizing Cheer S' },
-    '夢之碎片獲取S': { 'zh-TW': '夢之碎片獲取S', 'en-US': 'Dream Shard Magnet S' },
-    '夢之碎片獲取S（隨機）': { 'zh-TW': '夢之碎片獲取S（隨機）', 'en-US': 'Dream Shard Magnet S (Random)' },
-    '揮指': { 'zh-TW': '揮指', 'en-US': 'Metronome' },
-    '變身': { 'zh-TW': '變身', 'en-US': 'Transform' },
-    '傳說降臨（雷公）': { 'zh-TW': '傳說降臨（雷公）', 'en-US': 'Raikou Helper Boost' },
-    '傳說降臨（炎帝）': { 'zh-TW': '傳說降臨（炎帝）', 'en-US': 'Entei Helper Boost' },
-    '傳說降臨（水君）': { 'zh-TW': '傳說降臨（水君）', 'en-US': 'Suicune Helper Boost' },
+    '活力全體療癒S': { 'zh-TW': '活力全體療癒S', 'en-US': 'Energy for Everyone S' },
+    '全體療癒S': { 'zh-TW': '全體療癒S', 'en-US': 'Energy for Everyone S' },
+    '全體能量回復S': { 'zh-TW': '全體能量回復S', 'en-US': 'Energy for Everyone S' },
+    
+    '幫手支援S': { 'zh-TW': '幫手支援S', 'en-US': 'Extra Helpful S' },
+    '幫手加速': { 'zh-TW': '幫手加速', 'en-US': 'Helper Boost' },
+    '幫手加速（電）': { 'zh-TW': '幫手加速（電）', 'en-US': 'Helper Boost (Electric)' },
+    '幫手加速 (電)': { 'zh-TW': '幫手加速 (電)', 'en-US': 'Helper Boost (Electric)' },
+    '幫手加速（火）': { 'zh-TW': '幫手加速（火）', 'en-US': 'Helper Boost (Fire)' },
+    '幫手加速 (火)': { 'zh-TW': '幫手加速 (火)', 'en-US': 'Helper Boost (Fire)' },
+    '幫手加速（水）': { 'zh-TW': '幫手加速（水）', 'en-US': 'Helper Boost (Water)' },
+    '幫手加速 (水)': { 'zh-TW': '幫手加速 (水)', 'en-US': 'Helper Boost (Water)' },
     '雷公幫手支援': { 'zh-TW': '雷公幫手支援', 'en-US': 'Raikou Helper Boost' },
     '炎帝幫手支援': { 'zh-TW': '炎帝幫手支援', 'en-US': 'Entei Helper Boost' },
     '水君幫手支援': { 'zh-TW': '水君幫手支援', 'en-US': 'Suicune Helper Boost' },
-    '達克萊伊專屬': { 'zh-TW': '達克萊伊專屬', 'en-US': 'Darkrai Nightmare' },
-    '變身（隨機技能）': { 'zh-TW': '變身（隨機技能）', 'en-US': 'Transform (Random)' },
+    '傳說降臨（雷公）': { 'zh-TW': '傳說降臨（雷公）', 'en-US': 'Raikou Helper Boost' },
+    '傳說降臨（炎帝）': { 'zh-TW': '傳說降臨（炎帝）', 'en-US': 'Entei Helper Boost' },
+    '傳說降臨（水君）': { 'zh-TW': '傳說降臨（水君）', 'en-US': 'Suicune Helper Boost' },
+    
+    '樹果遽增': { 'zh-TW': '樹果遽增', 'en-US': 'Berry Burst' },
+    '樹果擴增': { 'zh-TW': '樹果擴增', 'en-US': 'Berry Burst' },
+    '樹果領域': { 'zh-TW': '樹果領域', 'en-US': 'Berry Field' },
+    '精神擊破（樹果領域）': { 'zh-TW': '精神擊破（樹果領域）', 'en-US': 'Psystrike (Berry Field)' },
+    '精神擊破 (樹果領域)': { 'zh-TW': '精神擊破 (樹果領域)', 'en-US': 'Psystrike (Berry Field)' },
+    '流星群（樹果遽增）': { 'zh-TW': '流星群（樹果遽增）', 'en-US': 'Draco Meteor (Berry Burst)' },
+    '流星群 (樹果遽增)': { 'zh-TW': '流星群 (樹果遽增)', 'en-US': 'Draco Meteor (Berry Burst)' },
+    '畫皮（樹果遽增）': { 'zh-TW': '畫皮（樹果遽增）', 'en-US': 'Disguise (Berry Burst)' },
+    '畫皮 (樹果遽增)': { 'zh-TW': '畫皮 (樹果遽增)', 'en-US': 'Disguise (Berry Burst)' },
+    
+    '夢之碎片獲取S': { 'zh-TW': '夢之碎片獲取S', 'en-US': 'Dream Shard Magnet S' },
+    '碎片獲取S': { 'zh-TW': '碎片獲取S', 'en-US': 'Dream Shard Magnet S' },
+    '夢之碎片獲取S (固定值)': { 'zh-TW': '夢之碎片獲取S (固定值)', 'en-US': 'Dream Shard Magnet S (Fixed)' },
+    '夢之碎片獲取S（隨機）': { 'zh-TW': '夢之碎片獲取S（隨機）', 'en-US': 'Dream Shard Magnet S (Random)' },
+    '夢之碎片獲取S (隨機/變動值)': { 'zh-TW': '夢之碎片獲取S (隨機/變動值)', 'en-US': 'Dream Shard Magnet S (Random)' },
+    '波導彈（夢之碎片獲取S）': { 'zh-TW': '波導彈（夢之碎片獲取S）', 'en-US': 'Aura Sphere (Dream Shard Magnet S)' },
+    '波導彈 (夢之碎片獲取S)': { 'zh-TW': '波導彈 (夢之碎片獲取S)', 'en-US': 'Aura Sphere (Dream Shard Magnet S)' },
+    
+    '揮指': { 'zh-TW': '揮指', 'en-US': 'Metronome' },
     '揮指（隨機技能）': { 'zh-TW': '揮指（隨機技能）', 'en-US': 'Metronome (Random)' },
+    '揮指 (隨機技能)': { 'zh-TW': '揮指 (隨機技能)', 'en-US': 'Metronome (Random)' },
+    '十項全能（揮指）[可替換]': { 'zh-TW': '十項全能（揮指）[可替換]', 'en-US': 'All-Rounder (Metronome) [Customizable]' },
+    '十項全能 (揮指) [可替換]': { 'zh-TW': '十項全能 (揮指) [可替換]', 'en-US': 'All-Rounder (Metronome) [Customizable]' },
+    
+    '變身': { 'zh-TW': '變身', 'en-US': 'Transform' },
+    '技能複製': { 'zh-TW': '技能複製', 'en-US': 'Skill Copy' },
+    '變身（技能複製）': { 'zh-TW': '變身（技能複製）', 'en-US': 'Transform (Skill Copy)' },
+    '變身 (技能複製)': { 'zh-TW': '變身 (技能複製)', 'en-US': 'Transform (Skill Copy)' },
+    '模仿（技能複製）': { 'zh-TW': '模仿（技能複製）', 'en-US': 'Mimic (Skill Copy)' },
+    '模仿 (技能複製)': { 'zh-TW': '模仿 (技能複製)', 'en-US': 'Mimic (Skill Copy)' },
+    
     '月光': { 'zh-TW': '月光', 'en-US': 'Moonlight' },
+    '月光（活力填充S）': { 'zh-TW': '月光（活力填充S）', 'en-US': 'Moonlight (Charge Energy S)' },
+    '月光 (活力填充S)': { 'zh-TW': '月光 (活力填充S)', 'en-US': 'Moonlight (Charge Energy S)' },
+    '新月祈禱（活力全體療癒S）': { 'zh-TW': '新月祈禱（活力全體療癒S）', 'en-US': 'Lunar Prayer (Energy for Everyone S)' },
+    '新月祈禱 (活力全體療癒S)': { 'zh-TW': '新月祈禱 (活力全體療癒S)', 'en-US': 'Lunar Prayer (Energy for Everyone S)' },
+    
+    '蓄力': { 'zh-TW': '蓄力', 'en-US': 'Stockpile' },
+    '蓄力（能量填充S）': { 'zh-TW': '蓄力（能量填充S）', 'en-US': 'Stockpile (Charge Strength S)' },
+    '蓄力 (能量填充S)': { 'zh-TW': '蓄力 (能量填充S)', 'en-US': 'Stockpile (Charge Strength S)' },
+    
+    '夢魘': { 'zh-TW': '夢魘', 'en-US': 'Bad Dreams' },
+    '夢魘（能量填充M）': { 'zh-TW': '夢魘（能量填充M）', 'en-US': 'Bad Dreams (Charge Strength M)' },
+    '夢魘 (能量填充M)': { 'zh-TW': '夢魘 (能量填充M)', 'en-US': 'Bad Dreams (Charge Strength M)' },
+    '達克萊伊專屬': { 'zh-TW': '達克萊伊專屬', 'en-US': 'Darkrai Nightmare' },
+    
+    '健美（料理輔助S）': { 'zh-TW': '健美（料理輔助S）', 'en-US': 'Bulk Up (Cooking Assist S)' },
+    '健美 (料理輔助S)': { 'zh-TW': '健美 (料理輔助S)', 'en-US': 'Bulk Up (Cooking Assist S)' },
+    '樹果汁（活力全體療癒S）': { 'zh-TW': '樹果汁（活力全體療癒S）', 'en-US': 'Berry Juice (Energy for Everyone S)' },
+    '樹果汁 (活力全體療癒S)': { 'zh-TW': '樹果汁 (活力全體療癒S)', 'en-US': 'Berry Juice (Energy for Everyone S)' },
+    '禮物（食材獲取S）': { 'zh-TW': '禮物（食材獲取S）', 'en-US': 'Present (Ingredient Magnet S)' },
+    '禮物 (食材獲取S)': { 'zh-TW': '禮物 (食材獲取S)', 'en-US': 'Present (Ingredient Magnet S)' },
+    '怪力钳（食材精選S）': { 'zh-TW': '怪力钳（食材精選S）', 'en-US': 'Hyper Cutter (Ingredient Magnet S)' },
+    '怪力钳 (食材精選S)': { 'zh-TW': '怪力钳 (食材精選S)', 'en-US': 'Hyper Cutter (Ingredient Magnet S)' },
+    '超幸運（食材精選S）': { 'zh-TW': '超幸運（食材精選S）', 'en-US': 'Super Luck (Ingredient Magnet S)' },
+    '超幸運 (食材精選S)': { 'zh-TW': '超幸運 (食材精選S)', 'en-US': 'Super Luck (Ingredient Magnet S)' },
+    '正電（食材獲取S）': { 'zh-TW': '正電（食材獲取S）', 'en-US': 'Plus (Ingredient Magnet S)' },
+    '正電 (食材獲取S)': { 'zh-TW': '正電 (食材獲取S)', 'en-US': 'Plus (Ingredient Magnet S)' },
+    '負電（料理強化S）': { 'zh-TW': '負電（料理強化S）', 'en-US': 'Minus (Cooking Power-Up S)' },
+    '負電 (料理強化S)': { 'zh-TW': '負電 (料理強化S)', 'en-US': 'Minus (Cooking Power-Up S)' },
+    '治癒波動（活力療癒S）': { 'zh-TW': '治癒波動（活力療癒S）', 'en-US': 'Heal Pulse (Energizing Cheer S)' },
+    '治癒波動 (活力療癒S)': { 'zh-TW': '治癒波動 (活力療癒S)', 'en-US': 'Heal Pulse (Energizing Cheer S)' },
+    '蹭蹭臉頰（活力療癒S）': { 'zh-TW': '蹭蹭臉頰（活力療癒S）', 'en-US': 'Nuzzle (Energizing Cheer S)' },
+    '蹭蹭臉頰 (活力療癒S)': { 'zh-TW': '蹭蹭臉頰 (活力療癒S)', 'en-US': 'Nuzzle (Energizing Cheer S)' },
+    
     '電光一閃': { 'zh-TW': '電光一閃', 'en-US': 'Quick Attack' },
     '精神強念': { 'zh-TW': '精神強念', 'en-US': 'Psychic' },
     '晨光': { 'zh-TW': '晨光', 'en-US': 'Morning Sun' }
@@ -614,11 +697,15 @@
     '樹果數量S': { 'zh-TW': '樹果數量S', 'en-US': 'Berry Finding S' },
     '幫手獎勵': { 'zh-TW': '幫手獎勵', 'en-US': 'Helping Bonus' },
     '睡眠EXP提升': { 'zh-TW': '睡眠EXP提升', 'en-US': 'Sleep EXP Bonus' },
+    '睡眠EXP獎勵': { 'zh-TW': '睡眠EXP獎勵', 'en-US': 'Sleep EXP Bonus' },
     '研究EXP提升': { 'zh-TW': '研究EXP提升', 'en-US': 'Research EXP Bonus' },
+    '研究EXP獎勵': { 'zh-TW': '研究EXP獎勵', 'en-US': 'Research EXP Bonus' },
     '夢之碎片獎勵': { 'zh-TW': '夢之碎片獎勵', 'en-US': 'Dream Shard Bonus' },
     '活力回復獎勵': { 'zh-TW': '活力回復獎勵', 'en-US': 'Energy Recovery Bonus' },
     '幫手速度M': { 'zh-TW': '幫手速度M', 'en-US': 'Helping Speed M' },
+    '幫忙速度M': { 'zh-TW': '幫忙速度M', 'en-US': 'Helping Speed M' },
     '幫手速度S': { 'zh-TW': '幫手速度S', 'en-US': 'Helping Speed S' },
+    '幫忙速度S': { 'zh-TW': '幫忙速度S', 'en-US': 'Helping Speed S' },
     '食材機率提升M': { 'zh-TW': '食材機率提升M', 'en-US': 'Ingredient Finder M' },
     '食材機率提升S': { 'zh-TW': '食材機率提升S', 'en-US': 'Ingredient Finder S' },
     '技能發動率提升M': { 'zh-TW': '技能發動率提升M', 'en-US': 'Skill Trigger M' },
@@ -627,7 +714,11 @@
     '技能等級提升S': { 'zh-TW': '技能等級提升S', 'en-US': 'Skill Level Up S' },
     '持有上限提升L': { 'zh-TW': '持有上限提升L', 'en-US': 'Inventory Up L' },
     '持有上限提升M': { 'zh-TW': '持有上限提升M', 'en-US': 'Inventory Up M' },
-    '持有上限提升S': { 'zh-TW': '持有上限提升S', 'en-US': 'Inventory Up S' }
+    '持有上限提升S': { 'zh-TW': '持有上限提升S', 'en-US': 'Inventory Up S' },
+    '最大持有上限提升L': { 'zh-TW': '最大持有上限提升L', 'en-US': 'Inventory Up L' },
+    '最大持有上限提升M': { 'zh-TW': '最大持有上限提升M', 'en-US': 'Inventory Up M' },
+    '最大持有上限提升S': { 'zh-TW': '最大持有上限提升S', 'en-US': 'Inventory Up S' },
+    '活力回復提升S': { 'zh-TW': '活力回復提升S', 'en-US': 'Energy Recovery Up S' }
   };
 
   // 當前語言狀態
@@ -640,6 +731,19 @@
         currentLang = saved;
       }
     } catch (e) {}
+
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('lang', currentLang === 'zh-TW' ? 'zh-Hant' : 'en');
+      document.documentElement.setAttribute('data-lang', currentLang === 'zh-TW' ? 'zh' : 'en');
+      const onReady = () => {
+        updatePageTranslations();
+      };
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', onReady);
+      } else {
+        onReady();
+      }
+    }
   }
 
   function getLanguage() {
@@ -655,6 +759,7 @@
 
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('lang', lang === 'zh-TW' ? 'zh-Hant' : 'en');
+      document.documentElement.setAttribute('data-lang', lang === 'zh-TW' ? 'zh' : 'en');
       updatePageTranslations();
     }
 
@@ -678,6 +783,9 @@
       if (window.AppraisalLab && typeof window.AppraisalLab.renderLab === 'function') {
         const labCont = document.getElementById('appraisal-lab-container');
         if (labCont) window.AppraisalLab.renderLab(labCont);
+      }
+      if (typeof CustomEvent !== 'undefined' && typeof window.dispatchEvent === 'function') {
+        window.dispatchEvent(new CustomEvent('appLanguageChanged', { detail: { lang: currentLang } }));
       }
     }
   }
@@ -719,8 +827,19 @@
 
   function getMainSkillName(skill) {
     if (!skill) return '';
-    const item = MAIN_SKILL_NAMES[skill];
-    return item ? (item[currentLang] || skill) : skill;
+    const trimmed = String(skill).trim();
+    if (MAIN_SKILL_NAMES[trimmed]) {
+      return MAIN_SKILL_NAMES[trimmed][currentLang] || trimmed;
+    }
+    const normalized = trimmed.replace(/\(/g, '（').replace(/\)/g, '）');
+    if (MAIN_SKILL_NAMES[normalized]) {
+      return MAIN_SKILL_NAMES[normalized][currentLang] || normalized;
+    }
+    const denormalized = trimmed.replace(/（/g, '(').replace(/）/g, ')');
+    if (MAIN_SKILL_NAMES[denormalized]) {
+      return MAIN_SKILL_NAMES[denormalized][currentLang] || denormalized;
+    }
+    return trimmed;
   }
 
   function getSubSkillName(subskill) {
@@ -791,11 +910,9 @@
 
   if (typeof window !== 'undefined') {
     window.I18N = I18NExport;
-    window.t = t;
   }
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = I18NExport;
   }
 })();
-
