@@ -17,9 +17,11 @@
       category: "energy",
       catName: "能量系",
       desc: "增加卡比獸的能量（固定數值）。",
+      desc_en: "Adds a fixed amount of Snorlax Strength.",
       maxLevel: 7,
       values: [400, 569, 785, 1083, 1496, 2066, 3002],
-      unit: " 能量"
+      unit: " 能量",
+      unit_en: " Strength"
     },
     {
       id: "charge_energy_s_range",
@@ -28,6 +30,7 @@
       category: "energy",
       catName: "能量系",
       desc: "隨機增加卡比獸能量（在最小~最大區間浮動）。",
+      desc_en: "Adds random Snorlax Strength within a range.",
       maxLevel: 7,
       ranges: [
         { min: 200, max: 800 },
@@ -39,7 +42,9 @@
         { min: 1501, max: 6004 }
       ],
       specialNote: "🎲 浮動機制：每次發動隨機給予區間內能量",
-      unit: " 能量"
+      specialNote_en: "🎲 Random: Strength varies per trigger",
+      unit: " 能量",
+      unit_en: " Strength"
     },
     {
       id: "charge_energy_m",
@@ -48,9 +53,11 @@
       category: "energy",
       catName: "能量系",
       desc: "大量增加卡比獸的能量（固定數值）。",
+      desc_en: "Adds a large fixed amount of Snorlax Strength.",
       maxLevel: 7,
       values: [880, 1251, 1726, 2383, 3290, 4546, 6409],
-      unit: " 能量"
+      unit: " 能量",
+      unit_en: " Strength"
     },
     {
       id: "charge_stock_s",
@@ -59,6 +66,7 @@
       category: "energy",
       catName: "能量系 (複合)",
       desc: "發動蓄積或噴放。依蓄積次數（0~10次）暴增能量，最高達 82,386 能量！",
+      desc_en: "Charges or releases. Scales with 0~10 stacks up to 82,386 Strength!",
       maxLevel: 7,
       hasStackMatrix: true,
       matrix: [
@@ -74,7 +82,8 @@
         { stacks: 9, vals: [7980, 11345, 15655, 21615, 29832, 41217, 59876] },
         { stacks: 10, vals: [10980, 15610, 21540, 29740, 41047, 56712, 82386] }
       ],
-      unit: " 能量"
+      unit: " 能量",
+      unit_en: " Strength"
     },
     {
       id: "nightmare_m",
@@ -83,10 +92,13 @@
       category: "special",
       catName: "神獸/特殊",
       desc: "達克萊伊專屬招式。卡比獸能量超大幅增加，但非惡屬性隊友活力下降。",
+      desc_en: "Darkrai exclusive. Huge Strength boost; non-Dark allies lose energy.",
       maxLevel: 6,
       values: [2640, 3753, 5178, 7149, 9870, 13638],
       penaltyNote: "⚠️ 副作用：非惡屬性隊友全員活力 -12",
-      unit: " 能量"
+      penaltyNote_en: "⚠️ Penalty: Non-Dark teammates lose 12 Energy",
+      unit: " 能量",
+      unit_en: " Strength"
     },
     {
       id: "ingredient_magnet_s",
@@ -95,9 +107,11 @@
       category: "ingredient",
       catName: "食材與料理",
       desc: "隨機獲得已解鎖的食材。",
+      desc_en: "Gets a random assortment of unlocked ingredients.",
       maxLevel: 7,
       values: [6, 8, 11, 14, 17, 21, 24],
-      unit: " 個食材"
+      unit: " 個食材",
+      unit_en: " Ingredients"
     },
     {
       id: "cooking_power_up_s",
@@ -106,9 +120,11 @@
       category: "ingredient",
       catName: "食材與料理",
       desc: "增加下次烹調時鍋子容量上限，效果持續到料理大成功或換營地。",
+      desc_en: "Expands pot capacity for next meal. Stacks until Extra Tasty or move.",
       maxLevel: 7,
       values: [7, 10, 12, 17, 22, 27, 31],
-      unit: " 個容量"
+      unit: " 個容量",
+      unit_en: " Pot Space"
     },
     {
       id: "tasty_chance_s",
@@ -117,10 +133,13 @@
       category: "ingredient",
       catName: "食材與料理",
       desc: "料理漂亮成功（大成功）機率提升，可持續疊加直到大成功為止。",
+      desc_en: "Boosts Extra Tasty chance; stacks until an Extra Tasty dish is cooked.",
       maxLevel: 6,
       values: [4, 5, 6, 7, 8, 10],
       specialNote: "✨ 機率累加：大成功時發動雙倍/三倍能量，成功後機率重設",
-      unit: "%"
+      specialNote_en: "✨ 2x~3x power on Extra Tasty; resets after trigger",
+      unit: "%",
+      unit_en: "%"
     },
     {
       id: "helper_boost_s",
@@ -129,9 +148,11 @@
       category: "special",
       catName: "神獸/特殊",
       desc: "隨機 1 隻隊友立刻完成多次幫忙產出。",
+      desc_en: "Instantly gets helps from a random teammate.",
       maxLevel: 7,
       values: [5, 6, 7, 8, 9, 10, 11],
-      unit: " 次幫忙"
+      unit: " 次幫忙",
+      unit_en: " Helps"
     },
     {
       id: "helper_boost_type",
@@ -140,17 +161,19 @@
       category: "special",
       catName: "神獸/特殊",
       desc: "雷公/炎帝/水君專屬。隊伍同屬寶可夢立刻幫忙，同屬不同種類越多越強！",
+      desc_en: "Legendary exclusive. All same-type allies help; scales with unique species!",
       maxLevel: 6,
       hasTypeKindsMatrix: true,
       matrix: [
-        { kinds: "0 種類", vals: [2, 3, 3, 4, 4, 5] },
-        { kinds: "1 種類", vals: [2, 3, 3, 4, 4, 5] },
-        { kinds: "2 種類", vals: [2, 3, 3, 4, 5, 6] },
-        { kinds: "3 種類", vals: [3, 4, 5, 6, 7, 8] },
-        { kinds: "4 種類", vals: [4, 5, 6, 7, 8, 9] },
-        { kinds: "5 種類", vals: [6, 7, 8, 9, 10, 11] }
+        { kinds: "0 種類", kinds_en: "0 Species", vals: [2, 3, 3, 4, 4, 5] },
+        { kinds: "1 種類", kinds_en: "1 Species", vals: [2, 3, 3, 4, 4, 5] },
+        { kinds: "2 種類", kinds_en: "2 Species", vals: [2, 3, 3, 4, 5, 6] },
+        { kinds: "3 種類", kinds_en: "3 Species", vals: [3, 4, 5, 6, 7, 8] },
+        { kinds: "4 種類", kinds_en: "4 Species", vals: [4, 5, 6, 7, 8, 9] },
+        { kinds: "5 種類", kinds_en: "5 Species", vals: [6, 7, 8, 9, 10, 11] }
       ],
-      unit: " 次幫忙"
+      unit: " 次幫忙",
+      unit_en: " Helps"
     },
     {
       id: "berry_burst",
@@ -159,13 +182,15 @@
       category: "special",
       catName: "神獸/特殊",
       desc: "帕路奇亞專屬招式。獲得自身產出的樹果，並額外獲得隊友撿來的樹果。",
+      desc_en: "Palkia exclusive. Gathers extra berries from user and allies.",
       maxLevel: 6,
       hasDualValues: true,
       selfShort: "自",
       teamShort: "他",
       selfValues: [11, 14, 21, 24, 27, 30],
       teamValues: [1, 2, 2, 3, 4, 5],
-      unit: " 個"
+      unit: " 個",
+      unit_en: " Berries"
     },
     {
       id: "disguise_berry_burst",
@@ -174,6 +199,7 @@
       category: "special",
       catName: "神獸/特殊",
       desc: "謎擬Ｑ專屬招式。獲得自身與隊友的樹果。大成功時獲得 3 倍樹果。",
+      desc_en: "Mimikyu exclusive. Gathers berries from user and allies; 3x on Extra Tasty.",
       maxLevel: 6,
       hasDualValues: true,
       selfShort: "自",
@@ -181,7 +207,9 @@
       selfValues: [8, 10, 15, 17, 19, 21],
       teamValues: [1, 2, 2, 3, 4, 5],
       specialNote: "✨ 機率觸發：大成功時獲得 3 倍樹果（至下次睡眠研究前不重複發動）",
-      unit: " 個"
+      specialNote_en: "✨ 3x berries on Extra Tasty (once per sleep session)",
+      unit: " 個",
+      unit_en: " Berries"
     },
     {
       id: "dream_shard_magnet_s_fixed",
@@ -190,9 +218,11 @@
       category: "shards",
       catName: "夢碎系",
       desc: "獲得夢之碎片（固定數量）。最高支援至 Lv.8！",
+      desc_en: "Obtains a fixed amount of Dream Shards (up to Lv.8).",
       maxLevel: 8,
       values: [240, 340, 480, 670, 920, 1260, 1800, 2500],
-      unit: " 碎片"
+      unit: " 碎片",
+      unit_en: " Shards"
     },
     {
       id: "dream_shard_magnet_s_range",
@@ -201,6 +231,7 @@
       category: "shards",
       catName: "夢碎系",
       desc: "隨機獲得夢之碎片（在最小~最大區間浮動）。最高支援至 Lv.8！",
+      desc_en: "Obtains random Dream Shards within a range (up to Lv.8).",
       maxLevel: 8,
       ranges: [
         { min: 120, max: 480 },
@@ -213,7 +244,9 @@
         { min: 1150, max: 4600 }
       ],
       specialNote: "🎲 浮動機制：每次發動隨機給予區間內碎片",
-      unit: " 碎片"
+      specialNote_en: "🎲 Random: Shards vary per trigger",
+      unit: " 碎片",
+      unit_en: " Shards"
     },
     {
       id: "charge_energy_self_s",
@@ -222,9 +255,11 @@
       category: "energy_heal",
       catName: "活力系",
       desc: "讓自身回復活力。",
+      desc_en: "Restores energy to the user.",
       maxLevel: 6,
       values: [12, 16, 21, 26, 33, 43],
-      unit: " 點活力"
+      unit: " 點活力",
+      unit_en: " Energy"
     },
     {
       id: "energizing_cheer_s",
@@ -233,9 +268,11 @@
       category: "energy_heal",
       catName: "活力系",
       desc: "隨機讓隊伍中的 1 隻隊友回復活力。",
+      desc_en: "Restores energy to 1 random teammate.",
       maxLevel: 6,
       values: [14, 17, 22, 28, 38, 50],
-      unit: " 點活力"
+      unit: " 點活力",
+      unit_en: " Energy"
     },
     {
       id: "energy_for_everyone_s",
@@ -244,9 +281,11 @@
       category: "energy_heal",
       catName: "活力系 (補師)",
       desc: "讓全體隊友回復活力（主力補師核心招式）。",
+      desc_en: "Restores energy to all teammates (core healer skill).",
       maxLevel: 6,
       values: [5, 7, 9, 11, 15, 18],
-      unit: " 點活力"
+      unit: " 點活力",
+      unit_en: " Energy"
     },
     {
       id: "moonlight",
@@ -255,12 +294,15 @@
       category: "energy_heal",
       catName: "活力系 (伊布專屬)",
       desc: "月亮伊布 (#197) 專屬。自己回復活力；大成功時額外隨機讓 1 隻隊友回復活力。",
+      desc_en: "Umbreon exclusive. Restores self energy; heals 1 ally on Extra Tasty.",
       maxLevel: 6,
       hasMoonlightChips: true,
       selfValues: [12, 16, 21, 26, 33, 43],
       teamValues: [6, 7, 10, 13, 17, 22],
       specialNote: "✨ 機率觸發：大成功（漂亮成功）時額外隨機讓 1 隻隊友回復活力",
-      unit: " 點"
+      specialNote_en: "✨ Extra Tasty: Heals 1 additional random teammate",
+      unit: " 點",
+      unit_en: " Energy"
     },
     {
       id: "lunar_prayer",
@@ -269,19 +311,22 @@
       category: "energy_heal",
       catName: "活力系 (神獸專屬)",
       desc: "克雷色利亞 (#488) 專屬。全隊回復活力，並額外獲得隊友撿來的樹果。",
+      desc_en: "Cresselia exclusive. Restores team energy and gathers bonus berries from allies.",
       maxLevel: 6,
       hasLunarPrayerMatrix: true,
       healValues: [3, 4, 5, 7, 9, 11],
       berryRange: ["5~16", "9~22", "13~28", "17~34", "21~37", "25~41"],
       specialNote: "🔮 額外樹果：依隊伍中超能屬性隊友種類數（1~5 種）加成獲取",
+      specialNote_en: "🔮 Bonus Berries: Scales with unique Psychic species (1~5)",
       berryMatrix: [
-        { kinds: "1 種類", vals: ["5+1", "9+1", "13+1", "17+1", "21+1", "25+1"] },
-        { kinds: "2 種類", vals: ["7+1", "12+1", "17+1", "19+2", "24+2", "29+2"] },
-        { kinds: "3 種類", vals: ["9+1", "15+1", "18+2", "25+2", "27+3", "30+4"] },
-        { kinds: "4 種類", vals: ["12+1", "16+2", "20+3", "28+3", "28+5", "31+6"] },
-        { kinds: "5 種類", vals: ["14+2", "19+3", "24+4", "29+5", "30+7", "32+9"] }
+        { kinds: "1 種類", kinds_en: "1 Species", vals: ["5+1", "9+1", "13+1", "17+1", "21+1", "25+1"] },
+        { kinds: "2 種類", kinds_en: "2 Species", vals: ["7+1", "12+1", "17+1", "19+2", "24+2", "29+2"] },
+        { kinds: "3 種類", kinds_en: "3 Species", vals: ["9+1", "15+1", "18+2", "25+2", "27+3", "30+4"] },
+        { kinds: "4 種類", kinds_en: "4 Species", vals: ["12+1", "16+2", "20+3", "28+3", "28+5", "31+6"] },
+        { kinds: "5 種類", kinds_en: "5 Species", vals: ["14+2", "19+3", "24+4", "29+5", "30+7", "32+9"] }
       ],
-      unit: " 點活力"
+      unit: " 點活力",
+      unit_en: " Energy"
     },
     {
       id: "transform",
@@ -290,8 +335,10 @@
       category: "special",
       catName: "特殊機制",
       desc: "百變怪專屬。隨機複製隊伍中 1 隻隊友的主技能發動。",
+      desc_en: "Ditto exclusive. Copies and executes a random teammate's main skill.",
       maxLevel: 7,
-      unit: "比照複製招式等級"
+      unit: "比照複製招式等級",
+      unit_en: "Matches Target Lv."
     },
     {
       id: "mimic",
@@ -300,8 +347,10 @@
       category: "special",
       catName: "特殊機制",
       desc: "魔牆人偶專屬。隨機複製隊伍中 1 隻隊友的主技能發動。",
+      desc_en: "Mr. Mime exclusive. Copies and executes a random teammate's main skill.",
       maxLevel: 7,
-      unit: "比照複製招式等級"
+      unit: "比照複製招式等級",
+      unit_en: "Matches Target Lv."
     },
     {
       id: "metronome",
@@ -310,8 +359,10 @@
       category: "special",
       catName: "特殊機制",
       desc: "波克比家族等專屬。從全主技能庫中隨機抽選 1 種發動。",
+      desc_en: "Togepi family exclusive. Randomly triggers any main skill in the game.",
       maxLevel: 7,
-      unit: "Lv.1~7 隨機發動"
+      unit: "Lv.1~7 隨機發動",
+      unit_en: "Random Lv.1~7 Trigger"
     }
   ];
 
@@ -319,86 +370,108 @@
   const SUB_SKILLS_DATA = [
     {
       category: "持有上限",
+      category_en: "Inventory",
       skills: [
-        { name: "持有上限提升 S", color: "white", val: "+6 個" },
-        { name: "持有上限提升 M", color: "blue", val: "+12 個" },
-        { name: "持有上限提升 L", color: "blue", val: "+18 個" }
+        { name: "持有上限提升 S", color: "white", val: "+6 個", val_en: "+6" },
+        { name: "持有上限提升 M", color: "blue", val: "+12 個", val_en: "+12" },
+        { name: "持有上限提升 L", color: "blue", val: "+18 個", val_en: "+18" }
       ],
-      desc: "可持有的樹果與食材上限提升 +6 / +12 / +18 個（避免睡眠溢出）"
+      desc: "可持有的樹果與食材上限提升 +6 / +12 / +18 個（避免睡眠溢出）",
+      desc_en: "Increases carry capacity by +6 / +12 / +18 (prevents overflow during sleep)."
     },
     {
       category: "幫忙速度",
+      category_en: "Speed",
       skills: [
-        { name: "幫忙速度 S", color: "white", val: "-7%" },
-        { name: "幫忙速度 M", color: "blue", val: "-14%" }
+        { name: "幫忙速度 S", color: "white", val: "-7%", val_en: "-7%" },
+        { name: "幫忙速度 M", color: "blue", val: "-14%", val_en: "-14%" }
       ],
-      desc: "提供幫助所需的時間減少 7% / 14%（副技能幫速合計上限 35%）"
+      desc: "提供幫助所需的時間減少 7% / 14%（副技能幫速合計上限 35%）",
+      desc_en: "Reduces help time by 7% / 14% (helping speed sub-skills capped at 35%)."
     },
     {
       category: "技能機率",
+      category_en: "Skill Trigger",
       skills: [
-        { name: "技能機率提升 S", color: "white", val: "+18%" },
-        { name: "技能機率提升 M", color: "blue", val: "+36%" }
+        { name: "技能機率提升 S", color: "white", val: "+18%", val_en: "+18%" },
+        { name: "技能機率提升 M", color: "blue", val: "+36%", val_en: "+36%" }
       ],
-      desc: "主技能發動機率提升 18% / 36%（技能型寶可夢核心畢業副技）"
+      desc: "主技能發動機率提升 18% / 36%（技能型寶可夢核心畢業副技）",
+      desc_en: "Boosts main skill trigger rate by +18% / +36% (essential for Skill specialists)."
     },
     {
       category: "食材機率",
+      category_en: "Ingredient",
       skills: [
-        { name: "食材機率提升 S", color: "white", val: "+18%" },
-        { name: "食材機率提升 M", color: "blue", val: "+36%" }
+        { name: "食材機率提升 S", color: "white", val: "+18%", val_en: "+18%" },
+        { name: "食材機率提升 M", color: "blue", val: "+36%", val_en: "+36%" }
       ],
-      desc: "發現食材的機率提升 18% / 36%（食材型寶可夢核心畢業副技）"
+      desc: "發現食材的機率提升 18% / 36%（食材型寶可夢核心畢業副技）",
+      desc_en: "Boosts ingredient finding rate by +18% / +36% (essential for Ingredient specialists)."
     },
     {
       category: "樹果數量",
+      category_en: "Berries",
       skills: [
-        { name: "樹果數量 S", color: "gold", val: "+1 個" }
+        { name: "樹果數量 S", color: "gold", val: "+1 個", val_en: "+1 Berry" }
       ],
-      desc: "每次找到樹果的數量 +1 個（樹果型寶可夢最強 T0 核心）"
+      desc: "每次找到樹果的數量 +1 個（樹果型寶可夢最強 T0 核心）",
+      desc_en: "Increases berries gathered by +1 (top-tier core for Berry specialists)."
     },
     {
       category: "技能等級",
+      category_en: "Skill Level",
       skills: [
-        { name: "技能等級提升 S", color: "blue", val: "+1 級" },
-        { name: "技能等級提升 M", color: "gold", val: "+2 級" }
+        { name: "技能等級提升 S", color: "blue", val: "+1 級", val_en: "+1 Lv." },
+        { name: "技能等級提升 M", color: "gold", val: "+2 級", val_en: "+2 Lv." }
       ],
-      desc: "主技能等級提升 1 / 2 級（省下主技能金種子珍貴資源）"
+      desc: "主技能等級提升 1 / 2 級（省下主技能金種子珍貴資源）",
+      desc_en: "Increases main skill level by +1 / +2 (saves Main Skill Seeds)."
     },
     {
       category: "全隊幫忙",
+      category_en: "Team Speed",
       skills: [
-        { name: "幫手獎勵", color: "gold", val: "全隊 -5%" }
+        { name: "幫手獎勵", color: "gold", val: "全隊 -5%", val_en: "Team -5%" }
       ],
-      desc: "全隊提供幫助時間減少 5%（隊伍最多疊加 5 隻 = 25%）"
+      desc: "全隊提供幫助時間減少 5%（隊伍最多疊加 5 隻 = 25%）",
+      desc_en: "Reduces team help time by 5% (stacks up to 25% with 5 helpers)."
     },
     {
       category: "全隊活力",
+      category_en: "Team Recovery",
       skills: [
-        { name: "活力恢復獎勵", color: "gold", val: "全隊 1.12x" }
+        { name: "活力恢復獎勵", color: "gold", val: "全隊 1.12x", val_en: "Team 1.12x" }
       ],
-      desc: "全隊睡眠活力恢復量提高 1.12 倍（可彌補性格活力下降隊友）"
+      desc: "全隊睡眠活力恢復量提高 1.12 倍（可彌補性格活力下降隊友）",
+      desc_en: "Boosts team sleep energy recovery by 1.12x (offsets Energy Down natures)."
     },
     {
       category: "全隊經驗",
+      category_en: "Team EXP",
       skills: [
-        { name: "睡眠 EXP 獎勵", color: "gold", val: "全隊 +14%" }
+        { name: "睡眠 EXP 獎勵", color: "gold", val: "全隊 +14%", val_en: "Team +14%" }
       ],
-      desc: "全隊睡眠結算獲得 EXP 提高 14%（大幅加速全隊成長）"
+      desc: "全隊睡眠結算獲得 EXP 提高 14%（大幅加速全隊成長）",
+      desc_en: "Boosts team sleep EXP by +14% (significantly accelerates leveling)."
     },
     {
       category: "研究經驗",
+      category_en: "Research EXP",
       skills: [
-        { name: "研究 EXP 獎勵", color: "gold", val: "個人 +6%" }
+        { name: "研究 EXP 獎勵", color: "gold", val: "個人 +6%", val_en: "Self +6%" }
       ],
-      desc: "玩家睡眠結算獲得的研究 EXP 提高 6%（加快研究等級升級）"
+      desc: "玩家睡眠結算獲得的研究 EXP 提高 6%（加快研究等級升級）",
+      desc_en: "Boosts player research EXP by +6% (speeds up research rank progress)."
     },
     {
       category: "夢之碎片",
+      category_en: "Dream Shards",
       skills: [
-        { name: "夢之碎片獎勵", color: "gold", val: "個人 +6%" }
+        { name: "夢之碎片獎勵", color: "gold", val: "個人 +6%", val_en: "Self +6%" }
       ],
-      desc: "睡眠結算獲得夢之碎片數量提高 6%（可與幸運薰香疊加）"
+      desc: "睡眠結算獲得夢之碎片數量提高 6%（可與幸運薰香疊加）",
+      desc_en: "Boosts dream shards gained from sleep by +6% (stacks with Luck Incense)."
     }
   ];
 
@@ -413,7 +486,8 @@
       natureBadge: "up",
       calc: "1.54 × 1.20",
       multiplier: 1.848,
-      grade: "SSS (頂級極限)"
+      grade: "SSS (頂級極限)",
+      grade_en: "SSS (Peak Meta)"
     },
     {
       subskills: [
@@ -423,7 +497,8 @@
       natureBadge: "up",
       calc: "1.36 × 1.20",
       multiplier: 1.632,
-      grade: "SS (優秀極限)"
+      grade: "SS (優秀極限)",
+      grade_en: "SS (Top Tier)"
     },
     {
       subskills: [
@@ -434,7 +509,8 @@
       natureBadge: "neutral",
       calc: "1.54 × 1.00",
       multiplier: 1.530,
-      grade: "S (雙副技無性格)"
+      grade: "S (雙副技無性格)",
+      grade_en: "S (Dual Sub Neutral)"
     },
     {
       subskills: [
@@ -444,7 +520,8 @@
       natureBadge: "up",
       calc: "1.18 × 1.20",
       multiplier: 1.416,
-      grade: "A (單副技+性格)"
+      grade: "A (單副技+性格)",
+      grade_en: "A (Sub + Nature)"
     },
     {
       subskills: [
@@ -454,7 +531,8 @@
       natureBadge: "neutral",
       calc: "1.36 × 1.00",
       multiplier: 1.360,
-      grade: "A (單STM無性格)"
+      grade: "A (單STM無性格)",
+      grade_en: "A (Solo STM Neutral)"
     },
     {
       subskills: [
@@ -465,7 +543,8 @@
       natureBadge: "down",
       calc: "1.54 × 0.80",
       multiplier: 1.232,
-      grade: "B (雙副技補回性格)"
+      grade: "B (雙副技補回性格)",
+      grade_en: "B (Dual Offset)"
     },
     {
       subskills: [],
@@ -473,7 +552,8 @@
       natureBadge: "up",
       calc: "1.00 × 1.20",
       multiplier: 1.200,
-      grade: "B (純性格無副技)"
+      grade: "B (純性格無副技)",
+      grade_en: "B (Nature Only)"
     },
     {
       subskills: [
@@ -483,7 +563,8 @@
       natureBadge: "neutral",
       calc: "1.18 × 1.00",
       multiplier: 1.180,
-      grade: "B (純STS無性格)"
+      grade: "B (純STS無性格)",
+      grade_en: "B (Solo STS Neutral)"
     },
     {
       subskills: [
@@ -493,7 +574,8 @@
       natureBadge: "down",
       calc: "1.36 × 0.80",
       multiplier: 1.088,
-      grade: "C (STM抵銷性格下修)"
+      grade: "C (STM抵銷性格下修)",
+      grade_en: "C (STM Neutralizer)"
     },
     {
       subskills: [],
@@ -501,7 +583,8 @@
       natureBadge: "neutral",
       calc: "1.00 × 1.00",
       multiplier: 1.000,
-      grade: "基準線 (1.00x)"
+      grade: "基準線 (1.00x)",
+      grade_en: "Baseline (1.00x)"
     },
     {
       subskills: [
@@ -511,7 +594,8 @@
       natureBadge: "down",
       calc: "1.18 × 0.80",
       multiplier: 0.944,
-      grade: "D (微幅受阻)"
+      grade: "D (微幅受阻)",
+      grade_en: "D (Slight Impair)"
     },
     {
       subskills: [],
@@ -519,81 +603,136 @@
       natureBadge: "down",
       calc: "1.00 × 0.80",
       multiplier: 0.800,
-      grade: "E (嚴重削弱)"
+      grade: "E (嚴重削弱)",
+      grade_en: "E (Heavy Impair)"
     }
   ];
 
   // 性格五維倍率表 (包含官方最新數值與下降懲罰減輕修正)
   const NATURES_EFFECT_DATA = [
-    { stat: "幫忙速度", up: "▲▲ +10% (間隔 ÷1.10 = 0.909x)", down: "▼▼ -7.5% (間隔 ×1.075 = 0.925x)", desc: "影響所有樹果、食材與技能判定頻率（官方已將下降懲罰調輕至 -7.5%）" },
-    { stat: "活力回復量", up: "▲▲ +20% (1.20 倍)", down: "▼▼ -12% (0.88 倍)", desc: "影響睡眠與隊伍補師回復量（Ver 1.0.13 已將下降懲罰調輕至 -12%）" },
-    { stat: "食材發現率", up: "▲▲ +20% (1.20 倍)", down: "▼▼ -20% (0.80 倍)", desc: "每次幫忙時判定獲得食材的機率" },
-    { stat: "主技能機率", up: "▲▲ +20% (1.20 倍)", down: "▼▼ -20% (0.80 倍)", desc: "每次幫忙時判定觸發主技能的機率" },
-    { stat: "EXP 獲得量", up: "▲▲ +18% (1.18 倍)", down: "▼▼ -18% (0.82 倍)", desc: "影響睡眠結算與糖果升級經驗值（5 顆糖多/少約 1 顆）" }
+    { 
+      stat: "幫忙速度", 
+      stat_en: "Speed of Help",
+      up: "▲▲ +10% (間隔 ÷1.10 = 0.909x)", 
+      up_en: "▲▲ +10% (Interval ÷1.10 = 0.909x)",
+      down: "▼▼ -7.5% (間隔 ×1.075 = 0.925x)", 
+      down_en: "▼▼ -7.5% (Interval ×1.075 = 0.925x)",
+      desc: "影響所有樹果、食材與技能判定頻率（官方已將下降懲罰調輕至 -7.5%）",
+      desc_en: "Affects frequency of berries, ingredients, and skill checks (down penalty softened to -7.5%)."
+    },
+    { 
+      stat: "活力回復量", 
+      stat_en: "Energy Recovery",
+      up: "▲▲ +20% (1.20 倍)", 
+      up_en: "▲▲ +20% (1.20x)",
+      down: "▼▼ -12% (0.88 倍)", 
+      down_en: "▼▼ -12% (0.88x)",
+      desc: "影響睡眠與隊伍補師回復量（Ver 1.0.13 已將下降懲罰調輕至 -12%）",
+      desc_en: "Affects sleep energy and healer skill recovery (down penalty softened to -12%)."
+    },
+    { 
+      stat: "食材發現率", 
+      stat_en: "Ingredient Finding",
+      up: "▲▲ +20% (1.20 倍)", 
+      up_en: "▲▲ +20% (1.20x)",
+      down: "▼▼ -20% (0.80 倍)", 
+      down_en: "▼▼ -20% (0.80x)",
+      desc: "每次幫忙時判定獲得食材的機率",
+      desc_en: "Probability of finding ingredients during each help cycle."
+    },
+    { 
+      stat: "主技能機率", 
+      stat_en: "Main Skill Trigger",
+      up: "▲▲ +20% (1.20 倍)", 
+      up_en: "▲▲ +20% (1.20x)",
+      down: "▼▼ -20% (0.80 倍)", 
+      down_en: "▼▼ -20% (0.80x)",
+      desc: "每次幫忙時判定觸發主技能的機率",
+      desc_en: "Probability of triggering main skill during each help cycle."
+    },
+    { 
+      stat: "EXP 獲得量", 
+      stat_en: "EXP Gained",
+      up: "▲▲ +18% (1.18 倍)", 
+      up_en: "▲▲ +18% (1.18x)",
+      down: "▼▼ -18% (0.82 倍)", 
+      down_en: "▼▼ -18% (0.82x)",
+      desc: "影響睡眠結算與糖果升級經驗值（5 顆糖多/少約 1 顆）",
+      desc_en: "Affects sleep session EXP and candy leveling EXP (±1 candy value per 5 candies)."
+    }
   ];
 
   // --- 3. 培育與評級指南資料庫 (Image 2) ---
   const RATINGS_GUIDE_DATA = {
     berry: {
+      type: "berry",
       title: "🍊 樹果寵 【樹果 2 個、食材 1 個】",
+      title_en: "🍊 Berry Specialists (2 Berries, 1 Ingredient)",
       desc: "以高頻率產出大量樹果累積卡比獸能量為最高目標。",
+      desc_en: "Maximizes Snorlax Strength via massive, high-speed berry output.",
       subskills: [
-        { grade: "Ⓢ", name: "樹果數量S", detail: "樹果數量+1，能量直接翻倍（容易滿包需常收取）" },
-        { grade: "Ⓐ", name: "幫手獎勵", detail: "全隊 -5% 幫忙時間（5隻疊加 25%）" },
-        { grade: "Ⓐ", name: "幫忙速度M", detail: "自己 -14% 幫忙時間" },
-        { grade: "Ⓑ", name: "幫忙速度S", detail: "自己 -7% 幫忙時間（可用銀種子升階為 M 升至 Ⓐ）" }
+        { grade: "Ⓢ", name: "樹果數量S", detail: "樹果數量+1，能量直接翻倍（容易滿包需常收取）", detail_en: "Berry count +1, doubles base strength (fills inventory quickly, gather often)." },
+        { grade: "Ⓐ", name: "幫手獎勵", detail: "全隊 -5% 幫忙時間（5隻疊加 25%）", detail_en: "Reduces team help time by 5% (up to 25% with 5 helpers)." },
+        { grade: "Ⓐ", name: "幫忙速度M", detail: "自己 -14% 幫忙時間", detail_en: "Self help time -14%." },
+        { grade: "Ⓑ", name: "幫忙速度S", detail: "自己 -7% 幫忙時間（可用銀種子升階為 M 升至 Ⓐ）", detail_en: "Self help time -7% (upgradeable to M with Sub Skill Seed)." }
       ],
       natures: [
-        { grade: "Ⓢ", name: "幫忙速度 ▲▲", detail: "全方位提升樹果產出速度" },
-        { grade: "Ⓐ", name: "食材發現率 ▼▼", detail: "食材率降低，變相提高樹果產出機率（加分項）" },
-        { grade: "Ⓑ", name: "主技能機率 ▲▲ / ▼▼", detail: "技能對樹果寵非首要，發動機率高低影響不大" }
+        { grade: "Ⓢ", name: "幫忙速度 ▲▲", detail: "全方位提升樹果產出速度", detail_en: "Accelerates overall berry gathering frequency." },
+        { grade: "Ⓐ", name: "食材發現率 ▼▼", detail: "食材率降低，變相提高樹果產出機率（加分項）", detail_en: "Lower ingredient chance means higher relative berry production." },
+        { grade: "Ⓑ", name: "主技能機率 ▲▲ / ▼▼", detail: "技能對樹果寵非首要，發動機率高低影響不大", detail_en: "Skill trigger is secondary for berry specialists." }
       ]
     },
     ingredient: {
+      type: "ingredient",
       title: "🥩 食材寵 【樹果 1 個、食材 2 個】",
+      title_en: "🥩 Ingredient Specialists (1 Berry, 2 Ingredients)",
       desc: "以穩定供給高階食譜所需的高價值食材為核心職責。",
+      desc_en: "Provides consistent supply of high-tier ingredients for powerful dishes.",
       subskills: [
-        { grade: "Ⓢ", name: "食材機率提升M", detail: "+36% 食材機率，食材寵畢業核心" },
-        { grade: "Ⓐ", name: "幫手獎勵", detail: "全隊 -5% 幫忙時間" },
-        { grade: "Ⓐ", name: "食材機率提升S", detail: "+18% 食材機率（可用銀種子升階為 M 升至 Ⓢ）" },
-        { grade: "Ⓐ", name: "幫忙速度M", detail: "自己 -14% 幫忙時間" },
-        { grade: "Ⓑ", name: "幫忙速度S", detail: "自己 -7% 幫忙時間" },
-        { grade: "Ⓑ", name: "持有上限提升 M/L", detail: "防止睡覺滿包停止產出食材" },
-        { grade: "Ⓑ", name: "樹果數量S + 持有上限", detail: "需搭配持有上限擴充，並保持頻繁收取" }
+        { grade: "Ⓢ", name: "食材機率提升M", detail: "+36% 食材機率，食材寵畢業核心", detail_en: "+36% ingredient rate, top-tier graduation core." },
+        { grade: "Ⓐ", name: "幫手獎勵", detail: "全隊 -5% 幫忙時間", detail_en: "Reduces team help time by 5%." },
+        { grade: "Ⓐ", name: "食材機率提升S", detail: "+18% 食材機率（可用銀種子升階為 M 升至 Ⓢ）", detail_en: "+18% ingredient rate (upgradeable to M)." },
+        { grade: "Ⓐ", name: "幫忙速度M", detail: "自己 -14% 幫忙時間", detail_en: "Self help time -14%." },
+        { grade: "Ⓑ", name: "幫忙速度S", detail: "自己 -7% 幫忙時間", detail_en: "Self help time -7%." },
+        { grade: "Ⓑ", name: "持有上限提升 M/L", detail: "防止睡覺滿包停止產出食材", detail_en: "Prevents full inventory during sleep, avoiding missed ingredients." },
+        { grade: "Ⓑ", name: "樹果數量S + 持有上限", detail: "需搭配持有上限擴充，並保持頻繁收取", detail_en: "Pairs well with inventory upgrades and frequent gathering." }
       ],
       natures: [
-        { grade: "Ⓢ", name: "食材發現率 ▲▲", detail: "食材產出量大幅提升" },
-        { grade: "Ⓐ", name: "幫忙速度 ▲▲", detail: "提高整體幫忙與食材判定頻率" },
-        { grade: "Ⓑ", name: "主技能機率 ▲▲ / ▼▼", detail: "若有自補/料理強化可加分，其餘技能影響不大" }
+        { grade: "Ⓢ", name: "食材發現率 ▲▲", detail: "食材產出量大幅提升", detail_en: "Significantly boosts ingredient quantity." },
+        { grade: "Ⓐ", name: "幫忙速度 ▲▲", detail: "提高整體幫忙與食材判定頻率", detail_en: "Increases overall helping and check frequency." },
+        { grade: "Ⓑ", name: "主技能機率 ▲▲ / ▼▼", detail: "若有自補/料理強化可加分，其餘技能影響不大", detail_en: "Beneficial if Pokémon has Charge Energy or Cooking Power Up." }
       ]
     },
     skill: {
+      type: "skill",
       title: "⚡ 技能寵 【樹果 1 個、食材 1 個】",
+      title_en: "⚡ Skill Specialists (1 Berry, 1 Ingredient)",
       desc: "以高頻率觸發核心主技能（全體補血、神獸加速、高額能量、料理擴鍋）為核心職責。",
+      desc_en: "Triggers crucial main skills (E4E heal, Legend boost, pot expand, energy burst) frequently.",
       subskills: [
-        { grade: "Ⓢ", name: "技能機率提升M", detail: "+36% 技能發動機率，技能寵畢業核心" },
-        { grade: "Ⓐ", name: "幫手獎勵", detail: "全隊 -5% 幫忙時間" },
-        { grade: "Ⓐ", name: "幫忙速度M", detail: "自己 -14% 幫忙時間" },
-        { grade: "Ⓐ", name: "技能機率提升S", detail: "+18% 技能發動機率（可用銀種子升階為 M 升至 Ⓢ）" },
-        { grade: "Ⓑ", name: "樹果數量S + 持有上限", detail: "補足基本能量產出，需常收取" },
-        { grade: "Ⓑ", name: "技能等級提升M", detail: "主技能等級+2，節省金種子珍貴資源" },
-        { grade: "Ⓒ", name: "技能等級提升S", detail: "主技能等級+1（可用銀種子升階）" }
+        { grade: "Ⓢ", name: "技能機率提升M", detail: "+36% 技能發動機率，技能寵畢業核心", detail_en: "+36% skill trigger rate, essential graduation core." },
+        { grade: "Ⓐ", name: "幫手獎勵", detail: "全隊 -5% 幫忙時間", detail_en: "Reduces team help time by 5%." },
+        { grade: "Ⓐ", name: "幫忙速度M", detail: "自己 -14% 幫忙時間", detail_en: "Self help time -14%." },
+        { grade: "Ⓐ", name: "技能機率提升S", detail: "+18% 技能發動機率（可用銀種子升階為 M 升至 Ⓢ）", detail_en: "+18% skill trigger rate (upgradeable to M)." },
+        { grade: "Ⓑ", name: "樹果數量S + 持有上限", detail: "補足基本能量產出，需常收取", detail_en: "Supplements base strength output; requires active collection." },
+        { grade: "Ⓑ", name: "技能等級提升M", detail: "主技能等級+2，節省金種子珍貴資源", detail_en: "Main skill Lv.+2, saves precious Main Skill Seeds." },
+        { grade: "Ⓒ", name: "技能等級提升S", detail: "主技能等級+1（可用銀種子升階）", detail_en: "Main skill Lv.+1 (upgradeable with seeds)." }
       ],
       natures: [
-        { grade: "Ⓢ", name: "主技能發動機率 ▲▲", detail: "技能寵靈魂性格，觸發次數最大化" },
-        { grade: "Ⓐ", name: "幫忙速度 ▲▲", detail: "提高幫忙判定頻率" },
-        { grade: "Ⓐ", name: "食材發現率 ▼▼", detail: "降低食材掉落，無副作用（技能寵只看技能與速度）" }
+        { grade: "Ⓢ", name: "主技能發動機率 ▲▲", detail: "技能寵靈魂性格，觸發次數最大化", detail_en: "Prime nature for skill specialists; maximizes activations." },
+        { grade: "Ⓐ", name: "幫忙速度 ▲▲", detail: "提高幫忙判定頻率", detail_en: "Increases helping cycle rate." },
+        { grade: "Ⓐ", name: "食材發現率 ▼▼", detail: "降低食材掉落，無副作用（技能寵只看技能與速度）", detail_en: "Reduces ingredient drop, no negative impact on skills." }
       ]
     }
   };
 
   // 睡眠天數成長基準表 (Image 2)
   const SLEEP_DAYS_BASELINE = [
-    { level: 10, totalExp: 1600, days: 16, note: "解鎖第一個副技能，新手初期門檻" },
-    { level: 25, totalExp: 8700, days: 87, note: "解鎖第二個副技能，中階關鍵戰力" },
-    { level: 30, totalExp: 12000, days: 120, note: "解鎖第二種食材，前期核心目標（約 2~4 個月）" },
-    { level: 50, totalExp: 30000, days: 300, note: "解鎖第三個副技能，後期主力培育（約 5~10 個月）" },
-    { level: 60, totalExp: 51500, days: 515, note: "解鎖第三種食材，頂級完全體" }
+    { level: 10, totalExp: 1600, days: 16, note: "解鎖第一個副技能，新手初期門檻", note_en: "Unlocks 1st sub-skill, early milestone." },
+    { level: 25, totalExp: 8700, days: 87, note: "解鎖第二個副技能，中階關鍵戰力", note_en: "Unlocks 2nd sub-skill, mid-game power spike." },
+    { level: 30, totalExp: 12000, days: 120, note: "解鎖第二種食材，前期核心目標（約 2~4 個月）", note_en: "Unlocks 2nd ingredient slot, primary early goal (approx. 2-4 mos)." },
+    { level: 50, totalExp: 30000, days: 300, note: "解鎖第三個副技能，後期主力培育（約 5~10 個月）", note_en: "Unlocks 3rd sub-skill, late-game investment (approx. 5-10 mos)." },
+    { level: 60, totalExp: 51500, days: 515, note: "解鎖第三種食材，頂級完全體", note_en: "Unlocks 3rd ingredient slot, max potential complete build." }
   ];
 
   // --- 4. 樹果與食材基礎能量資料庫 (Image 1 實體化 - Berry & Ingredient Values) ---
@@ -3549,11 +3688,14 @@
     }))
   }));
 
+  let currentWikiSubTab = 'skills';
+
   // --- 核心互動控制函數 ---
 
   // 1. 切換子分頁 (skills / subskills / ratings / ingredients)
   function switchWikiSubTab(targetTab) {
     if (!targetTab) return;
+    currentWikiSubTab = targetTab;
 
     const allSubtabBtns = document.querySelectorAll('.wiki-subtab-btn');
     allSubtabBtns.forEach(b => {
@@ -3632,25 +3774,25 @@
   let ladderRecipeFilter = 'ALL'; // 'ALL' | 'AAA' | 'TOP'
 
   const TOP_RECIPES_FOR_INGREDIENTS = {
-    apple: { name: '熟成甜薯沙拉', need: 14, type: '沙拉', secondary: '花漾馬卡龍 (25)' },
-    milk: { name: '煉獄玉米乾酪咖哩', need: 20, type: '咖哩', secondary: '花漾馬卡龍 (15)' },
-    soybeans: { name: '冷靜豆漿沙拉', need: 15, type: '沙拉', secondary: '忍者沙拉 (15)' },
-    honey: { name: '花漾馬卡龍', need: 20, type: '甜點', secondary: '太妃糖豆漿拿鐵 (15)' },
-    sausage: { name: '炙烤尾巴咖哩', need: 25, type: '咖哩', secondary: '重磅多汁漢堡排 (18)' },
-    ginger: { name: '煉獄玉米乾酪咖哩', need: 24, type: '咖哩', secondary: '太妃糖豆漿拿鐵 (20)' },
-    tomato: { name: '大文字披薩', need: 20, type: '甜點', secondary: '忍者沙拉 (17)' },
-    egg: { name: '花漾馬卡龍', need: 25, type: '甜點', secondary: '早安起司沙拉 (14)' },
-    oil: { name: '大文字披薩', need: 18, type: '甜點', secondary: '油封豆腐 (15)' },
-    potato: { name: '早安起司沙拉', need: 18, type: '沙拉', secondary: '忍者咖哩 (16)' },
-    herb: { name: '煉獄玉米乾酪咖哩', need: 27, type: '咖哩', secondary: '大文字披薩 (15)' },
-    corn: { name: '煉獄玉米乾酪咖哩', need: 27, type: '咖哩', secondary: '爆鳴爆米花 (22)' },
-    cacao: { name: '花漾馬卡龍', need: 25, type: '甜點', secondary: '冷靜豆漿沙拉 (18)' },
-    coffee: { name: '太妃糖豆漿拿鐵', need: 35, type: '甜點', secondary: '超極致黑咖啡 (28)' },
-    glossyavocado: { name: '酪梨鮮蝦三明治', need: 22, type: '沙拉', secondary: '海味酪梨溫沙拉 (18)' },
-    mushroom: { name: '忍者沙拉', need: 12, type: '沙拉', secondary: '孢子濃湯 (14)' },
-    leek: { name: '忍者沙拉', need: 15, type: '沙拉', secondary: '蔥燒炙烤牛排 (16)' },
-    pumpkin: { name: '萬聖節南瓜濃湯', need: 20, type: '咖哩', secondary: '南瓜派 (18)' },
-    tail: { name: '炙烤尾巴咖哩', need: 8, type: '咖哩', secondary: '慢燉尾巴濃湯 (8)' }
+    apple: { name: '熟成甜薯沙拉', name_en: 'Sweet Potato Salad', need: 14, type: '沙拉', type_en: 'Salad', secondary: '花漾馬卡龍 (25)', secondary_en: 'Flower Gift Macaron (25)' },
+    milk: { name: '煉獄玉米乾酪咖哩', name_en: 'Inferno Corn Keema Curry', need: 20, type: '咖哩', type_en: 'Curry', secondary: '花漾馬卡龍 (15)', secondary_en: 'Flower Gift Macaron (15)' },
+    soybeans: { name: '冷靜豆漿沙拉', name_en: 'Calm Soy Salad', need: 15, type: '沙拉', type_en: 'Salad', secondary: '忍者沙拉 (15)', secondary_en: 'Ninja Salad (15)' },
+    honey: { name: '花漾馬卡龍', name_en: 'Flower Gift Macaron', need: 20, type: '甜點', type_en: 'Dessert', secondary: '太妃糖豆漿拿鐵 (15)', secondary_en: 'Zingy Soda Latte (15)' },
+    sausage: { name: '炙烤尾巴咖哩', name_en: 'Grilled Tail Curry', need: 25, type: '咖哩', type_en: 'Curry', secondary: '重磅多汁漢堡排 (18)', secondary_en: 'Juicy Burger (18)' },
+    ginger: { name: '煉獄玉米乾酪咖哩', name_en: 'Inferno Corn Keema Curry', need: 24, type: '咖哩', type_en: 'Curry', secondary: '太妃糖豆漿拿鐵 (20)', secondary_en: 'Zingy Soda Latte (20)' },
+    tomato: { name: '大文字披薩', name_en: 'Fire Blast Pizza', need: 20, type: '甜點', type_en: 'Dessert', secondary: '忍者沙拉 (17)', secondary_en: 'Ninja Salad (17)' },
+    egg: { name: '花漾馬卡龍', name_en: 'Flower Gift Macaron', need: 25, type: '甜點', type_en: 'Dessert', secondary: '早安起司沙拉 (14)', secondary_en: 'Morning Cheese Salad (14)' },
+    oil: { name: '大文字披薩', name_en: 'Fire Blast Pizza', need: 18, type: '甜點', type_en: 'Dessert', secondary: '油封豆腐 (15)', secondary_en: 'Confit Tofu (15)' },
+    potato: { name: '早安起司沙拉', name_en: 'Morning Cheese Salad', need: 18, type: '沙拉', type_en: 'Salad', secondary: '忍者咖哩 (16)', secondary_en: 'Ninja Curry (16)' },
+    herb: { name: '煉獄玉米乾酪咖哩', name_en: 'Inferno Corn Keema Curry', need: 27, type: '咖哩', type_en: 'Curry', secondary: '大文字披薩 (15)', secondary_en: 'Fire Blast Pizza (15)' },
+    corn: { name: '煉獄玉米乾酪咖哩', name_en: 'Inferno Corn Keema Curry', need: 27, type: '咖哩', type_en: 'Curry', secondary: '爆鳴爆米花 (22)', secondary_en: 'Explosion Popcorn (22)' },
+    cacao: { name: '花漾馬卡龍', name_en: 'Flower Gift Macaron', need: 25, type: '甜點', type_en: 'Dessert', secondary: '冷靜豆漿沙拉 (18)', secondary_en: 'Calm Soy Salad (18)' },
+    coffee: { name: '太妃糖豆漿拿鐵', name_en: 'Zingy Soda Latte', need: 35, type: '甜點', type_en: 'Dessert', secondary: '超極致黑咖啡 (28)', secondary_en: 'Ultra Black Coffee (28)' },
+    glossyavocado: { name: '酪梨鮮蝦三明治', name_en: 'Avocado Shrimp Sandwich', need: 22, type: '沙拉', type_en: 'Salad', secondary: '海味酪梨溫沙拉 (18)', secondary_en: 'Seafood Avocado Salad (18)' },
+    mushroom: { name: '忍者沙拉', name_en: 'Ninja Salad', need: 12, type: '沙拉', type_en: 'Salad', secondary: '孢子濃湯 (14)', secondary_en: 'Spore Stew (14)' },
+    leek: { name: '忍者沙拉', name_en: 'Ninja Salad', need: 15, type: '沙拉', type_en: 'Salad', secondary: '蔥燒炙烤牛排 (16)', secondary_en: 'Grilled Steak with Leek (16)' },
+    pumpkin: { name: '萬聖節南瓜濃湯', name_en: 'Halloween Pumpkin Soup', need: 20, type: '咖哩', type_en: 'Curry', secondary: '南瓜派 (18)', secondary_en: 'Pumpkin Pie (18)' },
+    tail: { name: '炙烤尾巴咖哩', name_en: 'Grilled Tail Curry', need: 8, type: '咖哩', type_en: 'Curry', secondary: '慢燉尾巴濃湯 (8)', secondary_en: 'Slow-Cooked Tail Stew (8)' }
   };
 
   function getLadderMultiplier() {
@@ -4190,27 +4332,15 @@
     const displayName = isEN ? (window.I18N.getSubSkillName(skill.name) || skill.name) : skill.name;
     const cls = skill.color ? `skill-badge-${skill.color}` : '';
     const statusNote = skill.status === 'unreleased' ? (isEN ? ' <span class="badge-unreleased">(Unreleased)</span>' : ' <span class="badge-unreleased">(未開放)</span>') : '';
-    return `<span class="wiki-skill-badge ${cls}">${displayName}${statusNote} <span class="skill-badge-val">${skill.val}</span></span>`;
+    const valText = isEN ? (skill.val_en || skill.val) : skill.val;
+    return `<span class="wiki-skill-badge ${cls}">${displayName}${statusNote} <span class="skill-badge-val">${valText}</span></span>`;
   }
 
   // 渲染專長評級卡片
   function renderRatingCard(data) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    let title = data.title;
-    let desc = data.desc;
-
-    if (isEN) {
-      if (data.type === 'berry') {
-        title = '🍊 Berry Specialists';
-        desc = 'Focuses on massive berry production. Berry Finding S (BFS) and Helping Speed are mandatory core skills.';
-      } else if (data.type === 'ingredient') {
-        title = '🍲 Ingredient Specialists';
-        desc = 'Focuses on steady ingredient output. Prioritizes AAA/ABB combinations and Ingredient Finder M/S.';
-      } else if (data.type === 'skill') {
-        title = '⚡ Skill Specialists';
-        desc = 'Focuses on frequent main skill activation. Skill Trigger M/S and Main Skill Chance Up nature are top tier.';
-      }
-    }
+    const title = isEN ? (data.title_en || data.title) : data.title;
+    const desc = isEN ? (data.desc_en || data.desc) : data.desc;
 
     return `
       <div class="wiki-card wiki-rating-card">
@@ -4225,12 +4355,13 @@
             <div class="rating-list">
               ${data.subskills.map(s => {
                 const sName = isEN ? (window.I18N.getSubSkillName(s.name) || s.name) : s.name;
+                const sDetail = isEN ? (s.detail_en || s.detail) : s.detail;
                 return `
                 <div class="rating-item">
                   <span class="rating-tier-tag tier-${s.grade.toLowerCase()}">${s.grade}</span>
                   <div class="rating-item-content">
                     <span class="rating-item-name font-bold text-white">${sName}</span>
-                    <span class="rating-item-detail text-secondary">${s.detail}</span>
+                    <span class="rating-item-detail text-secondary">${sDetail}</span>
                   </div>
                 </div>
               `;}).join('')}
@@ -4242,12 +4373,13 @@
             <div class="rating-list">
               ${data.natures.map(n => {
                 const nName = isEN ? (window.I18N.getNatureName(n.name) || n.name) : n.name;
+                const nDetail = isEN ? (n.detail_en || n.detail) : n.detail;
                 return `
                 <div class="rating-item">
                   <span class="rating-tier-tag tier-${n.grade.toLowerCase()}">${n.grade}</span>
                   <div class="rating-item-content">
                     <span class="rating-item-name font-bold text-white">${nName}</span>
-                    <span class="rating-item-detail text-secondary">${n.detail}</span>
+                    <span class="rating-item-detail text-secondary">${nDetail}</span>
                   </div>
                 </div>
               `;}).join('')}
@@ -4306,12 +4438,13 @@
 
           <!-- 各食材軌道 (19種食材完整一覽) -->
           ${ladderData.map(ing => {
-            const dishInfo = TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { name: isEN ? 'High Tier Dish' : '高階料理', need: 20, type: isEN ? 'Dish' : '料理', secondary: '' };
+            const dishInfo = TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { name: isEN ? 'High Tier Dish' : '高階料理', name_en: 'High Tier Dish', need: 20, type: isEN ? 'Dish' : '料理', secondary: '' };
+            const dishName = isEN ? (dishInfo.name_en || dishInfo.name) : dishInfo.name;
             const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
 
             return `
             <div class="ladder-track-row" data-ladder-ing="${ing.id}">
-              <div class="ladder-track-header" title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isEN ? 'Key Dish:' : '核心大菜：'}${dishInfo.name} (${dishInfo.need}${isEN ? '/meal' : '顆/餐'})">
+              <div class="ladder-track-header" title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isEN ? 'Key Dish: ' : '核心大菜：'}${dishName} (${dishInfo.need}${isEN ? '/meal' : '顆/餐'})">
                 <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">
               </div>
 
@@ -4400,7 +4533,7 @@
                             
                             <!-- 🍲 頂級大菜供貨能力指標 -->
                             <div class="tooltip-dish-box">
-                              <div class="tooltip-dish-title">🍲 ${isEN ? 'Key Dish: ' : '核心大菜：'}<span class="text-white font-bold">${dishInfo.name}</span> (${dishInfo.need}${isEN ? '/meal' : '顆/餐'})</div>
+                              <div class="tooltip-dish-title">🍲 ${isEN ? 'Key Dish: ' : '核心大菜：'}<span class="text-white font-bold">${dishName}</span> (${dishInfo.need}${isEN ? '/meal' : '顆/餐'})</div>
                               <div class="tooltip-dish-badge ${dishBadgeClass}">${dishTag}</div>
                             </div>
 
@@ -4506,32 +4639,36 @@
   // 渲染食材天梯榜卡片 (舊版清單檢視)
   function renderIngredientLadders(ladders) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    return ladders.map(ing => `
+    return ladders.map(ing => {
+      const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
+      return `
       <div class="ladder-card" data-ladder-ing="${ing.id}">
         <div class="ladder-header">
           <div class="ladder-title-group">
-            <img src="${ing.icon}" class="ladder-icon" alt="${ing.name}">
-            <h4 class="ladder-name">${ing.name}</h4>
+            <img src="${ing.icon}" class="ladder-icon" alt="${ingName}">
+            <h4 class="ladder-name">${ingName}</h4>
           </div>
           <span class="ladder-max-badge">${isEN ? 'Max Daily ~ ' : '最高日產 ~ '}${ing.maxDaily} ${isEN ? '/day' : '顆'}</span>
         </div>
 
         <div class="ladder-tiers-list">
-          ${ing.tiers.map(t => `
+          ${ing.tiers.map(t => {
+            const pkmName = isEN ? (window.I18N.getPokemonName(t.name) || t.name) : t.name;
+            return `
             <div class="ladder-tier-row">
               <div class="ladder-tier-info">
-                <span class="ladder-pkm-name font-bold">${t.name}</span>
-                <span class="ladder-count text-accent font-bold">${t.count}</span>
+                <span class="ladder-pkm-name font-bold">${pkmName}</span>
+                <span class="ladder-count text-accent font-bold">${t.count} ${isEN ? '/day' : '顆'}</span>
               </div>
               <div class="ladder-progress-bar">
                 <div class="ladder-progress-fill" style="width: ${t.rate}%"></div>
               </div>
               <div class="ladder-note text-muted">${t.note}</div>
             </div>
-          `).join('')}
+          `;}).join('')}
         </div>
       </div>
-    `).join('');
+    `;}).join('');
   }
 
   // 渲染技能卡片 (精簡緊湊設計，蓄力與屬性加速採用互動式切換)
@@ -4548,7 +4685,8 @@
 
     return skills.map(skill => {
       let valuesHtml = '';
-      const skillName = isEN ? (window.I18N.getMainSkillName(skill.id) || skill.name) : skill.name;
+      const rawSkillName = skill.name || skill.id;
+      const skillName = isEN ? (window.I18N ? (window.I18N.getMainSkillName(rawSkillName) || skill.name_en || rawSkillName) : rawSkillName) : rawSkillName;
       const catLabel = catNameMap[skill.category] || skill.catName;
       const unitLabel = isEN ? (skill.unit_en || (skill.unit.includes('能量') ? ' Strength' : (skill.unit.includes('食材') ? ' Ingredients' : (skill.unit.includes('次') ? ' Helps' : (skill.unit.includes('點') ? ' Energy' : skill.unit))))) : skill.unit;
 
@@ -4640,8 +4778,8 @@
                 </thead>
                 <tbody>
                   ${skill.matrix.map(m => `
-                    <tr class="${m.kinds === '5 種類' ? 'row-highlight' : ''}">
-                      <td class="font-bold text-accent">${m.kinds}</td>
+                    <tr class="${(m.kinds === '5 種類' || m.kinds_en === '5 Species') ? 'row-highlight' : ''}">
+                      <td class="font-bold text-accent">${isEN ? (m.kinds_en || m.kinds) : m.kinds}</td>
                       ${m.vals.map(v => `<td>${v} ${isEN ? 'Helps' : '次'}</td>`).join('')}
                     </tr>
                   `).join('')}
@@ -4690,7 +4828,7 @@
               <tbody>
                 ${skill.berryMatrix.map((m, idx) => `
                   <tr class="${idx === 4 ? 'row-highlight' : ''}">
-                    <td class="font-bold text-accent">${m.kinds}</td>
+                    <td class="font-bold text-accent">${isEN ? (m.kinds_en || m.kinds) : m.kinds}</td>
                     ${m.vals.map(v => `<td>${v} ${isEN ? 'Berries' : '顆'}</td>`).join('')}
                   </tr>
                 `).join('')}
@@ -4737,6 +4875,10 @@
         valuesHtml = `<div class="skill-level-chip"><span class="level-val">${unitLabel}</span></div>`;
       }
 
+      const skillDesc = isEN ? (skill.desc_en || skill.desc) : skill.desc;
+      const specialNote = skill.specialNote ? (isEN ? (skill.specialNote_en || skill.specialNote) : skill.specialNote) : null;
+      const penaltyNote = skill.penaltyNote ? (isEN ? (skill.penaltyNote_en || skill.penaltyNote) : skill.penaltyNote) : null;
+
       return `
         <div class="wiki-skill-card" data-category="${skill.category}">
           <div class="skill-card-top">
@@ -4748,9 +4890,9 @@
           </div>
 
           <p class="skill-desc-text">
-            ${skill.desc}
-            ${skill.specialNote ? `<span class="skill-note-inline">${skill.specialNote}</span>` : ''}
-            ${skill.penaltyNote ? `<span class="skill-penalty-inline">${skill.penaltyNote}</span>` : ''}
+            ${skillDesc}
+            ${specialNote ? `<span class="skill-note-inline">${specialNote}</span>` : ''}
+            ${penaltyNote ? `<span class="skill-penalty-inline">${penaltyNote}</span>` : ''}
           </p>
 
           <div class="skill-values-container">
@@ -4770,16 +4912,16 @@
         <!-- 二級子分頁導航 (Sub-tabs) - 精簡無大標題橫幅 -->
         <div class="wiki-subnav-bar">
           <div class="wiki-subnav-tabs" role="tablist">
-            <button type="button" class="wiki-subtab-btn active" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${isEN ? '⚡ Main Skills DB' : '⚡ 主技能數值庫'}</button>
-            <button type="button" class="wiki-subtab-btn" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${isEN ? '🧩 Sub-Skills & Natures' : '🧩 副技能與性格指南'}</button>
-            <button type="button" class="wiki-subtab-btn" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isEN ? '🎓 Growth & Tier Guide' : '🎓 培育與評級指南'}</button>
-            <button type="button" class="wiki-subtab-btn" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isEN ? '🥗 Lv.60 Ingredient Ladder' : '🥗 Lv.60 食材天梯榜'}</button>
-            <button type="button" class="wiki-subtab-btn" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isEN ? '🫐 Berry & Ing. Values' : '🫐 樹果與食材能量'}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills' ? 'active' : ''}" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${isEN ? '⚡ Main Skills DB' : '⚡ 主技能數值庫'}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'subskills' ? 'active' : ''}" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${isEN ? '🧩 Sub-Skills & Natures' : '🧩 副技能與性格指南'}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isEN ? '🎓 Growth & Tier Guide' : '🎓 培育與評級指南'}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isEN ? '🥗 Lv.60 Ingredient Ladder' : '🥗 Lv.60 食材天梯榜'}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isEN ? '🫐 Berry & Ing. Values' : '🫐 樹果與食材能量'}</button>
           </div>
         </div>
 
         <!-- 子分頁 1：⚡ 主技能數值庫 (Main Skills) -->
-        <div id="wiki-subpanel-skills" class="wiki-subpanel active">
+        <div id="wiki-subpanel-skills" class="wiki-subpanel ${currentWikiSubTab === 'skills' ? 'active' : ''}" style="${currentWikiSubTab === 'skills' ? 'display:block;' : 'display:none;'}">
           <div class="wiki-control-bar">
             <div class="wiki-filter-pills">
               <span class="wiki-pill-label">${isEN ? 'Skill Type:' : '技能類型：'}</span>
@@ -4798,7 +4940,7 @@
         </div>
 
         <!-- 子分頁 2：🧩 副技能與性格指南 (Sub-Skills & Natures) -->
-        <div id="wiki-subpanel-subskills" class="wiki-subpanel">
+        <div id="wiki-subpanel-subskills" class="wiki-subpanel ${currentWikiSubTab === 'subskills' ? 'active' : ''}" style="${currentWikiSubTab === 'subskills' ? 'display:block;' : 'display:none;'}">
           <!-- 主技能發動機率矩陣速查表 -->
           <div class="wiki-card">
             <div class="wiki-card-header">
@@ -4812,11 +4954,11 @@
               <table class="wiki-data-table">
                 <thead>
                   <tr>
-                    <th>副技能組合</th>
-                    <th>性格主技能機率</th>
-                    <th>乘算計算式</th>
-                    <th>最終綜合總倍率</th>
-                    <th>發動強度評級</th>
+                    <th>${isEN ? 'Sub-Skill Combo' : '副技能組合'}</th>
+                    <th>${isEN ? 'Nature Modifier' : '性格主技能機率'}</th>
+                    <th>${isEN ? 'Calculation Formula' : '乘算計算式'}</th>
+                    <th>${isEN ? 'Combined Multiplier' : '最終綜合總倍率'}</th>
+                    <th>${isEN ? 'Trigger Tier' : '發動強度評級'}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -4825,25 +4967,28 @@
                       <td style="vertical-align: middle;">
                         <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                           ${row.subskills && row.subskills.length > 0 
-                            ? row.subskills.map(s => `<span class="wiki-skill-badge skill-badge-${s.color}">${s.name}</span>`).join('') 
-                            : '<span class="text-muted" style="font-size: 12px; font-weight: 500;">無技能機率副技能</span>'}
+                            ? row.subskills.map(s => {
+                                const sName = isEN ? (window.I18N.getSubSkillName(s.name) || s.name) : s.name;
+                                return `<span class="wiki-skill-badge skill-badge-${s.color}">${sName}</span>`;
+                              }).join('') 
+                            : `<span class="text-muted" style="font-size: 12px; font-weight: 500;">${isEN ? 'No Skill Trigger Sub-Skills' : '無技能機率副技能'}</span>`}
                         </div>
                       </td>
                       <td style="vertical-align: middle;">
                         ${row.natureBadge === 'up' 
-                          ? '<span style="color: #34d399; font-weight: 700; font-size: 12.5px;">▲▲ 技能機率上升</span>' 
+                          ? `<span style="color: #34d399; font-weight: 700; font-size: 12.5px;">${isEN ? '▲▲ Trigger Rate Up' : '▲▲ 技能機率上升'}</span>` 
                           : (row.natureBadge === 'down' 
-                            ? '<span style="color: #f87171; font-weight: 700; font-size: 12.5px;">▼▼ 技能機率下降</span>' 
-                            : '<span class="text-secondary" style="font-size: 12.5px;">無修正 / 其它性格</span>')}
+                            ? `<span style="color: #f87171; font-weight: 700; font-size: 12.5px;">${isEN ? '▼▼ Trigger Rate Down' : '▼▼ 技能機率下降'}</span>` 
+                            : `<span class="text-secondary" style="font-size: 12.5px;">${isEN ? 'Neutral / Other Natures' : '無修正 / 其它性格'}</span>`)}
                       </td>
                       <td style="vertical-align: middle;"><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">${row.calc}</code></td>
                       <td style="vertical-align: middle;">
-                        <span class="text-accent font-bold" style="font-size: 13.5px;">${row.multiplier.toFixed(3)} 倍</span>
+                        <span class="text-accent font-bold" style="font-size: 13.5px;">${row.multiplier.toFixed(3)} ${isEN ? 'x' : '倍'}</span>
                         <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: ${row.multiplier >= 1 ? '#34d399' : '#f87171'};">
                           (${row.multiplier >= 1 ? '+' : ''}${((row.multiplier - 1) * 100).toFixed(1)}%)
                         </span>
                       </td>
-                      <td style="vertical-align: middle;"><span class="wiki-tier-badge tier-${row.grade[0].toLowerCase()}">${row.grade}</span></td>
+                      <td style="vertical-align: middle;"><span class="wiki-tier-badge tier-${row.grade[0].toLowerCase()}">${isEN ? (row.grade_en || row.grade) : row.grade}</span></td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -4855,30 +5000,32 @@
           <div class="wiki-card" style="margin-top: 20px;">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">📋</span>
-              <h3 class="wiki-card-title">副技能階級與數值完整一覽表（已開放副技能）</h3>
+              <h3 class="wiki-card-title">${isEN ? 'Sub-Skills Complete Tier & Stats Overview' : '副技能階級與數值完整一覽表（已開放副技能）'}</h3>
             </div>
             <div class="wiki-rule-banner">
-              ⚠️ <strong>重要規則</strong>：副技能幫忙速度（幫手獎勵 5% + 幫速M 14% + 幫速S 7%）<strong>合計上限為 35%</strong>。
+              ${isEN 
+                ? '⚠️ <strong>Important Rule</strong>: Helping speed from sub-skills (Helping Bonus 5% + Helping Speed M 14% + Helping Speed S 7%) is <strong>capped at 35%</strong>.'
+                : '⚠️ <strong>重要規則</strong>：副技能幫忙速度（幫手獎勵 5% + 幫速M 14% + 幫速S 7%）<strong>合計上限為 35%</strong>。'}
             </div>
             <div class="wiki-table-wrapper">
               <table class="wiki-data-table">
                 <thead>
                   <tr>
-                    <th style="min-width: 90px;">專長分類</th>
-                    <th style="min-width: 220px;">已開放階級與技能標籤</th>
-                    <th>詳細效果說明</th>
+                    <th style="min-width: 90px;">${isEN ? 'Category' : '專長分類'}</th>
+                    <th style="min-width: 220px;">${isEN ? 'Available Tiers & Tags' : '已開放階級與技能標籤'}</th>
+                    <th>${isEN ? 'Detailed Effect' : '詳細效果說明'}</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${SUB_SKILLS_DATA.map(row => `
                     <tr>
-                      <td class="font-bold text-accent">${row.category}</td>
+                      <td class="font-bold text-accent">${isEN ? (row.category_en || row.category) : row.category}</td>
                       <td>
                         <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
                           ${row.skills.map(s => renderSkillBadge(s)).join('')}
                         </div>
                       </td>
-                      <td class="text-secondary">${row.desc}</td>
+                      <td class="text-secondary">${isEN ? (row.desc_en || row.desc) : row.desc}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -4890,25 +5037,25 @@
           <div class="wiki-card" style="margin-top: 20px;">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">🧬</span>
-              <h3 class="wiki-card-title">性格五維屬性增減倍率表（官方最新補正）</h3>
+              <h3 class="wiki-card-title">${isEN ? 'Nature 5-Stat Multiplier Table (Official Rates)' : '性格五維屬性增減倍率表（官方最新補正）'}</h3>
             </div>
             <div class="wiki-table-wrapper">
               <table class="wiki-data-table">
                 <thead>
                   <tr>
-                    <th>屬性項目</th>
-                    <th>▲▲ 增加性格 (上升效果)</th>
-                    <th>▼▼ 下降性格 (下降效果)</th>
-                    <th>影響機制說明</th>
+                    <th>${isEN ? 'Stat' : '屬性項目'}</th>
+                    <th>${isEN ? '▲▲ Boosted Nature' : '▲▲ 增加性格 (上升效果)'}</th>
+                    <th>${isEN ? '▼▼ Hindered Nature' : '▼▼ 下降性格 (下降效果)'}</th>
+                    <th>${isEN ? 'Mechanic Details' : '影響機制說明'}</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${NATURES_EFFECT_DATA.map(row => `
                     <tr>
-                      <td class="font-bold text-white">${row.stat}</td>
-                      <td class="text-success font-bold">${row.up}</td>
-                      <td class="text-danger font-bold">${row.down}</td>
-                      <td class="text-secondary">${row.desc}</td>
+                      <td class="font-bold text-white">${isEN ? (row.stat_en || row.stat) : row.stat}</td>
+                      <td class="text-success font-bold">${isEN ? (row.up_en || row.up) : row.up}</td>
+                      <td class="text-danger font-bold">${isEN ? (row.down_en || row.down) : row.down}</td>
+                      <td class="text-secondary">${isEN ? (row.desc_en || row.desc) : row.desc}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -4918,33 +5065,33 @@
         </div>
 
         <!-- 子分頁 3：🎓 培育與評級指南 (Ratings & Growth) -->
-        <div id="wiki-subpanel-ratings" class="wiki-subpanel">
+        <div id="wiki-subpanel-ratings" class="wiki-subpanel ${currentWikiSubTab === 'ratings' ? 'active' : ''}" style="${currentWikiSubTab === 'ratings' ? 'display:block;' : 'display:none;'}">
           <!-- 培育週期與核心思維 -->
           <div class="wiki-card">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">🎯</span>
-              <h3 class="wiki-card-title">新手與進階養成核心週期指引</h3>
+              <h3 class="wiki-card-title">${isEN ? 'Core Growth & Investment Cycle Guide' : '新手與進階養成核心週期指引'}</h3>
             </div>
             <div class="wiki-strategy-grid">
               <div class="strategy-item">
-                <div class="strategy-badge">前期目標</div>
-                <div class="strategy-title">優先放置在 Lv.30</div>
-                <div class="strategy-desc">先看性格與 Lv.10 & Lv.25 副技能，無課/微課約養成 2~4 個月即可解鎖第 2 種食材，成為中流砥柱。</div>
+                <div class="strategy-badge">${isEN ? 'Early Goal' : '前期目標'}</div>
+                <div class="strategy-title">${isEN ? 'Prioritize Lv.30' : '優先放置在 Lv.30'}</div>
+                <div class="strategy-desc">${isEN ? 'Focus on nature and Lv.10 & Lv.25 sub-skills. Takes ~2-4 months for free/light players to unlock 2nd ingredient slot, becoming core pillars.' : '先看性格與 Lv.10 & Lv.25 副技能，無課/微課約養成 2~4 個月即可解鎖第 2 種食材，成為中流砥柱。'}</div>
               </div>
               <div class="strategy-item">
-                <div class="strategy-badge">後期投資</div>
-                <div class="strategy-title">慎選投入 Lv.50~60</div>
-                <div class="strategy-desc">確認副技能與性格皆達 Ⓢ/Ⓐ 畢業級再投入大量糖果與金種子（約需 5~10 個月養成時間）。</div>
+                <div class="strategy-badge">${isEN ? 'Late Game' : '後期投資'}</div>
+                <div class="strategy-title">${isEN ? 'Carefully Invest in Lv.50~60' : '慎選投入 Lv.50~60'}</div>
+                <div class="strategy-desc">${isEN ? 'Ensure sub-skills and nature reach Ⓢ/Ⓐ graduation tier before heavily investing candies and Main Skill Seeds (~5-10 months).' : '確認副技能與性格皆達 Ⓢ/Ⓐ 畢業級再投入大量糖果與金種子（約需 5~10 個月養成時間）。'}</div>
               </div>
               <div class="strategy-item">
-                <div class="strategy-badge">活力核心</div>
-                <div class="strategy-title">優先養成一隻主力補師</div>
-                <div class="strategy-desc">全體活力維持在 80% 以上可享受 2.2x~2.5x 幫忙速度！建議先練：胖可丁、仙子伊布、沙奈朵或巴布土撥。</div>
+                <div class="strategy-badge">${isEN ? 'Energy Core' : '活力核心'}</div>
+                <div class="strategy-title">${isEN ? 'Raise One Dedicated Healer First' : '優先養成一隻主力補師'}</div>
+                <div class="strategy-desc">${isEN ? 'Maintaining team energy > 80% grants 2.2x~2.5x helping speed! Recommended healers: Wigglytuff, Sylveon, Gardevoir, or Pawmot.' : '全體活力維持在 80% 以上可享受 2.2x~2.5x 幫忙速度！建議先練：胖可丁、仙子伊布、沙奈朵或巴布土撥。'}</div>
               </div>
               <div class="strategy-item">
-                <div class="strategy-badge">種子機制</div>
-                <div class="strategy-title">主技能與副技能種子規則</div>
-                <div class="strategy-desc">每次進化主技能+1、持有上限+5。副技能不能同時存在相同名稱技能（如已有S與M，則S無法再升階為M）。</div>
+                <div class="strategy-badge">${isEN ? 'Seed Rules' : '種子機制'}</div>
+                <div class="strategy-title">${isEN ? 'Main & Sub Skill Seed Rules' : '主技能與副技能種子規則'}</div>
+                <div class="strategy-desc">${isEN ? 'Each evolution grants Main Skill Lv.+1 and inventory +5. Duplicate sub-skills cannot coexist (if S and M already exist, S cannot upgrade to M).' : '每次進化主技能+1、持有上限+5。副技能不能同時存在相同名稱技能（如已有S與M，則S無法再升階為M）。'}</div>
               </div>
             </div>
           </div>
@@ -4960,38 +5107,38 @@
           <div class="wiki-card wiki-calc-card" style="margin-top: 24px;">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">🌙</span>
-              <h3 class="wiki-card-title">寶可夢睡眠升級天數計算器</h3>
+              <h3 class="wiki-card-title">${isEN ? 'Pokémon Sleep EXP & Days Calculator' : '寶可夢睡眠升級天數計算器'}</h3>
             </div>
-            <p class="wiki-card-desc">依據每日睡滿 100 分（100 EXP 基礎），計算從目前等級升至目標等級所需睡眠天數與經驗值。</p>
+            <p class="wiki-card-desc">${isEN ? 'Based on 100 daily sleep score (100 base EXP), calculates required sleep days and EXP from current to target level.' : '依據每日睡滿 100 分（100 EXP 基礎），計算從目前等級升至目標等級所需睡眠天數與經驗值。'}</p>
             
             <div class="calc-inputs-row">
               <div class="calc-input-group">
-                <label class="calc-label" for="calc-sleep-cur-lv">目前等級：</label>
+                <label class="calc-label" for="calc-sleep-cur-lv">${isEN ? 'Current Level:' : '目前等級：'}</label>
                 <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="59" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
               </div>
 
               <div class="calc-input-group">
-                <label class="calc-label" for="calc-sleep-target-lv">目標等級：</label>
+                <label class="calc-label" for="calc-sleep-target-lv">${isEN ? 'Target Level:' : '目標等級：'}</label>
                 <input type="number" id="calc-sleep-target-lv" class="calc-input-num" value="30" min="2" max="60" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
               </div>
 
               <div class="calc-input-group">
-                <label class="calc-label">加成條件：</label>
+                <label class="calc-label">${isEN ? 'Boost Conditions:' : '加成條件：'}</label>
                 <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 4px;">
-                  <label><input type="checkbox" id="calc-sleep-exp-subskill" onchange="window.WikiDB.recalcSleepDays()"> 睡眠EXP獎勵 (+14%)</label>
-                  <label><input type="checkbox" id="calc-sleep-incense" onchange="window.WikiDB.recalcSleepDays()"> 成長薰香 (2x)</label>
+                  <label><input type="checkbox" id="calc-sleep-exp-subskill" onchange="window.WikiDB.recalcSleepDays()"> ${isEN ? 'Sleep EXP Bonus (+14%)' : '睡眠EXP獎勵 (+14%)'}</label>
+                  <label><input type="checkbox" id="calc-sleep-incense" onchange="window.WikiDB.recalcSleepDays()"> ${isEN ? 'Growth Incense (2x)' : '成長薰香 (2x)'}</label>
                   <select id="calc-sleep-nature-select" class="calc-select" style="width: auto; padding: 4px 8px;" onchange="window.WikiDB.recalcSleepDays()">
-                    <option value="1.0">性格無 EXP 修正</option>
-                    <option value="1.18">性格 EXP ▲▲ (+18%)</option>
-                    <option value="0.82">性格 EXP ▼▼ (-18%)</option>
+                    <option value="1.0">${isEN ? 'Neutral EXP Nature' : '性格無 EXP 修正'}</option>
+                    <option value="1.18">${isEN ? 'EXP Up ▲▲ (+18%)' : '性格 EXP ▲▲ (+18%)'}</option>
+                    <option value="0.82">${isEN ? 'EXP Down ▼▼ (-18%)' : '性格 EXP ▼▼ (-18%)'}</option>
                   </select>
                 </div>
               </div>
 
               <div class="calc-result-box">
-                <div class="calc-result-label">預估所需睡眠天數</div>
-                <div id="calc-sleep-days-result" class="calc-result-val">120 天</div>
-                <div id="calc-sleep-exp-result" class="calc-result-badge">約需 12,000 EXP</div>
+                <div class="calc-result-label">${isEN ? 'Estimated Sleep Days' : '預估所需睡眠天數'}</div>
+                <div id="calc-sleep-days-result" class="calc-result-val">${isEN ? '120 Days' : '120 天'}</div>
+                <div id="calc-sleep-exp-result" class="calc-result-badge">${isEN ? 'Approx. 12,000 EXP' : '約需 12,000 EXP'}</div>
               </div>
             </div>
 
@@ -5000,10 +5147,10 @@
               <table class="wiki-data-table">
                 <thead>
                   <tr>
-                    <th>目標等級</th>
-                    <th>累計所需 EXP</th>
-                    <th>無加成睡眠天數 (每天100EXP)</th>
-                    <th>里程碑意義</th>
+                    <th>${isEN ? 'Target Level' : '目標等級'}</th>
+                    <th>${isEN ? 'Total Required EXP' : '累計所需 EXP'}</th>
+                    <th>${isEN ? 'Base Sleep Days (100 EXP/Day)' : '無加成睡眠天數 (每天100EXP)'}</th>
+                    <th>${isEN ? 'Milestone Significance' : '里程碑意義'}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -5011,8 +5158,8 @@
                     <tr>
                       <td class="font-bold text-accent">Lv. ${row.level}</td>
                       <td class="font-bold">${row.totalExp.toLocaleString()} EXP</td>
-                      <td class="text-success font-bold">${row.days} 天 (搭配活動約 ${Math.ceil(row.days / 2)} 天)</td>
-                      <td class="text-secondary">${row.note}</td>
+                      <td class="text-success font-bold">${row.days} ${isEN ? 'Days (approx. ' + Math.ceil(row.days / 2) + ' with events)' : '天 (搭配活動約 ' + Math.ceil(row.days / 2) + ' 天)'}</td>
+                      <td class="text-secondary">${isEN ? (row.note_en || row.note) : row.note}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -5022,7 +5169,7 @@
         </div>
 
         <!-- 子分頁 4：🥗 Lv.60 食材天梯榜 (Lv.60 Ingredients Ladder) -->
-        <div id="wiki-subpanel-ingredients" class="wiki-subpanel">
+        <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:block;' : 'display:none;'}">
           <div class="wiki-card">
             <div class="wiki-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
               <div style="display: flex; align-items: center; gap: 8px;">
@@ -5078,7 +5225,7 @@
         </div>
 
         <!-- 子分頁 5：🫐 樹果與食材基礎能量 (Image 1 實體化 - Berry & Ingredient Values) -->
-        <div id="wiki-subpanel-values" class="wiki-subpanel">
+        <div id="wiki-subpanel-values" class="wiki-subpanel ${currentWikiSubTab === 'values' ? 'active' : ''}" style="${currentWikiSubTab === 'values' ? 'display:block;' : 'display:none;'}">
           <div class="wiki-card">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">🫐</span>
