@@ -97,7 +97,7 @@
 graph TD
     User["使用者 (Browser / Mobile)"] --> SPA["SPA 單頁核心 (index.html)"]
     
-    subgraph Core Modules ["核心前端模組 (Vanilla JS & CSS3)"]
+    subgraph CoreModules ["核心前端模組 (Vanilla JS & CSS3)"]
         I18N["🌐 i18n 雙語引擎 (i18n.js)"]
         Theme["🎨 多主題樣式引擎 (styles.css)"]
         Dex["⚡ 寶可夢圖鑑 (app.js)"]
@@ -108,7 +108,7 @@ graph TD
         News["📰 最新公告 (news.js)"]
     end
     
-    subgraph Data & Services ["資料層與周邊服務"]
+    subgraph DataServices ["資料層與周邊服務"]
         DataJSON[("data.json (247+ 寶可夢)")]
         RecipesJSON[("recipes.json (78 道料理)")]
         NewsJSON[("news.json (官方活動公告)")]
@@ -117,7 +117,15 @@ graph TD
         GHActions["🔄 GitHub Actions (線上定時爬蟲)"]
     end
 
-    SPA --> Core Modules
+    SPA --> I18N
+    SPA --> Theme
+    SPA --> Dex
+    SPA --> Recipes
+    SPA --> Wiki
+    SPA --> Box
+    SPA --> Appraisal
+    SPA --> News
+
     Dex --> DataJSON
     Recipes --> RecipesJSON
     News --> NewsJSON
