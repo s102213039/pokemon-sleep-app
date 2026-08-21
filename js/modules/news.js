@@ -112,17 +112,18 @@
       endCol = Math.max(startCol, Math.min(totalDays, endCol));
       const spanCols = Math.max(1, endCol - startCol + 1);
 
-      let cleanTitle = item.title
-        .replace(/【[^】]+】/g, '')
+      const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+      let rawTitle = (isEN && item.title_en) ? item.title_en : item.title;
+      let cleanTitle = rawTitle
+        .replace(/【[^】]+】|\[[^\]]+\]/g, '')
         .replace(/「|」/g, '')
         .replace(/介紹$/g, '')
         .replace(/資訊$/g, '')
         .trim();
 
-      const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
       let typeLabel = isEN ? 'Event' : '活動列表';
       let typeClass = 'gantt-bar-event';
-      if (item.title.includes('培育包')) {
+      if (item.title.includes('培育包') || (item.title_en && item.title_en.includes('Growth Bundle'))) {
         typeLabel = isEN ? 'Growth Pack' : '培育包';
         typeClass = 'gantt-bar-pack';
       } else if (isPack) {
@@ -133,7 +134,7 @@
       ganttItems.push({
         id: item.id,
         title: cleanTitle,
-        fullTitle: item.title,
+        fullTitle: rawTitle,
         typeLabel,
         typeClass,
         startStr: schedule.startStr,
@@ -402,7 +403,10 @@
           <div class="news-debut-banner">
             <span class="news-debut-label">${isEN ? '🦄 New Pokémon Debut: ' : '🦄 新登場寶可夢：'}</span>
             <div class="news-poke-pill-group">
-              ${item.debut_pokemon.map(p => `<span class="news-poke-pill-new">✨ ${escapeHtml(p)}</span>`).join('')}
+              ${item.debut_pokemon.map(p => {
+                const pName = isEN && window.I18N ? window.I18N.getPokemonName(p) : p;
+                return `<span class="news-poke-pill-new">✨ ${escapeHtml(pName)}</span>`;
+              }).join('')}
             </div>
           </div>
         `;
@@ -411,7 +415,10 @@
           <div class="news-featured-banner">
             <span class="news-featured-label">${isEN ? '⭐ Featured Pokémon: ' : '⭐ 焦點寶可夢：'}</span>
             <div class="news-poke-pill-group">
-              ${item.featured_pokemon.map(p => `<span class="news-poke-pill-featured">🔥 ${escapeHtml(p)}</span>`).join('')}
+              ${item.featured_pokemon.map(p => {
+                const pName = isEN && window.I18N ? window.I18N.getPokemonName(p) : p;
+                return `<span class="news-poke-pill-featured">🔥 ${escapeHtml(pName)}</span>`;
+              }).join('')}
             </div>
           </div>
         `;
@@ -427,21 +434,25 @@
               <span class="news-ai-dashboard-title">${isEN ? 'AI Key Highlights & Insights' : 'AI 智能深度重點整理'}</span>
             </div>
             <div class="news-ai-sections-grid">
-              ${item.sections.map(sec => `
+              ${item.sections.map(sec => {
+                const secTitle = isEN ? (sec.title_en || sec.title) : sec.title;
+                const secItems = isEN && sec.items_en ? sec.items_en : sec.items;
+                return `
                 <div class="news-ai-section-box news-sec-${sec.key || 'general'}">
                   <div class="news-ai-section-title">
                     <span>${sec.icon || '📌'}</span>
-                    <span>${sec.title}</span>
+                    <span>${secTitle}</span>
                   </div>
                   <ul class="news-ai-section-list">
-                    ${sec.items.map(it => `<li>${formatAiListItem(it, item)}</li>`).join('')}
+                    ${secItems.map(it => `<li>${formatAiListItem(it, item)}</li>`).join('')}
                   </ul>
                 </div>
-              `).join('')}
+              `;}).join('')}
             </div>
           </div>
         `;
       } else if (item.highlights && item.highlights.length > 0) {
+        const highlightsList = isEN && item.highlights_en ? item.highlights_en : item.highlights;
         aiSectionsHTML = `
           <div class="news-ai-highlights">
             <div class="news-ai-title">
@@ -449,7 +460,7 @@
               <span>${isEN ? 'AI Key Highlights' : 'AI 智能重點萃取'}</span>
             </div>
             <ul class="news-ai-list">
-              ${item.highlights.map(h => `<li>${formatAiListItem(h, item)}</li>`).join('')}
+              ${highlightsList.map(h => `<li>${formatAiListItem(h, item)}</li>`).join('')}
             </ul>
           </div>
         `;
@@ -469,6 +480,9 @@
         maintenance: isEN ? 'Maintenance' : '維護公告',
         notice: isEN ? 'Notice' : '重要通知'
       };
+
+      const displayTitle = isEN ? (item.title_en || item.title) : item.title;
+      const displayOverview = isEN ? (item.overview_en || item.overview) : item.overview;
 
       return `
         <article class="news-card ${isLatest ? 'news-card-featured' : ''}" data-id="${item.id}">
@@ -491,12 +505,12 @@
           </div>
 
           <h3 class="news-card-title">
-            <a href="${item.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a>
+            <a href="${item.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(displayTitle)}</a>
           </h3>
 
           ${debutBannerHTML}
 
-          <p class="news-overview-text">${escapeHtml(item.overview || '')}</p>
+          <p class="news-overview-text">${escapeHtml(displayOverview || '')}</p>
 
           ${aiSectionsHTML}
 

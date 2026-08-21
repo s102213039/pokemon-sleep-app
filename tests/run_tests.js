@@ -1192,6 +1192,35 @@ test('Tier 4 - Real-World Application Scenarios', 'SPA Tab Lifecycle, Hashchange
   });
 });
 
+test('Tier 1 - Feature Coverage', 'Bilingual News & Events Translation Dataset & Render Verification', () => {
+  const newsData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'news.json'), 'utf8'));
+  assert(newsData.length >= 20, 'news.json should have >= 20 items');
+
+  newsData.forEach(item => {
+    assert(item.title_en && typeof item.title_en === 'string', `News item ${item.id} missing title_en`);
+    assert(item.overview_en && typeof item.overview_en === 'string', `News item ${item.id} missing overview_en`);
+    assert(!/[\u4e00-\u9fa5]/.test(item.title_en), `title_en for "${item.title_en}" contains Chinese characters`);
+    assert(!/[\u4e00-\u9fa5]/.test(item.overview_en), `overview_en for "${item.title_en}" contains Chinese characters`);
+  });
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Sidebar Filter UI Tokens (Ing.1 only & 2-column layout tokens)', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const ctx = {
+    window: {
+      location: { hash: '#pokemon' },
+      localStorage: { getItem: () => 'en-US', setItem: () => {} }
+    }
+  };
+  ctx.window.window = ctx.window;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+
+  ctx.window.I18N.setLanguage('en-US');
+  const initialIngText = ctx.window.I18N.t('pokedex.only_initial_ing');
+  assert(initialIngText === '🥗 Ing.1 only', `pokedex.only_initial_ing in English must be "🥗 Ing.1 only", got "${initialIngText}"`);
+});
+
 
 // Final Summary Output
 console.log('\n======================================================');

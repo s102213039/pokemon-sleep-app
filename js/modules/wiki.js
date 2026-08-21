@@ -671,15 +671,15 @@
       desc: "以高頻率產出大量樹果累積卡比獸能量為最高目標。",
       desc_en: "Maximizes Snorlax Strength via massive, high-speed berry output.",
       subskills: [
-        { grade: "Ⓢ", name: "樹果數量S", detail: "樹果數量+1，能量直接翻倍（容易滿包需常收取）", detail_en: "Berry count +1, doubles base strength (fills inventory quickly, gather often)." },
-        { grade: "Ⓐ", name: "幫手獎勵", detail: "全隊 -5% 幫忙時間（5隻疊加 25%）", detail_en: "Reduces team help time by 5% (up to 25% with 5 helpers)." },
-        { grade: "Ⓐ", name: "幫忙速度M", detail: "自己 -14% 幫忙時間", detail_en: "Self help time -14%." },
-        { grade: "Ⓑ", name: "幫忙速度S", detail: "自己 -7% 幫忙時間（可用銀種子升階為 M 升至 Ⓐ）", detail_en: "Self help time -7% (upgradeable to M with Sub Skill Seed)." }
+        { grade: "Ⓢ", name: "樹果數量S", name_en: "Berry Finding S", detail: "樹果數量+1，能量直接翻倍（容易滿包需常收取）", detail_en: "Berry count +1, doubles base strength (fills inventory quickly, gather often)." },
+        { grade: "Ⓐ", name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊 -5% 幫忙時間（5隻疊加 25%）", detail_en: "Reduces team help time by 5% (up to 25% with 5 helpers)." },
+        { grade: "Ⓐ", name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己 -14% 幫忙時間", detail_en: "Self help time -14%." },
+        { grade: "Ⓑ", name: "幫忙速度S", name_en: "Helping Speed S", detail: "自己 -7% 幫忙時間（可用銀種子升階為 M 升至 Ⓐ）", detail_en: "Self help time -7% (upgradeable to M with Sub Skill Seed)." }
       ],
       natures: [
-        { grade: "Ⓢ", name: "幫忙速度 ▲▲", detail: "全方位提升樹果產出速度", detail_en: "Accelerates overall berry gathering frequency." },
-        { grade: "Ⓐ", name: "食材發現率 ▼▼", detail: "食材率降低，變相提高樹果產出機率（加分項）", detail_en: "Lower ingredient chance means higher relative berry production." },
-        { grade: "Ⓑ", name: "主技能機率 ▲▲ / ▼▼", detail: "技能對樹果寵非首要，發動機率高低影響不大", detail_en: "Skill trigger is secondary for berry specialists." }
+        { grade: "Ⓢ", name: "幫忙速度 ▲▲", name_en: "Speed of Help ▲▲", detail: "全方位提升樹果產出速度", detail_en: "Accelerates overall berry gathering frequency." },
+        { grade: "Ⓐ", name: "食材發現率 ▼▼", name_en: "Ingredient Finding ▼▼", detail: "食材率降低，變相提高樹果產出機率（加分項）", detail_en: "Lower ingredient chance means higher relative berry production." },
+        { grade: "Ⓑ", name: "主技能機率 ▲▲ / ▼▼", name_en: "Main Skill Chance ▲▲ / ▼▼", detail: "技能對樹果寵非首要，發動機率高低影響不大", detail_en: "Skill trigger is secondary for berry specialists." }
       ]
     },
     ingredient: {
@@ -689,18 +689,18 @@
       desc: "以穩定供給高階食譜所需的高價值食材為核心職責。",
       desc_en: "Provides consistent supply of high-tier ingredients for powerful dishes.",
       subskills: [
-        { grade: "Ⓢ", name: "食材機率提升M", detail: "+36% 食材機率，食材寵畢業核心", detail_en: "+36% ingredient rate, top-tier graduation core." },
-        { grade: "Ⓐ", name: "幫手獎勵", detail: "全隊 -5% 幫忙時間", detail_en: "Reduces team help time by 5%." },
-        { grade: "Ⓐ", name: "食材機率提升S", detail: "+18% 食材機率（可用銀種子升階為 M 升至 Ⓢ）", detail_en: "+18% ingredient rate (upgradeable to M)." },
-        { grade: "Ⓐ", name: "幫忙速度M", detail: "自己 -14% 幫忙時間", detail_en: "Self help time -14%." },
-        { grade: "Ⓑ", name: "幫忙速度S", detail: "自己 -7% 幫忙時間", detail_en: "Self help time -7%." },
-        { grade: "Ⓑ", name: "持有上限提升 M/L", detail: "防止睡覺滿包停止產出食材", detail_en: "Prevents full inventory during sleep, avoiding missed ingredients." },
-        { grade: "Ⓑ", name: "樹果數量S + 持有上限", detail: "需搭配持有上限擴充，並保持頻繁收取", detail_en: "Pairs well with inventory upgrades and frequent gathering." }
+        { grade: "Ⓢ", name: "食材機率提升M", name_en: "Ingredient Finder M", detail: "+36% 食材機率，食材寵畢業核心", detail_en: "+36% ingredient rate, top-tier graduation core." },
+        { grade: "Ⓐ", name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊 -5% 幫忙時間", detail_en: "Reduces team help time by 5%." },
+        { grade: "Ⓐ", name: "食材機率提升S", name_en: "Ingredient Finder S", detail: "+18% 食材機率（可用銀種子升階為 M 升至 Ⓢ）", detail_en: "+18% ingredient rate (upgradeable to M)." },
+        { grade: "Ⓐ", name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己 -14% 幫忙時間", detail_en: "Self help time -14%." },
+        { grade: "Ⓑ", name: "幫忙速度S", name_en: "Helping Speed S", detail: "自己 -7% 幫忙時間", detail_en: "Self help time -7%." },
+        { grade: "Ⓑ", name: "持有上限提升 M/L", name_en: "Inventory Up M/L", detail: "防止睡覺滿包停止產出食材", detail_en: "Prevents full inventory during sleep, avoiding missed ingredients." },
+        { grade: "Ⓑ", name: "樹果數量S + 持有上限", name_en: "Berry Finding S + Inventory", detail: "需搭配持有上限擴充，並保持頻繁收取", detail_en: "Pairs well with inventory upgrades and frequent gathering." }
       ],
       natures: [
-        { grade: "Ⓢ", name: "食材發現率 ▲▲", detail: "食材產出量大幅提升", detail_en: "Significantly boosts ingredient quantity." },
-        { grade: "Ⓐ", name: "幫忙速度 ▲▲", detail: "提高整體幫忙與食材判定頻率", detail_en: "Increases overall helping and check frequency." },
-        { grade: "Ⓑ", name: "主技能機率 ▲▲ / ▼▼", detail: "若有自補/料理強化可加分，其餘技能影響不大", detail_en: "Beneficial if Pokémon has Charge Energy or Cooking Power Up." }
+        { grade: "Ⓢ", name: "食材發現率 ▲▲", name_en: "Ingredient Finding ▲▲", detail: "食材產出量大幅提升", detail_en: "Significantly boosts ingredient quantity." },
+        { grade: "Ⓐ", name: "幫忙速度 ▲▲", name_en: "Speed of Help ▲▲", detail: "提高整體幫忙與食材判定頻率", detail_en: "Increases overall helping and check frequency." },
+        { grade: "Ⓑ", name: "主技能機率 ▲▲ / ▼▼", name_en: "Main Skill Chance ▲▲ / ▼▼", detail: "若有自補/料理強化可加分，其餘技能影響不大", detail_en: "Beneficial if Pokémon has Charge Energy or Cooking Power Up." }
       ]
     },
     skill: {
@@ -710,18 +710,18 @@
       desc: "以高頻率觸發核心主技能（全體補血、神獸加速、高額能量、料理擴鍋）為核心職責。",
       desc_en: "Triggers crucial main skills (E4E heal, Legend boost, pot expand, energy burst) frequently.",
       subskills: [
-        { grade: "Ⓢ", name: "技能機率提升M", detail: "+36% 技能發動機率，技能寵畢業核心", detail_en: "+36% skill trigger rate, essential graduation core." },
-        { grade: "Ⓐ", name: "幫手獎勵", detail: "全隊 -5% 幫忙時間", detail_en: "Reduces team help time by 5%." },
-        { grade: "Ⓐ", name: "幫忙速度M", detail: "自己 -14% 幫忙時間", detail_en: "Self help time -14%." },
-        { grade: "Ⓐ", name: "技能機率提升S", detail: "+18% 技能發動機率（可用銀種子升階為 M 升至 Ⓢ）", detail_en: "+18% skill trigger rate (upgradeable to M)." },
-        { grade: "Ⓑ", name: "樹果數量S + 持有上限", detail: "補足基本能量產出，需常收取", detail_en: "Supplements base strength output; requires active collection." },
-        { grade: "Ⓑ", name: "技能等級提升M", detail: "主技能等級+2，節省金種子珍貴資源", detail_en: "Main skill Lv.+2, saves precious Main Skill Seeds." },
-        { grade: "Ⓒ", name: "技能等級提升S", detail: "主技能等級+1（可用銀種子升階）", detail_en: "Main skill Lv.+1 (upgradeable with seeds)." }
+        { grade: "Ⓢ", name: "技能機率提升M", name_en: "Skill Trigger M", detail: "+36% 技能發動機率，技能寵畢業核心", detail_en: "+36% skill trigger rate, essential graduation core." },
+        { grade: "Ⓐ", name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊 -5% 幫忙時間", detail_en: "Reduces team help time by 5%." },
+        { grade: "Ⓐ", name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己 -14% 幫忙時間", detail_en: "Self help time -14%." },
+        { grade: "Ⓐ", name: "技能機率提升S", name_en: "Skill Trigger S", detail: "+18% 技能發動機率（可用銀種子升階為 M 升至 Ⓢ）", detail_en: "+18% skill trigger rate (upgradeable to M)." },
+        { grade: "Ⓑ", name: "樹果數量S + 持有上限", name_en: "Berry Finding S + Inventory", detail: "補足基本能量產出，需常收取", detail_en: "Supplements base strength output; requires active collection." },
+        { grade: "Ⓑ", name: "技能等級提升M", name_en: "Skill Level Up M", detail: "主技能等級+2，節省金種子珍貴資源", detail_en: "Main skill Lv.+2, saves precious Main Skill Seeds." },
+        { grade: "Ⓒ", name: "技能等級提升S", name_en: "Skill Level Up S", detail: "主技能等級+1（可用銀種子升階）", detail_en: "Main skill Lv.+1 (upgradeable with seeds)." }
       ],
       natures: [
-        { grade: "Ⓢ", name: "主技能發動機率 ▲▲", detail: "技能寵靈魂性格，觸發次數最大化", detail_en: "Prime nature for skill specialists; maximizes activations." },
-        { grade: "Ⓐ", name: "幫忙速度 ▲▲", detail: "提高幫忙判定頻率", detail_en: "Increases helping cycle rate." },
-        { grade: "Ⓐ", name: "食材發現率 ▼▼", detail: "降低食材掉落，無副作用（技能寵只看技能與速度）", detail_en: "Reduces ingredient drop, no negative impact on skills." }
+        { grade: "Ⓢ", name: "主技能發動機率 ▲▲", name_en: "Main Skill Chance ▲▲", detail: "技能寵靈魂性格，觸發次數最大化", detail_en: "Prime nature for skill specialists; maximizes activations." },
+        { grade: "Ⓐ", name: "幫忙速度 ▲▲", name_en: "Speed of Help ▲▲", detail: "提高幫忙判定頻率", detail_en: "Increases helping cycle rate." },
+        { grade: "Ⓐ", name: "食材發現率 ▼▼", name_en: "Ingredient Finding ▼▼", detail: "降低食材掉落，無副作用（技能寵只看技能與速度）", detail_en: "Reduces ingredient drop, no negative impact on skills." }
       ]
     }
   };
@@ -3927,10 +3927,11 @@
     const dynamicContainer = document.getElementById('charge-stock-dynamic-levels');
     if (chargeSkill && dynamicContainer && chargeSkill.matrix && chargeSkill.matrix[stackNum]) {
       const vals = chargeSkill.matrix[stackNum].vals;
+      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       dynamicContainer.innerHTML = vals.map((v, i) => `
         <div class="skill-level-chip ${stackNum === 10 ? 'highlight-gold' : 'highlight-blue'}">
           <span class="level-tag">Lv.${i + 1}</span>
-          <span class="level-val">${v.toLocaleString()} 能量</span>
+          <span class="level-val">${v.toLocaleString()} ${isEN ? 'Strength' : '能量'}</span>
         </div>
       `).join('');
     }
@@ -4362,7 +4363,7 @@
             <h4 class="rating-col-title">${isEN ? '👑 Sub-Skill Priority' : '👑 副技能推薦梯度'}</h4>
             <div class="rating-list">
               ${data.subskills.map(s => {
-                const sName = isEN ? (window.I18N.getSubSkillName(s.name) || s.name) : s.name;
+                const sName = isEN ? (s.name_en || (window.I18N ? window.I18N.getSubSkillName(s.name) : s.name)) : s.name;
                 const sDetail = isEN ? (s.detail_en || s.detail) : s.detail;
                 return `
                 <div class="rating-item">
@@ -4380,7 +4381,7 @@
             <h4 class="rating-col-title">${isEN ? '🧬 Nature Priority' : '🧬 性格推薦梯度'}</h4>
             <div class="rating-list">
               ${data.natures.map(n => {
-                const nName = isEN ? (window.I18N.getNatureName(n.name) || n.name) : n.name;
+                const nName = isEN ? (n.name_en || (window.I18N ? window.I18N.getNatureName(n.name) : n.name)) : n.name;
                 const nDetail = isEN ? (n.detail_en || n.detail) : n.detail;
                 return `
                 <div class="rating-item">
@@ -4396,6 +4397,18 @@
         </div>
       </div>
     `;
+  }
+
+  function formatLadderNote(note, isEN) {
+    if (!note || !isEN) return note || '';
+    return note
+      .replace(/👑\s*TOP 1 AAA\s*(.+?)\s*產量之王/g, '👑 TOP 1 AAA $1 Production King')
+      .replace(/AAC\s*雙(.+?)\s*二階解鎖/g, 'AAC Dual $1 Unlocks at Lv.30')
+      .replace(/AAC\s*(.+?)\s*解鎖/g, 'AAC $1 Unlocks at Lv.30')
+      .replace(/ABB\s*單(.+?)\s*混產/g, 'ABB Single $1 Mixed Output')
+      .replace(/ABB\s*(.+?)\s*主力產出/g, 'ABB $1 Main Output')
+      .replace(/ABC\s*(.+?)\s*兼顧/g, 'ABC $1 Balanced Output')
+      .replace(/AAA\s*(.+?)\s*產量之王/g, 'AAA $1 Top Production');
   }
 
   // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、大菜供應能力評定、跨軌道搜尋聚焦)
@@ -4545,7 +4558,7 @@
                               <div class="tooltip-dish-badge ${dishBadgeClass}">${dishTag}</div>
                             </div>
 
-                            <div class="tooltip-note">${v.note || ''}</div>
+                            <div class="tooltip-note">${formatLadderNote(v.note || '', isEN)}</div>
                           </div>
                         </div>
                       `;
