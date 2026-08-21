@@ -574,21 +574,115 @@
     '琥褐溪谷': 'Amber Canyon'
   };
 
+  const GAME_ITEM_TRANSLATIONS = {
+    '寶可沙布蕾': 'Poké Biscuit',
+    '超級沙布蕾': 'Great Biscuit',
+    '高級沙布蕾': 'Ultra Biscuit',
+    '大師沙布蕾': 'Master Biscuit',
+    '主技能種子': 'Main Skill Seed',
+    '副技能種子': 'Sub Skill Seed',
+    '萬能糖果S': 'Handy Candy S',
+    '萬能糖果M': 'Handy Candy M',
+    '萬能糖果L': 'Handy Candy L',
+    '萬能糖果': 'Handy Candy',
+    '夢之塊S': 'Dream Cluster S',
+    '夢之塊M': 'Dream Cluster M',
+    '夢之塊L': 'Dream Cluster L',
+    '夢之塊': 'Dream Cluster',
+    '友好薰香': 'Friend Incense',
+    '專用薰香': 'Specific Incense',
+    '鑽石': 'Diamonds',
+    '睡眠點數': 'Sleep Points',
+    '幫手哨子': 'Helper Whistle',
+    '好的營地套票': 'Good Camp Ticket',
+    '露營券': 'Good Camp Ticket',
+    '能量枕頭': 'Energy Pillow',
+    '寶可夢的糖果': 'Pokémon Candy',
+    '寶可夢糖果': 'Pokémon Candy',
+    '睡意之力': 'Drowsy Power',
+    '睡眠經驗值': 'Sleep EXP',
+    '睡眠EXP': 'Sleep EXP',
+    '幫忙速度': 'Helping Speed',
+    '主技能發動機率': 'Main Skill Trigger Rate',
+    '技能機率': 'Skill Trigger Rate',
+    '食材發現率': 'Ingredient Finding Rate',
+    '食材機率': 'Ingredient Rate',
+    '料理能量': 'Cooking Strength',
+    '料理效果': 'Cooking Bonus'
+  };
+
+  const GAME_PHRASE_RULES = [
+    // 禮包名稱模式
+    [/「(.+?)同樂包([SML])?」/g, '"$1 Celebration Bundle$2"'],
+    [/「(.+?)培育包([SML])?」/g, '"$1 Growth Bundle$2"'],
+    [/「(.+?)紀念包([SML])?」/g, '"$1 Commemorative Bundle$2"'],
+    [/「(.+?)限定包([SML])?」/g, '"$1 Limited Bundle$2"'],
+    [/「(.+?)包([SML])?」/g, '"$1 Pack$2"'],
+    [/夏日嘉年華(\d*)/g, 'Summer Festival $1'],
+    [/嘉年華(\d*)/g, 'Festival $1'],
+    [/週年紀念/g, 'Anniversary '],
+    [/電屬性/g, 'Electric Type '],
+    [/水屬性/g, 'Water Type '],
+    [/火屬性/g, 'Fire Type '],
+    [/草屬性/g, 'Grass Type '],
+    [/滿月/g, 'Good Sleep Day '],
+    [/萬聖節/g, 'Halloween '],
+    [/佳節/g, 'Holiday '],
+    [/新年/g, 'New Year '],
+    [/第(\d+)回/g, 'Vol. $1'],
+
+    // 禮包文案與活動說明
+    [/本商品裡裝有\s*專門迎接\s*(.+?)\s*成為夥伴並且培育牠的道具\s*，?\s*歡迎選購。?/g, 'Contains special items to help you befriend and raise $1.'],
+    [/在\s*(.+?)\s*會出現的營地使用薰香，與牠相遇吧！?/g, 'Use incense in areas where $1 appears to encounter it!'],
+    [/銷售期間\s*:\s*|販售期間\s*:\s*|活動期間\s*:\s*/g, 'Sale Period: '],
+    [/限購(\d+)個|限購(\d+)次/g, 'Limit: $1 per user'],
+
+    // 糖果與特殊形態通用說明
+    [/※此道具與「寶可夢的糖果」相同，對道具名稱中所標示的寶可夢的不同樣子，以及(.+?)等有著特別裝扮的寶可夢也可使用。?/g, '※This item functions the same as Pokémon Candy and can also be used on different forms and special costume Pokémon (such as $1).'],
+
+    // 更新與功能公告
+    [/新增功能\s*:\s*|新增機能\s*:\s*/g, 'New Feature: '],
+    [/問題修正\s*:\s*|異常修復\s*:\s*/g, 'Bug Fixes: '],
+    [/平衡調整\s*:\s*/g, 'Balance Adjustments: '],
+    [/的長期開發計畫/g, 'Ongoing long-term development roadmap'],
+    [/透過此功能，玩家將\s*能獲得包含主技能種子在內的各種道具\s*。?/g, 'Through this feature, players will be able to obtain various items including Main Skill Seeds.'],
+    [/此外，自下週起全新的「主技能種子」將會登場。?/g, 'In addition, brand-new Main Skill Seeds will debut starting next week.'],
+    [/各寶可夢專用的新「主技能種子」/g, 'New Pokémon-specific Main Skill Seeds'],
+    [/各寶可夢專用的全新「主技能種子」將自\s*(.+?)\s*起登場。?/g, 'Brand-new Pokémon-specific Main Skill Seeds will debut starting $1.'],
+    [/的薰香/g, ' Incense'],
+    [/的糖果/g, ' Candy']
+  ];
+
   /* ─── 關鍵字高亮與雙語格式化 ─────────────────────────────────── */
   function formatAiListItem(text, item) {
     if (!text) return '';
     const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
     let processed = String(text);
 
+    // 消除開頭重複堆疊的 Emoji（例如 ✨ ✨、🛍️ 🛍️、🍬 🍬）
+    processed = processed.replace(/^([\u{1F300}-\u{1F9FF}✨🔥⭐🛍️⏰⚡🏝️💡⚙️🍬])\s*\1\s*/u, '$1 ');
+
     if (isEN) {
-      // 1. 翻譯營地 / 島嶼名稱
+      // 1. 執行語句與通用模式替換
+      GAME_PHRASE_RULES.forEach(([regex, repl]) => {
+        processed = processed.replace(regex, repl);
+      });
+
+      // 2. 翻譯營地 / 島嶼名稱
       Object.keys(ISLAND_MAP).forEach(cn => {
         if (processed.includes(cn)) {
           processed = processed.replaceAll(cn, ISLAND_MAP[cn]);
         }
       });
 
-      // 2. 翻譯寶可夢名稱 (長度由長至短依序取代，避免部分覆蓋)
+      // 3. 翻譯遊戲道具與單位
+      Object.keys(GAME_ITEM_TRANSLATIONS).forEach(cn => {
+        if (processed.includes(cn)) {
+          processed = processed.replaceAll(cn, GAME_ITEM_TRANSLATIONS[cn]);
+        }
+      });
+
+      // 4. 翻譯寶可夢名稱 (長度由長至短依序取代，避免部分覆蓋)
       if (window.I18N && window.I18N.POKEMON_NAMES) {
         const pkmNames = Object.keys(window.I18N.POKEMON_NAMES).sort((a, b) => b.length - a.length);
         pkmNames.forEach(cn => {
@@ -598,10 +692,11 @@
         });
       }
 
-      // 3. 翻譯常見標籤與標點
+      // 5. 標點符號與常見標籤規格化
       processed = processed
         .replaceAll('、', ', ')
         .replaceAll('：', ': ')
+        .replaceAll('；', '; ')
         .replaceAll('【機率中幅提升】', '【Greater Appearance Rate 🔥】')
         .replaceAll('【機率大幅提升】', '【Significantly Greater Appearance Rate 🌟】')
         .replaceAll('【機率小幅提升】', '【Slightly Greater Appearance Rate】')

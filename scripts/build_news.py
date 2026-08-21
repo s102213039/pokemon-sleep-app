@@ -405,6 +405,10 @@ def parse_article(url):
     # 擷取文章預覽（前 360 字）
     preview = clean_text[:360].strip() + ("..." if len(clean_text) > 360 else "")
 
+    # 同步爬取對應之官方英文公告 (/en/news/)
+    en_data = fetch_english_counterpart(url)
+    title_en = en_data.get('title_en') if en_data else None
+
     return {
         "id": re.sub(r'[^a-zA-Z0-9]', '', url.split('/')[-2] or 'news'),
         "url": url,
@@ -414,6 +418,7 @@ def parse_article(url):
         "badge_label": badge_label,
         "badge_color": badge_color,
         "title": title,
+        "title_en": title_en or title,
         "debut_pokemon": debut_pokes,
         "mid_rateup_pokemon": mid_rateup_pokes,
         "featured_pokemon": featured_pokes,
@@ -422,6 +427,31 @@ def parse_article(url):
         "sections": ai_result["sections"],
         "content_preview": preview
     }
+
+def fetch_english_counterpart(zh_url):
+    try:
+        en_url = zh_url.replace('/zh/news/', '/en/news/')
+        html = fetch_url(en_url, timeout=8)
+        if not html:
+            return None
+        title_match = re.search(r'<h1[^>]*class=\"[^\"]*header_4__h1[^\"]*\"[^>]*>(.*?)</h1>', html, re.DOTALL) or \
+                      re.search(r'<title>(.*?)(?:&#8211;|-|《|\s*Pokémon)', html, re.DOTALL) or \
+                      re.search(r'<h1[^>]*>(.*?)</h1>', html, re.DOTALL)
+        title_en = title_match.group(1).strip() if title_match else ""
+        title_en = re.sub(r'<[^>]+>', '', title_en).strip().replace('&#8211;', '-')
+        article_match = re.search(r'<article[^>]*>(.*?)</article>', html, re.DOTALL) or \
+                        re.search(r'<main[^>]*>(.*?)</main>', html, re.DOTALL)
+        raw_html = article_match.group(1) if article_match else html
+        clean_text_en = clean_html_text(raw_html)
+        preview_en = clean_text_en[:360].strip() + ("..." if len(clean_text_en) > 360 else "")
+        return {
+            "title_en": title_en,
+            "clean_text_en": clean_text_en,
+            "preview_en": preview_en
+        }
+    except Exception as e:
+        print(f"  [WARN] Failed to fetch English counterpart for {zh_url}: {e}", file=sys.stderr)
+        return None
 
 def main():
     print("=" * 60)
