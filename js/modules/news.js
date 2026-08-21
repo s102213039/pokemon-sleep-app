@@ -437,13 +437,17 @@
             </div>
             <div class="news-ai-sections-grid">
               ${item.sections.map(sec => {
-                const secTitle = isEN ? (sec.title_en || sec.title) : sec.title;
+                const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+                let secTitle = isEN ? (sec.title_en || sec.title) : sec.title;
                 const secItems = isEN && sec.items_en ? sec.items_en : sec.items;
+                const icon = sec.icon || '📌';
+                // 去除標題內部可能自帶的重複 emoji 與空格
+                const cleanTitle = (secTitle || '').replace(/^[^\w\u4e00-\u9fa5\s]+/, '').trim();
                 return `
                 <div class="news-ai-section-box news-sec-${sec.key || 'general'}">
                   <div class="news-ai-section-title">
-                    <span>${sec.icon || '📌'}</span>
-                    <span>${secTitle}</span>
+                    <span>${icon}</span>
+                    <span>${escapeHtml(cleanTitle)}</span>
                   </div>
                   <ul class="news-ai-section-list">
                     ${secItems.map(it => `<li>${formatAiListItem(it, item)}</li>`).join('')}
@@ -558,37 +562,96 @@
   }
 
   /* ─── 關鍵字高亮格式化 ─────────────────────────────────── */
+  const ISLAND_MAP = {
+    '萌綠之島EX': 'Greengrass Isle EX',
+    '萌綠之島': 'Greengrass Isle',
+    '天青沙灘EX': 'Cyan Beach EX',
+    '天青沙灘': 'Cyan Beach',
+    '灰褐洞窟': 'Taupe Hollow',
+    '白花雪原': 'Snowdrop Tundra',
+    '寶藍湖畔': 'Lapis Lakeside',
+    '黃金舊發電廠': 'Old Gold Power Plant',
+    '琥褐溪谷': 'Amber Canyon'
+  };
+
+  /* ─── 關鍵字高亮與雙語格式化 ─────────────────────────────────── */
   function formatAiListItem(text, item) {
     if (!text) return '';
-    let formatted = escapeHtml(text);
+    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+    let processed = String(text);
 
-    // 1. 機率分級標題高亮（中幅提升通常為新登場焦點）
-    formatted = formatted.replace(/【\s*機率中幅提升\s*】/g, '<span class="hl-rateup-mid">【機率中幅提升 🔥 新登場/焦點】</span>');
-    formatted = formatted.replace(/【\s*機率大幅提升\s*】/g, '<span class="hl-rateup-large">【機率大幅提升 🌟 超絕UP】</span>');
-    formatted = formatted.replace(/【\s*機率小幅提升\s*】/g, '<span class="hl-rateup-small">【機率小幅提升】</span>');
-    formatted = formatted.replace(/【\s*新登場\s*】/g, '<span class="hl-rateup-mid">【新登場 ✨】</span>');
+    if (isEN) {
+      // 1. 翻譯營地 / 島嶼名稱
+      Object.keys(ISLAND_MAP).forEach(cn => {
+        if (processed.includes(cn)) {
+          processed = processed.replaceAll(cn, ISLAND_MAP[cn]);
+        }
+      });
+
+      // 2. 翻譯寶可夢名稱 (長度由長至短依序取代，避免部分覆蓋)
+      if (window.I18N && window.I18N.POKEMON_NAMES) {
+        const pkmNames = Object.keys(window.I18N.POKEMON_NAMES).sort((a, b) => b.length - a.length);
+        pkmNames.forEach(cn => {
+          if (processed.includes(cn)) {
+            processed = processed.replaceAll(cn, window.I18N.POKEMON_NAMES[cn]);
+          }
+        });
+      }
+
+      // 3. 翻譯常見標籤與標點
+      processed = processed
+        .replaceAll('、', ', ')
+        .replaceAll('：', ': ')
+        .replaceAll('【機率中幅提升】', '【Greater Appearance Rate 🔥】')
+        .replaceAll('【機率大幅提升】', '【Significantly Greater Appearance Rate 🌟】')
+        .replaceAll('【機率小幅提升】', '【Slightly Greater Appearance Rate】')
+        .replaceAll('【新登場】', '【New Debut ✨】')
+        .replaceAll('【各營地出現寶可夢一覽】', '【Featured Pokémon by Area】')
+        .replaceAll('【活動時間】', '【Event Period】')
+        .replaceAll('【活動營地】', '【Event Areas】')
+        .replaceAll('【特別任務】', '【Special Missions】')
+        .replaceAll('【活動禮包】', '【Event Bundles】')
+        .replaceAll('【禮包內容】', '【Bundle Contents】')
+        .replaceAll('【販售期間】', '【Sale Period】')
+        .replaceAll('【注意事項】', '【Important Notes】')
+        .replaceAll('【平衡調整】', '【Balance Adjustments】')
+        .replaceAll('【機能追加】', '【New Features】')
+        .replaceAll('【異常修復】', '【Bug Fixes】')
+        .replaceAll('【更新維護】', '【Maintenance】')
+        .replaceAll('【限定任務】', '【Limited-Time Missions】');
+    }
+
+    let formatted = escapeHtml(processed);
+
+    // 1. 機率分級標題高亮
+    formatted = formatted.replace(/【\s*(?:機率中幅提升|Greater Appearance Rate 🔥)(?:\s*🔥\s*新登場\/焦點)?\s*】/g, '<span class="hl-rateup-mid">【' + (isEN ? 'Greater Appearance Rate 🔥' : '機率中幅提升 🔥 新登場/焦點') + '】</span>');
+    formatted = formatted.replace(/【\s*(?:機率大幅提升|Significantly Greater Appearance Rate 🌟)(?:\s*🌟\s*超絕UP)?\s*】/g, '<span class="hl-rateup-large">【' + (isEN ? 'Significantly Greater Appearance Rate 🌟' : '機率大幅提升 🌟 超絕UP') + '】</span>');
+    formatted = formatted.replace(/【\s*(?:機率小幅提升|Slightly Greater Appearance Rate)\s*】/g, '<span class="hl-rateup-small">【' + (isEN ? 'Slightly Greater Appearance Rate' : '機率小幅提升') + '】</span>');
+    formatted = formatted.replace(/【\s*(?:新登場|New Debut ✨)(?:\s*✨)?\s*】/g, '<span class="hl-rateup-mid">【' + (isEN ? 'New Debut ✨' : '新登場 ✨') + '】</span>');
 
     // 2. 新登場 / 機率中幅提升寶可夢高亮（粉紅微光發光標籤）
     const debutList = item.debut_pokemon || [];
     debutList.forEach(name => {
       if (!name) return;
-      const re = new RegExp(escapeRegExp(name), 'g');
-      formatted = formatted.replace(re, `<span class="hl-poke-new">✨ ${name}</span>`);
+      const displayName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(name) : name;
+      const re = new RegExp('(?:✨\\s*)?' + escapeRegExp(displayName), 'g');
+      formatted = formatted.replace(re, `<span class="hl-poke-new">✨ ${displayName}</span>`);
     });
 
     // 3. 焦點 / 機率提升寶可夢高亮（金黃微光標籤）
     const featList = item.featured_pokemon || [];
     featList.forEach(name => {
       if (!name || debutList.includes(name)) return;
-      const re = new RegExp(escapeRegExp(name), 'g');
-      formatted = formatted.replace(re, `<span class="hl-poke-feat">⭐ ${name}</span>`);
+      const displayName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(name) : name;
+      const re = new RegExp('(?:⭐\\s*|🔥\\s*)?' + escapeRegExp(displayName), 'g');
+      formatted = formatted.replace(re, `<span class="hl-poke-feat">⭐ ${displayName}</span>`);
     });
 
-    // 4. 關鍵倍率與數值高亮 (如 1.25倍、2.5倍、3.75倍、2倍、3倍、+1,000pt、250鑽石)
-    formatted = formatted.replace(/([1-4](?:\.\d+)?倍|\+\d{1,3}(?:,\d{3})*pt|\d+鑽石)/g, '<span class="hl-mult">$1</span>');
+    // 4. 關鍵倍率與數值高亮 (如 1.25倍, 2.5x, +1,000pt, 250鑽石, 250 Diamonds)
+    formatted = formatted.replace(/([1-4](?:\.\d+)?(?:倍|x)|\+\d{1,3}(?:,\d{3})*pt|\d+(?:鑽石| Diamonds))/g, '<span class="hl-mult">$1</span>');
 
-    // 5. 島嶼 / 營地名稱高亮
-    formatted = formatted.replace(/(萌綠之島EX|天青沙灘EX|萌綠之島|天青沙灘|灰褐洞窟|白花雪原|寶藍湖畔|黃金舊發電廠|琥褐溪谷)/g, '<span class="hl-island">🏝️ $1</span>');
+    // 5. 島嶼 / 營地名稱高亮 (防止前置 emoji 重複)
+    formatted = formatted.replace(/(?:🏝️\s*)?(Greengrass Isle EX|Greengrass Isle|Cyan Beach EX|Cyan Beach|Taupe Hollow|Snowdrop Tundra|Lapis Lakeside|Old Gold Power Plant|Amber Canyon|萌綠之島EX|天青沙灘EX|萌綠之島|天青沙灘|灰褐洞窟|白花雪原|寶藍湖畔|黃金舊發電廠|琥褐溪谷)/g, '<span class="hl-island">🏝️ $1</span>');
 
     return formatted;
   }

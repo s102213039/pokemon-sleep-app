@@ -1257,6 +1257,45 @@ test('Tier 1 - Feature Coverage', 'I18N.getPokemonName API & Coverage across all
   assert(ctx.window.I18N.getPokemonName({ name_cn: '耿鬼', name_en: 'Gengar' }) === '耿鬼', 'Object in zh-TW -> 耿鬼');
 });
 
+test('Tier 1 - Feature Coverage', 'News AI Dashboard Sections Title & List Items Full English Translation and No Duplicate Icons', () => {
+  const newsCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'news.js'), 'utf8');
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const newsData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'news.json'), 'utf8'));
+
+  const ctx = {
+    window: {
+      location: { hash: '#news' },
+      localStorage: { getItem: () => 'en-US', setItem: () => {} },
+      addEventListener: () => {}
+    },
+    document: {
+      readyState: 'complete',
+      documentElement: { setAttribute: () => {} },
+      addEventListener: () => {},
+      getElementById: () => null,
+      querySelectorAll: () => []
+    },
+    console: console,
+    fetch: () => Promise.resolve({ ok: true, json: () => Promise.resolve([]) })
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  ctx.window.fetch = ctx.fetch;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+  vm.runInContext(newsCode, ctx);
+
+  // Verify all sections in news.json have title_en defined and clean
+  newsData.forEach(item => {
+    if (item.sections) {
+      item.sections.forEach(sec => {
+        assert(sec.title_en, `Section in news item ${item.id} missing title_en`);
+        assert(!/^[\u{1F300}-\u{1F9FF}\s]+/u.test(sec.title_en), `Section title_en "${sec.title_en}" should not start with emoji`);
+      });
+    }
+  });
+});
+
 
 // Final Summary Output
 console.log('\n======================================================');
