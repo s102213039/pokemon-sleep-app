@@ -495,9 +495,13 @@
   // 專長類型官方英中對照
   const SPECIALTY_NAMES = {
     '樹果': { 'zh-TW': '樹果', 'en-US': 'Berries' },
+    '樹果型': { 'zh-TW': '樹果型', 'en-US': 'Berries' },
     '食材': { 'zh-TW': '食材', 'en-US': 'Ingredients' },
+    '食材型': { 'zh-TW': '食材型', 'en-US': 'Ingredients' },
     '技能': { 'zh-TW': '技能', 'en-US': 'Skills' },
-    '全能': { 'zh-TW': '全能', 'en-US': 'All-Rounder' }
+    '技能型': { 'zh-TW': '技能型', 'en-US': 'Skills' },
+    '全能': { 'zh-TW': '全能', 'en-US': 'All-Rounder' },
+    '全部': { 'zh-TW': '全部', 'en-US': 'All-Rounder' }
   };
 
   // 食材名稱官方英中對照 (19種食材全收錄)
@@ -860,6 +864,58 @@
     }
   }
 
+  // ─── 🛡️ 全域正規化與多層級容錯查找引擎 (Universal Normalization Engine) ───
+  function normalizeSearchKey(str) {
+    if (!str || typeof str !== 'string') return '';
+    return str
+      .trim()
+      .replace(/（/g, '(')
+      .replace(/）/g, ')')
+      .replace(/【/g, '[')
+      .replace(/】/g, ']')
+      .replace(/：/g, ':')
+      .replace(/\(\s+/g, '(')
+      .replace(/\s+\)/g, ')')
+      .replace(/\[\s+/g, '[')
+      .replace(/\s+\]/g, ']')
+      .replace(/恢復/g, '回復')
+      .replace(/恢/g, '回')
+      .replace(/\s+/g, ' ');
+  }
+
+  function lookupBilingualDict(dict, query, lang = currentLang) {
+    if (!query || !dict) return null;
+    const str = String(query).trim();
+    if (!str) return '';
+
+    // Level 1: 直接精確命中 (Direct Fast Match)
+    if (dict[str]) {
+      const val = dict[str];
+      return typeof val === 'object' ? (val[lang] || val['en-US'] || str) : val;
+    }
+
+    // Level 2: 標點符號與括號正規化比對 (Normalized Match)
+    const normTarget = normalizeSearchKey(str);
+    for (const key in dict) {
+      if (normalizeSearchKey(key) === normTarget) {
+        const val = dict[key];
+        return typeof val === 'object' ? (val[lang] || val['en-US'] || str) : val;
+      }
+    }
+
+    // Level 3: 緊湊無視空格比對 (Compact Match without Whitespace)
+    const compactTarget = str.replace(/\s+/g, '').replace(/（/g, '(').replace(/）/g, ')').replace(/恢/g, '回');
+    for (const key in dict) {
+      const compactKey = key.replace(/\s+/g, '').replace(/（/g, '(').replace(/）/g, ')').replace(/恢/g, '回');
+      if (compactKey === compactTarget) {
+        const val = dict[key];
+        return typeof val === 'object' ? (val[lang] || val['en-US'] || str) : val;
+      }
+    }
+
+    return null;
+  }
+
   function t(key, fallback = '') {
     const dict = DICTIONARY[currentLang] || DICTIONARY[DEFAULT_LANG];
     return dict[key] || fallback || key;
@@ -867,47 +923,41 @@
 
   function getTypeName(type) {
     if (!type) return '';
-    const item = TYPE_NAMES[type];
-    return item ? (item[currentLang] || type) : type;
+    return lookupBilingualDict(TYPE_NAMES, type) || type;
   }
 
   function getSpecialtyName(spec) {
     if (!spec) return '';
-    const item = SPECIALTY_NAMES[spec];
-    return item ? (item[currentLang] || spec) : spec;
+    return lookupBilingualDict(SPECIALTY_NAMES, spec) || spec;
   }
 
   function getIngredientName(ing) {
     if (!ing) return '';
-    const item = INGREDIENT_NAMES[ing];
-    return item ? (item[currentLang] || ing) : ing;
+    return lookupBilingualDict(INGREDIENT_NAMES, ing) || ing;
   }
 
   function getBerryName(berry) {
     if (!berry) return '';
-    const item = BERRY_NAMES[berry];
-    return item ? (item[currentLang] || berry) : berry;
+    return lookupBilingualDict(BERRY_NAMES, berry) || berry;
   }
 
   function getNatureName(nat) {
     if (!nat) return '';
-    const item = NATURE_NAMES[nat];
-    return item ? (item[currentLang] || nat) : nat;
+    return lookupBilingualDict(NATURE_NAMES, nat) || nat;
   }
 
   function getMainSkillName(skill) {
     if (!skill) return '';
+    const res = lookupBilingualDict(MAIN_SKILL_NAMES, skill);
+    if (res) return res;
+
+    // 支援複合型括號變體 (例如：能量填充S (隨機))
     const trimmed = String(skill).trim();
-    if (MAIN_SKILL_NAMES[trimmed]) {
-      return MAIN_SKILL_NAMES[trimmed][currentLang] || trimmed;
-    }
-    const normalized = trimmed.replace(/\(/g, '（').replace(/\)/g, '）');
-    if (MAIN_SKILL_NAMES[normalized]) {
-      return MAIN_SKILL_NAMES[normalized][currentLang] || normalized;
-    }
-    const denormalized = trimmed.replace(/（/g, '(').replace(/）/g, ')');
-    if (MAIN_SKILL_NAMES[denormalized]) {
-      return MAIN_SKILL_NAMES[denormalized][currentLang] || denormalized;
+    const parenMatch = trimmed.match(/^(.+?)\s*([(\[（【].+[)\]）】])$/);
+    if (parenMatch) {
+      const baseSkill = getMainSkillName(parenMatch[1]);
+      const suffix = translateDynamicText(parenMatch[2]);
+      return `${baseSkill} ${suffix}`;
     }
     return trimmed;
   }
@@ -919,33 +969,34 @@
     if (typeof name === 'object') {
       return currentLang === 'en-US' ? (name.name_en || name.name_cn || name.name) : (name.name_cn || name.name_en || name.name);
     }
-    if (currentLang === 'en-US') {
-      if (POKEMON_NAMES[name]) return POKEMON_NAMES[name];
-      if (typeof window !== 'undefined' && Array.isArray(window.allPokemons)) {
-        const found = window.allPokemons.find(p => p.name_cn === name || p.name === name);
-        if (found && found.name_en) return found.name_en;
-      }
+    const str = String(name).trim();
+    if (currentLang !== 'en-US') return str;
+
+    // Level 1 & 2 & 3 字典比對
+    const direct = lookupBilingualDict(POKEMON_NAMES, str, 'en-US');
+    if (direct) return direct;
+
+    // Level 4: 支援括號後綴（如 毒骷蛙 (ABB)、皮卡丘（萬聖節）等）
+    const parenMatch = str.match(/^(.+?)\s*([(\[（【].+[)\]）】])$/);
+    if (parenMatch) {
+      const baseName = getPokemonName(parenMatch[1]);
+      const suffix = translateDynamicText(parenMatch[2]);
+      return `${baseName} ${suffix}`;
     }
-    return name;
+
+    // Level 5: 搜尋全域陣列備援
+    if (typeof window !== 'undefined' && Array.isArray(window.allPokemons)) {
+      const found = window.allPokemons.find(p => p.name_cn === str || p.name === str || normalizeSearchKey(p.name_cn) === normalizeSearchKey(str));
+      if (found && found.name_en) return found.name_en;
+    }
+
+    return str;
   }
 
   function getSubSkillName(subskill) {
     if (!subskill) return '';
-    const trimmed = String(subskill).trim();
-    if (SUBSKILL_NAMES[trimmed]) {
-      return SUBSKILL_NAMES[trimmed][currentLang] || trimmed;
-    }
-    const normalized = trimmed.replace(/\s+/g, '').replace(/恢復/g, '回復').replace(/恢/g, '回');
-    if (SUBSKILL_NAMES[normalized]) {
-      return SUBSKILL_NAMES[normalized][currentLang] || trimmed;
-    }
-    for (const key in SUBSKILL_NAMES) {
-      const normKey = key.replace(/\s+/g, '').replace(/恢復/g, '回復').replace(/恢/g, '回');
-      if (normKey === normalized) {
-        return SUBSKILL_NAMES[key][currentLang] || trimmed;
-      }
-    }
-    return trimmed;
+    const res = lookupBilingualDict(SUBSKILL_NAMES, subskill);
+    return res || String(subskill).trim();
   }
 
   function translateDynamicText(text) {

@@ -1377,7 +1377,18 @@ test('Tier 1 - Feature Coverage', 'Centralized Scalable I18N Dynamic Translator 
   assert(ctx.window.I18N.getSubSkillName('活力恢復獎勵') === 'Energy Recovery Bonus', '活力恢復獎勵 (恢) -> Energy Recovery Bonus');
   assert(ctx.window.I18N.getSubSkillName('睡眠 EXP 獎勵') === 'Sleep EXP Bonus', '睡眠 EXP 獎勵 -> Sleep EXP Bonus');
 
-  // Test 2: Dynamic text translation engine
+  // Test 2: Pokémon name normalization & parenthesis extraction
+  assert(ctx.window.I18N.getPokemonName('毒骷蛙 (ABB)') === 'Toxicroak (ABB)', '毒骷蛙 (ABB) -> Toxicroak (ABB)');
+  assert(ctx.window.I18N.getPokemonName('皮卡丘（ 萬聖節 ）') === 'Pikachu (Halloween)', '皮卡丘（ 萬聖節 ） -> Pikachu (Halloween)');
+  assert(ctx.window.I18N.getPokemonName('骨紋巨聲鱷(AAA)') === 'Skeledirge (AAA)', '骨紋巨聲鱷(AAA) -> Skeledirge (AAA)');
+
+  // Test 3: Specialty, nature, and item normalization
+  assert(ctx.window.I18N.getSpecialtyName('樹果型') === 'Berries', '樹果型 -> Berries');
+  assert(ctx.window.I18N.getSpecialtyName('食材型') === 'Ingredients', '食材型 -> Ingredients');
+  assert(ctx.window.I18N.getNatureName('固執') === 'Adamant', '固執 -> Adamant');
+  assert(ctx.window.I18N.getMainSkillName('能量填充S (隨機)') === 'Charge Strength S (Random)', '能量填充S (隨機) -> Charge Strength S (Random)');
+
+  // Test 4: Dynamic text translation engine
   const ladderNote = '👑 TOP 1 AAA 特選蘋果 產量之王';
   const translatedNote = ctx.window.I18N.translateDynamicText(ladderNote);
   assert(translatedNote === '👑 TOP 1 AAA Fancy Apple Production King', `Ladder note translation failed: ${translatedNote}`);
