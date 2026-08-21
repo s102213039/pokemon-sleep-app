@@ -15,55 +15,55 @@
 
   /* ─── 字典常數定義 ─────────────────────────────────────── */
   const NATURE_DATA = [
-    { name: '固執', buff: '幫忙速度▲▲', debuff: '食材機率▼▼', buffType: 'speed', debuffType: 'ingredient' },
-    { name: '勇敢', buff: '幫忙速度▲▲', debuff: 'EXP獲得量▼▼', buffType: 'speed', debuffType: 'exp' },
-    { name: '怕寂寞', buff: '幫忙速度▲▲', debuff: '活力回復量▼▼', buffType: 'speed', debuffType: 'energy' },
-    { name: '頑皮', buff: '幫忙速度▲▲', debuff: '主技能發動機率▼▼', buffType: 'speed', debuffType: 'skill' },
-    { name: '內斂', buff: '食材機率▲▲', debuff: '幫忙速度▼▼', buffType: 'ingredient', debuffType: 'speed' },
-    { name: '冷靜', buff: '食材機率▲▲', debuff: 'EXP獲得量▼▼', buffType: 'ingredient', debuffType: 'exp' },
-    { name: '慢吞吞', buff: '食材機率▲▲', debuff: '活力回復量▼▼', buffType: 'ingredient', debuffType: 'energy' },
-    { name: '馬虎', buff: '食材機率▲▲', debuff: '主技能發動機率▼▼', buffType: 'ingredient', debuffType: 'skill' },
-    { name: '溫和', buff: '主技能發動機率▲▲', debuff: '幫忙速度▼▼', buffType: 'skill', debuffType: 'speed' },
-    { name: '慎重', buff: '主技能發動機率▲▲', debuff: '食材機率▼▼', buffType: 'skill', debuffType: 'ingredient' },
-    { name: '自大', buff: '主技能發動機率▲▲', debuff: 'EXP獲得量▼▼', buffType: 'skill', debuffType: 'exp' },
-    { name: '溫順', buff: '主技能發動機率▲▲', debuff: '活力回復量▼▼', buffType: 'skill', debuffType: 'energy' },
-    { name: '大膽', buff: '活力回復量▲▲', debuff: '幫忙速度▼▼', buffType: 'energy', debuffType: 'speed' },
-    { name: '淘氣', buff: '活力回復量▲▲', debuff: '食材機率▼▼', buffType: 'energy', debuffType: 'ingredient' },
-    { name: '悠閒', buff: '活力回復量▲▲', debuff: 'EXP獲得量▼▼', buffType: 'energy', debuffType: 'exp' },
-    { name: '樂天', buff: '活力回復量▲▲', debuff: '主技能發動機率▼▼', buffType: 'energy', debuffType: 'skill' },
-    { name: '膽小', buff: 'EXP獲得量▲▲', debuff: '幫忙速度▼▼', buffType: 'exp', debuffType: 'speed' },
-    { name: '爽朗', buff: 'EXP獲得量▲▲', debuff: '食材機率▼▼', buffType: 'exp', debuffType: 'ingredient' },
-    { name: '急躁', buff: 'EXP獲得量▲▲', debuff: '活力回復量▼▼', buffType: 'exp', debuffType: 'energy' },
-    { name: '天真', buff: 'EXP獲得量▲▲', debuff: '主技能發動機率▼▼', buffType: 'exp', debuffType: 'skill' },
-    { name: '坦率', buff: '無增減', debuff: '', buffType: 'none', debuffType: 'none' },
-    { name: '害羞', buff: '無增減', debuff: '', buffType: 'none', debuffType: 'none' },
-    { name: '認真', buff: '無增減', debuff: '', buffType: 'none', debuffType: 'none' },
-    { name: '勤奮', buff: '無增減', debuff: '', buffType: 'none', debuffType: 'none' },
-    { name: '浮躁', buff: '無增減', debuff: '', buffType: 'none', debuffType: 'none' }
+    { name: '固執', name_en: 'Adamant', buff: '幫忙速度▲▲', buff_en: 'Speed ▲▲', debuff: '食材機率▼▼', debuff_en: 'Ingr. ▼▼', buffType: 'speed', debuffType: 'ingredient' },
+    { name: '勇敢', name_en: 'Brave', buff: '幫忙速度▲▲', buff_en: 'Speed ▲▲', debuff: 'EXP獲得量▼▼', debuff_en: 'EXP ▼▼', buffType: 'speed', debuffType: 'exp' },
+    { name: '怕寂寞', name_en: 'Lonely', buff: '幫忙速度▲▲', buff_en: 'Speed ▲▲', debuff: '活力回復量▼▼', debuff_en: 'Energy ▼▼', buffType: 'speed', debuffType: 'energy' },
+    { name: '頑皮', name_en: 'Naughty', buff: '幫忙速度▲▲', buff_en: 'Speed ▲▲', debuff: '主技能發動機率▼▼', debuff_en: 'Skill ▼▼', buffType: 'speed', debuffType: 'skill' },
+    { name: '內斂', name_en: 'Modest', buff: '食材機率▲▲', buff_en: 'Ingr. ▲▲', debuff: '幫忙速度▼▼', debuff_en: 'Speed ▼▼', buffType: 'ingredient', debuffType: 'speed' },
+    { name: '冷靜', name_en: 'Quiet', buff: '食材機率▲▲', buff_en: 'Ingr. ▲▲', debuff: 'EXP獲得量▼▼', debuff_en: 'EXP ▼▼', buffType: 'ingredient', debuffType: 'exp' },
+    { name: '慢吞吞', name_en: 'Mild', buff: '食材機率▲▲', buff_en: 'Ingr. ▲▲', debuff: '活力回復量▼▼', debuff_en: 'Energy ▼▼', buffType: 'ingredient', debuffType: 'energy' },
+    { name: '馬虎', name_en: 'Rash', buff: '食材機率▲▲', buff_en: 'Ingr. ▲▲', debuff: '主技能發動機率▼▼', debuff_en: 'Skill ▼▼', buffType: 'ingredient', debuffType: 'skill' },
+    { name: '溫和', name_en: 'Calm', buff: '主技能發動機率▲▲', buff_en: 'Skill ▲▲', debuff: '幫忙速度▼▼', debuff_en: 'Speed ▼▼', buffType: 'skill', debuffType: 'speed' },
+    { name: '慎重', name_en: 'Careful', buff: '主技能發動機率▲▲', buff_en: 'Skill ▲▲', debuff: '食材機率▼▼', debuff_en: 'Ingr. ▼▼', buffType: 'skill', debuffType: 'ingredient' },
+    { name: '自大', name_en: 'Sassy', buff: '主技能發動機率▲▲', buff_en: 'Skill ▲▲', debuff: 'EXP獲得量▼▼', debuff_en: 'EXP ▼▼', buffType: 'skill', debuffType: 'exp' },
+    { name: '溫順', name_en: 'Gentle', buff: '主技能發動機率▲▲', buff_en: 'Skill ▲▲', debuff: '活力回復量▼▼', debuff_en: 'Energy ▼▼', buffType: 'skill', debuffType: 'energy' },
+    { name: '大膽', name_en: 'Bold', buff: '活力回復量▲▲', buff_en: 'Energy ▲▲', debuff: '幫忙速度▼▼', debuff_en: 'Speed ▼▼', buffType: 'energy', debuffType: 'speed' },
+    { name: '淘氣', name_en: 'Impish', buff: '活力回復量▲▲', buff_en: 'Energy ▲▲', debuff: '食材機率▼▼', debuff_en: 'Ingr. ▼▼', buffType: 'energy', debuffType: 'ingredient' },
+    { name: '悠閒', name_en: 'Relaxed', buff: '活力回復量▲▲', buff_en: 'Energy ▲▲', debuff: 'EXP獲得量▼▼', debuff_en: 'EXP ▼▼', buffType: 'energy', debuffType: 'exp' },
+    { name: '樂天', name_en: 'Lax', buff: '活力回復量▲▲', buff_en: 'Energy ▲▲', debuff: '主技能發動機率▼▼', debuff_en: 'Skill ▼▼', buffType: 'energy', debuffType: 'skill' },
+    { name: '膽小', name_en: 'Timid', buff: 'EXP獲得量▲▲', buff_en: 'EXP ▲▲', debuff: '幫忙速度▼▼', debuff_en: 'Speed ▼▼', buffType: 'exp', debuffType: 'speed' },
+    { name: '爽朗', name_en: 'Jolly', buff: 'EXP獲得量▲▲', buff_en: 'EXP ▲▲', debuff: '食材機率▼▼', debuff_en: 'Ingr. ▼▼', buffType: 'exp', debuffType: 'ingredient' },
+    { name: '急躁', name_en: 'Hasty', buff: 'EXP獲得量▲▲', buff_en: 'EXP ▲▲', debuff: '活力回復量▼▼', debuff_en: 'Energy ▼▼', buffType: 'exp', debuffType: 'energy' },
+    { name: '天真', name_en: 'Naive', buff: 'EXP獲得量▲▲', buff_en: 'EXP ▲▲', debuff: '主技能發動機率▼▼', debuff_en: 'Skill ▼▼', buffType: 'exp', debuffType: 'skill' },
+    { name: '坦率', name_en: 'Hardy', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '', buffType: 'none', debuffType: 'none' },
+    { name: '害羞', name_en: 'Bashful', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '', buffType: 'none', debuffType: 'none' },
+    { name: '認真', name_en: 'Docile', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '', buffType: 'none', debuffType: 'none' },
+    { name: '勤奮', name_en: 'Serious', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '', buffType: 'none', debuffType: 'none' },
+    { name: '浮躁', name_en: 'Quirky', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '', buffType: 'none', debuffType: 'none' }
   ];
 
   const SUBSKILLS_DATA = [
     // 金色技能 (Tier 1 Gold)
-    { name: '樹果數量S', tier: 'gold', desc: '幫忙時發現的樹果數量增加1個' },
-    { name: '幫手獎勵', tier: 'gold', desc: '隊伍全員的幫忙時間縮短5%' },
-    { name: '睡眠EXP獎勵', tier: 'gold', desc: '睡眠研究獲得的EXP提升14%' },
-    { name: '活力回復獎勵', tier: 'gold', desc: '隊伍全員睡眠活力回復量提升14%' },
-    { name: '夢之碎片獎勵', tier: 'gold', desc: '睡眠研究獲得的夢之碎片增加6%' },
-    { name: '研究EXP獎勵', tier: 'gold', desc: '睡眠研究獲得的研究EXP增加6%' },
-    { name: '技能等級提升M', tier: 'gold', desc: '主技能等級提升2級' },
+    { name: '樹果數量S', name_en: 'Berry Finding S', tier: 'gold', desc: '幫忙時發現的樹果數量增加1個', desc_en: 'Finds 1 additional berry when helping.' },
+    { name: '幫手獎勵', name_en: 'Helping Bonus', tier: 'gold', desc: '隊伍全員的幫忙時間縮短5%', desc_en: 'Reduces helping time of all team members by 5%.' },
+    { name: '睡眠EXP獎勵', name_en: 'Sleep EXP Bonus', tier: 'gold', desc: '睡眠研究獲得的EXP提升14%', desc_en: 'Boosts EXP gained from sleep research by 14%.' },
+    { name: '活力回復獎勵', name_en: 'Energy Recovery Bonus', tier: 'gold', desc: '隊伍全員睡眠活力回復量提升14%', desc_en: 'Boosts sleep energy recovery for all team members by 14%.' },
+    { name: '夢之碎片獎勵', name_en: 'Dream Shard Bonus', tier: 'gold', desc: '睡眠研究獲得的夢之碎片增加6%', desc_en: 'Boosts Dream Shards gained from sleep research by 6%.' },
+    { name: '研究EXP獎勵', name_en: 'Research EXP Bonus', tier: 'gold', desc: '睡眠研究獲得的研究EXP增加6%', desc_en: 'Boosts Research EXP gained from sleep research by 6%.' },
+    { name: '技能等級提升M', name_en: 'Skill Level Up M', tier: 'gold', desc: '主技能等級提升2級', desc_en: 'Increases the level of the main skill by 2.' },
     // 藍色技能 (Tier 2 Silver/Blue)
-    { name: '幫忙速度M', tier: 'blue', desc: '幫忙時間縮短14%' },
-    { name: '食材機率提升M', tier: 'blue', desc: '發現食材的機率大幅提升' },
-    { name: '技能機率提升M', tier: 'blue', desc: '發動主技能的機率大幅提升' },
-    { name: '技能等級提升S', tier: 'blue', desc: '主技能等級提升1級' },
-    { name: '持有上限提升L', tier: 'blue', desc: '最大持有數量增加18' },
-    { name: '持有上限提升M', tier: 'blue', desc: '最大持有數量增加12' },
+    { name: '幫忙速度M', name_en: 'Helping Speed M', tier: 'blue', desc: '幫忙時間縮短14%', desc_en: 'Reduces helping time by 14%.' },
+    { name: '食材機率提升M', name_en: 'Ingredient Finder M', tier: 'blue', desc: '發現食材的機率大幅提升', desc_en: 'Significantly increases the chance of finding ingredients.' },
+    { name: '技能機率提升M', name_en: 'Skill Trigger M', tier: 'blue', desc: '發動主技能的機率大幅提升', desc_en: 'Significantly increases the chance of triggering main skill.' },
+    { name: '技能等級提升S', name_en: 'Skill Level Up S', tier: 'blue', desc: '主技能等級提升1級', desc_en: 'Increases the level of the main skill by 1.' },
+    { name: '持有上限提升L', name_en: 'Inventory Up L', tier: 'blue', desc: '最大持有數量增加18', desc_en: 'Increases max carry capacity by 18.' },
+    { name: '持有上限提升M', name_en: 'Inventory Up M', tier: 'blue', desc: '最大持有數量增加12', desc_en: 'Increases max carry capacity by 12.' },
     // 白色技能 (Tier 3 White)
-    { name: '幫忙速度S', tier: 'white', desc: '幫忙時間縮短7%' },
-    { name: '食材機率提升S', tier: 'white', desc: '發現食材的機率小幅提升' },
-    { name: '技能機率提升S', tier: 'white', desc: '發動主技能的機率小幅提升' },
-    { name: '持有上限提升S', tier: 'white', desc: '最大持有數量增加6' },
-    { name: '活力回復提升S', tier: 'white', desc: '自身的活力回復量提升' }
+    { name: '幫忙速度S', name_en: 'Helping Speed S', tier: 'white', desc: '幫忙時間縮短7%', desc_en: 'Reduces helping time by 7%.' },
+    { name: '食材機率提升S', name_en: 'Ingredient Finder S', tier: 'white', desc: '發現食材的機率小幅提升', desc_en: 'Slightly increases the chance of finding ingredients.' },
+    { name: '技能機率提升S', name_en: 'Skill Trigger S', tier: 'white', desc: '發動主技能的機率小幅提升', desc_en: 'Slightly increases the chance of triggering main skill.' },
+    { name: '持有上限提升S', name_en: 'Inventory Up S', tier: 'white', desc: '最大持有數量增加6', desc_en: 'Increases max carry capacity by 6.' },
+    { name: '活力回復提升S', name_en: 'Energy Recovery Up S', tier: 'white', desc: '自身的活力回復量提升', desc_en: 'Boosts the Pokémon\'s own energy recovery by 14%.' }
   ];
 
   /* ─── 狀態管理 ─────────────────────────────────────────── */
@@ -486,9 +486,9 @@
                 ${natureObj && natureObj.buff ? `
                   <div class="box-nature-effects">
                     ${natureObj.buff !== '無增減' ? `
-                      <span class="nature-buff">${natureObj.buff}</span>
-                      <span class="nature-debuff">${natureObj.debuff}</span>
-                    ` : `<span class="nature-neutral">${isEN ? 'No Modifiers' : '無修正'}</span>`}
+                      <span class="nature-buff">${isEN ? (natureObj.buff_en || natureObj.buff) : natureObj.buff}</span>
+                      <span class="nature-debuff">${isEN ? (natureObj.debuff_en || natureObj.debuff) : natureObj.debuff}</span>
+                    ` : `<span class="nature-neutral">${isEN ? 'Neutral' : '無修正'}</span>`}
                   </div>
                 ` : ''}
               </div>
@@ -571,7 +571,7 @@
                   </td>
                   <td>
                     <div><strong>${escapeHtml(natureDisplayName || (isEN ? 'Hardy' : '坦率'))}</strong></div>
-                    ${natureObj && natureObj.buff ? `<div style="font-size:10.5px;" class="nature-buff">${natureObj.buff} ${natureObj.debuff}</div>` : ''}
+                    ${natureObj && natureObj.buff ? `<div style="font-size:10.5px;" class="nature-buff">${natureObj.buff !== '無增減' ? (isEN ? `${natureObj.buff_en} ${natureObj.debuff_en}` : `${natureObj.buff} ${natureObj.debuff}`) : (isEN ? 'Neutral' : '無修正')}</div>` : ''}
                   </td>
                   <td>
                     <div style="display:flex;gap:6px;">
@@ -699,9 +699,11 @@
     if (natureSelect) {
       natureSelect.innerHTML = NATURE_DATA.map(n => {
         const natDisplayName = window.I18N ? window.I18N.getNatureName(n.name) : n.name;
+        const buffLabel = isEN ? (n.buff_en || n.buff) : n.buff;
+        const debuffLabel = isEN ? (n.debuff_en || n.debuff) : n.debuff;
         return `
         <option value="${n.name}" ${existingItem && existingItem.nature === n.name ? 'selected' : (n.name === '固執' && !existingItem ? 'selected' : '')}>
-          ${natDisplayName} (${n.buff}${n.debuff ? ' / ' + n.debuff : ''})
+          ${natDisplayName} (${buffLabel}${debuffLabel ? ' / ' + debuffLabel : ''})
         </option>
       `;}).join('');
     }

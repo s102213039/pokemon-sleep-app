@@ -1296,6 +1296,62 @@ test('Tier 1 - Feature Coverage', 'News AI Dashboard Sections Title & List Items
   });
 });
 
+test('Tier 1 - Feature Coverage', 'I18N Item & Island & Nature & Subskill Bilingual Coverage', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+
+  const ctx = {
+    window: {
+      location: { hash: '#box' },
+      localStorage: { getItem: () => 'en-US', setItem: () => {} },
+      addEventListener: () => {}
+    },
+    document: {
+      readyState: 'complete',
+      documentElement: { setAttribute: () => {} },
+      addEventListener: () => {},
+      getElementById: () => null,
+      querySelectorAll: () => []
+    },
+    console: console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+  vm.runInContext(boxCode, ctx);
+
+  assert(typeof ctx.window.I18N.getItemName === 'function', 'getItemName must be exported');
+  assert(typeof ctx.window.I18N.getIslandName === 'function', 'getIslandName must be exported');
+
+  // Test Item translations in EN
+  ctx.window.I18N.setLanguage('en-US');
+  assert(ctx.window.I18N.getItemName('寶可沙布蕾') === 'Poké Biscuit', '寶可沙布蕾 -> Poké Biscuit');
+  assert(ctx.window.I18N.getItemName('主技能種子') === 'Main Skill Seed', '主技能種子 -> Main Skill Seed');
+  assert(ctx.window.I18N.getItemName('萬能糖果S') === 'Handy Candy S', '萬能糖果S -> Handy Candy S');
+
+  // Test Island translations in EN
+  assert(ctx.window.I18N.getIslandName('萌綠之島') === 'Greengrass Isle', '萌綠之島 -> Greengrass Isle');
+  assert(ctx.window.I18N.getIslandName('天青沙灘') === 'Cyan Beach', '天青沙灘 -> Cyan Beach');
+  assert(ctx.window.I18N.getIslandName('黃金舊發電廠') === 'Old Gold Power Plant', '黃金舊發電廠 -> Old Gold Power Plant');
+
+  // Test Natures in box.js
+  const natureData = ctx.window.PokemonBoxApp.NATURE_DATA;
+  assert(Array.isArray(natureData) && natureData.length === 25, '25 Natures defined');
+  natureData.forEach(n => {
+    assert(n.name_en, `Nature ${n.name} must have name_en`);
+    assert(n.buff_en, `Nature ${n.name} must have buff_en`);
+  });
+
+  // Test Subskills in box.js
+  const subskillData = ctx.window.PokemonBoxApp.SUBSKILLS_DATA;
+  assert(Array.isArray(subskillData) && subskillData.length >= 17, 'Subskills defined');
+  subskillData.forEach(s => {
+    assert(s.name_en, `Subskill ${s.name} must have name_en`);
+    assert(s.desc_en, `Subskill ${s.name} must have desc_en`);
+  });
+});
+
 
 // Final Summary Output
 console.log('\n======================================================');

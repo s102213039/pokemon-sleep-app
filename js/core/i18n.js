@@ -732,6 +732,52 @@
     '活力回復提升S': { 'zh-TW': '活力回復提升S', 'en-US': 'Energy Recovery Up S' }
   };
 
+  // 道具名稱官方英中對照
+  const ITEM_NAMES = {
+    '寶可沙布蕾': { 'zh-TW': '寶可沙布蕾', 'en-US': 'Poké Biscuit' },
+    '超級沙布蕾': { 'zh-TW': '超級沙布蕾', 'en-US': 'Great Biscuit' },
+    '高級沙布蕾': { 'zh-TW': '高級沙布蕾', 'en-US': 'Ultra Biscuit' },
+    '大師沙布蕾': { 'zh-TW': '大師沙布蕾', 'en-US': 'Master Biscuit' },
+    '主技能種子': { 'zh-TW': '主技能種子', 'en-US': 'Main Skill Seed' },
+    '副技能種子': { 'zh-TW': '副技能種子', 'en-US': 'Sub Skill Seed' },
+    '萬能糖果S': { 'zh-TW': '萬能糖果S', 'en-US': 'Handy Candy S' },
+    '萬能糖果M': { 'zh-TW': '萬能糖果M', 'en-US': 'Handy Candy M' },
+    '萬能糖果L': { 'zh-TW': '萬能糖果L', 'en-US': 'Handy Candy L' },
+    '萬能糖果': { 'zh-TW': '萬能糖果', 'en-US': 'Handy Candy' },
+    '夢之塊S': { 'zh-TW': '夢之塊S', 'en-US': 'Dream Cluster S' },
+    '夢之塊M': { 'zh-TW': '夢之塊M', 'en-US': 'Dream Cluster M' },
+    '夢之塊L': { 'zh-TW': '夢之塊L', 'en-US': 'Dream Cluster L' },
+    '夢之塊': { 'zh-TW': '夢之塊', 'en-US': 'Dream Cluster' },
+    '夢之碎片': { 'zh-TW': '夢之碎片', 'en-US': 'Dream Shards' },
+    '友好薰香': { 'zh-TW': '友好薰香', 'en-US': 'Friend Incense' },
+    '成長薰香': { 'zh-TW': '成長薰香', 'en-US': 'Growth Incense' },
+    '幸運薰香': { 'zh-TW': '幸運薰香', 'en-US': 'Luck Incense' },
+    '專用薰香': { 'zh-TW': '專用薰香', 'en-US': 'Specific Incense' },
+    '薰香': { 'zh-TW': '薰香', 'en-US': 'Incense' },
+    '糖果': { 'zh-TW': '糖果', 'en-US': 'Candy' },
+    '鑽石': { 'zh-TW': '鑽石', 'en-US': 'Diamonds' },
+    '睡眠點數': { 'zh-TW': '睡眠點數', 'en-US': 'Sleep Points' },
+    '幫手哨子': { 'zh-TW': '幫手哨子', 'en-US': 'Helper Whistle' },
+    '好的營地套票': { 'zh-TW': '好的營地套票', 'en-US': 'Good Camp Ticket' },
+    '露營券': { 'zh-TW': '露營券', 'en-US': 'Good Camp Ticket' },
+    '能量枕頭': { 'zh-TW': '能量枕頭', 'en-US': 'Energy Pillow' },
+    '寶可夢的糖果': { 'zh-TW': '寶可夢的糖果', 'en-US': 'Pokémon Candy' },
+    '寶可夢糖果': { 'zh-TW': '寶可夢糖果', 'en-US': 'Pokémon Candy' }
+  };
+
+  // 島嶼與營地名稱官方英中對照
+  const ISLAND_NAMES = {
+    '萌綠之島': { 'zh-TW': '萌綠之島', 'en-US': 'Greengrass Isle' },
+    '萌綠之島EX': { 'zh-TW': '萌綠之島EX', 'en-US': 'Greengrass Isle EX' },
+    '天青沙灘': { 'zh-TW': '天青沙灘', 'en-US': 'Cyan Beach' },
+    '天青沙灘EX': { 'zh-TW': '天青沙灘EX', 'en-US': 'Cyan Beach EX' },
+    '灰褐洞窟': { 'zh-TW': '灰褐洞窟', 'en-US': 'Taupe Hollow' },
+    '白花雪原': { 'zh-TW': '白花雪原', 'en-US': 'Snowdrop Tundra' },
+    '寶藍湖畔': { 'zh-TW': '寶藍湖畔', 'en-US': 'Lapis Lakeside' },
+    '黃金舊發電廠': { 'zh-TW': '黃金舊發電廠', 'en-US': 'Old Gold Power Plant' },
+    '琥褐溪谷': { 'zh-TW': '琥褐溪谷', 'en-US': 'Amber Canyon' }
+  };
+
   // 當前語言狀態
   let currentLang = DEFAULT_LANG;
 
@@ -939,6 +985,18 @@
     return currentLang === 'en-US' ? shortenSkillName(full) : full;
   }
 
+  function getItemName(item) {
+    if (!item) return '';
+    const it = ITEM_NAMES[item];
+    return it ? (it[currentLang] || item) : item;
+  }
+
+  function getIslandName(island) {
+    if (!island) return '';
+    const isl = ISLAND_NAMES[island];
+    return isl ? (isl[currentLang] || island) : island;
+  }
+
   const I18NExport = {
     t,
     getLanguage,
@@ -953,6 +1011,8 @@
     getShortMainSkillName,
     shortenSkillName,
     getSubSkillName,
+    getItemName,
+    getIslandName,
     updatePageTranslations,
     DICTIONARY,
     POKEMON_NAMES,
@@ -962,7 +1022,9 @@
     BERRY_NAMES,
     NATURE_NAMES,
     MAIN_SKILL_NAMES,
-    SUBSKILL_NAMES
+    SUBSKILL_NAMES,
+    ITEM_NAMES,
+    ISLAND_NAMES
   };
 
   if (typeof window !== 'undefined') {
