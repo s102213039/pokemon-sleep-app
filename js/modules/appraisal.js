@@ -533,7 +533,7 @@
 
             <!-- 下半部：關鍵里程碑升級消耗試算 -->
             <div class="appraisal-costs-card">
-              <h4 class="appraisal-section-heading">${isEN ? `🍬 Milestone Investment Calculator (Current Lv.${currentLv})` : `🍬 關鍵里程碑培育成本精算 (當前 Lv.${currentLv})`}</h4>
+              <h4 class="appraisal-section-heading">${isEN ? `🍬 Milestone Investment Calculator (Lv.${currentLv})` : `🍬 培育成本精算 (當前 Lv.${currentLv})`}</h4>
               <div class="appraisal-costs-grid">
                 <div class="appraisal-cost-block">
                   <div class="cost-milestone-title">${isEN ? '🎯 Reach Lv. 30' : '🎯 升至 Lv. 30'} <span class="cost-milestone-sub">${isEN ? '(Unlock 2nd Ingredient)' : '(解鎖第 2 食材)'}</span></div>
@@ -611,7 +611,7 @@
       <div class="appraisal-lab-card">
         <div class="appraisal-lab-header">
           <div class="appraisal-lab-title-group">
-            <span class="appraisal-lab-badge">${isEN ? '🔮 Appraisal Lab' : '🔮 評測實驗室 (Lab)'}</span>
+            <span class="appraisal-lab-badge">${isEN ? '🔮 Appraisal Lab' : '🔮 評測實驗室'}</span>
             <h3 class="appraisal-lab-title">${isEN ? 'Pokémon Deep Appraisal & Synergy Lab' : '寶可夢深度診斷評測實驗室'}</h3>
           </div>
           <p class="appraisal-lab-desc">${isEN ? 'Pick any Pokémon, configure natures, sub-skills & levels to calculate 6-dimension potential and milestone costs!' : '自由挑選任何寶可夢物種、自選性格、副技能與等級，即時繪製六維雷達圖並精算潛力與升級成本！'}</p>

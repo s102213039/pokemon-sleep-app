@@ -118,7 +118,7 @@
   const MAIN_SKILLS_DATA = [
     {
       id: "charge_energy_s_fixed",
-      name: "能量填充S (固定值)",
+      name: "能量填充S (固定)",
       icon: "⚡",
       category: "energy",
       catName: "能量系",
@@ -131,7 +131,7 @@
     },
     {
       id: "charge_energy_s_range",
-      name: "能量填充S (隨機/變動值)",
+      name: "能量填充S (隨機)",
       icon: "🎲",
       category: "energy",
       catName: "能量系",
@@ -154,7 +154,7 @@
     },
     {
       id: "charge_energy_m",
-      name: "能量填充M (固定值)",
+      name: "能量填充M (固定)",
       icon: "🔥",
       category: "energy",
       catName: "能量系",
@@ -367,7 +367,7 @@
     },
     {
       id: "dream_shard_magnet_s_fixed",
-      name: "夢之碎片獲取S (固定值)",
+      name: "夢之碎片獲取S (固定)",
       icon: "💎",
       category: "shards",
       catName: "夢碎系",
@@ -380,7 +380,7 @@
     },
     {
       id: "dream_shard_magnet_s_range",
-      name: "夢之碎片獲取S (隨機/變動值)",
+      name: "夢之碎片獲取S (隨機)",
       icon: "🎰",
       category: "shards",
       catName: "夢碎系",
@@ -4792,7 +4792,7 @@
           <div class="values-section-header">
             <div class="values-section-title-group">
               <span class="values-section-badge ing-badge">${isEN ? '🍲 Ingredient Base Power' : '🍲 食材基礎能量庫'}</span>
-              <span class="values-section-sub">${isEN ? 'Base Energy 90 ➔ 342 (Dish Base Scoring)' : '基礎能量 90 ➔ 342 (料理關鍵基礎分)'}</span>
+              <span class="values-section-sub">${isEN ? 'Ingredient Base Power (90 ➔ 342)' : '食材基礎能量一覽'}</span>
             </div>
           </div>
 
@@ -5180,7 +5180,7 @@
           <div class="wiki-card">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">🧮</span>
-              <h3 class="wiki-card-title">${isEN ? 'Main Skill Trigger Chance Matrix (Sub-Skills × Nature)' : '主技能發動機率矩陣對照表（副技能 × 性格乘算）'}</h3>
+              <h3 class="wiki-card-title">${isEN ? 'Main Skill Trigger Chance Matrix' : '主技能發動機率矩陣'}</h3>
             </div>
             <p class="wiki-card-desc">${isEN ? 'Calculated via official in-game formula: <code>(1 + Sub-Skill %) × Nature Multiplier = Final Multiplier</code>.' : '依據遊戲底層乘法公式：<code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>，展示所有組合狀況的計算過程與最終總倍率速查。'}</p>
 
@@ -5231,11 +5231,11 @@
             </div>
           </div>
 
-          <!-- 副技能完整階級與數值說明表格 (僅已開放副技能) -->
+          <!-- 副技能完整階級與數值說明表格 -->
           <div class="wiki-card" style="margin-top: 20px;">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">📋</span>
-              <h3 class="wiki-card-title">${isEN ? 'Sub-Skills Complete Tier & Stats Overview' : '副技能階級與數值完整一覽表（已開放副技能）'}</h3>
+              <h3 class="wiki-card-title">${isEN ? 'Sub-Skills Complete Tier & Stats Overview' : '副技能階級與數值總覽'}</h3>
             </div>
             <div class="wiki-rule-banner">
               ${isEN 
@@ -5268,11 +5268,11 @@
             </div>
           </div>
 
-          <!-- 性格五維加成倍率表 (官方最新補正) -->
+          <!-- 性格五維加成倍率表 -->
           <div class="wiki-card" style="margin-top: 20px;">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">🧬</span>
-              <h3 class="wiki-card-title">${isEN ? 'Nature 5-Stat Multiplier Table (Official Rates)' : '性格五維屬性增減倍率表（官方最新補正）'}</h3>
+              <h3 class="wiki-card-title">${isEN ? 'Nature 5-Stat Multiplier Table' : '性格五維屬性倍率表'}</h3>
             </div>
             <div class="wiki-table-wrapper">
               <table class="wiki-data-table">
@@ -5464,7 +5464,7 @@
           <div class="wiki-card">
             <div class="wiki-card-header">
               <span class="wiki-card-icon">🫐</span>
-              <h3 class="wiki-card-title">${isEN ? 'Berry & Ingredient Base Power Table' : '樹果與食材基礎能量一覽表（BERRY & INGREDIENT VALUES）'}</h3>
+              <h3 class="wiki-card-title">${isEN ? 'Berry & Ingredient Base Power Table' : '樹果與食材基礎能量表'}</h3>
             </div>
             <p class="wiki-card-desc">${isEN ? 'Official in-game base power values for 18 Berries (24~35) and 19 Ingredients (90~342).' : '依據官方遊戲底層能量設定，完整展示 18 種屬性樹果基礎能量（24~35）與 19 種料理食材基礎能量（90~342）。'}</p>
 
