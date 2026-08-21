@@ -282,13 +282,17 @@ const SPECIAL_SKILL_DETAILS = {
     'zh-TW': '隨機獲得多個食材；有時除了食材之外，還會額外隨機獲得隊伍中 1 隻寶可夢的糖果。',
     'en-US': 'Randomly obtains ingredients, and occasionally grants candies for a random team member.'
   },
+  '食材精選S': {
+    'zh-TW': '從該寶可夢自身專屬食材池（Lv.1/Lv.30/Lv.60）中隨機獲得 1 種食材。不同寶可夢能獲得的食材池各不相同（與隨機給全圖鑑食材的「食材獲取S」不同）。',
+    'en-US': 'Obtains 1 ingredient type exclusively from this Pokémon\'s own ingredient pool (Lv.1/Lv.30/Lv.60). Different Pokémon draw different ingredient sets.'
+  },
   '超幸運（食材精選S）': {
-    'zh-TW': '從該寶可夢自身可產出的特定食材中隨機獲得 1 種；少數情況下會獲得大量的夢之碎片而不是食材。',
-    'en-US': 'Obtains one of its droppable ingredients; rarely awards large amounts of Dream Shards instead.'
+    'zh-TW': '從該寶可夢自身專屬食材池中隨機獲得 1 種食材；少數情況下會獲得大量的夢之碎片而不是食材。',
+    'en-US': 'Obtains 1 ingredient type exclusively from its own pool; rarely awards large amounts of Dream Shards instead.'
   },
   '怪力钳（食材精選S）': {
-    'zh-TW': '從該寶可夢自身可產出的特定食材中隨機獲得 1 種；有時候會額外獲得更多的食材。',
-    'en-US': 'Obtains one of its droppable ingredients; sometimes awards extra amounts.'
+    'zh-TW': '從該寶可夢自身專屬食材池中隨機獲得 1 種食材；有時候會額外獲得更多的食材。',
+    'en-US': 'Obtains 1 ingredient type exclusively from its own pool; sometimes awards extra amounts.'
   },
   '新月祈禱（活力全體療癒S）': {
     'zh-TW': '讓幫手隊伍的所有寶可夢回復活力，並額外獲得隊伍中所有寶可夢撿來的樹果（超能力屬性隊員越多，樹果數量越多）。',
@@ -398,12 +402,25 @@ function formatSkillNameHtml(displayName, isEN) {
   return `<span class="skill-single-line">${escapeHtml(shortName)}</span>`;
 }
 
-function renderSkillWithTooltip(skillName) {
+function renderSkillWithTooltip(skillName, pkm) {
   if (!skillName) return '--';
   const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
   const displayName = (typeof window !== 'undefined' && window.I18N) ? window.I18N.getMainSkillName(skillName) : skillName;
   const rawDetail = SPECIAL_SKILL_DETAILS[skillName] || SPECIAL_SKILL_DETAILS[skillName.replace(/\(/g, '（').replace(/\)/g, '）')];
-  const detail = rawDetail ? (typeof rawDetail === 'object' ? (rawDetail[isEN ? 'en-US' : 'zh-TW'] || rawDetail['zh-TW']) : rawDetail) : '';
+  let detail = rawDetail ? (typeof rawDetail === 'object' ? (rawDetail[isEN ? 'en-US' : 'zh-TW'] || rawDetail['zh-TW']) : rawDetail) : '';
+
+  // 針對「食材精選S」系列，若傳入寶可夢物件，動態追加該寶可夢專屬的 3 種可產食材池提示
+  if (skillName && skillName.includes('食材精選') && pkm && pkm.ingredients && pkm.ingredients.length > 0) {
+    const pkmName = isEN ? ((window.I18N && window.I18N.getPokemonName(pkm.name_cn || pkm.name)) || pkm.name_en || pkm.name_cn || pkm.name) : (pkm.name_cn || pkm.name);
+    const ingNames = Array.from(new Set(pkm.ingredients.map(ig => (typeof window !== 'undefined' && window.I18N) ? (window.I18N.getIngredientName(ig.name) || ig.name) : ig.name))).join(isEN ? ', ' : '、');
+    if (ingNames) {
+      if (isEN) {
+        detail += `\n👉 [${pkmName} Candidate Pool]: ${ingNames}`;
+      } else {
+        detail += `\n👉【${pkmName} 專屬食材池】：${ingNames}`;
+      }
+    }
+  }
   
   const contentHtml = formatSkillNameHtml(displayName, isEN);
 
@@ -455,7 +472,9 @@ const PokemonApp = {
 
 if (typeof window !== 'undefined') {
   window.PokemonApp = PokemonApp;
+  window.renderSkillWithTooltip = renderSkillWithTooltip;
 }
+PokemonApp.renderSkillWithTooltip = renderSkillWithTooltip;
 
 Object.assign(PokemonApp, {
   filterData() {
@@ -1440,7 +1459,7 @@ if (typeof document !== 'undefined') {
               </div>
               <div class="card-skill-footer">
                 <span class="card-skill-label">⚡ ${t('th.main_skill', '主技能')}</span>
-                <span class="card-skill-value">${renderSkillWithTooltip(p.main_skill)}</span>
+                <span class="card-skill-value">${renderSkillWithTooltip(p.main_skill, p)}</span>
               </div>
             </div>
           `}).join('')}
@@ -1495,7 +1514,7 @@ if (typeof document !== 'undefined') {
                   <td class="td-rate">${p.ingredient_rate || '--'}</td>
                   <td class="td-rate">${p.skill_rate || '--'}</td>
                   <td class="td-interval">${p.interval || '--'}</td>
-                  <td class="td-skill">${renderSkillWithTooltip(p.main_skill)}</td>
+                  <td class="td-skill">${renderSkillWithTooltip(p.main_skill, p)}</td>
                 </tr>
               `}).join('')}
             </tbody>

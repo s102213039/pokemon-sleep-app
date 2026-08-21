@@ -1402,6 +1402,71 @@ test('Tier 1 - Feature Coverage', 'Centralized Scalable I18N Dynamic Translator 
   assert(translatedBundle.includes('Great Biscuit') && translatedBundle.includes('Luck Incense') && translatedBundle.includes('Focus Incense'), `Bundle translation failed: ${translatedBundle}`);
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Ingredient Draw S Specific Pools & Tooltips Verification', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const appCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+
+  const ctx = {
+    window: { localStorage: { getItem: () => 'zh-TW', setItem: () => {} }, addEventListener: () => {} },
+    document: {
+      documentElement: { setAttribute: () => {} },
+      getElementById: () => null,
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    console: console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+  vm.runInContext(appCode, ctx);
+  vm.runInContext(wikiCode, ctx);
+
+  const sandslash = {
+    name: '穿山王',
+    name_cn: '穿山王',
+    name_en: 'Sandslash',
+    main_skill: '食材精選S',
+    ingredients: [
+      { name: '沉甸甸南瓜' },
+      { name: '萌綠玉米' },
+      { name: '窩心洋芋' }
+    ]
+  };
+
+  const mawile = {
+    name: '大嘴娃',
+    name_cn: '大嘴娃',
+    name_en: 'Mawile',
+    main_skill: '怪力钳（食材精選S）',
+    ingredients: [
+      { name: '純粹油' },
+      { name: '萌綠玉米' },
+      { name: '好眠番茄' }
+    ]
+  };
+
+  // Test Chinese tooltip rendering
+  const sandslashHtmlZh = ctx.window.PokemonApp.renderSkillWithTooltip(sandslash.main_skill, sandslash);
+  assert(sandslashHtmlZh.includes('special-skill-badge'), 'Sandslash should render special-skill-badge');
+  assert(sandslashHtmlZh.includes('沉甸甸南瓜') && sandslashHtmlZh.includes('萌綠玉米') && sandslashHtmlZh.includes('窩心洋芋'), 'Sandslash tooltip should include its 3 specific ingredients');
+
+  const mawileHtmlZh = ctx.window.PokemonApp.renderSkillWithTooltip(mawile.main_skill, mawile);
+  assert(mawileHtmlZh.includes('純粹油') && mawileHtmlZh.includes('萌綠玉米') && mawileHtmlZh.includes('好眠番茄'), 'Mawile tooltip should include its 3 specific ingredients');
+
+  // Test English tooltip rendering
+  ctx.window.I18N.setLanguage('en-US');
+  const sandslashHtmlEn = ctx.window.PokemonApp.renderSkillWithTooltip(sandslash.main_skill, sandslash);
+  assert(sandslashHtmlEn.includes('Plump Pumpkin') && sandslashHtmlEn.includes('Greengrass Corn') && sandslashHtmlEn.includes('Soft Potato'), 'Sandslash English tooltip should include its 3 specific ingredients in English');
+  ctx.window.I18N.setLanguage('zh-TW');
+
+  // Test Wiki MAIN_SKILLS_DATA has ingredient_draw_s
+  const ingDrawSkill = ctx.window.WikiDB.MAIN_SKILLS_DATA.find(s => s.id === 'ingredient_draw_s');
+  assert(ingDrawSkill && ingDrawSkill.hasIngredientDrawMatrix, 'Wiki should define ingredient_draw_s with hasIngredientDrawMatrix');
+});
+
 
 // Final Summary Output
 console.log('\n======================================================');

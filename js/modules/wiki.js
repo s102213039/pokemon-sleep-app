@@ -8,6 +8,112 @@
 (function () {
   'use strict';
 
+  // --- 0. 食材精選S 專屬寶可夢與食材池對照表 (Ingredient Draw Specific Pools) ---
+  const INGREDIENT_DRAW_POKEMONS = [
+    {
+      id: 28,
+      name: '穿山王',
+      name_en: 'Sandslash',
+      family: '穿山鼠 / 穿山王',
+      family_en: 'Sandshrew / Sandslash',
+      skill: '食材精選S',
+      skill_en: 'Ingr. Select S',
+      icon: 'https://www.serebii.net/pokemonsleep/pokemon/icon/028.png',
+      ingredients: [
+        { name: '沉甸甸南瓜', name_en: 'Plump Pumpkin', icon: 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png' },
+        { name: '萌綠玉米', name_en: 'Greengrass Corn', icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' },
+        { name: '窩心洋芋', name_en: 'Soft Potato', icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' }
+      ],
+      extraEffect: '精準產出南瓜、玉米與洋芋',
+      extraEffect_en: 'Guaranteed Pumpkin, Corn, or Potato'
+    },
+    {
+      id: 430,
+      name: '烏鴉頭頭',
+      name_en: 'Honchkrow',
+      family: '黑暗鴉 / 烏鴉頭頭',
+      family_en: 'Murkrow / Honchkrow',
+      skill: '超幸運（食材精選S）',
+      skill_en: 'Super Luck (Ingr. Select S)',
+      icon: 'https://www.serebii.net/pokemonsleep/pokemon/icon/430.png',
+      ingredients: [
+        { name: '醒腦咖啡豆', name_en: 'Rousing Coffee', icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' },
+        { name: '萌綠大豆', name_en: 'Greengrass Soybeans', icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' },
+        { name: '火辣香草', name_en: 'Fiery Herb', icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }
+      ],
+      extraEffect: '✨ 機率獲得大量夢之碎片',
+      extraEffect_en: '✨ Chance to grant massive Dream Shards'
+    },
+    {
+      id: 303,
+      name: '大嘴娃',
+      name_en: 'Mawile',
+      family: '大嘴娃',
+      family_en: 'Mawile',
+      skill: '怪力钳（食材精選S）',
+      skill_en: 'Hyper Cutter (Ingr. Select S)',
+      icon: 'https://www.serebii.net/pokemonsleep/pokemon/icon/303.png',
+      ingredients: [
+        { name: '純粹油', name_en: 'Pure Oil', icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' },
+        { name: '萌綠玉米', name_en: 'Greengrass Corn', icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' },
+        { name: '好眠番茄', name_en: 'Snoozy Tomato', icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }
+      ],
+      extraEffect: '✨ 機率額外獲得更多食材',
+      extraEffect_en: '✨ Chance to gain bonus ingredient quantity'
+    },
+    {
+      id: 558,
+      name: '岩殿居蟹',
+      name_en: 'Crustle',
+      family: '石居蟹 / 岩殿居蟹',
+      family_en: 'Dwebble / Crustle',
+      skill: '食材精選S',
+      skill_en: 'Ingr. Select S',
+      icon: 'https://www.serebii.net/pokemonsleep/pokemon/icon/558.png',
+      ingredients: [
+        { name: '嫩亮酪梨', name_en: 'Glossy Avocado', icon: 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png' },
+        { name: '窩心洋芋', name_en: 'Soft Potato', icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' },
+        { name: '純粹油', name_en: 'Pure Oil', icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }
+      ],
+      extraEffect: '精準產出酪梨、洋芋與純油',
+      extraEffect_en: 'Guaranteed Avocado, Potato, or Oil'
+    },
+    {
+      id: 701,
+      name: '摔角鷹人',
+      name_en: 'Hawlucha',
+      family: '摔角鷹人',
+      family_en: 'Hawlucha',
+      skill: '食材精選S',
+      skill_en: 'Ingr. Select S',
+      icon: 'https://www.serebii.net/pokemonsleep/pokemon/icon/701.png',
+      ingredients: [
+        { name: '火辣香草', name_en: 'Fiery Herb', icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' },
+        { name: '暖暖薑', name_en: 'Warming Ginger', icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' },
+        { name: '豆製肉', name_en: 'Bean Sausage', icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' }
+      ],
+      extraEffect: '精準產出香草、暖薑與豆肉',
+      extraEffect_en: 'Guaranteed Herb, Ginger, or Sausage'
+    },
+    {
+      id: 743,
+      name: '蝶結萌虻',
+      name_en: 'Ribombee',
+      family: '萌虻 / 蝶結萌虻',
+      family_en: 'Cutiefly / Ribombee',
+      skill: '食材精選S',
+      skill_en: 'Ingr. Select S',
+      icon: 'https://www.serebii.net/pokemonsleep/pokemon/icon/743.png',
+      ingredients: [
+        { name: '甜甜蜜', name_en: 'Honey', icon: 'https://www.serebii.net/pokemonsleep/ingredients/honey.png' },
+        { name: '純粹油', name_en: 'Pure Oil', icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' },
+        { name: '萌綠玉米', name_en: 'Greengrass Corn', icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' }
+      ],
+      extraEffect: '精準產出蜂蜜、純油與玉米',
+      extraEffect_en: 'Guaranteed Honey, Oil, or Corn'
+    }
+  ];
+
   // --- 1. 主技能完整數值資料庫 (Main Skills Lv.1 ~ Lv.8) ---
   const MAIN_SKILLS_DATA = [
     {
@@ -106,10 +212,58 @@
       icon: "🥗",
       category: "ingredient",
       catName: "食材與料理",
-      desc: "隨機獲得已解鎖的食材。",
-      desc_en: "Gets a random assortment of unlocked ingredients.",
+      desc: "隨機獲得已解鎖的食材（全圖鑑已解鎖食材隨機抽選）。",
+      desc_en: "Gets a random assortment of all unlocked ingredients.",
       maxLevel: 7,
       values: [6, 8, 11, 14, 17, 21, 24],
+      unit: " 個食材",
+      unit_en: " Ingredients"
+    },
+    {
+      id: "ingredient_draw_s",
+      name: "食材精選S",
+      icon: "🥗",
+      category: "ingredient",
+      catName: "食材與料理 (精選)",
+      desc: "從該寶可夢自身可產出的食材（Lv.1/Lv.30/Lv.60專屬食材池）中，隨機獲得其中 1 種食材。",
+      desc_en: "Obtains 1 ingredient type exclusively from this Pokémon's own ingredient pool (Lv.1/Lv.30/Lv.60).",
+      maxLevel: 7,
+      values: [6, 8, 11, 14, 17, 21, 24],
+      specialNote: "💡 食材精選機制：不同於「食材獲取S」隨機給全圖鑑食材，「食材精選S」僅會鎖定抽取「該隻發動寶可夢自身的專屬食材池」。",
+      specialNote_en: "💡 Ingr. Select Rule: Draws 1 ingredient type only from this Pokémon's own ingredient pool, unlike Ingr. Magnet S.",
+      hasIngredientDrawMatrix: true,
+      unit: " 個食材",
+      unit_en: " Ingredients"
+    },
+    {
+      id: "super_luck_s",
+      name: "超幸運 (食材精選S)",
+      icon: "🍀",
+      category: "ingredient",
+      catName: "食材與料理 (專屬)",
+      desc: "黑暗鴉/烏鴉頭頭專屬。從自身食材中隨機抽取 1 種；少數情況下會觸發大獎，獲得大量夢之碎片！",
+      desc_en: "Murkrow / Honchkrow exclusive. Draws 1 own ingredient; rarely triggers a jackpot of massive Dream Shards!",
+      maxLevel: 7,
+      values: [6, 8, 11, 14, 17, 21, 24],
+      specialNote: "✨ 超幸運大獎：發動時有機率不給食材，改為爆發獲得大量「夢之碎片」！",
+      specialNote_en: "✨ Jackpot: Has a chance to grant massive Dream Shards instead of ingredients!",
+      hasIngredientDrawMatrix: true,
+      unit: " 個食材",
+      unit_en: " Ingredients"
+    },
+    {
+      id: "hyper_cutter_s",
+      name: "怪力鉗 (食材精選S)",
+      icon: "🦀",
+      category: "ingredient",
+      catName: "食材與料理 (專屬)",
+      desc: "大嘴娃專屬。從自身食材中隨機抽取 1 種；有時候會額外爆發獲得更多的食材！",
+      desc_en: "Mawile exclusive. Draws 1 own ingredient; sometimes bursts extra amounts of ingredients!",
+      maxLevel: 7,
+      values: [6, 8, 11, 14, 17, 21, 24],
+      specialNote: "✨ 怪力鉗爆發：發動時有機會額外爆發獲得更多數量的食材！",
+      specialNote_en: "✨ Extra Burst: Chance to yield bonus ingredient quantities upon trigger!",
+      hasIngredientDrawMatrix: true,
       unit: " 個食材",
       unit_en: " Ingredients"
     },
@@ -4856,6 +5010,61 @@
                   <tr class="${idx === 4 ? 'row-highlight' : ''}">
                     <td class="font-bold text-accent">${isEN ? (m.kinds_en || m.kinds) : m.kinds}</td>
                     ${m.vals.map(v => `<td>${v} ${isEN ? 'Berries' : '顆'}</td>`).join('')}
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } else if (skill.hasIngredientDrawMatrix) {
+        valuesHtml = `
+          <div class="skill-levels-grid">
+            ${skill.values.map((v, i) => `
+              <div class="skill-level-chip">
+                <span class="level-tag">Lv.${i + 1}</span>
+                <span class="level-val">${v} ${unitLabel}</span>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- 展開各寶可夢專屬食材池對照表按鈕 -->
+          <div style="margin-top: 6px;">
+            <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="ing-draw-matrix-table" onclick="window.WikiDB.toggleDetail('ing-draw-matrix-table')">
+              ${isEN ? '📊 Toggle Candidate Ingredient Pools per Pokémon' : '📊 展開 / 收合 各寶可夢「專屬食材池」對照表'}
+            </button>
+          </div>
+
+          <div id="ing-draw-matrix-table" class="wiki-table-wrapper" style="display: none; margin-top: 6px;">
+            <table class="wiki-mini-table">
+              <thead>
+                <tr>
+                  <th>${isEN ? 'Pokémon Family' : '寶可夢家族'}</th>
+                  <th>${isEN ? 'Main Skill Variant' : '主技能型態'}</th>
+                  <th>${isEN ? '3 Candidate Ingredients' : '可精選抽取的 3 種專屬食材'}</th>
+                  <th>${isEN ? 'Special Note' : '特殊說明'}</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${INGREDIENT_DRAW_POKEMONS.map(p => `
+                  <tr>
+                    <td style="text-align: left; padding-left: 8px;">
+                      <div style="display: flex; align-items: center; gap: 6px;">
+                        <img src="${p.icon}" width="26" height="26" style="object-fit: contain;" alt="${p.name}">
+                        <span class="font-bold">${isEN ? p.family_en : p.family}</span>
+                      </div>
+                    </td>
+                    <td><span class="wiki-skill-badge skill-badge-blue">${isEN ? p.skill_en : p.skill}</span></td>
+                    <td>
+                      <div style="display: flex; align-items: center; gap: 6px; justify-content: center; flex-wrap: wrap;">
+                        ${p.ingredients.map(ig => `
+                          <div style="display: inline-flex; align-items: center; gap: 3px; background: var(--bg-card-inner); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-color-subtle); font-size: 11px;">
+                            <img src="${ig.icon}" width="16" height="16" alt="${ig.name}">
+                            <span>${isEN ? ig.name_en : ig.name}</span>
+                          </div>
+                        `).join('')}
+                      </div>
+                    </td>
+                    <td class="text-secondary" style="font-size: 11px;">${isEN ? p.extraEffect_en : p.extraEffect}</td>
                   </tr>
                 `).join('')}
               </tbody>
