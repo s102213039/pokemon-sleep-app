@@ -590,7 +590,7 @@
     
     '食材獲取S': { 'zh-TW': '食材獲取S', 'en-US': 'Ingredient Magnet S' },
     '食材獲取M': { 'zh-TW': '食材獲取M', 'en-US': 'Ingredient Magnet M' },
-    '食材精選S': { 'zh-TW': '食材精選S', 'en-US': 'Ingredient Magnet S' },
+    '食材精選S': { 'zh-TW': '食材精選S', 'en-US': 'Ingredient Selection S' },
     '食材隨機S': { 'zh-TW': '食材隨機S', 'en-US': 'Random Ingredients S' },
     
     '料理強化S': { 'zh-TW': '料理強化S', 'en-US': 'Cooking Power-Up S' },

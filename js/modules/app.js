@@ -380,15 +380,7 @@ function formatSkillNameHtml(displayName, isEN) {
     return `<span class="skill-line-1">${escapeHtml(mainPart)}</span><span class="skill-line-2">${escapeHtml(subPart)}</span>`;
   }
 
-  // 2. 多單詞主技能（3 個單詞以上折為兩行）
-  const words = displayName.trim().split(/\s+/);
-  if (words.length >= 3) {
-    const mid = Math.floor(words.length / 2);
-    const line1 = words.slice(0, mid).join(' ');
-    const line2 = words.slice(mid).join(' ');
-    return `<span class="skill-line-1">${escapeHtml(line1)}</span><span class="skill-line-2">${escapeHtml(line2)}</span>`;
-  }
-
+  // 2. 標準主技能（如 Ingredient Magnet S、Energy for Everyone S、Dream Shard Magnet S 等）單行完整展示
   return `<span class="skill-single-line">${escapeHtml(displayName)}</span>`;
 }
 
