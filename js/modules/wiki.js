@@ -5002,15 +5002,15 @@
                       </td>
                       <td style="vertical-align: middle;">
                         ${row.natureBadge === 'up' 
-                          ? `<span style="color: #34d399; font-weight: 700; font-size: 12.5px;">${isEN ? '▲▲ Trigger Rate Up' : '▲▲ 技能機率上升'}</span>` 
+                          ? `<span class="matrix-rate-up">${isEN ? '▲▲ Trigger Rate Up' : '▲▲ 技能機率上升'}</span>` 
                           : (row.natureBadge === 'down' 
-                            ? `<span style="color: #f87171; font-weight: 700; font-size: 12.5px;">${isEN ? '▼▼ Trigger Rate Down' : '▼▼ 技能機率下降'}</span>` 
-                            : `<span class="text-secondary" style="font-size: 12.5px;">${isEN ? 'Neutral / Other Natures' : '無修正 / 其它性格'}</span>`)}
+                            ? `<span class="matrix-rate-down">${isEN ? '▼▼ Trigger Rate Down' : '▼▼ 技能機率下降'}</span>` 
+                            : `<span class="text-secondary" style="font-size: 12.5px; font-weight: 500;">${isEN ? 'Neutral / Other Natures' : '無修正 / 其它性格'}</span>`)}
                       </td>
-                      <td style="vertical-align: middle;"><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">${row.calc}</code></td>
+                      <td style="vertical-align: middle;"><code class="matrix-calc-code">${row.calc}</code></td>
                       <td style="vertical-align: middle;">
                         <span class="text-accent font-bold" style="font-size: 13.5px;">${row.multiplier.toFixed(3)} ${isEN ? 'x' : '倍'}</span>
-                        <span style="font-size: 11px; margin-left: 4px; font-weight: 600; color: ${row.multiplier >= 1 ? '#34d399' : '#f87171'};">
+                        <span class="${row.multiplier >= 1 ? 'matrix-pct-up' : 'matrix-pct-down'}" style="font-size: 11px; margin-left: 4px; font-weight: 700;">
                           (${row.multiplier >= 1 ? '+' : ''}${((row.multiplier - 1) * 100).toFixed(1)}%)
                         </span>
                       </td>
