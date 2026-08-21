@@ -283,16 +283,16 @@ const SPECIAL_SKILL_DETAILS = {
     'en-US': 'Randomly obtains ingredients, and occasionally grants candies for a random team member.'
   },
   '食材精選S': {
-    'zh-TW': '從該寶可夢自身專屬食材池（Lv.1/Lv.30/Lv.60）中隨機獲得 1 種食材。不同寶可夢能獲得的食材池各不相同（與隨機給全圖鑑食材的「食材獲取S」不同）。',
-    'en-US': 'Obtains 1 ingredient type exclusively from this Pokémon\'s own ingredient pool (Lv.1/Lv.30/Lv.60). Different Pokémon draw different ingredient sets.'
+    'zh-TW': '隨機獲得該寶可夢專屬食材池中的 1 種食材。',
+    'en-US': 'Randomly obtains 1 ingredient from this Pokémon\'s candidate pool.'
   },
   '超幸運（食材精選S）': {
-    'zh-TW': '從該寶可夢自身專屬食材池中隨機獲得 1 種食材；少數情況下會獲得大量的夢之碎片而不是食材。',
-    'en-US': 'Obtains 1 ingredient type exclusively from its own pool; rarely awards large amounts of Dream Shards instead.'
+    'zh-TW': '隨機獲得該寶可夢專屬食材，少數情況下獲得大量夢之碎片。',
+    'en-US': 'Obtains own ingredient; rarely awards massive Dream Shards.'
   },
   '怪力钳（食材精選S）': {
-    'zh-TW': '從該寶可夢自身專屬食材池中隨機獲得 1 種食材；有時候會額外獲得更多的食材。',
-    'en-US': 'Obtains 1 ingredient type exclusively from its own pool; sometimes awards extra amounts.'
+    'zh-TW': '隨機獲得該寶可夢專屬食材，有時額外獲得更多食材。',
+    'en-US': 'Obtains own ingredient; sometimes awards extra amounts.'
   },
   '新月祈禱（活力全體療癒S）': {
     'zh-TW': '讓幫手隊伍的所有寶可夢回復活力，並額外獲得隊伍中所有寶可夢撿來的樹果（超能力屬性隊員越多，樹果數量越多）。',
@@ -409,15 +409,22 @@ function renderSkillWithTooltip(skillName, pkm) {
   const rawDetail = SPECIAL_SKILL_DETAILS[skillName] || SPECIAL_SKILL_DETAILS[skillName.replace(/\(/g, '（').replace(/\)/g, '）')];
   let detail = rawDetail ? (typeof rawDetail === 'object' ? (rawDetail[isEN ? 'en-US' : 'zh-TW'] || rawDetail['zh-TW']) : rawDetail) : '';
 
-  // 針對「食材精選S」系列，若傳入寶可夢物件，動態追加該寶可夢專屬的 3 種可產食材池提示
+  // 針對特定寶可夢的「食材精選S」系列，精簡直接顯示該寶可夢專屬食材池（避免冗長通用說明）
   if (skillName && skillName.includes('食材精選') && pkm && pkm.ingredients && pkm.ingredients.length > 0) {
-    const pkmName = isEN ? ((window.I18N && window.I18N.getPokemonName(pkm.name_cn || pkm.name)) || pkm.name_en || pkm.name_cn || pkm.name) : (pkm.name_cn || pkm.name);
     const ingNames = Array.from(new Set(pkm.ingredients.map(ig => (typeof window !== 'undefined' && window.I18N) ? (window.I18N.getIngredientName(ig.name) || ig.name) : ig.name))).join(isEN ? ', ' : '、');
     if (ingNames) {
-      if (isEN) {
-        detail += `\n👉 [${pkmName} Candidate Pool]: ${ingNames}`;
+      if (skillName.includes('超幸運')) {
+        detail = isEN
+          ? `Draws: ${ingNames} (rarely grants massive Dream Shards)`
+          : `可精選食材：${ingNames}（少數情況下獲得大量夢之碎片）`;
+      } else if (skillName.includes('怪力')) {
+        detail = isEN
+          ? `Draws: ${ingNames} (sometimes yields extra ingredients)`
+          : `可精選食材：${ingNames}（有時額外獲得更多食材）`;
       } else {
-        detail += `\n👉【${pkmName} 專屬食材池】：${ingNames}`;
+        detail = isEN
+          ? `Draws 1 candidate ingredient: ${ingNames}`
+          : `可精選食材：${ingNames}`;
       }
     }
   }
