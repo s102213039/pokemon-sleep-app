@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue?style=for-the-badge&logo=github)](https://s102213039.github.io/pokemon-sleep-app/)
-[![Tests](https://img.shields.io/badge/Tests-43%2F43%20PASS-brightgreen?style=for-the-badge&logo=node.js)](https://github.com/s102213039/pokemon-sleep-app)
+[![Tests](https://img.shields.io/badge/Tests-44%2F44%20PASS-brightgreen?style=for-the-badge&logo=node.js)](https://github.com/s102213039/pokemon-sleep-app)
 [![Bilingual](https://img.shields.io/badge/Language-繁體中文%20%7C%20English-orange?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
 [![Theme](https://img.shields.io/badge/Themes-4%20Themes%20(Dark%2FLight)-purple?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
@@ -52,7 +52,7 @@
   - 📋 **副技能階級與數值總覽**：已開放副技能分類與數值
   - 🧬 **性格五維屬性倍率表**：官方最新補正增減效果
 - 🎓 **培育與評級指南**：樹果型、食材型、技能型各專長 Ⓢ/Ⓐ/Ⓑ/Ⓒ 評級標準與睡眠天數基線。
-- 🥗 **Lv.60 食材天梯榜**：橫向視覺天梯座標圖（產量 TOP 1 標籤、AAA/ABB/ABC 配方、跨度線）與 19 種食材天梯清單。
+- 🥗 **各食材單日產量天梯榜**：橫向視覺天梯座標圖（產量 TOP 1 標籤、AAA/ABB/ABC 配方、跨度線）、19 種食材天梯清單、產量冠軍與極限日產量標籤，並支援「副技能（食材M、幫速M）」與「性格補正（食材▲▲、幫速▲▲）」四重模擬試算。
 - 🫐 **樹果與食材基礎能量庫**：樹果能量等級滑桿（Lv.1~70）、島嶼加成（0~85%）、順果 2x 試算與 19 種食材基礎分。
 
 ---

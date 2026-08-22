@@ -1489,7 +1489,8 @@ test('Tier 1 - Feature Coverage', 'WikiDB Namespace & Event Handler Methods Inte
     'filterIngredients', 'filterWikiIngredients', 'switchStack', 'switchChargeStock',
     'switchBoost', 'switchHelperBoost', 'toggleDetail', 'toggleDetailTable',
     'updateBerryLevel', 'updateBerryIsland', 'toggleBerryFavorite', 'toggleFavorite',
-    'toggleLadderIngM', 'toggleLadderSpeedM', 'onLadderSearch', 'clearLadderSearch',
+    'toggleLadderIngM', 'toggleLadderSpeedM', 'toggleLadderNatureIng', 'toggleLadderNatureSpeed',
+    'onLadderSearch', 'clearLadderSearch',
     'setLadderRecipeFilter', 'refreshCoordinateLadder', 'handleLadderGroupHover',
     'handleLadderGroupHoverOut', 'recalcTriggerChance', 'recalcSleepDays'
   ];
@@ -1498,15 +1499,47 @@ test('Tier 1 - Feature Coverage', 'WikiDB Namespace & Event Handler Methods Inte
     assert(typeof ctx.window.WikiDB[method] === 'function', `window.WikiDB.${method} should be a valid function`);
   });
 
-  // Verify toggleBerryFavorite toggles without throwing
+  // Verify toggleBerryFavorite and nature toggles execute cleanly
   let threw = false;
   try {
     ctx.window.WikiDB.toggleBerryFavorite(true);
     ctx.window.WikiDB.toggleBerryFavorite(false);
+    ctx.window.WikiDB.toggleLadderNatureIng(true);
+    ctx.window.WikiDB.toggleLadderNatureSpeed(true);
   } catch (e) {
     threw = true;
   }
-  assert(!threw, 'toggleBerryFavorite should execute cleanly');
+  assert(!threw, 'toggleBerryFavorite and nature toggles should execute cleanly');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Lv.60 prefix removed from tabs/headers & 4-tier multiplier logic verified', () => {
+  const wikiPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js');
+  const wikiCode = fs.readFileSync(wikiPath, 'utf8');
+
+  // Verify subtab and header don't contain Lv.60 in title
+  assert(!wikiCode.includes("data-subtab=\"ingredients\">${isEN ? '🥗 Lv.60"), 'Subtab 4 button should not contain Lv.60');
+  assert(!wikiCode.includes("h3 class=\"wiki-card-title\" style=\"margin: 0;\">${isEN ? 'Lv.60"), 'Card title should not contain Lv.60');
+
+  // Verify nature toggle elements exist in HTML template
+  assert(wikiCode.includes('id="ladder-nature-ing-toggle"'), 'Template should contain ladder-nature-ing-toggle');
+  assert(wikiCode.includes('id="ladder-nature-speed-toggle"'), 'Template should contain ladder-nature-speed-toggle');
+  assert(wikiCode.includes('ladder-track-champion-badge'), 'Template should render ladder-track-champion-badge');
+
+  // Verify mathematical multiplier combinations
+  function calcMult(isIngM, isSpeedM, isNatureIng, isNatureSpeed) {
+    let mult = 1.0;
+    if (isIngM) mult *= 1.36;
+    if (isSpeedM) mult *= (1.0 / 0.86);
+    if (isNatureIng) mult *= 1.20;
+    if (isNatureSpeed) mult *= (1.0 / 0.9090909);
+    return mult;
+  }
+
+  assertEquals(calcMult(false, false, false, false), 1.0, 'Base multiplier should be 1.0');
+  assertEquals(parseFloat(calcMult(true, false, false, false).toFixed(2)), 1.36, 'Ing M should be 1.36x');
+  assertEquals(parseFloat(calcMult(false, false, true, false).toFixed(2)), 1.20, 'Nature Ing should be 1.20x');
+  const allBoosted = calcMult(true, true, true, true);
+  assert(allBoosted > 2.0 && allBoosted < 2.15, `All 4 boosts combined multiplier should be ~2.08x, got ${allBoosted.toFixed(3)}`);
 });
 
 

@@ -3923,9 +3923,11 @@
     });
   }
 
-  // 3.0 食材天梯榜即時副技能補正開關與跨軌道搜尋/篩選狀態
+  // 3.0 食材天梯榜即時副技能與性格補正開關、跨軌道搜尋/篩選狀態
   let isLadderIngM = false;
   let isLadderSpeedM = false;
+  let isLadderNatureIng = false;
+  let isLadderNatureSpeed = false;
   let ladderSearchQuery = '';
   let ladderRecipeFilter = 'ALL'; // 'ALL' | 'AAA' | 'TOP'
 
@@ -3955,6 +3957,8 @@
     let mult = 1.0;
     if (isLadderIngM) mult *= 1.36;
     if (isLadderSpeedM) mult *= (1.0 / 0.86); // -14% 間隔 = 約 1.16279 倍
+    if (isLadderNatureIng) mult *= 1.20; // 性格食材機率▲▲ (+20%)
+    if (isLadderNatureSpeed) mult *= (1.0 / 0.9090909); // 性格幫忙速度▲▲ (約 +10% 幫忙次數)
     return mult;
   }
 
@@ -3965,6 +3969,16 @@
 
   function toggleLadderSpeedM(checked) {
     isLadderSpeedM = !!checked;
+    refreshCoordinateLadder();
+  }
+
+  function toggleLadderNatureIng(checked) {
+    isLadderNatureIng = !!checked;
+    refreshCoordinateLadder();
+  }
+
+  function toggleLadderNatureSpeed(checked) {
+    isLadderNatureSpeed = !!checked;
     refreshCoordinateLadder();
   }
 
@@ -4451,6 +4465,12 @@
       if (e.target && e.target.id === 'ladder-speed-m-toggle') {
         toggleLadderSpeedM(e.target.checked);
       }
+      if (e.target && e.target.id === 'ladder-nature-ing-toggle') {
+        toggleLadderNatureIng(e.target.checked);
+      }
+      if (e.target && e.target.id === 'ladder-nature-speed-toggle') {
+        toggleLadderNatureSpeed(e.target.checked);
+      }
     });
 
     document.addEventListener('input', (e) => {
@@ -4570,20 +4590,29 @@
     const mult = getLadderMultiplier();
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     
-    // 依據是否開啟副技能加成動態調整刻度上限
-    let ticks = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    // 依據是否開啟各項加成動態調整刻度上限
+    const maxProjected = 100 * mult;
     let minVal = 10;
     let maxVal = 105;
+    let step = 10;
 
-    if (isLadderIngM && isLadderSpeedM) {
-      ticks = [10, 30, 60, 90, 120, 150, 180];
+    if (maxProjected > 165) {
+      maxVal = 220;
+      step = 30;
+    } else if (maxProjected > 135) {
       maxVal = 175;
-    } else if (isLadderIngM) {
-      ticks = [10, 30, 50, 70, 90, 110, 130, 150];
-      maxVal = 148;
-    } else if (isLadderSpeedM) {
-      ticks = [10, 25, 50, 75, 100, 125];
-      maxVal = 125;
+      step = 25;
+    } else if (maxProjected > 110) {
+      maxVal = 145;
+      step = 20;
+    } else {
+      maxVal = 105;
+      step = 10;
+    }
+
+    let ticks = [];
+    for (let t = 10; t <= maxVal; t += step) {
+      ticks.push(t);
     }
 
     function getPosPct(val) {
@@ -4591,16 +4620,23 @@
       return ((clamped - minVal) / (maxVal - minVal) * 100).toFixed(2);
     }
 
-    const boostLabel = (isLadderIngM && isLadderSpeedM) 
-      ? (isEN ? ' (incl. Ing. Finder M + Help Speed M)' : ' (含 食材M + 幫速M 補正)') 
-      : (isLadderIngM ? (isEN ? ' (incl. Ing. Finder M)' : ' (含 食材M 補正)') : (isLadderSpeedM ? (isEN ? ' (incl. Help Speed M)' : ' (含 幫速M 補正)') : ''));
+    const activeBoosts = [];
+    if (isLadderIngM) activeBoosts.push(isEN ? 'Ing. Finder M' : '食材M');
+    if (isLadderSpeedM) activeBoosts.push(isEN ? 'Help Speed M' : '幫速M');
+    if (isLadderNatureIng) activeBoosts.push(isEN ? 'Nature Ing▲▲' : '性格食材▲▲');
+    if (isLadderNatureSpeed) activeBoosts.push(isEN ? 'Nature Speed▲▲' : '性格幫速▲▲');
+    const boostLabel = activeBoosts.length > 0 
+      ? (isEN ? ` (incl. ${activeBoosts.join(' + ')})` : ` (含 ${activeBoosts.join(' + ')} 補正)`) 
+      : '';
 
     return `
       <div class="wiki-coordinate-ladder-wrapper">
         <div class="wiki-coordinate-ladder" onmouseover="window.WikiDB.handleLadderGroupHover(event)" onmouseout="window.WikiDB.handleLadderGroupHoverOut(event)">
           <!-- 頂部刻度標尺 -->
           <div class="ladder-ruler-header">
-            <div class="ladder-ruler-spacer"></div>
+            <div class="ladder-ruler-spacer">
+              <span class="ruler-spacer-title">${isEN ? 'Ingredient & Champion' : '食材與產量冠軍'}</span>
+            </div>
             <div class="ladder-ruler-scale">
               ${ticks.map(t => `
                 <div class="ladder-ruler-tick" style="left: ${getPosPct(t)}%;">
@@ -4617,10 +4653,41 @@
             const dishName = isEN ? (dishInfo.name_en || dishInfo.name) : dishInfo.name;
             const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
 
+            // 尋找該軌道產量冠軍與理論極限產量
+            let champPkm = null;
+            let champRecipe = 'AAA';
+            let champMaxBaseCount = 0;
+
+            ing.pokemon.forEach(p => {
+              const variants = p.variants || [{ recipe: p.recipe, count: p.count, isTop: p.isTop }];
+              variants.forEach(v => {
+                if (v.count > champMaxBaseCount) {
+                  champMaxBaseCount = v.count;
+                  champPkm = p;
+                  champRecipe = v.recipe;
+                }
+              });
+            });
+
+            const champDisplayName = champPkm 
+              ? (isEN ? ((window.I18N && window.I18N.getPokemonName(champPkm.name)) || champPkm.name) : champPkm.name) 
+              : '';
+            const champScaledCount = Math.round(champMaxBaseCount * mult);
+
             return `
             <div class="ladder-track-row" data-ladder-ing="${ing.id}">
               <div class="ladder-track-header" title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isEN ? 'Key Dish: ' : '核心大菜：'}${dishName} (${dishInfo.need}${isEN ? '/meal' : '顆/餐'})">
-                <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">
+                <div class="ladder-track-ing-main">
+                  <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">
+                  <span class="ladder-track-ing-name">${ingName}</span>
+                </div>
+                ${champPkm ? `
+                  <div class="ladder-track-champion-badge" title="${isEN ? '👑 Champion: ' + champDisplayName + ' (' + champRecipe + ') - ' + champScaledCount + ' /day' : '👑 產量冠軍：' + champDisplayName + ' (' + champRecipe + ') - 每日預估 ' + champScaledCount + ' 顆'}">
+                    <span class="champ-crown">👑</span>
+                    <span class="champ-pkm">${champDisplayName}</span>
+                    <span class="champ-yield">${champScaledCount}${isEN ? '/d' : '顆'}</span>
+                  </div>
+                ` : ''}
               </div>
 
               <div class="ladder-track-canvas">
@@ -4813,9 +4880,11 @@
 
   // 渲染食材天梯榜卡片 (舊版清單檢視)
   function renderIngredientLadders(ladders) {
+    const mult = getLadderMultiplier();
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     return ladders.map(ing => {
       const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
+      const scaledMax = (ing.maxDaily * mult).toFixed(1);
       return `
       <div class="ladder-card" data-ladder-ing="${ing.id}">
         <div class="ladder-header">
@@ -4823,7 +4892,7 @@
             <img src="${ing.icon}" class="ladder-icon" alt="${ingName}">
             <h4 class="ladder-name">${ingName}</h4>
           </div>
-          <span class="ladder-max-badge">${isEN ? 'Max Daily ~ ' : '最高日產 ~ '}${ing.maxDaily} ${isEN ? '/day' : '顆/天'}</span>
+          <span class="ladder-max-badge">${isEN ? 'Max Daily ~ ' : '最高日產 ~ '}${scaledMax} ${isEN ? '/day' : '顆/天'}</span>
         </div>
 
         <div class="ladder-tiers-list">
@@ -4832,7 +4901,8 @@
             const translatedPkm = isEN ? ((window.I18N && window.I18N.getPokemonName(rawName)) || rawName) : rawName;
             const pkmDisplayName = `${translatedPkm} (${t.recipe || 'AAA'})`;
             const noteText = isEN ? (window.I18N ? window.I18N.translateDynamicText(t.note) : t.note) : t.note;
-            const displayCount = t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count);
+            const rawCountNum = parseFloat(t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count)) || 0;
+            const displayCount = (rawCountNum * mult).toFixed(1);
 
             return `
             <div class="ladder-tier-row">
@@ -5150,7 +5220,7 @@
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills' ? 'active' : ''}" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${isEN ? '⚡ Main Skills DB' : '⚡ 主技能數值庫'}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'subskills' ? 'active' : ''}" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${isEN ? '🧩 Sub-Skills & Natures' : '🧩 副技能與性格指南'}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isEN ? '🎓 Growth & Tier Guide' : '🎓 培育與評級指南'}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isEN ? '🥗 Lv.60 Ingredient Ladder' : '🥗 Lv.60 食材天梯榜'}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isEN ? '🥗 Ingredient Yield Ladder' : '🥗 各食材單日產量天梯榜'}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isEN ? '🫐 Berry & Ing. Values' : '🫐 樹果與食材能量'}</button>
           </div>
         </div>
@@ -5403,16 +5473,16 @@
           </div>
         </div>
 
-        <!-- 子分頁 4：🥗 Lv.60 食材天梯榜 (Lv.60 Ingredients Ladder) -->
+        <!-- 子分頁 4：🥗 各食材單日產量天梯榜 (Daily Ingredient Yield Ladder) -->
         <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:block;' : 'display:none;'}">
           <div class="wiki-card">
             <div class="wiki-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span class="wiki-card-icon">🥗</span>
-                <h3 class="wiki-card-title" style="margin: 0;">${isEN ? 'Lv.60 Daily Ingredient Yield Ladder' : 'Lv.60 各食材單日產量天梯榜'}</h3>
+                <h3 class="wiki-card-title" style="margin: 0;">${isEN ? 'Daily Ingredient Yield Ladder' : '各食材單日產量天梯榜'}</h3>
               </div>
 
-              <!-- 水平正右側控制列：[ 跨軌道搜尋 ] + [ 型態篩選膠囊 ] + [ 視覺天梯圖 | 卡片清單 ] + [ 食材機率M ] + [ 幫速M ] -->
+              <!-- 水平正右側控制列：[ 跨軌道搜尋 ] + [ 型態篩選膠囊 ] + [ 視覺天梯圖 | 卡片清單 ] + [ 副技能補正組 ] + [ 性格補正組 ] -->
               <div class="ladder-header-controls">
                 <!-- 跨軌道微型搜尋框 -->
                 <div class="ladder-search-box">
@@ -5433,17 +5503,40 @@
                   <button type="button" class="ladder-mode-btn" data-ladder-view="list" onclick="window.WikiDB.switchLadderView('list')">${isEN ? '📋 Card List' : '📋 卡片清單'}</button>
                 </div>
 
-                <label class="ladder-switch-label" title="${isEN ? 'Ingredient Finder M (+36%)' : '食材發現機率提升M (+36%)'}">
-                  <input type="checkbox" id="ladder-ing-m-toggle" ${isLadderIngM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderIngM(this.checked)">
-                  <span class="ladder-switch-slider"></span>
-                  <span class="ladder-switch-text ing-m-text">${isEN ? '🥩 Ing. Finder M (+36%)' : '🥩 食材機率M (+36%)'}</span>
-                </label>
+                <!-- 分組膠囊補正開關 -->
+                <div class="ladder-toggle-groups">
+                  <!-- 副技能補正組 -->
+                  <div class="ladder-toggle-group">
+                    <span class="ladder-group-label">${isEN ? 'Sub-Skill:' : '副技能：'}</span>
+                    <label class="ladder-switch-label" title="${isEN ? 'Ingredient Finder M (+36%)' : '食材發現機率提升M (+36%)'}">
+                      <input type="checkbox" id="ladder-ing-m-toggle" ${isLadderIngM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderIngM(this.checked)">
+                      <span class="ladder-switch-slider"></span>
+                      <span class="ladder-switch-text ing-m-text">${isEN ? '🥩 Ing. M (+36%)' : '🥩 食材M (+36%)'}</span>
+                    </label>
 
-                <label class="ladder-switch-label" title="${isEN ? 'Helping Speed M (+16.3% helps)' : '幫忙速度M (-14% 間隔時間，約 +16.3% 幫忙次數)'}">
-                  <input type="checkbox" id="ladder-speed-m-toggle" ${isLadderSpeedM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSpeedM(this.checked)">
-                  <span class="ladder-switch-slider"></span>
-                  <span class="ladder-switch-text speed-m-text">${isEN ? '⚡ Helping Speed M (+16.3%)' : '⚡ 幫速M (+16.3%)'}</span>
-                </label>
+                    <label class="ladder-switch-label" title="${isEN ? 'Helping Speed M (+16.3% helps)' : '幫忙速度M (-14% 間隔時間，約 +16.3% 幫忙次數)'}">
+                      <input type="checkbox" id="ladder-speed-m-toggle" ${isLadderSpeedM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSpeedM(this.checked)">
+                      <span class="ladder-switch-slider"></span>
+                      <span class="ladder-switch-text speed-m-text">${isEN ? '⚡ Speed M (+16.3%)' : '⚡ 幫速M (+16.3%)'}</span>
+                    </label>
+                  </div>
+
+                  <!-- 性格補正組 -->
+                  <div class="ladder-toggle-group">
+                    <span class="ladder-group-label">${isEN ? 'Nature:' : '性格：'}</span>
+                    <label class="ladder-switch-label" title="${isEN ? 'Nature Ingredient Rate Up (+20%)' : '性格食材機率提升▲▲ (+20%)'}">
+                      <input type="checkbox" id="ladder-nature-ing-toggle" ${isLadderNatureIng ? 'checked' : ''} onchange="window.WikiDB.toggleLadderNatureIng(this.checked)">
+                      <span class="ladder-switch-slider"></span>
+                      <span class="ladder-switch-text nature-ing-text">${isEN ? '🧬 Ing. ▲▲ (+20%)' : '🧬 食材▲▲ (+20%)'}</span>
+                    </label>
+
+                    <label class="ladder-switch-label" title="${isEN ? 'Nature Helping Speed Up (+10% helps)' : '性格幫忙速度提升▲▲ (-9.09% 間隔時間，約 +10% 幫忙次數)'}">
+                      <input type="checkbox" id="ladder-nature-speed-toggle" ${isLadderNatureSpeed ? 'checked' : ''} onchange="window.WikiDB.toggleLadderNatureSpeed(this.checked)">
+                      <span class="ladder-switch-slider"></span>
+                      <span class="ladder-switch-text nature-speed-text">${isEN ? '🧬 Speed ▲▲ (+10%)' : '🧬 幫速▲▲ (+10%)'}</span>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -5532,6 +5625,8 @@
     toggleFavorite: toggleBerryFavorite,
     toggleLadderIngM: toggleLadderIngM,
     toggleLadderSpeedM: toggleLadderSpeedM,
+    toggleLadderNatureIng: toggleLadderNatureIng,
+    toggleLadderNatureSpeed: toggleLadderNatureSpeed,
     onLadderSearch: onLadderSearch,
     clearLadderSearch: clearLadderSearch,
     setLadderRecipeFilter: setLadderRecipeFilter,
@@ -5558,6 +5653,8 @@
   window.toggleBerryFavorite = toggleBerryFavorite;
   window.toggleLadderIngM = toggleLadderIngM;
   window.toggleLadderSpeedM = toggleLadderSpeedM;
+  window.toggleLadderNatureIng = toggleLadderNatureIng;
+  window.toggleLadderNatureSpeed = toggleLadderNatureSpeed;
   window.onLadderSearch = onLadderSearch;
   window.clearLadderSearch = clearLadderSearch;
   window.setLadderRecipeFilter = setLadderRecipeFilter;
