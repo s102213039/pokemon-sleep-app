@@ -421,11 +421,12 @@ function renderSkillWithTooltip(skillName, pkm) {
       }
     });
 
+    const separator = isEN ? '<span class="skill-tooltip-sep">, </span>' : '<span class="skill-tooltip-sep">、</span>';
     const ingIconsHtml = uniqueIngs.map(ig => {
       const ingName = (typeof window !== 'undefined' && window.I18N) ? (window.I18N.getIngredientName(ig.name) || ig.name) : ig.name;
       const icon = ig.icon || (typeof window !== 'undefined' && window.I18N && window.I18N.getIngredientIcon(ig.name)) || '';
       return icon ? `<img src="${icon}" class="skill-tooltip-inline-ing" alt="${ingName}" title="${ingName}">` : '';
-    }).filter(Boolean).join('');
+    }).filter(Boolean).join(separator);
 
     const ingNamesPlain = uniqueIngs.map(ig => (typeof window !== 'undefined' && window.I18N) ? (window.I18N.getIngredientName(ig.name) || ig.name) : ig.name).join(isEN ? ', ' : '、');
 
