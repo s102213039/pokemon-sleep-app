@@ -2,7 +2,10 @@
  * recipes.js — Pokémon Sleep 料理食譜大全
  * 功能：篩選、排序、等級滑桿、島嶼加成、活動加成、漂亮成功分數、localStorage 記憶
  */
-document.addEventListener('DOMContentLoaded', () => {
+(function () {
+  'use strict';
+
+  function initRecipesModule() {
 
   /* ─── 狀態變數 ──────────────────────────────────────── */
   let allRecipes          = [];
@@ -414,62 +417,70 @@ document.addEventListener('DOMContentLoaded', () => {
     ingredientPickerContainer.innerHTML = ingNames.map(name => {
       const icon   = ingMap.get(name);
       const active = selectedIngredients.has(name) ? 'active' : '';
-      return `<button class="ing-picker-btn ${active}" data-name="${name}" title="${name}">
-        ${icon ? `<img src="${icon}" class="ing-picker-icon" alt="${name}">` : ''}
+      const ingTitle = window.I18N ? window.I18N.getIngredientName(name) : name;
+      return `<button class="ing-picker-btn ${active}" data-name="${name}" title="${ingTitle}">
+        ${icon ? `<img src="${icon}" class="ing-picker-icon" alt="${ingTitle}">` : ''}
       </button>`;
     }).join('');
 
-    ingredientPickerContainer.addEventListener('click', e => {
-      const btn = e.target.closest('.ing-picker-btn');
-      if (btn) {
-        const name = btn.getAttribute('data-name');
-        if (excludedIngredients.has(name)) {
-          excludedIngredients.delete(name);
-          const exBtn = excludedPickerContainer && excludedPickerContainer.querySelector(`[data-name="${CSS.escape(name)}"]`);
-          if (exBtn) exBtn.classList.remove('active');
+    if (!ingredientPickerContainer._hasListener) {
+      ingredientPickerContainer._hasListener = true;
+      ingredientPickerContainer.addEventListener('click', e => {
+        const btn = e.target.closest('.ing-picker-btn');
+        if (btn) {
+          const name = btn.getAttribute('data-name');
+          if (excludedIngredients.has(name)) {
+            excludedIngredients.delete(name);
+            const exBtn = excludedPickerContainer && excludedPickerContainer.querySelector(`[data-name="${CSS.escape(name)}"]`);
+            if (exBtn) exBtn.classList.remove('active-exclude');
+          }
+          if (selectedIngredients.has(name)) {
+            selectedIngredients.delete(name);
+            btn.classList.remove('active');
+          } else {
+            selectedIngredients.add(name);
+            btn.classList.add('active');
+          }
+          savePrefs();
+          render();
         }
-        if (selectedIngredients.has(name)) {
-          selectedIngredients.delete(name);
-          btn.classList.remove('active');
-        } else {
-          selectedIngredients.add(name);
-          btn.classList.add('active');
-        }
-        savePrefs();
-        render();
-      }
-    });
+      });
+    }
 
     const excludedPickerContainer = document.getElementById('excluded-ingredient-picker-tags');
     if (excludedPickerContainer) {
       excludedPickerContainer.innerHTML = ingNames.map(name => {
         const icon   = ingMap.get(name);
         const active = excludedIngredients.has(name) ? 'active-exclude' : '';
-        return `<button class="ing-picker-btn ${active}" data-name="${name}" title="${name}">
-          ${icon ? `<img src="${icon}" class="ing-picker-icon" alt="${name}">` : ''}
+        const ingTitle = window.I18N ? window.I18N.getIngredientName(name) : name;
+        return `<button class="ing-picker-btn ${active}" data-name="${name}" title="${ingTitle}">
+          ${icon ? `<img src="${icon}" class="ing-picker-icon" alt="${ingTitle}">` : ''}
         </button>`;
       }).join('');
 
-      excludedPickerContainer.addEventListener('click', e => {
-        const btn = e.target.closest('.ing-picker-btn');
-        if (btn) {
-          const name = btn.getAttribute('data-name');
-          if (selectedIngredients.has(name)) {
-            selectedIngredients.delete(name);
-            const incBtn = ingredientPickerContainer.querySelector(`[data-name="${CSS.escape(name)}"]`);
-            if (incBtn) incBtn.classList.remove('active');
+      if (!excludedPickerContainer._hasListener) {
+        excludedPickerContainer._hasListener = true;
+        excludedPickerContainer.addEventListener('click', e => {
+          const btn = e.target.closest('.ing-picker-btn');
+          if (btn) {
+            const name = btn.getAttribute('data-name');
+            if (selectedIngredients.has(name)) {
+              selectedIngredients.delete(name);
+              const incBtn = ingredientPickerContainer.querySelector(`[data-name="${CSS.escape(name)}"]`);
+              if (incBtn) incBtn.classList.remove('active');
+            }
+            if (excludedIngredients.has(name)) {
+              excludedIngredients.delete(name);
+              btn.classList.remove('active-exclude');
+            } else {
+              excludedIngredients.add(name);
+              btn.classList.add('active-exclude');
+            }
+            savePrefs();
+            render();
           }
-          if (excludedIngredients.has(name)) {
-            excludedIngredients.delete(name);
-            btn.classList.remove('active-exclude');
-          } else {
-            excludedIngredients.add(name);
-            btn.classList.add('active-exclude');
-          }
-          savePrefs();
-          render();
-        }
-      });
+        });
+      }
     }
 
     if (clearIngredientsBtn) {
@@ -826,10 +837,18 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  window.RecipesApp = {
-    render: function() {
-      initCategoryFilters();
-      render();
-    }
-  };
-});
+    window.RecipesApp = {
+      render: function() {
+        initCategoryFilters();
+        initIngredientPicker();
+        render();
+      }
+    };
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initRecipesModule);
+  } else {
+    initRecipesModule();
+  }
+})();

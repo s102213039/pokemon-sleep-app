@@ -933,10 +933,93 @@ if (typeof document !== 'undefined') {
         }
       });
 
-    function initFilters() {
-      const types = ['ALL', '一般', '格鬥', '飛行', '毒', '地面', '岩石', '蟲', '幽靈', '鋼', '火', '水', '草', '電', '超能力', '冰', '龍', '惡', '妖精'];
-      const specialties = ['樹果', '食材', '技能'];
+    const types = ['ALL', '一般', '格鬥', '飛行', '毒', '地面', '岩石', '蟲', '幽靈', '鋼', '火', '水', '草', '電', '超能力', '冰', '龍', '惡', '妖精'];
+    const specialties = ['樹果', '食材', '技能'];
+    let uniqueIngredients = [];
+    let baseSkillCounts = {};
 
+    function renderTypeButtons() {
+      if (!typeFilterContainer) return;
+      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+      typeFilterContainer.innerHTML = types.map(t => {
+        const isActive = t === 'ALL' ? selectedTypes.size === 0 : selectedTypes.has(t);
+        const label = t === 'ALL' ? (isEN ? 'All Types' : '全部屬性') : (isEN && window.I18N ? window.I18N.getTypeName(t) : t);
+        return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" data-type="${t}">${label}</button>`;
+      }).join('');
+    }
+
+    function renderSpecialtyButtons() {
+      if (!specialtyFilterContainer) return;
+      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+      specialtyFilterContainer.innerHTML = specialties.map(s => {
+        const isActive = selectedSpecialties.has(s);
+        const label = window.I18N ? window.I18N.getSpecialtyName(s) : s;
+        return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" data-specialty="${s}">${label}</button>`;
+      }).join('');
+    }
+
+    function renderBerryButtons() {
+      if (!berryFilterContainer) return;
+      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+      berryFilterContainer.innerHTML = BERRY_DATA.map(b => {
+        const isActive = selectedBerries.has(b.name);
+        const berryName = window.I18N ? window.I18N.getBerryName(b.name) : b.name;
+        const typeName = isEN && window.I18N ? window.I18N.getTypeName(b.type) : b.type;
+        return `
+          <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-berry="${b.name}" title="${berryName} (${typeName})" aria-label="${berryName}">
+            ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" alt="${berryName}" loading="lazy" onerror="this.style.display='none';">` : '🫐'}
+          </button>
+        `;
+      }).join('');
+
+      if (clearBerriesBtn) {
+        clearBerriesBtn.style.display = selectedBerries.size > 0 ? 'inline-block' : 'none';
+      }
+    }
+
+    function renderIngredientButtons() {
+      if (!ingredientFilterContainer) return;
+      ingredientFilterContainer.innerHTML = uniqueIngredients.map(ing => {
+        const isActive = selectedIngredients.has(ing.name);
+        const ingName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
+        return `
+          <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-ing="${ing.name}" title="${ingName}" aria-label="${ingName}">
+            ${ing.icon ? `<img src="${ing.icon}" class="subfilter-icon-img" alt="${ingName}" loading="lazy" onerror="this.style.display='none';">` : '🥗'}
+          </button>
+        `;
+      }).join('');
+
+      if (clearIngredientsBtn) {
+        clearIngredientsBtn.style.display = selectedIngredients.size > 0 ? 'inline-block' : 'none';
+      }
+    }
+
+    function renderSkillButtons() {
+      if (!skillFilterContainer) return;
+      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+      skillFilterContainer.innerHTML = BASE_SKILLS.map(skillItem => {
+        const isActive = selectedSkills.has(skillItem.key);
+        const label = isEN ? (skillItem.label_en || (window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label)) : (window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label);
+        const fullTitle = isEN ? (window.I18N ? window.I18N.getMainSkillName(skillItem.key) : skillItem.label) : skillItem.label;
+        return `
+          <button type="button" class="subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${fullTitle}">
+            <span class="subfilter-skill-name">${label}</span>
+          </button>
+        `;
+      }).join('');
+
+      if (clearSkillsBtn) {
+        clearSkillsBtn.style.display = selectedSkills.size > 0 ? 'inline-block' : 'none';
+      }
+    }
+
+    function updateSubfilterVisibility() {
+      if (subfilterBerryGroup) subfilterBerryGroup.style.display = 'flex';
+      if (subfilterIngredientGroup) subfilterIngredientGroup.style.display = 'flex';
+      if (subfilterSkillGroup) subfilterSkillGroup.style.display = 'flex';
+    }
+
+    function initFilters() {
       // 從資料庫動態收集所有食材與其圖示
       const uniqueIngredientsMap = new Map();
       allPokemons.forEach(p => {
@@ -948,90 +1031,12 @@ if (typeof document !== 'undefined') {
           });
         }
       });
-      const uniqueIngredients = Array.from(uniqueIngredientsMap.entries()).map(([name, icon]) => ({ name, icon }));
+      uniqueIngredients = Array.from(uniqueIngredientsMap.entries()).map(([name, icon]) => ({ name, icon }));
 
       // 計算 15 種基礎主技能對應的寶可夢數量（含複合技能與專屬變體技能）
-      const baseSkillCounts = {};
       BASE_SKILLS.forEach(b => {
         baseSkillCounts[b.key] = allPokemons.filter(p => matchesSkill(p.main_skill, b.key)).length;
       });
-
-      function renderTypeButtons() {
-        if (!typeFilterContainer) return;
-        typeFilterContainer.innerHTML = types.map(t => {
-          const isActive = t === 'ALL' ? selectedTypes.size === 0 : selectedTypes.has(t);
-          return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" data-type="${t}">${t === 'ALL' ? '全部屬性' : t}</button>`;
-        }).join('');
-      }
-
-      function renderSpecialtyButtons() {
-        if (!specialtyFilterContainer) return;
-        specialtyFilterContainer.innerHTML = specialties.map(s => {
-          const isActive = selectedSpecialties.has(s);
-          const label = window.I18N ? window.I18N.getSpecialtyName(s) : s;
-          return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" data-specialty="${s}">${label}</button>`;
-        }).join('');
-      }
-
-      function renderBerryButtons() {
-        if (!berryFilterContainer) return;
-        berryFilterContainer.innerHTML = BERRY_DATA.map(b => {
-          const isActive = selectedBerries.has(b.name);
-          const berryName = window.I18N ? window.I18N.getBerryName(b.name) : b.name;
-          return `
-            <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-berry="${b.name}" title="${berryName} (${b.type})" aria-label="${berryName}">
-              ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" alt="${berryName}" loading="lazy" onerror="this.style.display='none';">` : '🫐'}
-            </button>
-          `;
-        }).join('');
-
-        if (clearBerriesBtn) {
-          clearBerriesBtn.style.display = selectedBerries.size > 0 ? 'inline-block' : 'none';
-        }
-      }
-
-      function renderIngredientButtons() {
-        if (!ingredientFilterContainer) return;
-        ingredientFilterContainer.innerHTML = uniqueIngredients.map(ing => {
-          const isActive = selectedIngredients.has(ing.name);
-          const ingName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
-          return `
-            <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-ing="${ing.name}" title="${ingName}" aria-label="${ingName}">
-              ${ing.icon ? `<img src="${ing.icon}" class="subfilter-icon-img" alt="${ingName}" loading="lazy" onerror="this.style.display='none';">` : '🥗'}
-            </button>
-          `;
-        }).join('');
-
-        if (clearIngredientsBtn) {
-          clearIngredientsBtn.style.display = selectedIngredients.size > 0 ? 'inline-block' : 'none';
-        }
-      }
-
-      function renderSkillButtons() {
-        if (!skillFilterContainer) return;
-        const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-        skillFilterContainer.innerHTML = BASE_SKILLS.map(skillItem => {
-          const isActive = selectedSkills.has(skillItem.key);
-          const label = isEN ? (skillItem.label_en || skillItem.label) : (window.I18N ? window.I18N.getMainSkillName(skillItem.label) : skillItem.label);
-          const fullTitle = window.I18N ? window.I18N.getMainSkillName(skillItem.key) : skillItem.label;
-          return `
-            <button type="button" class="subfilter-skill-btn ${isActive ? 'active' : ''}" data-skill="${skillItem.key}" title="${fullTitle}">
-              <span class="subfilter-skill-name">${label}</span>
-            </button>
-          `;
-        }).join('');
-
-        if (clearSkillsBtn) {
-          clearSkillsBtn.style.display = selectedSkills.size > 0 ? 'inline-block' : 'none';
-        }
-      }
-
-      function updateSubfilterVisibility() {
-        // 所有篩選器全面開放自由組合（樹果、食材、技能隨時皆可直接選取）
-        if (subfilterBerryGroup) subfilterBerryGroup.style.display = 'flex';
-        if (subfilterIngredientGroup) subfilterIngredientGroup.style.display = 'flex';
-        if (subfilterSkillGroup) subfilterSkillGroup.style.display = 'flex';
-      }
 
       renderTypeButtons();
       renderSpecialtyButtons();

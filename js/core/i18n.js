@@ -1259,9 +1259,11 @@
       }
     });
 
-    document.querySelectorAll('select').forEach(sel => {
-      sel.dispatchEvent(new Event('sync-ui'));
-    });
+    if (typeof Event !== 'undefined') {
+      document.querySelectorAll('select').forEach(sel => {
+        try { sel.dispatchEvent(new Event('sync-ui')); } catch (e) {}
+      });
+    }
   }
 
   initLanguage();
