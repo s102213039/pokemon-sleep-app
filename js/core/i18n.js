@@ -665,7 +665,7 @@
     '變身': { 'zh-TW': '變身', 'en-US': 'Transform' },
     '技能複製': { 'zh-TW': '技能複製', 'en-US': 'Skill Copy' },
     '變身（技能複製）': { 'zh-TW': '變身（技能複製）', 'en-US': 'Transform (Skill Copy)' },
-    '變身 (技能複製)': { 'zh-TW': '變身 (技能複製)', 'en-US': 'Transform (Skill Copy)' },
+    '模仿': { 'zh-TW': '模仿', 'en-US': 'Mimic' },
     '模仿（技能複製）': { 'zh-TW': '模仿（技能複製）', 'en-US': 'Mimic (Skill Copy)' },
     '模仿 (技能複製)': { 'zh-TW': '模仿 (技能複製)', 'en-US': 'Mimic (Skill Copy)' },
     

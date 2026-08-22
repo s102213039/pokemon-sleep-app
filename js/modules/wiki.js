@@ -485,6 +485,7 @@
     {
       id: "transform",
       name: "變身",
+      name_en: "Transform",
       icon: "🧬",
       category: "special",
       catName: "神獸與特殊",
@@ -497,6 +498,7 @@
     {
       id: "mimic",
       name: "模仿",
+      name_en: "Mimic",
       icon: "🎪",
       category: "special",
       catName: "神獸與特殊",
@@ -509,6 +511,7 @@
     {
       id: "metronome",
       name: "揮指",
+      name_en: "Metronome",
       icon: "☝️",
       category: "special",
       catName: "神獸與特殊",
