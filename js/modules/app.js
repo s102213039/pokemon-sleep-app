@@ -798,6 +798,10 @@ if (typeof document !== 'undefined') {
         const filterSidebar = document.getElementById('pokemon-filter-sidebar');
         const bookmarkHandle = document.getElementById('sidebar-bookmark-handle');
         const backdrop = document.getElementById('sidebar-backdrop');
+        const ladderSidebar = document.getElementById('ladder-filter-sidebar');
+        if (ladderSidebar) {
+          ladderSidebar.style.display = (target === 'wiki' && window.WikiDB && window.WikiDB.getCurrentSubTab && window.WikiDB.getCurrentSubTab() === 'ingredients') ? 'flex' : 'none';
+        }
 
         if (target === 'news' && panelNews && tabNews) {
           tabNews.classList.add('active');
