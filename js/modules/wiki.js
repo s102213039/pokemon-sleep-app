@@ -4010,6 +4010,39 @@
     refreshCoordinateLadder();
   }
 
+  function resetLadderFilters() {
+    ladderSearchQuery = '';
+    const searchInput = document.getElementById('ladder-pkm-search-input');
+    if (searchInput) searchInput.value = '';
+    const clearBtn = document.getElementById('ladder-search-clear-btn');
+    if (clearBtn) clearBtn.style.display = 'none';
+
+    ladderRecipeFilter = 'ALL';
+    document.querySelectorAll('.ladder-filter-capsule').forEach(btn => {
+      if (btn.getAttribute('data-recipe-filter') === 'ALL') {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    isLadderIngM = false;
+    isLadderSpeedM = false;
+    isLadderNatureIng = false;
+    isLadderNatureSpeed = false;
+
+    const ingM = document.getElementById('ladder-ing-m-toggle');
+    if (ingM) ingM.checked = false;
+    const speedM = document.getElementById('ladder-speed-m-toggle');
+    if (speedM) speedM.checked = false;
+    const natIng = document.getElementById('ladder-nature-ing-toggle');
+    if (natIng) natIng.checked = false;
+    const natSpd = document.getElementById('ladder-nature-speed-toggle');
+    if (natSpd) natSpd.checked = false;
+
+    refreshCoordinateLadder();
+  }
+
   function applyLadderFiltersInPlace() {
     const q = ladderSearchQuery.toLowerCase();
     const nodes = document.querySelectorAll('.ladder-node');
@@ -5473,74 +5506,118 @@
 
         <!-- 子分頁 4：🥗 食材產量天梯榜 (Ingredient Yield Ladder) -->
         <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:block;' : 'display:none;'}">
-          <div class="wiki-card">
-            <div class="wiki-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding-bottom: 6px;">
-              <!-- 水平控制列：[ 跨軌道搜尋 ] + [ 型態篩選膠囊 ] + [ 視覺天梯圖 | 卡片清單 ] + [ 副技能補正組 ] + [ 性格補正組 ] -->
-              <div class="ladder-header-controls" style="width: 100%;">
-                <!-- 跨軌道微型搜尋框 -->
-                <div class="ladder-search-box">
-                  <span class="ladder-search-icon">🔍</span>
-                  <input type="text" id="ladder-pkm-search-input" class="ladder-search-input" placeholder="${isEN ? 'Search Pokémon across tracks...' : '跨軌道搜尋寶可夢...'}" value="${ladderSearchQuery}" oninput="window.WikiDB.onLadderSearch(this.value)">
-                  <button type="button" class="ladder-search-clear" id="ladder-search-clear-btn" style="${ladderSearchQuery ? 'display:flex;' : 'display:none;'}" onclick="window.WikiDB.clearLadderSearch()" title="${isEN ? 'Clear Search' : '清空搜尋'}">✕</button>
+          <div class="ladder-layout-view">
+            <!-- ⬅️ 左側固定側邊篩選器 (Sidebar Filter) -->
+            <aside class="ladder-filter-sidebar" aria-label="${isEN ? 'Ladder Filters' : '天梯篩選器'}">
+              <div class="ladder-sidebar-header">
+                <div class="sidebar-title-group">
+                  <span class="sidebar-icon">🎛️</span>
+                  <span class="sidebar-title">${isEN ? 'Ladder Filters' : '天梯篩選與模擬'}</span>
+                </div>
+                <button type="button" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${isEN ? 'Reset All' : '重設全部'}">${isEN ? 'Reset' : '重設'}</button>
+              </div>
+
+              <div class="ladder-sidebar-content">
+                <!-- 1. 🔍 跨軌道微型搜尋框 -->
+                <div class="ladder-sidebar-section">
+                  <div class="sidebar-section-header">
+                    <span class="sidebar-section-title">${isEN ? 'Search Pokémon' : '搜尋寶可夢'}</span>
+                  </div>
+                  <div class="ladder-search-box">
+                    <span class="ladder-search-icon">🔍</span>
+                    <input type="text" id="ladder-pkm-search-input" class="ladder-search-input" placeholder="${isEN ? 'Search name...' : '搜尋寶可夢名稱...'}" value="${ladderSearchQuery}" oninput="window.WikiDB.onLadderSearch(this.value)">
+                    <button type="button" class="ladder-search-clear" id="ladder-search-clear-btn" style="${ladderSearchQuery ? 'display:flex;' : 'display:none;'}" onclick="window.WikiDB.clearLadderSearch()" title="${isEN ? 'Clear Search' : '清空搜尋'}">✕</button>
+                  </div>
                 </div>
 
-                <!-- 型態篩選膠囊 -->
-                <div class="ladder-filter-capsules">
-                  <button type="button" class="ladder-filter-capsule ${ladderRecipeFilter === 'ALL' ? 'active' : ''}" data-recipe-filter="ALL" onclick="window.WikiDB.setLadderRecipeFilter('ALL')">${isEN ? 'All' : '全部'}</button>
-                  <button type="button" class="ladder-filter-capsule ${ladderRecipeFilter === 'AAA' ? 'active' : ''}" data-recipe-filter="AAA" onclick="window.WikiDB.setLadderRecipeFilter('AAA')">${isEN ? '👑 AAA Only' : '👑 僅看 AAA'}</button>
-                  <button type="button" class="ladder-filter-capsule ${ladderRecipeFilter === 'TOP' ? 'active' : ''}" data-recipe-filter="TOP" onclick="window.WikiDB.setLadderRecipeFilter('TOP')">${isEN ? '🥈 TOP 1-2 Only' : '🥈 僅看 TOP 1-2'}</button>
+                <!-- 2. 👑 型態篩選 (Recipe / Variant Filter) -->
+                <div class="ladder-sidebar-section">
+                  <div class="sidebar-section-header">
+                    <span class="sidebar-section-title">${isEN ? 'Recipe Filter' : '配方型態篩選'}</span>
+                  </div>
+                  <div class="ladder-filter-capsules-sidebar">
+                    <button type="button" class="ladder-filter-capsule ${ladderRecipeFilter === 'ALL' ? 'active' : ''}" data-recipe-filter="ALL" onclick="window.WikiDB.setLadderRecipeFilter('ALL')">${isEN ? 'All Recipes' : '全部配方'}</button>
+                    <button type="button" class="ladder-filter-capsule ${ladderRecipeFilter === 'AAA' ? 'active' : ''}" data-recipe-filter="AAA" onclick="window.WikiDB.setLadderRecipeFilter('AAA')">${isEN ? '👑 AAA Only' : '👑 僅看 AAA'}</button>
+                    <button type="button" class="ladder-filter-capsule ${ladderRecipeFilter === 'TOP' ? 'active' : ''}" data-recipe-filter="TOP" onclick="window.WikiDB.setLadderRecipeFilter('TOP')">${isEN ? '🥈 TOP 1-2 Only' : '🥈 僅看 TOP 1-2'}</button>
+                  </div>
                 </div>
 
-                <div class="ladder-mode-btns" style="margin: 0;">
-                  <button type="button" class="ladder-mode-btn active" data-ladder-view="coordinate" onclick="window.WikiDB.switchLadderView('coordinate')">${isEN ? '📈 Visual Ladder' : '📈 視覺天梯圖'}</button>
-                  <button type="button" class="ladder-mode-btn" data-ladder-view="list" onclick="window.WikiDB.switchLadderView('list')">${isEN ? '📋 Card List' : '📋 卡片清單'}</button>
+                <!-- 3. 👁️ 檢視模式切換 (View Mode) -->
+                <div class="ladder-sidebar-section">
+                  <div class="sidebar-section-header">
+                    <span class="sidebar-section-title">${isEN ? 'View Mode' : '檢視呈現模式'}</span>
+                  </div>
+                  <div class="ladder-mode-btns-sidebar">
+                    <button type="button" class="ladder-mode-btn active" data-ladder-view="coordinate" onclick="window.WikiDB.switchLadderView('coordinate')">${isEN ? '📈 Visual Ladder' : '📈 視覺天梯圖'}</button>
+                    <button type="button" class="ladder-mode-btn" data-ladder-view="list" onclick="window.WikiDB.switchLadderView('list')">${isEN ? '📋 Card List' : '📋 卡片清單'}</button>
+                  </div>
                 </div>
 
-                <!-- 分組膠囊補正開關 -->
-                <div class="ladder-toggle-groups">
-                  <!-- 副技能補正組 -->
-                  <div class="ladder-toggle-group">
-                    <span class="ladder-group-label">${isEN ? 'Sub-Skill:' : '副技能：'}</span>
-                    <label class="ladder-switch-label" title="${isEN ? 'Ingredient Finder M (+36%)' : '食材發現機率提升M (+36%)'}">
-                      <input type="checkbox" id="ladder-ing-m-toggle" ${isLadderIngM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderIngM(this.checked)">
-                      <span class="ladder-switch-slider"></span>
-                      <span class="ladder-switch-text ing-m-text">${isEN ? '🥩 Ing. M (+36%)' : '🥩 食材M (+36%)'}</span>
+                <!-- 4. 🥩 副技能模擬補正 (Sub-Skill Boost Simulation) -->
+                <div class="ladder-sidebar-section">
+                  <div class="sidebar-section-header">
+                    <span class="sidebar-section-title">${isEN ? 'Sub-Skill Simulation' : '副技能補正模擬'}</span>
+                  </div>
+                  <div class="ladder-sidebar-switches">
+                    <label class="ladder-sidebar-switch-row" title="${isEN ? 'Ingredient Finder M (+36%)' : '食材發現機率提升M (+36%)'}">
+                      <span class="ladder-switch-text ing-m-text">${isEN ? '🥩 Ing. Finder M' : '🥩 食材機率提升M'}</span>
+                      <span class="ladder-switch-subtag">+36%</span>
+                      <div class="sidebar-switch-wrapper">
+                        <input type="checkbox" id="ladder-ing-m-toggle" class="switch-checkbox" ${isLadderIngM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderIngM(this.checked)">
+                        <span class="switch-slider"></span>
+                      </div>
                     </label>
 
-                    <label class="ladder-switch-label" title="${isEN ? 'Helping Speed M (+16.3% helps)' : '幫忙速度M (-14% 間隔時間，約 +16.3% 幫忙次數)'}">
-                      <input type="checkbox" id="ladder-speed-m-toggle" ${isLadderSpeedM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSpeedM(this.checked)">
-                      <span class="ladder-switch-slider"></span>
-                      <span class="ladder-switch-text speed-m-text">${isEN ? '⚡ Speed M (+16.3%)' : '⚡ 幫速M (+16.3%)'}</span>
+                    <label class="ladder-sidebar-switch-row" title="${isEN ? 'Helping Speed M (+16.3% helps)' : '幫忙速度M (-14% 間隔時間，約 +16.3% 幫忙次數)'}">
+                      <span class="ladder-switch-text speed-m-text">${isEN ? '⚡ Helping Speed M' : '⚡ 幫忙速度提升M'}</span>
+                      <span class="ladder-switch-subtag">+16.3%</span>
+                      <div class="sidebar-switch-wrapper">
+                        <input type="checkbox" id="ladder-speed-m-toggle" class="switch-checkbox" ${isLadderSpeedM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSpeedM(this.checked)">
+                        <span class="switch-slider"></span>
+                      </div>
                     </label>
                   </div>
+                </div>
 
-                  <!-- 性格補正組 -->
-                  <div class="ladder-toggle-group">
-                    <span class="ladder-group-label">${isEN ? 'Nature:' : '性格：'}</span>
-                    <label class="ladder-switch-label" title="${isEN ? 'Nature Ingredient Rate Up (+20%)' : '性格食材機率提升▲▲ (+20%)'}">
-                      <input type="checkbox" id="ladder-nature-ing-toggle" ${isLadderNatureIng ? 'checked' : ''} onchange="window.WikiDB.toggleLadderNatureIng(this.checked)">
-                      <span class="ladder-switch-slider"></span>
-                      <span class="ladder-switch-text nature-ing-text">${isEN ? '🧬 Ing. ▲▲ (+20%)' : '🧬 食材▲▲ (+20%)'}</span>
+                <!-- 5. 🧬 性格補正模擬 (Nature Boost Simulation) -->
+                <div class="ladder-sidebar-section">
+                  <div class="sidebar-section-header">
+                    <span class="sidebar-section-title">${isEN ? 'Nature Simulation' : '性格補正模擬'}</span>
+                  </div>
+                  <div class="ladder-sidebar-switches">
+                    <label class="ladder-sidebar-switch-row" title="${isEN ? 'Nature Ingredient Rate Up (+20%)' : '性格食材機率提升▲▲ (+20%)'}">
+                      <span class="ladder-switch-text nature-ing-text">${isEN ? '🧬 Ing. Rate ▲▲' : '🧬 性格食材機率▲▲'}</span>
+                      <span class="ladder-switch-subtag">+20%</span>
+                      <div class="sidebar-switch-wrapper">
+                        <input type="checkbox" id="ladder-nature-ing-toggle" class="switch-checkbox" ${isLadderNatureIng ? 'checked' : ''} onchange="window.WikiDB.toggleLadderNatureIng(this.checked)">
+                        <span class="switch-slider"></span>
+                      </div>
                     </label>
 
-                    <label class="ladder-switch-label" title="${isEN ? 'Nature Helping Speed Up (+10% helps)' : '性格幫忙速度提升▲▲ (-9.09% 間隔時間，約 +10% 幫忙次數)'}">
-                      <input type="checkbox" id="ladder-nature-speed-toggle" ${isLadderNatureSpeed ? 'checked' : ''} onchange="window.WikiDB.toggleLadderNatureSpeed(this.checked)">
-                      <span class="ladder-switch-slider"></span>
-                      <span class="ladder-switch-text nature-speed-text">${isEN ? '🧬 Speed ▲▲ (+10%)' : '🧬 幫速▲▲ (+10%)'}</span>
+                    <label class="ladder-sidebar-switch-row" title="${isEN ? 'Nature Helping Speed Up (+10% helps)' : '性格幫忙速度提升▲▲ (-9.09% 間隔時間，約 +10% 幫忙次數)'}">
+                      <span class="ladder-switch-text nature-speed-text">${isEN ? '🧬 Help Speed ▲▲' : '🧬 性格幫忙速度▲▲'}</span>
+                      <span class="ladder-switch-subtag">+10%</span>
+                      <div class="sidebar-switch-wrapper">
+                        <input type="checkbox" id="ladder-nature-speed-toggle" class="switch-checkbox" ${isLadderNatureSpeed ? 'checked' : ''} onchange="window.WikiDB.toggleLadderNatureSpeed(this.checked)">
+                        <span class="switch-slider"></span>
+                      </div>
                     </label>
                   </div>
                 </div>
               </div>
-            </div>
+            </aside>
 
-            <!-- 橫向視覺天梯座標圖 (預設顯示) -->
-            <div id="wiki-ingredient-ladder-coordinate" style="margin-top: 8px;">
-              ${renderCoordinateLadder(LV60_COORDINATE_LADDER_DATA)}
-            </div>
+            <!-- ➡️ 右側主要內容區 (Right Main Content Area) -->
+            <div class="ladder-main-content">
+              <!-- 橫向視覺天梯座標圖 (預設顯示) -->
+              <div id="wiki-ingredient-ladder-coordinate">
+                ${renderCoordinateLadder(LV60_COORDINATE_LADDER_DATA)}
+              </div>
 
-            <!-- 食材天梯卡片清單 (列表檢視，預設隱藏) -->
-            <div id="wiki-ingredient-ladder-grid" class="wiki-ladder-grid" style="display: none; margin-top: 8px;">
-              ${renderIngredientLadders(LV60_INGREDIENTS_LADDER)}
+              <!-- 食材天梯卡片清單 (列表檢視，預設隱藏) -->
+              <div id="wiki-ingredient-ladder-grid" class="wiki-ladder-grid" style="display: none;">
+                ${renderIngredientLadders(LV60_INGREDIENTS_LADDER)}
+              </div>
             </div>
           </div>
         </div>
@@ -5623,6 +5700,7 @@
     onLadderSearch: onLadderSearch,
     clearLadderSearch: clearLadderSearch,
     setLadderRecipeFilter: setLadderRecipeFilter,
+    resetLadderFilters: resetLadderFilters,
     refreshCoordinateLadder: refreshCoordinateLadder,
     handleLadderGroupHover: handleLadderGroupHover,
     handleLadderGroupHoverOut: handleLadderGroupHoverOut,
@@ -5651,6 +5729,7 @@
   window.onLadderSearch = onLadderSearch;
   window.clearLadderSearch = clearLadderSearch;
   window.setLadderRecipeFilter = setLadderRecipeFilter;
+  window.resetLadderFilters = resetLadderFilters;
   window.refreshCoordinateLadder = refreshCoordinateLadder;
   window.handleLadderGroupHover = handleLadderGroupHover;
   window.handleLadderGroupHoverOut = handleLadderGroupHoverOut;
