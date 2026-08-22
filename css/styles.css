@@ -2129,6 +2129,7 @@ html[data-lang="en"] .subfilter-skill-btn,
 
 /* Footer */
 footer {
+  display: none !important;
   max-width: 1200px;
   width: 92%;
   margin: 40px auto 0;
