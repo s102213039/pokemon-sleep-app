@@ -1199,7 +1199,10 @@ html[lang="en"] .appraisal-pokemon-title,
   width: 100%;
 }
 
-.sidebar-specialty-tags .tag-btn {
+.sidebar-specialty-tags .tag-btn,
+.sidebar-skills-list .tag-btn,
+.sidebar-2col-tags .tag-btn,
+.tag-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1216,15 +1219,22 @@ html[lang="en"] .appraisal-pokemon-title,
   transition: all 0.15s ease;
   line-height: 1.25;
   min-height: 24px;
+  cursor: pointer;
 }
 
-.sidebar-specialty-tags .tag-btn:hover {
+.sidebar-specialty-tags .tag-btn:hover,
+.sidebar-skills-list .tag-btn:hover,
+.sidebar-2col-tags .tag-btn:hover,
+.tag-btn:hover {
   background: var(--bg-sidebar-btn-hover);
   border-color: rgba(56, 189, 248, 0.4);
   color: var(--text-primary);
 }
 
-.sidebar-specialty-tags .tag-btn.active {
+.sidebar-specialty-tags .tag-btn.active,
+.sidebar-skills-list .tag-btn.active,
+.sidebar-2col-tags .tag-btn.active,
+.tag-btn.active {
   background: #0284c7;
   border-color: #38bdf8;
   color: #ffffff;

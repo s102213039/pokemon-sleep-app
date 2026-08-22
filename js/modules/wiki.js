@@ -4011,7 +4011,7 @@
 
   function setLadderRecipeFilter(filterType) {
     ladderRecipeFilter = filterType;
-    document.querySelectorAll('.ladder-filter-capsule').forEach(btn => {
+    document.querySelectorAll('[data-recipe-filter]').forEach(btn => {
       if (btn.getAttribute('data-recipe-filter') === filterType) {
         btn.classList.add('active');
       } else {
@@ -4029,13 +4029,15 @@
     if (clearBtn) clearBtn.style.display = 'none';
 
     ladderRecipeFilter = 'ALL';
-    document.querySelectorAll('.ladder-filter-capsule').forEach(btn => {
+    document.querySelectorAll('[data-recipe-filter]').forEach(btn => {
       if (btn.getAttribute('data-recipe-filter') === 'ALL') {
         btn.classList.add('active');
       } else {
         btn.classList.remove('active');
       }
     });
+
+    switchLadderView('coordinate');
 
     isLadderIngM = false;
     isLadderSpeedM = false;
@@ -5284,9 +5286,9 @@
               <span class="sidebar-section-title">${isEN ? 'Recipe Filter' : '配方型態'}</span>
             </div>
             <div class="sidebar-specialty-tags">
-              <button type="button" class="sidebar-tag-btn ${ladderRecipeFilter === 'ALL' ? 'active' : ''}" data-recipe-filter="ALL" onclick="window.WikiDB.setLadderRecipeFilter('ALL')">${isEN ? 'All Recipes' : '全部配方'}</button>
-              <button type="button" class="sidebar-tag-btn ${ladderRecipeFilter === 'AAA' ? 'active' : ''}" data-recipe-filter="AAA" onclick="window.WikiDB.setLadderRecipeFilter('AAA')">${isEN ? '👑 AAA Only' : '👑 僅看 AAA'}</button>
-              <button type="button" class="sidebar-tag-btn ${ladderRecipeFilter === 'TOP' ? 'active' : ''}" data-recipe-filter="TOP" onclick="window.WikiDB.setLadderRecipeFilter('TOP')">${isEN ? '🥈 TOP 1-2' : '🥈 僅看 TOP 1-2'}</button>
+              <button type="button" class="tag-btn ${ladderRecipeFilter === 'ALL' ? 'active' : ''}" data-recipe-filter="ALL" onclick="window.WikiDB.setLadderRecipeFilter('ALL')">${isEN ? 'All' : '全部'}</button>
+              <button type="button" class="tag-btn ${ladderRecipeFilter === 'AAA' ? 'active' : ''}" data-recipe-filter="AAA" onclick="window.WikiDB.setLadderRecipeFilter('AAA')">AAA</button>
+              <button type="button" class="tag-btn ${ladderRecipeFilter === 'TOP' ? 'active' : ''}" data-recipe-filter="TOP" onclick="window.WikiDB.setLadderRecipeFilter('TOP')">TOP 1-2</button>
             </div>
           </div>
 
@@ -5295,9 +5297,9 @@
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'View Mode' : '檢視模式'}</span>
             </div>
-            <div class="sidebar-specialty-tags">
-              <button type="button" class="sidebar-tag-btn ${ladderViewMode === 'coordinate' ? 'active' : ''}" data-ladder-view="coordinate" onclick="window.WikiDB.switchLadderView('coordinate')">${isEN ? '📈 Visual' : '📈 視覺天梯'}</button>
-              <button type="button" class="sidebar-tag-btn ${ladderViewMode === 'list' ? 'active' : ''}" data-ladder-view="list" onclick="window.WikiDB.switchLadderView('list')">${isEN ? '📋 List' : '📋 卡片清單'}</button>
+            <div class="sidebar-skills-list">
+              <button type="button" class="tag-btn ${ladderViewMode === 'coordinate' ? 'active' : ''}" data-ladder-view="coordinate" onclick="window.WikiDB.switchLadderView('coordinate')">${isEN ? '📈 Visual' : '📈 視覺天梯'}</button>
+              <button type="button" class="tag-btn ${ladderViewMode === 'list' ? 'active' : ''}" data-ladder-view="list" onclick="window.WikiDB.switchLadderView('list')">${isEN ? '📋 List' : '📋 卡片清單'}</button>
             </div>
           </div>
 
