@@ -10994,9 +10994,32 @@
 
   function formatLadderNote(note, isEN) {
     if (!note) return '';
-    return (window.I18N && typeof window.I18N.translateDynamicText === 'function') 
+    let translated = (window.I18N && typeof window.I18N.translateDynamicText === 'function') 
       ? window.I18N.translateDynamicText(note) 
       : note;
+
+    if (window.I18N && typeof window.I18N.getIngredientIcon === 'function') {
+      const ingList = [
+        '特選蘋果', 'Fancy Apple', '哞哞鮮奶', 'Moomoo Milk', '萌綠大豆', 'Greengrass Soybeans',
+        '甜甜蜜', 'Honey', '豆製肉', 'Bean Sausage', '暖暖薑', 'Warming Ginger',
+        '好眠番茄', '熟透番茄', 'Snoozy Tomato', '特選蛋', 'Fancy Egg', '純粹油', 'Pure Oil',
+        '窩心洋芋', 'Soft Potato', '火辣香草', 'Fiery Herb', '萌綠玉米', 'Greengrass Corn',
+        '放鬆可可', 'Soothing Cacao', '醒腦咖啡豆', 'Rousing Coffee', '嫩亮酪梨', 'Glossy Avocado',
+        '品鮮蘑菇', 'Tasty Mushroom', '粗枝大蔥', 'Large Leek', '沉甸甸南瓜', 'Plump Pumpkin',
+        '美味尾巴', 'Slowpoke Tail'
+      ];
+      ingList.forEach(ingName => {
+        if (translated.includes(ingName)) {
+          const icon = window.I18N.getIngredientIcon(ingName);
+          if (icon) {
+            const displayName = window.I18N.getIngredientName(ingName);
+            const tag = `<img src="${icon}" class="ladder-note-ing-icon" alt="${displayName}" title="${displayName}">`;
+            translated = translated.split(ingName).join(tag);
+          }
+        }
+      });
+    }
+    return translated;
   }
 
   // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、大菜供應能力評定、跨軌道搜尋聚焦)
@@ -11420,7 +11443,7 @@
             const rawName = t.name || '';
             const translatedPkm = isEN ? ((window.I18N && window.I18N.getPokemonName(rawName)) || rawName) : rawName;
             const pkmDisplayName = `${translatedPkm} (${t.recipe || 'AAA'})`;
-            const noteText = isEN ? (window.I18N ? window.I18N.translateDynamicText(t.note) : t.note) : t.note;
+            const noteText = formatLadderNote(t.note || '', isEN);
             const rawCountNum = parseFloat(t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count)) || 0;
             const displayCount = (rawCountNum * mult).toFixed(1);
 
@@ -11645,11 +11668,10 @@
                     </td>
                     <td><span class="wiki-skill-badge skill-badge-blue">${isEN ? p.skill_en : p.skill}</span></td>
                     <td>
-                      <div style="display: flex; align-items: center; gap: 6px; justify-content: center; flex-wrap: wrap;">
+                      <div style="display: flex; align-items: center; gap: 8px; justify-content: center; flex-wrap: wrap;">
                         ${p.ingredients.map(ig => `
-                          <div style="display: inline-flex; align-items: center; gap: 3px; background: var(--bg-card-inner); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-color-subtle); font-size: 11px;">
-                            <img src="${ig.icon}" width="16" height="16" alt="${ig.name}">
-                            <span>${isEN ? ig.name_en : ig.name}</span>
+                          <div class="wiki-ing-badge" title="${isEN ? ig.name_en : ig.name}" style="display: inline-flex; align-items: center; justify-content: center; background: var(--bg-card-inner); padding: 4px 6px; border-radius: 6px; border: 1px solid var(--border-color-subtle); cursor: help;">
+                            <img src="${ig.icon}" width="22" height="22" alt="${isEN ? ig.name_en : ig.name}" style="object-fit: contain; vertical-align: middle;">
                           </div>
                         `).join('')}
                       </div>

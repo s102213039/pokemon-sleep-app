@@ -439,22 +439,13 @@
                 <span class="box-pr-summary-text">${escapeHtml(prInfo.summaryNote)}</span>
               </div>
 
-              <!-- 食材插槽組合 -->
+              <!-- 食材插槽組合 (圖標與數量徽章) -->
               <div class="box-card-section">
                 <div class="box-section-title">🍲 ${isEN ? 'Ingredients' : '食材組合'}</div>
                 <div class="box-ing-slots">
-                  <div class="box-ing-slot">
-                    <span class="box-slot-tag">Lv.1</span>
-                    <span class="box-slot-val">${escapeHtml(window.I18N ? window.I18N.getIngredientName(p.ing1) : (p.ing1 || '--'))}</span>
-                  </div>
-                  <div class="box-ing-slot">
-                    <span class="box-slot-tag">Lv.30</span>
-                    <span class="box-slot-val">${escapeHtml(window.I18N ? window.I18N.getIngredientName(p.ing2) : (p.ing2 || '--'))}</span>
-                  </div>
-                  <div class="box-ing-slot">
-                    <span class="box-slot-tag">Lv.60</span>
-                    <span class="box-slot-val">${escapeHtml(window.I18N ? window.I18N.getIngredientName(p.ing3) : (p.ing3 || '--'))}</span>
-                  </div>
+                  ${renderBoxCardIngSlot(p.ing1, 'Lv.1', base, 0)}
+                  ${renderBoxCardIngSlot(p.ing2, 'Lv.30', base, 1)}
+                  ${renderBoxCardIngSlot(p.ing3, 'Lv.60', base, 2)}
                 </div>
               </div>
 
@@ -519,7 +510,7 @@
               <th>${t('th.ing3', 'Lv.60 食材')}</th>
               <th>${isEN ? 'Sub-Skills' : '副技能 (Lv.10 ~ 80)'}</th>
               <th>${isEN ? 'Nature' : '性格'}</th>
-              <th>${t('th.actions', '操作')}</th>
+              <th>${isEN ? 'Actions' : '操作'}</th>
             </tr>
           </thead>
           <tbody>
@@ -556,9 +547,9 @@
                     </span>
                   </td>
                   <td>${specName}</td>
-                  <td>${escapeHtml(window.I18N ? window.I18N.getIngredientName(p.ing1) : (p.ing1 || '--'))}</td>
-                  <td>${escapeHtml(window.I18N ? window.I18N.getIngredientName(p.ing2) : (p.ing2 || '--'))}</td>
-                  <td>${escapeHtml(window.I18N ? window.I18N.getIngredientName(p.ing3) : (p.ing3 || '--'))}</td>
+                  ${renderBoxTableIngCell(p.ing1, base, 0)}
+                  ${renderBoxTableIngCell(p.ing2, base, 1)}
+                  ${renderBoxTableIngCell(p.ing3, base, 2)}
                   <td>
                     <div style="display:flex;flex-wrap:wrap;gap:4px;">
                       ${(p.subskills || []).map((skName) => {

@@ -409,22 +409,36 @@ function renderSkillWithTooltip(skillName, pkm) {
   const rawDetail = SPECIAL_SKILL_DETAILS[skillName] || SPECIAL_SKILL_DETAILS[skillName.replace(/\(/g, '（').replace(/\)/g, '）')];
   let detail = rawDetail ? (typeof rawDetail === 'object' ? (rawDetail[isEN ? 'en-US' : 'zh-TW'] || rawDetail['zh-TW']) : rawDetail) : '';
 
+  let plainTitle = detail;
   // 針對特定寶可夢的「食材精選S」系列，精簡直接顯示該寶可夢專屬食材池（避免冗長通用說明）
   if (skillName && skillName.includes('食材精選') && pkm && pkm.ingredients && pkm.ingredients.length > 0) {
-    const ingNames = Array.from(new Set(pkm.ingredients.map(ig => (typeof window !== 'undefined' && window.I18N) ? (window.I18N.getIngredientName(ig.name) || ig.name) : ig.name))).join(isEN ? ', ' : '、');
-    if (ingNames) {
+    const uniqueIngs = [];
+    const seen = new Set();
+    pkm.ingredients.forEach(ig => {
+      if (ig.name && !seen.has(ig.name)) {
+        seen.add(ig.name);
+        uniqueIngs.push(ig);
+      }
+    });
+
+    const ingChipsHtml = uniqueIngs.map(ig => {
+      const ingName = (typeof window !== 'undefined' && window.I18N) ? (window.I18N.getIngredientName(ig.name) || ig.name) : ig.name;
+      const icon = ig.icon || (typeof window !== 'undefined' && window.I18N && window.I18N.getIngredientIcon(ig.name)) || '';
+      return `<span class="skill-tooltip-ing-chip" title="${ingName}">${icon ? `<img src="${icon}" class="skill-tooltip-ing-icon" alt="${ingName}">` : ''}<span>${ingName}</span></span>`;
+    }).join('');
+
+    const ingNamesPlain = uniqueIngs.map(ig => (typeof window !== 'undefined' && window.I18N) ? (window.I18N.getIngredientName(ig.name) || ig.name) : ig.name).join(isEN ? ', ' : '、');
+
+    if (ingChipsHtml) {
       if (skillName.includes('超幸運')) {
-        detail = isEN
-          ? `Draws: ${ingNames} (rarely grants massive Dream Shards)`
-          : `可精選食材：${ingNames}（少數情況下獲得大量夢之碎片）`;
+        detail = `<div style="margin-bottom:4px;">${isEN ? 'Draws:' : '可精選食材：'}</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin:4px 0;">${ingChipsHtml}</div><div style="color:var(--text-muted);font-size:11px;">${isEN ? '(rarely grants massive Dream Shards)' : '（少數情況下獲得大量夢之碎片）'}</div>`;
+        plainTitle = isEN ? `Draws: ${ingNamesPlain} (rarely grants massive Dream Shards)` : `可精選食材：${ingNamesPlain}（少數情況下獲得大量夢之碎片）`;
       } else if (skillName.includes('怪力')) {
-        detail = isEN
-          ? `Draws: ${ingNames} (sometimes yields extra ingredients)`
-          : `可精選食材：${ingNames}（有時額外獲得更多食材）`;
+        detail = `<div style="margin-bottom:4px;">${isEN ? 'Draws:' : '可精選食材：'}</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin:4px 0;">${ingChipsHtml}</div><div style="color:var(--text-muted);font-size:11px;">${isEN ? '(sometimes yields extra ingredients)' : '（有時額外獲得更多食材）'}</div>`;
+        plainTitle = isEN ? `Draws: ${ingNamesPlain} (sometimes yields extra ingredients)` : `可精選食材：${ingNamesPlain}（有時額外獲得更多食材）`;
       } else {
-        detail = isEN
-          ? `Draws 1 candidate ingredient: ${ingNames}`
-          : `可精選食材：${ingNames}`;
+        detail = `<div style="margin-bottom:4px;">${isEN ? 'Draws 1 candidate ingredient:' : '可精選食材：'}</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin:4px 0;">${ingChipsHtml}</div>`;
+        plainTitle = isEN ? `Draws: ${ingNamesPlain}` : `可精選食材：${ingNamesPlain}`;
       }
     }
   }
@@ -433,7 +447,7 @@ function renderSkillWithTooltip(skillName, pkm) {
 
   // 僅針對特殊/變體/複合主技能展示標籤與詳細說明，純基礎主技能（如能量填充S）保持純文字不展示說明
   if (detail) {
-    return `<span class="special-skill-badge" data-skill="${escapeHtml(skillName)}" data-skill-detail="${escapeHtml(detail)}" title="${escapeHtml(detail)}"><span class="skill-sparkle" aria-hidden="true">✨</span><span class="skill-name-text">${contentHtml}</span></span>`;
+    return `<span class="special-skill-badge" data-skill="${escapeHtml(skillName)}" data-skill-detail="${escapeHtml(detail)}" title="${escapeHtml(plainTitle || detail)}"><span class="skill-sparkle" aria-hidden="true">✨</span><span class="skill-name-text">${contentHtml}</span></span>`;
   }
   if (isEN) {
     return `<span class="main-skill-text">${contentHtml}</span>`;

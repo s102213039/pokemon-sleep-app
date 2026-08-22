@@ -941,6 +941,73 @@
     return lookupBilingualDict(SPECIALTY_NAMES, spec) || spec;
   }
 
+  const INGREDIENT_ICONS = {
+    '特選蘋果': 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png',
+    'Fancy Apple': 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png',
+    'apple': 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png',
+    '哞哞鮮奶': 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png',
+    '窩心牛奶': 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png',
+    'Moomoo Milk': 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png',
+    'milk': 'https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png',
+    '萌綠大豆': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png',
+    'Greengrass Soybeans': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png',
+    'soybeans': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png',
+    '甜甜蜜': 'https://www.serebii.net/pokemonsleep/ingredients/honey.png',
+    'Honey': 'https://www.serebii.net/pokemonsleep/ingredients/honey.png',
+    'honey': 'https://www.serebii.net/pokemonsleep/ingredients/honey.png',
+    '豆製肉': 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png',
+    'Bean Sausage': 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png',
+    'sausage': 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png',
+    '暖暖薑': 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png',
+    'Warming Ginger': 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png',
+    'ginger': 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png',
+    '好眠番茄': 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png',
+    '熟透番茄': 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png',
+    'Snoozy Tomato': 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png',
+    'tomato': 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png',
+    '特選蛋': 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png',
+    'Fancy Egg': 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png',
+    'egg': 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png',
+    '純粹油': 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png',
+    'Pure Oil': 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png',
+    'oil': 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png',
+    '窩心洋芋': 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png',
+    'Soft Potato': 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png',
+    'potato': 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png',
+    '火辣香草': 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png',
+    'Fiery Herb': 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png',
+    'herb': 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png',
+    '萌綠玉米': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png',
+    'Greengrass Corn': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png',
+    'corn': 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png',
+    '放鬆可可': 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png',
+    'Soothing Cacao': 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png',
+    'cacao': 'https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png',
+    '醒腦咖啡豆': 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png',
+    'Rousing Coffee': 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png',
+    'coffee': 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png',
+    '嫩亮酪梨': 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png',
+    'Glossy Avocado': 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png',
+    'glossyavocado': 'https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png',
+    '品鮮蘑菇': 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png',
+    'Tasty Mushroom': 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png',
+    'mushroom': 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png',
+    '粗枝大蔥': 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png',
+    'Large Leek': 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png',
+    'leek': 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png',
+    '沉甸甸南瓜': 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png',
+    'Plump Pumpkin': 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png',
+    'pumpkin': 'https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png',
+    '美味尾巴': 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png',
+    'Slowpoke Tail': 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png',
+    'tail': 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png'
+  };
+
+  function getIngredientIcon(ing) {
+    if (!ing) return '';
+    return INGREDIENT_ICONS[ing] || '';
+  }
+
   function getIngredientName(ing) {
     if (!ing) return '';
     return lookupBilingualDict(INGREDIENT_NAMES, ing) || ing;
@@ -1303,6 +1370,7 @@
     getTypeName,
     getSpecialtyName,
     getIngredientName,
+    getIngredientIcon,
     getBerryName,
     getNatureName,
     getPokemonName,
@@ -1319,6 +1387,7 @@
     TYPE_NAMES,
     SPECIALTY_NAMES,
     INGREDIENT_NAMES,
+    INGREDIENT_ICONS,
     BERRY_NAMES,
     NATURE_NAMES,
     MAIN_SKILL_NAMES,
