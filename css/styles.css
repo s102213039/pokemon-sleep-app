@@ -5814,6 +5814,24 @@ select optgroup,
   background: #dcfce7;
 }
 
+.ladder-track-champion-badge.badge-empty {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  justify-content: center;
+}
+
+.ladder-track-row.ladder-track-empty {
+  opacity: 0.28;
+  filter: grayscale(0.5);
+  background: transparent;
+}
+
+.ladder-card.ladder-track-empty {
+  opacity: 0.35;
+  filter: grayscale(0.5);
+}
+
 .ladder-ing-icon {
   width: 22px;
   height: 22px;
