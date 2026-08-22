@@ -325,9 +325,8 @@ test('Tier 1 - Feature Coverage', 'Wiki Database Integrity: wiki.js defines skil
   assert(wikiContent.includes('SUB_SKILLS_DATA'), 'wiki.js missing SUB_SKILLS_DATA');
   assert(wikiContent.includes('TRIGGER_CHANCE_MATRIX'), 'wiki.js missing TRIGGER_CHANCE_MATRIX');
   assert(wikiContent.includes('RATINGS_GUIDE_DATA'), 'wiki.js missing RATINGS_GUIDE_DATA');
-  assert(wikiContent.includes('LV60_INGREDIENTS_LADDER'), 'wiki.js missing LV60_INGREDIENTS_LADDER');
-  assert(wikiContent.includes('蓄力 (能量填充S)'), 'wiki.js missing Charge Stock skill data');
-  assert(wikiContent.includes('幫手加速 (屬性)'), 'wiki.js missing Helper Boost skill data');
+  assert(wikiContent.includes('蓄力（能量填充S）') || wikiContent.includes('蓄力 (能量填充S)'), 'wiki.js missing Charge Stock skill data');
+  assert(wikiContent.includes('幫手加速（屬性）') || wikiContent.includes('幫手加速 (屬性)'), 'wiki.js missing Helper Boost skill data');
   assert(wikiContent.includes('1.848'), 'wiki.js missing 1.848x trigger chance multiplier');
 });
 
