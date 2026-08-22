@@ -4635,7 +4635,7 @@
           <!-- 頂部刻度標尺 -->
           <div class="ladder-ruler-header">
             <div class="ladder-ruler-spacer">
-              <span class="ruler-spacer-title">${isEN ? 'Ingredient & Champion' : '食材與產量冠軍'}</span>
+              <span class="ruler-spacer-title">${isEN ? 'Champion' : '產量冠軍'}</span>
             </div>
             <div class="ladder-ruler-scale">
               ${ticks.map(t => `
@@ -4679,7 +4679,6 @@
               <div class="ladder-track-header" title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isEN ? 'Key Dish: ' : '核心大菜：'}${dishName} (${dishInfo.need}${isEN ? '/meal' : '顆/餐'})">
                 <div class="ladder-track-ing-main">
                   <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">
-                  <span class="ladder-track-ing-name">${ingName}</span>
                 </div>
                 ${champPkm ? `
                   <div class="ladder-track-champion-badge" title="${isEN ? '👑 Champion: ' + champDisplayName + ' (' + champRecipe + ') - ' + champScaledCount + ' /day' : '👑 產量冠軍：' + champDisplayName + ' (' + champRecipe + ') - 每日預估 ' + champScaledCount + ' 顆'}">
@@ -4769,9 +4768,8 @@
                           <div class="node-count-badge">${scaledCount}</div>
                           
                           <div class="ladder-node-tooltip">
-                            <div class="tooltip-title">${isTopNode ? (isEN ? '👑 Top 1 Yield ' : '👑 產量 TOP 1 ') : ''}${pkmDisplayName} (${v.recipe})</div>
-                            <div class="tooltip-detail">${isEN ? 'Ingredient Combo: ' : '食材組合：'}<span class="text-accent font-bold">${v.recipe}</span></div>
-                            <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估日產：'}<span class="text-success font-bold">${scaledCount} ${isEN ? '/day' : '顆/天'}</span>${boostLabel}</div>
+                            <div class="tooltip-title">${isTopNode ? (isEN ? '👑 Top 1 Yield ' : '👑 產量 TOP 1 ') : ''}${pkmDisplayName}</div>
+                            <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估日產：'}<span class="text-success font-bold">${scaledCount} ${isEN ? '/day' : '顆/天'}</span></div>
                             
                             <!-- 🍲 頂級大菜供貨能力指標 -->
                             <div class="tooltip-dish-box">
@@ -5476,14 +5474,9 @@
         <!-- 子分頁 4：🥗 食材產量天梯榜 (Ingredient Yield Ladder) -->
         <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:block;' : 'display:none;'}">
           <div class="wiki-card">
-            <div class="wiki-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span class="wiki-card-icon">🥗</span>
-                <h3 class="wiki-card-title" style="margin: 0;">${isEN ? 'Ingredient Yield Ladder' : '食材產量天梯榜'}</h3>
-              </div>
-
-              <!-- 水平正右側控制列：[ 跨軌道搜尋 ] + [ 型態篩選膠囊 ] + [ 視覺天梯圖 | 卡片清單 ] + [ 副技能補正組 ] + [ 性格補正組 ] -->
-              <div class="ladder-header-controls">
+            <div class="wiki-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding-bottom: 6px;">
+              <!-- 水平控制列：[ 跨軌道搜尋 ] + [ 型態篩選膠囊 ] + [ 視覺天梯圖 | 卡片清單 ] + [ 副技能補正組 ] + [ 性格補正組 ] -->
+              <div class="ladder-header-controls" style="width: 100%;">
                 <!-- 跨軌道微型搜尋框 -->
                 <div class="ladder-search-box">
                   <span class="ladder-search-icon">🔍</span>
