@@ -1467,6 +1467,48 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Draw S Specific Po
   assert(ingDrawSkill && ingDrawSkill.hasIngredientDrawMatrix, 'Wiki should define ingredient_draw_s with hasIngredientDrawMatrix');
 });
 
+test('Tier 1 - Feature Coverage', 'WikiDB Namespace & Event Handler Methods Integrity', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const ctx = {
+    window: { localStorage: { getItem: () => 'zh-TW', setItem: () => {} }, addEventListener: () => {} },
+    document: {
+      documentElement: { setAttribute: () => {} },
+      getElementById: () => null,
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    console: console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(wikiCode, ctx);
+
+  const wikiMethods = [
+    'switchSubTab', 'switchWikiSubTab', 'switchLadderView', 'filterSkills', 'filterWikiSkills',
+    'filterIngredients', 'filterWikiIngredients', 'switchStack', 'switchChargeStock',
+    'switchBoost', 'switchHelperBoost', 'toggleDetail', 'toggleDetailTable',
+    'updateBerryLevel', 'updateBerryIsland', 'toggleBerryFavorite', 'toggleFavorite',
+    'toggleLadderIngM', 'toggleLadderSpeedM', 'onLadderSearch', 'clearLadderSearch',
+    'setLadderRecipeFilter', 'refreshCoordinateLadder', 'handleLadderGroupHover',
+    'handleLadderGroupHoverOut', 'recalcTriggerChance', 'recalcSleepDays'
+  ];
+
+  wikiMethods.forEach(method => {
+    assert(typeof ctx.window.WikiDB[method] === 'function', `window.WikiDB.${method} should be a valid function`);
+  });
+
+  // Verify toggleBerryFavorite toggles without throwing
+  let threw = false;
+  try {
+    ctx.window.WikiDB.toggleBerryFavorite(true);
+    ctx.window.WikiDB.toggleBerryFavorite(false);
+  } catch (e) {
+    threw = true;
+  }
+  assert(!threw, 'toggleBerryFavorite should execute cleanly');
+});
+
 
 // Final Summary Output
 console.log('\n======================================================');

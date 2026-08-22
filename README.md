@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue?style=for-the-badge&logo=github)](https://s102213039.github.io/pokemon-sleep-app/)
-[![Tests](https://img.shields.io/badge/Tests-42%2F42%20PASS-brightgreen?style=for-the-badge&logo=node.js)](https://github.com/s102213039/pokemon-sleep-app)
+[![Tests](https://img.shields.io/badge/Tests-43%2F43%20PASS-brightgreen?style=for-the-badge&logo=node.js)](https://github.com/s102213039/pokemon-sleep-app)
 [![Bilingual](https://img.shields.io/badge/Language-繁體中文%20%7C%20English-orange?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
 [![Theme](https://img.shields.io/badge/Themes-4%20Themes%20(Dark%2FLight)-purple?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
