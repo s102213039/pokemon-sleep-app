@@ -384,7 +384,7 @@ function shortenSkillName(name) {
 function formatSkillNameHtml(displayName, isEN) {
   if (!displayName) return '';
   if (!isEN) {
-    return escapeHtml(displayName);
+    return `<span class="skill-single-line">${escapeHtml(displayName)}</span>`;
   }
 
   // 縮短英文主技能名稱（例如 Ingredient -> Ingr., Strength -> Str., Everyone -> All 等）

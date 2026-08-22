@@ -241,10 +241,9 @@
   --color-accent-gold: #b45309;
   --color-accent-green: #15803d;
   --color-accent-rose: #be185d;
-  --color-accent-purple: #7e22ce;
   --badge-special-bg: #e0f2fe;
   --badge-special-border: #0284c7;
-  --badge-special-text: #0369a1;
+  --badge-special-text: #0c4a6e;
 
   /* Low-saturation, soft & readable badge palette for Dawn (Light Theme) */
   --badge-cat-curry-bg: #fef3c7;
@@ -331,7 +330,7 @@
   --color-accent-purple: #7e22ce;
   --badge-special-bg: #dcfce7;
   --badge-special-border: #16a34a;
-  --badge-special-text: #14532d;
+  --badge-special-text: #052e16;
 
   /* Low-saturation, soft & readable badge palette for Emerald (Light Theme) */
   --badge-cat-curry-bg: #fef9c3;
@@ -1862,10 +1861,36 @@ html[data-lang="en"] .subfilter-skill-btn,
   margin: 0 auto;
 }
 
-[data-theme="dawn"] .special-skill-badge,
+[data-theme="dawn"] .special-skill-badge {
+  background-color: #e0f2fe !important;
+  border: 1.5px solid #0284c7 !important;
+  color: #0c4a6e !important;
+  box-shadow: 0 1px 3px rgba(2, 132, 199, 0.12);
+}
+
+[data-theme="dawn"] .special-skill-badge .skill-name-text,
+[data-theme="dawn"] .special-skill-badge .skill-line-1,
+[data-theme="dawn"] .special-skill-badge .skill-line-2,
+[data-theme="dawn"] .special-skill-badge .skill-single-line {
+  color: #0c4a6e !important;
+  font-weight: 700;
+  opacity: 1;
+}
+
 [data-theme="emerald"] .special-skill-badge {
-  border-style: solid;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  background-color: #dcfce7 !important;
+  border: 1.5px solid #16a34a !important;
+  color: #052e16 !important;
+  box-shadow: 0 1px 3px rgba(22, 163, 74, 0.12);
+}
+
+[data-theme="emerald"] .special-skill-badge .skill-name-text,
+[data-theme="emerald"] .special-skill-badge .skill-line-1,
+[data-theme="emerald"] .special-skill-badge .skill-line-2,
+[data-theme="emerald"] .special-skill-badge .skill-single-line {
+  color: #052e16 !important;
+  font-weight: 700;
+  opacity: 1;
 }
 
 .special-skill-badge:hover {
@@ -1881,6 +1906,11 @@ html[data-lang="en"] .subfilter-skill-btn,
   flex-shrink: 0;
 }
 
+[data-theme="dawn"] .special-skill-badge .skill-sparkle,
+[data-theme="emerald"] .special-skill-badge .skill-sparkle {
+  filter: none;
+}
+
 .special-skill-badge .skill-name-text {
   display: inline-flex;
   flex-direction: column;
@@ -1888,11 +1918,13 @@ html[data-lang="en"] .subfilter-skill-btn,
   line-height: 1.2;
   gap: 1px;
   text-align: center;
+  color: inherit;
 }
 
 .special-skill-badge .skill-line-1 {
   white-space: nowrap;
   font-weight: 700;
+  color: inherit;
 }
 
 .special-skill-badge .skill-line-2 {
@@ -1900,25 +1932,13 @@ html[data-lang="en"] .subfilter-skill-btn,
   opacity: 0.95;
   white-space: nowrap;
   font-weight: 600;
-}
-
-[data-theme="dawn"] .special-skill-badge .skill-line-1,
-[data-theme="dawn"] .special-skill-badge .skill-line-2,
-[data-theme="dawn"] .special-skill-badge .skill-single-line {
-  color: #0369a1;
-  opacity: 1;
-}
-
-[data-theme="emerald"] .special-skill-badge .skill-line-1,
-[data-theme="emerald"] .special-skill-badge .skill-line-2,
-[data-theme="emerald"] .special-skill-badge .skill-single-line {
-  color: #14532d;
-  opacity: 1;
+  color: inherit;
 }
 
 .special-skill-badge .skill-single-line {
   white-space: nowrap;
   font-weight: 700;
+  color: inherit;
 }
 
 .skill-stat-val {
