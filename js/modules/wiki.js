@@ -5220,7 +5220,7 @@
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills' ? 'active' : ''}" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${isEN ? '⚡ Main Skills DB' : '⚡ 主技能數值庫'}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'subskills' ? 'active' : ''}" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${isEN ? '🧩 Sub-Skills & Natures' : '🧩 副技能與性格指南'}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isEN ? '🎓 Growth & Tier Guide' : '🎓 培育與評級指南'}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isEN ? '🥗 Ingredient Yield Ladder' : '🥗 各食材單日產量天梯榜'}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isEN ? '🥗 Ingredient Yield Ladder' : '🥗 食材產量天梯榜'}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isEN ? '🫐 Berry & Ing. Values' : '🫐 樹果與食材能量'}</button>
           </div>
         </div>
@@ -5473,13 +5473,13 @@
           </div>
         </div>
 
-        <!-- 子分頁 4：🥗 各食材單日產量天梯榜 (Daily Ingredient Yield Ladder) -->
+        <!-- 子分頁 4：🥗 食材產量天梯榜 (Ingredient Yield Ladder) -->
         <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:block;' : 'display:none;'}">
           <div class="wiki-card">
             <div class="wiki-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span class="wiki-card-icon">🥗</span>
-                <h3 class="wiki-card-title" style="margin: 0;">${isEN ? 'Daily Ingredient Yield Ladder' : '各食材單日產量天梯榜'}</h3>
+                <h3 class="wiki-card-title" style="margin: 0;">${isEN ? 'Ingredient Yield Ladder' : '食材產量天梯榜'}</h3>
               </div>
 
               <!-- 水平正右側控制列：[ 跨軌道搜尋 ] + [ 型態篩選膠囊 ] + [ 視覺天梯圖 | 卡片清單 ] + [ 副技能補正組 ] + [ 性格補正組 ] -->
