@@ -5631,10 +5631,11 @@ select optgroup,
 
 .wiki-coordinate-ladder {
   min-width: 680px;
-  background: var(--bg-card-inner);
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 6px 8px;
+  border-radius: var(--radius-lg);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-sm);
 }
 
 .ladder-ruler-header {

@@ -5609,16 +5609,14 @@
 
         <!-- 子分頁 4：🥗 食材產量天梯榜 (Ingredient Yield Ladder) -->
         <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:block;' : 'display:none;'}">
-          <div class="wiki-card" style="padding: 12px 14px;">
-            <!-- 橫向視覺天梯座標圖 (預設顯示) -->
-            <div id="wiki-ingredient-ladder-coordinate">
-              ${renderCoordinateLadder(LV60_COORDINATE_LADDER_DATA)}
-            </div>
+          <!-- 橫向視覺天梯座標圖 (預設顯示) -->
+          <div id="wiki-ingredient-ladder-coordinate">
+            ${renderCoordinateLadder(LV60_COORDINATE_LADDER_DATA)}
+          </div>
 
-            <!-- 食材天梯卡片清單 (列表檢視，預設隱藏) -->
-            <div id="wiki-ingredient-ladder-grid" class="wiki-ladder-grid" style="display: none;">
-              ${renderIngredientLadders(LV60_INGREDIENTS_LADDER)}
-            </div>
+          <!-- 食材天梯卡片清單 (列表檢視，預設隱藏) -->
+          <div id="wiki-ingredient-ladder-grid" class="wiki-ladder-grid" style="display: none;">
+            ${renderIngredientLadders(LV60_INGREDIENTS_LADDER)}
           </div>
         </div>
 
