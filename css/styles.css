@@ -6027,54 +6027,55 @@ select optgroup,
   margin-top: 2px;
 }
 
-/* 🔍 跨軌道微型搜尋框與篩選膠囊 */
-.ladder-search-box {
+/* 🔍 側邊欄專屬微型搜尋框 (Sidebar Search Box) */
+.sidebar-search-box {
   position: relative;
-  display: flex;
-  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.ladder-search-icon {
-  position: absolute;
-  left: 8px;
-  font-size: 11px;
-  pointer-events: none;
-  opacity: 0.6;
-}
-
-.ladder-search-input {
+.sidebar-search-box .sidebar-search-input {
+  width: 100%;
+  box-sizing: border-box;
   background: var(--bg-input);
   border: 1px solid var(--border-color);
   border-radius: 6px;
   color: var(--text-primary);
-  font-size: 11.5px;
-  padding: 4px 24px 4px 24px;
-  width: 140px;
+  font-size: 12px;
+  padding: 5px 26px 5px 26px;
+  outline: none;
   transition: all 0.2s ease;
 }
 
-.ladder-search-input:focus {
-  outline: none;
-  border-color: var(--accent-blue);
-  width: 160px;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+.sidebar-search-box .sidebar-search-input:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
 }
 
-.ladder-search-clear {
+.sidebar-search-box .sidebar-search-icon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 11.5px;
+  pointer-events: none;
+}
+
+.sidebar-search-box .sidebar-search-clear {
   position: absolute;
   right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
   background: transparent;
   border: none;
   color: var(--text-muted);
   font-size: 11px;
   cursor: pointer;
-  padding: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 2px 4px;
 }
 
-.ladder-search-clear:hover {
+.sidebar-search-box .sidebar-search-clear:hover {
   color: #ef4444;
 }
 

@@ -3933,14 +3933,54 @@
     });
   }
 
-  // 3.0 食材天梯榜即時副技能與性格補正開關、跨軌道搜尋/篩選狀態
+  // 3.0 食材天梯榜即時副技能與性格補正開關、跨軌道搜尋/三維度篩選狀態
   let isLadderIngM = false;
   let isLadderSpeedM = false;
   let isLadderNatureIng = false;
   let isLadderNatureSpeed = false;
   let ladderSearchQuery = '';
-  let ladderRecipeFilter = 'ALL'; // 'ALL' | 'AAA' | 'TOP'
+  let ladderSupplyFilter = 'ALL'; // 'ALL' | 'TOP' | 'MEALS_3' | 'MEALS_2'
+  let ladderRecipeFilter = 'ALL'; // 'ALL' | 'AAA' | 'ABB' | 'AXX'
+  let ladderSpecialtyFilter = 'ALL'; // 'ALL' | 'INGREDIENT' | 'BERRY' | 'SKILL'
   let ladderViewMode = 'coordinate'; // 'coordinate' | 'list'
+
+  const POKEMON_SPECIALTY_MAP = {
+    '妙蛙花': '食材', '噴火龍': '食材', '水箭龜': '食材', '巴大蝶': '樹果', '大針蜂': '樹果',
+    '大比鳥': '樹果', '拉達': '樹果', '阿柏怪': '樹果', '雷丘': '樹果', '皮卡丘': '樹果',
+    '皮卡丘（萬聖節）': '樹果', '皮卡丘（節日）': '樹果', '皮卡丘（戴著紅帽子）': '樹果',
+    '穿山王': '樹果', '皮可西': '樹果', '九尾': '樹果', '胖可丁': '技能', '貓老大': '技能',
+    '哥達鴨': '技能', '火爆猴': '樹果', '風速狗': '技能', '快泳蛙': '樹果', '胡地': '技能',
+    '怪力': '食材', '大食花': '食材', '隆隆岩': '食材', '嘟嘟利': '樹果', '白海獅': '樹果',
+    '臭臭泥': '技能', '耿鬼': '食材', '嘎啦嘎啦': '樹果', '袋獸': '食材', '魔牆人偶': '食材',
+    '凱羅斯': '食材', '百變怪': '食材', '水伊布': '技能', '雷伊布': '技能', '火伊布': '技能',
+    '太陽伊布': '技能', '月亮伊布': '技能', '葉伊布': '技能', '冰伊布': '技能', '仙子伊布': '技能',
+    '大甲': '食材', '大竺葵': '樹果', '火暴獸': '樹果', '大力鱷': '樹果', '胡說樹': '技能',
+    '電龍': '技能', '圈圈熊': '樹果', '月月熊': '樹果', '黑魯加': '樹果', '巨金怪': '樹果',
+    '班基拉斯': '食材', '請假王': '樹果', '勾魂眼': '技能', '恰雷姆': '技能', '吞食獸': '技能',
+    '青綿鳥': '樹果', '七夕青鳥': '樹果', '貓鼬斬': '樹果', '飯匙蛇': '樹果', '阿勃梭魯': '食材',
+    '海魔獅': '樹果', '帝牙海獅': '樹果', '櫻花兒': '樹果', '隨風球': '技能', '自爆磁怪': '技能',
+    '波克基斯': '技能', '樹才怪': '技能', '大鋼蛇': '樹果', '信使鳥': '食材', '巨鉗螳螂': '食材',
+    '巨鉗蟹': '食材', '赫拉克羅斯': '技能', '魔尼尼': '食材', '沙奈朵': '技能',
+    '艾路雷朵': '技能', '懶人獺': '樹果', '過動猿': '樹果', '路卡利歐': '技能', '鴨嘴炎獸': '技能',
+    '電擊魔獸': '技能', '波士可多拉': '食材', '雷公': '技能', '炎帝': '技能', '水君': '技能',
+    '急凍鳥': '技能', '閃電鳥': '技能', '火焰鳥': '技能', '夢幻': '全部', '達克萊伊': '技能',
+    '克雷色利亞': '技能', '草苗龜': '食材', '樹林龜': '食材', '土台龜': '食材',
+    '小火焰猴': '樹果', '猛火猴': '樹果', '烈焰猴': '樹果', '波加曼': '技能', '波皇子': '技能', '帝王拿波': '技能',
+    '長毛豬': '樹果', '象牙豬': '樹果', '倫琴貓': '技能', '暴雪王': '食材', '花岩怪': '技能',
+    '土王': '樹果', '骨紋巨聲鱷': '食材', '狂歡浪舞鴨': '食材', '魔幻假面喵': '食材', '巴布土撥': '技能',
+    '麻麻鰻魚王': '技能', '顫弦蠑螈': '技能', '南瓜怪人': '食材', '童偶熊': '食材', '穿著熊': '食材',
+    '咚咚鼠': '技能', '花漾海獅': '樹果', '西獅海壬': '樹果', '摔角鷹人': '樹果', '花潔夫人': '技能',
+    '岩狗狗': '樹果', '鬃岩狼人': '樹果', '甜冷美后': '樹果', '莫魯貝可': '技能', '呆呆王': '技能',
+    '呆殼獸': '技能', '吉利蛋': '技能', '幸福蛋': '技能', '大蔥鴨': '食材'
+  };
+
+  function getPokemonLadderSpecialty(pkmName) {
+    if (!pkmName) return '食材';
+    const clean = pkmName.replace(/（.*）|\(.*\)/g, '').trim();
+    if (POKEMON_SPECIALTY_MAP[clean]) return POKEMON_SPECIALTY_MAP[clean];
+    if (POKEMON_SPECIALTY_MAP[pkmName]) return POKEMON_SPECIALTY_MAP[pkmName];
+    return '食材';
+  }
 
   const TOP_RECIPES_FOR_INGREDIENTS = {
     apple: { name: '熟成甜薯沙拉', name_en: 'Sweet Potato Salad', need: 14, type: '沙拉', type_en: 'Salad', secondary: '花漾馬卡龍 (25)', secondary_en: 'Flower Gift Macaron (25)' },
@@ -4009,10 +4049,34 @@
     applyLadderFiltersInPlace();
   }
 
+  function setLadderSupplyFilter(filterType) {
+    ladderSupplyFilter = filterType || 'ALL';
+    document.querySelectorAll('[data-supply-filter]').forEach(btn => {
+      if (btn.getAttribute('data-supply-filter') === ladderSupplyFilter) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+    refreshCoordinateLadder();
+  }
+
   function setLadderRecipeFilter(filterType) {
-    ladderRecipeFilter = filterType;
+    ladderRecipeFilter = filterType || 'ALL';
     document.querySelectorAll('[data-recipe-filter]').forEach(btn => {
-      if (btn.getAttribute('data-recipe-filter') === filterType) {
+      if (btn.getAttribute('data-recipe-filter') === ladderRecipeFilter) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+    refreshCoordinateLadder();
+  }
+
+  function setLadderSpecialtyFilter(filterType) {
+    ladderSpecialtyFilter = filterType || 'ALL';
+    document.querySelectorAll('[data-specialty-filter]').forEach(btn => {
+      if (btn.getAttribute('data-specialty-filter') === ladderSpecialtyFilter) {
         btn.classList.add('active');
       } else {
         btn.classList.remove('active');
@@ -4028,9 +4092,27 @@
     const clearBtn = document.getElementById('ladder-search-clear-btn');
     if (clearBtn) clearBtn.style.display = 'none';
 
+    ladderSupplyFilter = 'ALL';
+    document.querySelectorAll('[data-supply-filter]').forEach(btn => {
+      if (btn.getAttribute('data-supply-filter') === 'ALL') {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
     ladderRecipeFilter = 'ALL';
     document.querySelectorAll('[data-recipe-filter]').forEach(btn => {
       if (btn.getAttribute('data-recipe-filter') === 'ALL') {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    ladderSpecialtyFilter = 'ALL';
+    document.querySelectorAll('[data-specialty-filter]').forEach(btn => {
+      if (btn.getAttribute('data-specialty-filter') === 'ALL') {
         btn.classList.add('active');
       } else {
         btn.classList.remove('active');
@@ -4744,14 +4826,36 @@
 
                 <!-- 跨度連接線容器 -->
                 <div class="ladder-spans-container">
-                  ${ing.pokemon.map(p => {
+                  ${ing.pokemon.map((p, pIdx) => {
                     const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
+                    const pkmSpec = getPokemonLadderSpecialty(p.name);
+                    if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return '';
+                    if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return '';
+                    if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return '';
+
                     let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
                     if (ladderRecipeFilter === 'AAA') {
                       variants = variants.filter(v => v.recipe === 'AAA');
-                    } else if (ladderRecipeFilter === 'TOP') {
-                      variants = variants.slice(0, 2);
+                    } else if (ladderRecipeFilter === 'ABB') {
+                      variants = variants.filter(v => v.recipe === 'ABB');
+                    } else if (ladderRecipeFilter === 'AXX') {
+                      variants = variants.filter(v => v.recipe !== 'AAA' && v.recipe !== 'ABB');
                     }
+
+                    if (ladderSupplyFilter === 'TOP') {
+                      variants = variants.filter((v, vIdx) => v.isTop || (p.isTop && v.recipe === p.recipe) || (pIdx < 2 && vIdx === 0));
+                    } else if (ladderSupplyFilter === 'MEALS_3') {
+                      variants = variants.filter(v => {
+                        const scaled = Math.round(v.count * mult);
+                        return (scaled / dishInfo.need) >= 3.0;
+                      });
+                    } else if (ladderSupplyFilter === 'MEALS_2') {
+                      variants = variants.filter(v => {
+                        const scaled = Math.round(v.count * mult);
+                        return (scaled / dishInfo.need) >= 1.8;
+                      });
+                    }
+
                     if (variants.length < 2) return '';
                     const scaledCounts = variants.map(v => Math.round(v.count * mult));
                     const minCount = Math.min(...scaledCounts);
@@ -4773,11 +4877,32 @@
                 <div class="ladder-nodes-container">
                   ${ing.pokemon.flatMap((p, pIdx) => {
                     const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
+                    const pkmSpec = getPokemonLadderSpecialty(p.name);
+                    if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return [];
+                    if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return [];
+                    if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return [];
+
                     let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
                     if (ladderRecipeFilter === 'AAA') {
                       variants = variants.filter(v => v.recipe === 'AAA');
-                    } else if (ladderRecipeFilter === 'TOP') {
-                      variants = variants.slice(0, 2);
+                    } else if (ladderRecipeFilter === 'ABB') {
+                      variants = variants.filter(v => v.recipe === 'ABB');
+                    } else if (ladderRecipeFilter === 'AXX') {
+                      variants = variants.filter(v => v.recipe !== 'AAA' && v.recipe !== 'ABB');
+                    }
+
+                    if (ladderSupplyFilter === 'TOP') {
+                      variants = variants.filter((v, vIdx) => v.isTop || (p.isTop && v.recipe === p.recipe) || (pIdx < 2 && vIdx === 0));
+                    } else if (ladderSupplyFilter === 'MEALS_3') {
+                      variants = variants.filter(v => {
+                        const scaled = Math.round(v.count * mult);
+                        return (scaled / dishInfo.need) >= 3.0;
+                      });
+                    } else if (ladderSupplyFilter === 'MEALS_2') {
+                      variants = variants.filter(v => {
+                        const scaled = Math.round(v.count * mult);
+                        return (scaled / dishInfo.need) >= 1.8;
+                      });
                     }
 
                     return variants.map((v, vIdx) => {
@@ -5274,25 +5399,52 @@
               <span class="sidebar-section-title">${isEN ? 'Search Pokémon' : '搜尋寶可夢'}</span>
               <button type="button" id="ladder-search-clear-btn" class="sidebar-section-clear-btn" style="${ladderSearchQuery ? 'display:inline-block;' : 'display:none;'}" onclick="window.WikiDB.clearLadderSearch()">${isEN ? 'Clear' : '清空'}</button>
             </div>
-            <div class="search-box" style="margin-top: 4px; width: 100%;">
-              <span class="search-icon">🔍</span>
-              <input type="text" id="ladder-pkm-search-input" class="search-input" placeholder="${isEN ? 'Search Pokémon...' : '搜尋寶可夢名稱...'}" value="${ladderSearchQuery}" oninput="window.WikiDB.onLadderSearch(this.value)" style="width: 100%; box-sizing: border-box;">
+            <div class="sidebar-search-box" style="margin-top: 4px;">
+              <span class="sidebar-search-icon">🔍</span>
+              <input type="text" id="ladder-pkm-search-input" class="sidebar-search-input" placeholder="${isEN ? 'Search Pokémon...' : '搜尋寶可夢名稱...'}" value="${ladderSearchQuery}" oninput="window.WikiDB.onLadderSearch(this.value)">
             </div>
           </div>
 
-          <!-- 2. 👑 配方型態篩選 (Recipe / Variant Filter) -->
+          <!-- 2. 👑 產量與供餐梯隊 (Supply Tier) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
-              <span class="sidebar-section-title">${isEN ? 'Recipe Filter' : '配方型態'}</span>
+              <span class="sidebar-section-title">${isEN ? 'Supply Tier' : '產量供餐梯隊'}</span>
             </div>
-            <div class="sidebar-specialty-tags">
-              <button type="button" class="tag-btn ${ladderRecipeFilter === 'ALL' ? 'active' : ''}" data-recipe-filter="ALL" onclick="window.WikiDB.setLadderRecipeFilter('ALL')">${isEN ? 'All' : '全部'}</button>
-              <button type="button" class="tag-btn ${ladderRecipeFilter === 'AAA' ? 'active' : ''}" data-recipe-filter="AAA" onclick="window.WikiDB.setLadderRecipeFilter('AAA')">AAA</button>
-              <button type="button" class="tag-btn ${ladderRecipeFilter === 'TOP' ? 'active' : ''}" data-recipe-filter="TOP" onclick="window.WikiDB.setLadderRecipeFilter('TOP')">TOP 1-2</button>
+            <div class="sidebar-skills-list">
+              <button type="button" class="tag-btn ${ladderSupplyFilter === 'ALL' ? 'active' : ''}" data-supply-filter="ALL" onclick="window.WikiDB.setLadderSupplyFilter('ALL')">${isEN ? 'All' : '全部'}</button>
+              <button type="button" class="tag-btn ${ladderSupplyFilter === 'TOP' ? 'active' : ''}" data-supply-filter="TOP" onclick="window.WikiDB.setLadderSupplyFilter('TOP')">${isEN ? '👑 Top 1-2' : '👑 冠亞軍'}</button>
+              <button type="button" class="tag-btn ${ladderSupplyFilter === 'MEALS_3' ? 'active' : ''}" data-supply-filter="MEALS_3" onclick="window.WikiDB.setLadderSupplyFilter('MEALS_3')">${isEN ? '🍲 3 Meals' : '🍲 滿載 3 餐'}</button>
+              <button type="button" class="tag-btn ${ladderSupplyFilter === 'MEALS_2' ? 'active' : ''}" data-supply-filter="MEALS_2" onclick="window.WikiDB.setLadderSupplyFilter('MEALS_2')">${isEN ? '⚡ 2 Meals' : '⚡ 充足 2 餐'}</button>
             </div>
           </div>
 
-          <!-- 3. 👁️ 檢視呈現模式 -->
+          <!-- 3. 🥗 食材組合型態 (Recipe Structure) -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">${isEN ? 'Recipe Structure' : '食材組合型態'}</span>
+            </div>
+            <div class="sidebar-skills-list">
+              <button type="button" class="tag-btn ${ladderRecipeFilter === 'ALL' ? 'active' : ''}" data-recipe-filter="ALL" onclick="window.WikiDB.setLadderRecipeFilter('ALL')">${isEN ? 'All' : '全部'}</button>
+              <button type="button" class="tag-btn ${ladderRecipeFilter === 'AAA' ? 'active' : ''}" data-recipe-filter="AAA" onclick="window.WikiDB.setLadderRecipeFilter('AAA')">${isEN ? '🥗 Pure AAA' : '🥗 純種 AAA'}</button>
+              <button type="button" class="tag-btn ${ladderRecipeFilter === 'ABB' ? 'active' : ''}" data-recipe-filter="ABB" onclick="window.WikiDB.setLadderRecipeFilter('ABB')">${isEN ? '🥑 Dual ABB' : '🥑 雙食材 ABB'}</button>
+              <button type="button" class="tag-btn ${ladderRecipeFilter === 'AXX' ? 'active' : ''}" data-recipe-filter="AXX" onclick="window.WikiDB.setLadderRecipeFilter('AXX')">${isEN ? '🍕 Mix AXX' : '🍕 混搭 AXX'}</button>
+            </div>
+          </div>
+
+          <!-- 4. ✨ 寶可夢專長分類 (Specialty Type) -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">${isEN ? 'Specialty Type' : '寶可夢專長'}</span>
+            </div>
+            <div class="sidebar-skills-list">
+              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'ALL' ? 'active' : ''}" data-specialty-filter="ALL" onclick="window.WikiDB.setLadderSpecialtyFilter('ALL')">${isEN ? 'All' : '全部'}</button>
+              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'INGREDIENT' ? 'active' : ''}" data-specialty-filter="INGREDIENT" onclick="window.WikiDB.setLadderSpecialtyFilter('INGREDIENT')">${isEN ? '🥗 Ingredient' : '🥗 食材型'}</button>
+              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'BERRY' ? 'active' : ''}" data-specialty-filter="BERRY" onclick="window.WikiDB.setLadderSpecialtyFilter('BERRY')">${isEN ? '🫐 Berry' : '🫐 樹果型'}</button>
+              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'SKILL' ? 'active' : ''}" data-specialty-filter="SKILL" onclick="window.WikiDB.setLadderSpecialtyFilter('SKILL')">${isEN ? '⚡ Skill' : '⚡ 技能型'}</button>
+            </div>
+          </div>
+
+          <!-- 5. 👁️ 檢視呈現模式 -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'View Mode' : '檢視模式'}</span>
@@ -5700,7 +5852,9 @@
     toggleLadderNatureSpeed: toggleLadderNatureSpeed,
     onLadderSearch: onLadderSearch,
     clearLadderSearch: clearLadderSearch,
+    setLadderSupplyFilter: setLadderSupplyFilter,
     setLadderRecipeFilter: setLadderRecipeFilter,
+    setLadderSpecialtyFilter: setLadderSpecialtyFilter,
     resetLadderFilters: resetLadderFilters,
     refreshCoordinateLadder: refreshCoordinateLadder,
     handleLadderGroupHover: handleLadderGroupHover,
@@ -5730,7 +5884,9 @@
   window.toggleLadderNatureSpeed = toggleLadderNatureSpeed;
   window.onLadderSearch = onLadderSearch;
   window.clearLadderSearch = clearLadderSearch;
+  window.setLadderSupplyFilter = setLadderSupplyFilter;
   window.setLadderRecipeFilter = setLadderRecipeFilter;
+  window.setLadderSpecialtyFilter = setLadderSpecialtyFilter;
   window.resetLadderFilters = resetLadderFilters;
   window.refreshCoordinateLadder = refreshCoordinateLadder;
   window.handleLadderGroupHover = handleLadderGroupHover;
