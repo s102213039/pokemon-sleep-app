@@ -2065,24 +2065,38 @@ html[data-lang="en"] .subfilter-skill-btn,
   margin: 0 1px;
 }
 
-.skill-tooltip-ing-chip {
+.skill-tooltip-inline-wrap {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  line-height: 1.4;
+}
+
+.skill-tooltip-icons-group {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color-subtle);
-  border-radius: 6px;
-  padding: 2px 6px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-main);
+  vertical-align: middle;
 }
 
-.skill-tooltip-ing-icon {
-  width: 16px;
-  height: 16px;
+.skill-tooltip-inline-ing {
+  width: 20px;
+  height: 20px;
   object-fit: contain;
   vertical-align: middle;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 4px;
+  padding: 1px;
+  display: inline-block;
+  cursor: help;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.skill-tooltip-inline-ing:hover {
+  transform: scale(1.15);
+  border-color: var(--color-accent-gold);
 }
 
 .ladder-note-ing-icon {
