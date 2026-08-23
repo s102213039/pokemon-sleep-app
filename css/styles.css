@@ -4478,7 +4478,7 @@ input[type="number"] {
 
 .box-pkm-toggle-btn {
   position: absolute;
-  right: 8px;
+  right: 6px;
   top: 50%;
   transform: translateY(-50%);
   background: transparent;
@@ -4488,12 +4488,16 @@ input[type="number"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3px;
-  transition: color 0.15s ease;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 4px;
+  transition: all 0.15s ease;
 }
 
 .box-pkm-toggle-btn:hover {
   color: var(--text-primary);
+  background: var(--bg-card-hover);
 }
 
 .box-pkm-dropdown {

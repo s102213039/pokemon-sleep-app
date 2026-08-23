@@ -697,6 +697,23 @@
     const toggleBtn = document.getElementById('box-pkm-dropdown-toggle');
     if (!searchInput || !nameHidden || !dropdown) return;
 
+    const CHEVRON_ICON = `<svg viewBox="0 0 12 8" width="12" height="8"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M1 1.5L6 6.5L11 1.5"/></svg>`;
+    const CLEAR_ICON = `<svg viewBox="0 0 12 12" width="12" height="12"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M2 2L10 10M10 2L2 10"/></svg>`;
+
+    function syncToggleBtnIcon() {
+      if (!toggleBtn) return;
+      const hasText = !!(searchInput.value && searchInput.value.trim().length > 0);
+      if (hasText) {
+        toggleBtn.innerHTML = CLEAR_ICON;
+        toggleBtn.setAttribute('aria-label', isEN ? 'Clear Pokémon' : '清空寶可夢');
+        toggleBtn.setAttribute('title', isEN ? 'Clear' : '清空');
+      } else {
+        toggleBtn.innerHTML = CHEVRON_ICON;
+        toggleBtn.setAttribute('aria-label', isEN ? 'Expand Pokémon list' : '展開寶可夢列表');
+        toggleBtn.removeAttribute('title');
+      }
+    }
+
     // 初始選取（僅在編輯或辨識帶入時設定，手動新增時為空）
     let initialPkm = null;
     if (existingItem) {
@@ -759,6 +776,7 @@
       const pkmDisplayName = isEN ? (p.name_en || p.name_cn) : p.name_cn;
       searchInput.value = `No.${p.formatted_no} ${pkmDisplayName}`;
       dropdown.style.display = 'none';
+      syncToggleBtnIcon();
       renderTiledIngredientPickers(p, existing);
     }
 
@@ -767,6 +785,7 @@
     } else {
       nameHidden.value = '';
       searchInput.value = '';
+      syncToggleBtnIcon();
       renderTiledIngredientPickers(null, null);
     }
 
@@ -775,17 +794,32 @@
     };
 
     searchInput.oninput = () => {
+      syncToggleBtnIcon();
+      if (!searchInput.value.trim()) {
+        nameHidden.value = '';
+        renderTiledIngredientPickers(null, null);
+      }
       renderDropdown(searchInput.value);
     };
 
     if (toggleBtn) {
       toggleBtn.onclick = (e) => {
         e.stopPropagation();
-        if (dropdown.style.display === 'block') {
-          dropdown.style.display = 'none';
-        } else {
+        const hasText = !!(searchInput.value && searchInput.value.trim().length > 0);
+        if (hasText) {
+          searchInput.value = '';
+          nameHidden.value = '';
+          syncToggleBtnIcon();
+          renderTiledIngredientPickers(null, null);
           renderDropdown('');
           searchInput.focus();
+        } else {
+          if (dropdown.style.display === 'block') {
+            dropdown.style.display = 'none';
+          } else {
+            renderDropdown('');
+            searchInput.focus();
+          }
         }
       };
     }
