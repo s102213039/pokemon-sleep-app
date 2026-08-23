@@ -1332,6 +1332,8 @@ html[data-lang="en"] .subfilter-skill-btn,
   font-size: 10.5px;
   letter-spacing: -0.15px;
   padding: 3.5px 2px;
+}
+
 /* 側邊欄遮罩：透明無模糊，保證側邊欄與中間內容無障礙同時互動 */
 .sidebar-backdrop {
   display: none;

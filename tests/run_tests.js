@@ -435,7 +435,7 @@ test('Tier 1 - Feature Coverage', 'Recipe Energy Formula: Level + Island Bonus +
   assertEquals(energy * 3, 45000, 'Tasty 3x should be triple normal energy');
 });
 
-test('Tier 1 - Feature Coverage', 'CSS Styling: styles.css exists with dark theme, badge styles, responsive rules', () => {
+test('Tier 1 - Feature Coverage', 'CSS Styling: styles.css exists with dark theme, badge styles, responsive rules, and valid balanced braces', () => {
   const cssPath = path.join(WORKSPACE_ROOT, 'css', 'styles.css');
   assert(fs.existsSync(cssPath), 'styles.css does not exist');
   const cssContent = fs.readFileSync(cssPath, 'utf8');
@@ -443,6 +443,13 @@ test('Tier 1 - Feature Coverage', 'CSS Styling: styles.css exists with dark them
   assert(cssContent.includes('--bg-dark'), 'CSS missing --bg-dark custom property');
   assert(cssContent.includes('.type-badge'), 'CSS missing .type-badge styling');
   assert(cssContent.includes('@media'), 'CSS missing responsive @media query rules');
+
+  let openBraces = 0;
+  for (let c of cssContent) {
+    if (c === '{') openBraces++;
+    if (c === '}') openBraces--;
+  }
+  assertEquals(openBraces, 0, `styles.css has unclosed or unmatched braces (diff: ${openBraces})`);
 });
 
 test('Tier 1 - Feature Coverage', 'JS Logic: app.js contains state management, multi-filtering, sorting & rendering', () => {
