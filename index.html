@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=20260823_03">
+  <link rel="stylesheet" href="css/styles.css?v=20260823_04">
   <!-- 🛡️ 全域錯誤診斷與日誌攔截器 (Global Error & Diagnostic Logger) -->
   <script>
     (function() {
@@ -465,45 +465,40 @@
     </div>
 
     <!-- Panel 2: 料理食譜大全 -->
-    <div id="panel-recipes" class="view-panel" style="display:none;">
-      <!-- Controls -->
-      <section class="controls-container" aria-label="Recipe Search and Filter Controls">
-        <!-- 第一行：搜尋 + 頁面內容 卡片/表格 切換 + 排序 -->
-        <div class="search-filter-row">
-          <div class="search-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="recipe-search-input" class="search-input"
-              placeholder="搜尋食譜名稱 (中/英) 或食材關鍵字..."
-              data-i18n-placeholder="recipe.search_placeholder"
-              aria-label="搜尋食譜">
-            <button type="button" id="recipe-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
+    <div id="panel-recipes" class="view-panel recipe-layout-view" style="display:none;">
+      <!-- ⬅️ 左側抽屜式側邊欄 (Left Sliding Recipe Filter Sidebar) -->
+      <aside id="recipe-filter-sidebar" class="pokemon-filter-sidebar recipe-filter-sidebar" aria-label="料理食譜篩選器">
+        <!-- 🔖 側邊欄垂直中央書籤標籤 (Vertically Centered Bookmark Drawer Handle) -->
+        <button type="button" id="recipe-sidebar-bookmark-handle" class="sidebar-bookmark-handle" title="展開 / 收合食譜篩選側邊欄" aria-label="切換食譜篩選側邊欄">
+          <span class="bookmark-icon">🍲</span>
+          <span class="bookmark-text" data-i18n="recipe.filter_bookmark">篩選</span>
+          <span class="bookmark-arrow">◀</span>
+          <span id="recipe-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
+        </button>
+
+        <div class="sidebar-header">
+          <button type="button" id="recipe-sidebar-close-btn" class="sidebar-close-btn" title="收合側邊欄" aria-label="收合側邊欄">◀</button>
+          <div class="sidebar-title-group">
+            <span class="sidebar-icon">🍲</span>
+            <span class="sidebar-title" data-i18n="recipe.filter_sidebar_title">食譜篩選器</span>
           </div>
-          <!-- 頁面內容裡面的 卡片/表格 切換按鈕 -->
-          <div class="view-mode-toggle">
-            <button id="recipe-toggle-grid" class="toggle-btn" data-i18n="pokedex.view_cards">🎴 卡片</button>
-            <button id="recipe-toggle-table" class="toggle-btn active" data-i18n="pokedex.view_table">📊 表格</button>
-          </div>
-          <div class="sort-box">
-            <select id="recipe-sort-select" class="sort-select" aria-label="食譜排序">
-              <option value="energy-desc" data-i18n="recipe.sort_energy_desc">食譜能量 ↓（高→低）</option>
-              <option value="energy-asc" data-i18n="recipe.sort_energy_asc">食譜能量 ↑（低→高）</option>
-              <option value="pot-asc" data-i18n="recipe.sort_pot_asc">鍋子容量 ↑（小→大）</option>
-              <option value="pot-desc" data-i18n="recipe.sort_pot_desc">鍋子容量 ↓（大→小）</option>
-              <option value="bonus-desc" data-i18n="recipe.sort_bonus_desc">食材加成 ↓（高→低）</option>
-              <option value="name-asc" data-i18n="recipe.sort_name_asc">名稱排序</option>
-            </select>
-          </div>
+          <button type="button" id="recipe-sidebar-reset-all-btn" class="sidebar-reset-btn" title="重設所有食譜篩選條件" data-i18n="pokedex.reset_all">全部重設</button>
         </div>
 
-        <!-- 第二行：raenonx 風格 filter bar -->
-        <div class="raenonx-filter-bar">
-          <div class="rf-group">
-            <span class="rf-label" data-i18n="recipe.category_label">料理種類</span>
-            <div id="category-filter-tags" class="rf-tags"></div>
+        <div class="sidebar-scrollable-content">
+          <!-- 1. 料理種類 (Category Tags) -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title" data-i18n="recipe.category_label">料理種類</span>
+            </div>
+            <div id="category-filter-tags" class="sidebar-2col-tags rf-tags"></div>
           </div>
 
-          <div class="rf-group">
-            <span class="rf-label" data-i18n="recipe.bonus_label">最低食譜加成</span>
+          <!-- 2. 最低食譜加成與鍋子容量 (Bonus & Pot Select) -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title" data-i18n="recipe.bonus_label">最低食譜加成</span>
+            </div>
             <div class="rf-select-wrap">
               <select id="bonus-filter-select" class="rf-select">
                 <option value="0" data-i18n="recipe.all">全部</option>
@@ -519,8 +514,10 @@
             </div>
           </div>
 
-          <div class="rf-group">
-            <span class="rf-label" data-i18n="recipe.pot_label">最低鍋子容量</span>
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title" data-i18n="recipe.pot_label">最低鍋子容量</span>
+            </div>
             <div class="rf-select-wrap">
               <select id="pot-filter-select" class="rf-select">
                 <option value="0" data-i18n="recipe.all">全部</option>
@@ -533,125 +530,143 @@
               </select>
             </div>
           </div>
-        </div>
 
-        <!-- 第三行：食譜等級滑桿 + 島嶼加成滑桿 + 活動加成滑桿 + 漂亮成功開關 -->
-        <div class="raenonx-filter-bar" style="gap:20px; flex-wrap:wrap;">
-          <div class="rf-group-vertical" style="flex:1; min-width:180px;">
-            <div class="slider-label-row">
-              <span class="rf-label" data-i18n="recipe.slider_level">📖 食譜等級</span>
-              <span id="level-badge" class="slider-value-badge">Lv. 1</span>
+          <!-- 3. 數值試算設定 (Level, Island, Event Sliders & Tasty Switch) -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title" data-i18n="recipe.calc_settings">📊 能量試算設定</span>
             </div>
-            <div class="slider-row">
-              <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">Lv.1</span>
-              <input type="range" id="recipe-level-slider" class="rf-slider"
-                min="1" max="70" step="1" value="1"
-                aria-label="食譜等級">
-              <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">Lv.70</span>
+
+            <!-- 漂亮成功分數開關 -->
+            <div style="margin-bottom:12px;">
+              <button id="tasty-toggle-btn" class="tasty-switch-btn" type="button" role="switch" aria-checked="false" title="切換是否展示漂亮成功分數" style="width:100%;justify-content:space-between;">
+                <span class="tasty-switch-label">
+                  <span class="tasty-toggle-icon">✨</span>
+                  <span class="tasty-toggle-text" data-i18n="recipe.tasty_toggle">漂亮成功分數</span>
+                </span>
+                <span class="tasty-switch-track">
+                  <span class="tasty-switch-thumb"></span>
+                </span>
+              </button>
             </div>
-            <div data-i18n="recipe.slider_level_desc" style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;">
-              等級加成非線性，Lv.70 最高可達 +258%
+
+            <!-- 食譜等級滑桿 -->
+            <div class="sidebar-slider-item" style="margin-bottom:12px;">
+              <div class="slider-label-row">
+                <span class="rf-label" data-i18n="recipe.slider_level">📖 食譜等級</span>
+                <span id="level-badge" class="slider-value-badge">Lv. 1</span>
+              </div>
+              <div class="slider-row">
+                <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">Lv.1</span>
+                <input type="range" id="recipe-level-slider" class="rf-slider" min="1" max="70" step="1" value="1" aria-label="食譜等級">
+                <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">Lv.70</span>
+              </div>
+            </div>
+
+            <!-- 島嶼加成滑桿 -->
+            <div class="sidebar-slider-item" style="margin-bottom:12px;">
+              <div class="slider-label-row">
+                <span class="rf-label" data-i18n="recipe.slider_island">🏝️ 島嶼加成</span>
+                <span id="island-bonus-badge" class="slider-value-badge island-bonus-badge">+0% (×1.00)</span>
+              </div>
+              <div class="slider-row">
+                <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">0%</span>
+                <input type="range" id="island-bonus-slider" class="rf-slider island-slider" min="0" max="85" step="5" value="0" aria-label="島嶼能量加成">
+                <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">85%</span>
+              </div>
+            </div>
+
+            <!-- 活動加成滑桿 -->
+            <div class="sidebar-slider-item">
+              <div class="slider-label-row">
+                <span class="rf-label" data-i18n="recipe.slider_event">🎉 活動加成</span>
+                <span id="event-bonus-badge" class="slider-value-badge event-bonus-badge">×1.00</span>
+              </div>
+              <div class="slider-row">
+                <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">1.00x</span>
+                <input type="range" id="event-bonus-slider" class="rf-slider event-slider" min="1.0" max="2.5" step="0.25" value="1.0" aria-label="活動能量加成">
+                <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">2.50x</span>
+              </div>
             </div>
           </div>
 
-          <div class="rf-group-vertical" style="flex:1; min-width:180px;">
-            <div class="slider-label-row">
-              <span class="rf-label" data-i18n="recipe.slider_island">🏝️ 島嶼能量加成</span>
-              <span id="island-bonus-badge" class="slider-value-badge island-bonus-badge">+0% (×1.00)</span>
+          <!-- 4. 包含食材篩選器 -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title" data-i18n="recipe.filter_included">🟢 包含食材</span>
+              <button type="button" id="clear-ingredients-btn" class="sidebar-section-clear-btn" style="display:none;" data-i18n="pokedex.clear">清空</button>
             </div>
-            <div class="slider-row">
-              <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">0%</span>
-              <input type="range" id="island-bonus-slider" class="rf-slider island-slider"
-                min="0" max="85" step="5" value="0"
-                aria-label="島嶼能量加成">
-              <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">85%</span>
-            </div>
-            <div data-i18n="recipe.slider_island_desc" style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;">
-              0%→85%，每格 +5%（×1.00 ～ ×1.85）
-            </div>
-          </div>
-
-          <div class="rf-group-vertical" style="flex:1; min-width:180px;">
-            <div class="slider-label-row">
-              <span class="rf-label" data-i18n="recipe.slider_event">🎉 活動能量加成</span>
-              <span id="event-bonus-badge" class="slider-value-badge event-bonus-badge">×1.00</span>
-            </div>
-            <div class="slider-row">
-              <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">1.00x</span>
-              <input type="range" id="event-bonus-slider" class="rf-slider event-slider"
-                min="1.0" max="2.5" step="0.25" value="1.0"
-                aria-label="活動能量加成">
-              <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">2.50x</span>
-            </div>
-            <div data-i18n="recipe.slider_event_desc" style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px;">
-              1.00x→2.50x，每格 +0.25x（活動限定倍率）
-            </div>
-          </div>
-
-          <!-- 漂亮成功分數開關 (SwitchButton 樣式) -->
-          <div class="rf-group-vertical" style="flex:0 0 auto; justify-content:center; align-self:center;">
-            <button id="tasty-toggle-btn" class="tasty-switch-btn" type="button" role="switch" aria-checked="false" title="切換是否展示漂亮成功分數">
-              <span class="tasty-switch-label">
-                <span class="tasty-toggle-icon">✨</span>
-                <span class="tasty-toggle-text" data-i18n="recipe.tasty_toggle">漂亮成功分數</span>
-              </span>
-              <span class="tasty-switch-track">
-                <span class="tasty-switch-thumb"></span>
-              </span>
-            </button>
-          </div>
-        </div>
-
-        <!-- 第四行：包含食材篩選器 -->
-        <div class="filter-tags-group" style="margin-top:0;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-            <span class="filter-label" data-i18n="recipe.filter_included">🟢 包含食材篩選</span>
-            <div style="display:flex;gap:12px;align-items:center;font-size:12px;color:var(--text-muted);">
-              <label style="cursor:pointer;display:flex;align-items:center;gap:5px;">
+            <div style="display:flex;gap:12px;align-items:center;font-size:11px;color:var(--text-muted);margin-bottom:8px;">
+              <label style="cursor:pointer;display:flex;align-items:center;gap:4px;">
                 <input type="radio" name="ingredient-match-mode" value="any" checked> <span data-i18n="recipe.match_any">含任一</span>
               </label>
-              <label style="cursor:pointer;display:flex;align-items:center;gap:5px;">
+              <label style="cursor:pointer;display:flex;align-items:center;gap:4px;">
                 <input type="radio" name="ingredient-match-mode" value="all"> <span data-i18n="recipe.match_all">全部符合</span>
               </label>
-              <button id="clear-ingredients-btn" class="tag-btn" data-i18n="recipe.clear_all" style="padding:3px 10px;font-size:12px;">全部清除</button>
+            </div>
+            <div id="ingredient-picker-tags" class="sidebar-icon-grid"></div>
+          </div>
+
+          <!-- 5. 排除食材篩選器 -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title" data-i18n="recipe.filter_excluded">🔴 排除食材</span>
+              <button type="button" id="clear-excluded-btn" class="sidebar-section-clear-btn" style="display:none;" data-i18n="pokedex.clear">清空</button>
+            </div>
+            <div id="excluded-ingredient-picker-tags" class="sidebar-icon-grid"></div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 側邊欄半透明遮罩 (Mobile / Tablet Backdrop) -->
+      <div id="recipe-sidebar-backdrop" class="sidebar-backdrop"></div>
+
+      <!-- ➡️ 右側主要內容區 (Right Main Content Area) -->
+      <div class="recipe-main-content pokemon-main-content">
+        <!-- Controls (Search, View Mode Toggle, Sort) -->
+        <section class="controls-container" aria-label="Recipe Search and Filter Controls">
+          <div class="search-filter-row">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="recipe-search-input" class="search-input"
+                placeholder="搜尋食譜名稱 (中/英) 或食材關鍵字..."
+                data-i18n-placeholder="recipe.search_placeholder"
+                aria-label="搜尋食譜">
+              <button type="button" id="recipe-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
+            </div>
+            <!-- 頁面內容裡面的 卡片/表格 切換按鈕 -->
+            <div class="view-mode-toggle">
+              <button id="recipe-toggle-grid" class="toggle-btn" data-i18n="pokedex.view_cards">🎴 卡片</button>
+              <button id="recipe-toggle-table" class="toggle-btn active" data-i18n="pokedex.view_table">📊 表格</button>
+            </div>
+            <div class="sort-box">
+              <select id="recipe-sort-select" class="sort-select" aria-label="食譜排序">
+                <option value="energy-desc" data-i18n="recipe.sort_energy_desc">食譜能量 ↓（高→低）</option>
+                <option value="energy-asc" data-i18n="recipe.sort_energy_asc">食譜能量 ↑（低→高）</option>
+                <option value="pot-asc" data-i18n="recipe.sort_pot_asc">鍋子容量 ↑（小→大）</option>
+                <option value="pot-desc" data-i18n="recipe.sort_pot_desc">鍋子容量 ↓（大→小）</option>
+                <option value="bonus-desc" data-i18n="recipe.sort_bonus_desc">食材加成 ↓（高→低）</option>
+                <option value="name-asc" data-i18n="recipe.sort_name_asc">名稱排序</option>
+              </select>
             </div>
           </div>
-          <div data-i18n-html="recipe.included_hint" style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">
-            點擊食材圖示，只顯示<strong>包含</strong>該食材的食譜
+        </section>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+          <span id="recipe-count-badge" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">載入食譜中...</span>
+          <div data-i18n-html="recipe.stats_tip" style="font-size:12px;color:var(--text-muted);">
+            💡 食材加成為每道食譜的<strong>固定數值</strong>；等級、島嶼與活動加成乘算於最終能量
           </div>
-          <div id="ingredient-picker-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
         </div>
 
-        <!-- 第五行：排除食材篩選器 -->
-        <div class="filter-tags-group" style="margin-top:0;border-top:1px solid rgba(255,255,255,0.06);padding-top:14px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-            <span class="filter-label" data-i18n="recipe.filter_excluded">🔴 排除食材篩選</span>
-            <div style="display:flex;gap:12px;align-items:center;font-size:12px;color:var(--text-muted);">
-              <span data-i18n="recipe.excluded_warn" style="font-size:11px;color:rgba(239,68,68,0.7);">點選食材後，含該食材的食譜將被隱藏</span>
-              <button id="clear-excluded-btn" class="tag-btn" data-i18n="recipe.clear_excluded" style="padding:3px 10px;font-size:12px;background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);">清除排除</button>
-            </div>
+        <!-- Recipe Content Area -->
+        <section id="recipe-content-area">
+          <div style="text-align:center;padding:60px;color:var(--text-muted);">
+            食譜資料載入中，請稍候...
           </div>
-          <div data-i18n-html="recipe.excluded_hint" style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">
-            點擊食材圖示，<strong>隱藏</strong>包含該食材的食譜（與「包含食材」互斥）
-          </div>
-          <div id="excluded-ingredient-picker-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-        </div>
-      </section>
-
-      <!-- Stats Bar -->
-      <div class="stats-bar">
-        <span id="recipe-count-badge" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">載入食譜中...</span>
-        <div data-i18n-html="recipe.stats_tip" style="font-size:12px;color:var(--text-muted);">
-          💡 食材加成為每道食譜的<strong>固定數值</strong>；等級、島嶼與活動加成乘算於最終能量
-        </div>
+        </section>
       </div>
-
-      <!-- Recipe Content Area -->
-      <section id="recipe-content-area">
-        <div style="text-align:center;padding:60px;color:var(--text-muted);">
-          食譜資料載入中，請稍候...
-        </div>
-      </section>
     </div>
 
     <!-- Panel 3: 數據百科與攻略知識庫 -->
@@ -925,12 +940,12 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
-  <script src="js/core/i18n.js?v=20260823_03"></script>
-  <script src="js/modules/app.js?v=20260823_03"></script>
-  <script src="js/modules/recipes.js?v=20260823_03"></script>
-  <script src="js/modules/wiki.js?v=20260823_03"></script>
-  <script src="js/modules/box.js?v=20260823_03"></script>
-  <script src="js/modules/news.js?v=20260823_03"></script>
-  <script src="js/modules/appraisal.js?v=20260823_03"></script>
+  <script src="js/core/i18n.js?v=20260823_04"></script>
+  <script src="js/modules/app.js?v=20260823_04"></script>
+  <script src="js/modules/recipes.js?v=20260823_04"></script>
+  <script src="js/modules/wiki.js?v=20260823_04"></script>
+  <script src="js/modules/box.js?v=20260823_04"></script>
+  <script src="js/modules/news.js?v=20260823_04"></script>
+  <script src="js/modules/appraisal.js?v=20260823_04"></script>
 </body>
 </html>

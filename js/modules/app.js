@@ -814,18 +814,36 @@ if (typeof document !== 'undefined') {
         const filterSidebar = document.getElementById('pokemon-filter-sidebar');
         const bookmarkHandle = document.getElementById('sidebar-bookmark-handle');
         const backdrop = document.getElementById('sidebar-backdrop');
+        const recipeSidebar = document.getElementById('recipe-filter-sidebar');
+        const recipeBookmarkHandle = document.getElementById('recipe-sidebar-bookmark-handle');
+        const recipeBackdrop = document.getElementById('recipe-sidebar-backdrop');
         const ladderSidebar = document.getElementById('ladder-filter-sidebar');
         if (ladderSidebar) {
           ladderSidebar.style.display = (target === 'wiki' && window.WikiDB && window.WikiDB.getCurrentSubTab && window.WikiDB.getCurrentSubTab() === 'ingredients') ? 'flex' : 'none';
         }
 
+        // 預設關閉非當前分頁的側邊欄
+        if (target !== 'recipes') {
+          if (recipeBookmarkHandle) recipeBookmarkHandle.style.display = 'none';
+          if (recipeSidebar) {
+            recipeSidebar.classList.add('collapsed');
+            recipeSidebar.style.display = 'none';
+          }
+          if (recipeBackdrop) recipeBackdrop.classList.remove('active');
+        }
+
+        if (target !== 'pokemon') {
+          if (bookmarkHandle) bookmarkHandle.style.display = 'none';
+          if (filterSidebar) {
+            filterSidebar.classList.add('collapsed');
+            filterSidebar.style.display = 'none';
+          }
+          if (backdrop) backdrop.classList.remove('active');
+        }
+
         if (target === 'news' && panelNews && tabNews) {
           tabNews.classList.add('active');
           panelNews.style.display = 'block';
-          // 非圖鑑頁：隱藏書籤，強制收合側邊欄
-          if (bookmarkHandle) bookmarkHandle.style.display = 'none';
-          if (filterSidebar) filterSidebar.classList.add('collapsed');
-          if (backdrop) backdrop.classList.remove('active');
           if (window.NewsApp && typeof window.NewsApp.render === 'function') {
             try { window.NewsApp.render(); } catch (e) {}
           }
@@ -835,10 +853,6 @@ if (typeof document !== 'undefined') {
         } else if (target === 'box' && panelBox && tabBox) {
           tabBox.classList.add('active');
           panelBox.style.display = 'block';
-          // 非圖鑑頁：隱藏書籤，強制收合側邊欄
-          if (bookmarkHandle) bookmarkHandle.style.display = 'none';
-          if (filterSidebar) filterSidebar.classList.add('collapsed');
-          if (backdrop) backdrop.classList.remove('active');
           if (window.PokemonBoxApp && typeof window.PokemonBoxApp.renderBox === 'function') {
             try { window.PokemonBoxApp.renderBox(); } catch (e) {}
           }
@@ -848,10 +862,6 @@ if (typeof document !== 'undefined') {
         } else if (target === 'wiki' && panelWiki && tabWiki) {
           tabWiki.classList.add('active');
           panelWiki.style.display = 'block';
-          // 非圖鑑頁：隱藏書籤，強制收合側邊欄
-          if (bookmarkHandle) bookmarkHandle.style.display = 'none';
-          if (filterSidebar) filterSidebar.classList.add('collapsed');
-          if (backdrop) backdrop.classList.remove('active');
           if (window.WikiDB && typeof window.WikiDB.init === 'function') {
             try { window.WikiDB.init(); } catch (e) { console.error('WikiDB.init error:', e); }
           }
@@ -861,10 +871,8 @@ if (typeof document !== 'undefined') {
         } else if (target === 'recipes' && panelRecipes && tabRecipes) {
           tabRecipes.classList.add('active');
           panelRecipes.style.display = 'block';
-          // 非圖鑑頁：隱藏書籤，強制收合側邊欄
-          if (bookmarkHandle) bookmarkHandle.style.display = 'none';
-          if (filterSidebar) filterSidebar.classList.add('collapsed');
-          if (backdrop) backdrop.classList.remove('active');
+          if (recipeSidebar) recipeSidebar.style.display = 'flex';
+          if (recipeBookmarkHandle) recipeBookmarkHandle.style.display = '';
           if (window.RecipesApp && typeof window.RecipesApp.render === 'function') {
             try { window.RecipesApp.render(); } catch (e) {}
           }
@@ -874,9 +882,7 @@ if (typeof document !== 'undefined') {
         } else {
           tabPokemon.classList.add('active');
           panelPokemon.style.display = 'block';
-          // 圖鑑頁：清除 inline style，讓 CSS 的 .collapsed 類控制書籤顯示/隱藏
-          // 展開時 .sidebar-bookmark-handle { display: none }
-          // 收合時 .pokemon-filter-sidebar.collapsed .sidebar-bookmark-handle { display: flex }
+          if (filterSidebar) filterSidebar.style.display = 'flex';
           if (bookmarkHandle) bookmarkHandle.style.display = '';
           if (window.PokemonApp && typeof window.PokemonApp.render === 'function') {
             try { window.PokemonApp.render(); } catch (e) {}

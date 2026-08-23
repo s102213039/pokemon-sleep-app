@@ -2429,41 +2429,66 @@ html[lang="en"] .recipe-name-wrapper,
   padding: 16px 20px;
   background: var(--bg-card-inner);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  margin-bottom: 8px;
-}
-
-.rf-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.rf-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-.rf-tags {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-}
-
-.rf-tags .tag-btn {
-  width: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-}
-
-.rf-select-wrap {
+.recipe-layout-view {
   position: relative;
+  width: 100%;
+}
+
+.recipe-main-content {
+  width: 100%;
+  margin: 0 auto;
+  min-height: calc(100vh - 120px);
+}
+
+.recipe-main-content .controls-container,
+.recipe-main-content .stats-bar,
+.recipe-main-content #recipe-content-area {
+  max-width: 1200px;
+  width: 92%;
+  margin: 0 auto 16px;
+  padding: 0 16px;
+}
+
+.recipe-main-content .controls-container {
+  margin-top: 24px;
+}
+
+.sidebar-icon-grid .ing-picker-btn {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  padding: 3px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-icon-grid .ing-picker-btn .ing-picker-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.sidebar-slider-item .slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.sidebar-slider-item .slider-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sidebar-slider-item .rf-slider {
+  flex: 1;
+}
+
+.recipe-filter-sidebar .rf-select-wrap .custom-select-container {
+  width: 100%;
 }
 
 .rf-select {

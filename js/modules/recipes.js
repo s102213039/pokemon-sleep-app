@@ -173,6 +173,7 @@
       initViewToggle();
       initSort();
       initSearch();
+      initRecipeSidebarEvents();
       render();
     })
     .catch(err => {
@@ -661,10 +662,137 @@
     </div>`;
   }
 
+  /* ─── 側邊欄展開/收合事件與計數 ───────────────────────── */
+  function updateRecipeActiveFilterBadge() {
+    const badge = document.getElementById('recipe-sidebar-bookmark-badge');
+    const clearIncBtn = document.getElementById('clear-ingredients-btn');
+    const clearExcBtn = document.getElementById('clear-excluded-btn');
+
+    if (clearIncBtn) {
+      clearIncBtn.style.display = selectedIngredients.size > 0 ? 'inline-block' : 'none';
+    }
+    if (clearExcBtn) {
+      clearExcBtn.style.display = excludedIngredients.size > 0 ? 'inline-block' : 'none';
+    }
+
+    let activeCount = 0;
+    if (selectedCategory && selectedCategory !== 'ALL') activeCount++;
+    if (minBonus > 0) activeCount++;
+    if (minPot > 0) activeCount++;
+    if (selectedIngredients.size > 0) activeCount += selectedIngredients.size;
+    if (excludedIngredients.size > 0) activeCount += excludedIngredients.size;
+    if (recipeLevel > 1 || islandBonus > 0 || eventBonus > 1.0 || showTasty) activeCount++;
+
+    if (badge) {
+      if (activeCount > 0) {
+        badge.textContent = activeCount;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  }
+
+  function initRecipeSidebarEvents() {
+    const sidebar = document.getElementById('recipe-filter-sidebar');
+    const bookmarkHandle = document.getElementById('recipe-sidebar-bookmark-handle');
+    const closeBtn = document.getElementById('recipe-sidebar-close-btn');
+    const backdrop = document.getElementById('recipe-sidebar-backdrop');
+    const resetAllBtn = document.getElementById('recipe-sidebar-reset-all-btn');
+
+    if (bookmarkHandle && sidebar && !bookmarkHandle._hasListener) {
+      bookmarkHandle._hasListener = true;
+      bookmarkHandle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sidebar.classList.toggle('collapsed');
+        if (backdrop) {
+          if (!sidebar.classList.contains('collapsed')) {
+            backdrop.classList.add('active');
+          } else {
+            backdrop.classList.remove('active');
+          }
+        }
+      });
+    }
+
+    if (closeBtn && sidebar && !closeBtn._hasListener) {
+      closeBtn._hasListener = true;
+      closeBtn.addEventListener('click', () => {
+        sidebar.classList.add('collapsed');
+        if (backdrop) backdrop.classList.remove('active');
+      });
+    }
+
+    if (backdrop && sidebar && !backdrop._hasListener) {
+      backdrop._hasListener = true;
+      backdrop.addEventListener('click', () => {
+        sidebar.classList.add('collapsed');
+        backdrop.classList.remove('active');
+      });
+    }
+
+    if (resetAllBtn && !resetAllBtn._hasListener) {
+      resetAllBtn._hasListener = true;
+      resetAllBtn.addEventListener('click', () => {
+        // 重設所有篩選條件
+        selectedCategory = 'ALL';
+        minBonus = 0;
+        minPot = 0;
+        recipeLevel = 1;
+        islandBonus = 0;
+        eventBonus = 1.0;
+        showTasty = false;
+        selectedIngredients.clear();
+        excludedIngredients.clear();
+        currentSearch = '';
+
+        if (searchInput) searchInput.value = '';
+        updateRecipeClearBtn();
+
+        if (bonusSelect) {
+          bonusSelect.value = '0';
+          bonusSelect.dispatchEvent(new Event('sync-ui'));
+        }
+        if (potSelect) {
+          potSelect.value = '0';
+          potSelect.dispatchEvent(new Event('sync-ui'));
+        }
+
+        if (categoryContainer) {
+          categoryContainer.querySelectorAll('.tag-btn').forEach(b => {
+            if (b.getAttribute('data-cat') === 'ALL') b.classList.add('active');
+            else b.classList.remove('active');
+          });
+        }
+
+        const ingContainer = document.getElementById('ingredient-picker-tags');
+        if (ingContainer) {
+          ingContainer.querySelectorAll('.ing-picker-btn').forEach(b => b.classList.remove('active'));
+        }
+        const excContainer = document.getElementById('excluded-ingredient-picker-tags');
+        if (excContainer) {
+          excContainer.querySelectorAll('.ing-picker-btn').forEach(b => b.classList.remove('active-exclude'));
+        }
+
+        syncLevelUI();
+        syncIslandUI();
+        syncEventUI();
+        syncTastyUI();
+
+        savePrefs();
+        updateRecipeActiveFilterBadge();
+        render();
+      });
+    }
+
+    updateRecipeActiveFilterBadge();
+  }
+
   /* ─── 渲染主入口 ────────────────────────────────────── */
   function render() {
     if (!contentArea || !countBadge) return;
     initCategoryFilters();
+    updateRecipeActiveFilterBadge();
     const filtered = getFilteredRecipes();
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
