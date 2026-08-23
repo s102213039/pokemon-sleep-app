@@ -697,13 +697,10 @@
     const toggleBtn = document.getElementById('box-pkm-dropdown-toggle');
     if (!searchInput || !nameHidden || !dropdown) return;
 
-    // 初始選取
+    // 初始選取（僅在編輯或辨識帶入時設定，手動新增時為空）
     let initialPkm = null;
     if (existingItem) {
       initialPkm = allPokemonsRef.find(p => p.id === existingItem.pokemonId || p.name_cn === existingItem.name) || null;
-    }
-    if (!initialPkm && allPokemonsRef.length > 0) {
-      initialPkm = allPokemonsRef[0];
     }
 
     function renderDropdown(filterText = '') {
@@ -767,6 +764,10 @@
 
     if (initialPkm) {
       selectPokemonInCombobox(initialPkm, false, existingItem);
+    } else {
+      nameHidden.value = '';
+      searchInput.value = '';
+      renderTiledIngredientPickers(null, null);
     }
 
     searchInput.onfocus = () => {
@@ -800,6 +801,22 @@
   /* ─── 解鎖食材組合平鋪選擇器 (符合官方解鎖規則：Lv.1=A, Lv.30=A/B, Lv.60=A/B/C) ── */
   function renderTiledIngredientPickers(basePkm, existingItem = null) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const slots = [
+      { key: 'ing1', level: 1, containerId: 'modal-ing-options-1' },
+      { key: 'ing2', level: 30, containerId: 'modal-ing-options-2' },
+      { key: 'ing3', level: 60, containerId: 'modal-ing-options-3' }
+    ];
+
+    if (!basePkm) {
+      slots.forEach(slot => {
+        const hiddenInput = document.getElementById(`modal-${slot.key}`);
+        const container = document.getElementById(slot.containerId);
+        if (hiddenInput) hiddenInput.value = '';
+        if (container) container.innerHTML = `<span style="font-size:11.5px;color:var(--text-muted);letter-spacing:1px;">--</span>`;
+      });
+      return;
+    }
+
     const ingList = (basePkm && basePkm.ingredients && basePkm.ingredients.length > 0)
       ? basePkm.ingredients
       : [{ name: '特選蘋果' }, { name: '暖暖薑' }, { name: '美味尾巴' }];
@@ -815,7 +832,7 @@
     const rawLv60 = [ingA, ingB, ingC];
     const uniqueLv60 = Array.from(new Set(rawLv60.map(i => i.name))).map(n => rawLv60.find(i => i.name === n));
 
-    const slots = [
+    const slotConfigs = [
       {
         key: 'ing1',
         level: 1,
@@ -839,7 +856,7 @@
       }
     ];
 
-    slots.forEach(slot => {
+    slotConfigs.forEach(slot => {
       const hiddenInput = document.getElementById(`modal-${slot.key}`);
       const container = document.getElementById(slot.containerId);
       if (!hiddenInput || !container) return;
@@ -1023,9 +1040,9 @@
     // 1. 初始化寶可夢 Combobox 搜尋選擇器
     initPokemonCombobox(existingItem);
 
-    // 2. 等級
+    // 2. 等級 (手動新增不給預設值)
     const levelInput = document.getElementById('modal-poke-level');
-    if (levelInput) levelInput.value = existingItem ? (existingItem.level || 30) : 30;
+    if (levelInput) levelInput.value = existingItem ? (existingItem.level || '') : '';
 
     // 3. 暱稱
     const nickInput = document.getElementById('modal-poke-nickname');
@@ -1068,6 +1085,7 @@
     const form = document.getElementById('box-edit-form');
     if (!form) return;
 
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const editingUid = form.getAttribute('data-editing-uid');
     const nameSelect = document.getElementById('modal-poke-name');
     const levelInput = document.getElementById('modal-poke-level');
@@ -1078,6 +1096,19 @@
     const ing3Select = document.getElementById('modal-ing3');
 
     const pokeName = nameSelect ? nameSelect.value : '';
+    if (!pokeName) {
+      alert(isEN ? 'Please select a Pokémon.' : '請選擇寶可夢！');
+      document.getElementById('modal-poke-search')?.focus();
+      return;
+    }
+
+    const parsedLevel = parseInt(levelInput ? levelInput.value : '', 10);
+    if (isNaN(parsedLevel) || parsedLevel < 1 || parsedLevel > 80) {
+      alert(isEN ? 'Please enter a valid level (1 ~ 80).' : '請輸入有效的等級 (1 ~ 80)！');
+      levelInput?.focus();
+      return;
+    }
+
     const base = findPokemonBase(pokeName);
 
     const subskills = [];
@@ -1092,7 +1123,7 @@
       name: pokeName,
       type: base ? base.type : '一般',
       specialty: base ? base.specialty : '樹果',
-      level: parseInt(levelInput ? levelInput.value : '30', 10) || 30,
+      level: parsedLevel,
       nickname: nickInput ? nickInput.value.trim() : '',
       nature: natureSelect ? natureSelect.value : '坦率',
       ing1: ing1Select ? ing1Select.value : '',
