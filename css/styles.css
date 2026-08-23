@@ -493,6 +493,35 @@ html[lang="en"] .appraisal-pokemon-title,
   align-items: center;
 }
 
+/* 英文模式彈窗標籤與文字排版適配 (English Mode Modal Layout Adaptation) */
+html[data-lang="en"] .box-modal-dialog,
+[data-lang="en"] .box-modal-dialog {
+  max-width: 560px;
+}
+
+html[data-lang="en"] .box-form-row-3col .flex-name,
+[data-lang="en"] .box-form-row-3col .flex-name {
+  width: 170px;
+}
+
+html[data-lang="en"] .box-form-row-3col .flex-level,
+[data-lang="en"] .box-form-row-3col .flex-level {
+  width: 58px;
+}
+
+html[data-lang="en"] .box-subskill-chip,
+[data-lang="en"] .box-subskill-chip {
+  font-size: 10px;
+  padding: 2.5px 5.5px;
+  letter-spacing: -0.2px;
+}
+
+html[data-lang="en"] .slot-val-badge,
+[data-lang="en"] .slot-val-badge {
+  font-size: 9.5px;
+  letter-spacing: -0.2px;
+}
+
 /* SPA Main Navigation Tabs */
 .main-tab-toggle {
   display: inline-flex;
