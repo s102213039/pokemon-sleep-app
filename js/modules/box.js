@@ -838,21 +838,21 @@
         level: 1,
         containerId: 'modal-ing-options-1',
         allowed: [ingA],
-        defaultVal: ingA.name // Lv.1 恆定為食材 A
+        defaultVal: (existingItem && existingItem.ing1) || ingA.name // 預設食材 A
       },
       {
         key: 'ing2',
         level: 30,
         containerId: 'modal-ing-options-2',
         allowed: uniqueLv30,
-        defaultVal: (existingItem && existingItem.ing2) || ingB.name || ingA.name
+        defaultVal: (existingItem && existingItem.ing2) || ingA.name // 預設食材 A
       },
       {
         key: 'ing3',
         level: 60,
         containerId: 'modal-ing-options-3',
         allowed: uniqueLv60,
-        defaultVal: (existingItem && existingItem.ing3) || ingC.name || ingB.name || ingA.name
+        defaultVal: (existingItem && existingItem.ing3) || ingA.name // 預設食材 A
       }
     ];
 

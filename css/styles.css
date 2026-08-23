@@ -522,6 +522,11 @@ html[data-lang="en"] .slot-val-badge,
   letter-spacing: -0.2px;
 }
 
+html[data-lang="en"] .box-form-inline-label,
+[data-lang="en"] .box-form-inline-label {
+  width: 90px;
+}
+
 /* SPA Main Navigation Tabs */
 .main-tab-toggle {
   display: inline-flex;
@@ -4401,6 +4406,40 @@ input[type="number"] {
   position: relative;
 }
 
+/* 橫向單行佈局：標籤與控制項同一行展示 (Inline Row Layout) */
+.box-form-row-inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.box-form-inline-label {
+  flex-shrink: 0;
+  margin-bottom: 0;
+  width: 80px;
+}
+
+.box-form-inline-control {
+  flex: 1;
+  min-width: 0;
+}
+
+.box-form-inline-control .custom-select-container {
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .box-form-row-inline {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+  .box-form-inline-label {
+    width: 100%;
+  }
+}
+
 .box-form-label {
   font-size: 11.5px;
   font-weight: 700;
@@ -4512,15 +4551,15 @@ input[type="number"] {
   gap: 6px;
 }
 
-/* 解鎖食材組合平鋪點選器（無外框、純圖示流式橫條） */
+/* 食材組合平鋪點選器（無外框、純圖示流式橫條） */
 .box-ing-strip {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: transparent;
   border: none;
   padding: 0;
-  width: 100%;
+  flex: 1;
   box-sizing: border-box;
   flex-wrap: wrap;
 }
@@ -4528,7 +4567,7 @@ input[type="number"] {
 .box-ing-slot-group {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   flex-shrink: 0;
 }
 
@@ -4543,12 +4582,13 @@ input[type="number"] {
   white-space: nowrap;
 }
 
-.box-ing-slot-arrow {
+.box-ing-slot-sep {
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: bold;
+  opacity: 0.35;
   user-select: none;
-  opacity: 0.5;
+  margin: 0 1px;
 }
 
 .box-ing-options-list {
