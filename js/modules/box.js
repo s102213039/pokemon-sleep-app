@@ -846,7 +846,7 @@
         const hiddenInput = document.getElementById(`modal-${slot.key}`);
         const container = document.getElementById(slot.containerId);
         if (hiddenInput) hiddenInput.value = '';
-        if (container) container.innerHTML = `<span style="font-size:11.5px;color:var(--text-muted);letter-spacing:1px;">--</span>`;
+        if (container) container.innerHTML = `<span class="box-ing-placeholder-slot">--</span>`;
       });
       return;
     }

@@ -4412,6 +4412,7 @@ input[type="number"] {
   flex-direction: row;
   align-items: center;
   gap: 12px;
+  min-height: 34px;
 }
 
 .box-form-inline-label {
@@ -4566,6 +4567,7 @@ input[type="number"] {
   flex: 1;
   box-sizing: border-box;
   flex-wrap: wrap;
+  min-height: 30px;
 }
 
 .box-ing-slot-group {
@@ -4573,6 +4575,8 @@ input[type="number"] {
   align-items: center;
   gap: 5px;
   flex-shrink: 0;
+  min-height: 30px;
+  height: 30px;
 }
 
 .box-ing-lvl-tag {
@@ -4584,6 +4588,7 @@ input[type="number"] {
   border-radius: 4px;
   padding: 1px 6px;
   white-space: nowrap;
+  line-height: 18px;
 }
 
 .box-ing-slot-sep {
@@ -4593,6 +4598,7 @@ input[type="number"] {
   opacity: 0.35;
   user-select: none;
   margin: 0 1px;
+  line-height: 30px;
 }
 
 .box-ing-options-list {
@@ -4600,6 +4606,20 @@ input[type="number"] {
   align-items: center;
   gap: 5px;
   flex-wrap: nowrap;
+  min-height: 30px;
+  height: 30px;
+}
+
+.box-ing-placeholder-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  height: 30px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  padding: 0 2px;
 }
 
 .box-ing-opt-btn {
