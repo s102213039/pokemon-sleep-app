@@ -390,6 +390,65 @@
     }
   }
 
+  function getIngCountFromBase(basePkm, slotIdx, ingName) {
+    if (!basePkm || !basePkm.ingredients) {
+      return slotIdx === 0 ? 1 : (slotIdx === 1 ? 2 : 4);
+    }
+    const found = basePkm.ingredients.find(ig => ig.name === ingName);
+    if (found && typeof found.count === 'number') {
+      return found.count;
+    }
+    if (slotIdx === 0) return 1;
+    if (slotIdx === 1) return (basePkm.ingredients[1] && basePkm.ingredients[1].count) || 2;
+    return (basePkm.ingredients[2] && basePkm.ingredients[2].count) || 4;
+  }
+
+  function renderBoxCardIngSlot(ingName, slotLv, basePkm, slotIdx) {
+    if (!ingName || ingName === '--') {
+      return `
+        <div class="box-ing-slot">
+          <span class="box-slot-tag">${slotLv}</span>
+          <span class="box-slot-val" style="color:var(--text-muted);font-size:11px;">--</span>
+        </div>
+      `;
+    }
+    const displayName = window.I18N ? window.I18N.getIngredientName(ingName) : ingName;
+    const iconUrl = (window.I18N && typeof window.I18N.getIngredientIcon === 'function') 
+      ? window.I18N.getIngredientIcon(ingName) 
+      : '';
+    const count = getIngCountFromBase(basePkm, slotIdx, ingName);
+
+    return `
+      <div class="box-ing-slot" title="${escapeHtml(displayName)} ×${count}">
+        <span class="box-slot-tag">${slotLv}</span>
+        <div class="box-slot-content">
+          ${iconUrl ? `<img src="${iconUrl}" class="box-slot-icon" alt="${escapeHtml(displayName)}">` : ''}
+          <span class="box-slot-count">×${count}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderBoxTableIngCell(ingName, basePkm, slotIdx) {
+    if (!ingName || ingName === '--') {
+      return `<td><span class="text-muted" style="font-size:11px;">--</span></td>`;
+    }
+    const displayName = window.I18N ? window.I18N.getIngredientName(ingName) : ingName;
+    const iconUrl = (window.I18N && typeof window.I18N.getIngredientIcon === 'function') 
+      ? window.I18N.getIngredientIcon(ingName) 
+      : '';
+    const count = getIngCountFromBase(basePkm, slotIdx, ingName);
+
+    return `
+      <td class="td-ing" title="${escapeHtml(displayName)} ×${count}">
+        <div class="ing-cell">
+          ${iconUrl ? `<img src="${iconUrl}" class="ing-icon" alt="${escapeHtml(displayName)}">` : ''}
+          <span class="ing-qty">${count}</span>
+        </div>
+      </td>
+    `;
+  }
+
   function renderBoxGrid(list, container) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     container.innerHTML = `
