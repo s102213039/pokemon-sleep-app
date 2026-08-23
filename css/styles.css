@@ -511,9 +511,9 @@ html[data-lang="en"] .box-form-row-3col .flex-level,
 
 html[data-lang="en"] .box-subskill-chip,
 [data-lang="en"] .box-subskill-chip {
-  font-size: 10px;
-  padding: 2.5px 5.5px;
-  letter-spacing: -0.2px;
+  font-size: 9px;
+  padding: 4px 1px;
+  letter-spacing: -0.3px;
 }
 
 html[data-lang="en"] .slot-val-badge,
@@ -4716,26 +4716,32 @@ input[type="number"] {
 }
 
 .subskill-chips-row {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 5px;
 }
 
 .box-subskill-chip {
   cursor: pointer;
-  padding: 3px 6px;
-  border-radius: 4px;
-  font-size: 10.5px;
+  padding: 5px 2px;
+  border-radius: 6px;
+  font-size: 11px;
   font-weight: 600;
   transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 3px;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   user-select: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .box-subskill-chip:hover {
-  transform: scale(1.04);
+  transform: translateY(-1px);
 }
 
 .box-subskill-chip.in-use {
