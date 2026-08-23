@@ -140,12 +140,16 @@
 
   function syncTastyUI() {
     if (!tastyToggleBtn) return;
-    if (showTasty) {
-      tastyToggleBtn.classList.add('active');
-      tastyToggleBtn.setAttribute('aria-checked', 'true');
+    if (tastyToggleBtn.type === 'checkbox') {
+      tastyToggleBtn.checked = showTasty;
     } else {
-      tastyToggleBtn.classList.remove('active');
-      tastyToggleBtn.setAttribute('aria-checked', 'false');
+      if (showTasty) {
+        tastyToggleBtn.classList.add('active');
+        tastyToggleBtn.setAttribute('aria-checked', 'true');
+      } else {
+        tastyToggleBtn.classList.remove('active');
+        tastyToggleBtn.setAttribute('aria-checked', 'false');
+      }
     }
   }
 
@@ -395,8 +399,9 @@
   function initTastyToggle() {
     if (!tastyToggleBtn) return;
     syncTastyUI();
-    tastyToggleBtn.addEventListener('click', () => {
-      showTasty = !showTasty;
+    const evt = tastyToggleBtn.type === 'checkbox' ? 'change' : 'click';
+    tastyToggleBtn.addEventListener(evt, () => {
+      showTasty = tastyToggleBtn.type === 'checkbox' ? tastyToggleBtn.checked : !showTasty;
       syncTastyUI();
       savePrefs();
       render();
