@@ -1332,9 +1332,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   font-size: 10.5px;
   letter-spacing: -0.15px;
   padding: 3.5px 2px;
-}
-
-/* 手機與平板端半透明遮罩 (全屏覆蓋) */
+/* 側邊欄遮罩：透明無模糊，保證側邊欄與中間內容無障礙同時互動 */
 .sidebar-backdrop {
   display: none;
   position: fixed;
@@ -1343,19 +1341,28 @@ html[data-lang="en"] .subfilter-skill-btn,
   right: 0;
   bottom: 0;
   height: calc(100vh - 70px);
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   z-index: 94;
   opacity: 0;
-  transition: opacity 0.28s ease;
   pointer-events: none;
 }
 
-.sidebar-backdrop.active {
-  display: block;
-  opacity: 1;
-  pointer-events: auto;
+@media (max-width: 1024px) {
+  .sidebar-backdrop.active {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+@media (min-width: 1025px) {
+  .sidebar-backdrop,
+  .sidebar-backdrop.active {
+    display: none !important;
+    pointer-events: none !important;
+  }
 }
 
 /* ➡️ 主要內容區：維持原本居中對齊與標準邊距 (Maintain Original Centered Margins) */
@@ -2444,17 +2451,25 @@ html[lang="en"] .recipe-name-wrapper,
   min-height: calc(100vh - 120px);
 }
 
-.recipe-main-content .controls-container,
+.recipe-main-content .controls-container {
+  max-width: 1200px;
+  width: 92%;
+  margin: 24px auto 16px;
+  padding: 0 16px;
+}
+
 .recipe-main-content .stats-bar,
-.recipe-main-content #recipe-content-area {
+.recipe-main-content .table-container,
+.recipe-main-content .pokemon-table-container,
+.recipe-main-content .pokemon-grid {
   max-width: 1200px;
   width: 92%;
   margin: 0 auto 16px;
   padding: 0 16px;
 }
 
-.recipe-main-content .controls-container {
-  margin-top: 24px;
+#recipe-content-area {
+  width: 100%;
 }
 
 /* 料理種類 2 欄網格 */
@@ -2975,11 +2990,11 @@ input[type=range].rf-slider.event-slider {
 }
 
 .tasty-row {
-  display: grid;
-  grid-template-columns: 24px 18px 1fr;
+  display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 15px;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14.5px;
   font-weight: 700;
   line-height: 1.25;
   white-space: nowrap;
@@ -2992,26 +3007,16 @@ input[type=range].rf-slider.event-slider {
   font-family: var(--font-main, sans-serif);
   font-size: 11px;
   font-weight: 700;
-  width: 24px;
+  padding: 1px 6px;
   height: 18px;
   border-radius: 4px;
   box-sizing: border-box;
   text-align: center;
 }
 
-.tasty-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  font-size: 13px;
-  text-align: center;
-  user-select: none;
-}
-
 .tasty-num {
   font-family: monospace;
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 700;
   text-align: right;
   letter-spacing: 0.3px;

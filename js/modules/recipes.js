@@ -863,17 +863,14 @@
                     <div class="tasty-energy-stack">
                       <div class="tasty-row tasty-row-normal" title="${isEN ? 'Normal Energy (1x)' : '一般能量 (1x)'}">
                         <span class="tasty-tag">1x</span>
-                        <span class="tasty-icon">⚡</span>
                         <span class="tasty-num">${finalE.toLocaleString()}</span>
                       </div>
                       <div class="tasty-row tasty-row-2x" title="${isEN ? 'Tasty Dish (2x)' : '漂亮成功 (2倍)'}">
                         <span class="tasty-tag">2x</span>
-                        <span class="tasty-icon">✨</span>
                         <span class="tasty-num">${(finalE * 2).toLocaleString()}</span>
                       </div>
                       <div class="tasty-row tasty-row-3x" title="${isEN ? 'Super Tasty / Extra (3x)' : '超成功 / 漂亮 (3倍)'}">
                         <span class="tasty-tag">3x</span>
-                        <span class="tasty-icon">🌟</span>
                         <span class="tasty-num">${(finalE * 3).toLocaleString()}</span>
                       </div>
                     </div>
@@ -949,12 +946,12 @@
                 ${showTasty ? `
                   <div class="card-tasty-group">
                     <div style="display:flex;justify-content:space-between;align-items:center;">
-                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">✨ 2x</span>
-                      <span class="card-score-2x">✨ ${(finalE * 2).toLocaleString()}</span>
+                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">2x</span>
+                      <span class="card-score-2x">${(finalE * 2).toLocaleString()}</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
-                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">🌟 3x</span>
-                      <span class="card-score-3x">🌟 ${(finalE * 3).toLocaleString()}</span>
+                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">3x</span>
+                      <span class="card-score-3x">${(finalE * 3).toLocaleString()}</span>
                     </div>
                   </div>
                 ` : ''}
