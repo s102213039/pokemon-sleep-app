@@ -454,7 +454,7 @@
       'box.modal_poke_level': 'Level',
       'box.modal_poke_nickname': 'Nickname',
       'box.modal_nickname_placeholder': 'e.g., BFS God Tank...',
-      'box.modal_search_placeholder': 'Name / EN / No.',
+      'box.modal_search_placeholder': 'Name / No.',
       'box.modal_clear_active_subskill': '✕ Clear Slot',
       'box.modal_ing_lv1': 'Lv.1',
       'box.modal_ing_lv30': 'Lv.30',
