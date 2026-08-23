@@ -981,7 +981,7 @@
           const skDisplayName = window.I18N ? window.I18N.getSubSkillName(sk.name) : sk.name;
           const isUsed = usedSkills.has(sk.name);
           return `
-            <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" title="${escapeHtml(skDisplayName)}${isUsed ? (isEN ? ' (Already Selected)' : '（已選用）') : ''}">
+            <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" ${isUsed ? 'disabled' : ''} title="${escapeHtml(skDisplayName)}${isUsed ? (isEN ? ' (Already Selected)' : '（已選用）') : ''}">
               <span>${escapeHtml(skDisplayName)}</span>
               ${isUsed ? '<span style="font-size:10px;opacity:0.8;">✓</span>' : ''}
             </button>
@@ -991,13 +991,24 @@
         container.querySelectorAll('.box-subskill-chip').forEach(chip => {
           chip.addEventListener('click', (e) => {
             e.preventDefault();
+            if (chip.disabled || chip.classList.contains('in-use')) return;
             const skName = chip.getAttribute('data-name');
             const targetInput = document.getElementById(`modal-subskill-${activeSubskillSlot}`);
             if (targetInput) {
               targetInput.value = skName;
             }
-            // 自動推進到下一個插槽
-            if (activeSubskillSlot < 5) {
+            // 自動推進到下一個未選取的插槽
+            let nextEmptySlot = -1;
+            for (let s = 1; s <= 5; s++) {
+              const inp = document.getElementById(`modal-subskill-${s}`);
+              if (inp && !inp.value) {
+                nextEmptySlot = s;
+                break;
+              }
+            }
+            if (nextEmptySlot !== -1) {
+              activeSubskillSlot = nextEmptySlot;
+            } else if (activeSubskillSlot < 5) {
               activeSubskillSlot += 1;
             } else {
               activeSubskillSlot = 1;
@@ -1018,15 +1029,18 @@
       };
     });
 
-    // 綁定清空當前插槽按鈕
-    const clearBtn = document.getElementById('box-subskill-clear-active-btn');
+    // 綁定清空全部副技能按鈕
+    const clearBtn = document.getElementById('box-subskill-clear-all-btn') || document.getElementById('box-subskill-clear-active-btn');
     if (clearBtn) {
       clearBtn.onclick = (e) => {
         e.preventDefault();
-        const targetInput = document.getElementById(`modal-subskill-${activeSubskillSlot}`);
-        if (targetInput) {
-          targetInput.value = '';
+        for (let slot = 1; slot <= 5; slot++) {
+          const targetInput = document.getElementById(`modal-subskill-${slot}`);
+          if (targetInput) {
+            targetInput.value = '';
+          }
         }
+        activeSubskillSlot = 1;
         updateSubskillUI();
       };
     }

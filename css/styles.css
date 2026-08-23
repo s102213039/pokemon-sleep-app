@@ -4808,9 +4808,12 @@ input[type="number"] {
   transform: translateY(-1px);
 }
 
-.box-subskill-chip.in-use {
-  opacity: 0.45;
-  filter: grayscale(0.4);
+.box-subskill-chip.in-use,
+.box-subskill-chip:disabled {
+  opacity: 0.35;
+  filter: grayscale(0.5);
+  cursor: not-allowed !important;
+  pointer-events: none;
 }
 
 .box-modal-footer {
