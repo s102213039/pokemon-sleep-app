@@ -726,22 +726,15 @@
 
       dropdown.innerHTML = filtered.map(p => {
         const pkmDisplayName = isEN ? (p.name_en || p.name_cn) : p.name_cn;
-        const typeName = window.I18N ? window.I18N.getTypeName(p.type) : p.type;
-        const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : p.specialty;
         const isSelected = nameHidden.value === p.name_cn;
-        const avatarUrl = p.icon || 'assets/placeholder.svg';
+        const avatarUrl = p.icon_url || p.icon || (p.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png` : '') || 'assets/placeholder.svg';
 
         return `
           <div class="box-pkm-dropdown-item ${isSelected ? 'active' : ''}" data-id="${p.id}" data-name="${escapeHtml(p.name_cn)}">
-            <img src="${avatarUrl}" class="box-pkm-dropdown-avatar" alt="${escapeHtml(pkmDisplayName)}">
+            <img src="${avatarUrl}" class="box-pkm-dropdown-avatar" alt="${escapeHtml(pkmDisplayName)}" loading="lazy" onerror="this.src='https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png'">
             <div class="box-pkm-dropdown-info">
               <div class="box-pkm-dropdown-name">
                 <span>No.${p.formatted_no} ${escapeHtml(pkmDisplayName)}</span>
-              </div>
-              <div class="box-pkm-dropdown-sub">
-                <span class="type-badge" style="background-color: var(--type-${p.type || '一般'}, #64748b); font-size: 10px; padding: 1px 5px;">${typeName}</span>
-                <span>·</span>
-                <span>${specName}</span>
               </div>
             </div>
             ${isSelected ? '<span style="color:var(--accent-blue);font-weight:bold;font-size:12px;">✓</span>' : ''}
@@ -804,17 +797,46 @@
     });
   }
 
-  /* ─── 解鎖食材組合平鋪選擇器 ─────────────────────────────────── */
+  /* ─── 解鎖食材組合平鋪選擇器 (符合官方解鎖規則：Lv.1=A, Lv.30=A/B, Lv.60=A/B/C) ── */
   function renderTiledIngredientPickers(basePkm, existingItem = null) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const ingList = (basePkm && basePkm.ingredients && basePkm.ingredients.length > 0)
       ? basePkm.ingredients
-      : [{ name: '特選蘋果', count: 1 }, { name: '暖暖薑', count: 2 }, { name: '美味尾巴', count: 4 }];
+      : [{ name: '特選蘋果' }, { name: '暖暖薑' }, { name: '美味尾巴' }];
+
+    const ingA = ingList[0] || { name: '特選蘋果' };
+    const ingB = ingList[1] || ingA;
+    const ingC = ingList[2] || ingB || ingA;
+
+    // 依照遊戲規則建立各等級可選食材庫
+    const rawLv30 = [ingA, ingB];
+    const uniqueLv30 = Array.from(new Set(rawLv30.map(i => i.name))).map(n => rawLv30.find(i => i.name === n));
+
+    const rawLv60 = [ingA, ingB, ingC];
+    const uniqueLv60 = Array.from(new Set(rawLv60.map(i => i.name))).map(n => rawLv60.find(i => i.name === n));
 
     const slots = [
-      { key: 'ing1', level: 1, containerId: 'modal-ing-options-1', defaultVal: (existingItem && existingItem.ing1) || ingList[0].name },
-      { key: 'ing2', level: 30, containerId: 'modal-ing-options-2', defaultVal: (existingItem && existingItem.ing2) || (ingList[1] ? ingList[1].name : ingList[0].name) },
-      { key: 'ing3', level: 60, containerId: 'modal-ing-options-3', defaultVal: (existingItem && existingItem.ing3) || (ingList[2] ? ingList[2].name : (ingList[1] ? ingList[1].name : ingList[0].name)) }
+      {
+        key: 'ing1',
+        level: 1,
+        containerId: 'modal-ing-options-1',
+        allowed: [ingA],
+        defaultVal: ingA.name // Lv.1 恆定為食材 A
+      },
+      {
+        key: 'ing2',
+        level: 30,
+        containerId: 'modal-ing-options-2',
+        allowed: uniqueLv30,
+        defaultVal: (existingItem && existingItem.ing2) || ingB.name || ingA.name
+      },
+      {
+        key: 'ing3',
+        level: 60,
+        containerId: 'modal-ing-options-3',
+        allowed: uniqueLv60,
+        defaultVal: (existingItem && existingItem.ing3) || ingC.name || ingB.name || ingA.name
+      }
     ];
 
     slots.forEach(slot => {
@@ -822,21 +844,18 @@
       const container = document.getElementById(slot.containerId);
       if (!hiddenInput || !container) return;
 
-      hiddenInput.value = slot.defaultVal;
+      // 檢查 defaultVal 是否在允許列表中
+      const isDefaultValid = slot.allowed.some(i => i.name === slot.defaultVal);
+      hiddenInput.value = isDefaultValid ? slot.defaultVal : slot.allowed[0].name;
 
-      container.innerHTML = ingList.map((ing, idx) => {
+      container.innerHTML = slot.allowed.map(ing => {
         const isSelected = hiddenInput.value === ing.name;
         const ingDisplayName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
         const iconUrl = ing.icon || (window.I18N && window.I18N.getIngredientIcon(ing.name)) || '';
-        const count = ing.count || getIngCountFromBase(basePkm, idx, ing.name);
 
         return `
-          <button type="button" class="box-ing-opt-btn ${isSelected ? 'active' : ''}" data-slot="${slot.key}" data-ing="${escapeHtml(ing.name)}">
-            <div style="display:flex;align-items:center;gap:6px;">
-              <img src="${iconUrl}" class="box-ing-opt-icon" alt="${escapeHtml(ingDisplayName)}">
-              <span style="font-size:12px;font-weight:600;color:var(--text-primary);">${escapeHtml(ingDisplayName)}</span>
-            </div>
-            <span class="box-ing-opt-count">×${count}</span>
+          <button type="button" class="box-ing-opt-btn ${isSelected ? 'active' : ''}" data-slot="${slot.key}" data-ing="${escapeHtml(ing.name)}" title="${escapeHtml(ingDisplayName)}" aria-label="${escapeHtml(ingDisplayName)}">
+            <img src="${iconUrl}" class="box-ing-opt-icon" alt="${escapeHtml(ingDisplayName)}" loading="lazy">
           </button>
         `;
       }).join('');

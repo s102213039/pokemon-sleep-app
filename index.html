@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=20260823_08">
+  <link rel="stylesheet" href="css/styles.css?v=20260823_09">
   <!-- 🛡️ 全域錯誤診斷與日誌攔截器 (Global Error & Diagnostic Logger) -->
   <script>
     (function() {
@@ -805,32 +805,35 @@
         <!-- 編輯表單 -->
         <form id="box-edit-form" class="box-modal-form">
           <div class="box-form-grid">
-            <!-- 寶可夢搜尋選擇器 (Combobox) -->
-            <div class="box-form-group">
-              <label class="box-form-label" for="modal-poke-search" data-i18n="box.modal_poke_name">寶可夢名稱 <span style="color:#ef4444;">*</span></label>
-              <div class="box-pkm-combobox" id="box-pkm-combobox">
-                <input type="text" id="modal-poke-search" class="box-form-input box-pkm-search-input" placeholder="搜尋寶可夢 (中文/英文/編號)..." data-i18n-placeholder="box.modal_search_placeholder" autocomplete="off" required>
-                <input type="hidden" id="modal-poke-name" name="pokemon_name" value="">
-                <button type="button" id="box-pkm-dropdown-toggle" class="box-pkm-toggle-btn" aria-label="展開寶可夢列表">
-                  <svg viewBox="0 0 12 8" width="12" height="8"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M1 1.5L6 6.5L11 1.5"/></svg>
-                </button>
-                <div id="box-pkm-dropdown" class="box-pkm-dropdown" style="display:none;" role="listbox"></div>
+            <!-- 1. 頂部單行：寶可夢名稱 + 等級 + 自訂暱稱 -->
+            <div class="box-form-row-3col box-full-width">
+              <!-- 寶可夢搜尋選擇器 (Combobox) -->
+              <div class="box-form-group flex-name">
+                <label class="box-form-label" for="modal-poke-search" data-i18n="box.modal_poke_name">寶可夢名稱 <span style="color:#ef4444;">*</span></label>
+                <div class="box-pkm-combobox" id="box-pkm-combobox">
+                  <input type="text" id="modal-poke-search" class="box-form-input box-pkm-search-input" placeholder="搜尋寶可夢 (中文/英文/編號)..." data-i18n-placeholder="box.modal_search_placeholder" autocomplete="off" required>
+                  <input type="hidden" id="modal-poke-name" name="pokemon_name" value="">
+                  <button type="button" id="box-pkm-dropdown-toggle" class="box-pkm-toggle-btn" aria-label="展開寶可夢列表">
+                    <svg viewBox="0 0 12 8" width="12" height="8"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M1 1.5L6 6.5L11 1.5"/></svg>
+                  </button>
+                  <div id="box-pkm-dropdown" class="box-pkm-dropdown" style="display:none;" role="listbox"></div>
+                </div>
+              </div>
+
+              <!-- 等級 -->
+              <div class="box-form-group flex-level">
+                <label class="box-form-label" for="modal-poke-level" data-i18n="box.modal_poke_level">等級 (1~80) <span style="color:#ef4444;">*</span></label>
+                <input type="number" id="modal-poke-level" class="box-form-input" min="1" max="80" value="30" required>
+              </div>
+
+              <!-- 自訂暱稱 -->
+              <div class="box-form-group flex-nickname">
+                <label class="box-form-label" for="modal-poke-nickname" data-i18n="box.modal_poke_nickname">自訂暱稱 (選填)</label>
+                <input type="text" id="modal-poke-nickname" class="box-form-input" placeholder="例如：首隻樹果S神坦、全蘋果隊長..." data-i18n-placeholder="box.modal_nickname_placeholder">
               </div>
             </div>
 
-            <!-- 等級 -->
-            <div class="box-form-group">
-              <label class="box-form-label" for="modal-poke-level" data-i18n="box.modal_poke_level">等級 (Lv.1 ~ 80) <span style="color:#ef4444;">*</span></label>
-              <input type="number" id="modal-poke-level" class="box-form-input" min="1" max="80" value="30" required>
-            </div>
-
-            <!-- 自訂暱稱 -->
-            <div class="box-form-group box-full-width">
-              <label class="box-form-label" for="modal-poke-nickname" data-i18n="box.modal_poke_nickname">自訂暱稱 (選填)</label>
-              <input type="text" id="modal-poke-nickname" class="box-form-input" placeholder="例如：首隻樹果S神坦、全蘋果隊長..." data-i18n-placeholder="box.modal_nickname_placeholder">
-            </div>
-
-            <!-- 食材組合平鋪點選 (Lv.1, Lv.30, Lv.60) -->
+            <!-- 2. 食材組合平鋪點選 (Lv.1, Lv.30, Lv.60) - 一行純圖標展示 -->
             <div class="box-form-group box-full-width">
               <label class="box-form-label" data-i18n="box.modal_poke_ing">🍲 解鎖食材組合 (Lv.1 / Lv.30 / Lv.60)</label>
               <input type="hidden" id="modal-ing1" value="">
@@ -838,15 +841,15 @@
               <input type="hidden" id="modal-ing3" value="">
               <div class="box-ing-tiled-row">
                 <div class="box-ing-tiled-col">
-                  <span class="box-ing-lvl-badge" data-i18n="box.modal_ing_lv1">Lv.1 初始食材</span>
+                  <span class="box-ing-lvl-badge" data-i18n="box.modal_ing_lv1">Lv.1</span>
                   <div id="modal-ing-options-1" class="box-ing-options-list"></div>
                 </div>
                 <div class="box-ing-tiled-col">
-                  <span class="box-ing-lvl-badge" data-i18n="box.modal_ing_lv30">Lv.30 解鎖食材</span>
+                  <span class="box-ing-lvl-badge" data-i18n="box.modal_ing_lv30">Lv.30</span>
                   <div id="modal-ing-options-2" class="box-ing-options-list"></div>
                 </div>
                 <div class="box-ing-tiled-col">
-                  <span class="box-ing-lvl-badge" data-i18n="box.modal_ing_lv60">Lv.60 解鎖食材</span>
+                  <span class="box-ing-lvl-badge" data-i18n="box.modal_ing_lv60">Lv.60</span>
                   <div id="modal-ing-options-3" class="box-ing-options-list"></div>
                 </div>
               </div>
@@ -936,12 +939,12 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
-  <script src="js/core/i18n.js?v=20260823_08"></script>
-  <script src="js/modules/app.js?v=20260823_08"></script>
-  <script src="js/modules/recipes.js?v=20260823_08"></script>
-  <script src="js/modules/wiki.js?v=20260823_08"></script>
-  <script src="js/modules/box.js?v=20260823_08"></script>
-  <script src="js/modules/news.js?v=20260823_08"></script>
-  <script src="js/modules/appraisal.js?v=20260823_08"></script>
+  <script src="js/core/i18n.js?v=20260823_09"></script>
+  <script src="js/modules/app.js?v=20260823_09"></script>
+  <script src="js/modules/recipes.js?v=20260823_09"></script>
+  <script src="js/modules/wiki.js?v=20260823_09"></script>
+  <script src="js/modules/box.js?v=20260823_09"></script>
+  <script src="js/modules/news.js?v=20260823_09"></script>
+  <script src="js/modules/appraisal.js?v=20260823_09"></script>
 </body>
 </html>
