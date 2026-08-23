@@ -1201,8 +1201,7 @@ html[lang="en"] .appraisal-pokemon-title,
 
 .sidebar-specialty-tags .tag-btn,
 .sidebar-skills-list .tag-btn,
-.sidebar-2col-tags .tag-btn,
-.tag-btn {
+.sidebar-2col-tags .tag-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1224,8 +1223,7 @@ html[lang="en"] .appraisal-pokemon-title,
 
 .sidebar-specialty-tags .tag-btn:hover,
 .sidebar-skills-list .tag-btn:hover,
-.sidebar-2col-tags .tag-btn:hover,
-.tag-btn:hover {
+.sidebar-2col-tags .tag-btn:hover {
   background: var(--bg-sidebar-btn-hover);
   border-color: rgba(56, 189, 248, 0.4);
   color: var(--text-primary);
@@ -1233,8 +1231,7 @@ html[lang="en"] .appraisal-pokemon-title,
 
 .sidebar-specialty-tags .tag-btn.active,
 .sidebar-skills-list .tag-btn.active,
-.sidebar-2col-tags .tag-btn.active,
-.tag-btn.active {
+.sidebar-2col-tags .tag-btn.active {
   background: #0284c7;
   border-color: #38bdf8;
   color: #ffffff;
@@ -2453,7 +2450,16 @@ html[lang="en"] .recipe-name-wrapper,
 .rf-tags {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
+}
+
+.rf-tags .tag-btn {
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
 }
 
 .rf-select-wrap {
