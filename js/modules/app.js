@@ -925,17 +925,40 @@ if (typeof document !== 'undefined') {
 
     initSpaTabs();
 
-    const fetchDataWithFallback = async (primaryUrl, fallbackUrl) => {
-      try {
-        const res = await fetch(primaryUrl, { cache: 'no-store' });
-        if (res.ok) return res.json();
-      } catch (e) {}
-      const fallbackRes = await fetch(fallbackUrl, { cache: 'no-store' });
-      if (!fallbackRes.ok) throw new Error(`HTTP ${fallbackRes.status}`);
-      return fallbackRes.json();
+    const fetchDataWithFallback = async (...customUrls) => {
+      const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
+      const t = Date.now();
+      const defaultCandidates = [
+        `${base}data/data.json?t=${t}`,
+        `data/data.json?t=${t}`,
+        `../data/data.json?t=${t}`,
+        `${base}data.json?t=${t}`,
+        `data.json?t=${t}`,
+        `../data.json?t=${t}`
+      ];
+      const urls = customUrls.length > 0 ? customUrls : defaultCandidates;
+      const uniqueUrls = Array.from(new Set(urls.filter(Boolean)));
+
+      let lastErr = null;
+      for (const url of uniqueUrls) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (res && res.ok) {
+            return await res.json();
+          }
+        } catch (e) {
+          lastErr = e;
+        }
+      }
+      throw lastErr || new Error('Failed to load data.json from candidate paths: ' + uniqueUrls.join(', '));
     };
 
-    fetchDataWithFallback(`data/data.json?t=${Date.now()}`, `data.json?t=${Date.now()}`)
+    fetchDataWithFallback(
+      (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/data.json?t=${Date.now()}`,
+      `data/data.json?t=${Date.now()}`,
+      `../data/data.json?t=${Date.now()}`,
+      `data.json?t=${Date.now()}`
+    )
       .then(data => {
         allPokemons = data;
         window.allPokemons = data;

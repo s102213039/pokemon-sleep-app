@@ -156,17 +156,40 @@
   /* ─── 載入 recipes.json ─────────────────────────────── */
   loadPrefs();
 
-  const fetchRecipesWithFallback = async (primaryUrl, fallbackUrl) => {
-    try {
-      const res = await fetch(primaryUrl, { cache: 'no-store' });
-      if (res.ok) return res.json();
-    } catch (e) {}
-    const fallbackRes = await fetch(fallbackUrl, { cache: 'no-store' });
-    if (!fallbackRes.ok) throw new Error(`HTTP ${fallbackRes.status}`);
-    return fallbackRes.json();
+  const fetchRecipesWithFallback = async (...customUrls) => {
+    const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
+    const t = Date.now();
+    const defaultCandidates = [
+      `${base}data/recipes.json?t=${t}`,
+      `data/recipes.json?t=${t}`,
+      `../data/recipes.json?t=${t}`,
+      `${base}recipes.json?t=${t}`,
+      `recipes.json?t=${t}`,
+      `../recipes.json?t=${t}`
+    ];
+    const urls = customUrls.length > 0 ? customUrls : defaultCandidates;
+    const uniqueUrls = Array.from(new Set(urls.filter(Boolean)));
+
+    let lastErr = null;
+    for (const url of uniqueUrls) {
+      try {
+        const res = await fetch(url, { cache: 'no-store' });
+        if (res && res.ok) {
+          return await res.json();
+        }
+      } catch (e) {
+        lastErr = e;
+      }
+    }
+    throw lastErr || new Error('Failed to load recipes.json from candidate paths: ' + uniqueUrls.join(', '));
   };
 
-  fetchRecipesWithFallback(`data/recipes.json?t=${Date.now()}`, `recipes.json?t=${Date.now()}`)
+  fetchRecipesWithFallback(
+    (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/recipes.json?t=${Date.now()}`,
+    `data/recipes.json?t=${Date.now()}`,
+    `../data/recipes.json?t=${Date.now()}`,
+    `recipes.json?t=${Date.now()}`
+  )
     .then(data => {
       allRecipes = data;
       initCategoryFilters();

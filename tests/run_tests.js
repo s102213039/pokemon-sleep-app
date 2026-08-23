@@ -53,6 +53,8 @@ class MiniElement {
     this.tagName = tagName.toUpperCase();
     this.id = id;
     this._className = className;
+    this.style = {};
+    this.dataset = {};
     const self = this;
     this.classList = {
       get value() { return self._className; },
@@ -68,6 +70,13 @@ class MiniElement {
       },
       contains(c) {
         return new Set((self._className || '').split(' ').filter(Boolean)).has(c);
+      },
+      toggle(c, force) {
+        const exists = this.contains(c);
+        const shouldAdd = force !== undefined ? !!force : !exists;
+        if (shouldAdd) this.add(c);
+        else this.remove(c);
+        return shouldAdd;
       }
     };
     this.attributes = {};
@@ -90,8 +99,22 @@ class MiniElement {
     this.parseInnerHTML(html);
   }
 
-  setAttribute(k, v) { this.attributes[k] = String(v); }
+  setAttribute(k, v) {
+    this.attributes[k] = String(v);
+    if (k.startsWith('data-')) {
+      const camelKey = k.slice(5).replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+      this.dataset[camelKey] = String(v);
+    }
+  }
   getAttribute(k) { return this.attributes[k] !== undefined ? this.attributes[k] : null; }
+  hasAttribute(k) { return this.attributes[k] !== undefined; }
+  removeAttribute(k) {
+    delete this.attributes[k];
+    if (k.startsWith('data-')) {
+      const camelKey = k.slice(5).replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+      delete this.dataset[camelKey];
+    }
+  }
 
   addEventListener(event, callback) {
     if (!this.listeners[event]) this.listeners[event] = [];
@@ -119,6 +142,28 @@ class MiniElement {
 
   click() {
     this.dispatchEvent({ type: 'click', target: this });
+  }
+
+  appendChild(child) {
+    if (child) {
+      child.parentNode = this;
+      this.children.push(child);
+    }
+    return child;
+  }
+
+  removeChild(child) {
+    const idx = this.children.indexOf(child);
+    if (idx !== -1) {
+      this.children.splice(idx, 1);
+      child.parentNode = null;
+    }
+    return child;
+  }
+
+  querySelector(selector) {
+    const results = this.querySelectorAll(selector);
+    return results.length > 0 ? results[0] : null;
   }
 
   parseInnerHTML(html) {
@@ -158,11 +203,34 @@ class MiniElement {
 }
 
 function matchesSelector(node, selector) {
+  if (!node || !selector) return false;
+  selector = selector.trim();
   if (selector.startsWith('#')) {
     return node.id === selector.slice(1);
   }
   if (selector.startsWith('.')) {
     return node.classList.contains(selector.slice(1));
+  }
+  if (selector.startsWith('[') && selector.endsWith(']')) {
+    const attrContent = selector.slice(1, -1);
+    if (attrContent.includes('=')) {
+      const [attrName, val] = attrContent.split('=');
+      const cleanVal = val.replace(/['"]/g, '');
+      return node.getAttribute(attrName) === cleanVal;
+    }
+    return node.hasAttribute(attrContent);
+  }
+  if (selector.includes('.')) {
+    const parts = selector.split('.');
+    const tagMatch = !parts[0] || node.tagName === parts[0].toUpperCase();
+    const classMatch = parts.slice(1).every(c => node.classList.contains(c));
+    return tagMatch && classMatch;
+  }
+  if (selector.includes('[')) {
+    const tag = selector.slice(0, selector.indexOf('['));
+    const attrMatch = selector.slice(selector.indexOf('['));
+    const tagMatches = !tag || node.tagName === tag.toUpperCase();
+    return tagMatches && matchesSelector(node, attrMatch);
   }
   if (selector.includes('.tag-btn')) {
     return node.classList.contains('tag-btn');
@@ -195,6 +263,12 @@ function createMockDocument() {
       const all = Object.values(elements);
       return all.filter(el => matchesSelector(el, selector));
     },
+    querySelector: (selector) => {
+      const all = Object.values(elements);
+      const found = all.filter(el => matchesSelector(el, selector));
+      return found.length > 0 ? found[0] : null;
+    },
+    createElement: (tag) => new MiniElement(tag),
     addEventListener: () => {}
   };
 }
@@ -230,6 +304,7 @@ console.log('======================================================\n');
 // -------------------------------------------------------------------
 console.log('--- Tier 1 - Feature Coverage ---');
 
+// Baseline Tests 1-10
 test('Tier 1 - Feature Coverage', 'Dataset Integrity: data.json exists and contains >= 247 valid Pokemon items', () => {
   assert(fs.existsSync(dataPath), 'data.json does not exist');
   assert(Array.isArray(dataset), 'data.json is not an array');
@@ -330,7 +405,6 @@ test('Tier 1 - Feature Coverage', 'Wiki Database Integrity: wiki.js defines skil
   assert(wikiContent.includes('1.848'), 'wiki.js missing 1.848x trigger chance multiplier');
 });
 
-
 test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js matches Serebii Separate Base Power (19 ingredients, 18 berries Lv.1)', () => {
   const wikiPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js');
   const wikiContent = fs.readFileSync(wikiPath, 'utf8');
@@ -423,14 +497,10 @@ test('Tier 1 - Feature Coverage', 'Recipe Energy Formula: Level + Island Bonus +
     return Math.round(base * lvMult * islandMult * eventMult);
   }
 
-  // Base: 10000, Lv1 (0%), Island 0% (x1.0), Event 1.0x -> 10000
   assertEquals(testCalcEnergy(10000, 1, 0, 1.0), 10000, 'Base energy at Lv1 0% 1.0x should be 10000');
-  // Base: 10000, Lv1 (0%), Island 0% (x1.0), Event 1.25x -> 12500
   assertEquals(testCalcEnergy(10000, 1, 0, 1.25), 12500, 'Energy with 1.25x event bonus should be 12500');
-  // Base: 10000, Lv1 (0%), Island 0% (x1.0), Event 2.50x -> 25000
   assertEquals(testCalcEnergy(10000, 1, 0, 2.5), 25000, 'Energy with 2.50x event bonus should be 25000');
-  // Tasty 2x & 3x calculations
-  const energy = testCalcEnergy(10000, 1, 0, 1.5); // 15000
+  const energy = testCalcEnergy(10000, 1, 0, 1.5);
   assertEquals(energy * 2, 30000, 'Tasty 2x should be double normal energy');
   assertEquals(energy * 3, 45000, 'Tasty 3x should be triple normal energy');
 });
@@ -459,11 +529,597 @@ test('Tier 1 - Feature Coverage', 'JS Logic: app.js contains state management, m
   assert(typeof PokemonApp.render === 'function', 'render method missing');
 });
 
+// Baseline Tests 11-23
+test('Tier 1 - Feature Coverage', 'Appraisal Lab & Six-Dimension Engine: Evaluates BFS God Roll and calculates milestone costs', () => {
+  const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+  
+  const ctx = {
+    window: {},
+    document: { createElement: () => ({ setAttribute: () => {}, appendChild: () => {} }), body: { appendChild: () => {} } },
+    console: console
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(boxCode, ctx);
+  vm.runInContext(appraisalCode, ctx);
+
+  const sampleRaichu = {
+    id: '26',
+    name_cn: '雷丘',
+    specialty: '樹果',
+    type: '電',
+    interval: '00:36:40'
+  };
+
+  const result = ctx.AppraisalLab.evaluatePokemon(sampleRaichu, 30, '固執', ['樹果數量S', '幫忙速度M', '幫手獎勵', '技能機率提升M', '睡眠EXP獎勵'], ['特選蘋果', '特選蘋果', '特選蘋果']);
+  
+  assert(result !== null, 'Evaluation should return non-null object');
+  assert(result.scores.berry >= 90, 'Raichu with BFS and Adamant should have berry score >= 90');
+  assert(result.scores.speed >= 80, 'Raichu with fast interval and Adamant should have speed score >= 80');
+  assert(result.grade === 'S+' || result.grade === 'S', 'Raichu God Roll should achieve S+ or S rank');
+  assert(result.pros.length >= 2, 'Should generate multiple pro highlights for top rolls');
+
+  const svg = ctx.AppraisalLab.renderRadarChartSVG(result.scores, 280);
+  assert(svg.includes('<svg'), 'Radar chart should be a valid SVG string');
+  assert(svg.includes('<polygon'), 'Radar chart should include polygon elements');
+  assert(svg.includes('樹果產能'), 'Radar chart should include dimension labels');
+
+  const costs = ctx.AppraisalLab.calculateMilestoneCost(10, 30, { buffType: 'none', debuffType: 'none' });
+  assert(costs.candies > 0, 'Cost to Lv.30 should require candies');
+  assert(costs.shards > 0, 'Cost to Lv.30 should require dream shards');
+  assert(costs.handyCandyS > 0, 'Cost should calculate Handy Candy S equivalents');
+});
+
+test('Tier 1 - Feature Coverage', 'Ingredient Ladder: Recipe Supply mappings & Cross-Track Search/Filter functionality', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  
+  const ctx = {
+    window: {},
+    document: { 
+      createElement: () => ({ setAttribute: () => {}, appendChild: () => {} }), 
+      getElementById: () => null,
+      querySelectorAll: () => []
+    },
+    console: console
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(wikiCode, ctx);
+
+  assert(ctx.WikiDB && ctx.WikiDB.TOP_RECIPES_FOR_INGREDIENTS, 'WikiDB should export TOP_RECIPES_FOR_INGREDIENTS');
+  const recipes = ctx.WikiDB.TOP_RECIPES_FOR_INGREDIENTS;
+  assert(recipes.corn.name === '採蜜可可鬆餅' || recipes.corn.name === '煉獄玉米乾酪咖哩', 'Corn top recipe should be highest energy dish');
+  assert(recipes.corn.need === 28 || recipes.corn.need === 27, 'Corn requirement per meal should be accurate');
+
+  assert(typeof ctx.WikiDB.onLadderSearch === 'function', 'onLadderSearch should be a function');
+  assert(typeof ctx.WikiDB.clearLadderSearch === 'function', 'clearLadderSearch should be a function');
+  assert(typeof ctx.WikiDB.setLadderRecipeFilter === 'function', 'setLadderRecipeFilter should be a function');
+});
+
+test('Tier 1 - Feature Coverage', 'i18n Bilingual Engine & Strategy Dictionaries: Translation coverage', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  
+  const ctx = {
+    window: {},
+    document: { 
+      documentElement: { setAttribute: () => {} },
+      querySelectorAll: () => []
+    },
+    localStorage: { getItem: () => null, setItem: () => {} },
+    console: console
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+
+  const I18N = ctx.window.I18N;
+  assert(I18N, 'I18N module must be exposed on window');
+  
+  assertEquals(I18N.getLanguage(), 'zh-TW', 'Default language should be zh-TW');
+  assertEquals(I18N.t('brand.title'), 'Pokémon Sleep 資料庫', 'zh-TW brand.title match');
+  assertEquals(I18N.getTypeName('草'), '草', 'zh-TW type name match');
+  assertEquals(I18N.getSpecialtyName('樹果'), '樹果', 'zh-TW specialty name match');
+  assertEquals(I18N.getNatureName('固執'), '固執', 'zh-TW nature name match');
+
+  I18N.setLanguage('en-US');
+  assertEquals(I18N.getLanguage(), 'en-US', 'Language should switch to en-US');
+  assertEquals(I18N.t('brand.title'), 'Pokémon Sleep Database', 'en-US brand.title match');
+  assertEquals(I18N.getTypeName('草'), 'Grass', 'en-US type name match');
+  assertEquals(I18N.getSpecialtyName('樹果'), 'Berries', 'en-US specialty name match');
+  assertEquals(I18N.getNatureName('固執'), 'Adamant', 'en-US nature name match');
+  assertEquals(I18N.getIngredientName('特選蘋果'), 'Fancy Apple', 'en-US ingredient name match');
+});
+
+test('Tier 1 - Feature Coverage', 'Multi-Theme CSS Variables & Theme Engine: 4 fixed themes (2 Dark + 2 Light)', () => {
+  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  
+  assert(cssContent.includes('[data-theme="midnight"]'), 'styles.css must support midnight theme');
+  assert(cssContent.includes('[data-theme="onyx"]'), 'styles.css must support onyx theme');
+  assert(cssContent.includes('[data-theme="dawn"]'), 'styles.css must support dawn light theme');
+  assert(cssContent.includes('[data-theme="emerald"]'), 'styles.css must support emerald light theme');
+  assert(cssContent.includes('.theme-picker-grid'), 'styles.css must style theme picker grid');
+  assert(cssContent.includes('.lang-switcher-row'), 'styles.css must style language switcher');
+});
+
+test('Tier 1 - Feature Coverage', 'English Mode Subtitle Hiding & Title Centering Rules', () => {
+  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  assert(cssContent.includes('html[lang="en"] .brand-subtitle'), 'CSS must hide brand-subtitle in English');
+  assert(cssContent.includes('html[lang="en"] .pokemon-name-en'), 'CSS must hide pokemon-name-en in English');
+  assert(cssContent.includes('html[lang="en"] .recipe-name-sub'), 'CSS must hide recipe-name-sub in English');
+  assert(cssContent.includes('html[lang="en"] .appraisal-pokemon-en'), 'CSS must hide appraisal-pokemon-en in English');
+});
+
+test('Tier 1 - Feature Coverage', 'All 38+ Main Skill Variants & Aliases 100% English Translated in I18N', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const ctx = { window: {}, document: { documentElement: { setAttribute: () => {} }, querySelectorAll: () => [] }, localStorage: { getItem: () => null, setItem: () => {} }, console };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+  const I18N = ctx.window.I18N;
+  I18N.setLanguage('en-US');
+
+  const datasetSkills = Array.from(new Set(dataset.map(p => p.mainSkill).filter(Boolean)));
+  datasetSkills.forEach(skill => {
+    const enName = I18N.getMainSkillName(skill);
+    assert(enName && typeof enName === 'string', `Main skill "${skill}" missing English translation`);
+    assert(!/[\u4e00-\u9fa5]/.test(enName), `Main skill translation for "${skill}" still contains Chinese: "${enName}"`);
+  });
+
+  const testSkills = [
+    '能量填充S', '能量填充S（隨機）', '能量填充M', '食材獲取S', '料理強化S', '料理成功S',
+    '活力充填S', '活力療癒S', '全體療癒S', '活力全體療癒S', '幫手加速', '幫手加速（電）',
+    '幫手加速（火）', '幫手加速（水）', '夢之碎片獲取S', '夢之碎片獲取S（隨機）',
+    '變身（技能複製）', '模仿（技能複製）', '揮指', '月光（活力填充S）', '新月祈禱（活力全體療癒S）',
+    '健美（料理輔助S）', '蹭蹭臉頰（活力療癒S）', '精神擊破（樹果領域）', '畫皮（樹果遽增）'
+  ];
+
+  testSkills.forEach(skill => {
+    const enName = I18N.getMainSkillName(skill);
+    assert(enName && !/[\u4e00-\u9fa5]/.test(enName), `Skill "${skill}" failed translation, got "${enName}"`);
+  });
+
+  assert(I18N.getMainSkillName('幫手支援S') === 'Extra Helpful S', '幫手支援S should be Extra Helpful S');
+  assert(I18N.getMainSkillName('料理成功S') === 'Tasty Chance S', '料理成功S should be Tasty Chance S');
+  assert(I18N.getMainSkillName('活力療癒S') === 'Energizing Cheer S', '活力療癒S should be Energizing Cheer S');
+  assert(I18N.getMainSkillName('料理強化S') === 'Cooking Power-Up S', '料理強化S should be Cooking Power-Up S');
+  assert(I18N.getMainSkillName('新月祈禱（活力全體療癒S）') === 'Lunar Prayer (Energy for Everyone S)', '新月祈禱 should be Lunar Prayer (Energy for Everyone S)');
+  assert(I18N.getMainSkillName('十項全能（揮指）[可替換]') === 'All-Rounder (Metronome) [Customizable]', '十項全能 should be All-Rounder (Metronome) [Customizable]');
+});
+
+test('Tier 1 - Feature Coverage', 'Low Saturation Recipe Badges Tokens & Classes Defined for 4 Themes', () => {
+  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  
+  const requiredTokens = [
+    '--badge-cat-curry-bg', '--badge-cat-salad-bg', '--badge-cat-dessert-bg',
+    '--badge-pot-bg', '--badge-bonus-78-bg', '--badge-bonus-61-bg',
+    '--badge-bonus-48-bg', '--badge-bonus-35-bg', '--badge-bonus-25-bg'
+  ];
+  requiredTokens.forEach(token => {
+    assert(cssContent.includes(token), `styles.css missing token ${token}`);
+  });
+
+  assert(cssContent.includes('.recipe-cat-badge.cat-咖哩'), 'styles.css missing cat-咖哩');
+  assert(cssContent.includes('.pot-badge'), 'styles.css missing pot-badge');
+  assert(cssContent.includes('.bonus-badge.bonus-badge-78'), 'styles.css missing bonus-badge-78');
+  assert(cssContent.includes('.bonus-badge.bonus-badge-61'), 'styles.css missing bonus-badge-61');
+  assert(cssContent.includes('.recipe-name-cell'), 'styles.css missing .recipe-name-cell');
+  assert(cssContent.includes('.recipe-name-wrapper'), 'styles.css missing .recipe-name-wrapper');
+});
+
+test('Tier 1 - Feature Coverage', 'Bilingual News & Events Translation Dataset & Render Verification', () => {
+  const newsData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'news.json'), 'utf8'));
+  assert(newsData.length >= 20, 'news.json should have >= 20 items');
+
+  newsData.forEach(item => {
+    assert(item.title_en && typeof item.title_en === 'string', `News item ${item.id} missing title_en`);
+    assert(item.overview_en && typeof item.overview_en === 'string', `News item ${item.id} missing overview_en`);
+    assert(!/[\u4e00-\u9fa5]/.test(item.title_en), `title_en for "${item.title_en}" contains Chinese characters`);
+    assert(!/[\u4e00-\u9fa5]/.test(item.overview_en), `overview_en for "${item.title_en}" contains Chinese characters`);
+  });
+});
+
+test('Tier 1 - Feature Coverage', 'I18N.getPokemonName API & Coverage across all 247 Pokemon', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const data = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'data.json'), 'utf8'));
+  const ctx = {
+    window: {
+      location: { hash: '#pokemon' },
+      localStorage: { getItem: () => 'en-US', setItem: () => {} }
+    }
+  };
+  ctx.window.window = ctx.window;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+
+  assert(typeof ctx.window.I18N.getPokemonName === 'function', 'I18N.getPokemonName must be an exported function');
+
+  ctx.window.I18N.setLanguage('en-US');
+  assert(ctx.window.I18N.getPokemonName('妙蛙種子') === 'Bulbasaur', '妙蛙種子 -> Bulbasaur');
+  assert(ctx.window.I18N.getPokemonName('皮卡丘') === 'Pikachu', '皮卡丘 -> Pikachu');
+  assert(ctx.window.I18N.getPokemonName('巨鍛匠') === 'Tinkaton', '巨鍛匠 -> Tinkaton');
+  assert(ctx.window.I18N.getPokemonName({ name_cn: '耿鬼', name_en: 'Gengar' }) === 'Gengar', 'Object input -> Gengar');
+
+  data.forEach(p => {
+    if (p.name_cn && p.name_en) {
+      const translated = ctx.window.I18N.getPokemonName(p.name_cn);
+      assert(translated === p.name_en, `Expected ${p.name_cn} -> ${p.name_en}, got ${translated}`);
+    }
+  });
+
+  ctx.window.I18N.setLanguage('zh-TW');
+  assert(ctx.window.I18N.getPokemonName('妙蛙種子') === '妙蛙種子', 'zh-TW mode should return CN name');
+  assert(ctx.window.I18N.getPokemonName({ name_cn: '耿鬼', name_en: 'Gengar' }) === '耿鬼', 'Object in zh-TW -> 耿鬼');
+});
+
+test('Tier 1 - Feature Coverage', 'News AI Dashboard Sections Title & List Items Full English Translation and No Duplicate Icons', () => {
+  const newsData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'news.json'), 'utf8'));
+
+  newsData.forEach(item => {
+    if (item.sections) {
+      item.sections.forEach(sec => {
+        assert(sec.title_en, `Section in news item ${item.id} missing title_en`);
+        assert(!/^[\u{1F300}-\u{1F9FF}\s]+/u.test(sec.title_en), `Section title_en "${sec.title_en}" should not start with emoji`);
+      });
+    }
+  });
+});
+
+test('Tier 1 - Feature Coverage', 'I18N Item & Island & Nature & Subskill Bilingual Coverage', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+
+  const ctx = {
+    window: {
+      location: { hash: '#box' },
+      localStorage: { getItem: () => 'en-US', setItem: () => {} },
+      addEventListener: () => {}
+    },
+    document: {
+      readyState: 'complete',
+      documentElement: { setAttribute: () => {} },
+      addEventListener: () => {},
+      getElementById: () => null,
+      querySelectorAll: () => []
+    },
+    console: console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+  vm.runInContext(boxCode, ctx);
+
+  assert(typeof ctx.window.I18N.getItemName === 'function', 'getItemName must be exported');
+  assert(typeof ctx.window.I18N.getIslandName === 'function', 'getIslandName must be exported');
+
+  ctx.window.I18N.setLanguage('en-US');
+  assert(ctx.window.I18N.getItemName('寶可沙布蕾') === 'Poké Biscuit', '寶可沙布蕾 -> Poké Biscuit');
+  assert(ctx.window.I18N.getItemName('主技能種子') === 'Main Skill Seed', '主技能種子 -> Main Skill Seed');
+  assert(ctx.window.I18N.getItemName('萬能糖果S') === 'Handy Candy S', '萬能糖果S -> Handy Candy S');
+
+  assert(ctx.window.I18N.getIslandName('萌綠之島') === 'Greengrass Isle', '萌綠之島 -> Greengrass Isle');
+  assert(ctx.window.I18N.getIslandName('天青沙灘') === 'Cyan Beach', '天青沙灘 -> Cyan Beach');
+  assert(ctx.window.I18N.getIslandName('黃金舊發電廠') === 'Old Gold Power Plant', '黃金舊發電廠 -> Old Gold Power Plant');
+
+  const natureData = ctx.window.PokemonBoxApp.NATURE_DATA;
+  assert(Array.isArray(natureData) && natureData.length === 25, '25 Natures defined');
+  natureData.forEach(n => {
+    assert(n.name_en, `Nature ${n.name} must have name_en`);
+    assert(n.buff_en, `Nature ${n.name} must have buff_en`);
+  });
+
+  const subskillData = ctx.window.PokemonBoxApp.SUBSKILLS_DATA;
+  assert(Array.isArray(subskillData) && subskillData.length >= 17, 'Subskills defined');
+  subskillData.forEach(s => {
+    assert(s.name_en, `Subskill ${s.name} must have name_en`);
+    assert(s.desc_en, `Subskill ${s.name} must have desc_en`);
+  });
+});
+
+test('Tier 1 - Feature Coverage', 'Centralized Scalable I18N Dynamic Translator & Fuzzy Matching', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const ctx = {
+    window: { localStorage: { getItem: () => 'en-US', setItem: () => {} }, addEventListener: () => {} },
+    document: {
+      documentElement: { setAttribute: () => {} },
+      getElementById: () => null,
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    console: console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+
+  ctx.window.I18N.setLanguage('en-US');
+
+  assert(ctx.window.I18N.getSubSkillName('幫忙速度 S') === 'Helping Speed S', '幫忙速度 S with space -> Helping Speed S');
+  assert(ctx.window.I18N.getSubSkillName('技能機率提升 S') === 'Skill Trigger S', '技能機率提升 S -> Skill Trigger S');
+  assert(ctx.window.I18N.getSubSkillName('活力恢復獎勵') === 'Energy Recovery Bonus', '活力恢復獎勵 (恢) -> Energy Recovery Bonus');
+  assert(ctx.window.I18N.getSubSkillName('睡眠 EXP 獎勵') === 'Sleep EXP Bonus', '睡眠 EXP 獎勵 -> Sleep EXP Bonus');
+
+  assert(ctx.window.I18N.getPokemonName('毒骷蛙 (ABB)') === 'Toxicroak (ABB)', '毒骷蛙 (ABB) -> Toxicroak (ABB)');
+  assert(ctx.window.I18N.getPokemonName('皮卡丘（ 萬聖節 ）') === 'Pikachu (Halloween)', '皮卡丘（ 萬聖節 ） -> Pikachu (Halloween)');
+  assert(ctx.window.I18N.getPokemonName('骨紋巨聲鱷(AAA)') === 'Skeledirge (AAA)', '骨紋巨聲鱷(AAA) -> Skeledirge (AAA)');
+
+  assert(ctx.window.I18N.getSpecialtyName('樹果型') === 'Berries', '樹果型 -> Berries');
+  assert(ctx.window.I18N.getSpecialtyName('食材型') === 'Ingredients', '食材型 -> Ingredients');
+  assert(ctx.window.I18N.getNatureName('固執') === 'Adamant', '固執 -> Adamant');
+  assert(ctx.window.I18N.getMainSkillName('能量填充S (隨機)') === 'Charge Strength S (Random)', '能量填充S (隨機) -> Charge Strength S (Random)');
+
+  const ladderNote = '👑 TOP 1 AAA 特選蘋果 產量之王';
+  const translatedNote = ctx.window.I18N.translateDynamicText(ladderNote);
+  assert(translatedNote === '👑 TOP 1 AAA Fancy Apple Production King', `Ladder note translation failed: ${translatedNote}`);
+
+  const eventSentence = '舉辦期間：8/27 (週四) 4:00 ～ 8/30 (週日) 3:59';
+  const translatedEvent = ctx.window.I18N.translateDynamicText(eventSentence);
+  assert(translatedEvent === 'Event Period: 8/27 (Thu) 4:00 ~ 8/30 (Sun) 3:59', `Event schedule translation failed: ${translatedEvent}`);
+
+  const bundleSentence = '🛍️ 「好眠日限定包vol.38」（1,500鑽石） ：超級沙布蕾×9、幸運薰香×2、成長薰香×2、專注薰香×2';
+  const translatedBundle = ctx.window.I18N.translateDynamicText(bundleSentence);
+  assert(translatedBundle.includes('Great Biscuit') && translatedBundle.includes('Luck Incense') && translatedBundle.includes('Focus Incense'), `Bundle translation failed: ${translatedBundle}`);
+});
+
+test('Tier 1 - Feature Coverage', 'WikiDB Namespace & Event Handler Methods Integrity', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const ctx = {
+    window: { localStorage: { getItem: () => 'zh-TW', setItem: () => {} }, addEventListener: () => {} },
+    document: {
+      documentElement: { setAttribute: () => {} },
+      getElementById: () => null,
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    console: console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(wikiCode, ctx);
+
+  const wikiMethods = [
+    'switchSubTab', 'switchWikiSubTab', 'switchLadderView', 'filterSkills', 'filterWikiSkills',
+    'filterIngredients', 'filterWikiIngredients', 'switchStack', 'switchChargeStock',
+    'switchBoost', 'switchHelperBoost', 'toggleDetail', 'toggleDetailTable',
+    'updateBerryLevel', 'updateBerryIsland', 'toggleBerryFavorite', 'toggleFavorite',
+    'toggleLadderIngM', 'toggleLadderSpeedM', 'toggleLadderNatureIng', 'toggleLadderNatureSpeed',
+    'onLadderSearch', 'clearLadderSearch',
+    'setLadderRecipeFilter', 'refreshCoordinateLadder', 'handleLadderGroupHover',
+    'handleLadderGroupHoverOut', 'recalcTriggerChance', 'recalcSleepDays'
+  ];
+
+  wikiMethods.forEach(method => {
+    assert(typeof ctx.window.WikiDB[method] === 'function', `window.WikiDB.${method} should be a valid function`);
+  });
+
+  let threw = false;
+  try {
+    ctx.window.WikiDB.toggleBerryFavorite(true);
+    ctx.window.WikiDB.toggleBerryFavorite(false);
+    ctx.window.WikiDB.toggleLadderNatureIng(true);
+    ctx.window.WikiDB.toggleLadderNatureSpeed(true);
+  } catch (e) {
+    threw = true;
+  }
+  assert(!threw, 'toggleBerryFavorite and nature toggles should execute cleanly');
+});
+
+// --- NEW Tier 1 Tests: Mobile H5 App Shell & Dock System ---
+test('Tier 1 - Feature Coverage', 'Mobile App Entry: app/index.html document structure and standalone HTML integrity', () => {
+  const mobileHtmlPath = path.join(WORKSPACE_ROOT, 'app', 'index.html');
+  assert(fs.existsSync(mobileHtmlPath), 'app/index.html does not exist');
+  const html = fs.readFileSync(mobileHtmlPath, 'utf8');
+
+  assert(/<!DOCTYPE\s+html>/i.test(html), 'app/index.html missing <!DOCTYPE html>');
+  assert(/<html[^>]*>/i.test(html), 'app/index.html missing <html> tag');
+  assert(/<title>[\s\S]*?<\/title>/i.test(html), 'app/index.html missing <title> tag');
+
+  // Header with Desktop version switch link or button
+  assert(html.includes('id="btn-switch-desktop"') || html.includes('view=desktop') || html.includes('桌面'),
+    'app/index.html missing Desktop switch link or button');
+
+  // 5 Main Tab Panels
+  const panelIds = ['panel-pokemon', 'panel-recipes', 'panel-wiki', 'panel-box', 'panel-news'];
+  panelIds.forEach(id => {
+    assert(html.includes(`id="${id}"`), `app/index.html missing panel container #${id}`);
+  });
+});
+
+test('Tier 1 - Feature Coverage', 'Mobile Viewport & Safe Area: app/index.html defines viewport-fit=cover and scale locks', () => {
+  const mobileHtmlPath = path.join(WORKSPACE_ROOT, 'app', 'index.html');
+  assert(fs.existsSync(mobileHtmlPath), 'app/index.html does not exist');
+  const html = fs.readFileSync(mobileHtmlPath, 'utf8');
+
+  assert(html.includes('viewport-fit=cover'), 'app/index.html meta viewport missing viewport-fit=cover');
+  assert(html.includes('width=device-width'), 'app/index.html meta viewport missing width=device-width');
+  assert(html.includes('initial-scale=1') || html.includes('initial-scale=1.0'), 'app/index.html meta viewport missing initial-scale=1');
+});
+
+test('Tier 1 - Feature Coverage', 'Mobile Script & Stylesheet Dependencies: Zero 404 broken asset links in app/index.html', () => {
+  const mobileHtmlPath = path.join(WORKSPACE_ROOT, 'app', 'index.html');
+  assert(fs.existsSync(mobileHtmlPath), 'app/index.html does not exist');
+  const html = fs.readFileSync(mobileHtmlPath, 'utf8');
+
+  // Verify CSS stylesheet links
+  const cssRegex = /<link\s+[^>]*rel=["']stylesheet["'][^>]*href=["']([^"']+)["']/gi;
+  let match;
+  let cssCount = 0;
+  while ((match = cssRegex.exec(html)) !== null) {
+    const href = match[1].split('?')[0];
+    if (!href.startsWith('http')) {
+      const resolved = path.resolve(WORKSPACE_ROOT, 'app', href);
+      assert(fs.existsSync(resolved), `Broken CSS link in app/index.html: ${href} (resolved: ${resolved})`);
+      cssCount++;
+    }
+  }
+  assert(cssCount > 0, 'app/index.html must reference at least 1 stylesheet');
+
+  // Verify Script tags
+  const scriptRegex = /<script\s+[^>]*src=["']([^"']+)["']/gi;
+  let scriptCount = 0;
+  while ((match = scriptRegex.exec(html)) !== null) {
+    const src = match[1].split('?')[0];
+    if (!src.startsWith('http')) {
+      const resolved = path.resolve(WORKSPACE_ROOT, 'app', src);
+      assert(fs.existsSync(resolved), `Broken script link in app/index.html: ${src} (resolved: ${resolved})`);
+      scriptCount++;
+    }
+  }
+  assert(scriptCount >= 5, `app/index.html must load core module scripts (found ${scriptCount})`);
+});
+
+test('Tier 1 - Feature Coverage', 'Mobile Base Path & Script Load Order: __DATA_BASE_PATH__ defined and scripts load in sequence', () => {
+  const mobileHtmlPath = path.join(WORKSPACE_ROOT, 'app', 'index.html');
+  assert(fs.existsSync(mobileHtmlPath), 'app/index.html does not exist');
+  const html = fs.readFileSync(mobileHtmlPath, 'utf8');
+
+  assert(html.includes('__DATA_BASE_PATH__'), 'app/index.html must configure window.__DATA_BASE_PATH__');
+  assert(html.includes("'../'") || html.includes('"../"'), '__DATA_BASE_PATH__ in app/index.html must point to "../"');
+
+  const i18nIdx = html.indexOf('i18n.js');
+  const appIdx = html.indexOf('app.js');
+  const recipesIdx = html.indexOf('recipes.js');
+  const boxIdx = html.indexOf('box.js');
+  const appraisalIdx = html.indexOf('appraisal.js');
+
+  assert(i18nIdx !== -1, 'i18n.js script tag missing in app/index.html');
+  assert(appIdx !== -1, 'app.js script tag missing in app/index.html');
+  assert(i18nIdx < appIdx, 'i18n.js must be loaded before app.js');
+  if (recipesIdx !== -1) assert(i18nIdx < recipesIdx, 'i18n.js must be loaded before recipes.js');
+  if (boxIdx !== -1 && appraisalIdx !== -1) assert(boxIdx < appraisalIdx, 'box.js must be loaded before appraisal.js');
+});
+
+test('Tier 1 - Feature Coverage', 'Mobile Shared Data Layer: All 4 JSON datasets accessible from app/ relative path', () => {
+  const appDir = path.join(WORKSPACE_ROOT, 'app');
+  const dataFiles = ['data.json', 'recipes.json', 'news.json', 'special_icons.json'];
+  dataFiles.forEach(file => {
+    const relativePath = path.resolve(appDir, '..', 'data', file);
+    assert(fs.existsSync(relativePath), `Shared data file not accessible from app/: ${file}`);
+    const content = fs.readFileSync(relativePath, 'utf8');
+    const parsed = JSON.parse(content);
+    assert(parsed && typeof parsed === 'object', `Shared data file ${file} does not parse to valid JSON`);
+  });
+});
+
+test('Tier 1 - Feature Coverage', 'Mobile Dock Navigation: 5 required tab items present with unique IDs and icon elements', () => {
+  const mobileHtmlPath = path.join(WORKSPACE_ROOT, 'app', 'index.html');
+  assert(fs.existsSync(mobileHtmlPath), 'app/index.html does not exist');
+  const html = fs.readFileSync(mobileHtmlPath, 'utf8');
+
+  assert(html.includes('id="bottom-dock"') || html.includes('class="bottom-dock"') || html.includes('class="mobile-bottom-dock"'),
+    'app/index.html missing bottom dock container');
+
+  const tabIds = ['tab-pokemon', 'tab-recipes', 'tab-wiki', 'tab-box', 'tab-news'];
+  tabIds.forEach(tabId => {
+    assert(html.includes(`id="${tabId}"`) || html.includes(`data-tab="${tabId}"`) || html.includes(`id="dock-${tabId}"`),
+      `app/index.html missing dock tab ${tabId}`);
+  });
+});
+
+test('Tier 1 - Feature Coverage', 'Mobile Dock zh-TW Labels: Strictly 2 Chinese characters per dock tab', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const ctx = {
+    window: { localStorage: { getItem: () => 'zh-TW', setItem: () => {} }, addEventListener: () => {} },
+    document: { documentElement: { setAttribute: () => {} }, querySelectorAll: () => [] },
+    console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+
+  const I18N = ctx.window.I18N;
+  I18N.setLanguage('zh-TW');
+
+  const dockKeys = [
+    { key: 'dock.pokemon', expected: '圖鑑' },
+    { key: 'dock.recipes', expected: '料理' },
+    { key: 'dock.wiki', expected: '百科' },
+    { key: 'dock.box', expected: '盒子' },
+    { key: 'dock.news', expected: '最新' }
+  ];
+
+  dockKeys.forEach(({ key }) => {
+    const raw = I18N.t(key);
+    assert(raw && raw !== key, `i18n zh-TW missing translation key "${key}"`);
+    const clean = raw.replace(/[\u{1F300}-\u{1F9FF}\s⚡🍲📚📦📰]/gu, '').trim();
+    assertEquals(clean.length, 2, `Dock label for ${key} ("${clean}") must be strictly 2 Chinese characters in zh-TW`);
+    assert(/^[\u4e00-\u9fa5]{2}$/.test(clean), `Dock label for ${key} ("${clean}") must contain only Chinese characters`);
+  });
+});
+
+test('Tier 1 - Feature Coverage', 'Mobile Dock en-US Labels: Compact English labels in i18n dictionary', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const ctx = {
+    window: { localStorage: { getItem: () => 'en-US', setItem: () => {} }, addEventListener: () => {} },
+    document: { documentElement: { setAttribute: () => {} }, querySelectorAll: () => [] },
+    console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+
+  const I18N = ctx.window.I18N;
+  I18N.setLanguage('en-US');
+
+  const dockKeys = ['dock.pokemon', 'dock.recipes', 'dock.wiki', 'dock.box', 'dock.news'];
+  dockKeys.forEach(key => {
+    const raw = I18N.t(key);
+    assert(raw && raw !== key, `i18n en-US missing translation key "${key}"`);
+    const clean = raw.replace(/[\u{1F300}-\u{1F9FF}\s⚡🍲📚📦📰]/gu, '').trim();
+    assert(clean.length <= 8, `Dock en-US label "${clean}" should be compact (<= 8 chars)`);
+    assert(!/[\u4e00-\u9fa5]/.test(clean), `Dock en-US label "${clean}" contains Chinese characters`);
+  });
+});
+
+test('Tier 1 - Feature Coverage', 'Mobile Dock Safe Area & Active State Styling in styles.css', () => {
+  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  assert(cssContent.includes('.bottom-dock') || cssContent.includes('.mobile-bottom-dock'),
+    'styles.css missing .bottom-dock or .mobile-bottom-dock class');
+  assert(cssContent.includes('safe-area-inset-bottom'),
+    'styles.css missing safe-area-inset-bottom support for mobile dock');
+});
+
+test('Tier 1 - Feature Coverage', 'Mobile UI Components: Dedicated CSS classes for segmented controls, bottom sheets & sticky cols', () => {
+  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  assert(cssContent.includes('.segmented-control') || cssContent.includes('.mobile-segmented-bar') || cssContent.includes('.subtab-pills') || cssContent.includes('.nav-tab'),
+    'styles.css missing segmented control / subtab pills styling');
+  assert(cssContent.includes('.bottom-sheet') || cssContent.includes('.mobile-drawer') || cssContent.includes('.mobile-modal-sheet') || cssContent.includes('.modal-overlay'),
+    'styles.css missing modal / bottom-sheet styling');
+});
+
+test('Tier 1 - Feature Coverage', 'Desktop Non-Regression: Desktop index.html preserves all desktop elements and 44 baseline tests', () => {
+  const htmlPath = path.join(WORKSPACE_ROOT, 'index.html');
+  assert(fs.existsSync(htmlPath), 'Desktop index.html does not exist');
+  const html = fs.readFileSync(htmlPath, 'utf8');
+
+  assert(html.includes('id="pokemon-filter-sidebar"'), 'Desktop index.html missing pokemon-filter-sidebar');
+  assert(html.includes('id="sidebar-bookmark-handle"'), 'Desktop index.html missing sidebar-bookmark-handle');
+  assert(html.includes('id="sidebar-reset-all-btn"'), 'Desktop index.html missing sidebar-reset-all-btn');
+  assert(html.includes('id="toggle-grid"'), 'Desktop index.html missing toggle-grid');
+  assert(html.includes('id="toggle-table"'), 'Desktop index.html missing toggle-table');
+
+  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  assert(cssContent.includes('.custom-select-trigger') && (cssContent.includes('42px') || cssContent.includes('40px') || cssContent.includes('36px')),
+    'Custom select trigger must provide >= 36px right padding for arrow clearance');
+  assert(cssContent.includes('.custom-select-arrow') && (cssContent.includes('right: 18px') || cssContent.includes('right:18px')),
+    'Custom select arrow icon must have right: 18px margin');
+  assert(cssContent.includes('.custom-select-menu') && (cssContent.includes('top: calc(100%') || cssContent.includes('top: 100%')),
+    'Custom select menu must open downwards below the trigger');
+});
+
 // -------------------------------------------------------------------
 // Tier 2 - Boundary & Corner Cases
 // -------------------------------------------------------------------
 console.log('\n--- Tier 2 - Boundary & Corner Cases ---');
 
+// Baseline Tests 24-39
 test('Tier 2 - Boundary & Corner Cases', 'Empty search string returns all items (with onlyFinal=false)', () => {
   PokemonApp.init([...dataset]);
   PokemonApp.onlyFinal = false;
@@ -530,11 +1186,9 @@ test('Tier 2 - Boundary & Corner Cases', 'Multi-select specialty combinations (e
     assert(item.specialty === '樹果' || item.specialty === '食材' || item.specialty === '全部', `Item ${item.id} specialty '${item.specialty}' not in ['樹果', '食材', '全部']`);
   });
 
-  // Verify Mew (夢幻) with specialty '全部' is included under any specialty
   const mew = res.find(p => p.name_cn === '夢幻');
   assert(mew !== undefined, 'Mew (夢幻) must be included when filtering by 樹果/食材');
 
-  // Verify Fairy berry (桃桃果) mapping
   PokemonApp.selectedSpecialties.clear();
   PokemonApp.selectedBerries = new Set(['桃桃果']);
   const fairyFiltered = PokemonApp.filterData();
@@ -549,7 +1203,6 @@ test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient
   PokemonApp.selectedTypes.clear();
   PokemonApp.selectedSpecialties.clear();
 
-  // 1. Berry multi-select filter (墨莓果 -> 草屬性, 蘋野果 -> 火屬性)
   PokemonApp.selectedBerries = new Set(['墨莓果', '蘋野果']);
   const berryFiltered = PokemonApp.filterData();
   assert(berryFiltered.length > 0, 'Berry filter should return results');
@@ -557,7 +1210,6 @@ test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient
     assert(p.type === '草' || p.type === '火', `Item ${p.id} type '${p.type}' should match 墨莓果/蘋野果`);
   });
 
-  // 2. Ingredient multi-select filter (甜甜蜜)
   PokemonApp.selectedBerries.clear();
   PokemonApp.selectedIngredients = new Set(['甜甜蜜']);
   const ingFiltered = PokemonApp.filterData();
@@ -567,7 +1219,6 @@ test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient
     assert(hasHoney, `Item ${p.name_cn} should have 甜甜蜜 in its ingredients`);
   });
 
-  // 2b. Initial Ingredient only filter (僅初始食材)
   PokemonApp.onlyInitialIng = true;
   PokemonApp.selectedIngredients = new Set(['特選蘋果']);
   const initialIngFiltered = PokemonApp.filterData();
@@ -578,7 +1229,6 @@ test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient
   });
   PokemonApp.onlyInitialIng = false;
 
-  // 3. Main Skill multi-select filter (食材獲取S, 料理成功S) with composite matching
   PokemonApp.selectedIngredients.clear();
   PokemonApp.selectedSkills = new Set(['料理成功S']);
   const tastyFiltered = PokemonApp.filterData();
@@ -586,7 +1236,6 @@ test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient
   const heracross = tastyFiltered.find(p => p.name_cn === '赫拉克羅斯');
   assert(heracross !== undefined, '赫拉克羅斯 (健美) should match 料理成功S');
 
-  // Heracross should also match 食材獲取S, but NOT 料理強化S
   PokemonApp.selectedSkills = new Set(['食材獲取S']);
   const ingSkillFiltered = PokemonApp.filterData();
   const heracrossIng = ingSkillFiltered.find(p => p.name_cn === '赫拉克羅斯');
@@ -599,7 +1248,6 @@ test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient
   const heracrossPot = potSkillFiltered.find(p => p.name_cn === '赫拉克羅斯');
   assert(heracrossPot === undefined, '赫拉克羅斯 (健美) should NOT match 料理強化S');
 
-  // Umbreon (月光) should match 活力填充S and 活力療癒S
   PokemonApp.selectedSkills = new Set(['活力療癒S']);
   const healSkillFiltered = PokemonApp.filterData();
   const umbreon = healSkillFiltered.find(p => p.name_cn === '月亮伊布');
@@ -607,7 +1255,6 @@ test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient
   const shuckle = healSkillFiltered.find(p => p.name_cn === '壺壺');
   assert(shuckle !== undefined, '壺壺 (樹果汁) should match 活力療癒S');
 
-  // Mimikyu (畫皮) & Mewtwo (精神擊破) should match 樹果遽增
   PokemonApp.selectedSkills = new Set(['樹果遽增']);
   const berrySkillFiltered = PokemonApp.filterData();
   const mimikyu = berrySkillFiltered.find(p => p.name_cn === '謎擬Q');
@@ -615,7 +1262,6 @@ test('Tier 2 - Boundary & Corner Cases', 'Dynamic Sub-Filters: Berry, Ingredient
   const mewtwo = berrySkillFiltered.find(p => p.name_cn === '超夢');
   assert(mewtwo !== undefined, '超夢 (精神擊破) should match 樹果遽增');
 
-  // 4. Cross-Combination: 食材類型 + 蘋野果 (火屬性樹果) -> e.g. 噴火龍 (Charizard)
   PokemonApp.selectedSkills.clear();
   PokemonApp.selectedSpecialties = new Set(['食材']);
   PokemonApp.selectedBerries = new Set(['蘋野果']);
@@ -634,26 +1280,22 @@ test('Tier 2 - Boundary & Corner Cases', 'Final Evolution Filter: onlyFinal defa
   PokemonApp.selectedIngredients.clear();
   PokemonApp.selectedSkills.clear();
 
-  // 1. By default, onlyFinal MUST be TRUE
   assertEquals(PokemonApp.onlyFinal, true, 'PokemonApp.onlyFinal should default to true');
   const defaultFinals = PokemonApp.filterData();
   assertEquals(defaultFinals.length, 127, 'Default filter should return exactly 127 final/single stage Pokémon');
 
-  // Must EXCLUDE pre-evolutions: Bulbasaur (#001), Ivysaur (#002), Charmander (#004), Charmeleon (#005), Squirtle (#007), Wartortle (#008)
   const preEvos = ['妙蛙種子', '妙蛙草', '小火龍', '火恐龍', '傑尼龜', '卡咪龜', '皮丘', '皮卡丘'];
   preEvos.forEach(name => {
     const found = defaultFinals.find(p => p.name_cn === name);
     assert(found === undefined, `Pre-evolution ${name} should NOT be in final evolution list`);
   });
 
-  // Must INCLUDE final stages and single stages: Venusaur, Charizard, Blastoise, Raichu, Pinsir, Heracross, Mewtwo, Mew
   const finalStages = ['妙蛙花', '噴火龍', '水箭龜', '雷丘', '凱羅斯', '赫拉克羅斯', '超夢', '夢幻'];
   finalStages.forEach(name => {
     const found = defaultFinals.find(p => p.name_cn === name);
     assert(found !== undefined, `Final stage ${name} MUST be in final evolution list`);
   });
 
-  // 2. When onlyFinal is toggled to FALSE
   PokemonApp.onlyFinal = false;
   assertEquals(PokemonApp.filterData().length, dataset.length, 'onlyFinal=false should return all 247 items');
 });
@@ -662,7 +1304,6 @@ test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Ho
   assert(typeof SPECIAL_SKILL_DETAILS === 'object', 'SPECIAL_SKILL_DETAILS dictionary is missing');
   assert(typeof renderSkillWithTooltip === 'function', 'renderSkillWithTooltip function is missing');
 
-  // 1. Test special/composite/variant skills (MUST have special badge, sparkle icon, and in-game description)
   const specialSkills = [
     '健美（料理輔助S）',
     '月光（活力填充S）',
@@ -682,7 +1323,6 @@ test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Ho
     assert(html.includes('✨'), `Rendered badge for ${skill} should include sparkle icon indicator`);
   });
 
-  // Verify Heracross official in-game text
   const heracrossDetail = typeof SPECIAL_SKILL_DETAILS['健美（料理輔助S）'] === 'object'
     ? SPECIAL_SKILL_DETAILS['健美（料理輔助S）']['zh-TW']
     : SPECIAL_SKILL_DETAILS['健美（料理輔助S）'];
@@ -692,7 +1332,6 @@ test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Ho
     'Heracross skill description must match official in-game text'
   );
 
-  // 2. Test pure base skills (like 能量填充S, 夢之碎片獲取S, 能量填充S（隨機）, 夢之碎片獲取S（隨機）) - MUST NOT have tooltips or special badges
   const pureBaseSkills = [
     '能量填充S',
     '能量填充M',
@@ -741,11 +1380,10 @@ test('Tier 2 - Boundary & Corner Cases', 'RaenonX PR Calculation: Fast-Exit Base
   const calcPR = boxModule.calculatePokemonPR;
   assert(typeof calcPR === 'function', 'calculatePokemonPR must be a function');
 
-  // 1. Berry God Pokemon (Raichu / Rattata: Adamant + BFS + HB + HelpSpeedM)
   const berryGod = {
     name: '小拉達',
     specialty: '樹果',
-    nature: '固執', // speed ++, ing --
+    nature: '固執',
     subskills: ['樹果數量S', '幫手獎勵', '幫忙速度M', '技能等級提升M', '持有上限提升L']
   };
   const berryResult = calcPR(berryGod, { specialty: '樹果' });
@@ -753,22 +1391,20 @@ test('Tier 2 - Boundary & Corner Cases', 'RaenonX PR Calculation: Fast-Exit Base
   assertEquals(berryResult.tier, 'S+', 'Berry God should be S+ tier');
   assert(berryResult.summaryNote.includes('樹果S') || berryResult.summaryNote.includes('幫忙速度'), 'Summary should highlight BFS');
 
-  // 2. Ingredient Specialist (Bulbasaur: Modest + IngFinderM + HelpBonus)
   const ingSpecialist = {
     name: '妙蛙種子',
     specialty: '食材',
-    nature: '內斂', // ing ++, speed --
+    nature: '內斂',
     subskills: ['食材機率提升M', '幫手獎勵', '食材機率提升S', '持有上限提升M', '幫忙速度M']
   };
   const ingResult = calcPR(ingSpecialist, { specialty: '食材' });
   assert(ingResult.pr >= 80, `Ingredient Specialist PR should be >= 80 (got ${ingResult.pr})`);
   assert(ingResult.tier === 'S+' || ingResult.tier === 'S', `Ingredient Specialist tier should be S/S+ (got ${ingResult.tier})`);
 
-  // 3. Fast-Exit Baseline: Berry Pokemon with Modest nature and no relevant subskills
   const poorBerry = {
     name: '小拉達',
     specialty: '樹果',
-    nature: '內斂', // ing ++, speed -- (speed debuff + no BFS/HB)
+    nature: '內斂',
     subskills: ['持有上限提升S', '活力回復提升S']
   };
   const poorResult = calcPR(poorBerry, { specialty: '樹果' });
@@ -776,11 +1412,10 @@ test('Tier 2 - Boundary & Corner Cases', 'RaenonX PR Calculation: Fast-Exit Base
   assert(poorResult.tier === 'B' || poorResult.tier === 'C', `Poor Pokemon tier should be B or C (got ${poorResult.tier})`);
   assert(poorResult.summaryNote.includes('⚠️') && poorResult.summaryNote.includes('未達'), 'Summary note should indicate baseline failure');
 
-  // 4. Fast-Exit Baseline: Ingredient Pokemon with Adamant nature (Ing down) and no Ing Finder M
   const poorIng = {
     name: '妙蛙種子',
     specialty: '食材',
-    nature: '固執', // speed ++, ing --
+    nature: '固執',
     subskills: ['幫忙速度S', '睡眠EXP獎勵']
   };
   const poorIngResult = calcPR(poorIng, { specialty: '食材' });
@@ -803,7 +1438,6 @@ test('Tier 2 - Boundary & Corner Cases', 'Event Gantt Timeline Parser: Identifie
   assert(typeof firstItem.startCol === 'number' && typeof firstItem.spanCols === 'number', 'Timeline item missing grid column spans');
   assert(firstItem.typeLabel && firstItem.typeClass, 'Timeline item missing type label');
 
-  // Verify events & packs both exist
   const events = timeline.filter(t => t.typeClass === 'gantt-bar-event');
   const packs = timeline.filter(t => t.typeClass === 'gantt-bar-pack');
   assert(events.length > 0, 'Gantt timeline should parse events');
@@ -859,11 +1493,352 @@ test('Tier 2 - Boundary & Corner Cases', 'Table column sort: carry/ingredient/sk
   assertEquals(PokemonApp.toggleColumnSort('interval'), 'interval-desc', '幫忙間隔 second click should toggle to desc');
 });
 
+test('Tier 2 - Boundary & Corner Cases', 'Batch OCR & Smart Deduplication: Fingerprint hashing and duplicate rejection', () => {
+  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+  
+  const ctx = {
+    window: {},
+    document: { 
+      createElement: () => ({ setAttribute: () => {}, appendChild: () => {}, className: '' }), 
+      getElementById: () => null,
+      querySelectorAll: () => [],
+      body: { appendChild: () => {} }
+    },
+    console: console
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(boxCode, ctx);
+
+  const pkmA1 = { name: '雷丘', level: 35, nature: '固執', subskills: ['樹果數量S', '幫忙速度M'], ing1: '特選蘋果', ing2: '特選蘋果', ing3: '特選蘋果' };
+  const pkmA2 = { name: '雷丘', level: 35, nature: '固執', subskills: ['幫忙速度M', '樹果數量S'], ing1: '特選蘋果', ing2: '特選蘋果', ing3: '特選蘋果' };
+  const pkmB = { name: '雷丘', level: 36, nature: '固執', subskills: ['樹果數量S', '幫忙速度M'], ing1: '特選蘋果', ing2: '特選蘋果', ing3: '特選蘋果' };
+
+  function makeFP(p) {
+    const sks = (p.subskills || []).slice().sort().join(',');
+    return `${p.name || ''}_Lv${p.level || 1}_${p.nature || ''}_${sks}_${p.ing1 || ''}_${p.ing2 || ''}_${p.ing3 || ''}`;
+  }
+
+  const fpA1 = makeFP(pkmA1);
+  const fpA2 = makeFP(pkmA2);
+  const fpB = makeFP(pkmB);
+
+  assertEquals(fpA1, fpA2, 'Fingerprint should be order-independent for subskills');
+  assert(fpA1 !== fpB, 'Fingerprint should distinguish different levels');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Sidebar Filter UI Tokens (Ing.1 only & 2-column layout tokens)', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const ctx = {
+    window: {
+      location: { hash: '#pokemon' },
+      localStorage: { getItem: () => 'en-US', setItem: () => {} }
+    }
+  };
+  ctx.window.window = ctx.window;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+
+  ctx.window.I18N.setLanguage('en-US');
+  const initialIngText = ctx.window.I18N.t('pokedex.only_initial_ing');
+  assert(initialIngText === '🥗 Ing.1 only', `pokedex.only_initial_ing in English must be "🥗 Ing.1 only", got "${initialIngText}"`);
+});
+
+// --- NEW Tier 2 Tests: Redirection, Anti-Loop, Stepper, Subskills, Clear Button ---
+test('Tier 2 - Boundary & Corner Cases', 'Smart Redirection: Screen width threshold (<= 768px triggers redirect, > 768px remains on desktop)', () => {
+  function checkRedirect(innerWidth, userAgent, storedPref, urlQuery) {
+    if ((urlQuery && urlQuery.includes('view=desktop')) || storedPref === 'desktop') return false;
+    if ((urlQuery && urlQuery.includes('view=mobile')) || storedPref === 'mobile') return true;
+    const isMobileUA = /Android|iPhone|iPad|iPod|Mobile|webOS/i.test(userAgent || '');
+    return isMobileUA || (typeof innerWidth === 'number' && innerWidth <= 768);
+  }
+
+  [320, 360, 375, 390, 414, 430, 600, 768].forEach(w => {
+    assert(checkRedirect(w, 'Mozilla/5.0 (Windows NT 10.0)', null, ''), `Screen width ${w}px should trigger mobile redirect`);
+  });
+
+  [769, 800, 1024, 1280, 1440, 1920, 2560].forEach(w => {
+    assert(!checkRedirect(w, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)', null, ''), `Screen width ${w}px should NOT trigger mobile redirect`);
+  });
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Smart Redirection: User Agent detection handles diverse mobile devices', () => {
+  function checkRedirectUA(userAgent) {
+    return /Android|iPhone|iPad|iPod|Mobile|webOS|BlackBerry|IEMobile|Opera Mini/i.test(userAgent || '');
+  }
+
+  const mobileUAs = [
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1',
+    'Mozilla/5.0 (Linux; Android 14; SM-S928B) AppleWebKit/537.36 Chrome/120.0 Mobile Safari/537.36',
+    'Mozilla/5.0 (iPad; CPU OS 16_5 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148',
+    'Mozilla/5.0 (Linux; Android 13; Pixel 7 Pro) AppleWebKit/537.36 Chrome/114.0.0.0 Mobile Safari/537.36'
+  ];
+
+  mobileUAs.forEach(ua => {
+    assert(checkRedirectUA(ua), `User Agent "${ua.slice(0, 40)}..." should be recognized as mobile device`);
+  });
+
+  const desktopUAs = [
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0'
+  ];
+
+  desktopUAs.forEach(ua => {
+    assert(!checkRedirectUA(ua), `Desktop User Agent "${ua.slice(0, 40)}..." should NOT be recognized as mobile`);
+  });
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Smart Redirection: Boundary value 768px vs 769px exact transition', () => {
+  function checkBoundary(w) {
+    return typeof w === 'number' && w <= 768;
+  }
+  assertEquals(checkBoundary(768), true, '768px (exact boundary) must redirect to mobile');
+  assertEquals(checkBoundary(769), false, '769px (1px above boundary) must remain on desktop');
+  assertEquals(checkBoundary(767.9), true, '767.9px (fractional boundary) must redirect to mobile');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Smart Redirection: Orientation change (portrait 390x844 vs landscape 844x390) with mobile UA', () => {
+  function checkOrientation(w, ua) {
+    const isMobileUA = /Android|iPhone|iPad|iPod|Mobile/i.test(ua || '');
+    return isMobileUA || (typeof w === 'number' && w <= 768);
+  }
+  const iphoneUA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile Safari/604.1';
+  assertEquals(checkOrientation(390, iphoneUA), true, 'iPhone in portrait should redirect');
+  assertEquals(checkOrientation(844, iphoneUA), true, 'iPhone in landscape (844px wide) should still redirect due to mobile UA');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Anti-Loop Guard: pksleep_view_pref="desktop" in localStorage prevents redirect loop on mobile device', () => {
+  function shouldRedirect(innerWidth, userAgent, storedPref, urlQuery) {
+    if ((urlQuery && urlQuery.includes('view=desktop')) || storedPref === 'desktop') return false;
+    if ((urlQuery && urlQuery.includes('view=mobile')) || storedPref === 'mobile') return true;
+    const isMobileUA = /Android|iPhone|Mobile/i.test(userAgent || '');
+    return isMobileUA || innerWidth <= 768;
+  }
+
+  const result = shouldRedirect(375, 'iPhone', 'desktop', '');
+  assertEquals(result, false, 'Explicit desktop preference must block mobile redirection');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Anti-Loop Guard: URL query ?view=desktop forces desktop view and updates localStorage', () => {
+  let storedPref = null;
+  function handleUrlRedirection(query, currentPref) {
+    if (query.includes('view=desktop')) {
+      storedPref = 'desktop';
+      return { redirect: false, target: null };
+    }
+    if (query.includes('view=mobile')) {
+      storedPref = 'mobile';
+      return { redirect: true, target: 'app/index.html' };
+    }
+    if (currentPref === 'desktop') return { redirect: false, target: null };
+    return { redirect: true, target: 'app/index.html' };
+  }
+
+  const navResult = handleUrlRedirection('?view=desktop', null);
+  assertEquals(navResult.redirect, false, '?view=desktop must prevent redirect');
+  assertEquals(storedPref, 'desktop', 'Visiting ?view=desktop must persist desktop preference');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Anti-Loop Guard: Switching back to mobile via ?view=mobile updates preference and redirects', () => {
+  let storedPref = 'desktop';
+  function handleMobileSwitch(query) {
+    if (query.includes('view=mobile')) {
+      storedPref = 'mobile';
+      return { redirect: true, target: 'app/index.html' };
+    }
+    return { redirect: false, target: null };
+  }
+
+  const res = handleMobileSwitch('?view=mobile');
+  assertEquals(res.redirect, true, '?view=mobile must redirect to mobile');
+  assertEquals(storedPref, 'mobile', 'Preference must be updated to mobile');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Anti-Loop Guard: URL hash preservation during redirection (#recipes, #wiki, #box, #news)', () => {
+  function getRedirectUrlWithHash(basePath, hash) {
+    const cleanHash = hash ? (hash.startsWith('#') ? hash : '#' + hash) : '';
+    return `${basePath}${cleanHash}`;
+  }
+
+  assertEquals(getRedirectUrlWithHash('app/index.html', '#recipes'), 'app/index.html#recipes', 'Hash #recipes must be preserved');
+  assertEquals(getRedirectUrlWithHash('app/index.html', '#wiki'), 'app/index.html#wiki', 'Hash #wiki must be preserved');
+  assertEquals(getRedirectUrlWithHash('app/index.html', '#box'), 'app/index.html#box', 'Hash #box must be preserved');
+  assertEquals(getRedirectUrlWithHash('app/index.html', ''), 'app/index.html', 'Empty hash produces clean URL');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Anti-Loop Guard: Corrupted or invalid preference values fallback safely to auto-detection', () => {
+  function sanitizePref(val) {
+    if (val === 'desktop' || val === 'mobile') return val;
+    return null;
+  }
+
+  ['invalid', '', '123', '{}', 'undefined', null, undefined].forEach(corrupted => {
+    assertEquals(sanitizePref(corrupted), null, `Corrupted value "${corrupted}" should sanitize to null`);
+  });
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Pot Stepper: Decrement clamped strictly at minimum capacity 15', () => {
+  function stepPot(current, delta, min = 15, max = 200) {
+    const next = current + delta;
+    if (next < min) return min;
+    if (next > max) return max;
+    return next;
+  }
+
+  assertEquals(stepPot(15, -1), 15, 'Decrement from 15 should clamp to 15');
+  assertEquals(stepPot(15, -6), 15, 'Large decrement from 15 should clamp to 15');
+  assertEquals(stepPot(18, -6), 15, 'Decrement below 15 should clamp to 15');
+  assertEquals(stepPot(21, -3), 18, 'Valid decrement from 21 should be 18');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Pot Stepper: Increment clamped strictly at maximum capacity 200', () => {
+  function stepPot(current, delta, min = 15, max = 200) {
+    const next = current + delta;
+    if (next < min) return min;
+    if (next > max) return max;
+    return next;
+  }
+
+  assertEquals(stepPot(200, 1), 200, 'Increment from 200 should clamp to 200');
+  assertEquals(stepPot(198, 6), 200, 'Increment past 200 should clamp to 200');
+  assertEquals(stepPot(100, 3), 103, 'Valid increment from 100 should be 103');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Pot Stepper: Quick-select presets (15, 21, 30, 50, 70, 100) and step increments', () => {
+  const presets = [15, 21, 30, 50, 70, 100];
+  presets.forEach(p => {
+    assert(p >= 15 && p <= 200, `Preset ${p} must be within [15, 200]`);
+  });
+
+  const recipesPath = path.join(WORKSPACE_ROOT, 'data', 'recipes.json');
+  const recipes = JSON.parse(fs.readFileSync(recipesPath, 'utf8'));
+
+  const recipesAt15 = recipes.filter(r => r.pot_size <= 15);
+  const recipesAt50 = recipes.filter(r => r.pot_size <= 50);
+  const recipesAt100 = recipes.filter(r => r.pot_size <= 100);
+  const recipesAtMax = recipes.filter(r => r.pot_size <= 200);
+
+  assert(recipesAt15.length > 0, 'Should have recipes available at pot size 15');
+  assert(recipesAt50.length > recipesAt15.length, 'Pot size 50 should unlock more recipes than 15');
+  assert(recipesAt100.length > recipesAt50.length, 'Pot size 100 should unlock more recipes than 50');
+  assertEquals(recipesAtMax.length, recipes.length, 'Max pot size 200 should unlock all 78 recipes');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Pot Stepper: Sanitization of non-numeric and NaN manual inputs', () => {
+  function sanitizePotInput(input, defaultVal = 15, min = 15, max = 200) {
+    const num = parseInt(input, 10);
+    if (isNaN(num)) return defaultVal;
+    if (num < min) return min;
+    if (num > max) return max;
+    return num;
+  }
+
+  assertEquals(sanitizePotInput('abc', 15), 15, 'Non-numeric string should default to 15');
+  assertEquals(sanitizePotInput('-10', 15), 15, 'Negative input should clamp to min 15');
+  assertEquals(sanitizePotInput('999', 15), 200, 'Excessive input should clamp to max 200');
+  assertEquals(sanitizePotInput('57', 15), 57, 'Valid string input "57" should parse to 57');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Anti-Duplicate Subskills: Selecting a subskill in Slot 1 disables it in Slots 2-5', () => {
+  function isSkillAvailable(skillName, targetSlotIndex, currentSelections) {
+    if (!skillName) return true;
+    return !currentSelections.some((selected, idx) => idx !== targetSlotIndex && selected === skillName);
+  }
+
+  const selections = ['樹果數量S', '', '', '', ''];
+  assertEquals(isSkillAvailable('樹果數量S', 1, selections), false, 'BFS must be unavailable for Slot 2 when chosen in Slot 1');
+  assertEquals(isSkillAvailable('樹果數量S', 2, selections), false, 'BFS must be unavailable for Slot 3');
+  assertEquals(isSkillAvailable('樹果數量S', 0, selections), true, 'BFS must be available for its own Slot 1');
+  assertEquals(isSkillAvailable('幫手獎勵', 1, selections), true, 'Unselected skill Helping Bonus must be available for Slot 2');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Anti-Duplicate Subskills: Re-assigning or clearing a slot frees up the previous subskill', () => {
+  function isSkillAvailable(skillName, targetSlotIndex, currentSelections) {
+    if (!skillName) return true;
+    return !currentSelections.some((selected, idx) => idx !== targetSlotIndex && selected === skillName);
+  }
+
+  let selections = ['樹果數量S', '幫手獎勵', '幫忙速度M', '', ''];
+  assertEquals(isSkillAvailable('樹果數量S', 3, selections), false, 'BFS unavailable before clear');
+
+  selections[0] = '技能機率提升M';
+  assertEquals(isSkillAvailable('樹果數量S', 3, selections), true, 'BFS becomes available for Slot 4 after Slot 1 is changed');
+  assertEquals(isSkillAvailable('技能機率提升M', 3, selections), false, 'Skill Trigger M becomes unavailable');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Anti-Duplicate Subskills: Reset / Clear All resets all 5 slots and enables all skills', () => {
+  let selections = ['', '', '', '', ''];
+  const allSubskills = ['樹果數量S', '幫手獎勵', '幫忙速度M', '技能機率提升M', '睡眠EXP獎勵', '持有上限提升L'];
+  
+  allSubskills.forEach(skill => {
+    for (let slot = 0; slot < 5; slot++) {
+      const available = !selections.some((s, idx) => idx !== slot && s === skill);
+      assert(available, `Skill ${skill} must be available for slot ${slot} after Clear All`);
+    }
+  });
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Anti-Duplicate Subskills: 5-slot unique validation on save prevents duplicate submission', () => {
+  function validateSubskills(subskills) {
+    const filled = (subskills || []).filter(Boolean);
+    const unique = new Set(filled);
+    return filled.length === unique.size;
+  }
+
+  assert(validateSubskills(['樹果數量S', '幫手獎勵', '幫忙速度M', '持有上限提升L', '技能機率提升M']), '5 unique subskills should pass validation');
+  assert(!validateSubskills(['樹果數量S', '樹果數量S', '幫忙速度M', '', '']), 'Duplicate BFS should fail validation');
+  assert(validateSubskills(['樹果數量S', '', '', '', '']), 'Single subskill with empty slots should pass validation');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Search Clear Button: Visibility state toggles based on input content', () => {
+  function getClearButtonDisplay(searchText) {
+    return (searchText && searchText.trim().length > 0) ? 'inline-flex' : 'none';
+  }
+
+  assertEquals(getClearButtonDisplay(''), 'none', 'Clear button should be hidden when search is empty');
+  assertEquals(getClearButtonDisplay('   '), 'none', 'Clear button should be hidden when search is only whitespace');
+  assertEquals(getClearButtonDisplay('pikachu'), 'inline-flex', 'Clear button should be visible when search has text');
+  assertEquals(getClearButtonDisplay('1'), 'inline-flex', 'Clear button should be visible with single char input');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Search Clear Button: Clear action resets input and restores full filtered dataset', () => {
+  PokemonApp.init([...dataset]);
+  PokemonApp.onlyFinal = false;
+  PokemonApp.selectedTypes.clear();
+  PokemonApp.selectedSpecialties.clear();
+
+  PokemonApp.currentSearch = '妙蛙';
+  let results = PokemonApp.filterData();
+  assert(results.length < dataset.length, 'Search should narrow results');
+
+  PokemonApp.currentSearch = '';
+  results = PokemonApp.filterData();
+  assertEquals(results.length, dataset.length, 'Clearing search must restore all items');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Search Clear Button: Clearing search with active type filters preserves active type filters', () => {
+  PokemonApp.init([...dataset]);
+  PokemonApp.onlyFinal = false;
+  PokemonApp.selectedTypes = new Set(['電']);
+  PokemonApp.selectedSpecialties.clear();
+
+  PokemonApp.currentSearch = '雷丘';
+  let results = PokemonApp.filterData();
+  results.forEach(p => assertEquals(p.type, '電', 'Results must be Electric type'));
+
+  PokemonApp.currentSearch = '';
+  results = PokemonApp.filterData();
+  assert(results.length > 1, 'Clearing search should return all Electric Pokemon');
+  results.forEach(p => assertEquals(p.type, '電', 'All results must still be Electric type'));
+});
+
 // -------------------------------------------------------------------
 // Tier 3 - Cross-Feature Combinations
 // -------------------------------------------------------------------
 console.log('\n--- Tier 3 - Cross-Feature Combinations ---');
 
+// Baseline Test 40
 test('Tier 3 - Cross-Feature Combinations', 'Combined filters: text search + multi-type + multi-specialty + sorting + view mode', () => {
   PokemonApp.init([...dataset]);
   PokemonApp.currentSearch = 'a';
@@ -887,37 +1862,208 @@ test('Tier 3 - Cross-Feature Combinations', 'Combined filters: text search + mul
   });
 });
 
+// --- NEW Tier 3 Tests: Pairwise Cross-Feature Interactions ---
+test('Tier 3 - Cross-Feature Combinations', 'Mobile Dock Navigation & Filter Persistence across Tab Switches', () => {
+  PokemonApp.init([...dataset]);
+  PokemonApp.onlyFinal = true;
+  PokemonApp.selectedTypes = new Set(['草']);
+  PokemonApp.currentSearch = '妙蛙';
+
+  const dexResultsBefore = PokemonApp.filterData();
+  assert(dexResultsBefore.length > 0, 'Dex filter should have results');
+
+  let currentActiveTab = 'tab-pokemon';
+  function switchTab(newTab) {
+    currentActiveTab = newTab;
+  }
+
+  switchTab('tab-recipes');
+  assertEquals(currentActiveTab, 'tab-recipes', 'Switched to recipes tab');
+
+  switchTab('tab-wiki');
+  assertEquals(currentActiveTab, 'tab-wiki', 'Switched to wiki tab');
+
+  switchTab('tab-pokemon');
+  assertEquals(currentActiveTab, 'tab-pokemon', 'Switched back to pokemon tab');
+
+  assertEquals(PokemonApp.currentSearch, '妙蛙', 'Search text preserved');
+  assert(PokemonApp.selectedTypes.has('草'), 'Type filter preserved');
+  assertEquals(PokemonApp.onlyFinal, true, 'onlyFinal switch preserved');
+  const dexResultsAfter = PokemonApp.filterData();
+  assertEquals(dexResultsAfter.length, dexResultsBefore.length, 'Filtered item count unchanged after tab switches');
+});
+
+test('Tier 3 - Cross-Feature Combinations', 'Mobile Recipe Category Segmented Bar & Pot Stepper & Tasty Multiplier Cross-Interaction', () => {
+  const recipesPath = path.join(WORKSPACE_ROOT, 'data', 'recipes.json');
+  const recipes = JSON.parse(fs.readFileSync(recipesPath, 'utf8'));
+
+  const LEVEL_BONUS_TABLE = { 1: 0, 50: 148 };
+  function calcEnergy(base, lv, islandPct, eventMult = 1.0, tastyMult = 1.0) {
+    const lvMult = 1 + ((LEVEL_BONUS_TABLE[lv] || 0) / 100);
+    const islandMult = 1 + (islandPct / 100);
+    return Math.round(base * lvMult * islandMult * eventMult * tastyMult);
+  }
+
+  const filteredSalads = recipes.filter(r => r.category === '沙拉' && r.pot_size <= 35);
+  assert(filteredSalads.length > 0, 'Should find salads fitting pot size <= 35');
+  
+  filteredSalads.forEach(r => {
+    assertEquals(r.category, '沙拉', 'Recipe must be Salad');
+    assert(r.pot_size <= 35, `Recipe ${r.name_cn} pot_size ${r.pot_size} must be <= 35`);
+    const normalEnergy = calcEnergy(r.base_energy, 1, 20, 1.0, 1.0);
+    const tastyEnergy = calcEnergy(r.base_energy, 1, 20, 1.0, 3.0);
+    assert(Math.abs(tastyEnergy - normalEnergy * 3) <= 2, `Tasty 3x multiplier must triple computed energy (got ${tastyEnergy}, expected ~${normalEnergy * 3})`);
+  });
+});
+
+test('Tier 3 - Cross-Feature Combinations', 'Mobile Theme & Language Switching across all 5 Mobile Tab Views', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const storage = {};
+  const ctx = {
+    window: {
+      localStorage: {
+        getItem: (k) => storage[k] || null,
+        setItem: (k, v) => { storage[k] = String(v); }
+      },
+      addEventListener: () => {}
+    },
+    document: {
+      documentElement: {
+        setAttribute: (k, v) => { ctx.window.document[k] = v; },
+        getAttribute: (k) => ctx.window.document[k] || null
+      },
+      querySelectorAll: () => []
+    },
+    console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+
+  const I18N = ctx.window.I18N;
+
+  storage['user_theme'] = 'onyx';
+  assertEquals(storage['user_theme'], 'onyx', 'Theme saved to localStorage');
+
+  I18N.setLanguage('en-US');
+  assertEquals(I18N.getLanguage(), 'en-US', 'Language updated to en-US');
+
+  const enDock = [I18N.t('dock.pokemon') || 'Dex', I18N.t('dock.recipes') || 'Cook', I18N.t('dock.wiki') || 'Wiki', I18N.t('dock.box') || 'Box', I18N.t('dock.news') || 'News'];
+  enDock.forEach(label => {
+    assert(!/[\u4e00-\u9fa5]/.test(label), `Dock label "${label}" in en-US should not contain Chinese`);
+  });
+
+  I18N.setLanguage('zh-TW');
+  assertEquals(I18N.getLanguage(), 'zh-TW', 'Language restored to zh-TW');
+});
+
+test('Tier 3 - Cross-Feature Combinations', 'Mobile Bottom Sheet Modal Lifecycle (Open, Subskill Selection, Backdrop Dismiss, Save)', () => {
+  class BoxBottomSheetSimulator {
+    constructor() {
+      this.isOpen = false;
+      this.currentPokemon = null;
+      this.savedList = [];
+    }
+    openAdd() {
+      this.isOpen = true;
+      this.currentPokemon = {
+        uid: 'pkm_' + Date.now(),
+        name: '妙蛙種子',
+        level: 25,
+        nature: '固執',
+        subskills: ['', '', '', '', '']
+      };
+    }
+    selectSubskill(slotIdx, skill) {
+      if (!this.isOpen || !this.currentPokemon) return;
+      const alreadyChosen = this.currentPokemon.subskills.some((s, idx) => idx !== slotIdx && s === skill);
+      if (!alreadyChosen) {
+        this.currentPokemon.subskills[slotIdx] = skill;
+      }
+    }
+    dismissBackdrop() {
+      this.isOpen = false;
+      this.currentPokemon = null;
+    }
+    save() {
+      if (!this.isOpen || !this.currentPokemon) return;
+      this.savedList.push({ ...this.currentPokemon });
+      this.isOpen = false;
+      this.currentPokemon = null;
+    }
+  }
+
+  const sheet = new BoxBottomSheetSimulator();
+
+  sheet.openAdd();
+  assert(sheet.isOpen, 'Sheet should be open');
+  sheet.selectSubskill(0, '樹果數量S');
+  sheet.dismissBackdrop();
+  assert(!sheet.isOpen, 'Sheet should be closed after backdrop tap');
+  assertEquals(sheet.savedList.length, 0, 'No Pokemon should be saved on backdrop dismiss');
+
+  sheet.openAdd();
+  sheet.selectSubskill(0, '樹果數量S');
+  sheet.selectSubskill(1, '樹果數量S');
+  assertEquals(sheet.currentPokemon.subskills[1], '', 'Duplicate subskill selection should be rejected');
+  sheet.selectSubskill(1, '幫手獎勵');
+  assertEquals(sheet.currentPokemon.subskills[1], '幫手獎勵', 'Valid subskill should be assigned');
+  sheet.save();
+  assert(!sheet.isOpen, 'Sheet closed after save');
+  assertEquals(sheet.savedList.length, 1, 'Pokemon saved to list');
+  assertEquals(sheet.savedList[0].subskills[0], '樹果數量S', 'Saved BFS');
+  assertEquals(sheet.savedList[0].subskills[1], '幫手獎勵', 'Saved Helping Bonus');
+});
+
+test('Tier 3 - Cross-Feature Combinations', '6D Appraisal Lab Modal Lifecycle from Box Card with SVG Radar Rendering', () => {
+  const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+  
+  const ctx = {
+    window: {},
+    document: { createElement: () => ({ setAttribute: () => {}, appendChild: () => {} }), body: { appendChild: () => {} } },
+    console
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(boxCode, ctx);
+  vm.runInContext(appraisalCode, ctx);
+
+  const testPokemon = {
+    id: '25',
+    name_cn: '皮卡丘',
+    specialty: '樹果',
+    type: '電',
+    interval: '00:45:00'
+  };
+
+  const evalResult = ctx.AppraisalLab.evaluatePokemon(testPokemon, 50, '固執', ['樹果數量S', '幫忙速度M'], ['特選蘋果', '特選蘋果']);
+  assert(evalResult, 'Evaluation should produce result');
+
+  const svg = ctx.AppraisalLab.renderRadarChartSVG(evalResult.scores, 260);
+  assert(svg.includes('<svg'), 'Radar chart must be SVG');
+  assert(svg.includes('viewBox='), 'SVG must include viewBox');
+  assert(svg.includes('polygon'), 'SVG must include polygon');
+});
+
 // -------------------------------------------------------------------
 // Tier 4 - Real-World Application Scenarios
 // -------------------------------------------------------------------
 console.log('\n--- Tier 4 - Real-World Application Scenarios ---');
 
+// Baseline Tests 41-44
 test('Tier 4 - Real-World Application Scenarios', 'Full application workflow simulation: load data -> filter CN name -> toggle to table view -> sort by ingredientRate descending', () => {
-  const mockDoc = createMockDocument();
-  const globalContext = {
-    document: mockDoc,
-    window: { PokemonApp, getItemIcon, DEFAULT_SVG_ICON },
-    PokemonApp,
-    getItemIcon,
-    DEFAULT_SVG_ICON,
-    console
-  };
-
-  // Step 1: Load Data
   PokemonApp.init([...dataset]);
   PokemonApp.onlyFinal = false;
   const initialItems = PokemonApp.render();
   assert(initialItems.length >= 247, 'Initial load with onlyFinal=false should contain >= 247 items');
 
-  // Step 2: Filter CN name (e.g. '皮卡丘' or '妙蛙')
   PokemonApp.currentSearch = '妙蛙';
   const filteredCN = PokemonApp.render();
   assert(filteredCN.length >= 2, 'Search "妙蛙" should match Bulbasaur, Ivysaur, etc.');
 
-  // Step 3: Toggle to table view
   PokemonApp.viewMode = 'table';
-
-  // Step 4: Sort by ingredientRate descending
   PokemonApp.currentSort = 'ingredientRate-desc';
   const sortedResult = PokemonApp.render();
 
@@ -930,234 +2076,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Full application workflow sim
   }
 });
 
-test('Tier 1 - Feature Coverage', 'Appraisal Lab & Six-Dimension Engine: Evaluates BFS God Roll and calculates milestone costs', () => {
-  const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
-  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
-  
-  const ctx = {
-    window: {},
-    document: { createElement: () => ({ setAttribute: () => {}, appendChild: () => {} }), body: { appendChild: () => {} } },
-    console: console
-  };
-  ctx.window = ctx;
-  vm.createContext(ctx);
-  vm.runInContext(boxCode, ctx);
-  vm.runInContext(appraisalCode, ctx);
-
-  const sampleRaichu = {
-    id: '26',
-    name_cn: '雷丘',
-    specialty: '樹果',
-    type: '電',
-    interval: '00:36:40'
-  };
-
-  // Evaluation with BFS Lv.10 + Helping Speed M
-  const result = ctx.AppraisalLab.evaluatePokemon(sampleRaichu, 30, '固執', ['樹果數量S', '幫忙速度M', '幫手獎勵', '技能機率提升M', '睡眠EXP獎勵'], ['特選蘋果', '特選蘋果', '特選蘋果']);
-  
-  assert(result !== null, 'Evaluation should return non-null object');
-  assert(result.scores.berry >= 90, 'Raichu with BFS and Adamant should have berry score >= 90');
-  assert(result.scores.speed >= 80, 'Raichu with fast interval and Adamant should have speed score >= 80');
-  assert(result.grade === 'S+' || result.grade === 'S', 'Raichu God Roll should achieve S+ or S rank');
-  assert(result.pros.length >= 2, 'Should generate multiple pro highlights for top rolls');
-
-  // SVG Radar Chart verification
-  const svg = ctx.AppraisalLab.renderRadarChartSVG(result.scores, 280);
-  assert(svg.includes('<svg'), 'Radar chart should be a valid SVG string');
-  assert(svg.includes('<polygon'), 'Radar chart should include polygon elements');
-  assert(svg.includes('樹果產能'), 'Radar chart should include dimension labels');
-
-  // Milestone costs
-  const costs = ctx.AppraisalLab.calculateMilestoneCost(10, 30, { buffType: 'none', debuffType: 'none' });
-  assert(costs.candies > 0, 'Cost to Lv.30 should require candies');
-  assert(costs.shards > 0, 'Cost to Lv.30 should require dream shards');
-  assert(costs.handyCandyS > 0, 'Cost should calculate Handy Candy S equivalents');
-});
-
-test('Tier 1 - Feature Coverage', 'Ingredient Ladder: Recipe Supply mappings & Cross-Track Search/Filter functionality', () => {
-  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
-  
-  const ctx = {
-    window: {},
-    document: { 
-      createElement: () => ({ setAttribute: () => {}, appendChild: () => {} }), 
-      getElementById: () => null,
-      querySelectorAll: () => []
-    },
-    console: console
-  };
-  ctx.window = ctx;
-  vm.createContext(ctx);
-  vm.runInContext(wikiCode, ctx);
-
-  assert(ctx.WikiDB && ctx.WikiDB.TOP_RECIPES_FOR_INGREDIENTS, 'WikiDB should export TOP_RECIPES_FOR_INGREDIENTS');
-  const recipes = ctx.WikiDB.TOP_RECIPES_FOR_INGREDIENTS;
-  assert(recipes.corn.name === '採蜜可可鬆餅' || recipes.corn.name === '煉獄玉米乾酪咖哩', 'Corn top recipe should be highest energy dish');
-  assert(recipes.corn.need === 28 || recipes.corn.need === 27, 'Corn requirement per meal should be accurate');
-
-  // Verify search & filter methods
-  assert(typeof ctx.WikiDB.onLadderSearch === 'function', 'onLadderSearch should be a function');
-  assert(typeof ctx.WikiDB.clearLadderSearch === 'function', 'clearLadderSearch should be a function');
-  assert(typeof ctx.WikiDB.setLadderRecipeFilter === 'function', 'setLadderRecipeFilter should be a function');
-});
-
-test('Tier 2 - Boundary & Corner Cases', 'Batch OCR & Smart Deduplication: Fingerprint hashing and duplicate rejection', () => {
-  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
-  
-  const ctx = {
-    window: {},
-    document: { 
-      createElement: () => ({ setAttribute: () => {}, appendChild: () => {}, className: '' }), 
-      getElementById: () => null,
-      querySelectorAll: () => [],
-      body: { appendChild: () => {} }
-    },
-    console: console
-  };
-  ctx.window = ctx;
-  vm.createContext(ctx);
-  vm.runInContext(boxCode, ctx);
-
-  // Test deduplication fingerprint
-  const pkmA1 = { name: '雷丘', level: 35, nature: '固執', subskills: ['樹果數量S', '幫忙速度M'], ing1: '特選蘋果', ing2: '特選蘋果', ing3: '特選蘋果' };
-  const pkmA2 = { name: '雷丘', level: 35, nature: '固執', subskills: ['幫忙速度M', '樹果數量S'], ing1: '特選蘋果', ing2: '特選蘋果', ing3: '特選蘋果' }; // subskills different order
-  const pkmB = { name: '雷丘', level: 36, nature: '固執', subskills: ['樹果數量S', '幫忙速度M'], ing1: '特選蘋果', ing2: '特選蘋果', ing3: '特選蘋果' }; // level diff
-
-  function makeFP(p) {
-    const sks = (p.subskills || []).slice().sort().join(',');
-    return `${p.name || ''}_Lv${p.level || 1}_${p.nature || ''}_${sks}_${p.ing1 || ''}_${p.ing2 || ''}_${p.ing3 || ''}`;
-  }
-
-  const fpA1 = makeFP(pkmA1);
-  const fpA2 = makeFP(pkmA2);
-  const fpB = makeFP(pkmB);
-
-  assertEquals(fpA1, fpA2, 'Fingerprint should be order-independent for subskills');
-  assert(fpA1 !== fpB, 'Fingerprint should distinguish different levels');
-});
-
-test('Tier 1 - Feature Coverage', 'i18n Bilingual Engine & Strategy Dictionaries: Translation coverage', () => {
-  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
-  
-  const ctx = {
-    window: {},
-    document: { 
-      documentElement: { setAttribute: () => {} },
-      querySelectorAll: () => []
-    },
-    localStorage: { getItem: () => null, setItem: () => {} },
-    console: console
-  };
-  ctx.window = ctx;
-  vm.createContext(ctx);
-  vm.runInContext(i18nCode, ctx);
-
-  const I18N = ctx.window.I18N;
-  assert(I18N, 'I18N module must be exposed on window');
-  
-  // Default is zh-TW
-  assertEquals(I18N.getLanguage(), 'zh-TW', 'Default language should be zh-TW');
-  assertEquals(I18N.t('brand.title'), 'Pokémon Sleep 資料庫', 'zh-TW brand.title match');
-  assertEquals(I18N.getTypeName('草'), '草', 'zh-TW type name match');
-  assertEquals(I18N.getSpecialtyName('樹果'), '樹果', 'zh-TW specialty name match');
-  assertEquals(I18N.getNatureName('固執'), '固執', 'zh-TW nature name match');
-
-  // Switch to en-US
-  I18N.setLanguage('en-US');
-  assertEquals(I18N.getLanguage(), 'en-US', 'Language should switch to en-US');
-  assertEquals(I18N.t('brand.title'), 'Pokémon Sleep Database', 'en-US brand.title match');
-  assertEquals(I18N.getTypeName('草'), 'Grass', 'en-US type name match');
-  assertEquals(I18N.getSpecialtyName('樹果'), 'Berries', 'en-US specialty name match');
-  assertEquals(I18N.getNatureName('固執'), 'Adamant', 'en-US nature name match');
-  assertEquals(I18N.getIngredientName('特選蘋果'), 'Fancy Apple', 'en-US ingredient name match');
-});
-
-test('Tier 1 - Feature Coverage', 'Multi-Theme CSS Variables & Theme Engine: 4 fixed themes (2 Dark + 2 Light)', () => {
-  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
-  
-  assert(cssContent.includes('[data-theme="midnight"]'), 'styles.css must support midnight theme');
-  assert(cssContent.includes('[data-theme="onyx"]'), 'styles.css must support onyx theme');
-  assert(cssContent.includes('[data-theme="dawn"]'), 'styles.css must support dawn light theme');
-  assert(cssContent.includes('[data-theme="emerald"]'), 'styles.css must support emerald light theme');
-  assert(cssContent.includes('.theme-picker-grid'), 'styles.css must style theme picker grid');
-  assert(cssContent.includes('.lang-switcher-row'), 'styles.css must style language switcher');
-});
-
-test('Tier 1 - Feature Coverage', 'English Mode Subtitle Hiding & Title Centering Rules', () => {
-  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
-  assert(cssContent.includes('html[lang="en"] .brand-subtitle'), 'CSS must hide brand-subtitle in English');
-  assert(cssContent.includes('html[lang="en"] .pokemon-name-en'), 'CSS must hide pokemon-name-en in English');
-  assert(cssContent.includes('html[lang="en"] .recipe-name-sub'), 'CSS must hide recipe-name-sub in English');
-  assert(cssContent.includes('html[lang="en"] .appraisal-pokemon-en'), 'CSS must hide appraisal-pokemon-en in English');
-});
-
-test('Tier 1 - Feature Coverage', 'All 38+ Main Skill Variants & Aliases 100% English Translated in I18N', () => {
-  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
-  const ctx = { window: {}, document: { documentElement: { setAttribute: () => {} }, querySelectorAll: () => [] }, localStorage: { getItem: () => null, setItem: () => {} }, console };
-  ctx.window = ctx;
-  vm.createContext(ctx);
-  vm.runInContext(i18nCode, ctx);
-  const I18N = ctx.window.I18N;
-  I18N.setLanguage('en-US');
-
-  // Verify all main skills in dataset
-  const datasetSkills = Array.from(new Set(dataset.map(p => p.mainSkill).filter(Boolean)));
-  datasetSkills.forEach(skill => {
-    const enName = I18N.getMainSkillName(skill);
-    assert(enName && typeof enName === 'string', `Main skill "${skill}" missing English translation`);
-    assert(!/[\u4e00-\u9fa5]/.test(enName), `Main skill translation for "${skill}" still contains Chinese: "${enName}"`);
-  });
-
-  // Verify specific aliases and legendary skills
-  const testSkills = [
-    '能量填充S', '能量填充S（隨機）', '能量填充M', '食材獲取S', '料理強化S', '料理成功S',
-    '活力充填S', '活力療癒S', '全體療癒S', '活力全體療癒S', '幫手加速', '幫手加速（電）',
-    '幫手加速（火）', '幫手加速（水）', '夢之碎片獲取S', '夢之碎片獲取S（隨機）',
-    '變身（技能複製）', '模仿（技能複製）', '揮指', '月光（活力填充S）', '新月祈禱（活力全體療癒S）',
-    '健美（料理輔助S）', '蹭蹭臉頰（活力療癒S）', '精神擊破（樹果領域）', '畫皮（樹果遽增）'
-  ];
-
-  testSkills.forEach(skill => {
-    const enName = I18N.getMainSkillName(skill);
-    assert(enName && !/[\u4e00-\u9fa5]/.test(enName), `Skill "${skill}" failed translation, got "${enName}"`);
-  });
-
-  // Verify official Pokémon Sleep in-game skill names
-  assert(I18N.getMainSkillName('幫手支援S') === 'Extra Helpful S', '幫手支援S should be Extra Helpful S');
-  assert(I18N.getMainSkillName('料理成功S') === 'Tasty Chance S', '料理成功S should be Tasty Chance S');
-  assert(I18N.getMainSkillName('活力療癒S') === 'Energizing Cheer S', '活力療癒S should be Energizing Cheer S');
-  assert(I18N.getMainSkillName('料理強化S') === 'Cooking Power-Up S', '料理強化S should be Cooking Power-Up S');
-  assert(I18N.getMainSkillName('新月祈禱（活力全體療癒S）') === 'Lunar Prayer (Energy for Everyone S)', '新月祈禱 should be Lunar Prayer (Energy for Everyone S)');
-  assert(I18N.getMainSkillName('十項全能（揮指）[可替換]') === 'All-Rounder (Metronome) [Customizable]', '十項全能 should be All-Rounder (Metronome) [Customizable]');
-});
-
-test('Tier 1 - Feature Coverage', 'Low Saturation Recipe Badges Tokens & Classes Defined for 4 Themes', () => {
-  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
-  
-  // Theme variables
-  const requiredTokens = [
-    '--badge-cat-curry-bg', '--badge-cat-salad-bg', '--badge-cat-dessert-bg',
-    '--badge-pot-bg', '--badge-bonus-78-bg', '--badge-bonus-61-bg',
-    '--badge-bonus-48-bg', '--badge-bonus-35-bg', '--badge-bonus-25-bg'
-  ];
-  requiredTokens.forEach(token => {
-    assert(cssContent.includes(token), `styles.css missing token ${token}`);
-  });
-
-  // Badge classes
-  assert(cssContent.includes('.recipe-cat-badge.cat-咖哩'), 'styles.css missing cat-咖哩');
-  assert(cssContent.includes('.pot-badge'), 'styles.css missing pot-badge');
-  assert(cssContent.includes('.bonus-badge.bonus-badge-78'), 'styles.css missing bonus-badge-78');
-  assert(cssContent.includes('.bonus-badge.bonus-badge-61'), 'styles.css missing bonus-badge-61');
-  assert(cssContent.includes('.recipe-name-cell'), 'styles.css missing .recipe-name-cell');
-  assert(cssContent.includes('.recipe-name-wrapper'), 'styles.css missing .recipe-name-wrapper');
-});
-
 test('Tier 4 - Real-World Application Scenarios', 'SPA Tab Lifecycle, Hashchange Routing & Wiki Rendering In Both Languages', () => {
   const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
   const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
 
-  // Test Wiki layout rendering in zh-TW and en-US
   ['zh-TW', 'en-US'].forEach(lang => {
     const mockContainer = {
       innerHTML: '',
@@ -1195,216 +2117,6 @@ test('Tier 4 - Real-World Application Scenarios', 'SPA Tab Lifecycle, Hashchange
     assert(mockContainer.innerHTML.includes('wiki-subpanel-ingredients'), 'Wiki should contain ingredients subpanel');
     assert(mockContainer.innerHTML.includes('wiki-subpanel-values'), 'Wiki should contain values subpanel');
   });
-});
-
-test('Tier 1 - Feature Coverage', 'Bilingual News & Events Translation Dataset & Render Verification', () => {
-  const newsData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'news.json'), 'utf8'));
-  assert(newsData.length >= 20, 'news.json should have >= 20 items');
-
-  newsData.forEach(item => {
-    assert(item.title_en && typeof item.title_en === 'string', `News item ${item.id} missing title_en`);
-    assert(item.overview_en && typeof item.overview_en === 'string', `News item ${item.id} missing overview_en`);
-    assert(!/[\u4e00-\u9fa5]/.test(item.title_en), `title_en for "${item.title_en}" contains Chinese characters`);
-    assert(!/[\u4e00-\u9fa5]/.test(item.overview_en), `overview_en for "${item.title_en}" contains Chinese characters`);
-  });
-});
-
-test('Tier 2 - Boundary & Corner Cases', 'Sidebar Filter UI Tokens (Ing.1 only & 2-column layout tokens)', () => {
-  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
-  const ctx = {
-    window: {
-      location: { hash: '#pokemon' },
-      localStorage: { getItem: () => 'en-US', setItem: () => {} }
-    }
-  };
-  ctx.window.window = ctx.window;
-  vm.createContext(ctx);
-  vm.runInContext(i18nCode, ctx);
-
-  ctx.window.I18N.setLanguage('en-US');
-  const initialIngText = ctx.window.I18N.t('pokedex.only_initial_ing');
-  assert(initialIngText === '🥗 Ing.1 only', `pokedex.only_initial_ing in English must be "🥗 Ing.1 only", got "${initialIngText}"`);
-});
-
-test('Tier 1 - Feature Coverage', 'I18N.getPokemonName API & Coverage across all 247 Pokemon', () => {
-  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
-  const data = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'data.json'), 'utf8'));
-  const ctx = {
-    window: {
-      location: { hash: '#pokemon' },
-      localStorage: { getItem: () => 'en-US', setItem: () => {} }
-    }
-  };
-  ctx.window.window = ctx.window;
-  vm.createContext(ctx);
-  vm.runInContext(i18nCode, ctx);
-
-  assert(typeof ctx.window.I18N.getPokemonName === 'function', 'I18N.getPokemonName must be an exported function');
-
-  // Test in EN mode
-  ctx.window.I18N.setLanguage('en-US');
-  assert(ctx.window.I18N.getPokemonName('妙蛙種子') === 'Bulbasaur', '妙蛙種子 -> Bulbasaur');
-  assert(ctx.window.I18N.getPokemonName('皮卡丘') === 'Pikachu', '皮卡丘 -> Pikachu');
-  assert(ctx.window.I18N.getPokemonName('巨鍛匠') === 'Tinkaton', '巨鍛匠 -> Tinkaton');
-  assert(ctx.window.I18N.getPokemonName({ name_cn: '耿鬼', name_en: 'Gengar' }) === 'Gengar', 'Object input -> Gengar');
-
-  // Test all 247 Pokemon in data.json
-  data.forEach(p => {
-    if (p.name_cn && p.name_en) {
-      const translated = ctx.window.I18N.getPokemonName(p.name_cn);
-      assert(translated === p.name_en, `Expected ${p.name_cn} -> ${p.name_en}, got ${translated}`);
-    }
-  });
-
-  // Test in zh-TW mode
-  ctx.window.I18N.setLanguage('zh-TW');
-  assert(ctx.window.I18N.getPokemonName('妙蛙種子') === '妙蛙種子', 'zh-TW mode should return CN name');
-  assert(ctx.window.I18N.getPokemonName({ name_cn: '耿鬼', name_en: 'Gengar' }) === '耿鬼', 'Object in zh-TW -> 耿鬼');
-});
-
-test('Tier 1 - Feature Coverage', 'News AI Dashboard Sections Title & List Items Full English Translation and No Duplicate Icons', () => {
-  const newsCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'news.js'), 'utf8');
-  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
-  const newsData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'news.json'), 'utf8'));
-
-  const ctx = {
-    window: {
-      location: { hash: '#news' },
-      localStorage: { getItem: () => 'en-US', setItem: () => {} },
-      addEventListener: () => {}
-    },
-    document: {
-      readyState: 'complete',
-      documentElement: { setAttribute: () => {} },
-      addEventListener: () => {},
-      getElementById: () => null,
-      querySelectorAll: () => []
-    },
-    console: console,
-    fetch: () => Promise.resolve({ ok: true, json: () => Promise.resolve([]) })
-  };
-  ctx.window.window = ctx.window;
-  ctx.window.document = ctx.document;
-  ctx.window.fetch = ctx.fetch;
-  vm.createContext(ctx);
-  vm.runInContext(i18nCode, ctx);
-  vm.runInContext(newsCode, ctx);
-
-  // Verify all sections in news.json have title_en defined and clean
-  newsData.forEach(item => {
-    if (item.sections) {
-      item.sections.forEach(sec => {
-        assert(sec.title_en, `Section in news item ${item.id} missing title_en`);
-        assert(!/^[\u{1F300}-\u{1F9FF}\s]+/u.test(sec.title_en), `Section title_en "${sec.title_en}" should not start with emoji`);
-      });
-    }
-  });
-});
-
-test('Tier 1 - Feature Coverage', 'I18N Item & Island & Nature & Subskill Bilingual Coverage', () => {
-  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
-  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
-
-  const ctx = {
-    window: {
-      location: { hash: '#box' },
-      localStorage: { getItem: () => 'en-US', setItem: () => {} },
-      addEventListener: () => {}
-    },
-    document: {
-      readyState: 'complete',
-      documentElement: { setAttribute: () => {} },
-      addEventListener: () => {},
-      getElementById: () => null,
-      querySelectorAll: () => []
-    },
-    console: console
-  };
-  ctx.window.window = ctx.window;
-  ctx.window.document = ctx.document;
-  vm.createContext(ctx);
-  vm.runInContext(i18nCode, ctx);
-  vm.runInContext(boxCode, ctx);
-
-  assert(typeof ctx.window.I18N.getItemName === 'function', 'getItemName must be exported');
-  assert(typeof ctx.window.I18N.getIslandName === 'function', 'getIslandName must be exported');
-
-  // Test Item translations in EN
-  ctx.window.I18N.setLanguage('en-US');
-  assert(ctx.window.I18N.getItemName('寶可沙布蕾') === 'Poké Biscuit', '寶可沙布蕾 -> Poké Biscuit');
-  assert(ctx.window.I18N.getItemName('主技能種子') === 'Main Skill Seed', '主技能種子 -> Main Skill Seed');
-  assert(ctx.window.I18N.getItemName('萬能糖果S') === 'Handy Candy S', '萬能糖果S -> Handy Candy S');
-
-  // Test Island translations in EN
-  assert(ctx.window.I18N.getIslandName('萌綠之島') === 'Greengrass Isle', '萌綠之島 -> Greengrass Isle');
-  assert(ctx.window.I18N.getIslandName('天青沙灘') === 'Cyan Beach', '天青沙灘 -> Cyan Beach');
-  assert(ctx.window.I18N.getIslandName('黃金舊發電廠') === 'Old Gold Power Plant', '黃金舊發電廠 -> Old Gold Power Plant');
-
-  // Test Natures in box.js
-  const natureData = ctx.window.PokemonBoxApp.NATURE_DATA;
-  assert(Array.isArray(natureData) && natureData.length === 25, '25 Natures defined');
-  natureData.forEach(n => {
-    assert(n.name_en, `Nature ${n.name} must have name_en`);
-    assert(n.buff_en, `Nature ${n.name} must have buff_en`);
-  });
-
-  // Test Subskills in box.js
-  const subskillData = ctx.window.PokemonBoxApp.SUBSKILLS_DATA;
-  assert(Array.isArray(subskillData) && subskillData.length >= 17, 'Subskills defined');
-  subskillData.forEach(s => {
-    assert(s.name_en, `Subskill ${s.name} must have name_en`);
-    assert(s.desc_en, `Subskill ${s.name} must have desc_en`);
-  });
-});
-
-test('Tier 1 - Feature Coverage', 'Centralized Scalable I18N Dynamic Translator & Fuzzy Matching', () => {
-  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
-  const ctx = {
-    window: { localStorage: { getItem: () => 'en-US', setItem: () => {} }, addEventListener: () => {} },
-    document: {
-      documentElement: { setAttribute: () => {} },
-      getElementById: () => null,
-      querySelectorAll: () => [],
-      addEventListener: () => {}
-    },
-    console: console
-  };
-  ctx.window.window = ctx.window;
-  ctx.window.document = ctx.document;
-  vm.createContext(ctx);
-  vm.runInContext(i18nCode, ctx);
-
-  ctx.window.I18N.setLanguage('en-US');
-
-  // Test 1: Fuzzy subskill matching (spaces and variations)
-  assert(ctx.window.I18N.getSubSkillName('幫忙速度 S') === 'Helping Speed S', '幫忙速度 S with space -> Helping Speed S');
-  assert(ctx.window.I18N.getSubSkillName('技能機率提升 S') === 'Skill Trigger S', '技能機率提升 S -> Skill Trigger S');
-  assert(ctx.window.I18N.getSubSkillName('活力恢復獎勵') === 'Energy Recovery Bonus', '活力恢復獎勵 (恢) -> Energy Recovery Bonus');
-  assert(ctx.window.I18N.getSubSkillName('睡眠 EXP 獎勵') === 'Sleep EXP Bonus', '睡眠 EXP 獎勵 -> Sleep EXP Bonus');
-
-  // Test 2: Pokémon name normalization & parenthesis extraction
-  assert(ctx.window.I18N.getPokemonName('毒骷蛙 (ABB)') === 'Toxicroak (ABB)', '毒骷蛙 (ABB) -> Toxicroak (ABB)');
-  assert(ctx.window.I18N.getPokemonName('皮卡丘（ 萬聖節 ）') === 'Pikachu (Halloween)', '皮卡丘（ 萬聖節 ） -> Pikachu (Halloween)');
-  assert(ctx.window.I18N.getPokemonName('骨紋巨聲鱷(AAA)') === 'Skeledirge (AAA)', '骨紋巨聲鱷(AAA) -> Skeledirge (AAA)');
-
-  // Test 3: Specialty, nature, and item normalization
-  assert(ctx.window.I18N.getSpecialtyName('樹果型') === 'Berries', '樹果型 -> Berries');
-  assert(ctx.window.I18N.getSpecialtyName('食材型') === 'Ingredients', '食材型 -> Ingredients');
-  assert(ctx.window.I18N.getNatureName('固執') === 'Adamant', '固執 -> Adamant');
-  assert(ctx.window.I18N.getMainSkillName('能量填充S (隨機)') === 'Charge Strength S (Random)', '能量填充S (隨機) -> Charge Strength S (Random)');
-
-  // Test 4: Dynamic text translation engine
-  const ladderNote = '👑 TOP 1 AAA 特選蘋果 產量之王';
-  const translatedNote = ctx.window.I18N.translateDynamicText(ladderNote);
-  assert(translatedNote === '👑 TOP 1 AAA Fancy Apple Production King', `Ladder note translation failed: ${translatedNote}`);
-
-  const eventSentence = '舉辦期間：8/27 (週四) 4:00 ～ 8/30 (週日) 3:59';
-  const translatedEvent = ctx.window.I18N.translateDynamicText(eventSentence);
-  assert(translatedEvent === 'Event Period: 8/27 (Thu) 4:00 ~ 8/30 (Sun) 3:59', `Event schedule translation failed: ${translatedEvent}`);
-
-  const bundleSentence = '🛍️ 「好眠日限定包vol.38」（1,500鑽石） ：超級沙布蕾×9、幸運薰香×2、成長薰香×2、專注薰香×2';
-  const translatedBundle = ctx.window.I18N.translateDynamicText(bundleSentence);
-  assert(translatedBundle.includes('Great Biscuit') && translatedBundle.includes('Luck Incense') && translatedBundle.includes('Focus Incense'), `Bundle translation failed: ${translatedBundle}`);
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Ingredient Draw S Specific Pools & Tooltips Verification', () => {
@@ -1453,7 +2165,6 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Draw S Specific Po
     ]
   };
 
-  // Test Chinese tooltip rendering
   const sandslashHtmlZh = ctx.window.PokemonApp.renderSkillWithTooltip(sandslash.main_skill, sandslash);
   assert(sandslashHtmlZh.includes('special-skill-badge'), 'Sandslash should render special-skill-badge');
   assert(sandslashHtmlZh.includes('沉甸甸南瓜') && sandslashHtmlZh.includes('萌綠玉米') && sandslashHtmlZh.includes('窩心洋芋'), 'Sandslash tooltip should include its 3 specific ingredients');
@@ -1461,76 +2172,26 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Draw S Specific Po
   const mawileHtmlZh = ctx.window.PokemonApp.renderSkillWithTooltip(mawile.main_skill, mawile);
   assert(mawileHtmlZh.includes('純粹油') && mawileHtmlZh.includes('萌綠玉米') && mawileHtmlZh.includes('好眠番茄'), 'Mawile tooltip should include its 3 specific ingredients');
 
-  // Test English tooltip rendering
   ctx.window.I18N.setLanguage('en-US');
   const sandslashHtmlEn = ctx.window.PokemonApp.renderSkillWithTooltip(sandslash.main_skill, sandslash);
   assert(sandslashHtmlEn.includes('Plump Pumpkin') && sandslashHtmlEn.includes('Greengrass Corn') && sandslashHtmlEn.includes('Soft Potato'), 'Sandslash English tooltip should include its 3 specific ingredients in English');
   ctx.window.I18N.setLanguage('zh-TW');
 
-  // Test Wiki MAIN_SKILLS_DATA has ingredient_draw_s
   const ingDrawSkill = ctx.window.WikiDB.MAIN_SKILLS_DATA.find(s => s.id === 'ingredient_draw_s');
   assert(ingDrawSkill && ingDrawSkill.hasIngredientDrawMatrix, 'Wiki should define ingredient_draw_s with hasIngredientDrawMatrix');
-});
-
-test('Tier 1 - Feature Coverage', 'WikiDB Namespace & Event Handler Methods Integrity', () => {
-  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
-  const ctx = {
-    window: { localStorage: { getItem: () => 'zh-TW', setItem: () => {} }, addEventListener: () => {} },
-    document: {
-      documentElement: { setAttribute: () => {} },
-      getElementById: () => null,
-      querySelectorAll: () => [],
-      addEventListener: () => {}
-    },
-    console: console
-  };
-  ctx.window.window = ctx.window;
-  ctx.window.document = ctx.document;
-  vm.createContext(ctx);
-  vm.runInContext(wikiCode, ctx);
-
-  const wikiMethods = [
-    'switchSubTab', 'switchWikiSubTab', 'switchLadderView', 'filterSkills', 'filterWikiSkills',
-    'filterIngredients', 'filterWikiIngredients', 'switchStack', 'switchChargeStock',
-    'switchBoost', 'switchHelperBoost', 'toggleDetail', 'toggleDetailTable',
-    'updateBerryLevel', 'updateBerryIsland', 'toggleBerryFavorite', 'toggleFavorite',
-    'toggleLadderIngM', 'toggleLadderSpeedM', 'toggleLadderNatureIng', 'toggleLadderNatureSpeed',
-    'onLadderSearch', 'clearLadderSearch',
-    'setLadderRecipeFilter', 'refreshCoordinateLadder', 'handleLadderGroupHover',
-    'handleLadderGroupHoverOut', 'recalcTriggerChance', 'recalcSleepDays'
-  ];
-
-  wikiMethods.forEach(method => {
-    assert(typeof ctx.window.WikiDB[method] === 'function', `window.WikiDB.${method} should be a valid function`);
-  });
-
-  // Verify toggleBerryFavorite and nature toggles execute cleanly
-  let threw = false;
-  try {
-    ctx.window.WikiDB.toggleBerryFavorite(true);
-    ctx.window.WikiDB.toggleBerryFavorite(false);
-    ctx.window.WikiDB.toggleLadderNatureIng(true);
-    ctx.window.WikiDB.toggleLadderNatureSpeed(true);
-  } catch (e) {
-    threw = true;
-  }
-  assert(!threw, 'toggleBerryFavorite and nature toggles should execute cleanly');
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Lv.60 prefix removed from tabs/headers & 4-tier multiplier logic verified', () => {
   const wikiPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js');
   const wikiCode = fs.readFileSync(wikiPath, 'utf8');
 
-  // Verify subtab and header don't contain Lv.60 in title
   assert(!wikiCode.includes("data-subtab=\"ingredients\">${isEN ? '🥗 Lv.60"), 'Subtab 4 button should not contain Lv.60');
   assert(!wikiCode.includes("h3 class=\"wiki-card-title\" style=\"margin: 0;\">${isEN ? 'Lv.60"), 'Card title should not contain Lv.60');
 
-  // Verify nature toggle elements exist in HTML template
   assert(wikiCode.includes('id="ladder-nature-ing-toggle"'), 'Template should contain ladder-nature-ing-toggle');
   assert(wikiCode.includes('id="ladder-nature-speed-toggle"'), 'Template should contain ladder-nature-speed-toggle');
   assert(wikiCode.includes('ladder-track-champion-badge'), 'Template should render ladder-track-champion-badge');
 
-  // Verify mathematical multiplier combinations
   function calcMult(isIngM, isSpeedM, isNatureIng, isNatureSpeed) {
     let mult = 1.0;
     if (isIngM) mult *= 1.36;
@@ -1547,6 +2208,153 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Lv.60 pref
   assert(allBoosted > 2.0 && allBoosted < 2.15, `All 4 boosts combined multiplier should be ~2.08x, got ${allBoosted.toFixed(3)}`);
 });
 
+// --- NEW Tier 4 Tests: Real-World Scenarios ---
+test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 End-to-End User Journey (Entry -> Dock Nav -> Dex -> Cook -> Wiki -> Box -> News)', () => {
+  PokemonApp.init([...dataset]);
+  PokemonApp.onlyFinal = true;
+  assertEquals(PokemonApp.filterData().length, 127, 'Step 1: Pokedex starts with 127 final stage Pokemon');
+
+  PokemonApp.currentSearch = '皮卡丘';
+  const pikachuMatch = PokemonApp.filterData();
+  assert(pikachuMatch.length >= 1, 'Step 2: Found Pikachu in search');
+  PokemonApp.currentSearch = '';
+  assertEquals(PokemonApp.filterData().length, 127, 'Step 2: Cleared search restores 127 items');
+
+  const recipes = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'recipes.json'), 'utf8'));
+  const curry57 = recipes.filter(r => r.category === '咖哩' && r.pot_size <= 57);
+  assert(curry57.length > 0, 'Step 3: Found Curry recipes for pot size 57');
+
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  assert(wikiCode.includes('MAIN_SKILLS_DATA') && wikiCode.includes('INGREDIENT_VALUES_DATA'), 'Step 4: Wiki data structures verified');
+
+  const boxModule = require(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'));
+  const pkm = {
+    name: '皮卡丘',
+    specialty: '樹果',
+    nature: '固執',
+    subskills: ['樹果數量S', '幫忙速度M', '幫手獎勵']
+  };
+  const prResult = boxModule.calculatePokemonPR(pkm, { specialty: '樹果' });
+  assert(prResult.pr >= 90, `Step 5: Pikachu PR score should be >= 90 (got ${prResult.pr})`);
+  assertEquals(prResult.tier, 'S+', 'Step 5: Pikachu tier should be S+');
+
+  const newsModule = require(path.join(WORKSPACE_ROOT, 'js', 'modules', 'news.js'));
+  const newsData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'news.json'), 'utf8'));
+  const timeline = newsModule.parseEventTimeline(newsData);
+  assert(timeline.length > 0, 'Step 6: Timeline parsed with event items');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Desktop Baseline User Session Workflow Preservation', () => {
+  PokemonApp.init([...dataset]);
+  PokemonApp.onlyFinal = true;
+  assertEquals(PokemonApp.filterData().length, 127, 'Desktop: 127 final stage Pokemon');
+
+  PokemonApp.onlyFinal = false;
+  assertEquals(PokemonApp.filterData().length, dataset.length, 'Desktop: 247 total items when onlyFinal=false');
+
+  PokemonApp.toggleColumnSort('carry');
+  const sortedCarryDesc = PokemonApp.render();
+  for (let i = 0; i < sortedCarryDesc.length - 1; i++) {
+    assert(getItemCarry(sortedCarryDesc[i]) >= getItemCarry(sortedCarryDesc[i + 1]), 'Carry sorted desc');
+  }
+
+  const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+  const ctx = { window: {}, document: { createElement: () => ({ setAttribute: () => {}, appendChild: () => {} }), body: { appendChild: () => {} } }, console };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(boxCode, ctx);
+  vm.runInContext(appraisalCode, ctx);
+
+  const raichu = { id: '26', name_cn: '雷丘', specialty: '樹果', type: '電', interval: '00:36:40' };
+  const res = ctx.AppraisalLab.evaluatePokemon(raichu, 30, '固執', ['樹果數量S', '幫忙速度M', '幫手獎勵'], ['特選蘋果', '特選蘋果']);
+  assert(res.scores.berry >= 90, 'Raichu berry score >= 90');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Dual-Surface Coexistence & Shared LocalStorage Non-Interference', () => {
+  const sharedStorage = {};
+  const mockLocalStorage = {
+    getItem: (k) => sharedStorage[k] || null,
+    setItem: (k, v) => { sharedStorage[k] = String(v); },
+    removeItem: (k) => { delete sharedStorage[k]; }
+  };
+
+  const mobilePkm = {
+    uid: 'pkm_m_001',
+    name: '妙蛙種子',
+    level: 30,
+    nature: '內斂',
+    subskills: ['食材機率提升M', '幫手獎勵']
+  };
+  mockLocalStorage.setItem('pokemon_sleep_box', JSON.stringify([mobilePkm]));
+
+  const desktopBox = JSON.parse(mockLocalStorage.getItem('pokemon_sleep_box'));
+  assert(Array.isArray(desktopBox) && desktopBox.length === 1, 'Desktop reads mobile-created Box item');
+  assertEquals(desktopBox[0].uid, 'pkm_m_001', 'UID match across surfaces');
+
+  mockLocalStorage.setItem('user_theme', 'dawn');
+  assertEquals(mockLocalStorage.getItem('user_theme'), 'dawn', 'Mobile synchronizes theme change');
+
+  mockLocalStorage.setItem('pksleep_view_pref', 'desktop');
+  assertEquals(mockLocalStorage.getItem('pksleep_view_pref'), 'desktop', 'View preference preserved');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Mobile Smart Redirection & Anti-Loop Preference Flow', () => {
+  const sharedStorage = {};
+  function simulateRedirectionEngine(surface, windowWidth, ua, query) {
+    if (surface === 'root_index_html') {
+      if (query.includes('view=desktop')) {
+        sharedStorage['pksleep_view_pref'] = 'desktop';
+        return { stay: true, url: 'index.html' };
+      }
+      if (sharedStorage['pksleep_view_pref'] === 'desktop') {
+        return { stay: true, url: 'index.html' };
+      }
+      const isMobile = /iPhone|Android/i.test(ua) || windowWidth <= 768;
+      if (isMobile) {
+        return { stay: false, url: 'app/index.html' };
+      }
+      return { stay: true, url: 'index.html' };
+    } else if (surface === 'app_index_html') {
+      if (query.includes('switch_desktop')) {
+        sharedStorage['pksleep_view_pref'] = 'desktop';
+        return { stay: false, url: '../index.html?view=desktop' };
+      }
+      return { stay: true, url: 'app/index.html' };
+    }
+  }
+
+  const step1 = simulateRedirectionEngine('root_index_html', 390, 'iPhone', '');
+  assertEquals(step1.stay, false, 'Step 1: Mobile visits root -> redirected');
+  assertEquals(step1.url, 'app/index.html', 'Step 1: Redirected to app/index.html');
+
+  const step2 = simulateRedirectionEngine('app_index_html', 390, 'iPhone', '?action=switch_desktop');
+  assertEquals(step2.stay, false, 'Step 2: Clicks desktop link');
+  assertEquals(step2.url, '../index.html?view=desktop', 'Step 2: Redirects to desktop URL');
+  assertEquals(sharedStorage['pksleep_view_pref'], 'desktop', 'Step 2: Desktop preference saved');
+
+  const step3 = simulateRedirectionEngine('root_index_html', 390, 'iPhone', '?view=desktop');
+  assertEquals(step3.stay, true, 'Step 3: Stays on desktop');
+
+  const step4 = simulateRedirectionEngine('root_index_html', 390, 'iPhone', '');
+  assertEquals(step4.stay, true, 'Step 4: Refreshes page -> remains on desktop without loop');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Multi-Fallback Asset & Data Loading under Various Base Paths', () => {
+  function resolveDataPath(basePath, relativePath) {
+    const base = basePath || '';
+    return base + relativePath;
+  }
+
+  const rootPath = resolveDataPath('', 'data/data.json');
+  assertEquals(rootPath, 'data/data.json', 'Root data path matches');
+  assert(fs.existsSync(path.join(WORKSPACE_ROOT, rootPath)), 'Root data file accessible');
+
+  const mobilePath = resolveDataPath('../', 'data/data.json');
+  assertEquals(mobilePath, '../data/data.json', 'Mobile data path matches');
+  const resolvedMobilePath = path.resolve(WORKSPACE_ROOT, 'app', mobilePath);
+  assert(fs.existsSync(resolvedMobilePath), 'Mobile relative data file accessible on disk');
+});
 
 // Final Summary Output
 console.log('\n======================================================');

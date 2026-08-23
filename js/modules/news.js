@@ -30,14 +30,34 @@
   /* ─── 載入新聞資料 ───────────────────────────────────── */
   async function loadNews() {
     try {
-      let res;
-      try {
-        res = await fetch(`data/news.json?t=${Date.now()}`, { cache: 'no-store' });
-      } catch (e) {}
-      if (!res || !res.ok) {
-        res = await fetch(`news.json?t=${Date.now()}`, { cache: 'no-store' });
+      const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
+      const t = Date.now();
+      const candidates = [
+        `${base}data/news.json?t=${t}`,
+        `data/news.json?t=${t}`,
+        `../data/news.json?t=${t}`,
+        `${base}news.json?t=${t}`,
+        `news.json?t=${t}`,
+        `../news.json?t=${t}`
+      ];
+      const uniqueUrls = Array.from(new Set(candidates.filter(Boolean)));
+
+      let res = null;
+      let lastErr = null;
+      for (const url of uniqueUrls) {
+        try {
+          const attempt = await fetch(url, { cache: 'no-store' });
+          if (attempt && attempt.ok) {
+            res = attempt;
+            break;
+          }
+        } catch (e) {
+          lastErr = e;
+        }
       }
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res || !res.ok) {
+        throw lastErr || new Error(`HTTP ${res ? res.status : 'Fetch Failed'}`);
+      }
       allNews = await res.json();
       renderEventTimeline();
       initCategoryTags();

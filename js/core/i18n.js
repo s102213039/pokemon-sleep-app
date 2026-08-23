@@ -21,6 +21,15 @@
       'nav.news': '📰 最新公告',
       'nav.sync': '🔄 同步資料',
       'nav.settings': '⚙️ 設定',
+      'dock.pokemon': '圖鑑',
+      'dock.recipes': '料理',
+      'dock.wiki': '百科',
+      'dock.box': '盒子',
+      'dock.news': '最新',
+      'nav.switch_desktop': '切換至桌面完整版',
+      'nav.desktop_label': '桌面版',
+      'nav.switch_to_mobile': '📱 行動版',
+      'nav.switch_to_desktop': '💻 桌面版',
 
       // Settings Modal
       'settings.title': '⚙️ 系統設定',
@@ -263,6 +272,15 @@
       'nav.news': '📰 News',
       'nav.sync': '🔄 Sync',
       'nav.settings': '⚙️ Settings',
+      'dock.pokemon': 'Dex',
+      'dock.recipes': 'Cook',
+      'dock.wiki': 'Wiki',
+      'dock.box': 'Box',
+      'dock.news': 'News',
+      'nav.switch_desktop': 'Switch to Desktop Version',
+      'nav.desktop_label': 'Desktop',
+      'nav.switch_to_mobile': '📱 Mobile',
+      'nav.switch_to_desktop': '💻 Desktop',
 
       // Settings Modal
       'settings.title': '⚙️ System Settings',
