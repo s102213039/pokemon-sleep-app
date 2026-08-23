@@ -4097,6 +4097,17 @@ input[type=range].rf-slider.event-slider {
 }
 
 /* 📸 倉庫編輯與核對彈窗 */
+/* 全域移除所有數字輸入框的上下整數微調箭頭 (Global Number Input Spinners Removal) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 .box-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -4114,7 +4125,7 @@ input[type=range].rf-slider.event-slider {
   border: 1px solid var(--border-color);
   border-radius: 16px;
   width: 100%;
-  max-width: 680px;
+  max-width: 740px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: var(--shadow-lg);
@@ -4208,6 +4219,7 @@ input[type=range].rf-slider.event-slider {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  position: relative;
 }
 
 .box-form-label {
@@ -4234,91 +4246,323 @@ input[type=range].rf-slider.event-slider {
   box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
 }
 
-select,
-.box-form-select,
-.sort-select,
-.rf-select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-color: var(--bg-input);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 18px center;
-  background-size: 12px 8px;
-  padding: 8px 42px 8px 12px !important;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  color: var(--text-primary);
-  font-family: inherit;
-  font-size: 13px;
-  outline: none;
+/* 寶可夢名稱 Combobox 搜尋選擇器 */
+.box-pkm-combobox {
+  position: relative;
+  width: 100%;
+}
+
+.box-pkm-search-input {
+  padding-right: 36px;
+}
+
+.box-pkm-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color 0.15s ease;
+}
+
+.box-pkm-toggle-btn:hover {
+  color: var(--text-primary);
+}
+
+.box-pkm-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 1050;
+  max-height: 250px;
+  overflow-y: auto;
+  background: var(--bg-dropdown);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+}
+
+.box-pkm-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color-subtle);
+  transition: background 0.15s ease;
+}
+
+.box-pkm-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.box-pkm-dropdown-item:hover,
+.box-pkm-dropdown-item.active {
+  background: var(--bg-card-hover);
+}
+
+.box-pkm-dropdown-avatar {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.box-pkm-dropdown-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.box-pkm-dropdown-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.box-pkm-dropdown-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1px;
+}
+
+/* 解鎖食材組合平鋪點選器 */
+.box-ing-tiled-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.box-ing-tiled-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 10px;
+  padding: 8px;
+}
+
+.box-ing-lvl-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  text-align: center;
+}
+
+.box-ing-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.box-ing-opt-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-color-subtle);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
   width: 100%;
   box-sizing: border-box;
 }
 
-select:hover,
-.box-form-select:hover,
-.sort-select:hover {
-  border-color: rgba(99, 102, 241, 0.6);
-  background-color: var(--bg-card-hover);
+.box-ing-opt-btn:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  background: var(--bg-card-hover);
 }
 
-select:focus,
-.box-form-select:focus,
-.sort-select:focus {
+.box-ing-opt-btn.active {
   border-color: var(--accent-blue);
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+  background: rgba(56, 189, 248, 0.12);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.25);
 }
 
-select option,
-select optgroup,
-.box-form-select option,
-.sort-select option {
-  background-color: var(--bg-dropdown);
-  color: var(--text-primary);
-  padding: 10px 14px;
-  font-size: 13px;
+.box-ing-opt-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  vertical-align: middle;
 }
 
-.box-ing-form-row {
+.box-ing-opt-count {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--badge-special-text);
+  background: var(--badge-special-bg);
+  border: 1px solid var(--badge-special-border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: monospace;
+}
+
+/* 副技能配置：單行 5 階插槽 + 平鋪副技能選擇盤 */
+.box-subskill-clear-btn {
+  background: transparent;
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 11px;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.box-subskill-clear-btn:hover {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.box-subskill-slots-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-top: 4px;
+  margin-bottom: 10px;
+}
+
+.box-subskill-slot-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 4px;
+  border-radius: 8px;
+  background: var(--bg-card-inner);
+  border: 1.5px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  min-height: 54px;
+  text-align: center;
+}
+
+.box-subskill-slot-btn:hover {
+  border-color: rgba(99, 102, 241, 0.6);
+  background: var(--bg-card-hover);
+}
+
+.box-subskill-slot-btn.active {
+  border-color: var(--color-accent-gold);
+  background: rgba(251, 191, 36, 0.08);
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.35);
+  transform: translateY(-2px);
+}
+
+.slot-lvl-header {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.box-subskill-slot-btn.active .slot-lvl-header {
+  color: var(--color-accent-gold);
+}
+
+.slot-val-badge {
+  font-size: 11px;
+  font-weight: 600;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.slot-val-empty {
+  color: var(--text-muted);
+  font-size: 10.5px;
+  border: 1px dashed var(--border-color);
+  padding: 1px 4px;
+}
+
+/* 副技能選擇盤 */
+.box-subskill-palette {
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 
-.box-ing-form-col {
+.subskill-tier-section {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.box-ing-lvl-badge {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--accent-blue);
-}
-
-.box-subskill-form-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.box-subskill-input-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.subskill-lvl-tag {
-  width: 48px;
+.subskill-tier-label {
   font-size: 11px;
   font-weight: 700;
-  color: var(--text-muted);
-  flex-shrink: 0;
+}
+
+.subskill-tier-label.gold-label {
+  color: #ca8a04;
+}
+[data-theme="midnight"] .subskill-tier-label.gold-label,
+[data-theme="onyx"] .subskill-tier-label.gold-label {
+  color: #fef08a;
+}
+
+.subskill-tier-label.blue-label {
+  color: #0284c7;
+}
+[data-theme="midnight"] .subskill-tier-label.blue-label,
+[data-theme="onyx"] .subskill-tier-label.blue-label {
+  color: #bae6fd;
+}
+
+.subskill-tier-label.white-label {
+  color: var(--text-secondary);
+}
+
+.subskill-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.box-subskill-chip {
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+}
+
+.box-subskill-chip:hover {
+  transform: scale(1.05);
+}
+
+.box-subskill-chip.in-use {
+  opacity: 0.45;
+  filter: grayscale(0.4);
 }
 
 .box-modal-footer {

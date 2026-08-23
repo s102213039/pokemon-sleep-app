@@ -627,6 +627,285 @@
   }
 
   /* ─── 視覺化確認與編輯彈窗 ───────────────────────────────── */
+  let activeSubskillSlot = 1; // 1 to 5
+
+  /* ─── 寶可夢名稱 Combobox 搜尋選擇器 ───────────────────────── */
+  function initPokemonCombobox(existingItem = null) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const searchInput = document.getElementById('modal-poke-search');
+    const nameHidden = document.getElementById('modal-poke-name');
+    const dropdown = document.getElementById('box-pkm-dropdown');
+    const toggleBtn = document.getElementById('box-pkm-dropdown-toggle');
+    if (!searchInput || !nameHidden || !dropdown) return;
+
+    // 初始選取
+    let initialPkm = null;
+    if (existingItem) {
+      initialPkm = allPokemonsRef.find(p => p.id === existingItem.pokemonId || p.name_cn === existingItem.name) || null;
+    }
+    if (!initialPkm && allPokemonsRef.length > 0) {
+      initialPkm = allPokemonsRef[0];
+    }
+
+    function renderDropdown(filterText = '') {
+      const q = filterText.trim().toLowerCase();
+      const filtered = allPokemonsRef.filter(p => {
+        if (!q) return true;
+        const cn = (p.name_cn || '').toLowerCase();
+        const en = (p.name_en || '').toLowerCase();
+        const no = String(p.formatted_no || p.id || '').toLowerCase();
+        const cleanNo = no.replace(/^0+/, '');
+        const cleanQ = q.replace(/^#/, '');
+        return cn.includes(q) || en.includes(q) || no.includes(cleanQ) || cleanNo === cleanQ;
+      });
+
+      if (filtered.length === 0) {
+        dropdown.innerHTML = `<div class="text-muted" style="padding: 12px; text-align: center; font-size: 12px;">${isEN ? 'No matching Pokémon' : '找不到符合之寶可夢'}</div>`;
+        dropdown.style.display = 'block';
+        return;
+      }
+
+      dropdown.innerHTML = filtered.map(p => {
+        const pkmDisplayName = isEN ? (p.name_en || p.name_cn) : p.name_cn;
+        const typeName = window.I18N ? window.I18N.getTypeName(p.type) : p.type;
+        const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : p.specialty;
+        const isSelected = nameHidden.value === p.name_cn;
+        const avatarUrl = p.icon || 'assets/placeholder.svg';
+
+        return `
+          <div class="box-pkm-dropdown-item ${isSelected ? 'active' : ''}" data-id="${p.id}" data-name="${escapeHtml(p.name_cn)}">
+            <img src="${avatarUrl}" class="box-pkm-dropdown-avatar" alt="${escapeHtml(pkmDisplayName)}">
+            <div class="box-pkm-dropdown-info">
+              <div class="box-pkm-dropdown-name">
+                <span>No.${p.formatted_no} ${escapeHtml(pkmDisplayName)}</span>
+              </div>
+              <div class="box-pkm-dropdown-sub">
+                <span class="type-badge" style="background-color: var(--type-${p.type || '一般'}, #64748b); font-size: 10px; padding: 1px 5px;">${typeName}</span>
+                <span>·</span>
+                <span>${specName}</span>
+              </div>
+            </div>
+            ${isSelected ? '<span style="color:var(--accent-blue);font-weight:bold;font-size:12px;">✓</span>' : ''}
+          </div>
+        `;
+      }).join('');
+
+      dropdown.querySelectorAll('.box-pkm-dropdown-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const pName = item.getAttribute('data-name');
+          const found = allPokemonsRef.find(p => p.name_cn === pName);
+          if (found) {
+            selectPokemonInCombobox(found, true);
+          }
+        });
+      });
+
+      dropdown.style.display = 'block';
+    }
+
+    function selectPokemonInCombobox(p, userChanged = false, existing = null) {
+      if (!p) return;
+      nameHidden.value = p.name_cn;
+      const pkmDisplayName = isEN ? (p.name_en || p.name_cn) : p.name_cn;
+      searchInput.value = `No.${p.formatted_no} ${pkmDisplayName}`;
+      dropdown.style.display = 'none';
+      renderTiledIngredientPickers(p, existing);
+    }
+
+    if (initialPkm) {
+      selectPokemonInCombobox(initialPkm, false, existingItem);
+    }
+
+    searchInput.onfocus = () => {
+      renderDropdown(searchInput.value.replace(/^No\.\d+\s*/, ''));
+    };
+
+    searchInput.oninput = () => {
+      renderDropdown(searchInput.value);
+    };
+
+    if (toggleBtn) {
+      toggleBtn.onclick = (e) => {
+        e.stopPropagation();
+        if (dropdown.style.display === 'block') {
+          dropdown.style.display = 'none';
+        } else {
+          renderDropdown('');
+          searchInput.focus();
+        }
+      };
+    }
+
+    // 點擊外面關閉下拉選單
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#box-pkm-combobox')) {
+        dropdown.style.display = 'none';
+      }
+    });
+  }
+
+  /* ─── 解鎖食材組合平鋪選擇器 ─────────────────────────────────── */
+  function renderTiledIngredientPickers(basePkm, existingItem = null) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const ingList = (basePkm && basePkm.ingredients && basePkm.ingredients.length > 0)
+      ? basePkm.ingredients
+      : [{ name: '特選蘋果', count: 1 }, { name: '暖暖薑', count: 2 }, { name: '美味尾巴', count: 4 }];
+
+    const slots = [
+      { key: 'ing1', level: 1, containerId: 'modal-ing-options-1', defaultVal: (existingItem && existingItem.ing1) || ingList[0].name },
+      { key: 'ing2', level: 30, containerId: 'modal-ing-options-2', defaultVal: (existingItem && existingItem.ing2) || (ingList[1] ? ingList[1].name : ingList[0].name) },
+      { key: 'ing3', level: 60, containerId: 'modal-ing-options-3', defaultVal: (existingItem && existingItem.ing3) || (ingList[2] ? ingList[2].name : (ingList[1] ? ingList[1].name : ingList[0].name)) }
+    ];
+
+    slots.forEach(slot => {
+      const hiddenInput = document.getElementById(`modal-${slot.key}`);
+      const container = document.getElementById(slot.containerId);
+      if (!hiddenInput || !container) return;
+
+      hiddenInput.value = slot.defaultVal;
+
+      container.innerHTML = ingList.map((ing, idx) => {
+        const isSelected = hiddenInput.value === ing.name;
+        const ingDisplayName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
+        const iconUrl = ing.icon || (window.I18N && window.I18N.getIngredientIcon(ing.name)) || '';
+        const count = ing.count || getIngCountFromBase(basePkm, idx, ing.name);
+
+        return `
+          <button type="button" class="box-ing-opt-btn ${isSelected ? 'active' : ''}" data-slot="${slot.key}" data-ing="${escapeHtml(ing.name)}">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <img src="${iconUrl}" class="box-ing-opt-icon" alt="${escapeHtml(ingDisplayName)}">
+              <span style="font-size:12px;font-weight:600;color:var(--text-primary);">${escapeHtml(ingDisplayName)}</span>
+            </div>
+            <span class="box-ing-opt-count">×${count}</span>
+          </button>
+        `;
+      }).join('');
+
+      container.querySelectorAll('.box-ing-opt-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const ingName = btn.getAttribute('data-ing');
+          hiddenInput.value = ingName;
+          container.querySelectorAll('.box-ing-opt-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+    });
+  }
+
+  /* ─── 單行 5 階副技能插槽 + 平鋪副技能選擇盤 ──────────────────── */
+  function initSubskillFlowPicker(initialSubskills = []) {
+    activeSubskillSlot = 1;
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+
+    for (let slot = 1; slot <= 5; slot++) {
+      const hiddenInput = document.getElementById(`modal-subskill-${slot}`);
+      if (hiddenInput) {
+        hiddenInput.value = (initialSubskills && initialSubskills[slot - 1]) || '';
+      }
+    }
+
+    function updateSubskillUI() {
+      // 1. 更新 5 個插槽按鈕
+      const slotBtns = document.querySelectorAll('.box-subskill-slot-btn');
+      slotBtns.forEach(btn => {
+        const slot = parseInt(btn.getAttribute('data-slot'), 10);
+        const hiddenInput = document.getElementById(`modal-subskill-${slot}`);
+        const curVal = hiddenInput ? hiddenInput.value : '';
+        const valBadge = btn.querySelector('.slot-val-badge');
+
+        if (slot === activeSubskillSlot) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+
+        if (valBadge) {
+          if (!curVal) {
+            valBadge.className = 'slot-val-badge slot-val-empty';
+            valBadge.textContent = isEN ? '-- None --' : '-- 未解鎖 --';
+          } else {
+            const sk = SUBSKILLS_DATA.find(s => s.name === curVal);
+            const tier = sk ? sk.tier : 'white';
+            const skDisplayName = window.I18N ? window.I18N.getSubSkillName(curVal) : curVal;
+            valBadge.className = `slot-val-badge box-subskill-pill subskill-${tier}`;
+            valBadge.textContent = skDisplayName;
+          }
+        }
+      });
+
+      // 2. 獲取所有目前已被使用的副技能
+      const usedSkills = new Set();
+      for (let slot = 1; slot <= 5; slot++) {
+        const input = document.getElementById(`modal-subskill-${slot}`);
+        if (input && input.value) usedSkills.add(input.value);
+      }
+
+      // 3. 渲染平鋪副技能晶片
+      ['gold', 'blue', 'white'].forEach(tier => {
+        const container = document.getElementById(`subskill-chips-${tier}`);
+        if (!container) return;
+
+        const skillsInTier = SUBSKILLS_DATA.filter(s => s.tier === tier);
+        container.innerHTML = skillsInTier.map(sk => {
+          const skDisplayName = window.I18N ? window.I18N.getSubSkillName(sk.name) : sk.name;
+          const isUsed = usedSkills.has(sk.name);
+          return `
+            <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" title="${escapeHtml(skDisplayName)}${isUsed ? (isEN ? ' (Already Selected)' : '（已選用）') : ''}">
+              <span>${escapeHtml(skDisplayName)}</span>
+              ${isUsed ? '<span style="font-size:10px;opacity:0.8;">✓</span>' : ''}
+            </button>
+          `;
+        }).join('');
+
+        container.querySelectorAll('.box-subskill-chip').forEach(chip => {
+          chip.addEventListener('click', (e) => {
+            e.preventDefault();
+            const skName = chip.getAttribute('data-name');
+            const targetInput = document.getElementById(`modal-subskill-${activeSubskillSlot}`);
+            if (targetInput) {
+              targetInput.value = skName;
+            }
+            // 自動推進到下一個插槽
+            if (activeSubskillSlot < 5) {
+              activeSubskillSlot += 1;
+            } else {
+              activeSubskillSlot = 1;
+            }
+            updateSubskillUI();
+          });
+        });
+      });
+    }
+
+    // 綁定插槽按鈕點擊
+    document.querySelectorAll('.box-subskill-slot-btn').forEach(btn => {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        const slot = parseInt(btn.getAttribute('data-slot'), 10);
+        activeSubskillSlot = slot;
+        updateSubskillUI();
+      };
+    });
+
+    // 綁定清空當前插槽按鈕
+    const clearBtn = document.getElementById('box-subskill-clear-active-btn');
+    if (clearBtn) {
+      clearBtn.onclick = (e) => {
+        e.preventDefault();
+        const targetInput = document.getElementById(`modal-subskill-${activeSubskillSlot}`);
+        if (targetInput) {
+          targetInput.value = '';
+        }
+        updateSubskillUI();
+      };
+    }
+
+    updateSubskillUI();
+  }
+
+  /* ─── 開啟編輯/新增彈窗 ─────────────────────────────────── */
   function openBoxEditModal(existingItem = null, screenshotSrc = null) {
     const modal = document.getElementById('box-edit-modal');
     if (!modal) return;
@@ -663,29 +942,18 @@
       }
     }
 
-    // 寶可夢名稱選單
-    const nameSelect = document.getElementById('modal-poke-name');
-    if (nameSelect && allPokemonsRef.length > 0) {
-      nameSelect.innerHTML = allPokemonsRef.map(p => {
-        const pkmDisplayName = isEN ? (p.name_en || p.name_cn) : p.name_cn;
-        const typeName = window.I18N ? window.I18N.getTypeName(p.type) : p.type;
-        const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : p.specialty;
-        return `
-        <option value="${escapeHtml(p.name_cn)}" data-id="${p.id}" ${existingItem && (existingItem.pokemonId === p.id || existingItem.name === p.name_cn) ? 'selected' : ''}>
-          No.${p.formatted_no} ${pkmDisplayName} (${typeName} · ${specName})
-        </option>
-      `;}).join('');
-    }
+    // 1. 初始化寶可夢 Combobox 搜尋選擇器
+    initPokemonCombobox(existingItem);
 
-    // 等級
+    // 2. 等級
     const levelInput = document.getElementById('modal-poke-level');
     if (levelInput) levelInput.value = existingItem ? (existingItem.level || 30) : 30;
 
-    // 暱稱
+    // 3. 暱稱
     const nickInput = document.getElementById('modal-poke-nickname');
     if (nickInput) nickInput.value = existingItem ? (existingItem.nickname || '') : '';
 
-    // 性格選單
+    // 4. 性格選單
     const natureSelect = document.getElementById('modal-poke-nature');
     if (natureSelect) {
       natureSelect.innerHTML = NATURE_DATA.map(n => {
@@ -697,73 +965,18 @@
           ${natDisplayName} (${buffLabel}${debuffLabel ? ' / ' + debuffLabel : ''})
         </option>
       `;}).join('');
-    }
 
-    // 食材選單 (Slot 1, Slot 2, Slot 3)
-    updateIngredientOptions(existingItem);
-
-    // 當更換寶可夢名稱時，自動刷新食材可選清單
-    if (nameSelect) {
-      nameSelect.onchange = () => {
-        updateIngredientOptions();
-      };
-    }
-
-    // 5 個副技能選單 (Lv.10, 25, 50, 75, 100)
-    for (let slot = 1; slot <= 5; slot++) {
-      const selectEl = document.getElementById(`modal-subskill-${slot}`);
-      if (selectEl) {
-        const curVal = existingItem && existingItem.subskills && existingItem.subskills[slot - 1] ? existingItem.subskills[slot - 1] : '';
-        selectEl.innerHTML = `
-          <option value="">${isEN ? '-- Unlocked / None --' : '-- 未解鎖 / 無 --'}</option>
-          <optgroup label="${isEN ? '🌟 Gold Sub-Skills' : '🌟 金色技能'}">
-            ${SUBSKILLS_DATA.filter(s => s.tier === 'gold').map(s => {
-              const sName = window.I18N ? window.I18N.getSubSkillName(s.name) : s.name;
-              return `<option value="${s.name}" ${curVal === s.name ? 'selected' : ''}>${sName}</option>`;
-            }).join('')}
-          </optgroup>
-          <optgroup label="${isEN ? '🔷 Blue Sub-Skills' : '🔷 藍色技能'}">
-            ${SUBSKILLS_DATA.filter(s => s.tier === 'blue').map(s => {
-              const sName = window.I18N ? window.I18N.getSubSkillName(s.name) : s.name;
-              return `<option value="${s.name}" ${curVal === s.name ? 'selected' : ''}>${sName}</option>`;
-            }).join('')}
-          </optgroup>
-          <optgroup label="${isEN ? '⚪ White Sub-Skills' : '⚪ 白色技能'}">
-            ${SUBSKILLS_DATA.filter(s => s.tier === 'white').map(s => {
-              const sName = window.I18N ? window.I18N.getSubSkillName(s.name) : s.name;
-              return `<option value="${s.name}" ${curVal === s.name ? 'selected' : ''}>${sName}</option>`;
-            }).join('')}
-          </optgroup>
-        `;
+      if (typeof window.setupCustomSelect === 'function' && !natureSelect._customized) {
+        window.setupCustomSelect(natureSelect);
+      } else if (natureSelect._customized) {
+        natureSelect.dispatchEvent(new Event('sync-ui'));
       }
     }
 
+    // 5. 初始化副技能單行插槽 + 選擇盤
+    initSubskillFlowPicker(existingItem ? existingItem.subskills : []);
+
     modal.style.display = 'flex';
-  }
-
-  function updateIngredientOptions(existingItem = null) {
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const nameSelect = document.getElementById('modal-poke-name');
-    const selectedName = nameSelect ? nameSelect.value : '';
-    const base = findPokemonBase(selectedName);
-
-    const ingList = (base && base.ingredients) ? base.ingredients : [
-      { name: '特選蘋果' }, { name: '窩心牛奶' }, { name: '熟透番茄' }
-    ];
-
-    ['ing1', 'ing2', 'ing3'].forEach((slotKey, idx) => {
-      const sel = document.getElementById(`modal-${slotKey}`);
-      if (!sel) return;
-      const curVal = existingItem ? existingItem[slotKey] : (ingList[idx] ? ingList[idx].name : ingList[0].name);
-
-      sel.innerHTML = ingList.map(ing => {
-        const ingDisplayName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
-        return `
-        <option value="${escapeHtml(ing.name)}" ${curVal === ing.name ? 'selected' : ''}>
-          🍲 ${escapeHtml(ingDisplayName)}
-        </option>
-      `;}).join('');
-    });
   }
 
   function closeBoxEditModal() {
