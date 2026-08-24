@@ -2356,6 +2356,56 @@ test('Tier 4 - Real-World Application Scenarios', 'Multi-Fallback Asset & Data L
   assert(fs.existsSync(resolvedMobilePath), 'Mobile relative data file accessible on disk');
 });
 
+test('Tier 1 - Feature Coverage', 'Pokemon Type Vector SVG Icons Coverage across all 18 Types', () => {
+  const i18n = require(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'));
+  assert(typeof i18n.getTypeIconSvg === 'function', 'I18N.getTypeIconSvg must be a function');
+  
+  const all18Types = ['一般', '火', '水', '電', '草', '冰', '格鬥', '毒', '地面', '飛行', '超能力', '蟲', '岩石', '幽靈', '龍', '惡', '鋼', '妖精'];
+  all18Types.forEach(t => {
+    const svg = i18n.getTypeIconSvg(t, 22);
+    assert(svg && svg.includes('<svg') && svg.includes('<path') && svg.includes('pkm-type-icon'), `Type ${t} must render valid SVG with .pkm-type-icon class`);
+    assert(svg.includes(`var(--type-${t}`), `Type ${t} must tint with CSS variable --type-${t}`);
+  });
+
+  const enTypes = ['Normal', 'Fire', 'Water', 'Electric', 'Grass', 'Ice', 'Fighting', 'Poison', 'Ground', 'Flying', 'Psychic', 'Bug', 'Rock', 'Ghost', 'Dragon', 'Dark', 'Steel', 'Fairy'];
+  enTypes.forEach(t => {
+    const svg = i18n.getTypeIconSvg(t, 20);
+    assert(svg && svg.includes('<svg') && svg.includes('<path'), `English type ${t} must render valid SVG`);
+  });
+});
+
+test('Tier 1 - Feature Coverage', 'Sidebar Compact Switches Grid & 6-Column Icon Grid Verification', () => {
+  const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+  const appHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+  const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  assert(indexHtml.includes('sidebar-switches-grid'), 'index.html missing .sidebar-switches-grid');
+  assert(indexHtml.includes('sidebar-switch-compact'), 'index.html missing .sidebar-switch-compact');
+  assert(appHtml.includes('sidebar-switches-grid'), 'app/index.html missing .sidebar-switches-grid');
+  assert(appHtml.includes('sidebar-switch-compact'), 'app/index.html missing .sidebar-switch-compact');
+
+  assert(stylesCss.includes('.sidebar-switches-grid'), 'styles.css missing .sidebar-switches-grid');
+  assert(stylesCss.includes('.sidebar-switch-compact'), 'styles.css missing .sidebar-switch-compact');
+  assert(stylesCss.includes('grid-template-columns: repeat(6, 1fr)'), 'styles.css missing 6-column icon grid');
+});
+
+test('Tier 1 - Feature Coverage', 'Header Simplification & Sync Data Button in Settings Modal', () => {
+  const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+  const appHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+
+  // Verify settings modal contains sync-btn in both surfaces
+  const settingsModalRegex = /<div[^>]*id=["']settings-modal["'][\s\S]*?id=["']sync-btn["'][\s\S]*?id=["']sync-status["']/;
+  assert(settingsModalRegex.test(indexHtml), 'index.html settings-modal must contain sync-btn and sync-status');
+  assert(settingsModalRegex.test(appHtml), 'app/index.html settings-modal must contain sync-btn and sync-status');
+
+  // Verify app/index.html header only has brand on left and settings on right (no header sync-btn outside modal)
+  const appHeaderMatch = appHtml.match(/<header[^>]*class=["'][^"']*mobile-app-header[^"']*["'][\s\S]*?<\/header>/);
+  assert(appHeaderMatch, 'app/index.html missing mobile-app-header');
+  assert(!appHeaderMatch[0].includes('id="sync-btn"'), 'app/index.html header must not have sync-btn in header (moved to settings modal)');
+  assert(!appHeaderMatch[0].includes('id="btn-switch-desktop"'), 'app/index.html header must not have btn-switch-desktop in header (moved to settings modal)');
+  assert(appHeaderMatch[0].includes('id="sync-config-btn"'), 'app/index.html header must keep settings button on the right');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

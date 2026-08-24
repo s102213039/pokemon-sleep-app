@@ -479,8 +479,8 @@
                   </div>
                   ${p.nickname ? `<div class="box-card-nickname">🏷️ ${escapeHtml(p.nickname)}</div>` : ''}
                   <div class="box-card-tags">
-                    <span class="type-badge" style="background-color: var(--type-${(base && base.type) || p.type || '一般'}, #64748b);">
-                      ${typeName}
+                    <span class="pkm-type-icon-wrapper" title="${typeName}">
+                      ${window.I18N ? window.I18N.getTypeIconSvg((base && base.type) || p.type || '一般', 18) : `<span class="type-badge" style="background-color: var(--type-${(base && base.type) || p.type || '一般'}, #64748b);">${typeName}</span>`}
                     </span>
                     <span class="box-spec-tag">${specName}</span>
                   </div>
@@ -601,8 +601,8 @@
                     </span>
                   </td>
                   <td>
-                    <span class="type-badge" style="background-color: var(--type-${(base && base.type) || p.type || '一般'}, #64748b);">
-                      ${typeName}
+                    <span class="pkm-type-icon-wrapper" title="${typeName}">
+                      ${window.I18N ? window.I18N.getTypeIconSvg((base && base.type) || p.type || '一般', 20) : `<span class="type-badge" style="background-color: var(--type-${(base && base.type) || p.type || '一般'}, #64748b);">${typeName}</span>`}
                     </span>
                   </td>
                   <td>${specName}</td>

@@ -457,7 +457,7 @@
               </div>
               
               <div class="appraisal-specialty-row">
-                <span class="appraisal-type-tag">${typeName} ${isEN ? 'Type' : '屬性'}</span>
+                <span class="appraisal-type-tag" style="display:inline-flex;align-items:center;gap:4px;">${window.I18N ? window.I18N.getTypeIconSvg(pkmData.type, 16) : ''} <span>${typeName} ${isEN ? 'Type' : '屬性'}</span></span>
                 <span class="appraisal-spec-tag">${specName} ${isEN ? 'Specialty' : '專長'}</span>
               </div>
 
@@ -674,7 +674,7 @@
                 <img src="${currentPkm.icon_url}" class="lab-preview-icon" alt="${displayName}">
                 <div>
                   <div class="lab-preview-name">${displayName}</div>
-                  <div class="lab-preview-spec">${isEN ? `${typeName} · ${specName}` : `${currentPkm.type}屬性 · ${currentPkm.specialty}專長`}</div>
+                  <div class="lab-preview-spec" style="display:flex;align-items:center;gap:4px;">${window.I18N ? window.I18N.getTypeIconSvg(currentPkm.type, 15) : ''} <span>${isEN ? `${typeName} · ${specName}` : `${currentPkm.type}屬性 · ${currentPkm.specialty}專長`}</span></div>
                 </div>
               </div>
 

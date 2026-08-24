@@ -1495,7 +1495,7 @@ if (typeof document !== 'undefined') {
               <div class="card-stats">
                 <div class="stat-item">
                   <span class="stat-label">${t('th.type', '屬性')}</span>
-                  <span class="stat-value"><span class="type-badge-mini" style="background-color: var(--type-${p.type}, #64748b);">${typeName}</span></span>
+                  <span class="stat-value"><span class="pkm-type-icon-wrapper" title="${typeName}">${window.I18N ? window.I18N.getTypeIconSvg(p.type, 20) : `<span class="type-badge-mini" style="background-color: var(--type-${p.type}, #64748b);">${typeName}</span>`}</span></span>
                 </div>
                 <div class="stat-item">
                   <span class="stat-label">${t('th.specialty', '得意')}</span>
@@ -1566,7 +1566,7 @@ if (typeof document !== 'undefined') {
                     ${iconUrl ? `<img src="${iconUrl}" width="34" height="34" class="table-icon" alt="${pkmName}" loading="lazy" onerror="this.style.display='none';">` : ''}
                   </td>
                   <td class="td-name pokemon-name-cell">${pkmName}</td>
-                  <td class="td-type"><span class="type-badge" style="background-color:var(--type-${p.type}, #64748b);">${typeName}</span></td>
+                  <td class="td-type"><span class="pkm-type-icon-wrapper" title="${typeName}">${window.I18N ? window.I18N.getTypeIconSvg(p.type, 22) : `<span class="type-badge" style="background-color:var(--type-${p.type}, #64748b);">${typeName}</span>`}</span></td>
                   <td class="td-spec">${specName}</td>
                   <td class="td-carry">${p.carry || '--'}</td>
                   <td class="td-ing">${p.ingredients && p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${p.ingredients[0].name}" loading="lazy" title="${p.ingredients[0].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[0],0)}</div>` : '--'}</td>
