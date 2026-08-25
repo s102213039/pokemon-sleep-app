@@ -1459,18 +1459,14 @@ if (typeof document !== 'undefined') {
         // 判斷是否為水平滑動（水平位移 > 50px 且大於垂直位移）
         if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.3) {
           if (isMobileH5) {
-            // H5 App (右側抽屜): 向右滑動收合，從螢幕右邊緣向左滑動展開
+            // H5 App (右側抽屜): 僅支援展開時向右滑動收合（取消向左滑動自動開啟，僅由浮動按鈕點選開啟）
             if (diffX > 50 && sidebar && !sidebar.classList.contains('collapsed')) {
               toggleSidebar(false);
-            } else if (diffX < -50 && touchStartX > window.innerWidth - 60 && sidebar && sidebar.classList.contains('collapsed')) {
-              toggleSidebar(true);
             }
           } else {
-            // Desktop (左側抽屜): 向左滑動收合，從螢幕左邊緣向右滑動展開
+            // Desktop (左側抽屜): 展開時向左滑動收合
             if (diffX < -50 && sidebar && !sidebar.classList.contains('collapsed')) {
               toggleSidebar(false);
-            } else if (diffX > 50 && touchStartX < 60 && sidebar && sidebar.classList.contains('collapsed')) {
-              toggleSidebar(true);
             }
           }
         }
