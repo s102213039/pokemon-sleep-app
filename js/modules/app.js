@@ -1452,6 +1452,11 @@ if (typeof document !== 'undefined') {
           return;
         }
 
+        const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+        if (isMobileH5) {
+          viewMode = 'table';
+        }
+
         if (viewMode === 'grid') renderGrid(filtered);
         else renderTable(filtered);
       } catch (err) {

@@ -2406,6 +2406,23 @@ test('Tier 1 - Feature Coverage', 'Header Simplification & Sync Data Button in S
   assert(appHeaderMatch[0].includes('id="sync-config-btn"'), 'app/index.html header must keep settings button on the right');
 });
 
+test('Tier 1 - Feature Coverage', 'H5 App Centered Loading View & Fixed Table View Verification', () => {
+  const appHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+  const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // Verify H5 App does not have toggle-grid / view-mode-toggle in pokemon panel
+  const pkmPanelMatch = appHtml.match(/<div[^>]*id=["']panel-pokemon["'][\s\S]*?<\/div>\s*<\/div>\s*<\/div>/);
+  assert(pkmPanelMatch, 'app/index.html missing panel-pokemon');
+  assert(!pkmPanelMatch[0].includes('id="toggle-grid"'), 'app/index.html panel-pokemon must not contain toggle-grid (fixed table view)');
+  assert(!pkmPanelMatch[0].includes('id="pokemon-count"'), 'app/index.html must not contain static loading stats-bar');
+
+  // Verify app-loading-view exists in app/index.html and styles.css
+  assert(appHtml.includes('app-loading-view'), 'app/index.html must use app-loading-view');
+  assert(appHtml.includes('app-loading-spinner'), 'app/index.html must use app-loading-spinner');
+  assert(stylesCss.includes('.app-loading-view'), 'styles.css missing .app-loading-view');
+  assert(stylesCss.includes('.app-loading-spinner'), 'styles.css missing .app-loading-spinner');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

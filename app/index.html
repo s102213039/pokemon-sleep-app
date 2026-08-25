@@ -420,10 +420,10 @@
       <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
 
       <div class="pokemon-main-content">
-        <!-- 搜尋列與視圖切換 -->
+        <!-- 搜尋列 -->
         <section class="controls-container mobile-controls-container" aria-label="Search and Controls">
           <div class="search-filter-row">
-            <div class="search-box">
+            <div class="search-box" style="width:100%;">
               <span class="search-icon">🔍</span>
               <input type="text" id="search-input" class="search-input"
                 placeholder="搜尋寶可夢名稱或 No. 編號..."
@@ -431,27 +431,15 @@
                 aria-label="搜尋寶可夢">
               <button type="button" id="pokemon-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
             </div>
-
-            <div class="view-mode-toggle">
-              <button id="toggle-grid" class="toggle-btn" data-i18n="pokedex.view_cards">🎴 卡片</button>
-              <button id="toggle-table" class="toggle-btn active" data-i18n="pokedex.view_table">📊 表格</button>
-            </div>
             <select id="sort-select" style="display:none;"></select>
           </div>
         </section>
 
-        <!-- 統計列 -->
-        <div class="stats-bar">
-          <div id="pokemon-count" class="result-count">
-            <span data-i18n="pokedex.loading">資料載入中...</span>
-          </div>
-        </div>
-
-        <!-- 列表內容容器 -->
+        <!-- 列表內容容器 (預設中央載入旋轉圖示) -->
         <div id="content-area" class="content-area" style="position:relative;">
-          <div class="loading-state">
-            <div class="loading-spinner"></div>
-            <p data-i18n="pokedex.loading">載入寶可夢資料中...</p>
+          <div class="app-loading-view">
+            <div class="app-loading-spinner"></div>
+            <div class="app-loading-text" data-i18n="pokedex.loading">載入寶可夢資料中...</div>
           </div>
         </div>
       </div>
@@ -501,7 +489,12 @@
         </div>
 
         <div id="recipe-list-container" class="recipe-cards-grid">
-          <div id="recipe-content-area" style="text-align:center;padding:60px;color:var(--text-muted);">料理資料載入中...</div>
+          <div id="recipe-content-area" style="width:100%;">
+            <div class="app-loading-view">
+              <div class="app-loading-spinner"></div>
+              <div class="app-loading-text" data-i18n="recipes.loading">載入料理食譜中...</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -564,7 +557,12 @@
       </section>
 
       <section class="news-content-container">
-        <div id="news-list-container" class="news-list-grid"></div>
+        <div id="news-list-container" class="news-list-grid">
+          <div class="app-loading-view">
+            <div class="app-loading-spinner"></div>
+            <div class="app-loading-text" data-i18n="news.loading">載入最新公告中...</div>
+          </div>
+        </div>
       </section>
     </div>
   </main>
