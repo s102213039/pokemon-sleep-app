@@ -14,9 +14,13 @@
   --bg-card-inner: rgba(15, 23, 42, 0.65);
   --bg-card-inner-subtle: rgba(15, 23, 42, 0.4);
   --bg-table-th: #0f172a;
+  --table-th-solid: #0f172a;
   --text-th: #94a3b8;
   --bg-table-row-even: rgba(255, 255, 255, 0.02);
   --bg-table-row-hover: rgba(51, 65, 85, 0.4);
+  --table-row-odd-solid: #0d1527;
+  --table-row-even-solid: #131f38;
+  --table-row-hover-solid: #1c2e52;
   --bg-input: #0f172a;
   --bg-dropdown: #0f172a;
   --bg-sidebar: #0f172a;
@@ -131,9 +135,13 @@
   --bg-card-inner: rgba(10, 10, 10, 0.7);
   --bg-card-inner-subtle: rgba(10, 10, 10, 0.4);
   --bg-table-th: #121212;
+  --table-th-solid: #121212;
   --text-th: #a1a1aa;
   --bg-table-row-even: rgba(255, 255, 255, 0.02);
   --bg-table-row-hover: rgba(39, 39, 42, 0.5);
+  --table-row-odd-solid: #101013;
+  --table-row-even-solid: #18181d;
+  --table-row-hover-solid: #22222a;
   --bg-input: #09090b;
   --bg-dropdown: #121212;
   --bg-sidebar: #09090b;
@@ -218,9 +226,13 @@
   --bg-card-inner: #f1f5f9;
   --bg-card-inner-subtle: #f8fafc;
   --bg-table-th: #e2e8f0;
+  --table-th-solid: #e2e8f0;
   --text-th: #1e293b;
   --bg-table-row-even: #f8fafc;
   --bg-table-row-hover: #e2e8f0;
+  --table-row-odd-solid: #ffffff;
+  --table-row-even-solid: #f8fafc;
+  --table-row-hover-solid: #e2e8f0;
   --bg-input: #ffffff;
   --bg-dropdown: #ffffff;
   --bg-sidebar: #ffffff;
@@ -304,9 +316,13 @@
   --bg-card-inner: #dcfce7;
   --bg-card-inner-subtle: #f0fdf4;
   --bg-table-th: #bbf7d0;
+  --table-th-solid: #bbf7d0;
   --text-th: #14532d;
   --bg-table-row-even: #f0fdf4;
   --bg-table-row-hover: #dcfce7;
+  --table-row-odd-solid: #ffffff;
+  --table-row-even-solid: #f0fdf4;
+  --table-row-hover-solid: #dcfce7;
   --bg-input: #ffffff;
   --bg-dropdown: #ffffff;
   --bg-sidebar: #ffffff;
@@ -1843,7 +1859,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   background: var(--bg-table-row-hover);
 }
 
-/* ─── 📌 關鍵置前：No. 與 圖示 橫向滑動時永遠鎖定吸附在最左側 ─── */
+/* ─── 📌 關鍵置前：No. 與 圖示 橫向滑動時永遠鎖定吸附在最左側（100% 不透明實色） ─── */
 .pokemon-table .th-no,
 .pokemon-table .td-no,
 .mobile-h5-app .pokemon-table .th-no,
@@ -1861,7 +1877,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   color: var(--accent-color);
   font-family: monospace;
   font-size: 12.5px;
-  background-color: var(--bg-card) !important;
+  background-color: var(--table-row-odd-solid, #0d1527) !important;
 }
 
 .pokemon-table .th-icon,
@@ -1877,7 +1893,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   padding: 4px 4px !important;
   box-sizing: border-box !important;
   text-align: center;
-  background-color: var(--bg-card) !important;
+  background-color: var(--table-row-odd-solid, #0d1527) !important;
   box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.5) !important;
 }
 
@@ -1886,31 +1902,31 @@ html[data-lang="en"] .subfilter-skill-btn,
   top: 0 !important;
   left: 0 !important;
   z-index: 30 !important;
-  background-color: var(--bg-table-th, var(--bg-header)) !important;
+  background-color: var(--table-th-solid, #0a0f1d) !important;
 }
 
 .pokemon-table thead .th-icon {
   top: 0 !important;
   left: 44px !important;
   z-index: 30 !important;
-  background-color: var(--bg-table-th, var(--bg-header)) !important;
+  background-color: var(--table-th-solid, #0a0f1d) !important;
   box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* 奇偶列與 Hover 時鎖定欄位必須具有 100% 不透明背景色，防止底層文字穿透 */
+/* 奇偶列與 Hover 必須 100% 實色背景覆蓋，徹底阻斷底層數據穿透 */
 .pokemon-table tbody tr:nth-child(odd) .td-no,
 .pokemon-table tbody tr:nth-child(odd) .td-icon {
-  background-color: var(--bg-card) !important;
+  background-color: var(--table-row-odd-solid, #0d1527) !important;
 }
 
 .pokemon-table tbody tr:nth-child(even) .td-no,
 .pokemon-table tbody tr:nth-child(even) .td-icon {
-  background-color: var(--bg-table-row-even, var(--bg-card-inner, #1e293b)) !important;
+  background-color: var(--table-row-even-solid, #131f38) !important;
 }
 
 .pokemon-table tbody tr:hover .td-no,
 .pokemon-table tbody tr:hover .td-icon {
-  background-color: var(--bg-table-row-hover, rgba(56, 189, 248, 0.12)) !important;
+  background-color: var(--table-row-hover-solid, #1c2e52) !important;
 }
 
 .table-icon {
@@ -3548,44 +3564,53 @@ input[type=range].rf-slider.event-slider {
   .pokemon-table .td-no {
     position: sticky !important;
     left: 0 !important;
-    z-index: 4 !important;
-    background-color: var(--bg-card) !important;
-    min-width: 36px !important;
-    max-width: 36px !important;
-    width: 36px !important;
+    z-index: 15 !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    width: 44px !important;
+    background-color: var(--table-row-odd-solid, #0d1527) !important;
   }
 
   .pokemon-table thead .th-no {
-    z-index: 6 !important;
-    background-color: var(--bg-header) !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 30 !important;
+    background-color: var(--table-th-solid, #0a0f1d) !important;
   }
 
   .pokemon-table .th-icon,
   .pokemon-table .td-icon {
     position: sticky !important;
-    left: 36px !important;
-    z-index: 4 !important;
-    background-color: var(--bg-card) !important;
-    min-width: 44px !important;
-    max-width: 44px !important;
-    width: 44px !important;
-    box-shadow: 4px 0 8px -2px rgba(0, 0, 0, 0.45) !important;
+    left: 44px !important;
+    z-index: 15 !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
+    width: 46px !important;
+    background-color: var(--table-row-odd-solid, #0d1527) !important;
+    box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.5) !important;
   }
 
   .pokemon-table thead .th-icon {
-    z-index: 6 !important;
-    background-color: var(--bg-header) !important;
-    box-shadow: 4px 0 8px -2px rgba(0, 0, 0, 0.45) !important;
+    top: 0 !important;
+    left: 44px !important;
+    z-index: 30 !important;
+    background-color: var(--table-th-solid, #0a0f1d) !important;
+    box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .pokemon-table tbody tr:nth-child(odd) .td-no,
+  .pokemon-table tbody tr:nth-child(odd) .td-icon {
+    background-color: var(--table-row-odd-solid, #0d1527) !important;
   }
 
   .pokemon-table tbody tr:nth-child(even) .td-no,
   .pokemon-table tbody tr:nth-child(even) .td-icon {
-    background-color: var(--bg-table-row-even, var(--bg-card-inner, #1e293b)) !important;
+    background-color: var(--table-row-even-solid, #131f38) !important;
   }
 
   .pokemon-table tbody tr:hover .td-no,
   .pokemon-table tbody tr:hover .td-icon {
-    background-color: var(--bg-table-row-hover, rgba(56, 189, 248, 0.08)) !important;
+    background-color: var(--table-row-hover-solid, #1c2e52) !important;
   }
 
   .pokemon-table .th-name,
@@ -9322,6 +9347,245 @@ input[type="number"] {
   .lang-switcher-row {
     grid-template-columns: 1fr;
   }
+}
+
+/* ─── 📱 H5 App 極簡規範設定彈窗 (App-Native Settings Modal) ─── */
+.app-settings-dialog {
+  max-width: 440px !important;
+  width: calc(100% - 24px) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.75), 0 0 24px rgba(56, 189, 248, 0.2) !important;
+}
+
+.app-settings-body {
+  padding: 16px 18px !important;
+  gap: 16px !important;
+}
+
+.app-settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.app-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.app-group-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: var(--text-secondary);
+}
+
+/* 2x2 極簡主題色塊網格 */
+.app-theme-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.app-theme-chip {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  padding: 10px 12px !important;
+  background: var(--bg-card-inner, rgba(15, 23, 42, 0.65)) !important;
+  border: 1.5px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  color: var(--text-main) !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+.app-theme-chip:active {
+  transform: scale(0.96);
+}
+
+.app-theme-chip .theme-chip-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.app-theme-chip .theme-chip-label {
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-theme-chip .theme-chip-check {
+  font-size: 12px;
+  color: var(--accent-blue, #38bdf8);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  font-weight: 800;
+}
+
+.app-theme-chip.active {
+  background: rgba(56, 189, 248, 0.12) !important;
+  border-color: var(--accent-blue, #38bdf8) !important;
+  color: var(--accent-blue, #38bdf8) !important;
+}
+
+.app-theme-chip.active .theme-chip-check {
+  opacity: 1;
+}
+
+/* 分段語言選擇器 (iOS Segmented Control) */
+.app-segmented-lang {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  background: var(--bg-card-inner, rgba(15, 23, 42, 0.65));
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.app-segment-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 8px 10px !important;
+  border-radius: 8px !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.app-segment-btn.active {
+  background: var(--accent-gradient, linear-gradient(135deg, #0284c7, #38bdf8)) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 緊湊資料同步卡片 */
+.app-sync-card {
+  background: var(--bg-card-inner, rgba(15, 23, 42, 0.65));
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.app-sync-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.app-sync-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.app-sync-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.app-sync-status {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.app-sync-action-btn {
+  padding: 6px 14px;
+  background: var(--accent-blue, #38bdf8);
+  color: #0f172a;
+  border: none;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.app-sync-action-btn:active {
+  transform: scale(0.94);
+}
+
+.app-token-row {
+  display: flex;
+  gap: 6px;
+}
+
+.app-token-input {
+  flex: 1;
+  background: var(--bg-input, #0f172a);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 7px 10px;
+  color: var(--text-main);
+  font-size: 12px;
+  outline: none;
+}
+
+.app-token-save-btn {
+  padding: 7px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* 系統導航條列按鈕 */
+.app-list-row-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--bg-card-inner, rgba(15, 23, 42, 0.65));
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.app-list-row-btn:active {
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.app-row-icon {
+  font-size: 16px;
+}
+
+.app-row-text {
+  flex: 1;
+}
+
+.app-row-arrow {
+  font-size: 18px;
+  color: var(--text-muted);
 }
 
 /* ─── 🛡️ 全域錯誤診斷與日誌展示樣式 (Diagnostic Logger UI) ─── */
