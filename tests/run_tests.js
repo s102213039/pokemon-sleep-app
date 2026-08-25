@@ -1320,7 +1320,7 @@ test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Ho
     const html = renderSkillWithTooltip(skill);
     assert(html.includes('special-skill-badge'), `Rendered badge for ${skill} should have 'special-skill-badge' class`);
     assert(html.includes('data-skill-detail='), `Rendered badge for ${skill} should have data-skill-detail attribute`);
-    assert(html.includes('✨'), `Rendered badge for ${skill} should include sparkle icon indicator`);
+    assert(!html.includes('✨'), `Rendered badge for ${skill} must not include sparkle emoji`);
   });
 
   const heracrossDetail = typeof SPECIAL_SKILL_DETAILS['健美（料理輔助S）'] === 'object'

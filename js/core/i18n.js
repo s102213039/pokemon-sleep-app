@@ -1032,7 +1032,7 @@
       .replace(/'/g, '&#39;');
   }
 
-  function getTypeIconSvg(type, size = 20) {
+  function getTypeIconSvg(type, size = 16) {
     if (!type) return '';
     const rawType = String(type).trim();
     const key = TYPE_CANONICAL_MAP[rawType] || TYPE_CANONICAL_MAP[rawType.toLowerCase()] || 'normal';
