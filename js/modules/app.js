@@ -184,13 +184,26 @@ function makeFloatingDraggable(el, onClick) {
   function onPointerUp(e) {
     if (!isPointerDown) return;
     isPointerDown = false;
-    el.style.transition = 'transform 0.15s ease, box-shadow 0.15s ease';
 
     window.removeEventListener('pointermove', onPointerMove);
     window.removeEventListener('pointerup', onPointerUp);
     window.removeEventListener('pointercancel', onPointerUp);
 
-    if (!hasMoved) {
+    if (hasMoved) {
+      // 左右側邊緣智慧磁吸吸附 (Magnetic edge snapping to left or right)
+      const screenW = window.innerWidth;
+      const btnW = el.offsetWidth || 50;
+      const minX = 14;
+      const maxX = screenW - btnW - 14;
+      const midX = screenW / 2;
+      const curLeft = parseFloat(el.style.left) || minX;
+
+      const snapLeft = (curLeft + btnW / 2 < midX) ? minX : maxX;
+
+      el.style.transition = 'left 0.28s cubic-bezier(0.2, 0.9, 0.3, 1), top 0.28s cubic-bezier(0.2, 0.9, 0.3, 1), transform 0.15s ease, box-shadow 0.15s ease';
+      el.style.left = `${snapLeft}px`;
+    } else {
+      el.style.transition = 'transform 0.15s ease, box-shadow 0.15s ease';
       if (typeof onClick === 'function') onClick(e);
     }
   }

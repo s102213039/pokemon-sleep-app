@@ -1881,6 +1881,55 @@ html[data-lang="en"] .subfilter-skill-btn,
   text-align: left;
 }
 
+.mobile-h5-app .pokemon-table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.mobile-h5-app .pokemon-table .th-no,
+.mobile-h5-app .pokemon-table .td-no {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 4 !important;
+  background-color: var(--bg-card) !important;
+  min-width: 36px !important;
+  max-width: 36px !important;
+  width: 36px !important;
+}
+
+.mobile-h5-app .pokemon-table thead .th-no {
+  z-index: 6 !important;
+  background-color: var(--bg-header) !important;
+}
+
+.mobile-h5-app .pokemon-table .th-icon,
+.mobile-h5-app .pokemon-table .td-icon {
+  position: sticky !important;
+  left: 36px !important;
+  z-index: 4 !important;
+  background-color: var(--bg-card) !important;
+  min-width: 44px !important;
+  max-width: 44px !important;
+  width: 44px !important;
+  box-shadow: 4px 0 8px -2px rgba(0, 0, 0, 0.45) !important;
+}
+
+.mobile-h5-app .pokemon-table thead .th-icon {
+  z-index: 6 !important;
+  background-color: var(--bg-header) !important;
+  box-shadow: 4px 0 8px -2px rgba(0, 0, 0, 0.45) !important;
+}
+
+.mobile-h5-app .pokemon-table tbody tr:nth-child(even) .td-no,
+.mobile-h5-app .pokemon-table tbody tr:nth-child(even) .td-icon {
+  background-color: var(--bg-table-row-even, var(--bg-card-inner, #1e293b)) !important;
+}
+
+.mobile-h5-app .pokemon-table tbody tr:hover .td-no,
+.mobile-h5-app .pokemon-table tbody tr:hover .td-icon {
+  background-color: var(--bg-table-row-hover, rgba(56, 189, 248, 0.08)) !important;
+}
+
 .mobile-h5-app .pokemon-table .th-name,
 .mobile-h5-app .pokemon-table .td-name,
 .mobile-h5-app .pokemon-table .pokemon-name-cell {
@@ -3481,7 +3530,56 @@ input[type=range].rf-slider.event-slider {
     font-size: 9.5px;
   }
 
-  /* 手機端與 H5 App 隱藏寶可夢名稱文字欄位，得意欄位單行緊湊 */
+  /* 手機端與 H5 App 隱藏寶可夢名稱文字欄位，No. 與 圖示 吸附最左側 */
+  .pokemon-table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+  }
+
+  .pokemon-table .th-no,
+  .pokemon-table .td-no {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 4 !important;
+    background-color: var(--bg-card) !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    width: 36px !important;
+  }
+
+  .pokemon-table thead .th-no {
+    z-index: 6 !important;
+    background-color: var(--bg-header) !important;
+  }
+
+  .pokemon-table .th-icon,
+  .pokemon-table .td-icon {
+    position: sticky !important;
+    left: 36px !important;
+    z-index: 4 !important;
+    background-color: var(--bg-card) !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    width: 44px !important;
+    box-shadow: 4px 0 8px -2px rgba(0, 0, 0, 0.45) !important;
+  }
+
+  .pokemon-table thead .th-icon {
+    z-index: 6 !important;
+    background-color: var(--bg-header) !important;
+    box-shadow: 4px 0 8px -2px rgba(0, 0, 0, 0.45) !important;
+  }
+
+  .pokemon-table tbody tr:nth-child(even) .td-no,
+  .pokemon-table tbody tr:nth-child(even) .td-icon {
+    background-color: var(--bg-table-row-even, var(--bg-card-inner, #1e293b)) !important;
+  }
+
+  .pokemon-table tbody tr:hover .td-no,
+  .pokemon-table tbody tr:hover .td-icon {
+    background-color: var(--bg-table-row-hover, rgba(56, 189, 248, 0.08)) !important;
+  }
+
   .pokemon-table .th-name,
   .pokemon-table .td-name,
   .pokemon-table .pokemon-name-cell {
@@ -9413,7 +9511,7 @@ body.mobile-h5-surface {
   align-items: center;
   justify-content: flex-end;
   width: 100%;
-  padding: 0 16px;
+  padding: 0 4px 0 12px;
   min-height: 44px;
 }
 
@@ -9446,8 +9544,9 @@ body.mobile-h5-surface {
 .mobile-header-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   z-index: 2;
+  margin-right: 0;
 }
 
 .mobile-header-btn.settings-btn,
@@ -9455,22 +9554,28 @@ body.mobile-h5-surface {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 8px;
+  padding: 6px;
   border-radius: 8px;
-  font-size: 19px;
+  font-size: 0;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   color: var(--text-primary);
   cursor: pointer;
   line-height: 1;
-  transition: transform 0.15s ease, opacity 0.15s ease;
+  transition: transform 0.15s ease, opacity 0.15s ease, color 0.15s ease;
 }
 
 .mobile-header-btn.settings-btn:active,
 .mobile-header-btn.borderless-btn:active {
   transform: scale(0.88);
   opacity: 0.7;
+}
+
+.mobile-header-btn.settings-btn .header-svg-icon {
+  width: 22px;
+  height: 22px;
+  stroke: var(--text-primary);
 }
 
 /* ─── 🎛️ H5 App 搜尋欄頂部舒適間距 ─── */
@@ -9480,23 +9585,24 @@ body.mobile-h5-surface {
   margin-bottom: 10px !important;
 }
 
-/* ─── 🎛️ H5 App 右下懸浮篩選按鈕 (Draggable FAB) ─── */
+/* ─── 🎛️ H5 App 右下懸浮篩選按鈕 (Theme Gradient & Draggable Snapping FAB) ─── */
 .mobile-h5-app .sidebar-bookmark-handle,
 .mobile-h5-app .sidebar-fab-btn {
   display: flex !important;
   position: fixed !important;
-  right: 18px !important;
+  right: 14px !important;
   bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
   left: auto;
   top: auto;
   transform: none;
-  width: 48px !important;
-  height: 48px !important;
-  min-height: 48px !important;
+  width: 50px !important;
+  height: 50px !important;
+  min-height: 50px !important;
   border-radius: 50% !important;
-  background: var(--bg-card) !important;
-  border: 1.5px solid rgba(56, 189, 248, 0.5) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), 0 0 14px rgba(56, 189, 248, 0.25) !important;
+  background: var(--accent-gradient, linear-gradient(135deg, #0284c7, #38bdf8)) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(2, 132, 199, 0.5), 0 0 16px rgba(56, 189, 248, 0.35) !important;
   flex-direction: row !important;
   align-items: center !important;
   justify-content: center !important;
@@ -9519,16 +9625,26 @@ body.mobile-h5-surface {
   display: none !important;
 }
 
-.mobile-h5-app .sidebar-bookmark-handle .bookmark-icon {
-  font-size: 20px !important;
-  line-height: 1 !important;
+.mobile-h5-app .sidebar-bookmark-handle .bookmark-icon,
+.mobile-h5-app .sidebar-fab-btn .bookmark-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #ffffff !important;
   pointer-events: none;
+}
+
+.mobile-h5-app .sidebar-bookmark-handle .fab-svg,
+.mobile-h5-app .sidebar-fab-btn .fab-svg {
+  width: 23px;
+  height: 23px;
+  stroke: #ffffff;
 }
 
 .mobile-h5-app .sidebar-bookmark-badge {
   position: absolute;
-  top: -3px;
-  right: -3px;
+  top: -2px;
+  right: -2px;
   min-width: 18px;
   height: 18px;
   padding: 0 5px;
@@ -9537,7 +9653,7 @@ body.mobile-h5-surface {
   font-weight: 700;
   background: #ef4444;
   color: #fff;
-  border: 1.5px solid var(--bg-card);
+  border: 1.5px solid var(--bg-card, #0f172a);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -9625,9 +9741,23 @@ body.mobile-h5-surface {
 
 .dock-tab .dock-icon,
 .dock-tab-btn .dock-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 24px;
   font-size: 19px;
   line-height: 1;
-  transition: transform 0.2s ease, filter 0.2s ease;
+  color: var(--text-muted);
+  transition: transform 0.2s ease, color 0.2s ease, filter 0.2s ease;
+}
+
+.dock-tab .dock-icon svg,
+.dock-tab .dock-svg {
+  width: 22px;
+  height: 22px;
+  stroke: var(--text-muted);
+  transition: stroke 0.2s ease, transform 0.2s ease;
 }
 
 .dock-tab .dock-label,
@@ -9647,8 +9777,14 @@ body.mobile-h5-surface {
 
 .dock-tab.active .dock-icon,
 .dock-tab-btn.active .dock-icon {
-  transform: translateY(-2px) scale(1.12);
-  filter: drop-shadow(0 0 8px var(--accent-color));
+  transform: translateY(-2px);
+  color: var(--accent-blue, #38bdf8);
+}
+
+.dock-tab.active .dock-icon svg,
+.dock-tab.active .dock-svg {
+  stroke: var(--accent-blue, #38bdf8);
+  filter: drop-shadow(0 0 6px var(--accent-glow, rgba(56, 189, 248, 0.45)));
 }
 
 .dock-tab.active .dock-label,
