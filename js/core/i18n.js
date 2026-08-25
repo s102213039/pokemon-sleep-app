@@ -13,6 +13,7 @@
     'zh-TW': {
       // App Branding & Navigation
       'brand.title': 'Pokémon Sleep 資料庫',
+      'brand.app_title': '寶可夢資料庫',
       'brand.subtitle': '機率、食材與屬性完整線上檢索',
       'nav.pokemon': '⚡ 寶可夢圖鑑',
       'nav.recipes': '🍲 料理食譜',
@@ -264,6 +265,7 @@
     'en-US': {
       // App Branding & Navigation
       'brand.title': 'Pokémon Sleep Database',
+      'brand.app_title': 'Pokémon Database',
       'brand.subtitle': 'Comprehensive Stats, Rates, Ingredients & Pokedex',
       'nav.pokemon': '⚡ Dex',
       'nav.recipes': '🍲 Dishes',

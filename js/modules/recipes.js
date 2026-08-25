@@ -728,19 +728,30 @@
     const backdrop = document.getElementById('recipe-sidebar-backdrop');
     const resetAllBtn = document.getElementById('recipe-sidebar-reset-all-btn');
 
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+
+    function toggleRecipeSidebar() {
+      if (!sidebar) return;
+      sidebar.classList.toggle('collapsed');
+      if (backdrop) {
+        if (!sidebar.classList.contains('collapsed')) {
+          backdrop.classList.add('active');
+        } else {
+          backdrop.classList.remove('active');
+        }
+      }
+    }
+
     if (bookmarkHandle && sidebar && !bookmarkHandle._hasListener) {
       bookmarkHandle._hasListener = true;
-      bookmarkHandle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        sidebar.classList.toggle('collapsed');
-        if (backdrop) {
-          if (!sidebar.classList.contains('collapsed')) {
-            backdrop.classList.add('active');
-          } else {
-            backdrop.classList.remove('active');
-          }
-        }
-      });
+      if (typeof window.makeFloatingDraggable === 'function' && isMobileH5) {
+        window.makeFloatingDraggable(bookmarkHandle, () => toggleRecipeSidebar());
+      } else {
+        bookmarkHandle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleRecipeSidebar();
+        });
+      }
     }
 
     if (closeBtn && sidebar && !closeBtn._hasListener) {

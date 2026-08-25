@@ -121,6 +121,87 @@ function sortPokemonList(list, sortKey) {
   return out;
 }
 
+/* ─── 🎛️ 懸浮按鈕觸控 / 滑鼠平滑拖曳控制器 (Draggable FAB Controller) ─── */
+function makeFloatingDraggable(el, onClick) {
+  if (!el || el._hasDragInit) return;
+  el._hasDragInit = true;
+
+  let startX = 0;
+  let startY = 0;
+  let startLeft = 0;
+  let startTop = 0;
+  let hasMoved = false;
+  let isPointerDown = false;
+
+  function onPointerDown(e) {
+    if (e.button !== undefined && e.button !== 0) return;
+    isPointerDown = true;
+    hasMoved = false;
+    startX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+    startY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+
+    const rect = el.getBoundingClientRect();
+    startLeft = rect.left;
+    startTop = rect.top;
+
+    el.style.transition = 'none';
+
+    window.addEventListener('pointermove', onPointerMove, { passive: false });
+    window.addEventListener('pointerup', onPointerUp, { passive: false });
+    window.addEventListener('pointercancel', onPointerUp, { passive: false });
+  }
+
+  function onPointerMove(e) {
+    if (!isPointerDown) return;
+    const curX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+    const curY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+    const dx = curX - startX;
+    const dy = curY - startY;
+
+    if (!hasMoved && Math.hypot(dx, dy) > 6) {
+      hasMoved = true;
+    }
+
+    if (hasMoved) {
+      if (e.cancelable) e.preventDefault();
+      const btnW = el.offsetWidth || 48;
+      const btnH = el.offsetHeight || 48;
+      const minX = 8;
+      const maxX = window.innerWidth - btnW - 8;
+      const minY = 56;
+      const maxY = window.innerHeight - 68 - btnH;
+
+      let newLeft = Math.max(minX, Math.min(maxX, startLeft + dx));
+      let newTop = Math.max(minY, Math.min(maxY, startTop + dy));
+
+      el.style.left = `${newLeft}px`;
+      el.style.top = `${newTop}px`;
+      el.style.right = 'auto';
+      el.style.bottom = 'auto';
+    }
+  }
+
+  function onPointerUp(e) {
+    if (!isPointerDown) return;
+    isPointerDown = false;
+    el.style.transition = 'transform 0.15s ease, box-shadow 0.15s ease';
+
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerUp);
+
+    if (!hasMoved) {
+      if (typeof onClick === 'function') onClick(e);
+    }
+  }
+
+  el.addEventListener('pointerdown', onPointerDown);
+}
+
+if (typeof window !== 'undefined') {
+  window.makeFloatingDraggable = makeFloatingDraggable;
+}
+
 function ingQtyBadges(ing, idx) {
   if (!ing) return '';
   const qtys = [];
@@ -1328,8 +1409,14 @@ if (typeof document !== 'undefined') {
         }
       }
 
+      const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+
       if (bookmarkHandle) {
-        bookmarkHandle.addEventListener('click', () => toggleSidebar());
+        if (typeof makeFloatingDraggable === 'function' && isMobileH5) {
+          makeFloatingDraggable(bookmarkHandle, () => toggleSidebar());
+        } else {
+          bookmarkHandle.addEventListener('click', () => toggleSidebar());
+        }
       }
       if (closeBtn) {
         closeBtn.addEventListener('click', () => toggleSidebar(false));
@@ -1338,7 +1425,7 @@ if (typeof document !== 'undefined') {
         backdrop.addEventListener('click', () => toggleSidebar(false));
       }
 
-      // Touch swipe gestures (左滑收合、右滑展開)
+      // Touch swipe gestures (支援左側/右側抽屜自適應滑動)
       let touchStartX = 0;
       let touchStartY = 0;
 
@@ -1358,12 +1445,20 @@ if (typeof document !== 'undefined') {
 
         // 判斷是否為水平滑動（水平位移 > 50px 且大於垂直位移）
         if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.3) {
-          if (diffX < -50 && sidebar && !sidebar.classList.contains('collapsed')) {
-            // 向左滑動 ➜ 收合側邊欄
-            toggleSidebar(false);
-          } else if (diffX > 50 && touchStartX < 60 && sidebar && sidebar.classList.contains('collapsed')) {
-            // 從螢幕左邊緣向右滑動 ➜ 展開側邊欄
-            toggleSidebar(true);
+          if (isMobileH5) {
+            // H5 App (右側抽屜): 向右滑動收合，從螢幕右邊緣向左滑動展開
+            if (diffX > 50 && sidebar && !sidebar.classList.contains('collapsed')) {
+              toggleSidebar(false);
+            } else if (diffX < -50 && touchStartX > window.innerWidth - 60 && sidebar && sidebar.classList.contains('collapsed')) {
+              toggleSidebar(true);
+            }
+          } else {
+            // Desktop (左側抽屜): 向左滑動收合，從螢幕左邊緣向右滑動展開
+            if (diffX < -50 && sidebar && !sidebar.classList.contains('collapsed')) {
+              toggleSidebar(false);
+            } else if (diffX > 50 && touchStartX < 60 && sidebar && sidebar.classList.contains('collapsed')) {
+              toggleSidebar(true);
+            }
           }
         }
       }, { passive: true });

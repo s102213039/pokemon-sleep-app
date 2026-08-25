@@ -9408,73 +9408,165 @@ body.mobile-h5-surface {
 }
 
 .mobile-header-container {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   width: 100%;
-  padding: 0 12px;
+  padding: 0 16px;
+  min-height: 44px;
 }
 
 .mobile-brand {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.mobile-brand-logo {
-  font-size: 20px;
-}
-
-.mobile-brand-text {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  justify-content: center;
+  text-align: center;
+  pointer-events: auto;
 }
 
 .mobile-brand-title {
-  font-size: 15px;
+  font-size: 16.5px;
   font-weight: 700;
   letter-spacing: -0.2px;
   margin: 0;
+  white-space: nowrap;
   background: var(--accent-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .mobile-brand-badge {
-  font-size: 10px;
-  font-weight: 700;
-  background: var(--badge-special-bg);
-  border: 1px solid var(--badge-special-border);
-  color: var(--badge-special-text);
-  padding: 1px 5px;
-  border-radius: 4px;
+  display: none !important;
 }
 
 .mobile-header-actions {
   display: flex;
   align-items: center;
   gap: 6px;
+  z-index: 2;
 }
 
-.mobile-header-btn {
+.mobile-header-btn.settings-btn,
+.mobile-header-btn.borderless-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 10px;
+  justify-content: center;
+  padding: 6px 8px;
   border-radius: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
+  font-size: 19px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--text-primary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  line-height: 1;
+  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-.mobile-header-btn:active {
-  transform: scale(0.95);
-  background: var(--bg-card-hover);
+.mobile-header-btn.settings-btn:active,
+.mobile-header-btn.borderless-btn:active {
+  transform: scale(0.88);
+  opacity: 0.7;
+}
+
+/* ─── 🎛️ H5 App 搜尋欄頂部舒適間距 ─── */
+.mobile-h5-app .pokemon-main-content .controls-container,
+.mobile-h5-app .recipe-main-content .controls-container {
+  margin-top: 14px !important;
+  margin-bottom: 10px !important;
+}
+
+/* ─── 🎛️ H5 App 右下懸浮篩選按鈕 (Draggable FAB) ─── */
+.mobile-h5-app .sidebar-bookmark-handle,
+.mobile-h5-app .sidebar-fab-btn {
+  display: flex !important;
+  position: fixed !important;
+  right: 18px !important;
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+  left: auto;
+  top: auto;
+  transform: none;
+  width: 48px !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  border-radius: 50% !important;
+  background: var(--bg-card) !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.5) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), 0 0 14px rgba(56, 189, 248, 0.25) !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  z-index: 995 !important;
+  cursor: grab !important;
+  touch-action: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.mobile-h5-app .sidebar-bookmark-handle:active,
+.mobile-h5-app .sidebar-fab-btn:active {
+  transform: scale(0.92) !important;
+}
+
+.mobile-h5-app .sidebar-bookmark-handle .bookmark-text,
+.mobile-h5-app .sidebar-bookmark-handle .bookmark-arrow {
+  display: none !important;
+}
+
+.mobile-h5-app .sidebar-bookmark-handle .bookmark-icon {
+  font-size: 20px !important;
+  line-height: 1 !important;
+  pointer-events: none;
+}
+
+.mobile-h5-app .sidebar-bookmark-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  font-size: 10.5px;
+  font-weight: 700;
+  background: #ef4444;
+  color: #fff;
+  border: 1.5px solid var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* ─── 🎛️ H5 App 右側抽屜式篩選器 (Right-side Sliding Drawer) ─── */
+.mobile-h5-app .pokemon-filter-sidebar,
+.mobile-h5-app .recipe-filter-sidebar {
+  position: fixed !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: auto !important;
+  right: 0 !important;
+  width: 86vw !important;
+  max-width: 320px !important;
+  z-index: 10000 !important;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.7) !important;
+  border-left: 1px solid var(--border-color) !important;
+  border-right: none !important;
+  transform: translateX(0) !important;
+  transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1), visibility 0.3s !important;
+}
+
+.mobile-h5-app .pokemon-filter-sidebar.collapsed,
+.mobile-h5-app .recipe-filter-sidebar.collapsed {
+  transform: translateX(105%) !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
 }
 
 .desktop-switch-btn {
