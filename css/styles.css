@@ -1895,6 +1895,20 @@ html[data-lang="en"] .subfilter-skill-btn,
   text-align: center;
 }
 
+.mobile-h5-app .pokemon-table .ing-cell .ing-qty-group,
+.mobile-h5-app .pokemon-table .ing-qty-group {
+  display: none !important;
+}
+
+.mobile-h5-app .pokemon-table .th-ing,
+.mobile-h5-app .pokemon-table .td-ing {
+  min-width: 36px !important;
+  width: 36px !important;
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+  text-align: center;
+}
+
 .th-type, .td-type {
   width: 50px;
   text-align: center;
@@ -3440,6 +3454,20 @@ input[type=range].rf-slider.event-slider {
   .pokemon-table .td-type .pkm-type-icon {
     width: 16px;
     height: 16px;
+  }
+
+  .pokemon-table .ing-cell .ing-qty-group,
+  .pokemon-table .ing-qty-group {
+    display: none !important;
+  }
+
+  .pokemon-table .th-ing,
+  .pokemon-table .td-ing {
+    min-width: 36px !important;
+    width: 36px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+    text-align: center;
   }
 
   .pokemon-filter-sidebar {
