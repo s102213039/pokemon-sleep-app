@@ -1851,15 +1851,21 @@ html[data-lang="en"] .subfilter-skill-btn,
   vertical-align: middle;
 }
 
-.pokemon-table tbody tr:nth-child(even) {
-  background: var(--bg-table-row-even);
+/* 🎨 確保整列所有儲存格（含 No. 與 圖示）背景顏色 100% 相同且完全實色 */
+.pokemon-table tbody tr:nth-child(odd) td {
+  background-color: var(--table-row-odd-solid, #0d1527) !important;
 }
 
-.pokemon-table tbody tr:hover {
-  background: var(--bg-table-row-hover);
+.pokemon-table tbody tr:nth-child(even) td {
+  background-color: var(--table-row-even-solid, #131f38) !important;
 }
 
-/* ─── 📌 關鍵置前：No. 與 圖示 橫向滑動時永遠鎖定吸附在最左側（100% 不透明實色） ─── */
+.pokemon-table tbody tr:hover td,
+.pokemon-table tbody tr:active td {
+  background-color: var(--table-row-hover-solid, #1c2e52) !important;
+}
+
+/* ─── 📌 關鍵置前：No. 與 圖示 橫向滑動時永遠鎖定吸附在最左側 ─── */
 .pokemon-table .th-no,
 .pokemon-table .td-no,
 .mobile-h5-app .pokemon-table .th-no,
@@ -1877,7 +1883,6 @@ html[data-lang="en"] .subfilter-skill-btn,
   color: var(--accent-color);
   font-family: monospace;
   font-size: 12.5px;
-  background-color: var(--table-row-odd-solid, #0d1527) !important;
 }
 
 .pokemon-table .th-icon,
@@ -1893,8 +1898,8 @@ html[data-lang="en"] .subfilter-skill-btn,
   padding: 4px 4px !important;
   box-sizing: border-box !important;
   text-align: center;
-  background-color: var(--table-row-odd-solid, #0d1527) !important;
-  box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.5) !important;
+  border-right: 1px solid var(--border-color) !important;
+  box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.4) !important;
 }
 
 /* 頂部左上角交會處：擁有最高層級 z-index: 30 */
@@ -1910,23 +1915,8 @@ html[data-lang="en"] .subfilter-skill-btn,
   left: 44px !important;
   z-index: 30 !important;
   background-color: var(--table-th-solid, #0a0f1d) !important;
-  box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.5) !important;
-}
-
-/* 奇偶列與 Hover 必須 100% 實色背景覆蓋，徹底阻斷底層數據穿透 */
-.pokemon-table tbody tr:nth-child(odd) .td-no,
-.pokemon-table tbody tr:nth-child(odd) .td-icon {
-  background-color: var(--table-row-odd-solid, #0d1527) !important;
-}
-
-.pokemon-table tbody tr:nth-child(even) .td-no,
-.pokemon-table tbody tr:nth-child(even) .td-icon {
-  background-color: var(--table-row-even-solid, #131f38) !important;
-}
-
-.pokemon-table tbody tr:hover .td-no,
-.pokemon-table tbody tr:hover .td-icon {
-  background-color: var(--table-row-hover-solid, #1c2e52) !important;
+  border-right: 1px solid var(--border-color) !important;
+  box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.4) !important;
 }
 
 .table-icon {
@@ -3480,13 +3470,32 @@ input[type=range].rf-slider.event-slider {
 
   /* ─── ⚡ 1. 寶可夢圖鑑手機適配 ─── */
   .pokemon-main-content .controls-container,
-  .pokemon-main-content .stats-bar,
+  .pokemon-main-content .stats-bar {
+    max-width: calc(100% - 24px);
+    width: calc(100% - 24px);
+    padding: 0;
+    margin: 12px auto 10px;
+  }
+
   .pokemon-main-content .table-container,
   .pokemon-main-content .pokemon-table-container,
+  .mobile-h5-app .table-container,
+  .mobile-h5-app .pokemon-table-container {
+    max-width: calc(100% - 24px) !important;
+    width: calc(100% - 24px) !important;
+    margin: 0 auto 16px !important;
+    padding: 0 !important;
+    border-radius: 16px !important;
+    border: 1px solid var(--border-color) !important;
+    background: var(--table-row-odd-solid, #0d1527) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+    overflow-x: auto !important;
+  }
+
   .pokemon-main-content .pokemon-grid {
-    max-width: 100%;
-    width: 100%;
-    padding: 0 10px;
+    max-width: calc(100% - 16px);
+    width: calc(100% - 16px);
+    padding: 0;
     margin: 0 auto 12px;
   }
 
@@ -3560,6 +3569,19 @@ input[type=range].rf-slider.event-slider {
     border-spacing: 0 !important;
   }
 
+  .pokemon-table tbody tr:nth-child(odd) td {
+    background-color: var(--table-row-odd-solid, #0d1527) !important;
+  }
+
+  .pokemon-table tbody tr:nth-child(even) td {
+    background-color: var(--table-row-even-solid, #131f38) !important;
+  }
+
+  .pokemon-table tbody tr:hover td,
+  .pokemon-table tbody tr:active td {
+    background-color: var(--table-row-hover-solid, #1c2e52) !important;
+  }
+
   .pokemon-table .th-no,
   .pokemon-table .td-no {
     position: sticky !important;
@@ -3568,7 +3590,6 @@ input[type=range].rf-slider.event-slider {
     min-width: 44px !important;
     max-width: 44px !important;
     width: 44px !important;
-    background-color: var(--table-row-odd-solid, #0d1527) !important;
   }
 
   .pokemon-table thead .th-no {
@@ -3586,8 +3607,8 @@ input[type=range].rf-slider.event-slider {
     min-width: 46px !important;
     max-width: 46px !important;
     width: 46px !important;
-    background-color: var(--table-row-odd-solid, #0d1527) !important;
-    box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.5) !important;
+    border-right: 1px solid var(--border-color) !important;
+    box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.4) !important;
   }
 
   .pokemon-table thead .th-icon {
@@ -3595,22 +3616,8 @@ input[type=range].rf-slider.event-slider {
     left: 44px !important;
     z-index: 30 !important;
     background-color: var(--table-th-solid, #0a0f1d) !important;
-    box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.5) !important;
-  }
-
-  .pokemon-table tbody tr:nth-child(odd) .td-no,
-  .pokemon-table tbody tr:nth-child(odd) .td-icon {
-    background-color: var(--table-row-odd-solid, #0d1527) !important;
-  }
-
-  .pokemon-table tbody tr:nth-child(even) .td-no,
-  .pokemon-table tbody tr:nth-child(even) .td-icon {
-    background-color: var(--table-row-even-solid, #131f38) !important;
-  }
-
-  .pokemon-table tbody tr:hover .td-no,
-  .pokemon-table tbody tr:hover .td-icon {
-    background-color: var(--table-row-hover-solid, #1c2e52) !important;
+    border-right: 1px solid var(--border-color) !important;
+    box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.4) !important;
   }
 
   .pokemon-table .th-name,
