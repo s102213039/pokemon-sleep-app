@@ -2026,9 +2026,18 @@ html[data-lang="en"] .subfilter-skill-btn,
   text-align: center;
 }
 
-.th-type, .td-type {
+.th-type, .td-type,
+.th-berry, .td-berry {
   width: 50px;
   text-align: center;
+}
+
+.table-berry-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  vertical-align: middle;
+  display: inline-block;
 }
 
 .th-spec, .td-spec {
@@ -3532,9 +3541,7 @@ input[type=range].rf-slider.event-slider {
   }
 
   .pokemon-main-content .table-container,
-  .pokemon-main-content .pokemon-table-container,
-  .mobile-h5-app .table-container,
-  .mobile-h5-app .pokemon-table-container {
+  .pokemon-main-content .pokemon-table-container {
     max-width: calc(100% - 24px) !important;
     width: calc(100% - 24px) !important;
     margin: 0 12px 24px 12px !important;
@@ -3544,7 +3551,6 @@ input[type=range].rf-slider.event-slider {
     background: var(--table-row-odd-solid, #0d1527) !important;
     box-shadow: none !important;
     overflow-x: auto !important;
-    overflow-y: visible !important;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -9950,41 +9956,46 @@ body.mobile-h5-surface {
   margin-bottom: 10px !important;
 }
 
-/* ─── 📱 H5 App 列表視圖：無限自然延伸（下方自然滾動到底，右方無限延伸） ─── */
+/* ─── 📱 H5 App 列表視圖：CoordinatorLayout 視窗置頂與容器內自然滾動 ─── */
 .mobile-h5-app .pokemon-main-content,
 .mobile-h5-app .recipe-main-content {
-  display: block;
-  height: auto;
-  min-height: 0;
-  max-height: none;
-  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - 52px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  max-height: calc(100dvh - 52px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  overflow: hidden;
 }
 
 .mobile-h5-app .pokemon-main-content .controls-container,
 .mobile-h5-app .recipe-main-content .controls-container {
-  margin: 12px 12px 10px !important;
+  flex-shrink: 0;
+  margin: 12px 12px 8px !important;
   width: calc(100% - 24px) !important;
 }
 
 .mobile-h5-app .pokemon-main-content .content-area,
 .mobile-h5-app .recipe-main-content .content-area {
-  display: block;
+  flex: 1 1 auto;
   min-height: 0;
-  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .mobile-h5-app .table-container,
 .mobile-h5-app .pokemon-table-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 100% !important;
   width: calc(100% - 24px) !important;
-  max-width: calc(100% - 24px) !important;
-  margin: 0 12px 24px 12px !important;
+  margin: 0 12px 12px !important;
   padding: 0 !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 14px !important;
   background: var(--table-row-odd-solid, #0d1527) !important;
   box-shadow: none !important;
   overflow-x: auto !important;
-  overflow-y: visible !important;
+  overflow-y: auto !important;
   -webkit-overflow-scrolling: touch;
   position: relative;
 }
@@ -10021,9 +10032,11 @@ body.mobile-h5-surface {
 }
 
 .mobile-h5-app .pokemon-table .th-type,
-.mobile-h5-app .pokemon-table .td-type {
-  width: 32px !important;
-  min-width: 32px !important;
+.mobile-h5-app .pokemon-table .td-type,
+.mobile-h5-app .pokemon-table .th-berry,
+.mobile-h5-app .pokemon-table .td-berry {
+  width: 34px !important;
+  min-width: 34px !important;
   padding: 6px 2px !important;
   text-align: center !important;
 }

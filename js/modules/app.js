@@ -297,6 +297,28 @@ TYPE_TO_BERRY['超能力'] = '芒念果';
 TYPE_TO_BERRY['飛'] = '椰木果';
 TYPE_TO_BERRY['飛行'] = '椰木果';
 
+const BERRY_ICON_MAP = {};
+BERRY_DATA.forEach(b => {
+  BERRY_ICON_MAP[b.name] = b.icon;
+  if (b.type) {
+    BERRY_ICON_MAP[b.type] = b.icon;
+  }
+});
+BERRY_ICON_MAP['妖'] = 'https://www.serebii.net/pokemonsleep/berries/pechaberry.png';
+BERRY_ICON_MAP['鬥'] = 'https://www.serebii.net/pokemonsleep/berries/cheriberry.png';
+BERRY_ICON_MAP['地'] = 'https://www.serebii.net/pokemonsleep/berries/figyberry.png';
+BERRY_ICON_MAP['岩'] = 'https://www.serebii.net/pokemonsleep/berries/sitrusberry.png';
+BERRY_ICON_MAP['鬼'] = 'https://www.serebii.net/pokemonsleep/berries/blukberry.png';
+BERRY_ICON_MAP['超'] = 'https://www.serebii.net/pokemonsleep/berries/magoberry.png';
+BERRY_ICON_MAP['飛'] = 'https://www.serebii.net/pokemonsleep/berries/pamtreberry.png';
+
+function getPokemonBerry(p) {
+  if (!p) return { name: '', icon: '' };
+  const berryName = TYPE_TO_BERRY[p.type] || (p.berry && p.berry.name) || '';
+  const berryIcon = BERRY_ICON_MAP[berryName] || BERRY_ICON_MAP[p.type] || (p.berry && p.berry.icon) || '';
+  return { name: berryName, icon: berryIcon };
+}
+
 /* ─── ⚡ 基礎主技能與複合/專屬技能映射系統 ─────────── */
 const BASE_SKILLS = [
   { key: '食材獲取S', label: '食材獲取S', label_en: 'Ingr. Mag. S', icon: '🍎' },
@@ -500,12 +522,20 @@ function shortenSkillName(name) {
 
 function formatSkillNameHtml(displayName, isEN) {
   if (!displayName) return '';
+  // 移除 [可替換] / [Customizable] / [Custom]
+  let cleaned = displayName
+    .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
+    .replace(/（活力全體療癒S）/g, '（全體療癒S）')
+    .replace(/\(活力全體療癒S\)/g, '(全體療癒S)')
+    .replace(/\(Energy for Everyone S\)/gi, '(Energy All S)')
+    .trim();
+
   if (!isEN) {
-    return `<span class="skill-single-line">${escapeHtml(displayName)}</span>`;
+    return `<span class="skill-single-line">${escapeHtml(cleaned)}</span>`;
   }
 
   // 縮短英文主技能名稱（例如 Ingredient -> Ingr., Strength -> Str., Everyone -> All 等）
-  const shortName = shortenSkillName(displayName);
+  const shortName = shortenSkillName(cleaned);
 
   // 1. 如果有括號或括弧（例如 (Fixed), (Random), (Charge Energy S), [Custom] 等）拆為兩行
   const parenMatch = shortName.match(/^(.+?)\s*([(\[].+[)\]])$/);
@@ -563,15 +593,25 @@ function renderSkillWithTooltip(skillName, pkm) {
   }
   
   const contentHtml = formatSkillNameHtml(displayName, isEN);
+  const cleanSkillKey = (skillName || '')
+    .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
+    .replace(/（活力全體療癒S）/g, '（全體療癒S）')
+    .replace(/\(活力全體療癒S\)/g, '(全體療癒S)')
+    .trim();
 
   // 僅針對特殊/變體/複合主技能展示標籤與詳細說明，純基礎主技能（如能量填充S）保持純文字不展示說明
   if (detail) {
-    return `<span class="special-skill-badge" data-skill="${escapeHtml(skillName)}" data-skill-detail="${escapeHtml(detail)}" title="${escapeHtml(plainTitle || detail)}"><span class="skill-name-text">${contentHtml}</span></span>`;
+    return `<span class="special-skill-badge" data-skill="${escapeHtml(cleanSkillKey)}" data-skill-detail="${escapeHtml(detail)}" title="${escapeHtml(plainTitle || detail)}"><span class="skill-name-text">${contentHtml}</span></span>`;
   }
   if (isEN) {
     return `<span class="main-skill-text">${contentHtml}</span>`;
   }
-  return escapeHtml(displayName);
+  let cleaned = displayName
+    .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
+    .replace(/（活力全體療癒S）/g, '（全體療癒S）')
+    .replace(/\(活力全體療癒S\)/g, '(全體療癒S)')
+    .trim();
+  return escapeHtml(cleaned);
 }
 
 function matchesSkill(pokemonSkill, targetBaseSkill) {
@@ -1691,7 +1731,7 @@ if (typeof document !== 'undefined') {
                 ${isShowNo ? '<th class="th-no">No.</th>' : ''}
                 <th class="th-icon">${t('th.icon', '圖示')}</th>
                 <th class="th-name">${t('th.name', '寶可夢')}</th>
-                <th class="th-type">${t('th.type', '屬性')}</th>
+                <th class="th-berry">${t('th.berry', '樹果')}</th>
                 <th class="th-spec">${t('th.specialty', '得意')}</th>
                 ${sortableTh('carry', t('th.carry', '持有'), 'th-carry')}
                 <th class="th-ing">${t('th.ing1', '食材1')}</th>
@@ -1707,8 +1747,9 @@ if (typeof document !== 'undefined') {
               ${data.map(p => {
                 const iconUrl = getIconUrl(p);
                 const pkmName = isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en);
-                const typeName = window.I18N ? window.I18N.getTypeName(p.type) : (p.type || '一般');
                 const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
+                const berry = getPokemonBerry(p);
+                const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--');
 
                 return `
                 <tr>
@@ -1717,7 +1758,7 @@ if (typeof document !== 'undefined') {
                     ${iconUrl ? `<img src="${iconUrl}" width="34" height="34" class="table-icon" alt="${pkmName}" title="${pkmName}" loading="lazy" onerror="this.style.display='none';">` : ''}
                   </td>
                   <td class="td-name pokemon-name-cell">${pkmName}</td>
-                  <td class="td-type"><span class="pkm-type-icon-wrapper" title="${typeName}">${window.I18N ? window.I18N.getTypeIconSvg(p.type, 16) : `<span class="type-badge" style="background-color:var(--type-${p.type}, #64748b);">${typeName}</span>`}</span></td>
+                  <td class="td-berry">${berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}" loading="lazy" onerror="this.style.display='none';">` : `<span class="berry-name-text">${berryName}</span>`}</td>
                   <td class="td-spec">${specName}</td>
                   <td class="td-carry">${p.carry || '--'}</td>
                   <td class="td-ing">${p.ingredients && p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${p.ingredients[0].name}" loading="lazy" title="${p.ingredients[0].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[0],0)}</div>` : '--'}</td>

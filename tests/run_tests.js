@@ -533,6 +533,14 @@ test('Tier 1 - Feature Coverage', 'JS Logic: app.js contains state management, m
   assertEquals(PokemonApp.formatHelpInterval('01:13:20'), '73:20', 'formatHelpInterval(01:13:20) should be 73:20');
   assertEquals(PokemonApp.formatHelpInterval('01:00:00'), '60:00', 'formatHelpInterval(01:00:00) should be 60:00');
   assertEquals(PokemonApp.showNo, false, 'PokemonApp.showNo should default to false');
+
+  const mewRender = PokemonApp.renderSkillWithTooltip('十項全能（揮指）[可替換]');
+  assert(!mewRender.includes('[可替換]'), 'renderSkillWithTooltip should not include [可替換]');
+  assert(mewRender.includes('十項全能（揮指）'), 'renderSkillWithTooltip should retain 十項全能（揮指）');
+
+  const cressRender = PokemonApp.renderSkillWithTooltip('新月祈禱（活力全體療癒S）');
+  assert(!cressRender.includes('活力全體療癒S'), 'renderSkillWithTooltip should simplify 活力全體療癒S');
+  assert(cressRender.includes('全體療癒S'), 'renderSkillWithTooltip should retain 全體療癒S');
 });
 
 // Baseline Tests 11-23
