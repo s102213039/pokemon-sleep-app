@@ -333,7 +333,7 @@ const BASE_SKILLS = [
   { key: '幫手支援S', label: '幫手支援S', label_en: 'Extra Help S', icon: '🤝' },
   { key: '幫手加速', label: '幫手加速', label_en: 'Helper Boost', icon: '🚀' },
   { key: '樹果遽增', label: '樹果遽增', label_en: 'Berry Burst', icon: '🫐' },
-  { key: '夢之碎片獲取S', label: '碎片獲取S', label_en: 'Dream Shard S', icon: '💎' },
+  { key: '夢之碎片獲取S', label: '夢碎獲取S', label_en: 'Dream Shard S', icon: '💎' },
   { key: '揮指', label: '揮指', label_en: 'Metronome', icon: '🎲' },
   { key: '技能複製', label: '技能複製', label_en: 'Skill Copy', icon: '🎭' }
 ];
@@ -523,9 +523,11 @@ function shortenSkillName(name) {
 function formatSkillNameHtml(displayName, isEN) {
   if (!displayName) return '';
   // 移除 [可替換] / [Customizable] / [Custom]，並將所有全形 （） 統一轉為半形 ()
+  // 簡短化：活力全體療癒S -> 全體療癒S，夢之碎片 -> 夢碎
   let cleaned = displayName
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
-    .replace(/[（\(]活力全體療癒S[）\)]/g, '(全體療癒S)')
+    .replace(/活力全體療癒S/g, '全體療癒S')
+    .replace(/夢之碎片/g, '夢碎')
     .replace(/\(Energy for Everyone S\)/gi, '(Energy All S)')
     .replace(/（/g, '(')
     .replace(/）/g, ')')
@@ -554,7 +556,9 @@ function renderSkillWithTooltip(skillName, pkm) {
   if (!skillName) return '--';
   const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
   const displayName = (typeof window !== 'undefined' && window.I18N) ? window.I18N.getMainSkillName(skillName) : skillName;
-  const rawDetail = SPECIAL_SKILL_DETAILS[skillName] || SPECIAL_SKILL_DETAILS[skillName.replace(/\(/g, '（').replace(/\)/g, '）')];
+  const rawDetail = SPECIAL_SKILL_DETAILS[skillName] || 
+                    SPECIAL_SKILL_DETAILS[skillName.replace(/\(/g, '（').replace(/\)/g, '）')] ||
+                    SPECIAL_SKILL_DETAILS[skillName.replace(/（/g, '(').replace(/）/g, ')')];
   let detail = rawDetail ? (typeof rawDetail === 'object' ? (rawDetail[isEN ? 'en-US' : 'zh-TW'] || rawDetail['zh-TW']) : rawDetail) : '';
 
   let plainTitle = detail;
@@ -596,7 +600,8 @@ function renderSkillWithTooltip(skillName, pkm) {
   const contentHtml = formatSkillNameHtml(displayName, isEN);
   const cleanSkillKey = (skillName || '')
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
-    .replace(/[（\(]活力全體療癒S[）\)]/g, '(全體療癒S)')
+    .replace(/活力全體療癒S/g, '全體療癒S')
+    .replace(/夢之碎片/g, '夢碎')
     .replace(/（/g, '(')
     .replace(/）/g, ')')
     .trim();
@@ -610,7 +615,8 @@ function renderSkillWithTooltip(skillName, pkm) {
   }
   let cleaned = displayName
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
-    .replace(/[（\(]活力全體療癒S[）\)]/g, '(全體療癒S)')
+    .replace(/活力全體療癒S/g, '全體療癒S')
+    .replace(/夢之碎片/g, '夢碎')
     .replace(/（/g, '(')
     .replace(/）/g, ')')
     .trim();

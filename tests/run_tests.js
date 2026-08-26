@@ -541,6 +541,13 @@ test('Tier 1 - Feature Coverage', 'JS Logic: app.js contains state management, m
   const cressRender = PokemonApp.renderSkillWithTooltip('新月祈禱（活力全體療癒S）');
   assert(!cressRender.includes('活力全體療癒S'), 'renderSkillWithTooltip should simplify 活力全體療癒S');
   assert(cressRender.includes('全體療癒S)'), 'renderSkillWithTooltip should format with halfwidth parentheses 全體療癒S)');
+
+  const shardRender = PokemonApp.renderSkillWithTooltip('夢之碎片獲取S');
+  assertEquals(shardRender, '夢碎獲取S', 'renderSkillWithTooltip should format 夢之碎片獲取S as 夢碎獲取S');
+
+  const lucarioRender = PokemonApp.renderSkillWithTooltip('波導彈（夢之碎片獲取S）');
+  assert(!lucarioRender.includes('波導彈（夢之碎片') && !lucarioRender.includes('波導彈(夢之碎片'), 'renderSkillWithTooltip should shorten 夢之碎片 in 波導彈 skill name');
+  assert(lucarioRender.includes('波導彈(夢碎獲取S)'), 'renderSkillWithTooltip should format as 波導彈(夢碎獲取S)');
 });
 
 // Baseline Tests 11-23
@@ -1359,7 +1366,11 @@ test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Ho
   ];
   pureBaseSkills.forEach(skill => {
     const rendered = renderSkillWithTooltip(skill);
-    const expected = skill.replace(/（/g, '(').replace(/）/g, ')');
+    const expected = skill
+      .replace(/活力全體療癒S/g, '全體療癒S')
+      .replace(/夢之碎片/g, '夢碎')
+      .replace(/（/g, '(')
+      .replace(/）/g, ')');
     assertEquals(rendered, expected, `Pure base skill ${skill} should be rendered as plain text without tooltip or badge`);
   });
 });
