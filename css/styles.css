@@ -3520,16 +3520,12 @@ input[type=range].rf-slider.event-slider {
   .pokemon-main-content .pokemon-table-container,
   .mobile-h5-app .table-container,
   .mobile-h5-app .pokemon-table-container {
-    max-width: calc(100% - 12px) !important;
-    width: calc(100% - 12px) !important;
-    margin: 0 0 16px 12px !important;
+    max-width: calc(100% - 24px) !important;
+    width: calc(100% - 24px) !important;
+    margin: 0 12px 24px 12px !important;
     padding: 0 !important;
-    border-top-left-radius: 14px !important;
-    border-bottom-left-radius: 14px !important;
-    border-top-right-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
+    border-radius: 14px !important;
     border: 1px solid var(--border-color) !important;
-    border-right: none !important;
     background: var(--table-row-odd-solid, #0d1527) !important;
     box-shadow: none !important;
     overflow-x: auto !important;
@@ -9958,13 +9954,13 @@ body.mobile-h5-surface {
 
 .mobile-h5-app .table-container,
 .mobile-h5-app .pokemon-table-container {
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 0 24px 0 !important;
-  padding: 0 12px !important;
-  box-sizing: border-box !important;
-  border: none !important;
-  background: transparent !important;
+  width: calc(100% - 24px) !important;
+  max-width: calc(100% - 24px) !important;
+  margin: 0 12px 24px 12px !important;
+  padding: 0 !important;
+  border-radius: 14px !important;
+  border: 1px solid var(--border-color) !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
   box-shadow: none !important;
   overflow-x: auto !important;
   overflow-y: visible !important;
@@ -9977,9 +9973,7 @@ body.mobile-h5-surface {
   min-width: 780px !important;
   border-collapse: separate !important;
   border-spacing: 0 !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: 14px !important;
-  background: var(--table-row-odd-solid, #0d1527) !important;
+  background: transparent !important;
 }
 
 .mobile-h5-app .pokemon-table thead th:first-child {
