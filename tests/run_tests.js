@@ -639,6 +639,9 @@ test('Tier 1 - Feature Coverage', 'i18n Bilingual Engine & Strategy Dictionaries
   
   assertEquals(I18N.getLanguage(), 'zh-TW', 'Default language should be zh-TW');
   assertEquals(I18N.t('brand.title'), 'Pokémon Sleep 資料庫', 'zh-TW brand.title match');
+  assertEquals(I18N.t('th.ing1'), '食1', 'zh-TW th.ing1 should be 食1');
+  assertEquals(I18N.t('th.ing2'), '食2', 'zh-TW th.ing2 should be 食2');
+  assertEquals(I18N.t('th.ing3'), '食3', 'zh-TW th.ing3 should be 食3');
   assertEquals(I18N.getTypeName('草'), '草', 'zh-TW type name match');
   assertEquals(I18N.getSpecialtyName('樹果'), '樹果', 'zh-TW specialty name match');
   assertEquals(I18N.getNatureName('固執'), '固執', 'zh-TW nature name match');
@@ -646,6 +649,9 @@ test('Tier 1 - Feature Coverage', 'i18n Bilingual Engine & Strategy Dictionaries
   I18N.setLanguage('en-US');
   assertEquals(I18N.getLanguage(), 'en-US', 'Language should switch to en-US');
   assertEquals(I18N.t('brand.title'), 'Pokémon Sleep Database', 'en-US brand.title match');
+  assertEquals(I18N.t('th.ing1'), 'Ing1', 'en-US th.ing1 should be Ing1');
+  assertEquals(I18N.t('th.ing2'), 'Ing2', 'en-US th.ing2 should be Ing2');
+  assertEquals(I18N.t('th.ing3'), 'Ing3', 'en-US th.ing3 should be Ing3');
   assertEquals(I18N.getTypeName('草'), 'Grass', 'en-US type name match');
   assertEquals(I18N.getSpecialtyName('樹果'), 'Berries', 'en-US specialty name match');
   assertEquals(I18N.getNatureName('固執'), 'Adamant', 'en-US nature name match');
