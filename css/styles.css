@@ -3525,7 +3525,10 @@ input[type=range].rf-slider.event-slider {
     margin: 0 0 24px 12px !important;
     padding: 0 !important;
     border: none !important;
-    border-radius: 0 !important;
+    border-top-left-radius: 14px !important;
+    border-bottom-left-radius: 14px !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
     background: transparent !important;
     box-shadow: none !important;
     overflow-x: auto !important;
@@ -9959,7 +9962,10 @@ body.mobile-h5-surface {
   margin: 0 0 24px 12px !important;
   padding: 0 !important;
   border: none !important;
-  border-radius: 0 !important;
+  border-top-left-radius: 14px !important;
+  border-bottom-left-radius: 14px !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
   overflow-x: auto !important;
@@ -9976,7 +9982,7 @@ body.mobile-h5-surface {
   border: 1px solid var(--border-color) !important;
   border-radius: 14px !important;
   background: var(--table-row-odd-solid, #0d1527) !important;
-  margin-right: 12px !important;
+  margin-right: 0 !important;
 }
 
 .mobile-h5-app .pokemon-table th,
@@ -10063,7 +10069,7 @@ body.mobile-h5-surface {
 
 .mobile-h5-app .pokemon-table th:last-child,
 .mobile-h5-app .pokemon-table td:last-child {
-  padding-right: 14px !important;
+  padding-right: 8px !important;
 }
 
 .mobile-h5-app .pokemon-table thead th {
