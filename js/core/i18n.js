@@ -1034,13 +1034,35 @@
       .replace(/'/g, '&#39;');
   }
 
+  const TYPE_COLOR_HEX = {
+    grass: '#4ad071',
+    fire: '#fb6c6c',
+    water: '#76befe',
+    electric: '#ffd833',
+    bug: '#92dc3d',
+    normal: '#a8a878',
+    poison: '#aa45a0',
+    fighting: '#c03028',
+    ground: '#e0c068',
+    rock: '#b8a038',
+    psychic: '#f85888',
+    ice: '#7cd8c1',
+    dragon: '#7038f8',
+    ghost: '#70559b',
+    dark: '#705848',
+    steel: '#b8b8d0',
+    fairy: '#f49ba8',
+    flying: '#a890f0'
+  };
+
   function getTypeIconSvg(type, size = 16) {
     if (!type) return '';
     const rawType = String(type).trim();
     const key = TYPE_CANONICAL_MAP[rawType] || TYPE_CANONICAL_MAP[rawType.toLowerCase()] || 'normal';
     const pathContent = TYPE_SVG_PATHS[key] || TYPE_SVG_PATHS['normal'];
     const typeDisplayName = getTypeName(rawType);
-    return `<svg class="pkm-type-icon type-${key}" viewBox="0 0 512 512" width="${size}" height="${size}" aria-label="${safeEscape(typeDisplayName)}" title="${safeEscape(typeDisplayName)}" style="fill: var(--type-${rawType}, currentColor); color: var(--type-${rawType}, currentColor);">${pathContent}</svg>`;
+    const colorHex = TYPE_COLOR_HEX[key] || '#a8a878';
+    return `<svg class="pkm-type-icon type-${key}" viewBox="0 0 512 512" width="${size}" height="${size}" aria-label="${safeEscape(typeDisplayName)}" title="${safeEscape(typeDisplayName)}" style="fill: var(--type-${rawType}, ${colorHex}); color: var(--type-${rawType}, ${colorHex});">${pathContent}</svg>`;
   }
 
   function getSpecialtyName(spec) {

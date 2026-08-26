@@ -1661,6 +1661,26 @@ html[data-lang="en"] .subfilter-skill-btn,
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
 }
 
+/* 🌈 18 種屬性專屬色彩 Tint (100% 穩定呈現色彩) */
+.pkm-type-icon.type-grass { fill: #4ad071 !important; color: #4ad071 !important; }
+.pkm-type-icon.type-fire { fill: #fb6c6c !important; color: #fb6c6c !important; }
+.pkm-type-icon.type-water { fill: #76befe !important; color: #76befe !important; }
+.pkm-type-icon.type-electric { fill: #ffd833 !important; color: #ffd833 !important; }
+.pkm-type-icon.type-bug { fill: #92dc3d !important; color: #92dc3d !important; }
+.pkm-type-icon.type-normal { fill: #a8a878 !important; color: #a8a878 !important; }
+.pkm-type-icon.type-poison { fill: #aa45a0 !important; color: #aa45a0 !important; }
+.pkm-type-icon.type-fighting { fill: #c03028 !important; color: #c03028 !important; }
+.pkm-type-icon.type-ground { fill: #e0c068 !important; color: #e0c068 !important; }
+.pkm-type-icon.type-rock { fill: #b8a038 !important; color: #b8a038 !important; }
+.pkm-type-icon.type-psychic { fill: #f85888 !important; color: #f85888 !important; }
+.pkm-type-icon.type-ice { fill: #7cd8c1 !important; color: #7cd8c1 !important; }
+.pkm-type-icon.type-dragon { fill: #7038f8 !important; color: #7038f8 !important; }
+.pkm-type-icon.type-ghost { fill: #70559b !important; color: #70559b !important; }
+.pkm-type-icon.type-dark { fill: #705848 !important; color: #705848 !important; }
+.pkm-type-icon.type-steel { fill: #b8b8d0 !important; color: #b8b8d0 !important; }
+.pkm-type-icon.type-fairy { fill: #f49ba8 !important; color: #f49ba8 !important; }
+.pkm-type-icon.type-flying { fill: #a890f0 !important; color: #a890f0 !important; }
+
 .pkm-type-icon:hover {
   transform: scale(1.15);
   filter: drop-shadow(0 0 5px currentColor);
@@ -9938,21 +9958,51 @@ body.mobile-h5-surface {
 
 .mobile-h5-app .table-container,
 .mobile-h5-app .pokemon-table-container {
-  width: calc(100% - 12px) !important;
-  max-width: calc(100% - 12px) !important;
-  margin: 0 0 24px 12px !important;
-  border-top-left-radius: 14px !important;
-  border-bottom-left-radius: 14px !important;
-  border-top-right-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
-  border: 1px solid var(--border-color) !important;
-  border-right: none !important;
-  background: var(--table-row-odd-solid, #0d1527) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 0 24px 0 !important;
+  padding: 0 12px !important;
+  box-sizing: border-box !important;
+  border: none !important;
+  background: transparent !important;
   box-shadow: none !important;
   overflow-x: auto !important;
   overflow-y: visible !important;
   -webkit-overflow-scrolling: touch;
   position: relative;
+}
+
+.mobile-h5-app .pokemon-table {
+  width: max-content !important;
+  min-width: 780px !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 14px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+}
+
+.mobile-h5-app .pokemon-table thead th:first-child {
+  border-top-left-radius: 13px !important;
+}
+
+.mobile-h5-app .pokemon-table thead th:last-child {
+  border-top-right-radius: 13px !important;
+}
+
+.mobile-h5-app .pokemon-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 13px !important;
+}
+
+.mobile-h5-app .pokemon-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 13px !important;
+}
+
+.mobile-h5-app .pokemon-table .th-skill,
+.mobile-h5-app .pokemon-table .td-skill {
+  min-width: 160px !important;
+  padding-right: 18px !important;
+  text-align: left !important;
 }
 
 .mobile-h5-app .pokemon-table thead th {
