@@ -1920,7 +1920,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   box-sizing: border-box !important;
   text-align: center !important;
   border-right: 1px solid var(--border-color) !important;
-  box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
 }
 
 .pokemon-table .td-icon,
@@ -1935,7 +1935,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   box-sizing: border-box !important;
   text-align: center !important;
   border-right: 1px solid var(--border-color) !important;
-  box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
 }
 
 .table-icon {
@@ -3500,15 +3500,28 @@ input[type=range].rf-slider.event-slider {
   .pokemon-main-content .pokemon-table-container,
   .mobile-h5-app .table-container,
   .mobile-h5-app .pokemon-table-container {
-    max-width: calc(100% - 24px) !important;
-    width: calc(100% - 24px) !important;
-    margin: 0 auto 16px !important;
+    max-width: calc(100% - 12px) !important;
+    width: calc(100% - 12px) !important;
+    margin: 0 0 16px 12px !important;
     padding: 0 !important;
-    border-radius: 16px !important;
+    border-top-left-radius: 14px !important;
+    border-bottom-left-radius: 14px !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
     border: 1px solid var(--border-color) !important;
+    border-right: none !important;
     background: var(--table-row-odd-solid, #0d1527) !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: none !important;
     overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mobile-h5-app .pokemon-table th:last-child,
+  .mobile-h5-app .pokemon-table td:last-child,
+  .pokemon-table th:last-child,
+  .pokemon-table td:last-child {
+    padding-right: 18px !important;
   }
 
   .pokemon-main-content .pokemon-grid {
@@ -3627,7 +3640,7 @@ input[type=range].rf-slider.event-slider {
     max-width: 46px !important;
     width: 46px !important;
     border-right: 1px solid var(--border-color) !important;
-    box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.4) !important;
+    box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
   }
 
   .pokemon-table thead .th-icon {
@@ -3636,7 +3649,7 @@ input[type=range].rf-slider.event-slider {
     z-index: 35 !important;
     background-color: var(--table-th-solid, #0a0f1d) !important;
     border-right: 1px solid var(--border-color) !important;
-    box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.4) !important;
+    box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
   }
 
   .pokemon-table .th-name,
@@ -9817,7 +9830,7 @@ body.mobile-h5-surface {
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
 }
 
 .mobile-header-container {
@@ -9897,70 +9910,92 @@ body.mobile-h5-surface {
 .mobile-h5-app .pokemon-main-content .controls-container,
 .mobile-h5-app .recipe-main-content .controls-container {
   margin-top: 12px !important;
-  margin-bottom: 8px !important;
+  margin-bottom: 10px !important;
 }
 
-/* ─── 📱 H5 App 類 Android CoordinatorLayout 列表容器視窗 ─── */
+/* ─── 📱 H5 App 列表視圖：無限自然延伸（下方自然滾動到底，右方無限延伸） ─── */
 .mobile-h5-app .pokemon-main-content,
 .mobile-h5-app .recipe-main-content {
-  display: flex;
-  flex-direction: column;
-  height: calc(100dvh - 52px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-  max-height: calc(100dvh - 52px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-  overflow: hidden;
+  display: block;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
 }
 
 .mobile-h5-app .pokemon-main-content .controls-container,
 .mobile-h5-app .recipe-main-content .controls-container {
-  flex-shrink: 0;
-  margin: 12px 12px 8px !important;
+  margin: 12px 12px 10px !important;
   width: calc(100% - 24px) !important;
 }
 
 .mobile-h5-app .pokemon-main-content .content-area,
 .mobile-h5-app .recipe-main-content .content-area {
-  flex: 1 1 auto;
+  display: block;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .mobile-h5-app .table-container,
 .mobile-h5-app .pokemon-table-container {
-  flex: 1 1 auto;
-  min-height: 0;
-  max-height: 100% !important;
-  width: calc(100% - 24px) !important;
-  margin: 0 12px 12px !important;
-  border-radius: 16px !important;
+  width: calc(100% - 12px) !important;
+  max-width: calc(100% - 12px) !important;
+  margin: 0 0 24px 12px !important;
+  border-top-left-radius: 14px !important;
+  border-bottom-left-radius: 14px !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
   border: 1px solid var(--border-color) !important;
+  border-right: none !important;
   background: var(--table-row-odd-solid, #0d1527) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: none !important;
   overflow-x: auto !important;
-  overflow-y: auto !important;
+  overflow-y: visible !important;
   -webkit-overflow-scrolling: touch;
   position: relative;
 }
 
-/* ─── 🎛️ H5 App 右下懸浮篩選按鈕 (Theme Gradient & Draggable Snapping FAB) ─── */
+.mobile-h5-app .pokemon-table thead th {
+  position: sticky !important;
+  top: calc(52px + env(safe-area-inset-top, 0px)) !important;
+  z-index: 10 !important;
+  background-color: var(--table-th-solid, #0a0f1d) !important;
+}
+
+.mobile-h5-app .pokemon-table thead .th-no {
+  position: sticky !important;
+  top: calc(52px + env(safe-area-inset-top, 0px)) !important;
+  left: 0 !important;
+  z-index: 35 !important;
+  background-color: var(--table-th-solid, #0a0f1d) !important;
+}
+
+.mobile-h5-app .pokemon-table thead .th-icon {
+  position: sticky !important;
+  top: calc(52px + env(safe-area-inset-top, 0px)) !important;
+  left: 44px !important;
+  z-index: 35 !important;
+  background-color: var(--table-th-solid, #0a0f1d) !important;
+}
+
+/* ─── 🎛️ H5 App 右下懸浮篩選按鈕 (輕量扁平微陰影，無刺眼炫光) ─── */
 .mobile-h5-app .sidebar-bookmark-handle,
 .mobile-h5-app .sidebar-fab-btn {
   display: flex !important;
   position: fixed !important;
-  right: 14px !important;
+  right: 16px !important;
   bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
   left: auto;
   top: auto;
   transform: none;
-  width: 50px !important;
-  height: 50px !important;
-  min-height: 50px !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-height: 48px !important;
   border-radius: 50% !important;
   background: var(--accent-gradient, linear-gradient(135deg, #0284c7, #38bdf8)) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 20px rgba(2, 132, 199, 0.5), 0 0 16px rgba(56, 189, 248, 0.35) !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22) !important;
   flex-direction: row !important;
   align-items: center !important;
   justify-content: center !important;
@@ -10135,21 +10170,21 @@ body.mobile-h5-surface {
 
 .dock-tab.active .dock-icon,
 .dock-tab-btn.active .dock-icon {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   color: var(--accent-blue, #38bdf8);
 }
 
 .dock-tab.active .dock-icon svg,
 .dock-tab.active .dock-svg {
   stroke: var(--accent-blue, #38bdf8);
-  filter: drop-shadow(0 0 6px var(--accent-glow, rgba(56, 189, 248, 0.45)));
+  filter: none;
 }
 
 .dock-tab.active .dock-label,
 .dock-tab-btn.active .dock-label {
   color: var(--accent-color);
   font-weight: 700;
-  text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+  text-shadow: none;
 }
 
 .dock-tab::after,
@@ -10158,11 +10193,11 @@ body.mobile-h5-surface {
   position: absolute;
   top: -6px;
   width: 0;
-  height: 3px;
-  background: var(--accent-gradient);
+  height: 2.5px;
+  background: var(--accent-color);
   border-radius: 0 0 3px 3px;
-  box-shadow: 0 0 10px var(--accent-color);
-  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: none;
+  transition: width 0.2s ease;
 }
 
 .dock-tab.active::after,
