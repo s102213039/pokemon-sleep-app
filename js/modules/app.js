@@ -522,12 +522,13 @@ function shortenSkillName(name) {
 
 function formatSkillNameHtml(displayName, isEN) {
   if (!displayName) return '';
-  // 移除 [可替換] / [Customizable] / [Custom]
+  // 移除 [可替換] / [Customizable] / [Custom]，並將所有全形 （） 統一轉為半形 ()
   let cleaned = displayName
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
-    .replace(/（活力全體療癒S）/g, '（全體療癒S）')
-    .replace(/\(活力全體療癒S\)/g, '(全體療癒S)')
+    .replace(/[（\(]活力全體療癒S[）\)]/g, '(全體療癒S)')
     .replace(/\(Energy for Everyone S\)/gi, '(Energy All S)')
+    .replace(/（/g, '(')
+    .replace(/）/g, ')')
     .trim();
 
   if (!isEN) {
@@ -537,7 +538,7 @@ function formatSkillNameHtml(displayName, isEN) {
   // 縮短英文主技能名稱（例如 Ingredient -> Ingr., Strength -> Str., Everyone -> All 等）
   const shortName = shortenSkillName(cleaned);
 
-  // 1. 如果有括號或括弧（例如 (Fixed), (Random), (Charge Energy S), [Custom] 等）拆為兩行
+  // 1. 如果有括號或括弧拆為兩行
   const parenMatch = shortName.match(/^(.+?)\s*([(\[].+[)\]])$/);
   if (parenMatch) {
     const mainPart = parenMatch[1].trim();
@@ -545,7 +546,7 @@ function formatSkillNameHtml(displayName, isEN) {
     return `<span class="skill-line-1">${escapeHtml(mainPart)}</span><span class="skill-line-2">${escapeHtml(subPart)}</span>`;
   }
 
-  // 2. 標準主技能（如 Ingr. Magnet S、Charge Str. S、Energy for All S 等）單行完整展示
+  // 2. 標準主技能單行完整展示
   return `<span class="skill-single-line">${escapeHtml(shortName)}</span>`;
 }
 
@@ -595,8 +596,9 @@ function renderSkillWithTooltip(skillName, pkm) {
   const contentHtml = formatSkillNameHtml(displayName, isEN);
   const cleanSkillKey = (skillName || '')
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
-    .replace(/（活力全體療癒S）/g, '（全體療癒S）')
-    .replace(/\(活力全體療癒S\)/g, '(全體療癒S)')
+    .replace(/[（\(]活力全體療癒S[）\)]/g, '(全體療癒S)')
+    .replace(/（/g, '(')
+    .replace(/）/g, ')')
     .trim();
 
   // 僅針對特殊/變體/複合主技能展示標籤與詳細說明，純基礎主技能（如能量填充S）保持純文字不展示說明
@@ -608,8 +610,9 @@ function renderSkillWithTooltip(skillName, pkm) {
   }
   let cleaned = displayName
     .replace(/\s*[\[\(](可替換|Customizable|Custom)[\]\)]/gi, '')
-    .replace(/（活力全體療癒S）/g, '（全體療癒S）')
-    .replace(/\(活力全體療癒S\)/g, '(全體療癒S)')
+    .replace(/[（\(]活力全體療癒S[）\)]/g, '(全體療癒S)')
+    .replace(/（/g, '(')
+    .replace(/）/g, ')')
     .trim();
   return escapeHtml(cleaned);
 }

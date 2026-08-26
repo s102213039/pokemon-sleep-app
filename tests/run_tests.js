@@ -536,11 +536,11 @@ test('Tier 1 - Feature Coverage', 'JS Logic: app.js contains state management, m
 
   const mewRender = PokemonApp.renderSkillWithTooltip('十項全能（揮指）[可替換]');
   assert(!mewRender.includes('[可替換]'), 'renderSkillWithTooltip should not include [可替換]');
-  assert(mewRender.includes('十項全能（揮指）'), 'renderSkillWithTooltip should retain 十項全能（揮指）');
+  assert(mewRender.includes('十項全能(揮指)'), 'renderSkillWithTooltip should format with halfwidth parentheses 十項全能(揮指)');
 
   const cressRender = PokemonApp.renderSkillWithTooltip('新月祈禱（活力全體療癒S）');
   assert(!cressRender.includes('活力全體療癒S'), 'renderSkillWithTooltip should simplify 活力全體療癒S');
-  assert(cressRender.includes('全體療癒S'), 'renderSkillWithTooltip should retain 全體療癒S');
+  assert(cressRender.includes('全體療癒S)'), 'renderSkillWithTooltip should format with halfwidth parentheses 全體療癒S)');
 });
 
 // Baseline Tests 11-23
@@ -1359,7 +1359,8 @@ test('Tier 2 - Boundary & Corner Cases', 'Special Main Skill Tooltip Details: Ho
   ];
   pureBaseSkills.forEach(skill => {
     const rendered = renderSkillWithTooltip(skill);
-    assertEquals(rendered, skill, `Pure base skill ${skill} should be rendered as plain text without tooltip or badge`);
+    const expected = skill.replace(/（/g, '(').replace(/）/g, ')');
+    assertEquals(rendered, expected, `Pure base skill ${skill} should be rendered as plain text without tooltip or badge`);
   });
 });
 
