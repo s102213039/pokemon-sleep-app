@@ -62,6 +62,29 @@ function getItemHelpInterval(p) {
   return 0;
 }
 
+function formatHelpInterval(val) {
+  if (!val || val === '--') return '--';
+  if (typeof val === 'number') {
+    const totalMin = Math.floor(val / 60);
+    const sec = Math.floor(val % 60);
+    return `${String(totalMin).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  }
+  if (typeof val === 'string') {
+    const trimmed = val.trim();
+    if (!trimmed || trimmed === '--') return '--';
+    const parts = trimmed.split(':').map(Number);
+    if (parts.length === 3) {
+      const totalMin = (isNaN(parts[0]) ? 0 : parts[0]) * 60 + (isNaN(parts[1]) ? 0 : parts[1]);
+      const sec = isNaN(parts[2]) ? 0 : parts[2];
+      return `${String(totalMin).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    }
+    if (parts.length === 2) {
+      return trimmed;
+    }
+  }
+  return String(val);
+}
+
 function getItemIngredientRate(p) {
   if (!p) return 0;
   if (typeof p.ingredientRate === 'number') return p.ingredientRate;
@@ -564,6 +587,7 @@ const PokemonApp = {
   currentSearch: '',
   onlyFinal: true,
   onlyInitialIng: false,
+  showNo: false,
   selectedTypes: new Set(),
   selectedSpecialties: new Set(),
   selectedBerries: new Set(),
@@ -577,6 +601,7 @@ const PokemonApp = {
     this.currentSearch = '';
     this.onlyFinal = true;
     this.onlyInitialIng = false;
+    this.showNo = false;
     this.selectedTypes = new Set();
     this.selectedSpecialties = new Set();
     this.selectedBerries = new Set();
@@ -590,8 +615,10 @@ const PokemonApp = {
 if (typeof window !== 'undefined') {
   window.PokemonApp = PokemonApp;
   window.renderSkillWithTooltip = renderSkillWithTooltip;
+  window.formatHelpInterval = formatHelpInterval;
 }
 PokemonApp.renderSkillWithTooltip = renderSkillWithTooltip;
+PokemonApp.formatHelpInterval = formatHelpInterval;
 
 Object.assign(PokemonApp, {
   filterData() {
@@ -681,6 +708,9 @@ if (typeof document !== 'undefined') {
     let onlyFinal = finalEvoToggle ? finalEvoToggle.checked : true;
     const initialIngToggle = document.getElementById('initial-ing-toggle');
     let onlyInitialIng = initialIngToggle ? initialIngToggle.checked : false;
+    const showNoToggle = document.getElementById('show-no-toggle');
+    let showNo = showNoToggle ? showNoToggle.checked : false;
+    PokemonApp.showNo = showNo;
     const selectedTypes = new Set();
     const selectedSpecialties = new Set();
     const selectedBerries = new Set();
@@ -1305,6 +1335,9 @@ if (typeof document !== 'undefined') {
           selectedBerries.clear();
           selectedIngredients.clear();
           selectedSkills.clear();
+          if (showNoToggle) showNoToggle.checked = false;
+          showNo = false;
+          PokemonApp.showNo = false;
           renderSpecialtyButtons();
           renderBerryButtons();
           renderIngredientButtons();
@@ -1369,6 +1402,14 @@ if (typeof document !== 'undefined') {
         initialIngToggle.addEventListener('change', (e) => {
           onlyInitialIng = e.target.checked;
           PokemonApp.onlyInitialIng = onlyInitialIng;
+          renderUI();
+        });
+      }
+
+      if (showNoToggle) {
+        showNoToggle.addEventListener('change', (e) => {
+          showNo = e.target.checked;
+          PokemonApp.showNo = showNo;
           renderUI();
         });
       }
@@ -1624,7 +1665,7 @@ if (typeof document !== 'undefined') {
                 </div>
                 <div class="stat-item">
                   <span class="stat-label">${t('th.interval', '幫忙間隔')}</span>
-                  <span class="stat-value" style="white-space:nowrap;">${p.interval || '--'}</span>
+                  <span class="stat-value" style="white-space:nowrap;">${formatHelpInterval(p.interval)}</span>
                 </div>
               </div>
               <div class="card-skill-footer">
@@ -1640,13 +1681,14 @@ if (typeof document !== 'undefined') {
     function renderTable(data) {
       const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
       const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+      const isShowNo = (typeof PokemonApp !== 'undefined' && PokemonApp.showNo) || (typeof showNo !== 'undefined' && showNo) || false;
 
       contentArea.innerHTML = `
         <div class="table-container">
-          <table class="pokemon-table">
+          <table class="pokemon-table ${isShowNo ? '' : 'hide-no'}">
             <thead>
               <tr>
-                <th class="th-no">No.</th>
+                ${isShowNo ? '<th class="th-no">No.</th>' : ''}
                 <th class="th-icon">${t('th.icon', '圖示')}</th>
                 <th class="th-name">${t('th.name', '寶可夢')}</th>
                 <th class="th-type">${t('th.type', '屬性')}</th>
@@ -1670,7 +1712,7 @@ if (typeof document !== 'undefined') {
 
                 return `
                 <tr>
-                  <td class="td-no">${p.formatted_no}</td>
+                  ${isShowNo ? `<td class="td-no">${p.formatted_no}</td>` : ''}
                   <td class="td-icon">
                     ${iconUrl ? `<img src="${iconUrl}" width="34" height="34" class="table-icon" alt="${pkmName}" title="${pkmName}" loading="lazy" onerror="this.style.display='none';">` : ''}
                   </td>
@@ -1683,7 +1725,7 @@ if (typeof document !== 'undefined') {
                   <td class="td-ing">${p.ingredients && p.ingredients[2] ? `<div class="ing-cell">${p.ingredients[2].icon ? `<img class="ing-icon" src="${p.ingredients[2].icon}" alt="${p.ingredients[2].name}" loading="lazy" title="${p.ingredients[2].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[2],2)}</div>` : '--'}</td>
                   <td class="td-rate">${p.ingredient_rate || '--'}</td>
                   <td class="td-rate">${p.skill_rate || '--'}</td>
-                  <td class="td-interval">${p.interval || '--'}</td>
+                  <td class="td-interval">${formatHelpInterval(p.interval)}</td>
                   <td class="td-skill">${renderSkillWithTooltip(p.main_skill, p)}</td>
                 </tr>
               `}).join('')}

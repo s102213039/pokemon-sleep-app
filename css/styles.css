@@ -1958,6 +1958,21 @@ html[data-lang="en"] .subfilter-skill-btn,
   box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
 }
 
+/* ─── 📌 關鍵置前：隱藏 No. 欄位時，圖示 (th-icon, td-icon) 自動貼齊 left: 0 ─── */
+.pokemon-table.hide-no .th-icon,
+.pokemon-table.hide-no .td-icon,
+.pokemon-table.hide-no thead .th-icon {
+  left: 0 !important;
+}
+
+.pokemon-table.hide-no thead th:first-child {
+  border-top-left-radius: 13px !important;
+}
+
+.pokemon-table.hide-no tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 13px !important;
+}
+
 .table-icon {
   width: 32px;
   height: 32px;
@@ -3520,16 +3535,13 @@ input[type=range].rf-slider.event-slider {
   .pokemon-main-content .pokemon-table-container,
   .mobile-h5-app .table-container,
   .mobile-h5-app .pokemon-table-container {
-    max-width: calc(100% - 12px) !important;
-    width: calc(100% - 12px) !important;
-    margin: 0 0 24px 12px !important;
+    max-width: calc(100% - 24px) !important;
+    width: calc(100% - 24px) !important;
+    margin: 0 12px 24px 12px !important;
     padding: 0 !important;
-    border: none !important;
-    border-top-left-radius: 14px !important;
-    border-bottom-left-radius: 14px !important;
-    border-top-right-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
-    background: transparent !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 14px !important;
+    background: var(--table-row-odd-solid, #0d1527) !important;
     box-shadow: none !important;
     overflow-x: auto !important;
     overflow-y: visible !important;
@@ -3669,6 +3681,12 @@ input[type=range].rf-slider.event-slider {
     background-color: var(--table-th-solid, #0a0f1d) !important;
     border-right: 1px solid var(--border-color) !important;
     box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .pokemon-table.hide-no .th-icon,
+  .pokemon-table.hide-no .td-icon,
+  .pokemon-table.hide-no thead .th-icon {
+    left: 0 !important;
   }
 
   .pokemon-table .th-name,
@@ -9957,16 +9975,13 @@ body.mobile-h5-surface {
 
 .mobile-h5-app .table-container,
 .mobile-h5-app .pokemon-table-container {
-  width: calc(100% - 12px) !important;
-  max-width: calc(100% - 12px) !important;
-  margin: 0 0 24px 12px !important;
+  width: calc(100% - 24px) !important;
+  max-width: calc(100% - 24px) !important;
+  margin: 0 12px 24px 12px !important;
   padding: 0 !important;
-  border: none !important;
-  border-top-left-radius: 14px !important;
-  border-bottom-left-radius: 14px !important;
-  border-top-right-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
-  background: transparent !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 14px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
   box-shadow: none !important;
   overflow-x: auto !important;
   overflow-y: visible !important;
@@ -9976,13 +9991,12 @@ body.mobile-h5-surface {
 
 .mobile-h5-app .pokemon-table {
   width: max-content !important;
-  min-width: 530px !important;
+  min-width: 100% !important;
   border-collapse: separate !important;
   border-spacing: 0 !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: 14px !important;
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  margin-right: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
 }
 
 .mobile-h5-app .pokemon-table th,
@@ -10051,9 +10065,9 @@ body.mobile-h5-surface {
 
 .mobile-h5-app .pokemon-table .th-interval,
 .mobile-h5-app .pokemon-table .td-interval {
-  width: 62px !important;
-  min-width: 62px !important;
-  padding: 6px 3px !important;
+  width: 52px !important;
+  min-width: 52px !important;
+  padding: 6px 2px !important;
   font-size: 11.5px !important;
   text-align: center !important;
 }
@@ -10061,7 +10075,8 @@ body.mobile-h5-surface {
 .mobile-h5-app .pokemon-table .th-skill,
 .mobile-h5-app .pokemon-table .td-skill {
   min-width: 110px !important;
-  max-width: 130px !important;
+  max-width: none !important;
+  width: max-content !important;
   padding: 6px 8px !important;
   text-align: left !important;
   white-space: nowrap !important;
@@ -10093,6 +10108,21 @@ body.mobile-h5-surface {
   left: 44px !important;
   z-index: 35 !important;
   background-color: var(--table-th-solid, #0a0f1d) !important;
+}
+
+/* ─── 隱藏 No. 欄位時：th-icon / td-icon 置於 left: 0 ─── */
+.mobile-h5-app .pokemon-table.hide-no thead .th-icon,
+.mobile-h5-app .pokemon-table.hide-no .th-icon,
+.mobile-h5-app .pokemon-table.hide-no .td-icon {
+  left: 0 !important;
+}
+
+.mobile-h5-app .pokemon-table.hide-no thead th:first-child {
+  border-top-left-radius: 13px !important;
+}
+
+.mobile-h5-app .pokemon-table.hide-no tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 13px !important;
 }
 
 /* ─── 🎛️ H5 App 右下懸浮篩選按鈕 (輕量扁平微陰影，無刺眼炫光) ─── */

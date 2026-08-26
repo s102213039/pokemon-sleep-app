@@ -365,6 +365,7 @@ test('Tier 1 - Feature Coverage', 'HTML Structure: index.html exists with requir
   assert(htmlContent.includes('id="search-input"') || htmlContent.includes("id='search-input'"), 'Missing search input element');
   assert(htmlContent.includes('id="final-evo-toggle"'), 'Missing final-evo-toggle switch element');
   assert(htmlContent.includes('id="initial-ing-toggle"'), 'Missing initial-ing-toggle switch element');
+  assert(htmlContent.includes('id="show-no-toggle"'), 'Missing show-no-toggle switch element');
   assert(htmlContent.includes('id="pokemon-filter-sidebar"'), 'Missing pokemon-filter-sidebar element in index.html');
   assert(htmlContent.includes('id="sidebar-bookmark-handle"'), 'Missing sidebar-bookmark-handle element in index.html');
   assert(htmlContent.includes('id="sidebar-close-btn"'), 'Missing sidebar-close-btn element in index.html');
@@ -527,6 +528,11 @@ test('Tier 1 - Feature Coverage', 'JS Logic: app.js contains state management, m
   assert(typeof PokemonApp.filterData === 'function', 'filterData method missing');
   assert(typeof PokemonApp.sortData === 'function', 'sortData method missing');
   assert(typeof PokemonApp.render === 'function', 'render method missing');
+  assert(typeof PokemonApp.formatHelpInterval === 'function', 'formatHelpInterval method missing');
+  assertEquals(PokemonApp.formatHelpInterval('00:44:10'), '44:10', 'formatHelpInterval(00:44:10) should be 44:10');
+  assertEquals(PokemonApp.formatHelpInterval('01:13:20'), '73:20', 'formatHelpInterval(01:13:20) should be 73:20');
+  assertEquals(PokemonApp.formatHelpInterval('01:00:00'), '60:00', 'formatHelpInterval(01:00:00) should be 60:00');
+  assertEquals(PokemonApp.showNo, false, 'PokemonApp.showNo should default to false');
 });
 
 // Baseline Tests 11-23
