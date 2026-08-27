@@ -955,7 +955,15 @@
                 <div class="h5-recipe-meta">
                   <div class="h5-recipe-title-row">
                     <span class="h5-recipe-name">${primaryName}</span>
-                    <span class="h5-recipe-energy">⚡ ${finalE.toLocaleString()}</span>
+                    <div class="h5-recipe-energy-group">
+                      <span class="h5-recipe-energy">⚡ ${finalE.toLocaleString()}</span>
+                      ${showTasty ? `
+                        <div class="h5-recipe-tasty-inline">
+                          <span class="tasty-mini-badge">2x ${(finalE * 2).toLocaleString()}</span>
+                          <span class="tasty-mini-badge tasty-3x">3x ${(finalE * 3).toLocaleString()}</span>
+                        </div>
+                      ` : ''}
+                    </div>
                   </div>
                   <div class="h5-recipe-tags-row">
                     <span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span>
@@ -966,12 +974,6 @@
               <div class="h5-recipe-ing-section">
                 ${renderIngRow(r.ingredients)}
               </div>
-              ${showTasty ? `
-                <div class="h5-recipe-tasty-row">
-                  <span class="tasty-mini-badge">2x <strong>${(finalE * 2).toLocaleString()}</strong></span>
-                  <span class="tasty-mini-badge tasty-3x">3x <strong>${(finalE * 3).toLocaleString()}</strong></span>
-                </div>
-              ` : ''}
             </div>
           `}).join('')}
         </div>
