@@ -1341,12 +1341,12 @@ html[data-lang="en"] .box-form-inline-label,
   font-weight: 700;
 }
 
-/* 純圖示極簡網格（樹果與食材，6 列排版，一行寬度鋪滿更緊湊） */
 .sidebar-icon-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 3.5px;
+  gap: 4px;
   width: 100%;
+  padding: 2px 0;
 }
 
 .subfilter-icon-btn {
@@ -1355,33 +1355,41 @@ html[data-lang="en"] .box-form-inline-label,
   justify-content: center;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: var(--bg-sidebar-btn);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
+  background: transparent;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
   cursor: pointer;
-  padding: 2.5px;
-  transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
+  padding: 0;
+  transition: all 0.15s ease;
   position: relative;
   box-sizing: border-box;
 }
 
 .subfilter-icon-btn:hover {
-  background: var(--bg-sidebar-btn-hover);
-  border-color: rgba(56, 189, 248, 0.4);
-  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(1.08);
 }
 
 .subfilter-icon-btn.active {
-  background: #0284c7;
-  border-color: #38bdf8;
-  box-shadow: 0 0 6px rgba(56, 189, 248, 0.4);
+  background: rgba(56, 189, 248, 0.18);
+  border-color: var(--accent-blue, #38bdf8);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+  transform: scale(1.1);
+}
+
+[data-theme="dawn"] .subfilter-icon-btn.active,
+[data-theme="emerald"] .subfilter-icon-btn.active {
+  background: rgba(2, 132, 199, 0.15);
+  border-color: var(--accent-blue, #0284c7);
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
 }
 
 .subfilter-icon-img {
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
   pointer-events: none;
+  transition: transform 0.15s ease;
 }
 
 /* ⚡ 主技能清單（雙列等寬，與類型按鈕完全一致的配置） */
