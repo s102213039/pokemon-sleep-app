@@ -11015,7 +11015,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   white-space: nowrap !important;
 }
 
-/* 🥦 食材展示 (Medium-compact ingredients row) */
+/* 🥦 食材展示 (Enlarged comfortable ingredients row) */
 .h5-recipe-ing-section {
   display: flex !important;
   align-items: center !important;
@@ -11023,7 +11023,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   overflow-x: auto !important;
   scrollbar-width: none !important;
   -webkit-overflow-scrolling: touch !important;
-  padding-top: 1px !important;
+  padding-top: 2px !important;
 }
 
 .h5-recipe-ing-section::-webkit-scrollbar {
@@ -11033,34 +11033,34 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .h5-recipe-ing-section .recipe-ing-row {
   display: flex !important;
   align-items: center !important;
-  gap: 4px !important;
+  gap: 5px !important;
   flex-wrap: nowrap !important;
 }
 
 .h5-recipe-ing-section .recipe-ing-chip {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 2.5px !important;
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04)) !important;
+  gap: 3px !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.05)) !important;
   border: 1px solid var(--border-color-subtle, var(--border-color)) !important;
   border-radius: 6px !important;
-  padding: 1.5px 5px !important;
-  font-size: 11px !important;
-  font-weight: 600 !important;
+  padding: 2px 6px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
   color: var(--text-secondary) !important;
   white-space: nowrap !important;
   flex-shrink: 0 !important;
 }
 
 .h5-recipe-ing-section .recipe-ing-icon {
-  width: 16px !important;
-  height: 16px !important;
+  width: 18px !important;
+  height: 18px !important;
   object-fit: contain !important;
 }
 
 .h5-recipe-ing-section .recipe-ing-count {
-  font-size: 10.5px !important;
-  font-weight: 600 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
 }
 
 /* ⚡ 右側上下等分/置中能量列 (Energy Column spanning full height with dynamic fit-content width) */
