@@ -726,7 +726,7 @@
     const bookmarkHandle = document.getElementById('recipe-sidebar-bookmark-handle');
     const closeBtn = document.getElementById('recipe-sidebar-close-btn');
     const backdrop = document.getElementById('recipe-sidebar-backdrop');
-    const resetAllBtn = document.getElementById('recipe-sidebar-reset-all-btn');
+    const resetAllBtn = document.getElementById('recipe-sidebar-reset-all-btn') || document.getElementById('recipe-reset-all-btn');
 
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
 

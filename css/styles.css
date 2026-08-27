@@ -10597,6 +10597,97 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   color: var(--accent-blue);
 }
 
+/* 🍲 H5 App 料理篩選器側邊欄專屬樣式 (Mobile Recipe Sidebar Drawer) */
+.mobile-h5-app .recipe-filter-sidebar .sidebar-section {
+  background: var(--bg-card-inner, rgba(15, 23, 42, 0.6));
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-2col-tags {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-2col-tags .tag-btn {
+  padding: 8px 10px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  text-align: center !important;
+  justify-content: center !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid .ing-picker-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  background: transparent !important;
+  border: 1.5px solid transparent !important;
+  border-radius: 8px !important;
+  padding: 1px !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid .ing-picker-btn .ing-picker-icon {
+  width: 28px !important;
+  height: 28px !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4)) !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid .ing-picker-btn.active {
+  background: rgba(56, 189, 248, 0.18) !important;
+  border-color: var(--accent-blue, #38bdf8) !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
+  transform: scale(1.08) !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid .ing-picker-btn.active-exclude {
+  background: rgba(239, 68, 68, 0.2) !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4) !important;
+  transform: scale(1.08) !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-slider-item .rf-slider {
+  height: 6px;
+  border-radius: 3px;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .rf-select-wrap .custom-select-trigger {
+  padding: 8px 36px 8px 12px !important;
+  font-size: 13px !important;
+  background: var(--bg-sidebar-btn) !important;
+  border-radius: 8px !important;
+}
+
 /* 🍲 H5 App 料理食譜 100% 寬度直列緊湊長方形卡片 (1-Column Rectangular Cards) */
 .mobile-h5-app .recipe-main-content {
   width: 100% !important;
