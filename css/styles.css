@@ -698,14 +698,13 @@ html[data-lang="en"] .box-form-inline-label,
 
 /* Controls Container */
 .controls-container {
-  max-width: 1560px;
-  width: calc(100% - 32px);
-  margin: 20px auto 16px;
-  padding: 0;
+  max-width: 1200px;
+  width: 92%;
+  margin: 24px auto 16px;
+  padding: 0 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  box-sizing: border-box;
 }
 
 .search-filter-row {
@@ -1491,22 +1490,26 @@ html[data-lang="en"] .subfilter-skill-btn,
 }
 
 .pokemon-main-content .controls-container {
-  max-width: 1560px;
-  width: calc(100% - 32px);
-  margin: 20px auto 16px;
-  padding: 0;
-  box-sizing: border-box;
+  max-width: 1200px;
+  width: 92%;
+  margin: 24px auto 16px;
+  padding: 0 16px;
 }
 
 .pokemon-main-content .stats-bar,
-.pokemon-main-content .table-container,
-.pokemon-main-content .pokemon-table-container,
 .pokemon-main-content .pokemon-grid {
-  max-width: 1560px;
-  width: calc(100% - 32px);
+  max-width: 1200px;
+  width: 92%;
+  margin: 0 auto 16px;
+  padding: 0 16px;
+}
+
+.pokemon-main-content .table-container,
+.pokemon-main-content .pokemon-table-container {
+  max-width: 1200px;
+  width: 92%;
   margin: 0 auto 16px;
   padding: 0;
-  box-sizing: border-box;
 }
 
 /* 響應式佈局 (Mobile & Tablet Displays) */
@@ -1519,10 +1522,10 @@ html[data-lang="en"] .subfilter-skill-btn,
 
 /* Stats Bar */
 .stats-bar {
-  max-width: 1560px;
-  width: calc(100% - 32px);
+  max-width: 1200px;
+  width: 92%;
   margin: 0 auto 16px;
-  padding: 0;
+  padding: 0 16px;
   font-size: 13.5px;
   color: var(--text-secondary);
   display: flex;
@@ -1530,7 +1533,6 @@ html[data-lang="en"] .subfilter-skill-btn,
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
-  box-sizing: border-box;
 }
 
 .count-badge {
@@ -1829,8 +1831,8 @@ html[data-lang="en"] .subfilter-skill-btn,
    ========================================================= */
 .pokemon-table-container,
 .table-container {
-  max-width: 1560px;
-  width: calc(100% - 32px);
+  max-width: 1200px;
+  width: 92%;
   margin: 0 auto 16px;
   padding: 0;
   overflow-x: auto !important;
@@ -1841,7 +1843,6 @@ html[data-lang="en"] .subfilter-skill-btn,
   border: 1px solid var(--border-color);
   background: var(--bg-card);
   position: relative;
-  box-sizing: border-box;
 }
 
 .pokemon-table-container::-webkit-scrollbar,
@@ -2777,22 +2778,26 @@ html[lang="en"] .recipe-name-wrapper,
 }
 
 .recipe-main-content .controls-container {
-  max-width: 1560px;
-  width: calc(100% - 32px);
-  margin: 20px auto 16px;
-  padding: 0;
-  box-sizing: border-box;
+  max-width: 1200px;
+  width: 92%;
+  margin: 24px auto 16px;
+  padding: 0 16px;
 }
 
 .recipe-main-content .stats-bar,
-.recipe-main-content .table-container,
-.recipe-main-content .pokemon-table-container,
 .recipe-main-content .pokemon-grid {
-  max-width: 1560px;
-  width: calc(100% - 32px);
+  max-width: 1200px;
+  width: 92%;
+  margin: 0 auto 16px;
+  padding: 0 16px;
+}
+
+.recipe-main-content .table-container,
+.recipe-main-content .pokemon-table-container {
+  max-width: 1200px;
+  width: 92%;
   margin: 0 auto 16px;
   padding: 0;
-  box-sizing: border-box;
 }
 
 #recipe-content-area {
