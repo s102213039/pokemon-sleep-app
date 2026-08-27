@@ -1343,8 +1343,8 @@ html[data-lang="en"] .box-form-inline-label,
 
 .sidebar-icon-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 4px;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
   width: 100%;
   padding: 2px 0;
 }
