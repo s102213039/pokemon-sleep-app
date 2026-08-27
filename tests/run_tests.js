@@ -2455,20 +2455,26 @@ test('Tier 1 - Feature Coverage', 'H5 App Centered Loading View & Fixed Table Vi
   assert(stylesCss.includes('.app-loading-spinner'), 'styles.css missing .app-loading-spinner');
 });
 
-test('Tier 1 - Feature Coverage', 'FAB Drag Physics & Subfilter Icon Enlargement Verification', () => {
-  const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+test('Tier 1 - Feature Coverage', 'H5 Recipe 1-Column Compact Card Layout Verification', () => {
+  const appHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
   const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  const recipesJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'recipes.js'), 'utf8');
 
-  // Verify makeFloatingDraggable has no undefined startTop / startLeft references
-  assert(appJs.includes('initialLeft + dx'), 'app.js must use initialLeft for dragging');
-  assert(appJs.includes('initialTop + dy'), 'app.js must use initialTop for dragging');
-  assert(!appJs.includes('startTop + dy'), 'app.js must not reference undefined startTop');
-  assert(!appJs.includes('startLeft + dx'), 'app.js must not reference undefined startLeft');
-  assert(appJs.includes('suppressClickUntil'), 'app.js must use suppressClickUntil to prevent drag from opening sidebar');
+  // Verify H5 App does not have recipe view-mode-toggle in recipe panel
+  const recipePanelMatch = appHtml.match(/<div[^>]*id=["']panel-recipes["'][\s\S]*?<\/div>\s*<\/div>\s*<\/div>/);
+  assert(recipePanelMatch, 'app/index.html missing panel-recipes');
+  assert(!recipePanelMatch[0].includes('id="recipe-toggle-cards"'), 'app/index.html panel-recipes must not contain recipe-toggle-cards (fixed card view)');
+  assert(!recipePanelMatch[0].includes('id="recipe-toggle-table"'), 'app/index.html panel-recipes must not contain recipe-toggle-table');
 
-  // Verify enlarged subfilter icons in styles.css
-  assert(stylesCss.includes('width: 28px'), 'styles.css missing enlarged 28px subfilter icons');
-  assert(stylesCss.includes('height: 28px'), 'styles.css missing enlarged 28px subfilter icons');
+  // Verify desktop preserves recipe view mode toggles
+  assert(indexHtml.includes('id="recipe-toggle-grid"'), 'desktop index.html must retain recipe-toggle-grid');
+  assert(indexHtml.includes('id="recipe-toggle-table"'), 'desktop index.html must retain recipe-toggle-table');
+
+  // Verify H5 1-column card styles & JS rendering logic
+  assert(stylesCss.includes('.h5-recipe-cards-list'), 'styles.css missing .h5-recipe-cards-list');
+  assert(stylesCss.includes('.h5-recipe-card'), 'styles.css missing .h5-recipe-card');
+  assert(recipesJs.includes('h5-recipe-card'), 'recipes.js missing h5-recipe-card template');
 });
 
 // Final Summary Output

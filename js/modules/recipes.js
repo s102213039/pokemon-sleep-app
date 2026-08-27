@@ -848,8 +848,10 @@
       return;
     }
 
-    if (viewMode === 'table') renderTable(filtered);
-    else renderGrid(filtered);
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+
+    if (isMobileH5 || viewMode === 'grid') renderGrid(filtered);
+    else renderTable(filtered);
   }
 
   function renderTable(recipes) {
@@ -943,10 +945,53 @@
 
   function renderGrid(recipes) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
     const catLabels = { '咖哩': isEN ? 'Curry' : '咖哩', '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : '甜點' };
     const islandMult = (1 + islandBonus / 100).toFixed(2);
     const eventSub = eventBonus > 1.0 ? ` · 🎉×${eventBonus.toFixed(2)}` : '';
+
+    if (isMobileH5) {
+      contentArea.innerHTML = `
+        <div class="h5-recipe-cards-list">
+          ${recipes.map(r => {
+            const bp         = r.bonus_pct || 19;
+            const badgeClass = getBonusBadgeClass(bp);
+            const emoji      = getBonusEmoji(bp);
+            const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
+            const primaryName = isEN ? (r.name_en || r.name_cn) : r.name_cn;
+            return `
+            <div class="h5-recipe-card">
+              <div class="h5-recipe-header">
+                <img class="h5-recipe-img" src="${r.icon}" alt="${primaryName}" loading="lazy" onerror="this.style.display='none';">
+                <div class="h5-recipe-meta">
+                  <div class="h5-recipe-title-row">
+                    <span class="h5-recipe-name">${primaryName}</span>
+                    <span class="h5-recipe-energy">⚡ ${finalE.toLocaleString()}</span>
+                  </div>
+                  <div class="h5-recipe-tags-row">
+                    <span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span>
+                    <span class="bonus-badge ${badgeClass}">${emoji} +${bp}%</span>
+                    <span class="h5-recipe-pot">🍲 ${r.pot_size}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="h5-recipe-ing-section">
+                ${renderIngRow(r.ingredients)}
+              </div>
+              ${showTasty ? `
+                <div class="h5-recipe-tasty-row">
+                  <span class="tasty-mini-badge">2x <strong>${(finalE * 2).toLocaleString()}</strong></span>
+                  <span class="tasty-mini-badge tasty-3x">3x <strong>${(finalE * 3).toLocaleString()}</strong></span>
+                </div>
+              ` : ''}
+            </div>
+          `}).join('')}
+        </div>
+      `;
+      return;
+    }
+
     contentArea.innerHTML = `
       <div class="pokemon-grid">
         ${recipes.map(r => {
