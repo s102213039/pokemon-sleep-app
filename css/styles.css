@@ -9592,7 +9592,7 @@ input[type="number"] {
 .app-sync-label {
   font-size: 13px;
   font-weight: 700;
-  color: #ffffff !important;
+  color: var(--text-primary) !important;
   white-space: nowrap;
 }
 
