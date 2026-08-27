@@ -10152,10 +10152,14 @@ body.mobile-h5-surface {
 }
 
 .mobile-h5-app .pokemon-main-content .controls-container,
-.mobile-h5-app .recipe-main-content .controls-container {
+.mobile-h5-app .recipe-main-content .controls-container,
+.mobile-h5-app #panel-box .controls-container,
+.mobile-h5-app #panel-news .controls-container {
   flex-shrink: 0;
   margin: 12px 12px 8px !important;
+  padding: 0 !important;
   width: calc(100% - 24px) !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .pokemon-main-content .content-area,
@@ -10499,9 +10503,24 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   max-width: 100% !important;
 }
 
-.mobile-h5-app .recipe-cards-grid {
+.mobile-h5-app .recipe-main-content #recipe-list-container,
+.mobile-h5-app .recipe-cards-grid,
+.mobile-h5-app .recipe-main-content #recipe-content-area {
   display: block !important;
-  width: 100% !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  width: calc(100% - 24px) !important;
+  margin: 0 12px !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-h5-app .recipe-main-content #recipe-count-badge {
+  margin: 0 12px 6px !important;
+  width: calc(100% - 24px) !important;
   padding: 0 !important;
 }
 
@@ -10511,7 +10530,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   gap: 8px !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  padding-bottom: 24px;
+  padding: 2px 0 24px 0 !important;
+  margin: 0 !important;
 }
 
 .h5-recipe-card {
