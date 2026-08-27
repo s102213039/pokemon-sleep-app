@@ -11063,14 +11063,14 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   font-weight: 600 !important;
 }
 
-/* ⚡ 右側上下等分/置中能量列 (Energy Column spanning full height with perfect vertical alignment) */
+/* ⚡ 右側上下等分/置中能量列 (Energy Column spanning full height with dynamic fit-content width) */
 .h5-recipe-energy-col {
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-end !important;
   flex-shrink: 0 !important;
-  min-width: 114px !important;
-  width: 114px !important;
+  width: max-content !important;
+  min-width: 0 !important;
   box-sizing: border-box !important;
 }
 
@@ -11090,14 +11090,14 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   align-items: baseline !important;
   justify-content: space-between !important;
   width: 100% !important;
-  gap: 4px !important;
+  gap: 3px !important;
   line-height: 1.2 !important;
 }
 
 .h5-energy-score .energy-multiplier {
   font-size: 11.5px !important;
   font-weight: 700 !important;
-  width: 18px !important;
+  width: 17px !important;
   flex-shrink: 0 !important;
   text-align: left !important;
   opacity: 0.85 !important;
