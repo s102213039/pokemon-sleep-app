@@ -10504,27 +10504,35 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .recipe-main-content #recipe-list-container,
-.mobile-h5-app .recipe-cards-grid,
-.mobile-h5-app .recipe-main-content #recipe-content-area {
+.mobile-h5-app .recipe-main-content .recipe-cards-grid {
   display: block !important;
   flex: 1 1 auto !important;
   min-height: 0 !important;
   max-height: 100% !important;
   width: calc(100% - 24px) !important;
-  margin: 0 12px !important;
+  margin: 0 12px 12px !important;
   padding: 0 !important;
   box-sizing: border-box !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch;
 }
 
+.mobile-h5-app .recipe-main-content #recipe-content-area {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
 .mobile-h5-app .recipe-main-content #recipe-count-badge {
   margin: 0 12px 6px !important;
   width: calc(100% - 24px) !important;
   padding: 0 !important;
+  box-sizing: border-box !important;
 }
 
-.h5-recipe-cards-list {
+.mobile-h5-app .h5-recipe-cards-list {
   display: flex !important;
   flex-direction: column !important;
   gap: 8px !important;
