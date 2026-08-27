@@ -459,9 +459,10 @@
           const natureObj = NATURE_DATA.find(n => n.name === p.nature);
           const prInfo = calculatePokemonPR(p, base);
           const pkmDisplayName = isEN ? (base ? (base.name_en || base.name_cn) : p.name) : (p.name || (base ? base.name_cn : '未知'));
-          const typeName = window.I18N ? window.I18N.getTypeName((base && base.type) || p.type || '一般') : ((base && base.type) || p.type || '一般');
           const specName = window.I18N ? window.I18N.getSpecialtyName((base && base.specialty) || p.specialty || '--') : ((base && base.specialty) || p.specialty || '--');
           const natureDisplayName = window.I18N ? window.I18N.getNatureName(p.nature) : p.nature;
+          const berry = (window.getPokemonBerry && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : null);
+          const berryName = berry ? (window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--')) : '';
 
           return `
             <div class="box-card" data-uid="${p.uid}">
@@ -479,9 +480,10 @@
                   </div>
                   ${p.nickname ? `<div class="box-card-nickname">🏷️ ${escapeHtml(p.nickname)}</div>` : ''}
                   <div class="box-card-tags">
-                    <span class="pkm-type-icon-wrapper" title="${typeName}">
-                      ${window.I18N ? window.I18N.getTypeIconSvg((base && base.type) || p.type || '一般', 15) : `<span class="type-badge" style="background-color: var(--type-${(base && base.type) || p.type || '一般'}, #64748b);">${typeName}</span>`}
-                    </span>
+                    ${berry && berry.icon ? `
+                    <span class="pkm-berry-icon-wrapper" title="${berryName}">
+                      <img src="${berry.icon}" alt="${berryName}" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;">
+                    </span>` : ''}
                     <span class="box-spec-tag">${specName}</span>
                   </div>
                 </div>
@@ -562,7 +564,7 @@
               <th>${isEN ? 'Name / Nickname' : '寶可夢 / 暱稱'}</th>
               <th>${isEN ? 'Level' : '等級'}</th>
               <th>${isEN ? 'PR Rank' : 'PR 評分'}</th>
-              <th>${t('th.type', '屬性')}</th>
+              <th>${t('th.berry', '樹果')}</th>
               <th>${t('th.specialty', '得意')}</th>
               <th>${t('th.ing1', 'Lv.1 食材')}</th>
               <th>${t('th.ing2', 'Lv.30 食材')}</th>
@@ -579,9 +581,10 @@
               const natureObj = NATURE_DATA.find(n => n.name === p.nature);
               const prInfo = calculatePokemonPR(p, base);
               const pkmDisplayName = isEN ? (base ? (base.name_en || base.name_cn) : p.name) : (p.name || (base ? base.name_cn : '未知'));
-              const typeName = window.I18N ? window.I18N.getTypeName((base && base.type) || p.type || '一般') : ((base && base.type) || p.type || '一般');
               const specName = window.I18N ? window.I18N.getSpecialtyName((base && base.specialty) || p.specialty || '--') : ((base && base.specialty) || p.specialty || '--');
               const natureDisplayName = window.I18N ? window.I18N.getNatureName(p.nature) : p.nature;
+              const berry = (window.getPokemonBerry && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : null);
+              const berryName = berry ? (window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--')) : '';
 
               return `
                 <tr data-uid="${p.uid}">
@@ -601,9 +604,7 @@
                     </span>
                   </td>
                   <td>
-                    <span class="pkm-type-icon-wrapper" title="${typeName}">
-                      ${window.I18N ? window.I18N.getTypeIconSvg((base && base.type) || p.type || '一般', 16) : `<span class="type-badge" style="background-color: var(--type-${(base && base.type) || p.type || '一般'}, #64748b);">${typeName}</span>`}
-                    </span>
+                    ${berry && berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}">` : `<span class="berry-name-text">${berryName || '--'}</span>`}
                   </td>
                   <td>${specName}</td>
                   ${renderBoxTableIngCell(p.ing1, base, 0)}

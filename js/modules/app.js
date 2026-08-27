@@ -348,6 +348,9 @@ function getPokemonBerry(p) {
   const berryIcon = BERRY_ICON_MAP[berryName] || BERRY_ICON_MAP[p.type] || (p.berry && p.berry.icon) || '';
   return { name: berryName, icon: berryIcon };
 }
+if (typeof window !== 'undefined') {
+  window.getPokemonBerry = getPokemonBerry;
+}
 
 /* ─── ⚡ 基礎主技能與複合/專屬技能映射系統 ─────────── */
 const BASE_SKILLS = [
@@ -1700,8 +1703,9 @@ if (typeof document !== 'undefined') {
           ${data.map(p => {
             const iconUrl = getIconUrl(p);
             const pkmName = isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en);
-            const typeName = window.I18N ? window.I18N.getTypeName(p.type) : (p.type || '一般');
             const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
+            const berry = getPokemonBerry(p);
+            const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--');
 
             return `
             <div class="pokemon-card">
@@ -1723,8 +1727,10 @@ if (typeof document !== 'undefined') {
               </div>
               <div class="card-stats">
                 <div class="stat-item">
-                  <span class="stat-label">${t('th.type', '屬性')}</span>
-                  <span class="stat-value"><span class="pkm-type-icon-wrapper" title="${typeName}">${window.I18N ? window.I18N.getTypeIconSvg(p.type, 16) : `<span class="type-badge-mini" style="background-color: var(--type-${p.type}, #64748b);">${typeName}</span>`}</span></span>
+                  <span class="stat-label">${t('th.berry', '樹果')}</span>
+                  <span class="stat-value" title="${berryName}">
+                    ${berry && berry.icon ? `<img src="${berry.icon}" alt="${berryName}" class="card-berry-icon" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;" loading="lazy" onerror="this.style.display='none';">` : `<span class="berry-name-text">${berryName}</span>`}
+                  </span>
                 </div>
                 <div class="stat-item">
                   <span class="stat-label">${t('th.specialty', '得意')}</span>
