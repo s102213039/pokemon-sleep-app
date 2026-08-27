@@ -217,9 +217,9 @@
     if (!categoryContainer) return;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const categories = ['ALL', '咖哩', '沙拉', '甜點'];
-    const catEmoji   = { ALL:'🍽️', '咖哩':'🍛', '沙拉':'🥗', '甜點':'🍰' };
+    const catEmoji   = { ALL:'', '咖哩':'🍛', '沙拉':'🥗', '甜點':'🍰' };
     const catLabels  = {
-      ALL: isEN ? 'All' : '全部種類',
+      ALL: isEN ? 'All' : '全部',
       '咖哩': isEN ? 'Curries' : '咖哩',
       '沙拉': isEN ? 'Salads' : '沙拉',
       '甜點': isEN ? 'Desserts' : '甜點'
@@ -232,8 +232,9 @@
     categoryContainer.innerHTML = categories.map(cat => {
       const count = cat === 'ALL' ? allRecipes.length : (catCounts[cat] || 0);
       const active = cat === selectedCategory ? 'active' : '';
+      const prefix = catEmoji[cat] ? `${catEmoji[cat]} ` : '';
       return `<button class="tag-btn ${active}" data-cat="${cat}">
-        ${catEmoji[cat]} ${catLabels[cat] || cat} (${count})
+        ${prefix}${catLabels[cat] || cat} (${count})
       </button>`;
     }).join('');
 
@@ -958,9 +959,9 @@
                     <div class="h5-recipe-energy-group">
                       <span class="h5-recipe-energy">⚡ ${finalE.toLocaleString()}</span>
                       ${showTasty ? `
-                        <div class="h5-recipe-tasty-inline">
-                          <span class="tasty-mini-badge">2x ${(finalE * 2).toLocaleString()}</span>
-                          <span class="tasty-mini-badge tasty-3x">3x ${(finalE * 3).toLocaleString()}</span>
+                        <div class="h5-recipe-tasty-stacked">
+                          <span class="h5-recipe-tasty-line tasty-2x">2x ${(finalE * 2).toLocaleString()}</span>
+                          <span class="h5-recipe-tasty-line tasty-3x">3x ${(finalE * 3).toLocaleString()}</span>
                         </div>
                       ` : ''}
                     </div>

@@ -10817,8 +10817,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 
 .mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid {
   display: grid !important;
-  grid-template-columns: repeat(10, 1fr) !important;
-  gap: 2.5px !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 3px !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
@@ -10829,57 +10829,67 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   justify-content: center !important;
   width: 100% !important;
   aspect-ratio: 1 / 1 !important;
-  background: var(--bg-sidebar-btn, rgba(30, 41, 59, 0.4)) !important;
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08)) !important;
-  border-radius: 5px !important;
-  padding: 1px !important;
+  background: transparent !important;
+  border: 1.5px solid transparent !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
   cursor: pointer !important;
   box-sizing: border-box !important;
   transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease !important;
 }
 
 .mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid .ing-picker-btn .ing-picker-icon {
-  width: 20px !important;
-  height: 20px !important;
+  width: 28px !important;
+  height: 28px !important;
   object-fit: contain !important;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4)) !important;
 }
 
 .mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid .ing-picker-btn.active {
-  background: rgba(56, 189, 248, 0.25) !important;
+  background: rgba(56, 189, 248, 0.18) !important;
   border-color: var(--accent-blue, #38bdf8) !important;
-  box-shadow: 0 0 6px rgba(56, 189, 248, 0.4) !important;
-  transform: scale(1.08) !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
+  transform: scale(1.1) !important;
 }
 
 .mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid .ing-picker-btn.active-exclude {
-  background: rgba(239, 68, 68, 0.25) !important;
+  background: rgba(239, 68, 68, 0.2) !important;
   border-color: #ef4444 !important;
-  box-shadow: 0 0 6px rgba(239, 68, 68, 0.4) !important;
-  transform: scale(1.08) !important;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4) !important;
+  transform: scale(1.1) !important;
 }
 
-/* 🍲 料理卡片能量與漂亮成功分數排版 (Tasty inline under energy) */
+/* 🍲 料理卡片能量與漂亮成功分數排版 (Tasty 2-line stacked under energy) */
 .h5-recipe-energy-group {
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-end !important;
-  gap: 2px !important;
+  gap: 1px !important;
   flex-shrink: 0 !important;
 }
 
-.h5-recipe-tasty-inline {
+.h5-recipe-tasty-stacked {
   display: flex !important;
-  align-items: center !important;
-  gap: 3px !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  gap: 1px !important;
+  width: 100% !important;
 }
 
-.h5-recipe-tasty-inline .tasty-mini-badge {
-  font-size: 9px !important;
-  padding: 1px 4px !important;
-  border-radius: 3px !important;
-  line-height: 1.1 !important;
+.h5-recipe-tasty-line {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
   font-family: monospace, -apple-system !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
+}
+
+.h5-recipe-tasty-line.tasty-2x {
+  color: var(--accent-blue, #38bdf8) !important;
+}
+
+.h5-recipe-tasty-line.tasty-3x {
+  color: var(--color-accent-gold, #f59e0b) !important;
 }
 
 /* 🍲 H5 App 料理食譜 100% 寬度直列緊湊長方形卡片 (1-Column Rectangular Cards) */
