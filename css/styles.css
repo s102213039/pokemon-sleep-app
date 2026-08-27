@@ -10544,6 +10544,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   max-width: 330px !important;
   height: 100% !important;
   height: 100dvh !important;
+  background-color: var(--bg-sidebar, #0a0f1d) !important;
+  background: var(--bg-sidebar, #0a0f1d) !important;
   border-radius: 0 !important;
   z-index: 10005 !important;
   box-shadow: -8px 0 32px rgba(0, 0, 0, 0.7) !important;
@@ -10551,17 +10553,42 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border-right: none !important;
   border-top: none !important;
   border-bottom: none !important;
+  display: flex !important;
+  flex-direction: column !important;
   transform: translateX(0) !important;
   transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1), visibility 0.3s !important;
 }
 
+.mobile-h5-app .pokemon-filter-sidebar .sidebar-header,
+.mobile-h5-app .recipe-filter-sidebar .sidebar-header {
+  height: 52px !important;
+  width: 100% !important;
+  padding: 0 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  background: var(--bg-sidebar-header, #0f172a) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+  gap: 8px !important;
+}
+
 .mobile-h5-app .pokemon-filter-sidebar .sidebar-scrollable-content,
 .mobile-h5-app .recipe-filter-sidebar .sidebar-scrollable-content {
-  flex: 1 !important;
-  height: calc(100% - 54px) !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  height: calc(100% - 52px) !important;
   overflow-y: auto !important;
+  overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch !important;
-  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  padding: 14px 12px calc(32px + env(safe-area-inset-bottom, 0px)) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
 }
 
 .mobile-h5-app .sidebar-backdrop {
@@ -10599,45 +10626,59 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 
 /* 🍲 H5 App 料理篩選器側邊欄專屬樣式 (Mobile Recipe Sidebar Drawer) */
 .mobile-h5-app .recipe-filter-sidebar .sidebar-section {
-  background: var(--bg-card-inner, rgba(15, 23, 42, 0.6));
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 10px 12px;
-  margin-bottom: 10px;
+  background: var(--bg-card-inner, rgba(15, 23, 42, 0.6)) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  padding: 10px 12px !important;
+  margin-bottom: 10px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .recipe-filter-sidebar .sidebar-section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 8px !important;
+  width: 100% !important;
 }
 
 .mobile-h5-app .recipe-filter-sidebar .sidebar-section-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
 }
 
 .mobile-h5-app .recipe-filter-sidebar .sidebar-2col-tags {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
   gap: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .recipe-filter-sidebar .sidebar-2col-tags .tag-btn {
-  padding: 8px 10px !important;
-  font-size: 13px !important;
+  padding: 8px 6px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   border-radius: 8px !important;
   text-align: center !important;
   justify-content: center !important;
+  display: flex !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid {
   display: grid !important;
   grid-template-columns: repeat(7, 1fr) !important;
   gap: 4px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid .ing-picker-btn {
@@ -10676,9 +10717,62 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   transform: scale(1.08) !important;
 }
 
-.mobile-h5-app .recipe-filter-sidebar .sidebar-slider-item .rf-slider {
-  height: 6px;
-  border-radius: 3px;
+.mobile-h5-app .recipe-filter-sidebar .sidebar-switch-compact {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 8px 10px !important;
+  background: var(--bg-sidebar-btn) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-slider-item {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  margin-bottom: 10px !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-slider-item:last-child {
+  margin-bottom: 0 !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .slider-label-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+  font-size: 12px !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .slider-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .slider-row .rf-slider {
+  flex: 1 !important;
+  width: 100% !important;
+  height: 6px !important;
+  border-radius: 3px !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .rf-select-wrap {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .rf-select-wrap .custom-select-container {
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .recipe-filter-sidebar .rf-select-wrap .custom-select-trigger {
@@ -10686,6 +10780,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   font-size: 13px !important;
   background: var(--bg-sidebar-btn) !important;
   border-radius: 8px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 /* 🍲 H5 App 料理食譜 100% 寬度直列緊湊長方形卡片 (1-Column Rectangular Cards) */
