@@ -1342,10 +1342,11 @@ html[data-lang="en"] .box-form-inline-label,
   font-weight: 700;
 }
 
+/* 💻 電腦版側邊欄圖標網格 (Desktop 6-Columns) */
 .sidebar-icon-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 3px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
   width: 100%;
   padding: 2px 0;
 }
@@ -1356,26 +1357,25 @@ html[data-lang="en"] .box-form-inline-label,
   justify-content: center;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: transparent;
-  border: 1.5px solid transparent;
-  border-radius: 8px;
+  background: var(--bg-sidebar-btn);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
   cursor: pointer;
-  padding: 0;
+  padding: 2px;
   transition: all 0.15s ease;
   position: relative;
   box-sizing: border-box;
 }
 
 .subfilter-icon-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  transform: scale(1.08);
+  background: var(--bg-sidebar-btn-hover);
+  border-color: rgba(56, 189, 248, 0.4);
 }
 
 .subfilter-icon-btn.active {
   background: rgba(56, 189, 248, 0.18);
   border-color: var(--accent-blue, #38bdf8);
   box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
-  transform: scale(1.1);
 }
 
 [data-theme="dawn"] .subfilter-icon-btn.active,
@@ -1386,11 +1386,41 @@ html[data-lang="en"] .box-form-inline-label,
 }
 
 .subfilter-icon-img {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   object-fit: contain;
   pointer-events: none;
   transition: transform 0.15s ease;
+}
+
+/* 📱 手機 H5 App 版專用側邊欄圖標網格 (7-Column Enlarged Borderless) */
+.mobile-h5-app .sidebar-icon-grid {
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 3px !important;
+}
+
+.mobile-h5-app .subfilter-icon-btn {
+  background: transparent !important;
+  border: 1.5px solid transparent !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+}
+
+.mobile-h5-app .subfilter-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  transform: scale(1.08) !important;
+}
+
+.mobile-h5-app .subfilter-icon-btn.active {
+  background: rgba(56, 189, 248, 0.18) !important;
+  border-color: var(--accent-blue, #38bdf8) !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
+  transform: scale(1.1) !important;
+}
+
+.mobile-h5-app .subfilter-icon-img {
+  width: 28px !important;
+  height: 28px !important;
 }
 
 /* ⚡ 主技能清單（雙列等寬，與類型按鈕完全一致的配置） */

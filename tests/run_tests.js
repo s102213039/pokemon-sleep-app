@@ -2411,14 +2411,18 @@ test('Tier 1 - Feature Coverage', 'Sidebar Compact Switches Grid & 6-Column Icon
   const appHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
   const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
 
-  assert(indexHtml.includes('sidebar-switches-grid'), 'index.html missing .sidebar-switches-grid');
-  assert(indexHtml.includes('sidebar-switch-compact'), 'index.html missing .sidebar-switch-compact');
+  // Verify desktop index.html preserves original full switch cards
+  assert(indexHtml.includes('👑 僅最終進化'), 'index.html missing 👑 僅最終進化');
+  assert(indexHtml.includes('🥗 僅初始食材'), 'index.html missing 🥗 僅初始食材');
+  assert(indexHtml.includes('顯示編號'), 'index.html missing 顯示編號');
+
+  // Verify mobile app/index.html has compact 1-row switches
   assert(appHtml.includes('sidebar-switches-grid'), 'app/index.html missing .sidebar-switches-grid');
   assert(appHtml.includes('sidebar-switch-compact'), 'app/index.html missing .sidebar-switch-compact');
 
-  assert(stylesCss.includes('.sidebar-switches-grid'), 'styles.css missing .sidebar-switches-grid');
-  assert(stylesCss.includes('.sidebar-switch-compact'), 'styles.css missing .sidebar-switch-compact');
-  assert(stylesCss.includes('grid-template-columns: repeat(7, 1fr)'), 'styles.css missing 7-column icon grid');
+  // Verify CSS contains both desktop 6-column and mobile 7-column grid rules
+  assert(stylesCss.includes('grid-template-columns: repeat(6, 1fr)'), 'styles.css missing desktop 6-column icon grid');
+  assert(stylesCss.includes('grid-template-columns: repeat(7, 1fr)'), 'styles.css missing mobile 7-column icon grid');
 });
 
 test('Tier 1 - Feature Coverage', 'Header Simplification & Sync Data Button in Settings Modal', () => {
