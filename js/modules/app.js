@@ -153,14 +153,15 @@ function makeFloatingDraggable(el, onClick) {
   let startY = 0;
   let startLeft = 0;
   let startTop = 0;
-  let hasMoved = false;
+  let isDragging = false;
   let isPointerDown = false;
   let pointerDownTime = 0;
   let lastClickTime = 0;
+  let pointerId = null;
 
   function triggerClick(e) {
     const now = Date.now();
-    if (now - lastClickTime < 300) return; // Prevent duplicate rapid trigger
+    if (now - lastClickTime < 350) return; // Prevent duplicate rapid trigger
     lastClickTime = now;
     if (typeof onClick === 'function') {
       onClick(e);
@@ -170,7 +171,8 @@ function makeFloatingDraggable(el, onClick) {
   function onPointerDown(e) {
     if (e.button !== undefined && e.button !== 0) return;
     isPointerDown = true;
-    hasMoved = false;
+    isDragging = false;
+    pointerId = e.pointerId;
     pointerDownTime = Date.now();
     startX = e.clientX || 0;
     startY = e.clientY || 0;
@@ -180,6 +182,12 @@ function makeFloatingDraggable(el, onClick) {
     startTop = rect.top;
 
     el.style.transition = 'none';
+
+    try {
+      if (el.setPointerCapture && pointerId !== null) {
+        el.setPointerCapture(pointerId);
+      }
+    } catch (_) {}
 
     window.addEventListener('pointermove', onPointerMove, { passive: false });
     window.addEventListener('pointerup', onPointerUp, { passive: false });
@@ -193,27 +201,28 @@ function makeFloatingDraggable(el, onClick) {
     const dx = curX - startX;
     const dy = curY - startY;
 
-    // Use 14px threshold to prevent accidental drag on normal touch tap
-    if (!hasMoved && Math.hypot(dx, dy) > 14) {
-      hasMoved = true;
+    // Use 10px threshold to distinguish intentional drag from tap
+    if (!isDragging && Math.hypot(dx, dy) > 10) {
+      isDragging = true;
+      el.style.cursor = 'grabbing';
     }
 
-    if (hasMoved) {
+    if (isDragging) {
       if (e.cancelable) e.preventDefault();
-      const btnW = el.offsetWidth || 48;
-      const btnH = el.offsetHeight || 48;
+      const btnW = el.offsetWidth || 50;
+      const btnH = el.offsetHeight || 50;
       const minX = 8;
       const maxX = window.innerWidth - btnW - 8;
-      const minY = 56;
+      const minY = 50;
       const maxY = window.innerHeight - 68 - btnH;
 
       let newLeft = Math.max(minX, Math.min(maxX, startLeft + dx));
       let newTop = Math.max(minY, Math.min(maxY, startTop + dy));
 
-      el.style.left = `${newLeft}px`;
-      el.style.top = `${newTop}px`;
-      el.style.right = 'auto';
-      el.style.bottom = 'auto';
+      el.style.setProperty('left', `${newLeft}px`, 'important');
+      el.style.setProperty('top', `${newTop}px`, 'important');
+      el.style.setProperty('right', 'auto', 'important');
+      el.style.setProperty('bottom', 'auto', 'important');
     }
   }
 
@@ -225,9 +234,16 @@ function makeFloatingDraggable(el, onClick) {
     window.removeEventListener('pointerup', onPointerUp);
     window.removeEventListener('pointercancel', onPointerUp);
 
+    try {
+      if (el.releasePointerCapture && pointerId !== null) {
+        el.releasePointerCapture(pointerId);
+      }
+    } catch (_) {}
+
+    el.style.cursor = 'grab';
     const touchDuration = Date.now() - pointerDownTime;
 
-    if (hasMoved && touchDuration > 120) {
+    if (isDragging && touchDuration > 100) {
       // 左右側邊緣智慧磁吸吸附 (Magnetic edge snapping to left or right)
       const screenW = window.innerWidth;
       const btnW = el.offsetWidth || 50;
@@ -238,8 +254,8 @@ function makeFloatingDraggable(el, onClick) {
 
       const snapLeft = (curLeft + btnW / 2 < midX) ? minX : maxX;
 
-      el.style.transition = 'left 0.28s cubic-bezier(0.2, 0.9, 0.3, 1), top 0.28s cubic-bezier(0.2, 0.9, 0.3, 1), transform 0.15s ease, box-shadow 0.15s ease';
-      el.style.left = `${snapLeft}px`;
+      el.style.transition = 'left 0.25s cubic-bezier(0.2, 0.9, 0.3, 1), top 0.25s cubic-bezier(0.2, 0.9, 0.3, 1), transform 0.15s ease, box-shadow 0.15s ease';
+      el.style.setProperty('left', `${snapLeft}px`, 'important');
     } else {
       el.style.transition = 'transform 0.15s ease, box-shadow 0.15s ease';
       triggerClick(e);
@@ -248,7 +264,7 @@ function makeFloatingDraggable(el, onClick) {
 
   el.addEventListener('pointerdown', onPointerDown);
   el.addEventListener('click', (e) => {
-    if (!hasMoved) {
+    if (!isDragging) {
       triggerClick(e);
     }
   });

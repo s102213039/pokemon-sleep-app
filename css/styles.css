@@ -1186,47 +1186,57 @@ html[data-lang="en"] .box-form-inline-label,
   white-space: nowrap;
 }
 
-.sidebar-switches-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 4px;
-  width: 100%;
+.sidebar-switches-grid,
+.sidebar-section.sidebar-switches-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 4px !important;
+  width: 100% !important;
+  margin-bottom: 4px !important;
+  flex-direction: row !important;
+  box-sizing: border-box !important;
 }
 
 .sidebar-switch-compact {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 4px 4px 6px;
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.03));
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  cursor: pointer;
-  margin: 0;
-  box-sizing: border-box;
-  min-height: 28px;
-  gap: 2px;
-  transition: all 0.15s ease;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 4px 4px 4px 6px !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.03)) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  min-height: 28px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  gap: 2px !important;
+  transition: all 0.15s ease !important;
 }
 
 .sidebar-switch-compact:hover {
-  background: var(--bg-sidebar-btn-hover);
-  border-color: rgba(56, 189, 248, 0.4);
+  background: var(--bg-sidebar-btn-hover) !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
 }
 
 .sidebar-switch-compact .sidebar-final-evo-text {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--text-primary);
-  white-space: nowrap;
-  letter-spacing: -0.2px;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  white-space: nowrap !important;
+  letter-spacing: -0.3px !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  flex-shrink: 1 !important;
+  min-width: 0 !important;
 }
 
 .sidebar-switch-compact .sidebar-switch-wrapper {
-  transform: scale(0.68);
-  transform-origin: right center;
-  margin: 0;
-  flex-shrink: 0;
+  transform: scale(0.68) !important;
+  transform-origin: right center !important;
+  margin: 0 !important;
+  flex-shrink: 0 !important;
 }
 
 .sidebar-switch-wrapper {
@@ -10190,8 +10200,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .sidebar-fab-btn {
   display: flex !important;
   position: fixed !important;
-  right: 16px !important;
-  bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+  right: 16px;
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
   left: auto;
   top: auto;
   transform: none;
@@ -10208,8 +10218,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   justify-content: center !important;
   padding: 0 !important;
   z-index: 9995 !important;
-  cursor: pointer !important;
-  touch-action: manipulation !important;
+  cursor: grab !important;
+  touch-action: none !important;
   user-select: none !important;
   -webkit-user-select: none !important;
   -webkit-tap-highlight-color: transparent !important;
