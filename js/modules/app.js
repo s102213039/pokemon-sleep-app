@@ -1759,8 +1759,13 @@ if (typeof document !== 'undefined') {
 
     function renderTable(data) {
       const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+      const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
       const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
       const isShowNo = (typeof PokemonApp !== 'undefined' && PokemonApp.showNo) || (typeof showNo !== 'undefined' && showNo) || false;
+
+      const ing1Label = isMobileH5 ? t('th.ing1_mobile', '食1') : t('th.ing1', '食材1');
+      const ing2Label = isMobileH5 ? t('th.ing2_mobile', '食2') : t('th.ing2', '食材2');
+      const ing3Label = isMobileH5 ? t('th.ing3_mobile', '食3') : t('th.ing3', '食材3');
 
       contentArea.innerHTML = `
         <div class="table-container">
@@ -1773,9 +1778,9 @@ if (typeof document !== 'undefined') {
                 <th class="th-berry">${t('th.berry', '樹果')}</th>
                 <th class="th-spec">${t('th.specialty', '得意')}</th>
                 ${sortableTh('carry', t('th.carry', '持有'), 'th-carry')}
-                <th class="th-ing">${t('th.ing1', '食1')}</th>
-                <th class="th-ing">${t('th.ing2', '食2')}</th>
-                <th class="th-ing">${t('th.ing3', '食3')}</th>
+                <th class="th-ing">${ing1Label}</th>
+                <th class="th-ing">${ing2Label}</th>
+                <th class="th-ing">${ing3Label}</th>
                 ${sortableTh('ingredientRate', t('th.ingredient_rate', '食材率'), 'th-rate')}
                 ${sortableTh('skillRate', t('th.skill_rate', '技能率'), 'th-rate')}
                 ${sortableTh('interval', t('th.interval', '幫忙間隔'), 'th-interval')}
