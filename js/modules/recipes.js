@@ -868,7 +868,6 @@
               <th>${t('th.icon', '圖示')}</th>
               <th>${t('recipe.th_dish', '料理名稱')}</th>
               <th>${t('recipe.th_category', '分類')}</th>
-              <th>${t('recipe.th_bonus', '食材加成')}</th>
               <th>${t('recipe.th_pot', '鍋子容量')}</th>
               <th>${t('recipe.th_ingredients', '食材需求')}</th>
               <th style="white-space:nowrap;min-width:115px;text-align:center;">
@@ -879,9 +878,6 @@
           </thead>
           <tbody>
             ${recipes.map(r => {
-              const bp         = r.bonus_pct || 19;
-              const badgeClass = getBonusBadgeClass(bp);
-              const emoji      = getBonusEmoji(bp);
               const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
               const primaryName = isEN ? (r.name_en || r.name_cn) : r.name_cn;
               const secondaryName = isEN ? '' : (r.name_en || '');
@@ -927,11 +923,6 @@
                   </div>
                 </td>
                 <td style="vertical-align:middle;"><span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span></td>
-                <td style="vertical-align:middle;">
-                  <span class="bonus-badge ${badgeClass}">
-                    ${emoji} +${bp}%
-                  </span>
-                </td>
                 <td style="vertical-align:middle;"><span class="pot-badge">🍲 ${r.pot_size}</span></td>
                 <td style="vertical-align:middle;">${renderIngRow(r.ingredients)}</td>
                 ${energyCellHTML}
@@ -955,9 +946,6 @@
       contentArea.innerHTML = `
         <div class="h5-recipe-cards-list">
           ${recipes.map(r => {
-            const bp         = r.bonus_pct || 19;
-            const badgeClass = getBonusBadgeClass(bp);
-            const emoji      = getBonusEmoji(bp);
             const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
             const primaryName = isEN ? (r.name_en || r.name_cn) : r.name_cn;
             return `
@@ -971,7 +959,6 @@
                   </div>
                   <div class="h5-recipe-tags-row">
                     <span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span>
-                    <span class="bonus-badge ${badgeClass}">${emoji} +${bp}%</span>
                     <span class="h5-recipe-pot">🍲 ${r.pot_size}</span>
                   </div>
                 </div>
@@ -995,50 +982,46 @@
     contentArea.innerHTML = `
       <div class="pokemon-grid">
         ${recipes.map(r => {
-          const bp         = r.bonus_pct || 19;
-          const badgeClass = getBonusBadgeClass(bp);
-          const emoji      = getBonusEmoji(bp);
           const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
           const primaryName = isEN ? (r.name_en || r.name_cn) : r.name_cn;
           return `
-          <div class="pokemon-card">
-            <div class="card-header" style="align-items:center;">
-              <img class="card-icon" src="${r.icon}" alt="${primaryName}" style="width:56px;height:56px;border-radius:10px;">
-              <div class="card-title-group">
-                <h3 class="pokemon-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${primaryName}</h3>
-                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
+          <div class="pokemon-card recipe-desktop-card">
+            <div class="card-header" style="align-items:center;margin-bottom:6px;">
+              <img class="card-icon" src="${r.icon}" alt="${primaryName}" style="width:48px;height:48px;border-radius:10px;object-fit:contain;background:var(--bg-card-inner);padding:2px;border:1px solid var(--border-color);">
+              <div class="card-title-group" style="flex:1;min-width:0;">
+                <h3 class="pokemon-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px;margin-bottom:3px;">${primaryName}</h3>
+                <div style="display:flex;gap:6px;align-items:center;">
                   <span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span>
-                  <span class="bonus-badge ${badgeClass}" style="font-size:11px;padding:3px 8px;">${emoji} +${bp}%</span>
                 </div>
               </div>
             </div>
-            <div class="card-stats" style="grid-template-columns:1fr;gap:8px;margin-top:10px;">
-              <div class="stat-item" style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="stat-label">🍲 ${t('recipe.th_pot', '鍋子容量')}</span>
-                <span class="stat-value" style="color:var(--accent-color);">🍲 ${r.pot_size}</span>
+
+            <div class="recipe-desktop-stats">
+              <div class="recipe-stat-row">
+                <span class="stat-label">${t('recipe.th_pot', '鍋子容量')}</span>
+                <span class="stat-value pot-value">${r.pot_size}</span>
               </div>
-              <div class="stat-item" style="display:flex;flex-direction:column;gap:4px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span class="stat-label">⚡ ${t('recipe.th_final_energy', '能量')} (Lv.${recipeLevel} · 🏝️×${islandMult}${eventSub})</span>
-                  <span class="stat-value" style="color:var(--color-accent-gold);font-size:15px;font-family:monospace;font-weight:700;">⚡ ${finalE.toLocaleString()}</span>
+              <div class="recipe-stat-row">
+                <span class="stat-label">${t('recipe.th_final_energy', '預估能量')} <small style="color:var(--text-muted);font-weight:400;">(Lv.${recipeLevel} · ×${islandMult}${eventSub})</small></span>
+                <span class="stat-value energy-value">${finalE.toLocaleString()}</span>
+              </div>
+              ${showTasty ? `
+                <div class="recipe-stat-row tasty-stats-row">
+                  <span class="tasty-desktop-badge">2x <strong>${(finalE * 2).toLocaleString()}</strong></span>
+                  <span class="tasty-desktop-badge tasty-3x">3x <strong>${(finalE * 3).toLocaleString()}</strong></span>
                 </div>
-                ${showTasty ? `
-                  <div class="card-tasty-group">
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">2x</span>
-                      <span class="card-score-2x">${(finalE * 2).toLocaleString()}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                      <span style="font-size:12px;color:var(--text-muted);font-family:sans-serif;">3x</span>
-                      <span class="card-score-3x">${(finalE * 3).toLocaleString()}</span>
-                    </div>
+              ` : ''}
+            </div>
+
+            <div class="recipe-desktop-ings">
+              <div class="recipe-ing-row compact-4-row">
+                ${r.ingredients.map(i => `
+                  <div class="recipe-ing-chip compact-chip" title="${i.name} × ${i.count}">
+                    ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${i.name}" loading="lazy">` : ''}
+                    <span class="recipe-ing-count">×${i.count}</span>
                   </div>
-                ` : ''}
+                `).join('')}
               </div>
-            </div>
-            <div style="margin-top:10px;">
-              <div style="font-size:11px;color:var(--text-muted);margin-bottom:5px;">${t('recipe.th_ingredients', '材料需求')}</div>
-              ${renderIngRow(r.ingredients)}
             </div>
           </div>
         `}).join('')}

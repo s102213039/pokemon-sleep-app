@@ -698,13 +698,14 @@ html[data-lang="en"] .box-form-inline-label,
 
 /* Controls Container */
 .controls-container {
-  max-width: 1200px;
-  width: 92%;
-  margin: 24px auto 16px;
-  padding: 0 16px;
+  max-width: 1560px;
+  width: calc(100% - 32px);
+  margin: 20px auto 16px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  box-sizing: border-box;
 }
 
 .search-filter-row {
@@ -1490,20 +1491,22 @@ html[data-lang="en"] .subfilter-skill-btn,
 }
 
 .pokemon-main-content .controls-container {
-  max-width: 1200px;
-  width: 92%;
-  margin: 24px auto 16px;
-  padding: 0 16px;
+  max-width: 1560px;
+  width: calc(100% - 32px);
+  margin: 20px auto 16px;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .pokemon-main-content .stats-bar,
 .pokemon-main-content .table-container,
 .pokemon-main-content .pokemon-table-container,
 .pokemon-main-content .pokemon-grid {
-  max-width: 1200px;
-  width: 92%;
+  max-width: 1560px;
+  width: calc(100% - 32px);
   margin: 0 auto 16px;
-  padding: 0 16px;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 /* 響應式佈局 (Mobile & Tablet Displays) */
@@ -1516,10 +1519,10 @@ html[data-lang="en"] .subfilter-skill-btn,
 
 /* Stats Bar */
 .stats-bar {
-  max-width: 1200px;
-  width: 92%;
+  max-width: 1560px;
+  width: calc(100% - 32px);
   margin: 0 auto 16px;
-  padding: 0 16px;
+  padding: 0;
   font-size: 13.5px;
   color: var(--text-secondary);
   display: flex;
@@ -1527,6 +1530,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
+  box-sizing: border-box;
 }
 
 .count-badge {
@@ -1825,9 +1829,9 @@ html[data-lang="en"] .subfilter-skill-btn,
    ========================================================= */
 .pokemon-table-container,
 .table-container {
-  max-width: 1200px;
-  width: 92%;
-  margin: 0 auto;
+  max-width: 1560px;
+  width: calc(100% - 32px);
+  margin: 0 auto 16px;
   padding: 0;
   overflow-x: auto !important;
   -webkit-overflow-scrolling: touch;
@@ -1837,6 +1841,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   border: 1px solid var(--border-color);
   background: var(--bg-card);
   position: relative;
+  box-sizing: border-box;
 }
 
 .pokemon-table-container::-webkit-scrollbar,
@@ -2772,24 +2777,132 @@ html[lang="en"] .recipe-name-wrapper,
 }
 
 .recipe-main-content .controls-container {
-  max-width: 1200px;
-  width: 92%;
-  margin: 24px auto 16px;
-  padding: 0 16px;
+  max-width: 1560px;
+  width: calc(100% - 32px);
+  margin: 20px auto 16px;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .recipe-main-content .stats-bar,
 .recipe-main-content .table-container,
 .recipe-main-content .pokemon-table-container,
 .recipe-main-content .pokemon-grid {
-  max-width: 1200px;
-  width: 92%;
+  max-width: 1560px;
+  width: calc(100% - 32px);
   margin: 0 auto 16px;
-  padding: 0 16px;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 #recipe-content-area {
   width: 100%;
+}
+
+/* 🍲 桌面版料理卡片緊湊排版 (Desktop Recipe Cards) */
+.recipe-desktop-card {
+  padding: 10px 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.recipe-desktop-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle, var(--border-color));
+  border-radius: var(--radius-md, 8px);
+  padding: 6px 10px;
+}
+
+.recipe-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 12.5px;
+}
+
+.recipe-stat-row .stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.recipe-stat-row .stat-value.pot-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  font-family: monospace, -apple-system;
+}
+
+.recipe-stat-row .stat-value.energy-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-accent-gold, #f59e0b);
+  font-family: monospace, -apple-system;
+}
+
+.tasty-stats-row {
+  padding-top: 4px;
+  border-top: 1px dashed var(--border-color);
+  margin-top: 2px;
+  gap: 6px;
+}
+
+.tasty-desktop-badge {
+  font-size: 11px;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace, -apple-system;
+}
+
+.tasty-desktop-badge.tasty-3x {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.recipe-desktop-ings {
+  width: 100%;
+  margin-top: 2px;
+}
+
+.compact-4-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 4px !important;
+  width: 100% !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.compact-4-row::-webkit-scrollbar {
+  display: none !important;
+}
+
+.compact-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 2.5px !important;
+  padding: 2px 5px !important;
+  border-radius: 6px !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--text-secondary) !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.compact-chip .recipe-ing-icon {
+  width: 16px !important;
+  height: 16px !important;
+  object-fit: contain !important;
 }
 
 /* 料理種類 2 欄網格 */
