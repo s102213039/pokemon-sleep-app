@@ -2455,6 +2455,22 @@ test('Tier 1 - Feature Coverage', 'H5 App Centered Loading View & Fixed Table Vi
   assert(stylesCss.includes('.app-loading-spinner'), 'styles.css missing .app-loading-spinner');
 });
 
+test('Tier 1 - Feature Coverage', 'FAB Drag Physics & Subfilter Icon Enlargement Verification', () => {
+  const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+  const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // Verify makeFloatingDraggable has no undefined startTop / startLeft references
+  assert(appJs.includes('initialLeft + dx'), 'app.js must use initialLeft for dragging');
+  assert(appJs.includes('initialTop + dy'), 'app.js must use initialTop for dragging');
+  assert(!appJs.includes('startTop + dy'), 'app.js must not reference undefined startTop');
+  assert(!appJs.includes('startLeft + dx'), 'app.js must not reference undefined startLeft');
+  assert(appJs.includes('suppressClickUntil'), 'app.js must use suppressClickUntil to prevent drag from opening sidebar');
+
+  // Verify enlarged subfilter icons in styles.css
+  assert(stylesCss.includes('width: 28px'), 'styles.css missing enlarged 28px subfilter icons');
+  assert(stylesCss.includes('height: 28px'), 'styles.css missing enlarged 28px subfilter icons');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

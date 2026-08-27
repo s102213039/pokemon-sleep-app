@@ -204,7 +204,7 @@ function makeFloatingDraggable(el, onClick) {
       const maxY = window.innerHeight - 68 - btnH;
 
       let newLeft = Math.max(minX, Math.min(maxX, initialLeft + dx));
-      let newTop = Math.max(minY, Math.min(maxY, startTop + dy));
+      let newTop = Math.max(minY, Math.min(maxY, initialTop + dy));
 
       el.style.setProperty('left', `${newLeft}px`, 'important');
       el.style.setProperty('top', `${newTop}px`, 'important');
