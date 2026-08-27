@@ -696,6 +696,121 @@ html[data-lang="en"] .box-form-inline-label,
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
+/* =========================================================
+   🚫 全域無邊界極簡滾動條隱藏系統 (Universal Scrollbar Hiding)
+   隱藏所有列表、卡片、表格與容器的滾動條，同時保留絲滑滾動操作體驗
+   ========================================================= */
+
+/* 1. 全域容器與列表滾動條隱藏 (Firefox & IE/Edge) */
+html,
+body,
+.pokemon-table-container,
+.table-container,
+.box-table-container,
+.wiki-table-container,
+.compact-table-wrap,
+.wiki-table-scroll,
+.energy-table-container,
+.milestone-table-container,
+.ladder-table-container,
+.content-area,
+#content-area,
+.recipe-main-content #recipe-list-container,
+.recipe-cards-grid,
+#recipe-content-area,
+.h5-recipe-cards-list,
+.pokemon-grid,
+.box-cards-grid,
+.box-content-container,
+.wiki-main-content,
+.wiki-content-area,
+.wiki-panel-content,
+.sidebar-scrollable-content,
+.pokemon-filter-sidebar,
+.recipe-filter-sidebar,
+.news-timeline-container,
+.news-event-timeline,
+.gantt-scroll-container,
+.modal-body,
+.modal-content,
+.modal-scroll-content,
+.box-modal-body,
+.appraisal-modal-body,
+.settings-modal-body,
+.bottom-sheet-content,
+.bottom-sheet-scroll,
+.segmented-control,
+.mobile-segmented-bar,
+.subtab-pills,
+.chips-scroll-container,
+.filter-chips-scroll,
+.rf-cat-buttons,
+.news-category-tags,
+.compact-4-row,
+.h5-recipe-ing-section,
+.mobile-touch-scroll,
+.hide-scrollbar,
+.no-scrollbar {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE 10+ and Edge */
+}
+
+/* 2. Webkit (Chrome, Safari, iOS Safari, Android Chrome, Edge Chromium, Opera) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.pokemon-table-container::-webkit-scrollbar,
+.table-container::-webkit-scrollbar,
+.box-table-container::-webkit-scrollbar,
+.wiki-table-container::-webkit-scrollbar,
+.compact-table-wrap::-webkit-scrollbar,
+.wiki-table-scroll::-webkit-scrollbar,
+.energy-table-container::-webkit-scrollbar,
+.milestone-table-container::-webkit-scrollbar,
+.ladder-table-container::-webkit-scrollbar,
+.content-area::-webkit-scrollbar,
+#content-area::-webkit-scrollbar,
+.recipe-main-content #recipe-list-container::-webkit-scrollbar,
+.recipe-cards-grid::-webkit-scrollbar,
+#recipe-content-area::-webkit-scrollbar,
+.h5-recipe-cards-list::-webkit-scrollbar,
+.pokemon-grid::-webkit-scrollbar,
+.box-cards-grid::-webkit-scrollbar,
+.box-content-container::-webkit-scrollbar,
+.wiki-main-content::-webkit-scrollbar,
+.wiki-content-area::-webkit-scrollbar,
+.wiki-panel-content::-webkit-scrollbar,
+.sidebar-scrollable-content::-webkit-scrollbar,
+.pokemon-filter-sidebar::-webkit-scrollbar,
+.recipe-filter-sidebar::-webkit-scrollbar,
+.news-timeline-container::-webkit-scrollbar,
+.news-event-timeline::-webkit-scrollbar,
+.gantt-scroll-container::-webkit-scrollbar,
+.modal-body::-webkit-scrollbar,
+.modal-content::-webkit-scrollbar,
+.modal-scroll-content::-webkit-scrollbar,
+.box-modal-body::-webkit-scrollbar,
+.appraisal-modal-body::-webkit-scrollbar,
+.settings-modal-body::-webkit-scrollbar,
+.bottom-sheet-content::-webkit-scrollbar,
+.bottom-sheet-scroll::-webkit-scrollbar,
+.segmented-control::-webkit-scrollbar,
+.mobile-segmented-bar::-webkit-scrollbar,
+.subtab-pills::-webkit-scrollbar,
+.chips-scroll-container::-webkit-scrollbar,
+.filter-chips-scroll::-webkit-scrollbar,
+.rf-cat-buttons::-webkit-scrollbar,
+.news-category-tags::-webkit-scrollbar,
+.compact-4-row::-webkit-scrollbar,
+.h5-recipe-ing-section::-webkit-scrollbar,
+.mobile-touch-scroll::-webkit-scrollbar,
+.hide-scrollbar::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
 /* Controls Container */
 .controls-container {
   max-width: 1200px;
@@ -1141,21 +1256,8 @@ html[data-lang="en"] .box-form-inline-label,
   flex-direction: column;
   gap: 12px;
   background: transparent;
-}
-
-/* 輕量極簡滾動條 */
-.sidebar-scrollable-content::-webkit-scrollbar {
-  width: 3.5px;
-}
-.sidebar-scrollable-content::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
-}
-.sidebar-scrollable-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(56, 189, 248, 0.5);
-}
-.sidebar-scrollable-content::-webkit-scrollbar-track {
-  background: transparent;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 /* 👑 側邊欄開關卡片 (Sidebar Switch Cards) */
@@ -6070,16 +6172,14 @@ input[type="number"] {
 .gantt-scroll-container {
   overflow-x: auto;
   padding-bottom: 6px;
-  scrollbar-width: thin;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 .gantt-scroll-container::-webkit-scrollbar {
-  height: 6px;
-}
-
-.gantt-scroll-container::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 3px;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 /* 甘特主網格 */
