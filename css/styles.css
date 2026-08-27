@@ -11015,7 +11015,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   white-space: nowrap !important;
 }
 
-/* 🥦 食材小巧展示 (Smaller, compact ingredients row) */
+/* 🥦 食材展示 (Medium-compact ingredients row) */
 .h5-recipe-ing-section {
   display: flex !important;
   align-items: center !important;
@@ -11033,19 +11033,19 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .h5-recipe-ing-section .recipe-ing-row {
   display: flex !important;
   align-items: center !important;
-  gap: 3.5px !important;
+  gap: 4px !important;
   flex-wrap: nowrap !important;
 }
 
 .h5-recipe-ing-section .recipe-ing-chip {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 2px !important;
+  gap: 2.5px !important;
   background: var(--bg-card-inner, rgba(255, 255, 255, 0.04)) !important;
   border: 1px solid var(--border-color-subtle, var(--border-color)) !important;
-  border-radius: 5px !important;
-  padding: 1px 4px !important;
-  font-size: 10.5px !important;
+  border-radius: 6px !important;
+  padding: 1.5px 5px !important;
+  font-size: 11px !important;
   font-weight: 600 !important;
   color: var(--text-secondary) !important;
   white-space: nowrap !important;
@@ -11053,23 +11053,24 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .h5-recipe-ing-section .recipe-ing-icon {
-  width: 13.5px !important;
-  height: 13.5px !important;
+  width: 16px !important;
+  height: 16px !important;
   object-fit: contain !important;
 }
 
 .h5-recipe-ing-section .recipe-ing-count {
-  font-size: 10px !important;
+  font-size: 10.5px !important;
   font-weight: 600 !important;
 }
 
-/* ⚡ 右側上下等分/置中能量列 (Energy Column spanning full height) */
+/* ⚡ 右側上下等分/置中能量列 (Energy Column spanning full height with perfect vertical alignment) */
 .h5-recipe-energy-col {
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-end !important;
   flex-shrink: 0 !important;
-  min-width: 108px !important;
+  min-width: 114px !important;
+  width: 114px !important;
   box-sizing: border-box !important;
 }
 
@@ -11085,18 +11086,36 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .h5-energy-score {
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  gap: 4px !important;
+  line-height: 1.2 !important;
+}
+
+.h5-energy-score .energy-multiplier {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  width: 18px !important;
+  flex-shrink: 0 !important;
+  text-align: left !important;
+  opacity: 0.85 !important;
+  font-family: monospace, -apple-system !important;
+}
+
+.h5-energy-score .energy-number {
   font-size: 13.5px !important;
   font-weight: 700 !important;
   font-family: monospace, -apple-system !important;
   white-space: nowrap !important;
-  line-height: 1.2 !important;
-  display: flex !important;
-  align-items: baseline !important;
-  gap: 3px !important;
+  text-align: right !important;
+  flex: 1 !important;
 }
 
+/* 1x: 白/主文字色；2x: 亮藍；3x: 金橘色 (3 階完全獨立區隔色彩) */
 .h5-energy-score.energy-1x {
-  color: var(--color-accent-gold, #f59e0b) !important;
+  color: var(--text-primary, #f1f5f9) !important;
 }
 
 .h5-energy-score.energy-2x {
@@ -11105,12 +11124,6 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 
 .h5-energy-score.energy-3x {
   color: var(--color-accent-gold, #f59e0b) !important;
-}
-
-.h5-energy-score .energy-multiplier {
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  opacity: 0.85 !important;
 }
 
 .h5-recipe-tasty-row {

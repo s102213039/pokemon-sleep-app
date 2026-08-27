@@ -971,10 +971,19 @@
                 </div>
               </div>
               <div class="h5-recipe-energy-col ${showTasty ? 'has-tasty' : 'single-energy'}">
-                <span class="h5-energy-score energy-1x"><span class="energy-multiplier">1x</span> ${finalE.toLocaleString()}</span>
+                <div class="h5-energy-score energy-1x">
+                  <span class="energy-multiplier">1x</span>
+                  <span class="energy-number">${finalE.toLocaleString()}</span>
+                </div>
                 ${showTasty ? `
-                  <span class="h5-energy-score energy-2x"><span class="energy-multiplier">2x</span> ${(finalE * 2).toLocaleString()}</span>
-                  <span class="h5-energy-score energy-3x"><span class="energy-multiplier">3x</span> ${(finalE * 3).toLocaleString()}</span>
+                  <div class="h5-energy-score energy-2x">
+                    <span class="energy-multiplier">2x</span>
+                    <span class="energy-number">${(finalE * 2).toLocaleString()}</span>
+                  </div>
+                  <div class="h5-energy-score energy-3x">
+                    <span class="energy-multiplier">3x</span>
+                    <span class="energy-number">${(finalE * 3).toLocaleString()}</span>
+                  </div>
                 ` : ''}
               </div>
             </div>
