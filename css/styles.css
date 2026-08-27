@@ -1215,13 +1215,11 @@ html[data-lang="en"] .box-form-inline-label,
 }
 
 .sidebar-switch-compact .sidebar-final-evo-text {
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 700;
   color: var(--text-primary);
   white-space: nowrap;
-  letter-spacing: -0.3px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  letter-spacing: -0.2px;
 }
 
 .sidebar-switch-compact .sidebar-switch-wrapper {
@@ -10197,23 +10195,24 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   left: auto;
   top: auto;
   transform: none;
-  width: 48px !important;
-  height: 48px !important;
-  min-height: 48px !important;
+  width: 50px !important;
+  height: 50px !important;
+  min-height: 50px !important;
   border-radius: 50% !important;
   background: var(--accent-gradient, linear-gradient(135deg, #0284c7, #38bdf8)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.3) !important;
   color: #ffffff !important;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28) !important;
   flex-direction: row !important;
   align-items: center !important;
   justify-content: center !important;
   padding: 0 !important;
-  z-index: 995 !important;
-  cursor: grab !important;
-  touch-action: none !important;
+  z-index: 9995 !important;
+  cursor: pointer !important;
+  touch-action: manipulation !important;
   user-select: none !important;
   -webkit-user-select: none !important;
+  -webkit-tap-highlight-color: transparent !important;
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 

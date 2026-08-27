@@ -155,13 +155,25 @@ function makeFloatingDraggable(el, onClick) {
   let startTop = 0;
   let hasMoved = false;
   let isPointerDown = false;
+  let pointerDownTime = 0;
+  let lastClickTime = 0;
+
+  function triggerClick(e) {
+    const now = Date.now();
+    if (now - lastClickTime < 300) return; // Prevent duplicate rapid trigger
+    lastClickTime = now;
+    if (typeof onClick === 'function') {
+      onClick(e);
+    }
+  }
 
   function onPointerDown(e) {
     if (e.button !== undefined && e.button !== 0) return;
     isPointerDown = true;
     hasMoved = false;
-    startX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-    startY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+    pointerDownTime = Date.now();
+    startX = e.clientX || 0;
+    startY = e.clientY || 0;
 
     const rect = el.getBoundingClientRect();
     startLeft = rect.left;
@@ -176,12 +188,13 @@ function makeFloatingDraggable(el, onClick) {
 
   function onPointerMove(e) {
     if (!isPointerDown) return;
-    const curX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-    const curY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+    const curX = e.clientX || 0;
+    const curY = e.clientY || 0;
     const dx = curX - startX;
     const dy = curY - startY;
 
-    if (!hasMoved && Math.hypot(dx, dy) > 6) {
+    // Use 14px threshold to prevent accidental drag on normal touch tap
+    if (!hasMoved && Math.hypot(dx, dy) > 14) {
       hasMoved = true;
     }
 
@@ -212,7 +225,9 @@ function makeFloatingDraggable(el, onClick) {
     window.removeEventListener('pointerup', onPointerUp);
     window.removeEventListener('pointercancel', onPointerUp);
 
-    if (hasMoved) {
+    const touchDuration = Date.now() - pointerDownTime;
+
+    if (hasMoved && touchDuration > 120) {
       // 左右側邊緣智慧磁吸吸附 (Magnetic edge snapping to left or right)
       const screenW = window.innerWidth;
       const btnW = el.offsetWidth || 50;
@@ -227,11 +242,16 @@ function makeFloatingDraggable(el, onClick) {
       el.style.left = `${snapLeft}px`;
     } else {
       el.style.transition = 'transform 0.15s ease, box-shadow 0.15s ease';
-      if (typeof onClick === 'function') onClick(e);
+      triggerClick(e);
     }
   }
 
   el.addEventListener('pointerdown', onPointerDown);
+  el.addEventListener('click', (e) => {
+    if (!hasMoved) {
+      triggerClick(e);
+    }
+  });
 }
 
 if (typeof window !== 'undefined') {
