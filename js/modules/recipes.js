@@ -842,14 +842,36 @@
     filtered.forEach(r => { catCounts[r.category] = (catCounts[r.category] || 0) + 1; });
     const breakdownHTML = Object.entries(catCounts).map(([cat, c]) => `${catLabels[cat] || cat} <strong>${c}</strong>`).join(' · ');
 
-    countBadge.innerHTML = isEN ? `Dishes <strong>${filtered.length}</strong> (${breakdownHTML})` : `食譜 <strong>${filtered.length}</strong> 道（${breakdownHTML}）`;
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+
+    const lvBonus = getLevelBonus(recipeLevel);
+    const islandMult = (1 + islandBonus / 100).toFixed(2);
+    const eventMult = Number(eventBonus).toFixed(2);
+
+    let formulaParts = [];
+    formulaParts.push(`Lv.${recipeLevel}${lvBonus > 0 ? ` (+${lvBonus}%)` : ''}`);
+    if (islandBonus > 0) formulaParts.push(`🏝️+${islandBonus}% (×${islandMult})`);
+    if (eventBonus > 1.0) formulaParts.push(`🎉×${eventMult}`);
+
+    const formulaText = formulaParts.join(' · ');
+
+    if (isMobileH5) {
+      countBadge.style.display = 'flex';
+      countBadge.innerHTML = isEN ? `
+        <span class="rc-badge-count">Dishes <strong>${filtered.length}</strong></span>
+        <span class="rc-badge-formula">${formulaText}</span>
+      ` : `
+        <span class="rc-badge-count">食譜 <strong>${filtered.length}</strong> 道</span>
+        <span class="rc-badge-formula">${formulaText}</span>
+      `;
+    } else {
+      countBadge.innerHTML = isEN ? `Dishes <strong>${filtered.length}</strong> (${breakdownHTML})` : `食譜 <strong>${filtered.length}</strong> 道（${breakdownHTML}）`;
+    }
 
     if (filtered.length === 0) {
       contentArea.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-muted);">🔍 ${isEN ? 'No matching recipes found' : '未找到符合條件的料理食譜'}</div>`;
       return;
     }
-
-    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
 
     if (isMobileH5 || viewMode === 'grid') renderGrid(filtered);
     else renderTable(filtered);
@@ -863,54 +885,38 @@
     const eventSub = eventBonus > 1.0 ? ` · 🎉×${eventBonus.toFixed(2)}` : '';
     contentArea.innerHTML = `
       <div class="table-container">
-        <table class="pokemon-table">
+        <table class="pokemon-table recipe-table">
           <thead>
             <tr>
-              <th>${t('th.icon', '圖示')}</th>
-              <th>${t('recipe.th_dish', '料理名稱')}</th>
-              <th>${t('recipe.th_category', '分類')}</th>
-              <th>${t('recipe.th_pot', '鍋子容量')}</th>
-              <th>${t('recipe.th_ingredients', '食材需求')}</th>
-              <th style="white-space:nowrap;min-width:115px;text-align:center;">
-                ${t('recipe.th_final_energy', '能量')}<br>
-                <small style="color:var(--color-accent-gold);font-weight:500;">Lv.${recipeLevel} · 🏝️×${islandMult}${eventSub}</small>
+              <th style="width:68px;text-align:center;">${t('recipe.th_icon', '圖示')}</th>
+              <th class="sortable" data-sort="name" style="min-width:140px;">${t('recipe.th_name', '料理名稱')} <span class="sort-arrow"></span></th>
+              <th class="sortable" data-sort="category" style="width:100px;">${t('recipe.th_type', '分類')} <span class="sort-arrow"></span></th>
+              <th class="sortable" data-sort="pot" style="width:90px;">${t('recipe.th_pot', '鍋子容量')} <span class="sort-arrow"></span></th>
+              <th style="min-width:180px;">${t('recipe.th_ingredients', '食材需求')}</th>
+              <th class="sortable" data-sort="energy" style="min-width:140px;text-align:right;">
+                ${t('recipe.th_final_energy', '預估能量')} <span class="sort-arrow"></span>
+                <div class="table-sub-header">Lv.${recipeLevel} · ×${islandMult}${eventSub}</div>
               </th>
             </tr>
           </thead>
           <tbody>
             ${recipes.map(r => {
-              const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
-              const primaryName = isEN ? (r.name_en || r.name_cn) : r.name_cn;
-              const secondaryName = isEN ? '' : (r.name_en || '');
-
-              let energyCellHTML = '';
-              if (!showTasty) {
-                energyCellHTML = `
-                  <td style="font-weight:700;color:var(--color-accent-gold);font-family:monospace;font-size:15px;white-space:nowrap;text-align:center;vertical-align:middle;">
-                    ⚡ ${finalE.toLocaleString()}
-                  </td>
-                `;
-              } else {
-                energyCellHTML = `
-                  <td style="white-space:nowrap;text-align:center;padding:8px 8px;vertical-align:middle;">
-                    <div class="tasty-energy-stack">
-                      <div class="tasty-row tasty-row-normal" title="${isEN ? 'Normal Energy (1x)' : '一般能量 (1x)'}">
-                        <span class="tasty-tag">1x</span>
-                        <span class="tasty-num">${finalE.toLocaleString()}</span>
-                      </div>
-                      <div class="tasty-row tasty-row-2x" title="${isEN ? 'Tasty Dish (2x)' : '漂亮成功 (2倍)'}">
-                        <span class="tasty-tag">2x</span>
-                        <span class="tasty-num">${(finalE * 2).toLocaleString()}</span>
-                      </div>
-                      <div class="tasty-row tasty-row-3x" title="${isEN ? 'Super Tasty / Extra (3x)' : '超成功 / 漂亮 (3倍)'}">
-                        <span class="tasty-tag">3x</span>
-                        <span class="tasty-num">${(finalE * 3).toLocaleString()}</span>
-                      </div>
-                    </div>
-                  </td>
-                `;
-              }
-
+              const finalE        = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
+              const primaryName   = isEN ? (r.name_en || r.name_cn) : r.name_cn;
+              const secondaryName = isEN ? (r.name_cn !== primaryName ? r.name_cn : '') : (r.name_en || '');
+              const energyCellHTML = showTasty ? `
+                <td style="vertical-align:middle;text-align:right;">
+                  <div class="table-energy-main">⚡ ${finalE.toLocaleString()}</div>
+                  <div class="table-tasty-row">
+                    <span class="tasty-badge">2x ${Math.round(finalE * 2).toLocaleString()}</span>
+                    <span class="tasty-badge tasty-3x">3x ${Math.round(finalE * 3).toLocaleString()}</span>
+                  </div>
+                </td>
+              ` : `
+                <td style="vertical-align:middle;text-align:right;">
+                  <div class="table-energy-main">⚡ ${finalE.toLocaleString()}</div>
+                </td>
+              `;
               return `
               <tr>
                 <td style="vertical-align:middle;text-align:center;">
@@ -940,8 +946,6 @@
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
     const catLabels = { '咖哩': isEN ? 'Curry' : '咖哩', '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : '甜點' };
-    const islandMult = (1 + islandBonus / 100).toFixed(2);
-    const eventSub = eventBonus > 1.0 ? ` · 🎉×${eventBonus.toFixed(2)}` : '';
 
     if (isMobileH5) {
       contentArea.innerHTML = `
@@ -951,29 +955,27 @@
             const primaryName = isEN ? (r.name_en || r.name_cn) : r.name_cn;
             return `
             <div class="h5-recipe-card">
-              <div class="h5-recipe-header">
-                <img class="h5-recipe-img" src="${r.icon}" alt="${primaryName}" loading="lazy" onerror="this.style.display='none';">
-                <div class="h5-recipe-meta">
-                  <div class="h5-recipe-title-row">
+              <div class="h5-recipe-left-col">
+                <div class="h5-recipe-top-row">
+                  <img class="h5-recipe-img" src="${r.icon}" alt="${primaryName}" loading="lazy" onerror="this.style.display='none';">
+                  <div class="h5-recipe-title-meta">
                     <span class="h5-recipe-name">${primaryName}</span>
-                    <div class="h5-recipe-energy-group">
-                      <span class="h5-recipe-energy">⚡ ${finalE.toLocaleString()}</span>
-                      ${showTasty ? `
-                        <div class="h5-recipe-tasty-stacked">
-                          <span class="h5-recipe-tasty-line tasty-2x">2x ${(finalE * 2).toLocaleString()}</span>
-                          <span class="h5-recipe-tasty-line tasty-3x">3x ${(finalE * 3).toLocaleString()}</span>
-                        </div>
-                      ` : ''}
+                    <div class="h5-recipe-tags-row">
+                      <span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span>
+                      <span class="h5-recipe-pot">🍲 ${r.pot_size}</span>
                     </div>
                   </div>
-                  <div class="h5-recipe-tags-row">
-                    <span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span>
-                    <span class="h5-recipe-pot">🍲 ${r.pot_size}</span>
-                  </div>
+                </div>
+                <div class="h5-recipe-ing-section">
+                  ${renderIngRow(r.ingredients)}
                 </div>
               </div>
-              <div class="h5-recipe-ing-section">
-                ${renderIngRow(r.ingredients)}
+              <div class="h5-recipe-energy-col ${showTasty ? 'has-tasty' : 'single-energy'}">
+                <span class="h5-energy-score energy-1x"><span class="energy-multiplier">1x</span> ${finalE.toLocaleString()}</span>
+                ${showTasty ? `
+                  <span class="h5-energy-score energy-2x"><span class="energy-multiplier">2x</span> ${(finalE * 2).toLocaleString()}</span>
+                  <span class="h5-energy-score energy-3x"><span class="energy-multiplier">3x</span> ${(finalE * 3).toLocaleString()}</span>
+                ` : ''}
               </div>
             </div>
           `}).join('')}
