@@ -12113,14 +12113,37 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border-radius: 5px !important;
 }
 
+.mobile-h5-app #lunar-prayer-table {
+  overflow-x: hidden !important;
+}
+
 .mobile-h5-app #lunar-prayer-table .wiki-mini-table {
-  min-width: 440px !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
 }
 
 .mobile-h5-app #lunar-prayer-table th,
 .mobile-h5-app #lunar-prayer-table td {
-  padding: 5px 4px !important;
-  font-size: 10.5px !important;
+  padding: 4px 1px !important;
+  font-size: 9.5px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  letter-spacing: -0.3px !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", monospace !important;
+}
+
+.mobile-h5-app #lunar-prayer-table th:first-child,
+.mobile-h5-app #lunar-prayer-table td:first-child {
+  width: 13% !important;
+  font-weight: 700 !important;
+  padding: 4px 1px !important;
+}
+
+.mobile-h5-app #lunar-prayer-table th:not(:first-child),
+.mobile-h5-app #lunar-prayer-table td:not(:first-child) {
+  width: 14.5% !important;
 }
 
 .mobile-h5-app .wiki-skill-badge {
