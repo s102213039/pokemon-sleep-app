@@ -10100,6 +10100,15 @@
       activePanel.style.display = '';
     }
 
+    const wikiPanel = document.getElementById('panel-wiki');
+    if (wikiPanel) {
+      if (targetTab === 'ingredients') {
+        wikiPanel.classList.add('ladder-fullscreen');
+      } else {
+        wikiPanel.classList.remove('ladder-fullscreen');
+      }
+    }
+
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const ladderSidebar = document.getElementById('ladder-filter-sidebar');
     const ladderFab = document.getElementById('ladder-sidebar-bookmark-handle');
@@ -12338,7 +12347,7 @@
         </div>
 
         <!-- 子分頁 4：食材產量天梯榜 (Ingredient Yield Ladder) -->
-        <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:block;' : 'display:none;'}">
+        <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? '' : 'display:none;'}">
           <!-- 右下懸浮天梯篩選按鈕 (Mobile Only FAB) -->
           <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Open Filters' : '展開天梯篩選器'}" aria-label="${isEN ? 'Open Filters' : '展開天梯篩選器'}" style="${isMobileH5 && currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
             <span class="bookmark-icon">
@@ -12368,7 +12377,7 @@
         </div>
 
         <!-- 子分頁 5：樹果與食材基礎能量 (Image 1 實體化 - Berry & Ingredient Values) -->
-        <div id="wiki-subpanel-values" class="wiki-subpanel ${currentWikiSubTab === 'values' ? 'active' : ''}" style="${currentWikiSubTab === 'values' ? 'display:block;' : 'display:none;'}">
+        <div id="wiki-subpanel-values" class="wiki-subpanel ${currentWikiSubTab === 'values' ? 'active' : ''}" style="${currentWikiSubTab === 'values' ? '' : 'display:none;'}">
           <div class="wiki-card">
             <div class="wiki-card-header">
               <h3 class="wiki-card-title">${isEN ? 'Berry & Ingredient Base Power Table' : '樹果與食材基礎能量表'}</h3>

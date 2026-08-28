@@ -12923,6 +12923,28 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border-color: transparent !important;
 }
 
+.mobile-h5-app #panel-wiki.ladder-fullscreen,
+.mobile-h5-app #panel-wiki:has(#wiki-subpanel-ingredients.active) {
+  height: calc(100dvh - 50px - 64px - env(safe-area-inset-bottom, 0px)) !important;
+  max-height: calc(100dvh - 50px - 64px - env(safe-area-inset-bottom, 0px)) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.mobile-h5-app #panel-wiki.ladder-fullscreen .wiki-main-container,
+.mobile-h5-app #panel-wiki:has(#wiki-subpanel-ingredients.active) .wiki-main-container {
+  height: 100% !important;
+  max-height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
 .mobile-h5-app #wiki-subpanel-ingredients {
   padding: 0 !important;
   margin: 0 !important;
@@ -12931,8 +12953,10 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app #wiki-subpanel-ingredients.active {
   display: flex !important;
   flex-direction: column !important;
+  flex: 1 1 auto !important;
   height: calc(100dvh - 50px - 42px - 64px - env(safe-area-inset-bottom, 0px)) !important;
   max-height: calc(100dvh - 50px - 42px - 64px - env(safe-area-inset-bottom, 0px)) !important;
+  min-height: 0 !important;
   box-sizing: border-box !important;
   padding: 2px 4px 4px !important;
   margin: 0 !important;
@@ -12941,12 +12965,25 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   background: #ffffff !important;
 }
 
+.mobile-h5-app #wiki-ingredient-ladder-coordinate {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
 .mobile-h5-app .wiki-coordinate-ladder-wrapper {
   display: flex !important;
   flex-direction: column !important;
   flex: 1 1 auto !important;
   height: 100% !important;
   max-height: 100% !important;
+  min-height: 0 !important;
   overflow-x: hidden !important;
   overflow-y: hidden !important;
   width: 100% !important;
@@ -12968,6 +13005,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   flex: 1 1 auto !important;
   height: 100% !important;
   max-height: 100% !important;
+  min-height: 0 !important;
   justify-content: space-between !important;
   min-width: 0 !important;
   width: 100% !important;
