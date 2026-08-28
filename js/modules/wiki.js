@@ -10629,10 +10629,38 @@
     }
   }
 
-  // 5.1 樹果能量動態等級 (Lv.1 ~ Lv.70)、島嶼加成 (0% ~ 85%) 與 順果 2x 計算
+  // 5.1 樹果能量動態等級 (Lv.1 ~ Lv.70)、島嶼加成 (0% ~ 85%) 與 順果 2x 計算 (持久化保存)
+  const STORAGE_KEY_BERRY_LEVEL = 'pksleep_wiki_berry_level';
+  const STORAGE_KEY_BERRY_ISLAND = 'pksleep_wiki_berry_island';
+
   let currentBerryLevel = 1;
   let currentIslandBonus = 0;
   let isFavoriteBerry2x = false;
+
+  function loadPersistedBerrySettings() {
+    try {
+      if (typeof localStorage === 'undefined') return;
+      const savedLv = localStorage.getItem(STORAGE_KEY_BERRY_LEVEL);
+      if (savedLv !== null) {
+        const parsedLv = parseInt(savedLv, 10);
+        if (!isNaN(parsedLv) && parsedLv >= 1 && parsedLv <= 70) {
+          currentBerryLevel = parsedLv;
+        }
+      }
+      const savedIsland = localStorage.getItem(STORAGE_KEY_BERRY_ISLAND);
+      if (savedIsland !== null) {
+        const parsedIsland = parseInt(savedIsland, 10);
+        if (!isNaN(parsedIsland) && parsedIsland >= 0 && parsedIsland <= 85) {
+          currentIslandBonus = parsedIsland;
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load persisted berry settings from localStorage:', e);
+    }
+  }
+
+  // 初始載入持久化設定
+  loadPersistedBerrySettings();
 
   function calcBerryEnergy(base, lv, islandBonus, isFav) {
     const baseAtLv = Math.round(Math.max(base + (lv - 1), base * Math.pow(1.025, lv - 1)));
@@ -10643,6 +10671,11 @@
 
   function updateBerryLevel(val) {
     currentBerryLevel = Math.min(Math.max(parseInt(val, 10) || 1, 1), 70);
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY_BERRY_LEVEL, currentBerryLevel.toString());
+      }
+    } catch (e) {}
     const displayEl = document.getElementById('berry-level-display');
     if (displayEl) displayEl.textContent = `Lv. ${currentBerryLevel}`;
     const sliderEl = document.getElementById('berry-level-slider');
@@ -10654,6 +10687,11 @@
 
   function updateBerryIsland(val) {
     currentIslandBonus = Math.min(Math.max(parseInt(val, 10) || 0, 0), 85);
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY_BERRY_ISLAND, currentIslandBonus.toString());
+      }
+    } catch (e) {}
     const displayEl = document.getElementById('berry-island-display');
     if (displayEl) displayEl.textContent = `+${currentIslandBonus}%`;
     const sliderEl = document.getElementById('berry-island-slider');
@@ -10985,6 +11023,7 @@
 
   // --- 初始化 Wiki 模組 ---
   function initWikiModule() {
+    loadPersistedBerrySettings();
     const wikiContainer = document.getElementById('panel-wiki');
     if (!wikiContainer) return;
 

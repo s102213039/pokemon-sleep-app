@@ -893,8 +893,21 @@ test('Tier 1 - Feature Coverage', 'Centralized Scalable I18N Dynamic Translator 
 
 test('Tier 1 - Feature Coverage', 'WikiDB Namespace & Event Handler Methods Integrity', () => {
   const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const mockStorage = new Map([['pksleep_lang', 'zh-TW']]);
   const ctx = {
-    window: { localStorage: { getItem: () => 'zh-TW', setItem: () => {} }, addEventListener: () => {} },
+    localStorage: {
+      getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+      setItem: (k, v) => mockStorage.set(k, String(v)),
+      removeItem: (k) => mockStorage.delete(k)
+    },
+    window: {
+      localStorage: {
+        getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+        setItem: (k, v) => mockStorage.set(k, String(v)),
+        removeItem: (k) => mockStorage.delete(k)
+      },
+      addEventListener: () => {}
+    },
     document: {
       documentElement: { setAttribute: () => {} },
       getElementById: () => null,
@@ -925,6 +938,10 @@ test('Tier 1 - Feature Coverage', 'WikiDB Namespace & Event Handler Methods Inte
 
   let threw = false;
   try {
+    ctx.window.WikiDB.updateBerryLevel(55);
+    assertEquals(ctx.window.localStorage.getItem('pksleep_wiki_berry_level'), '55', 'Berry Level should be persisted to localStorage');
+    ctx.window.WikiDB.updateBerryIsland(60);
+    assertEquals(ctx.window.localStorage.getItem('pksleep_wiki_berry_island'), '60', 'Island Bonus should be persisted to localStorage');
     ctx.window.WikiDB.toggleBerryFavorite(true);
     ctx.window.WikiDB.toggleBerryFavorite(false);
     ctx.window.WikiDB.toggleLadderNatureIng(true);
