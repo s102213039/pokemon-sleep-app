@@ -10638,50 +10638,51 @@ body.mobile-h5-surface {
   margin-bottom: 10px !important;
 }
 
-/* ─── 📱 H5 App 列表視圖：CoordinatorLayout 視窗置頂與容器內自然滾動 ─── */
+/* ─── 📱 H5 App 列表視圖：頁面級流式滾動，邊距與圓角於捲動至底部時完美呈現 ─── */
 .mobile-h5-app .pokemon-main-content,
 .mobile-h5-app .recipe-main-content {
-  display: flex;
-  flex-direction: column;
-  height: calc(100dvh - 52px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-  max-height: calc(100dvh - 52px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-  overflow: hidden;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
 }
 
 .mobile-h5-app .pokemon-main-content .controls-container,
 .mobile-h5-app .recipe-main-content .controls-container,
 .mobile-h5-app #panel-box .controls-container,
 .mobile-h5-app #panel-news .controls-container {
-  flex-shrink: 0;
-  margin: 12px 12px 8px !important;
+  position: sticky !important;
+  top: calc(52px + env(safe-area-inset-top, 0px)) !important;
+  z-index: 80 !important;
+  margin: 10px 12px 10px !important;
   padding: 0 !important;
   width: calc(100% - 24px) !important;
   box-sizing: border-box !important;
+  background: var(--bg-dark) !important;
 }
 
 .mobile-h5-app .pokemon-main-content .content-area,
 .mobile-h5-app .recipe-main-content .content-area {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
 }
 
 .mobile-h5-app .table-container,
 .mobile-h5-app .pokemon-table-container {
-  flex: 1 1 auto;
-  min-height: 0;
-  max-height: 100% !important;
+  display: block !important;
   width: calc(100% - 24px) !important;
-  margin: 0 12px 12px !important;
+  margin: 0 12px 20px !important;
   padding: 0 !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 14px !important;
   background: var(--table-row-odd-solid, #0d1527) !important;
-  box-shadow: none !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
   overflow-x: auto !important;
-  overflow-y: auto !important;
+  overflow-y: visible !important;
   -webkit-overflow-scrolling: touch;
   position: relative;
 }
@@ -11284,15 +11285,11 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .recipe-main-content #recipe-list-container,
 .mobile-h5-app .recipe-main-content .recipe-cards-grid {
   display: block !important;
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
-  max-height: 100% !important;
   width: calc(100% - 24px) !important;
-  margin: 0 12px 12px !important;
+  margin: 0 12px 20px !important;
   padding: 0 !important;
   box-sizing: border-box !important;
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch;
+  overflow-y: visible !important;
 }
 
 .mobile-h5-app .recipe-main-content #recipe-content-area {
@@ -11813,7 +11810,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .wiki-main-container {
-  padding: 0 0 calc(72px + env(safe-area-inset-bottom, 0px)) 0 !important;
+  padding: 0 0 16px 0 !important;
   margin: 0 !important;
   width: 100% !important;
   max-width: 100% !important;
@@ -12928,15 +12925,41 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   margin: 0 !important;
 }
 
+/* 🥗 食材天梯專屬：滿版視窗鎖定，完全禁止任何外部頁面滾動與多餘留白 */
+body.mobile-h5-app.ladder-active,
+.mobile-h5-app.ladder-active body {
+  overflow: hidden !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  padding-bottom: 0 !important;
+}
+
+.mobile-h5-app.ladder-active #panel-wiki,
+.mobile-h5-app.ladder-active .wiki-main-container {
+  height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
+  max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.mobile-h5-app.ladder-active .wiki-subnav-bar {
+  position: relative !important;
+  top: 0 !important;
+  flex-shrink: 0 !important;
+}
+
 .mobile-h5-app #wiki-subpanel-ingredients.active {
   display: flex !important;
   flex-direction: column !important;
   flex: 1 1 auto !important;
-  height: calc(100dvh - 50px - 42px - 64px - env(safe-area-inset-bottom, 0px)) !important;
-  max-height: calc(100dvh - 50px - 42px - 64px - env(safe-area-inset-bottom, 0px)) !important;
+  height: calc(100dvh - 52px - 42px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+  max-height: calc(100dvh - 52px - 42px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
   min-height: 0 !important;
   box-sizing: border-box !important;
-  padding: 2px 4px 4px !important;
+  padding: 2px 4px 0 4px !important;
   margin: 0 !important;
   width: 100% !important;
   overflow: hidden !important;
@@ -12962,8 +12985,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   height: 100% !important;
   max-height: 100% !important;
   min-height: 0 !important;
-  overflow-x: hidden !important;
-  overflow-y: hidden !important;
+  overflow: hidden !important;
   width: 100% !important;
   box-sizing: border-box !important;
   padding: 0 !important;
@@ -13001,8 +13023,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 
 .mobile-h5-app .ladder-track-row {
   flex: 1 1 0 !important;
-  height: calc((100dvh - 228px - env(safe-area-inset-bottom, 0px)) / 18) !important;
-  min-height: 28px !important;
+  height: auto !important;
+  min-height: 0 !important;
   max-height: 42px !important;
   display: flex !important;
   align-items: center !important;

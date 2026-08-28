@@ -1048,6 +1048,7 @@ if (typeof document !== 'undefined') {
         }
 
         if (target !== 'wiki') {
+          if (isMobileH5) document.body.classList.remove('ladder-active');
           if (ladderBookmarkHandle) ladderBookmarkHandle.style.display = 'none';
           if (ladderSidebar) {
             ladderSidebar.classList.add('collapsed');
@@ -1056,6 +1057,13 @@ if (typeof document !== 'undefined') {
           if (ladderBackdrop) ladderBackdrop.classList.remove('active');
         } else {
           const isIng = window.WikiDB && window.WikiDB.getCurrentSubTab && window.WikiDB.getCurrentSubTab() === 'ingredients';
+          if (isMobileH5) {
+            if (isIng) {
+              document.body.classList.add('ladder-active');
+            } else {
+              document.body.classList.remove('ladder-active');
+            }
+          }
           if (ladderSidebar) {
             if (isMobileH5) {
               ladderSidebar.style.display = isIng ? 'flex' : 'none';

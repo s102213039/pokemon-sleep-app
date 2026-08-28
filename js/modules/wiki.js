@@ -10101,6 +10101,13 @@
     }
 
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    if (isMobileH5) {
+      if (targetTab === 'ingredients') {
+        document.body.classList.add('ladder-active');
+      } else {
+        document.body.classList.remove('ladder-active');
+      }
+    }
     const ladderSidebar = document.getElementById('ladder-filter-sidebar');
     const ladderFab = document.getElementById('ladder-sidebar-bookmark-handle');
     const ladderBackdrop = document.getElementById('ladder-sidebar-backdrop');
