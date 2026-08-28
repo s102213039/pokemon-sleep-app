@@ -8118,7 +8118,7 @@ input[type="number"] {
 }
 
 @media (max-width: 1024px) {
-  .ladder-fixed-sidebar {
+  body:not(.mobile-h5-app) .ladder-fixed-sidebar {
     display: none !important;
   }
 }
@@ -10533,8 +10533,10 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 /* ─── 🎛️ H5 App 右側抽屜式篩選器 (Right-side Sliding Drawer - Full Viewport Height) ─── */
+/* ─── 🎛️ H5 App 右側抽屜式篩選器 (Right-side Sliding Drawer - Full Viewport Height) ─── */
 .mobile-h5-app .pokemon-filter-sidebar,
-.mobile-h5-app .recipe-filter-sidebar {
+.mobile-h5-app .recipe-filter-sidebar,
+.mobile-h5-app .ladder-fixed-sidebar {
   position: fixed !important;
   top: 0 !important;
   bottom: 0 !important;
@@ -10560,7 +10562,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .pokemon-filter-sidebar .sidebar-header,
-.mobile-h5-app .recipe-filter-sidebar .sidebar-header {
+.mobile-h5-app .recipe-filter-sidebar .sidebar-header,
+.mobile-h5-app .ladder-fixed-sidebar .sidebar-header {
   height: 52px !important;
   width: 100% !important;
   padding: 0 14px !important;
@@ -10577,7 +10580,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .pokemon-filter-sidebar .sidebar-scrollable-content,
-.mobile-h5-app .recipe-filter-sidebar .sidebar-scrollable-content {
+.mobile-h5-app .recipe-filter-sidebar .sidebar-scrollable-content,
+.mobile-h5-app .ladder-fixed-sidebar .sidebar-scrollable-content {
   flex: 1 1 auto !important;
   width: 100% !important;
   box-sizing: border-box !important;
@@ -10612,10 +10616,25 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .pokemon-filter-sidebar.collapsed,
-.mobile-h5-app .recipe-filter-sidebar.collapsed {
+.mobile-h5-app .recipe-filter-sidebar.collapsed,
+.mobile-h5-app .ladder-fixed-sidebar.collapsed {
   transform: translateX(105%) !important;
   pointer-events: none !important;
   visibility: hidden !important;
+}
+
+/* 🥗 H5 App 天梯側邊欄標籤與開關樣式 */
+.mobile-h5-app .ladder-fixed-sidebar .sidebar-skills-list {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .ladder-fixed-sidebar .sidebar-skills-list .tag-btn {
+  width: 100% !important;
+  text-align: center !important;
+  padding: 6px 4px !important;
+  font-size: 11.5px !important;
 }
 
 .desktop-switch-btn {

@@ -10132,10 +10132,50 @@
       activePanel.style.setProperty('display', 'block', 'important');
     }
 
-    // 當切換到 ingredients 子分頁時，顯示左側天梯專屬固定側邊欄；其餘子分頁則隱藏
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const ladderSidebar = document.getElementById('ladder-filter-sidebar');
+    const ladderFab = document.getElementById('ladder-sidebar-bookmark-handle');
+    const ladderBackdrop = document.getElementById('ladder-sidebar-backdrop');
+
     if (ladderSidebar) {
-      ladderSidebar.style.display = (targetTab === 'ingredients') ? 'flex' : 'none';
+      if (isMobileH5) {
+        if (targetTab === 'ingredients') {
+          ladderSidebar.style.display = 'flex';
+          ladderSidebar.classList.add('collapsed');
+          if (ladderFab) ladderFab.style.display = 'flex';
+        } else {
+          ladderSidebar.classList.add('collapsed');
+          ladderSidebar.style.display = 'none';
+          if (ladderFab) ladderFab.style.display = 'none';
+          if (ladderBackdrop) ladderBackdrop.classList.remove('active');
+        }
+      } else {
+        ladderSidebar.style.display = (targetTab === 'ingredients') ? 'flex' : 'none';
+        ladderSidebar.classList.remove('collapsed');
+      }
+    }
+  }
+
+  function openLadderSidebar() {
+    const sidebar = document.getElementById('ladder-filter-sidebar');
+    const backdrop = document.getElementById('ladder-sidebar-backdrop');
+    if (sidebar) {
+      sidebar.classList.remove('collapsed');
+      sidebar.style.setProperty('display', 'flex', 'important');
+    }
+    if (backdrop) {
+      backdrop.classList.add('active');
+    }
+  }
+
+  function closeLadderSidebar() {
+    const sidebar = document.getElementById('ladder-filter-sidebar');
+    const backdrop = document.getElementById('ladder-sidebar-backdrop');
+    if (sidebar) {
+      sidebar.classList.add('collapsed');
+    }
+    if (backdrop) {
+      backdrop.classList.remove('active');
     }
   }
 
@@ -11753,11 +11793,18 @@
   // 渲染 Wiki 主佈局與 5 大子分頁 (精簡二級選單列)
   function renderWikiLayout(container) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
 
     container.innerHTML = `
-      <!-- ⬅️ 左側天梯專屬固定側邊篩選器 (Left Fixed Sidebar Filter - Pokédex Style) -->
-      <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Ladder Filters' : '天梯篩選器'}">
+      <!-- ⬅️ 天梯專屬側邊篩選器 (Mobile: 抽屜式 / Desktop: 左側固定) -->
+      <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${isMobileH5 ? 'collapsed' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Ladder Filters' : '天梯篩選器'}">
         <div class="sidebar-header">
+          <button type="button" id="ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.closeLadderSidebar()" title="${isEN ? 'Close' : '收合'}" aria-label="${isEN ? 'Close' : '收合'}">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
           <div class="sidebar-title-group">
             <span class="sidebar-icon">🎛️</span>
             <span class="sidebar-title">${isEN ? 'Ladder Filters' : '天梯篩選器'}</span>
@@ -12136,6 +12183,23 @@
 
         <!-- 子分頁 4：🥗 食材產量天梯榜 (Ingredient Yield Ladder) -->
         <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:block;' : 'display:none;'}">
+          <!-- 🎛️ 右下懸浮天梯篩選按鈕 (Mobile Only FAB) -->
+          <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Open Filters' : '展開天梯篩選器'}" aria-label="${isEN ? 'Open Filters' : '展開天梯篩選器'}" style="${isMobileH5 && currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
+            <span class="bookmark-icon">
+              <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"></line>
+                <line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line>
+                <line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line>
+                <line x1="9" y1="8" x2="15" y2="8"></line>
+                <line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+            </span>
+          </button>
+
           <!-- 橫向視覺天梯座標圖 (預設顯示) -->
           <div id="wiki-ingredient-ladder-coordinate">
             ${renderCoordinateLadder(LV60_COORDINATE_LADDER_DATA)}
@@ -12162,6 +12226,9 @@
           </div>
         </div>
       </div>
+
+      <!-- 遮罩層 (Backdrop for Mobile Drawer) -->
+      <div id="ladder-sidebar-backdrop" class="sidebar-backdrop" onclick="window.WikiDB.closeLadderSidebar()"></div>
     `;
   }
 
@@ -12234,6 +12301,8 @@
     handleLadderGroupHoverOut: handleLadderGroupHoverOut,
     recalcTriggerChance: recalcTriggerChance,
     recalcSleepDays: recalcSleepDays,
+    openLadderSidebar: openLadderSidebar,
+    closeLadderSidebar: closeLadderSidebar,
     TOP_RECIPES_FOR_INGREDIENTS: TOP_RECIPES_FOR_INGREDIENTS
   };
 
@@ -12266,6 +12335,8 @@
   window.handleLadderGroupHoverOut = handleLadderGroupHoverOut;
   window.recalcTriggerChance = recalcTriggerChance;
   window.recalcSleepDays = recalcSleepDays;
+  window.openLadderSidebar = openLadderSidebar;
+  window.closeLadderSidebar = closeLadderSidebar;
 
   // 當 DOM 準備完成時自動初始化
   if (document.readyState === 'loading') {

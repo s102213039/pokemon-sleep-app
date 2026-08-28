@@ -1024,9 +1024,9 @@ if (typeof document !== 'undefined') {
         const recipeBookmarkHandle = document.getElementById('recipe-sidebar-bookmark-handle');
         const recipeBackdrop = document.getElementById('recipe-sidebar-backdrop');
         const ladderSidebar = document.getElementById('ladder-filter-sidebar');
-        if (ladderSidebar) {
-          ladderSidebar.style.display = (target === 'wiki' && window.WikiDB && window.WikiDB.getCurrentSubTab && window.WikiDB.getCurrentSubTab() === 'ingredients') ? 'flex' : 'none';
-        }
+        const ladderBookmarkHandle = document.getElementById('ladder-sidebar-bookmark-handle');
+        const ladderBackdrop = document.getElementById('ladder-sidebar-backdrop');
+        const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
 
         // 預設關閉非當前分頁的側邊欄
         if (target !== 'recipes') {
@@ -1045,6 +1045,27 @@ if (typeof document !== 'undefined') {
             filterSidebar.style.display = 'none';
           }
           if (backdrop) backdrop.classList.remove('active');
+        }
+
+        if (target !== 'wiki') {
+          if (ladderBookmarkHandle) ladderBookmarkHandle.style.display = 'none';
+          if (ladderSidebar) {
+            ladderSidebar.classList.add('collapsed');
+            ladderSidebar.style.display = 'none';
+          }
+          if (ladderBackdrop) ladderBackdrop.classList.remove('active');
+        } else {
+          const isIng = window.WikiDB && window.WikiDB.getCurrentSubTab && window.WikiDB.getCurrentSubTab() === 'ingredients';
+          if (ladderSidebar) {
+            if (isMobileH5) {
+              ladderSidebar.style.display = isIng ? 'flex' : 'none';
+              ladderSidebar.classList.add('collapsed');
+              if (ladderBookmarkHandle) ladderBookmarkHandle.style.display = isIng ? 'flex' : 'none';
+            } else {
+              ladderSidebar.style.display = isIng ? 'flex' : 'none';
+              ladderSidebar.classList.remove('collapsed');
+            }
+          }
         }
 
         if (target === 'news' && panelNews && tabNews) {
