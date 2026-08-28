@@ -10091,13 +10091,13 @@
     const allSubpanels = document.querySelectorAll('.wiki-subpanel');
     allSubpanels.forEach(p => {
       p.classList.remove('active');
-      p.style.setProperty('display', 'none', 'important');
+      p.style.display = 'none';
     });
 
     const activePanel = document.getElementById(`wiki-subpanel-${targetTab}`);
     if (activePanel) {
       activePanel.classList.add('active');
-      activePanel.style.setProperty('display', 'block', 'important');
+      activePanel.style.display = '';
     }
 
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');

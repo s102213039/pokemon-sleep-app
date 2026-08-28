@@ -12931,21 +12931,16 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app #wiki-subpanel-ingredients.active {
   display: flex !important;
   flex-direction: column !important;
-  height: calc(100dvh - 50px - 41px - 64px - env(safe-area-inset-bottom, 0px)) !important;
-  min-height: calc(100vh - 165px) !important;
   box-sizing: border-box !important;
   padding: 0 !important;
   margin: 0 !important;
-  overflow: hidden !important;
+  width: 100% !important;
 }
 
 .mobile-h5-app .wiki-coordinate-ladder-wrapper {
   display: flex !important;
   flex-direction: column !important;
-  flex: 1 !important;
-  height: 100% !important;
   overflow-x: hidden !important;
-  overflow-y: hidden !important;
   width: 100% !important;
   box-sizing: border-box !important;
   padding: 2px 4px 6px !important;
@@ -12962,9 +12957,6 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .wiki-coordinate-ladder {
   display: flex !important;
   flex-direction: column !important;
-  flex: 1 !important;
-  height: 100% !important;
-  justify-content: space-between !important;
   min-width: 0 !important;
   width: 100% !important;
   background: #ffffff !important;
@@ -12973,10 +12965,15 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   box-sizing: border-box !important;
 }
 
+.mobile-h5-app .ladder-ruler-header {
+  flex-shrink: 0 !important;
+  height: 20px !important;
+  margin-bottom: 2px !important;
+}
+
 .mobile-h5-app .ladder-track-row {
-  flex: 1 !important;
-  min-height: 0 !important;
-  height: auto !important;
+  height: calc((100dvh - 215px) / 18) !important;
+  min-height: 33px !important;
   display: flex !important;
   align-items: center !important;
   padding: 0 !important;
@@ -12985,29 +12982,23 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border: none !important;
 }
 
-.mobile-h5-app .ladder-ruler-header {
-  flex-shrink: 0 !important;
-  height: 18px !important;
-  margin-bottom: 2px !important;
-}
-
 .mobile-h5-app .ladder-track-header {
-  width: 20px !important;
-  min-width: 20px !important;
+  width: 22px !important;
+  min-width: 22px !important;
   justify-content: center !important;
   padding: 0 !important;
   border-right: none !important;
 }
 
 .mobile-h5-app .ladder-ruler-spacer {
-  width: 20px !important;
-  min-width: 20px !important;
+  width: 22px !important;
+  min-width: 22px !important;
   justify-content: center !important;
 }
 
 .mobile-h5-app .ladder-ing-icon {
-  width: 18px !important;
-  height: 18px !important;
+  width: 20px !important;
+  height: 20px !important;
 }
 
 .mobile-h5-app .ladder-ruler-scale {
@@ -13028,9 +13019,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 
 .mobile-h5-app .ladder-tail-standalone-container {
   flex-shrink: 0 !important;
-  margin-top: auto !important;
-  padding-top: 4px !important;
-  padding-bottom: 2px !important;
+  margin-top: 8px !important;
+  margin-bottom: 4px !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
   display: flex !important;
@@ -13039,27 +13029,27 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .ladder-tail-standalone-box {
-  width: 230px !important;
+  width: 240px !important;
   max-width: 100% !important;
   background: #ffffff !important;
   border: 1.5px solid #cbd5e1 !important;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
   margin-left: 0 !important;
-  padding: 3px 6px 4px !important;
+  padding: 4px 8px 6px !important;
 }
 
 .mobile-h5-app .ladder-tail-ruler {
-  height: 14px !important;
+  height: 16px !important;
 }
 
 .mobile-h5-app .ladder-tail-track-row {
-  height: 24px !important;
-  min-height: 24px !important;
+  height: 28px !important;
+  min-height: 28px !important;
 }
 
 .mobile-h5-app .ladder-tail-ruler-spacer {
-  width: 20px !important;
-  min-width: 20px !important;
+  width: 22px !important;
+  min-width: 22px !important;
 }
 
 .mobile-h5-app .ladder-tail-ruler-scale {
@@ -13071,12 +13061,12 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .node-avatar-wrapper {
-  width: 20px !important;
-  height: 20px !important;
+  width: 22px !important;
+  height: 22px !important;
 }
 
 .mobile-h5-app .tick-label {
-  font-size: 9.5px !important;
+  font-size: 10px !important;
 }
 
 .mobile-h5-app .ladder-card {
