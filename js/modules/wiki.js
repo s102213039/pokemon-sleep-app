@@ -11165,14 +11165,18 @@
     tail: 1
   };
 
-  // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、大菜供應能力評定、跨軌道搜尋聚焦)
+  // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、大菜供應能力評定、美味尾巴獨立分離)
   function renderCoordinateLadder(ladderData) {
     const mult = getLadderMultiplier();
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     
-    // 依據是否開啟各項加成動態調整刻度上限
+    // 分離 18 種常規食材與 1 種獨立美味尾巴
+    const mainTracks = ladderData.filter(ing => ing.id !== 'tail');
+    const tailIng = ladderData.find(ing => ing.id === 'tail');
+
+    // 18種常規食材刻度：自 20 開始擠壓，提升解析度與可讀性
     const maxProjected = 100 * mult;
-    let minVal = 10;
+    let minVal = 20;
     let maxVal = 105;
     let step = 10;
 
@@ -11191,7 +11195,7 @@
     }
 
     let ticks = [];
-    for (let t = 10; t <= maxVal; t += step) {
+    for (let t = 20; t <= maxVal; t += step) {
       ticks.push(t);
     }
 
@@ -11200,21 +11204,12 @@
       return ((clamped - minVal) / (maxVal - minVal) * 100).toFixed(2);
     }
 
-    const activeBoosts = [];
-    if (isLadderIngM) activeBoosts.push(isEN ? 'Ing. Finder M' : '食材M');
-    if (isLadderSpeedM) activeBoosts.push(isEN ? 'Help Speed M' : '幫速M');
-    if (isLadderNatureIng) activeBoosts.push(isEN ? 'Nature Ing▲▲' : '性格食材▲▲');
-    if (isLadderNatureSpeed) activeBoosts.push(isEN ? 'Nature Speed▲▲' : '性格幫速▲▲');
-    const boostLabel = activeBoosts.length > 0 
-      ? (isEN ? ` (incl. ${activeBoosts.join(' + ')})` : ` (含 ${activeBoosts.join(' + ')} 補正)`) 
-      : '';
-
     const isUnfilteredDefault = (ladderSpecialtyFilter === 'ALL' && ladderRecipeFilter === 'ALL' && ladderSupplyFilter === 'ALL' && !ladderSearchQuery);
 
     return `
       <div class="wiki-coordinate-ladder-wrapper">
         <div class="wiki-coordinate-ladder" onmouseover="window.WikiDB.handleLadderGroupHover(event)" onmouseout="window.WikiDB.handleLadderGroupHoverOut(event)">
-          <!-- 頂部刻度標尺 -->
+          <!-- 頂部刻度標尺 (自 20 起標) -->
           <div class="ladder-ruler-header">
             <div class="ladder-ruler-spacer"></div>
             <div class="ladder-ruler-scale">
@@ -11227,12 +11222,12 @@
             </div>
           </div>
 
-          <!-- 各食材軌道 (19種食材完整一覽) -->
-          ${ladderData.map(ing => {
+          <!-- 常規食材軌道 (18種食材，產量 >= 20 展開展示) -->
+          ${mainTracks.map(ing => {
             const dishInfo = TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { name: isEN ? 'High Tier Dish' : '高階料理', name_en: 'High Tier Dish', need: 20, type: isEN ? 'Dish' : '料理', secondary: '' };
             const dishName = isEN ? (dishInfo.name_en || dishInfo.name) : dishInfo.name;
             const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
-            const minDefaultThreshold = DEFAULT_LADDER_MIN_THRESHOLDS[ing.id] || 25;
+            const minDefaultThreshold = DEFAULT_LADDER_MIN_THRESHOLDS[ing.id] || 20;
 
             // 取得該軌道符合篩選之寶可夢與型態變體
             const filteredPokemonList = ing.pokemon.map(p => {
@@ -11243,7 +11238,7 @@
 
               let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
 
-              // 在預設總覽模式下，自動忽略過低產量之無效產出，保持畫面簡潔清爽（當使用者進行篩選或搜尋時，展示全部符合之型態）
+              // 預設總覽過濾低產量變體
               if (isUnfilteredDefault) {
                 variants = variants.filter(v => v.count >= minDefaultThreshold);
               }
@@ -11276,6 +11271,17 @@
 
             const isTrackEmpty = filteredPokemonList.length === 0;
 
+            // 計算該軌道最低產量起點，用於畫出前方點狀前導虛線
+            let minTrackCount = 105;
+            filteredPokemonList.forEach(p => {
+              p.variants.forEach(v => {
+                const scaled = Math.round(v.count * mult);
+                if (scaled < minTrackCount) minTrackCount = scaled;
+              });
+            });
+            if (minTrackCount > 105) minTrackCount = minVal;
+            const leadPct = getPosPct(minTrackCount);
+
             return `
             <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''}" data-ladder-ing="${ing.id}">
               <div class="ladder-track-header" title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isEN ? 'Key Dish: ' : '核心大菜：'}${dishName} (${dishInfo.need}${isEN ? '/meal' : '顆/餐'})">
@@ -11289,7 +11295,9 @@
                   ${ticks.map(t => `<div class="ladder-grid-line" style="left: ${getPosPct(t)}%;"></div>`).join('')}
                 </div>
 
-                <div class="ladder-track-line"></div>
+                <!-- 前導點狀虛線 (20 ~ 最低產量) 與 實體軌道線 (最低產量 ~ 終點) -->
+                <div class="ladder-track-lead-line" style="left: 0; width: ${leadPct}%;"></div>
+                <div class="ladder-track-line" style="left: ${leadPct}%; right: 0;"></div>
 
                 <!-- 跨度連接線容器 -->
                 <div class="ladder-spans-container">
@@ -11370,6 +11378,113 @@
             </div>
           `;
           }).join('')}
+
+          <!-- 獨立美味尾巴專屬天梯小看板 (0 ~ 20 獨立刻度) -->
+          ${tailIng ? (() => {
+            const tailTicks = [0, 5, 10, 15, 20];
+            function getTailPct(val) {
+              const clamped = Math.min(Math.max(val, 0), 20);
+              return ((clamped / 20) * 100).toFixed(2);
+            }
+            const filteredTailPkm = tailIng.pokemon.map(p => {
+              const pkmSpec = getPokemonLadderSpecialty(p.name);
+              if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return null;
+              if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return null;
+              if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return null;
+
+              let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
+              if (ladderRecipeFilter === 'AAA') {
+                variants = variants.filter(v => v.recipe === 'AAA');
+              } else if (ladderRecipeFilter === 'ABB') {
+                variants = variants.filter(v => v.recipe === 'ABB');
+              } else if (ladderRecipeFilter === 'AXX') {
+                variants = variants.filter(v => v.recipe !== 'AAA' && v.recipe !== 'ABB');
+              }
+              if (variants.length === 0) return null;
+              return { ...p, variants };
+            }).filter(Boolean);
+
+            const isTailEmpty = filteredTailPkm.length === 0;
+
+            return `
+              <div class="ladder-tail-standalone-container">
+                <div class="ladder-tail-standalone-box">
+                  <div class="ladder-tail-ruler">
+                    <div class="ladder-tail-ruler-spacer"></div>
+                    <div class="ladder-tail-ruler-scale">
+                      ${tailTicks.map(t => `
+                        <div class="ladder-tail-tick" style="left: ${getTailPct(t)}%;">
+                          <span class="tick-label">${t}</span>
+                          <div class="tick-line"></div>
+                        </div>
+                      `).join('')}
+                    </div>
+                    <div class="ladder-tail-ruler-spacer"></div>
+                  </div>
+
+                  <div class="ladder-tail-track-row ${isTailEmpty ? 'ladder-track-empty' : ''}" data-ladder-ing="tail">
+                    <div class="ladder-track-header">
+                      <img src="${tailIng.icon}" class="ladder-ing-icon" alt="${isEN ? 'Slowpoke Tail' : '美味尾巴'}">
+                    </div>
+
+                    <div class="ladder-tail-canvas">
+                      <div class="ladder-grid-lines">
+                        ${tailTicks.map(t => `<div class="ladder-grid-line" style="left: ${getTailPct(t)}%;"></div>`).join('')}
+                      </div>
+
+                      <div class="ladder-track-line" style="left: 0; right: 0;"></div>
+
+                      <div class="ladder-spans-container">
+                        ${filteredTailPkm.map(p => {
+                          if (p.variants.length < 2) return '';
+                          const scaledCounts = p.variants.map(v => Math.round(v.count * mult));
+                          const minC = Math.min(...scaledCounts);
+                          const maxC = Math.max(...scaledCounts);
+                          const minPct = parseFloat(getTailPct(minC));
+                          const maxPct = parseFloat(getTailPct(maxC));
+                          const widthPct = Math.max(maxPct - minPct, 1.5).toFixed(2);
+                          return `<div class="ladder-pkm-span-line" data-pkm-group="${p.name}" style="left: ${minPct}%; width: ${widthPct}%;"></div>`;
+                        }).join('')}
+                      </div>
+
+                      <div class="ladder-nodes-container">
+                        ${filteredTailPkm.flatMap((p, pIdx) => {
+                          const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
+                          return p.variants.map((v, vIdx) => {
+                            const scaledCount = Math.round(v.count * mult);
+                            const isTopNode = v.isTop || (p.isTop && v.recipe === p.recipe);
+                            const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
+                            return `
+                              <div class="ladder-node ${isTopNode ? 'node-top1' : ''} recipe-${v.recipe.toLowerCase()}" 
+                                   data-pkm-group="${p.name}"
+                                   data-pkm="${p.name}" 
+                                   data-recipe="${v.recipe}"
+                                   style="left: ${getTailPct(scaledCount)}%; z-index: ${zIndex};">
+                                <div class="node-recipe-tag recipe-tag-${v.recipe.toLowerCase()}">${v.recipe}</div>
+                                <div class="node-avatar-wrapper">
+                                  <img src="${p.icon}" class="node-avatar-img" alt="${pkmDisplayName}">
+                                </div>
+                                <div class="node-count-badge">${scaledCount}</div>
+                                <div class="ladder-node-tooltip">
+                                  <div class="tooltip-title">${pkmDisplayName}</div>
+                                  <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估日產：'}<span class="text-success font-bold">${scaledCount} ${isEN ? '/day' : '顆/天'}</span></div>
+                                  <div class="tooltip-note">${formatLadderNote(v.note || '', isEN)}</div>
+                                </div>
+                              </div>
+                            `;
+                          });
+                        }).join('')}
+                      </div>
+                    </div>
+
+                    <div class="ladder-track-header ladder-track-header-right">
+                      <img src="${tailIng.icon}" class="ladder-ing-icon" alt="${isEN ? 'Slowpoke Tail' : '美味尾巴'}">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          })() : ''}
         </div>
       </div>
     `;

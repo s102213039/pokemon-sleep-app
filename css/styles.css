@@ -7555,19 +7555,23 @@ input[type="number"] {
   color: var(--accent-blue);
 }
 
-/* 橫向天梯座標圖 (精簡緊湊單屏呈現) */
+/* 橫向天梯座標圖 (白底無框極簡高解析) */
 .wiki-coordinate-ladder-wrapper {
   overflow: visible;
   padding-bottom: 4px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: none;
+  box-shadow: none;
 }
 
 .wiki-coordinate-ladder {
   min-width: 680px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 10px 14px;
-  box-shadow: var(--shadow-sm);
+  background: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 6px 8px;
+  box-shadow: none;
 }
 
 .ladder-ruler-header {
@@ -7575,12 +7579,12 @@ input[type="number"] {
   align-items: center;
   height: 20px;
   margin-bottom: 2px;
-  border-bottom: 1px solid var(--border-color-subtle);
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .ladder-ruler-spacer {
-  width: 44px;
-  min-width: 44px;
+  width: 28px;
+  min-width: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -7589,7 +7593,7 @@ input[type="number"] {
 .ruler-spacer-title {
   font-size: 10px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #64748b;
   letter-spacing: 0.2px;
 }
 
@@ -7597,7 +7601,7 @@ input[type="number"] {
   flex: 1;
   position: relative;
   height: 100%;
-  margin: 0 10px;
+  margin: 0 4px;
 }
 
 .ladder-ruler-tick {
@@ -7611,16 +7615,16 @@ input[type="number"] {
 }
 
 .tick-label {
-  font-size: 9.5px;
-  font-weight: 700;
-  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
   line-height: 1;
 }
 
 .tick-line {
   width: 1px;
   height: 4px;
-  background: var(--border-color);
+  background: #cbd5e1;
   margin-top: 2px;
 }
 
@@ -7629,29 +7633,28 @@ input[type="number"] {
   align-items: center;
   height: 38px;
   min-height: 38px;
-  margin-bottom: 2px;
-  background: var(--bg-card-inner-subtle);
-  border: 1px solid var(--border-color-subtle);
-  border-radius: 6px;
+  margin-bottom: 1px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
   transition: all 0.15s ease;
   position: relative;
   z-index: 1;
 }
 
 .ladder-track-row:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--accent-blue);
+  background: rgba(241, 245, 249, 0.6);
   z-index: 9999;
 }
 
 .ladder-track-header {
-  width: 44px;
-  min-width: 44px;
+  width: 28px;
+  min-width: 28px;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-right: 1px solid var(--border-color-subtle);
+  border-right: none;
   height: 100%;
   box-sizing: border-box;
 }
@@ -7664,11 +7667,160 @@ input[type="number"] {
   flex-shrink: 0;
 }
 
-.ladder-track-ing-name {
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--text-primary);
-  white-space: nowrap;
+.ladder-ing-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.ladder-track-header:hover .ladder-ing-icon {
+  transform: scale(1.15);
+}
+
+.ladder-track-canvas {
+  flex: 1;
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin: 0 4px;
+}
+
+.ladder-grid-lines {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+.ladder-grid-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  border-left: 1px dashed #e2e8f0;
+}
+
+.ladder-track-lead-line {
+  position: absolute;
+  top: 50%;
+  height: 0;
+  border-top: 1.5px dotted #a8a29e;
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.ladder-track-line {
+  position: absolute;
+  top: 50%;
+  height: 2px;
+  background: #786c64;
+  border-radius: 1px;
+  transform: translateY(-50%);
+  opacity: 0.9;
+}
+
+.ladder-spans-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+.ladder-pkm-span-line {
+  position: absolute;
+  top: 50%;
+  height: 2.5px;
+  background: #94a3b8;
+  border-radius: 2px;
+  transform: translateY(-50%);
+  pointer-events: auto;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  z-index: 4;
+  opacity: 0.75;
+}
+
+.ladder-pkm-span-line:hover,
+.ladder-pkm-span-line.group-hover-active {
+  height: 3.5px;
+  background: #3b82f6;
+  opacity: 1;
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
+}
+
+/* 獨立美味尾巴專屬天梯小看板 (Standalone Tail Box) */
+.ladder-tail-standalone-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding-right: 8px;
+}
+
+.ladder-tail-standalone-box {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 6px 10px 8px;
+  width: 340px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.ladder-tail-ruler {
+  display: flex;
+  align-items: center;
+  height: 16px;
+  margin-bottom: 2px;
+}
+
+.ladder-tail-ruler-spacer {
+  width: 28px;
+  min-width: 28px;
+}
+
+.ladder-tail-ruler-scale {
+  flex: 1;
+  position: relative;
+  height: 100%;
+  margin: 0 4px;
+}
+
+.ladder-tail-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ladder-tail-track-row {
+  display: flex;
+  align-items: center;
+  height: 38px;
+  position: relative;
+}
+
+.ladder-tail-canvas {
+  flex: 1;
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin: 0 4px;
+}
+
+.ladder-track-header-right {
+  justify-content: flex-end;
 }
 
 .ladder-track-champion-badge {
@@ -12639,7 +12791,10 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   scrollbar-width: none !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  padding-bottom: 8px !important;
+  padding: 6px 4px 10px !important;
+  background: #ffffff !important;
+  border: none !important;
+  border-radius: 10px !important;
 }
 
 .mobile-h5-app .wiki-coordinate-ladder-wrapper::-webkit-scrollbar {
@@ -12647,30 +12802,51 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .wiki-coordinate-ladder {
-  min-width: 580px !important;
-}
-
-.mobile-h5-app .ladder-track-row {
-  padding: 6px 0 !important;
-  min-height: 52px !important;
-}
-
-.mobile-h5-app .ladder-track-header {
-  width: 40px !important;
-  min-width: 40px !important;
-  justify-content: center !important;
+  min-width: 540px !important;
+  background: #ffffff !important;
+  border: none !important;
   padding: 0 !important;
 }
 
+.mobile-h5-app .ladder-track-row {
+  padding: 2px 0 !important;
+  min-height: 42px !important;
+  height: 42px !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.mobile-h5-app .ladder-track-header {
+  width: 26px !important;
+  min-width: 26px !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border-right: none !important;
+}
+
 .mobile-h5-app .ladder-ruler-spacer {
-  width: 40px !important;
-  min-width: 40px !important;
+  width: 26px !important;
+  min-width: 26px !important;
   justify-content: center !important;
 }
 
 .mobile-h5-app .ladder-ing-icon {
-  width: 28px !important;
-  height: 28px !important;
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.mobile-h5-app .ladder-tail-standalone-container {
+  display: flex !important;
+  justify-content: center !important;
+  margin-top: 14px !important;
+  padding-right: 0 !important;
+}
+
+.mobile-h5-app .ladder-tail-standalone-box {
+  width: 290px !important;
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
 }
 
 .mobile-h5-app .ladder-card {
