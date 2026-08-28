@@ -11165,7 +11165,7 @@
     tail: 1
   };
 
-  // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、大菜供應能力評定、美味尾巴獨立分離)
+  // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、大菜供應能力評定、動態自適應最大刻度、美味尾巴獨立分離)
   function renderCoordinateLadder(ladderData) {
     const mult = getLadderMultiplier();
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
@@ -11174,29 +11174,94 @@
     const mainTracks = ladderData.filter(ing => ing.id !== 'tail');
     const tailIng = ladderData.find(ing => ing.id === 'tail');
 
-    // 18種常規食材刻度：自 20 開始擠壓，提升解析度與可讀性
-    const maxProjected = 100 * mult;
-    let minVal = 20;
-    let maxVal = 105;
-    let step = 10;
+    const isUnfilteredDefault = (ladderSpecialtyFilter === 'ALL' && ladderRecipeFilter === 'ALL' && ladderSupplyFilter === 'ALL' && !ladderSearchQuery);
 
-    if (maxProjected > 165) {
-      maxVal = 220;
-      step = 30;
-    } else if (maxProjected > 135) {
-      maxVal = 175;
-      step = 25;
-    } else if (maxProjected > 110) {
-      maxVal = 145;
+    // 1. 預先過濾各常規食材軌道之寶可夢與變體，並計算目前篩選下的全局最高產量
+    let globalMaxCount = 20;
+    const processedMainTracks = mainTracks.map(ing => {
+      const dishInfo = TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { name: isEN ? 'High Tier Dish' : '高階料理', name_en: 'High Tier Dish', need: 20, type: isEN ? 'Dish' : '料理', secondary: '' };
+      const dishName = isEN ? (dishInfo.name_en || dishInfo.name) : dishInfo.name;
+      const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
+      const minDefaultThreshold = DEFAULT_LADDER_MIN_THRESHOLDS[ing.id] || 20;
+
+      // 取得該軌道符合篩選之寶可夢與型態變體
+      const filteredPokemonList = ing.pokemon.map(p => {
+        const pkmSpec = getPokemonLadderSpecialty(p.name);
+        if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return null;
+        if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return null;
+        if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return null;
+
+        let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
+
+        // 預設總覽過濾低產量變體
+        if (isUnfilteredDefault) {
+          variants = variants.filter(v => v.count >= minDefaultThreshold);
+        }
+
+        if (ladderRecipeFilter === 'AAA') {
+          variants = variants.filter(v => v.recipe === 'AAA');
+        } else if (ladderRecipeFilter === 'ABB') {
+          variants = variants.filter(v => v.recipe === 'ABB');
+        } else if (ladderRecipeFilter === 'AXX') {
+          variants = variants.filter(v => v.recipe !== 'AAA' && v.recipe !== 'ABB');
+        }
+
+        if (ladderSupplyFilter === 'TOP') {
+          variants = variants.filter((v, vIdx) => v.isTop || (p.isTop && v.recipe === p.recipe));
+        } else if (ladderSupplyFilter === 'MEALS_3') {
+          variants = variants.filter(v => {
+            const scaled = Math.round(v.count * mult);
+            return (scaled / dishInfo.need) >= 3.0;
+          });
+        } else if (ladderSupplyFilter === 'MEALS_2') {
+          variants = variants.filter(v => {
+            const scaled = Math.round(v.count * mult);
+            return (scaled / dishInfo.need) >= 1.8;
+          });
+        }
+
+        if (variants.length === 0) return null;
+
+        variants.forEach(v => {
+          const scaled = Math.round(v.count * mult);
+          if (scaled > globalMaxCount) globalMaxCount = scaled;
+        });
+
+        return { ...p, variants };
+      }).filter(Boolean);
+
+      return {
+        ing,
+        dishInfo,
+        dishName,
+        ingName,
+        filteredPokemonList,
+        isTrackEmpty: filteredPokemonList.length === 0
+      };
+    });
+
+    // 2. 動態設定最高刻度：取當前篩選最高值的「下一個 10 的倍數」
+    let minVal = 20;
+    let maxVal = Math.ceil((globalMaxCount + 1) / 10) * 10;
+    if (maxVal <= minVal) maxVal = minVal + 10; // 最低至少 30
+
+    // 動態計算刻度步長 step
+    const span = maxVal - minVal;
+    let step = 10;
+    if (span > 120) {
       step = 20;
+    } else if (span > 80) {
+      step = 10;
     } else {
-      maxVal = 105;
       step = 10;
     }
 
     let ticks = [];
-    for (let t = 20; t <= maxVal; t += step) {
+    for (let t = minVal; t <= maxVal; t += step) {
       ticks.push(t);
+    }
+    if (ticks[ticks.length - 1] < maxVal) {
+      ticks.push(maxVal);
     }
 
     function getPosPct(val) {
@@ -11204,12 +11269,10 @@
       return ((clamped - minVal) / (maxVal - minVal) * 100).toFixed(2);
     }
 
-    const isUnfilteredDefault = (ladderSpecialtyFilter === 'ALL' && ladderRecipeFilter === 'ALL' && ladderSupplyFilter === 'ALL' && !ladderSearchQuery);
-
     return `
       <div class="wiki-coordinate-ladder-wrapper">
         <div class="wiki-coordinate-ladder" onmouseover="window.WikiDB.handleLadderGroupHover(event)" onmouseout="window.WikiDB.handleLadderGroupHoverOut(event)">
-          <!-- 頂部刻度標尺 (自 20 起標) -->
+          <!-- 頂部刻度標尺 (自 20 起標至動態最高值 ${maxVal}) -->
           <div class="ladder-ruler-header">
             <div class="ladder-ruler-spacer"></div>
             <div class="ladder-ruler-scale">
@@ -11222,64 +11285,17 @@
             </div>
           </div>
 
-          <!-- 常規食材軌道 (18種食材，產量 >= 20 展開展示) -->
-          ${mainTracks.map(ing => {
-            const dishInfo = TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { name: isEN ? 'High Tier Dish' : '高階料理', name_en: 'High Tier Dish', need: 20, type: isEN ? 'Dish' : '料理', secondary: '' };
-            const dishName = isEN ? (dishInfo.name_en || dishInfo.name) : dishInfo.name;
-            const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
-            const minDefaultThreshold = DEFAULT_LADDER_MIN_THRESHOLDS[ing.id] || 20;
-
-            // 取得該軌道符合篩選之寶可夢與型態變體
-            const filteredPokemonList = ing.pokemon.map(p => {
-              const pkmSpec = getPokemonLadderSpecialty(p.name);
-              if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return null;
-              if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return null;
-              if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return null;
-
-              let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
-
-              // 預設總覽過濾低產量變體
-              if (isUnfilteredDefault) {
-                variants = variants.filter(v => v.count >= minDefaultThreshold);
-              }
-
-              if (ladderRecipeFilter === 'AAA') {
-                variants = variants.filter(v => v.recipe === 'AAA');
-              } else if (ladderRecipeFilter === 'ABB') {
-                variants = variants.filter(v => v.recipe === 'ABB');
-              } else if (ladderRecipeFilter === 'AXX') {
-                variants = variants.filter(v => v.recipe !== 'AAA' && v.recipe !== 'ABB');
-              }
-
-              if (ladderSupplyFilter === 'TOP') {
-                variants = variants.filter((v, vIdx) => v.isTop || (p.isTop && v.recipe === p.recipe));
-              } else if (ladderSupplyFilter === 'MEALS_3') {
-                variants = variants.filter(v => {
-                  const scaled = Math.round(v.count * mult);
-                  return (scaled / dishInfo.need) >= 3.0;
-                });
-              } else if (ladderSupplyFilter === 'MEALS_2') {
-                variants = variants.filter(v => {
-                  const scaled = Math.round(v.count * mult);
-                  return (scaled / dishInfo.need) >= 1.8;
-                });
-              }
-
-              if (variants.length === 0) return null;
-              return { ...p, variants };
-            }).filter(Boolean);
-
-            const isTrackEmpty = filteredPokemonList.length === 0;
-
+          <!-- 常規食材軌道 (18種食材，依篩選動態縮放) -->
+          ${processedMainTracks.map(({ ing, dishInfo, dishName, ingName, filteredPokemonList, isTrackEmpty }) => {
             // 計算該軌道最低產量起點，用於畫出前方點狀前導虛線
-            let minTrackCount = 105;
+            let minTrackCount = maxVal;
             filteredPokemonList.forEach(p => {
               p.variants.forEach(v => {
                 const scaled = Math.round(v.count * mult);
                 if (scaled < minTrackCount) minTrackCount = scaled;
               });
             });
-            if (minTrackCount > 105) minTrackCount = minVal;
+            if (minTrackCount > maxVal) minTrackCount = minVal;
             const leadPct = getPosPct(minTrackCount);
 
             return `
