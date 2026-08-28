@@ -437,15 +437,15 @@
       maxLevel: 6,
       hasLunarPrayerMatrix: true,
       healValues: [3, 4, 5, 7, 9, 11],
-      berryRange: ["5~22", "9~31", "13~40", "17~49", "21~58", "25~68"],
-      specialNote: "🔮 額外樹果公式：自身基礎樹果 + 隊友額外樹果 × 其他超能隊友種類數（滿配 5 種類時 Lv.6 為 32+9*4=68 顆）",
-      specialNote_en: "🔮 Berry Formula: Base + Ally Bonus × Other Psychic Species (Lv.6 with 5 species is 32+9*4=68)",
+      berryFormulas: ["14+2n", "19+3n", "24+4n", "29+5n", "30+7n", "32+9n"],
+      specialNote: "🔮 額外樹果公式：自身基礎 + 隊友額外 × n（n 為其他超能隊友種類數，滿編 5 種類時 n=4）",
+      specialNote_en: "🔮 Berry Formula: Base + Ally Bonus × n (n = other Psychic species count, n=4 for full team)",
       berryMatrix: [
         { kinds: "1種", kinds_en: "1 Species", vals: ["5", "9", "13", "17", "21", "25"] },
-        { kinds: "2種", kinds_en: "2 Species", vals: ["7+1*1=8", "12+1*1=13", "17+1*1=18", "19+2*1=21", "24+2*1=26", "29+2*1=31"] },
-        { kinds: "3種", kinds_en: "3 Species", vals: ["9+1*2=11", "15+1*2=17", "18+2*2=22", "25+2*2=29", "27+3*2=33", "30+4*2=38"] },
-        { kinds: "4種", kinds_en: "4 Species", vals: ["12+1*3=15", "16+2*3=22", "20+3*3=29", "28+3*3=37", "28+5*3=43", "31+6*3=49"] },
-        { kinds: "5種", kinds_en: "5 Species", vals: ["14+2*4=22", "19+3*4=31", "24+4*4=40", "29+5*4=49", "30+7*4=58", "32+9*4=68"] }
+        { kinds: "2種", kinds_en: "2 Species", vals: ["7+1*1", "12+1*1", "17+1*1", "19+2*1", "24+2*1", "29+2*1"] },
+        { kinds: "3種", kinds_en: "3 Species", vals: ["9+1*2", "15+1*2", "18+2*2", "25+2*2", "27+3*2", "30+4*2"] },
+        { kinds: "4種", kinds_en: "4 Species", vals: ["12+1*3", "16+2*3", "20+3*3", "28+3*3", "28+5*3", "31+6*3"] },
+        { kinds: "5種", kinds_en: "5 Species", vals: ["14+2*4", "19+3*4", "24+4*4", "29+5*4", "30+7*4", "32+9*4"] }
       ],
       unit: " 點活力",
       unit_en: " Energy"
@@ -11691,7 +11691,10 @@
         const mlStrings = skill.selfValues.map((v, i) => isEN ? `Self ${v}+Ally ${skill.teamValues[i]}${unitLabel.trim()}` : `自${v}+他${skill.teamValues[i]}${unitLabel.trim()}`);
         valuesHtml = renderSkillHeroAndStepper(skill.id, mlStrings, unitLabel, 6);
       } else if (skill.hasLunarPrayerMatrix) {
-        const lpStrings = skill.healValues.map((v, i) => isEN ? `All ${v}+Berries ${skill.berryRange[i]}` : `全隊${v}點+樹果${skill.berryRange[i]}`);
+        const lpStrings = skill.healValues.map((v, i) => {
+          const formula = skill.berryFormulas ? skill.berryFormulas[i] : ["14+2n", "19+3n", "24+4n", "29+5n", "30+7n", "32+9n"][i];
+          return isEN ? `All ${v}+${formula}` : `全隊${v}點+${formula}`;
+        });
         valuesHtml = `
           ${renderSkillHeroAndStepper(skill.id, lpStrings, unitLabel, 6)}
 
@@ -11714,7 +11717,7 @@
                 ${skill.berryMatrix.map((m, idx) => `
                   <tr class="${idx === 4 ? 'row-highlight' : ''}">
                     <td class="font-bold text-accent" style="white-space: nowrap;">${isEN ? (m.kinds_en || m.kinds) : m.kinds}</td>
-                    ${m.vals.map(v => `<td style="font-size: 10.5px; white-space: nowrap;">${v}${v.includes('=') ? '' : (isEN ? ' Berries' : ' 顆')}</td>`).join('')}
+                    ${m.vals.map(v => `<td style="font-size: 10.5px; white-space: nowrap;">${v}</td>`).join('')}
                   </tr>
                 `).join('')}
               </tbody>
@@ -11768,9 +11771,7 @@
           </div>
         `;
       } else if (skill.hasDualValues) {
-        const selfShort = isEN ? 'Self' : (skill.selfShort || '自');
-        const teamShort = isEN ? 'Ally' : (skill.teamShort || '他');
-        const dualStrings = skill.selfValues.map((v, i) => `${selfShort}${v}+${teamShort}${skill.teamValues[i]}${unitLabel.trim()}`);
+        const dualStrings = skill.selfValues.map((v, i) => `${v}+${skill.teamValues[i]}*4`);
         valuesHtml = renderSkillHeroAndStepper(skill.id, dualStrings, unitLabel, skill.selfValues.length);
       } else if (skill.ranges) {
         const rangeStrings = skill.ranges.map(r => `${r.min.toLocaleString()}~${r.max.toLocaleString()}${unitLabel.trim()}`);
