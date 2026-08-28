@@ -11398,7 +11398,7 @@
         <div class="values-horizontal-section">
           <div class="values-section-header">
             <div class="values-section-title-group">
-              <span class="values-section-badge ing-badge">${isEN ? '🍲 Ingredient Base Power' : '🍲 食材基礎能量庫'}</span>
+              <span class="values-section-badge ing-badge">${isEN ? 'Ingredient Base Power' : '食材基礎能量庫'}</span>
               <span class="values-section-sub">${isEN ? 'Ingredient Base Power (90 ➔ 342)' : '食材基礎能量一覽'}</span>
             </div>
           </div>
