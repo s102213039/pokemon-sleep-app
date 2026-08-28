@@ -12092,7 +12092,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border-bottom: 1px solid var(--border-color-subtle) !important;
 }
 
-/* 🧩 子分頁 2: 副技能與性格指南 (手機端極致排版與無滾動條適配) */
+/* 🧩 子分頁 2: 副技能與性格指南 (手機端無外框極致放大排版) */
 .wiki-subskill-tags-col {
   display: flex;
   gap: 4px;
@@ -12111,9 +12111,29 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   display: none !important;
 }
 
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 0 16px 0 !important;
+  margin-bottom: 20px !important;
+  box-shadow: none !important;
+  border-bottom: 1px solid var(--border-color-subtle) !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:last-child {
+  border-bottom: none !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
 .mobile-h5-app #wiki-subpanel-subskills .wiki-table-wrapper {
   overflow-x: hidden !important;
   width: 100% !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  border-radius: 12px !important;
+  margin-top: 8px !important;
 }
 
 .mobile-h5-app #wiki-subpanel-subskills .wiki-data-table {
@@ -12126,8 +12146,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 /* 表格 1: 主技能發動機率矩陣 */
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table th,
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table td {
-  padding: 5px 2px !important;
-  font-size: 11px !important;
+  padding: 6px 3px !important;
+  font-size: 11.5px !important;
   text-align: center !important;
   vertical-align: middle !important;
 }
@@ -12150,8 +12170,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 /* 表格 2: 副技能階級與數值總覽 */
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th,
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td {
-  padding: 6px 3px !important;
-  font-size: 10.5px !important;
+  padding: 7px 4px !important;
+  font-size: 11px !important;
   vertical-align: middle !important;
 }
 
@@ -12163,21 +12183,21 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(2),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(2) {
-  width: 32% !important;
+  width: 31% !important;
 }
 
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(3),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(3) {
-  width: 46% !important;
-  font-size: 10px !important;
-  line-height: 1.35 !important;
+  width: 47% !important;
+  font-size: 10.5px !important;
+  line-height: 1.4 !important;
 }
 
 /* 表格 3: 性格五維屬性倍率表 */
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th,
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td {
-  padding: 5px 2px !important;
-  font-size: 10.5px !important;
+  padding: 6px 3px !important;
+  font-size: 11px !important;
   vertical-align: middle !important;
 }
 
@@ -12202,8 +12222,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(4),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(4) {
   width: 50% !important;
-  font-size: 10px !important;
-  line-height: 1.35 !important;
+  font-size: 10.5px !important;
+  line-height: 1.4 !important;
   text-align: left !important;
 }
 
