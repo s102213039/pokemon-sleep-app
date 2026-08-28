@@ -1039,6 +1039,7 @@ if (typeof document !== 'undefined') {
         }
 
         if (target !== 'pokemon') {
+          if (isMobileH5) document.body.classList.remove('pokemon-active');
           if (bookmarkHandle) bookmarkHandle.style.display = 'none';
           if (filterSidebar) {
             filterSidebar.classList.add('collapsed');
@@ -1115,6 +1116,7 @@ if (typeof document !== 'undefined') {
             window.history.replaceState(null, '', '#recipes');
           }
         } else {
+          if (isMobileH5) document.body.classList.add('pokemon-active');
           tabPokemon.classList.add('active');
           panelPokemon.style.display = 'block';
           if (filterSidebar) filterSidebar.style.display = 'flex';

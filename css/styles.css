@@ -10646,8 +10646,93 @@ body.mobile-h5-surface {
   margin-bottom: 10px !important;
 }
 
-/* ─── 📱 H5 App 列表視圖：頁面級流式滾動，邊距與圓角於捲動至底部時完美呈現 ─── */
-.mobile-h5-app .pokemon-main-content,
+/* ─── ⚡ H5 App 圖鑑 Tab 專屬：精準適配螢幕視窗（非無限延伸），表頭吸頂置頂，底部直接在螢幕內呈現 ─── */
+body.mobile-h5-app.pokemon-active,
+.mobile-h5-app.pokemon-active body {
+  overflow: hidden !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  padding-bottom: 0 !important;
+}
+
+.mobile-h5-app.pokemon-active #panel-pokemon {
+  height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
+  max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.mobile-h5-app.pokemon-active .pokemon-main-content {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app.pokemon-active .pokemon-main-content .controls-container {
+  flex-shrink: 0 !important;
+  position: relative !important;
+  margin: 12px 12px 8px !important;
+  padding: 0 !important;
+  width: calc(100% - 24px) !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+}
+
+.mobile-h5-app.pokemon-active .pokemon-main-content .content-area {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app.pokemon-active .table-container,
+.mobile-h5-app.pokemon-active .pokemon-table-container {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  width: calc(100% - 24px) !important;
+  margin: 0 12px 12px !important;
+  padding: 0 !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 14px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+}
+
+.mobile-h5-app.pokemon-active .pokemon-table thead th {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+  background-color: var(--table-th-solid, #0a0f1d) !important;
+}
+
+.mobile-h5-app.pokemon-active .pokemon-table thead .th-no {
+  position: sticky !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 35 !important;
+  background-color: var(--table-th-solid, #0a0f1d) !important;
+}
+
+.mobile-h5-app.pokemon-active .pokemon-table thead .th-icon {
+  position: sticky !important;
+  top: 0 !important;
+  left: 44px !important;
+  z-index: 35 !important;
+  background-color: var(--table-th-solid, #0a0f1d) !important;
+}
+
+/* ─── 📱 H5 App 料理與其他列表視圖：頁面級流式滾動 ─── */
 .mobile-h5-app .recipe-main-content {
   display: block !important;
   width: 100% !important;
@@ -10656,7 +10741,6 @@ body.mobile-h5-surface {
   overflow: visible !important;
 }
 
-.mobile-h5-app .pokemon-main-content .controls-container,
 .mobile-h5-app .recipe-main-content .controls-container,
 .mobile-h5-app #panel-box .controls-container,
 .mobile-h5-app #panel-news .controls-container {
@@ -10670,29 +10754,12 @@ body.mobile-h5-surface {
   background: var(--bg-dark) !important;
 }
 
-.mobile-h5-app .pokemon-main-content .content-area,
 .mobile-h5-app .recipe-main-content .content-area {
   display: block !important;
   width: 100% !important;
   height: auto !important;
   min-height: 0 !important;
   overflow: visible !important;
-}
-
-.mobile-h5-app .table-container,
-.mobile-h5-app .pokemon-table-container {
-  display: block !important;
-  width: calc(100% - 24px) !important;
-  margin: 0 12px 20px !important;
-  padding: 0 !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: 14px !important;
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
-  overflow-x: auto !important;
-  overflow-y: visible !important;
-  -webkit-overflow-scrolling: touch;
-  position: relative;
 }
 
 .mobile-h5-app .pokemon-table {
