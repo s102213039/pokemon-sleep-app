@@ -11720,10 +11720,10 @@
           </div>
         `;
       } else if (skill.hasMoonlightChips) {
-        const mlStrings = skill.selfValues.map((v, i) => isEN ? `Self ${v} · Ally +${skill.teamValues[i]}${unitLabel}` : `自 ${v} · 他+${skill.teamValues[i]}${unitLabel}`);
+        const mlStrings = skill.selfValues.map((v, i) => isEN ? `Self ${v}+Ally ${skill.teamValues[i]}${unitLabel.trim()}` : `自${v}+他${skill.teamValues[i]}${unitLabel.trim()}`);
         valuesHtml = renderSkillHeroAndStepper(skill.id, mlStrings, unitLabel, 6);
       } else if (skill.hasLunarPrayerMatrix) {
-        const lpStrings = skill.healValues.map((v, i) => isEN ? `All ${v} · Berries ${skill.berryRange[i]}` : `全隊 ${v}點 · 樹果 ${skill.berryRange[i]}`);
+        const lpStrings = skill.healValues.map((v, i) => isEN ? `All ${v}+Berries ${skill.berryRange[i]}` : `全隊${v}點+樹果${skill.berryRange[i]}`);
         valuesHtml = `
           ${renderSkillHeroAndStepper(skill.id, lpStrings, unitLabel, 6)}
 
@@ -11754,7 +11754,7 @@
           </div>
         `;
       } else if (skill.hasIngredientDrawMatrix) {
-        const ingStrings = skill.values.map(v => `${v} ${unitLabel}`);
+        const ingStrings = skill.values.map(v => `${v}${unitLabel.trim()}`);
         valuesHtml = `
           ${renderSkillHeroAndStepper(skill.id, ingStrings, unitLabel, 6)}
 
@@ -11769,32 +11769,29 @@
             <table class="wiki-mini-table">
               <thead>
                 <tr>
-                  <th>${isEN ? 'Pokémon Family' : '寶可夢家族'}</th>
-                  <th>${isEN ? 'Main Skill Variant' : '主技能型態'}</th>
-                  <th>${isEN ? '3 Candidate Ingredients' : '可精選抽取的 3 種專屬食材'}</th>
-                  <th>${isEN ? 'Special Note' : '特殊說明'}</th>
+                  <th style="width: 44px; text-align: center;">${isEN ? 'Pokémon' : '寶可夢'}</th>
+                  <th>${isEN ? 'Skill Variant' : '主技能型態'}</th>
+                  <th style="text-align: center;">${isEN ? 'Candidate Ingredients (3)' : '專屬食材 (3種)'}</th>
                 </tr>
               </thead>
               <tbody>
                 ${INGREDIENT_DRAW_POKEMONS.map(p => `
                   <tr>
-                    <td style="text-align: left; padding-left: 8px;">
-                      <div style="display: flex; align-items: center; gap: 6px;">
-                        <img src="${p.icon}" width="26" height="26" style="object-fit: contain;" alt="${p.name}">
-                        <span class="font-bold">${isEN ? p.family_en : p.family}</span>
-                      </div>
+                    <td style="text-align: center; padding: 5px 4px;">
+                      <img src="${p.icon}" width="30" height="30" style="object-fit: contain; vertical-align: middle; border-radius: 6px;" alt="${isEN ? p.name_en : p.name}" title="${isEN ? (p.family_en || p.name_en) : (p.family || p.name)}">
                     </td>
-                    <td><span class="wiki-skill-badge skill-badge-blue">${isEN ? p.skill_en : p.skill}</span></td>
-                    <td>
-                      <div style="display: flex; align-items: center; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                    <td style="text-align: center; white-space: nowrap; padding: 5px 6px;">
+                      <span class="wiki-skill-badge skill-badge-blue">${isEN ? p.skill_en : p.skill}</span>
+                    </td>
+                    <td style="text-align: center; padding: 5px 4px;">
+                      <div style="display: inline-flex; align-items: center; gap: 4px; justify-content: center; flex-direction: row; flex-wrap: nowrap;">
                         ${p.ingredients.map(ig => `
-                          <div class="wiki-ing-badge" title="${isEN ? ig.name_en : ig.name}" style="display: inline-flex; align-items: center; justify-content: center; background: var(--bg-card-inner); padding: 4px 6px; border-radius: 6px; border: 1px solid var(--border-color-subtle); cursor: help;">
-                            <img src="${ig.icon}" width="22" height="22" alt="${isEN ? ig.name_en : ig.name}" style="object-fit: contain; vertical-align: middle;">
+                          <div class="wiki-ing-badge" title="${isEN ? ig.name_en : ig.name}" style="display: inline-flex; align-items: center; justify-content: center; background: var(--bg-card-inner); padding: 2px 4px; border-radius: 5px; border: 1px solid var(--border-color-subtle); cursor: help;">
+                            <img src="${ig.icon}" width="20" height="20" alt="${isEN ? ig.name_en : ig.name}" style="object-fit: contain; vertical-align: middle;">
                           </div>
                         `).join('')}
                       </div>
                     </td>
-                    <td class="text-secondary" style="font-size: 11px;">${isEN ? p.extraEffect_en : p.extraEffect}</td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -11804,13 +11801,13 @@
       } else if (skill.hasDualValues) {
         const selfShort = isEN ? 'Self' : (skill.selfShort || '自');
         const teamShort = isEN ? 'Ally' : (skill.teamShort || '他');
-        const dualStrings = skill.selfValues.map((v, i) => `${selfShort} ${v} + ${teamShort} ${skill.teamValues[i]}${unitLabel}`);
+        const dualStrings = skill.selfValues.map((v, i) => `${selfShort}${v}+${teamShort}${skill.teamValues[i]}${unitLabel.trim()}`);
         valuesHtml = renderSkillHeroAndStepper(skill.id, dualStrings, unitLabel, skill.selfValues.length);
       } else if (skill.ranges) {
-        const rangeStrings = skill.ranges.map(r => `${r.min.toLocaleString()}~${r.max.toLocaleString()}${unitLabel}`);
+        const rangeStrings = skill.ranges.map(r => `${r.min.toLocaleString()}~${r.max.toLocaleString()}${unitLabel.trim()}`);
         valuesHtml = renderSkillHeroAndStepper(skill.id, rangeStrings, unitLabel, skill.ranges.length);
       } else if (skill.values) {
-        const valStrings = skill.values.map(v => `${typeof v === 'number' ? v.toLocaleString() : v}${unitLabel}`);
+        const valStrings = skill.values.map(v => `${typeof v === 'number' ? v.toLocaleString() : v}${unitLabel.trim()}`);
         valuesHtml = renderSkillHeroAndStepper(skill.id, valStrings, unitLabel, skill.values.length);
       } else {
         valuesHtml = `<div class="skill-level-chip"><span class="level-val">${unitLabel}</span></div>`;
