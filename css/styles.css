@@ -11403,4 +11403,626 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   box-shadow: 2px 0 6px rgba(0, 0, 0, 0.15);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   📚 MOBILE H5 DEDICATED WIKI TAB & SUB-TABS MODERN APP STYLING
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* 1. 頂部 5 大 Sub-Tabs：平分寬度、單行展示、貼齊頂部無邊距 */
+.mobile-h5-app #panel-wiki {
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .wiki-main-container {
+  padding: 0 0 calc(72px + env(safe-area-inset-bottom, 0px)) 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.mobile-h5-app .wiki-subnav-bar {
+  position: sticky !important;
+  top: 50px !important;
+  z-index: 90 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  background: var(--bg-primary, #0a0f1d) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .wiki-subnav-tabs {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 0 !important;
+}
+
+.mobile-h5-app .wiki-subtab-btn {
+  width: 100% !important;
+  padding: 11px 1px 10px !important;
+  text-align: center !important;
+  justify-content: center !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-secondary, #94a3b8) !important;
+  position: relative !important;
+  transition: all 0.2s ease !important;
+  white-space: nowrap !important;
+  gap: 0 !important;
+}
+
+.mobile-h5-app .wiki-subtab-btn:hover {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .wiki-subtab-btn.active {
+  color: var(--accent-blue, #38bdf8) !important;
+  font-weight: 700 !important;
+  background: rgba(56, 189, 248, 0.06) !important;
+}
+
+.mobile-h5-app .wiki-subtab-btn.active::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 12% !important;
+  right: 12% !important;
+  height: 3px !important;
+  background: var(--accent-gradient, #38bdf8) !important;
+  border-radius: 3px 3px 0 0 !important;
+}
+
+/* 2. 通用卡片與子面板邊距 */
+.mobile-h5-app .wiki-subpanel {
+  padding: 12px 12px 28px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .wiki-card {
+  background: var(--bg-card, #111827) !important;
+  border: 1px solid var(--border-color, #1e293b) !important;
+  border-radius: 14px !important;
+  padding: 14px !important;
+  margin-bottom: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18) !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .wiki-card-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.mobile-h5-app .wiki-card-title {
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary, #f8fafc) !important;
+  line-height: 1.3 !important;
+}
+
+.mobile-h5-app .wiki-card-desc {
+  font-size: 12px !important;
+  color: var(--text-secondary, #94a3b8) !important;
+  line-height: 1.5 !important;
+  margin-bottom: 10px !important;
+}
+
+.mobile-h5-app .wiki-rule-banner {
+  font-size: 11.5px !important;
+  padding: 8px 10px !important;
+  border-radius: 8px !important;
+  margin-bottom: 10px !important;
+  line-height: 1.4 !important;
+}
+
+/* 3. ⚡ Sub-Tab 1: 主技能數值庫 */
+.mobile-h5-app .wiki-control-bar {
+  margin-bottom: 10px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.mobile-h5-app .wiki-filter-pills {
+  display: flex !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  gap: 6px !important;
+  padding: 2px 0 6px 0 !important;
+  align-items: center !important;
+}
+
+.mobile-h5-app .wiki-filter-pills::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .wiki-pill-label {
+  display: none !important;
+}
+
+.mobile-h5-app .wiki-pill-btn {
+  padding: 5px 11px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  border-radius: 18px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  background: var(--bg-card, #111827) !important;
+  border: 1px solid var(--border-color, #1e293b) !important;
+  color: var(--text-secondary, #94a3b8) !important;
+}
+
+.mobile-h5-app .wiki-pill-btn.active {
+  background: var(--accent-gradient, #38bdf8) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+.mobile-h5-app .wiki-skills-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .wiki-skill-card {
+  background: var(--bg-card, #111827) !important;
+  border: 1px solid var(--border-color, #1e293b) !important;
+  border-radius: 14px !important;
+  padding: 13px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .skill-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin-bottom: 8px !important;
+}
+
+.mobile-h5-app .skill-icon {
+  width: 36px !important;
+  height: 36px !important;
+  flex-shrink: 0 !important;
+  border-radius: 8px !important;
+}
+
+.mobile-h5-app .skill-title-group {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.mobile-h5-app .skill-name {
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary, #f8fafc) !important;
+}
+
+.mobile-h5-app .skill-category-badge {
+  font-size: 10px !important;
+  padding: 1.5px 6px !important;
+  border-radius: 4px !important;
+}
+
+.mobile-h5-app .skill-desc {
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+  color: var(--text-secondary, #94a3b8) !important;
+  margin-bottom: 8px !important;
+}
+
+.mobile-h5-app .skill-levels-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 4px !important;
+  margin-top: 6px !important;
+}
+
+.mobile-h5-app .skill-level-chip {
+  padding: 5px 3px !important;
+  border-radius: 6px !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04)) !important;
+  border: 1px solid var(--border-color-subtle, var(--border-color)) !important;
+}
+
+.mobile-h5-app .skill-level-chip .level-tag {
+  font-size: 9.5px !important;
+  opacity: 0.8 !important;
+}
+
+.mobile-h5-app .skill-level-chip .level-val {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  font-family: monospace, -apple-system !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .stack-selector-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  align-items: flex-start !important;
+  margin-bottom: 6px !important;
+}
+
+.mobile-h5-app .stack-chips-group {
+  display: flex !important;
+  gap: 4px !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  padding: 2px 0 !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .stack-chips-group::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .stack-chip-btn {
+  padding: 4px 9px !important;
+  font-size: 11px !important;
+  border-radius: 6px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .wiki-toggle-detail-btn {
+  width: 100% !important;
+  padding: 8px 10px !important;
+  font-size: 11.5px !important;
+  border-radius: 8px !important;
+  text-align: center !important;
+  margin-top: 8px !important;
+}
+
+/* 4. 🧩 Sub-Tab 2: 副技能與性格指南 */
+.mobile-h5-app .wiki-table-wrapper {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border-color, #1e293b) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .wiki-table-wrapper::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .wiki-mini-table,
+.mobile-h5-app .wiki-data-table {
+  font-size: 11px !important;
+  width: 100% !important;
+  border-collapse: collapse !important;
+}
+
+.mobile-h5-app .wiki-mini-table th,
+.mobile-h5-app .wiki-mini-table td,
+.mobile-h5-app .wiki-data-table th,
+.mobile-h5-app .wiki-data-table td {
+  padding: 6px 6px !important;
+  text-align: center !important;
+  white-space: normal !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-data-table {
+  min-width: 460px !important;
+}
+
+.mobile-h5-app .wiki-skill-badge {
+  font-size: 10.5px !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+}
+
+.mobile-h5-app .matrix-rate-up,
+.mobile-h5-app .matrix-rate-down {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+.mobile-h5-app .matrix-calc-code {
+  font-size: 10px !important;
+  padding: 1px 4px !important;
+}
+
+/* 5. 🎓 Sub-Tab 3: 培育與評級指南 */
+.mobile-h5-app .wiki-strategy-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .strategy-item {
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.03)) !important;
+  border: 1px solid var(--border-color-subtle, var(--border-color)) !important;
+  border-radius: 10px !important;
+  padding: 10px 12px !important;
+}
+
+.mobile-h5-app .strategy-badge {
+  font-size: 10.5px !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  margin-bottom: 4px !important;
+  display: inline-block !important;
+}
+
+.mobile-h5-app .strategy-title {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  margin-bottom: 4px !important;
+}
+
+.mobile-h5-app .strategy-desc {
+  font-size: 11.5px !important;
+  line-height: 1.45 !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .wiki-ratings-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  margin-top: 12px !important;
+}
+
+.mobile-h5-app .rating-subsections {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .rating-col-title {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  margin-bottom: 6px !important;
+}
+
+.mobile-h5-app .rating-item {
+  padding: 6px 8px !important;
+  gap: 8px !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.03)) !important;
+  border-radius: 8px !important;
+  margin-bottom: 4px !important;
+}
+
+.mobile-h5-app .rating-tier-tag {
+  font-size: 11px !important;
+  padding: 2px 6px !important;
+  min-width: 20px !important;
+  text-align: center !important;
+}
+
+.mobile-h5-app .rating-item-name {
+  font-size: 12px !important;
+}
+
+.mobile-h5-app .rating-item-detail {
+  font-size: 11px !important;
+}
+
+.mobile-h5-app .calc-inputs-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .calc-input-group {
+  width: 100% !important;
+}
+
+.mobile-h5-app .calc-input-num {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 8px 10px !important;
+  font-size: 13px !important;
+  border-radius: 8px !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.05)) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .calc-select {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 8px 36px 8px 10px !important;
+  background-position: right 18px center !important;
+  font-size: 12px !important;
+  border-radius: 8px !important;
+  background-color: var(--bg-card-inner, rgba(255, 255, 255, 0.05)) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .calc-result-box {
+  margin-top: 10px !important;
+  padding: 12px !important;
+  border-radius: 10px !important;
+  text-align: center !important;
+}
+
+.mobile-h5-app .calc-result-label {
+  font-size: 11.5px !important;
+}
+
+.mobile-h5-app .calc-result-val {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  margin: 4px 0 !important;
+}
+
+.mobile-h5-app .calc-result-badge {
+  font-size: 11.5px !important;
+  padding: 3px 10px !important;
+}
+
+/* 6. 🥗 Sub-Tab 4: 食材產量天梯榜 */
+.mobile-h5-app .ladder-view-toggle-bar {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 10px !important;
+  padding-bottom: 8px !important;
+  border-bottom: 1px solid var(--border-color-subtle) !important;
+}
+
+.mobile-h5-app .ladder-mode-btns {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  width: 100% !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .ladder-mode-btn {
+  text-align: center !important;
+  padding: 7px 0 !important;
+  font-size: 12px !important;
+  border-radius: 8px !important;
+}
+
+.mobile-h5-app .wiki-coordinate-ladder-wrapper {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding-bottom: 8px !important;
+}
+
+.mobile-h5-app .wiki-coordinate-ladder-wrapper::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .wiki-coordinate-ladder {
+  min-width: 580px !important;
+}
+
+.mobile-h5-app .ladder-track-row {
+  padding: 6px 0 !important;
+  min-height: 52px !important;
+}
+
+.mobile-h5-app .ladder-track-header {
+  width: 130px !important;
+  min-width: 130px !important;
+}
+
+.mobile-h5-app .ladder-ruler-spacer {
+  width: 130px !important;
+  min-width: 130px !important;
+}
+
+.mobile-h5-app .ladder-card {
+  background: var(--bg-card, #111827) !important;
+  border: 1px solid var(--border-color, #1e293b) !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  margin-bottom: 8px !important;
+  box-sizing: border-box !important;
+}
+
+/* 7. 🫐 Sub-Tab 5: 樹果與食材能量 */
+.mobile-h5-app .values-horizontal-section {
+  padding: 12px 12px 14px !important;
+  border-radius: 12px !important;
+  margin-bottom: 12px !important;
+  background: var(--bg-card, #111827) !important;
+  border: 1px solid var(--border-color, #1e293b) !important;
+}
+
+.mobile-h5-app .values-section-header {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  margin-bottom: 10px !important;
+  padding-bottom: 8px !important;
+}
+
+.mobile-h5-app .berry-calc-controls {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .berry-control-group {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.mobile-h5-app .berry-slider {
+  flex: 1 !important;
+  margin-left: 10px !important;
+}
+
+.mobile-h5-app .values-compact-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .values-card {
+  padding: 7px 4px !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  gap: 3px !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04)) !important;
+  border: 1px solid var(--border-color-subtle, var(--border-color)) !important;
+}
+
+.mobile-h5-app .values-card-icon {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.mobile-h5-app .values-card-name {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 100% !important;
+}
+
+.mobile-h5-app .values-card-energy {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  font-family: monospace, -apple-system !important;
+  color: var(--accent-blue, #38bdf8) !important;
+}
+
 
