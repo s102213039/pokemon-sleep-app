@@ -2223,7 +2223,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Lv.60 pref
 
   assert(wikiCode.includes('id="ladder-nature-ing-toggle"'), 'Template should contain ladder-nature-ing-toggle');
   assert(wikiCode.includes('id="ladder-nature-speed-toggle"'), 'Template should contain ladder-nature-speed-toggle');
-  assert(wikiCode.includes('ladder-track-champion-badge'), 'Template should render ladder-track-champion-badge');
+  assert(wikiCode.includes('ladder-track-header') && wikiCode.includes('ladder-ing-icon'), 'Template should render ladder-track-header and ladder-ing-icon');
 
   function calcMult(isIngM, isSpeedM, isNatureIng, isNatureSpeed) {
     let mult = 1.0;

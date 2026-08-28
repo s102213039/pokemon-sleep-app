@@ -11103,6 +11103,28 @@
     return translated;
   }
 
+  const DEFAULT_LADDER_MIN_THRESHOLDS = {
+    coffee: 50,
+    apple: 50,
+    ginger: 50,
+    milk: 55,
+    honey: 42,
+    sausage: 45,
+    potato: 35,
+    tomato: 42,
+    corn: 40,
+    egg: 40,
+    soybeans: 35,
+    oil: 40,
+    leek: 35,
+    mushroom: 30,
+    cacao: 30,
+    herb: 25,
+    glossyavocado: 30,
+    pumpkin: 20,
+    tail: 1
+  };
+
   // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、大菜供應能力評定、跨軌道搜尋聚焦)
   function renderCoordinateLadder(ladderData) {
     const mult = getLadderMultiplier();
@@ -11147,14 +11169,14 @@
       ? (isEN ? ` (incl. ${activeBoosts.join(' + ')})` : ` (含 ${activeBoosts.join(' + ')} 補正)`) 
       : '';
 
+    const isUnfilteredDefault = (ladderSpecialtyFilter === 'ALL' && ladderRecipeFilter === 'ALL' && ladderSupplyFilter === 'ALL' && !ladderSearchQuery);
+
     return `
       <div class="wiki-coordinate-ladder-wrapper">
         <div class="wiki-coordinate-ladder" onmouseover="window.WikiDB.handleLadderGroupHover(event)" onmouseout="window.WikiDB.handleLadderGroupHoverOut(event)">
           <!-- 頂部刻度標尺 -->
           <div class="ladder-ruler-header">
-            <div class="ladder-ruler-spacer">
-              <span class="ruler-spacer-title">${isEN ? 'Champion' : '產量冠軍'}</span>
-            </div>
+            <div class="ladder-ruler-spacer"></div>
             <div class="ladder-ruler-scale">
               ${ticks.map(t => `
                 <div class="ladder-ruler-tick" style="left: ${getPosPct(t)}%;">
@@ -11170,20 +11192,22 @@
             const dishInfo = TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { name: isEN ? 'High Tier Dish' : '高階料理', name_en: 'High Tier Dish', need: 20, type: isEN ? 'Dish' : '料理', secondary: '' };
             const dishName = isEN ? (dishInfo.name_en || dishInfo.name) : dishInfo.name;
             const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
+            const minDefaultThreshold = DEFAULT_LADDER_MIN_THRESHOLDS[ing.id] || 25;
 
-            // 尋找該軌道在目前篩選條件下的產量冠軍與理論極限產量
-            let champPkm = null;
-            let champRecipe = 'AAA';
-            let champMaxBaseCount = 0;
-            let totalTrackVariants = 0;
-
-            ing.pokemon.forEach((p, pIdx) => {
+            // 取得該軌道符合篩選之寶可夢與型態變體
+            const filteredPokemonList = ing.pokemon.map(p => {
               const pkmSpec = getPokemonLadderSpecialty(p.name);
-              if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return;
-              if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return;
-              if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return;
+              if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return null;
+              if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return null;
+              if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return null;
 
               let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
+
+              // 在預設總覽模式下，自動忽略過低產量之無效產出，保持畫面簡潔清爽（當使用者進行篩選或搜尋時，展示全部符合之型態）
+              if (isUnfilteredDefault) {
+                variants = variants.filter(v => v.count >= minDefaultThreshold);
+              }
+
               if (ladderRecipeFilter === 'AAA') {
                 variants = variants.filter(v => v.recipe === 'AAA');
               } else if (ladderRecipeFilter === 'ABB') {
@@ -11193,7 +11217,7 @@
               }
 
               if (ladderSupplyFilter === 'TOP') {
-                variants = variants.filter((v, vIdx) => v.isTop || (p.isTop && v.recipe === p.recipe) || (pIdx < 2 && vIdx === 0));
+                variants = variants.filter((v, vIdx) => v.isTop || (p.isTop && v.recipe === p.recipe));
               } else if (ladderSupplyFilter === 'MEALS_3') {
                 variants = variants.filter(v => {
                   const scaled = Math.round(v.count * mult);
@@ -11206,27 +11230,11 @@
                 });
               }
 
-              totalTrackVariants += variants.length;
-              variants.forEach(v => {
-                if (v.count > champMaxBaseCount) {
-                  champMaxBaseCount = v.count;
-                  champPkm = p;
-                  champRecipe = v.recipe;
-                }
-              });
-            });
+              if (variants.length === 0) return null;
+              return { ...p, variants };
+            }).filter(Boolean);
 
-            const champDisplayName = champPkm 
-              ? (isEN ? ((window.I18N && window.I18N.getPokemonName(champPkm.name)) || champPkm.name) : champPkm.name) 
-              : '';
-            const champScaledCount = Math.round(champMaxBaseCount * mult);
-            const isTrackEmpty = totalTrackVariants === 0;
-
-            // 判斷是否為預設無篩選全覽模式 (預設全覽展示前 12 名保持清爽；任何篩選/搜尋生效時展示 100% 全部符合之寶可夢)
-            const isUnfilteredDefault = (ladderSpecialtyFilter === 'ALL' && ladderRecipeFilter === 'ALL' && ladderSupplyFilter === 'ALL' && !ladderSearchQuery);
-            const targetPokemonList = (isUnfilteredDefault && ing.pokemon.length > 12)
-              ? ing.pokemon.slice(0, 12)
-              : ing.pokemon;
+            const isTrackEmpty = filteredPokemonList.length === 0;
 
             return `
             <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''}" data-ladder-ing="${ing.id}">
@@ -11234,16 +11242,6 @@
                 <div class="ladder-track-ing-main">
                   <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">
                 </div>
-                ${champPkm ? `
-                  <div class="ladder-track-champion-badge" title="${isEN ? 'Champion: ' + champDisplayName + ' (' + champRecipe + ') - ' + champScaledCount + ' /day' : '產量冠軍：' + champDisplayName + ' (' + champRecipe + ') - 每日預估 ' + champScaledCount + ' 顆'}">
-                    <span class="champ-pkm">${champDisplayName}</span>
-                    <span class="champ-yield">${champScaledCount}${isEN ? '/d' : '顆'}</span>
-                  </div>
-                ` : `
-                  <div class="ladder-track-champion-badge badge-empty" title="${isEN ? 'No matching Pokémon under current filter' : '目前篩選條件下無符合寶可夢'}">
-                    <span class="champ-pkm text-muted" style="font-size: 11px;">--</span>
-                  </div>
-                `}
               </div>
 
               <div class="ladder-track-canvas">
@@ -11255,38 +11253,10 @@
 
                 <!-- 跨度連接線容器 -->
                 <div class="ladder-spans-container">
-                  ${targetPokemonList.map((p, pIdx) => {
+                  ${filteredPokemonList.map(p => {
                     const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
-                    const pkmSpec = getPokemonLadderSpecialty(p.name);
-                    if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return '';
-                    if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return '';
-                    if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return '';
-
-                    let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
-                    if (ladderRecipeFilter === 'AAA') {
-                      variants = variants.filter(v => v.recipe === 'AAA');
-                    } else if (ladderRecipeFilter === 'ABB') {
-                      variants = variants.filter(v => v.recipe === 'ABB');
-                    } else if (ladderRecipeFilter === 'AXX') {
-                      variants = variants.filter(v => v.recipe !== 'AAA' && v.recipe !== 'ABB');
-                    }
-
-                    if (ladderSupplyFilter === 'TOP') {
-                      variants = variants.filter((v, vIdx) => v.isTop || (p.isTop && v.recipe === p.recipe) || (pIdx < 2 && vIdx === 0));
-                    } else if (ladderSupplyFilter === 'MEALS_3') {
-                      variants = variants.filter(v => {
-                        const scaled = Math.round(v.count * mult);
-                        return (scaled / dishInfo.need) >= 3.0;
-                      });
-                    } else if (ladderSupplyFilter === 'MEALS_2') {
-                      variants = variants.filter(v => {
-                        const scaled = Math.round(v.count * mult);
-                        return (scaled / dishInfo.need) >= 1.8;
-                      });
-                    }
-
-                    if (variants.length < 2) return '';
-                    const scaledCounts = variants.map(v => Math.round(v.count * mult));
+                    if (p.variants.length < 2) return '';
+                    const scaledCounts = p.variants.map(v => Math.round(v.count * mult));
                     const minCount = Math.min(...scaledCounts);
                     const maxCount = Math.max(...scaledCounts);
                     const minPct = parseFloat(getPosPct(minCount));
@@ -11304,37 +11274,10 @@
 
                 <!-- 寶可夢型態節點容器 (Nodes Container) -->
                 <div class="ladder-nodes-container">
-                  ${targetPokemonList.flatMap((p, pIdx) => {
+                  ${filteredPokemonList.flatMap((p, pIdx) => {
                     const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
-                    const pkmSpec = getPokemonLadderSpecialty(p.name);
-                    if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return [];
-                    if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return [];
-                    if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return [];
 
-                    let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
-                    if (ladderRecipeFilter === 'AAA') {
-                      variants = variants.filter(v => v.recipe === 'AAA');
-                    } else if (ladderRecipeFilter === 'ABB') {
-                      variants = variants.filter(v => v.recipe === 'ABB');
-                    } else if (ladderRecipeFilter === 'AXX') {
-                      variants = variants.filter(v => v.recipe !== 'AAA' && v.recipe !== 'ABB');
-                    }
-
-                    if (ladderSupplyFilter === 'TOP') {
-                      variants = variants.filter((v, vIdx) => v.isTop || (p.isTop && v.recipe === p.recipe) || (pIdx < 2 && vIdx === 0));
-                    } else if (ladderSupplyFilter === 'MEALS_3') {
-                      variants = variants.filter(v => {
-                        const scaled = Math.round(v.count * mult);
-                        return (scaled / dishInfo.need) >= 3.0;
-                      });
-                    } else if (ladderSupplyFilter === 'MEALS_2') {
-                      variants = variants.filter(v => {
-                        const scaled = Math.round(v.count * mult);
-                        return (scaled / dishInfo.need) >= 1.8;
-                      });
-                    }
-
-                    return variants.map((v, vIdx) => {
+                    return p.variants.map((v, vIdx) => {
                       const scaledCount = Math.round(v.count * mult);
                       const isTopNode = v.isTop || (p.isTop && v.recipe === p.recipe);
                       const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
@@ -11947,9 +11890,9 @@
           <div class="wiki-subnav-tabs" role="tablist">
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills' ? 'active' : ''}" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${isMobileH5 ? (isEN ? 'Skills' : '主技能') : (isEN ? 'Main Skills DB' : '主技能數值庫')}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'subskills' ? 'active' : ''}" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${isMobileH5 ? (isEN ? 'Subskills' : '副技性格') : (isEN ? 'Sub-Skills & Natures' : '副技能與性格指南')}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isMobileH5 ? (isEN ? 'Growth' : '培育指南') : (isEN ? 'Growth & Tier Guide' : '培育與評級指南')}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isMobileH5 ? (isEN ? 'Ladder' : '食材天梯') : (isEN ? 'Ingredient Yield Ladder' : '食材產量天梯榜')}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isMobileH5 ? (isEN ? 'Values' : '能量速查') : (isEN ? 'Berry & Ing. Values' : '樹果與食材能量')}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isMobileH5 ? (isEN ? 'Growth' : '培育指南') : (isEN ? 'Growth & Tier Guide' : '培育與評級指南')}</button>
           </div>
         </div>
 
@@ -12095,7 +12038,51 @@
           </div>
         </div>
 
-        <!-- 子分頁 3：培育與評級指南 (Ratings & Growth) -->
+        <!-- 子分頁 3：食材產量天梯榜 (Ingredient Yield Ladder) -->
+        <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:block;' : 'display:none;'}">
+          <!-- 右下懸浮天梯篩選按鈕 (Mobile Only FAB) -->
+          <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Open Filters' : '展開天梯篩選器'}" aria-label="${isEN ? 'Open Filters' : '展開天梯篩選器'}" style="${isMobileH5 && currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
+            <span class="bookmark-icon">
+              <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"></line>
+                <line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line>
+                <line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line>
+                <line x1="9" y1="8" x2="15" y2="8"></line>
+                <line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+            </span>
+          </button>
+
+          <!-- 橫向視覺天梯座標圖 (預設顯示) -->
+          <div id="wiki-ingredient-ladder-coordinate">
+            ${renderCoordinateLadder(LV60_COORDINATE_LADDER_DATA)}
+          </div>
+
+          <!-- 食材天梯卡片清單 (列表檢視，預設隱藏) -->
+          <div id="wiki-ingredient-ladder-grid" class="wiki-ladder-grid" style="display: none;">
+            ${renderIngredientLadders(LV60_INGREDIENTS_LADDER)}
+          </div>
+        </div>
+
+        <!-- 子分頁 4：樹果與食材基礎能量 (Image 1 實體化 - Berry & Ingredient Values) -->
+        <div id="wiki-subpanel-values" class="wiki-subpanel ${currentWikiSubTab === 'values' ? 'active' : ''}" style="${currentWikiSubTab === 'values' ? 'display:block;' : 'display:none;'}">
+          <div class="wiki-card">
+            <div class="wiki-card-header">
+              <h3 class="wiki-card-title">${isEN ? 'Berry & Ingredient Base Power Table' : '樹果與食材基礎能量表'}</h3>
+            </div>
+            <p class="wiki-card-desc">${isEN ? 'Official in-game base power values for 18 Berries (24~35) and 19 Ingredients (90~342).' : '依據官方遊戲底層能量設定，完整展示 18 種屬性樹果基礎能量（24~35）與 19 種料理食材基礎能量（90~342）。'}</p>
+
+            <div style="margin-top: 20px;">
+              ${renderValuesBoard()}
+            </div>
+          </div>
+        </div>
+
+        <!-- 子分頁 5：培育與評級指南 (Ratings & Growth) -->
         <div id="wiki-subpanel-ratings" class="wiki-subpanel ${currentWikiSubTab === 'ratings' ? 'active' : ''}" style="${currentWikiSubTab === 'ratings' ? 'display:block;' : 'display:none;'}">
           <!-- 培育週期與核心思維 -->
           <div class="wiki-card">

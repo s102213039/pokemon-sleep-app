@@ -7579,11 +7579,11 @@ input[type="number"] {
 }
 
 .ladder-ruler-spacer {
-  width: 140px;
-  min-width: 140px;
+  width: 44px;
+  min-width: 44px;
   display: flex;
   align-items: center;
-  padding-left: 6px;
+  justify-content: center;
 }
 
 .ruler-spacer-title {
@@ -7645,12 +7645,12 @@ input[type="number"] {
 }
 
 .ladder-track-header {
-  width: 140px;
-  min-width: 140px;
-  padding: 0 6px;
+  width: 44px;
+  min-width: 44px;
+  padding: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   border-right: 1px solid var(--border-color-subtle);
   height: 100%;
   box-sizing: border-box;
@@ -7659,7 +7659,7 @@ input[type="number"] {
 .ladder-track-ing-main {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
   min-width: 0;
   flex-shrink: 0;
 }
@@ -12625,13 +12625,21 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .ladder-track-header {
-  width: 130px !important;
-  min-width: 130px !important;
+  width: 40px !important;
+  min-width: 40px !important;
+  justify-content: center !important;
+  padding: 0 !important;
 }
 
 .mobile-h5-app .ladder-ruler-spacer {
-  width: 130px !important;
-  min-width: 130px !important;
+  width: 40px !important;
+  min-width: 40px !important;
+  justify-content: center !important;
+}
+
+.mobile-h5-app .ladder-ing-icon {
+  width: 28px !important;
+  height: 28px !important;
 }
 
 .mobile-h5-app .ladder-card {
