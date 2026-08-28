@@ -12178,29 +12178,33 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td {
   padding: 5px 2px !important;
   font-size: 10.5px !important;
-  text-align: center !important;
   vertical-align: middle !important;
 }
 
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(1),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(1) {
   width: 20% !important;
+  text-align: center !important;
 }
 
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(2),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(2) {
-  width: 26% !important;
+  width: 15% !important;
+  text-align: center !important;
 }
 
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(3),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(3) {
-  width: 26% !important;
+  width: 15% !important;
+  text-align: center !important;
 }
 
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(4),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(4) {
-  width: 28% !important;
+  width: 50% !important;
   font-size: 10px !important;
+  line-height: 1.35 !important;
+  text-align: left !important;
 }
 
 .mobile-h5-app #ing-draw-matrix-table .wiki-mini-table {

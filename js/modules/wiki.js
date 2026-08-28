@@ -738,52 +738,52 @@
     { 
       stat: "幫忙速度", 
       stat_en: "Speed of Help",
-      up: "▲▲ +10% (間隔 ÷1.10 = 0.909x)", 
-      up_en: "▲▲ +10% (Interval ÷1.10 = 0.909x)",
-      down: "▼▼ -7.5% (間隔 ×1.075 = 0.925x)", 
-      down_en: "▼▼ -7.5% (Interval ×1.075 = 0.925x)",
-      desc: "影響所有樹果、食材與技能判定頻率（官方已將下降懲罰調輕至 -7.5%）",
-      desc_en: "Affects frequency of berries, ingredients, and skill checks (down penalty softened to -7.5%)."
+      up: "+10%", 
+      up_en: "+10%",
+      down: "-7.5%", 
+      down_en: "-7.5%",
+      desc: "影響所有樹果、食材與技能判定頻率（下降懲罰調輕至 -7.5%）",
+      desc_en: "Affects frequency of berries, ingredients, and skill checks (-7.5% penalty)."
     },
     { 
       stat: "活力回復量", 
       stat_en: "Energy Recovery",
-      up: "▲▲ +20% (1.20 倍)", 
-      up_en: "▲▲ +20% (1.20x)",
-      down: "▼▼ -12% (0.88 倍)", 
-      down_en: "▼▼ -12% (0.88x)",
-      desc: "影響睡眠與隊伍補師回復量（Ver 1.0.13 已將下降懲罰調輕至 -12%）",
-      desc_en: "Affects sleep energy and healer skill recovery (down penalty softened to -12%)."
+      up: "+20%", 
+      up_en: "+20%",
+      down: "-12%", 
+      down_en: "-12%",
+      desc: "影響睡眠與隊伍補師回復量（下降懲罰調輕至 -12%）",
+      desc_en: "Affects sleep energy and healer skill recovery (-12% penalty)."
     },
     { 
       stat: "食材發現率", 
       stat_en: "Ingredient Finding",
-      up: "▲▲ +20% (1.20 倍)", 
-      up_en: "▲▲ +20% (1.20x)",
-      down: "▼▼ -20% (0.80 倍)", 
-      down_en: "▼▼ -20% (0.80x)",
+      up: "+20%", 
+      up_en: "+20%",
+      down: "-20%", 
+      down_en: "-20%",
       desc: "每次幫忙時判定獲得食材的機率",
       desc_en: "Probability of finding ingredients during each help cycle."
     },
     { 
       stat: "主技能機率", 
       stat_en: "Main Skill Trigger",
-      up: "▲▲ +20% (1.20 倍)", 
-      up_en: "▲▲ +20% (1.20x)",
-      down: "▼▼ -20% (0.80 倍)", 
-      down_en: "▼▼ -20% (0.80x)",
+      up: "+20%", 
+      up_en: "+20%",
+      down: "-20%", 
+      down_en: "-20%",
       desc: "每次幫忙時判定觸發主技能的機率",
       desc_en: "Probability of triggering main skill during each help cycle."
     },
     { 
       stat: "EXP 獲得量", 
       stat_en: "EXP Gained",
-      up: "▲▲ +18% (1.18 倍)", 
-      up_en: "▲▲ +18% (1.18x)",
-      down: "▼▼ -18% (0.82 倍)", 
-      down_en: "▼▼ -18% (0.82x)",
-      desc: "影響睡眠結算與糖果升級經驗值（5 顆糖多/少約 1 顆）",
-      desc_en: "Affects sleep session EXP and candy leveling EXP (±1 candy value per 5 candies)."
+      up: "+18%", 
+      up_en: "+18%",
+      down: "-18%", 
+      down_en: "-18%",
+      desc: "影響睡眠結算與糖果升級經驗值",
+      desc_en: "Affects sleep session EXP and candy leveling EXP."
     }
   ];
 
@@ -12008,7 +12008,7 @@
                                 const sName = isEN ? (window.I18N.getSubSkillName(s.name) || s.name) : s.name;
                                 return `<span class="wiki-skill-badge skill-badge-${s.color}">${sName}</span>`;
                               }).join('') 
-                            : `<span class="text-muted" style="font-size: 11.5px; font-weight: 500;">${isEN ? 'None' : '無加成'}</span>`}
+                            : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`}
                         </div>
                       </td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
@@ -12077,19 +12077,19 @@
               <table class="wiki-data-table">
                 <thead>
                   <tr>
-                    <th>${isEN ? 'Stat' : '屬性項目'}</th>
-                    <th>${isEN ? '▲▲ Boosted Nature' : '▲▲ 增加性格 (上升效果)'}</th>
-                    <th>${isEN ? '▼▼ Hindered Nature' : '▼▼ 下降性格 (下降效果)'}</th>
+                    <th style="text-align: center;">${isEN ? 'Stat' : '屬性項目'}</th>
+                    <th style="text-align: center;">${isEN ? '▲▲ Nature' : '▲▲ 性格'}</th>
+                    <th style="text-align: center;">${isEN ? '▼▼ Nature' : '▼▼ 性格'}</th>
                     <th>${isEN ? 'Mechanic Details' : '影響機制說明'}</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${NATURES_EFFECT_DATA.map(row => `
                     <tr>
-                      <td class="font-bold text-white">${isEN ? (row.stat_en || row.stat) : row.stat}</td>
-                      <td class="text-success font-bold">${isEN ? (row.up_en || row.up) : row.up}</td>
-                      <td class="text-danger font-bold">${isEN ? (row.down_en || row.down) : row.down}</td>
-                      <td class="text-secondary">${isEN ? (row.desc_en || row.desc) : row.desc}</td>
+                      <td class="font-bold text-accent" style="vertical-align: middle; text-align: center; white-space: nowrap;">${isEN ? (row.stat_en || row.stat) : row.stat}</td>
+                      <td class="text-success font-bold" style="vertical-align: middle; text-align: center; white-space: nowrap;">${isEN ? (row.up_en || row.up) : row.up}</td>
+                      <td class="text-danger font-bold" style="vertical-align: middle; text-align: center; white-space: nowrap;">${isEN ? (row.down_en || row.down) : row.down}</td>
+                      <td class="text-secondary" style="vertical-align: middle;">${isEN ? (row.desc_en || row.desc) : row.desc}</td>
                     </tr>
                   `).join('')}
                 </tbody>
