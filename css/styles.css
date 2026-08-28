@@ -3789,8 +3789,8 @@ input[type=range].rf-slider.event-slider {
     box-shadow: 0 2px 8px var(--accent-glow, rgba(56, 189, 248, 0.35));
   }
 
-  /* 避免底部導航欄遮擋內容 (僅適用桌面版手機檢視，mobile-h5-app 自主管理) */
-  body:not(.mobile-h5-app) {
+  /* 避免底部導航欄遮擋內容 */
+  body {
     padding-bottom: calc(66px + env(safe-area-inset-bottom)) !important;
   }
 
@@ -10530,12 +10530,11 @@ input[type="number"] {
 /* Mobile App Body Base */
 body.mobile-h5-app,
 body.mobile-h5-surface {
-  padding-top: calc(52px + env(safe-area-inset-top, 0px)) !important;
-  padding-bottom: 0 !important;
+  padding-top: calc(52px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
   min-height: 100vh;
   min-height: 100dvh;
-  height: 100dvh;
-  overflow: hidden;
+  overflow-x: hidden;
   background-color: var(--bg-dark);
   color: var(--text-main);
   -webkit-tap-highlight-color: transparent;
@@ -10641,12 +10640,7 @@ body.mobile-h5-surface {
 
 /* ─── 📱 H5 App 列表視圖：CoordinatorLayout 視窗置頂與容器內自然滾動 ─── */
 .mobile-h5-app .pokemon-main-content,
-.mobile-h5-app .recipe-main-content,
-.mobile-h5-app #panel-pokemon,
-.mobile-h5-app #panel-recipes,
-.mobile-h5-app #panel-wiki,
-.mobile-h5-app #panel-box,
-.mobile-h5-app #panel-news {
+.mobile-h5-app .recipe-main-content {
   display: flex;
   flex-direction: column;
   height: calc(100dvh - 52px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
@@ -11813,35 +11807,21 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 /* 1. 頂部 5 大 Sub-Tabs：平分寬度、單行展示、貼齊頂部無邊距、全主題自適應 */
 .mobile-h5-app #panel-wiki {
   padding: 0 !important;
-  margin: 0 !important;
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
-  display: flex !important;
-  flex-direction: column !important;
-  height: calc(100dvh - 52px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
-  max-height: calc(100dvh - 52px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
-  overflow: hidden !important;
 }
 
 .mobile-h5-app .wiki-main-container {
-  padding: 0 !important;
+  padding: 0 0 calc(72px + env(safe-area-inset-bottom, 0px)) 0 !important;
   margin: 0 !important;
   width: 100% !important;
   max-width: 100% !important;
-  box-sizing: border-box !important;
-  display: flex !important;
-  flex-direction: column !important;
-  flex: 1 1 auto !important;
-  height: 100% !important;
-  max-height: 100% !important;
-  min-height: 0 !important;
-  overflow: hidden !important;
 }
 
 .mobile-h5-app .wiki-subnav-bar {
-  position: relative !important;
-  top: 0 !important;
+  position: sticky !important;
+  top: 50px !important;
   z-index: 90 !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -11855,7 +11835,6 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   -webkit-backdrop-filter: blur(16px) !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
   width: 100% !important;
-  flex-shrink: 0 !important;
 }
 
 .mobile-h5-app .wiki-subnav-tabs {
