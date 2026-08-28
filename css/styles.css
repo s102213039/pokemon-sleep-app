@@ -10648,7 +10648,6 @@ body.mobile-h5-surface {
   overflow: visible !important;
 }
 
-.mobile-h5-app .pokemon-main-content .controls-container,
 .mobile-h5-app .recipe-main-content .controls-container,
 .mobile-h5-app #panel-box .controls-container,
 .mobile-h5-app #panel-news .controls-container {
@@ -10660,6 +10659,17 @@ body.mobile-h5-surface {
   width: calc(100% - 24px) !important;
   box-sizing: border-box !important;
   background: var(--bg-dark) !important;
+}
+
+.mobile-h5-app .pokemon-main-content .controls-container {
+  position: relative !important;
+  top: auto !important;
+  z-index: 10 !important;
+  margin: 10px 12px 10px !important;
+  padding: 0 !important;
+  width: calc(100% - 24px) !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
 }
 
 .mobile-h5-app .pokemon-main-content .content-area,
