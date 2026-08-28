@@ -12928,11 +12928,27 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   margin: 0 !important;
 }
 
+.mobile-h5-app #wiki-subpanel-ingredients.active {
+  display: flex !important;
+  flex-direction: column !important;
+  height: calc(100dvh - 50px - 41px - 64px - env(safe-area-inset-bottom, 0px)) !important;
+  min-height: calc(100vh - 165px) !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
 .mobile-h5-app .wiki-coordinate-ladder-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  height: 100% !important;
   overflow-x: hidden !important;
+  overflow-y: hidden !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  padding: 2px 4px 10px !important;
+  padding: 2px 4px 6px !important;
   background: #ffffff !important;
   border: none !important;
   border-radius: 0 !important;
@@ -12944,6 +12960,11 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .wiki-coordinate-ladder {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  height: 100% !important;
+  justify-content: space-between !important;
   min-width: 0 !important;
   width: 100% !important;
   background: #ffffff !important;
@@ -12953,15 +12974,21 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .ladder-track-row {
+  flex: 1 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  display: flex !important;
+  align-items: center !important;
   padding: 0 !important;
-  min-height: 26px !important;
-  height: 26px !important;
+  margin: 0 !important;
   background: transparent !important;
   border: none !important;
 }
 
 .mobile-h5-app .ladder-ruler-header {
-  height: 16px !important;
+  flex-shrink: 0 !important;
+  height: 18px !important;
+  margin-bottom: 2px !important;
 }
 
 .mobile-h5-app .ladder-track-header {
@@ -13000,11 +13027,14 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .ladder-tail-standalone-container {
-  display: flex !important;
-  justify-content: flex-start !important;
-  margin-top: 8px !important;
+  flex-shrink: 0 !important;
+  margin-top: auto !important;
+  padding-top: 4px !important;
+  padding-bottom: 2px !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
+  display: flex !important;
+  justify-content: flex-start !important;
   width: 100% !important;
 }
 
@@ -13015,11 +13045,11 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border: 1.5px solid #cbd5e1 !important;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
   margin-left: 0 !important;
-  padding: 3px 6px 5px !important;
+  padding: 3px 6px 4px !important;
 }
 
 .mobile-h5-app .ladder-tail-ruler {
-  height: 15px !important;
+  height: 14px !important;
 }
 
 .mobile-h5-app .ladder-tail-track-row {
