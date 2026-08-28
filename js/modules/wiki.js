@@ -10673,15 +10673,16 @@
     if (!grid) return;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     grid.innerHTML = BERRY_VALUES_DATA.map(b => {
-      const energy = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, isFavoriteBerry2x);
+      const energy1x = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, false);
+      const energy2x = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, true);
       const bName = isEN ? (window.I18N.getBerryName(b.name) || b.name) : b.name;
       const bType = isEN ? (window.I18N.getTypeName(b.type) || b.type) : b.type;
       const bonusStr = currentIslandBonus > 0 ? (isEN ? ` +${currentIslandBonus}% Island` : ` +${currentIslandBonus}%島嶼`) : '';
-      const favStr = isFavoriteBerry2x ? (isEN ? ' Fav 2x' : ' 順果2x') : '';
       return `
-        <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr}${favStr} ${isEN ? 'Energy' : '能量'} ${energy}">
+        <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr} | ${isEN ? 'Base' : '基礎'}: ${energy1x} / ${isEN ? 'Fav 2x' : '順果 2x'}: ${energy2x}">
           <img src="${b.icon}" class="value-compact-icon" alt="${bName}">
-          <span class="value-compact-energy berry-val">${energy}</span>
+          <span class="value-compact-energy berry-val" title="${isEN ? 'Base Energy' : '基礎能量'}">${energy1x}</span>
+          <span class="value-compact-energy berry-val-fav" title="${isEN ? 'Favorite 2x' : '順果 2x 能量'}">${energy2x}</span>
         </div>
       `;
     }).join('');
@@ -11340,15 +11341,15 @@
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     return `
       <div class="values-horizontal-container">
-        <!-- 區塊 1：樹果基礎能量庫 (Lv.1 ~ Lv.70 + 島嶼加成 0~85% 動態試算) -->
+        <!-- 區塊 1：樹果基礎能量庫 (Lv.1 ~ Lv.70 + 島嶼加成 0~85% 動態試算 + 雙行 1x/2x 展示) -->
         <div class="values-horizontal-section">
           <div class="values-section-header">
             <div class="values-section-title-group">
               <span class="values-section-badge berry-badge">${isEN ? 'Berry Base Power' : '樹果能量庫'}</span>
-              <span class="values-section-sub">${isEN ? 'Base Energy (Lv.1: 24 ➔ 35)' : '基礎能量 (Lv.1: 24 ➔ 35)'}</span>
+              <span class="values-section-sub">${isEN ? 'Base 1x (Blue) · Favorite 2x (Gold)' : '基礎 1x（藍）· 順果 2x（金）'}</span>
             </div>
 
-            <!-- 等級滑桿、島嶼加成與順果 2x 控制器 -->
+            <!-- 等級滑桿與島嶼加成控制器 -->
             <div class="berry-calc-controls">
               <!-- 寶可夢等級滑桿 (1 ~ 70) -->
               <div class="berry-control-group">
@@ -11365,29 +11366,21 @@
                 </label>
                 <input type="range" id="berry-island-slider" min="0" max="85" value="${currentIslandBonus}" step="5" class="berry-slider island-slider" oninput="window.WikiDB.updateBerryIsland(this.value)">
               </div>
-
-              <!-- 順果 2x 開關 -->
-              <div class="berry-control-group">
-                <label class="berry-switch-label" title="${isEN ? 'Favorite Berry 2x Energy Multiplier' : '卡比獸喜愛樹果 (順果) 能量翻倍 (2x)'}">
-                  <input type="checkbox" id="berry-favorite-toggle" ${isFavoriteBerry2x ? 'checked' : ''} onchange="window.WikiDB.toggleBerryFavorite(this.checked)">
-                  <span class="berry-switch-slider"></span>
-                  <span class="berry-switch-text">${isEN ? 'Favorite 2x' : '順果 2x'}</span>
-                </label>
-              </div>
             </div>
           </div>
 
           <div id="values-berry-grid" class="values-compact-grid values-berry-grid">
             ${BERRY_VALUES_DATA.map(b => {
-              const energy = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, isFavoriteBerry2x);
+              const energy1x = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, false);
+              const energy2x = calcBerryEnergy(b.energy, currentBerryLevel, currentIslandBonus, true);
               const bName = isEN ? (window.I18N.getBerryName(b.name) || b.name) : b.name;
               const bType = isEN ? (window.I18N.getTypeName(b.type) || b.type) : b.type;
               const bonusStr = currentIslandBonus > 0 ? (isEN ? ` +${currentIslandBonus}% Island` : ` +${currentIslandBonus}%島嶼`) : '';
-              const favStr = isFavoriteBerry2x ? (isEN ? ' Fav 2x' : ' 順果2x') : '';
               return `
-                <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr}${favStr} ${isEN ? 'Energy' : '能量'} ${energy}">
+                <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr} | ${isEN ? 'Base' : '基礎'}: ${energy1x} / ${isEN ? 'Fav 2x' : '順果 2x'}: ${energy2x}">
                   <img src="${b.icon}" class="value-compact-icon" alt="${bName}">
-                  <span class="value-compact-energy berry-val">${energy}</span>
+                  <span class="value-compact-energy berry-val" title="${isEN ? 'Base Energy' : '基礎能量'}">${energy1x}</span>
+                  <span class="value-compact-energy berry-val-fav" title="${isEN ? 'Favorite 2x' : '順果 2x 能量'}">${energy2x}</span>
                 </div>
               `;
             }).join('')}
