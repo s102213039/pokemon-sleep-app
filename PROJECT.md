@@ -72,6 +72,11 @@
 - Select elements: `padding-right: 36px`, `background-position: right 18px center`.
 - Options menu: opens strictly downwards aligned with the bottom of the trigger, unless touching screen bottom.
 
+### 🛡️ Mandatory Pre-Flight Rules (每次處理需求時的三大核心鐵律)
+1. **📱 跨端環境確認 (H5 Mobile vs Desktop Surface)**：每次開發前確認目標是 H5 App (`/app/`) 還是 桌面網頁版 (`index.html`)，樣式必須精確隔離於 `.mobile-h5-app`，嚴禁跨端相互干擾。
+2. **🌐 雙語系切換確認 (Bilingual i18n Adaptation)**：所有文字與 UI 必須同時支援繁體中文 (`zh-TW`) 與 英文 (`en-US`)，並測試長度與折行不破版。
+3. **🎨 4 大主題亮/暗色自適應確認 (4-Theme Light/Dark Adaptation)**：嚴禁硬編碼 Hex 色值，一律使用語意化變數（`var(--bg-card)`、`var(--text-primary)` 等），強制覆蓋驗證 4 套主題：深邃夜空 (`midnight`)、曜石暗影 (`onyx`)、晨曦暖陽 (`dawn`)、萌綠森林 (`emerald`)。
+
 ## Code Layout
 - `app/index.html` — Mobile H5 App HTML Entry & Shell
 - `index.html` — Desktop SPA Entry with smart mobile redirection guard
@@ -83,4 +88,5 @@
 - `js/modules/box.js` — Box database, OCR processing, bottom sheet editor, PR engine
 - `js/modules/news.js` — News feed, touch Gantt chart, AI summary cards
 - `js/modules/appraisal.js` — 6D appraisal lab, SVG radar chart modal
-- `tests/run_tests.js` — Unified 4-tier automated test suite (85 tests)
+- `tests/run_tests.js` — Unified 4-tier automated test suite (90 tests)
+

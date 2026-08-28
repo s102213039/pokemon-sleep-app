@@ -11407,7 +11407,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
    📚 MOBILE H5 DEDICATED WIKI TAB & SUB-TABS MODERN APP STYLING
    ═══════════════════════════════════════════════════════════════════════════════ */
 
-/* 1. 頂部 5 大 Sub-Tabs：平分寬度、單行展示、貼齊頂部無邊距 */
+/* 1. 頂部 5 大 Sub-Tabs：平分寬度、單行展示、貼齊頂部無邊距、全主題自適應 */
 .mobile-h5-app #panel-wiki {
   padding: 0 !important;
   width: 100% !important;
@@ -11433,10 +11433,10 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border-right: none !important;
   border-top: none !important;
   border-bottom: 1px solid var(--border-color) !important;
-  background: var(--bg-primary, #0a0f1d) !important;
+  background: var(--bg-header, var(--bg-card)) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
   width: 100% !important;
 }
 
@@ -11459,7 +11459,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border-radius: 0 !important;
   border: none !important;
   background: transparent !important;
-  color: var(--text-secondary, #94a3b8) !important;
+  color: var(--text-secondary) !important;
   position: relative !important;
   transition: all 0.2s ease !important;
   white-space: nowrap !important;
@@ -11472,7 +11472,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .wiki-subtab-btn.active {
-  color: var(--accent-blue, #38bdf8) !important;
+  color: var(--accent-blue) !important;
   font-weight: 700 !important;
   background: rgba(56, 189, 248, 0.06) !important;
 }
@@ -11484,11 +11484,11 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   left: 12% !important;
   right: 12% !important;
   height: 3px !important;
-  background: var(--accent-gradient, #38bdf8) !important;
+  background: var(--accent-gradient, var(--accent-blue)) !important;
   border-radius: 3px 3px 0 0 !important;
 }
 
-/* 2. 通用卡片與子面板邊距 */
+/* 2. 通用卡片與子面板邊距 (4 主題自適應) */
 .mobile-h5-app .wiki-subpanel {
   padding: 12px 12px 28px !important;
   box-sizing: border-box !important;
@@ -11496,12 +11496,12 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .wiki-card {
-  background: var(--bg-card, #111827) !important;
-  border: 1px solid var(--border-color, #1e293b) !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
   border-radius: 14px !important;
   padding: 14px !important;
   margin-bottom: 12px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
   box-sizing: border-box !important;
   width: 100% !important;
 }
@@ -11516,13 +11516,13 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .wiki-card-title {
   font-size: 14.5px !important;
   font-weight: 700 !important;
-  color: var(--text-primary, #f8fafc) !important;
+  color: var(--text-primary) !important;
   line-height: 1.3 !important;
 }
 
 .mobile-h5-app .wiki-card-desc {
   font-size: 12px !important;
-  color: var(--text-secondary, #94a3b8) !important;
+  color: var(--text-secondary) !important;
   line-height: 1.5 !important;
   margin-bottom: 10px !important;
 }
@@ -11533,6 +11533,9 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border-radius: 8px !important;
   margin-bottom: 10px !important;
   line-height: 1.4 !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  color: var(--text-secondary) !important;
 }
 
 /* 3. ⚡ Sub-Tab 1: 主技能數值庫 */
@@ -11568,13 +11571,13 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border-radius: 18px !important;
   white-space: nowrap !important;
   flex-shrink: 0 !important;
-  background: var(--bg-card, #111827) !important;
-  border: 1px solid var(--border-color, #1e293b) !important;
-  color: var(--text-secondary, #94a3b8) !important;
+  background: var(--bg-card-inner, var(--bg-card)) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
 }
 
 .mobile-h5-app .wiki-pill-btn.active {
-  background: var(--accent-gradient, #38bdf8) !important;
+  background: var(--accent-gradient, var(--accent-blue)) !important;
   color: #ffffff !important;
   border-color: transparent !important;
 }
@@ -11586,8 +11589,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .wiki-skill-card {
-  background: var(--bg-card, #111827) !important;
-  border: 1px solid var(--border-color, #1e293b) !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
   border-radius: 14px !important;
   padding: 13px !important;
   box-sizing: border-box !important;
@@ -11615,7 +11618,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .skill-name {
   font-size: 14.5px !important;
   font-weight: 700 !important;
-  color: var(--text-primary, #f8fafc) !important;
+  color: var(--text-primary) !important;
 }
 
 .mobile-h5-app .skill-category-badge {
@@ -11627,7 +11630,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .skill-desc {
   font-size: 12px !important;
   line-height: 1.45 !important;
-  color: var(--text-secondary, #94a3b8) !important;
+  color: var(--text-secondary) !important;
   margin-bottom: 8px !important;
 }
 
@@ -11646,13 +11649,14 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04)) !important;
-  border: 1px solid var(--border-color-subtle, var(--border-color)) !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color-subtle) !important;
 }
 
 .mobile-h5-app .skill-level-chip .level-tag {
   font-size: 9.5px !important;
-  opacity: 0.8 !important;
+  opacity: 0.85 !important;
+  color: var(--text-secondary) !important;
 }
 
 .mobile-h5-app .skill-level-chip .level-val {
@@ -11660,6 +11664,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   font-weight: 700 !important;
   font-family: monospace, -apple-system !important;
   white-space: nowrap !important;
+  color: var(--text-primary) !important;
 }
 
 .mobile-h5-app .stack-selector-row {
@@ -11690,6 +11695,15 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border-radius: 6px !important;
   white-space: nowrap !important;
   flex-shrink: 0 !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .stack-chip-btn.active {
+  background: var(--accent-gradient, var(--accent-blue)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
 }
 
 .mobile-h5-app .wiki-toggle-detail-btn {
@@ -11699,6 +11713,9 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border-radius: 8px !important;
   text-align: center !important;
   margin-top: 8px !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--accent-blue) !important;
 }
 
 /* 4. 🧩 Sub-Tab 2: 副技能與性格指南 */
@@ -11707,9 +11724,10 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   -webkit-overflow-scrolling: touch !important;
   scrollbar-width: none !important;
   border-radius: 8px !important;
-  border: 1px solid var(--border-color, #1e293b) !important;
+  border: 1px solid var(--border-color) !important;
   width: 100% !important;
   box-sizing: border-box !important;
+  background: var(--bg-card) !important;
 }
 
 .mobile-h5-app .wiki-table-wrapper::-webkit-scrollbar {
@@ -11732,6 +11750,18 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   white-space: normal !important;
 }
 
+.mobile-h5-app .wiki-mini-table th,
+.mobile-h5-app .wiki-data-table th {
+  background: var(--bg-table-th, var(--bg-card-inner)) !important;
+  color: var(--text-th, var(--text-primary)) !important;
+}
+
+.mobile-h5-app .wiki-mini-table td,
+.mobile-h5-app .wiki-data-table td {
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border-color-subtle) !important;
+}
+
 .mobile-h5-app #wiki-subpanel-subskills .wiki-data-table {
   min-width: 460px !important;
 }
@@ -11751,6 +11781,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .matrix-calc-code {
   font-size: 10px !important;
   padding: 1px 4px !important;
+  background: var(--bg-card-inner) !important;
+  color: var(--text-primary) !important;
 }
 
 /* 5. 🎓 Sub-Tab 3: 培育與評級指南 */
@@ -11761,8 +11793,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .strategy-item {
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.03)) !important;
-  border: 1px solid var(--border-color-subtle, var(--border-color)) !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color-subtle) !important;
   border-radius: 10px !important;
   padding: 10px 12px !important;
 }
@@ -11804,13 +11836,15 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .rating-col-title {
   font-size: 12.5px !important;
   font-weight: 700 !important;
+  color: var(--text-primary) !important;
   margin-bottom: 6px !important;
 }
 
 .mobile-h5-app .rating-item {
   padding: 6px 8px !important;
   gap: 8px !important;
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.03)) !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color-subtle) !important;
   border-radius: 8px !important;
   margin-bottom: 4px !important;
 }
@@ -11824,10 +11858,12 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 
 .mobile-h5-app .rating-item-name {
   font-size: 12px !important;
+  color: var(--text-primary) !important;
 }
 
 .mobile-h5-app .rating-item-detail {
   font-size: 11px !important;
+  color: var(--text-secondary) !important;
 }
 
 .mobile-h5-app .calc-inputs-row {
@@ -11840,13 +11876,17 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   width: 100% !important;
 }
 
+.mobile-h5-app .calc-label {
+  color: var(--text-primary) !important;
+}
+
 .mobile-h5-app .calc-input-num {
   width: 100% !important;
   box-sizing: border-box !important;
   padding: 8px 10px !important;
   font-size: 13px !important;
   border-radius: 8px !important;
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.05)) !important;
+  background-color: var(--bg-input, var(--bg-card-inner)) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
 }
@@ -11858,7 +11898,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   background-position: right 18px center !important;
   font-size: 12px !important;
   border-radius: 8px !important;
-  background-color: var(--bg-card-inner, rgba(255, 255, 255, 0.05)) !important;
+  background-color: var(--bg-input, var(--bg-card-inner)) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
 }
@@ -11868,21 +11908,28 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   padding: 12px !important;
   border-radius: 10px !important;
   text-align: center !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color-subtle) !important;
 }
 
 .mobile-h5-app .calc-result-label {
   font-size: 11.5px !important;
+  color: var(--text-secondary) !important;
 }
 
 .mobile-h5-app .calc-result-val {
   font-size: 22px !important;
   font-weight: 800 !important;
   margin: 4px 0 !important;
+  color: var(--accent-blue) !important;
 }
 
 .mobile-h5-app .calc-result-badge {
   font-size: 11.5px !important;
   padding: 3px 10px !important;
+  background: var(--bg-card) !important;
+  color: var(--text-secondary) !important;
+  border: 1px solid var(--border-color-subtle) !important;
 }
 
 /* 6. 🥗 Sub-Tab 4: 食材產量天梯榜 */
@@ -11907,6 +11954,15 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   padding: 7px 0 !important;
   font-size: 12px !important;
   border-radius: 8px !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .ladder-mode-btn.active {
+  background: var(--accent-gradient, var(--accent-blue)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
 }
 
 .mobile-h5-app .wiki-coordinate-ladder-wrapper {
@@ -11942,12 +11998,13 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .ladder-card {
-  background: var(--bg-card, #111827) !important;
-  border: 1px solid var(--border-color, #1e293b) !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
   border-radius: 12px !important;
   padding: 12px !important;
   margin-bottom: 8px !important;
   box-sizing: border-box !important;
+  color: var(--text-primary) !important;
 }
 
 /* 7. 🫐 Sub-Tab 5: 樹果與食材能量 */
@@ -11955,8 +12012,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   padding: 12px 12px 14px !important;
   border-radius: 12px !important;
   margin-bottom: 12px !important;
-  background: var(--bg-card, #111827) !important;
-  border: 1px solid var(--border-color, #1e293b) !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
 }
 
 .mobile-h5-app .values-section-header {
@@ -11981,6 +12038,10 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   align-items: center !important;
 }
 
+.mobile-h5-app .berry-control-label {
+  color: var(--text-secondary) !important;
+}
+
 .mobile-h5-app .berry-slider {
   flex: 1 !important;
   margin-left: 10px !important;
@@ -12000,8 +12061,9 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   align-items: center !important;
   text-align: center !important;
   gap: 3px !important;
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04)) !important;
-  border: 1px solid var(--border-color-subtle, var(--border-color)) !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  color: var(--text-primary) !important;
 }
 
 .mobile-h5-app .values-card-icon {
@@ -12016,13 +12078,14 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   max-width: 100% !important;
+  color: var(--text-primary) !important;
 }
 
 .mobile-h5-app .values-card-energy {
   font-size: 12px !important;
   font-weight: 700 !important;
   font-family: monospace, -apple-system !important;
-  color: var(--accent-blue, #38bdf8) !important;
+  color: var(--accent-blue) !important;
 }
 
 
