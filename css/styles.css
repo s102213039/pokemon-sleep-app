@@ -11639,6 +11639,22 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   grid-template-columns: repeat(4, 1fr) !important;
   gap: 4px !important;
   margin-top: 6px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .skill-levels-grid.grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .skill-levels-grid.grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .skill-levels-grid.grid-cols-4 {
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 4px !important;
 }
 
 .mobile-h5-app .skill-level-chip {
@@ -11651,12 +11667,15 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   justify-content: center !important;
   background: var(--bg-card-inner) !important;
   border: 1px solid var(--border-color-subtle) !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .skill-level-chip .level-tag {
   font-size: 9.5px !important;
   opacity: 0.85 !important;
   color: var(--text-secondary) !important;
+  line-height: 1.2 !important;
 }
 
 .mobile-h5-app .skill-level-chip .level-val {
@@ -11665,6 +11684,17 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   font-family: monospace, -apple-system !important;
   white-space: nowrap !important;
   color: var(--text-primary) !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.mobile-h5-app .skill-levels-grid.grid-cols-3 .skill-level-chip {
+  padding: 6px 4px !important;
+}
+
+.mobile-h5-app .skill-levels-grid.grid-cols-3 .skill-level-chip .level-val {
+  font-size: 11.5px !important;
 }
 
 .mobile-h5-app .stack-selector-row {

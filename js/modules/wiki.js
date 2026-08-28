@@ -11504,6 +11504,23 @@
     `;}).join('');
   }
 
+  // 智慧動態計算技能等級卡片網格欄數 (短文字 4 欄，長文字/複合效果 3 欄)
+  function calcSkillGridClass(skill, sampleStrings) {
+    if (skill.hasMoonlightChips || skill.hasLunarPrayerMatrix || skill.hasDualValues) {
+      return 'grid-cols-3';
+    }
+    if (skill.ranges) {
+      return 'grid-cols-3';
+    }
+    if (sampleStrings && Array.isArray(sampleStrings) && sampleStrings.length > 0) {
+      const maxLen = Math.max(...sampleStrings.map(s => (s ? String(s).length : 0)), 0);
+      if (maxLen >= 8) {
+        return 'grid-cols-3';
+      }
+    }
+    return 'grid-cols-4';
+  }
+
   // 渲染技能卡片 (精簡緊湊設計，蓄力與屬性加速採用互動式切換)
   function renderSkillsCards(skills) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
@@ -11524,6 +11541,8 @@
       const unitLabel = isEN ? (skill.unit_en || (skill.unit.includes('能量') ? ' Strength' : (skill.unit.includes('食材') ? ' Ingredients' : (skill.unit.includes('次') ? ' Helps' : (skill.unit.includes('點') ? ' Energy' : skill.unit))))) : skill.unit;
 
       if (skill.hasStackMatrix) {
+        const sampleStrings = skill.matrix[10].vals.map(v => `${v.toLocaleString()} ${unitLabel}`);
+        const gridColClass = calcSkillGridClass(skill, sampleStrings);
         valuesHtml = `
           <div class="skill-interactive-section">
             <div class="stack-selector-row">
@@ -11536,7 +11555,7 @@
             </div>
 
             <!-- 即時動態等級卡片 (預設為 10次蓄力) -->
-            <div id="charge-stock-dynamic-levels" class="skill-levels-grid" style="margin-top: 8px;">
+            <div id="charge-stock-dynamic-levels" class="skill-levels-grid ${gridColClass}" style="margin-top: 8px;">
               ${skill.matrix[10].vals.map((v, i) => `
                 <div class="skill-level-chip highlight-gold">
                   <span class="level-tag">Lv.${i + 1}</span>
@@ -11573,6 +11592,8 @@
           </div>
         `;
       } else if (skill.hasTypeKindsMatrix) {
+        const sampleStrings = skill.matrix[5].vals.map(v => `${v} ${isEN ? 'Helps' : '次幫忙'}`);
+        const gridColClass = calcSkillGridClass(skill, sampleStrings);
         valuesHtml = `
           <div class="skill-interactive-section">
             <div class="stack-selector-row">
@@ -11585,7 +11606,7 @@
             </div>
 
             <!-- 即時動態等級卡片 (預設為 5種類) -->
-            <div id="helper-boost-dynamic-levels" class="skill-levels-grid" style="margin-top: 8px;">
+            <div id="helper-boost-dynamic-levels" class="skill-levels-grid ${gridColClass}" style="margin-top: 8px;">
               ${skill.matrix[5].vals.map((v, i) => `
                 <div class="skill-level-chip highlight-blue">
                   <span class="level-tag">Lv.${i + 1}</span>
@@ -11622,8 +11643,10 @@
           </div>
         `;
       } else if (skill.hasMoonlightChips) {
+        const mlStrings = skill.selfValues.map((v, i) => isEN ? `Self ${v} · Ally +${skill.teamValues[i]}${unitLabel}` : `自 ${v} · 他+${skill.teamValues[i]}${unitLabel}`);
+        const gridColClass = calcSkillGridClass(skill, mlStrings);
         valuesHtml = `
-          <div class="skill-levels-grid">
+          <div class="skill-levels-grid ${gridColClass}">
             ${skill.selfValues.map((v, i) => `
               <div class="skill-level-chip">
                 <span class="level-tag">Lv.${i + 1}</span>
@@ -11633,8 +11656,10 @@
           </div>
         `;
       } else if (skill.hasLunarPrayerMatrix) {
+        const lpStrings = skill.healValues.map((v, i) => isEN ? `All ${v} · Berries ${skill.berryRange[i]}` : `全隊 ${v}點 · 樹果 ${skill.berryRange[i]}`);
+        const gridColClass = calcSkillGridClass(skill, lpStrings);
         valuesHtml = `
-          <div class="skill-levels-grid">
+          <div class="skill-levels-grid ${gridColClass}">
             ${skill.healValues.map((v, i) => `
               <div class="skill-level-chip">
                 <span class="level-tag">Lv.${i + 1}</span>
@@ -11670,8 +11695,10 @@
           </div>
         `;
       } else if (skill.hasIngredientDrawMatrix) {
+        const ingStrings = skill.values.map(v => `${v} ${unitLabel}`);
+        const gridColClass = calcSkillGridClass(skill, ingStrings);
         valuesHtml = `
-          <div class="skill-levels-grid">
+          <div class="skill-levels-grid ${gridColClass}">
             ${skill.values.map((v, i) => `
               <div class="skill-level-chip">
                 <span class="level-tag">Lv.${i + 1}</span>
@@ -11726,8 +11753,10 @@
       } else if (skill.hasDualValues) {
         const selfShort = isEN ? 'Self' : (skill.selfShort || '自');
         const teamShort = isEN ? 'Ally' : (skill.teamShort || '他');
+        const dualStrings = skill.selfValues.map((v, i) => `${selfShort} ${v} + ${teamShort} ${skill.teamValues[i]}${unitLabel}`);
+        const gridColClass = calcSkillGridClass(skill, dualStrings);
         valuesHtml = `
-          <div class="skill-levels-grid">
+          <div class="skill-levels-grid ${gridColClass}">
             ${skill.selfValues.map((v, i) => `
               <div class="skill-level-chip">
                 <span class="level-tag">Lv.${i + 1}</span>
@@ -11737,8 +11766,10 @@
           </div>
         `;
       } else if (skill.ranges) {
+        const rangeStrings = skill.ranges.map(r => `${r.min.toLocaleString()}~${r.max.toLocaleString()}${unitLabel}`);
+        const gridColClass = calcSkillGridClass(skill, rangeStrings);
         valuesHtml = `
-          <div class="skill-levels-grid">
+          <div class="skill-levels-grid ${gridColClass}">
             ${skill.ranges.map((r, i) => `
               <div class="skill-level-chip">
                 <span class="level-tag">Lv.${i + 1}</span>
@@ -11748,8 +11779,10 @@
           </div>
         `;
       } else if (skill.values) {
+        const valStrings = skill.values.map(v => `${typeof v === 'number' ? v.toLocaleString() : v}${unitLabel}`);
+        const gridColClass = calcSkillGridClass(skill, valStrings);
         valuesHtml = `
-          <div class="skill-levels-grid">
+          <div class="skill-levels-grid ${gridColClass}">
             ${skill.values.map((v, i) => `
               <div class="skill-level-chip">
                 <span class="level-tag">Lv.${i + 1}</span>
