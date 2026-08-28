@@ -12001,12 +12001,14 @@
                 <tbody>
                   ${TRIGGER_CHANCE_MATRIX.map(row => `
                     <tr>
-                      <td style="vertical-align: middle; text-align: center;">
-                        <div style="display: inline-flex; align-items: center; justify-content: center; gap: 4px; flex-wrap: wrap;">
+                      <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
+                        <div style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; flex-wrap: nowrap; white-space: nowrap;">
                           ${row.subskills && row.subskills.length > 0 
                             ? row.subskills.map(s => {
-                                const sName = isEN ? (window.I18N.getSubSkillName(s.name) || s.name) : s.name;
-                                return `<span class="wiki-skill-badge skill-badge-${s.color}">${sName}</span>`;
+                                const sName = isEN 
+                                  ? (s.name.includes('M') ? 'Trigger M' : 'Trigger S') 
+                                  : s.name.replace('技能機率提升', '機率提升');
+                                return `<span class="wiki-skill-badge skill-badge-${s.color}" style="white-space: nowrap;">${sName}</span>`;
                               }).join('') 
                             : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`}
                         </div>
