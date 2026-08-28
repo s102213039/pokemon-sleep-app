@@ -12113,6 +12113,16 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border-radius: 5px !important;
 }
 
+.mobile-h5-app #lunar-prayer-table .wiki-mini-table {
+  min-width: 440px !important;
+}
+
+.mobile-h5-app #lunar-prayer-table th,
+.mobile-h5-app #lunar-prayer-table td {
+  padding: 5px 4px !important;
+  font-size: 10.5px !important;
+}
+
 .mobile-h5-app .wiki-skill-badge {
   font-size: 10.5px !important;
   padding: 2px 6px !important;

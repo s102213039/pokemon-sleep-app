@@ -197,8 +197,8 @@
       icon: "🌑",
       category: "special",
       catName: "神獸與特殊",
-      desc: "達克萊伊專屬招式。卡比獸能量超大幅增加，但非惡屬性隊友活力下降。",
-      desc_en: "Darkrai exclusive. Huge Strength boost; non-Dark allies lose energy.",
+      desc: "卡比獸能量超大幅增加，但非惡屬性隊友活力下降。",
+      desc_en: "Huge Strength boost; non-Dark allies lose energy.",
       maxLevel: 6,
       values: [2640, 3753, 5178, 7149, 9870, 13638],
       penaltyNote: "⚠️ 副作用：非惡屬性隊友全員活力 -12",
@@ -229,40 +229,8 @@
       desc_en: "Obtains 1 ingredient type exclusively from this Pokémon's own ingredient pool (Lv.1/Lv.30/Lv.60).",
       maxLevel: 7,
       values: [6, 8, 11, 14, 17, 21, 24],
-      specialNote: "💡 食材精選機制：不同於「食材獲取S」隨機給全圖鑑食材，「食材精選S」僅會鎖定抽取「該隻發動寶可夢自身的專屬食材池」。",
-      specialNote_en: "💡 Ingr. Select Rule: Draws 1 ingredient type only from this Pokémon's own ingredient pool, unlike Ingr. Magnet S.",
-      hasIngredientDrawMatrix: true,
-      unit: " 個食材",
-      unit_en: " Ingredients"
-    },
-    {
-      id: "super_luck_s",
-      name: "超幸運（食材精選S）",
-      icon: "🍀",
-      category: "ingredient",
-      catName: "食材與料理",
-      desc: "黑暗鴉/烏鴉頭頭專屬。從自身食材中隨機抽取 1 種；少數情況下會觸發大獎，獲得大量夢之碎片！",
-      desc_en: "Murkrow / Honchkrow exclusive. Draws 1 own ingredient; rarely triggers a jackpot of massive Dream Shards!",
-      maxLevel: 7,
-      values: [6, 8, 11, 14, 17, 21, 24],
-      specialNote: "✨ 超幸運大獎：發動時有機率不給食材，改為爆發獲得大量「夢之碎片」！",
-      specialNote_en: "✨ Jackpot: Has a chance to grant massive Dream Shards instead of ingredients!",
-      hasIngredientDrawMatrix: true,
-      unit: " 個食材",
-      unit_en: " Ingredients"
-    },
-    {
-      id: "hyper_cutter_s",
-      name: "怪力鉗（食材精選S）",
-      icon: "🦀",
-      category: "ingredient",
-      catName: "食材與料理",
-      desc: "大嘴娃專屬。從自身食材中隨機抽取 1 種；有時候會額外爆發獲得更多的食材！",
-      desc_en: "Mawile exclusive. Draws 1 own ingredient; sometimes bursts extra amounts of ingredients!",
-      maxLevel: 7,
-      values: [6, 8, 11, 14, 17, 21, 24],
-      specialNote: "✨ 怪力鉗爆發：發動時有機會額外爆發獲得更多數量的食材！",
-      specialNote_en: "✨ Extra Burst: Chance to yield bonus ingredient quantities upon trigger!",
+      specialNote: "💡 機制：僅鎖定抽取發動寶可夢自身專屬食材池。✨ 特殊型態：超幸運有機率爆發大量夢之碎片；怪力鉗有機率爆發更多食材。",
+      specialNote_en: "💡 Rule: Draws 1 ingredient type only from this Pokémon's own ingredient pool. ✨ Variants: Super Luck may grant Dream Shards; Hyper Cutter may grant bonus ingredients.",
       hasIngredientDrawMatrix: true,
       unit: " 個食材",
       unit_en: " Ingredients"
@@ -314,8 +282,8 @@
       icon: "⚡",
       category: "special",
       catName: "神獸與特殊",
-      desc: "雷公/炎帝/水君專屬。隊伍同屬寶可夢立刻幫忙，同屬不同種類越多越強！",
-      desc_en: "Legendary exclusive. All same-type allies help; scales with unique species!",
+      desc: "隊伍同屬寶可夢立刻幫忙，同屬不同種類越多越強！",
+      desc_en: "All same-type allies help; scales with unique species!",
       maxLevel: 6,
       hasTypeKindsMatrix: true,
       matrix: [
@@ -335,8 +303,8 @@
       icon: "🫐",
       category: "special",
       catName: "神獸與特殊",
-      desc: "帕路奇亞專屬招式。獲得自身產出的樹果，並額外獲得隊友撿來的樹果。",
-      desc_en: "Palkia exclusive. Gathers extra berries from user and allies.",
+      desc: "獲得自身產出的樹果，並額外獲得隊友撿來的樹果。",
+      desc_en: "Gathers extra berries from user and allies.",
       maxLevel: 6,
       hasDualValues: true,
       selfShort: "自",
@@ -352,8 +320,8 @@
       icon: "🎭",
       category: "special",
       catName: "神獸與特殊",
-      desc: "謎擬Ｑ專屬招式。獲得自身與隊友的樹果。大成功時獲得 3 倍樹果。",
-      desc_en: "Mimikyu exclusive. Gathers berries from user and allies; 3x on Extra Tasty.",
+      desc: "獲得自身與隊友的樹果。大成功時獲得 3 倍樹果。",
+      desc_en: "Gathers berries from user and allies; 3x on Extra Tasty.",
       maxLevel: 6,
       hasDualValues: true,
       selfShort: "自",
@@ -447,8 +415,8 @@
       icon: "🌙",
       category: "energy_heal",
       catName: "活力系",
-      desc: "月亮伊布 (#197) 專屬。自己回復活力；大成功時額外隨機讓 1 隻隊友回復活力。",
-      desc_en: "Umbreon exclusive. Restores self energy; heals 1 ally on Extra Tasty.",
+      desc: "自己回復活力；大成功時額外隨機讓 1 隻隊友回復活力。",
+      desc_en: "Restores self energy; heals 1 ally on Extra Tasty.",
       maxLevel: 6,
       hasMoonlightChips: true,
       selfValues: [12, 16, 21, 26, 33, 43],
@@ -464,20 +432,20 @@
       icon: "🌠",
       category: "energy_heal",
       catName: "活力系",
-      desc: "克雷色利亞 (#488) 專屬。全隊回復活力，並額外獲得隊友撿來的樹果。",
-      desc_en: "Cresselia exclusive. Restores team energy and gathers bonus berries from allies.",
+      desc: "全隊回復活力，並額外獲得隊友撿來的樹果。",
+      desc_en: "Restores team energy and gathers bonus berries from allies.",
       maxLevel: 6,
       hasLunarPrayerMatrix: true,
       healValues: [3, 4, 5, 7, 9, 11],
-      berryRange: ["5~16", "9~22", "13~28", "17~34", "21~37", "25~41"],
-      specialNote: "🔮 額外樹果：依隊伍中超能屬性隊友種類數（1~5 種）加成獲取",
-      specialNote_en: "🔮 Bonus Berries: Scales with unique Psychic species (1~5)",
+      berryRange: ["5~22", "9~31", "13~40", "17~49", "21~58", "25~68"],
+      specialNote: "🔮 額外樹果公式：自身基礎樹果 + 隊友額外樹果 × 其他超能隊友種類數（滿配 5 種類時 Lv.6 為 32+9*4=68 顆）",
+      specialNote_en: "🔮 Berry Formula: Base + Ally Bonus × Other Psychic Species (Lv.6 with 5 species is 32+9*4=68)",
       berryMatrix: [
-        { kinds: "1 種類", kinds_en: "1 Species", vals: ["5+1", "9+1", "13+1", "17+1", "21+1", "25+1"] },
-        { kinds: "2 種類", kinds_en: "2 Species", vals: ["7+1", "12+1", "17+1", "19+2", "24+2", "29+2"] },
-        { kinds: "3 種類", kinds_en: "3 Species", vals: ["9+1", "15+1", "18+2", "25+2", "27+3", "30+4"] },
-        { kinds: "4 種類", kinds_en: "4 Species", vals: ["12+1", "16+2", "20+3", "28+3", "28+5", "31+6"] },
-        { kinds: "5 種類", kinds_en: "5 Species", vals: ["14+2", "19+3", "24+4", "29+5", "30+7", "32+9"] }
+        { kinds: "1種", kinds_en: "1 Species", vals: ["5", "9", "13", "17", "21", "25"] },
+        { kinds: "2種", kinds_en: "2 Species", vals: ["7+1*1=8", "12+1*1=13", "17+1*1=18", "19+2*1=21", "24+2*1=26", "29+2*1=31"] },
+        { kinds: "3種", kinds_en: "3 Species", vals: ["9+1*2=11", "15+1*2=17", "18+2*2=22", "25+2*2=29", "27+3*2=33", "30+4*2=38"] },
+        { kinds: "4種", kinds_en: "4 Species", vals: ["12+1*3=15", "16+2*3=22", "20+3*3=29", "28+3*3=37", "28+5*3=43", "31+6*3=49"] },
+        { kinds: "5種", kinds_en: "5 Species", vals: ["14+2*4=22", "19+3*4=31", "24+4*4=40", "29+5*4=49", "30+7*4=58", "32+9*4=68"] }
       ],
       unit: " 點活力",
       unit_en: " Energy"
@@ -489,8 +457,8 @@
       icon: "🧬",
       category: "special",
       catName: "神獸與特殊",
-      desc: "百變怪專屬。隨機複製隊伍中 1 隻隊友的主技能發動。",
-      desc_en: "Ditto exclusive. Copies and executes a random teammate's main skill.",
+      desc: "隨機複製隊伍中 1 隻隊友的主技能發動。",
+      desc_en: "Copies and executes a random teammate's main skill.",
       maxLevel: 7,
       unit: "比照複製招式等級",
       unit_en: "Matches Target Lv."
@@ -502,8 +470,8 @@
       icon: "🎪",
       category: "special",
       catName: "神獸與特殊",
-      desc: "魔牆人偶專屬。隨機複製隊伍中 1 隻隊友的主技能發動。",
-      desc_en: "Mr. Mime exclusive. Copies and executes a random teammate's main skill.",
+      desc: "隨機複製隊伍中 1 隻隊友的主技能發動。",
+      desc_en: "Copies and executes a random teammate's main skill.",
       maxLevel: 7,
       unit: "比照複製招式等級",
       unit_en: "Matches Target Lv."
@@ -515,8 +483,8 @@
       icon: "☝️",
       category: "special",
       catName: "神獸與特殊",
-      desc: "波克比家族等專屬。從全主技能庫中隨機抽選 1 種發動。",
-      desc_en: "Togepi family exclusive. Randomly triggers any main skill in the game.",
+      desc: "從全主技能庫中隨機抽選 1 種發動。",
+      desc_en: "Randomly triggers any main skill in the game.",
       maxLevel: 7,
       unit: "Lv.1~7 隨機發動",
       unit_en: "Random Lv.1~7 Trigger"
@@ -11727,10 +11695,10 @@
         valuesHtml = `
           ${renderSkillHeroAndStepper(skill.id, lpStrings, unitLabel, 6)}
 
-          <!-- 展開完整 1~5 種類超能力隊友樹果對照表按鈕 -->
+          <!-- 展開完整 1~5 種類隊友樹果對照表按鈕 -->
           <div style="margin-top: 6px;">
             <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="lunar-prayer-table" onclick="window.WikiDB.toggleDetail('lunar-prayer-table')">
-              ${isEN ? '📊 Toggle 1~5 Psychic Types Table' : '📊 展開 / 收合 1~5 種類超能樹果表'}
+              ${isEN ? '📊 Toggle 1~5 Species Berry Table' : '📊 展開 / 收合 1~5 種類隊友樹果表'}
             </button>
           </div>
 
@@ -11738,15 +11706,15 @@
             <table class="wiki-mini-table">
               <thead>
                 <tr>
-                  <th>${isEN ? 'Psychic Types' : '超能種類'}</th>
+                  <th style="white-space: nowrap;">${isEN ? 'Species' : '種類'}</th>
                   ${[1, 2, 3, 4, 5, 6].map(lv => `<th>Lv.${lv}</th>`).join('')}
                 </tr>
               </thead>
               <tbody>
                 ${skill.berryMatrix.map((m, idx) => `
                   <tr class="${idx === 4 ? 'row-highlight' : ''}">
-                    <td class="font-bold text-accent">${isEN ? (m.kinds_en || m.kinds) : m.kinds}</td>
-                    ${m.vals.map(v => `<td>${v} ${isEN ? 'Berries' : '顆'}</td>`).join('')}
+                    <td class="font-bold text-accent" style="white-space: nowrap;">${isEN ? (m.kinds_en || m.kinds) : m.kinds}</td>
+                    ${m.vals.map(v => `<td style="font-size: 10.5px; white-space: nowrap;">${v}${v.includes('=') ? '' : (isEN ? ' Berries' : ' 顆')}</td>`).join('')}
                   </tr>
                 `).join('')}
               </tbody>
@@ -11780,8 +11748,9 @@
                     <td style="text-align: center; padding: 5px 4px;">
                       <img src="${p.icon}" width="30" height="30" style="object-fit: contain; vertical-align: middle; border-radius: 6px;" alt="${isEN ? p.name_en : p.name}" title="${isEN ? (p.family_en || p.name_en) : (p.family || p.name)}">
                     </td>
-                    <td style="text-align: center; white-space: nowrap; padding: 5px 6px;">
+                    <td style="text-align: center; padding: 5px 6px;">
                       <span class="wiki-skill-badge skill-badge-blue">${isEN ? p.skill_en : p.skill}</span>
+                      ${(p.id === 430 || p.id === 303) ? `<div style="font-size: 9.5px; color: var(--color-note-highlight, #d97706); margin-top: 3px; line-height: 1.2;">${isEN ? p.extraEffect_en : p.extraEffect}</div>` : ''}
                     </td>
                     <td style="text-align: center; padding: 5px 4px;">
                       <div style="display: inline-flex; align-items: center; gap: 4px; justify-content: center; flex-direction: row; flex-wrap: nowrap;">
