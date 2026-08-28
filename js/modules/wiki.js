@@ -11984,10 +11984,14 @@
               <span class="wiki-card-icon">🧮</span>
               <h3 class="wiki-card-title">${isEN ? 'Main Skill Trigger Chance Matrix' : '主技能發動機率矩陣'}</h3>
             </div>
-            <p class="wiki-card-desc">${isEN ? 'Calculated via official in-game formula: <code>(1 + Sub-Skill %) × Nature Multiplier = Final Multiplier</code>.' : '依據遊戲底層乘法公式：<code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>，展示所有組合狀況的計算過程與最終總倍率速查。'}</p>
+            <div class="wiki-rule-banner">
+              ${isEN 
+                ? '💡 <strong>Calculation Rule</strong>: <code>(1 + Sub-Skill %) × Nature Multiplier = Final Multiplier</code>.' 
+                : '💡 <strong>乘法公式</strong>：<code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>，為所有組合之總倍率速查。'}
+            </div>
 
             <!-- 速查對照表 -->
-            <div class="wiki-table-wrapper" style="margin-top: 14px;">
+            <div class="wiki-table-wrapper" style="margin-top: 10px;">
               <table class="wiki-data-table">
                 <thead>
                   <tr>
@@ -12074,6 +12078,11 @@
             <div class="wiki-card-header">
               <span class="wiki-card-icon">🧬</span>
               <h3 class="wiki-card-title">${isEN ? 'Nature 5-Stat Multiplier Table' : '性格五維屬性倍率表'}</h3>
+            </div>
+            <div class="wiki-rule-banner">
+              ${isEN 
+                ? '💡 <strong>Nature Impact</strong>: Natures directly modify Pokémon stats with enhanced bonuses and softened penalties.' 
+                : '💡 <strong>機制說明</strong>：性格直接修正寶可夢五維屬性，官方已全面調輕下降懲罰。'}
             </div>
             <div class="wiki-table-wrapper">
               <table class="wiki-data-table">
