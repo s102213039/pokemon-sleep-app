@@ -11425,11 +11425,11 @@
           </div>
         </div>
 
-        <!-- 區塊 2：食材基礎能量庫 (90 ~ 342) -->
-        <div class="values-horizontal-section" style="margin-top: 20px;">
+        <!-- 區塊 2：食材基礎庫 (90 ~ 342) -->
+        <div class="values-horizontal-section" style="margin-top: 8px;">
           <div class="values-section-header">
             <div class="values-section-title-group">
-              <span class="values-section-badge ing-badge">${isEN ? 'Ingredient Power' : '食材庫'}</span>
+              <span class="values-section-badge ing-badge">${isEN ? 'Ingredient Base Values' : '食材基礎庫'}</span>
             </div>
           </div>
 
@@ -12098,18 +12098,9 @@
           </div>
         </div>
 
-        <!-- 子分頁 4：樹果與食材基礎能量 (Image 1 實體化 - Berry & Ingredient Values) -->
+        <!-- 子分頁 4：樹果與食材基礎能量 (Berry & Ingredient Values) -->
         <div id="wiki-subpanel-values" class="wiki-subpanel ${currentWikiSubTab === 'values' ? 'active' : ''}" style="${currentWikiSubTab === 'values' ? 'display:block;' : 'display:none;'}">
-          <div class="wiki-card">
-            <div class="wiki-card-header">
-              <h3 class="wiki-card-title">${isEN ? 'Berry & Ingredient Base Power Table' : '樹果與食材基礎能量表'}</h3>
-            </div>
-            <p class="wiki-card-desc">${isEN ? 'Official in-game base power values for 18 Berries (24~35) and 19 Ingredients (90~342).' : '依據官方遊戲底層能量設定，完整展示 18 種屬性樹果基礎能量（24~35）與 19 種料理食材基礎能量（90~342）。'}</p>
-
-            <div style="margin-top: 20px;">
-              ${renderValuesBoard()}
-            </div>
-          </div>
+          ${renderValuesBoard()}
         </div>
 
         <!-- 子分頁 5：培育與評級指南 (Ratings & Growth) -->
