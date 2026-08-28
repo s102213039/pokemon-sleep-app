@@ -7601,7 +7601,7 @@ input[type="number"] {
   flex: 1;
   position: relative;
   height: 100%;
-  margin: 0 4px;
+  margin: 0 14px 0 4px;
 }
 
 .ladder-ruler-tick {
@@ -7612,6 +7612,14 @@ input[type="number"] {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.ladder-ruler-tick:first-child {
+  transform: translateX(-15%);
+}
+
+.ladder-ruler-tick:last-child {
+  transform: translateX(-85%);
 }
 
 .tick-label {
@@ -7686,7 +7694,7 @@ input[type="number"] {
   height: 100%;
   display: flex;
   align-items: center;
-  margin: 0 4px;
+  margin: 0 14px 0 4px;
 }
 
 .ladder-grid-lines {
@@ -8038,11 +8046,48 @@ input[type="number"] {
   color: var(--text-primary);
 }
 
+/* 智能邊緣防溢出 Tooltip 定位 */
+.ladder-node.align-right .ladder-node-tooltip {
+  left: auto !important;
+  right: -8px !important;
+  transform: none !important;
+}
+
+.ladder-node.align-left .ladder-node-tooltip {
+  left: -8px !important;
+  right: auto !important;
+  transform: none !important;
+}
+
+.ladder-node.align-center .ladder-node-tooltip {
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+}
+
 /* 第一行與第二行（最靠近頂部邊界）：浮窗改為向下展開，保證永遠在最高層且不被頂部卡片遮蔽裁切 */
 .ladder-track-row:first-of-type .ladder-node-tooltip,
 .ladder-track-row:nth-of-type(2) .ladder-node-tooltip {
   bottom: auto;
   top: calc(100% + 8px);
+}
+
+.ladder-track-row:first-of-type .ladder-node.align-right .ladder-node-tooltip,
+.ladder-track-row:nth-of-type(2) .ladder-node.align-right .ladder-node-tooltip {
+  bottom: auto !important;
+  top: calc(100% + 8px) !important;
+  left: auto !important;
+  right: -8px !important;
+  transform: none !important;
+}
+
+.ladder-track-row:first-of-type .ladder-node.align-left .ladder-node-tooltip,
+.ladder-track-row:nth-of-type(2) .ladder-node.align-left .ladder-node-tooltip {
+  bottom: auto !important;
+  top: calc(100% + 8px) !important;
+  left: -8px !important;
+  right: auto !important;
+  transform: none !important;
 }
 
 .ladder-node:hover .ladder-node-tooltip {
@@ -12910,11 +12955,19 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .ladder-ruler-scale {
-  margin: 0 2px !important;
+  margin: 0 14px 0 4px !important;
 }
 
 .mobile-h5-app .ladder-track-canvas {
-  margin: 0 2px !important;
+  margin: 0 14px 0 4px !important;
+}
+
+.mobile-h5-app .ladder-ruler-tick:first-child {
+  transform: translateX(-15%) !important;
+}
+
+.mobile-h5-app .ladder-ruler-tick:last-child {
+  transform: translateX(-85%) !important;
 }
 
 .mobile-h5-app .ladder-tail-standalone-container {

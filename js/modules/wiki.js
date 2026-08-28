@@ -11361,8 +11361,11 @@
                         dishBadgeClass = 'dish-badge-assist';
                       }
 
+                      const posPct = parseFloat(getPosPct(scaledCount));
+                      const alignClass = posPct > 55 ? 'align-right' : (posPct < 22 ? 'align-left' : 'align-center');
+
                       return `
-                        <div class="ladder-node ${isTopNode ? 'node-top1' : ''} recipe-${v.recipe.toLowerCase()}" 
+                        <div class="ladder-node ${isTopNode ? 'node-top1' : ''} ${alignClass} recipe-${v.recipe.toLowerCase()}" 
                              data-pkm-group="${p.name}"
                              data-pkm="${p.name}" 
                              data-recipe="${v.recipe}"
@@ -11470,8 +11473,10 @@
                             const scaledCount = Math.round(v.count * mult);
                             const isTopNode = v.isTop || (p.isTop && v.recipe === p.recipe);
                             const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
+                            const tailPosPct = parseFloat(getTailPct(scaledCount));
+                            const tailAlignClass = tailPosPct > 55 ? 'align-right' : (tailPosPct < 25 ? 'align-left' : 'align-center');
                             return `
-                              <div class="ladder-node ${isTopNode ? 'node-top1' : ''} recipe-${v.recipe.toLowerCase()}" 
+                              <div class="ladder-node ${isTopNode ? 'node-top1' : ''} ${tailAlignClass} recipe-${v.recipe.toLowerCase()}" 
                                    data-pkm-group="${p.name}"
                                    data-pkm="${p.name}" 
                                    data-recipe="${v.recipe}"
