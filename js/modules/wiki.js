@@ -11345,8 +11345,7 @@
         <div class="values-horizontal-section">
           <div class="values-section-header">
             <div class="values-section-title-group">
-              <span class="values-section-badge berry-badge">${isEN ? 'Berry Base Power' : '樹果能量庫'}</span>
-              <span class="values-section-sub">${isEN ? 'Base 1x (Blue) · Favorite 2x (Gold)' : '基礎 1x（藍）· 順果 2x（金）'}</span>
+              <span class="values-section-badge berry-badge">${isEN ? 'Berry Power' : '樹果能量庫'}</span>
             </div>
 
             <!-- 等級滑桿與島嶼加成控制器 -->
@@ -11388,11 +11387,10 @@
         </div>
 
         <!-- 區塊 2：食材基礎能量庫 (90 ~ 342) -->
-        <div class="values-horizontal-section">
+        <div class="values-horizontal-section" style="margin-top: 20px;">
           <div class="values-section-header">
             <div class="values-section-title-group">
-              <span class="values-section-badge ing-badge">${isEN ? 'Ingredient Base Power' : '食材基礎能量庫'}</span>
-              <span class="values-section-sub">${isEN ? 'Ingredient Base Power (90 ➔ 342)' : '食材基礎能量一覽'}</span>
+              <span class="values-section-badge ing-badge">${isEN ? 'Ingredient Power' : '食材庫'}</span>
             </div>
           </div>
 
