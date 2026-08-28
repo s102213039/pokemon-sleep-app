@@ -41,8 +41,8 @@
         { name: '萌綠大豆', name_en: 'Greengrass Soybeans', icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' },
         { name: '火辣香草', name_en: 'Fiery Herb', icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }
       ],
-      extraEffect: '✨ 機率獲得大量夢之碎片',
-      extraEffect_en: '✨ Chance to grant massive Dream Shards'
+      extraEffect: '機率獲得大量夢之碎片',
+      extraEffect_en: 'Chance to grant massive Dream Shards'
     },
     {
       id: 303,
@@ -58,8 +58,8 @@
         { name: '萌綠玉米', name_en: 'Greengrass Corn', icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' },
         { name: '好眠番茄', name_en: 'Snoozy Tomato', icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }
       ],
-      extraEffect: '✨ 機率額外獲得更多食材',
-      extraEffect_en: '✨ Chance to gain bonus ingredient quantity'
+      extraEffect: '機率額外獲得更多食材',
+      extraEffect_en: 'Chance to gain bonus ingredient quantity'
     },
     {
       id: 558,
@@ -201,8 +201,8 @@
       desc_en: "Huge Strength boost; non-Dark allies lose energy.",
       maxLevel: 6,
       values: [2640, 3753, 5178, 7149, 9870, 13638],
-      penaltyNote: "⚠️ 副作用：非惡屬性隊友全員活力 -12",
-      penaltyNote_en: "⚠️ Penalty: Non-Dark teammates lose 12 Energy",
+      penaltyNote: "副作用：非惡屬性隊友全員活力 -12",
+      penaltyNote_en: "Penalty: Non-Dark teammates lose 12 Energy",
       unit: " 能量",
       unit_en: " Strength"
     },
@@ -229,8 +229,8 @@
       desc_en: "Obtains 1 ingredient type exclusively from this Pokémon's own ingredient pool (Lv.1/Lv.30/Lv.60).",
       maxLevel: 7,
       values: [6, 8, 11, 14, 17, 21, 24],
-      specialNote: "💡 機制：僅鎖定抽取發動寶可夢自身專屬食材池。✨ 特殊型態：超幸運有機率爆發大量夢之碎片；怪力鉗有機率爆發更多食材。",
-      specialNote_en: "💡 Rule: Draws 1 ingredient type only from this Pokémon's own ingredient pool. ✨ Variants: Super Luck may grant Dream Shards; Hyper Cutter may grant bonus ingredients.",
+      specialNote: "機制：僅鎖定抽取發動寶可夢自身專屬食材池。特殊型態：超幸運有機率爆發大量夢之碎片；怪力鉗有機率爆發更多食材。",
+      specialNote_en: "Rule: Draws 1 ingredient type only from this Pokémon's own ingredient pool. Variants: Super Luck may grant Dream Shards; Hyper Cutter may grant bonus ingredients.",
       hasIngredientDrawMatrix: true,
       unit: " 個食材",
       unit_en: " Ingredients"
@@ -258,8 +258,8 @@
       desc_en: "Boosts Extra Tasty chance; stacks until an Extra Tasty dish is cooked.",
       maxLevel: 6,
       values: [4, 5, 6, 7, 8, 10],
-      specialNote: "✨ 機率累加：大成功時發動雙倍/三倍能量，成功後機率重設",
-      specialNote_en: "✨ 2x~3x power on Extra Tasty; resets after trigger",
+      specialNote: "機率累加：大成功時發動雙倍/三倍能量，成功後機率重設",
+      specialNote_en: "2x~3x power on Extra Tasty; resets after trigger",
       unit: "%",
       unit_en: "%"
     },
@@ -328,8 +328,8 @@
       teamShort: "他",
       selfValues: [8, 10, 15, 17, 19, 21],
       teamValues: [1, 2, 2, 3, 4, 5],
-      specialNote: "✨ 機率觸發：大成功時獲得 3 倍樹果（至下次睡眠研究前不重複發動）",
-      specialNote_en: "✨ 3x berries on Extra Tasty (once per sleep session)",
+      specialNote: "機率觸發：大成功時獲得 3 倍樹果（至下次睡眠研究前不重複發動）",
+      specialNote_en: "3x berries on Extra Tasty (once per sleep session)",
       unit: " 個",
       unit_en: " Berries"
     },
@@ -365,8 +365,8 @@
         { min: 900, max: 3600 },
         { min: 1150, max: 4600 }
       ],
-      specialNote: "🎲 浮動機制：每次發動隨機給予區間內碎片",
-      specialNote_en: "🎲 Random: Shards vary per trigger",
+      specialNote: "浮動機制：每次發動隨機給予區間內碎片",
+      specialNote_en: "Random: Shards vary per trigger",
       unit: " 碎片",
       unit_en: " Shards"
     },
@@ -421,8 +421,8 @@
       hasMoonlightChips: true,
       selfValues: [12, 16, 21, 26, 33, 43],
       teamValues: [6, 7, 10, 13, 17, 22],
-      specialNote: "✨ 機率觸發：大成功（漂亮成功）時額外隨機讓 1 隻隊友回復活力",
-      specialNote_en: "✨ Extra Tasty: Heals 1 additional random teammate",
+      specialNote: "機率觸發：大成功（漂亮成功）時額外隨機讓 1 隻隊友回復活力",
+      specialNote_en: "Extra Tasty: Heals 1 additional random teammate",
       unit: " 點",
       unit_en: " Energy"
     },
@@ -438,8 +438,8 @@
       hasLunarPrayerMatrix: true,
       healValues: [3, 4, 5, 7, 9, 11],
       berryFormulas: ["14+2n", "19+3n", "24+4n", "29+5n", "30+7n", "32+9n"],
-      specialNote: "🔮 額外樹果公式：自身基礎 + 隊友額外 × n（n 為其他超能隊友種類數，滿編 5 種類時 n=4）",
-      specialNote_en: "🔮 Berry Formula: Base + Ally Bonus × n (n = other Psychic species count, n=4 for full team)",
+      specialNote: "額外樹果公式：自身基礎 + 隊友額外 × n（n 為其他超能隊友種類數，滿編 5 種類時 n=4）",
+      specialNote_en: "Berry Formula: Base + Ally Bonus × n (n = other Psychic species count, n=4 for full team)",
       berryMatrix: [
         { kinds: "1種", kinds_en: "1 Species", vals: ["5", "9", "13", "17", "21", "25"] },
         { kinds: "2種", kinds_en: "2 Species", vals: ["7+1*1", "12+1*1", "17+1*1", "19+2*1", "24+2*1", "29+2*1"] },
@@ -791,8 +791,8 @@
   const RATINGS_GUIDE_DATA = {
     berry: {
       type: "berry",
-      title: "🍊 樹果寵 【樹果 2 個、食材 1 個】",
-      title_en: "🍊 Berry Specialists (2 Berries, 1 Ingredient)",
+      title: "樹果型專長 【樹果 2 個、食材 1 個】",
+      title_en: "Berry Specialists (2 Berries, 1 Ingredient)",
       desc: "以高頻率產出大量樹果累積卡比獸能量為最高目標。",
       desc_en: "Maximizes Snorlax Strength via massive, high-speed berry output.",
       subskills: [
@@ -809,8 +809,8 @@
     },
     ingredient: {
       type: "ingredient",
-      title: "🥩 食材寵 【樹果 1 個、食材 2 個】",
-      title_en: "🥩 Ingredient Specialists (1 Berry, 2 Ingredients)",
+      title: "食材型專長 【樹果 1 個、食材 2 個】",
+      title_en: "Ingredient Specialists (1 Berry, 2 Ingredients)",
       desc: "以穩定供給高階食譜所需的高價值食材為核心職責。",
       desc_en: "Provides consistent supply of high-tier ingredients for powerful dishes.",
       subskills: [
@@ -830,8 +830,8 @@
     },
     skill: {
       type: "skill",
-      title: "⚡ 技能寵 【樹果 1 個、食材 1 個】",
-      title_en: "⚡ Skill Specialists (1 Berry, 1 Ingredient)",
+      title: "技能型專長 【樹果 1 個、食材 1 個】",
+      title_en: "Skill Specialists (1 Berry, 1 Ingredient)",
       desc: "以高頻率觸發核心主技能（全體補血、神獸加速、高額能量、料理擴鍋）為核心職責。",
       desc_en: "Triggers crucial main skills (E4E heal, Legend boost, pot expand, energy burst) frequently.",
       subskills: [
@@ -919,13 +919,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/911.png",
                 "recipe": "AAA",
                 "count": 91,
-                "note": "👑 AAA 特選蘋果 純種產出",
+                "note": "AAA 特選蘋果 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 91,
-                        "note": "👑 AAA 特選蘋果 純種產出",
+                        "note": "AAA 特選蘋果 純種產出",
                         "isTop": true
                     },
                     {
@@ -1014,13 +1014,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/026.png",
                 "recipe": "AAA",
                 "count": 47,
-                "note": "👑 AAA 特選蘋果 純種產出",
+                "note": "AAA 特選蘋果 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 47,
-                        "note": "👑 AAA 特選蘋果 純種產出"
+                        "note": "AAA 特選蘋果 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1045,13 +1045,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/245.png",
                 "recipe": "AAA",
                 "count": 47,
-                "note": "👑 AAA 特選蘋果 純種產出",
+                "note": "AAA 特選蘋果 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 47,
-                        "note": "👑 AAA 特選蘋果 純種產出"
+                        "note": "AAA 特選蘋果 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1076,13 +1076,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png",
                 "recipe": "AAA",
                 "count": 40,
-                "note": "👑 AAA 特選蘋果 純種產出",
+                "note": "AAA 特選蘋果 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 40,
-                        "note": "👑 AAA 特選蘋果 純種產出"
+                        "note": "AAA 特選蘋果 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1107,13 +1107,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/020.png",
                 "recipe": "AAA",
                 "count": 37,
-                "note": "👑 AAA 特選蘋果 純種產出",
+                "note": "AAA 特選蘋果 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 37,
-                        "note": "👑 AAA 特選蘋果 純種產出"
+                        "note": "AAA 特選蘋果 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1138,13 +1138,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/715.png",
                 "recipe": "AAA",
                 "count": 33,
-                "note": "👑 AAA 特選蘋果 純種產出",
+                "note": "AAA 特選蘋果 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 33,
-                        "note": "👑 AAA 特選蘋果 純種產出"
+                        "note": "AAA 特選蘋果 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1169,13 +1169,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png",
                 "recipe": "AAA",
                 "count": 32,
-                "note": "👑 AAA 特選蘋果 純種產出",
+                "note": "AAA 特選蘋果 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 32,
-                        "note": "👑 AAA 特選蘋果 純種產出"
+                        "note": "AAA 特選蘋果 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1200,13 +1200,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/702.png",
                 "recipe": "AAA",
                 "count": 32,
-                "note": "👑 AAA 特選蘋果 純種產出",
+                "note": "AAA 特選蘋果 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 32,
-                        "note": "👑 AAA 特選蘋果 純種產出"
+                        "note": "AAA 特選蘋果 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1315,13 +1315,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/202.png",
                 "recipe": "AAA",
                 "count": 28,
-                "note": "👑 AAA 特選蘋果 純種產出",
+                "note": "AAA 特選蘋果 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 28,
-                        "note": "👑 AAA 特選蘋果 純種產出"
+                        "note": "AAA 特選蘋果 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1346,13 +1346,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/475.png",
                 "recipe": "AAA",
                 "count": 28,
-                "note": "👑 AAA 特選蘋果 純種產出",
+                "note": "AAA 特選蘋果 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 28,
-                        "note": "👑 AAA 特選蘋果 純種產出"
+                        "note": "AAA 特選蘋果 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1377,13 +1377,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/778.png",
                 "recipe": "AAA",
                 "count": 28,
-                "note": "👑 AAA 特選蘋果 純種產出",
+                "note": "AAA 特選蘋果 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 28,
-                        "note": "👑 AAA 特選蘋果 純種產出"
+                        "note": "AAA 特選蘋果 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1408,13 +1408,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/036.png",
                 "recipe": "AAA",
                 "count": 27,
-                "note": "👑 AAA 特選蘋果 純種產出",
+                "note": "AAA 特選蘋果 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 27,
-                        "note": "👑 AAA 特選蘋果 純種產出"
+                        "note": "AAA 特選蘋果 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1439,13 +1439,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/282.png",
                 "recipe": "AAA",
                 "count": 27,
-                "note": "👑 AAA 特選蘋果 純種產出",
+                "note": "AAA 特選蘋果 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 27,
-                        "note": "👑 AAA 特選蘋果 純種產出"
+                        "note": "AAA 特選蘋果 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1512,13 +1512,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png",
                 "recipe": "AAA",
                 "count": 24,
-                "note": "👑 AAA 特選蘋果 純種產出",
+                "note": "AAA 特選蘋果 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 24,
-                        "note": "👑 AAA 特選蘋果 純種產出"
+                        "note": "AAA 特選蘋果 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1573,13 +1573,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/009.png",
                 "recipe": "AAA",
                 "count": 90,
-                "note": "👑 AAA 哞哞鮮奶 純種產出",
+                "note": "AAA 哞哞鮮奶 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 90,
-                        "note": "👑 AAA 哞哞鮮奶 純種產出",
+                        "note": "AAA 哞哞鮮奶 純種產出",
                         "isTop": true
                     },
                     {
@@ -1626,13 +1626,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/849.png",
                 "recipe": "AAA",
                 "count": 35,
-                "note": "👑 AAA 哞哞鮮奶 純種產出",
+                "note": "AAA 哞哞鮮奶 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 35,
-                        "note": "👑 AAA 哞哞鮮奶 純種產出"
+                        "note": "AAA 哞哞鮮奶 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1657,13 +1657,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png",
                 "recipe": "AAA",
                 "count": 35,
-                "note": "👑 AAA 哞哞鮮奶 純種產出",
+                "note": "AAA 哞哞鮮奶 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 35,
-                        "note": "👑 AAA 哞哞鮮奶 純種產出"
+                        "note": "AAA 哞哞鮮奶 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1709,13 +1709,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/134.png",
                 "recipe": "AAA",
                 "count": 31,
-                "note": "👑 AAA 哞哞鮮奶 純種產出",
+                "note": "AAA 哞哞鮮奶 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 31,
-                        "note": "👑 AAA 哞哞鮮奶 純種產出"
+                        "note": "AAA 哞哞鮮奶 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1740,13 +1740,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/135.png",
                 "recipe": "AAA",
                 "count": 31,
-                "note": "👑 AAA 哞哞鮮奶 純種產出",
+                "note": "AAA 哞哞鮮奶 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 31,
-                        "note": "👑 AAA 哞哞鮮奶 純種產出"
+                        "note": "AAA 哞哞鮮奶 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1771,13 +1771,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/136.png",
                 "recipe": "AAA",
                 "count": 31,
-                "note": "👑 AAA 哞哞鮮奶 純種產出",
+                "note": "AAA 哞哞鮮奶 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 31,
-                        "note": "👑 AAA 哞哞鮮奶 純種產出"
+                        "note": "AAA 哞哞鮮奶 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1802,13 +1802,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/196.png",
                 "recipe": "AAA",
                 "count": 31,
-                "note": "👑 AAA 哞哞鮮奶 純種產出",
+                "note": "AAA 哞哞鮮奶 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 31,
-                        "note": "👑 AAA 哞哞鮮奶 純種產出"
+                        "note": "AAA 哞哞鮮奶 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1833,13 +1833,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/197.png",
                 "recipe": "AAA",
                 "count": 31,
-                "note": "👑 AAA 哞哞鮮奶 純種產出",
+                "note": "AAA 哞哞鮮奶 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 31,
-                        "note": "👑 AAA 哞哞鮮奶 純種產出"
+                        "note": "AAA 哞哞鮮奶 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1864,13 +1864,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/470.png",
                 "recipe": "AAA",
                 "count": 31,
-                "note": "👑 AAA 哞哞鮮奶 純種產出",
+                "note": "AAA 哞哞鮮奶 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 31,
-                        "note": "👑 AAA 哞哞鮮奶 純種產出"
+                        "note": "AAA 哞哞鮮奶 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1895,13 +1895,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/471.png",
                 "recipe": "AAA",
                 "count": 31,
-                "note": "👑 AAA 哞哞鮮奶 純種產出",
+                "note": "AAA 哞哞鮮奶 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 31,
-                        "note": "👑 AAA 哞哞鮮奶 純種產出"
+                        "note": "AAA 哞哞鮮奶 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1926,13 +1926,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/700.png",
                 "recipe": "AAA",
                 "count": 31,
-                "note": "👑 AAA 哞哞鮮奶 純種產出",
+                "note": "AAA 哞哞鮮奶 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 31,
-                        "note": "👑 AAA 哞哞鮮奶 純種產出"
+                        "note": "AAA 哞哞鮮奶 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1957,13 +1957,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/518.png",
                 "recipe": "AAA",
                 "count": 31,
-                "note": "👑 AAA 哞哞鮮奶 純種產出",
+                "note": "AAA 哞哞鮮奶 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 31,
-                        "note": "👑 AAA 哞哞鮮奶 純種產出"
+                        "note": "AAA 哞哞鮮奶 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -1988,13 +1988,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/777.png",
                 "recipe": "AAA",
                 "count": 29,
-                "note": "👑 AAA 哞哞鮮奶 純種產出",
+                "note": "AAA 哞哞鮮奶 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 29,
-                        "note": "👑 AAA 哞哞鮮奶 純種產出"
+                        "note": "AAA 哞哞鮮奶 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -2019,13 +2019,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/053.png",
                 "recipe": "AAA",
                 "count": 28,
-                "note": "👑 AAA 哞哞鮮奶 純種產出",
+                "note": "AAA 哞哞鮮奶 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 28,
-                        "note": "👑 AAA 哞哞鮮奶 純種產出"
+                        "note": "AAA 哞哞鮮奶 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -2071,13 +2071,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png",
                 "recipe": "AAA",
                 "count": 23,
-                "note": "👑 AAA 哞哞鮮奶 純種產出",
+                "note": "AAA 哞哞鮮奶 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 23,
-                        "note": "👑 AAA 哞哞鮮奶 純種產出"
+                        "note": "AAA 哞哞鮮奶 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -2238,13 +2238,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/076.png",
                 "recipe": "AAA",
                 "count": 83,
-                "note": "👑 AAA 萌綠大豆 純種產出",
+                "note": "AAA 萌綠大豆 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 83,
-                        "note": "👑 AAA 萌綠大豆 純種產出"
+                        "note": "AAA 萌綠大豆 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -2269,13 +2269,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/914.png",
                 "recipe": "AAA",
                 "count": 82,
-                "note": "👑 AAA 萌綠大豆 純種產出",
+                "note": "AAA 萌綠大豆 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 82,
-                        "note": "👑 AAA 萌綠大豆 純種產出"
+                        "note": "AAA 萌綠大豆 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -2342,13 +2342,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/780.png",
                 "recipe": "AAA",
                 "count": 77,
-                "note": "👑 AAA 萌綠大豆 純種產出",
+                "note": "AAA 萌綠大豆 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 77,
-                        "note": "👑 AAA 萌綠大豆 純種產出"
+                        "note": "AAA 萌綠大豆 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -2499,13 +2499,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png",
                 "recipe": "AAA",
                 "count": 37,
-                "note": "👑 AAA 萌綠大豆 純種產出",
+                "note": "AAA 萌綠大豆 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 37,
-                        "note": "👑 AAA 萌綠大豆 純種產出"
+                        "note": "AAA 萌綠大豆 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -2551,13 +2551,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/085.png",
                 "recipe": "AAA",
                 "count": 37,
-                "note": "👑 AAA 萌綠大豆 純種產出",
+                "note": "AAA 萌綠大豆 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 37,
-                        "note": "👑 AAA 萌綠大豆 純種產出"
+                        "note": "AAA 萌綠大豆 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -2603,13 +2603,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/038.png",
                 "recipe": "AAA",
                 "count": 29,
-                "note": "👑 AAA 萌綠大豆 純種產出",
+                "note": "AAA 萌綠大豆 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 29,
-                        "note": "👑 AAA 萌綠大豆 純種產出"
+                        "note": "AAA 萌綠大豆 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -2634,13 +2634,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/317.png",
                 "recipe": "AAA",
                 "count": 27,
-                "note": "👑 AAA 萌綠大豆 純種產出",
+                "note": "AAA 萌綠大豆 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 27,
-                        "note": "👑 AAA 萌綠大豆 純種產出"
+                        "note": "AAA 萌綠大豆 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -2800,13 +2800,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png",
                 "recipe": "AAA",
                 "count": 87,
-                "note": "👑 AAA 甜甜蜜 純種產出",
+                "note": "AAA 甜甜蜜 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 87,
-                        "note": "👑 AAA 甜甜蜜 純種產出",
+                        "note": "AAA 甜甜蜜 純種產出",
                         "isTop": true
                     },
                     {
@@ -2832,13 +2832,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/127.png",
                 "recipe": "AAA",
                 "count": 82,
-                "note": "👑 AAA 甜甜蜜 純種產出",
+                "note": "AAA 甜甜蜜 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 82,
-                        "note": "👑 AAA 甜甜蜜 純種產出"
+                        "note": "AAA 甜甜蜜 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -2863,13 +2863,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/743.png",
                 "recipe": "AAA",
                 "count": 77,
-                "note": "👑 AAA 甜甜蜜 純種產出",
+                "note": "AAA 甜甜蜜 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 77,
-                        "note": "👑 AAA 甜甜蜜 純種產出"
+                        "note": "AAA 甜甜蜜 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -2957,13 +2957,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/012.png",
                 "recipe": "AAA",
                 "count": 36,
-                "note": "👑 AAA 甜甜蜜 純種產出",
+                "note": "AAA 甜甜蜜 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 36,
-                        "note": "👑 AAA 甜甜蜜 純種產出"
+                        "note": "AAA 甜甜蜜 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -3009,13 +3009,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/312.png",
                 "recipe": "AAA",
                 "count": 33,
-                "note": "👑 AAA 甜甜蜜 純種產出",
+                "note": "AAA 甜甜蜜 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 33,
-                        "note": "👑 AAA 甜甜蜜 純種產出"
+                        "note": "AAA 甜甜蜜 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -3040,13 +3040,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/214.png",
                 "recipe": "AAA",
                 "count": 31,
-                "note": "👑 AAA 甜甜蜜 純種產出",
+                "note": "AAA 甜甜蜜 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 31,
-                        "note": "👑 AAA 甜甜蜜 純種產出"
+                        "note": "AAA 甜甜蜜 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -3071,13 +3071,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/040.png",
                 "recipe": "AAA",
                 "count": 27,
-                "note": "👑 AAA 甜甜蜜 純種產出",
+                "note": "AAA 甜甜蜜 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 27,
-                        "note": "👑 AAA 甜甜蜜 純種產出"
+                        "note": "AAA 甜甜蜜 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -3237,13 +3237,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/306.png",
                 "recipe": "AAA",
                 "count": 87,
-                "note": "👑 AAA 豆製肉 純種產出",
+                "note": "AAA 豆製肉 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 87,
-                        "note": "👑 AAA 豆製肉 純種產出",
+                        "note": "AAA 豆製肉 純種產出",
                         "isTop": true
                     },
                     {
@@ -3269,13 +3269,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png",
                 "recipe": "AAA",
                 "count": 85,
-                "note": "👑 AAA 豆製肉 純種產出",
+                "note": "AAA 豆製肉 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 85,
-                        "note": "👑 AAA 豆製肉 純種產出"
+                        "note": "AAA 豆製肉 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -3473,13 +3473,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/160.png",
                 "recipe": "AAA",
                 "count": 42,
-                "note": "👑 AAA 豆製肉 純種產出",
+                "note": "AAA 豆製肉 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 42,
-                        "note": "👑 AAA 豆製肉 純種產出"
+                        "note": "AAA 豆製肉 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -3504,13 +3504,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/461.png",
                 "recipe": "AAA",
                 "count": 42,
-                "note": "👑 AAA 豆製肉 純種產出",
+                "note": "AAA 豆製肉 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 42,
-                        "note": "👑 AAA 豆製肉 純種產出"
+                        "note": "AAA 豆製肉 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -3535,13 +3535,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/243.png",
                 "recipe": "AAA",
                 "count": 42,
-                "note": "👑 AAA 豆製肉 純種產出",
+                "note": "AAA 豆製肉 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 42,
-                        "note": "👑 AAA 豆製肉 純種產出"
+                        "note": "AAA 豆製肉 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -3608,13 +3608,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/024.png",
                 "recipe": "AAA",
                 "count": 35,
-                "note": "👑 AAA 豆製肉 純種產出",
+                "note": "AAA 豆製肉 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 35,
-                        "note": "👑 AAA 豆製肉 純種產出"
+                        "note": "AAA 豆製肉 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -3660,13 +3660,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/057.png",
                 "recipe": "AAA",
                 "count": 33,
-                "note": "👑 AAA 豆製肉 純種產出",
+                "note": "AAA 豆製肉 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 33,
-                        "note": "👑 AAA 豆製肉 純種產出"
+                        "note": "AAA 豆製肉 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -3712,13 +3712,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/697.png",
                 "recipe": "AAA",
                 "count": 29,
-                "note": "👑 AAA 豆製肉 純種產出",
+                "note": "AAA 豆製肉 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 29,
-                        "note": "👑 AAA 豆製肉 純種產出"
+                        "note": "AAA 豆製肉 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -3764,13 +3764,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/628.png",
                 "recipe": "AAA",
                 "count": 23,
-                "note": "👑 AAA 豆製肉 純種產出",
+                "note": "AAA 豆製肉 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 23,
-                        "note": "👑 AAA 豆製肉 純種產出"
+                        "note": "AAA 豆製肉 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -4187,13 +4187,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png",
                 "recipe": "AAA",
                 "count": 90,
-                "note": "👑 AAA 暖暖薑 純種產出",
+                "note": "AAA 暖暖薑 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 90,
-                        "note": "👑 AAA 暖暖薑 純種產出",
+                        "note": "AAA 暖暖薑 純種產出",
                         "isTop": true
                     },
                     {
@@ -4219,13 +4219,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/115.png",
                 "recipe": "AAA",
                 "count": 77,
-                "note": "👑 AAA 暖暖薑 純種產出",
+                "note": "AAA 暖暖薑 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 77,
-                        "note": "👑 AAA 暖暖薑 純種產出"
+                        "note": "AAA 暖暖薑 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -4292,13 +4292,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/488.png",
                 "recipe": "AAA",
                 "count": 48,
-                "note": "👑 AAA 暖暖薑 純種產出",
+                "note": "AAA 暖暖薑 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 48,
-                        "note": "👑 AAA 暖暖薑 純種產出"
+                        "note": "AAA 暖暖薑 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -4344,13 +4344,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/157.png",
                 "recipe": "AAA",
                 "count": 40,
-                "note": "👑 AAA 暖暖薑 純種產出",
+                "note": "AAA 暖暖薑 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 40,
-                        "note": "👑 AAA 暖暖薑 純種產出"
+                        "note": "AAA 暖暖薑 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -4438,13 +4438,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/105.png",
                 "recipe": "AAA",
                 "count": 31,
-                "note": "👑 AAA 暖暖薑 純種產出",
+                "note": "AAA 暖暖薑 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 31,
-                        "note": "👑 AAA 暖暖薑 純種產出"
+                        "note": "AAA 暖暖薑 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -4709,13 +4709,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/071.png",
                 "recipe": "AAA",
                 "count": 76,
-                "note": "👑 AAA 好眠番茄 純種產出",
+                "note": "AAA 好眠番茄 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 76,
-                        "note": "👑 AAA 好眠番茄 純種產出",
+                        "note": "AAA 好眠番茄 純種產出",
                         "isTop": true
                     },
                     {
@@ -4741,13 +4741,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/405.png",
                 "recipe": "AAA",
                 "count": 76,
-                "note": "👑 AAA 好眠番茄 純種產出",
+                "note": "AAA 好眠番茄 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 76,
-                        "note": "👑 AAA 好眠番茄 純種產出"
+                        "note": "AAA 好眠番茄 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -4772,13 +4772,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/460.png",
                 "recipe": "AAA",
                 "count": 76,
-                "note": "👑 AAA 好眠番茄 純種產出",
+                "note": "AAA 好眠番茄 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 76,
-                        "note": "👑 AAA 好眠番茄 純種產出"
+                        "note": "AAA 好眠番茄 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -4803,13 +4803,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/122.png",
                 "recipe": "AAA",
                 "count": 71,
-                "note": "👑 AAA 好眠番茄 純種產出",
+                "note": "AAA 好眠番茄 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 71,
-                        "note": "👑 AAA 好眠番茄 純種產出"
+                        "note": "AAA 好眠番茄 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -4855,13 +4855,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/051.png",
                 "recipe": "AAA",
                 "count": 66,
-                "note": "👑 AAA 好眠番茄 純種產出",
+                "note": "AAA 好眠番茄 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 66,
-                        "note": "👑 AAA 好眠番茄 純種產出"
+                        "note": "AAA 好眠番茄 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -4886,13 +4886,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/289.png",
                 "recipe": "AAA",
                 "count": 43,
-                "note": "👑 AAA 好眠番茄 純種產出",
+                "note": "AAA 好眠番茄 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 43,
-                        "note": "👑 AAA 好眠番茄 純種產出"
+                        "note": "AAA 好眠番茄 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -4917,13 +4917,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/959.png",
                 "recipe": "AAA",
                 "count": 35,
-                "note": "👑 AAA 好眠番茄 純種產出",
+                "note": "AAA 好眠番茄 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 35,
-                        "note": "👑 AAA 好眠番茄 純種產出"
+                        "note": "AAA 好眠番茄 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -4969,13 +4969,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/381.png",
                 "recipe": "AAA",
                 "count": 32,
-                "note": "👑 AAA 好眠番茄 純種產出",
+                "note": "AAA 好眠番茄 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 32,
-                        "note": "👑 AAA 好眠番茄 純種產出"
+                        "note": "AAA 好眠番茄 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -5063,13 +5063,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/185.png",
                 "recipe": "AAA",
                 "count": 25,
-                "note": "👑 AAA 好眠番茄 純種產出",
+                "note": "AAA 好眠番茄 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 25,
-                        "note": "👑 AAA 好眠番茄 純種產出"
+                        "note": "AAA 好眠番茄 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -5094,13 +5094,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/208.png",
                 "recipe": "AAA",
                 "count": 23,
-                "note": "👑 AAA 好眠番茄 純種產出",
+                "note": "AAA 好眠番茄 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 23,
-                        "note": "👑 AAA 好眠番茄 純種產出"
+                        "note": "AAA 好眠番茄 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -5125,13 +5125,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/380.png",
                 "recipe": "AAA",
                 "count": 19,
-                "note": "👑 AAA 好眠番茄 純種產出",
+                "note": "AAA 好眠番茄 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 19,
-                        "note": "👑 AAA 好眠番茄 純種產出"
+                        "note": "AAA 好眠番茄 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -5207,13 +5207,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/242.png",
                 "recipe": "AAA",
                 "count": 70,
-                "note": "👑 AAA 特選蛋 純種產出",
+                "note": "AAA 特選蛋 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 70,
-                        "note": "👑 AAA 特選蛋 純種產出",
+                        "note": "AAA 特選蛋 純種產出",
                         "isTop": true
                     },
                     {
@@ -5239,13 +5239,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/225.png",
                 "recipe": "AAA",
                 "count": 69,
-                "note": "👑 AAA 特選蛋 純種產出",
+                "note": "AAA 特選蛋 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 69,
-                        "note": "👑 AAA 特選蛋 純種產出"
+                        "note": "AAA 特選蛋 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -5312,13 +5312,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/178.png",
                 "recipe": "AAA",
                 "count": 35,
-                "note": "👑 AAA 特選蛋 純種產出",
+                "note": "AAA 特選蛋 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 35,
-                        "note": "👑 AAA 特選蛋 純種產出"
+                        "note": "AAA 特選蛋 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -5343,13 +5343,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/334.png",
                 "recipe": "AAA",
                 "count": 34,
-                "note": "👑 AAA 特選蛋 純種產出",
+                "note": "AAA 特選蛋 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 34,
-                        "note": "👑 AAA 特選蛋 純種產出"
+                        "note": "AAA 特選蛋 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -5416,13 +5416,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/468.png",
                 "recipe": "AAA",
                 "count": 28,
-                "note": "👑 AAA 特選蛋 純種產出",
+                "note": "AAA 特選蛋 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 28,
-                        "note": "👑 AAA 特選蛋 純種產出"
+                        "note": "AAA 特選蛋 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -5515,13 +5515,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/395.png",
                 "recipe": "AAA",
                 "count": 24,
-                "note": "👑 AAA 特選蛋 純種產出",
+                "note": "AAA 特選蛋 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 24,
-                        "note": "👑 AAA 特選蛋 純種產出"
+                        "note": "AAA 特選蛋 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -5567,13 +5567,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/254.png",
                 "recipe": "AAA",
                 "count": 21,
-                "note": "👑 AAA 特選蛋 純種產出",
+                "note": "AAA 特選蛋 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 21,
-                        "note": "👑 AAA 特選蛋 純種產出"
+                        "note": "AAA 特選蛋 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -5733,13 +5733,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/454.png",
                 "recipe": "AAA",
                 "count": 62,
-                "note": "👑 AAA 純粹油 純種產出",
+                "note": "AAA 純粹油 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 62,
-                        "note": "👑 AAA 純粹油 純種產出",
+                        "note": "AAA 純粹油 純種產出",
                         "isTop": true
                     },
                     {
@@ -5786,13 +5786,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/303.png",
                 "recipe": "AAA",
                 "count": 58,
-                "note": "👑 AAA 純粹油 純種產出",
+                "note": "AAA 純粹油 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 58,
-                        "note": "👑 AAA 純粹油 純種產出"
+                        "note": "AAA 純粹油 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -5817,13 +5817,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/845.png",
                 "recipe": "AAA",
                 "count": 56,
-                "note": "👑 AAA 純粹油 純種產出",
+                "note": "AAA 純粹油 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 56,
-                        "note": "👑 AAA 純粹油 純種產出"
+                        "note": "AAA 純粹油 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -5869,13 +5869,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/132.png",
                 "recipe": "AAA",
                 "count": 53,
-                "note": "👑 AAA 純粹油 純種產出",
+                "note": "AAA 純粹油 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 53,
-                        "note": "👑 AAA 純粹油 純種產出"
+                        "note": "AAA 純粹油 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -5942,13 +5942,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/244.png",
                 "recipe": "AAA",
                 "count": 36,
-                "note": "👑 AAA 純粹油 純種產出",
+                "note": "AAA 純粹油 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 36,
-                        "note": "👑 AAA 純粹油 純種產出"
+                        "note": "AAA 純粹油 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -5994,13 +5994,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/365.png",
                 "recipe": "AAA",
                 "count": 34,
-                "note": "👑 AAA 純粹油 純種產出",
+                "note": "AAA 純粹油 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 34,
-                        "note": "👑 AAA 純粹油 純種產出"
+                        "note": "AAA 純粹油 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -6046,13 +6046,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/354.png",
                 "recipe": "AAA",
                 "count": 31,
-                "note": "👑 AAA 純粹油 純種產出",
+                "note": "AAA 純粹油 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 31,
-                        "note": "👑 AAA 純粹油 純種產出"
+                        "note": "AAA 純粹油 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -6103,13 +6103,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png",
                 "recipe": "AAA",
                 "count": 30,
-                "note": "👑 AAA 純粹油 純種產出",
+                "note": "AAA 純粹油 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 30,
-                        "note": "👑 AAA 純粹油 純種產出"
+                        "note": "AAA 純粹油 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -6134,13 +6134,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/462.png",
                 "recipe": "AAA",
                 "count": 26,
-                "note": "👑 AAA 純粹油 純種產出",
+                "note": "AAA 純粹油 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 26,
-                        "note": "👑 AAA 純粹油 純種產出"
+                        "note": "AAA 純粹油 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -6165,13 +6165,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/213.png",
                 "recipe": "AAA",
                 "count": 26,
-                "note": "👑 AAA 純粹油 純種產出",
+                "note": "AAA 純粹油 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 26,
-                        "note": "👑 AAA 純粹油 純種產出"
+                        "note": "AAA 純粹油 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -6196,13 +6196,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/448.png",
                 "recipe": "AAA",
                 "count": 26,
-                "note": "👑 AAA 純粹油 純種產出",
+                "note": "AAA 純粹油 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 26,
-                        "note": "👑 AAA 純粹油 純種產出"
+                        "note": "AAA 純粹油 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -6227,13 +6227,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/302.png",
                 "recipe": "AAA",
                 "count": 24,
-                "note": "👑 AAA 純粹油 純種產出",
+                "note": "AAA 純粹油 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 24,
-                        "note": "👑 AAA 純粹油 純種產出"
+                        "note": "AAA 純粹油 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -6393,13 +6393,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/975.png",
                 "recipe": "AAA",
                 "count": 68,
-                "note": "👑 AAA 窩心洋芋 純種產出",
+                "note": "AAA 窩心洋芋 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 68,
-                        "note": "👑 AAA 窩心洋芋 純種產出",
+                        "note": "AAA 窩心洋芋 純種產出",
                         "isTop": true
                     },
                     {
@@ -6425,13 +6425,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/908.png",
                 "recipe": "AAA",
                 "count": 67,
-                "note": "👑 AAA 窩心洋芋 純種產出",
+                "note": "AAA 窩心洋芋 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 67,
-                        "note": "👑 AAA 窩心洋芋 純種產出"
+                        "note": "AAA 窩心洋芋 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -6750,13 +6750,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/373.png",
                 "recipe": "AAA",
                 "count": 35,
-                "note": "👑 AAA 窩心洋芋 純種產出",
+                "note": "AAA 窩心洋芋 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 35,
-                        "note": "👑 AAA 窩心洋芋 純種產出"
+                        "note": "AAA 窩心洋芋 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -6979,13 +6979,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/149.png",
                 "recipe": "AAA",
                 "count": 93,
-                "note": "👑 AAA 火辣香草 純種產出",
+                "note": "AAA 火辣香草 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 93,
-                        "note": "👑 AAA 火辣香草 純種產出",
+                        "note": "AAA 火辣香草 純種產出",
                         "isTop": true
                     },
                     {
@@ -7011,13 +7011,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png",
                 "recipe": "AAA",
                 "count": 67,
-                "note": "👑 AAA 火辣香草 純種產出",
+                "note": "AAA 火辣香草 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 67,
-                        "note": "👑 AAA 火辣香草 純種產出"
+                        "note": "AAA 火辣香草 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -7126,13 +7126,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/701.png",
                 "recipe": "AAA",
                 "count": 29,
-                "note": "👑 AAA 火辣香草 純種產出",
+                "note": "AAA 火辣香草 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 29,
-                        "note": "👑 AAA 火辣香草 純種產出"
+                        "note": "AAA 火辣香草 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -7178,13 +7178,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/229.png",
                 "recipe": "AAA",
                 "count": 28,
-                "note": "👑 AAA 火辣香草 純種產出",
+                "note": "AAA 火辣香草 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 28,
-                        "note": "👑 AAA 火辣香草 純種產出"
+                        "note": "AAA 火辣香草 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -7209,13 +7209,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/059.png",
                 "recipe": "AAA",
                 "count": 25,
-                "note": "👑 AAA 火辣香草 純種產出",
+                "note": "AAA 火辣香草 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 25,
-                        "note": "👑 AAA 火辣香草 純種產出"
+                        "note": "AAA 火辣香草 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -7240,13 +7240,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/181.png",
                 "recipe": "AAA",
                 "count": 24,
-                "note": "👑 AAA 火辣香草 純種產出",
+                "note": "AAA 火辣香草 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 24,
-                        "note": "👑 AAA 火辣香草 純種產出"
+                        "note": "AAA 火辣香草 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -7271,13 +7271,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/392.png",
                 "recipe": "AAA",
                 "count": 20,
-                "note": "👑 AAA 火辣香草 純種產出",
+                "note": "AAA 火辣香草 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 20,
-                        "note": "👑 AAA 火辣香草 純種產出"
+                        "note": "AAA 火辣香草 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -7379,13 +7379,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/760.png",
                 "recipe": "AAA",
                 "count": 75,
-                "note": "👑 AAA 萌綠玉米 純種產出",
+                "note": "AAA 萌綠玉米 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 75,
-                        "note": "👑 AAA 萌綠玉米 純種產出",
+                        "note": "AAA 萌綠玉米 純種產出",
                         "isTop": true
                     },
                     {
@@ -7432,13 +7432,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/764.png",
                 "recipe": "AAA",
                 "count": 61,
-                "note": "👑 AAA 萌綠玉米 純種產出",
+                "note": "AAA 萌綠玉米 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 61,
-                        "note": "👑 AAA 萌綠玉米 純種產出"
+                        "note": "AAA 萌綠玉米 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -7547,13 +7547,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/260.png",
                 "recipe": "AAA",
                 "count": 24,
-                "note": "👑 AAA 萌綠玉米 純種產出",
+                "note": "AAA 萌綠玉米 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 24,
-                        "note": "👑 AAA 萌綠玉米 純種產出"
+                        "note": "AAA 萌綠玉米 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -7578,13 +7578,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/426.png",
                 "recipe": "AAA",
                 "count": 23,
-                "note": "👑 AAA 萌綠玉米 純種產出",
+                "note": "AAA 萌綠玉米 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 23,
-                        "note": "👑 AAA 萌綠玉米 純種產出"
+                        "note": "AAA 萌綠玉米 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -7744,13 +7744,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/359.png",
                 "recipe": "AAA",
                 "count": 55,
-                "note": "👑 AAA 放鬆可可 純種產出",
+                "note": "AAA 放鬆可可 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 55,
-                        "note": "👑 AAA 放鬆可可 純種產出",
+                        "note": "AAA 放鬆可可 純種產出",
                         "isTop": true
                     },
                     {
@@ -7776,13 +7776,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/980.png",
                 "recipe": "AAA",
                 "count": 54,
-                "note": "👑 AAA 放鬆可可 純種產出",
+                "note": "AAA 放鬆可可 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 54,
-                        "note": "👑 AAA 放鬆可可 純種產出"
+                        "note": "AAA 放鬆可可 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -7870,13 +7870,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/154.png",
                 "recipe": "AAA",
                 "count": 29,
-                "note": "👑 AAA 放鬆可可 純種產出",
+                "note": "AAA 放鬆可可 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 29,
-                        "note": "👑 AAA 放鬆可可 純種產出"
+                        "note": "AAA 放鬆可可 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -7901,13 +7901,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/923.png",
                 "recipe": "AAA",
                 "count": 27,
-                "note": "👑 AAA 放鬆可可 純種產出",
+                "note": "AAA 放鬆可可 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 27,
-                        "note": "👑 AAA 放鬆可可 純種產出"
+                        "note": "AAA 放鬆可可 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -7995,13 +7995,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/080.png",
                 "recipe": "AAA",
                 "count": 24,
-                "note": "👑 AAA 放鬆可可 純種產出",
+                "note": "AAA 放鬆可可 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 24,
-                        "note": "👑 AAA 放鬆可可 純種產出"
+                        "note": "AAA 放鬆可可 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -8047,13 +8047,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/055.png",
                 "recipe": "AAA",
                 "count": 22,
-                "note": "👑 AAA 放鬆可可 純種產出",
+                "note": "AAA 放鬆可可 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 22,
-                        "note": "👑 AAA 放鬆可可 純種產出"
+                        "note": "AAA 放鬆可可 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -8078,13 +8078,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/199.png",
                 "recipe": "AAA",
                 "count": 22,
-                "note": "👑 AAA 放鬆可可 純種產出",
+                "note": "AAA 放鬆可可 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 22,
-                        "note": "👑 AAA 放鬆可可 純種產出"
+                        "note": "AAA 放鬆可可 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -8459,13 +8459,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/738.png",
                 "recipe": "AAA",
                 "count": 63,
-                "note": "👑 AAA 醒腦咖啡豆 純種產出",
+                "note": "AAA 醒腦咖啡豆 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 63,
-                        "note": "👑 AAA 醒腦咖啡豆 純種產出",
+                        "note": "AAA 醒腦咖啡豆 純種產出",
                         "isTop": true
                     },
                     {
@@ -8554,13 +8554,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/430.png",
                 "recipe": "AAA",
                 "count": 20,
-                "note": "👑 AAA 醒腦咖啡豆 純種產出",
+                "note": "AAA 醒腦咖啡豆 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 20,
-                        "note": "👑 AAA 醒腦咖啡豆 純種產出"
+                        "note": "AAA 醒腦咖啡豆 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -8585,13 +8585,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/311.png",
                 "recipe": "AAA",
                 "count": 20,
-                "note": "👑 AAA 醒腦咖啡豆 純種產出",
+                "note": "AAA 醒腦咖啡豆 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 20,
-                        "note": "👑 AAA 醒腦咖啡豆 純種產出"
+                        "note": "AAA 醒腦咖啡豆 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -8751,13 +8751,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/330.png",
                 "recipe": "AAA",
                 "count": 58,
-                "note": "👑 AAA 嫩亮酪梨 純種產出",
+                "note": "AAA 嫩亮酪梨 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 58,
-                        "note": "👑 AAA 嫩亮酪梨 純種產出",
+                        "note": "AAA 嫩亮酪梨 純種產出",
                         "isTop": true
                     },
                     {
@@ -8804,13 +8804,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/558.png",
                 "recipe": "AAA",
                 "count": 34,
-                "note": "👑 AAA 嫩亮酪梨 純種產出",
+                "note": "AAA 嫩亮酪梨 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 34,
-                        "note": "👑 AAA 嫩亮酪梨 純種產出"
+                        "note": "AAA 嫩亮酪梨 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -8865,13 +8865,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/442.png",
                 "recipe": "AAA",
                 "count": 52,
-                "note": "👑 AAA 品鮮蘑菇 純種產出",
+                "note": "AAA 品鮮蘑菇 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 52,
-                        "note": "👑 AAA 品鮮蘑菇 純種產出",
+                        "note": "AAA 品鮮蘑菇 純種產出",
                         "isTop": true
                     },
                     {
@@ -8897,13 +8897,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/195.png",
                 "recipe": "AAA",
                 "count": 51,
-                "note": "👑 AAA 品鮮蘑菇 純種產出",
+                "note": "AAA 品鮮蘑菇 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 51,
-                        "note": "👑 AAA 品鮮蘑菇 純種產出"
+                        "note": "AAA 品鮮蘑菇 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -8991,13 +8991,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/257.png",
                 "recipe": "AAA",
                 "count": 27,
-                "note": "👑 AAA 品鮮蘑菇 純種產出",
+                "note": "AAA 品鮮蘑菇 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 27,
-                        "note": "👑 AAA 品鮮蘑菇 純種產出"
+                        "note": "AAA 品鮮蘑菇 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -9043,13 +9043,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/389.png",
                 "recipe": "AAA",
                 "count": 25,
-                "note": "👑 AAA 品鮮蘑菇 純種產出",
+                "note": "AAA 品鮮蘑菇 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 25,
-                        "note": "👑 AAA 品鮮蘑菇 純種產出"
+                        "note": "AAA 品鮮蘑菇 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -9335,13 +9335,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/083.png",
                 "recipe": "AAA",
                 "count": 49,
-                "note": "👑 AAA 粗枝大蔥 純種產出",
+                "note": "AAA 粗枝大蔥 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 49,
-                        "note": "👑 AAA 粗枝大蔥 純種產出",
+                        "note": "AAA 粗枝大蔥 純種產出",
                         "isTop": true
                     },
                     {
@@ -9733,13 +9733,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
                 "recipe": "AAA",
                 "count": 38,
-                "note": "👑 AAA 沉甸甸南瓜 純種產出",
+                "note": "AAA 沉甸甸南瓜 純種產出",
                 "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 38,
-                        "note": "👑 AAA 沉甸甸南瓜 純種產出",
+                        "note": "AAA 沉甸甸南瓜 純種產出",
                         "isTop": true
                     },
                     {
@@ -9765,13 +9765,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
                 "recipe": "AAA",
                 "count": 37,
-                "note": "👑 AAA 沉甸甸南瓜 純種產出",
+                "note": "AAA 沉甸甸南瓜 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 37,
-                        "note": "👑 AAA 沉甸甸南瓜 純種產出"
+                        "note": "AAA 沉甸甸南瓜 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -9796,13 +9796,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
                 "recipe": "AAA",
                 "count": 36,
-                "note": "👑 AAA 沉甸甸南瓜 純種產出",
+                "note": "AAA 沉甸甸南瓜 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 36,
-                        "note": "👑 AAA 沉甸甸南瓜 純種產出"
+                        "note": "AAA 沉甸甸南瓜 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -9827,13 +9827,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
                 "recipe": "AAA",
                 "count": 35,
-                "note": "👑 AAA 沉甸甸南瓜 純種產出",
+                "note": "AAA 沉甸甸南瓜 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 35,
-                        "note": "👑 AAA 沉甸甸南瓜 純種產出"
+                        "note": "AAA 沉甸甸南瓜 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -9900,13 +9900,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/028.png",
                 "recipe": "AAA",
                 "count": 18,
-                "note": "👑 AAA 沉甸甸南瓜 純種產出",
+                "note": "AAA 沉甸甸南瓜 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 18,
-                        "note": "👑 AAA 沉甸甸南瓜 純種產出"
+                        "note": "AAA 沉甸甸南瓜 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -9931,13 +9931,13 @@
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png",
                 "recipe": "AAA",
                 "count": 17,
-                "note": "👑 AAA 沉甸甸南瓜 純種產出",
+                "note": "AAA 沉甸甸南瓜 純種產出",
                 "isTop": false,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 17,
-                        "note": "👑 AAA 沉甸甸南瓜 純種產出"
+                        "note": "AAA 沉甸甸南瓜 純種產出"
                     },
                     {
                         "recipe": "AAC",
@@ -11034,7 +11034,7 @@
         
         <div class="rating-subsections">
           <div class="rating-col">
-            <h4 class="rating-col-title">${isEN ? '👑 Sub-Skill Priority' : '👑 副技能推薦梯度'}</h4>
+            <h4 class="rating-col-title">${isEN ? 'Sub-Skill Priority' : '副技能推薦梯度'}</h4>
             <div class="rating-list">
               ${data.subskills.map(s => {
                 const sName = isEN ? (s.name_en || (window.I18N ? window.I18N.getSubSkillName(s.name) : s.name)) : s.name;
@@ -11052,7 +11052,7 @@
           </div>
 
           <div class="rating-col">
-            <h4 class="rating-col-title">${isEN ? '🧬 Nature Priority' : '🧬 性格推薦梯度'}</h4>
+            <h4 class="rating-col-title">${isEN ? 'Nature Priority' : '性格推薦梯度'}</h4>
             <div class="rating-list">
               ${data.natures.map(n => {
                 const nName = isEN ? (n.name_en || (window.I18N ? window.I18N.getNatureName(n.name) : n.name)) : n.name;
@@ -11235,8 +11235,7 @@
                   <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">
                 </div>
                 ${champPkm ? `
-                  <div class="ladder-track-champion-badge" title="${isEN ? '👑 Champion: ' + champDisplayName + ' (' + champRecipe + ') - ' + champScaledCount + ' /day' : '👑 產量冠軍：' + champDisplayName + ' (' + champRecipe + ') - 每日預估 ' + champScaledCount + ' 顆'}">
-                    <span class="champ-crown">👑</span>
+                  <div class="ladder-track-champion-badge" title="${isEN ? 'Champion: ' + champDisplayName + ' (' + champRecipe + ') - ' + champScaledCount + ' /day' : '產量冠軍：' + champDisplayName + ' (' + champRecipe + ') - 每日預估 ' + champScaledCount + ' 顆'}">
                     <span class="champ-pkm">${champDisplayName}</span>
                     <span class="champ-yield">${champScaledCount}${isEN ? '/d' : '顆'}</span>
                   </div>
@@ -11340,18 +11339,18 @@
                       const isTopNode = v.isTop || (p.isTop && v.recipe === p.recipe);
                       const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
 
-                      // 🍲 大菜供應能力試算
+                      // 大菜供應能力試算
                       const mealsPerDay = (scaledCount / dishInfo.need).toFixed(1);
                       let dishTag = '';
                       let dishBadgeClass = '';
                       if (mealsPerDay >= 3.0) {
-                        dishTag = isEN ? `✨ Full 3 Meals (${mealsPerDay} meals/day)` : `✨ 滿載 3 餐大菜 (${mealsPerDay} 餐/天)`;
+                        dishTag = isEN ? `Full 3 Meals (${mealsPerDay} meals/day)` : `滿載 3 餐大菜 (${mealsPerDay} 餐/天)`;
                         dishBadgeClass = 'dish-badge-full';
                       } else if (mealsPerDay >= 1.8) {
-                        dishTag = isEN ? `⚡ Solid 2 Meals (${mealsPerDay} meals/day)` : `⚡ 充足供應 2 餐大菜 (${mealsPerDay} 餐/天)`;
+                        dishTag = isEN ? `Solid 2 Meals (${mealsPerDay} meals/day)` : `充足供應 2 餐大菜 (${mealsPerDay} 餐/天)`;
                         dishBadgeClass = 'dish-badge-high';
                       } else {
-                        dishTag = isEN ? `💡 Auxiliary Support (${mealsPerDay} meals/day)` : `💡 輔助支援 (${mealsPerDay} 餐/天)`;
+                        dishTag = isEN ? `Auxiliary Support (${mealsPerDay} meals/day)` : `輔助支援 (${mealsPerDay} 餐/天)`;
                         dishBadgeClass = 'dish-badge-assist';
                       }
 
@@ -11364,17 +11363,16 @@
                           <div class="node-recipe-tag recipe-tag-${v.recipe.toLowerCase()}">${v.recipe}</div>
                           <div class="node-avatar-wrapper">
                             <img src="${p.icon}" class="node-avatar-img" alt="${pkmDisplayName}">
-                            ${isTopNode ? '<span class="node-crown">👑</span>' : ''}
                           </div>
                           <div class="node-count-badge">${scaledCount}</div>
                           
                           <div class="ladder-node-tooltip">
-                            <div class="tooltip-title">${isTopNode ? (isEN ? '👑 Top 1 Yield ' : '👑 產量 TOP 1 ') : ''}${pkmDisplayName}</div>
+                            <div class="tooltip-title">${isTopNode ? (isEN ? 'Top 1 Yield ' : '產量 TOP 1 ') : ''}${pkmDisplayName}</div>
                             <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估日產：'}<span class="text-success font-bold">${scaledCount} ${isEN ? '/day' : '顆/天'}</span></div>
                             
-                            <!-- 🍲 頂級大菜供貨能力指標 -->
+                            <!-- 頂級大菜供貨能力指標 -->
                             <div class="tooltip-dish-box">
-                              <div class="tooltip-dish-title">🍲 ${isEN ? 'Key Dish: ' : '核心大菜：'}<span class="text-white font-bold">${dishName}</span> (${dishInfo.need}${isEN ? '/meal' : '顆/餐'})</div>
+                              <div class="tooltip-dish-title">${isEN ? 'Key Dish: ' : '核心大菜：'}<span class="text-white font-bold">${dishName}</span> (${dishInfo.need}${isEN ? '/meal' : '顆/餐'})</div>
                               <div class="tooltip-dish-badge ${dishBadgeClass}">${dishTag}</div>
                             </div>
 
@@ -11403,7 +11401,7 @@
         <div class="values-horizontal-section">
           <div class="values-section-header">
             <div class="values-section-title-group">
-              <span class="values-section-badge berry-badge">${isEN ? '🫐 Berry Base Power' : '🫐 樹果能量庫'}</span>
+              <span class="values-section-badge berry-badge">${isEN ? 'Berry Base Power' : '樹果能量庫'}</span>
               <span class="values-section-sub">${isEN ? 'Base Energy (Lv.1: 24 ➔ 35)' : '基礎能量 (Lv.1: 24 ➔ 35)'}</span>
             </div>
 
@@ -11430,7 +11428,7 @@
                 <label class="berry-switch-label" title="${isEN ? 'Favorite Berry 2x Energy Multiplier' : '卡比獸喜愛樹果 (順果) 能量翻倍 (2x)'}">
                   <input type="checkbox" id="berry-favorite-toggle" ${isFavoriteBerry2x ? 'checked' : ''} onchange="window.WikiDB.toggleBerryFavorite(this.checked)">
                   <span class="berry-switch-slider"></span>
-                  <span class="berry-switch-text">${isEN ? '🎯 Favorite 2x' : '🎯 順果 2x'}</span>
+                  <span class="berry-switch-text">${isEN ? 'Favorite 2x' : '順果 2x'}</span>
                 </label>
               </div>
             </div>
@@ -11608,7 +11606,7 @@
         valuesHtml = `
           <div class="skill-interactive-section">
             <div class="stack-selector-row">
-              <span class="stack-selector-label">${isEN ? '🎯 Stack Count:' : '🎯 蓄力次數切換：'}</span>
+              <span class="stack-selector-label">${isEN ? 'Stack Count:' : '蓄力次數切換：'}</span>
               <div class="stack-chips-group" id="charge-stack-chips">
                 ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(s => `
                   <button type="button" class="stack-chip-btn ${s === 10 ? 'active' : ''}" data-stack-target="${s}" onclick="window.WikiDB.switchStack(${s})">${s}${isEN ? 'x' : '次'}</button>
@@ -11621,7 +11619,7 @@
             <!-- 展開完整對照表按鈕 -->
             <div style="margin-top: 8px;">
               <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="charge-matrix-table" onclick="window.WikiDB.toggleDetail('charge-matrix-table')">
-                ${isEN ? '📊 Toggle 0~10 Stack Value Matrix' : '📊 展開 / 收合完整 0~10 次蓄力數值表'}
+                ${isEN ? 'Toggle 0~10 Stack Value Matrix' : '展開 / 收合完整 0~10 次蓄力數值表'}
               </button>
             </div>
 
@@ -11650,7 +11648,7 @@
         valuesHtml = `
           <div class="skill-interactive-section">
             <div class="stack-selector-row">
-              <span class="stack-selector-label">${isEN ? '⚡ Same-type Species:' : '⚡ 同屬性種類數：'}</span>
+              <span class="stack-selector-label">${isEN ? 'Same-type Species:' : '同屬性種類數：'}</span>
               <div class="stack-chips-group" id="helper-boost-chips">
                 ${[0, 1, 2, 3, 4, 5].map(k => `
                   <button type="button" class="stack-chip-btn ${k === 5 ? 'active' : ''}" data-boost-kind="${k}" onclick="window.WikiDB.switchBoost(${k})">${k} ${isEN ? 'Types' : '種類'}</button>
@@ -11663,7 +11661,7 @@
             <!-- 展開完整對照表按鈕 -->
             <div style="margin-top: 8px;">
               <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="helper-boost-table" onclick="window.WikiDB.toggleDetail('helper-boost-table')">
-                ${isEN ? '📊 Toggle 0~5 Types Comparison Table' : '📊 展開 / 收合完整 0~5 種類對照表'}
+                ${isEN ? 'Toggle 0~5 Types Comparison Table' : '展開 / 收合完整 0~5 種類對照表'}
               </button>
             </div>
 
@@ -11701,7 +11699,7 @@
           <!-- 展開完整 1~5 種類隊友樹果對照表按鈕 -->
           <div style="margin-top: 6px;">
             <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="lunar-prayer-table" onclick="window.WikiDB.toggleDetail('lunar-prayer-table')">
-              ${isEN ? '📊 Toggle 1~5 Species Berry Table' : '📊 展開 / 收合 1~5 種類隊友樹果表'}
+              ${isEN ? 'Toggle 1~5 Species Berry Table' : '展開 / 收合 1~5 種類隊友樹果表'}
             </button>
           </div>
 
@@ -11732,7 +11730,7 @@
           <!-- 展開各寶可夢專屬食材池對照表按鈕 -->
           <div style="margin-top: 6px;">
             <button type="button" class="wiki-toggle-detail-btn" data-toggle-target="ing-draw-matrix-table" onclick="window.WikiDB.toggleDetail('ing-draw-matrix-table')">
-              ${isEN ? '📊 Toggle Candidate Ingredient Pools per Pokémon' : '📊 展開 / 收合 各寶可夢「專屬食材池」對照表'}
+              ${isEN ? 'Toggle Candidate Ingredient Pools per Pokémon' : '展開 / 收合 各寶可夢「專屬食材池」對照表'}
             </button>
           </div>
 
@@ -11820,7 +11818,7 @@
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
 
     container.innerHTML = `
-      <!-- ⬅️ 天梯專屬側邊篩選器 (Mobile: 抽屜式 / Desktop: 左側固定) -->
+      <!-- 天梯專屬側邊篩選器 (Mobile: 抽屜式 / Desktop: 左側固定) -->
       <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${isMobileH5 ? 'collapsed' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Ladder Filters' : '天梯篩選器'}">
         <div class="sidebar-header">
           <button type="button" id="ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.closeLadderSidebar()" title="${isEN ? 'Close' : '收合'}" aria-label="${isEN ? 'Close' : '收合'}">
@@ -11830,82 +11828,80 @@
             </svg>
           </button>
           <div class="sidebar-title-group">
-            <span class="sidebar-icon">🎛️</span>
             <span class="sidebar-title">${isEN ? 'Ladder Filters' : '天梯篩選器'}</span>
           </div>
           <button type="button" id="ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${isEN ? 'Reset All Filters' : '重設所有條件'}">${isEN ? 'Reset All' : '全部重設'}</button>
         </div>
 
         <div class="sidebar-scrollable-content">
-          <!-- 1. 🔍 搜尋寶可夢 -->
+          <!-- 1. 搜尋寶可夢 -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Search Pokémon' : '搜尋寶可夢'}</span>
               <button type="button" id="ladder-search-clear-btn" class="sidebar-section-clear-btn" style="${ladderSearchQuery ? 'display:inline-block;' : 'display:none;'}" onclick="window.WikiDB.clearLadderSearch()">${isEN ? 'Clear' : '清空'}</button>
             </div>
             <div class="sidebar-search-box" style="margin-top: 4px;">
-              <span class="sidebar-search-icon">🔍</span>
               <input type="text" id="ladder-pkm-search-input" class="sidebar-search-input" placeholder="${isEN ? 'Search Pokémon...' : '搜尋寶可夢名稱...'}" value="${ladderSearchQuery}" oninput="window.WikiDB.onLadderSearch(this.value)">
             </div>
           </div>
 
-          <!-- 2. 👑 產量與供餐梯隊 (Supply Tier) -->
+          <!-- 2. 產量與供餐梯隊 (Supply Tier) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Supply Tier' : '產量供餐梯隊'}</span>
             </div>
             <div class="sidebar-skills-list">
               <button type="button" class="tag-btn ${ladderSupplyFilter === 'ALL' ? 'active' : ''}" data-supply-filter="ALL" onclick="window.WikiDB.setLadderSupplyFilter('ALL')">${isEN ? 'All' : '全部'}</button>
-              <button type="button" class="tag-btn ${ladderSupplyFilter === 'TOP' ? 'active' : ''}" data-supply-filter="TOP" onclick="window.WikiDB.setLadderSupplyFilter('TOP')">${isEN ? '👑 Top 1-2' : '👑 冠亞軍'}</button>
-              <button type="button" class="tag-btn ${ladderSupplyFilter === 'MEALS_3' ? 'active' : ''}" data-supply-filter="MEALS_3" onclick="window.WikiDB.setLadderSupplyFilter('MEALS_3')">${isEN ? '🍲 3 Meals' : '🍲 滿載 3 餐'}</button>
-              <button type="button" class="tag-btn ${ladderSupplyFilter === 'MEALS_2' ? 'active' : ''}" data-supply-filter="MEALS_2" onclick="window.WikiDB.setLadderSupplyFilter('MEALS_2')">${isEN ? '⚡ 2 Meals' : '⚡ 充足 2 餐'}</button>
+              <button type="button" class="tag-btn ${ladderSupplyFilter === 'TOP' ? 'active' : ''}" data-supply-filter="TOP" onclick="window.WikiDB.setLadderSupplyFilter('TOP')">${isEN ? 'Top 1-2' : '冠亞軍'}</button>
+              <button type="button" class="tag-btn ${ladderSupplyFilter === 'MEALS_3' ? 'active' : ''}" data-supply-filter="MEALS_3" onclick="window.WikiDB.setLadderSupplyFilter('MEALS_3')">${isEN ? '3 Meals' : '滿載 3 餐'}</button>
+              <button type="button" class="tag-btn ${ladderSupplyFilter === 'MEALS_2' ? 'active' : ''}" data-supply-filter="MEALS_2" onclick="window.WikiDB.setLadderSupplyFilter('MEALS_2')">${isEN ? '2 Meals' : '充足 2 餐'}</button>
             </div>
           </div>
 
-          <!-- 3. 🥗 食材組合型態 (Recipe Structure) -->
+          <!-- 3. 食材組合型態 (Recipe Structure) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Recipe Structure' : '食材組合型態'}</span>
             </div>
             <div class="sidebar-skills-list">
               <button type="button" class="tag-btn ${ladderRecipeFilter === 'ALL' ? 'active' : ''}" data-recipe-filter="ALL" onclick="window.WikiDB.setLadderRecipeFilter('ALL')">${isEN ? 'All' : '全部'}</button>
-              <button type="button" class="tag-btn ${ladderRecipeFilter === 'AAA' ? 'active' : ''}" data-recipe-filter="AAA" onclick="window.WikiDB.setLadderRecipeFilter('AAA')">${isEN ? '🥗 Pure AAA' : '🥗 純種 AAA'}</button>
-              <button type="button" class="tag-btn ${ladderRecipeFilter === 'ABB' ? 'active' : ''}" data-recipe-filter="ABB" onclick="window.WikiDB.setLadderRecipeFilter('ABB')">${isEN ? '🥑 Dual ABB' : '🥑 雙食材 ABB'}</button>
-              <button type="button" class="tag-btn ${ladderRecipeFilter === 'AXX' ? 'active' : ''}" data-recipe-filter="AXX" onclick="window.WikiDB.setLadderRecipeFilter('AXX')">${isEN ? '🍕 Mix AXX' : '🍕 混搭 AXX'}</button>
+              <button type="button" class="tag-btn ${ladderRecipeFilter === 'AAA' ? 'active' : ''}" data-recipe-filter="AAA" onclick="window.WikiDB.setLadderRecipeFilter('AAA')">${isEN ? 'Pure AAA' : '純種 AAA'}</button>
+              <button type="button" class="tag-btn ${ladderRecipeFilter === 'ABB' ? 'active' : ''}" data-recipe-filter="ABB" onclick="window.WikiDB.setLadderRecipeFilter('ABB')">${isEN ? 'Dual ABB' : '雙食材 ABB'}</button>
+              <button type="button" class="tag-btn ${ladderRecipeFilter === 'AXX' ? 'active' : ''}" data-recipe-filter="AXX" onclick="window.WikiDB.setLadderRecipeFilter('AXX')">${isEN ? 'Mix AXX' : '混搭 AXX'}</button>
             </div>
           </div>
 
-          <!-- 4. ✨ 寶可夢專長分類 (Specialty Type) -->
+          <!-- 4. 寶可夢專長分類 (Specialty Type) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Specialty Type' : '寶可夢專長'}</span>
             </div>
             <div class="sidebar-skills-list">
               <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'ALL' ? 'active' : ''}" data-specialty-filter="ALL" onclick="window.WikiDB.setLadderSpecialtyFilter('ALL')">${isEN ? 'All' : '全部'}</button>
-              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'INGREDIENT' ? 'active' : ''}" data-specialty-filter="INGREDIENT" onclick="window.WikiDB.setLadderSpecialtyFilter('INGREDIENT')">${isEN ? '🥗 Ingredient' : '🥗 食材型'}</button>
-              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'BERRY' ? 'active' : ''}" data-specialty-filter="BERRY" onclick="window.WikiDB.setLadderSpecialtyFilter('BERRY')">${isEN ? '🫐 Berry' : '🫐 樹果型'}</button>
-              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'SKILL' ? 'active' : ''}" data-specialty-filter="SKILL" onclick="window.WikiDB.setLadderSpecialtyFilter('SKILL')">${isEN ? '⚡ Skill' : '⚡ 技能型'}</button>
+              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'INGREDIENT' ? 'active' : ''}" data-specialty-filter="INGREDIENT" onclick="window.WikiDB.setLadderSpecialtyFilter('INGREDIENT')">${isEN ? 'Ingredient' : '食材型'}</button>
+              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'BERRY' ? 'active' : ''}" data-specialty-filter="BERRY" onclick="window.WikiDB.setLadderSpecialtyFilter('BERRY')">${isEN ? 'Berry' : '樹果型'}</button>
+              <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'SKILL' ? 'active' : ''}" data-specialty-filter="SKILL" onclick="window.WikiDB.setLadderSpecialtyFilter('SKILL')">${isEN ? 'Skill' : '技能型'}</button>
             </div>
           </div>
 
-          <!-- 5. 👁️ 檢視呈現模式 -->
+          <!-- 5. 檢視呈現模式 -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'View Mode' : '檢視模式'}</span>
             </div>
             <div class="sidebar-skills-list">
-              <button type="button" class="tag-btn ${ladderViewMode === 'coordinate' ? 'active' : ''}" data-ladder-view="coordinate" onclick="window.WikiDB.switchLadderView('coordinate')">${isEN ? '📈 Visual' : '📈 視覺天梯'}</button>
-              <button type="button" class="tag-btn ${ladderViewMode === 'list' ? 'active' : ''}" data-ladder-view="list" onclick="window.WikiDB.switchLadderView('list')">${isEN ? '📋 List' : '📋 卡片清單'}</button>
+              <button type="button" class="tag-btn ${ladderViewMode === 'coordinate' ? 'active' : ''}" data-ladder-view="coordinate" onclick="window.WikiDB.switchLadderView('coordinate')">${isEN ? 'Visual' : '視覺天梯'}</button>
+              <button type="button" class="tag-btn ${ladderViewMode === 'list' ? 'active' : ''}" data-ladder-view="list" onclick="window.WikiDB.switchLadderView('list')">${isEN ? 'List' : '卡片清單'}</button>
             </div>
           </div>
 
-          <!-- 4. 🥩 副技能補正模擬 (Sub-Skill Boost Simulation) -->
+          <!-- 4. 副技能補正模擬 (Sub-Skill Boost Simulation) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Sub-Skills' : '副技能補正模擬'}</span>
             </div>
             <label class="sidebar-final-evo-label" for="ladder-ing-m-toggle" title="${isEN ? 'Ingredient Finder M (+36%)' : '食材發現機率提升M (+36%)'}">
-              <span class="sidebar-final-evo-text">${isEN ? '🥩 Ing. Finder M (+36%)' : '🥩 食材機率提升M (+36%)'}</span>
+              <span class="sidebar-final-evo-text">${isEN ? 'Ing. Finder M (+36%)' : '食材機率提升M (+36%)'}</span>
               <div class="sidebar-switch-wrapper">
                 <input type="checkbox" id="ladder-ing-m-toggle" class="switch-checkbox" ${isLadderIngM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderIngM(this.checked)">
                 <span class="switch-slider"></span>
@@ -11913,7 +11909,7 @@
             </label>
 
             <label class="sidebar-final-evo-label" for="ladder-speed-m-toggle" title="${isEN ? 'Helping Speed M (+16.3% helps)' : '幫忙速度M (-14% 間隔時間，約 +16.3% 幫忙次數)'}" style="margin-top: 6px;">
-              <span class="sidebar-final-evo-text">${isEN ? '⚡ Helping Speed M (+16.3%)' : '⚡ 幫忙速度提升M (+16.3%)'}</span>
+              <span class="sidebar-final-evo-text">${isEN ? 'Helping Speed M (+16.3%)' : '幫忙速度提升M (+16.3%)'}</span>
               <div class="sidebar-switch-wrapper">
                 <input type="checkbox" id="ladder-speed-m-toggle" class="switch-checkbox" ${isLadderSpeedM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSpeedM(this.checked)">
                 <span class="switch-slider"></span>
@@ -11921,13 +11917,13 @@
             </label>
           </div>
 
-          <!-- 5. 🧬 性格補正模擬 (Nature Boost Simulation) -->
+          <!-- 5. 性格補正模擬 (Nature Boost Simulation) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Natures' : '性格補正模擬'}</span>
             </div>
             <label class="sidebar-final-evo-label" for="ladder-nature-ing-toggle" title="${isEN ? 'Nature Ingredient Rate Up (+20%)' : '性格食材機率提升▲▲ (+20%)'}">
-              <span class="sidebar-final-evo-text">${isEN ? '🧬 Ing. Rate ▲▲ (+20%)' : '🧬 食材機率提升▲▲ (+20%)'}</span>
+              <span class="sidebar-final-evo-text">${isEN ? 'Ing. Rate ▲▲ (+20%)' : '食材機率提升▲▲ (+20%)'}</span>
               <div class="sidebar-switch-wrapper">
                 <input type="checkbox" id="ladder-nature-ing-toggle" class="switch-checkbox" ${isLadderNatureIng ? 'checked' : ''} onchange="window.WikiDB.toggleLadderNatureIng(this.checked)">
                 <span class="switch-slider"></span>
@@ -11935,7 +11931,7 @@
             </label>
 
             <label class="sidebar-final-evo-label" for="ladder-nature-speed-toggle" title="${isEN ? 'Nature Helping Speed Up (+10% helps)' : '性格幫忙速度提升▲▲ (-9.09% 間隔時間，約 +10% 幫忙次數)'}" style="margin-top: 6px;">
-              <span class="sidebar-final-evo-text">${isEN ? '🧬 Help Speed ▲▲ (+10%)' : '🧬 幫忙速度提升▲▲ (+10%)'}</span>
+              <span class="sidebar-final-evo-text">${isEN ? 'Help Speed ▲▲ (+10%)' : '幫忙速度提升▲▲ (+10%)'}</span>
               <div class="sidebar-switch-wrapper">
                 <input type="checkbox" id="ladder-nature-speed-toggle" class="switch-checkbox" ${isLadderNatureSpeed ? 'checked' : ''} onchange="window.WikiDB.toggleLadderNatureSpeed(this.checked)">
                 <span class="switch-slider"></span>
@@ -11949,25 +11945,25 @@
         <!-- 二級子分頁導航 (Sub-tabs) - 精簡無大標題橫幅 -->
         <div class="wiki-subnav-bar">
           <div class="wiki-subnav-tabs" role="tablist">
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills' ? 'active' : ''}" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${isMobileH5 ? (isEN ? 'Skills' : '主技能') : (isEN ? '⚡ Main Skills DB' : '⚡ 主技能數值庫')}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'subskills' ? 'active' : ''}" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${isMobileH5 ? (isEN ? 'Subskills' : '副技性格') : (isEN ? '🧩 Sub-Skills & Natures' : '🧩 副技能與性格指南')}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isMobileH5 ? (isEN ? 'Growth' : '培育指南') : (isEN ? '🎓 Growth & Tier Guide' : '🎓 培育與評級指南')}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isMobileH5 ? (isEN ? 'Ladder' : '食材天梯') : (isEN ? '🥗 Ingredient Yield Ladder' : '🥗 食材產量天梯榜')}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isMobileH5 ? (isEN ? 'Values' : '能量速查') : (isEN ? '🫐 Berry & Ing. Values' : '🫐 樹果與食材能量')}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills' ? 'active' : ''}" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${isMobileH5 ? (isEN ? 'Skills' : '主技能') : (isEN ? 'Main Skills DB' : '主技能數值庫')}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'subskills' ? 'active' : ''}" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${isMobileH5 ? (isEN ? 'Subskills' : '副技性格') : (isEN ? 'Sub-Skills & Natures' : '副技能與性格指南')}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isMobileH5 ? (isEN ? 'Growth' : '培育指南') : (isEN ? 'Growth & Tier Guide' : '培育與評級指南')}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isMobileH5 ? (isEN ? 'Ladder' : '食材天梯') : (isEN ? 'Ingredient Yield Ladder' : '食材產量天梯榜')}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isMobileH5 ? (isEN ? 'Values' : '能量速查') : (isEN ? 'Berry & Ing. Values' : '樹果與食材能量')}</button>
           </div>
         </div>
 
-        <!-- 子分頁 1：⚡ 主技能數值庫 (Main Skills) -->
+        <!-- 子分頁 1：主技能數值庫 (Main Skills) -->
         <div id="wiki-subpanel-skills" class="wiki-subpanel ${currentWikiSubTab === 'skills' ? 'active' : ''}" style="${currentWikiSubTab === 'skills' ? 'display:block;' : 'display:none;'}">
           <div class="wiki-control-bar">
             <div class="wiki-filter-pills">
               <span class="wiki-pill-label">${isEN ? 'Skill Type:' : '技能類型：'}</span>
               <button type="button" class="wiki-pill-btn active" data-skill-cat="all" onclick="window.WikiDB.filterSkills('all')">${isEN ? 'All Skills' : '全部技能'} (${MAIN_SKILLS_DATA.length})</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="energy" onclick="window.WikiDB.filterSkills('energy')">${isEN ? '⚡ Strength' : '⚡ 能量系'}</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="energy_heal" onclick="window.WikiDB.filterSkills('energy_heal')">${isEN ? '💖 Energy Recovery' : '💖 活力系'}</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="ingredient" onclick="window.WikiDB.filterSkills('ingredient')">${isEN ? '🥗 Ingredients' : '🥗 食材與料理'}</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="special" onclick="window.WikiDB.filterSkills('special')">${isEN ? '👑 Legend & Special' : '👑 神獸與特殊專屬'}</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="shards" onclick="window.WikiDB.filterSkills('shards')">${isEN ? '💎 Dream Shards' : '💎 夢之碎片'}</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="energy" onclick="window.WikiDB.filterSkills('energy')">${isEN ? 'Strength' : '能量系'}</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="energy_heal" onclick="window.WikiDB.filterSkills('energy_heal')">${isEN ? 'Energy Recovery' : '活力系'}</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="ingredient" onclick="window.WikiDB.filterSkills('ingredient')">${isEN ? 'Ingredients' : '食材與料理'}</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="special" onclick="window.WikiDB.filterSkills('special')">${isEN ? 'Legend & Special' : '神獸與特殊專屬'}</button>
+              <button type="button" class="wiki-pill-btn" data-skill-cat="shards" onclick="window.WikiDB.filterSkills('shards')">${isEN ? 'Dream Shards' : '夢之碎片'}</button>
             </div>
           </div>
 
@@ -11976,18 +11972,17 @@
           </div>
         </div>
 
-        <!-- 子分頁 2：🧩 副技能與性格指南 (Sub-Skills & Natures) -->
+        <!-- 子分頁 2：副技能與性格指南 (Sub-Skills & Natures) -->
         <div id="wiki-subpanel-subskills" class="wiki-subpanel ${currentWikiSubTab === 'subskills' ? 'active' : ''}" style="${currentWikiSubTab === 'subskills' ? 'display:block;' : 'display:none;'}">
           <!-- 主技能發動機率矩陣速查表 -->
           <div class="wiki-card">
             <div class="wiki-card-header">
-              <span class="wiki-card-icon">🧮</span>
               <h3 class="wiki-card-title">${isEN ? 'Main Skill Trigger Chance Matrix' : '主技能發動機率矩陣'}</h3>
             </div>
             <div class="wiki-rule-banner">
               ${isEN 
-                ? '💡 <strong>Formula</strong>: <code>(1 + Sub-Skill %) × Nature Multiplier = Final Multiplier</code>' 
-                : '💡 <strong>公式</strong>：<code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>'}
+                ? '<strong>Formula</strong>: <code>(1 + Sub-Skill %) × Nature Multiplier = Final Multiplier</code>' 
+                : '<strong>公式</strong>：<code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>'}
             </div>
 
             <!-- 速查對照表 -->
@@ -12039,13 +12034,12 @@
           <!-- 副技能完整階級與數值說明表格 -->
           <div class="wiki-card" style="margin-top: 20px;">
             <div class="wiki-card-header">
-              <span class="wiki-card-icon">📋</span>
               <h3 class="wiki-card-title">${isEN ? 'Sub-Skills Complete Tier & Stats Overview' : '副技能階級與數值總覽'}</h3>
             </div>
             <div class="wiki-rule-banner">
               ${isEN 
-                ? '⚠️ <strong>Rule</strong>: Helping speed buff from sub-skills is <strong>capped at 35%</strong> per Pokémon (includes own Helping Speed M/S plus stacked 5% Helping Bonus from all teammates).' 
-                : '⚠️ <strong>規則</strong>：單隻寶可夢受副技能加成之幫忙速度<strong>上限為 35%</strong>（包含自身幫速 M/S，以及全隊所有隊友攜帶「幫手獎勵」每隻 5% 之全隊疊加）。'}
+                ? '<strong>Rule</strong>: Helping speed buff from sub-skills is <strong>capped at 35%</strong> per Pokémon (includes own Helping Speed M/S plus stacked 5% Helping Bonus from all teammates).' 
+                : '<strong>規則</strong>：單隻寶可夢受副技能加成之幫忙速度<strong>上限為 35%</strong>（包含自身幫速 M/S，以及全隊所有隊友攜帶「幫手獎勵」每隻 5% 之全隊疊加）。'}
             </div>
             <div class="wiki-table-wrapper">
               <table class="wiki-data-table">
@@ -12076,7 +12070,6 @@
           <!-- 性格五維加成倍率表 -->
           <div class="wiki-card" style="margin-top: 20px;">
             <div class="wiki-card-header">
-              <span class="wiki-card-icon">🧬</span>
               <h3 class="wiki-card-title">${isEN ? 'Nature 5-Stat Multiplier Table' : '性格五維屬性倍率表'}</h3>
             </div>
             <div class="wiki-table-wrapper" style="margin-top: 10px;">
@@ -12104,12 +12097,11 @@
           </div>
         </div>
 
-        <!-- 子分頁 3：🎓 培育與評級指南 (Ratings & Growth) -->
+        <!-- 子分頁 3：培育與評級指南 (Ratings & Growth) -->
         <div id="wiki-subpanel-ratings" class="wiki-subpanel ${currentWikiSubTab === 'ratings' ? 'active' : ''}" style="${currentWikiSubTab === 'ratings' ? 'display:block;' : 'display:none;'}">
           <!-- 培育週期與核心思維 -->
           <div class="wiki-card">
             <div class="wiki-card-header">
-              <span class="wiki-card-icon">🎯</span>
               <h3 class="wiki-card-title">${isEN ? 'Core Growth & Investment Cycle Guide' : '新手與進階養成核心週期指引'}</h3>
             </div>
             <div class="wiki-strategy-grid">
@@ -12146,7 +12138,6 @@
           <!-- 睡眠天數升級試算器 (Image 2 實體化) -->
           <div class="wiki-card wiki-calc-card" style="margin-top: 24px;">
             <div class="wiki-card-header">
-              <span class="wiki-card-icon">🌙</span>
               <h3 class="wiki-card-title">${isEN ? 'Pokémon Sleep EXP & Days Calculator' : '寶可夢睡眠升級天數計算器'}</h3>
             </div>
             <p class="wiki-card-desc">${isEN ? 'Based on 100 daily sleep score (100 base EXP), calculates required sleep days and EXP from current to target level.' : '依據每日睡滿 100 分（100 EXP 基礎），計算從目前等級升至目標等級所需睡眠天數與經驗值。'}</p>
@@ -12208,9 +12199,9 @@
           </div>
         </div>
 
-        <!-- 子分頁 4：🥗 食材產量天梯榜 (Ingredient Yield Ladder) -->
+        <!-- 子分頁 4：食材產量天梯榜 (Ingredient Yield Ladder) -->
         <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:block;' : 'display:none;'}">
-          <!-- 🎛️ 右下懸浮天梯篩選按鈕 (Mobile Only FAB) -->
+          <!-- 右下懸浮天梯篩選按鈕 (Mobile Only FAB) -->
           <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Open Filters' : '展開天梯篩選器'}" aria-label="${isEN ? 'Open Filters' : '展開天梯篩選器'}" style="${isMobileH5 && currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
             <span class="bookmark-icon">
               <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -12238,11 +12229,10 @@
           </div>
         </div>
 
-        <!-- 子分頁 5：🫐 樹果與食材基礎能量 (Image 1 實體化 - Berry & Ingredient Values) -->
+        <!-- 子分頁 5：樹果與食材基礎能量 (Image 1 實體化 - Berry & Ingredient Values) -->
         <div id="wiki-subpanel-values" class="wiki-subpanel ${currentWikiSubTab === 'values' ? 'active' : ''}" style="${currentWikiSubTab === 'values' ? 'display:block;' : 'display:none;'}">
           <div class="wiki-card">
             <div class="wiki-card-header">
-              <span class="wiki-card-icon">🫐</span>
               <h3 class="wiki-card-title">${isEN ? 'Berry & Ingredient Base Power Table' : '樹果與食材基礎能量表'}</h3>
             </div>
             <p class="wiki-card-desc">${isEN ? 'Official in-game base power values for 18 Berries (24~35) and 19 Ingredients (90~342).' : '依據官方遊戲底層能量設定，完整展示 18 種屬性樹果基礎能量（24~35）與 19 種料理食材基礎能量（90~342）。'}</p>
