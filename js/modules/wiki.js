@@ -11711,18 +11711,18 @@
               </button>
             </div>
 
-            <div id="charge-matrix-table" class="wiki-table-wrapper" style="display: none; margin-top: 8px;">
+            <div id="charge-matrix-table" class="wiki-table-wrapper" style="display: none; margin-top: 6px;">
               <table class="wiki-mini-table">
                 <thead>
                   <tr>
-                    <th>${isEN ? 'Stacks' : '蓄力次數'}</th>
+                    <th>${isEN ? 'Stacks' : '蓄力'}</th>
                     ${[1, 2, 3, 4, 5, 6, 7].map(lv => `<th>Lv.${lv}</th>`).join('')}
                   </tr>
                 </thead>
                 <tbody>
                   ${skill.matrix.map(m => `
                     <tr class="${m.stacks === 10 ? 'row-highlight' : ''}">
-                      <td class="font-bold text-accent">${m.stacks} ${isEN ? 'Stacks' : '次'}</td>
+                      <td class="font-bold text-accent">${m.stacks}${isEN ? 'x' : '次'}</td>
                       ${m.vals.map(v => `<td>${v.toLocaleString()}</td>`).join('')}
                     </tr>
                   `).join('')}

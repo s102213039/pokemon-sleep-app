@@ -7757,12 +7757,14 @@ input[type="number"] {
   box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
 }
 
-/* 獨立美味尾巴專屬天梯小看板 (Standalone Tail Box) */
+/* 獨立美味尾巴專屬天梯小看板 (Standalone Tail Box) - 一樣從最左側開始 */
 .ladder-tail-standalone-container {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
-  padding-right: 8px;
+  justify-content: flex-start;
+  margin-top: 14px;
+  padding-left: 0;
+  padding-right: 0;
+  width: 100%;
 }
 
 .ladder-tail-standalone-box {
@@ -7770,8 +7772,10 @@ input[type="number"] {
   border: 1.5px solid #cbd5e1;
   border-radius: 10px;
   padding: 6px 10px 8px;
-  width: 340px;
+  width: 280px;
+  max-width: 100%;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  margin-left: 0;
 }
 
 .ladder-tail-ruler {
@@ -12283,6 +12287,76 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   color: var(--accent-blue) !important;
 }
 
+/* 蓄力與幫手獎勵對照表無滾動條全覽 */
+#charge-matrix-table,
+#helper-boost-table,
+.mobile-h5-app #charge-matrix-table,
+.mobile-h5-app #helper-boost-table {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+}
+
+#charge-matrix-table .wiki-mini-table,
+#helper-boost-table .wiki-mini-table,
+.mobile-h5-app #charge-matrix-table .wiki-mini-table,
+.mobile-h5-app #helper-boost-table .wiki-mini-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+}
+
+#charge-matrix-table th,
+#charge-matrix-table td,
+.mobile-h5-app #charge-matrix-table th,
+.mobile-h5-app #charge-matrix-table td {
+  padding: 3.5px 0.5px !important;
+  font-size: 10px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+#charge-matrix-table th:first-child,
+#charge-matrix-table td:first-child,
+.mobile-h5-app #charge-matrix-table th:first-child,
+.mobile-h5-app #charge-matrix-table td:first-child {
+  width: 14% !important;
+  font-weight: 700 !important;
+}
+
+#charge-matrix-table th:not(:first-child),
+#charge-matrix-table td:not(:first-child),
+.mobile-h5-app #charge-matrix-table th:not(:first-child),
+.mobile-h5-app #charge-matrix-table td:not(:first-child) {
+  width: 12.28% !important;
+}
+
+#helper-boost-table th,
+#helper-boost-table td,
+.mobile-h5-app #helper-boost-table th,
+.mobile-h5-app #helper-boost-table td {
+  padding: 4px 1px !important;
+  font-size: 10px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+#helper-boost-table th:first-child,
+#helper-boost-table td:first-child,
+.mobile-h5-app #helper-boost-table th:first-child,
+.mobile-h5-app #helper-boost-table td:first-child {
+  width: 18% !important;
+}
+
+#helper-boost-table th:not(:first-child),
+#helper-boost-table td:not(:first-child),
+.mobile-h5-app #helper-boost-table th:not(:first-child),
+.mobile-h5-app #helper-boost-table td:not(:first-child) {
+  width: 13.66% !important;
+}
+
 /* 4. 🧩 Sub-Tab 2: 副技能與性格指南 */
 .mobile-h5-app .wiki-table-wrapper {
   overflow-x: auto !important;
@@ -12786,15 +12860,13 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .wiki-coordinate-ladder-wrapper {
-  overflow-x: auto !important;
-  -webkit-overflow-scrolling: touch !important;
-  scrollbar-width: none !important;
+  overflow-x: hidden !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  padding: 6px 4px 10px !important;
+  padding: 4px 2px 8px !important;
   background: #ffffff !important;
   border: none !important;
-  border-radius: 10px !important;
+  border-radius: 8px !important;
 }
 
 .mobile-h5-app .wiki-coordinate-ladder-wrapper::-webkit-scrollbar {
@@ -12802,51 +12874,88 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .wiki-coordinate-ladder {
-  min-width: 540px !important;
+  min-width: 0 !important;
+  width: 100% !important;
   background: #ffffff !important;
   border: none !important;
   padding: 0 !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .ladder-track-row {
-  padding: 2px 0 !important;
-  min-height: 42px !important;
-  height: 42px !important;
+  padding: 1px 0 !important;
+  min-height: 38px !important;
+  height: 38px !important;
   background: transparent !important;
   border: none !important;
 }
 
 .mobile-h5-app .ladder-track-header {
-  width: 26px !important;
-  min-width: 26px !important;
+  width: 22px !important;
+  min-width: 22px !important;
   justify-content: center !important;
   padding: 0 !important;
   border-right: none !important;
 }
 
 .mobile-h5-app .ladder-ruler-spacer {
-  width: 26px !important;
-  min-width: 26px !important;
+  width: 22px !important;
+  min-width: 22px !important;
   justify-content: center !important;
 }
 
 .mobile-h5-app .ladder-ing-icon {
-  width: 22px !important;
-  height: 22px !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.mobile-h5-app .ladder-ruler-scale {
+  margin: 0 2px !important;
+}
+
+.mobile-h5-app .ladder-track-canvas {
+  margin: 0 2px !important;
 }
 
 .mobile-h5-app .ladder-tail-standalone-container {
   display: flex !important;
-  justify-content: center !important;
-  margin-top: 14px !important;
+  justify-content: flex-start !important;
+  margin-top: 10px !important;
+  padding-left: 0 !important;
   padding-right: 0 !important;
+  width: 100% !important;
 }
 
 .mobile-h5-app .ladder-tail-standalone-box {
-  width: 290px !important;
+  width: 230px !important;
+  max-width: 100% !important;
   background: #ffffff !important;
   border: 1.5px solid #cbd5e1 !important;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+  margin-left: 0 !important;
+  padding: 4px 6px 6px !important;
+}
+
+.mobile-h5-app .ladder-tail-ruler-spacer {
+  width: 22px !important;
+  min-width: 22px !important;
+}
+
+.mobile-h5-app .ladder-tail-ruler-scale {
+  margin: 0 2px !important;
+}
+
+.mobile-h5-app .ladder-tail-canvas {
+  margin: 0 2px !important;
+}
+
+.mobile-h5-app .node-avatar-wrapper {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.mobile-h5-app .tick-label {
+  font-size: 9.5px !important;
 }
 
 .mobile-h5-app .ladder-card {
