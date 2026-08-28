@@ -11986,8 +11986,8 @@
             </div>
             <div class="wiki-rule-banner">
               ${isEN 
-                ? '💡 <strong>Calculation Rule</strong>: <code>(1 + Sub-Skill %) × Nature Multiplier = Final Multiplier</code>.' 
-                : '💡 <strong>乘法公式</strong>：<code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>，為所有組合之總倍率速查。'}
+                ? '💡 <strong>Formula</strong>: <code>(1 + Sub-Skill %) × Nature Multiplier = Final Multiplier</code>' 
+                : '💡 <strong>公式</strong>：<code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>'}
             </div>
 
             <!-- 速查對照表 -->
@@ -12044,8 +12044,8 @@
             </div>
             <div class="wiki-rule-banner">
               ${isEN 
-                ? '⚠️ <strong>Important Rule</strong>: Helping speed from sub-skills (Helping Bonus 5% + Helping Speed M 14% + Helping Speed S 7%) is <strong>capped at 35%</strong>.'
-                : '⚠️ <strong>重要規則</strong>：副技能幫忙速度（幫手獎勵 5% + 幫速M 14% + 幫速S 7%）<strong>合計上限為 35%</strong>。'}
+                ? '⚠️ <strong>Rule</strong>: Helping speed buff from sub-skills is <strong>capped at 35%</strong> per Pokémon (includes own Helping Speed M/S plus stacked 5% Helping Bonus from all teammates).' 
+                : '⚠️ <strong>規則</strong>：單隻寶可夢受副技能加成之幫忙速度<strong>上限為 35%</strong>（包含自身幫速 M/S，以及全隊所有隊友攜帶「幫手獎勵」每隻 5% 之全隊疊加）。'}
             </div>
             <div class="wiki-table-wrapper">
               <table class="wiki-data-table">
@@ -12079,12 +12079,7 @@
               <span class="wiki-card-icon">🧬</span>
               <h3 class="wiki-card-title">${isEN ? 'Nature 5-Stat Multiplier Table' : '性格五維屬性倍率表'}</h3>
             </div>
-            <div class="wiki-rule-banner">
-              ${isEN 
-                ? '💡 <strong>Nature Impact</strong>: Natures directly modify Pokémon stats with enhanced bonuses and softened penalties.' 
-                : '💡 <strong>機制說明</strong>：性格直接修正寶可夢五維屬性，官方已全面調輕下降懲罰。'}
-            </div>
-            <div class="wiki-table-wrapper">
+            <div class="wiki-table-wrapper" style="margin-top: 10px;">
               <table class="wiki-data-table">
                 <thead>
                   <tr>
