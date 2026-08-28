@@ -12016,14 +12016,11 @@
                           ? `<span class="matrix-rate-up">${isEN ? '▲▲ Up' : '▲▲ 上升'}</span>` 
                           : (row.natureBadge === 'down' 
                             ? `<span class="matrix-rate-down">${isEN ? '▼▼ Down' : '▼▼ 下降'}</span>` 
-                            : `<span class="text-secondary" style="font-size: 11.5px; font-weight: 500;">${isEN ? 'Neutral' : '無修正'}</span>`)}
+                            : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`)}
                       </td>
                       <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><code class="matrix-calc-code">${row.calc}</code></td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
-                        <span class="text-accent font-bold" style="font-size: 12.5px;">${row.multiplier.toFixed(3)}${isEN ? 'x' : '倍'}</span>
-                        <span class="${row.multiplier >= 1 ? 'matrix-pct-up' : 'matrix-pct-down'}" style="font-size: 10.5px; margin-left: 2px; font-weight: 700;">
-                          (${row.multiplier >= 1 ? '+' : ''}${((row.multiplier - 1) * 100).toFixed(1)}%)
-                        </span>
+                        <span class="text-accent font-bold" style="font-size: 13px;">x${row.multiplier.toFixed(3)}</span>
                       </td>
                       <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><span class="wiki-tier-badge tier-${row.grade[0].toLowerCase()}">${isEN ? (row.grade_en || row.grade) : row.grade}</span></td>
                     </tr>
