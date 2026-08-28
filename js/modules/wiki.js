@@ -10640,23 +10640,24 @@
     }
   }
 
-  // 5.0 方案 C: 展開 / 收合主技能各等級階梯清單
-  function toggleSkillStepper(skillId) {
-    const stepper = document.getElementById(`skill-stepper-${skillId}`);
-    const btn = document.getElementById(`skill-stepper-btn-${skillId}`);
-    if (!stepper || !btn) return;
-    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const isHidden = stepper.style.display === 'none' || !stepper.style.display;
+  // 5.0 方案 C: 點擊卡片展開 / 收合主技能各等級階梯清單
+  function toggleSkillCard(cardEl, skillId, event) {
+    if (event) {
+      const target = event.target;
+      // 避免點擊互動式按鈕、晶片、對照表或展開/收合子按鈕時觸發卡片折疊
+      if (target && target.closest && target.closest('button, a, input, select, .wiki-table-wrapper, .stack-chip-btn, .wiki-toggle-detail-btn')) {
+        return;
+      }
+    }
+    const card = cardEl || document.getElementById(`skill-card-${skillId}`);
+    if (!card) return;
+    card.classList.toggle('is-expanded');
+  }
 
-    if (isHidden) {
-      stepper.style.display = 'flex';
-      btn.innerHTML = isEN ? '▴ Collapse Level Details' : '▴ 收合各級效果';
-      btn.classList.add('active');
-    } else {
-      stepper.style.display = 'none';
-      const maxLv = btn.getAttribute('data-max-lv') || '7';
-      btn.innerHTML = isEN ? `📋 Show All Lv.1~Lv.${maxLv} Levels ▾` : `📋 展開 Lv.1~Lv.${maxLv} 各級效果 ▾`;
-      btn.classList.remove('active');
+  function toggleSkillStepper(skillId) {
+    const card = document.getElementById(`skill-card-${skillId}`);
+    if (card) {
+      card.classList.toggle('is-expanded');
     }
   }
 
@@ -11576,7 +11577,7 @@
     `;}).join('');
   }
 
-  // 方案 C: 渲染技能「精華雙核心看板 (Lv.1 基礎 ➔ Lv.Max 頂級上限)」與「點擊展開/收合縱向階梯」
+  // 方案 C: 渲染技能「精華雙核心看板 (Lv.1 基礎 ➔ Lv.Max 頂級上限)」與「縱向階梯清單（隨卡片點擊展開/收合）」
   function renderSkillHeroAndStepper(skillId, levelsData, unitLabel, maxLv = 7) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     if (!levelsData || levelsData.length === 0) return '';
@@ -11601,18 +11602,8 @@
         </div>
       </div>
 
-      <!-- 展開 / 收合各等級階梯按鈕 -->
-      <button type="button" 
-        id="skill-stepper-btn-${skillId}" 
-        class="skill-stepper-toggle-btn" 
-        data-skill-id="${skillId}" 
-        data-max-lv="${actualMaxLv}" 
-        onclick="window.WikiDB.toggleSkillStepper('${skillId}')">
-        ${isEN ? `📋 Show All Lv.1~Lv.${actualMaxLv} Levels ▾` : `📋 展開 Lv.1~Lv.${actualMaxLv} 各級效果 ▾`}
-      </button>
-
-      <!-- 展開後的縱向階梯列表 -->
-      <div id="skill-stepper-${skillId}" class="skill-stepper-list" style="display: none;">
+      <!-- 展開後的縱向階梯列表 (隨卡片 .is-expanded 狀態展開/收合) -->
+      <div id="skill-stepper-${skillId}" class="skill-stepper-list">
         ${levelsData.map((val, idx) => {
           const lv = idx + 1;
           const isMax = lv === actualMaxLv;
@@ -11627,7 +11618,7 @@
     `;
   }
 
-  // 渲染技能卡片 (方案 C: 精華看板 + 點擊折疊展開階梯)
+  // 渲染技能卡片 (方案 C: 精華看板 + 點擊卡片展開/收合階梯)
   function renderSkillsCards(skills) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
@@ -11832,13 +11823,16 @@
       const penaltyNote = skill.penaltyNote ? (isEN ? (skill.penaltyNote_en || skill.penaltyNote) : skill.penaltyNote) : null;
 
       return `
-        <div class="wiki-skill-card" data-category="${skill.category}">
+        <div class="wiki-skill-card clickable-card" id="skill-card-${skill.id}" data-category="${skill.category}" onclick="window.WikiDB.toggleSkillCard(this, '${skill.id}', event)">
           <div class="skill-card-top">
             <div class="skill-title-badges">
               <h4 class="skill-name-text">${skillName}</h4>
               <span class="skill-cat-tag cat-${skill.category}">${catLabel}</span>
             </div>
-            <span class="skill-max-lv-badge">${isEN ? 'Max Lv.' : '上限 Lv.'}${skill.maxLevel}</span>
+            <div class="skill-top-right">
+              <span class="skill-max-lv-badge">${isEN ? 'Max Lv.' : '上限 Lv.'}${skill.maxLevel}</span>
+              <span class="skill-card-chevron">▾</span>
+            </div>
           </div>
 
           <p class="skill-desc-text">
@@ -12368,6 +12362,7 @@
     recalcSleepDays: recalcSleepDays,
     openLadderSidebar: openLadderSidebar,
     closeLadderSidebar: closeLadderSidebar,
+    toggleSkillCard: toggleSkillCard,
     toggleSkillStepper: toggleSkillStepper,
     TOP_RECIPES_FOR_INGREDIENTS: TOP_RECIPES_FOR_INGREDIENTS
   };
@@ -12383,6 +12378,7 @@
   window.switchChargeStock = switchChargeStock;
   window.switchHelperBoost = switchHelperBoost;
   window.toggleDetailTable = toggleDetailTable;
+  window.toggleSkillCard = toggleSkillCard;
   window.toggleSkillStepper = toggleSkillStepper;
   window.updateBerryLevel = updateBerryLevel;
   window.updateBerryIsland = updateBerryIsland;

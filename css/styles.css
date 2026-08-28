@@ -6661,6 +6661,35 @@ input[type="number"] {
 }
 
 /* 🌟 方案 C: 主技能精華雙核心看板 (Lv.1 基礎 ➔ Lv.Max 頂級上限) */
+.wiki-skill-card.clickable-card {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.wiki-skill-card.clickable-card:hover {
+  border-color: var(--accent-blue);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.skill-top-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.skill-card-chevron {
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: transform 0.25s ease, color 0.2s ease;
+  display: inline-block;
+}
+
+.wiki-skill-card.is-expanded .skill-card-chevron {
+  transform: rotate(180deg);
+  color: var(--accent-blue);
+}
+
 .skill-hero-summary {
   display: flex;
   align-items: center;
@@ -6728,35 +6757,9 @@ input[type="number"] {
   font-weight: 700;
 }
 
-/* 階梯展開 / 收合按鈕 */
-.skill-stepper-toggle-btn {
-  width: 100%;
-  padding: 7px 10px;
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 8px;
-  text-align: center;
-  background: var(--bg-card-inner);
-  border: 1px dashed var(--border-color);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 6px;
-  user-select: none;
-  box-sizing: border-box;
-}
-
-.skill-stepper-toggle-btn:hover,
-.skill-stepper-toggle-btn.active {
-  background: var(--bg-card-hover, var(--bg-card));
-  border-style: solid;
-  border-color: var(--accent-blue);
-  color: var(--accent-blue);
-}
-
-/* 展開後的縱向階梯清單 */
+/* 展開後的縱向階梯清單 (隨卡片 .is-expanded 展開) */
 .skill-stepper-list {
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 5px;
   margin-top: 8px;
@@ -6765,6 +6768,10 @@ input[type="number"] {
   border: 1px solid var(--border-color-subtle);
   border-radius: 10px;
   box-sizing: border-box;
+}
+
+.wiki-skill-card.is-expanded .skill-stepper-list {
+  display: flex;
 }
 
 .skill-step-item {
@@ -11784,6 +11791,34 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 /* 🌟 方案 C: 主技能精華雙核心看板 (手機端適配) */
+.mobile-h5-app .wiki-skill-card.clickable-card {
+  cursor: pointer !important;
+  user-select: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.mobile-h5-app .wiki-skill-card.clickable-card:active {
+  transform: scale(0.99) !important;
+}
+
+.mobile-h5-app .skill-top-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+}
+
+.mobile-h5-app .skill-card-chevron {
+  font-size: 13px !important;
+  color: var(--text-muted) !important;
+  transition: transform 0.25s ease, color 0.2s ease !important;
+  display: inline-block !important;
+}
+
+.mobile-h5-app .wiki-skill-card.is-expanded .skill-card-chevron {
+  transform: rotate(180deg) !important;
+  color: var(--accent-blue) !important;
+}
+
 .mobile-h5-app .skill-hero-summary {
   display: flex !important;
   align-items: center !important;
@@ -11851,33 +11886,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   font-weight: 700 !important;
 }
 
-.mobile-h5-app .skill-stepper-toggle-btn {
-  width: 100% !important;
-  padding: 7px 10px !important;
-  font-size: 11.5px !important;
-  font-weight: 600 !important;
-  border-radius: 8px !important;
-  text-align: center !important;
-  background: var(--bg-card-inner) !important;
-  border: 1px dashed var(--border-color) !important;
-  color: var(--text-secondary) !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  margin-top: 4px !important;
-  user-select: none !important;
-  box-sizing: border-box !important;
-}
-
-.mobile-h5-app .skill-stepper-toggle-btn:hover,
-.mobile-h5-app .skill-stepper-toggle-btn.active {
-  background: var(--bg-card-hover, var(--bg-card)) !important;
-  border-style: solid !important;
-  border-color: var(--accent-blue) !important;
-  color: var(--accent-blue) !important;
-}
-
 .mobile-h5-app .skill-stepper-list {
-  display: flex !important;
+  display: none !important;
   flex-direction: column !important;
   gap: 4px !important;
   margin-top: 8px !important;
@@ -11886,6 +11896,10 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border: 1px solid var(--border-color-subtle) !important;
   border-radius: 10px !important;
   box-sizing: border-box !important;
+}
+
+.mobile-h5-app .wiki-skill-card.is-expanded .skill-stepper-list {
+  display: flex !important;
 }
 
 .mobile-h5-app .skill-step-item {
