@@ -10568,7 +10568,7 @@
           const isMax = lv === 7;
           return `
             <div class="skill-step-item ${isMax ? 'item-max' : ''}">
-              <span class="step-tag-badge">${isMax ? `Lv.${lv} 👑` : `Lv.${lv}`}</span>
+              <span class="step-tag-badge">Lv.${lv}</span>
               <span class="step-val-text">${v.toLocaleString()} ${unit}</span>
             </div>
           `;
@@ -10620,7 +10620,7 @@
           const isMax = lv === 6;
           return `
             <div class="skill-step-item ${isMax ? 'item-max' : ''}">
-              <span class="step-tag-badge">${isMax ? `Lv.${lv} 👑` : `Lv.${lv}`}</span>
+              <span class="step-tag-badge">Lv.${lv}</span>
               <span class="step-val-text">${v} ${unit}</span>
             </div>
           `;
@@ -11577,7 +11577,7 @@
     `;}).join('');
   }
 
-  // 方案 C: 渲染技能「精華雙核心看板 (Lv.1 基礎 ➔ Lv.Max 頂級上限)」與「縱向階梯清單（隨卡片點擊展開/收合）」
+  // 方案 C: 渲染技能「精華單行速查 (Lv.1 ➔ Lv.Max)」與「縱向階梯清單（隨卡片點擊展開/收合）」
   function renderSkillHeroAndStepper(skillId, levelsData, unitLabel, maxLv = 7) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     if (!levelsData || levelsData.length === 0) return '';
@@ -11587,19 +11587,17 @@
     const maxVal = levelsData[actualMaxLv - 1];
 
     return `
-      <!-- 方案 C: 精華雙核心速查看板 -->
-      <div class="skill-hero-summary">
-        <div class="hero-stat-col">
-          <span class="hero-stat-tag">🔰 ${isEN ? 'Lv.1 Base' : 'Lv.1 基礎'}</span>
-          <span class="hero-stat-val" id="hero-base-${skillId}">${baseVal}</span>
-        </div>
-        <div class="hero-arrow-col">
-          <span class="hero-arrow-icon">➔</span>
-        </div>
-        <div class="hero-stat-col col-right">
-          <span class="hero-stat-tag tag-max">👑 ${isEN ? `Lv.${actualMaxLv} Max Cap` : `Lv.${actualMaxLv} 頂級上限`}</span>
-          <span class="hero-stat-val" id="hero-max-${skillId}">${maxVal}</span>
-        </div>
+      <!-- 精華單行速查 (無外框、無emoji、單行極簡展示) -->
+      <div class="skill-hero-summary single-line">
+        <span class="hero-stat-item">
+          <span class="hero-lv-label">Lv.1</span>
+          <span class="hero-val-text" id="hero-base-${skillId}">${baseVal}</span>
+        </span>
+        <span class="hero-arrow-icon">➔</span>
+        <span class="hero-stat-item item-max">
+          <span class="hero-lv-label tag-max">Lv.${actualMaxLv}</span>
+          <span class="hero-val-text val-max" id="hero-max-${skillId}">${maxVal}</span>
+        </span>
       </div>
 
       <!-- 展開後的縱向階梯列表 (隨卡片 .is-expanded 狀態展開/收合) -->
@@ -11609,7 +11607,7 @@
           const isMax = lv === actualMaxLv;
           return `
             <div class="skill-step-item ${isMax ? 'item-max' : ''}">
-              <span class="step-tag-badge">${isMax ? `Lv.${lv} 👑` : `Lv.${lv}`}</span>
+              <span class="step-tag-badge">Lv.${lv}</span>
               <span class="step-val-text">${val}</span>
             </div>
           `;
