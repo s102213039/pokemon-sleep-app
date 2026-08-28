@@ -3789,8 +3789,8 @@ input[type=range].rf-slider.event-slider {
     box-shadow: 0 2px 8px var(--accent-glow, rgba(56, 189, 248, 0.35));
   }
 
-  /* 避免底部導航欄遮擋內容 */
-  body {
+  /* 避免底部導航欄遮擋內容 (僅適用桌面版手機檢視，mobile-h5-app 自主管理) */
+  body:not(.mobile-h5-app) {
     padding-bottom: calc(66px + env(safe-area-inset-bottom)) !important;
   }
 
@@ -10530,11 +10530,12 @@ input[type="number"] {
 /* Mobile App Body Base */
 body.mobile-h5-app,
 body.mobile-h5-surface {
-  padding-top: calc(52px + env(safe-area-inset-top, 0px));
-  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  padding-top: calc(52px + env(safe-area-inset-top, 0px)) !important;
+  padding-bottom: 0 !important;
   min-height: 100vh;
   min-height: 100dvh;
-  overflow-x: hidden;
+  height: 100dvh;
+  overflow: hidden;
   background-color: var(--bg-dark);
   color: var(--text-main);
   -webkit-tap-highlight-color: transparent;
@@ -10640,7 +10641,12 @@ body.mobile-h5-surface {
 
 /* ─── 📱 H5 App 列表視圖：CoordinatorLayout 視窗置頂與容器內自然滾動 ─── */
 .mobile-h5-app .pokemon-main-content,
-.mobile-h5-app .recipe-main-content {
+.mobile-h5-app .recipe-main-content,
+.mobile-h5-app #panel-pokemon,
+.mobile-h5-app #panel-recipes,
+.mobile-h5-app #panel-wiki,
+.mobile-h5-app #panel-box,
+.mobile-h5-app #panel-news {
   display: flex;
   flex-direction: column;
   height: calc(100dvh - 52px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
