@@ -11144,23 +11144,23 @@
   }
 
   const DEFAULT_LADDER_MIN_THRESHOLDS = {
-    coffee: 50,
-    apple: 50,
-    ginger: 50,
-    milk: 55,
-    honey: 42,
-    sausage: 45,
-    potato: 35,
-    tomato: 42,
-    corn: 40,
-    egg: 40,
-    soybeans: 35,
-    oil: 40,
-    leek: 35,
-    mushroom: 30,
-    cacao: 30,
-    herb: 25,
-    glossyavocado: 30,
+    coffee: 20,
+    apple: 20,
+    ginger: 20,
+    milk: 20,
+    honey: 20,
+    sausage: 20,
+    potato: 20,
+    tomato: 20,
+    corn: 20,
+    egg: 20,
+    soybeans: 20,
+    oil: 20,
+    leek: 20,
+    mushroom: 20,
+    cacao: 20,
+    herb: 20,
+    glossyavocado: 20,
     pumpkin: 20,
     tail: 1
   };
@@ -11193,10 +11193,8 @@
 
         let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
 
-        // 預設總覽過濾低產量變體
-        if (isUnfilteredDefault) {
-          variants = variants.filter(v => v.count >= minDefaultThreshold);
-        }
+        // 常規天梯篩選產量 >= 20 的型態變體 (尾巴為 >= 1)
+        variants = variants.filter(v => v.count >= minDefaultThreshold);
 
         if (ladderRecipeFilter === 'AAA') {
           variants = variants.filter(v => v.recipe === 'AAA');
