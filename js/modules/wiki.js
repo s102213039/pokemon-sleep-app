@@ -10549,16 +10549,42 @@
     });
 
     const chargeSkill = MAIN_SKILLS_DATA.find(s => s.id === 'charge_stock_s');
-    const dynamicContainer = document.getElementById('charge-stock-dynamic-levels');
-    if (chargeSkill && dynamicContainer && chargeSkill.matrix && chargeSkill.matrix[stackNum]) {
+    if (chargeSkill && chargeSkill.matrix && chargeSkill.matrix[stackNum]) {
       const vals = chargeSkill.matrix[stackNum].vals;
       const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-      dynamicContainer.innerHTML = vals.map((v, i) => `
-        <div class="skill-level-chip ${stackNum === 10 ? 'highlight-gold' : 'highlight-blue'}">
-          <span class="level-tag">Lv.${i + 1}</span>
-          <span class="level-val">${v.toLocaleString()} ${isEN ? 'Strength' : '能量'}</span>
-        </div>
-      `).join('');
+      const unit = isEN ? 'Strength' : '能量';
+
+      // 更新 Hero 雙核心看板
+      const heroBase = document.getElementById('hero-base-charge_stock_s');
+      const heroMax = document.getElementById('hero-max-charge_stock_s');
+      if (heroBase) heroBase.textContent = `${vals[0].toLocaleString()} ${unit}`;
+      if (heroMax) heroMax.textContent = `${vals[6].toLocaleString()} ${unit}`;
+
+      // 更新 Stepper 階梯列表
+      const stepper = document.getElementById('skill-stepper-charge_stock_s');
+      if (stepper) {
+        stepper.innerHTML = vals.map((v, i) => {
+          const lv = i + 1;
+          const isMax = lv === 7;
+          return `
+            <div class="skill-step-item ${isMax ? 'item-max' : ''}">
+              <span class="step-tag-badge">${isMax ? `Lv.${lv} 👑` : `Lv.${lv}`}</span>
+              <span class="step-val-text">${v.toLocaleString()} ${unit}</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 保留舊版相容性容器更新 (若有)
+      const dynamicContainer = document.getElementById('charge-stock-dynamic-levels');
+      if (dynamicContainer) {
+        dynamicContainer.innerHTML = vals.map((v, i) => `
+          <div class="skill-level-chip ${stackNum === 10 ? 'highlight-gold' : 'highlight-blue'}">
+            <span class="level-tag">Lv.${i + 1}</span>
+            <span class="level-val">${v.toLocaleString()} ${isEN ? 'Strength' : '能量'}</span>
+          </div>
+        `).join('');
+      }
     }
   }
 
@@ -10575,16 +10601,62 @@
     });
 
     const boostSkill = MAIN_SKILLS_DATA.find(s => s.id === 'helper_boost_type');
-    const dynamicContainer = document.getElementById('helper-boost-dynamic-levels');
-    if (boostSkill && dynamicContainer && boostSkill.matrix && boostSkill.matrix[kindNum]) {
+    if (boostSkill && boostSkill.matrix && boostSkill.matrix[kindNum]) {
       const vals = boostSkill.matrix[kindNum].vals;
       const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-      dynamicContainer.innerHTML = vals.map((v, i) => `
-        <div class="skill-level-chip highlight-blue">
-          <span class="level-tag">Lv.${i + 1}</span>
-          <span class="level-val">${v} ${isEN ? 'Helps' : '次幫忙'}</span>
-        </div>
-      `).join('');
+      const unit = isEN ? 'Helps' : '次幫忙';
+
+      // 更新 Hero 雙核心看板
+      const heroBase = document.getElementById('hero-base-helper_boost_type');
+      const heroMax = document.getElementById('hero-max-helper_boost_type');
+      if (heroBase) heroBase.textContent = `${vals[0]} ${unit}`;
+      if (heroMax) heroMax.textContent = `${vals[5]} ${unit}`;
+
+      // 更新 Stepper 階梯列表
+      const stepper = document.getElementById('skill-stepper-helper_boost_type');
+      if (stepper) {
+        stepper.innerHTML = vals.map((v, i) => {
+          const lv = i + 1;
+          const isMax = lv === 6;
+          return `
+            <div class="skill-step-item ${isMax ? 'item-max' : ''}">
+              <span class="step-tag-badge">${isMax ? `Lv.${lv} 👑` : `Lv.${lv}`}</span>
+              <span class="step-val-text">${v} ${unit}</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 保留舊版相容性容器更新 (若有)
+      const dynamicContainer = document.getElementById('helper-boost-dynamic-levels');
+      if (dynamicContainer) {
+        dynamicContainer.innerHTML = vals.map((v, i) => `
+          <div class="skill-level-chip highlight-blue">
+            <span class="level-tag">Lv.${i + 1}</span>
+            <span class="level-val">${v} ${isEN ? 'Helps' : '次幫忙'}</span>
+          </div>
+        `).join('');
+      }
+    }
+  }
+
+  // 5.0 方案 C: 展開 / 收合主技能各等級階梯清單
+  function toggleSkillStepper(skillId) {
+    const stepper = document.getElementById(`skill-stepper-${skillId}`);
+    const btn = document.getElementById(`skill-stepper-btn-${skillId}`);
+    if (!stepper || !btn) return;
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isHidden = stepper.style.display === 'none' || !stepper.style.display;
+
+    if (isHidden) {
+      stepper.style.display = 'flex';
+      btn.innerHTML = isEN ? '▴ Collapse Level Details' : '▴ 收合各級效果';
+      btn.classList.add('active');
+    } else {
+      stepper.style.display = 'none';
+      const maxLv = btn.getAttribute('data-max-lv') || '7';
+      btn.innerHTML = isEN ? `📋 Show All Lv.1~Lv.${maxLv} Levels ▾` : `📋 展開 Lv.1~Lv.${maxLv} 各級效果 ▾`;
+      btn.classList.remove('active');
     }
   }
 
@@ -11504,24 +11576,58 @@
     `;}).join('');
   }
 
-  // 智慧動態計算技能等級卡片網格欄數 (短文字 4 欄，長文字/複合效果 3 欄)
-  function calcSkillGridClass(skill, sampleStrings) {
-    if (skill.hasMoonlightChips || skill.hasLunarPrayerMatrix || skill.hasDualValues) {
-      return 'grid-cols-3';
-    }
-    if (skill.ranges) {
-      return 'grid-cols-3';
-    }
-    if (sampleStrings && Array.isArray(sampleStrings) && sampleStrings.length > 0) {
-      const maxLen = Math.max(...sampleStrings.map(s => (s ? String(s).length : 0)), 0);
-      if (maxLen >= 8) {
-        return 'grid-cols-3';
-      }
-    }
-    return 'grid-cols-4';
+  // 方案 C: 渲染技能「精華雙核心看板 (Lv.1 基礎 ➔ Lv.Max 頂級上限)」與「點擊展開/收合縱向階梯」
+  function renderSkillHeroAndStepper(skillId, levelsData, unitLabel, maxLv = 7) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    if (!levelsData || levelsData.length === 0) return '';
+
+    const actualMaxLv = levelsData.length;
+    const baseVal = levelsData[0];
+    const maxVal = levelsData[actualMaxLv - 1];
+
+    return `
+      <!-- 方案 C: 精華雙核心速查看板 -->
+      <div class="skill-hero-summary">
+        <div class="hero-stat-col">
+          <span class="hero-stat-tag">🔰 ${isEN ? 'Lv.1 Base' : 'Lv.1 基礎'}</span>
+          <span class="hero-stat-val" id="hero-base-${skillId}">${baseVal}</span>
+        </div>
+        <div class="hero-arrow-col">
+          <span class="hero-arrow-icon">➔</span>
+        </div>
+        <div class="hero-stat-col col-right">
+          <span class="hero-stat-tag tag-max">👑 ${isEN ? `Lv.${actualMaxLv} Max Cap` : `Lv.${actualMaxLv} 頂級上限`}</span>
+          <span class="hero-stat-val" id="hero-max-${skillId}">${maxVal}</span>
+        </div>
+      </div>
+
+      <!-- 展開 / 收合各等級階梯按鈕 -->
+      <button type="button" 
+        id="skill-stepper-btn-${skillId}" 
+        class="skill-stepper-toggle-btn" 
+        data-skill-id="${skillId}" 
+        data-max-lv="${actualMaxLv}" 
+        onclick="window.WikiDB.toggleSkillStepper('${skillId}')">
+        ${isEN ? `📋 Show All Lv.1~Lv.${actualMaxLv} Levels ▾` : `📋 展開 Lv.1~Lv.${actualMaxLv} 各級效果 ▾`}
+      </button>
+
+      <!-- 展開後的縱向階梯列表 -->
+      <div id="skill-stepper-${skillId}" class="skill-stepper-list" style="display: none;">
+        ${levelsData.map((val, idx) => {
+          const lv = idx + 1;
+          const isMax = lv === actualMaxLv;
+          return `
+            <div class="skill-step-item ${isMax ? 'item-max' : ''}">
+              <span class="step-tag-badge">${isMax ? `Lv.${lv} 👑` : `Lv.${lv}`}</span>
+              <span class="step-val-text">${val}</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
   }
 
-  // 渲染技能卡片 (精簡緊湊設計，蓄力與屬性加速採用互動式切換)
+  // 渲染技能卡片 (方案 C: 精華看板 + 點擊折疊展開階梯)
   function renderSkillsCards(skills) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
@@ -11542,7 +11648,6 @@
 
       if (skill.hasStackMatrix) {
         const sampleStrings = skill.matrix[10].vals.map(v => `${v.toLocaleString()} ${unitLabel}`);
-        const gridColClass = calcSkillGridClass(skill, sampleStrings);
         valuesHtml = `
           <div class="skill-interactive-section">
             <div class="stack-selector-row">
@@ -11554,15 +11659,7 @@
               </div>
             </div>
 
-            <!-- 即時動態等級卡片 (預設為 10次蓄力) -->
-            <div id="charge-stock-dynamic-levels" class="skill-levels-grid ${gridColClass}" style="margin-top: 8px;">
-              ${skill.matrix[10].vals.map((v, i) => `
-                <div class="skill-level-chip highlight-gold">
-                  <span class="level-tag">Lv.${i + 1}</span>
-                  <span class="level-val">${v.toLocaleString()} ${unitLabel}</span>
-                </div>
-              `).join('')}
-            </div>
+            ${renderSkillHeroAndStepper(skill.id, sampleStrings, unitLabel, 7)}
 
             <!-- 展開完整對照表按鈕 -->
             <div style="margin-top: 8px;">
@@ -11593,7 +11690,6 @@
         `;
       } else if (skill.hasTypeKindsMatrix) {
         const sampleStrings = skill.matrix[5].vals.map(v => `${v} ${isEN ? 'Helps' : '次幫忙'}`);
-        const gridColClass = calcSkillGridClass(skill, sampleStrings);
         valuesHtml = `
           <div class="skill-interactive-section">
             <div class="stack-selector-row">
@@ -11605,15 +11701,7 @@
               </div>
             </div>
 
-            <!-- 即時動態等級卡片 (預設為 5種類) -->
-            <div id="helper-boost-dynamic-levels" class="skill-levels-grid ${gridColClass}" style="margin-top: 8px;">
-              ${skill.matrix[5].vals.map((v, i) => `
-                <div class="skill-level-chip highlight-blue">
-                  <span class="level-tag">Lv.${i + 1}</span>
-                  <span class="level-val">${v} ${isEN ? 'Helps' : '次幫忙'}</span>
-                </div>
-              `).join('')}
-            </div>
+            ${renderSkillHeroAndStepper(skill.id, sampleStrings, unitLabel, 6)}
 
             <!-- 展開完整對照表按鈕 -->
             <div style="margin-top: 8px;">
@@ -11644,29 +11732,11 @@
         `;
       } else if (skill.hasMoonlightChips) {
         const mlStrings = skill.selfValues.map((v, i) => isEN ? `Self ${v} · Ally +${skill.teamValues[i]}${unitLabel}` : `自 ${v} · 他+${skill.teamValues[i]}${unitLabel}`);
-        const gridColClass = calcSkillGridClass(skill, mlStrings);
-        valuesHtml = `
-          <div class="skill-levels-grid ${gridColClass}">
-            ${skill.selfValues.map((v, i) => `
-              <div class="skill-level-chip">
-                <span class="level-tag">Lv.${i + 1}</span>
-                <span class="level-val">${isEN ? `Self ${v} · Ally +${skill.teamValues[i]}` : `自 ${v} · 他+${skill.teamValues[i]}`}${unitLabel}</span>
-              </div>
-            `).join('')}
-          </div>
-        `;
+        valuesHtml = renderSkillHeroAndStepper(skill.id, mlStrings, unitLabel, 6);
       } else if (skill.hasLunarPrayerMatrix) {
         const lpStrings = skill.healValues.map((v, i) => isEN ? `All ${v} · Berries ${skill.berryRange[i]}` : `全隊 ${v}點 · 樹果 ${skill.berryRange[i]}`);
-        const gridColClass = calcSkillGridClass(skill, lpStrings);
         valuesHtml = `
-          <div class="skill-levels-grid ${gridColClass}">
-            ${skill.healValues.map((v, i) => `
-              <div class="skill-level-chip">
-                <span class="level-tag">Lv.${i + 1}</span>
-                <span class="level-val">${isEN ? `All ${v} · Berries ${skill.berryRange[i]}` : `全隊 ${v}點 · 樹果 ${skill.berryRange[i]}`}</span>
-              </div>
-            `).join('')}
-          </div>
+          ${renderSkillHeroAndStepper(skill.id, lpStrings, unitLabel, 6)}
 
           <!-- 展開完整 1~5 種類超能力隊友樹果對照表按鈕 -->
           <div style="margin-top: 6px;">
@@ -11696,16 +11766,8 @@
         `;
       } else if (skill.hasIngredientDrawMatrix) {
         const ingStrings = skill.values.map(v => `${v} ${unitLabel}`);
-        const gridColClass = calcSkillGridClass(skill, ingStrings);
         valuesHtml = `
-          <div class="skill-levels-grid ${gridColClass}">
-            ${skill.values.map((v, i) => `
-              <div class="skill-level-chip">
-                <span class="level-tag">Lv.${i + 1}</span>
-                <span class="level-val">${v} ${unitLabel}</span>
-              </div>
-            `).join('')}
-          </div>
+          ${renderSkillHeroAndStepper(skill.id, ingStrings, unitLabel, 6)}
 
           <!-- 展開各寶可夢專屬食材池對照表按鈕 -->
           <div style="margin-top: 6px;">
@@ -11754,43 +11816,13 @@
         const selfShort = isEN ? 'Self' : (skill.selfShort || '自');
         const teamShort = isEN ? 'Ally' : (skill.teamShort || '他');
         const dualStrings = skill.selfValues.map((v, i) => `${selfShort} ${v} + ${teamShort} ${skill.teamValues[i]}${unitLabel}`);
-        const gridColClass = calcSkillGridClass(skill, dualStrings);
-        valuesHtml = `
-          <div class="skill-levels-grid ${gridColClass}">
-            ${skill.selfValues.map((v, i) => `
-              <div class="skill-level-chip">
-                <span class="level-tag">Lv.${i + 1}</span>
-                <span class="level-val">${selfShort} ${v} + ${teamShort} ${skill.teamValues[i]}${unitLabel}</span>
-              </div>
-            `).join('')}
-          </div>
-        `;
+        valuesHtml = renderSkillHeroAndStepper(skill.id, dualStrings, unitLabel, skill.selfValues.length);
       } else if (skill.ranges) {
         const rangeStrings = skill.ranges.map(r => `${r.min.toLocaleString()}~${r.max.toLocaleString()}${unitLabel}`);
-        const gridColClass = calcSkillGridClass(skill, rangeStrings);
-        valuesHtml = `
-          <div class="skill-levels-grid ${gridColClass}">
-            ${skill.ranges.map((r, i) => `
-              <div class="skill-level-chip">
-                <span class="level-tag">Lv.${i + 1}</span>
-                <span class="level-val">${r.min.toLocaleString()}~${r.max.toLocaleString()}${unitLabel}</span>
-              </div>
-            `).join('')}
-          </div>
-        `;
+        valuesHtml = renderSkillHeroAndStepper(skill.id, rangeStrings, unitLabel, skill.ranges.length);
       } else if (skill.values) {
         const valStrings = skill.values.map(v => `${typeof v === 'number' ? v.toLocaleString() : v}${unitLabel}`);
-        const gridColClass = calcSkillGridClass(skill, valStrings);
-        valuesHtml = `
-          <div class="skill-levels-grid ${gridColClass}">
-            ${skill.values.map((v, i) => `
-              <div class="skill-level-chip">
-                <span class="level-tag">Lv.${i + 1}</span>
-                <span class="level-val">${typeof v === 'number' ? v.toLocaleString() : v}${unitLabel}</span>
-              </div>
-            `).join('')}
-          </div>
-        `;
+        valuesHtml = renderSkillHeroAndStepper(skill.id, valStrings, unitLabel, skill.values.length);
       } else {
         valuesHtml = `<div class="skill-level-chip"><span class="level-val">${unitLabel}</span></div>`;
       }
@@ -12336,6 +12368,7 @@
     recalcSleepDays: recalcSleepDays,
     openLadderSidebar: openLadderSidebar,
     closeLadderSidebar: closeLadderSidebar,
+    toggleSkillStepper: toggleSkillStepper,
     TOP_RECIPES_FOR_INGREDIENTS: TOP_RECIPES_FOR_INGREDIENTS
   };
 
@@ -12350,6 +12383,7 @@
   window.switchChargeStock = switchChargeStock;
   window.switchHelperBoost = switchHelperBoost;
   window.toggleDetailTable = toggleDetailTable;
+  window.toggleSkillStepper = toggleSkillStepper;
   window.updateBerryLevel = updateBerryLevel;
   window.updateBerryIsland = updateBerryIsland;
   window.toggleBerryFavorite = toggleBerryFavorite;

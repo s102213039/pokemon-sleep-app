@@ -6660,6 +6660,155 @@ input[type="number"] {
   font-feature-settings: 'tnum';
 }
 
+/* 🌟 方案 C: 主技能精華雙核心看板 (Lv.1 基礎 ➔ Lv.Max 頂級上限) */
+.skill-hero-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin: 10px 0 6px 0;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.hero-stat-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.hero-stat-col.col-right {
+  text-align: right;
+  align-items: flex-end;
+}
+
+.hero-stat-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hero-stat-tag.tag-max {
+  color: var(--color-accent-gold, #f59e0b);
+}
+
+.hero-stat-val {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-family: monospace, -apple-system;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.hero-stat-col.col-right .hero-stat-val {
+  color: var(--accent-blue);
+}
+
+.hero-arrow-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+
+.hero-arrow-icon {
+  font-size: 15px;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+/* 階梯展開 / 收合按鈕 */
+.skill-stepper-toggle-btn {
+  width: 100%;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  text-align: center;
+  background: var(--bg-card-inner);
+  border: 1px dashed var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 6px;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.skill-stepper-toggle-btn:hover,
+.skill-stepper-toggle-btn.active {
+  background: var(--bg-card-hover, var(--bg-card));
+  border-style: solid;
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+/* 展開後的縱向階梯清單 */
+.skill-stepper-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 8px;
+  padding: 8px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.skill-step-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 6px;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.skill-step-item.item-max {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.step-tag-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--bg-card-inner);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.skill-step-item.item-max .step-tag-badge {
+  background: var(--color-accent-gold, #f59e0b);
+  color: #ffffff;
+}
+
+.step-val-text {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: monospace, -apple-system;
+  flex: 1;
+  text-align: right;
+  word-break: break-word;
+}
+
 .skill-interactive-section {
   width: 100%;
   display: flex;
@@ -11632,6 +11781,153 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   line-height: 1.45 !important;
   color: var(--text-secondary) !important;
   margin-bottom: 8px !important;
+}
+
+/* 🌟 方案 C: 主技能精華雙核心看板 (手機端適配) */
+.mobile-h5-app .skill-hero-summary {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  border-radius: 10px !important;
+  padding: 9px 11px !important;
+  margin: 8px 0 6px 0 !important;
+  gap: 8px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .hero-stat-col {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+}
+
+.mobile-h5-app .hero-stat-col.col-right {
+  text-align: right !important;
+  align-items: flex-end !important;
+}
+
+.mobile-h5-app .hero-stat-tag {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: var(--text-secondary) !important;
+  margin-bottom: 2px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .hero-stat-tag.tag-max {
+  color: var(--color-accent-gold, #f59e0b) !important;
+}
+
+.mobile-h5-app .hero-stat-val {
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  color: var(--text-primary) !important;
+  font-family: monospace, -apple-system !important;
+  line-height: 1.25 !important;
+  word-break: break-word !important;
+}
+
+.mobile-h5-app .hero-stat-col.col-right .hero-stat-val {
+  color: var(--accent-blue) !important;
+}
+
+.mobile-h5-app .hero-arrow-col {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 4px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .hero-arrow-icon {
+  font-size: 14px !important;
+  color: var(--text-muted) !important;
+  font-weight: 700 !important;
+}
+
+.mobile-h5-app .skill-stepper-toggle-btn {
+  width: 100% !important;
+  padding: 7px 10px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  text-align: center !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px dashed var(--border-color) !important;
+  color: var(--text-secondary) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  margin-top: 4px !important;
+  user-select: none !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .skill-stepper-toggle-btn:hover,
+.mobile-h5-app .skill-stepper-toggle-btn.active {
+  background: var(--bg-card-hover, var(--bg-card)) !important;
+  border-style: solid !important;
+  border-color: var(--accent-blue) !important;
+  color: var(--accent-blue) !important;
+}
+
+.mobile-h5-app .skill-stepper-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  margin-top: 8px !important;
+  padding: 7px !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .skill-step-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 6px 8px !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  border-radius: 6px !important;
+  gap: 8px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .skill-step-item.item-max {
+  border-color: rgba(245, 158, 11, 0.4) !important;
+  background: rgba(245, 158, 11, 0.05) !important;
+}
+
+.mobile-h5-app .step-tag-badge {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  padding: 1.5px 5px !important;
+  border-radius: 4px !important;
+  background: var(--bg-card-inner) !important;
+  color: var(--text-secondary) !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .skill-step-item.item-max .step-tag-badge {
+  background: var(--color-accent-gold, #f59e0b) !important;
+  color: #ffffff !important;
+}
+
+.mobile-h5-app .step-val-text {
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+  font-family: monospace, -apple-system !important;
+  flex: 1 !important;
+  text-align: right !important;
+  word-break: break-word !important;
 }
 
 .mobile-h5-app .skill-levels-grid {
