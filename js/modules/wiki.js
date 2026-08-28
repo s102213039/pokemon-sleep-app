@@ -11991,41 +11991,41 @@
               <table class="wiki-data-table">
                 <thead>
                   <tr>
-                    <th>${isEN ? 'Sub-Skill Combo' : '副技能組合'}</th>
-                    <th>${isEN ? 'Nature Modifier' : '性格主技能機率'}</th>
-                    <th>${isEN ? 'Calculation Formula' : '乘算計算式'}</th>
-                    <th>${isEN ? 'Combined Multiplier' : '最終綜合總倍率'}</th>
-                    <th>${isEN ? 'Trigger Tier' : '發動強度評級'}</th>
+                    <th style="text-align: center;">${isEN ? 'Sub-Skills' : '副技能組合'}</th>
+                    <th style="text-align: center;">${isEN ? 'Nature' : '性格'}</th>
+                    <th class="col-hide-mobile" style="text-align: center;">${isEN ? 'Calculation Formula' : '乘算計算式'}</th>
+                    <th style="text-align: center;">${isEN ? 'Total Multiplier' : '總倍率'}</th>
+                    <th class="col-hide-mobile" style="text-align: center;">${isEN ? 'Trigger Tier' : '發動強度評級'}</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${TRIGGER_CHANCE_MATRIX.map(row => `
                     <tr>
-                      <td style="vertical-align: middle;">
-                        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                      <td style="vertical-align: middle; text-align: center;">
+                        <div style="display: inline-flex; align-items: center; justify-content: center; gap: 4px; flex-wrap: wrap;">
                           ${row.subskills && row.subskills.length > 0 
                             ? row.subskills.map(s => {
                                 const sName = isEN ? (window.I18N.getSubSkillName(s.name) || s.name) : s.name;
                                 return `<span class="wiki-skill-badge skill-badge-${s.color}">${sName}</span>`;
                               }).join('') 
-                            : `<span class="text-muted" style="font-size: 12px; font-weight: 500;">${isEN ? 'No Skill Trigger Sub-Skills' : '無技能機率副技能'}</span>`}
+                            : `<span class="text-muted" style="font-size: 11.5px; font-weight: 500;">${isEN ? 'None' : '無加成'}</span>`}
                         </div>
                       </td>
-                      <td style="vertical-align: middle;">
+                      <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
                         ${row.natureBadge === 'up' 
-                          ? `<span class="matrix-rate-up">${isEN ? '▲▲ Trigger Rate Up' : '▲▲ 技能機率上升'}</span>` 
+                          ? `<span class="matrix-rate-up">${isEN ? '▲▲ Up' : '▲▲ 上升'}</span>` 
                           : (row.natureBadge === 'down' 
-                            ? `<span class="matrix-rate-down">${isEN ? '▼▼ Trigger Rate Down' : '▼▼ 技能機率下降'}</span>` 
-                            : `<span class="text-secondary" style="font-size: 12.5px; font-weight: 500;">${isEN ? 'Neutral / Other Natures' : '無修正 / 其它性格'}</span>`)}
+                            ? `<span class="matrix-rate-down">${isEN ? '▼▼ Down' : '▼▼ 下降'}</span>` 
+                            : `<span class="text-secondary" style="font-size: 11.5px; font-weight: 500;">${isEN ? 'Neutral' : '無修正'}</span>`)}
                       </td>
-                      <td style="vertical-align: middle;"><code class="matrix-calc-code">${row.calc}</code></td>
-                      <td style="vertical-align: middle;">
-                        <span class="text-accent font-bold" style="font-size: 13.5px;">${row.multiplier.toFixed(3)} ${isEN ? 'x' : '倍'}</span>
-                        <span class="${row.multiplier >= 1 ? 'matrix-pct-up' : 'matrix-pct-down'}" style="font-size: 11px; margin-left: 4px; font-weight: 700;">
+                      <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><code class="matrix-calc-code">${row.calc}</code></td>
+                      <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
+                        <span class="text-accent font-bold" style="font-size: 12.5px;">${row.multiplier.toFixed(3)}${isEN ? 'x' : '倍'}</span>
+                        <span class="${row.multiplier >= 1 ? 'matrix-pct-up' : 'matrix-pct-down'}" style="font-size: 10.5px; margin-left: 2px; font-weight: 700;">
                           (${row.multiplier >= 1 ? '+' : ''}${((row.multiplier - 1) * 100).toFixed(1)}%)
                         </span>
                       </td>
-                      <td style="vertical-align: middle;"><span class="wiki-tier-badge tier-${row.grade[0].toLowerCase()}">${isEN ? (row.grade_en || row.grade) : row.grade}</span></td>
+                      <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><span class="wiki-tier-badge tier-${row.grade[0].toLowerCase()}">${isEN ? (row.grade_en || row.grade) : row.grade}</span></td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -12048,21 +12048,21 @@
               <table class="wiki-data-table">
                 <thead>
                   <tr>
-                    <th style="min-width: 90px;">${isEN ? 'Category' : '專長分類'}</th>
-                    <th style="min-width: 220px;">${isEN ? 'Available Tiers & Tags' : '已開放階級與技能標籤'}</th>
+                    <th style="text-align: center;">${isEN ? 'Category' : '專長分類'}</th>
+                    <th>${isEN ? 'Skill Tags' : '技能標籤'}</th>
                     <th>${isEN ? 'Detailed Effect' : '詳細效果說明'}</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${SUB_SKILLS_DATA.map(row => `
                     <tr>
-                      <td class="font-bold text-accent">${isEN ? (row.category_en || row.category) : row.category}</td>
-                      <td>
-                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                      <td class="font-bold text-accent" style="vertical-align: middle; text-align: center;">${isEN ? (row.category_en || row.category) : row.category}</td>
+                      <td style="vertical-align: middle;">
+                        <div class="wiki-subskill-tags-col">
                           ${row.skills.map(s => renderSkillBadge(s)).join('')}
                         </div>
                       </td>
-                      <td class="text-secondary">${isEN ? (row.desc_en || row.desc) : row.desc}</td>
+                      <td class="text-secondary" style="vertical-align: middle;">${isEN ? (row.desc_en || row.desc) : row.desc}</td>
                     </tr>
                   `).join('')}
                 </tbody>

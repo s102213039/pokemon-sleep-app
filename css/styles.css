@@ -12092,8 +12092,115 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border-bottom: 1px solid var(--border-color-subtle) !important;
 }
 
+/* 🧩 子分頁 2: 副技能與性格指南 (手機端極致排版與無滾動條適配) */
+.wiki-subskill-tags-col {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.mobile-h5-app .wiki-subskill-tags-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  align-items: flex-start !important;
+}
+
+.mobile-h5-app .col-hide-mobile {
+  display: none !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-table-wrapper {
+  overflow-x: hidden !important;
+  width: 100% !important;
+}
+
 .mobile-h5-app #wiki-subpanel-subskills .wiki-data-table {
-  min-width: 460px !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+}
+
+/* 表格 1: 主技能發動機率矩陣 */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table th,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table td {
+  padding: 5px 2px !important;
+  font-size: 11px !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table td:nth-child(1) {
+  width: 44% !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table td:nth-child(2) {
+  width: 26% !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table th:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table td:nth-child(4) {
+  width: 30% !important;
+}
+
+/* 表格 2: 副技能階級與數值總覽 */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td {
+  padding: 6px 3px !important;
+  font-size: 10.5px !important;
+  vertical-align: middle !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(1) {
+  width: 22% !important;
+  text-align: center !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(2) {
+  width: 32% !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(3),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(3) {
+  width: 46% !important;
+  font-size: 10px !important;
+  line-height: 1.35 !important;
+}
+
+/* 表格 3: 性格五維屬性倍率表 */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td {
+  padding: 5px 2px !important;
+  font-size: 10.5px !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(1) {
+  width: 20% !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(2) {
+  width: 26% !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(3),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(3) {
+  width: 26% !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(4) {
+  width: 28% !important;
+  font-size: 10px !important;
 }
 
 .mobile-h5-app #ing-draw-matrix-table .wiki-mini-table {
