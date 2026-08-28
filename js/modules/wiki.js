@@ -12045,16 +12045,14 @@
               <table class="wiki-data-table">
                 <thead>
                   <tr>
-                    <th style="text-align: center;">${isEN ? 'Category' : '專長分類'}</th>
-                    <th>${isEN ? 'Skill Tags' : '技能標籤'}</th>
+                    <th style="text-align: center;">${isEN ? 'Skill Tags' : '技能標籤'}</th>
                     <th>${isEN ? 'Detailed Effect' : '詳細效果說明'}</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${SUB_SKILLS_DATA.map(row => `
                     <tr>
-                      <td class="font-bold text-accent" style="vertical-align: middle; text-align: center;">${isEN ? (row.category_en || row.category) : row.category}</td>
-                      <td style="vertical-align: middle;">
+                      <td style="vertical-align: middle; text-align: center;">
                         <div class="wiki-subskill-tags-col">
                           ${row.skills.map(s => renderSkillBadge(s)).join('')}
                         </div>
