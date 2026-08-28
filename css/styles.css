@@ -11807,21 +11807,35 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 /* 1. 頂部 5 大 Sub-Tabs：平分寬度、單行展示、貼齊頂部無邊距、全主題自適應 */
 .mobile-h5-app #panel-wiki {
   padding: 0 !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-.mobile-h5-app .wiki-main-container {
-  padding: 0 0 calc(72px + env(safe-area-inset-bottom, 0px)) 0 !important;
   margin: 0 !important;
   width: 100% !important;
   max-width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: calc(100dvh - 52px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+  max-height: calc(100dvh - 52px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .wiki-main-container {
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
 }
 
 .mobile-h5-app .wiki-subnav-bar {
-  position: sticky !important;
-  top: 50px !important;
+  position: relative !important;
+  top: 0 !important;
   z-index: 90 !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -11835,6 +11849,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   -webkit-backdrop-filter: blur(16px) !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
   width: 100% !important;
+  flex-shrink: 0 !important;
 }
 
 .mobile-h5-app .wiki-subnav-tabs {
@@ -12921,28 +12936,6 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   background: var(--accent-gradient, var(--accent-blue)) !important;
   color: #ffffff !important;
   border-color: transparent !important;
-}
-
-.mobile-h5-app #panel-wiki.ladder-fullscreen,
-.mobile-h5-app #panel-wiki:has(#wiki-subpanel-ingredients.active) {
-  height: calc(100dvh - 50px - 64px - env(safe-area-inset-bottom, 0px)) !important;
-  max-height: calc(100dvh - 50px - 64px - env(safe-area-inset-bottom, 0px)) !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  overflow: hidden !important;
-  display: flex !important;
-  flex-direction: column !important;
-}
-
-.mobile-h5-app #panel-wiki.ladder-fullscreen .wiki-main-container,
-.mobile-h5-app #panel-wiki:has(#wiki-subpanel-ingredients.active) .wiki-main-container {
-  height: 100% !important;
-  max-height: 100% !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  overflow: hidden !important;
-  display: flex !important;
-  flex-direction: column !important;
 }
 
 .mobile-h5-app #wiki-subpanel-ingredients {
