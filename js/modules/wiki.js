@@ -12059,7 +12059,7 @@
         </div>
 
         <!-- 子分頁 1：主技能數值庫 (Main Skills) -->
-        <div id="wiki-subpanel-skills" class="wiki-subpanel ${currentWikiSubTab === 'skills' ? 'active' : ''}" style="${currentWikiSubTab === 'skills' ? 'display:block;' : 'display:none;'}">
+        <div id="wiki-subpanel-skills" class="wiki-subpanel ${currentWikiSubTab === 'skills' ? 'active' : ''}" style="${currentWikiSubTab === 'skills' ? '' : 'display:none;'}">
           <div class="wiki-control-bar">
             <div class="wiki-filter-pills">
               <span class="wiki-pill-label">${isEN ? 'Skill Type:' : '技能類型：'}</span>
@@ -12078,7 +12078,7 @@
         </div>
 
         <!-- 子分頁 2：副技能與性格指南 (Sub-Skills & Natures) -->
-        <div id="wiki-subpanel-subskills" class="wiki-subpanel ${currentWikiSubTab === 'subskills' ? 'active' : ''}" style="${currentWikiSubTab === 'subskills' ? 'display:block;' : 'display:none;'}">
+        <div id="wiki-subpanel-subskills" class="wiki-subpanel ${currentWikiSubTab === 'subskills' ? 'active' : ''}" style="${currentWikiSubTab === 'subskills' ? '' : 'display:none;'}">
           <!-- 主技能發動機率矩陣速查表 -->
           <div class="wiki-card">
             <div class="wiki-card-header">
@@ -12201,7 +12201,7 @@
         </div>
 
         <!-- 子分頁 3：食材產量天梯榜 (Ingredient Yield Ladder) -->
-        <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:block;' : 'display:none;'}">
+        <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? '' : 'display:none;'}">
           <!-- 右下懸浮天梯篩選按鈕 (Mobile Only FAB) -->
           <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Open Filters' : '展開天梯篩選器'}" aria-label="${isEN ? 'Open Filters' : '展開天梯篩選器'}" style="${isMobileH5 && currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
             <span class="bookmark-icon">
@@ -12231,12 +12231,12 @@
         </div>
 
         <!-- 子分頁 4：樹果與食材基礎能量 (Berry & Ingredient Values) -->
-        <div id="wiki-subpanel-values" class="wiki-subpanel ${currentWikiSubTab === 'values' ? 'active' : ''}" style="${currentWikiSubTab === 'values' ? 'display:block;' : 'display:none;'}">
+        <div id="wiki-subpanel-values" class="wiki-subpanel ${currentWikiSubTab === 'values' ? 'active' : ''}" style="${currentWikiSubTab === 'values' ? '' : 'display:none;'}">
           ${renderValuesBoard()}
         </div>
 
         <!-- 子分頁 5：培育與評級指南 (Ratings & Growth) -->
-        <div id="wiki-subpanel-ratings" class="wiki-subpanel ${currentWikiSubTab === 'ratings' ? 'active' : ''}" style="${currentWikiSubTab === 'ratings' ? 'display:block;' : 'display:none;'}">
+        <div id="wiki-subpanel-ratings" class="wiki-subpanel ${currentWikiSubTab === 'ratings' ? 'active' : ''}" style="${currentWikiSubTab === 'ratings' ? '' : 'display:none;'}">
           <!-- 培育週期與核心思維 -->
           <div class="wiki-card">
             <div class="wiki-card-header">
