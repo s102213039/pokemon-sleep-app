@@ -11368,14 +11368,13 @@
                              data-pkm="${p.name}" 
                              data-recipe="${v.recipe}"
                              style="left: ${getPosPct(scaledCount)}%; z-index: ${zIndex};">
-                          <div class="node-recipe-tag recipe-tag-${v.recipe.toLowerCase()}">${v.recipe}</div>
                           <div class="node-avatar-wrapper">
                             <img src="${p.icon}" class="node-avatar-img" alt="${pkmDisplayName}">
                           </div>
                           <div class="node-count-badge">${scaledCount}</div>
                           
                           <div class="ladder-node-tooltip">
-                            <div class="tooltip-title">${isTopNode ? (isEN ? 'Top 1 Yield ' : '產量 TOP 1 ') : ''}${pkmDisplayName}</div>
+                            <div class="tooltip-title">${isTopNode ? (isEN ? 'Top 1 Yield ' : '產量 TOP 1 ') : ''}${pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${v.recipe.toLowerCase()}">${v.recipe}</span></div>
                             <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估日產：'}<span class="text-success font-bold">${scaledCount} ${isEN ? '/day' : '顆/天'}</span></div>
                             
                             <!-- 頂級大菜供貨能力指標 -->
@@ -11479,13 +11478,12 @@
                                    data-pkm="${p.name}" 
                                    data-recipe="${v.recipe}"
                                    style="left: ${getTailPct(scaledCount)}%; z-index: ${zIndex};">
-                                <div class="node-recipe-tag recipe-tag-${v.recipe.toLowerCase()}">${v.recipe}</div>
                                 <div class="node-avatar-wrapper">
                                   <img src="${p.icon}" class="node-avatar-img" alt="${pkmDisplayName}">
                                 </div>
                                 <div class="node-count-badge">${scaledCount}</div>
                                 <div class="ladder-node-tooltip">
-                                  <div class="tooltip-title">${pkmDisplayName}</div>
+                                  <div class="tooltip-title">${pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${v.recipe.toLowerCase()}">${v.recipe}</span></div>
                                   <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估日產：'}<span class="text-success font-bold">${scaledCount} ${isEN ? '/day' : '顆/天'}</span></div>
                                   <div class="tooltip-note">${formatLadderNote(v.note || '', isEN)}</div>
                                 </div>
