@@ -10726,8 +10726,8 @@
       return `
         <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr} | ${isEN ? 'Base' : '基礎'}: ${energy1x} / ${isEN ? 'Fav 2x' : '順果 2x'}: ${energy2x}">
           <img src="${b.icon}" class="value-compact-icon" alt="${bName}">
-          <span class="value-compact-energy berry-val" title="${isEN ? 'Base Energy' : '基礎能量'}">${energy1x}</span>
-          <span class="value-compact-energy berry-val-fav" title="${isEN ? 'Favorite 2x' : '順果 2x 能量'}">${energy2x}</span>
+          <span class="value-compact-energy berry-val" title="${isEN ? 'Base Energy (1x)' : '基礎能量 (1x)'}"><span class="energy-multiplier-prefix">1x</span> ${energy1x}</span>
+          <span class="value-compact-energy berry-val-fav" title="${isEN ? 'Favorite Berry (2x)' : '順果 2x 能量'}"><span class="energy-multiplier-prefix">2x</span> ${energy2x}</span>
         </div>
       `;
     }).join('');
@@ -11556,8 +11556,8 @@
               return `
                 <div class="value-compact-node" title="${bName} (${bType}) - Lv.${currentBerryLevel}${bonusStr} | ${isEN ? 'Base' : '基礎'}: ${energy1x} / ${isEN ? 'Fav 2x' : '順果 2x'}: ${energy2x}">
                   <img src="${b.icon}" class="value-compact-icon" alt="${bName}">
-                  <span class="value-compact-energy berry-val" title="${isEN ? 'Base Energy' : '基礎能量'}">${energy1x}</span>
-                  <span class="value-compact-energy berry-val-fav" title="${isEN ? 'Favorite 2x' : '順果 2x 能量'}">${energy2x}</span>
+                  <span class="value-compact-energy berry-val" title="${isEN ? 'Base Energy (1x)' : '基礎能量 (1x)'}"><span class="energy-multiplier-prefix">1x</span> ${energy1x}</span>
+                  <span class="value-compact-energy berry-val-fav" title="${isEN ? 'Favorite Berry (2x)' : '順果 2x 能量'}"><span class="energy-multiplier-prefix">2x</span> ${energy2x}</span>
                 </div>
               `;
             }).join('')}
