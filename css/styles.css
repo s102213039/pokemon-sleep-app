@@ -13338,42 +13338,255 @@ body.mobile-h5-app.ladder-active,
   gap: 10px !important;
 }
 
-/* 📅 甘特圖卡片 App 化 */
-.mobile-h5-app .gantt-wrapper {
-  border-radius: 14px !important;
-  border: 1px solid var(--border-color) !important;
+/* 📅 📱 H5 App 活動日曆 (News Activity Calendar) ─── */
+.news-calendar-wrapper,
+.mobile-h5-app .news-calendar-wrapper {
   background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 14px !important;
+  padding: 12px 14px !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
-  padding: 10px 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
   margin: 0 !important;
 }
 
-.mobile-h5-app .gantt-top-bar {
-  margin-bottom: 8px !important;
-}
-
-.mobile-h5-app .gantt-title-row {
+.news-calendar-top-bar {
   display: flex !important;
-  flex-wrap: wrap !important;
   align-items: center !important;
-  gap: 6px !important;
-  font-size: 13px !important;
-}
-
-.mobile-h5-app .gantt-legend {
-  margin-left: auto !important;
-  font-size: 11px !important;
+  justify-content: space-between !important;
   gap: 8px !important;
 }
 
-.mobile-h5-app .gantt-hint {
-  display: none !important;
+.news-calendar-title-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
 }
 
-.mobile-h5-app .gantt-scroll-container {
+.news-calendar-month-text {
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: var(--text-muted) !important;
+}
+
+.news-calendar-nav-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.news-calendar-nav-btn {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
   border-radius: 8px !important;
-  -webkit-overflow-scrolling: touch !important;
+  padding: 3px 8px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.news-calendar-nav-btn:hover,
+.news-calendar-nav-btn:active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #fff !important;
+  border-color: var(--color-primary, #6366f1) !important;
+}
+
+/* 7 欄日曆星期標題 */
+.news-calendar-weekdays {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 2px !important;
+  text-align: center !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
   padding-bottom: 4px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.news-calendar-weekday.sun,
+.news-calendar-weekday.sat {
+  color: var(--text-muted) !important;
+  opacity: 0.7 !important;
+}
+
+/* 7 欄日曆網格 */
+.news-calendar-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 3px !important;
+}
+
+.news-cal-day-cell {
+  aspect-ratio: 1 / 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  user-select: none !important;
+  background: transparent !important;
+  padding: 2px !important;
+  box-sizing: border-box !important;
+}
+
+.news-cal-day-cell.empty {
+  cursor: default !important;
+  background: transparent !important;
+}
+
+.news-cal-day-cell:not(.empty):hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.news-cal-day-cell.is-selected {
+  background: rgba(99, 102, 241, 0.2) !important;
+  border: 1.5px solid var(--color-primary, #6366f1) !important;
+}
+
+.news-cal-day-num {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  color: var(--text-primary) !important;
+}
+
+.news-cal-day-cell.is-today .news-cal-day-num {
+  background: var(--color-primary, #6366f1) !important;
+  color: #fff !important;
+  border-radius: 50% !important;
+  width: 18px !important;
+  height: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 10.5px !important;
+}
+
+.news-cal-dots-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2.5px !important;
+  margin-top: 2.5px !important;
+  min-height: 5px !important;
+}
+
+.news-cal-dot {
+  width: 5px !important;
+  height: 5px !important;
+  border-radius: 50% !important;
+}
+
+.news-cal-dot.dot-event {
+  background-color: #818cf8 !important;
+  box-shadow: 0 0 4px rgba(129, 140, 248, 0.6) !important;
+}
+
+.news-cal-dot.dot-pack {
+  background-color: #fbbf24 !important;
+  box-shadow: 0 0 4px rgba(251, 191, 36, 0.6) !important;
+}
+
+/* 當日活動卡片列表 (Selected Day Event List) */
+.news-calendar-events-box {
+  background: rgba(0, 0, 0, 0.18) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 10px !important;
+  padding: 8px 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.news-cal-box-title-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  padding-bottom: 4px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.news-cal-event-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  padding: 6px 8px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.news-cal-event-item:hover,
+.news-cal-event-item:active {
+  background: rgba(99, 102, 241, 0.12) !important;
+  border-color: rgba(99, 102, 241, 0.4) !important;
+  transform: translateX(2px) !important;
+}
+
+.news-cal-event-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  flex: 1 !important;
+}
+
+.news-cal-event-badge {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+  white-space: nowrap !important;
+}
+
+.news-cal-event-badge.badge-event {
+  background: rgba(99, 102, 241, 0.2) !important;
+  color: #a5b4fc !important;
+}
+
+.news-cal-event-badge.badge-pack {
+  background: rgba(245, 158, 11, 0.2) !important;
+  color: #fcd34d !important;
+}
+
+.news-cal-event-name {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.news-cal-event-time {
+  font-size: 11px !important;
+  color: var(--text-muted) !important;
+  white-space: nowrap !important;
+}
+
+.news-cal-empty-hint {
+  font-size: 12px !important;
+  color: var(--text-muted) !important;
+  text-align: center !important;
+  padding: 8px 4px !important;
 }
 
 /* 🔍 篩選與搜尋卡片 App 化 */

@@ -176,6 +176,10 @@
     });
   }
 
+  let calCurrentYear = 2026;
+  let calCurrentMonth = 7; // 8月 (0-indexed)
+  let calSelectedDay = 16; // 8/16 (今日)
+
   function renderEventTimeline() {
     if (!newsTimelineContainer) return;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
@@ -187,98 +191,156 @@
 
     newsTimelineContainer.style.display = 'block';
 
-    // 建立 8/7 ~ 9/2 共 27 天的日期標題
-    const dayCols = [];
-    const todayIndex = 10; // 8/16 (從 8/7 起算第 10 天)
+    const monthNames = isEN
+      ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      : ['1 月', '2 月', '3 月', '4 月', '5 月', '6 月', '7 月', '8 月', '9 月', '10 月', '11 月', '12 月'];
+    const monthTitle = isEN ? `${monthNames[calCurrentMonth]} ${calCurrentYear}` : `${calCurrentYear} 年 ${monthNames[calCurrentMonth]}`;
+    const weekdayLabels = isEN ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] : ['日', '一', '二', '三', '四', '五', '六'];
 
-    for (let d = 7; d <= 31; d++) {
-      const dateObj = new Date(2026, 7, d);
-      const dayOfWeek = dateObj.getDay(); // 0: Sun, 6: Sat
-      const isToday = d === 16;
-      let dayClass = 'gantt-day-normal';
-      if (dayOfWeek === 6) dayClass = 'gantt-day-sat';
-      else if (dayOfWeek === 0) dayClass = 'gantt-day-sun';
-      if (isToday) dayClass += ' gantt-day-today';
+    const firstDayWeekday = new Date(calCurrentYear, calCurrentMonth, 1).getDay();
+    const daysInMonth = new Date(calCurrentYear, calCurrentMonth + 1, 0).getDate();
 
-      dayCols.push({
-        label: String(d).padStart(2, '0'),
-        month: '2026-08',
-        dayClass,
-        isToday
-      });
+    // 建立日曆網格
+    const dayCellsHTML = [];
+    for (let i = 0; i < firstDayWeekday; i++) {
+      dayCellsHTML.push('<div class="news-cal-day-cell empty"></div>');
     }
-    // 9/1, 9/2
-    [1, 2].forEach(d => {
-      const dateObj = new Date(2026, 8, d);
-      const dayOfWeek = dateObj.getDay();
-      let dayClass = 'gantt-day-normal';
-      if (dayOfWeek === 6) dayClass = 'gantt-day-sat';
-      else if (dayOfWeek === 0) dayClass = 'gantt-day-sun';
-      dayCols.push({
-        label: String(d).padStart(2, '0'),
-        month: '2026-09',
-        dayClass,
-        isToday: false
-      });
-    });
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dayStart = new Date(calCurrentYear, calCurrentMonth, d, 0, 0, 0);
+      const dayEnd = new Date(calCurrentYear, calCurrentMonth, d, 23, 59, 59);
+      const activeEvents = ganttData.filter(ev => ev.startDate <= dayEnd && ev.endDate >= dayStart);
+      const hasEvent = activeEvents.some(ev => ev.typeClass === 'gantt-bar-event');
+      const hasPack = activeEvents.some(ev => ev.typeClass === 'gantt-bar-pack');
+      const isToday = (calCurrentYear === 2026 && calCurrentMonth === 7 && d === 16);
+      const isSelected = (d === calSelectedDay);
+
+      let dotsHTML = '';
+      if (hasEvent || hasPack) {
+        dotsHTML = `
+          <div class="news-cal-dots-row">
+            ${hasEvent ? '<span class="news-cal-dot dot-event"></span>' : ''}
+            ${hasPack ? '<span class="news-cal-dot dot-pack"></span>' : ''}
+          </div>
+        `;
+      }
+
+      dayCellsHTML.push(`
+        <div class="news-cal-day-cell ${isToday ? 'is-today' : ''} ${isSelected ? 'is-selected' : ''} ${activeEvents.length > 0 ? 'has-events' : ''}" data-day="${d}">
+          <span class="news-cal-day-num">${d}</span>
+          ${dotsHTML}
+        </div>
+      `);
+    }
+
+    // 計算當前選取日期的活動
+    const selectedDayStart = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 0, 0, 0);
+    const selectedDayEnd = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 23, 59, 59);
+    const selectedDateEvents = ganttData.filter(ev => ev.startDate <= selectedDayEnd && ev.endDate >= selectedDayStart);
+
+    let selectedEventsHTML = '';
+    if (selectedDateEvents.length > 0) {
+      selectedEventsHTML = selectedDateEvents.map(ev => `
+        <div class="news-cal-event-item" data-event-id="${ev.id}">
+          <div class="news-cal-event-left">
+            <span class="news-cal-event-badge ${ev.typeClass === 'gantt-bar-event' ? 'badge-event' : 'badge-pack'}">${ev.typeLabel}</span>
+            <span class="news-cal-event-name">${escapeHtml(ev.title)}</span>
+          </div>
+          <span class="news-cal-event-time">${ev.startStr} ~ ${ev.endStr}</span>
+        </div>
+      `).join('');
+    } else {
+      selectedEventsHTML = `
+        <div class="news-cal-empty-hint">
+          ${isEN ? '🏖️ No active events or bundles on this date' : '🏖️ 當日暫無進行中的特殊活動或禮包'}
+        </div>
+      `;
+    }
+
+    const selectedDateStr = isEN
+      ? `${monthNames[calCurrentMonth]} ${calSelectedDay}${calCurrentYear === 2026 && calCurrentMonth === 7 && calSelectedDay === 16 ? ' (Today)' : ''}`
+      : `${calCurrentMonth + 1}月${calSelectedDay}日${calCurrentYear === 2026 && calCurrentMonth === 7 && calSelectedDay === 16 ? ' (今日)' : ''}`;
 
     newsTimelineContainer.innerHTML = `
-      <div class="gantt-wrapper">
-        <div class="gantt-top-bar">
-          <div class="gantt-title-row">
-            <span class="gantt-icon">📅</span>
-            <span class="gantt-title">${isEN ? 'Event & Bundle Schedule' : '活動與禮包時程'}</span>
-            <div class="gantt-legend">
-              <span class="gantt-legend-item"><span class="gantt-dot dot-event"></span> ${isEN ? 'Events' : '活動列表'}</span>
-              <span class="gantt-legend-item"><span class="gantt-dot dot-pack"></span> ${isEN ? 'Bundles / Packs' : '活動禮包 / 培育包'}</span>
-            </div>
+      <div class="news-calendar-wrapper">
+        <div class="news-calendar-top-bar">
+          <div class="news-calendar-title-group">
+            <span>📅</span>
+            <span>${isEN ? 'Event Calendar' : '活動日曆'}</span>
+            <span class="news-calendar-month-text">(${monthTitle})</span>
           </div>
-          <div class="gantt-hint">${isEN ? '💡 Click any timeline bar to locate the full announcement' : '💡 點擊任一時程條可快速定位完整公告'}</div>
+          <div class="news-calendar-nav-group">
+            <button type="button" class="news-calendar-nav-btn prev-btn" title="${isEN ? 'Previous Month' : '上個月'}">◀</button>
+            <button type="button" class="news-calendar-nav-btn today-btn" title="${isEN ? 'Return to Today' : '今日'}">${isEN ? 'Today' : '今日'}</button>
+            <button type="button" class="news-calendar-nav-btn next-btn" title="${isEN ? 'Next Month' : '下個月'}">▶</button>
+          </div>
         </div>
 
-        <div class="gantt-scroll-container">
-          <div class="gantt-chart-grid">
-            <!-- 1. 月份標題列 -->
-            <div class="gantt-month-row">
-              <div class="gantt-month-label" style="grid-column: 1 / span 25;">2026-08</div>
-              <div class="gantt-month-label" style="grid-column: 26 / span 2;">2026-09</div>
-            </div>
+        <div class="news-calendar-weekdays">
+          ${weekdayLabels.map((w, idx) => `<div class="news-calendar-weekday ${idx === 0 ? 'sun' : idx === 6 ? 'sat' : ''}">${w}</div>`).join('')}
+        </div>
 
-            <!-- 2. 日期刻度列 -->
-            <div class="gantt-days-row">
-              ${dayCols.map((dc, i) => `
-                <div class="gantt-day-cell ${dc.dayClass}" title="${dc.month}-${dc.label}${dc.isToday ? (isEN ? ' (Today)' : ' (今日)') : ''}">
-                  ${dc.label}
-                </div>
-              `).join('')}
-            </div>
+        <div class="news-calendar-grid">
+          ${dayCellsHTML.join('')}
+        </div>
 
-            <!-- 3. 今日垂直指示線 -->
-            <div class="gantt-today-line" style="grid-column: ${todayIndex};" title="${isEN ? 'Today (8/16)' : '今日 (8/16)'}"></div>
-
-            <!-- 4. 時程長條 Bars -->
-            <div class="gantt-bars-container">
-              ${ganttData.map(item => `
-                <div class="gantt-bar-row">
-                  <div class="gantt-bar ${item.typeClass}"
-                       style="grid-column: ${item.startCol} / span ${item.spanCols};"
-                       data-event-id="${item.id}"
-                       title="${escapeHtml(item.fullTitle)} (${item.startStr} ~ ${item.endStr})">
-                    <div class="gantt-bar-time">${item.startStr} ~ ${item.endStr} <span class="gantt-badge">${item.typeLabel}</span></div>
-                    <div class="gantt-bar-name">${escapeHtml(item.title)}</div>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
+        <div class="news-calendar-events-box">
+          <div class="news-cal-box-title-row">
+            <span>📅 ${selectedDateStr} ${isEN ? 'Active Events & Bundles' : '進行中的活動與禮包'}</span>
+            <span style="font-size:11px;opacity:0.8;">${selectedDateEvents.length} ${isEN ? 'items' : '項'}</span>
           </div>
+          ${selectedEventsHTML}
         </div>
       </div>
     `;
 
-    // 點擊甘特圖時程條跳轉至新聞
-    newsTimelineContainer.querySelectorAll('.gantt-bar').forEach(bar => {
-      bar.addEventListener('click', () => {
-        const evId = bar.getAttribute('data-event-id');
+    // 綁定日曆切換與點選事件
+    const prevBtn = newsTimelineContainer.querySelector('.prev-btn');
+    const nextBtn = newsTimelineContainer.querySelector('.next-btn');
+    const todayBtn = newsTimelineContainer.querySelector('.today-btn');
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        if (calCurrentMonth > 0) calCurrentMonth--;
+        else { calCurrentYear--; calCurrentMonth = 11; }
+        calSelectedDay = 1;
+        renderEventTimeline();
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        if (calCurrentMonth < 11) calCurrentMonth++;
+        else { calCurrentYear++; calCurrentMonth = 0; }
+        calSelectedDay = 1;
+        renderEventTimeline();
+      });
+    }
+
+    if (todayBtn) {
+      todayBtn.addEventListener('click', () => {
+        calCurrentYear = 2026;
+        calCurrentMonth = 7;
+        calSelectedDay = 16;
+        renderEventTimeline();
+      });
+    }
+
+    // 點擊日期格子切換選取日
+    newsTimelineContainer.querySelectorAll('.news-cal-day-cell:not(.empty)').forEach(cell => {
+      cell.addEventListener('click', () => {
+        const day = parseInt(cell.getAttribute('data-day'), 10);
+        if (day) {
+          calSelectedDay = day;
+          renderEventTimeline();
+        }
+      });
+    });
+
+    // 點擊活動項目直接跳轉至對應新聞
+    newsTimelineContainer.querySelectorAll('.news-cal-event-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const evId = item.getAttribute('data-event-id');
         const targetItem = allNews.find(n => n.id === evId);
         if (targetItem) {
           if (newsSearchInput) {
