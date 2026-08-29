@@ -12343,50 +12343,6 @@
             </div>
           </div>
         </div>
-
-        <!-- 子分頁 4：食材產量天梯榜 (Ingredient Yield Ladder) -->
-        <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? '' : 'display:none;'}">
-          <!-- 右下懸浮天梯篩選按鈕 (Mobile Only FAB) -->
-          <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Open Filters' : '展開天梯篩選器'}" aria-label="${isEN ? 'Open Filters' : '展開天梯篩選器'}" style="${isMobileH5 && currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
-            <span class="bookmark-icon">
-              <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="21" x2="4" y2="14"></line>
-                <line x1="4" y1="10" x2="4" y2="3"></line>
-                <line x1="12" y1="21" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12" y2="3"></line>
-                <line x1="20" y1="21" x2="20" y2="16"></line>
-                <line x1="20" y1="12" x2="20" y2="3"></line>
-                <line x1="1" y1="14" x2="7" y2="14"></line>
-                <line x1="9" y1="8" x2="15" y2="8"></line>
-                <line x1="17" y1="16" x2="23" y2="16"></line>
-              </svg>
-            </span>
-          </button>
-
-          <!-- 橫向視覺天梯座標圖 (預設顯示) -->
-          <div id="wiki-ingredient-ladder-coordinate">
-            ${renderCoordinateLadder(LV60_COORDINATE_LADDER_DATA)}
-          </div>
-
-          <!-- 食材天梯卡片清單 (列表檢視，預設隱藏) -->
-          <div id="wiki-ingredient-ladder-grid" class="wiki-ladder-grid" style="display: none;">
-            ${renderIngredientLadders(LV60_INGREDIENTS_LADDER)}
-          </div>
-        </div>
-
-        <!-- 子分頁 5：樹果與食材基礎能量 (Image 1 實體化 - Berry & Ingredient Values) -->
-        <div id="wiki-subpanel-values" class="wiki-subpanel ${currentWikiSubTab === 'values' ? 'active' : ''}" style="${currentWikiSubTab === 'values' ? '' : 'display:none;'}">
-          <div class="wiki-card">
-            <div class="wiki-card-header">
-              <h3 class="wiki-card-title">${isEN ? 'Berry & Ingredient Base Power Table' : '樹果與食材基礎能量表'}</h3>
-            </div>
-            <p class="wiki-card-desc">${isEN ? 'Official in-game base power values for 18 Berries (24~35) and 19 Ingredients (90~342).' : '依據官方遊戲底層能量設定，完整展示 18 種屬性樹果基礎能量（24~35）與 19 種料理食材基礎能量（90~342）。'}</p>
-
-            <div style="margin-top: 20px;">
-              ${renderValuesBoard()}
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- 遮罩層 (Backdrop for Mobile Drawer) -->
