@@ -12342,7 +12342,18 @@
                   </tr>
                 </thead>
                 <tbody>
-                  ${TRIGGER_CHANCE_MATRIX.map(row => `
+                  ${TRIGGER_CHANCE_MATRIX.map(row => {
+                    const gradeStr = row.grade || '';
+                    const tierClass = gradeStr.startsWith('SSS') ? 'tier-sss'
+                      : gradeStr.startsWith('SS') ? 'tier-ss'
+                      : gradeStr.startsWith('S') ? 'tier-s'
+                      : gradeStr.startsWith('A') ? 'tier-a'
+                      : gradeStr.startsWith('B') ? 'tier-b'
+                      : gradeStr.startsWith('C') ? 'tier-c'
+                      : gradeStr.startsWith('D') ? 'tier-d'
+                      : gradeStr.startsWith('E') ? 'tier-e'
+                      : 'tier-baseline';
+                    return `
                     <tr>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
                         <div style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; flex-wrap: nowrap; white-space: nowrap;">
@@ -12367,9 +12378,9 @@
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
                         <span class="text-accent font-bold" style="font-size: 13px;">x${row.multiplier.toFixed(3)}</span>
                       </td>
-                      <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><span class="wiki-tier-badge tier-${row.grade[0].toLowerCase()}">${isEN ? (row.grade_en || row.grade) : row.grade}</span></td>
+                      <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><span class="wiki-tier-badge ${tierClass}">${isEN ? (row.grade_en || row.grade) : row.grade}</span></td>
                     </tr>
-                  `).join('')}
+                  `;}).join('')}
                 </tbody>
               </table>
             </div>
