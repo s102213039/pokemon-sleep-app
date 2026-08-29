@@ -10603,15 +10603,19 @@ body.mobile-h5-surface {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* 📱 頂部 App Header */
+/* 📱 頂部 App Header (完全填滿、零左右邊距) */
 .mobile-app-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  width: 100% !important;
   z-index: 999;
   height: calc(52px + env(safe-area-inset-top, 0px));
   padding-top: env(safe-area-inset-top, 0px);
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin: 0 !important;
   background: var(--bg-header);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -10619,6 +10623,7 @@ body.mobile-h5-surface {
   display: flex;
   align-items: center;
   box-shadow: none;
+  box-sizing: border-box;
 }
 
 .mobile-header-container {
@@ -10626,9 +10631,11 @@ body.mobile-h5-surface {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  width: 100%;
-  padding: 0 2px 0 12px;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
   min-height: 44px;
+  box-sizing: border-box;
 }
 
 .mobile-brand {
@@ -10662,7 +10669,8 @@ body.mobile-h5-surface {
   align-items: center;
   gap: 0;
   z-index: 2;
-  margin-right: 2px;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .mobile-header-btn.settings-btn,
@@ -10670,10 +10678,11 @@ body.mobile-h5-surface {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
-  padding: 4px;
-  border-radius: 8px;
+  width: 48px;
+  height: 48px;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0;
   font-size: 0;
   background: transparent !important;
   border: none !important;
@@ -10686,13 +10695,13 @@ body.mobile-h5-surface {
 
 .mobile-header-btn.settings-btn:active,
 .mobile-header-btn.borderless-btn:active {
-  transform: scale(0.88);
+  transform: scale(0.9);
   opacity: 0.7;
 }
 
 .mobile-header-btn.settings-btn .header-svg-icon {
-  width: 22px;
-  height: 22px;
+  width: 23px;
+  height: 23px;
   stroke: var(--text-secondary, #64748b);
   stroke-width: 1.75;
   transition: stroke 0.2s ease;
