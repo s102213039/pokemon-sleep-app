@@ -774,14 +774,9 @@
     if (resetAllBtn && !resetAllBtn._hasListener) {
       resetAllBtn._hasListener = true;
       resetAllBtn.addEventListener('click', () => {
-        // 重設所有篩選條件
+        // 重設分類、食材與搜尋條件（保留「鍋子容量」與「能量試算設定」不重設，以符合使用者持久化保存需求）
         selectedCategory = 'ALL';
         minBonus = 0;
-        minPot = 0;
-        recipeLevel = 1;
-        islandBonus = 0;
-        eventBonus = 1.0;
-        showTasty = false;
         selectedIngredients.clear();
         excludedIngredients.clear();
         currentSearch = '';
@@ -792,10 +787,6 @@
         if (bonusSelect) {
           bonusSelect.value = '0';
           bonusSelect.dispatchEvent(new Event('sync-ui'));
-        }
-        if (potSelect) {
-          potSelect.value = '0';
-          potSelect.dispatchEvent(new Event('sync-ui'));
         }
 
         if (categoryContainer) {
@@ -813,11 +804,6 @@
         if (excContainer) {
           excContainer.querySelectorAll('.ing-picker-btn').forEach(b => b.classList.remove('active-exclude'));
         }
-
-        syncLevelUI();
-        syncIslandUI();
-        syncEventUI();
-        syncTastyUI();
 
         savePrefs();
         updateRecipeActiveFilterBadge();
