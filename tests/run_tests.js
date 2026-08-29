@@ -926,7 +926,8 @@ test('Tier 1 - Feature Coverage', 'WikiDB Namespace & Event Handler Methods Inte
     'filterIngredients', 'filterWikiIngredients', 'switchStack', 'switchChargeStock',
     'switchBoost', 'switchHelperBoost', 'toggleDetail', 'toggleDetailTable',
     'updateBerryLevel', 'updateBerryIsland', 'toggleBerryFavorite', 'toggleFavorite',
-    'toggleLadderIngM', 'toggleLadderSpeedM', 'toggleLadderNatureIng', 'toggleLadderNatureSpeed',
+    'toggleLadderIngM', 'toggleLadderIngS', 'toggleLadderSpeedM', 'toggleLadderSpeedS',
+    'toggleLadderNatureIng', 'toggleLadderNatureSpeed', 'setLadderNature',
     'onLadderSearch', 'clearLadderSearch',
     'setLadderRecipeFilter', 'refreshCoordinateLadder', 'handleLadderGroupHover',
     'handleLadderGroupHoverOut', 'recalcTriggerChance', 'recalcSleepDays',
@@ -2232,31 +2233,42 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Draw S Specific Po
   assert(ingDrawSkill && ingDrawSkill.hasIngredientDrawMatrix, 'Wiki should define ingredient_draw_s with hasIngredientDrawMatrix');
 });
 
-test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Lv.60 prefix removed from tabs/headers & 4-tier multiplier logic verified', () => {
+test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Sub-skills S/M and Single-Choice Nature multiplier logic verified', () => {
   const wikiPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js');
   const wikiCode = fs.readFileSync(wikiPath, 'utf8');
 
   assert(!wikiCode.includes("data-subtab=\"ingredients\">${isEN ? '🥗 Lv.60"), 'Subtab 4 button should not contain Lv.60');
   assert(!wikiCode.includes("h3 class=\"wiki-card-title\" style=\"margin: 0;\">${isEN ? 'Lv.60"), 'Card title should not contain Lv.60');
 
-  assert(wikiCode.includes('id="ladder-nature-ing-toggle"'), 'Template should contain ladder-nature-ing-toggle');
-  assert(wikiCode.includes('id="ladder-nature-speed-toggle"'), 'Template should contain ladder-nature-speed-toggle');
+  assert(wikiCode.includes('data-nature-filter="ING"'), 'Template should contain data-nature-filter="ING"');
+  assert(wikiCode.includes('data-nature-filter="SPEED"'), 'Template should contain data-nature-filter="SPEED"');
+  assert(wikiCode.includes('id="ladder-ing-s-toggle"'), 'Template should contain ladder-ing-s-toggle');
+  assert(wikiCode.includes('id="ladder-speed-s-toggle"'), 'Template should contain ladder-speed-s-toggle');
   assert(wikiCode.includes('ladder-track-header') && wikiCode.includes('ladder-ing-icon'), 'Template should render ladder-track-header and ladder-ing-icon');
 
-  function calcMult(isIngM, isSpeedM, isNatureIng, isNatureSpeed) {
+  function calcMult(isIngM, isIngS, isSpeedM, isSpeedS, nature) {
     let mult = 1.0;
-    if (isIngM) mult *= 1.36;
-    if (isSpeedM) mult *= (1.0 / 0.86);
-    if (isNatureIng) mult *= 1.20;
-    if (isNatureSpeed) mult *= (1.0 / 0.9090909);
+    let ingRateBoost = 0;
+    if (isIngM) ingRateBoost += 0.36;
+    if (isIngS) ingRateBoost += 0.18;
+    if (ingRateBoost > 0) mult *= (1.0 + ingRateBoost);
+
+    let speedReduction = 0;
+    if (isSpeedM) speedReduction += 0.14;
+    if (isSpeedS) speedReduction += 0.07;
+    if (speedReduction > 0) mult *= (1.0 / (1.0 - speedReduction));
+
+    if (nature === 'ING') mult *= 1.20;
+    if (nature === 'SPEED') mult *= (1.0 / 0.9090909);
     return mult;
   }
 
-  assertEquals(calcMult(false, false, false, false), 1.0, 'Base multiplier should be 1.0');
-  assertEquals(parseFloat(calcMult(true, false, false, false).toFixed(2)), 1.36, 'Ing M should be 1.36x');
-  assertEquals(parseFloat(calcMult(false, false, true, false).toFixed(2)), 1.20, 'Nature Ing should be 1.20x');
-  const allBoosted = calcMult(true, true, true, true);
-  assert(allBoosted > 2.0 && allBoosted < 2.15, `All 4 boosts combined multiplier should be ~2.08x, got ${allBoosted.toFixed(3)}`);
+  assertEquals(calcMult(false, false, false, false, 'NONE'), 1.0, 'Base multiplier should be 1.0');
+  assertEquals(parseFloat(calcMult(true, false, false, false, 'NONE').toFixed(2)), 1.36, 'Ing M should be 1.36x');
+  assertEquals(parseFloat(calcMult(false, true, false, false, 'NONE').toFixed(2)), 1.18, 'Ing S should be 1.18x');
+  assertEquals(parseFloat(calcMult(false, false, false, false, 'ING').toFixed(2)), 1.20, 'Nature Ing should be 1.20x');
+  const allSubBoosted = calcMult(true, true, true, true, 'ING');
+  assert(allSubBoosted > 2.3 && allSubBoosted < 2.5, `Combined S/M subskills + Nature Ing multiplier should be ~2.34x, got ${allSubBoosted.toFixed(3)}`);
 });
 
 // --- NEW Tier 4 Tests: Real-World Scenarios ---

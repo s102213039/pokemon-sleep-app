@@ -10210,9 +10210,10 @@
 
   // 3.0 食材天梯榜即時副技能與性格補正開關、跨軌道搜尋/三維度篩選狀態
   let isLadderIngM = false;
+  let isLadderIngS = false;
   let isLadderSpeedM = false;
-  let isLadderNatureIng = false;
-  let isLadderNatureSpeed = false;
+  let isLadderSpeedS = false;
+  let ladderNature = 'NONE'; // 'NONE' | 'ING' | 'SPEED'
   let ladderSearchQuery = '';
   let ladderSupplyFilter = 'ALL'; // 'ALL' | 'TOP' | 'MEALS_3' | 'MEALS_2'
   let ladderRecipeFilter = 'ALL'; // 'ALL' | 'AAA' | 'ABB' | 'AXX'
@@ -10310,10 +10311,25 @@
 
   function getLadderMultiplier() {
     let mult = 1.0;
-    if (isLadderIngM) mult *= 1.36;
-    if (isLadderSpeedM) mult *= (1.0 / 0.86); // -14% 間隔 = 約 1.16279 倍
-    if (isLadderNatureIng) mult *= 1.20; // 性格食材機率▲▲ (+20%)
-    if (isLadderNatureSpeed) mult *= (1.0 / 0.9090909); // 性格幫忙速度▲▲ (約 +10% 幫忙次數)
+    // 副技能加成：食材機率 (M: +36%, S: +18%)
+    let ingRateBoost = 0;
+    if (isLadderIngM) ingRateBoost += 0.36;
+    if (isLadderIngS) ingRateBoost += 0.18;
+    if (ingRateBoost > 0) mult *= (1.0 + ingRateBoost);
+
+    // 副技能加成：幫忙速度 (M: -14% 間隔, S: -7% 間隔)
+    let speedReduction = 0;
+    if (isLadderSpeedM) speedReduction += 0.14;
+    if (isLadderSpeedS) speedReduction += 0.07;
+    if (speedReduction > 0) mult *= (1.0 / (1.0 - speedReduction));
+
+    // 性格加成 (單選):
+    if (ladderNature === 'ING') {
+      mult *= 1.20; // 性格食材機率▲▲ (+20%)
+    } else if (ladderNature === 'SPEED') {
+      mult *= (1.0 / 0.9090909); // 性格幫忙速度▲▲ (-9.09% 間隔，約 +10% 幫忙次數)
+    }
+
     return mult;
   }
 
@@ -10322,19 +10338,39 @@
     refreshCoordinateLadder();
   }
 
+  function toggleLadderIngS(checked) {
+    isLadderIngS = !!checked;
+    refreshCoordinateLadder();
+  }
+
   function toggleLadderSpeedM(checked) {
     isLadderSpeedM = !!checked;
     refreshCoordinateLadder();
   }
 
-  function toggleLadderNatureIng(checked) {
-    isLadderNatureIng = !!checked;
+  function toggleLadderSpeedS(checked) {
+    isLadderSpeedS = !!checked;
     refreshCoordinateLadder();
   }
 
-  function toggleLadderNatureSpeed(checked) {
-    isLadderNatureSpeed = !!checked;
+  function setLadderNature(natureType) {
+    ladderNature = natureType || 'NONE';
+    document.querySelectorAll('[data-nature-filter]').forEach(btn => {
+      if (btn.getAttribute('data-nature-filter') === ladderNature) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
     refreshCoordinateLadder();
+  }
+
+  function toggleLadderNatureIng(checked) {
+    setLadderNature(checked ? 'ING' : 'NONE');
+  }
+
+  function toggleLadderNatureSpeed(checked) {
+    setLadderNature(checked ? 'SPEED' : 'NONE');
   }
 
   function onLadderSearch(val) {
@@ -10425,19 +10461,28 @@
 
     switchLadderView('coordinate');
 
+    ladderNature = 'NONE';
+    document.querySelectorAll('[data-nature-filter]').forEach(btn => {
+      if (btn.getAttribute('data-nature-filter') === 'NONE') {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
     isLadderIngM = false;
+    isLadderIngS = false;
     isLadderSpeedM = false;
-    isLadderNatureIng = false;
-    isLadderNatureSpeed = false;
+    isLadderSpeedS = false;
 
     const ingM = document.getElementById('ladder-ing-m-toggle');
     if (ingM) ingM.checked = false;
+    const ingS = document.getElementById('ladder-ing-s-toggle');
+    if (ingS) ingS.checked = false;
     const speedM = document.getElementById('ladder-speed-m-toggle');
     if (speedM) speedM.checked = false;
-    const natIng = document.getElementById('ladder-nature-ing-toggle');
-    if (natIng) natIng.checked = false;
-    const natSpd = document.getElementById('ladder-nature-speed-toggle');
-    if (natSpd) natSpd.checked = false;
+    const speedS = document.getElementById('ladder-speed-s-toggle');
+    if (speedS) speedS.checked = false;
 
     refreshCoordinateLadder();
   }
@@ -10487,10 +10532,8 @@
     if (ladderSupplyFilter && ladderSupplyFilter !== 'ALL') count++;
     if (ladderRecipeFilter && ladderRecipeFilter !== 'ALL') count++;
     if (ladderSpecialtyFilter && ladderSpecialtyFilter !== 'ALL') count++;
-    if (isLadderIngM) count++;
-    if (isLadderSpeedM) count++;
-    if (isLadderNatureIng) count++;
-    if (isLadderNatureSpeed) count++;
+    if (isLadderIngM || isLadderIngS || isLadderSpeedM || isLadderSpeedS) count++;
+    if (ladderNature && ladderNature !== 'NONE') count++;
 
     if (badge) {
       if (count > 0) {
@@ -12164,35 +12207,41 @@
               </div>
             </label>
 
-            <label class="sidebar-final-evo-label" for="ladder-speed-m-toggle" title="${isEN ? 'Helping Speed M (+16.3% helps)' : '幫忙速度M (-14% 間隔時間，約 +16.3% 幫忙次數)'}" style="margin-top: 6px;">
+            <label class="sidebar-final-evo-label" for="ladder-ing-s-toggle" title="${isEN ? 'Ingredient Finder S (+18%)' : '食材發現機率提升S (+18%)'}" style="margin-top: 6px;">
+              <span class="sidebar-final-evo-text">${isEN ? 'Ing. Finder S (+18%)' : '食材機率提升S (+18%)'}</span>
+              <div class="sidebar-switch-wrapper">
+                <input type="checkbox" id="ladder-ing-s-toggle" class="switch-checkbox" ${isLadderIngS ? 'checked' : ''} onchange="window.WikiDB.toggleLadderIngS(this.checked)">
+                <span class="switch-slider"></span>
+              </div>
+            </label>
+
+            <label class="sidebar-final-evo-label" for="ladder-speed-m-toggle" title="${isEN ? 'Helping Speed M (+16.3% helps)' : '幫忙速度提升M (-14% 間隔時間，約 +16.3% 幫忙次數)'}" style="margin-top: 6px;">
               <span class="sidebar-final-evo-text">${isEN ? 'Helping Speed M (+16.3%)' : '幫忙速度提升M (+16.3%)'}</span>
               <div class="sidebar-switch-wrapper">
                 <input type="checkbox" id="ladder-speed-m-toggle" class="switch-checkbox" ${isLadderSpeedM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSpeedM(this.checked)">
                 <span class="switch-slider"></span>
               </div>
             </label>
+
+            <label class="sidebar-final-evo-label" for="ladder-speed-s-toggle" title="${isEN ? 'Helping Speed S (+7.5% helps)' : '幫忙速度提升S (-7% 間隔時間，約 +7.5% 幫忙次數)'}" style="margin-top: 6px;">
+              <span class="sidebar-final-evo-text">${isEN ? 'Helping Speed S (+7.5%)' : '幫忙速度提升S (+7.5%)'}</span>
+              <div class="sidebar-switch-wrapper">
+                <input type="checkbox" id="ladder-speed-s-toggle" class="switch-checkbox" ${isLadderSpeedS ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSpeedS(this.checked)">
+                <span class="switch-slider"></span>
+              </div>
+            </label>
           </div>
 
-          <!-- 5. 性格補正模擬 (Nature Boost Simulation) -->
+          <!-- 5. 性格補正模擬 (Nature Boost Simulation - 單選) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
-              <span class="sidebar-section-title">${isEN ? 'Natures' : '性格補正模擬'}</span>
+              <span class="sidebar-section-title">${isEN ? 'Nature Boost' : '性格補正模擬'}</span>
             </div>
-            <label class="sidebar-final-evo-label" for="ladder-nature-ing-toggle" title="${isEN ? 'Nature Ingredient Rate Up (+20%)' : '性格食材機率提升▲▲ (+20%)'}">
-              <span class="sidebar-final-evo-text">${isEN ? 'Ing. Rate ▲▲ (+20%)' : '食材機率提升▲▲ (+20%)'}</span>
-              <div class="sidebar-switch-wrapper">
-                <input type="checkbox" id="ladder-nature-ing-toggle" class="switch-checkbox" ${isLadderNatureIng ? 'checked' : ''} onchange="window.WikiDB.toggleLadderNatureIng(this.checked)">
-                <span class="switch-slider"></span>
-              </div>
-            </label>
-
-            <label class="sidebar-final-evo-label" for="ladder-nature-speed-toggle" title="${isEN ? 'Nature Helping Speed Up (+10% helps)' : '性格幫忙速度提升▲▲ (-9.09% 間隔時間，約 +10% 幫忙次數)'}" style="margin-top: 6px;">
-              <span class="sidebar-final-evo-text">${isEN ? 'Help Speed ▲▲ (+10%)' : '幫忙速度提升▲▲ (+10%)'}</span>
-              <div class="sidebar-switch-wrapper">
-                <input type="checkbox" id="ladder-nature-speed-toggle" class="switch-checkbox" ${isLadderNatureSpeed ? 'checked' : ''} onchange="window.WikiDB.toggleLadderNatureSpeed(this.checked)">
-                <span class="switch-slider"></span>
-              </div>
-            </label>
+            <div class="sidebar-skills-list sidebar-2col-tags">
+              <button type="button" class="tag-btn ${ladderNature === 'NONE' ? 'active' : ''}" data-nature-filter="NONE" onclick="window.WikiDB.setLadderNature('NONE')">${isEN ? 'Neutral' : '無修正'}</button>
+              <button type="button" class="tag-btn ${ladderNature === 'ING' ? 'active' : ''}" data-nature-filter="ING" onclick="window.WikiDB.setLadderNature('ING')">${isEN ? 'Ing. Rate ▲▲ (+20%)' : '食材機率▲▲ (+20%)'}</button>
+              <button type="button" class="tag-btn ${ladderNature === 'SPEED' ? 'active' : ''}" data-nature-filter="SPEED" onclick="window.WikiDB.setLadderNature('SPEED')">${isEN ? 'Help Speed ▲▲ (+10%)' : '幫忙速度▲▲ (+10%)'}</button>
+            </div>
           </div>
         </div>
       </aside>
@@ -12545,9 +12594,12 @@
     toggleBerryFavorite: toggleBerryFavorite,
     toggleFavorite: toggleBerryFavorite,
     toggleLadderIngM: toggleLadderIngM,
+    toggleLadderIngS: toggleLadderIngS,
     toggleLadderSpeedM: toggleLadderSpeedM,
+    toggleLadderSpeedS: toggleLadderSpeedS,
     toggleLadderNatureIng: toggleLadderNatureIng,
     toggleLadderNatureSpeed: toggleLadderNatureSpeed,
+    setLadderNature: setLadderNature,
     onLadderSearch: onLadderSearch,
     clearLadderSearch: clearLadderSearch,
     setLadderSupplyFilter: setLadderSupplyFilter,
@@ -12586,9 +12638,12 @@
   window.updateBerryIsland = updateBerryIsland;
   window.toggleBerryFavorite = toggleBerryFavorite;
   window.toggleLadderIngM = toggleLadderIngM;
+  window.toggleLadderIngS = toggleLadderIngS;
   window.toggleLadderSpeedM = toggleLadderSpeedM;
+  window.toggleLadderSpeedS = toggleLadderSpeedS;
   window.toggleLadderNatureIng = toggleLadderNatureIng;
   window.toggleLadderNatureSpeed = toggleLadderNatureSpeed;
+  window.setLadderNature = setLadderNature;
   window.onLadderSearch = onLadderSearch;
   window.clearLadderSearch = clearLadderSearch;
   window.setLadderSupplyFilter = setLadderSupplyFilter;
