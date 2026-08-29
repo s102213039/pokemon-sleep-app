@@ -13843,6 +13843,7 @@ body.mobile-h5-app.ladder-active,
   background: transparent !important;
   padding: 0 !important;
   box-sizing: border-box !important;
+  border-radius: 6px !important;
 }
 
 .news-cal-day-cell.empty {
@@ -13852,7 +13853,6 @@ body.mobile-h5-app.ladder-active,
 
 .news-cal-day-cell:not(.empty):not(.has-events):hover {
   background: rgba(99, 102, 241, 0.08) !important;
-  border-radius: 4px !important;
 }
 
 /* 🎨 貫穿整格的背景多層色塊 (Continuous Full-Cell Background Bands per Event) */
@@ -13865,12 +13865,19 @@ body.mobile-h5-app.ladder-active,
   width: 100% !important;
   height: 100% !important;
   pointer-events: none !important;
+  overflow: hidden !important;
+  border-radius: 4px !important;
 }
 
 .news-cal-bg-band {
   width: 100% !important;
   flex: 1 1 0 !important;
+  opacity: 0.55 !important;
   transition: opacity 0.15s ease !important;
+}
+
+.news-cal-day-cell:hover .news-cal-bg-band {
+  opacity: 0.8 !important;
 }
 
 /* 邊界圓角連續效果 (開始日左圓角、結束日右圓角、中間無縫橫貫) */
@@ -13903,7 +13910,7 @@ body.mobile-h5-app.ladder-active,
   position: relative !important;
   z-index: 5 !important;
   font-size: 11px !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   line-height: 1 !important;
   color: var(--text-primary) !important;
   display: inline-flex !important;
@@ -13917,20 +13924,60 @@ body.mobile-h5-app.ladder-active,
   padding: 0 2px !important;
 }
 
-/* 💡 選取日期：高對比色塊反色 (Solid Inverted Block) */
-.news-cal-day-cell.is-selected .news-cal-day-num {
-  background: var(--color-primary, #6366f1) !important;
-  color: #ffffff !important;
-  font-weight: 800 !important;
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.45) !important;
+/* 🌟 今日（非選取狀態）：整個格子使用高亮外框展示 (Today Cell Distinct Border) */
+.news-cal-day-cell.is-today:not(.is-selected) {
+  border: 1.8px solid var(--color-primary, #6366f1) !important;
+  background: rgba(99, 102, 241, 0.08) !important;
 }
 
-/* 🌟 今日（非選取狀態）：醒目圓框標記 */
 .news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num {
-  border: 1.5px solid var(--color-primary, #6366f1) !important;
   color: var(--color-primary, #6366f1) !important;
-  font-weight: 800 !important;
-  background: var(--bg-card, rgba(255, 255, 255, 0.9)) !important;
+  font-weight: 900 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.is-today:not(.is-selected),
+[data-theme="emerald"] .news-cal-day-cell.is-today:not(.is-selected) {
+  border-color: #4f46e5 !important;
+  background: rgba(79, 70, 229, 0.08) !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num {
+  color: #4338ca !important;
+}
+
+/* 💡 選取日期：整個格子使用不同外框與背景展示 (Selected Cell Distinct Border & Background) */
+.news-cal-day-cell.is-selected {
+  background: var(--color-primary, #6366f1) !important;
+  border: 1.8px solid var(--color-primary, #6366f1) !important;
+  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.45) !important;
+  z-index: 10 !important;
+}
+
+.news-cal-day-cell.is-selected .news-cal-bg-bands {
+  opacity: 0.25 !important;
+}
+
+.news-cal-day-cell.is-selected .news-cal-day-num {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.is-selected,
+[data-theme="emerald"] .news-cal-day-cell.is-selected {
+  background: #4f46e5 !important;
+  border-color: #4338ca !important;
+  box-shadow: 0 2px 10px rgba(79, 70, 229, 0.35) !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.is-selected .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.is-selected .news-cal-day-num {
+  color: #ffffff !important;
 }
 
 /* 當日活動列表 (Selected Day Event List - 全部展示無滾動條) */
@@ -14394,22 +14441,6 @@ html[data-theme="obsidian"] .news-cal-event-badge.badge-update {
   color: #34d399 !important;
 }
 
-/* 🎨 明亮主題配色 (Dawn / Emerald) 高對比鮮明色彩，無底色無邊框 */
-[data-theme="dawn"] .news-cal-bg-band,
-[data-theme="emerald"] .news-cal-bg-band {
-  background: #e0e7ff !important;
-}
-
-[data-theme="dawn"] .news-cal-day-cell.has-events .news-cal-day-num,
-[data-theme="emerald"] .news-cal-day-cell.has-events .news-cal-day-num {
-  color: #3730a3 !important;
-}
-
-[data-theme="dawn"] .news-cal-day-cell.is-today .news-cal-day-num,
-[data-theme="emerald"] .news-cal-day-cell.is-today .news-cal-day-num {
-  background: #4f46e5 !important;
-  color: #ffffff !important;
-}
 
 [data-theme="dawn"] .search-input,
 [data-theme="dawn"] .news-search-input,
