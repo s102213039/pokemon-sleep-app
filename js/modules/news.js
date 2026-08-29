@@ -233,7 +233,7 @@
       const isToday = (calCurrentYear === 2026 && calCurrentMonth === 7 && d === 16);
       const isSelected = (d === calSelectedDay);
 
-      // 上中下 3 軌滿格色塊條 (填滿整個日期單元格背景)
+      // 上中下 3 軌滿格色塊條 (填滿整個日期單元格背景，無縫連續)
       let bgBandsHTML = '';
       if (activeEvents.length > 0) {
         const maxTracks = Math.min(3, Math.max(1, ...activeEvents.map(e => (e.trackIndex || 0) + 1), 0));
@@ -244,8 +244,8 @@
           if (!ev) {
             return '<div class="news-cal-bg-band empty" style="flex:1;"></div>';
           }
-          const isStart = (d === ev.startDate.getDate() && calCurrentMonth === ev.startDate.getMonth());
-          const isEnd = (d === ev.endDate.getDate() && calCurrentMonth === ev.endDate.getMonth());
+          const isStart = (d === ev.startDate.getDate() && calCurrentMonth === ev.startDate.getMonth()) || (d === 1 && ev.startDate < new Date(calCurrentYear, calCurrentMonth, 1));
+          const isEnd = (d === ev.endDate.getDate() && calCurrentMonth === ev.endDate.getMonth()) || (d === daysInMonth && ev.endDate > new Date(calCurrentYear, calCurrentMonth, daysInMonth, 23, 59, 59));
           const isSun = (dayOfWeek === 0);
           const isSat = (dayOfWeek === 6);
 
