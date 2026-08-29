@@ -837,12 +837,12 @@ body::-webkit-scrollbar,
 
 .search-input {
   width: 100%;
-  padding: 10px 36px 10px 38px;
+  padding: 8px 32px 8px 34px;
   background: var(--bg-input);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 13.5px;
   outline: none;
   transition: all 0.2s ease;
   box-sizing: border-box;
@@ -855,12 +855,15 @@ body::-webkit-scrollbar,
 
 .search-icon {
   position: absolute;
-  left: 12px;
+  left: 11px;
   top: 50%;
   transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--text-muted);
-  font-size: 15px;
   pointer-events: none;
+  z-index: 2;
 }
 
 .search-clear-btn {
@@ -13354,9 +13357,22 @@ body.mobile-h5-app.ladder-active,
   background: var(--table-row-odd-solid, #0d1527) !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 12px !important;
-  padding: 7px 12px !important;
+  padding: 0 !important;
   box-sizing: border-box !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.mobile-h5-app .news-search-box .search-icon {
+  position: absolute !important;
+  left: 11px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: var(--text-muted, #94a3b8) !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
 }
 
 .mobile-h5-app .news-search-input {
@@ -13364,9 +13380,10 @@ body.mobile-h5-app.ladder-active,
   background: transparent !important;
   border: none !important;
   outline: none !important;
-  color: var(--text-main) !important;
+  color: var(--text-primary) !important;
   font-size: 13px !important;
-  padding-left: 8px !important;
+  padding: 8px 32px 8px 34px !important;
+  box-sizing: border-box !important;
 }
 
 /* 🏷️ 2. 單行橫向滑動分類標籤 (Segmented Pill Chips - 1 Line) */

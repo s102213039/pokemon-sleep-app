@@ -869,7 +869,7 @@
     }
 
     if (filtered.length === 0) {
-      contentArea.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-muted);">🔍 ${isEN ? 'No matching recipes found' : '未找到符合條件的料理食譜'}</div>`;
+      contentArea.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-muted);">${isEN ? 'No matching recipes found' : '未找到符合條件的料理食譜'}</div>`;
       return;
     }
 

@@ -368,7 +368,12 @@
       } else {
         container.innerHTML = `
           <div class="box-empty-state">
-            <div class="box-empty-icon">🔍</div>
+            <div class="box-empty-icon">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);opacity:0.6;">
+                <circle cx="11" cy="11" r="7"></circle>
+                <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+              </svg>
+            </div>
             <h3>${isEN ? 'No Pokémon matched the filter' : '查無符合篩選條件的寶可夢'}</h3>
             <p>${isEN ? 'Try searching different keywords or adjusting filter tags.' : '請嘗試更換搜尋關鍵字，或切換屬性與得意篩選標籤。'}</p>
           </div>
