@@ -1610,6 +1610,10 @@ if (typeof document !== 'undefined') {
           if (bookmarkHandle) {
             bookmarkHandle.setAttribute('aria-expanded', 'false');
             bookmarkHandle.title = '展開篩選側邊欄';
+            if (isMobileH5) {
+              bookmarkHandle.style.opacity = '1';
+              bookmarkHandle.style.pointerEvents = 'auto';
+            }
           }
           setSidebarSavedState('pksleep_dex_sidebar_open', false);
         } else {
@@ -1620,6 +1624,10 @@ if (typeof document !== 'undefined') {
           if (bookmarkHandle) {
             bookmarkHandle.setAttribute('aria-expanded', 'true');
             bookmarkHandle.title = '收合篩選側邊欄';
+            if (isMobileH5) {
+              bookmarkHandle.style.opacity = '0';
+              bookmarkHandle.style.pointerEvents = 'none';
+            }
           }
           setSidebarSavedState('pksleep_dex_sidebar_open', true);
         }

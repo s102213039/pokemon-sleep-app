@@ -743,6 +743,10 @@
       if (shouldCollapse) {
         sidebar.classList.add('collapsed');
         if (backdrop) backdrop.classList.remove('active');
+        if (bookmarkHandle && isMobileH5) {
+          bookmarkHandle.style.opacity = '1';
+          bookmarkHandle.style.pointerEvents = 'auto';
+        }
         if (typeof window.setSidebarSavedState === 'function') {
           window.setSidebarSavedState('pksleep_recipe_sidebar_open', false);
         }
@@ -750,6 +754,10 @@
         sidebar.classList.remove('collapsed');
         if (window.innerWidth <= 1024 && backdrop) {
           backdrop.classList.add('active');
+        }
+        if (bookmarkHandle && isMobileH5) {
+          bookmarkHandle.style.opacity = '0';
+          bookmarkHandle.style.pointerEvents = 'none';
         }
         if (typeof window.setSidebarSavedState === 'function') {
           window.setSidebarSavedState('pksleep_recipe_sidebar_open', true);
