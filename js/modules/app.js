@@ -1536,10 +1536,10 @@ if (typeof document !== 'undefined') {
 
       function updateActiveFilterBadge() {
         let count = 0;
-        if (selectedSpecialties && selectedSpecialties.size > 0) count += selectedSpecialties.size;
-        if (selectedBerries && selectedBerries.size > 0) count += selectedBerries.size;
-        if (selectedIngredients && selectedIngredients.size > 0) count += selectedIngredients.size;
-        if (selectedSkills && selectedSkills.size > 0) count += selectedSkills.size;
+        if (selectedSpecialties && selectedSpecialties.size > 0) count += 1;
+        if (selectedBerries && selectedBerries.size > 0) count += 1;
+        if (selectedIngredients && selectedIngredients.size > 0) count += 1;
+        if (selectedSkills && selectedSkills.size > 0) count += 1;
         if (onlyInitialIng) count += 1;
         
         if (bookmarkBadge) {

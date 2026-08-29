@@ -10118,6 +10118,7 @@
           ladderSidebar.style.display = 'flex';
           ladderSidebar.classList.add('collapsed');
           if (ladderFab) ladderFab.style.display = 'flex';
+          updateLadderActiveFilterBadge();
         } else {
           ladderSidebar.classList.add('collapsed');
           ladderSidebar.style.display = 'none';
@@ -10127,6 +10128,7 @@
       } else {
         ladderSidebar.style.display = (targetTab === 'ingredients') ? 'flex' : 'none';
         ladderSidebar.classList.remove('collapsed');
+        if (targetTab === 'ingredients') updateLadderActiveFilterBadge();
       }
     }
   }
@@ -10478,6 +10480,28 @@
     });
   }
 
+  function updateLadderActiveFilterBadge() {
+    const badge = document.getElementById('ladder-sidebar-bookmark-badge');
+    let count = 0;
+    if (ladderSearchQuery && ladderSearchQuery.trim()) count++;
+    if (ladderSupplyFilter && ladderSupplyFilter !== 'ALL') count++;
+    if (ladderRecipeFilter && ladderRecipeFilter !== 'ALL') count++;
+    if (ladderSpecialtyFilter && ladderSpecialtyFilter !== 'ALL') count++;
+    if (isLadderIngM) count++;
+    if (isLadderSpeedM) count++;
+    if (isLadderNatureIng) count++;
+    if (isLadderNatureSpeed) count++;
+
+    if (badge) {
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'inline-flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  }
+
   function refreshCoordinateLadder() {
     const container = document.getElementById('wiki-ingredient-ladder-coordinate');
     if (container) {
@@ -10486,28 +10510,174 @@
         applyLadderFiltersInPlace();
       }
     }
+    updateLadderActiveFilterBadge();
   }
 
-  // 3.1 切換天梯圖呈現模式 (coordinate: 橫向視覺天梯座標圖 / list: 卡片清單列表)
+  // 3.1 切換天梯圖呈現模式 (相容性函式)
   function switchLadderView(mode) {
     const coordContainer = document.getElementById('wiki-ingredient-ladder-coordinate');
-    const gridContainer = document.getElementById('wiki-ingredient-ladder-grid');
-    const modeBtns = document.querySelectorAll('.ladder-mode-btn');
+    if (coordContainer) coordContainer.style.setProperty('display', 'block', 'important');
+  }
 
-    modeBtns.forEach(btn => {
-      if (btn.getAttribute('data-ladder-view') === mode) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
+  // 3.2 點選食材圖示開啟單一食材產量排名浮窗 (Ingredient Output Ranking Modal)
+  function openIngredientRankingModal(ingId) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const mult = getLadderMultiplier();
+    const ingData = LV60_COORDINATE_LADDER_DATA.find(i => i.id === ingId);
+    if (!ingData) return;
+
+    const ingName = isEN ? ((window.I18N && window.I18N.getIngredientName(ingData.name)) || ingData.name) : ingData.name;
+    const dishInfo = TOP_RECIPES_FOR_INGREDIENTS[ingId] || { name: isEN ? 'Key Dish' : '核心大菜', name_en: 'Key Dish', need: 20 };
+    const dishName = isEN ? (dishInfo.name_en || dishInfo.name) : dishInfo.name;
+
+    // 依當前篩選條件收集並計算所有寶可夢產量排名
+    let rankingList = [];
+    ingData.pokemon.forEach(p => {
+      const pkmSpec = getPokemonLadderSpecialty(p.name);
+      if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return;
+      if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return;
+      if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return;
+
+      let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
+      if (ladderRecipeFilter === 'AAA') variants = variants.filter(v => v.recipe === 'AAA');
+      else if (ladderRecipeFilter === 'ABB') variants = variants.filter(v => v.recipe === 'ABB');
+      else if (ladderRecipeFilter === 'AXX') variants = variants.filter(v => v.recipe !== 'AAA' && v.recipe !== 'ABB');
+
+      if (ladderSupplyFilter === 'TOP') {
+        variants = variants.filter(v => v.isTop || (p.isTop && v.recipe === p.recipe));
+      } else if (ladderSupplyFilter === 'MEALS_3') {
+        variants = variants.filter(v => Math.round(v.count * mult) / dishInfo.need >= 3.0);
+      } else if (ladderSupplyFilter === 'MEALS_2') {
+        variants = variants.filter(v => Math.round(v.count * mult) / dishInfo.need >= 1.8);
       }
+
+      if (ladderSearchQuery) {
+        const q = ladderSearchQuery.toLowerCase().trim();
+        const pName = (p.name || '').toLowerCase();
+        const pNameEn = (p.name_en || '').toLowerCase();
+        if (!pName.includes(q) && !pNameEn.includes(q)) return;
+      }
+
+      variants.forEach(v => {
+        const scaledCount = Math.round(v.count * mult);
+        rankingList.push({
+          name: p.name,
+          name_en: p.name_en,
+          icon: p.icon,
+          recipe: v.recipe,
+          count: scaledCount,
+          rawCount: v.count,
+          isTop: v.isTop || (p.isTop && v.recipe === p.recipe),
+          specialty: pkmSpec,
+          note: v.note
+        });
+      });
     });
 
-    if (mode === 'coordinate') {
-      if (coordContainer) coordContainer.style.setProperty('display', 'block', 'important');
-      if (gridContainer) gridContainer.style.setProperty('display', 'none', 'important');
-    } else {
-      if (coordContainer) coordContainer.style.setProperty('display', 'none', 'important');
-      if (gridContainer) gridContainer.style.setProperty('display', 'grid', 'important');
+    // 依產量由大到小排序
+    rankingList.sort((a, b) => b.count - a.count);
+
+    let modal = document.getElementById('wiki-ingredient-ranking-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'wiki-ingredient-ranking-modal';
+      modal.className = 'ing-rank-modal-overlay modal-overlay';
+      document.body.appendChild(modal);
+    }
+
+    const itemsHTML = rankingList.length === 0 ? `
+      <div class="ing-rank-empty">
+        <p>${isEN ? 'No Pokémon matched current ladder filter conditions.' : '當前篩選條件下查無符合之寶可夢。'}</p>
+      </div>
+    ` : `
+      <div class="ing-rank-list">
+        ${rankingList.map((item, idx) => {
+          const rank = idx + 1;
+          const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : 'rank-other'));
+          const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(item.name)) || item.name) : item.name;
+          
+          // 大菜供應能力試算
+          const mealsPerDay = (item.count / dishInfo.need).toFixed(1);
+          let dishTag = '';
+          let dishBadgeClass = '';
+          if (mealsPerDay >= 3.0) {
+            dishTag = isEN ? `3 Meals (${mealsPerDay}x)` : `3 餐大菜 (${mealsPerDay}×)`;
+            dishBadgeClass = 'dish-badge-full';
+          } else if (mealsPerDay >= 1.8) {
+            dishTag = isEN ? `2 Meals (${mealsPerDay}x)` : `2 餐大菜 (${mealsPerDay}×)`;
+            dishBadgeClass = 'dish-badge-high';
+          } else {
+            dishTag = isEN ? `Support (${mealsPerDay}x)` : `輔助支援 (${mealsPerDay}×)`;
+            dishBadgeClass = 'dish-badge-assist';
+          }
+
+          return `
+            <div class="ing-rank-card ${rankClass}">
+              <div class="ing-rank-left">
+                <div class="ing-rank-num ${rankClass}">
+                  ${rank === 1 ? '🥇 1' : (rank === 2 ? '🥈 2' : (rank === 3 ? '🥉 3' : `#${rank}`))}
+                </div>
+                <div class="ing-rank-avatar-box ${rankClass}">
+                  <img src="${item.icon}" class="ing-rank-avatar-img" alt="${pkmDisplayName}" loading="lazy">
+                </div>
+                <div class="ing-rank-info">
+                  <div class="ing-rank-name">${pkmDisplayName}</div>
+                  <div class="ing-rank-tags">
+                    <span class="node-recipe-tag-inline recipe-tag-${item.recipe.toLowerCase()}">${item.recipe}</span>
+                    <span class="ing-rank-dish-tag ${dishBadgeClass}">${dishTag}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="ing-rank-right">
+                <div class="ing-rank-yield-num">${item.count}</div>
+                <div class="ing-rank-yield-unit">${isEN ? '/day' : '顆/天'}</div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+
+    modal.innerHTML = `
+      <div class="ing-rank-dialog" onclick="event.stopPropagation()">
+        <div class="ing-rank-header">
+          <div class="ing-rank-title-group">
+            <img src="${ingData.icon}" class="ing-rank-header-icon" alt="${ingName}">
+            <div class="ing-rank-header-text">
+              <div class="ing-rank-header-title">${ingName} <span class="ing-rank-header-energy">⚡ ${ingData.energy || ''}</span></div>
+              <div class="ing-rank-header-sub">${isEN ? 'Key Dish:' : '核心大菜：'} ${dishName} (${dishInfo.need}${isEN ? '/meal' : '顆/餐'}) · ${rankingList.length} ${isEN ? 'Pokémon' : '隻寶可夢'}</div>
+            </div>
+          </div>
+          <button type="button" class="ing-rank-close-btn" onclick="window.WikiDB.closeIngredientRankingModal()" title="${isEN ? 'Close' : '關閉'}" aria-label="Close">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="ing-rank-body">
+          ${itemsHTML}
+        </div>
+      </div>
+    `;
+
+    modal.style.display = 'flex';
+    modal.onclick = closeIngredientRankingModal;
+
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') {
+        closeIngredientRankingModal();
+        document.removeEventListener('keydown', handleEsc);
+      }
+    };
+    document.addEventListener('keydown', handleEsc);
+  }
+
+  function closeIngredientRankingModal() {
+    const modal = document.getElementById('wiki-ingredient-ranking-modal');
+    if (modal) {
+      modal.style.display = 'none';
+      modal.innerHTML = '';
     }
   }
 
@@ -11305,7 +11475,7 @@
 
             return `
             <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''}" data-ladder-ing="${ing.id}">
-              <div class="ladder-track-header" title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isEN ? 'Key Dish: ' : '核心大菜：'}${dishName} (${dishInfo.need}${isEN ? '/meal' : '顆/餐'})">
+              <div class="ladder-track-header clickable-ing-header" onclick="window.WikiDB.openIngredientRankingModal('${ing.id}')" role="button" tabindex="0" title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isEN ? 'Key Dish: ' : '核心大菜：'}${dishName} · ${isEN ? 'Click to view rankings' : '點擊查看產量排名'}">
                 <div class="ladder-track-ing-main">
                   <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">
                 </div>
@@ -11446,7 +11616,7 @@
                   </div>
 
                   <div class="ladder-tail-track-row ${isTailEmpty ? 'ladder-track-empty' : ''}" data-ladder-ing="tail">
-                    <div class="ladder-track-header">
+                    <div class="ladder-track-header clickable-ing-header" onclick="window.WikiDB.openIngredientRankingModal('tail')" role="button" tabindex="0" title="${isEN ? 'Slowpoke Tail' : '美味尾巴'} · ${isEN ? 'Click to view rankings' : '點擊查看產量排名'}">
                       <img src="${tailIng.icon}" class="ladder-ing-icon" alt="${isEN ? 'Slowpoke Tail' : '美味尾巴'}">
                     </div>
 
@@ -12002,16 +12172,6 @@
             </div>
           </div>
 
-          <!-- 5. 檢視呈現模式 -->
-          <div class="sidebar-section">
-            <div class="sidebar-section-header">
-              <span class="sidebar-section-title">${isEN ? 'View Mode' : '檢視模式'}</span>
-            </div>
-            <div class="sidebar-skills-list">
-              <button type="button" class="tag-btn ${ladderViewMode === 'coordinate' ? 'active' : ''}" data-ladder-view="coordinate" onclick="window.WikiDB.switchLadderView('coordinate')">${isEN ? 'Visual' : '視覺天梯'}</button>
-              <button type="button" class="tag-btn ${ladderViewMode === 'list' ? 'active' : ''}" data-ladder-view="list" onclick="window.WikiDB.switchLadderView('list')">${isEN ? 'List' : '卡片清單'}</button>
-            </div>
-          </div>
 
           <!-- 4. 副技能補正模擬 (Sub-Skill Boost Simulation) -->
           <div class="sidebar-section">
@@ -12230,16 +12390,12 @@
                 <line x1="17" y1="16" x2="23" y2="16"></line>
               </svg>
             </span>
+            <span id="ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
           </button>
 
           <!-- 橫向視覺天梯座標圖 (預設顯示) -->
           <div id="wiki-ingredient-ladder-coordinate">
             ${renderCoordinateLadder(LV60_COORDINATE_LADDER_DATA)}
-          </div>
-
-          <!-- 食材天梯卡片清單 (列表檢視，預設隱藏) -->
-          <div id="wiki-ingredient-ladder-grid" class="wiki-ladder-grid" style="display: none;">
-            ${renderIngredientLadders(LV60_INGREDIENTS_LADDER)}
           </div>
         </div>
 
@@ -12427,6 +12583,9 @@
     recalcSleepDays: recalcSleepDays,
     openLadderSidebar: openLadderSidebar,
     closeLadderSidebar: closeLadderSidebar,
+    openIngredientRankingModal: openIngredientRankingModal,
+    closeIngredientRankingModal: closeIngredientRankingModal,
+    updateLadderActiveFilterBadge: updateLadderActiveFilterBadge,
     toggleSkillCard: toggleSkillCard,
     toggleSkillStepper: toggleSkillStepper,
     TOP_RECIPES_FOR_INGREDIENTS: TOP_RECIPES_FOR_INGREDIENTS
@@ -12465,6 +12624,9 @@
   window.recalcSleepDays = recalcSleepDays;
   window.openLadderSidebar = openLadderSidebar;
   window.closeLadderSidebar = closeLadderSidebar;
+  window.openIngredientRankingModal = openIngredientRankingModal;
+  window.closeIngredientRankingModal = closeIngredientRankingModal;
+  window.updateLadderActiveFilterBadge = updateLadderActiveFilterBadge;
 
   // 當 DOM 準備完成時自動初始化
   if (document.readyState === 'loading') {

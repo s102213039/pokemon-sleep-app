@@ -14231,5 +14231,274 @@ body.mobile-h5-app.ladder-active,
   text-decoration: none !important;
 }
 
+/* ─── 🥗 食材天梯單一食材排名浮窗 (Ingredient Output Ranking Modal) ─── */
+.clickable-ing-header {
+  cursor: pointer !important;
+  transition: transform 0.15s ease, filter 0.15s ease !important;
+}
+
+.clickable-ing-header:hover {
+  transform: scale(1.08) !important;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.4)) !important;
+}
+
+.ing-rank-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.ing-rank-dialog {
+  width: 100%;
+  max-width: 440px;
+  max-height: 82vh;
+  background: var(--bg-card-solid, var(--bg-dark, #0f172a));
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 20px rgba(56, 189, 248, 0.15);
+  overflow: hidden;
+  animation: ingRankModalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes ingRankModalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.ing-rank-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-card-inner, rgba(15, 23, 42, 0.8));
+}
+
+.ing-rank-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ing-rank-header-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.ing-rank-header-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ing-rank-header-energy {
+  font-size: 11px;
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.ing-rank-header-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.ing-rank-close-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-card, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+
+.ing-rank-close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.ing-rank-body {
+  padding: 10px 12px 14px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ing-rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ing-rank-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--bg-card-inner, rgba(15, 23, 42, 0.6));
+  border: 1px solid var(--border-color);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.ing-rank-card:hover {
+  border-color: rgba(56, 189, 248, 0.35);
+  transform: translateX(2px);
+}
+
+.ing-rank-card.rank-1 {
+  background: linear-gradient(90deg, rgba(234, 179, 8, 0.14), var(--bg-card-inner, rgba(15, 23, 42, 0.6))) !important;
+  border-color: rgba(234, 179, 8, 0.45) !important;
+}
+
+.ing-rank-card.rank-2 {
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.12), var(--bg-card-inner, rgba(15, 23, 42, 0.6))) !important;
+  border-color: rgba(148, 163, 184, 0.35) !important;
+}
+
+.ing-rank-card.rank-3 {
+  background: linear-gradient(90deg, rgba(217, 119, 6, 0.12), var(--bg-card-inner, rgba(15, 23, 42, 0.6))) !important;
+  border-color: rgba(217, 119, 6, 0.35) !important;
+}
+
+.ing-rank-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ing-rank-num {
+  font-size: 12px;
+  font-weight: 800;
+  width: 32px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.ing-rank-num.rank-1 {
+  color: #f59e0b !important;
+  font-size: 13px;
+}
+
+.ing-rank-num.rank-2 {
+  color: #cbd5e1 !important;
+  font-size: 12.5px;
+}
+
+.ing-rank-num.rank-3 {
+  color: #fb923c !important;
+  font-size: 12.5px;
+}
+
+.ing-rank-avatar-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 2px;
+  box-sizing: border-box;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ing-rank-avatar-box.rank-1 {
+  border: 2.2px solid #eab308 !important;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.45) !important;
+}
+
+.ing-rank-avatar-box.rank-2 {
+  border: 2px solid #cbd5e1 !important;
+  box-shadow: 0 0 8px rgba(148, 163, 184, 0.35) !important;
+}
+
+.ing-rank-avatar-box.rank-3 {
+  border: 2px solid #d97706 !important;
+  box-shadow: 0 0 8px rgba(217, 119, 6, 0.35) !important;
+}
+
+.ing-rank-avatar-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.ing-rank-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ing-rank-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ing-rank-tags {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ing-rank-dish-tag {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.ing-rank-right {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.ing-rank-yield-num {
+  font-size: 16px;
+  font-weight: 800;
+  color: #10b981;
+  line-height: 1.1;
+}
+
+.ing-rank-yield-unit {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.ing-rank-empty {
+  text-align: center;
+  padding: 30px 10px;
+  color: var(--text-muted);
+  font-size: 12.5px;
+}
+
 
 

@@ -708,14 +708,14 @@
     if (selectedCategory && selectedCategory !== 'ALL') activeCount++;
     if (minBonus > 0) activeCount++;
     if (minPot > 0) activeCount++;
-    if (selectedIngredients.size > 0) activeCount += selectedIngredients.size;
-    if (excludedIngredients.size > 0) activeCount += excludedIngredients.size;
+    if (selectedIngredients.size > 0) activeCount += 1;
+    if (excludedIngredients.size > 0) activeCount += 1;
     if (recipeLevel > 1 || islandBonus > 0 || eventBonus > 1.0 || showTasty) activeCount++;
 
     if (badge) {
       if (activeCount > 0) {
         badge.textContent = activeCount;
-        badge.style.display = 'flex';
+        badge.style.display = 'inline-flex';
       } else {
         badge.style.display = 'none';
       }

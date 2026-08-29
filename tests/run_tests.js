@@ -929,7 +929,8 @@ test('Tier 1 - Feature Coverage', 'WikiDB Namespace & Event Handler Methods Inte
     'toggleLadderIngM', 'toggleLadderSpeedM', 'toggleLadderNatureIng', 'toggleLadderNatureSpeed',
     'onLadderSearch', 'clearLadderSearch',
     'setLadderRecipeFilter', 'refreshCoordinateLadder', 'handleLadderGroupHover',
-    'handleLadderGroupHoverOut', 'recalcTriggerChance', 'recalcSleepDays'
+    'handleLadderGroupHoverOut', 'recalcTriggerChance', 'recalcSleepDays',
+    'openIngredientRankingModal', 'closeIngredientRankingModal', 'updateLadderActiveFilterBadge'
   ];
 
   wikiMethods.forEach(method => {
