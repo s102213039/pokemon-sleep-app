@@ -13315,9 +13315,14 @@ body.mobile-h5-app.ladder-active,
   background: rgba(180, 83, 9, 0.08) !important;
 }
 
+/* 全域保證：隱藏的 panel 絕不覆蓋顯示 */
+.view-panel[style*="display: none"],
+.mobile-h5-app .view-panel[style*="display: none"] {
+  display: none !important;
+}
+
 /* ─── 📰 📱 H5 App 最新公告專屬原生排版 (Mobile News & Updates Layout) ─── */
 .mobile-h5-app #panel-news {
-  display: block !important;
   width: 100% !important;
   height: auto !important;
   max-height: none !important;
