@@ -11130,6 +11130,33 @@
     if (sleepNatureSelect) {
       sleepNatureSelect.onchange = recalcSleepDays;
     }
+
+    // 9. 綁定天梯篩選側邊欄手勢右滑關閉 (Swipe Right to Close)
+    const ladderSidebar = document.getElementById('ladder-filter-sidebar');
+    if (ladderSidebar) {
+      if (typeof window.bindSidebarSwipeRightToClose === 'function') {
+        window.bindSidebarSwipeRightToClose(ladderSidebar, () => closeLadderSidebar());
+      } else {
+        let startX = 0, startY = 0, startTime = 0;
+        ladderSidebar.addEventListener('touchstart', (e) => {
+          if (!e.touches || !e.touches[0]) return;
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          startTime = Date.now();
+        }, { passive: true });
+        ladderSidebar.addEventListener('touchend', (e) => {
+          if (!e.changedTouches || !e.changedTouches[0]) return;
+          const diffX = e.changedTouches[0].clientX - startX;
+          const diffY = e.changedTouches[0].clientY - startY;
+          const elapsed = Date.now() - startTime;
+          if (diffX > 35 && (diffX > Math.abs(diffY) * 1.05 || (elapsed < 350 && diffX > 25))) {
+            if (!ladderSidebar.classList.contains('collapsed')) {
+              closeLadderSidebar();
+            }
+          }
+        }, { passive: true });
+      }
+    }
   }
 
   // --- 全域事件委託備援 (Global Event Delegation Fallback) ---

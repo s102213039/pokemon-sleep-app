@@ -771,6 +771,35 @@
       });
     }
 
+    if (sidebar) {
+      if (typeof window.bindSidebarSwipeRightToClose === 'function') {
+        window.bindSidebarSwipeRightToClose(sidebar, () => {
+          sidebar.classList.add('collapsed');
+          if (backdrop) backdrop.classList.remove('active');
+        });
+      } else {
+        let startX = 0, startY = 0, startTime = 0;
+        sidebar.addEventListener('touchstart', (e) => {
+          if (!e.touches || !e.touches[0]) return;
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          startTime = Date.now();
+        }, { passive: true });
+        sidebar.addEventListener('touchend', (e) => {
+          if (!e.changedTouches || !e.changedTouches[0]) return;
+          const diffX = e.changedTouches[0].clientX - startX;
+          const diffY = e.changedTouches[0].clientY - startY;
+          const elapsed = Date.now() - startTime;
+          if (diffX > 35 && (diffX > Math.abs(diffY) * 1.05 || (elapsed < 350 && diffX > 25))) {
+            if (!sidebar.classList.contains('collapsed')) {
+              sidebar.classList.add('collapsed');
+              if (backdrop) backdrop.classList.remove('active');
+            }
+          }
+        }, { passive: true });
+      }
+    }
+
     if (resetAllBtn && !resetAllBtn._hasListener) {
       resetAllBtn._hasListener = true;
       resetAllBtn.addEventListener('click', () => {

@@ -1592,35 +1592,73 @@ if (typeof document !== 'undefined') {
         backdrop.addEventListener('click', () => toggleSidebar(false));
       }
 
-      // Touch swipe gestures (支援左側/右側抽屜自適應滑動)
-      let touchStartX = 0;
-      let touchStartY = 0;
+      // 📱 手勢右滑收合控制 (Swipe Right to Close Sidebar Helper)
+      function bindSidebarSwipeRightToClose(sidebarEl, closeFn) {
+        if (!sidebarEl || sidebarEl._hasSwipeRightListener) return;
+        sidebarEl._hasSwipeRightListener = true;
+
+        let startX = 0;
+        let startY = 0;
+        let startTime = 0;
+
+        sidebarEl.addEventListener('touchstart', (e) => {
+          if (!e.touches || !e.touches[0]) return;
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          startTime = Date.now();
+        }, { passive: true });
+
+        sidebarEl.addEventListener('touchend', (e) => {
+          if (!e.changedTouches || !e.changedTouches[0]) return;
+          const endX = e.changedTouches[0].clientX;
+          const endY = e.changedTouches[0].clientY;
+          const diffX = endX - startX;
+          const diffY = endY - startY;
+          const elapsed = Date.now() - startTime;
+
+          // 按住向右滑動（diffX > 35px 且水平位移大於垂直位移，或短時間向右撥動）
+          if (diffX > 35 && (diffX > Math.abs(diffY) * 1.05 || (elapsed < 350 && diffX > 25))) {
+            if (!sidebarEl.classList.contains('collapsed')) {
+              closeFn();
+            }
+          }
+        }, { passive: true });
+      }
+      window.bindSidebarSwipeRightToClose = bindSidebarSwipeRightToClose;
+
+      if (sidebar) {
+        bindSidebarSwipeRightToClose(sidebar, () => toggleSidebar(false));
+      }
+
+      // 🌐 全域防護：任何打開的側邊欄或遮罩層向右滑動均自動收合
+      let touchGlobalStartX = 0;
+      let touchGlobalStartY = 0;
+      let touchGlobalStartTime = 0;
 
       document.addEventListener('touchstart', (e) => {
         if (e.touches && e.touches[0]) {
-          touchStartX = e.touches[0].clientX;
-          touchStartY = e.touches[0].clientY;
+          touchGlobalStartX = e.touches[0].clientX;
+          touchGlobalStartY = e.touches[0].clientY;
+          touchGlobalStartTime = Date.now();
         }
       }, { passive: true });
 
       document.addEventListener('touchend', (e) => {
         if (!e.changedTouches || !e.changedTouches[0]) return;
-        const touchEndX = e.changedTouches[0].clientX;
-        const touchEndY = e.changedTouches[0].clientY;
-        const diffX = touchEndX - touchStartX;
-        const diffY = touchEndY - touchStartY;
+        const diffX = e.changedTouches[0].clientX - touchGlobalStartX;
+        const diffY = e.changedTouches[0].clientY - touchGlobalStartY;
+        const elapsed = Date.now() - touchGlobalStartTime;
 
-        // 判斷是否為水平滑動（水平位移 > 50px 且大於垂直位移）
-        if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.3) {
-          if (isMobileH5) {
-            // H5 App (右側抽屜): 僅支援展開時向右滑動收合（取消向左滑動自動開啟，僅由浮動按鈕點選開啟）
-            if (diffX > 50 && sidebar && !sidebar.classList.contains('collapsed')) {
-              toggleSidebar(false);
-            }
-          } else {
-            // Desktop (左側抽屜): 展開時向左滑動收合
-            if (diffX < -50 && sidebar && !sidebar.classList.contains('collapsed')) {
-              toggleSidebar(false);
+        if (diffX > 35 && (diffX > Math.abs(diffY) * 1.05 || (elapsed < 350 && diffX > 25))) {
+          const target = e.target;
+          const openSidebar = document.querySelector('.pokemon-filter-sidebar:not(.collapsed), .recipe-filter-sidebar:not(.collapsed), .ladder-fixed-sidebar:not(.collapsed)');
+          if (openSidebar && (openSidebar.contains(target) || (target && target.classList && target.classList.contains('sidebar-backdrop')))) {
+            openSidebar.classList.add('collapsed');
+            document.querySelectorAll('.sidebar-backdrop').forEach(bd => bd.classList.remove('active'));
+            const handle = document.getElementById('sidebar-bookmark-handle');
+            if (handle) {
+              handle.setAttribute('aria-expanded', 'false');
+              handle.title = '展開篩選側邊欄';
             }
           }
         }
