@@ -13613,7 +13613,7 @@ body.mobile-h5-app.ladder-active,
   opacity: 0.75 !important;
 }
 
-/* 7 欄日曆網格 (多軌道彩色連續條帶 + 高對比色塊反色) */
+/* 7 欄日曆網格 (無縫貫穿背景色塊 + 高對比色塊反色) */
 .news-calendar-grid {
   display: grid !important;
   grid-template-columns: repeat(7, 1fr) !important;
@@ -13622,9 +13622,9 @@ body.mobile-h5-app.ladder-active,
 
 .news-cal-day-cell {
   aspect-ratio: auto !important;
-  height: 34px !important;
+  height: 28px !important;
   display: flex !important;
-  align-items: stretch !important;
+  align-items: center !important;
   justify-content: center !important;
   position: relative !important;
   cursor: pointer !important;
@@ -13640,25 +13640,80 @@ body.mobile-h5-app.ladder-active,
   background: transparent !important;
 }
 
-.news-cal-day-cell:not(.empty):hover {
+.news-cal-day-cell:not(.empty):not(.has-events):hover {
   background: rgba(99, 102, 241, 0.08) !important;
   border-radius: 4px !important;
 }
 
-.news-cal-cell-inner {
-  width: 100% !important;
-  height: 100% !important;
+/* 🎨 貫穿整格的背景多層色塊 (Continuous Full-Cell Background Bands) */
+.news-cal-bg-bands {
+  position: absolute !important;
+  inset: 0 !important;
   display: flex !important;
   flex-direction: column !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  position: relative !important;
-  padding: 1px 0 0 0 !important;
-  box-sizing: border-box !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
 }
 
-/* 🎯 日期數字：基礎樣式 */
+.news-cal-bg-band {
+  width: 100% !important;
+  flex: 1 1 0 !important;
+  background-color: rgba(99, 102, 241, 0.22) !important;
+  transition: opacity 0.15s ease !important;
+}
+
+/* 🌈 依活動種類與舉辦時程區分不同色彩 (Different Colors by Event & Timeframe) */
+.news-cal-bg-band.cat-good-sleep {
+  background-color: rgba(245, 158, 11, 0.28) !important;
+}
+
+.news-cal-bg-band.cat-event {
+  background-color: rgba(139, 92, 246, 0.26) !important;
+}
+
+.news-cal-bg-band.cat-pack-growth {
+  background-color: rgba(16, 185, 129, 0.25) !important;
+}
+
+.news-cal-bg-band.cat-pack-bundle {
+  background-color: rgba(6, 182, 212, 0.25) !important;
+}
+
+.news-cal-bg-band.cat-update {
+  background-color: rgba(244, 63, 94, 0.25) !important;
+}
+
+/* 邊界圓角連續效果 (貫穿日期背景) */
+.news-cal-bg-band.band-cap-start {
+  border-top-left-radius: 5px !important;
+  border-bottom-left-radius: 5px !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.news-cal-bg-band.band-cap-end {
+  border-top-right-radius: 5px !important;
+  border-bottom-right-radius: 5px !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.news-cal-bg-band.band-cap-both {
+  border-radius: 5px !important;
+  width: calc(100% - 4px) !important;
+  margin: 0 auto !important;
+}
+
+.news-cal-bg-band.band-mid {
+  border-radius: 0 !important;
+}
+
+/* 🎯 日期數字：浮在背景色塊之上 */
 .news-cal-day-num {
+  position: relative !important;
+  z-index: 5 !important;
   font-size: 11px !important;
   font-weight: 600 !important;
   line-height: 1 !important;
@@ -13666,20 +13721,20 @@ body.mobile-h5-app.ladder-active,
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-width: 19px !important;
-  height: 17px !important;
-  border-radius: 5px !important;
+  min-width: 20px !important;
+  height: 20px !important;
+  border-radius: 6px !important;
   transition: all 0.15s ease !important;
-  z-index: 2 !important;
+  pointer-events: none !important;
   padding: 0 2px !important;
 }
 
-/* 💡 選取日期：高對比色塊反色 (Inverted Solid Color Block) */
+/* 💡 選取日期：高對比色塊反色 (Solid Inverted Block) */
 .news-cal-day-cell.is-selected .news-cal-day-num {
   background: var(--color-primary, #6366f1) !important;
   color: #ffffff !important;
   font-weight: 800 !important;
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.45) !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.55) !important;
 }
 
 /* 🌟 今日（非選取狀態）：醒目圓框標記 */
@@ -13687,80 +13742,7 @@ body.mobile-h5-app.ladder-active,
   border: 1.5px solid var(--color-primary, #6366f1) !important;
   color: var(--color-primary, #6366f1) !important;
   font-weight: 800 !important;
-  padding: 0 1px !important;
-}
-
-/* 🌈 多軌道彩色活動條帶容器 (Multi-Track Event Bars) */
-.news-cal-track-bars {
-  width: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 1.5px !important;
-  margin-top: 2px !important;
-  padding: 0 !important;
-  pointer-events: none !important;
-}
-
-.news-cal-track-bar {
-  width: 100% !important;
-  height: 3px !important;
-  background-color: var(--bar-color, #6366f1) !important;
-  transition: opacity 0.15s ease !important;
-}
-
-.news-cal-track-bar.empty {
-  visibility: hidden !important;
-  height: 3px !important;
-  background: transparent !important;
-}
-
-.news-cal-track-bar.bar-cap-start {
-  border-top-left-radius: 2px !important;
-  border-bottom-left-radius: 2px !important;
-  border-top-right-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
-  margin-left: 2px !important;
-  width: calc(100% - 2px) !important;
-}
-
-.news-cal-track-bar.bar-cap-end {
-  border-top-right-radius: 2px !important;
-  border-bottom-right-radius: 2px !important;
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
-  margin-right: 2px !important;
-  width: calc(100% - 2px) !important;
-}
-
-.news-cal-track-bar.bar-cap-both {
-  border-radius: 2px !important;
-  margin: 0 auto !important;
-  width: calc(100% - 4px) !important;
-}
-
-.news-cal-track-bar.bar-mid {
-  border-radius: 0 !important;
-}
-
-/* 🎨 活動類別專屬條帶顏色 (按活動種類與舉辦時間區分) */
-.news-cal-track-bar.cat-good-sleep {
-  background-color: #f59e0b !important;
-}
-
-.news-cal-track-bar.cat-event {
-  background-color: #8b5cf6 !important;
-}
-
-.news-cal-track-bar.cat-pack-growth {
-  background-color: #10b981 !important;
-}
-
-.news-cal-track-bar.cat-pack-bundle {
-  background-color: #06b6d4 !important;
-}
-
-.news-cal-track-bar.cat-update {
-  background-color: #f43f5e !important;
+  background: var(--bg-card, rgba(255, 255, 255, 0.9)) !important;
 }
 
 /* 當日活動列表 (Selected Day Event List - 全部展示無滾動條) */

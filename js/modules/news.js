@@ -255,55 +255,37 @@
       const isToday = (calCurrentYear === 2026 && calCurrentMonth === 7 && d === 16);
       const isSelected = (d === calSelectedDay);
 
-      // 🌈 多軌道彩色活動連續條帶 (Multi-track continuous colored event bars)
-      let trackBarsHTML = '';
+      // 🌈 貫穿日期的背景色塊 (Continuous Multi-Colored Background Event Bands)
+      let bgBandsHTML = '';
       if (activeEvents.length > 0) {
-        const bars = [];
-        for (let t = 0; t < maxTracks; t++) {
-          const evOnTrack = activeEvents.find(e => e.trackIndex === t);
-          if (evOnTrack) {
-            const prevDayEnd = new Date(calCurrentYear, calCurrentMonth, d - 1, 23, 59, 59);
-            const nextDayStart = new Date(calCurrentYear, calCurrentMonth, d + 1, 0, 0, 0);
-            const hasPrev = (d > 1) && (evOnTrack.startDate <= prevDayEnd);
-            const hasNext = (d < daysInMonth) && (evOnTrack.endDate >= nextDayStart);
+        const bands = [];
+        activeEvents.forEach(ev => {
+          const prevDayEnd = new Date(calCurrentYear, calCurrentMonth, d - 1, 23, 59, 59);
+          const nextDayStart = new Date(calCurrentYear, calCurrentMonth, d + 1, 0, 0, 0);
+          const hasPrev = (d > 1) && (ev.startDate <= prevDayEnd);
+          const hasNext = (d < daysInMonth) && (ev.endDate >= nextDayStart);
 
-            const isStartCap = (!hasPrev) || (dayOfWeek === 0);
-            const isEndCap = (!hasNext) || (dayOfWeek === 6);
+          const isStartCap = (!hasPrev) || (dayOfWeek === 0);
+          const isEndCap = (!hasNext) || (dayOfWeek === 6);
 
-            let capClass = 'bar-mid';
-            if (isStartCap && isEndCap) capClass = 'bar-cap-both';
-            else if (isStartCap) capClass = 'bar-cap-start';
-            else if (isEndCap) capClass = 'bar-cap-end';
+          let capClass = 'band-mid';
+          if (isStartCap && isEndCap) capClass = 'band-cap-both';
+          else if (isStartCap) capClass = 'band-cap-start';
+          else if (isEndCap) capClass = 'band-cap-end';
 
-            bars.push(`
-              <div class="news-cal-track-bar ${capClass} cat-${evOnTrack.eventCat}" 
-                   style="--bar-color: ${evOnTrack.typeColor};" 
-                   title="${escapeHtml(evOnTrack.title)} (${evOnTrack.typeLabel})"></div>
-            `);
-          } else {
-            bars.push(`<div class="news-cal-track-bar empty"></div>`);
-          }
-        }
-        trackBarsHTML = `<div class="news-cal-track-bars">${bars.join('')}</div>`;
-      } else {
-        trackBarsHTML = `<div class="news-cal-track-bars empty"><div class="news-cal-track-bar empty"></div></div>`;
-      }
+          bands.push(`
+            <div class="news-cal-bg-band ${capClass} cat-${ev.eventCat}" 
+                 title="${escapeHtml(ev.title)} (${ev.typeLabel})"></div>
+          `);
+        });
 
-      // 判定當日主要活動類別背景光暈
-      let primaryCatClass = '';
-      if (activeEvents.length > 0) {
-        if (activeEvents.some(e => e.eventCat === 'good-sleep')) primaryCatClass = 'has-good-sleep';
-        else if (activeEvents.some(e => e.eventCat === 'event')) primaryCatClass = 'has-event';
-        else if (activeEvents.some(e => e.eventCat === 'pack-growth')) primaryCatClass = 'has-growth-pack';
-        else if (activeEvents.some(e => e.eventCat === 'pack-bundle')) primaryCatClass = 'has-bundle';
+        bgBandsHTML = `<div class="news-cal-bg-bands">${bands.join('')}</div>`;
       }
 
       dayCellsHTML.push(`
-        <div class="news-cal-day-cell ${isToday ? 'is-today' : ''} ${isSelected ? 'is-selected' : ''} ${activeEvents.length > 0 ? 'has-events' : ''} ${primaryCatClass}" data-day="${d}">
-          <div class="news-cal-cell-inner">
-            <span class="news-cal-day-num">${d}</span>
-            ${trackBarsHTML}
-          </div>
+        <div class="news-cal-day-cell ${isToday ? 'is-today' : ''} ${isSelected ? 'is-selected' : ''} ${activeEvents.length > 0 ? 'has-events' : ''}" data-day="${d}">
+          ${bgBandsHTML}
+          <span class="news-cal-day-num">${d}</span>
         </div>
       `);
     }
