@@ -13496,17 +13496,16 @@ body.mobile-h5-app.ladder-active,
   opacity: 0.75 !important;
 }
 
-/* 7 欄日曆網格 (連續色塊條架構) */
-/* 7 欄日曆網格 (無縫連續色塊架構) */
+/* 7 欄日曆網格 (超緊湊低飽和度連續色塊架構) */
 .news-calendar-grid {
   display: grid !important;
   grid-template-columns: repeat(7, 1fr) !important;
-  gap: 3px 0 !important;
+  gap: 2px 0 !important;
 }
 
 .news-cal-day-cell {
   aspect-ratio: auto !important;
-  height: 38px !important;
+  height: 26px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -13527,18 +13526,18 @@ body.mobile-h5-app.ladder-active,
 
 .news-cal-day-cell:not(.empty):not(.has-events):hover {
   background: rgba(99, 102, 241, 0.06) !important;
-  border-radius: 6px !important;
+  border-radius: 4px !important;
 }
 
 .news-cal-day-cell.is-selected {
-  outline: 2px solid var(--color-primary, #6366f1) !important;
+  outline: 1.5px solid var(--color-primary, #6366f1) !important;
   outline-offset: -1px !important;
   z-index: 10 !important;
-  border-radius: 6px !important;
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.4) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.35) !important;
 }
 
-/* 🎨 滿格色塊背景多層堆疊 (無縫連續條) */
+/* 🎨 滿格色塊背景多層堆疊 (單一低飽和度無縫連續條) */
 .news-cal-bg-bands {
   position: absolute !important;
   inset: 0 !important;
@@ -13552,7 +13551,8 @@ body.mobile-h5-app.ladder-active,
 
 .news-cal-bg-band {
   width: 100% !important;
-  opacity: 0.92 !important;
+  height: 100% !important;
+  background: rgba(99, 102, 241, 0.22) !important;
   transition: opacity 0.15s ease !important;
 }
 
@@ -13560,24 +13560,16 @@ body.mobile-h5-app.ladder-active,
   visibility: hidden !important;
 }
 
-.news-cal-bg-band.band-event {
-  background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%) !important;
-}
-
-.news-cal-bg-band.band-pack {
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
-}
-
 .news-cal-bg-band.band-cap-left {
-  border-top-left-radius: 6px !important;
-  border-bottom-left-radius: 6px !important;
+  border-top-left-radius: 5px !important;
+  border-bottom-left-radius: 5px !important;
   border-top-right-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
 }
 
 .news-cal-bg-band.band-cap-right {
-  border-top-right-radius: 6px !important;
-  border-bottom-right-radius: 6px !important;
+  border-top-right-radius: 5px !important;
+  border-bottom-right-radius: 5px !important;
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
 }
@@ -13587,7 +13579,7 @@ body.mobile-h5-app.ladder-active,
 }
 
 .news-cal-bg-band.band-cap-both {
-  border-radius: 6px !important;
+  border-radius: 5px !important;
   width: calc(100% - 4px) !important;
   margin: 0 auto !important;
 }
@@ -13595,31 +13587,30 @@ body.mobile-h5-app.ladder-active,
 .news-cal-day-num {
   position: relative !important;
   z-index: 2 !important;
-  font-size: 11.5px !important;
-  font-weight: 700 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
   line-height: 1 !important;
   color: var(--text-primary) !important;
   pointer-events: none !important;
 }
 
 .news-cal-day-cell.has-events .news-cal-day-num {
-  color: #ffffff !important;
-  font-weight: 800 !important;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8) !important;
+  color: #c7d2fe !important;
+  font-weight: 700 !important;
 }
 
 .news-cal-day-cell.is-today .news-cal-day-num {
-  background: #ffffff !important;
-  color: var(--color-primary, #6366f1) !important;
+  background: #6366f1 !important;
+  color: #ffffff !important;
   border-radius: 50% !important;
-  width: 18px !important;
-  height: 18px !important;
+  width: 16px !important;
+  height: 16px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 10.5px !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35) !important;
-  text-shadow: none !important;
+  font-size: 9.5px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25) !important;
 }
 
 /* 當日活動列表 (Selected Day Event List - 全部展示無滾動條) */
@@ -13796,13 +13787,26 @@ body.mobile-h5-app.ladder-active,
   font-weight: 700 !important;
 }
 
-.mobile-h5-app .news-accordion-arrow {
-  font-size: 11px !important;
+/* 官方原文右上角按鈕 (Top-Right Official Link Button) */
+.mobile-h5-app .news-official-link-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
   color: var(--color-primary, #818cf8) !important;
-  font-weight: 700 !important;
-  padding: 2px 6px !important;
-  border-radius: 6px !important;
   background: rgba(99, 102, 241, 0.1) !important;
+  border: 1px solid rgba(99, 102, 241, 0.25) !important;
+  padding: 2px 7px !important;
+  border-radius: 12px !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  transition: all 0.15s ease !important;
+}
+
+.mobile-h5-app .news-official-link-btn:active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #ffffff !important;
 }
 
 .mobile-h5-app .news-card-title {
@@ -13840,35 +13844,26 @@ body.mobile-h5-app.ladder-active,
   -webkit-line-clamp: none !important;
 }
 
-/* 🤖 5. 展開後的 AI 深度重點區塊 (Vibrant Theme Colors) */
+/* 🤖 5. 展開後的 AI 深度重點區塊 (極簡純淨無框無背景排版) */
 .mobile-h5-app .news-accordion-body {
-  padding: 0 12px 12px 12px !important;
+  padding: 4px 0 2px 0 !important;
   display: none !important;
   flex-direction: column !important;
-  gap: 10px !important;
-  border-top: 1px solid var(--border-color) !important;
-  background: var(--bg-card-inner-subtle, rgba(0, 0, 0, 0.05)) !important;
+  gap: 8px !important;
+  border-top: none !important;
+  background: transparent !important;
 }
 
 .mobile-h5-app .news-accordion-card.expanded .news-accordion-body {
   display: flex !important;
 }
 
-.mobile-h5-app .news-ai-dashboard {
+.mobile-h5-app .news-ai-dashboard,
+.mobile-h5-app .news-ai-highlights {
   background: transparent !important;
   border: none !important;
   border-radius: 0 !important;
-  padding: 6px 0 0 0 !important;
-}
-
-.mobile-h5-app .news-ai-dashboard-header {
-  font-size: 12px !important;
-  font-weight: 700 !important;
-  margin-bottom: 6px !important;
-  color: var(--color-primary, #818cf8) !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 4px !important;
+  padding: 0 !important;
 }
 
 .mobile-h5-app .news-ai-sections-grid {
@@ -13878,82 +13873,92 @@ body.mobile-h5-app.ladder-active,
 }
 
 .mobile-h5-app .news-ai-section-box {
-  border-radius: 8px !important;
-  padding: 7px 9px !important;
-  transition: all 0.15s ease !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 2px 0 4px 0 !important;
+  box-shadow: none !important;
 }
 
 .mobile-h5-app .news-ai-section-title {
-  font-size: 11.5px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
-  margin-bottom: 4px !important;
+  margin-bottom: 2px !important;
   display: flex !important;
   align-items: center !important;
   gap: 4px !important;
 }
 
-.mobile-h5-app .news-ai-section-list {
+.mobile-h5-app .news-ai-section-list,
+.mobile-h5-app .news-ai-list {
   font-size: 11.5px !important;
-  line-height: 1.45 !important;
-  padding-left: 14px !important;
+  line-height: 1.5 !important;
+  padding-left: 16px !important;
   margin: 0 !important;
-  color: var(--text-primary) !important;
+  color: var(--text-secondary) !important;
 }
 
-.mobile-h5-app .news-ai-section-list li {
-  margin-bottom: 3px !important;
+.mobile-h5-app .news-ai-section-list li,
+.mobile-h5-app .news-ai-list li {
+  margin-bottom: 2px !important;
 }
 
-/* 🎨 深色主題配色 (Dark / Obsidian) */
-.news-sec-schedule {
-  background: rgba(14, 165, 233, 0.12) !important;
-  border: 1px solid rgba(14, 165, 233, 0.35) !important;
+/* 🎨 深色主題配色 (Dark / Obsidian) 僅文字標題高亮，無底色無邊框 */
+.news-sec-schedule,
+.news-sec-features,
+.news-sec-debut,
+.news-sec-bonus,
+.news-sec-rewards,
+.news-sec-shop,
+.news-sec-fixes,
+.news-sec-balance,
+.news-sec-general {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
+
 .news-sec-schedule .news-ai-section-title {
   color: #38bdf8 !important;
 }
 
-.news-sec-features,
-.news-sec-debut {
-  background: rgba(168, 85, 247, 0.12) !important;
-  border: 1px solid rgba(168, 85, 247, 0.35) !important;
-}
 .news-sec-features .news-ai-section-title,
 .news-sec-debut .news-ai-section-title {
   color: #c084fc !important;
 }
 
-.news-sec-bonus,
-.news-sec-rewards {
-  background: rgba(245, 158, 11, 0.12) !important;
-  border: 1px solid rgba(245, 158, 11, 0.35) !important;
-}
 .news-sec-bonus .news-ai-section-title,
 .news-sec-rewards .news-ai-section-title {
   color: #fbbf24 !important;
 }
 
-.news-sec-shop {
-  background: rgba(234, 179, 8, 0.12) !important;
-  border: 1px solid rgba(234, 179, 8, 0.35) !important;
-}
 .news-sec-shop .news-ai-section-title {
   color: #facc15 !important;
 }
 
-.news-sec-fixes,
-.news-sec-balance,
-.news-sec-general {
-  background: rgba(16, 185, 129, 0.12) !important;
-  border: 1px solid rgba(16, 185, 129, 0.35) !important;
-}
 .news-sec-fixes .news-ai-section-title,
 .news-sec-balance .news-ai-section-title,
 .news-sec-general .news-ai-section-title {
   color: #34d399 !important;
 }
 
-/* 🎨 明亮主題配色 (Dawn / Emerald) 高對比鮮明色彩 */
+/* 🎨 明亮主題配色 (Dawn / Emerald) 高對比鮮明色彩，無底色無邊框 */
+[data-theme="dawn"] .news-cal-bg-band,
+[data-theme="emerald"] .news-cal-bg-band {
+  background: #e0e7ff !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.has-events .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.has-events .news-cal-day-num {
+  color: #3730a3 !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.is-today .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.is-today .news-cal-day-num {
+  background: #4f46e5 !important;
+  color: #ffffff !important;
+}
+
 [data-theme="dawn"] .mobile-h5-app .news-search-box,
 [data-theme="emerald"] .mobile-h5-app .news-search-box {
   background: #ffffff !important;
@@ -14001,14 +14006,8 @@ body.mobile-h5-app.ladder-active,
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
 }
 
-[data-theme="dawn"] .mobile-h5-app .news-accordion-body,
-[data-theme="emerald"] .mobile-h5-app .news-accordion-body {
-  background: #f8fafc !important;
-  border-top: 1px solid #e2e8f0 !important;
-}
-
-[data-theme="dawn"] .mobile-h5-app .news-accordion-toggle-btn,
-[data-theme="emerald"] .mobile-h5-app .news-accordion-toggle-btn {
+[data-theme="dawn"] .mobile-h5-app .news-official-link-btn,
+[data-theme="emerald"] .mobile-h5-app .news-official-link-btn {
   background: #eff6ff !important;
   border: 1px solid #bfdbfe !important;
   color: #2563eb !important;
@@ -14016,27 +14015,16 @@ body.mobile-h5-app.ladder-active,
 
 [data-theme="dawn"] .mobile-h5-app .news-ai-section-box,
 [data-theme="emerald"] .mobile-h5-app .news-ai-section-box {
-  background: #ffffff !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
-[data-theme="dawn"] .news-sec-schedule,
-[data-theme="emerald"] .news-sec-schedule {
-  background: #f0f9ff !important;
-  border: 1px solid #7dd3fc !important;
-}
 [data-theme="dawn"] .news-sec-schedule .news-ai-section-title,
 [data-theme="emerald"] .news-sec-schedule .news-ai-section-title {
   color: #0284c7 !important;
 }
 
-[data-theme="dawn"] .news-sec-features,
-[data-theme="dawn"] .news-sec-debut,
-[data-theme="emerald"] .news-sec-features,
-[data-theme="emerald"] .news-sec-debut {
-  background: #faf5ff !important;
-  border: 1px solid #d8b4fe !important;
-}
 [data-theme="dawn"] .news-sec-features .news-ai-section-title,
 [data-theme="dawn"] .news-sec-debut .news-ai-section-title,
 [data-theme="emerald"] .news-sec-features .news-ai-section-title,
@@ -14044,13 +14032,6 @@ body.mobile-h5-app.ladder-active,
   color: #7e22ce !important;
 }
 
-[data-theme="dawn"] .news-sec-bonus,
-[data-theme="dawn"] .news-sec-rewards,
-[data-theme="emerald"] .news-sec-bonus,
-[data-theme="emerald"] .news-sec-rewards {
-  background: #fffbeb !important;
-  border: 1px solid #fde68a !important;
-}
 [data-theme="dawn"] .news-sec-bonus .news-ai-section-title,
 [data-theme="dawn"] .news-sec-rewards .news-ai-section-title,
 [data-theme="emerald"] .news-sec-bonus .news-ai-section-title,
@@ -14058,25 +14039,11 @@ body.mobile-h5-app.ladder-active,
   color: #b45309 !important;
 }
 
-[data-theme="dawn"] .news-sec-shop,
-[data-theme="emerald"] .news-sec-shop {
-  background: #fefce8 !important;
-  border: 1px solid #fef08a !important;
-}
 [data-theme="dawn"] .news-sec-shop .news-ai-section-title,
 [data-theme="emerald"] .news-sec-shop .news-ai-section-title {
   color: #a16207 !important;
 }
 
-[data-theme="dawn"] .news-sec-fixes,
-[data-theme="dawn"] .news-sec-balance,
-[data-theme="dawn"] .news-sec-general,
-[data-theme="emerald"] .news-sec-fixes,
-[data-theme="emerald"] .news-sec-balance,
-[data-theme="emerald"] .news-sec-general {
-  background: #f0fdf4 !important;
-  border: 1px solid #86efac !important;
-}
 [data-theme="dawn"] .news-sec-fixes .news-ai-section-title,
 [data-theme="dawn"] .news-sec-balance .news-ai-section-title,
 [data-theme="dawn"] .news-sec-general .news-ai-section-title,
@@ -14088,7 +14055,7 @@ body.mobile-h5-app.ladder-active,
 
 [data-theme="dawn"] .mobile-h5-app .news-ai-section-list,
 [data-theme="emerald"] .mobile-h5-app .news-ai-section-list {
-  color: #1e293b !important;
+  color: #334155 !important;
 }
 
 /* 點擊日曆項目的跳轉高亮閃爍動畫 */

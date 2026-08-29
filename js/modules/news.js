@@ -233,35 +233,24 @@
       const isToday = (calCurrentYear === 2026 && calCurrentMonth === 7 && d === 16);
       const isSelected = (d === calSelectedDay);
 
-      // 上中下 3 軌滿格色塊條 (填滿整個日期單元格背景，無縫連續)
+      // 單一低飽和度滿格色塊 (填滿整個日期單元格背景，無縫連續)
       let bgBandsHTML = '';
       if (activeEvents.length > 0) {
-        const maxTracks = Math.min(3, Math.max(1, ...activeEvents.map(e => (e.trackIndex || 0) + 1), 0));
-        const slots = [0, 1, 2].slice(0, Math.max(1, maxTracks));
+        const prevDayEnd = new Date(calCurrentYear, calCurrentMonth, d - 1, 23, 59, 59);
+        const nextDayStart = new Date(calCurrentYear, calCurrentMonth, d + 1, 0, 0, 0);
+        const hasPrev = (d > 1) && ganttData.some(ev => ev.startDate <= prevDayEnd && ev.endDate >= new Date(calCurrentYear, calCurrentMonth, d - 1, 0, 0, 0));
+        const hasNext = (d < daysInMonth) && ganttData.some(ev => ev.startDate <= new Date(calCurrentYear, calCurrentMonth, d + 1, 23, 59, 59) && ev.endDate >= nextDayStart);
 
-        const bands = slots.map(trackIdx => {
-          const ev = activeEvents.find(e => e.trackIndex === trackIdx);
-          if (!ev) {
-            return '<div class="news-cal-bg-band empty" style="flex:1;"></div>';
-          }
-          const isStart = (d === ev.startDate.getDate() && calCurrentMonth === ev.startDate.getMonth()) || (d === 1 && ev.startDate < new Date(calCurrentYear, calCurrentMonth, 1));
-          const isEnd = (d === ev.endDate.getDate() && calCurrentMonth === ev.endDate.getMonth()) || (d === daysInMonth && ev.endDate > new Date(calCurrentYear, calCurrentMonth, daysInMonth, 23, 59, 59));
-          const isSun = (dayOfWeek === 0);
-          const isSat = (dayOfWeek === 6);
+        const leftCap = (!hasPrev) || (dayOfWeek === 0);
+        const rightCap = (!hasNext) || (dayOfWeek === 6);
 
-          const leftCap = isStart || isSun;
-          const rightCap = isEnd || isSat;
+        let bandClass = 'news-cal-bg-band';
+        if (leftCap && rightCap) bandClass += ' band-cap-both';
+        else if (leftCap) bandClass += ' band-cap-left';
+        else if (rightCap) bandClass += ' band-cap-right';
+        else bandClass += ' band-continuous';
 
-          let bandClass = `news-cal-bg-band ${ev.typeClass === 'gantt-bar-event' ? 'band-event' : 'band-pack'}`;
-          if (leftCap && rightCap) bandClass += ' band-cap-both';
-          else if (leftCap) bandClass += ' band-cap-left';
-          else if (rightCap) bandClass += ' band-cap-right';
-          else bandClass += ' band-continuous';
-
-          return `<div class="${bandClass}" style="flex:1;" title="${escapeHtml(ev.title)}"></div>`;
-        }).join('');
-
-        bgBandsHTML = `<div class="news-cal-bg-bands">${bands}</div>`;
+        bgBandsHTML = `<div class="news-cal-bg-bands"><div class="${bandClass}" title="${escapeHtml(activeEvents.map(e => e.title).join(' | '))}"></div></div>`;
       }
 
       dayCellsHTML.push(`
@@ -551,15 +540,11 @@
         `;
       }
 
-      // 渲染多維度 AI 智能摘要區塊 (Sections)
+      // 渲染多維度 AI 智能摘要區塊 (Sections - 極簡純淨無邊框排版)
       let aiSectionsHTML = '';
       if (item.sections && item.sections.length > 0) {
         aiSectionsHTML = `
           <div class="news-ai-dashboard">
-            <div class="news-ai-dashboard-header">
-              <span class="news-ai-sparkle">🤖</span>
-              <span class="news-ai-dashboard-title">${isEN ? 'AI Key Highlights & Insights' : 'AI 智能深度重點整理'}</span>
-            </div>
             <div class="news-ai-sections-grid">
               ${item.sections.map(sec => {
                 let secTitle = isEN ? (sec.title_en || sec.title) : sec.title;
@@ -584,10 +569,6 @@
         const highlightsList = isEN && item.highlights_en ? item.highlights_en : item.highlights;
         aiSectionsHTML = `
           <div class="news-ai-highlights">
-            <div class="news-ai-title">
-              <span class="news-ai-sparkle">🤖</span>
-              <span>${isEN ? 'AI Key Highlights' : 'AI 智能重點萃取'}</span>
-            </div>
             <ul class="news-ai-list">
               ${highlightsList.map(h => `<li>${formatAiListItem(h, item)}</li>`).join('')}
             </ul>
@@ -615,7 +596,9 @@
               </span>
               ${isLatest ? '<span class="news-latest-tag">NEW 🔥</span>' : ''}
             </div>
-            <span class="news-accordion-arrow">${isExpanded ? '▲' : '▼'}</span>
+            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-official-link-btn" onclick="event.stopPropagation()">
+              <span>${isEN ? 'Official ↗' : '官方原文 ↗'}</span>
+            </a>
           </div>
 
           <h3 class="news-card-title">
@@ -628,12 +611,6 @@
 
           <div class="news-accordion-body">
             ${aiSectionsHTML}
-
-            <div class="news-card-footer">
-              <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-read-more-btn" onclick="event.stopPropagation()">
-                <span>${isEN ? 'Official Post ↗' : '完整官方公告原文 ↗'}</span>
-              </a>
-            </div>
           </div>
         </article>
       `;
@@ -646,19 +623,12 @@
           return;
         }
         const id = card.getAttribute('data-id');
-        const bodyEl = card.querySelector('.news-accordion-body');
-        const arrowEl = card.querySelector('.news-accordion-arrow');
-
         if (expandedMap.has(id)) {
           expandedMap.delete(id);
           card.classList.remove('expanded');
-          if (bodyEl) bodyEl.style.display = 'none';
-          if (arrowEl) arrowEl.textContent = '▼';
         } else {
           expandedMap.add(id);
           card.classList.add('expanded');
-          if (bodyEl) bodyEl.style.display = 'block';
-          if (arrowEl) arrowEl.textContent = '▲';
         }
       });
     });
