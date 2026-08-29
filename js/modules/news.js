@@ -145,29 +145,44 @@
       let eventCat = 'event';
       let typeLabel = isEN ? 'Special Event' : '活動企劃';
       let typeClass = 'gantt-bar-event';
-      let typeColor = '#8b5cf6'; // Violet / Indigo
+      let typeColor = '#8b5cf6'; // Royal Purple
 
       const titleLower = (item.title + ' ' + (item.title_en || '')).toLowerCase();
       if (titleLower.includes('好眠日') || titleLower.includes('good sleep')) {
         eventCat = 'good-sleep';
         typeLabel = isEN ? 'Good Sleep Day' : '好眠日';
         typeClass = 'gantt-bar-event';
-        typeColor = '#f59e0b'; // Amber Gold / Full Moon
+        typeColor = '#f59e0b'; // Amber Gold
+      } else if (titleLower.includes('新月日') || titleLower.includes('new moon')) {
+        eventCat = 'new-moon';
+        typeLabel = isEN ? 'New Moon Day' : '新月日';
+        typeClass = 'gantt-bar-event';
+        typeColor = '#4f46e5'; // Cosmic Indigo
+      } else if (titleLower.includes('合作') || titleLower.includes('collab') || titleLower.includes('動畫')) {
+        eventCat = 'collab';
+        typeLabel = isEN ? 'Collab Event' : '合作特企';
+        typeClass = isPack ? 'gantt-bar-pack' : 'gantt-bar-event';
+        typeColor = '#c026d3'; // Fuchsia Magenta
+      } else if (titleLower.includes('嘉年華') || titleLower.includes('festival') || titleLower.includes('夏日') || titleLower.includes('慶典')) {
+        eventCat = isPack ? 'pack-bundle' : 'festival';
+        typeLabel = isPack ? (isEN ? 'Event Bundle' : '活動禮包') : (isEN ? 'Festival' : '節慶活動');
+        typeClass = isPack ? 'gantt-bar-pack' : 'gantt-bar-event';
+        typeColor = isPack ? '#0891b2' : '#ea580c'; // Coral Orange or Cyan
       } else if (titleLower.includes('培育包') || titleLower.includes('growth')) {
         eventCat = 'pack-growth';
         typeLabel = isEN ? 'Growth Pack' : '培育包';
         typeClass = 'gantt-bar-pack';
-        typeColor = '#10b981'; // Emerald Green
+        typeColor = '#059669'; // Emerald Green
       } else if (isPack || titleLower.includes('包') || titleLower.includes('bundle') || titleLower.includes('pack')) {
         eventCat = 'pack-bundle';
         typeLabel = isEN ? 'Event Bundle' : '活動禮包';
         typeClass = 'gantt-bar-pack';
-        typeColor = '#06b6d4'; // Cyan / Teal
+        typeColor = '#0891b2'; // Cyan Teal
       } else if (item.badge_key === 'update' || titleLower.includes('更新') || titleLower.includes('維護')) {
         eventCat = 'update';
         typeLabel = isEN ? 'Update' : '版本更新';
         typeClass = 'gantt-bar-event';
-        typeColor = '#f43f5e'; // Rose Red
+        typeColor = '#e11d48'; // Rose Red
       }
 
       ganttItems.push({
@@ -188,9 +203,9 @@
     });
 
     return ganttItems.sort((a, b) => {
-      const priorityOrder = { 'event': 1, 'good-sleep': 1, 'pack-growth': 2, 'pack-bundle': 3, 'update': 4 };
-      const pa = priorityOrder[a.eventCat] || 5;
-      const pb = priorityOrder[b.eventCat] || 5;
+      const priorityOrder = { 'good-sleep': 1, 'festival': 2, 'collab': 3, 'new-moon': 4, 'event': 5, 'pack-growth': 6, 'pack-bundle': 7, 'update': 8 };
+      const pa = priorityOrder[a.eventCat] || 9;
+      const pb = priorityOrder[b.eventCat] || 9;
       if (pa !== pb) return pa - pb;
       return a.startDate - b.startDate;
     });
@@ -298,7 +313,7 @@
     let selectedEventsHTML = '';
     if (selectedDateEvents.length > 0) {
       selectedEventsHTML = selectedDateEvents.map(ev => `
-        <div class="news-cal-event-item cat-${ev.eventCat}" data-event-id="${ev.id}">
+        <div class="news-cal-event-item cat-${ev.eventCat}" data-event-id="${ev.id}" data-event-title="${escapeHtml(ev.title)}" title="${isEN ? 'Click to search this event' : '點擊直接搜尋此活動'}">
           <div class="news-cal-event-left">
             <span class="news-cal-event-badge badge-${ev.eventCat}">${ev.typeLabel}</span>
             <span class="news-cal-event-name">${escapeHtml(ev.title)}</span>
@@ -395,29 +410,46 @@
       });
     });
 
-    // 點擊活動項目直接展開並跳轉至對應新聞
+    // 點擊活動項目：直接在搜尋框輸入該活動名稱並進行搜尋過濾
     newsTimelineContainer.querySelectorAll('.news-cal-event-item').forEach(item => {
       item.addEventListener('click', () => {
         const evId = item.getAttribute('data-event-id');
+        const evTitle = item.getAttribute('data-event-title') || '';
         const targetItem = allNews.find(n => n.id === evId);
-        if (targetItem) {
+        const searchWord = evTitle || (targetItem ? targetItem.title : '');
+
+        // 1. 填入搜尋關鍵字
+        if (newsSearchInput) {
+          newsSearchInput.value = searchWord;
+          searchQuery = searchWord.trim().toLowerCase();
+          updateClearBtn();
+        }
+
+        // 2. 切換分類至全部 (ALL) 確保搜尋完整覆蓋
+        currentCategory = 'ALL';
+        if (newsCategoryContainer) {
+          newsCategoryContainer.querySelectorAll('.news-tag-btn').forEach(b => {
+            b.classList.toggle('active', b.getAttribute('data-cat') === 'ALL');
+          });
+        }
+
+        // 3. 展開該活動卡片並渲染搜尋結果
+        if (evId) {
           expandedMap.add(evId);
-          currentCategory = 'ALL';
-          if (newsCategoryContainer) {
-            newsCategoryContainer.querySelectorAll('.news-tag-btn').forEach(b => {
-              b.classList.toggle('active', b.getAttribute('data-cat') === 'ALL');
-            });
-          }
-          renderNews();
-          setTimeout(() => {
-            const el = document.getElementById(`news-${evId}`);
-            if (el) {
-              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        renderNews();
+
+        // 4. 平滑滾動至搜尋結果新聞卡片
+        setTimeout(() => {
+          const el = document.getElementById(`news-${evId}`) || newsSearchInput;
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (el.classList) {
               el.classList.add('news-card-highlight-flash');
               setTimeout(() => el.classList.remove('news-card-highlight-flash'), 1800);
             }
-          }, 50);
-        }
+          }
+        }, 80);
       });
     });
   }
