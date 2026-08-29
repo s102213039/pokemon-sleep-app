@@ -13614,7 +13614,7 @@ body.mobile-h5-app.ladder-active,
   opacity: 0.75 !important;
 }
 
-/* 7 欄日曆網格 (獨立多軌道連續彩色條帶 + 高對比色塊反色) */
+/* 7 欄日曆網格 (貫穿日期的全格背景色塊 + 高對比色塊反色) */
 .news-calendar-grid {
   display: grid !important;
   grid-template-columns: repeat(7, 1fr) !important;
@@ -13623,17 +13623,16 @@ body.mobile-h5-app.ladder-active,
 
 .news-cal-day-cell {
   aspect-ratio: auto !important;
-  min-height: 42px !important;
+  height: 28px !important;
   display: flex !important;
-  flex-direction: column !important;
   align-items: center !important;
-  justify-content: flex-start !important;
+  justify-content: center !important;
   position: relative !important;
   cursor: pointer !important;
   transition: all 0.15s ease !important;
   user-select: none !important;
   background: transparent !important;
-  padding: 1px 0 2px 0 !important;
+  padding: 0 !important;
   box-sizing: border-box !important;
 }
 
@@ -13642,13 +13641,58 @@ body.mobile-h5-app.ladder-active,
   background: transparent !important;
 }
 
-.news-cal-day-cell:not(.empty):hover {
-  background: rgba(99, 102, 241, 0.06) !important;
+.news-cal-day-cell:not(.empty):not(.has-events):hover {
+  background: rgba(99, 102, 241, 0.08) !important;
   border-radius: 4px !important;
 }
 
-/* 🎯 日期數字：頂部居中 */
+/* 🎨 貫穿整格的背景多層色塊 (Continuous Full-Cell Background Bands per Event) */
+.news-cal-bg-bands {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+}
+
+.news-cal-bg-band {
+  width: 100% !important;
+  flex: 1 1 0 !important;
+  transition: opacity 0.15s ease !important;
+}
+
+/* 邊界圓角連續效果 (開始日左圓角、結束日右圓角、中間無縫橫貫) */
+.news-cal-bg-band.band-cap-start {
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.news-cal-bg-band.band-cap-end {
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.news-cal-bg-band.band-cap-both {
+  border-radius: 4px !important;
+  width: calc(100% - 2px) !important;
+  margin: 0 auto !important;
+}
+
+.news-cal-bg-band.band-mid {
+  border-radius: 0 !important;
+}
+
+/* 🎯 日期數字：浮在背景色塊之上 */
 .news-cal-day-num {
+  position: relative !important;
+  z-index: 5 !important;
   font-size: 11px !important;
   font-weight: 600 !important;
   line-height: 1 !important;
@@ -13656,13 +13700,12 @@ body.mobile-h5-app.ladder-active,
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-width: 19px !important;
-  height: 17px !important;
-  border-radius: 5px !important;
+  min-width: 20px !important;
+  height: 20px !important;
+  border-radius: 6px !important;
   transition: all 0.15s ease !important;
-  z-index: 2 !important;
+  pointer-events: none !important;
   padding: 0 2px !important;
-  margin-bottom: 2px !important;
 }
 
 /* 💡 選取日期：高對比色塊反色 (Solid Inverted Block) */
@@ -13679,60 +13722,6 @@ body.mobile-h5-app.ladder-active,
   color: var(--color-primary, #6366f1) !important;
   font-weight: 800 !important;
   background: var(--bg-card, rgba(255, 255, 255, 0.9)) !important;
-}
-
-/* 🌈 每個活動專屬獨立連續色彩條帶容器 (Multi-Track Persistent Continuous Bars) */
-.news-cal-tracks {
-  width: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 1.5px !important;
-  padding: 0 !important;
-  pointer-events: none !important;
-}
-
-.news-cal-track-bar {
-  width: 100% !important;
-  height: 3.5px !important;
-  transition: opacity 0.15s ease !important;
-  box-sizing: border-box !important;
-}
-
-.news-cal-track-bar.empty {
-  visibility: hidden !important;
-  height: 3.5px !important;
-  background: transparent !important;
-}
-
-/* 邊界圓角連續效果 (開始日左圓角、結束日右圓角、中間無縫橫貫) */
-.news-cal-track-bar.bar-cap-start {
-  border-top-left-radius: 2px !important;
-  border-bottom-left-radius: 2px !important;
-  border-top-right-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
-  margin-left: 1.5px !important;
-  width: calc(100% - 1.5px) !important;
-}
-
-.news-cal-track-bar.bar-cap-end {
-  border-top-right-radius: 2px !important;
-  border-bottom-right-radius: 2px !important;
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
-  margin-right: 1.5px !important;
-  width: calc(100% - 1.5px) !important;
-}
-
-.news-cal-track-bar.bar-cap-both {
-  border-radius: 2px !important;
-  width: calc(100% - 3px) !important;
-  margin: 0 auto !important;
-}
-
-.news-cal-track-bar.bar-mid {
-  border-radius: 0 !important;
-  width: 100% !important;
-  margin: 0 !important;
 }
 
 /* 當日活動列表 (Selected Day Event List - 全部展示無滾動條) */
@@ -13969,12 +13958,7 @@ html[data-theme="obsidian"] .news-cal-event-badge.badge-update {
 }
 
 .mobile-h5-app .news-info-bar {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  font-size: 11px !important;
-  color: var(--text-muted) !important;
-  padding: 0 2px !important;
+  display: none !important;
 }
 
 /* 📰 4. 新聞列表容器與折疊式 Accordion 卡片 (全主題自適應) */

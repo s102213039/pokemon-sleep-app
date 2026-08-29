@@ -99,8 +99,8 @@
         endMonth: endM,
         endDay: endD,
         endHour: endH,
-        startStr: `${String(startM).padStart(2, '0')}-${String(startD).padStart(2, '0')} ${startH}`,
-        endStr: `${String(endM).padStart(2, '0')}-${String(endD).padStart(2, '0')} ${endH}`,
+        startStr: `${String(startM).padStart(2, '0')}/${String(startD).padStart(2, '0')}`,
+        endStr: `${String(endM).padStart(2, '0')}/${String(endD).padStart(2, '0')}`,
         startDate: new Date(2026, startM - 1, startD, parseInt(startH, 10)),
         endDate: new Date(2026, endM - 1, endD, parseInt(endH, 10))
       };
@@ -275,8 +275,6 @@
       ev.trackIndex = assignedTrack;
     });
 
-    const maxTracks = Math.max(1, trackEndTimes.length);
-
     const monthNames = isEN
       ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
       : ['1 月', '2 月', '3 月', '4 月', '5 月', '6 月', '7 月', '8 月', '9 月', '10 月', '11 月', '12 月'];
@@ -301,11 +299,11 @@
       const isToday = (calCurrentYear === 2026 && calCurrentMonth === 7 && d === 16);
       const isSelected = (d === calSelectedDay);
 
-      // 🌈 每個活動各自的專屬色彩連續條帶 (Each event has its own continuous solid color track)
-      let tracksHTML = '';
-      for (let t = 0; t < maxTracks; t++) {
-        const ev = activeEvents.find(e => e.trackIndex === t);
-        if (ev) {
+      // 🌈 每個活動各自的專屬色彩貫穿整格背景 (Full-Cell Background Bands with Per-Event Colors)
+      let bgBandsHTML = '';
+      if (activeEvents.length > 0) {
+        const bands = [];
+        activeEvents.forEach(ev => {
           const prevDayEnd = new Date(calCurrentYear, calCurrentMonth, d - 1, 23, 59, 59);
           const nextDayStart = new Date(calCurrentYear, calCurrentMonth, d + 1, 0, 0, 0);
           const hasPrev = (d > 1) && (ev.startDate <= prevDayEnd);
@@ -314,27 +312,25 @@
           const isStartCap = (!hasPrev) || (dayOfWeek === 0);
           const isEndCap = (!hasNext) || (dayOfWeek === 6);
 
-          let capClass = 'bar-mid';
-          if (isStartCap && isEndCap) capClass = 'bar-cap-both';
-          else if (isStartCap) capClass = 'bar-cap-start';
-          else if (isEndCap) capClass = 'bar-cap-end';
+          let capClass = 'band-mid';
+          if (isStartCap && isEndCap) capClass = 'band-cap-both';
+          else if (isStartCap) capClass = 'band-cap-start';
+          else if (isEndCap) capClass = 'band-cap-end';
 
-          tracksHTML += `
-            <div class="news-cal-track-bar ${capClass}" 
-                 style="background-color: ${ev.typeColor};" 
+          bands.push(`
+            <div class="news-cal-bg-band ${capClass}" 
+                 style="background-color: ${ev.typeColor};"
                  title="${escapeHtml(ev.title)} (${ev.typeLabel})"></div>
-          `;
-        } else {
-          tracksHTML += `<div class="news-cal-track-bar empty"></div>`;
-        }
+          `);
+        });
+
+        bgBandsHTML = `<div class="news-cal-bg-bands">${bands.join('')}</div>`;
       }
 
       dayCellsHTML.push(`
         <div class="news-cal-day-cell ${isToday ? 'is-today' : ''} ${isSelected ? 'is-selected' : ''} ${activeEvents.length > 0 ? 'has-events' : ''}" data-day="${d}">
+          ${bgBandsHTML}
           <span class="news-cal-day-num">${d}</span>
-          <div class="news-cal-tracks">
-            ${tracksHTML}
-          </div>
         </div>
       `);
     }
@@ -622,25 +618,9 @@
     const filtered = getFilteredNews();
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
-    // 更新統計數量徽章
+    // 隱藏統計數量列
     if (newsCountBadge) {
-      if (filterOnlyOngoing) {
-        newsCountBadge.innerHTML = isEN
-          ? `Showing <strong>${filtered.length}</strong> active ongoing events <button type="button" class="news-reset-ongoing-link" style="margin-left:6px;background:none;border:none;color:var(--color-primary);font-weight:700;cursor:pointer;text-decoration:underline;">Reset</button>`
-          : `正在展示 <strong>${filtered.length}</strong> 則進行中活動卡片 <button type="button" class="news-reset-ongoing-link" style="margin-left:6px;background:none;border:none;color:var(--color-primary);font-weight:700;cursor:pointer;text-decoration:underline;">還原全部</button>`;
-        const resetLink = newsCountBadge.querySelector('.news-reset-ongoing-link');
-        if (resetLink) {
-          resetLink.addEventListener('click', () => {
-            filterOnlyOngoing = false;
-            renderNews();
-            renderEventTimeline();
-          });
-        }
-      } else {
-        newsCountBadge.innerHTML = isEN
-          ? `Showing <strong>${filtered.length}</strong> / ${allNews.length} news items`
-          : `顯示 <strong>${filtered.length}</strong> / ${allNews.length} 則最新消息`;
-      }
+      newsCountBadge.style.display = 'none';
     }
 
     if (filtered.length === 0) {
