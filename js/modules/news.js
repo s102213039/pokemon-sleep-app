@@ -233,39 +233,41 @@
       const isToday = (calCurrentYear === 2026 && calCurrentMonth === 7 && d === 16);
       const isSelected = (d === calSelectedDay);
 
-      // 上中下 3 軌連續色塊條
-      const maxTracks = Math.min(3, Math.max(1, ...activeEvents.map(e => (e.trackIndex || 0) + 1), 0));
-      const slots = [0, 1, 2].slice(0, Math.max(1, maxTracks));
+      // 上中下 3 軌滿格色塊條 (填滿整個日期單元格背景)
+      let bgBandsHTML = '';
+      if (activeEvents.length > 0) {
+        const maxTracks = Math.min(3, Math.max(1, ...activeEvents.map(e => (e.trackIndex || 0) + 1), 0));
+        const slots = [0, 1, 2].slice(0, Math.max(1, maxTracks));
 
-      const barsHTML = slots.map(trackIdx => {
-        const ev = activeEvents.find(e => e.trackIndex === trackIdx);
-        if (!ev) {
-          return '<div class="news-cal-bar-slot empty"></div>';
-        }
-        // 判斷是否為跨日色塊的起點、終點或中間連續段
-        const isStart = (d === ev.startDate.getDate() && calCurrentMonth === ev.startDate.getMonth());
-        const isEnd = (d === ev.endDate.getDate() && calCurrentMonth === ev.endDate.getMonth());
-        const isSun = (dayOfWeek === 0);
-        const isSat = (dayOfWeek === 6);
+        const bands = slots.map(trackIdx => {
+          const ev = activeEvents.find(e => e.trackIndex === trackIdx);
+          if (!ev) {
+            return '<div class="news-cal-bg-band empty" style="flex:1;"></div>';
+          }
+          const isStart = (d === ev.startDate.getDate() && calCurrentMonth === ev.startDate.getMonth());
+          const isEnd = (d === ev.endDate.getDate() && calCurrentMonth === ev.endDate.getMonth());
+          const isSun = (dayOfWeek === 0);
+          const isSat = (dayOfWeek === 6);
 
-        const leftCap = isStart || isSun;
-        const rightCap = isEnd || isSat;
+          const leftCap = isStart || isSun;
+          const rightCap = isEnd || isSat;
 
-        let barClass = `news-cal-bar ${ev.typeClass === 'gantt-bar-event' ? 'bar-event' : 'bar-pack'}`;
-        if (leftCap && rightCap) barClass += ' bar-cap-both';
-        else if (leftCap) barClass += ' bar-cap-left';
-        else if (rightCap) barClass += ' bar-cap-right';
-        else barClass += ' bar-continuous';
+          let bandClass = `news-cal-bg-band ${ev.typeClass === 'gantt-bar-event' ? 'band-event' : 'band-pack'}`;
+          if (leftCap && rightCap) bandClass += ' band-cap-both';
+          else if (leftCap) bandClass += ' band-cap-left';
+          else if (rightCap) bandClass += ' band-cap-right';
+          else bandClass += ' band-continuous';
 
-        return `<div class="${barClass}" title="${escapeHtml(ev.title)}"></div>`;
-      }).join('');
+          return `<div class="${bandClass}" style="flex:1;" title="${escapeHtml(ev.title)}"></div>`;
+        }).join('');
+
+        bgBandsHTML = `<div class="news-cal-bg-bands">${bands}</div>`;
+      }
 
       dayCellsHTML.push(`
         <div class="news-cal-day-cell ${isToday ? 'is-today' : ''} ${isSelected ? 'is-selected' : ''} ${activeEvents.length > 0 ? 'has-events' : ''}" data-day="${d}">
+          ${bgBandsHTML}
           <span class="news-cal-day-num">${d}</span>
-          <div class="news-cal-bars-stack">
-            ${barsHTML}
-          </div>
         </div>
       `);
     }
@@ -613,29 +615,24 @@
 
       return `
         <article class="news-card news-accordion-card ${isExpanded ? 'expanded' : ''} ${isLatest ? 'news-card-featured' : ''}" id="news-${item.id}" data-id="${item.id}">
-          <div class="news-accordion-header" data-id="${item.id}">
-            <div class="news-card-header-meta">
-              <div class="news-meta-left">
-                <span class="news-date-badge">📅 ${item.date}</span>
-                <span class="news-badge news-badge-${item.badge_key || 'notice'}" style="--badge-color:${item.badge_color || '#8b5cf6'};">
-                  ${categoryLabels[item.badge_key] || item.badge_label || item.category || (isEN ? 'Notice' : '📢 公告')}
-                </span>
-                ${isLatest ? '<span class="news-latest-tag">NEW 🔥</span>' : ''}
-              </div>
-              <div class="news-accordion-toggle-btn">
-                <span>${isExpanded ? (isEN ? 'Collapse' : '收起') : (isEN ? 'AI Highlights' : 'AI 重點')}</span>
-                <span class="news-accordion-arrow">${isExpanded ? '▲' : '▼'}</span>
-              </div>
+          <div class="news-card-header-meta">
+            <div class="news-meta-left">
+              <span class="news-date-badge">📅 ${item.date}</span>
+              <span class="news-badge news-badge-${item.badge_key || 'notice'}" style="--badge-color:${item.badge_color || '#8b5cf6'};">
+                ${categoryLabels[item.badge_key] || item.badge_label || item.category || (isEN ? 'Notice' : '📢 公告')}
+              </span>
+              ${isLatest ? '<span class="news-latest-tag">NEW 🔥</span>' : ''}
             </div>
-
-            <h3 class="news-card-title">
-              <span>${escapeHtml(displayTitle)}</span>
-            </h3>
-
-            ${debutBannerHTML}
-
-            <p class="news-overview-text">${escapeHtml(displayOverview || '')}</p>
+            <span class="news-accordion-arrow">${isExpanded ? '▲' : '▼'}</span>
           </div>
+
+          <h3 class="news-card-title">
+            <span>${escapeHtml(displayTitle)}</span>
+          </h3>
+
+          ${debutBannerHTML}
+
+          <p class="news-overview-text">${escapeHtml(displayOverview || '')}</p>
 
           <div class="news-accordion-body" style="${isExpanded ? 'display: block;' : 'display: none;'}">
             ${aiSectionsHTML}
@@ -643,7 +640,7 @@
             ${previewHTML}
 
             <div class="news-card-footer">
-              <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-read-more-btn">
+              <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-read-more-btn" onclick="event.stopPropagation()">
                 <span>${isEN ? 'Official Post ↗' : '完整官方公告原文 ↗'}</span>
               </a>
             </div>
@@ -652,16 +649,27 @@
       `;
     }).join('');
 
-    // 綁定點選卡片頭部展開 / 收合事件
-    newsListContainer.querySelectorAll('.news-accordion-header').forEach(header => {
-      header.addEventListener('click', () => {
-        const id = header.getAttribute('data-id');
+    // 點選整個卡片直接展開與隱藏
+    newsListContainer.querySelectorAll('.news-accordion-card').forEach(card => {
+      card.addEventListener('click', e => {
+        if (e.target.closest('a') || e.target.closest('button')) {
+          return;
+        }
+        const id = card.getAttribute('data-id');
+        const bodyEl = card.querySelector('.news-accordion-body');
+        const arrowEl = card.querySelector('.news-accordion-arrow');
+
         if (expandedMap.has(id)) {
           expandedMap.delete(id);
+          card.classList.remove('expanded');
+          if (bodyEl) bodyEl.style.display = 'none';
+          if (arrowEl) arrowEl.textContent = '▼';
         } else {
           expandedMap.add(id);
+          card.classList.add('expanded');
+          if (bodyEl) bodyEl.style.display = 'block';
+          if (arrowEl) arrowEl.textContent = '▲';
         }
-        renderNews();
       });
     });
   }
