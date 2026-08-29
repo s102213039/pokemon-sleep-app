@@ -142,22 +142,42 @@
         .replace(/資訊$/g, '')
         .trim();
 
-      let typeLabel = isEN ? 'Event' : '活動列表';
+      let eventCat = 'event';
+      let typeLabel = isEN ? 'Special Event' : '活動企劃';
       let typeClass = 'gantt-bar-event';
-      if (item.title.includes('培育包') || (item.title_en && item.title_en.includes('Growth Bundle'))) {
+      let typeColor = '#8b5cf6'; // Violet / Indigo
+
+      const titleLower = (item.title + ' ' + (item.title_en || '')).toLowerCase();
+      if (titleLower.includes('好眠日') || titleLower.includes('good sleep')) {
+        eventCat = 'good-sleep';
+        typeLabel = isEN ? 'Good Sleep Day' : '好眠日';
+        typeClass = 'gantt-bar-event';
+        typeColor = '#f59e0b'; // Amber Gold / Full Moon
+      } else if (titleLower.includes('培育包') || titleLower.includes('growth')) {
+        eventCat = 'pack-growth';
         typeLabel = isEN ? 'Growth Pack' : '培育包';
         typeClass = 'gantt-bar-pack';
-      } else if (isPack) {
+        typeColor = '#10b981'; // Emerald Green
+      } else if (isPack || titleLower.includes('包') || titleLower.includes('bundle') || titleLower.includes('pack')) {
+        eventCat = 'pack-bundle';
         typeLabel = isEN ? 'Event Bundle' : '活動禮包';
         typeClass = 'gantt-bar-pack';
+        typeColor = '#06b6d4'; // Cyan / Teal
+      } else if (item.badge_key === 'update' || titleLower.includes('更新') || titleLower.includes('維護')) {
+        eventCat = 'update';
+        typeLabel = isEN ? 'Update' : '版本更新';
+        typeClass = 'gantt-bar-event';
+        typeColor = '#f43f5e'; // Rose Red
       }
 
       ganttItems.push({
         id: item.id,
         title: cleanTitle,
         fullTitle: rawTitle,
+        eventCat,
         typeLabel,
         typeClass,
+        typeColor,
         startStr: schedule.startStr,
         endStr: schedule.endStr,
         startCol,
@@ -168,9 +188,10 @@
     });
 
     return ganttItems.sort((a, b) => {
-      if (a.typeClass !== b.typeClass) {
-        return a.typeClass === 'gantt-bar-event' ? -1 : 1;
-      }
+      const priorityOrder = { 'event': 1, 'good-sleep': 1, 'pack-growth': 2, 'pack-bundle': 3, 'update': 4 };
+      const pa = priorityOrder[a.eventCat] || 5;
+      const pb = priorityOrder[b.eventCat] || 5;
+      if (pa !== pb) return pa - pb;
       return a.startDate - b.startDate;
     });
   }
@@ -208,6 +229,8 @@
       ev.trackIndex = assignedTrack;
     });
 
+    const maxTracks = Math.min(3, Math.max(1, trackEndTimes.length));
+
     const monthNames = isEN
       ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
       : ['1 月', '2 月', '3 月', '4 月', '5 月', '6 月', '7 月', '8 月', '9 月', '10 月', '11 月', '12 月'];
@@ -232,30 +255,55 @@
       const isToday = (calCurrentYear === 2026 && calCurrentMonth === 7 && d === 16);
       const isSelected = (d === calSelectedDay);
 
-      // 單一低飽和度滿格色塊 (填滿整個日期單元格背景，無縫連續)
-      let bgBandsHTML = '';
+      // 🌈 多軌道彩色活動連續條帶 (Multi-track continuous colored event bars)
+      let trackBarsHTML = '';
       if (activeEvents.length > 0) {
-        const prevDayEnd = new Date(calCurrentYear, calCurrentMonth, d - 1, 23, 59, 59);
-        const nextDayStart = new Date(calCurrentYear, calCurrentMonth, d + 1, 0, 0, 0);
-        const hasPrev = (d > 1) && ganttData.some(ev => ev.startDate <= prevDayEnd && ev.endDate >= new Date(calCurrentYear, calCurrentMonth, d - 1, 0, 0, 0));
-        const hasNext = (d < daysInMonth) && ganttData.some(ev => ev.startDate <= new Date(calCurrentYear, calCurrentMonth, d + 1, 23, 59, 59) && ev.endDate >= nextDayStart);
+        const bars = [];
+        for (let t = 0; t < maxTracks; t++) {
+          const evOnTrack = activeEvents.find(e => e.trackIndex === t);
+          if (evOnTrack) {
+            const prevDayEnd = new Date(calCurrentYear, calCurrentMonth, d - 1, 23, 59, 59);
+            const nextDayStart = new Date(calCurrentYear, calCurrentMonth, d + 1, 0, 0, 0);
+            const hasPrev = (d > 1) && (evOnTrack.startDate <= prevDayEnd);
+            const hasNext = (d < daysInMonth) && (evOnTrack.endDate >= nextDayStart);
 
-        const leftCap = (!hasPrev) || (dayOfWeek === 0);
-        const rightCap = (!hasNext) || (dayOfWeek === 6);
+            const isStartCap = (!hasPrev) || (dayOfWeek === 0);
+            const isEndCap = (!hasNext) || (dayOfWeek === 6);
 
-        let bandClass = 'news-cal-bg-band';
-        if (leftCap && rightCap) bandClass += ' band-cap-both';
-        else if (leftCap) bandClass += ' band-cap-left';
-        else if (rightCap) bandClass += ' band-cap-right';
-        else bandClass += ' band-continuous';
+            let capClass = 'bar-mid';
+            if (isStartCap && isEndCap) capClass = 'bar-cap-both';
+            else if (isStartCap) capClass = 'bar-cap-start';
+            else if (isEndCap) capClass = 'bar-cap-end';
 
-        bgBandsHTML = `<div class="news-cal-bg-bands"><div class="${bandClass}" title="${escapeHtml(activeEvents.map(e => e.title).join(' | '))}"></div></div>`;
+            bars.push(`
+              <div class="news-cal-track-bar ${capClass} cat-${evOnTrack.eventCat}" 
+                   style="--bar-color: ${evOnTrack.typeColor};" 
+                   title="${escapeHtml(evOnTrack.title)} (${evOnTrack.typeLabel})"></div>
+            `);
+          } else {
+            bars.push(`<div class="news-cal-track-bar empty"></div>`);
+          }
+        }
+        trackBarsHTML = `<div class="news-cal-track-bars">${bars.join('')}</div>`;
+      } else {
+        trackBarsHTML = `<div class="news-cal-track-bars empty"><div class="news-cal-track-bar empty"></div></div>`;
+      }
+
+      // 判定當日主要活動類別背景光暈
+      let primaryCatClass = '';
+      if (activeEvents.length > 0) {
+        if (activeEvents.some(e => e.eventCat === 'good-sleep')) primaryCatClass = 'has-good-sleep';
+        else if (activeEvents.some(e => e.eventCat === 'event')) primaryCatClass = 'has-event';
+        else if (activeEvents.some(e => e.eventCat === 'pack-growth')) primaryCatClass = 'has-growth-pack';
+        else if (activeEvents.some(e => e.eventCat === 'pack-bundle')) primaryCatClass = 'has-bundle';
       }
 
       dayCellsHTML.push(`
-        <div class="news-cal-day-cell ${isToday ? 'is-today' : ''} ${isSelected ? 'is-selected' : ''} ${activeEvents.length > 0 ? 'has-events' : ''}" data-day="${d}">
-          ${bgBandsHTML}
-          <span class="news-cal-day-num">${d}</span>
+        <div class="news-cal-day-cell ${isToday ? 'is-today' : ''} ${isSelected ? 'is-selected' : ''} ${activeEvents.length > 0 ? 'has-events' : ''} ${primaryCatClass}" data-day="${d}">
+          <div class="news-cal-cell-inner">
+            <span class="news-cal-day-num">${d}</span>
+            ${trackBarsHTML}
+          </div>
         </div>
       `);
     }
@@ -268,9 +316,9 @@
     let selectedEventsHTML = '';
     if (selectedDateEvents.length > 0) {
       selectedEventsHTML = selectedDateEvents.map(ev => `
-        <div class="news-cal-event-item" data-event-id="${ev.id}">
+        <div class="news-cal-event-item cat-${ev.eventCat}" data-event-id="${ev.id}">
           <div class="news-cal-event-left">
-            <span class="news-cal-event-badge ${ev.typeClass === 'gantt-bar-event' ? 'badge-event' : 'badge-pack'}">${ev.typeLabel}</span>
+            <span class="news-cal-event-badge badge-${ev.eventCat}">${ev.typeLabel}</span>
             <span class="news-cal-event-name">${escapeHtml(ev.title)}</span>
           </div>
           <span class="news-cal-event-time">${ev.startStr} ~ ${ev.endStr}</span>
