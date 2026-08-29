@@ -4648,70 +4648,71 @@ input[type=range].rf-slider.event-slider {
   color: #38bdf8;
 }
 
-/* 🦄 新登場 / 焦點寶可夢頂部橫條 */
+/* 🦄 新登場 / 焦點寶可夢頂部橫條 (無外框、極簡純淨排版) */
 .news-debut-banner,
 .news-featured-banner {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 10px;
+  gap: 6px;
+  padding: 2px 0;
+  background: transparent;
+  border: none;
 }
 
 .news-debut-banner {
-  background: linear-gradient(90deg, rgba(236, 72, 153, 0.15), rgba(168, 85, 247, 0.1));
-  border: 1px solid rgba(236, 72, 153, 0.4);
+  background: transparent;
+  border: none;
 }
 
 .news-featured-banner {
-  background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), rgba(234, 88, 12, 0.1));
-  border: 1px solid rgba(245, 158, 11, 0.4);
+  background: transparent;
+  border: none;
 }
 
 .news-banner-title {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
-  color: var(--color-accent-rose);
+  color: var(--text-muted);
   white-space: nowrap;
 }
 
 .news-featured-banner .news-banner-title {
-  color: var(--color-accent-gold);
+  color: var(--text-muted);
 }
 
 .news-poke-pill-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 5px;
 }
 
 .news-poke-pill-new {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(219, 39, 119, 0.35));
-  border: 1px solid rgba(244, 114, 182, 0.6);
-  color: #ffffff;
+  background: rgba(236, 72, 153, 0.15);
+  color: #db2777;
   font-size: 12px;
-  font-weight: 700;
-  padding: 2px 9px;
-  border-radius: 9999px;
-  box-shadow: 0 0 10px rgba(236, 72, 153, 0.3);
+  font-weight: 600;
+  padding: 1.5px 7px;
+  border-radius: 4px;
+  border: none;
+  box-shadow: none;
+  line-height: 1.25;
 }
 
 .news-poke-pill-featured {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.35));
-  border: 1px solid rgba(251, 191, 36, 0.6);
-  color: #ffffff;
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
   font-size: 12px;
-  font-weight: 700;
-  padding: 2px 9px;
-  border-radius: 9999px;
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+  font-weight: 600;
+  padding: 1.5px 7px;
+  border-radius: 4px;
+  border: none;
+  box-shadow: none;
+  line-height: 1.25;
 }
 
 /* 內文醒目高亮標籤 (Inline Highlights) */
@@ -13664,37 +13665,37 @@ body.mobile-h5-app.ladder-active,
   transition: opacity 0.15s ease !important;
 }
 
-/* 🌈 依活動種類與舉辦時程區分不同色彩 (Distinct Vibrant Event Background Bands) */
+/* 🌈 依活動種類與舉辦時程區分不同色彩 (全主題相容，亮色暗色均清晰) */
 .news-cal-bg-band.cat-good-sleep {
-  background-color: rgba(245, 158, 11, 0.38) !important;
+  background-color: rgba(245, 158, 11, 0.3) !important;
 }
 
 .news-cal-bg-band.cat-festival {
-  background-color: rgba(234, 88, 12, 0.38) !important;
+  background-color: rgba(234, 88, 12, 0.28) !important;
 }
 
 .news-cal-bg-band.cat-new-moon {
-  background-color: rgba(79, 70, 229, 0.38) !important;
+  background-color: rgba(79, 70, 229, 0.28) !important;
 }
 
 .news-cal-bg-band.cat-collab {
-  background-color: rgba(192, 38, 211, 0.38) !important;
+  background-color: rgba(192, 38, 211, 0.28) !important;
 }
 
 .news-cal-bg-band.cat-pack-growth {
-  background-color: rgba(5, 150, 105, 0.38) !important;
+  background-color: rgba(5, 150, 105, 0.28) !important;
 }
 
 .news-cal-bg-band.cat-pack-bundle {
-  background-color: rgba(8, 145, 178, 0.38) !important;
+  background-color: rgba(8, 145, 178, 0.28) !important;
 }
 
 .news-cal-bg-band.cat-event {
-  background-color: rgba(139, 92, 246, 0.38) !important;
+  background-color: rgba(139, 92, 246, 0.28) !important;
 }
 
 .news-cal-bg-band.cat-update {
-  background-color: rgba(225, 29, 72, 0.38) !important;
+  background-color: rgba(225, 29, 72, 0.28) !important;
 }
 
 /* 邊界圓角連續效果 (貫穿日期背景) */
@@ -13778,6 +13779,51 @@ body.mobile-h5-app.ladder-active,
   color: var(--text-primary) !important;
   padding-bottom: 3px !important;
   border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.06)) !important;
+  gap: 6px !important;
+}
+
+.news-cal-box-title-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  flex: 1 !important;
+}
+
+.news-cal-box-heading {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+.news-cal-box-count {
+  font-size: 10.5px !important;
+  opacity: 0.75 !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+}
+
+.news-cal-toggle-all-btn {
+  background: var(--bg-card-inner, rgba(99, 102, 241, 0.08)) !important;
+  border: 1px solid var(--border-color, rgba(99, 102, 241, 0.25)) !important;
+  color: var(--color-primary, #6366f1) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  padding: 1.5px 7px !important;
+  border-radius: 9999px !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: all 0.15s ease !important;
+  flex-shrink: 0 !important;
+}
+
+.news-cal-toggle-all-btn:hover,
+.news-cal-toggle-all-btn.active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #ffffff !important;
+  border-color: var(--color-primary, #6366f1) !important;
 }
 
 .news-cal-events-scroll-list {
@@ -13803,8 +13849,8 @@ body.mobile-h5-app.ladder-active,
 
 .news-cal-event-item:hover,
 .news-cal-event-item:active {
-  background: rgba(99, 102, 241, 0.15) !important;
-  border-color: rgba(99, 102, 241, 0.5) !important;
+  background: rgba(99, 102, 241, 0.12) !important;
+  border-color: rgba(99, 102, 241, 0.45) !important;
   transform: translateY(-1px);
 }
 
@@ -13825,53 +13871,102 @@ body.mobile-h5-app.ladder-active,
   line-height: 1.1 !important;
 }
 
-/* 🏷️ 活動列表 Badge 多彩標籤 */
+/* 🏷️ 活動列表 Badge 多彩標籤 (亮色主題高可讀性優化) */
 .news-cal-event-badge.badge-good-sleep {
-  background: rgba(245, 158, 11, 0.22) !important;
-  color: #f59e0b !important;
-  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #b45309 !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
 }
 
 .news-cal-event-badge.badge-festival {
-  background: rgba(234, 88, 12, 0.22) !important;
-  color: #ea580c !important;
-  border: 1px solid rgba(234, 88, 12, 0.4) !important;
+  background: rgba(234, 88, 12, 0.15) !important;
+  color: #c2410c !important;
+  border: 1px solid rgba(234, 88, 12, 0.35) !important;
 }
 
 .news-cal-event-badge.badge-new-moon {
-  background: rgba(79, 70, 229, 0.22) !important;
-  color: #818cf8 !important;
-  border: 1px solid rgba(79, 70, 229, 0.4) !important;
+  background: rgba(79, 70, 229, 0.15) !important;
+  color: #4338ca !important;
+  border: 1px solid rgba(79, 70, 229, 0.35) !important;
 }
 
 .news-cal-event-badge.badge-collab {
-  background: rgba(192, 38, 211, 0.22) !important;
-  color: #e879f9 !important;
-  border: 1px solid rgba(192, 38, 211, 0.4) !important;
+  background: rgba(192, 38, 211, 0.15) !important;
+  color: #86198f !important;
+  border: 1px solid rgba(192, 38, 211, 0.35) !important;
 }
 
 .news-cal-event-badge.badge-pack-growth {
-  background: rgba(5, 150, 105, 0.22) !important;
-  color: #34d399 !important;
-  border: 1px solid rgba(5, 150, 105, 0.4) !important;
+  background: rgba(5, 150, 105, 0.15) !important;
+  color: #065f46 !important;
+  border: 1px solid rgba(5, 150, 105, 0.35) !important;
 }
 
 .news-cal-event-badge.badge-pack-bundle {
-  background: rgba(8, 145, 178, 0.22) !important;
-  color: #22d3ee !important;
-  border: 1px solid rgba(8, 145, 178, 0.4) !important;
+  background: rgba(8, 145, 178, 0.15) !important;
+  color: #0e7490 !important;
+  border: 1px solid rgba(8, 145, 178, 0.35) !important;
 }
 
 .news-cal-event-badge.badge-event {
-  background: rgba(139, 92, 246, 0.22) !important;
-  color: #a78bfa !important;
-  border: 1px solid rgba(139, 92, 246, 0.4) !important;
+  background: rgba(109, 40, 217, 0.15) !important;
+  color: #5b21b6 !important;
+  border: 1px solid rgba(109, 40, 217, 0.35) !important;
 }
 
 .news-cal-event-badge.badge-update {
+  background: rgba(225, 29, 72, 0.15) !important;
+  color: #9f1239 !important;
+  border: 1px solid rgba(225, 29, 72, 0.35) !important;
+}
+
+/* 🌙 暗色主題下的 Badge 螢光高亮自適應 */
+html[data-theme="night"] .news-cal-event-badge.badge-good-sleep,
+html[data-theme="obsidian"] .news-cal-event-badge.badge-good-sleep {
+  background: rgba(245, 158, 11, 0.22) !important;
+  color: #f59e0b !important;
+}
+
+html[data-theme="night"] .news-cal-event-badge.badge-festival,
+html[data-theme="obsidian"] .news-cal-event-badge.badge-festival {
+  background: rgba(234, 88, 12, 0.22) !important;
+  color: #fb923c !important;
+}
+
+html[data-theme="night"] .news-cal-event-badge.badge-new-moon,
+html[data-theme="obsidian"] .news-cal-event-badge.badge-new-moon {
+  background: rgba(79, 70, 229, 0.22) !important;
+  color: #a5b4fc !important;
+}
+
+html[data-theme="night"] .news-cal-event-badge.badge-collab,
+html[data-theme="obsidian"] .news-cal-event-badge.badge-collab {
+  background: rgba(192, 38, 211, 0.22) !important;
+  color: #f0abfc !important;
+}
+
+html[data-theme="night"] .news-cal-event-badge.badge-pack-growth,
+html[data-theme="obsidian"] .news-cal-event-badge.badge-pack-growth {
+  background: rgba(5, 150, 105, 0.22) !important;
+  color: #6ee7b7 !important;
+}
+
+html[data-theme="night"] .news-cal-event-badge.badge-pack-bundle,
+html[data-theme="obsidian"] .news-cal-event-badge.badge-pack-bundle {
+  background: rgba(8, 145, 178, 0.22) !important;
+  color: #67e8f9 !important;
+}
+
+html[data-theme="night"] .news-cal-event-badge.badge-event,
+html[data-theme="obsidian"] .news-cal-event-badge.badge-event {
+  background: rgba(139, 92, 246, 0.22) !important;
+  color: #c4b5fd !important;
+}
+
+html[data-theme="night"] .news-cal-event-badge.badge-update,
+html[data-theme="obsidian"] .news-cal-event-badge.badge-update {
   background: rgba(225, 29, 72, 0.22) !important;
-  color: #fb7185 !important;
-  border: 1px solid rgba(225, 29, 72, 0.4) !important;
+  color: #fda4af !important;
 }
 
 .news-cal-event-name {
@@ -14002,16 +14097,18 @@ body.mobile-h5-app.ladder-active,
   margin: 0 !important;
 }
 
+/* 🦄 新登場 / 焦點寶可夢頂部橫條 (無外框、極簡純淨排版) */
 .mobile-h5-app .news-debut-banner,
 .mobile-h5-app .news-featured-banner {
-  padding: 3px 6px !important;
-  border-radius: 6px !important;
-  font-size: 11px !important;
+  padding: 2px 0 !important;
+  border-radius: 0 !important;
+  font-size: 11.5px !important;
   display: flex !important;
   align-items: center !important;
-  gap: 4px !important;
-  background: rgba(99, 102, 241, 0.08) !important;
-  border: 1px solid rgba(99, 102, 241, 0.2) !important;
+  gap: 5px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .mobile-h5-app .news-overview-text {

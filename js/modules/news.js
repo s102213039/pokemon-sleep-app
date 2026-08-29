@@ -214,6 +214,7 @@
   let calCurrentYear = 2026;
   let calCurrentMonth = 7; // 8月 (0-indexed)
   let calSelectedDay = 16; // 8/16 (今日)
+  let calShowAllEvents = false; // 是否展示全部進行中的活動
 
   function renderEventTimeline() {
     if (!newsTimelineContainer) return;
@@ -243,8 +244,6 @@
       }
       ev.trackIndex = assignedTrack;
     });
-
-    const maxTracks = Math.min(3, Math.max(1, trackEndTimes.length));
 
     const monthNames = isEN
       ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -305,14 +304,15 @@
       `);
     }
 
-    // 計算當前選取日期的活動
+    // 計算當前展示的活動 (當日活動 vs 全部進行中活動)
     const selectedDayStart = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 0, 0, 0);
     const selectedDayEnd = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 23, 59, 59);
-    const selectedDateEvents = ganttData.filter(ev => ev.startDate <= selectedDayEnd && ev.endDate >= selectedDayStart);
+    const dayEvents = ganttData.filter(ev => ev.startDate <= selectedDayEnd && ev.endDate >= selectedDayStart);
+    const displayEvents = calShowAllEvents ? ganttData : dayEvents;
 
     let selectedEventsHTML = '';
-    if (selectedDateEvents.length > 0) {
-      selectedEventsHTML = selectedDateEvents.map(ev => `
+    if (displayEvents.length > 0) {
+      selectedEventsHTML = displayEvents.map(ev => `
         <div class="news-cal-event-item cat-${ev.eventCat}" data-event-id="${ev.id}" data-event-title="${escapeHtml(ev.title)}" title="${isEN ? 'Click to search this event' : '點擊直接搜尋此活動'}">
           <div class="news-cal-event-left">
             <span class="news-cal-event-badge badge-${ev.eventCat}">${ev.typeLabel}</span>
@@ -332,6 +332,14 @@
     const selectedDateStr = isEN
       ? `${monthNames[calCurrentMonth]} ${calSelectedDay}${calCurrentYear === 2026 && calCurrentMonth === 7 && calSelectedDay === 16 ? ' (Today)' : ''}`
       : `${calCurrentMonth + 1}月${calSelectedDay}日${calCurrentYear === 2026 && calCurrentMonth === 7 && calSelectedDay === 16 ? ' (今日)' : ''}`;
+
+    const boxTitleText = calShowAllEvents
+      ? (isEN ? `${monthTitle} All Ongoing Events` : `${monthTitle} 全部進行中的活動與禮包`)
+      : (isEN ? `${selectedDateStr} Active Events` : `${selectedDateStr} 進行中的活動與禮包`);
+
+    const toggleBtnText = calShowAllEvents
+      ? (isEN ? `Back to ${calCurrentMonth + 1}/${calSelectedDay}` : `返回 ${calCurrentMonth + 1}月${calSelectedDay}日`)
+      : (isEN ? 'Show All' : '顯示全部進行中');
 
     newsTimelineContainer.innerHTML = `
       <div class="news-calendar-wrapper">
@@ -357,8 +365,13 @@
 
         <div class="news-calendar-events-box">
           <div class="news-cal-box-title-row">
-            <span>${selectedDateStr} ${isEN ? 'Active Events' : '進行中的活動與禮包'}</span>
-            <span style="font-size:10.5px;opacity:0.8;">${selectedDateEvents.length} ${isEN ? 'items' : '項'}</span>
+            <div class="news-cal-box-title-left">
+              <span class="news-cal-box-heading">${boxTitleText}</span>
+              <span class="news-cal-box-count">${displayEvents.length} ${isEN ? 'items' : '項'}</span>
+            </div>
+            <button type="button" class="news-cal-toggle-all-btn ${calShowAllEvents ? 'active' : ''}" title="${isEN ? 'Toggle all active events vs selected date' : '切換展示全部進行中活動 / 當日活動'}">
+              ${toggleBtnText}
+            </button>
           </div>
           <div class="news-cal-events-scroll-list">
             ${selectedEventsHTML}
@@ -371,12 +384,21 @@
     const prevBtn = newsTimelineContainer.querySelector('.prev-btn');
     const nextBtn = newsTimelineContainer.querySelector('.next-btn');
     const todayBtn = newsTimelineContainer.querySelector('.today-btn');
+    const toggleAllBtn = newsTimelineContainer.querySelector('.news-cal-toggle-all-btn');
+
+    if (toggleAllBtn) {
+      toggleAllBtn.addEventListener('click', () => {
+        calShowAllEvents = !calShowAllEvents;
+        renderEventTimeline();
+      });
+    }
 
     if (prevBtn) {
       prevBtn.addEventListener('click', () => {
         if (calCurrentMonth > 0) calCurrentMonth--;
         else { calCurrentYear--; calCurrentMonth = 11; }
         calSelectedDay = 1;
+        calShowAllEvents = false;
         renderEventTimeline();
       });
     }
@@ -395,6 +417,7 @@
         calCurrentYear = 2026;
         calCurrentMonth = 7;
         calSelectedDay = 16;
+        calShowAllEvents = false;
         renderEventTimeline();
       });
     }
@@ -405,6 +428,7 @@
         const day = parseInt(cell.getAttribute('data-day'), 10);
         if (day) {
           calSelectedDay = day;
+          calShowAllEvents = false;
           renderEventTimeline();
         }
       });
