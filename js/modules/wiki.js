@@ -11482,7 +11482,7 @@
           </div>
 
           <!-- 常規食材軌道 (18種食材，依篩選動態縮放) -->
-          ${processedMainTracks.map(({ ing, dishInfo, dishName, ingName, filteredPokemonList, isTrackEmpty }) => {
+          ${processedMainTracks.map(({ ing, dishInfo, dishName, ingName, filteredPokemonList, isTrackEmpty }, trackIdx) => {
             // 計算該軌道最低產量起點，用於畫出前方點狀前導虛線
             let minTrackCount = maxVal;
             filteredPokemonList.forEach(p => {
@@ -11493,9 +11493,11 @@
             });
             if (minTrackCount > maxVal) minTrackCount = minVal;
             const leadPct = getPosPct(minTrackCount);
+            const isTopTrack = trackIdx < 5;
+            const popupDirectionClass = isTopTrack ? 'popup-down' : 'popup-up';
 
             return `
-            <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''}" data-ladder-ing="${ing.id}">
+            <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''}" data-ladder-ing="${ing.id}">
               <div class="ladder-track-header clickable-ing-header" onclick="window.WikiDB.openIngredientRankingModal('${ing.id}')" role="button" tabindex="0" title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isEN ? 'Key Dish: ' : '核心大菜：'}${dishName} · ${isEN ? 'Click to view rankings' : '點擊查看產量排名'}">
                 <div class="ladder-track-ing-main">
                   <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">
@@ -11561,7 +11563,7 @@
                       const alignClass = posPct > 55 ? 'align-right' : (posPct < 22 ? 'align-left' : 'align-center');
 
                       return `
-                        <div class="ladder-node ${isTopNode ? 'node-top1' : ''} ${alignClass} recipe-${v.recipe.toLowerCase()}" 
+                        <div class="ladder-node ${isTopNode ? 'node-top1' : ''} ${alignClass} ${popupDirectionClass} recipe-${v.recipe.toLowerCase()}" 
                              data-pkm-group="${p.name}"
                              data-pkm="${p.name}" 
                              data-recipe="${v.recipe}"

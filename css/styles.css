@@ -8072,16 +8072,17 @@ input[type="number"] {
   z-index: 10000 !important;
 }
 
+/* 🥗 食材天梯榜 - 寶可夢節點浮窗 (Pokemon Node Tooltip) */
 .ladder-node-tooltip {
   position: absolute;
-  bottom: calc(100% + 8px);
+  bottom: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
   background: var(--bg-card-solid);
-  border: 1px solid var(--accent-blue);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 11.5px;
+  padding: 6px 10px;
+  font-size: 11px;
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
@@ -8090,11 +8091,12 @@ input[type="number"] {
   z-index: 999999;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2.5px;
   color: var(--text-primary);
+  max-width: 280px;
 }
 
-/* 智能邊緣防溢出 Tooltip 定位 */
+/* 智能水平對齊 (左、中、右) */
 .ladder-node.align-right .ladder-node-tooltip {
   left: auto !important;
   right: -8px !important;
@@ -8113,49 +8115,66 @@ input[type="number"] {
   transform: translateX(-50%) !important;
 }
 
-/* 第一行與第二行（最靠近頂部邊界）：浮窗改為向下展開，保證永遠在最高層且不被頂部卡片遮蔽裁切 */
-.ladder-track-row:first-of-type .ladder-node-tooltip,
-.ladder-track-row:nth-of-type(2) .ladder-node-tooltip {
-  bottom: auto;
-  top: calc(100% + 8px);
+/* 頂部前 5 行軌道：浮窗改為向下展開，保證永遠在最高層且不被頂部卡片/標題欄遮蔽裁切 */
+.ladder-node.popup-down .ladder-node-tooltip,
+.ladder-track-top .ladder-node-tooltip,
+.ladder-track-row:nth-child(-n+6) .ladder-node-tooltip {
+  bottom: auto !important;
+  top: calc(100% + 6px) !important;
 }
 
-.ladder-track-row:first-of-type .ladder-node.align-right .ladder-node-tooltip,
-.ladder-track-row:nth-of-type(2) .ladder-node.align-right .ladder-node-tooltip {
+.ladder-node.popup-down.align-right .ladder-node-tooltip,
+.ladder-track-top .ladder-node.align-right .ladder-node-tooltip,
+.ladder-track-row:nth-child(-n+6) .ladder-node.align-right .ladder-node-tooltip {
   bottom: auto !important;
-  top: calc(100% + 8px) !important;
+  top: calc(100% + 6px) !important;
   left: auto !important;
   right: -8px !important;
   transform: none !important;
 }
 
-.ladder-track-row:first-of-type .ladder-node.align-left .ladder-node-tooltip,
-.ladder-track-row:nth-of-type(2) .ladder-node.align-left .ladder-node-tooltip {
+.ladder-node.popup-down.align-left .ladder-node-tooltip,
+.ladder-track-top .ladder-node.align-left .ladder-node-tooltip,
+.ladder-track-row:nth-child(-n+6) .ladder-node.align-left .ladder-node-tooltip {
   bottom: auto !important;
-  top: calc(100% + 8px) !important;
+  top: calc(100% + 6px) !important;
   left: -8px !important;
   right: auto !important;
   transform: none !important;
 }
 
-.ladder-node:hover .ladder-node-tooltip {
+.ladder-node.popup-down.align-center .ladder-node-tooltip,
+.ladder-track-top .ladder-node.align-center .ladder-node-tooltip,
+.ladder-track-row:nth-child(-n+6) .ladder-node.align-center .ladder-node-tooltip {
+  bottom: auto !important;
+  top: calc(100% + 6px) !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+}
+
+.ladder-node:hover .ladder-node-tooltip,
+.ladder-node:active .ladder-node-tooltip {
   opacity: 1;
 }
 
 .tooltip-title {
   font-weight: 700;
   color: var(--text-primary);
-  font-size: 12px;
+  font-size: 11.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .tooltip-detail {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text-secondary);
 }
 
 .tooltip-dish-box {
-  margin-top: 4px;
-  padding-top: 4px;
+  margin-top: 2px;
+  padding-top: 2px;
   border-top: 1px dashed var(--border-color);
   display: flex;
   flex-direction: column;
@@ -8163,17 +8182,25 @@ input[type="number"] {
 }
 
 .tooltip-dish-title {
-  font-size: 10.5px;
+  font-size: 10px;
   color: var(--text-secondary);
 }
 
 .tooltip-dish-badge {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 6px;
+  font-size: 9.5px;
+  padding: 1px 5px;
   border-radius: 4px;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   width: fit-content;
+}
+
+.tooltip-note {
+  font-size: 9.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  border-top: 1px solid var(--border-color-subtle);
+  padding-top: 2px;
 }
 
 .dish-badge-full {
@@ -8437,57 +8464,7 @@ input[type="number"] {
   border-color: rgba(234, 179, 8, 0.4);
 }
 
-.ladder-node-tooltip {
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--bg-card-solid);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 11.5px;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  box-shadow: var(--shadow-lg);
-  z-index: 999999;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  color: var(--text-primary);
-}
 
-/* 第一行與第二行（最靠近頂部邊界）：浮窗改為向下展開，保證永遠在最高層且不被頂部卡片遮蔽裁切 */
-.ladder-track-row:first-of-type .ladder-node-tooltip,
-.ladder-track-row:nth-of-type(2) .ladder-node-tooltip {
-  bottom: auto;
-  top: calc(100% + 8px);
-}
-
-.ladder-node:hover .ladder-node-tooltip {
-  opacity: 1;
-}
-
-.tooltip-title {
-  font-weight: 700;
-  color: var(--text-primary);
-  font-size: 12px;
-}
-
-.tooltip-detail {
-  font-size: 11px;
-  color: var(--text-secondary);
-}
-
-.tooltip-note {
-  font-size: 10.5px;
-  color: var(--text-muted);
-  margin-top: 2px;
-  border-top: 1px solid var(--border-color-subtle);
-  padding-top: 2px;
-}
 
 /* 🥗 食材產量天梯榜 - 外部固定側邊篩選器 (Left Fixed Sidebar Filter - Pokédex Style) */
 .ladder-fixed-sidebar {
