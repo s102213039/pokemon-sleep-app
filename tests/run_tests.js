@@ -2437,23 +2437,22 @@ test('Tier 1 - Feature Coverage', 'Pokemon Type Vector SVG Icons Coverage across
   });
 });
 
-test('Tier 1 - Feature Coverage', 'Sidebar Compact Switches Grid & 6-Column Icon Grid Verification', () => {
+test('Tier 1 - Feature Coverage', 'Sidebar Compact Switches Grid & 7-Column Icon Grid Verification', () => {
   const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
   const appHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
   const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
 
-  // Verify desktop index.html preserves original full switch cards
-  assert(indexHtml.includes('👑 僅最終進化'), 'index.html missing 👑 僅最終進化');
-  assert(indexHtml.includes('🥗 僅初始食材'), 'index.html missing 🥗 僅初始食材');
+  // Verify desktop index.html contains clean single-line switch titles
+  assert(indexHtml.includes('僅最終進化'), 'index.html missing 僅最終進化');
+  assert(indexHtml.includes('僅初始食材'), 'index.html missing 僅初始食材');
   assert(indexHtml.includes('顯示編號'), 'index.html missing 顯示編號');
 
   // Verify mobile app/index.html has compact 1-row switches
   assert(appHtml.includes('sidebar-switches-grid'), 'app/index.html missing .sidebar-switches-grid');
   assert(appHtml.includes('sidebar-switch-compact'), 'app/index.html missing .sidebar-switch-compact');
 
-  // Verify CSS contains both desktop 6-column and mobile 7-column grid rules
-  assert(stylesCss.includes('grid-template-columns: repeat(6, 1fr)'), 'styles.css missing desktop 6-column icon grid');
-  assert(stylesCss.includes('grid-template-columns: repeat(7, 1fr)'), 'styles.css missing mobile 7-column icon grid');
+  // Verify CSS contains 7-column icon grid rules
+  assert(stylesCss.includes('grid-template-columns: repeat(7, 1fr)'), 'styles.css missing 7-column icon grid');
 });
 
 test('Tier 1 - Feature Coverage', 'Header Simplification & Sync Data Button in Settings Modal', () => {
