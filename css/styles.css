@@ -1322,7 +1322,7 @@ html[data-theme="nature"] .search-filtering-badge {
   top: 70px;
   left: 0;
   bottom: 0;
-  width: 232px;
+  width: 240px;
   height: calc(100vh - 70px);
   background-color: var(--bg-sidebar);
   background-image: 
@@ -1341,6 +1341,7 @@ html[data-theme="nature"] .search-filtering-badge {
   z-index: 95;
   transform: translateX(0);
   transition: transform 0.25s ease;
+  box-sizing: border-box;
 }
 
 .pokemon-filter-sidebar.collapsed {
@@ -1351,7 +1352,7 @@ html[data-theme="nature"] .search-filtering-badge {
 /* 側邊欄頂部 Header：在頂部導航列下方 */
 .sidebar-header {
   height: 52px;
-  padding: 0 14px;
+  padding: 0 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1361,7 +1362,7 @@ html[data-theme="nature"] .search-filtering-badge {
   -webkit-backdrop-filter: blur(12px);
   flex-shrink: 0;
   box-sizing: border-box;
-  gap: 8px;
+  gap: 6px;
 }
 
 /* 最左側收合箭頭按鈕 */
@@ -1410,12 +1411,13 @@ html[data-theme="nature"] .search-filtering-badge {
   color: #f87171;
   border: 1px solid rgba(239, 68, 68, 0.28);
   border-radius: 6px;
-  padding: 4px 10px;
+  padding: 4px 8px;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
   flex-shrink: 0;
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .sidebar-reset-btn:hover {
@@ -1429,13 +1431,15 @@ html[data-theme="nature"] .search-filtering-badge {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 32px 12px 40px;
+  padding: 32px 10px 40px !important;
   display: flex;
   flex-direction: column;
   gap: 12px;
   background: transparent;
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
 }
 
 /* 👑 側邊欄開關卡片 (Sidebar Switch Cards) */
@@ -1623,55 +1627,65 @@ html[data-theme="nature"] .search-filtering-badge {
   font-weight: 700;
 }
 
-/* 💻 電腦版側邊欄圖標網格 (Desktop 7-Columns) */
+/* 💻 電腦版側邊欄圖標網格 (Desktop 7-Columns 嚴格自適應分配寬度，絕不溢出) */
 .sidebar-icon-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 3px;
-  width: 100%;
-  padding: 2px 0;
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 3px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 2px 0 !important;
+  overflow: hidden !important;
 }
 
 .subfilter-icon-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  background: var(--bg-sidebar-btn);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  cursor: pointer;
-  padding: 2px;
-  transition: all 0.15s ease;
-  position: relative;
-  box-sizing: border-box;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  height: auto !important;
+  background: var(--bg-sidebar-btn) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  padding: 2px !important;
+  margin: 0 !important;
+  transition: all 0.15s ease !important;
+  position: relative !important;
+  box-sizing: border-box !important;
 }
 
 .subfilter-icon-btn:hover {
-  background: var(--bg-sidebar-btn-hover);
-  border-color: rgba(56, 189, 248, 0.4);
+  background: var(--bg-sidebar-btn-hover) !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
 }
 
 .subfilter-icon-btn.active {
-  background: rgba(56, 189, 248, 0.18);
-  border-color: var(--accent-blue, #38bdf8);
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+  background: rgba(56, 189, 248, 0.18) !important;
+  border-color: var(--accent-blue, #38bdf8) !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
 }
 
 [data-theme="dawn"] .subfilter-icon-btn.active,
 [data-theme="emerald"] .subfilter-icon-btn.active {
-  background: rgba(2, 132, 199, 0.15);
-  border-color: var(--accent-blue, #0284c7);
-  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+  background: rgba(2, 132, 199, 0.15) !important;
+  border-color: var(--accent-blue, #0284c7) !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25) !important;
 }
 
 .subfilter-icon-img {
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
-  pointer-events: none;
-  transition: transform 0.15s ease;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 22px !important;
+  max-height: 22px !important;
+  object-fit: contain !important;
+  pointer-events: none !important;
+  transition: transform 0.15s ease !important;
+  flex-shrink: 1 !important;
 }
 
 /* 📱 手機 H5 App 版專用側邊欄圖標網格 (7-Column Enlarged Borderless) */
@@ -3229,42 +3243,50 @@ html[lang="en"] .recipe-name-wrapper,
   width: 100%;
 }
 
-/* 食譜側邊欄食材圖標按鈕（5 列網格，對齊圖鑑樣式） */
+/* 食譜側邊欄食材圖標按鈕（7 列自適應網格，對齊圖鑑樣式） */
 .sidebar-icon-grid .ing-picker-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  background: var(--bg-sidebar-btn);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  cursor: pointer;
-  padding: 3px;
-  box-sizing: border-box;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  height: auto !important;
+  background: var(--bg-sidebar-btn) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  padding: 2px !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.15s ease, background-color 0.15s ease !important;
 }
 
 .sidebar-icon-grid .ing-picker-btn:hover {
-  background: var(--bg-sidebar-btn-hover);
-  border-color: rgba(56, 189, 248, 0.4);
+  background: var(--bg-sidebar-btn-hover) !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
 }
 
 .sidebar-icon-grid .ing-picker-btn.active {
-  background: #0284c7;
-  border-color: #38bdf8;
+  background: #0284c7 !important;
+  border-color: #38bdf8 !important;
 }
 
 .sidebar-icon-grid .ing-picker-btn.active-exclude {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.2) !important;
+  border-color: #ef4444 !important;
 }
 
 .sidebar-icon-grid .ing-picker-btn .ing-picker-icon {
-  width: 22px;
-  height: 22px;
-  object-fit: contain;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 22px !important;
+  max-height: 22px !important;
+  object-fit: contain !important;
+  pointer-events: none !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4)) !important;
+  flex-shrink: 1 !important;
 }
 
 /* 食譜側邊欄滑桿項目 */
@@ -8713,7 +8735,7 @@ input[type="number"] {
   top: 70px;
   left: 0;
   bottom: 0;
-  width: 232px;
+  width: 240px;
   height: calc(100vh - 70px);
   background-color: var(--bg-sidebar);
   background-image: 
