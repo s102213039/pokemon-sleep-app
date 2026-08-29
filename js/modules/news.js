@@ -88,10 +88,12 @@
     if (!text && item.highlights) text = item.highlights.join(' ');
     if (!text) text = item.content_preview || '';
 
-    const m = text.match(/(?:2026\/)?(\d{1,2})\/(\d{1,2})(?:\s*\([^\)]+\))?\s*(?:(\d{1,2}):(\d{2}))?\s*～\s*(?:2026\/)?(\d{1,2})\/(\d{1,2})(?:\s*\([^\)]+\))?\s*(?:(\d{1,2}):(\d{2}))?/);
+    const m = text.match(/(?:(\d{4})\/)?(\d{1,2})\/(\d{1,2})(?:\s*\([^\)]+\))?\s*(?:(\d{1,2}):(\d{2}))?\s*～\s*(?:(\d{4})\/)?(\d{1,2})\/(\d{1,2})(?:\s*\([^\)]+\))?\s*(?:(\d{1,2}):(\d{2}))?/);
     if (m) {
-      const startM = parseInt(m[1], 10), startD = parseInt(m[2], 10), startH = m[3] ? m[3].padStart(2, '0') : '04';
-      const endM = parseInt(m[5], 10), endD = parseInt(m[6], 10), endH = m[7] ? m[7].padStart(2, '0') : '03';
+      const eventYear = m[1] ? parseInt(m[1], 10) : (item.date ? parseInt(item.date.split('/')[0] || item.date.split('-')[0], 10) : _today.getFullYear());
+      const startM = parseInt(m[2], 10), startD = parseInt(m[3], 10), startH = m[4] ? m[4].padStart(2, '0') : '04';
+      const endYear = m[6] ? parseInt(m[6], 10) : eventYear;
+      const endM = parseInt(m[7], 10), endD = parseInt(m[8], 10), endH = m[9] ? m[9].padStart(2, '0') : '03';
       return {
         startMonth: startM,
         startDay: startD,
@@ -101,8 +103,8 @@
         endHour: endH,
         startStr: `${String(startM).padStart(2, '0')}/${String(startD).padStart(2, '0')}`,
         endStr: `${String(endM).padStart(2, '0')}/${String(endD).padStart(2, '0')}`,
-        startDate: new Date(2026, startM - 1, startD, parseInt(startH, 10)),
-        endDate: new Date(2026, endM - 1, endD, parseInt(endH, 10))
+        startDate: new Date(eventYear, startM - 1, startD, parseInt(startH, 10)),
+        endDate: new Date(endYear, endM - 1, endD, parseInt(endH, 10))
       };
     }
     return null;
@@ -111,8 +113,9 @@
   function parseEventTimeline(items) {
     const newsList = items || allNews;
     const ganttItems = [];
-    const baseStart = new Date(2026, 7, 7, 0, 0, 0); // 8月7日
-    const totalDays = 27;
+    // 動態計算當月的起始日與天數 (不再寫死)
+    const baseStart = new Date(calCurrentYear, calCurrentMonth, 1, 0, 0, 0);
+    const totalDays = new Date(calCurrentYear, calCurrentMonth + 1, 0).getDate();
 
     newsList.forEach(item => {
       const isEvent = item.badge_key === 'event' || (item.title && item.title.includes('活動')) || (item.title && item.title.includes('企畫'));
@@ -241,9 +244,10 @@
     });
   }
 
-  let calCurrentYear = 2026;
-  let calCurrentMonth = 7; // 8月 (0-indexed)
-  let calSelectedDay = 16; // 8/16 (今日)
+  const _today = new Date();
+  let calCurrentYear = _today.getFullYear();
+  let calCurrentMonth = _today.getMonth(); // 0-indexed
+  let calSelectedDay = _today.getDate();
   let filterOnlyOngoing = false; // 是否在下方卡片列表只展示進行中的活動
 
   function renderEventTimeline() {
@@ -296,7 +300,7 @@
       const dayStart = new Date(calCurrentYear, calCurrentMonth, d, 0, 0, 0);
       const dayEnd = new Date(calCurrentYear, calCurrentMonth, d, 23, 59, 59);
       const activeEvents = ganttData.filter(ev => ev.startDate <= dayEnd && ev.endDate >= dayStart);
-      const isToday = (calCurrentYear === 2026 && calCurrentMonth === 7 && d === 16);
+      const isToday = (calCurrentYear === _today.getFullYear() && calCurrentMonth === _today.getMonth() && d === _today.getDate());
       const isSelected = (d === calSelectedDay);
 
       // 🌈 每個活動各自的專屬色彩貫穿整格背景 (Full-Cell Background Bands with Per-Event Colors)
@@ -359,9 +363,10 @@
       `;
     }
 
+    const isTodaySelected = (calCurrentYear === _today.getFullYear() && calCurrentMonth === _today.getMonth() && calSelectedDay === _today.getDate());
     const selectedDateStr = isEN
-      ? `${monthNames[calCurrentMonth]} ${calSelectedDay}${calCurrentYear === 2026 && calCurrentMonth === 7 && calSelectedDay === 16 ? ' (Today)' : ''}`
-      : `${calCurrentMonth + 1}月${calSelectedDay}日${calCurrentYear === 2026 && calCurrentMonth === 7 && calSelectedDay === 16 ? ' (今日)' : ''}`;
+      ? `${monthNames[calCurrentMonth]} ${calSelectedDay}${isTodaySelected ? ' (Today)' : ''}`
+      : `${calCurrentMonth + 1}月${calSelectedDay}日${isTodaySelected ? ' (今日)' : ''}`;
 
     newsTimelineContainer.innerHTML = `
       <div class="news-calendar-wrapper">
@@ -445,9 +450,9 @@
 
     if (todayBtn) {
       todayBtn.addEventListener('click', () => {
-        calCurrentYear = 2026;
-        calCurrentMonth = 7;
-        calSelectedDay = 16;
+        calCurrentYear = _today.getFullYear();
+        calCurrentMonth = _today.getMonth();
+        calSelectedDay = _today.getDate();
         renderEventTimeline();
       });
     }
