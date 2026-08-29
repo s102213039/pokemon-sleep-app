@@ -10109,26 +10109,26 @@
       }
     }
     const ladderSidebar = document.getElementById('ladder-filter-sidebar');
-    const ladderFab = document.getElementById('ladder-sidebar-bookmark-handle');
+    const ladderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
     const ladderBackdrop = document.getElementById('ladder-sidebar-backdrop');
 
     if (ladderSidebar) {
-      if (isMobileH5) {
-        if (targetTab === 'ingredients') {
-          ladderSidebar.style.display = 'flex';
-          ladderSidebar.classList.add('collapsed');
-          if (ladderFab) ladderFab.style.display = 'flex';
-          updateLadderActiveFilterBadge();
+      if (targetTab === 'ingredients') {
+        ladderSidebar.style.display = 'flex';
+        const isLadderOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_ladder_sidebar_open', true) : true;
+        if (isLadderOpen) {
+          ladderSidebar.classList.remove('collapsed');
+          if (isMobileH5 && window.innerWidth <= 1024 && ladderBackdrop) ladderBackdrop.classList.add('active');
         } else {
           ladderSidebar.classList.add('collapsed');
-          ladderSidebar.style.display = 'none';
-          if (ladderFab) ladderFab.style.display = 'none';
           if (ladderBackdrop) ladderBackdrop.classList.remove('active');
         }
+        if (ladderHandle) ladderHandle.style.display = '';
+        updateLadderActiveFilterBadge();
       } else {
-        ladderSidebar.style.display = (targetTab === 'ingredients') ? 'flex' : 'none';
-        ladderSidebar.classList.remove('collapsed');
-        if (targetTab === 'ingredients') updateLadderActiveFilterBadge();
+        ladderSidebar.style.display = 'none';
+        if (ladderHandle) ladderHandle.style.display = 'none';
+        if (ladderBackdrop) ladderBackdrop.classList.remove('active');
       }
     }
   }
@@ -10140,8 +10140,11 @@
       sidebar.classList.remove('collapsed');
       sidebar.style.setProperty('display', 'flex', 'important');
     }
-    if (backdrop) {
+    if (backdrop && window.innerWidth <= 1024) {
       backdrop.classList.add('active');
+    }
+    if (typeof window.setSidebarSavedState === 'function') {
+      window.setSidebarSavedState('pksleep_ladder_sidebar_open', true);
     }
   }
 
@@ -10153,6 +10156,21 @@
     }
     if (backdrop) {
       backdrop.classList.remove('active');
+    }
+    if (typeof window.setSidebarSavedState === 'function') {
+      window.setSidebarSavedState('pksleep_ladder_sidebar_open', false);
+    }
+  }
+
+  function toggleLadderSidebar(forceState) {
+    const sidebar = document.getElementById('ladder-filter-sidebar');
+    if (!sidebar) return;
+    const isCollapsed = sidebar.classList.contains('collapsed');
+    const shouldCollapse = forceState !== undefined ? !forceState : !isCollapsed;
+    if (shouldCollapse) {
+      closeLadderSidebar();
+    } else {
+      openLadderSidebar();
     }
   }
 
@@ -12160,15 +12178,17 @@
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
 
     container.innerHTML = `
-      <!-- 天梯專屬側邊篩選器 (Mobile: 抽屜式 / Desktop: 左側固定) -->
-      <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${isMobileH5 ? 'collapsed' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Ladder Filters' : '天梯篩選器'}">
+      <!-- 天梯專屬側邊篩選器 (Mobile: 抽屜式 / Desktop: 左側滑動) -->
+      <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Ladder Filters' : '天梯篩選器'}">
+        <!-- 🔖 側邊欄垂直中央書籤標籤 (Vertically Centered Bookmark Drawer Handle) -->
+        <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleLadderSidebar()" title="${isEN ? 'Toggle Ladder Filters' : '切換天梯篩選側邊欄'}" aria-label="${isEN ? 'Toggle Ladder Filters' : '切換天梯篩選側邊欄'}">
+          <span class="bookmark-text">${isEN ? 'Filter' : '篩選'}</span>
+          <span class="bookmark-arrow">◀</span>
+          <span id="ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
+        </button>
+
         <div class="sidebar-header">
-          <button type="button" id="ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.closeLadderSidebar()" title="${isEN ? 'Close' : '收合'}" aria-label="${isEN ? 'Close' : '收合'}">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
+          <button type="button" id="ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.closeLadderSidebar()" title="${isEN ? 'Close' : '收合側邊欄'}" aria-label="${isEN ? 'Close' : '收合側邊欄'}">◀</button>
           <div class="sidebar-title-group">
             <span class="sidebar-title">${isEN ? 'Ladder Filters' : '天梯篩選器'}</span>
           </div>
@@ -12452,24 +12472,6 @@
 
         <!-- 子分頁 3：食材產量天梯榜 (Ingredient Yield Ladder) -->
         <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? '' : 'display:none;'}">
-          <!-- 右下懸浮天梯篩選按鈕 (Mobile Only FAB) -->
-          <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Open Filters' : '展開天梯篩選器'}" aria-label="${isEN ? 'Open Filters' : '展開天梯篩選器'}" style="${isMobileH5 && currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
-            <span class="bookmark-icon">
-              <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="21" x2="4" y2="14"></line>
-                <line x1="4" y1="10" x2="4" y2="3"></line>
-                <line x1="12" y1="21" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12" y2="3"></line>
-                <line x1="20" y1="21" x2="20" y2="16"></line>
-                <line x1="20" y1="12" x2="20" y2="3"></line>
-                <line x1="1" y1="14" x2="7" y2="14"></line>
-                <line x1="9" y1="8" x2="15" y2="8"></line>
-                <line x1="17" y1="16" x2="23" y2="16"></line>
-              </svg>
-            </span>
-            <span id="ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
-          </button>
-
           <!-- 橫向視覺天梯座標圖 (預設顯示) -->
           <div id="wiki-ingredient-ladder-coordinate">
             ${renderCoordinateLadder(LV60_COORDINATE_LADDER_DATA)}
@@ -12663,6 +12665,7 @@
     recalcSleepDays: recalcSleepDays,
     openLadderSidebar: openLadderSidebar,
     closeLadderSidebar: closeLadderSidebar,
+    toggleLadderSidebar: toggleLadderSidebar,
     openIngredientRankingModal: openIngredientRankingModal,
     closeIngredientRankingModal: closeIngredientRankingModal,
     updateLadderActiveFilterBadge: updateLadderActiveFilterBadge,
@@ -12676,6 +12679,7 @@
   // 同步掛載至 window 根層級以防止任何命名空間呼叫錯誤
   window.switchWikiSubTab = switchWikiSubTab;
   window.getCurrentSubTab = getCurrentSubTab;
+  window.toggleLadderSidebar = toggleLadderSidebar;
   window.switchLadderView = switchLadderView;
   window.filterWikiSkills = filterWikiSkills;
   window.filterWikiIngredients = filterWikiIngredients;

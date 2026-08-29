@@ -1011,6 +1011,25 @@ if (typeof document !== 'undefined') {
 
       if (!tabPokemon || !tabRecipes || !panelPokemon || !panelRecipes) return;
 
+      /* ─── 💾 側邊欄展開/收合狀態持久化管理 (Sidebar Open/Collapsed State Persistence) ─── */
+      function getSidebarSavedState(key, defaultOpen = true) {
+        try {
+          const saved = sessionStorage.getItem(key);
+          if (saved !== null) return saved === 'true';
+        } catch (e) {}
+        const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+        return isMobileH5 ? false : defaultOpen;
+      }
+
+      function setSidebarSavedState(key, isOpen) {
+        try {
+          sessionStorage.setItem(key, isOpen ? 'true' : 'false');
+        } catch (e) {}
+      }
+
+      window.getSidebarSavedState = getSidebarSavedState;
+      window.setSidebarSavedState = setSidebarSavedState;
+
       function switchMainTab(target) {
         // 移除所有 tab active 狀態
         [tabPokemon, tabRecipes, tabWiki, tabBox, tabNews].forEach(t => t && t.classList.remove('active'));
@@ -1028,53 +1047,25 @@ if (typeof document !== 'undefined') {
         const ladderBackdrop = document.getElementById('ladder-sidebar-backdrop');
         const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
 
-        // 預設關閉非當前分頁的側邊欄
+        // 隱藏非當前分頁的側邊欄 DOM（不覆寫其內部 collapsed 記憶狀態）
         if (target !== 'recipes') {
           if (recipeBookmarkHandle) recipeBookmarkHandle.style.display = 'none';
-          if (recipeSidebar) {
-            recipeSidebar.classList.add('collapsed');
-            recipeSidebar.style.display = 'none';
-          }
+          if (recipeSidebar) recipeSidebar.style.display = 'none';
           if (recipeBackdrop) recipeBackdrop.classList.remove('active');
         }
 
         if (target !== 'pokemon') {
           if (isMobileH5) document.body.classList.remove('pokemon-active');
           if (bookmarkHandle) bookmarkHandle.style.display = 'none';
-          if (filterSidebar) {
-            filterSidebar.classList.add('collapsed');
-            filterSidebar.style.display = 'none';
-          }
+          if (filterSidebar) filterSidebar.style.display = 'none';
           if (backdrop) backdrop.classList.remove('active');
         }
 
         if (target !== 'wiki') {
           if (isMobileH5) document.body.classList.remove('ladder-active');
           if (ladderBookmarkHandle) ladderBookmarkHandle.style.display = 'none';
-          if (ladderSidebar) {
-            ladderSidebar.classList.add('collapsed');
-            ladderSidebar.style.display = 'none';
-          }
+          if (ladderSidebar) ladderSidebar.style.display = 'none';
           if (ladderBackdrop) ladderBackdrop.classList.remove('active');
-        } else {
-          const isIng = window.WikiDB && window.WikiDB.getCurrentSubTab && window.WikiDB.getCurrentSubTab() === 'ingredients';
-          if (isMobileH5) {
-            if (isIng) {
-              document.body.classList.add('ladder-active');
-            } else {
-              document.body.classList.remove('ladder-active');
-            }
-          }
-          if (ladderSidebar) {
-            if (isMobileH5) {
-              ladderSidebar.style.display = isIng ? 'flex' : 'none';
-              ladderSidebar.classList.add('collapsed');
-              if (ladderBookmarkHandle) ladderBookmarkHandle.style.display = isIng ? 'flex' : 'none';
-            } else {
-              ladderSidebar.style.display = isIng ? 'flex' : 'none';
-              ladderSidebar.classList.remove('collapsed');
-            }
-          }
         }
 
         if (target === 'news' && panelNews && tabNews) {
@@ -1101,13 +1092,48 @@ if (typeof document !== 'undefined') {
           if (window.WikiDB && typeof window.WikiDB.init === 'function') {
             try { window.WikiDB.init(); } catch (e) { console.error('WikiDB.init error:', e); }
           }
+          const isIng = window.WikiDB && window.WikiDB.getCurrentSubTab && window.WikiDB.getCurrentSubTab() === 'ingredients';
+          if (isMobileH5) {
+            if (isIng) {
+              document.body.classList.add('ladder-active');
+            } else {
+              document.body.classList.remove('ladder-active');
+            }
+          }
+          if (ladderSidebar) {
+            if (isIng) {
+              ladderSidebar.style.display = 'flex';
+              const isLadderOpen = getSidebarSavedState('pksleep_ladder_sidebar_open', true);
+              if (isLadderOpen) {
+                ladderSidebar.classList.remove('collapsed');
+                if (isMobileH5 && window.innerWidth <= 1024 && ladderBackdrop) ladderBackdrop.classList.add('active');
+              } else {
+                ladderSidebar.classList.add('collapsed');
+                if (ladderBackdrop) ladderBackdrop.classList.remove('active');
+              }
+            } else {
+              ladderSidebar.style.display = 'none';
+            }
+          }
+          if (ladderBookmarkHandle) ladderBookmarkHandle.style.display = isIng ? '' : 'none';
+
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#wiki');
           }
         } else if (target === 'recipes' && panelRecipes && tabRecipes) {
           tabRecipes.classList.add('active');
           panelRecipes.style.display = 'block';
-          if (recipeSidebar) recipeSidebar.style.display = 'flex';
+          if (recipeSidebar) {
+            recipeSidebar.style.display = 'flex';
+            const isRecipeOpen = getSidebarSavedState('pksleep_recipe_sidebar_open', true);
+            if (isRecipeOpen) {
+              recipeSidebar.classList.remove('collapsed');
+              if (isMobileH5 && window.innerWidth <= 1024 && recipeBackdrop) recipeBackdrop.classList.add('active');
+            } else {
+              recipeSidebar.classList.add('collapsed');
+              if (recipeBackdrop) recipeBackdrop.classList.remove('active');
+            }
+          }
           if (recipeBookmarkHandle) recipeBookmarkHandle.style.display = '';
           if (window.RecipesApp && typeof window.RecipesApp.render === 'function') {
             try { window.RecipesApp.render(); } catch (e) {}
@@ -1119,7 +1145,17 @@ if (typeof document !== 'undefined') {
           if (isMobileH5) document.body.classList.add('pokemon-active');
           tabPokemon.classList.add('active');
           panelPokemon.style.display = 'block';
-          if (filterSidebar) filterSidebar.style.display = 'flex';
+          if (filterSidebar) {
+            filterSidebar.style.display = 'flex';
+            const isDexOpen = getSidebarSavedState('pksleep_dex_sidebar_open', true);
+            if (isDexOpen) {
+              filterSidebar.classList.remove('collapsed');
+              if (isMobileH5 && window.innerWidth <= 1024 && backdrop) backdrop.classList.add('active');
+            } else {
+              filterSidebar.classList.add('collapsed');
+              if (backdrop) backdrop.classList.remove('active');
+            }
+          }
           if (bookmarkHandle) bookmarkHandle.style.display = '';
           if (window.PokemonApp && typeof window.PokemonApp.render === 'function') {
             try { window.PokemonApp.render(); } catch (e) {}
@@ -1566,6 +1602,7 @@ if (typeof document !== 'undefined') {
             bookmarkHandle.setAttribute('aria-expanded', 'false');
             bookmarkHandle.title = '展開篩選側邊欄';
           }
+          setSidebarSavedState('pksleep_dex_sidebar_open', false);
         } else {
           sidebar.classList.remove('collapsed');
           if (window.innerWidth <= 1024 && backdrop) {
@@ -1575,6 +1612,17 @@ if (typeof document !== 'undefined') {
             bookmarkHandle.setAttribute('aria-expanded', 'true');
             bookmarkHandle.title = '收合篩選側邊欄';
           }
+          setSidebarSavedState('pksleep_dex_sidebar_open', true);
+        }
+      }
+
+      // 依暫存狀態初始化側邊欄展開/收合
+      const initialDexOpen = getSidebarSavedState('pksleep_dex_sidebar_open', true);
+      if (sidebar) {
+        if (initialDexOpen) {
+          sidebar.classList.remove('collapsed');
+        } else {
+          sidebar.classList.add('collapsed');
         }
       }
 

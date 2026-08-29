@@ -735,15 +735,45 @@
 
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
 
-    function toggleRecipeSidebar() {
+    function toggleRecipeSidebar(forceState) {
       if (!sidebar) return;
-      sidebar.classList.toggle('collapsed');
-      if (backdrop) {
-        if (!sidebar.classList.contains('collapsed')) {
-          backdrop.classList.add('active');
-        } else {
-          backdrop.classList.remove('active');
+      const isCurrentlyCollapsed = sidebar.classList.contains('collapsed');
+      const shouldCollapse = forceState !== undefined ? !forceState : !isCurrentlyCollapsed;
+
+      if (shouldCollapse) {
+        sidebar.classList.add('collapsed');
+        if (backdrop) backdrop.classList.remove('active');
+        if (typeof window.setSidebarSavedState === 'function') {
+          window.setSidebarSavedState('pksleep_recipe_sidebar_open', false);
         }
+      } else {
+        sidebar.classList.remove('collapsed');
+        if (window.innerWidth <= 1024 && backdrop) {
+          backdrop.classList.add('active');
+        }
+        if (typeof window.setSidebarSavedState === 'function') {
+          window.setSidebarSavedState('pksleep_recipe_sidebar_open', true);
+        }
+      }
+    }
+
+    // 依暫存狀態初始化食譜側邊欄展開/收合
+    const initialRecipeOpen = (function() {
+      if (typeof window.getSidebarSavedState === 'function') {
+        return window.getSidebarSavedState('pksleep_recipe_sidebar_open', true);
+      }
+      try {
+        const saved = sessionStorage.getItem('pksleep_recipe_sidebar_open');
+        if (saved !== null) return saved === 'true';
+      } catch (e) {}
+      return isMobileH5 ? false : true;
+    })();
+
+    if (sidebar) {
+      if (initialRecipeOpen) {
+        sidebar.classList.remove('collapsed');
+      } else {
+        sidebar.classList.add('collapsed');
       }
     }
 
@@ -762,16 +792,14 @@
     if (closeBtn && sidebar && !closeBtn._hasListener) {
       closeBtn._hasListener = true;
       closeBtn.addEventListener('click', () => {
-        sidebar.classList.add('collapsed');
-        if (backdrop) backdrop.classList.remove('active');
+        toggleRecipeSidebar(false);
       });
     }
 
     if (backdrop && sidebar && !backdrop._hasListener) {
       backdrop._hasListener = true;
       backdrop.addEventListener('click', () => {
-        sidebar.classList.add('collapsed');
-        backdrop.classList.remove('active');
+        toggleRecipeSidebar(false);
       });
     }
 
