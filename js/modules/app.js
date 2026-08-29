@@ -1052,7 +1052,6 @@ if (typeof document !== 'undefined') {
         const recipeBookmarkHandle = document.getElementById('recipe-sidebar-bookmark-handle');
         const recipeBackdrop = document.getElementById('recipe-sidebar-backdrop');
         const ladderSidebar = document.getElementById('ladder-filter-sidebar');
-        const ladderBookmarkHandle = document.getElementById('ladder-sidebar-bookmark-handle');
         const ladderBackdrop = document.getElementById('ladder-sidebar-backdrop');
         const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
 
@@ -1072,7 +1071,8 @@ if (typeof document !== 'undefined') {
 
         if (target !== 'wiki') {
           if (isMobileH5) document.body.classList.remove('ladder-active');
-          if (ladderBookmarkHandle) ladderBookmarkHandle.style.display = 'none';
+          const curLadderHandle = document.getElementById('ladder-sidebar-bookmark-handle-fab') || document.getElementById('ladder-sidebar-bookmark-handle');
+          if (curLadderHandle) curLadderHandle.style.display = 'none';
           if (ladderSidebar) ladderSidebar.style.display = 'none';
           if (ladderBackdrop) ladderBackdrop.classList.remove('active');
         }
@@ -1125,7 +1125,8 @@ if (typeof document !== 'undefined') {
               if (ladderBackdrop) ladderBackdrop.classList.remove('active');
             }
           }
-          if (ladderBookmarkHandle) ladderBookmarkHandle.style.display = isIng ? '' : 'none';
+          const curLadderHandle = document.getElementById('ladder-sidebar-bookmark-handle-fab') || document.getElementById('ladder-sidebar-bookmark-handle');
+          if (curLadderHandle) curLadderHandle.style.display = isIng ? 'flex' : 'none';
 
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#wiki');

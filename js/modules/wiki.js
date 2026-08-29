@@ -10122,13 +10122,18 @@
           ladderSidebar.classList.add('collapsed');
           if (ladderBackdrop) ladderBackdrop.classList.remove('active');
         }
-        if (ladderHandle) ladderHandle.style.display = '';
-        updateLadderActiveFilterBadge();
       } else {
         ladderSidebar.style.display = 'none';
         ladderSidebar.classList.add('collapsed');
-        if (ladderHandle) ladderHandle.style.display = 'none';
         if (ladderBackdrop) ladderBackdrop.classList.remove('active');
+      }
+    }
+
+    const ladderFab = document.getElementById('ladder-sidebar-bookmark-handle-fab') || document.getElementById('ladder-sidebar-bookmark-handle');
+    if (ladderFab) {
+      ladderFab.style.display = (targetTab === 'ingredients') ? 'flex' : 'none';
+      if (targetTab === 'ingredients') {
+        updateLadderActiveFilterBadge();
       }
     }
   }
@@ -10553,7 +10558,7 @@
   }
 
   function updateLadderActiveFilterBadge() {
-    const badge = document.getElementById('ladder-sidebar-bookmark-badge');
+    const badges = document.querySelectorAll('#ladder-sidebar-bookmark-badge, #ladder-sidebar-bookmark-badge-fab');
     let count = 0;
     if (ladderSearchQuery && ladderSearchQuery.trim()) count++;
     if (ladderSupplyFilter && ladderSupplyFilter !== 'ALL') count++;
@@ -10562,14 +10567,14 @@
     if (isLadderIngM || isLadderIngS || isLadderSpeedM || isLadderSpeedS) count++;
     if (ladderNature && ladderNature !== 'NONE') count++;
 
-    if (badge) {
+    badges.forEach(badge => {
       if (count > 0) {
         badge.textContent = count;
         badge.style.display = 'inline-flex';
       } else {
         badge.style.display = 'none';
       }
-    }
+    });
   }
 
   function refreshCoordinateLadder() {
@@ -11281,6 +11286,12 @@
 
     try {
       renderWikiLayout(wikiContainer);
+      const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+      const ladderFab = document.getElementById('ladder-sidebar-bookmark-handle-fab') || document.getElementById('ladder-sidebar-bookmark-handle');
+      if (ladderFab && typeof window.makeFloatingDraggable === 'function' && isMobileH5 && !ladderFab._hasDraggable) {
+        ladderFab._hasDraggable = true;
+        window.makeFloatingDraggable(ladderFab, () => openLadderSidebar());
+      }
     } catch (e) {
       console.error('Error rendering Wiki layout:', e);
       if (typeof window.__renderInPlaceError === 'function') {
@@ -12472,6 +12483,24 @@
 
         <!-- 子分頁 3：食材產量天梯榜 (Ingredient Yield Ladder) -->
         <div id="wiki-subpanel-ingredients" class="wiki-subpanel ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" style="${currentWikiSubTab === 'ingredients' ? '' : 'display:none;'}">
+          <!-- 🎛️ 右下懸浮天梯篩選按鈕 (Mobile Only Draggable FAB) -->
+          <button type="button" id="ladder-sidebar-bookmark-handle-fab" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Open Filters' : '展開天梯篩選器'}" aria-label="${isEN ? 'Open Filters' : '展開天梯篩選器'}" style="${isMobileH5 && currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
+            <span class="bookmark-icon">
+              <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"></line>
+                <line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line>
+                <line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line>
+                <line x1="9" y1="8" x2="15" y2="8"></line>
+                <line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+            </span>
+            <span id="ladder-sidebar-bookmark-badge-fab" class="sidebar-bookmark-badge" style="display:none;"></span>
+          </button>
+
           <!-- 橫向視覺天梯座標圖 (預設顯示) -->
           <div id="wiki-ingredient-ladder-coordinate">
             ${renderCoordinateLadder(LV60_COORDINATE_LADDER_DATA)}
