@@ -10151,23 +10151,56 @@ input[type="number"] {
   }
 }
 
-/* ─── 📱 H5 App 極簡規範設定彈窗 (App-Native Settings Modal) ─── */
+/* ─── 📱 H5 App 極簡規範設定彈窗 (App-Native Compact Settings Modal) ─── */
 .app-settings-dialog {
-  max-width: 440px !important;
-  width: calc(100% - 24px) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.75), 0 0 24px rgba(56, 189, 248, 0.2) !important;
+  max-width: 380px !important;
+  width: calc(100% - 32px) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 16px rgba(56, 189, 248, 0.15) !important;
+}
+
+.settings-modal-header {
+  padding: 10px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.settings-modal-title {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 0 !important;
+}
+
+.settings-modal-close-btn {
+  width: 26px !important;
+  height: 26px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  background: var(--bg-card, rgba(255, 255, 255, 0.08)) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-muted) !important;
+  cursor: pointer !important;
+  padding: 0 !important;
 }
 
 .app-settings-body {
-  padding: 16px 18px !important;
-  gap: 16px !important;
+  padding: 10px 14px 12px !important;
+  gap: 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 .app-settings-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .app-group-header {
@@ -10177,17 +10210,17 @@ input[type="number"] {
 }
 
 .app-group-title {
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  color: var(--text-secondary);
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2px !important;
+  color: var(--text-secondary) !important;
 }
 
-/* 2x2 極簡主題色塊網格 */
+/* 2x2 極簡主題色塊網格 (Compact 2x2 Grid) */
 .app-theme-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: 6px !important;
 }
 
 .app-theme-chip {
@@ -10195,15 +10228,15 @@ input[type="number"] {
   flex-direction: row !important;
   align-items: center !important;
   justify-content: flex-start !important;
-  gap: 8px !important;
-  padding: 10px 12px !important;
+  gap: 6px !important;
+  padding: 6px 10px !important;
   background: var(--bg-card-inner, rgba(15, 23, 42, 0.65)) !important;
-  border: 1.5px solid var(--border-color) !important;
-  border-radius: 12px !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
   color: var(--text-main) !important;
   cursor: pointer !important;
   transition: all 0.15s ease !important;
-  font-size: 13px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
 }
 
@@ -10212,11 +10245,11 @@ input[type="number"] {
 }
 
 .app-theme-chip .theme-chip-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 11px !important;
+  height: 11px !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 .app-theme-chip .theme-chip-label {
@@ -10228,7 +10261,7 @@ input[type="number"] {
 }
 
 .app-theme-chip .theme-chip-check {
-  font-size: 12px;
+  font-size: 11px !important;
   color: var(--accent-blue, #38bdf8);
   opacity: 0;
   transition: opacity 0.15s ease;
@@ -10249,10 +10282,10 @@ input[type="number"] {
 .app-segmented-lang {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4px;
+  gap: 3px !important;
   background: var(--bg-card-inner, rgba(15, 23, 42, 0.65));
-  padding: 4px;
-  border-radius: 12px;
+  padding: 3px !important;
+  border-radius: 8px !important;
   border: 1px solid var(--border-color);
 }
 
@@ -10260,13 +10293,13 @@ input[type="number"] {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 6px !important;
-  padding: 8px 10px !important;
-  border-radius: 8px !important;
+  gap: 4px !important;
+  padding: 5px 8px !important;
+  border-radius: 6px !important;
   border: none !important;
   background: transparent !important;
   color: var(--text-secondary) !important;
-  font-size: 13px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
   transition: all 0.15s ease !important;
@@ -10276,36 +10309,36 @@ input[type="number"] {
   background: var(--accent-gradient, linear-gradient(135deg, #0284c7, #38bdf8)) !important;
   color: #ffffff !important;
   font-weight: 700 !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
 }
 
 /* 緊湊資料同步卡片 */
 .app-sync-card {
   background: var(--bg-card-inner, rgba(15, 23, 42, 0.65));
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: 8px !important;
+  padding: 8px 10px !important;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 7px !important;
 }
 
 .app-sync-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
 }
 
 .app-sync-info {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .app-sync-label {
-  font-size: 13px;
+  font-size: 12px !important;
   font-weight: 700;
   color: var(--text-primary) !important;
   white-space: nowrap;
@@ -10313,26 +10346,26 @@ input[type="number"] {
 
 .app-sync-dot {
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: 10px;
   user-select: none;
 }
 
 .app-sync-status {
-  font-size: 11.5px;
+  font-size: 11px !important;
   color: var(--text-muted);
   white-space: nowrap;
 }
 
 .app-sync-action-btn {
-  padding: 6px 14px;
+  padding: 4px 10px !important;
   background: var(--accent-gradient, linear-gradient(135deg, #0284c7, #38bdf8));
   color: #ffffff !important;
   border: none;
-  border-radius: 8px;
-  font-size: 12.5px;
+  border-radius: 6px !important;
+  font-size: 11.5px !important;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
   transition: transform 0.15s ease, opacity 0.15s ease;
   white-space: nowrap;
 }
@@ -10343,27 +10376,31 @@ input[type="number"] {
 
 .app-token-row {
   display: flex;
-  gap: 6px;
+  gap: 5px !important;
 }
 
 .app-token-input {
   flex: 1;
   background: var(--bg-input, #0f172a);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 7px 10px;
+  border-radius: 6px !important;
+  padding: 4px 8px !important;
+  height: 28px !important;
+  box-sizing: border-box !important;
   color: var(--text-main);
-  font-size: 12px;
+  font-size: 11px !important;
   outline: none;
 }
 
 .app-token-save-btn {
-  padding: 7px 12px;
+  padding: 0 10px !important;
+  height: 28px !important;
+  box-sizing: border-box !important;
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-main);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 12px;
+  border-radius: 6px !important;
+  font-size: 11px !important;
   font-weight: 600;
   cursor: pointer;
 }
@@ -10646,9 +10683,9 @@ body.mobile-h5-surface {
 .mobile-header-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   z-index: 2;
-  margin-right: 0;
+  margin-right: -2px;
 }
 
 .mobile-header-btn.settings-btn,
@@ -10656,13 +10693,15 @@ body.mobile-h5-surface {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
+  width: 32px;
+  height: 32px;
+  padding: 4px;
   border-radius: 8px;
   font-size: 0;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  color: var(--text-primary);
+  color: var(--text-secondary, #64748b);
   cursor: pointer;
   line-height: 1;
   transition: transform 0.15s ease, opacity 0.15s ease, color 0.15s ease;
@@ -10675,16 +10714,14 @@ body.mobile-h5-surface {
 }
 
 .mobile-header-btn.settings-btn .header-svg-icon {
-  width: 22px;
-  height: 22px;
-  stroke: var(--text-primary);
+  width: 18px;
+  height: 18px;
+  stroke: var(--text-secondary, #64748b);
+  transition: stroke 0.2s ease;
 }
 
-/* ─── 🎛️ H5 App 搜尋欄頂部舒適間距 ─── */
-.mobile-h5-app .pokemon-main-content .controls-container,
-.mobile-h5-app .recipe-main-content .controls-container {
-  margin-top: 12px !important;
-  margin-bottom: 10px !important;
+.mobile-header-btn.settings-btn:hover .header-svg-icon {
+  stroke: var(--text-primary);
 }
 
 /* ─── ⚡ H5 App 圖鑑 Tab 專屬：精準適配螢幕視窗（非無限延伸），表頭吸頂置頂，底部直接在螢幕內呈現 ─── */
@@ -10717,7 +10754,7 @@ body.mobile-h5-app.pokemon-active,
 .mobile-h5-app.pokemon-active .pokemon-main-content .controls-container {
   flex-shrink: 0 !important;
   position: relative !important;
-  margin: 12px 12px 8px !important;
+  margin: 10px 12px 6px !important;
   padding: 0 !important;
   width: calc(100% - 24px) !important;
   box-sizing: border-box !important;
@@ -10788,7 +10825,7 @@ body.mobile-h5-app.pokemon-active,
   position: sticky !important;
   top: calc(52px + env(safe-area-inset-top, 0px)) !important;
   z-index: 80 !important;
-  margin: 10px 12px 10px !important;
+  margin: 10px 12px 6px !important;
   padding: 0 !important;
   width: calc(100% - 24px) !important;
   box-sizing: border-box !important;
