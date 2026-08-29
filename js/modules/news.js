@@ -595,14 +595,6 @@
         `;
       }
 
-      const previewHTML = item.content_preview
-        ? `
-          <div id="preview-${item.id}" class="news-preview-collapse expanded">
-            <div class="news-preview-content">${escapeHtml(item.content_preview).replace(/\n/g, '<br>')}</div>
-          </div>
-        `
-        : '';
-
       const categoryLabels = {
         event: isEN ? 'Event' : '活動企劃',
         update: isEN ? 'Update' : '版本更新',
@@ -634,10 +626,8 @@
 
           <p class="news-overview-text">${escapeHtml(displayOverview || '')}</p>
 
-          <div class="news-accordion-body" style="${isExpanded ? 'display: block;' : 'display: none;'}">
+          <div class="news-accordion-body">
             ${aiSectionsHTML}
-
-            ${previewHTML}
 
             <div class="news-card-footer">
               <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-read-more-btn" onclick="event.stopPropagation()">
