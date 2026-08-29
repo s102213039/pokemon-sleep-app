@@ -155,52 +155,52 @@
         eventCat = 'good-sleep';
         typeLabel = isEN ? 'Good Sleep Pack' : '好眠限定包';
         typeClass = 'gantt-bar-pack';
-        typeColor = '#eab308'; // 陽光金黃 (Sun Yellow)
+        typeColor = '#f59e0b'; // 滿月曜石琥珀金
       } else if (titleLower.includes('好眠日') || titleLower.includes('good sleep')) {
         eventCat = 'good-sleep';
         typeLabel = isEN ? 'Good Sleep Day' : '好眠日';
         typeClass = 'gantt-bar-event';
-        typeColor = '#f59e0b'; // 滿月琥珀金 (Amber Gold)
+        typeColor = '#eab308'; // 陽光純金黃
       } else if (titleLower.includes('新月日限定包')) {
         eventCat = 'new-moon';
         typeLabel = isEN ? 'New Moon Pack' : '新月限定包';
         typeClass = 'gantt-bar-pack';
-        typeColor = '#8b5cf6'; // 霓虹亮紫 (Violet)
+        typeColor = '#a855f7'; // 霓虹亮紫
       } else if (titleLower.includes('新月日') || titleLower.includes('new moon')) {
         eventCat = 'new-moon';
         typeLabel = isEN ? 'New Moon Day' : '新月日';
         typeClass = 'gantt-bar-event';
-        typeColor = '#4f46e5'; // 宇宙深藍 (Cosmic Indigo)
+        typeColor = '#6366f1'; // 宇宙深靛藍
       } else if (titleLower.includes('合作紀念包')) {
         eventCat = 'collab';
         typeLabel = isEN ? 'Collab Pack' : '合作紀念包';
         typeClass = 'gantt-bar-pack';
-        typeColor = '#3b82f6'; // 晴空海藍 (Sky Blue)
+        typeColor = '#0284c7'; // 晴空海藍
       } else if (titleLower.includes('合作') || titleLower.includes('collab') || titleLower.includes('動畫')) {
         eventCat = 'collab';
         typeLabel = isEN ? 'Collab Event' : '合作特企';
         typeClass = 'gantt-bar-event';
-        typeColor = '#ec4899'; // 洋紅粉紫 (Hot Pink)
+        typeColor = '#ec4899'; // 洋紅亮粉
       } else if (titleLower.includes('小鍛匠')) {
         eventCat = 'pack-growth';
         typeLabel = isEN ? 'Tinkatink Pack' : '小鍛匠培育包';
         typeClass = 'gantt-bar-pack';
-        typeColor = '#14b8a6'; // 薄荷青綠 (Mint Teal)
+        typeColor = '#14b8a6'; // 薄荷青碧
       } else if (titleLower.includes('摔角鷹人')) {
         eventCat = 'pack-growth';
         typeLabel = isEN ? 'Hawlucha Pack' : '摔角鷹人培育包';
         typeClass = 'gantt-bar-pack';
-        typeColor = '#10b981'; // 翡翠翠綠 (Emerald Green)
+        typeColor = '#10b981'; // 翡翠翠綠
       } else if (titleLower.includes('培育包') || titleLower.includes('growth')) {
         eventCat = 'pack-growth';
         typeLabel = isEN ? 'Growth Pack' : '培育包';
         typeClass = 'gantt-bar-pack';
-        typeColor = '#10b981'; // 翡翠翠綠 (Emerald Green)
+        typeColor = '#10b981'; // 翡翠翠綠
       } else if (titleLower.includes('同樂包')) {
         eventCat = 'pack-bundle';
         typeLabel = isEN ? 'Festival Bundle' : '嘉年華同樂包';
         typeClass = 'gantt-bar-pack';
-        typeColor = '#06b6d4'; // 加勒比天青 (Cyan Teal)
+        typeColor = '#06b6d4'; // 加勒比天青
       } else if (titleLower.includes('嘉年華') || titleLower.includes('festival') || titleLower.includes('夏日') || titleLower.includes('慶典')) {
         eventCat = isPack ? 'pack-bundle' : 'festival';
         typeLabel = isPack ? (isEN ? 'Event Bundle' : '活動禮包') : (isEN ? 'Summer Carnival' : '夏日嘉年華');
@@ -210,12 +210,17 @@
         eventCat = 'pack-bundle';
         typeLabel = isEN ? 'Event Bundle' : '活動禮包';
         typeClass = 'gantt-bar-pack';
-        typeColor = '#0891b2'; // 湛藍 (Teal)
+        typeColor = '#0284c7'; // 晴空海藍
       } else if (item.badge_key === 'update' || titleLower.includes('更新') || titleLower.includes('維護')) {
         eventCat = 'update';
         typeLabel = isEN ? 'Update' : '版本更新';
         typeClass = 'gantt-bar-event';
-        typeColor = '#e11d48'; // 薔薇紅 (Rose Red)
+        typeColor = '#f43f5e'; // 薔薇亮紅
+      } else {
+        eventCat = 'event';
+        typeLabel = isEN ? 'Special Event' : '活動企劃';
+        typeClass = 'gantt-bar-event';
+        typeColor = '#d946ef'; // 炫彩紫羅蘭
       }
 
       ganttItems.push({
@@ -299,30 +304,37 @@
       const dayOfWeek = dateObj.getDay(); // 0: Sun, 6: Sat
       const dayStart = new Date(calCurrentYear, calCurrentMonth, d, 0, 0, 0);
       const dayEnd = new Date(calCurrentYear, calCurrentMonth, d, 23, 59, 59);
-      const activeEvents = ganttData.filter(ev => ev.startDate <= dayEnd && ev.endDate >= dayStart);
+      const activeEvents = ganttData.filter(ev => ev.startDate <= dayEnd && ev.endDate >= dayStart)
+                                    .sort((a, b) => (a.trackIndex || 0) - (b.trackIndex || 0));
       const isToday = (calCurrentYear === _today.getFullYear() && calCurrentMonth === _today.getMonth() && d === _today.getDate());
       const isSelected = (d === calSelectedDay);
 
-      // 🌈 每個活動各自的專屬色彩貫穿整格背景 (Full-Cell Background Bands with Per-Event Colors)
+      // 🌈 每個活動各自獨立的專屬色塊貫穿背景 (Head-Body-Foot 嚴格分段連續效果)
       let bgBandsHTML = '';
       if (activeEvents.length > 0) {
         const bands = [];
         activeEvents.forEach(ev => {
           const prevDayEnd = new Date(calCurrentYear, calCurrentMonth, d - 1, 23, 59, 59);
           const nextDayStart = new Date(calCurrentYear, calCurrentMonth, d + 1, 0, 0, 0);
-          const hasPrev = (d > 1) && (ev.startDate <= prevDayEnd);
-          const hasNext = (d < daysInMonth) && (ev.endDate >= nextDayStart);
 
-          const isStartCap = (!hasPrev) || (dayOfWeek === 0);
-          const isEndCap = (!hasNext) || (dayOfWeek === 6);
+          // 是否與同一週前一天連續 (同橫列左側連接)
+          const hasLeft = (dayOfWeek > 0) && (d > 1) && (ev.startDate <= prevDayEnd);
+          // 是否與同一週後一天連續 (同橫列右側連接)
+          const hasRight = (dayOfWeek < 6) && (d < daysInMonth) && (ev.endDate >= nextDayStart);
 
-          let capClass = 'band-mid';
-          if (isStartCap && isEndCap) capClass = 'band-cap-both';
-          else if (isStartCap) capClass = 'band-cap-start';
-          else if (isEndCap) capClass = 'band-cap-end';
+          let segType = 'body';
+          if (!hasLeft && !hasRight) {
+            segType = 'single'; // 單日活動：四角圓角
+          } else if (!hasLeft && hasRight) {
+            segType = 'head'; // 活動開頭 (或換行開頭)：左上左下圓角，右側直角 100% 填滿
+          } else if (hasLeft && hasRight) {
+            segType = 'body'; // 活動中間：全部直角，左右 100% 填滿
+          } else if (hasLeft && !hasRight) {
+            segType = 'foot'; // 活動結尾 (或換行結尾)：右上右下圓角，左側直角 100% 填滿
+          }
 
           bands.push(`
-            <div class="news-cal-bg-band ${capClass}" 
+            <div class="news-cal-bg-band band-${segType}" 
                  style="background-color: ${ev.typeColor};"
                  title="${escapeHtml(ev.title)} (${ev.typeLabel})"></div>
           `);
