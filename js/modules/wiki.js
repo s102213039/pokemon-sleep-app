@@ -11241,6 +11241,7 @@
       console.error('Error binding Wiki events:', e);
     }
 
+    try { switchWikiSubTab(currentWikiSubTab); } catch (e) {}
     try { recalcTriggerChance(); } catch (e) {}
     try { recalcSleepDays(); } catch (e) {}
     try { refreshCoordinateLadder(); } catch (e) {}

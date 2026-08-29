@@ -11938,18 +11938,22 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
+  height: auto !important;
+  max-height: none !important;
 }
 
 .mobile-h5-app .wiki-main-container {
-  padding: 0 0 16px 0 !important;
+  padding: 0 0 24px 0 !important;
   margin: 0 !important;
   width: 100% !important;
   max-width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
 }
 
 .mobile-h5-app .wiki-subnav-bar {
   position: sticky !important;
-  top: 50px !important;
+  top: calc(52px + env(safe-area-inset-top, 0px)) !important;
   z-index: 90 !important;
   margin: 0 !important;
   padding: 0 !important;
