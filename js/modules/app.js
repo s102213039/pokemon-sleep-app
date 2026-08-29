@@ -1463,7 +1463,9 @@ if (typeof document !== 'undefined') {
       const pokemonSearchClear = document.getElementById('pokemon-search-clear');
       if (searchInput) {
         const updatePkmClear = () => {
-          if (pokemonSearchClear) {
+          if (typeof window !== 'undefined' && typeof window.updateSearchInputHighlight === 'function') {
+            window.updateSearchInputHighlight(searchInput, pokemonSearchClear);
+          } else if (pokemonSearchClear) {
             pokemonSearchClear.style.display = searchInput.value.trim() ? 'flex' : 'none';
           }
         };

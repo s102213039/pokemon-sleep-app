@@ -1503,10 +1503,62 @@
     return isl ? (isl[currentLang] || island) : island;
   }
 
+  /**
+   * 🔍 全站搜尋框醒目提示與條件過濾標籤同步器
+   * 當搜尋框內有輸入文字時，自動為 input 與外層 container 加上 .has-value，
+   * 並動態注入 / 更新「條件篩選中 (Filtered)」醒目標籤與清空按鈕
+   */
+  function updateSearchInputHighlight(input, clearBtn) {
+    if (!input) return;
+    const hasVal = Boolean(input.value && input.value.trim().length > 0);
+    if (clearBtn) {
+      clearBtn.style.display = hasVal ? 'flex' : 'none';
+    }
+    input.classList.toggle('has-value', hasVal);
+    const container = input.closest('.search-box, .news-search-box, .sidebar-search-box, .search-container, .box-pkm-search-box, .search-filter-row');
+    if (container) {
+      container.classList.toggle('has-value', hasVal);
+      let badge = container.querySelector('.search-filtering-badge');
+      if (hasVal) {
+        const isEN = getLanguage() === 'en-US';
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = 'search-filtering-badge';
+          if (clearBtn && clearBtn.parentNode === container) {
+            container.insertBefore(badge, clearBtn);
+          } else {
+            container.appendChild(badge);
+          }
+        }
+        badge.innerHTML = `<span class="search-pulse-dot"></span><span>${isEN ? 'Filtered' : '條件篩選中'}</span>`;
+      } else if (badge) {
+        badge.remove();
+      }
+    }
+  }
+
+  // 全域監聽所有搜尋框輸入事件，確保 100% 即時呈現醒目外觀與標籤
+  if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+    document.addEventListener('input', (e) => {
+      const target = e.target;
+      if (target && target.tagName === 'INPUT' && (
+        target.classList.contains('search-input') ||
+        target.classList.contains('news-search-input') ||
+        target.classList.contains('sidebar-search-input') ||
+        target.classList.contains('box-pkm-search-input') ||
+        (target.id && target.id.toLowerCase().includes('search'))
+      )) {
+        const clearBtn = target.parentElement ? target.parentElement.querySelector('.search-clear-btn, [id*="clear"]') : null;
+        updateSearchInputHighlight(target, clearBtn);
+      }
+    });
+  }
+
   const I18NExport = {
     t,
     getLanguage,
     setLanguage,
+    updateSearchInputHighlight,
     getTypeName,
     getTypeIconSvg,
     TYPE_SVG_PATHS,
@@ -1541,6 +1593,7 @@
 
   if (typeof window !== 'undefined') {
     window.I18N = I18NExport;
+    window.updateSearchInputHighlight = updateSearchInputHighlight;
   }
 
   if (typeof module !== 'undefined' && module.exports) {

@@ -10375,8 +10375,13 @@
 
   function onLadderSearch(val) {
     ladderSearchQuery = (val || '').trim();
+    const input = document.getElementById('ladder-pkm-search-input');
     const clearBtn = document.getElementById('ladder-search-clear-btn');
-    if (clearBtn) clearBtn.style.display = ladderSearchQuery ? 'flex' : 'none';
+    if (input && typeof window !== 'undefined' && typeof window.updateSearchInputHighlight === 'function') {
+      window.updateSearchInputHighlight(input, clearBtn);
+    } else if (clearBtn) {
+      clearBtn.style.display = ladderSearchQuery ? 'flex' : 'none';
+    }
     applyLadderFiltersInPlace();
   }
 
@@ -10385,7 +10390,11 @@
     const input = document.getElementById('ladder-pkm-search-input');
     if (input) input.value = '';
     const clearBtn = document.getElementById('ladder-search-clear-btn');
-    if (clearBtn) clearBtn.style.display = 'none';
+    if (input && typeof window !== 'undefined' && typeof window.updateSearchInputHighlight === 'function') {
+      window.updateSearchInputHighlight(input, clearBtn);
+    } else if (clearBtn) {
+      clearBtn.style.display = 'none';
+    }
     applyLadderFiltersInPlace();
   }
 

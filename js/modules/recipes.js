@@ -590,8 +590,12 @@
   const recipeSearchClear = document.getElementById('recipe-search-clear');
 
   function updateRecipeClearBtn() {
-    if (!recipeSearchClear || !searchInput) return;
-    recipeSearchClear.style.display = searchInput.value.trim() ? 'flex' : 'none';
+    if (!searchInput) return;
+    if (typeof window !== 'undefined' && typeof window.updateSearchInputHighlight === 'function') {
+      window.updateSearchInputHighlight(searchInput, recipeSearchClear);
+    } else if (recipeSearchClear) {
+      recipeSearchClear.style.display = searchInput.value.trim() ? 'flex' : 'none';
+    }
   }
 
   function initSearch() {

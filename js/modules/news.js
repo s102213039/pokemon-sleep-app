@@ -562,8 +562,12 @@
 
   /* ─── 初始化搜尋功能與一鍵清空 ─────────────────────────── */
   function updateClearBtn() {
-    if (!newsSearchClear || !newsSearchInput) return;
-    newsSearchClear.style.display = newsSearchInput.value.trim() ? 'flex' : 'none';
+    if (!newsSearchInput) return;
+    if (typeof window !== 'undefined' && typeof window.updateSearchInputHighlight === 'function') {
+      window.updateSearchInputHighlight(newsSearchInput, newsSearchClear);
+    } else if (newsSearchClear) {
+      newsSearchClear.style.display = newsSearchInput.value.trim() ? 'flex' : 'none';
+    }
   }
 
   function initSearch() {

@@ -709,6 +709,7 @@
     function syncToggleBtnIcon() {
       if (!toggleBtn) return;
       const hasText = !!(searchInput.value && searchInput.value.trim().length > 0);
+      searchInput.classList.toggle('has-value', hasText);
       if (hasText) {
         toggleBtn.innerHTML = CLEAR_ICON;
         toggleBtn.setAttribute('aria-label', isEN ? 'Clear Pokémon' : '清空寶可夢');
@@ -1609,8 +1610,12 @@
     const boxSearchClear = document.getElementById('box-search-clear');
 
     function updateBoxClearBtn() {
-      if (!boxSearchClear || !searchInput) return;
-      boxSearchClear.style.display = searchInput.value.trim() ? 'flex' : 'none';
+      if (!searchInput) return;
+      if (typeof window !== 'undefined' && typeof window.updateSearchInputHighlight === 'function') {
+        window.updateSearchInputHighlight(searchInput, boxSearchClear);
+      } else if (boxSearchClear) {
+        boxSearchClear.style.display = searchInput.value.trim() ? 'flex' : 'none';
+      }
     }
 
     if (searchInput) {
