@@ -1011,17 +1011,26 @@ if (typeof document !== 'undefined') {
 
       if (!tabPokemon || !tabRecipes || !panelPokemon || !panelRecipes) return;
 
-      /* ─── 💾 側邊欄展開/收合狀態持久化管理 (Sidebar Open/Collapsed State Persistence) ─── */
+      /* ─── 💾 側邊欄展開/收合狀態持久化管理 (僅限桌面版，H5/移動端一律預設收合且不套用暫時記憶) ─── */
       function getSidebarSavedState(key, defaultOpen = true) {
+        const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+        const isSmallScreen = typeof window !== 'undefined' && window.innerWidth <= 1024;
+        if (isMobileH5 || isSmallScreen) {
+          return false; // H5 移動端切換 tab 或載入時一律保持收合，不受到暫時狀態保存影響
+        }
         try {
           const saved = sessionStorage.getItem(key);
           if (saved !== null) return saved === 'true';
         } catch (e) {}
-        const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
-        return isMobileH5 ? false : defaultOpen;
+        return defaultOpen;
       }
 
       function setSidebarSavedState(key, isOpen) {
+        const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+        const isSmallScreen = typeof window !== 'undefined' && window.innerWidth <= 1024;
+        if (isMobileH5 || isSmallScreen) {
+          return; // H5 移動端不寫入持久化開啟狀態
+        }
         try {
           sessionStorage.setItem(key, isOpen ? 'true' : 'false');
         } catch (e) {}
@@ -1104,15 +1113,16 @@ if (typeof document !== 'undefined') {
             if (isIng) {
               ladderSidebar.style.display = 'flex';
               const isLadderOpen = getSidebarSavedState('pksleep_ladder_sidebar_open', true);
-              if (isLadderOpen) {
+              if (isLadderOpen && !isMobileH5 && window.innerWidth > 1024) {
                 ladderSidebar.classList.remove('collapsed');
-                if (isMobileH5 && window.innerWidth <= 1024 && ladderBackdrop) ladderBackdrop.classList.add('active');
               } else {
                 ladderSidebar.classList.add('collapsed');
                 if (ladderBackdrop) ladderBackdrop.classList.remove('active');
               }
             } else {
               ladderSidebar.style.display = 'none';
+              ladderSidebar.classList.add('collapsed');
+              if (ladderBackdrop) ladderBackdrop.classList.remove('active');
             }
           }
           if (ladderBookmarkHandle) ladderBookmarkHandle.style.display = isIng ? '' : 'none';
@@ -1126,9 +1136,8 @@ if (typeof document !== 'undefined') {
           if (recipeSidebar) {
             recipeSidebar.style.display = 'flex';
             const isRecipeOpen = getSidebarSavedState('pksleep_recipe_sidebar_open', true);
-            if (isRecipeOpen) {
+            if (isRecipeOpen && !isMobileH5 && window.innerWidth > 1024) {
               recipeSidebar.classList.remove('collapsed');
-              if (isMobileH5 && window.innerWidth <= 1024 && recipeBackdrop) recipeBackdrop.classList.add('active');
             } else {
               recipeSidebar.classList.add('collapsed');
               if (recipeBackdrop) recipeBackdrop.classList.remove('active');
@@ -1148,9 +1157,8 @@ if (typeof document !== 'undefined') {
           if (filterSidebar) {
             filterSidebar.style.display = 'flex';
             const isDexOpen = getSidebarSavedState('pksleep_dex_sidebar_open', true);
-            if (isDexOpen) {
+            if (isDexOpen && !isMobileH5 && window.innerWidth > 1024) {
               filterSidebar.classList.remove('collapsed');
-              if (isMobileH5 && window.innerWidth <= 1024 && backdrop) backdrop.classList.add('active');
             } else {
               filterSidebar.classList.add('collapsed');
               if (backdrop) backdrop.classList.remove('active');

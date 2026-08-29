@@ -10115,10 +10115,9 @@
     if (ladderSidebar) {
       if (targetTab === 'ingredients') {
         ladderSidebar.style.display = 'flex';
-        const isLadderOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_ladder_sidebar_open', true) : true;
-        if (isLadderOpen) {
+        const isLadderOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_ladder_sidebar_open', true) : false;
+        if (isLadderOpen && !isMobileH5 && window.innerWidth > 1024) {
           ladderSidebar.classList.remove('collapsed');
-          if (isMobileH5 && window.innerWidth <= 1024 && ladderBackdrop) ladderBackdrop.classList.add('active');
         } else {
           ladderSidebar.classList.add('collapsed');
           if (ladderBackdrop) ladderBackdrop.classList.remove('active');
@@ -10127,6 +10126,7 @@
         updateLadderActiveFilterBadge();
       } else {
         ladderSidebar.style.display = 'none';
+        ladderSidebar.classList.add('collapsed');
         if (ladderHandle) ladderHandle.style.display = 'none';
         if (ladderBackdrop) ladderBackdrop.classList.remove('active');
       }
