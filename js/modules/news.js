@@ -191,6 +191,24 @@
 
     newsTimelineContainer.style.display = 'block';
 
+    // 智能多軌道分配 (0=上層, 1=中層, 2=下層)，保證連續跨日色塊處於相同高度
+    const trackEndTimes = [];
+    ganttData.forEach(ev => {
+      let assignedTrack = -1;
+      for (let i = 0; i < trackEndTimes.length; i++) {
+        if (trackEndTimes[i] < ev.startDate.getTime()) {
+          assignedTrack = i;
+          trackEndTimes[i] = ev.endDate.getTime();
+          break;
+        }
+      }
+      if (assignedTrack === -1) {
+        assignedTrack = trackEndTimes.length;
+        trackEndTimes.push(ev.endDate.getTime());
+      }
+      ev.trackIndex = assignedTrack;
+    });
+
     const monthNames = isEN
       ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
       : ['1 月', '2 月', '3 月', '4 月', '5 月', '6 月', '7 月', '8 月', '9 月', '10 月', '11 月', '12 月'];
@@ -207,28 +225,47 @@
     }
 
     for (let d = 1; d <= daysInMonth; d++) {
+      const dateObj = new Date(calCurrentYear, calCurrentMonth, d);
+      const dayOfWeek = dateObj.getDay(); // 0: Sun, 6: Sat
       const dayStart = new Date(calCurrentYear, calCurrentMonth, d, 0, 0, 0);
       const dayEnd = new Date(calCurrentYear, calCurrentMonth, d, 23, 59, 59);
       const activeEvents = ganttData.filter(ev => ev.startDate <= dayEnd && ev.endDate >= dayStart);
-      const hasEvent = activeEvents.some(ev => ev.typeClass === 'gantt-bar-event');
-      const hasPack = activeEvents.some(ev => ev.typeClass === 'gantt-bar-pack');
       const isToday = (calCurrentYear === 2026 && calCurrentMonth === 7 && d === 16);
       const isSelected = (d === calSelectedDay);
 
-      let dotsHTML = '';
-      if (hasEvent || hasPack) {
-        dotsHTML = `
-          <div class="news-cal-dots-row">
-            ${hasEvent ? '<span class="news-cal-dot dot-event"></span>' : ''}
-            ${hasPack ? '<span class="news-cal-dot dot-pack"></span>' : ''}
-          </div>
-        `;
-      }
+      // 上中下 3 軌連續色塊條
+      const maxTracks = Math.min(3, Math.max(1, ...activeEvents.map(e => (e.trackIndex || 0) + 1), 0));
+      const slots = [0, 1, 2].slice(0, Math.max(1, maxTracks));
+
+      const barsHTML = slots.map(trackIdx => {
+        const ev = activeEvents.find(e => e.trackIndex === trackIdx);
+        if (!ev) {
+          return '<div class="news-cal-bar-slot empty"></div>';
+        }
+        // 判斷是否為跨日色塊的起點、終點或中間連續段
+        const isStart = (d === ev.startDate.getDate() && calCurrentMonth === ev.startDate.getMonth());
+        const isEnd = (d === ev.endDate.getDate() && calCurrentMonth === ev.endDate.getMonth());
+        const isSun = (dayOfWeek === 0);
+        const isSat = (dayOfWeek === 6);
+
+        const leftCap = isStart || isSun;
+        const rightCap = isEnd || isSat;
+
+        let barClass = `news-cal-bar ${ev.typeClass === 'gantt-bar-event' ? 'bar-event' : 'bar-pack'}`;
+        if (leftCap && rightCap) barClass += ' bar-cap-both';
+        else if (leftCap) barClass += ' bar-cap-left';
+        else if (rightCap) barClass += ' bar-cap-right';
+        else barClass += ' bar-continuous';
+
+        return `<div class="${barClass}" title="${escapeHtml(ev.title)}"></div>`;
+      }).join('');
 
       dayCellsHTML.push(`
         <div class="news-cal-day-cell ${isToday ? 'is-today' : ''} ${isSelected ? 'is-selected' : ''} ${activeEvents.length > 0 ? 'has-events' : ''}" data-day="${d}">
           <span class="news-cal-day-num">${d}</span>
-          ${dotsHTML}
+          <div class="news-cal-bars-stack">
+            ${barsHTML}
+          </div>
         </div>
       `);
     }

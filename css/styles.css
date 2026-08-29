@@ -13415,14 +13415,14 @@ body.mobile-h5-app.ladder-active,
   border-radius: 8px !important;
 }
 
-/* 📅 3. 壓縮版活動日曆 (Ultra-Compact Activity Calendar) ─── */
+/* 📅 3. 壓縮無框版活動日曆 (Borderless Ultra-Compact Activity Calendar) ─── */
 .news-calendar-wrapper,
 .mobile-h5-app .news-calendar-wrapper {
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: 12px !important;
-  padding: 8px 10px !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 2px 0 4px 0 !important;
+  box-shadow: none !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 5px !important;
@@ -13459,9 +13459,9 @@ body.mobile-h5-app.ladder-active,
 }
 
 .news-calendar-nav-btn {
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: var(--bg-card, rgba(255, 255, 255, 0.08)) !important;
   border: 1px solid var(--border-color) !important;
-  color: var(--text-main) !important;
+  color: var(--text-primary) !important;
   border-radius: 6px !important;
   padding: 2px 6px !important;
   font-size: 10.5px !important;
@@ -13487,7 +13487,7 @@ body.mobile-h5-app.ladder-active,
   font-weight: 700 !important;
   color: var(--text-muted) !important;
   padding-bottom: 2px !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08)) !important;
 }
 
 .news-calendar-weekday.sun,
@@ -13496,7 +13496,7 @@ body.mobile-h5-app.ladder-active,
   opacity: 0.75 !important;
 }
 
-/* 7 欄日曆網格 (超緊湊高度) */
+/* 7 欄日曆網格 (連續色塊條架構) */
 .news-calendar-grid {
   display: grid !important;
   grid-template-columns: repeat(7, 1fr) !important;
@@ -13505,11 +13505,11 @@ body.mobile-h5-app.ladder-active,
 
 .news-cal-day-cell {
   aspect-ratio: auto !important;
-  height: 24px !important;
+  min-height: 38px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  justify-content: center !important;
+  justify-content: flex-start !important;
   position: relative !important;
   border-radius: 6px !important;
   cursor: pointer !important;
@@ -13526,67 +13526,104 @@ body.mobile-h5-app.ladder-active,
 }
 
 .news-cal-day-cell:not(.empty):hover {
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: rgba(99, 102, 241, 0.06) !important;
 }
 
 .news-cal-day-cell.is-selected {
-  background: rgba(99, 102, 241, 0.22) !important;
-  border: 1px solid var(--color-primary, #6366f1) !important;
+  background: rgba(99, 102, 241, 0.12) !important;
+  outline: 1.5px solid var(--color-primary, #6366f1) !important;
 }
 
 .news-cal-day-num {
   font-size: 11px !important;
   font-weight: 600 !important;
-  line-height: 1 !important;
+  line-height: 14px !important;
   color: var(--text-primary) !important;
+  margin-bottom: 2px !important;
 }
 
 .news-cal-day-cell.is-today .news-cal-day-num {
   background: var(--color-primary, #6366f1) !important;
   color: #fff !important;
   border-radius: 50% !important;
-  width: 16px !important;
-  height: 16px !important;
+  width: 15px !important;
+  height: 15px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   font-size: 9.5px !important;
 }
 
-.news-cal-dots-row {
+/* 🎨 連續色塊條多層堆疊 (上中下 3 軌) */
+.news-cal-bars-stack {
+  width: 100% !important;
   display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 2px !important;
+  flex-direction: column !important;
+  gap: 1.5px !important;
   margin-top: 1px !important;
-  min-height: 3.5px !important;
 }
 
-.news-cal-dot {
-  width: 3.5px !important;
+.news-cal-bar-slot {
   height: 3.5px !important;
-  border-radius: 50% !important;
+  width: 100% !important;
 }
 
-.news-cal-dot.dot-event {
-  background-color: #818cf8 !important;
-  box-shadow: 0 0 3px rgba(129, 140, 248, 0.8) !important;
+.news-cal-bar-slot.empty {
+  visibility: hidden !important;
 }
 
-.news-cal-dot.dot-pack {
-  background-color: #fbbf24 !important;
-  box-shadow: 0 0 3px rgba(251, 191, 36, 0.8) !important;
+.news-cal-bar {
+  height: 3.5px !important;
+  width: 100% !important;
+  display: block !important;
+  box-sizing: border-box !important;
 }
 
-/* 當日活動列表 (Selected Day Event List - 緊湊可捲動) */
+.news-cal-bar.bar-event {
+  background: #818cf8 !important;
+}
+
+.news-cal-bar.bar-pack {
+  background: #f59e0b !important;
+}
+
+.news-cal-bar.bar-cap-left {
+  border-top-left-radius: 3px !important;
+  border-bottom-left-radius: 3px !important;
+  width: calc(100% + 2px) !important;
+  margin-left: 1px !important;
+}
+
+.news-cal-bar.bar-cap-right {
+  border-top-right-radius: 3px !important;
+  border-bottom-right-radius: 3px !important;
+  width: calc(100% + 2px) !important;
+  margin-left: -2px !important;
+  margin-right: 1px !important;
+}
+
+.news-cal-bar.bar-continuous {
+  border-radius: 0 !important;
+  width: calc(100% + 4px) !important;
+  margin-left: -2px !important;
+}
+
+.news-cal-bar.bar-cap-both {
+  border-radius: 3px !important;
+  width: calc(100% - 4px) !important;
+  margin: 0 auto !important;
+}
+
+/* 當日活動列表 (Selected Day Event List - 支援主題自適應) */
 .news-calendar-events-box {
-  background: rgba(0, 0, 0, 0.15) !important;
+  background: var(--bg-card, #18181b) !important;
   border: 1px solid var(--border-color) !important;
-  border-radius: 8px !important;
+  border-radius: 10px !important;
   padding: 6px 8px !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 4px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
 }
 
 .news-cal-box-title-row {
@@ -13596,8 +13633,8 @@ body.mobile-h5-app.ladder-active,
   font-size: 11px !important;
   font-weight: 700 !important;
   color: var(--text-primary) !important;
-  padding-bottom: 2px !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  padding-bottom: 3px !important;
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.06)) !important;
 }
 
 .news-cal-events-scroll-list {
@@ -13615,7 +13652,7 @@ body.mobile-h5-app.ladder-active,
   justify-content: space-between !important;
   gap: 6px !important;
   padding: 3px 6px !important;
-  background: rgba(255, 255, 255, 0.04) !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04)) !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 6px !important;
   cursor: pointer !important;
@@ -13646,12 +13683,12 @@ body.mobile-h5-app.ladder-active,
 
 .news-cal-event-badge.badge-event {
   background: rgba(99, 102, 241, 0.25) !important;
-  color: #a5b4fc !important;
+  color: #818cf8 !important;
 }
 
 .news-cal-event-badge.badge-pack {
   background: rgba(245, 158, 11, 0.25) !important;
-  color: #fcd34d !important;
+  color: #f59e0b !important;
 }
 
 .news-cal-event-name {
@@ -13685,7 +13722,7 @@ body.mobile-h5-app.ladder-active,
   padding: 0 2px !important;
 }
 
-/* 📰 4. 新聞列表容器與折疊式 Accordion 卡片 */
+/* 📰 4. 新聞列表容器與折疊式 Accordion 卡片 (全主題自適應) */
 .mobile-h5-app .news-content-container {
   padding: 0 12px 24px !important;
   width: 100% !important;
@@ -13699,10 +13736,10 @@ body.mobile-h5-app.ladder-active,
 }
 
 .mobile-h5-app .news-accordion-card {
-  background: var(--table-row-odd-solid, #0d1527) !important;
+  background: var(--bg-card, #18181b) !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 12px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
   display: flex !important;
   flex-direction: column !important;
   margin: 0 !important;
@@ -13712,7 +13749,7 @@ body.mobile-h5-app.ladder-active,
 
 .mobile-h5-app .news-accordion-card.expanded {
   border-color: rgba(99, 102, 241, 0.4) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
 }
 
 .mobile-h5-app .news-accordion-header {
@@ -13726,7 +13763,7 @@ body.mobile-h5-app.ladder-active,
 }
 
 .mobile-h5-app .news-accordion-header:active {
-  background: rgba(255, 255, 255, 0.04) !important;
+  background: var(--bg-card-hover, rgba(255, 255, 255, 0.04)) !important;
 }
 
 .mobile-h5-app .news-card-header-meta {
@@ -13747,7 +13784,7 @@ body.mobile-h5-app.ladder-active,
   font-size: 10.5px !important;
   padding: 1px 5px !important;
   border-radius: 4px !important;
-  background: rgba(255, 255, 255, 0.05) !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.06)) !important;
   color: var(--text-muted) !important;
 }
 
@@ -13812,8 +13849,8 @@ body.mobile-h5-app.ladder-active,
   display: flex !important;
   flex-direction: column !important;
   gap: 10px !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
-  background: rgba(0, 0, 0, 0.08) !important;
+  border-top: 1px solid var(--border-color) !important;
+  background: var(--bg-card-inner-subtle, rgba(0, 0, 0, 0.05)) !important;
 }
 
 .mobile-h5-app .news-ai-dashboard {
@@ -13916,6 +13953,66 @@ body.mobile-h5-app.ladder-active,
 }
 
 /* 🎨 明亮主題配色 (Dawn / Emerald) 高對比鮮明色彩 */
+[data-theme="dawn"] .mobile-h5-app .news-search-box,
+[data-theme="emerald"] .mobile-h5-app .news-search-box {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .news-tag-btn,
+[data-theme="emerald"] .mobile-h5-app .news-tag-btn {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .news-tag-btn.active,
+[data-theme="emerald"] .mobile-h5-app .news-tag-btn.active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #ffffff !important;
+  border-color: var(--color-primary, #6366f1) !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .news-calendar-events-box,
+[data-theme="emerald"] .mobile-h5-app .news-calendar-events-box {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .news-cal-box-title-row,
+[data-theme="emerald"] .mobile-h5-app .news-cal-box-title-row {
+  color: #0f172a !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .news-cal-event-item,
+[data-theme="emerald"] .mobile-h5-app .news-cal-event-item {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .news-accordion-card,
+[data-theme="emerald"] .mobile-h5-app .news-accordion-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .news-accordion-body,
+[data-theme="emerald"] .mobile-h5-app .news-accordion-body {
+  background: #f8fafc !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .news-accordion-toggle-btn,
+[data-theme="emerald"] .mobile-h5-app .news-accordion-toggle-btn {
+  background: #eff6ff !important;
+  border: 1px solid #bfdbfe !important;
+  color: #2563eb !important;
+}
+
 [data-theme="dawn"] .mobile-h5-app .news-ai-section-box,
 [data-theme="emerald"] .mobile-h5-app .news-ai-section-box {
   background: #ffffff !important;
