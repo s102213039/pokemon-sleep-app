@@ -286,10 +286,12 @@
 
         <div class="news-calendar-events-box">
           <div class="news-cal-box-title-row">
-            <span>📅 ${selectedDateStr} ${isEN ? 'Active Events & Bundles' : '進行中的活動與禮包'}</span>
-            <span style="font-size:11px;opacity:0.8;">${selectedDateEvents.length} ${isEN ? 'items' : '項'}</span>
+            <span>📅 ${selectedDateStr} ${isEN ? 'Active Events' : '進行中的活動與禮包'}</span>
+            <span style="font-size:10.5px;opacity:0.8;">${selectedDateEvents.length} ${isEN ? 'items' : '項'}</span>
           </div>
-          ${selectedEventsHTML}
+          <div class="news-cal-events-scroll-list">
+            ${selectedEventsHTML}
+          </div>
         </div>
       </div>
     `;
@@ -337,17 +339,13 @@
       });
     });
 
-    // 點擊活動項目直接跳轉至對應新聞
+    // 點擊活動項目直接展開並跳轉至對應新聞
     newsTimelineContainer.querySelectorAll('.news-cal-event-item').forEach(item => {
       item.addEventListener('click', () => {
         const evId = item.getAttribute('data-event-id');
         const targetItem = allNews.find(n => n.id === evId);
         if (targetItem) {
-          if (newsSearchInput) {
-            newsSearchInput.value = targetItem.title;
-            if (newsSearchClear) newsSearchClear.style.display = 'flex';
-          }
-          searchQuery = targetItem.title.toLowerCase();
+          expandedMap.add(evId);
           currentCategory = 'ALL';
           if (newsCategoryContainer) {
             newsCategoryContainer.querySelectorAll('.news-tag-btn').forEach(b => {
@@ -355,8 +353,14 @@
             });
           }
           renderNews();
-          const el = document.getElementById(`news-${evId}`) || newsListContainer;
-          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setTimeout(() => {
+            const el = document.getElementById(`news-${evId}`);
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              el.classList.add('news-card-highlight-flash');
+              setTimeout(() => el.classList.remove('news-card-highlight-flash'), 1800);
+            }
+          }, 50);
         }
       });
     });
@@ -452,7 +456,7 @@
     });
   }
 
-  /* ─── 渲染新聞列表 ───────────────────────────────────── */
+  /* ─── 渲染新聞列表 (折疊式 Accordion 卡片) ─────────────── */
   function renderNews() {
     if (!newsListContainer) return;
     const filtered = getFilteredNews();
@@ -485,7 +489,7 @@
       if (item.debut_pokemon && item.debut_pokemon.length > 0) {
         debutBannerHTML = `
           <div class="news-debut-banner">
-            <span class="news-debut-label">${isEN ? '🦄 New Pokémon Debut: ' : '🦄 新登場寶可夢：'}</span>
+            <span class="news-debut-label">${isEN ? '🦄 Debut: ' : '🦄 新登場：'}</span>
             <div class="news-poke-pill-group">
               ${item.debut_pokemon.map(p => {
                 const pName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : p;
@@ -497,7 +501,7 @@
       } else if (item.featured_pokemon && item.featured_pokemon.length > 0 && item.badge_key === 'event') {
         debutBannerHTML = `
           <div class="news-featured-banner">
-            <span class="news-featured-label">${isEN ? '⭐ Featured Pokémon: ' : '⭐ 焦點寶可夢：'}</span>
+            <span class="news-featured-label">${isEN ? '⭐ Focus: ' : '⭐ 焦點：'}</span>
             <div class="news-poke-pill-group">
               ${item.featured_pokemon.map(p => {
                 const pName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : p;
@@ -519,11 +523,9 @@
             </div>
             <div class="news-ai-sections-grid">
               ${item.sections.map(sec => {
-                const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
                 let secTitle = isEN ? (sec.title_en || sec.title) : sec.title;
                 const secItems = isEN && sec.items_en ? sec.items_en : sec.items;
                 const icon = sec.icon || '📌';
-                // 去除標題內部可能自帶的重複 emoji 與空格
                 const cleanTitle = (secTitle || '').replace(/^[^\w\u4e00-\u9fa5\s]+/, '').trim();
                 return `
                 <div class="news-ai-section-box news-sec-${sec.key || 'general'}">
@@ -556,7 +558,7 @@
 
       const previewHTML = item.content_preview
         ? `
-          <div id="preview-${item.id}" class="news-preview-collapse ${isExpanded ? 'expanded' : ''}">
+          <div id="preview-${item.id}" class="news-preview-collapse expanded">
             <div class="news-preview-content">${escapeHtml(item.content_preview).replace(/\n/g, '<br>')}</div>
           </div>
         `
@@ -573,72 +575,56 @@
       const displayOverview = isEN ? (item.overview_en || item.overview) : item.overview;
 
       return `
-        <article class="news-card ${isLatest ? 'news-card-featured' : ''}" data-id="${item.id}">
-          <div class="news-card-header">
-            <div class="news-meta-left">
-              <span class="news-date-badge">📅 ${item.date}</span>
-              <span class="news-badge news-badge-${item.badge_key || 'notice'}" style="--badge-color:${item.badge_color || '#8b5cf6'};">
-                ${categoryLabels[item.badge_key] || item.badge_label || item.category || (isEN ? 'Notice' : '📢 公告')}
-              </span>
-              ${isLatest ? '<span class="news-latest-tag">NEW 🔥</span>' : ''}
+        <article class="news-card news-accordion-card ${isExpanded ? 'expanded' : ''} ${isLatest ? 'news-card-featured' : ''}" id="news-${item.id}" data-id="${item.id}">
+          <div class="news-accordion-header" data-id="${item.id}">
+            <div class="news-card-header-meta">
+              <div class="news-meta-left">
+                <span class="news-date-badge">📅 ${item.date}</span>
+                <span class="news-badge news-badge-${item.badge_key || 'notice'}" style="--badge-color:${item.badge_color || '#8b5cf6'};">
+                  ${categoryLabels[item.badge_key] || item.badge_label || item.category || (isEN ? 'Notice' : '📢 公告')}
+                </span>
+                ${isLatest ? '<span class="news-latest-tag">NEW 🔥</span>' : ''}
+              </div>
+              <div class="news-accordion-toggle-btn">
+                <span>${isExpanded ? (isEN ? 'Collapse' : '收起') : (isEN ? 'AI Highlights' : 'AI 重點')}</span>
+                <span class="news-accordion-arrow">${isExpanded ? '▲' : '▼'}</span>
+              </div>
             </div>
-            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-source-link" title="${isEN ? 'Official Post' : '前往官方公告原文'}">
-              <span>${isEN ? 'Official Post' : '官方原文'}</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                <polyline points="15 3 21 3 21 9"></polyline>
-                <line x1="10" y1="14" x2="21" y2="3"></line>
-              </svg>
-            </a>
+
+            <h3 class="news-card-title">
+              <span>${escapeHtml(displayTitle)}</span>
+            </h3>
+
+            ${debutBannerHTML}
+
+            <p class="news-overview-text">${escapeHtml(displayOverview || '')}</p>
           </div>
 
-          <h3 class="news-card-title">
-            <a href="${item.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(displayTitle)}</a>
-          </h3>
+          <div class="news-accordion-body" style="${isExpanded ? 'display: block;' : 'display: none;'}">
+            ${aiSectionsHTML}
 
-          ${debutBannerHTML}
+            ${previewHTML}
 
-          <p class="news-overview-text">${escapeHtml(displayOverview || '')}</p>
-
-          ${aiSectionsHTML}
-
-          ${previewHTML}
-
-          <div class="news-card-footer">
-            ${item.content_preview ? `
-              <button type="button" class="news-expand-btn ${isExpanded ? 'expanded' : ''}" data-target="${item.id}">
-                <span>${isExpanded ? (isEN ? 'Collapse Preview' : '收起預覽') : (isEN ? '📖 Preview Content' : '📖 查看原文預覽')}</span>
-                <span class="news-expand-arrow">${isExpanded ? '▲' : '▼'}</span>
-              </button>
-            ` : '<span></span>'}
-            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-read-more-btn">
-              <span>${isEN ? 'Official Post ↗' : '完整官方公告 ↗'}</span>
-            </a>
+            <div class="news-card-footer">
+              <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-read-more-btn">
+                <span>${isEN ? 'Official Post ↗' : '完整官方公告原文 ↗'}</span>
+              </a>
+            </div>
           </div>
         </article>
       `;
     }).join('');
 
-    // 綁定展開 / 收合按鈕事件
-    newsListContainer.querySelectorAll('.news-expand-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-target');
-        const previewEl = document.getElementById(`preview-${id}`);
-        if (!previewEl) return;
-
+    // 綁定點選卡片頭部展開 / 收合事件
+    newsListContainer.querySelectorAll('.news-accordion-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const id = header.getAttribute('data-id');
         if (expandedMap.has(id)) {
           expandedMap.delete(id);
-          previewEl.classList.remove('expanded');
-          btn.classList.remove('expanded');
-          btn.querySelector('span:first-child').textContent = isEN ? '📖 Preview Content' : '📖 查看原文預覽';
-          btn.querySelector('.news-expand-arrow').textContent = '▼';
         } else {
           expandedMap.add(id);
-          previewEl.classList.add('expanded');
-          btn.classList.add('expanded');
-          btn.querySelector('span:first-child').textContent = isEN ? 'Collapse Preview' : '收起預覽';
-          btn.querySelector('.news-expand-arrow').textContent = '▲';
         }
+        renderNews();
       });
     });
   }
