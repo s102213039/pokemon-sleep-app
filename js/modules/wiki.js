@@ -10129,17 +10129,16 @@
       }
     }
 
-    const ladderFab = document.getElementById('ladder-sidebar-bookmark-handle-fab');
-    if (ladderFab) {
+    if (ladderHandle) {
       if (targetTab === 'ingredients') {
-        ladderFab.style.display = 'flex';
-        ladderFab.style.opacity = '1';
-        ladderFab.style.pointerEvents = 'auto';
+        ladderHandle.style.display = 'flex';
+        ladderHandle.style.opacity = '1';
+        ladderHandle.style.pointerEvents = 'auto';
         updateLadderActiveFilterBadge();
       } else {
-        ladderFab.style.display = 'none';
-        ladderFab.style.opacity = '0';
-        ladderFab.style.pointerEvents = 'none';
+        ladderHandle.style.display = 'none';
+        ladderHandle.style.opacity = '0';
+        ladderHandle.style.pointerEvents = 'none';
       }
     }
   }
@@ -10147,17 +10146,19 @@
   function openLadderSidebar() {
     const sidebar = document.getElementById('ladder-filter-sidebar');
     const backdrop = document.getElementById('ladder-sidebar-backdrop');
-    const ladderFab = document.getElementById('ladder-sidebar-bookmark-handle-fab');
+    const ladderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+
     if (sidebar) {
       sidebar.classList.remove('collapsed');
       sidebar.style.setProperty('display', 'flex', 'important');
     }
-    if (backdrop && window.innerWidth <= 1024) {
+    if (backdrop && (isMobileH5 || window.innerWidth <= 1024)) {
       backdrop.classList.add('active');
     }
-    if (ladderFab) {
-      ladderFab.style.opacity = '0';
-      ladderFab.style.pointerEvents = 'none';
+    if (ladderHandle && isMobileH5) {
+      ladderHandle.style.opacity = '0';
+      ladderHandle.style.pointerEvents = 'none';
     }
     if (typeof window.setSidebarSavedState === 'function') {
       window.setSidebarSavedState('pksleep_ladder_sidebar_open', true);
@@ -10167,17 +10168,19 @@
   function closeLadderSidebar() {
     const sidebar = document.getElementById('ladder-filter-sidebar');
     const backdrop = document.getElementById('ladder-sidebar-backdrop');
-    const ladderFab = document.getElementById('ladder-sidebar-bookmark-handle-fab');
+    const ladderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+
     if (sidebar) {
       sidebar.classList.add('collapsed');
     }
     if (backdrop) {
       backdrop.classList.remove('active');
     }
-    if (ladderFab && currentWikiSubTab === 'ingredients') {
-      ladderFab.style.opacity = '1';
-      ladderFab.style.pointerEvents = 'auto';
-      ladderFab.style.display = 'flex';
+    if (ladderHandle && isMobileH5) {
+      ladderHandle.style.opacity = '1';
+      ladderHandle.style.pointerEvents = 'auto';
+      ladderHandle.style.display = (currentWikiSubTab === 'ingredients') ? 'flex' : 'none';
     }
     if (typeof window.setSidebarSavedState === 'function') {
       window.setSidebarSavedState('pksleep_ladder_sidebar_open', false);
@@ -10575,7 +10578,7 @@
   }
 
   function updateLadderActiveFilterBadge() {
-    const badges = document.querySelectorAll('#ladder-sidebar-bookmark-badge, #ladder-sidebar-bookmark-badge-fab');
+    const badge = document.getElementById('ladder-sidebar-bookmark-badge');
     let count = 0;
     if (ladderSearchQuery && ladderSearchQuery.trim()) count++;
     if (ladderSupplyFilter && ladderSupplyFilter !== 'ALL') count++;
@@ -10584,14 +10587,14 @@
     if (isLadderIngM || isLadderIngS || isLadderSpeedM || isLadderSpeedS) count++;
     if (ladderNature && ladderNature !== 'NONE') count++;
 
-    badges.forEach(badge => {
+    if (badge) {
       if (count > 0) {
         badge.textContent = count;
         badge.style.display = 'inline-flex';
       } else {
         badge.style.display = 'none';
       }
-    });
+    }
   }
 
   function refreshCoordinateLadder() {
@@ -12206,36 +12209,59 @@
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
 
     container.innerHTML = `
-      <!-- 🎛️ 右下懸浮天梯篩選按鈕 (與圖鑑/料理完全一致的 FAB 結構) -->
-      <button type="button" id="ladder-sidebar-bookmark-handle-fab" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Open Filters' : '展開天梯篩選器'}" aria-label="${isEN ? 'Open Filters' : '展開天梯篩選器'}" style="${isMobileH5 && currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
-        <span class="bookmark-icon">
-          <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="4" y1="21" x2="4" y2="14"></line>
-            <line x1="4" y1="10" x2="4" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12" y2="3"></line>
-            <line x1="20" y1="21" x2="20" y2="16"></line>
-            <line x1="20" y1="12" x2="20" y2="3"></line>
-            <line x1="1" y1="14" x2="7" y2="14"></line>
-            <line x1="9" y1="8" x2="15" y2="8"></line>
-            <line x1="17" y1="16" x2="23" y2="16"></line>
-          </svg>
-        </span>
-        <span id="ladder-sidebar-bookmark-badge-fab" class="sidebar-bookmark-badge" style="display:none;"></span>
-      </button>
-
-      <!-- 天梯專屬側邊篩選器 (Mobile: 抽屜式 / Desktop: 左側滑動) -->
-      <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Ladder Filters' : '天梯篩選器'}">
-        <!-- 🔖 側邊欄垂直中央書籤標籤 (Vertically Centered Bookmark Drawer Handle) -->
-        <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleLadderSidebar()" title="${isEN ? 'Toggle Ladder Filters' : '切換天梯篩選側邊欄'}" aria-label="${isEN ? 'Toggle Ladder Filters' : '切換天梯篩選側邊欄'}">
-          <span class="bookmark-text">${isEN ? 'Filter' : '篩選'}</span>
-          <span class="bookmark-arrow">◀</span>
+      ${isMobileH5 ? `
+        <!-- 🎛️ 右下懸浮天梯篩選按鈕 (與圖鑑/料理完全一致的 FAB 結構) -->
+        <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Open Filters' : '展開天梯篩選器'}" aria-label="${isEN ? 'Open Filters' : '展開天梯篩選器'}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
+          <span class="bookmark-icon">
+            <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line>
+              <line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line>
+              <line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line>
+              <line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+          </span>
           <span id="ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
         </button>
+      ` : ''}
+
+      <!-- 天梯專屬側邊篩選器 (Mobile: 抽屜式 / Desktop: 左側滑動) -->
+      <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${isMobileH5 ? 'collapsed' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Ladder Filters' : '天梯篩選器'}">
+        ${!isMobileH5 ? `
+          <!-- 🔖 側邊欄垂直中央書籤標籤 (Desktop: 抽屜把手) -->
+          <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleLadderSidebar()" title="${isEN ? 'Toggle Ladder Filters' : '切換天梯篩選側邊欄'}" aria-label="${isEN ? 'Toggle Ladder Filters' : '切換天梯篩選側邊欄'}">
+            <span class="bookmark-icon">🎛️</span>
+            <span class="bookmark-text">${isEN ? 'Filter' : '篩選'}</span>
+            <span class="bookmark-arrow">◀</span>
+            <span id="ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
+          </button>
+        ` : ''}
 
         <div class="sidebar-header">
-          <button type="button" id="ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.closeLadderSidebar()" title="${isEN ? 'Close' : '收合側邊欄'}" aria-label="${isEN ? 'Close' : '收合側邊欄'}">◀</button>
+          <button type="button" id="ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.closeLadderSidebar()" title="${isEN ? 'Close' : '收合側邊欄'}" aria-label="${isEN ? 'Close' : '收合側邊欄'}">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
           <div class="sidebar-title-group">
+            <span class="sidebar-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"></line>
+                <line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line>
+                <line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line>
+                <line x1="9" y1="8" x2="15" y2="8"></line>
+                <line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+            </span>
             <span class="sidebar-title">${isEN ? 'Ladder Filters' : '天梯篩選器'}</span>
           </div>
           <button type="button" id="ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${isEN ? 'Reset All Filters' : '重設所有條件'}">${isEN ? 'Reset All' : '全部重設'}</button>

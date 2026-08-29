@@ -1071,7 +1071,7 @@ if (typeof document !== 'undefined') {
 
         if (target !== 'wiki') {
           if (isMobileH5) document.body.classList.remove('ladder-active');
-          const curLadderHandle = document.getElementById('ladder-sidebar-bookmark-handle-fab') || document.getElementById('ladder-sidebar-bookmark-handle');
+          const curLadderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
           if (curLadderHandle) curLadderHandle.style.display = 'none';
           if (ladderSidebar) ladderSidebar.style.display = 'none';
           if (ladderBackdrop) ladderBackdrop.classList.remove('active');
@@ -1125,8 +1125,12 @@ if (typeof document !== 'undefined') {
               if (ladderBackdrop) ladderBackdrop.classList.remove('active');
             }
           }
-          const curLadderHandle = document.getElementById('ladder-sidebar-bookmark-handle-fab') || document.getElementById('ladder-sidebar-bookmark-handle');
-          if (curLadderHandle) curLadderHandle.style.display = isIng ? 'flex' : 'none';
+          const curLadderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
+          if (curLadderHandle) {
+            curLadderHandle.style.display = isIng ? 'flex' : 'none';
+            curLadderHandle.style.opacity = isIng ? '1' : '0';
+            curLadderHandle.style.pointerEvents = isIng ? 'auto' : 'none';
+          }
 
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#wiki');
