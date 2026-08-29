@@ -145,44 +145,74 @@
       let eventCat = 'event';
       let typeLabel = isEN ? 'Special Event' : '活動企劃';
       let typeClass = 'gantt-bar-event';
-      let typeColor = '#8b5cf6'; // Royal Purple
+      let typeColor = '#f97316'; // 暖陽落日橘 (Warm Coral)
 
       const titleLower = (item.title + ' ' + (item.title_en || '')).toLowerCase();
-      if (titleLower.includes('好眠日') || titleLower.includes('good sleep')) {
+      if (titleLower.includes('好眠日限定包')) {
+        eventCat = 'good-sleep';
+        typeLabel = isEN ? 'Good Sleep Pack' : '好眠限定包';
+        typeClass = 'gantt-bar-pack';
+        typeColor = '#eab308'; // 陽光金黃 (Sun Yellow)
+      } else if (titleLower.includes('好眠日') || titleLower.includes('good sleep')) {
         eventCat = 'good-sleep';
         typeLabel = isEN ? 'Good Sleep Day' : '好眠日';
         typeClass = 'gantt-bar-event';
-        typeColor = '#f59e0b'; // Amber Gold
+        typeColor = '#f59e0b'; // 滿月琥珀金 (Amber Gold)
+      } else if (titleLower.includes('新月日限定包')) {
+        eventCat = 'new-moon';
+        typeLabel = isEN ? 'New Moon Pack' : '新月限定包';
+        typeClass = 'gantt-bar-pack';
+        typeColor = '#8b5cf6'; // 霓虹亮紫 (Violet)
       } else if (titleLower.includes('新月日') || titleLower.includes('new moon')) {
         eventCat = 'new-moon';
         typeLabel = isEN ? 'New Moon Day' : '新月日';
         typeClass = 'gantt-bar-event';
-        typeColor = '#4f46e5'; // Cosmic Indigo
+        typeColor = '#4f46e5'; // 宇宙深藍 (Cosmic Indigo)
+      } else if (titleLower.includes('合作紀念包')) {
+        eventCat = 'collab';
+        typeLabel = isEN ? 'Collab Pack' : '合作紀念包';
+        typeClass = 'gantt-bar-pack';
+        typeColor = '#3b82f6'; // 晴空海藍 (Sky Blue)
       } else if (titleLower.includes('合作') || titleLower.includes('collab') || titleLower.includes('動畫')) {
         eventCat = 'collab';
         typeLabel = isEN ? 'Collab Event' : '合作特企';
-        typeClass = isPack ? 'gantt-bar-pack' : 'gantt-bar-event';
-        typeColor = '#c026d3'; // Fuchsia Magenta
-      } else if (titleLower.includes('嘉年華') || titleLower.includes('festival') || titleLower.includes('夏日') || titleLower.includes('慶典')) {
-        eventCat = isPack ? 'pack-bundle' : 'festival';
-        typeLabel = isPack ? (isEN ? 'Event Bundle' : '活動禮包') : (isEN ? 'Festival' : '節慶活動');
-        typeClass = isPack ? 'gantt-bar-pack' : 'gantt-bar-event';
-        typeColor = isPack ? '#0891b2' : '#ea580c'; // Coral Orange or Cyan
+        typeClass = 'gantt-bar-event';
+        typeColor = '#ec4899'; // 洋紅粉紫 (Hot Pink)
+      } else if (titleLower.includes('小鍛匠')) {
+        eventCat = 'pack-growth';
+        typeLabel = isEN ? 'Tinkatink Pack' : '小鍛匠培育包';
+        typeClass = 'gantt-bar-pack';
+        typeColor = '#14b8a6'; // 薄荷青綠 (Mint Teal)
+      } else if (titleLower.includes('摔角鷹人')) {
+        eventCat = 'pack-growth';
+        typeLabel = isEN ? 'Hawlucha Pack' : '摔角鷹人培育包';
+        typeClass = 'gantt-bar-pack';
+        typeColor = '#10b981'; // 翡翠翠綠 (Emerald Green)
       } else if (titleLower.includes('培育包') || titleLower.includes('growth')) {
         eventCat = 'pack-growth';
         typeLabel = isEN ? 'Growth Pack' : '培育包';
         typeClass = 'gantt-bar-pack';
-        typeColor = '#059669'; // Emerald Green
+        typeColor = '#10b981'; // 翡翠翠綠 (Emerald Green)
+      } else if (titleLower.includes('同樂包')) {
+        eventCat = 'pack-bundle';
+        typeLabel = isEN ? 'Festival Bundle' : '嘉年華同樂包';
+        typeClass = 'gantt-bar-pack';
+        typeColor = '#06b6d4'; // 加勒比天青 (Cyan Teal)
+      } else if (titleLower.includes('嘉年華') || titleLower.includes('festival') || titleLower.includes('夏日') || titleLower.includes('慶典')) {
+        eventCat = isPack ? 'pack-bundle' : 'festival';
+        typeLabel = isPack ? (isEN ? 'Event Bundle' : '活動禮包') : (isEN ? 'Summer Carnival' : '夏日嘉年華');
+        typeClass = isPack ? 'gantt-bar-pack' : 'gantt-bar-event';
+        typeColor = isPack ? '#06b6d4' : '#f97316'; // 暖陽落日橘
       } else if (isPack || titleLower.includes('包') || titleLower.includes('bundle') || titleLower.includes('pack')) {
         eventCat = 'pack-bundle';
         typeLabel = isEN ? 'Event Bundle' : '活動禮包';
         typeClass = 'gantt-bar-pack';
-        typeColor = '#0891b2'; // Cyan Teal
+        typeColor = '#0891b2'; // 湛藍 (Teal)
       } else if (item.badge_key === 'update' || titleLower.includes('更新') || titleLower.includes('維護')) {
         eventCat = 'update';
         typeLabel = isEN ? 'Update' : '版本更新';
         typeClass = 'gantt-bar-event';
-        typeColor = '#e11d48'; // Rose Red
+        typeColor = '#e11d48'; // 薔薇紅 (Rose Red)
       }
 
       ganttItems.push({
@@ -214,7 +244,7 @@
   let calCurrentYear = 2026;
   let calCurrentMonth = 7; // 8月 (0-indexed)
   let calSelectedDay = 16; // 8/16 (今日)
-  let calShowAllEvents = false; // 是否展示全部進行中的活動
+  let filterOnlyOngoing = false; // 是否在下方卡片列表只展示進行中的活動
 
   function renderEventTimeline() {
     if (!newsTimelineContainer) return;
@@ -227,7 +257,7 @@
 
     newsTimelineContainer.style.display = 'block';
 
-    // 智能多軌道分配 (0=上層, 1=中層, 2=下層)，保證連續跨日色塊處於相同高度
+    // 智能多軌道分配 (0, 1, 2, 3, 4)，保證跨日活動在相同的水平軌道上連續貫穿
     const trackEndTimes = [];
     ganttData.forEach(ev => {
       let assignedTrack = -1;
@@ -244,6 +274,8 @@
       }
       ev.trackIndex = assignedTrack;
     });
+
+    const maxTracks = Math.max(1, trackEndTimes.length);
 
     const monthNames = isEN
       ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -269,11 +301,11 @@
       const isToday = (calCurrentYear === 2026 && calCurrentMonth === 7 && d === 16);
       const isSelected = (d === calSelectedDay);
 
-      // 🌈 貫穿日期的背景色塊 (Continuous Multi-Colored Background Event Bands)
-      let bgBandsHTML = '';
-      if (activeEvents.length > 0) {
-        const bands = [];
-        activeEvents.forEach(ev => {
+      // 🌈 每個活動各自的專屬色彩連續條帶 (Each event has its own continuous solid color track)
+      let tracksHTML = '';
+      for (let t = 0; t < maxTracks; t++) {
+        const ev = activeEvents.find(e => e.trackIndex === t);
+        if (ev) {
           const prevDayEnd = new Date(calCurrentYear, calCurrentMonth, d - 1, 23, 59, 59);
           const nextDayStart = new Date(calCurrentYear, calCurrentMonth, d + 1, 0, 0, 0);
           const hasPrev = (d > 1) && (ev.startDate <= prevDayEnd);
@@ -282,40 +314,42 @@
           const isStartCap = (!hasPrev) || (dayOfWeek === 0);
           const isEndCap = (!hasNext) || (dayOfWeek === 6);
 
-          let capClass = 'band-mid';
-          if (isStartCap && isEndCap) capClass = 'band-cap-both';
-          else if (isStartCap) capClass = 'band-cap-start';
-          else if (isEndCap) capClass = 'band-cap-end';
+          let capClass = 'bar-mid';
+          if (isStartCap && isEndCap) capClass = 'bar-cap-both';
+          else if (isStartCap) capClass = 'bar-cap-start';
+          else if (isEndCap) capClass = 'bar-cap-end';
 
-          bands.push(`
-            <div class="news-cal-bg-band ${capClass} cat-${ev.eventCat}" 
+          tracksHTML += `
+            <div class="news-cal-track-bar ${capClass}" 
+                 style="background-color: ${ev.typeColor};" 
                  title="${escapeHtml(ev.title)} (${ev.typeLabel})"></div>
-          `);
-        });
-
-        bgBandsHTML = `<div class="news-cal-bg-bands">${bands.join('')}</div>`;
+          `;
+        } else {
+          tracksHTML += `<div class="news-cal-track-bar empty"></div>`;
+        }
       }
 
       dayCellsHTML.push(`
         <div class="news-cal-day-cell ${isToday ? 'is-today' : ''} ${isSelected ? 'is-selected' : ''} ${activeEvents.length > 0 ? 'has-events' : ''}" data-day="${d}">
-          ${bgBandsHTML}
           <span class="news-cal-day-num">${d}</span>
+          <div class="news-cal-tracks">
+            ${tracksHTML}
+          </div>
         </div>
       `);
     }
 
-    // 計算當前展示的活動 (當日活動 vs 全部進行中活動)
+    // 計算當前選取日期的活動
     const selectedDayStart = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 0, 0, 0);
     const selectedDayEnd = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 23, 59, 59);
-    const dayEvents = ganttData.filter(ev => ev.startDate <= selectedDayEnd && ev.endDate >= selectedDayStart);
-    const displayEvents = calShowAllEvents ? ganttData : dayEvents;
+    const selectedDateEvents = ganttData.filter(ev => ev.startDate <= selectedDayEnd && ev.endDate >= selectedDayStart);
 
     let selectedEventsHTML = '';
-    if (displayEvents.length > 0) {
-      selectedEventsHTML = displayEvents.map(ev => `
+    if (selectedDateEvents.length > 0) {
+      selectedEventsHTML = selectedDateEvents.map(ev => `
         <div class="news-cal-event-item cat-${ev.eventCat}" data-event-id="${ev.id}" data-event-title="${escapeHtml(ev.title)}" title="${isEN ? 'Click to search this event' : '點擊直接搜尋此活動'}">
           <div class="news-cal-event-left">
-            <span class="news-cal-event-badge badge-${ev.eventCat}">${ev.typeLabel}</span>
+            <span class="news-cal-event-badge badge-${ev.eventCat}" style="border-left: 3px solid ${ev.typeColor};">${ev.typeLabel}</span>
             <span class="news-cal-event-name">${escapeHtml(ev.title)}</span>
           </div>
           <span class="news-cal-event-time">${ev.startStr} ~ ${ev.endStr}</span>
@@ -332,14 +366,6 @@
     const selectedDateStr = isEN
       ? `${monthNames[calCurrentMonth]} ${calSelectedDay}${calCurrentYear === 2026 && calCurrentMonth === 7 && calSelectedDay === 16 ? ' (Today)' : ''}`
       : `${calCurrentMonth + 1}月${calSelectedDay}日${calCurrentYear === 2026 && calCurrentMonth === 7 && calSelectedDay === 16 ? ' (今日)' : ''}`;
-
-    const boxTitleText = calShowAllEvents
-      ? (isEN ? `${monthTitle} All Ongoing Events` : `${monthTitle} 全部進行中的活動與禮包`)
-      : (isEN ? `${selectedDateStr} Active Events` : `${selectedDateStr} 進行中的活動與禮包`);
-
-    const toggleBtnText = calShowAllEvents
-      ? (isEN ? `Back to ${calCurrentMonth + 1}/${calSelectedDay}` : `返回 ${calCurrentMonth + 1}月${calSelectedDay}日`)
-      : (isEN ? 'Show All' : '顯示全部進行中');
 
     newsTimelineContainer.innerHTML = `
       <div class="news-calendar-wrapper">
@@ -366,11 +392,11 @@
         <div class="news-calendar-events-box">
           <div class="news-cal-box-title-row">
             <div class="news-cal-box-title-left">
-              <span class="news-cal-box-heading">${boxTitleText}</span>
-              <span class="news-cal-box-count">${displayEvents.length} ${isEN ? 'items' : '項'}</span>
+              <span class="news-cal-box-heading">${selectedDateStr} ${isEN ? 'Active Events' : '進行中的活動與禮包'}</span>
+              <span class="news-cal-box-count">${selectedDateEvents.length} ${isEN ? 'items' : '項'}</span>
             </div>
-            <button type="button" class="news-cal-toggle-all-btn ${calShowAllEvents ? 'active' : ''}" title="${isEN ? 'Toggle all active events vs selected date' : '切換展示全部進行中活動 / 當日活動'}">
-              ${toggleBtnText}
+            <button type="button" class="news-cal-filter-ongoing-btn ${filterOnlyOngoing ? 'active' : ''}" title="${isEN ? 'Filter card list below to currently ongoing events' : '在下方卡片列表展示所有正在進行的活動'}">
+              ${filterOnlyOngoing ? (isEN ? '✕ Reset Cards' : '✕ 還原全部卡片') : (isEN ? 'Show in Cards' : '在下方展示進行中活動')}
             </button>
           </div>
           <div class="news-cal-events-scroll-list">
@@ -384,12 +410,22 @@
     const prevBtn = newsTimelineContainer.querySelector('.prev-btn');
     const nextBtn = newsTimelineContainer.querySelector('.next-btn');
     const todayBtn = newsTimelineContainer.querySelector('.today-btn');
-    const toggleAllBtn = newsTimelineContainer.querySelector('.news-cal-toggle-all-btn');
+    const filterOngoingBtn = newsTimelineContainer.querySelector('.news-cal-filter-ongoing-btn');
 
-    if (toggleAllBtn) {
-      toggleAllBtn.addEventListener('click', () => {
-        calShowAllEvents = !calShowAllEvents;
+    if (filterOngoingBtn) {
+      filterOngoingBtn.addEventListener('click', () => {
+        filterOnlyOngoing = !filterOnlyOngoing;
+        if (filterOnlyOngoing) {
+          // 展開所有進行中活動卡片
+          const refDate = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 12, 0, 0);
+          const activeIds = ganttData.filter(ev => ev.startDate <= refDate && ev.endDate >= refDate).map(e => e.id);
+          activeIds.forEach(id => expandedMap.add(id));
+        }
+        renderNews();
         renderEventTimeline();
+        if (filterOnlyOngoing && newsListContainer) {
+          newsListContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       });
     }
 
@@ -398,7 +434,6 @@
         if (calCurrentMonth > 0) calCurrentMonth--;
         else { calCurrentYear--; calCurrentMonth = 11; }
         calSelectedDay = 1;
-        calShowAllEvents = false;
         renderEventTimeline();
       });
     }
@@ -417,7 +452,6 @@
         calCurrentYear = 2026;
         calCurrentMonth = 7;
         calSelectedDay = 16;
-        calShowAllEvents = false;
         renderEventTimeline();
       });
     }
@@ -428,7 +462,9 @@
         const day = parseInt(cell.getAttribute('data-day'), 10);
         if (day) {
           calSelectedDay = day;
-          calShowAllEvents = false;
+          if (filterOnlyOngoing) {
+            renderNews();
+          }
           renderEventTimeline();
         }
       });
@@ -461,7 +497,9 @@
         if (evId) {
           expandedMap.add(evId);
         }
+        filterOnlyOngoing = false;
         renderNews();
+        renderEventTimeline();
 
         // 4. 平滑滾動至搜尋結果新聞卡片
         setTimeout(() => {
@@ -549,7 +587,17 @@
 
   /* ─── 篩選新聞清單 ───────────────────────────────────── */
   function getFilteredNews() {
+    const ganttData = parseEventTimeline(allNews);
+    const refDate = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 12, 0, 0);
+    const ongoingEventIds = new Set(
+      ganttData.filter(ev => ev.startDate <= refDate && ev.endDate >= refDate).map(ev => ev.id)
+    );
+
     return allNews.filter(item => {
+      // 0. 若啟用了「只在下方展示進行中活動」
+      if (filterOnlyOngoing && !ongoingEventIds.has(item.id)) {
+        return false;
+      }
       // 1. 分類過濾
       if (currentCategory !== 'ALL' && item.badge_key !== currentCategory) {
         return false;
@@ -576,9 +624,23 @@
 
     // 更新統計數量徽章
     if (newsCountBadge) {
-      newsCountBadge.innerHTML = isEN
-        ? `Showing <strong>${filtered.length}</strong> / ${allNews.length} news items`
-        : `顯示 <strong>${filtered.length}</strong> / ${allNews.length} 則最新消息`;
+      if (filterOnlyOngoing) {
+        newsCountBadge.innerHTML = isEN
+          ? `Showing <strong>${filtered.length}</strong> active ongoing events <button type="button" class="news-reset-ongoing-link" style="margin-left:6px;background:none;border:none;color:var(--color-primary);font-weight:700;cursor:pointer;text-decoration:underline;">Reset</button>`
+          : `正在展示 <strong>${filtered.length}</strong> 則進行中活動卡片 <button type="button" class="news-reset-ongoing-link" style="margin-left:6px;background:none;border:none;color:var(--color-primary);font-weight:700;cursor:pointer;text-decoration:underline;">還原全部</button>`;
+        const resetLink = newsCountBadge.querySelector('.news-reset-ongoing-link');
+        if (resetLink) {
+          resetLink.addEventListener('click', () => {
+            filterOnlyOngoing = false;
+            renderNews();
+            renderEventTimeline();
+          });
+        }
+      } else {
+        newsCountBadge.innerHTML = isEN
+          ? `Showing <strong>${filtered.length}</strong> / ${allNews.length} news items`
+          : `顯示 <strong>${filtered.length}</strong> / ${allNews.length} 則最新消息`;
+      }
     }
 
     if (filtered.length === 0) {
