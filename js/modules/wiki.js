@@ -10595,42 +10595,20 @@
           const rank = idx + 1;
           const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : 'rank-other'));
           const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(item.name)) || item.name) : item.name;
-          
-          // 大菜供應能力試算
-          const mealsPerDay = (item.count / dishInfo.need).toFixed(1);
-          let dishTag = '';
-          let dishBadgeClass = '';
-          if (mealsPerDay >= 3.0) {
-            dishTag = isEN ? `3 Meals (${mealsPerDay}x)` : `3 餐大菜 (${mealsPerDay}×)`;
-            dishBadgeClass = 'dish-badge-full';
-          } else if (mealsPerDay >= 1.8) {
-            dishTag = isEN ? `2 Meals (${mealsPerDay}x)` : `2 餐大菜 (${mealsPerDay}×)`;
-            dishBadgeClass = 'dish-badge-high';
-          } else {
-            dishTag = isEN ? `Support (${mealsPerDay}x)` : `輔助支援 (${mealsPerDay}×)`;
-            dishBadgeClass = 'dish-badge-assist';
-          }
 
           return `
-            <div class="ing-rank-card ${rankClass}">
+            <div class="ing-rank-card ${rankClass}" title="${pkmDisplayName} (${item.recipe}) · ${item.count} ${isEN ? '/day' : '顆/天'}">
               <div class="ing-rank-left">
                 <div class="ing-rank-num ${rankClass}">
-                  ${rank === 1 ? '🥇 1' : (rank === 2 ? '🥈 2' : (rank === 3 ? '🥉 3' : `#${rank}`))}
+                  ${rank === 1 ? '🥇' : (rank === 2 ? '🥈' : (rank === 3 ? '🥉' : `#${rank}`))}
                 </div>
                 <div class="ing-rank-avatar-box ${rankClass}">
                   <img src="${item.icon}" class="ing-rank-avatar-img" alt="${pkmDisplayName}" loading="lazy">
                 </div>
-                <div class="ing-rank-info">
-                  <div class="ing-rank-name">${pkmDisplayName}</div>
-                  <div class="ing-rank-tags">
-                    <span class="node-recipe-tag-inline recipe-tag-${item.recipe.toLowerCase()}">${item.recipe}</span>
-                    <span class="ing-rank-dish-tag ${dishBadgeClass}">${dishTag}</span>
-                  </div>
-                </div>
+                <span class="node-recipe-tag-inline recipe-tag-${item.recipe.toLowerCase()}">${item.recipe}</span>
               </div>
               <div class="ing-rank-right">
-                <div class="ing-rank-yield-num">${item.count}</div>
-                <div class="ing-rank-yield-unit">${isEN ? '/day' : '顆/天'}</div>
+                <span class="ing-rank-yield-line"><span class="ing-rank-yield-num">${item.count}</span><span class="ing-rank-yield-unit">${isEN ? ' /day' : ' 顆/天'}</span></span>
               </div>
             </div>
           `;
