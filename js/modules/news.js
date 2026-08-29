@@ -20,11 +20,11 @@
   const newsTimelineContainer = typeof document !== 'undefined' ? document.getElementById('news-event-timeline') : null;
 
   const CATEGORY_MAP = [
-    { key: 'ALL', label: '全部消息', emoji: '📰' },
-    { key: 'event', label: '活動企劃', emoji: '🏆' },
-    { key: 'update', label: '版本更新', emoji: '⚙️' },
-    { key: 'maintenance', label: '維護公告', emoji: '🔧' },
-    { key: 'notice', label: '重要通知', emoji: '📢' }
+    { key: 'ALL', label: '全部消息' },
+    { key: 'event', label: '活動企劃' },
+    { key: 'update', label: '版本更新' },
+    { key: 'maintenance', label: '維護公告' },
+    { key: 'notice', label: '重要通知' }
   ];
 
   /* ─── 載入新聞資料 ───────────────────────────────────── */
@@ -70,7 +70,6 @@
       } else if (newsListContainer) {
         newsListContainer.innerHTML = `
           <div class="empty-state" style="padding: 40px 20px; text-align: center;">
-            <div style="font-size: 36px; margin-bottom: 12px;">⚠️</div>
             <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">新聞資料載入失敗：${err.message}</div>
             <div style="font-size: 13px; color: var(--text-muted);">請稍後重整頁面，或點擊頂部「同步資料」更新最新官方新聞。</div>
           </div>
@@ -280,7 +279,7 @@
     } else {
       selectedEventsHTML = `
         <div class="news-cal-empty-hint">
-          ${isEN ? '🏖️ No active events or bundles on this date' : '🏖️ 當日暫無進行中的特殊活動或禮包'}
+          ${isEN ? 'No active events or bundles on this date' : '當日暫無進行中的特殊活動或禮包'}
         </div>
       `;
     }
@@ -293,7 +292,6 @@
       <div class="news-calendar-wrapper">
         <div class="news-calendar-top-bar">
           <div class="news-calendar-title-group">
-            <span>📅</span>
             <span>${isEN ? 'Event Calendar' : '活動日曆'}</span>
             <span class="news-calendar-month-text">(${monthTitle})</span>
           </div>
@@ -314,7 +312,7 @@
 
         <div class="news-calendar-events-box">
           <div class="news-cal-box-title-row">
-            <span>📅 ${selectedDateStr} ${isEN ? 'Active Events' : '進行中的活動與禮包'}</span>
+            <span>${selectedDateStr} ${isEN ? 'Active Events' : '進行中的活動與禮包'}</span>
             <span style="font-size:10.5px;opacity:0.8;">${selectedDateEvents.length} ${isEN ? 'items' : '項'}</span>
           </div>
           <div class="news-cal-events-scroll-list">
@@ -417,7 +415,7 @@
       const count = counts[cat.key] || 0;
       return `
         <button type="button" class="news-tag-btn ${active}" data-cat="${cat.key}">
-          <span>${cat.emoji} ${labels[cat.key] || cat.label}</span>
+          <span>${labels[cat.key] || cat.label}</span>
           <span class="news-tag-count">${count}</span>
         </button>
       `;
@@ -500,7 +498,6 @@
     if (filtered.length === 0) {
       newsListContainer.innerHTML = `
         <div class="empty-state" style="padding: 50px 20px; text-align: center;">
-          <div style="font-size: 40px; margin-bottom: 12px;">🔍</div>
           <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">${isEN ? 'No matching news or updates found' : '找不到符合的新聞或公告'}</div>
           <div style="font-size: 13px; color: var(--text-muted);">${isEN ? 'Try different keywords or switch to the "All" category.' : '請嘗試更換搜尋關鍵字，或切換至「全部消息」分類。'}</div>
         </div>
@@ -517,11 +514,11 @@
       if (item.debut_pokemon && item.debut_pokemon.length > 0) {
         debutBannerHTML = `
           <div class="news-debut-banner">
-            <span class="news-debut-label">${isEN ? '🦄 Debut: ' : '🦄 新登場：'}</span>
+            <span class="news-debut-label">${isEN ? 'Debut: ' : '新登場：'}</span>
             <div class="news-poke-pill-group">
               ${item.debut_pokemon.map(p => {
                 const pName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : p;
-                return `<span class="news-poke-pill-new">✨ ${escapeHtml(pName)}</span>`;
+                return `<span class="news-poke-pill-new">${escapeHtml(pName)}</span>`;
               }).join('')}
             </div>
           </div>
@@ -529,11 +526,11 @@
       } else if (item.featured_pokemon && item.featured_pokemon.length > 0 && item.badge_key === 'event') {
         debutBannerHTML = `
           <div class="news-featured-banner">
-            <span class="news-featured-label">${isEN ? '⭐ Focus: ' : '⭐ 焦點：'}</span>
+            <span class="news-featured-label">${isEN ? 'Focus: ' : '焦點：'}</span>
             <div class="news-poke-pill-group">
               ${item.featured_pokemon.map(p => {
                 const pName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : p;
-                return `<span class="news-poke-pill-featured">🔥 ${escapeHtml(pName)}</span>`;
+                return `<span class="news-poke-pill-featured">${escapeHtml(pName)}</span>`;
               }).join('')}
             </div>
           </div>
@@ -549,12 +546,10 @@
               ${item.sections.map(sec => {
                 let secTitle = isEN ? (sec.title_en || sec.title) : sec.title;
                 const secItems = isEN && sec.items_en ? sec.items_en : sec.items;
-                const icon = sec.icon || '📌';
-                const cleanTitle = (secTitle || '').replace(/^[^\w\u4e00-\u9fa5\s]+/, '').trim();
+                const cleanTitle = (secTitle || '').replace(/^[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\s]+/u, '').replace(/^[^\w\u4e00-\u9fa5\s]+/, '').trim();
                 return `
                 <div class="news-ai-section-box news-sec-${sec.key || 'general'}">
                   <div class="news-ai-section-title">
-                    <span>${icon}</span>
                     <span>${escapeHtml(cleanTitle)}</span>
                   </div>
                   <ul class="news-ai-section-list">
@@ -590,11 +585,11 @@
         <article class="news-card news-accordion-card ${isExpanded ? 'expanded' : ''} ${isLatest ? 'news-card-featured' : ''}" id="news-${item.id}" data-id="${item.id}">
           <div class="news-card-header-meta">
             <div class="news-meta-left">
-              <span class="news-date-badge">📅 ${item.date}</span>
+              <span class="news-date-badge">${item.date}</span>
               <span class="news-badge news-badge-${item.badge_key || 'notice'}" style="--badge-color:${item.badge_color || '#8b5cf6'};">
-                ${categoryLabels[item.badge_key] || item.badge_label || item.category || (isEN ? 'Notice' : '📢 公告')}
+                ${categoryLabels[item.badge_key] || item.badge_label || item.category || (isEN ? 'Notice' : '公告')}
               </span>
-              ${isLatest ? '<span class="news-latest-tag">NEW 🔥</span>' : ''}
+              ${isLatest ? '<span class="news-latest-tag">NEW</span>' : ''}
             </div>
             <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-official-link-btn" onclick="event.stopPropagation()">
               <span>${isEN ? 'Official ↗' : '官方原文 ↗'}</span>
@@ -732,8 +727,8 @@
     const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
     let processed = String(text);
 
-    // 消除開頭重複堆疊的 Emoji（例如 ✨ ✨、🛍️ 🛍️、🍬 🍬）
-    processed = processed.replace(/^([\u{1F300}-\u{1F9FF}✨🔥⭐🛍️⏰⚡🏝️💡⚙️🍬])\s*\1\s*/u, '$1 ');
+    // 移除所有 Emoji 字符
+    processed = processed.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}✨🔥⭐🛍️⏰⚡🏝️💡⚙️🍬🦄📢📌📅🔍🏖️🤖]/gu, '').trim();
 
     if (isEN) {
       // 0. 優先調用中央 I18N 動態翻譯引擎 (單一來源規範)
@@ -770,15 +765,15 @@
         });
       }
 
-      // 5. 標點符號與常見標籤規格化
+      // 5. 標點符號與常見標籤規格化 (無 Emoji)
       processed = processed
         .replaceAll('、', ', ')
         .replaceAll('：', ': ')
         .replaceAll('；', '; ')
-        .replaceAll('【機率中幅提升】', '【Greater Appearance Rate 🔥】')
-        .replaceAll('【機率大幅提升】', '【Significantly Greater Appearance Rate 🌟】')
+        .replaceAll('【機率中幅提升】', '【Greater Appearance Rate】')
+        .replaceAll('【機率大幅提升】', '【Significantly Greater Appearance Rate】')
         .replaceAll('【機率小幅提升】', '【Slightly Greater Appearance Rate】')
-        .replaceAll('【新登場】', '【New Debut ✨】')
+        .replaceAll('【新登場】', '【New Debut】')
         .replaceAll('【各營地出現寶可夢一覽】', '【Featured Pokémon by Area】')
         .replaceAll('【活動時間】', '【Event Period】')
         .replaceAll('【活動營地】', '【Event Areas】')
@@ -796,35 +791,35 @@
 
     let formatted = escapeHtml(processed);
 
-    // 1. 機率分級標題高亮
-    formatted = formatted.replace(/【\s*(?:機率中幅提升|Greater Appearance Rate 🔥)(?:\s*🔥\s*新登場\/焦點)?\s*】/g, '<span class="hl-rateup-mid">【' + (isEN ? 'Greater Appearance Rate 🔥' : '機率中幅提升 🔥 新登場/焦點') + '】</span>');
-    formatted = formatted.replace(/【\s*(?:機率大幅提升|Significantly Greater Appearance Rate 🌟)(?:\s*🌟\s*超絕UP)?\s*】/g, '<span class="hl-rateup-large">【' + (isEN ? 'Significantly Greater Appearance Rate 🌟' : '機率大幅提升 🌟 超絕UP') + '】</span>');
+    // 1. 機率分級標題高亮 (無 Emoji)
+    formatted = formatted.replace(/【\s*(?:機率中幅提升|Greater Appearance Rate)(?:\s*新登場\/焦點)?\s*】/g, '<span class="hl-rateup-mid">【' + (isEN ? 'Greater Appearance Rate' : '機率中幅提升 新登場/焦點') + '】</span>');
+    formatted = formatted.replace(/【\s*(?:機率大幅提升|Significantly Greater Appearance Rate)(?:\s*超絕UP)?\s*】/g, '<span class="hl-rateup-large">【' + (isEN ? 'Significantly Greater Appearance Rate' : '機率大幅提升 超絕UP') + '】</span>');
     formatted = formatted.replace(/【\s*(?:機率小幅提升|Slightly Greater Appearance Rate)\s*】/g, '<span class="hl-rateup-small">【' + (isEN ? 'Slightly Greater Appearance Rate' : '機率小幅提升') + '】</span>');
-    formatted = formatted.replace(/【\s*(?:新登場|New Debut ✨)(?:\s*✨)?\s*】/g, '<span class="hl-rateup-mid">【' + (isEN ? 'New Debut ✨' : '新登場 ✨') + '】</span>');
+    formatted = formatted.replace(/【\s*(?:新登場|New Debut)\s*】/g, '<span class="hl-rateup-mid">【' + (isEN ? 'New Debut' : '新登場') + '】</span>');
 
-    // 2. 新登場 / 機率中幅提升寶可夢高亮（粉紅微光發光標籤）
+    // 2. 新登場 / 機率中幅提升寶可夢高亮（無 Emoji）
     const debutList = item.debut_pokemon || [];
     debutList.forEach(name => {
       if (!name) return;
       const displayName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(name) : name;
-      const re = new RegExp('(?:✨\\s*)?' + escapeRegExp(displayName), 'g');
-      formatted = formatted.replace(re, `<span class="hl-poke-new">✨ ${displayName}</span>`);
+      const re = new RegExp(escapeRegExp(displayName), 'g');
+      formatted = formatted.replace(re, `<span class="hl-poke-new">${displayName}</span>`);
     });
 
-    // 3. 焦點 / 機率提升寶可夢高亮（金黃微光標籤）
+    // 3. 焦點 / 機率提升寶可夢高亮（無 Emoji）
     const featList = item.featured_pokemon || [];
     featList.forEach(name => {
       if (!name || debutList.includes(name)) return;
       const displayName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(name) : name;
-      const re = new RegExp('(?:⭐\\s*|🔥\\s*)?' + escapeRegExp(displayName), 'g');
-      formatted = formatted.replace(re, `<span class="hl-poke-feat">⭐ ${displayName}</span>`);
+      const re = new RegExp(escapeRegExp(displayName), 'g');
+      formatted = formatted.replace(re, `<span class="hl-poke-feat">${displayName}</span>`);
     });
 
     // 4. 關鍵倍率與數值高亮 (如 1.25倍, 2.5x, +1,000pt, 250鑽石, 250 Diamonds)
     formatted = formatted.replace(/([1-4](?:\.\d+)?(?:倍|x)|\+\d{1,3}(?:,\d{3})*pt|\d+(?:鑽石| Diamonds))/g, '<span class="hl-mult">$1</span>');
 
-    // 5. 島嶼 / 營地名稱高亮 (防止前置 emoji 重複)
-    formatted = formatted.replace(/(?:🏝️\s*)?(Greengrass Isle EX|Greengrass Isle|Cyan Beach EX|Cyan Beach|Taupe Hollow|Snowdrop Tundra|Lapis Lakeside|Old Gold Power Plant|Amber Canyon|萌綠之島EX|天青沙灘EX|萌綠之島|天青沙灘|灰褐洞窟|白花雪原|寶藍湖畔|黃金舊發電廠|琥褐溪谷)/g, '<span class="hl-island">🏝️ $1</span>');
+    // 5. 島嶼 / 營地名稱高亮 (無 Emoji)
+    formatted = formatted.replace(/(Greengrass Isle EX|Greengrass Isle|Cyan Beach EX|Cyan Beach|Taupe Hollow|Snowdrop Tundra|Lapis Lakeside|Old Gold Power Plant|Amber Canyon|萌綠之島EX|天青沙灘EX|萌綠之島|天青沙灘|灰褐洞窟|白花雪原|寶藍湖畔|黃金舊發電廠|琥褐溪谷)/g, '<span class="hl-island">$1</span>');
 
     return formatted;
   }
