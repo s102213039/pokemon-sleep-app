@@ -7859,7 +7859,7 @@ input[type="number"] {
   color: var(--accent-blue);
 }
 
-/* 橫向天梯座標圖 (白底無框極簡高解析) */
+/* 橫向天梯座標圖 (白底圓角陰影卡片樣式) */
 #wiki-subpanel-ingredients {
   padding: 0 !important;
   margin: 0 !important;
@@ -7867,13 +7867,14 @@ input[type="number"] {
 
 .wiki-coordinate-ladder-wrapper {
   background: #ffffff;
-  border: none;
-  border-radius: 0;
-  padding: 4px 6px 12px;
-  box-shadow: none;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  padding: 16px 18px 20px;
+  box-shadow: var(--shadow-sm, 0 4px 16px rgba(0, 0, 0, 0.06));
   margin: 0;
   width: 100%;
   box-sizing: border-box;
+  overflow-x: auto;
 }
 
 .wiki-coordinate-ladder {
@@ -8941,16 +8942,17 @@ input[type="number"] {
 .values-horizontal-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
   margin-top: 2px;
 }
 
 .values-horizontal-section {
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  padding: 0;
-  box-shadow: none;
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  padding: 16px 20px 18px;
+  box-shadow: var(--shadow-sm, 0 4px 16px rgba(0, 0, 0, 0.06));
+  box-sizing: border-box;
 }
 
 .values-section-header {
