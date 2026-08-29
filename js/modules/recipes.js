@@ -946,6 +946,8 @@
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
     const catLabels = { '咖哩': isEN ? 'Curry' : '咖哩', '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : '甜點' };
+    const islandMult = (1 + islandBonus / 100).toFixed(2);
+    const eventSub = eventBonus > 1.0 ? ` · 🎉×${eventBonus.toFixed(2)}` : '';
 
     if (isMobileH5) {
       contentArea.innerHTML = `
