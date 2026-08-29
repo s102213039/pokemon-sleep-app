@@ -824,36 +824,64 @@ body::-webkit-scrollbar,
 
 .search-filter-row {
   display: flex;
-  gap: 14px;
+  gap: 10px;
   flex-wrap: wrap;
   align-items: center;
-}
-
-.search-box {
-  flex: 1;
-  min-width: 260px;
-  position: relative;
-}
-
-.search-input {
   width: 100%;
-  padding: 8px 32px 8px 34px;
-  background: var(--bg-input);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  font-size: 13.5px;
-  outline: none;
-  transition: all 0.2s ease;
+}
+
+.search-box,
+.news-search-box {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
   box-sizing: border-box;
 }
 
-.search-input:focus {
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+.search-input,
+.news-search-input {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 32px 0 36px;
+  background: var(--bg-card-inner, #1e293b);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-weight: 500;
+  font-family: inherit;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-.search-icon {
+.search-input:focus,
+.news-search-input:focus {
+  border-color: var(--color-primary, #6366f1);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.search-input::placeholder,
+.news-search-input::placeholder {
+  color: var(--text-muted, #94a3b8);
+  opacity: 0.85;
+  font-size: 13.5px;
+  font-weight: 400;
+}
+
+.search-icon,
+.news-search-box .search-icon {
   position: absolute;
   left: 11px;
   top: 50%;
@@ -861,37 +889,47 @@ body::-webkit-scrollbar,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-muted);
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted, #94a3b8);
   pointer-events: none;
   z-index: 2;
+  line-height: 1;
+}
+
+.search-icon svg,
+.news-search-box .search-icon svg {
+  display: block;
+  width: 15px;
+  height: 15px;
 }
 
 .search-clear-btn {
   position: absolute;
-  right: 10px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  background: var(--bg-card-inner);
-  color: var(--text-muted);
-  border: 1px solid var(--border-color);
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  background: var(--bg-card, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
   font-size: 11px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
-  z-index: 5;
+  transition: all 0.15s ease;
+  z-index: 3;
   padding: 0;
   line-height: 1;
 }
 
 .search-clear-btn:hover {
-  background: rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.2);
   color: #ef4444;
-  transform: translateY(-50%) scale(1.1);
+  border-color: rgba(239, 68, 68, 0.4);
 }
 
 /* 👑 最終進化切換開關 (Final Evolution Switch Button) */
@@ -13337,7 +13375,7 @@ body.mobile-h5-app.ladder-active,
   position: relative !important;
   top: auto !important;
   z-index: 10 !important;
-  margin: 8px 12px 6px !important;
+  margin: 10px 12px 6px !important;
   padding: 0 !important;
   width: calc(100% - 24px) !important;
   background: transparent !important;
@@ -13348,20 +13386,56 @@ body.mobile-h5-app.ladder-active,
   gap: 8px !important;
 }
 
-/* 🔎 1. 頂部搜尋列 App 風格 */
+/* 🔎 1. 頂部搜尋列 App 風格 (與所有 Tab 保持 100% 統一元件規範) */
+.mobile-h5-app .search-box,
 .mobile-h5-app .news-search-box {
   position: relative !important;
   width: 100% !important;
   display: flex !important;
   align-items: center !important;
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: 12px !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
   padding: 0 !important;
+  margin: 0 0 6px 0 !important;
   box-sizing: border-box !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: none !important;
 }
 
+.mobile-h5-app .search-input,
+.mobile-h5-app .news-search-input {
+  width: 100% !important;
+  height: 40px !important;
+  line-height: 40px !important;
+  padding: 0 32px 0 36px !important;
+  background: var(--bg-card-inner, #1e293b) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 10px !important;
+  color: var(--text-primary) !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  font-family: inherit !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;
+}
+
+.mobile-h5-app .search-input:focus,
+.mobile-h5-app .news-search-input:focus {
+  border-color: var(--color-primary, #6366f1) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+}
+
+.mobile-h5-app .search-input::placeholder,
+.mobile-h5-app .news-search-input::placeholder {
+  color: var(--text-muted, #94a3b8) !important;
+  opacity: 0.85 !important;
+  font-size: 13.5px !important;
+  font-weight: 400 !important;
+}
+
+.mobile-h5-app .search-icon,
 .mobile-h5-app .news-search-box .search-icon {
   position: absolute !important;
   left: 11px !important;
@@ -13370,20 +13444,18 @@ body.mobile-h5-app.ladder-active,
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  width: 16px !important;
+  height: 16px !important;
   color: var(--text-muted, #94a3b8) !important;
   pointer-events: none !important;
   z-index: 2 !important;
 }
 
-.mobile-h5-app .news-search-input {
-  width: 100% !important;
-  background: transparent !important;
-  border: none !important;
-  outline: none !important;
-  color: var(--text-primary) !important;
-  font-size: 13px !important;
-  padding: 8px 32px 8px 34px !important;
-  box-sizing: border-box !important;
+.mobile-h5-app .search-icon svg,
+.mobile-h5-app .news-search-box .search-icon svg {
+  display: block !important;
+  width: 15px !important;
+  height: 15px !important;
 }
 
 /* 🏷️ 2. 單行橫向滑動分類標籤 (Segmented Pill Chips - 1 Line) */
@@ -13976,11 +14048,30 @@ body.mobile-h5-app.ladder-active,
   color: #ffffff !important;
 }
 
-[data-theme="dawn"] .mobile-h5-app .news-search-box,
-[data-theme="emerald"] .mobile-h5-app .news-search-box {
+[data-theme="dawn"] .search-input,
+[data-theme="dawn"] .news-search-input,
+[data-theme="emerald"] .search-input,
+[data-theme="emerald"] .news-search-input,
+[data-theme="dawn"] .mobile-h5-app .search-input,
+[data-theme="dawn"] .mobile-h5-app .news-search-input,
+[data-theme="emerald"] .mobile-h5-app .search-input,
+[data-theme="emerald"] .mobile-h5-app .news-search-input {
   background: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme="dawn"] .search-input:focus,
+[data-theme="dawn"] .news-search-input:focus,
+[data-theme="emerald"] .search-input:focus,
+[data-theme="emerald"] .news-search-input:focus,
+[data-theme="dawn"] .mobile-h5-app .search-input:focus,
+[data-theme="dawn"] .mobile-h5-app .news-search-input:focus,
+[data-theme="emerald"] .mobile-h5-app .search-input:focus,
+[data-theme="emerald"] .mobile-h5-app .news-search-input:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
 }
 
 [data-theme="dawn"] .mobile-h5-app .news-tag-btn,
