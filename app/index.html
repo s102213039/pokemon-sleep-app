@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/styles.css?v=20260830_03">
+  <link rel="stylesheet" href="../css/styles.css?v=20260830_04">
 
   <!-- 🛡️ 全域路徑基準與錯誤診斷攔截器 -->
   <script>
@@ -638,26 +638,84 @@
     <!-- Panel 4: 📦 寶可夢倉庫 -->
     <div id="panel-box" class="view-panel app-panel" style="display:none;">
       <section class="controls-container mobile-controls-container">
-        <!-- 截圖辨識卡片 -->
-        <div class="box-upload-card">
-          <div class="box-upload-zone" id="batch-ocr-dropzone">
-            <span class="upload-icon">📸</span>
-            <div class="upload-text">
-              <strong>拍照或選取寶可夢截圖</strong>
-              <small>支援單張 / 批次多選，自動辨識名稱、等級、食材與技能</small>
-            </div>
-            <input type="file" id="batch-ocr-input" accept="image/*" multiple style="display:none;">
-            <button type="button" class="box-btn-upload" onclick="document.getElementById('batch-ocr-input').click()">📷 選擇截圖</button>
+        <!-- 1. 頂部搜尋與排序列 -->
+        <div class="search-filter-row box-search-filter-row">
+          <div class="search-box box-search-box">
+            <span class="search-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7"></circle>
+                <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+              </svg>
+            </span>
+            <input type="text" id="box-search-input" class="search-input box-search-input"
+              placeholder="搜尋寶可夢、暱稱、技能、性格..."
+              data-i18n-placeholder="box.search_placeholder"
+              aria-label="搜尋個人倉庫">
+            <button type="button" id="box-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
           </div>
-          <div id="batch-ocr-progress" class="ocr-progress-container" style="display:none;">
-            <div class="ocr-progress-bar"><div id="batch-ocr-bar-fill" class="ocr-progress-fill"></div></div>
-            <span id="batch-ocr-status-text" class="ocr-status-text">辨識中...</span>
+          <div class="sort-box box-sort-box">
+            <select id="box-sort-select" class="sort-select" aria-label="倉庫排序">
+              <option value="pr-desc" data-i18n="box.sort_pr_desc">👑 PR 評分由高到低</option>
+              <option value="created-desc" data-i18n="box.sort_recent">📅 最近加入</option>
+              <option value="level-desc" data-i18n="box.sort_level_desc">⚡ 等級由高到低</option>
+              <option value="level-asc" data-i18n="box.sort_level_asc">🌱 等級由低到高</option>
+              <option value="pr-asc" data-i18n="box.sort_pr_asc">📉 PR 評分由低到高</option>
+              <option value="id-asc" data-i18n="box.sort_dex_asc">🔢 全國圖鑑編號</option>
+            </select>
           </div>
         </div>
 
-        <div class="box-toolbar-row">
+        <!-- 2. 原生 App 風格快速操作卡片 (智能 OCR 上傳 & 手動錄入 & 評測室 & 備份) -->
+        <div class="box-app-action-card">
+          <div class="box-action-primary-row">
+            <input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
+            <button type="button" id="box-dropzone" class="box-app-btn box-app-btn-primary">
+              <span class="btn-icon">📸</span>
+              <div class="btn-label-group">
+                <span class="btn-title" data-i18n="box.dropzone_btn">截圖智能辨識</span>
+                <span class="btn-sub" data-i18n="box.dropzone_sub_short">支援單張 / 批次多選</span>
+              </div>
+            </button>
+            <button type="button" id="box-manual-add-btn" class="box-app-btn box-app-btn-secondary">
+              <span class="btn-icon">➕</span>
+              <div class="btn-label-group">
+                <span class="btn-title" data-i18n="box.add_pokemon_short">手動新增</span>
+                <span class="btn-sub" data-i18n="box.add_pokemon_sub">自訂數值錄入</span>
+              </div>
+            </button>
+          </div>
+
+          <!-- 次要快速工具欄 (評測室、備份、還原、切換視圖) -->
+          <div class="box-action-secondary-row">
+            <button type="button" id="box-appraisal-lab-btn" class="box-app-chip-btn" onclick="window.AppraisalLab && window.AppraisalLab.toggleLab()" data-i18n="box.appraisal_lab">
+              🔮 深度評測室
+            </button>
+            <button type="button" id="box-export-btn" class="box-app-chip-btn" data-i18n="box.export_backup">
+              💾 匯出備份
+            </button>
+            <label class="box-app-chip-btn" style="cursor:pointer;margin:0;" data-i18n="box.import_backup">
+              📥 匯入還原
+              <input type="file" id="box-import-input" accept=".json" style="display:none;">
+            </label>
+            <div class="box-view-toggle-chips">
+              <button type="button" id="box-toggle-grid" class="view-chip-btn active" title="卡片視圖">⊞</button>
+              <button type="button" id="box-toggle-table" class="view-chip-btn" title="列表視圖">☰</button>
+            </div>
+          </div>
+
+          <!-- 掃描進度指示條 -->
+          <div id="box-scanner-status" class="box-scanner-status" style="display:none;"></div>
+        </div>
+
+        <!-- 🔮 寶可夢六維深度評測實驗室容器 (Appraisal Lab) -->
+        <div id="appraisal-lab-container" style="display:none; margin-bottom: 12px;"></div>
+
+        <!-- 🔔 倉庫專屬浮動 Toast 通知容器 -->
+        <div id="box-toast-container" class="box-toast-container"></div>
+
+        <!-- 3. 統計計數 -->
+        <div class="box-info-bar">
           <div id="box-count-badge" class="result-count">已收錄 0 隻寶可夢</div>
-          <button type="button" id="open-manual-modal-btn" class="box-btn-add">➕ 手動新增</button>
         </div>
       </section>
 
@@ -909,13 +967,13 @@
 
   <!-- 腳本載入區 (嚴格按照 i18n -> app -> recipes -> wiki -> box -> news -> appraisal 順序) -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
-  <script src="../js/core/i18n.js?v=20260830_02"></script>
-  <script src="../js/modules/app.js?v=20260830_02"></script>
-  <script src="../js/modules/recipes.js?v=20260830_02"></script>
-  <script src="../js/modules/wiki.js?v=20260830_02"></script>
-  <script src="../js/modules/box.js?v=20260830_02"></script>
-  <script src="../js/modules/news.js?v=20260830_02"></script>
-  <script src="../js/modules/appraisal.js?v=20260830_02"></script>
+  <script src="../js/core/i18n.js?v=20260830_04"></script>
+  <script src="../js/modules/app.js?v=20260830_04"></script>
+  <script src="../js/modules/recipes.js?v=20260830_04"></script>
+  <script src="../js/modules/wiki.js?v=20260830_04"></script>
+  <script src="../js/modules/box.js?v=20260830_04"></script>
+  <script src="../js/modules/news.js?v=20260830_04"></script>
+  <script src="../js/modules/appraisal.js?v=20260830_04"></script>
 
   <!-- 桌面版切換監聽腳本 -->
   <script>

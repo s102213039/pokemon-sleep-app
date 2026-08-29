@@ -13667,11 +13667,12 @@ body.mobile-h5-app.ladder-active,
 .mobile-h5-app .ladder-tail-standalone-box {
   width: 240px !important;
   max-width: 100% !important;
-  background: #ffffff !important;
-  border: 1.5px solid #cbd5e1 !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.08)) !important;
   margin-left: 0 !important;
   padding: 3px 6px 4px !important;
+  border-radius: 8px !important;
 }
 
 .mobile-h5-app .ladder-tail-ruler {
@@ -15100,6 +15101,705 @@ body.mobile-h5-app.ladder-active,
   padding: 24px 10px;
   color: var(--text-muted);
   font-size: 12px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   📦 MOBILE H5 DEDICATED POKÉMON BOX MODERN APP STYLING
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.mobile-h5-app #panel-box {
+  padding: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app #panel-box .mobile-controls-container {
+  padding: 10px 12px 6px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+/* 1. 頂部搜尋列與排序下拉框 */
+.mobile-h5-app .box-search-filter-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin-bottom: 0 !important;
+}
+
+.mobile-h5-app .box-search-box {
+  flex: 1 1 auto !important;
+  position: relative !important;
+  min-width: 0 !important;
+}
+
+.mobile-h5-app .box-search-input {
+  width: 100% !important;
+  height: 38px !important;
+  padding: 0 32px 0 34px !important;
+  border-radius: 20px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  box-sizing: border-box !important;
+  transition: all 0.15s ease !important;
+}
+
+.mobile-h5-app .box-search-input:focus {
+  border-color: var(--color-primary, #6366f1) !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2) !important;
+}
+
+.mobile-h5-app .box-sort-box {
+  flex: 0 0 auto !important;
+}
+
+.mobile-h5-app .box-sort-box select {
+  height: 38px !important;
+  border-radius: 20px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  padding: 0 32px 0 10px !important;
+  cursor: pointer !important;
+  max-width: 130px !important;
+}
+
+/* 2. 原生 App 快速操作卡片 (智能 OCR 上傳 & 手動新增 & 快捷工具) */
+.mobile-h5-app .box-app-action-card {
+  background: var(--bg-card, #131b2e) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 14px !important;
+  padding: 10px 12px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .box-action-primary-row {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .box-app-btn {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 9px 12px !important;
+  border-radius: 10px !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  border: none !important;
+  user-select: none !important;
+}
+
+.mobile-h5-app .box-app-btn:active {
+  transform: scale(0.97) !important;
+}
+
+.mobile-h5-app .box-app-btn-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #38bdf8 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 3px 12px rgba(99, 102, 241, 0.35) !important;
+}
+
+.mobile-h5-app .box-app-btn-secondary {
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.06)) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .box-app-btn .btn-icon {
+  font-size: 20px !important;
+  flex-shrink: 0 !important;
+  line-height: 1 !important;
+}
+
+.mobile-h5-app .box-app-btn .btn-label-group {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+}
+
+.mobile-h5-app .box-app-btn .btn-title {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.mobile-h5-app .box-app-btn .btn-sub {
+  font-size: 10px !important;
+  opacity: 0.8 !important;
+  line-height: 1.2 !important;
+  margin-top: 1px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.mobile-h5-app .box-action-secondary-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  padding-top: 2px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .box-action-secondary-row::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .box-app-chip-btn {
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 4px 10px !important;
+  border-radius: 8px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .box-app-chip-btn:active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #ffffff !important;
+  border-color: var(--color-primary, #6366f1) !important;
+}
+
+.mobile-h5-app .box-view-toggle-chips {
+  margin-left: auto !important;
+  display: flex !important;
+  gap: 2px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  padding: 2px !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border-color) !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .view-chip-btn {
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  width: 26px !important;
+  height: 24px !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.mobile-h5-app .view-chip-btn.active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+/* 3. 掃描進度指示條 (OCR Scanner Status) */
+.mobile-h5-app .box-scanner-status {
+  padding: 8px 10px !important;
+  border-radius: 10px !important;
+  background: rgba(99, 102, 241, 0.12) !important;
+  border: 1px solid rgba(99, 102, 241, 0.3) !important;
+  font-size: 11.5px !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .batch-ocr-progress-card {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .batch-ocr-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+}
+
+.mobile-h5-app .batch-ocr-bar-bg {
+  width: 100% !important;
+  height: 6px !important;
+  border-radius: 3px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .batch-ocr-bar-fill {
+  height: 100% !important;
+  background: var(--accent-gradient, #38bdf8) !important;
+  border-radius: 3px !important;
+  transition: width 0.2s ease !important;
+}
+
+.mobile-h5-app .batch-ocr-status-text {
+  font-size: 10.5px !important;
+  color: var(--text-muted) !important;
+}
+
+/* 4. 統計計數列 */
+.mobile-h5-app .box-info-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 4px !important;
+  font-size: 12px !important;
+  color: var(--text-muted) !important;
+  font-weight: 600 !important;
+}
+
+.mobile-h5-app .box-info-bar .result-count {
+  font-size: 11.5px !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .box-info-bar .result-count strong {
+  color: var(--color-primary, #6366f1) !important;
+  font-weight: 800 !important;
+}
+
+/* 5. 倉庫內容容器與卡片網格 */
+.mobile-h5-app .box-content-container {
+  padding: 0 12px 24px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .box-cards-grid,
+.mobile-h5-app .box-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+/* 6. 原生 App 寶可夢卡片 (App Box Card) */
+.mobile-h5-app .box-card {
+  background: var(--bg-card, #131b2e) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 14px !important;
+  padding: 10px 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 7px !important;
+  transition: all 0.2s ease !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .box-card-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .box-card-img-wrap {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  border-radius: 10px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-card-icon {
+  width: 38px !important;
+  height: 38px !important;
+  object-fit: contain !important;
+}
+
+.mobile-h5-app .box-card-info {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+
+.mobile-h5-app .box-card-name-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: nowrap !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .box-card-name {
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.mobile-h5-app .box-card-level {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: var(--color-primary, #818cf8) !important;
+  background: rgba(99, 102, 241, 0.15) !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-pr-badge {
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  padding: 1px 6px !important;
+  border-radius: 6px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-card-nickname {
+  font-size: 11px !important;
+  color: var(--text-muted) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.mobile-h5-app .box-card-tags {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin-top: 1px !important;
+}
+
+.mobile-h5-app .box-spec-tag {
+  font-size: 10px !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  color: var(--text-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.mobile-h5-app .box-card-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-action-btn {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 13px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  padding: 0 !important;
+}
+
+.mobile-h5-app .box-action-btn:active {
+  transform: scale(0.9) !important;
+}
+
+.mobile-h5-app .box-pr-summary-bar {
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.06)) !important;
+  border-radius: 6px !important;
+  padding: 4px 8px !important;
+  font-size: 11px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .box-pr-summary-label {
+  font-weight: 700 !important;
+  color: #fbbf24 !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-pr-summary-text {
+  color: var(--text-secondary) !important;
+  line-height: 1.25 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .box-card-section {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+.mobile-h5-app .box-section-title {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+  letter-spacing: 0.2px !important;
+}
+
+.mobile-h5-app .box-ing-slots {
+  display: flex !important;
+  gap: 5px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .box-ing-slot {
+  flex: 1 1 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px !important;
+  padding: 3px 6px !important;
+  min-width: 0 !important;
+}
+
+.mobile-h5-app .box-slot-tag {
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-slot-val {
+  display: flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  min-width: 0 !important;
+}
+
+.mobile-h5-app .box-slot-val .ing-icon {
+  width: 16px !important;
+  height: 16px !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-slot-val .ing-qty {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .box-subskills-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 4px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .box-subskill-pill {
+  padding: 3px 2px !important;
+  border-radius: 5px !important;
+  text-align: center !important;
+  font-size: 9.5px !important;
+  line-height: 1.15 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .box-subskill-pill .subskill-lv-badge {
+  font-size: 8.5px !important;
+  opacity: 0.85 !important;
+  font-weight: 700 !important;
+}
+
+.mobile-h5-app .box-subskill-pill .subskill-name {
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .box-card-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  border-top: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.06)) !important;
+  padding-top: 5px !important;
+  margin-top: 1px !important;
+}
+
+.mobile-h5-app .box-nature-info {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .box-nature-label {
+  font-size: 10.5px !important;
+  color: var(--text-muted) !important;
+  font-weight: 600 !important;
+}
+
+.mobile-h5-app .box-nature-badge {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .box-nature-effects {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .nature-buff {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: #f43f5e !important;
+  background: rgba(244, 63, 94, 0.15) !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+}
+
+.mobile-h5-app .nature-debuff {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: #38bdf8 !important;
+  background: rgba(56, 189, 248, 0.15) !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+}
+
+.mobile-h5-app .nature-neutral {
+  font-size: 10px !important;
+  color: var(--text-muted) !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+}
+
+/* 7. 原生 App 倉庫空狀態 (App Empty State) */
+.mobile-h5-app .box-empty-state {
+  background: var(--bg-card, #131b2e) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 16px !important;
+  padding: 32px 18px !important;
+  text-align: center !important;
+  margin-top: 4px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+.mobile-h5-app .box-empty-icon {
+  font-size: 40px !important;
+  margin-bottom: 10px !important;
+  line-height: 1 !important;
+}
+
+.mobile-h5-app .box-empty-state h3 {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  margin: 0 0 6px 0 !important;
+}
+
+.mobile-h5-app .box-empty-state p {
+  font-size: 12px !important;
+  color: var(--text-muted) !important;
+  line-height: 1.5 !important;
+  max-width: 260px !important;
+  margin: 0 auto 16px !important;
+}
+
+/* ☀️ 8. 亮色主題自適應 (Dawn & Emerald) */
+[data-theme="dawn"] .mobile-h5-app .box-search-input,
+[data-theme="emerald"] .mobile-h5-app .box-search-input,
+[data-theme="dawn"] .mobile-h5-app .box-sort-box select,
+[data-theme="emerald"] .mobile-h5-app .box-sort-box select,
+[data-theme="dawn"] .mobile-h5-app .box-app-chip-btn,
+[data-theme="emerald"] .mobile-h5-app .box-app-chip-btn,
+[data-theme="dawn"] .mobile-h5-app .box-view-toggle-chips,
+[data-theme="emerald"] .mobile-h5-app .box-view-toggle-chips,
+[data-theme="dawn"] .mobile-h5-app .box-card-img-wrap,
+[data-theme="emerald"] .mobile-h5-app .box-card-img-wrap,
+[data-theme="dawn"] .mobile-h5-app .box-action-btn,
+[data-theme="emerald"] .mobile-h5-app .box-action-btn,
+[data-theme="dawn"] .mobile-h5-app .box-pr-summary-bar,
+[data-theme="emerald"] .mobile-h5-app .box-pr-summary-bar,
+[data-theme="dawn"] .mobile-h5-app .box-ing-slot,
+[data-theme="emerald"] .mobile-h5-app .box-ing-slot {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .box-app-action-card,
+[data-theme="emerald"] .mobile-h5-app .box-app-action-card,
+[data-theme="dawn"] .mobile-h5-app .box-card,
+[data-theme="emerald"] .mobile-h5-app .box-card,
+[data-theme="dawn"] .mobile-h5-app .box-empty-state,
+[data-theme="emerald"] .mobile-h5-app .box-empty-state {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .box-app-btn-secondary,
+[data-theme="emerald"] .mobile-h5-app .box-app-btn-secondary {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .box-pr-summary-label,
+[data-theme="emerald"] .mobile-h5-app .box-pr-summary-label {
+  color: #b45309 !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .nature-buff,
+[data-theme="emerald"] .mobile-h5-app .nature-buff {
+  color: #be123c !important;
+  background: #ffe4e6 !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .nature-debuff,
+[data-theme="emerald"] .mobile-h5-app .nature-debuff {
+  color: #0369a1 !important;
+  background: #e0f2fe !important;
 }
 
 
