@@ -12298,8 +12298,8 @@
             </div>
             <div class="sidebar-skills-list sidebar-2col-tags">
               <button type="button" class="tag-btn ${ladderNature === 'NONE' ? 'active' : ''}" data-nature-filter="NONE" onclick="window.WikiDB.setLadderNature('NONE')">${isEN ? 'Neutral' : '無修正'}</button>
-              <button type="button" class="tag-btn ${ladderNature === 'ING' ? 'active' : ''}" data-nature-filter="ING" onclick="window.WikiDB.setLadderNature('ING')">${isEN ? 'Ing. Rate ▲▲ (+20%)' : '食材機率▲▲ (+20%)'}</button>
-              <button type="button" class="tag-btn ${ladderNature === 'SPEED' ? 'active' : ''}" data-nature-filter="SPEED" onclick="window.WikiDB.setLadderNature('SPEED')">${isEN ? 'Help Speed ▲▲ (+10%)' : '幫忙速度▲▲ (+10%)'}</button>
+              <button type="button" class="tag-btn ${ladderNature === 'ING' ? 'active' : ''}" data-nature-filter="ING" onclick="window.WikiDB.setLadderNature('ING')">${isEN ? 'Ing. Rate ▲ (+20%)' : '食材機率▲ (+20%)'}</button>
+              <button type="button" class="tag-btn ${ladderNature === 'SPEED' ? 'active' : ''}" data-nature-filter="SPEED" onclick="window.WikiDB.setLadderNature('SPEED')">${isEN ? 'Help Speed ▲ (+10%)' : '幫忙速度▲ (+10%)'}</button>
             </div>
           </div>
         </div>
