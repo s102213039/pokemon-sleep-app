@@ -607,7 +607,7 @@
         { name: "技能機率提升M", color: "blue" },
         { name: "技能機率提升S", color: "white" }
       ],
-      nature: "▲▲ 技能機率上升",
+      nature: "▲ 技能機率上升",
       natureBadge: "up",
       calc: "1.54 × 1.20",
       multiplier: 1.848,
@@ -618,7 +618,7 @@
       subskills: [
         { name: "技能機率提升M", color: "blue" }
       ],
-      nature: "▲▲ 技能機率上升",
+      nature: "▲ 技能機率上升",
       natureBadge: "up",
       calc: "1.36 × 1.20",
       multiplier: 1.632,
@@ -641,7 +641,7 @@
       subskills: [
         { name: "技能機率提升S", color: "white" }
       ],
-      nature: "▲▲ 技能機率上升",
+      nature: "▲ 技能機率上升",
       natureBadge: "up",
       calc: "1.18 × 1.20",
       multiplier: 1.416,
@@ -664,7 +664,7 @@
         { name: "技能機率提升M", color: "blue" },
         { name: "技能機率提升S", color: "white" }
       ],
-      nature: "▼▼ 技能機率下降",
+      nature: "▼ 技能機率下降",
       natureBadge: "down",
       calc: "1.54 × 0.80",
       multiplier: 1.232,
@@ -673,7 +673,7 @@
     },
     {
       subskills: [],
-      nature: "▲▲ 技能機率上升",
+      nature: "▲ 技能機率上升",
       natureBadge: "up",
       calc: "1.00 × 1.20",
       multiplier: 1.200,
@@ -695,7 +695,7 @@
       subskills: [
         { name: "技能機率提升M", color: "blue" }
       ],
-      nature: "▼▼ 技能機率下降",
+      nature: "▼ 技能機率下降",
       natureBadge: "down",
       calc: "1.36 × 0.80",
       multiplier: 1.088,
@@ -715,7 +715,7 @@
       subskills: [
         { name: "技能機率提升S", color: "white" }
       ],
-      nature: "▼▼ 技能機率下降",
+      nature: "▼ 技能機率下降",
       natureBadge: "down",
       calc: "1.18 × 0.80",
       multiplier: 0.944,
@@ -724,7 +724,7 @@
     },
     {
       subskills: [],
-      nature: "▼▼ 技能機率下降",
+      nature: "▼ 技能機率下降",
       natureBadge: "down",
       calc: "1.00 × 0.80",
       multiplier: 0.800,
@@ -802,9 +802,9 @@
         { grade: "Ⓑ", name: "幫忙速度S", name_en: "Helping Speed S", detail: "自己 -7% 幫忙時間（可用銀種子升階為 M 升至 Ⓐ）", detail_en: "Self help time -7% (upgradeable to M with Sub Skill Seed)." }
       ],
       natures: [
-        { grade: "Ⓢ", name: "幫忙速度 ▲▲", name_en: "Speed of Help ▲▲", detail: "全方位提升樹果產出速度", detail_en: "Accelerates overall berry gathering frequency." },
-        { grade: "Ⓐ", name: "食材發現率 ▼▼", name_en: "Ingredient Finding ▼▼", detail: "食材率降低，變相提高樹果產出機率（加分項）", detail_en: "Lower ingredient chance means higher relative berry production." },
-        { grade: "Ⓑ", name: "主技能機率 ▲▲ / ▼▼", name_en: "Main Skill Chance ▲▲ / ▼▼", detail: "技能對樹果寵非首要，發動機率高低影響不大", detail_en: "Skill trigger is secondary for berry specialists." }
+        { grade: "Ⓢ", name: "幫忙速度 ▲", name_en: "Speed of Help ▲", detail: "全方位提升樹果產出速度", detail_en: "Accelerates overall berry gathering frequency." },
+        { grade: "Ⓐ", name: "食材發現率 ▼", name_en: "Ingredient Finding ▼", detail: "食材率降低，變相提高樹果產出機率（加分項）", detail_en: "Lower ingredient chance means higher relative berry production." },
+        { grade: "Ⓑ", name: "主技能機率 ▲ / ▼", name_en: "Main Skill Chance ▲ / ▼", detail: "技能對樹果寵非首要，發動機率高低影響不大", detail_en: "Skill trigger is secondary for berry specialists." }
       ]
     },
     ingredient: {
@@ -823,9 +823,9 @@
         { grade: "Ⓑ", name: "樹果數量S + 持有上限", name_en: "Berry Finding S + Inventory", detail: "需搭配持有上限擴充，並保持頻繁收取", detail_en: "Pairs well with inventory upgrades and frequent gathering." }
       ],
       natures: [
-        { grade: "Ⓢ", name: "食材發現率 ▲▲", name_en: "Ingredient Finding ▲▲", detail: "食材產出量大幅提升", detail_en: "Significantly boosts ingredient quantity." },
-        { grade: "Ⓐ", name: "幫忙速度 ▲▲", name_en: "Speed of Help ▲▲", detail: "提高整體幫忙與食材判定頻率", detail_en: "Increases overall helping and check frequency." },
-        { grade: "Ⓑ", name: "主技能機率 ▲▲ / ▼▼", name_en: "Main Skill Chance ▲▲ / ▼▼", detail: "若有自補/料理強化可加分，其餘技能影響不大", detail_en: "Beneficial if Pokémon has Charge Energy or Cooking Power Up." }
+        { grade: "Ⓢ", name: "食材發現率 ▲", name_en: "Ingredient Finding ▲", detail: "食材產出量大幅提升", detail_en: "Significantly boosts ingredient quantity." },
+        { grade: "Ⓐ", name: "幫忙速度 ▲", name_en: "Speed of Help ▲", detail: "提高整體幫忙與食材判定頻率", detail_en: "Increases overall helping and check frequency." },
+        { grade: "Ⓑ", name: "主技能機率 ▲ / ▼", name_en: "Main Skill Chance ▲ / ▼", detail: "若有自補/料理強化可加分，其餘技能影響不大", detail_en: "Beneficial if Pokémon has Charge Energy or Cooking Power Up." }
       ]
     },
     skill: {
@@ -844,9 +844,9 @@
         { grade: "Ⓒ", name: "技能等級提升S", name_en: "Skill Level Up S", detail: "主技能等級+1（可用銀種子升階）", detail_en: "Main skill Lv.+1 (upgradeable with seeds)." }
       ],
       natures: [
-        { grade: "Ⓢ", name: "主技能發動機率 ▲▲", name_en: "Main Skill Chance ▲▲", detail: "技能寵靈魂性格，觸發次數最大化", detail_en: "Prime nature for skill specialists; maximizes activations." },
-        { grade: "Ⓐ", name: "幫忙速度 ▲▲", name_en: "Speed of Help ▲▲", detail: "提高幫忙判定頻率", detail_en: "Increases helping cycle rate." },
-        { grade: "Ⓐ", name: "食材發現率 ▼▼", name_en: "Ingredient Finding ▼▼", detail: "降低食材掉落，無副作用（技能寵只看技能與速度）", detail_en: "Reduces ingredient drop, no negative impact on skills." }
+        { grade: "Ⓢ", name: "主技能發動機率 ▲", name_en: "Main Skill Chance ▲", detail: "技能寵靈魂性格，觸發次數最大化", detail_en: "Prime nature for skill specialists; maximizes activations." },
+        { grade: "Ⓐ", name: "幫忙速度 ▲", name_en: "Speed of Help ▲", detail: "提高幫忙判定頻率", detail_en: "Increases helping cycle rate." },
+        { grade: "Ⓐ", name: "食材發現率 ▼", name_en: "Ingredient Finding ▼", detail: "降低食材掉落，無副作用（技能寵只看技能與速度）", detail_en: "Reduces ingredient drop, no negative impact on skills." }
       ]
     }
   };
@@ -10368,9 +10368,9 @@
 
     // 性格加成 (單選):
     if (ladderNature === 'ING') {
-      mult *= 1.20; // 性格食材機率▲▲ (+20%)
+      mult *= 1.20; // 性格食材機率▲ (+20%)
     } else if (ladderNature === 'SPEED') {
-      mult *= (1.0 / 0.9090909); // 性格幫忙速度▲▲ (-9.09% 間隔，約 +10% 幫忙次數)
+      mult *= (1.0 / 0.9090909); // 性格幫忙速度▲ (-9.09% 間隔，約 +10% 幫忙次數)
     }
 
     return mult;
@@ -12461,9 +12461,9 @@
                       </td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
                         ${row.natureBadge === 'up' 
-                          ? `<span class="matrix-rate-up">${isEN ? '▲▲ Up' : '▲▲ 上升'}</span>` 
+                          ? `<span class="matrix-rate-up">${isEN ? '▲ Up' : '▲ 上升'}</span>` 
                           : (row.natureBadge === 'down' 
-                            ? `<span class="matrix-rate-down">${isEN ? '▼▼ Down' : '▼▼ 下降'}</span>` 
+                            ? `<span class="matrix-rate-down">${isEN ? '▼ Down' : '▼ 下降'}</span>` 
                             : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`)}
                       </td>
                       <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><code class="matrix-calc-code">${row.calc}</code></td>
@@ -12522,8 +12522,8 @@
                 <thead>
                   <tr>
                     <th style="text-align: center;">${isEN ? 'Stat' : '屬性項目'}</th>
-                    <th style="text-align: center;">${isEN ? '▲▲ Nature' : '▲▲ 性格'}</th>
-                    <th style="text-align: center;">${isEN ? '▼▼ Nature' : '▼▼ 性格'}</th>
+                    <th style="text-align: center;">${isEN ? '▲ Nature' : '▲ 性格'}</th>
+                    <th style="text-align: center;">${isEN ? '▼ Nature' : '▼ 性格'}</th>
                     <th>${isEN ? 'Mechanic Details' : '影響機制說明'}</th>
                   </tr>
                 </thead>
@@ -12618,8 +12618,8 @@
                   <label><input type="checkbox" id="calc-sleep-incense" onchange="window.WikiDB.recalcSleepDays()"> ${isEN ? 'Growth Incense (2x)' : '成長薰香 (2x)'}</label>
                   <select id="calc-sleep-nature-select" class="calc-select" style="width: auto; padding: 4px 8px;" onchange="window.WikiDB.recalcSleepDays()">
                     <option value="1.0">${isEN ? 'Neutral EXP Nature' : '性格無 EXP 修正'}</option>
-                    <option value="1.18">${isEN ? 'EXP Up ▲▲ (+18%)' : '性格 EXP ▲▲ (+18%)'}</option>
-                    <option value="0.82">${isEN ? 'EXP Down ▼▼ (-18%)' : '性格 EXP ▼▼ (-18%)'}</option>
+                    <option value="1.18">${isEN ? 'EXP Up ▲ (+18%)' : '性格 EXP ▲ (+18%)'}</option>
+                    <option value="0.82">${isEN ? 'EXP Down ▼ (-18%)' : '性格 EXP ▼ (-18%)'}</option>
                   </select>
                 </div>
               </div>

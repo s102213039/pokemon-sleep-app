@@ -15,26 +15,26 @@
 
   /* ─── 字典常數定義 ─────────────────────────────────────── */
   const NATURE_DATA = [
-    { name: '固執', name_en: 'Adamant', buff: '幫忙速度▲▲', buff_en: 'Speed ▲▲', debuff: '食材機率▼▼', debuff_en: 'Ingr. ▼▼', buffType: 'speed', debuffType: 'ingredient' },
-    { name: '勇敢', name_en: 'Brave', buff: '幫忙速度▲▲', buff_en: 'Speed ▲▲', debuff: 'EXP獲得量▼▼', debuff_en: 'EXP ▼▼', buffType: 'speed', debuffType: 'exp' },
-    { name: '怕寂寞', name_en: 'Lonely', buff: '幫忙速度▲▲', buff_en: 'Speed ▲▲', debuff: '活力回復量▼▼', debuff_en: 'Energy ▼▼', buffType: 'speed', debuffType: 'energy' },
-    { name: '頑皮', name_en: 'Naughty', buff: '幫忙速度▲▲', buff_en: 'Speed ▲▲', debuff: '主技能發動機率▼▼', debuff_en: 'Skill ▼▼', buffType: 'speed', debuffType: 'skill' },
-    { name: '內斂', name_en: 'Modest', buff: '食材機率▲▲', buff_en: 'Ingr. ▲▲', debuff: '幫忙速度▼▼', debuff_en: 'Speed ▼▼', buffType: 'ingredient', debuffType: 'speed' },
-    { name: '冷靜', name_en: 'Quiet', buff: '食材機率▲▲', buff_en: 'Ingr. ▲▲', debuff: 'EXP獲得量▼▼', debuff_en: 'EXP ▼▼', buffType: 'ingredient', debuffType: 'exp' },
-    { name: '慢吞吞', name_en: 'Mild', buff: '食材機率▲▲', buff_en: 'Ingr. ▲▲', debuff: '活力回復量▼▼', debuff_en: 'Energy ▼▼', buffType: 'ingredient', debuffType: 'energy' },
-    { name: '馬虎', name_en: 'Rash', buff: '食材機率▲▲', buff_en: 'Ingr. ▲▲', debuff: '主技能發動機率▼▼', debuff_en: 'Skill ▼▼', buffType: 'ingredient', debuffType: 'skill' },
-    { name: '溫和', name_en: 'Calm', buff: '主技能發動機率▲▲', buff_en: 'Skill ▲▲', debuff: '幫忙速度▼▼', debuff_en: 'Speed ▼▼', buffType: 'skill', debuffType: 'speed' },
-    { name: '慎重', name_en: 'Careful', buff: '主技能發動機率▲▲', buff_en: 'Skill ▲▲', debuff: '食材機率▼▼', debuff_en: 'Ingr. ▼▼', buffType: 'skill', debuffType: 'ingredient' },
-    { name: '自大', name_en: 'Sassy', buff: '主技能發動機率▲▲', buff_en: 'Skill ▲▲', debuff: 'EXP獲得量▼▼', debuff_en: 'EXP ▼▼', buffType: 'skill', debuffType: 'exp' },
-    { name: '溫順', name_en: 'Gentle', buff: '主技能發動機率▲▲', buff_en: 'Skill ▲▲', debuff: '活力回復量▼▼', debuff_en: 'Energy ▼▼', buffType: 'skill', debuffType: 'energy' },
-    { name: '大膽', name_en: 'Bold', buff: '活力回復量▲▲', buff_en: 'Energy ▲▲', debuff: '幫忙速度▼▼', debuff_en: 'Speed ▼▼', buffType: 'energy', debuffType: 'speed' },
-    { name: '淘氣', name_en: 'Impish', buff: '活力回復量▲▲', buff_en: 'Energy ▲▲', debuff: '食材機率▼▼', debuff_en: 'Ingr. ▼▼', buffType: 'energy', debuffType: 'ingredient' },
-    { name: '悠閒', name_en: 'Relaxed', buff: '活力回復量▲▲', buff_en: 'Energy ▲▲', debuff: 'EXP獲得量▼▼', debuff_en: 'EXP ▼▼', buffType: 'energy', debuffType: 'exp' },
-    { name: '樂天', name_en: 'Lax', buff: '活力回復量▲▲', buff_en: 'Energy ▲▲', debuff: '主技能發動機率▼▼', debuff_en: 'Skill ▼▼', buffType: 'energy', debuffType: 'skill' },
-    { name: '膽小', name_en: 'Timid', buff: 'EXP獲得量▲▲', buff_en: 'EXP ▲▲', debuff: '幫忙速度▼▼', debuff_en: 'Speed ▼▼', buffType: 'exp', debuffType: 'speed' },
-    { name: '爽朗', name_en: 'Jolly', buff: 'EXP獲得量▲▲', buff_en: 'EXP ▲▲', debuff: '食材機率▼▼', debuff_en: 'Ingr. ▼▼', buffType: 'exp', debuffType: 'ingredient' },
-    { name: '急躁', name_en: 'Hasty', buff: 'EXP獲得量▲▲', buff_en: 'EXP ▲▲', debuff: '活力回復量▼▼', debuff_en: 'Energy ▼▼', buffType: 'exp', debuffType: 'energy' },
-    { name: '天真', name_en: 'Naive', buff: 'EXP獲得量▲▲', buff_en: 'EXP ▲▲', debuff: '主技能發動機率▼▼', debuff_en: 'Skill ▼▼', buffType: 'exp', debuffType: 'skill' },
+    { name: '固執', name_en: 'Adamant', buff: '幫忙速度▲', buff_en: 'Speed ▲', debuff: '食材機率▼', debuff_en: 'Ingr. ▼', buffType: 'speed', debuffType: 'ingredient' },
+    { name: '勇敢', name_en: 'Brave', buff: '幫忙速度▲', buff_en: 'Speed ▲', debuff: 'EXP獲得量▼', debuff_en: 'EXP ▼', buffType: 'speed', debuffType: 'exp' },
+    { name: '怕寂寞', name_en: 'Lonely', buff: '幫忙速度▲', buff_en: 'Speed ▲', debuff: '活力回復量▼', debuff_en: 'Energy ▼', buffType: 'speed', debuffType: 'energy' },
+    { name: '頑皮', name_en: 'Naughty', buff: '幫忙速度▲', buff_en: 'Speed ▲', debuff: '主技能發動機率▼', debuff_en: 'Skill ▼', buffType: 'speed', debuffType: 'skill' },
+    { name: '內斂', name_en: 'Modest', buff: '食材機率▲', buff_en: 'Ingr. ▲', debuff: '幫忙速度▼', debuff_en: 'Speed ▼', buffType: 'ingredient', debuffType: 'speed' },
+    { name: '冷靜', name_en: 'Quiet', buff: '食材機率▲', buff_en: 'Ingr. ▲', debuff: 'EXP獲得量▼', debuff_en: 'EXP ▼', buffType: 'ingredient', debuffType: 'exp' },
+    { name: '慢吞吞', name_en: 'Mild', buff: '食材機率▲', buff_en: 'Ingr. ▲', debuff: '活力回復量▼', debuff_en: 'Energy ▼', buffType: 'ingredient', debuffType: 'energy' },
+    { name: '馬虎', name_en: 'Rash', buff: '食材機率▲', buff_en: 'Ingr. ▲', debuff: '主技能發動機率▼', debuff_en: 'Skill ▼', buffType: 'ingredient', debuffType: 'skill' },
+    { name: '溫和', name_en: 'Calm', buff: '主技能發動機率▲', buff_en: 'Skill ▲', debuff: '幫忙速度▼', debuff_en: 'Speed ▼', buffType: 'skill', debuffType: 'speed' },
+    { name: '慎重', name_en: 'Careful', buff: '主技能發動機率▲', buff_en: 'Skill ▲', debuff: '食材機率▼', debuff_en: 'Ingr. ▼', buffType: 'skill', debuffType: 'ingredient' },
+    { name: '自大', name_en: 'Sassy', buff: '主技能發動機率▲', buff_en: 'Skill ▲', debuff: 'EXP獲得量▼', debuff_en: 'EXP ▼', buffType: 'skill', debuffType: 'exp' },
+    { name: '溫順', name_en: 'Gentle', buff: '主技能發動機率▲', buff_en: 'Skill ▲', debuff: '活力回復量▼', debuff_en: 'Energy ▼', buffType: 'skill', debuffType: 'energy' },
+    { name: '大膽', name_en: 'Bold', buff: '活力回復量▲', buff_en: 'Energy ▲', debuff: '幫忙速度▼', debuff_en: 'Speed ▼', buffType: 'energy', debuffType: 'speed' },
+    { name: '淘氣', name_en: 'Impish', buff: '活力回復量▲', buff_en: 'Energy ▲', debuff: '食材機率▼', debuff_en: 'Ingr. ▼', buffType: 'energy', debuffType: 'ingredient' },
+    { name: '悠閒', name_en: 'Relaxed', buff: '活力回復量▲', buff_en: 'Energy ▲', debuff: 'EXP獲得量▼', debuff_en: 'EXP ▼', buffType: 'energy', debuffType: 'exp' },
+    { name: '樂天', name_en: 'Lax', buff: '活力回復量▲', buff_en: 'Energy ▲', debuff: '主技能發動機率▼', debuff_en: 'Skill ▼', buffType: 'energy', debuffType: 'skill' },
+    { name: '膽小', name_en: 'Timid', buff: 'EXP獲得量▲', buff_en: 'EXP ▲', debuff: '幫忙速度▼', debuff_en: 'Speed ▼', buffType: 'exp', debuffType: 'speed' },
+    { name: '爽朗', name_en: 'Jolly', buff: 'EXP獲得量▲', buff_en: 'EXP ▲', debuff: '食材機率▼', debuff_en: 'Ingr. ▼', buffType: 'exp', debuffType: 'ingredient' },
+    { name: '急躁', name_en: 'Hasty', buff: 'EXP獲得量▲', buff_en: 'EXP ▲', debuff: '活力回復量▼', debuff_en: 'Energy ▼', buffType: 'exp', debuffType: 'energy' },
+    { name: '天真', name_en: 'Naive', buff: 'EXP獲得量▲', buff_en: 'EXP ▲', debuff: '主技能發動機率▼', debuff_en: 'Skill ▼', buffType: 'exp', debuffType: 'skill' },
     { name: '坦率', name_en: 'Hardy', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '', buffType: 'none', debuffType: 'none' },
     { name: '害羞', name_en: 'Bashful', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '', buffType: 'none', debuffType: 'none' },
     { name: '認真', name_en: 'Docile', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '', buffType: 'none', debuffType: 'none' },
@@ -197,19 +197,19 @@
 
     // 1. 性格評分
     if (specialty === '樹果') {
-      if (buff === 'speed') { score += 25; highlights.push(isEN ? 'Speed ▲▲' : '幫忙速度▲▲'); }
+      if (buff === 'speed') { score += 25; highlights.push(isEN ? 'Speed ▲' : '幫忙速度▲'); }
       if (debuff === 'speed') { score -= 25; }
-      if (debuff === 'ingredient') { score += 12; highlights.push(isEN ? 'Ing. ▼▼ (Pure Berry)' : '食材▼▼ (樹果極限流)'); }
+      if (debuff === 'ingredient') { score += 12; highlights.push(isEN ? 'Ing. ▼ (Pure Berry)' : '食材▼ (樹果極限流)'); }
       if (buff === 'ingredient') { score -= 6; }
     } else if (specialty === '食材') {
-      if (buff === 'ingredient') { score += 28; highlights.push(isEN ? 'Ing. Rate ▲▲' : '食材機率▲▲'); }
+      if (buff === 'ingredient') { score += 28; highlights.push(isEN ? 'Ing. Rate ▲' : '食材機率▲'); }
       if (debuff === 'ingredient') { score -= 28; }
-      if (buff === 'speed') { score += 16; highlights.push(isEN ? 'Speed ▲▲' : '幫忙速度▲▲'); }
+      if (buff === 'speed') { score += 16; highlights.push(isEN ? 'Speed ▲' : '幫忙速度▲'); }
       if (debuff === 'speed') { score -= 16; }
     } else { // 技能
-      if (buff === 'skill') { score += 30; highlights.push(isEN ? 'Skill Trigger ▲▲' : '主技能機率▲▲'); }
+      if (buff === 'skill') { score += 30; highlights.push(isEN ? 'Skill Trigger ▲' : '主技能機率▲'); }
       if (debuff === 'skill') { score -= 30; }
-      if (buff === 'speed') { score += 15; highlights.push(isEN ? 'Speed ▲▲' : '幫忙速度▲▲'); }
+      if (buff === 'speed') { score += 15; highlights.push(isEN ? 'Speed ▲' : '幫忙速度▲'); }
       if (debuff === 'speed') { score -= 15; }
     }
 
@@ -785,12 +785,31 @@
       dropdown.style.display = 'block';
     }
 
+    function updateSelectedPokemonAvatar(p) {
+      const iconWrap = document.getElementById('modal-poke-icon-wrap');
+      const iconImg = document.getElementById('modal-poke-icon-preview');
+      const combobox = document.getElementById('box-pkm-combobox');
+      if (p) {
+        const avatarUrl = p.icon_url || p.icon || (p.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png` : '') || 'assets/placeholder.svg';
+        if (iconWrap && iconImg) {
+          iconImg.src = avatarUrl;
+          iconImg.alt = p.name_cn || '';
+          iconWrap.style.display = 'flex';
+        }
+        if (combobox) combobox.classList.add('has-icon');
+      } else {
+        if (iconWrap) iconWrap.style.display = 'none';
+        if (combobox) combobox.classList.remove('has-icon');
+      }
+    }
+
     function selectPokemonInCombobox(p, userChanged = false, existing = null) {
       if (!p) return;
       nameHidden.value = p.name_cn;
       const pkmDisplayName = isEN ? (p.name_en || p.name_cn) : p.name_cn;
       searchInput.value = `No.${p.formatted_no} ${pkmDisplayName}`;
       dropdown.style.display = 'none';
+      updateSelectedPokemonAvatar(p);
       syncToggleBtnIcon();
       renderTiledIngredientPickers(p, existing);
     }
@@ -800,6 +819,7 @@
     } else {
       nameHidden.value = '';
       searchInput.value = '';
+      updateSelectedPokemonAvatar(null);
       syncToggleBtnIcon();
       renderTiledIngredientPickers(null, null);
     }
@@ -812,6 +832,7 @@
       syncToggleBtnIcon();
       if (!searchInput.value.trim()) {
         nameHidden.value = '';
+        updateSelectedPokemonAvatar(null);
         renderTiledIngredientPickers(null, null);
       }
       renderDropdown(searchInput.value);
@@ -824,6 +845,7 @@
         if (hasText) {
           searchInput.value = '';
           nameHidden.value = '';
+          updateSelectedPokemonAvatar(null);
           syncToggleBtnIcon();
           renderTiledIngredientPickers(null, null);
           renderDropdown('');
@@ -1166,8 +1188,8 @@
     }
 
     const parsedLevel = parseInt(levelInput ? levelInput.value : '', 10);
-    if (isNaN(parsedLevel) || parsedLevel < 1 || parsedLevel > 80) {
-      alert(isEN ? 'Please enter a valid level (1 ~ 80).' : '請輸入有效的等級 (1 ~ 80)！');
+    if (isNaN(parsedLevel) || parsedLevel < 1 || parsedLevel > 100) {
+      alert(isEN ? 'Please enter a valid level (1 ~ 100).' : '請輸入有效的等級 (1 ~ 100)！');
       levelInput?.focus();
       return;
     }

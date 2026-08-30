@@ -236,28 +236,28 @@
 
     if (nature.buffType === 'speed') {
       pros.push(isEN
-        ? `🚀 Nature "${natDisplayName}" provides Speed of Help ▲▲ (+10%), boosting all production.`
-        : '🚀 性格「' + natureName + '」帶來幫忙速度▲▲ (+10%)，強化所有產出判定。');
+        ? `🚀 Nature "${natDisplayName}" provides Speed of Help ▲ (+10%), boosting all production.`
+        : '🚀 性格「' + natureName + '」帶來幫忙速度▲ (+10%)，強化所有產出判定。');
     } else if (nature.debuffType === 'speed') {
       cons.push(isEN
-        ? `⚠️ Nature "${natDisplayName}" reduces Speed of Help ▼▼ (-7.5%), slightly impacting output.`
-        : '⚠️ 性格「' + natureName + '」幫忙速度▼▼ (-7.5%)，對全方位產出有微幅負面影響。');
+        ? `⚠️ Nature "${natDisplayName}" reduces Speed of Help ▼ (-7.5%), slightly impacting output.`
+        : '⚠️ 性格「' + natureName + '」幫忙速度▼ (-7.5%)，對全方位產出有微幅負面影響。');
     }
 
     if (nature.buffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
       pros.push(isEN
-        ? `🥩 Nature "${natDisplayName}" perfectly synergizes with Ingredient specialty (Ingredient Finder ▲▲ +20%).`
-        : '🥩 性格「' + natureName + '」完美契合食材型專長 (食材發現率▲▲ +20%)。');
+        ? `🥩 Nature "${natDisplayName}" perfectly synergizes with Ingredient specialty (Ingredient Finder ▲ +20%).`
+        : '🥩 性格「' + natureName + '」完美契合食材型專長 (食材發現率▲ +20%)。');
     } else if (nature.debuffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
       cons.push(isEN
-        ? `❌ Nature "${natDisplayName}" reduces Ingredient Finding ▼▼ (-20%), severely weakening specialty advantage.`
-        : '❌ 性格「' + natureName + '」導致食材發現率▼▼ (-20%)，嚴重削弱食材專長優勢。');
+        ? `❌ Nature "${natDisplayName}" reduces Ingredient Finding ▼ (-20%), severely weakening specialty advantage.`
+        : '❌ 性格「' + natureName + '」導致食材發現率▼ (-20%)，嚴重削弱食材專長優勢。');
     }
 
     if (nature.buffType === 'skill' && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
       pros.push(isEN
-        ? `💖 Nature "${natDisplayName}" perfectly matches Skill specialty (Main Skill Trigger ▲▲ +20%).`
-        : '💖 性格「' + natureName + '」完美契合技能型專長 (主技能發動率▲▲ +20%)。');
+        ? `💖 Nature "${natDisplayName}" perfectly matches Skill specialty (Main Skill Trigger ▲ +20%).`
+        : '💖 性格「' + natureName + '」完美契合技能型專長 (主技能發動率▲ +20%)。');
     }
 
     if (pros.length === 0) {
