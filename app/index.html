@@ -24,6 +24,15 @@
     
     (function() {
       // 行動版視圖初始化與自動視窗大小導向處理
+      function getDesktopUrl(extraQuery) {
+        var pathname = window.location.pathname || '/';
+        var parentDirPath = pathname.replace(/\/app(?:\/index\.html|\/)?$/i, '');
+        if (!parentDirPath) parentDirPath = '/';
+        else if (!parentDirPath.endsWith('/')) parentDirPath += '/';
+        var q = extraQuery ? (extraQuery.indexOf('?') === 0 ? extraQuery : '?' + extraQuery) : '';
+        return parentDirPath + 'index.html' + q + (window.location.hash || '');
+      }
+
       try {
         var search = window.location.search || '';
         var hash = window.location.hash || '';
@@ -41,14 +50,14 @@
           try {
             localStorage.setItem('pksleep_view_pref', 'desktop');
           } catch (storageErr) {}
-          window.location.replace('../index.html?view=desktop' + hash);
+          window.location.replace(getDesktopUrl('view=desktop'));
           return;
         } else {
           // 當視窗在寬螢幕 (> 768px 且非行動端裝置) 且無強制 mobile 參數時，重整自動回到桌面完整版
           var rawPref = null;
           try { rawPref = localStorage.getItem('pksleep_view_pref'); } catch (e) {}
           if (rawPref === 'desktop' || (window.innerWidth && window.innerWidth > 768 && !isMobileUA)) {
-            window.location.replace('../index.html' + hash);
+            window.location.replace(getDesktopUrl());
             return;
           }
         }
@@ -58,8 +67,7 @@
         try {
           localStorage.setItem('pksleep_view_pref', 'desktop');
         } catch (e) {}
-        var hash = window.location.hash || '';
-        window.location.href = '../index.html?view=desktop' + hash;
+        window.location.href = getDesktopUrl('view=desktop');
       };
 
       window.__APP_LOG_BUFFER__ = [];

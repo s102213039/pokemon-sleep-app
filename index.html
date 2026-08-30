@@ -62,7 +62,14 @@
 
         // 6. Otherwise (mobile UA or small screen <= 768px), redirect to mobile H5 App
         if (viewQuery === 'mobile' || rawPref === 'mobile' || isMobileUA || isSmallScreen) {
-          var targetUrl = 'app/index.html' + hash;
+          var pathname = window.location.pathname || '/';
+          var dirPath = pathname;
+          if (dirPath.endsWith('.html') || dirPath.endsWith('.htm')) {
+            dirPath = dirPath.substring(0, dirPath.lastIndexOf('/') + 1);
+          } else if (!dirPath.endsWith('/')) {
+            dirPath += '/';
+          }
+          var targetUrl = dirPath + 'app/index.html' + hash;
           window.location.replace(targetUrl);
         }
       } catch (globalErr) {
@@ -77,7 +84,14 @@
         localStorage.setItem('pksleep_view_pref', 'mobile');
       } catch (e) {}
       var hash = window.location.hash || '';
-      window.location.href = 'app/index.html?view=mobile' + hash;
+      var pathname = window.location.pathname || '/';
+      var dirPath = pathname;
+      if (dirPath.endsWith('.html') || dirPath.endsWith('.htm')) {
+        dirPath = dirPath.substring(0, dirPath.lastIndexOf('/') + 1);
+      } else if (!dirPath.endsWith('/')) {
+        dirPath += '/';
+      }
+      window.location.href = dirPath + 'app/index.html?view=mobile' + hash;
     };
   </script>
 
