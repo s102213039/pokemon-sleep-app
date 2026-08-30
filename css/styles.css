@@ -15945,7 +15945,7 @@ body.mobile-h5-app.ladder-active,
   background: var(--bg-card, #131b2e) !important;
   border-top-left-radius: 20px !important;
   border-top-right-radius: 20px !important;
-  border-top: 1px solid var(--border-color) !important;
+  border: none !important;
   box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5) !important;
   z-index: 1100 !important;
   display: flex !important;
@@ -15960,7 +15960,7 @@ body.mobile-h5-app.ladder-active,
   height: 4px !important;
   background: rgba(255, 255, 255, 0.25) !important;
   border-radius: 999px !important;
-  margin: 8px auto 6px auto !important;
+  margin: 8px auto 4px auto !important;
   flex-shrink: 0 !important;
 }
 
@@ -15973,8 +15973,8 @@ body.mobile-h5-app.ladder-active,
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  padding: 4px 16px 10px !important;
-  border-bottom: 1px solid var(--border-color) !important;
+  padding: 2px 14px 4px !important;
+  border: none !important;
   flex-shrink: 0 !important;
 }
 
@@ -16003,10 +16003,10 @@ body.mobile-h5-app.ladder-active,
   flex: 1 1 auto !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
-  padding: 12px 14px 16px !important;
+  padding: 6px 14px 10px !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 10px !important;
+  gap: 8px !important;
 }
 
 /* 雙欄並排表單組 (Row 1 & Row 2) */
@@ -16021,7 +16021,7 @@ body.mobile-h5-app.ladder-active,
 .mobile-h5-app .mobile-box-sheet .box-form-group {
   display: flex !important;
   flex-direction: column !important;
-  gap: 4px !important;
+  gap: 3px !important;
   margin-bottom: 0 !important;
   width: 100% !important;
   box-sizing: border-box !important;
@@ -16047,17 +16047,80 @@ body.mobile-h5-app.ladder-active,
   width: 100% !important;
 }
 
-/* 食材組合橫向條 */
+/* 食材組合橫向條：嚴格單行展示，去除多餘外框與留白 */
 .mobile-h5-app .mobile-box-sheet .box-ing-strip {
   display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
   align-items: center !important;
   justify-content: space-between !important;
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: 10px !important;
-  padding: 4px 8px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2px 0 !important;
+  margin: 0 !important;
   width: 100% !important;
   box-sizing: border-box !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-ing-slot-group {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 3px !important;
+  flex: 0 0 auto !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-ing-lvl-tag {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  padding: 1px 4px !important;
+  border-radius: 4px !important;
+  line-height: 16px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-ing-options-list {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 3px !important;
+  flex: 0 0 auto !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-ing-opt-btn {
+  width: 27px !important;
+  height: 27px !important;
+  min-width: 27px !important;
+  min-height: 27px !important;
+  padding: 2px !important;
+  border-radius: 6px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1.5px solid var(--border-color) !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  transition: all 0.15s ease !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-ing-opt-btn.active {
+  border-color: var(--color-primary, #6366f1) !important;
+  background: rgba(99, 102, 241, 0.15) !important;
+  box-shadow: 0 0 0 1px var(--color-primary, #6366f1) !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-ing-opt-icon {
+  width: 20px !important;
+  height: 20px !important;
+  object-fit: contain !important;
 }
 
 /* 副技能插槽 5 格 */
@@ -16066,17 +16129,17 @@ body.mobile-h5-app.ladder-active,
   grid-template-columns: repeat(5, 1fr) !important;
   gap: 4px !important;
   width: 100% !important;
-  margin: 4px 0 8px 0 !important;
+  margin: 2px 0 6px 0 !important;
   box-sizing: border-box !important;
 }
 
 .mobile-h5-app .mobile-box-sheet .box-subskill-slot-btn {
-  padding: 5px 2px !important;
+  padding: 4px 2px !important;
   border-radius: 8px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  gap: 3px !important;
+  gap: 2px !important;
   background: var(--table-row-odd-solid, #0d1527) !important;
   border: 1.5px solid var(--border-color) !important;
   cursor: pointer !important;
@@ -16092,7 +16155,7 @@ body.mobile-h5-app.ladder-active,
 }
 
 .mobile-h5-app .mobile-box-sheet .slot-lvl-header {
-  font-size: 10.5px !important;
+  font-size: 10px !important;
   font-weight: 700 !important;
   color: var(--text-muted) !important;
   line-height: 1 !important;
@@ -16108,15 +16171,16 @@ body.mobile-h5-app.ladder-active,
   padding: 1px 2px !important;
 }
 
-/* 🎯 副技能選擇盤：4 個一行 (4-Column Subskill Palette) */
+/* 🎯 副技能選擇盤：4 個一行，無多餘外框 */
 .mobile-h5-app .mobile-box-sheet .box-subskill-palette {
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: 12px !important;
-  padding: 8px 8px 10px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 8px !important;
+  gap: 6px !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
@@ -16124,7 +16188,7 @@ body.mobile-h5-app.ladder-active,
 .mobile-h5-app .mobile-box-sheet .subskill-tier-section {
   display: flex !important;
   flex-direction: column !important;
-  gap: 4px !important;
+  gap: 3px !important;
 }
 
 .mobile-h5-app .mobile-box-sheet .subskill-tier-label {
@@ -16136,7 +16200,7 @@ body.mobile-h5-app.ladder-active,
 .mobile-h5-app .mobile-box-sheet .subskill-chips-row {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
-  gap: 5px !important;
+  gap: 4px !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
@@ -16159,13 +16223,15 @@ body.mobile-h5-app.ladder-active,
   line-height: 1.2 !important;
 }
 
-/* 彈窗底部固定儲存欄 (Sticky Bottom Footer) */
+/* 彈窗底部固定儲存欄：徹底去除灰色外框與邊界線 */
 .mobile-h5-app .mobile-box-sheet .box-modal-footer {
   position: sticky !important;
   bottom: 0 !important;
-  background: var(--bg-card, #131b2e) !important;
-  border-top: 1px solid var(--border-color) !important;
-  padding: 10px 14px max(14px, env(safe-area-inset-bottom)) !important;
+  background: transparent !important;
+  border: none !important;
+  border-top: none !important;
+  box-shadow: none !important;
+  padding: 8px 14px max(14px, env(safe-area-inset-bottom)) !important;
   margin: 0 !important;
   display: grid !important;
   grid-template-columns: 1fr 2fr !important;
@@ -16186,8 +16252,8 @@ body.mobile-h5-app.ladder-active,
 }
 
 .mobile-h5-app .mobile-box-sheet .box-btn-secondary {
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  border: 1px solid var(--border-color) !important;
+  background: rgba(148, 163, 184, 0.15) !important;
+  border: none !important;
   color: var(--text-secondary) !important;
 }
 
@@ -16205,23 +16271,30 @@ body.mobile-h5-app.ladder-active,
 
 [data-theme="dawn"] .mobile-h5-app .mobile-box-sheet .box-form-input,
 [data-theme="dawn"] .mobile-h5-app .mobile-box-sheet .box-form-select,
-[data-theme="dawn"] .mobile-h5-app .mobile-box-sheet .box-ing-strip,
 [data-theme="dawn"] .mobile-h5-app .mobile-box-sheet .box-subskill-slot-btn,
-[data-theme="dawn"] .mobile-h5-app .mobile-box-sheet .box-subskill-palette,
-[data-theme="dawn"] .mobile-h5-app .mobile-box-sheet .box-btn-secondary,
+[data-theme="dawn"] .mobile-h5-app .mobile-box-sheet .box-ing-opt-btn,
 [data-theme="dawn"] .mobile-h5-app .mobile-box-sheet .box-modal-close,
-[data-theme="dawn"] .mobile-h5-app .mobile-box-sheet .box-modal-footer,
 [data-theme="emerald"] .mobile-h5-app .mobile-box-sheet .box-form-input,
 [data-theme="emerald"] .mobile-h5-app .mobile-box-sheet .box-form-select,
-[data-theme="emerald"] .mobile-h5-app .mobile-box-sheet .box-ing-strip,
 [data-theme="emerald"] .mobile-h5-app .mobile-box-sheet .box-subskill-slot-btn,
-[data-theme="emerald"] .mobile-h5-app .mobile-box-sheet .box-subskill-palette,
-[data-theme="emerald"] .mobile-h5-app .mobile-box-sheet .box-btn-secondary,
-[data-theme="emerald"] .mobile-h5-app .mobile-box-sheet .box-modal-close,
-[data-theme="emerald"] .mobile-h5-app .mobile-box-sheet .box-modal-footer {
+[data-theme="emerald"] .mobile-h5-app .mobile-box-sheet .box-ing-opt-btn,
+[data-theme="emerald"] .mobile-h5-app .mobile-box-sheet .box-modal-close {
   background: #f8fafc !important;
   border-color: #e2e8f0 !important;
   color: #0f172a !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .mobile-box-sheet .box-btn-secondary,
+[data-theme="emerald"] .mobile-h5-app .mobile-box-sheet .box-btn-secondary {
+  background: #f1f5f9 !important;
+  border: none !important;
+  color: #475569 !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .mobile-box-sheet .box-modal-footer,
+[data-theme="emerald"] .mobile-h5-app .mobile-box-sheet .box-modal-footer {
+  background: transparent !important;
+  border: none !important;
 }
 
 
