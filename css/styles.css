@@ -9985,64 +9985,35 @@ input[type="number"] {
 /* ═══════════════════════════════════════════════════════════════
    🔮 獨立評測實驗室 (Appraisal Lab)
    ═══════════════════════════════════════════════════════════════ */
-.appraisal-lab-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  padding: 18px;
-  box-shadow: var(--shadow-lg);
+.appraisal-lab-card,
+.appraisal-lab-seamless-view {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  width: 100%;
 }
 
 .appraisal-lab-header {
-  margin-bottom: 16px;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 12px;
-}
-
-.appraisal-lab-title-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 4px;
-}
-
-.appraisal-lab-badge {
-  font-size: 11px;
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 6px;
-  background: rgba(168, 85, 247, 0.25);
-  border: 1px solid rgba(168, 85, 247, 0.5);
-  color: #d8b4fe;
-}
-
-.appraisal-lab-title {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--text-primary);
-}
-
-.appraisal-lab-desc {
-  margin: 0;
-  font-size: 12px;
-  color: var(--text-secondary);
+  display: none;
 }
 
 .appraisal-lab-layout {
   display: grid;
-  grid-template-columns: 340px 1fr;
+  grid-template-columns: minmax(300px, 360px) 1fr;
   gap: 20px;
+  margin-top: 10px;
 }
 
 .appraisal-lab-controls {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 14px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
 }
 
 .lab-control-group {
@@ -10053,9 +10024,9 @@ input[type="number"] {
 
 /* 評測實驗室 倉庫連動選取樣式 */
 .lab-box-linkage-group {
-  padding-bottom: 12px;
-  border-bottom: 1px dashed var(--border-color);
-  margin-bottom: 4px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color-subtle, rgba(255,255,255,0.08));
+  margin-bottom: 2px;
 }
 
 .lab-box-reset-btn {
@@ -10189,7 +10160,7 @@ input[type="number"] {
 
 .lab-subskill-slot {
   display: grid;
-  grid-template-columns: 44px 1fr;
+  grid-template-columns: 48px 1fr;
   gap: 6px;
   align-items: center;
 }
@@ -10218,22 +10189,22 @@ input[type="number"] {
   background-size: 12px;
 }
 
-/* 實驗室右側預覽 */
+/* 實驗室評測展示 (無外框一體化設計) */
 .appraisal-lab-preview {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 14px;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
 }
 
 .lab-preview-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--border-color-subtle);
+  border-bottom: 1px solid var(--border-color-subtle, rgba(255,255,255,0.08));
   padding-bottom: 10px;
 }
 
@@ -10280,56 +10251,29 @@ input[type="number"] {
   font-weight: 700;
 }
 
-.lab-preview-chart-row {
-  display: grid;
-  grid-template-columns: 270px 1fr;
-  gap: 16px;
-  align-items: center;
-}
-
-.lab-chart-box {
+.lab-chart-container {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.lab-scores-box {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.lab-scores-title {
-  font-size: 12.5px;
-  font-weight: 800;
-  color: var(--accent-blue);
-  margin-bottom: 2px;
-}
-
-.lab-dim-item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11.5px;
-  color: var(--text-secondary);
-  background: var(--bg-card-inner-subtle);
-  border: 1px solid var(--border-color-subtle);
-  padding: 3px 8px;
-  border-radius: 4px;
+  width: 100%;
+  padding: 6px 0;
 }
 
 .lab-pros-box {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  margin-top: 4px;
 }
 
 .lab-bullet-item {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--text-primary);
   background: rgba(16, 185, 129, 0.08);
   border: 1px solid rgba(16, 185, 129, 0.2);
-  padding: 5px 8px;
-  border-radius: 4px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  line-height: 1.4;
 }
 
 @media (max-width: 768px) {
