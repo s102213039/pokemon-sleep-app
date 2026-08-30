@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/styles.css?v=20260830_05">
+  <link rel="stylesheet" href="../css/styles.css?v=20260830_06">
 
   <!-- 🛡️ 全域路徑基準與錯誤診斷攔截器 -->
   <script>
@@ -273,23 +273,21 @@
           </div>
         </div>
 
-        <!-- 3. 資料同步 (App-style List Row) -->
+        <!-- 3. 倉庫備份與還原 (App-style Backup & Restore Group) -->
         <div class="app-settings-group">
           <div class="app-group-header">
-            <span class="app-group-title" data-i18n="settings.sync_section">資料同步</span>
+            <span class="app-group-title" data-i18n="settings.box_backup_section">倉庫備份與還原</span>
           </div>
-          <div class="app-sync-card">
-            <div class="app-sync-row">
-              <button type="button" id="sync-btn" class="app-sync-action-btn" data-i18n="nav.sync">立即同步</button>
-              <div class="app-sync-info">
-                <span class="app-sync-label">GitHub Actions</span>
-                <span class="app-sync-dot">·</span>
-                <span id="sync-status" class="app-sync-status">待命</span>
-              </div>
-            </div>
-            <div class="app-token-row">
-              <input type="password" id="gh-pat-input" placeholder="GitHub Token (選填)" class="app-token-input">
-              <button type="button" id="save-pat-btn" class="app-token-save-btn" data-i18n="settings.save">儲存</button>
+          <div class="app-backup-card">
+            <p class="app-backup-desc" data-i18n="settings.box_backup_desc">將個人倉庫寶可夢匯出為 JSON 備份檔，或從本機檔案匯入還原。</p>
+            <div class="app-backup-btn-row">
+              <button type="button" id="settings-export-box-btn" class="app-backup-action-btn export-btn" data-i18n="settings.box_export_btn">
+                💾 匯出備份 JSON
+              </button>
+              <label class="app-backup-action-btn import-btn" style="cursor:pointer;margin:0;">
+                <span data-i18n="settings.box_import_btn">📥 匯入還原 JSON</span>
+                <input type="file" id="settings-import-box-input" accept=".json" style="display:none;">
+              </label>
             </div>
           </div>
         </div>
@@ -637,9 +635,22 @@
 
     <!-- Panel 4: 📦 寶可夢倉庫 -->
     <div id="panel-box" class="view-panel app-panel" style="display:none;">
-      <section class="controls-container mobile-controls-container">
-        <!-- 1. 頂部搜尋與排序列 -->
-        <div class="search-filter-row box-search-filter-row">
+      <!-- 頂部 Segmented 子分頁切換列 -->
+      <nav class="box-subnav-bar" aria-label="倉庫次級分頁">
+        <button type="button" id="box-subtab-list" class="box-subnav-item active" data-subtab="list">
+          <span class="subnav-icon">📦</span>
+          <span class="subnav-label" data-i18n="box.tab_list">寶可夢倉庫</span>
+        </button>
+        <button type="button" id="box-subtab-lab" class="box-subnav-item" data-subtab="lab">
+          <span class="subnav-icon">🔮</span>
+          <span class="subnav-label" data-i18n="box.tab_lab">深度評測室</span>
+        </button>
+      </nav>
+
+      <!-- 1. 寶可夢倉庫子分頁 (Subpanel List) -->
+      <div id="box-subpanel-list" class="box-subpanel-view" style="display:block;">
+        <section class="controls-container mobile-controls-container">
+          <!-- 1. 寬敞大搜尋列 -->
           <div class="search-box box-search-box">
             <span class="search-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -653,75 +664,61 @@
               aria-label="搜尋個人倉庫">
             <button type="button" id="box-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
           </div>
-          <div class="sort-box box-sort-box">
-            <select id="box-sort-select" class="sort-select" aria-label="倉庫排序">
-              <option value="pr-desc" data-i18n="box.sort_pr_desc">👑 PR 評分由高到低</option>
-              <option value="created-desc" data-i18n="box.sort_recent">📅 最近加入</option>
-              <option value="level-desc" data-i18n="box.sort_level_desc">⚡ 等級由高到低</option>
-              <option value="level-asc" data-i18n="box.sort_level_asc">🌱 等級由低到高</option>
-              <option value="pr-asc" data-i18n="box.sort_pr_asc">📉 PR 評分由低到高</option>
-              <option value="id-asc" data-i18n="box.sort_dex_asc">🔢 全國圖鑑編號</option>
-            </select>
-          </div>
-        </div>
 
-        <!-- 2. 原生 App 風格快速操作卡片 (智能 OCR 上傳 & 手動錄入 & 評測室 & 備份) -->
-        <div class="box-app-action-card">
-          <div class="box-action-primary-row">
-            <input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
-            <button type="button" id="box-dropzone" class="box-app-btn box-app-btn-primary">
-              <span class="btn-icon">📸</span>
-              <div class="btn-label-group">
-                <span class="btn-title" data-i18n="box.dropzone_btn">截圖智能辨識</span>
-                <span class="btn-sub" data-i18n="box.dropzone_sub_short">支援單張 / 批次多選</span>
+          <!-- 2. 控制工具列 (左側排序選單，右側視圖切換與收錄計數) -->
+          <div class="box-toolbar-control-row">
+            <div class="sort-box box-sort-box">
+              <select id="box-sort-select" class="sort-select" aria-label="倉庫排序">
+                <option value="pr-desc" data-i18n="box.sort_pr_desc">👑 PR 評分由高到低</option>
+                <option value="created-desc" data-i18n="box.sort_recent">📅 最近加入</option>
+                <option value="level-desc" data-i18n="box.sort_level_desc">⚡ 等級由高到低</option>
+                <option value="level-asc" data-i18n="box.sort_level_asc">🌱 等級由低到高</option>
+                <option value="pr-asc" data-i18n="box.sort_pr_asc">📉 PR 評分由低到高</option>
+                <option value="id-asc" data-i18n="box.sort_dex_asc">🔢 全國圖鑑編號</option>
+              </select>
+            </div>
+            <div class="box-toolbar-right">
+              <div id="box-count-badge" class="box-count-badge result-count">已登錄 0 隻</div>
+              <div class="box-view-toggle-chips">
+                <button type="button" id="box-toggle-grid" class="view-chip-btn active" title="卡片視圖">⊞</button>
+                <button type="button" id="box-toggle-table" class="view-chip-btn" title="列表視圖">☰</button>
               </div>
-            </button>
-            <button type="button" id="box-manual-add-btn" class="box-app-btn box-app-btn-secondary">
-              <span class="btn-icon">➕</span>
-              <div class="btn-label-group">
-                <span class="btn-title" data-i18n="box.add_pokemon_short">手動新增</span>
-                <span class="btn-sub" data-i18n="box.add_pokemon_sub">自訂數值錄入</span>
-              </div>
-            </button>
-          </div>
-
-          <!-- 次要快速工具欄 (評測室、備份、還原、切換視圖) -->
-          <div class="box-action-secondary-row">
-            <button type="button" id="box-appraisal-lab-btn" class="box-app-chip-btn" onclick="window.AppraisalLab && window.AppraisalLab.toggleLab()" data-i18n="box.appraisal_lab">
-              🔮 深度評測室
-            </button>
-            <button type="button" id="box-export-btn" class="box-app-chip-btn" data-i18n="box.export_backup">
-              💾 匯出備份
-            </button>
-            <label class="box-app-chip-btn" style="cursor:pointer;margin:0;" data-i18n="box.import_backup">
-              📥 匯入還原
-              <input type="file" id="box-import-input" accept=".json" style="display:none;">
-            </label>
-            <div class="box-view-toggle-chips">
-              <button type="button" id="box-toggle-grid" class="view-chip-btn active" title="卡片視圖">⊞</button>
-              <button type="button" id="box-toggle-table" class="view-chip-btn" title="列表視圖">☰</button>
             </div>
           </div>
 
-          <!-- 掃描進度指示條 -->
+          <!-- 掃描進度指示條 (多圖辨識時展示) -->
           <div id="box-scanner-status" class="box-scanner-status" style="display:none;"></div>
-        </div>
-
-        <!-- 🔮 寶可夢六維深度評測實驗室容器 (Appraisal Lab) -->
-        <div id="appraisal-lab-container" style="display:none; margin-bottom: 12px;"></div>
+        </section>
 
         <!-- 🔔 倉庫專屬浮動 Toast 通知容器 -->
         <div id="box-toast-container" class="box-toast-container"></div>
 
-        <!-- 3. 統計計數 -->
-        <div class="box-info-bar">
-          <div id="box-count-badge" class="result-count">已收錄 0 隻寶可夢</div>
-        </div>
-      </section>
+        <!-- 寶可夢卡片 / 表格列表容器 -->
+        <section class="box-content-container">
+          <div id="box-content-area" class="box-cards-grid"></div>
+        </section>
 
-      <section class="box-content-container">
-        <div id="box-content-area" class="box-cards-grid"></div>
-      </section>
+        <!-- 📸 & ➕ 原生 App 浮動操作按鈕區 (Floating Action Buttons - FAB) -->
+        <div class="box-fab-container" id="box-fab-container">
+          <input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
+          <button type="button" id="box-dropzone" class="box-fab-btn box-fab-scan" title="拍照 / 選取截圖辨識" aria-label="截圖智能辨識">
+            <span class="fab-icon">📸</span>
+            <span class="fab-label" data-i18n="box.fab_scan">截圖辨識</span>
+          </button>
+          <button type="button" id="box-manual-add-btn" class="box-fab-btn box-fab-add" title="手動新增寶可夢" aria-label="手動新增">
+            <span class="fab-icon">➕</span>
+            <span class="fab-label" data-i18n="box.fab_add">手動新增</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. 深度評測室子分頁 (Subpanel Lab) -->
+      <div id="box-subpanel-lab" class="box-subpanel-view" style="display:none;">
+        <section class="box-lab-content-container">
+          <!-- 🔮 寶可夢六維深度評測實驗室容器 (Appraisal Lab) -->
+          <div id="appraisal-lab-container" class="appraisal-lab-standalone-panel"></div>
+        </section>
+      </div>
     </div>
 
     <!-- Panel 5: 最新公告 -->

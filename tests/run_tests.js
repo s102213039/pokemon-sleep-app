@@ -2455,20 +2455,20 @@ test('Tier 1 - Feature Coverage', 'Sidebar Compact Switches Grid & 7-Column Icon
   assert(stylesCss.includes('grid-template-columns: repeat(7, 1fr)'), 'styles.css missing 7-column icon grid');
 });
 
-test('Tier 1 - Feature Coverage', 'Header Simplification & Sync Data Button in Settings Modal', () => {
+test('Tier 1 - Feature Coverage', 'Header Simplification & Box Backup in Settings Modal', () => {
   const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
   const appHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
 
-  // Verify settings modal contains sync-btn in both surfaces
-  const settingsModalRegex = /<div[^>]*id=["']settings-modal["'][\s\S]*?id=["']sync-btn["'][\s\S]*?id=["']sync-status["']/;
-  assert(settingsModalRegex.test(indexHtml), 'index.html settings-modal must contain sync-btn and sync-status');
-  assert(settingsModalRegex.test(appHtml), 'app/index.html settings-modal must contain sync-btn and sync-status');
+  // Verify settings modal contains Box Backup & Restore controls in both surfaces
+  const settingsModalRegex = /<div[^>]*id=["']settings-modal["'][\s\S]*?id=["']settings-export-box-btn["'][\s\S]*?id=["']settings-import-box-input["']/;
+  assert(settingsModalRegex.test(indexHtml), 'index.html settings-modal must contain settings-export-box-btn and settings-import-box-input');
+  assert(settingsModalRegex.test(appHtml), 'app/index.html settings-modal must contain settings-export-box-btn and settings-import-box-input');
 
   // Verify app/index.html header only has brand on left and settings on right (no header sync-btn outside modal)
   const appHeaderMatch = appHtml.match(/<header[^>]*class=["'][^"']*mobile-app-header[^"']*["'][\s\S]*?<\/header>/);
   assert(appHeaderMatch, 'app/index.html missing mobile-app-header');
-  assert(!appHeaderMatch[0].includes('id="sync-btn"'), 'app/index.html header must not have sync-btn in header (moved to settings modal)');
-  assert(!appHeaderMatch[0].includes('id="btn-switch-desktop"'), 'app/index.html header must not have btn-switch-desktop in header (moved to settings modal)');
+  assert(!appHeaderMatch[0].includes('id="sync-btn"'), 'app/index.html header must not have sync-btn in header');
+  assert(!appHeaderMatch[0].includes('id="btn-switch-desktop"'), 'app/index.html header must not have btn-switch-desktop in header');
   assert(appHeaderMatch[0].includes('id="sync-config-btn"'), 'app/index.html header must keep settings button on the right');
 });
 

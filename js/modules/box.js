@@ -1526,6 +1526,9 @@
     const exportBtn = document.getElementById('box-export-btn');
     const importInput = document.getElementById('box-import-input');
 
+    const settingsExportBtn = document.getElementById('settings-export-box-btn');
+    const settingsImportInput = document.getElementById('settings-import-box-input');
+
     if (dropzone && fileInput) {
       dropzone.addEventListener('click', () => fileInput.click());
       fileInput.addEventListener('change', (e) => {
@@ -1584,6 +1587,19 @@
         if (e.target.files && e.target.files[0]) {
           importBoxJSON(e.target.files[0]);
           importInput.value = '';
+        }
+      });
+    }
+
+    if (settingsExportBtn) {
+      settingsExportBtn.addEventListener('click', exportBoxJSON);
+    }
+
+    if (settingsImportInput) {
+      settingsImportInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          importBoxJSON(e.target.files[0]);
+          settingsImportInput.value = '';
         }
       });
     }
@@ -1664,6 +1680,34 @@
         renderBox();
       });
     }
+
+    // 5. 頂部 Segmented 子分頁切換 (📦 寶可夢倉庫 vs 🔮 深度評測室)
+    const subtabList = document.getElementById('box-subtab-list');
+    const subtabLab = document.getElementById('box-subtab-lab');
+    const subpanelList = document.getElementById('box-subpanel-list');
+    const subpanelLab = document.getElementById('box-subpanel-lab');
+
+    function switchBoxSubtab(tab) {
+      if (tab === 'lab') {
+        if (subtabLab) subtabLab.classList.add('active');
+        if (subtabList) subtabList.classList.remove('active');
+        if (subpanelList) subpanelList.style.display = 'none';
+        if (subpanelLab) subpanelLab.style.display = 'block';
+        const labContainer = document.getElementById('appraisal-lab-container');
+        if (labContainer && window.AppraisalLab && window.AppraisalLab.renderLab) {
+          window.AppraisalLab.renderLab(labContainer);
+        }
+      } else {
+        if (subtabList) subtabList.classList.add('active');
+        if (subtabLab) subtabLab.classList.remove('active');
+        if (subpanelList) subpanelList.style.display = 'block';
+        if (subpanelLab) subpanelLab.style.display = 'none';
+        renderBox();
+      }
+    }
+
+    if (subtabList) subtabList.addEventListener('click', () => switchBoxSubtab('list'));
+    if (subtabLab) subtabLab.addEventListener('click', () => switchBoxSubtab('lab'));
   }
 
   if (typeof window !== 'undefined') {

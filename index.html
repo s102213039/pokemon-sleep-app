@@ -84,7 +84,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=20260830_05">
+  <link rel="stylesheet" href="css/styles.css?v=20260830_06">
   <!-- 🛡️ 全域錯誤診斷與日誌攔截器 (Global Error & Diagnostic Logger) -->
   <script>
     (function() {
@@ -377,33 +377,22 @@
 
         <!-- 3. 🔄 GitHub Actions 同步設定 -->
         <div class="settings-section-card">
+          <!-- 3. 倉庫備份與還原 -->
           <div class="settings-section-header">
             <div class="settings-section-title">
-              <span>🔄</span>
-              <span data-i18n="settings.sync_section">GitHub Actions 資料同步</span>
+              <span>📦</span>
+              <span data-i18n="settings.box_backup_section">倉庫備份與還原</span>
             </div>
-            <div class="settings-section-desc" data-i18n="settings.sync_desc">設定具有 workflow 權限的 GitHub PAT Token 觸發線上自動抓取。</div>
-          </div>
-
-          <div style="margin-bottom: 12px;">
-            <div class="sync-wrapper" style="width: 100%;">
-              <button type="button" id="sync-btn" class="sync-btn" style="width: 100%; justify-content: center; padding: 10px; font-size: 13px; font-weight: 700;" title="觸發 GitHub Actions 同步最新寶可夢與食譜資料" data-i18n="nav.sync">🔄 立即同步最新資料</button>
-              <div id="sync-status" class="sync-status" style="margin-top: 6px; font-size: 12px; text-align: center;"></div>
-            </div>
-          </div>
-
-          <div>
-            <label style="display:block;font-size:11.5px;color:var(--text-secondary);margin-bottom:6px;" data-i18n="settings.pat_label">GitHub PAT Token（儲存於本地 LocalStorage，不會上傳）</label>
-            <input type="password" id="gh-pat-input" placeholder="ghp_xxxxxxxxxxxxxxxxxx"
-              style="width:100%;background:var(--bg-input);border:1px solid var(--border-color);border-radius:8px;padding:10px 14px;color:var(--text-main);font-size:13px;outline:none;">
+            <div class="settings-section-desc" data-i18n="settings.box_backup_desc">將個人倉庫寶可夢匯出為 JSON 備份檔，或從本機檔案匯入還原。</div>
           </div>
 
           <div style="display:flex;gap:10px;margin-top:8px;">
-            <button type="button" id="save-pat-btn" style="flex:1;padding:10px;background:var(--accent-gradient);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;" data-i18n="settings.save">💾 儲存設定</button>
+            <button type="button" id="settings-export-box-btn" style="flex:1;padding:10px;background:var(--accent-gradient);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;" data-i18n="settings.box_export_btn">💾 匯出備份 JSON</button>
+            <label style="flex:1;padding:10px;background:var(--bg-input);border:1px solid var(--border-color);color:var(--text-main);border-radius:8px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin:0;">
+              <span data-i18n="settings.box_import_btn">📥 匯入還原 JSON</span>
+              <input type="file" id="settings-import-box-input" accept=".json" style="display:none;">
+            </label>
           </div>
-          <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">
-            <a href="https://github.com/settings/tokens/new?scopes=workflow" target="_blank" style="color:var(--accent-color);" data-i18n="settings.pat_link">💡 點此建立 GitHub PAT（勾選 workflow 權限）</a>
-          </p>
         </div>
       </div>
     </div>
