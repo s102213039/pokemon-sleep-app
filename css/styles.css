@@ -905,8 +905,7 @@ body::-webkit-scrollbar,
 
 .search-input.has-value,
 .news-search-input.has-value,
-.sidebar-search-input.has-value,
-.box-pkm-search-input.has-value {
+.sidebar-search-input.has-value {
   border-color: var(--color-primary, #6366f1) !important;
   background: rgba(99, 102, 241, 0.06) !important;
   padding-right: 92px !important;
@@ -5898,7 +5897,7 @@ input[type="number"] {
 }
 
 .box-form-row-3col .flex-name {
-  width: 175px;
+  width: 220px;
   flex-shrink: 0;
 }
 
@@ -5993,42 +5992,55 @@ input[type="number"] {
   box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
 }
 
-/* 寶可夢名稱 Combobox 搜尋選擇器 */
-.box-pkm-combobox {
-  position: relative;
+/* 寶可夢名稱選擇列 (獨立頭像槽位 + Combobox 搜尋框) */
+.box-pkm-select-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   width: 100%;
 }
 
-.box-pkm-icon-slot {
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 24px;
-  height: 24px;
+.box-pkm-avatar-slot {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 50%;
+  background: var(--table-row-odd-solid, #0d1527);
+  border: 1.5px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.08));
   overflow: hidden;
-  z-index: 2;
-  pointer-events: none;
   flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 2px;
+  transition: border-color 0.2s ease;
 }
 
-.box-pkm-icon-preview {
+[data-theme="dawn"] .box-pkm-avatar-slot,
+[data-theme="emerald"] .box-pkm-avatar-slot {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.box-pkm-selected-avatar {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  border-radius: 50%;
+}
+
+.box-pkm-combobox {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
 }
 
 .box-pkm-search-input {
   padding-right: 32px;
-}
-
-.box-pkm-combobox.has-icon .box-pkm-search-input {
-  padding-left: 38px !important;
+  padding-left: 10px;
 }
 
 .box-pkm-toggle-btn {

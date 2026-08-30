@@ -717,7 +717,6 @@
     function syncToggleBtnIcon() {
       if (!toggleBtn) return;
       const hasText = !!(searchInput.value && searchInput.value.trim().length > 0);
-      searchInput.classList.toggle('has-value', hasText);
       if (hasText) {
         toggleBtn.innerHTML = CLEAR_ICON;
         toggleBtn.setAttribute('aria-label', isEN ? 'Clear Pokémon' : '清空寶可夢');
@@ -785,21 +784,21 @@
       dropdown.style.display = 'block';
     }
 
+    const POKEBALL_PLACEHOLDER_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><circle cx='20' cy='20' r='18' fill='%23334155' stroke='%2364748b' stroke-width='2'/><path d='M2 20h36' stroke='%2364748b' stroke-width='2'/><circle cx='20' cy='20' r='6' fill='%231e293b' stroke='%2364748b' stroke-width='2'/><circle cx='20' cy='20' r='2.5' fill='%2394a3b8'/></svg>";
+
     function updateSelectedPokemonAvatar(p) {
-      const iconWrap = document.getElementById('modal-poke-icon-wrap');
-      const iconImg = document.getElementById('modal-poke-icon-preview');
-      const combobox = document.getElementById('box-pkm-combobox');
+      const avatarImg = document.getElementById('modal-poke-selected-avatar');
+      if (!avatarImg) return;
       if (p) {
-        const avatarUrl = p.icon_url || p.icon || (p.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png` : '') || 'assets/placeholder.svg';
-        if (iconWrap && iconImg) {
-          iconImg.src = avatarUrl;
-          iconImg.alt = p.name_cn || '';
-          iconWrap.style.display = 'flex';
-        }
-        if (combobox) combobox.classList.add('has-icon');
+        const avatarUrl = p.icon_url || p.icon || (p.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png` : '') || POKEBALL_PLACEHOLDER_SVG;
+        avatarImg.src = avatarUrl;
+        avatarImg.alt = p.name_cn || 'Pokémon';
+        avatarImg.onerror = () => {
+          avatarImg.src = POKEBALL_PLACEHOLDER_SVG;
+        };
       } else {
-        if (iconWrap) iconWrap.style.display = 'none';
-        if (combobox) combobox.classList.remove('has-icon');
+        avatarImg.src = POKEBALL_PLACEHOLDER_SVG;
+        avatarImg.alt = 'Pokémon';
       }
     }
 
