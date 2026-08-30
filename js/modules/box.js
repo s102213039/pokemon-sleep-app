@@ -1073,8 +1073,8 @@
     const titleEl = document.getElementById('box-modal-title');
     if (titleEl) {
       titleEl.textContent = isEdit 
-        ? (isEN ? '✏️ Edit Pokémon' : '✏️ 編輯個人寶可夢') 
-        : (screenshotSrc ? (isEN ? '📸 Confirm OCR Entry' : '📸 截圖辨識確認入庫') : (isEN ? '➕ Add Pokémon' : '➕ 手動新增寶可夢'));
+        ? (isEN ? 'Edit Pokémon' : '編輯寶可夢') 
+        : (screenshotSrc ? (isEN ? 'Confirm OCR Entry' : '截圖辨識確認入庫') : (isEN ? 'Add Pokémon' : '手動新增寶可夢'));
     }
 
     // 填寫預設值

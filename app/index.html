@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/styles.css?v=20260830_10">
+  <link rel="stylesheet" href="../css/styles.css?v=20260830_11">
 
   <!-- 🛡️ 全域路徑基準與錯誤診斷攔截器 -->
   <script>
@@ -833,12 +833,12 @@
     </button>
   </nav>
 
-  <!-- 📸 寶可夢倉庫編輯彈窗 (Box Modal Sheet) -->
+  <!-- 寶可夢倉庫編輯彈窗 (Box Modal Sheet) -->
   <div id="box-edit-modal" class="box-modal-backdrop modal-overlay" style="display:none;">
     <div class="box-modal-dialog mobile-box-sheet bottom-sheet mobile-modal-sheet">
       <div class="sheet-drag-handle"></div>
       <div class="box-modal-header">
-        <h3 id="box-modal-title" class="box-modal-title" data-i18n="box.modal_title">📸 寶可夢入庫編輯</h3>
+        <h3 id="box-modal-title" class="box-modal-title" data-i18n="box.modal_title">新增寶可夢</h3>
         <button type="button" id="box-modal-close-btn" class="box-modal-close" aria-label="關閉">✕</button>
       </div>
 
@@ -846,7 +846,8 @@
         <div id="box-modal-screenshot-preview" class="box-modal-preview-col" style="display:none;"></div>
         <form id="box-edit-form" class="box-modal-form">
           <div class="box-form-grid">
-            <div class="box-form-row-3col box-full-width">
+            <!-- 第 1 行：寶可夢名稱 (65%) + 等級 (35%) -->
+            <div class="box-form-row-2col box-full-width">
               <div class="box-form-group flex-name">
                 <label class="box-form-label" for="modal-poke-search" data-i18n="box.modal_poke_name">寶可夢名稱 <span style="color:#ef4444;">*</span></label>
                 <div class="box-pkm-combobox" id="box-pkm-combobox">
@@ -863,15 +864,24 @@
                 <label class="box-form-label" for="modal-poke-level" data-i18n="box.modal_poke_level">等級 <span style="color:#ef4444;">*</span></label>
                 <input type="number" id="modal-poke-level" class="box-form-input" min="1" max="80" placeholder="1~80" required>
               </div>
+            </div>
 
+            <!-- 第 2 行：自訂暱稱 (45%) + 性格 (55%) -->
+            <div class="box-form-row-2col box-full-width">
               <div class="box-form-group flex-nickname">
                 <label class="box-form-label" for="modal-poke-nickname" data-i18n="box.modal_poke_nickname">自訂暱稱</label>
-                <input type="text" id="modal-poke-nickname" class="box-form-input" placeholder="自訂暱稱...">
+                <input type="text" id="modal-poke-nickname" class="box-form-input" placeholder="例如：首隻樹果S神坦...">
+              </div>
+
+              <div class="box-form-group flex-nature">
+                <label class="box-form-label" for="modal-poke-nature" data-i18n="box.modal_poke_nature">性格 <span style="color:#ef4444;">*</span></label>
+                <select id="modal-poke-nature" class="box-form-select" required></select>
               </div>
             </div>
 
+            <!-- 第 3 行：食材組合 -->
             <div class="box-form-group box-full-width box-form-row-inline">
-              <label class="box-form-label box-form-inline-label" data-i18n="box.modal_poke_ing">🍲 食材組合</label>
+              <label class="box-form-label box-form-inline-label" data-i18n="box.modal_poke_ing">食材組合</label>
               <input type="hidden" id="modal-ing1" value="">
               <input type="hidden" id="modal-ing2" value="">
               <input type="hidden" id="modal-ing3" value="">
@@ -893,16 +903,10 @@
               </div>
             </div>
 
-            <div class="box-form-group box-full-width box-form-row-inline">
-              <label class="box-form-label box-form-inline-label" for="modal-poke-nature" data-i18n="box.modal_poke_nature">🧠 性格 <span style="color:#ef4444;">*</span></label>
-              <div class="box-form-inline-control">
-                <select id="modal-poke-nature" class="box-form-select" required></select>
-              </div>
-            </div>
-
+            <!-- 第 4 行：副技能配置 -->
             <div class="box-form-group box-full-width">
               <div style="display:flex;justify-content:space-between;align-items:center;">
-                <label class="box-form-label" data-i18n="box.modal_poke_subskills">⚡ 副技能配置</label>
+                <label class="box-form-label" data-i18n="box.modal_poke_subskills">副技能配置</label>
                 <button type="button" id="box-subskill-clear-all-btn" class="box-subskill-clear-btn" data-i18n="box.modal_clear_all_subskills">✕ 清空全部</button>
               </div>
 
@@ -935,17 +939,18 @@
                 </button>
               </div>
 
+              <!-- 第 5 行：副技能選擇盤 (4 個一行) -->
               <div class="box-subskill-palette" id="box-subskill-palette">
                 <div class="subskill-tier-section">
-                  <div class="subskill-tier-label gold-label" data-i18n="box.modal_gold_skills">🌟 金色頂級技能</div>
+                  <div class="subskill-tier-label gold-label" data-i18n="box.modal_gold_skills">金色頂級技能</div>
                   <div class="subskill-chips-row" id="subskill-chips-gold"></div>
                 </div>
                 <div class="subskill-tier-section">
-                  <div class="subskill-tier-label blue-label" data-i18n="box.modal_blue_skills">🔷 藍色高階技能</div>
+                  <div class="subskill-tier-label blue-label" data-i18n="box.modal_blue_skills">藍色高階技能</div>
                   <div class="subskill-chips-row" id="subskill-chips-blue"></div>
                 </div>
                 <div class="subskill-tier-section">
-                  <div class="subskill-tier-label white-label" data-i18n="box.modal_white_skills">⚪ 白色基礎技能</div>
+                  <div class="subskill-tier-label white-label" data-i18n="box.modal_white_skills">白色基礎技能</div>
                   <div class="subskill-chips-row" id="subskill-chips-white"></div>
                 </div>
               </div>
@@ -963,13 +968,13 @@
 
   <!-- 腳本載入區 (嚴格按照 i18n -> app -> recipes -> wiki -> box -> news -> appraisal 順序) -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
-  <script src="../js/core/i18n.js?v=20260830_10"></script>
-  <script src="../js/modules/app.js?v=20260830_10"></script>
-  <script src="../js/modules/recipes.js?v=20260830_10"></script>
-  <script src="../js/modules/wiki.js?v=20260830_10"></script>
-  <script src="../js/modules/box.js?v=20260830_10"></script>
-  <script src="../js/modules/news.js?v=20260830_10"></script>
-  <script src="../js/modules/appraisal.js?v=20260830_10"></script>
+  <script src="../js/core/i18n.js?v=20260830_11"></script>
+  <script src="../js/modules/app.js?v=20260830_11"></script>
+  <script src="../js/modules/recipes.js?v=20260830_11"></script>
+  <script src="../js/modules/wiki.js?v=20260830_11"></script>
+  <script src="../js/modules/box.js?v=20260830_11"></script>
+  <script src="../js/modules/news.js?v=20260830_11"></script>
+  <script src="../js/modules/appraisal.js?v=20260830_11"></script>
 
   <!-- 桌面版切換監聽腳本 -->
   <script>
