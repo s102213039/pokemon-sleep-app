@@ -15207,80 +15207,78 @@ body.mobile-h5-app.ladder-active,
   box-sizing: border-box !important;
 }
 
-.mobile-h5-app #panel-box .mobile-controls-container {
-  padding: 12px 12px 8px !important;
+.mobile-h5-app .box-toolbar-container {
+  padding: 12px 12px 6px !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 8px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+  border: none !important;
 }
 
-/* 2. 單行精緻工具控制列 (左側排序選單，右側視圖切換與收錄計數) */
+/* 2. 單行精緻工具控制列 (佔 100% 寬度，左側排序選單，右側展示方式切換) */
 .mobile-h5-app .box-toolbar-control-row {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  gap: 8px !important;
+  gap: 10px !important;
   width: 100% !important;
-  padding: 0 2px !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
-.mobile-h5-app .box-sort-box {
-  flex: 0 0 auto !important;
+.mobile-h5-app .box-toolbar-control-row .custom-select-container,
+.mobile-h5-app .box-toolbar-control-row .box-sort-select {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
-.mobile-h5-app .box-sort-box select {
-  height: 34px !important;
-  border-radius: 17px !important;
+.mobile-h5-app .box-toolbar-control-row select,
+.mobile-h5-app .box-toolbar-control-row .custom-select-trigger {
+  height: 36px !important;
+  border-radius: 18px !important;
   background: var(--table-row-odd-solid, #0d1527) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-secondary) !important;
-  font-size: 11.5px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
-  padding: 0 36px 0 12px !important;
+  padding: 0 36px 0 14px !important;
   cursor: pointer !important;
-  max-width: 140px !important;
-}
-
-.mobile-h5-app .box-toolbar-right {
+  width: 100% !important;
+  box-sizing: border-box !important;
   display: flex !important;
   align-items: center !important;
-  gap: 8px !important;
-  flex: 0 0 auto !important;
-}
-
-.mobile-h5-app .box-count-badge {
-  font-size: 11.5px !important;
-  color: var(--text-muted) !important;
-  font-weight: 600 !important;
-  white-space: nowrap !important;
-}
-
-.mobile-h5-app .box-count-badge strong {
-  color: var(--color-primary, #6366f1) !important;
-  font-weight: 800 !important;
+  justify-content: space-between !important;
 }
 
 .mobile-h5-app .box-view-toggle-chips {
+  flex: 0 0 auto !important;
   display: flex !important;
   gap: 2px !important;
   background: var(--table-row-odd-solid, #0d1527) !important;
   padding: 3px !important;
   border-radius: 10px !important;
   border: 1px solid var(--border-color) !important;
-  flex-shrink: 0 !important;
 }
 
 .mobile-h5-app .view-chip-btn {
   border: none !important;
   background: transparent !important;
   color: var(--text-muted) !important;
-  padding: 3px 8px !important;
-  height: 26px !important;
+  padding: 4px 9px !important;
+  height: 28px !important;
   border-radius: 7px !important;
   display: inline-flex !important;
   align-items: center !important;
   gap: 4px !important;
-  font-size: 11px !important;
+  font-size: 11.5px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
   transition: all 0.15s ease !important;
@@ -15295,6 +15293,7 @@ body.mobile-h5-app.ladder-active,
   background: var(--color-primary, #6366f1) !important;
   color: #ffffff !important;
   font-weight: 700 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* 4. 掃描進度指示條 (OCR Scanner Status) */
@@ -15828,10 +15827,10 @@ body.mobile-h5-app.ladder-active,
   border-color: #e2e8f0 !important;
 }
 
-[data-theme="dawn"] .mobile-h5-app .box-search-input,
-[data-theme="emerald"] .mobile-h5-app .box-search-input,
-[data-theme="dawn"] .mobile-h5-app .box-sort-box select,
-[data-theme="emerald"] .mobile-h5-app .box-sort-box select,
+[data-theme="dawn"] .mobile-h5-app .box-toolbar-control-row select,
+[data-theme="emerald"] .mobile-h5-app .box-toolbar-control-row select,
+[data-theme="dawn"] .mobile-h5-app .box-toolbar-control-row .custom-select-trigger,
+[data-theme="emerald"] .mobile-h5-app .box-toolbar-control-row .custom-select-trigger,
 [data-theme="dawn"] .mobile-h5-app .box-view-toggle-chips,
 [data-theme="emerald"] .mobile-h5-app .box-view-toggle-chips,
 [data-theme="dawn"] .mobile-h5-app .box-card-img-wrap,

@@ -333,18 +333,11 @@
 
   function renderBox() {
     const container = document.getElementById('box-content-area');
-    const countBadge = document.getElementById('box-count-badge');
     if (!container) return;
 
     try {
       const filtered = getFilteredBox();
       const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-
-      if (countBadge) {
-        countBadge.innerHTML = isEN
-          ? `Registered <strong>${userBox.length}</strong> Pokémon (${filtered.length} shown)`
-          : `已登錄 <strong>${userBox.length}</strong> 隻寶可夢 (顯示 ${filtered.length} 隻)`;
-      }
 
       if (filtered.length === 0) {
         if (userBox.length === 0) {
