@@ -340,47 +340,30 @@
       const filtered = getFilteredBox();
       const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
-    if (countBadge) {
-      countBadge.innerHTML = isEN
-        ? `Registered <strong>${userBox.length}</strong> Pokémon (${filtered.length} shown)`
-        : `已登錄 <strong>${userBox.length}</strong> 隻寶可夢 (顯示 ${filtered.length} 隻)`;
-    }
-
-    if (filtered.length === 0) {
-      if (userBox.length === 0) {
-        container.innerHTML = `
-          <div class="box-empty-state">
-            <div class="box-empty-icon">📸</div>
-            <h3>${isEN ? 'Your Pokémon Box is empty' : '您的寶可夢倉庫還是空的'}</h3>
-            <p>${isEN ? 'Click "📸 Scan Screenshots" above to upload images, or click "➕ Add Pokémon" to get started!' : '點擊上方「<strong>📸 截圖智能辨識</strong>」上傳遊戲截圖，或點擊「<strong>➕ 手動新增</strong>」開始登錄你的幫手寶可夢！'}</p>
-            <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;">
-              <button type="button" class="sync-btn" id="empty-scan-btn" style="background:var(--accent-gradient);color:#fff;">📸 ${isEN ? 'Scan Screenshots' : '上傳截圖辨識'}</button>
-              <button type="button" class="toggle-btn" id="empty-manual-btn" style="border:1px solid var(--border-color);padding:8px 16px;">➕ ${isEN ? 'Add Manually' : '手動新增'}</button>
-            </div>
-          </div>
-        `;
-        document.getElementById('empty-scan-btn')?.addEventListener('click', () => {
-          document.getElementById('box-file-input')?.click();
-        });
-        document.getElementById('empty-manual-btn')?.addEventListener('click', () => {
-          openBoxEditModal();
-        });
-      } else {
-        container.innerHTML = `
-          <div class="box-empty-state">
-            <div class="box-empty-icon">
-              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);opacity:0.6;">
-                <circle cx="11" cy="11" r="7"></circle>
-                <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
-              </svg>
-            </div>
-            <h3>${isEN ? 'No Pokémon matched the filter' : '查無符合篩選條件的寶可夢'}</h3>
-            <p>${isEN ? 'Try searching different keywords or adjusting filter tags.' : '請嘗試更換搜尋關鍵字，或切換屬性與得意篩選標籤。'}</p>
-          </div>
-        `;
+      if (countBadge) {
+        countBadge.innerHTML = isEN
+          ? `Registered <strong>${userBox.length}</strong> Pokémon (${filtered.length} shown)`
+          : `已登錄 <strong>${userBox.length}</strong> 隻寶可夢 (顯示 ${filtered.length} 隻)`;
       }
-      return;
-    }
+
+      if (filtered.length === 0) {
+        if (userBox.length === 0) {
+          container.innerHTML = `
+            <div class="box-simple-empty-state">
+              <p class="box-simple-empty-title">${isEN ? 'No Pokémon recorded yet' : '目前尚未登錄任何寶可夢'}</p>
+              <p class="box-simple-empty-hint">${isEN ? 'Tap the "Scan OCR" or "Add Pokémon" button at the bottom right to start building your team!' : '請點擊右下角的「截圖辨識」或「手動新增」按鈕開始建立你的幫手隊伍！'}</p>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div class="box-simple-empty-state">
+              <p class="box-simple-empty-title">${isEN ? 'No Pokémon matched the filter' : '查無符合條件的寶可夢'}</p>
+              <p class="box-simple-empty-hint">${isEN ? 'Try searching different keywords or clearing filters.' : '請嘗試更換搜尋關鍵字或清空篩選條件。'}</p>
+            </div>
+          `;
+        }
+        return;
+      }
 
       if (boxViewMode === 'grid') {
         renderBoxGrid(filtered, container);
@@ -448,7 +431,7 @@
       <td class="td-ing" title="${escapeHtml(displayName)} ×${count}">
         <div class="ing-cell">
           ${iconUrl ? `<img src="${iconUrl}" class="ing-icon" alt="${escapeHtml(displayName)}">` : ''}
-          <span class="ing-qty">${count}</span>
+          <span class="ing-count">×${count}</span>
         </div>
       </td>
     `;
@@ -473,17 +456,17 @@
             <div class="box-card" data-uid="${p.uid}">
               <div class="box-card-header">
                 <div class="box-card-img-wrap">
-                  ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="box-card-icon" onerror="this.style.display='none';">` : '⚡'}
+                  ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="box-card-icon" onerror="this.style.display='none';">` : ''}
                 </div>
                 <div class="box-card-info">
                   <div class="box-card-name-row">
                     <span class="box-card-name">${escapeHtml(pkmDisplayName)}</span>
                     <span class="box-card-level">Lv.${p.level || 1}</span>
                     <span class="box-pr-badge ${prInfo.tierBadgeClass}" title="PR: ${prInfo.pr}/100">
-                      ${prInfo.tier === 'S+' ? '👑' : (prInfo.tier === 'S' ? '🌟' : '')} PR ${prInfo.pr} · ${prInfo.tier}
+                      PR ${prInfo.pr} · ${prInfo.tier}
                     </span>
                   </div>
-                  ${p.nickname ? `<div class="box-card-nickname">🏷️ ${escapeHtml(p.nickname)}</div>` : ''}
+                  ${p.nickname ? `<div class="box-card-nickname">${escapeHtml(p.nickname)}</div>` : ''}
                   <div class="box-card-tags">
                     ${berry && berry.icon ? `
                     <span class="pkm-berry-icon-wrapper" title="${berryName}">
@@ -493,9 +476,25 @@
                   </div>
                 </div>
                 <div class="box-card-actions">
-                  <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${isEN ? 'Appraisal Report' : '🔮 深度診斷報告書與六維雷達圖'}">🔮</button>
-                  <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="${isEN ? 'Edit' : '編輯寶可夢'}">✏️</button>
-                  <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="${isEN ? 'Delete' : '刪除寶可夢'}">🗑️</button>
+                  <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${isEN ? 'Appraisal Report' : '深度診斷報告書與六維雷達圖'}">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                  </button>
+                  <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="${isEN ? 'Edit' : '編輯寶可夢'}">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                  </button>
+                  <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="${isEN ? 'Delete' : '刪除寶可夢'}">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  </button>
                 </div>
               </div>
 
@@ -507,7 +506,7 @@
 
               <!-- 食材插槽組合 (圖標與數量徽章) -->
               <div class="box-card-section">
-                <div class="box-section-title">🍲 ${isEN ? 'Ingredients' : '食材組合'}</div>
+                <div class="box-section-title">${isEN ? 'Ingredients' : '食材組合'}</div>
                 <div class="box-ing-slots">
                   ${renderBoxCardIngSlot(p.ing1, 'Lv.1', base, 0)}
                   ${renderBoxCardIngSlot(p.ing2, 'Lv.30', base, 1)}
@@ -517,10 +516,10 @@
 
               <!-- 副技能清單 -->
               <div class="box-card-section">
-                <div class="box-section-title">🧩 ${isEN ? 'Sub-Skills' : '副技能組合'}</div>
+                <div class="box-section-title">${isEN ? 'Sub-Skills' : '副技能組合'}</div>
                 <div class="box-subskills-grid">
-                  ${[10, 25, 50, 75, 100].map((lv, idx) => {
-                    const skName = (p.subskills && p.subskills[idx]) || '';
+                  ${[10, 25, 50, 75, 100].map((lv, i) => {
+                    const skName = (p.subskills || [])[i];
                     const sk = SUBSKILLS_DATA.find(s => s.name === skName);
                     const tier = sk ? sk.tier : 'empty';
                     const displaySkName = skName ? (window.I18N ? window.I18N.getSubSkillName(skName) : skName) : '--';
@@ -595,17 +594,17 @@
                 <tr data-uid="${p.uid}">
                   <td>
                     <div class="table-icon-wrapper">
-                      ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="table-icon" onerror="this.style.display='none';">` : '⚡'}
+                      ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="table-icon" onerror="this.style.display='none';">` : ''}
                     </div>
                   </td>
                   <td>
                     <div class="table-name-cn">${escapeHtml(pkmDisplayName)}</div>
-                    ${p.nickname ? `<div style="font-size:11px;color:var(--accent-color);">🏷️ ${escapeHtml(p.nickname)}</div>` : ''}
+                    ${p.nickname ? `<div style="font-size:11px;color:var(--accent-color);">${escapeHtml(p.nickname)}</div>` : ''}
                   </td>
                   <td><span class="box-table-lvl">Lv.${p.level || 1}</span></td>
                   <td>
                     <span class="box-pr-badge ${prInfo.tierBadgeClass}">
-                      ${prInfo.tier === 'S+' ? '👑' : ''} PR ${prInfo.pr} · ${prInfo.tier}
+                      PR ${prInfo.pr} · ${prInfo.tier}
                     </span>
                   </td>
                   <td>
@@ -631,9 +630,25 @@
                   </td>
                   <td>
                     <div style="display:flex;gap:6px;">
-                      <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${isEN ? 'Appraisal Report' : '🔮 深度診斷報告'}">🔮</button>
-                      <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="${isEN ? 'Edit' : '編輯'}">✏️</button>
-                      <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="${isEN ? 'Delete' : '刪除'}">🗑️</button>
+                      <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${isEN ? 'Appraisal Report' : '深度診斷報告'}">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="12" y1="16" x2="12" y2="12"></line>
+                          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                      </button>
+                      <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="${isEN ? 'Edit' : '編輯'}">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                      </button>
+                      <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="${isEN ? 'Delete' : '刪除'}">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="3 6 5 6 21 6"></polyline>
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -1681,36 +1696,46 @@
       });
     }
 
-    // 5. 頂部 Segmented 子分頁切換 (📦 寶可夢倉庫 vs 🔮 深度評測室)
+    // 5. 頂部 Segmented 子分頁切換 (寶可夢倉庫 vs 深度評測室)
     const subtabList = document.getElementById('box-subtab-list');
     const subtabLab = document.getElementById('box-subtab-lab');
-    const subpanelList = document.getElementById('box-subpanel-list');
-    const subpanelLab = document.getElementById('box-subpanel-lab');
-
-    function switchBoxSubtab(tab) {
-      if (tab === 'lab') {
-        if (subtabLab) subtabLab.classList.add('active');
-        if (subtabList) subtabList.classList.remove('active');
-        if (subpanelList) subpanelList.style.display = 'none';
-        if (subpanelLab) subpanelLab.style.display = 'block';
-        const labContainer = document.getElementById('appraisal-lab-container');
-        if (labContainer && window.AppraisalLab && window.AppraisalLab.renderLab) {
-          window.AppraisalLab.renderLab(labContainer);
-        }
-      } else {
-        if (subtabList) subtabList.classList.add('active');
-        if (subtabLab) subtabLab.classList.remove('active');
-        if (subpanelList) subpanelList.style.display = 'block';
-        if (subpanelLab) subpanelLab.style.display = 'none';
-        renderBox();
-      }
-    }
 
     if (subtabList) subtabList.addEventListener('click', () => switchBoxSubtab('list'));
     if (subtabLab) subtabLab.addEventListener('click', () => switchBoxSubtab('lab'));
   }
 
+  function switchBoxSubtab(tab) {
+    const subtabList = document.getElementById('box-subtab-list');
+    const subtabLab = document.getElementById('box-subtab-lab');
+    const subpanelList = document.getElementById('box-subpanel-list');
+    const subpanelLab = document.getElementById('box-subpanel-lab');
+    const fabContainer = document.getElementById('box-fab-container');
+
+    if (tab === 'lab') {
+      if (subtabLab) subtabLab.classList.add('active');
+      if (subtabList) subtabList.classList.remove('active');
+      if (subpanelList) subpanelList.style.display = 'none';
+      if (subpanelLab) subpanelLab.style.display = 'block';
+      if (fabContainer) fabContainer.style.display = 'none';
+      const labContainer = document.getElementById('appraisal-lab-container');
+      if (labContainer) {
+        labContainer.style.display = 'block';
+        if (window.AppraisalLab && typeof window.AppraisalLab.renderLab === 'function') {
+          window.AppraisalLab.renderLab(labContainer);
+        }
+      }
+    } else {
+      if (subtabList) subtabList.classList.add('active');
+      if (subtabLab) subtabLab.classList.remove('active');
+      if (subpanelList) subpanelList.style.display = 'block';
+      if (subpanelLab) subpanelLab.style.display = 'none';
+      if (fabContainer) fabContainer.style.display = 'flex';
+      renderBox();
+    }
+  }
+
   if (typeof window !== 'undefined') {
+    window.switchBoxSubtab = switchBoxSubtab;
     window.initUserBox = function (pokemons) {
       allPokemonsRef = pokemons || [];
       initBoxEvents();

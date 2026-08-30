@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/styles.css?v=20260830_06">
+  <link rel="stylesheet" href="../css/styles.css?v=20260830_08">
 
   <!-- 🛡️ 全域路徑基準與錯誤診斷攔截器 -->
   <script>
@@ -633,16 +633,14 @@
       <!-- 由百科模組動態渲染 5 大 Sub-Tabs 與 Sticky 表格 -->
     </div>
 
-    <!-- Panel 4: 📦 寶可夢倉庫 -->
+    <!-- Panel 4: 寶可夢倉庫 -->
     <div id="panel-box" class="view-panel app-panel" style="display:none;">
       <!-- 頂部 Segmented 子分頁切換列 -->
       <nav class="box-subnav-bar" aria-label="倉庫次級分頁">
-        <button type="button" id="box-subtab-list" class="box-subnav-item active" data-subtab="list">
-          <span class="subnav-icon">📦</span>
+        <button type="button" id="box-subtab-list" class="box-subnav-item active" data-subtab="list" onclick="window.switchBoxSubtab && window.switchBoxSubtab('list')">
           <span class="subnav-label" data-i18n="box.tab_list">寶可夢倉庫</span>
         </button>
-        <button type="button" id="box-subtab-lab" class="box-subnav-item" data-subtab="lab">
-          <span class="subnav-icon">🔮</span>
+        <button type="button" id="box-subtab-lab" class="box-subnav-item" data-subtab="lab" onclick="window.switchBoxSubtab && window.switchBoxSubtab('lab')">
           <span class="subnav-label" data-i18n="box.tab_lab">深度評測室</span>
         </button>
       </nav>
@@ -650,38 +648,38 @@
       <!-- 1. 寶可夢倉庫子分頁 (Subpanel List) -->
       <div id="box-subpanel-list" class="box-subpanel-view" style="display:block;">
         <section class="controls-container mobile-controls-container">
-          <!-- 1. 寬敞大搜尋列 -->
-          <div class="search-box box-search-box">
-            <span class="search-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="7"></circle>
-                <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
-              </svg>
-            </span>
-            <input type="text" id="box-search-input" class="search-input box-search-input"
-              placeholder="搜尋寶可夢、暱稱、技能、性格..."
-              data-i18n-placeholder="box.search_placeholder"
-              aria-label="搜尋個人倉庫">
-            <button type="button" id="box-search-clear" class="search-clear-btn" style="display:none;" title="清空搜尋" aria-label="清空搜尋">✕</button>
-          </div>
-
-          <!-- 2. 控制工具列 (左側排序選單，右側視圖切換與收錄計數) -->
+          <!-- 單行精緻工具控制列 (左側排序選單，右側視圖切換與計數) -->
           <div class="box-toolbar-control-row">
             <div class="sort-box box-sort-box">
               <select id="box-sort-select" class="sort-select" aria-label="倉庫排序">
-                <option value="pr-desc" data-i18n="box.sort_pr_desc">👑 PR 評分由高到低</option>
-                <option value="created-desc" data-i18n="box.sort_recent">📅 最近加入</option>
-                <option value="level-desc" data-i18n="box.sort_level_desc">⚡ 等級由高到低</option>
-                <option value="level-asc" data-i18n="box.sort_level_asc">🌱 等級由低到高</option>
-                <option value="pr-asc" data-i18n="box.sort_pr_asc">📉 PR 評分由低到高</option>
-                <option value="id-asc" data-i18n="box.sort_dex_asc">🔢 全國圖鑑編號</option>
+                <option value="pr-desc" data-i18n="box.sort_pr_desc">PR 評分由高到低</option>
+                <option value="created-desc" data-i18n="box.sort_recent">最近加入</option>
+                <option value="level-desc" data-i18n="box.sort_level_desc">等級由高到低</option>
+                <option value="level-asc" data-i18n="box.sort_level_asc">等級由低到高</option>
+                <option value="pr-asc" data-i18n="box.sort_pr_asc">PR 評分由低到高</option>
+                <option value="id-asc" data-i18n="box.sort_dex_asc">全國圖鑑編號</option>
               </select>
             </div>
             <div class="box-toolbar-right">
-              <div id="box-count-badge" class="box-count-badge result-count">已登錄 0 隻</div>
-              <div class="box-view-toggle-chips">
-                <button type="button" id="box-toggle-grid" class="view-chip-btn active" title="卡片視圖">⊞</button>
-                <button type="button" id="box-toggle-table" class="view-chip-btn" title="列表視圖">☰</button>
+              <div id="box-count-badge" class="box-count-badge result-count">已收錄 0 隻</div>
+              <div class="box-view-toggle-chips" aria-label="展示方式切換">
+                <button type="button" id="box-toggle-grid" class="view-chip-btn active" title="卡片視圖">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                  </svg>
+                  <span class="view-chip-text" data-i18n="box.view_cards">卡片</span>
+                </button>
+                <button type="button" id="box-toggle-table" class="view-chip-btn" title="列表視圖">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+                    <rect x="3" y="4" width="18" height="3" rx="1"></rect>
+                    <rect x="3" y="10.5" width="18" height="3" rx="1"></rect>
+                    <rect x="3" y="17" width="18" height="3" rx="1"></rect>
+                  </svg>
+                  <span class="view-chip-text" data-i18n="box.view_table">列表</span>
+                </button>
               </div>
             </div>
           </div>
@@ -690,7 +688,7 @@
           <div id="box-scanner-status" class="box-scanner-status" style="display:none;"></div>
         </section>
 
-        <!-- 🔔 倉庫專屬浮動 Toast 通知容器 -->
+        <!-- 倉庫專屬浮動 Toast 通知容器 -->
         <div id="box-toast-container" class="box-toast-container"></div>
 
         <!-- 寶可夢卡片 / 表格列表容器 -->
@@ -698,15 +696,21 @@
           <div id="box-content-area" class="box-cards-grid"></div>
         </section>
 
-        <!-- 📸 & ➕ 原生 App 浮動操作按鈕區 (Floating Action Buttons - FAB) -->
+        <!-- 原生 App 浮動操作按鈕區 (Floating Action Buttons - FAB) -->
         <div class="box-fab-container" id="box-fab-container">
           <input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
           <button type="button" id="box-dropzone" class="box-fab-btn box-fab-scan" title="拍照 / 選取截圖辨識" aria-label="截圖智能辨識">
-            <span class="fab-icon">📸</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+              <circle cx="12" cy="13" r="4"></circle>
+            </svg>
             <span class="fab-label" data-i18n="box.fab_scan">截圖辨識</span>
           </button>
           <button type="button" id="box-manual-add-btn" class="box-fab-btn box-fab-add" title="手動新增寶可夢" aria-label="手動新增">
-            <span class="fab-icon">➕</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
             <span class="fab-label" data-i18n="box.fab_add">手動新增</span>
           </button>
         </div>
@@ -715,7 +719,7 @@
       <!-- 2. 深度評測室子分頁 (Subpanel Lab) -->
       <div id="box-subpanel-lab" class="box-subpanel-view" style="display:none;">
         <section class="box-lab-content-container">
-          <!-- 🔮 寶可夢六維深度評測實驗室容器 (Appraisal Lab) -->
+          <!-- 寶可夢六維深度評測實驗室容器 (Appraisal Lab) -->
           <div id="appraisal-lab-container" class="appraisal-lab-standalone-panel"></div>
         </section>
       </div>
@@ -955,7 +959,7 @@
 
           <div class="box-modal-footer">
             <button type="button" id="box-modal-cancel-btn" class="box-btn box-btn-secondary" data-i18n="box.modal_cancel">取消</button>
-            <button type="submit" id="box-modal-submit-btn" class="box-btn box-btn-primary" data-i18n="box.modal_save">💾 確認儲存入庫</button>
+            <button type="submit" id="box-modal-submit-btn" class="box-btn box-btn-primary" data-i18n="box.modal_save">確認儲存入庫</button>
           </div>
         </form>
       </div>
@@ -964,13 +968,13 @@
 
   <!-- 腳本載入區 (嚴格按照 i18n -> app -> recipes -> wiki -> box -> news -> appraisal 順序) -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
-  <script src="../js/core/i18n.js?v=20260830_04"></script>
-  <script src="../js/modules/app.js?v=20260830_04"></script>
-  <script src="../js/modules/recipes.js?v=20260830_04"></script>
-  <script src="../js/modules/wiki.js?v=20260830_04"></script>
-  <script src="../js/modules/box.js?v=20260830_04"></script>
-  <script src="../js/modules/news.js?v=20260830_04"></script>
-  <script src="../js/modules/appraisal.js?v=20260830_04"></script>
+  <script src="../js/core/i18n.js?v=20260830_08"></script>
+  <script src="../js/modules/app.js?v=20260830_08"></script>
+  <script src="../js/modules/recipes.js?v=20260830_08"></script>
+  <script src="../js/modules/wiki.js?v=20260830_08"></script>
+  <script src="../js/modules/box.js?v=20260830_08"></script>
+  <script src="../js/modules/news.js?v=20260830_08"></script>
+  <script src="../js/modules/appraisal.js?v=20260830_08"></script>
 
   <!-- 桌面版切換監聽腳本 -->
   <script>

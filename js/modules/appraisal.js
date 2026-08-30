@@ -15,12 +15,12 @@
   /* ─── 六維度元資料定義 ─────────────────────────────────────── */
   function getSixDimMeta(isEN) {
     return [
-      { key: 'berry', label: isEN ? 'Berry Output' : '樹果產能', icon: '🍊', angle: -Math.PI / 2, desc: isEN ? 'Total daily berry energy potential (BFS, specialty & speed)' : '單日樹果總能量潛力 (含樹果S、專長與幫速)' },
-      { key: 'ingredient', label: isEN ? 'Ingredient Output' : '食材產能', icon: '🍲', angle: -Math.PI / 6, desc: isEN ? 'Ingredient drop rate and recipe combo synergies' : '食材獲取期望與解鎖組合協同效應' },
-      { key: 'skill', label: isEN ? 'Skill Power' : '技能強度', icon: '⚡', angle: Math.PI / 6, desc: isEN ? 'Main skill trigger rate and value scaling' : '主技能觸發頻率、等級加成與爆發收益' },
-      { key: 'speed', label: isEN ? 'Helping Speed' : '幫忙速度', icon: '⏱️', angle: Math.PI / 2, desc: isEN ? 'Overall helping frequency (base interval, sub-skills & nature)' : '整體幫忙頻率 (基礎間隔、幫速SM、幫獎與性格)' },
-      { key: 'growth', label: isEN ? 'Late Growth' : '後期成長', icon: '📈', angle: 5 * Math.PI / 6, desc: isEN ? 'Lv.50/60/75 late skill and ingredient scaling potential' : 'Lv.50/60/75 後期技能與第三食材爆發潛能' },
-      { key: 'roi', label: isEN ? 'Resource ROI' : '資源效益', icon: '💎', angle: -5 * Math.PI / 6, desc: isEN ? 'Early/mid power unlock and candy investment efficiency' : '成型週期、前中期戰力解鎖速度與糖果回報率' }
+      { key: 'berry', label: isEN ? 'Berry Output' : '樹果產能', icon: '', angle: -Math.PI / 2, desc: isEN ? 'Total daily berry energy potential (BFS, specialty & speed)' : '單日樹果總能量潛力 (含樹果S、專長與幫速)' },
+      { key: 'ingredient', label: isEN ? 'Ingredient Output' : '食材產能', icon: '', angle: -Math.PI / 6, desc: isEN ? 'Ingredient drop rate and recipe combo synergies' : '食材獲取期望與解鎖組合協同效應' },
+      { key: 'skill', label: isEN ? 'Skill Power' : '技能強度', icon: '', angle: Math.PI / 6, desc: isEN ? 'Main skill trigger rate and value scaling' : '主技能觸發頻率、等級加成與爆發收益' },
+      { key: 'speed', label: isEN ? 'Helping Speed' : '幫忙速度', icon: '', angle: Math.PI / 2, desc: isEN ? 'Overall helping frequency (base interval, sub-skills & nature)' : '整體幫忙頻率 (基礎間隔、幫速SM、幫獎與性格)' },
+      { key: 'growth', label: isEN ? 'Late Growth' : '後期成長', icon: '', angle: 5 * Math.PI / 6, desc: isEN ? 'Lv.50/60/75 late skill and ingredient scaling potential' : 'Lv.50/60/75 後期技能與第三食材爆發潛能' },
+      { key: 'roi', label: isEN ? 'Resource ROI' : '資源效益', icon: '', angle: -5 * Math.PI / 6, desc: isEN ? 'Early/mid power unlock and candy investment efficiency' : '成型週期、前中期戰力解鎖速度與糖果回報率' }
     ];
   }
 
