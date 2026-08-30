@@ -662,14 +662,20 @@
         const uid = btn.getAttribute('data-uid');
         const item = userBox.find(p => p.uid === uid);
         if (item && window.AppraisalLab) {
-          const base = findPokemonBase(item.pokemonId || item.name);
-          window.AppraisalLab.openModal({
-            pkm: base,
-            level: item.level || 30,
-            nature: item.nature || '坦率',
-            subskills: item.subskills || [],
-            ingredients: [item.ing1, item.ing2, item.ing3]
-          });
+          const isMobileH5 = document.body.classList.contains('mobile-h5-app');
+          if (isMobileH5 && typeof window.switchBoxSubtab === 'function') {
+            window.AppraisalLab.loadBoxItem(item);
+            window.switchBoxSubtab('lab');
+          } else {
+            const base = findPokemonBase(item.pokemonId || item.name);
+            window.AppraisalLab.openModal({
+              pkm: base,
+              level: item.level || 30,
+              nature: item.nature || '坦率',
+              subskills: item.subskills || [],
+              ingredients: [item.ing1, item.ing2, item.ing3]
+            });
+          }
         }
       });
     });

@@ -260,6 +260,13 @@
       'appraisal.radar_speed': '幫忙速度',
       'appraisal.radar_growth': '後期成長',
       'appraisal.radar_roi': '資源效益',
+      'appraisal.select_from_box': '📦 從我的倉庫選取：',
+      'appraisal.custom_simulation': '✨ 自訂模擬 (自由挑選物種)',
+      'appraisal.box_empty_tip': '💡 提示：在【寶可夢倉庫】登錄寶可夢後，即可在此直接選取並診斷你的專屬寶可夢！',
+      'appraisal.in_box_badge': '📦 倉庫實體',
+      'appraisal.simulated_badge': '🔮 模擬調校中',
+      'appraisal.reset_box_btn': '🔄 重置為倉庫原始數值',
+      'appraisal.quick_pick': '快速切換倉庫寶可夢：',
 
       // Footer
       'footer.copyright': 'Pokémon Sleep 寶可夢資料庫 &copy; 2026 · <a href="https://github.com/s102213039/pokemon-sleep-app" target="_blank">GitHub 原始碼</a> · Powered by <a href="https://www.serebii.net/" target="_blank">Serebii.net</a>',
@@ -525,6 +532,13 @@
       'appraisal.radar_speed': 'Helping Speed',
       'appraisal.radar_growth': 'Late Growth',
       'appraisal.radar_roi': 'Resource ROI',
+      'appraisal.select_from_box': '📦 Select from My Box:',
+      'appraisal.custom_simulation': '✨ Custom Simulation (Any Species)',
+      'appraisal.box_empty_tip': '💡 Tip: Register Pokémon in your Box tab to evaluate your personal collection here!',
+      'appraisal.in_box_badge': '📦 In Box',
+      'appraisal.simulated_badge': '🔮 What-If Simulation',
+      'appraisal.reset_box_btn': '🔄 Reset to Box Stats',
+      'appraisal.quick_pick': 'Quick Pick from Box:',
 
       // Footer
       'footer.copyright': 'Pokémon Sleep Database &copy; 2026 · <a href="https://github.com/s102213039/pokemon-sleep-app" target="_blank">GitHub Source</a> · Powered by <a href="https://www.serebii.net/" target="_blank">Serebii.net</a>',

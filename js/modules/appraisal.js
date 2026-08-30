@@ -577,26 +577,87 @@
     }
   }
 
-  /* ─── 獨立模擬評測實驗室 (Appraisal Lab) ───────────────── */
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /* ─── 獨立模擬評測實驗室 (Appraisal Lab & Box Linkage) ───────────────── */
   let labState = {
+    selectedBoxUid: '',
     selectedPkmId: '1',
     level: 30,
     nature: '固執',
     subskills: ['樹果數量S', '幫忙速度M', '食材機率提升M', '', ''],
-    ingredients: []
+    ingredients: [],
+    nickname: '',
+    isCustomized: false
   };
+
+  function loadBoxItem(item) {
+    if (!item) return;
+    const pokemons = window.allPokemons || (window.PokemonApp && window.PokemonApp.allPokemons) || [];
+    const pkm = pokemons.find(function (p) { return p.id === item.pokemonId || p.name_cn === item.name; }) || pokemons[0];
+
+    labState.selectedBoxUid = item.uid;
+    labState.selectedPkmId = pkm ? pkm.id : '1';
+    labState.level = item.level || 30;
+    labState.nature = item.nature || '坦率';
+
+    const rawSubs = Array.isArray(item.subskills) ? item.subskills.slice(0, 5) : [];
+    while (rawSubs.length < 5) rawSubs.push('');
+    labState.subskills = rawSubs;
+
+    labState.ingredients = [item.ing1, item.ing2, item.ing3].filter(Boolean);
+    labState.nickname = item.nickname || '';
+    labState.isCustomized = false;
+  }
+
+  function onBoxItemSelect(uid) {
+    const userBox = (window.UserBox && typeof window.UserBox.getUserBox === 'function') ? window.UserBox.getUserBox() : [];
+    if (!uid) {
+      labState.selectedBoxUid = '';
+      labState.nickname = '';
+      labState.isCustomized = false;
+      updateLabUI();
+      return;
+    }
+    const item = userBox.find(function (p) { return p.uid === uid; });
+    if (item) {
+      loadBoxItem(item);
+      updateLabUI();
+    }
+  }
+
+  function resetToBoxOriginal() {
+    if (!labState.selectedBoxUid) return;
+    onBoxItemSelect(labState.selectedBoxUid);
+  }
 
   function renderAppraisalLabContainer(targetElement) {
     if (!targetElement) return;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
     const pokemons = window.allPokemons || (window.PokemonApp && window.PokemonApp.allPokemons) || [];
+    const userBox = (window.UserBox && typeof window.UserBox.getUserBox === 'function') ? window.UserBox.getUserBox() : [];
+    
     if (pokemons.length === 0) {
       targetElement.innerHTML = `<div style="padding:20px;text-align:center;color:#94a3b8;">${isEN ? 'Loading Pokédex data...' : '載入圖鑑資料中...'}</div>`;
       return;
     }
 
-    const currentPkm = pokemons.find(function(p) { return p.id === labState.selectedPkmId; }) || pokemons[0];
+    // 若有選中 boxUid 但該物品已不存在，重置為自訂模式
+    if (labState.selectedBoxUid && !userBox.some(function (p) { return p.uid === labState.selectedBoxUid; })) {
+      labState.selectedBoxUid = '';
+      labState.nickname = '';
+      labState.isCustomized = false;
+    }
+
+    const currentPkm = pokemons.find(function (p) { return p.id === labState.selectedPkmId; }) || pokemons[0];
     const natures = (window.UserBox && window.UserBox.NATURE_DATA) || [];
     const subskillPool = (window.UserBox && window.UserBox.SUBSKILLS_DATA) || [];
 
@@ -611,20 +672,68 @@
       <div class="appraisal-lab-card">
         <div class="appraisal-lab-header">
           <div class="appraisal-lab-title-group">
-            <span class="appraisal-lab-badge">${isEN ? '🔮 Appraisal Lab' : '🔮 評測實驗室'}</span>
+            <span class="appraisal-lab-badge">${isEN ? 'Appraisal Lab' : '評測實驗室'}</span>
             <h3 class="appraisal-lab-title">${isEN ? 'Pokémon Deep Appraisal & Synergy Lab' : '寶可夢深度診斷評測實驗室'}</h3>
           </div>
-          <p class="appraisal-lab-desc">${isEN ? 'Pick any Pokémon, configure natures, sub-skills & levels to calculate 6-dimension potential and milestone costs!' : '自由挑選任何寶可夢物種、自選性格、副技能與等級，即時繪製六維雷達圖並精算潛力與升級成本！'}</p>
+          <p class="appraisal-lab-desc">${isEN ? 'Directly evaluate Pokémon from your Box, or simulate custom species, natures, and sub-skills to inspect 6-dimension potential!' : '可直接選取個人倉庫寶可夢進行深度診斷，或自由模擬任何物種、性格與副技能，即時繪製六維雷達圖！'}</p>
         </div>
 
         <div class="appraisal-lab-layout">
           <!-- 左側：自訂配置控制器 -->
           <div class="appraisal-lab-controls">
-            <!-- 寶可夢選擇 -->
+            <!-- 1. 倉庫寶可夢快速選取區 (User Box Linkage) -->
+            <div class="lab-control-group lab-box-linkage-group">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <label for="lab-box-select" class="lab-control-label font-bold text-accent">
+                  ${isEN ? 'Select from My Box:' : '從我的倉庫選取：'}
+                </label>
+                ${labState.selectedBoxUid && labState.isCustomized ? `
+                  <button type="button" class="lab-box-reset-btn" onclick="window.AppraisalLab.resetToBoxOriginal()" title="${isEN ? 'Reset to Box Stats' : '重置為倉庫原始數值'}">
+                    ${isEN ? 'Reset' : '重置原始數值'}
+                  </button>
+                ` : ''}
+              </div>
+
+              <select id="lab-box-select" class="lab-select lab-box-select" onchange="window.AppraisalLab.onBoxItemSelect(this.value)">
+                <option value="" ${!labState.selectedBoxUid ? 'selected' : ''}>${isEN ? '✨ Custom Simulation (Select Any Species)' : '✨ 自訂模擬 (自由挑選物種)'}</option>
+                ${userBox.map(function (item) {
+                  const bPkm = pokemons.find(function (p) { return p.id === item.pokemonId || p.name_cn === item.name; });
+                  const pDisplayName = isEN ? (bPkm ? (bPkm.name_en || bPkm.name_cn) : item.name) : item.name;
+                  const nickText = item.nickname ? `${item.nickname} (${pDisplayName})` : pDisplayName;
+                  const natText = window.I18N ? window.I18N.getNatureName(item.nature) : item.nature;
+                  return '<option value="' + item.uid + '" ' + (labState.selectedBoxUid === item.uid ? 'selected' : '') + '>Lv.' + (item.level || 1) + ' ' + escapeHtml(nickText) + ' · ' + natText + '</option>';
+                }).join('')}
+              </select>
+
+              ${userBox.length > 0 ? `
+                <div class="lab-box-chips-scroll">
+                  <button type="button" class="lab-box-chip ${!labState.selectedBoxUid ? 'active' : ''}" onclick="window.AppraisalLab.onBoxItemSelect('')">
+                    <span class="lab-box-chip-name">${isEN ? '✨ Custom' : '✨ 自訂模擬'}</span>
+                  </button>
+                  ${userBox.map(function (item) {
+                    const bPkm = pokemons.find(function (p) { return p.id === item.pokemonId || p.name_cn === item.name; });
+                    const pDisplayName = isEN ? (bPkm ? (bPkm.name_en || bPkm.name_cn) : item.name) : item.name;
+                    const avatarUrl = (bPkm && (bPkm.icon_url || bPkm.icon)) || (bPkm && bPkm.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${bPkm.formatted_no}.png` : '') || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
+                    const isSelected = labState.selectedBoxUid === item.uid;
+                    return `
+                      <button type="button" class="lab-box-chip ${isSelected ? 'active' : ''}" onclick="window.AppraisalLab.onBoxItemSelect('${item.uid}')" title="${escapeHtml(item.nickname || pDisplayName)}">
+                        <img src="${avatarUrl}" class="lab-box-chip-icon" alt="${escapeHtml(item.name)}" loading="lazy">
+                        <span class="lab-box-chip-name">${escapeHtml(item.nickname || pDisplayName)}</span>
+                        <span class="lab-box-chip-lv">Lv.${item.level || 1}</span>
+                      </button>
+                    `;
+                  }).join('')}
+                </div>
+              ` : `
+                <div class="lab-box-empty-hint">${isEN ? 'Tip: Register Pokémon in Box tab to evaluate your personal collection here!' : '提示：在【寶可夢倉庫】新增登錄寶可夢後，即可在此一鍵選取並評測你的專屬寶可夢！'}</div>
+              `}
+            </div>
+
+            <!-- 寶可夢物種選擇 (自訂或從圖鑑選擇) -->
             <div class="lab-control-group">
               <label for="lab-pkm-select" class="lab-control-label">${isEN ? 'Select Pokémon Species:' : '選擇寶可夢物種：'}</label>
               <select id="lab-pkm-select" class="lab-select" onchange="window.AppraisalLab.onPkmChange(this.value)">
-                ${pokemons.map(function(p) {
+                ${pokemons.map(function (p) {
                   const pName = isEN ? (p.name_en || p.name_cn) : p.name_cn;
                   const pSpec = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : p.specialty;
                   const pType = window.I18N ? window.I18N.getTypeName(p.type) : p.type;
@@ -633,19 +742,19 @@
               </select>
             </div>
 
-            <!-- 等級滑桿 -->
+            <!-- 等級滑桿 (支援 1 ~ 100) -->
             <div class="lab-control-group">
               <label for="lab-level-slider" class="lab-control-label">
                 ${isEN ? 'Training Level:' : '培育等級：'}<span class="font-bold text-accent">Lv. ${labState.level}</span>
               </label>
-              <input type="range" id="lab-level-slider" min="1" max="60" value="${labState.level}" step="1" class="lab-slider" oninput="window.AppraisalLab.onLevelChange(this.value)">
+              <input type="range" id="lab-level-slider" min="1" max="100" value="${labState.level}" step="1" class="lab-slider" oninput="window.AppraisalLab.onLevelChange(this.value)">
             </div>
 
             <!-- 性格選擇 -->
             <div class="lab-control-group">
               <label for="lab-nature-select" class="lab-control-label">${isEN ? 'Nature Setting:' : '性格設定：'}</label>
               <select id="lab-nature-select" class="lab-select" onchange="window.AppraisalLab.onNatureChange(this.value)">
-                ${natures.map(function(n) {
+                ${natures.map(function (n) {
                   const nName = window.I18N ? window.I18N.getNatureName(n.name) : n.name;
                   return '<option value="' + n.name + '" ' + (n.name === labState.nature ? 'selected' : '') + '>' + nName + ' (' + n.buff + ' / ' + n.debuff + ')</option>';
                 }).join('')}
@@ -656,9 +765,9 @@
             <div class="lab-control-group">
               <label class="lab-control-label">${isEN ? 'Sub-Skill Setup (Lv.10, 25, 50, 75, 100):' : '副技能配置 (Lv.10, 25, 50, 75, 100)：'}</label>
               <div class="lab-subskills-picker">
-                ${[10, 25, 50, 75, 100].map(function(lv, idx) {
+                ${[10, 25, 50, 75, 100].map(function (lv, idx) {
                   return '<div class="lab-subskill-slot"><span class="slot-lv-label">Lv.' + lv + '</span><select class="lab-select-subskill" onchange="window.AppraisalLab.onSubskillChange(' + idx + ', this.value)"><option value="">' + (isEN ? '(None)' : '(無)') + '</option>' +
-                    subskillPool.map(function(s) {
+                    subskillPool.map(function (s) {
                       const sDisplayName = window.I18N ? window.I18N.getSubSkillName(s.name) : s.name;
                       return '<option value="' + s.name + '" ' + (labState.subskills[idx] === s.name ? 'selected' : '') + '>' + sDisplayName + '</option>';
                     }).join('') + '</select></div>';
@@ -673,8 +782,21 @@
               <div class="lab-preview-pokemon-info">
                 <img src="${currentPkm.icon_url}" class="lab-preview-icon" alt="${displayName}">
                 <div>
-                  <div class="lab-preview-name">${displayName}</div>
-                  <div class="lab-preview-spec" style="display:flex;align-items:center;gap:4px;">${window.I18N ? window.I18N.getTypeIconSvg(currentPkm.type, 15) : ''} <span>${isEN ? `${typeName} · ${specName}` : `${currentPkm.type}屬性 · ${currentPkm.specialty}專長`}</span></div>
+                  <div class="lab-preview-name-row" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                    <span class="lab-preview-name">${displayName}</span>
+                    ${labState.selectedBoxUid && labState.nickname ? `
+                      <span class="lab-nickname-tag">${escapeHtml(labState.nickname)}</span>
+                    ` : ''}
+                    ${labState.selectedBoxUid ? (labState.isCustomized ? `
+                      <span class="lab-sim-tag" style="background:rgba(234,179,8,0.18); color:#facc15; border:1px solid rgba(234,179,8,0.35); font-size:11px; padding:1px 6px; border-radius:4px; font-weight:600;">${isEN ? 'Simulating' : '模擬調校中'}</span>
+                    ` : `
+                      <span class="lab-inbox-tag" style="background:rgba(56,189,248,0.18); color:#38bdf8; border:1px solid rgba(56,189,248,0.35); font-size:11px; padding:1px 6px; border-radius:4px; font-weight:600;">${isEN ? 'In Box' : '倉庫實體'}</span>
+                    `) : ''}
+                  </div>
+                  <div class="lab-preview-spec" style="display:flex;align-items:center;gap:4px;">
+                    ${window.I18N ? window.I18N.getTypeIconSvg(currentPkm.type, 15) : ''} 
+                    <span>${isEN ? `${typeName} · ${specName}` : `${currentPkm.type}屬性 · ${currentPkm.specialty}專長`} · Lv.${labState.level}</span>
+                  </div>
                 </div>
               </div>
 
@@ -691,14 +813,14 @@
 
               <div class="lab-scores-box">
                 <div class="lab-scores-title">${isEN ? '6-Dim Quantitative Scores' : '六維數值評分'}</div>
-                ${SIX_DIM_META.map(function(m) {
+                ${SIX_DIM_META.map(function (m) {
                   return '<div class="lab-dim-item"><span>' + m.icon + ' ' + m.label + '</span><span class="font-bold text-accent">' + evaluation.scores[m.key] + (isEN ? ' pts' : ' 分') + '</span></div>';
                 }).join('')}
               </div>
             </div>
 
             <div class="lab-pros-box">
-              ${evaluation.pros.map(function(p) { return '<div class="lab-bullet-item">' + p + '</div>'; }).join('')}
+              ${evaluation.pros.map(function (p) { return '<div class="lab-bullet-item">' + p + '</div>'; }).join('')}
             </div>
           </div>
         </div>
@@ -708,21 +830,33 @@
 
   function onPkmChange(pkmId) {
     labState.selectedPkmId = pkmId;
+    if (labState.selectedBoxUid) {
+      labState.isCustomized = true;
+    }
     updateLabUI();
   }
 
   function onLevelChange(val) {
     labState.level = parseInt(val, 10) || 30;
+    if (labState.selectedBoxUid) {
+      labState.isCustomized = true;
+    }
     updateLabUI();
   }
 
   function onNatureChange(nature) {
     labState.nature = nature;
+    if (labState.selectedBoxUid) {
+      labState.isCustomized = true;
+    }
     updateLabUI();
   }
 
   function onSubskillChange(idx, val) {
     labState.subskills[idx] = val;
+    if (labState.selectedBoxUid) {
+      labState.isCustomized = true;
+    }
     updateLabUI();
   }
 
@@ -741,6 +875,9 @@
     openModal: openAppraisalModal,
     closeModal: closeAppraisalModal,
     renderLab: renderAppraisalLabContainer,
+    loadBoxItem: loadBoxItem,
+    onBoxItemSelect: onBoxItemSelect,
+    resetToBoxOriginal: resetToBoxOriginal,
     onPkmChange: onPkmChange,
     onLevelChange: onLevelChange,
     onNatureChange: onNatureChange,
