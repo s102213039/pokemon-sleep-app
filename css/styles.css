@@ -11972,18 +11972,18 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   box-sizing: border-box !important;
 }
 
-/* 搜尋框下方 / 卡片上方的詳細倍率算法與食譜數量 Banner */
+/* 搜尋框下方 / 卡片上方的詳細倍率算法與食譜數量 Banner (無外框、無背景極簡展示) */
 .mobile-h5-app .recipe-main-content #recipe-count-badge {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  margin: 0 12px 6px !important;
-  width: calc(100% - 24px) !important;
-  padding: 4px 10px !important;
+  margin: 2px 14px 4px !important;
+  width: calc(100% - 28px) !important;
+  padding: 2px 0 !important;
   box-sizing: border-box !important;
-  background: var(--bg-card-inner, rgba(15, 23, 42, 0.5)) !important;
-  border: 1px solid var(--border-color-subtle, var(--border-color)) !important;
-  border-radius: 8px !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
   font-size: 11px !important;
   color: var(--text-secondary) !important;
   flex-shrink: 0 !important;
