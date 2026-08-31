@@ -1020,8 +1020,8 @@
       formatted = formatted.replace(re, `<span class="hl-poke-feat">${displayName}</span>`);
     });
 
-    // 4. 關鍵倍率與數值高亮 (如 1.25倍, 2.5x, +1,000pt, 250鑽石, 250 Diamonds)
-    formatted = formatted.replace(/([1-4](?:\.\d+)?(?:倍|x)|\+\d{1,3}(?:,\d{3})*pt|\d+(?:鑽石| Diamonds))/g, '<span class="hl-mult">$1</span>');
+    // 4. 關鍵倍率與數值高亮 (如 1.25倍, 2.5x, +1,000pt, 1,200鑽石, 3,000鑽石, 250鑽石, 1,200 Diamonds)
+    formatted = formatted.replace(/([1-4](?:\.\d+)?(?:倍|x)|\+\d{1,3}(?:[,，]\d{3})*pt|(?:\d{1,3}(?:[,，]\d{3})+|\d+)\s*(?:鑽石|Diamonds))/gi, '<span class="hl-mult">$1</span>');
 
     // 5. 島嶼 / 營地名稱高亮 (無 Emoji)
     formatted = formatted.replace(/(Greengrass Isle EX|Greengrass Isle|Cyan Beach EX|Cyan Beach|Taupe Hollow|Snowdrop Tundra|Lapis Lakeside|Old Gold Power Plant|Amber Canyon|萌綠之島EX|天青沙灘EX|萌綠之島|天青沙灘|灰褐洞窟|白花雪原|寶藍湖畔|黃金舊發電廠|琥褐溪谷)/g, '<span class="hl-island">$1</span>');

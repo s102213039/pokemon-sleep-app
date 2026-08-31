@@ -218,6 +218,9 @@ def deep_ai_extract_sections(category, title, clean_text):
     pack_matches = re.findall(r'(「[^」]+包[^」]*」[^\n]*)\s*(.*?)(?=(?:「[^」]+包|※僅限|注意事項|$))', clean_text, re.DOTALL)
     for p_name, p_content in pack_matches:
         p_name_clean = p_name.strip()
+        # 智能標準化鑽石金額 (例如 1，200鑽石 -> 1,200鑽石, 1 200鑽石 -> 1,200鑽石)
+        p_name_clean = re.sub(r'(\d+)[，\s]+(\d{3})\s*鑽石', r'\1,\2鑽石', p_name_clean)
+        p_name_clean = re.sub(r'(\d+)[，,](\d{3})\s*鑽石', r'\1,\2鑽石', p_name_clean)
         # 提取道具清單
         lines = [re.sub(r'^[・\-\*]\s*', '', l).strip() for l in p_content.strip().split('\n') if l.strip() and not l.strip().startswith('※') and not l.strip().startswith('商品')]
         # 提取限購
@@ -404,6 +407,8 @@ def translate_item_to_en(item_zh):
     clean = re.sub(r'\s*\([^\)]+\)', '', clean)
     clean = clean.replace('舉辦期間：', 'Event Period: ').replace('銷售期間：', 'Sales Period: ').replace('任務期間：', 'Mission Period: ').replace('兌換期間：', 'Exchange Period: ')
     clean = clean.replace('【適用營地】', '[Areas] ').replace('【機率小幅提升】', '[Rate Up] ').replace('【機率中幅提升】', '[Major Rate Up] ')
+    # 智能鑽石金額翻譯
+    clean = re.sub(r'[（\(](\d[\d,，\s]*)\s*鑽石[）\)]', lambda m: f" ({m.group(1).replace('，', ',').replace(' ', '')} Diamonds)", clean)
     if re.search(r'[\u4e00-\u9fa5]', clean):
         date_match = re.search(r'\d{1,2}/\d{1,2}.*?[～~-].*?\d{1,2}/\d{1,2}', clean)
         if date_match:
