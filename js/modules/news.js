@@ -80,31 +80,54 @@
 
   /* ─── 📅 官方活動與禮包甘特圖時程 (Gantt Schedule Timeline) ─── */
   function extractEventSchedule(item) {
-    let text = '';
+    let texts = [];
     if (item.sections) {
-      const s = item.sections.find(sec => sec.key === 'schedule' || sec.key === 'shop');
-      if (s && s.items) text = s.items.join(' ');
+      item.sections.forEach(sec => {
+        if (sec.items) texts.push(...sec.items);
+      });
     }
-    if (!text && item.highlights) text = item.highlights.join(' ');
-    if (!text) text = item.content_preview || '';
+    if (item.highlights) texts.push(...item.highlights);
+    if (item.content_preview) texts.push(item.content_preview);
+    const combinedText = texts.join(' ');
 
-    const m = text.match(/(?:(\d{4})\/)?(\d{1,2})\/(\d{1,2})(?:\s*\([^\)]+\))?\s*(?:(\d{1,2}):(\d{2}))?\s*～\s*(?:(\d{4})\/)?(\d{1,2})\/(\d{1,2})(?:\s*\([^\)]+\))?\s*(?:(\d{1,2}):(\d{2}))?/);
-    if (m) {
-      const eventYear = m[1] ? parseInt(m[1], 10) : (item.date ? parseInt(item.date.split('/')[0] || item.date.split('-')[0], 10) : _today.getFullYear());
-      const startM = parseInt(m[2], 10), startD = parseInt(m[3], 10), startH = m[4] ? m[4].padStart(2, '0') : '04';
-      const endYear = m[6] ? parseInt(m[6], 10) : eventYear;
-      const endM = parseInt(m[7], 10), endD = parseInt(m[8], 10), endH = m[9] ? m[9].padStart(2, '0') : '03';
+    const regex = /(?:(\d{4})\/)?(\d{1,2})\/(\d{1,2})(?:\s*\([^\)]+\))?\s*(?:(\d{1,2}):(\d{2}))?\s*[～~-]\s*(?:(\d{4})\/)?(\d{1,2})\/(\d{1,2})(?:\s*\([^\)]+\))?\s*(?:(\d{1,2}):(\d{2}))?/g;
+    let match;
+    let earliestStart = null;
+    let latestEnd = null;
+    let startStr = '', endStr = '';
+
+    const defaultYear = item.date ? parseInt(item.date.split('/')[0] || item.date.split('-')[0], 10) : _today.getFullYear();
+
+    while ((match = regex.exec(combinedText)) !== null) {
+      const sYear = match[1] ? parseInt(match[1], 10) : defaultYear;
+      const sMonth = parseInt(match[2], 10);
+      const sDay = parseInt(match[3], 10);
+      const sHour = match[4] ? parseInt(match[4], 10) : 4;
+
+      const eYear = match[6] ? parseInt(match[6], 10) : (match[1] ? parseInt(match[1], 10) : defaultYear);
+      const eMonth = parseInt(match[7], 10);
+      const eDay = parseInt(match[8], 10);
+      const eHour = match[9] ? parseInt(match[9], 10) : 3;
+
+      const sDate = new Date(sYear, sMonth - 1, sDay, sHour);
+      const eDate = new Date(eYear, eMonth - 1, eDay, eHour);
+
+      if (!earliestStart || sDate < earliestStart) {
+        earliestStart = sDate;
+        startStr = `${String(sMonth).padStart(2, '0')}/${String(sDay).padStart(2, '0')}`;
+      }
+      if (!latestEnd || eDate > latestEnd) {
+        latestEnd = eDate;
+        endStr = `${String(eMonth).padStart(2, '0')}/${String(eDay).padStart(2, '0')}`;
+      }
+    }
+
+    if (earliestStart && latestEnd) {
       return {
-        startMonth: startM,
-        startDay: startD,
-        startHour: startH,
-        endMonth: endM,
-        endDay: endD,
-        endHour: endH,
-        startStr: `${String(startM).padStart(2, '0')}/${String(startD).padStart(2, '0')}`,
-        endStr: `${String(endM).padStart(2, '0')}/${String(endD).padStart(2, '0')}`,
-        startDate: new Date(eventYear, startM - 1, startD, parseInt(startH, 10)),
-        endDate: new Date(endYear, endM - 1, endD, parseInt(endH, 10))
+        startStr,
+        endStr,
+        startDate: earliestStart,
+        endDate: latestEnd
       };
     }
     return null;
@@ -118,7 +141,7 @@
     const totalDays = new Date(calCurrentYear, calCurrentMonth + 1, 0).getDate();
 
     newsList.forEach(item => {
-      const isEvent = item.badge_key === 'event' || (item.title && item.title.includes('活動')) || (item.title && item.title.includes('企畫'));
+      const isEvent = item.badge_key === 'event' || (item.title && (item.title.includes('活動') || item.title.includes('企畫') || item.title.includes('企劃') || item.title.includes('快照') || item.title.includes('新月日') || item.title.includes('好眠日') || item.title.includes('秘境') || item.title.includes('超夢') || item.title.includes('夢幻') || item.title.includes('任務')));
       const isPack = (item.title && (item.title.includes('包') || item.title.includes('限定包') || item.title.includes('培育包') || item.title.includes('同樂包') || item.title.includes('紀念包')));
 
       if (!isEvent && !isPack) return;
@@ -151,7 +174,17 @@
       let typeColor = '#f97316'; // 暖陽落日橘 (Warm Coral)
 
       const titleLower = (item.title + ' ' + (item.title_en || '')).toLowerCase();
-      if (titleLower.includes('好眠日限定包')) {
+      if (titleLower.includes('快照') || titleLower.includes('snapshot')) {
+        eventCat = 'snapshot';
+        typeLabel = isPack ? (isEN ? 'Snapshot Pack' : '快照同樂包') : (isEN ? 'Miracle Snapshot' : '奇跡快照');
+        typeClass = isPack ? 'gantt-bar-pack' : 'gantt-bar-event';
+        typeColor = '#38bdf8'; // 亮天藍 (Sky Blue)
+      } else if (titleLower.includes('超夢') || titleLower.includes('mewtwo') || titleLower.includes('秘境')) {
+        eventCat = 'mewtwo';
+        typeLabel = isEN ? 'Mewtwo Research' : '超夢秘境研究';
+        typeClass = 'gantt-bar-event';
+        typeColor = '#a855f7'; // 霓虹亮紫
+      } else if (titleLower.includes('好眠日限定包')) {
         eventCat = 'good-sleep';
         typeLabel = isEN ? 'Good Sleep Pack' : '好眠限定包';
         typeClass = 'gantt-bar-pack';
@@ -171,6 +204,11 @@
         typeLabel = isEN ? 'New Moon Day' : '新月日';
         typeClass = 'gantt-bar-event';
         typeColor = '#6366f1'; // 宇宙深靛藍
+      } else if (titleLower.includes('30週年') || titleLower.includes('30th')) {
+        eventCat = 'pack-bundle';
+        typeLabel = isEN ? '30th Anniv Pack' : '30週年紀念包';
+        typeClass = 'gantt-bar-pack';
+        typeColor = '#f43f5e'; // 慶典緋紅
       } else if (titleLower.includes('合作紀念包')) {
         eventCat = 'collab';
         typeLabel = isEN ? 'Collab Pack' : '合作紀念包';
@@ -198,7 +236,7 @@
         typeColor = '#10b981'; // 翡翠翠綠
       } else if (titleLower.includes('同樂包')) {
         eventCat = 'pack-bundle';
-        typeLabel = isEN ? 'Festival Bundle' : '嘉年華同樂包';
+        typeLabel = isEN ? 'Festival Bundle' : '同樂包';
         typeClass = 'gantt-bar-pack';
         typeColor = '#06b6d4'; // 加勒比天青
       } else if (titleLower.includes('嘉年華') || titleLower.includes('festival') || titleLower.includes('夏日') || titleLower.includes('慶典')) {
@@ -241,9 +279,9 @@
     });
 
     return ganttItems.sort((a, b) => {
-      const priorityOrder = { 'good-sleep': 1, 'festival': 2, 'collab': 3, 'new-moon': 4, 'event': 5, 'pack-growth': 6, 'pack-bundle': 7, 'update': 8 };
-      const pa = priorityOrder[a.eventCat] || 9;
-      const pb = priorityOrder[b.eventCat] || 9;
+      const priorityOrder = { 'snapshot': 1, 'mewtwo': 2, 'good-sleep': 3, 'festival': 4, 'collab': 5, 'new-moon': 6, 'event': 7, 'pack-growth': 8, 'pack-bundle': 9, 'update': 10 };
+      const pa = priorityOrder[a.eventCat] || 99;
+      const pb = priorityOrder[b.eventCat] || 99;
       if (pa !== pb) return pa - pb;
       return a.startDate - b.startDate;
     });
@@ -312,8 +350,22 @@
       // 🌈 每個活動各自獨立的專屬色塊貫穿背景 (Head-Body-Foot 嚴格分段連續效果)
       let bgBandsHTML = '';
       if (activeEvents.length > 0) {
-        const bands = [];
+        const trackMap = {};
         activeEvents.forEach(ev => {
+          trackMap[ev.trackIndex] = ev;
+        });
+
+        const bands = [];
+        const maxDayTrack = Math.max(...activeEvents.map(e => e.trackIndex || 0));
+        const limitTracks = Math.max(1, Math.min(3, maxDayTrack + 1));
+
+        for (let t = 0; t < limitTracks; t++) {
+          const ev = trackMap[t];
+          if (!ev) {
+            bands.push('<div class="news-cal-bg-band band-empty"></div>');
+            continue;
+          }
+
           const prevDayEnd = new Date(calCurrentYear, calCurrentMonth, d - 1, 23, 59, 59);
           const nextDayStart = new Date(calCurrentYear, calCurrentMonth, d + 1, 0, 0, 0);
 
@@ -338,7 +390,7 @@
                  style="background-color: ${ev.typeColor};"
                  title="${escapeHtml(ev.title)} (${ev.typeLabel})"></div>
           `);
-        });
+        }
 
         bgBandsHTML = `<div class="news-cal-bg-bands">${bands.join('')}</div>`;
       }
@@ -429,9 +481,10 @@
       filterOngoingBtn.addEventListener('click', () => {
         filterOnlyOngoing = !filterOnlyOngoing;
         if (filterOnlyOngoing) {
-          // 展開所有進行中活動卡片
-          const refDate = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 12, 0, 0);
-          const activeIds = ganttData.filter(ev => ev.startDate <= refDate && ev.endDate >= refDate).map(e => e.id);
+          // 展開當日進行中活動卡片
+          const selectedDayStart = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 0, 0, 0);
+          const selectedDayEnd = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 23, 59, 59);
+          const activeIds = ganttData.filter(ev => ev.startDate <= selectedDayEnd && ev.endDate >= selectedDayStart).map(e => e.id);
           activeIds.forEach(id => expandedMap.add(id));
         }
         renderNews();
@@ -605,9 +658,10 @@
   /* ─── 篩選新聞清單 ───────────────────────────────────── */
   function getFilteredNews() {
     const ganttData = parseEventTimeline(allNews);
-    const refDate = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 12, 0, 0);
+    const selectedDayStart = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 0, 0, 0);
+    const selectedDayEnd = new Date(calCurrentYear, calCurrentMonth, calSelectedDay, 23, 59, 59);
     const ongoingEventIds = new Set(
-      ganttData.filter(ev => ev.startDate <= refDate && ev.endDate >= refDate).map(ev => ev.id)
+      ganttData.filter(ev => ev.startDate <= selectedDayEnd && ev.endDate >= selectedDayStart).map(ev => ev.id)
     );
 
     return allNews.filter(item => {
@@ -619,13 +673,15 @@
       if (currentCategory !== 'ALL' && item.badge_key !== currentCategory) {
         return false;
       }
-      // 2. 關鍵字搜尋（標題、簡述、重點項目、預覽）
+      // 2. 關鍵字搜尋（標題、英文標題、簡述、重點項目、預覽、日期）
       if (searchQuery) {
         const titleMatch = (item.title || '').toLowerCase().includes(searchQuery);
+        const titleEnMatch = (item.title_en || '').toLowerCase().includes(searchQuery);
         const overviewMatch = (item.overview || '').toLowerCase().includes(searchQuery);
         const highlightsMatch = (item.highlights || []).some(h => h.toLowerCase().includes(searchQuery));
         const dateMatch = (item.date || '').includes(searchQuery);
-        if (!titleMatch && !overviewMatch && !highlightsMatch && !dateMatch) {
+        const contentMatch = (item.content_preview || '').toLowerCase().includes(searchQuery);
+        if (!titleMatch && !titleEnMatch && !overviewMatch && !highlightsMatch && !dateMatch && !contentMatch) {
           return false;
         }
       }

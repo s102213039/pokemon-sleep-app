@@ -11340,11 +11340,15 @@ body.mobile-h5-app.pokemon-active,
   position: sticky !important;
   top: calc(52px + env(safe-area-inset-top, 0px)) !important;
   z-index: 80 !important;
-  margin: 10px 12px 6px !important;
-  padding: 0 !important;
-  width: calc(100% - 24px) !important;
+  margin: 0 !important;
+  padding: 8px 12px 6px !important;
+  width: 100% !important;
   box-sizing: border-box !important;
-  background: transparent !important;
+  background: var(--bg-header) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
 }
 
 .mobile-h5-app .recipe-main-content .content-area {
@@ -14243,6 +14247,12 @@ body.mobile-h5-app.ladder-active,
   border-radius: 4px !important;
   margin: 0 2px !important;
   width: calc(100% - 4px) !important;
+}
+
+.news-cal-bg-band.band-empty {
+  opacity: 0 !important;
+  background: transparent !important;
+  pointer-events: none !important;
 }
 
 /* 🎯 日期數字：浮在背景色塊之上，確保極致可讀性 */

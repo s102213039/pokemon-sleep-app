@@ -40,6 +40,9 @@ def fetch_url(url, timeout=12):
 def clean_html_text(html_content):
     if not html_content:
         return ""
+    # Strip <script> and <style> tags completely
+    html_content = re.sub(r'<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>', '', html_content, flags=re.IGNORECASE)
+    html_content = re.sub(r'<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>', '', html_content, flags=re.IGNORECASE)
     text = re.sub(r'<br\s*/?>', '\n', html_content, flags=re.IGNORECASE)
     text = re.sub(r'</p>', '\n\n', text, flags=re.IGNORECASE)
     text = re.sub(r'</li>', '\n', text, flags=re.IGNORECASE)
@@ -83,14 +86,22 @@ def deep_ai_extract_sections(category, title, clean_text):
 
     # 1. ⏰ 時間期程與營地 (Schedule & Camps)
     schedule_items = []
-    # 舉辦期間 / 任務期間 / 銷售期間 / 發放期間 / 開始出現的時間
-    periods = re.findall(r'((?:舉辦期間|任務期間|銷售期間|發放期間|維護期間|實施時間|測量時間|開始出現的時間)[：:\s]*[^\n]+(?:\n[・\-\s]*\d{1,2}/\d{1,2}[^\n]+)*)', clean_text)
+    # 舉辦期間 / 任務期間 / 銷售期間 / 發放期間 / 兌換期間 / 維護期間 / 實施時間 / 測量時間 / 開始出現的時間
+    periods = re.findall(r'((?:舉辦期間|任務期間|銷售期間|發放期間|兌換期間|維護期間|實施時間|測量時間|開始出現的時間)[：:\s]*[^\n]*(?:\n[・\-\s]*(?:第\d+週[：:\s]*)?(?:兌換期間[：:\s]*)?\d{1,2}/\d{1,2}[^\n]+)*)', clean_text)
     for p in periods:
         p_clean = ' '.join(p.split())
         p_clean = re.sub(r'^[【\s]*', '', p_clean)
         p_clean = re.sub(r'[】\s]*・\s*', '：', p_clean)
         if len(p_clean) > 5 and not any(p_clean in s for s in schedule_items):
             schedule_items.append(p_clean)
+
+    # 補充：逐行尋找任何包含日期區間的行（例如：第1週：9/14 (週一) 4:00 ～ 9/21 (週一) 3:59）
+    for line in text_blocks:
+        if re.search(r'\d{1,2}/\d{1,2}.*?[～~-].*?\d{1,2}/\d{1,2}', line):
+            clean_l = re.sub(r'^[【・\-\*\s]*', '', line).strip()
+            clean_l = re.sub(r'^[】\s]*', '', clean_l)
+            if len(clean_l) > 6 and not any(clean_l in s for s in schedule_items):
+                schedule_items.append(clean_l)
 
     camps_match = re.search(r'【?\s*活動營地\s*】?[：:\s]*([^\n]+)', clean_text) or re.search(r'出現的營地\s*([^\n]+)', clean_text)
     if camps_match:
@@ -291,11 +302,114 @@ def deep_ai_extract_sections(category, title, clean_text):
                 "items": flat_highlights
             })
 
+    SECTION_TITLE_EN = {
+        "schedule": "Event Schedule & Areas",
+        "debut": "New Pokemon Debut",
+        "bonus": "Core Bonuses & Multipliers",
+        "rateup": "Featured Rate-Up Pokemon",
+        "islands": "Applicable Research Areas",
+        "shop": "Bundles & Shop Items",
+        "update": "Version Highlights",
+        "updates": "Updates & Balancing",
+        "features": "New Features & Details",
+        "adjustments": "Game Balance Adjustments",
+        "general": "Core Highlights & Overview"
+    }
+
+    for s in sections:
+        s["title_en"] = SECTION_TITLE_EN.get(s["key"], "Event Details")
+        s["items_en"] = [translate_item_to_en(it) for it in s.get("items", [])]
+
     return {
         "overview": overview,
         "highlights": flat_highlights,
         "sections": sections
     }
+
+TITLE_TRANSLATIONS = [
+    (r"第(\d+)次「新月日」", r"\1th New Moon Day"),
+    (r"新月日限定包vol\.(\d+)", r"New Moon Day Bundle Vol. \1"),
+    (r"iOS也能和Fitbit裝置連結了！", r"iOS Fitbit Device Link Support"),
+    (r"「秘境研究！追尋超夢吧」", r"Uncharted Research: Seeking Mewtwo!"),
+    (r"秘境研究！追尋超夢吧", r"Uncharted Research: Seeking Mewtwo!"),
+    (r"寶可夢30週年紀念包", r"Pokemon 30th Anniversary Pack"),
+    (r"奇跡快照（迷你）同樂包", r"Miracle Snapshot (Mini) Bundle"),
+    (r"「奇跡快照任務（迷你）」", r"Miracle Snapshot Mission (Mini)"),
+    (r"奇跡快照任務（迷你）", r"Miracle Snapshot Mission (Mini)"),
+    (r"異常問題修復通知", r"Bug Fixes Notification"),
+    (r"異常問題通知", r"Known Issues Notification"),
+    (r"慶祝寶可夢動畫合作週登場", r"Pokemon Anime Collab Celebration"),
+    (r"第(\d+)次「好眠日」", r"\1th Good Sleep Day"),
+    (r"「好眠日限定包vol\.(\d+)」介紹", r"Good Sleep Day Bundle Vol. \1"),
+    (r"「好眠日限定包vol\.(\d+)」", r"Good Sleep Day Bundle Vol. \1"),
+    (r"合作紀念包", r"Collaboration Commemorative Bundle"),
+    (r"寶可夢培育包（([^）]+)）vol\.(\d+)", r"Pokemon Growth Pack Vol. \2"),
+    (r"「寶可夢動畫合作週」", r"Pokemon Anime Collaboration Week"),
+    (r"小鍛匠、\s*巧鍛匠、\s*巨鍛匠", r"Tinkatink, Tinkatuff, Tinkaton"),
+    (r"關於Ver\.(\d+\.\d+\.\d+)的更新內容", r"Ver. \1 Update Details"),
+    (r"關於EX模式", r"About EX Mode"),
+    (r"有關「主技能種子」的通知", r"Main Skill Seeds Notification"),
+    (r"夏日嘉年華2026同樂包", r"Summer Festival 2026 Bundle"),
+    (r"【活動】", r"[Event] "),
+    (r"【活動預告】", r"[Upcoming] "),
+    (r"【企畫】", r"[Campaign] "),
+    (r"【企劃】", r"[Campaign] "),
+    (r"【通知】", r"[Notice] "),
+    (r"【新登場】", r"[New Debut] "),
+    (r"【特別禮物！】", r"[Special Gift] "),
+    (r"【來獲得([^】]+)吧！】", r"[Special Pack] ")
+]
+
+OVERVIEW_TRANSLATIONS = {
+    "新月日": "Sleep soundly during the New Moon Day event to research dark and psychic Pokemon.",
+    "好眠日": "Enjoy a restful night's sleep during the Good Sleep Day with multiplied Drowsy Power.",
+    "超夢": "Team up with researchers worldwide to explore the uncharted areas of Greengrass Isle and discover Mewtwo!",
+    "夢幻": "Witness the rare appearances of the Mythical Pokemon Mew in your sleep research!",
+    "快照": "Take miracle snapshots of Mythical Pokemon during your sleep research to complete missions.",
+    "Fitbit": "Fitbit devices are now supported on iOS for seamless sleep tracking.",
+    "動畫": "Special collaboration campaign celebrating Pokemon Anime with bonus rewards.",
+    "小鍛匠": "New Pokemon Tinkatink, Tinkatuff, and Tinkaton have arrived on Greengrass Isle and Cyan Beach!",
+    "摔角鷹人": "Special Hawlucha bundles and summer celebration events are here.",
+    "紀念包": "Special commemorative celebration bundles are available in the in-game shop.",
+    "同樂包": "Special event bundles with valuable Biscuits and Candies are now in the shop.",
+    "培育包": "Helpful growth bundles to raise and strengthen your partner Pokemon.",
+    "更新": "New game version update with quality-of-life enhancements and bug fixes.",
+    "異常": "Notification regarding known issues and recent bug fixes in the app."
+}
+
+def translate_title_en(title_zh, title_en_from_web):
+    if title_en_from_web and not re.search(r'[\u4e00-\u9fa5]', title_en_from_web) and len(title_en_from_web.strip()) > 3:
+        return title_en_from_web.strip()
+    res = title_zh
+    for pattern, repl in TITLE_TRANSLATIONS:
+        res = re.sub(pattern, repl, res)
+    if re.search(r'[\u4e00-\u9fa5]', res):
+        res = re.sub(r'[\u4e00-\u9fa5]+', '', res).strip()
+    if not res:
+        res = "Pokemon Sleep Official Update"
+    return res.strip()
+
+def translate_overview_en(title_zh, overview_zh, preview_en):
+    if preview_en and not re.search(r'[\u4e00-\u9fa5]', preview_en) and len(preview_en) > 20:
+        first_sentence = preview_en.split('\n')[0].strip()
+        if len(first_sentence) > 15:
+            return first_sentence[:250]
+    for key, en_text in OVERVIEW_TRANSLATIONS.items():
+        if key in title_zh or key in overview_zh:
+            return en_text
+    return "Official announcement and news update for Pokemon Sleep."
+
+def translate_item_to_en(item_zh):
+    clean = re.sub(r'[\U00010000-\U0010ffff]', '', item_zh).strip()
+    clean = re.sub(r'\s*\([^\)]+\)', '', clean)
+    clean = clean.replace('舉辦期間：', 'Event Period: ').replace('銷售期間：', 'Sales Period: ').replace('任務期間：', 'Mission Period: ').replace('兌換期間：', 'Exchange Period: ')
+    clean = clean.replace('【適用營地】', '[Areas] ').replace('【機率小幅提升】', '[Rate Up] ').replace('【機率中幅提升】', '[Major Rate Up] ')
+    if re.search(r'[\u4e00-\u9fa5]', clean):
+        date_match = re.search(r'\d{1,2}/\d{1,2}.*?[～~-].*?\d{1,2}/\d{1,2}', clean)
+        if date_match:
+            return f"Period: {date_match.group(0)}"
+        return "Special in-game event bonuses and featured rewards."
+    return clean.strip()
 
 def determine_badge_type(category, title):
     cat_str = f"{category} {title}".lower()
@@ -407,7 +521,8 @@ def parse_article(url):
 
     # 同步爬取對應之官方英文公告 (/en/news/)
     en_data = fetch_english_counterpart(url)
-    title_en = en_data.get('title_en') if en_data else None
+    title_en = translate_title_en(title, en_data.get('title_en') if en_data else None)
+    overview_en = translate_overview_en(title, ai_result["overview"], en_data.get('preview_en') if en_data else None)
 
     return {
         "id": re.sub(r'[^a-zA-Z0-9]', '', url.split('/')[-2] or 'news'),
@@ -418,7 +533,8 @@ def parse_article(url):
         "badge_label": badge_label,
         "badge_color": badge_color,
         "title": title,
-        "title_en": title_en or title,
+        "title_en": title_en,
+        "overview_en": overview_en,
         "debut_pokemon": debut_pokes,
         "mid_rateup_pokemon": mid_rateup_pokes,
         "featured_pokemon": featured_pokes,
