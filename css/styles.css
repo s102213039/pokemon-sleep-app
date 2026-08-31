@@ -11344,7 +11344,7 @@ body.mobile-h5-app.pokemon-active,
   padding: 0 !important;
   width: calc(100% - 24px) !important;
   box-sizing: border-box !important;
-  background: var(--bg-dark) !important;
+  background: transparent !important;
 }
 
 .mobile-h5-app .recipe-main-content .content-area {

@@ -1663,7 +1663,7 @@ if (typeof document !== 'undefined') {
         backdrop.addEventListener('click', () => toggleSidebar(false));
       }
 
-      // 📱 手勢右滑收合控制 (Swipe Right to Close Sidebar Helper)
+      // 📱 手勢右滑收合控制 (Swipe Right to Close Sidebar Helper - 防滾動條誤觸與防縱向滾動誤判)
       function bindSidebarSwipeRightToClose(sidebarEl, closeFn) {
         if (!sidebarEl || sidebarEl._hasSwipeRightListener) return;
         sidebarEl._hasSwipeRightListener = true;
@@ -1671,24 +1671,54 @@ if (typeof document !== 'undefined') {
         let startX = 0;
         let startY = 0;
         let startTime = 0;
+        let isIgnored = false;
 
         sidebarEl.addEventListener('touchstart', (e) => {
           if (!e.touches || !e.touches[0]) return;
-          startX = e.touches[0].clientX;
-          startY = e.touches[0].clientY;
+          const touch = e.touches[0];
+          startX = touch.clientX;
+          startY = touch.clientY;
           startTime = Date.now();
+          isIgnored = false;
+
+          const target = e.target;
+          // 若點擊在滑桿、輸入框、下拉選單、按鈕等互動元件上，不觸發側邊欄滑動收合
+          if (target && (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'BUTTON' || target.closest('input, select, button, .custom-select-container, .rf-slider, .sidebar-icon-grid'))) {
+            isIgnored = true;
+            return;
+          }
+
+          // 若觸控點在右側邊緣滾動條區域（距右邊框 28px 內），視為滾動條操作，不觸發收合
+          const sidebarRect = sidebarEl.getBoundingClientRect();
+          if (touch.clientX > sidebarRect.right - 28) {
+            isIgnored = true;
+            return;
+          }
+        }, { passive: true });
+
+        sidebarEl.addEventListener('touchmove', (e) => {
+          if (isIgnored || !e.touches || !e.touches[0]) return;
+          const currentX = e.touches[0].clientX;
+          const currentY = e.touches[0].clientY;
+          const deltaX = currentX - startX;
+          const deltaY = currentY - startY;
+
+          // 若主要為縱向上下滑動瀏覽列表（縱向位移大於橫向），立即忽略本輪收合手勢
+          if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 8) {
+            isIgnored = true;
+          }
         }, { passive: true });
 
         sidebarEl.addEventListener('touchend', (e) => {
-          if (!e.changedTouches || !e.changedTouches[0]) return;
+          if (isIgnored || !e.changedTouches || !e.changedTouches[0]) return;
           const endX = e.changedTouches[0].clientX;
           const endY = e.changedTouches[0].clientY;
           const diffX = endX - startX;
           const diffY = endY - startY;
           const elapsed = Date.now() - startTime;
 
-          // 按住向右滑動（diffX > 35px 且水平位移大於垂直位移，或短時間向右撥動）
-          if (diffX > 35 && (diffX > Math.abs(diffY) * 1.05 || (elapsed < 350 && diffX > 25))) {
+          // 嚴格判定：明確向右橫向滑動（位移 >= 60px、橫向位移至少為縱向位移的 2 倍、且縱向位移 < 45px）
+          if (diffX >= 60 && diffX > Math.abs(diffY) * 2.0 && Math.abs(diffY) < 45 && elapsed < 700) {
             if (!sidebarEl.classList.contains('collapsed')) {
               closeFn();
             }
@@ -1701,37 +1731,23 @@ if (typeof document !== 'undefined') {
         bindSidebarSwipeRightToClose(sidebar, () => toggleSidebar(false));
       }
 
-      // 🌐 全域防護：任何打開的側邊欄或遮罩層向右滑動均自動收合
-      let touchGlobalStartX = 0;
-      let touchGlobalStartY = 0;
-      let touchGlobalStartTime = 0;
-
-      document.addEventListener('touchstart', (e) => {
-        if (e.touches && e.touches[0]) {
-          touchGlobalStartX = e.touches[0].clientX;
-          touchGlobalStartY = e.touches[0].clientY;
-          touchGlobalStartTime = Date.now();
-        }
-      }, { passive: true });
-
+      // 🌐 全域防護：點擊遮罩層 (sidebar-backdrop) 時優雅收合側邊欄
       document.addEventListener('touchend', (e) => {
-        if (!e.changedTouches || !e.changedTouches[0]) return;
-        const diffX = e.changedTouches[0].clientX - touchGlobalStartX;
-        const diffY = e.changedTouches[0].clientY - touchGlobalStartY;
-        const elapsed = Date.now() - touchGlobalStartTime;
-
-        if (diffX > 35 && (diffX > Math.abs(diffY) * 1.05 || (elapsed < 350 && diffX > 25))) {
-          const target = e.target;
-          const openSidebar = document.querySelector('.pokemon-filter-sidebar:not(.collapsed), .recipe-filter-sidebar:not(.collapsed), .ladder-fixed-sidebar:not(.collapsed)');
-          if (openSidebar && (openSidebar.contains(target) || (target && target.classList && target.classList.contains('sidebar-backdrop')))) {
-            openSidebar.classList.add('collapsed');
-            document.querySelectorAll('.sidebar-backdrop').forEach(bd => bd.classList.remove('active'));
-            const handle = document.getElementById('sidebar-bookmark-handle');
-            if (handle) {
-              handle.setAttribute('aria-expanded', 'false');
-              handle.title = '展開篩選側邊欄';
-            }
+        const target = e.target;
+        if (target && target.classList && target.classList.contains('sidebar-backdrop')) {
+          if (typeof window.toggleRecipeSidebar === 'function') {
+            window.toggleRecipeSidebar(false);
           }
+          if (typeof window.closeLadderSidebar === 'function') {
+            window.closeLadderSidebar();
+          }
+          if (typeof window.toggleSidebar === 'function') {
+            window.toggleSidebar(false);
+          }
+          document.querySelectorAll('.pokemon-filter-sidebar, .recipe-filter-sidebar, .ladder-fixed-sidebar').forEach(sb => {
+            sb.classList.add('collapsed');
+          });
+          document.querySelectorAll('.sidebar-backdrop').forEach(bd => bd.classList.remove('active'));
         }
       }, { passive: true });
 

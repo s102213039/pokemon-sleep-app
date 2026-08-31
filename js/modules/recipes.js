@@ -743,16 +743,17 @@
       if (shouldCollapse) {
         sidebar.classList.add('collapsed');
         if (backdrop) backdrop.classList.remove('active');
-        if (bookmarkHandle && isMobileH5) {
+        if (bookmarkHandle) {
           bookmarkHandle.style.opacity = '1';
           bookmarkHandle.style.pointerEvents = 'auto';
+          bookmarkHandle.style.display = 'flex';
         }
         if (typeof window.setSidebarSavedState === 'function') {
           window.setSidebarSavedState('pksleep_recipe_sidebar_open', false);
         }
       } else {
         sidebar.classList.remove('collapsed');
-        if (window.innerWidth <= 1024 && backdrop) {
+        if (backdrop) {
           backdrop.classList.add('active');
         }
         if (bookmarkHandle && isMobileH5) {
@@ -764,6 +765,7 @@
         }
       }
     }
+    window.toggleRecipeSidebar = toggleRecipeSidebar;
 
     // 依暫存狀態初始化食譜側邊欄展開/收合
     const initialRecipeOpen = (function() {
@@ -814,29 +816,8 @@
     if (sidebar) {
       if (typeof window.bindSidebarSwipeRightToClose === 'function') {
         window.bindSidebarSwipeRightToClose(sidebar, () => {
-          sidebar.classList.add('collapsed');
-          if (backdrop) backdrop.classList.remove('active');
+          toggleRecipeSidebar(false);
         });
-      } else {
-        let startX = 0, startY = 0, startTime = 0;
-        sidebar.addEventListener('touchstart', (e) => {
-          if (!e.touches || !e.touches[0]) return;
-          startX = e.touches[0].clientX;
-          startY = e.touches[0].clientY;
-          startTime = Date.now();
-        }, { passive: true });
-        sidebar.addEventListener('touchend', (e) => {
-          if (!e.changedTouches || !e.changedTouches[0]) return;
-          const diffX = e.changedTouches[0].clientX - startX;
-          const diffY = e.changedTouches[0].clientY - startY;
-          const elapsed = Date.now() - startTime;
-          if (diffX > 35 && (diffX > Math.abs(diffY) * 1.05 || (elapsed < 350 && diffX > 25))) {
-            if (!sidebar.classList.contains('collapsed')) {
-              sidebar.classList.add('collapsed');
-              if (backdrop) backdrop.classList.remove('active');
-            }
-          }
-        }, { passive: true });
       }
     }
 
