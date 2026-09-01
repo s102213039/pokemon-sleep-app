@@ -6780,11 +6780,28 @@ input[type="number"] {
    ========================================================= */
 
 .wiki-main-container {
-  max-width: 1200px;
-  width: 92%;
-  margin: 14px auto 24px;
+  max-width: 1380px;
+  width: 95%;
+  margin: 14px auto 20px;
   padding: 0 16px;
   box-sizing: border-box;
+  min-height: calc(100vh - 90px);
+  display: flex;
+  flex-direction: column;
+}
+
+#wiki-subpanel-ingredients {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#wiki-ingredient-ladder-coordinate {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .wiki-header-card,
@@ -8061,12 +8078,17 @@ input[type="number"] {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg, 12px);
-  padding: 16px 18px 20px;
+  padding: 16px 20px 18px;
   box-shadow: var(--shadow-sm, 0 4px 16px rgba(0, 0, 0, 0.08));
   margin: 0;
   width: 100%;
   box-sizing: border-box;
   overflow-x: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: calc(100vh - 170px);
 }
 
 .wiki-coordinate-ladder {
@@ -8076,14 +8098,19 @@ input[type="number"] {
   border-radius: 0;
   padding: 0;
   box-shadow: none;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .ladder-ruler-header {
   display: flex;
   align-items: center;
-  height: 18px;
-  margin-bottom: 2px;
+  height: 22px;
+  margin-bottom: 4px;
   border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 
 .ladder-ruler-spacer {
@@ -8143,12 +8170,14 @@ input[type="number"] {
 .ladder-track-row {
   display: flex;
   align-items: center;
-  height: 28px;
-  min-height: 28px;
+  flex: 1 1 0;
+  height: clamp(34px, calc((100vh - 270px) / 17), 48px);
+  min-height: 32px;
+  max-height: 48px;
   margin-bottom: 1px;
   background: transparent;
   border: none;
-  border-radius: 0;
+  border-radius: 4px;
   transition: all 0.15s ease;
   position: relative;
   z-index: 1;
@@ -8277,6 +8306,7 @@ input[type="number"] {
   padding-left: 0;
   padding-right: 0;
   width: 100%;
+  flex-shrink: 0;
 }
 
 .ladder-tail-standalone-box {
