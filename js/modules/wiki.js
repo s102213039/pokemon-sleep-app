@@ -10646,7 +10646,7 @@
       else if (ladderRecipeFilter === 'AXX') variants = variants.filter(v => v.recipe !== 'AAA' && v.recipe !== 'ABB');
 
       if (ladderSupplyFilter === 'TOP') {
-        if (pIdx > 1 && !p.isTop) return;
+        if (pIdx > 4 && !p.isTop) return;
         variants = variants.slice(0, 1);
       } else if (ladderSupplyFilter === 'MEALS_3') {
         variants = variants.filter(v => Math.round(v.count * mult) >= dishInfo.need * 3);
@@ -11505,8 +11505,8 @@
         }
 
         if (ladderSupplyFilter === 'TOP') {
-          // 冠亞軍：保留該軌道排名前 2 (Top 1 & Top 2) 的寶可夢，且只展示其最高產量變體
-          if (pIdx > 1 && !p.isTop) return null;
+          // 前五名：保留該軌道排名前 5 (Top 1 ~ Top 5) 的寶可夢，且只展示其最高產量變體
+          if (pIdx > 4 && !p.isTop) return null;
           variants = variants.slice(0, 1);
         } else if (ladderSupplyFilter === 'MEALS_3') {
           // 滿載 3 餐：日產量 >= 核心大菜 3 餐所需總量
@@ -11732,7 +11732,7 @@
               }
 
               if (ladderSupplyFilter === 'TOP') {
-                if (pIdx > 1 && !p.isTop) return null;
+                if (pIdx > 4 && !p.isTop) return null;
                 variants = variants.slice(0, 1);
               } else if (ladderSupplyFilter === 'MEALS_3') {
                 variants = variants.filter(v => Math.round(v.count * mult) >= tailDishInfo.need * 3);
@@ -11933,7 +11933,7 @@
 
         const rawCountNum = parseFloat(t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count)) || 0;
         const scaledCount = Math.round(rawCountNum * mult);
-        if (ladderSupplyFilter === 'TOP' && tIdx >= 2) return false;
+        if (ladderSupplyFilter === 'TOP' && tIdx >= 5) return false;
         if (ladderSupplyFilter === 'MEALS_3' && scaledCount < dishInfo.need * 3) return false;
         if (ladderSupplyFilter === 'MEALS_2' && scaledCount < dishInfo.need * 2) return false;
 
@@ -12337,7 +12337,7 @@
             </div>
             <div class="sidebar-skills-list">
               <button type="button" class="tag-btn ${ladderSupplyFilter === 'ALL' ? 'active' : ''}" data-supply-filter="ALL" onclick="window.WikiDB.setLadderSupplyFilter('ALL')">${isEN ? 'All' : '全部'}</button>
-              <button type="button" class="tag-btn ${ladderSupplyFilter === 'TOP' ? 'active' : ''}" data-supply-filter="TOP" onclick="window.WikiDB.setLadderSupplyFilter('TOP')">${isEN ? 'Top 1-2' : '冠亞軍'}</button>
+              <button type="button" class="tag-btn ${ladderSupplyFilter === 'TOP' ? 'active' : ''}" data-supply-filter="TOP" onclick="window.WikiDB.setLadderSupplyFilter('TOP')">${isEN ? 'Top 5' : '前五名'}</button>
               <button type="button" class="tag-btn ${ladderSupplyFilter === 'MEALS_3' ? 'active' : ''}" data-supply-filter="MEALS_3" onclick="window.WikiDB.setLadderSupplyFilter('MEALS_3')">${isEN ? '3 Meals' : '滿載 3 餐'}</button>
               <button type="button" class="tag-btn ${ladderSupplyFilter === 'MEALS_2' ? 'active' : ''}" data-supply-filter="MEALS_2" onclick="window.WikiDB.setLadderSupplyFilter('MEALS_2')">${isEN ? '2 Meals' : '充足 2 餐'}</button>
             </div>
