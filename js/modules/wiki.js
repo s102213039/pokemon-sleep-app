@@ -10115,7 +10115,7 @@
     if (ladderSidebar) {
       if (targetTab === 'ingredients') {
         ladderSidebar.style.display = 'flex';
-        const isLadderOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_ladder_sidebar_open', true) : false;
+        const isLadderOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_ladder_sidebar_open', true) : true;
         if (isLadderOpen && !isMobileH5 && window.innerWidth > 1024) {
           ladderSidebar.classList.remove('collapsed');
         } else {
@@ -10131,71 +10131,73 @@
 
     if (ladderHandle) {
       if (targetTab === 'ingredients') {
-        ladderHandle.style.display = 'flex';
-        ladderHandle.style.opacity = '1';
-        ladderHandle.style.pointerEvents = 'auto';
+        ladderHandle.style.display = '';
+        if (isMobileH5) {
+          const isCollapsed = ladderSidebar ? ladderSidebar.classList.contains('collapsed') : true;
+          ladderHandle.style.opacity = isCollapsed ? '1' : '0';
+          ladderHandle.style.pointerEvents = isCollapsed ? 'auto' : 'none';
+        }
         updateLadderActiveFilterBadge();
       } else {
         ladderHandle.style.display = 'none';
-        ladderHandle.style.opacity = '0';
-        ladderHandle.style.pointerEvents = 'none';
+        if (isMobileH5) {
+          ladderHandle.style.opacity = '0';
+          ladderHandle.style.pointerEvents = 'none';
+        }
       }
     }
   }
 
   function openLadderSidebar() {
-    const sidebar = document.getElementById('ladder-filter-sidebar');
-    const backdrop = document.getElementById('ladder-sidebar-backdrop');
-    const ladderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
-    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
-
-    if (sidebar) {
-      sidebar.classList.remove('collapsed');
-      sidebar.style.setProperty('display', 'flex', 'important');
-    }
-    if (backdrop && (isMobileH5 || window.innerWidth <= 1024)) {
-      backdrop.classList.add('active');
-    }
-    if (ladderHandle && isMobileH5) {
-      ladderHandle.style.opacity = '0';
-      ladderHandle.style.pointerEvents = 'none';
-    }
-    if (typeof window.setSidebarSavedState === 'function') {
-      window.setSidebarSavedState('pksleep_ladder_sidebar_open', true);
-    }
+    toggleLadderSidebar(true);
   }
 
   function closeLadderSidebar() {
-    const sidebar = document.getElementById('ladder-filter-sidebar');
-    const backdrop = document.getElementById('ladder-sidebar-backdrop');
-    const ladderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
-    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
-
-    if (sidebar) {
-      sidebar.classList.add('collapsed');
-    }
-    if (backdrop) {
-      backdrop.classList.remove('active');
-    }
-    if (ladderHandle && isMobileH5) {
-      ladderHandle.style.opacity = '1';
-      ladderHandle.style.pointerEvents = 'auto';
-      ladderHandle.style.display = (currentWikiSubTab === 'ingredients') ? 'flex' : 'none';
-    }
-    if (typeof window.setSidebarSavedState === 'function') {
-      window.setSidebarSavedState('pksleep_ladder_sidebar_open', false);
-    }
+    toggleLadderSidebar(false);
   }
 
   function toggleLadderSidebar(forceState) {
     const sidebar = document.getElementById('ladder-filter-sidebar');
+    const backdrop = document.getElementById('ladder-sidebar-backdrop');
+    const bookmarkHandle = document.getElementById('ladder-sidebar-bookmark-handle');
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     if (!sidebar) return;
-    const isCollapsed = sidebar.classList.contains('collapsed');
-    const shouldCollapse = forceState !== undefined ? !forceState : !isCollapsed;
+
+    const isCurrentlyCollapsed = sidebar.classList.contains('collapsed');
+    const shouldCollapse = forceState !== undefined ? !forceState : !isCurrentlyCollapsed;
+
     if (shouldCollapse) {
-      closeLadderSidebar();
+      sidebar.classList.add('collapsed');
+      if (backdrop) backdrop.classList.remove('active');
+      if (bookmarkHandle) {
+        bookmarkHandle.setAttribute('aria-expanded', 'false');
+        bookmarkHandle.title = isEN ? 'Expand Ladder Filters' : '展開天梯篩選側邊欄';
+        if (isMobileH5) {
+          bookmarkHandle.style.opacity = '1';
+          bookmarkHandle.style.pointerEvents = 'auto';
+        }
+      }
+      if (typeof window.setSidebarSavedState === 'function') {
+        window.setSidebarSavedState('pksleep_ladder_sidebar_open', false);
+      }
     } else {
-      openLadderSidebar();
+      sidebar.classList.remove('collapsed');
+      sidebar.style.setProperty('display', 'flex', 'important');
+      if (backdrop && (isMobileH5 || window.innerWidth <= 1024)) {
+        backdrop.classList.add('active');
+      }
+      if (bookmarkHandle) {
+        bookmarkHandle.setAttribute('aria-expanded', 'true');
+        bookmarkHandle.title = isEN ? 'Collapse Ladder Filters' : '收合天梯篩選側邊欄';
+        if (isMobileH5) {
+          bookmarkHandle.style.opacity = '0';
+          bookmarkHandle.style.pointerEvents = 'none';
+        }
+      }
+      if (typeof window.setSidebarSavedState === 'function') {
+        window.setSidebarSavedState('pksleep_ladder_sidebar_open', true);
+      }
     }
   }
 
@@ -12318,6 +12320,8 @@
   function renderWikiLayout(container) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    const isLadderOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_ladder_sidebar_open', true) : true;
+    const initialLadderCollapsed = isMobileH5 ? 'collapsed' : (isLadderOpen ? '' : 'collapsed');
 
     container.innerHTML = `
       ${isMobileH5 ? `
@@ -12341,10 +12345,10 @@
       ` : ''}
 
       <!-- 天梯專屬側邊篩選器 (Mobile: 抽屜式 / Desktop: 左側滑動) -->
-      <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${isMobileH5 ? 'collapsed' : ''}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Ladder Filters' : '天梯篩選器'}">
+      <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialLadderCollapsed}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Ladder Filters' : '天梯篩選器'}">
         ${!isMobileH5 ? `
-          <!-- 🔖 側邊欄垂直中央書籤標籤 (Desktop: 抽屜把手) -->
-          <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleLadderSidebar()" title="${isEN ? 'Toggle Ladder Filters' : '切換天梯篩選側邊欄'}" aria-label="${isEN ? 'Toggle Ladder Filters' : '切換天梯篩選側邊欄'}">
+          <!-- 🔖 側邊欄垂直中央書籤標籤 (Desktop: 抽屜把手，展開時自動隱藏，收合時展示) -->
+          <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleLadderSidebar(true)" title="${isEN ? 'Expand Ladder Filters' : '展開天梯篩選側邊欄'}" aria-label="${isEN ? 'Expand Ladder Filters' : '展開天梯篩選側邊欄'}">
             <span class="bookmark-icon">🎛️</span>
             <span class="bookmark-text">${isEN ? 'Filter' : '篩選'}</span>
             <span class="bookmark-arrow">◀</span>
@@ -12353,26 +12357,8 @@
         ` : ''}
 
         <div class="sidebar-header">
-          <button type="button" id="ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.closeLadderSidebar()" title="${isEN ? 'Close' : '收合側邊欄'}" aria-label="${isEN ? 'Close' : '收合側邊欄'}">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
+          <button type="button" id="ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.toggleLadderSidebar(false)" title="${isEN ? 'Collapse Filters' : '收合側邊欄'}" aria-label="${isEN ? 'Collapse Filters' : '收合側邊欄'}">◀</button>
           <div class="sidebar-title-group">
-            <span class="sidebar-icon">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="21" x2="4" y2="14"></line>
-                <line x1="4" y1="10" x2="4" y2="3"></line>
-                <line x1="12" y1="21" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12" y2="3"></line>
-                <line x1="20" y1="21" x2="20" y2="16"></line>
-                <line x1="20" y1="12" x2="20" y2="3"></line>
-                <line x1="1" y1="14" x2="7" y2="14"></line>
-                <line x1="9" y1="8" x2="15" y2="8"></line>
-                <line x1="17" y1="16" x2="23" y2="16"></line>
-              </svg>
-            </span>
             <span class="sidebar-title">${isEN ? 'Ladder Filters' : '天梯篩選器'}</span>
           </div>
           <button type="button" id="ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${isEN ? 'Reset All Filters' : '重設所有條件'}">${isEN ? 'Reset All' : '全部重設'}</button>

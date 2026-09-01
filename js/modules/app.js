@@ -1127,9 +1127,12 @@ if (typeof document !== 'undefined') {
           }
           const curLadderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
           if (curLadderHandle) {
-            curLadderHandle.style.display = isIng ? 'flex' : 'none';
-            curLadderHandle.style.opacity = isIng ? '1' : '0';
-            curLadderHandle.style.pointerEvents = isIng ? 'auto' : 'none';
+            curLadderHandle.style.display = isIng ? '' : 'none';
+            if (isMobileH5) {
+              const isCollapsed = ladderSidebar ? ladderSidebar.classList.contains('collapsed') : true;
+              curLadderHandle.style.opacity = (isIng && isCollapsed) ? '1' : '0';
+              curLadderHandle.style.pointerEvents = (isIng && isCollapsed) ? 'auto' : 'none';
+            }
           }
 
           if (window.history && window.history.replaceState) {

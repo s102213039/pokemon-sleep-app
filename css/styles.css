@@ -1259,7 +1259,9 @@ html[data-theme="nature"] .search-filtering-badge {
   padding: 8px 0;
 }
 
-.pokemon-filter-sidebar.collapsed .sidebar-bookmark-handle {
+.pokemon-filter-sidebar.collapsed .sidebar-bookmark-handle,
+.recipe-filter-sidebar.collapsed .sidebar-bookmark-handle,
+.ladder-fixed-sidebar.collapsed .sidebar-bookmark-handle {
   display: flex;
 }
 
