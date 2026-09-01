@@ -3837,7 +3837,7 @@
                 ]
             },
             {
-                "name": "大綱蛇",
+                "name": "大鋼蛇",
                 "specialty": "樹果",
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/208.png",
                 "recipe": "ABB",
@@ -5089,7 +5089,7 @@
                 ]
             },
             {
-                "name": "大綱蛇",
+                "name": "大鋼蛇",
                 "specialty": "樹果",
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/208.png",
                 "recipe": "AAA",
@@ -6944,7 +6944,7 @@
                 ]
             },
             {
-                "name": "大綱蛇",
+                "name": "大鋼蛇",
                 "specialty": "樹果",
                 "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/208.png",
                 "recipe": "AAC",
@@ -10275,7 +10275,7 @@
     "喇叭芽": "食材", "口呆花": "食材", "大食花": "食材", "小拳石": "食材", "隆隆石": "食材", "隆隆岩": "食材",
     "呆呆獸": "技能", "呆殼獸": "技能", "呆呆王": "技能", "小磁怪": "技能", "三合一磁怪": "技能", "自爆磁怪": "技能",
     "大蔥鴨": "食材", "嘟嘟": "樹果", "嘟嘟利": "樹果", "鬼斯": "食材", "鬼斯通": "食材", "耿鬼": "食材",
-    "大岩蛇": "樹果", "大鋼蛇": "樹果", "卡拉卡拉": "樹果", "嘎啦嘎啦": "樹果", "小福蛋": "食材", "吉利蛋": "食材", "幸福蛋": "食材",
+    "大岩蛇": "樹果", "大鋼蛇": "樹果", "大綱蛇": "樹果", "卡拉卡拉": "樹果", "嘎啦嘎啦": "樹果", "小福蛋": "食材", "吉利蛋": "食材", "幸福蛋": "食材",
     "袋獸": "食材", "魔尼尼": "食材", "魔牆人偶": "食材", "凱羅斯": "食材", "大甲": "食材", "百變怪": "食材",
     "伊布": "技能", "伊布（佳節）": "樹果", "伊布（萬聖節）": "技能", "水伊布": "技能", "雷伊布": "技能", "火伊布": "技能",
     "太陽伊布": "技能", "月亮伊布": "技能", "葉伊布": "技能", "冰伊布": "技能", "仙子伊布": "技能",
@@ -10296,7 +10296,7 @@
     "正電拍拍": "技能", "負電拍拍": "技能", "溶食獸": "技能", "吞食獸": "技能",
     "大顎蟻": "食材", "超音波幼蟲": "食材", "沙漠蜻蜓": "食材",
     "青綿鳥": "樹果", "七夕青鳥": "樹果", "怨影娃娃": "樹果", "詛咒娃娃": "樹果", "阿勃梭魯": "食材",
-    "海豹球": "技能", "海豹球（佳節）": "技能", "海魔獅": "樹果", "帝牙海獅": "樹果",
+    "海豹球": "樹果", "海豹球（佳節）": "技能", "海魔獅": "樹果", "帝牙海獅": "樹果",
     "寶貝龍": "樹果", "甲殼龍": "樹果", "暴飛龍": "樹果", "拉帝亞斯": "技能", "拉帝歐斯": "技能",
     "草苗龜": "技能", "樹林龜": "技能", "土台龜": "技能",
     "小火焰猴": "技能", "猛火猴": "技能", "烈焰猴": "技能",
@@ -10319,14 +10319,21 @@
     "布撥": "技能", "布土撥": "技能", "巴布土撥": "技能",
     "小鍛匠": "樹果", "巧鍛匠": "樹果", "巨鍛匠": "樹果",
     "走鯨": "食材", "浩大鯨": "食材", "白海獅": "樹果", "巨鉗蟹": "食材", "巨鉗螳螂": "食材",
-    "快泳蛙": "樹果", "胡地": "技能", "怪力": "食材", "白海獅": "樹果", "臭臭泥": "技能"
+    "快泳蛙": "樹果", "胡地": "技能", "怪力": "食材", "臭臭泥": "技能"
   };
 
   function getPokemonLadderSpecialty(pkmName) {
     if (!pkmName) return '食材';
     const clean = pkmName.replace(/（.*）|\(.*\)/g, '').trim();
-    if (POKEMON_SPECIALTY_MAP[clean]) return POKEMON_SPECIALTY_MAP[clean];
+    // 1. 若全域寶可夢資料庫（window.POKEMON_DATA）已載入，優先使用官方資料集
+    if (typeof window !== 'undefined' && Array.isArray(window.POKEMON_DATA) && window.POKEMON_DATA.length > 0) {
+      const match = window.POKEMON_DATA.find(p => p.name_cn === pkmName || p.name_cn === clean || p.name_cn === pkmName.replace('大綱蛇', '大鋼蛇') || p.name_cn === pkmName.replace('大鋼蛇', '大綱蛇') || p.name_en === pkmName);
+      if (match && match.specialty) return match.specialty;
+    }
+    // 2. 本地字典速查
     if (POKEMON_SPECIALTY_MAP[pkmName]) return POKEMON_SPECIALTY_MAP[pkmName];
+    if (POKEMON_SPECIALTY_MAP[clean]) return POKEMON_SPECIALTY_MAP[clean];
+    if (clean === '大綱蛇' || clean === '大鋼蛇') return '樹果';
     return '食材';
   }
 
@@ -10627,7 +10634,7 @@
 
     // 依當前篩選條件收集並計算所有寶可夢產量排名
     let rankingList = [];
-    ingData.pokemon.forEach(p => {
+    ingData.pokemon.forEach((p, pIdx) => {
       const pkmSpec = getPokemonLadderSpecialty(p.name);
       if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return;
       if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return;
@@ -10639,11 +10646,12 @@
       else if (ladderRecipeFilter === 'AXX') variants = variants.filter(v => v.recipe !== 'AAA' && v.recipe !== 'ABB');
 
       if (ladderSupplyFilter === 'TOP') {
-        variants = variants.filter(v => v.isTop || (p.isTop && v.recipe === p.recipe));
+        if (pIdx > 1 && !p.isTop) return;
+        variants = variants.slice(0, 1);
       } else if (ladderSupplyFilter === 'MEALS_3') {
-        variants = variants.filter(v => Math.round(v.count * mult) / dishInfo.need >= 3.0);
+        variants = variants.filter(v => Math.round(v.count * mult) >= dishInfo.need * 3);
       } else if (ladderSupplyFilter === 'MEALS_2') {
-        variants = variants.filter(v => Math.round(v.count * mult) / dishInfo.need >= 1.8);
+        variants = variants.filter(v => Math.round(v.count * mult) >= dishInfo.need * 2);
       }
 
       if (ladderSearchQuery) {
@@ -11469,11 +11477,19 @@
       const minDefaultThreshold = DEFAULT_LADDER_MIN_THRESHOLDS[ing.id] || 20;
 
       // 取得該軌道符合篩選之寶可夢與型態變體
-      const filteredPokemonList = ing.pokemon.map(p => {
+      const filteredPokemonList = ing.pokemon.map((p, pIdx) => {
         const pkmSpec = getPokemonLadderSpecialty(p.name);
         if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return null;
         if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return null;
         if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return null;
+
+        // 搜尋關鍵字過濾
+        if (ladderSearchQuery) {
+          const q = ladderSearchQuery.toLowerCase().trim();
+          const pName = (p.name || '').toLowerCase();
+          const pNameEn = (p.name_en || '').toLowerCase();
+          if (!pName.includes(q) && !pNameEn.includes(q)) return null;
+        }
 
         let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
 
@@ -11489,16 +11505,20 @@
         }
 
         if (ladderSupplyFilter === 'TOP') {
-          variants = variants.filter((v, vIdx) => v.isTop || (p.isTop && v.recipe === p.recipe));
+          // 冠亞軍：保留該軌道排名前 2 (Top 1 & Top 2) 的寶可夢，且只展示其最高產量變體
+          if (pIdx > 1 && !p.isTop) return null;
+          variants = variants.slice(0, 1);
         } else if (ladderSupplyFilter === 'MEALS_3') {
+          // 滿載 3 餐：日產量 >= 核心大菜 3 餐所需總量
           variants = variants.filter(v => {
             const scaled = Math.round(v.count * mult);
-            return (scaled / dishInfo.need) >= 3.0;
+            return scaled >= dishInfo.need * 3;
           });
         } else if (ladderSupplyFilter === 'MEALS_2') {
+          // 充足 2 餐：日產量 >= 核心大菜 2 餐所需總量
           variants = variants.filter(v => {
             const scaled = Math.round(v.count * mult);
-            return (scaled / dishInfo.need) >= 1.8;
+            return scaled >= dishInfo.need * 2;
           });
         }
 
@@ -11688,11 +11708,19 @@
               const clamped = Math.min(Math.max(val, 0), 20);
               return ((clamped / 20) * 100).toFixed(2);
             }
-            const filteredTailPkm = tailIng.pokemon.map(p => {
+            const tailDishInfo = TOP_RECIPES_FOR_INGREDIENTS.tail || { need: 10 };
+            const filteredTailPkm = tailIng.pokemon.map((p, pIdx) => {
               const pkmSpec = getPokemonLadderSpecialty(p.name);
               if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return null;
               if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return null;
               if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return null;
+
+              if (ladderSearchQuery) {
+                const q = ladderSearchQuery.toLowerCase().trim();
+                const pName = (p.name || '').toLowerCase();
+                const pNameEn = (p.name_en || '').toLowerCase();
+                if (!pName.includes(q) && !pNameEn.includes(q)) return null;
+              }
 
               let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
               if (ladderRecipeFilter === 'AAA') {
@@ -11702,6 +11730,16 @@
               } else if (ladderRecipeFilter === 'AXX') {
                 variants = variants.filter(v => v.recipe !== 'AAA' && v.recipe !== 'ABB');
               }
+
+              if (ladderSupplyFilter === 'TOP') {
+                if (pIdx > 1 && !p.isTop) return null;
+                variants = variants.slice(0, 1);
+              } else if (ladderSupplyFilter === 'MEALS_3') {
+                variants = variants.filter(v => Math.round(v.count * mult) >= tailDishInfo.need * 3);
+              } else if (ladderSupplyFilter === 'MEALS_2') {
+                variants = variants.filter(v => Math.round(v.count * mult) >= tailDishInfo.need * 2);
+              }
+
               if (variants.length === 0) return null;
               return { ...p, variants };
             }).filter(Boolean);
@@ -11886,11 +11924,18 @@
         if (ladderRecipeFilter === 'ABB' && recipe !== 'ABB') return false;
         if (ladderRecipeFilter === 'AXX' && (recipe === 'AAA' || recipe === 'ABB')) return false;
 
+        if (ladderSearchQuery) {
+          const q = ladderSearchQuery.toLowerCase().trim();
+          const pName = (t.name || '').toLowerCase();
+          const pNameEn = (t.name_en || '').toLowerCase();
+          if (!pName.includes(q) && !pNameEn.includes(q)) return false;
+        }
+
         const rawCountNum = parseFloat(t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count)) || 0;
-        const scaledCount = rawCountNum * mult;
+        const scaledCount = Math.round(rawCountNum * mult);
         if (ladderSupplyFilter === 'TOP' && tIdx >= 2) return false;
-        if (ladderSupplyFilter === 'MEALS_3' && (scaledCount / dishInfo.need) < 3.0) return false;
-        if (ladderSupplyFilter === 'MEALS_2' && (scaledCount / dishInfo.need) < 1.8) return false;
+        if (ladderSupplyFilter === 'MEALS_3' && scaledCount < dishInfo.need * 3) return false;
+        if (ladderSupplyFilter === 'MEALS_2' && scaledCount < dishInfo.need * 2) return false;
 
         return true;
       });
@@ -12743,7 +12788,8 @@
     updateLadderActiveFilterBadge: updateLadderActiveFilterBadge,
     toggleSkillCard: toggleSkillCard,
     toggleSkillStepper: toggleSkillStepper,
-    TOP_RECIPES_FOR_INGREDIENTS: TOP_RECIPES_FOR_INGREDIENTS
+    TOP_RECIPES_FOR_INGREDIENTS: TOP_RECIPES_FOR_INGREDIENTS,
+    getPokemonLadderSpecialty: getPokemonLadderSpecialty
   };
 
   window.WikiDB = WikiDBExport;
