@@ -8558,6 +8558,14 @@ input[type="number"] {
   z-index: 10000 !important;
 }
 
+.ladder-node.node-in-cluster .node-avatar-img {
+  box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.5), 0 2px 5px rgba(0, 0, 0, 0.35);
+}
+
+.ladder-node.node-in-cluster:hover .node-avatar-img {
+  box-shadow: 0 0 0 2px var(--color-primary, #6366f1), 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
 /* 🥗 食材天梯榜 - 寶可夢節點浮窗 (Pokemon Node Tooltip) */
 .ladder-node-tooltip {
   position: absolute;

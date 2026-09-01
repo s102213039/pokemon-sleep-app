@@ -11642,16 +11642,47 @@
 
                 <!-- 寶可夢型態節點容器 (Nodes Container) -->
                 <div class="ladder-nodes-container">
-                  ${filteredPokemonList.flatMap((p, pIdx) => {
-                    const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
+                  ${(() => {
+                    const trackNodes = [];
+                    filteredPokemonList.forEach((p, pIdx) => {
+                      const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
+                      p.variants.forEach((v, vIdx) => {
+                        const scaledCount = Math.round(v.count * mult);
+                        const isTopNode = v.isTop || (p.isTop && v.recipe === p.recipe);
+                        const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
+                        trackNodes.push({
+                          p,
+                          pIdx,
+                          pkmDisplayName,
+                          v,
+                          vIdx,
+                          scaledCount,
+                          isTopNode,
+                          zIndex
+                        });
+                      });
+                    });
 
-                    return p.variants.map((v, vIdx) => {
-                      const scaledCount = Math.round(v.count * mult);
-                      const isTopNode = v.isTop || (p.isTop && v.recipe === p.recipe);
-                      const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
+                    // 依據 scaledCount 分組以計算重疊節點之水平偏移量 (Cluster Stagger Offset)
+                    const countGroups = {};
+                    trackNodes.forEach(node => {
+                      if (!countGroups[node.scaledCount]) countGroups[node.scaledCount] = [];
+                      countGroups[node.scaledCount].push(node);
+                    });
+
+                    return trackNodes.map(node => {
+                      const group = countGroups[node.scaledCount];
+                      const groupSize = group.length;
+                      const itemIdx = group.indexOf(node);
+                      
+                      let offsetPx = 0;
+                      if (groupSize > 1) {
+                        const staggerStep = groupSize >= 6 ? 14 : 18;
+                        offsetPx = Math.round((itemIdx - (groupSize - 1) / 2) * staggerStep);
+                      }
 
                       // 大菜供應能力試算
-                      const mealsPerDay = (scaledCount / dishInfo.need).toFixed(1);
+                      const mealsPerDay = (node.scaledCount / dishInfo.need).toFixed(1);
                       let dishTag = '';
                       let dishBadgeClass = '';
                       if (mealsPerDay >= 3.0) {
@@ -11665,23 +11696,24 @@
                         dishBadgeClass = 'dish-badge-assist';
                       }
 
-                      const posPct = parseFloat(getPosPct(scaledCount));
-                      const alignClass = posPct > 55 ? 'align-right' : (posPct < 22 ? 'align-left' : 'align-center');
+                      const basePosPct = parseFloat(getPosPct(node.scaledCount));
+                      const alignClass = basePosPct > 55 ? 'align-right' : (basePosPct < 22 ? 'align-left' : 'align-center');
+                      const leftStyle = offsetPx === 0 ? `${basePosPct}%` : `calc(${basePosPct}% + ${offsetPx}px)`;
 
                       return `
-                        <div class="ladder-node ${isTopNode ? 'node-top1' : ''} ${alignClass} ${popupDirectionClass} recipe-${v.recipe.toLowerCase()}" 
-                             data-pkm-group="${p.name}"
-                             data-pkm="${p.name}" 
-                             data-recipe="${v.recipe}"
-                             style="left: ${getPosPct(scaledCount)}%; z-index: ${zIndex};">
+                        <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${alignClass} ${popupDirectionClass} recipe-${node.v.recipe.toLowerCase()} ${groupSize > 1 ? 'node-in-cluster' : ''}" 
+                             data-pkm-group="${node.p.name}"
+                             data-pkm="${node.p.name}" 
+                             data-recipe="${node.v.recipe}"
+                             style="left: ${leftStyle}; z-index: ${node.zIndex};">
                           <div class="node-avatar-wrapper">
-                            <img src="${p.icon}" class="node-avatar-img" alt="${pkmDisplayName}">
+                            <img src="${node.p.icon}" class="node-avatar-img" alt="${node.pkmDisplayName}">
                           </div>
-                          <div class="node-count-badge">${scaledCount}</div>
+                          <div class="node-count-badge">${node.scaledCount}</div>
                           
                           <div class="ladder-node-tooltip">
-                            <div class="tooltip-title">${isTopNode ? (isEN ? 'Top 1 Yield ' : '產量 TOP 1 ') : ''}${pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${v.recipe.toLowerCase()}">${v.recipe}</span></div>
-                            <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估日產：'}<span class="text-success font-bold">${scaledCount} ${isEN ? '/day' : '顆/天'}</span></div>
+                            <div class="tooltip-title">${node.isTopNode ? (isEN ? 'Top 1 Yield ' : '產量 TOP 1 ') : ''}${node.pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${node.v.recipe.toLowerCase()}">${node.v.recipe}</span></div>
+                            <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估日產：'}<span class="text-success font-bold">${node.scaledCount} ${isEN ? '/day' : '顆/天'}</span></div>
                             
                             <!-- 頂級大菜供貨能力指標 -->
                             <div class="tooltip-dish-box">
@@ -11689,12 +11721,12 @@
                               <div class="tooltip-dish-badge ${dishBadgeClass}">${dishTag}</div>
                             </div>
 
-                            <div class="tooltip-note">${formatLadderNote(v.note || '', isEN)}</div>
+                            <div class="tooltip-note">${formatLadderNote(node.v.note || '', isEN)}</div>
                           </div>
                         </div>
                       `;
-                    });
-                  }).join('')}
+                    }).join('');
+                  })()}
                 </div>
               </div>
             </div>
@@ -11788,33 +11820,67 @@
                       </div>
 
                       <div class="ladder-nodes-container">
-                        ${filteredTailPkm.flatMap((p, pIdx) => {
-                          const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
-                          return p.variants.map((v, vIdx) => {
-                            const scaledCount = Math.round(v.count * mult);
-                            const isTopNode = v.isTop || (p.isTop && v.recipe === p.recipe);
-                            const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
-                            const tailPosPct = parseFloat(getTailPct(scaledCount));
-                            const tailAlignClass = tailPosPct > 55 ? 'align-right' : (tailPosPct < 25 ? 'align-left' : 'align-center');
+                        ${(() => {
+                          const tailTrackNodes = [];
+                          filteredTailPkm.forEach((p, pIdx) => {
+                            const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
+                            p.variants.forEach((v, vIdx) => {
+                              const scaledCount = Math.round(v.count * mult);
+                              const isTopNode = v.isTop || (p.isTop && v.recipe === p.recipe);
+                              const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
+                              tailTrackNodes.push({
+                                p,
+                                pIdx,
+                                pkmDisplayName,
+                                v,
+                                vIdx,
+                                scaledCount,
+                                isTopNode,
+                                zIndex
+                              });
+                            });
+                          });
+
+                          const tailCountGroups = {};
+                          tailTrackNodes.forEach(node => {
+                            if (!tailCountGroups[node.scaledCount]) tailCountGroups[node.scaledCount] = [];
+                            tailCountGroups[node.scaledCount].push(node);
+                          });
+
+                          return tailTrackNodes.map(node => {
+                            const group = tailCountGroups[node.scaledCount];
+                            const groupSize = group.length;
+                            const itemIdx = group.indexOf(node);
+                            
+                            let offsetPx = 0;
+                            if (groupSize > 1) {
+                              const staggerStep = groupSize >= 6 ? 14 : 18;
+                              offsetPx = Math.round((itemIdx - (groupSize - 1) / 2) * staggerStep);
+                            }
+
+                            const baseTailPosPct = parseFloat(getTailPct(node.scaledCount));
+                            const tailAlignClass = baseTailPosPct > 55 ? 'align-right' : (baseTailPosPct < 25 ? 'align-left' : 'align-center');
+                            const leftStyle = offsetPx === 0 ? `${baseTailPosPct}%` : `calc(${baseTailPosPct}% + ${offsetPx}px)`;
+
                             return `
-                              <div class="ladder-node ${isTopNode ? 'node-top1' : ''} ${tailAlignClass} recipe-${v.recipe.toLowerCase()}" 
-                                   data-pkm-group="${p.name}"
-                                   data-pkm="${p.name}" 
-                                   data-recipe="${v.recipe}"
-                                   style="left: ${getTailPct(scaledCount)}%; z-index: ${zIndex};">
+                              <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${tailAlignClass} recipe-${node.v.recipe.toLowerCase()} ${groupSize > 1 ? 'node-in-cluster' : ''}" 
+                                   data-pkm-group="${node.p.name}"
+                                   data-pkm="${node.p.name}" 
+                                   data-recipe="${node.v.recipe}"
+                                   style="left: ${leftStyle}; z-index: ${node.zIndex};">
                                 <div class="node-avatar-wrapper">
-                                  <img src="${p.icon}" class="node-avatar-img" alt="${pkmDisplayName}">
+                                  <img src="${node.p.icon}" class="node-avatar-img" alt="${node.pkmDisplayName}">
                                 </div>
-                                <div class="node-count-badge">${scaledCount}</div>
+                                <div class="node-count-badge">${node.scaledCount}</div>
                                 <div class="ladder-node-tooltip">
-                                  <div class="tooltip-title">${pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${v.recipe.toLowerCase()}">${v.recipe}</span></div>
-                                  <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估日產：'}<span class="text-success font-bold">${scaledCount} ${isEN ? '/day' : '顆/天'}</span></div>
-                                  <div class="tooltip-note">${formatLadderNote(v.note || '', isEN)}</div>
+                                  <div class="tooltip-title">${node.pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${node.v.recipe.toLowerCase()}">${node.v.recipe}</span></div>
+                                  <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估日產：'}<span class="text-success font-bold">${node.scaledCount} ${isEN ? '/day' : '顆/天'}</span></div>
+                                  <div class="tooltip-note">${formatLadderNote(node.v.note || '', isEN)}</div>
                                 </div>
                               </div>
                             `;
-                          });
-                        }).join('')}
+                          }).join('');
+                        })()}
                       </div>
                     </div>
 
