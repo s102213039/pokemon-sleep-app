@@ -29,8 +29,8 @@
   --bg-sidebar-btn-hover: rgba(30, 41, 59, 0.95);
   --border-color: rgba(255, 255, 255, 0.12);
   --border-color-subtle: rgba(255, 255, 255, 0.06);
-  --text-main: #f8fafc;
-  --text-primary: #f8fafc;
+  --text-main: #cbd5e1;
+  --text-primary: #cbd5e1;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
   --accent-blue: #38bdf8;
@@ -150,8 +150,8 @@
   --bg-sidebar-btn-hover: rgba(63, 63, 70, 0.95);
   --border-color: rgba(255, 255, 255, 0.16);
   --border-color-subtle: rgba(255, 255, 255, 0.08);
-  --text-main: #fafafa;
-  --text-primary: #fafafa;
+  --text-main: #d4d4d8;
+  --text-primary: #d4d4d8;
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
   --accent-blue: #cbd5e1;
@@ -306,35 +306,35 @@
 }
 
 [data-theme="emerald"] {
-  --bg-dark: #f0fdf4;
-  --bg-header: rgba(240, 253, 244, 0.94);
+  --bg-dark: #f4f4f5;
+  --bg-header: rgba(244, 244, 245, 0.94);
   --bg-card: #ffffff;
   --card-bg: #ffffff;
   --bg-card-solid: #ffffff;
-  --bg-card-hover: #f0fdf4;
-  --card-bg-hover: #f0fdf4;
-  --bg-card-inner: #dcfce7;
-  --bg-card-inner-subtle: #f0fdf4;
-  --bg-table-th: #bbf7d0;
-  --table-th-solid: #bbf7d0;
-  --text-th: #14532d;
-  --bg-table-row-even: #f0fdf4;
-  --bg-table-row-hover: #dcfce7;
+  --bg-card-hover: #ececee;
+  --card-bg-hover: #ececee;
+  --bg-card-inner: #e4e4e7;
+  --bg-card-inner-subtle: #f4f4f5;
+  --bg-table-th: #e4e4e7;
+  --table-th-solid: #e4e4e7;
+  --text-th: #18181b;
+  --bg-table-row-even: #f4f4f5;
+  --bg-table-row-hover: #e4e4e7;
   --table-row-odd-solid: #ffffff;
-  --table-row-even-solid: #f0fdf4;
-  --table-row-hover-solid: #dcfce7;
+  --table-row-even-solid: #f4f4f5;
+  --table-row-hover-solid: #e4e4e7;
   --bg-input: #ffffff;
   --bg-dropdown: #ffffff;
   --bg-sidebar: #ffffff;
-  --bg-sidebar-header: #f0fdf4;
-  --bg-sidebar-btn: #dcfce7;
-  --bg-sidebar-btn-hover: #bbf7d0;
+  --bg-sidebar-header: #f4f4f5;
+  --bg-sidebar-btn: #e4e4e7;
+  --bg-sidebar-btn-hover: #d4d4d8;
   --border-color: rgba(24, 24, 27, 0.12);
   --border-color-subtle: rgba(24, 24, 27, 0.06);
-  --text-main: #052e16;
-  --text-primary: #052e16;
-  --text-secondary: #166534;
-  --text-muted: #3f6212;
+  --text-main: #18181b;
+  --text-primary: #18181b;
+  --text-secondary: #52525b;
+  --text-muted: #71717a;
   --accent-blue: #18181b;
   --accent-purple: #3f3f46;
   --accent-color: #18181b;
@@ -353,9 +353,9 @@
   --badge-cat-curry-text: #854d0e;
   --badge-cat-curry-border: #fde047;
 
-  --badge-cat-salad-bg: #dcfce7;
-  --badge-cat-salad-text: #14532d;
-  --badge-cat-salad-border: #86efac;
+  --badge-cat-salad-bg: #e4e4e7;
+  --badge-cat-salad-text: #18181b;
+  --badge-cat-salad-border: #d4d4d8;
 
   --badge-cat-dessert-bg: #fce7f3;
   --badge-cat-dessert-text: #831843;
@@ -381,18 +381,18 @@
   --badge-bonus-35-text: #075985;
   --badge-bonus-35-border: #7dd3fc;
 
-  --badge-bonus-25-bg: #d1fae5;
-  --badge-bonus-25-text: #065f46;
-  --badge-bonus-25-border: #6ee7b7;
+  --badge-bonus-25-bg: #e4e4e7;
+  --badge-bonus-25-text: #18181b;
+  --badge-bonus-25-border: #d4d4d8;
 
-  --badge-bonus-default-bg: #f1f5f9;
-  --badge-bonus-default-text: #475569;
-  --badge-bonus-default-border: #cbd5e1;
+  --badge-bonus-default-bg: #f4f4f5;
+  --badge-bonus-default-text: #52525b;
+  --badge-bonus-default-border: #d4d4d8;
 
-  --shadow-lg: 0 4px 20px -2px rgba(5, 46, 22, 0.08), 0 2px 6px -1px rgba(5, 46, 22, 0.04);
+  --shadow-lg: 0 4px 20px -2px rgba(24, 24, 27, 0.08), 0 2px 6px -1px rgba(24, 24, 27, 0.04);
   --shadow-hover: 0 10px 25px -4px rgba(0, 0, 0, 0.15), 0 0 15px rgba(24, 24, 27, 0.12);
   --bg-radial-1: rgba(24, 24, 27, 0.04);
-  --bg-radial-3: rgba(240, 253, 244, 0.98);
+  --bg-radial-3: rgba(244, 244, 245, 0.98);
 }
 
 * {
@@ -917,14 +917,14 @@ body::-webkit-scrollbar,
 html[data-theme="midnight"] .search-input.has-value,
 .search-input.has-value {
   border-color: #818cf8 !important;
-  color: #ffffff !important;
+  color: #e2e8f0 !important;
   animation: searchActivePulseGlow 2s ease-in-out infinite !important;
 }
 
 html[data-theme="onyx"] .search-input.has-value {
   border-color: #94a3b8 !important;
   background: rgba(148, 163, 184, 0.08) !important;
-  color: #ffffff !important;
+  color: #e4e4e7 !important;
   animation: searchActivePulseGlowOnyx 2s ease-in-out infinite !important;
 }
 
@@ -2591,17 +2591,17 @@ html[data-lang="en"] .subfilter-skill-btn,
 }
 
 [data-theme="emerald"] .special-skill-badge {
-  background-color: #dcfce7 !important;
-  border: 1px solid #16a34a !important;
-  color: #052e16 !important;
-  box-shadow: 0 1px 3px rgba(22, 163, 74, 0.12);
+  background-color: #e4e4e7 !important;
+  border: 1px solid #18181b !important;
+  color: #18181b !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 [data-theme="emerald"] .special-skill-badge .skill-name-text,
 [data-theme="emerald"] .special-skill-badge .skill-line-1,
 [data-theme="emerald"] .special-skill-badge .skill-line-2,
 [data-theme="emerald"] .special-skill-badge .skill-single-line {
-  color: #052e16 !important;
+  color: #18181b !important;
   opacity: 1;
 }
 
@@ -8514,8 +8514,8 @@ input[type="number"] {
 }
 
 [data-theme="emerald"] .ladder-track-champion-badge .champ-yield {
-  color: #14532d;
-  background: #dcfce7;
+  color: #18181b;
+  background: #e4e4e7;
 }
 
 .ladder-track-champion-badge.badge-empty {
@@ -12767,20 +12767,20 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 [data-theme="emerald"] .mobile-h5-app .wiki-rule-banner {
-  background: #f0fdf4 !important;
-  border: 1px solid #bbf7d0 !important;
-  border-left: 3.5px solid #16a34a !important;
-  color: #14532d !important;
+  background: #f4f4f5 !important;
+  border: 1px solid #e4e4e7 !important;
+  border-left: 3.5px solid #18181b !important;
+  color: #18181b !important;
 }
 
 [data-theme="emerald"] .mobile-h5-app .wiki-rule-banner code {
-  background: #dcfce7 !important;
-  color: #15803d !important;
+  background: #e4e4e7 !important;
+  color: #18181b !important;
   padding: 1.5px 6px !important;
   border-radius: 4px !important;
   font-size: 11.5px !important;
   font-weight: 700 !important;
-  border: 1px solid #86efac !important;
+  border: 1px solid #d4d4d8 !important;
 }
 
 /* 3. ⚡ Sub-Tab 1: 主技能數值庫 */
