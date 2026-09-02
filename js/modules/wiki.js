@@ -4742,12 +4742,13 @@
                 "recipe": "AAA",
                 "count": 76,
                 "note": "AAA 好眠番茄 純種產出",
-                "isTop": false,
+                "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 76,
-                        "note": "AAA 好眠番茄 純種產出"
+                        "note": "AAA 好眠番茄 純種產出",
+                        "isTop": true
                     },
                     {
                         "recipe": "AAC",
@@ -4773,12 +4774,13 @@
                 "recipe": "AAA",
                 "count": 76,
                 "note": "AAA 好眠番茄 純種產出",
-                "isTop": false,
+                "isTop": true,
                 "variants": [
                     {
                         "recipe": "AAA",
                         "count": 76,
-                        "note": "AAA 好眠番茄 純種產出"
+                        "note": "AAA 好眠番茄 純種產出",
+                        "isTop": true
                     },
                     {
                         "recipe": "AAC",
@@ -10004,7 +10006,8 @@
                     {
                         "recipe": "ABC",
                         "count": 11,
-                        "note": "ABC 美味尾巴 兼顧"
+                        "note": "ABC 美味尾巴 兼顧",
+                        "isTop": true
                     }
                 ]
             },
@@ -10648,7 +10651,11 @@
       else if (ladderRecipeFilter === 'AXX') variants = variants.filter(v => v.recipe !== 'AAA' && v.recipe !== 'ABB');
 
       if (ladderSupplyFilter === 'TOP') {
-        if (pIdx > 4 && !p.isTop) return;
+        const allMaxCounts = ingData.pokemon.map(pkm => Math.max(...(pkm.variants || [{count: pkm.count}]).map(v => v.count)));
+        const distinctCounts = [...new Set(allMaxCounts)].sort((a,b) => b - a);
+        const top5Threshold = distinctCounts[Math.min(4, distinctCounts.length - 1)] || 0;
+        const pkmMaxCount = Math.max(...(p.variants || [{count: p.count}]).map(v => v.count));
+        if (pkmMaxCount < top5Threshold) return;
         variants = variants.slice(0, 1);
       } else if (ladderSupplyFilter === 'MEALS_3') {
         variants = variants.filter(v => Math.round(v.count * mult) >= dishInfo.need * 3);
@@ -10682,6 +10689,20 @@
     // 依產量由大到小排序
     rankingList.sort((a, b) => b.count - a.count);
 
+    // 密集群組名次演算法 (Dense Ranking)：同產量者並列相同名次，後續名次緊接遞增不跳號
+    let currentDenseRank = 0;
+    let lastYieldCount = null;
+    const rankedList = rankingList.map((item) => {
+      if (lastYieldCount === null || item.count < lastYieldCount) {
+        currentDenseRank++;
+        lastYieldCount = item.count;
+      }
+      return {
+        ...item,
+        rank: currentDenseRank
+      };
+    });
+
     let modal = document.getElementById('wiki-ingredient-ranking-modal');
     if (!modal) {
       modal = document.createElement('div');
@@ -10690,14 +10711,14 @@
       document.body.appendChild(modal);
     }
 
-    const itemsHTML = rankingList.length === 0 ? `
+    const itemsHTML = rankedList.length === 0 ? `
       <div class="ing-rank-empty">
         <p>${isEN ? 'No Pokémon matched current ladder filter conditions.' : '當前篩選條件下查無符合之寶可夢。'}</p>
       </div>
     ` : `
       <div class="ing-rank-list">
-        ${rankingList.map((item, idx) => {
-          const rank = idx + 1;
+        ${rankedList.map((item) => {
+          const rank = item.rank;
           const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : 'rank-other'));
           const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(item.name)) || item.name) : item.name;
 
@@ -11507,8 +11528,12 @@
         }
 
         if (ladderSupplyFilter === 'TOP') {
-          // 前五名：保留該軌道排名前 5 (Top 1 ~ Top 5) 的寶可夢，且只展示其最高產量變體
-          if (pIdx > 4 && !p.isTop) return null;
+          // 前五名：保留該軌道排名前 5 (Top 1 ~ Top 5) 的寶可夢梯隊，且只展示其最高產量變體
+          const allMaxCounts = ing.pokemon.map(pkm => Math.max(...(pkm.variants || [{count: pkm.count}]).map(v => v.count)));
+          const distinctCounts = [...new Set(allMaxCounts)].sort((a,b) => b - a);
+          const top5Threshold = distinctCounts[Math.min(4, distinctCounts.length - 1)] || 0;
+          const pkmMaxCount = Math.max(...(p.variants || [{count: p.count}]).map(v => v.count));
+          if (pkmMaxCount < top5Threshold) return null;
           variants = variants.slice(0, 1);
         } else if (ladderSupplyFilter === 'MEALS_3') {
           // 滿載 3 餐：日產量 >= 核心大菜 3 餐所需總量
@@ -11645,12 +11670,21 @@
                 <!-- 寶可夢型態節點容器 (Nodes Container) -->
                 <div class="ladder-nodes-container">
                   ${(() => {
+                    // 先計算該軌道最高產量 (Track Max Yield)
+                    let trackMaxYield = 0;
+                    filteredPokemonList.forEach(p => {
+                      p.variants.forEach(v => {
+                        const scaled = Math.round(v.count * mult);
+                        if (scaled > trackMaxYield) trackMaxYield = scaled;
+                      });
+                    });
+
                     const trackNodes = [];
                     filteredPokemonList.forEach((p, pIdx) => {
                       const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
                       p.variants.forEach((v, vIdx) => {
                         const scaledCount = Math.round(v.count * mult);
-                        const isTopNode = v.isTop || (p.isTop && v.recipe === p.recipe);
+                        const isTopNode = (scaledCount === trackMaxYield && scaledCount > 0) || v.isTop || (p.isTop && v.recipe === p.recipe);
                         const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
                         trackNodes.push({
                           p,
@@ -11766,7 +11800,11 @@
               }
 
               if (ladderSupplyFilter === 'TOP') {
-                if (pIdx > 4 && !p.isTop) return null;
+                const allMaxCounts = tailIng.pokemon.map(pkm => Math.max(...(pkm.variants || [{count: pkm.count}]).map(v => v.count)));
+                const distinctCounts = [...new Set(allMaxCounts)].sort((a,b) => b - a);
+                const top5Threshold = distinctCounts[Math.min(4, distinctCounts.length - 1)] || 0;
+                const pkmMaxCount = Math.max(...(p.variants || [{count: p.count}]).map(v => v.count));
+                if (pkmMaxCount < top5Threshold) return null;
                 variants = variants.slice(0, 1);
               } else if (ladderSupplyFilter === 'MEALS_3') {
                 variants = variants.filter(v => Math.round(v.count * mult) >= tailDishInfo.need * 3);
@@ -11823,12 +11861,21 @@
 
                       <div class="ladder-nodes-container">
                         ${(() => {
+                          // 先計算美味尾巴最高產量 (Tail Track Max Yield)
+                          let tailMaxYield = 0;
+                          filteredTailPkm.forEach(p => {
+                            p.variants.forEach(v => {
+                              const scaled = Math.round(v.count * mult);
+                              if (scaled > tailMaxYield) tailMaxYield = scaled;
+                            });
+                          });
+
                           const tailTrackNodes = [];
                           filteredTailPkm.forEach((p, pIdx) => {
                             const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
                             p.variants.forEach((v, vIdx) => {
                               const scaledCount = Math.round(v.count * mult);
-                              const isTopNode = v.isTop || (p.isTop && v.recipe === p.recipe);
+                              const isTopNode = (scaledCount === tailMaxYield && scaledCount > 0) || v.isTop || (p.isTop && v.recipe === p.recipe);
                               const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
                               tailTrackNodes.push({
                                 p,
@@ -11875,7 +11922,7 @@
                                 </div>
                                 <div class="node-count-badge">${node.scaledCount}</div>
                                 <div class="ladder-node-tooltip">
-                                  <div class="tooltip-title">${node.pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${node.v.recipe.toLowerCase()}">${node.v.recipe}</span></div>
+                                  <div class="tooltip-title">${node.isTopNode ? (isEN ? 'Top 1 Yield ' : '產量 TOP 1 ') : ''}${node.pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${node.v.recipe.toLowerCase()}">${node.v.recipe}</span></div>
                                   <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估日產：'}<span class="text-success font-bold">${node.scaledCount} ${isEN ? '/day' : '顆/天'}</span></div>
                                   <div class="tooltip-note">${formatLadderNote(node.v.note || '', isEN)}</div>
                                 </div>
