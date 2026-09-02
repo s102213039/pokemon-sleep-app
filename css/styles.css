@@ -3259,6 +3259,73 @@ html[lang="en"] .recipe-name-wrapper,
   font-family: monospace, -apple-system;
 }
 
+/* ⚡ 桌面版食譜預估能量 3 階垂直排列 (Desktop 3-Stack Energy Rows: 1x / 2x / 3x) */
+.desktop-energy-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  min-width: 95px;
+}
+
+.desktop-energy-stack.has-tasty {
+  padding: 1px 0;
+}
+
+.desktop-energy-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 4px;
+  width: 100%;
+  line-height: 1.25;
+}
+
+.desktop-energy-row .energy-multiplier {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: monospace, -apple-system, sans-serif;
+  opacity: 0.85;
+  width: 16px;
+  text-align: left;
+  flex-shrink: 0;
+}
+
+.desktop-energy-row .energy-number {
+  font-size: 13.5px;
+  font-weight: 700;
+  font-family: monospace, -apple-system, sans-serif;
+  white-space: nowrap;
+  text-align: right;
+  flex: 1;
+}
+
+/* 1x: 主文字色 (柔和白/灰/黑) */
+.desktop-energy-row.energy-1x {
+  color: var(--text-primary);
+}
+
+/* 2x: 蔚藍/天藍色高亮 */
+.desktop-energy-row.energy-2x {
+  color: #38bdf8;
+}
+
+[data-theme="dawn"] .desktop-energy-row.energy-2x,
+[data-theme="emerald"] .desktop-energy-row.energy-2x {
+  color: #0284c7;
+}
+
+/* 3x: 琥珀金橘色高亮 */
+.desktop-energy-row.energy-3x {
+  color: #fbbf24;
+}
+
+[data-theme="dawn"] .desktop-energy-row.energy-3x,
+[data-theme="emerald"] .desktop-energy-row.energy-3x {
+  color: #d97706;
+}
+
 .tasty-stats-row {
   padding-top: 4px;
   border-top: 1px dashed var(--border-color);

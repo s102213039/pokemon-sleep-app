@@ -940,17 +940,24 @@
               const finalE        = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
               const primaryName   = isEN ? (r.name_en || r.name_cn) : r.name_cn;
               const secondaryName = isEN ? (r.name_cn !== primaryName ? r.name_cn : '') : (r.name_en || '');
-              const energyCellHTML = showTasty ? `
-                <td style="vertical-align:middle;text-align:right;">
-                  <div class="table-energy-main">⚡ ${finalE.toLocaleString()}</div>
-                  <div class="table-tasty-row">
-                    <span class="tasty-badge">2x ${Math.round(finalE * 2).toLocaleString()}</span>
-                    <span class="tasty-badge tasty-3x">3x ${Math.round(finalE * 3).toLocaleString()}</span>
+              const energyCellHTML = `
+                <td class="recipe-energy-cell" style="vertical-align:middle;text-align:right;">
+                  <div class="desktop-energy-stack ${showTasty ? 'has-tasty' : 'single-energy'}">
+                    <div class="desktop-energy-row energy-1x">
+                      <span class="energy-multiplier">${showTasty ? '1x' : '⚡'}</span>
+                      <span class="energy-number">${finalE.toLocaleString()}</span>
+                    </div>
+                    ${showTasty ? `
+                      <div class="desktop-energy-row energy-2x">
+                        <span class="energy-multiplier">2x</span>
+                        <span class="energy-number">${Math.round(finalE * 2).toLocaleString()}</span>
+                      </div>
+                      <div class="desktop-energy-row energy-3x">
+                        <span class="energy-multiplier">3x</span>
+                        <span class="energy-number">${Math.round(finalE * 3).toLocaleString()}</span>
+                      </div>
+                    ` : ''}
                   </div>
-                </td>
-              ` : `
-                <td style="vertical-align:middle;text-align:right;">
-                  <div class="table-energy-main">⚡ ${finalE.toLocaleString()}</div>
                 </td>
               `;
               return `
@@ -1051,18 +1058,30 @@
             <div class="recipe-desktop-stats">
               <div class="recipe-stat-row">
                 <span class="stat-label">${t('recipe.th_pot', '鍋子容量')}</span>
-                <span class="stat-value pot-value">${r.pot_size}</span>
+                <span class="stat-value pot-value">🍲 ${r.pot_size}</span>
               </div>
-              <div class="recipe-stat-row">
-                <span class="stat-label">${t('recipe.th_final_energy', '預估能量')} <small style="color:var(--text-muted);font-weight:400;">(Lv.${recipeLevel} · ×${islandMult}${eventSub})</small></span>
-                <span class="stat-value energy-value">${finalE.toLocaleString()}</span>
-              </div>
-              ${showTasty ? `
-                <div class="recipe-stat-row tasty-stats-row">
-                  <span class="tasty-desktop-badge">2x <strong>${(finalE * 2).toLocaleString()}</strong></span>
-                  <span class="tasty-desktop-badge tasty-3x">3x <strong>${(finalE * 3).toLocaleString()}</strong></span>
+              <div class="recipe-stat-row ${showTasty ? 'has-tasty-energy' : ''}" style="${showTasty ? 'align-items:flex-start;' : 'align-items:center;'}">
+                <div style="display:flex;flex-direction:column;align-items:flex-start;">
+                  <span class="stat-label">${t('recipe.th_final_energy', '預估能量')}</span>
+                  <span style="color:var(--text-muted);font-size:10.5px;font-weight:400;margin-top:1px;">Lv.${recipeLevel} · ×${islandMult}${eventSub}</span>
                 </div>
-              ` : ''}
+                <div class="desktop-energy-stack ${showTasty ? 'has-tasty' : 'single-energy'}">
+                  <div class="desktop-energy-row energy-1x">
+                    <span class="energy-multiplier">${showTasty ? '1x' : '⚡'}</span>
+                    <span class="energy-number">${finalE.toLocaleString()}</span>
+                  </div>
+                  ${showTasty ? `
+                    <div class="desktop-energy-row energy-2x">
+                      <span class="energy-multiplier">2x</span>
+                      <span class="energy-number">${Math.round(finalE * 2).toLocaleString()}</span>
+                    </div>
+                    <div class="desktop-energy-row energy-3x">
+                      <span class="energy-multiplier">3x</span>
+                      <span class="energy-number">${Math.round(finalE * 3).toLocaleString()}</span>
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
             </div>
 
             <div class="recipe-desktop-ings">
