@@ -2511,6 +2511,74 @@ test('Tier 1 - Feature Coverage', 'H5 Recipe 1-Column Compact Card Layout Verifi
   assert(recipesJs.includes('h5-recipe-card'), 'recipes.js missing h5-recipe-card template');
 });
 
+test('Tier 2 - Boundary & Corner Cases', 'Ingredient Ladder: Dense Ranking & Multi-Top1 Verification', () => {
+  const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  assert(wikiJs.includes('Dense Ranking'), 'wiki.js should implement dense ranking');
+
+  let modalContainer = null;
+  const mockStorage = new Map([['pksleep_lang', 'zh-TW']]);
+  const ctx = {
+    localStorage: {
+      getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+      setItem: (k, v) => mockStorage.set(k, String(v)),
+      removeItem: (k) => mockStorage.delete(k)
+    },
+    window: {
+      localStorage: {
+        getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+        setItem: (k, v) => mockStorage.set(k, String(v)),
+        removeItem: (k) => mockStorage.delete(k)
+      },
+      addEventListener: () => {},
+      I18N: { getLanguage: () => 'zh-TW', getIngredientName: (s) => s, getPokemonName: (s) => s }
+    },
+    document: {
+      body: { classList: { contains: () => false }, appendChild: (el) => { modalContainer = el; } },
+      documentElement: { setAttribute: () => {} },
+      getElementById: (id) => id === 'wiki-ingredient-ranking-modal' ? modalContainer : null,
+      querySelectorAll: () => [],
+      createElement: () => ({ setAttribute: () => {}, innerHTML: '', className: '', id: '', style: {} }),
+      addEventListener: () => {}
+    },
+    console: console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(wikiJs, ctx);
+
+  // Verify Tomato track in LV60_COORDINATE_LADDER_DATA has 3 isTop: true pokemons (大食花, 倫琴貓, 暴雪王)
+  const tomatoData = ctx.window.WikiDB.LV60_COORDINATE_LADDER_DATA.find(i => i.id === 'tomato');
+  assert(tomatoData !== undefined, 'Tomato ladder data must exist');
+  const topTomatoPkms = tomatoData.pokemon.filter(p => p.isTop && p.variants.some(v => v.count === 76 && v.isTop));
+  assertEquals(topTomatoPkms.length, 3, 'Tomato track must have 3 TOP 1 Pokemons (大食花, 倫琴貓, 暴雪王)');
+  const topNames = topTomatoPkms.map(p => p.name);
+  assert(topNames.includes('大食花') && topNames.includes('倫琴貓') && topNames.includes('暴雪王'), 'Top pokemons must be 大食花, 倫琴貓, 暴雪王');
+
+  // Test modal rendering dense ranking for Tomato
+  ctx.window.WikiDB.openIngredientRankingModal('tomato');
+  assert(modalContainer !== null, 'Ranking modal container must be created');
+  const cards = [...modalContainer.innerHTML.matchAll(/<div class="ing-rank-card [^"]*" title="([^"]+)"[\s\S]*?<div class="ing-rank-num [^"]*">\s*([^<\s]+)\s*<\/div>/g)];
+  assert(cards.length >= 7, 'Must have at least 7 ranked cards for tomato');
+
+  // Cards 1-3 must all have 🥇 medal
+  assertEquals(cards[0][2], '🥇', '1st card must have 🥇');
+  assertEquals(cards[1][2], '🥇', '2nd card must have 🥇 (tied)');
+  assertEquals(cards[2][2], '🥇', '3rd card must have 🥇 (tied)');
+
+  // Card 4 (魔牆人偶 71) must have 🥈 medal (Dense rank 2, NOT rank 4!)
+  assertEquals(cards[3][2], '🥈', '4th card (魔牆人偶 71) must have 🥈 (Dense rank 2)');
+
+  // Card 5 (妙蛙花 68) must have 🥉 medal (Dense rank 3)
+  assertEquals(cards[4][2], '🥉', '5th card (妙蛙花 68) must have 🥉 (Dense rank 3)');
+
+  // Card 6 (三地鼠 66) must have #4
+  assertEquals(cards[5][2], '#4', '6th card (三地鼠 66) must have #4');
+
+  // Card 7 (請假王 43) must have #5
+  assertEquals(cards[6][2], '#5', '7th card (請假王 43) must have #5');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');
