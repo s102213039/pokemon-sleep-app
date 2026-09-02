@@ -835,18 +835,29 @@ if (typeof document !== 'undefined') {
 
     let ghPat = localStorage.getItem(GH_PAT_KEY) || '';
 
-    /* ─── 🎨 主題與外觀系統 (Theme System - 4 Themes: 2 Dark + 2 Light) ─── */
+    /* ─── 🎨 主題與外觀系統 (Theme System - 4 Themes × 2 Normal/Inverted = 8 Themes) ─── */
     const STORAGE_KEY_THEME = 'user_theme';
+    const STORAGE_KEY_THEME_INVERT = 'user_theme_inverted';
     let currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'midnight';
+    let isThemeInverted = localStorage.getItem(STORAGE_KEY_THEME_INVERT) === 'true';
     
-    function applyTheme(theme) {
+    function applyTheme(theme, inverted) {
       if (!['midnight', 'onyx', 'dawn', 'emerald'].includes(theme)) {
         theme = 'midnight';
       }
       currentTheme = theme;
+      if (typeof inverted === 'boolean') {
+        isThemeInverted = inverted;
+      }
       document.documentElement.setAttribute('data-theme', theme);
+      if (isThemeInverted) {
+        document.documentElement.setAttribute('data-theme-inverted', 'true');
+      } else {
+        document.documentElement.removeAttribute('data-theme-inverted');
+      }
       try {
         localStorage.setItem(STORAGE_KEY_THEME, theme);
+        localStorage.setItem(STORAGE_KEY_THEME_INVERT, isThemeInverted ? 'true' : 'false');
       } catch (e) {}
 
       // 更新彈窗內的選中卡片
@@ -857,21 +868,38 @@ if (typeof document !== 'undefined') {
           btn.classList.remove('active');
         }
       });
+
+      // 更新反色開關狀態
+      const invertSwitch = document.getElementById('theme-invert-switch');
+      const appInvertSwitch = document.getElementById('app-theme-invert-switch');
+      if (invertSwitch) invertSwitch.checked = isThemeInverted;
+      if (appInvertSwitch) appInvertSwitch.checked = isThemeInverted;
     }
 
     // 初始化主題
-    applyTheme(currentTheme);
+    applyTheme(currentTheme, isThemeInverted);
     PokemonApp.applyTheme = applyTheme;
     PokemonApp.getCurrentTheme = () => currentTheme;
+    PokemonApp.isThemeInverted = () => isThemeInverted;
 
     // 綁定主題卡片點擊
     document.querySelectorAll('.theme-card-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const themeVal = btn.getAttribute('data-theme-val');
         if (themeVal) {
-          applyTheme(themeVal);
+          applyTheme(themeVal, isThemeInverted);
         }
       });
+    });
+
+    // 綁定反色開關
+    ['theme-invert-switch', 'app-theme-invert-switch'].forEach(id => {
+      const sw = document.getElementById(id);
+      if (sw) {
+        sw.addEventListener('change', (e) => {
+          applyTheme(currentTheme, e.target.checked);
+        });
+      }
     });
 
     /* ─── 🌐 語言系統 (Language System) ─── */

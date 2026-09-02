@@ -670,6 +670,34 @@ test('Tier 1 - Feature Coverage', 'Multi-Theme CSS Variables & Theme Engine: 4 f
   assert(cssContent.includes('.lang-switcher-row'), 'styles.css must style language switcher');
 });
 
+test('Tier 1 - Feature Coverage', 'Theme Inversion Engine: 4 Inverted Theme Variants, Switch Controls & LocalStorage Persistence', () => {
+  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+  const appHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+  const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+  const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+
+  // Verify CSS contains all 4 inverted theme definitions
+  assert(cssContent.includes('[data-theme="midnight"][data-theme-inverted="true"]'), 'styles.css must support inverted midnight theme');
+  assert(cssContent.includes('[data-theme="onyx"][data-theme-inverted="true"]'), 'styles.css must support inverted onyx theme');
+  assert(cssContent.includes('[data-theme="dawn"][data-theme-inverted="true"]'), 'styles.css must support inverted dawn theme');
+  assert(cssContent.includes('[data-theme="emerald"][data-theme-inverted="true"]'), 'styles.css must support inverted emerald theme');
+  assert(cssContent.includes('.theme-invert-control-row'), 'styles.css must style desktop theme-invert-control-row');
+  assert(cssContent.includes('.app-theme-invert-control-row'), 'styles.css must style mobile app-theme-invert-control-row');
+
+  // Verify HTML contains switches
+  assert(indexHtml.includes('id="theme-invert-switch"'), 'index.html must have theme-invert-switch');
+  assert(appHtml.includes('id="app-theme-invert-switch"'), 'app/index.html must have app-theme-invert-switch');
+
+  // Verify app.js contains inverted state management & storage
+  assert(appJs.includes('user_theme_inverted'), 'app.js must persist user_theme_inverted in localStorage');
+  assert(appJs.includes('data-theme-inverted'), 'app.js must toggle data-theme-inverted attribute on root');
+
+  // Verify i18n contains translation keys
+  assert(i18nJs.includes('settings.theme_invert'), 'i18n.js must contain settings.theme_invert translation key');
+  assert(i18nJs.includes('settings.theme_invert_desc'), 'i18n.js must contain settings.theme_invert_desc translation key');
+});
+
 test('Tier 1 - Feature Coverage', 'English Mode Subtitle Hiding & Title Centering Rules', () => {
   const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
   assert(cssContent.includes('html[lang="en"] .brand-subtitle'), 'CSS must hide brand-subtitle in English');
