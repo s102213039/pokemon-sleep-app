@@ -11497,7 +11497,7 @@
       const dishInfo = TOP_RECIPES_FOR_INGREDIENTS[ing.id] || { name: isEN ? 'High Tier Dish' : '高階料理', name_en: 'High Tier Dish', need: 20, type: isEN ? 'Dish' : '料理', secondary: '' };
       const dishName = isEN ? (dishInfo.name_en || dishInfo.name) : dishInfo.name;
       const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
-      const minDefaultThreshold = DEFAULT_LADDER_MIN_THRESHOLDS[ing.id] || 20;
+      const minDefaultThreshold = isUnfilteredDefault ? 30 : (DEFAULT_LADDER_MIN_THRESHOLDS[ing.id] || 20);
 
       // 取得該軌道符合篩選之寶可夢與型態變體
       const filteredPokemonList = ing.pokemon.map((p, pIdx) => {
@@ -11516,8 +11516,8 @@
 
         let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
 
-        // 常規天梯篩選產量 >= 20 的型態變體 (尾巴為 >= 1)
-        variants = variants.filter(v => v.count >= minDefaultThreshold);
+        // 全部展示狀態下僅展示產量 >= 30 的主力型態變體；有具體篩選條件時則完整展示 (< 30 也展示)
+        variants = variants.filter(v => Math.round(v.count * mult) >= minDefaultThreshold);
 
         if (ladderRecipeFilter === 'AAA') {
           variants = variants.filter(v => v.recipe === 'AAA');
@@ -11569,10 +11569,24 @@
       };
     });
 
-    // 2. 動態設定最高刻度：取當前篩選最高值的「下一個 10 的倍數」
-    let minVal = 20;
+    // 2. 動態設定最高與最低刻度 (全部展示時自 30 起標，有篩選時動態支援低於 30 之刻度)
+    let globalMinCount = 100;
+    processedMainTracks.forEach(t => {
+      t.filteredPokemonList.forEach(p => {
+        p.variants.forEach(v => {
+          const scaled = Math.round(v.count * mult);
+          if (scaled < globalMinCount) globalMinCount = scaled;
+        });
+      });
+    });
+
+    let minVal = 30;
+    if (!isUnfilteredDefault && globalMinCount < 30) {
+      minVal = Math.max(0, Math.floor(globalMinCount / 10) * 10);
+      if (minVal > 20) minVal = 20;
+    }
     let maxVal = Math.ceil((globalMaxCount + 1) / 10) * 10;
-    if (maxVal <= minVal) maxVal = minVal + 10; // 最低至少 30
+    if (maxVal <= minVal) maxVal = minVal + 10; // 最低跨度至少 10
 
     // 動態計算刻度步長 step
     const span = maxVal - minVal;
