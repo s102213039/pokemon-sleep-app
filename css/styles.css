@@ -5151,7 +5151,7 @@ input[type=range].rf-slider.event-slider {
 .news-info-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: wrap;
   gap: 10px;
   padding-top: 10px;
@@ -5159,18 +5159,33 @@ input[type=range].rf-slider.event-slider {
   font-size: 12px;
 }
 
-.news-source-hint {
+/* 📰 新聞頁面極簡底部備註 (Minimal News Footer) */
+.news-minimal-footer {
+  width: 100%;
+  margin: 24px auto 10px;
+  padding: 14px 16px 8px;
+  text-align: center;
+  border-top: 1px dashed var(--border-color, rgba(255, 255, 255, 0.08));
+}
+
+.news-footer-source {
+  font-size: 11px;
   color: var(--text-muted);
+  opacity: 0.75;
+  margin: 0;
+  line-height: 1.5;
 }
 
-.news-source-hint a {
-  color: #38bdf8;
+.news-footer-source a {
+  color: var(--accent-blue, #38bdf8);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 500;
+  transition: all 0.15s ease;
 }
 
-.news-source-hint a:hover {
+.news-footer-source a:hover {
   text-decoration: underline;
+  opacity: 1;
 }
 
 .news-content-container {
@@ -5210,19 +5225,20 @@ input[type=range].rf-slider.event-slider {
   box-shadow: 0 0 20px rgba(245, 158, 11, 0.12);
 }
 
-.news-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
+.news-card-header,
+.news-card-header-meta {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  width: 100% !important;
 }
 
 .news-meta-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
 }
 
 .news-date-badge {
@@ -5242,6 +5258,73 @@ input[type=range].rf-slider.event-slider {
   background: rgba(99, 102, 241, 0.22);
   color: #a5b4fc;
   border: 1px solid rgba(99, 102, 241, 0.45);
+}
+
+/* 官方原文右上角精緻膠囊按鈕 (Top-Right Official Link Button) */
+.news-official-link-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  color: var(--accent-blue, #38bdf8) !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.06)) !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 3px 10px !important;
+  border-radius: 12px !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+}
+
+.news-official-link-btn:hover {
+  background: var(--accent-gradient, linear-gradient(135deg, #38bdf8, #818cf8)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 3px 10px rgba(56, 189, 248, 0.35) !important;
+}
+
+.news-official-link-btn:active {
+  transform: scale(0.96) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .news-official-link-btn {
+  background: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #0284c7 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .news-official-link-btn:hover {
+  background: #0284c7 !important;
+  border-color: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .news-official-link-btn {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .news-official-link-btn:hover {
+  background: #475569 !important;
+  border-color: #475569 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .news-official-link-btn {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #cbd5e1 !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .news-official-link-btn:hover {
+  background: #3f3f46 !important;
+  border-color: #52525b !important;
+  color: #ffffff !important;
 }
 
 .news-badge.news-badge-event {
