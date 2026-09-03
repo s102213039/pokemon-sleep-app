@@ -240,7 +240,16 @@
         <!-- 1. 外觀主題 (2x2 Compact App Grid) -->
         <div class="app-settings-group">
           <div class="app-group-header">
-            <span class="app-group-title" data-i18n="settings.theme_section">外觀主題</span>
+            <span class="app-group-title">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path>
+              </svg>
+              <span data-i18n="settings.theme_section">外觀主題</span>
+            </span>
           </div>
           <div class="app-theme-grid">
             <button type="button" class="theme-card-btn app-theme-chip active" data-theme-val="midnight">
@@ -267,7 +276,14 @@
 
           <!-- 移動端反色開關 (精簡版) -->
           <div class="app-theme-invert-control-row">
-            <span class="app-theme-invert-title" data-i18n="settings.theme_invert">反色模式</span>
+            <div class="theme-invert-label-wrap">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 3v18"></path>
+                <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"></path>
+              </svg>
+              <span class="app-theme-invert-title" data-i18n="settings.theme_invert">反色模式</span>
+            </div>
             <label class="switch" for="app-theme-invert-switch" title="反色模式">
               <input type="checkbox" id="app-theme-invert-switch" class="switch-checkbox">
               <span class="switch-slider"></span>
@@ -278,7 +294,14 @@
         <!-- 2. 介面語言 (Segmented Bar) -->
         <div class="app-settings-group">
           <div class="app-group-header">
-            <span class="app-group-title" data-i18n="settings.lang_section">介面語言</span>
+            <span class="app-group-title">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+              <span data-i18n="settings.lang_section">介面語言</span>
+            </span>
           </div>
           <div class="app-segmented-lang">
             <button type="button" id="lang-btn-zh" class="lang-btn app-segment-btn active" data-lang-val="zh-TW">
@@ -293,14 +316,31 @@
         <!-- 3. 倉庫備份與還原 (App-style Backup & Restore Group) -->
         <div class="app-settings-group">
           <div class="app-group-header">
-            <span class="app-group-title" data-i18n="settings.box_backup_section">倉庫備份與還原</span>
+            <span class="app-group-title">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                <rect x="1" y="3" width="22" height="5"></rect>
+                <line x1="10" y1="12" x2="14" y2="12"></line>
+              </svg>
+              <span data-i18n="settings.box_backup_section">倉庫備份與還原</span>
+            </span>
           </div>
           <div class="app-backup-card">
             <div class="app-backup-btn-row">
-              <button type="button" id="settings-export-box-btn" class="app-backup-action-btn export-btn" data-i18n="settings.box_export_btn">
-                匯出備份 JSON
+              <button type="button" id="settings-export-box-btn" class="app-backup-action-btn export-btn">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span data-i18n="settings.box_export_btn">匯出備份 JSON</span>
               </button>
               <label class="app-backup-action-btn import-btn" style="cursor:pointer;margin:0;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
                 <span data-i18n="settings.box_import_btn">匯入還原 JSON</span>
                 <input type="file" id="settings-import-box-input" accept=".json" style="display:none;">
               </label>
