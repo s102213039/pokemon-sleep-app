@@ -293,19 +293,15 @@
   <div id="settings-modal" class="settings-modal-overlay" style="display:none;">
     <div class="settings-modal-container">
       <div class="settings-modal-header">
-        <h3 class="settings-modal-title" data-i18n="settings.title">⚙️ 系統設定</h3>
+        <h3 class="settings-modal-title" data-i18n="settings.title">系統設定</h3>
         <button type="button" id="settings-modal-close-btn" class="settings-modal-close-btn" title="關閉">✕</button>
       </div>
 
       <div class="settings-modal-body">
-        <!-- 1. 🎨 外觀主題風格 -->
+        <!-- 1. 外觀主題風格 -->
         <div class="settings-section-card">
           <div class="settings-section-header">
-            <div class="settings-section-title">
-              <span>🎨</span>
-              <span data-i18n="settings.theme_section">外觀主題風格</span>
-            </div>
-            <div class="settings-section-desc" data-i18n="settings.theme_desc">提供 2 組深色與 2 組明亮主題，適配各種光線環境。</div>
+            <div class="settings-section-title" data-i18n="settings.theme_section">外觀主題風格</div>
           </div>
           
           <div class="theme-picker-grid">
@@ -319,8 +315,7 @@
                 </div>
                 <span class="theme-card-badge" data-i18n="settings.theme_active">✓ 使用中</span>
               </div>
-              <div class="theme-card-name" data-i18n="settings.theme_midnight">🌌 深邃夜空</div>
-              <div class="theme-card-sub" data-i18n="settings.theme_midnight_sub">科技深藍黑 · 霓虹青紫點綴</div>
+              <div class="theme-card-name" data-i18n="settings.theme_midnight">深邃夜空</div>
             </button>
 
             <!-- Onyx (深色 2 - OLED 高對比) -->
@@ -333,8 +328,7 @@
                 </div>
                 <span class="theme-card-badge" data-i18n="settings.theme_active">✓ 使用中</span>
               </div>
-              <div class="theme-card-name" data-i18n="settings.theme_onyx">🌑 曜石暗影</div>
-              <div class="theme-card-sub" data-i18n="settings.theme_onyx_sub">OLED 純粹黑 · 鈦金冷灰點綴</div>
+              <div class="theme-card-name" data-i18n="settings.theme_onyx">曜石暗影</div>
             </button>
 
             <!-- Dawn (明亮 1 - 晨曦暖陽) -->
@@ -347,8 +341,7 @@
                 </div>
                 <span class="theme-card-badge" data-i18n="settings.theme_active">✓ 使用中</span>
               </div>
-              <div class="theme-card-name" data-i18n="settings.theme_dawn">☀️ 晨曦暖陽</div>
-              <div class="theme-card-sub" data-i18n="settings.theme_dawn_sub">溫潤奶油白 · 蔚藍暖陽點綴</div>
+              <div class="theme-card-name" data-i18n="settings.theme_dawn">晨曦暖陽</div>
             </button>
 
             <!-- Emerald / Slate (明亮 2 - 雅緻灰石) -->
@@ -361,20 +354,13 @@
                 </div>
                 <span class="theme-card-badge" data-i18n="settings.theme_active">✓ 使用中</span>
               </div>
-              <div class="theme-card-name" data-i18n="settings.theme_emerald">🗿 雅緻灰石</div>
-              <div class="theme-card-sub" data-i18n="settings.theme_emerald_sub">極簡淺灰底 · 冷鈦深灰點綴</div>
+              <div class="theme-card-name" data-i18n="settings.theme_emerald">雅緻灰石</div>
             </button>
           </div>
 
-          <!-- ☯️ 明暗反色開關 -->
+          <!-- 反色開關 (精簡版) -->
           <div class="theme-invert-control-row">
-            <div class="theme-invert-info">
-              <span class="theme-invert-icon">☯️</span>
-              <div>
-                <div class="theme-invert-title" data-i18n="settings.theme_invert">明暗反色模式</div>
-                <div class="theme-invert-desc" data-i18n="settings.theme_invert_desc">反轉當前主題的深淺底色，拓展出 4 款高反差風格。</div>
-              </div>
-            </div>
+            <span class="theme-invert-title" data-i18n="settings.theme_invert">反色模式</span>
             <label class="switch" for="theme-invert-switch" title="反色模式">
               <input type="checkbox" id="theme-invert-switch" class="switch-checkbox">
               <span class="switch-slider"></span>
@@ -382,43 +368,32 @@
           </div>
         </div>
 
-        <!-- 2. 🌐 介面語言 (Language) -->
+        <!-- 2. 介面語言 -->
         <div class="settings-section-card">
           <div class="settings-section-header">
-            <div class="settings-section-title">
-              <span>🌐</span>
-              <span data-i18n="settings.lang_section">介面語言 (Language)</span>
-            </div>
-            <div class="settings-section-desc" data-i18n="settings.lang_desc">切換全站介面文字與寶可夢資料顯示語系。</div>
+            <div class="settings-section-title" data-i18n="settings.lang_section">介面語言</div>
           </div>
 
           <div class="lang-switcher-row">
             <button type="button" id="lang-btn-zh" class="lang-btn active" data-lang-val="zh-TW">
-              <span>🇹🇼</span>
-              <span data-i18n="settings.lang_zh">繁體中文 (Traditional Chinese)</span>
+              <span data-i18n="settings.lang_zh">繁體中文</span>
             </button>
             <button type="button" id="lang-btn-en" class="lang-btn" data-lang-val="en-US">
-              <span>🇺🇸</span>
-              <span data-i18n="settings.lang_en">English (US)</span>
+              <span data-i18n="settings.lang_en">English</span>
             </button>
           </div>
         </div>
 
-        <!-- 3. 🔄 GitHub Actions 同步設定 -->
+        <!-- 3. 倉庫備份與還原 -->
         <div class="settings-section-card">
-          <!-- 3. 倉庫備份與還原 -->
           <div class="settings-section-header">
-            <div class="settings-section-title">
-              <span>📦</span>
-              <span data-i18n="settings.box_backup_section">倉庫備份與還原</span>
-            </div>
-            <div class="settings-section-desc" data-i18n="settings.box_backup_desc">將個人倉庫寶可夢匯出為 JSON 備份檔，或從本機檔案匯入還原。</div>
+            <div class="settings-section-title" data-i18n="settings.box_backup_section">倉庫備份與還原</div>
           </div>
 
-          <div style="display:flex;gap:10px;margin-top:8px;">
-            <button type="button" id="settings-export-box-btn" style="flex:1;padding:10px;background:var(--accent-gradient);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;" data-i18n="settings.box_export_btn">💾 匯出備份 JSON</button>
-            <label style="flex:1;padding:10px;background:var(--bg-input);border:1px solid var(--border-color);color:var(--text-main);border-radius:8px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin:0;">
-              <span data-i18n="settings.box_import_btn">📥 匯入還原 JSON</span>
+          <div style="display:flex;gap:10px;margin-top:2px;">
+            <button type="button" id="settings-export-box-btn" style="flex:1;padding:9px;background:var(--accent-gradient);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;" data-i18n="settings.box_export_btn">匯出備份 JSON</button>
+            <label style="flex:1;padding:9px;background:var(--bg-input);border:1px solid var(--border-color);color:var(--text-main);border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0;">
+              <span data-i18n="settings.box_import_btn">匯入還原 JSON</span>
               <input type="file" id="settings-import-box-input" accept=".json" style="display:none;">
             </label>
           </div>

@@ -265,15 +265,9 @@
             </button>
           </div>
 
-          <!-- ☯️ 移動端明暗反色開關 -->
+          <!-- 移動端反色開關 (精簡版) -->
           <div class="app-theme-invert-control-row">
-            <div class="app-theme-invert-info">
-              <span class="app-theme-invert-icon">☯️</span>
-              <div>
-                <div class="app-theme-invert-title" data-i18n="settings.theme_invert">明暗反色模式</div>
-                <div class="app-theme-invert-desc" data-i18n="settings.theme_invert_desc">反轉當前主題的深淺底色，拓展出 4 款高反差風格。</div>
-              </div>
-            </div>
+            <span class="app-theme-invert-title" data-i18n="settings.theme_invert">反色模式</span>
             <label class="switch" for="app-theme-invert-switch" title="反色模式">
               <input type="checkbox" id="app-theme-invert-switch" class="switch-checkbox">
               <span class="switch-slider"></span>
@@ -302,13 +296,12 @@
             <span class="app-group-title" data-i18n="settings.box_backup_section">倉庫備份與還原</span>
           </div>
           <div class="app-backup-card">
-            <p class="app-backup-desc" data-i18n="settings.box_backup_desc">將個人倉庫寶可夢匯出為 JSON 備份檔，或從本機檔案匯入還原。</p>
             <div class="app-backup-btn-row">
               <button type="button" id="settings-export-box-btn" class="app-backup-action-btn export-btn" data-i18n="settings.box_export_btn">
-                💾 匯出備份 JSON
+                匯出備份 JSON
               </button>
               <label class="app-backup-action-btn import-btn" style="cursor:pointer;margin:0;">
-                <span data-i18n="settings.box_import_btn">📥 匯入還原 JSON</span>
+                <span data-i18n="settings.box_import_btn">匯入還原 JSON</span>
                 <input type="file" id="settings-import-box-input" accept=".json" style="display:none;">
               </label>
             </div>
