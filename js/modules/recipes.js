@@ -686,12 +686,15 @@
 
   function renderIngRow(ingredients) {
     return `<div class="recipe-ing-row">
-      ${ingredients.map(i => `
-        <div class="recipe-ing-chip" title="${i.name} × ${i.count}">
-          ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${i.name}" loading="lazy">` : ''}
+      ${ingredients.map(i => {
+        const ingDisplayName = window.I18N ? window.I18N.getIngredientName(i.name) : i.name;
+        return `
+        <div class="recipe-ing-chip" title="${ingDisplayName} × ${i.count}">
+          ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy">` : ''}
           <span class="recipe-ing-count">×${i.count}</span>
         </div>
-      `).join('')}
+      `;
+      }).join('')}
     </div>`;
   }
 
@@ -1086,12 +1089,15 @@
 
             <div class="recipe-desktop-ings">
               <div class="recipe-ing-row compact-4-row">
-                ${r.ingredients.map(i => `
-                  <div class="recipe-ing-chip compact-chip" title="${i.name} × ${i.count}">
-                    ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${i.name}" loading="lazy">` : ''}
+                ${r.ingredients.map(i => {
+                  const ingDisplayName = window.I18N ? window.I18N.getIngredientName(i.name) : i.name;
+                  return `
+                  <div class="recipe-ing-chip compact-chip" title="${ingDisplayName} × ${i.count}">
+                    ${i.icon ? `<img src="${i.icon}" class="recipe-ing-icon" alt="${ingDisplayName}" loading="lazy">` : ''}
                     <span class="recipe-ing-count">×${i.count}</span>
                   </div>
-                `).join('')}
+                `;
+                }).join('')}
               </div>
             </div>
           </div>
