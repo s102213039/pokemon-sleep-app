@@ -400,6 +400,7 @@ test('Tier 1 - Feature Coverage', 'Wiki Database Integrity: wiki.js defines skil
   assert(wikiContent.includes('MAIN_SKILLS_DATA'), 'wiki.js missing MAIN_SKILLS_DATA');
   assert(wikiContent.includes('SUB_SKILLS_DATA'), 'wiki.js missing SUB_SKILLS_DATA');
   assert(wikiContent.includes('TRIGGER_CHANCE_MATRIX'), 'wiki.js missing TRIGGER_CHANCE_MATRIX');
+  assert(wikiContent.includes('HELPING_SPEED_MATRIX'), 'wiki.js missing HELPING_SPEED_MATRIX');
   assert(wikiContent.includes('RATINGS_GUIDE_DATA'), 'wiki.js missing RATINGS_GUIDE_DATA');
   assert(wikiContent.includes('蓄力（能量填充S）') || wikiContent.includes('蓄力 (能量填充S)'), 'wiki.js missing Charge Stock skill data');
   assert(wikiContent.includes('幫手加速（屬性）') || wikiContent.includes('幫手加速 (屬性)'), 'wiki.js missing Helper Boost skill data');
@@ -982,6 +983,77 @@ test('Tier 1 - Feature Coverage', 'WikiDB Namespace & Event Handler Methods Inte
   assert(!threw, 'toggleBerryFavorite and nature toggles should execute cleanly');
 });
 
+test('Tier 1 - Feature Coverage', 'Helping Speed Limit & Calculation Matrix: Sub-skills 35% cap and Nature independent multiplier', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const mockStorage = new Map([['pksleep_lang', 'zh-TW']]);
+  const ctx = {
+    localStorage: {
+      getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+      setItem: (k, v) => mockStorage.set(k, String(v)),
+      removeItem: (k) => mockStorage.delete(k)
+    },
+    window: {
+      localStorage: {
+        getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+        setItem: (k, v) => mockStorage.set(k, String(v)),
+        removeItem: (k) => mockStorage.delete(k)
+      },
+      addEventListener: () => {}
+    },
+    document: {
+      documentElement: { setAttribute: () => {} },
+      getElementById: () => null,
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    console: console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(wikiCode, ctx);
+
+  const matrix = ctx.window.WikiDB.HELPING_SPEED_MATRIX || ctx.window.HELPING_SPEED_MATRIX;
+  assert(Array.isArray(matrix), 'HELPING_SPEED_MATRIX should be an array');
+  assert(matrix.length >= 10, `HELPING_SPEED_MATRIX should have at least 10 rows, got ${matrix.length}`);
+
+  // 1. Full team cap: (1 - 0.35) * 0.90 = 0.585 -> +70.94%
+  const teamCap = matrix.find(r => r.grade.includes('全隊極限') || r.grade_en.includes('Full Team'));
+  assert(teamCap, 'Full team cap row missing');
+  assertEquals(teamCap.intervalRatio, 0.585, 'Team cap interval ratio should be 0.585');
+  assertEquals(teamCap.intervalDisplay, '58.5%', 'Team cap intervalDisplay should be 58.5%');
+  assertEquals(teamCap.intervalDiff, '-41.5%', 'Team cap intervalDiff should be -41.5%');
+  assertEquals(teamCap.outputBoostDisplay, '+70.94%', 'Team cap output boost should be +70.94%');
+
+  // 2. Solo max cap: (1 - 0.26) * 0.90 = 0.666 -> +50.15%
+  const soloCap = matrix.find(r => r.grade.includes('單體滿配') || r.grade_en.includes('Solo Max'));
+  assert(soloCap, 'Solo cap row missing');
+  assertEquals(soloCap.intervalRatio, 0.666, 'Solo cap interval ratio should be 0.666');
+  assertEquals(soloCap.intervalDisplay, '66.6%', 'Solo cap intervalDisplay should be 66.6%');
+  assertEquals(soloCap.intervalDiff, '-33.4%', 'Solo cap intervalDiff should be -33.4%');
+  assertEquals(soloCap.outputBoostDisplay, '+50.15%', 'Solo cap output boost should be +50.15%');
+
+  // 3. Common Dual Speed: (1 - 0.21) * 0.90 = 0.711 -> +40.65%
+  const dualSpeed = matrix.find(r => r.grade.includes('常規雙幫忙速度') || r.grade.includes('常規雙幫速') || r.grade_en.includes('Dual Speed Up'));
+  assert(dualSpeed, 'Dual speed row missing');
+  assertEquals(dualSpeed.intervalRatio, 0.711, 'Dual speed interval ratio should be 0.711');
+  assertEquals(dualSpeed.outputBoostDisplay, '+40.65%', 'Dual speed output boost should be +40.65%');
+  assert(dualSpeed.subskills.some(s => s.name === '幫忙速度M'), 'Should use full name 幫忙速度M in subskills');
+  assert(dualSpeed.subskills.some(s => s.name === '幫忙速度S'), 'Should use full name 幫忙速度S in subskills');
+
+  // 4. Baseline row: 1.000 interval, +0.00% boost
+  const baseline = matrix.find(r => r.grade.includes('基準線'));
+  assert(baseline, 'Baseline row missing');
+  assertEquals(baseline.intervalRatio, 1.000, 'Baseline interval ratio should be 1.000');
+  assertEquals(baseline.outputBoostDisplay, '+0.00%', 'Baseline output boost should be +0.00%');
+
+  // 5. Speed Down row: 1.100 interval, -9.09% boost
+  const downRow = matrix.find(r => r.grade.includes('性格減速'));
+  assert(downRow, 'Speed down row missing');
+  assertEquals(downRow.intervalRatio, 1.100, 'Speed down interval ratio should be 1.100');
+  assertEquals(downRow.outputBoostDisplay, '-9.09%', 'Speed down output boost should be -9.09%');
+});
+
 // --- NEW Tier 1 Tests: Mobile H5 App Shell & Dock System ---
 test('Tier 1 - Feature Coverage', 'Mobile App Entry: app/index.html document structure and standalone HTML integrity', () => {
   const mobileHtmlPath = path.join(WORKSPACE_ROOT, 'app', 'index.html');
@@ -1233,6 +1305,85 @@ test('Tier 2 - Boundary & Corner Cases', 'Case-insensitive search (bulbasaur, Bu
     assert(res.length >= 1, `Search '${q}' should find results`);
     const match = res.find(p => getItemNameEN(p).toLowerCase() === 'bulbasaur');
     assert(match !== undefined, `Search '${q}' should match Bulbasaur`);
+  });
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Pokédex Typo-Tolerant & Loose Search (Chinese Homophones, English Typos, Strict Numeric IDs)', () => {
+  PokemonApp.init([...dataset]);
+  PokemonApp.onlyFinal = false;
+  PokemonApp.selectedTypes.clear();
+  PokemonApp.selectedSpecialties.clear();
+
+  // 1. 中文同音字與免選字寬鬆搜尋 (Chinese Homophones & IME Typos)
+  const cnTypoTests = [
+    { q: '一步', expect: ['伊布', '雷伊布', '水伊布'] },
+    { q: '依布', expect: ['伊布', '火伊布'] },
+    { q: '雷一步', expect: ['雷伊布'], notExpect: ['水伊布'] },
+    { q: '皮卡秋', expect: ['皮卡丘'] },
+    { q: '皮卡求', expect: ['皮卡丘'] },
+    { q: '梗鬼', expect: ['耿鬼'] },
+    { q: '班吉拉', expect: ['班基拉斯'] },
+    { q: '大鋼蛇', expect: ['大綱蛇'] },
+    { q: '大綱蛇', expect: ['大綱蛇'] },
+    { q: '沙奈舵', expect: ['沙奈朵'] },
+    { q: '帝亞海獅', expect: ['帝牙海獅'] },
+    { q: '爆雪王', expect: ['暴雪王'] },
+    { q: '東東鼠', expect: ['咚咚鼠'] },
+    { q: '耗大鯨', expect: ['浩大鯨'] },
+    { q: '秋農炮蟲', expect: ['鍬農炮蟲'] },
+    { q: '結尼龜', expect: ['傑尼龜'] },
+    { q: '水劍龜', expect: ['水箭龜'] },
+    { q: '妙花', expect: ['妙蛙花'] },
+    { q: '噴水龍', expect: ['噴火龍'] }
+  ];
+
+  cnTypoTests.forEach(tc => {
+    PokemonApp.currentSearch = tc.q;
+    const res = PokemonApp.filterData();
+    const names = res.map(p => getItemNameCN(p));
+    tc.expect.forEach(target => {
+      assert(names.includes(target), `Loose search for '${tc.q}' should match '${target}', got: [${names.slice(0, 5).join(', ')}]`);
+    });
+    if (tc.notExpect) {
+      tc.notExpect.forEach(unwanted => {
+        assert(!names.includes(unwanted), `Search for '${tc.q}' should NOT match '${unwanted}'`);
+      });
+    }
+  });
+
+  // 2. 英文拼字錯誤寬鬆搜尋 (English Typo Tolerance)
+  const enTypoTests = [
+    { q: 'eeve', expect: 'Eevee' },
+    { q: 'pikachuu', expect: 'Pikachu' },
+    { q: 'picachu', expect: 'Pikachu' },
+    { q: 'charzard', expect: 'Charizard' },
+    { q: 'blastose', expect: 'Blastoise' },
+    { q: 'tyraniter', expect: 'Tyranitar' },
+    { q: 'gengr', expect: 'Gengar' },
+    { q: 'balbasaur', expect: 'Bulbasaur' }
+  ];
+
+  enTypoTests.forEach(tc => {
+    PokemonApp.currentSearch = tc.q;
+    const res = PokemonApp.filterData();
+    const namesEN = res.map(p => getItemNameEN(p));
+    assert(namesEN.includes(tc.expect), `English typo search for '${tc.q}' should match '${tc.expect}'`);
+  });
+
+  // 3. 純數字嚴格編號邏輯 (Strict Numeric ID Matching - No False Positives)
+  const numTests = [
+    { q: '25', expectName: '皮卡丘' },
+    { q: '#0025', expectName: '皮卡丘' },
+    { q: '1', expectName: '妙蛙種子' },
+    { q: '#0001', expectName: '妙蛙種子' },
+    { q: '133', expectName: '伊布' }
+  ];
+
+  numTests.forEach(tc => {
+    PokemonApp.currentSearch = tc.q;
+    const res = PokemonApp.filterData();
+    assertEquals(res.length, 1, `Numeric query '${tc.q}' must strictly return 1 exact Pokémon, got ${res.length}`);
+    assertEquals(getItemNameCN(res[0]), tc.expectName, `Numeric query '${tc.q}' should strictly match '${tc.expectName}'`);
   });
 });
 
@@ -2193,6 +2344,8 @@ test('Tier 4 - Real-World Application Scenarios', 'SPA Tab Lifecycle, Hashchange
     assert(mockContainer.innerHTML.length > 50000, `Wiki HTML should be rendered for ${lang}, got length ${mockContainer.innerHTML.length}`);
     assert(mockContainer.innerHTML.includes('wiki-subpanel-skills'), 'Wiki should contain skills subpanel');
     assert(mockContainer.innerHTML.includes('wiki-subpanel-subskills'), 'Wiki should contain subskills subpanel');
+    assert(mockContainer.innerHTML.includes('wiki-card-speed-guide'), 'Wiki should contain helping speed guide card');
+    assert(mockContainer.innerHTML.includes('58.5%'), 'Wiki should display 58.5% interval');
     assert(mockContainer.innerHTML.includes('wiki-subpanel-ratings'), 'Wiki should contain ratings subpanel');
     assert(mockContainer.innerHTML.includes('wiki-subpanel-ingredients'), 'Wiki should contain ingredients subpanel');
     assert(mockContainer.innerHTML.includes('wiki-subpanel-values'), 'Wiki should contain values subpanel');
@@ -2606,6 +2759,460 @@ test('Tier 2 - Boundary & Corner Cases', 'Ingredient Ladder: Dense Ranking & Mul
   // Card 7 (請假王 43) must have #5
   assertEquals(cards[6][2], '#5', '7th card (請假王 43) must have #5');
 });
+
+test('Tier 1 - Feature Coverage', 'FlagsAPI National Flags Integration for Language Switcher (Desktop & Mobile)', () => {
+  const desktopHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+  const mobileHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+  const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // Both index.html and app/index.html must have TW and US flags from FlagsAPI
+  assert(desktopHtml.includes('https://flagsapi.com/TW/flat/64.png'), 'Desktop must use TW flag from flagsapi.com');
+  assert(desktopHtml.includes('https://flagsapi.com/US/flat/64.png'), 'Desktop must use US flag from flagsapi.com');
+  assert(mobileHtml.includes('https://flagsapi.com/TW/flat/64.png'), 'Mobile must use TW flag from flagsapi.com');
+  assert(mobileHtml.includes('https://flagsapi.com/US/flat/64.png'), 'Mobile must use US flag from flagsapi.com');
+
+  // styles.css must have appropriate sizing rules
+  assert(css.includes('.lang-flag-icon'), 'styles.css must style .lang-flag-icon');
+  assert(css.includes('.app-segment-btn .lang-flag-icon'), 'styles.css must style mobile .lang-flag-icon');
+});
+
+test('Tier 1 - Feature Coverage', 'News Event Calendar Selected and Today Borderless Styling', () => {
+  const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // Selected date must use translucent gray background, no glow (box-shadow: none), and no outline
+  assert(css.includes('.news-cal-day-cell.is-selected'), 'styles.css must style .news-cal-day-cell.is-selected');
+  assert(css.includes('background: rgba(148, 163, 184, 0.22) !important;'), 'Selected cell must have translucent gray background');
+  assert(css.includes('box-shadow: none !important;'), 'Selected cell must not use glow box-shadow');
+  assert(!css.includes('outline: 2px solid #ffffff'), 'Selected cell must not use 2px solid border/outline');
+
+  // Today date must use white text, no 2px outline or solid medallion, and pulsing heartbeat dot
+  assert(!css.includes('outline: 2px solid var(--color-primary'), 'Today cell must not use 2px solid border/outline');
+  assert(css.includes('color: #ffffff !important; /* 今日文字使用白色 */'), 'Today date number must use white color');
+  assert(css.includes('.news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num'), 'Today must style day-num');
+  assert(css.includes('todayHeartbeat'), 'styles.css must define todayHeartbeat animation');
+
+  // News items sections dashboard must be transparent and borderless on desktop web
+  assert(css.includes('.news-ai-dashboard {'), 'styles.css must style .news-ai-dashboard');
+  assert(css.includes('.news-ai-dashboard {\n  background: transparent !important;\n  border: none !important;'), 'News AI dashboard must be transparent and borderless');
+});
+
+test('Tier 1 - Feature Coverage', 'News Event Calendar Desktop Side-by-Side Parallel Layout & Mobile Stacked Preservation', () => {
+  const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  const newsJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'news.js'), 'utf8');
+
+  // news.js must wrap calendar column
+  assert(newsJs.includes('class="news-calendar-cal-col"'), 'news.js must wrap calendar in .news-calendar-cal-col');
+  assert(newsJs.includes('class="news-calendar-events-box"'), 'news.js must contain .news-calendar-events-box');
+
+  // Desktop styles: Grid layout side-by-side
+  assert(css.includes('.news-calendar-wrapper {'), 'styles.css must style .news-calendar-wrapper');
+  assert(css.includes('grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;'), 'Desktop calendar wrapper must use 2-column equal-width parallel grid (50/50)');
+  assert(css.includes('.news-calendar-cal-col {'), 'styles.css must style .news-calendar-cal-col');
+
+  // Mobile styles: Must strictly preserve flex-direction: column
+  assert(css.includes('.mobile-h5-app .news-calendar-wrapper {'), 'styles.css must scope mobile wrapper');
+  assert(css.includes('flex-direction: column !important;'), 'Mobile wrapper must preserve column stacking');
+  assert(css.includes('.mobile-h5-app .news-calendar-cal-col {'), 'styles.css must style mobile cal-col');
+});
+
+test('Tier 1 - Feature Coverage', 'News Event & Bundle Expiration Status Badges and Clean UI', () => {
+  const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  const newsJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'news.js'), 'utf8');
+
+  // styles.css must define expired status badge styles and expired card dimming
+  assert(css.includes('.news-card.is-expired'), 'styles.css must style .news-card.is-expired');
+  assert(css.includes('.news-status-badge.status-expired'), 'styles.css must style .news-status-badge.status-expired');
+  assert(css.includes('.news-cal-status-tag.status-expired'), 'styles.css must style .news-cal-status-tag.status-expired');
+
+  // news.js must check expiration, render top status-expired badge, and omit bulky alert banner
+  assert(newsJs.includes("timeStatus === 'expired'"), 'news.js must detect expired events/bundles');
+  assert(newsJs.includes('news-status-badge status-expired'), 'news.js must render status-expired badge on top');
+  assert(!newsJs.includes('news-expired-alert-banner'), 'news.js must not render bulky news-expired-alert-banner inside card');
+  assert(newsJs.includes('news-cal-status-tag status-expired'), 'news.js must render status-expired in calendar event list');
+});
+
+test('Tier 1 - Feature Coverage', 'Ingredient Ladder Universal Simplified Recipe Model (XXC, AAX, ABX, ABA, ABB, AAA)', () => {
+  const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  assert(css.includes('.recipe-tag-aaa'), 'styles.css must style .recipe-tag-aaa');
+  assert(css.includes('.recipe-tag-abb'), 'styles.css must style .recipe-tag-abb');
+  assert(css.includes('.recipe-tag-aba'), 'styles.css must style .recipe-tag-aba');
+  assert(css.includes('.recipe-tag-xxc'), 'styles.css must style .recipe-tag-xxc');
+  assert(css.includes('.recipe-tag-aax'), 'styles.css must style .recipe-tag-aax');
+  assert(css.includes('.recipe-tag-abx'), 'styles.css must style .recipe-tag-abx');
+
+  const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const ctx = {
+    window: {
+      I18N: {
+        getLanguage: () => 'zh-TW',
+        getIngredientName: (name) => name,
+        getPokemonName: (name) => name,
+        translateDynamicText: (text) => text,
+        getIngredientIcon: () => null
+      }
+    },
+    document: {
+      querySelectorAll: () => [],
+      getElementById: () => null,
+      createElement: () => ({ style: {}, classList: { add: () => {}, remove: () => {} } })
+    },
+    console: console
+  };
+  vm.createContext(ctx);
+  vm.runInContext(wikiJs, ctx);
+
+  const WikiDB = ctx.window.WikiDB;
+  assert(typeof WikiDB.mergeRecipeCodes === 'function', 'mergeRecipeCodes must be exported');
+  assertEquals(WikiDB.mergeRecipeCodes(['AAC', 'ABC']), 'AXC', "['AAC', 'ABC'] must merge to 'AXC'");
+
+  // Verify that across all ladder data, zero duplicate-yield variants exist for any Pokemon
+  const ladderData = WikiDB.LV60_COORDINATE_LADDER_DATA;
+  let xxcCount = 0;
+  let aaxCount = 0;
+  let abaCount = 0;
+  let aaaCount = 0;
+  let abbCount = 0;
+  let duplicateCountErrors = 0;
+
+  ladderData.forEach(ing => {
+    ing.pokemon.forEach(p => {
+      const countsSeen = new Set();
+      (p.variants || []).forEach(v => {
+        if (countsSeen.has(v.count)) {
+          duplicateCountErrors++;
+        }
+        countsSeen.add(v.count);
+        if (v.recipe === 'XXC') xxcCount++;
+        if (v.recipe === 'AAX') aaxCount++;
+        if (v.recipe === 'ABA') abaCount++;
+        if (v.recipe === 'AAA') aaaCount++;
+        if (v.recipe === 'ABB') abbCount++;
+      });
+    });
+  });
+
+  assertEquals(duplicateCountErrors, 0, 'No Pokemon should have duplicate-yield variants');
+  assertEquals(xxcCount, 108, 'Ingredient C track entries must be unified into universal XXC (108 variants)');
+  assertEquals(aaxCount, 114, 'Pos A dual ingredients must be unified into universal AAX (114 variants)');
+  assertEquals(abaCount, 114, 'ABA combinations must be 114 variants for Pos A pokemons with Lv.60 A');
+  assertEquals(aaaCount, 114, 'AAA combinations must be 114 variants');
+  assertEquals(abbCount, 114, 'ABB combinations must be 114 variants');
+
+  // Verify specific Skeledirge calculations on Apple track
+  const appleTrack = ladderData.find(i => i.id === 'apple');
+  const skeledirge = appleTrack.pokemon.find(p => p.name === '骨紋巨聲鱷');
+  assert(skeledirge, 'Skeledirge must exist in apple track');
+  const skelVariants = skeledirge.variants.reduce((acc, v) => { acc[v.recipe] = v.count; return acc; }, {});
+  assertEquals(skelVariants['AAA'], 91, 'Skeledirge AAA apple count should be 91');
+  assertEquals(skelVariants['ABA'], 58, 'Skeledirge ABA apple count should be 58');
+  assertEquals(skelVariants['AAX'], 46, 'Skeledirge AAX apple count should be 46');
+  assertEquals(skelVariants['ABX'], 13, 'Skeledirge ABX apple count should be 13');
+
+  // Verify specific Pinsir calculations on Apple track (Apple is position B)
+  const pinsir = appleTrack.pokemon.find(p => p.name === '凱羅斯');
+  assert(pinsir, 'Pinsir must exist in apple track');
+  const pinsirVariants = pinsir.variants.reduce((acc, v) => { acc[v.recipe] = v.count; return acc; }, {});
+  assertEquals(pinsirVariants['ABB'], 76, 'Pinsir ABB apple count should be 76');
+  assertEquals(pinsirVariants['AAB'], 47, 'Pinsir AAB apple count should be 47');
+  assertEquals(pinsirVariants['ABX'], 29, 'Pinsir ABX apple count should be 29');
+
+  // Verify specific Xatu (天然鳥) on Apple track (Apple is position C)
+  const xatu = appleTrack.pokemon.find(p => p.name === '天然鳥');
+  assert(xatu, 'Xatu must exist in apple track');
+  assertEquals(xatu.recipe, 'XXC', 'Xatu in apple track should have universal XXC recipe');
+  assertEquals(xatu.count, 25, 'Xatu in apple track should have 25 count');
+  assertEquals(xatu.variants.length, 1, 'Xatu should have exactly 1 universal XXC variant');
+
+  // Verify Gourgeist consolidation: only 1 entry in each of soybeans, potato, pumpkin
+  const soybeansGourgeist = ladderData.find(i => i.id === 'soybeans').pokemon.filter(p => p.name.includes('南瓜怪人'));
+  assertEquals(soybeansGourgeist.length, 1, 'Soybeans track must have exactly 1 consolidated Gourgeist');
+  assertEquals(soybeansGourgeist[0].name, '南瓜怪人', 'Gourgeist name should be clean 南瓜怪人');
+  assertEquals(soybeansGourgeist[0].count, 79, 'Soybeans Gourgeist count should be 79 (Small Variety)');
+
+  const pumpkinGourgeist = ladderData.find(i => i.id === 'pumpkin').pokemon.filter(p => p.name.includes('南瓜怪人'));
+  assertEquals(pumpkinGourgeist.length, 1, 'Pumpkin track must have exactly 1 consolidated Gourgeist');
+  assertEquals(pumpkinGourgeist[0].count, 38, 'Pumpkin Gourgeist count should be 38 (Small Variety)');
+
+  // Verify Eeveelutions consolidation: unified into "伊布家族（8種進化）" across milk, sausage, cacao
+  const eeveelutionNames = ['水伊布', '雷伊布', '火伊布', '太陽伊布', '月亮伊布', '葉伊布', '冰伊布', '仙子伊布'];
+  ['milk', 'sausage', 'cacao'].forEach(trackId => {
+    const track = ladderData.find(i => i.id === trackId);
+    const eeveeFam = track.pokemon.filter(p => p.name === '伊布家族（8種進化）');
+    assertEquals(eeveeFam.length, 1, `${trackId} track must have exactly 1 consolidated '伊布家族（8種進化）'`);
+    eeveelutionNames.forEach(ename => {
+      const standalone = track.pokemon.filter(p => p.name === ename);
+      assertEquals(standalone.length, 0, `${trackId} track must not have standalone ${ename}`);
+    });
+  });
+
+  // Verify search matching and alias resolution for consolidated Eevee family
+  assert(WikiDB.matchesLadderSearch('伊布家族（8種進化）', 'Eevee Evolutions (8 Forms)', '雷伊布'), 'Search for 雷伊布 matches Eevee family');
+  assert(WikiDB.matchesLadderSearch('伊布家族（8種進化）', 'Eevee Evolutions (8 Forms)', 'jolteon'), 'Search for jolteon matches Eevee family');
+  assert(WikiDB.matchesLadderSearch('伊布家族（8種進化）', 'Eevee Evolutions (8 Forms)', '水伊布'), 'Search for 水伊布 matches Eevee family');
+  assert(WikiDB.matchesLadderSearch('伊布家族（8種進化）', 'Eevee Evolutions (8 Forms)', 'vaporeon'), 'Search for vaporeon matches Eevee family');
+  assert(!WikiDB.matchesLadderSearch('伊布家族（8種進化）', 'Eevee Evolutions (8 Forms)', '皮卡丘'), 'Search for 皮卡丘 does NOT match Eevee family');
+
+  // Verify the 4 original recipe filter buttons logic (ALL, AAA, ABB, AXX)
+  const xxcVariant = { recipe: 'XXC', origRecipes: ['AAC', 'ABC'] };
+  const aaxVariant = { recipe: 'AAX', origRecipes: ['AAB', 'AAC'] };
+  const abxVariant = { recipe: 'ABX', origRecipes: ['ABA', 'ABC'] };
+  const aaaVariant = { recipe: 'AAA' };
+  const abbVariant = { recipe: 'ABB' };
+
+  assert(WikiDB.matchesLadderRecipeFilter(xxcVariant, 'ALL'), 'XXC must match ALL filter');
+  assert(WikiDB.matchesLadderRecipeFilter(xxcVariant, 'AXX'), 'XXC must match AXX mix filter');
+  assert(!WikiDB.matchesLadderRecipeFilter(xxcVariant, 'AAA'), 'XXC must NOT match AAA filter');
+  assert(!WikiDB.matchesLadderRecipeFilter(xxcVariant, 'ABB'), 'XXC must NOT match ABB filter');
+
+  assert(WikiDB.matchesLadderRecipeFilter(aaxVariant, 'AXX'), 'AAX must match AXX mix filter');
+  assert(WikiDB.matchesLadderRecipeFilter(abxVariant, 'AXX'), 'ABX must match AXX mix filter');
+  assert(WikiDB.matchesLadderRecipeFilter(aaaVariant, 'AAA'), 'AAA must match AAA filter');
+  assert(!WikiDB.matchesLadderRecipeFilter(aaaVariant, 'AXX'), 'AAA must NOT match AXX filter');
+  assert(WikiDB.matchesLadderRecipeFilter(abbVariant, 'ABB'), 'ABB must match ABB filter');
+  assert(!WikiDB.matchesLadderRecipeFilter(abbVariant, 'AXX'), 'ABB must NOT match AXX filter');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Main Tab and Internal Sub-Tabs Persistence across Page Reloads & Tab Switches', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+  const appCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+
+  const sharedStorage = {};
+  const mockStorage = {
+    getItem: (k) => sharedStorage[k] !== undefined ? sharedStorage[k] : null,
+    setItem: (k, v) => { sharedStorage[k] = String(v); },
+    removeItem: (k) => { delete sharedStorage[k]; }
+  };
+
+  function createEnv(initialHash = '') {
+    const mockElements = {};
+    function getEl(id) {
+      if (!mockElements[id]) {
+        mockElements[id] = {
+          id: id,
+          style: { display: '' },
+          classList: {
+            _classes: new Set(),
+            add: function(c) { this._classes.add(c); },
+            remove: function(c) { this._classes.delete(c); },
+            contains: function(c) { return this._classes.has(c); },
+            toggle: function(c, force) {
+              if (force === undefined) {
+                if (this._classes.has(c)) this._classes.delete(c);
+                else this._classes.add(c);
+              } else if (force) {
+                this._classes.add(c);
+              } else {
+                this._classes.delete(c);
+              }
+            }
+          },
+          getAttribute: (a) => null,
+          setAttribute: () => {},
+          addEventListener: () => {},
+          querySelectorAll: () => []
+        };
+      }
+      return mockElements[id];
+    }
+
+    const domListeners = [];
+    const ctx = {
+      localStorage: mockStorage,
+      sessionStorage: mockStorage,
+      window: {
+        location: { hash: initialHash },
+        localStorage: mockStorage,
+        sessionStorage: mockStorage,
+        history: {
+          replaceState: (state, title, url) => {
+            if (url && url.startsWith('#')) {
+              ctx.window.location.hash = url;
+            }
+          }
+        },
+        addEventListener: () => {},
+        innerWidth: 1200
+      },
+      document: {
+        readyState: 'complete',
+        documentElement: {
+          setAttribute: () => {},
+          getAttribute: () => null,
+          removeAttribute: () => {}
+        },
+        body: {
+          classList: {
+            _classes: new Set(),
+            add: function(c) { this._classes.add(c); },
+            remove: function(c) { this._classes.delete(c); },
+            contains: function(c) { return this._classes.has(c); }
+          }
+        },
+        getElementById: getEl,
+        querySelectorAll: (sel) => [],
+        querySelector: (sel) => null,
+        addEventListener: (evt, cb) => {
+          if (evt === 'DOMContentLoaded') domListeners.push(cb);
+        }
+      },
+      console: console,
+      setTimeout: setTimeout
+    };
+    ctx.window.window = ctx.window;
+    ctx.window.document = ctx.document;
+    vm.createContext(ctx);
+    ctx.triggerReady = () => {
+      domListeners.forEach(cb => { try { cb(); } catch (e) {} });
+    };
+    return ctx;
+  }
+
+  // 1. Session 1: User navigates to Wiki and selects Subskills sub-tab
+  const env1 = createEnv('#wiki');
+  vm.runInContext(i18nCode, env1);
+  vm.runInContext(wikiCode, env1);
+  vm.runInContext(boxCode, env1);
+  vm.runInContext(appCode, env1);
+  env1.triggerReady();
+
+  assert(typeof env1.window.WikiDB.switchSubTab === 'function', 'WikiDB.switchSubTab must exist');
+  env1.window.WikiDB.switchSubTab('subskills');
+  assertEquals(sharedStorage['pksleep_active_wiki_subtab'], 'subskills', 'Wiki subtab should be saved to localStorage');
+  assertEquals(env1.window.location.hash, '#wiki/subskills', 'Hash should sync with subtab');
+
+  // 2. User switches to Box and selects Lab sub-tab
+  env1.window.switchMainTab('box');
+  assertEquals(sharedStorage['pksleep_active_main_tab'], 'box', 'Main tab should be saved to localStorage');
+  env1.window.switchBoxSubtab('lab');
+  assertEquals(sharedStorage['pksleep_active_box_subtab'], 'lab', 'Box subtab should be saved to localStorage');
+  assertEquals(env1.window.location.hash, '#box/lab', 'Hash should sync with box lab subtab');
+
+  // 3. User switches back to Wiki: subtab must be remembered as subskills!
+  env1.window.switchMainTab('wiki');
+  assertEquals(sharedStorage['pksleep_active_main_tab'], 'wiki', 'Main tab is wiki');
+  assertEquals(env1.window.WikiDB.getCurrentSubTab(), 'subskills', 'Wiki must preserve last viewed subskills subtab after main tab switch');
+  assertEquals(env1.window.location.hash, '#wiki/subskills', 'Hash must restore #wiki/subskills');
+
+  // 4. Session 2 (Page Refresh): simulate reload on #wiki
+  const env2 = createEnv('#wiki');
+  vm.runInContext(i18nCode, env2);
+  vm.runInContext(wikiCode, env2);
+  vm.runInContext(boxCode, env2);
+  vm.runInContext(appCode, env2);
+  env2.triggerReady();
+
+  assertEquals(env2.window.WikiDB.getCurrentSubTab(), 'subskills', 'Wiki must restore subskills on reload');
+  assertEquals(env2.window.getCurrentBoxSubtab(), 'lab', 'Box must restore lab on reload');
+
+  // 5. Session 3: simulate reload with no hash (root entry)
+  const env3 = createEnv('');
+  vm.runInContext(i18nCode, env3);
+  vm.runInContext(wikiCode, env3);
+  vm.runInContext(boxCode, env3);
+  vm.runInContext(appCode, env3);
+  env3.triggerReady();
+
+  assertEquals(sharedStorage['pksleep_active_main_tab'], 'wiki', 'Main tab remembered as wiki');
+  assertEquals(env3.window.WikiDB.getCurrentSubTab(), 'subskills', 'Subtab remembered as subskills');
+});
+
+test('Tier 1 - Feature Coverage', 'Ingredient Ladder Multi-Criteria Track Sorting (ENERGY_ASC, ENERGY_DESC, YIELD_DESC, DEMAND_DESC)', () => {
+  const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  let badgeEl = { textContent: '', style: { display: 'none', setProperty: () => {} } };
+  let coordinateContainer = { innerHTML: '', style: { setProperty: () => {} } };
+  const mockStorage = new Map([['pksleep_lang', 'zh-TW']]);
+  const ctx = {
+    localStorage: {
+      getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+      setItem: (k, v) => mockStorage.set(k, String(v)),
+      removeItem: (k) => mockStorage.delete(k)
+    },
+    window: {
+      localStorage: {
+        getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+        setItem: (k, v) => mockStorage.set(k, String(v)),
+        removeItem: (k) => mockStorage.delete(k)
+      },
+      addEventListener: () => {},
+      I18N: { getLanguage: () => 'zh-TW', getIngredientName: (s) => s, getPokemonName: (s) => s }
+    },
+    document: {
+      body: { classList: { contains: () => false }, appendChild: () => {} },
+      documentElement: { setAttribute: () => {} },
+      getElementById: (id) => {
+        if (id === 'ladder-sidebar-bookmark-badge') return badgeEl;
+        if (id === 'wiki-ingredient-ladder-coordinate') return coordinateContainer;
+        return null;
+      },
+      querySelectorAll: () => [],
+      createElement: () => ({ setAttribute: () => {}, innerHTML: '', className: '', id: '', style: {} }),
+      addEventListener: () => {}
+    },
+    console: console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(wikiJs, ctx);
+
+  const WikiDB = ctx.window.WikiDB;
+  assert(typeof WikiDB.setLadderSortOrder === 'function', 'WikiDB.setLadderSortOrder must be a function');
+  assert(typeof WikiDB.getLadderSortOrder === 'function', 'WikiDB.getLadderSortOrder must be a function');
+
+  // 1. Verify default sort order is ENERGY_ASC
+  assertEquals(WikiDB.getLadderSortOrder(), 'ENERGY_ASC', 'Default sort order must be ENERGY_ASC');
+
+  // Helper to extract track order from rendered coordinate ladder HTML
+  const extractTrackOrder = () => {
+    WikiDB.refreshCoordinateLadder();
+    const matches = [...coordinateContainer.innerHTML.matchAll(/<div class="ladder-track-row [^"]*" data-ladder-ing="([^"]+)">/g)];
+    return matches.map(m => m[1]);
+  };
+
+  // 2. Test Default: ENERGY_ASC (apple 90 -> ... -> pumpkin 250)
+  const tracksEnergyAsc = extractTrackOrder();
+  assertEquals(tracksEnergyAsc[0], 'apple', 'ENERGY_ASC: Apple (energy 90) must be first track');
+  assertEquals(tracksEnergyAsc[tracksEnergyAsc.length - 1], 'pumpkin', 'ENERGY_ASC: Pumpkin (energy 250) must be last main track');
+
+  // 3. Test ENERGY_DESC (pumpkin 250 -> ... -> apple 90)
+  WikiDB.setLadderSortOrder('ENERGY_DESC');
+  assertEquals(WikiDB.getLadderSortOrder(), 'ENERGY_DESC', 'Sort order must switch to ENERGY_DESC');
+  const tracksEnergyDesc = extractTrackOrder();
+  assertEquals(tracksEnergyDesc[0], 'pumpkin', 'ENERGY_DESC: Pumpkin (energy 250) must be first track');
+  assertEquals(tracksEnergyDesc[1], 'leek', 'ENERGY_DESC: Leek (energy 185) must be second track');
+  assertEquals(tracksEnergyDesc[tracksEnergyDesc.length - 1], 'apple', 'ENERGY_DESC: Apple (energy 90) must be last main track');
+
+  // 4. Test YIELD_DESC (herb 93 -> ... -> pumpkin 38)
+  WikiDB.setLadderSortOrder('YIELD_DESC');
+  assertEquals(WikiDB.getLadderSortOrder(), 'YIELD_DESC', 'Sort order must switch to YIELD_DESC');
+  const tracksYieldDesc = extractTrackOrder();
+  assertEquals(tracksYieldDesc[0], 'herb', 'YIELD_DESC: Herb (top yield 93) must be first track');
+  assertEquals(tracksYieldDesc[1], 'apple', 'YIELD_DESC: Apple (top yield 91) must be second track');
+  assertEquals(tracksYieldDesc[tracksYieldDesc.length - 1], 'pumpkin', 'YIELD_DESC: Pumpkin (top yield 38) must be last main track');
+
+  // 5. Test DEMAND_DESC (milk 41 -> ginger 39 -> ... -> pumpkin/sausage 20)
+  WikiDB.setLadderSortOrder('DEMAND_DESC');
+  assertEquals(WikiDB.getLadderSortOrder(), 'DEMAND_DESC', 'Sort order must switch to DEMAND_DESC');
+  const tracksDemandDesc = extractTrackOrder();
+  assertEquals(tracksDemandDesc[0], 'milk', 'DEMAND_DESC: Milk (key dish need 41) must be first track');
+  assertEquals(tracksDemandDesc[1], 'ginger', 'DEMAND_DESC: Ginger (key dish need 39) must be second track');
+  assertEquals(tracksDemandDesc[2], 'honey', 'DEMAND_DESC: Honey (key dish need 38) must be third track');
+
+  // 6. Test active filter badge count
+  WikiDB.updateLadderActiveFilterBadge();
+  assertEquals(badgeEl.style.display, 'inline-flex', 'Badge must display when sort order is non-default');
+  assertEquals(badgeEl.textContent, 1, 'Badge count must include sort order when non-default');
+
+  // 7. Test Reset Filters
+  WikiDB.resetLadderFilters();
+  assertEquals(WikiDB.getLadderSortOrder(), 'ENERGY_ASC', 'resetLadderFilters must reset sort order to ENERGY_ASC');
+  const tracksAfterReset = extractTrackOrder();
+  assertEquals(tracksAfterReset[0], 'apple', 'Track order after reset must return to Apple first');
+});
+
+
 
 // Final Summary Output
 console.log('\n======================================================');

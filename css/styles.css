@@ -595,68 +595,65 @@
   --bg-radial-3: rgba(15, 23, 42, 0.98);
 }
 
-/* ☯️ 主題反色切換控制列 (Theme Inversion Switch Control Row - Compact) */
-.theme-invert-control-row {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.theme-invert-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.theme-invert-icon {
-  display: none !important;
-}
-
-.theme-invert-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.theme-invert-desc {
-  display: none !important;
-}
-
-/* 📱 手機 H5 反色控制列 */
+/* ☯️ 主題反色切換控制 (Theme Inversion Header Control - Minimalist) */
+.theme-invert-control-row,
 .app-theme-invert-control-row {
-  margin-top: 8px;
-  padding: 6px 10px;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  margin: 0 0 0 auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 4px !important;
+  cursor: pointer;
+  flex-shrink: 0 !important;
 }
 
-.app-theme-invert-info {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.app-theme-invert-icon {
-  display: none !important;
-}
-
+.theme-invert-title,
 .app-theme-invert-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-primary);
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  color: var(--text-secondary) !important;
+  user-select: none;
+  cursor: pointer;
+  letter-spacing: 0.1px;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  transition: color 0.2s ease;
 }
 
+.theme-invert-control-row:hover .theme-invert-title,
+.app-theme-invert-control-row:hover .app-theme-invert-title {
+  color: var(--text-main) !important;
+}
+
+.theme-invert-control-row .switch,
+.app-theme-invert-control-row .switch {
+  display: inline-flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  height: 16px !important;
+  flex-shrink: 0 !important;
+}
+
+.theme-invert-info,
+.app-theme-invert-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.theme-invert-icon,
+.app-theme-invert-icon,
+.theme-invert-desc,
 .app-theme-invert-desc {
   display: none !important;
 }
@@ -1497,6 +1494,23 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
 .switch-checkbox:checked + .switch-slider::before {
   transform: translateX(16px);
   background-color: #ffffff;
+}
+
+/* 微型 switch 按鈕 (.switch-sm) */
+.switch-sm .switch-slider {
+  width: 28px !important;
+  height: 16px !important;
+}
+
+.switch-sm .switch-slider::before {
+  height: 10px !important;
+  width: 10px !important;
+  left: 3px !important;
+  bottom: 3px !important;
+}
+
+.switch-sm .switch-checkbox:checked + .switch-slider::before {
+  transform: translateX(12px) !important;
 }
 
 .switch-text {
@@ -3585,14 +3599,31 @@ html[lang="en"] .recipe-name-wrapper,
   font-family: monospace, -apple-system;
 }
 
-/* ⚡ 桌面版食譜預估能量 3 階垂直排列 (Desktop 3-Stack Energy Rows: 1x / 2x / 3x) */
+/* 桌面版食譜預估能量 3 階垂直排列 (Desktop 3-Stack Energy Rows: 1x / 2x / 3x) */
+.recipe-table th[data-sort="energy"],
+.recipe-table th.th-energy {
+  font-size: 14px !important;
+  padding-right: 32px !important;
+}
+
+.recipe-table th.th-energy .table-sub-header {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.recipe-table td.recipe-energy-cell {
+  padding-right: 32px !important;
+}
+
 .desktop-energy-stack {
   display: inline-flex;
   flex-direction: column;
   align-items: flex-end;
   justify-content: center;
   gap: 2px;
-  min-width: 95px;
+  min-width: 110px;
 }
 
 .desktop-energy-stack.has-tasty {
@@ -3603,28 +3634,38 @@ html[lang="en"] .recipe-name-wrapper,
   display: flex;
   align-items: baseline;
   justify-content: flex-end;
-  gap: 4px;
+  gap: 5px;
   width: 100%;
   line-height: 1.25;
 }
 
 .desktop-energy-row .energy-multiplier {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   font-family: monospace, -apple-system, sans-serif;
   opacity: 0.85;
-  width: 16px;
+  width: 18px;
   text-align: left;
   flex-shrink: 0;
 }
 
 .desktop-energy-row .energy-number {
-  font-size: 13.5px;
+  font-size: 15.5px;
   font-weight: 700;
   font-family: monospace, -apple-system, sans-serif;
   white-space: nowrap;
   text-align: right;
   flex: 1;
+}
+
+.desktop-energy-stack.single-energy .desktop-energy-row .energy-number {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.desktop-energy-stack.has-tasty .desktop-energy-row .energy-number {
+  font-size: 15px;
+  font-weight: 700;
 }
 
 /* 1x: 主文字色 (柔和白/灰/黑) */
@@ -5396,6 +5437,209 @@ input[type=range].rf-slider.event-slider {
   50% { opacity: 1; transform: scale(1.04); }
 }
 
+/* 🏷️ 活動狀態標籤 (Status Badges: Expired / Ongoing / Upcoming) */
+.news-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+
+.news-status-badge.status-expired {
+  background: rgba(239, 68, 68, 0.16);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.45);
+}
+
+.news-status-badge.status-ongoing {
+  background: rgba(16, 185, 129, 0.16);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.45);
+}
+
+.news-status-badge.status-upcoming {
+  background: rgba(56, 189, 248, 0.16);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+}
+
+[data-theme="dawn"] .news-status-badge.status-expired,
+[data-theme="emerald"] .news-status-badge.status-expired {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+[data-theme="dawn"] .news-status-badge.status-ongoing,
+[data-theme="emerald"] .news-status-badge.status-ongoing {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+[data-theme="dawn"] .news-status-badge.status-upcoming,
+[data-theme="emerald"] .news-status-badge.status-upcoming {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-color: #7dd3fc;
+}
+
+/* ⚠️ 特殊醒目過期警告橫條 (Special Eye-Catching Expired Alert Banner) */
+.news-expired-alert-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-left: 4px solid #ef4444;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 6px 0 10px 0;
+  box-sizing: border-box;
+}
+
+.news-expired-alert-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.3px;
+  margin-top: 1px;
+}
+
+.news-expired-alert-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.news-expired-alert-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #f87171;
+  line-height: 1.35;
+}
+
+.news-expired-alert-desc {
+  font-size: 11.5px;
+  color: var(--text-secondary, #94a3b8);
+  line-height: 1.5;
+}
+
+[data-theme="dawn"] .news-expired-alert-banner,
+[data-theme="emerald"] .news-expired-alert-banner {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  border-left-color: #dc2626;
+}
+
+[data-theme="dawn"] .news-expired-alert-badge,
+[data-theme="emerald"] .news-expired-alert-badge {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #f87171;
+}
+
+[data-theme="dawn"] .news-expired-alert-title,
+[data-theme="emerald"] .news-expired-alert-title {
+  color: #b91c1c;
+}
+
+[data-theme="dawn"] .news-expired-alert-desc,
+[data-theme="emerald"] .news-expired-alert-desc {
+  color: #64748b;
+}
+
+/* ⏳ 已過期新聞卡片微弱化 (Expired News Card Visual Muting) */
+.news-card.is-expired {
+  opacity: 0.85;
+  border-color: rgba(239, 68, 68, 0.22) !important;
+  transition: opacity 0.25s ease, border-color 0.25s ease;
+}
+
+.news-card.is-expired:hover {
+  opacity: 1;
+  border-color: rgba(239, 68, 68, 0.45) !important;
+}
+
+[data-theme="dawn"] .news-card.is-expired,
+[data-theme="emerald"] .news-card.is-expired {
+  opacity: 0.88;
+  border-color: #fecaca !important;
+}
+
+[data-theme="dawn"] .news-card.is-expired:hover,
+[data-theme="emerald"] .news-card.is-expired:hover {
+  opacity: 1;
+  border-color: #f87171 !important;
+}
+
+/* 📅 日曆活動清單狀態標籤 (Calendar Event List Status Tag) */
+.news-cal-status-tag {
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.news-cal-status-tag.status-expired {
+  background: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.news-cal-status-tag.status-ongoing {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.news-cal-status-tag.status-upcoming {
+  background: rgba(56, 189, 248, 0.18);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+[data-theme="dawn"] .news-cal-status-tag.status-expired,
+[data-theme="emerald"] .news-cal-status-tag.status-expired {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
+[data-theme="dawn"] .news-cal-status-tag.status-ongoing,
+[data-theme="emerald"] .news-cal-status-tag.status-ongoing {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+[data-theme="dawn"] .news-cal-status-tag.status-upcoming,
+[data-theme="emerald"] .news-cal-status-tag.status-upcoming {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-color: #7dd3fc;
+}
+
+.news-cal-event-item.is-expired {
+  opacity: 0.75;
+}
+
+.news-cal-event-item.is-expired:hover {
+  opacity: 1;
+}
+
 .news-source-link {
   display: inline-flex;
   align-items: center;
@@ -5633,15 +5877,22 @@ input[type=range].rf-slider.event-slider {
   border-color: rgba(16, 185, 129, 0.4);
 }
 
-/* 🤖 AI 智能深度重點儀表板 */
+/* 🤖 AI 智能深度重點儀表板 (網頁版無灰底無外框純淨排版) */
 .news-ai-dashboard {
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  padding: 14px 18px;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.news-ai-highlights {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
 }
 
 .news-ai-dashboard-header {
@@ -5667,10 +5918,11 @@ input[type=range].rf-slider.event-slider {
 }
 
 .news-ai-section-box {
-  background: var(--bg-card-inner-subtle);
-  border: 1px solid var(--border-color-subtle);
-  border-radius: 10px;
-  padding: 10px 14px;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 2px 0 !important;
+  box-shadow: none !important;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -8087,6 +8339,227 @@ input[type="number"] {
   color: #fde68a;
 }
 
+/* 幫忙速度極限與計算機制卡片樣式 (Helping Speed Metrics & Breakdown) */
+.wiki-speed-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+  margin-bottom: 18px;
+}
+
+.wiki-speed-metric-card {
+  background: var(--bg-card, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.wiki-speed-metric-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.wiki-speed-metric-card.card-highlight-team {
+  border-color: rgba(236, 72, 153, 0.35);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.08) 0%, rgba(30, 41, 59, 0.4) 100%);
+}
+
+.wiki-speed-metric-card.card-highlight-solo {
+  border-color: rgba(59, 130, 246, 0.35);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(30, 41, 59, 0.4) 100%);
+}
+
+.wiki-speed-metric-card.card-highlight-dual {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(30, 41, 59, 0.4) 100%);
+}
+
+.speed-metric-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.speed-metric-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.3px;
+}
+
+.card-highlight-team .speed-metric-tag {
+  background: rgba(236, 72, 153, 0.18);
+  color: #f472b6;
+  border: 1px solid rgba(236, 72, 153, 0.35);
+}
+
+.card-highlight-solo .speed-metric-tag {
+  background: rgba(59, 130, 246, 0.18);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.card-highlight-dual .speed-metric-tag {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.speed-metric-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.speed-metric-stats-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 6px 0 10px 0;
+}
+
+.speed-metric-primary-val {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.card-highlight-team .speed-metric-primary-val {
+  color: #f472b6;
+}
+
+.card-highlight-solo .speed-metric-primary-val {
+  color: #60a5fa;
+}
+
+.card-highlight-dual .speed-metric-primary-val {
+  color: #34d399;
+}
+
+.speed-metric-secondary-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.speed-metric-calc {
+  font-family: monospace;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--text-accent, #38bdf8);
+  margin-bottom: 8px;
+}
+
+.speed-metric-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-top: auto;
+}
+
+/* 3 大詳細機制卡片 */
+.wiki-speed-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.wiki-speed-breakdown-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.breakdown-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.breakdown-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.breakdown-list li {
+  margin-bottom: 4px;
+}
+
+.breakdown-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* 明亮主題自適應 */
+[data-theme="dawn"] .wiki-speed-metric-card,
+[data-theme="emerald"] .wiki-speed-metric-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+[data-theme="dawn"] .wiki-speed-metric-card.card-highlight-team,
+[data-theme="emerald"] .wiki-speed-metric-card.card-highlight-team {
+  background: #fdf2f8;
+  border-color: #fbcfe8;
+}
+
+[data-theme="dawn"] .wiki-speed-metric-card.card-highlight-solo,
+[data-theme="emerald"] .wiki-speed-metric-card.card-highlight-solo {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+[data-theme="dawn"] .wiki-speed-metric-card.card-highlight-dual,
+[data-theme="emerald"] .wiki-speed-metric-card.card-highlight-dual {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+[data-theme="dawn"] .card-highlight-team .speed-metric-primary-val,
+[data-theme="emerald"] .card-highlight-team .speed-metric-primary-val {
+  color: #db2777;
+}
+
+[data-theme="dawn"] .card-highlight-solo .speed-metric-primary-val,
+[data-theme="emerald"] .card-highlight-solo .speed-metric-primary-val {
+  color: #2563eb;
+}
+
+[data-theme="dawn"] .card-highlight-dual .speed-metric-primary-val,
+[data-theme="emerald"] .card-highlight-dual .speed-metric-primary-val {
+  color: #059669;
+}
+
+[data-theme="dawn"] .speed-metric-calc,
+[data-theme="emerald"] .speed-metric-calc {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #0284c7;
+}
+
+[data-theme="dawn"] .wiki-speed-breakdown-card,
+[data-theme="emerald"] .wiki-speed-breakdown-card {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
 /* 計算機區域 (Calculator Inputs) */
 .calc-inputs-row {
   display: flex;
@@ -9458,6 +9931,48 @@ input[type="number"] {
   background: rgba(51, 65, 85, 0.95);
   color: #cbd5e1;
   border-color: rgba(148, 163, 184, 0.4);
+}
+
+.recipe-tag-aba {
+  background: rgba(16, 185, 129, 0.95);
+  color: #ffffff;
+  border-color: rgba(52, 211, 153, 0.5);
+}
+
+.recipe-tag-aab {
+  background: rgba(14, 165, 233, 0.95);
+  color: #ffffff;
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+.recipe-tag-axc {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.92), rgba(71, 85, 105, 0.95));
+  color: #ffffff;
+  border-color: rgba(168, 85, 247, 0.6);
+}
+
+.recipe-tag-abx {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.92), rgba(71, 85, 105, 0.95));
+  color: #ffffff;
+  border-color: rgba(56, 189, 248, 0.6);
+}
+
+.recipe-tag-xxc {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.92), rgba(99, 102, 241, 0.95));
+  color: #ffffff;
+  border-color: rgba(192, 132, 252, 0.6);
+}
+
+.recipe-tag-aax {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.92), rgba(16, 185, 129, 0.95));
+  color: #ffffff;
+  border-color: rgba(56, 189, 248, 0.6);
+}
+
+[class*="recipe-tag-"][class*="x"] {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.9), rgba(51, 65, 85, 0.95));
+  color: #ffffff;
+  border-color: rgba(129, 140, 248, 0.5);
 }
 
 .node-recipe-tag-inline {
@@ -11119,8 +11634,10 @@ input[type="number"] {
 
 .settings-section-header {
   display: flex;
-  flex-direction: column;
-  gap: 0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .settings-section-title {
@@ -11243,6 +11760,25 @@ input[type="number"] {
   color: #ffffff;
   border-color: transparent;
   box-shadow: 0 4px 12px var(--accent-glow, rgba(56, 189, 248, 0.3));
+}
+
+.lang-flag-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex-shrink: 0;
+  vertical-align: middle;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lang-btn:hover .lang-flag-icon {
+  transform: scale(1.08);
+}
+
+.app-segment-btn .lang-flag-icon {
+  width: 18px;
+  height: 18px;
 }
 
 .theme-invert-label-wrap {
@@ -13865,7 +14401,19 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border-collapse: collapse !important;
 }
 
+/* 幫忙速度手機版網格與卡片 */
+.mobile-h5-app .wiki-speed-metric-grid {
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .wiki-speed-breakdown-grid {
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+}
+
 /* 表格 1: 主技能發動機率矩陣 (清晰一行化) */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table th,
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table th {
   padding: 8px 3px !important;
   font-size: 13px !important;
@@ -13875,6 +14423,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   white-space: nowrap !important;
 }
 
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table td,
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table td {
   padding: 8px 2px !important;
   font-size: 13px !important;
@@ -13883,21 +14432,28 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   white-space: nowrap !important;
 }
 
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table td:nth-child(1),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table th:nth-child(1),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table td:nth-child(1) {
   width: 48% !important;
 }
 
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table td:nth-child(2),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table th:nth-child(2),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table td:nth-child(2) {
   width: 24% !important;
 }
 
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table th:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table td:nth-child(4),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table th:nth-child(4),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table td:nth-child(4) {
   width: 28% !important;
 }
 
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-skill-badge,
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-skill-badge {
   font-size: 11px !important;
   padding: 2.5px 5px !important;
@@ -13911,34 +14467,97 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   font-weight: 700 !important;
 }
 
-/* 表格 2: 副技能階級與數值總覽 (2 欄化極致寬敞) */
+/* 表格 2 (新增): 幫忙速度矩陣速查表 */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table th,
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th {
+  padding: 8px 3px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table td,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td {
+  padding: 8px 2px !important;
+  font-size: 13px !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table td:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(1) {
+  width: 36% !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table td:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(2) {
+  width: 20% !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table th:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table td:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(4) {
+  width: 22% !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table th:nth-child(5),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table td:nth-child(5),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(5),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(5) {
+  width: 22% !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-skill-badge,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-skill-badge {
+  font-size: 11px !important;
+  padding: 2.5px 5px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.2px !important;
+}
+
+/* 表格 3: 副技能階級與數值總覽 (2 欄化極致寬敞) */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table th,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th {
   padding: 8px 6px !important;
   font-size: 13px !important;
   font-weight: 700 !important;
 }
 
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td {
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table td,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td {
   padding: 9px 8px !important;
   font-size: 13px !important;
   vertical-align: middle !important;
 }
 
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(1),
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(1) {
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table td:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(1) {
   width: 36% !important;
   text-align: center !important;
 }
 
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(2),
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(2) {
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table td:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(2) {
   width: 64% !important;
   font-size: 12.5px !important;
   line-height: 1.5 !important;
   text-align: left !important;
 }
 
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-skill-badge {
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-skill-badge,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-skill-badge {
   font-size: 12px !important;
   padding: 3px 8px !important;
   font-weight: 700 !important;
@@ -13951,42 +14570,52 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   align-items: center !important;
 }
 
-/* 表格 3: 性格五維屬性倍率表 */
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th {
+/* 表格 4: 性格五維屬性倍率表 */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table th,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table th {
   padding: 8px 4px !important;
   font-size: 13px !important;
   font-weight: 700 !important;
 }
 
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td {
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table td,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table td {
   padding: 8px 4px !important;
   font-size: 13px !important;
   vertical-align: middle !important;
 }
 
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(1),
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(1) {
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table td:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table td:nth-child(1) {
   width: 22% !important;
   text-align: center !important;
   font-weight: 700 !important;
 }
 
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(2),
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(2) {
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table td:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table td:nth-child(2) {
   width: 18% !important;
   text-align: center !important;
   font-weight: 700 !important;
 }
 
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(3),
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(3) {
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table th:nth-child(3),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table td:nth-child(3),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table th:nth-child(3),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table td:nth-child(3) {
   width: 18% !important;
   text-align: center !important;
   font-weight: 700 !important;
 }
 
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(4),
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(4) {
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table th:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table td:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table th:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table td:nth-child(4) {
   width: 42% !important;
   font-size: 12px !important;
   line-height: 1.45 !important;
@@ -14712,7 +15341,35 @@ body.mobile-h5-app.ladder-active,
 }
 
 /* 📅 3. 壓縮無框版活動日曆 (Borderless Ultra-Compact Activity Calendar) ─── */
-.news-calendar-wrapper,
+/* 網頁桌面版：日曆與進行中活動左右並行 (Side-by-Side Parallel Layout) */
+.news-calendar-wrapper {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 2px 0 4px 0 !important;
+  box-shadow: none !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 16px !important;
+  align-items: stretch !important;
+  margin: 0 !important;
+}
+
+.news-calendar-cal-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+}
+
+@media (max-width: 880px) {
+  .news-calendar-wrapper {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+/* 行動版 H5 專屬：嚴格維持原樣上下垂直堆疊 (Mobile Keeps Vertical Stacking Unchanged) */
 .mobile-h5-app .news-calendar-wrapper {
   background: transparent !important;
   border: none !important;
@@ -14723,6 +15380,71 @@ body.mobile-h5-app.ladder-active,
   flex-direction: column !important;
   gap: 5px !important;
   margin: 0 !important;
+  grid-template-columns: none !important;
+}
+
+.mobile-h5-app .news-calendar-cal-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  width: 100% !important;
+}
+
+/* 行動端 H5 專屬：精確鎖定原本緊湊規格 (Mobile H5 Exact Compact Preservations) */
+.mobile-h5-app .news-calendar-top-bar {
+  height: 22px !important;
+}
+
+.mobile-h5-app .news-calendar-title-group {
+  gap: 4px !important;
+  font-size: 12.5px !important;
+}
+
+.mobile-h5-app .news-calendar-month-text {
+  font-size: 11.5px !important;
+}
+
+.mobile-h5-app .news-calendar-nav-btn {
+  padding: 2px 6px !important;
+  font-size: 10.5px !important;
+}
+
+.mobile-h5-app .news-calendar-weekdays {
+  font-size: 10.5px !important;
+  padding-bottom: 2px !important;
+}
+
+.mobile-h5-app .news-cal-day-cell {
+  height: 28px !important;
+}
+
+.mobile-h5-app .news-cal-day-num {
+  font-size: 11px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8), 0 0 4px rgba(0, 0, 0, 0.6) !important;
+}
+
+.mobile-h5-app .news-cal-day-cell.is-today .news-cal-day-num,
+.mobile-h5-app .news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num {
+  color: #d4a338 !important;
+  font-size: 12px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  line-height: 18px !important;
+  text-shadow: none !important;
+}
+
+.mobile-h5-app .news-cal-day-cell.is-today::after {
+  bottom: 2px !important;
+  width: 4px !important;
+  height: 4px !important;
+  background: #d4a338 !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .news-cal-day-cell.is-selected:not(.is-today) .news-cal-day-num {
+  font-size: 11.5px !important;
 }
 
 .news-calendar-top-bar {
@@ -14730,20 +15452,20 @@ body.mobile-h5-app.ladder-active,
   align-items: center !important;
   justify-content: space-between !important;
   gap: 6px !important;
-  height: 22px !important;
+  height: 26px !important;
 }
 
 .news-calendar-title-group {
   display: flex !important;
   align-items: center !important;
-  gap: 4px !important;
-  font-size: 12.5px !important;
+  gap: 6px !important;
+  font-size: 14px !important;
   font-weight: 700 !important;
   color: var(--text-primary) !important;
 }
 
 .news-calendar-month-text {
-  font-size: 11.5px !important;
+  font-size: 13px !important;
   font-weight: 600 !important;
   color: var(--text-muted) !important;
 }
@@ -14751,7 +15473,7 @@ body.mobile-h5-app.ladder-active,
 .news-calendar-nav-group {
   display: flex !important;
   align-items: center !important;
-  gap: 3px !important;
+  gap: 4px !important;
 }
 
 .news-calendar-nav-btn {
@@ -14759,8 +15481,8 @@ body.mobile-h5-app.ladder-active,
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
   border-radius: 6px !important;
-  padding: 2px 6px !important;
-  font-size: 10.5px !important;
+  padding: 3px 8px !important;
+  font-size: 11.5px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
   transition: all 0.15s ease !important;
@@ -14779,10 +15501,10 @@ body.mobile-h5-app.ladder-active,
   grid-template-columns: repeat(7, 1fr) !important;
   gap: 1px !important;
   text-align: center !important;
-  font-size: 10.5px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   color: var(--text-muted) !important;
-  padding-bottom: 2px !important;
+  padding-bottom: 4px !important;
   border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08)) !important;
 }
 
@@ -14801,7 +15523,7 @@ body.mobile-h5-app.ladder-active,
 
 .news-cal-day-cell {
   aspect-ratio: auto !important;
-  height: 28px !important;
+  height: 34px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -14901,23 +15623,23 @@ body.mobile-h5-app.ladder-active,
   pointer-events: none !important;
 }
 
-/* 🎯 日期數字：浮在背景色塊之上，確保極致可讀性 */
+/* 🎯 日期數字：浮在背景色塊之上，字型放大至 13.5px，柔和陰影確保清晰 */
 .news-cal-day-num {
   position: relative !important;
   z-index: 5 !important;
-  font-size: 11px !important;
+  font-size: 13.5px !important;
   font-weight: 800 !important;
   line-height: 1 !important;
   color: #ffffff !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-width: 18px !important;
-  height: 18px !important;
+  min-width: 22px !important;
+  height: 22px !important;
   border-radius: 4px !important;
   transition: all 0.15s ease !important;
   pointer-events: none !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8), 0 0 4px rgba(0, 0, 0, 0.6) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45) !important;
 }
 
 .news-cal-day-cell:not(.has-events) .news-cal-day-num {
@@ -14930,79 +15652,190 @@ body.mobile-h5-app.ladder-active,
   color: #1e293b !important;
 }
 
-/* 🌟 今日（非選取狀態）：整個格子外框高亮展示 (Today Distinct Cell Border) */
-.news-cal-day-cell.is-today:not(.is-selected) {
-  outline: 2px solid var(--color-primary, #6366f1) !important;
-  outline-offset: -2px !important;
-  border-radius: 4px !important;
+/* 💓 今日日期黃色圓點心跳動態 (Today Dot Heartbeat Pulse Animation) */
+@keyframes todayHeartbeat {
+  0% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 0 0 3px rgba(250, 204, 21, 0.7);
+  }
+  14% {
+    transform: translateX(-50%) scale(1.45);
+    box-shadow: 0 0 8px rgba(250, 204, 21, 0.95), 0 0 0 2px rgba(250, 204, 21, 0.4);
+  }
+  28% {
+    transform: translateX(-50%) scale(1.1);
+    box-shadow: 0 0 4px rgba(250, 204, 21, 0.7);
+  }
+  42% {
+    transform: translateX(-50%) scale(1.5);
+    box-shadow: 0 0 10px rgba(250, 204, 21, 1), 0 0 0 3px rgba(250, 204, 21, 0.25);
+  }
+  70% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 0 0 3px rgba(250, 204, 21, 0.7);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 0 0 3px rgba(250, 204, 21, 0.7);
+  }
+}
+
+/* 🌟 今日（非選取狀態）：文字白色，下方保留黃色圓點心跳動態 (White Text with Heartbeat Yellow Dot) */
+.news-cal-day-cell.is-today {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
   z-index: 8 !important;
 }
 
+.news-cal-day-cell.is-today .news-cal-day-num,
 .news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num {
-  color: #ffffff !important;
-  font-weight: 900 !important;
-}
-
-.news-cal-day-cell.is-today:not(.is-selected):not(.has-events) .news-cal-day-num {
-  color: var(--color-primary, #6366f1) !important;
-}
-
-[data-theme="dawn"] .news-cal-day-cell.is-today:not(.is-selected) {
-  outline-color: #4f46e5 !important;
-}
-
-[data-theme="dawn"] .news-cal-day-cell.is-today:not(.is-selected):not(.has-events) .news-cal-day-num {
-  color: #4338ca !important;
-}
-
-/* 💡 選取日期：外框高亮與光暈展示 (Selected Cell Border & Shadow) */
-.news-cal-day-cell.is-selected {
-  outline: 2px solid #ffffff !important;
-  outline-offset: -2px !important;
+  background: transparent !important;
+  color: #ffffff !important; /* 今日文字使用白色 */
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  border: none !important;
   border-radius: 4px !important;
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.6) !important;
+  box-shadow: none !important;
+  min-width: 22px !important;
+  height: 22px !important;
+  line-height: 22px !important;
+  padding: 0 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
+  transition: all 0.15s ease !important;
+}
+
+.news-cal-day-cell.is-today:hover .news-cal-day-num {
+  transform: scale(1.08) !important;
+}
+
+/* 今日底端黃色圓點：帶心跳效果 (Heartbeat Pulse) */
+.news-cal-day-cell.is-today::after {
+  content: '' !important;
+  display: block !important;
+  position: absolute !important;
+  bottom: 2.5px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  transform-origin: center center !important;
+  width: 4.5px !important;
+  height: 4.5px !important;
+  border-radius: 50% !important;
+  background: #facc15 !important;
+  box-shadow: 0 0 4px rgba(250, 204, 21, 0.8) !important;
+  z-index: 6 !important;
+  animation: todayHeartbeat 1.6s ease-in-out infinite !important;
+}
+
+/* 明亮主題今日文字與心跳黃點 */
+[data-theme="dawn"] .news-cal-day-cell.is-today .news-cal-day-num,
+[data-theme="dawn"] .news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.is-today .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num {
+  background: transparent !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65) !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.is-today:not(.has-events) .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.is-today:not(.has-events) .news-cal-day-num {
+  color: #1e293b !important;
+  text-shadow: none !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.is-today::after,
+[data-theme="emerald"] .news-cal-day-cell.is-today::after {
+  display: block !important;
+  background: #f59e0b !important;
+  animation: todayHeartbeat 1.6s ease-in-out infinite !important;
+}
+
+/* 💡 選取日期：半透明灰色背景，無光暈，不遮擋活動進度條 (Selected Cell Translucent Gray - No Glow) */
+.news-cal-day-cell.is-selected {
+  outline: none !important;
+  border: none !important;
+  background: rgba(148, 163, 184, 0.22) !important; /* 半透明灰色 */
+  border-radius: 6px !important;
+  box-shadow: none !important; /* 無光暈 */
   z-index: 10 !important;
 }
 
-.news-cal-day-cell.is-selected .news-cal-day-num {
+/* 確保活動進度條在選中時完全正常展示，絕不遮擋 */
+.news-cal-day-cell.is-selected .news-cal-bg-bands {
+  display: flex !important;
+  z-index: 2 !important;
+  opacity: 1 !important;
+}
+
+.news-cal-day-cell.is-selected:not(.is-today) .news-cal-day-num {
   color: #ffffff !important;
-  font-weight: 900 !important;
+  font-weight: 800 !important;
+  font-size: 13.5px !important;
+  text-shadow: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 [data-theme="dawn"] .news-cal-day-cell.is-selected,
 [data-theme="emerald"] .news-cal-day-cell.is-selected {
-  outline-color: #0f172a !important;
-  box-shadow: 0 0 10px rgba(79, 70, 229, 0.4) !important;
+  background: rgba(100, 116, 139, 0.16) !important; /* 明亮主題半透明灰色 */
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
-/* 當日活動列表 (Selected Day Event List - 全部展示無滾動條) */
+[data-theme="dawn"] .news-cal-day-cell.is-selected:not(.is-today) .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.is-selected:not(.is-today) .news-cal-day-num {
+  color: #0f172a !important;
+}
+
+/* 當日活動列表 (Selected Day Event List) */
 .news-calendar-events-box {
   background: var(--bg-card, #18181b) !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 10px !important;
-  padding: 6px 8px !important;
+  padding: 10px 12px !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 4px !important;
+  gap: 8px !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  max-height: 280px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .news-calendar-events-box {
+  padding: 6px 8px !important;
+  gap: 4px !important;
+  height: auto !important;
+  max-height: none !important;
 }
 
 .news-cal-box-title-row {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  font-size: 11px !important;
+  font-size: 13px !important;
   font-weight: 700 !important;
   color: var(--text-primary) !important;
-  padding-bottom: 3px !important;
+  padding-bottom: 6px !important;
   border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.06)) !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .news-cal-box-title-row {
+  font-size: 11px !important;
+  padding-bottom: 3px !important;
   gap: 6px !important;
 }
 
 .news-cal-box-title-left {
   display: flex !important;
   align-items: center !important;
-  gap: 5px !important;
+  gap: 6px !important;
   min-width: 0 !important;
   flex: 1 !important;
 }
@@ -15011,29 +15844,42 @@ body.mobile-h5-app.ladder-active,
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
-  font-size: 11px !important;
+  font-size: 13px !important;
   font-weight: 700 !important;
 }
 
+.mobile-h5-app .news-cal-box-heading {
+  font-size: 11px !important;
+}
+
 .news-cal-box-count {
-  font-size: 10.5px !important;
-  opacity: 0.75 !important;
+  font-size: 12px !important;
+  opacity: 0.8 !important;
   font-weight: 600 !important;
   white-space: nowrap !important;
+}
+
+.mobile-h5-app .news-cal-box-count {
+  font-size: 10.5px !important;
 }
 
 .news-cal-filter-ongoing-btn {
   background: var(--bg-card-inner, rgba(99, 102, 241, 0.08)) !important;
   border: 1px solid var(--border-color, rgba(99, 102, 241, 0.25)) !important;
   color: var(--color-primary, #6366f1) !important;
-  font-size: 10.5px !important;
+  font-size: 11.5px !important;
   font-weight: 700 !important;
-  padding: 2px 8px !important;
+  padding: 3px 10px !important;
   border-radius: 9999px !important;
   cursor: pointer !important;
   white-space: nowrap !important;
   transition: all 0.15s ease !important;
   flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .news-cal-filter-ongoing-btn {
+  font-size: 10.5px !important;
+  padding: 2px 8px !important;
 }
 
 .news-cal-filter-ongoing-btn:hover,
@@ -15046,22 +15892,40 @@ body.mobile-h5-app.ladder-active,
 .news-cal-events-scroll-list {
   display: flex !important;
   flex-direction: column !important;
-  gap: 4px !important;
+  gap: 5px !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+  max-height: 230px !important;
+  overflow-y: auto !important;
+  padding-right: 3px !important;
+  scrollbar-width: thin !important;
+}
+
+.mobile-h5-app .news-cal-events-scroll-list {
+  flex: none !important;
   max-height: none !important;
   overflow-y: visible !important;
+  padding-right: 0 !important;
+  gap: 4px !important;
 }
 
 .news-cal-event-item {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  gap: 6px !important;
-  padding: 4px 7px !important;
+  gap: 8px !important;
+  padding: 6px 10px !important;
   background: var(--bg-card-inner, rgba(255, 255, 255, 0.04)) !important;
   border: 1px solid var(--border-color) !important;
-  border-radius: 6px !important;
+  border-radius: 8px !important;
   cursor: pointer !important;
   transition: all 0.15s ease !important;
+}
+
+.mobile-h5-app .news-cal-event-item {
+  gap: 6px !important;
+  padding: 4px 7px !important;
+  border-radius: 6px !important;
 }
 
 .news-cal-event-item:hover,
@@ -15074,17 +15938,24 @@ body.mobile-h5-app.ladder-active,
 .news-cal-event-left {
   display: flex !important;
   align-items: center !important;
-  gap: 5px !important;
+  gap: 6px !important;
   min-width: 0 !important;
   flex: 1 !important;
 }
 
 .news-cal-event-badge {
-  font-size: 9.5px !important;
+  font-size: 11px !important;
   font-weight: 700 !important;
+  padding: 2px 7px !important;
+  border-radius: 5px !important;
+  white-space: nowrap !important;
+  line-height: 1.15 !important;
+}
+
+.mobile-h5-app .news-cal-event-badge {
+  font-size: 9.5px !important;
   padding: 1.5px 5px !important;
   border-radius: 4px !important;
-  white-space: nowrap !important;
   line-height: 1.1 !important;
 }
 
@@ -15195,7 +16066,7 @@ body.mobile-h5-app.ladder-active,
 }
 
 .news-cal-event-name {
-  font-size: 11.5px !important;
+  font-size: 12.5px !important;
   font-weight: 600 !important;
   color: var(--text-primary) !important;
   white-space: nowrap !important;
@@ -15203,16 +16074,36 @@ body.mobile-h5-app.ladder-active,
   text-overflow: ellipsis !important;
 }
 
+.mobile-h5-app .news-cal-event-name {
+  font-size: 11.5px !important;
+}
+
 .news-cal-event-time {
-  font-size: 10px !important;
+  font-size: 11px !important;
   color: var(--text-muted) !important;
   white-space: nowrap !important;
 }
 
+.mobile-h5-app .news-cal-event-time {
+  font-size: 10px !important;
+}
+
 .news-cal-empty-hint {
-  font-size: 11px !important;
+  font-size: 12px !important;
   color: var(--text-muted) !important;
   text-align: center !important;
+  padding: 8px 4px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 1 !important;
+  min-height: 80px !important;
+}
+
+.mobile-h5-app .news-cal-empty-hint {
+  font-size: 11px !important;
+  min-height: unset !important;
+  flex: none !important;
   padding: 4px 2px !important;
 }
 
@@ -15485,6 +16376,8 @@ body.mobile-h5-app.ladder-active,
   border-color: var(--color-primary, #6366f1) !important;
 }
 
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .news-calendar-events-box,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .news-calendar-events-box,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-calendar-events-box,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-calendar-events-box {
   background: #ffffff !important;
@@ -15492,12 +16385,16 @@ body.mobile-h5-app.ladder-active,
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
 }
 
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .news-cal-box-title-row,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .news-cal-box-title-row,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-cal-box-title-row,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-cal-box-title-row {
   color: #0f172a !important;
   border-bottom: 1px solid #e2e8f0 !important;
 }
 
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .news-cal-event-item,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .news-cal-event-item,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-cal-event-item,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-cal-event-item {
   background: #f8fafc !important;

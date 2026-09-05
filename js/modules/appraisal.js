@@ -895,8 +895,27 @@
       const container = document.getElementById('appraisal-lab-container');
       if (container) {
         const isHidden = container.style.display === 'none' || getComputedStyle(container).display === 'none';
-        container.style.display = isHidden ? 'block' : 'none';
-        if (isHidden) renderAppraisalLabContainer(container);
+        const willOpen = isHidden;
+        container.style.display = willOpen ? 'block' : 'none';
+        if (willOpen) {
+          renderAppraisalLabContainer(container);
+        }
+        try {
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('pksleep_active_box_subtab', willOpen ? 'lab' : 'list');
+          }
+          const desktopLabBtn = document.getElementById('box-appraisal-lab-btn');
+          if (desktopLabBtn) {
+            desktopLabBtn.classList.toggle('active', willOpen);
+          }
+          if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
+            const curHash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
+            const mainPart = curHash.split(/[/_?]/)[0];
+            if (mainPart === 'box' || !mainPart) {
+              window.history.replaceState(null, '', willOpen ? '#box/lab' : '#box');
+            }
+          }
+        } catch (e) {}
       }
     }
   };

@@ -664,6 +664,497 @@ function matchesSkill(pokemonSkill, targetBaseSkill) {
   return false;
 }
 
+/* ─── 🔍 智慧寬鬆搜尋引擎 (Phonetic Pinyin / Subsequence / Typo-tolerant Fuzzy Search) ─── */
+const PINYIN_TABLE = [
+  ['a', '啊阿'],
+  ['ai', '艾愛矮哀埃礙癌呆'],
+  ['an', '安暗按案岸'],
+  ['ang', '昂'],
+  ['ao', '奧熬襖傲敖'],
+  ['ba', '巴拔把吧霸八罷扒靶疤爸叭'],
+  ['bai', '白百擺敗拜柏'],
+  ['ban', '班般搬板版半伴辦'],
+  ['bang', '幫榜膀棒邦'],
+  ['bao', '包寶保報爆暴抱飽胞薄豹寶寶'],
+  ['bei', '北被備背貝悲杯倍碑輩'],
+  ['ben', '本奔苯笨'],
+  ['beng', '崩蹦繃'],
+  ['bi', '比必皮閉壁幣避碧筆鼻彼畢匕'],
+  ['bian', '邊變編扁遍便辯變'],
+  ['biao', '標表飆鏢'],
+  ['bie', '別鱉憋'],
+  ['bin', '賓濱彬冰'],
+  ['bing', '冰兵並病柄餅'],
+  ['bo', '波播撥伯薄泊勃駁脖渤'],
+  ['bu', '布不步部補捕怖埠哺簿'],
+  ['cai', '才采彩菜裁財材'],
+  ['cao', '草操槽曹'],
+  ['chan', '產單纏禪顫懺'],
+  ['chang', '長常場唱廠昌暢倡嘗'],
+  ['chao', '超潮朝炒巢抄'],
+  ['chen', '陳晨沉趁辰臣'],
+  ['cheng', '城成承程盛稱撐誠呈懲'],
+  ['chong', '蟲重沖充崇寵'],
+  ['chou', '愁抽臭仇醜籌綢'],
+  ['chu', '初出除處觸楚儲畜廚'],
+  ['chuan', '穿船川傳串喘'],
+  ['chui', '吹垂槌'],
+  ['chun', '春純春唇蠢'],
+  ['ci', '刺次磁詞慈此辭賜雌瓷'],
+  ['cong', '蔥從聰叢匆'],
+  ['cui', '翠催脆摧'],
+  ['cun', '村存寸'],
+  ['cuo', '錯措撮'],
+  ['da', '大達搭答打塔'],
+  ['dai', '呆帶待袋代貸戴怠逮'],
+  ['dan', '蛋單但擔淡丹彈膽誕'],
+  ['dang', '當擋黨盪蕩檔'],
+  ['dao', '刀導島倒道盜稻到'],
+  ['de', '德得的地'],
+  ['deng', '燈等登鄧鄧'],
+  ['di', '低地第底弟帝敵笛遞滴蒂提'],
+  ['dian', '電點店顛典甸墊殿典顛'],
+  ['diao', '雕吊釣掉調雕'],
+  ['die', '蝶跌疊碟爹諜'],
+  ['ding', '丁定頂訂盯釘鼎'],
+  ['dong', '咚東冬動洞棟凍懂動'],
+  ['dou', '豆都斗逗兜陡'],
+  ['du', '嘟讀度獨毒都杜肚渡督堵睹'],
+  ['duan', '段短斷鍛緞'],
+  ['dui', '隊對堆'],
+  ['dun', '盾頓噸頓敦鈍蹲'],
+  ['duo', '朵舵多墮躲惰奪剁哆墮'],
+  ['e', '顎惡額鵝俄餓鵝俄厄鱷'],
+  ['en', '恩'],
+  ['er', '爾耳兒二而貳餌'],
+  ['fa', '發法伐罰乏'],
+  ['fan', '反犯范凡繁泛翻煩販'],
+  ['fang', '方房防放訪芳仿仿'],
+  ['fei', '飛非肥費廢菲匪沸'],
+  ['fen', '分份紛粉奮憤糞忿酚'],
+  ['feng', '風峰封豐瘋鋒奉逢鳳蜂'],
+  ['fu', '福負服副復富父婦符扶伏浮幅輔覆腐蝠'],
+  ['ga', '嘎咖尬噶'],
+  ['gai', '該改概蓋鈣'],
+  ['gan', '乾甘敢趕感竿肝幹'],
+  ['gang', '鋼綱岡崗剛港扛缸釭'],
+  ['gao', '高告搞稿膏羔'],
+  ['ge', '哥格各歌割閣隔個革葛戈'],
+  ['geng', '耿梗更耕庚'],
+  ['gong', '公工共功攻宮供恭拱貢弓'],
+  ['gou', '勾狗購溝夠構鉤構'],
+  ['gu', '古骨谷孤鼓故固古顧姑咕辜'],
+  ['gua', '瓜掛刮寡'],
+  ['guai', '怪拐乖'],
+  ['guan', '關管觀官館冠罐貫慣'],
+  ['guang', '光廣逛'],
+  ['gui', '鬼龜規貴歸軌桂跪硅櫃瑰'],
+  ['guo', '果過國郭鍋裹果'],
+  ['ha', '哈蛤'],
+  ['hai', '海害孩還骸'],
+  ['han', '含漢韓汗喊寒涵旱撼'],
+  ['hao', '浩耗好好號豪毫壕濠'],
+  ['he', '河合何和盒赫褐鶴核荷喝賀涸'],
+  ['hei', '黑嘿'],
+  ['hong', '紅轟烘弘虹宏鴻洪'],
+  ['hou', '猴侯喉厚後吼猴'],
+  ['hu', '壺湖呼護互弧胡虎忽蝴乎核琥'],
+  ['hua', '花華滑化話畫劃'],
+  ['huan', '歡環緩換幻患還煥荒喚'],
+  ['huang', '黃皇晃慌荒謊煌簧皇'],
+  ['hui', '灰揮回會毀繪慧恢輝惠悔晦徽'],
+  ['hun', '魂混昏婚葷'],
+  ['huo', '火夥伙獲惑活或貨霍獲火焰'],
+  ['ji', '基吉擊機雞積極集計記季技既際濟寂祭幾己寄繼紀擠脊棘姬緝嫉畸稽飢肌'],
+  ['jia', '加假甲家夾佳駕架稼價嘉枷夾'],
+  ['jian', '箭劍健件見間建鑑漸剪檢減堅尖兼監煎揀艱'],
+  ['jiang', '匠江將姜獎講降醬僵殭薑僵'],
+  ['jiao', '交角焦郊腳覺校叫教膠矯澆狡繳'],
+  ['jie', '傑結截節接街階介借解姐捷潔竭藉'],
+  ['jin', '金今進近僅斤緊勁錦巾禁晉筋浸'],
+  ['jing', '精經晶驚井景警鏡競境京敬淨靜睛莖荊鯨'],
+  ['jiu', '九酒久救舊就究糾救韭糾'],
+  ['ju', '巨劇具聚局居橘懼拒矩沮據桔駒拘舉鋸菊'],
+  ['juan', '卷圈捐倦絹眷'],
+  ['jue', '決絕覺掘爵嚼訣'],
+  ['jun', '君軍均菌俊郡駿鈞'],
+  ['ka', '卡咖咯佧喀卡'],
+  ['kai', '凱開慨楷鎧'],
+  ['kan', '看砍刊勘坎檻'],
+  ['kang', '康抗慷炕糠'],
+  ['ke', '可克客刻科課顆渴殼柯瞌苛顆克'],
+  ['kong', '恐空孔控'],
+  ['kou', '口扣寇叩'],
+  ['ku', '苦哭庫酷窟骷'],
+  ['kua', '跨夸垮誇'],
+  ['kuai', '快筷塊會膾'],
+  ['kuan', '寬款'],
+  ['kuang', '況狂曠框礦筐'],
+  ['kui', '虧愧奎葵魁饋匱'],
+  ['kun', '困昆捆坤'],
+  ['kuo', '闊擴括廓'],
+  ['la', '拉辣蠟喇落拉啦落臘'],
+  ['lai', '萊來賴萊賴賚'],
+  ['lan', '藍蘭覽懶爛欄籃攬藍覽纜'],
+  ['lang', '狼浪郎朗廊莨'],
+  ['lao', '老勞落牢撈酪姥'],
+  ['le', '勒樂了肋'],
+  ['lei', '雷磊累蕾擂類淚羸'],
+  ['li', '利力立例麗李離理歷莉裡厘黎粒璃哩笠靂栗勵歷'],
+  ['lian', '連聯練臉鍊憐鏈蓮聯鐮廉'],
+  ['liang', '亮量輛良涼樑梁兩糧'],
+  ['liao', '療料瞭僚廖撩寥燎'],
+  ['lie', '烈列裂劣獵咧'],
+  ['lin', '林臨鱗林麟淋吝嶙磷'],
+  ['ling', '令另領零鈴靈凌玲齡陵菱令'],
+  ['liu', '六流留柳溜瘤硫餾榴'],
+  ['long', '龍隆籠聾弄隴瓏瀧籠'],
+  ['lou', '樓漏陋摟簍'],
+  ['lu', '路陸錄鹿露魯盧爐魯碌路蘆賂鲁'],
+  ['lun', '輪論倫崙輪輪倫'],
+  ['luo', '羅洛落絡螺裸邏落'],
+  ['lv', '綠律旅率屢鋁履濾綠'],
+  ['ma', '嗎媽馬麻碼瑪罵麻瑪'],
+  ['mai', '買賣邁麥脈埋'],
+  ['man', '滿慢曼漫瞞蠻蔓饅'],
+  ['mang', '芒忙盲莽茫'],
+  ['mao', '貓毛矛帽茂冒貌錨毛'],
+  ['me', '麼'],
+  ['mei', '沒每妹美枚妹梅媒眉魅昧'],
+  ['men', '門們悶捫'],
+  ['meng', '夢蒙猛萌盟懵濛朦虻'],
+  ['mi', '迷咪米密蜜祕祕咪秘謎'],
+  ['mian', '面免綿棉緬免眠免面'],
+  ['miao', '妙秒苗描喵瞄渺眇苗'],
+  ['min', '敏民敏皿憫憫'],
+  ['ming', '明名命鳴冥銘'],
+  ['mo', '魔磨摸模膜末莫墨默漠陌抹歿沫模'],
+  ['mou', '謀某牟眸'],
+  ['mu', '木目母墓幕幕睦穆募牧'],
+  ['na', '拿那納娜哪鈉鈉'],
+  ['nai', '奈耐奶奶乃奈奈'],
+  ['nan', '南難男喃'],
+  ['nao', '腦鬧惱鬧'],
+  ['ne', '呢哪'],
+  ['nei', '內餒'],
+  ['nen', '嫩'],
+  ['neng', '能'],
+  ['ni', '泥你擬逆匿尼泥倪旎膩'],
+  ['nian', '年念黏碾念'],
+  ['niao', '鳥尿蔦'],
+  ['nie', '聶捏涅鎳'],
+  ['ning', '寧凝檸擰嚀'],
+  ['niu', '牛扭紐鈕狃'],
+  ['nong', '農濃弄農儂'],
+  ['nu', '怒奴努弩'],
+  ['nv', '女奴'],
+  ['nuan', '暖'],
+  ['nuo', '挪諾懦糯'],
+  ['ou', '歐偶嘔歐鷗藕'],
+  ['pa', '怕爬趴啪耙'],
+  ['pai', '拍排牌派拍'],
+  ['pan', '盤判盼叛潘畔'],
+  ['pang', '胖旁膀磅仿'],
+  ['pao', '炮跑泡袍砲'],
+  ['pei', '配陪培培佩沛賠呸'],
+  ['pen', '噴盆盼判噴'],
+  ['peng', '朋碰澎彭蓬膨棚棚'],
+  ['pi', '皮批披疲匹屁痞霹匹皮'],
+  ['pian', '片篇便偏片'],
+  ['piao', '票漂飄嫖瓢飄'],
+  ['pin', '品貧拼頻貧'],
+  ['ping', '平瓶評屏萍憑萍'],
+  ['po', '破婆魄頗迫坡珀破'],
+  ['pou', '剖'],
+  ['pu', '普撲鋪僕蒲埔瀑葡鋪譜'],
+  ['qi', '七奇旗起其期氣器妻齊汽漆欺戚騎乞歧泣琪'],
+  ['qian', '前千牽遷千鉛潛錢乾淺欠簽'],
+  ['qiang', '強槍牆腔強搶薔鏘彊'],
+  ['qiao', '巧橋悄敲巧雀殼俏殼鍬僑鞘巧'],
+  ['qie', '切茄且妾怯'],
+  ['qin', '琴親勤禽侵琴寢欽芹琴'],
+  ['qing', '青晴清情輕傾頃慶請蜻清'],
+  ['qiu', '丘秋求球仇囚鰍酋蚯鍬'],
+  ['qu', '去區取曲趣屈趨驅蛆軀'],
+  ['quan', '全拳泉權券勸犬圈拳'],
+  ['que', '確卻雀缺瘸雀鵲'],
+  ['qun', '群裙群'],
+  ['ran', '然燃染然'],
+  ['rang', '讓嚷壤讓'],
+  ['rao', '繞擾饒'],
+  ['re', '熱惹'],
+  ['ren', '人人認任忍刃仁韌任'],
+  ['ri', '日'],
+  ['rong', '蓉絨榮容融溶茸蠑榕戎'],
+  ['rou', '肉柔揉揉'],
+  ['ru', '如入汝乳儒辱褥'],
+  ['ruan', '軟阮'],
+  ['rui', '瑞銳蕊芮'],
+  ['run', '潤閏潤'],
+  ['ruo', '弱若若'],
+  ['sa', '撒薩灑'],
+  ['sai', '賽塞腮塞'],
+  ['san', '三散散傘參'],
+  ['sang', '桑喪嗓'],
+  ['se', '色色澀瑟嗇'],
+  ['sen', '森森'],
+  ['seng', '僧'],
+  ['sha', '沙殺砂紗傻廈煞鯊沙'],
+  ['shan', '山珊扇善單閃衫珊膳煽訕'],
+  ['shang', '上商傷賞尚裳晌'],
+  ['shao', '少燒稍哨勺紹燒'],
+  ['she', '蛇射設捨舌奢社涉攝捨'],
+  ['shen', '身深神什甚申伸審滲慎腎神'],
+  ['sheng', '聲生升勝繩聖盛牲笙省聖'],
+  ['shi', '食石時十實識始使市是事示視式室試世勢士獅師詩失施濕拾蝕矢誓屎飾史逝釋'],
+  ['shou', '手首守受授壽瘦獸獸'],
+  ['shu', '鼠屬署書樹數術輸叔殊熟暑舒束述蜀梳贖梳'],
+  ['shua', '刷耍'],
+  ['shuai', '摔率帥衰'],
+  ['shuan', '栓拴栓'],
+  ['shuang', '雙霜爽雙'],
+  ['shui', '水睡稅水'],
+  ['shun', '順瞬吮'],
+  ['shuo', '說爍朔碩'],
+  ['si', '斯思絲司私死四寺似肆撕飼斯'],
+  ['song', '松送宋誦聳鬆頌'],
+  ['sou', '搜艘嗽颼'],
+  ['su', '速素宿塑俗肅蘇訴溯縮訴速'],
+  ['suan', '算酸蒜'],
+  ['sui', '隨歲碎遂隧隨穗'],
+  ['sun', '孫損筍筍'],
+  ['suo', '所鎖索梭縮瑣娑梭'],
+  ['ta', '他她它踏塔塌獺塔獺'],
+  ['tai', '太泰胎台苔態抬臺泰'],
+  ['tan', '談探坦炭攤灘潭壇貪檀痰'],
+  ['tang', '堂唐糖湯躺燙趟堂塘搪'],
+  ['tao', '桃逃淘陶套討濤討桃'],
+  ['te', '特忒'],
+  ['teng', '騰疼藤謄'],
+  ['ti', '體題踢提替涕剃惕梯啼蹄蒂'],
+  ['tian', '天田甜添填田舔恬天'],
+  ['tiao', '條跳挑調挑'],
+  ['tie', '鐵貼帖鐵'],
+  ['ting', '聽庭停廳挺廷蜓婷霆'],
+  ['tong', '同童通痛銅桐桶統彤筒瞳同'],
+  ['tou', '頭投偷透頭'],
+  ['tu', '土圖兔途吐突徒塗凸土'],
+  ['tuan', '團團揣'],
+  ['tui', '推退腿褪'],
+  ['tun', '吞屯臀囤吞'],
+  ['tuo', '托脫妥駝鴕唾托拖托陀陀'],
+  ['wa', '蛙娃哇挖瓦窪媧襪蛙'],
+  ['wai', '外歪'],
+  ['wan', '萬玩完晚碗彎宛挽腕頑蔓萬'],
+  ['wang', '王望往網亡妄忘旺網王'],
+  ['wei', '尾為位微危味未微委衛唯偉圍違唯維畏胃緯偽威'],
+  ['wen', '文問聞紋溫穩吻蚊紊玟紋'],
+  ['weng', '翁甕嗡'],
+  ['wo', '我窩握臥窩握渦'],
+  ['wu', '無五物舞物屋武午舞誤悟伍污霧烏巫侮鳥務'],
+  ['xi', '西希西夕析吸息洗細喜稀戲繫息惜隙吸蟋膝席稀習蜥'],
+  ['xia', '夏下峽蝦瞎嚇俠匣轄'],
+  ['xian', '仙先線現限鮮險顯縣掀閑閒咸弦銜餡纖腺憲仙'],
+  ['xiang', '相象向像想鄉香響享降箱祥翔巷鑲項'],
+  ['xiao', '小消笑效校銷囂嘯霄宵蕭硝曉梟小'],
+  ['xie', '些寫謝鞋協邪血寫洩屑斜歇諧謝蟹'],
+  ['xin', '新心辛信新薪芯馨欣信'],
+  ['xing', '行性形星幸型醒興杏腥杏幸'],
+  ['xiong', '胸雄熊兇兄兇熊雄'],
+  ['xiu', '休秀修袖羞臭宿鏽'],
+  ['xu', '許需須序虛續緒蓄敘徐婿徐'],
+  ['xuan', '玄選旋宣懸炫旋眩絃選'],
+  ['xue', '雪穴學靴血削學雪'],
+  ['xun', '尋訓訊迅循旬熏詢尋'],
+  ['ya', '牙押崖涯雅牙啞壓芽鴨訝蚜亞雅鴉'],
+  ['yan', '炎焰眼岩言顏研演驗厭演宴嚴煙艷鹽延沿雁燕鹽眼岩'],
+  ['yang', '樣羊楊洋揚漾仰養氧陽央秧樣'],
+  ['yao', '要腰搖藥咬遙耀妖窯謠搖曜鑰'],
+  ['ye', '葉頁夜野也業爺液冶咽夜葉'],
+  ['yi', '伊依一衣醫異易意義益譯億役抑翼議疑怡姨乙亦屹移儀宜遺倚矣抑藝裔蟻蜴'],
+  ['yin', '音陰引印隱銀因飲引音殷吟寅蔭'],
+  ['ying', '影應英映硬嬰鷹迎盈熒螢櫻贏營穎鷹嬰'],
+  ['yo', '喲'],
+  ['yong', '勇泳永用湧詠蛹擁庸臃湧勇'],
+  ['you', '幼友有由右遊又油優誘幽悠郵尤游'],
+  ['yu', '魚雨語玉育遇魚羽於預域余宇郁域娛遇羽鬱魚禦語怨'],
+  ['yuan', '螈原圓源園員遠院願元援淵袁冤緣員猿螈'],
+  ['yue', '月岳越躍悅約樂閱鑰躍月'],
+  ['yun', '運雲勻允暈韻孕運勻員'],
+  ['za', '雜砸咋'],
+  ['zai', '在再載災仔栽哉'],
+  ['zan', '讚暫贊簪'],
+  ['zang', '髒藏葬'],
+  ['zao', '早造藻燥噪糟棗造'],
+  ['ze', '則責擇澤嘖'],
+  ['zei', '賊'],
+  ['zen', '怎'],
+  ['zeng', '增贈憎'],
+  ['zha', '炸扎查榨閘詐眨'],
+  ['zhai', '宅摘窄債寨齋'],
+  ['zhan', '顫站戰佔斬展沾粘詹盞戰氈顫'],
+  ['zhang', '張章丈掌長障帳脹彰'],
+  ['zhao', '沼照找爪兆趙召沼招罩肇'],
+  ['zhe', '這著遮折者蜇哲蔗者著'],
+  ['zhen', '真陣針震鎮診枕針甄震'],
+  ['zheng', '正爭整政證征蒸掙睜正'],
+  ['zhi', '智隻指枝支知製直值質執治志制至址紙植殖脂蜘織稚炙'],
+  ['zhong', '種中鐘重終眾忠腫衷踵種'],
+  ['zhou', '周洲舟咒晝宙粥皺軸咒'],
+  ['zhu', '竹主著住助注珠株諸祝豬煮逐燭築著竺'],
+  ['zhua', '抓爪'],
+  ['zhuai', '拽'],
+  ['zhuan', '專轉傳磚撰賺轉'],
+  ['zhuang', '壯裝撞莊狀妝幢壯'],
+  ['zhui', '追錐墜綴贅'],
+  ['zhun', '準准'],
+  ['zhuo', '著捉桌卓濁酌琢灼啄著'],
+  ['zi', '子紫字自姿咨資仔滋諮姊子'],
+  ['zong', '總棕宗縱縱鬃縱'],
+  ['zou', '走奏揍走'],
+  ['zu', '組族足阻租卒祖足詛'],
+  ['zuan', '鑽纂'],
+  ['zui', '嘴最罪醉嘴'],
+  ['zun', '尊遵'],
+  ['zuo', '做作坐座左昨佐琢']
+];
+
+const CHAR_TO_PINYIN = {};
+for (let i = 0; i < PINYIN_TABLE.length; i++) {
+  const py = PINYIN_TABLE[i][0];
+  const chars = PINYIN_TABLE[i][1];
+  for (let j = 0; j < chars.length; j++) {
+    CHAR_TO_PINYIN[chars[j]] = py;
+  }
+}
+
+function toPinyin(str) {
+  if (!str) return '';
+  let res = '';
+  for (let i = 0; i < str.length; i++) {
+    res += CHAR_TO_PINYIN[str[i]] || str[i];
+  }
+  return res;
+}
+
+function levenshteinDistance(s1, s2) {
+  if (s1 === s2) return 0;
+  if (!s1) return s2.length;
+  if (!s2) return s1.length;
+  const m = s1.length, n = s2.length;
+  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  for (let i = 0; i <= m; i++) dp[i][0] = i;
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1,
+        dp[i][j - 1] + 1,
+        dp[i - 1][j - 1] + cost
+      );
+    }
+  }
+  return dp[m][n];
+}
+
+function isSubsequence(sub, str) {
+  if (!sub || !str) return false;
+  let i = 0, j = 0;
+  while (i < sub.length && j < str.length) {
+    if (sub[i] === str[j]) i++;
+    j++;
+  }
+  return i === sub.length;
+}
+
+function matchesPokemonSearch(p, query) {
+  if (!query) return true;
+  const q = String(query).trim().toLowerCase();
+  if (!q) return true;
+
+  const qClean = q.replace(/[\s\-_（）\(\)\.\'’]/g, '');
+
+  // 1. 純數字編號邏輯 (完全精確比對編號，嚴禁寬鬆模糊匹配)
+  const isNumeric = /^#?\d+$/.test(qClean);
+  if (isNumeric) {
+    const qNum = qClean.replace(/^#/, '').replace(/^0+/, '');
+    const idStr = String(p.id || '');
+    const fNo = String(p.formatted_no || '');
+    const fNoNum = fNo.replace(/^0+/, '');
+    return (
+      qClean === idStr ||
+      qClean === `#${fNo}` ||
+      qClean === fNo ||
+      (qNum !== '' && (idStr === qNum || fNoNum === qNum))
+    );
+  }
+
+  // 2. 文字精確比對
+  const nameCN = String((p.name && p.name.cn) || p.name_cn || '').toLowerCase();
+  const nameEN = String((p.name && p.name.en) || p.name_en || '').toLowerCase();
+  const nameJP = String((p.name && p.name.jp) || p.name_jp || '').toLowerCase();
+  const nameCNClean = nameCN.replace(/[\s\-_（）\(\)\.\'’]/g, '');
+  const nameENClean = nameEN.replace(/[\s\-_（）\(\)\.\'’]/g, '');
+  const nameJPClean = nameJP.replace(/[\s\-_（）\(\)\.\'’]/g, '');
+
+  if (
+    nameCN.includes(q) || nameEN.includes(q) || nameJP.includes(q) ||
+    nameCNClean.includes(qClean) || nameENClean.includes(qClean) || nameJPClean.includes(qClean)
+  ) {
+    return true;
+  }
+
+  // 3. 中文拼音 / 同音字寬鬆比對 (解決「一步」、「依布」、「皮卡秋」免選字輸入)
+  if (!p._pinyin) {
+    p._pinyin = toPinyin(nameCNClean);
+  }
+  const qPinyin = toPinyin(qClean);
+  if (qPinyin && p._pinyin && p._pinyin.includes(qPinyin)) {
+    return true;
+  }
+
+  // 4. 中文子序列匹配 (例如「妙花」匹配「妙蛙花」、「南瓜人」匹配「南瓜怪人」)
+  if (qClean.length >= 2 && isSubsequence(qClean, nameCNClean)) {
+    return true;
+  }
+
+  // 5. 中文字元編輯距離 (單字打錯，長度 >= 3 容許 1 個錯字)
+  if (qClean.length >= 3) {
+    if (Math.abs(qClean.length - nameCNClean.length) <= 1) {
+      if (levenshteinDistance(qClean, nameCNClean) <= 1) return true;
+    }
+    if (nameCNClean.length > qClean.length) {
+      for (let i = 0; i <= nameCNClean.length - qClean.length; i++) {
+        const sub = nameCNClean.slice(i, i + qClean.length);
+        if (levenshteinDistance(qClean, sub) <= 1) return true;
+      }
+    }
+  }
+
+  // 6. 英文拼字錯誤 / 模糊比對 (例如 eeve, pikachuu, blastose, charzard)
+  if (/^[a-z\s\-_'\.]+$/i.test(q)) {
+    if (qClean.length >= 4 && isSubsequence(qClean, nameENClean)) {
+      return true;
+    }
+    if (qClean.length >= 4) {
+      const maxDist = qClean.length >= 7 ? 2 : 1;
+      if (Math.abs(qClean.length - nameENClean.length) <= maxDist) {
+        if (levenshteinDistance(qClean, nameENClean) <= maxDist) return true;
+      }
+      const enWords = nameEN.split(/[\s\-_（）\(\)\.\'’]+/).filter(Boolean);
+      for (let w = 0; w < enWords.length; w++) {
+        const word = enWords[w];
+        if (Math.abs(qClean.length - word.length) <= maxDist) {
+          if (levenshteinDistance(qClean, word) <= maxDist) return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
 const PokemonApp = {
   allPokemons: [],
   currentSearch: '',
@@ -698,9 +1189,15 @@ if (typeof window !== 'undefined') {
   window.PokemonApp = PokemonApp;
   window.renderSkillWithTooltip = renderSkillWithTooltip;
   window.formatHelpInterval = formatHelpInterval;
+  window.matchesPokemonSearch = matchesPokemonSearch;
+  window.toPinyin = toPinyin;
 }
 PokemonApp.renderSkillWithTooltip = renderSkillWithTooltip;
 PokemonApp.formatHelpInterval = formatHelpInterval;
+PokemonApp.matchesPokemonSearch = matchesPokemonSearch;
+PokemonApp.toPinyin = toPinyin;
+PokemonApp.levenshteinDistance = levenshteinDistance;
+PokemonApp.isSubsequence = isSubsequence;
 
 Object.assign(PokemonApp, {
   filterData() {
@@ -751,17 +1248,7 @@ Object.assign(PokemonApp, {
       }
 
       if (this.currentSearch) {
-        const q = this.currentSearch.toLowerCase().trim();
-        const idStr = String(p.id || p.formatted_no || '');
-        const fNo = String(p.formatted_no || '');
-        const nameCN = String((p.name && p.name.cn) || p.name_cn || '').toLowerCase();
-        const nameEN = String((p.name && p.name.en) || p.name_en || '').toLowerCase();
-        const nameJP = String((p.name && p.name.jp) || p.name_jp || '').toLowerCase();
-        
-        const qNum = q.replace(/^#/, '').replace(/^0+/, '');
-        const matchesId = q === idStr || q === `#${fNo}` || q === fNo || (qNum && (idStr === qNum || fNo.replace(/^0+/, '') === qNum));
-        const matchesText = nameCN.includes(q) || nameEN.includes(q) || nameJP.includes(q) || idStr.includes(q) || fNo.includes(q);
-        if (!matchesId && !matchesText) return false;
+        if (!matchesPokemonSearch(p, this.currentSearch)) return false;
       }
       return true;
     });
@@ -1067,7 +1554,26 @@ if (typeof document !== 'undefined') {
       window.getSidebarSavedState = getSidebarSavedState;
       window.setSidebarSavedState = setSidebarSavedState;
 
+      function getStorage() {
+        try {
+          if (typeof window !== 'undefined' && window.localStorage) return window.localStorage;
+          if (typeof localStorage !== 'undefined') return localStorage;
+        } catch (e) {}
+        return null;
+      }
+
+      const STORAGE_KEY_MAIN_TAB = 'pksleep_active_main_tab';
+      const VALID_MAIN_TABS = ['pokemon', 'recipes', 'wiki', 'box', 'news'];
+
       function switchMainTab(target) {
+        if (!VALID_MAIN_TABS.includes(target)) target = 'pokemon';
+        try {
+          const storage = getStorage();
+          if (storage) {
+            storage.setItem(STORAGE_KEY_MAIN_TAB, target);
+          }
+        } catch (e) {}
+
         // 移除所有 tab active 狀態
         [tabPokemon, tabRecipes, tabWiki, tabBox, tabNews].forEach(t => t && t.classList.remove('active'));
         // 隱藏所有 panels
@@ -1117,11 +1623,21 @@ if (typeof document !== 'undefined') {
         } else if (target === 'box' && panelBox && tabBox) {
           tabBox.classList.add('active');
           panelBox.style.display = 'block';
-          if (window.PokemonBoxApp && typeof window.PokemonBoxApp.renderBox === 'function') {
+          let boxSubtab = 'list';
+          try {
+            const storage = getStorage();
+            const saved = storage ? storage.getItem('pksleep_active_box_subtab') : null;
+            if (saved === 'list' || saved === 'lab') {
+              boxSubtab = saved;
+            }
+          } catch (e) {}
+          if (typeof window.switchBoxSubtab === 'function') {
+            try { window.switchBoxSubtab(boxSubtab); } catch (e) {}
+          } else if (window.PokemonBoxApp && typeof window.PokemonBoxApp.renderBox === 'function') {
             try { window.PokemonBoxApp.renderBox(); } catch (e) {}
           }
           if (window.history && window.history.replaceState) {
-            window.history.replaceState(null, '', '#box');
+            window.history.replaceState(null, '', boxSubtab === 'list' ? '#box' : `#box/${boxSubtab}`);
           }
         } else if (target === 'wiki' && panelWiki && tabWiki) {
           tabWiki.classList.add('active');
@@ -1129,7 +1645,18 @@ if (typeof document !== 'undefined') {
           if (window.WikiDB && typeof window.WikiDB.init === 'function') {
             try { window.WikiDB.init(); } catch (e) { console.error('WikiDB.init error:', e); }
           }
-          const isIng = window.WikiDB && window.WikiDB.getCurrentSubTab && window.WikiDB.getCurrentSubTab() === 'ingredients';
+          let wikiSubTab = 'skills';
+          try {
+            const storage = getStorage();
+            const saved = storage ? storage.getItem('pksleep_active_wiki_subtab') : null;
+            if (saved && ['skills', 'subskills', 'ingredients', 'values', 'ratings'].includes(saved)) {
+              wikiSubTab = saved;
+            }
+          } catch (e) {}
+          if (window.WikiDB && typeof window.WikiDB.switchSubTab === 'function') {
+            try { window.WikiDB.switchSubTab(wikiSubTab); } catch (e) {}
+          }
+          const isIng = wikiSubTab === 'ingredients';
           if (isMobileH5) {
             if (isIng) {
               document.body.classList.add('ladder-active');
@@ -1164,7 +1691,7 @@ if (typeof document !== 'undefined') {
           }
 
           if (window.history && window.history.replaceState) {
-            window.history.replaceState(null, '', '#wiki');
+            window.history.replaceState(null, '', wikiSubTab === 'skills' ? '#wiki' : `#wiki/${wikiSubTab}`);
           }
         } else if (target === 'recipes' && panelRecipes && tabRecipes) {
           tabRecipes.classList.add('active');
@@ -1220,24 +1747,49 @@ if (typeof document !== 'undefined') {
 
       // 監聽網址 hash 變更 (SPA 路由)
       window.addEventListener('hashchange', () => {
-        const hash = window.location.hash.replace(/^#/, '');
-        if (['pokemon', 'recipes', 'wiki', 'box', 'news'].includes(hash)) {
-          switchMainTab(hash);
+        const rawHash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
+        const parts = rawHash.split(/[/_?]/);
+        const main = parts[0];
+        const sub = parts[1];
+        if (VALID_MAIN_TABS.includes(main)) {
+          const storage = getStorage();
+          if (storage) {
+            if (main === 'wiki' && sub && ['skills', 'subskills', 'ingredients', 'values', 'ratings'].includes(sub)) {
+              try { storage.setItem('pksleep_active_wiki_subtab', sub); } catch (e) {}
+            } else if (main === 'box' && sub && ['list', 'lab'].includes(sub)) {
+              try { storage.setItem('pksleep_active_box_subtab', sub); } catch (e) {}
+            }
+          }
+          switchMainTab(main);
         }
       });
 
-      // 依網址 hash 載入預設 tab
-      if (window.location.hash === '#news') {
-        switchMainTab('news');
-      } else if (window.location.hash === '#box') {
-        switchMainTab('box');
-      } else if (window.location.hash === '#wiki') {
-        switchMainTab('wiki');
-      } else if (window.location.hash === '#recipes') {
-        switchMainTab('recipes');
-      } else {
-        switchMainTab('pokemon');
+      // 依網址 hash 或 localStorage 載入預設 tab 與子 tab
+      const rawHash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
+      const parts = rawHash.split(/[/_?]/);
+      const mainFromHash = parts[0];
+      const subFromHash = parts[1];
+
+      let savedMainTab = null;
+      try {
+        const storage = getStorage();
+        if (storage) savedMainTab = storage.getItem(STORAGE_KEY_MAIN_TAB);
+      } catch (e) {}
+
+      const initialTab = (VALID_MAIN_TABS.includes(mainFromHash) ? mainFromHash : null)
+        || (VALID_MAIN_TABS.includes(savedMainTab) ? savedMainTab : null)
+        || 'pokemon';
+
+      const storage = getStorage();
+      if (storage) {
+        if (initialTab === 'wiki' && subFromHash && ['skills', 'subskills', 'ingredients', 'values', 'ratings'].includes(subFromHash)) {
+          try { storage.setItem('pksleep_active_wiki_subtab', subFromHash); } catch (e) {}
+        } else if (initialTab === 'box' && subFromHash && ['list', 'lab'].includes(subFromHash)) {
+          try { storage.setItem('pksleep_active_box_subtab', subFromHash); } catch (e) {}
+        }
       }
+
+      switchMainTab(initialTab);
     }
 
     initSpaTabs();
@@ -1831,14 +2383,7 @@ if (typeof document !== 'undefined') {
         }
 
         if (currentSearch) {
-          const q = currentSearch;
-          return (
-            (p.name_cn && p.name_cn.toLowerCase().includes(q)) ||
-            (p.name_en && p.name_en.toLowerCase().includes(q)) ||
-            (p.name_jp && p.name_jp.toLowerCase().includes(q)) ||
-            (p.formatted_no && p.formatted_no.includes(q)) ||
-            (p.id && String(p.id).includes(q))
-          );
+          if (!matchesPokemonSearch(p, currentSearch)) return false;
         }
         return true;
       });

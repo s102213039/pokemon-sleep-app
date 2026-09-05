@@ -744,6 +744,9 @@
       const q = filterText.trim().toLowerCase();
       const filtered = allPokemonsRef.filter(p => {
         if (!q) return true;
+        if (typeof window.matchesPokemonSearch === 'function') {
+          return window.matchesPokemonSearch(p, q);
+        }
         const cn = (p.name_cn || '').toLowerCase();
         const en = (p.name_en || '').toLowerCase();
         const no = String(p.formatted_no || p.id || '').toLowerCase();
@@ -1722,14 +1725,60 @@
 
     if (subtabList) subtabList.addEventListener('click', () => switchBoxSubtab('list'));
     if (subtabLab) subtabLab.addEventListener('click', () => switchBoxSubtab('lab'));
+
+    try {
+      const initialSubtab = getSavedBoxSubtab();
+      if (initialSubtab === 'lab') {
+        switchBoxSubtab('lab');
+      }
+    } catch (e) {}
+  }
+
+  const STORAGE_KEY_BOX_SUBTAB = 'pksleep_active_box_subtab';
+  const VALID_BOX_SUBTABS = ['list', 'lab'];
+
+  function getSavedBoxSubtab() {
+    try {
+      if (typeof window !== 'undefined' && window.location && window.location.hash) {
+        const rawHash = window.location.hash.replace(/^#/, '');
+        const parts = rawHash.split(/[/_?]/);
+        if (parts[0] === 'box' && VALID_BOX_SUBTABS.includes(parts[1])) {
+          return parts[1];
+        }
+      }
+      const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (storage) {
+        const saved = storage.getItem(STORAGE_KEY_BOX_SUBTAB);
+        if (VALID_BOX_SUBTABS.includes(saved)) {
+          return saved;
+        }
+      }
+    } catch (e) {}
+    return 'list';
   }
 
   function switchBoxSubtab(tab) {
+    if (!VALID_BOX_SUBTABS.includes(tab)) tab = 'list';
+    try {
+      const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (storage) {
+        storage.setItem(STORAGE_KEY_BOX_SUBTAB, tab);
+      }
+      if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
+        const curHash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
+        const mainPart = curHash.split(/[/_?]/)[0];
+        if (mainPart === 'box' || !mainPart) {
+          window.history.replaceState(null, '', tab === 'list' ? '#box' : '#box/' + tab);
+        }
+      }
+    } catch (e) {}
+
     const subtabList = document.getElementById('box-subtab-list');
     const subtabLab = document.getElementById('box-subtab-lab');
     const subpanelList = document.getElementById('box-subpanel-list');
     const subpanelLab = document.getElementById('box-subpanel-lab');
     const fabContainer = document.getElementById('box-fab-container');
+    const desktopLabBtn = document.getElementById('box-appraisal-lab-btn');
 
     if (tab === 'lab') {
       if (subtabLab) subtabLab.classList.add('active');
@@ -1737,6 +1786,7 @@
       if (subpanelList) subpanelList.style.display = 'none';
       if (subpanelLab) subpanelLab.style.display = 'block';
       if (fabContainer) fabContainer.style.display = 'none';
+      if (desktopLabBtn) desktopLabBtn.classList.add('active');
       const labContainer = document.getElementById('appraisal-lab-container');
       if (labContainer) {
         labContainer.style.display = 'block';
@@ -1750,16 +1800,27 @@
       if (subpanelList) subpanelList.style.display = 'block';
       if (subpanelLab) subpanelLab.style.display = 'none';
       if (fabContainer) fabContainer.style.display = 'flex';
+      if (desktopLabBtn) desktopLabBtn.classList.remove('active');
+      const labContainer = document.getElementById('appraisal-lab-container');
+      if (labContainer && !subpanelLab) {
+        labContainer.style.display = 'none';
+      }
       renderBox();
     }
   }
 
   if (typeof window !== 'undefined') {
     window.switchBoxSubtab = switchBoxSubtab;
+    window.getCurrentBoxSubtab = getSavedBoxSubtab;
     window.initUserBox = function (pokemons) {
       allPokemonsRef = pokemons || [];
       initBoxEvents();
-      renderBox();
+      const initialSubtab = getSavedBoxSubtab();
+      if (initialSubtab === 'lab') {
+        switchBoxSubtab('lab');
+      } else {
+        renderBox();
+      }
     };
 
     const NATURE_DICT = {};
@@ -1769,6 +1830,8 @@
       getUserBox: () => userBox,
       setUserBox: (box) => { userBox = box; saveUserBox(); renderBox(); },
       renderBox: renderBox,
+      getCurrentSubTab: getSavedBoxSubtab,
+      switchSubTab: switchBoxSubtab,
       calculatePokemonPR,
       NATURE_DATA,
       NATURE_DICT,

@@ -511,7 +511,7 @@
         { name: "幫忙速度 S", color: "white", val: "-7%", val_en: "-7%" },
         { name: "幫忙速度 M", color: "blue", val: "-14%", val_en: "-14%" }
       ],
-      desc: "提供幫助所需的時間減少 7% / 14%（副技能幫速合計上限 35%）",
+      desc: "提供幫助所需的時間減少 7% / 14%（副技能幫忙速度合計上限 35%）",
       desc_en: "Reduces help time by 7% / 14% (helping speed sub-skills capped at 35%)."
     },
     {
@@ -733,6 +733,184 @@
     }
   ];
 
+  // 幫忙速度矩陣速查表 (副技能組合 × 性格獨立乘區)
+  const HELPING_SPEED_MATRIX = [
+    {
+      subskills: [
+        { name: "幫手獎勵滿配(35%封頂)", name_en: "Help Bonus Team Cap (35%)", color: "gold" }
+      ],
+      nature: "▲ 幫忙速度上升",
+      nature_en: "▲ Speed Up",
+      natureBadge: "up",
+      calc: "(1 - 0.35) × 0.90",
+      intervalRatio: 0.585,
+      intervalDisplay: "58.5%",
+      intervalDiff: "-41.5%",
+      outputMultiplier: 1.7094,
+      outputBoostDisplay: "+70.94%",
+      grade: "SSS (全隊極限滿配)",
+      grade_en: "SSS (Full Team Cap)"
+    },
+    {
+      subskills: [
+        { name: "幫忙速度M", name_en: "Speed M", color: "blue" },
+        { name: "幫忙速度S", name_en: "Speed S", color: "white" },
+        { name: "幫手獎勵", name_en: "Help Bonus", color: "gold" }
+      ],
+      nature: "▲ 幫忙速度上升",
+      nature_en: "▲ Speed Up",
+      natureBadge: "up",
+      calc: "(1 - 0.26) × 0.90",
+      intervalRatio: 0.666,
+      intervalDisplay: "66.6%",
+      intervalDiff: "-33.4%",
+      outputMultiplier: 1.5015,
+      outputBoostDisplay: "+50.15%",
+      grade: "SS (單體滿配自帶)",
+      grade_en: "SS (Solo Max Cap)"
+    },
+    {
+      subskills: [
+        { name: "幫忙速度M", name_en: "Speed M", color: "blue" },
+        { name: "幫忙速度S", name_en: "Speed S", color: "white" }
+      ],
+      nature: "▲ 幫忙速度上升",
+      nature_en: "▲ Speed Up",
+      natureBadge: "up",
+      calc: "(1 - 0.21) × 0.90",
+      intervalRatio: 0.711,
+      intervalDisplay: "71.1%",
+      intervalDiff: "-28.9%",
+      outputMultiplier: 1.4065,
+      outputBoostDisplay: "+40.65%",
+      grade: "S (常規雙幫忙速度極限)",
+      grade_en: "S (Dual Speed Up)"
+    },
+    {
+      subskills: [
+        { name: "幫忙速度M", name_en: "Speed M", color: "blue" }
+      ],
+      nature: "▲ 幫忙速度上升",
+      nature_en: "▲ Speed Up",
+      natureBadge: "up",
+      calc: "(1 - 0.14) × 0.90",
+      intervalRatio: 0.774,
+      intervalDisplay: "77.4%",
+      intervalDiff: "-22.6%",
+      outputMultiplier: 1.2920,
+      outputBoostDisplay: "+29.20%",
+      grade: "A (單幫忙速度M配性格)",
+      grade_en: "A (Speed M + Nature)"
+    },
+    {
+      subskills: [
+        { name: "幫忙速度M", name_en: "Speed M", color: "blue" },
+        { name: "幫忙速度S", name_en: "Speed S", color: "white" }
+      ],
+      nature: "無修正 / 其它性格",
+      nature_en: "Neutral",
+      natureBadge: "neutral",
+      calc: "(1 - 0.21) × 1.00",
+      intervalRatio: 0.790,
+      intervalDisplay: "79.0%",
+      intervalDiff: "-21.0%",
+      outputMultiplier: 1.2658,
+      outputBoostDisplay: "+26.58%",
+      grade: "A (純雙幫忙速度無性格)",
+      grade_en: "A (Dual Speed Neutral)"
+    },
+    {
+      subskills: [
+        { name: "幫忙速度S", name_en: "Speed S", color: "white" }
+      ],
+      nature: "▲ 幫忙速度上升",
+      nature_en: "▲ Speed Up",
+      natureBadge: "up",
+      calc: "(1 - 0.07) × 0.90",
+      intervalRatio: 0.837,
+      intervalDisplay: "83.7%",
+      intervalDiff: "-16.3%",
+      outputMultiplier: 1.1947,
+      outputBoostDisplay: "+19.47%",
+      grade: "B (單幫忙速度S配性格)",
+      grade_en: "B (Speed S + Nature)"
+    },
+    {
+      subskills: [
+        { name: "幫忙速度M", name_en: "Speed M", color: "blue" }
+      ],
+      nature: "無修正 / 其它性格",
+      nature_en: "Neutral",
+      natureBadge: "neutral",
+      calc: "(1 - 0.14) × 1.00",
+      intervalRatio: 0.860,
+      intervalDisplay: "86.0%",
+      intervalDiff: "-14.0%",
+      outputMultiplier: 1.1628,
+      outputBoostDisplay: "+16.28%",
+      grade: "B (純幫忙速度M無性格)",
+      grade_en: "B (Speed M Neutral)"
+    },
+    {
+      subskills: [],
+      nature: "▲ 幫忙速度上升",
+      nature_en: "▲ Speed Up",
+      natureBadge: "up",
+      calc: "1.00 × 0.90",
+      intervalRatio: 0.900,
+      intervalDisplay: "90.0%",
+      intervalDiff: "-10.0%",
+      outputMultiplier: 1.1111,
+      outputBoostDisplay: "+11.11%",
+      grade: "C (純幫忙速度上升)",
+      grade_en: "C (Nature Up Only)"
+    },
+    {
+      subskills: [
+        { name: "幫忙速度S", name_en: "Speed S", color: "white" }
+      ],
+      nature: "無修正 / 其它性格",
+      nature_en: "Neutral",
+      natureBadge: "neutral",
+      calc: "(1 - 0.07) × 1.00",
+      intervalRatio: 0.930,
+      intervalDisplay: "93.0%",
+      intervalDiff: "-7.0%",
+      outputMultiplier: 1.0753,
+      outputBoostDisplay: "+7.53%",
+      grade: "C (純幫忙速度S無性格)",
+      grade_en: "C (Speed S Neutral)"
+    },
+    {
+      subskills: [],
+      nature: "無修正 / 其它性格",
+      nature_en: "Neutral",
+      natureBadge: "neutral",
+      calc: "1.00 × 1.00",
+      intervalRatio: 1.000,
+      intervalDisplay: "100.0%",
+      intervalDiff: "±0.0%",
+      outputMultiplier: 1.0000,
+      outputBoostDisplay: "+0.00%",
+      grade: "基準線 (1.00x)",
+      grade_en: "Baseline (1.00x)"
+    },
+    {
+      subskills: [],
+      nature: "▼ 幫忙速度下降",
+      nature_en: "▼ Speed Down",
+      natureBadge: "down",
+      calc: "1.00 × 1.10",
+      intervalRatio: 1.100,
+      intervalDisplay: "110.0%",
+      intervalDiff: "+10.0%",
+      outputMultiplier: 0.9091,
+      outputBoostDisplay: "-9.09%",
+      grade: "D (性格減速削弱)",
+      grade_en: "D (Nature Impair)"
+    }
+  ];
+
   // 性格五維倍率表 (包含官方最新數值與下降懲罰減輕修正)
   const NATURES_EFFECT_DATA = [
     { 
@@ -906,9156 +1084,10231 @@
 
   // --- 5. Lv.60 視覺橫向天梯座標圖資料庫 (Image 2 實體化 - Coordinate Ladder Data) ---
   const LV60_COORDINATE_LADDER_DATA = [
-    {
-        "id": "apple",
-        "name": "特選蘋果",
-        "enName": "Fancy Apple",
-        "energy": 90,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png",
-        "pokemon": [
-            {
-                "name": "骨紋巨聲鱷",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/911.png",
-                "recipe": "AAA",
-                "count": 91,
-                "note": "AAA 特選蘋果 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 91,
-                        "note": "AAA 特選蘋果 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 45,
-                        "note": "AAC 雙特選蘋果 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 13,
-                        "note": "ABB 單特選蘋果 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "阿勃梭魯",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/359.png",
-                "recipe": "ABB",
-                "count": 79,
-                "note": "ABB 特選蘋果 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 79,
-                        "note": "ABB 特選蘋果 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 32,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "凱羅斯",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/127.png",
-                "recipe": "ABB",
-                "count": 76,
-                "note": "ABB 特選蘋果 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 76,
-                        "note": "ABB 特選蘋果 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 29,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "信使鳥",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/225.png",
-                "recipe": "ABB",
-                "count": 74,
-                "note": "ABB 特選蘋果 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 74,
-                        "note": "ABB 特選蘋果 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 29,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "雷丘",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/026.png",
-                "recipe": "AAA",
-                "count": 47,
-                "note": "AAA 特選蘋果 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 47,
-                        "note": "AAA 特選蘋果 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 20,
-                        "note": "AAC 雙特選蘋果 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 7,
-                        "note": "ABB 單特選蘋果 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 7,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "水君",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/245.png",
-                "recipe": "AAA",
-                "count": 47,
-                "note": "AAA 特選蘋果 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 47,
-                        "note": "AAA 特選蘋果 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 20,
-                        "note": "AAC 雙特選蘋果 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 7,
-                        "note": "ABB 單特選蘋果 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 7,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "皮卡丘（萬聖節）",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png",
-                "recipe": "AAA",
-                "count": 40,
-                "note": "AAA 特選蘋果 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 40,
-                        "note": "AAA 特選蘋果 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 17,
-                        "note": "AAC 雙特選蘋果 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 6,
-                        "note": "ABB 單特選蘋果 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 6,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "拉達",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/020.png",
-                "recipe": "AAA",
-                "count": 37,
-                "note": "AAA 特選蘋果 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 37,
-                        "note": "AAA 特選蘋果 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 16,
-                        "note": "AAC 雙特選蘋果 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單特選蘋果 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "音波龍",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/715.png",
-                "recipe": "AAA",
-                "count": 33,
-                "note": "AAA 特選蘋果 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 33,
-                        "note": "AAA 特選蘋果 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 14,
-                        "note": "AAC 雙特選蘋果 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單特選蘋果 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "皮卡丘（船長）",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png",
-                "recipe": "AAA",
-                "count": 32,
-                "note": "AAA 特選蘋果 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 32,
-                        "note": "AAA 特選蘋果 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 14,
-                        "note": "AAC 雙特選蘋果 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單特選蘋果 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "咚咚鼠",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/702.png",
-                "recipe": "AAA",
-                "count": 32,
-                "note": "AAA 特選蘋果 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 32,
-                        "note": "AAA 特選蘋果 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 14,
-                        "note": "AAC 雙特選蘋果 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單特選蘋果 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "哥達鴨",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/055.png",
-                "recipe": "ABB",
-                "count": 31,
-                "note": "ABB 特選蘋果 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 31,
-                        "note": "ABB 特選蘋果 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "顫弦蠑螈（高調的樣子）",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/849.png",
-                "recipe": "ABB",
-                "count": 30,
-                "note": "ABB 特選蘋果 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 30,
-                        "note": "ABB 特選蘋果 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "顫弦蠑螈（低調的樣子）",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png",
-                "recipe": "ABB",
-                "count": 30,
-                "note": "ABB 特選蘋果 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 30,
-                        "note": "ABB 特選蘋果 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "怪顎龍",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/697.png",
-                "recipe": "ABB",
-                "count": 29,
-                "note": "ABB 特選蘋果 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 29,
-                        "note": "ABB 特選蘋果 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "果然翁",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/202.png",
-                "recipe": "AAA",
-                "count": 28,
-                "note": "AAA 特選蘋果 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 28,
-                        "note": "AAA 特選蘋果 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙特選蘋果 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單特選蘋果 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "艾路雷朵",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/475.png",
-                "recipe": "AAA",
-                "count": 28,
-                "note": "AAA 特選蘋果 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 28,
-                        "note": "AAA 特選蘋果 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙特選蘋果 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單特選蘋果 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "謎擬Q",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/778.png",
-                "recipe": "AAA",
-                "count": 28,
-                "note": "AAA 特選蘋果 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 28,
-                        "note": "AAA 特選蘋果 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙特選蘋果 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單特選蘋果 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "皮可西",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/036.png",
-                "recipe": "AAA",
-                "count": 27,
-                "note": "AAA 特選蘋果 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 27,
-                        "note": "AAA 特選蘋果 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙特選蘋果 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單特選蘋果 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "沙奈朵",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/282.png",
-                "recipe": "AAA",
-                "count": 27,
-                "note": "AAA 特選蘋果 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 27,
-                        "note": "AAA 特選蘋果 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙特選蘋果 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單特選蘋果 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "天然鳥",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/178.png",
-                "recipe": "AAC",
-                "count": 25,
-                "note": "AAC 單特選蘋果 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 25,
-                        "note": "AAC 單特選蘋果 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 25,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "請假王",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/289.png",
-                "recipe": "AAC",
-                "count": 25,
-                "note": "AAC 單特選蘋果 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 25,
-                        "note": "AAC 單特選蘋果 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 25,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "皮卡丘（佳節）",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png",
-                "recipe": "AAA",
-                "count": 24,
-                "note": "AAA 特選蘋果 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 24,
-                        "note": "AAA 特選蘋果 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 雙特選蘋果 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單特選蘋果 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "七夕青鳥",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/334.png",
-                "recipe": "AAC",
-                "count": 24,
-                "note": "AAC 單特選蘋果 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 24,
-                        "note": "AAC 單特選蘋果 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 24,
-                        "note": "ABC 特選蘋果 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "milk",
-        "name": "哞哞鮮奶",
-        "enName": "Moomoo Milk",
-        "energy": 98,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png",
-        "pokemon": [
-            {
-                "name": "水箭龜",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/009.png",
-                "recipe": "AAA",
-                "count": 90,
-                "note": "AAA 哞哞鮮奶 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 90,
-                        "note": "AAA 哞哞鮮奶 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 45,
-                        "note": "AAC 雙哞哞鮮奶 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 13,
-                        "note": "ABB 單哞哞鮮奶 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "魔幻假面喵",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/908.png",
-                "recipe": "ABB",
-                "count": 72,
-                "note": "ABB 哞哞鮮奶 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 72,
-                        "note": "ABB 哞哞鮮奶 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 29,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "顫弦蠑螈（高調的樣子）",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/849.png",
-                "recipe": "AAA",
-                "count": 35,
-                "note": "AAA 哞哞鮮奶 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 35,
-                        "note": "AAA 哞哞鮮奶 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 15,
-                        "note": "AAC 雙哞哞鮮奶 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單哞哞鮮奶 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "顫弦蠑螈（低調的樣子）",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png",
-                "recipe": "AAA",
-                "count": 35,
-                "note": "AAA 哞哞鮮奶 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 35,
-                        "note": "AAA 哞哞鮮奶 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 15,
-                        "note": "AAC 雙哞哞鮮奶 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單哞哞鮮奶 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "巴布土撥",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/923.png",
-                "recipe": "ABB",
-                "count": 35,
-                "note": "ABB 哞哞鮮奶 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 35,
-                        "note": "ABB 哞哞鮮奶 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "水伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/134.png",
-                "recipe": "AAA",
-                "count": 31,
-                "note": "AAA 哞哞鮮奶 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 31,
-                        "note": "AAA 哞哞鮮奶 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 雙哞哞鮮奶 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單哞哞鮮奶 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "雷伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/135.png",
-                "recipe": "AAA",
-                "count": 31,
-                "note": "AAA 哞哞鮮奶 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 31,
-                        "note": "AAA 哞哞鮮奶 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 雙哞哞鮮奶 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單哞哞鮮奶 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "火伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/136.png",
-                "recipe": "AAA",
-                "count": 31,
-                "note": "AAA 哞哞鮮奶 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 31,
-                        "note": "AAA 哞哞鮮奶 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 雙哞哞鮮奶 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單哞哞鮮奶 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "太陽伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/196.png",
-                "recipe": "AAA",
-                "count": 31,
-                "note": "AAA 哞哞鮮奶 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 31,
-                        "note": "AAA 哞哞鮮奶 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 雙哞哞鮮奶 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單哞哞鮮奶 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "月亮伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/197.png",
-                "recipe": "AAA",
-                "count": 31,
-                "note": "AAA 哞哞鮮奶 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 31,
-                        "note": "AAA 哞哞鮮奶 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 雙哞哞鮮奶 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單哞哞鮮奶 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "葉伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/470.png",
-                "recipe": "AAA",
-                "count": 31,
-                "note": "AAA 哞哞鮮奶 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 31,
-                        "note": "AAA 哞哞鮮奶 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 雙哞哞鮮奶 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單哞哞鮮奶 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "冰伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/471.png",
-                "recipe": "AAA",
-                "count": 31,
-                "note": "AAA 哞哞鮮奶 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 31,
-                        "note": "AAA 哞哞鮮奶 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 雙哞哞鮮奶 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單哞哞鮮奶 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "仙子伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/700.png",
-                "recipe": "AAA",
-                "count": 31,
-                "note": "AAA 哞哞鮮奶 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 31,
-                        "note": "AAA 哞哞鮮奶 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 雙哞哞鮮奶 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單哞哞鮮奶 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "夢夢蝕",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/518.png",
-                "recipe": "AAA",
-                "count": 31,
-                "note": "AAA 哞哞鮮奶 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 31,
-                        "note": "AAA 哞哞鮮奶 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 雙哞哞鮮奶 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單哞哞鮮奶 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "托戈德瑪爾",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/777.png",
-                "recipe": "AAA",
-                "count": 29,
-                "note": "AAA 哞哞鮮奶 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 29,
-                        "note": "AAA 哞哞鮮奶 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙哞哞鮮奶 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單哞哞鮮奶 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "貓老大",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/053.png",
-                "recipe": "AAA",
-                "count": 28,
-                "note": "AAA 哞哞鮮奶 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 28,
-                        "note": "AAA 哞哞鮮奶 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙哞哞鮮奶 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單哞哞鮮奶 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "巨沼怪",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/260.png",
-                "recipe": "ABB",
-                "count": 27,
-                "note": "ABB 哞哞鮮奶 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 27,
-                        "note": "ABB 哞哞鮮奶 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "伊布（佳節）",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png",
-                "recipe": "AAA",
-                "count": 23,
-                "note": "AAA 哞哞鮮奶 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 23,
-                        "note": "AAA 哞哞鮮奶 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 雙哞哞鮮奶 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單哞哞鮮奶 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "伊布（萬聖節）",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png",
-                "recipe": "AAC",
-                "count": 22,
-                "note": "AAC 單哞哞鮮奶 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 22,
-                        "note": "AAC 單哞哞鮮奶 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 22,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "負電拍拍",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/312.png",
-                "recipe": "AAC",
-                "count": 19,
-                "note": "AAC 單哞哞鮮奶 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 19,
-                        "note": "AAC 單哞哞鮮奶 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 19,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "風速狗",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/059.png",
-                "recipe": "AAC",
-                "count": 18,
-                "note": "AAC 單哞哞鮮奶 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 18,
-                        "note": "AAC 單哞哞鮮奶 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 18,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "拉帝歐斯",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/381.png",
-                "recipe": "AAC",
-                "count": 18,
-                "note": "AAC 單哞哞鮮奶 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 18,
-                        "note": "AAC 單哞哞鮮奶 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 18,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "正電拍拍",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/311.png",
-                "recipe": "AAC",
-                "count": 17,
-                "note": "AAC 單哞哞鮮奶 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 17,
-                        "note": "AAC 單哞哞鮮奶 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 17,
-                        "note": "ABC 哞哞鮮奶 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "soybeans",
-        "name": "萌綠大豆",
-        "enName": "Greengrass Soybeans",
-        "energy": 100,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png",
-        "pokemon": [
-            {
-                "name": "班基拉斯",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png",
-                "recipe": "ABB",
-                "count": 84,
-                "note": "ABB 萌綠大豆 主力產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 84,
-                        "note": "ABB 萌綠大豆 主力產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 32,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "隆隆岩",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/076.png",
-                "recipe": "AAA",
-                "count": 83,
-                "note": "AAA 萌綠大豆 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 83,
-                        "note": "AAA 萌綠大豆 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 41,
-                        "note": "AAC 雙萌綠大豆 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 12,
-                        "note": "ABB 單萌綠大豆 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "狂歡浪舞鴨",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/914.png",
-                "recipe": "AAA",
-                "count": 82,
-                "note": "AAA 萌綠大豆 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 82,
-                        "note": "AAA 萌綠大豆 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 41,
-                        "note": "AAC 雙萌綠大豆 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 12,
-                        "note": "ABB 單萌綠大豆 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "南瓜怪人 (小顆種)",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
-                "recipe": "ABB",
-                "count": 79,
-                "note": "ABB 萌綠大豆 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 79,
-                        "note": "ABB 萌綠大豆 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 30,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "南瓜怪人 (中顆種)",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
-                "recipe": "ABB",
-                "count": 77,
-                "note": "ABB 萌綠大豆 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 77,
-                        "note": "ABB 萌綠大豆 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 29,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "老翁龍",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/780.png",
-                "recipe": "AAA",
-                "count": 77,
-                "note": "AAA 萌綠大豆 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 77,
-                        "note": "AAA 萌綠大豆 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 38,
-                        "note": "AAC 雙萌綠大豆 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 11,
-                        "note": "ABB 單萌綠大豆 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 11,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "南瓜怪人 (大顆種)",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
-                "recipe": "ABB",
-                "count": 75,
-                "note": "ABB 萌綠大豆 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 75,
-                        "note": "ABB 萌綠大豆 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 28,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "南瓜怪人 (巨顆種)",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
-                "recipe": "ABB",
-                "count": 72,
-                "note": "ABB 萌綠大豆 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 72,
-                        "note": "ABB 萌綠大豆 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 27,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "沙漠蜻蜓",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/330.png",
-                "recipe": "AAC",
-                "count": 50,
-                "note": "AAC 單萌綠大豆 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 50,
-                        "note": "AAC 單萌綠大豆 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 50,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "袋獸",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/115.png",
-                "recipe": "AAC",
-                "count": 44,
-                "note": "AAC 單萌綠大豆 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 44,
-                        "note": "AAC 單萌綠大豆 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 44,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "波士可多拉",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/306.png",
-                "recipe": "AAC",
-                "count": 43,
-                "note": "AAC 單萌綠大豆 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 43,
-                        "note": "AAC 單萌綠大豆 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 43,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "火焰雞",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/257.png",
-                "recipe": "ABB",
-                "count": 38,
-                "note": "ABB 萌綠大豆 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 38,
-                        "note": "ABB 萌綠大豆 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 15,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "九尾（阿羅拉的樣子）",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png",
-                "recipe": "AAA",
-                "count": 37,
-                "note": "AAA 萌綠大豆 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 37,
-                        "note": "AAA 萌綠大豆 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 16,
-                        "note": "AAC 雙萌綠大豆 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單萌綠大豆 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "三地鼠",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/051.png",
-                "recipe": "AAC",
-                "count": 37,
-                "note": "AAC 單萌綠大豆 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 37,
-                        "note": "AAC 單萌綠大豆 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 37,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "嘟嘟利",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/085.png",
-                "recipe": "AAA",
-                "count": 37,
-                "note": "AAA 萌綠大豆 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 37,
-                        "note": "AAA 萌綠大豆 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 16,
-                        "note": "AAC 雙萌綠大豆 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單萌綠大豆 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "七夕青鳥",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/334.png",
-                "recipe": "ABB",
-                "count": 34,
-                "note": "ABB 萌綠大豆 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 34,
-                        "note": "ABB 萌綠大豆 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 14,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "九尾",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/038.png",
-                "recipe": "AAA",
-                "count": 29,
-                "note": "AAA 萌綠大豆 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 29,
-                        "note": "AAA 萌綠大豆 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙萌綠大豆 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單萌綠大豆 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "吞食獸",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/317.png",
-                "recipe": "AAA",
-                "count": 27,
-                "note": "AAA 萌綠大豆 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 27,
-                        "note": "AAA 萌綠大豆 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙萌綠大豆 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單萌綠大豆 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "拉達",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/020.png",
-                "recipe": "ABB",
-                "count": 26,
-                "note": "ABB 萌綠大豆 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 26,
-                        "note": "ABB 萌綠大豆 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "烏鴉頭頭",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/430.png",
-                "recipe": "ABB",
-                "count": 26,
-                "note": "ABB 萌綠大豆 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 26,
-                        "note": "ABB 萌綠大豆 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 9,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "瑪狃拉",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/461.png",
-                "recipe": "AAC",
-                "count": 24,
-                "note": "AAC 單萌綠大豆 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 24,
-                        "note": "AAC 單萌綠大豆 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 24,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "巴大蝶",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/012.png",
-                "recipe": "AAC",
-                "count": 21,
-                "note": "AAC 單萌綠大豆 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 21,
-                        "note": "AAC 單萌綠大豆 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 21,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "樹才怪",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/185.png",
-                "recipe": "ABB",
-                "count": 21,
-                "note": "ABB 萌綠大豆 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 21,
-                        "note": "ABB 萌綠大豆 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 7,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "皮可西",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/036.png",
-                "recipe": "AAC",
-                "count": 12,
-                "note": "AAC 單萌綠大豆 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 單萌綠大豆 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 萌綠大豆 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "honey",
-        "name": "甜甜蜜",
-        "enName": "Honey",
-        "energy": 101,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png",
-        "pokemon": [
-            {
-                "name": "妙蛙花",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png",
-                "recipe": "AAA",
-                "count": 87,
-                "note": "AAA 甜甜蜜 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 87,
-                        "note": "AAA 甜甜蜜 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 43,
-                        "note": "AAC 雙甜甜蜜 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 12,
-                        "note": "ABB 單甜甜蜜 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "凱羅斯",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/127.png",
-                "recipe": "AAA",
-                "count": 82,
-                "note": "AAA 甜甜蜜 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 82,
-                        "note": "AAA 甜甜蜜 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 41,
-                        "note": "AAC 雙甜甜蜜 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 12,
-                        "note": "ABB 單甜甜蜜 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "蝶結萌虻",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/743.png",
-                "recipe": "AAA",
-                "count": 77,
-                "note": "AAA 甜甜蜜 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 77,
-                        "note": "AAA 甜甜蜜 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 39,
-                        "note": "AAC 雙甜甜蜜 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 11,
-                        "note": "ABB 單甜甜蜜 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 11,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "鍬農炮蟲",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/738.png",
-                "recipe": "AAC",
-                "count": 50,
-                "note": "AAC 單甜甜蜜 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 50,
-                        "note": "AAC 單甜甜蜜 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 50,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "幸福蛋",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/242.png",
-                "recipe": "AAC",
-                "count": 40,
-                "note": "AAC 單甜甜蜜 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 40,
-                        "note": "AAC 單甜甜蜜 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 40,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "請假王",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/289.png",
-                "recipe": "ABB",
-                "count": 37,
-                "note": "ABB 甜甜蜜 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 37,
-                        "note": "ABB 甜甜蜜 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "巴大蝶",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/012.png",
-                "recipe": "AAA",
-                "count": 36,
-                "note": "AAA 甜甜蜜 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 36,
-                        "note": "AAA 甜甜蜜 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 15,
-                        "note": "AAC 雙甜甜蜜 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單甜甜蜜 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "大竺葵",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/154.png",
-                "recipe": "ABB",
-                "count": 33,
-                "note": "ABB 甜甜蜜 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 33,
-                        "note": "ABB 甜甜蜜 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "負電拍拍",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/312.png",
-                "recipe": "AAA",
-                "count": 33,
-                "note": "AAA 甜甜蜜 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 33,
-                        "note": "AAA 甜甜蜜 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 14,
-                        "note": "AAC 雙甜甜蜜 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單甜甜蜜 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "赫拉克羅斯",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/214.png",
-                "recipe": "AAA",
-                "count": 31,
-                "note": "AAA 甜甜蜜 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 31,
-                        "note": "AAA 甜甜蜜 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 雙甜甜蜜 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單甜甜蜜 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "胖可丁",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/040.png",
-                "recipe": "AAA",
-                "count": 27,
-                "note": "AAA 甜甜蜜 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 27,
-                        "note": "AAA 甜甜蜜 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙甜甜蜜 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單甜甜蜜 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "夢夢蝕",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/518.png",
-                "recipe": "ABB",
-                "count": 22,
-                "note": "ABB 甜甜蜜 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 22,
-                        "note": "ABB 甜甜蜜 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 9,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "皮可西",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/036.png",
-                "recipe": "ABB",
-                "count": 20,
-                "note": "ABB 甜甜蜜 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 20,
-                        "note": "ABB 甜甜蜜 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "火爆猴",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/057.png",
-                "recipe": "AAC",
-                "count": 19,
-                "note": "AAC 單甜甜蜜 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 19,
-                        "note": "AAC 單甜甜蜜 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 19,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "吞食獸",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/317.png",
-                "recipe": "AAC",
-                "count": 16,
-                "note": "AAC 單甜甜蜜 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 16,
-                        "note": "AAC 單甜甜蜜 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 16,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "壺壺",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/213.png",
-                "recipe": "AAC",
-                "count": 15,
-                "note": "AAC 單甜甜蜜 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 15,
-                        "note": "AAC 單甜甜蜜 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 15,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "帝王拿波",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/395.png",
-                "recipe": "AAC",
-                "count": 14,
-                "note": "AAC 單甜甜蜜 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 14,
-                        "note": "AAC 單甜甜蜜 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 14,
-                        "note": "ABC 甜甜蜜 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "sausage",
-        "name": "豆製肉",
-        "enName": "Bean Sausage",
-        "energy": 103,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png",
-        "pokemon": [
-            {
-                "name": "波士可多拉",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/306.png",
-                "recipe": "AAA",
-                "count": 87,
-                "note": "AAA 豆製肉 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 87,
-                        "note": "AAA 豆製肉 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 43,
-                        "note": "AAC 雙豆製肉 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 12,
-                        "note": "ABB 單豆製肉 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "噴火龍",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png",
-                "recipe": "AAA",
-                "count": 85,
-                "note": "AAA 豆製肉 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 85,
-                        "note": "AAA 豆製肉 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 43,
-                        "note": "AAC 雙豆製肉 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 12,
-                        "note": "ABB 單豆製肉 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "穿著熊",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/760.png",
-                "recipe": "ABB",
-                "count": 85,
-                "note": "ABB 豆製肉 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 85,
-                        "note": "ABB 豆製肉 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 32,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "大蔥鴨",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/083.png",
-                "recipe": "ABB",
-                "count": 73,
-                "note": "ABB 豆製肉 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 73,
-                        "note": "ABB 豆製肉 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 28,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "浩大鯨",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/975.png",
-                "recipe": "ABB",
-                "count": 68,
-                "note": "ABB 豆製肉 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 68,
-                        "note": "ABB 豆製肉 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 24,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "骨紋巨聲鱷",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/911.png",
-                "recipe": "ABB",
-                "count": 65,
-                "note": "ABB 豆製肉 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 65,
-                        "note": "ABB 豆製肉 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 26,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "毒骷蛙",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/454.png",
-                "recipe": "ABB",
-                "count": 57,
-                "note": "ABB 豆製肉 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 57,
-                        "note": "ABB 豆製肉 主力產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 35,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 35,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "班基拉斯",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png",
-                "recipe": "AAC",
-                "count": 51,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 51,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 51,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "水箭龜",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/009.png",
-                "recipe": "AAC",
-                "count": 45,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 45,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 45,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "沼王",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/195.png",
-                "recipe": "AAC",
-                "count": 44,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 44,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 44,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "大力鱷",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/160.png",
-                "recipe": "AAA",
-                "count": 42,
-                "note": "AAA 豆製肉 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 42,
-                        "note": "AAA 豆製肉 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 18,
-                        "note": "AAC 雙豆製肉 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 6,
-                        "note": "ABB 單豆製肉 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 6,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "瑪狃拉",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/461.png",
-                "recipe": "AAA",
-                "count": 42,
-                "note": "AAA 豆製肉 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 42,
-                        "note": "AAA 豆製肉 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 18,
-                        "note": "AAC 雙豆製肉 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 6,
-                        "note": "ABB 單豆製肉 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 6,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "雷公",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/243.png",
-                "recipe": "AAA",
-                "count": 42,
-                "note": "AAA 豆製肉 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 42,
-                        "note": "AAA 豆製肉 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 18,
-                        "note": "AAC 雙豆製肉 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 6,
-                        "note": "ABB 單豆製肉 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 6,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "凱羅斯",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/127.png",
-                "recipe": "AAC",
-                "count": 41,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 41,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 41,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "老翁龍",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/780.png",
-                "recipe": "AAC",
-                "count": 38,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 38,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 38,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "阿柏怪",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/024.png",
-                "recipe": "AAA",
-                "count": 35,
-                "note": "AAA 豆製肉 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 35,
-                        "note": "AAA 豆製肉 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 15,
-                        "note": "AAC 雙豆製肉 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單豆製肉 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "帝牙海獅",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/365.png",
-                "recipe": "ABB",
-                "count": 34,
-                "note": "ABB 豆製肉 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 34,
-                        "note": "ABB 豆製肉 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 15,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "火爆猴",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/057.png",
-                "recipe": "AAA",
-                "count": 33,
-                "note": "AAA 豆製肉 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 33,
-                        "note": "AAA 豆製肉 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 14,
-                        "note": "AAC 雙豆製肉 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單豆製肉 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "海豹球（佳節）",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png",
-                "recipe": "ABB",
-                "count": 30,
-                "note": "ABB 豆製肉 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 30,
-                        "note": "ABB 豆製肉 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "怪顎龍",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/697.png",
-                "recipe": "AAA",
-                "count": 29,
-                "note": "AAA 豆製肉 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 29,
-                        "note": "AAA 豆製肉 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙豆製肉 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單豆製肉 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "風速狗",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/059.png",
-                "recipe": "ABB",
-                "count": 28,
-                "note": "ABB 豆製肉 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 28,
-                        "note": "ABB 豆製肉 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 11,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "勇士雄鷹",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/628.png",
-                "recipe": "AAA",
-                "count": 23,
-                "note": "AAA 豆製肉 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 23,
-                        "note": "AAA 豆製肉 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 雙豆製肉 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單豆製肉 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "摔角鷹人",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/701.png",
-                "recipe": "AAC",
-                "count": 21,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 21,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 21,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "貓老大",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/053.png",
-                "recipe": "ABB",
-                "count": 20,
-                "note": "ABB 豆製肉 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 20,
-                        "note": "ABB 豆製肉 主力產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "大鋼蛇",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/208.png",
-                "recipe": "ABB",
-                "count": 20,
-                "note": "ABB 豆製肉 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 20,
-                        "note": "ABB 豆製肉 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 7,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "暴飛龍",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/373.png",
-                "recipe": "AAC",
-                "count": 20,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 20,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 20,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "赫拉克羅斯",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/214.png",
-                "recipe": "AAC",
-                "count": 18,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 18,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 18,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "拉達",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/020.png",
-                "recipe": "AAC",
-                "count": 16,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 16,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 16,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "哥達鴨",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/055.png",
-                "recipe": "AAC",
-                "count": 16,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 16,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 16,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "嘟嘟利",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/085.png",
-                "recipe": "AAC",
-                "count": 16,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 16,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 16,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "音波龍",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/715.png",
-                "recipe": "AAC",
-                "count": 14,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 14,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 14,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "水伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/134.png",
-                "recipe": "AAC",
-                "count": 13,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "雷伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/135.png",
-                "recipe": "AAC",
-                "count": 13,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "火伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/136.png",
-                "recipe": "AAC",
-                "count": 13,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "太陽伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/196.png",
-                "recipe": "AAC",
-                "count": 13,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "月亮伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/197.png",
-                "recipe": "AAC",
-                "count": 13,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "葉伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/470.png",
-                "recipe": "AAC",
-                "count": 13,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "冰伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/471.png",
-                "recipe": "AAC",
-                "count": 13,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "仙子伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/700.png",
-                "recipe": "AAC",
-                "count": 13,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "伊布（佳節）",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png",
-                "recipe": "AAC",
-                "count": 10,
-                "note": "AAC 單豆製肉 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 單豆製肉 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 豆製肉 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "ginger",
-        "name": "暖暖薑",
-        "enName": "Warming Ginger",
-        "energy": 109,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png",
-        "pokemon": [
-            {
-                "name": "班基拉斯",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png",
-                "recipe": "AAA",
-                "count": 90,
-                "note": "AAA 暖暖薑 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 90,
-                        "note": "AAA 暖暖薑 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 45,
-                        "note": "AAC 雙暖暖薑 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 13,
-                        "note": "ABB 單暖暖薑 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "袋獸",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/115.png",
-                "recipe": "AAA",
-                "count": 77,
-                "note": "AAA 暖暖薑 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 77,
-                        "note": "AAA 暖暖薑 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 38,
-                        "note": "AAC 雙暖暖薑 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 11,
-                        "note": "ABB 單暖暖薑 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 11,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "噴火龍",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png",
-                "recipe": "ABB",
-                "count": 67,
-                "note": "ABB 暖暖薑 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 67,
-                        "note": "ABB 暖暖薑 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 24,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "花療環環",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/764.png",
-                "recipe": "ABB",
-                "count": 65,
-                "note": "ABB 暖暖薑 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 65,
-                        "note": "ABB 暖暖薑 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 26,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "克雷色利亞",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/488.png",
-                "recipe": "AAA",
-                "count": 48,
-                "note": "AAA 暖暖薑 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 48,
-                        "note": "AAA 暖暖薑 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 20,
-                        "note": "AAC 雙暖暖薑 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 7,
-                        "note": "ABB 單暖暖薑 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 7,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "大蔥鴨",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/083.png",
-                "recipe": "AAC",
-                "count": 42,
-                "note": "AAC 單暖暖薑 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 42,
-                        "note": "AAC 單暖暖薑 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 42,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "火爆獸",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/157.png",
-                "recipe": "AAA",
-                "count": 40,
-                "note": "AAA 暖暖薑 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 40,
-                        "note": "AAA 暖暖薑 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 17,
-                        "note": "AAC 雙暖暖薑 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 6,
-                        "note": "ABB 單暖暖薑 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 6,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "魔幻假面喵",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/908.png",
-                "recipe": "AAC",
-                "count": 38,
-                "note": "AAC 單暖暖薑 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 38,
-                        "note": "AAC 單暖暖薑 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 38,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "暴飛龍",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/373.png",
-                "recipe": "ABB",
-                "count": 35,
-                "note": "ABB 暖暖薑 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 35,
-                        "note": "ABB 暖暖薑 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 15,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "雷丘",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/026.png",
-                "recipe": "ABB",
-                "count": 33,
-                "note": "ABB 暖暖薑 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 33,
-                        "note": "ABB 暖暖薑 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "嘎啦嘎啦",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/105.png",
-                "recipe": "AAA",
-                "count": 31,
-                "note": "AAA 暖暖薑 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 31,
-                        "note": "AAA 暖暖薑 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 雙暖暖薑 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單暖暖薑 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "摔角鷹人",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/701.png",
-                "recipe": "ABB",
-                "count": 29,
-                "note": "ABB 暖暖薑 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 29,
-                        "note": "ABB 暖暖薑 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "皮卡丘（萬聖節）",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png",
-                "recipe": "ABB",
-                "count": 28,
-                "note": "ABB 暖暖薑 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 28,
-                        "note": "ABB 暖暖薑 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 11,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "黑魯加",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/229.png",
-                "recipe": "ABB",
-                "count": 28,
-                "note": "ABB 暖暖薑 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 28,
-                        "note": "ABB 暖暖薑 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "詛咒娃娃",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/354.png",
-                "recipe": "ABB",
-                "count": 27,
-                "note": "ABB 暖暖薑 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 27,
-                        "note": "ABB 暖暖薑 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 9,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "波克基斯",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/468.png",
-                "recipe": "ABB",
-                "count": 24,
-                "note": "ABB 暖暖薑 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 24,
-                        "note": "ABB 暖暖薑 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "皮卡丘（船長）",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png",
-                "recipe": "ABB",
-                "count": 23,
-                "note": "ABB 暖暖薑 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 23,
-                        "note": "ABB 暖暖薑 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 9,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "土台龜",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/389.png",
-                "recipe": "AAC",
-                "count": 21,
-                "note": "AAC 單暖暖薑 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 21,
-                        "note": "AAC 單暖暖薑 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 21,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "烈焰猴",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/392.png",
-                "recipe": "ABB",
-                "count": 20,
-                "note": "ABB 暖暖薑 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 20,
-                        "note": "ABB 暖暖薑 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 9,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "帝牙海獅",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/365.png",
-                "recipe": "AAC",
-                "count": 19,
-                "note": "AAC 單暖暖薑 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 19,
-                        "note": "AAC 單暖暖薑 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 19,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "皮卡丘（佳節）",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png",
-                "recipe": "ABB",
-                "count": 17,
-                "note": "ABB 暖暖薑 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 17,
-                        "note": "ABB 暖暖薑 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 7,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "海豹球（佳節）",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png",
-                "recipe": "AAC",
-                "count": 17,
-                "note": "AAC 單暖暖薑 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 17,
-                        "note": "AAC 單暖暖薑 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 17,
-                        "note": "ABC 暖暖薑 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "tomato",
-        "name": "好眠番茄",
-        "enName": "Snoozy Tomato",
-        "energy": 110,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png",
-        "pokemon": [
-            {
-                "name": "大食花",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/071.png",
-                "recipe": "AAA",
-                "count": 76,
-                "note": "AAA 好眠番茄 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 76,
-                        "note": "AAA 好眠番茄 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 38,
-                        "note": "AAC 雙好眠番茄 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 11,
-                        "note": "ABB 單好眠番茄 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 11,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "倫琴貓",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/405.png",
-                "recipe": "AAA",
-                "count": 76,
-                "note": "AAA 好眠番茄 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 76,
-                        "note": "AAA 好眠番茄 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 38,
-                        "note": "AAC 雙好眠番茄 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 11,
-                        "note": "ABB 單好眠番茄 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 11,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "暴雪王",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/460.png",
-                "recipe": "AAA",
-                "count": 76,
-                "note": "AAA 好眠番茄 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 76,
-                        "note": "AAA 好眠番茄 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 38,
-                        "note": "AAC 雙好眠番茄 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 11,
-                        "note": "ABB 單好眠番茄 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 11,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "魔牆人偶",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/122.png",
-                "recipe": "AAA",
-                "count": 71,
-                "note": "AAA 好眠番茄 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 71,
-                        "note": "AAA 好眠番茄 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 35,
-                        "note": "AAC 雙好眠番茄 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 10,
-                        "note": "ABB 單好眠番茄 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "妙蛙花",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png",
-                "recipe": "ABB",
-                "count": 68,
-                "note": "ABB 好眠番茄 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 68,
-                        "note": "ABB 好眠番茄 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 25,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "三地鼠",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/051.png",
-                "recipe": "AAA",
-                "count": 66,
-                "note": "AAA 好眠番茄 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 66,
-                        "note": "AAA 好眠番茄 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 33,
-                        "note": "AAC 雙好眠番茄 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 9,
-                        "note": "ABB 單好眠番茄 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 9,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "請假王",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/289.png",
-                "recipe": "AAA",
-                "count": 43,
-                "note": "AAA 好眠番茄 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 43,
-                        "note": "AAA 好眠番茄 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 18,
-                        "note": "AAC 雙好眠番茄 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 6,
-                        "note": "ABB 單好眠番茄 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 6,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "巨鍛匠",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/959.png",
-                "recipe": "AAA",
-                "count": 35,
-                "note": "AAA 好眠番茄 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 35,
-                        "note": "AAA 好眠番茄 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 15,
-                        "note": "AAC 雙好眠番茄 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單好眠番茄 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "大嘴娃",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/303.png",
-                "recipe": "AAC",
-                "count": 33,
-                "note": "AAC 單好眠番茄 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 33,
-                        "note": "AAC 單好眠番茄 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 33,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "拉帝歐斯",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/381.png",
-                "recipe": "AAA",
-                "count": 32,
-                "note": "AAA 好眠番茄 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 32,
-                        "note": "AAA 好眠番茄 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 14,
-                        "note": "AAC 雙好眠番茄 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單好眠番茄 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "炎帝",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/244.png",
-                "recipe": "ABB",
-                "count": 31,
-                "note": "ABB 好眠番茄 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 31,
-                        "note": "ABB 好眠番茄 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "克雷色利亞",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/488.png",
-                "recipe": "AAC",
-                "count": 27,
-                "note": "AAC 單好眠番茄 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 27,
-                        "note": "AAC 單好眠番茄 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 27,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "巴大蝶",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/012.png",
-                "recipe": "ABB",
-                "count": 26,
-                "note": "ABB 好眠番茄 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 26,
-                        "note": "ABB 好眠番茄 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "樹才怪",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/185.png",
-                "recipe": "AAA",
-                "count": 25,
-                "note": "AAA 好眠番茄 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 25,
-                        "note": "AAA 好眠番茄 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 11,
-                        "note": "AAC 雙好眠番茄 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單好眠番茄 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "大鋼蛇",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/208.png",
-                "recipe": "AAA",
-                "count": 23,
-                "note": "AAA 好眠番茄 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 23,
-                        "note": "AAA 好眠番茄 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 雙好眠番茄 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單好眠番茄 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "拉帝亞斯",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/380.png",
-                "recipe": "AAA",
-                "count": 19,
-                "note": "AAA 好眠番茄 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 19,
-                        "note": "AAA 好眠番茄 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 8,
-                        "note": "AAC 雙好眠番茄 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單好眠番茄 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "呆殼獸",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/080.png",
-                "recipe": "AAC",
-                "count": 17,
-                "note": "AAC 單好眠番茄 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 17,
-                        "note": "AAC 單好眠番茄 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 17,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "呆呆王",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/199.png",
-                "recipe": "AAC",
-                "count": 16,
-                "note": "AAC 單好眠番茄 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 16,
-                        "note": "AAC 單好眠番茄 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 16,
-                        "note": "ABC 好眠番茄 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "egg",
-        "name": "特選蛋",
-        "enName": "Fancy Egg",
-        "energy": 115,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png",
-        "pokemon": [
-            {
-                "name": "幸福蛋",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/242.png",
-                "recipe": "AAA",
-                "count": 70,
-                "note": "AAA 特選蛋 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 70,
-                        "note": "AAA 特選蛋 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 35,
-                        "note": "AAC 雙特選蛋 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 10,
-                        "note": "ABB 單特選蛋 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "信使鳥",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/225.png",
-                "recipe": "AAA",
-                "count": 69,
-                "note": "AAA 特選蛋 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 69,
-                        "note": "AAA 特選蛋 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 34,
-                        "note": "AAC 雙特選蛋 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 10,
-                        "note": "ABB 單特選蛋 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "暴雪王",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/460.png",
-                "recipe": "ABB",
-                "count": 60,
-                "note": "ABB 特選蛋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 60,
-                        "note": "ABB 特選蛋 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 22,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "穿著熊",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/760.png",
-                "recipe": "AAC",
-                "count": 48,
-                "note": "AAC 單特選蛋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 48,
-                        "note": "AAC 單特選蛋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 48,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "天然鳥",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/178.png",
-                "recipe": "AAA",
-                "count": 35,
-                "note": "AAA 特選蛋 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 35,
-                        "note": "AAA 特選蛋 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 15,
-                        "note": "AAC 雙特選蛋 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單特選蛋 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "七夕青鳥",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/334.png",
-                "recipe": "AAA",
-                "count": 34,
-                "note": "AAA 特選蛋 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 34,
-                        "note": "AAA 特選蛋 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 14,
-                        "note": "AAC 雙特選蛋 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單特選蛋 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "古月鳥",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/845.png",
-                "recipe": "AAC",
-                "count": 32,
-                "note": "AAC 單特選蛋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 32,
-                        "note": "AAC 單特選蛋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 32,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "瑪狃拉",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/461.png",
-                "recipe": "ABB",
-                "count": 30,
-                "note": "ABB 特選蛋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 30,
-                        "note": "ABB 特選蛋 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "波克基斯",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/468.png",
-                "recipe": "AAA",
-                "count": 28,
-                "note": "AAA 特選蛋 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 28,
-                        "note": "AAA 特選蛋 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙特選蛋 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單特選蛋 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "負電拍拍",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/312.png",
-                "recipe": "ABB",
-                "count": 28,
-                "note": "ABB 特選蛋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 28,
-                        "note": "ABB 特選蛋 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 9,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "阿柏怪",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/024.png",
-                "recipe": "ABB",
-                "count": 25,
-                "note": "ABB 特選蛋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 25,
-                        "note": "ABB 特選蛋 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "電龍",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/181.png",
-                "recipe": "ABB",
-                "count": 24,
-                "note": "ABB 特選蛋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 24,
-                        "note": "ABB 特選蛋 主力產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 14,
-                        "note": "AAC 單特選蛋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 14,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "帝王拿波",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/395.png",
-                "recipe": "AAA",
-                "count": 24,
-                "note": "AAA 特選蛋 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 24,
-                        "note": "AAA 特選蛋 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 雙特選蛋 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單特選蛋 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "拉帝歐斯",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/381.png",
-                "recipe": "ABB",
-                "count": 23,
-                "note": "ABB 特選蛋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 23,
-                        "note": "ABB 特選蛋 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 9,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "蜥蜴王",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/254.png",
-                "recipe": "AAA",
-                "count": 21,
-                "note": "AAA 特選蛋 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 21,
-                        "note": "AAA 特選蛋 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 9,
-                        "note": "AAC 雙特選蛋 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單特選蛋 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "雷丘",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/026.png",
-                "recipe": "AAC",
-                "count": 20,
-                "note": "AAC 單特選蛋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 20,
-                        "note": "AAC 單特選蛋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 20,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "巴布土撥",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/923.png",
-                "recipe": "AAC",
-                "count": 19,
-                "note": "AAC 單特選蛋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 19,
-                        "note": "AAC 單特選蛋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 19,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "皮卡丘（萬聖節）",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png",
-                "recipe": "AAC",
-                "count": 17,
-                "note": "AAC 單特選蛋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 17,
-                        "note": "AAC 單特選蛋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 17,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "路卡利歐",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/448.png",
-                "recipe": "AAC",
-                "count": 15,
-                "note": "AAC 單特選蛋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 15,
-                        "note": "AAC 單特選蛋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 15,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "皮卡丘（船長）",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png",
-                "recipe": "AAC",
-                "count": 14,
-                "note": "AAC 單特選蛋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 14,
-                        "note": "AAC 單特選蛋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 14,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "皮卡丘（佳節）",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png",
-                "recipe": "AAC",
-                "count": 10,
-                "note": "AAC 單特選蛋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 單特選蛋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 特選蛋 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "oil",
-        "name": "純粹油",
-        "enName": "Pure Oil",
-        "energy": 121,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png",
-        "pokemon": [
-            {
-                "name": "毒骷蛙",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/454.png",
-                "recipe": "AAA",
-                "count": 62,
-                "note": "AAA 純粹油 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 62,
-                        "note": "AAA 純粹油 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 31,
-                        "note": "AAC 雙純粹油 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 9,
-                        "note": "ABB 單純粹油 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 9,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "倫琴貓",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/405.png",
-                "recipe": "ABB",
-                "count": 60,
-                "note": "ABB 純粹油 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 60,
-                        "note": "ABB 純粹油 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 22,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "大嘴娃",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/303.png",
-                "recipe": "AAA",
-                "count": 58,
-                "note": "AAA 純粹油 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 58,
-                        "note": "AAA 純粹油 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 29,
-                        "note": "AAC 雙純粹油 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 8,
-                        "note": "ABB 單純粹油 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "古月鳥",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/845.png",
-                "recipe": "AAA",
-                "count": 56,
-                "note": "AAA 純粹油 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 56,
-                        "note": "AAA 純粹油 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 28,
-                        "note": "AAC 雙純粹油 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 8,
-                        "note": "ABB 單純粹油 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "蝶結萌虻",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/743.png",
-                "recipe": "ABB",
-                "count": 55,
-                "note": "ABB 純粹油 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 55,
-                        "note": "ABB 純粹油 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 22,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "百變怪",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/132.png",
-                "recipe": "AAA",
-                "count": 53,
-                "note": "AAA 純粹油 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 53,
-                        "note": "AAA 純粹油 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 26,
-                        "note": "AAC 雙純粹油 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 8,
-                        "note": "ABB 單純粹油 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "快龍",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/149.png",
-                "recipe": "AAC",
-                "count": 53,
-                "note": "AAC 單純粹油 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 53,
-                        "note": "AAC 單純粹油 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 53,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "耿鬼",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png",
-                "recipe": "AAC",
-                "count": 38,
-                "note": "AAC 單純粹油 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 38,
-                        "note": "AAC 單純粹油 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 38,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "炎帝",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/244.png",
-                "recipe": "AAA",
-                "count": 36,
-                "note": "AAA 純粹油 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 36,
-                        "note": "AAA 純粹油 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 15,
-                        "note": "AAC 雙純粹油 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單純粹油 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "狂歡浪舞鴨",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/914.png",
-                "recipe": "AAC",
-                "count": 35,
-                "note": "AAC 單純粹油 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 35,
-                        "note": "AAC 單純粹油 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 35,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "帝牙海獅",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/365.png",
-                "recipe": "AAA",
-                "count": 34,
-                "note": "AAA 純粹油 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 34,
-                        "note": "AAA 純粹油 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 15,
-                        "note": "AAC 雙純粹油 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單純粹油 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "水君",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/245.png",
-                "recipe": "ABB",
-                "count": 33,
-                "note": "ABB 純粹油 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 33,
-                        "note": "ABB 純粹油 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "詛咒娃娃",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/354.png",
-                "recipe": "AAA",
-                "count": 31,
-                "note": "AAA 純粹油 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 31,
-                        "note": "AAA 純粹油 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 雙純粹油 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單純粹油 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "大力鱷",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/160.png",
-                "recipe": "ABB",
-                "count": 30,
-                "note": "ABB 純粹油 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 30,
-                        "note": "ABB 純粹油 主力產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 18,
-                        "note": "AAC 單純粹油 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 18,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "海豹球（佳節）",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png",
-                "recipe": "AAA",
-                "count": 30,
-                "note": "AAA 純粹油 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 30,
-                        "note": "AAA 純粹油 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 雙純粹油 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單純粹油 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "自爆磁怪",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/462.png",
-                "recipe": "AAA",
-                "count": 26,
-                "note": "AAA 純粹油 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 26,
-                        "note": "AAA 純粹油 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 11,
-                        "note": "AAC 雙純粹油 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單純粹油 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "壺壺",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/213.png",
-                "recipe": "AAA",
-                "count": 26,
-                "note": "AAA 純粹油 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 26,
-                        "note": "AAA 純粹油 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 11,
-                        "note": "AAC 雙純粹油 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單純粹油 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "路卡利歐",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/448.png",
-                "recipe": "AAA",
-                "count": 26,
-                "note": "AAA 純粹油 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 26,
-                        "note": "AAA 純粹油 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 11,
-                        "note": "AAC 雙純粹油 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單純粹油 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "勾魂眼",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/302.png",
-                "recipe": "AAA",
-                "count": 24,
-                "note": "AAA 純粹油 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 24,
-                        "note": "AAA 純粹油 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 雙純粹油 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單純粹油 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "岩殿居蟹",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/558.png",
-                "recipe": "AAC",
-                "count": 24,
-                "note": "AAC 單純粹油 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 24,
-                        "note": "AAC 單純粹油 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 24,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "隨風球",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/426.png",
-                "recipe": "ABB",
-                "count": 23,
-                "note": "ABB 純粹油 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 23,
-                        "note": "ABB 純粹油 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "胖可丁",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/040.png",
-                "recipe": "ABB",
-                "count": 20,
-                "note": "ABB 純粹油 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 20,
-                        "note": "ABB 純粹油 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "火焰雞",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/257.png",
-                "recipe": "AAC",
-                "count": 19,
-                "note": "AAC 單純粹油 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 19,
-                        "note": "AAC 單純粹油 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 19,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "火爆獸",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/157.png",
-                "recipe": "AAC",
-                "count": 17,
-                "note": "AAC 單純粹油 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 17,
-                        "note": "AAC 單純粹油 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 17,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "果然翁",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/202.png",
-                "recipe": "AAC",
-                "count": 12,
-                "note": "AAC 單純粹油 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 單純粹油 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 純粹油 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "potato",
-        "name": "窩心洋芋",
-        "enName": "Soft Potato",
-        "energy": 124,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png",
-        "pokemon": [
-            {
-                "name": "浩大鯨",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/975.png",
-                "recipe": "AAA",
-                "count": 68,
-                "note": "AAA 窩心洋芋 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 68,
-                        "note": "AAA 窩心洋芋 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 34,
-                        "note": "AAC 雙窩心洋芋 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 10,
-                        "note": "ABB 單窩心洋芋 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "魔幻假面喵",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/908.png",
-                "recipe": "AAA",
-                "count": 67,
-                "note": "AAA 窩心洋芋 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 67,
-                        "note": "AAA 窩心洋芋 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 33,
-                        "note": "AAC 雙窩心洋芋 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 10,
-                        "note": "ABB 單窩心洋芋 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "隆隆岩",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/076.png",
-                "recipe": "ABB",
-                "count": 59,
-                "note": "ABB 窩心洋芋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 59,
-                        "note": "ABB 窩心洋芋 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 24,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "沼王",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/195.png",
-                "recipe": "ABB",
-                "count": 58,
-                "note": "ABB 窩心洋芋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 58,
-                        "note": "ABB 窩心洋芋 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 22,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "幸福蛋",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/242.png",
-                "recipe": "ABB",
-                "count": 55,
-                "note": "ABB 窩心洋芋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 55,
-                        "note": "ABB 窩心洋芋 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 20,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "袋獸",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/115.png",
-                "recipe": "ABB",
-                "count": 55,
-                "note": "ABB 窩心洋芋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 55,
-                        "note": "ABB 窩心洋芋 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 22,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "大食花",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/071.png",
-                "recipe": "ABB",
-                "count": 54,
-                "note": "ABB 窩心洋芋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 54,
-                        "note": "ABB 窩心洋芋 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 22,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "魔牆人偶",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/122.png",
-                "recipe": "ABB",
-                "count": 50,
-                "note": "ABB 窩心洋芋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 50,
-                        "note": "ABB 窩心洋芋 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 20,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "古月鳥",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/845.png",
-                "recipe": "ABB",
-                "count": 44,
-                "note": "ABB 窩心洋芋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 44,
-                        "note": "ABB 窩心洋芋 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 16,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "南瓜怪人 (小顆種)",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
-                "recipe": "AAC",
-                "count": 41,
-                "note": "AAC 單窩心洋芋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 41,
-                        "note": "AAC 單窩心洋芋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 41,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "南瓜怪人 (中顆種)",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
-                "recipe": "AAC",
-                "count": 40,
-                "note": "AAC 單窩心洋芋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 40,
-                        "note": "AAC 單窩心洋芋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 40,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "岩殿居蟹",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/558.png",
-                "recipe": "ABB",
-                "count": 39,
-                "note": "ABB 窩心洋芋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 39,
-                        "note": "ABB 窩心洋芋 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 15,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "南瓜怪人 (大顆種)",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
-                "recipe": "AAC",
-                "count": 39,
-                "note": "AAC 單窩心洋芋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 39,
-                        "note": "AAC 單窩心洋芋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 39,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "妙蛙花",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png",
-                "recipe": "AAC",
-                "count": 37,
-                "note": "AAC 單窩心洋芋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 37,
-                        "note": "AAC 單窩心洋芋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 37,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "南瓜怪人 (巨顆種)",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
-                "recipe": "AAC",
-                "count": 37,
-                "note": "AAC 單窩心洋芋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 37,
-                        "note": "AAC 單窩心洋芋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 37,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "土王",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/980.png",
-                "recipe": "AAC",
-                "count": 35,
-                "note": "AAC 單窩心洋芋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 35,
-                        "note": "AAC 單窩心洋芋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 35,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "暴飛龍",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/373.png",
-                "recipe": "AAA",
-                "count": 35,
-                "note": "AAA 窩心洋芋 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 35,
-                        "note": "AAA 窩心洋芋 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 15,
-                        "note": "AAC 雙窩心洋芋 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單窩心洋芋 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "土台龜",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/389.png",
-                "recipe": "ABB",
-                "count": 28,
-                "note": "ABB 窩心洋芋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 28,
-                        "note": "ABB 窩心洋芋 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 11,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "路卡利歐",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/448.png",
-                "recipe": "ABB",
-                "count": 23,
-                "note": "ABB 窩心洋芋 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 23,
-                        "note": "ABB 窩心洋芋 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "穿山王",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/028.png",
-                "recipe": "AAC",
-                "count": 18,
-                "note": "AAC 單窩心洋芋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 18,
-                        "note": "AAC 單窩心洋芋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 18,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "九尾（阿羅拉的樣子）",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png",
-                "recipe": "AAC",
-                "count": 16,
-                "note": "AAC 單窩心洋芋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 16,
-                        "note": "AAC 單窩心洋芋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 16,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "巨鍛匠",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/959.png",
-                "recipe": "AAC",
-                "count": 15,
-                "note": "AAC 單窩心洋芋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 15,
-                        "note": "AAC 單窩心洋芋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 15,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "隨風球",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/426.png",
-                "recipe": "AAC",
-                "count": 13,
-                "note": "AAC 單窩心洋芋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 單窩心洋芋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "九尾",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/038.png",
-                "recipe": "AAC",
-                "count": 12,
-                "note": "AAC 單窩心洋芋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 單窩心洋芋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "怪顎龍",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/697.png",
-                "recipe": "AAC",
-                "count": 12,
-                "note": "AAC 單窩心洋芋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 單窩心洋芋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "大鋼蛇",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/208.png",
-                "recipe": "AAC",
-                "count": 10,
-                "note": "AAC 單窩心洋芋 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 單窩心洋芋 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 窩心洋芋 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "herb",
-        "name": "火辣香草",
-        "enName": "Fiery Herb",
-        "energy": 130,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png",
-        "pokemon": [
-            {
-                "name": "快龍",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/149.png",
-                "recipe": "AAA",
-                "count": 93,
-                "note": "AAA 火辣香草 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 93,
-                        "note": "AAA 火辣香草 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 46,
-                        "note": "AAC 雙火辣香草 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 13,
-                        "note": "ABB 單火辣香草 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 火辣香草 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "耿鬼",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png",
-                "recipe": "AAA",
-                "count": 67,
-                "note": "AAA 火辣香草 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 67,
-                        "note": "AAA 火辣香草 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 33,
-                        "note": "AAC 雙火辣香草 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 10,
-                        "note": "ABB 單火辣香草 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 火辣香草 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "沙漠蜻蜓",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/330.png",
-                "recipe": "ABB",
-                "count": 62,
-                "note": "ABB 火辣香草 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 62,
-                        "note": "ABB 火辣香草 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 25,
-                        "note": "ABC 火辣香草 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "噴火龍",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png",
-                "recipe": "AAC",
-                "count": 37,
-                "note": "AAC 單火辣香草 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 37,
-                        "note": "AAC 單火辣香草 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 37,
-                        "note": "ABC 火辣香草 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "骨紋巨聲鱷",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/911.png",
-                "recipe": "AAC",
-                "count": 32,
-                "note": "AAC 單火辣香草 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 32,
-                        "note": "AAC 單火辣香草 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 32,
-                        "note": "ABC 火辣香草 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "雷公",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/243.png",
-                "recipe": "ABB",
-                "count": 30,
-                "note": "ABB 火辣香草 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 30,
-                        "note": "ABB 火辣香草 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 火辣香草 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "摔角鷹人",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/701.png",
-                "recipe": "AAA",
-                "count": 29,
-                "note": "AAA 火辣香草 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 29,
-                        "note": "AAA 火辣香草 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙火辣香草 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單火辣香草 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 火辣香草 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "火爆獸",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/157.png",
-                "recipe": "ABB",
-                "count": 28,
-                "note": "ABB 火辣香草 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 28,
-                        "note": "ABB 火辣香草 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 11,
-                        "note": "ABC 火辣香草 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "黑魯加",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/229.png",
-                "recipe": "AAA",
-                "count": 28,
-                "note": "AAA 火辣香草 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 28,
-                        "note": "AAA 火辣香草 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙火辣香草 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單火辣香草 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 火辣香草 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "風速狗",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/059.png",
-                "recipe": "AAA",
-                "count": 25,
-                "note": "AAA 火辣香草 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 25,
-                        "note": "AAA 火辣香草 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 11,
-                        "note": "AAC 雙火辣香草 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單火辣香草 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 火辣香草 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "電龍",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/181.png",
-                "recipe": "AAA",
-                "count": 24,
-                "note": "AAA 火辣香草 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 24,
-                        "note": "AAA 火辣香草 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 雙火辣香草 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單火辣香草 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 火辣香草 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "烈焰猴",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/392.png",
-                "recipe": "AAA",
-                "count": 20,
-                "note": "AAA 火辣香草 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 20,
-                        "note": "AAA 火辣香草 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 9,
-                        "note": "AAC 雙火辣香草 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單火辣香草 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 火辣香草 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "自爆磁怪",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/462.png",
-                "recipe": "ABB",
-                "count": 19,
-                "note": "ABB 火辣香草 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 19,
-                        "note": "ABB 火辣香草 主力產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 11,
-                        "note": "AAC 單火辣香草 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 11,
-                        "note": "ABC 火辣香草 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "阿柏怪",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/024.png",
-                "recipe": "AAC",
-                "count": 15,
-                "note": "AAC 單火辣香草 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 15,
-                        "note": "AAC 單火辣香草 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 15,
-                        "note": "ABC 火辣香草 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "烏鴉頭頭",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/430.png",
-                "recipe": "AAC",
-                "count": 12,
-                "note": "AAC 單火辣香草 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 單火辣香草 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 火辣香草 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "corn",
-        "name": "萌綠玉米",
-        "enName": "Greengrass Corn",
-        "energy": 140,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png",
-        "pokemon": [
-            {
-                "name": "穿著熊",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/760.png",
-                "recipe": "AAA",
-                "count": 75,
-                "note": "AAA 萌綠玉米 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 75,
-                        "note": "AAA 萌綠玉米 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 37,
-                        "note": "AAC 雙萌綠玉米 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 11,
-                        "note": "ABB 單萌綠玉米 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 11,
-                        "note": "ABC 萌綠玉米 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "快龍",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/149.png",
-                "recipe": "ABB",
-                "count": 73,
-                "note": "ABB 萌綠玉米 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 73,
-                        "note": "ABB 萌綠玉米 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 27,
-                        "note": "ABC 萌綠玉米 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "花療環環",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/764.png",
-                "recipe": "AAA",
-                "count": 61,
-                "note": "AAA 萌綠玉米 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 61,
-                        "note": "AAA 萌綠玉米 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 31,
-                        "note": "AAC 雙萌綠玉米 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 9,
-                        "note": "ABB 單萌綠玉米 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 9,
-                        "note": "ABC 萌綠玉米 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "大嘴娃",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/303.png",
-                "recipe": "ABB",
-                "count": 42,
-                "note": "ABB 萌綠玉米 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 42,
-                        "note": "ABB 萌綠玉米 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 17,
-                        "note": "ABC 萌綠玉米 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "蝶結萌虻",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/743.png",
-                "recipe": "AAC",
-                "count": 28,
-                "note": "AAC 單萌綠玉米 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 28,
-                        "note": "AAC 單萌綠玉米 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 28,
-                        "note": "ABC 萌綠玉米 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "九尾（阿羅拉的樣子）",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png",
-                "recipe": "ABB",
-                "count": 26,
-                "note": "ABB 萌綠玉米 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 26,
-                        "note": "ABB 萌綠玉米 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 萌綠玉米 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "穿山王",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/028.png",
-                "recipe": "ABB",
-                "count": 25,
-                "note": "ABB 萌綠玉米 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 25,
-                        "note": "ABB 萌綠玉米 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 萌綠玉米 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "巨沼怪",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/260.png",
-                "recipe": "AAA",
-                "count": 24,
-                "note": "AAA 萌綠玉米 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 24,
-                        "note": "AAA 萌綠玉米 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 雙萌綠玉米 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單萌綠玉米 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 萌綠玉米 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "隨風球",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/426.png",
-                "recipe": "AAA",
-                "count": 23,
-                "note": "AAA 萌綠玉米 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 23,
-                        "note": "AAA 萌綠玉米 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 雙萌綠玉米 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單萌綠玉米 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 萌綠玉米 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "九尾",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/038.png",
-                "recipe": "ABB",
-                "count": 21,
-                "note": "ABB 萌綠玉米 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 21,
-                        "note": "ABB 萌綠玉米 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 萌綠玉米 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "勇士雄鷹",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/628.png",
-                "recipe": "ABB",
-                "count": 16,
-                "note": "ABB 萌綠玉米 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 16,
-                        "note": "ABB 萌綠玉米 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 7,
-                        "note": "ABC 萌綠玉米 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "水君",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/245.png",
-                "recipe": "AAC",
-                "count": 13,
-                "note": "AAC 單萌綠玉米 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 單萌綠玉米 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 萌綠玉米 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "沙奈朵",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/282.png",
-                "recipe": "ABB",
-                "count": 12,
-                "note": "ABB 萌綠玉米 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 12,
-                        "note": "ABB 萌綠玉米 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 萌綠玉米 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "艾路雷朵",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/475.png",
-                "recipe": "ABB",
-                "count": 12,
-                "note": "ABB 萌綠玉米 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 12,
-                        "note": "ABB 萌綠玉米 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 萌綠玉米 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "咚咚鼠",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/702.png",
-                "recipe": "AAC",
-                "count": 9,
-                "note": "AAC 單萌綠玉米 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 9,
-                        "note": "AAC 單萌綠玉米 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 9,
-                        "note": "ABC 萌綠玉米 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "cacao",
-        "name": "放鬆可可",
-        "enName": "Soothing Cacao",
-        "energy": 151,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png",
-        "pokemon": [
-            {
-                "name": "阿勃梭魯",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/359.png",
-                "recipe": "AAA",
-                "count": 55,
-                "note": "AAA 放鬆可可 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 55,
-                        "note": "AAA 放鬆可可 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 28,
-                        "note": "AAC 雙放鬆可可 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 8,
-                        "note": "ABB 單放鬆可可 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "土王",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/980.png",
-                "recipe": "AAA",
-                "count": 54,
-                "note": "AAA 放鬆可可 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 54,
-                        "note": "AAA 放鬆可可 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 27,
-                        "note": "AAC 雙放鬆可可 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 8,
-                        "note": "ABB 單放鬆可可 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "水箭龜",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/009.png",
-                "recipe": "ABB",
-                "count": 51,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 51,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 19,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "克雷色利亞",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/488.png",
-                "recipe": "ABB",
-                "count": 34,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 34,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 14,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "花療環環",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/764.png",
-                "recipe": "AAC",
-                "count": 31,
-                "note": "AAC 單放鬆可可 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 31,
-                        "note": "AAC 單放鬆可可 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 31,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "大竺葵",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/154.png",
-                "recipe": "AAA",
-                "count": 29,
-                "note": "AAA 放鬆可可 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 29,
-                        "note": "AAA 放鬆可可 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙放鬆可可 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單放鬆可可 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "巴布土撥",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/923.png",
-                "recipe": "AAA",
-                "count": 27,
-                "note": "AAA 放鬆可可 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 27,
-                        "note": "AAA 放鬆可可 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙放鬆可可 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單放鬆可可 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "天然鳥",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/178.png",
-                "recipe": "ABB",
-                "count": 25,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 25,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "信使鳥",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/225.png",
-                "recipe": "AAC",
-                "count": 25,
-                "note": "AAC 單放鬆可可 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 25,
-                        "note": "AAC 單放鬆可可 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 25,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "巨鍛匠",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/959.png",
-                "recipe": "ABB",
-                "count": 25,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 25,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "呆殼獸",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/080.png",
-                "recipe": "AAA",
-                "count": 24,
-                "note": "AAA 放鬆可可 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 24,
-                        "note": "AAA 放鬆可可 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 雙放鬆可可 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單放鬆可可 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "伊布（萬聖節）",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png",
-                "recipe": "ABB",
-                "count": 24,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 24,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "哥達鴨",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/055.png",
-                "recipe": "AAA",
-                "count": 22,
-                "note": "AAA 放鬆可可 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 22,
-                        "note": "AAA 放鬆可可 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 9,
-                        "note": "AAC 雙放鬆可可 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單放鬆可可 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "呆呆王",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/199.png",
-                "recipe": "AAA",
-                "count": 22,
-                "note": "AAA 放鬆可可 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 22,
-                        "note": "AAA 放鬆可可 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 雙放鬆可可 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單放鬆可可 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "嘎啦嘎啦",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/105.png",
-                "recipe": "ABB",
-                "count": 22,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 22,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 單放鬆可可 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "嘟嘟利",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/085.png",
-                "recipe": "ABB",
-                "count": 16,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 16,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "咚咚鼠",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/702.png",
-                "recipe": "ABB",
-                "count": 14,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 14,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "水伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/134.png",
-                "recipe": "ABB",
-                "count": 13,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 13,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "雷伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/135.png",
-                "recipe": "ABB",
-                "count": 13,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 13,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "火伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/136.png",
-                "recipe": "ABB",
-                "count": 13,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 13,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "太陽伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/196.png",
-                "recipe": "ABB",
-                "count": 13,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 13,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "月亮伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/197.png",
-                "recipe": "ABB",
-                "count": 13,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 13,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "葉伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/470.png",
-                "recipe": "ABB",
-                "count": 13,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 13,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "冰伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/471.png",
-                "recipe": "ABB",
-                "count": 13,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 13,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "仙子伊布",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/700.png",
-                "recipe": "ABB",
-                "count": 13,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 13,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "波克基斯",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/468.png",
-                "recipe": "AAC",
-                "count": 12,
-                "note": "AAC 單放鬆可可 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 單放鬆可可 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "伊布（佳節）",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png",
-                "recipe": "ABB",
-                "count": 10,
-                "note": "ABB 放鬆可可 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 10,
-                        "note": "ABB 放鬆可可 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "勾魂眼",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/302.png",
-                "recipe": "AAC",
-                "count": 10,
-                "note": "AAC 單放鬆可可 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 單放鬆可可 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "胖可丁",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/040.png",
-                "recipe": "AAC",
-                "count": 8,
-                "note": "AAC 單放鬆可可 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 8,
-                        "note": "AAC 單放鬆可可 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "托戈德瑪爾",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/777.png",
-                "recipe": "AAC",
-                "count": 8,
-                "note": "AAC 單放鬆可可 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 8,
-                        "note": "AAC 單放鬆可可 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 放鬆可可 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "coffee",
-        "name": "醒腦咖啡豆",
-        "enName": "Rousing Coffee",
-        "energy": 153,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png",
-        "pokemon": [
-            {
-                "name": "鍬農炮蟲",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/738.png",
-                "recipe": "AAA",
-                "count": 63,
-                "note": "AAA 醒腦咖啡豆 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 63,
-                        "note": "AAA 醒腦咖啡豆 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 32,
-                        "note": "AAC 雙醒腦咖啡豆 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 9,
-                        "note": "ABB 單醒腦咖啡豆 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 9,
-                        "note": "ABC 醒腦咖啡豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "波士可多拉",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/306.png",
-                "recipe": "ABB",
-                "count": 50,
-                "note": "ABB 醒腦咖啡豆 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 50,
-                        "note": "ABB 醒腦咖啡豆 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 19,
-                        "note": "ABC 醒腦咖啡豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "土王",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/980.png",
-                "recipe": "ABB",
-                "count": 43,
-                "note": "ABB 醒腦咖啡豆 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 43,
-                        "note": "ABB 醒腦咖啡豆 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 16,
-                        "note": "ABC 醒腦咖啡豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "倫琴貓",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/405.png",
-                "recipe": "AAC",
-                "count": 27,
-                "note": "AAC 單醒腦咖啡豆 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 27,
-                        "note": "AAC 單醒腦咖啡豆 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 27,
-                        "note": "ABC 醒腦咖啡豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "烏鴉頭頭",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/430.png",
-                "recipe": "AAA",
-                "count": 20,
-                "note": "AAA 醒腦咖啡豆 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 20,
-                        "note": "AAA 醒腦咖啡豆 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 9,
-                        "note": "AAC 雙醒腦咖啡豆 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單醒腦咖啡豆 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 醒腦咖啡豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "正電拍拍",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/311.png",
-                "recipe": "AAA",
-                "count": 20,
-                "note": "AAA 醒腦咖啡豆 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 20,
-                        "note": "AAA 醒腦咖啡豆 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 8,
-                        "note": "AAC 雙醒腦咖啡豆 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單醒腦咖啡豆 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 醒腦咖啡豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "壺壺",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/213.png",
-                "recipe": "ABB",
-                "count": 19,
-                "note": "ABB 醒腦咖啡豆 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 19,
-                        "note": "ABB 醒腦咖啡豆 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 7,
-                        "note": "ABC 醒腦咖啡豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "蜥蜴王",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/254.png",
-                "recipe": "ABB",
-                "count": 15,
-                "note": "ABB 醒腦咖啡豆 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 15,
-                        "note": "ABB 醒腦咖啡豆 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 6,
-                        "note": "ABC 醒腦咖啡豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "謎擬Q",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/778.png",
-                "recipe": "ABB",
-                "count": 12,
-                "note": "ABB 醒腦咖啡豆 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 12,
-                        "note": "ABB 醒腦咖啡豆 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 醒腦咖啡豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "烈焰猴",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/392.png",
-                "recipe": "AAC",
-                "count": 9,
-                "note": "AAC 單醒腦咖啡豆 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 9,
-                        "note": "AAC 單醒腦咖啡豆 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 9,
-                        "note": "ABC 醒腦咖啡豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "夢夢蝕",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/518.png",
-                "recipe": "AAC",
-                "count": 9,
-                "note": "AAC 單醒腦咖啡豆 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 9,
-                        "note": "AAC 單醒腦咖啡豆 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 9,
-                        "note": "ABC 醒腦咖啡豆 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "勇士雄鷹",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/628.png",
-                "recipe": "AAC",
-                "count": 7,
-                "note": "AAC 單醒腦咖啡豆 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 7,
-                        "note": "AAC 單醒腦咖啡豆 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 7,
-                        "note": "ABC 醒腦咖啡豆 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "glossyavocado",
-        "name": "嫩亮酪梨",
-        "enName": "Glossy Avocado",
-        "energy": 162,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png",
-        "pokemon": [
-            {
-                "name": "沙漠蜻蜓",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/330.png",
-                "recipe": "AAA",
-                "count": 58,
-                "note": "AAA 嫩亮酪梨 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 58,
-                        "note": "AAA 嫩亮酪梨 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 29,
-                        "note": "AAC 雙嫩亮酪梨 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 8,
-                        "note": "ABB 單嫩亮酪梨 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 嫩亮酪梨 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "老翁龍",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/780.png",
-                "recipe": "ABB",
-                "count": 38,
-                "note": "ABB 嫩亮酪梨 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 38,
-                        "note": "ABB 嫩亮酪梨 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 16,
-                        "note": "ABC 嫩亮酪梨 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "岩殿居蟹",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/558.png",
-                "recipe": "AAA",
-                "count": 34,
-                "note": "AAA 嫩亮酪梨 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 34,
-                        "note": "AAA 嫩亮酪梨 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 15,
-                        "note": "AAC 雙嫩亮酪梨 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單嫩亮酪梨 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 嫩亮酪梨 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "托戈德瑪爾",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/777.png",
-                "recipe": "ABB",
-                "count": 12,
-                "note": "ABB 嫩亮酪梨 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 12,
-                        "note": "ABB 嫩亮酪梨 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 嫩亮酪梨 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "mushroom",
-        "name": "品鮮蘑菇",
-        "enName": "Tasty Mushroom",
-        "energy": 167,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png",
-        "pokemon": [
-            {
-                "name": "花岩怪",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/442.png",
-                "recipe": "AAA",
-                "count": 52,
-                "note": "AAA 品鮮蘑菇 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 52,
-                        "note": "AAA 品鮮蘑菇 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 26,
-                        "note": "AAC 雙品鮮蘑菇 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 7,
-                        "note": "ABB 單品鮮蘑菇 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 7,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "沼王",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/195.png",
-                "recipe": "AAA",
-                "count": 51,
-                "note": "AAA 品鮮蘑菇 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 51,
-                        "note": "AAA 品鮮蘑菇 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 26,
-                        "note": "AAC 雙品鮮蘑菇 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 7,
-                        "note": "ABB 單品鮮蘑菇 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 7,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "鍬農炮蟲",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/738.png",
-                "recipe": "ABB",
-                "count": 50,
-                "note": "ABB 品鮮蘑菇 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 50,
-                        "note": "ABB 品鮮蘑菇 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 18,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "耿鬼",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png",
-                "recipe": "ABB",
-                "count": 48,
-                "note": "ABB 品鮮蘑菇 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 48,
-                        "note": "ABB 品鮮蘑菇 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 19,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "阿勃梭魯",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/359.png",
-                "recipe": "AAC",
-                "count": 28,
-                "note": "AAC 單品鮮蘑菇 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 28,
-                        "note": "AAC 單品鮮蘑菇 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 28,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "火焰雞",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/257.png",
-                "recipe": "AAA",
-                "count": 27,
-                "note": "AAA 品鮮蘑菇 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 27,
-                        "note": "AAA 品鮮蘑菇 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 雙品鮮蘑菇 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單品鮮蘑菇 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "暴雪王",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/460.png",
-                "recipe": "AAC",
-                "count": 27,
-                "note": "AAC 單品鮮蘑菇 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 27,
-                        "note": "AAC 單品鮮蘑菇 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 27,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "土台龜",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/389.png",
-                "recipe": "AAA",
-                "count": 25,
-                "note": "AAA 品鮮蘑菇 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 25,
-                        "note": "AAA 品鮮蘑菇 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 11,
-                        "note": "AAC 雙品鮮蘑菇 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 4,
-                        "note": "ABB 單品鮮蘑菇 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "隆隆岩",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/076.png",
-                "recipe": "AAC",
-                "count": 24,
-                "note": "AAC 單品鮮蘑菇 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 24,
-                        "note": "AAC 單品鮮蘑菇 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 24,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "勾魂眼",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/302.png",
-                "recipe": "ABB",
-                "count": 17,
-                "note": "ABB 品鮮蘑菇 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 17,
-                        "note": "ABB 品鮮蘑菇 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 7,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "炎帝",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/244.png",
-                "recipe": "AAC",
-                "count": 15,
-                "note": "AAC 單品鮮蘑菇 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 15,
-                        "note": "AAC 單品鮮蘑菇 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 15,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "火爆猴",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/057.png",
-                "recipe": "ABB",
-                "count": 14,
-                "note": "ABB 品鮮蘑菇 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 14,
-                        "note": "ABB 品鮮蘑菇 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "赫拉克羅斯",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/214.png",
-                "recipe": "ABB",
-                "count": 13,
-                "note": "ABB 品鮮蘑菇 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 13,
-                        "note": "ABB 品鮮蘑菇 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "詛咒娃娃",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/354.png",
-                "recipe": "AAC",
-                "count": 13,
-                "note": "AAC 單品鮮蘑菇 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 13,
-                        "note": "AAC 單品鮮蘑菇 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 13,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "果然翁",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/202.png",
-                "recipe": "ABB",
-                "count": 12,
-                "note": "ABB 品鮮蘑菇 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 12,
-                        "note": "ABB 品鮮蘑菇 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "吞食獸",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/317.png",
-                "recipe": "ABB",
-                "count": 12,
-                "note": "ABB 品鮮蘑菇 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 12,
-                        "note": "ABB 品鮮蘑菇 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 4,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "巨沼怪",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/260.png",
-                "recipe": "AAC",
-                "count": 10,
-                "note": "AAC 單品鮮蘑菇 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 單品鮮蘑菇 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "謎擬Q",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/778.png",
-                "recipe": "AAC",
-                "count": 8,
-                "note": "AAC 單品鮮蘑菇 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 8,
-                        "note": "AAC 單品鮮蘑菇 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "樹才怪",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/185.png",
-                "recipe": "AAC",
-                "count": 7,
-                "note": "AAC 單品鮮蘑菇 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 7,
-                        "note": "AAC 單品鮮蘑菇 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 7,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "拉帝亞斯",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/380.png",
-                "recipe": "AAC",
-                "count": 5,
-                "note": "AAC 單品鮮蘑菇 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 5,
-                        "note": "AAC 單品鮮蘑菇 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 品鮮蘑菇 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "leek",
-        "name": "粗枝大蔥",
-        "enName": "Large Leek",
-        "energy": 185,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png",
-        "pokemon": [
-            {
-                "name": "大蔥鴨",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/083.png",
-                "recipe": "AAA",
-                "count": 49,
-                "note": "AAA 粗枝大蔥 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 49,
-                        "note": "AAA 粗枝大蔥 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 24,
-                        "note": "AAC 雙粗枝大蔥 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 7,
-                        "note": "ABB 單粗枝大蔥 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 7,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "狂歡浪舞鴨",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/914.png",
-                "recipe": "ABB",
-                "count": 35,
-                "note": "ABB 粗枝大蔥 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 35,
-                        "note": "ABB 粗枝大蔥 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "三地鼠",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/051.png",
-                "recipe": "ABB",
-                "count": 33,
-                "note": "ABB 粗枝大蔥 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 33,
-                        "note": "ABB 粗枝大蔥 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 14,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "百變怪",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/132.png",
-                "recipe": "ABB",
-                "count": 30,
-                "note": "ABB 粗枝大蔥 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 30,
-                        "note": "ABB 粗枝大蔥 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 11,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "大食花",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/071.png",
-                "recipe": "AAC",
-                "count": 22,
-                "note": "AAC 單粗枝大蔥 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 22,
-                        "note": "AAC 單粗枝大蔥 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 22,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "花岩怪",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/442.png",
-                "recipe": "AAC",
-                "count": 22,
-                "note": "AAC 單粗枝大蔥 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 22,
-                        "note": "AAC 單粗枝大蔥 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 22,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "魔牆人偶",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/122.png",
-                "recipe": "AAC",
-                "count": 20,
-                "note": "AAC 單粗枝大蔥 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 20,
-                        "note": "AAC 單粗枝大蔥 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 20,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "正電拍拍",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/311.png",
-                "recipe": "ABB",
-                "count": 14,
-                "note": "ABB 粗枝大蔥 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 14,
-                        "note": "ABB 粗枝大蔥 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 6,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "音波龍",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/715.png",
-                "recipe": "ABB",
-                "count": 14,
-                "note": "ABB 粗枝大蔥 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 14,
-                        "note": "ABB 粗枝大蔥 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "大竺葵",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/154.png",
-                "recipe": "AAC",
-                "count": 12,
-                "note": "AAC 單粗枝大蔥 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 單粗枝大蔥 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "黑魯加",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/229.png",
-                "recipe": "AAC",
-                "count": 12,
-                "note": "AAC 單粗枝大蔥 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 單粗枝大蔥 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "雷公",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/243.png",
-                "recipe": "AAC",
-                "count": 12,
-                "note": "AAC 單粗枝大蔥 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 12,
-                        "note": "AAC 單粗枝大蔥 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 12,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "帝王拿波",
-                "specialty": "樹果",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/395.png",
-                "recipe": "ABB",
-                "count": 10,
-                "note": "ABB 粗枝大蔥 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 10,
-                        "note": "ABB 粗枝大蔥 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "顫弦蠑螈（高調的樣子）",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/849.png",
-                "recipe": "AAC",
-                "count": 10,
-                "note": "AAC 單粗枝大蔥 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 單粗枝大蔥 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "顫弦蠑螈（低調的樣子）",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png",
-                "recipe": "AAC",
-                "count": 10,
-                "note": "AAC 單粗枝大蔥 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 10,
-                        "note": "AAC 單粗枝大蔥 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 10,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "沙奈朵",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/282.png",
-                "recipe": "AAC",
-                "count": 8,
-                "note": "AAC 單粗枝大蔥 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 8,
-                        "note": "AAC 單粗枝大蔥 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "艾路雷朵",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/475.png",
-                "recipe": "AAC",
-                "count": 8,
-                "note": "AAC 單粗枝大蔥 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 8,
-                        "note": "AAC 單粗枝大蔥 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 8,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "蜥蜴王",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/254.png",
-                "recipe": "AAC",
-                "count": 6,
-                "note": "AAC 單粗枝大蔥 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 6,
-                        "note": "AAC 單粗枝大蔥 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 6,
-                        "note": "ABC 粗枝大蔥 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "pumpkin",
-        "name": "沉甸甸南瓜",
-        "enName": "Plump Pumpkin",
-        "energy": 250,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png",
-        "pokemon": [
-            {
-                "name": "南瓜怪人 (小顆種)",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
-                "recipe": "AAA",
-                "count": 38,
-                "note": "AAA 沉甸甸南瓜 純種產出",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 38,
-                        "note": "AAA 沉甸甸南瓜 純種產出",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 19,
-                        "note": "AAC 雙沉甸甸南瓜 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單沉甸甸南瓜 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 沉甸甸南瓜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "南瓜怪人 (中顆種)",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
-                "recipe": "AAA",
-                "count": 37,
-                "note": "AAA 沉甸甸南瓜 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 37,
-                        "note": "AAA 沉甸甸南瓜 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 19,
-                        "note": "AAC 雙沉甸甸南瓜 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單沉甸甸南瓜 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 沉甸甸南瓜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "南瓜怪人 (大顆種)",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
-                "recipe": "AAA",
-                "count": 36,
-                "note": "AAA 沉甸甸南瓜 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 36,
-                        "note": "AAA 沉甸甸南瓜 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 18,
-                        "note": "AAC 雙沉甸甸南瓜 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單沉甸甸南瓜 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 沉甸甸南瓜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "南瓜怪人 (巨顆種)",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
-                "recipe": "AAA",
-                "count": 35,
-                "note": "AAA 沉甸甸南瓜 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 35,
-                        "note": "AAA 沉甸甸南瓜 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 17,
-                        "note": "AAC 雙沉甸甸南瓜 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 5,
-                        "note": "ABB 單沉甸甸南瓜 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 5,
-                        "note": "ABC 沉甸甸南瓜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "花岩怪",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/442.png",
-                "recipe": "ABB",
-                "count": 30,
-                "note": "ABB 沉甸甸南瓜 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 30,
-                        "note": "ABB 沉甸甸南瓜 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 11,
-                        "note": "ABC 沉甸甸南瓜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "浩大鯨",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/975.png",
-                "recipe": "AAC",
-                "count": 19,
-                "note": "AAC 單沉甸甸南瓜 補足",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 19,
-                        "note": "AAC 單沉甸甸南瓜 補足"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 19,
-                        "note": "ABC 沉甸甸南瓜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "穿山王",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/028.png",
-                "recipe": "AAA",
-                "count": 18,
-                "note": "AAA 沉甸甸南瓜 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 18,
-                        "note": "AAA 沉甸甸南瓜 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 8,
-                        "note": "AAC 雙沉甸甸南瓜 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 3,
-                        "note": "ABB 單沉甸甸南瓜 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 沉甸甸南瓜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "伊布（萬聖節）",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png",
-                "recipe": "AAA",
-                "count": 17,
-                "note": "AAA 沉甸甸南瓜 純種產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "AAA",
-                        "count": 17,
-                        "note": "AAA 沉甸甸南瓜 純種產出"
-                    },
-                    {
-                        "recipe": "AAC",
-                        "count": 7,
-                        "note": "AAC 雙沉甸甸南瓜 產出"
-                    },
-                    {
-                        "recipe": "ABB",
-                        "count": 2,
-                        "note": "ABB 單沉甸甸南瓜 混產"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 2,
-                        "note": "ABC 沉甸甸南瓜 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "拉帝亞斯",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/380.png",
-                "recipe": "ABB",
-                "count": 8,
-                "note": "ABB 沉甸甸南瓜 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 8,
-                        "note": "ABB 沉甸甸南瓜 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 沉甸甸南瓜 兼顧"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "tail",
-        "name": "美味尾巴",
-        "enName": "Slowpoke Tail",
-        "energy": 342,
-        "icon": "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png",
-        "pokemon": [
-            {
-                "name": "百變怪",
-                "specialty": "食材",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/132.png",
-                "recipe": "AAC",
-                "count": 11,
-                "note": "AAC 單美味尾巴 補足",
-                "isTop": true,
-                "variants": [
-                    {
-                        "recipe": "AAC",
-                        "count": 11,
-                        "note": "AAC 單美味尾巴 補足",
-                        "isTop": true
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 11,
-                        "note": "ABC 美味尾巴 兼顧",
-                        "isTop": true
-                    }
-                ]
-            },
-            {
-                "name": "呆殼獸",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/080.png",
-                "recipe": "ABB",
-                "count": 10,
-                "note": "ABB 美味尾巴 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 10,
-                        "note": "ABB 美味尾巴 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 美味尾巴 兼顧"
-                    }
-                ]
-            },
-            {
-                "name": "呆呆王",
-                "specialty": "技能",
-                "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/199.png",
-                "recipe": "ABB",
-                "count": 10,
-                "note": "ABB 美味尾巴 主力產出",
-                "isTop": false,
-                "variants": [
-                    {
-                        "recipe": "ABB",
-                        "count": 10,
-                        "note": "ABB 美味尾巴 主力產出"
-                    },
-                    {
-                        "recipe": "ABC",
-                        "count": 3,
-                        "note": "ABC 美味尾巴 兼顧"
-                    }
-                ]
-            }
-        ]
-    }
-];
+        {
+            "id": "apple",
+            "name": "特選蘋果",
+            "enName": "Fancy Apple",
+            "energy": 90,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png",
+            "pokemon": [
+                {
+                    "name": "骨紋巨聲鱷",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/911.png",
+                    "recipe": "AAA",
+                    "count": 91,
+                    "note": "AAA 特選蘋果 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 91,
+                            "note": "AAA 特選蘋果 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 58,
+                            "note": "ABA 雙特選蘋果 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 46,
+                            "note": "AAX 雙特選蘋果 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 13,
+                            "note": "ABX 單特選蘋果 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "阿勃梭魯",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/359.png",
+                    "recipe": "ABB",
+                    "count": 79,
+                    "note": "ABB 特選蘋果 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 79,
+                            "note": "ABB 特選蘋果 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 47,
+                            "note": "AAB 特選蘋果 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 32,
+                            "note": "ABX 特選蘋果 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "凱羅斯",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/127.png",
+                    "recipe": "ABB",
+                    "count": 76,
+                    "note": "ABB 特選蘋果 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 76,
+                            "note": "ABB 特選蘋果 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 47,
+                            "note": "AAB 特選蘋果 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 29,
+                            "note": "ABX 特選蘋果 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "信使鳥",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/225.png",
+                    "recipe": "ABB",
+                    "count": 74,
+                    "note": "ABB 特選蘋果 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 74,
+                            "note": "ABB 特選蘋果 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 44,
+                            "note": "AAB 特選蘋果 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 30,
+                            "note": "ABX 特選蘋果 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "雷丘",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/026.png",
+                    "recipe": "AAA",
+                    "count": 47,
+                    "note": "AAA 特選蘋果 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 47,
+                            "note": "AAA 特選蘋果 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 34,
+                            "note": "ABA 雙特選蘋果 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 20,
+                            "note": "AAX 雙特選蘋果 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 7,
+                            "note": "ABX 單特選蘋果 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "水君",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/245.png",
+                    "recipe": "AAA",
+                    "count": 47,
+                    "note": "AAA 特選蘋果 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 47,
+                            "note": "AAA 特選蘋果 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 34,
+                            "note": "ABA 雙特選蘋果 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 20,
+                            "note": "AAX 雙特選蘋果 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 7,
+                            "note": "ABX 單特選蘋果 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "皮卡丘（萬聖節）",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png",
+                    "recipe": "AAA",
+                    "count": 40,
+                    "note": "AAA 特選蘋果 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 40,
+                            "note": "AAA 特選蘋果 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 29,
+                            "note": "ABA 雙特選蘋果 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 17,
+                            "note": "AAX 雙特選蘋果 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 6,
+                            "note": "ABX 單特選蘋果 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "拉達",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/020.png",
+                    "recipe": "AAA",
+                    "count": 37,
+                    "note": "AAA 特選蘋果 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 37,
+                            "note": "AAA 特選蘋果 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 26,
+                            "note": "ABA 雙特選蘋果 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 16,
+                            "note": "AAX 雙特選蘋果 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單特選蘋果 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "音波龍",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/715.png",
+                    "recipe": "AAA",
+                    "count": 33,
+                    "note": "AAA 特選蘋果 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 33,
+                            "note": "AAA 特選蘋果 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 24,
+                            "note": "ABA 雙特選蘋果 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 14,
+                            "note": "AAX 雙特選蘋果 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單特選蘋果 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "皮卡丘（船長）",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png",
+                    "recipe": "AAA",
+                    "count": 32,
+                    "note": "AAA 特選蘋果 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 32,
+                            "note": "AAA 特選蘋果 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 23,
+                            "note": "ABA 雙特選蘋果 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 14,
+                            "note": "AAX 雙特選蘋果 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單特選蘋果 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "咚咚鼠",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/702.png",
+                    "recipe": "AAA",
+                    "count": 32,
+                    "note": "AAA 特選蘋果 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 32,
+                            "note": "AAA 特選蘋果 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 23,
+                            "note": "ABA 雙特選蘋果 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 14,
+                            "note": "AAX 雙特選蘋果 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單特選蘋果 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "哥達鴨",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/055.png",
+                    "recipe": "ABB",
+                    "count": 31,
+                    "note": "ABB 特選蘋果 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 31,
+                            "note": "ABB 特選蘋果 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 19,
+                            "note": "AAB 特選蘋果 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 特選蘋果 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "顫弦蠑螈（高調的樣子）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/849.png",
+                    "recipe": "ABB",
+                    "count": 30,
+                    "note": "ABB 特選蘋果 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 30,
+                            "note": "ABB 特選蘋果 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 20,
+                            "note": "AAB 特選蘋果 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 特選蘋果 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "顫弦蠑螈（低調的樣子）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png",
+                    "recipe": "ABB",
+                    "count": 30,
+                    "note": "ABB 特選蘋果 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 30,
+                            "note": "ABB 特選蘋果 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 20,
+                            "note": "AAB 特選蘋果 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 特選蘋果 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "怪顎龍",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/697.png",
+                    "recipe": "ABB",
+                    "count": 29,
+                    "note": "ABB 特選蘋果 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 29,
+                            "note": "ABB 特選蘋果 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 17,
+                            "note": "AAB 特選蘋果 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 特選蘋果 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "果然翁",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/202.png",
+                    "recipe": "AAA",
+                    "count": 28,
+                    "note": "AAA 特選蘋果 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 28,
+                            "note": "AAA 特選蘋果 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 20,
+                            "note": "ABA 雙特選蘋果 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙特選蘋果 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單特選蘋果 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "艾路雷朵",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/475.png",
+                    "recipe": "AAA",
+                    "count": 28,
+                    "note": "AAA 特選蘋果 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 28,
+                            "note": "AAA 特選蘋果 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 20,
+                            "note": "ABA 雙特選蘋果 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙特選蘋果 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單特選蘋果 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "謎擬Q",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/778.png",
+                    "recipe": "AAA",
+                    "count": 28,
+                    "note": "AAA 特選蘋果 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 28,
+                            "note": "AAA 特選蘋果 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 20,
+                            "note": "ABA 雙特選蘋果 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙特選蘋果 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單特選蘋果 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "皮可西",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/036.png",
+                    "recipe": "AAA",
+                    "count": 27,
+                    "note": "AAA 特選蘋果 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 27,
+                            "note": "AAA 特選蘋果 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 19,
+                            "note": "ABA 雙特選蘋果 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙特選蘋果 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單特選蘋果 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "沙奈朵",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/282.png",
+                    "recipe": "AAA",
+                    "count": 27,
+                    "note": "AAA 特選蘋果 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 27,
+                            "note": "AAA 特選蘋果 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 19,
+                            "note": "ABA 雙特選蘋果 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙特選蘋果 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單特選蘋果 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "天然鳥",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/178.png",
+                    "recipe": "XXC",
+                    "count": 25,
+                    "note": "XXC 單特選蘋果 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 25,
+                            "note": "XXC 單特選蘋果 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "請假王",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/289.png",
+                    "recipe": "XXC",
+                    "count": 25,
+                    "note": "XXC 單特選蘋果 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 25,
+                            "note": "XXC 單特選蘋果 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "皮卡丘（佳節）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png",
+                    "recipe": "AAA",
+                    "count": 24,
+                    "note": "AAA 特選蘋果 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 24,
+                            "note": "AAA 特選蘋果 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 17,
+                            "note": "ABA 雙特選蘋果 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 10,
+                            "note": "AAX 雙特選蘋果 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單特選蘋果 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "七夕青鳥",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/334.png",
+                    "recipe": "XXC",
+                    "count": 24,
+                    "note": "XXC 單特選蘋果 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 24,
+                            "note": "XXC 單特選蘋果 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "milk",
+            "name": "哞哞鮮奶",
+            "enName": "Moomoo Milk",
+            "energy": 98,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/moomoomilk.png",
+            "pokemon": [
+                {
+                    "name": "水箭龜",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/009.png",
+                    "recipe": "AAA",
+                    "count": 90,
+                    "note": "AAA 哞哞鮮奶 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 90,
+                            "note": "AAA 哞哞鮮奶 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 58,
+                            "note": "ABA 雙哞哞鮮奶 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 45,
+                            "note": "AAX 雙哞哞鮮奶 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 13,
+                            "note": "ABX 單哞哞鮮奶 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "魔幻假面喵",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/908.png",
+                    "recipe": "ABB",
+                    "count": 72,
+                    "note": "ABB 哞哞鮮奶 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 72,
+                            "note": "ABB 哞哞鮮奶 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 43,
+                            "note": "AAB 哞哞鮮奶 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 29,
+                            "note": "ABX 哞哞鮮奶 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "顫弦蠑螈（高調的樣子）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/849.png",
+                    "recipe": "AAA",
+                    "count": 35,
+                    "note": "AAA 哞哞鮮奶 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 35,
+                            "note": "AAA 哞哞鮮奶 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 25,
+                            "note": "ABA 雙哞哞鮮奶 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 15,
+                            "note": "AAX 雙哞哞鮮奶 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單哞哞鮮奶 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "顫弦蠑螈（低調的樣子）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png",
+                    "recipe": "AAA",
+                    "count": 35,
+                    "note": "AAA 哞哞鮮奶 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 35,
+                            "note": "AAA 哞哞鮮奶 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 25,
+                            "note": "ABA 雙哞哞鮮奶 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 15,
+                            "note": "AAX 雙哞哞鮮奶 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單哞哞鮮奶 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "巴布土撥",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/923.png",
+                    "recipe": "ABB",
+                    "count": 35,
+                    "note": "ABB 哞哞鮮奶 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 35,
+                            "note": "ABB 哞哞鮮奶 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 23,
+                            "note": "AAB 哞哞鮮奶 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 哞哞鮮奶 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "夢夢蝕",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/518.png",
+                    "recipe": "AAA",
+                    "count": 31,
+                    "note": "AAA 哞哞鮮奶 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 31,
+                            "note": "AAA 哞哞鮮奶 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 22,
+                            "note": "ABA 雙哞哞鮮奶 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 13,
+                            "note": "AAX 雙哞哞鮮奶 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單哞哞鮮奶 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "伊布家族（8種進化）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133.png",
+                    "recipe": "AAA",
+                    "count": 31,
+                    "note": "AAA 哞哞鮮奶 純種產出 (8種進化產量皆相同)",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 31,
+                            "note": "AAA 哞哞鮮奶 純種產出 (8種進化產量皆相同)"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 22,
+                            "note": "ABA 雙哞哞鮮奶 產出 (8種進化產量皆相同)"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 13,
+                            "note": "AAX 雙哞哞鮮奶 產出 (8種進化產量皆相同)",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單哞哞鮮奶 混產 (8種進化產量皆相同)",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ],
+                    "name_en": "Eevee Evolutions (8 Forms)"
+                },
+                {
+                    "name": "托戈德瑪爾",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/777.png",
+                    "recipe": "AAA",
+                    "count": 29,
+                    "note": "AAA 哞哞鮮奶 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 29,
+                            "note": "AAA 哞哞鮮奶 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 21,
+                            "note": "ABA 雙哞哞鮮奶 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙哞哞鮮奶 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單哞哞鮮奶 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "貓老大",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/053.png",
+                    "recipe": "AAA",
+                    "count": 28,
+                    "note": "AAA 哞哞鮮奶 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 28,
+                            "note": "AAA 哞哞鮮奶 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 20,
+                            "note": "ABA 雙哞哞鮮奶 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙哞哞鮮奶 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單哞哞鮮奶 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "巨沼怪",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/260.png",
+                    "recipe": "ABB",
+                    "count": 27,
+                    "note": "ABB 哞哞鮮奶 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 27,
+                            "note": "ABB 哞哞鮮奶 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 17,
+                            "note": "AAB 哞哞鮮奶 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 哞哞鮮奶 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "伊布（佳節）",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png",
+                    "recipe": "AAA",
+                    "count": 23,
+                    "note": "AAA 哞哞鮮奶 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 23,
+                            "note": "AAA 哞哞鮮奶 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 16,
+                            "note": "ABA 雙哞哞鮮奶 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 10,
+                            "note": "AAX 雙哞哞鮮奶 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單哞哞鮮奶 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "伊布（萬聖節）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png",
+                    "recipe": "XXC",
+                    "count": 22,
+                    "note": "XXC 單哞哞鮮奶 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 22,
+                            "note": "XXC 單哞哞鮮奶 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "負電拍拍",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/312.png",
+                    "recipe": "XXC",
+                    "count": 19,
+                    "note": "XXC 單哞哞鮮奶 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 19,
+                            "note": "XXC 單哞哞鮮奶 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "風速狗",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/059.png",
+                    "recipe": "XXC",
+                    "count": 18,
+                    "note": "XXC 單哞哞鮮奶 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 18,
+                            "note": "XXC 單哞哞鮮奶 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "拉帝歐斯",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/381.png",
+                    "recipe": "XXC",
+                    "count": 18,
+                    "note": "XXC 單哞哞鮮奶 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 18,
+                            "note": "XXC 單哞哞鮮奶 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "正電拍拍",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/311.png",
+                    "recipe": "XXC",
+                    "count": 17,
+                    "note": "XXC 單哞哞鮮奶 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 17,
+                            "note": "XXC 單哞哞鮮奶 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "soybeans",
+            "name": "萌綠大豆",
+            "enName": "Greengrass Soybeans",
+            "energy": 100,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png",
+            "pokemon": [
+                {
+                    "name": "班基拉斯",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png",
+                    "recipe": "ABB",
+                    "count": 84,
+                    "note": "ABB 萌綠大豆 主力產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 84,
+                            "note": "ABB 萌綠大豆 主力產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 52,
+                            "note": "AAB 萌綠大豆 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 32,
+                            "note": "ABX 萌綠大豆 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "隆隆岩",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/076.png",
+                    "recipe": "AAA",
+                    "count": 83,
+                    "note": "AAA 萌綠大豆 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 83,
+                            "note": "AAA 萌綠大豆 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 53,
+                            "note": "ABA 雙萌綠大豆 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 42,
+                            "note": "AAX 雙萌綠大豆 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 單萌綠大豆 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "狂歡浪舞鴨",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/914.png",
+                    "recipe": "AAA",
+                    "count": 82,
+                    "note": "AAA 萌綠大豆 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 82,
+                            "note": "AAA 萌綠大豆 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 53,
+                            "note": "ABA 雙萌綠大豆 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 41,
+                            "note": "AAX 雙萌綠大豆 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 單萌綠大豆 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "南瓜怪人",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
+                    "recipe": "ABB",
+                    "count": 79,
+                    "note": "ABB 萌綠大豆 主力產出 (體型日產 72~79 顆)",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 79,
+                            "note": "ABB 萌綠大豆 主力產出 (體型日產 72~79 顆)"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 49,
+                            "note": "AAB 萌綠大豆 後期主力 (體型日產 72~79 顆)"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 30,
+                            "note": "ABX 萌綠大豆 兼顧 (體型日產 72~79 顆)",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ],
+                    "name_en": "Gourgeist"
+                },
+                {
+                    "name": "老翁龍",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/780.png",
+                    "recipe": "AAA",
+                    "count": 77,
+                    "note": "AAA 萌綠大豆 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 77,
+                            "note": "AAA 萌綠大豆 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 50,
+                            "note": "ABA 雙萌綠大豆 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 38,
+                            "note": "AAX 雙萌綠大豆 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 11,
+                            "note": "ABX 單萌綠大豆 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "沙漠蜻蜓",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/330.png",
+                    "recipe": "XXC",
+                    "count": 50,
+                    "note": "XXC 單萌綠大豆 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 50,
+                            "note": "XXC 單萌綠大豆 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "袋獸",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/115.png",
+                    "recipe": "XXC",
+                    "count": 44,
+                    "note": "XXC 單萌綠大豆 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 44,
+                            "note": "XXC 單萌綠大豆 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "波士可多拉",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/306.png",
+                    "recipe": "XXC",
+                    "count": 43,
+                    "note": "XXC 單萌綠大豆 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 43,
+                            "note": "XXC 單萌綠大豆 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "火焰雞",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/257.png",
+                    "recipe": "ABB",
+                    "count": 38,
+                    "note": "ABB 萌綠大豆 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 38,
+                            "note": "ABB 萌綠大豆 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 23,
+                            "note": "AAB 萌綠大豆 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 15,
+                            "note": "ABX 萌綠大豆 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "九尾（阿羅拉的樣子）",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png",
+                    "recipe": "AAA",
+                    "count": 37,
+                    "note": "AAA 萌綠大豆 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 37,
+                            "note": "AAA 萌綠大豆 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 26,
+                            "note": "ABA 雙萌綠大豆 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 16,
+                            "note": "AAX 雙萌綠大豆 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單萌綠大豆 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "三地鼠",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/051.png",
+                    "recipe": "XXC",
+                    "count": 37,
+                    "note": "XXC 單萌綠大豆 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 37,
+                            "note": "XXC 單萌綠大豆 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "嘟嘟利",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/085.png",
+                    "recipe": "AAA",
+                    "count": 37,
+                    "note": "AAA 萌綠大豆 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 37,
+                            "note": "AAA 萌綠大豆 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 26,
+                            "note": "ABA 雙萌綠大豆 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 16,
+                            "note": "AAX 雙萌綠大豆 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單萌綠大豆 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "七夕青鳥",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/334.png",
+                    "recipe": "ABB",
+                    "count": 34,
+                    "note": "ABB 萌綠大豆 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 34,
+                            "note": "ABB 萌綠大豆 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 19,
+                            "note": "AAB 萌綠大豆 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 15,
+                            "note": "ABX 萌綠大豆 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "九尾",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/038.png",
+                    "recipe": "AAA",
+                    "count": 29,
+                    "note": "AAA 萌綠大豆 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 29,
+                            "note": "AAA 萌綠大豆 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 21,
+                            "note": "ABA 雙萌綠大豆 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙萌綠大豆 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單萌綠大豆 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "吞食獸",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/317.png",
+                    "recipe": "AAA",
+                    "count": 27,
+                    "note": "AAA 萌綠大豆 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 27,
+                            "note": "AAA 萌綠大豆 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 19,
+                            "note": "ABA 雙萌綠大豆 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙萌綠大豆 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單萌綠大豆 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "拉達",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/020.png",
+                    "recipe": "ABB",
+                    "count": 26,
+                    "note": "ABB 萌綠大豆 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 26,
+                            "note": "ABB 萌綠大豆 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 16,
+                            "note": "AAB 萌綠大豆 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 萌綠大豆 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "烏鴉頭頭",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/430.png",
+                    "recipe": "ABB",
+                    "count": 26,
+                    "note": "ABB 萌綠大豆 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 26,
+                            "note": "ABB 萌綠大豆 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 17,
+                            "note": "AAB 萌綠大豆 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 9,
+                            "note": "ABX 萌綠大豆 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "瑪狃拉",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/461.png",
+                    "recipe": "XXC",
+                    "count": 24,
+                    "note": "XXC 單萌綠大豆 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 24,
+                            "note": "XXC 單萌綠大豆 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "巴大蝶",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/012.png",
+                    "recipe": "XXC",
+                    "count": 21,
+                    "note": "XXC 單萌綠大豆 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 21,
+                            "note": "XXC 單萌綠大豆 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "樹才怪",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/185.png",
+                    "recipe": "ABB",
+                    "count": 21,
+                    "note": "ABB 萌綠大豆 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 21,
+                            "note": "ABB 萌綠大豆 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 14,
+                            "note": "AAB 萌綠大豆 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 7,
+                            "note": "ABX 萌綠大豆 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "皮可西",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/036.png",
+                    "recipe": "XXC",
+                    "count": 12,
+                    "note": "XXC 單萌綠大豆 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 12,
+                            "note": "XXC 單萌綠大豆 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "honey",
+            "name": "甜甜蜜",
+            "enName": "Honey",
+            "energy": 101,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/honey.png",
+            "pokemon": [
+                {
+                    "name": "妙蛙花",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png",
+                    "recipe": "AAA",
+                    "count": 87,
+                    "note": "AAA 甜甜蜜 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 87,
+                            "note": "AAA 甜甜蜜 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 56,
+                            "note": "ABA 雙甜甜蜜 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 44,
+                            "note": "AAX 雙甜甜蜜 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 單甜甜蜜 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "凱羅斯",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/127.png",
+                    "recipe": "AAA",
+                    "count": 82,
+                    "note": "AAA 甜甜蜜 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 82,
+                            "note": "AAA 甜甜蜜 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 53,
+                            "note": "ABA 雙甜甜蜜 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 41,
+                            "note": "AAX 雙甜甜蜜 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 單甜甜蜜 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "蝶結萌虻",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/743.png",
+                    "recipe": "AAA",
+                    "count": 77,
+                    "note": "AAA 甜甜蜜 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 77,
+                            "note": "AAA 甜甜蜜 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 50,
+                            "note": "ABA 雙甜甜蜜 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 38,
+                            "note": "AAX 雙甜甜蜜 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 11,
+                            "note": "ABX 單甜甜蜜 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "鍬農炮蟲",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/738.png",
+                    "recipe": "XXC",
+                    "count": 50,
+                    "note": "XXC 單甜甜蜜 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 50,
+                            "note": "XXC 單甜甜蜜 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "幸福蛋",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/242.png",
+                    "recipe": "XXC",
+                    "count": 40,
+                    "note": "XXC 單甜甜蜜 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 40,
+                            "note": "XXC 單甜甜蜜 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "請假王",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/289.png",
+                    "recipe": "ABB",
+                    "count": 37,
+                    "note": "ABB 甜甜蜜 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 37,
+                            "note": "ABB 甜甜蜜 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 25,
+                            "note": "AAB 甜甜蜜 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 甜甜蜜 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "巴大蝶",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/012.png",
+                    "recipe": "AAA",
+                    "count": 36,
+                    "note": "AAA 甜甜蜜 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 36,
+                            "note": "AAA 甜甜蜜 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 26,
+                            "note": "ABA 雙甜甜蜜 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 15,
+                            "note": "AAX 雙甜甜蜜 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單甜甜蜜 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "大竺葵",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/154.png",
+                    "recipe": "ABB",
+                    "count": 33,
+                    "note": "ABB 甜甜蜜 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 33,
+                            "note": "ABB 甜甜蜜 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 21,
+                            "note": "AAB 甜甜蜜 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 甜甜蜜 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "負電拍拍",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/312.png",
+                    "recipe": "AAA",
+                    "count": 33,
+                    "note": "AAA 甜甜蜜 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 33,
+                            "note": "AAA 甜甜蜜 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 24,
+                            "note": "ABA 雙甜甜蜜 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 14,
+                            "note": "AAX 雙甜甜蜜 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單甜甜蜜 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "赫拉克羅斯",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/214.png",
+                    "recipe": "AAA",
+                    "count": 31,
+                    "note": "AAA 甜甜蜜 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 31,
+                            "note": "AAA 甜甜蜜 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 22,
+                            "note": "ABA 雙甜甜蜜 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 13,
+                            "note": "AAX 雙甜甜蜜 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單甜甜蜜 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "胖可丁",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/040.png",
+                    "recipe": "AAA",
+                    "count": 27,
+                    "note": "AAA 甜甜蜜 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 27,
+                            "note": "AAA 甜甜蜜 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 19,
+                            "note": "ABA 雙甜甜蜜 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙甜甜蜜 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單甜甜蜜 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "夢夢蝕",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/518.png",
+                    "recipe": "ABB",
+                    "count": 22,
+                    "note": "ABB 甜甜蜜 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 22,
+                            "note": "ABB 甜甜蜜 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 13,
+                            "note": "AAB 甜甜蜜 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 9,
+                            "note": "ABX 甜甜蜜 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "皮可西",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/036.png",
+                    "recipe": "ABB",
+                    "count": 20,
+                    "note": "ABB 甜甜蜜 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 20,
+                            "note": "ABB 甜甜蜜 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 12,
+                            "note": "AAB 甜甜蜜 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 8,
+                            "note": "ABX 甜甜蜜 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "火爆猴",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/057.png",
+                    "recipe": "XXC",
+                    "count": 19,
+                    "note": "XXC 單甜甜蜜 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 19,
+                            "note": "XXC 單甜甜蜜 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "吞食獸",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/317.png",
+                    "recipe": "XXC",
+                    "count": 16,
+                    "note": "XXC 單甜甜蜜 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 16,
+                            "note": "XXC 單甜甜蜜 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "壺壺",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/213.png",
+                    "recipe": "XXC",
+                    "count": 15,
+                    "note": "XXC 單甜甜蜜 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 15,
+                            "note": "XXC 單甜甜蜜 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "帝王拿波",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/395.png",
+                    "recipe": "XXC",
+                    "count": 14,
+                    "note": "XXC 單甜甜蜜 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 14,
+                            "note": "XXC 單甜甜蜜 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "sausage",
+            "name": "豆製肉",
+            "enName": "Bean Sausage",
+            "energy": 103,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/beansausage.png",
+            "pokemon": [
+                {
+                    "name": "波士可多拉",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/306.png",
+                    "recipe": "AAA",
+                    "count": 87,
+                    "note": "AAA 豆製肉 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 87,
+                            "note": "AAA 豆製肉 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 56,
+                            "note": "ABA 雙豆製肉 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 44,
+                            "note": "AAX 雙豆製肉 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 單豆製肉 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "噴火龍",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png",
+                    "recipe": "AAA",
+                    "count": 85,
+                    "note": "AAA 豆製肉 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 85,
+                            "note": "AAA 豆製肉 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 55,
+                            "note": "ABA 雙豆製肉 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 42,
+                            "note": "AAX 雙豆製肉 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 單豆製肉 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "穿著熊",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/760.png",
+                    "recipe": "ABB",
+                    "count": 85,
+                    "note": "ABB 豆製肉 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 85,
+                            "note": "ABB 豆製肉 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 53,
+                            "note": "AAB 豆製肉 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 32,
+                            "note": "ABX 豆製肉 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "大蔥鴨",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/083.png",
+                    "recipe": "ABB",
+                    "count": 73,
+                    "note": "ABB 豆製肉 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 73,
+                            "note": "ABB 豆製肉 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 45,
+                            "note": "AAB 豆製肉 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 28,
+                            "note": "ABX 豆製肉 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "浩大鯨",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/975.png",
+                    "recipe": "ABB",
+                    "count": 68,
+                    "note": "ABB 豆製肉 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 68,
+                            "note": "ABB 豆製肉 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 44,
+                            "note": "AAB 豆製肉 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 24,
+                            "note": "ABX 豆製肉 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "骨紋巨聲鱷",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/911.png",
+                    "recipe": "ABB",
+                    "count": 65,
+                    "note": "ABB 豆製肉 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 65,
+                            "note": "ABB 豆製肉 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 39,
+                            "note": "AAB 豆製肉 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 26,
+                            "note": "ABX 豆製肉 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "毒骷蛙",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/454.png",
+                    "recipe": "ABB",
+                    "count": 57,
+                    "note": "ABB 豆製肉 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 57,
+                            "note": "ABB 豆製肉 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 35,
+                            "note": "AAB 豆製肉 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 22,
+                            "note": "ABX 豆製肉 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "班基拉斯",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png",
+                    "recipe": "XXC",
+                    "count": 51,
+                    "note": "XXC 單豆製肉 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 51,
+                            "note": "XXC 單豆製肉 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "水箭龜",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/009.png",
+                    "recipe": "XXC",
+                    "count": 45,
+                    "note": "XXC 單豆製肉 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 45,
+                            "note": "XXC 單豆製肉 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "沼王",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/195.png",
+                    "recipe": "XXC",
+                    "count": 44,
+                    "note": "XXC 單豆製肉 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 44,
+                            "note": "XXC 單豆製肉 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "大力鱷",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/160.png",
+                    "recipe": "AAA",
+                    "count": 42,
+                    "note": "AAA 豆製肉 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 42,
+                            "note": "AAA 豆製肉 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 30,
+                            "note": "ABA 雙豆製肉 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 18,
+                            "note": "AAX 雙豆製肉 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 6,
+                            "note": "ABX 單豆製肉 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "瑪狃拉",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/461.png",
+                    "recipe": "AAA",
+                    "count": 42,
+                    "note": "AAA 豆製肉 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 42,
+                            "note": "AAA 豆製肉 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 30,
+                            "note": "ABA 雙豆製肉 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 18,
+                            "note": "AAX 雙豆製肉 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 6,
+                            "note": "ABX 單豆製肉 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "雷公",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/243.png",
+                    "recipe": "AAA",
+                    "count": 42,
+                    "note": "AAA 豆製肉 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 42,
+                            "note": "AAA 豆製肉 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 30,
+                            "note": "ABA 雙豆製肉 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 18,
+                            "note": "AAX 雙豆製肉 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 6,
+                            "note": "ABX 單豆製肉 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "凱羅斯",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/127.png",
+                    "recipe": "XXC",
+                    "count": 41,
+                    "note": "XXC 單豆製肉 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 41,
+                            "note": "XXC 單豆製肉 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "老翁龍",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/780.png",
+                    "recipe": "XXC",
+                    "count": 38,
+                    "note": "XXC 單豆製肉 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 38,
+                            "note": "XXC 單豆製肉 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "阿柏怪",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/024.png",
+                    "recipe": "AAA",
+                    "count": 35,
+                    "note": "AAA 豆製肉 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 35,
+                            "note": "AAA 豆製肉 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 25,
+                            "note": "ABA 雙豆製肉 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 15,
+                            "note": "AAX 雙豆製肉 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單豆製肉 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "帝牙海獅",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/365.png",
+                    "recipe": "ABB",
+                    "count": 34,
+                    "note": "ABB 豆製肉 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 34,
+                            "note": "ABB 豆製肉 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 19,
+                            "note": "AAB 豆製肉 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 15,
+                            "note": "ABX 豆製肉 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "火爆猴",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/057.png",
+                    "recipe": "AAA",
+                    "count": 33,
+                    "note": "AAA 豆製肉 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 33,
+                            "note": "AAA 豆製肉 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 24,
+                            "note": "ABA 雙豆製肉 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 14,
+                            "note": "AAX 雙豆製肉 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單豆製肉 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "海豹球（佳節）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png",
+                    "recipe": "ABB",
+                    "count": 30,
+                    "note": "ABB 豆製肉 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 30,
+                            "note": "ABB 豆製肉 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 17,
+                            "note": "AAB 豆製肉 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 13,
+                            "note": "ABX 豆製肉 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "怪顎龍",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/697.png",
+                    "recipe": "AAA",
+                    "count": 29,
+                    "note": "AAA 豆製肉 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 29,
+                            "note": "AAA 豆製肉 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 21,
+                            "note": "ABA 雙豆製肉 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙豆製肉 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單豆製肉 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "風速狗",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/059.png",
+                    "recipe": "ABB",
+                    "count": 28,
+                    "note": "ABB 豆製肉 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 28,
+                            "note": "ABB 豆製肉 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 18,
+                            "note": "AAB 豆製肉 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 豆製肉 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "勇士雄鷹",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/628.png",
+                    "recipe": "AAA",
+                    "count": 23,
+                    "note": "AAA 豆製肉 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 23,
+                            "note": "AAA 豆製肉 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 16,
+                            "note": "ABA 雙豆製肉 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 10,
+                            "note": "AAX 雙豆製肉 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單豆製肉 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "摔角鷹人",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/701.png",
+                    "recipe": "XXC",
+                    "count": 21,
+                    "note": "XXC 單豆製肉 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 21,
+                            "note": "XXC 單豆製肉 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "貓老大",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/053.png",
+                    "recipe": "ABB",
+                    "count": 20,
+                    "note": "ABB 豆製肉 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 20,
+                            "note": "ABB 豆製肉 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 12,
+                            "note": "AAB 豆製肉 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 8,
+                            "note": "ABX 豆製肉 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "大鋼蛇",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/208.png",
+                    "recipe": "ABB",
+                    "count": 20,
+                    "note": "ABB 豆製肉 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 20,
+                            "note": "ABB 豆製肉 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 13,
+                            "note": "AAB 豆製肉 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 7,
+                            "note": "ABX 豆製肉 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "暴飛龍",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/373.png",
+                    "recipe": "XXC",
+                    "count": 20,
+                    "note": "XXC 單豆製肉 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 20,
+                            "note": "XXC 單豆製肉 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "赫拉克羅斯",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/214.png",
+                    "recipe": "XXC",
+                    "count": 18,
+                    "note": "XXC 單豆製肉 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 18,
+                            "note": "XXC 單豆製肉 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "拉達",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/020.png",
+                    "recipe": "XXC",
+                    "count": 16,
+                    "note": "XXC 單豆製肉 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 16,
+                            "note": "XXC 單豆製肉 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "哥達鴨",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/055.png",
+                    "recipe": "XXC",
+                    "count": 16,
+                    "note": "XXC 單豆製肉 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 16,
+                            "note": "XXC 單豆製肉 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "嘟嘟利",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/085.png",
+                    "recipe": "XXC",
+                    "count": 16,
+                    "note": "XXC 單豆製肉 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 16,
+                            "note": "XXC 單豆製肉 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "音波龍",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/715.png",
+                    "recipe": "XXC",
+                    "count": 14,
+                    "note": "XXC 單豆製肉 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 14,
+                            "note": "XXC 單豆製肉 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "伊布家族（8種進化）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133.png",
+                    "recipe": "XXC",
+                    "count": 13,
+                    "note": "XXC 單豆製肉 補足 (8種進化產量皆相同)",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 13,
+                            "note": "XXC 單豆製肉 補足 (8種進化產量皆相同)",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ],
+                    "name_en": "Eevee Evolutions (8 Forms)"
+                },
+                {
+                    "name": "伊布（佳節）",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png",
+                    "recipe": "XXC",
+                    "count": 10,
+                    "note": "XXC 單豆製肉 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 10,
+                            "note": "XXC 單豆製肉 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "ginger",
+            "name": "暖暖薑",
+            "enName": "Warming Ginger",
+            "energy": 109,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png",
+            "pokemon": [
+                {
+                    "name": "班基拉斯",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/248.png",
+                    "recipe": "AAA",
+                    "count": 90,
+                    "note": "AAA 暖暖薑 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 90,
+                            "note": "AAA 暖暖薑 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 58,
+                            "note": "ABA 雙暖暖薑 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 45,
+                            "note": "AAX 雙暖暖薑 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 13,
+                            "note": "ABX 單暖暖薑 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "袋獸",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/115.png",
+                    "recipe": "AAA",
+                    "count": 77,
+                    "note": "AAA 暖暖薑 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 77,
+                            "note": "AAA 暖暖薑 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 50,
+                            "note": "ABA 雙暖暖薑 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 38,
+                            "note": "AAX 雙暖暖薑 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 11,
+                            "note": "ABX 單暖暖薑 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "噴火龍",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png",
+                    "recipe": "ABB",
+                    "count": 67,
+                    "note": "ABB 暖暖薑 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 67,
+                            "note": "ABB 暖暖薑 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 43,
+                            "note": "AAB 暖暖薑 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 24,
+                            "note": "ABX 暖暖薑 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "花療環環",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/764.png",
+                    "recipe": "ABB",
+                    "count": 65,
+                    "note": "ABB 暖暖薑 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 65,
+                            "note": "ABB 暖暖薑 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 39,
+                            "note": "AAB 暖暖薑 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 26,
+                            "note": "ABX 暖暖薑 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "克雷色利亞",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/488.png",
+                    "recipe": "AAA",
+                    "count": 48,
+                    "note": "AAA 暖暖薑 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 48,
+                            "note": "AAA 暖暖薑 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 34,
+                            "note": "ABA 雙暖暖薑 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 21,
+                            "note": "AAX 雙暖暖薑 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 7,
+                            "note": "ABX 單暖暖薑 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "大蔥鴨",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/083.png",
+                    "recipe": "XXC",
+                    "count": 42,
+                    "note": "XXC 單暖暖薑 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 42,
+                            "note": "XXC 單暖暖薑 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "火爆獸",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/157.png",
+                    "recipe": "AAA",
+                    "count": 40,
+                    "note": "AAA 暖暖薑 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 40,
+                            "note": "AAA 暖暖薑 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 29,
+                            "note": "ABA 雙暖暖薑 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 17,
+                            "note": "AAX 雙暖暖薑 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 6,
+                            "note": "ABX 單暖暖薑 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "魔幻假面喵",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/908.png",
+                    "recipe": "XXC",
+                    "count": 38,
+                    "note": "XXC 單暖暖薑 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 38,
+                            "note": "XXC 單暖暖薑 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "暴飛龍",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/373.png",
+                    "recipe": "ABB",
+                    "count": 35,
+                    "note": "ABB 暖暖薑 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 35,
+                            "note": "ABB 暖暖薑 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 20,
+                            "note": "AAB 暖暖薑 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 15,
+                            "note": "ABX 暖暖薑 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "雷丘",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/026.png",
+                    "recipe": "ABB",
+                    "count": 33,
+                    "note": "ABB 暖暖薑 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 33,
+                            "note": "ABB 暖暖薑 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 20,
+                            "note": "AAB 暖暖薑 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 13,
+                            "note": "ABX 暖暖薑 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "嘎啦嘎啦",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/105.png",
+                    "recipe": "AAA",
+                    "count": 31,
+                    "note": "AAA 暖暖薑 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 31,
+                            "note": "AAA 暖暖薑 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 22,
+                            "note": "ABA 雙暖暖薑 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 13,
+                            "note": "AAX 雙暖暖薑 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單暖暖薑 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "摔角鷹人",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/701.png",
+                    "recipe": "ABB",
+                    "count": 29,
+                    "note": "ABB 暖暖薑 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 29,
+                            "note": "ABB 暖暖薑 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 17,
+                            "note": "AAB 暖暖薑 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 暖暖薑 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "皮卡丘（萬聖節）",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png",
+                    "recipe": "ABB",
+                    "count": 28,
+                    "note": "ABB 暖暖薑 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 28,
+                            "note": "ABB 暖暖薑 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 17,
+                            "note": "AAB 暖暖薑 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 11,
+                            "note": "ABX 暖暖薑 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "黑魯加",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/229.png",
+                    "recipe": "ABB",
+                    "count": 28,
+                    "note": "ABB 暖暖薑 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 28,
+                            "note": "ABB 暖暖薑 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 16,
+                            "note": "AAB 暖暖薑 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 暖暖薑 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "詛咒娃娃",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/354.png",
+                    "recipe": "ABB",
+                    "count": 27,
+                    "note": "ABB 暖暖薑 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 27,
+                            "note": "ABB 暖暖薑 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 18,
+                            "note": "AAB 暖暖薑 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 9,
+                            "note": "ABX 暖暖薑 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "波克基斯",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/468.png",
+                    "recipe": "ABB",
+                    "count": 24,
+                    "note": "ABB 暖暖薑 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 24,
+                            "note": "ABB 暖暖薑 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 16,
+                            "note": "AAB 暖暖薑 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 8,
+                            "note": "ABX 暖暖薑 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "皮卡丘（船長）",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png",
+                    "recipe": "ABB",
+                    "count": 23,
+                    "note": "ABB 暖暖薑 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 23,
+                            "note": "ABB 暖暖薑 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 14,
+                            "note": "AAB 暖暖薑 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 9,
+                            "note": "ABX 暖暖薑 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "土台龜",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/389.png",
+                    "recipe": "XXC",
+                    "count": 21,
+                    "note": "XXC 單暖暖薑 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 21,
+                            "note": "XXC 單暖暖薑 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "烈焰猴",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/392.png",
+                    "recipe": "ABB",
+                    "count": 20,
+                    "note": "ABB 暖暖薑 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 20,
+                            "note": "ABB 暖暖薑 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 11,
+                            "note": "AAB 暖暖薑 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 9,
+                            "note": "ABX 暖暖薑 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "帝牙海獅",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/365.png",
+                    "recipe": "XXC",
+                    "count": 19,
+                    "note": "XXC 單暖暖薑 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 19,
+                            "note": "XXC 單暖暖薑 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "皮卡丘（佳節）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png",
+                    "recipe": "ABB",
+                    "count": 17,
+                    "note": "ABB 暖暖薑 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 17,
+                            "note": "ABB 暖暖薑 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 10,
+                            "note": "AAB 暖暖薑 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 7,
+                            "note": "ABX 暖暖薑 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "海豹球（佳節）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png",
+                    "recipe": "XXC",
+                    "count": 17,
+                    "note": "XXC 單暖暖薑 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 17,
+                            "note": "XXC 單暖暖薑 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "tomato",
+            "name": "好眠番茄",
+            "enName": "Snoozy Tomato",
+            "energy": 110,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png",
+            "pokemon": [
+                {
+                    "name": "大食花",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/071.png",
+                    "recipe": "AAA",
+                    "count": 76,
+                    "note": "AAA 好眠番茄 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 76,
+                            "note": "AAA 好眠番茄 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 49,
+                            "note": "ABA 雙好眠番茄 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 38,
+                            "note": "AAX 雙好眠番茄 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 11,
+                            "note": "ABX 單好眠番茄 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "倫琴貓",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/405.png",
+                    "recipe": "AAA",
+                    "count": 76,
+                    "note": "AAA 好眠番茄 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 76,
+                            "note": "AAA 好眠番茄 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 49,
+                            "note": "ABA 雙好眠番茄 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 38,
+                            "note": "AAX 雙好眠番茄 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 11,
+                            "note": "ABX 單好眠番茄 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "暴雪王",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/460.png",
+                    "recipe": "AAA",
+                    "count": 76,
+                    "note": "AAA 好眠番茄 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 76,
+                            "note": "AAA 好眠番茄 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 49,
+                            "note": "ABA 雙好眠番茄 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 38,
+                            "note": "AAX 雙好眠番茄 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 11,
+                            "note": "ABX 單好眠番茄 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "魔牆人偶",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/122.png",
+                    "recipe": "AAA",
+                    "count": 71,
+                    "note": "AAA 好眠番茄 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 71,
+                            "note": "AAA 好眠番茄 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 46,
+                            "note": "ABA 雙好眠番茄 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 36,
+                            "note": "AAX 雙好眠番茄 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 單好眠番茄 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "妙蛙花",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png",
+                    "recipe": "ABB",
+                    "count": 68,
+                    "note": "ABB 好眠番茄 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 68,
+                            "note": "ABB 好眠番茄 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 43,
+                            "note": "AAB 好眠番茄 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 25,
+                            "note": "ABX 好眠番茄 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "三地鼠",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/051.png",
+                    "recipe": "AAA",
+                    "count": 66,
+                    "note": "AAA 好眠番茄 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 66,
+                            "note": "AAA 好眠番茄 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 42,
+                            "note": "ABA 雙好眠番茄 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 33,
+                            "note": "AAX 雙好眠番茄 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 9,
+                            "note": "ABX 單好眠番茄 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "請假王",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/289.png",
+                    "recipe": "AAA",
+                    "count": 43,
+                    "note": "AAA 好眠番茄 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 43,
+                            "note": "AAA 好眠番茄 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 31,
+                            "note": "ABA 雙好眠番茄 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 18,
+                            "note": "AAX 雙好眠番茄 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 6,
+                            "note": "ABX 單好眠番茄 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "巨鍛匠",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/959.png",
+                    "recipe": "AAA",
+                    "count": 35,
+                    "note": "AAA 好眠番茄 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 35,
+                            "note": "AAA 好眠番茄 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 25,
+                            "note": "ABA 雙好眠番茄 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 15,
+                            "note": "AAX 雙好眠番茄 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單好眠番茄 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "大嘴娃",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/303.png",
+                    "recipe": "XXC",
+                    "count": 33,
+                    "note": "XXC 單好眠番茄 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 33,
+                            "note": "XXC 單好眠番茄 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "拉帝歐斯",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/381.png",
+                    "recipe": "AAA",
+                    "count": 32,
+                    "note": "AAA 好眠番茄 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 32,
+                            "note": "AAA 好眠番茄 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 23,
+                            "note": "ABA 雙好眠番茄 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 14,
+                            "note": "AAX 雙好眠番茄 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單好眠番茄 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "炎帝",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/244.png",
+                    "recipe": "ABB",
+                    "count": 31,
+                    "note": "ABB 好眠番茄 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 31,
+                            "note": "ABB 好眠番茄 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 21,
+                            "note": "AAB 好眠番茄 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 好眠番茄 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "克雷色利亞",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/488.png",
+                    "recipe": "XXC",
+                    "count": 27,
+                    "note": "XXC 單好眠番茄 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 27,
+                            "note": "XXC 單好眠番茄 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "巴大蝶",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/012.png",
+                    "recipe": "ABB",
+                    "count": 26,
+                    "note": "ABB 好眠番茄 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 26,
+                            "note": "ABB 好眠番茄 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 16,
+                            "note": "AAB 好眠番茄 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 好眠番茄 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "樹才怪",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/185.png",
+                    "recipe": "AAA",
+                    "count": 25,
+                    "note": "AAA 好眠番茄 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 25,
+                            "note": "AAA 好眠番茄 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 18,
+                            "note": "ABA 雙好眠番茄 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 11,
+                            "note": "AAX 雙好眠番茄 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單好眠番茄 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "大鋼蛇",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/208.png",
+                    "recipe": "AAA",
+                    "count": 23,
+                    "note": "AAA 好眠番茄 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 23,
+                            "note": "AAA 好眠番茄 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 16,
+                            "note": "ABA 雙好眠番茄 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 10,
+                            "note": "AAX 雙好眠番茄 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單好眠番茄 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "拉帝亞斯",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/380.png",
+                    "recipe": "AAA",
+                    "count": 19,
+                    "note": "AAA 好眠番茄 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 19,
+                            "note": "AAA 好眠番茄 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 14,
+                            "note": "ABA 雙好眠番茄 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 8,
+                            "note": "AAX 雙好眠番茄 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單好眠番茄 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "呆殼獸",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/080.png",
+                    "recipe": "XXC",
+                    "count": 17,
+                    "note": "XXC 單好眠番茄 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 17,
+                            "note": "XXC 單好眠番茄 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "呆呆王",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/199.png",
+                    "recipe": "XXC",
+                    "count": 16,
+                    "note": "XXC 單好眠番茄 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 16,
+                            "note": "XXC 單好眠番茄 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "egg",
+            "name": "特選蛋",
+            "enName": "Fancy Egg",
+            "energy": 115,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png",
+            "pokemon": [
+                {
+                    "name": "幸福蛋",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/242.png",
+                    "recipe": "AAA",
+                    "count": 70,
+                    "note": "AAA 特選蛋 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 70,
+                            "note": "AAA 特選蛋 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 45,
+                            "note": "ABA 雙特選蛋 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 35,
+                            "note": "AAX 雙特選蛋 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 單特選蛋 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "信使鳥",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/225.png",
+                    "recipe": "AAA",
+                    "count": 69,
+                    "note": "AAA 特選蛋 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 69,
+                            "note": "AAA 特選蛋 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 44,
+                            "note": "ABA 雙特選蛋 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 34,
+                            "note": "AAX 雙特選蛋 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 單特選蛋 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "暴雪王",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/460.png",
+                    "recipe": "ABB",
+                    "count": 60,
+                    "note": "ABB 特選蛋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 60,
+                            "note": "ABB 特選蛋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 38,
+                            "note": "AAB 特選蛋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 22,
+                            "note": "ABX 特選蛋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "穿著熊",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/760.png",
+                    "recipe": "XXC",
+                    "count": 48,
+                    "note": "XXC 單特選蛋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 48,
+                            "note": "XXC 單特選蛋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "天然鳥",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/178.png",
+                    "recipe": "AAA",
+                    "count": 35,
+                    "note": "AAA 特選蛋 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 35,
+                            "note": "AAA 特選蛋 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 25,
+                            "note": "ABA 雙特選蛋 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 15,
+                            "note": "AAX 雙特選蛋 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單特選蛋 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "七夕青鳥",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/334.png",
+                    "recipe": "AAA",
+                    "count": 34,
+                    "note": "AAA 特選蛋 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 34,
+                            "note": "AAA 特選蛋 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 24,
+                            "note": "ABA 雙特選蛋 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 15,
+                            "note": "AAX 雙特選蛋 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單特選蛋 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "古月鳥",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/845.png",
+                    "recipe": "XXC",
+                    "count": 32,
+                    "note": "XXC 單特選蛋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 32,
+                            "note": "XXC 單特選蛋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "瑪狃拉",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/461.png",
+                    "recipe": "ABB",
+                    "count": 30,
+                    "note": "ABB 特選蛋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 30,
+                            "note": "ABB 特選蛋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 18,
+                            "note": "AAB 特選蛋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 特選蛋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "波克基斯",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/468.png",
+                    "recipe": "AAA",
+                    "count": 28,
+                    "note": "AAA 特選蛋 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 28,
+                            "note": "AAA 特選蛋 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 20,
+                            "note": "ABA 雙特選蛋 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙特選蛋 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單特選蛋 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "負電拍拍",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/312.png",
+                    "recipe": "ABB",
+                    "count": 28,
+                    "note": "ABB 特選蛋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 28,
+                            "note": "ABB 特選蛋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 19,
+                            "note": "AAB 特選蛋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 9,
+                            "note": "ABX 特選蛋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "阿柏怪",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/024.png",
+                    "recipe": "ABB",
+                    "count": 25,
+                    "note": "ABB 特選蛋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 25,
+                            "note": "ABB 特選蛋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 15,
+                            "note": "AAB 特選蛋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 特選蛋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "電龍",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/181.png",
+                    "recipe": "ABB",
+                    "count": 24,
+                    "note": "ABB 特選蛋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 24,
+                            "note": "ABB 特選蛋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 14,
+                            "note": "AAB 特選蛋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 特選蛋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "帝王拿波",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/395.png",
+                    "recipe": "AAA",
+                    "count": 24,
+                    "note": "AAA 特選蛋 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 24,
+                            "note": "AAA 特選蛋 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 17,
+                            "note": "ABA 雙特選蛋 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 10,
+                            "note": "AAX 雙特選蛋 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單特選蛋 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "拉帝歐斯",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/381.png",
+                    "recipe": "ABB",
+                    "count": 23,
+                    "note": "ABB 特選蛋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 23,
+                            "note": "ABB 特選蛋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 14,
+                            "note": "AAB 特選蛋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 9,
+                            "note": "ABX 特選蛋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "蜥蜴王",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/254.png",
+                    "recipe": "AAA",
+                    "count": 21,
+                    "note": "AAA 特選蛋 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 21,
+                            "note": "AAA 特選蛋 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 15,
+                            "note": "ABA 雙特選蛋 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 9,
+                            "note": "AAX 雙特選蛋 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單特選蛋 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "雷丘",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/026.png",
+                    "recipe": "XXC",
+                    "count": 20,
+                    "note": "XXC 單特選蛋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 20,
+                            "note": "XXC 單特選蛋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "巴布土撥",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/923.png",
+                    "recipe": "XXC",
+                    "count": 19,
+                    "note": "XXC 單特選蛋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 19,
+                            "note": "XXC 單特選蛋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "皮卡丘（萬聖節）",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png",
+                    "recipe": "XXC",
+                    "count": 17,
+                    "note": "XXC 單特選蛋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 17,
+                            "note": "XXC 單特選蛋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "路卡利歐",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/448.png",
+                    "recipe": "XXC",
+                    "count": 15,
+                    "note": "XXC 單特選蛋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 15,
+                            "note": "XXC 單特選蛋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "皮卡丘（船長）",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png",
+                    "recipe": "XXC",
+                    "count": 14,
+                    "note": "XXC 單特選蛋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 14,
+                            "note": "XXC 單特選蛋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "皮卡丘（佳節）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png",
+                    "recipe": "XXC",
+                    "count": 10,
+                    "note": "XXC 單特選蛋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 10,
+                            "note": "XXC 單特選蛋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "oil",
+            "name": "純粹油",
+            "enName": "Pure Oil",
+            "energy": 121,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/pureoil.png",
+            "pokemon": [
+                {
+                    "name": "毒骷蛙",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/454.png",
+                    "recipe": "AAA",
+                    "count": 62,
+                    "note": "AAA 純粹油 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 62,
+                            "note": "AAA 純粹油 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 40,
+                            "note": "ABA 雙純粹油 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 31,
+                            "note": "AAX 雙純粹油 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 9,
+                            "note": "ABX 單純粹油 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "倫琴貓",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/405.png",
+                    "recipe": "ABB",
+                    "count": 60,
+                    "note": "ABB 純粹油 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 60,
+                            "note": "ABB 純粹油 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 38,
+                            "note": "AAB 純粹油 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 22,
+                            "note": "ABX 純粹油 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "大嘴娃",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/303.png",
+                    "recipe": "AAA",
+                    "count": 58,
+                    "note": "AAA 純粹油 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 58,
+                            "note": "AAA 純粹油 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 37,
+                            "note": "ABA 雙純粹油 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 29,
+                            "note": "AAX 雙純粹油 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 8,
+                            "note": "ABX 單純粹油 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "古月鳥",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/845.png",
+                    "recipe": "AAA",
+                    "count": 56,
+                    "note": "AAA 純粹油 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 56,
+                            "note": "AAA 純粹油 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 36,
+                            "note": "ABA 雙純粹油 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 28,
+                            "note": "AAX 雙純粹油 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 8,
+                            "note": "ABX 單純粹油 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "蝶結萌虻",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/743.png",
+                    "recipe": "ABB",
+                    "count": 55,
+                    "note": "ABB 純粹油 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 55,
+                            "note": "ABB 純粹油 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 33,
+                            "note": "AAB 純粹油 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 22,
+                            "note": "ABX 純粹油 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "百變怪",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/132.png",
+                    "recipe": "AAA",
+                    "count": 53,
+                    "note": "AAA 純粹油 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 53,
+                            "note": "AAA 純粹油 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 34,
+                            "note": "ABA 雙純粹油 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 26,
+                            "note": "AAX 雙純粹油 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 8,
+                            "note": "ABX 單純粹油 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "快龍",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/149.png",
+                    "recipe": "XXC",
+                    "count": 53,
+                    "note": "XXC 單純粹油 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 53,
+                            "note": "XXC 單純粹油 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "耿鬼",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png",
+                    "recipe": "XXC",
+                    "count": 38,
+                    "note": "XXC 單純粹油 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 38,
+                            "note": "XXC 單純粹油 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "炎帝",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/244.png",
+                    "recipe": "AAA",
+                    "count": 36,
+                    "note": "AAA 純粹油 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 36,
+                            "note": "AAA 純粹油 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 26,
+                            "note": "ABA 雙純粹油 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 15,
+                            "note": "AAX 雙純粹油 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單純粹油 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "狂歡浪舞鴨",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/914.png",
+                    "recipe": "XXC",
+                    "count": 35,
+                    "note": "XXC 單純粹油 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 35,
+                            "note": "XXC 單純粹油 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "帝牙海獅",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/365.png",
+                    "recipe": "AAA",
+                    "count": 34,
+                    "note": "AAA 純粹油 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 34,
+                            "note": "AAA 純粹油 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 24,
+                            "note": "ABA 雙純粹油 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 15,
+                            "note": "AAX 雙純粹油 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單純粹油 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "水君",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/245.png",
+                    "recipe": "ABB",
+                    "count": 33,
+                    "note": "ABB 純粹油 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 33,
+                            "note": "ABB 純粹油 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 20,
+                            "note": "AAB 純粹油 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 13,
+                            "note": "ABX 純粹油 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "詛咒娃娃",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/354.png",
+                    "recipe": "AAA",
+                    "count": 31,
+                    "note": "AAA 純粹油 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 31,
+                            "note": "AAA 純粹油 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 22,
+                            "note": "ABA 雙純粹油 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 13,
+                            "note": "AAX 雙純粹油 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單純粹油 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "大力鱷",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/160.png",
+                    "recipe": "ABB",
+                    "count": 30,
+                    "note": "ABB 純粹油 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 30,
+                            "note": "ABB 純粹油 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 18,
+                            "note": "AAB 純粹油 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 純粹油 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "海豹球（佳節）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png",
+                    "recipe": "AAA",
+                    "count": 30,
+                    "note": "AAA 純粹油 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 30,
+                            "note": "AAA 純粹油 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 21,
+                            "note": "ABA 雙純粹油 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 13,
+                            "note": "AAX 雙純粹油 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單純粹油 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "自爆磁怪",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/462.png",
+                    "recipe": "AAA",
+                    "count": 26,
+                    "note": "AAA 純粹油 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 26,
+                            "note": "AAA 純粹油 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 19,
+                            "note": "ABA 雙純粹油 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 11,
+                            "note": "AAX 雙純粹油 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單純粹油 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "壺壺",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/213.png",
+                    "recipe": "AAA",
+                    "count": 26,
+                    "note": "AAA 純粹油 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 26,
+                            "note": "AAA 純粹油 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 19,
+                            "note": "ABA 雙純粹油 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 11,
+                            "note": "AAX 雙純粹油 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單純粹油 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "路卡利歐",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/448.png",
+                    "recipe": "AAA",
+                    "count": 26,
+                    "note": "AAA 純粹油 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 26,
+                            "note": "AAA 純粹油 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 19,
+                            "note": "ABA 雙純粹油 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 11,
+                            "note": "AAX 雙純粹油 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單純粹油 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "勾魂眼",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/302.png",
+                    "recipe": "AAA",
+                    "count": 24,
+                    "note": "AAA 純粹油 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 24,
+                            "note": "AAA 純粹油 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 17,
+                            "note": "ABA 雙純粹油 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 10,
+                            "note": "AAX 雙純粹油 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單純粹油 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "岩殿居蟹",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/558.png",
+                    "recipe": "XXC",
+                    "count": 24,
+                    "note": "XXC 單純粹油 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 24,
+                            "note": "XXC 單純粹油 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "隨風球",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/426.png",
+                    "recipe": "ABB",
+                    "count": 23,
+                    "note": "ABB 純粹油 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 23,
+                            "note": "ABB 純粹油 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 13,
+                            "note": "AAB 純粹油 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 純粹油 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "胖可丁",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/040.png",
+                    "recipe": "ABB",
+                    "count": 20,
+                    "note": "ABB 純粹油 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 20,
+                            "note": "ABB 純粹油 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 12,
+                            "note": "AAB 純粹油 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 8,
+                            "note": "ABX 純粹油 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "火焰雞",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/257.png",
+                    "recipe": "XXC",
+                    "count": 19,
+                    "note": "XXC 單純粹油 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 19,
+                            "note": "XXC 單純粹油 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "火爆獸",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/157.png",
+                    "recipe": "XXC",
+                    "count": 17,
+                    "note": "XXC 單純粹油 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 17,
+                            "note": "XXC 單純粹油 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "果然翁",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/202.png",
+                    "recipe": "XXC",
+                    "count": 12,
+                    "note": "XXC 單純粹油 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 12,
+                            "note": "XXC 單純粹油 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "potato",
+            "name": "窩心洋芋",
+            "enName": "Soft Potato",
+            "energy": 124,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png",
+            "pokemon": [
+                {
+                    "name": "浩大鯨",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/975.png",
+                    "recipe": "AAA",
+                    "count": 68,
+                    "note": "AAA 窩心洋芋 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 68,
+                            "note": "AAA 窩心洋芋 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 44,
+                            "note": "ABA 雙窩心洋芋 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 34,
+                            "note": "AAX 雙窩心洋芋 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 單窩心洋芋 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "魔幻假面喵",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/908.png",
+                    "recipe": "AAA",
+                    "count": 67,
+                    "note": "AAA 窩心洋芋 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 67,
+                            "note": "AAA 窩心洋芋 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 43,
+                            "note": "ABA 雙窩心洋芋 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 34,
+                            "note": "AAX 雙窩心洋芋 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 單窩心洋芋 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "隆隆岩",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/076.png",
+                    "recipe": "ABB",
+                    "count": 59,
+                    "note": "ABB 窩心洋芋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 59,
+                            "note": "ABB 窩心洋芋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 35,
+                            "note": "AAB 窩心洋芋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 24,
+                            "note": "ABX 窩心洋芋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "沼王",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/195.png",
+                    "recipe": "ABB",
+                    "count": 58,
+                    "note": "ABB 窩心洋芋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 58,
+                            "note": "ABB 窩心洋芋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 36,
+                            "note": "AAB 窩心洋芋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 22,
+                            "note": "ABX 窩心洋芋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "幸福蛋",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/242.png",
+                    "recipe": "ABB",
+                    "count": 55,
+                    "note": "ABB 窩心洋芋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 55,
+                            "note": "ABB 窩心洋芋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 35,
+                            "note": "AAB 窩心洋芋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 20,
+                            "note": "ABX 窩心洋芋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "袋獸",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/115.png",
+                    "recipe": "ABB",
+                    "count": 55,
+                    "note": "ABB 窩心洋芋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 55,
+                            "note": "ABB 窩心洋芋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 33,
+                            "note": "AAB 窩心洋芋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 22,
+                            "note": "ABX 窩心洋芋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "大食花",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/071.png",
+                    "recipe": "ABB",
+                    "count": 54,
+                    "note": "ABB 窩心洋芋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 54,
+                            "note": "ABB 窩心洋芋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 32,
+                            "note": "AAB 窩心洋芋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 22,
+                            "note": "ABX 窩心洋芋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "魔牆人偶",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/122.png",
+                    "recipe": "ABB",
+                    "count": 50,
+                    "note": "ABB 窩心洋芋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 50,
+                            "note": "ABB 窩心洋芋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 30,
+                            "note": "AAB 窩心洋芋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 20,
+                            "note": "ABX 窩心洋芋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "古月鳥",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/845.png",
+                    "recipe": "ABB",
+                    "count": 44,
+                    "note": "ABB 窩心洋芋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 44,
+                            "note": "ABB 窩心洋芋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 28,
+                            "note": "AAB 窩心洋芋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 16,
+                            "note": "ABX 窩心洋芋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "南瓜怪人",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
+                    "recipe": "XXC",
+                    "count": 41,
+                    "note": "XXC 單窩心洋芋 補足 (體型日產 37~41 顆)",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 41,
+                            "note": "XXC 單窩心洋芋 補足 (體型日產 37~41 顆)",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ],
+                    "name_en": "Gourgeist"
+                },
+                {
+                    "name": "岩殿居蟹",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/558.png",
+                    "recipe": "ABB",
+                    "count": 39,
+                    "note": "ABB 窩心洋芋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 39,
+                            "note": "ABB 窩心洋芋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 24,
+                            "note": "AAB 窩心洋芋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 15,
+                            "note": "ABX 窩心洋芋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "妙蛙花",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/003.png",
+                    "recipe": "XXC",
+                    "count": 37,
+                    "note": "XXC 單窩心洋芋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 37,
+                            "note": "XXC 單窩心洋芋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "土王",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/980.png",
+                    "recipe": "XXC",
+                    "count": 35,
+                    "note": "XXC 單窩心洋芋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 35,
+                            "note": "XXC 單窩心洋芋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "暴飛龍",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/373.png",
+                    "recipe": "AAA",
+                    "count": 35,
+                    "note": "AAA 窩心洋芋 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 35,
+                            "note": "AAA 窩心洋芋 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 25,
+                            "note": "ABA 雙窩心洋芋 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 15,
+                            "note": "AAX 雙窩心洋芋 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單窩心洋芋 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "土台龜",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/389.png",
+                    "recipe": "ABB",
+                    "count": 28,
+                    "note": "ABB 窩心洋芋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 28,
+                            "note": "ABB 窩心洋芋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 18,
+                            "note": "AAB 窩心洋芋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 窩心洋芋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "路卡利歐",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/448.png",
+                    "recipe": "ABB",
+                    "count": 23,
+                    "note": "ABB 窩心洋芋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 23,
+                            "note": "ABB 窩心洋芋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 15,
+                            "note": "AAB 窩心洋芋 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 8,
+                            "note": "ABX 窩心洋芋 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "穿山王",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/028.png",
+                    "recipe": "XXC",
+                    "count": 18,
+                    "note": "XXC 單窩心洋芋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 18,
+                            "note": "XXC 單窩心洋芋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "九尾（阿羅拉的樣子）",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png",
+                    "recipe": "XXC",
+                    "count": 16,
+                    "note": "XXC 單窩心洋芋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 16,
+                            "note": "XXC 單窩心洋芋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "巨鍛匠",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/959.png",
+                    "recipe": "XXC",
+                    "count": 15,
+                    "note": "XXC 單窩心洋芋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 15,
+                            "note": "XXC 單窩心洋芋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "隨風球",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/426.png",
+                    "recipe": "XXC",
+                    "count": 13,
+                    "note": "XXC 單窩心洋芋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 13,
+                            "note": "XXC 單窩心洋芋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "九尾",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/038.png",
+                    "recipe": "XXC",
+                    "count": 12,
+                    "note": "XXC 單窩心洋芋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 12,
+                            "note": "XXC 單窩心洋芋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "怪顎龍",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/697.png",
+                    "recipe": "XXC",
+                    "count": 12,
+                    "note": "XXC 單窩心洋芋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 12,
+                            "note": "XXC 單窩心洋芋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "大鋼蛇",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/208.png",
+                    "recipe": "XXC",
+                    "count": 10,
+                    "note": "XXC 單窩心洋芋 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 10,
+                            "note": "XXC 單窩心洋芋 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "herb",
+            "name": "火辣香草",
+            "enName": "Fiery Herb",
+            "energy": 130,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png",
+            "pokemon": [
+                {
+                    "name": "快龍",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/149.png",
+                    "recipe": "AAA",
+                    "count": 93,
+                    "note": "AAA 火辣香草 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 93,
+                            "note": "AAA 火辣香草 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 60,
+                            "note": "ABA 雙火辣香草 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 46,
+                            "note": "AAX 雙火辣香草 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 13,
+                            "note": "ABX 單火辣香草 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "耿鬼",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png",
+                    "recipe": "AAA",
+                    "count": 67,
+                    "note": "AAA 火辣香草 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 67,
+                            "note": "AAA 火辣香草 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 43,
+                            "note": "ABA 雙火辣香草 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 34,
+                            "note": "AAX 雙火辣香草 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 單火辣香草 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "沙漠蜻蜓",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/330.png",
+                    "recipe": "ABB",
+                    "count": 62,
+                    "note": "ABB 火辣香草 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 62,
+                            "note": "ABB 火辣香草 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 37,
+                            "note": "AAB 火辣香草 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 25,
+                            "note": "ABX 火辣香草 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "噴火龍",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/006.png",
+                    "recipe": "XXC",
+                    "count": 37,
+                    "note": "XXC 單火辣香草 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 37,
+                            "note": "XXC 單火辣香草 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "骨紋巨聲鱷",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/911.png",
+                    "recipe": "XXC",
+                    "count": 32,
+                    "note": "XXC 單火辣香草 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 32,
+                            "note": "XXC 單火辣香草 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "雷公",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/243.png",
+                    "recipe": "ABB",
+                    "count": 30,
+                    "note": "ABB 火辣香草 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 30,
+                            "note": "ABB 火辣香草 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 18,
+                            "note": "AAB 火辣香草 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 火辣香草 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "摔角鷹人",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/701.png",
+                    "recipe": "AAA",
+                    "count": 29,
+                    "note": "AAA 火辣香草 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 29,
+                            "note": "AAA 火辣香草 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 21,
+                            "note": "ABA 雙火辣香草 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙火辣香草 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單火辣香草 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "火爆獸",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/157.png",
+                    "recipe": "ABB",
+                    "count": 28,
+                    "note": "ABB 火辣香草 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 28,
+                            "note": "ABB 火辣香草 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 17,
+                            "note": "AAB 火辣香草 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 11,
+                            "note": "ABX 火辣香草 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "黑魯加",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/229.png",
+                    "recipe": "AAA",
+                    "count": 28,
+                    "note": "AAA 火辣香草 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 28,
+                            "note": "AAA 火辣香草 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 20,
+                            "note": "ABA 雙火辣香草 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙火辣香草 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單火辣香草 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "風速狗",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/059.png",
+                    "recipe": "AAA",
+                    "count": 25,
+                    "note": "AAA 火辣香草 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 25,
+                            "note": "AAA 火辣香草 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 18,
+                            "note": "ABA 雙火辣香草 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 11,
+                            "note": "AAX 雙火辣香草 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單火辣香草 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "電龍",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/181.png",
+                    "recipe": "AAA",
+                    "count": 24,
+                    "note": "AAA 火辣香草 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 24,
+                            "note": "AAA 火辣香草 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 17,
+                            "note": "ABA 雙火辣香草 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 10,
+                            "note": "AAX 雙火辣香草 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單火辣香草 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "烈焰猴",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/392.png",
+                    "recipe": "AAA",
+                    "count": 20,
+                    "note": "AAA 火辣香草 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 20,
+                            "note": "AAA 火辣香草 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 14,
+                            "note": "ABA 雙火辣香草 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 9,
+                            "note": "AAX 雙火辣香草 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單火辣香草 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "自爆磁怪",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/462.png",
+                    "recipe": "ABB",
+                    "count": 19,
+                    "note": "ABB 火辣香草 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 19,
+                            "note": "ABB 火辣香草 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 11,
+                            "note": "AAB 火辣香草 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 8,
+                            "note": "ABX 火辣香草 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "阿柏怪",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/024.png",
+                    "recipe": "XXC",
+                    "count": 15,
+                    "note": "XXC 單火辣香草 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 15,
+                            "note": "XXC 單火辣香草 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "烏鴉頭頭",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/430.png",
+                    "recipe": "XXC",
+                    "count": 12,
+                    "note": "XXC 單火辣香草 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 12,
+                            "note": "XXC 單火辣香草 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "corn",
+            "name": "萌綠玉米",
+            "enName": "Greengrass Corn",
+            "energy": 140,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png",
+            "pokemon": [
+                {
+                    "name": "穿著熊",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/760.png",
+                    "recipe": "AAA",
+                    "count": 75,
+                    "note": "AAA 萌綠玉米 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 75,
+                            "note": "AAA 萌綠玉米 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 48,
+                            "note": "ABA 雙萌綠玉米 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 38,
+                            "note": "AAX 雙萌綠玉米 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 11,
+                            "note": "ABX 單萌綠玉米 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "快龍",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/149.png",
+                    "recipe": "ABB",
+                    "count": 73,
+                    "note": "ABB 萌綠玉米 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 73,
+                            "note": "ABB 萌綠玉米 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 46,
+                            "note": "AAB 萌綠玉米 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 27,
+                            "note": "ABX 萌綠玉米 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "花療環環",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/764.png",
+                    "recipe": "AAA",
+                    "count": 61,
+                    "note": "AAA 萌綠玉米 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 61,
+                            "note": "AAA 萌綠玉米 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 39,
+                            "note": "ABA 雙萌綠玉米 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 30,
+                            "note": "AAX 雙萌綠玉米 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 9,
+                            "note": "ABX 單萌綠玉米 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "大嘴娃",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/303.png",
+                    "recipe": "ABB",
+                    "count": 42,
+                    "note": "ABB 萌綠玉米 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 42,
+                            "note": "ABB 萌綠玉米 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 25,
+                            "note": "AAB 萌綠玉米 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 17,
+                            "note": "ABX 萌綠玉米 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "蝶結萌虻",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/743.png",
+                    "recipe": "XXC",
+                    "count": 28,
+                    "note": "XXC 單萌綠玉米 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 28,
+                            "note": "XXC 單萌綠玉米 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "九尾（阿羅拉的樣子）",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png",
+                    "recipe": "ABB",
+                    "count": 26,
+                    "note": "ABB 萌綠玉米 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 26,
+                            "note": "ABB 萌綠玉米 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 16,
+                            "note": "AAB 萌綠玉米 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 萌綠玉米 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "穿山王",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/028.png",
+                    "recipe": "ABB",
+                    "count": 25,
+                    "note": "ABB 萌綠玉米 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 25,
+                            "note": "ABB 萌綠玉米 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 15,
+                            "note": "AAB 萌綠玉米 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 萌綠玉米 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "巨沼怪",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/260.png",
+                    "recipe": "AAA",
+                    "count": 24,
+                    "note": "AAA 萌綠玉米 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 24,
+                            "note": "AAA 萌綠玉米 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 17,
+                            "note": "ABA 雙萌綠玉米 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 10,
+                            "note": "AAX 雙萌綠玉米 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單萌綠玉米 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "隨風球",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/426.png",
+                    "recipe": "AAA",
+                    "count": 23,
+                    "note": "AAA 萌綠玉米 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 23,
+                            "note": "AAA 萌綠玉米 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 16,
+                            "note": "ABA 雙萌綠玉米 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 10,
+                            "note": "AAX 雙萌綠玉米 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單萌綠玉米 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "九尾",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/038.png",
+                    "recipe": "ABB",
+                    "count": 21,
+                    "note": "ABB 萌綠玉米 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 21,
+                            "note": "ABB 萌綠玉米 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 13,
+                            "note": "AAB 萌綠玉米 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 8,
+                            "note": "ABX 萌綠玉米 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "勇士雄鷹",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/628.png",
+                    "recipe": "ABB",
+                    "count": 16,
+                    "note": "ABB 萌綠玉米 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 16,
+                            "note": "ABB 萌綠玉米 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 10,
+                            "note": "AAB 萌綠玉米 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 6,
+                            "note": "ABX 萌綠玉米 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "水君",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/245.png",
+                    "recipe": "XXC",
+                    "count": 13,
+                    "note": "XXC 單萌綠玉米 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 13,
+                            "note": "XXC 單萌綠玉米 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "沙奈朵",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/282.png",
+                    "recipe": "ABB",
+                    "count": 12,
+                    "note": "ABB 萌綠玉米 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 12,
+                            "note": "ABB 萌綠玉米 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 8,
+                            "note": "AAB 萌綠玉米 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 萌綠玉米 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "艾路雷朵",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/475.png",
+                    "recipe": "ABB",
+                    "count": 12,
+                    "note": "ABB 萌綠玉米 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 12,
+                            "note": "ABB 萌綠玉米 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 8,
+                            "note": "AAB 萌綠玉米 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 萌綠玉米 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "咚咚鼠",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/702.png",
+                    "recipe": "XXC",
+                    "count": 9,
+                    "note": "XXC 單萌綠玉米 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 9,
+                            "note": "XXC 單萌綠玉米 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "cacao",
+            "name": "放鬆可可",
+            "enName": "Soothing Cacao",
+            "energy": 151,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/soothingcacao.png",
+            "pokemon": [
+                {
+                    "name": "阿勃梭魯",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/359.png",
+                    "recipe": "AAA",
+                    "count": 55,
+                    "note": "AAA 放鬆可可 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 55,
+                            "note": "AAA 放鬆可可 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 35,
+                            "note": "ABA 雙放鬆可可 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 28,
+                            "note": "AAX 雙放鬆可可 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 8,
+                            "note": "ABX 單放鬆可可 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "土王",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/980.png",
+                    "recipe": "AAA",
+                    "count": 54,
+                    "note": "AAA 放鬆可可 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 54,
+                            "note": "AAA 放鬆可可 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 35,
+                            "note": "ABA 雙放鬆可可 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 27,
+                            "note": "AAX 雙放鬆可可 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 8,
+                            "note": "ABX 單放鬆可可 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "水箭龜",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/009.png",
+                    "recipe": "ABB",
+                    "count": 51,
+                    "note": "ABB 放鬆可可 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 51,
+                            "note": "ABB 放鬆可可 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 32,
+                            "note": "AAB 放鬆可可 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 19,
+                            "note": "ABX 放鬆可可 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "克雷色利亞",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/488.png",
+                    "recipe": "ABB",
+                    "count": 34,
+                    "note": "ABB 放鬆可可 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 34,
+                            "note": "ABB 放鬆可可 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 20,
+                            "note": "AAB 放鬆可可 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 14,
+                            "note": "ABX 放鬆可可 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "花療環環",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/764.png",
+                    "recipe": "XXC",
+                    "count": 31,
+                    "note": "XXC 單放鬆可可 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 31,
+                            "note": "XXC 單放鬆可可 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "大竺葵",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/154.png",
+                    "recipe": "AAA",
+                    "count": 29,
+                    "note": "AAA 放鬆可可 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 29,
+                            "note": "AAA 放鬆可可 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 21,
+                            "note": "ABA 雙放鬆可可 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙放鬆可可 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單放鬆可可 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "巴布土撥",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/923.png",
+                    "recipe": "AAA",
+                    "count": 27,
+                    "note": "AAA 放鬆可可 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 27,
+                            "note": "AAA 放鬆可可 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 19,
+                            "note": "ABA 雙放鬆可可 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙放鬆可可 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單放鬆可可 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "天然鳥",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/178.png",
+                    "recipe": "ABB",
+                    "count": 25,
+                    "note": "ABB 放鬆可可 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 25,
+                            "note": "ABB 放鬆可可 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 15,
+                            "note": "AAB 放鬆可可 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 放鬆可可 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "信使鳥",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/225.png",
+                    "recipe": "XXC",
+                    "count": 25,
+                    "note": "XXC 單放鬆可可 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 25,
+                            "note": "XXC 單放鬆可可 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "巨鍛匠",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/959.png",
+                    "recipe": "ABB",
+                    "count": 25,
+                    "note": "ABB 放鬆可可 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 25,
+                            "note": "ABB 放鬆可可 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 15,
+                            "note": "AAB 放鬆可可 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 放鬆可可 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "呆殼獸",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/080.png",
+                    "recipe": "AAA",
+                    "count": 24,
+                    "note": "AAA 放鬆可可 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 24,
+                            "note": "AAA 放鬆可可 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 17,
+                            "note": "ABA 雙放鬆可可 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 10,
+                            "note": "AAX 雙放鬆可可 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單放鬆可可 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "伊布（萬聖節）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png",
+                    "recipe": "ABB",
+                    "count": 24,
+                    "note": "ABB 放鬆可可 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 24,
+                            "note": "ABB 放鬆可可 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 14,
+                            "note": "AAB 放鬆可可 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 10,
+                            "note": "ABX 放鬆可可 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "哥達鴨",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/055.png",
+                    "recipe": "AAA",
+                    "count": 22,
+                    "note": "AAA 放鬆可可 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 22,
+                            "note": "AAA 放鬆可可 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 16,
+                            "note": "ABA 雙放鬆可可 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 9,
+                            "note": "AAX 雙放鬆可可 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單放鬆可可 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "呆呆王",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/199.png",
+                    "recipe": "AAA",
+                    "count": 22,
+                    "note": "AAA 放鬆可可 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 22,
+                            "note": "AAA 放鬆可可 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 16,
+                            "note": "ABA 雙放鬆可可 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 9,
+                            "note": "AAX 雙放鬆可可 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單放鬆可可 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "嘎啦嘎啦",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/105.png",
+                    "recipe": "ABB",
+                    "count": 22,
+                    "note": "ABB 放鬆可可 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 22,
+                            "note": "ABB 放鬆可可 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 13,
+                            "note": "AAB 放鬆可可 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 9,
+                            "note": "ABX 放鬆可可 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "嘟嘟利",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/085.png",
+                    "recipe": "ABB",
+                    "count": 16,
+                    "note": "ABB 放鬆可可 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 16,
+                            "note": "ABB 放鬆可可 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 11,
+                            "note": "AAB 放鬆可可 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 放鬆可可 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "咚咚鼠",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/702.png",
+                    "recipe": "ABB",
+                    "count": 14,
+                    "note": "ABB 放鬆可可 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 14,
+                            "note": "ABB 放鬆可可 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 9,
+                            "note": "AAB 放鬆可可 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 放鬆可可 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "伊布家族（8種進化）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133.png",
+                    "recipe": "ABB",
+                    "count": 13,
+                    "note": "ABB 放鬆可可 主力產出 (8種進化產量皆相同)",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 13,
+                            "note": "ABB 放鬆可可 主力產出 (8種進化產量皆相同)"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 9,
+                            "note": "AAB 放鬆可可 後期主力 (8種進化產量皆相同)"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 放鬆可可 兼顧 (8種進化產量皆相同)",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ],
+                    "name_en": "Eevee Evolutions (8 Forms)"
+                },
+                {
+                    "name": "波克基斯",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/468.png",
+                    "recipe": "XXC",
+                    "count": 12,
+                    "note": "XXC 單放鬆可可 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 12,
+                            "note": "XXC 單放鬆可可 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "伊布（佳節）",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png",
+                    "recipe": "ABB",
+                    "count": 10,
+                    "note": "ABB 放鬆可可 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 10,
+                            "note": "ABB 放鬆可可 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 7,
+                            "note": "AAB 放鬆可可 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 放鬆可可 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "勾魂眼",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/302.png",
+                    "recipe": "XXC",
+                    "count": 10,
+                    "note": "XXC 單放鬆可可 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 10,
+                            "note": "XXC 單放鬆可可 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "胖可丁",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/040.png",
+                    "recipe": "XXC",
+                    "count": 8,
+                    "note": "XXC 單放鬆可可 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 8,
+                            "note": "XXC 單放鬆可可 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "托戈德瑪爾",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/777.png",
+                    "recipe": "XXC",
+                    "count": 8,
+                    "note": "XXC 單放鬆可可 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 8,
+                            "note": "XXC 單放鬆可可 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "coffee",
+            "name": "醒腦咖啡豆",
+            "enName": "Rousing Coffee",
+            "energy": 153,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png",
+            "pokemon": [
+                {
+                    "name": "鍬農炮蟲",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/738.png",
+                    "recipe": "AAA",
+                    "count": 63,
+                    "note": "AAA 醒腦咖啡豆 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 63,
+                            "note": "AAA 醒腦咖啡豆 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 40,
+                            "note": "ABA 雙醒腦咖啡豆 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 32,
+                            "note": "AAX 雙醒腦咖啡豆 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 9,
+                            "note": "ABX 單醒腦咖啡豆 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "波士可多拉",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/306.png",
+                    "recipe": "ABB",
+                    "count": 50,
+                    "note": "ABB 醒腦咖啡豆 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 50,
+                            "note": "ABB 醒腦咖啡豆 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 31,
+                            "note": "AAB 醒腦咖啡豆 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 19,
+                            "note": "ABX 醒腦咖啡豆 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "土王",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/980.png",
+                    "recipe": "ABB",
+                    "count": 43,
+                    "note": "ABB 醒腦咖啡豆 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 43,
+                            "note": "ABB 醒腦咖啡豆 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 27,
+                            "note": "AAB 醒腦咖啡豆 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 16,
+                            "note": "ABX 醒腦咖啡豆 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "倫琴貓",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/405.png",
+                    "recipe": "XXC",
+                    "count": 27,
+                    "note": "XXC 單醒腦咖啡豆 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 27,
+                            "note": "XXC 單醒腦咖啡豆 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "烏鴉頭頭",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/430.png",
+                    "recipe": "AAA",
+                    "count": 20,
+                    "note": "AAA 醒腦咖啡豆 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 20,
+                            "note": "AAA 醒腦咖啡豆 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 14,
+                            "note": "ABA 雙醒腦咖啡豆 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 9,
+                            "note": "AAX 雙醒腦咖啡豆 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單醒腦咖啡豆 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "正電拍拍",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/311.png",
+                    "recipe": "AAA",
+                    "count": 20,
+                    "note": "AAA 醒腦咖啡豆 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 20,
+                            "note": "AAA 醒腦咖啡豆 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 14,
+                            "note": "ABA 雙醒腦咖啡豆 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 9,
+                            "note": "AAX 雙醒腦咖啡豆 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單醒腦咖啡豆 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "壺壺",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/213.png",
+                    "recipe": "ABB",
+                    "count": 19,
+                    "note": "ABB 醒腦咖啡豆 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 19,
+                            "note": "ABB 醒腦咖啡豆 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 11,
+                            "note": "AAB 醒腦咖啡豆 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 8,
+                            "note": "ABX 醒腦咖啡豆 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "蜥蜴王",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/254.png",
+                    "recipe": "ABB",
+                    "count": 15,
+                    "note": "ABB 醒腦咖啡豆 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 15,
+                            "note": "ABB 醒腦咖啡豆 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 9,
+                            "note": "AAB 醒腦咖啡豆 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 6,
+                            "note": "ABX 醒腦咖啡豆 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "謎擬Q",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/778.png",
+                    "recipe": "ABB",
+                    "count": 12,
+                    "note": "ABB 醒腦咖啡豆 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 12,
+                            "note": "ABB 醒腦咖啡豆 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 8,
+                            "note": "AAB 醒腦咖啡豆 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 醒腦咖啡豆 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "烈焰猴",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/392.png",
+                    "recipe": "XXC",
+                    "count": 9,
+                    "note": "XXC 單醒腦咖啡豆 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 9,
+                            "note": "XXC 單醒腦咖啡豆 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "夢夢蝕",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/518.png",
+                    "recipe": "XXC",
+                    "count": 9,
+                    "note": "XXC 單醒腦咖啡豆 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 9,
+                            "note": "XXC 單醒腦咖啡豆 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "勇士雄鷹",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/628.png",
+                    "recipe": "XXC",
+                    "count": 7,
+                    "note": "XXC 單醒腦咖啡豆 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 7,
+                            "note": "XXC 單醒腦咖啡豆 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "glossyavocado",
+            "name": "嫩亮酪梨",
+            "enName": "Glossy Avocado",
+            "energy": 162,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/glossyavocado.png",
+            "pokemon": [
+                {
+                    "name": "沙漠蜻蜓",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/330.png",
+                    "recipe": "AAA",
+                    "count": 58,
+                    "note": "AAA 嫩亮酪梨 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 58,
+                            "note": "AAA 嫩亮酪梨 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 37,
+                            "note": "ABA 雙嫩亮酪梨 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 29,
+                            "note": "AAX 雙嫩亮酪梨 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 8,
+                            "note": "ABX 單嫩亮酪梨 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "老翁龍",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/780.png",
+                    "recipe": "ABB",
+                    "count": 38,
+                    "note": "ABB 嫩亮酪梨 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 38,
+                            "note": "ABB 嫩亮酪梨 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 22,
+                            "note": "AAB 嫩亮酪梨 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 16,
+                            "note": "ABX 嫩亮酪梨 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "岩殿居蟹",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/558.png",
+                    "recipe": "AAA",
+                    "count": 34,
+                    "note": "AAA 嫩亮酪梨 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 34,
+                            "note": "AAA 嫩亮酪梨 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 24,
+                            "note": "ABA 雙嫩亮酪梨 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 15,
+                            "note": "AAX 雙嫩亮酪梨 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單嫩亮酪梨 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "托戈德瑪爾",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/777.png",
+                    "recipe": "ABB",
+                    "count": 12,
+                    "note": "ABB 嫩亮酪梨 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 12,
+                            "note": "ABB 嫩亮酪梨 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 8,
+                            "note": "AAB 嫩亮酪梨 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 嫩亮酪梨 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "mushroom",
+            "name": "品鮮蘑菇",
+            "enName": "Tasty Mushroom",
+            "energy": 167,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png",
+            "pokemon": [
+                {
+                    "name": "花岩怪",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/442.png",
+                    "recipe": "AAA",
+                    "count": 52,
+                    "note": "AAA 品鮮蘑菇 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 52,
+                            "note": "AAA 品鮮蘑菇 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 33,
+                            "note": "ABA 雙品鮮蘑菇 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 26,
+                            "note": "AAX 雙品鮮蘑菇 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 7,
+                            "note": "ABX 單品鮮蘑菇 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "沼王",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/195.png",
+                    "recipe": "AAA",
+                    "count": 51,
+                    "note": "AAA 品鮮蘑菇 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 51,
+                            "note": "AAA 品鮮蘑菇 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 33,
+                            "note": "ABA 雙品鮮蘑菇 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 26,
+                            "note": "AAX 雙品鮮蘑菇 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 7,
+                            "note": "ABX 單品鮮蘑菇 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "鍬農炮蟲",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/738.png",
+                    "recipe": "ABB",
+                    "count": 50,
+                    "note": "ABB 品鮮蘑菇 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 50,
+                            "note": "ABB 品鮮蘑菇 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 32,
+                            "note": "AAB 品鮮蘑菇 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 18,
+                            "note": "ABX 品鮮蘑菇 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "耿鬼",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/094.png",
+                    "recipe": "ABB",
+                    "count": 48,
+                    "note": "ABB 品鮮蘑菇 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 48,
+                            "note": "ABB 品鮮蘑菇 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 29,
+                            "note": "AAB 品鮮蘑菇 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 19,
+                            "note": "ABX 品鮮蘑菇 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "阿勃梭魯",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/359.png",
+                    "recipe": "XXC",
+                    "count": 28,
+                    "note": "XXC 單品鮮蘑菇 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 28,
+                            "note": "XXC 單品鮮蘑菇 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "火焰雞",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/257.png",
+                    "recipe": "AAA",
+                    "count": 27,
+                    "note": "AAA 品鮮蘑菇 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 27,
+                            "note": "AAA 品鮮蘑菇 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 19,
+                            "note": "ABA 雙品鮮蘑菇 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 12,
+                            "note": "AAX 雙品鮮蘑菇 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單品鮮蘑菇 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "暴雪王",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/460.png",
+                    "recipe": "XXC",
+                    "count": 27,
+                    "note": "XXC 單品鮮蘑菇 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 27,
+                            "note": "XXC 單品鮮蘑菇 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "土台龜",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/389.png",
+                    "recipe": "AAA",
+                    "count": 25,
+                    "note": "AAA 品鮮蘑菇 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 25,
+                            "note": "AAA 品鮮蘑菇 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 18,
+                            "note": "ABA 雙品鮮蘑菇 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 11,
+                            "note": "AAX 雙品鮮蘑菇 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 單品鮮蘑菇 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "隆隆岩",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/076.png",
+                    "recipe": "XXC",
+                    "count": 24,
+                    "note": "XXC 單品鮮蘑菇 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 24,
+                            "note": "XXC 單品鮮蘑菇 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "勾魂眼",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/302.png",
+                    "recipe": "ABB",
+                    "count": 17,
+                    "note": "ABB 品鮮蘑菇 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 17,
+                            "note": "ABB 品鮮蘑菇 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 10,
+                            "note": "AAB 品鮮蘑菇 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 7,
+                            "note": "ABX 品鮮蘑菇 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "炎帝",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/244.png",
+                    "recipe": "XXC",
+                    "count": 15,
+                    "note": "XXC 單品鮮蘑菇 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 15,
+                            "note": "XXC 單品鮮蘑菇 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "火爆猴",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/057.png",
+                    "recipe": "ABB",
+                    "count": 14,
+                    "note": "ABB 品鮮蘑菇 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 14,
+                            "note": "ABB 品鮮蘑菇 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 9,
+                            "note": "AAB 品鮮蘑菇 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 品鮮蘑菇 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "赫拉克羅斯",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/214.png",
+                    "recipe": "ABB",
+                    "count": 13,
+                    "note": "ABB 品鮮蘑菇 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 13,
+                            "note": "ABB 品鮮蘑菇 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 9,
+                            "note": "AAB 品鮮蘑菇 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 品鮮蘑菇 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "詛咒娃娃",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/354.png",
+                    "recipe": "XXC",
+                    "count": 13,
+                    "note": "XXC 單品鮮蘑菇 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 13,
+                            "note": "XXC 單品鮮蘑菇 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "果然翁",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/202.png",
+                    "recipe": "ABB",
+                    "count": 12,
+                    "note": "ABB 品鮮蘑菇 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 12,
+                            "note": "ABB 品鮮蘑菇 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 8,
+                            "note": "AAB 品鮮蘑菇 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 品鮮蘑菇 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "吞食獸",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/317.png",
+                    "recipe": "ABB",
+                    "count": 12,
+                    "note": "ABB 品鮮蘑菇 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 12,
+                            "note": "ABB 品鮮蘑菇 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 8,
+                            "note": "AAB 品鮮蘑菇 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 4,
+                            "note": "ABX 品鮮蘑菇 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "巨沼怪",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/260.png",
+                    "recipe": "XXC",
+                    "count": 10,
+                    "note": "XXC 單品鮮蘑菇 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 10,
+                            "note": "XXC 單品鮮蘑菇 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "謎擬Q",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/778.png",
+                    "recipe": "XXC",
+                    "count": 8,
+                    "note": "XXC 單品鮮蘑菇 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 8,
+                            "note": "XXC 單品鮮蘑菇 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "樹才怪",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/185.png",
+                    "recipe": "XXC",
+                    "count": 7,
+                    "note": "XXC 單品鮮蘑菇 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 7,
+                            "note": "XXC 單品鮮蘑菇 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "拉帝亞斯",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/380.png",
+                    "recipe": "XXC",
+                    "count": 5,
+                    "note": "XXC 單品鮮蘑菇 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 5,
+                            "note": "XXC 單品鮮蘑菇 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "leek",
+            "name": "粗枝大蔥",
+            "enName": "Large Leek",
+            "energy": 185,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/largeleek.png",
+            "pokemon": [
+                {
+                    "name": "大蔥鴨",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/083.png",
+                    "recipe": "AAA",
+                    "count": 49,
+                    "note": "AAA 粗枝大蔥 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 49,
+                            "note": "AAA 粗枝大蔥 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 32,
+                            "note": "ABA 雙粗枝大蔥 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 24,
+                            "note": "AAX 雙粗枝大蔥 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 7,
+                            "note": "ABX 單粗枝大蔥 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "狂歡浪舞鴨",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/914.png",
+                    "recipe": "ABB",
+                    "count": 35,
+                    "note": "ABB 粗枝大蔥 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 35,
+                            "note": "ABB 粗枝大蔥 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 23,
+                            "note": "AAB 粗枝大蔥 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 12,
+                            "note": "ABX 粗枝大蔥 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "三地鼠",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/051.png",
+                    "recipe": "ABB",
+                    "count": 33,
+                    "note": "ABB 粗枝大蔥 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 33,
+                            "note": "ABB 粗枝大蔥 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 19,
+                            "note": "AAB 粗枝大蔥 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 14,
+                            "note": "ABX 粗枝大蔥 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "百變怪",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/132.png",
+                    "recipe": "ABB",
+                    "count": 30,
+                    "note": "ABB 粗枝大蔥 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 30,
+                            "note": "ABB 粗枝大蔥 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 19,
+                            "note": "AAB 粗枝大蔥 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 11,
+                            "note": "ABX 粗枝大蔥 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "大食花",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/071.png",
+                    "recipe": "XXC",
+                    "count": 22,
+                    "note": "XXC 單粗枝大蔥 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 22,
+                            "note": "XXC 單粗枝大蔥 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "花岩怪",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/442.png",
+                    "recipe": "XXC",
+                    "count": 22,
+                    "note": "XXC 單粗枝大蔥 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 22,
+                            "note": "XXC 單粗枝大蔥 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "魔牆人偶",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/122.png",
+                    "recipe": "XXC",
+                    "count": 20,
+                    "note": "XXC 單粗枝大蔥 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 20,
+                            "note": "XXC 單粗枝大蔥 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "正電拍拍",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/311.png",
+                    "recipe": "ABB",
+                    "count": 14,
+                    "note": "ABB 粗枝大蔥 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 14,
+                            "note": "ABB 粗枝大蔥 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 8,
+                            "note": "AAB 粗枝大蔥 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 6,
+                            "note": "ABX 粗枝大蔥 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "音波龍",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/715.png",
+                    "recipe": "ABB",
+                    "count": 14,
+                    "note": "ABB 粗枝大蔥 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 14,
+                            "note": "ABB 粗枝大蔥 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 9,
+                            "note": "AAB 粗枝大蔥 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 粗枝大蔥 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "大竺葵",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/154.png",
+                    "recipe": "XXC",
+                    "count": 12,
+                    "note": "XXC 單粗枝大蔥 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 12,
+                            "note": "XXC 單粗枝大蔥 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "黑魯加",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/229.png",
+                    "recipe": "XXC",
+                    "count": 12,
+                    "note": "XXC 單粗枝大蔥 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 12,
+                            "note": "XXC 單粗枝大蔥 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "雷公",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/243.png",
+                    "recipe": "XXC",
+                    "count": 12,
+                    "note": "XXC 單粗枝大蔥 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 12,
+                            "note": "XXC 單粗枝大蔥 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "帝王拿波",
+                    "specialty": "樹果",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/395.png",
+                    "recipe": "ABB",
+                    "count": 10,
+                    "note": "ABB 粗枝大蔥 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 10,
+                            "note": "ABB 粗枝大蔥 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 7,
+                            "note": "AAB 粗枝大蔥 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 粗枝大蔥 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "顫弦蠑螈（高調的樣子）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/849.png",
+                    "recipe": "XXC",
+                    "count": 10,
+                    "note": "XXC 單粗枝大蔥 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 10,
+                            "note": "XXC 單粗枝大蔥 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "顫弦蠑螈（低調的樣子）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png",
+                    "recipe": "XXC",
+                    "count": 10,
+                    "note": "XXC 單粗枝大蔥 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 10,
+                            "note": "XXC 單粗枝大蔥 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "沙奈朵",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/282.png",
+                    "recipe": "XXC",
+                    "count": 8,
+                    "note": "XXC 單粗枝大蔥 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 8,
+                            "note": "XXC 單粗枝大蔥 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "艾路雷朵",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/475.png",
+                    "recipe": "XXC",
+                    "count": 8,
+                    "note": "XXC 單粗枝大蔥 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 8,
+                            "note": "XXC 單粗枝大蔥 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "蜥蜴王",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/254.png",
+                    "recipe": "XXC",
+                    "count": 6,
+                    "note": "XXC 單粗枝大蔥 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 6,
+                            "note": "XXC 單粗枝大蔥 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "pumpkin",
+            "name": "沉甸甸南瓜",
+            "enName": "Plump Pumpkin",
+            "energy": 250,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/plumppumpkin.png",
+            "pokemon": [
+                {
+                    "name": "南瓜怪人",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/711.png",
+                    "recipe": "AAA",
+                    "count": 38,
+                    "note": "AAA 沉甸甸南瓜 純種產出 (體型日產 35~38 顆)",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 38,
+                            "note": "AAA 沉甸甸南瓜 純種產出 (體型日產 35~38 顆)",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 24,
+                            "note": "ABA 雙沉甸甸南瓜 產出 (體型日產 35~38 顆)"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 19,
+                            "note": "AAX 雙沉甸甸南瓜 產出 (體型日產 35~38 顆)",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 5,
+                            "note": "ABX 單沉甸甸南瓜 混產 (體型日產 35~38 顆)",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ],
+                    "name_en": "Gourgeist"
+                },
+                {
+                    "name": "花岩怪",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/442.png",
+                    "recipe": "ABB",
+                    "count": 30,
+                    "note": "ABB 沉甸甸南瓜 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 30,
+                            "note": "ABB 沉甸甸南瓜 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 19,
+                            "note": "AAB 沉甸甸南瓜 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 11,
+                            "note": "ABX 沉甸甸南瓜 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "浩大鯨",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/975.png",
+                    "recipe": "XXC",
+                    "count": 19,
+                    "note": "XXC 單沉甸甸南瓜 補足",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 19,
+                            "note": "XXC 單沉甸甸南瓜 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "穿山王",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/028.png",
+                    "recipe": "AAA",
+                    "count": 18,
+                    "note": "AAA 沉甸甸南瓜 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 18,
+                            "note": "AAA 沉甸甸南瓜 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 13,
+                            "note": "ABA 雙沉甸甸南瓜 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 8,
+                            "note": "AAX 雙沉甸甸南瓜 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 單沉甸甸南瓜 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "伊布（萬聖節）",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png",
+                    "recipe": "AAA",
+                    "count": 17,
+                    "note": "AAA 沉甸甸南瓜 純種產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 17,
+                            "note": "AAA 沉甸甸南瓜 純種產出"
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 12,
+                            "note": "ABA 雙沉甸甸南瓜 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 7,
+                            "note": "AAX 雙沉甸甸南瓜 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 2,
+                            "note": "ABX 單沉甸甸南瓜 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "拉帝亞斯",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/380.png",
+                    "recipe": "ABB",
+                    "count": 8,
+                    "note": "ABB 沉甸甸南瓜 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 8,
+                            "note": "ABB 沉甸甸南瓜 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 5,
+                            "note": "AAB 沉甸甸南瓜 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 沉甸甸南瓜 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "tail",
+            "name": "美味尾巴",
+            "enName": "Slowpoke Tail",
+            "energy": 342,
+            "icon": "https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png",
+            "pokemon": [
+                {
+                    "name": "百變怪",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/132.png",
+                    "recipe": "XXC",
+                    "count": 11,
+                    "note": "XXC 單美味尾巴 補足",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "XXC",
+                            "count": 11,
+                            "note": "XXC 單美味尾巴 補足",
+                            "origRecipes": [
+                                "AAC",
+                                "ABC"
+                            ],
+                            "isTop": true
+                        }
+                    ]
+                },
+                {
+                    "name": "呆殼獸",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/080.png",
+                    "recipe": "ABB",
+                    "count": 10,
+                    "note": "ABB 美味尾巴 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 10,
+                            "note": "ABB 美味尾巴 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 7,
+                            "note": "AAB 美味尾巴 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 美味尾巴 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "呆呆王",
+                    "specialty": "技能",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/199.png",
+                    "recipe": "ABB",
+                    "count": 10,
+                    "note": "ABB 美味尾巴 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 10,
+                            "note": "ABB 美味尾巴 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 7,
+                            "note": "AAB 美味尾巴 後期主力"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 3,
+                            "note": "ABX 美味尾巴 兼顧",
+                            "origRecipes": [
+                                "ABA",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ];
 
   // 舊版清單資料 (提供切換至列表檢視時使用)
   const LV60_INGREDIENTS_LADDER = LV60_COORDINATE_LADDER_DATA.map(d => ({
@@ -10073,14 +11326,52 @@
     }))
   }));
 
-  let currentWikiSubTab = 'skills';
+  const STORAGE_KEY_WIKI_SUBTAB = 'pksleep_active_wiki_subtab';
+  const VALID_WIKI_SUBTABS = ['skills', 'subskills', 'ingredients', 'values', 'ratings'];
+
+  function getSavedWikiSubTab() {
+    try {
+      if (typeof window !== 'undefined' && window.location && window.location.hash) {
+        const rawHash = window.location.hash.replace(/^#/, '');
+        const parts = rawHash.split(/[/_?]/);
+        if (parts[0] === 'wiki' && VALID_WIKI_SUBTABS.includes(parts[1])) {
+          return parts[1];
+        }
+      }
+      const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (storage) {
+        const saved = storage.getItem(STORAGE_KEY_WIKI_SUBTAB);
+        if (VALID_WIKI_SUBTABS.includes(saved)) {
+          return saved;
+        }
+      }
+    } catch (e) {}
+    return 'skills';
+  }
+
+  let currentWikiSubTab = getSavedWikiSubTab();
 
   // --- 核心互動控制函數 ---
 
   // 1. 切換子分頁 (skills / subskills / ratings / ingredients / values)
   function switchWikiSubTab(targetTab) {
     if (!targetTab) return;
+    if (!VALID_WIKI_SUBTABS.includes(targetTab)) targetTab = 'skills';
     currentWikiSubTab = targetTab;
+
+    try {
+      const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (storage) {
+        storage.setItem(STORAGE_KEY_WIKI_SUBTAB, targetTab);
+      }
+      if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
+        const curHash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
+        const mainPart = curHash.split(/[/_?]/)[0];
+        if (mainPart === 'wiki' || !mainPart) {
+          window.history.replaceState(null, '', targetTab === 'skills' ? '#wiki' : '#wiki/' + targetTab);
+        }
+      }
+    } catch (e) {}
 
     const allSubtabBtns = document.querySelectorAll('.wiki-subtab-btn');
     allSubtabBtns.forEach(b => {
@@ -10266,7 +11557,40 @@
   let ladderSupplyFilter = 'ALL'; // 'ALL' | 'TOP' | 'MEALS_3' | 'MEALS_2'
   let ladderRecipeFilter = 'ALL'; // 'ALL' | 'AAA' | 'ABB' | 'AXX'
   let ladderSpecialtyFilter = 'ALL'; // 'ALL' | 'INGREDIENT' | 'BERRY' | 'SKILL'
+  let ladderSortOrder = 'ENERGY_ASC'; // 'ENERGY_ASC' | 'ENERGY_DESC' | 'YIELD_DESC' | 'DEMAND_DESC'
   let ladderViewMode = 'coordinate'; // 'coordinate' | 'list'
+
+  // 3.0.0 食材天梯相同產量配方動態合併核心 (Dynamic Recipe Wildcard Merger)
+  function mergeRecipeCodes(recipeList) {
+    if (!recipeList || recipeList.length === 0) return 'AAA';
+    if (recipeList.length === 1) return recipeList[0];
+    const res = [];
+    for (let col = 0; col < 3; col++) {
+      const chars = new Set(recipeList.map(r => (r && r[col]) || 'A'));
+      if (chars.size === 1) {
+        res.push([...chars][0]);
+      } else {
+        res.push('X');
+      }
+    }
+    return res.join('');
+  }
+
+  function matchesLadderRecipeFilter(v, filter) {
+    if (!filter || filter === 'ALL') return true;
+    const recipe = typeof v === 'string' ? v : (v.recipe || '');
+    const origRecipes = (typeof v === 'object' && v.origRecipes) ? v.origRecipes : [recipe];
+    if (filter === 'AAA') {
+      return recipe === 'AAA' || origRecipes.includes('AAA');
+    }
+    if (filter === 'ABB') {
+      return recipe === 'ABB' || origRecipes.includes('ABB');
+    }
+    if (filter === 'AXX') {
+      return recipe !== 'AAA' && recipe !== 'ABB';
+    }
+    return recipe === filter || origRecipes.includes(filter);
+  }
 
   const POKEMON_SPECIALTY_MAP = {
     "妙蛙種子": "食材", "妙蛙草": "食材", "妙蛙花": "食材", "小火龍": "食材", "火恐龍": "食材", "噴火龍": "食材",
@@ -10282,7 +11606,7 @@
     "大蔥鴨": "食材", "嘟嘟": "樹果", "嘟嘟利": "樹果", "鬼斯": "食材", "鬼斯通": "食材", "耿鬼": "食材",
     "大岩蛇": "樹果", "大鋼蛇": "樹果", "大綱蛇": "樹果", "卡拉卡拉": "樹果", "嘎啦嘎啦": "樹果", "小福蛋": "食材", "吉利蛋": "食材", "幸福蛋": "食材",
     "袋獸": "食材", "魔尼尼": "食材", "魔牆人偶": "食材", "凱羅斯": "食材", "大甲": "食材", "百變怪": "食材",
-    "伊布": "技能", "伊布（佳節）": "樹果", "伊布（萬聖節）": "技能", "水伊布": "技能", "雷伊布": "技能", "火伊布": "技能",
+    "伊布": "技能", "伊布（佳節）": "樹果", "伊布（萬聖節）": "技能", "伊布家族": "技能", "伊布家族（8種進化）": "技能", "水伊布": "技能", "雷伊布": "技能", "火伊布": "技能",
     "太陽伊布": "技能", "月亮伊布": "技能", "葉伊布": "技能", "冰伊布": "技能", "仙子伊布": "技能",
     "迷你龍": "食材", "哈克龍": "食材", "快龍": "食材", "超夢": "技能", "夢幻": "全部",
     "菊草葉": "樹果", "月桂葉": "樹果", "大竺葵": "樹果", "火球鼠": "樹果", "火岩鼠": "樹果", "火爆獸": "樹果",
@@ -10363,6 +11687,27 @@
     pumpkin: { name: '熱水溫沙拉', name_en: 'Scald Chunky Salad', need: 20, type: '沙拉', type_en: 'Salad', energy: 25356, secondary: '心跳加速鬼面鬆餅 (18)', secondary_en: 'Scary Face Pancakes (18)' },
     tail: { name: '呆呆獸尾巴的胡椒沙拉', name_en: 'Slowpoke Tail Pepper Salad', need: 10, type: '沙拉', type_en: 'Salad', energy: 8169, secondary: '炙烤尾巴咖哩 (8)', secondary_en: 'Grilled Tail Curry (8)' }
   };
+
+  const EEVEELUTIONS_ALIASES = [
+    '雷伊布', 'jolteon', '水伊布', 'vaporeon', '火伊布', 'flareon',
+    '太陽伊布', 'espeon', '月亮伊布', 'umbreon', '葉伊布', 'leafeon',
+    '冰伊布', 'glaceon', '仙子伊布', 'sylveon', '伊布家族', 'eevee'
+  ];
+
+  function matchesLadderSearch(pName, pNameEn, query) {
+    if (!query) return true;
+    const q = query.toLowerCase().trim();
+    if (!q) return true;
+    const name = (pName || '').toLowerCase();
+    const nameEn = (pNameEn || '').toLowerCase();
+    if (name.includes(q) || nameEn.includes(q)) return true;
+    if (name.includes('伊布家族') || nameEn.includes('eevee')) {
+      if (EEVEELUTIONS_ALIASES.some(alias => alias.includes(q) || q.includes(alias))) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   function getLadderMultiplier() {
     let mult = 1.0;
@@ -10489,12 +11834,37 @@
     refreshCoordinateLadder();
   }
 
+  function setLadderSortOrder(sortOrder) {
+    ladderSortOrder = sortOrder || 'ENERGY_ASC';
+    document.querySelectorAll('[data-sort-order]').forEach(btn => {
+      if (btn.getAttribute('data-sort-order') === ladderSortOrder) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+    refreshCoordinateLadder();
+  }
+
+  function getLadderSortOrder() {
+    return ladderSortOrder;
+  }
+
   function resetLadderFilters() {
     ladderSearchQuery = '';
     const searchInput = document.getElementById('ladder-pkm-search-input');
     if (searchInput) searchInput.value = '';
     const clearBtn = document.getElementById('ladder-search-clear-btn');
     if (clearBtn) clearBtn.style.display = 'none';
+
+    ladderSortOrder = 'ENERGY_ASC';
+    document.querySelectorAll('[data-sort-order]').forEach(btn => {
+      if (btn.getAttribute('data-sort-order') === 'ENERGY_ASC') {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
 
     ladderSupplyFilter = 'ALL';
     document.querySelectorAll('[data-supply-filter]').forEach(btn => {
@@ -10567,8 +11937,8 @@
     }
 
     nodes.forEach(n => {
-      const pkmName = (n.getAttribute('data-pkm') || '').toLowerCase();
-      if (pkmName.includes(q)) {
+      const pkmName = n.getAttribute('data-pkm') || '';
+      if (matchesLadderSearch(pkmName, '', q)) {
         n.classList.remove('ladder-node-dimmed');
         n.classList.add('ladder-node-spotlight');
       } else {
@@ -10578,8 +11948,8 @@
     });
 
     spans.forEach(s => {
-      const pkmGroup = (s.getAttribute('data-pkm-group') || '').toLowerCase();
-      if (pkmGroup.includes(q)) {
+      const pkmGroup = s.getAttribute('data-pkm-group') || '';
+      if (matchesLadderSearch(pkmGroup, '', q)) {
         s.classList.remove('ladder-span-dimmed');
         s.classList.add('ladder-span-spotlight');
       } else {
@@ -10596,6 +11966,7 @@
     if (ladderSupplyFilter && ladderSupplyFilter !== 'ALL') count++;
     if (ladderRecipeFilter && ladderRecipeFilter !== 'ALL') count++;
     if (ladderSpecialtyFilter && ladderSpecialtyFilter !== 'ALL') count++;
+    if (ladderSortOrder && ladderSortOrder !== 'ENERGY_ASC') count++;
     if (isLadderIngM || isLadderIngS || isLadderSpeedM || isLadderSpeedS) count++;
     if (ladderNature && ladderNature !== 'NONE') count++;
 
@@ -10645,10 +12016,7 @@
       if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return;
       if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return;
 
-      let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
-      if (ladderRecipeFilter === 'AAA') variants = variants.filter(v => v.recipe === 'AAA');
-      else if (ladderRecipeFilter === 'ABB') variants = variants.filter(v => v.recipe === 'ABB');
-      else if (ladderRecipeFilter === 'AXX') variants = variants.filter(v => v.recipe !== 'AAA' && v.recipe !== 'ABB');
+      let variants = (p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }]).filter(v => matchesLadderRecipeFilter(v, ladderRecipeFilter));
 
       if (ladderSupplyFilter === 'TOP') {
         const allMaxCounts = ingData.pokemon.map(pkm => Math.max(...(pkm.variants || [{count: pkm.count}]).map(v => v.count)));
@@ -10664,10 +12032,7 @@
       }
 
       if (ladderSearchQuery) {
-        const q = ladderSearchQuery.toLowerCase().trim();
-        const pName = (p.name || '').toLowerCase();
-        const pNameEn = (p.name_en || '').toLowerCase();
-        if (!pName.includes(q) && !pNameEn.includes(q)) return;
+        if (!matchesLadderSearch(p.name, p.name_en, ladderSearchQuery)) return;
       }
 
       variants.forEach(v => {
@@ -10748,7 +12113,7 @@
           <div class="ing-rank-title-group">
             <img src="${ingData.icon}" class="ing-rank-header-icon" alt="${ingName}">
             <div class="ing-rank-header-text">
-              <div class="ing-rank-header-title">${ingName} <span class="ing-rank-header-energy">⚡ ${ingData.energy || ''}</span></div>
+              <div class="ing-rank-header-title">${ingName} <span class="ing-rank-header-energy">[${isEN ? 'Energy' : '能量'} ${ingData.energy || ''}]</span></div>
               <div class="ing-rank-header-sub">${isEN ? 'Key Dish:' : '核心大菜：'} ${dishName} (${dishInfo.need}${isEN ? '/meal' : '顆/餐'}) · ${rankingList.length} ${isEN ? 'Pokémon' : '隻寶可夢'}</div>
             </div>
           </div>
@@ -11332,6 +12697,7 @@
   // --- 初始化 Wiki 模組 ---
   function initWikiModule() {
     loadPersistedBerrySettings();
+    currentWikiSubTab = getSavedWikiSubTab();
     const wikiContainer = document.getElementById('panel-wiki');
     if (!wikiContainer) return;
 
@@ -11508,10 +12874,7 @@
 
         // 搜尋關鍵字過濾
         if (ladderSearchQuery) {
-          const q = ladderSearchQuery.toLowerCase().trim();
-          const pName = (p.name || '').toLowerCase();
-          const pNameEn = (p.name_en || '').toLowerCase();
-          if (!pName.includes(q) && !pNameEn.includes(q)) return null;
+          if (!matchesLadderSearch(p.name, p.name_en, ladderSearchQuery)) return null;
         }
 
         let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
@@ -11519,13 +12882,7 @@
         // 全部展示狀態下僅展示產量 >= 30 的主力型態變體；有具體篩選條件時則完整展示 (< 30 也展示)
         variants = variants.filter(v => Math.round(v.count * mult) >= minDefaultThreshold);
 
-        if (ladderRecipeFilter === 'AAA') {
-          variants = variants.filter(v => v.recipe === 'AAA');
-        } else if (ladderRecipeFilter === 'ABB') {
-          variants = variants.filter(v => v.recipe === 'ABB');
-        } else if (ladderRecipeFilter === 'AXX') {
-          variants = variants.filter(v => v.recipe !== 'AAA' && v.recipe !== 'ABB');
-        }
+        variants = variants.filter(v => matchesLadderRecipeFilter(v, ladderRecipeFilter));
 
         if (ladderSupplyFilter === 'TOP') {
           // 前五名：保留該軌道排名前 5 (Top 1 ~ Top 5) 的寶可夢梯隊，且只展示其最高產量變體
@@ -11567,6 +12924,47 @@
         filteredPokemonList,
         isTrackEmpty: filteredPokemonList.length === 0
       };
+    });
+
+    // 依天梯軌道排序選項排序 processedMainTracks (Track Sorting)
+    processedMainTracks.sort((a, b) => {
+      if (ladderSortOrder === 'ENERGY_DESC') {
+        return (b.ing.energy || 0) - (a.ing.energy || 0);
+      } else if (ladderSortOrder === 'YIELD_DESC') {
+        const getTrackMax = (track) => {
+          if (track.filteredPokemonList && track.filteredPokemonList.length > 0) {
+            let m = 0;
+            track.filteredPokemonList.forEach(p => {
+              p.variants.forEach(v => {
+                const scaled = Math.round(v.count * mult);
+                if (scaled > m) m = scaled;
+              });
+            });
+            return m;
+          }
+          let m = 0;
+          if (track.ing && track.ing.pokemon) {
+            track.ing.pokemon.forEach(p => {
+              (p.variants || [{ count: p.count }]).forEach(v => {
+                if (v.count > m) m = v.count;
+              });
+            });
+          }
+          return m * 0.001;
+        };
+        const maxA = getTrackMax(a);
+        const maxB = getTrackMax(b);
+        if (maxB !== maxA) return maxB - maxA;
+        return (b.ing.energy || 0) - (a.ing.energy || 0);
+      } else if (ladderSortOrder === 'DEMAND_DESC') {
+        const needA = (a.dishInfo && a.dishInfo.need) || 0;
+        const needB = (b.dishInfo && b.dishInfo.need) || 0;
+        if (needB !== needA) return needB - needA;
+        return (b.ing.energy || 0) - (a.ing.energy || 0);
+      } else {
+        // 預設 ENERGY_ASC：食材能量由低到高
+        return (a.ing.energy || 0) - (b.ing.energy || 0);
+      }
     });
 
     // 2. 動態設定最高與最低刻度 (全部展示時自 30 起標，有篩選時動態支援低於 30 之刻度)
@@ -11798,20 +13196,11 @@
               if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return null;
 
               if (ladderSearchQuery) {
-                const q = ladderSearchQuery.toLowerCase().trim();
-                const pName = (p.name || '').toLowerCase();
-                const pNameEn = (p.name_en || '').toLowerCase();
-                if (!pName.includes(q) && !pNameEn.includes(q)) return null;
+                if (!matchesLadderSearch(p.name, p.name_en, ladderSearchQuery)) return null;
               }
 
               let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
-              if (ladderRecipeFilter === 'AAA') {
-                variants = variants.filter(v => v.recipe === 'AAA');
-              } else if (ladderRecipeFilter === 'ABB') {
-                variants = variants.filter(v => v.recipe === 'ABB');
-              } else if (ladderRecipeFilter === 'AXX') {
-                variants = variants.filter(v => v.recipe !== 'AAA' && v.recipe !== 'ABB');
-              }
+              variants = variants.filter(v => matchesLadderRecipeFilter(v, ladderRecipeFilter));
 
               if (ladderSupplyFilter === 'TOP') {
                 const allMaxCounts = tailIng.pokemon.map(pkm => Math.max(...(pkm.variants || [{count: pkm.count}]).map(v => v.count)));
@@ -12048,16 +13437,10 @@
         if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return false;
         if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return false;
 
-        const recipe = t.recipe || 'AAA';
-        if (ladderRecipeFilter === 'AAA' && recipe !== 'AAA') return false;
-        if (ladderRecipeFilter === 'ABB' && recipe !== 'ABB') return false;
-        if (ladderRecipeFilter === 'AXX' && (recipe === 'AAA' || recipe === 'ABB')) return false;
+        if (!matchesLadderRecipeFilter(t, ladderRecipeFilter)) return false;
 
         if (ladderSearchQuery) {
-          const q = ladderSearchQuery.toLowerCase().trim();
-          const pName = (t.name || '').toLowerCase();
-          const pNameEn = (t.name_en || '').toLowerCase();
-          if (!pName.includes(q) && !pNameEn.includes(q)) return false;
+          if (!matchesLadderSearch(t.name, t.name_en, ladderSearchQuery)) return false;
         }
 
         const rawCountNum = parseFloat(t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count)) || 0;
@@ -12408,9 +13791,21 @@
       <!-- 天梯專屬側邊篩選器 (Mobile: 抽屜式 / Desktop: 左側滑動) -->
       <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialLadderCollapsed}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Ladder Filters' : '天梯篩選器'}">
         ${!isMobileH5 ? `
-          <!-- 🔖 側邊欄垂直中央書籤標籤 (Desktop: 抽屜把手，展開時自動隱藏，收合時展示) -->
+          <!-- 側邊欄垂直中央書籤標籤 (Desktop: 抽屜把手，展開時自動隱藏，收合時展示) -->
           <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleLadderSidebar(true)" title="${isEN ? 'Expand Ladder Filters' : '展開天梯篩選側邊欄'}" aria-label="${isEN ? 'Expand Ladder Filters' : '展開天梯篩選側邊欄'}">
-            <span class="bookmark-icon">🎛️</span>
+            <span class="bookmark-icon">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"></line>
+                <line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line>
+                <line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line>
+                <line x1="9" y1="8" x2="15" y2="8"></line>
+                <line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+            </span>
             <span class="bookmark-text">${isEN ? 'Filter' : '篩選'}</span>
             <span class="bookmark-arrow">◀</span>
             <span id="ladder-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
@@ -12443,7 +13838,20 @@
             </div>
           </div>
 
-          <!-- 2. 產量與供餐梯隊 (Supply Tier) -->
+          <!-- 2. 天梯軌道排序 (Track Sorting) -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title">${isEN ? 'Track Sorting' : '天梯軌道排序'}</span>
+            </div>
+            <div class="sidebar-skills-list sidebar-2col-tags">
+              <button type="button" class="tag-btn ${ladderSortOrder === 'ENERGY_ASC' ? 'active' : ''}" data-sort-order="ENERGY_ASC" onclick="window.WikiDB.setLadderSortOrder('ENERGY_ASC')">${isEN ? 'Energy: Low to High' : '能量：低到高'}</button>
+              <button type="button" class="tag-btn ${ladderSortOrder === 'ENERGY_DESC' ? 'active' : ''}" data-sort-order="ENERGY_DESC" onclick="window.WikiDB.setLadderSortOrder('ENERGY_DESC')">${isEN ? 'Energy: High to Low' : '能量：高到低'}</button>
+              <button type="button" class="tag-btn ${ladderSortOrder === 'YIELD_DESC' ? 'active' : ''}" data-sort-order="YIELD_DESC" onclick="window.WikiDB.setLadderSortOrder('YIELD_DESC')">${isEN ? 'Yield: High to Low' : '產量：多到少'}</button>
+              <button type="button" class="tag-btn ${ladderSortOrder === 'DEMAND_DESC' ? 'active' : ''}" data-sort-order="DEMAND_DESC" onclick="window.WikiDB.setLadderSortOrder('DEMAND_DESC')">${isEN ? 'Demand: High to Low' : '大菜需求：多到少'}</button>
+            </div>
+          </div>
+
+          <!-- 3. 產量與供餐梯隊 (Supply Tier) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Supply Tier' : '產量供餐梯隊'}</span>
@@ -12456,7 +13864,7 @@
             </div>
           </div>
 
-          <!-- 3. 食材組合型態 (Recipe Structure) -->
+          <!-- 4. 食材組合型態 (Recipe Structure) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Recipe Structure' : '食材組合型態'}</span>
@@ -12469,7 +13877,7 @@
             </div>
           </div>
 
-          <!-- 4. 寶可夢專長分類 (Specialty Type) -->
+          <!-- 5. 寶可夢專長分類 (Specialty Type) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Specialty Type' : '寶可夢專長'}</span>
@@ -12483,7 +13891,7 @@
           </div>
 
 
-          <!-- 4. 副技能補正模擬 (Sub-Skill Boost Simulation) -->
+          <!-- 6. 副技能補正模擬 (Sub-Skill Boost Simulation) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Sub-Skills' : '副技能補正模擬'}</span>
@@ -12521,7 +13929,7 @@
             </label>
           </div>
 
-          <!-- 5. 性格補正模擬 (Nature Boost Simulation - 單選) -->
+          <!-- 7. 性格補正模擬 (Nature Boost Simulation - 單選) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Nature Boost' : '性格補正模擬'}</span>
@@ -12569,7 +13977,7 @@
         <!-- 子分頁 2：副技能與性格指南 (Sub-Skills & Natures) -->
         <div id="wiki-subpanel-subskills" class="wiki-subpanel ${currentWikiSubTab === 'subskills' ? 'active' : ''}" style="${currentWikiSubTab === 'subskills' ? '' : 'display:none;'}">
           <!-- 主技能發動機率矩陣速查表 -->
-          <div class="wiki-card">
+          <div class="wiki-card wiki-card-trigger-matrix">
             <div class="wiki-card-header">
               <h3 class="wiki-card-title">${isEN ? 'Main Skill Trigger Chance Matrix' : '主技能發動機率矩陣'}</h3>
             </div>
@@ -12610,7 +14018,7 @@
                           ${row.subskills && row.subskills.length > 0 
                             ? row.subskills.map(s => {
                                 const sName = isEN 
-                                  ? (s.name.includes('M') ? 'Trigger M' : 'Trigger S') 
+                                   ? (s.name.includes('M') ? 'Trigger M' : 'Trigger S') 
                                   : s.name.replace('技能機率提升', '機率提升');
                                 return `<span class="wiki-skill-badge skill-badge-${s.color}" style="white-space: nowrap;">${sName}</span>`;
                               }).join('') 
@@ -12636,15 +14044,128 @@
             </div>
           </div>
 
+          <!-- 幫忙速度極限與計算機制指南 (Helping Speed Limits & Mechanics) -->
+          <div class="wiki-card wiki-card-speed-guide" style="margin-top: 20px;">
+            <div class="wiki-card-header">
+              <h3 class="wiki-card-title">${isEN ? 'Helping Speed Limits & Calculation Mechanics Guide' : '幫忙速度極限與計算機制指南'}</h3>
+            </div>
+            
+            <div class="wiki-rule-banner">
+              ${isEN 
+                ? '<strong>Core Rules</strong>: Sub-skills have a <strong>35% hard cap</strong>, and <strong>Nature operates as an independent multiplicative layer</strong>.<br><strong>Interval Formula</strong>: <code>Final Interval = Base Time × (1 - Sub-Skill %, max 35%) × Nature Mod (0.90)</code><br><strong>Output Formula</strong>: <code>Output Boost = (1 / Final Interval Ratio) - 1</code> (Shortening interval by 41.5% yields +70.94% frequency boost!)' 
+                : '<strong>核心關鍵</strong>：副技能存在 <strong>35% 硬上限</strong>，且<strong>性格屬於獨立乘區</strong>（兩者相乘，不互斥）。<br><strong>間隔公式</strong>：<code>最終間隔 = 基礎時間 × (1 - 副技能縮短%, 上限 35%) × 性格修正 (0.90)</code><br><strong>產能換算</strong>：<code>產能提升率 = (1 / 最終間隔比例) - 1</code>（幫忙時間縮短 41.5%，等同幫忙頻率與產量暴增 +70.94%！）'}
+            </div>
+
+            <!-- 3 大詳細機制卡片 (Detailed Mechanics Breakdown) -->
+            <div class="wiki-speed-breakdown-grid">
+              <div class="wiki-speed-breakdown-card">
+                <div class="breakdown-card-title">
+                  <span>[1]</span>
+                  <span>${isEN ? 'Sub-Skills & 35% Hard Cap' : '副技能數值與 35% 硬上限'}</span>
+                </div>
+                <ul class="breakdown-list">
+                  <li>${isEN ? '<strong>Helping Speed M</strong>: -14% interval' : '<strong>幫忙速度提升M</strong>：縮短 14% 間隔'}</li>
+                  <li>${isEN ? '<strong>Helping Speed S</strong>: -7% interval' : '<strong>幫忙速度提升S</strong>：縮短 7% 間隔'}</li>
+                  <li>${isEN ? '<strong>Helping Bonus</strong>: -5% per helper on team (stacks across all 5 Pokémon)' : '<strong>幫手獎勵</strong>：全隊每隻 -5%（全隊 5 隻皆可疊加生效）'}</li>
+                  <li>${isEN ? '<strong>Hard Cap</strong>: Combined sub-skill deduction is capped at <strong>35% max</strong> (min 0.65x). Excess percentage is ignored.' : '<strong>硬上限規則</strong>：副技能縮短合計上限鎖死為 <strong>35%</strong>（間隔最低 0.65）。超過部分溢出無效。'}</li>
+                </ul>
+              </div>
+
+              <div class="wiki-speed-breakdown-card">
+                <div class="breakdown-card-title">
+                  <span>[2]</span>
+                  <span>${isEN ? 'Nature Multiplicative Layer' : '性格獨立乘區機制'}</span>
+                </div>
+                <ul class="breakdown-list">
+                  <li>${isEN ? '<strong>Speed Up (▲)</strong>: Interval × 0.90 (output +11.11%)' : '<strong>幫忙速度上升 (▲)</strong>：時間係數 × 0.90（產能提升 +11.11%）'}</li>
+                  <li>${isEN ? '<strong>Neutral</strong>: Interval × 1.00' : '<strong>無修正 / 其它性格</strong>：時間係數 × 1.00'}</li>
+                  <li>${isEN ? '<strong>Speed Down (▼)</strong>: Interval × 1.10 (output -9.09%)' : '<strong>幫忙速度下降 (▼)</strong>：時間係數 × 1.10（產能懲罰 -9.09%）'}</li>
+                  <li>${isEN ? '<strong>Independent</strong>: Multiplies after sub-skills; enjoys full 10% reduction exempt from 35% cap.' : '<strong>獨立乘算</strong>：直接與副技能結算結果相乘，不受 35% 副技上限約束！'}</li>
+                </ul>
+              </div>
+
+              <div class="wiki-speed-breakdown-card">
+                <div class="breakdown-card-title">
+                  <span>[3]</span>
+                  <span>${isEN ? 'Interval vs Real Productivity' : '時間縮短 vs 產能暴增換算'}</span>
+                </div>
+                <ul class="breakdown-list">
+                  <li>${isEN ? '<strong>Key Concept</strong>: -41.5% interval does NOT mean +41.5% output!' : '<strong>重要觀念</strong>：時間縮短 -41.5%，絕不等於產能只增加 +41.5%！'}</li>
+                  <li>${isEN ? '<strong>Inverse Relation</strong>: Output Frequency = <code>1 / Remaining Time</code>' : '<strong>倒數關係</strong>：產出頻率 = <code>1 / 剩餘時間比例</code>'}</li>
+                  <li>${isEN ? 'When interval becomes 58.5% (0.585), frequency is <code>1 / 0.585 ≈ 1.7094</code>, meaning <strong>+70.94%</strong> more items in the same timeframe.' : '當間隔縮短為 58.5% (0.585) 時，同時間產出為 <code>1 / 0.585 ≈ 1.7094</code> 倍，產能直接<strong>暴增 +70.94%</strong>！'}</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- 速查對照表 (Quick-Lookup Table) -->
+            <div class="wiki-table-wrapper" style="margin-top: 10px;">
+              <table class="wiki-data-table">
+                <thead>
+                  <tr>
+                    <th style="text-align: center;">${isEN ? 'Sub-Skills' : '副技能組合'}</th>
+                    <th style="text-align: center;">${isEN ? 'Nature' : '性格'}</th>
+                    <th class="col-hide-mobile" style="text-align: center;">${isEN ? 'Formula' : '計算式'}</th>
+                    <th style="text-align: center;">${isEN ? 'Interval Ratio' : '幫忙間隔'}</th>
+                    <th style="text-align: center;">${isEN ? 'Output Boost' : '產能提升'}</th>
+                    <th class="col-hide-mobile" style="text-align: center;">${isEN ? 'Tier' : '強度評級'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${HELPING_SPEED_MATRIX.map(row => {
+                    const gradeStr = row.grade || '';
+                    const tierClass = gradeStr.startsWith('SSS') ? 'tier-sss'
+                      : gradeStr.startsWith('SS') ? 'tier-ss'
+                      : gradeStr.startsWith('S') ? 'tier-s'
+                      : gradeStr.startsWith('A') ? 'tier-a'
+                      : gradeStr.startsWith('B') ? 'tier-b'
+                      : gradeStr.startsWith('C') ? 'tier-c'
+                      : gradeStr.startsWith('D') ? 'tier-d'
+                      : 'tier-baseline';
+                    const isBoostPositive = row.outputMultiplier >= 1.0;
+                    return `
+                    <tr>
+                      <td style="vertical-align: middle; text-align: center;">
+                        <div style="display: inline-flex; align-items: center; justify-content: center; gap: 3px; flex-wrap: wrap;">
+                          ${row.subskills && row.subskills.length > 0 
+                            ? row.subskills.map(s => {
+                                const sName = isEN ? (s.name_en || s.name) : s.name;
+                                return `<span class="wiki-skill-badge skill-badge-${s.color}" style="white-space: nowrap;">${sName}</span>`;
+                              }).join('') 
+                            : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`}
+                        </div>
+                      </td>
+                      <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
+                        ${row.natureBadge === 'up' 
+                          ? `<span class="matrix-rate-up">${isEN ? (row.nature_en || '▲ Speed Up') : row.nature}</span>` 
+                          : (row.natureBadge === 'down' 
+                            ? `<span class="matrix-rate-down">${isEN ? (row.nature_en || '▼ Speed Down') : row.nature}</span>` 
+                            : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`)}
+                      </td>
+                      <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><code class="matrix-calc-code">${row.calc}</code></td>
+                      <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
+                        <span class="font-bold" style="font-size: 13px;">${row.intervalDisplay}</span>
+                        <span class="text-secondary" style="font-size: 11px; margin-left: 2px;">(${row.intervalDiff})</span>
+                      </td>
+                      <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
+                        <span class="${isBoostPositive ? 'matrix-pct-up' : 'matrix-pct-down'} font-bold" style="font-size: 13px;">${row.outputBoostDisplay}</span>
+                      </td>
+                      <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><span class="wiki-tier-badge ${tierClass}">${isEN ? (row.grade_en || row.grade) : row.grade}</span></td>
+                    </tr>
+                  `;}).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <!-- 副技能完整階級與數值說明表格 -->
-          <div class="wiki-card" style="margin-top: 20px;">
+          <div class="wiki-card wiki-card-subskills-overview" style="margin-top: 20px;">
             <div class="wiki-card-header">
               <h3 class="wiki-card-title">${isEN ? 'Sub-Skills Complete Tier & Stats Overview' : '副技能階級與數值總覽'}</h3>
             </div>
             <div class="wiki-rule-banner">
               ${isEN 
                 ? '<strong>Rule</strong>: Helping speed buff from sub-skills is <strong>capped at 35%</strong> per Pokémon (includes own Helping Speed M/S plus stacked 5% Helping Bonus from all teammates).' 
-                : '<strong>規則</strong>：單隻寶可夢受副技能加成之幫忙速度<strong>上限為 35%</strong>（包含自身幫速 M/S，以及全隊所有隊友攜帶「幫手獎勵」每隻 5% 之全隊疊加）。'}
+                : '<strong>規則</strong>：單隻寶可夢受副技能加成之幫忙速度<strong>上限為 35%</strong>（包含自身幫忙速度 M/S，以及全隊所有隊友攜帶「幫手獎勵」每隻 5% 之全隊疊加）。'}
             </div>
             <div class="wiki-table-wrapper">
               <table class="wiki-data-table">
@@ -12671,7 +14192,7 @@
           </div>
 
           <!-- 性格五維加成倍率表 -->
-          <div class="wiki-card" style="margin-top: 20px;">
+          <div class="wiki-card wiki-card-natures-table" style="margin-top: 20px;">
             <div class="wiki-card-header">
               <h3 class="wiki-card-title">${isEN ? 'Nature 5-Stat Multiplier Table' : '性格五維屬性倍率表'}</h3>
             </div>
@@ -12848,6 +14369,7 @@
     MAIN_SKILLS_DATA,
     SUB_SKILLS_DATA,
     TRIGGER_CHANCE_MATRIX,
+    HELPING_SPEED_MATRIX,
     NATURES_EFFECT_DATA,
     RATINGS_GUIDE_DATA,
     SLEEP_DAYS_BASELINE,
@@ -12855,6 +14377,9 @@
     INGREDIENT_VALUES_DATA,
     LV60_COORDINATE_LADDER_DATA,
     LV60_INGREDIENTS_LADDER,
+    mergeRecipeCodes,
+    matchesLadderRecipeFilter,
+    matchesLadderSearch,
     init: initWikiModule,
     renderWikiLayout: renderWikiLayout,
     switchSubTab: switchWikiSubTab,
@@ -12887,6 +14412,8 @@
     setLadderSupplyFilter: setLadderSupplyFilter,
     setLadderRecipeFilter: setLadderRecipeFilter,
     setLadderSpecialtyFilter: setLadderSpecialtyFilter,
+    setLadderSortOrder: setLadderSortOrder,
+    getLadderSortOrder: getLadderSortOrder,
     resetLadderFilters: resetLadderFilters,
     refreshCoordinateLadder: refreshCoordinateLadder,
     handleLadderGroupHover: handleLadderGroupHover,
@@ -12934,6 +14461,8 @@
   window.setLadderSupplyFilter = setLadderSupplyFilter;
   window.setLadderRecipeFilter = setLadderRecipeFilter;
   window.setLadderSpecialtyFilter = setLadderSpecialtyFilter;
+  window.setLadderSortOrder = setLadderSortOrder;
+  window.getLadderSortOrder = getLadderSortOrder;
   window.resetLadderFilters = resetLadderFilters;
   window.refreshCoordinateLadder = refreshCoordinateLadder;
   window.handleLadderGroupHover = handleLadderGroupHover;
@@ -12945,6 +14474,7 @@
   window.openIngredientRankingModal = openIngredientRankingModal;
   window.closeIngredientRankingModal = closeIngredientRankingModal;
   window.updateLadderActiveFilterBadge = updateLadderActiveFilterBadge;
+  window.HELPING_SPEED_MATRIX = HELPING_SPEED_MATRIX;
 
   // 當 DOM 準備完成時自動初始化
   if (document.readyState === 'loading') {

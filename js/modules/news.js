@@ -410,15 +410,25 @@
 
     let selectedEventsHTML = '';
     if (selectedDateEvents.length > 0) {
-      selectedEventsHTML = selectedDateEvents.map(ev => `
-        <div class="news-cal-event-item cat-${ev.eventCat}" data-event-id="${ev.id}" data-event-title="${escapeHtml(ev.title)}" title="${isEN ? 'Click to search this event' : '點擊直接搜尋此活動'}">
+      selectedEventsHTML = selectedDateEvents.map(ev => {
+        let evStatus = '';
+        if (_today > ev.endDate) {
+          evStatus = `<span class="news-cal-status-tag status-expired">${isEN ? 'Ended' : '已結束'}</span>`;
+        } else if (_today >= ev.startDate && _today <= ev.endDate) {
+          evStatus = `<span class="news-cal-status-tag status-ongoing">${isEN ? 'Ongoing' : '進行中'}</span>`;
+        } else {
+          evStatus = `<span class="news-cal-status-tag status-upcoming">${isEN ? 'Upcoming' : '即將開始'}</span>`;
+        }
+        return `
+        <div class="news-cal-event-item cat-${ev.eventCat} ${_today > ev.endDate ? 'is-expired' : ''}" data-event-id="${ev.id}" data-event-title="${escapeHtml(ev.title)}" title="${isEN ? 'Click to search this event' : '點擊直接搜尋此活動'}">
           <div class="news-cal-event-left">
             <span class="news-cal-event-badge badge-${ev.eventCat}" style="border-left: 3px solid ${ev.typeColor};">${ev.typeLabel}</span>
             <span class="news-cal-event-name">${escapeHtml(ev.title)}</span>
+            ${evStatus}
           </div>
           <span class="news-cal-event-time">${ev.startStr} ~ ${ev.endStr}</span>
         </div>
-      `).join('');
+      `;}).join('');
     } else {
       selectedEventsHTML = `
         <div class="news-cal-empty-hint">
@@ -434,24 +444,26 @@
 
     newsTimelineContainer.innerHTML = `
       <div class="news-calendar-wrapper">
-        <div class="news-calendar-top-bar">
-          <div class="news-calendar-title-group">
-            <span>${isEN ? 'Event Calendar' : '活動日曆'}</span>
-            <span class="news-calendar-month-text">(${monthTitle})</span>
+        <div class="news-calendar-cal-col">
+          <div class="news-calendar-top-bar">
+            <div class="news-calendar-title-group">
+              <span>${isEN ? 'Event Calendar' : '活動日曆'}</span>
+              <span class="news-calendar-month-text">(${monthTitle})</span>
+            </div>
+            <div class="news-calendar-nav-group">
+              <button type="button" class="news-calendar-nav-btn prev-btn" title="${isEN ? 'Previous Month' : '上個月'}">◀</button>
+              <button type="button" class="news-calendar-nav-btn today-btn" title="${isEN ? 'Return to Today' : '今日'}">${isEN ? 'Today' : '今日'}</button>
+              <button type="button" class="news-calendar-nav-btn next-btn" title="${isEN ? 'Next Month' : '下個月'}">▶</button>
+            </div>
           </div>
-          <div class="news-calendar-nav-group">
-            <button type="button" class="news-calendar-nav-btn prev-btn" title="${isEN ? 'Previous Month' : '上個月'}">◀</button>
-            <button type="button" class="news-calendar-nav-btn today-btn" title="${isEN ? 'Return to Today' : '今日'}">${isEN ? 'Today' : '今日'}</button>
-            <button type="button" class="news-calendar-nav-btn next-btn" title="${isEN ? 'Next Month' : '下個月'}">▶</button>
+
+          <div class="news-calendar-weekdays">
+            ${weekdayLabels.map((w, idx) => `<div class="news-calendar-weekday ${idx === 0 ? 'sun' : idx === 6 ? 'sat' : ''}">${w}</div>`).join('')}
           </div>
-        </div>
 
-        <div class="news-calendar-weekdays">
-          ${weekdayLabels.map((w, idx) => `<div class="news-calendar-weekday ${idx === 0 ? 'sun' : idx === 6 ? 'sat' : ''}">${w}</div>`).join('')}
-        </div>
-
-        <div class="news-calendar-grid">
-          ${dayCellsHTML.join('')}
+          <div class="news-calendar-grid">
+            ${dayCellsHTML.join('')}
+          </div>
         </div>
 
         <div class="news-calendar-events-box">
@@ -786,14 +798,40 @@
       const displayTitle = isEN ? (item.title_en || item.title) : item.title;
       const displayOverview = isEN ? (item.overview_en || item.overview) : item.overview;
 
+      const isEvent = item.badge_key === 'event' || (item.title && (item.title.includes('活動') || item.title.includes('企畫') || item.title.includes('企劃') || item.title.includes('快照') || item.title.includes('新月日') || item.title.includes('好眠日') || item.title.includes('秘境') || item.title.includes('超夢') || item.title.includes('夢幻') || item.title.includes('任務')));
+      const isPack = (item.title && (item.title.includes('包') || item.title.includes('限定包') || item.title.includes('培育包') || item.title.includes('同樂包') || item.title.includes('紀念包')));
+      const schedule = (isEvent || isPack) ? extractEventSchedule(item) : null;
+
+      let timeStatus = null; // 'expired' | 'ongoing' | 'upcoming'
+      if (schedule) {
+        const now = new Date();
+        if (now > schedule.endDate) {
+          timeStatus = 'expired';
+        } else if (now < schedule.startDate) {
+          timeStatus = 'upcoming';
+        } else {
+          timeStatus = 'ongoing';
+        }
+      }
+
+      let statusBadgeHTML = '';
+      if (timeStatus === 'expired') {
+        statusBadgeHTML = `<span class="news-status-badge status-expired">${isEN ? 'EXPIRED' : '已結束'}</span>`;
+      } else if (timeStatus === 'ongoing') {
+        statusBadgeHTML = `<span class="news-status-badge status-ongoing">${isEN ? 'ONGOING' : '進行中'}</span>`;
+      } else if (timeStatus === 'upcoming') {
+        statusBadgeHTML = `<span class="news-status-badge status-upcoming">${isEN ? 'UPCOMING' : '即將開始'}</span>`;
+      }
+
       return `
-        <article class="news-card news-accordion-card ${isExpanded ? 'expanded' : ''} ${isLatest ? 'news-card-featured' : ''}" id="news-${item.id}" data-id="${item.id}">
+        <article class="news-card news-accordion-card ${isExpanded ? 'expanded' : ''} ${isLatest ? 'news-card-featured' : ''} ${timeStatus === 'expired' ? 'is-expired' : ''}" id="news-${item.id}" data-id="${item.id}">
           <div class="news-card-header-meta">
             <div class="news-meta-left">
               <span class="news-date-badge">${item.date}</span>
               <span class="news-badge news-badge-${item.badge_key || 'notice'}" style="--badge-color:${item.badge_color || '#8b5cf6'};">
                 ${categoryLabels[item.badge_key] || item.badge_label || item.category || (isEN ? 'Notice' : '公告')}
               </span>
+              ${statusBadgeHTML}
               ${isLatest ? '<span class="news-latest-tag">NEW</span>' : ''}
             </div>
             <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-official-link-btn" onclick="event.stopPropagation()">

@@ -932,7 +932,7 @@
               <th class="sortable" data-sort="category" style="width:100px;">${t('recipe.th_type', '分類')} <span class="sort-arrow"></span></th>
               <th class="sortable" data-sort="pot" style="width:90px;">${t('recipe.th_pot', '鍋子容量')} <span class="sort-arrow"></span></th>
               <th style="min-width:180px;">${t('recipe.th_ingredients', '食材需求')}</th>
-              <th class="sortable" data-sort="energy" style="min-width:140px;text-align:right;">
+              <th class="sortable th-energy" data-sort="energy" style="min-width:140px;text-align:right;padding-right:32px;">
                 ${t('recipe.th_final_energy', '預估能量')} <span class="sort-arrow"></span>
                 <div class="table-sub-header">Lv.${recipeLevel} · ×${islandMult}${eventSub}</div>
               </th>
@@ -944,10 +944,10 @@
               const primaryName   = isEN ? (r.name_en || r.name_cn) : r.name_cn;
               const secondaryName = isEN ? (r.name_cn !== primaryName ? r.name_cn : '') : (r.name_en || '');
               const energyCellHTML = `
-                <td class="recipe-energy-cell" style="vertical-align:middle;text-align:right;">
+                <td class="recipe-energy-cell" style="vertical-align:middle;text-align:right;padding-right:32px;">
                   <div class="desktop-energy-stack ${showTasty ? 'has-tasty' : 'single-energy'}">
                     <div class="desktop-energy-row energy-1x">
-                      <span class="energy-multiplier">${showTasty ? '1x' : '⚡'}</span>
+                      <span class="energy-multiplier">${showTasty ? '1x' : '1x'}</span>
                       <span class="energy-number">${finalE.toLocaleString()}</span>
                     </div>
                     ${showTasty ? `
@@ -1070,7 +1070,7 @@
                 </div>
                 <div class="desktop-energy-stack ${showTasty ? 'has-tasty' : 'single-energy'}">
                   <div class="desktop-energy-row energy-1x">
-                    <span class="energy-multiplier">${showTasty ? '1x' : '⚡'}</span>
+                    <span class="energy-multiplier">1x</span>
                     <span class="energy-number">${finalE.toLocaleString()}</span>
                   </div>
                   ${showTasty ? `
