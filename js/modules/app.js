@@ -1735,6 +1735,13 @@ if (typeof document !== 'undefined') {
             window.history.replaceState(null, '', '#pokemon');
           }
         }
+
+        if (typeof window.updateBackToTopVisibility === 'function') {
+          window.updateBackToTopVisibility();
+          if (typeof requestAnimationFrame === 'function') {
+            requestAnimationFrame(window.updateBackToTopVisibility);
+          }
+        }
       }
 
       window.switchMainTab = switchMainTab;
@@ -2595,7 +2602,7 @@ if (typeof document !== 'undefined') {
 
           tooltipEl.innerHTML = `
             <div class="tooltip-header">
-              <span class="tooltip-sparkle">✨</span>
+              <span class="tooltip-sparkle">[★]</span>
               <strong class="tooltip-title">${titleName}</strong>
               <span class="tooltip-tag">${isEN ? 'Special Main Skill' : '特殊主技能'}</span>
             </div>
@@ -2635,7 +2642,100 @@ if (typeof document !== 'undefined') {
       });
     }
 
+    function initBackToTop() {
+      let btn = document.getElementById('back-to-top-btn');
+      if (!btn) {
+        btn = document.createElement('button');
+        btn.type = 'button';
+        btn.id = 'back-to-top-btn';
+        btn.className = 'back-to-top-btn';
+        btn.setAttribute('aria-label', window.I18N ? window.I18N.t('common.back_to_top', '回到頂部') : '回到頂部');
+        btn.setAttribute('title', window.I18N ? window.I18N.t('common.back_to_top', '回到頂部') : '回到頂部');
+        btn.setAttribute('data-i18n-title', 'common.back_to_top');
+        btn.setAttribute('data-i18n-aria', 'common.back_to_top');
+        btn.innerHTML = `
+          <svg class="back-to-top-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 19V5"></path>
+            <polyline points="5 12 12 5 19 12"></polyline>
+          </svg>
+        `;
+        document.body.appendChild(btn);
+      }
+
+      function updateBackToTopVisibility() {
+        if (!btn) return;
+        const scrollY = window.pageYOffset || (document.documentElement ? document.documentElement.scrollTop : 0) || (document.body ? document.body.scrollTop : 0) || 0;
+        const docHeight = Math.max(
+          document.body ? document.body.scrollHeight : 0,
+          document.documentElement ? document.documentElement.scrollHeight : 0,
+          document.body ? document.body.offsetHeight : 0,
+          document.documentElement ? document.documentElement.offsetHeight : 0
+        );
+        const winHeight = window.innerHeight || (document.documentElement ? document.documentElement.clientHeight : 0) || 0;
+
+        // 判定內容高度是否明顯超過螢幕視窗（至少多出 150px），且向下滑動超過 280px
+        const isLongContent = docHeight > winHeight + 150;
+        const shouldShow = isLongContent && scrollY > 280;
+
+        if (shouldShow) {
+          btn.classList.add('visible');
+        } else {
+          btn.classList.remove('visible');
+        }
+
+        // 行動端 H5 避讓檢測：若右下有篩選按鈕 (FAB)，自動向上避讓 138px，防止互相覆蓋
+        const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+        if (isMobileH5) {
+          const fabPkm = document.getElementById('sidebar-bookmark-handle');
+          const fabRecipe = document.getElementById('recipe-sidebar-bookmark-handle');
+          const fabLadder = document.getElementById('ladder-sidebar-bookmark-handle');
+
+          const isFabVisible = (el) => {
+            if (!el) return false;
+            if (el.style.display === 'none') return false;
+            if (typeof window !== 'undefined' && typeof window.getComputedStyle === 'function') {
+              try {
+                const s = window.getComputedStyle(el);
+                return s.display !== 'none' && s.visibility !== 'hidden' && s.opacity !== '0';
+              } catch (e) { return true; }
+            }
+            return true;
+          };
+
+          if (isFabVisible(fabPkm) || isFabVisible(fabRecipe) || isFabVisible(fabLadder)) {
+            btn.classList.add('has-filter-fab');
+          } else {
+            btn.classList.remove('has-filter-fab');
+          }
+        }
+      }
+
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        try {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (err) {
+          window.scrollTo(0, 0);
+        }
+        if (document.documentElement) {
+          try { document.documentElement.scrollTo({ top: 0, behavior: 'smooth' }); } catch (err) {}
+        }
+        if (document.body) {
+          try { document.body.scrollTo({ top: 0, behavior: 'smooth' }); } catch (err) {}
+        }
+      });
+
+      window.addEventListener('scroll', updateBackToTopVisibility, { passive: true });
+      window.addEventListener('resize', updateBackToTopVisibility, { passive: true });
+
+      window.updateBackToTopVisibility = updateBackToTopVisibility;
+      PokemonApp.updateBackToTopVisibility = updateBackToTopVisibility;
+      updateBackToTopVisibility();
+    }
+
     initSkillTooltips();
+    initBackToTop();
+    PokemonApp.initBackToTop = initBackToTop;
   });
 }
 
@@ -2657,6 +2757,8 @@ if (typeof module !== 'undefined' && module.exports) {
     COMPOSITE_SKILL_MAP,
     SPECIAL_SKILL_DETAILS,
     matchesSkill,
-    renderSkillWithTooltip
+    renderSkillWithTooltip,
+    initBackToTop: (typeof PokemonApp !== 'undefined' && PokemonApp.initBackToTop) ? PokemonApp.initBackToTop : undefined,
+    updateBackToTopVisibility: (typeof PokemonApp !== 'undefined' && PokemonApp.updateBackToTopVisibility) ? PokemonApp.updateBackToTopVisibility : undefined
   };
 }

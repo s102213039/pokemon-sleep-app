@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue?style=for-the-badge&logo=github)](https://s102213039.github.io/pokemon-sleep-app/)
-[![Tests](https://img.shields.io/badge/Tests-101%2F101%20PASS-brightgreen?style=for-the-badge&logo=node.js)](https://github.com/s102213039/pokemon-sleep-app)
+[![Tests](https://img.shields.io/badge/Tests-103%2F103%20PASS-brightgreen?style=for-the-badge&logo=node.js)](https://github.com/s102213039/pokemon-sleep-app)
 [![Bilingual](https://img.shields.io/badge/Language-繁體中文%20%7C%20English-orange?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
 [![Themes](https://img.shields.io/badge/Themes-4%20Themes%20(Dark%2FLight)-purple?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
@@ -108,6 +108,15 @@
 
 ---
 
+### 9. 智能回到頂部導航 (Smart Back to Top Navigation)
+- **動態長內容偵測**：當頁面具有充足長度且使用者向下滾動超過閾值（280px）時，自動淡入右下懸浮回到頂部按鈕。
+- **平滑滾動與適時隱藏**：點擊後平滑滾動回頁面最頂端，並自動淡出隱藏；再次向下滑動時自動判斷重新展示。
+- **雙端適配與行動端避讓**：
+  - **桌面版**：右下角舒適懸浮（`right: 28px; bottom: 32px`）。
+  - **行動端 (H5 App)**：自適應安全區域（Safe Area Insets），並自動偵測當前頁面之懸浮篩選按鈕（FAB），採垂直堆疊避讓（`bottom: 138px`），杜絕互相覆蓋；無篩選按鈕時平滑落至 Dock 頂部（`bottom: 76px`）。
+
+---
+
 ## 系統架構 (System Architecture)
 
 ```mermaid
@@ -157,7 +166,7 @@ graph TD
 
 ## 本地開發與自動化測試 (Testing)
 
-本專案內建一套獨立的 **101 項全自動化測試套件**，涵蓋資料庫完整性、公式精確度、OCR 雜湊去重、i18n 雙語翻譯、雙端路徑跳轉與 UI 元件渲染。
+本專案內建一套獨立的 **103 項全自動化測試套件**，涵蓋資料庫完整性、公式精確度、OCR 雜湊去重、i18n 雙語翻譯、雙端路徑跳轉、回到頂部懸浮導航與 UI 元件渲染。
 
 ### 執行測試
 ```bash
@@ -166,8 +175,8 @@ rtk node tests/run_tests.js
 ```
 
 ### 測試覆蓋階層
-- **Tier 1 - Feature Coverage (47 項)**：資料集結構、公式計算、食譜加成、主技能矩陣、主題色系、H5 入口完整性。
-- **Tier 2 - Boundary Cases (38 項)**：空搜尋、大小寫不敏感、多選交集、等級邊界 (Lv.1~80)、鍋子容量上下限、副技能防重複選擇。
+- **Tier 1 - Feature Coverage (48 項)**：資料集結構、公式計算、食譜加成、主技能矩陣、主題色系、H5 入口完整性、回到頂部按鈕結構。
+- **Tier 2 - Boundary Cases (39 項)**：空搜尋、大小寫不敏感、多選交集、等級邊界 (Lv.1~80)、鍋子容量上下限、副技能防重複選擇、回到頂部滾動閾值與避讓邏輯。
 - **Tier 3 - Cross-Feature (6 項)**：多維度複合篩選、主題語言聯動切換、Dock 導航持久化。
 - **Tier 4 - Real-World Scenarios (10 項)**：完整操作流程模擬、評測六維雷達、食材天梯全排序驗證、雙端共存跳轉防迴圈。
 

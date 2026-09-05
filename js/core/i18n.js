@@ -31,6 +31,7 @@
       'nav.desktop_label': '桌面版',
       'nav.switch_to_mobile': '📱 行動版',
       'nav.switch_to_desktop': '💻 桌面版',
+      'common.back_to_top': '回到頂部',
 
       // Settings Modal
       'settings.title': '系統設定',
@@ -311,6 +312,7 @@
       'nav.desktop_label': 'Desktop',
       'nav.switch_to_mobile': '📱 Mobile',
       'nav.switch_to_desktop': '💻 Desktop',
+      'common.back_to_top': 'Back to Top',
 
       // Settings Modal
       'settings.title': 'Settings',
@@ -1506,6 +1508,13 @@
       const key = el.getAttribute('data-i18n-title');
       if (key) {
         el.setAttribute('title', t(key, el.getAttribute('title')));
+      }
+    });
+
+    document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+      const key = el.getAttribute('data-i18n-aria');
+      if (key) {
+        el.setAttribute('aria-label', t(key, el.getAttribute('aria-label')));
       }
     });
 

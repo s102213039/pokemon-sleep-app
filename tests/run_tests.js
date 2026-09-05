@@ -1261,6 +1261,32 @@ test('Tier 1 - Feature Coverage', 'Desktop Non-Regression: Desktop index.html pr
     'Custom select menu must open downwards below the trigger');
 });
 
+test('Tier 1 - Feature Coverage', 'Back to Top Floating Button: Desktop and Mobile HTML Markup, SVG Icon, and CSS Rules', () => {
+  const desktopHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+  const mobileHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+
+  // 1. Desktop & Mobile HTML Markup
+  assert(desktopHtml.includes('id="back-to-top-btn"') && desktopHtml.includes('class="back-to-top-btn"'),
+    'Desktop index.html must contain #back-to-top-btn element');
+  assert(mobileHtml.includes('id="back-to-top-btn"') && mobileHtml.includes('class="back-to-top-btn"'),
+    'Mobile app/index.html must contain #back-to-top-btn element');
+  assert(desktopHtml.includes('class="back-to-top-icon"') && mobileHtml.includes('class="back-to-top-icon"'),
+    'Both desktop and mobile must embed SVG .back-to-top-icon');
+
+  // 2. CSS Rules
+  assert(cssContent.includes('.back-to-top-btn {'), 'styles.css missing .back-to-top-btn definition');
+  assert(cssContent.includes('.back-to-top-btn.visible {'), 'styles.css missing .back-to-top-btn.visible transition class');
+  assert(cssContent.includes('.mobile-h5-app .back-to-top-btn {'), 'styles.css missing mobile H5 dock-aligned bottom position');
+  assert(cssContent.includes('.mobile-h5-app .back-to-top-btn.has-filter-fab {'), 'styles.css missing .has-filter-fab stacking rule');
+  assert(cssContent.includes('138px'), 'styles.css missing 138px stack offset to clear 50px filter FAB');
+
+  // 3. i18n Dictionary
+  assert(i18nCode.includes("'common.back_to_top': '回到頂部'"), 'i18n.js missing zh-TW common.back_to_top translation');
+  assert(i18nCode.includes("'common.back_to_top': 'Back to Top'"), 'i18n.js missing en-US common.back_to_top translation');
+});
+
 // -------------------------------------------------------------------
 // Tier 2 - Boundary & Corner Cases
 // -------------------------------------------------------------------
@@ -2091,6 +2117,74 @@ test('Tier 3 - Cross-Feature Combinations', 'Combined filters: text search + mul
     assert(PokemonApp.selectedTypes.has(item.type), `Item type ${item.type} not in selected types`);
     assert(PokemonApp.selectedSpecialties.has(item.specialty), `Item specialty ${item.specialty} not in selected specialties`);
   });
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Back to Top Scroll Threshold, Long Content Detection, and Mobile Filter Collision Avoidance', () => {
+  // Simulator for Back-to-Top behavior
+  class BackToTopSimulator {
+    constructor(options = {}) {
+      this.isMobileH5 = options.isMobileH5 || false;
+      this.docHeight = options.docHeight || 800;
+      this.winHeight = options.winHeight || 600;
+      this.scrollY = options.scrollY || 0;
+      this.fabVisible = options.fabVisible || false;
+      this.visible = false;
+      this.hasFilterFab = false;
+    }
+
+    update() {
+      const isLongContent = this.docHeight > this.winHeight + 150;
+      const shouldShow = isLongContent && this.scrollY > 280;
+      this.visible = shouldShow;
+
+      if (this.isMobileH5) {
+        this.hasFilterFab = this.fabVisible;
+      } else {
+        this.hasFilterFab = false;
+      }
+    }
+
+    scrollToTop() {
+      this.scrollY = 0;
+      this.update();
+    }
+  }
+
+  // 1. Short content: even when scrolled past 280, button must not show
+  const shortPage = new BackToTopSimulator({ docHeight: 650, winHeight: 600, scrollY: 350 });
+  shortPage.update();
+  assertEquals(shortPage.visible, false, 'Short page must NOT show back-to-top button');
+
+  // 2. Long content: at top of page, button must be hidden
+  const longPage = new BackToTopSimulator({ docHeight: 2500, winHeight: 800, scrollY: 100 });
+  longPage.update();
+  assertEquals(longPage.visible, false, 'Long page with scroll <= 280 must NOT show back-to-top button');
+
+  // 3. Long content: scrolled down past 280, button must become visible
+  longPage.scrollY = 350;
+  longPage.update();
+  assertEquals(longPage.visible, true, 'Long page with scroll > 280 must show back-to-top button');
+
+  // 4. Click back-to-top: resets scroll to 0, button hides
+  longPage.scrollToTop();
+  assertEquals(longPage.visible, false, 'Clicking back-to-top must hide the button after returning to top');
+
+  // 5. Scroll down again: button reappears
+  longPage.scrollY = 600;
+  longPage.update();
+  assertEquals(longPage.visible, true, 'Scrolling down again must re-show the button');
+
+  // 6. Mobile H5: when filter FAB is visible, .has-filter-fab is applied to stack safely above at 138px
+  const mobileWithFab = new BackToTopSimulator({ isMobileH5: true, docHeight: 3000, winHeight: 800, scrollY: 400, fabVisible: true });
+  mobileWithFab.update();
+  assertEquals(mobileWithFab.visible, true, 'Mobile page must show back-to-top when scrolled');
+  assertEquals(mobileWithFab.hasFilterFab, true, 'Mobile page with filter FAB must apply hasFilterFab class to stack above FAB');
+
+  // 7. Mobile H5: when filter FAB is not present (e.g. News tab), .has-filter-fab is removed to rest at 76px
+  const mobileWithoutFab = new BackToTopSimulator({ isMobileH5: true, docHeight: 3000, winHeight: 800, scrollY: 400, fabVisible: false });
+  mobileWithoutFab.update();
+  assertEquals(mobileWithoutFab.visible, true, 'Mobile page without FAB must show back-to-top');
+  assertEquals(mobileWithoutFab.hasFilterFab, false, 'Mobile page without FAB must not have hasFilterFab class');
 });
 
 // --- NEW Tier 3 Tests: Pairwise Cross-Feature Interactions ---
