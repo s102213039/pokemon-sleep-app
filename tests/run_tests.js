@@ -3815,10 +3815,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(indexHtml.includes('css/styles.css?v=20260907_5'), 'index.html styles.css must be v=20260907_5');
-  assert(indexHtml.includes('js/modules/wiki.js?v=20260907_5'), 'index.html wiki.js must be v=20260907_5');
-  assert(appIndexHtml.includes('css/styles.css?v=20260907_5'), 'app/index.html styles.css must be v=20260907_5');
-  assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_5'), 'app/index.html wiki.js must be v=20260907_5');
+  assert(indexHtml.includes('css/styles.css?v=20260907_6'), 'index.html styles.css must be v=20260907_6');
+  assert(indexHtml.includes('js/modules/wiki.js?v=20260907_6'), 'index.html wiki.js must be v=20260907_6');
+  assert(appIndexHtml.includes('css/styles.css?v=20260907_6'), 'app/index.html styles.css must be v=20260907_6');
+  assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_6'), 'app/index.html wiki.js must be v=20260907_6');
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless Layout, Single-Line Name:Desc, No Tier Badges & Half-Width Symbols', () => {
@@ -3838,11 +3838,30 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless
   // 3. Verify renderRatingCard removes tier tags and renders single-line format with colon
   assert(!wikiJs.includes('rating-tier-tag tier-'), 'Must not render circle tier tags in ratings guide');
   assert(wikiJs.includes('rating-item-colon'), 'Must include colon separator between name and description');
-  assert(wikiJs.includes('技能專長[樹果1個,食材1個]'), 'Skill card title must be consolidated without repetition');
-  assert(wikiJs.includes('樹果專長[樹果2個,食材1個]'), 'Berry card title must be consolidated without repetition');
-  assert(wikiJs.includes('食材專長[樹果1個,食材2個]'), 'Ingredient card title must be consolidated without repetition');
+  assert(wikiJs.includes('rating-specialty-badge specialty-'), 'Specialty badge must be rendered');
+  assert(wikiJs.includes('rating-specialty-desc'), 'Specialty spec description must be rendered as pure text');
+  assert(wikiJs.includes('spec: "[樹果1個,食材1個]"'), 'Skill card must have spec');
+  assert(wikiJs.includes('spec: "[樹果2個,食材1個]"'), 'Berry card must have spec');
+  assert(wikiJs.includes('spec: "[樹果1個,食材2個]"'), 'Ingredient card must have spec');
 
-  // 4. Verify borderless styles in CSS
+  // 4. Verify strategy header displays badge and title on one line without inner borders
+  assert(wikiJs.includes('<div class="strategy-header">'), 'Strategy item must have strategy-header container');
+  assert(stylesCss.includes('.strategy-header {\n  display: flex;\n  align-items: center;\n  gap: 8px;'), 'CSS must include strategy-header layout');
+  assert(stylesCss.includes('.mobile-h5-app .strategy-item {\n  background: transparent !important;\n  border: none !important;'), 'Mobile strategy-item must have transparent background and no borders');
+
+  // 5. Verify milestone table simplification and single-line column control
+  assert(wikiJs.includes('<th class="col-milestone-days">${isEN ? \'100 EXP/Day\' : \'每天100EXP\'}</th>'), 'Milestone table header must be 每天100EXP');
+  assert(wikiJs.includes("${row.days} ${isEN ? 'Days' : '天'}"), 'Milestone days must not have parentheses');
+  assert(wikiJs.includes('note: "解鎖第1個副技能"'), 'Milestone note Lv.10 must remove extra comma content');
+  assert(wikiJs.includes('note: "解鎖第2個副技能"'), 'Milestone note Lv.25 must remove extra comma content');
+  assert(wikiJs.includes('note: "解鎖第2種食材"'), 'Milestone note Lv.30 must remove extra comma content');
+  assert(wikiJs.includes('note: "解鎖第3個副技能"'), 'Milestone note Lv.50 must remove extra comma content');
+  assert(wikiJs.includes('note: "解鎖第3種食材"'), 'Milestone note Lv.60 must remove extra comma content');
+  assert(stylesCss.includes('.milestone-table th.col-milestone-lv'), 'Milestone table must have column lv styling');
+  assert(stylesCss.includes('.milestone-table th.col-milestone-exp'), 'Milestone table must have column exp styling');
+  assert(stylesCss.includes('.milestone-table th.col-milestone-days'), 'Milestone table must have column days styling');
+
+  // 6. Verify borderless styles in CSS
   assert(stylesCss.includes('.rating-item {\n  display: flex;\n  align-items: center;\n  gap: 4px;\n  background: transparent;\n  border: none;'), 'Rating item must be borderless');
   assert(stylesCss.includes('#wiki-subpanel-ratings .calc-inputs-row {\n  background: transparent;\n  border: none;'), 'Calc row must be borderless in ratings');
 });

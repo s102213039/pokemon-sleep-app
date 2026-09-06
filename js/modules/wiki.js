@@ -1135,8 +1135,12 @@
   const RATINGS_GUIDE_DATA = {
     berry: {
       type: "berry",
-      title: "樹果專長[樹果2個,食材1個]",
-      title_en: "Berry Specialist [2 Berries, 1 Ingredient]",
+      badge: "樹果專長",
+      badge_en: "Berry Specialist",
+      title: "樹果專長",
+      title_en: "Berry Specialist",
+      spec: "[樹果2個,食材1個]",
+      spec_en: "[2 Berries, 1 Ingredient]",
       desc: "以高頻率產出大量樹果累積卡比獸能量為最高目標.",
       desc_en: "Maximizes Snorlax Strength via massive, high-speed berry output.",
       subskills: [
@@ -1153,8 +1157,12 @@
     },
     ingredient: {
       type: "ingredient",
-      title: "食材專長[樹果1個,食材2個]",
-      title_en: "Ingredient Specialist [1 Berry, 2 Ingredients]",
+      badge: "食材專長",
+      badge_en: "Ingredient Specialist",
+      title: "食材專長",
+      title_en: "Ingredient Specialist",
+      spec: "[樹果1個,食材2個]",
+      spec_en: "[1 Berry, 2 Ingredients]",
       desc: "以穩定供給高階食譜所需的高價值食材為核心職責.",
       desc_en: "Provides consistent supply of high-tier ingredients for powerful dishes.",
       subskills: [
@@ -1174,8 +1182,12 @@
     },
     skill: {
       type: "skill",
-      title: "技能專長[樹果1個,食材1個]",
-      title_en: "Skill Specialist [1 Berry, 1 Ingredient]",
+      badge: "技能專長",
+      badge_en: "Skill Specialist",
+      title: "技能專長",
+      title_en: "Skill Specialist",
+      spec: "[樹果1個,食材1個]",
+      spec_en: "[1 Berry, 1 Ingredient]",
       desc: "以高頻率觸發核心主技能(全體補血,神獸加速,高額能量,料理擴鍋)為核心職責.",
       desc_en: "Triggers crucial main skills (E4E heal, Legend boost, pot expand, energy burst) frequently.",
       subskills: [
@@ -1197,11 +1209,11 @@
 
   // 睡眠天數成長基準表 (Image 2)
   const SLEEP_DAYS_BASELINE = [
-    { level: 10, totalExp: 1600, days: 16, note: "解鎖第1個副技能,新手初期門檻", note_en: "Unlocks 1st sub-skill, early milestone." },
-    { level: 25, totalExp: 8700, days: 87, note: "解鎖第2個副技能,中階關鍵戰力", note_en: "Unlocks 2nd sub-skill, mid-game power spike." },
-    { level: 30, totalExp: 12000, days: 120, note: "解鎖第2種食材,前期核心目標(約2~4個月)", note_en: "Unlocks 2nd ingredient slot, primary early goal (approx. 2-4 mos)." },
-    { level: 50, totalExp: 30000, days: 300, note: "解鎖第3個副技能,後期主力培育(約5~10個月)", note_en: "Unlocks 3rd sub-skill, late-game investment (approx. 5-10 mos)." },
-    { level: 60, totalExp: 51500, days: 515, note: "解鎖第3種食材,頂級完全體", note_en: "Unlocks 3rd ingredient slot, max potential complete build." }
+    { level: 10, totalExp: 1600, days: 16, note: "解鎖第1個副技能", note_en: "Unlocks 1st sub-skill" },
+    { level: 25, totalExp: 8700, days: 87, note: "解鎖第2個副技能", note_en: "Unlocks 2nd sub-skill" },
+    { level: 30, totalExp: 12000, days: 120, note: "解鎖第2種食材", note_en: "Unlocks 2nd ingredient slot" },
+    { level: 50, totalExp: 30000, days: 300, note: "解鎖第3個副技能", note_en: "Unlocks 3rd sub-skill" },
+    { level: 60, totalExp: 51500, days: 515, note: "解鎖第3種食材", note_en: "Unlocks 3rd ingredient slot" }
   ];
 
   // --- 4. 樹果與食材基礎能量資料庫 (Image 1 實體化 - Berry & Ingredient Values) ---
@@ -12988,7 +13000,8 @@
   // 渲染專長評級卡片
   function renderRatingCard(data) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const title = isEN ? (data.title_en || data.title) : data.title;
+    const badgeText = isEN ? (data.badge_en || data.badge || data.title_en || data.title) : (data.badge || data.title);
+    const specText = isEN ? (data.spec_en || data.spec || '') : (data.spec || '');
     const desc = isEN ? (data.desc_en || data.desc) : data.desc;
     const type = data.type || 'berry';
     const themeColor = type === 'berry' ? '#f59e0b' : (type === 'ingredient' ? '#06b6d4' : '#a855f7');
@@ -12996,8 +13009,9 @@
     return `
       <div class="wiki-card wiki-rating-card rating-card-${type}">
         <div class="wiki-card-header">
-          <h3 class="wiki-card-title" style="margin: 0;">
-            <span class="rating-specialty-badge specialty-${type}">${title}</span>
+          <h3 class="wiki-card-title rating-card-header-title" style="margin: 0;">
+            <span class="rating-specialty-badge specialty-${type}">${badgeText}</span>
+            <span class="rating-specialty-desc">${specText}</span>
           </h3>
         </div>
         <p class="wiki-card-desc" style="margin-top: 6px;">${desc}</p>
@@ -14468,23 +14482,31 @@
             </div>
             <div class="wiki-strategy-grid">
               <div class="strategy-item strategy-early">
-                <div class="strategy-badge badge-early">${isEN ? 'Early Goal' : '前期目標'}</div>
-                <div class="strategy-title">${isEN ? 'Prioritize <span class="text-accent font-bold">Lv.30</span>' : '優先放置在 <span class="text-accent font-bold">Lv.30</span>'}</div>
+                <div class="strategy-header">
+                  <span class="strategy-badge badge-early">${isEN ? 'Early Goal' : '前期目標'}</span>
+                  <span class="strategy-title">${isEN ? 'Prioritize <span class="text-accent font-bold">Lv.30</span>' : '優先放置在 <span class="text-accent font-bold">Lv.30</span>'}</span>
+                </div>
                 <div class="strategy-desc">${isEN ? 'Focus on nature and <span class="text-success font-bold">Lv.10</span> &amp; <span class="text-success font-bold">Lv.25</span> sub-skills. Takes <span class="text-warning font-bold">~2-4 months</span> for free/light players to unlock <span class="text-accent font-bold">2nd ingredient slot</span>, becoming core pillars.' : '先看性格與 <span class="text-success font-bold">Lv.10</span> &amp; <span class="text-success font-bold">Lv.25</span> 副技能,無課/微課約養成 <span class="text-warning font-bold">2~4個月</span>即可解鎖<span class="text-accent font-bold">第2種食材</span>,成為中流砥柱.'}</div>
               </div>
               <div class="strategy-item strategy-late">
-                <div class="strategy-badge badge-late">${isEN ? 'Late Game' : '後期投資'}</div>
-                <div class="strategy-title">${isEN ? 'Carefully Invest in <span class="text-accent font-bold">Lv.50~60</span>' : '慎選投入 <span class="text-accent font-bold">Lv.50~60</span>'}</div>
+                <div class="strategy-header">
+                  <span class="strategy-badge badge-late">${isEN ? 'Late Game' : '後期投資'}</span>
+                  <span class="strategy-title">${isEN ? 'Carefully Invest in <span class="text-accent font-bold">Lv.50~60</span>' : '慎選投入 <span class="text-accent font-bold">Lv.50~60</span>'}</span>
+                </div>
                 <div class="strategy-desc">${isEN ? 'Ensure sub-skills and nature reach graduation tier before heavily investing candies and <span class="text-warning font-bold">Main Skill Seeds</span> (<span class="text-warning font-bold">~5-10 months</span>).' : '確認副技能與性格皆達畢業級再投入大量糖果與<span class="text-warning font-bold">金種子</span>(約需 <span class="text-warning font-bold">5~10個月</span>養成時間).'}</div>
               </div>
               <div class="strategy-item strategy-energy">
-                <div class="strategy-badge badge-energy">${isEN ? 'Energy Core' : '活力核心'}</div>
-                <div class="strategy-title">${isEN ? 'Raise One Dedicated Healer First' : '優先養成一隻主力補師'}</div>
+                <div class="strategy-header">
+                  <span class="strategy-badge badge-energy">${isEN ? 'Energy Core' : '活力核心'}</span>
+                  <span class="strategy-title">${isEN ? 'Raise One Dedicated Healer First' : '優先養成一隻主力補師'}</span>
+                </div>
                 <div class="strategy-desc">${isEN ? 'Maintaining team energy <span class="text-success font-bold">&gt; 80%</span> grants <span class="text-accent font-bold">2.2x~2.5x</span> helping speed! Recommended healers: <span class="text-warning font-bold">Wigglytuff</span>, <span class="text-warning font-bold">Sylveon</span>, <span class="text-warning font-bold">Gardevoir</span>, or <span class="text-warning font-bold">Pawmot</span>.' : '全體活力維持在 <span class="text-success font-bold">80%以上</span>可享受 <span class="text-accent font-bold">2.2x~2.5x</span> 幫忙速度!建議先練:<span class="text-warning font-bold">胖可丁</span>,<span class="text-warning font-bold">仙子伊布</span>,<span class="text-warning font-bold">沙奈朵</span>或<span class="text-warning font-bold">巴布土撥</span>.'}</div>
               </div>
               <div class="strategy-item strategy-seeds">
-                <div class="strategy-badge badge-seeds">${isEN ? 'Seed Rules' : '種子機制'}</div>
-                <div class="strategy-title">${isEN ? 'Main &amp; Sub Skill Seed Rules' : '主技能與副技能種子規則'}</div>
+                <div class="strategy-header">
+                  <span class="strategy-badge badge-seeds">${isEN ? 'Seed Rules' : '種子機制'}</span>
+                  <span class="strategy-title">${isEN ? 'Main &amp; Sub Skill Seed Rules' : '主技能與副技能種子規則'}</span>
+                </div>
                 <div class="strategy-desc">${isEN ? 'Each evolution grants <span class="text-success font-bold">Main Skill Lv.+1</span> and <span class="text-accent font-bold">inventory +5</span>. Duplicate sub-skills cannot coexist (if S and M already exist, S cannot upgrade to M).' : '每次進化<span class="text-success font-bold">主技能+1</span>,<span class="text-accent font-bold">持有上限+5</span>.副技能不能同時存在相同名稱技能(如已有S與M,則S無法再升階為M).'}</div>
               </div>
             </div>
@@ -14537,13 +14559,13 @@
 
             <!-- 基準天數對照表 -->
             <div class="wiki-table-wrapper" style="margin-top: 18px;">
-              <table class="wiki-data-table">
+              <table class="wiki-data-table milestone-table">
                 <thead>
                   <tr>
-                    <th>${isEN ? 'Target Level' : '目標等級'}</th>
-                    <th>${isEN ? 'Total Required EXP' : '累計所需 EXP'}</th>
-                    <th>${isEN ? 'Base Sleep Days (100 EXP/Day)' : '無加成睡眠天數(每天100EXP)'}</th>
-                    <th>${isEN ? 'Milestone Significance' : '里程碑意義'}</th>
+                    <th class="col-milestone-lv">${isEN ? 'Target Level' : '目標等級'}</th>
+                    <th class="col-milestone-exp">${isEN ? 'Total Required EXP' : '累計所需 EXP'}</th>
+                    <th class="col-milestone-days">${isEN ? '100 EXP/Day' : '每天100EXP'}</th>
+                    <th class="col-milestone-note">${isEN ? 'Milestone Significance' : '里程碑意義'}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -14555,14 +14577,13 @@
                       : 'milestone-pink';
                     const rawNote = isEN ? (row.note_en || row.note) : row.note;
                     const formattedNote = rawNote
-                      .replace(/(第[一二三123]個副技能|第[一二三123]種食材|1st sub-skill|2nd sub-skill|3rd sub-skill|2nd ingredient slot|3rd ingredient slot)/g, '<span class="text-accent font-bold">$1</span>')
-                      .replace(/(前期核心目標|中階關鍵戰力|新手初期門檻|頂級完全體|後期主力培育|primary early goal|power spike|early milestone|max potential)/g, '<span class="text-warning font-bold">$1</span>');
+                      .replace(/(第[一二三123]個副技能|第[一二三123]種食材|1st sub-skill|2nd sub-skill|3rd sub-skill|2nd ingredient slot|3rd ingredient slot)/g, '<span class="text-accent font-bold">$1</span>');
                     return `
                     <tr>
-                      <td style="vertical-align: middle;"><span class="milestone-badge ${milestoneColor}">Lv. ${row.level}</span></td>
-                      <td class="font-bold" style="vertical-align: middle;">${row.totalExp.toLocaleString()} EXP</td>
-                      <td class="text-success font-bold" style="vertical-align: middle;">${row.days} ${isEN ? 'Days (approx. ' + Math.ceil(row.days / 2) + ' with events)' : '天(搭配活動約' + Math.ceil(row.days / 2) + '天)'}</td>
-                      <td class="text-secondary" style="vertical-align: middle;">${formattedNote}</td>
+                      <td class="col-milestone-lv" style="vertical-align: middle;"><span class="milestone-badge ${milestoneColor}">Lv. ${row.level}</span></td>
+                      <td class="col-milestone-exp font-bold" style="vertical-align: middle;">${row.totalExp.toLocaleString()} EXP</td>
+                      <td class="col-milestone-days text-success font-bold" style="vertical-align: middle;">${row.days} ${isEN ? 'Days' : '天'}</td>
+                      <td class="col-milestone-note text-secondary" style="vertical-align: middle;">${formattedNote}</td>
                     </tr>
                   `;}).join('')}
                 </tbody>
