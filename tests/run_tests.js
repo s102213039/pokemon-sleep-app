@@ -3815,15 +3815,16 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(indexHtml.includes('css/styles.css?v=20260907_6'), 'index.html styles.css must be v=20260907_6');
-  assert(indexHtml.includes('js/modules/wiki.js?v=20260907_6'), 'index.html wiki.js must be v=20260907_6');
-  assert(appIndexHtml.includes('css/styles.css?v=20260907_6'), 'app/index.html styles.css must be v=20260907_6');
-  assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_6'), 'app/index.html wiki.js must be v=20260907_6');
+  assert(indexHtml.includes('css/styles.css?v=20260907_7'), 'index.html styles.css must be v=20260907_7');
+  assert(indexHtml.includes('js/modules/wiki.js?v=20260907_7'), 'index.html wiki.js must be v=20260907_7');
+  assert(appIndexHtml.includes('css/styles.css?v=20260907_7'), 'app/index.html styles.css must be v=20260907_7');
+  assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_7'), 'app/index.html wiki.js must be v=20260907_7');
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless Layout, Single-Line Name:Desc, No Tier Badges & Half-Width Symbols', () => {
   const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
   const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
 
   // 1. Verify zero full-width punctuation in RATINGS_GUIDE_DATA and SLEEP_DAYS_BASELINE
   const ratingsData = wikiJs.slice(wikiJs.indexOf('const RATINGS_GUIDE_DATA ='), wikiJs.indexOf('const BERRY_VALUES_DATA ='));
@@ -3861,7 +3862,21 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless
   assert(stylesCss.includes('.milestone-table th.col-milestone-exp'), 'Milestone table must have column exp styling');
   assert(stylesCss.includes('.milestone-table th.col-milestone-days'), 'Milestone table must have column days styling');
 
-  // 6. Verify borderless styles in CSS
+  // 6. Verify section headings outside card and theme-adaptive typography
+  assert(wikiJs.includes('<div class="wiki-section-heading">'), 'Must include section heading outside card');
+  assert(stylesCss.includes('.wiki-section-title'), 'Must define wiki-section-title in CSS');
+  assert(stylesCss.includes('--text-title: #f8fafc;'), 'Must define --text-title in :root');
+  assert(stylesCss.includes('--text-title: #ffffff;'), 'Must define --text-title in onyx theme');
+  assert(stylesCss.includes('--text-title: #0f172a;'), 'Must define --text-title in dawn theme');
+
+  // 7. Verify values-active viewport locking prevents header cut-off
+  assert(wikiJs.includes("targetTab === 'values'"), 'wiki.js must check values subtab');
+  assert(wikiJs.includes("document.body.classList.add('values-active')"), 'wiki.js must add values-active');
+  assert(appJs.includes("document.body.classList.remove('values-active')"), 'app.js must remove values-active when switching away from wiki');
+  assert(stylesCss.includes('body.mobile-h5-app.values-active'), 'styles.css must lock body on values-active');
+  assert(stylesCss.includes('.mobile-h5-app #wiki-subpanel-values.active'), 'styles.css must style active values subpanel');
+
+  // 8. Verify borderless styles in CSS
   assert(stylesCss.includes('.rating-item {\n  display: flex;\n  align-items: center;\n  gap: 4px;\n  background: transparent;\n  border: none;'), 'Rating item must be borderless');
   assert(stylesCss.includes('#wiki-subpanel-ratings .calc-inputs-row {\n  background: transparent;\n  border: none;'), 'Calc row must be borderless in ratings');
 });

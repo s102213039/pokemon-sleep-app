@@ -1759,6 +1759,9 @@
 
   function switchBoxSubtab(tab) {
     if (!VALID_BOX_SUBTABS.includes(tab)) tab = 'list';
+    if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+      window.scrollTo(0, 0);
+    }
     try {
       const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
       if (storage) {

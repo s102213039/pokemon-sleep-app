@@ -30,6 +30,7 @@
   --border-color: rgba(255, 255, 255, 0.12);
   --border-color-subtle: rgba(255, 255, 255, 0.06);
   --text-main: #cbd5e1;
+  --text-title: #f8fafc;
   --text-primary: #cbd5e1;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
@@ -151,6 +152,7 @@
   --border-color: rgba(255, 255, 255, 0.16);
   --border-color-subtle: rgba(255, 255, 255, 0.08);
   --text-main: #d4d4d8;
+  --text-title: #ffffff;
   --text-primary: #d4d4d8;
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
@@ -242,6 +244,7 @@
   --border-color: rgba(15, 23, 42, 0.12);
   --border-color-subtle: rgba(15, 23, 42, 0.06);
   --text-main: #0f172a;
+  --text-title: #0f172a;
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-muted: #64748b;
@@ -332,6 +335,7 @@
   --border-color: rgba(71, 85, 105, 0.16);
   --border-color-subtle: rgba(71, 85, 105, 0.08);
   --text-main: #1e293b;
+  --text-title: #0f172a;
   --text-primary: #1e293b;
   --text-secondary: #475569;
   --text-muted: #64748b;
@@ -427,6 +431,7 @@
   --border-color: rgba(2, 132, 199, 0.16);
   --border-color-subtle: rgba(2, 132, 199, 0.08);
   --text-main: #0c4a6e;
+  --text-title: #082f49;
   --text-primary: #0c4a6e;
   --text-secondary: #0369a1;
   --text-muted: #0284c7;
@@ -476,6 +481,7 @@
   --border-color: rgba(24, 24, 27, 0.14);
   --border-color-subtle: rgba(24, 24, 27, 0.08);
   --text-main: #09090b;
+  --text-title: #09090b;
   --text-primary: #09090b;
   --text-secondary: #52525b;
   --text-muted: #71717a;
@@ -525,6 +531,7 @@
   --border-color: rgba(255, 255, 255, 0.12);
   --border-color-subtle: rgba(255, 255, 255, 0.06);
   --text-main: #e7e5e4;
+  --text-title: #fafaf9;
   --text-primary: #e7e5e4;
   --text-secondary: #a8a29e;
   --text-muted: #78716c;
@@ -574,6 +581,7 @@
   --border-color: rgba(255, 255, 255, 0.14);
   --border-color-subtle: rgba(255, 255, 255, 0.07);
   --text-main: #e2e8f0;
+  --text-title: #f8fafc;
   --text-primary: #e2e8f0;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
@@ -8227,6 +8235,30 @@ input[type="number"] {
   line-height: 1.4;
 }
 
+/* 🧩 百科全書外層主題標題與副標題 (Section Heading outside Card) */
+.wiki-section-heading {
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.wiki-section-title {
+  font-size: 16.5px;
+  font-weight: 800;
+  color: var(--text-title, #f8fafc);
+  margin: 0 0 4px 0;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wiki-section-subtitle {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
 /* 🧩 副技能 & 計算機卡片樣式 */
 .wiki-card {
   background: var(--bg-card);
@@ -8250,7 +8282,7 @@ input[type="number"] {
 .wiki-card-title {
   font-size: 17px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-title, #f8fafc);
 }
 
 .wiki-card-desc {
@@ -9022,7 +9054,7 @@ input[type="number"] {
 }
 
 .strategy-badge {
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
   text-transform: uppercase;
   margin-bottom: 0;
@@ -9057,15 +9089,15 @@ input[type="number"] {
 }
 
 .strategy-title {
-  font-size: 14px;
+  font-size: 14.5px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-title, #f8fafc);
   margin-bottom: 0;
   display: inline-block;
 }
 
 .strategy-desc {
-  font-size: 12.5px;
+  font-size: 13.5px;
   color: var(--text-secondary);
   line-height: 1.55;
 }
@@ -9078,14 +9110,14 @@ input[type="number"] {
 }
 
 .rating-specialty-desc {
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 700;
-  color: var(--text-secondary);
+  color: var(--text-title, #f8fafc);
   letter-spacing: 0.2px;
 }
 
 .rating-specialty-badge {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 6px;
@@ -9137,7 +9169,7 @@ input[type="number"] {
 }
 
 .rating-col-title {
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--accent-blue);
   margin-bottom: 10px;
@@ -9157,7 +9189,7 @@ input[type="number"] {
   border: none;
   border-radius: 0;
   padding: 4px 0;
-  font-size: 13px;
+  font-size: 13.5px;
   line-height: 1.5;
   flex-wrap: wrap;
 }
@@ -9186,7 +9218,7 @@ input[type="number"] {
 }
 
 .rating-item-detail {
-  font-size: 13px;
+  font-size: 13.5px;
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -9258,6 +9290,16 @@ input[type="number"] {
 }
 
 /* 里程碑天數表欄位寬度與單行控制 */
+.milestone-table th {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-title, #f8fafc);
+}
+
+.milestone-table td {
+  font-size: 13px;
+}
+
 .milestone-table th.col-milestone-lv,
 .milestone-table td.col-milestone-lv {
   white-space: nowrap;
@@ -14186,6 +14228,25 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   width: 100% !important;
 }
 
+.mobile-h5-app .wiki-section-heading {
+  margin-bottom: 10px !important;
+  padding: 0 2px !important;
+}
+
+.mobile-h5-app .wiki-section-title {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  color: var(--text-title, #f8fafc) !important;
+  margin: 0 0 3px 0 !important;
+}
+
+.mobile-h5-app .wiki-section-subtitle {
+  font-size: 12.5px !important;
+  line-height: 1.45 !important;
+  color: var(--text-secondary) !important;
+  margin: 0 !important;
+}
+
 .mobile-h5-app .wiki-card {
   background: var(--bg-card) !important;
   border: 1px solid var(--border-color) !important;
@@ -14207,12 +14268,12 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .wiki-card-title {
   font-size: 14.5px !important;
   font-weight: 700 !important;
-  color: var(--text-primary) !important;
+  color: var(--text-title, #f8fafc) !important;
   line-height: 1.3 !important;
 }
 
 .mobile-h5-app .wiki-card-desc {
-  font-size: 12px !important;
+  font-size: 13px !important;
   color: var(--text-secondary) !important;
   line-height: 1.5 !important;
   margin-bottom: 10px !important;
@@ -15134,7 +15195,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .strategy-badge {
-  font-size: 10.5px !important;
+  font-size: 11.5px !important;
   padding: 2px 6px !important;
   border-radius: 4px !important;
   margin-bottom: 0 !important;
@@ -15143,16 +15204,16 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .strategy-title {
-  font-size: 13.5px !important;
+  font-size: 14px !important;
   font-weight: 700 !important;
-  color: var(--text-primary) !important;
+  color: var(--text-title, #f8fafc) !important;
   margin-bottom: 0 !important;
   display: inline-block !important;
 }
 
 .mobile-h5-app .strategy-desc {
-  font-size: 11.5px !important;
-  line-height: 1.45 !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
   color: var(--text-secondary) !important;
 }
 
@@ -15163,10 +15224,14 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   flex-wrap: wrap !important;
 }
 
+.mobile-h5-app .rating-specialty-badge {
+  font-size: 11.5px !important;
+}
+
 .mobile-h5-app .rating-specialty-desc {
-  font-size: 12.5px !important;
+  font-size: 13.5px !important;
   font-weight: 700 !important;
-  color: var(--text-secondary) !important;
+  color: var(--text-title, #f8fafc) !important;
 }
 
 .mobile-h5-app .wiki-ratings-container {
@@ -15183,9 +15248,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .rating-col-title {
-  font-size: 12.5px !important;
+  font-size: 13.5px !important;
   font-weight: 700 !important;
-  color: var(--text-primary) !important;
   margin-bottom: 6px !important;
 }
 
@@ -15196,19 +15260,34 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border: none !important;
   border-radius: 0 !important;
   margin-bottom: 2px !important;
+  font-size: 13px !important;
 }
 
 .mobile-h5-app .rating-tier-tag {
   display: none !important;
 }
 
-.mobile-h5-app .rating-item-name {
+.mobile-h5-app .rating-item-badge {
+  display: inline-flex !important;
+  align-items: center !important;
   font-size: 12px !important;
+}
+
+.mobile-h5-app .rating-item-colon {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--text-secondary) !important;
+  margin: 0 4px 0 1px !important;
+}
+
+.mobile-h5-app .rating-item-name {
+  font-size: 13px !important;
   color: var(--text-primary) !important;
 }
 
 .mobile-h5-app .rating-item-detail {
-  font-size: 11px !important;
+  font-size: 12.5px !important;
+  line-height: 1.5 !important;
   color: var(--text-secondary) !important;
 }
 
@@ -15223,7 +15302,9 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .calc-label {
-  color: var(--text-primary) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--text-title, #f8fafc) !important;
 }
 
 .mobile-h5-app .calc-input-num {
@@ -15276,6 +15357,16 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   background: var(--bg-card) !important;
   color: var(--text-secondary) !important;
   border: 1px solid var(--border-color-subtle) !important;
+}
+
+.mobile-h5-app .milestone-table th {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-title, #f8fafc) !important;
+}
+
+.mobile-h5-app .milestone-table td {
+  font-size: 12.5px !important;
 }
 
 .mobile-h5-app .milestone-table th.col-milestone-lv,
@@ -15342,9 +15433,11 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   margin: 0 !important;
 }
 
-/* 🥗 食材天梯專屬：滿版視窗鎖定，完全禁止任何外部頁面滾動與多餘留白 */
+/* 🥗 食材天梯與 🫐 能量速查專屬：滿版視窗鎖定，完全禁止任何外部頁面滾動與多餘留白 */
 body.mobile-h5-app.ladder-active,
-.mobile-h5-app.ladder-active body {
+.mobile-h5-app.ladder-active body,
+body.mobile-h5-app.values-active,
+.mobile-h5-app.values-active body {
   overflow: hidden !important;
   height: 100dvh !important;
   max-height: 100dvh !important;
@@ -15352,7 +15445,9 @@ body.mobile-h5-app.ladder-active,
 }
 
 .mobile-h5-app.ladder-active #panel-wiki,
-.mobile-h5-app.ladder-active .wiki-main-container {
+.mobile-h5-app.ladder-active .wiki-main-container,
+.mobile-h5-app.values-active #panel-wiki,
+.mobile-h5-app.values-active .wiki-main-container {
   height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
   max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
   overflow: hidden !important;
@@ -15362,7 +15457,8 @@ body.mobile-h5-app.ladder-active,
   flex-direction: column !important;
 }
 
-.mobile-h5-app.ladder-active .wiki-subnav-bar {
+.mobile-h5-app.ladder-active .wiki-subnav-bar,
+.mobile-h5-app.values-active .wiki-subnav-bar {
   position: relative !important;
   top: 0 !important;
   flex-shrink: 0 !important;
@@ -15549,10 +15645,33 @@ body.mobile-h5-app.ladder-active,
 }
 
 /* 7. 🫐 Sub-Tab 4: 樹果與食材能量 */
+.mobile-h5-app #wiki-subpanel-values.active {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: calc(100dvh - 52px - 42px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+  max-height: calc(100dvh - 52px - 42px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+  padding: 6px 10px 10px 10px !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app.values-active .values-horizontal-container {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
 .mobile-h5-app .values-horizontal-section {
   padding: 0 !important;
   border-radius: 0 !important;
-  margin-bottom: 8px !important;
+  margin-bottom: 4px !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;

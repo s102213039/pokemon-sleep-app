@@ -1713,6 +1713,10 @@ if (typeof document !== 'undefined') {
           }
         } catch (e) {}
 
+        if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+          window.scrollTo(0, 0);
+        }
+
         // 移除所有 tab active 狀態
         [tabPokemon, tabRecipes, tabWiki, tabBox, tabNews].forEach(t => t && t.classList.remove('active'));
         // 隱藏所有 panels
@@ -1743,7 +1747,10 @@ if (typeof document !== 'undefined') {
         }
 
         if (target !== 'wiki') {
-          if (isMobileH5) document.body.classList.remove('ladder-active');
+          if (isMobileH5) {
+            document.body.classList.remove('ladder-active');
+            document.body.classList.remove('values-active');
+          }
           const curLadderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
           if (curLadderHandle) curLadderHandle.style.display = 'none';
           if (ladderSidebar) ladderSidebar.style.display = 'none';
@@ -1796,11 +1803,17 @@ if (typeof document !== 'undefined') {
             try { window.WikiDB.switchSubTab(wikiSubTab); } catch (e) {}
           }
           const isIng = wikiSubTab === 'ingredients';
+          const isVal = wikiSubTab === 'values';
           if (isMobileH5) {
             if (isIng) {
               document.body.classList.add('ladder-active');
             } else {
               document.body.classList.remove('ladder-active');
+            }
+            if (isVal) {
+              document.body.classList.add('values-active');
+            } else {
+              document.body.classList.remove('values-active');
             }
           }
           if (ladderSidebar) {

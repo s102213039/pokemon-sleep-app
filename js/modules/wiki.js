@@ -11579,6 +11579,15 @@
       } else {
         document.body.classList.remove('ladder-active');
       }
+      if (targetTab === 'values') {
+        document.body.classList.add('values-active');
+      } else {
+        document.body.classList.remove('values-active');
+      }
+    }
+
+    if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+      window.scrollTo(0, 0);
     }
     const ladderSidebar = document.getElementById('ladder-filter-sidebar');
     const ladderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
@@ -14473,13 +14482,14 @@
           ${renderValuesBoard()}
         </div>
 
-        <!-- 子分頁 5：培育與評級指南 (Ratings & Growth) -->
+        <!-- 子分頁 5: 培育與評級指南 (Ratings & Growth) -->
         <div id="wiki-subpanel-ratings" class="wiki-subpanel ${currentWikiSubTab === 'ratings' ? 'active' : ''}" style="${currentWikiSubTab === 'ratings' ? '' : 'display:none;'}">
-          <!-- 培育週期與核心思維 -->
+          <!-- 區塊 1: 核心養成週期指引 -->
+          <div class="wiki-section-heading">
+            <h3 class="wiki-section-title">${isEN ? 'Core Growth & Investment Cycle Guide' : '新手與進階養成核心週期指引'}</h3>
+            <p class="wiki-section-subtitle">${isEN ? 'Key milestones, energy management, and seed mechanics for early to late-game development.' : '掌握前期突破門檻,活力常駐加成與種子珍稀資源的養成核心思維.'}</p>
+          </div>
           <div class="wiki-card">
-            <div class="wiki-card-header">
-              <h3 class="wiki-card-title">${isEN ? 'Core Growth & Investment Cycle Guide' : '新手與進階養成核心週期指引'}</h3>
-            </div>
             <div class="wiki-strategy-grid">
               <div class="strategy-item strategy-early">
                 <div class="strategy-header">
@@ -14512,20 +14522,23 @@
             </div>
           </div>
 
-          <!-- 三大專長畢業評級榜 (Image 2 實體化) -->
-          <div class="wiki-ratings-container" style="margin-top: 24px;">
+          <!-- 區塊 2: 三大專長畢業評級榜 -->
+          <div class="wiki-section-heading" style="margin-top: 24px;">
+            <h3 class="wiki-section-title">${isEN ? 'Specialty Graduation Tier Guide' : '三大專長畢業評級指南'}</h3>
+            <p class="wiki-section-subtitle">${isEN ? 'Optimal sub-skill and nature combinations for Berry, Ingredient, and Skill specialists.' : '樹果,食材,技能三大專長的頂級副技能與黃金性格搭配方向.'}</p>
+          </div>
+          <div class="wiki-ratings-container">
             ${renderRatingCard(RATINGS_GUIDE_DATA.berry)}
             ${renderRatingCard(RATINGS_GUIDE_DATA.ingredient)}
             ${renderRatingCard(RATINGS_GUIDE_DATA.skill)}
           </div>
 
-          <!-- 睡眠天數升級試算器 (Image 2 實體化) -->
-          <div class="wiki-card wiki-calc-card" style="margin-top: 24px;">
-            <div class="wiki-card-header">
-              <h3 class="wiki-card-title">${isEN ? 'Pokémon Sleep EXP & Days Calculator' : '寶可夢睡眠升級天數計算器'}</h3>
-            </div>
-            <p class="wiki-card-desc">${isEN ? 'Based on 100 daily sleep score (100 base EXP), calculates required sleep days and EXP from current to target level.' : '依據每日睡滿100分(100 EXP基礎),計算從目前等級升至目標等級所需睡眠天數與經驗值.'}</p>
-            
+          <!-- 區塊 3: 睡眠天數升級試算器 -->
+          <div class="wiki-section-heading" style="margin-top: 24px;">
+            <h3 class="wiki-section-title">${isEN ? 'Pokémon Sleep EXP & Days Calculator' : '寶可夢睡眠升級天數計算器'}</h3>
+            <p class="wiki-section-subtitle">${isEN ? 'Based on 100 daily sleep score (100 base EXP), calculates required sleep days and EXP from current to target level.' : '依據每日睡滿100分(100 EXP基礎),計算從目前等級升至目標等級所需睡眠天數與經驗值.'}</p>
+          </div>
+          <div class="wiki-card wiki-calc-card">
             <div class="calc-inputs-row">
               <div class="calc-input-group">
                 <label class="calc-label" for="calc-sleep-cur-lv">${isEN ? 'Current Level:' : '目前等級:'}</label>
