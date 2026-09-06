@@ -667,8 +667,8 @@
         { name: "持有上限提升 M", color: "blue", val: "+12 個", val_en: "+12" },
         { name: "持有上限提升 L", color: "blue", val: "+18 個", val_en: "+18" }
       ],
-      desc: "可持有的樹果與食材上限提升 +6 / +12 / +18 個",
-      desc_en: "Increases carry capacity by +6 / +12 / +18."
+      desc: "持有上限+6 / +12 / +18個",
+      desc_en: "Carry capacity +6 / +12 / +18"
     },
     {
       category: "幫忙速度",
@@ -677,8 +677,8 @@
         { name: "幫忙速度 S", color: "white", val: "-7%", val_en: "-7%" },
         { name: "幫忙速度 M", color: "blue", val: "-14%", val_en: "-14%" }
       ],
-      desc: "提供幫助所需的時間減少 7% / 14%",
-      desc_en: "Reduces help time by 7% / 14%."
+      desc: "幫忙時間-7% / -14%",
+      desc_en: "Help time -7% / -14%"
     },
     {
       category: "技能機率",
@@ -687,8 +687,8 @@
         { name: "技能機率提升 S", color: "white", val: "+18%", val_en: "+18%" },
         { name: "技能機率提升 M", color: "blue", val: "+36%", val_en: "+36%" }
       ],
-      desc: "主技能發動機率提升 18% / 36%",
-      desc_en: "Boosts main skill trigger rate by +18% / +36%."
+      desc: "主技能機率+18% / +36%",
+      desc_en: "Skill trigger rate +18% / +36%"
     },
     {
       category: "食材機率",
@@ -697,8 +697,8 @@
         { name: "食材機率提升 S", color: "white", val: "+18%", val_en: "+18%" },
         { name: "食材機率提升 M", color: "blue", val: "+36%", val_en: "+36%" }
       ],
-      desc: "發現食材的機率提升 18% / 36%",
-      desc_en: "Boosts ingredient finding rate by +18% / +36%."
+      desc: "食材機率+18% / +36%",
+      desc_en: "Ingredient rate +18% / +36%"
     },
     {
       category: "樹果數量",
@@ -706,8 +706,8 @@
       skills: [
         { name: "樹果數量 S", color: "gold", val: "+1 個", val_en: "+1 Berry" }
       ],
-      desc: "每次找到樹果的數量 +1 個（樹果型寶可夢最強 T0 核心）",
-      desc_en: "Increases berries gathered by +1 (top-tier core for Berry specialists)."
+      desc: "樹果數量+1個(樹果型T0核心)",
+      desc_en: "Berries +1 (Berry T0 core)"
     },
     {
       category: "技能等級",
@@ -716,8 +716,8 @@
         { name: "技能等級提升 S", color: "blue", val: "+1 級", val_en: "+1 Lv." },
         { name: "技能等級提升 M", color: "gold", val: "+2 級", val_en: "+2 Lv." }
       ],
-      desc: "主技能等級提升 1 / 2 級",
-      desc_en: "Increases main skill level by +1 / +2."
+      desc: "主技能等級+1 / +2級",
+      desc_en: "Skill level +1 / +2"
     },
     {
       category: "全隊幫忙",
@@ -725,8 +725,8 @@
       skills: [
         { name: "幫手獎勵", color: "gold", val: "全隊 -5%", val_en: "Team -5%" }
       ],
-      desc: "全隊提供幫助時間減少 5%（隊伍最多疊加 5 隻 = 25%）",
-      desc_en: "Reduces team help time by 5% (stacks up to 25% with 5 helpers)."
+      desc: "全隊幫忙時間-5%(5 隻 = 25%)",
+      desc_en: "Team help time -5% (5 helpers = 25%)"
     },
     {
       category: "全隊活力",
@@ -734,8 +734,8 @@
       skills: [
         { name: "活力恢復獎勵", color: "gold", val: "全隊 1.12x", val_en: "Team 1.12x" }
       ],
-      desc: "全隊睡眠活力恢復量提高 1.12 倍",
-      desc_en: "Boosts team sleep energy recovery by 1.12x."
+      desc: "全隊睡眠活力恢復1.12x",
+      desc_en: "Team sleep energy 1.12x"
     },
     {
       category: "全隊經驗",
@@ -743,8 +743,8 @@
       skills: [
         { name: "睡眠 EXP 獎勵", color: "gold", val: "全隊 +14%", val_en: "Team +14%" }
       ],
-      desc: "全隊睡眠結算獲得 EXP 提高 14%",
-      desc_en: "Boosts team sleep EXP by +14%."
+      desc: "全隊睡眠EXP+14%",
+      desc_en: "Team sleep EXP +14%"
     },
     {
       category: "研究經驗",
@@ -752,8 +752,8 @@
       skills: [
         { name: "研究 EXP 獎勵", color: "gold", val: "個人 +6%", val_en: "Self +6%" }
       ],
-      desc: "玩家睡眠結算獲得的研究 EXP 提高 6%",
-      desc_en: "Boosts player research EXP by +6%."
+      desc: "研究EXP+6%",
+      desc_en: "Research EXP +6%"
     },
     {
       category: "夢之碎片",
@@ -761,8 +761,8 @@
       skills: [
         { name: "夢之碎片獎勵", color: "gold", val: "個人 +6%", val_en: "Self +6%" }
       ],
-      desc: "睡眠結算獲得夢之碎片數量提高 6%",
-      desc_en: "Boosts dream shards gained from sleep by +6%."
+      desc: "夢之碎片+6%",
+      desc_en: "Dream shards +6%"
     }
   ];
 
@@ -14252,52 +14252,22 @@
               <h3 class="wiki-card-title">${isEN ? 'Helping Speed Limits & Calculation Mechanics Guide' : '幫忙速度極限與計算機制指南'}</h3>
             </div>
             
-            <!-- 整合單一方框：幫忙速度核心機制總覽 (Unified Mechanics Summary Box) -->
-            <div class="wiki-speed-summary-box">
-              <div class="speed-summary-formula-bar">
-                <div class="formula-chip">
-                  <span class="formula-label">${isEN ? 'Interval Formula' : '間隔公式'}</span>
-                  <code>${isEN ? 'Final Interval = Base Time × (1 - Sub-Skill %, max 35%) × Nature Mod' : '最終間隔 = 基礎時間 × (1 - 副技能縮短%, 上限 35%) × 性格修正'}</code>
-                </div>
-                <div class="formula-chip">
-                  <span class="formula-label">${isEN ? 'Output Boost' : '產能換算'}</span>
-                  <code>${isEN ? 'Output Boost = (1 / Final Interval) - 1' : '產能提升 = (1 / 最終間隔) - 1'}</code>
-                </div>
+            <!-- 幫忙速度核心機制重點說明 (無外框直接展示，文字極簡化) -->
+            <div class="wiki-speed-summary-points">
+              <div class="summary-point-line">
+                <span class="point-prefix">1.</span>
+                <span class="point-title">${isEN ? 'Sub-Skills 35% Cap:' : '副技能上限 35%：'}</span>
+                <span class="point-desc">${isEN ? 'Combined reduction capped at 35%, excess is ignored.' : '副技能合計縮短上限為 35%，溢出無效。'}</span>
               </div>
-              <div class="speed-summary-points-grid">
-                <div class="summary-point-item">
-                  <div class="point-header">
-                    <span class="point-num">1</span>
-                    <span class="point-title">${isEN ? 'Sub-Skills 35% Hard Cap' : '副技能 35% 硬上限'}</span>
-                  </div>
-                  <div class="point-desc">
-                    ${isEN 
-                      ? 'Sub-skill interval reduction is capped at <strong>35% max</strong> (min 0.65x). Excess percentage is ignored.' 
-                      : '副技能縮短合計上限鎖死為 <strong>35%</strong>（間隔最低 0.65x），超過部分溢出無效。'}
-                  </div>
-                </div>
-                <div class="summary-point-item">
-                  <div class="point-header">
-                    <span class="point-num">2</span>
-                    <span class="point-title">${isEN ? 'Independent Nature Multiplier' : '性格獨立乘區機制'}</span>
-                  </div>
-                  <div class="point-desc">
-                    ${isEN 
-                      ? 'Multiplies directly after sub-skills (▲ 0.90x / ▼ 1.10x), fully exempt from the 35% sub-skill cap.' 
-                      : '直接與副技能結果相乘（▲ 0.90x / ▼ 1.10x），<strong>不受 35% 副技上限約束</strong>。'}
-                  </div>
-                </div>
-                <div class="summary-point-item">
-                  <div class="point-header">
-                    <span class="point-num">3</span>
-                    <span class="point-title">${isEN ? 'Inverse Output Frequency' : '時間縮短 vs 產能換算'}</span>
-                  </div>
-                  <div class="point-desc">
-                    ${isEN 
-                      ? 'Output is the inverse of time (<code>1 / Interval</code>). A 58.5% interval (-41.5% / 0.585x) yields a <strong>+70.94%</strong> production boost.' 
-                      : '產能為時間倒數（<code>1 / 最終間隔</code>）。時間縮短至 58.5%（-41.5% / 0.585x）等同產能暴增 <strong>+70.94%</strong>。'}
-                  </div>
-                </div>
+              <div class="summary-point-line">
+                <span class="point-prefix">2.</span>
+                <span class="point-title">${isEN ? 'Independent Nature:' : '性格獨立乘區：'}</span>
+                <span class="point-desc">${isEN ? 'Multiplies after sub-skills, exempt from 35% cap.' : '直接與副技能相乘，不受 35% 上限約束。'}</span>
+              </div>
+              <div class="summary-point-line">
+                <span class="point-prefix">3.</span>
+                <span class="point-title">${isEN ? 'Output Conversion:' : '產能換算：'}</span>
+                <span class="point-desc">${isEN ? 'Output is inverse of time. 58.5% interval equals +70.94% output.' : '產能為時間倒數，間隔 58.5% 等同產能提升 70.94%。'}</span>
               </div>
             </div>
 
@@ -14401,7 +14371,6 @@
                     <th style="text-align: center;">${isEN ? 'Stat' : '屬性項目'}</th>
                     <th style="text-align: center;">${isEN ? '▲ Nature' : '▲ 性格'}</th>
                     <th style="text-align: center;">${isEN ? '▼ Nature' : '▼ 性格'}</th>
-                    <th>${isEN ? 'Mechanic Details' : '影響機制說明'}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -14410,7 +14379,6 @@
                       <td class="font-bold text-accent" style="vertical-align: middle; text-align: center; white-space: nowrap;">${isEN ? (row.stat_en || row.stat) : row.stat}</td>
                       <td class="text-success font-bold" style="vertical-align: middle; text-align: center; white-space: nowrap;">${isEN ? (row.up_en || row.up) : row.up}</td>
                       <td class="text-danger font-bold" style="vertical-align: middle; text-align: center; white-space: nowrap;">${isEN ? (row.down_en || row.down) : row.down}</td>
-                      <td class="text-secondary" style="vertical-align: middle;">${isEN ? (row.desc_en || row.desc) : row.desc}</td>
                     </tr>
                   `).join('')}
                 </tbody>

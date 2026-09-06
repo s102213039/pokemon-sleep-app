@@ -3643,8 +3643,16 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Parentheses Removal & Sp
   });
 
   // 2. Sub-skills: ONLY 樹果數量 S and 幫手獎勵 contain parentheses, all other 9 categories must not
+  const helpingBonus = WikiDB.SUB_SKILLS_DATA.find(r => r.category === '全隊幫忙');
+  assert(helpingBonus && helpingBonus.desc === '全隊幫忙時間-5%(5 隻 = 25%)', `全隊幫忙 desc must match exact requested text, got: ${helpingBonus ? helpingBonus.desc : 'null'}`);
+  assertEquals(helpingBonus.desc_en, 'Team help time -5% (5 helpers = 25%)', '全隊幫忙 desc_en must be concise');
+
+  const berryFinding = WikiDB.SUB_SKILLS_DATA.find(r => r.category === '樹果數量');
+  assert(berryFinding && berryFinding.desc === '樹果數量+1個(樹果型T0核心)', `樹果數量 desc must match exact requested text, got: ${berryFinding ? berryFinding.desc : 'null'}`);
+  assertEquals(berryFinding.desc_en, 'Berries +1 (Berry T0 core)', '樹果數量 desc_en must be concise');
+
   WikiDB.SUB_SKILLS_DATA.forEach(row => {
-    const hasParenthesesZh = row.desc.includes('（') || row.desc.includes('）');
+    const hasParenthesesZh = row.desc.includes('（') || row.desc.includes('）') || row.desc.includes('(') || row.desc.includes(')');
     const hasParenthesesEn = row.desc_en.includes('(') || row.desc_en.includes(')');
     const isAllowed = row.category === '樹果數量' || row.category === '全隊幫忙';
 
@@ -3661,15 +3669,18 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Parentheses Removal & Sp
   const container = { innerHTML: '' };
   WikiDB.renderWikiLayout(container);
 
-  // Assert single summary box is present
-  assert(container.innerHTML.includes('wiki-speed-summary-box'), 'Wiki layout must contain wiki-speed-summary-box');
-  assert(container.innerHTML.includes('speed-summary-formula-bar'), 'Wiki layout must contain speed-summary-formula-bar');
-  assert(container.innerHTML.includes('speed-summary-points-grid'), 'Wiki layout must contain speed-summary-points-grid');
-  assert(container.innerHTML.includes('summary-point-item'), 'Wiki layout must contain summary-point-item');
+  // Assert borderless points list is present and boxes/formulas are removed
+  assert(container.innerHTML.includes('wiki-speed-summary-points'), 'Wiki layout must contain wiki-speed-summary-points');
+  assert(container.innerHTML.includes('summary-point-line'), 'Wiki layout must contain summary-point-line');
+  assert(!container.innerHTML.includes('wiki-speed-summary-box'), 'wiki-speed-summary-box outer box should be removed');
+  assert(!container.innerHTML.includes('speed-summary-formula-bar'), 'speed-summary-formula-bar should be removed');
+  assert(!container.innerHTML.includes('speed-summary-points-grid'), 'speed-summary-points-grid should be removed');
 
-  // Assert old 3 separate breakdown cards are gone
-  assert(!container.innerHTML.includes('wiki-speed-breakdown-grid'), 'wiki-speed-breakdown-grid should be replaced');
-  assert(!container.innerHTML.includes('wiki-speed-breakdown-card'), 'wiki-speed-breakdown-card should be replaced');
+  // Assert Nature 5-stat table has removed the 4th column (影響機制說明 / Mechanic Details)
+  const natureTablePart = container.innerHTML.substring(container.innerHTML.indexOf('wiki-card-natures-table'));
+  const natureTableHead = natureTablePart.substring(0, natureTablePart.indexOf('<tbody>'));
+  assert(!natureTableHead.includes('影響機制說明'), 'Nature table header must not contain 影響機制說明');
+  assert(!natureTableHead.includes('Mechanic Details'), 'Nature table header must not contain Mechanic Details');
 
   // Assert subskills overview card does NOT have wiki-rule-banner
   const subskillsOverviewPart = container.innerHTML.substring(container.innerHTML.indexOf('wiki-card-subskills-overview'));

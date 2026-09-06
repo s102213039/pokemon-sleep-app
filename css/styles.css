@@ -8507,112 +8507,42 @@ input[type="number"] {
   margin-bottom: 0;
 }
 
-/* 幫忙速度極限與計算機制指南 - 整合單一方框 */
-.wiki-speed-summary-box {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin-bottom: 16px;
-}
-
-.speed-summary-formula-bar {
+/* 幫忙速度極限與計算機制指南 - 精簡要點展示 (無外框) */
+.wiki-speed-summary-points {
+  margin: 6px 0 16px 0;
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 14px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  flex-direction: column;
+  gap: 6px;
 }
 
-.speed-summary-formula-bar .formula-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 12px;
-  flex: 1 1 320px;
+.summary-point-line {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
 }
 
-.speed-summary-formula-bar .formula-label {
+.summary-point-line .point-prefix {
   font-weight: 700;
   color: var(--accent-color, #4f46e5);
+}
+
+.summary-point-line .point-title {
+  font-weight: 700;
+  color: var(--text-primary);
   white-space: nowrap;
 }
 
-.speed-summary-formula-bar code {
-  color: var(--text-primary);
-  font-size: 12px;
-  background: transparent;
-  padding: 0;
-  word-break: break-word;
-}
-
-.speed-summary-points-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.summary-point-item {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.06));
-  border-radius: 8px;
-  padding: 10px 12px;
-  display: flex;
-  flex-direction: column;
-}
-
-.summary-point-item .point-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-
-.summary-point-item .point-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  background: var(--accent-color, #4f46e5);
-  color: #ffffff;
-  border-radius: 50%;
-  font-size: 11px;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.summary-point-item .point-title {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.summary-point-item .point-desc {
-  font-size: 12px;
+.summary-point-line .point-desc {
   color: var(--text-secondary);
-  line-height: 1.55;
-}
-
-.summary-point-item .point-desc code {
-  font-size: 11px;
-  padding: 1px 4px;
 }
 
 @media (max-width: 768px) {
-  .speed-summary-points-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-  .speed-summary-formula-bar .formula-chip {
-    flex: 1 1 100%;
-    flex-direction: column;
-    align-items: flex-start;
+  .summary-point-line {
+    font-size: 12px;
+    flex-wrap: wrap;
     gap: 4px;
   }
 }
@@ -8667,29 +8597,6 @@ input[type="number"] {
 [data-theme="dawn"] .wiki-speed-breakdown-card,
 [data-theme="emerald"] .wiki-speed-breakdown-card {
   background: #f8fafc;
-  border-color: #e2e8f0;
-}
-
-[data-theme="dawn"] .wiki-speed-summary-box,
-[data-theme="emerald"] .wiki-speed-summary-box {
-  background: #f8fafc;
-  border-color: #e2e8f0;
-}
-
-[data-theme="dawn"] .speed-summary-formula-bar,
-[data-theme="emerald"] .speed-summary-formula-bar {
-  border-bottom-color: #e2e8f0;
-}
-
-[data-theme="dawn"] .speed-summary-formula-bar .formula-chip,
-[data-theme="emerald"] .speed-summary-formula-bar .formula-chip {
-  background: #ffffff;
-  border-color: #cbd5e1;
-}
-
-[data-theme="dawn"] .summary-point-item,
-[data-theme="emerald"] .summary-point-item {
-  background: #ffffff;
   border-color: #e2e8f0;
 }
 
@@ -14662,19 +14569,14 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   gap: 10px !important;
 }
 
-.mobile-h5-app .wiki-speed-summary-box {
-  padding: 10px 12px !important;
+.mobile-h5-app .wiki-speed-summary-points {
+  margin: 2px 0 12px 0 !important;
+  gap: 6px !important;
 }
 
-.mobile-h5-app .speed-summary-points-grid {
-  grid-template-columns: 1fr !important;
-  gap: 8px !important;
-}
-
-.mobile-h5-app .speed-summary-formula-bar .formula-chip {
-  flex: 1 1 100% !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
+.mobile-h5-app .summary-point-line {
+  font-size: 12px !important;
+  flex-wrap: wrap !important;
   gap: 4px !important;
 }
 
