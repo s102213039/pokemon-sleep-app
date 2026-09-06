@@ -3700,6 +3700,29 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Parentheses Removal & Sp
   assert(!subskillsTablePart.includes('wiki-rule-banner'), 'wiki-card-subskills-overview must not contain wiki-rule-banner');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Wiki Subskills & Nature Tab Uniform Itemview Height and Multi-Line Support', () => {
+  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // Verify desktop uniform itemview height definition
+  assert(cssContent.includes('#wiki-subpanel-subskills .wiki-data-table tbody tr') || cssContent.includes('.wiki-subskills-table tbody tr'),
+    'styles.css must define desktop subpanel table row height');
+  assert(cssContent.includes('height: 38px'), 'styles.css must specify 38px desktop uniform row height');
+
+  // Verify mobile H5 uniform itemview height definition
+  assert(cssContent.includes('.mobile-h5-app #wiki-subpanel-subskills .wiki-data-table tbody tr'),
+    'styles.css must define mobile H5 subpanel table row height');
+  assert(cssContent.includes('.mobile-h5-app .wiki-subskills-table tbody tr'),
+    'styles.css must define mobile H5 subskills table row height');
+  assert(cssContent.includes('height: 36px !important'),
+    'styles.css must specify 36px mobile uniform row height');
+
+  // Verify multi-line rows are unconstrained (no overflow:hidden or max-height clamping on table cells)
+  const mobileSubskillsPart = cssContent.substring(cssContent.indexOf('.mobile-h5-app .wiki-subskills-table td'));
+  const mobileSubskillsBlock = mobileSubskillsPart.substring(0, mobileSubskillsPart.indexOf('}'));
+  assert(!mobileSubskillsBlock.includes('overflow: hidden'), 'Subskills table cells must not clamp or overflow-hide multi-line content');
+  assert(!mobileSubskillsBlock.includes('max-height'), 'Subskills table cells must not set max-height to permit multi-line expansion');
+});
+
 
 
 // Final Summary Output

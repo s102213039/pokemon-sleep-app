@@ -8580,6 +8580,19 @@ input[type="number"] {
   white-space: nowrap;
 }
 
+/* 副技性格tab內的列表 - 單行 itemview 高度一致（多行自動擴展） */
+#wiki-subpanel-subskills .wiki-data-table tbody tr,
+.wiki-subskills-table tbody tr {
+  height: 38px;
+}
+
+#wiki-subpanel-subskills .wiki-data-table tbody td,
+.wiki-subskills-table tbody td {
+  height: 38px;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
 /* 明亮主題自適應 */
 [data-theme="dawn"] .wiki-speed-metric-card,
 [data-theme="emerald"] .wiki-speed-metric-card {
@@ -14594,6 +14607,19 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border-collapse: collapse !important;
 }
 
+/* 副技性格tab內的列表 (H5) - 單行 itemview 高度一致（多行自動擴展） */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-data-table tbody tr,
+.mobile-h5-app .wiki-subskills-table tbody tr {
+  height: 36px !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-data-table tbody td,
+.mobile-h5-app .wiki-subskills-table tbody td {
+  height: 36px !important;
+  box-sizing: border-box !important;
+  vertical-align: middle !important;
+}
+
 /* 幫忙速度手機版網格與卡片 */
 .mobile-h5-app .wiki-speed-metric-grid {
   grid-template-columns: 1fr !important;
@@ -14736,12 +14762,20 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   font-weight: 700 !important;
 }
 
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table tbody tr,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table tbody tr,
+.mobile-h5-app .wiki-subskills-table tbody tr {
+  height: 36px !important;
+}
+
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table td,
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td,
 .mobile-h5-app .wiki-subskills-table td {
   padding: 4px 4px !important;
   font-size: 12px !important;
   vertical-align: middle !important;
+  height: 36px !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table th:nth-child(1),
@@ -14785,6 +14819,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   gap: 3px 4px !important;
   align-items: center !important;
   justify-content: center !important;
+  min-height: 22px !important;
 }
 
 /* 表格 4: 性格五維屬性倍率表 */
