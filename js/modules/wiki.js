@@ -667,7 +667,7 @@
         { name: "持有上限 M", color: "blue", val: "+12 個", val_en: "+12" },
         { name: "持有上限 L", color: "blue", val: "+18 個", val_en: "+18" }
       ],
-      desc: "持有上限+6 / +12 / +18個",
+      desc: "持有上限+6/+12/+18個",
       desc_en: "Carry capacity +6 / +12 / +18"
     },
     {
@@ -677,7 +677,7 @@
         { name: "幫忙速度 S", color: "white", val: "-7%", val_en: "-7%" },
         { name: "幫忙速度 M", color: "blue", val: "-14%", val_en: "-14%" }
       ],
-      desc: "幫忙時間-7% / -14%",
+      desc: "幫忙時間-7%/-14%",
       desc_en: "Help time -7% / -14%"
     },
     {
@@ -687,7 +687,7 @@
         { name: "技能機率 S", color: "white", val: "+18%", val_en: "+18%" },
         { name: "技能機率 M", color: "blue", val: "+36%", val_en: "+36%" }
       ],
-      desc: "主技能機率+18% / +36%",
+      desc: "主技能機率+18%/+36%",
       desc_en: "Skill trigger rate +18% / +36%"
     },
     {
@@ -697,7 +697,7 @@
         { name: "食材機率 S", color: "white", val: "+18%", val_en: "+18%" },
         { name: "食材機率 M", color: "blue", val: "+36%", val_en: "+36%" }
       ],
-      desc: "食材機率+18% / +36%",
+      desc: "食材機率+18%/+36%",
       desc_en: "Ingredient rate +18% / +36%"
     },
     {
@@ -716,7 +716,7 @@
         { name: "技能等級 S", color: "blue", val: "+1 級", val_en: "+1 Lv." },
         { name: "技能等級 M", color: "gold", val: "+2 級", val_en: "+2 Lv." }
       ],
-      desc: "主技能等級+1 / +2級",
+      desc: "主技能等級+1/+2級",
       desc_en: "Skill level +1 / +2"
     },
     {
@@ -725,7 +725,7 @@
       skills: [
         { name: "幫手獎勵", color: "gold", val: "全隊 -5%", val_en: "Team -5%" }
       ],
-      desc: "全隊幫忙時間-5%(5 隻 = 25%)",
+      desc: "全隊幫忙時間-5%(5隻=25%)",
       desc_en: "Team help time -5% (5 helpers = 25%)"
     },
     {
@@ -1086,7 +1086,7 @@
       up_en: "-10%",
       down: "+7.5%", 
       down_en: "+7.5%",
-      desc: "影響所有樹果, 食材與技能判定間隔",
+      desc: "影響所有樹果,食材與技能判定間隔",
       desc_en: "Affects help interval for berries, ingredients, and skills."
     },
     { 
@@ -14256,18 +14256,18 @@
             <div class="wiki-speed-summary-points">
               <div class="summary-point-line">
                 <span class="point-prefix">1.</span>
-                <span class="point-title">${isEN ? 'Sub-Skills 35% Cap:' : '副技能上限 35%:'}</span>
-                <span class="point-desc">${isEN ? 'Combined reduction capped at 35%, excess is ignored.' : '副技能合計縮短上限為 35%, 溢出無效.'}</span>
+                <span class="point-title">${isEN ? 'Sub-Skills 35% Cap:' : '副技能上限35%:'}</span>
+                <span class="point-desc">${isEN ? 'Combined reduction capped at 35%, excess is ignored.' : '副技能合計縮短上限為35%,溢出無效.'}</span>
               </div>
               <div class="summary-point-line">
                 <span class="point-prefix">2.</span>
                 <span class="point-title">${isEN ? 'Independent Nature:' : '性格獨立乘區:'}</span>
-                <span class="point-desc">${isEN ? 'Multiplies after sub-skills, exempt from 35% cap.' : '直接與副技能相乘, 不受 35% 上限約束.'}</span>
+                <span class="point-desc">${isEN ? 'Multiplies after sub-skills, exempt from 35% cap.' : '直接與副技能相乘,不受35%上限約束.'}</span>
               </div>
               <div class="summary-point-line">
                 <span class="point-prefix">3.</span>
                 <span class="point-title">${isEN ? 'Output Conversion:' : '產能換算:'}</span>
-                <span class="point-desc">${isEN ? 'Output is inverse of time. 58.5% interval equals +70.94% output.' : '產能為時間倒數, 間隔 58.5% 等同產能提升 70.94%.'}</span>
+                <span class="point-desc">${isEN ? 'Output is inverse of time. 58.5% interval equals +70.94% output.' : '產能為時間倒數,間隔58.5%等同產能提升70.94%.'}</span>
               </div>
             </div>
 

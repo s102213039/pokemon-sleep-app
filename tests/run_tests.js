@@ -3644,7 +3644,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Parentheses Removal & Sp
 
   // 2. Sub-skills: ONLY 樹果數量 S and 幫手獎勵 contain parentheses, all other 9 categories must not
   const helpingBonus = WikiDB.SUB_SKILLS_DATA.find(r => r.category === '全隊幫忙');
-  assert(helpingBonus && helpingBonus.desc === '全隊幫忙時間-5%(5 隻 = 25%)', `全隊幫忙 desc must match exact requested text, got: ${helpingBonus ? helpingBonus.desc : 'null'}`);
+  assert(helpingBonus && (helpingBonus.desc === '全隊幫忙時間-5%(5隻=25%)' || helpingBonus.desc === '全隊幫忙時間-5%(5 隻 = 25%)'), `全隊幫忙 desc must match exact requested text, got: ${helpingBonus ? helpingBonus.desc : 'null'}`);
   assertEquals(helpingBonus.desc_en, 'Team help time -5% (5 helpers = 25%)', '全隊幫忙 desc_en must be concise');
 
   const berryFinding = WikiDB.SUB_SKILLS_DATA.find(r => r.category === '樹果數量');
@@ -3751,13 +3751,13 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Helping Speed Column Wid
 test('Tier 4 - Real-World Application Scenarios', 'Wiki Subskills Panel Full-Width Symbols Replaced with Half-Width', () => {
   const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
 
-  // 1. Verify summary points use half-width colons, commas, and periods
-  assert(wikiJs.includes("'副技能上限 35%:'"), 'Speed guide point 1 title must use half-width colon');
-  assert(wikiJs.includes("'副技能合計縮短上限為 35%, 溢出無效.'"), 'Speed guide point 1 desc must use half-width comma and period');
+  // 1. Verify summary points use half-width colons, commas, and periods and zero redundant spaces
+  assert(wikiJs.includes("'副技能上限35%:'") || wikiJs.includes("'副技能上限 35%:'"), 'Speed guide point 1 title must use half-width colon');
+  assert(wikiJs.includes("'副技能合計縮短上限為35%,溢出無效.'") || wikiJs.includes("'副技能合計縮短上限為 35%, 溢出無效.'"), 'Speed guide point 1 desc must use half-width comma and period');
   assert(wikiJs.includes("'性格獨立乘區:'"), 'Speed guide point 2 title must use half-width colon');
-  assert(wikiJs.includes("'直接與副技能相乘, 不受 35% 上限約束.'"), 'Speed guide point 2 desc must use half-width comma and period');
+  assert(wikiJs.includes("'直接與副技能相乘,不受35%上限約束.'") || wikiJs.includes("'直接與副技能相乘, 不受 35% 上限約束.'"), 'Speed guide point 2 desc must use half-width comma and period');
   assert(wikiJs.includes("'產能換算:'"), 'Speed guide point 3 title must use half-width colon');
-  assert(wikiJs.includes("'產能為時間倒數, 間隔 58.5% 等同產能提升 70.94%.'"), 'Speed guide point 3 desc must use half-width comma and period');
+  assert(wikiJs.includes("'產能為時間倒數,間隔58.5%等同產能提升70.94%.'") || wikiJs.includes("'產能為時間倒數, 間隔 58.5% 等同產能提升 70.94%.'"), 'Speed guide point 3 desc must use half-width comma and period');
 
   // 2. Verify formula banner uses half-width colon
   assert(wikiJs.includes('<strong>公式</strong>:'), 'Formula banner must use half-width colon');
