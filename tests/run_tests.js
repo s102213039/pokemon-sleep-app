@@ -3669,6 +3669,13 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Parentheses Removal & Sp
   const container = { innerHTML: '' };
   WikiDB.renderWikiLayout(container);
 
+  // Assert no subskill badge name in SUB_SKILLS_DATA has "提升"
+  WikiDB.SUB_SKILLS_DATA.forEach(row => {
+    row.skills.forEach(s => {
+      assert(!s.name.includes('提升'), `Subskill name ${s.name} should not contain '提升'`);
+    });
+  });
+
   // Assert borderless points list is present and boxes/formulas are removed
   assert(container.innerHTML.includes('wiki-speed-summary-points'), 'Wiki layout must contain wiki-speed-summary-points');
   assert(container.innerHTML.includes('summary-point-line'), 'Wiki layout must contain summary-point-line');
@@ -3681,6 +3688,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Parentheses Removal & Sp
   const natureTableHead = natureTablePart.substring(0, natureTablePart.indexOf('<tbody>'));
   assert(!natureTableHead.includes('影響機制說明'), 'Nature table header must not contain 影響機制說明');
   assert(!natureTableHead.includes('Mechanic Details'), 'Nature table header must not contain Mechanic Details');
+
+  // Assert subskills overview table has dedicated classes
+  assert(container.innerHTML.includes('wiki-subskills-table'), 'Subskills table must have wiki-subskills-table class');
+  assert(container.innerHTML.includes('col-subskills-tags'), 'Subskills table must have col-subskills-tags class');
+  assert(container.innerHTML.includes('col-subskills-effect'), 'Subskills table must have col-subskills-effect class');
 
   // Assert subskills overview card does NOT have wiki-rule-banner
   const subskillsOverviewPart = container.innerHTML.substring(container.innerHTML.indexOf('wiki-card-subskills-overview'));

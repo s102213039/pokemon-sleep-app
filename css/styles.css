@@ -8547,6 +8547,39 @@ input[type="number"] {
   }
 }
 
+/* 副技能階級與數值總覽 - 緊湊排版 */
+.wiki-subskills-table th.col-subskills-tags,
+.wiki-subskills-table td.col-subskills-tags {
+  width: 54%;
+  text-align: center;
+  padding: 5px 8px;
+}
+
+.wiki-subskills-table th.col-subskills-effect,
+.wiki-subskills-table td.col-subskills-effect {
+  width: 46%;
+  text-align: left;
+  padding: 5px 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.wiki-subskills-table .wiki-subskill-tags-col {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 3px 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+.wiki-subskills-table .wiki-skill-badge {
+  font-size: 11.5px;
+  padding: 1.5px 6px;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+}
+
 /* 明亮主題自適應 */
 [data-theme="dawn"] .wiki-speed-metric-card,
 [data-theme="emerald"] .wiki-speed-metric-card {
@@ -14480,16 +14513,19 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 /* 🧩 子分頁 2: 副技能與性格指南 (手機端無外框極致放大排版) */
 .wiki-subskill-tags-col {
   display: flex;
-  gap: 4px;
+  gap: 3px 4px;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
 }
 
 .mobile-h5-app .wiki-subskill-tags-col {
   display: flex !important;
-  flex-direction: column !important;
-  gap: 3px !important;
-  align-items: flex-start !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 3px 4px !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .mobile-h5-app .col-hide-mobile {
@@ -14691,51 +14727,64 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   letter-spacing: -0.2px !important;
 }
 
-/* 表格 3: 副技能階級與數值總覽 (2 欄化極致寬敞) */
+/* 表格 3: 副技能階級與數值總覽 (緊湊排版、技能標籤寬敞可一行塞2個) */
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table th,
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th {
-  padding: 8px 6px !important;
-  font-size: 13px !important;
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th,
+.mobile-h5-app .wiki-subskills-table th {
+  padding: 6px 4px !important;
+  font-size: 12.5px !important;
   font-weight: 700 !important;
 }
 
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table td,
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td {
-  padding: 9px 8px !important;
-  font-size: 13px !important;
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td,
+.mobile-h5-app .wiki-subskills-table td {
+  padding: 4px 4px !important;
+  font-size: 12px !important;
   vertical-align: middle !important;
 }
 
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table th:nth-child(1),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table td:nth-child(1),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(1),
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(1) {
-  width: 36% !important;
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(1),
+.mobile-h5-app .wiki-subskills-table .col-subskills-tags {
+  width: 58% !important;
   text-align: center !important;
+  padding: 4px 2px !important;
 }
 
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table th:nth-child(2),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table td:nth-child(2),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(2),
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(2) {
-  width: 64% !important;
-  font-size: 12.5px !important;
-  line-height: 1.5 !important;
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(2),
+.mobile-h5-app .wiki-subskills-table .col-subskills-effect {
+  width: 42% !important;
+  font-size: 11.5px !important;
+  line-height: 1.35 !important;
   text-align: left !important;
+  padding: 4px 6px !important;
 }
 
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-skill-badge,
-.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-skill-badge {
-  font-size: 12px !important;
-  padding: 3px 8px !important;
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-skill-badge,
+.mobile-h5-app .wiki-subskills-table .wiki-skill-badge {
+  font-size: 11px !important;
+  padding: 1.5px 5px !important;
   font-weight: 700 !important;
+  letter-spacing: -0.2px !important;
+  white-space: nowrap !important;
+  line-height: 1.3 !important;
 }
 
-.mobile-h5-app .wiki-subskill-tags-col {
+.mobile-h5-app .wiki-subskills-table .wiki-subskill-tags-col,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-subskill-tags-col {
   display: flex !important;
-  flex-direction: column !important;
-  gap: 4px !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 3px 4px !important;
   align-items: center !important;
+  justify-content: center !important;
 }
 
 /* 表格 4: 性格五維屬性倍率表 */

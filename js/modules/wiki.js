@@ -663,9 +663,9 @@
       category: "持有上限",
       category_en: "Inventory",
       skills: [
-        { name: "持有上限提升 S", color: "white", val: "+6 個", val_en: "+6" },
-        { name: "持有上限提升 M", color: "blue", val: "+12 個", val_en: "+12" },
-        { name: "持有上限提升 L", color: "blue", val: "+18 個", val_en: "+18" }
+        { name: "持有上限 S", color: "white", val: "+6 個", val_en: "+6" },
+        { name: "持有上限 M", color: "blue", val: "+12 個", val_en: "+12" },
+        { name: "持有上限 L", color: "blue", val: "+18 個", val_en: "+18" }
       ],
       desc: "持有上限+6 / +12 / +18個",
       desc_en: "Carry capacity +6 / +12 / +18"
@@ -684,8 +684,8 @@
       category: "技能機率",
       category_en: "Skill Trigger",
       skills: [
-        { name: "技能機率提升 S", color: "white", val: "+18%", val_en: "+18%" },
-        { name: "技能機率提升 M", color: "blue", val: "+36%", val_en: "+36%" }
+        { name: "技能機率 S", color: "white", val: "+18%", val_en: "+18%" },
+        { name: "技能機率 M", color: "blue", val: "+36%", val_en: "+36%" }
       ],
       desc: "主技能機率+18% / +36%",
       desc_en: "Skill trigger rate +18% / +36%"
@@ -694,8 +694,8 @@
       category: "食材機率",
       category_en: "Ingredient",
       skills: [
-        { name: "食材機率提升 S", color: "white", val: "+18%", val_en: "+18%" },
-        { name: "食材機率提升 M", color: "blue", val: "+36%", val_en: "+36%" }
+        { name: "食材機率 S", color: "white", val: "+18%", val_en: "+18%" },
+        { name: "食材機率 M", color: "blue", val: "+36%", val_en: "+36%" }
       ],
       desc: "食材機率+18% / +36%",
       desc_en: "Ingredient rate +18% / +36%"
@@ -713,8 +713,8 @@
       category: "技能等級",
       category_en: "Skill Level",
       skills: [
-        { name: "技能等級提升 S", color: "blue", val: "+1 級", val_en: "+1 Lv." },
-        { name: "技能等級提升 M", color: "gold", val: "+2 級", val_en: "+2 Lv." }
+        { name: "技能等級 S", color: "blue", val: "+1 級", val_en: "+1 Lv." },
+        { name: "技能等級 M", color: "gold", val: "+2 級", val_en: "+2 Lv." }
       ],
       desc: "主技能等級+1 / +2級",
       desc_en: "Skill level +1 / +2"
@@ -14336,22 +14336,22 @@
               <h3 class="wiki-card-title">${isEN ? 'Sub-Skills Complete Tier & Stats Overview' : '副技能階級與數值總覽'}</h3>
             </div>
             <div class="wiki-table-wrapper" style="margin-top: 10px;">
-              <table class="wiki-data-table">
+              <table class="wiki-data-table wiki-subskills-table">
                 <thead>
                   <tr>
-                    <th style="text-align: center;">${isEN ? 'Skill Tags' : '技能標籤'}</th>
-                    <th>${isEN ? 'Detailed Effect' : '詳細效果說明'}</th>
+                    <th class="col-subskills-tags" style="text-align: center;">${isEN ? 'Skill Tags' : '技能標籤'}</th>
+                    <th class="col-subskills-effect">${isEN ? 'Detailed Effect' : '詳細效果說明'}</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${SUB_SKILLS_DATA.map(row => `
                     <tr>
-                      <td style="vertical-align: middle; text-align: center;">
+                      <td class="col-subskills-tags" style="vertical-align: middle; text-align: center;">
                         <div class="wiki-subskill-tags-col">
                           ${row.skills.map(s => renderSkillBadge(s)).join('')}
                         </div>
                       </td>
-                      <td class="text-secondary" style="vertical-align: middle;">${isEN ? (row.desc_en || row.desc) : row.desc}</td>
+                      <td class="col-subskills-effect text-secondary" style="vertical-align: middle;">${isEN ? (row.desc_en || row.desc) : row.desc}</td>
                     </tr>
                   `).join('')}
                 </tbody>
