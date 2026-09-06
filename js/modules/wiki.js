@@ -11725,6 +11725,18 @@
   let ladderSpecialtyFilter = 'ALL'; // 'ALL' | 'INGREDIENT' | 'BERRY' | 'SKILL'
   let ladderSortOrder = 'ENERGY_ASC'; // 'ENERGY_ASC' | 'ENERGY_DESC' | 'YIELD_DESC' | 'DEMAND_DESC'
   let ladderViewMode = 'coordinate'; // 'coordinate' | 'list'
+  let ladderTop15Only = true; // 預設開啟前 15 名排行（有效降低 DOM 節點並消除行動端卡頓）
+
+  function toggleLadderTop15(enabled) {
+    ladderTop15Only = enabled !== undefined ? !!enabled : !ladderTop15Only;
+    const switchInput = document.getElementById('ladder-top15-switch');
+    if (switchInput) switchInput.checked = ladderTop15Only;
+    refreshCoordinateLadder();
+  }
+
+  function getLadderTop15Only() {
+    return ladderTop15Only;
+  }
 
   // 3.0.0 食材天梯相同產量配方動態合併核心 (Dynamic Recipe Wildcard Merger)
   function mergeRecipeCodes(recipeList) {
@@ -12074,7 +12086,10 @@
     isLadderIngS = false;
     isLadderSpeedM = false;
     isLadderSpeedS = false;
+    ladderTop15Only = true;
 
+    const top15 = document.getElementById('ladder-top15-switch');
+    if (top15) top15.checked = true;
     const ingM = document.getElementById('ladder-ing-m-toggle');
     if (ingM) ingM.checked = false;
     const ingS = document.getElementById('ladder-ing-s-toggle');
@@ -13207,6 +13222,43 @@
             const isTopTrack = trackIdx < 5;
             const popupDirectionClass = isTopTrack ? 'popup-down' : 'popup-up';
 
+            // 先計算該軌道最高產量 (Track Max Yield)
+            let trackMaxYield = 0;
+            filteredPokemonList.forEach(p => {
+              p.variants.forEach(v => {
+                const scaled = Math.round(v.count * mult);
+                if (scaled > trackMaxYield) trackMaxYield = scaled;
+              });
+            });
+
+            let trackNodes = [];
+            filteredPokemonList.forEach((p, pIdx) => {
+              const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
+              p.variants.forEach((v, vIdx) => {
+                const scaledCount = Math.round(v.count * mult);
+                const isTopNode = (scaledCount === trackMaxYield && scaledCount > 0) || v.isTop || (p.isTop && v.recipe === p.recipe);
+                const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
+                trackNodes.push({
+                  p,
+                  pIdx,
+                  pkmDisplayName,
+                  v,
+                  vIdx,
+                  scaledCount,
+                  isTopNode,
+                  zIndex
+                });
+              });
+            });
+
+            // 預設或開啟前15名篩選：僅保留產量前 15 名的節點（大幅削減 70% DOM 節點，徹底消除卡頓）
+            if (ladderTop15Only && trackNodes.length > 15) {
+              trackNodes.sort((a, b) => b.scaledCount - a.scaledCount);
+              trackNodes = trackNodes.slice(0, 15);
+            }
+
+            const visiblePkmGroupNames = new Set(trackNodes.map(n => n.p.name));
+
             return `
             <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''}" data-ladder-ing="${ing.id}">
               <div class="ladder-track-header clickable-ing-header" onclick="window.WikiDB.openIngredientRankingModal('${ing.id}')" role="button" tabindex="0" title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isEN ? 'Key Dish: ' : '核心大菜：'}${dishName} · ${isEN ? 'Click to view rankings' : '點擊查看產量排名'}">
@@ -13227,9 +13279,11 @@
                 <!-- 跨度連接線容器 -->
                 <div class="ladder-spans-container">
                   ${filteredPokemonList.map(p => {
+                    if (ladderTop15Only && !visiblePkmGroupNames.has(p.name)) return '';
+                    const pkmNodes = trackNodes.filter(n => n.p.name === p.name);
+                    if (pkmNodes.length < 2) return '';
                     const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
-                    if (p.variants.length < 2) return '';
-                    const scaledCounts = p.variants.map(v => Math.round(v.count * mult));
+                    const scaledCounts = pkmNodes.map(n => n.scaledCount);
                     const minCount = Math.min(...scaledCounts);
                     const maxCount = Math.max(...scaledCounts);
                     const minPct = parseFloat(getPosPct(minCount));
@@ -13248,35 +13302,6 @@
                 <!-- 寶可夢型態節點容器 (Nodes Container) -->
                 <div class="ladder-nodes-container">
                   ${(() => {
-                    // 先計算該軌道最高產量 (Track Max Yield)
-                    let trackMaxYield = 0;
-                    filteredPokemonList.forEach(p => {
-                      p.variants.forEach(v => {
-                        const scaled = Math.round(v.count * mult);
-                        if (scaled > trackMaxYield) trackMaxYield = scaled;
-                      });
-                    });
-
-                    const trackNodes = [];
-                    filteredPokemonList.forEach((p, pIdx) => {
-                      const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
-                      p.variants.forEach((v, vIdx) => {
-                        const scaledCount = Math.round(v.count * mult);
-                        const isTopNode = (scaledCount === trackMaxYield && scaledCount > 0) || v.isTop || (p.isTop && v.recipe === p.recipe);
-                        const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
-                        trackNodes.push({
-                          p,
-                          pIdx,
-                          pkmDisplayName,
-                          v,
-                          vIdx,
-                          scaledCount,
-                          isTopNode,
-                          zIndex
-                        });
-                      });
-                    });
-
                     // 依據 scaledCount 分組以計算重疊節點之水平偏移量 (Cluster Stagger Offset)
                     const countGroups = {};
                     trackNodes.forEach(node => {
@@ -13321,7 +13346,7 @@
                              data-recipe="${node.v.recipe}"
                              style="left: ${leftStyle}; z-index: ${node.zIndex};">
                           <div class="node-avatar-wrapper">
-                            <img src="${node.p.icon}" class="node-avatar-img" alt="${node.pkmDisplayName}">
+                            <img src="${node.p.icon}" class="node-avatar-img" alt="${node.pkmDisplayName}" loading="lazy" decoding="async">
                           </div>
                           <div class="node-count-badge">${node.scaledCount}</div>
                           
@@ -13617,6 +13642,10 @@
 
         return true;
       });
+
+      if (ladderTop15Only && filteredTiers.length > 15) {
+        filteredTiers = filteredTiers.slice(0, 15);
+      }
 
       const maxDailyBase = filteredTiers.length > 0 ? (filteredTiers[0].rawCount !== undefined ? filteredTiers[0].rawCount : filteredTiers[0].count) : 0;
       const scaledMax = (parseFloat(maxDailyBase) * mult).toFixed(1);
@@ -13983,7 +14012,14 @@
           <div class="sidebar-title-group">
             <span class="sidebar-title">${isEN ? 'Ladder Filters' : '天梯篩選器'}</span>
           </div>
-          <button type="button" id="ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${isEN ? 'Reset All Filters' : '重設所有條件'}">${isEN ? 'Reset All' : '全部重設'}</button>
+          <div class="sidebar-header-actions" style="display: flex; align-items: center; gap: 8px;">
+            <label class="ladder-top15-switch-label" title="${isEN ? 'Show Top 15 Only' : '預設開啟前15名排行'}">
+              <input type="checkbox" id="ladder-top15-switch" class="ladder-switch-input" ${ladderTop15Only ? 'checked' : ''} onchange="window.WikiDB.toggleLadderTop15(this.checked)">
+              <span class="ladder-switch-slider"></span>
+              <span class="ladder-switch-text">${isEN ? 'Top 15' : '前15名'}</span>
+            </label>
+            <button type="button" id="ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${isEN ? 'Reset All Filters' : '重設所有條件'}">${isEN ? 'Reset All' : '全部重設'}</button>
+          </div>
         </div>
 
         <div class="sidebar-scrollable-content">
@@ -14302,15 +14338,14 @@
                       </td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
                         ${row.natureBadge === 'up' 
-                          ? `<span class="matrix-rate-up">${isEN ? (row.nature_en || '▲ Speed Up') : row.nature}</span>` 
+                          ? `<span class="matrix-rate-up font-bold" style="font-size: 15px;" title="${isEN ? 'Speed Up' : '幫忙速度上升'}">▲</span>` 
                           : (row.natureBadge === 'down' 
-                            ? `<span class="matrix-rate-down">${isEN ? (row.nature_en || '▼ Speed Down') : row.nature}</span>` 
-                            : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`)}
+                            ? `<span class="matrix-rate-down font-bold" style="font-size: 15px;" title="${isEN ? 'Speed Down' : '幫忙速度下降'}">▼</span>` 
+                            : `<span class="text-muted font-bold" style="font-size: 15px;" title="${isEN ? 'Neutral' : '無修正'}">-</span>`)}
                       </td>
                       <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><code class="matrix-calc-code">${row.calc}</code></td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
-                        <span class="font-bold" style="font-size: 13px;">${row.intervalDisplay}</span>
-                        <span class="text-secondary" style="font-size: 11px; margin-left: 2px;">(${row.intervalDiff})</span>
+                        <span class="font-bold text-accent" style="font-size: 13.5px;">${row.intervalRatio}x</span>
                       </td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
                         <span class="${isBoostPositive ? 'matrix-pct-up' : 'matrix-pct-down'} font-bold" style="font-size: 13px;">${row.outputBoostDisplay}</span>
@@ -14503,8 +14538,8 @@
         </div>
       </div>
 
-      <!-- 遮罩層 (Backdrop for Mobile Drawer) -->
-      <div id="ladder-sidebar-backdrop" class="sidebar-backdrop" onclick="window.WikiDB.closeLadderSidebar()"></div>
+      <!-- 遮罩層 (Backdrop for Mobile Drawer - 阻斷點擊穿透) -->
+      <div id="ladder-sidebar-backdrop" class="sidebar-backdrop" onclick="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeLadderSidebar()" ontouchend="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeLadderSidebar()" ontouchstart="event.stopPropagation()"></div>
     `;
   }
 
@@ -14566,6 +14601,8 @@
     updateBerryIsland: updateBerryIsland,
     toggleBerryFavorite: toggleBerryFavorite,
     toggleFavorite: toggleBerryFavorite,
+    toggleLadderTop15: toggleLadderTop15,
+    getLadderTop15Only: getLadderTop15Only,
     toggleLadderIngM: toggleLadderIngM,
     toggleLadderIngS: toggleLadderIngS,
     toggleLadderSpeedM: toggleLadderSpeedM,
@@ -14615,6 +14652,8 @@
   window.updateBerryLevel = updateBerryLevel;
   window.updateBerryIsland = updateBerryIsland;
   window.toggleBerryFavorite = toggleBerryFavorite;
+  window.toggleLadderTop15 = toggleLadderTop15;
+  window.getLadderTop15Only = getLadderTop15Only;
   window.toggleLadderIngM = toggleLadderIngM;
   window.toggleLadderIngS = toggleLadderIngS;
   window.toggleLadderSpeedM = toggleLadderSpeedM;

@@ -3336,6 +3336,242 @@ test('Tier 1 - Feature Coverage', 'Ingredient Ladder Multi-Criteria Track Sortin
   assertEquals(tracksAfterReset[0], 'apple', 'Track order after reset must return to Apple first');
 });
 
+test('Tier 1 - Feature Coverage', 'Wiki Subskills Helping Speed Matrix Nature/Interval Multiplier Formatting', () => {
+  const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const mockStorage = new Map([['pksleep_lang', 'zh-TW']]);
+  const container = { innerHTML: '' };
+  const ctx = {
+    localStorage: {
+      getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+      setItem: (k, v) => mockStorage.set(k, String(v)),
+      removeItem: (k) => mockStorage.delete(k)
+    },
+    window: {
+      localStorage: {
+        getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+        setItem: (k, v) => mockStorage.set(k, String(v)),
+        removeItem: (k) => mockStorage.delete(k)
+      },
+      addEventListener: () => {},
+      I18N: { getLanguage: () => 'zh-TW', getIngredientName: (s) => s, getPokemonName: (s) => s }
+    },
+    document: {
+      body: { classList: { contains: () => false }, appendChild: () => {} },
+      documentElement: { setAttribute: () => {} },
+      getElementById: () => null,
+      querySelectorAll: () => [],
+      createElement: () => ({ setAttribute: () => {}, innerHTML: '', className: '', id: '', style: {} }),
+      addEventListener: () => {}
+    },
+    console: console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(wikiJs, ctx);
+
+  const WikiDB = ctx.window.WikiDB;
+  assert(WikiDB && typeof WikiDB.renderWikiLayout === 'function', 'WikiDB.renderWikiLayout must exist');
+  WikiDB.renderWikiLayout(container);
+
+  const html = container.innerHTML;
+  assert(html.includes('幫忙速度極限與計算機制指南'), 'Wiki layout missing Helping Speed Matrix table');
+
+  // 1. Check nature arrow formatting: only ▲, ▼, - in the content
+  assert(html.includes('class="matrix-rate-up font-bold" style="font-size: 15px;" title="幫忙速度上升">▲</span>'), 'Nature up must render as ▲');
+  assert(html.includes('class="matrix-rate-down font-bold" style="font-size: 15px;" title="幫忙速度下降">▼</span>'), 'Nature down must render as ▼');
+  assert(html.includes('class="text-muted font-bold" style="font-size: 15px;" title="無修正">-</span>'), 'Nature neutral must render as -');
+
+  // 2. Check helping interval ratio format: ${row.intervalRatio}x
+  assert(html.includes('0.585x'), 'Interval ratio should include 0.585x');
+  assert(html.includes('0.666x'), 'Interval ratio should include 0.666x');
+  assert(html.includes('0.711x'), 'Interval ratio should include 0.711x');
+  assert(html.includes('1x') || html.includes('1.000x'), 'Interval ratio should include 1x');
+  assert(html.includes('1.1x') || html.includes('1.100x'), 'Interval ratio should include 1.1x');
+});
+
+test('Tier 1 - Feature Coverage', 'Ingredient Ladder Top 15 Mobile Optimization and Lazy Loading', () => {
+  const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  let switchEl = { checked: true };
+  let badgeEl = { textContent: '', style: { display: 'none', setProperty: () => {} } };
+  let coordinateContainer = { innerHTML: '', style: { setProperty: () => {} } };
+  const mockStorage = new Map([['pksleep_lang', 'zh-TW']]);
+  const ctx = {
+    localStorage: {
+      getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+      setItem: (k, v) => mockStorage.set(k, String(v)),
+      removeItem: (k) => mockStorage.delete(k)
+    },
+    window: {
+      localStorage: {
+        getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+        setItem: (k, v) => mockStorage.set(k, String(v)),
+        removeItem: (k) => mockStorage.delete(k)
+      },
+      addEventListener: () => {},
+      I18N: { getLanguage: () => 'zh-TW', getIngredientName: (s) => s, getPokemonName: (s) => s }
+    },
+    document: {
+      body: { classList: { contains: () => false }, appendChild: () => {} },
+      documentElement: { setAttribute: () => {} },
+      getElementById: (id) => {
+        if (id === 'ladder-top15-switch') return switchEl;
+        if (id === 'ladder-sidebar-bookmark-badge') return badgeEl;
+        if (id === 'wiki-ingredient-ladder-coordinate') return coordinateContainer;
+        return null;
+      },
+      querySelectorAll: () => [],
+      createElement: () => ({ setAttribute: () => {}, innerHTML: '', className: '', id: '', style: {} }),
+      addEventListener: () => {}
+    },
+    console: console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(wikiJs, ctx);
+
+  const WikiDB = ctx.window.WikiDB;
+  assert(typeof WikiDB.getLadderTop15Only === 'function', 'WikiDB.getLadderTop15Only must exist');
+  assert(typeof WikiDB.toggleLadderTop15 === 'function', 'WikiDB.toggleLadderTop15 must exist');
+
+  // 1. Default state is true (Top 15 enabled)
+  assertEquals(WikiDB.getLadderTop15Only(), true, 'Default ladderTop15Only must be true');
+
+  // 2. Render ladder and check node counts when Top 15 is active
+  WikiDB.refreshCoordinateLadder();
+  const htmlTop15 = coordinateContainer.innerHTML;
+  assert(htmlTop15.length > 0, 'Coordinate ladder HTML must not be empty');
+
+  // Verify lazy loading attributes on avatar images
+  assert(htmlTop15.includes('loading="lazy"'), 'Ladder avatars must have loading="lazy"');
+  assert(htmlTop15.includes('decoding="async"'), 'Ladder avatars must have decoding="async"');
+
+  // Verify track nodes are sliced to <= 15
+  const trackMatches = htmlTop15.split('<div class="ladder-track-row');
+  trackMatches.slice(1).forEach(trackHtml => {
+    const nodeCount = (trackHtml.match(/class="ladder-node\s/g) || []).length;
+    assert(nodeCount <= 15, `Track node count when Top 15 enabled must be <= 15, found ${nodeCount}`);
+  });
+
+  // 3. Toggle to false (Show all nodes)
+  WikiDB.toggleLadderTop15(false);
+  assertEquals(WikiDB.getLadderTop15Only(), false, 'ladderTop15Only should be false after toggle');
+  WikiDB.refreshCoordinateLadder();
+  const htmlAll = coordinateContainer.innerHTML;
+  const allTracks = htmlAll.split('<div class="ladder-track-row');
+  let hasTrackMoreThan15 = false;
+  allTracks.slice(1).forEach(trackHtml => {
+    const nodeCount = (trackHtml.match(/class="ladder-node\s/g) || []).length;
+    if (nodeCount > 15) hasTrackMoreThan15 = true;
+  });
+  assert(hasTrackMoreThan15, 'When Top 15 disabled, tracks with >15 Pokemon should render more than 15 nodes');
+
+  // 4. resetLadderFilters restores Top 15
+  WikiDB.resetLadderFilters();
+  assertEquals(WikiDB.getLadderTop15Only(), true, 'resetLadderFilters must restore ladderTop15Only to true');
+});
+
+test('Tier 1 - Feature Coverage', 'Mobile App Pull-to-Refresh Mechanism and Indicator Styles', () => {
+  const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+  const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // Verify PTR styles in CSS
+  assert(css.includes('.ptr-indicator'), 'styles.css must define .ptr-indicator');
+  assert(css.includes('.ptr-inner'), 'styles.css must define .ptr-inner');
+  assert(css.includes('.ptr-icon'), 'styles.css must define .ptr-icon');
+  assert(css.includes('@keyframes ptr-spin'), 'styles.css must define @keyframes ptr-spin');
+  assert(css.includes('.ptr-indicator.ptr-refreshing .ptr-icon'), 'styles.css must define refreshing animation');
+
+  // Verify PTR logic in app.js
+  assert(appJs.includes('function initPullToRefresh()'), 'app.js must define initPullToRefresh');
+  assert(appJs.includes('window.initPullToRefresh = initPullToRefresh'), 'app.js must export window.initPullToRefresh');
+  assert(appJs.includes('THRESHOLD = 64'), 'PTR threshold must be 64px');
+  assert(appJs.includes('window.location.reload()'), 'PTR must trigger window.location.reload() on release');
+});
+
+test('Tier 1 - Feature Coverage', 'Filter Drawer Swipe-to-Close and Ghost Click Prevention (Backdrop Dismiss)', () => {
+  const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+  assert(appJs.includes('function bindBackdropDismiss('), 'app.js must define bindBackdropDismiss');
+  assert(appJs.includes('window.bindBackdropDismiss = bindBackdropDismiss'), 'app.js must export bindBackdropDismiss');
+  assert(appJs.includes('window.toggleSidebar = toggleSidebar'), 'app.js must export window.toggleSidebar');
+
+  // Verify swipe right close helper does not block buttons/badges
+  assert(appJs.includes("target.tagName === 'INPUT' && (target.type === 'range'"), 'Swipe close helper should only ignore range sliders');
+
+  // Verify backdrop event consumer behavior
+  let touchEndPrevented = false;
+  let touchEndStopped = false;
+  let clickPrevented = false;
+  let clickStopped = false;
+  let closeCalledCount = 0;
+
+  const mockBackdrop = {
+    listeners: {},
+    addEventListener(event, fn) {
+      this.listeners[event] = fn;
+    }
+  };
+
+  const closeFn = () => { closeCalledCount++; };
+
+  const ctx = {
+    window: {},
+    document: {
+      documentElement: { setAttribute: () => {} },
+      body: { classList: { contains: () => false } },
+      getElementById: () => null,
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    console: console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(appJs, ctx);
+
+  assert(typeof ctx.window.bindBackdropDismiss === 'function', 'window.bindBackdropDismiss must be a function');
+  ctx.window.bindBackdropDismiss(mockBackdrop, closeFn);
+
+  assert(mockBackdrop.listeners['touchstart'], 'touchstart listener must be attached');
+  assert(mockBackdrop.listeners['touchend'], 'touchend listener must be attached');
+  assert(mockBackdrop.listeners['click'], 'click listener must be attached');
+
+  // Test touchend consumes and invokes closeFn
+  mockBackdrop.listeners['touchend']({
+    preventDefault: () => { touchEndPrevented = true; },
+    stopPropagation: () => { touchEndStopped = true; }
+  });
+  assert(touchEndPrevented, 'touchend must call e.preventDefault() to prevent ghost click');
+  assert(touchEndStopped, 'touchend must call e.stopPropagation()');
+  assertEquals(closeCalledCount, 1, 'closeFn should be invoked on touchend');
+
+  // Test click consumes and invokes closeFn
+  mockBackdrop.listeners['click']({
+    preventDefault: () => { clickPrevented = true; },
+    stopPropagation: () => { clickStopped = true; }
+  });
+  assert(clickPrevented, 'click must call e.preventDefault()');
+  assert(clickStopped, 'click must call e.stopPropagation()');
+  assertEquals(closeCalledCount, 2, 'closeFn should be invoked on click');
+});
+
+test('Tier 1 - Feature Coverage', 'Mobile Pokemon Table Safe Area and Bottom Dock Viewport Clearance CSS', () => {
+  const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // 1. Check Pokemon table tr:last-child td bottom padding
+  assert(css.includes('.pokemon-table tbody tr:last-child td'), 'styles.css must style .pokemon-table tbody tr:last-child td');
+  assert(css.includes('env(safe-area-inset-bottom'), 'tr:last-child td must account for env(safe-area-inset-bottom)');
+
+  // 2. Check mobile viewport panel height formula for #panel-pokemon
+  assert(css.includes('#panel-pokemon {'), 'styles.css must define mobile #panel-pokemon height rule');
+  assert(css.includes('100dvh - 52px - env(safe-area-inset-top'), '#panel-pokemon must deduct top bar and bottom dock clearance');
+
+  // 3. Check drawer smooth slide transition delay for visibility
+  assert(css.includes('visibility 0s 0.28s'), 'Drawer sidebars must delay visibility change until slide-out completes');
+});
+
 
 
 // Final Summary Output

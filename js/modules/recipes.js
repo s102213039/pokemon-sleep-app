@@ -811,9 +811,21 @@
 
     if (backdrop && sidebar && !backdrop._hasListener) {
       backdrop._hasListener = true;
-      backdrop.addEventListener('click', () => {
-        toggleRecipeSidebar(false);
-      });
+      if (typeof window.bindBackdropDismiss === 'function') {
+        window.bindBackdropDismiss(backdrop, () => toggleRecipeSidebar(false));
+      } else {
+        backdrop.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: false });
+        backdrop.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleRecipeSidebar(false);
+        }, { passive: false });
+        backdrop.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleRecipeSidebar(false);
+        });
+      }
     }
 
     if (sidebar) {

@@ -1269,6 +1269,145 @@ Object.assign(PokemonApp, {
   }
 });
 
+// 🛑 遮罩層專屬事件消費器 (Backdrop Event Consumer - 徹底阻斷穿透至底層元件)
+function bindBackdropDismiss(backdropEl, closeFn) {
+  if (!backdropEl || backdropEl._hasDismissBound) return;
+  backdropEl._hasDismissBound = true;
+
+  backdropEl.addEventListener('touchstart', (e) => {
+    e.stopPropagation();
+  }, { passive: false });
+
+  backdropEl.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    closeFn();
+  }, { passive: false });
+
+  backdropEl.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    closeFn();
+  });
+}
+
+// 📱 手勢右滑收合控制 (Swipe Right to Close Sidebar Helper - 支援全組件區域右滑且不干擾點選與滑桿)
+function bindSidebarSwipeRightToClose(sidebarEl, closeFn) {
+  if (!sidebarEl || sidebarEl._hasSwipeRightListener) return;
+  sidebarEl._hasSwipeRightListener = true;
+
+  let startX = 0;
+  let startY = 0;
+  let startTime = 0;
+  let isIgnored = false;
+
+  sidebarEl.addEventListener('touchstart', (e) => {
+    if (!e.touches || !e.touches[0]) return;
+    const touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+    startTime = Date.now();
+    isIgnored = false;
+
+    const target = e.target;
+    // 僅排除水平滑桿本體操作（防止拖動數值滑桿時誤觸收合）
+    if (target && target.tagName === 'INPUT' && (target.type === 'range' || target.classList.contains('rf-slider'))) {
+      isIgnored = true;
+      return;
+    }
+
+    // 若觸控點在右側邊緣滾動條區域（距右邊框 24px 內），視為滾動條操作，不觸發收合
+    const sidebarRect = sidebarEl.getBoundingClientRect ? sidebarEl.getBoundingClientRect() : { right: 1000 };
+    if (touch.clientX > sidebarRect.right - 24) {
+      isIgnored = true;
+      return;
+    }
+  }, { passive: true });
+
+  sidebarEl.addEventListener('touchmove', (e) => {
+    if (isIgnored || !e.touches || !e.touches[0]) return;
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const deltaX = currentX - startX;
+    const deltaY = currentY - startY;
+
+    // 若主要為縱向上下滑動瀏覽列表（縱向位移大於橫向且 > 8px），立即忽略本輪收合手勢，保證正常縱向滾動流暢
+    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 8) {
+      isIgnored = true;
+    }
+  }, { passive: false });
+
+  sidebarEl.addEventListener('touchend', (e) => {
+    if (isIgnored || !e.changedTouches || !e.changedTouches[0]) return;
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+    const diffX = endX - startX;
+    const diffY = endY - startY;
+    const elapsed = Date.now() - startTime;
+
+    // 判定向右橫向滑動收合（位移 >= 45px、橫向位移大於縱向位移的 1.2 倍、時間 < 800ms）
+    if (diffX >= 45 && diffX > Math.abs(diffY) * 1.2 && elapsed < 800) {
+      if (!sidebarEl.classList.contains('collapsed')) {
+        closeFn();
+      }
+    }
+  }, { passive: true });
+}
+
+function toggleSidebar(forceState) {
+  if (typeof PokemonApp !== 'undefined' && typeof PokemonApp.toggleSidebar === 'function' && PokemonApp.toggleSidebar !== toggleSidebar) {
+    return PokemonApp.toggleSidebar(forceState);
+  }
+  const sidebar = (typeof document !== 'undefined') ? document.getElementById('pokemon-filter-sidebar') : null;
+  const bookmarkHandle = (typeof document !== 'undefined') ? document.getElementById('sidebar-bookmark-handle') : null;
+  const backdrop = (typeof document !== 'undefined') ? document.getElementById('sidebar-backdrop') : null;
+  if (!sidebar) return;
+  const isCurrentlyCollapsed = sidebar.classList.contains('collapsed');
+  const shouldCollapse = forceState !== undefined ? !forceState : !isCurrentlyCollapsed;
+
+  if (shouldCollapse) {
+    sidebar.classList.add('collapsed');
+    if (backdrop) backdrop.classList.remove('active');
+    if (bookmarkHandle) {
+      bookmarkHandle.setAttribute('aria-expanded', 'false');
+      bookmarkHandle.title = '展開篩選側邊欄';
+      bookmarkHandle.style.opacity = '1';
+      bookmarkHandle.style.pointerEvents = 'auto';
+      bookmarkHandle.style.display = 'flex';
+      bookmarkHandle.style.visibility = 'visible';
+    }
+    if (typeof setSidebarSavedState === 'function') {
+      setSidebarSavedState('pksleep_dex_sidebar_open', false);
+    }
+  } else {
+    sidebar.classList.remove('collapsed');
+    if (typeof window !== 'undefined' && window.innerWidth <= 1024 && backdrop) {
+      backdrop.classList.add('active');
+    }
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    if (bookmarkHandle) {
+      bookmarkHandle.setAttribute('aria-expanded', 'true');
+      bookmarkHandle.title = '收合篩選側邊欄';
+      if (isMobileH5) {
+        bookmarkHandle.style.opacity = '0';
+        bookmarkHandle.style.pointerEvents = 'none';
+      }
+    }
+    if (typeof setSidebarSavedState === 'function') {
+      setSidebarSavedState('pksleep_dex_sidebar_open', true);
+    }
+  }
+}
+
+if (typeof window !== 'undefined') {
+  window.bindBackdropDismiss = bindBackdropDismiss;
+  window.bindSidebarSwipeRightToClose = bindSidebarSwipeRightToClose;
+  window.toggleSidebar = toggleSidebar;
+}
+PokemonApp.bindBackdropDismiss = bindBackdropDismiss;
+PokemonApp.bindSidebarSwipeRightToClose = bindSidebarSwipeRightToClose;
+PokemonApp.toggleSidebar = toggleSidebar;
+
 if (typeof document !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
     let allPokemons = [];
@@ -2193,6 +2332,8 @@ if (typeof document !== 'undefined') {
         }
       }
 
+      const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+
       function toggleSidebar(forceState) {
         if (!sidebar) return;
         const isCurrentlyCollapsed = sidebar.classList.contains('collapsed');
@@ -2204,10 +2345,10 @@ if (typeof document !== 'undefined') {
           if (bookmarkHandle) {
             bookmarkHandle.setAttribute('aria-expanded', 'false');
             bookmarkHandle.title = '展開篩選側邊欄';
-            if (isMobileH5) {
-              bookmarkHandle.style.opacity = '1';
-              bookmarkHandle.style.pointerEvents = 'auto';
-            }
+            bookmarkHandle.style.opacity = '1';
+            bookmarkHandle.style.pointerEvents = 'auto';
+            bookmarkHandle.style.display = 'flex';
+            bookmarkHandle.style.visibility = 'visible';
           }
           setSidebarSavedState('pksleep_dex_sidebar_open', false);
         } else {
@@ -2226,6 +2367,8 @@ if (typeof document !== 'undefined') {
           setSidebarSavedState('pksleep_dex_sidebar_open', true);
         }
       }
+      window.toggleSidebar = toggleSidebar;
+      PokemonApp.toggleSidebar = toggleSidebar;
 
       // 依暫存狀態初始化側邊欄展開/收合
       const initialDexOpen = getSidebarSavedState('pksleep_dex_sidebar_open', true);
@@ -2237,8 +2380,6 @@ if (typeof document !== 'undefined') {
         }
       }
 
-      const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
-
       if (bookmarkHandle) {
         if (typeof makeFloatingDraggable === 'function' && isMobileH5) {
           makeFloatingDraggable(bookmarkHandle, () => toggleSidebar());
@@ -2249,11 +2390,35 @@ if (typeof document !== 'undefined') {
       if (closeBtn) {
         closeBtn.addEventListener('click', () => toggleSidebar(false));
       }
+
+      // 🛑 遮罩層專屬事件消費器 (Backdrop Event Consumer - 徹底阻斷穿透至底層元件)
+      function bindBackdropDismiss(backdropEl, closeFn) {
+        if (!backdropEl || backdropEl._hasDismissBound) return;
+        backdropEl._hasDismissBound = true;
+
+        backdropEl.addEventListener('touchstart', (e) => {
+          e.stopPropagation();
+        }, { passive: false });
+
+        backdropEl.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          closeFn();
+        }, { passive: false });
+
+        backdropEl.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          closeFn();
+        });
+      }
+      window.bindBackdropDismiss = bindBackdropDismiss;
+
       if (backdrop) {
-        backdrop.addEventListener('click', () => toggleSidebar(false));
+        bindBackdropDismiss(backdrop, () => toggleSidebar(false));
       }
 
-      // 📱 手勢右滑收合控制 (Swipe Right to Close Sidebar Helper - 防滾動條誤觸與防縱向滾動誤判)
+      // 📱 手勢右滑收合控制 (Swipe Right to Close Sidebar Helper - 支援全組件區域右滑且不干擾點選與滑桿)
       function bindSidebarSwipeRightToClose(sidebarEl, closeFn) {
         if (!sidebarEl || sidebarEl._hasSwipeRightListener) return;
         sidebarEl._hasSwipeRightListener = true;
@@ -2272,15 +2437,15 @@ if (typeof document !== 'undefined') {
           isIgnored = false;
 
           const target = e.target;
-          // 若點擊在滑桿、輸入框、下拉選單、按鈕等互動元件上，不觸發側邊欄滑動收合
-          if (target && (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'BUTTON' || target.closest('input, select, button, .custom-select-container, .rf-slider, .sidebar-icon-grid'))) {
+          // 僅排除水平滑桿本體操作（防止拖動數值滑桿時誤觸收合）
+          if (target && target.tagName === 'INPUT' && (target.type === 'range' || target.classList.contains('rf-slider'))) {
             isIgnored = true;
             return;
           }
 
-          // 若觸控點在右側邊緣滾動條區域（距右邊框 28px 內），視為滾動條操作，不觸發收合
+          // 若觸控點在右側邊緣滾動條區域（距右邊框 24px 內），視為滾動條操作，不觸發收合
           const sidebarRect = sidebarEl.getBoundingClientRect();
-          if (touch.clientX > sidebarRect.right - 28) {
+          if (touch.clientX > sidebarRect.right - 24) {
             isIgnored = true;
             return;
           }
@@ -2293,7 +2458,7 @@ if (typeof document !== 'undefined') {
           const deltaX = currentX - startX;
           const deltaY = currentY - startY;
 
-          // 若主要為縱向上下滑動瀏覽列表（縱向位移大於橫向），立即忽略本輪收合手勢
+          // 若主要為縱向上下滑動瀏覽列表（縱向位移大於橫向且 > 8px），立即忽略本輪收合手勢，保證正常縱向滾動流暢
           if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 8) {
             isIgnored = true;
           }
@@ -2307,8 +2472,8 @@ if (typeof document !== 'undefined') {
           const diffY = endY - startY;
           const elapsed = Date.now() - startTime;
 
-          // 嚴格判定：明確向右橫向滑動（位移 >= 60px、橫向位移至少為縱向位移的 2 倍、且縱向位移 < 45px）
-          if (diffX >= 60 && diffX > Math.abs(diffY) * 2.0 && Math.abs(diffY) < 45 && elapsed < 700) {
+          // 判定向右橫向滑動收合（位移 >= 45px、橫向位移大於縱向位移的 1.2 倍、時間 < 800ms）
+          if (diffX >= 45 && diffX > Math.abs(diffY) * 1.2 && elapsed < 800) {
             if (!sidebarEl.classList.contains('collapsed')) {
               closeFn();
             }
@@ -2321,10 +2486,12 @@ if (typeof document !== 'undefined') {
         bindSidebarSwipeRightToClose(sidebar, () => toggleSidebar(false));
       }
 
-      // 🌐 全域防護：點擊遮罩層 (sidebar-backdrop) 時優雅收合側邊欄
+      // 🌐 全域防護：點擊遮罩層 (sidebar-backdrop) 時優雅收合側邊欄並消費事件
       document.addEventListener('touchend', (e) => {
         const target = e.target;
         if (target && target.classList && target.classList.contains('sidebar-backdrop')) {
+          e.preventDefault();
+          e.stopPropagation();
           if (typeof window.toggleRecipeSidebar === 'function') {
             window.toggleRecipeSidebar(false);
           }
@@ -2338,8 +2505,19 @@ if (typeof document !== 'undefined') {
             sb.classList.add('collapsed');
           });
           document.querySelectorAll('.sidebar-backdrop').forEach(bd => bd.classList.remove('active'));
+          const f1 = document.getElementById('sidebar-bookmark-handle');
+          const f2 = document.getElementById('recipe-sidebar-bookmark-handle');
+          const f3 = document.getElementById('ladder-sidebar-bookmark-handle');
+          [f1, f2, f3].forEach(f => {
+            if (f) {
+              f.style.opacity = '1';
+              f.style.pointerEvents = 'auto';
+              f.style.display = 'flex';
+              f.style.visibility = 'visible';
+            }
+          });
         }
-      }, { passive: true });
+      }, { passive: false });
 
       window.updateActiveFilterBadge = updateActiveFilterBadge;
     }
@@ -2733,9 +2911,156 @@ if (typeof document !== 'undefined') {
       updateBackToTopVisibility();
     }
 
+    // 🔄 原生 App 風格下拉刷新指示器 (Native App Pull-to-Refresh Controller)
+    function initPullToRefresh() {
+      if (typeof document === 'undefined') return;
+      let ptrEl = document.getElementById('pull-to-refresh-indicator');
+      if (!ptrEl) {
+        ptrEl = document.createElement('div');
+        ptrEl.id = 'pull-to-refresh-indicator';
+        ptrEl.className = 'ptr-indicator';
+        ptrEl.setAttribute('aria-hidden', 'true');
+        ptrEl.innerHTML = `
+          <div class="ptr-inner">
+            <svg class="ptr-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.5 2v6h-6"></path>
+              <path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+            </svg>
+          </div>
+        `;
+        if (document.body) {
+          document.body.appendChild(ptrEl);
+        }
+      }
+
+      let touchStartY = 0;
+      let touchStartX = 0;
+      let isTracking = false;
+      let isRefreshing = false;
+      let currentPull = 0;
+      const PULL_THRESHOLD = 64;
+      const MAX_PULL = 84;
+
+      function getActiveScrollTop() {
+        const winScroll = window.pageYOffset || (document.documentElement ? document.documentElement.scrollTop : 0) || (document.body ? document.body.scrollTop : 0) || 0;
+        if (winScroll > 0) return winScroll;
+
+        // 若當前在特定 tab 且內部表格/容器有滾動，檢查該滾動容器
+        const activeTableContainer = document.querySelector('.mobile-h5-app.pokemon-active .pokemon-table-container, .mobile-h5-app.pokemon-active .table-container');
+        if (activeTableContainer && activeTableContainer.scrollTop > 0) {
+          return activeTableContainer.scrollTop;
+        }
+        return 0;
+      }
+
+      function updatePtrUI(dist) {
+        if (!ptrEl) return;
+        if (dist <= 0) {
+          ptrEl.style.transform = 'translate(-50%, -64px)';
+          ptrEl.style.opacity = '0';
+          ptrEl.classList.remove('ptr-active');
+          const icon = ptrEl.querySelector('.ptr-icon');
+          if (icon) icon.style.transform = 'rotate(0deg)';
+          return;
+        }
+
+        ptrEl.classList.add('ptr-active');
+        const progress = Math.min(1, dist / PULL_THRESHOLD);
+        ptrEl.style.opacity = `${Math.min(1, progress * 1.3)}`;
+        ptrEl.style.transform = `translate(-50%, ${dist - 44}px) scale(${0.72 + progress * 0.28})`;
+        const icon = ptrEl.querySelector('.ptr-icon');
+        if (icon) {
+          icon.style.transform = `rotate(${progress * 280}deg)`;
+        }
+      }
+
+      document.addEventListener('touchstart', (e) => {
+        if (isRefreshing || !e.touches || !e.touches[0]) return;
+        // 嚴格判定：只有在最頂部時才允許判斷觸發下拉刷新
+        if (getActiveScrollTop() > 2) {
+          isTracking = false;
+          return;
+        }
+
+        // 避免在開啟的側邊欄或彈窗內誤觸發全頁下拉刷新
+        const target = e.target;
+        if (target && target.closest && target.closest('.pokemon-filter-sidebar:not(.collapsed), .recipe-filter-sidebar:not(.collapsed), .ladder-fixed-sidebar:not(.collapsed), .modal-overlay.active, .subskill-sheet-modal.active, .appraisal-modal-overlay.active')) {
+          isTracking = false;
+          return;
+        }
+
+        isTracking = true;
+        touchStartY = e.touches[0].clientY;
+        touchStartX = e.touches[0].clientX;
+        currentPull = 0;
+        ptrEl.classList.remove('ptr-refreshing');
+        ptrEl.style.transition = 'none';
+      }, { passive: true });
+
+      document.addEventListener('touchmove', (e) => {
+        if (!isTracking || isRefreshing || !e.touches || !e.touches[0]) return;
+        const currentY = e.touches[0].clientY;
+        const currentX = e.touches[0].clientX;
+        const deltaY = currentY - touchStartY;
+        const deltaX = currentX - touchStartX;
+
+        // 若為向上滑動或橫向左右滑動，立即取消並還原
+        if (deltaY <= 0 || Math.abs(deltaX) > deltaY) {
+          if (currentPull > 0) {
+            currentPull = 0;
+            updatePtrUI(0);
+          }
+          return;
+        }
+
+        // 再次確認是否仍在最頂部
+        if (getActiveScrollTop() > 2) {
+          isTracking = false;
+          currentPull = 0;
+          updatePtrUI(0);
+          return;
+        }
+
+        // 阻尼係數計算下拉位移
+        currentPull = Math.min(MAX_PULL, Math.pow(deltaY, 0.8) * 1.8);
+        updatePtrUI(currentPull);
+      }, { passive: true });
+
+      document.addEventListener('touchend', () => {
+        if (!isTracking || isRefreshing) return;
+        isTracking = false;
+
+        if (currentPull >= PULL_THRESHOLD) {
+          // 達到下拉刷新閥值：鎖定展示旋轉動畫並執行刷新
+          isRefreshing = true;
+          ptrEl.classList.add('ptr-refreshing');
+          ptrEl.style.transition = 'transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1)';
+          ptrEl.style.transform = `translate(-50%, ${PULL_THRESHOLD - 36}px)`;
+
+          setTimeout(() => {
+            try {
+              window.location.reload();
+            } catch (err) {
+              window.location.href = window.location.href;
+            }
+          }, 550);
+        } else {
+          // 未達閥值：平滑彈回頂部隱藏
+          ptrEl.style.transition = 'transform 0.25s ease, opacity 0.25s ease';
+          updatePtrUI(0);
+        }
+        currentPull = 0;
+      }, { passive: true });
+
+      window.initPullToRefresh = initPullToRefresh;
+      PokemonApp.initPullToRefresh = initPullToRefresh;
+    }
+
     initSkillTooltips();
     initBackToTop();
+    initPullToRefresh();
     PokemonApp.initBackToTop = initBackToTop;
+    PokemonApp.initPullToRefresh = initPullToRefresh;
   });
 }
 
@@ -2759,6 +3084,10 @@ if (typeof module !== 'undefined' && module.exports) {
     matchesSkill,
     renderSkillWithTooltip,
     initBackToTop: (typeof PokemonApp !== 'undefined' && PokemonApp.initBackToTop) ? PokemonApp.initBackToTop : undefined,
-    updateBackToTopVisibility: (typeof PokemonApp !== 'undefined' && PokemonApp.updateBackToTopVisibility) ? PokemonApp.updateBackToTopVisibility : undefined
+    updateBackToTopVisibility: (typeof PokemonApp !== 'undefined' && PokemonApp.updateBackToTopVisibility) ? PokemonApp.updateBackToTopVisibility : undefined,
+    initPullToRefresh: (typeof PokemonApp !== 'undefined' && PokemonApp.initPullToRefresh) ? PokemonApp.initPullToRefresh : undefined,
+    bindBackdropDismiss,
+    bindSidebarSwipeRightToClose,
+    toggleSidebar
   };
 }
