@@ -3815,10 +3815,36 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(indexHtml.includes('css/styles.css?v=20260907_4'), 'index.html styles.css must be v=20260907_4');
-  assert(indexHtml.includes('js/modules/wiki.js?v=20260907_4'), 'index.html wiki.js must be v=20260907_4');
-  assert(appIndexHtml.includes('css/styles.css?v=20260907_4'), 'app/index.html styles.css must be v=20260907_4');
-  assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_4'), 'app/index.html wiki.js must be v=20260907_4');
+  assert(indexHtml.includes('css/styles.css?v=20260907_5'), 'index.html styles.css must be v=20260907_5');
+  assert(indexHtml.includes('js/modules/wiki.js?v=20260907_5'), 'index.html wiki.js must be v=20260907_5');
+  assert(appIndexHtml.includes('css/styles.css?v=20260907_5'), 'app/index.html styles.css must be v=20260907_5');
+  assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_5'), 'app/index.html wiki.js must be v=20260907_5');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless Layout, Single-Line Name:Desc, No Tier Badges & Half-Width Symbols', () => {
+  const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // 1. Verify zero full-width punctuation in RATINGS_GUIDE_DATA and SLEEP_DAYS_BASELINE
+  const ratingsData = wikiJs.slice(wikiJs.indexOf('const RATINGS_GUIDE_DATA ='), wikiJs.indexOf('const BERRY_VALUES_DATA ='));
+  const dataFwMatches = ratingsData.match(/[\uFF01-\uFF5E\u3000-\u303F\u2000-\u206F]/g);
+  assert(!dataFwMatches || dataFwMatches.length === 0, `Ratings guide data must not contain full-width punctuation, found: ${dataFwMatches}`);
+
+  // 2. Verify zero full-width punctuation in ratings HTML
+  const ratingsHtml = wikiJs.slice(wikiJs.indexOf('id="wiki-subpanel-ratings"'), wikiJs.indexOf('<!-- 遮罩層 (Backdrop for Mobile Drawer'));
+  const htmlFwMatches = ratingsHtml.match(/[\uFF01-\uFF5E\u3000-\u303F\u2000-\u206F]/g);
+  assert(!htmlFwMatches || htmlFwMatches.length === 0, `Ratings HTML must not contain full-width punctuation, found: ${htmlFwMatches}`);
+
+  // 3. Verify renderRatingCard removes tier tags and renders single-line format with colon
+  assert(!wikiJs.includes('rating-tier-tag tier-'), 'Must not render circle tier tags in ratings guide');
+  assert(wikiJs.includes('rating-item-colon'), 'Must include colon separator between name and description');
+  assert(wikiJs.includes('技能專長[樹果1個,食材1個]'), 'Skill card title must be consolidated without repetition');
+  assert(wikiJs.includes('樹果專長[樹果2個,食材1個]'), 'Berry card title must be consolidated without repetition');
+  assert(wikiJs.includes('食材專長[樹果1個,食材2個]'), 'Ingredient card title must be consolidated without repetition');
+
+  // 4. Verify borderless styles in CSS
+  assert(stylesCss.includes('.rating-item {\n  display: flex;\n  align-items: center;\n  gap: 4px;\n  background: transparent;\n  border: none;'), 'Rating item must be borderless');
+  assert(stylesCss.includes('#wiki-subpanel-ratings .calc-inputs-row {\n  background: transparent;\n  border: none;'), 'Calc row must be borderless in ratings');
 });
 
 

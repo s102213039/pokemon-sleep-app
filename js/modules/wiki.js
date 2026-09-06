@@ -1135,73 +1135,73 @@
   const RATINGS_GUIDE_DATA = {
     berry: {
       type: "berry",
-      title: "樹果型專長 【樹果 2 個、食材 1 個】",
-      title_en: "Berry Specialists (2 Berries, 1 Ingredient)",
-      desc: "以高頻率產出大量樹果累積卡比獸能量為最高目標。",
+      title: "樹果專長[樹果2個,食材1個]",
+      title_en: "Berry Specialist [2 Berries, 1 Ingredient]",
+      desc: "以高頻率產出大量樹果累積卡比獸能量為最高目標.",
       desc_en: "Maximizes Snorlax Strength via massive, high-speed berry output.",
       subskills: [
-        { grade: "Ⓢ", name: "樹果數量S", name_en: "Berry Finding S", detail: "樹果數量+1，能量直接翻倍（容易滿包需常收取）", detail_en: "Berry count +1, doubles base strength (fills inventory quickly, gather often)." },
-        { grade: "Ⓐ", name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊 -5% 幫忙時間（5隻疊加 25%）", detail_en: "Reduces team help time by 5% (up to 25% with 5 helpers)." },
-        { grade: "Ⓐ", name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己 -14% 幫忙時間", detail_en: "Self help time -14%." },
-        { grade: "Ⓑ", name: "幫忙速度S", name_en: "Helping Speed S", detail: "自己 -7% 幫忙時間（可用銀種子升階為 M 升至 Ⓐ）", detail_en: "Self help time -7% (upgradeable to M with Sub Skill Seed)." }
+        { name: "樹果數量S", name_en: "Berry Finding S", detail: "樹果數量+1,能量直接翻倍(容易滿包需常收取)." },
+        { name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊-5%幫忙時間(5隻疊加25%)." },
+        { name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己-14%幫忙時間." },
+        { name: "幫忙速度S", name_en: "Helping Speed S", detail: "自己-7%幫忙時間(可用銀種子升階為M)." }
       ],
       natures: [
-        { grade: "Ⓢ", name: "幫忙速度 ▲", name_en: "Speed of Help ▲", detail: "全方位提升樹果產出速度", detail_en: "Accelerates overall berry gathering frequency." },
-        { grade: "Ⓐ", name: "食材發現率 ▼", name_en: "Ingredient Finding ▼", detail: "食材率降低，變相提高樹果產出機率（加分項）", detail_en: "Lower ingredient chance means higher relative berry production." },
-        { grade: "Ⓑ", name: "主技能機率 ▲ / ▼", name_en: "Main Skill Chance ▲ / ▼", detail: "技能對樹果寵非首要，發動機率高低影響不大", detail_en: "Skill trigger is secondary for berry specialists." }
+        { name: "幫忙速度▲", name_en: "Speed of Help ▲", detail: "全方位提升樹果產出速度." },
+        { name: "食材發現率▼", name_en: "Ingredient Finding ▼", detail: "食材率降低,變相提高樹果產出機率(加分項)." },
+        { name: "主技能機率▲/▼", name_en: "Main Skill Chance ▲ / ▼", detail: "技能對樹果寵非首要,發動機率高低影響不大." }
       ]
     },
     ingredient: {
       type: "ingredient",
-      title: "食材型專長 【樹果 1 個、食材 2 個】",
-      title_en: "Ingredient Specialists (1 Berry, 2 Ingredients)",
-      desc: "以穩定供給高階食譜所需的高價值食材為核心職責。",
+      title: "食材專長[樹果1個,食材2個]",
+      title_en: "Ingredient Specialist [1 Berry, 2 Ingredients]",
+      desc: "以穩定供給高階食譜所需的高價值食材為核心職責.",
       desc_en: "Provides consistent supply of high-tier ingredients for powerful dishes.",
       subskills: [
-        { grade: "Ⓢ", name: "食材機率提升M", name_en: "Ingredient Finder M", detail: "+36% 食材機率，食材寵畢業核心", detail_en: "+36% ingredient rate, top-tier graduation core." },
-        { grade: "Ⓐ", name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊 -5% 幫忙時間", detail_en: "Reduces team help time by 5%." },
-        { grade: "Ⓐ", name: "食材機率提升S", name_en: "Ingredient Finder S", detail: "+18% 食材機率（可用銀種子升階為 M 升至 Ⓢ）", detail_en: "+18% ingredient rate (upgradeable to M)." },
-        { grade: "Ⓐ", name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己 -14% 幫忙時間", detail_en: "Self help time -14%." },
-        { grade: "Ⓑ", name: "幫忙速度S", name_en: "Helping Speed S", detail: "自己 -7% 幫忙時間", detail_en: "Self help time -7%." },
-        { grade: "Ⓑ", name: "持有上限提升 M/L", name_en: "Inventory Up M/L", detail: "防止睡覺滿包停止產出食材", detail_en: "Prevents full inventory during sleep, avoiding missed ingredients." },
-        { grade: "Ⓑ", name: "樹果數量S + 持有上限", name_en: "Berry Finding S + Inventory", detail: "需搭配持有上限擴充，並保持頻繁收取", detail_en: "Pairs well with inventory upgrades and frequent gathering." }
+        { name: "食材機率提升M", name_en: "Ingredient Finder M", detail: "+36%食材機率,食材寵畢業核心." },
+        { name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊-5%幫忙時間." },
+        { name: "食材機率提升S", name_en: "Ingredient Finder S", detail: "+18%食材機率(可用銀種子升階為M)." },
+        { name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己-14%幫忙時間." },
+        { name: "幫忙速度S", name_en: "Helping Speed S", detail: "自己-7%幫忙時間." },
+        { name: "持有上限提升 M/L", name_en: "Inventory Up M/L", detail: "防止睡覺滿包停止產出食材." },
+        { name: "樹果數量S + 持有上限", name_en: "Berry Finding S + Inventory", detail: "需搭配持有上限擴充,並保持頻繁收取." }
       ],
       natures: [
-        { grade: "Ⓢ", name: "食材發現率 ▲", name_en: "Ingredient Finding ▲", detail: "食材產出量大幅提升", detail_en: "Significantly boosts ingredient quantity." },
-        { grade: "Ⓐ", name: "幫忙速度 ▲", name_en: "Speed of Help ▲", detail: "提高整體幫忙與食材判定頻率", detail_en: "Increases overall helping and check frequency." },
-        { grade: "Ⓑ", name: "主技能機率 ▲ / ▼", name_en: "Main Skill Chance ▲ / ▼", detail: "若有自補/料理強化可加分，其餘技能影響不大", detail_en: "Beneficial if Pokémon has Charge Energy or Cooking Power Up." }
+        { name: "食材發現率▲", name_en: "Ingredient Finding ▲", detail: "食材產出量大幅提升." },
+        { name: "幫忙速度▲", name_en: "Speed of Help ▲", detail: "提高整體幫忙與食材判定頻率." },
+        { name: "主技能機率▲/▼", name_en: "Main Skill Chance ▲ / ▼", detail: "若有自補/料理強化可加分,其餘技能影響不大." }
       ]
     },
     skill: {
       type: "skill",
-      title: "技能型專長 【樹果 1 個、食材 1 個】",
-      title_en: "Skill Specialists (1 Berry, 1 Ingredient)",
-      desc: "以高頻率觸發核心主技能（全體補血、神獸加速、高額能量、料理擴鍋）為核心職責。",
+      title: "技能專長[樹果1個,食材1個]",
+      title_en: "Skill Specialist [1 Berry, 1 Ingredient]",
+      desc: "以高頻率觸發核心主技能(全體補血,神獸加速,高額能量,料理擴鍋)為核心職責.",
       desc_en: "Triggers crucial main skills (E4E heal, Legend boost, pot expand, energy burst) frequently.",
       subskills: [
-        { grade: "Ⓢ", name: "技能機率提升M", name_en: "Skill Trigger M", detail: "+36% 技能發動機率，技能寵畢業核心", detail_en: "+36% skill trigger rate, essential graduation core." },
-        { grade: "Ⓐ", name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊 -5% 幫忙時間", detail_en: "Reduces team help time by 5%." },
-        { grade: "Ⓐ", name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己 -14% 幫忙時間", detail_en: "Self help time -14%." },
-        { grade: "Ⓐ", name: "技能機率提升S", name_en: "Skill Trigger S", detail: "+18% 技能發動機率（可用銀種子升階為 M 升至 Ⓢ）", detail_en: "+18% skill trigger rate (upgradeable to M)." },
-        { grade: "Ⓑ", name: "樹果數量S + 持有上限", name_en: "Berry Finding S + Inventory", detail: "補足基本能量產出，需常收取", detail_en: "Supplements base strength output; requires active collection." },
-        { grade: "Ⓑ", name: "技能等級提升M", name_en: "Skill Level Up M", detail: "主技能等級+2，節省金種子珍貴資源", detail_en: "Main skill Lv.+2, saves precious Main Skill Seeds." },
-        { grade: "Ⓒ", name: "技能等級提升S", name_en: "Skill Level Up S", detail: "主技能等級+1（可用銀種子升階）", detail_en: "Main skill Lv.+1 (upgradeable with seeds)." }
+        { name: "技能機率提升M", name_en: "Skill Trigger M", detail: "+36%技能發動機率,技能寵畢業核心." },
+        { name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊-5%幫忙時間." },
+        { name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己-14%幫忙時間." },
+        { name: "技能機率提升S", name_en: "Skill Trigger S", detail: "+18%技能發動機率(可用銀種子升階為M)." },
+        { name: "樹果數量S + 持有上限", name_en: "Berry Finding S + Inventory", detail: "補足基本能量產出,需常收取." },
+        { name: "技能等級提升M", name_en: "Skill Level Up M", detail: "主技能等級+2,節省金種子珍貴資源." },
+        { name: "技能等級提升S", name_en: "Skill Level Up S", detail: "主技能等級+1(可用銀種子升階)." }
       ],
       natures: [
-        { grade: "Ⓢ", name: "主技能發動機率 ▲", name_en: "Main Skill Chance ▲", detail: "技能寵靈魂性格，觸發次數最大化", detail_en: "Prime nature for skill specialists; maximizes activations." },
-        { grade: "Ⓐ", name: "幫忙速度 ▲", name_en: "Speed of Help ▲", detail: "提高幫忙判定頻率", detail_en: "Increases helping cycle rate." },
-        { grade: "Ⓐ", name: "食材發現率 ▼", name_en: "Ingredient Finding ▼", detail: "降低食材掉落，無副作用（技能寵只看技能與速度）", detail_en: "Reduces ingredient drop, no negative impact on skills." }
+        { name: "主技能發動機率▲", name_en: "Main Skill Chance ▲", detail: "技能寵靈魂性格,觸發次數最大化." },
+        { name: "幫忙速度▲", name_en: "Speed of Help ▲", detail: "提高幫忙判定頻率." },
+        { name: "食材發現率▼", name_en: "Ingredient Finding ▼", detail: "降低食材掉落,無副作用(技能寵只看技能與速度)." }
       ]
     }
   };
 
   // 睡眠天數成長基準表 (Image 2)
   const SLEEP_DAYS_BASELINE = [
-    { level: 10, totalExp: 1600, days: 16, note: "解鎖第一個副技能，新手初期門檻", note_en: "Unlocks 1st sub-skill, early milestone." },
-    { level: 25, totalExp: 8700, days: 87, note: "解鎖第二個副技能，中階關鍵戰力", note_en: "Unlocks 2nd sub-skill, mid-game power spike." },
-    { level: 30, totalExp: 12000, days: 120, note: "解鎖第二種食材，前期核心目標（約 2~4 個月）", note_en: "Unlocks 2nd ingredient slot, primary early goal (approx. 2-4 mos)." },
-    { level: 50, totalExp: 30000, days: 300, note: "解鎖第三個副技能，後期主力培育（約 5~10 個月）", note_en: "Unlocks 3rd sub-skill, late-game investment (approx. 5-10 mos)." },
-    { level: 60, totalExp: 51500, days: 515, note: "解鎖第三種食材，頂級完全體", note_en: "Unlocks 3rd ingredient slot, max potential complete build." }
+    { level: 10, totalExp: 1600, days: 16, note: "解鎖第1個副技能,新手初期門檻", note_en: "Unlocks 1st sub-skill, early milestone." },
+    { level: 25, totalExp: 8700, days: 87, note: "解鎖第2個副技能,中階關鍵戰力", note_en: "Unlocks 2nd sub-skill, mid-game power spike." },
+    { level: 30, totalExp: 12000, days: 120, note: "解鎖第2種食材,前期核心目標(約2~4個月)", note_en: "Unlocks 2nd ingredient slot, primary early goal (approx. 2-4 mos)." },
+    { level: 50, totalExp: 30000, days: 300, note: "解鎖第3個副技能,後期主力培育(約5~10個月)", note_en: "Unlocks 3rd sub-skill, late-game investment (approx. 5-10 mos)." },
+    { level: 60, totalExp: 51500, days: 515, note: "解鎖第3種食材,頂級完全體", note_en: "Unlocks 3rd ingredient slot, max potential complete build." }
   ];
 
   // --- 4. 樹果與食材基礎能量資料庫 (Image 1 實體化 - Berry & Ingredient Values) ---
@@ -12992,17 +12992,13 @@
     const desc = isEN ? (data.desc_en || data.desc) : data.desc;
     const type = data.type || 'berry';
     const themeColor = type === 'berry' ? '#f59e0b' : (type === 'ingredient' ? '#06b6d4' : '#a855f7');
-    const specialtyLabel = type === 'berry'
-      ? (isEN ? 'Berry Specialist' : '樹果專長')
-      : (type === 'ingredient' ? (isEN ? 'Ingredient Specialist' : '食材專長') : (isEN ? 'Skill Specialist' : '技能專長'));
 
     return `
       <div class="wiki-card wiki-rating-card rating-card-${type}">
-        <div class="wiki-card-header" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <span class="rating-specialty-badge specialty-${type}">${specialtyLabel}</span>
-            <h3 class="wiki-card-title" style="margin: 0; font-size: 16px;">${title}</h3>
-          </div>
+        <div class="wiki-card-header">
+          <h3 class="wiki-card-title" style="margin: 0;">
+            <span class="rating-specialty-badge specialty-${type}">${title}</span>
+          </h3>
         </div>
         <p class="wiki-card-desc" style="margin-top: 6px;">${desc}</p>
         
@@ -13014,13 +13010,7 @@
                 const sDetail = isEN ? (s.detail_en || s.detail) : s.detail;
                 return `
                 <div class="rating-item">
-                  <span class="rating-tier-tag tier-${s.grade.toLowerCase()}">${s.grade}</span>
-                  <div class="rating-item-content">
-                    <div class="rating-item-badges">
-                      ${renderRatingSubskillBadge(s.name, s.name_en, isEN)}
-                    </div>
-                    <span class="rating-item-detail text-secondary">${formatRatingDetail(sDetail)}</span>
-                  </div>
+                  <span class="rating-item-badge">${renderRatingSubskillBadge(s.name, s.name_en, isEN)}</span><span class="rating-item-colon">:</span><span class="rating-item-detail text-secondary">${formatRatingDetail(sDetail)}</span>
                 </div>
               `;}).join('')}
             </div>
@@ -13034,13 +13024,7 @@
                 const nDetail = isEN ? (n.detail_en || n.detail) : n.detail;
                 return `
                 <div class="rating-item">
-                  <span class="rating-tier-tag tier-${n.grade.toLowerCase()}">${n.grade}</span>
-                  <div class="rating-item-content">
-                    <div class="rating-item-badges">
-                      ${renderRatingNatureBadge(nName)}
-                    </div>
-                    <span class="rating-item-detail text-secondary">${formatRatingDetail(nDetail)}</span>
-                  </div>
+                  <span class="rating-item-badge">${renderRatingNatureBadge(nName)}</span><span class="rating-item-colon">:</span><span class="rating-item-detail text-secondary">${formatRatingDetail(nDetail)}</span>
                 </div>
               `;}).join('')}
             </div>
@@ -14486,22 +14470,22 @@
               <div class="strategy-item strategy-early">
                 <div class="strategy-badge badge-early">${isEN ? 'Early Goal' : '前期目標'}</div>
                 <div class="strategy-title">${isEN ? 'Prioritize <span class="text-accent font-bold">Lv.30</span>' : '優先放置在 <span class="text-accent font-bold">Lv.30</span>'}</div>
-                <div class="strategy-desc">${isEN ? 'Focus on nature and <span class="text-success font-bold">Lv.10</span> &amp; <span class="text-success font-bold">Lv.25</span> sub-skills. Takes <span class="text-warning font-bold">~2-4 months</span> for free/light players to unlock <span class="text-accent font-bold">2nd ingredient slot</span>, becoming core pillars.' : '先看性格與 <span class="text-success font-bold">Lv.10</span> &amp; <span class="text-success font-bold">Lv.25</span> 副技能，無課/微課約養成 <span class="text-warning font-bold">2~4 個月</span>即可解鎖<span class="text-accent font-bold">第 2 種食材</span>，成為中流砥柱。'}</div>
+                <div class="strategy-desc">${isEN ? 'Focus on nature and <span class="text-success font-bold">Lv.10</span> &amp; <span class="text-success font-bold">Lv.25</span> sub-skills. Takes <span class="text-warning font-bold">~2-4 months</span> for free/light players to unlock <span class="text-accent font-bold">2nd ingredient slot</span>, becoming core pillars.' : '先看性格與 <span class="text-success font-bold">Lv.10</span> &amp; <span class="text-success font-bold">Lv.25</span> 副技能,無課/微課約養成 <span class="text-warning font-bold">2~4個月</span>即可解鎖<span class="text-accent font-bold">第2種食材</span>,成為中流砥柱.'}</div>
               </div>
               <div class="strategy-item strategy-late">
                 <div class="strategy-badge badge-late">${isEN ? 'Late Game' : '後期投資'}</div>
                 <div class="strategy-title">${isEN ? 'Carefully Invest in <span class="text-accent font-bold">Lv.50~60</span>' : '慎選投入 <span class="text-accent font-bold">Lv.50~60</span>'}</div>
-                <div class="strategy-desc">${isEN ? 'Ensure sub-skills and nature reach <span class="text-success font-bold">Ⓢ/Ⓐ</span> graduation tier before heavily investing candies and <span class="text-warning font-bold">Main Skill Seeds</span> (<span class="text-warning font-bold">~5-10 months</span>).' : '確認副技能與性格皆達 <span class="text-success font-bold">Ⓢ/Ⓐ</span> 畢業級再投入大量糖果與<span class="text-warning font-bold">金種子</span>（約需 <span class="text-warning font-bold">5~10 個月</span>養成時間）。'}</div>
+                <div class="strategy-desc">${isEN ? 'Ensure sub-skills and nature reach graduation tier before heavily investing candies and <span class="text-warning font-bold">Main Skill Seeds</span> (<span class="text-warning font-bold">~5-10 months</span>).' : '確認副技能與性格皆達畢業級再投入大量糖果與<span class="text-warning font-bold">金種子</span>(約需 <span class="text-warning font-bold">5~10個月</span>養成時間).'}</div>
               </div>
               <div class="strategy-item strategy-energy">
                 <div class="strategy-badge badge-energy">${isEN ? 'Energy Core' : '活力核心'}</div>
                 <div class="strategy-title">${isEN ? 'Raise One Dedicated Healer First' : '優先養成一隻主力補師'}</div>
-                <div class="strategy-desc">${isEN ? 'Maintaining team energy <span class="text-success font-bold">&gt; 80%</span> grants <span class="text-accent font-bold">2.2x~2.5x</span> helping speed! Recommended healers: <span class="text-warning font-bold">Wigglytuff</span>, <span class="text-warning font-bold">Sylveon</span>, <span class="text-warning font-bold">Gardevoir</span>, or <span class="text-warning font-bold">Pawmot</span>.' : '全體活力維持在 <span class="text-success font-bold">80% 以上</span>可享受 <span class="text-accent font-bold">2.2x~2.5x</span> 幫忙速度！建議先練：<span class="text-warning font-bold">胖可丁</span>、<span class="text-warning font-bold">仙子伊布</span>、<span class="text-warning font-bold">沙奈朵</span>或<span class="text-warning font-bold">巴布土撥</span>。'}</div>
+                <div class="strategy-desc">${isEN ? 'Maintaining team energy <span class="text-success font-bold">&gt; 80%</span> grants <span class="text-accent font-bold">2.2x~2.5x</span> helping speed! Recommended healers: <span class="text-warning font-bold">Wigglytuff</span>, <span class="text-warning font-bold">Sylveon</span>, <span class="text-warning font-bold">Gardevoir</span>, or <span class="text-warning font-bold">Pawmot</span>.' : '全體活力維持在 <span class="text-success font-bold">80%以上</span>可享受 <span class="text-accent font-bold">2.2x~2.5x</span> 幫忙速度!建議先練:<span class="text-warning font-bold">胖可丁</span>,<span class="text-warning font-bold">仙子伊布</span>,<span class="text-warning font-bold">沙奈朵</span>或<span class="text-warning font-bold">巴布土撥</span>.'}</div>
               </div>
               <div class="strategy-item strategy-seeds">
                 <div class="strategy-badge badge-seeds">${isEN ? 'Seed Rules' : '種子機制'}</div>
                 <div class="strategy-title">${isEN ? 'Main &amp; Sub Skill Seed Rules' : '主技能與副技能種子規則'}</div>
-                <div class="strategy-desc">${isEN ? 'Each evolution grants <span class="text-success font-bold">Main Skill Lv.+1</span> and <span class="text-accent font-bold">inventory +5</span>. Duplicate sub-skills cannot coexist (if S and M already exist, S cannot upgrade to M).' : '每次進化<span class="text-success font-bold">主技能+1</span>、<span class="text-accent font-bold">持有上限+5</span>。副技能不能同時存在相同名稱技能（如已有S與M，則S無法再升階為M）。'}</div>
+                <div class="strategy-desc">${isEN ? 'Each evolution grants <span class="text-success font-bold">Main Skill Lv.+1</span> and <span class="text-accent font-bold">inventory +5</span>. Duplicate sub-skills cannot coexist (if S and M already exist, S cannot upgrade to M).' : '每次進化<span class="text-success font-bold">主技能+1</span>,<span class="text-accent font-bold">持有上限+5</span>.副技能不能同時存在相同名稱技能(如已有S與M,則S無法再升階為M).'}</div>
               </div>
             </div>
           </div>
@@ -14518,28 +14502,28 @@
             <div class="wiki-card-header">
               <h3 class="wiki-card-title">${isEN ? 'Pokémon Sleep EXP & Days Calculator' : '寶可夢睡眠升級天數計算器'}</h3>
             </div>
-            <p class="wiki-card-desc">${isEN ? 'Based on 100 daily sleep score (100 base EXP), calculates required sleep days and EXP from current to target level.' : '依據每日睡滿 100 分（100 EXP 基礎），計算從目前等級升至目標等級所需睡眠天數與經驗值。'}</p>
+            <p class="wiki-card-desc">${isEN ? 'Based on 100 daily sleep score (100 base EXP), calculates required sleep days and EXP from current to target level.' : '依據每日睡滿100分(100 EXP基礎),計算從目前等級升至目標等級所需睡眠天數與經驗值.'}</p>
             
             <div class="calc-inputs-row">
               <div class="calc-input-group">
-                <label class="calc-label" for="calc-sleep-cur-lv">${isEN ? 'Current Level:' : '目前等級：'}</label>
+                <label class="calc-label" for="calc-sleep-cur-lv">${isEN ? 'Current Level:' : '目前等級:'}</label>
                 <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="59" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
               </div>
 
               <div class="calc-input-group">
-                <label class="calc-label" for="calc-sleep-target-lv">${isEN ? 'Target Level:' : '目標等級：'}</label>
+                <label class="calc-label" for="calc-sleep-target-lv">${isEN ? 'Target Level:' : '目標等級:'}</label>
                 <input type="number" id="calc-sleep-target-lv" class="calc-input-num" value="30" min="2" max="60" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
               </div>
 
               <div class="calc-input-group">
-                <label class="calc-label">${isEN ? 'Boost Conditions:' : '加成條件：'}</label>
+                <label class="calc-label">${isEN ? 'Boost Conditions:' : '加成條件:'}</label>
                 <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 4px;">
                   <label><input type="checkbox" id="calc-sleep-exp-subskill" onchange="window.WikiDB.recalcSleepDays()"> ${isEN ? 'Sleep EXP Bonus (+14%)' : '睡眠EXP獎勵 (+14%)'}</label>
                   <label><input type="checkbox" id="calc-sleep-incense" onchange="window.WikiDB.recalcSleepDays()"> ${isEN ? 'Growth Incense (2x)' : '成長薰香 (2x)'}</label>
                   <select id="calc-sleep-nature-select" class="calc-select" style="width: auto; padding: 4px 8px;" onchange="window.WikiDB.recalcSleepDays()">
-                    <option value="1.0">${isEN ? 'Neutral EXP Nature' : '性格無 EXP 修正'}</option>
-                    <option value="1.18">${isEN ? 'EXP Up ▲ (+18%)' : '性格 EXP ▲ (+18%)'}</option>
-                    <option value="0.82">${isEN ? 'EXP Down ▼ (-18%)' : '性格 EXP ▼ (-18%)'}</option>
+                    <option value="1.0">${isEN ? 'Neutral EXP Nature' : '性格無EXP修正'}</option>
+                    <option value="1.18">${isEN ? 'EXP Up ▲ (+18%)' : '性格EXP▲ (+18%)'}</option>
+                    <option value="0.82">${isEN ? 'EXP Down ▼ (-18%)' : '性格EXP▼ (-18%)'}</option>
                   </select>
                 </div>
               </div>
@@ -14558,7 +14542,7 @@
                   <tr>
                     <th>${isEN ? 'Target Level' : '目標等級'}</th>
                     <th>${isEN ? 'Total Required EXP' : '累計所需 EXP'}</th>
-                    <th>${isEN ? 'Base Sleep Days (100 EXP/Day)' : '無加成睡眠天數 (每天100EXP)'}</th>
+                    <th>${isEN ? 'Base Sleep Days (100 EXP/Day)' : '無加成睡眠天數(每天100EXP)'}</th>
                     <th>${isEN ? 'Milestone Significance' : '里程碑意義'}</th>
                   </tr>
                 </thead>
@@ -14577,7 +14561,7 @@
                     <tr>
                       <td style="vertical-align: middle;"><span class="milestone-badge ${milestoneColor}">Lv. ${row.level}</span></td>
                       <td class="font-bold" style="vertical-align: middle;">${row.totalExp.toLocaleString()} EXP</td>
-                      <td class="text-success font-bold" style="vertical-align: middle;">${row.days} ${isEN ? 'Days (approx. ' + Math.ceil(row.days / 2) + ' with events)' : '天 (搭配活動約 ' + Math.ceil(row.days / 2) + ' 天)'}</td>
+                      <td class="text-success font-bold" style="vertical-align: middle;">${row.days} ${isEN ? 'Days (approx. ' + Math.ceil(row.days / 2) + ' with events)' : '天(搭配活動約' + Math.ceil(row.days / 2) + '天)'}</td>
                       <td class="text-secondary" style="vertical-align: middle;">${formattedNote}</td>
                     </tr>
                   `;}).join('')}
