@@ -3763,15 +3763,62 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Subskills Panel Full-Wid
   assert(wikiJs.includes('<strong>公式</strong>:'), 'Formula banner must use half-width colon');
 
   // 3. Verify subskills HTML block has zero full-width punctuation
-  const lines = wikiJs.split('\n');
-  const subskillsHtml = lines.slice(14179, 14388).join('\n');
+  const startSubskills = wikiJs.indexOf('id="wiki-subpanel-subskills"');
+  const endSubskills = wikiJs.indexOf('<!-- 子分頁 3');
+  const subskillsHtml = wikiJs.slice(startSubskills, endSubskills);
   const fwMatches = subskillsHtml.match(/[\uFF01-\uFF5E\u3000-\u303F\u2000-\u206F]/g);
   assert(!fwMatches || fwMatches.length === 0, `Subskills panel HTML must not contain full-width punctuation, found: ${fwMatches}`);
 
   // 4. Verify subskills data structures have zero full-width punctuation
-  const dataPart = lines.slice(660, 1133).join('\n');
+  const dataStart = wikiJs.indexOf('const SUB_SKILLS_DATA =');
+  const dataEnd = wikiJs.indexOf('const RATINGS_GUIDE_DATA =');
+  const dataPart = wikiJs.slice(dataStart, dataEnd);
   const dataFwMatches = dataPart.match(/[\uFF01-\uFF5E\u3000-\u303F\u2000-\u206F]/g);
   assert(!dataFwMatches || dataFwMatches.length === 0, `Subskills data must not contain full-width punctuation, found: ${dataFwMatches}`);
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and Game-Like Subskill Badges', () => {
+  const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+  const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+
+  // 1. Verify CSS classes exist in styles.css
+  assert(stylesCss.includes('.strategy-item.strategy-early'), 'Must include .strategy-item.strategy-early');
+  assert(stylesCss.includes('.strategy-item.strategy-late'), 'Must include .strategy-item.strategy-late');
+  assert(stylesCss.includes('.strategy-item.strategy-energy'), 'Must include .strategy-item.strategy-energy');
+  assert(stylesCss.includes('.strategy-item.strategy-seeds'), 'Must include .strategy-item.strategy-seeds');
+  assert(stylesCss.includes('.strategy-badge.badge-early'), 'Must include .strategy-badge.badge-early');
+  assert(stylesCss.includes('.rating-specialty-badge'), 'Must include .rating-specialty-badge');
+  assert(stylesCss.includes('.specialty-berry'), 'Must include .specialty-berry');
+  assert(stylesCss.includes('.specialty-ingredient'), 'Must include .specialty-ingredient');
+  assert(stylesCss.includes('.specialty-skill'), 'Must include .specialty-skill');
+  assert(stylesCss.includes('.rating-card-berry'), 'Must include .rating-card-berry');
+  assert(stylesCss.includes('.rating-card-ingredient'), 'Must include .rating-card-ingredient');
+  assert(stylesCss.includes('.rating-card-skill'), 'Must include .rating-card-skill');
+  assert(stylesCss.includes('.milestone-badge'), 'Must include .milestone-badge');
+  assert(stylesCss.includes('.milestone-cyan'), 'Must include .milestone-cyan');
+
+  // 2. Verify helper functions in wiki.js
+  assert(wikiJs.includes('function getSubSkillBadgeColor('), 'Must define getSubSkillBadgeColor');
+  assert(wikiJs.includes('function renderRatingSubskillBadge('), 'Must define renderRatingSubskillBadge');
+  assert(wikiJs.includes('function renderRatingNatureBadge('), 'Must define renderRatingNatureBadge');
+  assert(wikiJs.includes('function formatRatingDetail('), 'Must define formatRatingDetail');
+
+  // 3. Verify subskills badges rendered in ratings guide
+  assert(wikiJs.includes('renderRatingSubskillBadge(s.name'), 'Must call renderRatingSubskillBadge');
+  assert(wikiJs.includes('renderRatingNatureBadge(nName)'), 'Must call renderRatingNatureBadge');
+  assert(wikiJs.includes('rating-card-${type}'), 'Must apply specialty class to rating card');
+
+  // 4. Verify strategy grid and milestone table enhancements
+  assert(wikiJs.includes('strategy-item strategy-early'), 'Strategy grid must have early class');
+  assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
+
+  // 5. Verify cache busters
+  assert(indexHtml.includes('css/styles.css?v=20260907_4'), 'index.html styles.css must be v=20260907_4');
+  assert(indexHtml.includes('js/modules/wiki.js?v=20260907_4'), 'index.html wiki.js must be v=20260907_4');
+  assert(appIndexHtml.includes('css/styles.css?v=20260907_4'), 'app/index.html styles.css must be v=20260907_4');
+  assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_4'), 'app/index.html wiki.js must be v=20260907_4');
 });
 
 

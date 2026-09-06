@@ -8999,14 +8999,62 @@ input[type="number"] {
   border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 14px 16px;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.strategy-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.strategy-item.strategy-early {
+  border-top: 3px solid #10b981;
+}
+
+.strategy-item.strategy-late {
+  border-top: 3px solid #a855f7;
+}
+
+.strategy-item.strategy-energy {
+  border-top: 3px solid #f43f5e;
+}
+
+.strategy-item.strategy-seeds {
+  border-top: 3px solid #f59e0b;
 }
 
 .strategy-badge {
   font-size: 11px;
   font-weight: 700;
-  color: var(--accent-blue);
   text-transform: uppercase;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.strategy-badge.badge-early {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.strategy-badge.badge-late {
+  color: #c084fc;
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.strategy-badge.badge-energy {
+  color: #fb7185;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.strategy-badge.badge-seeds {
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .strategy-title {
@@ -9019,7 +9067,46 @@ input[type="number"] {
 .strategy-desc {
   font-size: 12.5px;
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: 1.55;
+}
+
+.rating-specialty-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  letter-spacing: 0.2px;
+}
+
+.specialty-berry {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #f59e0b;
+}
+
+.specialty-ingredient {
+  background: rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  color: #06b6d4;
+}
+
+.specialty-skill {
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: #a855f7;
+}
+
+.rating-card-berry {
+  border-top: 3px solid #f59e0b !important;
+}
+
+.rating-card-ingredient {
+  border-top: 3px solid #06b6d4 !important;
+}
+
+.rating-card-skill {
+  border-top: 3px solid #a855f7 !important;
 }
 
 .wiki-ratings-container {
@@ -9093,9 +9180,70 @@ input[type="number"] {
 
 .rating-item-detail {
   font-size: 12px;
-  line-height: 1.4;
+  line-height: 1.45;
   color: var(--text-secondary);
 }
+
+.rating-item-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+
+.rating-nature-title {
+  font-size: 13.5px;
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.wiki-rating-card .wiki-skill-badge {
+  font-size: 12px;
+  padding: 2px 8px;
+}
+
+.milestone-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.milestone-cyan {
+  background: rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  color: #06b6d4;
+}
+
+.milestone-purple {
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: #a855f7;
+}
+
+.milestone-green {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #10b981;
+}
+
+.milestone-amber {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #f59e0b;
+}
+
+.milestone-pink {
+  background: rgba(236, 72, 153, 0.15);
+  border: 1px solid rgba(236, 72, 153, 0.4);
+  color: #ec4899;
+}
+
 
 /* 🥗 Lv.60 食材天梯卡片網格 (Ladder Grid) */
 .wiki-ladder-grid {

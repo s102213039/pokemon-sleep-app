@@ -12921,32 +12921,105 @@
     return `<span class="wiki-skill-badge ${cls}">${displayName}${statusNote}</span>`;
   }
 
+  // 獲取副技能遊戲品階顏色 (Gold / Blue / White)
+  function getSubSkillBadgeColor(rawName) {
+    if (!rawName) return 'white';
+    const name = rawName.replace(/\s+/g, '');
+    if (name.includes('樹果數量') || name.includes('幫手獎勵') || name.includes('技能等級提升M') || 
+        name.includes('睡眠EXP') || name.includes('睡眠EXP獎勵') || name.includes('活力恢復') || 
+        name.includes('研究EXP') || name.includes('夢之碎片') ||
+        name.toLowerCase().includes('berryfinding') || name.toLowerCase().includes('helpingbonus') ||
+        name.toLowerCase().includes('skilllevelupm') || name.toLowerCase().includes('sleepexp') ||
+        name.toLowerCase().includes('energyrecovery') || name.toLowerCase().includes('researchexp') ||
+        name.toLowerCase().includes('dreamshard')) {
+      return 'gold';
+    }
+    if (name.endsWith('M') || name.endsWith('L') || name.includes('M/L') || name.includes('技能等級提升S') ||
+        name.toLowerCase().includes('finderm') || name.toLowerCase().includes('speedm') || 
+        name.toLowerCase().includes('triggerm') || name.toLowerCase().includes('inventoryupm') ||
+        name.toLowerCase().includes('inventoryupl') || name.toLowerCase().includes('inventoryupm/l') ||
+        name.toLowerCase().includes('skilllevelups') || name.includes('持有上限') || name.toLowerCase().includes('inventory')) {
+      return 'blue';
+    }
+    return 'white';
+  }
+
+  // 渲染副技能徽章 (支援複合格式 如 "樹果數量S + 持有上限")
+  function renderRatingSubskillBadge(rawName, rawNameEn, isEN) {
+    if (!rawName) return '';
+    const text = isEN ? (rawNameEn || (window.I18N ? window.I18N.getSubSkillName(rawName) : rawName)) : rawName;
+    if (text.includes('+')) {
+      const parts = text.split('+').map(p => p.trim());
+      return parts.map(part => {
+        const color = getSubSkillBadgeColor(part);
+        return `<span class="wiki-skill-badge skill-badge-${color}">${part}</span>`;
+      }).join(' <span class="text-secondary font-bold" style="font-size: 11px;">+</span> ');
+    }
+    const color = getSubSkillBadgeColor(text);
+    return `<span class="wiki-skill-badge skill-badge-${color}">${text}</span>`;
+  }
+
+  // 渲染性格推薦標籤 (高亮 ▲ 與 ▼ 符號)
+  function renderRatingNatureBadge(natureName) {
+    if (!natureName) return '';
+    let html = natureName;
+    html = html.replace(/▲/g, '<span class="matrix-rate-up font-bold" style="font-size: 13px; margin: 0 1px;">▲</span>');
+    html = html.replace(/▼/g, '<span class="matrix-rate-down font-bold" style="font-size: 13px; margin: 0 1px;">▼</span>');
+    return `<span class="rating-nature-title font-bold text-white">${html}</span>`;
+  }
+
+  // 培育指南詳細說明文字色彩強化
+  function formatRatingDetail(detail) {
+    if (!detail) return '';
+    let res = detail;
+    // 正向加成數值 (如 +36%, +18%, +1, +2)
+    res = res.replace(/(\+\d+(?:\.\d+)?%?)/g, '<span class="text-success font-bold">$1</span>');
+    // 時間縮短/減項 (如 -14%, -7%, -5%)
+    res = res.replace(/(-\d+(?:\.\d+)?%)/g, '<span class="text-accent font-bold">$1</span>');
+    // 關鍵專有名詞加亮
+    res = res.replace(/(翻倍|畢業核心|靈魂性格|金種子|銀種子)/g, '<span class="text-warning font-bold">$1</span>');
+    res = res.replace(/(doubles|graduation core|essential graduation core|Prime nature|Sub Skill Seed|Main Skill Seed)/g, '<span class="text-warning font-bold">$1</span>');
+    // 箭頭高亮
+    res = res.replace(/▲/g, '<span class="matrix-rate-up font-bold">▲</span>');
+    res = res.replace(/▼/g, '<span class="matrix-rate-down font-bold">▼</span>');
+    return res;
+  }
+
   // 渲染專長評級卡片
   function renderRatingCard(data) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const title = isEN ? (data.title_en || data.title) : data.title;
     const desc = isEN ? (data.desc_en || data.desc) : data.desc;
+    const type = data.type || 'berry';
+    const themeColor = type === 'berry' ? '#f59e0b' : (type === 'ingredient' ? '#06b6d4' : '#a855f7');
+    const specialtyLabel = type === 'berry'
+      ? (isEN ? 'Berry Specialist' : '樹果專長')
+      : (type === 'ingredient' ? (isEN ? 'Ingredient Specialist' : '食材專長') : (isEN ? 'Skill Specialist' : '技能專長'));
 
     return `
-      <div class="wiki-card wiki-rating-card">
-        <div class="wiki-card-header">
-          <h3 class="wiki-card-title">${title}</h3>
+      <div class="wiki-card wiki-rating-card rating-card-${type}">
+        <div class="wiki-card-header" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="rating-specialty-badge specialty-${type}">${specialtyLabel}</span>
+            <h3 class="wiki-card-title" style="margin: 0; font-size: 16px;">${title}</h3>
+          </div>
         </div>
-        <p class="wiki-card-desc">${desc}</p>
+        <p class="wiki-card-desc" style="margin-top: 6px;">${desc}</p>
         
         <div class="rating-subsections">
           <div class="rating-col">
-            <h4 class="rating-col-title">${isEN ? 'Sub-Skill Priority' : '副技能推薦梯度'}</h4>
+            <h4 class="rating-col-title" style="color: ${themeColor};">${isEN ? 'Sub-Skill Priority' : '副技能推薦梯度'}</h4>
             <div class="rating-list">
               ${data.subskills.map(s => {
-                const sName = isEN ? (s.name_en || (window.I18N ? window.I18N.getSubSkillName(s.name) : s.name)) : s.name;
                 const sDetail = isEN ? (s.detail_en || s.detail) : s.detail;
                 return `
                 <div class="rating-item">
                   <span class="rating-tier-tag tier-${s.grade.toLowerCase()}">${s.grade}</span>
                   <div class="rating-item-content">
-                    <span class="rating-item-name font-bold text-white">${sName}</span>
-                    <span class="rating-item-detail text-secondary">${sDetail}</span>
+                    <div class="rating-item-badges">
+                      ${renderRatingSubskillBadge(s.name, s.name_en, isEN)}
+                    </div>
+                    <span class="rating-item-detail text-secondary">${formatRatingDetail(sDetail)}</span>
                   </div>
                 </div>
               `;}).join('')}
@@ -12954,7 +13027,7 @@
           </div>
 
           <div class="rating-col">
-            <h4 class="rating-col-title">${isEN ? 'Nature Priority' : '性格推薦梯度'}</h4>
+            <h4 class="rating-col-title" style="color: ${themeColor};">${isEN ? 'Nature Priority' : '性格推薦梯度'}</h4>
             <div class="rating-list">
               ${data.natures.map(n => {
                 const nName = isEN ? (n.name_en || (window.I18N ? window.I18N.getNatureName(n.name) : n.name)) : n.name;
@@ -12963,8 +13036,10 @@
                 <div class="rating-item">
                   <span class="rating-tier-tag tier-${n.grade.toLowerCase()}">${n.grade}</span>
                   <div class="rating-item-content">
-                    <span class="rating-item-name font-bold text-white">${nName}</span>
-                    <span class="rating-item-detail text-secondary">${nDetail}</span>
+                    <div class="rating-item-badges">
+                      ${renderRatingNatureBadge(nName)}
+                    </div>
+                    <span class="rating-item-detail text-secondary">${formatRatingDetail(nDetail)}</span>
                   </div>
                 </div>
               `;}).join('')}
@@ -14408,25 +14483,25 @@
               <h3 class="wiki-card-title">${isEN ? 'Core Growth & Investment Cycle Guide' : '新手與進階養成核心週期指引'}</h3>
             </div>
             <div class="wiki-strategy-grid">
-              <div class="strategy-item">
-                <div class="strategy-badge">${isEN ? 'Early Goal' : '前期目標'}</div>
-                <div class="strategy-title">${isEN ? 'Prioritize Lv.30' : '優先放置在 Lv.30'}</div>
-                <div class="strategy-desc">${isEN ? 'Focus on nature and Lv.10 & Lv.25 sub-skills. Takes ~2-4 months for free/light players to unlock 2nd ingredient slot, becoming core pillars.' : '先看性格與 Lv.10 & Lv.25 副技能，無課/微課約養成 2~4 個月即可解鎖第 2 種食材，成為中流砥柱。'}</div>
+              <div class="strategy-item strategy-early">
+                <div class="strategy-badge badge-early">${isEN ? 'Early Goal' : '前期目標'}</div>
+                <div class="strategy-title">${isEN ? 'Prioritize <span class="text-accent font-bold">Lv.30</span>' : '優先放置在 <span class="text-accent font-bold">Lv.30</span>'}</div>
+                <div class="strategy-desc">${isEN ? 'Focus on nature and <span class="text-success font-bold">Lv.10</span> &amp; <span class="text-success font-bold">Lv.25</span> sub-skills. Takes <span class="text-warning font-bold">~2-4 months</span> for free/light players to unlock <span class="text-accent font-bold">2nd ingredient slot</span>, becoming core pillars.' : '先看性格與 <span class="text-success font-bold">Lv.10</span> &amp; <span class="text-success font-bold">Lv.25</span> 副技能，無課/微課約養成 <span class="text-warning font-bold">2~4 個月</span>即可解鎖<span class="text-accent font-bold">第 2 種食材</span>，成為中流砥柱。'}</div>
               </div>
-              <div class="strategy-item">
-                <div class="strategy-badge">${isEN ? 'Late Game' : '後期投資'}</div>
-                <div class="strategy-title">${isEN ? 'Carefully Invest in Lv.50~60' : '慎選投入 Lv.50~60'}</div>
-                <div class="strategy-desc">${isEN ? 'Ensure sub-skills and nature reach Ⓢ/Ⓐ graduation tier before heavily investing candies and Main Skill Seeds (~5-10 months).' : '確認副技能與性格皆達 Ⓢ/Ⓐ 畢業級再投入大量糖果與金種子（約需 5~10 個月養成時間）。'}</div>
+              <div class="strategy-item strategy-late">
+                <div class="strategy-badge badge-late">${isEN ? 'Late Game' : '後期投資'}</div>
+                <div class="strategy-title">${isEN ? 'Carefully Invest in <span class="text-accent font-bold">Lv.50~60</span>' : '慎選投入 <span class="text-accent font-bold">Lv.50~60</span>'}</div>
+                <div class="strategy-desc">${isEN ? 'Ensure sub-skills and nature reach <span class="text-success font-bold">Ⓢ/Ⓐ</span> graduation tier before heavily investing candies and <span class="text-warning font-bold">Main Skill Seeds</span> (<span class="text-warning font-bold">~5-10 months</span>).' : '確認副技能與性格皆達 <span class="text-success font-bold">Ⓢ/Ⓐ</span> 畢業級再投入大量糖果與<span class="text-warning font-bold">金種子</span>（約需 <span class="text-warning font-bold">5~10 個月</span>養成時間）。'}</div>
               </div>
-              <div class="strategy-item">
-                <div class="strategy-badge">${isEN ? 'Energy Core' : '活力核心'}</div>
+              <div class="strategy-item strategy-energy">
+                <div class="strategy-badge badge-energy">${isEN ? 'Energy Core' : '活力核心'}</div>
                 <div class="strategy-title">${isEN ? 'Raise One Dedicated Healer First' : '優先養成一隻主力補師'}</div>
-                <div class="strategy-desc">${isEN ? 'Maintaining team energy > 80% grants 2.2x~2.5x helping speed! Recommended healers: Wigglytuff, Sylveon, Gardevoir, or Pawmot.' : '全體活力維持在 80% 以上可享受 2.2x~2.5x 幫忙速度！建議先練：胖可丁、仙子伊布、沙奈朵或巴布土撥。'}</div>
+                <div class="strategy-desc">${isEN ? 'Maintaining team energy <span class="text-success font-bold">&gt; 80%</span> grants <span class="text-accent font-bold">2.2x~2.5x</span> helping speed! Recommended healers: <span class="text-warning font-bold">Wigglytuff</span>, <span class="text-warning font-bold">Sylveon</span>, <span class="text-warning font-bold">Gardevoir</span>, or <span class="text-warning font-bold">Pawmot</span>.' : '全體活力維持在 <span class="text-success font-bold">80% 以上</span>可享受 <span class="text-accent font-bold">2.2x~2.5x</span> 幫忙速度！建議先練：<span class="text-warning font-bold">胖可丁</span>、<span class="text-warning font-bold">仙子伊布</span>、<span class="text-warning font-bold">沙奈朵</span>或<span class="text-warning font-bold">巴布土撥</span>。'}</div>
               </div>
-              <div class="strategy-item">
-                <div class="strategy-badge">${isEN ? 'Seed Rules' : '種子機制'}</div>
-                <div class="strategy-title">${isEN ? 'Main & Sub Skill Seed Rules' : '主技能與副技能種子規則'}</div>
-                <div class="strategy-desc">${isEN ? 'Each evolution grants Main Skill Lv.+1 and inventory +5. Duplicate sub-skills cannot coexist (if S and M already exist, S cannot upgrade to M).' : '每次進化主技能+1、持有上限+5。副技能不能同時存在相同名稱技能（如已有S與M，則S無法再升階為M）。'}</div>
+              <div class="strategy-item strategy-seeds">
+                <div class="strategy-badge badge-seeds">${isEN ? 'Seed Rules' : '種子機制'}</div>
+                <div class="strategy-title">${isEN ? 'Main &amp; Sub Skill Seed Rules' : '主技能與副技能種子規則'}</div>
+                <div class="strategy-desc">${isEN ? 'Each evolution grants <span class="text-success font-bold">Main Skill Lv.+1</span> and <span class="text-accent font-bold">inventory +5</span>. Duplicate sub-skills cannot coexist (if S and M already exist, S cannot upgrade to M).' : '每次進化<span class="text-success font-bold">主技能+1</span>、<span class="text-accent font-bold">持有上限+5</span>。副技能不能同時存在相同名稱技能（如已有S與M，則S無法再升階為M）。'}</div>
               </div>
             </div>
           </div>
@@ -14488,14 +14563,24 @@
                   </tr>
                 </thead>
                 <tbody>
-                  ${SLEEP_DAYS_BASELINE.map(row => `
+                  ${SLEEP_DAYS_BASELINE.map(row => {
+                    const milestoneColor = row.level === 10 ? 'milestone-cyan'
+                      : row.level === 25 ? 'milestone-purple'
+                      : row.level === 30 ? 'milestone-green'
+                      : row.level === 50 ? 'milestone-amber'
+                      : 'milestone-pink';
+                    const rawNote = isEN ? (row.note_en || row.note) : row.note;
+                    const formattedNote = rawNote
+                      .replace(/(第[一二三123]個副技能|第[一二三123]種食材|1st sub-skill|2nd sub-skill|3rd sub-skill|2nd ingredient slot|3rd ingredient slot)/g, '<span class="text-accent font-bold">$1</span>')
+                      .replace(/(前期核心目標|中階關鍵戰力|新手初期門檻|頂級完全體|後期主力培育|primary early goal|power spike|early milestone|max potential)/g, '<span class="text-warning font-bold">$1</span>');
+                    return `
                     <tr>
-                      <td class="font-bold text-accent">Lv. ${row.level}</td>
-                      <td class="font-bold">${row.totalExp.toLocaleString()} EXP</td>
-                      <td class="text-success font-bold">${row.days} ${isEN ? 'Days (approx. ' + Math.ceil(row.days / 2) + ' with events)' : '天 (搭配活動約 ' + Math.ceil(row.days / 2) + ' 天)'}</td>
-                      <td class="text-secondary">${isEN ? (row.note_en || row.note) : row.note}</td>
+                      <td style="vertical-align: middle;"><span class="milestone-badge ${milestoneColor}">Lv. ${row.level}</span></td>
+                      <td class="font-bold" style="vertical-align: middle;">${row.totalExp.toLocaleString()} EXP</td>
+                      <td class="text-success font-bold" style="vertical-align: middle;">${row.days} ${isEN ? 'Days (approx. ' + Math.ceil(row.days / 2) + ' with events)' : '天 (搭配活動約 ' + Math.ceil(row.days / 2) + ' 天)'}</td>
+                      <td class="text-secondary" style="vertical-align: middle;">${formattedNote}</td>
                     </tr>
-                  `).join('')}
+                  `;}).join('')}
                 </tbody>
               </table>
             </div>
