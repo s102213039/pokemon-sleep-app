@@ -3748,6 +3748,32 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Helping Speed Column Wid
   assert(effectColBlock.includes('font-size: 13px !important'), 'col-subskills-effect must be unified to 13px');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Wiki Subskills Panel Full-Width Symbols Replaced with Half-Width', () => {
+  const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+
+  // 1. Verify summary points use half-width colons, commas, and periods
+  assert(wikiJs.includes("'副技能上限 35%:'"), 'Speed guide point 1 title must use half-width colon');
+  assert(wikiJs.includes("'副技能合計縮短上限為 35%, 溢出無效.'"), 'Speed guide point 1 desc must use half-width comma and period');
+  assert(wikiJs.includes("'性格獨立乘區:'"), 'Speed guide point 2 title must use half-width colon');
+  assert(wikiJs.includes("'直接與副技能相乘, 不受 35% 上限約束.'"), 'Speed guide point 2 desc must use half-width comma and period');
+  assert(wikiJs.includes("'產能換算:'"), 'Speed guide point 3 title must use half-width colon');
+  assert(wikiJs.includes("'產能為時間倒數, 間隔 58.5% 等同產能提升 70.94%.'"), 'Speed guide point 3 desc must use half-width comma and period');
+
+  // 2. Verify formula banner uses half-width colon
+  assert(wikiJs.includes('<strong>公式</strong>:'), 'Formula banner must use half-width colon');
+
+  // 3. Verify subskills HTML block has zero full-width punctuation
+  const lines = wikiJs.split('\n');
+  const subskillsHtml = lines.slice(14179, 14388).join('\n');
+  const fwMatches = subskillsHtml.match(/[\uFF01-\uFF5E\u3000-\u303F\u2000-\u206F]/g);
+  assert(!fwMatches || fwMatches.length === 0, `Subskills panel HTML must not contain full-width punctuation, found: ${fwMatches}`);
+
+  // 4. Verify subskills data structures have zero full-width punctuation
+  const dataPart = lines.slice(660, 1133).join('\n');
+  const dataFwMatches = dataPart.match(/[\uFF01-\uFF5E\u3000-\u303F\u2000-\u206F]/g);
+  assert(!dataFwMatches || dataFwMatches.length === 0, `Subskills data must not contain full-width punctuation, found: ${dataFwMatches}`);
+});
+
 
 
 // Final Summary Output

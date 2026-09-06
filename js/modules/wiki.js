@@ -1086,7 +1086,7 @@
       up_en: "-10%",
       down: "+7.5%", 
       down_en: "+7.5%",
-      desc: "影響所有樹果、食材與技能判定間隔",
+      desc: "影響所有樹果, 食材與技能判定間隔",
       desc_en: "Affects help interval for berries, ingredients, and skills."
     },
     { 
@@ -14186,7 +14186,7 @@
             <div class="wiki-rule-banner">
               ${isEN 
                 ? '<strong>Formula</strong>: <code>(1 + Sub-Skill %) × Nature Multiplier = Final Multiplier</code>' 
-                : '<strong>公式</strong>：<code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>'}
+                : '<strong>公式</strong>: <code>(1 + 副技能提升%) × 性格倍率 = 最終發動總倍率</code>'}
             </div>
 
             <!-- 速查對照表 -->
@@ -14252,22 +14252,22 @@
               <h3 class="wiki-card-title">${isEN ? 'Helping Speed Limits & Calculation Mechanics Guide' : '幫忙速度極限與計算機制指南'}</h3>
             </div>
             
-            <!-- 幫忙速度核心機制重點說明 (無外框直接展示，文字極簡化) -->
+            <!-- 幫忙速度核心機制重點說明 (無外框直接展示, 文字極簡化) -->
             <div class="wiki-speed-summary-points">
               <div class="summary-point-line">
                 <span class="point-prefix">1.</span>
-                <span class="point-title">${isEN ? 'Sub-Skills 35% Cap:' : '副技能上限 35%：'}</span>
-                <span class="point-desc">${isEN ? 'Combined reduction capped at 35%, excess is ignored.' : '副技能合計縮短上限為 35%，溢出無效。'}</span>
+                <span class="point-title">${isEN ? 'Sub-Skills 35% Cap:' : '副技能上限 35%:'}</span>
+                <span class="point-desc">${isEN ? 'Combined reduction capped at 35%, excess is ignored.' : '副技能合計縮短上限為 35%, 溢出無效.'}</span>
               </div>
               <div class="summary-point-line">
                 <span class="point-prefix">2.</span>
-                <span class="point-title">${isEN ? 'Independent Nature:' : '性格獨立乘區：'}</span>
-                <span class="point-desc">${isEN ? 'Multiplies after sub-skills, exempt from 35% cap.' : '直接與副技能相乘，不受 35% 上限約束。'}</span>
+                <span class="point-title">${isEN ? 'Independent Nature:' : '性格獨立乘區:'}</span>
+                <span class="point-desc">${isEN ? 'Multiplies after sub-skills, exempt from 35% cap.' : '直接與副技能相乘, 不受 35% 上限約束.'}</span>
               </div>
               <div class="summary-point-line">
                 <span class="point-prefix">3.</span>
-                <span class="point-title">${isEN ? 'Output Conversion:' : '產能換算：'}</span>
-                <span class="point-desc">${isEN ? 'Output is inverse of time. 58.5% interval equals +70.94% output.' : '產能為時間倒數，間隔 58.5% 等同產能提升 70.94%。'}</span>
+                <span class="point-title">${isEN ? 'Output Conversion:' : '產能換算:'}</span>
+                <span class="point-desc">${isEN ? 'Output is inverse of time. 58.5% interval equals +70.94% output.' : '產能為時間倒數, 間隔 58.5% 等同產能提升 70.94%.'}</span>
               </div>
             </div>
 
