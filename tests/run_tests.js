@@ -3815,10 +3815,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(indexHtml.includes('css/styles.css?v=20260907_7'), 'index.html styles.css must be v=20260907_7');
-  assert(indexHtml.includes('js/modules/wiki.js?v=20260907_7'), 'index.html wiki.js must be v=20260907_7');
-  assert(appIndexHtml.includes('css/styles.css?v=20260907_7'), 'app/index.html styles.css must be v=20260907_7');
-  assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_7'), 'app/index.html wiki.js must be v=20260907_7');
+  assert(indexHtml.includes('css/styles.css?v=20260907_8'), 'index.html styles.css must be v=20260907_8');
+  assert(indexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'index.html wiki.js must be v=20260907_8');
+  assert(appIndexHtml.includes('css/styles.css?v=20260907_8'), 'app/index.html styles.css must be v=20260907_8');
+  assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'app/index.html wiki.js must be v=20260907_8');
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless Layout, Single-Line Name:Desc, No Tier Badges & Half-Width Symbols', () => {
@@ -3851,7 +3851,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless
   assert(stylesCss.includes('.mobile-h5-app .strategy-item {\n  background: transparent !important;\n  border: none !important;'), 'Mobile strategy-item must have transparent background and no borders');
 
   // 5. Verify milestone table simplification and single-line column control
-  assert(wikiJs.includes('<th class="col-milestone-days">${isEN ? \'100 EXP/Day\' : \'每天100EXP\'}</th>'), 'Milestone table header must be 每天100EXP');
+  assert(wikiJs.includes('<th class="col-milestone-days">${isEN ? \'Daily Full Sleep\' : \'每天滿睡\'}</th>'), 'Milestone table header must be 每天滿睡');
+  assert(wikiJs.includes('<th class="col-milestone-exp">${isEN ? \'Required EXP\' : \'所需EXP\'}</th>'), 'Milestone table header must be 所需EXP');
+  assert(wikiJs.includes('<th class="col-milestone-note">${isEN ? \'Milestone\' : \'里程碑\'}</th>'), 'Milestone table header must be 里程碑');
+  assert(wikiJs.includes('Lv.${row.level}'), 'Milestone level must not have spaces');
+  assert(wikiJs.includes('${row.totalExp.toLocaleString()}</td>'), 'Milestone EXP value must not have EXP suffix text');
   assert(wikiJs.includes("${row.days} ${isEN ? 'Days' : '天'}"), 'Milestone days must not have parentheses');
   assert(wikiJs.includes('note: "解鎖第1個副技能"'), 'Milestone note Lv.10 must remove extra comma content');
   assert(wikiJs.includes('note: "解鎖第2個副技能"'), 'Milestone note Lv.25 must remove extra comma content');
@@ -3879,6 +3883,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless
   // 8. Verify borderless styles in CSS
   assert(stylesCss.includes('.rating-item {\n  display: flex;\n  align-items: center;\n  gap: 4px;\n  background: transparent;\n  border: none;'), 'Rating item must be borderless');
   assert(stylesCss.includes('#wiki-subpanel-ratings .calc-inputs-row {\n  background: transparent;\n  border: none;'), 'Calc row must be borderless in ratings');
+
+  // 9. Verify Pokédex bottom dead space removal and milestone responsive layout
+  assert(stylesCss.includes('.mobile-h5-app.pokemon-active .pokemon-table tbody tr:last-child td {\n  padding-bottom: 6px !important;\n}'), 'Pokédex table must not have redundant bottom blank space');
+  assert(stylesCss.includes('.mobile-h5-app .milestone-table {\n  width: 100% !important;\n  table-layout: auto !important;\n}'), 'Mobile milestone table must adapt without scrolling');
+  assert(stylesCss.includes('.mobile-h5-app .wiki-calc-card {\n  padding: 10px 8px !important;\n}'), 'Mobile wiki-calc-card must have compact outer padding');
 });
 
 

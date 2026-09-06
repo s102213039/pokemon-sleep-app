@@ -9246,11 +9246,12 @@ input[type="number"] {
 
 .milestone-badge {
   display: inline-block;
-  padding: 3px 8px;
+  padding: 2px 6px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   text-align: center;
+  letter-spacing: -0.2px;
 }
 
 .milestone-cyan {
@@ -9283,47 +9284,57 @@ input[type="number"] {
   color: #ec4899;
 }
 
+.wiki-calc-card {
+  padding: 16px 18px;
+}
+
 #wiki-subpanel-ratings .calc-inputs-row {
   background: transparent;
   border: none;
-  padding: 8px 0;
+  padding: 6px 0;
 }
 
 /* 里程碑天數表欄位寬度與單行控制 */
 .milestone-table th {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-title, #f8fafc);
+  padding: 8px 6px;
 }
 
 .milestone-table td {
-  font-size: 13px;
+  font-size: 12px;
+  padding: 8px 6px;
 }
 
 .milestone-table th.col-milestone-lv,
 .milestone-table td.col-milestone-lv {
   white-space: nowrap;
   width: 14%;
-  min-width: 80px;
+  min-width: 68px;
+  text-align: center;
 }
 
 .milestone-table th.col-milestone-exp,
 .milestone-table td.col-milestone-exp {
   white-space: nowrap;
-  width: 22%;
-  min-width: 125px;
+  width: 20%;
+  min-width: 80px;
+  text-align: center;
 }
 
 .milestone-table th.col-milestone-days,
 .milestone-table td.col-milestone-days {
   white-space: nowrap;
   width: 18%;
-  min-width: 95px;
+  min-width: 76px;
+  text-align: center;
 }
 
 .milestone-table th.col-milestone-note,
 .milestone-table td.col-milestone-note {
-  width: 46%;
+  width: 48%;
+  min-width: 120px;
 }
 
 
@@ -12795,8 +12806,8 @@ body.mobile-h5-app.pokemon-active,
 }
 
 .mobile-h5-app.pokemon-active #panel-pokemon {
-  height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 72px - env(safe-area-inset-bottom, 0px)) !important;
-  max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 72px - env(safe-area-inset-bottom, 0px)) !important;
+  height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
+  max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
   overflow: hidden !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -12836,7 +12847,7 @@ body.mobile-h5-app.pokemon-active,
   min-height: 0 !important;
   max-height: 100% !important;
   width: calc(100% - 24px) !important;
-  margin: 0 12px calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+  margin: 0 12px 6px !important;
   padding: 0 !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 14px !important;
@@ -12849,7 +12860,7 @@ body.mobile-h5-app.pokemon-active,
 }
 
 .mobile-h5-app.pokemon-active .pokemon-table tbody tr:last-child td {
-  padding-bottom: calc(26px + env(safe-area-inset-bottom, 0px)) !important;
+  padding-bottom: 6px !important;
 }
 
 .mobile-h5-app.pokemon-active .pokemon-table thead th {
@@ -15359,40 +15370,74 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border: 1px solid var(--border-color-subtle) !important;
 }
 
+.mobile-h5-app .wiki-calc-card {
+  padding: 10px 8px !important;
+}
+
+.mobile-h5-app .wiki-calc-card .wiki-table-wrapper {
+  margin-top: 10px !important;
+  border-radius: 8px !important;
+}
+
+.mobile-h5-app .milestone-badge {
+  font-size: 10.5px !important;
+  padding: 1.5px 4px !important;
+  border-radius: 4px !important;
+  letter-spacing: -0.3px !important;
+}
+
+.mobile-h5-app .milestone-table {
+  width: 100% !important;
+  table-layout: auto !important;
+}
+
 .mobile-h5-app .milestone-table th {
-  font-size: 12.5px !important;
+  font-size: 11px !important;
   font-weight: 700 !important;
   color: var(--text-title, #f8fafc) !important;
+  padding: 6px 3px !important;
+  text-align: center !important;
 }
 
 .mobile-h5-app .milestone-table td {
-  font-size: 12.5px !important;
+  font-size: 11px !important;
+  padding: 6px 3px !important;
 }
 
 .mobile-h5-app .milestone-table th.col-milestone-lv,
 .mobile-h5-app .milestone-table td.col-milestone-lv {
   white-space: nowrap !important;
-  width: 18% !important;
-  min-width: 76px !important;
+  width: 16% !important;
+  min-width: 46px !important;
+  text-align: center !important;
+  padding: 6px 2px !important;
 }
 
 .mobile-h5-app .milestone-table th.col-milestone-exp,
 .mobile-h5-app .milestone-table td.col-milestone-exp {
   white-space: nowrap !important;
-  width: 26% !important;
-  min-width: 115px !important;
+  width: 20% !important;
+  min-width: 52px !important;
+  text-align: center !important;
+  padding: 6px 2px !important;
 }
 
 .mobile-h5-app .milestone-table th.col-milestone-days,
 .mobile-h5-app .milestone-table td.col-milestone-days {
   white-space: nowrap !important;
-  width: 20% !important;
-  min-width: 90px !important;
+  width: 18% !important;
+  min-width: 50px !important;
+  text-align: center !important;
+  padding: 6px 2px !important;
 }
 
 .mobile-h5-app .milestone-table th.col-milestone-note,
 .mobile-h5-app .milestone-table td.col-milestone-note {
-  min-width: 135px !important;
+  white-space: nowrap !important;
+  width: 46% !important;
+  min-width: 110px !important;
+  text-align: left !important;
+  padding: 6px 4px !important;
 }
 
 /* 6. 🥗 Sub-Tab 4: 食材產量天梯榜 */

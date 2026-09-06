@@ -14571,14 +14571,14 @@
             </div>
 
             <!-- 基準天數對照表 -->
-            <div class="wiki-table-wrapper" style="margin-top: 18px;">
+            <div class="wiki-table-wrapper" style="margin-top: 14px;">
               <table class="wiki-data-table milestone-table">
                 <thead>
                   <tr>
                     <th class="col-milestone-lv">${isEN ? 'Target Level' : '目標等級'}</th>
-                    <th class="col-milestone-exp">${isEN ? 'Total Required EXP' : '累計所需 EXP'}</th>
-                    <th class="col-milestone-days">${isEN ? '100 EXP/Day' : '每天100EXP'}</th>
-                    <th class="col-milestone-note">${isEN ? 'Milestone Significance' : '里程碑意義'}</th>
+                    <th class="col-milestone-exp">${isEN ? 'Required EXP' : '所需EXP'}</th>
+                    <th class="col-milestone-days">${isEN ? 'Daily Full Sleep' : '每天滿睡'}</th>
+                    <th class="col-milestone-note">${isEN ? 'Milestone' : '里程碑'}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -14593,8 +14593,8 @@
                       .replace(/(第[一二三123]個副技能|第[一二三123]種食材|1st sub-skill|2nd sub-skill|3rd sub-skill|2nd ingredient slot|3rd ingredient slot)/g, '<span class="text-accent font-bold">$1</span>');
                     return `
                     <tr>
-                      <td class="col-milestone-lv" style="vertical-align: middle;"><span class="milestone-badge ${milestoneColor}">Lv. ${row.level}</span></td>
-                      <td class="col-milestone-exp font-bold" style="vertical-align: middle;">${row.totalExp.toLocaleString()} EXP</td>
+                      <td class="col-milestone-lv" style="vertical-align: middle;"><span class="milestone-badge ${milestoneColor}">Lv.${row.level}</span></td>
+                      <td class="col-milestone-exp font-bold" style="vertical-align: middle;">${row.totalExp.toLocaleString()}</td>
                       <td class="col-milestone-days text-success font-bold" style="vertical-align: middle;">${row.days} ${isEN ? 'Days' : '天'}</td>
                       <td class="col-milestone-note text-secondary" style="vertical-align: middle;">${formattedNote}</td>
                     </tr>
