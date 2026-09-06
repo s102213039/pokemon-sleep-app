@@ -667,8 +667,8 @@
         { name: "持有上限提升 M", color: "blue", val: "+12 個", val_en: "+12" },
         { name: "持有上限提升 L", color: "blue", val: "+18 個", val_en: "+18" }
       ],
-      desc: "可持有的樹果與食材上限提升 +6 / +12 / +18 個（避免睡眠溢出）",
-      desc_en: "Increases carry capacity by +6 / +12 / +18 (prevents overflow during sleep)."
+      desc: "可持有的樹果與食材上限提升 +6 / +12 / +18 個",
+      desc_en: "Increases carry capacity by +6 / +12 / +18."
     },
     {
       category: "幫忙速度",
@@ -677,8 +677,8 @@
         { name: "幫忙速度 S", color: "white", val: "-7%", val_en: "-7%" },
         { name: "幫忙速度 M", color: "blue", val: "-14%", val_en: "-14%" }
       ],
-      desc: "提供幫助所需的時間減少 7% / 14%（副技能幫忙速度合計上限 35%）",
-      desc_en: "Reduces help time by 7% / 14% (helping speed sub-skills capped at 35%)."
+      desc: "提供幫助所需的時間減少 7% / 14%",
+      desc_en: "Reduces help time by 7% / 14%."
     },
     {
       category: "技能機率",
@@ -687,8 +687,8 @@
         { name: "技能機率提升 S", color: "white", val: "+18%", val_en: "+18%" },
         { name: "技能機率提升 M", color: "blue", val: "+36%", val_en: "+36%" }
       ],
-      desc: "主技能發動機率提升 18% / 36%（技能型寶可夢核心畢業副技）",
-      desc_en: "Boosts main skill trigger rate by +18% / +36% (essential for Skill specialists)."
+      desc: "主技能發動機率提升 18% / 36%",
+      desc_en: "Boosts main skill trigger rate by +18% / +36%."
     },
     {
       category: "食材機率",
@@ -697,8 +697,8 @@
         { name: "食材機率提升 S", color: "white", val: "+18%", val_en: "+18%" },
         { name: "食材機率提升 M", color: "blue", val: "+36%", val_en: "+36%" }
       ],
-      desc: "發現食材的機率提升 18% / 36%（食材型寶可夢核心畢業副技）",
-      desc_en: "Boosts ingredient finding rate by +18% / +36% (essential for Ingredient specialists)."
+      desc: "發現食材的機率提升 18% / 36%",
+      desc_en: "Boosts ingredient finding rate by +18% / +36%."
     },
     {
       category: "樹果數量",
@@ -716,8 +716,8 @@
         { name: "技能等級提升 S", color: "blue", val: "+1 級", val_en: "+1 Lv." },
         { name: "技能等級提升 M", color: "gold", val: "+2 級", val_en: "+2 Lv." }
       ],
-      desc: "主技能等級提升 1 / 2 級（省下主技能金種子珍貴資源）",
-      desc_en: "Increases main skill level by +1 / +2 (saves Main Skill Seeds)."
+      desc: "主技能等級提升 1 / 2 級",
+      desc_en: "Increases main skill level by +1 / +2."
     },
     {
       category: "全隊幫忙",
@@ -734,8 +734,8 @@
       skills: [
         { name: "活力恢復獎勵", color: "gold", val: "全隊 1.12x", val_en: "Team 1.12x" }
       ],
-      desc: "全隊睡眠活力恢復量提高 1.12 倍（可彌補性格活力下降隊友）",
-      desc_en: "Boosts team sleep energy recovery by 1.12x (offsets Energy Down natures)."
+      desc: "全隊睡眠活力恢復量提高 1.12 倍",
+      desc_en: "Boosts team sleep energy recovery by 1.12x."
     },
     {
       category: "全隊經驗",
@@ -743,8 +743,8 @@
       skills: [
         { name: "睡眠 EXP 獎勵", color: "gold", val: "全隊 +14%", val_en: "Team +14%" }
       ],
-      desc: "全隊睡眠結算獲得 EXP 提高 14%（大幅加速全隊成長）",
-      desc_en: "Boosts team sleep EXP by +14% (significantly accelerates leveling)."
+      desc: "全隊睡眠結算獲得 EXP 提高 14%",
+      desc_en: "Boosts team sleep EXP by +14%."
     },
     {
       category: "研究經驗",
@@ -752,8 +752,8 @@
       skills: [
         { name: "研究 EXP 獎勵", color: "gold", val: "個人 +6%", val_en: "Self +6%" }
       ],
-      desc: "玩家睡眠結算獲得的研究 EXP 提高 6%（加快研究等級升級）",
-      desc_en: "Boosts player research EXP by +6% (speeds up research rank progress)."
+      desc: "玩家睡眠結算獲得的研究 EXP 提高 6%",
+      desc_en: "Boosts player research EXP by +6%."
     },
     {
       category: "夢之碎片",
@@ -761,8 +761,8 @@
       skills: [
         { name: "夢之碎片獎勵", color: "gold", val: "個人 +6%", val_en: "Self +6%" }
       ],
-      desc: "睡眠結算獲得夢之碎片數量提高 6%（可與幸運薰香疊加）",
-      desc_en: "Boosts dream shards gained from sleep by +6% (stacks with Luck Incense)."
+      desc: "睡眠結算獲得夢之碎片數量提高 6%",
+      desc_en: "Boosts dream shards gained from sleep by +6%."
     }
   ];
 
@@ -1086,8 +1086,8 @@
       up_en: "-10%",
       down: "+7.5%", 
       down_en: "+7.5%",
-      desc: "影響所有樹果、食材與技能判定間隔（▲ 縮短 -10% 幫忙時間；▼ 增加 +7.5% 幫忙時間）",
-      desc_en: "Affects help interval for berries, ingredients, and skills (▲ reduces help time by -10%; ▼ increases help time by +7.5%)."
+      desc: "影響所有樹果、食材與技能判定間隔",
+      desc_en: "Affects help interval for berries, ingredients, and skills."
     },
     { 
       stat: "活力回復量", 
@@ -1096,8 +1096,8 @@
       up_en: "+20%",
       down: "-12%", 
       down_en: "-12%",
-      desc: "影響睡眠與隊伍補師回復量（下降懲罰調輕至 -12%）",
-      desc_en: "Affects sleep energy and healer skill recovery (-12% penalty)."
+      desc: "影響睡眠與隊伍補師回復量",
+      desc_en: "Affects sleep energy and healer skill recovery."
     },
     { 
       stat: "食材發現率", 
@@ -14252,50 +14252,52 @@
               <h3 class="wiki-card-title">${isEN ? 'Helping Speed Limits & Calculation Mechanics Guide' : '幫忙速度極限與計算機制指南'}</h3>
             </div>
             
-            <div class="wiki-rule-banner">
-              ${isEN 
-                ? '<strong>Core Rules</strong>: Sub-skills have a <strong>35% hard cap</strong>, and <strong>Nature operates as an independent multiplicative layer</strong>.<br><strong>Interval Formula</strong>: <code>Final Interval = Base Time × (1 - Sub-Skill %, max 35%) × Nature Mod (0.90)</code><br><strong>Output Formula</strong>: <code>Output Boost = (1 / Final Interval Ratio) - 1</code> (Shortening interval by 41.5% yields +70.94% frequency boost!)' 
-                : '<strong>核心關鍵</strong>：副技能存在 <strong>35% 硬上限</strong>，且<strong>性格屬於獨立乘區</strong>（兩者相乘，不互斥）。<br><strong>間隔公式</strong>：<code>最終間隔 = 基礎時間 × (1 - 副技能縮短%, 上限 35%) × 性格修正 (0.90)</code><br><strong>產能換算</strong>：<code>產能提升率 = (1 / 最終間隔比例) - 1</code>（幫忙時間縮短 41.5%，等同幫忙頻率與產量暴增 +70.94%！）'}
-            </div>
-
-            <!-- 3 大詳細機制卡片 (Detailed Mechanics Breakdown) -->
-            <div class="wiki-speed-breakdown-grid">
-              <div class="wiki-speed-breakdown-card">
-                <div class="breakdown-card-title">
-                  <span>[1]</span>
-                  <span>${isEN ? 'Sub-Skills & 35% Hard Cap' : '副技能數值與 35% 硬上限'}</span>
+            <!-- 整合單一方框：幫忙速度核心機制總覽 (Unified Mechanics Summary Box) -->
+            <div class="wiki-speed-summary-box">
+              <div class="speed-summary-formula-bar">
+                <div class="formula-chip">
+                  <span class="formula-label">${isEN ? 'Interval Formula' : '間隔公式'}</span>
+                  <code>${isEN ? 'Final Interval = Base Time × (1 - Sub-Skill %, max 35%) × Nature Mod' : '最終間隔 = 基礎時間 × (1 - 副技能縮短%, 上限 35%) × 性格修正'}</code>
                 </div>
-                <ul class="breakdown-list">
-                  <li>${isEN ? '<strong>Helping Speed M</strong>: -14% interval' : '<strong>幫忙速度提升M</strong>：縮短 14% 間隔'}</li>
-                  <li>${isEN ? '<strong>Helping Speed S</strong>: -7% interval' : '<strong>幫忙速度提升S</strong>：縮短 7% 間隔'}</li>
-                  <li>${isEN ? '<strong>Helping Bonus</strong>: -5% per helper on team (stacks across all 5 Pokémon)' : '<strong>幫手獎勵</strong>：全隊每隻 -5%（全隊 5 隻皆可疊加生效）'}</li>
-                  <li>${isEN ? '<strong>Hard Cap</strong>: Combined sub-skill deduction is capped at <strong>35% max</strong> (min 0.65x). Excess percentage is ignored.' : '<strong>硬上限規則</strong>：副技能縮短合計上限鎖死為 <strong>35%</strong>（間隔最低 0.65）。超過部分溢出無效。'}</li>
-                </ul>
+                <div class="formula-chip">
+                  <span class="formula-label">${isEN ? 'Output Boost' : '產能換算'}</span>
+                  <code>${isEN ? 'Output Boost = (1 / Final Interval) - 1' : '產能提升 = (1 / 最終間隔) - 1'}</code>
+                </div>
               </div>
-
-              <div class="wiki-speed-breakdown-card">
-                <div class="breakdown-card-title">
-                  <span>[2]</span>
-                  <span>${isEN ? 'Nature Multiplicative Layer' : '性格獨立乘區機制'}</span>
+              <div class="speed-summary-points-grid">
+                <div class="summary-point-item">
+                  <div class="point-header">
+                    <span class="point-num">1</span>
+                    <span class="point-title">${isEN ? 'Sub-Skills 35% Hard Cap' : '副技能 35% 硬上限'}</span>
+                  </div>
+                  <div class="point-desc">
+                    ${isEN 
+                      ? 'Sub-skill interval reduction is capped at <strong>35% max</strong> (min 0.65x). Excess percentage is ignored.' 
+                      : '副技能縮短合計上限鎖死為 <strong>35%</strong>（間隔最低 0.65x），超過部分溢出無效。'}
+                  </div>
                 </div>
-                <ul class="breakdown-list">
-                  <li>${isEN ? '<strong>Speed Up (▲)</strong>: Interval × 0.90 (output +11.11%)' : '<strong>幫忙速度上升 (▲)</strong>：時間係數 × 0.90（產能提升 +11.11%）'}</li>
-                  <li>${isEN ? '<strong>Neutral</strong>: Interval × 1.00' : '<strong>無修正 / 其它性格</strong>：時間係數 × 1.00'}</li>
-                  <li>${isEN ? '<strong>Speed Down (▼)</strong>: Interval × 1.10 (output -9.09%)' : '<strong>幫忙速度下降 (▼)</strong>：時間係數 × 1.10（產能懲罰 -9.09%）'}</li>
-                  <li>${isEN ? '<strong>Independent</strong>: Multiplies after sub-skills; enjoys full 10% reduction exempt from 35% cap.' : '<strong>獨立乘算</strong>：直接與副技能結算結果相乘，不受 35% 副技上限約束！'}</li>
-                </ul>
-              </div>
-
-              <div class="wiki-speed-breakdown-card">
-                <div class="breakdown-card-title">
-                  <span>[3]</span>
-                  <span>${isEN ? 'Interval vs Real Productivity' : '時間縮短 vs 產能暴增換算'}</span>
+                <div class="summary-point-item">
+                  <div class="point-header">
+                    <span class="point-num">2</span>
+                    <span class="point-title">${isEN ? 'Independent Nature Multiplier' : '性格獨立乘區機制'}</span>
+                  </div>
+                  <div class="point-desc">
+                    ${isEN 
+                      ? 'Multiplies directly after sub-skills (▲ 0.90x / ▼ 1.10x), fully exempt from the 35% sub-skill cap.' 
+                      : '直接與副技能結果相乘（▲ 0.90x / ▼ 1.10x），<strong>不受 35% 副技上限約束</strong>。'}
+                  </div>
                 </div>
-                <ul class="breakdown-list">
-                  <li>${isEN ? '<strong>Key Concept</strong>: -41.5% interval does NOT mean +41.5% output!' : '<strong>重要觀念</strong>：時間縮短 -41.5%，絕不等於產能只增加 +41.5%！'}</li>
-                  <li>${isEN ? '<strong>Inverse Relation</strong>: Output Frequency = <code>1 / Remaining Time</code>' : '<strong>倒數關係</strong>：產出頻率 = <code>1 / 剩餘時間比例</code>'}</li>
-                  <li>${isEN ? 'When interval becomes 58.5% (0.585), frequency is <code>1 / 0.585 ≈ 1.7094</code>, meaning <strong>+70.94%</strong> more items in the same timeframe.' : '當間隔縮短為 58.5% (0.585) 時，同時間產出為 <code>1 / 0.585 ≈ 1.7094</code> 倍，產能直接<strong>暴增 +70.94%</strong>！'}</li>
-                </ul>
+                <div class="summary-point-item">
+                  <div class="point-header">
+                    <span class="point-num">3</span>
+                    <span class="point-title">${isEN ? 'Inverse Output Frequency' : '時間縮短 vs 產能換算'}</span>
+                  </div>
+                  <div class="point-desc">
+                    ${isEN 
+                      ? 'Output is the inverse of time (<code>1 / Interval</code>). A 58.5% interval (-41.5% / 0.585x) yields a <strong>+70.94%</strong> production boost.' 
+                      : '產能為時間倒數（<code>1 / 最終間隔</code>）。時間縮短至 58.5%（-41.5% / 0.585x）等同產能暴增 <strong>+70.94%</strong>。'}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -14363,12 +14365,7 @@
             <div class="wiki-card-header">
               <h3 class="wiki-card-title">${isEN ? 'Sub-Skills Complete Tier & Stats Overview' : '副技能階級與數值總覽'}</h3>
             </div>
-            <div class="wiki-rule-banner">
-              ${isEN 
-                ? '<strong>Rule</strong>: Helping speed buff from sub-skills is <strong>capped at 35%</strong> per Pokémon (includes own Helping Speed M/S plus stacked 5% Helping Bonus from all teammates).' 
-                : '<strong>規則</strong>：單隻寶可夢受副技能加成之幫忙速度<strong>上限為 35%</strong>（包含自身幫忙速度 M/S，以及全隊所有隊友攜帶「幫手獎勵」每隻 5% 之全隊疊加）。'}
-            </div>
-            <div class="wiki-table-wrapper">
+            <div class="wiki-table-wrapper" style="margin-top: 10px;">
               <table class="wiki-data-table">
                 <thead>
                   <tr>

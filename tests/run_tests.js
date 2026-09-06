@@ -3616,6 +3616,67 @@ test('Tier 1 - Feature Coverage', 'Nature 5-Stat Multiplier Helping Speed (-10% 
   assert(appIndexHtml.includes("reading 'startTime'"), 'app/index.html must guard against startTime error');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Wiki Parentheses Removal & Speed Mechanics Single Box Simplification', () => {
+  const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const ctx = {
+    window: {},
+    document: {
+      addEventListener: () => {},
+      getElementById: () => null,
+      querySelector: () => null,
+      querySelectorAll: () => []
+    },
+    console: console
+  };
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(wikiJs, ctx);
+
+  const WikiDB = ctx.window.WikiDB;
+  assert(WikiDB && WikiDB.NATURES_EFFECT_DATA, 'WikiDB.NATURES_EFFECT_DATA must exist');
+  assert(WikiDB && WikiDB.SUB_SKILLS_DATA, 'WikiDB.SUB_SKILLS_DATA must exist');
+
+  // 1. Nature 5-Stat Multiplier: no parentheses in desc or desc_en
+  WikiDB.NATURES_EFFECT_DATA.forEach(row => {
+    assert(!row.desc.includes('（') && !row.desc.includes('）'), `Nature stat ${row.stat} desc must not contain parentheses, got: ${row.desc}`);
+    assert(!row.desc_en.includes('(') && !row.desc_en.includes(')'), `Nature stat ${row.stat_en} desc_en must not contain parentheses, got: ${row.desc_en}`);
+  });
+
+  // 2. Sub-skills: ONLY 樹果數量 S and 幫手獎勵 contain parentheses, all other 9 categories must not
+  WikiDB.SUB_SKILLS_DATA.forEach(row => {
+    const hasParenthesesZh = row.desc.includes('（') || row.desc.includes('）');
+    const hasParenthesesEn = row.desc_en.includes('(') || row.desc_en.includes(')');
+    const isAllowed = row.category === '樹果數量' || row.category === '全隊幫忙';
+
+    if (isAllowed) {
+      assert(hasParenthesesZh, `${row.category} must preserve parentheses in desc`);
+      assert(hasParenthesesEn, `${row.category_en} must preserve parentheses in desc_en`);
+    } else {
+      assert(!hasParenthesesZh, `${row.category} desc must NOT contain parentheses, got: ${row.desc}`);
+      assert(!hasParenthesesEn, `${row.category_en} desc_en must NOT contain parentheses, got: ${row.desc_en}`);
+    }
+  });
+
+  // 3. Rendered wiki layout assertions
+  const container = { innerHTML: '' };
+  WikiDB.renderWikiLayout(container);
+
+  // Assert single summary box is present
+  assert(container.innerHTML.includes('wiki-speed-summary-box'), 'Wiki layout must contain wiki-speed-summary-box');
+  assert(container.innerHTML.includes('speed-summary-formula-bar'), 'Wiki layout must contain speed-summary-formula-bar');
+  assert(container.innerHTML.includes('speed-summary-points-grid'), 'Wiki layout must contain speed-summary-points-grid');
+  assert(container.innerHTML.includes('summary-point-item'), 'Wiki layout must contain summary-point-item');
+
+  // Assert old 3 separate breakdown cards are gone
+  assert(!container.innerHTML.includes('wiki-speed-breakdown-grid'), 'wiki-speed-breakdown-grid should be replaced');
+  assert(!container.innerHTML.includes('wiki-speed-breakdown-card'), 'wiki-speed-breakdown-card should be replaced');
+
+  // Assert subskills overview card does NOT have wiki-rule-banner
+  const subskillsOverviewPart = container.innerHTML.substring(container.innerHTML.indexOf('wiki-card-subskills-overview'));
+  const subskillsTablePart = subskillsOverviewPart.substring(0, subskillsOverviewPart.indexOf('wiki-data-table'));
+  assert(!subskillsTablePart.includes('wiki-rule-banner'), 'wiki-card-subskills-overview must not contain wiki-rule-banner');
+});
+
 
 
 // Final Summary Output
