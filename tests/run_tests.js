@@ -3723,6 +3723,31 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Subskills & Nature Tab U
   assert(!mobileSubskillsBlock.includes('max-height'), 'Subskills table cells must not set max-height to permit multi-line expansion');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Wiki Helping Speed Column Width and Subpanel Typography Consistency', () => {
+  const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // 1. Verify speed guide col 1 is widened to 48% on mobile to fit at least 2 subskills on one line
+  assert(cssContent.includes('.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table th:nth-child(1)'),
+    'styles.css must style mobile speed guide column 1');
+  assert(cssContent.includes('width: 48% !important'), 'Speed guide col 1 must be widened to 48% on mobile');
+
+  // 2. Verify desktop speed guide table defines column 1 width
+  assert(cssContent.includes('.wiki-card-speed-guide .wiki-data-table th:nth-child(1)'),
+    'styles.css must style desktop speed guide column 1');
+  assert(cssContent.includes('width: 28%'), 'Speed guide col 1 must be 28% on desktop');
+
+  // 3. Verify unified table headers font size (13px bold) across subpanel
+  assert(cssContent.includes('.mobile-h5-app #wiki-subpanel-subskills .wiki-data-table th'),
+    'styles.css must define unified mobile table header styling');
+  assert(cssContent.includes('#wiki-subpanel-subskills .wiki-data-table th,') || cssContent.includes('#wiki-subpanel-subskills .wiki-data-table th {'),
+    'styles.css must define desktop subpanel table header styling');
+
+  // 4. Verify subskills table effect description is unified to 13px
+  const effectColPart = cssContent.substring(cssContent.indexOf('.mobile-h5-app .wiki-subskills-table .col-subskills-effect'));
+  const effectColBlock = effectColPart.substring(0, effectColPart.indexOf('}'));
+  assert(effectColBlock.includes('font-size: 13px !important'), 'col-subskills-effect must be unified to 13px');
+});
+
 
 
 // Final Summary Output
