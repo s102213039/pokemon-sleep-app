@@ -3572,6 +3572,50 @@ test('Tier 1 - Feature Coverage', 'Mobile Pokemon Table Safe Area and Bottom Doc
   assert(css.includes('visibility 0s 0.28s'), 'Drawer sidebars must delay visibility change until slide-out completes');
 });
 
+test('Tier 1 - Feature Coverage', 'Nature 5-Stat Multiplier Helping Speed (-10% / +7.5%) & DevTools Error Guard', () => {
+  const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+  const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+
+  // 1. Verify Nature 5-stat table data in wiki.js
+  const ctx = {
+    localStorage: { getItem: () => 'zh-TW', setItem: () => {}, removeItem: () => {} },
+    window: { localStorage: { getItem: () => 'zh-TW', setItem: () => {}, removeItem: () => {} }, addEventListener: () => {} },
+    document: {
+      body: { classList: { contains: () => false }, appendChild: () => {} },
+      documentElement: { setAttribute: () => {} },
+      getElementById: () => null,
+      querySelectorAll: () => [],
+      createElement: () => ({ setAttribute: () => {}, innerHTML: '', className: '', id: '', style: {} }),
+      addEventListener: () => {}
+    },
+    console: console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(wikiJs, ctx);
+
+  const WikiDB = ctx.window.WikiDB;
+  assert(WikiDB && WikiDB.NATURES_EFFECT_DATA, 'WikiDB.NATURES_EFFECT_DATA must exist');
+  const speedRow = WikiDB.NATURES_EFFECT_DATA.find(r => r.stat === '幫忙速度' || r.stat_en === 'Speed of Help');
+  assert(speedRow, '幫忙速度 row must exist in NATURES_EFFECT_DATA');
+  assertEquals(speedRow.up, '-10%', 'Helping Speed Up must be -10% (less time)');
+  assertEquals(speedRow.down, '+7.5%', 'Helping Speed Down must be +7.5% (more time)');
+
+  // 2. Verify rendered HTML output in wiki layout
+  const container = { innerHTML: '' };
+  WikiDB.renderWikiLayout(container);
+  assert(container.innerHTML.includes('-10%'), 'Wiki layout must render -10% for helping speed up');
+  assert(container.innerHTML.includes('+7.5%'), 'Wiki layout must render +7.5% for helping speed down');
+
+  // 3. Verify DevTools Live Metrics error filtering in both index.html and app/index.html
+  assert(indexHtml.includes('reportAllChanges'), 'index.html must guard against reportAllChanges error');
+  assert(indexHtml.includes("reading 'startTime'"), 'index.html must guard against startTime error');
+  assert(appIndexHtml.includes('reportAllChanges'), 'app/index.html must guard against reportAllChanges error');
+  assert(appIndexHtml.includes("reading 'startTime'"), 'app/index.html must guard against startTime error');
+});
+
 
 
 // Final Summary Output

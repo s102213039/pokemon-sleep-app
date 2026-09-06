@@ -1082,12 +1082,12 @@
     { 
       stat: "幫忙速度", 
       stat_en: "Speed of Help",
-      up: "+10%", 
-      up_en: "+10%",
-      down: "-7.5%", 
-      down_en: "-7.5%",
-      desc: "影響所有樹果、食材與技能判定頻率（下降懲罰調輕至 -7.5%）",
-      desc_en: "Affects frequency of berries, ingredients, and skill checks (-7.5% penalty)."
+      up: "-10%", 
+      up_en: "-10%",
+      down: "+7.5%", 
+      down_en: "+7.5%",
+      desc: "影響所有樹果、食材與技能判定間隔（▲ 縮短 -10% 幫忙時間；▼ 增加 +7.5% 幫忙時間）",
+      desc_en: "Affects help interval for berries, ingredients, and skills (▲ reduces help time by -10%; ▼ increases help time by +7.5%)."
     },
     { 
       stat: "活力回復量", 
