@@ -47,6 +47,12 @@ function assertEquals(actual, expected, message) {
   }
 }
 
+function assertArrayEquals(actual, expected, message) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+    throw new Error(`${message || 'assertArrayEquals failed'}: Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+  }
+}
+
 // Lightweight Mini-DOM Implementation for Headless E2E Simulation
 class MiniElement {
   constructor(tagName, id = '', className = '') {
@@ -2506,6 +2512,30 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Draw S Specific Po
 
   const ingDrawSkill = ctx.window.WikiDB.MAIN_SKILLS_DATA.find(s => s.id === 'ingredient_draw_s');
   assert(ingDrawSkill && ingDrawSkill.hasIngredientDrawMatrix, 'Wiki should define ingredient_draw_s with hasIngredientDrawMatrix');
+  assertEquals(ingDrawSkill.maxLevel, 7, 'Ingredient Draw S max level must be 7');
+  assertEquals(ingDrawSkill.values[0], 5, 'Ingredient Draw S Lv.1 must be 5');
+  assertEquals(ingDrawSkill.values[6], 18, 'Ingredient Draw S Lv.7 must be 18');
+  assertArrayEquals(ingDrawSkill.values, [5, 6, 8, 11, 13, 16, 18], 'Ingredient Draw S values must match official 5~18 progression');
+
+  // Audited skills verification
+  const chargeFixed = ctx.window.WikiDB.MAIN_SKILLS_DATA.find(s => s.id === 'charge_energy_s_fixed');
+  assertEquals(chargeFixed.values[6], 3212, 'Charge Energy S Fixed Lv.7 must be 3212');
+
+  const chargeRange = ctx.window.WikiDB.MAIN_SKILLS_DATA.find(s => s.id === 'charge_energy_s_range');
+  assertEquals(chargeRange.ranges[6].max, 6424, 'Charge Energy S Range Lv.7 max must be 6424');
+
+  const nightmare = ctx.window.WikiDB.MAIN_SKILLS_DATA.find(s => s.id === 'nightmare_m');
+  assertEquals(nightmare.maxLevel, 7, 'Nightmare M max level must be unlocked to 7');
+  assertEquals(nightmare.values[6], 18515, 'Nightmare M Lv.7 value must be 18515');
+
+  const helperBoostS = ctx.window.WikiDB.MAIN_SKILLS_DATA.find(s => s.id === 'helper_boost_s');
+  assertArrayEquals(helperBoostS.values, [6, 7, 8, 9, 10, 11, 12], 'Extra Helpful S values must be 6~12');
+
+  const cheerS = ctx.window.WikiDB.MAIN_SKILLS_DATA.find(s => s.id === 'energizing_cheer_s');
+  assertArrayEquals(cheerS.values, [12, 15, 20, 25, 33, 44], 'Energizing Cheer S values must match v3.0.0 balance adjustment (12~44)');
+
+  const stockpile = ctx.window.WikiDB.MAIN_SKILLS_DATA.find(s => s.id === 'charge_stock_s');
+  assertEquals(stockpile.matrix[10].vals[6], 90940, 'Stockpile stack 10 Lv.7 must reach 90940');
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Sub-skills S/M and Single-Choice Nature multiplier logic verified', () => {

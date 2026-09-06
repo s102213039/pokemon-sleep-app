@@ -39,10 +39,11 @@
       ingredients: [
         { name: '醒腦咖啡豆', name_en: 'Rousing Coffee', icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' },
         { name: '萌綠大豆', name_en: 'Greengrass Soybeans', icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' },
-        { name: '火辣香草', name_en: 'Fiery Herb', icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }
+        { name: '豆製肉', name_en: 'Bean Sausage', icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' },
+        { name: '美味蘑菇', name_en: 'Tasty Mushroom', icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }
       ],
-      extraEffect: '機率獲得大量夢之碎片',
-      extraEffect_en: 'Chance to grant massive Dream Shards'
+      extraEffect: '機率獲得大量夢之碎片（最高 20,000）',
+      extraEffect_en: 'Chance to grant massive Dream Shards (up to 20,000)'
     },
     {
       id: 303,
@@ -54,12 +55,13 @@
       skill_en: 'Hyper Cutter (Ingr. Select S)',
       icon: 'https://www.serebii.net/pokemonsleep/pokemon/icon/303.png',
       ingredients: [
+        { name: '窩心洋芋', name_en: 'Soft Potato', icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' },
         { name: '純粹油', name_en: 'Pure Oil', icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' },
         { name: '萌綠玉米', name_en: 'Greengrass Corn', icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' },
         { name: '好眠番茄', name_en: 'Snoozy Tomato', icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }
       ],
-      extraEffect: '機率額外獲得更多食材',
-      extraEffect_en: 'Chance to gain bonus ingredient quantity'
+      extraEffect: '大成功獲取 2 倍食材（最高 36 個）',
+      extraEffect_en: '2x ingredients on Extra Tasty (up to 36)'
     },
     {
       id: 558,
@@ -122,10 +124,10 @@
       icon: "⚡",
       category: "energy",
       catName: "能量系",
-      desc: "增加卡比獸的能量（固定數值）。",
-      desc_en: "Adds a fixed amount of Snorlax Strength.",
+      desc: "增加卡比獸的能量（固定數值 400 ~ 3,212）。",
+      desc_en: "Adds a fixed amount of Snorlax Strength (400 ~ 3,212).",
       maxLevel: 7,
-      values: [400, 569, 785, 1083, 1496, 2066, 3002],
+      values: [400, 569, 785, 1083, 1496, 2066, 3212],
       unit: " 能量",
       unit_en: " Strength"
     },
@@ -145,10 +147,10 @@
         { min: 542, max: 2166 },
         { min: 748, max: 2992 },
         { min: 1033, max: 4132 },
-        { min: 1501, max: 6004 }
+        { min: 1606, max: 6424 }
       ],
-      specialNote: "🎲 浮動機制：每次發動隨機給予區間內能量",
-      specialNote_en: "🎲 Random: Strength varies per trigger",
+      specialNote: "浮動機制：每次發動隨機給予區間內能量（約 0.5x ~ 2.0x 基準值）",
+      specialNote_en: "Random: Strength varies per trigger (~0.5x ~ 2.0x base value)",
       unit: " 能量",
       unit_en: " Strength"
     },
@@ -158,8 +160,8 @@
       icon: "🔥",
       category: "energy",
       catName: "能量系",
-      desc: "大量增加卡比獸的能量（固定數值）。",
-      desc_en: "Adds a large fixed amount of Snorlax Strength.",
+      desc: "大量增加卡比獸的能量（固定數值 880 ~ 6,409）。",
+      desc_en: "Adds a large fixed amount of Snorlax Strength (880 ~ 6,409).",
       maxLevel: 7,
       values: [880, 1251, 1726, 2383, 3290, 4546, 6409],
       unit: " 能量",
@@ -171,8 +173,8 @@
       icon: "🔋",
       category: "energy",
       catName: "能量系",
-      desc: "發動蓄積或噴放。依蓄積次數（0~10次）暴增能量，最高達 82,386 能量！",
-      desc_en: "Charges or releases. Scales with 0~10 stacks up to 82,386 Strength!",
+      desc: "發動蓄積或噴放。依蓄積次數（0~10次）暴增能量，最高達 90,940 能量！",
+      desc_en: "Charges or releases. Scales with 0~10 stacks up to 90,940 Strength!",
       maxLevel: 7,
       hasStackMatrix: true,
       matrix: [
@@ -184,9 +186,9 @@
         { stacks: 5, vals: [3300, 4691, 6474, 8939, 12336, 17044, 24761] },
         { stacks: 6, vals: [4020, 5715, 7886, 10889, 15028, 20763, 30163] },
         { stacks: 7, vals: [4920, 6995, 9652, 13327, 18393, 25412, 36916] },
-        { stacks: 8, vals: [6180, 8786, 12124, 16740, 23103, 31920, 46370] },
-        { stacks: 9, vals: [7980, 11345, 15655, 21615, 29832, 41217, 59876] },
-        { stacks: 10, vals: [10980, 15610, 21540, 29740, 41047, 56712, 82386] }
+        { stacks: 8, vals: [6480, 9213, 12712, 17552, 24225, 33469, 48621] },
+        { stacks: 9, vals: [8880, 12625, 17420, 24052, 33197, 45865, 66629] },
+        { stacks: 10, vals: [12120, 17231, 23776, 32827, 45309, 62600, 90940] }
       ],
       unit: " 能量",
       unit_en: " Strength"
@@ -197,10 +199,10 @@
       icon: "🌑",
       category: "special",
       catName: "神獸與特殊",
-      desc: "卡比獸能量超大幅增加，但非惡屬性隊友活力下降。",
-      desc_en: "Huge Strength boost; non-Dark allies lose energy.",
-      maxLevel: 6,
-      values: [2640, 3753, 5178, 7149, 9870, 13638],
+      desc: "卡比獸能量超大幅增加（最高達 18,515 能量），但非惡屬性隊友活力下降。",
+      desc_en: "Huge Strength boost (up to 18,515); non-Dark allies lose energy.",
+      maxLevel: 7,
+      values: [2640, 3753, 5178, 7149, 9870, 13638, 18515],
       penaltyNote: "副作用：非惡屬性隊友全員活力 -12",
       penaltyNote_en: "Penalty: Non-Dark teammates lose 12 Energy",
       unit: " 能量",
@@ -212,8 +214,8 @@
       icon: "🥗",
       category: "ingredient",
       catName: "食材與料理",
-      desc: "隨機獲得已解鎖的食材（全圖鑑已解鎖食材隨機抽選）。",
-      desc_en: "Gets a random assortment of all unlocked ingredients.",
+      desc: "隨機獲得已解鎖的食材（全圖鑑已解鎖食材隨機抽選 6~24 個）。",
+      desc_en: "Gets a random assortment of all unlocked ingredients (6~24 ingredients).",
       maxLevel: 7,
       values: [6, 8, 11, 14, 17, 21, 24],
       unit: " 個食材",
@@ -225,12 +227,12 @@
       icon: "🥗",
       category: "ingredient",
       catName: "食材與料理",
-      desc: "從該寶可夢自身可產出的食材（Lv.1/Lv.30/Lv.60專屬食材池）中，隨機獲得其中 1 種食材。",
-      desc_en: "Obtains 1 ingredient type exclusively from this Pokémon's own ingredient pool (Lv.1/Lv.30/Lv.60).",
+      desc: "從該寶可夢專屬的特定食材候選池中，隨機獲得其中 1 種食材（單一食材獲取量為 5~18 個）。",
+      desc_en: "Obtains 1 ingredient type exclusively from this Pokémon's candidate pool (5~18 of a single ingredient).",
       maxLevel: 7,
-      values: [6, 8, 11, 14, 17, 21, 24],
-      specialNote: "機制：僅鎖定抽取發動寶可夢自身專屬食材池。特殊型態：超幸運有機率爆發大量夢之碎片；怪力鉗有機率爆發更多食材。",
-      specialNote_en: "Rule: Draws 1 ingredient type only from this Pokémon's own ingredient pool. Variants: Super Luck may grant Dream Shards; Hyper Cutter may grant bonus ingredients.",
+      values: [5, 6, 8, 11, 13, 16, 18],
+      specialNote: "機制：鎖定抽取發動寶可夢專屬食材池中 1 種食材。Lv.1 為 5 個，Lv.7 上限最高獲取 18 個。特殊型態：超幸運有機率爆發大量夢之碎片（最高達 20,000 碎片）；怪力鉗大成功時獲取 2 倍食材（最高達 36 個）。",
+      specialNote_en: "Rule: Draws 1 ingredient type only from this Pokémon's candidate pool. Lv.1 yields 5, up to 18 at Lv.7. Variants: Super Luck may grant massive Dream Shards (up to 20,000); Hyper Cutter grants 2x ingredients on Extra Tasty (up to 36).",
       hasIngredientDrawMatrix: true,
       unit: " 個食材",
       unit_en: " Ingredients"
@@ -241,10 +243,12 @@
       icon: "🍲",
       category: "ingredient",
       catName: "食材與料理",
-      desc: "增加下次烹調時鍋子容量上限，效果持續到料理大成功或換營地。",
-      desc_en: "Expands pot capacity for next meal. Stacks until Extra Tasty or move.",
+      desc: "增加下次烹調時鍋子容量上限（7~31個），效果持續到料理大成功或換營地。",
+      desc_en: "Expands pot capacity for next meal (+7~31). Stacks until Extra Tasty or move.",
       maxLevel: 7,
       values: [7, 10, 12, 17, 22, 27, 31],
+      specialNote: "限制：擴充上限最高累加至鍋子容量 200，達到上限時無法再次發動",
+      specialNote_en: "Limit: Pot capacity stacks up to 200 max; cannot trigger once limit is reached",
       unit: " 個容量",
       unit_en: " Pot Space"
     },
@@ -254,12 +258,12 @@
       icon: "✨",
       category: "ingredient",
       catName: "食材與料理",
-      desc: "料理漂亮成功（大成功）機率提升，可持續疊加直到大成功為止。",
-      desc_en: "Boosts Extra Tasty chance; stacks until an Extra Tasty dish is cooked.",
+      desc: "料理漂亮成功（大成功）機率提升（4%~10%），可持續疊加直到大成功為止。",
+      desc_en: "Boosts Extra Tasty chance (+4%~10%); stacks until an Extra Tasty dish is cooked.",
       maxLevel: 6,
       values: [4, 5, 6, 7, 8, 10],
-      specialNote: "機率累加：大成功時發動雙倍/三倍能量，成功後機率重設",
-      specialNote_en: "2x~3x power on Extra Tasty; resets after trigger",
+      specialNote: "機率累加：大成功機率最高累計至 70% 上限。大成功時發動雙倍/三倍能量，成功後機率重設",
+      specialNote_en: "Stacks up to 70% max. 2x~3x power on Extra Tasty; resets after trigger",
       unit: "%",
       unit_en: "%"
     },
@@ -269,10 +273,10 @@
       icon: "🤝",
       category: "special",
       catName: "神獸與特殊",
-      desc: "隨機 1 隻隊友立刻完成多次幫忙產出。",
-      desc_en: "Instantly gets helps from a random teammate.",
+      desc: "隨機 1 隻隊友立刻完成多次幫忙產出（6~12次幫忙）。",
+      desc_en: "Instantly gets 6~12 helps from a random teammate.",
       maxLevel: 7,
-      values: [5, 6, 7, 8, 9, 10, 11],
+      values: [6, 7, 8, 9, 10, 11, 12],
       unit: " 次幫忙",
       unit_en: " Helps"
     },
@@ -389,10 +393,12 @@
       icon: "💚",
       category: "energy_heal",
       catName: "活力系",
-      desc: "隨機讓隊伍中的 1 隻隊友回復活力。",
-      desc_en: "Restores energy to 1 random teammate.",
+      desc: "隨機讓隊伍中的 1 隻隊友回復活力（12~44點，大幅度優先鎖定活力最低的寶可夢）。",
+      desc_en: "Restores 12~44 energy to 1 random teammate (strongly favors lowest energy teammate).",
       maxLevel: 6,
-      values: [14, 17, 22, 28, 38, 50],
+      values: [12, 15, 20, 25, 33, 44],
+      specialNote: "機制：官方 v3.0.0 平衡調整，大幅提升發動機率，且優先鎖定隊伍中當前活力最低的隊友",
+      specialNote_en: "v3.0.0 balance update: Increased trigger rate and strongly favors the lowest energy teammate",
       unit: " 點活力",
       unit_en: " Energy"
     },
@@ -483,11 +489,171 @@
       icon: "☝️",
       category: "special",
       catName: "神獸與特殊",
-      desc: "從全主技能庫中隨機抽選 1 種發動。",
-      desc_en: "Randomly triggers any main skill in the game.",
+      desc: "從主技能庫中隨機抽選 1 種發動（部分未來特殊專屬招式除外）。",
+      desc_en: "Randomly triggers a main skill from a large selection in the game.",
       maxLevel: 7,
       unit: "Lv.1~7 隨機發動",
       unit_en: "Random Lv.1~7 Trigger"
+    },
+    {
+      id: "plus_ingredient_magnet",
+      name: "正電（食材獲取S）",
+      name_en: "Plus (Ingredient Magnet S)",
+      icon: "",
+      category: "ingredient",
+      catName: "食材與料理",
+      desc: "隨機獲得食材（5~18個）；若隊伍中有「正電」或「負電」隊友，額外獲得食材（6~14個）。",
+      desc_en: "Gets 5~18 random ingredients; gets 6~14 bonus ingredients if Plus or Minus teammates present.",
+      maxLevel: 7,
+      values: [5, 7, 9, 11, 13, 16, 18],
+      specialNote: "正負電連動：隊伍中有 1 隻以上正電或負電隊友時，額外獲得 +6, +7, +8, +10, +12, +13, +14 個食材。",
+      specialNote_en: "Plus/Minus synergy: If team has Plus or Minus teammates, yields bonus +6, +7, +8, +10, +12, +13, +14 ingredients.",
+      unit: " 個食材",
+      unit_en: " Ingredients"
+    },
+    {
+      id: "minus_cooking_power_up",
+      name: "負電（料理強化S）",
+      name_en: "Minus (Cooking Power-Up S)",
+      icon: "",
+      category: "ingredient",
+      catName: "食材與料理",
+      desc: "擴大下次料理時鍋子容量上限（5~24個）；若隊伍中有「正電」或「負電」隊友，隨機讓 1 隻隊友回復活力（8~35點）。",
+      desc_en: "Expands pot capacity (+5~24); if Plus or Minus teammates present, heals 1 teammate (8~35 energy).",
+      maxLevel: 7,
+      values: [5, 7, 9, 12, 16, 20, 24],
+      specialNote: "正負電連動：隊伍中有 1 隻以上正電或負電隊友時，額外回復 1 隻隊友 +8, +10, +13, +17, +23, +30, +35 點活力。",
+      specialNote_en: "Plus/Minus synergy: If team has Plus or Minus teammates, restores +8, +10, +13, +17, +23, +30, +35 energy to 1 teammate.",
+      unit: " 個容量",
+      unit_en: " Pot Space"
+    },
+    {
+      id: "present_ingredient_magnet",
+      name: "禮物（食材獲取S）",
+      name_en: "Present (Ingredient Magnet S)",
+      icon: "",
+      category: "ingredient",
+      catName: "食材與料理",
+      desc: "隨機獲得食材（4~17個）；有時額外隨機獲得隊伍中 1 隻寶可夢的 4 顆糖果。",
+      desc_en: "Gets 4~17 random ingredients; sometimes gets 4 candies for a random team member.",
+      maxLevel: 7,
+      values: [4, 6, 8, 10, 12, 15, 17],
+      specialNote: "信使鳥專屬：發動時機率額外贈送隊伍中隨機 1 隻隊友的 4 顆專屬糖果。",
+      specialNote_en: "Delibird signature: Chance to award 4 candies for a random teammate upon trigger.",
+      unit: " 個食材",
+      unit_en: " Ingredients"
+    },
+    {
+      id: "bulk_up_cooking_assist",
+      name: "健美（料理輔助S）",
+      name_en: "Bulk Up (Cooking Assist S)",
+      icon: "",
+      category: "ingredient",
+      catName: "食材與料理",
+      desc: "隨機獲得食材（6~24個），並提升下次料理漂亮成功（大成功）機率（+1%~5%）。",
+      desc_en: "Gets 6~24 random ingredients and raises Extra Tasty rate (+1%~5%).",
+      maxLevel: 7,
+      values: [6, 8, 11, 14, 17, 21, 24],
+      specialNote: "複合效果：同時提供食材產出與大成功機率疊加（+1%, +2%, +2%, +3%, +3%, +4%, +5%），直到大成功為止。",
+      specialNote_en: "Dual Effect: Grants ingredients and stacks Extra Tasty rate (+1%~5%) until Extra Tasty triggers.",
+      unit: " 個食材",
+      unit_en: " Ingredients"
+    },
+    {
+      id: "aura_sphere_dream_shard",
+      name: "波導彈（夢之碎片獲取S）",
+      name_en: "Aura Sphere (Dream Shard Magnet S)",
+      icon: "",
+      category: "shards",
+      catName: "夢之碎片",
+      desc: "獲得夢之碎片（240~2,500），並同時增加卡比獸能量（200~2,042）。最高支援至 Lv.8！",
+      desc_en: "Obtains 240~2,500 Dream Shards while boosting Strength by 200~2,042 (up to Lv.8).",
+      maxLevel: 8,
+      values: [240, 340, 480, 670, 920, 1260, 1800, 2500],
+      specialNote: "路卡利歐專屬：碎片 240~2500 + 能量 +200, +285, +393, +542, +748, +1033, +1501, +2042。",
+      specialNote_en: "Lucario signature: Grants 240~2500 Shards + boosts Strength by +200, +285, +393, +542, +748, +1033, +1501, +2042.",
+      unit: " 碎片",
+      unit_en: " Shards"
+    },
+    {
+      id: "nuzzle_energizing_cheer",
+      name: "蹭蹭臉頰（活力療癒S）",
+      name_en: "Nuzzle (Energizing Cheer S)",
+      icon: "",
+      category: "energy_heal",
+      catName: "活力系",
+      desc: "隨機讓 1 隻隊友回復活力（9~35點）；幸運時該隊友獲得主技能發動獎勵，可額外發動 1 次主技能。",
+      desc_en: "Restores 9~35 energy to 1 teammate; lucky teammates gain a bonus main skill trigger.",
+      maxLevel: 6,
+      values: [9, 12, 16, 20, 27, 35],
+      specialNote: "獎勵發動：幸運時該隊友獲得額外 1 次主技能發動機會。",
+      specialNote_en: "Lucky Bonus: Target teammate may gain an extra main skill trigger.",
+      unit: " 點活力",
+      unit_en: " Energy"
+    },
+    {
+      id: "heal_pulse_energizing_cheer",
+      name: "治癒波動（活力療癒S）",
+      name_en: "Heal Pulse (Energizing Cheer S)",
+      icon: "",
+      category: "energy_heal",
+      catName: "活力系",
+      desc: "隨機讓 2 隻隊友回復活力（6~22點），並立刻完成 1~4 次幫忙（隊伍中有拉帝歐斯時幫忙次數增加）。",
+      desc_en: "Restores 6~22 energy to 2 teammates and instantly performs 1~4 helps (increased if Latios is on team).",
+      maxLevel: 6,
+      values: [6, 8, 10, 13, 17, 22],
+      specialNote: "拉帝亞斯專屬：同時回復 2 隻隊友活力與立即幫忙（x1, x2, x2, x3, x4, x4；隊伍有拉帝歐斯時額外 +1, +1, +2, +2, +2, +3 次幫忙）。",
+      specialNote_en: "Latias signature: Heals 2 teammates and grants 1~4 helps (+1~3 bonus helps if Latios is in party).",
+      unit: " 點活力",
+      unit_en: " Energy"
+    },
+    {
+      id: "berry_juice_energy_for_everyone",
+      name: "樹果汁（活力全體療癒S）",
+      name_en: "Berry Juice (Energy for Everyone S)",
+      icon: "",
+      category: "energy_heal",
+      catName: "活力系",
+      desc: "全體隊友回復活力（5~18點）；有機會額外獲得可回復單體 20 活力的「樹果汁」道具（最多持有 5 個）。",
+      desc_en: "Restores 5~18 energy to all teammates; occasionally produces Berry Juice item (heals 20 energy, max 5 held).",
+      maxLevel: 6,
+      values: [5, 7, 9, 11, 15, 18],
+      specialNote: "壺壺專屬：全隊活力回復 + 機率產出「樹果汁」背包道具。",
+      specialNote_en: "Shuckle signature: Team energy heal + chance to obtain Berry Juice item.",
+      unit: " 點活力",
+      unit_en: " Energy"
+    },
+    {
+      id: "draco_meteor_berry_burst",
+      name: "流星群（樹果遽增）",
+      name_en: "Draco Meteor (Berry Burst)",
+      icon: "",
+      category: "special",
+      catName: "神獸與特殊",
+      desc: "獲得自己與隊友撿來的樹果（龍屬性隊員越多樹果越多；隊伍中有拉帝亞斯數量進一步增加）。",
+      desc_en: "Gathers berries from team (scales with Dragon types; further increased if Latias is on team).",
+      maxLevel: 6,
+      values: [12, 21, 29, 38, 43, 48],
+      specialNote: "拉帝歐斯專屬：樹果爆發產出，龍屬性隊友越多獲得越多，若隊伍中有拉帝亞斯時樹果量再增加（+2~11顆）。",
+      specialNote_en: "Latios signature: Berries gathered scales with Dragon types, plus +2~11 extra berries if Latias is in party.",
+      unit: " 個樹果",
+      unit_en: " Berries"
+    },
+    {
+      id: "psystrike_berry_field",
+      name: "精神擊破（樹果領域）",
+      name_en: "Psystrike (Berry Field)",
+      icon: "",
+      category: "special",
+      catName: "神獸與特殊",
+      desc: "增加卡比獸能量，並在營地展開「樹果領域」，期間透過芒芒果（超能力屬性）獲得的能量提升。",
+      desc_en: "Increases Snorlax Strength and deploys a Berry Field, boosting energy gained from Mago Berries.",
+      maxLevel: 6,
+      values: [2640, 3753, 5178, 7149, 9870, 13638],
+      specialNote: "超夢專屬：能量增益 + 營地樹果領域（超能力屬性芒芒果能量倍率提升）。",
+      specialNote_en: "Mewtwo signature: Strength gain + deploys Berry Field (boosts Mago Berry power).",
+      unit: " 能量",
+      unit_en: " Strength"
     }
   ];
 
@@ -13673,7 +13839,7 @@
       } else if (skill.hasIngredientDrawMatrix) {
         const ingStrings = skill.values.map(v => `${v}${unitLabel.trim()}`);
         valuesHtml = `
-          ${renderSkillHeroAndStepper(skill.id, ingStrings, unitLabel, 6)}
+          ${renderSkillHeroAndStepper(skill.id, ingStrings, unitLabel, skill.maxLevel || 7)}
 
           <!-- 展開各寶可夢專屬食材池對照表按鈕 -->
           <div style="margin-top: 6px;">
@@ -13688,7 +13854,7 @@
                 <tr>
                   <th style="width: 44px; text-align: center;">${isEN ? 'Pokémon' : '寶可夢'}</th>
                   <th>${isEN ? 'Skill Variant' : '主技能型態'}</th>
-                  <th style="text-align: center;">${isEN ? 'Candidate Ingredients (3)' : '專屬食材 (3種)'}</th>
+                  <th style="text-align: center;">${isEN ? 'Candidate Ingredients (3~4)' : '專屬食材候選池 (3~4種)'}</th>
                 </tr>
               </thead>
               <tbody>

@@ -455,16 +455,16 @@ const SPECIAL_SKILL_DETAILS = {
     'en-US': 'Randomly obtains ingredients, and occasionally grants candies for a random team member.'
   },
   '食材精選S': {
-    'zh-TW': '隨機獲得該寶可夢專屬食材池中的 1 種食材。',
-    'en-US': 'Randomly obtains 1 ingredient from this Pokémon\'s candidate pool.'
+    'zh-TW': '從特定食材中隨機獲得 1 種食材（單一食材獲取量為 5~18 個）。',
+    'en-US': 'Gets 1 ingredient type from specific selection (5~18 of a single ingredient).'
   },
   '超幸運（食材精選S）': {
-    'zh-TW': '隨機獲得該寶可夢專屬食材，少數情況下獲得大量夢之碎片。',
-    'en-US': 'Obtains own ingredient; rarely awards massive Dream Shards.'
+    'zh-TW': '從特定食材（4種）中隨機獲得 1 種食材；少數情況下獲得大量夢之碎片代替食材（最高達 20,000 碎片）。',
+    'en-US': 'Gets 1 ingredient type from 4 specific ingredients; rarely awards massive Dream Shards instead (up to 20,000).'
   },
   '怪力钳（食材精選S）': {
-    'zh-TW': '隨機獲得該寶可夢專屬食材，有時額外獲得更多食材。',
-    'en-US': 'Obtains own ingredient; sometimes awards extra amounts.'
+    'zh-TW': '從特定食材（4種）中隨機獲得 1 種食材；若發生「漂亮成功（大成功）」時獲得 2 倍食材（最高達 36 個）。',
+    'en-US': 'Gets 1 ingredient type from 4 specific ingredients; awards 2x ingredients on Extra Tasty (up to 36).'
   },
   '新月祈禱（活力全體療癒S）': {
     'zh-TW': '讓幫手隊伍的所有寶可夢回復活力，並額外獲得隊伍中所有寶可夢撿來的樹果（超能力屬性隊員越多，樹果數量越多）。',
@@ -479,12 +479,12 @@ const SPECIAL_SKILL_DETAILS = {
     'en-US': 'Restores energy to a teammate; when lucky, grants a bonus main skill trigger to that Pokémon.'
   },
   '蓄力（能量填充S）': {
-    'zh-TW': '隨機發動「蓄積」或「噴放」；連續蓄積次數越多，噴放時為卡比獸增加的能量就越多。',
-    'en-US': 'Stockpiles or spits energy; more consecutive stockpiles result in greater Snorlax Strength gained.'
+    'zh-TW': '隨機發動「蓄積」或「噴放」；連續蓄積次數越多，噴放時為卡比獸增加的能量就越多（最高達 90,940 能量）。',
+    'en-US': 'Stockpiles or spits energy; more consecutive stockpiles result in greater Snorlax Strength gained (up to 90,940).'
   },
   '夢魘（能量填充M）': {
-    'zh-TW': '固定增加大量卡比獸能量；發動時會降低隊伍中「惡屬性以外」寶可夢的活力。',
-    'en-US': 'Significantly increases Snorlax Strength, but reduces energy of non-Dark type teammates.'
+    'zh-TW': '固定增加大量卡比獸能量（最高達 18,515 能量）；發動時會降低隊伍中「惡屬性以外」寶可夢的活力 12 點。',
+    'en-US': 'Significantly increases Snorlax Strength (up to 18,515), but reduces energy of non-Dark type teammates by 12.'
   },
   '精神擊破（樹果領域）': {
     'zh-TW': '增加卡比獸能量，並在營地展開「樹果領域」，期間透過芒芒果（超能力屬性）獲得的能量提升。',
