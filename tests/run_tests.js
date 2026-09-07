@@ -3815,9 +3815,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(indexHtml.includes('css/styles.css?v=20260907_8'), 'index.html styles.css must be v=20260907_8');
+  assert(indexHtml.includes('css/styles.css?v=20260907_9'), 'index.html styles.css must be v=20260907_9');
   assert(indexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'index.html wiki.js must be v=20260907_8');
-  assert(appIndexHtml.includes('css/styles.css?v=20260907_8'), 'app/index.html styles.css must be v=20260907_8');
+  assert(appIndexHtml.includes('css/styles.css?v=20260907_9'), 'app/index.html styles.css must be v=20260907_9');
   assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'app/index.html wiki.js must be v=20260907_8');
 });
 
@@ -3888,6 +3888,12 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless
   assert(stylesCss.includes('.mobile-h5-app.pokemon-active .pokemon-table tbody tr:last-child td {\n  padding-bottom: 6px !important;\n}'), 'Pokédex table must not have redundant bottom blank space');
   assert(stylesCss.includes('.mobile-h5-app .milestone-table {\n  width: 100% !important;\n  table-layout: auto !important;\n}'), 'Mobile milestone table must adapt without scrolling');
   assert(stylesCss.includes('.mobile-h5-app .wiki-calc-card {\n  padding: 10px 8px !important;\n}'), 'Mobile wiki-calc-card must have compact outer padding');
+
+  // 10. Verify subskills table tags column streamlined to 45% and effect column to 55%
+  assert(stylesCss.includes('.mobile-h5-app .wiki-subskills-table .col-subskills-tags {\n  width: 45% !important;'), 'col-subskills-tags must be 45% in mobile');
+  assert(stylesCss.includes('.mobile-h5-app .wiki-subskills-table .col-subskills-effect {\n  width: 55% !important;'), 'col-subskills-effect must be 55% in mobile');
+  assert(stylesCss.includes('.wiki-subskills-table th.col-subskills-tags,\n.wiki-subskills-table td.col-subskills-tags {\n  width: 45%;'), 'col-subskills-tags must be 45% in desktop');
+  assert(stylesCss.includes('.wiki-subskills-table th.col-subskills-effect,\n.wiki-subskills-table td.col-subskills-effect {\n  width: 55%;'), 'col-subskills-effect must be 55% in desktop');
 });
 
 

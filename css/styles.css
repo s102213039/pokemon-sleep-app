@@ -8579,17 +8579,17 @@ input[type="number"] {
   }
 }
 
-/* 副技能階級與數值總覽 - 緊湊排版 */
+/* 副技能階級與數值總覽 - 緊湊排版 (技能標籤寬度適配單行2個，保留更多空間給詳細效果說明) */
 .wiki-subskills-table th.col-subskills-tags,
 .wiki-subskills-table td.col-subskills-tags {
-  width: 54%;
+  width: 45%;
   text-align: center;
   padding: 5px 8px;
 }
 
 .wiki-subskills-table th.col-subskills-effect,
 .wiki-subskills-table td.col-subskills-effect {
-  width: 46%;
+  width: 55%;
   text-align: left;
   padding: 5px 8px;
   font-size: 13px;
@@ -15044,11 +15044,20 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   padding: 4px 2px !important;
 }
 
-/* 表格 3: 副技能階級與數值總覽 */
+/* 表格 3: 副技能階級與數值總覽 (技能標籤寬度適配單行2個，留多空間給詳細效果說明) */
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table tbody tr,
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table tbody tr,
 .mobile-h5-app .wiki-subskills-table tbody tr {
-  height: 36px !important;
+  min-height: 36px !important;
+  height: auto !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table tbody td,
+.mobile-h5-app .wiki-subskills-table tbody td {
+  min-height: 36px !important;
+  height: auto !important;
+  box-sizing: border-box !important;
+  vertical-align: middle !important;
 }
 
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table th:nth-child(1),
@@ -15056,7 +15065,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(1),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(1),
 .mobile-h5-app .wiki-subskills-table .col-subskills-tags {
-  width: 58% !important;
+  width: 45% !important;
   text-align: center !important;
   padding: 4px 2px !important;
 }
@@ -15066,7 +15075,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(2),
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(2),
 .mobile-h5-app .wiki-subskills-table .col-subskills-effect {
-  width: 42% !important;
+  width: 55% !important;
   font-size: 13px !important;
   line-height: 1.35 !important;
   text-align: left !important;
