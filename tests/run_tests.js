@@ -3742,10 +3742,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Helping Speed Column Wid
   assert(cssContent.includes('#wiki-subpanel-subskills .wiki-data-table th,') || cssContent.includes('#wiki-subpanel-subskills .wiki-data-table th {'),
     'styles.css must define desktop subpanel table header styling');
 
-  // 4. Verify subskills table effect description is unified to 13px
+  // 4. Verify subskills table effect description is unified to 11.5px
   const effectColPart = cssContent.substring(cssContent.indexOf('.mobile-h5-app .wiki-subskills-table .col-subskills-effect'));
   const effectColBlock = effectColPart.substring(0, effectColPart.indexOf('}'));
-  assert(effectColBlock.includes('font-size: 13px !important'), 'col-subskills-effect must be unified to 13px');
+  assert(effectColBlock.includes('font-size: 11.5px !important'), 'col-subskills-effect must be unified to 11.5px');
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Wiki Subskills Panel Full-Width Symbols Replaced with Half-Width', () => {
@@ -4102,13 +4102,24 @@ test('Tier 4 - Real-World Application Scenarios', 'Good-Night Ribbon Wiki Guide 
     assert(mockContainer.innerHTML.includes('wiki-card-ribbon-guide'), 'Wiki layout must include wiki-card-ribbon-guide');
   });
 
-  // 2. Verify Wiki Ribbon Guide contains zero full-width punctuation
+  // 2. Verify Wiki Ribbon Guide contains zero full-width punctuation & zero emojis
   const startRibbon = wikiCode.indexOf('wiki-card-ribbon-guide');
   assert(startRibbon !== -1, 'wiki.js must contain wiki-card-ribbon-guide');
-  const endRibbon = wikiCode.indexOf('</div>\n            </div>\n\n            <!-- 子分頁 3');
+  const endRibbon = wikiCode.indexOf('<!-- 副技能完整階級與數值說明表格 -->');
   const ribbonBlock = wikiCode.slice(startRibbon, endRibbon !== -1 ? endRibbon : startRibbon + 4000);
   const fwMatches = ribbonBlock.match(/[\uFF01-\uFF5E\u3000-\u303F\u2000-\u206F]/g);
   assert(!fwMatches || fwMatches.length === 0, `Ribbon guide block must not contain full-width punctuation, found: ${fwMatches}`);
+  assert(!/\p{Extended_Pictographic}/u.test(ribbonBlock), 'Ribbon guide block must contain zero emojis');
+
+  // Verify visual tier cards grid and single Case 1
+  assert(ribbonBlock.includes('ribbon-tiers-grid'), 'Ribbon guide must use visual tier cards grid');
+  assert(ribbonBlock.includes('ribbon-tier-card tier-bronze'), 'Ribbon guide must include Bronze tier card');
+  assert(ribbonBlock.includes('ribbon-tier-card tier-silver'), 'Ribbon guide must include Silver tier card');
+  assert(ribbonBlock.includes('ribbon-tier-card tier-gold'), 'Ribbon guide must include Gold tier card');
+  assert(ribbonBlock.includes('ribbon-tier-card tier-platinum'), 'Ribbon guide must include Platinum tier card');
+  assert(ribbonBlock.includes('Chansey vs Blissey') || ribbonBlock.includes('吉利蛋 vs 幸福蛋'), 'Ribbon guide must include Case 1');
+  assert(!ribbonBlock.includes('Vigoroth vs Slaking') && !ribbonBlock.includes('過動猿 vs 請假王'), 'Ribbon guide must not include Case 2');
+  assert(!ribbonBlock.includes('Un-evolved Favorites') && !ribbonBlock.includes('真愛黨與節慶限定'), 'Ribbon guide must not include Case 3');
 
   // 3. Verify Box PR calculation integrates Ribbon
   const boxModule = require(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'));

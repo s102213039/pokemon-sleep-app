@@ -8626,8 +8626,8 @@ input[type="number"] {
   width: 55%;
   text-align: left;
   padding: 5px 8px;
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: 11.5px;
+  line-height: 1.35;
 }
 
 .wiki-subskills-table .wiki-subskill-tags-col {
@@ -15110,7 +15110,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(2),
 .mobile-h5-app .wiki-subskills-table .col-subskills-effect {
   width: 55% !important;
-  font-size: 13px !important;
+  font-size: 11.5px !important;
   line-height: 1.35 !important;
   text-align: left !important;
   padding: 4px 6px !important;
@@ -19068,5 +19068,229 @@ body.mobile-h5-app.values-active,
   color: #facc15;
   border: 1px solid rgba(234, 179, 8, 0.35);
   font-weight: 700;
+}
+
+/* Good-Night Ribbon Visual Tier Cards */
+.ribbon-tiers-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .ribbon-tiers-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .ribbon-tiers-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ribbon-tier-card {
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.ribbon-tier-card:hover {
+  transform: translateY(-2px);
+}
+
+.ribbon-tier-card.tier-bronze {
+  border-color: rgba(205, 127, 50, 0.35);
+  background: linear-gradient(180deg, rgba(205, 127, 50, 0.06) 0%, var(--bg-card-inner, rgba(255, 255, 255, 0.02)) 100%);
+}
+
+.ribbon-tier-card.tier-bronze:hover {
+  border-color: rgba(205, 127, 50, 0.6);
+  box-shadow: 0 4px 14px rgba(205, 127, 50, 0.15);
+}
+
+.ribbon-tier-card.tier-silver {
+  border-color: rgba(148, 163, 184, 0.35);
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.06) 0%, var(--bg-card-inner, rgba(255, 255, 255, 0.02)) 100%);
+}
+
+.ribbon-tier-card.tier-silver:hover {
+  border-color: rgba(148, 163, 184, 0.6);
+  box-shadow: 0 4px 14px rgba(148, 163, 184, 0.15);
+}
+
+.ribbon-tier-card.tier-gold {
+  border-color: rgba(234, 179, 8, 0.4);
+  background: linear-gradient(180deg, rgba(234, 179, 8, 0.08) 0%, var(--bg-card-inner, rgba(255, 255, 255, 0.02)) 100%);
+}
+
+.ribbon-tier-card.tier-gold:hover {
+  border-color: rgba(234, 179, 8, 0.7);
+  box-shadow: 0 4px 16px rgba(234, 179, 8, 0.2);
+}
+
+.ribbon-tier-card.tier-platinum {
+  border-color: rgba(56, 189, 248, 0.45);
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.09) 0%, var(--bg-card-inner, rgba(255, 255, 255, 0.02)) 100%);
+}
+
+.ribbon-tier-card.tier-platinum:hover {
+  border-color: rgba(56, 189, 248, 0.8);
+  box-shadow: 0 4px 18px rgba(56, 189, 248, 0.25);
+}
+
+.ribbon-tier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.ribbon-tier-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.badge-bronze {
+  background: linear-gradient(135deg, #a75d28, #7a3e14);
+  color: #ffedd5;
+  border: 1px solid rgba(251, 146, 60, 0.4);
+}
+
+.badge-silver {
+  background: linear-gradient(135deg, #64748b, #475569);
+  color: #f1f5f9;
+  border: 1px solid rgba(203, 213, 225, 0.4);
+}
+
+.badge-gold {
+  background: linear-gradient(135deg, #ca8a04, #854d0e);
+  color: #fef08a;
+  border: 1px solid rgba(250, 204, 21, 0.5);
+}
+
+.badge-platinum {
+  background: linear-gradient(135deg, #0284c7, #075985);
+  color: #e0f2fe;
+  border: 1px solid rgba(56, 189, 248, 0.5);
+}
+
+.ribbon-hours-tag {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-blue, #38bdf8);
+  background: rgba(56, 189, 248, 0.1);
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.ribbon-effect-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.ribbon-effect-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.ribbon-effect-item.ribbon-speed-col {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.ribbon-effect-label {
+  font-size: 11.5px;
+  color: var(--text-secondary, #94a3b8);
+  font-weight: 500;
+}
+
+.ribbon-effect-val {
+  font-weight: 700;
+  font-size: 12.5px;
+}
+
+.ribbon-effect-val.val-carry {
+  color: #38bdf8;
+}
+
+.ribbon-effect-val.val-none {
+  color: var(--text-muted, #64748b);
+  font-weight: 500;
+}
+
+.ribbon-effect-val .val-sub {
+  font-size: 10.5px;
+  color: var(--text-muted, #64748b);
+  font-weight: normal;
+}
+
+.ribbon-speed-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.ribbon-speed-chip {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  display: inline-block;
+}
+
+.ribbon-speed-chip.chip-max {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.3);
+  font-weight: 700;
+}
+
+.ribbon-special-item {
+  margin-top: auto;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border-color-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.ribbon-special-badge {
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: rgba(234, 179, 8, 0.12);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.ribbon-special-badge.badge-glow {
+  background: rgba(56, 189, 248, 0.15);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
 }
 

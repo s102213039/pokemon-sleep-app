@@ -13662,7 +13662,7 @@
         </div>
       </div>
 
-      <div class="wiki-card wiki-card-ribbon-guide">
+      <div class="wiki-card wiki-card-island-drowsy-guide">
         <div class="wiki-card-header">
           <h3 class="wiki-card-title">${isEN ? 'Drowsy Power & Sleep Style Mechanics Guide' : '睡意之力與睡姿解鎖核心規則指南'}</h3>
         </div>
@@ -15238,73 +15238,108 @@
               <div class="summary-point-line">
                 <span class="point-prefix">1.</span>
                 <span class="point-title">${isEN ? 'Sleep Hours Accumulation:' : '睡眠時數累計:'}</span>
-                <span class="point-desc">${isEN ? 'Milestones at 200h, 500h, 1000h, 2000h. All carry limit and speed bonuses are cumulative.' : '達到 200h, 500h, 1000h, 2000h 四大門檻自動解鎖, 持有上限與速度效果採完全累加制.'}</span>
+                <span class="point-desc">${isEN ? 'Milestones at 200h, 500h, 1000h, 2000h. Carry limit and speed boosts are cumulative.' : '睡眠達 200h, 500h, 1000h, 2000h 解鎖, 持有上限與幫速效果累加.'}</span>
               </div>
               <div class="summary-point-line">
                 <span class="point-prefix">2.</span>
                 <span class="point-title">${isEN ? 'Unevolved Speed Bonus:' : '未進化速度加成:'}</span>
-                <span class="point-desc">${isEN ? 'Only Not Fully Evolved (NFE) Pokémon receive helping frequency reductions. Single-stage & fully evolved forms get 0% speed bonus.' : '僅限尚未完全進化的寶可夢享有幫忙間隔縮短; 無進化空間之單一型態與最終進化型為 0%.'}</span>
+                <span class="point-desc">${isEN ? 'Only unevolved forms gain speed boosts (up to -25%). Fully evolved forms get 0% speed boost.' : '僅未完全進化寶可夢享有幫速縮短(最高 -25%), 最終進化型為 0%.'}</span>
               </div>
               <div class="summary-point-line">
                 <span class="point-prefix">3.</span>
-                <span class="point-title">${isEN ? 'Dynamic Evolution Scaling:' : '進化動態轉移:'}</span>
-                <span class="point-desc">${isEN ? 'Upon evolution, sleep hours and carry bonuses persist, but speed boost dynamically recalculates based on remaining evolution count.' : '進化後累積時數與持有上限保留, 但幫速縮短會依新形態剩餘進化次數即時重新計算衰減.'}</span>
-              </div>
-              <div class="summary-point-line">
-                <span class="point-prefix">4.</span>
                 <span class="point-title">${isEN ? 'Independent Multiplier:' : '獨立相乘計算:'}</span>
-                <span class="point-desc">${isEN ? 'Formula: Base x (1 - Nature) x (1 - Subskills) x (1 - Ribbon). Uncapped by the 35% sub-skill ceiling.' : '計算式: 基礎間隔 x (1 - 性格) x (1 - 副技能) x (1 - 獎章縮短率), 不受副技能 35% 上限約束.'}</span>
+                <span class="point-desc">${isEN ? 'Calculated as Base x (1 - Nature) x (1 - Subskills) x (1 - Ribbon), uncapped by the 35% limit.' : '獨立相乘計算: 基礎 x (1 - 性格) x (1 - 副技能) x (1 - 獎章), 不受 35% 上限限制.'}</span>
               </div>
             </div>
 
-            <!-- 四大階段門檻與獎勵效果一覽表 -->
-            <div class="wiki-table-wrapper" style="margin-top: 10px;">
-              <table class="wiki-data-table">
-                <thead>
-                  <tr>
-                    <th style="text-align: center;">${isEN ? 'Ribbon Tier' : '獎章階段'}</th>
-                    <th style="text-align: center;">${isEN ? 'Sleep Hours' : '睡眠門檻'}</th>
-                    <th style="text-align: center;">${isEN ? 'Carry Limit' : '持有上限'}</th>
-                    <th style="text-align: center;">${isEN ? '1 Evo Remaining' : '能再進化 1 次'}</th>
-                    <th style="text-align: center;">${isEN ? '2 Evos Remaining' : '能再進化 2 次'}</th>
-                    <th class="col-hide-mobile" style="text-align: center;">${isEN ? 'Special Rewards' : '特殊獎勵'}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td style="vertical-align: middle; text-align: center; font-weight: 700;">${isEN ? 'Tier 1' : '第 1 階段'}</td>
-                    <td style="vertical-align: middle; text-align: center;"><span class="text-accent font-bold">200 hrs</span></td>
-                    <td style="vertical-align: middle; text-align: center; color: #38bdf8; font-weight: 700;">+1</td>
-                    <td style="vertical-align: middle; text-align: center; color: #94a3b8;">-</td>
-                    <td style="vertical-align: middle; text-align: center; color: #94a3b8;">-</td>
-                    <td class="col-hide-mobile" style="vertical-align: middle; text-align: center; color: #94a3b8;">-</td>
-                  </tr>
-                  <tr>
-                    <td style="vertical-align: middle; text-align: center; font-weight: 700;">${isEN ? 'Tier 2' : '第 2 階段'}</td>
-                    <td style="vertical-align: middle; text-align: center;"><span class="text-accent font-bold">500 hrs</span></td>
-                    <td style="vertical-align: middle; text-align: center; color: #38bdf8; font-weight: 700;">+3 <span style="font-size: 11px; color: #64748b;">(+2)</span></td>
-                    <td style="vertical-align: middle; text-align: center; color: #10b981; font-weight: 700;">-5%</td>
-                    <td style="vertical-align: middle; text-align: center; color: #10b981; font-weight: 700;">-11%</td>
-                    <td class="col-hide-mobile" style="vertical-align: middle; text-align: center; color: #94a3b8;">-</td>
-                  </tr>
-                  <tr>
-                    <td style="vertical-align: middle; text-align: center; font-weight: 700;">${isEN ? 'Tier 3' : '第 3 階段'}</td>
-                    <td style="vertical-align: middle; text-align: center;"><span class="text-accent font-bold">1,000 hrs</span></td>
-                    <td style="vertical-align: middle; text-align: center; color: #38bdf8; font-weight: 700;">+6 <span style="font-size: 11px; color: #64748b;">(+3)</span></td>
-                    <td style="vertical-align: middle; text-align: center; color: #10b981; font-weight: 700;">-5%</td>
-                    <td style="vertical-align: middle; text-align: center; color: #10b981; font-weight: 700;">-11%</td>
-                    <td class="col-hide-mobile" style="vertical-align: middle; text-align: center; color: #eab308; font-weight: 600;">${isEN ? 'Special Profile Icon' : '解鎖專屬個人頭像'}</td>
-                  </tr>
-                  <tr>
-                    <td style="vertical-align: middle; text-align: center; font-weight: 700;">${isEN ? 'Tier 4' : '第 4 階段'}</td>
-                    <td style="vertical-align: middle; text-align: center;"><span class="text-accent font-bold">2,000 hrs</span></td>
-                    <td style="vertical-align: middle; text-align: center; color: #38bdf8; font-weight: 700;">+8 <span style="font-size: 11px; color: #64748b;">(+2)</span></td>
-                    <td style="vertical-align: middle; text-align: center; color: #38bdf8; font-weight: 700;">-12% <span style="font-size: 11px; color: #64748b;">(-7%)</span></td>
-                    <td style="vertical-align: middle; text-align: center; color: #38bdf8; font-weight: 700;">-25% <span style="font-size: 11px; color: #64748b;">(-14%)</span></td>
-                    <td class="col-hide-mobile" style="vertical-align: middle; text-align: center; color: #94a3b8;">-</td>
-                  </tr>
-                </tbody>
-              </table>
+            <!-- 四大階段門檻與獎勵效果展示卡片 (Good-Night Ribbon Tier Visual Cards) -->
+            <div class="ribbon-tiers-grid" style="margin-top: 14px;">
+              <!-- Tier 1: Bronze (200h) -->
+              <div class="ribbon-tier-card tier-bronze">
+                <div class="ribbon-tier-header">
+                  <span class="ribbon-tier-badge badge-bronze">${isEN ? 'Tier 1' : '第 1 階段'}</span>
+                  <span class="ribbon-hours-tag">200 hrs</span>
+                </div>
+                <div class="ribbon-effect-list">
+                  <div class="ribbon-effect-item">
+                    <span class="ribbon-effect-label">${isEN ? 'Carry Limit:' : '持有上限:'}</span>
+                    <span class="ribbon-effect-val val-carry">+1</span>
+                  </div>
+                  <div class="ribbon-effect-item">
+                    <span class="ribbon-effect-label">${isEN ? 'Speed Boost:' : '幫速縮短:'}</span>
+                    <span class="ribbon-effect-val val-none">${isEN ? 'None' : '無加成'}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tier 2: Silver (500h) -->
+              <div class="ribbon-tier-card tier-silver">
+                <div class="ribbon-tier-header">
+                  <span class="ribbon-tier-badge badge-silver">${isEN ? 'Tier 2' : '第 2 階段'}</span>
+                  <span class="ribbon-hours-tag">500 hrs</span>
+                </div>
+                <div class="ribbon-effect-list">
+                  <div class="ribbon-effect-item">
+                    <span class="ribbon-effect-label">${isEN ? 'Carry Limit:' : '持有上限:'}</span>
+                    <span class="ribbon-effect-val val-carry">+3 <span class="val-sub">(+2)</span></span>
+                  </div>
+                  <div class="ribbon-effect-item ribbon-speed-col">
+                    <span class="ribbon-effect-label">${isEN ? 'Speed Boost:' : '幫速縮短:'}</span>
+                    <div class="ribbon-speed-lines">
+                      <span class="ribbon-speed-chip">${isEN ? '1 Evo: -5%' : '能再進化 1 次: -5%'}</span>
+                      <span class="ribbon-speed-chip">${isEN ? '2 Evos: -11%' : '能再進化 2 次: -11%'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tier 3: Gold (1000h) -->
+              <div class="ribbon-tier-card tier-gold">
+                <div class="ribbon-tier-header">
+                  <span class="ribbon-tier-badge badge-gold">${isEN ? 'Tier 3' : '第 3 階段'}</span>
+                  <span class="ribbon-hours-tag">1,000 hrs</span>
+                </div>
+                <div class="ribbon-effect-list">
+                  <div class="ribbon-effect-item">
+                    <span class="ribbon-effect-label">${isEN ? 'Carry Limit:' : '持有上限:'}</span>
+                    <span class="ribbon-effect-val val-carry">+6 <span class="val-sub">(+3)</span></span>
+                  </div>
+                  <div class="ribbon-effect-item ribbon-speed-col">
+                    <span class="ribbon-effect-label">${isEN ? 'Speed Boost:' : '幫速縮短:'}</span>
+                    <div class="ribbon-speed-lines">
+                      <span class="ribbon-speed-chip">${isEN ? '1 Evo: -5%' : '能再進化 1 次: -5%'}</span>
+                      <span class="ribbon-speed-chip">${isEN ? '2 Evos: -11%' : '能再進化 2 次: -11%'}</span>
+                    </div>
+                  </div>
+                  <div class="ribbon-special-item">
+                    <span class="ribbon-special-badge">${isEN ? 'Special Profile Icon' : '解鎖專屬個人頭像'}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tier 4: Platinum (2000h) -->
+              <div class="ribbon-tier-card tier-platinum">
+                <div class="ribbon-tier-header">
+                  <span class="ribbon-tier-badge badge-platinum">${isEN ? 'Tier 4' : '第 4 階段'}</span>
+                  <span class="ribbon-hours-tag">2,000 hrs</span>
+                </div>
+                <div class="ribbon-effect-list">
+                  <div class="ribbon-effect-item">
+                    <span class="ribbon-effect-label">${isEN ? 'Carry Limit:' : '持有上限:'}</span>
+                    <span class="ribbon-effect-val val-carry">+8 <span class="val-sub">(+2)</span></span>
+                  </div>
+                  <div class="ribbon-effect-item ribbon-speed-col">
+                    <span class="ribbon-effect-label">${isEN ? 'Speed Boost:' : '幫速縮短:'}</span>
+                    <div class="ribbon-speed-lines">
+                      <span class="ribbon-speed-chip chip-max">${isEN ? '1 Evo: -12%' : '能再進化 1 次: -12%'}</span>
+                      <span class="ribbon-speed-chip chip-max">${isEN ? '2 Evos: -25%' : '能再進化 2 次: -25%'}</span>
+                    </div>
+                  </div>
+                  <div class="ribbon-special-item">
+                    <span class="ribbon-special-badge badge-glow">${isEN ? 'Profile Icon Glow Effect' : '解鎖頭像特別光效'}</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- 生態經典案例分析 -->
@@ -15317,26 +15352,6 @@
                   ${isEN
                     ? 'Chansey (1 evolution remaining, base 3,300s) reaches <strong>2,904s</strong> (-12%) at 2,000h, surpassing fully evolved Blissey (base 3,100s, 0% boost). Officially confirmed as intended game design.'
                     : '吉利蛋(能再進化 1 次, 基礎 3300 秒)滿 2000 小時縮短 12% 間隔至 <strong>2904 秒</strong>, 反超最終型態幸福蛋(基礎 3100 秒, 0% 減免). 官方已公告確認此為預期設計.'}
-                </div>
-              </div>
-              <div class="strategy-item strategy-energy">
-                <div class="strategy-header">
-                  <span class="strategy-badge badge-energy">${isEN ? 'Case 2: Vigoroth vs Slaking' : '案例 2: 過動猿 vs 請假王'}</span>
-                </div>
-                <div class="strategy-desc">
-                  ${isEN
-                    ? 'Vigoroth (Berry specialist, base 3,100s) reaches <strong>2,728s</strong> at 2,000h (-12%), becoming an elite Normal-type berry powerhouse. Slaking evolves into Skill specialty with slower 3,800s base interval.'
-                    : '過動猿(樹果專長, 基礎 3100 秒)滿 2000 小時縮短 12% 至 <strong>2728 秒</strong>, 成為頂級普通屬性樹果爆發手; 請假王進化後轉為技能型, 基礎間隔拉長至 3800 秒.'}
-                </div>
-              </div>
-              <div class="strategy-item strategy-late">
-                <div class="strategy-header">
-                  <span class="strategy-badge badge-late">${isEN ? 'Case 3: Un-evolved Favorites' : '案例 3: 真愛黨與節慶限定'}</span>
-                </div>
-                <div class="strategy-desc">
-                  ${isEN
-                    ? 'Allows unevolved favorites (Pichu, Eevee) and non-evolving costume forms (Holiday/Halloween Pikachu) to bridge performance gaps with +8 carry capacity and up to 25% speed reductions.'
-                    : '賦予真愛未進化寶可夢(如皮丘, 伊布)與無法進化的節慶限定型態(佳節/萬聖皮卡丘)強大競爭力, 透過 +8 持有上限與最高 25% 速度縮短, 大幅拉近與最終型態實力差距.'}
                 </div>
               </div>
             </div>
