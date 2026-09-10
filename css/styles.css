@@ -14257,10 +14257,11 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .wiki-subtab-btn.active {
-  background: var(--accent-blue, #38bdf8) !important;
-  color: #000 !important;
+  background: var(--accent-gradient, linear-gradient(135deg, #38bdf8, #6366f1)) !important;
+  color: #ffffff !important;
   font-weight: 700 !important;
-  border-color: var(--accent-blue, #38bdf8) !important;
+  border-color: transparent !important;
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.35) !important;
 }
 
 .mobile-h5-app .wiki-subtab-btn.active::after {
@@ -18779,72 +18780,143 @@ body.mobile-h5-app.values-active,
 
 .island-nav-strip {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 4px 0 16px 0;
-  border-bottom: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08));
-  margin-bottom: 16px;
-}
-
-.island-pill-btn {
-  display: inline-flex;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  gap: 10px;
+  padding: 6px 2px 14px 2px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  width: 100%;
   align-items: center;
-  gap: 7px;
-  padding: 6px 14px;
-  border-radius: 20px;
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.05));
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
-  color: var(--text-primary);
+}
+
+.island-nav-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.island-tab-btn {
+  flex: 0 0 auto;
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04));
+  border: 2px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
   cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  opacity: 0.72;
 }
 
-.island-pill-btn:hover {
-  background: var(--bg-card-hover, rgba(255, 255, 255, 0.1));
+.island-tab-btn:hover {
+  opacity: 0.95;
+  border-color: rgba(56, 189, 248, 0.6);
+  transform: translateY(-2px);
+}
+
+.island-tab-btn.active {
+  opacity: 1;
   border-color: var(--accent-blue, #38bdf8);
-  transform: translateY(-1px);
+  background: rgba(56, 189, 248, 0.15);
+  box-shadow: 0 0 0 1px var(--accent-blue, #38bdf8), 0 4px 14px rgba(56, 189, 248, 0.35);
+  transform: translateY(-2px) scale(1.04);
 }
 
-.island-pill-btn.active {
-  background: rgba(56, 189, 248, 0.16);
-  border-color: #38bdf8;
-  color: #38bdf8;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+.island-tab-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  display: block;
 }
 
-.island-pill-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  display: inline-block;
-  flex-shrink: 0;
+.island-tab-indicator {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent-blue, #38bdf8);
+  transition: transform 0.2s ease;
 }
 
-.island-pill-ex-tag {
-  font-size: 10px;
+.island-tab-btn.active .island-tab-indicator {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* EX Tab Button in Nav Strip */
+.island-tab-ex-btn {
+  border-color: rgba(234, 179, 8, 0.4);
+  background: rgba(234, 179, 8, 0.08);
+}
+
+.island-tab-ex-btn:hover {
+  border-color: #facc15;
+  opacity: 0.95;
+}
+
+.island-tab-ex-btn.active {
+  border-color: #facc15;
+  background: rgba(234, 179, 8, 0.2);
+  box-shadow: 0 0 0 1px #facc15, 0 4px 14px rgba(250, 204, 21, 0.4);
+}
+
+.island-tab-ex-btn.active .island-tab-indicator {
+  background: #facc15;
+}
+
+.island-tab-ex-inner {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.25) 0%, rgba(202, 138, 4, 0.35) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed rgba(234, 179, 8, 0.5);
+}
+
+.island-ex-tab-badge {
+  font-size: 14px;
   font-weight: 900;
-  padding: 1px 5px;
-  border-radius: 4px;
-  background: #eab308;
-  color: #000;
-  margin-left: 2px;
-  letter-spacing: 0.5px;
+  color: #facc15;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
+/* Island Hero Card */
 .island-overview-card {
   padding: 18px 20px;
   margin-bottom: 16px;
 }
 
-.island-overview-header {
+.island-hero-banner {
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
+  position: relative;
+  overflow: hidden;
+  min-height: 80px;
+  display: flex;
+  align-items: flex-end;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.island-hero-content {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
+  width: 100%;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: 10px;
 }
 
 .island-title-group {
@@ -18853,19 +18925,21 @@ body.mobile-h5-app.values-active,
   gap: 10px;
 }
 
-.island-title-main {
+.island-hero-title {
   font-size: 22px;
   font-weight: 800;
   margin: 0;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
 }
 
 .island-title-en {
-  font-size: 14px;
-  color: var(--text-muted);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
   font-weight: 500;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
-.island-badges-group {
+.island-hero-meta {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -18878,17 +18952,17 @@ body.mobile-h5-app.values-active,
   gap: 4px;
   font-size: 11.5px;
   font-weight: 600;
-  padding: 3px 8px;
+  padding: 4px 9px;
   border-radius: 6px;
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.06));
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
+  background: var(--bg-card-inner, rgba(0, 0, 0, 0.45));
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.12));
   color: var(--text-secondary);
 }
 
 .island-chip-accent {
   color: #38bdf8;
-  background: rgba(56, 189, 248, 0.12);
-  border-color: rgba(56, 189, 248, 0.25);
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.35);
 }
 
 .island-btn-ex-toggle {
@@ -18911,10 +18985,11 @@ body.mobile-h5-app.values-active,
 }
 
 .island-btn-ex-toggle.active {
-  background: #eab308;
-  color: #000;
-  border-color: #eab308;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  border-color: #f59e0b;
   font-weight: 800;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
 }
 
 .island-berries-section {
@@ -18922,7 +18997,7 @@ body.mobile-h5-app.values-active,
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
-  padding-top: 12px;
+  padding-top: 14px;
   border-top: 1px dashed var(--border-color-subtle, rgba(255, 255, 255, 0.08));
 }
 
@@ -18932,11 +19007,17 @@ body.mobile-h5-app.values-active,
   color: var(--text-muted);
 }
 
+.island-berries-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .island-berry-chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 10px;
+  padding: 4px 10px;
   border-radius: 16px;
   background: var(--bg-card-inner, rgba(255, 255, 255, 0.04));
   border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
@@ -18954,6 +19035,7 @@ body.mobile-h5-app.values-active,
   color: var(--text-primary);
 }
 
+/* EX Expert Mode Card */
 .island-ex-card {
   background: linear-gradient(135deg, rgba(234, 179, 8, 0.08) 0%, rgba(202, 138, 4, 0.04) 100%), var(--bg-card, #1e293b);
   border: 1px solid rgba(234, 179, 8, 0.35);
@@ -18972,13 +19054,14 @@ body.mobile-h5-app.values-active,
 }
 
 .island-ex-badge {
-  background: #eab308;
-  color: #000;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
   font-size: 11px;
   font-weight: 900;
-  padding: 2px 7px;
-  border-radius: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
   letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
 }
 
 .island-ex-rules-grid {
@@ -19007,36 +19090,66 @@ body.mobile-h5-app.values-active,
   color: var(--text-secondary);
 }
 
+/* Sleep Filters Segmented Bar */
 .island-sleep-filters {
   display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08));
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.island-sleep-filters::-webkit-scrollbar {
+  display: none;
 }
 
 .island-sleep-btn {
-  padding: 4px 10px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
   font-size: 12px;
   font-weight: 600;
-  border-radius: 6px;
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.05));
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
+  border-radius: 7px;
+  background: transparent;
+  border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.18s ease;
+  white-space: nowrap;
 }
 
 .island-sleep-btn:hover {
   color: var(--text-primary);
-  border-color: var(--accent-blue, #38bdf8);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .island-sleep-btn.active {
-  background: #38bdf8;
-  color: #000;
+  background: var(--accent-gradient, linear-gradient(135deg, #38bdf8, #6366f1));
+  color: #ffffff !important;
   font-weight: 700;
-  border-color: #38bdf8;
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
 }
 
+.island-sleep-count {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  color: inherit;
+}
+
+.island-sleep-btn.active .island-sleep-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* Star Chips */
 .island-star-chip {
   font-size: 11.5px;
   font-weight: 600;
@@ -19069,6 +19182,23 @@ body.mobile-h5-app.values-active,
   color: #facc15;
   border: 1px solid rgba(234, 179, 8, 0.35);
   font-weight: 700;
+}
+
+/* Pokemon List Item with Avatar */
+.island-pkm-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.island-pkm-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.12));
+  flex-shrink: 0;
 }
 
 /* Good-Night Ribbon Ultra Compact Quick Guide */
@@ -19151,150 +19281,4 @@ body.mobile-h5-app.values-active,
   flex-shrink: 0;
 }
 
-/* Island Camp Single-Row Nav Strip & Badges */
-.island-nav-strip {
-  display: flex;
-  overflow-x: auto;
-  flex-wrap: nowrap;
-  gap: 8px;
-  padding: 4px 2px 10px 2px;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  width: 100%;
-}
-
-.island-nav-strip::-webkit-scrollbar {
-  display: none;
-}
-
-.island-tab-btn {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: 12px;
-  background: var(--bg-card-inner, #0d1527);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.island-tab-btn:hover {
-  background: var(--bg-card-hover, rgba(255, 255, 255, 0.06));
-  color: var(--text-primary);
-  border-color: var(--accent-blue, #38bdf8);
-}
-
-.island-tab-btn.active {
-  border-color: var(--accent-blue, #38bdf8);
-  background: rgba(56, 189, 248, 0.12);
-  color: #38bdf8;
-  font-weight: 700;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.15);
-}
-
-.island-tab-thumb {
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
-  object-fit: cover;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  flex-shrink: 0;
-}
-
-.island-tab-title {
-  font-size: 12px;
-  line-height: 1.2;
-}
-
-.island-tab-ex-btn {
-  border-color: rgba(234, 179, 8, 0.4);
-  background: rgba(234, 179, 8, 0.06);
-}
-
-.island-tab-ex-btn:hover {
-  border-color: #facc15;
-  color: #facc15;
-}
-
-.island-tab-ex-btn.active {
-  border-color: #facc15;
-  background: rgba(234, 179, 8, 0.18);
-  color: #facc15;
-  box-shadow: 0 0 12px rgba(234, 179, 8, 0.25);
-}
-
-.island-ex-tab-badge {
-  font-size: 10px;
-  font-weight: 800;
-  background: linear-gradient(135deg, #eab308, #ca8a04);
-  color: #000;
-  padding: 2px 5px;
-  border-radius: 4px;
-  line-height: 1;
-}
-
-/* Island Hero Landscape Banner */
-.island-hero-banner {
-  border-radius: 10px;
-  background-size: cover;
-  background-position: center;
-  padding: 14px 18px;
-  margin-bottom: 12px;
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
-  position: relative;
-  overflow: hidden;
-  min-height: 72px;
-  display: flex;
-  align-items: flex-end;
-}
-
-.island-hero-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  width: 100%;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.island-hero-title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 800;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-}
-
-.island-hero-meta {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.island-chip-ex {
-  background: rgba(234, 179, 8, 0.2);
-  color: #facc15;
-  border: 1px solid rgba(234, 179, 8, 0.4);
-  font-weight: 700;
-}
-
-/* Island Pokemon Spawns Table Item with Avatar */
-.island-pkm-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.island-pkm-avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.12));
-  flex-shrink: 0;
-}
 
