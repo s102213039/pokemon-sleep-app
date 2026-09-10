@@ -12931,40 +12931,26 @@
         campReward_en: "Accumulates independent EX Area Bonus, separate from normal area bonus",
         rewards: "異色寶可夢 (Shiny) 出現機率顯著提升, 獲得大量研究EXP與夢之碎片與糖果, 開放專屬高難度每週任務",
         rewards_en: "Higher Shiny rate, massive Research EXP, Dream Shards, Candies, and exclusive weekly missions",
+        snorlaxEnergyTiers: [
+          { rank: "Basic 1", energy: 0 },
+          { rank: "Great 1", energy: 309675 },
+          { rank: "Ultra 1", energy: 997610 },
+          { rank: "Master 1", energy: 2014314 },
+          { rank: "Master 5", energy: 3057187 },
+          { rank: "Master 10", energy: 4778794 },
+          { rank: "Master 15", energy: 7152862 },
+          { rank: "Master 20", energy: 10981171 }
+        ]
       },
       snorlaxEnergyTiers: [
-              {
-                      "rank": "Basic 1",
-                      "energy": 0
-              },
-              {
-                      "rank": "Great 1",
-                      "energy": 18500
-              },
-              {
-                      "rank": "Ultra 1",
-                      "energy": 67000
-              },
-              {
-                      "rank": "Master 1",
-                      "energy": 187832
-              },
-              {
-                      "rank": "Master 5",
-                      "energy": 389000
-              },
-              {
-                      "rank": "Master 10",
-                      "energy": 840000
-              },
-              {
-                      "rank": "Master 15",
-                      "energy": 1820000
-              },
-              {
-                      "rank": "Master 20",
-                      "energy": 3200000
-              }
+        { rank: "Basic 1", energy: 0 },
+        { rank: "Great 1", energy: 23385 },
+        { rank: "Ultra 1", energy: 79197 },
+        { rank: "Master 1", energy: 187832 },
+        { rank: "Master 5", energy: 321146 },
+        { rank: "Master 10", energy: 532707 },
+        { rank: "Master 15", energy: 1199506 },
+        { rank: "Master 20", energy: 3245795 }
       ],
       drowsyPowerSpawns: [
               {
@@ -13218,38 +13204,14 @@
         rewards_en: "Massive Research EXP, Dream Shards, Candies, higher Shiny rates, and exclusive weekly missions",
       },
       snorlaxEnergyTiers: [
-              {
-                      "rank": "Basic 1",
-                      "energy": 0
-              },
-              {
-                      "rank": "Great 1",
-                      "energy": 23200
-              },
-              {
-                      "rank": "Ultra 1",
-                      "energy": 84000
-              },
-              {
-                      "rank": "Master 1",
-                      "energy": 257000
-              },
-              {
-                      "rank": "Master 5",
-                      "energy": 532000
-              },
-              {
-                      "rank": "Master 10",
-                      "energy": 1150000
-              },
-              {
-                      "rank": "Master 15",
-                      "energy": 2490000
-              },
-              {
-                      "rank": "Master 20",
-                      "energy": 4500000
-              }
+        { rank: "Basic 1", energy: 0 },
+        { rank: "Great 1", energy: 36164 },
+        { rank: "Ultra 1", energy: 122474 },
+        { rank: "Master 1", energy: 256544 },
+        { rank: "Master 5", energy: 420363 },
+        { rank: "Master 10", energy: 735875 },
+        { rank: "Master 15", energy: 1379432 },
+        { rank: "Master 20", energy: 3732664 }
       ],
       drowsyPowerSpawns: [
               {
@@ -13363,38 +13325,14 @@
       favoriteTypes: ["火","地面","岩石"],
       hasExpertMode: false,
       snorlaxEnergyTiers: [
-              {
-                      "rank": "Basic 1",
-                      "energy": 0
-              },
-              {
-                      "rank": "Great 1",
-                      "energy": 28800
-              },
-              {
-                      "rank": "Ultra 1",
-                      "energy": 104000
-              },
-              {
-                      "rank": "Master 1",
-                      "energy": 355000
-              },
-              {
-                      "rank": "Master 5",
-                      "energy": 735000
-              },
-              {
-                      "rank": "Master 10",
-                      "energy": 1590000
-              },
-              {
-                      "rank": "Master 15",
-                      "energy": 3450000
-              },
-              {
-                      "rank": "Master 20",
-                      "energy": 6200000
-              }
+        { rank: "Basic 1", energy: 0 },
+        { rank: "Great 1", energy: 51635 },
+        { rank: "Ultra 1", energy: 174869 },
+        { rank: "Master 1", energy: 366295 },
+        { rank: "Master 5", energy: 600197 },
+        { rank: "Master 10", energy: 1050688 },
+        { rank: "Master 15", energy: 1776213 },
+        { rank: "Master 20", energy: 4219534 }
       ],
       drowsyPowerSpawns: [
               {
@@ -13511,38 +13449,14 @@
       favoriteTypes: ["一般","冰","惡"],
       hasExpertMode: false,
       snorlaxEnergyTiers: [
-              {
-                      "rank": "Basic 1",
-                      "energy": 0
-              },
-              {
-                      "rank": "Great 1",
-                      "energy": 37000
-              },
-              {
-                      "rank": "Ultra 1",
-                      "energy": 134000
-              },
-              {
-                      "rank": "Master 1",
-                      "energy": 490000
-              },
-              {
-                      "rank": "Master 5",
-                      "energy": 1020000
-              },
-              {
-                      "rank": "Master 10",
-                      "energy": 2210000
-              },
-              {
-                      "rank": "Master 15",
-                      "energy": 4800000
-              },
-              {
-                      "rank": "Master 20",
-                      "energy": 8500000
-              }
+        { rank: "Basic 1", energy: 0 },
+        { rank: "Great 1", energy: 78645 },
+        { rank: "Ultra 1", energy: 266344 },
+        { rank: "Master 1", energy: 557907 },
+        { rank: "Master 5", energy: 914159 },
+        { rank: "Master 10", energy: 1600296 },
+        { rank: "Master 15", energy: 2705329 },
+        { rank: "Master 20", energy: 4706403 }
       ],
       drowsyPowerSpawns: [
               {
@@ -13651,38 +13565,14 @@
       favoriteTypes: ["草","格鬥","超能"],
       hasExpertMode: false,
       snorlaxEnergyTiers: [
-              {
-                      "rank": "Basic 1",
-                      "energy": 0
-              },
-              {
-                      "rank": "Great 1",
-                      "energy": 49000
-              },
-              {
-                      "rank": "Ultra 1",
-                      "energy": 178000
-              },
-              {
-                      "rank": "Master 1",
-                      "energy": 650000
-              },
-              {
-                      "rank": "Master 5",
-                      "energy": 1350000
-              },
-              {
-                      "rank": "Master 10",
-                      "energy": 2930000
-              },
-              {
-                      "rank": "Master 15",
-                      "energy": 6360000
-              },
-              {
-                      "rank": "Master 20",
-                      "energy": 11300000
-              }
+        { rank: "Basic 1", energy: 0 },
+        { rank: "Great 1", energy: 97031 },
+        { rank: "Ultra 1", energy: 328610 },
+        { rank: "Master 1", energy: 675330 },
+        { rank: "Master 5", energy: 1075709 },
+        { rank: "Master 10", energy: 1825483 },
+        { rank: "Master 15", energy: 2925574 },
+        { rank: "Master 20", energy: 5193272 }
       ],
       drowsyPowerSpawns: [
               {
@@ -13799,38 +13689,14 @@
       favoriteTypes: ["電","幽靈","鋼"],
       hasExpertMode: false,
       snorlaxEnergyTiers: [
-              {
-                      "rank": "Basic 1",
-                      "energy": 0
-              },
-              {
-                      "rank": "Great 1",
-                      "energy": 63000
-              },
-              {
-                      "rank": "Ultra 1",
-                      "energy": 228000
-              },
-              {
-                      "rank": "Master 1",
-                      "energy": 850000
-              },
-              {
-                      "rank": "Master 5",
-                      "energy": 1760000
-              },
-              {
-                      "rank": "Master 10",
-                      "energy": 3820000
-              },
-              {
-                      "rank": "Master 15",
-                      "energy": 8300000
-              },
-              {
-                      "rank": "Master 20",
-                      "energy": 14800000
-              }
+        { rank: "Basic 1", energy: 0 },
+        { rank: "Great 1", energy: 151061 },
+        { rank: "Ultra 1", energy: 511595 },
+        { rank: "Master 1", energy: 1038306 },
+        { rank: "Master 5", energy: 1582395 },
+        { rank: "Master 10", energy: 2476059 },
+        { rank: "Master 15", energy: 3744954 },
+        { rank: "Master 20", energy: 6674166 }
       ],
       drowsyPowerSpawns: [
               {
@@ -13942,38 +13808,14 @@
       favoriteTypes: ["毒","蟲","龍"],
       hasExpertMode: false,
       snorlaxEnergyTiers: [
-              {
-                      "rank": "Basic 1",
-                      "energy": 0
-              },
-              {
-                      "rank": "Great 1",
-                      "energy": 78000
-              },
-              {
-                      "rank": "Ultra 1",
-                      "energy": 282000
-              },
-              {
-                      "rank": "Master 1",
-                      "energy": 1100000
-              },
-              {
-                      "rank": "Master 5",
-                      "energy": 2280000
-              },
-              {
-                      "rank": "Master 10",
-                      "energy": 4950000
-              },
-              {
-                      "rank": "Master 15",
-                      "energy": 10760000
-              },
-              {
-                      "rank": "Master 20",
-                      "energy": 19200000
-              }
+        { rank: "Basic 1", energy: 0 },
+        { rank: "Great 1", energy: 198585 },
+        { rank: "Ultra 1", energy: 654607 },
+        { rank: "Master 1", energy: 1325740 },
+        { rank: "Master 5", energy: 2015408 },
+        { rank: "Master 10", energy: 3179971 },
+        { rank: "Master 15", energy: 4815792 },
+        { rank: "Master 20", energy: 8528976 }
       ],
       drowsyPowerSpawns: [
               {
@@ -14418,9 +14260,6 @@
               <span class="island-ex-badge">EX EXPERT MODE</span>
               <h4 style="margin:0; font-size:15px; color:#facc15; font-weight:700;">${isEN ? exp.name_en : exp.name}</h4>
             </div>
-            <button type="button" class="island-btn-ex-toggle active" onclick="window.WikiDB.selectIsland('${island.id}', false)">
-              ${isEN ? 'Exit EX Mode' : '退出 EX 模式'}
-            </button>
           </div>
           <div class="island-ex-rules-grid">
             <div class="island-ex-rule-item">
@@ -14487,7 +14326,11 @@
       `;
     }
 
-    const energyRows = island.snorlaxEnergyTiers.map(t => `
+    const activeEnergyTiers = (isExpert && island.expertMode && island.expertMode.snorlaxEnergyTiers)
+      ? island.expertMode.snorlaxEnergyTiers
+      : island.snorlaxEnergyTiers;
+
+    const energyRows = activeEnergyTiers.map(t => `
       <tr>
         <td class="font-bold" style="vertical-align:middle;">${formatSnorlaxRankBadge(t.rank)}</td>
         <td class="font-bold text-accent" style="vertical-align:middle;">${t.energy.toLocaleString()}</td>
@@ -14548,13 +14391,6 @@
               <h3 class="island-hero-title">${isEN ? (isExpert ? island.name_en + ' EX' : island.name_en) : (isExpert ? island.name + ' EX' : island.name)}</h3>
               <span class="island-title-en">${isEN ? (isExpert ? island.name + ' EX' : island.name) : (isExpert ? island.name_en + ' EX' : island.name_en)}</span>
             </div>
-            ${island.hasExpertMode ? `
-              <div class="island-hero-meta">
-                <button type="button" class="island-btn-ex-toggle ${isExpert ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${island.id}', ${!isExpert})">
-                  ${isExpert ? (isEN ? 'Exit EX Mode' : '退出 EX 模式') : (isEN ? 'Switch to EX Mode' : '切換 EX 專家模式')}
-                </button>
-              </div>
-            ` : ''}
           </div>
         </div>
         ${berriesHtml}
@@ -14639,52 +14475,6 @@
               ${spawnsRows}
             </tbody>
           </table>
-        </div>
-      </div>
-
-      <div class="wiki-card wiki-card-island-drowsy-guide">
-        <div class="wiki-card-header">
-          <h3 class="wiki-card-title">${isEN ? 'Drowsy Power & Sleep Style Mechanics Guide' : '睡意之力與睡姿解鎖核心規則指南'}</h3>
-        </div>
-        <div class="wiki-rule-banner">
-          ${isEN
-            ? '<strong>Formula</strong>: <code>Drowsy Power = Snorlax Strength * Sleep Score (0 ~ 100)</code>'
-            : '<strong>核心公式</strong>: <code>睡意之力 = 卡比獸能量 * 睡眠分數 (0 ~ 100)</code>'}
-        </div>
-        <div class="wiki-strategy-grid" style="margin-top:14px;">
-          <div class="strategy-item strategy-early">
-            <div class="strategy-header">
-              <span class="strategy-badge badge-early">${isEN ? 'Point 1' : '要點 1'}</span>
-              <strong class="text-primary">${isEN ? 'Snorlax Rank Requirement:' : '卡比獸評價為解鎖前提:'}</strong>
-            </div>
-            <div class="strategy-desc">
-              ${isEN
-                ? 'High-tier evolutions and 3*/4* sleep styles require both sufficient Snorlax Rank (e.g. Master 1+) and high Drowsy Power.'
-                : '高階進化形態與3*/4*睡姿需要卡比獸評價達標 (如大師1以上) 且睡意之力充足, 才會加入早晨研究抽取池.'}
-            </div>
-          </div>
-          <div class="strategy-item strategy-late">
-            <div class="strategy-header">
-              <span class="strategy-badge badge-late">${isEN ? 'Point 2' : '要點 2'}</span>
-              <strong class="text-primary">${isEN ? 'Star Tier Hierarchy:' : '睡姿星級階層規律:'}</strong>
-            </div>
-            <div class="strategy-desc">
-              ${isEN
-                ? '1* Ground sleep unlocks early (Basic/Great); 2* Curled sleep unlocks mid (Great/Ultra); 3* Rare/Inverted sleep requires Ultra 3+ to Master; 4* Atop-Belly sleep requires Master rank.'
-                : '1*地面睡姿最易解鎖; 2*放鬆睡姿於超級/高級解鎖; 3*稀有/倒立睡姿需高級3以上至大師級; 4*卡比獸肚皮上睡姿幾乎全物種皆限定大師級解鎖.'}
-            </div>
-          </div>
-          <div class="strategy-item strategy-energy">
-            <div class="strategy-header">
-              <span class="strategy-badge badge-energy">${isEN ? 'Point 3' : '要點 3'}</span>
-              <strong class="text-primary">${isEN ? 'Sleep Session Strategy:' : '睡眠分段與單次長睡策略:'}</strong>
-            </div>
-            <div class="strategy-desc">
-              ${isEN
-                ? 'Splitting sleep into two sessions divides daily Snorlax strength, lowering single-session Drowsy Power. A single full 8.5-hour sleep is strongly recommended to target rare 3*/4* postures.'
-                : '分兩次睡會將卡比獸能量拆分, 導致單次睡意之力較低, 不利於沖刺3*/4*稀有睡姿. 欲解鎖肚皮睡與高階圖鑑, 強烈建議維持單次8.5小時滿睡.'}
-            </div>
-          </div>
         </div>
       </div>
     `;
