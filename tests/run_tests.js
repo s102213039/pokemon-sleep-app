@@ -4432,6 +4432,67 @@ test('Tier 4 - Real-World Application Scenarios', 'Islands Subpanel DOM Renderin
   assert(!emojiRegex.test(htmlEn), 'en-US html must not contain emoji');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Compact Table, Pokeball SVG Badges & Pure Avatar Presentation', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+
+  let mockPanel = {
+    innerHTML: '',
+    style: {},
+    classList: { add: () => {}, remove: () => {}, contains: () => true },
+    addEventListener: () => {}
+  };
+  const ctx = {
+    window: {
+      location: { hash: '#wiki' },
+      localStorage: { getItem: () => 'zh-TW', setItem: () => {} },
+      addEventListener: () => {},
+      history: { replaceState: () => {} }
+    },
+    document: {
+      readyState: 'complete',
+      documentElement: { setAttribute: () => {} },
+      getElementById: () => mockPanel,
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    console,
+    setTimeout
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+  vm.runInContext(wikiCode, ctx);
+
+  ctx.window.I18N.setLanguage('zh-TW');
+  ctx.window.WikiDB.selectIsland('greengrass');
+  const html = ctx.window.WikiDB.renderIslandsSubpanel();
+
+  // 1. Table structure verification: Name and Type columns must NOT be present
+  assert(html.includes('island-spawns-compact-table'), 'Table must use island-spawns-compact-table class');
+  assert(!html.includes('>名稱<') && !html.includes('>Name<'), 'Table header must NOT contain Name column');
+  assert(!html.includes('>屬性<') && !html.includes('>Type<'), 'Table header must NOT contain Type column');
+  assert(html.includes('寶可夢</th>'), 'Table header must contain Pokemon avatar column');
+  assert(html.includes('1*</th>'), 'Table header must contain 1* column');
+  assert(html.includes('2*</th>'), 'Table header must contain 2* column');
+  assert(html.includes('3*</th>'), 'Table header must contain 3* column');
+  assert(html.includes('4*</th>'), 'Table header must contain 4* column');
+
+  // 2. Avatar-only presentation verification
+  assert(html.includes('island-pkm-icon-only'), 'Pokemon must be rendered in icon-only container');
+  assert(html.includes('island-pkm-avatar'), 'Pokemon icon must use island-pkm-avatar class');
+
+  // 3. Pokeball SVG badges and legend verification
+  assert(html.includes('island-ball-legend'), 'Card header must include island-ball-legend');
+  assert(html.includes('pokeball-svg'), 'Spawns table must render pokeball-svg icons');
+  assert(html.includes('rank-badge rank-basic'), 'Table must render Basic pokeball badge');
+  assert(html.includes('rank-badge rank-great'), 'Table must render Great pokeball badge');
+  assert(html.includes('rank-badge rank-ultra'), 'Table must render Ultra pokeball badge');
+  assert(html.includes('rank-badge rank-master'), 'Table must render Master pokeball badge');
+  assert(html.includes('rank-dash'), 'Unavailable sleep styles must render rank-dash');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');
