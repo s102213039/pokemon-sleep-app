@@ -15946,68 +15946,85 @@ body.mobile-h5-app.values-active,
 }
 
 .mobile-h5-app .island-hero-title {
-  font-size: 18px !important;
+  font-size: 20px !important;
+  color: #e2e8f0 !important;
 }
 
 .mobile-h5-app .island-title-en {
-  font-size: 11.5px !important;
+  font-size: 12px !important;
+  color: rgba(203, 213, 225, 0.75) !important;
 }
 
-.mobile-h5-app .island-hero-meta {
-  gap: 6px !important;
-  width: 100% !important;
-  flex-wrap: wrap !important;
+.mobile-h5-app .island-nav-divider {
+  width: 1px !important;
+  height: 26px !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  margin: 0 4px !important;
+  flex-shrink: 0 !important;
+  align-self: center !important;
 }
 
-.mobile-h5-app .island-info-chip {
-  font-size: 11px !important;
-  padding: 3px 7px !important;
+.mobile-h5-app .island-tab-thumb-wrapper {
+  position: relative !important;
+  display: inline-block !important;
 }
 
-.mobile-h5-app .island-btn-ex-toggle {
-  font-size: 11px !important;
-  padding: 3px 9px !important;
+.mobile-h5-app .island-tab-ex-tag {
+  position: absolute !important;
+  top: -2px !important;
+  right: -2px !important;
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  color: #ffffff !important;
+  font-size: 8.5px !important;
+  font-weight: 800 !important;
+  padding: 0.5px 3px !important;
+  border-radius: 3px !important;
+  line-height: 1 !important;
+}
+
+.mobile-h5-app .island-tab-ex-item.active {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.45) !important;
+}
+
+.mobile-h5-app .island-tab-ex-item.active .island-tab-indicator {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24) !important;
 }
 
 .mobile-h5-app .island-berries-section {
   padding-top: 10px !important;
-  gap: 6px !important;
+  gap: 8px !important;
 }
 
 .mobile-h5-app .island-berries-label {
-  font-size: 12px !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
   width: 100% !important;
   margin-bottom: 2px !important;
+  color: #e2e8f0 !important;
+}
+
+.mobile-h5-app .island-berries-random-desc {
+  font-size: 13px !important;
+  color: var(--text-secondary) !important;
 }
 
 .mobile-h5-app .island-berry-chip {
-  padding: 3px 8px !important;
-  gap: 5px !important;
-  border-radius: 12px !important;
+  padding: 4px !important;
+  border-radius: 10px !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.05)) !important;
 }
 
 .mobile-h5-app .island-berry-icon {
-  width: 18px !important;
-  height: 18px !important;
-}
-
-.mobile-h5-app .island-berry-name {
-  font-size: 12px !important;
-}
-
-.mobile-h5-app .wiki-two-col-grid {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 10px !important;
-  margin-bottom: 12px !important;
-  width: 100% !important;
+  width: 32px !important;
+  height: 32px !important;
 }
 
 .mobile-h5-app .island-sleep-filters {
   width: 100% !important;
   display: flex !important;
-  gap: 3px !important;
-  padding: 3px !important;
+  gap: 4px !important;
+  padding: 4px !important;
   border-radius: 10px !important;
   background: var(--bg-card-inner, rgba(255, 255, 255, 0.05)) !important;
   overflow-x: auto !important;
@@ -16017,70 +16034,14 @@ body.mobile-h5-app.values-active,
 .mobile-h5-app .island-sleep-btn {
   flex: 1 1 0 !important;
   justify-content: center !important;
-  padding: 5px 6px !important;
-  font-size: 11px !important;
+  padding: 6px 8px !important;
+  font-size: 12.5px !important;
   border-radius: 7px !important;
 }
 
 .mobile-h5-app .island-sleep-count {
-  font-size: 10px !important;
-  padding: 0.5px 5px !important;
-}
-
-.mobile-h5-app .island-pkm-item {
-  gap: 6px !important;
-  font-size: 12px !important;
-}
-
-.mobile-h5-app .island-pkm-avatar {
-  width: 24px !important;
-  height: 24px !important;
-}
-
-.mobile-h5-app .island-star-chip {
-  font-size: 10.5px !important;
-  padding: 1.5px 5px !important;
-}
-
-.mobile-h5-app .island-ex-card {
-  padding: 12px !important;
-  border-radius: 12px !important;
-  margin-bottom: 12px !important;
-}
-
-.mobile-h5-app .island-ex-rules-grid {
-  grid-template-columns: 1fr !important;
-  gap: 8px !important;
-}
-
-.mobile-h5-app .island-ex-rule-item {
-  padding: 8px 10px !important;
-}
-
-.mobile-h5-app .island-ex-rule-title {
   font-size: 11px !important;
-}
-
-.mobile-h5-app .island-ex-rule-desc {
-  font-size: 12px !important;
-}
-
-.mobile-h5-app .island-ball-legend {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 6px 10px !important;
-  padding: 4px 8px !important;
-  margin-top: 4px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-.mobile-h5-app .legend-item {
-  gap: 3px !important;
-}
-
-.mobile-h5-app .legend-text {
-  font-size: 10px !important;
+  padding: 1px 5px !important;
 }
 
 .mobile-h5-app .island-spawns-compact-table {
@@ -16088,40 +16049,47 @@ body.mobile-h5-app.values-active,
 }
 
 .mobile-h5-app .island-spawns-compact-table th {
-  padding: 6px 3px !important;
-  font-size: 11px !important;
+  padding: 8px 4px !important;
+  font-size: 13px !important;
   text-align: center !important;
 }
 
 .mobile-h5-app .island-spawns-compact-table td {
-  padding: 4px 2px !important;
+  padding: 6px 3px !important;
+  font-size: 12.5px !important;
   text-align: center !important;
 }
 
 .mobile-h5-app .island-pkm-icon-only .island-pkm-avatar {
-  width: 28px !important;
-  height: 28px !important;
+  width: 38px !important;
+  height: 38px !important;
 }
 
 .mobile-h5-app .rank-badge {
-  padding: 2px 4.5px !important;
-  font-size: 10px !important;
-  gap: 2.5px !important;
-  border-radius: 8px !important;
+  padding: 2.5px 6px !important;
+  font-size: 12px !important;
+  gap: 3.5px !important;
+  border-radius: 10px !important;
 }
 
 .mobile-h5-app .rank-num {
-  font-size: 10px !important;
+  font-size: 12px !important;
 }
 
 .mobile-h5-app .pokeball-svg {
-  width: 12px !important;
-  height: 12px !important;
+  width: 14px !important;
+  height: 14px !important;
 }
 
 .mobile-h5-app .rank-dash {
-  font-size: 11px !important;
+  font-size: 13px !important;
   padding: 1px 4px !important;
+}
+
+.mobile-h5-app .wiki-two-col-grid .wiki-data-table th,
+.mobile-h5-app .wiki-two-col-grid .wiki-data-table td {
+  font-size: 13px !important;
+  padding: 8px 8px !important;
 }
 
 /* H5 App 最新公告專屬原生排版 (Mobile News & Updates Layout) */
@@ -19100,7 +19068,47 @@ body.mobile-h5-app.values-active,
   transform: translateX(-50%) scaleX(1);
 }
 
-/* EX Tab Button in Nav Strip */
+/* Island Nav Strip Divider & EX Tabs */
+.island-nav-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.15);
+  margin: 0 6px;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.island-tab-thumb-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.island-tab-ex-tag {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  line-height: 1;
+  letter-spacing: 0.5px;
+}
+
+.island-tab-ex-item.active {
+  border-color: #f59e0b;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
+}
+
+.island-tab-ex-item.active .island-tab-indicator {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
+}
+
+/* EX Tab Button in Nav Strip (Legacy / Toggle) */
 .island-tab-ex-btn {
   border-color: rgba(234, 179, 8, 0.4);
   background: rgba(234, 179, 8, 0.08);
@@ -19177,15 +19185,16 @@ body.mobile-h5-app.values-active,
 }
 
 .island-hero-title {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 800;
   margin: 0;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
+  color: #e2e8f0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
 }
 
 .island-title-en {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(203, 213, 225, 0.75);
   font-weight: 500;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
@@ -19247,43 +19256,51 @@ body.mobile-h5-app.values-active,
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   padding-top: 14px;
   border-top: 1px dashed var(--border-color-subtle, rgba(255, 255, 255, 0.08));
 }
 
 .island-berries-label {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #e2e8f0;
+}
+
+.island-berries-random-desc {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .island-berries-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .island-berry-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 16px;
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04));
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
+  justify-content: center;
+  padding: 6px;
+  border-radius: 12px;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.12));
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  cursor: pointer;
+}
+
+.island-berry-chip:hover {
+  transform: scale(1.15);
+  border-color: var(--accent-blue, #38bdf8);
 }
 
 .island-berry-icon {
-  width: 20px;
-  height: 20px;
+  width: 38px;
+  height: 38px;
   object-fit: contain;
-}
-
-.island-berry-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary);
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5));
 }
 
 /* EX Expert Mode Card */
@@ -19362,8 +19379,8 @@ body.mobile-h5-app.values-active,
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 12px;
-  font-size: 12px;
+  padding: 6px 14px;
+  font-size: 13.5px;
   font-weight: 600;
   border-radius: 7px;
   background: transparent;
@@ -19387,9 +19404,9 @@ body.mobile-h5-app.values-active,
 }
 
 .island-sleep-count {
-  font-size: 10.5px;
+  font-size: 11.5px;
   font-weight: 700;
-  padding: 1px 6px;
+  padding: 1px 7px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.15);
   color: inherit;
@@ -19400,29 +19417,6 @@ body.mobile-h5-app.values-active,
   color: #ffffff;
 }
 
-/* Island Ball Legend */
-.island-ball-legend {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 3px 8px;
-  border-radius: 8px;
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04));
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08));
-}
-
-.legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.legend-text {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
 /* Compact Spawns Table */
 .island-spawns-compact-table {
   width: 100%;
@@ -19430,13 +19424,14 @@ body.mobile-h5-app.values-active,
 }
 
 .island-spawns-compact-table th {
-  padding: 8px 6px;
-  font-size: 12.5px;
+  padding: 10px 8px;
+  font-size: 14px;
   font-weight: 700;
 }
 
 .island-spawns-compact-table td {
-  padding: 5px 6px;
+  padding: 7px 6px;
+  font-size: 13.5px;
 }
 
 .island-pkm-icon-only {
@@ -19446,8 +19441,8 @@ body.mobile-h5-app.values-active,
 }
 
 .island-pkm-icon-only .island-pkm-avatar {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
   background: rgba(255, 255, 255, 0.06);
@@ -19466,10 +19461,10 @@ body.mobile-h5-app.values-active,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 2.5px 7px;
-  border-radius: 12px;
-  font-size: 11.5px;
+  gap: 5px;
+  padding: 3.5px 8.5px;
+  border-radius: 14px;
+  font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
   transition: transform 0.15s ease;
@@ -19506,9 +19501,9 @@ body.mobile-h5-app.values-active,
 .rank-dash {
   color: var(--text-muted, #64748b);
   opacity: 0.5;
-  font-weight: 600;
-  font-size: 13px;
-  padding: 2px 6px;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 2px 8px;
 }
 
 .pokeball-svg {
@@ -19519,8 +19514,18 @@ body.mobile-h5-app.values-active,
 
 .rank-num {
   line-height: 1;
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 800;
+}
+
+.wiki-two-col-grid .wiki-data-table th {
+  font-size: 13.5px;
+  padding: 9px 12px;
+}
+
+.wiki-two-col-grid .wiki-data-table td {
+  font-size: 13.5px;
+  padding: 8px 12px;
 }
 
 /* Star Chips (Legacy & Fallback) */

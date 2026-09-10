@@ -4484,13 +4484,31 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Compact Table, 
   assert(html.includes('island-pkm-avatar'), 'Pokemon icon must use island-pkm-avatar class');
 
   // 3. Pokeball SVG badges and legend verification
-  assert(html.includes('island-ball-legend'), 'Card header must include island-ball-legend');
+  assert(!html.includes('island-ball-legend'), 'Card header must NOT include island-ball-legend');
   assert(html.includes('pokeball-svg'), 'Spawns table must render pokeball-svg icons');
   assert(html.includes('rank-badge rank-basic'), 'Table must render Basic pokeball badge');
   assert(html.includes('rank-badge rank-great'), 'Table must render Great pokeball badge');
   assert(html.includes('rank-badge rank-ultra'), 'Table must render Ultra pokeball badge');
   assert(html.includes('rank-badge rank-master'), 'Table must render Master pokeball badge');
   assert(html.includes('rank-dash'), 'Unavailable sleep styles must render rank-dash');
+
+  // 4. Hero banner cleanup: unlock goal and snorlax multiplier must be removed
+  assert(!html.includes('解鎖目標:'), 'Unlock goal block must be removed');
+  assert(!html.includes('卡比獸難度:'), 'Snorlax multiplier block must be removed');
+
+  // 5. Sleep type filter button text: '全部' instead of '全部睡眠類型'
+  assert(html.includes('全部 <span') || html.includes('全部<span'), 'Sleep type filter button must say 全部');
+  assert(!html.includes('全部睡眠類型'), 'Sleep type filter button must not say 全部睡眠類型');
+
+  // 6. Isolated EX tabs at the end of island nav strip
+  assert(html.includes('island-tab-ex-item'), 'Must render independent EX island tabs at the end');
+  assert(html.includes('island-nav-divider'), 'Must render nav divider before EX tabs');
+
+  // 7. Berry pure icon presentation verification (tested on Cyan Beach)
+  ctx.window.WikiDB.selectIsland('cyan');
+  const htmlCyan = ctx.window.WikiDB.renderIslandsSubpanel();
+  assert(htmlCyan.includes('island-berry-icon-only'), 'Berries must be rendered in icon-only format');
+  assert(!htmlCyan.includes('island-berry-name'), 'Berry name must NOT be displayed');
 });
 
 // Final Summary Output

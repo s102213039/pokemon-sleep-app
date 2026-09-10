@@ -14074,10 +14074,10 @@
   let isExpertModeActive = false;
   let currentIslandSleepType = 'all';
 
-  function selectIsland(islandId) {
+  function selectIsland(islandId, isExpert = false) {
     if (!islandId) return;
     currentIslandId = islandId;
-    isExpertModeActive = false;
+    isExpertModeActive = !!isExpert;
     refreshIslandsSubpanel();
   }
 
@@ -14352,32 +14352,39 @@
     const island = ISLANDS_DATA.find(i => i.id === currentIslandId) || ISLANDS_DATA[0];
     const isExpert = island.hasExpertMode && isExpertModeActive;
 
-    const navPillsHtml = ISLANDS_DATA.map(isl => {
+    const normalNavHtml = ISLANDS_DATA.map(isl => {
       const isActive = !isExpert && isl.id === currentIslandId;
       const islName = isEN ? isl.name_en : isl.name;
       return `
-        <button type="button" class="island-tab-btn ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}')" title="${islName}" aria-label="${islName}">
+        <button type="button" class="island-tab-btn ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}', false)" title="${islName}" aria-label="${islName}">
           <img src="${isl.image}" class="island-tab-thumb" alt="${islName}" loading="lazy">
           <span class="island-tab-indicator"></span>
         </button>
       `;
     }).join('');
 
-    const exBtnHtml = `
-      <button type="button" class="island-tab-btn island-tab-ex-btn ${isExpert ? 'active' : ''}" onclick="window.WikiDB.toggleIslandExpertMode()" title="${isEN ? 'EX Expert Mode' : 'EX 專家模式'}" aria-label="${isEN ? 'EX Expert Mode' : 'EX 專家模式'}">
-        <div class="island-tab-ex-inner">
-          <span class="island-ex-tab-badge">EX</span>
-        </div>
-        <span class="island-tab-indicator"></span>
-      </button>
-    `;
+    const exIslands = ISLANDS_DATA.filter(isl => isl.hasExpertMode);
+    const exNavHtml = exIslands.map(isl => {
+      const isActive = isExpert && isl.id === currentIslandId;
+      const baseName = isEN ? isl.name_en : isl.name;
+      const islName = baseName + ' EX';
+      return `
+        <button type="button" class="island-tab-btn island-tab-ex-item ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}', true)" title="${islName}" aria-label="${islName}">
+          <div class="island-tab-thumb-wrapper">
+            <img src="${isl.image}" class="island-tab-thumb" alt="${islName}" loading="lazy">
+            <span class="island-tab-ex-tag">EX</span>
+          </div>
+          <span class="island-tab-indicator"></span>
+        </button>
+      `;
+    }).join('');
 
     let berriesHtml = '';
     if (island.berriesMode === 'random') {
       berriesHtml = `
         <div class="island-berries-section">
           <span class="island-berries-label">${isEN ? 'Favored Berries:' : '卡比獸喜好樹果:'}</span>
-          <span class="text-secondary text-sm">${isEN ? island.berriesDesc_en : island.berriesDesc}</span>
+          <span class="island-berries-random-desc">${isEN ? island.berriesDesc_en : island.berriesDesc}</span>
         </div>
       `;
     } else {
@@ -14388,10 +14395,8 @@
         const rawType = bInfo ? bInfo.type : '';
         const typeLabel = isEN ? (window.I18N && window.I18N.getTypeName ? window.I18N.getTypeName(rawType) : rawType) : rawType;
         return `
-          <div class="island-berry-chip">
+          <div class="island-berry-chip island-berry-icon-only" title="${displayName} (${typeLabel})">
             ${iconSrc ? `<img src="${iconSrc}" class="island-berry-icon" alt="${displayName}" loading="lazy">` : ''}
-            <span class="island-berry-name">${displayName}</span>
-            <span class="island-info-chip">${typeLabel}</span>
           </div>
         `;
       }).join('');
@@ -14413,7 +14418,7 @@
               <span class="island-ex-badge">EX EXPERT MODE</span>
               <h4 style="margin:0; font-size:15px; color:#facc15; font-weight:700;">${isEN ? exp.name_en : exp.name}</h4>
             </div>
-            <button type="button" class="island-btn-ex-toggle active" onclick="window.WikiDB.toggleIslandExpertMode()">
+            <button type="button" class="island-btn-ex-toggle active" onclick="window.WikiDB.selectIsland('${island.id}', false)">
               ${isEN ? 'Exit EX Mode' : '退出 EX 模式'}
             </button>
           </div>
@@ -14463,13 +14468,13 @@
 
       let ballSvg = '';
       if (tier === 'basic') {
-        ballSvg = `<svg class="pokeball-svg ball-basic" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#334155" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#ef4444"/><line x1="1" y1="8" x2="15" y2="8" stroke="#334155" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#334155" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#334155"/></svg>`;
+        ballSvg = `<svg class="pokeball-svg ball-basic" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#334155" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#ef4444"/><line x1="1" y1="8" x2="15" y2="8" stroke="#334155" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#334155" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#334155"/></svg>`;
       } else if (tier === 'great') {
-        ballSvg = `<svg class="pokeball-svg ball-great" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#2563eb"/><path d="M 2.6,5.2 A 7,7 0 0,1 5.2,2.6 L 5.8,5.8 Z" fill="#ef4444"/><path d="M 13.4,5.2 A 7,7 0 0,0 10.8,2.6 L 10.2,5.8 Z" fill="#ef4444"/><line x1="1" y1="8" x2="15" y2="8" stroke="#1e3a8a" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#1e3a8a"/></svg>`;
+        ballSvg = `<svg class="pokeball-svg ball-great" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#2563eb"/><path d="M 2.6,5.2 A 7,7 0 0,1 5.2,2.6 L 5.8,5.8 Z" fill="#ef4444"/><path d="M 13.4,5.2 A 7,7 0 0,0 10.8,2.6 L 10.2,5.8 Z" fill="#ef4444"/><line x1="1" y1="8" x2="15" y2="8" stroke="#1e3a8a" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#1e3a8a"/></svg>`;
       } else if (tier === 'ultra') {
-        ballSvg = `<svg class="pokeball-svg ball-ultra" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#0f172a" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#1e293b"/><path d="M 3.2,7.5 L 4.4,2.2 L 5.8,2.4 L 4.8,7.5 Z" fill="#facc15"/><path d="M 12.8,7.5 L 11.6,2.2 L 10.2,2.4 L 11.2,7.5 Z" fill="#facc15"/><line x1="1" y1="8" x2="15" y2="8" stroke="#0f172a" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#0f172a" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#0f172a"/></svg>`;
+        ballSvg = `<svg class="pokeball-svg ball-ultra" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#0f172a" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#1e293b"/><path d="M 3.2,7.5 L 4.4,2.2 L 5.8,2.4 L 4.8,7.5 Z" fill="#facc15"/><path d="M 12.8,7.5 L 11.6,2.2 L 10.2,2.4 L 11.2,7.5 Z" fill="#facc15"/><line x1="1" y1="8" x2="15" y2="8" stroke="#0f172a" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#0f172a" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#0f172a"/></svg>`;
       } else if (tier === 'master') {
-        ballSvg = `<svg class="pokeball-svg ball-master" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#4c1d95" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#7e22ce"/><circle cx="4.5" cy="4.5" r="1.6" fill="#ec4899"/><circle cx="11.5" cy="4.5" r="1.6" fill="#ec4899"/><path d="M 6.8,3.2 L 7.2,4.8 L 8,4 L 8.8,4.8 L 9.2,3.2" fill="none" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="8" x2="15" y2="8" stroke="#4c1d95" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#4c1d95" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#4c1d95"/></svg>`;
+        ballSvg = `<svg class="pokeball-svg ball-master" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#4c1d95" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#7e22ce"/><circle cx="4.5" cy="4.5" r="1.6" fill="#ec4899"/><circle cx="11.5" cy="4.5" r="1.6" fill="#ec4899"/><path d="M 6.8,3.2 L 7.2,4.8 L 8,4 L 8.8,4.8 L 9.2,3.2" fill="none" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="8" x2="15" y2="8" stroke="#4c1d95" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#4c1d95" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#4c1d95"/></svg>`;
       } else {
         return `<span class="rank-badge">${rankStr}</span>`;
       }
@@ -14509,15 +14514,15 @@
       const pkmDex = POKEMON_SPRITE_FALLBACK[p.name] || '001';
       return `
         <tr>
-          <td style="vertical-align:middle; text-align:center; padding:5px 6px;">
+          <td style="vertical-align:middle; text-align:center; padding:6px 6px;">
             <div class="island-pkm-item island-pkm-icon-only" title="${pName}">
               <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${pName}" loading="lazy" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokedex-sv/icon/${pkmDex}.png';}">
             </div>
           </td>
-          <td style="vertical-align:middle; text-align:center; padding:5px 6px;">${formatSnorlaxRankBadge(p.s1)}</td>
-          <td style="vertical-align:middle; text-align:center; padding:5px 6px;">${formatSnorlaxRankBadge(p.s2)}</td>
-          <td style="vertical-align:middle; text-align:center; padding:5px 6px;">${formatSnorlaxRankBadge(p.s3)}</td>
-          <td style="vertical-align:middle; text-align:center; padding:5px 6px;">${formatSnorlaxRankBadge(p.s4)}</td>
+          <td style="vertical-align:middle; text-align:center; padding:6px 6px;">${formatSnorlaxRankBadge(p.s1)}</td>
+          <td style="vertical-align:middle; text-align:center; padding:6px 6px;">${formatSnorlaxRankBadge(p.s2)}</td>
+          <td style="vertical-align:middle; text-align:center; padding:6px 6px;">${formatSnorlaxRankBadge(p.s3)}</td>
+          <td style="vertical-align:middle; text-align:center; padding:6px 6px;">${formatSnorlaxRankBadge(p.s4)}</td>
         </tr>
       `;
     }).join('');
@@ -14531,26 +14536,25 @@
 
     return `
       <div class="island-nav-strip">
-        ${navPillsHtml}
-        ${exBtnHtml}
+        ${normalNavHtml}
+        <div class="island-nav-divider" title="${isEN ? 'EX Expert Mode' : 'EX 專家模式'}"></div>
+        ${exNavHtml}
       </div>
 
       <div class="wiki-card island-overview-card">
         <div class="island-hero-banner" style="background-image: linear-gradient(to bottom, rgba(13,21,39,0.35), rgba(13,21,39,0.92)), url('${island.image}');">
           <div class="island-hero-content">
             <div class="island-title-group">
-              <h3 class="island-hero-title" style="color:${island.badgeColor};">${isEN ? island.name_en : island.name}</h3>
-              <span class="island-title-en" style="color:rgba(255,255,255,0.85); font-size:12.5px;">${isEN ? island.name : island.name_en}</span>
+              <h3 class="island-hero-title">${isEN ? (isExpert ? island.name_en + ' EX' : island.name_en) : (isExpert ? island.name + ' EX' : island.name)}</h3>
+              <span class="island-title-en">${isEN ? (isExpert ? island.name + ' EX' : island.name) : (isExpert ? island.name_en + ' EX' : island.name_en)}</span>
             </div>
-            <div class="island-hero-meta">
-              <span class="island-info-chip island-chip-accent">${isEN ? 'Unlock:' : '解鎖目標:'} ${isEN ? island.unlockGoalText_en : island.unlockGoalText}</span>
-              <span class="island-info-chip">${isEN ? 'Snorlax Multiplier:' : '卡比獸難度:'} ${island.snorlaxMultiplier}</span>
-              ${island.hasExpertMode ? `
-                <button type="button" class="island-btn-ex-toggle ${isExpert ? 'active' : ''}" onclick="window.WikiDB.toggleIslandExpertMode()">
-                  ${isExpert ? (isEN ? 'EX Mode Active' : 'EX 模式啟用中') : (isEN ? 'Switch to EX Mode' : '切換 EX 專家模式')}
+            ${island.hasExpertMode ? `
+              <div class="island-hero-meta">
+                <button type="button" class="island-btn-ex-toggle ${isExpert ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${island.id}', ${!isExpert})">
+                  ${isExpert ? (isEN ? 'Exit EX Mode' : '退出 EX 模式') : (isEN ? 'Switch to EX Mode' : '切換 EX 專家模式')}
                 </button>
-              ` : ''}
-            </div>
+              </div>
+            ` : ''}
           </div>
         </div>
         ${berriesHtml}
@@ -14604,30 +14608,10 @@
 
       <div class="wiki-card" style="margin-bottom:16px;">
         <div class="wiki-card-header" style="flex-wrap:wrap; gap:12px; justify-content:space-between; align-items:center;">
-          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-            <h3 class="wiki-card-title">${isEN ? 'Pokemon Sleep Types & Posture Unlock Tiers' : '棲息寶可夢與各星級睡姿解鎖門檻'}</h3>
-            <div class="island-ball-legend">
-              <span class="legend-item" title="${isEN ? 'Basic Rank' : '普通級'}">
-                <svg class="pokeball-svg ball-basic" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#334155" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#ef4444"/><line x1="1" y1="8" x2="15" y2="8" stroke="#334155" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#334155" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#334155"/></svg>
-                <span class="legend-text">${isEN ? 'Basic' : '普通'}</span>
-              </span>
-              <span class="legend-item" title="${isEN ? 'Great Rank' : '超級'}">
-                <svg class="pokeball-svg ball-great" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#2563eb"/><path d="M 2.6,5.2 A 7,7 0 0,1 5.2,2.6 L 5.8,5.8 Z" fill="#ef4444"/><path d="M 13.4,5.2 A 7,7 0 0,0 10.8,2.6 L 10.2,5.8 Z" fill="#ef4444"/><line x1="1" y1="8" x2="15" y2="8" stroke="#1e3a8a" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#1e3a8a"/></svg>
-                <span class="legend-text">${isEN ? 'Great' : '超級'}</span>
-              </span>
-              <span class="legend-item" title="${isEN ? 'Ultra Rank' : '高級'}">
-                <svg class="pokeball-svg ball-ultra" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#0f172a" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#1e293b"/><path d="M 3.2,7.5 L 4.4,2.2 L 5.8,2.4 L 4.8,7.5 Z" fill="#facc15"/><path d="M 12.8,7.5 L 11.6,2.2 L 10.2,2.4 L 11.2,7.5 Z" fill="#facc15"/><line x1="1" y1="8" x2="15" y2="8" stroke="#0f172a" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#0f172a" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#0f172a"/></svg>
-                <span class="legend-text">${isEN ? 'Ultra' : '高級'}</span>
-              </span>
-              <span class="legend-item" title="${isEN ? 'Master Rank' : '大師級'}">
-                <svg class="pokeball-svg ball-master" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#4c1d95" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#7e22ce"/><circle cx="4.5" cy="4.5" r="1.6" fill="#ec4899"/><circle cx="11.5" cy="4.5" r="1.6" fill="#ec4899"/><path d="M 6.8,3.2 L 7.2,4.8 L 8,4 L 8.8,4.8 L 9.2,3.2" fill="none" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="8" x2="15" y2="8" stroke="#4c1d95" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#4c1d95" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#4c1d95"/></svg>
-                <span class="legend-text">${isEN ? 'Master' : '大師'}</span>
-              </span>
-            </div>
-          </div>
+          <h3 class="wiki-card-title">${isEN ? 'Pokemon Sleep Types & Posture Unlock Tiers' : '棲息寶可夢與各星級睡姿解鎖門檻'}</h3>
           <div class="island-sleep-filters">
             <button type="button" class="island-sleep-btn ${currentIslandSleepType === 'all' ? 'active' : ''}" onclick="window.WikiDB.filterIslandSleepType('all')">
-              ${isEN ? 'All Types' : '全部睡眠類型'} <span class="island-sleep-count">${totalCount}</span>
+              ${isEN ? 'All' : '全部'} <span class="island-sleep-count">${totalCount}</span>
             </button>
             <button type="button" class="island-sleep-btn ${currentIslandSleepType === 'dozing' ? 'active' : ''}" onclick="window.WikiDB.filterIslandSleepType('dozing')">
               ${isEN ? 'Dozing' : '淺淺入夢'} <span class="island-sleep-count">${dozingCount}</span>
@@ -14644,7 +14628,7 @@
           <table class="wiki-data-table island-spawns-compact-table">
             <thead>
               <tr>
-                <th style="width:52px; text-align:center;">${isEN ? 'Pokemon' : '寶可夢'}</th>
+                <th style="width:56px; text-align:center;">${isEN ? 'Pokemon' : '寶可夢'}</th>
                 <th style="text-align:center;">1*</th>
                 <th style="text-align:center;">2*</th>
                 <th style="text-align:center;">3*</th>
