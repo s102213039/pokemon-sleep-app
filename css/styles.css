@@ -14219,51 +14219,52 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .wiki-subnav-tabs {
-  display: grid !important;
-  grid-template-columns: repeat(5, 1fr) !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  gap: 6px !important;
+  padding: 6px 12px !important;
+  scrollbar-width: none !important;
   width: 100% !important;
   margin: 0 !important;
-  padding: 0 !important;
-  gap: 0 !important;
+}
+
+.mobile-h5-app .wiki-subnav-tabs::-webkit-scrollbar {
+  display: none !important;
 }
 
 .mobile-h5-app .wiki-subtab-btn {
-  width: 100% !important;
-  padding: 11px 1px 10px !important;
-  text-align: center !important;
-  justify-content: center !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 5px 12px !important;
+  border-radius: 18px !important;
   font-size: 11.5px !important;
   font-weight: 600 !important;
-  border-radius: 0 !important;
-  border: none !important;
-  background: transparent !important;
-  color: var(--text-secondary) !important;
-  position: relative !important;
-  transition: all 0.2s ease !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-muted) !important;
+  transition: all 0.15s ease !important;
   white-space: nowrap !important;
-  gap: 0 !important;
 }
 
 .mobile-h5-app .wiki-subtab-btn:hover {
-  background: transparent !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
   color: var(--text-primary) !important;
 }
 
 .mobile-h5-app .wiki-subtab-btn.active {
-  color: var(--accent-blue) !important;
+  background: var(--accent-blue, #38bdf8) !important;
+  color: #000 !important;
   font-weight: 700 !important;
-  background: rgba(56, 189, 248, 0.06) !important;
+  border-color: var(--accent-blue, #38bdf8) !important;
 }
 
 .mobile-h5-app .wiki-subtab-btn.active::after {
-  content: '' !important;
-  position: absolute !important;
-  bottom: 0 !important;
-  left: 12% !important;
-  right: 12% !important;
-  height: 3px !important;
-  background: var(--accent-gradient, var(--accent-blue)) !important;
-  border-radius: 3px 3px 0 0 !important;
+  display: none !important;
 }
 
 /* 2. 通用卡片與子面板邊距 (4 主題自適應) */
@@ -19070,227 +19071,230 @@ body.mobile-h5-app.values-active,
   font-weight: 700;
 }
 
-/* Good-Night Ribbon Visual Tier Cards */
-.ribbon-tiers-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+/* Good-Night Ribbon Ultra Compact Quick Guide */
+.ribbon-compact-tiers {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
-@media (max-width: 900px) {
-  .ribbon-tiers-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 520px) {
-  .ribbon-tiers-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.ribbon-tier-card {
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.03));
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08));
-  border-radius: 10px;
-  padding: 12px;
+.ribbon-compact-chip {
+  flex: 1 1 calc(25% - 8px);
+  min-width: 140px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  position: relative;
-  overflow: hidden;
+  gap: 2px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
 }
 
-.ribbon-tier-card:hover {
-  transform: translateY(-2px);
-}
-
-.ribbon-tier-card.tier-bronze {
+.ribbon-compact-chip.chip-bronze {
   border-color: rgba(205, 127, 50, 0.35);
-  background: linear-gradient(180deg, rgba(205, 127, 50, 0.06) 0%, var(--bg-card-inner, rgba(255, 255, 255, 0.02)) 100%);
+  background: rgba(205, 127, 50, 0.08);
 }
 
-.ribbon-tier-card.tier-bronze:hover {
-  border-color: rgba(205, 127, 50, 0.6);
-  box-shadow: 0 4px 14px rgba(205, 127, 50, 0.15);
-}
-
-.ribbon-tier-card.tier-silver {
+.ribbon-compact-chip.chip-silver {
   border-color: rgba(148, 163, 184, 0.35);
-  background: linear-gradient(180deg, rgba(148, 163, 184, 0.06) 0%, var(--bg-card-inner, rgba(255, 255, 255, 0.02)) 100%);
+  background: rgba(148, 163, 184, 0.08);
 }
 
-.ribbon-tier-card.tier-silver:hover {
-  border-color: rgba(148, 163, 184, 0.6);
-  box-shadow: 0 4px 14px rgba(148, 163, 184, 0.15);
-}
-
-.ribbon-tier-card.tier-gold {
+.ribbon-compact-chip.chip-gold {
   border-color: rgba(234, 179, 8, 0.4);
-  background: linear-gradient(180deg, rgba(234, 179, 8, 0.08) 0%, var(--bg-card-inner, rgba(255, 255, 255, 0.02)) 100%);
+  background: rgba(234, 179, 8, 0.08);
 }
 
-.ribbon-tier-card.tier-gold:hover {
-  border-color: rgba(234, 179, 8, 0.7);
-  box-shadow: 0 4px 16px rgba(234, 179, 8, 0.2);
-}
-
-.ribbon-tier-card.tier-platinum {
+.ribbon-compact-chip.chip-platinum {
   border-color: rgba(56, 189, 248, 0.45);
-  background: linear-gradient(180deg, rgba(56, 189, 248, 0.09) 0%, var(--bg-card-inner, rgba(255, 255, 255, 0.02)) 100%);
+  background: rgba(56, 189, 248, 0.09);
 }
 
-.ribbon-tier-card.tier-platinum:hover {
-  border-color: rgba(56, 189, 248, 0.8);
-  box-shadow: 0 4px 18px rgba(56, 189, 248, 0.25);
-}
-
-.ribbon-tier-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08));
-}
-
-.ribbon-tier-badge {
+.chip-tier-tag {
   font-size: 11px;
   font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 6px;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-}
-
-.badge-bronze {
-  background: linear-gradient(135deg, #a75d28, #7a3e14);
-  color: #ffedd5;
-  border: 1px solid rgba(251, 146, 60, 0.4);
-}
-
-.badge-silver {
-  background: linear-gradient(135deg, #64748b, #475569);
-  color: #f1f5f9;
-  border: 1px solid rgba(203, 213, 225, 0.4);
-}
-
-.badge-gold {
-  background: linear-gradient(135deg, #ca8a04, #854d0e);
-  color: #fef08a;
-  border: 1px solid rgba(250, 204, 21, 0.5);
-}
-
-.badge-platinum {
-  background: linear-gradient(135deg, #0284c7, #075985);
-  color: #e0f2fe;
-  border: 1px solid rgba(56, 189, 248, 0.5);
-}
-
-.ribbon-hours-tag {
-  font-size: 12px;
-  font-weight: 700;
   color: var(--accent-blue, #38bdf8);
-  background: rgba(56, 189, 248, 0.1);
-  padding: 2px 7px;
-  border-radius: 6px;
-  border: 1px solid rgba(56, 189, 248, 0.2);
 }
 
-.ribbon-effect-list {
+.chip-bronze .chip-tier-tag { color: #f97316; }
+.chip-silver .chip-tier-tag { color: #cbd5e1; }
+.chip-gold .chip-tier-tag { color: #facc15; }
+.chip-platinum .chip-tier-tag { color: #38bdf8; }
+
+.chip-effect-text {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ribbon-compact-notes {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  flex: 1;
+  gap: 4px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.06));
 }
 
-.ribbon-effect-item {
+.compact-note-line {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
   font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-secondary);
 }
 
-.ribbon-effect-item.ribbon-speed-col {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-}
-
-.ribbon-effect-label {
-  font-size: 11.5px;
-  color: var(--text-secondary, #94a3b8);
-  font-weight: 500;
-}
-
-.ribbon-effect-val {
+.compact-note-label {
   font-weight: 700;
-  font-size: 12.5px;
+  color: var(--accent-blue, #38bdf8);
+  flex-shrink: 0;
 }
 
-.ribbon-effect-val.val-carry {
-  color: #38bdf8;
-}
-
-.ribbon-effect-val.val-none {
-  color: var(--text-muted, #64748b);
-  font-weight: 500;
-}
-
-.ribbon-effect-val .val-sub {
-  font-size: 10.5px;
-  color: var(--text-muted, #64748b);
-  font-weight: normal;
-}
-
-.ribbon-speed-lines {
+/* Island Camp Single-Row Nav Strip & Badges */
+.island-nav-strip {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  gap: 8px;
+  padding: 4px 2px 10px 2px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
   width: 100%;
 }
 
-.ribbon-speed-chip {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 6px;
-  border-radius: 4px;
-  background: rgba(16, 185, 129, 0.1);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  display: inline-block;
+.island-nav-strip::-webkit-scrollbar {
+  display: none;
 }
 
-.ribbon-speed-chip.chip-max {
+.island-tab-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: var(--bg-card-inner, #0d1527);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.island-tab-btn:hover {
+  background: var(--bg-card-hover, rgba(255, 255, 255, 0.06));
+  color: var(--text-primary);
+  border-color: var(--accent-blue, #38bdf8);
+}
+
+.island-tab-btn.active {
+  border-color: var(--accent-blue, #38bdf8);
   background: rgba(56, 189, 248, 0.12);
   color: #38bdf8;
-  border-color: rgba(56, 189, 248, 0.3);
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.15);
+}
+
+.island-tab-thumb {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.island-tab-title {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.island-tab-ex-btn {
+  border-color: rgba(234, 179, 8, 0.4);
+  background: rgba(234, 179, 8, 0.06);
+}
+
+.island-tab-ex-btn:hover {
+  border-color: #facc15;
+  color: #facc15;
+}
+
+.island-tab-ex-btn.active {
+  border-color: #facc15;
+  background: rgba(234, 179, 8, 0.18);
+  color: #facc15;
+  box-shadow: 0 0 12px rgba(234, 179, 8, 0.25);
+}
+
+.island-ex-tab-badge {
+  font-size: 10px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #eab308, #ca8a04);
+  color: #000;
+  padding: 2px 5px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+/* Island Hero Landscape Banner */
+.island-hero-banner {
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
+  position: relative;
+  overflow: hidden;
+  min-height: 72px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.island-hero-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.island-hero-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.island-hero-meta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.island-chip-ex {
+  background: rgba(234, 179, 8, 0.2);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.4);
   font-weight: 700;
 }
 
-.ribbon-special-item {
-  margin-top: auto;
-  padding-top: 6px;
-  border-top: 1px dashed var(--border-color-subtle, rgba(255, 255, 255, 0.08));
+/* Island Pokemon Spawns Table Item with Avatar */
+.island-pkm-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.ribbon-special-badge {
-  display: block;
-  text-align: center;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 6px;
-  border-radius: 4px;
-  background: rgba(234, 179, 8, 0.12);
-  color: #facc15;
-  border: 1px solid rgba(234, 179, 8, 0.3);
-}
-
-.ribbon-special-badge.badge-glow {
-  background: rgba(56, 189, 248, 0.15);
-  color: #7dd3fc;
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
+.island-pkm-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.12));
+  flex-shrink: 0;
 }
 

@@ -12902,6 +12902,7 @@
       id: 'greengrass',
       name: '萌綠之島',
       name_en: 'Greengrass Isle',
+      image: 'https://www.serebii.net/pokemonsleep/locations/greengrassisle.jpg',
       badgeColor: '#22c55e',
       unlockGoal: 0,
       unlockGoalText: '初始營地 (0種睡姿)',
@@ -12992,6 +12993,7 @@
       id: 'cyan',
       name: '天青沙灘',
       name_en: 'Cyan Beach',
+      image: 'https://www.serebii.net/pokemonsleep/locations/cyanbeach.jpg',
       badgeColor: '#06b6d4',
       unlockGoal: 20,
       unlockGoalText: '登錄 20 種睡姿',
@@ -13008,7 +13010,7 @@
         unlockReq_en: 'Reach Master 18 on both Greengrass Isle and Cyan Beach',
         ticketReq: '進入需消耗 [EX券] 1張',
         ticketReq_en: 'Requires 1 EX Pass',
-        berryRule: '主樹果自 (水/飛行/妖精) 中指定1種, 副樹果自其餘17種中隨機指定2種',
+        berryRule: '1種主樹果自 (水/飛行/妖精) 中指定1種, 副樹果自其餘17種中隨機指定2種',
         berryRule_en: '1 Primary Berry from Water/Flying/Fairy, 2 Secondary Berries from remaining 17 types',
         bonus: '主樹果幫手速度大幅縮短, 水君 (Suicune) 與小鍛匠家族遭遇率大幅提升',
         bonus_en: 'Primary Berry speed boost, significantly boosted Suicune and Tinkatink spawn rates',
@@ -13078,6 +13080,7 @@
       id: 'taupe',
       name: '灰褐洞窟',
       name_en: 'Taupe Hollow',
+      image: 'https://www.serebii.net/pokemonsleep/locations/taupehollow.jpg',
       badgeColor: '#f97316',
       unlockGoal: 70,
       unlockGoalText: '登錄 70 種睡姿',
@@ -13144,6 +13147,7 @@
       id: 'snowdrop',
       name: '白花雪原',
       name_en: 'Snowdrop Tundra',
+      image: 'https://www.serebii.net/pokemonsleep/locations/snowdroptundra.jpg',
       badgeColor: '#38bdf8',
       unlockGoal: 150,
       unlockGoalText: '登錄 150 種睡姿',
@@ -13203,6 +13207,7 @@
       id: 'lapis',
       name: '拉碧絲湖畔',
       name_en: 'Lapis Lakeside',
+      image: 'https://www.serebii.net/pokemonsleep/locations/lapislakeside.jpg',
       badgeColor: '#10b981',
       unlockGoal: 240,
       unlockGoalText: '登錄 240 種睡姿',
@@ -13266,6 +13271,7 @@
       id: 'powerplant',
       name: '黃金舊發電廠',
       name_en: 'Old Gold Power Plant',
+      image: 'https://www.serebii.net/pokemonsleep/locations/oldgoldpowerplant.jpg',
       badgeColor: '#a855f7',
       unlockGoal: 340,
       unlockGoalText: '登錄 340 種睡姿',
@@ -13328,6 +13334,7 @@
       id: 'amber',
       name: '琥褐溪谷',
       name_en: 'Amber Canyon',
+      image: 'https://www.serebii.net/pokemonsleep/locations/ambercanyon.jpg',
       badgeColor: '#d97706',
       unlockGoal: 450,
       unlockGoalText: '登錄 450 種睡姿',
@@ -13405,9 +13412,63 @@
 
   function toggleIslandExpertMode() {
     const island = ISLANDS_DATA.find(i => i.id === currentIslandId);
-    if (!island || !island.hasExpertMode) return;
+    if (!island || !island.hasExpertMode) {
+      currentIslandId = 'greengrass';
+      isExpertModeActive = true;
+      refreshIslandsSubpanel();
+      return;
+    }
     isExpertModeActive = !isExpertModeActive;
     refreshIslandsSubpanel();
+  }
+
+  const POKEMON_SPRITE_FALLBACK = {
+    '妙蛙種子': '001', '妙蛙草': '002', '阿柏蛇': '023', '喇叭芽': '069', '鬼斯': '092',
+    '猴怪': '056', '毛球': '048', '青綿鳥': '333', '新葉喵': '906', '強顎雞母蟲': '736',
+    '皮卡丘': '025', '雷丘': '026', '伊布': '133', '卡蒂狗': '058', '六尾': '037',
+    '波克比': '175', '胖丁': '039', '戴魯比': '228', '咚咚鼠': '702', '呆呆獸': '079',
+    '傑尼龜': '007', '卡龜': '008', '小拳石': '074', '地鼠': '050', '可達鴨': '054',
+    '小磁怪': '081', '海豹球': '363', '幼基拉斯': '246', '利歐路': '447', '卡比獸': '143',
+    '哥達鴨': '055', '呆殼獸': '080', '嘟嘟': '084', '嘟嘟利': '085', '長翅鷗': '278',
+    '大嘴鷗': '279', '大食花': '071', '水伊布': '134', '波克基古': '176', '波克基斯': '468',
+    '胖可丁': '040', '皮寶寶': '173', '花漾海獅': '729', '水箭龜': '009', '小鋸鱷': '158',
+    '藍鱷': '159', '大力鱷': '160', '烏波': '194', '水君': '245', '小鍛匠': '957',
+    '鬼斯通': '093', '耿鬼': '094', '阿柏怪': '024', '卡拉卡拉': '104', '嘎啦嘎啦': '105',
+    '勾魂眼': '302', '火球鼠': '155', '火岩鼠': '156', '火暴獸': '157', '風速狗': '059',
+    '炎帝': '244', '小火龍': '004', '火恐龍': '005', '噴火龍': '006', '三地鼠': '051',
+    '隆隆石': '075', '大岩蛇': '095', '炭小侍': '935', '阿勃梭魯': '359', '七夕青鳥': '334',
+    '瑪狃拉': '461', '月亮伊布': '197', '冰伊布': '471', '小山豬': '220', '長毛豬': '221',
+    '象牙豬': '473', '信使鳥': '225', '大舌頭': '108', '百變怪': '132', '海魔獅': '364',
+    '帝牙海獅': '365', '過動猿': '288', '請假王': '289', '拉普拉斯': '131', '雪童子': '361',
+    '火爆猴': '057', '棄世猴': '979', '拉魯拉絲': '280', '奇魯莉安': '281', '艾路雷朵': '475',
+    '夢妖': '200', '不良蛙': '453', '菊草葉': '152', '月桂葉': '153', '大竺葵': '154',
+    '太陽伊布': '196', '仙子伊布': '700', '長尾怪手': '190', '雷公': '243', '迷你龍': '147',
+    '哈克龍': '148', '快龍': '149', '童偶熊': '759', '穿著熊': '760', '路卡利歐': '448',
+    '沙奈朵': '282', '蟲電寶': '737', '鍬農炮蟲': '738', '隨風球': '426', '黑魯加': '229',
+    '小貓怪': '403', '勒克貓': '404', '倫琴貓': '405', '電飛鼠': '587', '洛托姆': '479',
+    '雷伊布': '135', '可可多拉': '304', '可多拉': '305', '波士可多拉': '306', '三合一磁怪': '082',
+    '自爆磁怪': '462', '齒輪兒': '599', '百足蜈蚣': '543', '車輪毬': '544', '蜈蚣王': '545',
+    '毒藻龍': '691', '超音蝠': '041', '大嘴蝠': '042', '叉字蝠': '169', '凱羅斯': '127',
+    '赫拉克羅斯': '214', '蟲寶包': '540', '寶包繭': '541', '保姆蟲': '542', '大顎蟻': '328',
+    '沙漠蜻蜓': '330', '音波龍': '715', '班基拉斯': '248', '墨海馬': '116', '海刺龍': '117',
+    '刺龍王': '230', '多龍梅西亞': '885', '多龍奇': '886', '多龍巴魯托': '887', '太古羽蟲': '347',
+    '太古盔甲': '348'
+  };
+
+  function getPokemonAvatarUrl(name, name_en) {
+    if (typeof window !== 'undefined' && Array.isArray(window.allPokemons)) {
+      const p = window.allPokemons.find(x => x.name_cn === name || x.name === name || x.name_en === name_en);
+      if (p) {
+        if (p.icon && typeof p.icon === 'string' && p.icon.trim() !== '') return p.icon;
+        if (p.icon_url && typeof p.icon_url === 'string' && p.icon_url.trim() !== '') return p.icon_url;
+        if (p.formatted_no) return `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png`;
+      }
+    }
+    const dex = POKEMON_SPRITE_FALLBACK[name] || POKEMON_SPRITE_FALLBACK[name_en];
+    if (dex) {
+      return `https://www.serebii.net/pokemonsleep/pokemon/icon/${dex}.png`;
+    }
+    return '';
   }
 
   function filterIslandSleepType(sleepType) {
@@ -13429,19 +13490,22 @@
     const isExpert = island.hasExpertMode && isExpertModeActive;
 
     const navPillsHtml = ISLANDS_DATA.map(isl => {
-      const isActive = isl.id === currentIslandId;
+      const isActive = !isExpert && isl.id === currentIslandId;
       const islName = isEN ? isl.name_en : isl.name;
-      const goalText = isEN ? isl.unlockGoalText_en : isl.unlockGoalText;
-      const exBadge = isl.hasExpertMode ? '<span class="island-pill-ex-tag">EX</span>' : '';
       return `
-        <button type="button" class="island-pill-btn ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}')">
-          <span class="island-pill-dot" style="background:${isl.badgeColor};"></span>
-          <span>${islName}</span>
-          <span class="text-muted text-xs">(${goalText})</span>
-          ${exBadge}
+        <button type="button" class="island-tab-btn ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}')" title="${islName}">
+          <img src="${isl.image}" class="island-tab-thumb" alt="${islName}" loading="lazy">
+          <span class="island-tab-title">${islName}</span>
         </button>
       `;
     }).join('');
+
+    const exBtnHtml = `
+      <button type="button" class="island-tab-btn island-tab-ex-btn ${isExpert ? 'active' : ''}" onclick="window.WikiDB.toggleIslandExpertMode()" title="${isEN ? 'EX Expert Mode' : 'EX 專家模式'}">
+        <span class="island-ex-tab-badge">EX</span>
+        <span class="island-tab-title" style="color:#facc15; font-weight:700;">${isEN ? 'EX Mode' : 'EX 專家模式'}</span>
+      </button>
+    `;
 
     let berriesHtml = '';
     if (island.berriesMode === 'random') {
@@ -13542,10 +13606,15 @@
     const spawnsRows = spawnList.map(p => {
       const pName = isEN ? p.name_en : p.name;
       const typeLabel = isEN ? (window.I18N && window.I18N.getTypeName ? window.I18N.getTypeName(p.type) : p.type) : p.type;
+      const pkmAvatar = getPokemonAvatarUrl(p.name, p.name_en);
+      const pkmDex = POKEMON_SPRITE_FALLBACK[p.name] || '001';
       return `
         <tr>
           <td class="font-bold" style="vertical-align:middle; white-space:nowrap;">
-            ${pName}
+            <div class="island-pkm-item">
+              <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" loading="lazy" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokedex-sv/icon/${pkmDex}.png';}">
+              <span>${pName}</span>
+            </div>
           </td>
           <td style="vertical-align:middle; white-space:nowrap;">
             <span class="island-info-chip">${typeLabel}</span>
@@ -13559,29 +13628,27 @@
     }).join('');
 
     return `
-      <div class="wiki-section-heading">
-        <h2 class="wiki-section-title">${isEN ? 'Research Camps & EX Expert Mode Guide' : '7大研究營地與EX專家模式全覽'}</h2>
-        <span class="wiki-section-subtitle">${isEN ? 'Explore 7 islands, EX Expert challenges, berry preferences, Snorlax ranks, and sleep style tiers.' : '探索7大研究島嶼, EX專家挑戰模式, 固定喜愛樹果, 卡比獸評級門檻與睡姿星級解鎖機制.'}</span>
-      </div>
-
       <div class="island-nav-strip">
         ${navPillsHtml}
+        ${exBtnHtml}
       </div>
 
       <div class="wiki-card island-overview-card">
-        <div class="island-overview-header">
-          <div class="island-title-group">
-            <h3 class="island-title-main" style="color:${island.badgeColor};">${isEN ? island.name_en : island.name}</h3>
-            <span class="island-title-en">${isEN ? island.name : island.name_en}</span>
-          </div>
-          <div class="island-badges-group">
-            <span class="island-info-chip island-chip-accent">${isEN ? 'Unlock:' : '解鎖目標:'} ${isEN ? island.unlockGoalText_en : island.unlockGoalText}</span>
-            <span class="island-info-chip">${isEN ? 'Snorlax Multiplier:' : '卡比獸難度:'} ${island.snorlaxMultiplier}</span>
-            ${island.hasExpertMode ? `
-              <button type="button" class="island-btn-ex-toggle ${isExpert ? 'active' : ''}" onclick="window.WikiDB.toggleIslandExpertMode()">
-                ${isExpert ? (isEN ? 'EX Mode Active' : 'EX 模式啟用中') : (isEN ? 'Switch to EX Mode' : '切換 EX 專家模式')}
-              </button>
-            ` : ''}
+        <div class="island-hero-banner" style="background-image: linear-gradient(to bottom, rgba(13,21,39,0.35), rgba(13,21,39,0.92)), url('${island.image}');">
+          <div class="island-hero-content">
+            <div class="island-title-group">
+              <h3 class="island-hero-title" style="color:${island.badgeColor};">${isEN ? island.name_en : island.name}</h3>
+              <span class="island-title-en" style="color:rgba(255,255,255,0.85); font-size:12.5px;">${isEN ? island.name : island.name_en}</span>
+            </div>
+            <div class="island-hero-meta">
+              <span class="island-info-chip island-chip-accent">${isEN ? 'Unlock:' : '解鎖目標:'} ${isEN ? island.unlockGoalText_en : island.unlockGoalText}</span>
+              <span class="island-info-chip">${isEN ? 'Snorlax Multiplier:' : '卡比獸難度:'} ${island.snorlaxMultiplier}</span>
+              ${island.hasExpertMode ? `
+                <button type="button" class="island-btn-ex-toggle ${isExpert ? 'active' : ''}" onclick="window.WikiDB.toggleIslandExpertMode()">
+                  ${isExpert ? (isEN ? 'EX Mode Active' : 'EX 模式啟用中') : (isEN ? 'Switch to EX Mode' : '切換 EX 專家模式')}
+                </button>
+              ` : ''}
+            </div>
           </div>
         </div>
         ${berriesHtml}
@@ -15227,132 +15294,39 @@
             </div>
           </div>
 
-          <!-- 睡飽飽獎章與幫忙速度加成指南 (Good-Night Ribbon Mechanics Guide) -->
-          <div class="wiki-card wiki-card-ribbon-guide" style="margin-top: 20px;">
-            <div class="wiki-card-header">
-              <h3 class="wiki-card-title">${isEN ? 'Good-Night Ribbon Mechanics Guide' : '睡飽飽獎章與幫忙速度加成指南'}</h3>
+          <!-- 睡飽飽獎章加成指南 (Good-Night Ribbon Quick Guide) -->
+          <div class="wiki-card wiki-card-ribbon-guide" style="margin-top: 16px;">
+            <div class="wiki-card-header" style="margin-bottom: 8px;">
+              <h3 class="wiki-card-title">${isEN ? 'Good-Night Ribbon Quick Guide' : '睡飽飽獎章加成指南'}</h3>
             </div>
 
-            <!-- 睡飽飽獎章核心機制重點說明 -->
-            <div class="wiki-speed-summary-points">
-              <div class="summary-point-line">
-                <span class="point-prefix">1.</span>
-                <span class="point-title">${isEN ? 'Sleep Hours Accumulation:' : '睡眠時數累計:'}</span>
-                <span class="point-desc">${isEN ? 'Milestones at 200h, 500h, 1000h, 2000h. Carry limit and speed boosts are cumulative.' : '睡眠達 200h, 500h, 1000h, 2000h 解鎖, 持有上限與幫速效果累加.'}</span>
+            <div class="ribbon-compact-tiers">
+              <div class="ribbon-compact-chip chip-bronze">
+                <span class="chip-tier-tag">${isEN ? 'Tier 1' : '第 1 階段'} (200h)</span>
+                <span class="chip-effect-text">+1 ${isEN ? 'Carry' : '持有上限'}</span>
               </div>
-              <div class="summary-point-line">
-                <span class="point-prefix">2.</span>
-                <span class="point-title">${isEN ? 'Unevolved Speed Bonus:' : '未進化速度加成:'}</span>
-                <span class="point-desc">${isEN ? 'Only unevolved forms gain speed boosts (up to -25%). Fully evolved forms get 0% speed boost.' : '僅未完全進化寶可夢享有幫速縮短(最高 -25%), 最終進化型為 0%.'}</span>
+              <div class="ribbon-compact-chip chip-silver">
+                <span class="chip-tier-tag">${isEN ? 'Tier 2' : '第 2 階段'} (500h)</span>
+                <span class="chip-effect-text">+3 ${isEN ? 'Carry' : '持有'}, ${isEN ? 'Speed' : '幫速'} -5% / -11%</span>
               </div>
-              <div class="summary-point-line">
-                <span class="point-prefix">3.</span>
-                <span class="point-title">${isEN ? 'Independent Multiplier:' : '獨立相乘計算:'}</span>
-                <span class="point-desc">${isEN ? 'Calculated as Base x (1 - Nature) x (1 - Subskills) x (1 - Ribbon), uncapped by the 35% limit.' : '獨立相乘計算: 基礎 x (1 - 性格) x (1 - 副技能) x (1 - 獎章), 不受 35% 上限限制.'}</span>
+              <div class="ribbon-compact-chip chip-gold">
+                <span class="chip-tier-tag">${isEN ? 'Tier 3' : '第 3 階段'} (1,000h)</span>
+                <span class="chip-effect-text">+6 ${isEN ? 'Carry' : '持有'}, ${isEN ? 'Profile Icon' : '專屬頭像'}</span>
               </div>
-            </div>
-
-            <!-- 四大階段門檻與獎勵效果展示卡片 (Good-Night Ribbon Tier Visual Cards) -->
-            <div class="ribbon-tiers-grid" style="margin-top: 14px;">
-              <!-- Tier 1: Bronze (200h) -->
-              <div class="ribbon-tier-card tier-bronze">
-                <div class="ribbon-tier-header">
-                  <span class="ribbon-tier-badge badge-bronze">${isEN ? 'Tier 1' : '第 1 階段'}</span>
-                  <span class="ribbon-hours-tag">200 hrs</span>
-                </div>
-                <div class="ribbon-effect-list">
-                  <div class="ribbon-effect-item">
-                    <span class="ribbon-effect-label">${isEN ? 'Carry Limit:' : '持有上限:'}</span>
-                    <span class="ribbon-effect-val val-carry">+1</span>
-                  </div>
-                  <div class="ribbon-effect-item">
-                    <span class="ribbon-effect-label">${isEN ? 'Speed Boost:' : '幫速縮短:'}</span>
-                    <span class="ribbon-effect-val val-none">${isEN ? 'None' : '無加成'}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Tier 2: Silver (500h) -->
-              <div class="ribbon-tier-card tier-silver">
-                <div class="ribbon-tier-header">
-                  <span class="ribbon-tier-badge badge-silver">${isEN ? 'Tier 2' : '第 2 階段'}</span>
-                  <span class="ribbon-hours-tag">500 hrs</span>
-                </div>
-                <div class="ribbon-effect-list">
-                  <div class="ribbon-effect-item">
-                    <span class="ribbon-effect-label">${isEN ? 'Carry Limit:' : '持有上限:'}</span>
-                    <span class="ribbon-effect-val val-carry">+3 <span class="val-sub">(+2)</span></span>
-                  </div>
-                  <div class="ribbon-effect-item ribbon-speed-col">
-                    <span class="ribbon-effect-label">${isEN ? 'Speed Boost:' : '幫速縮短:'}</span>
-                    <div class="ribbon-speed-lines">
-                      <span class="ribbon-speed-chip">${isEN ? '1 Evo: -5%' : '能再進化 1 次: -5%'}</span>
-                      <span class="ribbon-speed-chip">${isEN ? '2 Evos: -11%' : '能再進化 2 次: -11%'}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Tier 3: Gold (1000h) -->
-              <div class="ribbon-tier-card tier-gold">
-                <div class="ribbon-tier-header">
-                  <span class="ribbon-tier-badge badge-gold">${isEN ? 'Tier 3' : '第 3 階段'}</span>
-                  <span class="ribbon-hours-tag">1,000 hrs</span>
-                </div>
-                <div class="ribbon-effect-list">
-                  <div class="ribbon-effect-item">
-                    <span class="ribbon-effect-label">${isEN ? 'Carry Limit:' : '持有上限:'}</span>
-                    <span class="ribbon-effect-val val-carry">+6 <span class="val-sub">(+3)</span></span>
-                  </div>
-                  <div class="ribbon-effect-item ribbon-speed-col">
-                    <span class="ribbon-effect-label">${isEN ? 'Speed Boost:' : '幫速縮短:'}</span>
-                    <div class="ribbon-speed-lines">
-                      <span class="ribbon-speed-chip">${isEN ? '1 Evo: -5%' : '能再進化 1 次: -5%'}</span>
-                      <span class="ribbon-speed-chip">${isEN ? '2 Evos: -11%' : '能再進化 2 次: -11%'}</span>
-                    </div>
-                  </div>
-                  <div class="ribbon-special-item">
-                    <span class="ribbon-special-badge">${isEN ? 'Special Profile Icon' : '解鎖專屬個人頭像'}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Tier 4: Platinum (2000h) -->
-              <div class="ribbon-tier-card tier-platinum">
-                <div class="ribbon-tier-header">
-                  <span class="ribbon-tier-badge badge-platinum">${isEN ? 'Tier 4' : '第 4 階段'}</span>
-                  <span class="ribbon-hours-tag">2,000 hrs</span>
-                </div>
-                <div class="ribbon-effect-list">
-                  <div class="ribbon-effect-item">
-                    <span class="ribbon-effect-label">${isEN ? 'Carry Limit:' : '持有上限:'}</span>
-                    <span class="ribbon-effect-val val-carry">+8 <span class="val-sub">(+2)</span></span>
-                  </div>
-                  <div class="ribbon-effect-item ribbon-speed-col">
-                    <span class="ribbon-effect-label">${isEN ? 'Speed Boost:' : '幫速縮短:'}</span>
-                    <div class="ribbon-speed-lines">
-                      <span class="ribbon-speed-chip chip-max">${isEN ? '1 Evo: -12%' : '能再進化 1 次: -12%'}</span>
-                      <span class="ribbon-speed-chip chip-max">${isEN ? '2 Evos: -25%' : '能再進化 2 次: -25%'}</span>
-                    </div>
-                  </div>
-                  <div class="ribbon-special-item">
-                    <span class="ribbon-special-badge badge-glow">${isEN ? 'Profile Icon Glow Effect' : '解鎖頭像特別光效'}</span>
-                  </div>
-                </div>
+              <div class="ribbon-compact-chip chip-platinum">
+                <span class="chip-tier-tag">${isEN ? 'Tier 4' : '第 4 階段'} (2,000h)</span>
+                <span class="chip-effect-text">+8 ${isEN ? 'Carry' : '持有'}, ${isEN ? 'Speed' : '幫速'} -12% / -25%</span>
               </div>
             </div>
 
-            <!-- 生態經典案例分析 -->
-            <div class="wiki-strategy-grid" style="margin-top: 14px;">
-              <div class="strategy-item strategy-early">
-                <div class="strategy-header">
-                  <span class="strategy-badge badge-early">${isEN ? 'Case 1: Chansey vs Blissey' : '案例 1: 吉利蛋 vs 幸福蛋'}</span>
-                </div>
-                <div class="strategy-desc">
-                  ${isEN
-                    ? 'Chansey (1 evolution remaining, base 3,300s) reaches <strong>2,904s</strong> (-12%) at 2,000h, surpassing fully evolved Blissey (base 3,100s, 0% boost). Officially confirmed as intended game design.'
-                    : '吉利蛋(能再進化 1 次, 基礎 3300 秒)滿 2000 小時縮短 12% 間隔至 <strong>2904 秒</strong>, 反超最終型態幸福蛋(基礎 3100 秒, 0% 減免). 官方已公告確認此為預期設計.'}
-                </div>
+            <div class="ribbon-compact-notes">
+              <div class="compact-note-line">
+                <span class="compact-note-label">${isEN ? 'Core Rule:' : '核心規則:'}</span>
+                <span class="compact-note-text">${isEN ? 'Speed boost applies only to unevolved Pokemon (up to -25%), compounding independently with Nature & Subskills.' : '僅未完全進化寶可夢享有幫速縮短(最高 -25%), 與性格/副技能獨立相乘, 不受 35% 上限限制.'}</span>
+              </div>
+              <div class="compact-note-line">
+                <span class="compact-note-label">${isEN ? 'Classic Case:' : '經典案例:'}</span>
+                <span class="compact-note-text">${isEN ? 'Chansey vs Blissey: Chansey (1 evo left, base 3,300s) reaches <strong>2,904s</strong> (-12%) at 2,000h, surpassing Blissey (3,100s).' : '吉利蛋 vs 幸福蛋: 吉利蛋(能再進化 1 次)滿 2000h 幫速縮短 12% 至 <strong>2904 秒</strong>, 反超幸福蛋(3100 秒).'}</span>
               </div>
             </div>
           </div>

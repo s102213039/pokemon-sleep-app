@@ -4111,12 +4111,12 @@ test('Tier 4 - Real-World Application Scenarios', 'Good-Night Ribbon Wiki Guide 
   assert(!fwMatches || fwMatches.length === 0, `Ribbon guide block must not contain full-width punctuation, found: ${fwMatches}`);
   assert(!/\p{Extended_Pictographic}/u.test(ribbonBlock), 'Ribbon guide block must contain zero emojis');
 
-  // Verify visual tier cards grid and single Case 1
-  assert(ribbonBlock.includes('ribbon-tiers-grid'), 'Ribbon guide must use visual tier cards grid');
-  assert(ribbonBlock.includes('ribbon-tier-card tier-bronze'), 'Ribbon guide must include Bronze tier card');
-  assert(ribbonBlock.includes('ribbon-tier-card tier-silver'), 'Ribbon guide must include Silver tier card');
-  assert(ribbonBlock.includes('ribbon-tier-card tier-gold'), 'Ribbon guide must include Gold tier card');
-  assert(ribbonBlock.includes('ribbon-tier-card tier-platinum'), 'Ribbon guide must include Platinum tier card');
+  // Verify compact ribbon tier chips and single Case 1
+  assert(ribbonBlock.includes('ribbon-compact-tiers'), 'Ribbon guide must use compact tiers layout');
+  assert(ribbonBlock.includes('chip-bronze'), 'Ribbon guide must include Bronze tier chip');
+  assert(ribbonBlock.includes('chip-silver'), 'Ribbon guide must include Silver tier chip');
+  assert(ribbonBlock.includes('chip-gold'), 'Ribbon guide must include Gold tier chip');
+  assert(ribbonBlock.includes('chip-platinum'), 'Ribbon guide must include Platinum tier chip');
   assert(ribbonBlock.includes('Chansey vs Blissey') || ribbonBlock.includes('吉利蛋 vs 幸福蛋'), 'Ribbon guide must include Case 1');
   assert(!ribbonBlock.includes('Vigoroth vs Slaking') && !ribbonBlock.includes('過動猿 vs 請假王'), 'Ribbon guide must not include Case 2');
   assert(!ribbonBlock.includes('Un-evolved Favorites') && !ribbonBlock.includes('真愛黨與節慶限定'), 'Ribbon guide must not include Case 3');
@@ -4428,7 +4428,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Islands Subpanel DOM Renderin
   ctxEn.window.WikiDB.selectIsland('greengrass');
   const htmlEn = ctxEn.window.WikiDB.renderIslandsSubpanel();
   assert(htmlEn.includes('Greengrass Isle'), 'en-US must render English name');
-  assert(htmlEn.includes('Research Camps & EX Expert Mode Guide'), 'en-US must render English heading');
+  assert(htmlEn.includes('Snorlax Rank Energy Progression'), 'en-US must render English card title');
   assert(!emojiRegex.test(htmlEn), 'en-US html must not contain emoji');
 });
 
