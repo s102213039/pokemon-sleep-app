@@ -13202,6 +13202,16 @@
         campReward_en: "Accumulates independent EX Area Bonus",
         rewards: "高額研究EXP與夢之碎片與糖果, 異色率提升, EX專屬每週任務",
         rewards_en: "Massive Research EXP, Dream Shards, Candies, higher Shiny rates, and exclusive weekly missions",
+        snorlaxEnergyTiers: [
+          { rank: "Basic 1", energy: 0 },
+          { rank: "Great 1", energy: 309675 },
+          { rank: "Ultra 1", energy: 1037612 },
+          { rank: "Master 1", energy: 2194292 },
+          { rank: "Master 5", energy: 3489192 },
+          { rank: "Master 10", energy: 5609891 },
+          { rank: "Master 15", energy: 7802011 },
+          { rank: "Master 20", energy: 14780152 }
+        ]
       },
       snorlaxEnergyTiers: [
         { rank: "Basic 1", energy: 0 },

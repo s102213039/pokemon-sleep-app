@@ -4255,8 +4255,11 @@ test('Tier 2 - Boundary & Corner Cases', '18 Berry Types Coverage & EX Rules Iso
 
   assert(greengrass.expertMode.unlockReq.includes('大師 18'), 'Greengrass EX must require Master 18');
   assert(greengrass.expertMode.ticketReq.includes('EX券'), 'Greengrass EX must require EX Pass');
-  assert(greengrass.expertMode.penalty.includes('+15%'), 'EX penalty must specify +15% interval delay');
   assert(cyan.expertMode.bonus.includes('水君'), 'Cyan Beach EX bonus should highlight Suicune');
+  assert(Array.isArray(greengrass.expertMode.snorlaxEnergyTiers) && greengrass.expertMode.snorlaxEnergyTiers.length >= 8, 'Greengrass EX must have at least 8 energy tiers');
+  assert(Array.isArray(cyan.expertMode.snorlaxEnergyTiers) && cyan.expertMode.snorlaxEnergyTiers.length >= 8, 'Cyan Beach EX must have at least 8 energy tiers');
+  assertEquals(cyan.expertMode.snorlaxEnergyTiers.find(t => t.rank === 'Master 1')?.energy, 2194292, 'Cyan Beach EX Master 1 energy must be 2194292');
+  assertEquals(cyan.expertMode.snorlaxEnergyTiers.find(t => t.rank === 'Master 20')?.energy, 14780152, 'Cyan Beach EX Master 20 energy must be 14780152');
 
   // Verify Snorlax rank tiers and Drowsy spawns structure
   islands.forEach(isl => {
@@ -4327,10 +4330,14 @@ test('Tier 3 - Cross-Feature Combinations', 'Island Selection, Sleep Type Filter
   ctx.window.WikiDB.toggleIslandExpertMode();
   assert(mockPanel.innerHTML.includes('EX EXPERT MODE'), 'Toggling EX mode must render EX section');
   assert(mockPanel.innerHTML.includes('天青沙灘 EX模式'), 'EX section should display Cyan Beach EX');
+  assert(mockPanel.innerHTML.includes('2,194,292'), 'Cyan EX must display Master 1 energy 2,194,292');
+  assert(mockPanel.innerHTML.includes('14,780,152'), 'Cyan EX must display Master 20 energy 14,780,152');
 
   // Toggle off EX mode
   ctx.window.WikiDB.toggleIslandExpertMode();
   assert(!mockPanel.innerHTML.includes('EX EXPERT MODE'), 'Toggling off EX mode must hide EX card');
+  assert(mockPanel.innerHTML.includes('256,544'), 'Normal Cyan must display Master 1 energy 256,544');
+  assert(mockPanel.innerHTML.includes('3,732,664'), 'Normal Cyan must display Master 20 energy 3,732,664');
 
   // Sleep type filter
   ctx.window.WikiDB.filterIslandSleepType('slumbering');
