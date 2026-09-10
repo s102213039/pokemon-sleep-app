@@ -6813,6 +6813,40 @@ input[type="number"] {
   box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
 }
 
+.box-form-select {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 6px 10px;
+  padding-right: 36px;
+  color: var(--text-primary);
+  font-size: 12.5px;
+  outline: none;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+  height: 34px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 14px;
+}
+
+.box-form-select:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+.box-ribbon-tag,
+.lab-ribbon-tag {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
 /* 寶可夢名稱選擇列 (獨立頭像槽位 + Combobox 搜尋框) */
 .box-pkm-select-row {
   display: flex;
@@ -18737,3 +18771,302 @@ body.mobile-h5-app.values-active,
 .mobile-h5-app .back-to-top-btn:active {
   transform: scale(0.92) !important;
 }
+
+/* =========================================================
+   7大研究營地與EX專家模式樣式 (Research Camps & EX Mode)
+   ========================================================= */
+
+.island-nav-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 0 16px 0;
+  border-bottom: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08));
+  margin-bottom: 16px;
+}
+
+.island-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.island-pill-btn:hover {
+  background: var(--bg-card-hover, rgba(255, 255, 255, 0.1));
+  border-color: var(--accent-blue, #38bdf8);
+  transform: translateY(-1px);
+}
+
+.island-pill-btn.active {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: #38bdf8;
+  color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+}
+
+.island-pill-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.island-pill-ex-tag {
+  font-size: 10px;
+  font-weight: 900;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: #eab308;
+  color: #000;
+  margin-left: 2px;
+  letter-spacing: 0.5px;
+}
+
+.island-overview-card {
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+
+.island-overview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.island-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.island-title-main {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.island-title-en {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.island-badges-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.island-info-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
+  color: var(--text-secondary);
+}
+
+.island-chip-accent {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+.island-btn-ex-toggle {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.4);
+  color: #facc15;
+  transition: all 0.2s ease;
+}
+
+.island-btn-ex-toggle:hover {
+  background: rgba(234, 179, 8, 0.25);
+  transform: translateY(-1px);
+}
+
+.island-btn-ex-toggle.active {
+  background: #eab308;
+  color: #000;
+  border-color: #eab308;
+  font-weight: 800;
+}
+
+.island-berries-section {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border-color-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.island-berries-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.island-berry-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 16px;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
+}
+
+.island-berry-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.island-berry-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.island-ex-card {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.08) 0%, rgba(202, 138, 4, 0.04) 100%), var(--bg-card, #1e293b);
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+}
+
+.island-ex-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(234, 179, 8, 0.2);
+}
+
+.island-ex-badge {
+  background: #eab308;
+  color: #000;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.island-ex-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.island-ex-rule-item {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.island-ex-rule-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #facc15;
+  margin-bottom: 4px;
+}
+
+.island-ex-rule-desc {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.island-sleep-filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.island-sleep-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.island-sleep-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-blue, #38bdf8);
+}
+
+.island-sleep-btn.active {
+  background: #38bdf8;
+  color: #000;
+  font-weight: 700;
+  border-color: #38bdf8;
+}
+
+.island-star-chip {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.star-s1 {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.star-s2 {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.star-s3 {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.star-s4 {
+  background: rgba(234, 179, 8, 0.18);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  font-weight: 700;
+}
+

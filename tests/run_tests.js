@@ -3898,6 +3898,529 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless
 
 
 
+test('Tier 1 - Feature Coverage', 'Good-Night Ribbon i18n Dictionary and Box Modal Markup Verification', () => {
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+  const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // 1. Verify i18n keys exist
+  const ctx = {
+    window: { localStorage: { getItem: () => 'zh-TW', setItem: () => {} }, addEventListener: () => {} },
+    document: { documentElement: { setAttribute: () => {} }, querySelectorAll: () => [] },
+    console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+
+  const I18N = ctx.window.I18N;
+  const ribbonKeys = [
+    'box.modal_poke_ribbon',
+    'box.ribbon_none',
+    'box.ribbon_lv1',
+    'box.ribbon_lv2',
+    'box.ribbon_lv3',
+    'box.ribbon_lv4',
+    'appraisal.ribbon_label',
+    'wiki.ribbon_title'
+  ];
+
+  ['zh-TW', 'en-US'].forEach(lang => {
+    I18N.setLanguage(lang);
+    ribbonKeys.forEach(key => {
+      const val = I18N.t(key);
+      assert(val && val.length > 0 && val !== key, `Translation for ${key} in ${lang} must exist and not equal key`);
+    });
+  });
+
+  // 2. Verify Box Modal Select Markup
+  assert(indexHtml.includes('id="modal-poke-ribbon"'), 'index.html must include #modal-poke-ribbon element');
+  assert(indexHtml.includes('class="box-form-select"'), 'index.html must use box-form-select class on dropdowns');
+  assert(indexHtml.includes('value="0"'), 'modal-poke-ribbon must include value 0');
+  assert(indexHtml.includes('value="4"'), 'modal-poke-ribbon must include value 4');
+
+  // 3. Verify CSS styling complies with dropdown padding and arrow layout rules
+  assert(stylesCss.includes('.box-form-select'), 'styles.css must style .box-form-select');
+  assert(stylesCss.includes('padding-right: 36px'), 'box-form-select must include padding-right: 36px');
+  assert(stylesCss.includes('background-position: right 18px center'), 'box-form-select must place arrow with right 18px center');
+});
+
+test('Tier 2 - Boundary & Corner Cases', 'Good-Night Ribbon Remaining Evolutions & Speed Discount Tier Boundary Logic', () => {
+  const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+  const ctx = {
+    window: {},
+    document: { createElement: () => ({ setAttribute: () => {}, appendChild: () => {} }), body: { appendChild: () => {} } },
+    console
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(boxCode, ctx);
+  vm.runInContext(appraisalCode, ctx);
+
+  const lab = ctx.AppraisalLab;
+  assert(typeof lab.getRemainingEvolutions === 'function', 'AppraisalLab.getRemainingEvolutions must be exported');
+  assert(typeof lab.getRibbonBonus === 'function', 'AppraisalLab.getRibbonBonus must be exported');
+
+  // 1. Check 3-stage base species -> 2 evolutions remaining
+  const threeStageBase = ['皮丘', '鬼斯', '小火龍', '幼基拉斯', '迷你龍', '菊草葉'];
+  threeStageBase.forEach(name => {
+    const pkm = { name_cn: name, is_final: '' };
+    assertEquals(lab.getRemainingEvolutions(pkm), 2, `${name} must have 2 remaining evolutions`);
+  });
+
+  // 2. Check 2-stage base species and mid-stage species -> 1 evolution remaining
+  const oneStageRemaining = ['皮卡丘', '鬼斯通', '火恐龍', '伊布', '卡蒂狗'];
+  oneStageRemaining.forEach(name => {
+    const pkm = { name_cn: name, is_final: '' };
+    assertEquals(lab.getRemainingEvolutions(pkm), 1, `${name} must have 1 remaining evolution`);
+  });
+
+  // 3. Check fully evolved or single-stage species -> 0 evolutions remaining
+  const zeroRemaining = ['雷丘', '耿鬼', '噴火龍', '班基拉斯', '幸福蛋', '凱羅斯', '赫拉克羅斯'];
+  zeroRemaining.forEach(name => {
+    const pkm = { name_cn: name, is_final: '〇' };
+    assertEquals(lab.getRemainingEvolutions(pkm), 0, `${name} must have 0 remaining evolutions`);
+  });
+
+  // 4. Ribbon tier bonuses across remaining evolution stages
+  // Lv.0: 0 carry, 0% speed
+  const bonus0 = lab.getRibbonBonus(0, 2);
+  assertEquals(bonus0.carry, 0, 'Lv.0 carry should be 0');
+  assertEquals(bonus0.speed, 0, 'Lv.0 speed should be 0');
+
+  // Lv.1 (200h): +1 carry, 0% speed for all
+  [0, 1, 2].forEach(evos => {
+    const b = lab.getRibbonBonus(1, evos);
+    assertEquals(b.carry, 1, `Lv.1 carry should be 1 for evos=${evos}`);
+    assertEquals(b.speed, 0, `Lv.1 speed should be 0 for evos=${evos}`);
+  });
+
+  // Lv.2 (500h): +3 carry, speed: 2 evos -> 11%, 1 evo -> 5%, 0 evos -> 0%
+  assertEquals(lab.getRibbonBonus(2, 2).carry, 3, 'Lv.2 carry should be 3');
+  assertEquals(lab.getRibbonBonus(2, 2).speed, 0.11, 'Lv.2 speed for 2 evos should be 11%');
+  assertEquals(lab.getRibbonBonus(2, 1).speed, 0.05, 'Lv.2 speed for 1 evo should be 5%');
+  assertEquals(lab.getRibbonBonus(2, 0).speed, 0, 'Lv.2 speed for 0 evos should be 0%');
+
+  // Lv.3 (1000h): +6 carry, speed identical to Lv.2
+  assertEquals(lab.getRibbonBonus(3, 2).carry, 6, 'Lv.3 carry should be 6');
+  assertEquals(lab.getRibbonBonus(3, 2).speed, 0.11, 'Lv.3 speed for 2 evos should be 11%');
+  assertEquals(lab.getRibbonBonus(3, 1).speed, 0.05, 'Lv.3 speed for 1 evo should be 5%');
+  assertEquals(lab.getRibbonBonus(3, 0).speed, 0, 'Lv.3 speed for 0 evos should be 0%');
+
+  // Lv.4 (2000h): +8 carry, speed: 2 evos -> 25%, 1 evo -> 12%, 0 evos -> 0%
+  assertEquals(lab.getRibbonBonus(4, 2).carry, 8, 'Lv.4 carry should be 8');
+  assertEquals(lab.getRibbonBonus(4, 2).speed, 0.25, 'Lv.4 speed for 2 evos should be 25%');
+  assertEquals(lab.getRibbonBonus(4, 1).speed, 0.12, 'Lv.4 speed for 1 evo should be 12%');
+  assertEquals(lab.getRibbonBonus(4, 0).speed, 0, 'Lv.4 speed for 0 evos should be 0%');
+});
+
+test('Tier 3 - Cross-Feature Combinations', 'Good-Night Ribbon Appraisal Lab Integration and Diagnostic Feedback', () => {
+  const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+  const ctx = {
+    window: {},
+    document: { createElement: () => ({ setAttribute: () => {}, appendChild: () => {} }), body: { appendChild: () => {} } },
+    console
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(boxCode, ctx);
+  vm.runInContext(appraisalCode, ctx);
+
+  const lab = ctx.AppraisalLab;
+
+  // Pichu base interval: 4300s, 2 remaining evos
+  const pichu = {
+    id: '172',
+    name_cn: '皮丘',
+    specialty: '樹果',
+    type: '電',
+    interval: '01:11:40' // 4300s
+  };
+
+  // Evaluate Pichu without ribbon (Lv.0)
+  const evalNoRibbon = lab.evaluatePokemon(pichu, 25, '認真', [], ['特選蘋果'], 0);
+  assertEquals(evalNoRibbon.calculatedInterval, 4300, 'Pichu without ribbon should have base interval 4300s');
+
+  // Evaluate Pichu with Ribbon Lv.4 (25% speed discount)
+  const evalRibbonLv4 = lab.evaluatePokemon(pichu, 25, '認真', [], ['特選蘋果'], 4);
+  const expectedInterval = Math.round(4300 * (1 - 0.25)); // 3225s
+  assertEquals(evalRibbonLv4.calculatedInterval, expectedInterval, 'Pichu with Ribbon Lv.4 should have 3225s interval');
+  assert(evalRibbonLv4.scores.speed > evalNoRibbon.scores.speed, 'Pichu with Ribbon Lv.4 should have higher speed score');
+
+  // Verify diagnostic pros mention Good-Night Ribbon
+  const hasRibbonPro = evalRibbonLv4.diagnostics.pros.some(p => p.includes('睡飽飽獎章') || p.includes('25%'));
+  assert(hasRibbonPro, 'Diagnostics pros should mention Ribbon speed discount');
+
+  // Evaluate fully evolved Raichu with Ribbon Lv.4 (speed discount must remain 0)
+  const raichu = {
+    id: '26',
+    name_cn: '雷丘',
+    specialty: '樹果',
+    type: '電',
+    interval: '00:36:40', // 2200s
+    is_final: '〇'
+  };
+  const evalRaichuRibbon = lab.evaluatePokemon(raichu, 25, '認真', [], ['特選蘋果'], 4);
+  assertEquals(evalRaichuRibbon.calculatedInterval, 2200, 'Raichu should receive 0% speed discount even with Ribbon Lv.4');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Good-Night Ribbon Wiki Guide Formatting & Box PR Calculation Workflow', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+
+  // 1. Verify Wiki contains Ribbon Guide card in both languages
+  ['zh-TW', 'en-US'].forEach(lang => {
+    const mockContainer = { innerHTML: '', style: { display: '' } };
+    const ctx = {
+      window: {
+        location: { hash: '#wiki' },
+        localStorage: { getItem: () => lang, setItem: () => {} },
+        addEventListener: () => {},
+        history: { replaceState: () => {} }
+      },
+      document: {
+        readyState: 'complete',
+        documentElement: { setAttribute: () => {} },
+        getElementById: () => null,
+        querySelectorAll: () => [],
+        addEventListener: () => {}
+      },
+      console,
+      setTimeout
+    };
+    ctx.window.window = ctx.window;
+    ctx.window.document = ctx.document;
+    vm.createContext(ctx);
+    vm.runInContext(i18nCode, ctx);
+    vm.runInContext(wikiCode, ctx);
+
+    ctx.window.WikiDB.renderWikiLayout(mockContainer);
+    assert(mockContainer.innerHTML.includes('wiki-card-ribbon-guide'), 'Wiki layout must include wiki-card-ribbon-guide');
+  });
+
+  // 2. Verify Wiki Ribbon Guide contains zero full-width punctuation
+  const startRibbon = wikiCode.indexOf('wiki-card-ribbon-guide');
+  assert(startRibbon !== -1, 'wiki.js must contain wiki-card-ribbon-guide');
+  const endRibbon = wikiCode.indexOf('</div>\n            </div>\n\n            <!-- 子分頁 3');
+  const ribbonBlock = wikiCode.slice(startRibbon, endRibbon !== -1 ? endRibbon : startRibbon + 4000);
+  const fwMatches = ribbonBlock.match(/[\uFF01-\uFF5E\u3000-\u303F\u2000-\u206F]/g);
+  assert(!fwMatches || fwMatches.length === 0, `Ribbon guide block must not contain full-width punctuation, found: ${fwMatches}`);
+
+  // 3. Verify Box PR calculation integrates Ribbon
+  const boxModule = require(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'));
+  const basePkm = {
+    name: '皮丘',
+    specialty: '樹果',
+    nature: '固執',
+    subskills: ['樹果數量S']
+  };
+
+  const prWithoutRibbon = boxModule.calculatePokemonPR({ ...basePkm, ribbon: 0 }, { specialty: '樹果' });
+  const prWithRibbon4 = boxModule.calculatePokemonPR({ ...basePkm, ribbon: 4 }, { specialty: '樹果' });
+
+  assert(prWithRibbon4.pr >= prWithoutRibbon.pr, 'Ribbon Lv.4 PR score should be higher or equal to Ribbon Lv.0 PR score');
+  assert(prWithRibbon4.highlights.some(h => h.includes('獎章') || h.includes('Ribbon') || h.includes('幫忙速度')), 'PR highlights should recognize speed boost from Ribbon');
+});
+
+test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i18n Keys', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+
+  const ctx = {
+    window: {
+      location: { hash: '#wiki' },
+      localStorage: { getItem: () => 'zh-TW', setItem: () => {} },
+      addEventListener: () => {},
+      history: { replaceState: () => {} }
+    },
+    document: {
+      readyState: 'complete',
+      documentElement: { setAttribute: () => {} },
+      getElementById: () => ({ addEventListener: () => {}, value: '', style: {} }),
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    console,
+    setTimeout
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+  vm.runInContext(wikiCode, ctx);
+
+  const requiredKeys = [
+    'wiki.subtab_islands', 'wiki.tab_islands', 'wiki.islands_title',
+    'wiki.islands_select_label', 'wiki.islands_unlock_goal', 'wiki.islands_snorlax_mult',
+    'wiki.islands_fav_berries', 'wiki.islands_expert_btn', 'wiki.islands_normal_btn',
+    'wiki.islands_ranks_title', 'wiki.islands_spawns_title', 'wiki.islands_guide_title'
+  ];
+
+  ['zh-TW', 'en-US'].forEach(lang => {
+    ctx.window.I18N.setLanguage(lang);
+    requiredKeys.forEach(k => {
+      const val = ctx.window.I18N.t(k);
+      assert(val && val.length > 0 && val !== k, `i18n ${lang} must have translation for ${k}`);
+    });
+  });
+
+  const islands = ctx.window.WikiDB.ISLANDS_DATA;
+  assert(Array.isArray(islands), 'ISLANDS_DATA must be an array');
+  assertEquals(islands.length, 7, 'Must have exactly 7 research camps');
+
+  const expectedIds = ['greengrass', 'cyan', 'taupe', 'snowdrop', 'lapis', 'powerplant', 'amber'];
+  assertArrayEquals(islands.map(i => i.id), expectedIds, 'Island IDs must match 7 official camps');
+
+  const unlockGoals = islands.map(i => i.unlockGoal);
+  assertArrayEquals(unlockGoals, [0, 20, 70, 150, 240, 340, 450], 'Unlock sleep style goals must be 0, 20, 70, 150, 240, 340, 450');
+
+  assertEquals(islands[0].hasExpertMode, true, 'Greengrass Isle must have EX expert mode');
+  assertEquals(islands[1].hasExpertMode, true, 'Cyan Beach must have EX expert mode');
+  assertEquals(islands[2].hasExpertMode, false, 'Taupe Hollow must not have EX expert mode');
+  assertEquals(islands[3].hasExpertMode, false, 'Snowdrop Tundra must not have EX expert mode');
+  assertEquals(islands[4].hasExpertMode, false, 'Lapis Lakeside must not have EX expert mode');
+  assertEquals(islands[5].hasExpertMode, false, 'Power Plant must not have EX expert mode');
+  assertEquals(islands[6].hasExpertMode, false, 'Amber Canyon must not have EX expert mode');
+});
+
+test('Tier 2 - Boundary & Corner Cases', '18 Berry Types Coverage & EX Rules Isolation', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+
+  const createMockEl = () => ({
+    addEventListener: () => {},
+    value: '',
+    style: {},
+    classList: { add: () => {}, remove: () => {}, contains: () => true },
+    setAttribute: () => {},
+    innerHTML: ''
+  });
+
+  const ctx = {
+    window: {
+      location: { hash: '#wiki' },
+      localStorage: { getItem: () => 'zh-TW', setItem: () => {} },
+      addEventListener: () => {},
+      history: { replaceState: () => {} }
+    },
+    document: {
+      readyState: 'complete',
+      documentElement: { setAttribute: () => {} },
+      getElementById: createMockEl,
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    console,
+    setTimeout
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+  vm.runInContext(wikiCode, ctx);
+
+  const islands = ctx.window.WikiDB.ISLANDS_DATA;
+  const fixedIslands = islands.filter(i => i.berriesMode === 'fixed');
+  assertEquals(fixedIslands.length, 6, 'Must have 6 fixed berry islands');
+
+  const allFixedTypes = [];
+  fixedIslands.forEach(isl => {
+    assertEquals(isl.favoriteTypes.length, 3, `${isl.id} must have exactly 3 favorite types`);
+    assertEquals(isl.favoriteBerries.length, 3, `${isl.id} must have exactly 3 favorite berries`);
+    isl.favoriteTypes.forEach(t => allFixedTypes.push(t));
+  });
+
+  assertEquals(allFixedTypes.length, 18, '6 fixed islands * 3 types must equal 18 types');
+  const uniqueTypes = Array.from(new Set(allFixedTypes));
+  assertEquals(uniqueTypes.length, 18, 'Fixed islands must cover all 18 Pokemon types without duplication');
+
+  // Verify EX mode details
+  const greengrass = islands.find(i => i.id === 'greengrass');
+  const cyan = islands.find(i => i.id === 'cyan');
+
+  assert(greengrass.expertMode.unlockReq.includes('大師 18'), 'Greengrass EX must require Master 18');
+  assert(greengrass.expertMode.ticketReq.includes('EX券'), 'Greengrass EX must require EX Pass');
+  assert(greengrass.expertMode.penalty.includes('+15%'), 'EX penalty must specify +15% interval delay');
+  assert(cyan.expertMode.bonus.includes('水君'), 'Cyan Beach EX bonus should highlight Suicune');
+
+  // Verify Snorlax rank tiers and Drowsy spawns structure
+  islands.forEach(isl => {
+    assert(isl.snorlaxEnergyTiers.length >= 8, `${isl.id} must have at least 8 Snorlax rank milestones`);
+    assertEquals(isl.drowsyPowerSpawns.length, 6, `${isl.id} must have 6 drowsy power spawn tiers (3 to 8 spawns)`);
+    assert(isl.spawns.dozing.length > 0, `${isl.id} must have dozing spawns`);
+    assert(isl.spawns.snoozing.length > 0, `${isl.id} must have snoozing spawns`);
+    assert(isl.spawns.slumbering.length > 0, `${isl.id} must have slumbering spawns`);
+  });
+});
+
+test('Tier 3 - Cross-Feature Combinations', 'Island Selection, Sleep Type Filter & EX Mode Reactive State', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+
+  let mockPanel = {
+    innerHTML: '',
+    style: {},
+    classList: { add: () => {}, remove: () => {}, contains: () => true },
+    addEventListener: () => {},
+    setAttribute: () => {}
+  };
+  const mockContainer = { innerHTML: '', style: { display: '' } };
+
+  const ctx = {
+    window: {
+      location: { hash: '#wiki' },
+      localStorage: { getItem: () => 'zh-TW', setItem: () => {} },
+      addEventListener: () => {},
+      history: { replaceState: () => {} }
+    },
+    document: {
+      readyState: 'complete',
+      documentElement: { setAttribute: () => {} },
+      getElementById: (id) => {
+        if (id === 'wiki-subpanel-islands') return mockPanel;
+        return {
+          innerHTML: '',
+          style: {},
+          classList: { add: () => {}, remove: () => {}, contains: () => true },
+          addEventListener: () => {},
+          setAttribute: () => {}
+        };
+      },
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    console,
+    setTimeout
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+  vm.runInContext(wikiCode, ctx);
+
+  ctx.window.WikiDB.renderWikiLayout(mockContainer);
+
+  // Switch to islands subtab
+  ctx.window.WikiDB.switchSubTab('islands');
+  assertEquals(ctx.window.WikiDB.getCurrentSubTab(), 'islands', 'Current subtab must be islands');
+
+  // Select Cyan Beach
+  ctx.window.WikiDB.selectIsland('cyan');
+  assert(mockPanel.innerHTML.includes('天青沙灘'), 'Selecting cyan must render Cyan Beach');
+
+  // Toggle EX mode on Cyan
+  ctx.window.WikiDB.toggleIslandExpertMode();
+  assert(mockPanel.innerHTML.includes('EX EXPERT MODE'), 'Toggling EX mode must render EX section');
+  assert(mockPanel.innerHTML.includes('天青沙灘 EX模式'), 'EX section should display Cyan Beach EX');
+
+  // Toggle off EX mode
+  ctx.window.WikiDB.toggleIslandExpertMode();
+  assert(!mockPanel.innerHTML.includes('EX EXPERT MODE'), 'Toggling off EX mode must hide EX card');
+
+  // Sleep type filter
+  ctx.window.WikiDB.filterIslandSleepType('slumbering');
+  assert(mockPanel.innerHTML.includes('水箭龜'), 'Slumbering filter on Cyan should include Blastoise');
+  assert(!mockPanel.innerHTML.includes('長翅鷗'), 'Slumbering filter should not show Dozing Pokemon Wingull');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Islands Subpanel DOM Rendering, Bilingual Support & Zero Full-Width Rule', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+
+  const emojiRegex = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u;
+  const fwRegex = /[\uFF01-\uFF5E\u3000-\u303F\u2000-\u206F]/g;
+
+  // Render in zh-TW
+  let mockPanelZh = {
+    innerHTML: '',
+    style: {},
+    classList: { add: () => {}, remove: () => {}, contains: () => true },
+    addEventListener: () => {}
+  };
+  const ctxZh = {
+    window: {
+      location: { hash: '#wiki' },
+      localStorage: { getItem: () => 'zh-TW', setItem: () => {} },
+      addEventListener: () => {},
+      history: { replaceState: () => {} }
+    },
+    document: {
+      readyState: 'complete',
+      documentElement: { setAttribute: () => {} },
+      getElementById: () => mockPanelZh,
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    console,
+    setTimeout
+  };
+  ctxZh.window.window = ctxZh.window;
+  ctxZh.window.document = ctxZh.document;
+  vm.createContext(ctxZh);
+  vm.runInContext(i18nCode, ctxZh);
+  vm.runInContext(wikiCode, ctxZh);
+
+  const islands = ctxZh.window.WikiDB.ISLANDS_DATA;
+
+  islands.forEach(isl => {
+    ctxZh.window.WikiDB.selectIsland(isl.id);
+    const htmlNormal = ctxZh.window.WikiDB.renderIslandsSubpanel();
+    assert(!emojiRegex.test(htmlNormal), `${isl.id} normal html must not contain emoji`);
+    const fwNormal = htmlNormal.match(fwRegex);
+    assert(!fwNormal || fwNormal.length === 0, `${isl.id} normal html must not contain full-width characters, found: ${fwNormal}`);
+
+    if (isl.hasExpertMode) {
+      ctxZh.window.WikiDB.toggleIslandExpertMode();
+      const htmlEx = ctxZh.window.WikiDB.renderIslandsSubpanel();
+      assert(!emojiRegex.test(htmlEx), `${isl.id} EX html must not contain emoji`);
+      const fwEx = htmlEx.match(fwRegex);
+      assert(!fwEx || fwEx.length === 0, `${isl.id} EX html must not contain full-width characters, found: ${fwEx}`);
+      ctxZh.window.WikiDB.toggleIslandExpertMode();
+    }
+  });
+
+  // Render in en-US
+  let mockPanelEn = {
+    innerHTML: '',
+    style: {},
+    classList: { add: () => {}, remove: () => {}, contains: () => true },
+    addEventListener: () => {}
+  };
+  const ctxEn = {
+    window: {
+      location: { hash: '#wiki' },
+      localStorage: { getItem: () => 'en-US', setItem: () => {} },
+      addEventListener: () => {},
+      history: { replaceState: () => {} }
+    },
+    document: {
+      readyState: 'complete',
+      documentElement: { setAttribute: () => {} },
+      getElementById: () => mockPanelEn,
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    console,
+    setTimeout
+  };
+  ctxEn.window.window = ctxEn.window;
+  ctxEn.window.document = ctxEn.document;
+  vm.createContext(ctxEn);
+  vm.runInContext(i18nCode, ctxEn);
+  vm.runInContext(wikiCode, ctxEn);
+
+  ctxEn.window.I18N.setLanguage('en-US');
+  ctxEn.window.WikiDB.selectIsland('greengrass');
+  const htmlEn = ctxEn.window.WikiDB.renderIslandsSubpanel();
+  assert(htmlEn.includes('Greengrass Isle'), 'en-US must render English name');
+  assert(htmlEn.includes('Research Camps & EX Expert Mode Guide'), 'en-US must render English heading');
+  assert(!emojiRegex.test(htmlEn), 'en-US html must not contain emoji');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

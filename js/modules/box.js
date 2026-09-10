@@ -263,6 +263,25 @@
       score += skScore * w;
     });
 
+    // 睡飽飽獎章加成 (Good-Night Ribbon Bonus)
+    const ribbonLvl = parseInt(pkm.ribbon, 10) || 0;
+    if (ribbonLvl > 0) {
+      const remainingEvos = typeof window !== 'undefined' && window.AppraisalLab && typeof window.AppraisalLab.getRemainingEvolutions === 'function'
+        ? window.AppraisalLab.getRemainingEvolutions(base)
+        : 1;
+      const ribbonBonus = typeof window !== 'undefined' && window.AppraisalLab && typeof window.AppraisalLab.getRibbonBonus === 'function'
+        ? window.AppraisalLab.getRibbonBonus(ribbonLvl, remainingEvos)
+        : { carry: 8, speedDiscount: 0.12 };
+      
+      if (ribbonBonus.speedDiscount > 0) {
+        score += Math.round(ribbonBonus.speedDiscount * 25);
+        highlights.push(isEN ? `Ribbon -${Math.round(ribbonBonus.speedDiscount * 100)}% Speed` : `獎章幫速 -${Math.round(ribbonBonus.speedDiscount * 100)}%`);
+      } else {
+        score += ribbonBonus.carry * 0.8;
+        highlights.push(isEN ? `Ribbon +${ribbonBonus.carry} Carry` : `獎章持有 +${ribbonBonus.carry}`);
+      }
+    }
+
     // 3. 正規化至 PR 百分位數 [50 ~ 100] (及格線以上個體)
     const minPassBenchmark = 10;
     const maxBenchmark = 75;
@@ -293,6 +312,7 @@
       tier,
       tierBadgeClass,
       summaryNote,
+      highlights,
       score: Math.round(score * 10) / 10
     };
   }
@@ -466,6 +486,9 @@
                       <img src="${berry.icon}" alt="${berryName}" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;">
                     </span>` : ''}
                     <span class="box-spec-tag">${specName}</span>
+                    ${p.ribbon ? `
+                      <span class="box-ribbon-tag" style="background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);font-size:11px;padding:1px 6px;border-radius:4px;font-weight:600;">${isEN ? `Ribbon Lv.${p.ribbon}` : `獎章 Lv.${p.ribbon}`}</span>
+                    ` : ''}
                   </div>
                 </div>
                 <div class="box-card-actions">
@@ -591,7 +614,10 @@
                     </div>
                   </td>
                   <td>
-                    <div class="table-name-cn">${escapeHtml(pkmDisplayName)}</div>
+                    <div class="table-name-cn" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+                      <span>${escapeHtml(pkmDisplayName)}</span>
+                      ${p.ribbon ? `<span class="box-ribbon-tag" style="background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);font-size:10px;padding:1px 5px;border-radius:4px;font-weight:600;">${isEN ? `Ribbon Lv.${p.ribbon}` : `獎章 Lv.${p.ribbon}`}</span>` : ''}
+                    </div>
                     ${p.nickname ? `<div style="font-size:11px;color:var(--accent-color);">${escapeHtml(p.nickname)}</div>` : ''}
                   </td>
                   <td><span class="box-table-lvl">Lv.${p.level || 1}</span></td>
@@ -673,7 +699,8 @@
               level: item.level || 30,
               nature: item.nature || '坦率',
               subskills: item.subskills || [],
-              ingredients: [item.ing1, item.ing2, item.ing3]
+              ingredients: [item.ing1, item.ing2, item.ing3],
+              ribbon: item.ribbon || 0
             });
           }
         }
@@ -1161,6 +1188,17 @@
       }
     }
 
+    // 4.5 睡飽飽獎章選單
+    const ribbonSelect = document.getElementById('modal-poke-ribbon');
+    if (ribbonSelect) {
+      ribbonSelect.value = String(existingItem && existingItem.ribbon != null ? existingItem.ribbon : '0');
+      if (typeof window.setupCustomSelect === 'function' && !ribbonSelect._customized) {
+        window.setupCustomSelect(ribbonSelect);
+      } else if (ribbonSelect._customized) {
+        ribbonSelect.dispatchEvent(new Event('sync-ui'));
+      }
+    }
+
     // 5. 初始化副技能單行插槽 + 選擇盤
     initSubskillFlowPicker(existingItem ? existingItem.subskills : []);
 
@@ -1184,6 +1222,7 @@
     const levelInput = document.getElementById('modal-poke-level');
     const nickInput = document.getElementById('modal-poke-nickname');
     const natureSelect = document.getElementById('modal-poke-nature');
+    const ribbonSelect = document.getElementById('modal-poke-ribbon');
     const ing1Select = document.getElementById('modal-ing1');
     const ing2Select = document.getElementById('modal-ing2');
     const ing3Select = document.getElementById('modal-ing3');
@@ -1210,6 +1249,8 @@
       if (s && s.value) subskills.push(s.value);
     }
 
+    const ribbonVal = ribbonSelect ? (parseInt(ribbonSelect.value, 10) || 0) : 0;
+
     const itemData = {
       uid: editingUid || ('pkm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6)),
       pokemonId: base ? base.id : '',
@@ -1219,6 +1260,7 @@
       level: parsedLevel,
       nickname: nickInput ? nickInput.value.trim() : '',
       nature: natureSelect ? natureSelect.value : '坦率',
+      ribbon: ribbonVal,
       ing1: ing1Select ? ing1Select.value : '',
       ing2: ing2Select ? ing2Select.value : '',
       ing3: ing3Select ? ing3Select.value : '',

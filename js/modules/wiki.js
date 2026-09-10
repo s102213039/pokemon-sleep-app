@@ -11505,7 +11505,7 @@
   }));
 
   const STORAGE_KEY_WIKI_SUBTAB = 'pksleep_active_wiki_subtab';
-  const VALID_WIKI_SUBTABS = ['skills', 'subskills', 'ingredients', 'values', 'ratings'];
+  const VALID_WIKI_SUBTABS = ['skills', 'subskills', 'ingredients', 'values', 'ratings', 'islands'];
 
   function getSavedWikiSubTab() {
     try {
@@ -12896,6 +12896,820 @@
     });
   }
 
+  // --- 8. 7大研究島嶼營地與EX專家模式資料庫 (Research Camps & EX Mode DB) ---
+  const ISLANDS_DATA = [
+    {
+      id: 'greengrass',
+      name: '萌綠之島',
+      name_en: 'Greengrass Isle',
+      badgeColor: '#22c55e',
+      unlockGoal: 0,
+      unlockGoalText: '初始營地 (0種睡姿)',
+      unlockGoalText_en: 'Starting Camp (0 Styles)',
+      snorlaxMultiplier: '1.0x',
+      berriesMode: 'random',
+      berriesDesc: '每週自18種樹果中隨機指定3種',
+      berriesDesc_en: 'Random 3 Berries chosen weekly from all 18 types',
+      favoriteBerries: [],
+      favoriteTypes: [],
+      hasExpertMode: true,
+      expertMode: {
+        name: '萌綠之島 EX模式',
+        name_en: 'Greengrass Isle EX',
+        unlockReq: '萌綠之島卡比獸達到 [大師 18]',
+        unlockReq_en: 'Reach Snorlax Master 18 on Greengrass Isle',
+        ticketReq: '進入需消耗 [EX券] 1張 (普通兌換所200點/進階兌換所100點, 背包上限持有2張)',
+        ticketReq_en: 'Requires 1 EX Pass (200 Sleep Pts normal / 100 Sleep Pts premium, max hold 2)',
+        berryRule: '1種主樹果 + 2種副樹果 (每週隨機輪替)',
+        berryRule_en: '1 Primary Berry + 2 Secondary Berries (Rotates weekly)',
+        bonus: '收集主樹果的寶可夢享有幫忙間隔大幅縮短加成',
+        bonus_en: 'Pokemon collecting Primary Berry gain massive helping speed boost',
+        penalty: '未收集當週指定喜愛樹果的寶可夢受到幫忙間隔延長 (+15%) 減速懲罰',
+        penalty_en: 'Pokemon without favored berries suffer +15% interval delay penalty',
+        campReward: '累積獨立的 [EX營地加成], 不消耗也不疊加一般營地加成',
+        campReward_en: 'Accumulates independent EX Area Bonus, separate from normal area bonus',
+        rewards: '異色寶可夢 (Shiny) 出現機率顯著提升, 獲得大量研究EXP與夢之碎片與糖果, 開放專屬高難度每週任務',
+        rewards_en: 'Higher Shiny rate, massive Research EXP, Dream Shards, Candies, and exclusive weekly missions'
+      },
+      snorlaxEnergyTiers: [
+        { rank: 'Basic 1', energy: 0 },
+        { rank: 'Great 1', energy: 18500 },
+        { rank: 'Ultra 1', energy: 67000 },
+        { rank: 'Master 1', energy: 187832 },
+        { rank: 'Master 5', energy: 389000 },
+        { rank: 'Master 10', energy: 840000 },
+        { rank: 'Master 15', energy: 1820000 },
+        { rank: 'Master 20', energy: 3200000 }
+      ],
+      drowsyPowerSpawns: [
+        { count: 3, power: '0+' },
+        { count: 4, power: '920,000' },
+        { count: 5, power: '2,060,000' },
+        { count: 6, power: '4,500,000' },
+        { count: 7, power: '8,320,000' },
+        { count: 8, power: '19,500,000' }
+      ],
+      spawns: {
+        dozing: [
+          { name: '妙蛙種子', name_en: 'Bulbasaur', type: '草', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '妙蛙草', name_en: 'Ivysaur', type: '草', s1: 'Great 2', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '阿柏蛇', name_en: 'Ekans', type: '毒', s1: 'Basic 1', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 2' },
+          { name: '喇叭芽', name_en: 'Bellsprout', type: '草', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '鬼斯', name_en: 'Gastly', type: '幽靈', s1: 'Basic 1', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 2' },
+          { name: '猴怪', name_en: 'Mankey', type: '格鬥', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '毛球', name_en: 'Venonat', type: '蟲', s1: 'Basic 1', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 2' },
+          { name: '青綿鳥', name_en: 'Swablu', type: '飛行', s1: 'Basic 1', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 2' },
+          { name: '新葉喵', name_en: 'Sprigatito', type: '草', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 2', s4: 'Master 2' },
+          { name: '強顎雞母蟲', name_en: 'Grubbin', type: '蟲', s1: 'Basic 1', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 2' }
+        ],
+        snoozing: [
+          { name: '皮卡丘', name_en: 'Pikachu', type: '電', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 2', s4: 'Master 2' },
+          { name: '雷丘', name_en: 'Raichu', type: '電', s1: 'Ultra 1', s2: 'Master 1', s3: 'Master 4', s4: 'Master 8' },
+          { name: '伊布', name_en: 'Eevee', type: '一般', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '卡蒂狗', name_en: 'Growlithe', type: '火', s1: 'Basic 2', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 2' },
+          { name: '六尾', name_en: 'Vulpix', type: '火', s1: 'Basic 1', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 2' },
+          { name: '波克比', name_en: 'Togepi', type: '妖精', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 2', s4: 'Master 2' },
+          { name: '胖丁', name_en: 'Jigglypuff', type: '一般', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '戴魯比', name_en: 'Houndour', type: '惡', s1: 'Basic 2', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 2' },
+          { name: '咚咚鼠', name_en: 'Dedenne', type: '電', s1: 'Ultra 1', s2: 'Master 1', s3: 'Master 5', s4: 'Master 10' },
+          { name: '呆呆獸', name_en: 'Slowpoke', type: '水', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' }
+        ],
+        slumbering: [
+          { name: '傑尼龜', name_en: 'Squirtle', type: '水', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '卡龜', name_en: 'Wartortle', type: '水', s1: 'Great 2', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '小拳石', name_en: 'Geodude', type: '岩石', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '地鼠', name_en: 'Diglett', type: '地面', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '可達鴨', name_en: 'Psyduck', type: '水', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '小磁怪', name_en: 'Magnemite', type: '電', s1: 'Basic 1', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 2' },
+          { name: '海豹球', name_en: 'Spheal', type: '冰', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '幼基拉斯', name_en: 'Larvitar', type: '岩石', s1: 'Basic 2', s2: 'Great 2', s3: 'Ultra 3', s4: 'Master 3' },
+          { name: '利歐路', name_en: 'Riolu', type: '格鬥', s1: 'Basic 1', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 3' },
+          { name: '卡比獸', name_en: 'Snorlax', type: '一般', s1: 'Ultra 2', s2: 'Master 2', s3: 'Master 8', s4: 'Master 15' }
+        ]
+      }
+    },
+    {
+      id: 'cyan',
+      name: '天青沙灘',
+      name_en: 'Cyan Beach',
+      badgeColor: '#06b6d4',
+      unlockGoal: 20,
+      unlockGoalText: '登錄 20 種睡姿',
+      unlockGoalText_en: '20 Sleep Styles',
+      snorlaxMultiplier: '1.25x',
+      berriesMode: 'fixed',
+      favoriteBerries: ['橙橙果', '椰木果', '桃桃果'],
+      favoriteTypes: ['水', '飛行', '妖精'],
+      hasExpertMode: true,
+      expertMode: {
+        name: '天青沙灘 EX模式',
+        name_en: 'Cyan Beach EX',
+        unlockReq: '萌綠之島與天青沙灘卡比獸皆達到 [大師 18]',
+        unlockReq_en: 'Reach Master 18 on both Greengrass Isle and Cyan Beach',
+        ticketReq: '進入需消耗 [EX券] 1張',
+        ticketReq_en: 'Requires 1 EX Pass',
+        berryRule: '主樹果自 (水/飛行/妖精) 中指定1種, 副樹果自其餘17種中隨機指定2種',
+        berryRule_en: '1 Primary Berry from Water/Flying/Fairy, 2 Secondary Berries from remaining 17 types',
+        bonus: '主樹果幫手速度大幅縮短, 水君 (Suicune) 與小鍛匠家族遭遇率大幅提升',
+        bonus_en: 'Primary Berry speed boost, significantly boosted Suicune and Tinkatink spawn rates',
+        penalty: '非指定喜愛樹果寶可夢幫忙間隔延長 (+15%) 懲罰',
+        penalty_en: 'Pokemon without favored berries suffer +15% interval delay penalty',
+        campReward: '累積獨立的 [EX營地加成]',
+        campReward_en: 'Accumulates independent EX Area Bonus',
+        rewards: '高額研究EXP與夢之碎片與糖果, 異色率提升, EX專屬每週任務',
+        rewards_en: 'Massive Research EXP, Dream Shards, Candies, higher Shiny rates, and exclusive weekly missions'
+      },
+      snorlaxEnergyTiers: [
+        { rank: 'Basic 1', energy: 0 },
+        { rank: 'Great 1', energy: 23200 },
+        { rank: 'Ultra 1', energy: 84000 },
+        { rank: 'Master 1', energy: 257000 },
+        { rank: 'Master 5', energy: 532000 },
+        { rank: 'Master 10', energy: 1150000 },
+        { rank: 'Master 15', energy: 2490000 },
+        { rank: 'Master 20', energy: 4500000 }
+      ],
+      drowsyPowerSpawns: [
+        { count: 3, power: '0+' },
+        { count: 4, power: '1,150,000' },
+        { count: 5, power: '2,570,000' },
+        { count: 6, power: '5,620,000' },
+        { count: 7, power: '10,400,000' },
+        { count: 8, power: '24,400,000' }
+      ],
+      spawns: {
+        dozing: [
+          { name: '可達鴨', name_en: 'Psyduck', type: '水', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '哥達鴨', name_en: 'Golduck', type: '水', s1: 'Great 2', s2: 'Ultra 2', s3: 'Master 3', s4: 'Master 7' },
+          { name: '呆呆獸', name_en: 'Slowpoke', type: '水', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '呆殼獸', name_en: 'Slowbro', type: '水', s1: 'Great 3', s2: 'Ultra 2', s3: 'Master 3', s4: 'Master 7' },
+          { name: '嘟嘟', name_en: 'Doduo', type: '飛行', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '嘟嘟利', name_en: 'Dodrio', type: '飛行', s1: 'Great 3', s2: 'Ultra 2', s3: 'Master 4', s4: 'Master 8' },
+          { name: '長翅鷗', name_en: 'Wingull', type: '水', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '大嘴鷗', name_en: 'Pelipper', type: '水', s1: 'Great 2', s2: 'Ultra 2', s3: 'Master 3', s4: 'Master 6' },
+          { name: '大食花', name_en: 'Victreebel', type: '草', s1: 'Ultra 1', s2: 'Master 2', s3: 'Master 6', s4: 'Master 11' }
+        ],
+        snoozing: [
+          { name: '皮卡丘', name_en: 'Pikachu', type: '電', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 2', s4: 'Master 2' },
+          { name: '水伊布', name_en: 'Vaporeon', type: '水', s1: 'Ultra 1', s2: 'Master 2', s3: 'Master 5', s4: 'Master 10' },
+          { name: '波克比', name_en: 'Togepi', type: '妖精', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '波克基古', name_en: 'Togetic', type: '妖精', s1: 'Great 2', s2: 'Ultra 2', s3: 'Master 3', s4: 'Master 7' },
+          { name: '波克基斯', name_en: 'Togekiss', type: '妖精', s1: 'Ultra 3', s2: 'Master 4', s3: 'Master 8', s4: 'Master 13' },
+          { name: '胖丁', name_en: 'Jigglypuff', type: '一般', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '胖可丁', name_en: 'Wigglytuff', type: '一般', s1: 'Great 3', s2: 'Ultra 2', s3: 'Master 3', s4: 'Master 7' },
+          { name: '皮寶寶', name_en: 'Cleffa', type: '妖精', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '花漾海獅', name_en: 'Brionne', type: '水', s1: 'Great 2', s2: 'Ultra 2', s3: 'Master 3', s4: 'Master 7' }
+        ],
+        slumbering: [
+          { name: '傑尼龜', name_en: 'Squirtle', type: '水', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '卡龜', name_en: 'Wartortle', type: '水', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '水箭龜', name_en: 'Blastoise', type: '水', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 6', s4: 'Master 11' },
+          { name: '小鋸鱷', name_en: 'Totodile', type: '水', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '藍鱷', name_en: 'Croconaw', type: '水', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '大力鱷', name_en: 'Feraligatr', type: '水', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 6', s4: 'Master 11' },
+          { name: '海豹球', name_en: 'Spheal', type: '冰', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '烏波', name_en: 'Wooper', type: '水', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '水君', name_en: 'Suicune', type: '水', s1: 'Master 2', s2: 'Master 6', s3: 'Master 12', s4: 'Master 19' },
+          { name: '小鍛匠', name_en: 'Tinkatink', type: '妖精', s1: 'Basic 2', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 3' }
+        ]
+      }
+    },
+    {
+      id: 'taupe',
+      name: '灰褐洞窟',
+      name_en: 'Taupe Hollow',
+      badgeColor: '#f97316',
+      unlockGoal: 70,
+      unlockGoalText: '登錄 70 種睡姿',
+      unlockGoalText_en: '70 Sleep Styles',
+      snorlaxMultiplier: '1.55x',
+      berriesMode: 'fixed',
+      favoriteBerries: ['蘋野果', '勿花果', '文柚果'],
+      favoriteTypes: ['火', '地面', '岩石'],
+      hasExpertMode: false,
+      snorlaxEnergyTiers: [
+        { rank: 'Basic 1', energy: 0 },
+        { rank: 'Great 1', energy: 28800 },
+        { rank: 'Ultra 1', energy: 104000 },
+        { rank: 'Master 1', energy: 355000 },
+        { rank: 'Master 5', energy: 735000 },
+        { rank: 'Master 10', energy: 1590000 },
+        { rank: 'Master 15', energy: 3450000 },
+        { rank: 'Master 20', energy: 6200000 }
+      ],
+      drowsyPowerSpawns: [
+        { count: 3, power: '0+' },
+        { count: 4, power: '1,430,000' },
+        { count: 5, power: '3,190,000' },
+        { count: 6, power: '6,980,000' },
+        { count: 7, power: '12,900,000' },
+        { count: 8, power: '30,200,000' }
+      ],
+      spawns: {
+        dozing: [
+          { name: '鬼斯', name_en: 'Gastly', type: '幽靈', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '鬼斯通', name_en: 'Haunter', type: '幽靈', s1: 'Great 2', s2: 'Ultra 2', s3: 'Master 2', s4: 'Master 6' },
+          { name: '耿鬼', name_en: 'Gengar', type: '幽靈', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '阿柏蛇', name_en: 'Ekans', type: '毒', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '阿柏怪', name_en: 'Arbok', type: '毒', s1: 'Great 2', s2: 'Ultra 1', s3: 'Master 3', s4: 'Master 6' },
+          { name: '卡拉卡拉', name_en: 'Cubone', type: '地面', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '嘎啦嘎啦', name_en: 'Marowak', type: '地面', s1: 'Great 2', s2: 'Ultra 2', s3: 'Master 3', s4: 'Master 7' },
+          { name: '勾魂眼', name_en: 'Sableye', type: '惡', s1: 'Basic 2', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 3' }
+        ],
+        snoozing: [
+          { name: '火球鼠', name_en: 'Cyndaquil', type: '火', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '火岩鼠', name_en: 'Quilava', type: '火', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '火暴獸', name_en: 'Typhlosion', type: '火', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 6', s4: 'Master 11' },
+          { name: '卡蒂狗', name_en: 'Growlithe', type: '火', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '風速狗', name_en: 'Arcanine', type: '火', s1: 'Ultra 1', s2: 'Master 2', s3: 'Master 5', s4: 'Master 9' },
+          { name: '六尾', name_en: 'Vulpix', type: '火', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '戴魯比', name_en: 'Houndour', type: '惡', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '炎帝', name_en: 'Entei', type: '火', s1: 'Master 2', s2: 'Master 6', s3: 'Master 12', s4: 'Master 19' }
+        ],
+        slumbering: [
+          { name: '小火龍', name_en: 'Charmander', type: '火', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '火恐龍', name_en: 'Charmeleon', type: '火', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '噴火龍', name_en: 'Charizard', type: '火', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 6', s4: 'Master 11' },
+          { name: '地鼠', name_en: 'Diglett', type: '地面', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '三地鼠', name_en: 'Dugtrio', type: '地面', s1: 'Great 2', s2: 'Ultra 1', s3: 'Master 3', s4: 'Master 6' },
+          { name: '小拳石', name_en: 'Geodude', type: '岩石', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '隆隆石', name_en: 'Graveler', type: '岩石', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '大岩蛇', name_en: 'Onix', type: '岩石', s1: 'Great 3', s2: 'Ultra 2', s3: 'Master 4', s4: 'Master 9' },
+          { name: '幼基拉斯', name_en: 'Larvitar', type: '岩石', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 2', s4: 'Master 2' },
+          { name: '炭小侍', name_en: 'Charcadet', type: '火', s1: 'Basic 2', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 3' }
+        ]
+      }
+    },
+    {
+      id: 'snowdrop',
+      name: '白花雪原',
+      name_en: 'Snowdrop Tundra',
+      badgeColor: '#38bdf8',
+      unlockGoal: 150,
+      unlockGoalText: '登錄 150 種睡姿',
+      unlockGoalText_en: '150 Sleep Styles',
+      snorlaxMultiplier: '2.0x',
+      berriesMode: 'fixed',
+      favoriteBerries: ['柿仔果', '生薑果', '芭拉果'],
+      favoriteTypes: ['一般', '冰', '惡'],
+      hasExpertMode: false,
+      snorlaxEnergyTiers: [
+        { rank: 'Basic 1', energy: 0 },
+        { rank: 'Great 1', energy: 37000 },
+        { rank: 'Ultra 1', energy: 134000 },
+        { rank: 'Master 1', energy: 490000 },
+        { rank: 'Master 5', energy: 1020000 },
+        { rank: 'Master 10', energy: 2210000 },
+        { rank: 'Master 15', energy: 4800000 },
+        { rank: 'Master 20', energy: 8500000 }
+      ],
+      drowsyPowerSpawns: [
+        { count: 3, power: '0+' },
+        { count: 4, power: '1,840,000' },
+        { count: 5, power: '4,120,000' },
+        { count: 6, power: '9,000,000' },
+        { count: 7, power: '16,640,000' },
+        { count: 8, power: '39,000,000' }
+      ],
+      spawns: {
+        dozing: [
+          { name: '阿勃梭魯', name_en: 'Absol', type: '惡', s1: 'Basic 2', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 4' },
+          { name: '青綿鳥', name_en: 'Swablu', type: '飛行', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '七夕青鳥', name_en: 'Altaria', type: '龍', s1: 'Great 3', s2: 'Ultra 2', s3: 'Master 3', s4: 'Master 8' },
+          { name: '瑪狃拉', name_en: 'Weavile', type: '惡', s1: 'Ultra 2', s2: 'Master 2', s3: 'Master 6', s4: 'Master 10' }
+        ],
+        snoozing: [
+          { name: '月亮伊布', name_en: 'Umbreon', type: '惡', s1: 'Ultra 1', s2: 'Master 2', s3: 'Master 5', s4: 'Master 10' },
+          { name: '冰伊布', name_en: 'Glaceon', type: '冰', s1: 'Ultra 1', s2: 'Master 2', s3: 'Master 5', s4: 'Master 10' },
+          { name: '小山豬', name_en: 'Swinub', type: '冰', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '長毛豬', name_en: 'Piloswine', type: '冰', s1: 'Great 2', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 6' },
+          { name: '象牙豬', name_en: 'Mamoswine', type: '冰', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '信使鳥', name_en: 'Delibird', type: '飛行', s1: 'Basic 2', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 4' },
+          { name: '大舌頭', name_en: 'Lickitung', type: '一般', s1: 'Basic 2', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 3' },
+          { name: '百變怪', name_en: 'Ditto', type: '一般', s1: 'Basic 2', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 4' }
+        ],
+        slumbering: [
+          { name: '海豹球', name_en: 'Spheal', type: '冰', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '海魔獅', name_en: 'Sealeo', type: '冰', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '帝牙海獅', name_en: 'Walrein', type: '冰', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 6', s4: 'Master 11' },
+          { name: '過動猿', name_en: 'Vigoroth', type: '一般', s1: 'Great 2', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 6' },
+          { name: '請假王', name_en: 'Slaking', type: '一般', s1: 'Ultra 3', s2: 'Master 4', s3: 'Master 8', s4: 'Master 13' },
+          { name: '拉普拉斯', name_en: 'Lapras', type: '水', s1: 'Basic 2', s2: 'Great 3', s3: 'Ultra 3', s4: 'Master 6' },
+          { name: '雪童子', name_en: 'Snorunt', type: '冰', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' }
+        ]
+      }
+    },
+    {
+      id: 'lapis',
+      name: '拉碧絲湖畔',
+      name_en: 'Lapis Lakeside',
+      badgeColor: '#10b981',
+      unlockGoal: 240,
+      unlockGoalText: '登錄 240 種睡姿',
+      unlockGoalText_en: '240 Sleep Styles',
+      snorlaxMultiplier: '2.65x',
+      berriesMode: 'fixed',
+      favoriteBerries: ['榴石果', '櫻子果', '芒念果'],
+      favoriteTypes: ['草', '格鬥', '超能'],
+      hasExpertMode: false,
+      snorlaxEnergyTiers: [
+        { rank: 'Basic 1', energy: 0 },
+        { rank: 'Great 1', energy: 49000 },
+        { rank: 'Ultra 1', energy: 178000 },
+        { rank: 'Master 1', energy: 650000 },
+        { rank: 'Master 5', energy: 1350000 },
+        { rank: 'Master 10', energy: 2930000 },
+        { rank: 'Master 15', energy: 6360000 },
+        { rank: 'Master 20', energy: 11300000 }
+      ],
+      drowsyPowerSpawns: [
+        { count: 3, power: '0+' },
+        { count: 4, power: '2,440,000' },
+        { count: 5, power: '5,460,000' },
+        { count: 6, power: '11,920,000' },
+        { count: 7, power: '22,040,000' },
+        { count: 8, power: '51,670,000' }
+      ],
+      spawns: {
+        dozing: [
+          { name: '猴怪', name_en: 'Mankey', type: '格鬥', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '火爆猴', name_en: 'Primeape', type: '格鬥', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '棄世猴', name_en: 'Annihilape', type: '格鬥', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '拉魯拉絲', name_en: 'Ralts', type: '超能', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '奇魯莉安', name_en: 'Kirlia', type: '超能', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '艾路雷朵', name_en: 'Gallade', type: '超能', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '夢妖', name_en: 'Misdreavus', type: '幽靈', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '不良蛙', name_en: 'Croagunk', type: '毒', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' }
+        ],
+        snoozing: [
+          { name: '菊草葉', name_en: 'Chikorita', type: '草', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '月桂葉', name_en: 'Bayleef', type: '草', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '大竺葵', name_en: 'Meganium', type: '草', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 6', s4: 'Master 11' },
+          { name: '太陽伊布', name_en: 'Espeon', type: '超能', s1: 'Ultra 1', s2: 'Master 2', s3: 'Master 5', s4: 'Master 10' },
+          { name: '仙子伊布', name_en: 'Sylveon', type: '妖精', s1: 'Ultra 1', s2: 'Master 2', s3: 'Master 5', s4: 'Master 10' },
+          { name: '長尾怪手', name_en: 'Aipom', type: '一般', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '雷公', name_en: 'Raikou', type: '電', s1: 'Master 2', s2: 'Master 6', s3: 'Master 12', s4: 'Master 19' }
+        ],
+        slumbering: [
+          { name: '迷你龍', name_en: 'Dratini', type: '龍', s1: 'Basic 1', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 3' },
+          { name: '哈克龍', name_en: 'Dragonair', type: '龍', s1: 'Great 3', s2: 'Ultra 2', s3: 'Master 4', s4: 'Master 8' },
+          { name: '快龍', name_en: 'Dragonite', type: '龍', s1: 'Ultra 3', s2: 'Master 5', s3: 'Master 10', s4: 'Master 16' },
+          { name: '童偶熊', name_en: 'Stufful', type: '一般', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '穿著熊', name_en: 'Bewear', type: '一般', s1: 'Great 2', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 6' },
+          { name: '利歐路', name_en: 'Riolu', type: '格鬥', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 2' },
+          { name: '路卡利歐', name_en: 'Lucario', type: '格鬥', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '沙奈朵', name_en: 'Gardevoir', type: '超能', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' }
+        ]
+      }
+    },
+    {
+      id: 'powerplant',
+      name: '黃金舊發電廠',
+      name_en: 'Old Gold Power Plant',
+      badgeColor: '#a855f7',
+      unlockGoal: 340,
+      unlockGoalText: '登錄 340 種睡姿',
+      unlockGoalText_en: '340 Sleep Styles',
+      snorlaxMultiplier: '3.4x',
+      berriesMode: 'fixed',
+      favoriteBerries: ['異奇果', '檬果', '靛莓果'],
+      favoriteTypes: ['電', '幽靈', '鋼'],
+      hasExpertMode: false,
+      snorlaxEnergyTiers: [
+        { rank: 'Basic 1', energy: 0 },
+        { rank: 'Great 1', energy: 63000 },
+        { rank: 'Ultra 1', energy: 228000 },
+        { rank: 'Master 1', energy: 850000 },
+        { rank: 'Master 5', energy: 1760000 },
+        { rank: 'Master 10', energy: 3820000 },
+        { rank: 'Master 15', energy: 8300000 },
+        { rank: 'Master 20', energy: 14800000 }
+      ],
+      drowsyPowerSpawns: [
+        { count: 3, power: '0+' },
+        { count: 4, power: '3,130,000' },
+        { count: 5, power: '7,000,000' },
+        { count: 6, power: '15,300,000' },
+        { count: 7, power: '28,290,000' },
+        { count: 8, power: '66,300,000' }
+      ],
+      spawns: {
+        dozing: [
+          { name: '強顎雞母蟲', name_en: 'Grubbin', type: '蟲', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '蟲電寶', name_en: 'Charjabug', type: '蟲', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '鍬農炮蟲', name_en: 'Vikavolt', type: '蟲', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '鬼斯通', name_en: 'Haunter', type: '幽靈', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '耿鬼', name_en: 'Gengar', type: '幽靈', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '隨風球', name_en: 'Drifblim', type: '幽靈', s1: 'Great 2', s2: 'Ultra 2', s3: 'Master 3', s4: 'Master 7' },
+          { name: '黑魯加', name_en: 'Houndoom', type: '惡', s1: 'Great 2', s2: 'Ultra 2', s3: 'Master 3', s4: 'Master 7' }
+        ],
+        snoozing: [
+          { name: '小貓怪', name_en: 'Shinx', type: '電', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '勒克貓', name_en: 'Luxio', type: '電', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '倫琴貓', name_en: 'Luxray', type: '電', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '咚咚鼠', name_en: 'Dedenne', type: '電', s1: 'Basic 2', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 3' },
+          { name: '電飛鼠', name_en: 'Emolga', type: '電', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '洛托姆', name_en: 'Rotom', type: '電', s1: 'Great 2', s2: 'Ultra 2', s3: 'Master 4', s4: 'Master 9' },
+          { name: '雷伊布', name_en: 'Jolteon', type: '電', s1: 'Ultra 1', s2: 'Master 2', s3: 'Master 5', s4: 'Master 10' },
+          { name: '雷丘', name_en: 'Raichu', type: '電', s1: 'Great 3', s2: 'Ultra 2', s3: 'Master 3', s4: 'Master 8' }
+        ],
+        slumbering: [
+          { name: '可可多拉', name_en: 'Aron', type: '鋼', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '可多拉', name_en: 'Lairon', type: '鋼', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '波士可多拉', name_en: 'Aggron', type: '鋼', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '小磁怪', name_en: 'Magnemite', type: '電', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '三合一磁怪', name_en: 'Magneton', type: '電', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '自爆磁怪', name_en: 'Magnezone', type: '電', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '齒輪兒', name_en: 'Klink', type: '鋼', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' }
+        ]
+      }
+    },
+    {
+      id: 'amber',
+      name: '琥褐溪谷',
+      name_en: 'Amber Canyon',
+      badgeColor: '#d97706',
+      unlockGoal: 450,
+      unlockGoalText: '登錄 450 種睡姿',
+      unlockGoalText_en: '450 Sleep Styles',
+      snorlaxMultiplier: '4.2x',
+      berriesMode: 'fixed',
+      favoriteBerries: ['零餘果', '木子果', '巧可果'],
+      favoriteTypes: ['毒', '蟲', '龍'],
+      hasExpertMode: false,
+      snorlaxEnergyTiers: [
+        { rank: 'Basic 1', energy: 0 },
+        { rank: 'Great 1', energy: 78000 },
+        { rank: 'Ultra 1', energy: 282000 },
+        { rank: 'Master 1', energy: 1100000 },
+        { rank: 'Master 5', energy: 2280000 },
+        { rank: 'Master 10', energy: 4950000 },
+        { rank: 'Master 15', energy: 10760000 },
+        { rank: 'Master 20', energy: 19200000 }
+      ],
+      drowsyPowerSpawns: [
+        { count: 3, power: '0+' },
+        { count: 4, power: '3,860,000' },
+        { count: 5, power: '8,650,000' },
+        { count: 6, power: '18,900,000' },
+        { count: 7, power: '34,940,000' },
+        { count: 8, power: '81,900,000' }
+      ],
+      spawns: {
+        dozing: [
+          { name: '百足蜈蚣', name_en: 'Venipede', type: '毒', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '車輪毬', name_en: 'Whirlipede', type: '毒', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '蜈蚣王', name_en: 'Scolipede', type: '毒', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '毒藻龍', name_en: 'Dragalge', type: '毒', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '超音蝠', name_en: 'Zubat', type: '毒', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '大嘴蝠', name_en: 'Golbat', type: '毒', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '叉字蝠', name_en: 'Crobat', type: '毒', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '不良蛙', name_en: 'Croagunk', type: '毒', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' }
+        ],
+        snoozing: [
+          { name: '凱羅斯', name_en: 'Pinsir', type: '蟲', s1: 'Basic 2', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 3' },
+          { name: '赫拉克羅斯', name_en: 'Heracross', type: '蟲', s1: 'Basic 2', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 3' },
+          { name: '蟲寶包', name_en: 'Sewaddle', type: '蟲', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '寶包繭', name_en: 'Swadloon', type: '蟲', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '保姆蟲', name_en: 'Leavanny', type: '蟲', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '大顎蟻', name_en: 'Trapinch', type: '地面', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '沙漠蜻蜓', name_en: 'Flygon', type: '地面', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '音波龍', name_en: 'Noivern', type: '飛行', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' }
+        ],
+        slumbering: [
+          { name: '幼基拉斯', name_en: 'Larvitar', type: '岩石', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '班基拉斯', name_en: 'Tyranitar', type: '岩石', s1: 'Ultra 3', s2: 'Master 5', s3: 'Master 10', s4: 'Master 16' },
+          { name: '墨海馬', name_en: 'Horsea', type: '水', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '海刺龍', name_en: 'Seadra', type: '水', s1: 'Great 1', s2: 'Ultra 1', s3: 'Master 2', s4: 'Master 5' },
+          { name: '刺龍王', name_en: 'Kingdra', type: '水', s1: 'Ultra 2', s2: 'Master 3', s3: 'Master 7', s4: 'Master 12' },
+          { name: '多龍梅西亞', name_en: 'Dreepy', type: '龍', s1: 'Basic 1', s2: 'Great 2', s3: 'Ultra 2', s4: 'Master 3' },
+          { name: '多龍奇', name_en: 'Drakloak', type: '龍', s1: 'Great 3', s2: 'Ultra 2', s3: 'Master 4', s4: 'Master 8' },
+          { name: '多龍巴魯托', name_en: 'Dragapult', type: '龍', s1: 'Ultra 3', s2: 'Master 5', s3: 'Master 10', s4: 'Master 16' },
+          { name: '太古羽蟲', name_en: 'Anorith', type: '岩石', s1: 'Basic 1', s2: 'Great 1', s3: 'Ultra 1', s4: 'Master 1' },
+          { name: '太古盔甲', name_en: 'Armaldo', type: '岩石', s1: 'Great 2', s2: 'Ultra 1', s3: 'Master 3', s4: 'Master 7' }
+        ]
+      }
+    }
+  ];
+
+  let currentIslandId = 'greengrass';
+  let isExpertModeActive = false;
+  let currentIslandSleepType = 'all';
+
+  function selectIsland(islandId) {
+    if (!islandId) return;
+    currentIslandId = islandId;
+    isExpertModeActive = false;
+    refreshIslandsSubpanel();
+  }
+
+  function toggleIslandExpertMode() {
+    const island = ISLANDS_DATA.find(i => i.id === currentIslandId);
+    if (!island || !island.hasExpertMode) return;
+    isExpertModeActive = !isExpertModeActive;
+    refreshIslandsSubpanel();
+  }
+
+  function filterIslandSleepType(sleepType) {
+    if (!['all', 'dozing', 'snoozing', 'slumbering'].includes(sleepType)) return;
+    currentIslandSleepType = sleepType;
+    refreshIslandsSubpanel();
+  }
+
+  function refreshIslandsSubpanel() {
+    const panel = document.getElementById('wiki-subpanel-islands');
+    if (panel) {
+      panel.innerHTML = renderIslandsSubpanel();
+    }
+  }
+
+  function renderIslandsSubpanel() {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const island = ISLANDS_DATA.find(i => i.id === currentIslandId) || ISLANDS_DATA[0];
+    const isExpert = island.hasExpertMode && isExpertModeActive;
+
+    const navPillsHtml = ISLANDS_DATA.map(isl => {
+      const isActive = isl.id === currentIslandId;
+      const islName = isEN ? isl.name_en : isl.name;
+      const goalText = isEN ? isl.unlockGoalText_en : isl.unlockGoalText;
+      const exBadge = isl.hasExpertMode ? '<span class="island-pill-ex-tag">EX</span>' : '';
+      return `
+        <button type="button" class="island-pill-btn ${isActive ? 'active' : ''}" onclick="window.WikiDB.selectIsland('${isl.id}')">
+          <span class="island-pill-dot" style="background:${isl.badgeColor};"></span>
+          <span>${islName}</span>
+          <span class="text-muted text-xs">(${goalText})</span>
+          ${exBadge}
+        </button>
+      `;
+    }).join('');
+
+    let berriesHtml = '';
+    if (island.berriesMode === 'random') {
+      berriesHtml = `
+        <div class="island-berries-section">
+          <span class="island-berries-label">${isEN ? 'Favored Berries:' : '卡比獸喜好樹果:'}</span>
+          <span class="text-secondary text-sm">${isEN ? island.berriesDesc_en : island.berriesDesc}</span>
+        </div>
+      `;
+    } else {
+      const berryChips = island.favoriteBerries.map(bName => {
+        const bInfo = BERRY_VALUES_DATA.find(b => b.name === bName);
+        const displayName = isEN ? (window.I18N && window.I18N.t(bName) || bName) : bName;
+        const iconSrc = bInfo ? bInfo.icon : '';
+        const rawType = bInfo ? bInfo.type : '';
+        const typeLabel = isEN ? (window.I18N && window.I18N.getTypeName ? window.I18N.getTypeName(rawType) : rawType) : rawType;
+        return `
+          <div class="island-berry-chip">
+            ${iconSrc ? `<img src="${iconSrc}" class="island-berry-icon" alt="${displayName}" loading="lazy">` : ''}
+            <span class="island-berry-name">${displayName}</span>
+            <span class="island-info-chip">${typeLabel}</span>
+          </div>
+        `;
+      }).join('');
+      berriesHtml = `
+        <div class="island-berries-section">
+          <span class="island-berries-label">${isEN ? 'Favored Berries:' : '卡比獸喜好樹果:'}</span>
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">${berryChips}</div>
+        </div>
+      `;
+    }
+
+    let expertCardHtml = '';
+    if (island.hasExpertMode && isExpert) {
+      const exp = island.expertMode;
+      expertCardHtml = `
+        <div class="wiki-card island-ex-card">
+          <div class="island-ex-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="island-ex-badge">EX EXPERT MODE</span>
+              <h4 style="margin:0; font-size:15px; color:#facc15; font-weight:700;">${isEN ? exp.name_en : exp.name}</h4>
+            </div>
+            <button type="button" class="island-btn-ex-toggle active" onclick="window.WikiDB.toggleIslandExpertMode()">
+              ${isEN ? 'Exit EX Mode' : '退出 EX 模式'}
+            </button>
+          </div>
+          <div class="island-ex-rules-grid">
+            <div class="island-ex-rule-item">
+              <div class="island-ex-rule-title">${isEN ? 'Unlock Requirement:' : '開放條件:'}</div>
+              <div class="island-ex-rule-desc">${isEN ? exp.unlockReq_en : exp.unlockReq}</div>
+            </div>
+            <div class="island-ex-rule-item">
+              <div class="island-ex-rule-title">${isEN ? 'Admission Ticket:' : '入場門票:'}</div>
+              <div class="island-ex-rule-desc">${isEN ? exp.ticketReq_en : exp.ticketReq}</div>
+            </div>
+            <div class="island-ex-rule-item">
+              <div class="island-ex-rule-title">${isEN ? 'Berry Rule:' : '樹果規則:'}</div>
+              <div class="island-ex-rule-desc">${isEN ? exp.berryRule_en : exp.berryRule}</div>
+            </div>
+            <div class="island-ex-rule-item">
+              <div class="island-ex-rule-title">${isEN ? 'Primary Berry Bonus:' : '主樹果加成:'}</div>
+              <div class="island-ex-rule-desc text-success">${isEN ? exp.bonus_en : exp.bonus}</div>
+            </div>
+            <div class="island-ex-rule-item">
+              <div class="island-ex-rule-title">${isEN ? 'Non-Favored Berry Penalty:' : '非指定樹果懲罰:'}</div>
+              <div class="island-ex-rule-desc text-danger">${isEN ? exp.penalty_en : exp.penalty}</div>
+            </div>
+            <div class="island-ex-rule-item">
+              <div class="island-ex-rule-title">${isEN ? 'Area Bonus & Rewards:' : '營地加成與報酬:'}</div>
+              <div class="island-ex-rule-desc text-accent">${isEN ? exp.rewards_en : exp.rewards}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    const energyRows = island.snorlaxEnergyTiers.map(t => `
+      <tr>
+        <td class="font-bold" style="vertical-align:middle;"><span class="milestone-badge milestone-cyan">${t.rank}</span></td>
+        <td class="font-bold text-accent" style="vertical-align:middle;">${t.energy.toLocaleString()}</td>
+      </tr>
+    `).join('');
+
+    const drowsyRows = island.drowsyPowerSpawns.map(d => `
+      <tr>
+        <td class="font-bold text-success" style="vertical-align:middle;">${d.count} ${isEN ? 'Pokemon' : '隻'}</td>
+        <td class="font-bold" style="vertical-align:middle;">${d.power}</td>
+      </tr>
+    `).join('');
+
+    let spawnList = [];
+    if (currentIslandSleepType === 'all') {
+      spawnList = [...island.spawns.dozing, ...island.spawns.snoozing, ...island.spawns.slumbering];
+    } else {
+      spawnList = island.spawns[currentIslandSleepType] || [];
+    }
+
+    const spawnsRows = spawnList.map(p => {
+      const pName = isEN ? p.name_en : p.name;
+      const typeLabel = isEN ? (window.I18N && window.I18N.getTypeName ? window.I18N.getTypeName(p.type) : p.type) : p.type;
+      return `
+        <tr>
+          <td class="font-bold" style="vertical-align:middle; white-space:nowrap;">
+            ${pName}
+          </td>
+          <td style="vertical-align:middle; white-space:nowrap;">
+            <span class="island-info-chip">${typeLabel}</span>
+          </td>
+          <td style="vertical-align:middle;"><span class="island-star-chip star-s1">1*: ${p.s1}</span></td>
+          <td style="vertical-align:middle;"><span class="island-star-chip star-s2">2*: ${p.s2}</span></td>
+          <td style="vertical-align:middle;"><span class="island-star-chip star-s3">3*: ${p.s3}</span></td>
+          <td style="vertical-align:middle;"><span class="island-star-chip star-s4">4*: ${p.s4}</span></td>
+        </tr>
+      `;
+    }).join('');
+
+    return `
+      <div class="wiki-section-heading">
+        <h2 class="wiki-section-title">${isEN ? 'Research Camps & EX Expert Mode Guide' : '7大研究營地與EX專家模式全覽'}</h2>
+        <span class="wiki-section-subtitle">${isEN ? 'Explore 7 islands, EX Expert challenges, berry preferences, Snorlax ranks, and sleep style tiers.' : '探索7大研究島嶼, EX專家挑戰模式, 固定喜愛樹果, 卡比獸評級門檻與睡姿星級解鎖機制.'}</span>
+      </div>
+
+      <div class="island-nav-strip">
+        ${navPillsHtml}
+      </div>
+
+      <div class="wiki-card island-overview-card">
+        <div class="island-overview-header">
+          <div class="island-title-group">
+            <h3 class="island-title-main" style="color:${island.badgeColor};">${isEN ? island.name_en : island.name}</h3>
+            <span class="island-title-en">${isEN ? island.name : island.name_en}</span>
+          </div>
+          <div class="island-badges-group">
+            <span class="island-info-chip island-chip-accent">${isEN ? 'Unlock:' : '解鎖目標:'} ${isEN ? island.unlockGoalText_en : island.unlockGoalText}</span>
+            <span class="island-info-chip">${isEN ? 'Snorlax Multiplier:' : '卡比獸難度:'} ${island.snorlaxMultiplier}</span>
+            ${island.hasExpertMode ? `
+              <button type="button" class="island-btn-ex-toggle ${isExpert ? 'active' : ''}" onclick="window.WikiDB.toggleIslandExpertMode()">
+                ${isExpert ? (isEN ? 'EX Mode Active' : 'EX 模式啟用中') : (isEN ? 'Switch to EX Mode' : '切換 EX 專家模式')}
+              </button>
+            ` : ''}
+          </div>
+        </div>
+        ${berriesHtml}
+      </div>
+
+      ${expertCardHtml}
+
+      <div class="wiki-two-col-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px; margin-bottom:16px;">
+        <div class="wiki-card">
+          <div class="wiki-card-header">
+            <h3 class="wiki-card-title">${isEN ? 'Snorlax Rank Energy Progression' : '卡比獸評級所需能量'}</h3>
+          </div>
+          <div class="wiki-table-wrapper" style="margin-top:8px;">
+            <table class="wiki-data-table">
+              <thead>
+                <tr>
+                  <th style="width:45%;">${isEN ? 'Rank' : '卡比獸評級'}</th>
+                  <th style="width:55%;">${isEN ? 'Required Energy' : '所需能量 (累計)'}</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${energyRows}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="wiki-card">
+          <div class="wiki-card-header">
+            <h3 class="wiki-card-title">${isEN ? 'Drowsy Power Spawn Tiers' : '睡意之力與出現隻數門檻'}</h3>
+          </div>
+          <div class="wiki-table-wrapper" style="margin-top:8px;">
+            <table class="wiki-data-table">
+              <thead>
+                <tr>
+                  <th style="width:45%;">${isEN ? 'Morning Spawns' : '早晨出現隻數'}</th>
+                  <th style="width:55%;">${isEN ? 'Min Drowsy Power' : '最低睡意之力門檻'}</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${drowsyRows}
+                <tr>
+                  <td class="font-bold text-accent" style="vertical-align:middle;">+1 (9 ${isEN ? 'Pokemon' : '隻'})</td>
+                  <td class="text-secondary" style="vertical-align:middle;">${isEN ? 'Good Camp Ticket guarantee' : '使用好露營券 (必出1隻貪吃)'}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="wiki-card" style="margin-bottom:16px;">
+        <div class="wiki-card-header" style="flex-wrap:wrap; gap:12px;">
+          <h3 class="wiki-card-title">${isEN ? 'Pokemon Sleep Types & Posture Unlock Tiers' : '棲息寶可夢與各星級睡姿解鎖門檻'}</h3>
+          <div class="island-sleep-filters">
+            <button type="button" class="island-sleep-btn ${currentIslandSleepType === 'all' ? 'active' : ''}" onclick="window.WikiDB.filterIslandSleepType('all')">${isEN ? 'All Types' : '全部睡眠類型'}</button>
+            <button type="button" class="island-sleep-btn ${currentIslandSleepType === 'dozing' ? 'active' : ''}" onclick="window.WikiDB.filterIslandSleepType('dozing')">${isEN ? 'Dozing' : '淺淺入夢'}</button>
+            <button type="button" class="island-sleep-btn ${currentIslandSleepType === 'snoozing' ? 'active' : ''}" onclick="window.WikiDB.filterIslandSleepType('snoozing')">${isEN ? 'Snoozing' : '安然入睡'}</button>
+            <button type="button" class="island-sleep-btn ${currentIslandSleepType === 'slumbering' ? 'active' : ''}" onclick="window.WikiDB.filterIslandSleepType('slumbering')">${isEN ? 'Slumbering' : '深深入眠'}</button>
+          </div>
+        </div>
+        <div class="wiki-table-wrapper" style="margin-top:8px;">
+          <table class="wiki-data-table">
+            <thead>
+              <tr>
+                <th style="width:20%;">${isEN ? 'Pokemon' : '寶可夢'}</th>
+                <th style="width:16%;">${isEN ? 'Type' : '屬性'}</th>
+                <th style="width:16%;">${isEN ? '1* Posture' : '1* 地面睡姿'}</th>
+                <th style="width:16%;">${isEN ? '2* Posture' : '2* 放鬆睡姿'}</th>
+                <th style="width:16%;">${isEN ? '3* Posture' : '3* 稀有睡姿'}</th>
+                <th style="width:16%;">${isEN ? '4* Posture' : '4* 肚皮上睡'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${spawnsRows}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="wiki-card wiki-card-ribbon-guide">
+        <div class="wiki-card-header">
+          <h3 class="wiki-card-title">${isEN ? 'Drowsy Power & Sleep Style Mechanics Guide' : '睡意之力與睡姿解鎖核心規則指南'}</h3>
+        </div>
+        <div class="wiki-rule-banner">
+          ${isEN
+            ? '<strong>Formula</strong>: <code>Drowsy Power = Snorlax Strength * Sleep Score (0 ~ 100)</code>'
+            : '<strong>核心公式</strong>: <code>睡意之力 = 卡比獸能量 * 睡眠分數 (0 ~ 100)</code>'}
+        </div>
+        <div class="wiki-strategy-grid" style="margin-top:14px;">
+          <div class="strategy-item strategy-early">
+            <div class="strategy-header">
+              <span class="strategy-badge badge-early">${isEN ? 'Point 1' : '要點 1'}</span>
+              <strong class="text-primary">${isEN ? 'Snorlax Rank Requirement:' : '卡比獸評價為解鎖前提:'}</strong>
+            </div>
+            <div class="strategy-desc">
+              ${isEN
+                ? 'High-tier evolutions and 3*/4* sleep styles require both sufficient Snorlax Rank (e.g. Master 1+) and high Drowsy Power.'
+                : '高階進化形態與3*/4*睡姿需要卡比獸評價達標 (如大師1以上) 且睡意之力充足, 才會加入早晨研究抽取池.'}
+            </div>
+          </div>
+          <div class="strategy-item strategy-late">
+            <div class="strategy-header">
+              <span class="strategy-badge badge-late">${isEN ? 'Point 2' : '要點 2'}</span>
+              <strong class="text-primary">${isEN ? 'Star Tier Hierarchy:' : '睡姿星級階層規律:'}</strong>
+            </div>
+            <div class="strategy-desc">
+              ${isEN
+                ? '1* Ground sleep unlocks early (Basic/Great); 2* Curled sleep unlocks mid (Great/Ultra); 3* Rare/Inverted sleep requires Ultra 3+ to Master; 4* Atop-Belly sleep requires Master rank.'
+                : '1*地面睡姿最易解鎖; 2*放鬆睡姿於超級/高級解鎖; 3*稀有/倒立睡姿需高級3以上至大師級; 4*卡比獸肚皮上睡姿幾乎全物種皆限定大師級解鎖.'}
+            </div>
+          </div>
+          <div class="strategy-item strategy-energy">
+            <div class="strategy-header">
+              <span class="strategy-badge badge-energy">${isEN ? 'Point 3' : '要點 3'}</span>
+              <strong class="text-primary">${isEN ? 'Sleep Session Strategy:' : '睡眠分段與單次長睡策略:'}</strong>
+            </div>
+            <div class="strategy-desc">
+              ${isEN
+                ? 'Splitting sleep into two sessions divides daily Snorlax strength, lowering single-session Drowsy Power. A single full 8.5-hour sleep is strongly recommended to target rare 3*/4* postures.'
+                : '分兩次睡會將卡比獸能量拆分, 導致單次睡意之力較低, 不利於沖刺3*/4*稀有睡姿. 欲解鎖肚皮睡與高階圖鑑, 強烈建議維持單次8.5小時滿睡.'}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   // --- 初始化 Wiki 模組 ---
   function initWikiModule() {
     loadPersistedBerrySettings();
@@ -14236,6 +15050,7 @@
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isMobileH5 ? (isEN ? 'Ladder' : '食材天梯') : (isEN ? 'Ingredient Yield Ladder' : '食材產量天梯榜')}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isMobileH5 ? (isEN ? 'Values' : '能量速查') : (isEN ? 'Berry & Ing. Values' : '樹果與食材能量')}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isMobileH5 ? (isEN ? 'Growth' : '培育指南') : (isEN ? 'Growth & Tier Guide' : '培育與評級指南')}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'islands' ? 'active' : ''}" data-subtab="islands" onclick="window.WikiDB.switchSubTab('islands')">${isMobileH5 ? (isEN ? 'Islands' : '島嶼營地') : (isEN ? 'Research Camps & EX' : '島嶼營地與EX模式')}</button>
           </div>
         </div>
 
@@ -14409,6 +15224,121 @@
                   `;}).join('')}
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          <!-- 睡飽飽獎章與幫忙速度加成指南 (Good-Night Ribbon Mechanics Guide) -->
+          <div class="wiki-card wiki-card-ribbon-guide" style="margin-top: 20px;">
+            <div class="wiki-card-header">
+              <h3 class="wiki-card-title">${isEN ? 'Good-Night Ribbon Mechanics Guide' : '睡飽飽獎章與幫忙速度加成指南'}</h3>
+            </div>
+
+            <!-- 睡飽飽獎章核心機制重點說明 -->
+            <div class="wiki-speed-summary-points">
+              <div class="summary-point-line">
+                <span class="point-prefix">1.</span>
+                <span class="point-title">${isEN ? 'Sleep Hours Accumulation:' : '睡眠時數累計:'}</span>
+                <span class="point-desc">${isEN ? 'Milestones at 200h, 500h, 1000h, 2000h. All carry limit and speed bonuses are cumulative.' : '達到 200h, 500h, 1000h, 2000h 四大門檻自動解鎖, 持有上限與速度效果採完全累加制.'}</span>
+              </div>
+              <div class="summary-point-line">
+                <span class="point-prefix">2.</span>
+                <span class="point-title">${isEN ? 'Unevolved Speed Bonus:' : '未進化速度加成:'}</span>
+                <span class="point-desc">${isEN ? 'Only Not Fully Evolved (NFE) Pokémon receive helping frequency reductions. Single-stage & fully evolved forms get 0% speed bonus.' : '僅限尚未完全進化的寶可夢享有幫忙間隔縮短; 無進化空間之單一型態與最終進化型為 0%.'}</span>
+              </div>
+              <div class="summary-point-line">
+                <span class="point-prefix">3.</span>
+                <span class="point-title">${isEN ? 'Dynamic Evolution Scaling:' : '進化動態轉移:'}</span>
+                <span class="point-desc">${isEN ? 'Upon evolution, sleep hours and carry bonuses persist, but speed boost dynamically recalculates based on remaining evolution count.' : '進化後累積時數與持有上限保留, 但幫速縮短會依新形態剩餘進化次數即時重新計算衰減.'}</span>
+              </div>
+              <div class="summary-point-line">
+                <span class="point-prefix">4.</span>
+                <span class="point-title">${isEN ? 'Independent Multiplier:' : '獨立相乘計算:'}</span>
+                <span class="point-desc">${isEN ? 'Formula: Base x (1 - Nature) x (1 - Subskills) x (1 - Ribbon). Uncapped by the 35% sub-skill ceiling.' : '計算式: 基礎間隔 x (1 - 性格) x (1 - 副技能) x (1 - 獎章縮短率), 不受副技能 35% 上限約束.'}</span>
+              </div>
+            </div>
+
+            <!-- 四大階段門檻與獎勵效果一覽表 -->
+            <div class="wiki-table-wrapper" style="margin-top: 10px;">
+              <table class="wiki-data-table">
+                <thead>
+                  <tr>
+                    <th style="text-align: center;">${isEN ? 'Ribbon Tier' : '獎章階段'}</th>
+                    <th style="text-align: center;">${isEN ? 'Sleep Hours' : '睡眠門檻'}</th>
+                    <th style="text-align: center;">${isEN ? 'Carry Limit' : '持有上限'}</th>
+                    <th style="text-align: center;">${isEN ? '1 Evo Remaining' : '能再進化 1 次'}</th>
+                    <th style="text-align: center;">${isEN ? '2 Evos Remaining' : '能再進化 2 次'}</th>
+                    <th class="col-hide-mobile" style="text-align: center;">${isEN ? 'Special Rewards' : '特殊獎勵'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="vertical-align: middle; text-align: center; font-weight: 700;">${isEN ? 'Tier 1' : '第 1 階段'}</td>
+                    <td style="vertical-align: middle; text-align: center;"><span class="text-accent font-bold">200 hrs</span></td>
+                    <td style="vertical-align: middle; text-align: center; color: #38bdf8; font-weight: 700;">+1</td>
+                    <td style="vertical-align: middle; text-align: center; color: #94a3b8;">-</td>
+                    <td style="vertical-align: middle; text-align: center; color: #94a3b8;">-</td>
+                    <td class="col-hide-mobile" style="vertical-align: middle; text-align: center; color: #94a3b8;">-</td>
+                  </tr>
+                  <tr>
+                    <td style="vertical-align: middle; text-align: center; font-weight: 700;">${isEN ? 'Tier 2' : '第 2 階段'}</td>
+                    <td style="vertical-align: middle; text-align: center;"><span class="text-accent font-bold">500 hrs</span></td>
+                    <td style="vertical-align: middle; text-align: center; color: #38bdf8; font-weight: 700;">+3 <span style="font-size: 11px; color: #64748b;">(+2)</span></td>
+                    <td style="vertical-align: middle; text-align: center; color: #10b981; font-weight: 700;">-5%</td>
+                    <td style="vertical-align: middle; text-align: center; color: #10b981; font-weight: 700;">-11%</td>
+                    <td class="col-hide-mobile" style="vertical-align: middle; text-align: center; color: #94a3b8;">-</td>
+                  </tr>
+                  <tr>
+                    <td style="vertical-align: middle; text-align: center; font-weight: 700;">${isEN ? 'Tier 3' : '第 3 階段'}</td>
+                    <td style="vertical-align: middle; text-align: center;"><span class="text-accent font-bold">1,000 hrs</span></td>
+                    <td style="vertical-align: middle; text-align: center; color: #38bdf8; font-weight: 700;">+6 <span style="font-size: 11px; color: #64748b;">(+3)</span></td>
+                    <td style="vertical-align: middle; text-align: center; color: #10b981; font-weight: 700;">-5%</td>
+                    <td style="vertical-align: middle; text-align: center; color: #10b981; font-weight: 700;">-11%</td>
+                    <td class="col-hide-mobile" style="vertical-align: middle; text-align: center; color: #eab308; font-weight: 600;">${isEN ? 'Special Profile Icon' : '解鎖專屬個人頭像'}</td>
+                  </tr>
+                  <tr>
+                    <td style="vertical-align: middle; text-align: center; font-weight: 700;">${isEN ? 'Tier 4' : '第 4 階段'}</td>
+                    <td style="vertical-align: middle; text-align: center;"><span class="text-accent font-bold">2,000 hrs</span></td>
+                    <td style="vertical-align: middle; text-align: center; color: #38bdf8; font-weight: 700;">+8 <span style="font-size: 11px; color: #64748b;">(+2)</span></td>
+                    <td style="vertical-align: middle; text-align: center; color: #38bdf8; font-weight: 700;">-12% <span style="font-size: 11px; color: #64748b;">(-7%)</span></td>
+                    <td style="vertical-align: middle; text-align: center; color: #38bdf8; font-weight: 700;">-25% <span style="font-size: 11px; color: #64748b;">(-14%)</span></td>
+                    <td class="col-hide-mobile" style="vertical-align: middle; text-align: center; color: #94a3b8;">-</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 生態經典案例分析 -->
+            <div class="wiki-strategy-grid" style="margin-top: 14px;">
+              <div class="strategy-item strategy-early">
+                <div class="strategy-header">
+                  <span class="strategy-badge badge-early">${isEN ? 'Case 1: Chansey vs Blissey' : '案例 1: 吉利蛋 vs 幸福蛋'}</span>
+                </div>
+                <div class="strategy-desc">
+                  ${isEN
+                    ? 'Chansey (1 evolution remaining, base 3,300s) reaches <strong>2,904s</strong> (-12%) at 2,000h, surpassing fully evolved Blissey (base 3,100s, 0% boost). Officially confirmed as intended game design.'
+                    : '吉利蛋(能再進化 1 次, 基礎 3300 秒)滿 2000 小時縮短 12% 間隔至 <strong>2904 秒</strong>, 反超最終型態幸福蛋(基礎 3100 秒, 0% 減免). 官方已公告確認此為預期設計.'}
+                </div>
+              </div>
+              <div class="strategy-item strategy-energy">
+                <div class="strategy-header">
+                  <span class="strategy-badge badge-energy">${isEN ? 'Case 2: Vigoroth vs Slaking' : '案例 2: 過動猿 vs 請假王'}</span>
+                </div>
+                <div class="strategy-desc">
+                  ${isEN
+                    ? 'Vigoroth (Berry specialist, base 3,100s) reaches <strong>2,728s</strong> at 2,000h (-12%), becoming an elite Normal-type berry powerhouse. Slaking evolves into Skill specialty with slower 3,800s base interval.'
+                    : '過動猿(樹果專長, 基礎 3100 秒)滿 2000 小時縮短 12% 至 <strong>2728 秒</strong>, 成為頂級普通屬性樹果爆發手; 請假王進化後轉為技能型, 基礎間隔拉長至 3800 秒.'}
+                </div>
+              </div>
+              <div class="strategy-item strategy-late">
+                <div class="strategy-header">
+                  <span class="strategy-badge badge-late">${isEN ? 'Case 3: Un-evolved Favorites' : '案例 3: 真愛黨與節慶限定'}</span>
+                </div>
+                <div class="strategy-desc">
+                  ${isEN
+                    ? 'Allows unevolved favorites (Pichu, Eevee) and non-evolving costume forms (Holiday/Halloween Pikachu) to bridge performance gaps with +8 carry capacity and up to 25% speed reductions.'
+                    : '賦予真愛未進化寶可夢(如皮丘, 伊布)與無法進化的節慶限定型態(佳節/萬聖皮卡丘)強大競爭力, 透過 +8 持有上限與最高 25% 速度縮短, 大幅拉近與最終型態實力差距.'}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -14604,6 +15534,11 @@
             </div>
           </div>
         </div>
+
+        <!-- 子分頁 6: 島嶼營地與EX專家模式 (Research Camps & EX Mode) -->
+        <div id="wiki-subpanel-islands" class="wiki-subpanel ${currentWikiSubTab === 'islands' ? 'active' : ''}" style="${currentWikiSubTab === 'islands' ? '' : 'display:none;'}">
+          ${renderIslandsSubpanel()}
+        </div>
       </div>
 
       <!-- 遮罩層 (Backdrop for Mobile Drawer - 阻斷點擊穿透) -->
@@ -14700,7 +15635,12 @@
     toggleSkillCard: toggleSkillCard,
     toggleSkillStepper: toggleSkillStepper,
     TOP_RECIPES_FOR_INGREDIENTS: TOP_RECIPES_FOR_INGREDIENTS,
-    getPokemonLadderSpecialty: getPokemonLadderSpecialty
+    getPokemonLadderSpecialty: getPokemonLadderSpecialty,
+    ISLANDS_DATA: ISLANDS_DATA,
+    selectIsland: selectIsland,
+    toggleIslandExpertMode: toggleIslandExpertMode,
+    filterIslandSleepType: filterIslandSleepType,
+    renderIslandsSubpanel: renderIslandsSubpanel
   };
 
   window.WikiDB = WikiDBExport;
@@ -14748,6 +15688,10 @@
   window.closeIngredientRankingModal = closeIngredientRankingModal;
   window.updateLadderActiveFilterBadge = updateLadderActiveFilterBadge;
   window.HELPING_SPEED_MATRIX = HELPING_SPEED_MATRIX;
+  window.selectIsland = selectIsland;
+  window.toggleIslandExpertMode = toggleIslandExpertMode;
+  window.filterIslandSleepType = filterIslandSleepType;
+  window.renderIslandsSubpanel = renderIslandsSubpanel;
 
   // 當 DOM 準備完成時自動初始化
   if (document.readyState === 'loading') {

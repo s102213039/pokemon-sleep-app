@@ -48,14 +48,61 @@
     100: 680000
   };
 
+  /* ─── 剩餘可進化次數判定與睡飽飽獎章加成 ───────────────────── */
+  const THREE_STAGE_BASE_NAMES = new Set([
+    '妙蛙種子', '小火龍', '傑尼龜', '綠毛蟲', '皮丘', '皮寶寶', '寶寶丁', '喇叭芽',
+    '小拳石', '鬼斯', '小磁怪', '小福蛋', '波克比', '咩利羊', '迷你龍', '菊草葉',
+    '火球鼠', '小鋸鱷', '幼基拉斯', '木守宮', '火稚雞', '水躍魚', '拉魯拉絲', '懶人獺',
+    '可可多拉', '大顎蟻', '海豹球', '寶貝龍', '草苗龜', '小火焰猴', '波加曼', '小貓怪',
+    '強顎雞母蟲', '新葉喵', '呆火鱷', '潤水鴨', '布撥', '小鍛匠',
+    'Bulbasaur', 'Charmander', 'Squirtle', 'Caterpie', 'Pichu', 'Cleffa', 'Igglybuff', 'Bellsprout',
+    'Geodude', 'Gastly', 'Magnemite', 'Happiny', 'Togepi', 'Mareep', 'Dratini', 'Chikorita',
+    'Cyndaquil', 'Totodile', 'Larvitar', 'Treecko', 'Torchic', 'Mudkip', 'Ralts', 'Slakoth',
+    'Aron', 'Trapinch', 'Spheal', 'Bagon', 'Turtwig', 'Chimchar', 'Piplup', 'Shinx',
+    'Grubbin', 'Sprigatito', 'Fuecoco', 'Quaxly', 'Pawmi', 'Tinkatink'
+  ]);
+
+  function getRemainingEvolutions(pkm) {
+    if (!pkm) return 0;
+    const isFinal = pkm.is_final === '〇' || pkm.is_final === 'O' || pkm.is_final === 'o' || pkm.is_final === true || pkm.is_final === '1';
+    if (isFinal) return 0;
+    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name;
+    if (THREE_STAGE_BASE_NAMES.has(name)) return 2;
+    return 1;
+  }
+
+  function getRibbonBonus(ribbonLevel, remainingEvolutions) {
+    const lvl = Math.min(Math.max(parseInt(ribbonLevel, 10) || 0, 0), 4);
+    let carry = 0;
+    let speedDiscount = 0;
+
+    if (lvl === 1) {
+      carry = 1;
+    } else if (lvl === 2) {
+      carry = 3;
+      if (remainingEvolutions === 1) speedDiscount = 0.05;
+      else if (remainingEvolutions === 2) speedDiscount = 0.11;
+    } else if (lvl === 3) {
+      carry = 6;
+      if (remainingEvolutions === 1) speedDiscount = 0.05;
+      else if (remainingEvolutions === 2) speedDiscount = 0.11;
+    } else if (lvl === 4) {
+      carry = 8;
+      if (remainingEvolutions === 1) speedDiscount = 0.12;
+      else if (remainingEvolutions === 2) speedDiscount = 0.25;
+    }
+    return { carry: carry, speedDiscount: speedDiscount, speed: speedDiscount, level: lvl };
+  }
+
   /* ─── 核心評估演算法 ───────────────────────────────────── */
-  function evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients) {
+  function evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel) {
     if (!pkmData) return null;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     currentLv = currentLv || 30;
     natureName = natureName || '坦率';
     subskills = subskills || [];
     ingredients = ingredients || [];
+    ribbonLevel = parseInt(ribbonLevel, 10) || 0;
 
     const specialty = pkmData.specialty || '樹果';
     const subskillArr = Array.isArray(subskills) ? subskills.map(function(s) { return typeof s === 'string' ? s : (s ? s.name : ''); }) : [];
@@ -120,9 +167,11 @@
 
     // 4. ⏱️ 幫忙速度 (Speed Power)
     let speedScore = 55;
+    let calculatedInterval = 0;
     if (pkmData.interval) {
       const parts = pkmData.interval.split(':');
       const totalSec = (+parts[0] * 3600) + (+parts[1] * 60) + (+parts[2] || 0);
+      calculatedInterval = totalSec;
       if (totalSec < 2400) speedScore += 15;
       else if (totalSec < 3000) speedScore += 8;
       else if (totalSec > 4000) speedScore -= 8;
@@ -132,6 +181,16 @@
     if (subskillArr.indexOf('幫手獎勵') !== -1) speedScore += 8;
     if (nature.buffType === 'speed') speedScore += 10;
     if (nature.debuffType === 'speed') speedScore -= 8;
+
+    // 睡飽飽獎章加成 (Good-Night Ribbon Bonus)
+    const remainingEvos = getRemainingEvolutions(pkmData);
+    const ribbonBonus = getRibbonBonus(ribbonLevel, remainingEvos);
+    if (ribbonBonus.speedDiscount > 0) {
+      speedScore += Math.round(ribbonBonus.speedDiscount * 90);
+      if (calculatedInterval > 0) {
+        calculatedInterval = Math.round(calculatedInterval * (1 - ribbonBonus.speedDiscount));
+      }
+    }
     speedScore = Math.min(Math.max(Math.round(speedScore), 20), 100);
 
     // 5. 📈 後期成長 (Late-game Growth)
@@ -260,6 +319,20 @@
         : '💖 性格「' + natureName + '」完美契合技能型專長 (主技能發動率▲ +20%)。');
     }
 
+    if (ribbonBonus.level > 0) {
+      const carryText = `+${ribbonBonus.carry}`;
+      if (ribbonBonus.speedDiscount > 0) {
+        const pctText = `${Math.round(ribbonBonus.speedDiscount * 100)}%`;
+        pros.push(isEN
+          ? `[Ribbon Lv.${ribbonBonus.level}] Helping interval shortened by ${pctText}, carry capacity increased by ${carryText}.`
+          : `[睡飽飽獎章 Lv.${ribbonBonus.level}] 幫忙間隔縮短 ${pctText}，持有上限增加 ${carryText}。`);
+      } else {
+        pros.push(isEN
+          ? `[Ribbon Lv.${ribbonBonus.level}] Carry capacity increased by ${carryText}${remainingEvos === 0 ? ' (fully evolved/single-stage, no speed reduction)' : ''}.`
+          : `[睡飽飽獎章 Lv.${ribbonBonus.level}] 持有上限增加 ${carryText}${remainingEvos === 0 ? '（最終形態/無進化型態無速度縮短）' : ''}。`);
+      }
+    }
+
     if (pros.length === 0) {
       pros.push(isEN
         ? '💡 Well-balanced stats, suitable as a reliable placeholder support.'
@@ -280,10 +353,14 @@
         growth: growthScore,
         roi: roiScore
       },
+      calculatedInterval: calculatedInterval,
+      ribbonBonus: ribbonBonus,
+      remainingEvos: remainingEvos,
       compositeScore: compositeScore,
       grade: grade,
       gradeTitle: gradeTitle,
       gradeColor: gradeColor,
+      diagnostics: { pros: pros, cons: cons },
       pros: pros,
       cons: cons,
       costs: {
@@ -426,6 +503,7 @@
     let natureName = pkmOrBoxItem.nature || '坦率';
     let subskills = pkmOrBoxItem.subskills || [];
     let ingredients = pkmOrBoxItem.ingredients || [];
+    let ribbonLevel = parseInt(pkmOrBoxItem.ribbon, 10) || 0;
 
     if (pkmOrBoxItem.pkm) {
       pkmData = pkmOrBoxItem.pkm;
@@ -439,7 +517,7 @@
       pkmData = window.allPokemons[0];
     }
 
-    const evaluation = evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients);
+    const evaluation = evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel);
     if (!evaluation) return;
 
     let modal = document.getElementById('modal-appraisal-report');
@@ -491,6 +569,16 @@
                 <div class="appraisal-config-title">${isEN ? '🧬 Nature' : '🧬 性格'}</div>
                 <div class="appraisal-nature-badge">${natDisplayName}</div>
               </div>
+
+              <!-- 睡飽飽獎章 -->
+              ${ribbonLevel > 0 ? `
+                <div class="appraisal-config-section">
+                  <div class="appraisal-config-title">${isEN ? 'Good-Night Ribbon' : '睡飽飽獎章'}</div>
+                  <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;padding:4px 8px;border-radius:6px;background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;font-size:12px;font-weight:600;">
+                    ${isEN ? `Tier ${ribbonLevel} (+${evaluation.ribbonBonus.carry} Carry${evaluation.ribbonBonus.speedDiscount > 0 ? ` · -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}% Speed` : ''})` : `第 ${ribbonLevel} 階段 (+${evaluation.ribbonBonus.carry} 持有${evaluation.ribbonBonus.speedDiscount > 0 ? ` · 幫速 -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}%` : ''})`}
+                  </div>
+                </div>
+              ` : ''}
 
               <!-- 副技能清單 -->
               <div class="appraisal-config-section">
@@ -619,6 +707,7 @@
     nature: '固執',
     subskills: ['樹果數量S', '幫忙速度M', '食材機率提升M', '', ''],
     ingredients: [],
+    ribbon: 0,
     nickname: '',
     isCustomized: false
   };
@@ -638,6 +727,7 @@
     labState.subskills = rawSubs;
 
     labState.ingredients = [item.ing1, item.ing2, item.ing3].filter(Boolean);
+    labState.ribbon = parseInt(item.ribbon, 10) || 0;
     labState.nickname = item.nickname || '';
     labState.isCustomized = false;
   }
@@ -686,7 +776,7 @@
     const natures = (window.UserBox && window.UserBox.NATURE_DATA) || [];
     const subskillPool = (window.UserBox && window.UserBox.SUBSKILLS_DATA) || [];
 
-    const evaluation = evaluatePokemon(currentPkm, labState.level, labState.nature, labState.subskills, labState.ingredients);
+    const evaluation = evaluatePokemon(currentPkm, labState.level, labState.nature, labState.subskills, labState.ingredients, labState.ribbon);
     const radarSVG = evaluation ? renderRadarChartSVG(evaluation.scores, 340, 310) : '';
     const displayName = isEN ? (currentPkm.name_en || currentPkm.name_cn) : currentPkm.name_cn;
     const typeName = window.I18N ? window.I18N.getTypeName(currentPkm.type) : currentPkm.type;
@@ -777,6 +867,21 @@
               </select>
             </div>
 
+            <!-- 睡飽飽獎章選擇 -->
+            <div class="lab-control-group">
+              <label for="lab-ribbon-select" class="lab-control-label">
+                ${isEN ? 'Good-Night Ribbon:' : '睡飽飽獎章：'}
+                ${labState.ribbon > 0 ? `<span class="font-bold text-accent">${isEN ? `Tier ${labState.ribbon}` : `第 ${labState.ribbon} 階段`}</span>` : ''}
+              </label>
+              <select id="lab-ribbon-select" class="lab-select" onchange="window.AppraisalLab.onRibbonChange(this.value)">
+                <option value="0" ${labState.ribbon === 0 ? 'selected' : ''}>${isEN ? 'None (0h)' : '未佩戴 (0h)'}</option>
+                <option value="1" ${labState.ribbon === 1 ? 'selected' : ''}>${isEN ? 'Tier 1 · 200 hrs (+1 Carry)' : '第 1 階段 · 200 小時 (+1 持有上限)'}</option>
+                <option value="2" ${labState.ribbon === 2 ? 'selected' : ''}>${isEN ? 'Tier 2 · 500 hrs (+3 Carry · Speed Boost)' : '第 2 階段 · 500 小時 (+3 持有上限 · 幫速加成)'}</option>
+                <option value="3" ${labState.ribbon === 3 ? 'selected' : ''}>${isEN ? 'Tier 3 · 1,000 hrs (+6 Carry · Profile Icon)' : '第 3 階段 · 1000 小時 (+6 持有上限 · 專屬頭像)'}</option>
+                <option value="4" ${labState.ribbon === 4 ? 'selected' : ''}>${isEN ? 'Tier 4 · 2,000 hrs (+8 Carry · Max Speed Boost)' : '第 4 階段 · 2000 小時 (+8 持有上限 · 幫速最大加成)'}</option>
+              </select>
+            </div>
+
             <!-- 5 個副技能槽位選擇 (Lv.10, 25, 50, 70, 80) -->
             <div class="lab-control-group">
               <label class="lab-control-label">${isEN ? 'Sub-Skill Setup (Lv.10, 25, 50, 70, 80):' : '副技能配置 (Lv.10, 25, 50, 70, 80)：'}</label>
@@ -802,6 +907,9 @@
                     <span class="lab-preview-name">${displayName}</span>
                     ${labState.selectedBoxUid && labState.nickname ? `
                       <span class="lab-nickname-tag">${escapeHtml(labState.nickname)}</span>
+                    ` : ''}
+                    ${labState.ribbon > 0 ? `
+                      <span class="lab-ribbon-tag" style="background:rgba(56,189,248,0.18); color:#38bdf8; border:1px solid rgba(56,189,248,0.35); font-size:11px; padding:1px 6px; border-radius:4px; font-weight:600;">${isEN ? `Ribbon Lv.${labState.ribbon}` : `獎章 Lv.${labState.ribbon}`}</span>
                     ` : ''}
                     ${labState.selectedBoxUid ? (labState.isCustomized ? `
                       <span class="lab-sim-tag" style="background:rgba(234,179,8,0.18); color:#facc15; border:1px solid rgba(234,179,8,0.35); font-size:11px; padding:1px 6px; border-radius:4px; font-weight:600;">${isEN ? 'Simulating' : '模擬調校中'}</span>
@@ -861,6 +969,14 @@
     updateLabUI();
   }
 
+  function onRibbonChange(val) {
+    labState.ribbon = parseInt(val, 10) || 0;
+    if (labState.selectedBoxUid) {
+      labState.isCustomized = true;
+    }
+    updateLabUI();
+  }
+
   function onSubskillChange(idx, val) {
     labState.subskills[idx] = val;
     if (labState.selectedBoxUid) {
@@ -879,6 +995,8 @@
   /* ─── 全域導出 ─────────────────────────────────────────── */
   window.AppraisalLab = {
     evaluatePokemon: evaluatePokemon,
+    getRemainingEvolutions: getRemainingEvolutions,
+    getRibbonBonus: getRibbonBonus,
     renderRadarChartSVG: renderRadarChartSVG,
     calculateMilestoneCost: calculateMilestoneCost,
     openModal: openAppraisalModal,
@@ -890,6 +1008,7 @@
     onPkmChange: onPkmChange,
     onLevelChange: onLevelChange,
     onNatureChange: onNatureChange,
+    onRibbonChange: onRibbonChange,
     onSubskillChange: onSubskillChange,
     toggleLab: function () {
       const container = document.getElementById('appraisal-lab-container');
