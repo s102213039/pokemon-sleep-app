@@ -4846,6 +4846,25 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   assert(/<div class="island-hero-banner"[^>]*>[\s\S]*?<div class="island-title-group">[\s\S]*?<div class="island-berries-section">/.test(htmlCyan), 'Hero banner must contain title group followed by berries section');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Snorlax Rank Badges Theme Saturation & Brightness Adaptation', () => {
+  const cssCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // 1. Dark theme must use high-saturation luminous backgrounds and glowing box-shadow, never muddy 0.28
+  assert(!cssCode.includes('background: rgba(239, 68, 68, 0.28);'), 'Basic rank must NOT use muddy low-alpha 0.28 in dark theme');
+  assert(!cssCode.includes('background: rgba(217, 119, 6, 0.28);'), 'Ultra rank must NOT use muddy low-alpha brown 0.28 in dark theme');
+  assert(cssCode.includes('.rank-basic {') && cssCode.includes('box-shadow: 0 1px 4px rgba(239, 68, 68, 0.3);'), 'Basic rank must use luminous glow in dark theme');
+  assert(cssCode.includes('.rank-ultra {') && cssCode.includes('box-shadow: 0 1px 4px rgba(245, 158, 11, 0.3);'), 'Ultra rank must use bright amber glow in dark theme');
+
+  // 2. Onyx pure black theme must have enhanced high-contrast styles
+  assert(cssCode.includes('[data-theme="onyx"]:not([data-theme-inverted="true"]) .rank-ultra'), 'Onyx theme must have dedicated high-contrast ultra badge rule');
+
+  // 3. Light themes (Dawn / Emerald / Inverted) must use low-saturation soft pastel backgrounds
+  assert(cssCode.includes('[data-theme="dawn"] .rank-basic') && cssCode.includes('background: #fee2e2;'), 'Dawn / Emerald must use soft low-saturation pastel #fee2e2 for Basic');
+  assert(cssCode.includes('[data-theme="dawn"] .rank-great') && cssCode.includes('background: #dbeafe;'), 'Dawn / Emerald must use soft low-saturation pastel #dbeafe for Great');
+  assert(cssCode.includes('[data-theme="dawn"] .rank-ultra') && cssCode.includes('background: #fef3c7;'), 'Dawn / Emerald must use soft low-saturation pastel #fef3c7 for Ultra');
+  assert(cssCode.includes('[data-theme="dawn"] .rank-master') && cssCode.includes('background: #f3e8ff;'), 'Dawn / Emerald must use soft low-saturation pastel #f3e8ff for Master');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');
