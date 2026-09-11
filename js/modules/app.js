@@ -1437,14 +1437,13 @@ function toggleSidebar(forceState) {
     if (typeof window !== 'undefined' && window.innerWidth <= 1024 && backdrop) {
       backdrop.classList.add('active');
     }
-    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     if (bookmarkHandle) {
       bookmarkHandle.setAttribute('aria-expanded', 'true');
       bookmarkHandle.title = '收合篩選側邊欄';
-      if (isMobileH5) {
-        bookmarkHandle.style.opacity = '0';
-        bookmarkHandle.style.pointerEvents = 'none';
-      }
+      bookmarkHandle.style.opacity = '0';
+      bookmarkHandle.style.pointerEvents = 'none';
+      bookmarkHandle.style.display = 'none';
+      bookmarkHandle.style.visibility = 'hidden';
     }
     if (typeof setSidebarSavedState === 'function') {
       setSidebarSavedState('pksleep_dex_sidebar_open', true);
@@ -1889,11 +1888,17 @@ if (typeof document !== 'undefined') {
           }
           const curLadderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
           if (curLadderHandle) {
-            curLadderHandle.style.display = isIng ? '' : 'none';
-            if (isMobileH5) {
-              const isCollapsed = ladderSidebar ? ladderSidebar.classList.contains('collapsed') : true;
-              curLadderHandle.style.opacity = (isIng && isCollapsed) ? '1' : '0';
-              curLadderHandle.style.pointerEvents = (isIng && isCollapsed) ? 'auto' : 'none';
+            const isCollapsed = ladderSidebar ? ladderSidebar.classList.contains('collapsed') : true;
+            if (isIng && isCollapsed) {
+              curLadderHandle.style.display = 'flex';
+              curLadderHandle.style.opacity = '1';
+              curLadderHandle.style.pointerEvents = 'auto';
+              curLadderHandle.style.visibility = 'visible';
+            } else {
+              curLadderHandle.style.display = 'none';
+              curLadderHandle.style.opacity = '0';
+              curLadderHandle.style.pointerEvents = 'none';
+              curLadderHandle.style.visibility = 'hidden';
             }
           }
 
@@ -1913,7 +1918,20 @@ if (typeof document !== 'undefined') {
               if (recipeBackdrop) recipeBackdrop.classList.remove('active');
             }
           }
-          if (recipeBookmarkHandle) recipeBookmarkHandle.style.display = '';
+          if (recipeBookmarkHandle) {
+            const isCollapsed = recipeSidebar ? recipeSidebar.classList.contains('collapsed') : false;
+            if (isCollapsed) {
+              recipeBookmarkHandle.style.display = 'flex';
+              recipeBookmarkHandle.style.opacity = '1';
+              recipeBookmarkHandle.style.pointerEvents = 'auto';
+              recipeBookmarkHandle.style.visibility = 'visible';
+            } else {
+              recipeBookmarkHandle.style.display = 'none';
+              recipeBookmarkHandle.style.opacity = '0';
+              recipeBookmarkHandle.style.pointerEvents = 'none';
+              recipeBookmarkHandle.style.visibility = 'hidden';
+            }
+          }
           if (window.RecipesApp && typeof window.RecipesApp.render === 'function') {
             try { window.RecipesApp.render(); } catch (e) {}
           }
@@ -1934,7 +1952,20 @@ if (typeof document !== 'undefined') {
               if (backdrop) backdrop.classList.remove('active');
             }
           }
-          if (bookmarkHandle) bookmarkHandle.style.display = '';
+          if (bookmarkHandle) {
+            const isCollapsed = filterSidebar ? filterSidebar.classList.contains('collapsed') : false;
+            if (isCollapsed) {
+              bookmarkHandle.style.display = 'flex';
+              bookmarkHandle.style.opacity = '1';
+              bookmarkHandle.style.pointerEvents = 'auto';
+              bookmarkHandle.style.visibility = 'visible';
+            } else {
+              bookmarkHandle.style.display = 'none';
+              bookmarkHandle.style.opacity = '0';
+              bookmarkHandle.style.pointerEvents = 'none';
+              bookmarkHandle.style.visibility = 'hidden';
+            }
+          }
           if (window.PokemonApp && typeof window.PokemonApp.render === 'function') {
             try { window.PokemonApp.render(); } catch (e) {}
           }
@@ -2427,10 +2458,10 @@ if (typeof document !== 'undefined') {
           if (bookmarkHandle) {
             bookmarkHandle.setAttribute('aria-expanded', 'true');
             bookmarkHandle.title = '收合篩選側邊欄';
-            if (isMobileH5) {
-              bookmarkHandle.style.opacity = '0';
-              bookmarkHandle.style.pointerEvents = 'none';
-            }
+            bookmarkHandle.style.opacity = '0';
+            bookmarkHandle.style.pointerEvents = 'none';
+            bookmarkHandle.style.display = 'none';
+            bookmarkHandle.style.visibility = 'hidden';
           }
           setSidebarSavedState('pksleep_dex_sidebar_open', true);
         }
@@ -2443,8 +2474,22 @@ if (typeof document !== 'undefined') {
       if (sidebar) {
         if (initialDexOpen) {
           sidebar.classList.remove('collapsed');
+          if (bookmarkHandle) {
+            bookmarkHandle.setAttribute('aria-expanded', 'true');
+            bookmarkHandle.style.display = 'none';
+            bookmarkHandle.style.opacity = '0';
+            bookmarkHandle.style.pointerEvents = 'none';
+            bookmarkHandle.style.visibility = 'hidden';
+          }
         } else {
           sidebar.classList.add('collapsed');
+          if (bookmarkHandle) {
+            bookmarkHandle.setAttribute('aria-expanded', 'false');
+            bookmarkHandle.style.display = 'flex';
+            bookmarkHandle.style.opacity = '1';
+            bookmarkHandle.style.pointerEvents = 'auto';
+            bookmarkHandle.style.visibility = 'visible';
+          }
         }
       }
 

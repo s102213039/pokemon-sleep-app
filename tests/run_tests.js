@@ -4932,6 +4932,30 @@ test('Tier 4 - Real-World Application Scenarios', 'Snorlax Rank Badges Theme Sat
   assert(cssCode.includes('[data-theme="dawn"] .rank-master') && cssCode.includes('background: #f3e8ff;'), 'Dawn / Emerald must use soft low-saturation pastel #f3e8ff for Master');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Sidebar Bookmark Handle Ironclad Visibility (Strictly Hidden when Expanded, Visible when Collapsed)', () => {
+  const cssCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  assert(cssCode.includes('.recipe-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle'), 'CSS must define :not(.collapsed) hide rule for recipe sidebar handle');
+  assert(cssCode.includes('.pokemon-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle'), 'CSS must define :not(.collapsed) hide rule for pokemon sidebar handle');
+  assert(cssCode.includes('.ladder-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle') || cssCode.includes('.ladder-fixed-sidebar:not(.collapsed) .sidebar-bookmark-handle'), 'CSS must define :not(.collapsed) hide rule for ladder sidebar handle');
+  assert(cssCode.includes('display: none !important;'), 'CSS must enforce display: none !important for expanded sidebar handles');
+  assert(cssCode.includes('display: flex !important;'), 'CSS must enforce display: flex !important for collapsed sidebar handles');
+
+  // Verify recipes.js toggle logic
+  const recipesJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'recipes.js'), 'utf8');
+  assert(recipesJs.includes("bookmarkHandle.style.display = 'none'"), 'recipes.js must set bookmarkHandle.style.display = none when expanding');
+  assert(recipesJs.includes("bookmarkHandle.style.visibility = 'hidden'"), 'recipes.js must set bookmarkHandle.style.visibility = hidden when expanding');
+
+  // Verify app.js toggle logic
+  const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+  assert(appJs.includes("bookmarkHandle.style.display = 'none'"), 'app.js must set bookmarkHandle.style.display = none when expanding');
+  assert(appJs.includes("bookmarkHandle.style.visibility = 'hidden'"), 'app.js must set bookmarkHandle.style.visibility = hidden when expanding');
+
+  // Verify wiki.js toggle logic
+  const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  assert(wikiJs.includes("bookmarkHandle.style.display = 'none'"), 'wiki.js must set bookmarkHandle.style.display = none when expanding');
+  assert(wikiJs.includes("bookmarkHandle.style.visibility = 'hidden'"), 'wiki.js must set bookmarkHandle.style.visibility = hidden when expanding');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

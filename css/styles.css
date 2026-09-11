@@ -1626,9 +1626,9 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
   width: 100%;
 }
 
-/* 🔖 側邊欄垂直中央書籤標籤（僅在收合時顯示，展開時隱藏） */
+/* 🔖 側邊欄垂直中央書籤標籤（僅在收合時顯示，展開時強制徹底隱藏） */
 .sidebar-bookmark-handle {
-  display: none;
+  display: none !important;
   position: absolute;
   top: 50%;
   right: -36px;
@@ -1651,12 +1651,29 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
   transition: background-color 0.15s ease, border-color 0.15s ease;
   color: var(--text-primary);
   padding: 8px 0;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+.pokemon-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle,
+.recipe-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle,
+.ladder-fixed-sidebar:not(.collapsed) .sidebar-bookmark-handle,
+.ladder-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
 }
 
 .pokemon-filter-sidebar.collapsed .sidebar-bookmark-handle,
 .recipe-filter-sidebar.collapsed .sidebar-bookmark-handle,
-.ladder-fixed-sidebar.collapsed .sidebar-bookmark-handle {
-  display: flex;
+.ladder-fixed-sidebar.collapsed .sidebar-bookmark-handle,
+.ladder-filter-sidebar.collapsed .sidebar-bookmark-handle {
+  display: flex !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  visibility: visible !important;
 }
 
 .sidebar-bookmark-handle:hover {

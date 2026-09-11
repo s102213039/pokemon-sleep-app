@@ -11676,10 +11676,10 @@
       if (bookmarkHandle) {
         bookmarkHandle.setAttribute('aria-expanded', 'false');
         bookmarkHandle.title = isEN ? 'Expand Ladder Filters' : '展開天梯篩選側邊欄';
-        if (isMobileH5) {
-          bookmarkHandle.style.opacity = '1';
-          bookmarkHandle.style.pointerEvents = 'auto';
-        }
+        bookmarkHandle.style.opacity = '1';
+        bookmarkHandle.style.pointerEvents = 'auto';
+        bookmarkHandle.style.display = 'flex';
+        bookmarkHandle.style.visibility = 'visible';
       }
       if (typeof window.setSidebarSavedState === 'function') {
         window.setSidebarSavedState('pksleep_ladder_sidebar_open', false);
@@ -11693,10 +11693,10 @@
       if (bookmarkHandle) {
         bookmarkHandle.setAttribute('aria-expanded', 'true');
         bookmarkHandle.title = isEN ? 'Collapse Ladder Filters' : '收合天梯篩選側邊欄';
-        if (isMobileH5) {
-          bookmarkHandle.style.opacity = '0';
-          bookmarkHandle.style.pointerEvents = 'none';
-        }
+        bookmarkHandle.style.opacity = '0';
+        bookmarkHandle.style.pointerEvents = 'none';
+        bookmarkHandle.style.display = 'none';
+        bookmarkHandle.style.visibility = 'hidden';
       }
       if (typeof window.setSidebarSavedState === 'function') {
         window.setSidebarSavedState('pksleep_ladder_sidebar_open', true);

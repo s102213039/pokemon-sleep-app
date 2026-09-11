@@ -33,27 +33,47 @@
 
 ## ✅ 已確認正常運作的功能（不得破壞）
 
-### 🔖 1. 篩選器側邊欄書籤
+### 1. 篩選器側邊欄書籤 (Sidebar Bookmark Handle)
 
-**正確行為**：
-- 圖鑑頁 展開狀態 → 書籤 **隱藏**
-- 圖鑑頁 收合狀態 → 書籤 **顯示**
-- 其他頁面（Wiki / Box / Recipes / News）→ 書籤 **完全隱藏**
+**正確行為與核心鐵律**:
+- **展開狀態 (Expanded)**: 當側邊欄處於展開狀態 (未帶 `.collapsed`) 時, 書籤標籤 (`.sidebar-bookmark-handle`) **必須 100% 強制徹底隱藏** (`display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;`), 絕對不可懸浮或出現在畫面中與側邊欄或主要列表重疊!
+- **收合狀態 (Collapsed)**: 當側邊欄處於收合狀態 (帶有 `.collapsed`) 時, 書籤標籤才允許展示 (`display: flex !important; opacity: 1 !important; pointer-events: auto !important; visibility: visible !important;`).
+- **非當前頁面**: 其他頁面切換離開時, 該分頁的書籤標籤必須保持隱藏.
+- **涵蓋所有側邊欄**:
+  1. 寶可夢圖鑑: `#pokemon-filter-sidebar` 與 `#sidebar-bookmark-handle`
+  2. 料理食譜大全: `#recipe-filter-sidebar` 與 `#recipe-sidebar-bookmark-handle`
+  3. 數據百科天梯: `#ladder-filter-sidebar` 與 `#ladder-sidebar-bookmark-handle`
 
-**位置**：`js/modules/app.js` — `switchMainTab()` 函數
-
-**不得修改的關鍵程式碼**：
-```js
-// 圖鑑頁（else 分支）—— 絕對禁止改回 style.display = 'flex'
-if (bookmarkHandle) bookmarkHandle.style.display = '';
-// 讓 CSS 的 .collapsed class 控制顯示/隱藏
-```
-
-**CSS 規則**（`css/styles.css`）：
+**CSS 規則防護** (`css/styles.css`):
 ```css
-.sidebar-bookmark-handle { display: none; }
-.pokemon-filter-sidebar.collapsed .sidebar-bookmark-handle { display: flex; }
+/* 展開狀態下強制徹底隱藏，具最高特異性防禦 */
+.sidebar-bookmark-handle,
+.pokemon-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle,
+.recipe-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle,
+.ladder-fixed-sidebar:not(.collapsed) .sidebar-bookmark-handle,
+.ladder-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+/* 僅在收合狀態下展示 */
+.pokemon-filter-sidebar.collapsed .sidebar-bookmark-handle,
+.recipe-filter-sidebar.collapsed .sidebar-bookmark-handle,
+.ladder-fixed-sidebar.collapsed .sidebar-bookmark-handle,
+.ladder-filter-sidebar.collapsed .sidebar-bookmark-handle {
+  display: flex !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  visibility: visible !important;
+}
 ```
+
+**JavaScript 行為規範**:
+- 在 `toggleSidebar`、`toggleRecipeSidebar`、`toggleLadderSidebar` 展開分支中:
+  **必須**將 `bookmarkHandle` 設為 `display = 'none'`, `opacity = '0'`, `pointerEvents = 'none'`, `visibility = 'hidden'`.
+- 嚴禁在展開分支中僅對行動端 (`isMobileH5`) 設透明度而忽略桌面端, 嚴禁殘留 `style="display: flex"` 行內樣式.
 
 ---
 

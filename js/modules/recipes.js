@@ -747,9 +747,12 @@
         sidebar.classList.add('collapsed');
         if (backdrop) backdrop.classList.remove('active');
         if (bookmarkHandle) {
+          bookmarkHandle.setAttribute('aria-expanded', 'false');
+          bookmarkHandle.title = '展開食譜篩選側邊欄';
           bookmarkHandle.style.opacity = '1';
           bookmarkHandle.style.pointerEvents = 'auto';
           bookmarkHandle.style.display = 'flex';
+          bookmarkHandle.style.visibility = 'visible';
         }
         if (typeof window.setSidebarSavedState === 'function') {
           window.setSidebarSavedState('pksleep_recipe_sidebar_open', false);
@@ -759,9 +762,13 @@
         if (backdrop) {
           backdrop.classList.add('active');
         }
-        if (bookmarkHandle && isMobileH5) {
+        if (bookmarkHandle) {
+          bookmarkHandle.setAttribute('aria-expanded', 'true');
+          bookmarkHandle.title = '收合食譜篩選側邊欄';
           bookmarkHandle.style.opacity = '0';
           bookmarkHandle.style.pointerEvents = 'none';
+          bookmarkHandle.style.display = 'none';
+          bookmarkHandle.style.visibility = 'hidden';
         }
         if (typeof window.setSidebarSavedState === 'function') {
           window.setSidebarSavedState('pksleep_recipe_sidebar_open', true);
@@ -785,8 +792,22 @@
     if (sidebar) {
       if (initialRecipeOpen) {
         sidebar.classList.remove('collapsed');
+        if (bookmarkHandle) {
+          bookmarkHandle.setAttribute('aria-expanded', 'true');
+          bookmarkHandle.style.display = 'none';
+          bookmarkHandle.style.opacity = '0';
+          bookmarkHandle.style.pointerEvents = 'none';
+          bookmarkHandle.style.visibility = 'hidden';
+        }
       } else {
         sidebar.classList.add('collapsed');
+        if (bookmarkHandle) {
+          bookmarkHandle.setAttribute('aria-expanded', 'false');
+          bookmarkHandle.style.display = 'flex';
+          bookmarkHandle.style.opacity = '1';
+          bookmarkHandle.style.pointerEvents = 'auto';
+          bookmarkHandle.style.visibility = 'visible';
+        }
       }
     }
 
