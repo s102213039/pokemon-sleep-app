@@ -16099,10 +16099,13 @@ body.mobile-h5-app.values-active,
   font-size: 11px !important;
   gap: 3px !important;
   border-radius: 9px !important;
+  color: var(--text-primary) !important;
 }
 
 .mobile-h5-app .rank-num {
   font-size: 11px !important;
+  font-weight: 800 !important;
+  color: var(--text-primary) !important;
 }
 
 .mobile-h5-app .pokeball-svg {
@@ -19535,6 +19538,7 @@ body.mobile-h5-app.values-active,
   font-weight: 700;
   white-space: nowrap;
   transition: transform 0.15s ease;
+  color: var(--text-primary);
 }
 
 .rank-badge:hover {
@@ -19544,50 +19548,50 @@ body.mobile-h5-app.values-active,
 .rank-basic {
   background: rgba(239, 68, 68, 0.28);
   border: 1px solid rgba(239, 68, 68, 0.55);
-  color: #fca5a5;
+  color: var(--text-primary);
 }
 
 .rank-great {
   background: rgba(37, 99, 235, 0.28);
   border: 1px solid rgba(59, 130, 246, 0.55);
-  color: #93c5fd;
+  color: var(--text-primary);
 }
 
 .rank-ultra {
   background: rgba(217, 119, 6, 0.28);
   border: 1px solid rgba(245, 158, 11, 0.55);
-  color: #fef08a;
+  color: var(--text-primary);
 }
 
 .rank-master {
   background: rgba(147, 51, 234, 0.30);
   border: 1px solid rgba(168, 85, 247, 0.55);
-  color: #e9d5ff;
+  color: var(--text-primary);
 }
 
 /* Light / Inverted theme */
 [data-theme-inverted="true"] .rank-basic {
   background: rgba(239, 68, 68, 0.22);
   border: 1px solid rgba(220, 38, 38, 0.5);
-  color: #b91c1c;
+  color: var(--text-primary) !important;
 }
 
 [data-theme-inverted="true"] .rank-great {
   background: rgba(37, 99, 235, 0.22);
   border: 1px solid rgba(29, 78, 216, 0.5);
-  color: #1d4ed8;
+  color: var(--text-primary) !important;
 }
 
 [data-theme-inverted="true"] .rank-ultra {
   background: rgba(234, 179, 8, 0.25);
   border: 1px solid rgba(180, 83, 9, 0.5);
-  color: #a16207;
+  color: var(--text-primary) !important;
 }
 
 [data-theme-inverted="true"] .rank-master {
   background: rgba(147, 51, 234, 0.22);
   border: 1px solid rgba(126, 34, 206, 0.5);
-  color: #7e22ce;
+  color: var(--text-primary) !important;
 }
 
 .rank-dash {
@@ -19608,6 +19612,7 @@ body.mobile-h5-app.values-active,
   line-height: 1;
   font-size: 12.5px;
   font-weight: 800;
+  color: var(--text-primary) !important;
 }
 
 .wiki-two-col-grid .wiki-data-table th {

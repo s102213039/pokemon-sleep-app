@@ -4752,6 +4752,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Berries Single Line La
   assert(html.includes('class="island-table-card"'), 'Two-col tables must use borderless island-table-card');
   assert(html.includes('class="island-spawns-card"'), 'Spawns section must use borderless island-spawns-card');
   assert(!html.includes('<div class="wiki-card" style="margin-bottom:16px;">'), 'Spawns section must not have outer wiki-card box');
+
+  // 5. CSS Verification: Rank badge numbers must use var(--text-primary) for optimal contrast across themes
+  assert(cssCode.includes('.rank-num {') && cssCode.includes('color: var(--text-primary) !important;'), 'Desktop rank-num must use var(--text-primary)');
+  assert(cssCode.includes('.mobile-h5-app .rank-num') && cssCode.includes('color: var(--text-primary) !important;'), 'Mobile rank-num must use var(--text-primary)');
+  assert(cssCode.includes('.rank-badge {') && cssCode.includes('color: var(--text-primary);'), 'Desktop rank-badge must use var(--text-primary)');
 });
 
 // Final Summary Output
