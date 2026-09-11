@@ -10464,6 +10464,10 @@ input[type="number"] {
 
 
 /* 🥗 食材產量天梯榜 - 外部固定側邊篩選器 (Left Fixed Sidebar Filter - Pokédex Style) */
+.ladder-fixed-sidebar .sidebar-header {
+  overflow: hidden;
+}
+
 .ladder-fixed-sidebar {
   position: fixed;
   top: 70px;
@@ -10498,7 +10502,7 @@ input[type="number"] {
 .ladder-fixed-sidebar .sidebar-scrollable-content {
   flex: 1;
   overflow-y: auto;
-  padding: 32px 10px 40px !important;
+  padding: 10px 10px 40px !important;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -13264,8 +13268,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .mobile-h5-app .pokemon-filter-sidebar .sidebar-scrollable-content,
-.mobile-h5-app .recipe-filter-sidebar .sidebar-scrollable-content,
-.mobile-h5-app .ladder-fixed-sidebar .sidebar-scrollable-content {
+.mobile-h5-app .recipe-filter-sidebar .sidebar-scrollable-content {
   flex: 1 1 auto !important;
   width: 100% !important;
   box-sizing: border-box !important;
@@ -13308,7 +13311,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   transition: transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1), visibility 0s 0.28s !important;
 }
 
-/* 🥗 天梯側邊欄 Top 15 扁平切換開關 (Compact Switch Button) */
+/* 天梯 Top 15：放在「天梯軌道排序」標題列右側，不另佔一列、不擠出側欄 */
 .ladder-top15-switch-label {
   display: inline-flex;
   align-items: center;
@@ -13316,7 +13319,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
-  margin-right: 2px;
+  margin: 0;
+  flex-shrink: 0;
 }
 
 .ladder-switch-input {
@@ -13419,7 +13423,21 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   100% { transform: rotate(360deg); }
 }
 
-/* 🥗 H5 App 天梯側邊欄標籤與開關樣式 */
+/* H5 App 天梯側邊欄內容排版與標籤樣式 (Compact Top Padding & Gap) */
+.mobile-h5-app .ladder-fixed-sidebar .sidebar-scrollable-content {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  height: calc(100% - 52px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 8px 12px calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 9px !important;
+}
+
 .mobile-h5-app .ladder-fixed-sidebar .sidebar-skills-list {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;

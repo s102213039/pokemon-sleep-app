@@ -3516,6 +3516,12 @@ test('Tier 1 - Feature Coverage', 'Ingredient Ladder Top 15 Mobile Optimization 
   vm.runInContext(wikiJs, ctx);
 
   const WikiDB = ctx.window.WikiDB;
+  assert(wikiJs.includes('天梯軌道排序'), 'Ladder template must include track sorting section');
+  const switchIdx = wikiJs.indexOf('id="ladder-top15-switch"');
+  const sortIdx = wikiJs.indexOf('天梯軌道排序');
+  const headerIdx = wikiJs.indexOf('id="ladder-reset-all-btn"');
+  assert(switchIdx > 0 && sortIdx > 0 && switchIdx > sortIdx, 'Top 15 switch must sit in Track Sorting header, not the cramped sidebar header');
+  assert(headerIdx > 0 && switchIdx > headerIdx, 'Top 15 switch must come after sidebar reset, inside scrollable sections');
   assert(typeof WikiDB.getLadderTop15Only === 'function', 'WikiDB.getLadderTop15Only must exist');
   assert(typeof WikiDB.toggleLadderTop15 === 'function', 'WikiDB.toggleLadderTop15 must exist');
 
@@ -4954,6 +4960,25 @@ test('Tier 4 - Real-World Application Scenarios', 'Sidebar Bookmark Handle Ironc
   const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
   assert(wikiJs.includes("bookmarkHandle.style.display = 'none'"), 'wiki.js must set bookmarkHandle.style.display = none when expanding');
   assert(wikiJs.includes("bookmarkHandle.style.visibility = 'hidden'"), 'wiki.js must set bookmarkHandle.style.visibility = hidden when expanding');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder Sidebar Header-to-Content Spacing and Mobile H5 Optimization', () => {
+  const cssCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  // Desktop ladder sidebar scrollable content must have compact top padding (10px, never 32px legacy offset)
+  const ladderDesktopRegex = /\.ladder-fixed-sidebar\s+\.sidebar-scrollable-content\s*\{[^}]*padding:\s*([0-9]+)px/m;
+  const matchDesktop = cssCode.match(ladderDesktopRegex);
+  assert(matchDesktop, 'CSS must specify padding for .ladder-fixed-sidebar .sidebar-scrollable-content');
+  const desktopTopPadding = parseInt(matchDesktop[1], 10);
+  assert(desktopTopPadding <= 12, `Desktop ladder sidebar top padding must be compact (<= 12px), got ${desktopTopPadding}px`);
+  assert(!cssCode.includes('.ladder-fixed-sidebar .sidebar-scrollable-content {\n  flex: 1;\n  overflow-y: auto;\n  padding: 32px'), 'Desktop ladder sidebar must not have 32px top gap');
+
+  // Mobile H5 ladder sidebar must have compact top padding and compact gap
+  assert(cssCode.includes('.mobile-h5-app .ladder-fixed-sidebar .sidebar-scrollable-content'), 'CSS must define mobile H5 ladder sidebar scrollable content rule');
+  const ladderH5Regex = /\.mobile-h5-app\s+\.ladder-fixed-sidebar\s+\.sidebar-scrollable-content\s*\{[^}]*padding:\s*([0-9]+)px/m;
+  const matchH5 = cssCode.match(ladderH5Regex);
+  assert(matchH5, 'CSS must specify padding for mobile H5 ladder sidebar');
+  const h5TopPadding = parseInt(matchH5[1], 10);
+  assert(h5TopPadding <= 10, `Mobile H5 ladder sidebar top padding must be compact (<= 10px), got ${h5TopPadding}px`);
 });
 
 // Final Summary Output

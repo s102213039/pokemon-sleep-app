@@ -15771,14 +15771,7 @@
           <div class="sidebar-title-group">
             <span class="sidebar-title">${isEN ? 'Ladder Filters' : '天梯篩選器'}</span>
           </div>
-          <div class="sidebar-header-actions" style="display: flex; align-items: center; gap: 8px;">
-            <label class="ladder-top15-switch-label" title="${isEN ? 'Show Top 15 Only' : '預設開啟前15名排行'}">
-              <input type="checkbox" id="ladder-top15-switch" class="ladder-switch-input" ${ladderTop15Only ? 'checked' : ''} onchange="window.WikiDB.toggleLadderTop15(this.checked)">
-              <span class="ladder-switch-slider"></span>
-              <span class="ladder-switch-text">${isEN ? 'Top 15' : '前15名'}</span>
-            </label>
-            <button type="button" id="ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${isEN ? 'Reset All Filters' : '重設所有條件'}">${isEN ? 'Reset All' : '全部重設'}</button>
-          </div>
+          <button type="button" id="ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${isEN ? 'Reset All Filters' : '重設所有條件'}">${isEN ? 'Reset All' : '全部重設'}</button>
         </div>
 
         <div class="sidebar-scrollable-content">
@@ -15803,6 +15796,11 @@
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Track Sorting' : '天梯軌道排序'}</span>
+              <label class="ladder-top15-switch-label" title="${isEN ? 'Show Top 15 Only' : '預設開啟前15名排行'}">
+                <input type="checkbox" id="ladder-top15-switch" class="ladder-switch-input" ${ladderTop15Only ? 'checked' : ''} onchange="window.WikiDB.toggleLadderTop15(this.checked)">
+                <span class="ladder-switch-slider"></span>
+                <span class="ladder-switch-text">${isEN ? 'Top 15' : '前15名'}</span>
+              </label>
             </div>
             <div class="sidebar-skills-list sidebar-2col-tags">
               <button type="button" class="tag-btn ${ladderSortOrder === 'ENERGY_ASC' ? 'active' : ''}" data-sort-order="ENERGY_ASC" onclick="window.WikiDB.setLadderSortOrder('ENERGY_ASC')">${isEN ? 'Energy: Low to High' : '能量：低到高'}</button>
