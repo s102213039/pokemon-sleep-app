@@ -14301,12 +14301,32 @@
       </tr>
     `).join('');
 
-    const drowsyRows = island.drowsyPowerSpawns.map(d => `
-      <tr>
-        <td class="font-bold text-success" style="vertical-align:middle;">${d.count} ${isEN ? 'Pokemon' : '隻'}</td>
-        <td class="font-bold" style="vertical-align:middle;">${d.power}</td>
-      </tr>
-    `).join('');
+    function getMinRankForDrowsyPower(powerStr, tiers) {
+      if (!powerStr || !tiers || !tiers.length) return 'Basic 1';
+      const cleanNum = parseInt(String(powerStr).replace(/[^0-9]/g, ''), 10) || 0;
+      if (cleanNum === 0) return 'Basic 1';
+      const minEnergyNeeded = Math.ceil(cleanNum / 100);
+      let matchedRank = tiers[0].rank;
+      for (let i = 0; i < tiers.length; i++) {
+        if (minEnergyNeeded >= tiers[i].energy) {
+          matchedRank = tiers[i].rank;
+        } else {
+          break;
+        }
+      }
+      return matchedRank;
+    }
+
+    const drowsyRows = island.drowsyPowerSpawns.map(d => {
+      const minRank = getMinRankForDrowsyPower(d.power, activeEnergyTiers);
+      return `
+        <tr>
+          <td class="font-bold text-success" style="vertical-align:middle;">${d.count} ${isEN ? 'Pokemon' : '隻'}</td>
+          <td class="font-bold" style="vertical-align:middle;">${d.power}</td>
+          <td style="vertical-align:middle; text-align:center;">${formatSnorlaxRankBadge(minRank)}</td>
+        </tr>
+      `;
+    }).join('');
 
     const sleepTypeNameMap = {
       dozing: isEN ? 'Dozing' : '淺淺入夢',
@@ -14415,8 +14435,9 @@
             <table class="wiki-data-table">
               <thead>
                 <tr>
-                  <th style="width:45%;">${isEN ? 'Morning Spawns' : '早晨出現隻數'}</th>
-                  <th style="width:55%;">${isEN ? 'Min Drowsy Power' : '最低睡意之力門檻'}</th>
+                  <th style="width:28%;">${isEN ? 'Morning Spawns' : '早晨出現隻數'}</th>
+                  <th style="width:42%;">${isEN ? 'Min Drowsy Power' : '最低睡意之力'}</th>
+                  <th style="width:30%; text-align:center;">${isEN ? 'Min Rank (100 Score)' : '最低評級 (100分)'}</th>
                 </tr>
               </thead>
               <tbody>
@@ -14424,9 +14445,13 @@
                 <tr>
                   <td class="font-bold text-accent" style="vertical-align:middle;">+1 (9 ${isEN ? 'Pokemon' : '隻'})</td>
                   <td class="text-secondary" style="vertical-align:middle;">${isEN ? 'Good Camp Ticket guarantee' : '使用好露營券 (必出1隻貪吃)'}</td>
+                  <td class="text-secondary" style="vertical-align:middle; text-align:center;">-</td>
                 </tr>
               </tbody>
             </table>
+          </div>
+          <div style="font-size:11px; color:var(--text-secondary); margin-top:6px; padding:0 2px; line-height:1.4;">
+            ${isEN ? '* Min Rank required assuming a full 100 Sleep Score (8.5 hrs). If sleep score is lower, higher Snorlax energy is required.' : '* 最低評級以睡滿 100 分 (8.5小時) 為基準換算, 若睡眠分數不足 100 分則需更高的卡比獸能量.'}
           </div>
         </div>
       </div>

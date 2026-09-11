@@ -4844,6 +4844,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   // 5. Verify Cyan (fixed berries) renders inside hero banner with shortened label
   assert(htmlCyan.includes('喜好樹果:'), 'Cyan must render shortened label 喜好樹果:');
   assert(/<div class="island-hero-banner"[^>]*>[\s\S]*?<div class="island-title-group">[\s\S]*?<div class="island-berries-section">/.test(htmlCyan), 'Hero banner must contain title group followed by berries section');
+
+  // 6. Verify Drowsy Power spawn tiers table includes 3rd column: 最低評級 (100分)
+  assert(htmlCyan.includes('最低評級 (100分)'), 'Drowsy power table must include 3rd column 最低評級 (100分)');
+  assert(htmlCyan.includes('最低評級以睡滿 100 分 (8.5小時) 為基準換算'), 'Drowsy power table must render footnote');
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Snorlax Rank Badges Theme Saturation & Brightness Adaptation', () => {
