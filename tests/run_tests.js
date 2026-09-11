@@ -4518,6 +4518,38 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Compact Table, 
   assert(!htmlCyan.includes('island-berry-name'), 'Berry name must NOT be displayed');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Island Berries Theme Tokens, Rank Badge Solid Opacity & Zero All-Dash Spawns', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const cssCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // 1. Verify CSS rules for berries label and rank badge opacity
+  assert(cssCode.includes('.island-berries-label {') && cssCode.includes('color: var(--text-primary);'), 'Desktop island-berries-label must use var(--text-primary)');
+  assert(!cssCode.includes('.island-berries-label {\n  font-size: 14px;\n  font-weight: 700;\n  color: #e2e8f0;'), 'Hardcoded #e2e8f0 in island-berries-label must be removed');
+  assert(cssCode.includes('.mobile-h5-app .island-berries-label') && cssCode.includes('color: var(--text-primary) !important;'), 'Mobile island-berries-label must use var(--text-primary)');
+  assert(cssCode.includes('[data-theme-inverted="true"] .island-berries-label'), 'Inverted theme must support island-berries-label');
+  assert(cssCode.includes('[data-theme-inverted="true"] .rank-basic'), 'Inverted theme must support rank badges');
+
+  // 2. Compact table padding and avatar sizes
+  assert(cssCode.includes('.island-pkm-icon-only .island-pkm-avatar') && cssCode.includes('width: 32px;'), 'Desktop avatar width must be reduced to 32px');
+  assert(cssCode.includes('.mobile-h5-app .island-pkm-icon-only .island-pkm-avatar') && cssCode.includes('width: 28px !important;'), 'Mobile avatar width must be reduced to 28px');
+
+  // 3. Verify ZERO all-dash spawns in ISLANDS_DATA across all islands
+  const start = wikiCode.indexOf('  const ISLANDS_DATA = [');
+  const end = wikiCode.indexOf('  ];\n\n  let currentIslandId');
+  let code = wikiCode.slice(start, end + 4).replace('const ISLANDS_DATA =', 'var ISLANDS_DATA =');
+  eval(code);
+
+  let invalidSpawnCount = 0;
+  for (const isl of ISLANDS_DATA) {
+    for (const st of ['dozing', 'snoozing', 'slumbering']) {
+      const list = isl.spawns[st] || [];
+      const invalid = list.filter(p => p.s1 === '-' && p.s2 === '-' && p.s3 === '-' && p.s4 === '-');
+      invalidSpawnCount += invalid.length;
+    }
+  }
+  assertEquals(invalidSpawnCount, 0, 'No Pokemon in any island should have all-dash sleep styles');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

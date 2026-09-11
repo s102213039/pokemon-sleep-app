@@ -13150,24 +13150,6 @@
           { name: "毒電嬰", name_en: "Toxel", type: "毒", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
           { name: "潤水鴨", name_en: "Quaxly", type: "水", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Ultra 1" },
           { name: "走鯨", name_en: "Cetoddle", type: "冰", s1: "Great 1", s2: "Great 5", s3: "-", s4: "Master 1" },
-          { name: "小拉達", name_en: "Rattata", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "喵喵", name_en: "Meowth", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "皮卡丘", name_en: "Pikachu", type: "電", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "伊布", name_en: "Eevee", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "妙蛙草", name_en: "Ivysaur", type: "草", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "鐵甲蛹", name_en: "Metapod", type: "蟲", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "口呆花", name_en: "Weepinbell", type: "草", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "三地鼠", name_en: "Dugtrio", type: "地面", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "巴大蝶", name_en: "Butterfree", type: "蟲", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "胖可丁", name_en: "Wigglytuff", type: "妖精", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "仙子伊布", name_en: "Sylveon", type: "妖精", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "妙蛙花", name_en: "Venusaur", type: "草", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "袋獸", name_en: "Kangaskhan", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "雷丘", name_en: "Raichu", type: "電", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "請假王", name_en: "Slaking", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "波克基斯", name_en: "Togekiss", type: "妖精", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "雷公", name_en: "Raikou", type: "電", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "超夢", name_en: "Mewtwo", type: "超能力", s1: "-", s2: "-", s3: "-", s4: "-" },
         ],
       }
     },
@@ -13306,17 +13288,6 @@
           { name: "魔尼尼", name_en: "Mime Jr.", type: "超能力", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Ultra 1" },
           { name: "毛頭小鷹", name_en: "Rufflet", type: "飛行", s1: "Basic 3", s2: "Great 2", s3: "Ultra 3", s4: "Great 3" },
           { name: "古月鳥", name_en: "Cramorant", type: "飛行", s1: "Ultra 3", s2: "Master 2", s3: "Master 8", s4: "Master 3" },
-          { name: "皮卡丘", name_en: "Pikachu", type: "電", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "綠毛蟲", name_en: "Caterpie", type: "蟲", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "伊布", name_en: "Eevee", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "呆殼獸", name_en: "Slowbro", type: "水", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "袋獸", name_en: "Kangaskhan", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "胖可丁", name_en: "Wigglytuff", type: "妖精", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "魔牆人偶", name_en: "Mr. Mime", type: "超能力", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "花療環環", name_en: "Comfey", type: "妖精", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "皮可西", name_en: "Clefable", type: "妖精", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "壺壺", name_en: "Shuckle", type: "蟲", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "骨紋巨聲鱷", name_en: "Skeledirge", type: "幽靈", s1: "-", s2: "-", s3: "-", s4: "-" },
         ],
       }
     },
@@ -13430,17 +13401,6 @@
           { name: "利歐路", name_en: "Riolu", type: "格鬥", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Great 1" },
           { name: "寶寶暴龍", name_en: "Tyrunt", type: "岩石", s1: "Basic 2", s2: "Great 1", s3: "Ultra 2", s4: "Ultra 1" },
           { name: "怪顎龍", name_en: "Tyrantrum", type: "岩石", s1: "Master 3", s2: "Master 7", s3: "Master 13", s4: "-" },
-          { name: "小火龍", name_en: "Charmander", type: "火", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "火恐龍", name_en: "Charmeleon", type: "火", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "三地鼠", name_en: "Dugtrio", type: "地面", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "地鼠", name_en: "Diglett", type: "地面", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "勾魂眼", name_en: "Sableye", type: "惡", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "風速狗", name_en: "Arcanine", type: "火", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "皮可西", name_en: "Clefable", type: "妖精", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "噴火龍", name_en: "Charizard", type: "火", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "骨紋巨聲鱷", name_en: "Skeledirge", type: "幽靈", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "炎帝", name_en: "Entei", type: "火", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "班基拉斯", name_en: "Tyranitar", type: "惡", s1: "-", s2: "-", s3: "-", s4: "-" },
         ],
       }
     },
@@ -13545,18 +13505,6 @@
           { name: "古月鳥", name_en: "Cramorant", type: "飛行", s1: "Ultra 1", s2: "Ultra 5", s3: "Master 6", s4: "Master 1" },
           { name: "走鯨", name_en: "Cetoddle", type: "冰", s1: "Basic 1", s2: "Basic 5", s3: "Ultra 1", s4: "Master 1" },
           { name: "浩大鯨", name_en: "Cetitan", type: "冰", s1: "Master 2", s2: "Master 6", s3: "Master 12", s4: "-" },
-          { name: "小拉達", name_en: "Rattata", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "茸茸羊", name_en: "Flaaffy", type: "電", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "過動猿", name_en: "Vigoroth", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "拉達", name_en: "Raticate", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "百變怪", name_en: "Ditto", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "溶食獸", name_en: "Gulpin", type: "毒", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "阿勃梭魯", name_en: "Absol", type: "惡", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "電龍", name_en: "Ampharos", type: "電", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "信使鳥", name_en: "Delibird", type: "飛行", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "請假王", name_en: "Slaking", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "皮可西", name_en: "Clefable", type: "妖精", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "巴布土撥", name_en: "Pawmot", type: "電", s1: "-", s2: "-", s3: "-", s4: "-" },
         ],
       }
     },
@@ -13669,18 +13617,6 @@
           { name: "潤水鴨", name_en: "Quaxly", type: "水", s1: "Basic 1", s2: "Basic 4", s3: "Great 5", s4: "Ultra 1" },
           { name: "湧躍鴨", name_en: "Quaxwell", type: "水", s1: "Great 1", s2: "Great 5", s3: "Master 1", s4: "Master 1" },
           { name: "狂歡浪舞鴨", name_en: "Quaquaval", type: "格鬥", s1: "Master 1", s2: "Master 5", s3: "Master 11", s4: "Master 6" },
-          { name: "喵喵", name_en: "Meowth", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "果然翁", name_en: "Wobbuffet", type: "超能力", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "妙蛙草", name_en: "Ivysaur", type: "草", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "貓老大", name_en: "Persian", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "哈克龍", name_en: "Dragonair", type: "龍", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "口呆花", name_en: "Weepinbell", type: "草", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "皮可西", name_en: "Clefable", type: "妖精", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "妙蛙花", name_en: "Venusaur", type: "草", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "大食花", name_en: "Victreebel", type: "草", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "老翁龍", name_en: "Drampa", type: "龍", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "沙奈朵", name_en: "Gardevoir", type: "超能力", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "快龍", name_en: "Dragonite", type: "龍", s1: "-", s2: "-", s3: "-", s4: "-" },
         ],
       }
     },
@@ -13789,17 +13725,6 @@
           { name: "自爆磁怪", name_en: "Magnezone", type: "鋼", s1: "Ultra 5", s2: "Master 4", s3: "Master 10", s4: "-" },
           { name: "托戈德瑪爾", name_en: "Togedemaru", type: "鋼", s1: "Ultra 2", s2: "Master 1", s3: "Master 7", s4: "Master 2" },
           { name: "毒電嬰", name_en: "Toxel", type: "毒", s1: "Basic 1", s2: "Basic 3", s3: "Great 4", s4: "Basic 4" },
-          { name: "皮卡丘", name_en: "Pikachu", type: "電", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "鬼斯通", name_en: "Haunter", type: "幽靈", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "鐵甲蛹", name_en: "Metapod", type: "蟲", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "百變怪", name_en: "Ditto", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "巴大蝶", name_en: "Butterfree", type: "蟲", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "雷丘", name_en: "Raichu", type: "電", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "雷伊布", name_en: "Jolteon", type: "電", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "倫琴貓", name_en: "Luxray", type: "電", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "皮可西", name_en: "Clefable", type: "妖精", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "鍬農炮蟲", name_en: "Vikavolt", type: "蟲", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "雷公", name_en: "Raikou", type: "電", s1: "-", s2: "-", s3: "-", s4: "-" },
         ],
       }
     },
@@ -13904,19 +13829,6 @@
           { name: "怪顎龍", name_en: "Tyrantrum", type: "岩石", s1: "Ultra 4", s2: "Master 3", s3: "Master 9", s4: "-" },
           { name: "托戈德瑪爾", name_en: "Togedemaru", type: "鋼", s1: "Ultra 1", s2: "Ultra 5", s3: "Master 6", s4: "Master 1" },
           { name: "毒電嬰", name_en: "Toxel", type: "毒", s1: "Basic 1", s2: "Basic 2", s3: "Great 3", s4: "Great 1" },
-          { name: "伊布", name_en: "Eevee", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "百變怪", name_en: "Ditto", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "阿柏蛇", name_en: "Ekans", type: "毒", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "凱羅斯", name_en: "Pinsir", type: "蟲", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "阿柏怪", name_en: "Arbok", type: "毒", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "寶貝龍", name_en: "Bagon", type: "龍", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "皮可西", name_en: "Clefable", type: "妖精", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "九尾", name_en: "Ninetales", type: "火", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "岩殿居蟹", name_en: "Crustle", type: "蟲", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "吉利蛋", name_en: "Chansey", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "幸福蛋", name_en: "Blissey", type: "一般", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "暴飛龍", name_en: "Salamence", type: "龍", s1: "-", s2: "-", s3: "-", s4: "-" },
-          { name: "炎帝", name_en: "Entei", type: "火", s1: "-", s2: "-", s3: "-", s4: "-" },
         ],
       }
     }
@@ -14367,15 +14279,15 @@
       const pkmDex = POKEMON_SPRITE_FALLBACK[p.name] || '001';
       return `
         <tr>
-          <td style="vertical-align:middle; text-align:center; padding:6px 6px;">
+          <td style="vertical-align:middle; text-align:center; padding:3px 4px;">
             <div class="island-pkm-item island-pkm-icon-only" title="${pName}">
               <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${pName}" loading="lazy" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokedex-sv/icon/${pkmDex}.png';}">
             </div>
           </td>
-          <td style="vertical-align:middle; text-align:center; padding:6px 6px;">${formatSnorlaxRankBadge(p.s1)}</td>
-          <td style="vertical-align:middle; text-align:center; padding:6px 6px;">${formatSnorlaxRankBadge(p.s2)}</td>
-          <td style="vertical-align:middle; text-align:center; padding:6px 6px;">${formatSnorlaxRankBadge(p.s3)}</td>
-          <td style="vertical-align:middle; text-align:center; padding:6px 6px;">${formatSnorlaxRankBadge(p.s4)}</td>
+          <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${formatSnorlaxRankBadge(p.s1)}</td>
+          <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${formatSnorlaxRankBadge(p.s2)}</td>
+          <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${formatSnorlaxRankBadge(p.s3)}</td>
+          <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${formatSnorlaxRankBadge(p.s4)}</td>
         </tr>
       `;
     }).join('');
