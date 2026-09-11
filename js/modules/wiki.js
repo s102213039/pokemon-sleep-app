@@ -14227,14 +14227,13 @@
 
     let berriesHtml = '';
     if (island.berriesMode === 'random') {
-      berriesHtml = `
-        <div class="island-berries-section">
-          <span class="island-berries-label">${isEN ? 'Favored Berries:' : '卡比獸喜好樹果:'}</span>
-          <span class="island-berries-random-desc">${isEN ? island.berriesDesc_en : island.berriesDesc}</span>
-        </div>
-      `;
+      // 萌綠森林為每週隨機樹果, 依需求不展示亦不說明
+      berriesHtml = '';
     } else {
-      const berryChips = island.favoriteBerries.map(bName => {
+      const activeFavBerries = (isExpert && island.expertMode && island.expertMode.favoriteBerries)
+        ? island.expertMode.favoriteBerries
+        : (island.favoriteBerries || []);
+      const berryChips = activeFavBerries.map(bName => {
         const bInfo = BERRY_VALUES_DATA.find(b => b.name === bName);
         const displayName = isEN ? (window.I18N && window.I18N.t(bName) || bName) : bName;
         const iconSrc = bInfo ? bInfo.icon : '';
@@ -14248,7 +14247,7 @@
       }).join('');
       berriesHtml = `
         <div class="island-berries-section">
-          <span class="island-berries-label">${isEN ? 'Favored Berries:' : '卡比獸喜好樹果:'}</span>
+          <span class="island-berries-label">${isEN ? 'Favored:' : '喜好樹果:'}</span>
           <div class="island-berries-list">${berryChips}</div>
         </div>
       `;
@@ -14377,15 +14376,15 @@
       </div>
 
       <div class="island-overview-card">
-        <div class="island-hero-banner" style="background-image: linear-gradient(to bottom, rgba(13,21,39,0.35), rgba(13,21,39,0.92)), url('${island.image}');">
+        <div class="island-hero-banner" style="background-image: linear-gradient(180deg, rgba(8, 14, 26, 0.65) 0%, rgba(8, 14, 26, 0.38) 50%, rgba(8, 14, 26, 0.65) 100%), url('${island.image}');">
           <div class="island-hero-content">
             <div class="island-title-group">
               <h3 class="island-hero-title">${isEN ? (isExpert ? island.name_en + ' EX' : island.name_en) : (isExpert ? island.name + ' EX' : island.name)}</h3>
               <span class="island-title-en">${isEN ? (isExpert ? island.name + ' EX' : island.name) : (isExpert ? island.name_en + ' EX' : island.name_en)}</span>
             </div>
+            ${berriesHtml}
           </div>
         </div>
-        ${berriesHtml}
       </div>
 
       <div class="wiki-two-col-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px; margin-bottom:16px;">

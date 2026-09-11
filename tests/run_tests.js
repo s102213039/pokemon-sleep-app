@@ -4836,6 +4836,14 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   const snoozeTitles = [...htmlCyanSnooze.matchAll(/class="island-pkm-item island-pkm-icon-only" title="([^"]+)"/g)].map(m => m[1]);
   assert(snoozeTitles[0].includes('#025 皮卡丘'), 'Cyan snoozing 1st must be Pikachu #025');
   assert(snoozeTitles[1].includes('#035 皮皮'), 'Cyan snoozing 2nd must be Clefairy #035');
+
+  // 4. Verify Greengrass (random berries) has zero berry section or description rendered
+  assert(!htmlGreengrass.includes('island-berries-section'), 'Greengrass must NOT render any berry section');
+  assert(!htmlGreengrass.includes('隨機3種樹果'), 'Greengrass must NOT display random berries explanation');
+
+  // 5. Verify Cyan (fixed berries) renders inside hero banner with shortened label
+  assert(htmlCyan.includes('喜好樹果:'), 'Cyan must render shortened label 喜好樹果:');
+  assert(/<div class="island-hero-banner"[^>]*>[\s\S]*?<div class="island-title-group">[\s\S]*?<div class="island-berries-section">/.test(htmlCyan), 'Hero banner must contain title group followed by berries section');
 });
 
 // Final Summary Output

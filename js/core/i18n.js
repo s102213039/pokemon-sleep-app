@@ -195,7 +195,7 @@
       'wiki.islands_select_label': '選擇研究營地：',
       'wiki.islands_unlock_goal': '解鎖門檻',
       'wiki.islands_snorlax_mult': '卡比獸難度倍率',
-      'wiki.islands_fav_berries': '卡比獸喜好樹果',
+      'wiki.islands_fav_berries': '喜好樹果',
       'wiki.islands_expert_btn': '切換 EX 專家模式',
       'wiki.islands_normal_btn': '返回一般營地',
       'wiki.islands_ranks_title': '卡比獸評級門檻與睡意之力級距',

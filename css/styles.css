@@ -15951,25 +15951,34 @@ body.mobile-h5-app.values-active,
 
 .mobile-h5-app .island-hero-banner {
   border-radius: 10px !important;
-  min-height: 86px !important;
+  min-height: 84px !important;
   padding: 12px 14px !important;
-  margin-bottom: 8px !important;
+  margin-bottom: 12px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  background-position: center 30% !important;
 }
 
 .mobile-h5-app .island-hero-content {
   flex-direction: column !important;
   align-items: flex-start !important;
-  gap: 8px !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  width: 100% !important;
 }
 
 .mobile-h5-app .island-hero-title {
-  font-size: 20px !important;
-  color: #e2e8f0 !important;
+  font-size: 19px !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85) !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
 }
 
 .mobile-h5-app .island-title-en {
   font-size: 12px !important;
-  color: rgba(203, 213, 225, 0.75) !important;
+  color: rgba(226, 232, 240, 0.85) !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85) !important;
 }
 
 .mobile-h5-app .island-nav-divider {
@@ -16016,16 +16025,22 @@ body.mobile-h5-app.values-active,
   flex-wrap: nowrap !important;
   align-items: center !important;
   border-top: none !important;
+  margin-top: 2px !important;
 }
 
 .mobile-h5-app .island-berries-label {
-  font-size: 13.5px !important;
+  font-size: 12.5px !important;
   font-weight: 700 !important;
   width: auto !important;
   margin: 0 !important;
   white-space: nowrap !important;
   flex-shrink: 0 !important;
   color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .island-hero-banner .island-berries-label {
+  color: #f1f5f9 !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85) !important;
 }
 
 .mobile-h5-app .island-berries-list {
@@ -16035,11 +16050,6 @@ body.mobile-h5-app.values-active,
   gap: 6px !important;
 }
 
-.mobile-h5-app .island-berries-random-desc {
-  font-size: 12.5px !important;
-  color: var(--text-secondary) !important;
-  white-space: nowrap !important;
-}
 
 .mobile-h5-app .island-berry-chip {
   padding: 0 !important;
@@ -19207,46 +19217,48 @@ body.mobile-h5-app.values-active,
 .island-hero-banner {
   border-radius: 12px;
   background-size: cover;
-  background-position: center;
+  background-position: center 30%;
   padding: 16px 20px;
-  margin-bottom: 12px;
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.12));
   position: relative;
   overflow: hidden;
-  min-height: 80px;
+  min-height: 92px;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
 .island-hero-content {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
   width: 100%;
-  flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .island-title-group {
   display: flex;
   align-items: baseline;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .island-hero-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   margin: 0;
-  color: #e2e8f0;
+  color: #ffffff;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+  line-height: 1.2;
 }
 
 .island-title-en {
   font-size: 13px;
-  color: rgba(203, 213, 225, 0.75);
+  color: rgba(226, 232, 240, 0.85);
   font-weight: 500;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
 }
 
 .island-hero-meta {
@@ -19321,15 +19333,13 @@ body.mobile-h5-app.values-active,
   margin: 0;
 }
 
-[data-theme-inverted="true"] .island-berries-label {
-  color: var(--text-primary) !important;
+.island-hero-banner .island-berries-label {
+  color: #f1f5f9 !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
 }
 
-.island-berries-random-desc {
-  font-size: 13.5px;
-  color: var(--text-secondary);
-  font-weight: 500;
-  white-space: nowrap;
+[data-theme-inverted="true"] .island-berries-label {
+  color: var(--text-primary) !important;
 }
 
 .island-berries-list {
