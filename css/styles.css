@@ -4825,15 +4825,16 @@ input[type=range].rf-slider.event-slider {
 
   .wiki-subnav-tabs {
     display: flex;
-    gap: 6px;
+    gap: 3px;
     width: max-content;
+    padding: 0 4px;
   }
 
   .wiki-subtab-btn {
-    padding: 6px 12px;
-    font-size: 11.5px;
+    padding: 4px 7px;
+    font-size: 11px;
     white-space: nowrap;
-    border-radius: 8px;
+    border-radius: 14px;
   }
 
   .wiki-control-bar {
@@ -7678,7 +7679,7 @@ input[type="number"] {
 /* 二級子分頁切換按鈕 */
 .wiki-subnav-tabs {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
   border-top: none;
   padding-top: 0;
@@ -7686,19 +7687,19 @@ input[type="number"] {
 }
 
 .wiki-subtab-btn {
-  padding: 6px 14px;
+  padding: 5px 11px;
   background: var(--bg-card-inner);
   border: 1px solid var(--border-color);
-  border-radius: 20px;
+  border-radius: 18px;
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   user-select: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .wiki-subtab-btn:hover {
@@ -14223,15 +14224,27 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   flex-wrap: nowrap !important;
   overflow-x: auto !important;
   -webkit-overflow-scrolling: touch !important;
-  gap: 6px !important;
-  padding: 6px 12px !important;
-  scrollbar-width: none !important;
+  gap: 3px !important;
+  padding: 4px 6px !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--border-color, rgba(255, 255, 255, 0.25)) transparent !important;
   width: 100% !important;
   margin: 0 !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .wiki-subnav-tabs::-webkit-scrollbar {
-  display: none !important;
+  height: 2.5px !important;
+  display: block !important;
+}
+
+.mobile-h5-app .wiki-subnav-tabs::-webkit-scrollbar-thumb {
+  background: var(--border-color, rgba(255, 255, 255, 0.25)) !important;
+  border-radius: 2px !important;
+}
+
+.mobile-h5-app .wiki-subnav-tabs::-webkit-scrollbar-track {
+  background: transparent !important;
 }
 
 .mobile-h5-app .wiki-subtab-btn {
@@ -14239,11 +14252,13 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   width: auto !important;
   display: inline-flex !important;
   align-items: center !important;
-  gap: 4px !important;
-  padding: 5px 12px !important;
-  border-radius: 18px !important;
-  font-size: 11.5px !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  padding: 4px 7px !important;
+  border-radius: 14px !important;
+  font-size: 11px !important;
   font-weight: 600 !important;
+  line-height: 1.2 !important;
   background: var(--table-row-odd-solid, #0d1527) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-muted) !important;

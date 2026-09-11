@@ -4358,14 +4358,16 @@ test('Tier 3 - Cross-Feature Combinations', 'Island Selection, Sleep Type Filter
 
   // Toggle EX mode on Cyan
   ctx.window.WikiDB.toggleIslandExpertMode();
-  assert(mockPanel.innerHTML.includes('EX EXPERT MODE'), 'Toggling EX mode must render EX section');
-  assert(mockPanel.innerHTML.includes('天青沙灘 EX模式'), 'EX section should display Cyan Beach EX');
+  assert(!mockPanel.innerHTML.includes('island-ex-card'), 'EX special explanation card must be removed');
+  assert(mockPanel.innerHTML.includes('天青沙灘 EX'), 'Hero banner should display Cyan Beach EX');
   assert(mockPanel.innerHTML.includes('2,194,292'), 'Cyan EX must display Master 1 energy 2,194,292');
   assert(mockPanel.innerHTML.includes('14,780,152'), 'Cyan EX must display Master 20 energy 14,780,152');
 
   // Toggle off EX mode
   ctx.window.WikiDB.toggleIslandExpertMode();
-  assert(!mockPanel.innerHTML.includes('EX EXPERT MODE'), 'Toggling off EX mode must hide EX card');
+  assert(!mockPanel.innerHTML.includes('island-ex-card'), 'Toggling off EX mode must not show EX card');
+  assert(!mockPanel.innerHTML.includes('class="island-hero-title">天青沙灘 EX</h3>'), 'Toggling off EX mode must revert hero title to normal');
+  assert(mockPanel.innerHTML.includes('class="island-hero-title">天青沙灘</h3>'), 'Toggling off EX mode must show normal hero title');
   assert(mockPanel.innerHTML.includes('256,544'), 'Normal Cyan must display Master 1 energy 256,544');
   assert(mockPanel.innerHTML.includes('3,732,664'), 'Normal Cyan must display Master 20 energy 3,732,664');
 
@@ -4748,7 +4750,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Berries Single Line La
   const html = mockCtx.window.WikiDB.renderIslandsSubpanel();
 
   assert(!html.includes('class="wiki-card island-overview-card"'), 'Hero block must not have outer wiki-card border');
-  assert(!html.includes('class="wiki-card island-ex-card"'), 'EX block must not have outer wiki-card border');
+  assert(!html.includes('island-ex-card'), 'EX card must be completely removed from DOM');
   assert(html.includes('class="island-table-card"'), 'Two-col tables must use borderless island-table-card');
   assert(html.includes('class="island-spawns-card"'), 'Spawns section must use borderless island-spawns-card');
   assert(!html.includes('<div class="wiki-card" style="margin-bottom:16px;">'), 'Spawns section must not have outer wiki-card box');
@@ -4757,6 +4759,83 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Berries Single Line La
   assert(cssCode.includes('.rank-num {') && cssCode.includes('color: var(--text-primary) !important;'), 'Desktop rank-num must use var(--text-primary)');
   assert(cssCode.includes('.mobile-h5-app .rank-num') && cssCode.includes('color: var(--text-primary) !important;'), 'Mobile rank-num must use var(--text-primary)');
   assert(cssCode.includes('.rank-badge {') && cssCode.includes('color: var(--text-primary);'), 'Desktop rank-badge must use var(--text-primary)');
+
+  // 6. Subtabs compact padding & visible scroll indicator verification
+  assert(cssCode.includes('.mobile-h5-app .wiki-subnav-tabs') && cssCode.includes('gap: 3px !important;'), 'Mobile subnav tabs must use compact gap: 3px');
+  assert(cssCode.includes('.mobile-h5-app .wiki-subnav-tabs') && cssCode.includes('padding: 4px 6px !important;'), 'Mobile subnav tabs must use reduced padding: 4px 6px');
+  assert(cssCode.includes('.mobile-h5-app .wiki-subtab-btn') && cssCode.includes('padding: 4px 7px !important;'), 'Mobile subtab buttons must use compact padding: 4px 7px');
+  assert(cssCode.includes('.mobile-h5-app .wiki-subnav-tabs::-webkit-scrollbar') && cssCode.includes('height: 2.5px !important;'), 'Mobile subnav scrollbar must be visibly styled');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified National Dex Ordering & Tooltips', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+
+  const mockCtx = {
+    window: {
+      location: { hash: '#wiki/islands' },
+      localStorage: { getItem: () => null, setItem: () => {} },
+      addEventListener: () => {},
+      history: { replaceState: () => {} }
+    },
+    document: {
+      documentElement: { setAttribute: () => {}, getAttribute: () => 'zh-TW' },
+      getElementById: () => null,
+      querySelectorAll: () => [],
+      querySelector: () => null,
+      createElement: () => ({ setAttribute: () => {}, appendChild: () => {}, style: {} }),
+      head: { appendChild: () => {} },
+      body: { appendChild: () => {}, classList: { contains: () => false } }
+    },
+    console, setTimeout
+  };
+  mockCtx.window.window = mockCtx.window;
+  mockCtx.window.document = mockCtx.document;
+  vm.createContext(mockCtx);
+  vm.runInContext(i18nCode, mockCtx);
+  vm.runInContext(wikiCode, mockCtx);
+
+  // 1. Greengrass island 'all' view: All sleep types must be unified and ordered by National Pokédex number
+  mockCtx.window.WikiDB.selectIsland('greengrass', false);
+  mockCtx.window.WikiDB.filterIslandSleepType('all');
+  const htmlGreengrass = mockCtx.window.WikiDB.renderIslandsSubpanel();
+
+  // Extract avatar tooltips in rendered sequence
+  const titleMatches = [...htmlGreengrass.matchAll(/class="island-pkm-item island-pkm-icon-only" title="([^"]+)"/g)].map(m => m[1]);
+  assert(titleMatches.length >= 160, 'Greengrass must render all spawns (expected 166)');
+
+  // Verify first 7 sequential Pokemon: #001 -> #002 -> #003 -> #004 -> #005 -> #006 -> #007
+  assert(titleMatches[0].includes('#001 妙蛙種子 (淺淺入夢)'), '1st must be #001 Bulbasaur (Dozing)');
+  assert(titleMatches[1].includes('#002 妙蛙草 (淺淺入夢)'), '2nd must be #002 Ivysaur (Dozing)');
+  assert(titleMatches[2].includes('#003 妙蛙花 (淺淺入夢)'), '3rd must be #003 Venusaur (Dozing)');
+  assert(titleMatches[3].includes('#004 小火龍 (安然入睡)'), '4th must be #004 Charmander (Snoozing)');
+  assert(titleMatches[4].includes('#005 火恐龍 (安然入睡)'), '5th must be #005 Charmeleon (Snoozing)');
+  assert(titleMatches[5].includes('#006 噴火龍 (安然入睡)'), '6th must be #006 Charizard (Snoozing)');
+  assert(titleMatches[6].includes('#007 傑尼龜 (深深入眠)'), '7th must be #007 Squirtle (Slumbering)');
+
+  // Verify that Charmander (#004) appears before Caterpie (#010) and Pinsir (#127), proving no block partitioning
+  const idxCharmander = titleMatches.findIndex(t => t.includes('小火龍'));
+  const idxCaterpie = titleMatches.findIndex(t => t.includes('綠毛蟲'));
+  const idxPinsir = titleMatches.findIndex(t => t.includes('凱羅斯'));
+  assert(idxCharmander < idxCaterpie, 'Charmander (#004) must appear before Caterpie (#010)');
+  assert(idxCharmander < idxPinsir, 'Charmander (#004) must appear before Pinsir (#127)');
+
+  // 2. Cyan Beach: Squirtle (#007) -> Wartortle (#008) -> Blastoise (#009) -> Caterpie (#010)
+  mockCtx.window.WikiDB.selectIsland('cyan', false);
+  mockCtx.window.WikiDB.filterIslandSleepType('all');
+  const htmlCyan = mockCtx.window.WikiDB.renderIslandsSubpanel();
+  const cyanTitles = [...htmlCyan.matchAll(/class="island-pkm-item island-pkm-icon-only" title="([^"]+)"/g)].map(m => m[1]);
+  assert(cyanTitles[0].includes('#007 傑尼龜 (深深入眠)'), 'Cyan 1st must be Squirtle #007');
+  assert(cyanTitles[1].includes('#008 卡咪龜 (深深入眠)'), 'Cyan 2nd must be Wartortle #008');
+  assert(cyanTitles[2].includes('#009 水箭龜 (深深入眠)'), 'Cyan 3rd must be Blastoise #009');
+  assert(cyanTitles[3].includes('#010 綠毛蟲 (淺淺入夢)'), 'Cyan 4th must be Caterpie #010');
+
+  // 3. Verify single sleep type filter also respects Dex ordering
+  mockCtx.window.WikiDB.filterIslandSleepType('snoozing');
+  const htmlCyanSnooze = mockCtx.window.WikiDB.renderIslandsSubpanel();
+  const snoozeTitles = [...htmlCyanSnooze.matchAll(/class="island-pkm-item island-pkm-icon-only" title="([^"]+)"/g)].map(m => m[1]);
+  assert(snoozeTitles[0].includes('#025 皮卡丘'), 'Cyan snoozing 1st must be Pikachu #025');
+  assert(snoozeTitles[1].includes('#035 皮皮'), 'Cyan snoozing 2nd must be Clefairy #035');
 });
 
 // Final Summary Output

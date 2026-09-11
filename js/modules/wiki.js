@@ -11555,6 +11555,11 @@
     allSubtabBtns.forEach(b => {
       if (b.getAttribute('data-subtab') === targetTab) {
         b.classList.add('active');
+        try {
+          if (typeof b.scrollIntoView === 'function') {
+            b.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+          }
+        } catch (e) {}
       } else {
         b.classList.remove('active');
       }
@@ -14151,6 +14156,24 @@
     return '';
   }
 
+  function getIslandPokemonDexCode(p) {
+    if (!p) return '001';
+    if (typeof window !== 'undefined' && Array.isArray(window.allPokemons)) {
+      const found = window.allPokemons.find(x => x.name_cn === p.name || x.name === p.name || x.name_en === p.name_en);
+      if (found && found.formatted_no) return String(found.formatted_no);
+    }
+    return POKEMON_SPRITE_FALLBACK[p.name] || POKEMON_SPRITE_FALLBACK[p.name_en] || '001';
+  }
+
+  function getIslandPokemonDexOrder(p) {
+    if (!p) return 999999;
+    const rawDex = getIslandPokemonDexCode(p);
+    const num = parseInt(rawDex, 10);
+    const base = isNaN(num) ? 9999 : num;
+    const isForm = String(rawDex).includes('-') || (p.name && (p.name.includes('樣子') || p.name.includes('低調')));
+    return base * 10 + (isForm ? 1 : 0);
+  }
+
   function filterIslandSleepType(sleepType) {
     if (!['all', 'dozing', 'snoozing', 'slumbering'].includes(sleepType)) return;
     currentIslandSleepType = sleepType;
@@ -14231,46 +14254,7 @@
       `;
     }
 
-    let expertCardHtml = '';
-    if (island.hasExpertMode && isExpert) {
-      const exp = island.expertMode;
-      expertCardHtml = `
-        <div class="island-ex-card">
-          <div class="island-ex-header">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span class="island-ex-badge">EX EXPERT MODE</span>
-              <h4 style="margin:0; font-size:15px; color:#facc15; font-weight:700;">${isEN ? exp.name_en : exp.name}</h4>
-            </div>
-          </div>
-          <div class="island-ex-rules-grid">
-            <div class="island-ex-rule-item">
-              <div class="island-ex-rule-title">${isEN ? 'Unlock Requirement:' : '開放條件:'}</div>
-              <div class="island-ex-rule-desc">${isEN ? exp.unlockReq_en : exp.unlockReq}</div>
-            </div>
-            <div class="island-ex-rule-item">
-              <div class="island-ex-rule-title">${isEN ? 'Admission Ticket:' : '入場門票:'}</div>
-              <div class="island-ex-rule-desc">${isEN ? exp.ticketReq_en : exp.ticketReq}</div>
-            </div>
-            <div class="island-ex-rule-item">
-              <div class="island-ex-rule-title">${isEN ? 'Berry Rule:' : '樹果規則:'}</div>
-              <div class="island-ex-rule-desc">${isEN ? exp.berryRule_en : exp.berryRule}</div>
-            </div>
-            <div class="island-ex-rule-item">
-              <div class="island-ex-rule-title">${isEN ? 'Primary Berry Bonus:' : '主樹果加成:'}</div>
-              <div class="island-ex-rule-desc text-success">${isEN ? exp.bonus_en : exp.bonus}</div>
-            </div>
-            <div class="island-ex-rule-item">
-              <div class="island-ex-rule-title">${isEN ? 'Non-Favored Berry Penalty:' : '非指定樹果懲罰:'}</div>
-              <div class="island-ex-rule-desc text-danger">${isEN ? exp.penalty_en : exp.penalty}</div>
-            </div>
-            <div class="island-ex-rule-item">
-              <div class="island-ex-rule-title">${isEN ? 'Area Bonus & Rewards:' : '營地加成與報酬:'}</div>
-              <div class="island-ex-rule-desc text-accent">${isEN ? exp.rewards_en : exp.rewards}</div>
-            </div>
-          </div>
-        </div>
-      `;
-    }
+
 
     function formatSnorlaxRankBadge(rankStr) {
       if (!rankStr || rankStr === '-') {
@@ -14325,22 +14309,49 @@
       </tr>
     `).join('');
 
+    const sleepTypeNameMap = {
+      dozing: isEN ? 'Dozing' : '淺淺入夢',
+      snoozing: isEN ? 'Snoozing' : '安然入睡',
+      slumbering: isEN ? 'Slumbering' : '深深入眠'
+    };
+
+    const dozingList = (island.spawns && island.spawns.dozing) ? island.spawns.dozing.map(p => ({ ...p, sleepType: 'dozing' })) : [];
+    const snoozingList = (island.spawns && island.spawns.snoozing) ? island.spawns.snoozing.map(p => ({ ...p, sleepType: 'snoozing' })) : [];
+    const slumberingList = (island.spawns && island.spawns.slumbering) ? island.spawns.slumbering.map(p => ({ ...p, sleepType: 'slumbering' })) : [];
+
     let spawnList = [];
     if (currentIslandSleepType === 'all') {
-      spawnList = [...island.spawns.dozing, ...island.spawns.snoozing, ...island.spawns.slumbering];
+      spawnList = [...dozingList, ...snoozingList, ...slumberingList];
+    } else if (currentIslandSleepType === 'dozing') {
+      spawnList = [...dozingList];
+    } else if (currentIslandSleepType === 'snoozing') {
+      spawnList = [...snoozingList];
+    } else if (currentIslandSleepType === 'slumbering') {
+      spawnList = [...slumberingList];
     } else {
-      spawnList = island.spawns[currentIslandSleepType] || [];
+      spawnList = [...dozingList, ...snoozingList, ...slumberingList];
     }
+
+    // 全島嶼睡姿一律整合並依全國圖鑑編號由小到大排序, 避免三個睡眠狀態分塊堆疊不直觀
+    spawnList.sort((a, b) => {
+      const orderDiff = getIslandPokemonDexOrder(a) - getIslandPokemonDexOrder(b);
+      if (orderDiff !== 0) return orderDiff;
+      return (a.name || '').localeCompare(b.name || '');
+    });
 
     const spawnsRows = spawnList.map(p => {
       const pName = isEN ? p.name_en : p.name;
       const pkmAvatar = getPokemonAvatarUrl(p.name, p.name_en);
-      const pkmDex = POKEMON_SPRITE_FALLBACK[p.name] || '001';
+      const pkmDex = getIslandPokemonDexCode(p);
+      const dexNum = parseInt(pkmDex, 10);
+      const dexPrefix = isNaN(dexNum) ? '' : `#${String(dexNum).padStart(3, '0')} `;
+      const sleepTypeName = p.sleepType ? (sleepTypeNameMap[p.sleepType] || '') : '';
+      const tooltipText = `${dexPrefix}${pName}${sleepTypeName ? ' (' + sleepTypeName + ')' : ''}`;
       return `
-        <tr>
+        <tr data-sleep-type="${p.sleepType || ''}">
           <td style="vertical-align:middle; text-align:center; padding:3px 4px;">
-            <div class="island-pkm-item island-pkm-icon-only" title="${pName}">
-              <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${pName}" loading="lazy" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokedex-sv/icon/${pkmDex}.png';}">
+            <div class="island-pkm-item island-pkm-icon-only" title="${tooltipText}">
+              <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${tooltipText}" loading="lazy" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokedex-sv/icon/${pkmDex}.png';}">
             </div>
           </td>
           <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${formatSnorlaxRankBadge(p.s1)}</td>
@@ -14376,8 +14387,6 @@
         </div>
         ${berriesHtml}
       </div>
-
-      ${expertCardHtml}
 
       <div class="wiki-two-col-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px; margin-bottom:16px;">
         <div class="island-table-card">
@@ -16319,7 +16328,9 @@
     renderIslandsSubpanel: renderIslandsSubpanel,
     getCurrentIslandId: () => currentIslandId,
     getIsExpertModeActive: () => isExpertModeActive,
-    getCurrentIslandSleepType: () => currentIslandSleepType
+    getCurrentIslandSleepType: () => currentIslandSleepType,
+    getIslandPokemonDexOrder: getIslandPokemonDexOrder,
+    getIslandPokemonDexCode: getIslandPokemonDexCode
   };
 
   window.WikiDB = WikiDBExport;
