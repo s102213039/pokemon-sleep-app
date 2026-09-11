@@ -4845,9 +4845,18 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   assert(htmlCyan.includes('喜好樹果:'), 'Cyan must render shortened label 喜好樹果:');
   assert(/<div class="island-hero-banner"[^>]*>[\s\S]*?<div class="island-title-group">[\s\S]*?<div class="island-berries-section">/.test(htmlCyan), 'Hero banner must contain title group followed by berries section');
 
-  // 6. Verify Drowsy Power spawn tiers table renders clean 2-column table with clear formula footnote
+  // 6. Verify Drowsy Power spawn tiers table renders 3 columns with 100-score rank badge, energy and formula footnote
   assert(htmlCyan.includes('最低睡意之力門檻'), 'Drowsy power table must include 最低睡意之力門檻 header');
-  assert(htmlCyan.includes('睡意之力 = 卡比獸能量 × 睡眠分數'), 'Drowsy power table must render sleep formula footnote');
+  assert(htmlCyan.includes('100分對應球級'), 'Drowsy power table must include 100分對應球級 header');
+  assert(htmlCyan.includes('100分對應球級: 以睡滿 100 分 (8.5小時) 換算'), 'Drowsy power table must render 100-score conversion formula footnote');
+
+  mockCtx.window.WikiDB.selectIsland('greengrass');
+  const htmlGreen = mockCtx.window.WikiDB.renderIslandsSubpanel();
+  assert(htmlGreen.includes('普通 (Basic) 3') && htmlGreen.includes('≥ 9,200'), 'Greengrass 4 spawns must map to Basic 3 and >= 9,200');
+  assert(htmlGreen.includes('普通 (Basic) 5') && htmlGreen.includes('≥ 20.6k'), 'Greengrass 5 spawns must map to Basic 5 and >= 20.6k');
+  assert(htmlGreen.includes('超級 (Great) 3') && htmlGreen.includes('≥ 45k'), 'Greengrass 6 spawns must map to Great 3 and >= 45k');
+  assert(htmlGreen.includes('高級 (Ultra) 1') && htmlGreen.includes('≥ 83.2k'), 'Greengrass 7 spawns must map to Ultra 1 and >= 83.2k');
+  assert(htmlGreen.includes('大師 (Master) 1') && htmlGreen.includes('≥ 195k'), 'Greengrass 8 spawns must map to Master 1 and >= 195k');
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Snorlax Rank Badges Theme Saturation & Brightness Adaptation', () => {

@@ -14301,12 +14301,80 @@
       </tr>
     `).join('');
 
-    const drowsyRows = island.drowsyPowerSpawns.map(d => `
-      <tr>
-        <td class="font-bold text-success" style="vertical-align:middle;">${d.count} ${isEN ? 'Pokemon' : '隻'}</td>
-        <td class="font-bold" style="vertical-align:middle;">${d.power}</td>
-      </tr>
-    `).join('');
+    function formatEnergyK(val) {
+      if (!val || val === 0) return '0';
+      if (val >= 1000000) {
+        return '≥ ' + (val / 1000000).toFixed(val % 1000000 === 0 ? 0 : 1) + 'M';
+      }
+      if (val >= 10000) {
+        return '≥ ' + (val / 1000).toFixed(val % 1000 === 0 ? 0 : 1) + 'k';
+      }
+      return '≥ ' + val.toLocaleString();
+    }
+
+    function getMinRankForDrowsyPower(powerStr, tiers) {
+      if (!powerStr || !tiers || !tiers.length) return { rank: 'Basic 1', energy: 0 };
+      const cleanNum = parseInt(String(powerStr).replace(/[^0-9]/g, ''), 10) || 0;
+      if (cleanNum === 0) return { rank: 'Basic 1', energy: 0 };
+      const minEnergyNeeded = Math.ceil(cleanNum / 100);
+
+      const great1Obj = tiers.find(t => t.rank === 'Great 1') || { energy: 23385 };
+      const ultra1Obj = tiers.find(t => t.rank === 'Ultra 1') || { energy: 79197 };
+      const master1Obj = tiers.find(t => t.rank === 'Master 1') || { energy: 187832 };
+
+      const g1 = great1Obj.energy;
+      const u1 = ultra1Obj.energy;
+      const m1 = master1Obj.energy;
+
+      let rank = 'Basic 1';
+      if (minEnergyNeeded < g1) {
+        const ratio = minEnergyNeeded / g1;
+        if (ratio < 0.133) rank = 'Basic 1';
+        else if (ratio < 0.307) rank = 'Basic 2';
+        else if (ratio < 0.500) rank = 'Basic 3';
+        else if (ratio < 0.733) rank = 'Basic 4';
+        else rank = 'Basic 5';
+      } else if (minEnergyNeeded < u1) {
+        const ratio = (minEnergyNeeded - g1) / (u1 - g1);
+        if (ratio < 0.145) rank = 'Great 1';
+        else if (ratio < 0.321) rank = 'Great 2';
+        else if (ratio < 0.531) rank = 'Great 3';
+        else if (ratio < 0.757) rank = 'Great 4';
+        else rank = 'Great 5';
+      } else if (minEnergyNeeded < m1) {
+        const ratio = (minEnergyNeeded - u1) / (m1 - u1);
+        if (ratio < 0.132) rank = 'Ultra 1';
+        else if (ratio < 0.276) rank = 'Ultra 2';
+        else if (ratio < 0.422) rank = 'Ultra 3';
+        else if (ratio < 0.708) rank = 'Ultra 4';
+        else rank = 'Ultra 5';
+      } else {
+        rank = 'Master 1';
+        for (let i = 0; i < tiers.length; i++) {
+          if (tiers[i].rank.startsWith('Master') && minEnergyNeeded >= tiers[i].energy) {
+            rank = tiers[i].rank;
+          }
+        }
+      }
+      return { rank, energy: minEnergyNeeded };
+    }
+
+    const drowsyRows = island.drowsyPowerSpawns.map(d => {
+      const match = getMinRankForDrowsyPower(d.power, activeEnergyTiers);
+      const energyText = formatEnergyK(match.energy);
+      return `
+        <tr>
+          <td class="font-bold text-success" style="vertical-align:middle;">${d.count} ${isEN ? 'Pokemon' : '隻'}</td>
+          <td class="font-bold" style="vertical-align:middle;">${d.power}</td>
+          <td style="vertical-align:middle; text-align:center; padding:5px 4px;">
+            <div style="display:inline-flex; flex-direction:column; align-items:center; gap:2px;">
+              ${formatSnorlaxRankBadge(match.rank)}
+              <span style="font-size:10px; color:var(--text-secondary); line-height:1; font-weight:600;">${energyText}</span>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
 
     const sleepTypeNameMap = {
       dozing: isEN ? 'Dozing' : '淺淺入夢',
@@ -14415,8 +14483,9 @@
             <table class="wiki-data-table">
               <thead>
                 <tr>
-                  <th style="width:45%;">${isEN ? 'Morning Spawns' : '早晨出現隻數'}</th>
-                  <th style="width:55%;">${isEN ? 'Min Drowsy Power' : '最低睡意之力門檻'}</th>
+                  <th style="width:28%;">${isEN ? 'Morning Spawns' : '早晨出現隻數'}</th>
+                  <th style="width:40%;">${isEN ? 'Min Drowsy Power' : '最低睡意之力門檻'}</th>
+                  <th style="width:32%; text-align:center;">${isEN ? 'Min Rank (100 Score)' : '100分對應球級'}</th>
                 </tr>
               </thead>
               <tbody>
@@ -14424,12 +14493,13 @@
                 <tr>
                   <td class="font-bold text-accent" style="vertical-align:middle;">+1 (9 ${isEN ? 'Pokemon' : '隻'})</td>
                   <td class="text-secondary" style="vertical-align:middle;">${isEN ? 'Good Camp Ticket guarantee' : '使用好露營券 (必出1隻貪吃)'}</td>
+                  <td class="text-secondary" style="vertical-align:middle; text-align:center;">-</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <div style="font-size:11.5px; color:var(--text-secondary); margin-top:6px; padding:0 2px; line-height:1.4;">
-            ${isEN ? '* Drowsy Power = Snorlax Strength × Sleep Score (0~100). Higher drowsy power unlocks more spawns and rarer sleep styles.' : '* 睡意之力 = 卡比獸能量 × 睡眠分數 (滿分100分). 每次睡眠結算以此數值直接判定出現隻數與睡姿稀有度.'}
+            ${isEN ? '* Min Rank: Lowest Snorlax rank and energy required to reach this spawn count assuming a 100 Sleep Score (8.5 hrs). Drowsy Power = Snorlax Strength × Sleep Score.' : '* 100分對應球級: 以睡滿 100 分 (8.5小時) 換算, 當天早晨達成該隻數所需之卡比獸最低能量與對應評級. 睡意之力 = 卡比獸能量 × 睡眠分數.'}
           </div>
         </div>
       </div>
