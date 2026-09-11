@@ -392,7 +392,11 @@ const COMPOSITE_SKILL_MAP = {
   
   // 食材精選系列
   '超幸運（食材精選S）': ['食材精選S'],
+  '超幸運 (食材精選S)': ['食材精選S'],
+  '怪力鉗（食材精選S）': ['食材精選S'],
+  '怪力鉗 (食材精選S)': ['食材精選S'],
   '怪力钳（食材精選S）': ['食材精選S'],
+  '怪力钳 (食材精選S)': ['食材精選S'],
   
   // 活力療癒系列
   '新月祈禱（活力全體療癒S）': ['活力全體療癒S'],
@@ -459,12 +463,28 @@ const SPECIAL_SKILL_DETAILS = {
     'en-US': 'Gets 1 ingredient type from specific selection (5~18 of a single ingredient).'
   },
   '超幸運（食材精選S）': {
-    'zh-TW': '從特定食材（4種）中隨機獲得 1 種食材；少數情況下獲得大量夢之碎片代替食材（最高達 20,000 碎片）。',
-    'en-US': 'Gets 1 ingredient type from 4 specific ingredients; rarely awards massive Dream Shards instead (up to 20,000).'
+    'zh-TW': '從特定食材 (4種: 咖啡豆、大豆、豆肉、蘑菇) 中隨機獲得 1 種食材 (5~18個); 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片).',
+    'en-US': 'Gets 1 ingredient type from 4 specific ingredients (Coffee, Soybean, Sausage, Mushroom; 5~18 items); rarely crits for massive Dream Shards instead (up to 20,000).'
+  },
+  '超幸運 (食材精選S)': {
+    'zh-TW': '從特定食材 (4種: 咖啡豆、大豆、豆肉、蘑菇) 中隨機獲得 1 種食材 (5~18個); 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片).',
+    'en-US': 'Gets 1 ingredient type from 4 specific ingredients (Coffee, Soybean, Sausage, Mushroom; 5~18 items); rarely crits for massive Dream Shards instead (up to 20,000).'
+  },
+  '怪力鉗（食材精選S）': {
+    'zh-TW': '從特定食材 (4種: 洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個).',
+    'en-US': 'Gets 1 ingredient type from 4 specific ingredients (Potato, Oil, Corn, Tomato; 5~18 items); crits on Extra Tasty to award 2x ingredients (up to 36).'
+  },
+  '怪力鉗 (食材精選S)': {
+    'zh-TW': '從特定食材 (4種: 洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個).',
+    'en-US': 'Gets 1 ingredient type from 4 specific ingredients (Potato, Oil, Corn, Tomato; 5~18 items); crits on Extra Tasty to award 2x ingredients (up to 36).'
   },
   '怪力钳（食材精選S）': {
-    'zh-TW': '從特定食材（4種）中隨機獲得 1 種食材；若發生「漂亮成功（大成功）」時獲得 2 倍食材（最高達 36 個）。',
-    'en-US': 'Gets 1 ingredient type from 4 specific ingredients; awards 2x ingredients on Extra Tasty (up to 36).'
+    'zh-TW': '從特定食材 (4種: 洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個).',
+    'en-US': 'Gets 1 ingredient type from 4 specific ingredients (Potato, Oil, Corn, Tomato; 5~18 items); crits on Extra Tasty to award 2x ingredients (up to 36).'
+  },
+  '怪力钳 (食材精選S)': {
+    'zh-TW': '從特定食材 (4種: 洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個).',
+    'en-US': 'Gets 1 ingredient type from 4 specific ingredients (Potato, Oil, Corn, Tomato; 5~18 items); crits on Extra Tasty to award 2x ingredients (up to 36).'
   },
   '新月祈禱（活力全體療癒S）': {
     'zh-TW': '讓幫手隊伍的所有寶可夢回復活力，並額外獲得隊伍中所有寶可夢撿來的樹果（超能力屬性隊員越多，樹果數量越多）。',
@@ -585,6 +605,20 @@ function formatSkillNameHtml(displayName, isEN) {
   return `<span class="skill-single-line">${escapeHtml(shortName)}</span>`;
 }
 
+const SUPER_LUCK_INGS = [
+  { name: '醒腦咖啡豆', name_en: 'Rousing Coffee', icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' },
+  { name: '萌綠大豆', name_en: 'Greengrass Soybeans', icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png' },
+  { name: '豆製肉', name_en: 'Bean Sausage', icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' },
+  { name: '品鮮蘑菇', name_en: 'Tasty Mushroom', icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }
+];
+
+const HYPER_CUTTER_INGS = [
+  { name: '窩心洋芋', name_en: 'Soft Potato', icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' },
+  { name: '純粹油', name_en: 'Pure Oil', icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' },
+  { name: '萌綠玉米', name_en: 'Greengrass Corn', icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' },
+  { name: '好眠番茄', name_en: 'Snoozy Tomato', icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }
+];
+
 function renderSkillWithTooltip(skillName, pkm) {
   if (!skillName) return '--';
   const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
@@ -596,36 +630,55 @@ function renderSkillWithTooltip(skillName, pkm) {
 
   let plainTitle = detail;
   // 針對特定寶可夢的「食材精選S」系列，精簡直接顯示該寶可夢專屬食材池（單行純圖標，無冗長換行）
-  if (skillName && skillName.includes('食材精選') && pkm && pkm.ingredients && pkm.ingredients.length > 0) {
-    const uniqueIngs = [];
-    const seen = new Set();
-    pkm.ingredients.forEach(ig => {
-      if (ig.name && !seen.has(ig.name)) {
-        seen.add(ig.name);
-        uniqueIngs.push(ig);
-      }
-    });
+  if (skillName && skillName.includes('食材精選')) {
+    let targetIngs = [];
+    const isSuperLuck = skillName.includes('超幸運');
+    const isHyperCutter = skillName.includes('怪力');
 
-    const separator = isEN ? '<span class="skill-tooltip-sep">, </span>' : '<span class="skill-tooltip-sep">、</span>';
-    const ingIconsHtml = uniqueIngs.map(ig => {
-      const ingName = (typeof window !== 'undefined' && window.I18N) ? (window.I18N.getIngredientName(ig.name) || ig.name) : ig.name;
-      const icon = ig.icon || (typeof window !== 'undefined' && window.I18N && window.I18N.getIngredientIcon(ig.name)) || '';
-      return icon ? `<img src="${icon}" class="skill-tooltip-inline-ing" alt="${ingName}" title="${ingName}">` : '';
-    }).filter(Boolean).join(separator);
+    if (isSuperLuck) {
+      targetIngs = SUPER_LUCK_INGS;
+    } else if (isHyperCutter) {
+      targetIngs = HYPER_CUTTER_INGS;
+    } else if (pkm && pkm.ingredients && pkm.ingredients.length > 0) {
+      const seen = new Set();
+      pkm.ingredients.forEach(ig => {
+        if (ig.name && !seen.has(ig.name)) {
+          seen.add(ig.name);
+          targetIngs.push(ig);
+        }
+      });
+    }
 
-    const ingNamesPlain = uniqueIngs.map(ig => (typeof window !== 'undefined' && window.I18N) ? (window.I18N.getIngredientName(ig.name) || ig.name) : ig.name).join(isEN ? ', ' : '、');
+    if (targetIngs.length > 0) {
+      const separator = isEN ? '<span class="skill-tooltip-sep">, </span>' : '<span class="skill-tooltip-sep">、</span>';
+      const ingIconsHtml = targetIngs.map(ig => {
+        const ingName = (typeof window !== 'undefined' && window.I18N) ? (window.I18N.getIngredientName(ig.name) || ig.name) : ig.name;
+        const icon = ig.icon || (typeof window !== 'undefined' && window.I18N && window.I18N.getIngredientIcon(ig.name)) || '';
+        return icon ? `<img src="${icon}" class="skill-tooltip-inline-ing" alt="${ingName}" title="${ingName}">` : '';
+      }).filter(Boolean).join(separator);
 
-    if (ingIconsHtml) {
-      const prefix = isEN ? 'Draws: ' : '可精選食材：';
-      if (skillName.includes('超幸運')) {
-        detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span><span style="color:var(--text-muted);font-size:11px;margin-left:4px;">${isEN ? '(rarely gives Shards)' : '（少數獲取碎片）'}</span></span>`;
-        plainTitle = isEN ? `Draws: ${ingNamesPlain} (rarely gives Shards)` : `可精選食材：${ingNamesPlain}（少數獲取碎片）`;
-      } else if (skillName.includes('怪力')) {
-        detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span><span style="color:var(--text-muted);font-size:11px;margin-left:4px;">${isEN ? '(extra ings)' : '（額外產出）'}</span></span>`;
-        plainTitle = isEN ? `Draws: ${ingNamesPlain} (extra ings)` : `可精選食材：${ingNamesPlain}（額外產出）`;
+      const ingNamesPlain = targetIngs.map(ig => (typeof window !== 'undefined' && window.I18N) ? (window.I18N.getIngredientName(ig.name) || ig.name) : ig.name).join(isEN ? ', ' : '、');
+
+      const prefix = isEN ? 'Draws: ' : '可精選食材: ';
+      if (isSuperLuck) {
+        const critText = isEN 
+          ? 'Crit effect: Rarely crits for massive Dream Shards instead of ingredients (up to 20,000 shards)!' 
+          : '暴擊效果: 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片)!';
+        detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span><span style="color:var(--text-secondary);font-size:11px;margin-left:4px;font-weight:600;">(4${isEN ? ' types' : '種'})</span></span><div style="font-size:11.5px;color:var(--accent-color,#f59e0b);margin-top:3px;line-height:1.35;font-weight:500;">${critText}</div>`;
+        plainTitle = isEN 
+          ? `Draws (4 types): ${ingNamesPlain}. ${critText}` 
+          : `可精選食材 (4種): ${ingNamesPlain}. ${critText}`;
+      } else if (isHyperCutter) {
+        const critText = isEN 
+          ? 'Crit effect: Extra Tasty crits to grant 2x ingredients (up to 36 items)!' 
+          : '暴擊效果: 漂亮成功 (大成功/暴擊) 時食材產出翻倍 (2 倍, 最高達 36 個)!';
+        detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span><span style="color:var(--text-secondary);font-size:11px;margin-left:4px;font-weight:600;">(4${isEN ? ' types' : '種'})</span></span><div style="font-size:11.5px;color:var(--accent-color,#f59e0b);margin-top:3px;line-height:1.35;font-weight:500;">${critText}</div>`;
+        plainTitle = isEN 
+          ? `Draws (4 types): ${ingNamesPlain}. ${critText}` 
+          : `可精選食材 (4種): ${ingNamesPlain}. ${critText}`;
       } else {
         detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span></span>`;
-        plainTitle = isEN ? `Draws: ${ingNamesPlain}` : `可精選食材：${ingNamesPlain}`;
+        plainTitle = isEN ? `Draws: ${ingNamesPlain}` : `可精選食材: ${ingNamesPlain}`;
       }
     }
   }

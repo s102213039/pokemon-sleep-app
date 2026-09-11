@@ -42,8 +42,8 @@
         { name: '豆製肉', name_en: 'Bean Sausage', icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' },
         { name: '美味蘑菇', name_en: 'Tasty Mushroom', icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' }
       ],
-      extraEffect: '機率獲得大量夢之碎片（最高 20,000）',
-      extraEffect_en: 'Chance to grant massive Dream Shards (up to 20,000)'
+      extraEffect: '少數情況暴擊獲得大量夢之碎片 (暴擊時最高 20,000)',
+      extraEffect_en: 'Rarely crits for massive Dream Shards (up to 20,000)'
     },
     {
       id: 303,
@@ -51,7 +51,7 @@
       name_en: 'Mawile',
       family: '大嘴娃',
       family_en: 'Mawile',
-      skill: '怪力钳（食材精選S）',
+      skill: '怪力鉗（食材精選S）',
       skill_en: 'Hyper Cutter (Ingr. Select S)',
       icon: 'https://www.serebii.net/pokemonsleep/pokemon/icon/303.png',
       ingredients: [
@@ -60,8 +60,8 @@
         { name: '萌綠玉米', name_en: 'Greengrass Corn', icon: 'https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png' },
         { name: '好眠番茄', name_en: 'Snoozy Tomato', icon: 'https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png' }
       ],
-      extraEffect: '大成功獲取 2 倍食材（最高 36 個）',
-      extraEffect_en: '2x ingredients on Extra Tasty (up to 36)'
+      extraEffect: '漂亮成功 (大成功/暴擊) 獲取 2 倍食材 (最高 36 個)',
+      extraEffect_en: 'Crits on Extra Tasty for 2x ingredients (up to 36)'
     },
     {
       id: 558,
@@ -231,8 +231,8 @@
       desc_en: "Obtains 1 ingredient type exclusively from this Pokémon's candidate pool (5~18 of a single ingredient).",
       maxLevel: 7,
       values: [5, 6, 8, 11, 13, 16, 18],
-      specialNote: "機制：鎖定抽取發動寶可夢專屬食材池中 1 種食材。Lv.1 為 5 個，Lv.7 上限最高獲取 18 個。特殊型態：超幸運有機率爆發大量夢之碎片（最高達 20,000 碎片）；怪力鉗大成功時獲取 2 倍食材（最高達 36 個）。",
-      specialNote_en: "Rule: Draws 1 ingredient type only from this Pokémon's candidate pool. Lv.1 yields 5, up to 18 at Lv.7. Variants: Super Luck may grant massive Dream Shards (up to 20,000); Hyper Cutter grants 2x ingredients on Extra Tasty (up to 36).",
+      specialNote: "機制: 鎖定抽取發動寶可夢專屬食材池中 1 種食材 (Lv.1 為 5 個, Lv.7 上限最高獲取 18 個). 特殊型態: 超幸運有機率暴擊獲得大量夢之碎片 (暴擊時最高達 20,000 碎片); 怪力鉗漂亮成功 (大成功/暴擊) 時獲取 2 倍食材 (最高達 36 個).",
+      specialNote_en: "Rule: Draws 1 ingredient type only from this Pokémon's candidate pool (Lv.1 yields 5, up to 18 at Lv.7). Variants: Super Luck may crit for massive Dream Shards (up to 20,000); Hyper Cutter crits on Extra Tasty for 2x ingredients (up to 36).",
       hasIngredientDrawMatrix: true,
       unit: " 個食材",
       unit_en: " Ingredients"
@@ -11507,6 +11507,9 @@
   const STORAGE_KEY_WIKI_SUBTAB = 'pksleep_active_wiki_subtab';
   const VALID_WIKI_SUBTABS = ['skills', 'subskills', 'ingredients', 'values', 'ratings', 'islands'];
 
+  const STORAGE_KEY_SKILLS_CATEGORY = 'pksleep_wiki_skills_category';
+  const VALID_SKILLS_CATEGORIES = ['all', 'energy', 'energy_heal', 'ingredient', 'special', 'shards'];
+
   function getSavedWikiSubTab() {
     try {
       if (typeof window !== 'undefined' && window.location && window.location.hash) {
@@ -11527,7 +11530,21 @@
     return 'skills';
   }
 
+  function getSavedSkillsCategory() {
+    try {
+      const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (storage) {
+        const saved = storage.getItem(STORAGE_KEY_SKILLS_CATEGORY);
+        if (VALID_SKILLS_CATEGORIES.includes(saved)) {
+          return saved;
+        }
+      }
+    } catch (e) {}
+    return 'all';
+  }
+
   let currentWikiSubTab = getSavedWikiSubTab();
+  let currentSkillsCategory = getSavedSkillsCategory();
 
   // --- 核心互動控制函數 ---
 
@@ -11543,10 +11560,10 @@
         storage.setItem(STORAGE_KEY_WIKI_SUBTAB, targetTab);
       }
       if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
-        const curHash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
+        const curHash = (window.location && window.location.hash) ? window.location.hash.replace(/^#/, '') : '';
         const mainPart = curHash.split(/[/_?]/)[0];
         if (mainPart === 'wiki' || !mainPart) {
-          window.history.replaceState(null, '', targetTab === 'skills' ? '#wiki' : '#wiki/' + targetTab);
+          window.history.replaceState(null, '', '#wiki/' + targetTab);
         }
       }
     } catch (e) {}
@@ -11694,6 +11711,15 @@
   // 2. 篩選技能類型 (all / energy / energy_heal / ingredient / special / shards)
   function filterWikiSkills(category) {
     if (!category) return;
+    if (!VALID_SKILLS_CATEGORIES.includes(category)) category = 'all';
+    currentSkillsCategory = category;
+
+    try {
+      const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (storage) {
+        storage.setItem(STORAGE_KEY_SKILLS_CATEGORY, category);
+      }
+    } catch (e) {}
 
     const allPills = document.querySelectorAll('[data-skill-cat]');
     allPills.forEach(b => {
@@ -14546,6 +14572,7 @@
   function initWikiModule() {
     loadPersistedBerrySettings();
     currentWikiSubTab = getSavedWikiSubTab();
+    currentSkillsCategory = getSavedSkillsCategory();
     currentIslandId = getSavedIslandId();
     isExpertModeActive = getSavedIslandExpertMode();
     currentIslandSleepType = getSavedIslandSleepType();
@@ -15659,8 +15686,9 @@
       const specialNote = skill.specialNote ? (isEN ? (skill.specialNote_en || skill.specialNote) : skill.specialNote) : null;
       const penaltyNote = skill.penaltyNote ? (isEN ? (skill.penaltyNote_en || skill.penaltyNote) : skill.penaltyNote) : null;
 
+      const isVisible = currentSkillsCategory === 'all' || skill.category === currentSkillsCategory;
       return `
-        <div class="wiki-skill-card clickable-card" id="skill-card-${skill.id}" data-category="${skill.category}" onclick="window.WikiDB.toggleSkillCard(this, '${skill.id}', event)">
+        <div class="wiki-skill-card clickable-card" id="skill-card-${skill.id}" data-category="${skill.category}" style="display: ${isVisible ? 'flex' : 'none'} !important;" onclick="window.WikiDB.toggleSkillCard(this, '${skill.id}', event)">
           <div class="skill-card-top">
             <div class="skill-title-badges">
               <h4 class="skill-name-text">${skillName}</h4>
@@ -15894,12 +15922,12 @@
           <div class="wiki-control-bar">
             <div class="wiki-filter-pills">
               <span class="wiki-pill-label">${isEN ? 'Skill Type:' : '技能類型：'}</span>
-              <button type="button" class="wiki-pill-btn active" data-skill-cat="all" onclick="window.WikiDB.filterSkills('all')">${isEN ? 'All Skills' : '全部技能'} (${MAIN_SKILLS_DATA.length})</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="energy" onclick="window.WikiDB.filterSkills('energy')">${isEN ? 'Strength' : '能量系'}</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="energy_heal" onclick="window.WikiDB.filterSkills('energy_heal')">${isEN ? 'Energy Recovery' : '活力系'}</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="ingredient" onclick="window.WikiDB.filterSkills('ingredient')">${isEN ? 'Ingredients' : '食材與料理'}</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="special" onclick="window.WikiDB.filterSkills('special')">${isEN ? 'Legend & Special' : '神獸與特殊專屬'}</button>
-              <button type="button" class="wiki-pill-btn" data-skill-cat="shards" onclick="window.WikiDB.filterSkills('shards')">${isEN ? 'Dream Shards' : '夢之碎片'}</button>
+              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'all' ? 'active' : ''}" data-skill-cat="all" onclick="window.WikiDB.filterSkills('all')">${isEN ? 'All Skills' : '全部技能'} (${MAIN_SKILLS_DATA.length})</button>
+              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'energy' ? 'active' : ''}" data-skill-cat="energy" onclick="window.WikiDB.filterSkills('energy')">${isEN ? 'Strength' : '能量系'}</button>
+              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'energy_heal' ? 'active' : ''}" data-skill-cat="energy_heal" onclick="window.WikiDB.filterSkills('energy_heal')">${isEN ? 'Energy Recovery' : '活力系'}</button>
+              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'ingredient' ? 'active' : ''}" data-skill-cat="ingredient" onclick="window.WikiDB.filterSkills('ingredient')">${isEN ? 'Ingredients' : '食材與料理'}</button>
+              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'special' ? 'active' : ''}" data-skill-cat="special" onclick="window.WikiDB.filterSkills('special')">${isEN ? 'Legend & Special' : '神獸與特殊專屬'}</button>
+              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'shards' ? 'active' : ''}" data-skill-cat="shards" onclick="window.WikiDB.filterSkills('shards')">${isEN ? 'Dream Shards' : '夢之碎片'}</button>
             </div>
           </div>
 
@@ -16346,6 +16374,7 @@
     switchSubTab: switchWikiSubTab,
     switchWikiSubTab: switchWikiSubTab,
     getCurrentSubTab: getCurrentSubTab,
+    getCurrentSkillsCategory: () => currentSkillsCategory,
     switchLadderView: switchLadderView,
     filterSkills: filterWikiSkills,
     filterWikiSkills: filterWikiSkills,

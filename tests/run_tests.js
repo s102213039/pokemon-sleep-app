@@ -2457,8 +2457,16 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Draw S Specific Po
   const appCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
   const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
 
+  const store = { 'pksleep_lang': 'zh-TW' };
+  const mockLocalStorage = {
+    getItem: (key) => (key in store ? store[key] : null),
+    setItem: (key, val) => { store[key] = String(val); },
+    removeItem: (key) => { delete store[key]; },
+    clear: () => { for (const k of Object.keys(store)) delete store[k]; }
+  };
+
   const ctx = {
-    window: { localStorage: { getItem: () => 'zh-TW', setItem: () => {} }, addEventListener: () => {} },
+    window: { localStorage: mockLocalStorage, addEventListener: () => {} },
     document: {
       documentElement: { setAttribute: () => {} },
       getElementById: () => null,
@@ -2490,11 +2498,23 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Draw S Specific Po
     name: '大嘴娃',
     name_cn: '大嘴娃',
     name_en: 'Mawile',
-    main_skill: '怪力钳（食材精選S）',
+    main_skill: '怪力鉗（食材精選S）',
     ingredients: [
       { name: '純粹油' },
       { name: '萌綠玉米' },
       { name: '好眠番茄' }
+    ]
+  };
+
+  const honchkrow = {
+    name: '烏鴉頭頭',
+    name_cn: '烏鴉頭頭',
+    name_en: 'Honchkrow',
+    main_skill: '超幸運（食材精選S）',
+    ingredients: [
+      { name: '醒腦咖啡豆' },
+      { name: '萌綠大豆' },
+      { name: '火辣香草' }
     ]
   };
 
@@ -2503,12 +2523,46 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Draw S Specific Po
   assert(sandslashHtmlZh.includes('沉甸甸南瓜') && sandslashHtmlZh.includes('萌綠玉米') && sandslashHtmlZh.includes('窩心洋芋'), 'Sandslash tooltip should include its 3 specific ingredients');
 
   const mawileHtmlZh = ctx.window.PokemonApp.renderSkillWithTooltip(mawile.main_skill, mawile);
-  assert(mawileHtmlZh.includes('純粹油') && mawileHtmlZh.includes('萌綠玉米') && mawileHtmlZh.includes('好眠番茄'), 'Mawile tooltip should include its 3 specific ingredients');
+  assert(mawileHtmlZh.includes('窩心洋芋') && mawileHtmlZh.includes('純粹油') && mawileHtmlZh.includes('萌綠玉米') && mawileHtmlZh.includes('好眠番茄'), 'Mawile tooltip must include all 4 specific ingredients (Soft Potato, Pure Oil, Greengrass Corn, Snoozy Tomato)');
+  assert(mawileHtmlZh.includes('(4種)'), 'Mawile badge should show (4種)');
+  assert(mawileHtmlZh.includes('暴擊效果') && (mawileHtmlZh.includes('翻倍') || mawileHtmlZh.includes('雙倍')), 'Mawile tooltip must explain critical hit effect (double ingredients)');
+
+  // Verify alias 怪力钳（食材精選S）
+  const mawileAliasHtml = ctx.window.PokemonApp.renderSkillWithTooltip('怪力钳（食材精選S）', mawile);
+  assert(mawileAliasHtml.includes('窩心洋芋') && mawileAliasHtml.includes('純粹油'), 'Mawile alias must resolve 4-ingredient pool');
+
+  const honchkrowHtmlZh = ctx.window.PokemonApp.renderSkillWithTooltip(honchkrow.main_skill, honchkrow);
+  assert(honchkrowHtmlZh.includes('醒腦咖啡豆') && honchkrowHtmlZh.includes('萌綠大豆') && honchkrowHtmlZh.includes('豆製肉') && honchkrowHtmlZh.includes('品鮮蘑菇'), 'Honchkrow tooltip must include all 4 specific ingredients (Rousing Coffee, Greengrass Soybeans, Bean Sausage, Tasty Mushroom)');
+  assert(!honchkrowHtmlZh.includes('火辣香草'), 'Honchkrow tooltip must not include spicy herb');
+  assert(honchkrowHtmlZh.includes('(4種)'), 'Honchkrow badge should show (4種)');
+  assert(honchkrowHtmlZh.includes('暴擊效果') && honchkrowHtmlZh.includes('夢之碎片'), 'Honchkrow tooltip must explain critical hit effect (massive Dream Shards)');
 
   ctx.window.I18N.setLanguage('en-US');
   const sandslashHtmlEn = ctx.window.PokemonApp.renderSkillWithTooltip(sandslash.main_skill, sandslash);
   assert(sandslashHtmlEn.includes('Plump Pumpkin') && sandslashHtmlEn.includes('Greengrass Corn') && sandslashHtmlEn.includes('Soft Potato'), 'Sandslash English tooltip should include its 3 specific ingredients in English');
+
+  const mawileHtmlEn = ctx.window.PokemonApp.renderSkillWithTooltip(mawile.main_skill, mawile);
+  assert(mawileHtmlEn.includes('Soft Potato') && mawileHtmlEn.includes('Pure Oil') && mawileHtmlEn.includes('Greengrass Corn') && mawileHtmlEn.includes('Snoozy Tomato'), 'Mawile English tooltip should include all 4 ingredients in English');
+  assert(mawileHtmlEn.includes('2x ingredients') && mawileHtmlEn.includes('Extra Tasty'), 'Mawile English tooltip should include critical hit explanation');
+
+  const honchkrowHtmlEn = ctx.window.PokemonApp.renderSkillWithTooltip(honchkrow.main_skill, honchkrow);
+  assert(honchkrowHtmlEn.includes('Rousing Coffee') && honchkrowHtmlEn.includes('Greengrass Soybeans') && honchkrowHtmlEn.includes('Bean Sausage') && honchkrowHtmlEn.includes('Tasty Mushroom'), 'Honchkrow English tooltip should include all 4 ingredients in English');
+  assert(honchkrowHtmlEn.includes('Dream Shards') && honchkrowHtmlEn.includes('20,000'), 'Honchkrow English tooltip should include critical hit explanation');
+
   ctx.window.I18N.setLanguage('zh-TW');
+
+  // Wiki Main Skills Subtab & Category Filter State Persistence Verification
+  ctx.window.WikiDB.switchWikiSubTab('skills');
+  assertEquals(mockLocalStorage.getItem('pksleep_active_wiki_subtab'), 'skills', 'Switching to skills subtab must persist in localStorage');
+  assertEquals(ctx.window.WikiDB.getCurrentSubTab(), 'skills', 'getCurrentSubTab must return skills');
+
+  ctx.window.WikiDB.filterWikiSkills('ingredient');
+  assertEquals(mockLocalStorage.getItem('pksleep_wiki_skills_category'), 'ingredient', 'Filtering ingredient skills must persist in localStorage');
+  assertEquals(ctx.window.WikiDB.getCurrentSkillsCategory(), 'ingredient', 'getCurrentSkillsCategory must return ingredient');
+
+  ctx.window.WikiDB.filterWikiSkills('shards');
+  assertEquals(mockLocalStorage.getItem('pksleep_wiki_skills_category'), 'shards', 'Filtering shards skills must persist in localStorage');
+  assertEquals(ctx.window.WikiDB.getCurrentSkillsCategory(), 'shards', 'getCurrentSkillsCategory must return shards');
 
   const ingDrawSkill = ctx.window.WikiDB.MAIN_SKILLS_DATA.find(s => s.id === 'ingredient_draw_s');
   assert(ingDrawSkill && ingDrawSkill.hasIngredientDrawMatrix, 'Wiki should define ingredient_draw_s with hasIngredientDrawMatrix');
