@@ -4715,6 +4715,45 @@ test('Tier 4 - Real-World Application Scenarios', 'Islands Subtab, Active Island
   assertEquals(env3.window.WikiDB.getCurrentIslandSleepType(), 'snoozing', 'Snoozing filter remembered on clean reload');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Island Berries Single Line Layout, Borderless Chips & Zero Nested Outer Borders', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const cssCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // 1. CSS Verification: Single-line layout for Favored Berries (desktop and mobile)
+  assert(cssCode.includes('.island-berries-section {') && cssCode.includes('flex-direction: row;') && cssCode.includes('flex-wrap: nowrap;'), 'Desktop island-berries-section must be single line row');
+  assert(cssCode.includes('.island-berries-label {') && cssCode.includes('white-space: nowrap;') && cssCode.includes('flex-shrink: 0;'), 'Desktop island-berries-label must be nowrap and non-shrinking');
+  assert(cssCode.includes('.mobile-h5-app .island-berries-section') && cssCode.includes('flex-direction: row !important;') && cssCode.includes('flex-wrap: nowrap !important;'), 'Mobile island-berries-section must be single line row');
+  assert(cssCode.includes('.mobile-h5-app .island-berries-label') && cssCode.includes('width: auto !important;') && cssCode.includes('white-space: nowrap !important;'), 'Mobile island-berries-label must be width auto and nowrap');
+
+  // 2. CSS Verification: Berry chips must have borders removed
+  assert(cssCode.includes('.island-berry-chip {') && cssCode.includes('border: none !important;') && cssCode.includes('background: transparent !important;'), 'Desktop berry chips must have border removed');
+  assert(cssCode.includes('.mobile-h5-app .island-berry-chip') && cssCode.includes('border: none !important;'), 'Mobile berry chips must have border removed');
+
+  // 3. CSS Verification: Elimination of redundant outer borders in islands tab
+  assert(cssCode.includes('.island-table-card,') && cssCode.includes('.island-spawns-card') && cssCode.includes('border: none !important;') && cssCode.includes('padding: 0 !important;'), 'Table sections must have outer borders and padding removed to maximize content width');
+  assert(cssCode.includes('#wiki-subpanel-islands .wiki-card') && cssCode.includes('border: none !important;'), 'Any wiki-card in islands subpanel must be borderless');
+
+  // 4. DOM Verification: Islands subpanel HTML structure must NOT wrap sections in redundant wiki-card borders
+  const mockCtx = {
+    window: { localStorage: { getItem: () => null, setItem: () => {} }, location: { hash: '' } },
+    document: { getElementById: () => null, querySelectorAll: () => [], addEventListener: () => {} },
+    console, setTimeout
+  };
+  mockCtx.window.window = mockCtx.window;
+  mockCtx.window.document = mockCtx.document;
+  vm.createContext(mockCtx);
+  vm.runInContext(wikiCode, mockCtx);
+
+  mockCtx.window.WikiDB.selectIsland('cyan', true);
+  const html = mockCtx.window.WikiDB.renderIslandsSubpanel();
+
+  assert(!html.includes('class="wiki-card island-overview-card"'), 'Hero block must not have outer wiki-card border');
+  assert(!html.includes('class="wiki-card island-ex-card"'), 'EX block must not have outer wiki-card border');
+  assert(html.includes('class="island-table-card"'), 'Two-col tables must use borderless island-table-card');
+  assert(html.includes('class="island-spawns-card"'), 'Spawns section must use borderless island-spawns-card');
+  assert(!html.includes('<div class="wiki-card" style="margin-bottom:16px;">'), 'Spawns section must not have outer wiki-card box');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

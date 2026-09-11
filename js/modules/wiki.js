@@ -14235,7 +14235,7 @@
     if (island.hasExpertMode && isExpert) {
       const exp = island.expertMode;
       expertCardHtml = `
-        <div class="wiki-card island-ex-card">
+        <div class="island-ex-card">
           <div class="island-ex-header">
             <div style="display:flex; align-items:center; gap:8px;">
               <span class="island-ex-badge">EX EXPERT MODE</span>
@@ -14365,7 +14365,7 @@
         ${exNavHtml}
       </div>
 
-      <div class="wiki-card island-overview-card">
+      <div class="island-overview-card">
         <div class="island-hero-banner" style="background-image: linear-gradient(to bottom, rgba(13,21,39,0.35), rgba(13,21,39,0.92)), url('${island.image}');">
           <div class="island-hero-content">
             <div class="island-title-group">
@@ -14380,7 +14380,7 @@
       ${expertCardHtml}
 
       <div class="wiki-two-col-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px; margin-bottom:16px;">
-        <div class="wiki-card">
+        <div class="island-table-card">
           <div class="wiki-card-header">
             <h3 class="wiki-card-title">${isEN ? 'Snorlax Rank Energy Progression' : '卡比獸評級所需能量'}</h3>
           </div>
@@ -14399,7 +14399,7 @@
           </div>
         </div>
 
-        <div class="wiki-card">
+        <div class="island-table-card">
           <div class="wiki-card-header">
             <h3 class="wiki-card-title">${isEN ? 'Drowsy Power Spawn Tiers' : '睡意之力與出現隻數門檻'}</h3>
           </div>
@@ -14423,7 +14423,7 @@
         </div>
       </div>
 
-      <div class="wiki-card" style="margin-bottom:16px;">
+      <div class="island-spawns-card" style="margin-bottom:16px;">
         <div class="wiki-card-header" style="flex-wrap:wrap; gap:12px; justify-content:space-between; align-items:center;">
           <h3 class="wiki-card-title">${isEN ? 'Pokemon Sleep Types & Posture Unlock Tiers' : '棲息寶可夢與各星級睡姿解鎖門檻'}</h3>
           <div class="island-sleep-filters">
