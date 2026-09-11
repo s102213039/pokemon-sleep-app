@@ -1703,6 +1703,8 @@ if (typeof document !== 'undefined') {
 
       const STORAGE_KEY_MAIN_TAB = 'pksleep_active_main_tab';
       const VALID_MAIN_TABS = ['pokemon', 'recipes', 'wiki', 'box', 'news'];
+      const VALID_WIKI_SUBTABS = ['skills', 'subskills', 'ingredients', 'values', 'ratings', 'islands'];
+      const VALID_BOX_SUBTABS = ['list', 'lab'];
 
       function switchMainTab(target) {
         if (!VALID_MAIN_TABS.includes(target)) target = 'pokemon';
@@ -1795,7 +1797,7 @@ if (typeof document !== 'undefined') {
           try {
             const storage = getStorage();
             const saved = storage ? storage.getItem('pksleep_active_wiki_subtab') : null;
-            if (saved && ['skills', 'subskills', 'ingredients', 'values', 'ratings'].includes(saved)) {
+            if (saved && VALID_WIKI_SUBTABS.includes(saved)) {
               wikiSubTab = saved;
             }
           } catch (e) {}
@@ -1913,9 +1915,9 @@ if (typeof document !== 'undefined') {
         if (VALID_MAIN_TABS.includes(main)) {
           const storage = getStorage();
           if (storage) {
-            if (main === 'wiki' && sub && ['skills', 'subskills', 'ingredients', 'values', 'ratings'].includes(sub)) {
+            if (main === 'wiki' && sub && VALID_WIKI_SUBTABS.includes(sub)) {
               try { storage.setItem('pksleep_active_wiki_subtab', sub); } catch (e) {}
-            } else if (main === 'box' && sub && ['list', 'lab'].includes(sub)) {
+            } else if (main === 'box' && sub && VALID_BOX_SUBTABS.includes(sub)) {
               try { storage.setItem('pksleep_active_box_subtab', sub); } catch (e) {}
             }
           }
@@ -1941,9 +1943,9 @@ if (typeof document !== 'undefined') {
 
       const storage = getStorage();
       if (storage) {
-        if (initialTab === 'wiki' && subFromHash && ['skills', 'subskills', 'ingredients', 'values', 'ratings'].includes(subFromHash)) {
+        if (initialTab === 'wiki' && subFromHash && VALID_WIKI_SUBTABS.includes(subFromHash)) {
           try { storage.setItem('pksleep_active_wiki_subtab', subFromHash); } catch (e) {}
-        } else if (initialTab === 'box' && subFromHash && ['list', 'lab'].includes(subFromHash)) {
+        } else if (initialTab === 'box' && subFromHash && VALID_BOX_SUBTABS.includes(subFromHash)) {
           try { storage.setItem('pksleep_active_box_subtab', subFromHash); } catch (e) {}
         }
       }

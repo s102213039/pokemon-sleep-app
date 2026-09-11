@@ -3240,6 +3240,36 @@ test('Tier 4 - Real-World Application Scenarios', 'Main Tab and Internal Sub-Tab
 
   assertEquals(sharedStorage['pksleep_active_main_tab'], 'wiki', 'Main tab remembered as wiki');
   assertEquals(env3.window.WikiDB.getCurrentSubTab(), 'subskills', 'Subtab remembered as subskills');
+
+  // 6. User switches to Islands subtab in Wiki and selects Cyan Beach
+  env3.window.WikiDB.switchSubTab('islands');
+  assertEquals(sharedStorage['pksleep_active_wiki_subtab'], 'islands', 'Wiki subtab should be saved as islands');
+  assertEquals(env3.window.location.hash, '#wiki/islands', 'Hash should sync with #wiki/islands');
+  env3.window.WikiDB.selectIsland('cyan', false);
+  assertEquals(sharedStorage['pksleep_active_island_id'], 'cyan', 'Selected island should be saved to localStorage');
+
+  // 7. Session 4 (Page Refresh on #wiki/islands): simulate reload
+  const env4 = createEnv('#wiki/islands');
+  vm.runInContext(i18nCode, env4);
+  vm.runInContext(wikiCode, env4);
+  vm.runInContext(boxCode, env4);
+  vm.runInContext(appCode, env4);
+  env4.triggerReady();
+
+  assertEquals(env4.window.WikiDB.getCurrentSubTab(), 'islands', 'Wiki must restore islands subtab on reload');
+  assertEquals(env4.window.WikiDB.getCurrentIslandId(), 'cyan', 'Island must restore cyan on reload');
+  assertEquals(env4.window.location.hash, '#wiki/islands', 'Hash must stay #wiki/islands on reload');
+
+  // 8. Session 5: simulate reload with no hash (root entry)
+  const env5 = createEnv('');
+  vm.runInContext(i18nCode, env5);
+  vm.runInContext(wikiCode, env5);
+  vm.runInContext(boxCode, env5);
+  vm.runInContext(appCode, env5);
+  env5.triggerReady();
+
+  assertEquals(sharedStorage['pksleep_active_main_tab'], 'wiki', 'Main tab remembered as wiki');
+  assertEquals(env5.window.WikiDB.getCurrentSubTab(), 'islands', 'Subtab remembered as islands on root reload');
 });
 
 test('Tier 1 - Feature Coverage', 'Ingredient Ladder Multi-Criteria Track Sorting (ENERGY_ASC, ENERGY_DESC, YIELD_DESC, DEMAND_DESC)', () => {
@@ -4534,13 +4564,19 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Berries Theme Tokens, 
   assert(cssCode.includes('.mobile-h5-app .island-pkm-icon-only .island-pkm-avatar') && cssCode.includes('width: 28px !important;'), 'Mobile avatar width must be reduced to 28px');
 
   // 3. Verify ZERO all-dash spawns in ISLANDS_DATA across all islands
-  const start = wikiCode.indexOf('  const ISLANDS_DATA = [');
-  const end = wikiCode.indexOf('  ];\n\n  let currentIslandId');
-  let code = wikiCode.slice(start, end + 4).replace('const ISLANDS_DATA =', 'var ISLANDS_DATA =');
-  eval(code);
+  const mockCtx = {
+    window: { localStorage: { getItem: () => null, setItem: () => {} }, location: { hash: '' } },
+    document: { getElementById: () => null, querySelectorAll: () => [], addEventListener: () => {} },
+    console, setTimeout
+  };
+  mockCtx.window.window = mockCtx.window;
+  mockCtx.window.document = mockCtx.document;
+  vm.createContext(mockCtx);
+  vm.runInContext(wikiCode, mockCtx);
+  const islandsData = mockCtx.window.WikiDB.ISLANDS_DATA;
 
   let invalidSpawnCount = 0;
-  for (const isl of ISLANDS_DATA) {
+  for (const isl of islandsData) {
     for (const st of ['dozing', 'snoozing', 'slumbering']) {
       const list = isl.spawns[st] || [];
       const invalid = list.filter(p => p.s1 === '-' && p.s2 === '-' && p.s3 === '-' && p.s4 === '-');
@@ -4548,6 +4584,135 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Berries Theme Tokens, 
     }
   }
   assertEquals(invalidSpawnCount, 0, 'No Pokemon in any island should have all-dash sleep styles');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Islands Subtab, Active Island & Sleep Filter Persistence Across Reloads', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const appCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+  const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+
+  const sharedStorage = {};
+  function makeEnv(hash = '') {
+    const domListeners = [];
+    const elements = {};
+    const getEl = id => {
+      if (!elements[id]) {
+        elements[id] = {
+          id,
+          classList: {
+            classes: new Set(),
+            add(c) { this.classes.add(c); },
+            remove(c) { this.classes.delete(c); },
+            contains(c) { return this.classes.has(c); }
+          },
+          style: {},
+          innerHTML: '',
+          value: '',
+          setAttribute() {},
+          addEventListener(evt, cb) { if (evt === 'DOMContentLoaded') domListeners.push(cb); }
+        };
+      }
+      return elements[id];
+    };
+
+    const mockStorage = {
+      getItem: k => sharedStorage[k] !== undefined ? sharedStorage[k] : null,
+      setItem: (k, v) => { sharedStorage[k] = String(v); },
+      removeItem: k => { delete sharedStorage[k]; }
+    };
+
+    const ctx = {
+      localStorage: mockStorage,
+      sessionStorage: mockStorage,
+      window: {
+        location: { hash },
+        localStorage: mockStorage,
+        sessionStorage: mockStorage,
+        history: {
+          replaceState: (state, title, url) => {
+            ctx.window.location.hash = url;
+          }
+        },
+        innerWidth: 1200,
+        scrollTo: () => {},
+        addEventListener: (evt, cb) => {
+          if (evt === 'DOMContentLoaded') domListeners.push(cb);
+        }
+      },
+      document: {
+        readyState: 'complete',
+        documentElement: {
+          setAttribute: () => {},
+          getAttribute: () => null,
+          removeAttribute: () => {}
+        },
+        getElementById: getEl,
+        querySelectorAll: () => [],
+        querySelector: () => null,
+        body: { classList: { add() {}, remove() {}, contains: () => false } },
+        addEventListener: (evt, cb) => {
+          if (evt === 'DOMContentLoaded') domListeners.push(cb);
+        }
+      },
+      console,
+      setTimeout
+    };
+    ctx.window.window = ctx.window;
+    ctx.window.document = ctx.document;
+    vm.createContext(ctx);
+    ctx.triggerReady = () => {
+      domListeners.forEach(cb => { try { cb(); } catch (e) {} });
+    };
+    return ctx;
+  }
+
+  // 1. Initial navigation to Wiki and selection of Islands tab, Cyan Beach, and Snoozing filter
+  const env1 = makeEnv('#wiki');
+  vm.runInContext(i18nCode, env1);
+  vm.runInContext(wikiCode, env1);
+  vm.runInContext(boxCode, env1);
+  vm.runInContext(appCode, env1);
+  env1.triggerReady();
+
+  env1.window.WikiDB.switchSubTab('islands');
+  assertEquals(sharedStorage['pksleep_active_wiki_subtab'], 'islands', 'Wiki subtab must be stored as islands');
+  assertEquals(env1.window.location.hash, '#wiki/islands', 'Hash must be #wiki/islands');
+
+  env1.window.WikiDB.selectIsland('cyan', true);
+  assertEquals(sharedStorage['pksleep_active_island_id'], 'cyan', 'Active island must be stored as cyan');
+  assertEquals(sharedStorage['pksleep_active_island_expert'], 'true', 'Expert mode must be stored as true');
+
+  env1.window.WikiDB.filterIslandSleepType('snoozing');
+  assertEquals(sharedStorage['pksleep_active_island_sleep_type'], 'snoozing', 'Sleep filter must be stored as snoozing');
+
+  // 2. Simulate Page Refresh with hash #wiki/islands
+  const env2 = makeEnv('#wiki/islands');
+  vm.runInContext(i18nCode, env2);
+  vm.runInContext(wikiCode, env2);
+  vm.runInContext(boxCode, env2);
+  vm.runInContext(appCode, env2);
+  env2.triggerReady();
+
+  assertEquals(env2.window.WikiDB.getCurrentSubTab(), 'islands', 'Wiki must restore islands subtab after reload');
+  assertEquals(env2.window.WikiDB.getCurrentIslandId(), 'cyan', 'Wiki must restore cyan beach after reload');
+  assertEquals(env2.window.WikiDB.getIsExpertModeActive(), true, 'Wiki must restore expert mode after reload');
+  assertEquals(env2.window.WikiDB.getCurrentIslandSleepType(), 'snoozing', 'Wiki must restore snoozing filter after reload');
+  assertEquals(env2.window.location.hash, '#wiki/islands', 'Hash must stay #wiki/islands after reload');
+
+  // 3. Simulate Page Refresh with no hash (clean reload)
+  const env3 = makeEnv('');
+  vm.runInContext(i18nCode, env3);
+  vm.runInContext(wikiCode, env3);
+  vm.runInContext(boxCode, env3);
+  vm.runInContext(appCode, env3);
+  env3.triggerReady();
+
+  assertEquals(sharedStorage['pksleep_active_main_tab'], 'wiki', 'Main tab remembered as wiki');
+  assertEquals(env3.window.WikiDB.getCurrentSubTab(), 'islands', 'Wiki subtab remembered as islands on clean reload');
+  assertEquals(env3.window.WikiDB.getCurrentIslandId(), 'cyan', 'Cyan beach remembered on clean reload');
+  assertEquals(env3.window.WikiDB.getIsExpertModeActive(), true, 'Expert mode remembered on clean reload');
+  assertEquals(env3.window.WikiDB.getCurrentIslandSleepType(), 'snoozing', 'Snoozing filter remembered on clean reload');
 });
 
 // Final Summary Output

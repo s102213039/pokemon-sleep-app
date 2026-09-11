@@ -13834,14 +13834,61 @@
     }
   ];
 
-  let currentIslandId = 'greengrass';
-  let isExpertModeActive = false;
-  let currentIslandSleepType = 'all';
+  const STORAGE_KEY_ISLAND_ID = 'pksleep_active_island_id';
+  const STORAGE_KEY_ISLAND_EXPERT = 'pksleep_active_island_expert';
+  const STORAGE_KEY_ISLAND_SLEEP_TYPE = 'pksleep_active_island_sleep_type';
+
+  function getSavedIslandId() {
+    try {
+      const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (storage) {
+        const saved = storage.getItem(STORAGE_KEY_ISLAND_ID);
+        if (saved && ISLANDS_DATA.some(i => i.id === saved)) {
+          return saved;
+        }
+      }
+    } catch (e) {}
+    return 'greengrass';
+  }
+
+  function getSavedIslandExpertMode() {
+    try {
+      const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (storage) {
+        return storage.getItem(STORAGE_KEY_ISLAND_EXPERT) === 'true';
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  function getSavedIslandSleepType() {
+    try {
+      const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (storage) {
+        const saved = storage.getItem(STORAGE_KEY_ISLAND_SLEEP_TYPE);
+        if (['all', 'dozing', 'snoozing', 'slumbering'].includes(saved)) {
+          return saved;
+        }
+      }
+    } catch (e) {}
+    return 'all';
+  }
+
+  let currentIslandId = getSavedIslandId();
+  let isExpertModeActive = getSavedIslandExpertMode();
+  let currentIslandSleepType = getSavedIslandSleepType();
 
   function selectIsland(islandId, isExpert = false) {
     if (!islandId) return;
     currentIslandId = islandId;
     isExpertModeActive = !!isExpert;
+    try {
+      const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (storage) {
+        storage.setItem(STORAGE_KEY_ISLAND_ID, islandId);
+        storage.setItem(STORAGE_KEY_ISLAND_EXPERT, String(!!isExpert));
+      }
+    } catch (e) {}
     refreshIslandsSubpanel();
   }
 
@@ -13850,10 +13897,16 @@
     if (!island || !island.hasExpertMode) {
       currentIslandId = 'greengrass';
       isExpertModeActive = true;
-      refreshIslandsSubpanel();
-      return;
+    } else {
+      isExpertModeActive = !isExpertModeActive;
     }
-    isExpertModeActive = !isExpertModeActive;
+    try {
+      const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (storage) {
+        storage.setItem(STORAGE_KEY_ISLAND_ID, currentIslandId);
+        storage.setItem(STORAGE_KEY_ISLAND_EXPERT, String(isExpertModeActive));
+      }
+    } catch (e) {}
     refreshIslandsSubpanel();
   }
 
@@ -14101,6 +14154,12 @@
   function filterIslandSleepType(sleepType) {
     if (!['all', 'dozing', 'snoozing', 'slumbering'].includes(sleepType)) return;
     currentIslandSleepType = sleepType;
+    try {
+      const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (storage) {
+        storage.setItem(STORAGE_KEY_ISLAND_SLEEP_TYPE, sleepType);
+      }
+    } catch (e) {}
     refreshIslandsSubpanel();
   }
 
@@ -14406,6 +14465,9 @@
   function initWikiModule() {
     loadPersistedBerrySettings();
     currentWikiSubTab = getSavedWikiSubTab();
+    currentIslandId = getSavedIslandId();
+    isExpertModeActive = getSavedIslandExpertMode();
+    currentIslandSleepType = getSavedIslandSleepType();
     const wikiContainer = document.getElementById('panel-wiki');
     if (!wikiContainer) return;
 
@@ -16254,7 +16316,10 @@
     selectIsland: selectIsland,
     toggleIslandExpertMode: toggleIslandExpertMode,
     filterIslandSleepType: filterIslandSleepType,
-    renderIslandsSubpanel: renderIslandsSubpanel
+    renderIslandsSubpanel: renderIslandsSubpanel,
+    getCurrentIslandId: () => currentIslandId,
+    getIsExpertModeActive: () => isExpertModeActive,
+    getCurrentIslandSleepType: () => currentIslandSleepType
   };
 
   window.WikiDB = WikiDBExport;
@@ -16262,6 +16327,9 @@
   // 同步掛載至 window 根層級以防止任何命名空間呼叫錯誤
   window.switchWikiSubTab = switchWikiSubTab;
   window.getCurrentSubTab = getCurrentSubTab;
+  window.getCurrentIslandId = () => currentIslandId;
+  window.getIsExpertModeActive = () => isExpertModeActive;
+  window.getCurrentIslandSleepType = () => currentIslandSleepType;
   window.toggleLadderSidebar = toggleLadderSidebar;
   window.switchLadderView = switchLadderView;
   window.filterWikiSkills = filterWikiSkills;
