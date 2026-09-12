@@ -1209,11 +1209,13 @@
 
   // 睡眠天數成長基準表 (Image 2)
   const SLEEP_DAYS_BASELINE = [
-    { level: 10, totalExp: 1600, days: 16, note: "解鎖第1個副技能", note_en: "Unlocks 1st sub-skill" },
-    { level: 25, totalExp: 8700, days: 87, note: "解鎖第2個副技能", note_en: "Unlocks 2nd sub-skill" },
-    { level: 30, totalExp: 12000, days: 120, note: "解鎖第2種食材", note_en: "Unlocks 2nd ingredient slot" },
-    { level: 50, totalExp: 30000, days: 300, note: "解鎖第3個副技能", note_en: "Unlocks 3rd sub-skill" },
-    { level: 60, totalExp: 51500, days: 515, note: "解鎖第3種食材", note_en: "Unlocks 3rd ingredient slot" }
+    { level: 10, totalExp: 1560, days: 16, note: "解鎖第1個副技能", note_en: "Unlocks 1st sub-skill" },
+    { level: 25, totalExp: 8668, days: 87, note: "解鎖第2個副技能", note_en: "Unlocks 2nd sub-skill" },
+    { level: 30, totalExp: 11992, days: 120, note: "解鎖第2種食材", note_en: "Unlocks 2nd ingredient slot" },
+    { level: 50, totalExp: 29993, days: 300, note: "解鎖第3個副技能", note_en: "Unlocks 3rd sub-skill" },
+    { level: 60, totalExp: 51493, days: 515, note: "解鎖第3種食材", note_en: "Unlocks 3rd ingredient slot" },
+    { level: 70, totalExp: 82162, days: 822, note: "解鎖第4個副技能", note_en: "Unlocks 4th sub-skill" },
+    { level: 80, totalExp: 120262, days: 1203, note: "解鎖第5個副技能", note_en: "Unlocks 5th sub-skill" }
   ];
 
   // --- 4. 樹果與食材基礎能量資料庫 (Image 1 實體化 - Berry & Ingredient Values) ---
@@ -12663,50 +12665,59 @@
     resultBadge.textContent = grade;
   }
 
-  // 8. 升級睡眠天數計算機重新計算
+  // 8. 升級睡眠天數計算機重新計算 (Official Pokemon Sleep EXP Table Lv.1~80)
   function recalcSleepDays() {
     const curLvInput    = document.getElementById('calc-sleep-cur-lv');
     const targetLvInput = document.getElementById('calc-sleep-target-lv');
     const expSubskill   = document.getElementById('calc-sleep-exp-subskill');
-    const incense       = document.getElementById('calc-sleep-incense');
     const natureSelect  = document.getElementById('calc-sleep-nature-select');
     const daysResult    = document.getElementById('calc-sleep-days-result');
     const expResult     = document.getElementById('calc-sleep-exp-result');
 
     if (!curLvInput || !targetLvInput || !daysResult || !expResult) return;
 
+    // 官方 Pokemon Sleep 各等級累積所需 EXP 資料庫 (Lv.1 ~ Lv.80)
+    // 依據 WikiWiki 與 RaenonX 實測解包正本
     const cumulativeExp = [
-      0, 54, 153, 297, 486, 720, 999, 1323, 1692, 2106,
-      2565, 3069, 3618, 4212, 4851, 5535, 6264, 7038, 7857, 8721,
-      9630, 10584, 11583, 12627, 13716, 14850, 16029, 17253, 18522, 19836,
-      21195, 22599, 24048, 25542, 27081, 28665, 30294, 31968, 33687, 35451,
-      37260, 39114, 41013, 42957, 44946, 46980, 49059, 51183, 53352, 55566,
-      57825, 60129, 62478, 64872, 67311, 69795, 72324, 74898, 77517, 80181
+      0,     0,     54,    125,   233,   361,   525,   727,   971,   1245,  1560,
+      1905,  2281,  2688,  3107,  3536,  3976,  4430,  4899,  5382,  5879,
+      6394,  6931,  7489,  8068,  8668,  9290,  9933,  10598, 11284, 11992,
+      12721, 13469, 14235, 15020, 15823, 16644, 17483, 18340, 19215, 20108,
+      21018, 21946, 22891, 23854, 24834, 25831, 26846, 27878, 28927, 29993,
+      31355, 32917, 34664, 36610, 38805, 41084, 43488, 46021, 48687, 51493,
+      54358, 57280, 60257, 63286, 66363, 69458, 72574, 75718, 78907, 82162,
+      85492, 88902, 92402, 96002, 99712, 103542, 107502, 111602, 115852, 120262
     ];
 
     let cur = parseInt(curLvInput.value, 10) || 1;
     let target = parseInt(targetLvInput.value, 10) || 30;
 
     if (cur < 1) cur = 1;
-    if (cur > 59) cur = 59;
-    if (target <= cur) target = cur + 1;
-    if (target > 60) target = 60;
+    if (cur > 79) cur = 79;
+    if (target < 2) target = 30;
+    if (target > 80) target = 80;
 
-    const baseExpNeeded = (cumulativeExp[target - 1] || 80000) - (cumulativeExp[cur - 1] || 0);
+    const curExp = cumulativeExp[cur] !== undefined ? cumulativeExp[cur] : 0;
+    const targetExp = cumulativeExp[target] !== undefined ? cumulativeExp[target] : cumulativeExp[80];
+    const baseExpNeeded = Math.max(0, targetExp - curExp);
 
     let dailyExp = 100;
     if (expSubskill && expSubskill.checked) dailyExp *= 1.14;
-    if (incense && incense.checked) dailyExp *= 2.0;
     const natureFactor = parseFloat(natureSelect ? natureSelect.value : 1.0) || 1.0;
     dailyExp *= natureFactor;
 
-    const daysNeeded = Math.ceil(baseExpNeeded / dailyExp);
+    const daysNeeded = baseExpNeeded > 0 ? Math.ceil(baseExpNeeded / dailyExp) : 0;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
-    daysResult.textContent = daysNeeded.toLocaleString() + (isEN ? ' Days' : ' 天');
-    expResult.textContent = isEN 
-      ? `Approx. ${baseExpNeeded.toLocaleString()} EXP (~${Math.round(dailyExp)} EXP/Day)` 
-      : `約需 ${baseExpNeeded.toLocaleString()} EXP (每日約 ${Math.round(dailyExp)} EXP)`;
+    if (baseExpNeeded === 0) {
+      daysResult.textContent = isEN ? '0 Days' : '0 天';
+      expResult.textContent = isEN ? 'Target Level Already Reached' : '已達目標等級, 無需額外 EXP';
+    } else {
+      daysResult.textContent = daysNeeded.toLocaleString() + (isEN ? ' Days' : ' 天');
+      expResult.textContent = isEN 
+        ? `Approx. ${baseExpNeeded.toLocaleString()} EXP (~${Math.round(dailyExp)} EXP/Day)` 
+        : `約需 ${baseExpNeeded.toLocaleString()} EXP (每日約 ${Math.round(dailyExp)} EXP)`;
+    }
   }
 
   // --- 綁定直接節點事件 (Direct DOM Event Listeners) ---
@@ -12800,11 +12811,6 @@
     const expSubskill = document.getElementById('calc-sleep-exp-subskill');
     if (expSubskill) {
       expSubskill.onchange = recalcSleepDays;
-    }
-
-    const incense = document.getElementById('calc-sleep-incense');
-    if (incense) {
-      incense.onchange = recalcSleepDays;
     }
 
     const sleepNatureSelect = document.getElementById('calc-sleep-nature-select');
@@ -14613,21 +14619,21 @@
                 <tr>
                   <th style="width:28%;">${isEN ? 'Morning Spawns' : '早晨出現隻數'}</th>
                   <th style="width:40%;">${isEN ? 'Min Drowsy Power' : '最低睡意之力門檻'}</th>
-                  <th style="width:32%; text-align:center;">${isEN ? 'Min Rank (100 Score)' : '100分對應球級'}</th>
+                  <th style="width:32%; text-align:center;">${isEN ? 'Min Rank (100 Score)' : '睡眠分數100'}</th>
                 </tr>
               </thead>
               <tbody>
                 ${drowsyRows}
                 <tr>
                   <td class="font-bold text-accent" style="vertical-align:middle;">+1 (9 ${isEN ? 'Pokemon' : '隻'})</td>
-                  <td class="text-secondary" style="vertical-align:middle;">${isEN ? 'Good Camp Ticket guarantee' : '使用好露營券 (必出1隻貪吃)'}</td>
+                  <td class="text-secondary" style="vertical-align:middle;">${isEN ? 'Good Camp Ticket (+1 & Hungry)' : '露營券(+1且貪吃)'}</td>
                   <td class="text-secondary" style="vertical-align:middle; text-align:center;">-</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <div style="font-size:11.5px; color:var(--text-secondary); margin-top:6px; padding:0 2px; line-height:1.4;">
-            ${isEN ? '* Min Rank: Lowest Snorlax rank and energy required to reach this spawn count assuming a 100 Sleep Score (8.5 hrs). Drowsy Power = Snorlax Strength × Sleep Score.' : '* 100分對應球級: 以睡滿 100 分 (8.5小時) 換算, 當天早晨達成該隻數所需之卡比獸最低能量與對應評級. 睡意之力 = 卡比獸能量 × 睡眠分數.'}
+            ${isEN ? '* Min Rank (100 Score): Lowest Snorlax rank and energy required to reach this spawn count assuming a 100 Sleep Score (8.5 hrs). Drowsy Power = Snorlax Strength × Sleep Score.' : '* 睡眠分數100: 以睡滿 100 分 (8.5小時) 換算, 當天早晨達成該隻數所需之卡比獸最低能量與對應評級. 睡意之力 = 卡比獸能量 × 睡眠分數.'}
           </div>
         </div>
       </div>
@@ -16203,15 +16209,15 @@
               </div>
               <div class="ribbon-compact-chip chip-silver">
                 <span class="chip-tier-tag">${isEN ? 'Tier 2' : '第 2 階段'} (500h)</span>
-                <span class="chip-effect-text">+3 ${isEN ? 'Carry' : '持有'}, ${isEN ? 'Speed' : '幫速'} -5% / -11%</span>
+                <span class="chip-effect-text">+2 ${isEN ? 'Carry' : '持有'}, ${isEN ? 'Speed' : '幫速'} -5% / -11%</span>
               </div>
               <div class="ribbon-compact-chip chip-gold">
                 <span class="chip-tier-tag">${isEN ? 'Tier 3' : '第 3 階段'} (1,000h)</span>
-                <span class="chip-effect-text">+6 ${isEN ? 'Carry' : '持有'}, ${isEN ? 'Profile Icon' : '專屬頭像'}</span>
+                <span class="chip-effect-text">+3 ${isEN ? 'Carry' : '持有'}, ${isEN ? 'Profile Icon' : '專屬頭像'}</span>
               </div>
               <div class="ribbon-compact-chip chip-platinum">
                 <span class="chip-tier-tag">${isEN ? 'Tier 4' : '第 4 階段'} (2,000h)</span>
-                <span class="chip-effect-text">+8 ${isEN ? 'Carry' : '持有'}, ${isEN ? 'Speed' : '幫速'} -12% / -25%</span>
+                <span class="chip-effect-text">+2 ${isEN ? 'Carry' : '持有'}, ${isEN ? 'Speed' : '幫速'} -12% / -25%</span>
               </div>
             </div>
 
@@ -16355,33 +16361,44 @@
           </div>
           <div class="wiki-card wiki-calc-card">
             <div class="calc-inputs-row">
-              <div class="calc-input-group">
+              <div class="calc-input-group calc-input-group-cur" style="flex: 0 0 110px; min-width: 95px;">
                 <label class="calc-label" for="calc-sleep-cur-lv">${isEN ? 'Current Level:' : '目前等級:'}</label>
-                <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="59" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
+                <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="79" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
               </div>
 
-              <div class="calc-input-group">
+              <div class="calc-input-group calc-input-group-target" style="flex: 0 0 130px; min-width: 110px;">
                 <label class="calc-label" for="calc-sleep-target-lv">${isEN ? 'Target Level:' : '目標等級:'}</label>
-                <input type="number" id="calc-sleep-target-lv" class="calc-input-num" value="30" min="2" max="60" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
+                <select id="calc-sleep-target-lv" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
+                  <option value="30">Lv.30</option>
+                  <option value="50">Lv.50</option>
+                  <option value="60">Lv.60</option>
+                  <option value="70">Lv.70</option>
+                  <option value="80">Lv.80</option>
+                </select>
               </div>
 
-              <div class="calc-input-group">
+              <div class="calc-input-group calc-input-group-boosts" style="flex: 1 1 320px; min-width: 260px;">
                 <label class="calc-label">${isEN ? 'Boost Conditions:' : '加成條件:'}</label>
-                <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 4px;">
-                  <label><input type="checkbox" id="calc-sleep-exp-subskill" onchange="window.WikiDB.recalcSleepDays()"> ${isEN ? 'Sleep EXP Bonus (+14%)' : '睡眠EXP獎勵 (+14%)'}</label>
-                  <label><input type="checkbox" id="calc-sleep-incense" onchange="window.WikiDB.recalcSleepDays()"> ${isEN ? 'Growth Incense (2x)' : '成長薰香 (2x)'}</label>
-                  <select id="calc-sleep-nature-select" class="calc-select" style="width: auto; padding: 4px 8px;" onchange="window.WikiDB.recalcSleepDays()">
-                    <option value="1.0">${isEN ? 'Neutral EXP Nature' : '性格無EXP修正'}</option>
-                    <option value="1.18">${isEN ? 'EXP Up ▲ (+18%)' : '性格EXP▲ (+18%)'}</option>
-                    <option value="0.82">${isEN ? 'EXP Down ▼ (-18%)' : '性格EXP▼ (-18%)'}</option>
-                  </select>
+                <div class="calc-boost-controls">
+                  <label class="calc-switch-label">
+                    <input type="checkbox" id="calc-sleep-exp-subskill" class="switch-checkbox" onchange="window.WikiDB.recalcSleepDays()">
+                    <span class="switch-slider"></span>
+                    <span class="switch-text">${isEN ? 'Sleep EXP Bonus (+14%)' : '睡眠EXP獎勵 (+14%)'}</span>
+                  </label>
+                  <div class="calc-nature-select-wrap">
+                    <select id="calc-sleep-nature-select" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
+                      <option value="1.0">${isEN ? 'Neutral EXP Nature' : '性格無EXP修正'}</option>
+                      <option value="1.18">${isEN ? 'EXP Up ▲ (+18%)' : '性格EXP▲ (+18%)'}</option>
+                      <option value="0.82">${isEN ? 'EXP Down ▼ (-18%)' : '性格EXP▼ (-18%)'}</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
               <div class="calc-result-box">
                 <div class="calc-result-label">${isEN ? 'Estimated Sleep Days' : '預估所需睡眠天數'}</div>
                 <div id="calc-sleep-days-result" class="calc-result-val">${isEN ? '120 Days' : '120 天'}</div>
-                <div id="calc-sleep-exp-result" class="calc-result-badge">${isEN ? 'Approx. 12,000 EXP' : '約需 12,000 EXP'}</div>
+                <div id="calc-sleep-exp-result" class="calc-result-badge">${isEN ? 'Approx. 11,992 EXP' : '約需 11,992 EXP'}</div>
               </div>
             </div>
 
@@ -16402,10 +16419,12 @@
                       : row.level === 25 ? 'milestone-purple'
                       : row.level === 30 ? 'milestone-green'
                       : row.level === 50 ? 'milestone-amber'
-                      : 'milestone-pink';
+                      : row.level === 60 ? 'milestone-pink'
+                      : row.level === 70 ? 'milestone-purple'
+                      : 'milestone-cyan';
                     const rawNote = isEN ? (row.note_en || row.note) : row.note;
                     const formattedNote = rawNote
-                      .replace(/(第[一二三123]個副技能|第[一二三123]種食材|1st sub-skill|2nd sub-skill|3rd sub-skill|2nd ingredient slot|3rd ingredient slot)/g, '<span class="text-accent font-bold">$1</span>');
+                      .replace(/(第[一二三四五12345]個副技能|第[一二三123]種食材|1st sub-skill|2nd sub-skill|3rd sub-skill|4th sub-skill|5th sub-skill|2nd ingredient slot|3rd ingredient slot)/g, '<span class="text-accent font-bold">$1</span>');
                     return `
                     <tr>
                       <td class="col-milestone-lv" style="vertical-align: middle;"><span class="milestone-badge ${milestoneColor}">Lv.${row.level}</span></td>

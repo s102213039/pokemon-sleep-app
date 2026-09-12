@@ -4908,8 +4908,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
 
   // 6. Verify Drowsy Power spawn tiers table renders 3 columns with 100-score rank badge, energy and formula footnote
   assert(htmlCyan.includes('最低睡意之力門檻'), 'Drowsy power table must include 最低睡意之力門檻 header');
-  assert(htmlCyan.includes('100分對應球級'), 'Drowsy power table must include 100分對應球級 header');
-  assert(htmlCyan.includes('100分對應球級: 以睡滿 100 分 (8.5小時) 換算'), 'Drowsy power table must render 100-score conversion formula footnote');
+  assert(htmlCyan.includes('睡眠分數100'), 'Drowsy power table must include 睡眠分數100 header');
+  assert(htmlCyan.includes('露營券(+1且貪吃)'), 'Drowsy power table must render 露營券(+1且貪吃)');
+  assert(htmlCyan.includes('睡眠分數100: 以睡滿 100 分 (8.5小時) 換算'), 'Drowsy power table must render 100-score conversion formula footnote');
 
   mockCtx.window.WikiDB.selectIsland('greengrass');
   const htmlGreen = mockCtx.window.WikiDB.renderIslandsSubpanel();
@@ -5051,6 +5052,159 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Table Star Icon
 
   // 6. Verify star image asset exists on filesystem
   assert(fs.existsSync(path.join(WORKSPACE_ROOT, 'assets', 'star.png')), 'assets/star.png must exist');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Sleep EXP Calculator Accurate EXP Table, Dropdown Target Level & Ribbon Carry Progression', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const cssCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // 1. Verify Ribbon Quick Guide displays independent progression (+1, +2, +3, +2)
+  assert(wikiCode.includes('+1 ${isEN ? \'Carry\' : \'持有上限\'}'), 'Ribbon Tier 1 must be +1');
+  assert(wikiCode.includes('+2 ${isEN ? \'Carry\' : \'持有\'}, ${isEN ? \'Speed\' : \'幫速\'} -5% / -11%'), 'Ribbon Tier 2 must be +2');
+  assert(wikiCode.includes('+3 ${isEN ? \'Carry\' : \'持有\'}, ${isEN ? \'Profile Icon\' : \'專屬頭像\'}'), 'Ribbon Tier 3 must be +3');
+  assert(wikiCode.includes('+2 ${isEN ? \'Carry\' : \'持有\'}, ${isEN ? \'Speed\' : \'幫速\'} -12% / -25%'), 'Ribbon Tier 4 must be +2');
+
+  // 2. Verify CSS defines dropdown styling complying with dropdown arrow rule
+  assert(cssCode.includes('.calc-select') && cssCode.includes('padding: 9px 36px 9px 12px;'), 'calc-select must have 36px right padding for arrow clearance');
+  assert(cssCode.includes('background-position: right 18px center;'), 'calc-select arrow must be inset 18px from right');
+  assert(cssCode.includes('.calc-boost-controls'), 'CSS must define calc-boost-controls');
+  assert(cssCode.includes('.calc-switch-label'), 'CSS must define calc-switch-label');
+
+  // 3. Setup mock DOM environment
+  const elements = {};
+  const getEl = id => {
+    if (!elements[id]) {
+      elements[id] = {
+        id,
+        value: '',
+        checked: false,
+        textContent: '',
+        style: {},
+        classList: { add: () => {}, remove: () => {}, contains: () => false },
+        setAttribute: () => {},
+        getAttribute: () => null,
+        addEventListener: () => {}
+      };
+    }
+    return elements[id];
+  };
+
+  const ctx = {
+    window: {
+      location: { hash: '#wiki/ratings' },
+      localStorage: { getItem: () => 'zh-TW', setItem: () => {} },
+      addEventListener: () => {},
+      history: { replaceState: () => {} }
+    },
+    document: {
+      readyState: 'complete',
+      documentElement: { setAttribute: () => {} },
+      getElementById: getEl,
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    console,
+    setTimeout
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+  vm.runInContext(wikiCode, ctx);
+
+  const mockContainer = { innerHTML: '', style: {} };
+  ctx.window.WikiDB.renderWikiLayout(mockContainer);
+  const html = mockContainer.innerHTML;
+
+  // 4. Verify Target Level is a select dropdown with options 30, 50, 60, 70, 80
+  assert(html.includes('<select id="calc-sleep-target-lv" class="calc-select"'), 'Target level must be a calc-select dropdown');
+  assert(html.includes('<option value="30">Lv.30</option>'), 'Target level must have option 30');
+  assert(html.includes('<option value="50">Lv.50</option>'), 'Target level must have option 50');
+  assert(html.includes('<option value="60">Lv.60</option>'), 'Target level must have option 60');
+  assert(html.includes('<option value="70">Lv.70</option>'), 'Target level must have option 70');
+  assert(html.includes('<option value="80">Lv.80</option>'), 'Target level must have option 80');
+
+  // 5. Verify Growth Incense is completely removed
+  assert(!html.includes('calc-sleep-incense'), 'Growth incense control must be removed');
+  assert(!html.includes('成長薰香 (2x)'), 'Growth incense label must be removed');
+
+  // 6. Verify Sleep EXP Bonus uses switch button markup
+  assert(html.includes('class="calc-switch-label"'), 'Must render calc-switch-label wrapper');
+  assert(html.includes('class="switch-checkbox"'), 'Must render switch-checkbox input');
+  assert(html.includes('class="switch-slider"'), 'Must render switch-slider span');
+  assert(html.includes('睡眠EXP獎勵 (+14%)'), 'Must render Sleep EXP bonus text');
+
+  // 7. Verify Nature select exists with unified styling
+  assert(html.includes('id="calc-sleep-nature-select" class="calc-select"'), 'Nature select must use unified calc-select class');
+
+  // 8. Test accurate calculation logic via recalcSleepDays
+  const curLv = getEl('calc-sleep-cur-lv');
+  const targetLv = getEl('calc-sleep-target-lv');
+  const expBonus = getEl('calc-sleep-exp-subskill');
+  const natureSel = getEl('calc-sleep-nature-select');
+  const daysRes = getEl('calc-sleep-days-result');
+  const expRes = getEl('calc-sleep-exp-result');
+
+  // Case A: Level 1 to 30 default -> 11,992 EXP, 120 Days
+  curLv.value = '1';
+  targetLv.value = '30';
+  expBonus.checked = false;
+  natureSel.value = '1.0';
+  ctx.window.WikiDB.recalcSleepDays();
+  assert(daysRes.textContent.includes('120'), `Lv.1 to 30 must be 120 days, got: ${daysRes.textContent}`);
+  assert(expRes.textContent.includes('11,992'), `Lv.1 to 30 must be 11,992 EXP, got: ${expRes.textContent}`);
+
+  // Case B: Level 1 to 50 default -> 29,993 EXP, 300 Days
+  targetLv.value = '50';
+  ctx.window.WikiDB.recalcSleepDays();
+  assert(daysRes.textContent.includes('300'), `Lv.1 to 50 must be 300 days, got: ${daysRes.textContent}`);
+  assert(expRes.textContent.includes('29,993'), `Lv.1 to 50 must be 29,993 EXP, got: ${expRes.textContent}`);
+
+  // Case C: Level 50 to 60 steep surge -> 51,493 - 29,993 = 21,500 EXP, 215 Days
+  curLv.value = '50';
+  targetLv.value = '60';
+  ctx.window.WikiDB.recalcSleepDays();
+  assert(daysRes.textContent.includes('215'), `Lv.50 to 60 must be 215 days, got: ${daysRes.textContent}`);
+  assert(expRes.textContent.includes('21,500'), `Lv.50 to 60 must be 21,500 EXP, got: ${expRes.textContent}`);
+
+  // Case D: Level 60 to 70 steep surge -> 82,162 - 51,493 = 30,669 EXP, 307 Days
+  curLv.value = '60';
+  targetLv.value = '70';
+  ctx.window.WikiDB.recalcSleepDays();
+  assert(daysRes.textContent.includes('307'), `Lv.60 to 70 must be 307 days, got: ${daysRes.textContent}`);
+  assert(expRes.textContent.includes('30,669'), `Lv.60 to 70 must be 30,669 EXP, got: ${expRes.textContent}`);
+
+  // Case E: Level 70 to 80 -> 120,262 - 82,162 = 38,100 EXP, 381 Days
+  curLv.value = '70';
+  targetLv.value = '80';
+  ctx.window.WikiDB.recalcSleepDays();
+  assert(daysRes.textContent.includes('381'), `Lv.70 to 80 must be 381 days, got: ${daysRes.textContent}`);
+  assert(expRes.textContent.includes('38,100'), `Lv.70 to 80 must be 38,100 EXP, got: ${expRes.textContent}`);
+
+  // Case F: Level 50 to 60 with Sleep EXP Bonus (+14%) -> ceil(21500 / 114) = 189 Days
+  curLv.value = '50';
+  targetLv.value = '60';
+  expBonus.checked = true;
+  natureSel.value = '1.0';
+  ctx.window.WikiDB.recalcSleepDays();
+  assert(daysRes.textContent.includes('189'), `Lv.50 to 60 with +14% must be 189 days, got: ${daysRes.textContent}`);
+
+  // Case G: Nature Up (+18%) and Nature Down (-18%) multipliers
+  expBonus.checked = false;
+  natureSel.value = '1.18'; // dailyExp = 118 -> ceil(21500 / 118) = 183 Days
+  ctx.window.WikiDB.recalcSleepDays();
+  assert(daysRes.textContent.includes('183'), `Lv.50 to 60 with Nature Up must be 183 days, got: ${daysRes.textContent}`);
+
+  natureSel.value = '0.82'; // dailyExp = 82 -> ceil(21500 / 82) = 263 Days
+  ctx.window.WikiDB.recalcSleepDays();
+  assert(daysRes.textContent.includes('263'), `Lv.50 to 60 with Nature Down must be 263 days, got: ${daysRes.textContent}`);
+
+  // Case H: cur >= target -> 0 Days
+  curLv.value = '65';
+  targetLv.value = '60';
+  ctx.window.WikiDB.recalcSleepDays();
+  assert(daysRes.textContent.includes('0'), `cur >= target must show 0 days, got: ${daysRes.textContent}`);
 });
 
 // Final Summary Output
