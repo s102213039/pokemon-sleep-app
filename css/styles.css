@@ -15563,26 +15563,26 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 
 .mobile-h5-app .calc-inputs-row {
   display: flex !important;
-  flex-direction: row !important;
-  gap: 8px !important;
-  padding: 8px !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding: 12px 10px !important;
   align-items: stretch !important;
 }
 
 .mobile-h5-app .calc-form-col {
-  flex: 1 1 0% !important;
-  min-width: 0 !important;
+  width: 100% !important;
+  flex: none !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 6px !important;
-  justify-content: space-between !important;
+  gap: 8px !important;
 }
 
 .mobile-h5-app .calc-form-row {
   display: flex !important;
   flex-direction: row !important;
-  gap: 6px !important;
+  gap: 8px !important;
   align-items: flex-end !important;
+  width: 100% !important;
 }
 
 .mobile-h5-app .calc-field-group {
@@ -15590,27 +15590,25 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   min-width: 0 !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 2px !important;
+  gap: 3px !important;
 }
 
 .mobile-h5-app .calc-label {
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   color: var(--text-title, #f8fafc) !important;
   white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
   line-height: 1.2 !important;
 }
 
 .mobile-h5-app .calc-input-num {
   width: 100% !important;
   box-sizing: border-box !important;
-  padding: 5px 6px !important;
-  font-size: 12px !important;
-  height: 33px !important;
-  min-height: 33px !important;
-  border-radius: 6px !important;
+  padding: 6px 8px !important;
+  font-size: 13px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 8px !important;
   background-color: var(--bg-input, var(--bg-card-inner)) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
@@ -15619,12 +15617,12 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .calc-select {
   width: 100% !important;
   box-sizing: border-box !important;
-  padding: 5px 28px 5px 6px !important;
-  background-position: right 12px center !important;
-  font-size: 11.5px !important;
-  height: 33px !important;
-  min-height: 33px !important;
-  border-radius: 6px !important;
+  padding: 6px 32px 6px 8px !important;
+  background-position: right 14px center !important;
+  font-size: 12.5px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 8px !important;
   background-color: var(--bg-input, var(--bg-card-inner)) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
@@ -15633,100 +15631,105 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .custom-select-calc .custom-select-trigger {
   width: 100% !important;
   box-sizing: border-box !important;
-  padding: 5px 26px 5px 6px !important;
-  font-size: 11.5px !important;
-  height: 33px !important;
-  min-height: 33px !important;
-  border-radius: 6px !important;
+  padding: 6px 32px 6px 10px !important;
+  font-size: 12.5px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 8px !important;
 }
 
 .mobile-h5-app .custom-select-calc .custom-select-arrow {
-  right: 8px !important;
+  right: 12px !important;
 }
 
 .mobile-h5-app .custom-select-calc .custom-select-menu {
-  max-width: 210px !important;
+  max-width: 240px !important;
 }
 
 .mobile-h5-app .custom-select-calc .custom-select-item {
-  padding: 6px 8px !important;
-  font-size: 11px !important;
+  padding: 8px 10px !important;
+  font-size: 12px !important;
 }
 
 .mobile-h5-app .calc-switch-label {
   width: 100% !important;
   box-sizing: border-box !important;
-  padding: 4px 6px !important;
-  height: 33px !important;
-  min-height: 33px !important;
-  border-radius: 6px !important;
-  gap: 5px !important;
+  padding: 6px 8px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 8px !important;
+  gap: 6px !important;
   justify-content: flex-start !important;
 }
 
 .mobile-h5-app .calc-switch-label .switch-slider {
-  width: 26px !important;
-  height: 15px !important;
+  width: 28px !important;
+  height: 16px !important;
   flex-shrink: 0 !important;
 }
 
 .mobile-h5-app .calc-switch-label .switch-slider:before {
-  width: 11px !important;
-  height: 11px !important;
+  width: 12px !important;
+  height: 12px !important;
   left: 2px !important;
   bottom: 2px !important;
 }
 
 .mobile-h5-app .calc-switch-label .switch-checkbox:checked + .switch-slider:before {
-  transform: translateX(11px) !important;
+  transform: translateX(12px) !important;
 }
 
 .mobile-h5-app .calc-switch-label .switch-text {
-  font-size: 10.5px !important;
+  font-size: 11.5px !important;
   white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
 }
 
 .mobile-h5-app .calc-result-box {
-  flex: 0 0 120px !important;
-  min-width: 105px !important;
-  max-width: 130px !important;
-  padding: 6px 5px !important;
-  margin-top: 0 !important;
-  border-radius: 8px !important;
+  width: 100% !important;
+  flex: none !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+  padding: 10px 12px !important;
+  margin-top: 2px !important;
+  border-radius: 10px !important;
   text-align: center !important;
   justify-content: center !important;
-  background: var(--bg-card-inner) !important;
-  border: 1px solid var(--border-color-subtle) !important;
+  background: rgba(2, 132, 199, 0.12) !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
 }
 
 .mobile-h5-app .calc-result-label {
-  font-size: 9.5px !important;
-  color: var(--text-secondary) !important;
-  line-height: 1.1 !important;
+  font-size: 11px !important;
+  color: var(--text-secondary, #94a3b8) !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.5px !important;
 }
 
 .mobile-h5-app .calc-result-val {
-  font-size: 17px !important;
+  font-size: 22px !important;
   font-weight: 800 !important;
-  margin: 2px 0 !important;
-  color: var(--accent-blue) !important;
+  margin: 3px 0 !important;
+  color: var(--accent-blue, #38bdf8) !important;
 }
 
 .mobile-h5-app .calc-result-badge {
-  font-size: 9.5px !important;
-  padding: 2px 4px !important;
-  background: var(--bg-card) !important;
-  color: var(--text-secondary) !important;
-  border: 1px solid var(--border-color-subtle) !important;
-  line-height: 1.2 !important;
+  font-size: 11.5px !important;
+  padding: 3px 10px !important;
+  background: var(--bg-card, #1e293b) !important;
+  color: var(--text-secondary, #94a3b8) !important;
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1)) !important;
+  border-radius: 12px !important;
+  line-height: 1.3 !important;
+  display: inline-block !important;
 }
 
 .mobile-h5-app .calc-result-candies {
-  font-size: 9.5px !important;
-  margin-top: 3px !important;
-  line-height: 1.2 !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: #f59e0b !important;
+  margin-top: 4px !important;
+  line-height: 1.3 !important;
 }
 
 .mobile-h5-app .wiki-calc-card {
