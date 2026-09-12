@@ -747,6 +747,7 @@
         sidebar.classList.add('collapsed');
         if (backdrop) backdrop.classList.remove('active');
         if (bookmarkHandle) {
+          bookmarkHandle.classList.remove('drawer-open');
           bookmarkHandle.setAttribute('aria-expanded', 'false');
           bookmarkHandle.title = '展開食譜篩選側邊欄';
           bookmarkHandle.style.opacity = '1';
@@ -763,6 +764,7 @@
           backdrop.classList.add('active');
         }
         if (bookmarkHandle) {
+          bookmarkHandle.classList.add('drawer-open');
           bookmarkHandle.setAttribute('aria-expanded', 'true');
           bookmarkHandle.title = '收合食譜篩選側邊欄';
           bookmarkHandle.style.opacity = '0';
@@ -793,6 +795,7 @@
       if (initialRecipeOpen) {
         sidebar.classList.remove('collapsed');
         if (bookmarkHandle) {
+          bookmarkHandle.classList.add('drawer-open');
           bookmarkHandle.setAttribute('aria-expanded', 'true');
           bookmarkHandle.style.display = 'none';
           bookmarkHandle.style.opacity = '0';
@@ -802,6 +805,7 @@
       } else {
         sidebar.classList.add('collapsed');
         if (bookmarkHandle) {
+          bookmarkHandle.classList.remove('drawer-open');
           bookmarkHandle.setAttribute('aria-expanded', 'false');
           bookmarkHandle.style.display = 'flex';
           bookmarkHandle.style.opacity = '1';

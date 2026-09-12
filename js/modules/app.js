@@ -1422,6 +1422,7 @@ function toggleSidebar(forceState) {
     sidebar.classList.add('collapsed');
     if (backdrop) backdrop.classList.remove('active');
     if (bookmarkHandle) {
+      bookmarkHandle.classList.remove('drawer-open');
       bookmarkHandle.setAttribute('aria-expanded', 'false');
       bookmarkHandle.title = '展開篩選側邊欄';
       bookmarkHandle.style.opacity = '1';
@@ -1438,6 +1439,7 @@ function toggleSidebar(forceState) {
       backdrop.classList.add('active');
     }
     if (bookmarkHandle) {
+      bookmarkHandle.classList.add('drawer-open');
       bookmarkHandle.setAttribute('aria-expanded', 'true');
       bookmarkHandle.title = '收合篩選側邊欄';
       bookmarkHandle.style.opacity = '0';
@@ -1890,11 +1892,13 @@ if (typeof document !== 'undefined') {
           if (curLadderHandle) {
             const isCollapsed = ladderSidebar ? ladderSidebar.classList.contains('collapsed') : true;
             if (isIng && isCollapsed) {
+              curLadderHandle.classList.remove('drawer-open');
               curLadderHandle.style.display = 'flex';
               curLadderHandle.style.opacity = '1';
               curLadderHandle.style.pointerEvents = 'auto';
               curLadderHandle.style.visibility = 'visible';
             } else {
+              if (isIng && !isCollapsed) curLadderHandle.classList.add('drawer-open');
               curLadderHandle.style.display = 'none';
               curLadderHandle.style.opacity = '0';
               curLadderHandle.style.pointerEvents = 'none';
@@ -1921,11 +1925,13 @@ if (typeof document !== 'undefined') {
           if (recipeBookmarkHandle) {
             const isCollapsed = recipeSidebar ? recipeSidebar.classList.contains('collapsed') : false;
             if (isCollapsed) {
+              recipeBookmarkHandle.classList.remove('drawer-open');
               recipeBookmarkHandle.style.display = 'flex';
               recipeBookmarkHandle.style.opacity = '1';
               recipeBookmarkHandle.style.pointerEvents = 'auto';
               recipeBookmarkHandle.style.visibility = 'visible';
             } else {
+              recipeBookmarkHandle.classList.add('drawer-open');
               recipeBookmarkHandle.style.display = 'none';
               recipeBookmarkHandle.style.opacity = '0';
               recipeBookmarkHandle.style.pointerEvents = 'none';
@@ -1955,11 +1961,13 @@ if (typeof document !== 'undefined') {
           if (bookmarkHandle) {
             const isCollapsed = filterSidebar ? filterSidebar.classList.contains('collapsed') : false;
             if (isCollapsed) {
+              bookmarkHandle.classList.remove('drawer-open');
               bookmarkHandle.style.display = 'flex';
               bookmarkHandle.style.opacity = '1';
               bookmarkHandle.style.pointerEvents = 'auto';
               bookmarkHandle.style.visibility = 'visible';
             } else {
+              bookmarkHandle.classList.add('drawer-open');
               bookmarkHandle.style.display = 'none';
               bookmarkHandle.style.opacity = '0';
               bookmarkHandle.style.pointerEvents = 'none';
@@ -2442,6 +2450,7 @@ if (typeof document !== 'undefined') {
           sidebar.classList.add('collapsed');
           if (backdrop) backdrop.classList.remove('active');
           if (bookmarkHandle) {
+            bookmarkHandle.classList.remove('drawer-open');
             bookmarkHandle.setAttribute('aria-expanded', 'false');
             bookmarkHandle.title = '展開篩選側邊欄';
             bookmarkHandle.style.opacity = '1';
@@ -2456,6 +2465,7 @@ if (typeof document !== 'undefined') {
             backdrop.classList.add('active');
           }
           if (bookmarkHandle) {
+            bookmarkHandle.classList.add('drawer-open');
             bookmarkHandle.setAttribute('aria-expanded', 'true');
             bookmarkHandle.title = '收合篩選側邊欄';
             bookmarkHandle.style.opacity = '0';
@@ -2475,6 +2485,7 @@ if (typeof document !== 'undefined') {
         if (initialDexOpen) {
           sidebar.classList.remove('collapsed');
           if (bookmarkHandle) {
+            bookmarkHandle.classList.add('drawer-open');
             bookmarkHandle.setAttribute('aria-expanded', 'true');
             bookmarkHandle.style.display = 'none';
             bookmarkHandle.style.opacity = '0';
@@ -2484,6 +2495,7 @@ if (typeof document !== 'undefined') {
         } else {
           sidebar.classList.add('collapsed');
           if (bookmarkHandle) {
+            bookmarkHandle.classList.remove('drawer-open');
             bookmarkHandle.setAttribute('aria-expanded', 'false');
             bookmarkHandle.style.display = 'flex';
             bookmarkHandle.style.opacity = '1';

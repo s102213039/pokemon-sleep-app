@@ -1,93 +1,133 @@
-# 篩選器側邊欄書籤標籤規範與防呆機制 (Sidebar Bookmark Handle Rules)
+# 篩選器側邊欄書籤標籤與移動端懸浮按鈕規範 (Sidebar Handle & Mobile FAB Rules)
 
 ## 一、 核心規則與設計意圖 (Core Ironclad Rules)
 
 本專案在三處主要功能均具備抽屜式/滑動式側邊篩選器:
-1. **寶可夢圖鑑**: `#pokemon-filter-sidebar` 與 `#sidebar-bookmark-handle`
-2. **料理食譜大全**: `#recipe-filter-sidebar` 與 `#recipe-sidebar-bookmark-handle`
-3. **數據百科食材天梯**: `#ladder-filter-sidebar` 與 `#ladder-sidebar-bookmark-handle`
+1. 寶可夢圖鑑: `#pokemon-filter-sidebar` 與 `#sidebar-bookmark-handle`
+2. 料理食譜大全: `#recipe-filter-sidebar` 與 `#recipe-sidebar-bookmark-handle`
+3. 數據百科食材天梯: `#ladder-filter-sidebar` 與 `#ladder-sidebar-bookmark-handle`
 
-### 狀態顯示規範
-- **側邊欄展開狀態 (Expanded / 未帶 `.collapsed` class)**:
-  - 書籤標籤 (`.sidebar-bookmark-handle`) **必須 100% 徹底隱藏** (`display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;`).
-  - **嚴禁**在展開狀態下將標籤懸浮於側邊欄邊緣、主要內容或表格上方. 展開時側邊欄頂部已有專屬關閉按鈕 (`◀`), 絕不可出現重疊冗餘的把手.
-- **側邊欄收合狀態 (Collapsed / 帶有 `.collapsed` class)**:
-  - 書籤標籤才允許出現在螢幕邊緣 (`display: flex !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important;`), 提供使用者點擊展開.
-- **非當前主要分頁**:
-  - 當切換至其他主要分頁時 (例如切到隊伍盒子或最新消息), 所有非當前分頁的側邊欄與書籤標籤均必須保持隱藏 (`display: none`).
-
----
-
-## 二、 歷史回歸根因深度檢討 (Root Cause Analysis)
-
-在過往改動中曾發生「側邊欄展開時, 書籤標籤依然突兀黏在邊緣」的嚴重回歸, 其根因如下:
-1. **JavaScript 行內樣式汙染與非對稱邏輯**:
-   - 在 `toggleRecipeSidebar` 與 `toggleSidebar` 關閉側邊欄時, 程式碼動態注入了行內樣式 `bookmarkHandle.style.display = 'flex'`.
-   - 但在打開 (展開) 側邊欄的分支中, 原程式碼誤以為只有行動端需要隱藏標籤 (`if (bookmarkHandle && isMobileH5)`), 導致桌面端完全沒有將 `bookmarkHandle` 設為 `display = 'none'`, 也沒有清除行內樣式.
-   - 因 HTML DOM 行內樣式優先權高於外部樣式表的一般 class, 導致 `style="display: flex;"` 永遠留在元素上.
-2. **CSS 防禦缺乏最高特異性強制鎖定**:
-   - 原 CSS 僅定義了 `.sidebar-bookmark-handle { display: none; }` 與 `.collapsed .sidebar-bookmark-handle { display: flex; }`.
-   - 缺乏 `:not(.collapsed)` 否定偽類與 `!important` 宣告, 無法在行內樣式遭誤植時發揮最後一道防線的強制隱藏效果.
+### 跨端 DOM 架構差異 (Critical Architectural Asymmetry)
+- 桌面網頁版 (Desktop Surface - `index.html`):
+  - 書籤標籤 (`.sidebar-bookmark-handle`) 位於 `<aside>` 篩選器元素內部 (Descendant).
+  - 當側邊欄收合時 (`aside.collapsed`), 書籤標籤突出於側邊欄邊緣提供點擊.
+  - 當側邊欄展開時 (`aside:not(.collapsed)`), 書籤標籤必須徹底隱藏 (`display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;`), 避免與表格或側邊欄本身重疊.
+- 移動端 H5 版 (Mobile H5 Surface - `app/index.html` / `.mobile-h5-app`):
+  - 懸浮按鈕 (`.sidebar-fab-btn`) 位於 `<aside>` 篩選器外部 (Sibling), 屬於固定定位在右下角的懸浮按鈕 (FAB: `position: fixed !important; right: 16px; bottom: calc(...)`).
+  - 當側邊欄收合時 (`aside.collapsed`), FAB 按鈕必須強制保持可見與可點擊 (`display: flex !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important;`).
+  - 當側邊欄抽屜展開時 (`aside:not(.collapsed)` 或標記有 `.drawer-open`), FAB 按鈕必須強制隱藏 (`display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;`), 避免遮擋抽屜內容或引發幽靈點擊.
 
 ---
 
-## 三、 雙重架構防禦規範 (Dual-Layer Safeguard Implementation)
+## 二、 歷史回歸根因深度剖析 (Root Cause Analysis of Bug)
 
-### 1. CSS 最高特異性強制防禦 (`css/styles.css`)
+在先前的修復中, 為了根絕「桌面版展開時書籤標籤未隱藏」的問題, 誤將最高特異性的強制隱藏規則寫在全域基礎選擇器上:
 ```css
-/* 預設狀態與展開狀態：絕對強制隱藏，覆蓋任何行內樣式干擾 */
-.sidebar-bookmark-handle,
-.pokemon-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle,
-.recipe-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle,
-.ladder-fixed-sidebar:not(.collapsed) .sidebar-bookmark-handle,
-.ladder-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle {
+/* 致命錯誤寫法：直接將全域基礎 class 宣告為強制隱藏 */
+.sidebar-bookmark-handle {
   display: none !important;
   opacity: 0 !important;
   pointer-events: none !important;
   visibility: hidden !important;
 }
-
-/* 僅當帶有 .collapsed class 時展示 */
-.pokemon-filter-sidebar.collapsed .sidebar-bookmark-handle,
-.recipe-filter-sidebar.collapsed .sidebar-bookmark-handle,
-.ladder-fixed-sidebar.collapsed .sidebar-bookmark-handle,
-.ladder-filter-sidebar.collapsed .sidebar-bookmark-handle {
+```
+隨後僅使用後代選擇器嘗試復原收合狀態:
+```css
+.pokemon-filter-sidebar.collapsed .sidebar-bookmark-handle {
   display: flex !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-  visibility: visible !important;
 }
 ```
 
-### 2. JavaScript 對稱狀態清理規範 (`app.js`, `recipes.js`, `wiki.js`)
-- **展開時 (Expanding)**:
-  ```javascript
-  if (bookmarkHandle) {
-    bookmarkHandle.setAttribute('aria-expanded', 'true');
-    bookmarkHandle.style.display = 'none';
-    bookmarkHandle.style.opacity = '0';
-    bookmarkHandle.style.pointerEvents = 'none';
-    bookmarkHandle.style.visibility = 'hidden';
-  }
-  ```
-- **收合時 (Collapsing)**:
-  ```javascript
-  if (bookmarkHandle) {
-    bookmarkHandle.setAttribute('aria-expanded', 'false');
-    bookmarkHandle.style.display = 'flex';
-    bookmarkHandle.style.opacity = '1';
-    bookmarkHandle.style.pointerEvents = 'auto';
-    bookmarkHandle.style.visibility = 'visible';
-  }
-  ```
-- **初始化與分頁切換時**:
-  必須依照側邊欄是否處於 `collapsed` 狀態同步更新標籤之 `display`, 絕不殘留錯誤狀態.
+### 導致移動端 H5 篩選器全面消失的直接根因:
+1. DOM 階層不對稱破壞:
+   - 在移動端 H5, `#sidebar-bookmark-handle` 是 `<aside>` 的同層兄弟節點 (Sibling), 並非其內部子元素 (Descendant).
+   - 因此, `.pokemon-filter-sidebar.collapsed .sidebar-bookmark-handle` 在移動端永遠無法匹配.
+2. `!important` 壓制所有行內樣式與覆寫:
+   - 全域 `.sidebar-bookmark-handle` 帶有 `visibility: hidden !important; opacity: 0 !important;`, 即使 `.mobile-h5-app .sidebar-fab-btn` 宣告了 `display: flex !important`, 也依然被 `visibility: hidden !important` 徹底隱形.
+   - JavaScript 動態賦予的 `bookmarkHandle.style.display = 'flex'` 與 `visibility = 'visible'` 屬於無 `!important` 的行內樣式, 在 CSS `!important` 規則面前完全失效.
+   - 結果導致移動端 H5 所有頁面的篩選器懸浮按鈕全面蒸發, 用戶完全無法開啟篩選抽屜.
 
 ---
 
-## 四、 自動化測試保護 (`tests/run_tests.js`)
+## 三、 雙端防禦架構與永久防呆機制 (Ironclad Solution & Prevention)
 
-在測試套件 Tier 4 中已加入專屬斷言:
-- 檢驗 `styles.css` 包含 `:not(.collapsed)` 與 `display: none !important;`.
-- 檢驗 `recipes.js`, `app.js`, `wiki.js` 在展開側邊欄時均明確將 `bookmarkHandle.style.display` 設為 `'none'` 與 `visibility` 設為 `'hidden'`.
-- 任何違反本規則之改動均會導致測試失敗, 禁止提交與合併.
+### 1. CSS 特異性與作用域精確隔離 (`css/styles.css`)
+- 基礎樣式嚴禁在全域 `.sidebar-bookmark-handle` 上施加 `!important` 的隱藏屬性.
+- 桌面端嚴格限定於後代選擇器:
+  ```css
+  /* 桌面端展開：強制隱藏 */
+  .pokemon-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle,
+  .recipe-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle,
+  .ladder-fixed-sidebar:not(.collapsed) .sidebar-bookmark-handle,
+  .ladder-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+
+  /* 桌面端收合：強制展示 */
+  .pokemon-filter-sidebar.collapsed .sidebar-bookmark-handle,
+  .recipe-filter-sidebar.collapsed .sidebar-bookmark-handle,
+  .ladder-fixed-sidebar.collapsed .sidebar-bookmark-handle,
+  .ladder-filter-sidebar.collapsed .sidebar-bookmark-handle {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+  }
+  ```
+- 移動端 H5 獨立定義狀態規則 (支援 `:has` 與 `.drawer-open` 雙重保險):
+  ```css
+  /* 移動端 FAB 基礎展示態 (收合且分頁活躍) */
+  .mobile-h5-app .sidebar-bookmark-handle,
+  .mobile-h5-app .sidebar-fab-btn {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  /* 移動端抽屜展開時強制隱藏 */
+  .mobile-h5-app .sidebar-fab-btn.drawer-open,
+  .mobile-h5-app .sidebar-bookmark-handle.drawer-open,
+  .mobile-h5-app #panel-pokemon:has(#pokemon-filter-sidebar:not(.collapsed)) #sidebar-bookmark-handle,
+  .mobile-h5-app #panel-recipes:has(#recipe-filter-sidebar:not(.collapsed)) #recipe-sidebar-bookmark-handle,
+  .mobile-h5-app #panel-wiki:has(#ladder-filter-sidebar:not(.collapsed)) #ladder-sidebar-bookmark-handle {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  ```
+
+### 2. JavaScript 對稱狀態雙向切換 (`app.js`, `recipes.js`, `wiki.js`)
+在所有側邊欄切換與分頁切換邏輯中, 同步維護 `.drawer-open` class 與行內樣式:
+- 展開抽屜時:
+  ```javascript
+  bookmarkHandle.classList.add('drawer-open');
+  bookmarkHandle.setAttribute('aria-expanded', 'true');
+  bookmarkHandle.style.opacity = '0';
+  bookmarkHandle.style.pointerEvents = 'none';
+  bookmarkHandle.style.display = 'none';
+  bookmarkHandle.style.visibility = 'hidden';
+  ```
+- 收合抽屜時:
+  ```javascript
+  bookmarkHandle.classList.remove('drawer-open');
+  bookmarkHandle.setAttribute('aria-expanded', 'false');
+  bookmarkHandle.style.opacity = '1';
+  bookmarkHandle.style.pointerEvents = 'auto';
+  bookmarkHandle.style.display = 'flex';
+  bookmarkHandle.style.visibility = 'visible';
+  ```
+
+---
+
+## 四、 自動化測試守門員 (`tests/run_tests.js`)
+
+在 Tier 4 測試中嚴格納入雙端斷言:
+1. 斷言桌面端展開時包含 `:not(.collapsed)` 且強制 `display: none !important`.
+2. 斷言移動端 H5 `.sidebar-fab-btn` 具備 `display: flex !important`, `opacity: 1 !important`, `visibility: visible !important`.
+3. 斷言移動端 H5 `.sidebar-fab-btn.drawer-open` 具備 `display: none !important`.
+4. 斷言 `app.js`, `recipes.js`, `wiki.js` 均完整實作 `classList.add('drawer-open')` 與 `classList.remove('drawer-open')`.

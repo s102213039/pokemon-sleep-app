@@ -5207,6 +5207,36 @@ test('Tier 4 - Real-World Application Scenarios', 'Sleep EXP Calculator Accurate
   assert(daysRes.textContent.includes('0'), `cur >= target must show 0 days, got: ${daysRes.textContent}`);
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Wiki Healer Strategy, Seed Evolution Rules & Mobile H5 Filter FAB Ironclad Visibility', () => {
+  const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+  const recipesJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'recipes.js'), 'utf8');
+  const cssCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // 1. Seed rules: remove legacy inventory +5
+  assert(!wikiJs.includes('持有上限+5'), 'wiki.js must remove legacy 持有上限+5');
+  assert(!wikiJs.includes('inventory +5'), 'wiki.js must remove legacy inventory +5');
+  assert(wikiJs.includes('每次進化<span class="text-success font-bold">主技能+1</span>.副技能不能同時存在相同名稱技能'), 'wiki.js must retain skill +1 and subskill uniqueness');
+
+  // 2. Healers & Energy boost
+  assert(wikiJs.includes('土台龜') && wikiJs.includes('Torterra'), 'wiki.js must include Torterra / 土台龜 as recommended healer');
+  assert(wikiJs.includes('約2.22倍') && wikiJs.includes('0.45x'), 'wiki.js must accurately describe ~2.22x speed and 0.45x interval for >80% energy');
+
+  // 3. Mobile H5 FAB CSS rules
+  assert(cssCode.includes('.mobile-h5-app .sidebar-fab-btn'), 'styles.css must style mobile H5 FAB');
+  assert(cssCode.includes('.mobile-h5-app .sidebar-fab-btn.drawer-open') && cssCode.includes('display: none !important;'), 'styles.css must strictly hide FAB when drawer is open');
+  assert(cssCode.includes('.mobile-h5-app.pokemon-active #sidebar-bookmark-handle:not(.drawer-open)'), 'styles.css must show Pokemon FAB when collapsed');
+  assert(cssCode.includes('.mobile-h5-app.ladder-active #ladder-sidebar-bookmark-handle:not(.drawer-open)'), 'styles.css must show Ladder FAB when collapsed');
+
+  // 4. JS Drawer-open symmetric state tracking
+  assert(appJs.includes("bookmarkHandle.classList.add('drawer-open')"), 'app.js must add drawer-open when expanding');
+  assert(appJs.includes("bookmarkHandle.classList.remove('drawer-open')"), 'app.js must remove drawer-open when collapsing');
+  assert(recipesJs.includes("bookmarkHandle.classList.add('drawer-open')"), 'recipes.js must add drawer-open when expanding');
+  assert(recipesJs.includes("bookmarkHandle.classList.remove('drawer-open')"), 'recipes.js must remove drawer-open when collapsing');
+  assert(wikiJs.includes("bookmarkHandle.classList.add('drawer-open')"), 'wiki.js must add drawer-open when expanding');
+  assert(wikiJs.includes("bookmarkHandle.classList.remove('drawer-open')"), 'wiki.js must remove drawer-open when collapsing');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

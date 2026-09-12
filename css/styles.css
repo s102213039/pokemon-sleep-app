@@ -1626,9 +1626,9 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
   width: 100%;
 }
 
-/* 🔖 側邊欄垂直中央書籤標籤（僅在收合時顯示，展開時強制徹底隱藏） */
+/* 🔖 側邊欄垂直中央書籤標籤（桌面端預設樣式） */
 .sidebar-bookmark-handle {
-  display: none !important;
+  display: none;
   position: absolute;
   top: 50%;
   right: -36px;
@@ -1651,9 +1651,6 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
   transition: background-color 0.15s ease, border-color 0.15s ease;
   color: var(--text-primary);
   padding: 8px 0;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  visibility: hidden !important;
 }
 
 .pokemon-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle,
@@ -13201,6 +13198,9 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .sidebar-bookmark-handle,
 .mobile-h5-app .sidebar-fab-btn {
   display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
   position: fixed !important;
   right: 16px;
   bottom: calc(76px + env(safe-area-inset-bottom, 0px));
@@ -13226,6 +13226,29 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   -webkit-user-select: none !important;
   -webkit-tap-highlight-color: transparent !important;
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+/* 🎛️ Mobile H5 側邊欄抽屜展開時，FAB 按鈕必須強制徹底隱藏（防遮擋、防誤觸） */
+.mobile-h5-app .sidebar-fab-btn.drawer-open,
+.mobile-h5-app .sidebar-bookmark-handle.drawer-open,
+.mobile-h5-app #panel-pokemon:has(#pokemon-filter-sidebar:not(.collapsed)) #sidebar-bookmark-handle,
+.mobile-h5-app #panel-recipes:has(#recipe-filter-sidebar:not(.collapsed)) #recipe-sidebar-bookmark-handle,
+.mobile-h5-app #panel-wiki:has(#ladder-filter-sidebar:not(.collapsed)) #ladder-sidebar-bookmark-handle {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* 🎛️ Mobile H5 側邊欄抽屜收合且面板為活躍狀態時，FAB 按鈕明確展示 */
+.mobile-h5-app.pokemon-active #sidebar-bookmark-handle:not(.drawer-open),
+.mobile-h5-app #panel-pokemon:not([style*="display: none"]):not([style*="display:none"]) #sidebar-bookmark-handle:not(.drawer-open),
+.mobile-h5-app #panel-recipes:not([style*="display: none"]):not([style*="display:none"]) #recipe-sidebar-bookmark-handle:not(.drawer-open),
+.mobile-h5-app.ladder-active #ladder-sidebar-bookmark-handle:not(.drawer-open) {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 .mobile-h5-app .sidebar-bookmark-handle:active,

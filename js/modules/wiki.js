@@ -11636,19 +11636,27 @@
 
     if (ladderHandle) {
       if (targetTab === 'ingredients') {
-        ladderHandle.style.display = '';
-        if (isMobileH5) {
-          const isCollapsed = ladderSidebar ? ladderSidebar.classList.contains('collapsed') : true;
-          ladderHandle.style.opacity = isCollapsed ? '1' : '0';
-          ladderHandle.style.pointerEvents = isCollapsed ? 'auto' : 'none';
+        const isCollapsed = ladderSidebar ? ladderSidebar.classList.contains('collapsed') : true;
+        if (isCollapsed) {
+          ladderHandle.classList.remove('drawer-open');
+          ladderHandle.style.display = 'flex';
+          ladderHandle.style.opacity = '1';
+          ladderHandle.style.pointerEvents = 'auto';
+          ladderHandle.style.visibility = 'visible';
+        } else {
+          ladderHandle.classList.add('drawer-open');
+          ladderHandle.style.display = 'none';
+          ladderHandle.style.opacity = '0';
+          ladderHandle.style.pointerEvents = 'none';
+          ladderHandle.style.visibility = 'hidden';
         }
         updateLadderActiveFilterBadge();
       } else {
+        ladderHandle.classList.add('drawer-open');
         ladderHandle.style.display = 'none';
-        if (isMobileH5) {
-          ladderHandle.style.opacity = '0';
-          ladderHandle.style.pointerEvents = 'none';
-        }
+        ladderHandle.style.opacity = '0';
+        ladderHandle.style.pointerEvents = 'none';
+        ladderHandle.style.visibility = 'hidden';
       }
     }
   }
@@ -11676,6 +11684,7 @@
       sidebar.classList.add('collapsed');
       if (backdrop) backdrop.classList.remove('active');
       if (bookmarkHandle) {
+        bookmarkHandle.classList.remove('drawer-open');
         bookmarkHandle.setAttribute('aria-expanded', 'false');
         bookmarkHandle.title = isEN ? 'Expand Ladder Filters' : '展開天梯篩選側邊欄';
         bookmarkHandle.style.opacity = '1';
@@ -11693,6 +11702,7 @@
         backdrop.classList.add('active');
       }
       if (bookmarkHandle) {
+        bookmarkHandle.classList.add('drawer-open');
         bookmarkHandle.setAttribute('aria-expanded', 'true');
         bookmarkHandle.title = isEN ? 'Collapse Ladder Filters' : '收合天梯篩選側邊欄';
         bookmarkHandle.style.opacity = '0';
@@ -16331,14 +16341,14 @@
                   <span class="strategy-badge badge-energy">${isEN ? 'Energy Core' : '活力核心'}</span>
                   <span class="strategy-title">${isEN ? 'Raise One Dedicated Healer First' : '優先養成一隻主力補師'}</span>
                 </div>
-                <div class="strategy-desc">${isEN ? 'Maintaining team energy <span class="text-success font-bold">&gt; 80%</span> grants <span class="text-accent font-bold">2.2x~2.5x</span> helping speed! Recommended healers: <span class="text-warning font-bold">Wigglytuff</span>, <span class="text-warning font-bold">Sylveon</span>, <span class="text-warning font-bold">Gardevoir</span>, or <span class="text-warning font-bold">Pawmot</span>.' : '全體活力維持在 <span class="text-success font-bold">80%以上</span>可享受 <span class="text-accent font-bold">2.2x~2.5x</span> 幫忙速度!建議先練:<span class="text-warning font-bold">胖可丁</span>,<span class="text-warning font-bold">仙子伊布</span>,<span class="text-warning font-bold">沙奈朵</span>或<span class="text-warning font-bold">巴布土撥</span>.'}</div>
+                <div class="strategy-desc">${isEN ? 'Maintaining team energy <span class="text-success font-bold">&gt; 80%</span> grants <span class="text-accent font-bold">~2.22x speed (interval 0.45x)</span>! Recommended healers: <span class="text-warning font-bold">Wigglytuff</span>, <span class="text-warning font-bold">Sylveon</span>, <span class="text-warning font-bold">Gardevoir</span>, <span class="text-warning font-bold">Pawmot</span>, or <span class="text-warning font-bold">Torterra</span>.' : '全體活力維持在 <span class="text-success font-bold">80%以上</span>可享受 <span class="text-accent font-bold">約2.22倍 (間隔 0.45x)</span> 幫忙速度!建議先練:<span class="text-warning font-bold">胖可丁</span>,<span class="text-warning font-bold">仙子伊布</span>,<span class="text-warning font-bold">沙奈朵</span>,<span class="text-warning font-bold">巴布土撥</span>或<span class="text-warning font-bold">土台龜</span>.'}</div>
               </div>
               <div class="strategy-item strategy-seeds">
                 <div class="strategy-header">
                   <span class="strategy-badge badge-seeds">${isEN ? 'Seed Rules' : '種子機制'}</span>
                   <span class="strategy-title">${isEN ? 'Main &amp; Sub Skill Seed Rules' : '主技能與副技能種子規則'}</span>
                 </div>
-                <div class="strategy-desc">${isEN ? 'Each evolution grants <span class="text-success font-bold">Main Skill Lv.+1</span> and <span class="text-accent font-bold">inventory +5</span>. Duplicate sub-skills cannot coexist (if S and M already exist, S cannot upgrade to M).' : '每次進化<span class="text-success font-bold">主技能+1</span>,<span class="text-accent font-bold">持有上限+5</span>.副技能不能同時存在相同名稱技能(如已有S與M,則S無法再升階為M).'}</div>
+                <div class="strategy-desc">${isEN ? 'Each evolution grants <span class="text-success font-bold">Main Skill Lv.+1</span>. Duplicate sub-skills cannot coexist (if S and M already exist, S cannot upgrade to M).' : '每次進化<span class="text-success font-bold">主技能+1</span>.副技能不能同時存在相同名稱技能(如已有S與M,則S無法再升階為M).'}</div>
               </div>
             </div>
           </div>
