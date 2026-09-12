@@ -12740,8 +12740,8 @@
     } else {
       daysResult.textContent = daysNeeded.toLocaleString() + (isEN ? ' Days' : ' 天');
       expResult.textContent = isEN 
-        ? `Approx. ${baseExpNeeded.toLocaleString()} EXP (~${Math.round(dailyExp)} EXP/Day)` 
-        : `約需 ${baseExpNeeded.toLocaleString()} EXP (每日約 ${Math.round(dailyExp)} EXP)`;
+        ? `Approx. ${baseExpNeeded.toLocaleString()} EXP` 
+        : `約需 ${baseExpNeeded.toLocaleString()} EXP`;
       if (candiesResult) {
         candiesResult.textContent = isEN
           ? `Approx. ${candiesNeeded.toLocaleString()} Candies (${expPerCandy} EXP/ea)`

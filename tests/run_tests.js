@@ -5175,6 +5175,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Sleep EXP Calculator Accurate
   ctx.window.WikiDB.recalcSleepDays();
   assert(daysRes.textContent.includes('120'), `Lv.1 to 30 must be 120 days, got: ${daysRes.textContent}`);
   assert(expRes.textContent.includes('11,992'), `Lv.1 to 30 must be 11,992 EXP, got: ${expRes.textContent}`);
+  assert(!expRes.textContent.includes('每日約') && !expRes.textContent.includes('EXP/Day'), `expRes must not contain (每日約 100 EXP) or (~100 EXP/Day), got: ${expRes.textContent}`);
   assert(candiesRes.textContent.includes('480') && candiesRes.textContent.includes('25 EXP'), `Lv.1 to 30 must be 480 candies (25 EXP/ea), got: ${candiesRes.textContent}`);
 
   // Case B: Level 1 to 50 default -> 29,993 EXP, 300 Days, 1,200 Candies
