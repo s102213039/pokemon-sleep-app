@@ -11656,8 +11656,14 @@
         ladderHandle.style.display = 'none';
         ladderHandle.style.opacity = '0';
         ladderHandle.style.pointerEvents = 'none';
-        ladderHandle.style.visibility = 'hidden';
       }
+    }
+
+    if (targetTab === 'ratings') {
+      try {
+        initCalcCustomSelects();
+        recalcSleepDays();
+      } catch (e) {}
     }
   }
 
@@ -12683,6 +12689,7 @@
     const natureSelect  = document.getElementById('calc-sleep-nature-select');
     const daysResult    = document.getElementById('calc-sleep-days-result');
     const expResult     = document.getElementById('calc-sleep-exp-result');
+    const candiesResult = document.getElementById('calc-sleep-candies-result');
 
     if (!curLvInput || !targetLvInput || !daysResult || !expResult) return;
 
@@ -12719,14 +12726,40 @@
     const daysNeeded = baseExpNeeded > 0 ? Math.ceil(baseExpNeeded / dailyExp) : 0;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
+    // 糖果換算 (Candy calculation):
+    // 基礎 1 顆 25 EXP; 性格修正: +18% -> 30 EXP (25*1.18=29.5->30), -18% -> 21 EXP (25*0.82=20.5->21)
+    const expPerCandy = Math.round(25 * natureFactor);
+    const candiesNeeded = baseExpNeeded > 0 ? Math.ceil(baseExpNeeded / expPerCandy) : 0;
+
     if (baseExpNeeded === 0) {
       daysResult.textContent = isEN ? '0 Days' : '0 天';
       expResult.textContent = isEN ? 'Target Level Already Reached' : '已達目標等級, 無需額外 EXP';
+      if (candiesResult) {
+        candiesResult.textContent = isEN ? '0 Candies Needed' : '無需額外糖果';
+      }
     } else {
       daysResult.textContent = daysNeeded.toLocaleString() + (isEN ? ' Days' : ' 天');
       expResult.textContent = isEN 
         ? `Approx. ${baseExpNeeded.toLocaleString()} EXP (~${Math.round(dailyExp)} EXP/Day)` 
         : `約需 ${baseExpNeeded.toLocaleString()} EXP (每日約 ${Math.round(dailyExp)} EXP)`;
+      if (candiesResult) {
+        candiesResult.textContent = isEN
+          ? `Approx. ${candiesNeeded.toLocaleString()} Candies (${expPerCandy} EXP/ea)`
+          : `約需 ${candiesNeeded.toLocaleString()} 顆糖果 (每顆 ${expPerCandy} EXP)`;
+      }
+    }
+  }
+
+  // 9. 初始化升級天數計算機自訂下拉選單
+  function initCalcCustomSelects() {
+    if (typeof window === 'undefined' || typeof window.setupCustomSelect !== 'function') return;
+    const targetSelect = document.getElementById('calc-sleep-target-lv');
+    const natureSelect = document.getElementById('calc-sleep-nature-select');
+    if (targetSelect && !targetSelect._customized) {
+      window.setupCustomSelect(targetSelect);
+    }
+    if (natureSelect && !natureSelect._customized) {
+      window.setupCustomSelect(natureSelect);
     }
   }
 
@@ -16371,31 +16404,35 @@
           </div>
           <div class="wiki-card wiki-calc-card">
             <div class="calc-inputs-row">
-              <div class="calc-input-group calc-input-group-cur" style="flex: 0 0 110px; min-width: 95px;">
-                <label class="calc-label" for="calc-sleep-cur-lv">${isEN ? 'Current Level:' : '目前等級:'}</label>
-                <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="79" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
-              </div>
+              <div class="calc-form-col">
+                <div class="calc-form-row calc-form-row-levels">
+                  <div class="calc-field-group calc-field-cur">
+                    <label class="calc-label" for="calc-sleep-cur-lv">${isEN ? 'Current Level:' : '目前等級:'}</label>
+                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="79" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
+                  </div>
 
-              <div class="calc-input-group calc-input-group-target" style="flex: 0 0 130px; min-width: 110px;">
-                <label class="calc-label" for="calc-sleep-target-lv">${isEN ? 'Target Level:' : '目標等級:'}</label>
-                <select id="calc-sleep-target-lv" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
-                  <option value="30">Lv.30</option>
-                  <option value="50">Lv.50</option>
-                  <option value="60">Lv.60</option>
-                  <option value="70">Lv.70</option>
-                  <option value="80">Lv.80</option>
-                </select>
-              </div>
+                  <div class="calc-field-group calc-field-target">
+                    <label class="calc-label" for="calc-sleep-target-lv">${isEN ? 'Target Level:' : '目標等級:'}</label>
+                    <select id="calc-sleep-target-lv" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
+                      <option value="30">Lv.30</option>
+                      <option value="50">Lv.50</option>
+                      <option value="60">Lv.60</option>
+                      <option value="70">Lv.70</option>
+                      <option value="80">Lv.80</option>
+                    </select>
+                  </div>
+                </div>
 
-              <div class="calc-input-group calc-input-group-boosts" style="flex: 1 1 320px; min-width: 260px;">
-                <label class="calc-label">${isEN ? 'Boost Conditions:' : '加成條件:'}</label>
-                <div class="calc-boost-controls">
-                  <label class="calc-switch-label">
-                    <input type="checkbox" id="calc-sleep-exp-subskill" class="switch-checkbox" onchange="window.WikiDB.recalcSleepDays()">
-                    <span class="switch-slider"></span>
-                    <span class="switch-text">${isEN ? 'Sleep EXP Bonus (+14%)' : '睡眠EXP獎勵 (+14%)'}</span>
-                  </label>
-                  <div class="calc-nature-select-wrap">
+                <div class="calc-form-row calc-form-row-boosts">
+                  <div class="calc-field-group calc-field-switch">
+                    <label class="calc-switch-label">
+                      <input type="checkbox" id="calc-sleep-exp-subskill" class="switch-checkbox" onchange="window.WikiDB.recalcSleepDays()">
+                      <span class="switch-slider"></span>
+                      <span class="switch-text">${isEN ? 'Sleep EXP Bonus (+14%)' : '睡眠EXP獎勵 (+14%)'}</span>
+                    </label>
+                  </div>
+
+                  <div class="calc-field-group calc-field-nature">
                     <select id="calc-sleep-nature-select" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
                       <option value="1.0">${isEN ? 'Neutral EXP Nature' : '性格無EXP修正'}</option>
                       <option value="1.18">${isEN ? 'EXP Up ▲ (+18%)' : '性格EXP▲ (+18%)'}</option>
@@ -16409,6 +16446,7 @@
                 <div class="calc-result-label">${isEN ? 'Estimated Sleep Days' : '預估所需睡眠天數'}</div>
                 <div id="calc-sleep-days-result" class="calc-result-val">${isEN ? '120 Days' : '120 天'}</div>
                 <div id="calc-sleep-exp-result" class="calc-result-badge">${isEN ? 'Approx. 11,992 EXP' : '約需 11,992 EXP'}</div>
+                <div id="calc-sleep-candies-result" class="calc-result-candies">${isEN ? 'Approx. 480 Candies (25 EXP/ea)' : '約需 480 顆糖果 (每顆 25 EXP)'}</div>
               </div>
             </div>
 
@@ -16458,6 +16496,10 @@
       <!-- 遮罩層 (Backdrop for Mobile Drawer - 阻斷點擊穿透) -->
       <div id="ladder-sidebar-backdrop" class="sidebar-backdrop" onclick="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeLadderSidebar()" ontouchend="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeLadderSidebar()" ontouchstart="event.stopPropagation()"></div>
     `;
+
+    try {
+      initCalcCustomSelects();
+    } catch (e) {}
   }
 
   function handleLadderGroupHover(e) {
@@ -16541,6 +16583,7 @@
     handleLadderGroupHoverOut: handleLadderGroupHoverOut,
     recalcTriggerChance: recalcTriggerChance,
     recalcSleepDays: recalcSleepDays,
+    initCalcCustomSelects: initCalcCustomSelects,
     openLadderSidebar: openLadderSidebar,
     closeLadderSidebar: closeLadderSidebar,
     toggleLadderSidebar: toggleLadderSidebar,
@@ -16610,6 +16653,7 @@
   window.handleLadderGroupHoverOut = handleLadderGroupHoverOut;
   window.recalcTriggerChance = recalcTriggerChance;
   window.recalcSleepDays = recalcSleepDays;
+  window.initCalcCustomSelects = initCalcCustomSelects;
   window.openLadderSidebar = openLadderSidebar;
   window.closeLadderSidebar = closeLadderSidebar;
   window.openIngredientRankingModal = openIngredientRankingModal;

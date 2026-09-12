@@ -5065,11 +5065,14 @@ test('Tier 4 - Real-World Application Scenarios', 'Sleep EXP Calculator Accurate
   assert(wikiCode.includes('+3 ${isEN ? \'Carry\' : \'持有\'}, ${isEN ? \'Profile Icon\' : \'專屬頭像\'}'), 'Ribbon Tier 3 must be +3');
   assert(wikiCode.includes('+2 ${isEN ? \'Carry\' : \'持有\'}, ${isEN ? \'Speed\' : \'幫速\'} -12% / -25%'), 'Ribbon Tier 4 must be +2');
 
-  // 2. Verify CSS defines dropdown styling complying with dropdown arrow rule
+  // 2. Verify CSS defines dropdown styling complying with dropdown arrow rule & custom-select-calc
   assert(cssCode.includes('.calc-select') && cssCode.includes('padding: 9px 36px 9px 12px;'), 'calc-select must have 36px right padding for arrow clearance');
   assert(cssCode.includes('background-position: right 18px center;'), 'calc-select arrow must be inset 18px from right');
-  assert(cssCode.includes('.calc-boost-controls'), 'CSS must define calc-boost-controls');
+  assert(cssCode.includes('.calc-form-col'), 'CSS must define calc-form-col');
+  assert(cssCode.includes('.calc-form-row'), 'CSS must define calc-form-row');
   assert(cssCode.includes('.calc-switch-label'), 'CSS must define calc-switch-label');
+  assert(cssCode.includes('.custom-select-calc'), 'CSS must define custom-select-calc');
+  assert(cssCode.includes('.calc-result-candies'), 'CSS must define calc-result-candies');
 
   // 3. Setup mock DOM environment
   const elements = {};
@@ -5090,12 +5093,17 @@ test('Tier 4 - Real-World Application Scenarios', 'Sleep EXP Calculator Accurate
     return elements[id];
   };
 
+  const customizedElements = [];
   const ctx = {
     window: {
       location: { hash: '#wiki/ratings' },
       localStorage: { getItem: () => 'zh-TW', setItem: () => {} },
       addEventListener: () => {},
-      history: { replaceState: () => {} }
+      history: { replaceState: () => {} },
+      setupCustomSelect: el => {
+        el._customized = true;
+        customizedElements.push(el);
+      }
     },
     document: {
       readyState: 'complete',
@@ -5117,7 +5125,13 @@ test('Tier 4 - Real-World Application Scenarios', 'Sleep EXP Calculator Accurate
   ctx.window.WikiDB.renderWikiLayout(mockContainer);
   const html = mockContainer.innerHTML;
 
-  // 4. Verify Target Level is a select dropdown with options 30, 50, 60, 70, 80
+  // 4. Verify 2-row layout structure and custom select elements
+  assert(html.includes('class="calc-form-col"'), 'Must render calc-form-col for two-row left column');
+  assert(html.includes('class="calc-form-row calc-form-row-levels"'), 'Must render calc-form-row-levels');
+  assert(html.includes('class="calc-form-row calc-form-row-boosts"'), 'Must render calc-form-row-boosts');
+  assert(html.includes('id="calc-sleep-candies-result"'), 'Must render calc-sleep-candies-result for candies estimation');
+
+  // Verify Target Level is a select dropdown with options 30, 50, 60, 70, 80
   assert(html.includes('<select id="calc-sleep-target-lv" class="calc-select"'), 'Target level must be a calc-select dropdown');
   assert(html.includes('<option value="30">Lv.30</option>'), 'Target level must have option 30');
   assert(html.includes('<option value="50">Lv.50</option>'), 'Target level must have option 50');
@@ -5138,15 +5152,21 @@ test('Tier 4 - Real-World Application Scenarios', 'Sleep EXP Calculator Accurate
   // 7. Verify Nature select exists with unified styling
   assert(html.includes('id="calc-sleep-nature-select" class="calc-select"'), 'Nature select must use unified calc-select class');
 
-  // 8. Test accurate calculation logic via recalcSleepDays
+  // 8. Verify initCalcCustomSelects initializes target and nature selects
+  ctx.window.WikiDB.initCalcCustomSelects();
+  assert(getEl('calc-sleep-target-lv')._customized === true, 'Target level select must be customized');
+  assert(getEl('calc-sleep-nature-select')._customized === true, 'Nature select must be customized');
+
+  // 9. Test accurate calculation logic and candy equivalent via recalcSleepDays
   const curLv = getEl('calc-sleep-cur-lv');
   const targetLv = getEl('calc-sleep-target-lv');
   const expBonus = getEl('calc-sleep-exp-subskill');
   const natureSel = getEl('calc-sleep-nature-select');
   const daysRes = getEl('calc-sleep-days-result');
   const expRes = getEl('calc-sleep-exp-result');
+  const candiesRes = getEl('calc-sleep-candies-result');
 
-  // Case A: Level 1 to 30 default -> 11,992 EXP, 120 Days
+  // Case A: Level 1 to 30 default -> 11,992 EXP, 120 Days, 480 Candies (25 EXP/ea)
   curLv.value = '1';
   targetLv.value = '30';
   expBonus.checked = false;
@@ -5154,19 +5174,22 @@ test('Tier 4 - Real-World Application Scenarios', 'Sleep EXP Calculator Accurate
   ctx.window.WikiDB.recalcSleepDays();
   assert(daysRes.textContent.includes('120'), `Lv.1 to 30 must be 120 days, got: ${daysRes.textContent}`);
   assert(expRes.textContent.includes('11,992'), `Lv.1 to 30 must be 11,992 EXP, got: ${expRes.textContent}`);
+  assert(candiesRes.textContent.includes('480') && candiesRes.textContent.includes('25 EXP'), `Lv.1 to 30 must be 480 candies (25 EXP/ea), got: ${candiesRes.textContent}`);
 
-  // Case B: Level 1 to 50 default -> 29,993 EXP, 300 Days
+  // Case B: Level 1 to 50 default -> 29,993 EXP, 300 Days, 1,200 Candies
   targetLv.value = '50';
   ctx.window.WikiDB.recalcSleepDays();
   assert(daysRes.textContent.includes('300'), `Lv.1 to 50 must be 300 days, got: ${daysRes.textContent}`);
   assert(expRes.textContent.includes('29,993'), `Lv.1 to 50 must be 29,993 EXP, got: ${expRes.textContent}`);
+  assert(candiesRes.textContent.includes('1,200'), `Lv.1 to 50 must be 1,200 candies, got: ${candiesRes.textContent}`);
 
-  // Case C: Level 50 to 60 steep surge -> 51,493 - 29,993 = 21,500 EXP, 215 Days
+  // Case C: Level 50 to 60 steep surge -> 51,493 - 29,993 = 21,500 EXP, 215 Days, 860 Candies
   curLv.value = '50';
   targetLv.value = '60';
   ctx.window.WikiDB.recalcSleepDays();
   assert(daysRes.textContent.includes('215'), `Lv.50 to 60 must be 215 days, got: ${daysRes.textContent}`);
   assert(expRes.textContent.includes('21,500'), `Lv.50 to 60 must be 21,500 EXP, got: ${expRes.textContent}`);
+  assert(candiesRes.textContent.includes('860'), `Lv.50 to 60 must be 860 candies, got: ${candiesRes.textContent}`);
 
   // Case D: Level 60 to 70 steep surge -> 82,162 - 51,493 = 30,669 EXP, 307 Days
   curLv.value = '60';
@@ -5190,21 +5213,24 @@ test('Tier 4 - Real-World Application Scenarios', 'Sleep EXP Calculator Accurate
   ctx.window.WikiDB.recalcSleepDays();
   assert(daysRes.textContent.includes('189'), `Lv.50 to 60 with +14% must be 189 days, got: ${daysRes.textContent}`);
 
-  // Case G: Nature Up (+18%) and Nature Down (-18%) multipliers
+  // Case G: Nature Up (+18%) and Nature Down (-18%) multipliers and candy changes
   expBonus.checked = false;
-  natureSel.value = '1.18'; // dailyExp = 118 -> ceil(21500 / 118) = 183 Days
+  natureSel.value = '1.18'; // dailyExp = 118 -> ceil(21500 / 118) = 183 Days; candy = 30 EXP/ea -> ceil(21500 / 30) = 717 Candies
   ctx.window.WikiDB.recalcSleepDays();
   assert(daysRes.textContent.includes('183'), `Lv.50 to 60 with Nature Up must be 183 days, got: ${daysRes.textContent}`);
+  assert(candiesRes.textContent.includes('717') && candiesRes.textContent.includes('30 EXP'), `Lv.50 to 60 with Nature Up must be 717 candies (30 EXP/ea), got: ${candiesRes.textContent}`);
 
-  natureSel.value = '0.82'; // dailyExp = 82 -> ceil(21500 / 82) = 263 Days
+  natureSel.value = '0.82'; // dailyExp = 82 -> ceil(21500 / 82) = 263 Days; candy = 21 EXP/ea -> ceil(21500 / 21) = 1,024 Candies
   ctx.window.WikiDB.recalcSleepDays();
   assert(daysRes.textContent.includes('263'), `Lv.50 to 60 with Nature Down must be 263 days, got: ${daysRes.textContent}`);
+  assert(candiesRes.textContent.includes('1,024') && candiesRes.textContent.includes('21 EXP'), `Lv.50 to 60 with Nature Down must be 1,024 candies (21 EXP/ea), got: ${candiesRes.textContent}`);
 
-  // Case H: cur >= target -> 0 Days
+  // Case H: cur >= target -> 0 Days, 0 Candies
   curLv.value = '65';
   targetLv.value = '60';
   ctx.window.WikiDB.recalcSleepDays();
   assert(daysRes.textContent.includes('0'), `cur >= target must show 0 days, got: ${daysRes.textContent}`);
+  assert(candiesRes.textContent.includes('無需額外糖果'), `cur >= target must show 無需額外糖果, got: ${candiesRes.textContent}`);
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Wiki Healer Strategy, Seed Evolution Rules & Mobile H5 Filter FAB Ironclad Visibility', () => {

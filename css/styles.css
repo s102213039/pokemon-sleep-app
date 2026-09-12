@@ -8779,20 +8779,34 @@ input[type="number"] {
 .calc-inputs-row {
   display: flex;
   gap: 18px;
-  align-items: flex-end;
-  flex-wrap: wrap;
+  align-items: stretch;
   background: var(--bg-card-inner);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 18px 20px;
+  padding: 16px 18px;
 }
 
-.calc-input-group {
+.calc-form-col {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+}
+
+.calc-form-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.calc-field-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  flex: 1;
-  min-width: 220px;
+  flex: 1 1 0%;
+  min-width: 0;
 }
 
 .calc-label {
@@ -8854,6 +8868,12 @@ input[type="number"] {
   flex-wrap: wrap;
 }
 
+.calc-field-switch {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
 .calc-switch-label {
   display: inline-flex;
   align-items: center;
@@ -8866,6 +8886,8 @@ input[type="number"] {
   padding: 8px 12px;
   box-sizing: border-box;
   min-height: 40px;
+  height: 40px;
+  width: 100%;
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
@@ -8879,6 +8901,56 @@ input[type="number"] {
   min-width: 160px;
 }
 
+/* 自訂下拉選單在計算機內的專屬樣式 */
+.custom-select-calc {
+  width: 100%;
+  display: block;
+}
+
+.custom-select-calc .custom-select-trigger {
+  width: 100%;
+  padding: 9px 38px 9px 12px;
+  background: var(--bg-input, var(--bg-card-inner));
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-weight: 500;
+  min-height: 40px;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.custom-select-calc .custom-select-trigger:hover {
+  border-color: var(--accent-blue, #38bdf8);
+}
+
+.custom-select-calc.open .custom-select-trigger {
+  border-color: var(--accent-blue, #38bdf8);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+}
+
+.custom-select-calc .custom-select-arrow {
+  right: 18px;
+}
+
+.custom-select-calc .custom-select-menu {
+  min-width: 100%;
+  width: max-content;
+  max-width: 260px;
+  background: var(--bg-card-solid, #1e293b);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  z-index: 1050;
+}
+
+[data-theme="dawn"] .custom-select-calc .custom-select-menu,
+[data-theme="emerald"] .custom-select-calc .custom-select-menu {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
 .calc-result-box {
   background: rgba(2, 132, 199, 0.15);
   border: 1px solid rgba(56, 189, 248, 0.4);
@@ -8888,8 +8960,10 @@ input[type="number"] {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 170px;
+  flex: 0 0 220px;
+  min-width: 190px;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .calc-result-label {
@@ -8914,6 +8988,19 @@ input[type="number"] {
   padding: 2px 8px;
   border-radius: 12px;
   margin-top: 4px;
+}
+
+.calc-result-candies {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #f59e0b;
+  margin-top: 5px;
+  line-height: 1.3;
+}
+
+[data-theme="dawn"] .calc-result-candies,
+[data-theme="emerald"] .calc-result-candies {
+  color: #b45309;
 }
 
 .grade-sss { background: #ec4899; color: #ffffff; box-shadow: 0 0 10px rgba(236, 72, 153, 0.5); }
@@ -15476,26 +15563,54 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 
 .mobile-h5-app .calc-inputs-row {
   display: flex !important;
-  flex-direction: column !important;
-  gap: 10px !important;
+  flex-direction: row !important;
+  gap: 8px !important;
+  padding: 8px !important;
+  align-items: stretch !important;
 }
 
-.mobile-h5-app .calc-input-group {
-  width: 100% !important;
+.mobile-h5-app .calc-form-col {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  justify-content: space-between !important;
+}
+
+.mobile-h5-app .calc-form-row {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 6px !important;
+  align-items: flex-end !important;
+}
+
+.mobile-h5-app .calc-field-group {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
 }
 
 .mobile-h5-app .calc-label {
-  font-size: 13px !important;
+  font-size: 11px !important;
   font-weight: 700 !important;
   color: var(--text-title, #f8fafc) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.2 !important;
 }
 
 .mobile-h5-app .calc-input-num {
   width: 100% !important;
   box-sizing: border-box !important;
-  padding: 8px 10px !important;
-  font-size: 13px !important;
-  border-radius: 8px !important;
+  padding: 5px 6px !important;
+  font-size: 12px !important;
+  height: 33px !important;
+  min-height: 33px !important;
+  border-radius: 6px !important;
   background-color: var(--bg-input, var(--bg-card-inner)) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
@@ -15504,58 +15619,114 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .calc-select {
   width: 100% !important;
   box-sizing: border-box !important;
-  padding: 8px 36px 8px 10px !important;
-  background-position: right 18px center !important;
-  font-size: 12px !important;
-  border-radius: 8px !important;
+  padding: 5px 28px 5px 6px !important;
+  background-position: right 12px center !important;
+  font-size: 11.5px !important;
+  height: 33px !important;
+  min-height: 33px !important;
+  border-radius: 6px !important;
   background-color: var(--bg-input, var(--bg-card-inner)) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
 }
 
-.mobile-h5-app .calc-boost-controls {
-  flex-direction: column !important;
-  align-items: stretch !important;
-  gap: 8px !important;
+.mobile-h5-app .custom-select-calc .custom-select-trigger {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 5px 26px 5px 6px !important;
+  font-size: 11.5px !important;
+  height: 33px !important;
+  min-height: 33px !important;
+  border-radius: 6px !important;
+}
+
+.mobile-h5-app .custom-select-calc .custom-select-arrow {
+  right: 8px !important;
+}
+
+.mobile-h5-app .custom-select-calc .custom-select-menu {
+  max-width: 210px !important;
+}
+
+.mobile-h5-app .custom-select-calc .custom-select-item {
+  padding: 6px 8px !important;
+  font-size: 11px !important;
 }
 
 .mobile-h5-app .calc-switch-label {
   width: 100% !important;
   box-sizing: border-box !important;
-  justify-content: space-between !important;
+  padding: 4px 6px !important;
+  height: 33px !important;
+  min-height: 33px !important;
+  border-radius: 6px !important;
+  gap: 5px !important;
+  justify-content: flex-start !important;
 }
 
-.mobile-h5-app .calc-nature-select-wrap {
-  width: 100% !important;
+.mobile-h5-app .calc-switch-label .switch-slider {
+  width: 26px !important;
+  height: 15px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .calc-switch-label .switch-slider:before {
+  width: 11px !important;
+  height: 11px !important;
+  left: 2px !important;
+  bottom: 2px !important;
+}
+
+.mobile-h5-app .calc-switch-label .switch-checkbox:checked + .switch-slider:before {
+  transform: translateX(11px) !important;
+}
+
+.mobile-h5-app .calc-switch-label .switch-text {
+  font-size: 10.5px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .mobile-h5-app .calc-result-box {
-  margin-top: 10px !important;
-  padding: 12px !important;
-  border-radius: 10px !important;
+  flex: 0 0 120px !important;
+  min-width: 105px !important;
+  max-width: 130px !important;
+  padding: 6px 5px !important;
+  margin-top: 0 !important;
+  border-radius: 8px !important;
   text-align: center !important;
+  justify-content: center !important;
   background: var(--bg-card-inner) !important;
   border: 1px solid var(--border-color-subtle) !important;
 }
 
 .mobile-h5-app .calc-result-label {
-  font-size: 11.5px !important;
+  font-size: 9.5px !important;
   color: var(--text-secondary) !important;
+  line-height: 1.1 !important;
 }
 
 .mobile-h5-app .calc-result-val {
-  font-size: 22px !important;
+  font-size: 17px !important;
   font-weight: 800 !important;
-  margin: 4px 0 !important;
+  margin: 2px 0 !important;
   color: var(--accent-blue) !important;
 }
 
 .mobile-h5-app .calc-result-badge {
-  font-size: 11.5px !important;
-  padding: 3px 10px !important;
+  font-size: 9.5px !important;
+  padding: 2px 4px !important;
   background: var(--bg-card) !important;
   color: var(--text-secondary) !important;
   border: 1px solid var(--border-color-subtle) !important;
+  line-height: 1.2 !important;
+}
+
+.mobile-h5-app .calc-result-candies {
+  font-size: 9.5px !important;
+  margin-top: 3px !important;
+  line-height: 1.2 !important;
 }
 
 .mobile-h5-app .wiki-calc-card {

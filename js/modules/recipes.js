@@ -264,6 +264,8 @@
     container.className = 'custom-select-container';
     if (selectElement.classList.contains('sort-select')) {
       container.classList.add('custom-select-sort');
+    } else if (selectElement.classList.contains('calc-select')) {
+      container.classList.add('custom-select-calc');
     } else {
       container.classList.add('custom-select-rf');
     }
