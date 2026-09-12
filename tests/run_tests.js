@@ -2524,17 +2524,18 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Draw S Specific Po
 
   const mawileHtmlZh = ctx.window.PokemonApp.renderSkillWithTooltip(mawile.main_skill, mawile);
   assert(mawileHtmlZh.includes('窩心洋芋') && mawileHtmlZh.includes('純粹油') && mawileHtmlZh.includes('萌綠玉米') && mawileHtmlZh.includes('好眠番茄'), 'Mawile tooltip must include all 4 specific ingredients (Soft Potato, Pure Oil, Greengrass Corn, Snoozy Tomato)');
-  assert(mawileHtmlZh.includes('(4種)'), 'Mawile badge should show (4種)');
+  assert(!mawileHtmlZh.includes('(4種)'), 'Mawile badge should not show (4種)');
   assert(mawileHtmlZh.includes('暴擊效果') && (mawileHtmlZh.includes('翻倍') || mawileHtmlZh.includes('雙倍')), 'Mawile tooltip must explain critical hit effect (double ingredients)');
 
   // Verify alias 怪力钳（食材精選S）
   const mawileAliasHtml = ctx.window.PokemonApp.renderSkillWithTooltip('怪力钳（食材精選S）', mawile);
   assert(mawileAliasHtml.includes('窩心洋芋') && mawileAliasHtml.includes('純粹油'), 'Mawile alias must resolve 4-ingredient pool');
+  assert(!mawileAliasHtml.includes('(4種)'), 'Mawile alias badge should not show (4種)');
 
   const honchkrowHtmlZh = ctx.window.PokemonApp.renderSkillWithTooltip(honchkrow.main_skill, honchkrow);
   assert(honchkrowHtmlZh.includes('醒腦咖啡豆') && honchkrowHtmlZh.includes('萌綠大豆') && honchkrowHtmlZh.includes('豆製肉') && honchkrowHtmlZh.includes('品鮮蘑菇'), 'Honchkrow tooltip must include all 4 specific ingredients (Rousing Coffee, Greengrass Soybeans, Bean Sausage, Tasty Mushroom)');
   assert(!honchkrowHtmlZh.includes('火辣香草'), 'Honchkrow tooltip must not include spicy herb');
-  assert(honchkrowHtmlZh.includes('(4種)'), 'Honchkrow badge should show (4種)');
+  assert(!honchkrowHtmlZh.includes('(4種)'), 'Honchkrow badge should not show (4種)');
   assert(honchkrowHtmlZh.includes('暴擊效果') && honchkrowHtmlZh.includes('夢之碎片'), 'Honchkrow tooltip must explain critical hit effect (massive Dream Shards)');
 
   ctx.window.I18N.setLanguage('en-US');

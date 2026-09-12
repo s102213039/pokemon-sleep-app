@@ -463,28 +463,28 @@ const SPECIAL_SKILL_DETAILS = {
     'en-US': 'Gets 1 ingredient type from specific selection (5~18 of a single ingredient).'
   },
   '超幸運（食材精選S）': {
-    'zh-TW': '從特定食材 (4種: 咖啡豆、大豆、豆肉、蘑菇) 中隨機獲得 1 種食材 (5~18個); 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片).',
-    'en-US': 'Gets 1 ingredient type from 4 specific ingredients (Coffee, Soybean, Sausage, Mushroom; 5~18 items); rarely crits for massive Dream Shards instead (up to 20,000).'
+    'zh-TW': '從特定食材 (咖啡豆、大豆、豆肉、蘑菇) 中隨機獲得 1 種食材 (5~18個); 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片).',
+    'en-US': 'Gets 1 ingredient type from specific ingredients (Coffee, Soybean, Sausage, Mushroom; 5~18 items); rarely crits for massive Dream Shards instead (up to 20,000).'
   },
   '超幸運 (食材精選S)': {
-    'zh-TW': '從特定食材 (4種: 咖啡豆、大豆、豆肉、蘑菇) 中隨機獲得 1 種食材 (5~18個); 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片).',
-    'en-US': 'Gets 1 ingredient type from 4 specific ingredients (Coffee, Soybean, Sausage, Mushroom; 5~18 items); rarely crits for massive Dream Shards instead (up to 20,000).'
+    'zh-TW': '從特定食材 (咖啡豆、大豆、豆肉、蘑菇) 中隨機獲得 1 種食材 (5~18個); 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片).',
+    'en-US': 'Gets 1 ingredient type from specific ingredients (Coffee, Soybean, Sausage, Mushroom; 5~18 items); rarely crits for massive Dream Shards instead (up to 20,000).'
   },
   '怪力鉗（食材精選S）': {
-    'zh-TW': '從特定食材 (4種: 洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個).',
-    'en-US': 'Gets 1 ingredient type from 4 specific ingredients (Potato, Oil, Corn, Tomato; 5~18 items); crits on Extra Tasty to award 2x ingredients (up to 36).'
+    'zh-TW': '從特定食材 (洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個).',
+    'en-US': 'Gets 1 ingredient type from specific ingredients (Potato, Oil, Corn, Tomato; 5~18 items); crits on Extra Tasty to award 2x ingredients (up to 36).'
   },
   '怪力鉗 (食材精選S)': {
-    'zh-TW': '從特定食材 (4種: 洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個).',
-    'en-US': 'Gets 1 ingredient type from 4 specific ingredients (Potato, Oil, Corn, Tomato; 5~18 items); crits on Extra Tasty to award 2x ingredients (up to 36).'
+    'zh-TW': '從特定食材 (洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個).',
+    'en-US': 'Gets 1 ingredient type from specific ingredients (Potato, Oil, Corn, Tomato; 5~18 items); crits on Extra Tasty to award 2x ingredients (up to 36).'
   },
   '怪力钳（食材精選S）': {
-    'zh-TW': '從特定食材 (4種: 洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個).',
-    'en-US': 'Gets 1 ingredient type from 4 specific ingredients (Potato, Oil, Corn, Tomato; 5~18 items); crits on Extra Tasty to award 2x ingredients (up to 36).'
+    'zh-TW': '從特定食材 (洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個).',
+    'en-US': 'Gets 1 ingredient type from specific ingredients (Potato, Oil, Corn, Tomato; 5~18 items); crits on Extra Tasty to award 2x ingredients (up to 36).'
   },
   '怪力钳 (食材精選S)': {
-    'zh-TW': '從特定食材 (4種: 洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個).',
-    'en-US': 'Gets 1 ingredient type from 4 specific ingredients (Potato, Oil, Corn, Tomato; 5~18 items); crits on Extra Tasty to award 2x ingredients (up to 36).'
+    'zh-TW': '從特定食材 (洋芋、純油、玉米、番茄) 中隨機獲得 1 種食材 (5~18個); 若發生「漂亮成功 (大成功/暴擊)」時獲得 2 倍食材 (最高達 36 個).',
+    'en-US': 'Gets 1 ingredient type from specific ingredients (Potato, Oil, Corn, Tomato; 5~18 items); crits on Extra Tasty to award 2x ingredients (up to 36).'
   },
   '新月祈禱（活力全體療癒S）': {
     'zh-TW': '讓幫手隊伍的所有寶可夢回復活力，並額外獲得隊伍中所有寶可夢撿來的樹果（超能力屬性隊員越多，樹果數量越多）。',
@@ -664,18 +664,18 @@ function renderSkillWithTooltip(skillName, pkm) {
         const critText = isEN 
           ? 'Crit effect: Rarely crits for massive Dream Shards instead of ingredients (up to 20,000 shards)!' 
           : '暴擊效果: 少數情況下暴擊獲得大量夢之碎片代替食材 (暴擊時最高達 20,000 碎片)!';
-        detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span><span style="color:var(--text-secondary);font-size:11px;margin-left:4px;font-weight:600;">(4${isEN ? ' types' : '種'})</span></span><div style="font-size:11.5px;color:var(--accent-color,#f59e0b);margin-top:3px;line-height:1.35;font-weight:500;">${critText}</div>`;
+        detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span></span><div style="font-size:11.5px;color:var(--accent-color,#f59e0b);margin-top:3px;line-height:1.35;font-weight:500;">${critText}</div>`;
         plainTitle = isEN 
-          ? `Draws (4 types): ${ingNamesPlain}. ${critText}` 
-          : `可精選食材 (4種): ${ingNamesPlain}. ${critText}`;
+          ? `Draws: ${ingNamesPlain}. ${critText}` 
+          : `可精選食材: ${ingNamesPlain}. ${critText}`;
       } else if (isHyperCutter) {
         const critText = isEN 
           ? 'Crit effect: Extra Tasty crits to grant 2x ingredients (up to 36 items)!' 
           : '暴擊效果: 漂亮成功 (大成功/暴擊) 時食材產出翻倍 (2 倍, 最高達 36 個)!';
-        detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span><span style="color:var(--text-secondary);font-size:11px;margin-left:4px;font-weight:600;">(4${isEN ? ' types' : '種'})</span></span><div style="font-size:11.5px;color:var(--accent-color,#f59e0b);margin-top:3px;line-height:1.35;font-weight:500;">${critText}</div>`;
+        detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span></span><div style="font-size:11.5px;color:var(--accent-color,#f59e0b);margin-top:3px;line-height:1.35;font-weight:500;">${critText}</div>`;
         plainTitle = isEN 
-          ? `Draws (4 types): ${ingNamesPlain}. ${critText}` 
-          : `可精選食材 (4種): ${ingNamesPlain}. ${critText}`;
+          ? `Draws: ${ingNamesPlain}. ${critText}` 
+          : `可精選食材: ${ingNamesPlain}. ${critText}`;
       } else {
         detail = `<span class="skill-tooltip-inline-wrap">${prefix}<span class="skill-tooltip-icons-group">${ingIconsHtml}</span></span>`;
         plainTitle = isEN ? `Draws: ${ingNamesPlain}` : `可精選食材: ${ingNamesPlain}`;
@@ -2905,9 +2905,7 @@ if (typeof document !== 'undefined') {
 
           tooltipEl.innerHTML = `
             <div class="tooltip-header">
-              <span class="tooltip-sparkle">[★]</span>
               <strong class="tooltip-title">${titleName}</strong>
-              <span class="tooltip-tag">${isEN ? 'Special Main Skill' : '特殊主技能'}</span>
             </div>
             <div class="tooltip-body">${detail}</div>
           `;
