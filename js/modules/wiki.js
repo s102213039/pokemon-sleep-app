@@ -13908,6 +13908,8 @@
   let currentIslandId = getSavedIslandId();
   let isExpertModeActive = getSavedIslandExpertMode();
   let currentIslandSleepType = getSavedIslandSleepType();
+  let islandSpawnsSortCol = null;
+  let islandSpawnsSortDir = null;
 
   function selectIsland(islandId, isExpert = false) {
     if (!islandId) return;
@@ -14212,6 +14214,40 @@
     refreshIslandsSubpanel();
   }
 
+  function getSnorlaxRankScore(rankStr) {
+    if (!rankStr || rankStr === '-' || rankStr.trim() === '') return -1;
+    const parts = rankStr.trim().split(/\s+/);
+    const tier = (parts[0] || '').toLowerCase();
+    const num = parseInt(parts[1], 10) || 0;
+    if (tier === 'basic') return 100 + num;
+    if (tier === 'great') return 200 + num;
+    if (tier === 'ultra') return 300 + num;
+    if (tier === 'master') return 400 + num;
+    return 0;
+  }
+
+  function sortIslandSpawns(col) {
+    if (!['pokemon', 's1', 's2', 's3', 's4'].includes(col)) return;
+    if (islandSpawnsSortCol === col) {
+      if (islandSpawnsSortDir === 'desc') {
+        islandSpawnsSortDir = 'asc';
+      } else if (islandSpawnsSortDir === 'asc') {
+        islandSpawnsSortCol = null;
+        islandSpawnsSortDir = null;
+      } else {
+        islandSpawnsSortDir = 'desc';
+      }
+    } else {
+      islandSpawnsSortCol = col;
+      islandSpawnsSortDir = 'desc';
+    }
+    refreshIslandsSubpanel();
+  }
+
+  function getIslandSpawnsSort() {
+    return { col: islandSpawnsSortCol, dir: islandSpawnsSortDir };
+  }
+
   function refreshIslandsSubpanel() {
     const panel = document.getElementById('wiki-subpanel-islands');
     if (panel) {
@@ -14425,12 +14461,48 @@
       spawnList = [...dozingList, ...snoozingList, ...slumberingList];
     }
 
-    // 全島嶼睡姿一律整合並依全國圖鑑編號由小到大排序, 避免三個睡眠狀態分塊堆疊不直觀
-    spawnList.sort((a, b) => {
-      const orderDiff = getIslandPokemonDexOrder(a) - getIslandPokemonDexOrder(b);
-      if (orderDiff !== 0) return orderDiff;
-      return (a.name || '').localeCompare(b.name || '');
-    });
+    // 全島嶼睡姿排序處理 (依選中欄位進行 降冪 -> 升冪 -> 預設編號排序)
+    if (islandSpawnsSortCol === 'pokemon') {
+      spawnList.sort((a, b) => {
+        const orderA = getIslandPokemonDexOrder(a);
+        const orderB = getIslandPokemonDexOrder(b);
+        if (islandSpawnsSortDir === 'desc') {
+          if (orderB !== orderA) return orderB - orderA;
+          return (b.name || '').localeCompare(a.name || '');
+        } else {
+          if (orderA !== orderB) return orderA - orderB;
+          return (a.name || '').localeCompare(b.name || '');
+        }
+      });
+    } else if (['s1', 's2', 's3', 's4'].includes(islandSpawnsSortCol)) {
+      const col = islandSpawnsSortCol;
+      spawnList.sort((a, b) => {
+        const scoreA = getSnorlaxRankScore(a[col]);
+        const scoreB = getSnorlaxRankScore(b[col]);
+
+        if (scoreA >= 0 && scoreB < 0) return -1;
+        if (scoreA < 0 && scoreB >= 0) return 1;
+
+        if (scoreA >= 0 && scoreB >= 0 && scoreA !== scoreB) {
+          if (islandSpawnsSortDir === 'desc') {
+            return scoreB - scoreA;
+          } else {
+            return scoreA - scoreB;
+          }
+        }
+
+        const orderDiff = getIslandPokemonDexOrder(a) - getIslandPokemonDexOrder(b);
+        if (orderDiff !== 0) return orderDiff;
+        return (a.name || '').localeCompare(b.name || '');
+      });
+    } else {
+      // 全島嶼睡姿一律整合並依全國圖鑑編號由小到大排序, 避免三個睡眠狀態分塊堆疊不直觀
+      spawnList.sort((a, b) => {
+        const orderDiff = getIslandPokemonDexOrder(a) - getIslandPokemonDexOrder(b);
+        if (orderDiff !== 0) return orderDiff;
+        return (a.name || '').localeCompare(b.name || '');
+      });
+    }
 
     const spawnsRows = spawnList.map(p => {
       const pName = isEN ? p.name_en : p.name;
@@ -14461,6 +14533,36 @@
     const dozingCount = island.spawns.dozing ? island.spawns.dozing.length : 0;
     const snoozingCount = island.spawns.snoozing ? island.spawns.snoozing.length : 0;
     const slumberingCount = island.spawns.slumbering ? island.spawns.slumbering.length : 0;
+
+    const basePath = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) || '';
+    const starImgSrc = `${basePath}assets/star.png`;
+
+    function renderIslandSortTh(colKey, labelHtml, titleText, styleStr) {
+      const isSorted = islandSpawnsSortCol === colKey;
+      let arrowSvg = '';
+      if (isSorted) {
+        if (islandSpawnsSortDir === 'desc') {
+          arrowSvg = `<svg class="island-sort-arrow-svg active" viewBox="0 0 10 6" width="10" height="6" fill="currentColor" aria-label="${isEN ? 'Descending' : '降冪'}"><path d="M0 0l5 6 5-6z"/></svg>`;
+        } else if (islandSpawnsSortDir === 'asc') {
+          arrowSvg = `<svg class="island-sort-arrow-svg active" viewBox="0 0 10 6" width="10" height="6" fill="currentColor" aria-label="${isEN ? 'Ascending' : '升冪'}"><path d="M0 6l5-6 5 6z"/></svg>`;
+        }
+      } else {
+        arrowSvg = `<svg class="island-sort-arrow-svg inactive" viewBox="0 0 10 12" width="8" height="10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4.5L5 1.5L8 4.5M2 7.5L5 10.5L8 7.5"/></svg>`;
+      }
+
+      if (colKey === 'pokemon') {
+        return `<th class="island-sort-th ${isSorted ? 'active-sort' : ''}" style="${styleStr || 'text-align:center;'}" onclick="window.WikiDB.sortIslandSpawns('${colKey}')" title="${titleText}" data-col="${colKey}"><span class="island-sort-arrow-wrap" style="margin-right:2px; vertical-align:middle;">${arrowSvg}</span>${isEN ? 'Pokemon' : '寶可夢'}</th>`;
+      }
+
+      return `
+        <th class="island-sort-th ${isSorted ? 'active-sort' : ''}" style="${styleStr || 'text-align:center;'}" onclick="window.WikiDB.sortIslandSpawns('${colKey}')" title="${titleText}" data-col="${colKey}">
+          <div class="island-th-content">
+            ${labelHtml}
+            <span class="island-sort-arrow-wrap">${arrowSvg}</span>
+          </div>
+        </th>
+      `;
+    }
 
     return `
       <div class="island-nav-strip">
@@ -14552,11 +14654,11 @@
           <table class="wiki-data-table island-spawns-compact-table">
             <thead>
               <tr>
-                <th style="width:56px; text-align:center;">${isEN ? 'Pokemon' : '寶可夢'}</th>
-                <th style="text-align:center;">1*</th>
-                <th style="text-align:center;">2*</th>
-                <th style="text-align:center;">3*</th>
-                <th style="text-align:center;">4*</th>
+                ${renderIslandSortTh('pokemon', `<span>${isEN ? 'Pokemon' : '寶可夢'}</span>`, isEN ? 'Sort by Pokemon Dex No. (Desc -> Asc -> Default)' : '點選依寶可夢編號排序 (降冪 -> 升冪 -> 回復預設)', 'width:70px; text-align:center;')}
+                ${renderIslandSortTh('s1', `<span class="sleep-star-label">1<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, isEN ? 'Sort by 1-Star Unlock Rank (Desc -> Asc -> Default)' : '點選依 1 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)', 'text-align:center;')}
+                ${renderIslandSortTh('s2', `<span class="sleep-star-label">2<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, isEN ? 'Sort by 2-Star Unlock Rank (Desc -> Asc -> Default)' : '點選依 2 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)', 'text-align:center;')}
+                ${renderIslandSortTh('s3', `<span class="sleep-star-label">3<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, isEN ? 'Sort by 3-Star Unlock Rank (Desc -> Asc -> Default)' : '點選依 3 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)', 'text-align:center;')}
+                ${renderIslandSortTh('s4', `<span class="sleep-star-label">4<img src="${starImgSrc}" class="sleep-style-star-icon" alt="Star" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokemonsleep/star.png';}"></span>`, isEN ? 'Sort by 4-Star Unlock Rank (Desc -> Asc -> Default)' : '點選依 4 星睡姿門檻排序 (降冪 -> 升冪 -> 回復預設)', 'text-align:center;')}
               </tr>
             </thead>
             <tbody>
@@ -16429,7 +16531,10 @@
     getIsExpertModeActive: () => isExpertModeActive,
     getCurrentIslandSleepType: () => currentIslandSleepType,
     getIslandPokemonDexOrder: getIslandPokemonDexOrder,
-    getIslandPokemonDexCode: getIslandPokemonDexCode
+    getIslandPokemonDexCode: getIslandPokemonDexCode,
+    sortIslandSpawns: sortIslandSpawns,
+    getIslandSpawnsSort: getIslandSpawnsSort,
+    getSnorlaxRankScore: getSnorlaxRankScore
   };
 
   window.WikiDB = WikiDBExport;
@@ -16440,6 +16545,8 @@
   window.getCurrentIslandId = () => currentIslandId;
   window.getIsExpertModeActive = () => isExpertModeActive;
   window.getCurrentIslandSleepType = () => currentIslandSleepType;
+  window.sortIslandSpawns = sortIslandSpawns;
+  window.getIslandSpawnsSort = getIslandSpawnsSort;
   window.toggleLadderSidebar = toggleLadderSidebar;
   window.switchLadderView = switchLadderView;
   window.filterWikiSkills = filterWikiSkills;

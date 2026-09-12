@@ -4573,10 +4573,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Compact Table, 
   assert(!html.includes('>名稱<') && !html.includes('>Name<'), 'Table header must NOT contain Name column');
   assert(!html.includes('>屬性<') && !html.includes('>Type<'), 'Table header must NOT contain Type column');
   assert(html.includes('寶可夢</th>'), 'Table header must contain Pokemon avatar column');
-  assert(html.includes('1*</th>'), 'Table header must contain 1* column');
-  assert(html.includes('2*</th>'), 'Table header must contain 2* column');
-  assert(html.includes('3*</th>'), 'Table header must contain 3* column');
-  assert(html.includes('4*</th>'), 'Table header must contain 4* column');
+  assert(html.includes('sleep-style-star-icon'), 'Table header must contain game-like sleep style star icon');
+  assert(html.includes('data-col="s1"'), 'Table header must contain 1-star column');
+  assert(html.includes('data-col="s2"'), 'Table header must contain 2-star column');
+  assert(html.includes('data-col="s3"'), 'Table header must contain 3-star column');
+  assert(html.includes('data-col="s4"'), 'Table header must contain 4-star column');
 
   // 2. Avatar-only presentation verification
   assert(html.includes('island-pkm-icon-only'), 'Pokemon must be rendered in icon-only container');
@@ -4979,6 +4980,77 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder Sidebar Hea
   assert(matchH5, 'CSS must specify padding for mobile H5 ladder sidebar');
   const h5TopPadding = parseInt(matchH5[1], 10);
   assert(h5TopPadding <= 10, `Mobile H5 ladder sidebar top padding must be compact (<= 10px), got ${h5TopPadding}px`);
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Table Star Icons, Multi-State Column Sorting and Pokemon Dex Order Cycle', () => {
+  const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const cssCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // Verify CSS defines sortable th styles and star icon styles
+  assert(cssCode.includes('.island-spawns-compact-table th.island-sort-th'), 'CSS must define island-sort-th style');
+  assert(cssCode.includes('.sleep-style-star-icon'), 'CSS must define sleep-style-star-icon style');
+  assert(cssCode.includes('.sleep-star-label'), 'CSS must define sleep-star-label style');
+
+  // Setup DOM mock context
+  let mockPanel = { innerHTML: '', style: {}, classList: { add: () => {}, remove: () => {}, contains: () => true }, addEventListener: () => {} };
+  const ctx = {
+    window: { location: { hash: '#wiki' }, localStorage: { getItem: () => 'zh-TW', setItem: () => {} }, addEventListener: () => {}, history: { replaceState: () => {} } },
+    document: { readyState: 'complete', documentElement: { setAttribute: () => {} }, getElementById: () => mockPanel, querySelectorAll: () => [], addEventListener: () => {} },
+    console, setTimeout
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(i18nCode, ctx);
+  vm.runInContext(wikiCode, ctx);
+
+  const WikiDB = ctx.window.WikiDB;
+  WikiDB.selectIsland('greengrass');
+
+  // 1. Verify rank score converter
+  assertEquals(WikiDB.getSnorlaxRankScore('Basic 1'), 101, 'Basic 1 score must be 101');
+  assertEquals(WikiDB.getSnorlaxRankScore('Great 3'), 203, 'Great 3 score must be 203');
+  assertEquals(WikiDB.getSnorlaxRankScore('Ultra 5'), 305, 'Ultra 5 score must be 305');
+  assertEquals(WikiDB.getSnorlaxRankScore('Master 10'), 410, 'Master 10 score must be 410');
+  assertEquals(WikiDB.getSnorlaxRankScore('-'), -1, '- score must be -1');
+
+  // 2. Initial state: default sorting
+  assertEquals(JSON.stringify(WikiDB.getIslandSpawnsSort()), JSON.stringify({ col: null, dir: null }), 'Initial sort state must be null');
+
+  // 3. Test Pokemon column sort cycle: 1st click desc, 2nd click asc, 3rd click reset
+  WikiDB.sortIslandSpawns('pokemon');
+  assertEquals(JSON.stringify(WikiDB.getIslandSpawnsSort()), JSON.stringify({ col: 'pokemon', dir: 'desc' }), '1st click on pokemon must be desc');
+  let html = WikiDB.renderIslandsSubpanel();
+  assert(html.includes('active-sort') && html.includes('data-col="pokemon"'), 'Pokemon column must have active-sort class');
+
+  WikiDB.sortIslandSpawns('pokemon');
+  assertEquals(JSON.stringify(WikiDB.getIslandSpawnsSort()), JSON.stringify({ col: 'pokemon', dir: 'asc' }), '2nd click on pokemon must be asc');
+
+  WikiDB.sortIslandSpawns('pokemon');
+  assertEquals(JSON.stringify(WikiDB.getIslandSpawnsSort()), JSON.stringify({ col: null, dir: null }), '3rd click on pokemon must reset to null');
+
+  // 4. Test 1-Star (s1) sort cycle: 1st click desc, 2nd click asc, 3rd click reset
+  WikiDB.sortIslandSpawns('s1');
+  assertEquals(JSON.stringify(WikiDB.getIslandSpawnsSort()), JSON.stringify({ col: 's1', dir: 'desc' }), '1st click on s1 must be desc');
+
+  WikiDB.sortIslandSpawns('s1');
+  assertEquals(JSON.stringify(WikiDB.getIslandSpawnsSort()), JSON.stringify({ col: 's1', dir: 'asc' }), '2nd click on s1 must be asc');
+
+  WikiDB.sortIslandSpawns('s1');
+  assertEquals(JSON.stringify(WikiDB.getIslandSpawnsSort()), JSON.stringify({ col: null, dir: null }), '3rd click on s1 must reset to null');
+
+  // 5. Switching from s2 to s3 starts with desc on s3
+  WikiDB.sortIslandSpawns('s2');
+  assertEquals(JSON.stringify(WikiDB.getIslandSpawnsSort()), JSON.stringify({ col: 's2', dir: 'desc' }), '1st click on s2 must be desc');
+  WikiDB.sortIslandSpawns('s3');
+  assertEquals(JSON.stringify(WikiDB.getIslandSpawnsSort()), JSON.stringify({ col: 's3', dir: 'desc' }), 'Switching to s3 must start with desc');
+  WikiDB.sortIslandSpawns('s3');
+  WikiDB.sortIslandSpawns('s3');
+  assertEquals(JSON.stringify(WikiDB.getIslandSpawnsSort()), JSON.stringify({ col: null, dir: null }), '3rd click on s3 must reset to null');
+
+  // 6. Verify star image asset exists on filesystem
+  assert(fs.existsSync(path.join(WORKSPACE_ROOT, 'assets', 'star.png')), 'assets/star.png must exist');
 });
 
 // Final Summary Output

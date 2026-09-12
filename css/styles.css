@@ -16138,9 +16138,23 @@ body.mobile-h5-app.values-active,
 }
 
 .mobile-h5-app .island-spawns-compact-table th {
-  padding: 5px 3px !important;
+  padding: 5px 2px !important;
   font-size: 12px !important;
   text-align: center !important;
+}
+
+.mobile-h5-app .sleep-style-star-icon {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.mobile-h5-app .island-th-content {
+  gap: 2px !important;
+}
+
+.mobile-h5-app .island-sort-arrow-wrap {
+  width: 8px !important;
+  height: 8px !important;
 }
 
 .mobile-h5-app .island-spawns-compact-table td {
@@ -19547,7 +19561,7 @@ body.mobile-h5-app.values-active,
   color: #ffffff;
 }
 
-/* Compact Spawns Table */
+/* Compact Spawns Table & Sortable Headers */
 .island-spawns-compact-table {
   width: 100%;
   border-collapse: collapse;
@@ -19557,6 +19571,72 @@ body.mobile-h5-app.values-active,
   padding: 6px 6px;
   font-size: 13.5px;
   font-weight: 700;
+}
+
+.island-spawns-compact-table th.island-sort-th {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.island-spawns-compact-table th.island-sort-th:hover {
+  background: var(--bg-card-hover, rgba(255, 255, 255, 0.06));
+  color: var(--accent-blue, #38bdf8);
+}
+
+.island-spawns-compact-table th.island-sort-th.active-sort {
+  color: var(--accent-blue, #38bdf8);
+}
+
+.island-th-content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  vertical-align: middle;
+}
+
+.sleep-star-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.sleep-style-star-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  display: inline-block;
+  vertical-align: middle;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+
+.island-sort-arrow-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 10px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.island-sort-arrow-svg.active {
+  color: var(--accent-blue, #38bdf8);
+}
+
+.island-sort-arrow-svg.inactive {
+  opacity: 0.3;
+  color: var(--text-secondary, #94a3b8);
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.island-sort-th:hover .island-sort-arrow-svg.inactive {
+  opacity: 0.8;
+  color: var(--text-primary, #f8fafc);
 }
 
 .island-spawns-compact-table td {
