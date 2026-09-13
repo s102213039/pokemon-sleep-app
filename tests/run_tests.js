@@ -6026,7 +6026,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder 3-Meal Pass
 
   // (b) 3-Meal Passing Lines rendered on highlighted tracks
   assert(highlightedHtml.includes('ladder-passing-line-container'), 'Ladder must render .ladder-passing-line-container on recipe tracks');
-  assert(highlightedHtml.includes('三餐') || highlightedHtml.includes('3 Meals'), 'Passing badge must contain meal label');
+  assert(!highlightedHtml.includes('ladder-passing-label'), 'Passing badge must only display numbers without text label');
+  assert(highlightedHtml.includes('三餐及格線') || highlightedHtml.includes('3 Meals Target'), 'Passing line container title must contain tooltip text');
   assert(highlightedHtml.includes('117'), 'Passing line for 暖暖薑 must display 117');
   assert(highlightedHtml.includes('93'), 'Passing line for 品鮮蘑菇 must display 93');
   assert(highlightedHtml.includes('66'), 'Passing line for 火辣香草 must display 66');

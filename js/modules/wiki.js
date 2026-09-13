@@ -15899,7 +15899,6 @@
                   <div class="ladder-passing-line-container" style="left: ${getPosPct(threeMealsTarget)}%;" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${threeMealsTarget} ${isEN ? 'items' : '顆'}">
                     <div class="ladder-passing-line"></div>
                     <div class="ladder-passing-badge">
-                      <span class="ladder-passing-label">${isEN ? '3 Meals' : '三餐'}</span>
                       <span class="ladder-passing-num">${threeMealsTarget}</span>
                     </div>
                   </div>
@@ -16084,7 +16083,6 @@
                         <div class="ladder-passing-line-container" style="left: ${getTailPct(tailThreeMealsTarget)}%;" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${tailThreeMealsTarget} ${isEN ? 'items' : '顆'}">
                           <div class="ladder-passing-line"></div>
                           <div class="ladder-passing-badge">
-                            <span class="ladder-passing-label">${isEN ? '3 Meals' : '三餐'}</span>
                             <span class="ladder-passing-num">${tailThreeMealsTarget}</span>
                           </div>
                         </div>
