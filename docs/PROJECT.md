@@ -61,3 +61,10 @@ Features:
 ## E2E Testing Infrastructure
 - Automated test script in Node.js / Python to validate HTML, JS, data integrity (247+ entries), filtering logic, and SPA rendering.
 - `TEST_READY.md` published upon completion of test infrastructure.
+
+## Standards & Policies
+- [THEME_COLOR_SPEC.md](THEME_COLOR_SPEC.md) — Mandatory theme color specification & pre/post execution check protocol across 4 themes (Midnight, Onyx, Dawn, Emerald) and inverted modes.
+- [SIDEBAR_HANDLE_RULE.md](SIDEBAR_HANDLE_RULE.md) — Sidebar bookmark handle visibility rules.
+- **Zero Emoji Policy**: Strict prohibition of emojis in all UI elements, logs, text, and markdown files.
+- **Single Frame Rule**: No redundant nested outer borders around card grids, lists, or tables.
+

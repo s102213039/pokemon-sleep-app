@@ -20884,8 +20884,8 @@ body.mobile-h5-app.values-active,
   justify-content: center;
   gap: 6px;
   padding: 8px 10px;
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04));
   color: var(--text-secondary, #94a3b8);
   font-size: 12.5px;
   font-weight: 600;
@@ -20897,15 +20897,15 @@ body.mobile-h5-app.values-active,
 }
 
 .ladder-recipe-cat-btn:hover {
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--bg-card-hover, rgba(255, 255, 255, 0.08));
   color: var(--text-primary, #f8fafc);
-  border-color: rgba(56, 189, 248, 0.35);
+  border-color: var(--accent-color, #38bdf8);
 }
 
 .ladder-recipe-cat-btn.active {
   background: var(--accent-gradient, linear-gradient(135deg, #0284c7, #38bdf8));
   color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.4);
+  border-color: transparent;
   box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
   font-weight: 700;
 }
@@ -20926,15 +20926,15 @@ body.mobile-h5-app.values-active,
   gap: 8px;
   padding: 10px 12px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.03));
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
   cursor: pointer;
   transition: transform 0.12s ease, border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ladder-recipe-card:hover {
-  border-color: rgba(56, 189, 248, 0.4);
-  background: rgba(56, 189, 248, 0.05);
+  border-color: var(--accent-color, rgba(56, 189, 248, 0.4));
+  background: var(--bg-card-hover, rgba(56, 189, 248, 0.05));
 }
 
 .ladder-recipe-card:active {
@@ -20942,8 +20942,8 @@ body.mobile-h5-app.values-active,
 }
 
 .ladder-recipe-card.selected {
-  border-color: var(--accent-blue, #38bdf8);
-  background: rgba(56, 189, 248, 0.1);
+  border-color: var(--accent-color, #38bdf8);
+  background: rgba(56, 189, 248, 0.12);
   box-shadow: 0 0 14px rgba(56, 189, 248, 0.2);
 }
 
@@ -20967,7 +20967,8 @@ body.mobile-h5-app.values-active,
   object-fit: contain;
   flex-shrink: 0;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--bg-card-inner-subtle, rgba(0, 0, 0, 0.2));
+  border: 1px solid var(--border-color-subtle, transparent);
   padding: 2px;
 }
 
@@ -20989,7 +20990,7 @@ body.mobile-h5-app.values-active,
 .recipe-card-name {
   font-size: 14px;
   font-weight: 700;
-  color: var(--text-primary, #f8fafc);
+  color: var(--text-title, #f8fafc);
 }
 
 .recipe-card-cat-badge {
@@ -21000,27 +21001,27 @@ body.mobile-h5-app.values-active,
 }
 
 .recipe-card-cat-badge.cat-咖哩 {
-  background: rgba(245, 158, 11, 0.18);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: var(--badge-cat-curry-bg, rgba(245, 158, 11, 0.2));
+  color: var(--badge-cat-curry-text, #fbbf24);
+  border: 1px solid var(--badge-cat-curry-border, rgba(245, 158, 11, 0.4));
 }
 
 .recipe-card-cat-badge.cat-沙拉 {
-  background: rgba(16, 185, 129, 0.18);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: var(--badge-cat-salad-bg, rgba(34, 197, 94, 0.2));
+  color: var(--badge-cat-salad-text, #4ade80);
+  border: 1px solid var(--badge-cat-salad-border, rgba(34, 197, 94, 0.4));
 }
 
 .recipe-card-cat-badge.cat-甜點 {
-  background: rgba(236, 72, 153, 0.18);
-  color: #f472b6;
-  border: 1px solid rgba(236, 72, 153, 0.3);
+  background: var(--badge-cat-dessert-bg, rgba(236, 72, 153, 0.2));
+  color: var(--badge-cat-dessert-text, #f472b6);
+  border: 1px solid var(--badge-cat-dessert-border, rgba(236, 72, 153, 0.4));
 }
 
 .recipe-card-active-pill {
   font-size: 10.5px;
   font-weight: 700;
-  color: #38bdf8;
+  color: var(--accent-color, #38bdf8);
   background: rgba(56, 189, 248, 0.15);
   border: 1px solid rgba(56, 189, 248, 0.4);
   padding: 1px 6px;
@@ -21037,7 +21038,7 @@ body.mobile-h5-app.values-active,
 .recipe-card-energy-num {
   font-size: 13.5px;
   font-weight: 700;
-  color: #f59e0b;
+  color: var(--color-accent-gold, #fbbf24);
 }
 
 .recipe-card-energy-unit {
@@ -21064,14 +21065,14 @@ body.mobile-h5-app.values-active,
   font-size: 11px;
   padding: 2px 7px;
   border-radius: 5px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-card, rgba(255, 255, 255, 0.05));
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
   color: var(--text-secondary, #94a3b8);
 }
 
 .recipe-card-ing-chip .ing-chip-count {
   font-weight: 700;
-  color: #38bdf8;
+  color: var(--accent-color, #38bdf8);
 }
 
 .ladder-recipe-modal-footer {
@@ -21082,7 +21083,7 @@ body.mobile-h5-app.values-active,
   padding: 12px 18px;
   border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
   flex-shrink: 0;
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--bg-card-inner-subtle, rgba(0, 0, 0, 0.15));
 }
 
 .ladder-recipe-btn-clear {
@@ -21104,7 +21105,7 @@ body.mobile-h5-app.values-active,
 .ladder-recipe-btn-cancel {
   padding: 7px 14px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--bg-card, rgba(255, 255, 255, 0.06));
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
   color: var(--text-primary, #f8fafc);
   font-size: 12.5px;
@@ -21114,7 +21115,7 @@ body.mobile-h5-app.values-active,
 }
 
 .ladder-recipe-btn-cancel:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--bg-card-hover, rgba(255, 255, 255, 0.12));
 }
 
 /* Banner Above Coordinate Ladder */
@@ -21122,7 +21123,7 @@ body.mobile-h5-app.values-active,
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: rgba(2, 132, 199, 0.08);
+  background: rgba(2, 132, 199, 0.12);
   border: 1px solid rgba(56, 189, 248, 0.35);
   border-radius: 12px;
   padding: 10px 14px;
@@ -21163,7 +21164,7 @@ body.mobile-h5-app.values-active,
 .ladder-recipe-banner-title {
   font-size: 13px;
   font-weight: 700;
-  color: #38bdf8;
+  color: var(--accent-color, #38bdf8);
   white-space: nowrap;
 }
 
@@ -21177,8 +21178,8 @@ body.mobile-h5-app.values-active,
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.4);
   color: #fca5a5;
   font-size: 11.5px;
   font-weight: 600;
@@ -21201,19 +21202,19 @@ body.mobile-h5-app.values-active,
   gap: 6px 8px;
   align-items: center;
   padding-top: 8px;
-  border-top: 1px solid rgba(56, 189, 248, 0.15);
+  border-top: 1px solid rgba(56, 189, 248, 0.2);
 }
 
 .ladder-recipe-banner-ing-chip {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(15, 23, 42, 0.75);
   border: 1px solid rgba(56, 189, 248, 0.3);
   border-radius: 6px;
   padding: 3px 8px;
   font-size: 11.5px;
-  color: var(--text-primary, #f8fafc);
+  color: var(--text-title, #f8fafc);
 }
 
 .ladder-banner-ing-icon {
@@ -21228,14 +21229,14 @@ body.mobile-h5-app.values-active,
 }
 
 .ladder-banner-ing-count {
-  color: #38bdf8;
+  color: var(--accent-color, #38bdf8);
   font-weight: 700;
   letter-spacing: -0.2px;
 }
 
 .ladder-track-row.ladder-track-highlighted {
   background: rgba(56, 189, 248, 0.08) !important;
-  border-left: 3px solid #38bdf8 !important;
+  border-left: 3px solid var(--accent-color, #38bdf8) !important;
   box-shadow: 0 0 12px rgba(56, 189, 248, 0.2) !important;
   transition: background 0.25s ease, border-left 0.25s ease, box-shadow 0.25s ease;
 }
@@ -21245,7 +21246,7 @@ body.mobile-h5-app.values-active,
   align-items: center;
   justify-content: center;
   background: rgba(56, 189, 248, 0.22);
-  color: #38bdf8;
+  color: var(--accent-color, #38bdf8);
   border: 1px solid rgba(56, 189, 248, 0.45);
   font-size: 9.5px;
   font-weight: 700;
@@ -21265,6 +21266,250 @@ body.mobile-h5-app.values-active,
 .ladder-track-row.ladder-track-dimmed:hover {
   opacity: 0.75 !important;
   filter: none !important;
+}
+
+/* ==========================================================================
+   Light Theme Explicit Overrides for Ladder Recipe Components
+   Covers Dawn, Emerald & Light Inverted Theme Surfaces
+   ========================================================================== */
+
+/* 1. Recipe Banner in Light Theme */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08);
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(51, 65, 85, 0.06);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-title,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-title,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-title {
+  color: #0369a1;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-title {
+  color: #1e293b;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-sub,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-sub,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-sub,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-sub {
+  color: #475569;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-clear-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-clear-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-clear-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-clear-btn {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-clear-btn:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-clear-btn:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-clear-btn:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-clear-btn:hover {
+  background: #fecaca;
+  color: #991b1b;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ings,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-ings,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-ings {
+  border-top: 1px solid #bae6fd;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ings {
+  border-top: 1px solid #cbd5e1;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ing-chip,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ing-chip,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ing-chip,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip {
+  border-color: #bae6fd;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-banner-ing-count,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-banner-ing-count,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-banner-ing-count {
+  color: #0284c7;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-banner-ing-count {
+  color: #334155;
+}
+
+/* 2. Highlighted Track Row in Light Theme */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-track-row.ladder-track-highlighted,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-track-row.ladder-track-highlighted,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-track-row.ladder-track-highlighted {
+  background: rgba(2, 132, 199, 0.08) !important;
+  border-left: 3px solid #0284c7 !important;
+  box-shadow: 0 0 10px rgba(2, 132, 199, 0.12) !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-track-row.ladder-track-highlighted {
+  background: rgba(71, 85, 105, 0.08) !important;
+  border-left: 3px solid #475569 !important;
+  box-shadow: 0 0 10px rgba(71, 85, 105, 0.12) !important;
+}
+
+/* 3. Modal Components in Light Theme */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-cat-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-cat-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-cat-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-cat-btn {
+  background: #f1f5f9;
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #475569;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-cat-btn:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-cat-btn:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-cat-btn:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-cat-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-card,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-card,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-card {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-card:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-card:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-card:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-card:hover {
+  background: #f8fafc;
+  border-color: #0284c7;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-card.selected,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-card.selected,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-card.selected {
+  background: #f0f9ff;
+  border-color: #0284c7;
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.18);
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-card.selected {
+  background: #f1f5f9;
+  border-color: #475569;
+  box-shadow: 0 0 12px rgba(71, 85, 105, 0.18);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-icon,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-icon,
+[data-theme="midnight"][data-theme-inverted="true"] .recipe-card-icon,
+[data-theme="onyx"][data-theme-inverted="true"] .recipe-card-icon {
+  background: #f1f5f9;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-active-pill,
+[data-theme="midnight"][data-theme-inverted="true"] .recipe-card-active-pill,
+[data-theme="onyx"][data-theme-inverted="true"] .recipe-card-active-pill {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #7dd3fc;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-active-pill {
+  background: #e2e8f0;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-energy-num,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-energy-num,
+[data-theme="midnight"][data-theme-inverted="true"] .recipe-card-energy-num,
+[data-theme="onyx"][data-theme-inverted="true"] .recipe-card-energy-num {
+  color: #b45309;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-ing-chip,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-ing-chip,
+[data-theme="midnight"][data-theme-inverted="true"] .recipe-card-ing-chip,
+[data-theme="onyx"][data-theme-inverted="true"] .recipe-card-ing-chip {
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  color: #334155;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-ing-chip .ing-chip-count,
+[data-theme="midnight"][data-theme-inverted="true"] .recipe-card-ing-chip .ing-chip-count,
+[data-theme="onyx"][data-theme-inverted="true"] .recipe-card-ing-chip .ing-chip-count {
+  color: #0284c7;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-ing-chip .ing-chip-count {
+  color: #334155;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-modal-footer,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-modal-footer,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-modal-footer,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-modal-footer {
+  background: #f8fafc;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-btn-clear,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-clear {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-btn-clear:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-clear:hover {
+  background: #fecaca;
+  color: #991b1b;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-cancel,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-cancel,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-btn-cancel,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-cancel {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  color: #0f172a;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-cancel:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-cancel:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-btn-cancel:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-cancel:hover {
+  background: #f1f5f9;
 }
 
 

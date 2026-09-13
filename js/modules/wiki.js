@@ -16450,7 +16450,7 @@
             <button type="button" class="ladder-recipe-btn-clear" onclick="window.WikiDB.clearLadderHighlightRecipe()">
               ${isEN ? 'Clear Highlight' : '清除高亮'}
             </button>
-            <button type="button" class="ladder-recipe-btn-close" onclick="window.WikiDB.closeLadderRecipeModal()">
+            <button type="button" class="ladder-recipe-btn-cancel" onclick="window.WikiDB.closeLadderRecipeModal()">
               ${isEN ? 'Close' : '關閉'}
             </button>
           </div>

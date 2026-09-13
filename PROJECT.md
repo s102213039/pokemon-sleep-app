@@ -75,11 +75,13 @@
 ### 🛡️ Mandatory Pre-Flight & Component Delivery Contract (全域開發最高準則)
 1. **📱 跨端環境確認 (H5 Mobile vs Desktop Surface)**：每次開發前確認目標是 H5 App (`/app/`) 還是 桌面網頁版 (`index.html`)，樣式必須精確隔離於 `.mobile-h5-app`，嚴禁跨端相互干擾。
 2. **🌐 雙語系切換與簡短翻譯確認 (Bilingual i18n Adaptation)**：新增任何組件或文字，**必須**第一時間對一遍繁中 (`zh-TW`) 與 英文 (`en-US`) 字典。英文翻譯必須正確且簡短精煉，確保長度適配不破版、不溢出。
-3. **🎨 4 大主題亮/暗色雙向適配 (4-Theme Light/Dark Adaptation - 嚴禁寫死單一亮色/暗色)**：
-   - 只要新增或修改任何組件，**必須**同時核對深色主題（`midnight` 深邃夜空、`onyx` 曜石暗影）與亮色主題（`dawn` 晨曦暖陽、`emerald` 萌綠森林）。
-   - **嚴禁硬編碼 `#ffffff` 或固定暗色值**：背景一律使用語意化變數（`var(--bg-card)`、`var(--bg-card-inner)`、`var(--border-color)`）或透明背景 `transparent`。
+3. **🎨 4 大主題亮/暗色雙向適配與雙向檢核 (4-Theme Light/Dark Adaptation - 詳見 [docs/THEME_COLOR_SPEC.md](docs/THEME_COLOR_SPEC.md))**：
+   - 每次執行任務**前後**，均**必須**強制依據 [docs/THEME_COLOR_SPEC.md](docs/THEME_COLOR_SPEC.md) 執行雙向色彩檢核。
+   - 只要新增或修改任何組件，**必須**同時核對深色主題（`midnight` 深邃夜空、`onyx` 曜石暗影）與亮色主題（`dawn` 晨曦暖陽、`emerald` 萌綠森林）及反色衍生模式。
+   - **嚴禁硬編碼 `#ffffff`、`#0f172a` 或固定暗色/亮色值**：背景一律使用語意化變數（`var(--bg-card)`、`var(--bg-card-inner)`、`var(--border-color)`）或提供專屬主題覆蓋。
    - **深色主題文字與高亮色**：必須具備足夠高飽和度、螢光高對比度（如 `#fbbf24`、`#38bdf8`、`#f472b6`），嚴禁使用暗褐色或黯淡顏色导致在黑底上無法辨識。
-   - **亮色主題文字與高亮色**：自動適配為高飽和深色調（如 `#b45309`、`#0284c7`、`#be185d`），確保在白底上對比鮮明。
+   - **亮色主題文字與高亮色**：自動適配為高飽和深色調（如 `#b45309`、`#0284c7`、`#b91c1c`），確保在白底上對比鮮明，嚴禁淺粉/淡天藍等發虛文字。
+
 
 ## Code Layout
 - `app/index.html` — Mobile H5 App HTML Entry & Shell

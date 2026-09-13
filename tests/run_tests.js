@@ -5896,6 +5896,43 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Ba
   assertEquals(ctx.window.WikiDB.getLadderHighlightRecipe(), null, 'Active highlight recipe must be cleared');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Theme Color Engine: Dual-Surface Pre/Post Check and Ladder Recipe Light/Dark Adaptation', () => {
+  const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  const specMdPath = path.join(WORKSPACE_ROOT, 'docs', 'THEME_COLOR_SPEC.md');
+  assert(fs.existsSync(specMdPath), 'docs/THEME_COLOR_SPEC.md must exist');
+  const specMd = fs.readFileSync(specMdPath, 'utf8');
+
+  // 1. Theme Color Specification Protocol assertions
+  assert(specMd.includes('midnight'), 'Spec must cover midnight theme');
+  assert(specMd.includes('onyx'), 'Spec must cover onyx theme');
+  assert(specMd.includes('dawn'), 'Spec must cover dawn theme');
+  assert(specMd.includes('emerald'), 'Spec must cover emerald theme');
+  assert(specMd.includes('執行前檢核 (Pre-Execution Check)'), 'Spec must define pre-execution check protocol');
+  assert(specMd.includes('執行後檢核 (Post-Execution Check)'), 'Spec must define post-execution check protocol');
+
+  // 2. Ladder Recipe Components Theme Semantic Variables
+  assert(css.includes('var(--badge-cat-curry-bg'), 'Recipe card curry badge must use semantic token --badge-cat-curry-bg');
+  assert(css.includes('var(--badge-cat-salad-bg'), 'Recipe card salad badge must use semantic token --badge-cat-salad-bg');
+  assert(css.includes('var(--badge-cat-dessert-bg'), 'Recipe card dessert badge must use semantic token --badge-cat-dessert-bg');
+
+  // 3. Light Theme Overrides for Ladder Recipe Banner & Chips
+  assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner'), 'styles.css must provide Dawn light theme overrides for ladder-recipe-banner');
+  assert(css.includes('[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner'), 'styles.css must provide Emerald light theme overrides for ladder-recipe-banner');
+  assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ing-chip'), 'styles.css must provide Dawn light theme overrides for ladder-recipe-banner-ing-chip');
+  assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-clear-btn'), 'styles.css must provide Dawn light theme overrides for clear button');
+  assert(css.includes('color: #b91c1c;'), 'Clear button in light mode must use high-contrast dark red #b91c1c');
+  assert(css.includes('color: #0369a1;'), 'Recipe banner title in Dawn must use high-contrast ocean blue #0369a1');
+
+  // 4. Light Theme Overrides for Ladder Recipe Modal
+  assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-card'), 'styles.css must provide Dawn light theme overrides for recipe card');
+  assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-cat-btn'), 'styles.css must provide Dawn light theme overrides for category buttons');
+  assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-cancel'), 'styles.css must provide Dawn light theme overrides for cancel button');
+  assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-modal-footer'), 'styles.css must provide Dawn light theme overrides for modal footer');
+
+  // 5. Light Theme Overrides for Highlighted Track Row
+  assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-track-row.ladder-track-highlighted'), 'styles.css must provide Dawn light theme overrides for highlighted track row');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');
