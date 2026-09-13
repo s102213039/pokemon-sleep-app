@@ -11597,13 +11597,19 @@
     }
 
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    const wikiPanel = document.getElementById('panel-wiki');
+    const isWikiMainActive = !!(wikiPanel && (
+      (wikiPanel.style.display !== 'none' && !wikiPanel.hidden) ||
+      (typeof document !== 'undefined' && document.getElementById('tab-wiki') && document.getElementById('tab-wiki').classList.contains('active'))
+    ));
+
     if (isMobileH5) {
-      if (targetTab === 'ingredients') {
+      if (isWikiMainActive && targetTab === 'ingredients') {
         document.body.classList.add('ladder-active');
       } else {
         document.body.classList.remove('ladder-active');
       }
-      if (targetTab === 'values') {
+      if (isWikiMainActive && targetTab === 'values') {
         document.body.classList.add('values-active');
       } else {
         document.body.classList.remove('values-active');
@@ -11618,7 +11624,7 @@
     const ladderBackdrop = document.getElementById('ladder-sidebar-backdrop');
 
     if (ladderSidebar) {
-      if (targetTab === 'ingredients') {
+      if (isWikiMainActive && targetTab === 'ingredients') {
         ladderSidebar.style.display = 'flex';
         const isLadderOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_ladder_sidebar_open', true) : true;
         if (isLadderOpen && !isMobileH5 && window.innerWidth > 1024) {
@@ -11635,7 +11641,7 @@
     }
 
     if (ladderHandle) {
-      if (targetTab === 'ingredients') {
+      if (isWikiMainActive && targetTab === 'ingredients') {
         const isCollapsed = ladderSidebar ? ladderSidebar.classList.contains('collapsed') : true;
         if (isCollapsed) {
           ladderHandle.classList.remove('drawer-open');
@@ -11660,8 +11666,11 @@
     }
 
     const ladderRecipeFab = document.getElementById('ladder-recipe-highlight-fab');
-    if (ladderRecipeFab) {
-      if (targetTab === 'ingredients') {
+    if (ladderRecipeFab && ladderRecipeFab.style) {
+      if (typeof ladderRecipeFab.style.removeProperty === 'function') {
+        ladderRecipeFab.style.removeProperty('display');
+      }
+      if (isWikiMainActive && targetTab === 'ingredients') {
         ladderRecipeFab.style.display = 'flex';
         updateLadderRecipeFabState();
       } else {
@@ -15789,17 +15798,6 @@
                   ${ticks.map(t => `<div class="ladder-grid-line" style="left: ${getPosPct(t)}%;"></div>`).join('')}
                 </div>
 
-                <!-- 三餐及格線 (3 Meals Passing Line) -->
-                ${isHighlighted && threeMealsTarget !== null ? `
-                  <div class="ladder-passing-line-container" style="left: ${getPosPct(threeMealsTarget)}%;" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${threeMealsTarget} ${isEN ? 'items' : '顆'}">
-                    <div class="ladder-passing-line"></div>
-                    <div class="ladder-passing-badge">
-                      <span class="ladder-passing-label">${isEN ? '3 Meals' : '三餐'}</span>
-                      <span class="ladder-passing-num">${threeMealsTarget}</span>
-                    </div>
-                  </div>
-                ` : ''}
-
                 <!-- 前導點狀虛線 (20 ~ 最低產量) 與 實體軌道線 (最低產量 ~ 終點) -->
                 <div class="ladder-track-lead-line" style="left: 0; width: ${leadPct}%;"></div>
                 <div class="ladder-track-line" style="left: ${leadPct}%; right: 0;"></div>
@@ -15895,6 +15893,17 @@
                     }).join('');
                   })()}
                 </div>
+
+                <!-- 三餐及格線 (3 Meals Passing Line) - 置於節點容器後，確保不被覆蓋 -->
+                ${isHighlighted && threeMealsTarget !== null ? `
+                  <div class="ladder-passing-line-container" style="left: ${getPosPct(threeMealsTarget)}%;" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${threeMealsTarget} ${isEN ? 'items' : '顆'}">
+                    <div class="ladder-passing-line"></div>
+                    <div class="ladder-passing-badge">
+                      <span class="ladder-passing-label">${isEN ? '3 Meals' : '三餐'}</span>
+                      <span class="ladder-passing-num">${threeMealsTarget}</span>
+                    </div>
+                  </div>
+                ` : ''}
               </div>
             </div>
           `;
@@ -15984,19 +15993,6 @@
                         ${tailTicks.map(t => `<div class="ladder-grid-line" style="left: ${getTailPct(t)}%;"></div>`).join('')}
                       </div>
 
-                      <div class="ladder-track-line" style="left: 0; right: 0;"></div>
-
-                      <!-- 尾巴三餐及格線 -->
-                      ${isTailHighlighted && tailThreeMealsTarget !== null ? `
-                        <div class="ladder-passing-line-container" style="left: ${getTailPct(tailThreeMealsTarget)}%;" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${tailThreeMealsTarget} ${isEN ? 'items' : '顆'}">
-                          <div class="ladder-passing-line"></div>
-                          <div class="ladder-passing-badge">
-                            <span class="ladder-passing-label">${isEN ? '3 Meals' : '三餐'}</span>
-                            <span class="ladder-passing-num">${tailThreeMealsTarget}</span>
-                          </div>
-                        </div>
-                      ` : ''}
-
                       <div class="ladder-spans-container">
                         ${filteredTailPkm.map(p => {
                           if (p.variants.length < 2) return '';
@@ -16082,6 +16078,17 @@
                           }).join('');
                         })()}
                       </div>
+
+                      <!-- 尾巴三餐及格線 - 置於節點容器後，確保不被覆蓋 -->
+                      ${isTailHighlighted && tailThreeMealsTarget !== null ? `
+                        <div class="ladder-passing-line-container" style="left: ${getTailPct(tailThreeMealsTarget)}%;" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${tailThreeMealsTarget} ${isEN ? 'items' : '顆'}">
+                          <div class="ladder-passing-line"></div>
+                          <div class="ladder-passing-badge">
+                            <span class="ladder-passing-label">${isEN ? '3 Meals' : '三餐'}</span>
+                            <span class="ladder-passing-num">${tailThreeMealsTarget}</span>
+                          </div>
+                        </div>
+                      ` : ''}
                     </div>
 
                     <div class="ladder-track-header ladder-track-header-right">
@@ -16517,12 +16524,18 @@
   function renderWikiLayout(container) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
     const isLadderOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_ladder_sidebar_open', true) : true;
     const initialLadderCollapsed = isMobileH5 ? 'collapsed' : (isLadderOpen ? '' : 'collapsed');
+    const isWikiMainActive = !!(container && (
+      (container.style && container.style.display !== 'none' && !container.hidden) ||
+      (typeof document !== 'undefined' && document.getElementById && document.getElementById('tab-wiki') && document.getElementById('tab-wiki').classList && document.getElementById('tab-wiki').classList.contains('active')) ||
+      (!container.style && (!document.getElementById || !document.getElementById('tab-wiki')))
+    ));
 
     container.innerHTML = `
       <!-- 🍲 天梯頂級料理食材高亮懸浮按鈕 (FAB) -->
-      <button type="button" id="ladder-recipe-highlight-fab" class="ladder-recipe-highlight-fab ${ladderHighlightRecipe ? 'has-active' : ''}" onclick="window.WikiDB.openLadderRecipeModal()" title="${isEN ? 'Highlight by Top Recipe' : '選取料理高亮食材'}" aria-label="${isEN ? 'Highlight by Top Recipe' : '選取料理高亮食材'}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
+      <button type="button" id="ladder-recipe-highlight-fab" class="ladder-recipe-highlight-fab ${ladderHighlightRecipe ? 'has-active' : ''}" onclick="window.WikiDB.openLadderRecipeModal()" title="${isEN ? 'Highlight by Top Recipe' : '選取料理高亮食材'}" aria-label="${isEN ? 'Highlight by Top Recipe' : '選取料理高亮食材'}" style="${(isWikiMainActive && currentWikiSubTab === 'ingredients') ? 'display:flex;' : 'display:none;'}">
         <span class="recipe-fab-icon">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 11h18a1 1 0 0 1 1 1v2a7 7 0 0 1-14 0v-2"></path>
@@ -16941,28 +16954,28 @@
             <div class="ribbon-compact-tiers">
               <div class="ribbon-compact-chip chip-bronze">
                 <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
-                  <img src="assets/ribbons/ribbon_lv1.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
+                  <img src="${base}assets/ribbons/ribbon_lv1.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
                   200h
                 </span>
                 <span class="chip-effect-text">+1 ${isEN ? 'Carry' : '持有上限'}</span>
               </div>
               <div class="ribbon-compact-chip chip-silver">
                 <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
-                  <img src="assets/ribbons/ribbon_lv2.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
+                  <img src="${base}assets/ribbons/ribbon_lv2.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
                   500h
                 </span>
                 <span class="chip-effect-text">+2 ${isEN ? 'Carry' : '持有'}, ${isEN ? 'Speed' : '幫速'} -5% / -11%</span>
               </div>
               <div class="ribbon-compact-chip chip-gold">
                 <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
-                  <img src="assets/ribbons/ribbon_lv3.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
+                  <img src="${base}assets/ribbons/ribbon_lv3.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
                   1,000h
                 </span>
                 <span class="chip-effect-text">+3 ${isEN ? 'Carry' : '持有上限'}</span>
               </div>
               <div class="ribbon-compact-chip chip-platinum">
                 <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
-                  <img src="assets/ribbons/ribbon_lv4.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
+                  <img src="${base}assets/ribbons/ribbon_lv4.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
                   2,000h
                 </span>
                 <span class="chip-effect-text">+2 ${isEN ? 'Carry' : '持有'}, ${isEN ? 'Speed' : '幫速'} -12% / -25%</span>

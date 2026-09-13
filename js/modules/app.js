@@ -1803,16 +1803,27 @@ if (typeof document !== 'undefined') {
         }
 
         if (target !== 'wiki') {
-          if (isMobileH5) {
-            document.body.classList.remove('ladder-active');
-            document.body.classList.remove('values-active');
-          }
+          document.body.classList.remove('ladder-active');
+          document.body.classList.remove('values-active');
           const curLadderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
-          if (curLadderHandle) curLadderHandle.style.display = 'none';
-          if (ladderSidebar) ladderSidebar.style.display = 'none';
+          if (curLadderHandle && curLadderHandle.style) {
+            curLadderHandle.style.display = 'none';
+            if (typeof curLadderHandle.style.setProperty === 'function') curLadderHandle.style.setProperty('display', 'none', 'important');
+          }
+          if (ladderSidebar && ladderSidebar.style) {
+            ladderSidebar.style.display = 'none';
+            if (typeof ladderSidebar.style.setProperty === 'function') ladderSidebar.style.setProperty('display', 'none', 'important');
+          }
           if (ladderBackdrop) ladderBackdrop.classList.remove('active');
           const curLadderRecipeFab = document.getElementById('ladder-recipe-highlight-fab');
-          if (curLadderRecipeFab) curLadderRecipeFab.style.display = 'none';
+          if (curLadderRecipeFab && curLadderRecipeFab.style) {
+            curLadderRecipeFab.style.display = 'none';
+            if (typeof curLadderRecipeFab.style.setProperty === 'function') curLadderRecipeFab.style.setProperty('display', 'none', 'important');
+          }
+          if (panelWiki && panelWiki.style) {
+            panelWiki.style.display = 'none';
+            if (typeof panelWiki.style.setProperty === 'function') panelWiki.style.setProperty('display', 'none', 'important');
+          }
           if (window.WikiDB && typeof window.WikiDB.closeLadderRecipeModal === 'function') {
             window.WikiDB.closeLadderRecipeModal();
           }
@@ -1848,6 +1859,7 @@ if (typeof document !== 'undefined') {
           }
         } else if (target === 'wiki' && panelWiki && tabWiki) {
           tabWiki.classList.add('active');
+          if (panelWiki.style && typeof panelWiki.style.removeProperty === 'function') panelWiki.style.removeProperty('display');
           panelWiki.style.display = 'block';
           if (window.WikiDB && typeof window.WikiDB.init === 'function') {
             try { window.WikiDB.init(); } catch (e) { console.error('WikiDB.init error:', e); }
@@ -1898,6 +1910,7 @@ if (typeof document !== 'undefined') {
             const isCollapsed = ladderSidebar ? ladderSidebar.classList.contains('collapsed') : true;
             if (isIng && isCollapsed) {
               curLadderHandle.classList.remove('drawer-open');
+              if (curLadderHandle.style && typeof curLadderHandle.style.removeProperty === 'function') curLadderHandle.style.removeProperty('display');
               curLadderHandle.style.display = 'flex';
               curLadderHandle.style.opacity = '1';
               curLadderHandle.style.pointerEvents = 'auto';
@@ -1913,6 +1926,7 @@ if (typeof document !== 'undefined') {
 
           const curLadderRecipeFab = document.getElementById('ladder-recipe-highlight-fab');
           if (curLadderRecipeFab) {
+            if (curLadderRecipeFab.style && typeof curLadderRecipeFab.style.removeProperty === 'function') curLadderRecipeFab.style.removeProperty('display');
             curLadderRecipeFab.style.display = (wikiSubTab === 'ingredients') ? 'flex' : 'none';
           }
 

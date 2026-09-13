@@ -13516,7 +13516,7 @@ body.mobile-h5-app.pokemon-active,
   max-height: 100% !important;
   width: calc(100% - 24px) !important;
   margin: 0 12px 0 !important;
-  padding: 0 0 28px 0 !important;
+  padding: 0 !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 14px !important;
   background: var(--table-row-odd-solid, #0d1527) !important;
@@ -16361,9 +16361,9 @@ body.mobile-h5-app.values-active,
   padding-bottom: 0 !important;
 }
 
-.mobile-h5-app.ladder-active #panel-wiki,
+.mobile-h5-app.ladder-active #panel-wiki:not([style*="display: none"]):not([style*="display:none"]),
 .mobile-h5-app.ladder-active .wiki-main-container,
-.mobile-h5-app.values-active #panel-wiki,
+.mobile-h5-app.values-active #panel-wiki:not([style*="display: none"]):not([style*="display:none"]),
 .mobile-h5-app.values-active .wiki-main-container {
   height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
   max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
@@ -16696,7 +16696,19 @@ body.mobile-h5-app.values-active,
 
 /* 全域保證：隱藏的 panel 絕不覆蓋顯示 */
 .view-panel[style*="display: none"],
-.mobile-h5-app .view-panel[style*="display: none"] {
+.view-panel[style*="display:none"],
+.mobile-h5-app .view-panel[style*="display: none"],
+.mobile-h5-app .view-panel[style*="display:none"],
+.mobile-h5-app #panel-pokemon[style*="display: none"],
+.mobile-h5-app #panel-recipes[style*="display: none"],
+.mobile-h5-app #panel-wiki[style*="display: none"],
+.mobile-h5-app #panel-box[style*="display: none"],
+.mobile-h5-app #panel-news[style*="display: none"],
+.mobile-h5-app #panel-pokemon[style*="display:none"],
+.mobile-h5-app #panel-recipes[style*="display:none"],
+.mobile-h5-app #panel-wiki[style*="display:none"],
+.mobile-h5-app #panel-box[style*="display:none"],
+.mobile-h5-app #panel-news[style*="display:none"] {
   display: none !important;
 }
 
@@ -21328,7 +21340,7 @@ body.mobile-h5-app.values-active,
   position: absolute;
   top: 0;
   bottom: 0;
-  z-index: 28;
+  z-index: 500 !important;
   transform: translateX(-50%);
   pointer-events: none;
   display: flex;
@@ -21349,7 +21361,7 @@ body.mobile-h5-app.values-active,
 .ladder-passing-badge {
   position: relative;
   top: 2px;
-  z-index: 2;
+  z-index: 501;
   display: inline-flex;
   align-items: center;
   gap: 3px;

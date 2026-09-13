@@ -5831,7 +5831,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Ba
   assert(appIndexHtml.includes('class="mobile-h5-html"'), 'app/index.html must have mobile-h5-html class');
   assert(css.includes('html.mobile-h5-html'), 'styles.css must style html.mobile-h5-html');
   assert(css.includes('position: fixed !important;\n  top: 0 !important;\n  left: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  width: 100% !important;\n  height: 100% !important;\n  height: 100dvh !important;\n  overflow: hidden !important;'), 'styles.css must lock body.mobile-h5-app with fixed positioning and overflow hidden');
-  assert(css.includes('padding: 0 0 28px 0 !important;'), 'Pokemon table container must have 28px bottom clearance');
+  assert(css.includes('padding: 0 !important;'), 'Pokemon table container must have clean zero bottom clearance');
+  assert(css.includes('z-index: 500 !important;'), 'styles.css must set passing line container z-index to 500');
+  assert(css.includes('z-index: 501;'), 'styles.css must set passing line badge z-index to 501');
   assert(css.includes('.ladder-recipe-highlight-fab'), 'styles.css must style .ladder-recipe-highlight-fab');
   assert(css.includes('.ladder-track-row.ladder-track-highlighted'), 'styles.css must define highlighted ladder track row');
   assert(css.includes('.ladder-track-row.ladder-track-dimmed'), 'styles.css must define dimmed ladder track row');
