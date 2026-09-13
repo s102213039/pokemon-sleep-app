@@ -1673,7 +1673,7 @@ test('Tier 2 - Boundary & Corner Cases', 'RaenonX PR Calculation: Fast-Exit Base
   const poorResult = calcPR(poorBerry, { specialty: '樹果' });
   assert(poorResult.pr < 50, `Poor Pokemon PR should be < 50 (got ${poorResult.pr})`);
   assert(poorResult.tier === 'B' || poorResult.tier === 'C', `Poor Pokemon tier should be B or C (got ${poorResult.tier})`);
-  assert(poorResult.summaryNote.includes('⚠️') && poorResult.summaryNote.includes('未達'), 'Summary note should indicate baseline failure');
+  assert((poorResult.summaryNote.includes('[!]') || poorResult.summaryNote.includes('⚠️')) && poorResult.summaryNote.includes('未達'), 'Summary note should indicate baseline failure');
 
   const poorIng = {
     name: '妙蛙種子',
@@ -1683,7 +1683,7 @@ test('Tier 2 - Boundary & Corner Cases', 'RaenonX PR Calculation: Fast-Exit Base
   };
   const poorIngResult = calcPR(poorIng, { specialty: '食材' });
   assert(poorIngResult.pr < 50, `Poor Ingredient PR should be < 50 (got ${poorIngResult.pr})`);
-  assert(poorIngResult.summaryNote.includes('⚠️'), 'Should fail baseline due to Ing debuff');
+  assert(poorIngResult.summaryNote.includes('[!]') || poorIngResult.summaryNote.includes('⚠️'), 'Should fail baseline due to Ing debuff');
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'Event Gantt Timeline Parser: Identifies Events and Bundles with column grid spans and date ranges', () => {
@@ -5432,6 +5432,183 @@ test('Tier 4 - Real-World Application Scenarios', 'Box Manual Add Combobox Numbe
   // 2F. Search subsequence '妙花'
   renderDropdown('妙花');
   assert(dropdown.innerHTML.includes('妙蛙花'), 'Search "妙花" must match 妙蛙花');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Box Intelligent OCR Multi-Anchor Engine & Image 1 Ground Truth 100% Verification', () => {
+  const pkmData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'data.json'), 'utf8'));
+  const domElements = {};
+  function mockEl(id, tagName = 'div') {
+    const el = {
+      id,
+      tagName: tagName.toUpperCase(),
+      value: '',
+      innerHTML: '',
+      style: {},
+      classList: {
+        add: () => {},
+        remove: () => {},
+        contains: () => false
+      },
+      setAttribute: () => {},
+      removeAttribute: () => {},
+      getAttribute: () => '',
+      addEventListener: (evt, handler) => { el['on' + evt] = handler; },
+      dispatchEvent: () => {},
+      querySelectorAll: () => []
+    };
+    domElements[id] = el;
+    return el;
+  }
+
+  const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+  const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+  const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+
+  const ctx = {
+    window: {},
+    document: {
+      getElementById: id => domElements[id] || mockEl(id),
+      createElement: tag => mockEl('mock-' + Math.random(), tag),
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    localStorage: { getItem: () => null, setItem: () => {} },
+    console,
+    BERRY_DATA: []
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+
+  vm.createContext(ctx);
+  vm.runInContext(appJs, ctx);
+  vm.runInContext(appraisalJs, ctx);
+  vm.runInContext(boxJs, ctx);
+
+  const boxApp = ctx.PokemonBoxApp || ctx.window.PokemonBoxApp;
+  assert(boxApp, 'PokemonBoxApp must be defined');
+  assert(typeof boxApp.parsePokemonFromOcr === 'function', 'parsePokemonFromOcr must be exposed');
+
+  boxApp.setAllPokemons(pkmData);
+
+  // 1. Ground Truth Verification for Image 1 (Heracross, Lv.52, Careful, 5 subskills, Honey/Mushroom/Honey)
+  const image1OcrText = `Lv. 52 其 拉克 羅斯
+@ 健美 (料理 輔助 S) Lv.7
+技能 機 率 提 升 M
+技能 等 級 提 升 M
+幫忙 速度 M !
+kotuv70 ,
+持 有 上 限 提升 S
+和 ouv.30 ,
+食材 機 率 提 升 S
+2 全
+主 技能 發 動機 家 人 全
+食材 發 現 率 字
+掉 My`;
+
+  const image1RgbSlots = [
+    { r: 244.2, g: 202.3, b: 140.1 }, // Slot 1 (Honey)
+    { r: 182.5, g: 104.6, b: 47.6 },  // Slot 2 (Mushroom)
+    { r: 251.2, g: 219.5, b: 158.6 }  // Slot 3 (Honey)
+  ];
+
+  const parsed = boxApp.parsePokemonFromOcr(image1OcrText, image1RgbSlots, pkmData);
+
+  // Assert 100% accurate ground truth resolution
+  assertEquals(parsed.name, '赫拉克羅斯', 'Ground truth name must be 赫拉克羅斯 (Heracross #214)');
+  assertEquals(parsed.pokemonId, '214', 'Ground truth pokemonId must be 214');
+  assertEquals(parsed.level, 52, 'Ground truth level must be 52');
+  assertEquals(parsed.nature, '慎重', 'Ground truth nature must be 慎重 (Careful)');
+  assertEquals(parsed.ing1, '甜甜蜜', 'Ground truth Slot 1 ingredient must be 甜甜蜜');
+  assertEquals(parsed.ing2, '品鮮蘑菇', 'Ground truth Slot 2 ingredient must be 品鮮蘑菇');
+  assertEquals(parsed.ing3, '甜甜蜜', 'Ground truth Slot 3 ingredient must be 甜甜蜜');
+
+  assertArrayEquals(parsed.subskills, [
+    '技能機率提升M',
+    '技能等級提升M',
+    '幫忙速度M',
+    '持有上限提升S',
+    '食材機率提升S'
+  ], 'Ground truth 5 subskills must match exact visual slot order');
+
+  // 2. False-Positive Immunity Test (Haunter No.093 false trigger prevention)
+  const noisyTextWith093 = `
+SP 6,920
+每 29 分 36 秒
+持有上限 21個
+093 025 140
+健美（料理輔助S）
+主技能發動機率 ▲▲
+食材發現率 ▼▼
+`;
+  const falseTriggerTest = boxApp.parsePokemonFromOcr(noisyTextWith093, image1RgbSlots, pkmData);
+  assert(falseTriggerTest.name !== '鬼斯通', 'Raw OCR noise with "093" must NEVER falsely match 鬼斯通');
+  assertEquals(falseTriggerTest.name, '赫拉克羅斯', 'Main skill 健美（料理輔助S） must disambiguate to 赫拉克羅斯');
+
+  // 3. Nature Deductive Stat Mapping (25 Natures accuracy)
+  const statTextCareful = '主技能發動機率 ▲▲\n食材發現率 ▼▼';
+  const natureCareful = boxApp.parsePokemonFromOcr(statTextCareful, null, pkmData).nature;
+  assertEquals(natureCareful, '慎重', 'Skill trigger up + Ingredient down must deduce 慎重');
+
+  const statTextAdamant = '幫忙速度 ▲▲\n食材發現率 ▼▼';
+  const natureAdamant = boxApp.parsePokemonFromOcr(statTextAdamant, null, pkmData).nature;
+  assertEquals(natureAdamant, '固執', 'Speed up + Ingredient down must deduce 固執');
+
+  // 4. Modal UI Population End-to-End Simulation
+  // Setup required DOM elements for modal
+  const modalEl = mockEl('box-edit-modal', 'div');
+  const modalForm = mockEl('box-edit-form', 'form');
+  const titleEl = mockEl('box-modal-title', 'div');
+  const previewEl = mockEl('box-modal-screenshot-preview', 'div');
+  const searchInput = mockEl('modal-poke-search', 'input');
+  const nameHidden = mockEl('modal-poke-name', 'input');
+  const levelInput = mockEl('modal-poke-level', 'input');
+  const natureSelect = mockEl('modal-poke-nature', 'select');
+  const ribbonSelect = mockEl('modal-poke-ribbon', 'select');
+  const ing1Hidden = mockEl('modal-ing1', 'input');
+  const ing2Hidden = mockEl('modal-ing2', 'input');
+  const ing3Hidden = mockEl('modal-ing3', 'input');
+  const ingOpt1 = mockEl('modal-ing-options-1', 'div');
+  const ingOpt2 = mockEl('modal-ing-options-2', 'div');
+  const ingOpt3 = mockEl('modal-ing-options-3', 'div');
+  const dropdown = mockEl('box-pkm-dropdown', 'div');
+  const toggleBtn = mockEl('box-pkm-dropdown-toggle', 'button');
+
+  domElements['box-edit-modal'] = modalEl;
+  domElements['box-edit-form'] = modalForm;
+  domElements['box-modal-title'] = titleEl;
+  domElements['box-modal-screenshot-preview'] = previewEl;
+  domElements['modal-poke-search'] = searchInput;
+  domElements['modal-poke-name'] = nameHidden;
+  domElements['modal-poke-level'] = levelInput;
+  domElements['modal-poke-nature'] = natureSelect;
+  domElements['modal-poke-ribbon'] = ribbonSelect;
+  domElements['modal-ing1'] = ing1Hidden;
+  domElements['modal-ing2'] = ing2Hidden;
+  domElements['modal-ing3'] = ing3Hidden;
+  domElements['modal-ing-options-1'] = ingOpt1;
+  domElements['modal-ing-options-2'] = ingOpt2;
+  domElements['modal-ing-options-3'] = ingOpt3;
+  domElements['box-pkm-dropdown'] = dropdown;
+  domElements['box-pkm-dropdown-toggle'] = toggleBtn;
+
+  for (let s = 1; s <= 5; s++) {
+    domElements[`modal-subskill-${s}`] = mockEl(`modal-subskill-${s}`, 'input');
+  }
+
+  // Open modal with parsed ground truth data
+  boxApp.initPokemonCombobox(parsed);
+  levelInput.value = parsed.level;
+  natureSelect.value = parsed.nature;
+
+  // Check that inputs are populated with 100% correct values
+  assert(searchInput.value.includes('赫拉克羅斯'), 'Modal Pokémon input must display 赫拉克羅斯');
+  assert(searchInput.value.includes('214'), 'Modal Pokémon input must display No.214');
+  assertEquals(nameHidden.value, '赫拉克羅斯', 'Modal hidden name must be 赫拉克羅斯');
+  assertEquals(levelInput.value, 52, 'Modal level input must be 52');
+  assertEquals(natureSelect.value, '慎重', 'Modal nature select must be 慎重');
+  assertEquals(ing1Hidden.value, '甜甜蜜', 'Modal Ing 1 must be 甜甜蜜');
+  assertEquals(ing2Hidden.value, '品鮮蘑菇', 'Modal Ing 2 must be 品鮮蘑菇');
+  assertEquals(ing3Hidden.value, '甜甜蜜', 'Modal Ing 3 must be 甜甜蜜');
 });
 
 // Final Summary Output

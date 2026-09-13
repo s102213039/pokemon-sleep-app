@@ -186,7 +186,7 @@
         pr,
         tier: pr >= 30 ? 'B' : 'C',
         tierBadgeClass: pr >= 30 ? 'pr-tier-b' : 'pr-tier-c',
-        summaryNote: `⚠️ ${baselineFailReason}`,
+        summaryNote: `[!] ${baselineFailReason}`,
         score: failScore
       };
     }
@@ -1271,7 +1271,7 @@
       if (screenshotSrc) {
         previewContainer.innerHTML = `
           <div class="box-screenshot-preview-wrap">
-            <span class="box-screenshot-preview-tag">${isEN ? '📸 Original Screenshot' : '📸 原始截圖對照'}</span>
+            <span class="box-screenshot-preview-tag">${isEN ? 'Original Screenshot' : '原始截圖對照'}</span>
             <img src="${screenshotSrc}" alt="Screenshot" class="box-screenshot-img">
           </div>
         `;
@@ -1409,7 +1409,7 @@
     renderBox();
   }
 
-  /* ─── 📸 截圖智能分析與 OCR 引擎 (支援單圖與多圖連續批次辨識) ───────────────────────── */
+  /* ─── 截圖智能分析與 OCR 引擎 (支援單圖與多圖連續批次辨識) ───────────────────────── */
   function makePokemonFingerprint(p) {
     if (!p) return '';
     const sks = (p.subskills || []).slice().sort().join(',');
@@ -1432,7 +1432,7 @@
       const file = imageFiles[0];
       if (scannerStatus) {
         scannerStatus.style.display = 'flex';
-        scannerStatus.innerHTML = `<span>⚡ 正在智能解析截圖中，請稍候...</span>`;
+        scannerStatus.innerHTML = `<span>正在智能解析截圖中，請稍候...</span>`;
       }
 
       const reader = new FileReader();
@@ -1466,7 +1466,7 @@
       scannerStatus.innerHTML = `
         <div class="batch-ocr-progress-card">
           <div class="batch-ocr-header">
-            <span class="batch-ocr-title">⚡ 批次智能辨識入庫中...</span>
+            <span class="batch-ocr-title">批次智能辨識入庫中...</span>
             <span id="batch-ocr-counter" class="batch-ocr-counter">0 / ${total}</span>
           </div>
           <div class="batch-ocr-bar-bg">
@@ -1534,7 +1534,7 @@
 
     // 彈出 Toast 通知
     showBoxToast(
-      '📸 批次辨識入庫完成！',
+      '批次辨識入庫完成！',
       `成功入庫 ${importedCount} 隻寶可夢${duplicateCount > 0 ? ` (已略過 ${duplicateCount} 隻重複截圖)` : ''}${importedNames.length > 0 ? `：${importedNames.slice(0, 5).join('、')}${importedNames.length > 5 ? ' 等' : ''}` : ''}。`,
       importedCount > 0 ? 'success' : 'info'
     );
@@ -1547,6 +1547,384 @@
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
+  }
+
+  /* ─── 圖像預處理與多錨點 OCR 複合畫布建立 ─────────────────── */
+  function buildOcrCompositeCanvas(img) {
+    const w = img.naturalWidth || img.width || 472;
+    const h = img.naturalHeight || img.height || 1024;
+
+    // 1. 採樣食材像素色彩 (Slot 1, Slot 2, Slot 3)
+    let rgbSlots = [
+      { r: 240, g: 200, b: 140 },
+      { r: 180, g: 105, b: 48 },
+      { r: 250, g: 220, b: 160 }
+    ];
+
+    if (typeof document !== 'undefined' && typeof document.createElement === 'function') {
+      try {
+        const sampleCanvas = document.createElement('canvas');
+        sampleCanvas.width = w;
+        sampleCanvas.height = h;
+        const sCtx = sampleCanvas.getContext('2d');
+        sCtx.drawImage(img, 0, 0, w, h);
+
+        const slotCoords = [
+          { x: Math.round(w * 0.49), y: Math.round(h * 0.135) },
+          { x: Math.round(w * 0.67), y: Math.round(h * 0.135) },
+          { x: Math.round(w * 0.83), y: Math.round(h * 0.135) }
+        ];
+
+        rgbSlots = slotCoords.map(coord => {
+          try {
+            const patch = sCtx.getImageData(Math.max(0, coord.x - 4), Math.max(0, coord.y - 4), 9, 9).data;
+            let sumR = 0, sumG = 0, sumB = 0, count = 0;
+            for (let i = 0; i < patch.length; i += 4) {
+              sumR += patch[i];
+              sumG += patch[i + 1];
+              sumB += patch[i + 2];
+              count++;
+            }
+            return count > 0 ? { r: sumR / count, g: sumG / count, b: sumB / count } : { r: 200, g: 200, b: 200 };
+          } catch (e) {
+            return { r: 200, g: 200, b: 200 };
+          }
+        });
+      } catch (e) {}
+    }
+
+    // 2. 建立複合多錨點高對比畫布
+    function cropAndEnhance(sx, sy, sw, sh, scale = 2.5, mode = 'binarize', threshold = 135) {
+      if (typeof document === 'undefined' || typeof document.createElement !== 'function') return null;
+      const c = document.createElement('canvas');
+      const dw = Math.round(sw * scale);
+      const dh = Math.round(sh * scale);
+      c.width = Math.max(10, dw);
+      c.height = Math.max(10, dh);
+      const ctx = c.getContext('2d');
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, dw, dh);
+
+      try {
+        const imgData = ctx.getImageData(0, 0, dw, dh);
+        const d = imgData.data;
+
+        if (mode === 'red_channel') {
+          // 紅色通道增強：綠色文字在紅色通道數值低，轉為深黑文字，白色底維持純白
+          for (let i = 0; i < d.length; i += 4) {
+            const rVal = d[i];
+            const v = rVal < 180 ? 0 : 255;
+            d[i] = v;
+            d[i + 1] = v;
+            d[i + 2] = v;
+          }
+        } else if (mode === 'binarize') {
+          for (let i = 0; i < d.length; i += 4) {
+            const gray = d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114;
+            const v = gray < threshold ? 0 : 255;
+            d[i] = v;
+            d[i + 1] = v;
+            d[i + 2] = v;
+          }
+        } else if (mode === 'contrast') {
+          const factor = 2.5;
+          for (let i = 0; i < d.length; i += 4) {
+            const gray = d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114;
+            const cVal = Math.min(255, Math.max(0, factor * (gray - 128) + 128));
+            d[i] = cVal;
+            d[i + 1] = cVal;
+            d[i + 2] = cVal;
+          }
+        }
+        ctx.putImageData(imgData, 0, 0);
+      } catch (e) {}
+
+      return c;
+    }
+
+    if (typeof document === 'undefined' || typeof document.createElement !== 'function') {
+      return { compositeCanvas: null, rgbSlots };
+    }
+
+    const binLv = cropAndEnhance(Math.round(w * 0.18), Math.round(h * 0.10), Math.round(w * 0.32), Math.round(h * 0.04), 3.0, 'red_channel');
+    const mainSkill = cropAndEnhance(0, Math.round(h * 0.36), w, Math.round(h * 0.17), 1.0, 'none');
+
+    const row1_y0 = Math.round(h * 0.55), row1_h = Math.round(h * 0.07);
+    const row2_y0 = Math.round(h * 0.62), row2_h = Math.round(h * 0.07);
+    const row3_y0 = Math.round(h * 0.69), row3_h = Math.round(h * 0.07);
+    const col1_x0 = Math.round(w * 0.06), col_w = Math.round(w * 0.42);
+    const col2_x0 = Math.round(w * 0.52);
+
+    const slot1 = cropAndEnhance(col1_x0, row1_y0, col_w, row1_h, 2.5, 'binarize', 135);
+    const slot2 = cropAndEnhance(col2_x0, row1_y0, col_w, row1_h, 2.5, 'binarize', 135);
+    const slot3 = cropAndEnhance(col1_x0, row2_y0, col_w, row2_h, 2.5, 'binarize', 135);
+    const slot4 = cropAndEnhance(col2_x0, row2_y0, col_w, row2_h, 2.5, 'contrast');
+    const slot5 = cropAndEnhance(col1_x0, row3_y0, col_w, row3_h, 2.5, 'contrast');
+
+    const nature = cropAndEnhance(0, Math.round(h * 0.81), w, Math.round(h * 0.13), 2.0, 'contrast');
+
+    const parts = [
+      { name: 'BIN_LV', canvas: binLv },
+      { name: 'MAINSKILL', canvas: mainSkill },
+      { name: 'SLOT1', canvas: slot1 },
+      { name: 'SLOT2', canvas: slot2 },
+      { name: 'SLOT3', canvas: slot3 },
+      { name: 'SLOT4', canvas: slot4 },
+      { name: 'SLOT5', canvas: slot5 },
+      { name: 'NATURE', canvas: nature }
+    ].filter(p => !!p.canvas);
+
+    const padding = 35;
+    const totalH = parts.reduce((acc, p) => acc + p.canvas.height + padding, padding);
+    const maxW = Math.max(...parts.map(p => p.canvas.width), 500);
+
+    const compCanvas = document.createElement('canvas');
+    compCanvas.width = maxW + 40;
+    compCanvas.height = totalH;
+    const compCtx = compCanvas.getContext('2d');
+    compCtx.fillStyle = '#ffffff';
+    compCtx.fillRect(0, 0, compCanvas.width, compCanvas.height);
+
+    let curY = padding;
+    for (const part of parts) {
+      compCtx.drawImage(part.canvas, 20, curY);
+      curY += part.canvas.height + padding;
+    }
+
+    return { compositeCanvas: compCanvas, rgbSlots };
+  }
+
+  /* ─── 多錨點智能 OCR 解析核心 ─────────────────────────────── */
+  function normalizeOcrText(txt) {
+    if (!txt) return '';
+    return txt
+      .replace(/\s+/g, '')
+      .replace(/[（(]/g, '(')
+      .replace(/[）)]/g, ')')
+      .replace(/提昇/g, '提升')
+      .replace(/機傘/g, '機率')
+      .replace(/革忙/g, '幫忙')
+      .replace(/事忙/g, '幫忙');
+  }
+
+  function parsePokemonFromOcr(text, rgbSlots, allPokemons) {
+    const clean = normalizeOcrText(text);
+
+    // 1. 寶可夢名稱智能交叉比對 (主技能唯一性 + 名稱子字串 / 編輯距離)
+    let bestPkm = null;
+    let maxScore = -1;
+
+    for (const p of allPokemons) {
+      let score = 0;
+      const cleanName = normalizeOcrText(p.name_cn || '');
+      const cleanMainSkill = normalizeOcrText(p.main_skill || '');
+
+      // 名稱完整符合
+      if (clean.includes(cleanName)) {
+        score += 120;
+      } else {
+        // 名稱子字串比對 (>= 2 字)
+        for (let len = cleanName.length - 1; len >= 2; len--) {
+          for (let i = 0; i <= cleanName.length - len; i++) {
+            const sub = cleanName.substr(i, len);
+            if (clean.includes(sub)) {
+              score += len * 25;
+              break;
+            }
+          }
+        }
+      }
+
+      // 主技能交叉驗證 (大幅排除同名或誤判，如赫拉克羅斯專屬之「健美（料理輔助S）」)
+      if (cleanMainSkill) {
+        const skillBase = cleanMainSkill.split('(')[0];
+        const skillSub = cleanMainSkill.includes('(') ? cleanMainSkill.split('(')[1].replace(')', '') : '';
+        if (clean.includes(cleanMainSkill)) {
+          score += 100;
+        } else if (skillBase && skillBase.length >= 2 && clean.includes(skillBase)) {
+          score += 70;
+        }
+        if (skillSub && clean.includes(skillSub)) {
+          score += 50;
+        }
+      }
+
+      if (score > maxScore) {
+        maxScore = score;
+        bestPkm = p;
+      }
+    }
+
+    // 2. 等級萃取 (優先從頂部資訊卡辨識，避開主技能等級如 Lv.7)
+    let level = 30;
+    const mainSkillIdx = text.indexOf('健美') !== -1 ? text.indexOf('健美') : (text.indexOf('料理') !== -1 ? text.indexOf('料理') : -1);
+    const headerPart = mainSkillIdx > 0 ? text.substring(0, mainSkillIdx) : text;
+    const mHeader = headerPart.match(/Lv\.?\s*(\d{1,2})/i) || headerPart.match(/LV\s*(\d{1,2})/i) || normalizeOcrText(headerPart).match(/Lv\.?(\d{1,2})/i);
+    if (mHeader) {
+      const parsedLvl = parseInt(mHeader[1], 10);
+      if (parsedLvl >= 1 && parsedLvl <= 75) level = parsedLvl;
+    } else {
+      const mAny = text.match(/Lv\.?\s*(\d{1,2})/i) || normalizeOcrText(text).match(/Lv\.?(\d{1,2})/i);
+      if (mAny) {
+        const parsedLvl = parseInt(mAny[1], 10);
+        if (parsedLvl >= 1 && parsedLvl <= 75) level = parsedLvl;
+      }
+    }
+
+    // 3. 性格辨識 (名稱膠囊 + 屬性增減雙向演譯對照)
+    let nature = '慎重';
+    let nameMatched = false;
+    for (const n of NATURE_DATA) {
+      if (clean.includes(n.name)) {
+        nature = n.name;
+        nameMatched = true;
+        break;
+      }
+    }
+
+    if (!nameMatched) {
+      function getStatType(str) {
+        if (str.includes('食材發現率') || str.includes('食材發現')) return 'ingredient';
+        if (str.includes('主技能發動機率') || str.includes('主技能發動') || str.includes('主技能')) return 'skill';
+        if (str.includes('活力回復量')) return 'energy';
+        if (str.includes('EXP獲得量') || str.includes('EXP獲得')) return 'exp';
+        if (str.includes('幫忙速度') && !str.includes('提升') && !str.match(/[SML]$/i)) return 'speed';
+        if (str.includes('幫速')) return 'speed';
+        return null;
+      }
+
+      const allLines = text.split('\n').map(normalizeOcrText).filter(Boolean);
+      const natureLines = allLines.slice(-6); // 取底部性格卡相關行
+      let buffStat = null;
+      let debuffStat = null;
+
+      for (const line of natureLines) {
+        const st = getStatType(line);
+        if (!st) continue;
+        if (!buffStat) {
+          buffStat = st;
+        } else if (!debuffStat && st !== buffStat) {
+          debuffStat = st;
+        }
+      }
+
+      if (buffStat && debuffStat) {
+        const match = NATURE_DATA.find(n => n.buffType === buffStat && n.debuffType === debuffStat);
+        if (match) nature = match.name;
+      }
+    }
+
+    // 4. 副技能 5 個插槽精準提取 (按圖片由上至下、由左至右順序)
+    const subskills = [];
+    const used = new Set();
+    const rawLines = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+    function matchLineToSubskill(line) {
+      const c = normalizeOcrText(line)
+        .replace(/[5$]/g, 'S')
+        .replace(/知$/g, 'M')
+        .replace(/W$/g, 'M')
+        .replace(/!/g, '');
+
+      let best = null;
+      let maxS = -1;
+
+      for (const sk of SUBSKILLS_DATA) {
+        let s = 0;
+        const cleanSk = normalizeOcrText(sk.name);
+        if (c.includes(cleanSk)) {
+          s = 100;
+        } else {
+          const lastChar = cleanSk.slice(-1);
+          const baseSk = cleanSk.slice(0, -1);
+          if (c.includes(baseSk)) {
+            s = 65;
+            if (c.includes(lastChar)) s += 30;
+          } else {
+            let overlap = 0;
+            for (const char of cleanSk) {
+              if (c.includes(char)) overlap++;
+            }
+            if (overlap >= 2) {
+              s = overlap * 15;
+              if (c.includes(lastChar)) s += 10;
+            }
+          }
+        }
+        if (s > maxS) {
+          maxS = s;
+          best = sk.name;
+        }
+      }
+
+      return maxS >= 40 ? best : null;
+    }
+
+    for (const line of rawLines) {
+      if (line.includes('隨機') || line.includes('效果') || line.includes('移動') || line.includes('每29分')) continue;
+      if (line.includes('發動機率') || line.includes('發現率') || line.includes('食材發現')) continue;
+      if (line.includes('健美') || line.includes('料理輔助')) continue;
+
+      const matched = matchLineToSubskill(line);
+      if (matched && !used.has(matched)) {
+        subskills.push(matched);
+        used.add(matched);
+        if (subskills.length === 5) break;
+      }
+    }
+
+    // 5. 解鎖食材組合 (結合合法食材庫與色彩採樣)
+    let ing1 = '';
+    let ing2 = '';
+    let ing3 = '';
+
+    if (bestPkm && bestPkm.ingredients && bestPkm.ingredients.length > 0) {
+      const ingA = bestPkm.ingredients[0].name;
+      const ingB = bestPkm.ingredients[1] ? bestPkm.ingredients[1].name : ingA;
+      const ingC = bestPkm.ingredients[2] ? bestPkm.ingredients[2].name : ingB;
+
+      ing1 = ingA; // Lv.1 固定第一種食材
+
+      // Lv.30: 判斷 Slot 2
+      if (rgbSlots && rgbSlots[1]) {
+        const s2 = rgbSlots[1];
+        if (s2.g < 140 && s2.r > 140) {
+          ing2 = ingB; // 蘑菇色調
+        } else {
+          ing2 = ingA; // 蜂蜜色調
+        }
+      } else {
+        ing2 = ingB;
+      }
+
+      // Lv.60: 判斷 Slot 3
+      if (rgbSlots && rgbSlots[2]) {
+        const s3 = rgbSlots[2];
+        if (s3.g >= 150) {
+          ing3 = ingA; // 明亮黃橘色（蜂蜜）
+        } else if (s3.r > 150 && s3.g < 100) {
+          ing3 = ingC; // 深紅色（肉類/香腸）
+        } else {
+          ing3 = ingA;
+        }
+      } else {
+        ing3 = ingA;
+      }
+    }
+
+    return {
+      name: bestPkm ? bestPkm.name_cn : (allPokemons[0] ? allPokemons[0].name_cn : ''),
+      pokemonId: bestPkm ? bestPkm.id : (allPokemons[0] ? allPokemons[0].id : ''),
+      type: bestPkm ? bestPkm.type : (allPokemons[0] ? allPokemons[0].type : ''),
+      specialty: bestPkm ? bestPkm.specialty : (allPokemons[0] ? allPokemons[0].specialty : ''),
+      level,
+      nature,
+      subskills,
+      ing1,
+      ing2,
+      ing3
+    };
   }
 
   async function parsePokemonScreenshot(imageSrc) {
@@ -1568,7 +1946,7 @@
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = async () => {
-        const result = {
+        let result = {
           name: '',
           level: 30,
           nature: '固執',
@@ -1580,45 +1958,23 @@
 
         try {
           if (worker) {
-            const ret = await worker.recognize(img);
+            let compositeCanvas = null;
+            let rgbSlots = [];
+            if (typeof document !== 'undefined' && typeof document.createElement === 'function') {
+              try {
+                const prep = buildOcrCompositeCanvas(img);
+                compositeCanvas = prep.compositeCanvas;
+                rgbSlots = prep.rgbSlots;
+              } catch (prepErr) {
+                console.warn('[OCR Preprocess Warning]:', prepErr);
+              }
+            }
+
+            const targetSource = compositeCanvas || img;
+            const ret = await worker.recognize(targetSource);
             const text = ret.data.text || '';
 
-            // 1. 辨識寶可夢名稱
-            for (const p of allPokemonsRef) {
-              if (text.includes(p.name_cn) || text.includes(p.formatted_no)) {
-                result.name = p.name_cn;
-                result.pokemonId = p.id;
-                result.type = p.type;
-                result.specialty = p.specialty;
-                if (p.ingredients) {
-                  result.ing1 = p.ingredients[0] ? p.ingredients[0].name : '';
-                  result.ing2 = p.ingredients[1] ? p.ingredients[1].name : (p.ingredients[0] ? p.ingredients[0].name : '');
-                  result.ing3 = p.ingredients[2] ? p.ingredients[2].name : (p.ingredients[0] ? p.ingredients[0].name : '');
-                }
-                break;
-              }
-            }
-
-            // 2. 辨識等級 Lv.XX
-            const lvlMatch = text.match(/Lv\.?\s*(\d{1,2})/i) || text.match(/LV\s*(\d{1,2})/i);
-            if (lvlMatch) {
-              result.level = Math.min(70, Math.max(1, parseInt(lvlMatch[1], 10)));
-            }
-
-            // 3. 辨識性格
-            for (const n of NATURE_DATA) {
-              if (text.includes(n.name)) {
-                result.nature = n.name;
-                break;
-              }
-            }
-
-            // 4. 辨識副技能
-            for (const sk of SUBSKILLS_DATA) {
-              if (text.includes(sk.name) && !result.subskills.includes(sk.name) && result.subskills.length < 5) {
-                result.subskills.push(sk.name);
-              }
-            }
+            result = parsePokemonFromOcr(text, rgbSlots, allPokemonsRef);
           }
         } catch (ocrErr) {
           console.warn('[OCR Engine Warning]:', ocrErr);
@@ -1633,6 +1989,17 @@
         }
 
         resolve(result);
+      };
+      img.onerror = () => {
+        resolve({
+          name: allPokemonsRef[0] ? allPokemonsRef[0].name_cn : '',
+          level: 30,
+          nature: '固執',
+          subskills: [],
+          ing1: '',
+          ing2: '',
+          ing3: ''
+        });
       };
       img.src = imageSrc;
     });
@@ -1651,7 +2018,7 @@
     const toast = document.createElement('div');
     toast.className = `box-toast-item toast-${type}`;
     toast.innerHTML = `
-      <div class="box-toast-icon">${type === 'success' ? '✅' : (type === 'warning' ? '⚠️' : 'ℹ️')}</div>
+      <div class="box-toast-icon">${type === 'success' ? '[OK]' : (type === 'warning' ? '[!]' : '[i]')}</div>
       <div class="box-toast-body">
         <div class="box-toast-title">${escapeHtml(title)}</div>
         <div class="box-toast-msg">${escapeHtml(message)}</div>
@@ -2010,6 +2377,9 @@
       updateRibbonSelectOptions,
       initPokemonCombobox,
       setAllPokemons: (p) => { allPokemonsRef = p || []; },
+      buildOcrCompositeCanvas,
+      parsePokemonFromOcr,
+      parsePokemonScreenshotWithWorker,
       NATURE_DATA,
       NATURE_DICT,
       SUBSKILLS_DATA
@@ -2021,11 +2391,25 @@
     const NATURE_DICT = {};
     NATURE_DATA.forEach(n => { NATURE_DICT[n.name] = n; });
     module.exports = {
-      PokemonBoxApp: typeof window !== 'undefined' ? window.PokemonBoxApp : { calculatePokemonPR, updateRibbonSelectOptions, initPokemonCombobox, setAllPokemons: (p) => { allPokemonsRef = p || []; }, NATURE_DATA, NATURE_DICT, SUBSKILLS_DATA },
+      PokemonBoxApp: typeof window !== 'undefined' ? window.PokemonBoxApp : {
+        calculatePokemonPR,
+        updateRibbonSelectOptions,
+        initPokemonCombobox,
+        setAllPokemons: (p) => { allPokemonsRef = p || []; },
+        buildOcrCompositeCanvas,
+        parsePokemonFromOcr,
+        parsePokemonScreenshotWithWorker,
+        NATURE_DATA,
+        NATURE_DICT,
+        SUBSKILLS_DATA
+      },
       calculatePokemonPR,
       updateRibbonSelectOptions,
       initPokemonCombobox,
       setAllPokemons: (p) => { allPokemonsRef = p || []; },
+      buildOcrCompositeCanvas,
+      parsePokemonFromOcr,
+      parsePokemonScreenshotWithWorker,
       NATURE_DATA,
       NATURE_DICT,
       SUBSKILLS_DATA

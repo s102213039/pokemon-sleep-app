@@ -15,3 +15,10 @@ __pycache__/
 
 # Deploy temp dirs
 deploy_gh_pages*/
+
+# Node & OCR dependencies
+node_modules/
+*.traineddata
+package.json
+package-lock.json
+scratch/
