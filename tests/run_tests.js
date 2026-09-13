@@ -5492,6 +5492,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Box Intelligent OCR Multi-Anc
 
   // 1. Ground Truth Verification for Image 1 (Heracross, Lv.52, Careful, 5 subskills, Honey/Mushroom/Honey)
   const image1OcrText = `Lv. 52 其 拉克 羅斯
+持有上限 21個
 @ 健美 (料理 輔助 S) Lv.7
 技能 機 率 提 升 M
 技能 等 級 提 升 M
@@ -5517,6 +5518,8 @@ kotuv70 ,
   assertEquals(parsed.name, '赫拉克羅斯', 'Ground truth name must be 赫拉克羅斯 (Heracross #214)');
   assertEquals(parsed.pokemonId, '214', 'Ground truth pokemonId must be 214');
   assertEquals(parsed.level, 52, 'Ground truth level must be 52');
+  assertEquals(parsed.skillLevel, 7, 'Ground truth main skill level must be 7');
+  assertEquals(parsed.ribbon, 1, 'Carry 21 with base 20 and locked subskill must deduce Ribbon Lv.1');
   assertEquals(parsed.nature, '慎重', 'Ground truth nature must be 慎重 (Careful)');
   assertEquals(parsed.ing1, '甜甜蜜', 'Ground truth Slot 1 ingredient must be 甜甜蜜');
   assertEquals(parsed.ing2, '品鮮蘑菇', 'Ground truth Slot 2 ingredient must be 品鮮蘑菇');
@@ -5564,6 +5567,8 @@ SP 6,920
   const levelInput = mockEl('modal-poke-level', 'input');
   const natureSelect = mockEl('modal-poke-nature', 'select');
   const ribbonSelect = mockEl('modal-poke-ribbon', 'select');
+  const skillLevelSelect = mockEl('modal-poke-skill-level', 'select');
+  const mainSkillEl = mockEl('modal-poke-main-skill-name', 'span');
   const ing1Hidden = mockEl('modal-ing1', 'input');
   const ing2Hidden = mockEl('modal-ing2', 'input');
   const ing3Hidden = mockEl('modal-ing3', 'input');
@@ -5582,6 +5587,8 @@ SP 6,920
   domElements['modal-poke-level'] = levelInput;
   domElements['modal-poke-nature'] = natureSelect;
   domElements['modal-poke-ribbon'] = ribbonSelect;
+  domElements['modal-poke-skill-level'] = skillLevelSelect;
+  domElements['modal-poke-main-skill-name'] = mainSkillEl;
   domElements['modal-ing1'] = ing1Hidden;
   domElements['modal-ing2'] = ing2Hidden;
   domElements['modal-ing3'] = ing3Hidden;
@@ -5604,6 +5611,7 @@ SP 6,920
   assert(searchInput.value.includes('赫拉克羅斯'), 'Modal Pokémon input must display 赫拉克羅斯');
   assert(searchInput.value.includes('214'), 'Modal Pokémon input must display No.214');
   assertEquals(nameHidden.value, '赫拉克羅斯', 'Modal hidden name must be 赫拉克羅斯');
+  assertEquals(mainSkillEl.textContent, '健美（料理輔助S）', 'Modal main skill name badge must display 健美（料理輔助S）');
   assertEquals(levelInput.value, 52, 'Modal level input must be 52');
   assertEquals(natureSelect.value, '慎重', 'Modal nature select must be 慎重');
   assertEquals(ing1Hidden.value, '甜甜蜜', 'Modal Ing 1 must be 甜甜蜜');
@@ -5675,6 +5683,96 @@ test('Tier 4 - Real-World Application Scenarios', 'Box Modal Widening, Sticky Su
   assert(!emojiRegex.test('標準截圖示範例與必備資訊'), 'Guide title must not contain emojis');
   assert(!emojiRegex.test('截圖辨識確認入庫'), 'Modal title must not contain emojis');
   assert(!emojiRegex.test('深度評測室'), 'Appraisal lab button must not contain emojis');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Box Main Skill Level Control & Good-Night Ribbon Carry Deduction Workflow', () => {
+  const pkmData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'data.json'), 'utf8'));
+  const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+  const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+  const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+
+  // 1. Verify HTML Markup for Main Skill display and Level select (Desktop & Mobile)
+  assert(indexHtml.includes('modal-poke-main-skill-name'), 'index.html must include modal-poke-main-skill-name');
+  assert(indexHtml.includes('modal-poke-skill-level'), 'index.html must include modal-poke-skill-level');
+  assert(appIndexHtml.includes('modal-poke-main-skill-name'), 'app/index.html must include modal-poke-main-skill-name');
+  assert(appIndexHtml.includes('modal-poke-skill-level'), 'app/index.html must include modal-poke-skill-level');
+
+  // 2. Verify CSS rules for main skill row, badge and level select
+  assert(stylesCss.includes('.box-mainskill-control'), 'styles.css must include .box-mainskill-control');
+  assert(stylesCss.includes('.box-mainskill-name-badge'), 'styles.css must include .box-mainskill-name-badge');
+  assert(stylesCss.includes('.box-mainskill-select'), 'styles.css must include .box-mainskill-select');
+
+  // 3. Verify i18n keys
+  assert(i18nJs.includes("'box.modal_main_skill'"), 'i18n.js must define box.modal_main_skill');
+  assert(i18nJs.includes("'box.modal_skill_level'"), 'i18n.js must define box.modal_skill_level');
+
+  // Load box module
+  const boxModule = require(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'));
+  assert(typeof boxModule.deduceRibbonFromCarry === 'function', 'deduceRibbonFromCarry must be exported');
+  assert(typeof boxModule.parsePokemonFromOcr === 'function', 'parsePokemonFromOcr must be exported');
+
+  // 4. Test deduceRibbonFromCarry logic across diverse scenarios
+  const heracross = pkmData.find(p => p.name_cn === '赫拉克羅斯');
+  assert(heracross, 'Heracross must exist in data.json');
+  assertEquals(parseInt(heracross.carry, 10), 20, 'Heracross base carry is 20');
+
+  // Heracross screenshot subskills:
+  // Slot 1 (Lv.10): 技能機率提升M
+  // Slot 2 (Lv.25): 技能等級提升M
+  // Slot 3 (Lv.50): 幫忙速度M
+  // Slot 4 (Lv.70): 持有上限提升S (+6)
+  // Slot 5 (Lv.80): 食材機率提升S
+  const subskillsHera = ['技能機率提升M', '技能等級提升M', '幫忙速度M', '持有上限提升S', '食材機率提升S'];
+
+  // Scenario A: Carry 21, Lv.52 -> Slot 4 is LOCKED (52 < 70) -> diff = 21 - 20 - 0 = +1 -> Ribbon Lv.1 (200 hrs)
+  const ribbonA = boxModule.deduceRibbonFromCarry(heracross, 52, subskillsHera, 21);
+  assertEquals(ribbonA, 1, 'Carry 21 with base 20 and locked Inventory S must deduce Ribbon Lv.1');
+
+  // Scenario B: Carry 20, Lv.52 -> diff = 20 - 20 = 0 -> Ribbon Lv.0 (none)
+  const ribbonB = boxModule.deduceRibbonFromCarry(heracross, 52, subskillsHera, 20);
+  assertEquals(ribbonB, 0, 'Carry 20 with base 20 must deduce Ribbon Lv.0');
+
+  // Scenario C: Carry 23, Lv.52 -> diff = 23 - 20 = +3 -> Ribbon Lv.2 (500 hrs)
+  const ribbonC = boxModule.deduceRibbonFromCarry(heracross, 52, subskillsHera, 23);
+  assertEquals(ribbonC, 2, 'Carry 23 with base 20 must deduce Ribbon Lv.2');
+
+  // Scenario D: Carry 26, Lv.52 -> diff = 26 - 20 = +6 -> Ribbon Lv.3 (1000 hrs)
+  const ribbonD = boxModule.deduceRibbonFromCarry(heracross, 52, subskillsHera, 26);
+  assertEquals(ribbonD, 3, 'Carry 26 with base 20 must deduce Ribbon Lv.3');
+
+  // Scenario E: Carry 28, Lv.52 -> diff = 28 - 20 = +8 -> Ribbon Lv.4 (2000 hrs)
+  const ribbonE = boxModule.deduceRibbonFromCarry(heracross, 52, subskillsHera, 28);
+  assertEquals(ribbonE, 4, 'Carry 28 with base 20 must deduce Ribbon Lv.4');
+
+  // Scenario F: Heracross reaches Lv.75! Inventory Up S (+6) is now unlocked!
+  // If screenshot shows Carry 27, diff = 27 - 20 - 6 = +1 -> Ribbon Lv.1
+  const ribbonF = boxModule.deduceRibbonFromCarry(heracross, 75, subskillsHera, 27);
+  assertEquals(ribbonF, 1, 'Carry 27 with base 20 and unlocked Inventory S (+6) must deduce Ribbon Lv.1');
+
+  // 5. Verify OCR Parsing of Image 1 text extracts skillLevel = 7 and ribbon = 1
+  const fullOcrText = `SP 6,920
+Lv. 52 赫拉克羅斯
+幫忙間隔 每29分36秒
+持有上限 21個
+健美（料理輔助S） Lv. 7
+隨機獲得24個食材。不僅如此，料理漂亮成功的機率還會提升5%。
+技能機率提升M
+技能等級提升M
+幫忙速度M
+持有上限提升S
+食材機率提升S
+慎重
+主技能發動機率 ▲▲
+食材發現率 ▼▼`;
+
+  const parsed = boxModule.parsePokemonFromOcr(fullOcrText, null, pkmData);
+  assertEquals(parsed.name, '赫拉克羅斯', 'Parsed name must be 赫拉克羅斯');
+  assertEquals(parsed.level, 52, 'Parsed level must be 52');
+  assertEquals(parsed.skillLevel, 7, 'Parsed main skill level must be 7');
+  assertEquals(parsed.ribbon, 1, 'Parsed ribbon must be deduced as Lv.1 (+1 carry)');
+  assertArrayEquals(parsed.subskills, subskillsHera, 'Parsed subskills must exactly match all 5 slots');
 });
 
 // Final Summary Output

@@ -803,6 +803,18 @@
     }
   }
 
+  /* ─── 主技能展示與等級更新 ─────────────────────────────────── */
+  function updateModalMainSkill(p) {
+    const skillEl = document.getElementById('modal-poke-main-skill-name');
+    if (!skillEl) return;
+    const skillName = p ? (p.main_skill || '--') : '--';
+    const displaySkillName = (window.I18N && typeof window.I18N.getSkillName === 'function') 
+      ? window.I18N.getSkillName(skillName) 
+      : skillName;
+    skillEl.textContent = displaySkillName;
+    skillEl.setAttribute('title', skillName);
+  }
+
   /* ─── 寶可夢名稱 Combobox 搜尋選擇器 ───────────────────────── */
   function initPokemonCombobox(existingItem = null) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
@@ -813,44 +825,38 @@
     if (!searchInput || !nameHidden || !dropdown) return;
 
     const CHEVRON_ICON = `<svg viewBox="0 0 12 8" width="12" height="8"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M1 1.5L6 6.5L11 1.5"/></svg>`;
-    const CLEAR_ICON = `<svg viewBox="0 0 12 12" width="12" height="12"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M2 2L10 10M10 2L2 10"/></svg>`;
+    const CLEAR_ICON = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
 
     function syncToggleBtnIcon() {
       if (!toggleBtn) return;
       const hasText = !!(searchInput.value && searchInput.value.trim().length > 0);
       if (hasText) {
         toggleBtn.innerHTML = CLEAR_ICON;
-        toggleBtn.setAttribute('aria-label', isEN ? 'Clear Pokémon' : '清空寶可夢');
-        toggleBtn.setAttribute('title', isEN ? 'Clear' : '清空');
+        toggleBtn.title = isEN ? 'Clear selection' : '清除已選寶可夢';
+        toggleBtn.setAttribute('aria-label', isEN ? 'Clear selection' : '清除已選寶可夢');
       } else {
         toggleBtn.innerHTML = CHEVRON_ICON;
-        toggleBtn.setAttribute('aria-label', isEN ? 'Expand Pokémon list' : '展開寶可夢列表');
-        toggleBtn.removeAttribute('title');
+        toggleBtn.title = isEN ? 'Expand list' : '展開寶可夢列表';
+        toggleBtn.setAttribute('aria-label', isEN ? 'Expand list' : '展開寶可夢列表');
       }
     }
 
-    // 初始選取（僅在編輯或辨識帶入時設定，手動新增時為空）
-    let initialPkm = null;
-    if (existingItem) {
-      initialPkm = allPokemonsRef.find(p => p.id === existingItem.pokemonId || p.name_cn === existingItem.name) || null;
-    }
+    const initialPkm = existingItem
+      ? allPokemonsRef.find(p => p.id === existingItem.pokemonId || p.name_cn === existingItem.name)
+      : null;
 
     function renderDropdown(filterText = '') {
-      const q = filterText.trim().toLowerCase();
-      if (!q) {
-        renderFilteredItems(allPokemonsRef);
-        return;
-      }
+      const q = (filterText || '').trim().toLowerCase();
+      let matchedItems = [];
 
-      // 檢查是否為純數字/編號相關查詢 (支援 4, 40, 405, #405, No.405, no 405 等)
       const numMatch = q.match(/^(?:#|no\.?\s*)?(\d+)$/i);
       const isNumQuery = !!numMatch;
       const qDigits = numMatch ? numMatch[1] : '';
       const qNoZero = qDigits.replace(/^0+/, '');
 
-      let matchedItems = [];
-
-      if (isNumQuery && qDigits) {
+      if (!q) {
+        matchedItems = allPokemonsRef.slice();
+      } else if (isNumQuery && qDigits) {
         // 純數字編號智能查找：只要編號有任何符合 (包含 formatted_no, id, 無前導零) 全部列出
         allPokemonsRef.forEach(p => {
           const fNo = String(p.formatted_no || '');
@@ -874,7 +880,6 @@
           }
         });
 
-        // 排序：優先級 rank 越小越前，相同 rank 依圖鑑編號整數由小到大正序排列
         matchedItems.sort((a, b) => {
           if (a.rank !== b.rank) return a.rank - b.rank;
           const noA = parseInt(a.p.id || a.p.formatted_no, 10) || 0;
@@ -884,7 +889,6 @@
 
         matchedItems = matchedItems.map(item => item.p);
       } else {
-        // 非純數字輸入：完整保留名稱比對、拼音同音字、英文錯字與 Levenshtein 編輯距離模糊比對
         matchedItems = allPokemonsRef.filter(p => {
           if (typeof window.matchesPokemonSearch === 'function') {
             return window.matchesPokemonSearch(p, q);
@@ -969,6 +973,7 @@
       syncToggleBtnIcon();
       renderTiledIngredientPickers(p, existing);
       updateRibbonSelectOptions(p);
+      updateModalMainSkill(p);
     }
 
     if (initialPkm) {
@@ -980,6 +985,7 @@
       syncToggleBtnIcon();
       renderTiledIngredientPickers(null, null);
       updateRibbonSelectOptions(null);
+      updateModalMainSkill(null);
     }
 
     searchInput.onfocus = () => {
@@ -993,6 +999,7 @@
         updateSelectedPokemonAvatar(null);
         renderTiledIngredientPickers(null, null);
         updateRibbonSelectOptions(null);
+        updateModalMainSkill(null);
       }
       renderDropdown(searchInput.value);
     };
@@ -1008,6 +1015,7 @@
           syncToggleBtnIcon();
           renderTiledIngredientPickers(null, null);
           updateRibbonSelectOptions(null);
+          updateModalMainSkill(null);
           renderDropdown('');
           searchInput.focus();
         } else {
@@ -1328,6 +1336,19 @@
       }
     }
 
+    // 4.6 主技能展示與技能等級選單
+    updateModalMainSkill(currentSelectedPkm);
+    const skillLevelSelect = document.getElementById('modal-poke-skill-level');
+    if (skillLevelSelect) {
+      const lvlVal = existingItem && existingItem.skillLevel != null ? existingItem.skillLevel : 1;
+      skillLevelSelect.value = String(Math.max(1, Math.min(7, lvlVal)));
+      if (typeof window.setupCustomSelect === 'function' && !skillLevelSelect._customized) {
+        window.setupCustomSelect(skillLevelSelect);
+      } else if (skillLevelSelect._customized) {
+        skillLevelSelect.dispatchEvent(new Event('sync-ui'));
+      }
+    }
+
     // 5. 初始化副技能單行插槽 + 選擇盤
     initSubskillFlowPicker(existingItem ? existingItem.subskills : []);
 
@@ -1367,6 +1388,7 @@
     const nickInput = document.getElementById('modal-poke-nickname');
     const natureSelect = document.getElementById('modal-poke-nature');
     const ribbonSelect = document.getElementById('modal-poke-ribbon');
+    const skillLevelSelect = document.getElementById('modal-poke-skill-level');
     const ing1Select = document.getElementById('modal-ing1');
     const ing2Select = document.getElementById('modal-ing2');
     const ing3Select = document.getElementById('modal-ing3');
@@ -1385,6 +1407,7 @@
       return;
     }
 
+    const parsedSkillLevel = skillLevelSelect ? (parseInt(skillLevelSelect.value, 10) || 1) : 1;
     const base = findPokemonBase(pokeName);
 
     const subskills = [];
@@ -1402,6 +1425,7 @@
       type: base ? base.type : '一般',
       specialty: base ? base.specialty : '樹果',
       level: parsedLevel,
+      skillLevel: parsedSkillLevel,
       nickname: nickInput ? nickInput.value.trim() : '',
       nature: natureSelect ? natureSelect.value : '坦率',
       ribbon: ribbonVal,
@@ -1663,7 +1687,10 @@
     }
 
     const binLv = cropAndEnhance(Math.round(w * 0.18), Math.round(h * 0.10), Math.round(w * 0.32), Math.round(h * 0.04), 3.0, 'red_channel');
-    const mainSkill = cropAndEnhance(0, Math.round(h * 0.36), w, Math.round(h * 0.17), 1.0, 'none');
+    // 主技能卡：僅裁切上半部標題與等級區域（y: 0.36 ~ 0.435），避開下半部長篇說明文字（「隨機獲得24個食材...」），杜絕干擾
+    const mainSkill = cropAndEnhance(0, Math.round(h * 0.36), w, Math.round(h * 0.075), 1.2, 'none');
+    // 持有上限：裁切「持有上限 21個」區域
+    const carryNum = cropAndEnhance(Math.round(w * 0.36), Math.round(h * 0.25), Math.round(w * 0.26), Math.round(h * 0.045), 2.0, 'binarize', 135);
 
     const row1_y0 = Math.round(h * 0.55), row1_h = Math.round(h * 0.07);
     const row2_y0 = Math.round(h * 0.62), row2_h = Math.round(h * 0.07);
@@ -1671,16 +1698,90 @@
     const col1_x0 = Math.round(w * 0.06), col_w = Math.round(w * 0.42);
     const col2_x0 = Math.round(w * 0.52);
 
-    const slot1 = cropAndEnhance(col1_x0, row1_y0, col_w, row1_h, 2.5, 'binarize', 135);
-    const slot2 = cropAndEnhance(col2_x0, row1_y0, col_w, row1_h, 2.5, 'binarize', 135);
-    const slot3 = cropAndEnhance(col1_x0, row2_y0, col_w, row2_h, 2.5, 'binarize', 135);
-    const slot4 = cropAndEnhance(col2_x0, row2_y0, col_w, row2_h, 2.5, 'contrast');
-    const slot5 = cropAndEnhance(col1_x0, row3_y0, col_w, row3_h, 2.5, 'contrast');
+    // 副技能插槽自適應預處理函數：支援已解鎖彩色按鈕與帶鎖白色按鈕
+    function cropSubskillSlot(sx, sy, sw, sh) {
+      if (typeof document === 'undefined' || typeof document.createElement !== 'function') return null;
+      const scale = 2.5;
+      const dw = Math.round(sw * scale);
+      const dh = Math.round(sh * scale);
+      const c = document.createElement('canvas');
+      c.width = Math.max(10, dw);
+      c.height = Math.max(10, dh);
+      const ctx = c.getContext('2d');
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, dw, dh);
+
+      try {
+        const imgData = ctx.getImageData(0, 0, dw, dh);
+        const d = imgData.data;
+
+        // 採樣插槽文字中心區域以辨別是否為帶鎖白色按鈕 (淺灰字 minGray > 100) 或彩色按鈕 (深色字 minGray <= 100)
+        let minGray = 255;
+        const startY = Math.round(dh * 0.35);
+        const endY = Math.round(dh * 0.85);
+        const startX = Math.round(dw * 0.10);
+        const endX = Math.round(dw * 0.90);
+
+        for (let y = startY; y < endY; y++) {
+          for (let x = startX; x < endX; x++) {
+            const idx = (y * dw + x) * 4;
+            const g = d[idx] * 0.299 + d[idx + 1] * 0.587 + d[idx + 2] * 0.114;
+            if (g < minGray) minGray = g;
+          }
+        }
+
+        const isLocked = minGray > 100;
+        const threshold = isLocked ? 220 : 135;
+
+        for (let i = 0; i < d.length; i += 4) {
+          const gray = d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114;
+          const v = gray < threshold ? 0 : 255;
+          d[i] = v;
+          d[i + 1] = v;
+          d[i + 2] = v;
+        }
+
+        // 若為鎖定插槽，遮蔽左上角鎖頭徽章 (x: 0~45%, y: 0~42%) 與底部邊界純白化，移除干擾雜訊
+        if (isLocked) {
+          const badgeW = Math.round(dw * 0.45);
+          const badgeH = Math.round(dh * 0.42);
+          for (let y = 0; y < badgeH; y++) {
+            for (let x = 0; x < badgeW; x++) {
+              const idx = (y * dw + x) * 4;
+              d[idx] = 255;
+              d[idx + 1] = 255;
+              d[idx + 2] = 255;
+            }
+          }
+          const bottomCut = Math.round(dh * 0.94);
+          for (let y = bottomCut; y < dh; y++) {
+            for (let x = 0; x < dw; x++) {
+              const idx = (y * dw + x) * 4;
+              d[idx] = 255;
+              d[idx + 1] = 255;
+              d[idx + 2] = 255;
+            }
+          }
+        }
+
+        ctx.putImageData(imgData, 0, 0);
+      } catch (e) {}
+
+      return c;
+    }
+
+    const slot1 = cropSubskillSlot(col1_x0, row1_y0, col_w, row1_h);
+    const slot2 = cropSubskillSlot(col2_x0, row1_y0, col_w, row1_h);
+    const slot3 = cropSubskillSlot(col1_x0, row2_y0, col_w, row2_h);
+    const slot4 = cropSubskillSlot(col2_x0, row2_y0, col_w, row2_h);
+    const slot5 = cropSubskillSlot(col1_x0, row3_y0, col_w, row3_h);
 
     const nature = cropAndEnhance(0, Math.round(h * 0.81), w, Math.round(h * 0.13), 2.0, 'contrast');
 
     const parts = [
       { name: 'BIN_LV', canvas: binLv },
+      { name: 'CARRY_NUM', canvas: carryNum },
       { name: 'MAINSKILL', canvas: mainSkill },
       { name: 'SLOT1', canvas: slot1 },
       { name: 'SLOT2', canvas: slot2 },
@@ -1708,6 +1809,34 @@
     }
 
     return { compositeCanvas: compCanvas, rgbSlots };
+  }
+
+  /* ─── 依據持有上限反推睡飽飽獎章 (Carry to Good-Night Ribbon Deduction) ─── */
+  function deduceRibbonFromCarry(pkm, currentLvl, subskillsList, carryVal) {
+    if (!pkm || carryVal == null || isNaN(carryVal)) return 0;
+    const baseCarry = parseInt(pkm.carry, 10) || 20;
+
+    // 副技能解鎖等級門檻：Lv.10, Lv.25, Lv.50, Lv.70, Lv.80 (容錯 70/75 與 80/100)
+    const unlockThresholds = [10, 25, 50, 70, 80];
+    let subskillCarryBonus = 0;
+    const actualLvl = parseInt(currentLvl, 10) || 1;
+
+    for (let i = 0; i < (subskillsList || []).length; i++) {
+      const reqLvl = unlockThresholds[i] || 100;
+      if (actualLvl >= reqLvl) {
+        const skName = subskillsList[i];
+        if (skName === '持有上限提升S') subskillCarryBonus += 6;
+        else if (skName === '持有上限提升M') subskillCarryBonus += 12;
+        else if (skName === '持有上限提升L') subskillCarryBonus += 18;
+      }
+    }
+
+    const diff = carryVal - baseCarry - subskillCarryBonus;
+    if (diff >= 8) return 4;
+    if (diff >= 6) return 3;
+    if (diff >= 3) return 2;
+    if (diff >= 1) return 1;
+    return 0;
   }
 
   /* ─── 多錨點智能 OCR 解析核心 ─────────────────────────────── */
@@ -1784,6 +1913,35 @@
       if (mAny) {
         const parsedLvl = parseInt(mAny[1], 10);
         if (parsedLvl >= 1 && parsedLvl <= 75) level = parsedLvl;
+      }
+    }
+
+    // 2.5 主技能等級萃取 (從主技能區域擷取 1~7 級)
+    let skillLevel = 1;
+    const allOcrLines = text.split('\n');
+    for (const line of allOcrLines) {
+      const normLine = normalizeOcrText(line);
+      if (normLine.includes('SP') || (bestPkm && normLine.includes(bestPkm.name_cn))) continue;
+      const mSkillLvl = line.match(/(?:Lv\.?|LV)\s*([1-7])\b/) || normLine.match(/Lv\.?([1-7])$/);
+      if (mSkillLvl) {
+        const parsedSkillLvl = parseInt(mSkillLvl[1], 10);
+        if (parsedSkillLvl >= 1 && parsedSkillLvl <= 7) {
+          skillLevel = parsedSkillLvl;
+          break;
+        }
+      }
+    }
+
+    // 2.6 持有上限萃取 (從 CARRY_NUM 區域取得，例如「21個」)
+    let ocrCarry = null;
+    const mCarry = text.match(/持有上限\s*(\d{1,2})\s*個?/) || 
+                   text.match(/(\d{1,2})\s*個/) || 
+                   normalizeOcrText(text).match(/持有上限(\d{1,2})/) ||
+                   normalizeOcrText(text).match(/(\d{1,2})個/);
+    if (mCarry) {
+      const parsedCarry = parseInt(mCarry[1], 10);
+      if (parsedCarry >= 5 && parsedCarry <= 120) {
+        ocrCarry = parsedCarry;
       }
     }
 
@@ -1880,6 +2038,8 @@
       if (line.includes('隨機') || line.includes('效果') || line.includes('移動') || line.includes('每29分')) continue;
       if (line.includes('發動機率') || line.includes('發現率') || line.includes('食材發現')) continue;
       if (line.includes('健美') || line.includes('料理輔助')) continue;
+      if ((line.includes('持有上限') && !line.includes('提升')) || line.includes('料理漂亮') || line.includes('成功') || line.includes('持續到')) continue;
+      if (line.includes('SP') || (line.includes('個') && !line.includes('提升'))) continue;
 
       const matched = matchLineToSubskill(line);
       if (matched && !used.has(matched)) {
@@ -1888,6 +2048,9 @@
         if (subskills.length === 5) break;
       }
     }
+
+    // 依據持有上限反推睡飽飽獎章
+    const deducedRibbon = deduceRibbonFromCarry(bestPkm, level, subskills, ocrCarry);
 
     // 5. 解鎖食材組合 (結合合法食材庫與色彩採樣)
     let ing1 = '';
@@ -1934,6 +2097,8 @@
       type: bestPkm ? bestPkm.type : (allPokemons[0] ? allPokemons[0].type : ''),
       specialty: bestPkm ? bestPkm.specialty : (allPokemons[0] ? allPokemons[0].specialty : ''),
       level,
+      skillLevel,
+      ribbon: deducedRibbon,
       nature,
       subskills,
       ing1,
@@ -1964,6 +2129,8 @@
         let result = {
           name: '',
           level: 30,
+          skillLevel: 1,
+          ribbon: 0,
           nature: '固執',
           ing1: '',
           ing2: '',
@@ -2009,6 +2176,8 @@
         resolve({
           name: allPokemonsRef[0] ? allPokemonsRef[0].name_cn : '',
           level: 30,
+          skillLevel: 1,
+          ribbon: 0,
           nature: '固執',
           subskills: [],
           ing1: '',
@@ -2083,13 +2252,13 @@
             });
             saveUserBox();
             renderBox();
-            alert(`✅ 成功匯入 ${imported.length} 隻寶可夢！`);
+            alert(`成功匯入 ${imported.length} 隻寶可夢！`);
           }
         } else {
-          alert('❌ JSON 格式不正確，必須是寶可夢陣列清單！');
+          alert('匯入檔案格式錯誤，請確認為正確的 JSON 備份檔！');
         }
       } catch (err) {
-        alert('❌ 解析 JSON 檔案失敗：' + err.message);
+        alert('解析 JSON 備份檔案失敗：' + err.message);
       }
     };
     reader.readAsText(file);
@@ -2432,6 +2601,8 @@
       switchSubTab: switchBoxSubtab,
       calculatePokemonPR,
       updateRibbonSelectOptions,
+      updateModalMainSkill,
+      deduceRibbonFromCarry,
       initPokemonCombobox,
       setAllPokemons: (p) => { allPokemonsRef = p || []; },
       buildOcrCompositeCanvas,
@@ -2451,6 +2622,8 @@
       PokemonBoxApp: typeof window !== 'undefined' ? window.PokemonBoxApp : {
         calculatePokemonPR,
         updateRibbonSelectOptions,
+        updateModalMainSkill,
+        deduceRibbonFromCarry,
         initPokemonCombobox,
         setAllPokemons: (p) => { allPokemonsRef = p || []; },
         buildOcrCompositeCanvas,
@@ -2462,6 +2635,8 @@
       },
       calculatePokemonPR,
       updateRibbonSelectOptions,
+      updateModalMainSkill,
+      deduceRibbonFromCarry,
       initPokemonCombobox,
       setAllPokemons: (p) => { allPokemonsRef = p || []; },
       buildOcrCompositeCanvas,
