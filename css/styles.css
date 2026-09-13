@@ -6844,13 +6844,15 @@ input[type="number"] {
 .box-mainskill-control {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 .box-mainskill-badge-wrap {
-  flex: 1 1 auto;
-  min-width: 120px;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
 }
 
 .box-mainskill-name-badge {
@@ -6868,29 +6870,48 @@ input[type="number"] {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  height: 32px;
+  box-sizing: border-box;
 }
 
 .box-mainskill-lvl-wrap {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  flex-shrink: 0;
+  flex: 0 0 auto;
 }
 
 .box-mainskill-lvl-prefix {
-  font-size: 11.5px;
+  display: none !important;
+}
+
+.box-mainskill-control .custom-select-container {
+  width: 96px !important;
+  min-width: 96px !important;
+  flex: 0 0 96px;
+}
+
+.box-mainskill-control .custom-select-trigger {
+  height: 32px;
+  padding: 4px 34px 4px 10px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--text-secondary);
-  white-space: nowrap;
+  border-radius: 6px;
+}
+
+.box-mainskill-control .custom-select-arrow {
+  right: 14px;
 }
 
 .box-mainskill-select {
   width: 96px;
   height: 32px;
-  padding: 4px 8px;
-  padding-right: 32px;
+  padding: 4px 10px;
+  padding-right: 34px;
   font-size: 12px;
   font-weight: 700;
+  background-position: right 14px center;
+  flex-shrink: 0;
 }
 
 .box-form-label {

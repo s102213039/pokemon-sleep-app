@@ -5698,11 +5698,14 @@ test('Tier 4 - Real-World Application Scenarios', 'Box Main Skill Level Control 
   assert(indexHtml.includes('modal-poke-skill-level'), 'index.html must include modal-poke-skill-level');
   assert(appIndexHtml.includes('modal-poke-main-skill-name'), 'app/index.html must include modal-poke-main-skill-name');
   assert(appIndexHtml.includes('modal-poke-skill-level'), 'app/index.html must include modal-poke-skill-level');
+  assert(!indexHtml.includes('box-mainskill-lvl-prefix'), 'index.html must remove redundant box-mainskill-lvl-prefix label');
+  assert(!appIndexHtml.includes('box-mainskill-lvl-prefix'), 'app/index.html must remove redundant box-mainskill-lvl-prefix label');
 
   // 2. Verify CSS rules for main skill row, badge and level select
   assert(stylesCss.includes('.box-mainskill-control'), 'styles.css must include .box-mainskill-control');
   assert(stylesCss.includes('.box-mainskill-name-badge'), 'styles.css must include .box-mainskill-name-badge');
   assert(stylesCss.includes('.box-mainskill-select'), 'styles.css must include .box-mainskill-select');
+  assert(stylesCss.includes('.box-mainskill-control .custom-select-container'), 'styles.css must include .box-mainskill-control .custom-select-container');
 
   // 3. Verify i18n keys
   assert(i18nJs.includes("'box.modal_main_skill'"), 'i18n.js must define box.modal_main_skill');
