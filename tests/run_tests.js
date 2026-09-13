@@ -5611,6 +5611,72 @@ SP 6,920
   assertEquals(ing3Hidden.value, '甜甜蜜', 'Modal Ing 3 must be 甜甜蜜');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Box Modal Widening, Sticky Submit Button & Standard Screenshot Guide UI', () => {
+  const fs = require('fs');
+  const path = require('path');
+
+  // 1. Verify standard screenshot asset exists and is valid
+  const sampleAssetPath = path.join(__dirname, '../assets/guide/standard_screenshot_guide.png');
+  assert(fs.existsSync(sampleAssetPath), 'assets/guide/standard_screenshot_guide.png must exist');
+  const assetStats = fs.statSync(sampleAssetPath);
+  assert(assetStats.size > 50000, `Sample asset must be substantial size (actual: ${assetStats.size} bytes)`);
+
+  // 2. Verify index.html markup
+  const indexHtml = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
+  assert(indexHtml.includes('id="box-screenshot-guide-card"'), 'index.html must include box-screenshot-guide-card');
+  assert(indexHtml.includes('id="box-guide-lightbox-modal"'), 'index.html must include box-guide-lightbox-modal');
+  assert(indexHtml.includes('assets/guide/standard_screenshot_guide.png'), 'index.html must reference standard_screenshot_guide.png');
+  assert(indexHtml.includes('id="box-modal-submit-btn"'), 'index.html must contain box-modal-submit-btn');
+  assert(indexHtml.includes('id="box-modal-cancel-btn"'), 'index.html must contain box-modal-cancel-btn');
+
+  // Verify 5 checklist elements in index.html
+  assert(indexHtml.includes('[1]'), 'Guide must contain item [1]');
+  assert(indexHtml.includes('[2]'), 'Guide must contain item [2]');
+  assert(indexHtml.includes('[3]'), 'Guide must contain item [3]');
+  assert(indexHtml.includes('[4]'), 'Guide must contain item [4]');
+  assert(indexHtml.includes('[5]'), 'Guide must contain item [5]');
+
+  // 3. Verify mobile app/index.html markup
+  const mobileHtml = fs.readFileSync(path.join(__dirname, '../app/index.html'), 'utf8');
+  assert(mobileHtml.includes('id="box-screenshot-guide-card"'), 'app/index.html must include box-screenshot-guide-card');
+  assert(mobileHtml.includes('id="box-guide-lightbox-modal"'), 'app/index.html must include box-guide-lightbox-modal');
+  assert(mobileHtml.includes('../assets/guide/standard_screenshot_guide.png'), 'app/index.html must reference sample image');
+
+  // 4. Verify CSS rules for widening and sticky footer
+  const stylesCss = fs.readFileSync(path.join(__dirname, '../css/styles.css'), 'utf8');
+  assert(stylesCss.includes('.box-modal-dialog.has-screenshot'), 'CSS must include .box-modal-dialog.has-screenshot');
+  assert(stylesCss.includes('max-width: 1040px'), 'CSS must specify max-width: 1040px for has-screenshot');
+  assert(stylesCss.includes('.box-screenshot-guide-card'), 'CSS must style .box-screenshot-guide-card');
+  assert(stylesCss.includes('.box-guide-lightbox-backdrop'), 'CSS must style .box-guide-lightbox-backdrop');
+
+  // 5. Verify i18n dictionaries in both languages
+  const i18nSrc = fs.readFileSync(path.join(__dirname, '../js/core/i18n.js'), 'utf8');
+  const requiredKeys = [
+    'box.guide_title',
+    'box.guide_collapse',
+    'box.guide_expand',
+    'box.guide_click_zoom',
+    'box.guide_sample_label',
+    'box.guide_info_heading',
+    'box.guide_item1_title',
+    'box.guide_item2_title',
+    'box.guide_item3_title',
+    'box.guide_item4_title',
+    'box.guide_item5_title',
+    'box.guide_tip_badge',
+    'box.guide_tip_text'
+  ];
+  requiredKeys.forEach(k => {
+    assert(i18nSrc.includes(`'${k}'`), `i18n must include translation key: ${k}`);
+  });
+
+  // 6. Verify zero emoji policy on guide titles and modal headers
+  const emojiRegex = /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u;
+  assert(!emojiRegex.test('標準截圖示範例與必備資訊'), 'Guide title must not contain emojis');
+  assert(!emojiRegex.test('截圖辨識確認入庫'), 'Modal title must not contain emojis');
+  assert(!emojiRegex.test('深度評測室'), 'Appraisal lab button must not contain emojis');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

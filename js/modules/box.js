@@ -1331,12 +1331,27 @@
     // 5. 初始化副技能單行插槽 + 選擇盤
     initSubskillFlowPicker(existingItem ? existingItem.subskills : []);
 
+    const dialog = modal.querySelector ? modal.querySelector('.box-modal-dialog') : null;
+    if (dialog && dialog.classList) {
+      if (screenshotSrc) {
+        dialog.classList.add('has-screenshot');
+      } else {
+        dialog.classList.remove('has-screenshot');
+      }
+    }
+
     modal.style.display = 'flex';
   }
 
   function closeBoxEditModal() {
     const modal = document.getElementById('box-edit-modal');
-    if (modal) modal.style.display = 'none';
+    if (modal) {
+      modal.style.display = 'none';
+      const dialog = modal.querySelector ? modal.querySelector('.box-modal-dialog') : null;
+      if (dialog && dialog.classList) {
+        dialog.classList.remove('has-screenshot');
+      }
+    }
   }
 
   /* ─── 儲存編輯表單 ─────────────────────────────────────── */
@@ -2149,6 +2164,48 @@
         }
       }
     });
+
+    // 1.5 標準截圖指引卡片與 Lightbox 大圖彈窗
+    const guideToggleBtn = document.getElementById('box-guide-toggle-btn');
+    const guideBody = document.getElementById('box-guide-body');
+    const guideThumbWrap = document.getElementById('box-guide-thumb-wrap');
+    const guideLightbox = document.getElementById('box-guide-lightbox-modal');
+    const guideLightboxClose = document.getElementById('box-guide-lightbox-close');
+
+    if (guideToggleBtn && guideBody) {
+      guideToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isCollapsed = guideBody.style.display === 'none';
+        guideBody.style.display = isCollapsed ? 'flex' : 'none';
+        guideToggleBtn.setAttribute('aria-expanded', isCollapsed ? 'true' : 'false');
+        const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+        guideToggleBtn.textContent = isCollapsed 
+          ? (isEN ? 'Collapse' : '收合說明') 
+          : (isEN ? 'Expand Guide' : '展開說明');
+      });
+    }
+
+    if (guideThumbWrap && guideLightbox) {
+      guideThumbWrap.addEventListener('click', (e) => {
+        e.stopPropagation();
+        guideLightbox.style.display = 'flex';
+      });
+    }
+
+    if (guideLightboxClose && guideLightbox) {
+      guideLightboxClose.addEventListener('click', (e) => {
+        e.stopPropagation();
+        guideLightbox.style.display = 'none';
+      });
+    }
+
+    if (guideLightbox) {
+      guideLightbox.addEventListener('click', (e) => {
+        if (e.target === guideLightbox) {
+          guideLightbox.style.display = 'none';
+        }
+      });
+    }
 
     if (manualBtn) {
       manualBtn.addEventListener('click', () => openBoxEditModal());

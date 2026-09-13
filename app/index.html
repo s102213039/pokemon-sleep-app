@@ -746,6 +746,93 @@
             </div>
           </div>
 
+          <!-- 標準截圖示範例與必備資訊指引卡片 -->
+          <div id="box-screenshot-guide-card" class="box-screenshot-guide-card" style="margin: 8px 12px 12px;">
+            <div class="box-guide-header">
+              <div class="box-guide-title">
+                <svg class="box-guide-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <span data-i18n="box.guide_title">標準截圖示範例與必備資訊</span>
+              </div>
+              <button type="button" id="box-guide-toggle-btn" class="box-guide-toggle-btn" aria-expanded="false" data-i18n="box.guide_expand">展開說明</button>
+            </div>
+            <div id="box-guide-body" class="box-guide-body" style="display:none;">
+              <!-- 示範截圖縮圖 -->
+              <div class="box-guide-thumb-col">
+                <div class="box-guide-thumb-wrap" id="box-guide-thumb-wrap" title="點擊放大查看標準截圖範例">
+                  <img src="../assets/guide/standard_screenshot_guide.png" alt="標準截圖示範例" class="box-guide-thumb-img">
+                  <div class="box-guide-thumb-overlay">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                      <line x1="11" y1="8" x2="11" y2="14"></line>
+                      <line x1="8" y1="11" x2="14" y2="11"></line>
+                    </svg>
+                    <span data-i18n="box.guide_click_zoom">點擊放大檢視</span>
+                  </div>
+                </div>
+                <span class="box-guide-thumb-caption" data-i18n="box.guide_sample_label">官方詳細資訊全幅示範</span>
+              </div>
+
+              <!-- 5 大標準資訊清單 -->
+              <div class="box-guide-info-col">
+                <div class="box-guide-subtitle" data-i18n="box.guide_info_heading">標準截圖必備 5 大核心資訊 (確保 100% 辨識率)：</div>
+                <div class="box-guide-items-grid">
+                  <div class="box-guide-item">
+                    <span class="box-guide-num">[1]</span>
+                    <div class="box-guide-item-content">
+                      <strong data-i18n="box.guide_item1_title">頂部資訊 (名稱與等級)</strong>
+                      <p data-i18n="box.guide_item1_desc">包含完整的寶可夢名稱 (如 赫拉克羅斯) 與等級 (如 Lv. 52), 文字清晰無遮蔽。</p>
+                    </div>
+                  </div>
+                  <div class="box-guide-item">
+                    <span class="box-guide-num">[2]</span>
+                    <div class="box-guide-item-content">
+                      <strong data-i18n="box.guide_item2_title">食材組合 (Lv.1 / 30 / 60)</strong>
+                      <p data-i18n="box.guide_item2_desc">清晰顯示三個等級之解鎖食材圖示與獲得數量 (如 甜甜蜜x1, 品鮮蘑菇x1, 甜甜蜜x4)。</p>
+                    </div>
+                  </div>
+                  <div class="box-guide-item">
+                    <span class="box-guide-num">[3]</span>
+                    <div class="box-guide-item-content">
+                      <strong data-i18n="box.guide_item3_title">主技能資訊</strong>
+                      <p data-i18n="box.guide_item3_desc">顯示完整主技能名稱 (如 健美 / 料理輔助S) 與目前技能等級 (如 Lv.7)。</p>
+                    </div>
+                  </div>
+                  <div class="box-guide-item">
+                    <span class="box-guide-num">[4]</span>
+                    <div class="box-guide-item-content">
+                      <strong data-i18n="box.guide_item4_title">副技能欄位 (全部 5 格)</strong>
+                      <p data-i18n="box.guide_item4_desc">完整露出 Lv.10 至 Lv.80 (或 100) 共 5 個副技能方塊按鈕, 無選單遮擋。</p>
+                    </div>
+                  </div>
+                  <div class="box-guide-item">
+                    <span class="box-guide-num">[5]</span>
+                    <div class="box-guide-item-content">
+                      <strong data-i18n="box.guide_item5_title">性格與能力修正</strong>
+                      <p data-i18n="box.guide_item5_desc">底部性格名稱 (如 慎重) 及對應的主技能 / 食材發現率加減成箭頭 (▲▲ / ▼▼)。</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="box-guide-tips">
+                  <span class="box-guide-tip-badge" data-i18n="box.guide_tip_badge">提示</span>
+                  <span data-i18n="box.guide_tip_text">請截取「詳細資訊」完整畫面，避開半透明浮動選單覆蓋，即可秒速辨識！</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 截圖指引大圖 Lightbox 彈窗 -->
+          <div id="box-guide-lightbox-modal" class="box-guide-lightbox-backdrop" style="display:none;">
+            <div class="box-guide-lightbox-dialog">
+              <button type="button" id="box-guide-lightbox-close" class="box-guide-lightbox-close" aria-label="關閉大圖">✕</button>
+              <img src="../assets/guide/standard_screenshot_guide.png" alt="標準截圖完整大圖" class="box-guide-lightbox-img">
+            </div>
+          </div>
+
           <!-- 掃描進度指示條 (多圖辨識時展示) -->
           <div id="box-scanner-status" class="box-scanner-status" style="display:none;"></div>
         </section>

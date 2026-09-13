@@ -799,8 +799,8 @@
           </div>
           <div class="box-banner-actions">
             <input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
-            <button type="button" id="box-appraisal-lab-btn" class="box-btn" style="background: linear-gradient(135deg, #8b5cf6, #38bdf8); color: #ffffff; border: 1px solid rgba(168, 85, 247, 0.4); font-weight: 700;" onclick="window.AppraisalLab.toggleLab()" title="開啟/收合 寶可夢六維深度診斷評測實驗室" data-i18n="box.appraisal_lab">🔮 深度評測室</button>
-            <button type="button" id="box-manual-add-btn" class="box-btn box-btn-primary" data-i18n="box.add_pokemon">➕ 手動新增寶可夢</button>
+            <button type="button" id="box-appraisal-lab-btn" class="box-btn" style="background: linear-gradient(135deg, #8b5cf6, #38bdf8); color: #ffffff; border: 1px solid rgba(168, 85, 247, 0.4); font-weight: 700;" onclick="window.AppraisalLab.toggleLab()" title="開啟/收合 寶可夢六維深度診斷評測實驗室" data-i18n="box.appraisal_lab">深度評測室</button>
+            <button type="button" id="box-manual-add-btn" class="box-btn box-btn-primary" data-i18n="box.add_pokemon">手動新增寶可夢</button>
             <button type="button" id="box-export-btn" class="box-btn box-btn-secondary" title="匯出個人倉庫為 JSON 備份檔" data-i18n="box.export_backup">匯出備份</button>
             <label class="box-btn box-btn-secondary" style="cursor:pointer;margin:0;" title="從 JSON 檔案匯入還原倉庫" data-i18n="box.import_backup">
               匯入還原
@@ -809,13 +809,18 @@
           </div>
         </div>
 
-        <!-- 🔮 寶可夢六維深度評測實驗室容器 (Appraisal Lab) -->
+        <!-- 寶可夢六維深度評測實驗室容器 (Appraisal Lab) -->
         <div id="appraisal-lab-container" style="display:none; margin-bottom: 20px;"></div>
 
         <!-- 截圖拖曳與剪貼簿貼上區 -->
         <div id="box-dropzone" class="box-dropzone">
           <div class="box-dropzone-inner">
-            <span class="box-dropzone-icon">📸</span>
+            <span class="box-dropzone-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+            </span>
             <div class="box-dropzone-content">
               <div class="box-dropzone-title" data-i18n="box.dropzone_title">點擊或多選/批次拖曳「寶可夢資料截圖」至此，或直接按 <kbd>Ctrl+V</kbd> / <kbd>Cmd+V</kbd> 貼上</div>
               <div class="box-dropzone-sub" data-i18n="box.dropzone_sub">自動批次辨識：寶可夢名稱 · 等級 · Lv.1/30/60 食材組合 · 5 格副技能 · 性格加成 · 智能防重保護</div>
@@ -824,7 +829,94 @@
           <div id="box-scanner-status" class="box-scanner-status" style="display:none;"></div>
         </div>
 
-        <!-- 🔔 倉庫專屬浮動 Toast 通知容器 -->
+        <!-- 標準截圖示範例與必備資訊指引卡片 -->
+        <div id="box-screenshot-guide-card" class="box-screenshot-guide-card">
+          <div class="box-guide-header">
+            <div class="box-guide-title">
+              <svg class="box-guide-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              <span data-i18n="box.guide_title">標準截圖示範例與必備資訊</span>
+            </div>
+            <button type="button" id="box-guide-toggle-btn" class="box-guide-toggle-btn" aria-expanded="true" data-i18n="box.guide_collapse">收合說明</button>
+          </div>
+          <div id="box-guide-body" class="box-guide-body">
+            <!-- 示範截圖縮圖 -->
+            <div class="box-guide-thumb-col">
+              <div class="box-guide-thumb-wrap" id="box-guide-thumb-wrap" title="點擊放大查看標準截圖範例">
+                <img src="assets/guide/standard_screenshot_guide.png" alt="標準截圖示範例" class="box-guide-thumb-img">
+                <div class="box-guide-thumb-overlay">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    <line x1="11" y1="8" x2="11" y2="14"></line>
+                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                  </svg>
+                  <span data-i18n="box.guide_click_zoom">點擊放大檢視</span>
+                </div>
+              </div>
+              <span class="box-guide-thumb-caption" data-i18n="box.guide_sample_label">官方遊戲詳細資訊全幅示範</span>
+            </div>
+
+            <!-- 5 大標準資訊清單 -->
+            <div class="box-guide-info-col">
+              <div class="box-guide-subtitle" data-i18n="box.guide_info_heading">標準截圖必備 5 大核心資訊 (確保 100% 辨識率)：</div>
+              <div class="box-guide-items-grid">
+                <div class="box-guide-item">
+                  <span class="box-guide-num">[1]</span>
+                  <div class="box-guide-item-content">
+                    <strong data-i18n="box.guide_item1_title">頂部資訊 (名稱與等級)</strong>
+                    <p data-i18n="box.guide_item1_desc">包含完整的寶可夢名稱 (如 赫拉克羅斯) 與等級 (如 Lv. 52), 文字清晰無遮蔽。</p>
+                  </div>
+                </div>
+                <div class="box-guide-item">
+                  <span class="box-guide-num">[2]</span>
+                  <div class="box-guide-item-content">
+                    <strong data-i18n="box.guide_item2_title">食材組合 (Lv.1 / 30 / 60)</strong>
+                    <p data-i18n="box.guide_item2_desc">清晰顯示三個等級之解鎖食材圖示與獲得數量 (如 甜甜蜜x1, 品鮮蘑菇x1, 甜甜蜜x4)。</p>
+                  </div>
+                </div>
+                <div class="box-guide-item">
+                  <span class="box-guide-num">[3]</span>
+                  <div class="box-guide-item-content">
+                    <strong data-i18n="box.guide_item3_title">主技能資訊</strong>
+                    <p data-i18n="box.guide_item3_desc">顯示完整主技能名稱 (如 健美 / 料理輔助S) 與目前技能等級 (如 Lv.7)。</p>
+                  </div>
+                </div>
+                <div class="box-guide-item">
+                  <span class="box-guide-num">[4]</span>
+                  <div class="box-guide-item-content">
+                    <strong data-i18n="box.guide_item4_title">副技能欄位 (全部 5 格)</strong>
+                    <p data-i18n="box.guide_item4_desc">完整露出 Lv.10 至 Lv.80 (或 100) 共 5 個副技能方塊按鈕, 無選單或彈窗覆蓋遮擋。</p>
+                  </div>
+                </div>
+                <div class="box-guide-item">
+                  <span class="box-guide-num">[5]</span>
+                  <div class="box-guide-item-content">
+                    <strong data-i18n="box.guide_item5_title">性格與能力修正</strong>
+                    <p data-i18n="box.guide_item5_desc">底部性格名稱 (如 慎重) 及對應的主技能發動率 / 食材發現率加減成箭頭 (▲▲ / ▼▼)。</p>
+                  </div>
+                </div>
+              </div>
+              <div class="box-guide-tips">
+                <span class="box-guide-tip-badge" data-i18n="box.guide_tip_badge">提示</span>
+                <span data-i18n="box.guide_tip_text">請截取遊戲中「詳細資訊」完整畫面, 避開半透明浮動選單覆蓋, 即可實現高精準度秒速辨識！</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 截圖指引大圖 Lightbox 彈窗 -->
+        <div id="box-guide-lightbox-modal" class="box-guide-lightbox-backdrop" style="display:none;">
+          <div class="box-guide-lightbox-dialog">
+            <button type="button" id="box-guide-lightbox-close" class="box-guide-lightbox-close" aria-label="關閉大圖">✕</button>
+            <img src="assets/guide/standard_screenshot_guide.png" alt="標準截圖完整大圖" class="box-guide-lightbox-img">
+          </div>
+        </div>
+
+        <!-- 倉庫專屬浮動 Toast 通知容器 -->
         <div id="box-toast-container" class="box-toast-container"></div>
 
         <!-- 篩選與搜尋列 -->
@@ -844,17 +936,17 @@
           </div>
           <div class="sort-box">
             <select id="box-sort-select" class="sort-select" aria-label="倉庫排序">
-              <option value="pr-desc" data-i18n="box.sort_pr_desc">👑 PR 評分由高到低</option>
-              <option value="created-desc" data-i18n="box.sort_recent">📅 最近加入</option>
-              <option value="level-desc" data-i18n="box.sort_level_desc">⚡ 等級由高到低</option>
-              <option value="level-asc" data-i18n="box.sort_level_asc">🌱 等級由低到高</option>
-              <option value="pr-asc" data-i18n="box.sort_pr_asc">📉 PR 評分由低到高</option>
-              <option value="id-asc" data-i18n="box.sort_dex_asc">🔢 全國圖鑑編號</option>
+              <option value="pr-desc" data-i18n="box.sort_pr_desc">PR 評分由高到低</option>
+              <option value="created-desc" data-i18n="box.sort_recent">最近加入</option>
+              <option value="level-desc" data-i18n="box.sort_level_desc">等級由高到低</option>
+              <option value="level-asc" data-i18n="box.sort_level_asc">等級由低到高</option>
+              <option value="pr-asc" data-i18n="box.sort_pr_asc">PR 評分由低到高</option>
+              <option value="id-asc" data-i18n="box.sort_dex_asc">全國圖鑑編號</option>
             </select>
           </div>
           <div class="view-mode-toggle">
-            <button id="box-toggle-grid" class="toggle-btn active" data-i18n="pokedex.view_cards">🎴 卡片</button>
-            <button id="box-toggle-table" class="toggle-btn" data-i18n="pokedex.view_table">📊 表格</button>
+            <button id="box-toggle-grid" class="toggle-btn active" data-i18n="pokedex.view_cards">卡片</button>
+            <button id="box-toggle-table" class="toggle-btn" data-i18n="pokedex.view_table">表格</button>
           </div>
         </div>
 
@@ -924,11 +1016,11 @@
     </div>
   </main>
 
-  <!-- 📸 我的寶可夢倉庫：截圖辨識核對與手動編輯彈窗 -->
+  <!-- 我的寶可夢倉庫：截圖辨識核對與手動編輯彈窗 -->
   <div id="box-edit-modal" class="box-modal-backdrop" style="display:none;">
     <div class="box-modal-dialog">
       <div class="box-modal-header">
-        <h3 id="box-modal-title" class="box-modal-title" data-i18n="box.modal_title">📸 截圖辨識確認入庫</h3>
+        <h3 id="box-modal-title" class="box-modal-title" data-i18n="box.modal_title">截圖辨識確認入庫</h3>
         <button type="button" id="box-modal-close-btn" class="box-modal-close" aria-label="關閉">✕</button>
       </div>
 
@@ -974,7 +1066,7 @@
 
             <!-- 2. 食材組合：標籤與純圖標選項同一行展示 -->
             <div class="box-form-group box-full-width box-form-row-inline">
-              <label class="box-form-label box-form-inline-label" data-i18n="box.modal_poke_ing">🍲 食材組合</label>
+              <label class="box-form-label box-form-inline-label" data-i18n="box.modal_poke_ing">食材組合</label>
               <input type="hidden" id="modal-ing1" value="">
               <input type="hidden" id="modal-ing2" value="">
               <input type="hidden" id="modal-ing3" value="">
@@ -998,7 +1090,7 @@
 
             <!-- 性格：標籤與選單同一行展示 -->
             <div class="box-form-group box-full-width box-form-row-inline">
-              <label class="box-form-label box-form-inline-label" for="modal-poke-nature" data-i18n="box.modal_poke_nature">🧠 性格 <span style="color:#ef4444;">*</span></label>
+              <label class="box-form-label box-form-inline-label" for="modal-poke-nature" data-i18n="box.modal_poke_nature">性格 <span style="color:#ef4444;">*</span></label>
               <div class="box-form-inline-control">
                 <select id="modal-poke-nature" class="box-form-select" required></select>
               </div>
@@ -1021,7 +1113,7 @@
             <!-- 5 格副技能配置：單行 5 階插槽 + 平鋪副技能選擇盤 -->
             <div class="box-form-group box-full-width">
               <div style="display:flex;justify-content:space-between;align-items:center;">
-                <label class="box-form-label" data-i18n="box.modal_poke_subskills">⚡ 副技能配置</label>
+                <label class="box-form-label" data-i18n="box.modal_poke_subskills">副技能配置</label>
                 <button type="button" id="box-subskill-clear-all-btn" class="box-subskill-clear-btn" data-i18n="box.modal_clear_all_subskills" title="清空全部副技能">✕ 清空全部</button>
               </div>
 
@@ -1059,15 +1151,15 @@
               <!-- 平鋪副技能選擇盤 -->
               <div class="box-subskill-palette" id="box-subskill-palette">
                 <div class="subskill-tier-section">
-                  <div class="subskill-tier-label gold-label" data-i18n="box.modal_gold_skills">🌟 金色頂級技能</div>
+                  <div class="subskill-tier-label gold-label" data-i18n="box.modal_gold_skills">金色頂級技能</div>
                   <div class="subskill-chips-row" id="subskill-chips-gold"></div>
                 </div>
                 <div class="subskill-tier-section">
-                  <div class="subskill-tier-label blue-label" data-i18n="box.modal_blue_skills">🔷 藍色高階技能</div>
+                  <div class="subskill-tier-label blue-label" data-i18n="box.modal_blue_skills">藍色高階技能</div>
                   <div class="subskill-chips-row" id="subskill-chips-blue"></div>
                 </div>
                 <div class="subskill-tier-section">
-                  <div class="subskill-tier-label white-label" data-i18n="box.modal_white_skills">⚪ 白色基礎技能</div>
+                  <div class="subskill-tier-label white-label" data-i18n="box.modal_white_skills">白色基礎技能</div>
                   <div class="subskill-chips-row" id="subskill-chips-white"></div>
                 </div>
               </div>
