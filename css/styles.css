@@ -13442,8 +13442,8 @@ body.mobile-h5-app.pokemon-active,
 }
 
 .mobile-h5-app.pokemon-active #panel-pokemon {
-  height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
-  max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
+  height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 72px - env(safe-area-inset-bottom, 0px)) !important;
+  max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 72px - env(safe-area-inset-bottom, 0px)) !important;
   overflow: hidden !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -13483,7 +13483,7 @@ body.mobile-h5-app.pokemon-active,
   min-height: 0 !important;
   max-height: 100% !important;
   width: calc(100% - 24px) !important;
-  margin: 0 12px 8px !important;
+  margin: 0 12px 0 !important;
   padding: 0 0 28px 0 !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 14px !important;
@@ -13538,8 +13538,8 @@ body.mobile-h5-app.pokemon-active,
 .mobile-h5-app #panel-wiki,
 .mobile-h5-app #panel-box,
 .mobile-h5-app #panel-news {
-  height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
-  max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
+  height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 72px - env(safe-area-inset-bottom, 0px)) !important;
+  max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 72px - env(safe-area-inset-bottom, 0px)) !important;
   box-sizing: border-box !important;
 }
 
@@ -14619,6 +14619,9 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   bottom: 0;
   left: 0;
   right: 0;
+  height: calc(62px + env(safe-area-inset-bottom, 0px));
+  max-height: calc(62px + env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
   z-index: 1000;
   display: flex;
   justify-content: space-around;
@@ -14627,8 +14630,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid var(--border-color);
-  padding-top: 6px;
-  padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+  padding-top: 4px;
+  padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
   box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.12);
   user-select: none;
   -webkit-user-select: none;
@@ -20695,11 +20698,11 @@ body.mobile-h5-app.values-active,
 /* Recipe Highlight FAB (Floating Action Button) */
 .ladder-recipe-highlight-fab {
   position: fixed;
-  bottom: 24px;
-  right: 88px;
+  bottom: 64px;
+  right: 32px;
   z-index: 9990;
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background: linear-gradient(135deg, #f59e0b, #d97706);
   border: 1.5px solid rgba(255, 255, 255, 0.35);
@@ -20751,11 +20754,11 @@ body.mobile-h5-app.values-active,
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
-/* Mobile H5: Positioned on bottom-left, symmetric with right-side filter FAB */
+/* Mobile H5: Positioned on the right, directly ABOVE the filter FAB (bottom: 76px + 50px + 12px) */
 .mobile-h5-app .ladder-recipe-highlight-fab {
-  right: auto !important;
-  left: 16px !important;
-  bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+  right: 16px !important;
+  left: auto !important;
+  bottom: calc(138px + env(safe-area-inset-bottom, 0px)) !important;
   width: 50px !important;
   height: 50px !important;
 }
@@ -20865,14 +20868,56 @@ body.mobile-h5-app.values-active,
   background-color: rgba(255, 255, 255, 0.08);
 }
 
+/* Category Switcher Segmented Bar */
+.ladder-recipe-cat-bar {
+  display: flex;
+  gap: 6px;
+  padding: 10px 14px 4px;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.ladder-recipe-cat-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary, #94a3b8);
+  font-size: 12.5px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ladder-recipe-cat-btn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-primary, #f8fafc);
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+.ladder-recipe-cat-btn.active {
+  background: var(--accent-gradient, linear-gradient(135deg, #0284c7, #38bdf8));
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+  font-weight: 700;
+}
+
 .ladder-recipe-modal-body {
   flex: 1 1 auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 12px 14px;
+  padding: 10px 14px 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
 }
 
 .ladder-recipe-card {
@@ -20906,6 +20951,14 @@ body.mobile-h5-app.values-active,
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.recipe-card-rank {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-muted, #64748b);
+  min-width: 16px;
+  text-align: center;
 }
 
 .recipe-card-icon {
@@ -20948,97 +21001,96 @@ body.mobile-h5-app.values-active,
 
 .recipe-card-cat-badge.cat-咖哩 {
   background: rgba(245, 158, 11, 0.18);
-  color: #f59e0b;
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .recipe-card-cat-badge.cat-沙拉 {
-  background: rgba(34, 197, 94, 0.18);
-  color: #22c55e;
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .recipe-card-cat-badge.cat-甜點 {
   background: rgba(236, 72, 153, 0.18);
-  color: #ec4899;
+  color: #f472b6;
+  border: 1px solid rgba(236, 72, 153, 0.3);
 }
 
 .recipe-card-active-pill {
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 700;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
   padding: 1px 6px;
   border-radius: 10px;
-  background: #0284c7;
-  color: #ffffff;
   margin-left: auto;
 }
 
 .recipe-card-energy-row {
   display: flex;
   align-items: baseline;
-  gap: 6px;
-  font-size: 11.5px;
-  color: var(--text-secondary, #94a3b8);
+  gap: 5px;
 }
 
 .recipe-card-energy-num {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   color: #f59e0b;
-  font-family: monospace;
 }
 
 .recipe-card-energy-unit {
   font-size: 11px;
+  color: var(--text-secondary, #94a3b8);
 }
 
 .recipe-card-pot {
-  margin-left: auto;
+  margin-left: 8px;
   font-size: 11px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-muted, #64748b);
 }
 
 .recipe-card-ings-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 4px 6px;
 }
 
 .recipe-card-ing-chip {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 6px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  color: var(--text-secondary, #94a3b8);
 }
 
-.ing-chip-name {
-  color: var(--text-primary, #e2e8f0);
-}
-
-.ing-chip-count {
+.recipe-card-ing-chip .ing-chip-count {
   font-weight: 700;
   color: #38bdf8;
-  font-family: monospace;
 }
 
 .ladder-recipe-modal-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 12px 18px;
   border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  background: rgba(0, 0, 0, 0.15);
   flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .ladder-recipe-btn-clear {
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  color: #f87171;
-  padding: 6px 14px;
+  padding: 7px 14px;
   border-radius: 8px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
@@ -21046,43 +21098,44 @@ body.mobile-h5-app.values-active,
 }
 
 .ladder-recipe-btn-clear:hover {
-  background: rgba(239, 68, 68, 0.22);
+  background: rgba(239, 68, 68, 0.25);
 }
 
-.ladder-recipe-btn-close {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: var(--text-primary, #f8fafc);
-  padding: 6px 16px;
+.ladder-recipe-btn-cancel {
+  padding: 7px 14px;
   border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  color: var(--text-primary, #f8fafc);
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
-  margin-left: auto;
   transition: background-color 0.15s ease;
 }
 
-.ladder-recipe-btn-close:hover {
-  background: rgba(255, 255, 255, 0.14);
+.ladder-recipe-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.12);
 }
 
-/* Ladder Banner and Track Highlighting */
+/* Banner Above Coordinate Ladder */
 .ladder-recipe-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(2, 132, 199, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.ladder-recipe-banner-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(90deg, rgba(2, 132, 199, 0.22), rgba(56, 189, 248, 0.08));
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  border-radius: 10px;
-  padding: 6px 12px;
-  margin: 0 0 6px 0;
-  flex-shrink: 0;
-  animation: fadeInBanner 0.2s ease;
-}
-
-@keyframes fadeInBanner {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
+  gap: 10px;
 }
 
 .ladder-recipe-banner-info {
@@ -21139,6 +21192,45 @@ body.mobile-h5-app.values-active,
 
 .ladder-recipe-banner-clear-btn:hover {
   background: rgba(239, 68, 68, 0.25);
+}
+
+/* Banner Ingredients List (Below Recipe Info) */
+.ladder-recipe-banner-ings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid rgba(56, 189, 248, 0.15);
+}
+
+.ladder-recipe-banner-ing-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11.5px;
+  color: var(--text-primary, #f8fafc);
+}
+
+.ladder-banner-ing-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.ladder-banner-ing-name {
+  font-weight: 500;
+}
+
+.ladder-banner-ing-count {
+  color: #38bdf8;
+  font-weight: 700;
+  letter-spacing: -0.2px;
 }
 
 .ladder-track-row.ladder-track-highlighted {

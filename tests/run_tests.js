@@ -5835,15 +5835,20 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Ba
   assert(css.includes('.ladder-recipe-highlight-fab'), 'styles.css must style .ladder-recipe-highlight-fab');
   assert(css.includes('.ladder-track-row.ladder-track-highlighted'), 'styles.css must define highlighted ladder track row');
   assert(css.includes('.ladder-track-row.ladder-track-dimmed'), 'styles.css must define dimmed ladder track row');
-  assert(css.includes('.ladder-highlight-req-chip'), 'styles.css must define requirement badge chip');
+  assert(css.includes('.ladder-recipe-cat-bar'), 'styles.css must style recipe category switcher bar');
+  assert(css.includes('.ladder-recipe-banner-ings'), 'styles.css must style banner ingredient chips container');
+  assert(css.includes('bottom: calc(138px + env(safe-area-inset-bottom, 0px)) !important;'), 'styles.css must position mobile ladder FAB above filter FAB');
+  assert(css.includes('height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 72px - env(safe-area-inset-bottom, 0px)) !important;'), 'styles.css must reserve 72px bottom clearance for dock and margin');
 
-  // 2. Top 7 Recipes Data and Logic in wiki.js
-  assert(wikiJs.includes('const TOP_7_RECIPES_HIGHLIGHT = ['), 'wiki.js must define TOP_7_RECIPES_HIGHLIGHT');
+  // 2. Top Recipes by Category and Logic in wiki.js
+  assert(wikiJs.includes('const TOP_RECIPES_BY_CATEGORY = {'), 'wiki.js must define TOP_RECIPES_BY_CATEGORY');
+  assert(wikiJs.includes('switchLadderRecipeCategory'), 'wiki.js must define switchLadderRecipeCategory');
   assert(wikiJs.includes('openLadderRecipeModal'), 'wiki.js must define openLadderRecipeModal');
   assert(wikiJs.includes('selectLadderHighlightRecipe'), 'wiki.js must define selectLadderHighlightRecipe');
   assert(wikiJs.includes('clearLadderHighlightRecipe'), 'wiki.js must define clearLadderHighlightRecipe');
+  assert(!wikiJs.includes('ladder-track-ing-main">\n                  <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">\n                  ${isHighlighted ?'), 'wiki.js must not annotate requirement count in front of ladder track header');
 
-  // 3. Evaluate Top 7 Recipes
+  // 3. Evaluate Top Recipes Data
   const ctx = {
     localStorage: { getItem: () => 'zh-TW', setItem: () => {} },
     window: { localStorage: { getItem: () => 'zh-TW', setItem: () => {} }, addEventListener: () => {} },
@@ -5857,21 +5862,35 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Ba
   vm.createContext(ctx);
   vm.runInContext(wikiJs, ctx);
 
-  const top7 = ctx.window.WikiDB.TOP_7_RECIPES_HIGHLIGHT;
-  assertEquals(top7.length, 7, 'Must contain exactly 7 top recipes');
-  assertEquals(top7[0].name_cn, '彈跳咖哩烏龍麵', 'Rank 1 recipe must be 彈跳咖哩烏龍麵');
-  assertEquals(top7[0].base_energy, 25539, 'Rank 1 energy must be 25539');
-  assertEquals(top7[1].name_cn, '採蜜可可鬆餅', 'Rank 2 recipe must be 採蜜可可鬆餅');
-  assertEquals(top7[2].name_cn, '熱水溫沙拉', 'Rank 3 recipe must be 熱水溫沙拉');
-  assertEquals(top7[3].name_cn, '重踏酪梨醬薯片', 'Rank 4 recipe must be 重踏酪梨醬薯片');
-  assertEquals(top7[4].name_cn, '茂盛焗烤酪梨', 'Rank 5 recipe must be 茂盛焗烤酪梨');
-  assertEquals(top7[5].name_cn, '心跳加速鬼面鬆餅', 'Rank 6 recipe must be 心跳加速鬼面鬆餅');
-  assertEquals(top7[6].name_cn, '土王閃電泡芙', 'Rank 7 recipe must be 土王閃電泡芙');
-  assertEquals(top7[6].base_energy, 20885, 'Rank 7 energy must be 20885');
+  const byCat = ctx.window.WikiDB.TOP_RECIPES_BY_CATEGORY;
+  assert(byCat && byCat.curry && byCat.salad && byCat.dessert, 'Must define curry, salad, and dessert categories');
+  assertEquals(byCat.curry.length, 7, 'Curry must have exactly 7 top recipes');
+  assertEquals(byCat.salad.length, 7, 'Salad must have exactly 7 top recipes');
+  assertEquals(byCat.dessert.length, 7, 'Dessert must have exactly 7 top recipes');
+
+  // Verify top recipe energy ordering for each category
+  assertEquals(byCat.curry[0].name_cn, '彈跳咖哩烏龍麵', 'Curry #1 must be 彈跳咖哩烏龍麵');
+  assertEquals(byCat.curry[0].base_energy, 25539, 'Curry #1 energy must be 25539');
+  assertEquals(byCat.curry[6].name_cn, '萌綠咖哩麵包', 'Curry #7 must be 萌綠咖哩麵包');
+
+  assertEquals(byCat.salad[0].name_cn, '熱水溫沙拉', 'Salad #1 must be 熱水溫沙拉');
+  assertEquals(byCat.salad[0].base_energy, 25356, 'Salad #1 energy must be 25356');
+  assertEquals(byCat.salad[6].name_cn, '萌綠沙拉', 'Salad #7 must be 萌綠沙拉');
+
+  assertEquals(byCat.dessert[0].name_cn, '採蜜可可鬆餅', 'Dessert #1 must be 採蜜可可鬆餅');
+  assertEquals(byCat.dessert[0].base_energy, 25484, 'Dessert #1 energy must be 25484');
+  assertEquals(byCat.dessert[6].name_cn, '青草攪拌器果昔', 'Dessert #7 must be 青草攪拌器果昔');
+
+  // Verify category switching
+  assertEquals(ctx.window.WikiDB.getLadderRecipeCategory(), 'curry', 'Initial category should be curry');
+  ctx.window.WikiDB.switchLadderRecipeCategory('salad');
+  assertEquals(ctx.window.WikiDB.getLadderRecipeCategory(), 'salad', 'Category should switch to salad');
+  ctx.window.WikiDB.switchLadderRecipeCategory('dessert');
+  assertEquals(ctx.window.WikiDB.getLadderRecipeCategory(), 'dessert', 'Category should switch to dessert');
 
   // 4. Test Highlighting interaction
-  ctx.window.WikiDB.selectLadderHighlightRecipe('彈跳咖哩烏龍麵');
-  assertEquals(ctx.window.WikiDB.getLadderHighlightRecipe(), '彈跳咖哩烏龍麵', 'Active highlight recipe must be 彈跳咖哩烏龍麵');
+  ctx.window.WikiDB.selectLadderHighlightRecipe('熱水溫沙拉');
+  assertEquals(ctx.window.WikiDB.getLadderHighlightRecipe(), '熱水溫沙拉', 'Active highlight recipe must be 熱水溫沙拉');
 
   ctx.window.WikiDB.clearLadderHighlightRecipe();
   assertEquals(ctx.window.WikiDB.getLadderHighlightRecipe(), null, 'Active highlight recipe must be cleared');
