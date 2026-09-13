@@ -782,6 +782,19 @@
     const typeName = window.I18N ? window.I18N.getTypeName(currentPkm.type) : currentPkm.type;
     const specName = window.I18N ? window.I18N.getSpecialtyName(currentPkm.specialty) : currentPkm.specialty;
 
+    // 睡飽飽獎章動態效果文案 (依據寶可夢進化次數)
+    const ribbonEvos = getRemainingEvolutions(currentPkm);
+    let ribbonOpt2 = isEN ? 'Tier 2 · 500 hrs (+3 Carry)' : '第 2 階段 · 500 小時 (+3 持有上限)';
+    let ribbonOpt3 = isEN ? 'Tier 3 · 1,000 hrs (+6 Carry)' : '第 3 階段 · 1000 小時 (+6 持有上限)';
+    let ribbonOpt4 = isEN ? 'Tier 4 · 2,000 hrs (+8 Carry)' : '第 4 階段 · 2000 小時 (+8 持有上限)';
+    if (ribbonEvos === 2) {
+      ribbonOpt2 = isEN ? 'Tier 2 · 500 hrs (+3 Carry · Speed -11%)' : '第 2 階段 · 500 小時 (+3 持有上限 · 幫速加成 -11%)';
+      ribbonOpt4 = isEN ? 'Tier 4 · 2,000 hrs (+8 Carry · Speed -25%)' : '第 4 階段 · 2000 小時 (+8 持有上限 · 幫速最大加成 -25%)';
+    } else if (ribbonEvos === 1) {
+      ribbonOpt2 = isEN ? 'Tier 2 · 500 hrs (+3 Carry · Speed -5%)' : '第 2 階段 · 500 小時 (+3 持有上限 · 幫速加成 -5%)';
+      ribbonOpt4 = isEN ? 'Tier 4 · 2,000 hrs (+8 Carry · Speed -12%)' : '第 4 階段 · 2000 小時 (+8 持有上限 · 幫速最大加成 -12%)';
+    }
+
     targetElement.innerHTML = `
       <div class="appraisal-lab-seamless-view">
         <!-- 1. 倉庫快速選取區 (User Box Linkage) -->
@@ -875,10 +888,10 @@
               </label>
               <select id="lab-ribbon-select" class="lab-select" onchange="window.AppraisalLab.onRibbonChange(this.value)">
                 <option value="0" ${labState.ribbon === 0 ? 'selected' : ''}>${isEN ? 'None (0h)' : '未佩戴 (0h)'}</option>
-                <option value="1" ${labState.ribbon === 1 ? 'selected' : ''}>${isEN ? 'Tier 1 · 200 hrs (+1 Carry)' : '第 1 階段 · 200 小時 (+1 持有上限)'}</option>
-                <option value="2" ${labState.ribbon === 2 ? 'selected' : ''}>${isEN ? 'Tier 2 · 500 hrs (+3 Carry · Speed Boost)' : '第 2 階段 · 500 小時 (+3 持有上限 · 幫速加成)'}</option>
-                <option value="3" ${labState.ribbon === 3 ? 'selected' : ''}>${isEN ? 'Tier 3 · 1,000 hrs (+6 Carry · Profile Icon)' : '第 3 階段 · 1000 小時 (+6 持有上限 · 專屬頭像)'}</option>
-                <option value="4" ${labState.ribbon === 4 ? 'selected' : ''}>${isEN ? 'Tier 4 · 2,000 hrs (+8 Carry · Max Speed Boost)' : '第 4 階段 · 2000 小時 (+8 持有上限 · 幫速最大加成)'}</option>
+                <option value="1" ${labState.ribbon === 1 ? 'selected' : ''}>${isEN ? 'Tier 1 · 200 hrs (+1 Carry Limit)' : '第 1 階段 · 200 小時 (+1 持有上限)'}</option>
+                <option value="2" ${labState.ribbon === 2 ? 'selected' : ''}>${ribbonOpt2}</option>
+                <option value="3" ${labState.ribbon === 3 ? 'selected' : ''}>${ribbonOpt3}</option>
+                <option value="4" ${labState.ribbon === 4 ? 'selected' : ''}>${ribbonOpt4}</option>
               </select>
             </div>
 

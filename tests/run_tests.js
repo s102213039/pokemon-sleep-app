@@ -4030,6 +4030,17 @@ test('Tier 1 - Feature Coverage', 'Good-Night Ribbon i18n Dictionary and Box Mod
   assert(indexHtml.includes('class="box-form-select"'), 'index.html must use box-form-select class on dropdowns');
   assert(indexHtml.includes('value="0"'), 'modal-poke-ribbon must include value 0');
   assert(indexHtml.includes('value="4"'), 'modal-poke-ribbon must include value 4');
+  assert(!indexHtml.includes('專屬頭像'), 'index.html modal-poke-ribbon must not include 專屬頭像');
+
+  // Verify mobile app/index.html includes modal-poke-ribbon
+  const appHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+  assert(appHtml.includes('id="modal-poke-ribbon"'), 'app/index.html must include modal-poke-ribbon');
+
+  // Verify removal of profile icon from i18n
+  I18N.setLanguage('zh-TW');
+  assert(!I18N.t('box.ribbon_lv3').includes('專屬頭像'), 'box.ribbon_lv3 zh-TW must not include 專屬頭像');
+  I18N.setLanguage('en-US');
+  assert(!I18N.t('box.ribbon_lv3').includes('Profile Icon'), 'box.ribbon_lv3 en-US must not include Profile Icon');
 
   // 3. Verify CSS styling complies with dropdown padding and arrow layout rules
   assert(stylesCss.includes('.box-form-select'), 'styles.css must style .box-form-select');
@@ -5263,6 +5274,151 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Healer Strategy, Seed Ev
   assert(recipesJs.includes("bookmarkHandle.classList.remove('drawer-open')"), 'recipes.js must remove drawer-open when collapsing');
   assert(wikiJs.includes("bookmarkHandle.classList.add('drawer-open')"), 'wiki.js must add drawer-open when expanding');
   assert(wikiJs.includes("bookmarkHandle.classList.remove('drawer-open')"), 'wiki.js must remove drawer-open when collapsing');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Box Manual Add Combobox Number Search Intelligence & Dynamic Good-Night Ribbon Options', () => {
+  const pkmData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'data.json'), 'utf8'));
+  const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+  const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+  const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+
+  // 1. Setup DOM and vm Context
+  const domElements = {};
+  function mockEl(id, tagName = 'div') {
+    const el = {
+      id,
+      tagName: tagName.toUpperCase(),
+      value: '',
+      innerHTML: '',
+      style: {},
+      classList: {
+        add: () => {},
+        remove: () => {},
+        contains: () => false
+      },
+      setAttribute: () => {},
+      removeAttribute: () => {},
+      getAttribute: () => '',
+      addEventListener: (evt, handler) => { el['on' + evt] = handler; },
+      dispatchEvent: () => {},
+      querySelectorAll: () => []
+    };
+    domElements[id] = el;
+    return el;
+  }
+
+  const ctx = {
+    window: {},
+    document: {
+      getElementById: id => domElements[id] || mockEl(id),
+      createElement: tag => mockEl('mock-' + Math.random(), tag),
+      querySelectorAll: () => [],
+      addEventListener: () => {}
+    },
+    localStorage: { getItem: () => null, setItem: () => {} },
+    console,
+    BERRY_DATA: [],
+    THREE_STAGE_BASE_NAMES: new Set([
+      '妙蛙種子', '小火龍', '傑尼龜', '綠毛蟲', '喇叭芽', '波克比', '咩利羊',
+      '火稚雞', '木守宮', '水躍魚', '拉魯拉絲', '過動猿', '可可多拉',
+      '超音蝠', '小拳石', '鬼斯', '凱西', '小磁怪', '圓陸鯊', '大針蜂',
+      '火球鼠', '小鋸鱷', '幼基拉斯', '大顎蟻', '海豹球', '寶貝龍', '草苗龜', '小火焰猴', '波加曼', '小貓怪',
+      '強顎雞母蟲', '新葉喵', '呆火鱷', '潤水鴨', '布撥', '巧鍛匠'
+    ])
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+
+  vm.createContext(ctx);
+  vm.runInContext(appJs, ctx);
+  vm.runInContext(appraisalJs, ctx);
+  vm.runInContext(boxJs, ctx);
+
+  // Initialize Box with pokemon data
+  const boxApp = ctx.PokemonBoxApp || ctx.window.PokemonBoxApp;
+  assert(boxApp, 'PokemonBoxApp must be defined');
+  assert(typeof boxApp.updateRibbonSelectOptions === 'function', 'updateRibbonSelectOptions must be exposed');
+
+  // Test 1: Dynamic Good-Night Ribbon options based on evolution stage
+  const ribbonSelect = mockEl('modal-poke-ribbon', 'select');
+  domElements['modal-poke-ribbon'] = ribbonSelect;
+
+  // Case 1A: Final Evolution (e.g. 倫琴貓 Luxray #405, is_final = '〇')
+  const luxray = pkmData.find(p => p.id === '405' || p.name_cn === '倫琴貓');
+  assert(luxray, 'Luxray #405 must exist in data.json');
+  boxApp.updateRibbonSelectOptions(luxray);
+  const luxrayHtml = ribbonSelect.innerHTML;
+  assert(luxrayHtml.includes('+3 持有上限'), 'Final evolution must have +3 持有上限');
+  assert(!luxrayHtml.includes('幫速加成'), 'Final evolution must NOT have 幫速加成');
+  assert(!luxrayHtml.includes('幫速最大加成'), 'Final evolution must NOT have 幫速最大加成');
+  assert(!luxrayHtml.includes('專屬頭像'), 'Final evolution must NOT have 專屬頭像');
+  assert(luxrayHtml.includes('+6 持有上限'), 'Final evolution must have +6 持有上限');
+  assert(luxrayHtml.includes('+8 持有上限'), 'Final evolution must have +8 持有上限');
+
+  // Case 1B: Mid-Stage / 1 Evo Remaining (e.g. 勒克貓 Luxio #404)
+  const luxio = pkmData.find(p => p.id === '404' || p.name_cn === '勒克貓');
+  assert(luxio, 'Luxio #404 must exist in data.json');
+  boxApp.updateRibbonSelectOptions(luxio);
+  const luxioHtml = ribbonSelect.innerHTML;
+  assert(luxioHtml.includes('幫速加成 -5%'), '1-evo remaining must have 幫速加成 -5%');
+  assert(luxioHtml.includes('幫速最大加成 -12%'), '1-evo remaining must have 幫速最大加成 -12%');
+  assert(!luxioHtml.includes('專屬頭像'), '1-evo remaining must NOT have 專屬頭像');
+
+  // Case 1C: Base Stage / 2 Evos Remaining (e.g. 小貓怪 Shinx #403)
+  const shinx = pkmData.find(p => p.id === '403' || p.name_cn === '小貓怪');
+  assert(shinx, 'Shinx #403 must exist in data.json');
+  boxApp.updateRibbonSelectOptions(shinx);
+  const shinxHtml = ribbonSelect.innerHTML;
+  assert(shinxHtml.includes('幫速加成 -11%'), '2-evo remaining must have 幫速加成 -11%');
+  assert(shinxHtml.includes('幫速最大加成 -25%'), '2-evo remaining must have 幫速最大加成 -25%');
+  assert(!shinxHtml.includes('專屬頭像'), '2-evo remaining must NOT have 專屬頭像');
+
+  // Test 2: Combobox Number Search Intelligence (Partial, Prefix, Substring, Typo)
+  const searchInput = mockEl('modal-poke-search', 'input');
+  const nameHidden = mockEl('modal-poke-name', 'input');
+  const dropdown = mockEl('box-pkm-dropdown', 'div');
+  const toggleBtn = mockEl('box-pkm-dropdown-toggle', 'button');
+  domElements['modal-poke-search'] = searchInput;
+  domElements['modal-poke-name'] = nameHidden;
+  domElements['box-pkm-dropdown'] = dropdown;
+  domElements['box-pkm-dropdown-toggle'] = toggleBtn;
+
+  boxApp.setAllPokemons(pkmData);
+  boxApp.initPokemonCombobox();
+  const renderDropdown = ctx.window._boxRenderDropdown;
+  assert(typeof renderDropdown === 'function', '_boxRenderDropdown must be exposed for testing');
+
+  // 2A. Search '40'
+  renderDropdown('40');
+  assert(dropdown.innerHTML.includes('No.040 胖可丁'), 'Search "40" must include #040 胖可丁 as exact match');
+  assert(dropdown.innerHTML.includes('No.405 倫琴貓'), 'Search "40" must include #405 倫琴貓 (prefix 40)');
+  assert(dropdown.innerHTML.includes('No.403 小貓怪'), 'Search "40" must include #403 小貓怪 (prefix 40)');
+  // Verify rank ordering: #040 胖可丁 appears before #405 倫琴貓
+  const idx40 = dropdown.innerHTML.indexOf('No.040 胖可丁');
+  const idx405 = dropdown.innerHTML.indexOf('No.405 倫琴貓');
+  assert(idx40 !== -1 && idx405 !== -1 && idx40 < idx405, '#040 exact match must appear before #405 prefix match');
+
+  // 2B. Search '405'
+  renderDropdown('405');
+  assert(dropdown.innerHTML.includes('No.405 倫琴貓'), 'Search "405" must include #405 倫琴貓');
+  assert(!dropdown.innerHTML.includes('No.040 胖可丁'), 'Search "405" must NOT include #040');
+
+  // 2C. Search 'No.405'
+  renderDropdown('No.405');
+  assert(dropdown.innerHTML.includes('No.405 倫琴貓'), 'Search "No.405" must match #405 倫琴貓');
+
+  // 2D. Search '4'
+  renderDropdown('4');
+  assert(dropdown.innerHTML.includes('No.004 小火龍'), 'Search "4" must include #004 小火龍');
+  assert(dropdown.innerHTML.includes('No.405 倫琴貓'), 'Search "4" must include #405 倫琴貓');
+
+  // 2E. Search typo '皮卡秋' (Homophone/typo tolerance)
+  renderDropdown('皮卡秋');
+  assert(dropdown.innerHTML.includes('皮卡丘'), 'Search typo "皮卡秋" must match 皮卡丘');
+
+  // 2F. Search subsequence '妙花'
+  renderDropdown('妙花');
+  assert(dropdown.innerHTML.includes('妙蛙花'), 'Search "妙花" must match 妙蛙花');
 });
 
 // Final Summary Output

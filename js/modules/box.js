@@ -735,6 +735,71 @@
   /* ─── 視覺化確認與編輯彈窗 ───────────────────────────────── */
   let activeSubskillSlot = 1; // 1 to 5
 
+  /* ─── 睡飽飽獎章動態效果選單更新 (依據寶可夢進化形態不同動態調整) ── */
+  function updateRibbonSelectOptions(p) {
+    const ribbonSelect = document.getElementById('modal-poke-ribbon');
+    if (!ribbonSelect) return;
+
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+
+    // 計算剩餘進化次數
+    let remainingEvos = 0;
+    if (p) {
+      if (typeof window !== 'undefined' && window.AppraisalLab && typeof window.AppraisalLab.getRemainingEvolutions === 'function') {
+        remainingEvos = window.AppraisalLab.getRemainingEvolutions(p);
+      } else {
+        const isFinal = p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1';
+        remainingEvos = isFinal ? 0 : 1;
+      }
+    }
+
+    // 記住當前選取值
+    const currentVal = ribbonSelect.value || '0';
+
+    let opt2Text = '';
+    let opt3Text = isEN ? 'Tier 3 · 1000 hrs (+6 Carry Limit)' : '第 3 階段 · 1000 小時 (+6 持有上限)';
+    let opt4Text = '';
+
+    if (!p) {
+      // 未選擇寶可夢時的通用預設文案
+      opt2Text = isEN ? 'Tier 2 · 500 hrs (+3 Carry Limit · Speed Boost)' : '第 2 階段 · 500 小時 (+3 持有上限 · 幫速加成)';
+      opt4Text = isEN ? 'Tier 4 · 2000 hrs (+8 Carry Limit · Max Speed Boost)' : '第 4 階段 · 2000 小時 (+8 持有上限 · 幫速最大加成)';
+    } else if (remainingEvos === 2) {
+      // 尚可進化 2 次 (例如：小火龍、小貓怪、皮丘)
+      opt2Text = isEN ? 'Tier 2 · 500 hrs (+3 Carry Limit · Speed -11%)' : '第 2 階段 · 500 小時 (+3 持有上限 · 幫速加成 -11%)';
+      opt4Text = isEN ? 'Tier 4 · 2000 hrs (+8 Carry Limit · Speed -25%)' : '第 4 階段 · 2000 小時 (+8 持有上限 · 幫速最大加成 -25%)';
+    } else if (remainingEvos === 1) {
+      // 尚可進化 1 次 (例如：火恐龍、勒克貓、皮卡丘、伊布)
+      opt2Text = isEN ? 'Tier 2 · 500 hrs (+3 Carry Limit · Speed -5%)' : '第 2 階段 · 500 小時 (+3 持有上限 · 幫速加成 -5%)';
+      opt4Text = isEN ? 'Tier 4 · 2000 hrs (+8 Carry Limit · Speed -12%)' : '第 4 階段 · 2000 小時 (+8 持有上限 · 幫速最大加成 -12%)';
+    } else {
+      // 最終進化形或無法進化的寶可夢 (例如：噴火龍、倫琴貓、凱羅斯) -> 無幫速加成
+      opt2Text = isEN ? 'Tier 2 · 500 hrs (+3 Carry Limit)' : '第 2 階段 · 500 小時 (+3 持有上限)';
+      opt4Text = isEN ? 'Tier 4 · 2000 hrs (+8 Carry Limit)' : '第 4 階段 · 2000 小時 (+8 持有上限)';
+    }
+
+    const optionsData = [
+      { val: '0', text: isEN ? 'None (0h)' : '未佩戴 (0h)' },
+      { val: '1', text: isEN ? 'Tier 1 · 200 hrs (+1 Carry Limit)' : '第 1 階段 · 200 小時 (+1 持有上限)' },
+      { val: '2', text: opt2Text },
+      { val: '3', text: opt3Text },
+      { val: '4', text: opt4Text }
+    ];
+
+    ribbonSelect.innerHTML = optionsData.map(o => `
+      <option value="${o.val}" ${o.val === currentVal ? 'selected' : ''}>${o.text}</option>
+    `).join('');
+
+    ribbonSelect.value = currentVal;
+
+    // 同步自訂下拉元件
+    if (typeof window.setupCustomSelect === 'function' && !ribbonSelect._customized) {
+      window.setupCustomSelect(ribbonSelect);
+    } else if (ribbonSelect._customized) {
+      ribbonSelect.dispatchEvent(new Event('sync-ui'));
+    }
+  }
+
   /* ─── 寶可夢名稱 Combobox 搜尋選擇器 ───────────────────────── */
   function initPokemonCombobox(existingItem = null) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
@@ -769,26 +834,79 @@
 
     function renderDropdown(filterText = '') {
       const q = filterText.trim().toLowerCase();
-      const filtered = allPokemonsRef.filter(p => {
-        if (!q) return true;
-        if (typeof window.matchesPokemonSearch === 'function') {
-          return window.matchesPokemonSearch(p, q);
-        }
-        const cn = (p.name_cn || '').toLowerCase();
-        const en = (p.name_en || '').toLowerCase();
-        const no = String(p.formatted_no || p.id || '').toLowerCase();
-        const cleanNo = no.replace(/^0+/, '');
-        const cleanQ = q.replace(/^#/, '');
-        return cn.includes(q) || en.includes(q) || no.includes(cleanQ) || cleanNo === cleanQ;
-      });
+      if (!q) {
+        renderFilteredItems(allPokemonsRef);
+        return;
+      }
 
-      if (filtered.length === 0) {
+      // 檢查是否為純數字/編號相關查詢 (支援 4, 40, 405, #405, No.405, no 405 等)
+      const numMatch = q.match(/^(?:#|no\.?\s*)?(\d+)$/i);
+      const isNumQuery = !!numMatch;
+      const qDigits = numMatch ? numMatch[1] : '';
+      const qNoZero = qDigits.replace(/^0+/, '');
+
+      let matchedItems = [];
+
+      if (isNumQuery && qDigits) {
+        // 純數字編號智能查找：只要編號有任何符合 (包含 formatted_no, id, 無前導零) 全部列出
+        allPokemonsRef.forEach(p => {
+          const fNo = String(p.formatted_no || '');
+          const idStr = String(p.id || '');
+          const cleanNo = fNo.replace(/^0+/, '');
+          const pad4 = fNo.padStart(4, '0');
+
+          let rank = 0;
+          if (idStr === qDigits || cleanNo === qDigits || (qNoZero && cleanNo === qNoZero) || fNo === qDigits || pad4 === qDigits) {
+            rank = 1; // 完全精確比對，最優先展示
+          } else if ((qNoZero && cleanNo.startsWith(qNoZero)) || cleanNo.startsWith(qDigits) || fNo.startsWith(qDigits)) {
+            rank = 2; // 前綴符合 (例如輸入 40 時，400, 403, 404, 405 優先展示)
+          } else if (fNo.includes(qDigits) || idStr.includes(qDigits) || cleanNo.includes(qDigits) || pad4.includes(qDigits) || (qNoZero && idStr.includes(qNoZero))) {
+            rank = 3; // 包含符合 (例如輸入 40 時，140, 240, 340 也列出供挑選)
+          } else if (typeof window.matchesPokemonSearch === 'function' && window.matchesPokemonSearch(p, q)) {
+            rank = 4; // 名稱或同音錯字符合
+          }
+
+          if (rank > 0) {
+            matchedItems.push({ p, rank });
+          }
+        });
+
+        // 排序：優先級 rank 越小越前，相同 rank 依圖鑑編號整數由小到大正序排列
+        matchedItems.sort((a, b) => {
+          if (a.rank !== b.rank) return a.rank - b.rank;
+          const noA = parseInt(a.p.id || a.p.formatted_no, 10) || 0;
+          const noB = parseInt(b.p.id || b.p.formatted_no, 10) || 0;
+          return noA - noB;
+        });
+
+        matchedItems = matchedItems.map(item => item.p);
+      } else {
+        // 非純數字輸入：完整保留名稱比對、拼音同音字、英文錯字與 Levenshtein 編輯距離模糊比對
+        matchedItems = allPokemonsRef.filter(p => {
+          if (typeof window.matchesPokemonSearch === 'function') {
+            return window.matchesPokemonSearch(p, q);
+          }
+          const cn = (p.name_cn || '').toLowerCase();
+          const en = (p.name_en || '').toLowerCase();
+          return cn.includes(q) || en.includes(q);
+        });
+      }
+
+      renderFilteredItems(matchedItems);
+    }
+
+    if (typeof window !== 'undefined') {
+      window._boxRenderDropdown = renderDropdown;
+    }
+
+    function renderFilteredItems(items) {
+      if (items.length === 0) {
         dropdown.innerHTML = `<div class="text-muted" style="padding: 12px; text-align: center; font-size: 12px;">${isEN ? 'No matching Pokémon' : '找不到符合之寶可夢'}</div>`;
         dropdown.style.display = 'block';
         return;
       }
 
-      dropdown.innerHTML = filtered.map(p => {
+      dropdown.innerHTML = items.map(p => {
         const pkmDisplayName = isEN ? (p.name_en || p.name_cn) : p.name_cn;
         const isSelected = nameHidden.value === p.name_cn;
         const avatarUrl = p.icon_url || p.icon || (p.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png` : '') || 'assets/placeholder.svg';
@@ -847,6 +965,7 @@
       updateSelectedPokemonAvatar(p);
       syncToggleBtnIcon();
       renderTiledIngredientPickers(p, existing);
+      updateRibbonSelectOptions(p);
     }
 
     if (initialPkm) {
@@ -857,6 +976,7 @@
       updateSelectedPokemonAvatar(null);
       syncToggleBtnIcon();
       renderTiledIngredientPickers(null, null);
+      updateRibbonSelectOptions(null);
     }
 
     searchInput.onfocus = () => {
@@ -869,6 +989,7 @@
         nameHidden.value = '';
         updateSelectedPokemonAvatar(null);
         renderTiledIngredientPickers(null, null);
+        updateRibbonSelectOptions(null);
       }
       renderDropdown(searchInput.value);
     };
@@ -883,6 +1004,7 @@
           updateSelectedPokemonAvatar(null);
           syncToggleBtnIcon();
           renderTiledIngredientPickers(null, null);
+          updateRibbonSelectOptions(null);
           renderDropdown('');
           searchInput.focus();
         } else {
@@ -1188,10 +1310,14 @@
       }
     }
 
-    // 4.5 睡飽飽獎章選單
+    // 4.5 睡飽飽獎章選單 (依據選取寶可夢更新動態文案)
+    const currentSelectedPkm = existingItem 
+      ? allPokemonsRef.find(p => p.id === existingItem.pokemonId || p.name_cn === existingItem.name) 
+      : null;
     const ribbonSelect = document.getElementById('modal-poke-ribbon');
     if (ribbonSelect) {
       ribbonSelect.value = String(existingItem && existingItem.ribbon != null ? existingItem.ribbon : '0');
+      updateRibbonSelectOptions(currentSelectedPkm);
       if (typeof window.setupCustomSelect === 'function' && !ribbonSelect._customized) {
         window.setupCustomSelect(ribbonSelect);
       } else if (ribbonSelect._customized) {
@@ -1878,6 +2004,9 @@
       getCurrentSubTab: getSavedBoxSubtab,
       switchSubTab: switchBoxSubtab,
       calculatePokemonPR,
+      updateRibbonSelectOptions,
+      initPokemonCombobox,
+      setAllPokemons: (p) => { allPokemonsRef = p || []; },
       NATURE_DATA,
       NATURE_DICT,
       SUBSKILLS_DATA
@@ -1889,8 +2018,11 @@
     const NATURE_DICT = {};
     NATURE_DATA.forEach(n => { NATURE_DICT[n.name] = n; });
     module.exports = {
-      PokemonBoxApp: typeof window !== 'undefined' ? window.PokemonBoxApp : { calculatePokemonPR, NATURE_DATA, NATURE_DICT, SUBSKILLS_DATA },
+      PokemonBoxApp: typeof window !== 'undefined' ? window.PokemonBoxApp : { calculatePokemonPR, updateRibbonSelectOptions, initPokemonCombobox, setAllPokemons: (p) => { allPokemonsRef = p || []; }, NATURE_DATA, NATURE_DICT, SUBSKILLS_DATA },
       calculatePokemonPR,
+      updateRibbonSelectOptions,
+      initPokemonCombobox,
+      setAllPokemons: (p) => { allPokemonsRef = p || []; },
       NATURE_DATA,
       NATURE_DICT,
       SUBSKILLS_DATA
