@@ -5776,6 +5776,50 @@ Lv. 52 赫拉克羅斯
   assertEquals(parsed.skillLevel, 7, 'Parsed main skill level must be 7');
   assertEquals(parsed.ribbon, 1, 'Parsed ribbon must be deduced as Lv.1 (+1 carry)');
   assertArrayEquals(parsed.subskills, subskillsHera, 'Parsed subskills must exactly match all 5 slots');
+
+  // 5. Test getMainSkillMaxLevel across various skill categories
+  assert(typeof boxModule.getMainSkillMaxLevel === 'function', 'getMainSkillMaxLevel must be exported');
+  assertEquals(boxModule.getMainSkillMaxLevel('活力全體療癒S'), 6, 'Energy for Everyone S must be max Lv. 6');
+  assertEquals(boxModule.getMainSkillMaxLevel('料理成功S'), 6, 'Extra Tasty S must be max Lv. 6');
+  assertEquals(boxModule.getMainSkillMaxLevel('幫手加速（水）'), 6, 'Helper Boost must be max Lv. 6');
+  assertEquals(boxModule.getMainSkillMaxLevel('樹果遽增'), 6, 'Berry Burst must be max Lv. 6');
+  assertEquals(boxModule.getMainSkillMaxLevel('健美（料理輔助S）'), 7, 'Bulk Up must be max Lv. 7');
+  assertEquals(boxModule.getMainSkillMaxLevel('能量填充M'), 7, 'Charge Strength M must be max Lv. 7');
+  assertEquals(boxModule.getMainSkillMaxLevel('料理強化S'), 7, 'Cooking Power Up S must be max Lv. 7');
+  assertEquals(boxModule.getMainSkillMaxLevel('夢之碎片獲取S'), 8, 'Dream Shard Magnet S must be max Lv. 8');
+  assertEquals(boxModule.getMainSkillMaxLevel('波導彈（夢之碎片獲取S）'), 8, 'Aura Sphere must be max Lv. 8');
+
+  // 6. Test updateModalMainSkill dynamic select options generation & value clamping
+  const sylveon = pkmData.find(p => p.name_cn === '仙子伊布') || { name_cn: '仙子伊布', main_skill: '活力全體療癒S' };
+  const lucario = pkmData.find(p => p.name_cn === '路卡利歐') || { name_cn: '路卡利歐', main_skill: '波導彈（夢之碎片獲取S）' };
+
+  let mockSkillSelect = {
+    value: '7',
+    innerHTML: '',
+    dispatchEvent: () => {}
+  };
+  global.document = {
+    getElementById: (id) => {
+      if (id === 'modal-poke-main-skill-name') return { textContent: '', setAttribute: () => {} };
+      if (id === 'modal-poke-skill-level') return mockSkillSelect;
+      return null;
+    }
+  };
+
+  // When updating to Sylveon (maxLevel 6), level 7 should clamp to 6 and innerHTML has 6 options
+  boxModule.updateModalMainSkill(sylveon, 7);
+  assertEquals(mockSkillSelect.value, '6', 'Sylveon skill level 7 must be clamped to 6');
+  assertEquals((mockSkillSelect.innerHTML.match(/<option/g) || []).length, 6, 'Sylveon select must contain exactly 6 options');
+
+  // When updating to Heracross (maxLevel 7), level 7 is valid and innerHTML has 7 options
+  boxModule.updateModalMainSkill(heracross, 7);
+  assertEquals(mockSkillSelect.value, '7', 'Heracross skill level 7 is valid');
+  assertEquals((mockSkillSelect.innerHTML.match(/<option/g) || []).length, 7, 'Heracross select must contain exactly 7 options');
+
+  // When updating to Lucario (maxLevel 8), level 8 is valid and innerHTML has 8 options
+  boxModule.updateModalMainSkill(lucario, 8);
+  assertEquals(mockSkillSelect.value, '8', 'Lucario skill level 8 is valid');
+  assertEquals((mockSkillSelect.innerHTML.match(/<option/g) || []).length, 8, 'Lucario select must contain exactly 8 options');
 });
 
 // Final Summary Output

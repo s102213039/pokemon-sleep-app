@@ -803,16 +803,107 @@
     }
   }
 
-  /* ─── 主技能展示與等級更新 ─────────────────────────────────── */
-  function updateModalMainSkill(p) {
+  /* ─── 取得主技能的最大等級上限 (6 / 7 / 8) ─────────────────── */
+  function getMainSkillMaxLevel(name) {
+    if (!name) return 7;
+    const clean = String(name).trim();
+
+    // 1. 夢之碎片系列（夢之碎片獲取S、波導彈）：官方上限 Lv. 8
+    if (clean.includes('夢之碎片') || clean.includes('波導彈') || clean.includes('Dream Shard') || clean.includes('Aura Sphere')) {
+      return 8;
+    }
+
+    // 2. 能量填充 / 蓄力 / 夢魘 系列：官方上限 Lv. 7
+    if (clean.includes('能量填充') || clean.includes('Charge Strength') || clean.includes('蓄力') || clean.includes('夢魘')) {
+      return 7;
+    }
+
+    // 3. 食材系列（獲取、精選、怪力鉗、超幸運、正電、禮物）：官方上限 Lv. 7
+    if (clean.includes('食材獲取') || clean.includes('食材精選') || clean.includes('Ingredient') || clean.includes('怪力钳') || clean.includes('超幸運') || clean.includes('正電') || clean.includes('禮物')) {
+      return 7;
+    }
+
+    // 4. 料理鍋系列：料理強化為 Lv. 7，料理成功為 Lv. 6
+    if (clean.includes('料理強化') || clean.includes('Cooking Power') || clean.includes('負電')) {
+      return 7;
+    }
+    if (clean.includes('料理成功') || clean.includes('Extra Tasty')) {
+      return 6;
+    }
+
+    // 5. 幫手系列：幫手支援為 Lv. 7，幫手加速（屬性）為 Lv. 6
+    if (clean.includes('幫手支援') || clean.includes('Helper Support')) {
+      return 7;
+    }
+    if (clean.includes('幫手加速') || clean.includes('Helper Boost')) {
+      return 6;
+    }
+
+    // 6. 樹果遽增系列 / 領域系列：官方上限 Lv. 6
+    if (clean.includes('樹果遽增') || clean.includes('Berry Burst') || clean.includes('畫皮') || clean.includes('流星群') || clean.includes('精神擊破') || clean.includes('樹果領域') || clean.includes('Psystrike')) {
+      return 6;
+    }
+
+    // 7. 活力恢復系列（全體療癒、活力療癒、活力填充/充填、月光、新月祈禱、蹭蹭臉頰、治癒波動、樹果汁）：官方上限 Lv. 6
+    if (clean.includes('活力') || clean.includes('療癒') || clean.includes('充填') || clean.includes('月光') || clean.includes('新月祈禱') || clean.includes('蹭蹭臉頰') || clean.includes('治癒波動') || clean.includes('樹果汁') || clean.includes('Energizing Cheer') || clean.includes('Energy for Everyone') || clean.includes('Charge Energy')) {
+      return 6;
+    }
+
+    // 8. 料理輔助 / 揮指 / 變身 / 模仿：官方上限 Lv. 7
+    if (clean.includes('料理輔助') || clean.includes('健美') || clean.includes('Bulk Up') || clean.includes('揮指') || clean.includes('十項全能') || clean.includes('Metronome') || clean.includes('變身') || clean.includes('模仿') || clean.includes('Transform') || clean.includes('Mimic')) {
+      return 7;
+    }
+
+    // 9. 從 window.WikiDB 動態比對
+    if (typeof window !== 'undefined' && window.WikiDB && Array.isArray(window.WikiDB.MAIN_SKILLS_DATA)) {
+      const norm = clean.replace(/[（(].*?[）)]/, '').replace(/\s+/g, '');
+      const found = window.WikiDB.MAIN_SKILLS_DATA.find(s => s.name.replace(/[（(].*?[）)]/, '').replace(/\s+/g, '') === norm);
+      if (found && found.maxLevel) return found.maxLevel;
+    }
+
+    return 7;
+  }
+
+  /* ─── 主技能展示與等級更新 (動態依技能上限調整 Lv.1 ~ Lv.max) ─── */
+  function updateModalMainSkill(p, targetLevel = null) {
     const skillEl = document.getElementById('modal-poke-main-skill-name');
-    if (!skillEl) return;
+    const skillLevelSelect = document.getElementById('modal-poke-skill-level');
+
     const skillName = p ? (p.main_skill || '--') : '--';
-    const displaySkillName = (window.I18N && typeof window.I18N.getSkillName === 'function') 
-      ? window.I18N.getSkillName(skillName) 
-      : skillName;
-    skillEl.textContent = displaySkillName;
-    skillEl.setAttribute('title', skillName);
+    if (skillEl) {
+      const displaySkillName = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getSkillName === 'function') 
+        ? window.I18N.getSkillName(skillName) 
+        : skillName;
+      skillEl.textContent = displaySkillName;
+      skillEl.setAttribute('title', skillName);
+    }
+
+    if (skillLevelSelect) {
+      const maxLvl = p && p.main_skill ? getMainSkillMaxLevel(p.main_skill) : 7;
+      let desiredLvl;
+      if (targetLevel != null) {
+        desiredLvl = parseInt(targetLevel, 10);
+      } else {
+        const cur = parseInt(skillLevelSelect.value, 10);
+        desiredLvl = !isNaN(cur) && cur > 0 ? cur : 1;
+      }
+      const clampedLvl = Math.max(1, Math.min(maxLvl, desiredLvl));
+
+      // 動態更新下拉選單選項至該主技能之最大上限 (Lv.1 ~ Lv.maxLvl)
+      const options = [];
+      for (let i = 1; i <= maxLvl; i++) {
+        options.push(`<option value="${i}" ${i === clampedLvl ? 'selected' : ''}>Lv. ${i}</option>`);
+      }
+      skillLevelSelect.innerHTML = options.join('');
+      skillLevelSelect.value = String(clampedLvl);
+
+      // 同步自訂下拉元件
+      if (typeof window !== 'undefined' && typeof window.setupCustomSelect === 'function' && !skillLevelSelect._customized) {
+        window.setupCustomSelect(skillLevelSelect);
+      } else if (skillLevelSelect._customized) {
+        skillLevelSelect.dispatchEvent(new Event('sync-ui'));
+      }
+    }
   }
 
   /* ─── 寶可夢名稱 Combobox 搜尋選擇器 ───────────────────────── */
@@ -1336,18 +1427,9 @@
       }
     }
 
-    // 4.6 主技能展示與技能等級選單
-    updateModalMainSkill(currentSelectedPkm);
-    const skillLevelSelect = document.getElementById('modal-poke-skill-level');
-    if (skillLevelSelect) {
-      const lvlVal = existingItem && existingItem.skillLevel != null ? existingItem.skillLevel : 1;
-      skillLevelSelect.value = String(Math.max(1, Math.min(7, lvlVal)));
-      if (typeof window.setupCustomSelect === 'function' && !skillLevelSelect._customized) {
-        window.setupCustomSelect(skillLevelSelect);
-      } else if (skillLevelSelect._customized) {
-        skillLevelSelect.dispatchEvent(new Event('sync-ui'));
-      }
-    }
+    // 4.6 主技能展示與技能等級選單 (依據該主技能上限動態生成 Lv.1 ~ Lv.max)
+    const initialSkillLevel = existingItem && existingItem.skillLevel != null ? existingItem.skillLevel : 1;
+    updateModalMainSkill(currentSelectedPkm, initialSkillLevel);
 
     // 5. 初始化副技能單行插槽 + 選擇盤
     initSubskillFlowPicker(existingItem ? existingItem.subskills : []);
@@ -1407,8 +1489,10 @@
       return;
     }
 
-    const parsedSkillLevel = skillLevelSelect ? (parseInt(skillLevelSelect.value, 10) || 1) : 1;
     const base = findPokemonBase(pokeName);
+    const maxSkillLvl = base && base.main_skill ? getMainSkillMaxLevel(base.main_skill) : 8;
+    const rawSkillLevel = skillLevelSelect ? (parseInt(skillLevelSelect.value, 10) || 1) : 1;
+    const parsedSkillLevel = Math.max(1, Math.min(maxSkillLvl, rawSkillLevel));
 
     const subskills = [];
     for (let slot = 1; slot <= 5; slot++) {
@@ -1916,16 +2000,17 @@
       }
     }
 
-    // 2.5 主技能等級萃取 (從主技能區域擷取 1~7 級)
+    // 2.5 主技能等級萃取 (依據該主技能上限 1~6, 7 或 8 級)
     let skillLevel = 1;
+    const maxAllowedSkillLvl = bestPkm && bestPkm.main_skill ? getMainSkillMaxLevel(bestPkm.main_skill) : 8;
     const allOcrLines = text.split('\n');
     for (const line of allOcrLines) {
       const normLine = normalizeOcrText(line);
       if (normLine.includes('SP') || (bestPkm && normLine.includes(bestPkm.name_cn))) continue;
-      const mSkillLvl = line.match(/(?:Lv\.?|LV)\s*([1-7])\b/) || normLine.match(/Lv\.?([1-7])$/);
+      const mSkillLvl = line.match(/(?:Lv\.?|LV)\s*([1-8])\b/) || normLine.match(/Lv\.?([1-8])$/);
       if (mSkillLvl) {
         const parsedSkillLvl = parseInt(mSkillLvl[1], 10);
-        if (parsedSkillLvl >= 1 && parsedSkillLvl <= 7) {
+        if (parsedSkillLvl >= 1 && parsedSkillLvl <= maxAllowedSkillLvl) {
           skillLevel = parsedSkillLvl;
           break;
         }
@@ -2600,6 +2685,7 @@
       getCurrentSubTab: getSavedBoxSubtab,
       switchSubTab: switchBoxSubtab,
       calculatePokemonPR,
+      getMainSkillMaxLevel,
       updateRibbonSelectOptions,
       updateModalMainSkill,
       deduceRibbonFromCarry,
@@ -2621,6 +2707,7 @@
     module.exports = {
       PokemonBoxApp: typeof window !== 'undefined' ? window.PokemonBoxApp : {
         calculatePokemonPR,
+        getMainSkillMaxLevel,
         updateRibbonSelectOptions,
         updateModalMainSkill,
         deduceRibbonFromCarry,
@@ -2634,6 +2721,7 @@
         SUBSKILLS_DATA
       },
       calculatePokemonPR,
+      getMainSkillMaxLevel,
       updateRibbonSelectOptions,
       updateModalMainSkill,
       deduceRibbonFromCarry,
