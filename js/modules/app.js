@@ -1811,6 +1811,11 @@ if (typeof document !== 'undefined') {
           if (curLadderHandle) curLadderHandle.style.display = 'none';
           if (ladderSidebar) ladderSidebar.style.display = 'none';
           if (ladderBackdrop) ladderBackdrop.classList.remove('active');
+          const curLadderRecipeFab = document.getElementById('ladder-recipe-highlight-fab');
+          if (curLadderRecipeFab) curLadderRecipeFab.style.display = 'none';
+          if (window.WikiDB && typeof window.WikiDB.closeLadderRecipeModal === 'function') {
+            window.WikiDB.closeLadderRecipeModal();
+          }
         }
 
         if (target === 'news' && panelNews && tabNews) {
@@ -1904,6 +1909,11 @@ if (typeof document !== 'undefined') {
               curLadderHandle.style.pointerEvents = 'none';
               curLadderHandle.style.visibility = 'hidden';
             }
+          }
+
+          const curLadderRecipeFab = document.getElementById('ladder-recipe-highlight-fab');
+          if (curLadderRecipeFab) {
+            curLadderRecipeFab.style.display = (wikiSubTab === 'ingredients') ? 'flex' : 'none';
           }
 
           if (window.history && window.history.replaceState) {
@@ -3072,6 +3082,11 @@ if (typeof document !== 'undefined') {
         const activeTableContainer = document.querySelector('.mobile-h5-app.pokemon-active .pokemon-table-container, .mobile-h5-app.pokemon-active .table-container');
         if (activeTableContainer && activeTableContainer.scrollTop > 0) {
           return activeTableContainer.scrollTop;
+        }
+
+        const activePanel = document.querySelector('.mobile-h5-app .view-panel:not([style*="display: none"]):not([style*="display:none"])');
+        if (activePanel && activePanel.scrollTop > 0) {
+          return activePanel.scrollTop;
         }
         return 0;
       }

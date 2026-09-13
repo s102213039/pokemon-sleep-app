@@ -11659,6 +11659,17 @@
       }
     }
 
+    const ladderRecipeFab = document.getElementById('ladder-recipe-highlight-fab');
+    if (ladderRecipeFab) {
+      if (targetTab === 'ingredients') {
+        ladderRecipeFab.style.display = 'flex';
+        updateLadderRecipeFabState();
+      } else {
+        ladderRecipeFab.style.display = 'none';
+        closeLadderRecipeModal();
+      }
+    }
+
     if (targetTab === 'ratings') {
       try {
         initCalcCustomSelects();
@@ -11679,6 +11690,7 @@
     const sidebar = document.getElementById('ladder-filter-sidebar');
     const backdrop = document.getElementById('ladder-sidebar-backdrop');
     const bookmarkHandle = document.getElementById('ladder-sidebar-bookmark-handle');
+    const ladderRecipeFab = document.getElementById('ladder-recipe-highlight-fab');
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     if (!sidebar) return;
@@ -11698,6 +11710,10 @@
         bookmarkHandle.style.display = 'flex';
         bookmarkHandle.style.visibility = 'visible';
       }
+      if (ladderRecipeFab && currentWikiSubTab === 'ingredients') {
+        ladderRecipeFab.classList.remove('drawer-open');
+        ladderRecipeFab.style.display = 'flex';
+      }
       if (typeof window.setSidebarSavedState === 'function') {
         window.setSidebarSavedState('pksleep_ladder_sidebar_open', false);
       }
@@ -11715,6 +11731,10 @@
         bookmarkHandle.style.pointerEvents = 'none';
         bookmarkHandle.style.display = 'none';
         bookmarkHandle.style.visibility = 'hidden';
+      }
+      if (ladderRecipeFab) {
+        ladderRecipeFab.classList.add('drawer-open');
+        ladderRecipeFab.style.display = 'none';
       }
       if (typeof window.setSidebarSavedState === 'function') {
         window.setSidebarSavedState('pksleep_ladder_sidebar_open', true);
@@ -11935,6 +11955,189 @@
     pumpkin: { name: '熱水溫沙拉', name_en: 'Scald Chunky Salad', need: 20, type: '沙拉', type_en: 'Salad', energy: 25356, secondary: '心跳加速鬼面鬆餅 (18)', secondary_en: 'Scary Face Pancakes (18)' },
     tail: { name: '呆呆獸尾巴的胡椒沙拉', name_en: 'Slowpoke Tail Pepper Salad', need: 10, type: '沙拉', type_en: 'Salad', energy: 8169, secondary: '炙烤尾巴咖哩 (8)', secondary_en: 'Grilled Tail Curry (8)' }
   };
+
+  // 食材天梯頂級料理高亮清單 (前 7 高基礎能量之頂級大菜)
+  const TOP_7_RECIPES_HIGHLIGHT = [
+    {
+      name_cn: '彈跳咖哩烏龍麵',
+      name_en: 'Bounce Curry Udon',
+      category: '咖哩',
+      pot_size: 112,
+      base_energy: 25539,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png',
+      ingredients: [
+        { name: '暖暖薑', count: 39 },
+        { name: '品鮮蘑菇', count: 31 },
+        { name: '火辣香草', count: 22 },
+        { name: '豆製肉', count: 20 }
+      ]
+    },
+    {
+      name_cn: '採蜜可可鬆餅',
+      name_en: 'Honey Gather Chocolate Waffles',
+      category: '甜點',
+      pot_size: 115,
+      base_energy: 25484,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png',
+      ingredients: [
+        { name: '甜甜蜜', count: 38 },
+        { name: '萌綠玉米', count: 28 },
+        { name: '純粹油', count: 28 },
+        { name: '放鬆可可', count: 21 }
+      ]
+    },
+    {
+      name_cn: '熱水溫沙拉',
+      name_en: 'Scald Chunky Salad',
+      category: '沙拉',
+      pot_size: 95,
+      base_energy: 25356,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png',
+      ingredients: [
+        { name: '窩心洋芋', count: 30 },
+        { name: '品鮮蘑菇', count: 27 },
+        { name: '沉甸甸南瓜', count: 20 },
+        { name: '萌綠玉米', count: 18 }
+      ]
+    },
+    {
+      name_cn: '重踏酪梨醬薯片',
+      name_en: 'Bulldoze Guacamole and Chips',
+      category: '沙拉',
+      pot_size: 105,
+      base_energy: 25162,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/bulldozeguacamoleandchips.png',
+      ingredients: [
+        { name: '火辣香草', count: 30 },
+        { name: '嫩亮酪梨', count: 28 },
+        { name: '萌綠玉米', count: 25 },
+        { name: '萌綠大豆', count: 22 }
+      ]
+    },
+    {
+      name_cn: '茂盛焗烤酪梨',
+      name_en: 'Overgrow Avocado Gratin',
+      category: '咖哩',
+      pot_size: 115,
+      base_energy: 24802,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/overgrowavocadogratin.png',
+      ingredients: [
+        { name: '哞哞鮮奶', count: 41 },
+        { name: '純粹油', count: 32 },
+        { name: '嫩亮酪梨', count: 22 },
+        { name: '窩心洋芋', count: 20 }
+      ]
+    },
+    {
+      name_cn: '心跳加速鬼面鬆餅',
+      name_en: 'Scary Face Pancakes',
+      category: '甜點',
+      pot_size: 103,
+      base_energy: 24354,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/scaryfacepancakes.png',
+      ingredients: [
+        { name: '甜甜蜜', count: 32 },
+        { name: '好眠番茄', count: 29 },
+        { name: '特選蛋', count: 24 },
+        { name: '沉甸甸南瓜', count: 18 }
+      ]
+    },
+    {
+      name_cn: '土王閃電泡芙',
+      name_en: 'Clodsire Eclair',
+      category: '甜點',
+      pot_size: 102,
+      base_energy: 20885,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/clodsireeclair.png',
+      ingredients: [
+        { name: '放鬆可可', count: 30 },
+        { name: '哞哞鮮奶', count: 26 },
+        { name: '醒腦咖啡豆', count: 24 },
+        { name: '甜甜蜜', count: 22 }
+      ]
+    }
+  ];
+
+  let ladderHighlightRecipe = null;
+
+  function openLadderRecipeModal() {
+    const modal = document.getElementById('ladder-recipe-modal');
+    if (!modal) return;
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const bodyEl = modal.querySelector('.ladder-recipe-modal-body');
+    if (bodyEl) {
+      bodyEl.innerHTML = TOP_7_RECIPES_HIGHLIGHT.map(r => {
+        const isCurrent = (ladderHighlightRecipe === r.name_cn || ladderHighlightRecipe === r.name_en);
+        const displayName = isEN ? r.name_en : r.name_cn;
+        return `
+          <div class="ladder-recipe-card ${isCurrent ? 'selected' : ''}" onclick="window.WikiDB.selectLadderHighlightRecipe('${r.name_cn}')" role="button" tabindex="0">
+            <div class="recipe-card-top">
+              <img src="${r.icon}" class="recipe-card-icon" alt="${displayName}">
+              <div class="recipe-card-meta">
+                <div class="recipe-card-name-row">
+                  <span class="recipe-card-name">${displayName}</span>
+                  <span class="recipe-card-cat-badge cat-${r.category}">${r.category}</span>
+                  ${isCurrent ? `<span class="recipe-card-active-pill">${isEN ? 'Active' : '目前選取'}</span>` : ''}
+                </div>
+                <div class="recipe-card-energy-row">
+                  <span class="recipe-card-energy-num">${r.base_energy.toLocaleString()}</span>
+                  <span class="recipe-card-energy-unit">${isEN ? 'Base Energy' : '基礎能量'}</span>
+                  <span class="recipe-card-pot">${isEN ? `Pot ${r.pot_size}` : `鍋容量 ${r.pot_size}`}</span>
+                </div>
+              </div>
+            </div>
+            <div class="recipe-card-ings-row">
+              ${r.ingredients.map(ing => `
+                <span class="recipe-card-ing-chip">
+                  <span class="ing-chip-name">${isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name}</span>
+                  <span class="ing-chip-count">x${ing.count}</span>
+                </span>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    modal.style.display = 'flex';
+  }
+
+  function closeLadderRecipeModal() {
+    const modal = document.getElementById('ladder-recipe-modal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+
+  function selectLadderHighlightRecipe(recipeName) {
+    if (ladderHighlightRecipe === recipeName) {
+      ladderHighlightRecipe = null;
+    } else {
+      ladderHighlightRecipe = recipeName;
+    }
+    closeLadderRecipeModal();
+    updateLadderRecipeFabState();
+    refreshCoordinateLadder();
+  }
+
+  function clearLadderHighlightRecipe() {
+    ladderHighlightRecipe = null;
+    closeLadderRecipeModal();
+    updateLadderRecipeFabState();
+    refreshCoordinateLadder();
+  }
+
+  function updateLadderRecipeFabState() {
+    const fab = document.getElementById('ladder-recipe-highlight-fab');
+    if (!fab) return;
+    const badge = document.getElementById('ladder-recipe-fab-badge');
+    if (ladderHighlightRecipe) {
+      fab.classList.add('has-active');
+      if (badge) badge.style.display = 'flex';
+    } else {
+      fab.classList.remove('has-active');
+      if (badge) badge.style.display = 'none';
+    }
+  }
 
   const EEVEELUTIONS_ALIASES = [
     '雷伊布', 'jolteon', '水伊布', 'vaporeon', '火伊布', 'flareon',
@@ -14941,6 +15144,19 @@
     const mult = getLadderMultiplier();
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     
+    // 高亮特定料理食材
+    let activeHighlightRecipe = null;
+    let highlightedIngMap = null;
+    if (ladderHighlightRecipe) {
+      activeHighlightRecipe = TOP_7_RECIPES_HIGHLIGHT.find(r => r.name_cn === ladderHighlightRecipe || r.name_en === ladderHighlightRecipe);
+      if (activeHighlightRecipe) {
+        highlightedIngMap = new Map();
+        activeHighlightRecipe.ingredients.forEach(item => {
+          highlightedIngMap.set(item.name, item.count);
+        });
+      }
+    }
+
     // 分離 18 種常規食材與 1 種獨立美味尾巴
     const mainTracks = ladderData.filter(ing => ing.id !== 'tail');
     const tailIng = ladderData.find(ing => ing.id === 'tail');
@@ -15057,6 +15273,20 @@
       }
     });
 
+    // 若有選取高分料理高亮，將符合該料理的食材軌道優先置頂，並依需求量由多到少排序
+    if (highlightedIngMap) {
+      processedMainTracks.sort((a, b) => {
+        const aReq = highlightedIngMap.has(a.ing.name);
+        const bReq = highlightedIngMap.has(b.ing.name);
+        if (aReq && !bReq) return -1;
+        if (!aReq && bReq) return 1;
+        if (aReq && bReq) {
+          return (highlightedIngMap.get(b.ing.name) || 0) - (highlightedIngMap.get(a.ing.name) || 0);
+        }
+        return 0;
+      });
+    }
+
     // 2. 動態設定最高與最低刻度 (全部展示時自 30 起標，有篩選時動態支援低於 30 之刻度)
     let globalMinCount = 100;
     processedMainTracks.forEach(t => {
@@ -15103,6 +15333,25 @@
     return `
       <div class="wiki-coordinate-ladder-wrapper">
         <div class="wiki-coordinate-ladder" onmouseover="window.WikiDB.handleLadderGroupHover(event)" onmouseout="window.WikiDB.handleLadderGroupHoverOut(event)">
+          ${activeHighlightRecipe ? `
+            <div class="ladder-recipe-banner">
+              <div class="ladder-recipe-banner-info">
+                <img src="${activeHighlightRecipe.icon}" class="ladder-recipe-banner-icon" alt="${isEN ? activeHighlightRecipe.name_en : activeHighlightRecipe.name_cn}">
+                <div class="ladder-recipe-banner-text">
+                  <span class="ladder-recipe-banner-title">${isEN ? activeHighlightRecipe.name_en : activeHighlightRecipe.name_cn}</span>
+                  <span class="ladder-recipe-banner-sub">${activeHighlightRecipe.category} · ${isEN ? 'Base Energy' : '基礎能量'} ${activeHighlightRecipe.base_energy.toLocaleString()}</span>
+                </div>
+              </div>
+              <button type="button" class="ladder-recipe-banner-clear-btn" onclick="window.WikiDB.clearLadderHighlightRecipe()" title="${isEN ? 'Clear recipe highlight' : '清除料理高亮'}">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                <span>${isEN ? 'Clear' : '清除高亮'}</span>
+              </button>
+            </div>
+          ` : ''}
+
           <!-- 頂部刻度標尺 (自 20 起標至動態最高值 ${maxVal}) -->
           <div class="ladder-ruler-header">
             <div class="ladder-ruler-spacer"></div>
@@ -15168,11 +15417,17 @@
 
             const visiblePkmGroupNames = new Set(trackNodes.map(n => n.p.name));
 
+            const reqCount = highlightedIngMap ? highlightedIngMap.get(ing.name) : null;
+            const isHighlighted = reqCount !== null && reqCount !== undefined;
+            const isDimmed = highlightedIngMap && !isHighlighted;
+            const highlightClass = isHighlighted ? 'ladder-track-highlighted' : (isDimmed ? 'ladder-track-dimmed' : '');
+
             return `
-            <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''}" data-ladder-ing="${ing.id}">
+            <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''} ${highlightClass}" data-ladder-ing="${ing.id}">
               <div class="ladder-track-header clickable-ing-header" onclick="window.WikiDB.openIngredientRankingModal('${ing.id}')" role="button" tabindex="0" title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isEN ? 'Key Dish: ' : '核心大菜：'}${dishName} · ${isEN ? 'Click to view rankings' : '點擊查看產量排名'}">
                 <div class="ladder-track-ing-main">
                   <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">
+                  ${isHighlighted ? `<span class="ladder-highlight-req-chip">${isEN ? `x${reqCount}` : `需 ${reqCount}`}</span>` : ''}
                 </div>
               </div>
 
@@ -15337,7 +15592,7 @@
                     <div class="ladder-tail-ruler-spacer"></div>
                   </div>
 
-                  <div class="ladder-tail-track-row ${isTailEmpty ? 'ladder-track-empty' : ''}" data-ladder-ing="tail">
+                  <div class="ladder-tail-track-row ${isTailEmpty ? 'ladder-track-empty' : ''} ${highlightedIngMap ? 'ladder-track-dimmed' : ''}" data-ladder-ing="tail">
                     <div class="ladder-track-header clickable-ing-header" onclick="window.WikiDB.openIngredientRankingModal('tail')" role="button" tabindex="0" title="${isEN ? 'Slowpoke Tail' : '美味尾巴'} · ${isEN ? 'Click to view rankings' : '點擊查看產量排名'}">
                       <img src="${tailIng.icon}" class="ladder-ing-icon" alt="${isEN ? 'Slowpoke Tail' : '美味尾巴'}">
                     </div>
@@ -15873,6 +16128,48 @@
     const initialLadderCollapsed = isMobileH5 ? 'collapsed' : (isLadderOpen ? '' : 'collapsed');
 
     container.innerHTML = `
+      <!-- 🍲 天梯頂級料理食材高亮懸浮按鈕 (FAB) -->
+      <button type="button" id="ladder-recipe-highlight-fab" class="ladder-recipe-highlight-fab ${ladderHighlightRecipe ? 'has-active' : ''}" onclick="window.WikiDB.openLadderRecipeModal()" title="${isEN ? 'Highlight by Top Recipe' : '選取料理高亮食材'}" aria-label="${isEN ? 'Highlight by Top Recipe' : '選取料理高亮食材'}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
+        <span class="recipe-fab-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 11h18a1 1 0 0 1 1 1v2a7 7 0 0 1-14 0v-2"></path>
+            <path d="M7 11V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v5"></path>
+            <line x1="12" y1="2" x2="12" y2="4"></line>
+          </svg>
+        </span>
+        <span id="ladder-recipe-fab-badge" class="ladder-recipe-fab-badge" style="${ladderHighlightRecipe ? 'display:flex;' : 'display:none;'}">✓</span>
+      </button>
+
+      <!-- 🍲 天梯頂級料理食材高亮彈窗 (Modal) -->
+      <div id="ladder-recipe-modal" class="ladder-recipe-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="ladder-recipe-modal-title">
+        <div class="ladder-recipe-modal-backdrop" onclick="window.WikiDB.closeLadderRecipeModal()"></div>
+        <div class="ladder-recipe-modal-dialog">
+          <div class="ladder-recipe-modal-header">
+            <div class="ladder-recipe-modal-title-group">
+              <h3 id="ladder-recipe-modal-title" class="ladder-recipe-modal-title">${isEN ? 'Highlight Ingredients by Top Recipe' : '選取頂級料理高亮食材'}</h3>
+              <p class="ladder-recipe-modal-subtitle">${isEN ? 'Top 7 Base Energy Recipes (Tap to highlight required ingredients on the ladder)' : '僅展示前 7 高基礎能量之頂級料理，選取後天梯將自動標記所需食材與數量'}</p>
+            </div>
+            <button type="button" class="ladder-recipe-modal-close" onclick="window.WikiDB.closeLadderRecipeModal()" aria-label="${isEN ? 'Close' : '關閉'}">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="ladder-recipe-modal-body">
+            <!-- Dynamically populated on open -->
+          </div>
+          <div class="ladder-recipe-modal-footer">
+            <button type="button" class="ladder-recipe-btn-clear" onclick="window.WikiDB.clearLadderHighlightRecipe()">
+              ${isEN ? 'Clear Highlight' : '清除高亮'}
+            </button>
+            <button type="button" class="ladder-recipe-btn-close" onclick="window.WikiDB.closeLadderRecipeModal()">
+              ${isEN ? 'Close' : '關閉'}
+            </button>
+          </div>
+        </div>
+      </div>
+
       ${isMobileH5 ? `
         <!-- 🎛️ 右下懸浮天梯篩選按鈕 (與圖鑑/料理完全一致的 FAB 結構) -->
         <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Open Filters' : '展開天梯篩選器'}" aria-label="${isEN ? 'Open Filters' : '展開天梯篩選器'}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
@@ -16618,7 +16915,13 @@
     getIslandPokemonDexCode: getIslandPokemonDexCode,
     sortIslandSpawns: sortIslandSpawns,
     getIslandSpawnsSort: getIslandSpawnsSort,
-    getSnorlaxRankScore: getSnorlaxRankScore
+    getSnorlaxRankScore: getSnorlaxRankScore,
+    TOP_7_RECIPES_HIGHLIGHT: TOP_7_RECIPES_HIGHLIGHT,
+    openLadderRecipeModal: openLadderRecipeModal,
+    closeLadderRecipeModal: closeLadderRecipeModal,
+    selectLadderHighlightRecipe: selectLadderHighlightRecipe,
+    clearLadderHighlightRecipe: clearLadderHighlightRecipe,
+    getLadderHighlightRecipe: () => ladderHighlightRecipe
   };
 
   window.WikiDB = WikiDBExport;
@@ -16676,6 +16979,12 @@
   window.toggleIslandExpertMode = toggleIslandExpertMode;
   window.filterIslandSleepType = filterIslandSleepType;
   window.renderIslandsSubpanel = renderIslandsSubpanel;
+  window.TOP_7_RECIPES_HIGHLIGHT = TOP_7_RECIPES_HIGHLIGHT;
+  window.openLadderRecipeModal = openLadderRecipeModal;
+  window.closeLadderRecipeModal = closeLadderRecipeModal;
+  window.selectLadderHighlightRecipe = selectLadderHighlightRecipe;
+  window.clearLadderHighlightRecipe = clearLadderHighlightRecipe;
+  window.getLadderHighlightRecipe = () => ladderHighlightRecipe;
 
   // 當 DOM 準備完成時自動初始化
   if (document.readyState === 'loading') {

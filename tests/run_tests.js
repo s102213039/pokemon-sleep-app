@@ -5822,6 +5822,61 @@ Lv. 52 赫拉克羅斯
   assertEquals((mockSkillSelect.innerHTML.match(/<option/g) || []).length, 8, 'Lucario select must contain exactly 8 options');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Bar Stability & Ingredient Ladder Top 7 Recipe Highlight', () => {
+  const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+
+  // 1. Mobile H5 Viewport & Address Bar Locking
+  assert(appIndexHtml.includes('class="mobile-h5-html"'), 'app/index.html must have mobile-h5-html class');
+  assert(css.includes('html.mobile-h5-html'), 'styles.css must style html.mobile-h5-html');
+  assert(css.includes('position: fixed !important;\n  top: 0 !important;\n  left: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  width: 100% !important;\n  height: 100% !important;\n  height: 100dvh !important;\n  overflow: hidden !important;'), 'styles.css must lock body.mobile-h5-app with fixed positioning and overflow hidden');
+  assert(css.includes('padding: 0 0 28px 0 !important;'), 'Pokemon table container must have 28px bottom clearance');
+  assert(css.includes('.ladder-recipe-highlight-fab'), 'styles.css must style .ladder-recipe-highlight-fab');
+  assert(css.includes('.ladder-track-row.ladder-track-highlighted'), 'styles.css must define highlighted ladder track row');
+  assert(css.includes('.ladder-track-row.ladder-track-dimmed'), 'styles.css must define dimmed ladder track row');
+  assert(css.includes('.ladder-highlight-req-chip'), 'styles.css must define requirement badge chip');
+
+  // 2. Top 7 Recipes Data and Logic in wiki.js
+  assert(wikiJs.includes('const TOP_7_RECIPES_HIGHLIGHT = ['), 'wiki.js must define TOP_7_RECIPES_HIGHLIGHT');
+  assert(wikiJs.includes('openLadderRecipeModal'), 'wiki.js must define openLadderRecipeModal');
+  assert(wikiJs.includes('selectLadderHighlightRecipe'), 'wiki.js must define selectLadderHighlightRecipe');
+  assert(wikiJs.includes('clearLadderHighlightRecipe'), 'wiki.js must define clearLadderHighlightRecipe');
+
+  // 3. Evaluate Top 7 Recipes
+  const ctx = {
+    localStorage: { getItem: () => 'zh-TW', setItem: () => {} },
+    window: { localStorage: { getItem: () => 'zh-TW', setItem: () => {} }, addEventListener: () => {} },
+    document: {
+      readyState: 'complete',
+      addEventListener: () => {},
+      getElementById: () => null,
+      querySelectorAll: () => []
+    }
+  };
+  vm.createContext(ctx);
+  vm.runInContext(wikiJs, ctx);
+
+  const top7 = ctx.window.WikiDB.TOP_7_RECIPES_HIGHLIGHT;
+  assertEquals(top7.length, 7, 'Must contain exactly 7 top recipes');
+  assertEquals(top7[0].name_cn, '彈跳咖哩烏龍麵', 'Rank 1 recipe must be 彈跳咖哩烏龍麵');
+  assertEquals(top7[0].base_energy, 25539, 'Rank 1 energy must be 25539');
+  assertEquals(top7[1].name_cn, '採蜜可可鬆餅', 'Rank 2 recipe must be 採蜜可可鬆餅');
+  assertEquals(top7[2].name_cn, '熱水溫沙拉', 'Rank 3 recipe must be 熱水溫沙拉');
+  assertEquals(top7[3].name_cn, '重踏酪梨醬薯片', 'Rank 4 recipe must be 重踏酪梨醬薯片');
+  assertEquals(top7[4].name_cn, '茂盛焗烤酪梨', 'Rank 5 recipe must be 茂盛焗烤酪梨');
+  assertEquals(top7[5].name_cn, '心跳加速鬼面鬆餅', 'Rank 6 recipe must be 心跳加速鬼面鬆餅');
+  assertEquals(top7[6].name_cn, '土王閃電泡芙', 'Rank 7 recipe must be 土王閃電泡芙');
+  assertEquals(top7[6].base_energy, 20885, 'Rank 7 energy must be 20885');
+
+  // 4. Test Highlighting interaction
+  ctx.window.WikiDB.selectLadderHighlightRecipe('彈跳咖哩烏龍麵');
+  assertEquals(ctx.window.WikiDB.getLadderHighlightRecipe(), '彈跳咖哩烏龍麵', 'Active highlight recipe must be 彈跳咖哩烏龍麵');
+
+  ctx.window.WikiDB.clearLadderHighlightRecipe();
+  assertEquals(ctx.window.WikiDB.getLadderHighlightRecipe(), null, 'Active highlight recipe must be cleared');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');
