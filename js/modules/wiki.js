@@ -16247,19 +16247,31 @@
 
             <div class="ribbon-compact-tiers">
               <div class="ribbon-compact-chip chip-bronze">
-                <span class="chip-tier-tag">${isEN ? 'Tier 1' : '第 1 階段'} (200h)</span>
+                <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
+                  <img src="assets/ribbons/ribbon_lv1.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
+                  200h
+                </span>
                 <span class="chip-effect-text">+1 ${isEN ? 'Carry' : '持有上限'}</span>
               </div>
               <div class="ribbon-compact-chip chip-silver">
-                <span class="chip-tier-tag">${isEN ? 'Tier 2' : '第 2 階段'} (500h)</span>
+                <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
+                  <img src="assets/ribbons/ribbon_lv2.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
+                  500h
+                </span>
                 <span class="chip-effect-text">+2 ${isEN ? 'Carry' : '持有'}, ${isEN ? 'Speed' : '幫速'} -5% / -11%</span>
               </div>
               <div class="ribbon-compact-chip chip-gold">
-                <span class="chip-tier-tag">${isEN ? 'Tier 3' : '第 3 階段'} (1,000h)</span>
-                <span class="chip-effect-text">+3 ${isEN ? 'Carry' : '持有'}, ${isEN ? 'Profile Icon' : '專屬頭像'}</span>
+                <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
+                  <img src="assets/ribbons/ribbon_lv3.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
+                  1,000h
+                </span>
+                <span class="chip-effect-text">+3 ${isEN ? 'Carry' : '持有上限'}</span>
               </div>
               <div class="ribbon-compact-chip chip-platinum">
-                <span class="chip-tier-tag">${isEN ? 'Tier 4' : '第 4 階段'} (2,000h)</span>
+                <span class="chip-tier-tag" style="display:flex;align-items:center;gap:4px;">
+                  <img src="assets/ribbons/ribbon_lv4.png" style="width:18px;height:18px;object-fit:contain;" alt="" />
+                  2,000h
+                </span>
                 <span class="chip-effect-text">+2 ${isEN ? 'Carry' : '持有'}, ${isEN ? 'Speed' : '幫速'} -12% / -25%</span>
               </div>
             </div>

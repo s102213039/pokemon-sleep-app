@@ -4030,16 +4030,27 @@ test('Tier 1 - Feature Coverage', 'Good-Night Ribbon i18n Dictionary and Box Mod
   assert(indexHtml.includes('class="box-form-select"'), 'index.html must use box-form-select class on dropdowns');
   assert(indexHtml.includes('value="0"'), 'modal-poke-ribbon must include value 0');
   assert(indexHtml.includes('value="4"'), 'modal-poke-ribbon must include value 4');
+  assert(indexHtml.includes('data-icon="assets/ribbons/ribbon_lv1.png"'), 'index.html must include ribbon_lv1 data-icon');
   assert(!indexHtml.includes('專屬頭像'), 'index.html modal-poke-ribbon must not include 專屬頭像');
+  assert(!indexHtml.includes('第 1 階段'), 'index.html modal-poke-ribbon must not include 第 1 階段');
 
-  // Verify mobile app/index.html includes modal-poke-ribbon
+  // Verify mobile app/index.html includes modal-poke-ribbon with data-icon
   const appHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
   assert(appHtml.includes('id="modal-poke-ribbon"'), 'app/index.html must include modal-poke-ribbon');
+  assert(appHtml.includes('data-icon="../assets/ribbons/ribbon_lv1.png"'), 'app/index.html must include ribbon_lv1 data-icon');
+  assert(!appHtml.includes('第 1 階段'), 'app/index.html modal-poke-ribbon must not include 第 1 階段');
 
-  // Verify removal of profile icon from i18n
+  // Verify official ribbon assets exist on disk
+  [1, 2, 3, 4].forEach(lvl => {
+    assert(fs.existsSync(path.join(WORKSPACE_ROOT, 'assets', 'ribbons', `ribbon_lv${lvl}.png`)), `assets/ribbons/ribbon_lv${lvl}.png must exist`);
+  });
+
+  // Verify removal of stage and profile icon from i18n
   I18N.setLanguage('zh-TW');
+  assert(!I18N.t('box.ribbon_lv1').includes('第 1 階段'), 'box.ribbon_lv1 zh-TW must not include 第 1 階段');
   assert(!I18N.t('box.ribbon_lv3').includes('專屬頭像'), 'box.ribbon_lv3 zh-TW must not include 專屬頭像');
   I18N.setLanguage('en-US');
+  assert(!I18N.t('box.ribbon_lv1').includes('Tier 1'), 'box.ribbon_lv1 en-US must not include Tier 1');
   assert(!I18N.t('box.ribbon_lv3').includes('Profile Icon'), 'box.ribbon_lv3 en-US must not include Profile Icon');
 
   // 3. Verify CSS styling complies with dropdown padding and arrow layout rules
@@ -5074,7 +5085,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Sleep EXP Calculator Accurate
   // 1. Verify Ribbon Quick Guide displays independent progression (+1, +2, +3, +2)
   assert(wikiCode.includes('+1 ${isEN ? \'Carry\' : \'持有上限\'}'), 'Ribbon Tier 1 must be +1');
   assert(wikiCode.includes('+2 ${isEN ? \'Carry\' : \'持有\'}, ${isEN ? \'Speed\' : \'幫速\'} -5% / -11%'), 'Ribbon Tier 2 must be +2');
-  assert(wikiCode.includes('+3 ${isEN ? \'Carry\' : \'持有\'}, ${isEN ? \'Profile Icon\' : \'專屬頭像\'}'), 'Ribbon Tier 3 must be +3');
+  assert(wikiCode.includes('+3 ${isEN ? \'Carry\' : \'持有上限\'}'), 'Ribbon Tier 3 must be +3');
   assert(wikiCode.includes('+2 ${isEN ? \'Carry\' : \'持有\'}, ${isEN ? \'Speed\' : \'幫速\'} -12% / -25%'), 'Ribbon Tier 4 must be +2');
 
   // 2. Verify CSS defines dropdown styling complying with dropdown arrow rule & custom-select-calc
@@ -5348,6 +5359,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Box Manual Add Combobox Numbe
   assert(luxray, 'Luxray #405 must exist in data.json');
   boxApp.updateRibbonSelectOptions(luxray);
   const luxrayHtml = ribbonSelect.innerHTML;
+  assert(luxrayHtml.includes('data-icon="assets/ribbons/ribbon_lv1.png"'), 'Ribbon options must include official ribbon_lv1 icon');
+  assert(!luxrayHtml.includes('第 1 階段'), 'Ribbon options must NOT have 第 1 階段');
   assert(luxrayHtml.includes('+3 持有上限'), 'Final evolution must have +3 持有上限');
   assert(!luxrayHtml.includes('幫速加成'), 'Final evolution must NOT have 幫速加成');
   assert(!luxrayHtml.includes('幫速最大加成'), 'Final evolution must NOT have 幫速最大加成');

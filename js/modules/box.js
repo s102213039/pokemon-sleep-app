@@ -487,7 +487,9 @@
                     </span>` : ''}
                     <span class="box-spec-tag">${specName}</span>
                     ${p.ribbon ? `
-                      <span class="box-ribbon-tag" style="background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);font-size:11px;padding:1px 6px;border-radius:4px;font-weight:600;">${isEN ? `Ribbon Lv.${p.ribbon}` : `獎章 Lv.${p.ribbon}`}</span>
+                      <span class="box-ribbon-tag" title="${isEN ? `Good-Night Ribbon Tier ${p.ribbon}` : `睡飽飽獎章`}">
+                        <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${p.ribbon}.png" class="box-ribbon-icon" alt="Ribbon" />
+                      </span>
                     ` : ''}
                   </div>
                 </div>
@@ -616,7 +618,7 @@
                   <td>
                     <div class="table-name-cn" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
                       <span>${escapeHtml(pkmDisplayName)}</span>
-                      ${p.ribbon ? `<span class="box-ribbon-tag" style="background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);font-size:10px;padding:1px 5px;border-radius:4px;font-weight:600;">${isEN ? `Ribbon Lv.${p.ribbon}` : `獎章 Lv.${p.ribbon}`}</span>` : ''}
+                      ${p.ribbon ? `<span class="box-ribbon-tag" title="${isEN ? `Good-Night Ribbon Tier ${p.ribbon}` : `睡飽飽獎章`}"><img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${p.ribbon}.png" class="box-ribbon-icon" alt="Ribbon" /></span>` : ''}
                     </div>
                     ${p.nickname ? `<div style="font-size:11px;color:var(--accent-color);">${escapeHtml(p.nickname)}</div>` : ''}
                   </td>
@@ -756,38 +758,39 @@
     // 記住當前選取值
     const currentVal = ribbonSelect.value || '0';
 
+    const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
     let opt2Text = '';
-    let opt3Text = isEN ? 'Tier 3 · 1000 hrs (+6 Carry Limit)' : '第 3 階段 · 1000 小時 (+6 持有上限)';
+    let opt3Text = isEN ? '1000 hrs (+6 Carry Limit)' : '1000 小時 (+6 持有上限)';
     let opt4Text = '';
 
     if (!p) {
       // 未選擇寶可夢時的通用預設文案
-      opt2Text = isEN ? 'Tier 2 · 500 hrs (+3 Carry Limit · Speed Boost)' : '第 2 階段 · 500 小時 (+3 持有上限 · 幫速加成)';
-      opt4Text = isEN ? 'Tier 4 · 2000 hrs (+8 Carry Limit · Max Speed Boost)' : '第 4 階段 · 2000 小時 (+8 持有上限 · 幫速最大加成)';
+      opt2Text = isEN ? '500 hrs (+3 Carry Limit · Speed Boost)' : '500 小時 (+3 持有上限 · 幫速加成)';
+      opt4Text = isEN ? '2000 hrs (+8 Carry Limit · Max Speed Boost)' : '2000 小時 (+8 持有上限 · 幫速最大加成)';
     } else if (remainingEvos === 2) {
       // 尚可進化 2 次 (例如：小火龍、小貓怪、皮丘)
-      opt2Text = isEN ? 'Tier 2 · 500 hrs (+3 Carry Limit · Speed -11%)' : '第 2 階段 · 500 小時 (+3 持有上限 · 幫速加成 -11%)';
-      opt4Text = isEN ? 'Tier 4 · 2000 hrs (+8 Carry Limit · Speed -25%)' : '第 4 階段 · 2000 小時 (+8 持有上限 · 幫速最大加成 -25%)';
+      opt2Text = isEN ? '500 hrs (+3 Carry Limit · Speed -11%)' : '500 小時 (+3 持有上限 · 幫速加成 -11%)';
+      opt4Text = isEN ? '2000 hrs (+8 Carry Limit · Speed -25%)' : '2000 小時 (+8 持有上限 · 幫速最大加成 -25%)';
     } else if (remainingEvos === 1) {
       // 尚可進化 1 次 (例如：火恐龍、勒克貓、皮卡丘、伊布)
-      opt2Text = isEN ? 'Tier 2 · 500 hrs (+3 Carry Limit · Speed -5%)' : '第 2 階段 · 500 小時 (+3 持有上限 · 幫速加成 -5%)';
-      opt4Text = isEN ? 'Tier 4 · 2000 hrs (+8 Carry Limit · Speed -12%)' : '第 4 階段 · 2000 小時 (+8 持有上限 · 幫速最大加成 -12%)';
+      opt2Text = isEN ? '500 hrs (+3 Carry Limit · Speed -5%)' : '500 小時 (+3 持有上限 · 幫速加成 -5%)';
+      opt4Text = isEN ? '2000 hrs (+8 Carry Limit · Speed -12%)' : '2000 小時 (+8 持有上限 · 幫速最大加成 -12%)';
     } else {
       // 最終進化形或無法進化的寶可夢 (例如：噴火龍、倫琴貓、凱羅斯) -> 無幫速加成
-      opt2Text = isEN ? 'Tier 2 · 500 hrs (+3 Carry Limit)' : '第 2 階段 · 500 小時 (+3 持有上限)';
-      opt4Text = isEN ? 'Tier 4 · 2000 hrs (+8 Carry Limit)' : '第 4 階段 · 2000 小時 (+8 持有上限)';
+      opt2Text = isEN ? '500 hrs (+3 Carry Limit)' : '500 小時 (+3 持有上限)';
+      opt4Text = isEN ? '2000 hrs (+8 Carry Limit)' : '2000 小時 (+8 持有上限)';
     }
 
     const optionsData = [
-      { val: '0', text: isEN ? 'None (0h)' : '未佩戴 (0h)' },
-      { val: '1', text: isEN ? 'Tier 1 · 200 hrs (+1 Carry Limit)' : '第 1 階段 · 200 小時 (+1 持有上限)' },
-      { val: '2', text: opt2Text },
-      { val: '3', text: opt3Text },
-      { val: '4', text: opt4Text }
+      { val: '0', text: isEN ? 'None (0h)' : '未佩戴 (0h)', icon: '' },
+      { val: '1', text: isEN ? '200 hrs (+1 Carry Limit)' : '200 小時 (+1 持有上限)', icon: `${base}assets/ribbons/ribbon_lv1.png` },
+      { val: '2', text: opt2Text, icon: `${base}assets/ribbons/ribbon_lv2.png` },
+      { val: '3', text: opt3Text, icon: `${base}assets/ribbons/ribbon_lv3.png` },
+      { val: '4', text: opt4Text, icon: `${base}assets/ribbons/ribbon_lv4.png` }
     ];
 
     ribbonSelect.innerHTML = optionsData.map(o => `
-      <option value="${o.val}" ${o.val === currentVal ? 'selected' : ''}>${o.text}</option>
+      <option value="${o.val}" ${o.icon ? `data-icon="${o.icon}"` : ''} ${o.val === currentVal ? 'selected' : ''}>${o.text}</option>
     `).join('');
 
     ribbonSelect.value = currentVal;

@@ -293,7 +293,12 @@
     function syncUI() {
       const options = selectElement.options ? Array.from(selectElement.options) : [];
       const selected = (selectElement.selectedIndex >= 0 && options[selectElement.selectedIndex]) || options[0] || null;
-      labelSpan.textContent = selected ? selected.text : '';
+      const selectedIcon = selected ? selected.getAttribute('data-icon') : null;
+      if (selectedIcon) {
+        labelSpan.innerHTML = `<img src="${selectedIcon}" class="custom-select-icon" alt="" /><span>${selected.text}</span>`;
+      } else {
+        labelSpan.textContent = selected ? selected.text : '';
+      }
 
       menuDiv.innerHTML = '';
       options.forEach(opt => {
@@ -304,8 +309,12 @@
         }
         item.setAttribute('role', 'option');
         item.setAttribute('data-value', opt.value);
+        const optIcon = opt.getAttribute('data-icon');
         item.innerHTML = `
-          <span class="custom-select-item-text">${opt.text}</span>
+          <div class="custom-select-item-content">
+            ${optIcon ? `<img src="${optIcon}" class="custom-select-icon" alt="" />` : ''}
+            <span class="custom-select-item-text">${opt.text}</span>
+          </div>
           ${opt.value === selectElement.value ? '<span class="custom-select-check">✓</span>' : ''}
         `;
 

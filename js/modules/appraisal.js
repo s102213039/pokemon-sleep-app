@@ -784,15 +784,15 @@
 
     // 睡飽飽獎章動態效果文案 (依據寶可夢進化次數)
     const ribbonEvos = getRemainingEvolutions(currentPkm);
-    let ribbonOpt2 = isEN ? 'Tier 2 · 500 hrs (+3 Carry)' : '第 2 階段 · 500 小時 (+3 持有上限)';
-    let ribbonOpt3 = isEN ? 'Tier 3 · 1,000 hrs (+6 Carry)' : '第 3 階段 · 1000 小時 (+6 持有上限)';
-    let ribbonOpt4 = isEN ? 'Tier 4 · 2,000 hrs (+8 Carry)' : '第 4 階段 · 2000 小時 (+8 持有上限)';
+    let ribbonOpt2 = isEN ? '500 hrs (+3 Carry)' : '500 小時 (+3 持有上限)';
+    let ribbonOpt3 = isEN ? '1000 hrs (+6 Carry)' : '1000 小時 (+6 持有上限)';
+    let ribbonOpt4 = isEN ? '2000 hrs (+8 Carry)' : '2000 小時 (+8 持有上限)';
     if (ribbonEvos === 2) {
-      ribbonOpt2 = isEN ? 'Tier 2 · 500 hrs (+3 Carry · Speed -11%)' : '第 2 階段 · 500 小時 (+3 持有上限 · 幫速加成 -11%)';
-      ribbonOpt4 = isEN ? 'Tier 4 · 2,000 hrs (+8 Carry · Speed -25%)' : '第 4 階段 · 2000 小時 (+8 持有上限 · 幫速最大加成 -25%)';
+      ribbonOpt2 = isEN ? '500 hrs (+3 Carry · Speed -11%)' : '500 小時 (+3 持有上限 · 幫速加成 -11%)';
+      ribbonOpt4 = isEN ? '2000 hrs (+8 Carry · Speed -25%)' : '2000 小時 (+8 持有上限 · 幫速最大加成 -25%)';
     } else if (ribbonEvos === 1) {
-      ribbonOpt2 = isEN ? 'Tier 2 · 500 hrs (+3 Carry · Speed -5%)' : '第 2 階段 · 500 小時 (+3 持有上限 · 幫速加成 -5%)';
-      ribbonOpt4 = isEN ? 'Tier 4 · 2,000 hrs (+8 Carry · Speed -12%)' : '第 4 階段 · 2000 小時 (+8 持有上限 · 幫速最大加成 -12%)';
+      ribbonOpt2 = isEN ? '500 hrs (+3 Carry · Speed -5%)' : '500 小時 (+3 持有上限 · 幫速加成 -5%)';
+      ribbonOpt4 = isEN ? '2000 hrs (+8 Carry · Speed -12%)' : '2000 小時 (+8 持有上限 · 幫速最大加成 -12%)';
     }
 
     targetElement.innerHTML = `
@@ -882,16 +882,16 @@
 
             <!-- 睡飽飽獎章選擇 -->
             <div class="lab-control-group">
-              <label for="lab-ribbon-select" class="lab-control-label">
+              <label for="lab-ribbon-select" class="lab-control-label" style="display:flex;align-items:center;gap:6px;">
                 ${isEN ? 'Good-Night Ribbon:' : '睡飽飽獎章：'}
-                ${labState.ribbon > 0 ? `<span class="font-bold text-accent">${isEN ? `Tier ${labState.ribbon}` : `第 ${labState.ribbon} 階段`}</span>` : ''}
+                ${labState.ribbon > 0 ? `<img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${labState.ribbon}.png" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;" alt="Ribbon" />` : ''}
               </label>
               <select id="lab-ribbon-select" class="lab-select" onchange="window.AppraisalLab.onRibbonChange(this.value)">
                 <option value="0" ${labState.ribbon === 0 ? 'selected' : ''}>${isEN ? 'None (0h)' : '未佩戴 (0h)'}</option>
-                <option value="1" ${labState.ribbon === 1 ? 'selected' : ''}>${isEN ? 'Tier 1 · 200 hrs (+1 Carry Limit)' : '第 1 階段 · 200 小時 (+1 持有上限)'}</option>
-                <option value="2" ${labState.ribbon === 2 ? 'selected' : ''}>${ribbonOpt2}</option>
-                <option value="3" ${labState.ribbon === 3 ? 'selected' : ''}>${ribbonOpt3}</option>
-                <option value="4" ${labState.ribbon === 4 ? 'selected' : ''}>${ribbonOpt4}</option>
+                <option value="1" data-icon="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv1.png" ${labState.ribbon === 1 ? 'selected' : ''}>${isEN ? '200 hrs (+1 Carry Limit)' : '200 小時 (+1 持有上限)'}</option>
+                <option value="2" data-icon="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv2.png" ${labState.ribbon === 2 ? 'selected' : ''}>${ribbonOpt2}</option>
+                <option value="3" data-icon="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv3.png" ${labState.ribbon === 3 ? 'selected' : ''}>${ribbonOpt3}</option>
+                <option value="4" data-icon="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv4.png" ${labState.ribbon === 4 ? 'selected' : ''}>${ribbonOpt4}</option>
               </select>
             </div>
 
@@ -922,7 +922,9 @@
                       <span class="lab-nickname-tag">${escapeHtml(labState.nickname)}</span>
                     ` : ''}
                     ${labState.ribbon > 0 ? `
-                      <span class="lab-ribbon-tag" style="background:rgba(56,189,248,0.18); color:#38bdf8; border:1px solid rgba(56,189,248,0.35); font-size:11px; padding:1px 6px; border-radius:4px; font-weight:600;">${isEN ? `Ribbon Lv.${labState.ribbon}` : `獎章 Lv.${labState.ribbon}`}</span>
+                      <span class="lab-ribbon-tag" title="${isEN ? `Good-Night Ribbon Tier ${labState.ribbon}` : `睡飽飽獎章`}" style="display:inline-flex;align-items:center;">
+                        <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${labState.ribbon}.png" class="lab-ribbon-icon" alt="Ribbon" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;" />
+                      </span>
                     ` : ''}
                     ${labState.selectedBoxUid ? (labState.isCustomized ? `
                       <span class="lab-sim-tag" style="background:rgba(234,179,8,0.18); color:#facc15; border:1px solid rgba(234,179,8,0.35); font-size:11px; padding:1px 6px; border-radius:4px; font-weight:600;">${isEN ? 'Simulating' : '模擬調校中'}</span>
