@@ -5933,6 +5933,111 @@ test('Tier 4 - Real-World Application Scenarios', 'Theme Color Engine: Dual-Surf
   assert(css.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-track-row.ladder-track-highlighted'), 'styles.css must provide Dawn light theme overrides for highlighted track row');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder 3-Meal Passing Lines, Dynamic Max Scale, Tail Standalone Dimming and Reversible Unselectable Guard', () => {
+  const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // 1. Theme Color Tokens & CSS rules verification
+  assert(css.includes('--ladder-passing-line-color: #f59e0b;'), 'Midnight/Onyx must define --ladder-passing-line-color as luminous amber #f59e0b');
+  assert(css.includes('--ladder-passing-line-color: #d97706;'), 'Dawn must define --ladder-passing-line-color as warm amber #d97706');
+  assert(css.includes('--ladder-passing-line-color: #b45309;'), 'Emerald must define --ladder-passing-line-color as deep amber #b45309');
+  assert(css.includes('.ladder-passing-line-container'), 'styles.css must define .ladder-passing-line-container');
+  assert(css.includes('.ladder-passing-line'), 'styles.css must define .ladder-passing-line');
+  assert(css.includes('.ladder-passing-badge'), 'styles.css must define .ladder-passing-badge');
+  assert(css.includes('.ladder-tail-standalone-container.ladder-track-dimmed'), 'styles.css must define .ladder-tail-standalone-container.ladder-track-dimmed');
+  assert(css.includes('.ladder-track-disabled-header'), 'styles.css must define .ladder-track-disabled-header');
+
+  // 2. Headless VM Environment for wiki.js evaluation
+  let modalOpened = false;
+  let modalTitle = '';
+  const mockRankingModal = {
+    style: {},
+    querySelector(sel) {
+      if (sel === '.ranking-modal-title') return { set textContent(val) { modalTitle = val; }, textContent: modalTitle };
+      if (sel === '.ranking-modal-body') return { innerHTML: '' };
+      return null;
+    }
+  };
+
+  const ctx = {
+    localStorage: { getItem: () => 'zh-TW', setItem: () => {}, removeItem: () => {} },
+    window: { localStorage: { getItem: () => 'zh-TW', setItem: () => {}, removeItem: () => {} }, addEventListener: () => {} },
+    document: {
+      readyState: 'complete',
+      body: { classList: { contains: () => false }, appendChild: () => {} },
+      documentElement: { setAttribute: () => {} },
+      addEventListener: () => {},
+      createElement: () => ({ setAttribute: () => {}, innerHTML: '', className: '', id: '', style: {} }),
+      getElementById: (id) => {
+        if (id === 'wiki-ingredient-ranking-modal' || id === 'ingredient-ranking-modal') return mockRankingModal;
+        return null;
+      },
+      querySelectorAll: () => []
+    }
+  };
+  vm.createContext(ctx);
+  vm.runInContext(wikiJs, ctx);
+
+  const WikiDB = ctx.window.WikiDB;
+  assert(WikiDB && typeof WikiDB.renderCoordinateLadder === 'function', 'WikiDB.renderCoordinateLadder must exist');
+  assert(typeof WikiDB.selectLadderHighlightRecipe === 'function', 'WikiDB.selectLadderHighlightRecipe must exist');
+  assert(typeof WikiDB.clearLadderHighlightRecipe === 'function', 'WikiDB.clearLadderHighlightRecipe must exist');
+
+  // 3. Baseline: Default coordinate ladder rendering without recipe highlight
+  const defaultHtml = WikiDB.renderCoordinateLadder();
+  assert(!defaultHtml.includes('ladder-passing-line-container'), 'Default ladder must not render passing lines when no recipe is selected');
+  assert(!defaultHtml.includes('ladder-track-disabled-header'), 'Default ladder tracks must all be selectable');
+  assert(!defaultHtml.includes('ladder-tail-standalone-container ladder-track-dimmed'), 'Default tail container must not be dimmed');
+
+  // 4. Highlight Recipe: 彈跳咖哩烏龍麵 (Bounce Curry Udon)
+  // Ingredients: 暖暖薑 (39, 3-meal=117), 品鮮蘑菇 (31, 3-meal=93), 火辣香草 (22, 3-meal=66), 豆製肉 (20, 3-meal=60)
+  WikiDB.selectLadderHighlightRecipe('彈跳咖哩烏龍麵');
+  assertEquals(WikiDB.getLadderHighlightRecipe(), '彈跳咖哩烏龍麵', 'Active highlight recipe must be 彈跳咖哩烏龍麵');
+
+  const highlightedHtml = WikiDB.renderCoordinateLadder();
+
+  // (a) Dynamic Max Scale Expansion: Max passing target is 117 -> maxVal expands to 120
+  assert(highlightedHtml.includes('<span class="tick-label">120</span>'), 'Ladder ruler must dynamically expand to 120 to accommodate the 117 passing line');
+
+  // (b) 3-Meal Passing Lines rendered on highlighted tracks
+  assert(highlightedHtml.includes('ladder-passing-line-container'), 'Ladder must render .ladder-passing-line-container on recipe tracks');
+  assert(highlightedHtml.includes('三餐') || highlightedHtml.includes('3 Meals'), 'Passing badge must contain meal label');
+  assert(highlightedHtml.includes('117'), 'Passing line for 暖暖薑 must display 117');
+  assert(highlightedHtml.includes('93'), 'Passing line for 品鮮蘑菇 must display 93');
+  assert(highlightedHtml.includes('66'), 'Passing line for 火辣香草 must display 66');
+  assert(highlightedHtml.includes('60'), 'Passing line for 豆製肉 must display 60');
+
+  // (c) Slowpoke Tail Standalone Container Dimming: 烏龍麵 does not use tail, so tail must be dimmed
+  assert(highlightedHtml.includes('ladder-tail-standalone-container ladder-track-dimmed'), 'Tail standalone container must have ladder-track-dimmed when recipe does not use tail');
+  assert(highlightedHtml.includes('ladder-tail-track-row') && highlightedHtml.includes('ladder-track-disabled-header'), 'Tail track header must be disabled when dimmed');
+
+  // (d) Non-recipe tracks unselectable header
+  assert(highlightedHtml.includes('ladder-track-disabled-header'), 'Dimmed tracks must have ladder-track-disabled-header class');
+
+  // (e) Programmatic Guard: openIngredientRankingModal on non-recipe ingredient must be ignored
+  mockRankingModal.style.display = 'none';
+  WikiDB.openIngredientRankingModal('apple'); // Apple is NOT in 烏龍麵
+  assertEquals(mockRankingModal.style.display, 'none', 'Clicking non-recipe ingredient (apple) must NOT open modal');
+
+  // But recipe ingredient (ginger) CAN be selected
+  WikiDB.openIngredientRankingModal('ginger');
+  assertEquals(mockRankingModal.style.display, 'flex', 'Clicking recipe ingredient (ginger) must open ranking modal');
+
+  // 5. Reversible Restore ("要能夠回復"): Clear highlight and verify clean restoration
+  WikiDB.clearLadderHighlightRecipe();
+  assertEquals(WikiDB.getLadderHighlightRecipe(), null, 'Ladder highlight recipe must be null after clear');
+
+  const restoredHtml = WikiDB.renderCoordinateLadder();
+  assert(!restoredHtml.includes('ladder-passing-line-container'), 'Restored ladder must have passing lines removed');
+  assert(!restoredHtml.includes('ladder-tail-standalone-container ladder-track-dimmed'), 'Restored tail container must have dimmed class removed');
+  assert(!restoredHtml.includes('ladder-track-disabled-header'), 'Restored ladder tracks must not have disabled headers');
+
+  // Non-recipe ingredient (apple) can now be selected again after restore
+  mockRankingModal.style.display = 'none';
+  WikiDB.openIngredientRankingModal('apple');
+  assertEquals(mockRankingModal.style.display, 'flex', 'After clearing highlight, apple must be selectable again');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

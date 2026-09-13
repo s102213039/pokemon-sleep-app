@@ -12259,10 +12259,39 @@
     ]
   };
 
+  const TAIL_FEATURED_RECIPES = [
+    {
+      name_cn: '炙烤尾巴咖哩',
+      name_en: 'Grilled Tail Curry',
+      category: '咖哩',
+      pot_size: 33,
+      base_energy: 7483,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/grilledtailcurry.png',
+      ingredients: [
+        { name: '美味尾巴', count: 8, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' },
+        { name: '火辣香草', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' }
+      ]
+    },
+    {
+      name_cn: '呆呆獸尾巴的胡椒沙拉',
+      name_en: 'Slowpoke Tail Pepper Salad',
+      category: '沙拉',
+      pot_size: 35,
+      base_energy: 8169,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png',
+      ingredients: [
+        { name: '美味尾巴', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/slowpoketail.png' },
+        { name: '火辣香草', count: 10, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' },
+        { name: '純粹油', count: 15, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' }
+      ]
+    }
+  ];
+
   const ALL_TOP_CATEGORY_RECIPES = [
     ...TOP_RECIPES_BY_CATEGORY.curry,
     ...TOP_RECIPES_BY_CATEGORY.salad,
-    ...TOP_RECIPES_BY_CATEGORY.dessert
+    ...TOP_RECIPES_BY_CATEGORY.dessert,
+    ...TAIL_FEATURED_RECIPES
   ];
 
   // 全局前 7 高能量料理 (維持舊介面與單元測試相容性)
@@ -12731,6 +12760,15 @@
     const mult = getLadderMultiplier();
     const ingData = LV60_COORDINATE_LADDER_DATA.find(i => i.id === ingId);
     if (!ingData) return;
+
+    // 若當前有高亮料理，且點選的食材非該料理所需食材，則禁止開啟與選取
+    if (ladderHighlightRecipe) {
+      const activeRecipe = ALL_TOP_CATEGORY_RECIPES.find(r => r.name_cn === ladderHighlightRecipe || r.name_en === ladderHighlightRecipe);
+      if (activeRecipe && activeRecipe.ingredients) {
+        const isRecipeIng = activeRecipe.ingredients.some(i => i.name === ingData.name || (i.name === '美味尾巴' && ingId === 'tail'));
+        if (!isRecipeIng) return;
+      }
+    }
 
     const ingName = isEN ? ((window.I18N && window.I18N.getIngredientName(ingData.name)) || ingData.name) : ingData.name;
     const dishInfo = TOP_RECIPES_FOR_INGREDIENTS[ingId] || { name: isEN ? 'Key Dish' : '核心大菜', name_en: 'Key Dish', need: 20 };
@@ -15230,6 +15268,15 @@
     }
 
     try { switchWikiSubTab(currentWikiSubTab); } catch (e) {}
+    try {
+      if (typeof window !== 'undefined' && window.location) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const recipeParam = urlParams.get('recipe');
+        if (recipeParam) {
+          selectLadderHighlightRecipe(decodeURIComponent(recipeParam));
+        }
+      }
+    } catch (e) {}
     try { recalcTriggerChance(); } catch (e) {}
     try { recalcSleepDays(); } catch (e) {}
     try { refreshCoordinateLadder(); } catch (e) {}
@@ -15415,6 +15462,7 @@
 
   // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、大菜供應能力評定、動態自適應最大刻度、美味尾巴獨立分離)
   function renderCoordinateLadder(ladderData) {
+    const data = ladderData || LV60_COORDINATE_LADDER_DATA || [];
     const mult = getLadderMultiplier();
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     
@@ -15432,8 +15480,8 @@
     }
 
     // 分離 18 種常規食材與 1 種獨立美味尾巴
-    const mainTracks = ladderData.filter(ing => ing.id !== 'tail');
-    const tailIng = ladderData.find(ing => ing.id === 'tail');
+    const mainTracks = data.filter(ing => ing.id !== 'tail');
+    const tailIng = data.find(ing => ing.id === 'tail');
 
     const isUnfilteredDefault = (ladderSpecialtyFilter === 'ALL' && ladderRecipeFilter === 'ALL' && ladderSupplyFilter === 'ALL' && !ladderSearchQuery);
 
@@ -15580,6 +15628,21 @@
     let maxVal = Math.ceil((globalMaxCount + 1) / 10) * 10;
     if (maxVal <= minVal) maxVal = minVal + 10; // 最低跨度至少 10
 
+    // 若有選取料理，計算該料理所有食材之最大三餐及格線需求 (3 Meals Max Target)
+    // 若當前範圍數量不足以把及格線畫上，則將最大及格線當作最大展示數量，務必展示出及格線
+    let maxPassingTarget = 0;
+    if (activeHighlightRecipe && activeHighlightRecipe.ingredients) {
+      activeHighlightRecipe.ingredients.forEach(item => {
+        if (item.name !== '美味尾巴' && item.name !== 'Slowpoke Tail') {
+          const target = (item.count || 0) * 3;
+          if (target > maxPassingTarget) maxPassingTarget = target;
+        }
+      });
+    }
+    if (maxPassingTarget > maxVal) {
+      maxVal = Math.ceil(maxPassingTarget / 10) * 10;
+    }
+
     // 動態計算刻度步長 step
     const span = maxVal - minVal;
     let step = 10;
@@ -15706,10 +15769,13 @@
             const isHighlighted = reqCount !== null && reqCount !== undefined;
             const isDimmed = highlightedIngMap && !isHighlighted;
             const highlightClass = isHighlighted ? 'ladder-track-highlighted' : (isDimmed ? 'ladder-track-dimmed' : '');
+            const threeMealsTarget = isHighlighted ? (reqCount * 3) : null;
 
             return `
             <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''} ${highlightClass}" data-ladder-ing="${ing.id}">
-              <div class="ladder-track-header clickable-ing-header" onclick="window.WikiDB.openIngredientRankingModal('${ing.id}')" role="button" tabindex="0" title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isEN ? 'Key Dish: ' : '核心大菜：'}${dishName} · ${isEN ? 'Click to view rankings' : '點擊查看產量排名'}">
+              <div class="ladder-track-header ${isDimmed ? 'ladder-track-disabled-header' : 'clickable-ing-header'}" 
+                   ${isDimmed ? 'tabindex="-1"' : `onclick="window.WikiDB.openIngredientRankingModal('${ing.id}')" role="button" tabindex="0"`} 
+                   title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isDimmed ? (isEN ? 'Not in current recipe' : '非此料理所需食材') : (isEN ? 'Key Dish: ' : '核心大菜：') + dishName + (isEN ? ' · Click to view rankings' : ' · 點擊查看產量排名')}">
                 <div class="ladder-track-ing-main">
                   <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">
                 </div>
@@ -15719,6 +15785,17 @@
                 <div class="ladder-grid-lines">
                   ${ticks.map(t => `<div class="ladder-grid-line" style="left: ${getPosPct(t)}%;"></div>`).join('')}
                 </div>
+
+                <!-- 三餐及格線 (3 Meals Passing Line) -->
+                ${isHighlighted && threeMealsTarget !== null ? `
+                  <div class="ladder-passing-line-container" style="left: ${getPosPct(threeMealsTarget)}%;" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${threeMealsTarget} ${isEN ? 'items' : '顆'}">
+                    <div class="ladder-passing-line"></div>
+                    <div class="ladder-passing-badge">
+                      <span class="ladder-passing-label">${isEN ? '3 Meals' : '三餐'}</span>
+                      <span class="ladder-passing-num">${threeMealsTarget}</span>
+                    </div>
+                  </div>
+                ` : ''}
 
                 <!-- 前導點狀虛線 (20 ~ 最低產量) 與 實體軌道線 (最低產量 ~ 終點) -->
                 <div class="ladder-track-lead-line" style="left: 0; width: ${leadPct}%;"></div>
@@ -15820,12 +15897,28 @@
           `;
           }).join('')}
 
-          <!-- 獨立美味尾巴專屬天梯小看板 (0 ~ 20 獨立刻度) -->
+          <!-- 獨立美味尾巴專屬天梯小看板 (0 ~ 20 獨立刻度，支援高亮與及格線) -->
           ${tailIng ? (() => {
-            const tailTicks = [0, 5, 10, 15, 20];
+            const tailReqCount = highlightedIngMap ? (highlightedIngMap.get('美味尾巴') || highlightedIngMap.get('Slowpoke Tail')) : null;
+            const isTailHighlighted = tailReqCount !== null && tailReqCount !== undefined;
+            const isTailDimmed = highlightedIngMap && !isTailHighlighted;
+            const tailThreeMealsTarget = isTailHighlighted ? (tailReqCount * 3) : null;
+
+            let tailMax = 20;
+            if (isTailHighlighted && tailThreeMealsTarget > tailMax) {
+              tailMax = Math.ceil(tailThreeMealsTarget / 5) * 5;
+            }
+            const tailStep = tailMax > 30 ? 10 : 5;
+            const tailTicks = [];
+            for (let t = 0; t <= tailMax; t += tailStep) {
+              tailTicks.push(t);
+            }
+            if (tailTicks[tailTicks.length - 1] < tailMax) {
+              tailTicks.push(tailMax);
+            }
             function getTailPct(val) {
-              const clamped = Math.min(Math.max(val, 0), 20);
-              return ((clamped / 20) * 100).toFixed(2);
+              const clamped = Math.min(Math.max(val, 0), tailMax);
+              return ((clamped / tailMax) * 100).toFixed(2);
             }
             const tailDishInfo = TOP_RECIPES_FOR_INGREDIENTS.tail || { need: 10 };
             const filteredTailPkm = tailIng.pokemon.map((p, pIdx) => {
@@ -15861,7 +15954,7 @@
             const isTailEmpty = filteredTailPkm.length === 0;
 
             return `
-              <div class="ladder-tail-standalone-container">
+              <div class="ladder-tail-standalone-container ${isTailDimmed ? 'ladder-track-dimmed' : ''}">
                 <div class="ladder-tail-standalone-box">
                   <div class="ladder-tail-ruler">
                     <div class="ladder-tail-ruler-spacer"></div>
@@ -15876,8 +15969,10 @@
                     <div class="ladder-tail-ruler-spacer"></div>
                   </div>
 
-                  <div class="ladder-tail-track-row ${isTailEmpty ? 'ladder-track-empty' : ''} ${highlightedIngMap ? 'ladder-track-dimmed' : ''}" data-ladder-ing="tail">
-                    <div class="ladder-track-header clickable-ing-header" onclick="window.WikiDB.openIngredientRankingModal('tail')" role="button" tabindex="0" title="${isEN ? 'Slowpoke Tail' : '美味尾巴'} · ${isEN ? 'Click to view rankings' : '點擊查看產量排名'}">
+                  <div class="ladder-tail-track-row ${isTailEmpty ? 'ladder-track-empty' : ''} ${isTailDimmed ? 'ladder-track-dimmed' : (isTailHighlighted ? 'ladder-track-highlighted' : '')}" data-ladder-ing="tail">
+                    <div class="ladder-track-header ${isTailDimmed ? 'ladder-track-disabled-header' : 'clickable-ing-header'}" 
+                         ${isTailDimmed ? 'tabindex="-1"' : `onclick="window.WikiDB.openIngredientRankingModal('tail')" role="button" tabindex="0"`} 
+                         title="${isEN ? 'Slowpoke Tail' : '美味尾巴'} · ${isTailDimmed ? (isEN ? 'Not required for this recipe' : '非此料理所需食材') : (isEN ? 'Click to view rankings' : '點擊查看產量排名')}">
                       <img src="${tailIng.icon}" class="ladder-ing-icon" alt="${isEN ? 'Slowpoke Tail' : '美味尾巴'}">
                     </div>
 
@@ -15887,6 +15982,17 @@
                       </div>
 
                       <div class="ladder-track-line" style="left: 0; right: 0;"></div>
+
+                      <!-- 尾巴三餐及格線 -->
+                      ${isTailHighlighted && tailThreeMealsTarget !== null ? `
+                        <div class="ladder-passing-line-container" style="left: ${getTailPct(tailThreeMealsTarget)}%;" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${tailThreeMealsTarget} ${isEN ? 'items' : '顆'}">
+                          <div class="ladder-passing-line"></div>
+                          <div class="ladder-passing-badge">
+                            <span class="ladder-passing-label">${isEN ? '3 Meals' : '三餐'}</span>
+                            <span class="ladder-passing-num">${tailThreeMealsTarget}</span>
+                          </div>
+                        </div>
+                      ` : ''}
 
                       <div class="ladder-spans-container">
                         ${filteredTailPkm.map(p => {
@@ -17175,6 +17281,7 @@
     getLadderSortOrder: getLadderSortOrder,
     resetLadderFilters: resetLadderFilters,
     refreshCoordinateLadder: refreshCoordinateLadder,
+    renderCoordinateLadder: renderCoordinateLadder,
     handleLadderGroupHover: handleLadderGroupHover,
     handleLadderGroupHoverOut: handleLadderGroupHoverOut,
     recalcTriggerChance: recalcTriggerChance,
@@ -17254,6 +17361,7 @@
   window.getLadderSortOrder = getLadderSortOrder;
   window.resetLadderFilters = resetLadderFilters;
   window.refreshCoordinateLadder = refreshCoordinateLadder;
+  window.renderCoordinateLadder = renderCoordinateLadder;
   window.handleLadderGroupHover = handleLadderGroupHover;
   window.handleLadderGroupHoverOut = handleLadderGroupHoverOut;
   window.recalcTriggerChance = recalcTriggerChance;

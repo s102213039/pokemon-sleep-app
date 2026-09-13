@@ -67,6 +67,15 @@
 - 沙拉類: `var(--badge-cat-salad-bg)`, `var(--badge-cat-salad-text)`, `var(--badge-cat-salad-border)`
 - 甜點類: `var(--badge-cat-dessert-bg)`, `var(--badge-cat-dessert-text)`, `var(--badge-cat-dessert-border)`
 
+### 3.6 天梯三餐及格線與軌道遮罩 (Ladder 3-Meal Passing Line & Track Masking)
+- 及格基準線: `var(--ladder-passing-line-color)` (深色為亮琥珀金 `#f59e0b`, 淺色為深琥珀橘 `#d97706` / `#b45309`)
+- 及格線光暈: `var(--ladder-passing-line-glow)`
+- 數值徽章底色: `var(--ladder-passing-badge-bg)` (深色為深棕黑 `rgba(26, 21, 12, 0.94)`, 淺色為淡琥珀金 `#fffbeb` / `#fef3c7`)
+- 數值徽章外框: `var(--ladder-passing-badge-border)`
+- 數值徽章文字: `var(--ladder-passing-badge-text)` (深色為亮金 `#fbbf24`, 淺色為深暖褐 `#92400e` / `#78350f`, 對比度 > 7:1)
+- 非料理食材軌道透明度遮罩: `.ladder-track-row.ladder-track-dimmed`, `.ladder-tail-standalone-container.ladder-track-dimmed` (`opacity: 0.28 !important; filter: grayscale(40%) !important; pointer-events: none !important;`)
+- 禁用食材標題標籤: `.ladder-track-disabled-header` (`cursor: not-allowed !important; pointer-events: none !important; opacity: 0.35 !important;`)
+
 ---
 
 ## 4. 雙向執行檢核機制 (Execution Pre/Post Check Protocol)

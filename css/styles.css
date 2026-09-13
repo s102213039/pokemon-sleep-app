@@ -88,6 +88,14 @@
   --badge-bonus-default-text: var(--text-main);
   --badge-bonus-default-border: rgba(255, 255, 255, 0.15);
 
+  /* Ladder 3-Meal Passing Line Tokens (Midnight Dark) */
+  --ladder-passing-line-color: #f59e0b;
+  --ladder-passing-line-glow: rgba(245, 158, 11, 0.55);
+  --ladder-passing-badge-bg: rgba(26, 21, 12, 0.94);
+  --ladder-passing-badge-border: rgba(245, 158, 11, 0.85);
+  --ladder-passing-badge-text: #fbbf24;
+  --ladder-passing-badge-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+
   --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
   --shadow-hover: 0 20px 35px -5px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 189, 248, 0.2);
   --bg-radial-1: rgba(56, 189, 248, 0.15);
@@ -210,6 +218,14 @@
   --badge-bonus-default-text: var(--text-main);
   --badge-bonus-default-border: rgba(255, 255, 255, 0.15);
 
+  /* Ladder 3-Meal Passing Line Tokens (Onyx Dark) */
+  --ladder-passing-line-color: #f59e0b;
+  --ladder-passing-line-glow: rgba(245, 158, 11, 0.55);
+  --ladder-passing-badge-bg: rgba(18, 16, 12, 0.94);
+  --ladder-passing-badge-border: rgba(245, 158, 11, 0.85);
+  --ladder-passing-badge-text: #fbbf24;
+  --ladder-passing-badge-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+
   --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.8), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
   --shadow-hover: 0 20px 35px -5px rgba(0, 0, 0, 0.9), 0 0 15px rgba(203, 213, 225, 0.15);
   --bg-radial-1: rgba(203, 213, 225, 0.08);
@@ -300,6 +316,14 @@
   --badge-bonus-default-bg: #f1f5f9;
   --badge-bonus-default-text: #475569;
   --badge-bonus-default-border: #cbd5e1;
+
+  /* Ladder 3-Meal Passing Line Tokens (Dawn Light) */
+  --ladder-passing-line-color: #d97706;
+  --ladder-passing-line-glow: rgba(217, 119, 6, 0.35);
+  --ladder-passing-badge-bg: #fffbeb;
+  --ladder-passing-badge-border: #d97706;
+  --ladder-passing-badge-text: #92400e;
+  --ladder-passing-badge-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 
   --shadow-lg: 0 4px 20px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
   --shadow-hover: 0 10px 25px -4px rgba(15, 23, 42, 0.12), 0 0 15px rgba(2, 132, 199, 0.15);
@@ -392,6 +416,14 @@
   --badge-bonus-default-bg: #f1f5f9;
   --badge-bonus-default-text: #475569;
   --badge-bonus-default-border: #cbd5e1;
+
+  /* Ladder 3-Meal Passing Line Tokens (Emerald Light) */
+  --ladder-passing-line-color: #b45309;
+  --ladder-passing-line-glow: rgba(180, 83, 9, 0.3);
+  --ladder-passing-badge-bg: #fef3c7;
+  --ladder-passing-badge-border: #b45309;
+  --ladder-passing-badge-text: #78350f;
+  --ladder-passing-badge-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 
   --shadow-lg: 0 4px 20px -2px rgba(51, 65, 85, 0.08), 0 2px 6px -1px rgba(51, 65, 85, 0.04);
   --shadow-hover: 0 10px 25px -4px rgba(51, 65, 85, 0.12), 0 0 15px rgba(71, 85, 105, 0.15);
@@ -21260,12 +21292,82 @@ body.mobile-h5-app.values-active,
 .ladder-track-row.ladder-track-dimmed {
   opacity: 0.28 !important;
   filter: grayscale(40%) !important;
+  pointer-events: none !important;
   transition: opacity 0.25s ease, filter 0.25s ease;
 }
 
 .ladder-track-row.ladder-track-dimmed:hover {
-  opacity: 0.75 !important;
-  filter: none !important;
+  opacity: 0.28 !important;
+  filter: grayscale(40%) !important;
+}
+
+.ladder-tail-standalone-container.ladder-track-dimmed {
+  opacity: 0.28 !important;
+  filter: grayscale(40%) !important;
+  pointer-events: none !important;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.ladder-track-disabled-header {
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  opacity: 0.35 !important;
+}
+
+/* ==========================================================================
+   Ladder 3-Meal Passing Line Component (三餐及格線)
+   ========================================================================== */
+.ladder-passing-line-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 28;
+  transform: translateX(-50%);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: left 0.25s ease, opacity 0.2s ease;
+}
+
+.ladder-passing-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--ladder-passing-line-color, #f59e0b);
+  box-shadow: 0 0 6px var(--ladder-passing-line-glow, rgba(245, 158, 11, 0.55));
+}
+
+.ladder-passing-badge {
+  position: relative;
+  top: 2px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 4px;
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 1.15;
+  border-radius: 3px;
+  white-space: nowrap;
+  pointer-events: auto;
+  background: var(--ladder-passing-badge-bg, rgba(26, 21, 12, 0.94));
+  border: 1px solid var(--ladder-passing-badge-border, rgba(245, 158, 11, 0.85));
+  color: var(--ladder-passing-badge-text, #fbbf24);
+  box-shadow: var(--ladder-passing-badge-shadow, 0 2px 6px rgba(0, 0, 0, 0.5));
+}
+
+.ladder-passing-label {
+  font-size: 8.5px;
+  opacity: 0.9;
+  letter-spacing: -0.2px;
+}
+
+.ladder-passing-num {
+  font-weight: 800;
+  letter-spacing: -0.2px;
 }
 
 /* ==========================================================================
@@ -21510,6 +21612,41 @@ body.mobile-h5-app.values-active,
 [data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-btn-cancel:hover,
 [data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-cancel:hover {
   background: #f1f5f9;
+}
+
+/* 4. 3-Meal Passing Line in Light Theme */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-passing-line,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-passing-line,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-passing-line {
+  background: #d97706;
+  box-shadow: 0 0 4px rgba(217, 119, 6, 0.35);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-passing-badge,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-passing-badge,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-passing-badge {
+  background: #fffbeb;
+  border-color: #d97706;
+  color: #92400e;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-passing-line {
+  background: #b45309;
+  box-shadow: 0 0 4px rgba(180, 83, 9, 0.3);
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-passing-badge {
+  background: #fef3c7;
+  border-color: #b45309;
+  color: #78350f;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.mobile-h5-app .ladder-passing-badge {
+  font-size: 8.5px !important;
+  padding: 0 3px !important;
+  top: 1px !important;
 }
 
 
