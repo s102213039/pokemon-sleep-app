@@ -21153,36 +21153,33 @@ body.mobile-h5-app.values-active,
 /* Banner Above Coordinate Ladder */
 .ladder-recipe-banner {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   background: rgba(2, 132, 199, 0.12);
   border: 1px solid rgba(56, 189, 248, 0.35);
   border-radius: 12px;
-  padding: 10px 14px;
+  padding: 6px 14px;
   margin-bottom: 12px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  min-height: 46px;
 }
 
-.ladder-recipe-banner-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.ladder-recipe-banner-info {
+.ladder-recipe-banner-left {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-width: 0;
+  flex-shrink: 0;
 }
 
 .ladder-recipe-banner-icon {
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   object-fit: contain;
   flex-shrink: 0;
+  border-radius: 6px;
 }
 
 .ladder-recipe-banner-text {
@@ -21190,7 +21187,7 @@ body.mobile-h5-app.values-active,
   align-items: baseline;
   gap: 6px;
   min-width: 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .ladder-recipe-banner-title {
@@ -21215,7 +21212,7 @@ body.mobile-h5-app.values-active,
   color: #fca5a5;
   font-size: 11.5px;
   font-weight: 600;
-  padding: 3px 8px;
+  padding: 4px 9px;
   border-radius: 6px;
   cursor: pointer;
   white-space: nowrap;
@@ -21227,31 +21224,41 @@ body.mobile-h5-app.values-active,
   background: rgba(239, 68, 68, 0.25);
 }
 
-/* Banner Ingredients List (Below Recipe Info) */
+/* Banner Ingredients List (Inline next to recipe) */
 .ladder-recipe-banner-ings {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px 8px;
   align-items: center;
-  padding-top: 8px;
-  border-top: 1px solid rgba(56, 189, 248, 0.2);
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-left: auto;
+  margin-right: 6px;
+  border-top: none;
+  padding-top: 0;
 }
 
 .ladder-recipe-banner-ing-chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   background: rgba(15, 23, 42, 0.75);
   border: 1px solid rgba(56, 189, 248, 0.3);
   border-radius: 6px;
-  padding: 3px 8px;
+  padding: 3px 7px;
   font-size: 11.5px;
   color: var(--text-title, #f8fafc);
+  flex-shrink: 0;
 }
 
 .ladder-banner-ing-icon {
   width: 18px;
   height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.recipe-card-ing-icon {
+  width: 16px;
+  height: 16px;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -21427,12 +21434,9 @@ body.mobile-h5-app.values-active,
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ings,
 [data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-ings,
-[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-ings {
-  border-top: 1px solid #bae6fd;
-}
-
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-ings,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ings {
-  border-top: 1px solid #cbd5e1;
+  border-top: none;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ing-chip,
@@ -21648,6 +21652,154 @@ body.mobile-h5-app.values-active,
   padding: 0 3px !important;
   top: 1px !important;
 }
+
+/* Mobile H5 Condensed Single-Row Recipe Banner */
+.mobile-h5-app .ladder-recipe-banner,
+.mobile-h5-html .ladder-recipe-banner {
+  padding: 5px 8px;
+  gap: 8px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  min-height: 44px;
+  height: auto;
+}
+
+.mobile-h5-app .ladder-recipe-banner-left,
+.mobile-h5-html .ladder-recipe-banner-left {
+  flex-shrink: 0;
+}
+
+.mobile-h5-app .ladder-recipe-banner-icon,
+.mobile-h5-html .ladder-recipe-banner-icon {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 8px;
+}
+
+/* 旁邊的料理名稱與類型還有基礎能量都不要了 */
+.mobile-h5-app .ladder-recipe-banner-text,
+.mobile-h5-html .ladder-recipe-banner-text {
+  display: none !important;
+}
+
+/* 直接把下方的食材圖示以及數量拿上來，做好排版 */
+.mobile-h5-app .ladder-recipe-banner-ings,
+.mobile-h5-html .ladder-recipe-banner-ings {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 5px !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  overflow-x: auto !important;
+  flex-wrap: nowrap !important;
+  border-top: none !important;
+  padding-top: 0 !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.mobile-h5-app .ladder-recipe-banner-ings::-webkit-scrollbar,
+.mobile-h5-html .ladder-recipe-banner-ings::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .ladder-recipe-banner-ing-chip,
+.mobile-h5-html .ladder-recipe-banner-ing-chip {
+  padding: 2px 6px !important;
+  gap: 3px !important;
+  border-radius: 5px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .ladder-banner-ing-icon,
+.mobile-h5-html .ladder-banner-ing-icon {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.mobile-h5-app .ladder-banner-ing-count,
+.mobile-h5-html .ladder-banner-ing-count {
+  font-size: 11.5px !important;
+}
+
+.mobile-h5-app .ladder-recipe-banner-clear-btn,
+.mobile-h5-html .ladder-recipe-banner-clear-btn {
+  padding: 4px 8px !important;
+  font-size: 11px !important;
+  border-radius: 5px !important;
+}
+
+@media (max-width: 768px) {
+  .ladder-recipe-banner {
+    padding: 5px 8px;
+    gap: 8px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    min-height: 44px;
+    height: auto;
+  }
+
+  .ladder-recipe-banner-left {
+    flex-shrink: 0;
+  }
+
+  .ladder-recipe-banner-icon {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 8px;
+  }
+
+  .ladder-recipe-banner-text {
+    display: none !important;
+  }
+
+  .ladder-recipe-banner-ings {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 5px !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    border-top: none !important;
+    padding-top: 0 !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .ladder-recipe-banner-ings::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .ladder-recipe-banner-ing-chip {
+    padding: 2px 6px !important;
+    gap: 3px !important;
+    border-radius: 5px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .ladder-banner-ing-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .ladder-banner-ing-count {
+    font-size: 11.5px !important;
+  }
+
+  .ladder-recipe-banner-clear-btn {
+    padding: 4px 8px !important;
+    font-size: 11px !important;
+    border-radius: 5px !important;
+  }
+}
+
 
 
 

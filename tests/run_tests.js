@@ -5894,6 +5894,29 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Ba
 
   ctx.window.WikiDB.clearLadderHighlightRecipe();
   assertEquals(ctx.window.WikiDB.getLadderHighlightRecipe(), null, 'Active highlight recipe must be cleared');
+
+  // 5. Zero Ingredient Names & Single-Row Banner Assertions
+  assert(!wikiJs.includes('class="ing-chip-name"'), 'Modal recipe cards must not display ingredient text names');
+  assert(!wikiJs.includes('class="ladder-banner-ing-name"'), 'Ladder recipe banner must not display ingredient text names');
+  assert(wikiJs.includes('class="recipe-card-ing-icon"'), 'Modal recipe chips must include ingredient icons');
+  assert(!wikiJs.includes("'清除高亮'"), "Button text must be shortened to '清除' (no '清除高亮')");
+
+  // Verify all 21 recipes have correct icons from recipes.json
+  const recipesJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'recipes.json'), 'utf8'));
+  const canonicalMap = new Map();
+  recipesJson.forEach(r => canonicalMap.set(r.name_cn, r));
+  ['curry', 'salad', 'dessert'].forEach(cat => {
+    byCat[cat].forEach(r => {
+      const canonical = canonicalMap.get(r.name_cn);
+      assert(canonical, `Recipe ${r.name_cn} must exist in recipes.json`);
+      assertEquals(r.icon, canonical.icon, `Recipe ${r.name_cn} icon must match recipes.json canonical icon`);
+      assertEquals(r.name_en, canonical.name_en, `Recipe ${r.name_cn} name_en must match recipes.json canonical name_en`);
+    });
+  });
+
+  // Verify mobile condensed single-row CSS
+  assert(css.includes('.mobile-h5-app .ladder-recipe-banner'), 'styles.css must provide .mobile-h5-app single-row banner rules');
+  assert(css.includes('width: 38px;\n    height: 38px;'), 'Mobile banner icon must be enlarged to 38px');
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Theme Color Engine: Dual-Surface Pre/Post Check and Ladder Recipe Light/Dark Adaptation', () => {

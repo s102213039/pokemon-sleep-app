@@ -11989,11 +11989,11 @@
       },
       {
         name_cn: '一字斬壽喜燒咖哩',
-        name_en: 'Cross Chop Sukiyaki Curry',
+        name_en: 'Cut Sukiyaki Curry',
         category: '咖哩',
         pot_size: 101,
         base_energy: 20655,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/crosschopsukiyakicurry.png',
+        icon: 'https://www.serebii.net/pokemonsleep/meals/cutsukiyakicurry.png',
         ingredients: [
           { name: '粗枝大蔥', count: 27, icon: 'https://www.serebii.net/pokemonsleep/ingredients/largeleek.png' },
           { name: '豆製肉', count: 26, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' },
@@ -12017,11 +12017,11 @@
       },
       {
         name_cn: '扮演南瓜濃湯',
-        name_en: 'Role Play Pumpkin Stew',
+        name_en: 'Role Play Pumpkaboo Stew',
         category: '咖哩',
         pot_size: 69,
         base_energy: 15621,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/roleplaypumpkinstew.png',
+        icon: 'https://www.serebii.net/pokemonsleep/meals/roleplaypumpkaboostew.png',
         ingredients: [
           { name: '品鮮蘑菇', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png' },
           { name: '窩心洋芋', count: 18, icon: 'https://www.serebii.net/pokemonsleep/ingredients/softpotato.png' },
@@ -12045,11 +12045,11 @@
       },
       {
         name_cn: '萌綠咖哩麵包',
-        name_en: 'Greengrass Curry Bread',
+        name_en: 'Greengrass Curry Bun',
         category: '咖哩',
         pot_size: 63,
         base_energy: 10945,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/greengrasscurrybread.png',
+        icon: 'https://www.serebii.net/pokemonsleep/meals/greengrasscurrybun.png',
         ingredients: [
           { name: '暖暖薑', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/warmingginger.png' },
           { name: '火辣香草', count: 20, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fieryherb.png' },
@@ -12089,11 +12089,11 @@
       },
       {
         name_cn: '不服輸咖啡風味沙拉',
-        name_en: 'Defiant Coffee Salad',
+        name_en: 'Defiant Coffee-Dressed Salad',
         category: '沙拉',
         pot_size: 100,
         base_energy: 20218,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/defiantcoffeesalad.png',
+        icon: 'https://www.serebii.net/pokemonsleep/meals/defiantcoffee-dressedsalad.png',
         ingredients: [
           { name: '醒腦咖啡豆', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/rousingcoffee.png' },
           { name: '豆製肉', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/beansausage.png' },
@@ -12103,11 +12103,11 @@
       },
       {
         name_cn: '蘋果酸優格風味沙拉',
-        name_en: 'Apple Acid Salad',
+        name_en: 'Apple Acid Yogurt-Dressed Salad',
         category: '沙拉',
         pot_size: 104,
         base_energy: 19293,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/appleacidsalad.png',
+        icon: 'https://www.serebii.net/pokemonsleep/meals/appleacidyogurt-dressedsalad.png',
         ingredients: [
           { name: '特選蛋', count: 35, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' },
           { name: '特選蘋果', count: 28, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png' },
@@ -12117,11 +12117,11 @@
       },
       {
         name_cn: '落英繽紛含羞草蛋沙拉',
-        name_en: 'Petal Dance Mimosa Salad',
+        name_en: 'Petal Blizzard Layered Salad',
         category: '沙拉',
         pot_size: 69,
         base_energy: 11811,
-        icon: 'https://www.serebii.net/pokemonsleep/meals/petaldancemimosasalad.png',
+        icon: 'https://www.serebii.net/pokemonsleep/meals/petalblizzardlayeredsalad.png',
         ingredients: [
           { name: '特選蛋', count: 25, icon: 'https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png' },
           { name: '純粹油', count: 17, icon: 'https://www.serebii.net/pokemonsleep/ingredients/pureoil.png' },
@@ -12360,12 +12360,15 @@
               </div>
             </div>
             <div class="recipe-card-ings-row">
-              ${r.ingredients.map(ing => `
-                <span class="recipe-card-ing-chip">
-                  <span class="ing-chip-name">${isEN ? ((window.I18N && window.I18N.getIngredientName(ing.name)) || ing.name) : ing.name}</span>
-                  <span class="ing-chip-count">x${ing.count}</span>
-                </span>
-              `).join('')}
+              ${r.ingredients.map(ing => {
+                const ingDisplayName = isEN ? ((window.I18N && window.I18N.getIngredientName(ing.name)) || ing.name) : ing.name;
+                return `
+                  <span class="recipe-card-ing-chip" title="${ingDisplayName}">
+                    <img src="${ing.icon}" class="recipe-card-ing-icon" alt="${ingDisplayName}">
+                    <span class="ing-chip-count">×${ing.count}</span>
+                  </span>
+                `;
+              }).join('')}
             </div>
           </div>
         `;
@@ -12378,7 +12381,7 @@
       footerEl.innerHTML = `
         ${ladderHighlightRecipe ? `
           <button type="button" class="ladder-recipe-btn-clear" onclick="window.WikiDB.clearLadderHighlightRecipe()">
-            ${isEN ? 'Clear Highlight' : '清除高亮'}
+            ${isEN ? 'Clear' : '清除'}
           </button>
         ` : ''}
         <button type="button" class="ladder-recipe-btn-cancel" onclick="window.WikiDB.closeLadderRecipeModal()">
@@ -15672,31 +15675,31 @@
         <div class="wiki-coordinate-ladder" onmouseover="window.WikiDB.handleLadderGroupHover(event)" onmouseout="window.WikiDB.handleLadderGroupHoverOut(event)">
           ${activeHighlightRecipe ? `
             <div class="ladder-recipe-banner">
-              <div class="ladder-recipe-banner-top">
-                <div class="ladder-recipe-banner-info">
-                  <img src="${activeHighlightRecipe.icon}" class="ladder-recipe-banner-icon" alt="${isEN ? activeHighlightRecipe.name_en : activeHighlightRecipe.name_cn}">
-                  <div class="ladder-recipe-banner-text">
-                    <span class="ladder-recipe-banner-title">${isEN ? activeHighlightRecipe.name_en : activeHighlightRecipe.name_cn}</span>
-                    <span class="ladder-recipe-banner-sub">${activeHighlightRecipe.category} · ${isEN ? 'Base Energy' : '基礎能量'} ${activeHighlightRecipe.base_energy.toLocaleString()}</span>
-                  </div>
+              <div class="ladder-recipe-banner-left">
+                <img src="${activeHighlightRecipe.icon}" class="ladder-recipe-banner-icon" alt="${isEN ? activeHighlightRecipe.name_en : activeHighlightRecipe.name_cn}">
+                <div class="ladder-recipe-banner-text">
+                  <span class="ladder-recipe-banner-title">${isEN ? activeHighlightRecipe.name_en : activeHighlightRecipe.name_cn}</span>
+                  <span class="ladder-recipe-banner-sub">${activeHighlightRecipe.category} · ${isEN ? 'Base Energy' : '基礎能量'} ${activeHighlightRecipe.base_energy.toLocaleString()}</span>
                 </div>
-                <button type="button" class="ladder-recipe-banner-clear-btn" onclick="window.WikiDB.clearLadderHighlightRecipe()" title="${isEN ? 'Clear recipe highlight' : '清除料理高亮'}">
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                  <span>${isEN ? 'Clear' : '清除高亮'}</span>
-                </button>
               </div>
               <div class="ladder-recipe-banner-ings">
-                ${activeHighlightRecipe.ingredients.map(item => `
-                  <div class="ladder-recipe-banner-ing-chip" title="${isEN ? ((window.I18N && window.I18N.getIngredientName(item.name)) || item.name) : item.name}">
-                    <img src="${item.icon}" class="ladder-banner-ing-icon" alt="${item.name}">
-                    <span class="ladder-banner-ing-name">${isEN ? ((window.I18N && window.I18N.getIngredientName(item.name)) || item.name) : item.name}</span>
-                    <strong class="ladder-banner-ing-count">×${item.count}</strong>
-                  </div>
-                `).join('')}
+                ${activeHighlightRecipe.ingredients.map(item => {
+                  const itemDisplayName = isEN ? ((window.I18N && window.I18N.getIngredientName(item.name)) || item.name) : item.name;
+                  return `
+                    <div class="ladder-recipe-banner-ing-chip" title="${itemDisplayName}">
+                      <img src="${item.icon}" class="ladder-banner-ing-icon" alt="${itemDisplayName}">
+                      <strong class="ladder-banner-ing-count">×${item.count}</strong>
+                    </div>
+                  `;
+                }).join('')}
               </div>
+              <button type="button" class="ladder-recipe-banner-clear-btn" onclick="window.WikiDB.clearLadderHighlightRecipe()" title="${isEN ? 'Clear recipe highlight' : '清除料理高亮'}">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                <span>${isEN ? 'Clear' : '清除'}</span>
+              </button>
             </div>
           ` : ''}
 
@@ -16554,7 +16557,7 @@
           </div>
           <div class="ladder-recipe-modal-footer">
             <button type="button" class="ladder-recipe-btn-clear" onclick="window.WikiDB.clearLadderHighlightRecipe()">
-              ${isEN ? 'Clear Highlight' : '清除高亮'}
+              ${isEN ? 'Clear' : '清除'}
             </button>
             <button type="button" class="ladder-recipe-btn-cancel" onclick="window.WikiDB.closeLadderRecipeModal()">
               ${isEN ? 'Close' : '關閉'}
