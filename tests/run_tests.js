@@ -6064,6 +6064,149 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder 3-Meal Pass
   assertEquals(mockRankingModal.style.display, 'flex', 'After clearing highlight, apple must be selectable again');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Ingredient Draw S Switch, Expectation Bonus, and Two-Part Yield Representation', () => {
+  const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // Verify CSS styles exist
+  assert(stylesCss.includes('.node-has-skill-draw'), 'styles.css must include .node-has-skill-draw');
+  assert(stylesCss.includes('.node-count-badge.badge-skill-draw'), 'styles.css must include .node-count-badge.badge-skill-draw');
+  assert(stylesCss.includes('.badge-total'), 'styles.css must include .badge-total');
+  assert(stylesCss.includes('.badge-split'), 'styles.css must include .badge-split');
+  assert(stylesCss.includes('.tooltip-yield-breakdown'), 'styles.css must include .tooltip-yield-breakdown');
+  assert(stylesCss.includes('.ing-rank-split-line'), 'styles.css must include .ing-rank-split-line');
+
+  // Set up VM environment
+  let modalContainer = null;
+  const mockStorage = new Map([
+    ['pksleep_lang', 'zh-TW'],
+    ['pksleep_ladder_skill_draw', 'false']
+  ]);
+  const mockElements = new Map();
+
+  const ctx = {
+    localStorage: {
+      getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+      setItem: (k, v) => mockStorage.set(k, String(v)),
+      removeItem: (k) => mockStorage.delete(k)
+    },
+    window: {
+      localStorage: {
+        getItem: (k) => mockStorage.has(k) ? mockStorage.get(k) : null,
+        setItem: (k, v) => mockStorage.set(k, String(v)),
+        removeItem: (k) => mockStorage.delete(k)
+      },
+      addEventListener: () => {},
+      I18N: { getLanguage: () => 'zh-TW', getIngredientName: (s) => s, getPokemonName: (s) => s }
+    },
+    document: {
+      body: { classList: { contains: () => false }, appendChild: (el) => { modalContainer = el; } },
+      documentElement: { setAttribute: () => {} },
+      getElementById: (id) => {
+        if (id === 'wiki-ingredient-ranking-modal') return modalContainer;
+        if (!mockElements.has(id)) {
+          mockElements.set(id, {
+            checked: false,
+            style: { setProperty: () => {}, display: '' },
+            classList: { add: () => {}, remove: () => {}, contains: () => false },
+            innerHTML: '',
+            textContent: '',
+            addEventListener: () => {}
+          });
+        }
+        return mockElements.get(id);
+      },
+      querySelectorAll: () => [],
+      createElement: () => ({
+        setAttribute: () => {},
+        innerHTML: '',
+        className: '',
+        id: '',
+        style: { setProperty: () => {}, display: '' },
+        addEventListener: () => {}
+      }),
+      addEventListener: () => {}
+    },
+    console: console
+  };
+  ctx.window.window = ctx.window;
+  ctx.window.document = ctx.document;
+  vm.createContext(ctx);
+  vm.runInContext(wikiJs, ctx);
+
+  const WikiDB = ctx.window.WikiDB;
+  assert(WikiDB, 'WikiDB must be defined');
+
+  // 1. Check toggle functions and expectations constant
+  assert(typeof WikiDB.toggleLadderSkillDrawExpected === 'function', 'toggleLadderSkillDrawExpected must be a function');
+  assert(typeof WikiDB.getLadderSkillDrawExpected === 'function', 'getLadderSkillDrawExpected must be a function');
+  assert(typeof WikiDB.getPokemonSkillDrawBonus === 'function', 'getPokemonSkillDrawBonus must be a function');
+  assert(WikiDB.INGREDIENT_DRAW_SKILL_EXPECTATIONS, 'INGREDIENT_DRAW_SKILL_EXPECTATIONS table must exist');
+
+  // Initial state should be false
+  assertEquals(WikiDB.getLadderSkillDrawExpected(), false, 'Initial state of skill draw expected must be false');
+
+  // Bonus should be 0 when toggle is false
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'corn', '萌綠玉米'), 0, 'Bonus must be 0 when toggle is off');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('烏鴉頭頭', 'coffee', '醒晨咖啡'), 0, 'Bonus must be 0 when toggle is off');
+
+  // 2. Enable toggle
+  WikiDB.toggleLadderSkillDrawExpected(true);
+  assertEquals(WikiDB.getLadderSkillDrawExpected(), true, 'State should be true after toggle');
+  assertEquals(mockStorage.get('pksleep_ladder_skill_draw'), 'true', 'localStorage must be updated to true');
+
+  // 3. Verify exact mathematical expectations for all 6 Pokemon
+  // 穿山王 (+27 on pumpkin, corn, potato)
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'corn', '萌綠玉米'), 27, 'Sandslash corn bonus must be +27');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'pumpkin', '吉利蛋南瓜'), 27, 'Sandslash pumpkin bonus must be +27');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'potato', '窩心洋芋'), 27, 'Sandslash potato bonus must be +27');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'apple', '特選蘋果'), 0, 'Sandslash non-candidate ingredient bonus must be 0');
+
+  // 烏鴉頭頭 (+28 on coffee, soy, meat, mushroom)
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('烏鴉頭頭', 'coffee', '醒晨咖啡'), 28, 'Honchkrow coffee bonus must be +28');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('烏鴉頭頭', 'soy', '醒晨大豆'), 28, 'Honchkrow soy bonus must be +28');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('烏鴉頭頭', 'apple', '特選蘋果'), 0, 'Honchkrow non-candidate ingredient bonus must be 0');
+
+  // 岩殿居蟹 (+36 on avocado, potato, oil)
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('岩殿居蟹', 'potato', '窩心洋芋'), 36, 'Crustle potato bonus must be +36');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('岩殿居蟹', 'oil', '純油'), 36, 'Crustle oil bonus must be +36');
+
+  // 摔角鷹人 (+38 on herb, ginger, meat)
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('摔角鷹人', 'herb', '透心涼香草'), 38, 'Hawlucha herb bonus must be +38');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('摔角鷹人', 'ginger', '暖暖薑'), 38, 'Hawlucha ginger bonus must be +38');
+
+  // 蝶結萌虻 (+19 on honey, oil, corn)
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('蝶結萌虻', 'honey', '蜜糖'), 19, 'Ribombee honey bonus must be +19');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('蝶結萌虻', 'corn', '萌綠玉米'), 19, 'Ribombee corn bonus must be +19');
+
+  // 大嘴娃 (+16 on potato, oil, corn, tomato)
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('大嘴娃', 'tomato', '番茄'), 16, 'Mawile tomato bonus must be +16');
+
+  // Non-candidate Pokemon must have 0 bonus
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('妙蛙花', 'honey', '蜜糖'), 0, 'Venusaur must have 0 bonus');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('雷丘', 'apple', '特選蘋果'), 0, 'Raichu must have 0 bonus');
+
+  // 4. Test Coordinate Ladder Rendering with Skill Draw Active
+  const ladderHtml = WikiDB.renderCoordinateLadder();
+  assert(ladderHtml.includes('node-has-skill-draw'), 'Rendered ladder must contain node-has-skill-draw when active');
+  assert(ladderHtml.includes('badge-skill-draw'), 'Rendered ladder must contain badge-skill-draw when active');
+  assert(ladderHtml.includes('badge-total'), 'Rendered ladder must contain badge-total');
+  assert(ladderHtml.includes('badge-split'), 'Rendered ladder must contain badge-split');
+  assert(ladderHtml.includes('tooltip-yield-breakdown'), 'Rendered ladder must contain tooltip-yield-breakdown');
+  assert(ladderHtml.includes('食材精選S 獲取 (Lv.7)'), 'Rendered ladder tooltip must mention 食材精選S 獲取 (Lv.7)');
+
+  // 5. Test openIngredientRankingModal with Skill Draw Active
+  WikiDB.openIngredientRankingModal('corn');
+  assert(modalContainer !== null, 'Ranking modal container must be created');
+  assert(modalContainer.innerHTML.includes('ing-rank-split-line'), 'Ranking modal must display ing-rank-split-line for skill draw pokemons');
+  assert(modalContainer.innerHTML.includes('split-drop'), 'Ranking modal must display split-drop');
+  assert(modalContainer.innerHTML.includes('split-skill'), 'Ranking modal must display split-skill');
+
+  // 6. Test resetLadderFilters resets the toggle
+  WikiDB.resetLadderFilters();
+  assertEquals(WikiDB.getLadderSkillDrawExpected(), false, 'resetLadderFilters must reset skill draw toggle to false');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

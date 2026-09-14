@@ -11825,6 +11825,12 @@
   let ladderSortOrder = 'ENERGY_ASC'; // 'ENERGY_ASC' | 'ENERGY_DESC' | 'YIELD_DESC' | 'DEMAND_DESC'
   let ladderViewMode = 'coordinate'; // 'coordinate' | 'list'
   let ladderTop15Only = true; // 預設開啟前 15 名排行（有效降低 DOM 節點並消除行動端卡頓）
+  let isLadderSkillDrawExpected = false; // 食材精選S 技能期望值加成開關
+  try {
+    if (typeof localStorage !== 'undefined') {
+      isLadderSkillDrawExpected = localStorage.getItem('pksleep_ladder_skill_draw') === 'true';
+    }
+  } catch (e) {}
 
   function toggleLadderTop15(enabled) {
     ladderTop15Only = enabled !== undefined ? !!enabled : !ladderTop15Only;
@@ -11835,6 +11841,90 @@
 
   function getLadderTop15Only() {
     return ladderTop15Only;
+  }
+
+  function toggleLadderSkillDrawExpected(enabled) {
+    isLadderSkillDrawExpected = enabled !== undefined ? !!enabled : !isLadderSkillDrawExpected;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('pksleep_ladder_skill_draw', String(isLadderSkillDrawExpected));
+      }
+    } catch (e) {}
+    const toggleInput = document.getElementById('ladder-skill-draw-toggle');
+    if (toggleInput) toggleInput.checked = isLadderSkillDrawExpected;
+    refreshCoordinateLadder();
+  }
+
+  function getLadderSkillDrawExpected() {
+    return isLadderSkillDrawExpected;
+  }
+
+  // 食材精選S 專屬寶可夢主技能期望值加成 (主技能最高等級 Lv.7, 每次 18 顆 + 技能機率提升M +36%)
+  // 排除暴擊、大成功與碎片，依候選食材池等機率 1/K 均分推導之日獲取期望值
+  const INGREDIENT_DRAW_SKILL_EXPECTATIONS = {
+    '穿山王': {
+      bonus: 27,
+      ingredients: ['沉甸甸南瓜', '吉利蛋南瓜', '南瓜', '萌綠玉米', '玉米', '窩心洋芋', '洋芋', 'Plump Pumpkin', 'Greengrass Corn', 'Soft Potato', 'pumpkin', 'corn', 'potato']
+    },
+    'Sandslash': {
+      bonus: 27,
+      ingredients: ['沉甸甸南瓜', '吉利蛋南瓜', '南瓜', '萌綠玉米', '玉米', '窩心洋芋', '洋芋', 'Plump Pumpkin', 'Greengrass Corn', 'Soft Potato', 'pumpkin', 'corn', 'potato']
+    },
+    '烏鴉頭頭': {
+      bonus: 28,
+      ingredients: ['醒腦咖啡豆', '醒晨咖啡', '咖啡', '萌綠大豆', '大豆', '豆製肉', '美味蘑菇', '蘑菇', 'Rousing Coffee', 'Greengrass Soybeans', 'Bean Sausage', 'Tasty Mushroom', 'coffee', 'soy', 'soybeans', 'meat', 'sausage', 'beansausage', 'mushroom']
+    },
+    'Honchkrow': {
+      bonus: 28,
+      ingredients: ['醒腦咖啡豆', '醒晨咖啡', '咖啡', '萌綠大豆', '大豆', '豆製肉', '美味蘑菇', '蘑菇', 'Rousing Coffee', 'Greengrass Soybeans', 'Bean Sausage', 'Tasty Mushroom', 'coffee', 'soy', 'soybeans', 'meat', 'sausage', 'beansausage', 'mushroom']
+    },
+    '岩殿居蟹': {
+      bonus: 36,
+      ingredients: ['嫩亮酪梨', '酪梨', '窩心洋芋', '洋芋', '純粹油', '純油', 'Glossy Avocado', 'Soft Potato', 'Pure Oil', 'avocado', 'glossyavocado', 'potato', 'oil']
+    },
+    'Crustle': {
+      bonus: 36,
+      ingredients: ['嫩亮酪梨', '酪梨', '窩心洋芋', '洋芋', '純粹油', '純油', 'Glossy Avocado', 'Soft Potato', 'Pure Oil', 'avocado', 'glossyavocado', 'potato', 'oil']
+    },
+    '摔角鷹人': {
+      bonus: 38,
+      ingredients: ['火辣香草', '透心涼香草', '香草', '暖暖薑', '豆製肉', 'Fiery Herb', 'Warming Ginger', 'Bean Sausage', 'herb', 'ginger', 'meat', 'sausage', 'beansausage']
+    },
+    'Hawlucha': {
+      bonus: 38,
+      ingredients: ['火辣香草', '透心涼香草', '香草', '暖暖薑', '豆製肉', 'Fiery Herb', 'Warming Ginger', 'Bean Sausage', 'herb', 'ginger', 'meat', 'sausage', 'beansausage']
+    },
+    '蝶結萌虻': {
+      bonus: 19,
+      ingredients: ['甜甜蜜', '蜜糖', '蜂蜜', '純粹油', '純油', '萌綠玉米', '玉米', 'Honey', 'Pure Oil', 'Greengrass Corn', 'honey', 'oil', 'corn']
+    },
+    'Ribombee': {
+      bonus: 19,
+      ingredients: ['甜甜蜜', '蜜糖', '蜂蜜', '純粹油', '純油', '萌綠玉米', '玉米', 'Honey', 'Pure Oil', 'Greengrass Corn', 'honey', 'oil', 'corn']
+    },
+    '大嘴娃': {
+      bonus: 16,
+      ingredients: ['窩心洋芋', '洋芋', '純粹油', '純油', '萌綠玉米', '玉米', '好眠番茄', '番茄', 'Soft Potato', 'Pure Oil', 'Greengrass Corn', 'Snoozy Tomato', 'potato', 'oil', 'corn', 'tomato']
+    },
+    'Mawile': {
+      bonus: 16,
+      ingredients: ['窩心洋芋', '洋芋', '純粹油', '純油', '萌綠玉米', '玉米', '好眠番茄', '番茄', 'Soft Potato', 'Pure Oil', 'Greengrass Corn', 'Snoozy Tomato', 'potato', 'oil', 'corn', 'tomato']
+    }
+  };
+
+  function getPokemonSkillDrawBonus(pkmName, ingId, ingName) {
+    if (!isLadderSkillDrawExpected) return 0;
+    if (!pkmName) return 0;
+    const cleanName = pkmName.trim();
+    const entry = INGREDIENT_DRAW_SKILL_EXPECTATIONS[cleanName];
+    if (!entry) return 0;
+    const lowerIngId = ingId ? ingId.toLowerCase().trim() : '';
+    const cleanIngName = ingName ? ingName.trim() : '';
+    const matched = entry.ingredients.some(target => {
+      const lowerTarget = target.toLowerCase();
+      return target === cleanIngName || lowerTarget === lowerIngId || target === ingId;
+    });
+    return matched ? entry.bonus : 0;
   }
 
   // 3.0.0 食材天梯相同產量配方動態合併核心 (Dynamic Recipe Wildcard Merger)
@@ -12674,10 +12764,18 @@
     isLadderIngS = false;
     isLadderSpeedM = false;
     isLadderSpeedS = false;
+    isLadderSkillDrawExpected = false;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('pksleep_ladder_skill_draw', 'false');
+      }
+    } catch (e) {}
     ladderTop15Only = true;
 
     const top15 = document.getElementById('ladder-top15-switch');
     if (top15) top15.checked = true;
+    const skillDraw = document.getElementById('ladder-skill-draw-toggle');
+    if (skillDraw) skillDraw.checked = false;
     const ingM = document.getElementById('ladder-ing-m-toggle');
     if (ingM) ingM.checked = false;
     const ingS = document.getElementById('ladder-ing-s-toggle');
@@ -12738,6 +12836,7 @@
     if (ladderSortOrder && ladderSortOrder !== 'ENERGY_ASC') count++;
     if (isLadderIngM || isLadderIngS || isLadderSpeedM || isLadderSpeedS) count++;
     if (ladderNature && ladderNature !== 'NONE') count++;
+    if (isLadderSkillDrawExpected) count++;
 
     if (badge) {
       if (count > 0) {
@@ -12794,19 +12893,24 @@
       if (ladderSpecialtyFilter === 'BERRY' && pkmSpec !== '樹果' && pkmSpec !== '全部') return;
       if (ladderSpecialtyFilter === 'SKILL' && pkmSpec !== '技能' && pkmSpec !== '全部') return;
 
+      const skillBonus = getPokemonSkillDrawBonus(p.name, ingData.id, ingData.name);
+
       let variants = (p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }]).filter(v => matchesLadderRecipeFilter(v, ladderRecipeFilter));
 
       if (ladderSupplyFilter === 'TOP') {
-        const allMaxCounts = ingData.pokemon.map(pkm => Math.max(...(pkm.variants || [{count: pkm.count}]).map(v => v.count)));
+        const allMaxCounts = ingData.pokemon.map(pkm => {
+          const pkmBonus = getPokemonSkillDrawBonus(pkm.name, ingData.id, ingData.name);
+          return Math.max(...(pkm.variants || [{count: pkm.count}]).map(v => Math.round(v.count * mult) + pkmBonus));
+        });
         const distinctCounts = [...new Set(allMaxCounts)].sort((a,b) => b - a);
         const top5Threshold = distinctCounts[Math.min(4, distinctCounts.length - 1)] || 0;
-        const pkmMaxCount = Math.max(...(p.variants || [{count: p.count}]).map(v => v.count));
+        const pkmMaxCount = Math.max(...(p.variants || [{count: p.count}]).map(v => Math.round(v.count * mult) + skillBonus));
         if (pkmMaxCount < top5Threshold) return;
         variants = variants.slice(0, 1);
       } else if (ladderSupplyFilter === 'MEALS_3') {
-        variants = variants.filter(v => Math.round(v.count * mult) >= dishInfo.need * 3);
+        variants = variants.filter(v => Math.round(v.count * mult) + skillBonus >= dishInfo.need * 3);
       } else if (ladderSupplyFilter === 'MEALS_2') {
-        variants = variants.filter(v => Math.round(v.count * mult) >= dishInfo.need * 2);
+        variants = variants.filter(v => Math.round(v.count * mult) + skillBonus >= dishInfo.need * 2);
       }
 
       if (ladderSearchQuery) {
@@ -12814,13 +12918,16 @@
       }
 
       variants.forEach(v => {
-        const scaledCount = Math.round(v.count * mult);
+        const dropCount = Math.round(v.count * mult);
+        const totalCount = dropCount + skillBonus;
         rankingList.push({
           name: p.name,
           name_en: p.name_en,
           icon: p.icon,
           recipe: v.recipe,
-          count: scaledCount,
+          count: totalCount,
+          dropCount: dropCount,
+          skillBonus: skillBonus,
           rawCount: v.count,
           isTop: v.isTop || (p.isTop && v.recipe === p.recipe),
           specialty: pkmSpec,
@@ -12869,7 +12976,7 @@
             <div class="ing-rank-card ${rankClass}" title="${pkmDisplayName} (${item.recipe}) · ${item.count} ${isEN ? '/day' : '顆/天'}">
               <div class="ing-rank-left">
                 <div class="ing-rank-num ${rankClass}">
-                  ${rank === 1 ? '🥇' : (rank === 2 ? '🥈' : (rank === 3 ? '🥉' : `#${rank}`))}
+                  ${rank === 1 ? '\u{1F947}' : (rank === 2 ? '\u{1F948}' : (rank === 3 ? '\u{1F949}' : `#${rank}`))}
                 </div>
                 <div class="ing-rank-avatar-box ${rankClass}">
                   <img src="${item.icon}" class="ing-rank-avatar-img" alt="${pkmDisplayName}" loading="lazy">
@@ -12878,6 +12985,11 @@
               </div>
               <div class="ing-rank-right">
                 <span class="ing-rank-yield-line"><span class="ing-rank-yield-num">${item.count}</span><span class="ing-rank-yield-unit">${isEN ? ' /day' : ' 顆/天'}</span></span>
+                ${item.skillBonus > 0 ? `
+                  <span class="ing-rank-split-line" title="${isEN ? 'Drop: ' + item.dropCount + ' + Skill: ' + item.skillBonus : '食材掉落: ' + item.dropCount + ' + 技能獲取: ' + item.skillBonus}">
+                    <span class="split-drop">${item.dropCount}</span>+<span class="split-skill">${item.skillBonus}</span>
+                  </span>
+                ` : ''}
               </div>
             </div>
           `;
@@ -13478,6 +13590,9 @@
       }
       if (e.target && e.target.id === 'ladder-ing-m-toggle') {
         toggleLadderIngM(e.target.checked);
+      }
+      if (e.target && e.target.id === 'ladder-skill-draw-toggle') {
+        toggleLadderSkillDrawExpected(e.target.checked);
       }
       if (e.target && e.target.id === 'ladder-speed-m-toggle') {
         toggleLadderSpeedM(e.target.checked);
@@ -15495,7 +15610,7 @@
     const mainTracks = data.filter(ing => ing.id !== 'tail');
     const tailIng = data.find(ing => ing.id === 'tail');
 
-    const isUnfilteredDefault = (ladderSpecialtyFilter === 'ALL' && ladderRecipeFilter === 'ALL' && ladderSupplyFilter === 'ALL' && !ladderSearchQuery);
+    const isUnfilteredDefault = (ladderSpecialtyFilter === 'ALL' && ladderRecipeFilter === 'ALL' && ladderSupplyFilter === 'ALL' && !ladderSearchQuery && !isLadderSkillDrawExpected);
 
     // 1. 預先過濾各常規食材軌道之寶可夢與變體，並計算目前篩選下的全局最高產量
     let globalMaxCount = 20;
@@ -15517,31 +15632,36 @@
           if (!matchesLadderSearch(p.name, p.name_en, ladderSearchQuery)) return null;
         }
 
+        const skillBonus = getPokemonSkillDrawBonus(p.name, ing.id, ing.name);
+
         let variants = p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }];
 
         // 全部展示狀態下僅展示產量 >= 30 的主力型態變體；有具體篩選條件時則完整展示 (< 30 也展示)
-        variants = variants.filter(v => Math.round(v.count * mult) >= minDefaultThreshold);
+        variants = variants.filter(v => (Math.round(v.count * mult) + skillBonus) >= minDefaultThreshold);
 
         variants = variants.filter(v => matchesLadderRecipeFilter(v, ladderRecipeFilter));
 
         if (ladderSupplyFilter === 'TOP') {
           // 前五名：保留該軌道排名前 5 (Top 1 ~ Top 5) 的寶可夢梯隊，且只展示其最高產量變體
-          const allMaxCounts = ing.pokemon.map(pkm => Math.max(...(pkm.variants || [{count: pkm.count}]).map(v => v.count)));
+          const allMaxCounts = ing.pokemon.map(pkm => {
+            const pkmBonus = getPokemonSkillDrawBonus(pkm.name, ing.id, ing.name);
+            return Math.max(...(pkm.variants || [{count: pkm.count}]).map(v => Math.round(v.count * mult) + pkmBonus));
+          });
           const distinctCounts = [...new Set(allMaxCounts)].sort((a,b) => b - a);
           const top5Threshold = distinctCounts[Math.min(4, distinctCounts.length - 1)] || 0;
-          const pkmMaxCount = Math.max(...(p.variants || [{count: p.count}]).map(v => v.count));
+          const pkmMaxCount = Math.max(...(p.variants || [{count: p.count}]).map(v => Math.round(v.count * mult) + skillBonus));
           if (pkmMaxCount < top5Threshold) return null;
           variants = variants.slice(0, 1);
         } else if (ladderSupplyFilter === 'MEALS_3') {
           // 滿載 3 餐：日產量 >= 核心大菜 3 餐所需總量
           variants = variants.filter(v => {
-            const scaled = Math.round(v.count * mult);
+            const scaled = Math.round(v.count * mult) + skillBonus;
             return scaled >= dishInfo.need * 3;
           });
         } else if (ladderSupplyFilter === 'MEALS_2') {
           // 充足 2 餐：日產量 >= 核心大菜 2 餐所需總量
           variants = variants.filter(v => {
-            const scaled = Math.round(v.count * mult);
+            const scaled = Math.round(v.count * mult) + skillBonus;
             return scaled >= dishInfo.need * 2;
           });
         }
@@ -15549,7 +15669,7 @@
         if (variants.length === 0) return null;
 
         variants.forEach(v => {
-          const scaled = Math.round(v.count * mult);
+          const scaled = Math.round(v.count * mult) + skillBonus;
           if (scaled > globalMaxCount) globalMaxCount = scaled;
         });
 
@@ -15575,8 +15695,9 @@
           if (track.filteredPokemonList && track.filteredPokemonList.length > 0) {
             let m = 0;
             track.filteredPokemonList.forEach(p => {
+              const skillBonus = getPokemonSkillDrawBonus(p.name, track.ing.id, track.ing.name);
               p.variants.forEach(v => {
-                const scaled = Math.round(v.count * mult);
+                const scaled = Math.round(v.count * mult) + skillBonus;
                 if (scaled > m) m = scaled;
               });
             });
@@ -15585,8 +15706,10 @@
           let m = 0;
           if (track.ing && track.ing.pokemon) {
             track.ing.pokemon.forEach(p => {
+              const skillBonus = getPokemonSkillDrawBonus(p.name, track.ing.id, track.ing.name);
               (p.variants || [{ count: p.count }]).forEach(v => {
-                if (v.count > m) m = v.count;
+                const scaled = (v.count || 0) + skillBonus;
+                if (scaled > m) m = scaled;
               });
             });
           }
@@ -15730,8 +15853,9 @@
             // 計算該軌道最低產量起點，用於畫出前方點狀前導虛線
             let minTrackCount = maxVal;
             filteredPokemonList.forEach(p => {
+              const skillBonus = getPokemonSkillDrawBonus(p.name, ing.id, ing.name);
               p.variants.forEach(v => {
-                const scaled = Math.round(v.count * mult);
+                const scaled = Math.round(v.count * mult) + skillBonus;
                 if (scaled < minTrackCount) minTrackCount = scaled;
               });
             });
@@ -15743,8 +15867,9 @@
             // 先計算該軌道最高產量 (Track Max Yield)
             let trackMaxYield = 0;
             filteredPokemonList.forEach(p => {
+              const skillBonus = getPokemonSkillDrawBonus(p.name, ing.id, ing.name);
               p.variants.forEach(v => {
-                const scaled = Math.round(v.count * mult);
+                const scaled = Math.round(v.count * mult) + skillBonus;
                 if (scaled > trackMaxYield) trackMaxYield = scaled;
               });
             });
@@ -15752,8 +15877,10 @@
             let trackNodes = [];
             filteredPokemonList.forEach((p, pIdx) => {
               const pkmDisplayName = isEN ? ((window.I18N && window.I18N.getPokemonName(p.name)) || p.name) : p.name;
+              const skillBonus = getPokemonSkillDrawBonus(p.name, ing.id, ing.name);
               p.variants.forEach((v, vIdx) => {
-                const scaledCount = Math.round(v.count * mult);
+                const dropCount = Math.round(v.count * mult);
+                const scaledCount = dropCount + skillBonus;
                 const isTopNode = (scaledCount === trackMaxYield && scaledCount > 0) || v.isTop || (p.isTop && v.recipe === p.recipe);
                 const zIndex = isTopNode ? 45 : Math.max(35 - pIdx * 3 - vIdx, 5);
                 trackNodes.push({
@@ -15762,6 +15889,8 @@
                   pkmDisplayName,
                   v,
                   vIdx,
+                  dropCount,
+                  skillBonus,
                   scaledCount,
                   isTopNode,
                   zIndex
@@ -15864,9 +15993,10 @@
                       const basePosPct = parseFloat(getPosPct(node.scaledCount));
                       const alignClass = basePosPct > 55 ? 'align-right' : (basePosPct < 22 ? 'align-left' : 'align-center');
                       const leftStyle = offsetPx === 0 ? `${basePosPct}%` : `calc(${basePosPct}% + ${offsetPx}px)`;
+                      const hasSkillDraw = node.skillBonus > 0;
 
                       return `
-                        <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${alignClass} ${popupDirectionClass} recipe-${node.v.recipe.toLowerCase()} ${groupSize > 1 ? 'node-in-cluster' : ''}" 
+                        <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${hasSkillDraw ? 'node-has-skill-draw' : ''} ${alignClass} ${popupDirectionClass} recipe-${node.v.recipe.toLowerCase()} ${groupSize > 1 ? 'node-in-cluster' : ''}" 
                              data-pkm-group="${node.p.name}"
                              data-pkm="${node.p.name}" 
                              data-recipe="${node.v.recipe}"
@@ -15874,12 +16004,31 @@
                           <div class="node-avatar-wrapper">
                             <img src="${node.p.icon}" class="node-avatar-img" alt="${node.pkmDisplayName}" loading="lazy" decoding="async">
                           </div>
-                          <div class="node-count-badge">${node.scaledCount}</div>
+                          <div class="node-count-badge ${hasSkillDraw ? 'badge-skill-draw' : ''}">
+                            ${hasSkillDraw ? `
+                              <span class="badge-total">${node.scaledCount}</span>
+                              <span class="badge-split" title="${isEN ? 'Drop: ' + node.dropCount + ' + Skill: ' + node.skillBonus : '食材掉落: ' + node.dropCount + ' + 技能獲取: ' + node.skillBonus}">${node.dropCount}+${node.skillBonus}</span>
+                            ` : node.scaledCount}
+                          </div>
                           
                           <div class="ladder-node-tooltip">
                             <div class="tooltip-title">${node.isTopNode ? (isEN ? 'Top 1 Yield ' : '產量 TOP 1 ') : ''}${node.pkmDisplayName} <span class="node-recipe-tag-inline recipe-tag-${node.v.recipe.toLowerCase()}">${node.v.recipe}</span></div>
-                            <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估日產：'}<span class="text-success font-bold">${node.scaledCount} ${isEN ? '/day' : '顆/天'}</span></div>
+                            <div class="tooltip-detail">${isEN ? 'Est. Daily Output: ' : '預估總日產：'}<span class="text-success font-bold">${node.scaledCount} ${isEN ? '/day' : '顆/天'}</span></div>
                             
+                            ${hasSkillDraw ? `
+                              <!-- 食材掉落與技能獲取雙區塊拆解 -->
+                              <div class="tooltip-yield-breakdown">
+                                <div class="breakdown-row">
+                                  <span class="breakdown-label">${isEN ? 'Ingredient Drop:' : '常規食材掉落：'}</span>
+                                  <span class="breakdown-val">${node.dropCount} ${isEN ? 'items' : '顆'}</span>
+                                </div>
+                                <div class="breakdown-row breakdown-skill">
+                                  <span class="breakdown-label">${isEN ? 'Ingr. Selection S (Lv.7):' : '食材精選S 獲取 (Lv.7)：'}</span>
+                                  <span class="breakdown-val text-amber">+${node.skillBonus} ${isEN ? 'items' : '顆'}</span>
+                                </div>
+                              </div>
+                            ` : ''}
+
                             <!-- 頂級大菜供貨能力指標 -->
                             <div class="tooltip-dish-box">
                               <div class="tooltip-dish-title">${isEN ? 'Key Dish: ' : '核心大菜：'}<span class="text-white font-bold">${dishName}</span> (${dishInfo.need}${isEN ? '/meal' : '顆/餐'})</div>
@@ -16197,7 +16346,8 @@
         }
 
         const rawCountNum = parseFloat(t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count)) || 0;
-        const scaledCount = Math.round(rawCountNum * mult);
+        const skillBonus = getPokemonSkillDrawBonus(t.name, ing.id, ing.name);
+        const scaledCount = Math.round(rawCountNum * mult) + skillBonus;
         if (ladderSupplyFilter === 'TOP' && tIdx >= 5) return false;
         if (ladderSupplyFilter === 'MEALS_3' && scaledCount < dishInfo.need * 3) return false;
         if (ladderSupplyFilter === 'MEALS_2' && scaledCount < dishInfo.need * 2) return false;
@@ -16209,8 +16359,12 @@
         filteredTiers = filteredTiers.slice(0, 15);
       }
 
-      const maxDailyBase = filteredTiers.length > 0 ? (filteredTiers[0].rawCount !== undefined ? filteredTiers[0].rawCount : filteredTiers[0].count) : 0;
-      const scaledMax = (parseFloat(maxDailyBase) * mult).toFixed(1);
+      const maxDailyBase = filteredTiers.length > 0 ? Math.max(...filteredTiers.map(t => {
+        const rawCountNum = parseFloat(t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count)) || 0;
+        const skillBonus = getPokemonSkillDrawBonus(t.name, ing.id, ing.name);
+        return rawCountNum * mult + skillBonus;
+      })) : 0;
+      const scaledMax = maxDailyBase.toFixed(1);
 
       return `
       <div class="ladder-card ${filteredTiers.length === 0 ? 'ladder-track-empty' : ''}" data-ladder-ing="${ing.id}">
@@ -16229,13 +16383,18 @@
             const pkmDisplayName = `${translatedPkm} (${t.recipe || 'AAA'})`;
             const noteText = formatLadderNote(t.note || '', isEN);
             const rawCountNum = parseFloat(t.rawCount !== undefined ? t.rawCount : (String(t.count).replace(/[^\d.]/g, '') || t.count)) || 0;
-            const displayCount = (rawCountNum * mult).toFixed(1);
+            const skillBonus = getPokemonSkillDrawBonus(t.name, ing.id, ing.name);
+            const dropCount = (rawCountNum * mult).toFixed(1);
+            const totalCount = (parseFloat(dropCount) + skillBonus).toFixed(1);
+            const displayCount = skillBonus > 0
+              ? `${totalCount} ${isEN ? '/day' : '顆/天'} <span class="ladder-split-text" style="font-size: 11px; color: #f59e0b; font-weight: normal; margin-left: 4px;">(${dropCount} + ${skillBonus})</span>`
+              : `${dropCount} ${isEN ? '/day' : '顆/天'}`;
 
             return `
             <div class="ladder-tier-row">
               <div class="ladder-tier-info">
                 <span class="ladder-pkm-name font-bold">${pkmDisplayName}</span>
-                <span class="ladder-count text-accent font-bold">${displayCount} ${isEN ? '/day' : '顆/天'}</span>
+                <span class="ladder-count text-accent font-bold">${displayCount}</span>
               </div>
               <div class="ladder-progress-bar">
                 <div class="ladder-progress-fill" style="width: ${t.rate}%"></div>
@@ -16702,6 +16861,13 @@
               <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'BERRY' ? 'active' : ''}" data-specialty-filter="BERRY" onclick="window.WikiDB.setLadderSpecialtyFilter('BERRY')">${isEN ? 'Berry' : '樹果型'}</button>
               <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'SKILL' ? 'active' : ''}" data-specialty-filter="SKILL" onclick="window.WikiDB.setLadderSpecialtyFilter('SKILL')">${isEN ? 'Skill' : '技能型'}</button>
             </div>
+            <label class="sidebar-final-evo-label" for="ladder-skill-draw-toggle" title="${isEN ? 'Include Lv.7 Ingredient Draw S main skill yield expectation (Skill Trigger M)' : '納入主技能食材精選S (Lv.7 滿級) 期望產量加成 (以自帶技能機率提升M計算)'}" style="margin-top: 8px;">
+              <span class="sidebar-final-evo-text">${isEN ? 'Ingredient Draw S' : '食材精選'}</span>
+              <div class="sidebar-switch-wrapper">
+                <input type="checkbox" id="ladder-skill-draw-toggle" class="switch-checkbox" ${isLadderSkillDrawExpected ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSkillDrawExpected(this.checked)">
+                <span class="switch-slider"></span>
+              </div>
+            </label>
           </div>
 
 
@@ -17291,6 +17457,10 @@
     setLadderSupplyFilter: setLadderSupplyFilter,
     setLadderRecipeFilter: setLadderRecipeFilter,
     setLadderSpecialtyFilter: setLadderSpecialtyFilter,
+    toggleLadderSkillDrawExpected: toggleLadderSkillDrawExpected,
+    getLadderSkillDrawExpected: getLadderSkillDrawExpected,
+    getPokemonSkillDrawBonus: getPokemonSkillDrawBonus,
+    INGREDIENT_DRAW_SKILL_EXPECTATIONS: INGREDIENT_DRAW_SKILL_EXPECTATIONS,
     setLadderSortOrder: setLadderSortOrder,
     getLadderSortOrder: getLadderSortOrder,
     resetLadderFilters: resetLadderFilters,
@@ -17371,6 +17541,10 @@
   window.setLadderSupplyFilter = setLadderSupplyFilter;
   window.setLadderRecipeFilter = setLadderRecipeFilter;
   window.setLadderSpecialtyFilter = setLadderSpecialtyFilter;
+  window.toggleLadderSkillDrawExpected = toggleLadderSkillDrawExpected;
+  window.getLadderSkillDrawExpected = getLadderSkillDrawExpected;
+  window.getPokemonSkillDrawBonus = getPokemonSkillDrawBonus;
+  window.INGREDIENT_DRAW_SKILL_EXPECTATIONS = INGREDIENT_DRAW_SKILL_EXPECTATIONS;
   window.setLadderSortOrder = setLadderSortOrder;
   window.getLadderSortOrder = getLadderSortOrder;
   window.resetLadderFilters = resetLadderFilters;
