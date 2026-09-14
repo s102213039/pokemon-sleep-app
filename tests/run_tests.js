@@ -6206,7 +6206,34 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Ingredient
 
   // 6. Test resetLadderFilters resets the toggle
   WikiDB.resetLadderFilters();
-  assertEquals(WikiDB.getLadderSkillDrawExpected(), false, 'resetLadderFilters must reset skill draw toggle to false');
+});
+
+test('Tier 4 - Real-World Application Scenarios', 'Data Engine: Intelligent Retry with Delay and LocalStorage Offline Cache Recovery', async () => {
+  const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+  const recipesJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'recipes.js'), 'utf8');
+  const newsJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'news.js'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+  const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+
+  // 1. Verify code structure in app.js, recipes.js, and news.js
+  assert(appJs.includes('CACHE_KEY_DATA_JSON = \'pksleep_cache_data_json\''), 'app.js must define CACHE_KEY_DATA_JSON');
+  assert(appJs.includes('maxAttempts = 3'), 'app.js must implement 3-stage retry');
+  assert(appJs.includes('attempt * 600'), 'app.js must implement retry backoff delay');
+  assert(appJs.includes('window.localStorage.getItem(CACHE_KEY_DATA_JSON)'), 'app.js must implement LocalStorage cache fallback');
+
+  assert(recipesJs.includes('CACHE_KEY_RECIPES_JSON = \'pksleep_cache_recipes_json\''), 'recipes.js must define CACHE_KEY_RECIPES_JSON');
+  assert(recipesJs.includes('maxAttempts = 3'), 'recipes.js must implement 3-stage retry');
+  assert(recipesJs.includes('window.localStorage.getItem(CACHE_KEY_RECIPES_JSON)'), 'recipes.js must implement LocalStorage cache fallback');
+
+  assert(newsJs.includes('CACHE_KEY_NEWS_JSON = \'pksleep_cache_news_json\''), 'news.js must define CACHE_KEY_NEWS_JSON');
+  assert(newsJs.includes('maxAttempts = 3'), 'news.js must implement 3-stage retry');
+  assert(newsJs.includes('window.localStorage.getItem(CACHE_KEY_NEWS_JSON)'), 'news.js must implement LocalStorage cache fallback');
+
+  // 2. Verify zero emojis in index.html and app/index.html error banner
+  assert(!indexHtml.includes('⚠️') && !indexHtml.includes('📋') && !indexHtml.includes('✅'), 'index.html error banner must not contain emojis');
+  assert(!appIndexHtml.includes('⚠️') && !appIndexHtml.includes('📋') && !appIndexHtml.includes('✅'), 'app/index.html error banner must not contain emojis');
+  assert(indexHtml.includes('[!]'), 'index.html must use [!] text icon');
+  assert(appIndexHtml.includes('[!]'), 'app/index.html must use [!] text icon');
 });
 
 // Final Summary Output

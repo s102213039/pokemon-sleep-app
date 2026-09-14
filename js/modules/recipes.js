@@ -156,32 +156,79 @@
   /* ─── 載入 recipes.json ─────────────────────────────── */
   loadPrefs();
 
+  const CACHE_KEY_RECIPES_JSON = 'pksleep_cache_recipes_json';
+  const CACHE_KEY_RECIPES_JSON_TIME = 'pksleep_cache_recipes_json_time';
+
   const fetchRecipesWithFallback = async (...customUrls) => {
     const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
-    const t = Date.now();
     const defaultCandidates = [
-      `${base}data/recipes.json?t=${t}`,
-      `data/recipes.json?t=${t}`,
-      `../data/recipes.json?t=${t}`,
-      `${base}recipes.json?t=${t}`,
-      `recipes.json?t=${t}`,
-      `../recipes.json?t=${t}`
+      `${base}data/recipes.json`,
+      `data/recipes.json`,
+      `../data/recipes.json`,
+      `${base}recipes.json`,
+      `recipes.json`,
+      `../recipes.json`
     ];
-    const urls = customUrls.length > 0 ? customUrls : defaultCandidates;
-    const uniqueUrls = Array.from(new Set(urls.filter(Boolean)));
+    const rawUrls = customUrls.length > 0 ? customUrls : defaultCandidates;
+    const cleanUrls = Array.from(new Set(rawUrls.filter(Boolean).map(u => u.split('?')[0])));
 
+    const maxAttempts = 3;
     let lastErr = null;
-    for (const url of uniqueUrls) {
-      try {
-        const res = await fetch(url, { cache: 'no-store' });
-        if (res && res.ok) {
-          return await res.json();
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      const t = Date.now();
+      const uniqueUrls = cleanUrls.map(u => `${u}?t=${t}`);
+
+      for (const url of uniqueUrls) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (res && res.ok) {
+            const text = await res.text();
+            const parsed = JSON.parse(text);
+            try {
+              if (typeof window !== 'undefined' && window.localStorage) {
+                window.localStorage.setItem(CACHE_KEY_RECIPES_JSON, text);
+                window.localStorage.setItem(CACHE_KEY_RECIPES_JSON_TIME, String(Date.now()));
+              }
+            } catch (e) {}
+            return parsed;
+          }
+        } catch (e) {
+          lastErr = e;
         }
-      } catch (e) {
-        lastErr = e;
+      }
+
+      // 若前次嘗試未成功，短暫退避等待後重試 (平滑跨過 GitHub Pages 部署瞬間)
+      if (attempt < maxAttempts) {
+        await new Promise(r => setTimeout(r, attempt * 600));
       }
     }
-    throw lastErr || new Error('Failed to load recipes.json from candidate paths: ' + uniqueUrls.join(', '));
+
+    // 若所有網路請求重試皆失敗，嘗試自 LocalStorage 離線快取載入
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const cachedText = window.localStorage.getItem(CACHE_KEY_RECIPES_JSON);
+        if (cachedText) {
+          const cachedData = JSON.parse(cachedText);
+          if (Array.isArray(cachedData) && cachedData.length > 0) {
+            console.warn('[Recipe Engine] 網路請求暫時失敗，已自動自本機離線快取載入 recipes.json (' + cachedData.length + ' 筆料理)');
+            // 背景排程於 6 秒後靜默嘗試重新請求最新資料以刷新快取
+            setTimeout(() => {
+              fetchRecipesWithFallback().then(freshData => {
+                if (Array.isArray(freshData) && freshData.length > 0) {
+                  allRecipes = freshData;
+                }
+              }).catch(() => {});
+            }, 6000);
+            return cachedData;
+          }
+        }
+      }
+    } catch (cacheErr) {
+      console.warn('[Recipe Engine] 讀取離線快取失敗:', cacheErr);
+    }
+
+    throw lastErr || new Error('Failed to load recipes.json from candidate paths: ' + cleanUrls.join(', '));
   };
 
   fetchRecipesWithFallback(

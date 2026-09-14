@@ -176,7 +176,7 @@
           document.execCommand('copy');
           if (btnEl) {
             var oldHtml = btnEl.innerHTML;
-            btnEl.innerHTML = '✅ 已複製 (Copied!)';
+            btnEl.innerHTML = '[已複製] (Copied!)';
             setTimeout(function() { btnEl.innerHTML = oldHtml; }, 3000);
           }
         } catch (e) { alert('複製失敗'); }
@@ -200,12 +200,12 @@
         var latestError = window.__APP_LOG_BUFFER__.filter(function(l) { return l.level === 'ERROR'; }).pop();
         var errorMsg = latestError ? (latestError.message + (latestError.source ? ' (' + latestError.source + ')' : '')) : '頁面載入異常';
         el.innerHTML = '<div class="diag-bar-content">' +
-          '<span class="diag-bar-icon">⚠️</span>' +
+          '<span class="diag-bar-icon">[!]</span>' +
           '<div class="diag-bar-text">' +
           '<strong>系統偵測到異常：</strong>' +
           '<span class="diag-bar-msg">' + errorMsg + '</span>' +
           '</div>' +
-          '<button type="button" class="diag-copy-btn" onclick="window.__copyAppErrorLog(this)">📋 複製錯誤日誌</button>' +
+          '<button type="button" class="diag-copy-btn" onclick="window.__copyAppErrorLog(this)">複製錯誤日誌</button>' +
           '</div>';
         el.style.display = 'block';
       }

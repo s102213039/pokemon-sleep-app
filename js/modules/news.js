@@ -28,37 +28,79 @@
   ];
 
   /* ─── 載入新聞資料 ───────────────────────────────────── */
+  const CACHE_KEY_NEWS_JSON = 'pksleep_cache_news_json';
+
   async function loadNews() {
     try {
       const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
-      const t = Date.now();
-      const candidates = [
-        `${base}data/news.json?t=${t}`,
-        `data/news.json?t=${t}`,
-        `../data/news.json?t=${t}`,
-        `${base}news.json?t=${t}`,
-        `news.json?t=${t}`,
-        `../news.json?t=${t}`
+      const defaultCandidates = [
+        `${base}data/news.json`,
+        `data/news.json`,
+        `../data/news.json`,
+        `${base}news.json`,
+        `news.json`,
+        `../news.json`
       ];
-      const uniqueUrls = Array.from(new Set(candidates.filter(Boolean)));
+      const cleanUrls = Array.from(new Set(defaultCandidates.filter(Boolean).map(u => u.split('?')[0])));
 
+      const maxAttempts = 3;
       let res = null;
       let lastErr = null;
-      for (const url of uniqueUrls) {
-        try {
-          const attempt = await fetch(url, { cache: 'no-store' });
-          if (attempt && attempt.ok) {
-            res = attempt;
-            break;
+
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        const t = Date.now();
+        const uniqueUrls = cleanUrls.map(u => `${u}?t=${t}`);
+
+        for (const url of uniqueUrls) {
+          try {
+            const attemptRes = await fetch(url, { cache: 'no-store' });
+            if (attemptRes && attemptRes.ok) {
+              res = attemptRes;
+              break;
+            }
+          } catch (e) {
+            lastErr = e;
           }
-        } catch (e) {
-          lastErr = e;
+        }
+        if (res && res.ok) break;
+
+        // 若前次嘗試未成功，短暫退避等待後重試 (平滑跨過 GitHub Pages 部署瞬間)
+        if (attempt < maxAttempts) {
+          await new Promise(r => setTimeout(r, attempt * 600));
         }
       }
+
       if (!res || !res.ok) {
+        // 若網路請求失敗，嘗試自 LocalStorage 離線快取載入
+        try {
+          if (typeof window !== 'undefined' && window.localStorage) {
+            const cachedText = window.localStorage.getItem(CACHE_KEY_NEWS_JSON);
+            if (cachedText) {
+              const cachedData = JSON.parse(cachedText);
+              if (Array.isArray(cachedData) && cachedData.length > 0) {
+                console.warn('[News Engine] 網路請求暫時失敗，已自動自本機離線快取載入 news.json (' + cachedData.length + ' 筆公告)');
+                allNews = cachedData;
+                renderEventTimeline();
+                initCategoryTags();
+                initSearch();
+                renderNews();
+                return;
+              }
+            }
+          }
+        } catch (cacheErr) {
+          console.warn('[News Engine] 讀取離線快取失敗:', cacheErr);
+        }
         throw lastErr || new Error(`HTTP ${res ? res.status : 'Fetch Failed'}`);
       }
-      allNews = await res.json();
+
+      const text = await res.text();
+      allNews = JSON.parse(text);
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          window.localStorage.setItem(CACHE_KEY_NEWS_JSON, text);
+        }
+      } catch (e) {}
       renderEventTimeline();
       initCategoryTags();
       initSearch();

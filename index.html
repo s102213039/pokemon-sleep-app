@@ -217,7 +217,7 @@
           document.execCommand('copy');
           if (btnEl) {
             var oldHtml = btnEl.innerHTML;
-            btnEl.innerHTML = '✅ 已複製錯誤日誌 (Copied!)';
+            btnEl.innerHTML = '[已複製] (Copied!)';
             setTimeout(function() { btnEl.innerHTML = oldHtml; }, 3000);
           }
         } catch (e) {
@@ -243,12 +243,12 @@
         var latestError = window.__APP_LOG_BUFFER__.filter(function(l) { return l.level === 'ERROR'; }).pop();
         var errorMsg = latestError ? (latestError.message + (latestError.source ? ' (' + latestError.source + ')' : '')) : '頁面載入異常';
         el.innerHTML = '<div class="diag-bar-content">' +
-          '<span class="diag-bar-icon">⚠️</span>' +
+          '<span class="diag-bar-icon">[!]</span>' +
           '<div class="diag-bar-text">' +
           '<strong>系統偵測到異常：</strong>' +
           '<span class="diag-bar-msg">' + errorMsg + '</span>' +
           '</div>' +
-          '<button type="button" class="diag-copy-btn" onclick="window.__copyAppErrorLog(this)">📋 複製錯誤日誌</button>' +
+          '<button type="button" class="diag-copy-btn" onclick="window.__copyAppErrorLog(this)">複製錯誤日誌</button>' +
           '</div>';
         el.style.display = 'block';
       }
@@ -260,12 +260,12 @@
         var stack = (errorObj && errorObj.stack) ? errorObj.stack : '';
         container.innerHTML = '<div class="content-error-card">' +
           '<div class="content-error-header">' +
-          '<span class="content-error-icon">⚠️</span>' +
+          '<span class="content-error-icon">[!]</span>' +
           '<div class="content-error-title-group">' +
           '<h3 class="content-error-title">' + (title || '內容載入發生異常') + '</h3>' +
           '<p class="content-error-sub">請點擊下方按鈕複製完整診斷日誌並提供給開發者排查。</p>' +
           '</div>' +
-          '<button type="button" class="diag-copy-btn-large" onclick="window.__copyAppErrorLog(this)">📋 複製完整錯誤日誌</button>' +
+          '<button type="button" class="diag-copy-btn-large" onclick="window.__copyAppErrorLog(this)">複製完整錯誤日誌</button>' +
           '</div>' +
           '<div class="content-error-box">' +
           '<div class="content-error-msg"><strong>錯誤資訊：</strong> ' + errMsg + '</div>' +
