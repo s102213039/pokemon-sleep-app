@@ -10728,7 +10728,7 @@ input[type="number"] {
   padding: 4px 6px;
   background: var(--bg-card-inner);
   border: 1px solid var(--border-color);
-  border-left: 3px solid var(--color-accent-gold);
+  border-left: 3px solid #a855f7;
   border-radius: 4px;
   font-size: 10px;
   display: flex;
@@ -10753,7 +10753,7 @@ input[type="number"] {
 }
 
 .tooltip-yield-breakdown .breakdown-skill .breakdown-val {
-  color: var(--color-accent-gold);
+  color: #c084fc;
 }
 
 .tooltip-dish-box {
@@ -11090,15 +11090,22 @@ input[type="number"] {
   border-color: rgba(234, 179, 8, 0.4);
 }
 
-/* 食材精選S 技能加成徽章樣式 (無額外頭像外框, 僅精緻徽章展示) */
+/* 食材精選S 技能加成徽章樣式 (無額外頭像外框, 採用技能紫色系與冠軍金色徹底區隔) */
 .ladder-node.node-has-skill-draw {
   /* 保持自然頭像無外框 */
 }
 
 .node-count-badge.badge-skill-draw {
-  color: var(--color-accent-gold);
-  border: 1px solid var(--color-accent-gold);
+  color: #c084fc;
+  background: rgba(168, 85, 247, 0.14);
+  border: 1px solid rgba(168, 85, 247, 0.6);
   font-weight: 800;
+}
+
+.ladder-node.node-top1 .node-count-badge.badge-skill-draw {
+  color: #c084fc;
+  background: rgba(168, 85, 247, 0.2);
+  border: 1.5px solid #a855f7;
 }
 
 
@@ -11231,6 +11238,18 @@ input[type="number"] {
   background: #8b5cf6;
   border-color: #8b5cf6;
   box-shadow: 0 0 6px rgba(139, 92, 246, 0.35);
+}
+
+.ladder-switch-label input#ladder-skill-draw-toggle:checked + .ladder-switch-slider,
+.ladder-top15-switch-label input#ladder-skill-draw-toggle:checked + .ladder-switch-slider {
+  background: #a855f7;
+  border-color: #a855f7;
+  box-shadow: 0 0 6px rgba(168, 85, 247, 0.4);
+}
+
+.ladder-switch-label input#ladder-skill-draw-toggle:checked ~ .ladder-switch-text,
+.ladder-top15-switch-label input#ladder-skill-draw-toggle:checked ~ .ladder-switch-text {
+  color: #c084fc;
 }
 
 .ladder-switch-label input:checked + .ladder-switch-slider::before {
@@ -11696,12 +11715,12 @@ input[type="number"] {
   color: var(--text-primary);
 }
 
-/* 食材天梯浮窗與技能加成徽章主題適配 (Dawn, Emerald & Onyx) */
+/* 食材天梯浮窗與技能加成徽章主題適配 (Dawn, Emerald & Onyx 採用技能專屬紫色系) */
 [data-theme="dawn"] .tooltip-yield-breakdown,
 [data-theme="emerald"] .tooltip-yield-breakdown {
-  background: var(--bg-card-inner, #f1f5f9);
+  background: var(--bg-card-inner, #f8fafc);
   border: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
-  border-left: 3px solid var(--color-accent-gold, #b45309);
+  border-left: 3px solid #7e22ce;
 }
 
 [data-theme="dawn"] .tooltip-yield-breakdown .breakdown-label,
@@ -11716,39 +11735,80 @@ input[type="number"] {
 
 [data-theme="dawn"] .tooltip-yield-breakdown .breakdown-skill .breakdown-val,
 [data-theme="emerald"] .tooltip-yield-breakdown .breakdown-skill .breakdown-val {
-  color: var(--color-accent-gold, #b45309);
+  color: #7e22ce;
 }
 
 [data-theme="dawn"] .node-count-badge.badge-skill-draw,
 [data-theme="emerald"] .node-count-badge.badge-skill-draw {
-  background: #ffffff;
-  border-color: rgba(180, 83, 9, 0.45);
-  color: #b45309;
+  background: rgba(147, 51, 234, 0.08);
+  border-color: rgba(126, 34, 206, 0.45);
+  color: #7e22ce;
+}
+
+[data-theme="dawn"] .ladder-node.node-top1 .node-count-badge.badge-skill-draw,
+[data-theme="emerald"] .ladder-node.node-top1 .node-count-badge.badge-skill-draw {
+  background: rgba(147, 51, 234, 0.12);
+  border: 1.5px solid #7e22ce;
+  color: #7e22ce;
 }
 
 [data-theme="dawn"] .ing-rank-split-line .split-skill,
 [data-theme="emerald"] .ing-rank-split-line .split-skill {
-  color: #b45309;
+  color: #7e22ce;
+}
+
+[data-theme="dawn"] .ladder-top15-switch-label input#ladder-skill-draw-toggle:checked + .ladder-switch-slider,
+[data-theme="emerald"] .ladder-top15-switch-label input#ladder-skill-draw-toggle:checked + .ladder-switch-slider,
+[data-theme="dawn"] .ladder-switch-label input#ladder-skill-draw-toggle:checked + .ladder-switch-slider,
+[data-theme="emerald"] .ladder-switch-label input#ladder-skill-draw-toggle:checked + .ladder-switch-slider {
+  background: #7e22ce;
+  border-color: #7e22ce;
+  box-shadow: 0 0 6px rgba(126, 34, 206, 0.3);
+}
+
+[data-theme="dawn"] .ladder-top15-switch-label input#ladder-skill-draw-toggle:checked ~ .ladder-switch-text,
+[data-theme="emerald"] .ladder-top15-switch-label input#ladder-skill-draw-toggle:checked ~ .ladder-switch-text,
+[data-theme="dawn"] .ladder-switch-label input#ladder-skill-draw-toggle:checked ~ .ladder-switch-text,
+[data-theme="emerald"] .ladder-switch-label input#ladder-skill-draw-toggle:checked ~ .ladder-switch-text {
+  color: #7e22ce;
 }
 
 [data-theme="onyx"] .tooltip-yield-breakdown {
   background: #141414;
   border-color: rgba(255, 255, 255, 0.15);
-  border-left-color: #fbbf24;
+  border-left-color: #c084fc;
 }
 
 [data-theme="onyx"] .tooltip-yield-breakdown .breakdown-skill .breakdown-val {
-  color: #fbbf24;
+  color: #d8b4fe;
 }
 
 [data-theme="onyx"] .node-count-badge.badge-skill-draw {
-  background: #141414;
-  border-color: rgba(251, 191, 36, 0.6);
-  color: #fbbf24;
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(192, 132, 252, 0.6);
+  color: #d8b4fe;
+}
+
+[data-theme="onyx"] .ladder-node.node-top1 .node-count-badge.badge-skill-draw {
+  background: rgba(168, 85, 247, 0.22);
+  border: 1.5px solid #c084fc;
+  color: #d8b4fe;
 }
 
 [data-theme="onyx"] .ing-rank-split-line .split-skill {
-  color: #fbbf24;
+  color: #d8b4fe;
+}
+
+[data-theme="onyx"] .ladder-top15-switch-label input#ladder-skill-draw-toggle:checked + .ladder-switch-slider,
+[data-theme="onyx"] .ladder-switch-label input#ladder-skill-draw-toggle:checked + .ladder-switch-slider {
+  background: #9333ea;
+  border-color: #c084fc;
+  box-shadow: 0 0 6px rgba(168, 85, 247, 0.5);
+}
+
+[data-theme="onyx"] .ladder-top15-switch-label input#ladder-skill-draw-toggle:checked ~ .ladder-switch-text,
+[data-theme="onyx"] .ladder-switch-label input#ladder-skill-draw-toggle:checked ~ .ladder-switch-text {
+  color: #d8b4fe;
 }
 
 @media (max-width: 900px) {
@@ -18714,7 +18774,7 @@ body.mobile-h5-app.values-active,
 }
 
 .ing-rank-split-line .split-skill {
-  color: #f59e0b;
+  color: #c084fc;
   font-weight: 700;
 }
 

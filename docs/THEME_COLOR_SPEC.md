@@ -77,18 +77,23 @@
 - 禁用食材標題標籤: `.ladder-track-disabled-header` (`cursor: not-allowed !important; pointer-events: none !important; opacity: 0.35 !important;`)
 
 ### 3.7 食材天梯浮窗、技能拆解與開關元件 (Ladder Tooltip, Skill Breakdown & Switches)
+- **色彩語意區隔原則 (Strict Role-Color Separation)**:
+  - **冠軍 TOP 1 (Champion)**: 專屬黃金配色 (`#eab308`, `var(--color-accent-gold)`，含金色王冠與頭像外框光暈)。
+  - **食材精選S (Skill Draw S)**: 官方技能紫色配色 (`#c084fc`, 淺色 `#7e22ce`, 黑曜 `#d8b4fe`)，絕對嚴禁與冠軍金色混用。
 - **浮窗內部容器 (`.tooltip-yield-breakdown`)**:
   - 嚴禁硬編碼任何深色背景 (如 `rgba(0, 0, 0, 0.25)`)。
-  - 底色必須使用語意變數 `var(--bg-card-inner)`，邊框使用 `var(--border-color)`，左側飾條使用 `var(--color-accent-gold)`。
-  - 淺色主題 (`dawn`, `emerald`) 覆蓋: 底色為 `#f1f5f9`，邊框為 `rgba(0, 0, 0, 0.08)`，飾條與技能值為高對比深琥珀金 `#b45309` (對比度 > 4.5:1)。
-  - 深色主題 (`onyx`): 底色為 `#141414`，飾條與技能值為 `#fbbf24`。
+  - 底色必須使用語意變數 `var(--bg-card-inner)`，邊框使用 `var(--border-color)`，左側飾條使用技能紫 `#a855f7`，技能加成文字使用 `#c084fc`。
+  - 淺色主題 (`dawn`, `emerald`) 覆蓋: 底色為 `#f8fafc`，邊框為 `rgba(0, 0, 0, 0.08)`，飾條與技能值為高對比深皇家紫 `#7e22ce` (對比度 > 7:1)。
+  - 深色主題 (`onyx`): 底色為 `#141414`，飾條為 `#c084fc`，技能值為 `#d8b4fe`。
 - **節點徽章 (`.node-count-badge.badge-skill-draw`)**:
   - **嚴禁**對寶可夢頭像外加任何方框或光暈外框 (保持自然圓形頭像無外框)。
-  - 徽章底色使用 `var(--bg-card-inner)`，邊框使用 `var(--color-accent-gold)`。
-  - 淺色主題覆蓋: 底色為 `#ffffff`，邊框為 `rgba(180, 83, 9, 0.45)`，總產量數值為 `#b45309`，拆解次要文字為 `#64748b`。
+  - 徽章底色使用 `rgba(168, 85, 247, 0.14)`，邊框使用 `rgba(168, 85, 247, 0.6)`，文字使用 `#c084fc`。
+  - 淺色主題覆蓋: 底色為 `rgba(147, 51, 234, 0.08)`，邊框為 `rgba(126, 34, 206, 0.45)`，數值文字為 `#7e22ce`。
+  - 黑曜主題覆蓋: 底色為 `rgba(168, 85, 247, 0.15)`，邊框為 `rgba(192, 132, 252, 0.6)`，數值文字為 `#d8b4fe`。
+  - 若節點同時為冠軍 (TOP 1) 且具有技能加成: 徽章明確使用紫色系 (如 `.ladder-node.node-top1 .node-count-badge.badge-skill-draw`)，頭像保留黃金王冠與光暈，雙重身分清楚辨識。
 - **標題列緊湊開關 (`.ladder-top15-switch-label`)**:
   - 側邊欄篩選開關必須統一放置於各節標題列 (`.sidebar-section-header`) 右側 (如「天梯軌道排序」旁之「前15名」、「寶可夢專長」旁之「食材精選」)。
-  - 嚴禁在分類下方新增全寬獨立行破壞側邊欄層級與空間。
+  - 「食材精選」開關啟用時使用技能紫色滑塊 (`#a855f7` / 淺色 `#7e22ce`)，文字切換為紫色 (`#c084fc` / `#7e22ce`)。
 
 ---
 
