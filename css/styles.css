@@ -10726,9 +10726,10 @@ input[type="number"] {
 .tooltip-yield-breakdown {
   margin: 4px 0;
   padding: 4px 6px;
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--color-accent-gold);
   border-radius: 4px;
-  border-left: 2px solid #f59e0b;
   font-size: 10px;
   display: flex;
   flex-direction: column;
@@ -10752,7 +10753,7 @@ input[type="number"] {
 }
 
 .tooltip-yield-breakdown .breakdown-skill .breakdown-val {
-  color: #f59e0b;
+  color: var(--color-accent-gold);
 }
 
 .tooltip-dish-box {
@@ -11089,9 +11090,9 @@ input[type="number"] {
   border-color: rgba(234, 179, 8, 0.4);
 }
 
-/* 食材精選S 技能加成節點與徽章樣式 */
-.ladder-node.node-has-skill-draw .node-avatar-wrapper {
-  box-shadow: 0 0 0 1.5px rgba(245, 158, 11, 0.7);
+/* 食材精選S 技能加成徽章樣式 (無額外頭像外框, 僅精緻徽章展示) */
+.ladder-node.node-has-skill-draw {
+  /* 保持自然頭像無外框 */
 }
 
 .node-count-badge.badge-skill-draw {
@@ -11101,14 +11102,15 @@ input[type="number"] {
   justify-content: center;
   padding: 1px 3px;
   background: var(--bg-card-inner);
-  border-color: rgba(245, 158, 11, 0.6);
+  border: 1px solid var(--color-accent-gold);
+  border-radius: 3px;
   min-width: 24px;
 }
 
 .node-count-badge.badge-skill-draw .badge-total {
   font-size: 8.5px;
   font-weight: 800;
-  color: #f59e0b;
+  color: var(--color-accent-gold);
   line-height: 1;
 }
 
@@ -11714,6 +11716,73 @@ input[type="number"] {
   background: var(--bg-card-inner);
   border-color: var(--border-color);
   color: var(--text-primary);
+}
+
+/* 食材天梯浮窗與技能加成徽章主題適配 (Dawn, Emerald & Onyx) */
+[data-theme="dawn"] .tooltip-yield-breakdown,
+[data-theme="emerald"] .tooltip-yield-breakdown {
+  background: var(--bg-card-inner, #f1f5f9);
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+  border-left: 3px solid var(--color-accent-gold, #b45309);
+}
+
+[data-theme="dawn"] .tooltip-yield-breakdown .breakdown-label,
+[data-theme="emerald"] .tooltip-yield-breakdown .breakdown-label {
+  color: var(--text-secondary, #475569);
+}
+
+[data-theme="dawn"] .tooltip-yield-breakdown .breakdown-val,
+[data-theme="emerald"] .tooltip-yield-breakdown .breakdown-val {
+  color: var(--text-primary, #0f172a);
+}
+
+[data-theme="dawn"] .tooltip-yield-breakdown .breakdown-skill .breakdown-val,
+[data-theme="emerald"] .tooltip-yield-breakdown .breakdown-skill .breakdown-val {
+  color: var(--color-accent-gold, #b45309);
+}
+
+[data-theme="dawn"] .node-count-badge.badge-skill-draw,
+[data-theme="emerald"] .node-count-badge.badge-skill-draw {
+  background: #ffffff;
+  border-color: rgba(180, 83, 9, 0.45);
+}
+
+[data-theme="dawn"] .node-count-badge.badge-skill-draw .badge-total,
+[data-theme="emerald"] .node-count-badge.badge-skill-draw .badge-total {
+  color: #b45309;
+}
+
+[data-theme="dawn"] .node-count-badge.badge-skill-draw .badge-split,
+[data-theme="emerald"] .node-count-badge.badge-skill-draw .badge-split {
+  color: #64748b;
+}
+
+[data-theme="dawn"] .ing-rank-split-line .split-skill,
+[data-theme="emerald"] .ing-rank-split-line .split-skill {
+  color: #b45309;
+}
+
+[data-theme="onyx"] .tooltip-yield-breakdown {
+  background: #141414;
+  border-color: rgba(255, 255, 255, 0.15);
+  border-left-color: #fbbf24;
+}
+
+[data-theme="onyx"] .tooltip-yield-breakdown .breakdown-skill .breakdown-val {
+  color: #fbbf24;
+}
+
+[data-theme="onyx"] .node-count-badge.badge-skill-draw {
+  background: #141414;
+  border-color: rgba(251, 191, 36, 0.6);
+}
+
+[data-theme="onyx"] .node-count-badge.badge-skill-draw .badge-total {
+  color: #fbbf24;
+}
+
+[data-theme="onyx"] .ing-rank-split-line .split-skill {
+  color: #fbbf24;
 }
 
 @media (max-width: 900px) {

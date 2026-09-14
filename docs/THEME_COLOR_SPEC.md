@@ -76,6 +76,20 @@
 - 非料理食材軌道透明度遮罩: `.ladder-track-row.ladder-track-dimmed`, `.ladder-tail-standalone-container.ladder-track-dimmed` (`opacity: 0.28 !important; filter: grayscale(40%) !important; pointer-events: none !important;`)
 - 禁用食材標題標籤: `.ladder-track-disabled-header` (`cursor: not-allowed !important; pointer-events: none !important; opacity: 0.35 !important;`)
 
+### 3.7 食材天梯浮窗、技能拆解與開關元件 (Ladder Tooltip, Skill Breakdown & Switches)
+- **浮窗內部容器 (`.tooltip-yield-breakdown`)**:
+  - 嚴禁硬編碼任何深色背景 (如 `rgba(0, 0, 0, 0.25)`)。
+  - 底色必須使用語意變數 `var(--bg-card-inner)`，邊框使用 `var(--border-color)`，左側飾條使用 `var(--color-accent-gold)`。
+  - 淺色主題 (`dawn`, `emerald`) 覆蓋: 底色為 `#f1f5f9`，邊框為 `rgba(0, 0, 0, 0.08)`，飾條與技能值為高對比深琥珀金 `#b45309` (對比度 > 4.5:1)。
+  - 深色主題 (`onyx`): 底色為 `#141414`，飾條與技能值為 `#fbbf24`。
+- **節點徽章 (`.node-count-badge.badge-skill-draw`)**:
+  - **嚴禁**對寶可夢頭像外加任何方框或光暈外框 (保持自然圓形頭像無外框)。
+  - 徽章底色使用 `var(--bg-card-inner)`，邊框使用 `var(--color-accent-gold)`。
+  - 淺色主題覆蓋: 底色為 `#ffffff`，邊框為 `rgba(180, 83, 9, 0.45)`，總產量數值為 `#b45309`，拆解次要文字為 `#64748b`。
+- **標題列緊湊開關 (`.ladder-top15-switch-label`)**:
+  - 側邊欄篩選開關必須統一放置於各節標題列 (`.sidebar-section-header`) 右側 (如「天梯軌道排序」旁之「前15名」、「寶可夢專長」旁之「食材精選」)。
+  - 嚴禁在分類下方新增全寬獨立行破壞側邊欄層級與空間。
+
 ---
 
 ## 4. 雙向執行檢核機制 (Execution Pre/Post Check Protocol)

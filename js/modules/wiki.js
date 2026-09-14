@@ -16024,7 +16024,7 @@
                                 </div>
                                 <div class="breakdown-row breakdown-skill">
                                   <span class="breakdown-label">${isEN ? 'Ingr. Selection S (Lv.7):' : '食材精選S 獲取 (Lv.7)：'}</span>
-                                  <span class="breakdown-val text-amber">+${node.skillBonus} ${isEN ? 'items' : '顆'}</span>
+                                  <span class="breakdown-val">+${node.skillBonus} ${isEN ? 'items' : '顆'}</span>
                                 </div>
                               </div>
                             ` : ''}
@@ -16854,6 +16854,11 @@
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Specialty Type' : '寶可夢專長'}</span>
+              <label class="ladder-top15-switch-label" title="${isEN ? 'Include Lv.7 Ingredient Draw S main skill yield expectation (Skill Trigger M)' : '納入主技能食材精選S (Lv.7 滿級) 期望產量加成 (以自帶技能機率提升M計算)'}">
+                <input type="checkbox" id="ladder-skill-draw-toggle" class="ladder-switch-input" ${isLadderSkillDrawExpected ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSkillDrawExpected(this.checked)">
+                <span class="ladder-switch-slider"></span>
+                <span class="ladder-switch-text">${isEN ? 'Ingr. Draw' : '食材精選'}</span>
+              </label>
             </div>
             <div class="sidebar-skills-list">
               <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'ALL' ? 'active' : ''}" data-specialty-filter="ALL" onclick="window.WikiDB.setLadderSpecialtyFilter('ALL')">${isEN ? 'All' : '全部'}</button>
@@ -16861,13 +16866,6 @@
               <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'BERRY' ? 'active' : ''}" data-specialty-filter="BERRY" onclick="window.WikiDB.setLadderSpecialtyFilter('BERRY')">${isEN ? 'Berry' : '樹果型'}</button>
               <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'SKILL' ? 'active' : ''}" data-specialty-filter="SKILL" onclick="window.WikiDB.setLadderSpecialtyFilter('SKILL')">${isEN ? 'Skill' : '技能型'}</button>
             </div>
-            <label class="sidebar-final-evo-label" for="ladder-skill-draw-toggle" title="${isEN ? 'Include Lv.7 Ingredient Draw S main skill yield expectation (Skill Trigger M)' : '納入主技能食材精選S (Lv.7 滿級) 期望產量加成 (以自帶技能機率提升M計算)'}" style="margin-top: 8px;">
-              <span class="sidebar-final-evo-text">${isEN ? 'Ingredient Draw S' : '食材精選'}</span>
-              <div class="sidebar-switch-wrapper">
-                <input type="checkbox" id="ladder-skill-draw-toggle" class="switch-checkbox" ${isLadderSkillDrawExpected ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSkillDrawExpected(this.checked)">
-                <span class="switch-slider"></span>
-              </div>
-            </label>
           </div>
 
 
