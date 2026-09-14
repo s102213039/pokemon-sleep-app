@@ -11096,31 +11096,9 @@ input[type="number"] {
 }
 
 .node-count-badge.badge-skill-draw {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 1px 3px;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--color-accent-gold);
-  border-radius: 3px;
-  min-width: 24px;
-}
-
-.node-count-badge.badge-skill-draw .badge-total {
-  font-size: 8.5px;
-  font-weight: 800;
   color: var(--color-accent-gold);
-  line-height: 1;
-}
-
-.node-count-badge.badge-skill-draw .badge-split {
-  font-size: 6.5px;
-  font-weight: 600;
-  color: var(--text-muted);
-  line-height: 1;
-  letter-spacing: -0.2px;
-  margin-top: 1px;
+  border: 1px solid var(--color-accent-gold);
+  font-weight: 800;
 }
 
 
@@ -11745,16 +11723,7 @@ input[type="number"] {
 [data-theme="emerald"] .node-count-badge.badge-skill-draw {
   background: #ffffff;
   border-color: rgba(180, 83, 9, 0.45);
-}
-
-[data-theme="dawn"] .node-count-badge.badge-skill-draw .badge-total,
-[data-theme="emerald"] .node-count-badge.badge-skill-draw .badge-total {
   color: #b45309;
-}
-
-[data-theme="dawn"] .node-count-badge.badge-skill-draw .badge-split,
-[data-theme="emerald"] .node-count-badge.badge-skill-draw .badge-split {
-  color: #64748b;
 }
 
 [data-theme="dawn"] .ing-rank-split-line .split-skill,
@@ -11775,9 +11744,6 @@ input[type="number"] {
 [data-theme="onyx"] .node-count-badge.badge-skill-draw {
   background: #141414;
   border-color: rgba(251, 191, 36, 0.6);
-}
-
-[data-theme="onyx"] .node-count-badge.badge-skill-draw .badge-total {
   color: #fbbf24;
 }
 

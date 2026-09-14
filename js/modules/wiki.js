@@ -15610,7 +15610,7 @@
     const mainTracks = data.filter(ing => ing.id !== 'tail');
     const tailIng = data.find(ing => ing.id === 'tail');
 
-    const isUnfilteredDefault = (ladderSpecialtyFilter === 'ALL' && ladderRecipeFilter === 'ALL' && ladderSupplyFilter === 'ALL' && !ladderSearchQuery && !isLadderSkillDrawExpected);
+    const isUnfilteredDefault = (ladderSpecialtyFilter === 'ALL' && ladderRecipeFilter === 'ALL' && ladderSupplyFilter === 'ALL' && !ladderSearchQuery);
 
     // 1. 預先過濾各常規食材軌道之寶可夢與變體，並計算目前篩選下的全局最高產量
     let globalMaxCount = 20;
@@ -15748,8 +15748,9 @@
     let globalMinCount = 100;
     processedMainTracks.forEach(t => {
       t.filteredPokemonList.forEach(p => {
+        const skillBonus = getPokemonSkillDrawBonus(p.name, t.ing.id, t.ing.name);
         p.variants.forEach(v => {
-          const scaled = Math.round(v.count * mult);
+          const scaled = Math.round(v.count * mult) + skillBonus;
           if (scaled < globalMinCount) globalMinCount = scaled;
         });
       });
@@ -16004,11 +16005,8 @@
                           <div class="node-avatar-wrapper">
                             <img src="${node.p.icon}" class="node-avatar-img" alt="${node.pkmDisplayName}" loading="lazy" decoding="async">
                           </div>
-                          <div class="node-count-badge ${hasSkillDraw ? 'badge-skill-draw' : ''}">
-                            ${hasSkillDraw ? `
-                              <span class="badge-total">${node.scaledCount}</span>
-                              <span class="badge-split" title="${isEN ? 'Drop: ' + node.dropCount + ' + Skill: ' + node.skillBonus : '食材掉落: ' + node.dropCount + ' + 技能獲取: ' + node.skillBonus}">${node.dropCount}+${node.skillBonus}</span>
-                            ` : node.scaledCount}
+                          <div class="node-count-badge ${hasSkillDraw ? 'badge-skill-draw' : ''}" ${hasSkillDraw ? `title="${isEN ? 'Base Drop: ' + node.dropCount + ' + Ingr. Selection Lv.7: ' + node.skillBonus : '常規食材掉落: ' + node.dropCount + ' + 食材精選S Lv.7: ' + node.skillBonus}"` : ''}>
+                            ${node.scaledCount}
                           </div>
                           
                           <div class="ladder-node-tooltip">

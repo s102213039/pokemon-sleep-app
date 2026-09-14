@@ -6071,8 +6071,6 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Ingredient
   // Verify CSS styles exist
   assert(stylesCss.includes('.node-has-skill-draw'), 'styles.css must include .node-has-skill-draw');
   assert(stylesCss.includes('.node-count-badge.badge-skill-draw'), 'styles.css must include .node-count-badge.badge-skill-draw');
-  assert(stylesCss.includes('.badge-total'), 'styles.css must include .badge-total');
-  assert(stylesCss.includes('.badge-split'), 'styles.css must include .badge-split');
   assert(stylesCss.includes('.tooltip-yield-breakdown'), 'styles.css must include .tooltip-yield-breakdown');
   assert(stylesCss.includes('.ing-rank-split-line'), 'styles.css must include .ing-rank-split-line');
 
@@ -6190,8 +6188,12 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Ingredient
   const ladderHtml = WikiDB.renderCoordinateLadder();
   assert(ladderHtml.includes('node-has-skill-draw'), 'Rendered ladder must contain node-has-skill-draw when active');
   assert(ladderHtml.includes('badge-skill-draw'), 'Rendered ladder must contain badge-skill-draw when active');
-  assert(ladderHtml.includes('badge-total'), 'Rendered ladder must contain badge-total');
-  assert(ladderHtml.includes('badge-split'), 'Rendered ladder must contain badge-split');
+  assert(!ladderHtml.includes('badge-total'), 'Rendered ladder must not contain badge-total (single number display)');
+  assert(!ladderHtml.includes('badge-split'), 'Rendered ladder must not contain badge-split (single number display)');
+  assert(ladderHtml.includes('<span class="tick-label">30</span>'), 'Main ladder ruler must start at 30 when skill draw toggle is active');
+  const mainRulerScale = ladderHtml.split('class="ladder-ruler-scale"')[1].split('</div>')[0];
+  assert(mainRulerScale.includes('<span class="tick-label">30</span>'), 'First tick on ruler must be 30');
+  assert(!mainRulerScale.includes('<span class="tick-label">0</span>'), 'Main ruler must not start at 0');
   assert(ladderHtml.includes('tooltip-yield-breakdown'), 'Rendered ladder must contain tooltip-yield-breakdown');
   assert(ladderHtml.includes('食材精選S 獲取 (Lv.7)'), 'Rendered ladder tooltip must mention 食材精選S 獲取 (Lv.7)');
 
