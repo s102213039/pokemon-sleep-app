@@ -3333,6 +3333,7 @@ let pokedexModalState = {
   ribbon: 0,
   ingSlots: [0, 0, 0] // 0, 1, 2 indices in pkm.ingredients
 };
+let pokedexActiveSubskillSlot = 1;
 
 function getPokedexMainSkillMaxLvl(skillName) {
   if (!skillName) return 6;
@@ -3427,7 +3428,27 @@ function applyPokedexGodPreset() {
     pokedexModalState.subskills = ['技能機率提升M', '技能等級提升M', '幫忙速度M', '技能機率提升S', '幫手獎勵'];
     pokedexModalState.skillLevel = getPokedexMainSkillMaxLvl(pkm.main_skill);
   }
-  renderPokedexDetailModalContent();
+  pokedexActiveSubskillSlot = 1;
+
+  const numInput = document.getElementById('pokedex-poke-level') || document.getElementById('pokedex-level-input');
+  const slider = document.getElementById('pokedex-level-slider');
+  const valText = document.getElementById('pokedex-level-val-text');
+  if (numInput) numInput.value = pokedexModalState.level;
+  if (slider) slider.value = pokedexModalState.level;
+  if (valText) valText.textContent = pokedexModalState.level;
+
+  const natureSelect = document.getElementById('pokedex-poke-nature');
+  if (natureSelect) natureSelect.value = pokedexModalState.nature;
+
+  const skillSelect = document.getElementById('pokedex-poke-skill-level');
+  if (skillSelect) skillSelect.value = pokedexModalState.skillLevel;
+
+  const ribbonSelect = document.getElementById('pokedex-poke-ribbon');
+  if (ribbonSelect) ribbonSelect.value = pokedexModalState.ribbon;
+
+  renderPokedexIngredientStrip();
+  updatePokedexSubskillUI();
+  updatePokedexModalAppraisalLive();
 }
 
 function applyPokedexResetPreset() {
@@ -3437,41 +3458,221 @@ function applyPokedexResetPreset() {
   pokedexModalState.skillLevel = 1;
   pokedexModalState.ribbon = 0;
   pokedexModalState.ingSlots = [0, 0, 0];
-  renderPokedexDetailModalContent();
+  pokedexActiveSubskillSlot = 1;
+
+  const numInput = document.getElementById('pokedex-poke-level') || document.getElementById('pokedex-level-input');
+  const slider = document.getElementById('pokedex-level-slider');
+  const valText = document.getElementById('pokedex-level-val-text');
+  if (numInput) numInput.value = pokedexModalState.level;
+  if (slider) slider.value = pokedexModalState.level;
+  if (valText) valText.textContent = pokedexModalState.level;
+
+  const natureSelect = document.getElementById('pokedex-poke-nature');
+  if (natureSelect) natureSelect.value = pokedexModalState.nature;
+
+  const skillSelect = document.getElementById('pokedex-poke-skill-level');
+  if (skillSelect) skillSelect.value = pokedexModalState.skillLevel;
+
+  const ribbonSelect = document.getElementById('pokedex-poke-ribbon');
+  if (ribbonSelect) ribbonSelect.value = pokedexModalState.ribbon;
+
+  renderPokedexIngredientStrip();
+  updatePokedexSubskillUI();
+  updatePokedexModalAppraisalLive();
 }
 
 function setPokedexModalLevel(val) {
   pokedexModalState.level = Math.max(1, Math.min(100, parseInt(val, 10) || 1));
-  const numInput = document.getElementById('pokedex-level-input');
+  const numInput = document.getElementById('pokedex-poke-level') || document.getElementById('pokedex-level-input');
   const slider = document.getElementById('pokedex-level-slider');
+  const valText = document.getElementById('pokedex-level-val-text');
   if (numInput && numInput.value != pokedexModalState.level) numInput.value = pokedexModalState.level;
   if (slider && slider.value != pokedexModalState.level) slider.value = pokedexModalState.level;
+  if (valText) valText.textContent = pokedexModalState.level;
+  updatePokedexSubskillUI();
+  renderPokedexIngredientStrip();
   updatePokedexModalAppraisalLive();
 }
 
 function setPokedexModalNature(val) {
   pokedexModalState.nature = val || '坦率';
+  const natureSelect = document.getElementById('pokedex-poke-nature');
+  if (natureSelect && natureSelect.value !== pokedexModalState.nature) natureSelect.value = pokedexModalState.nature;
   updatePokedexModalAppraisalLive();
 }
 
 function setPokedexModalSubskill(idx, val) {
   pokedexModalState.subskills[idx] = val || '';
+  updatePokedexSubskillUI();
   updatePokedexModalAppraisalLive();
 }
 
 function setPokedexModalSkillLevel(val) {
   pokedexModalState.skillLevel = parseInt(val, 10) || 1;
+  const skillSelect = document.getElementById('pokedex-poke-skill-level');
+  if (skillSelect && skillSelect.value != pokedexModalState.skillLevel) skillSelect.value = pokedexModalState.skillLevel;
   updatePokedexModalAppraisalLive();
 }
 
 function setPokedexModalRibbon(val) {
   pokedexModalState.ribbon = parseInt(val, 10) || 0;
+  const ribbonSelect = document.getElementById('pokedex-poke-ribbon');
+  if (ribbonSelect && ribbonSelect.value != pokedexModalState.ribbon) ribbonSelect.value = pokedexModalState.ribbon;
   updatePokedexModalAppraisalLive();
 }
 
 function setPokedexModalIng(slotIdx, val) {
   pokedexModalState.ingSlots[slotIdx] = parseInt(val, 10) || 0;
+  renderPokedexIngredientStrip();
   updatePokedexModalAppraisalLive();
+}
+
+function selectPokedexSubskillSlot(slotNum) {
+  pokedexActiveSubskillSlot = parseInt(slotNum, 10) || 1;
+  updatePokedexSubskillUI();
+}
+
+function choosePokedexSubskill(skName) {
+  if (!skName) return;
+  if (pokedexModalState.subskills.includes(skName)) return;
+
+  pokedexModalState.subskills[pokedexActiveSubskillSlot - 1] = skName;
+
+  let nextEmpty = -1;
+  for (let s = 1; s <= 5; s++) {
+    if (!pokedexModalState.subskills[s - 1]) {
+      nextEmpty = s;
+      break;
+    }
+  }
+  if (nextEmpty !== -1) {
+    pokedexActiveSubskillSlot = nextEmpty;
+  } else if (pokedexActiveSubskillSlot < 5) {
+    pokedexActiveSubskillSlot += 1;
+  } else {
+    pokedexActiveSubskillSlot = 1;
+  }
+
+  updatePokedexSubskillUI();
+  updatePokedexModalAppraisalLive();
+}
+
+function clearAllPokedexSubskills() {
+  pokedexModalState.subskills = ['', '', '', '', ''];
+  pokedexActiveSubskillSlot = 1;
+  updatePokedexSubskillUI();
+  updatePokedexModalAppraisalLive();
+}
+
+function renderPokedexIngredientStrip() {
+  const container = document.getElementById('pokedex-ing-strip');
+  if (!container) return;
+  const pkm = pokedexModalState.pkm;
+  if (!pkm) {
+    container.innerHTML = '<span class="box-ing-placeholder-slot">--</span>';
+    return;
+  }
+
+  const ingList = (pkm.ingredients && pkm.ingredients.length > 0)
+    ? pkm.ingredients
+    : [{ name: '特選蘋果' }, { name: '暖暖薑' }, { name: '美味尾巴' }];
+
+  const ingA = ingList[0] || { name: '特選蘋果' };
+  const ingB = ingList[1] || ingA;
+  const ingC = ingList[2] || ingB || ingA;
+
+  const rawLv30 = [ingA, ingB];
+  const uniqueLv30 = Array.from(new Set(rawLv30.map(i => i.name))).map(n => rawLv30.find(i => i.name === n));
+
+  const rawLv60 = [ingA, ingB, ingC];
+  const uniqueLv60 = Array.from(new Set(rawLv60.map(i => i.name))).map(n => rawLv60.find(i => i.name === n));
+
+  const slots = [
+    { level: 1, allowed: [ingA], slotIdx: 0, tag: 'Lv.1' },
+    { level: 30, allowed: uniqueLv30, slotIdx: 1, tag: 'Lv.30' },
+    { level: 60, allowed: uniqueLv60, slotIdx: 2, tag: 'Lv.60' }
+  ];
+
+  container.innerHTML = slots.map((slot, sIdx) => {
+    const isUnlocked = pokedexModalState.level >= slot.level;
+    const currentOptIdx = pokedexModalState.ingSlots[slot.slotIdx] || 0;
+
+    const optButtons = slot.allowed.map((ing, optIdx) => {
+      const isSelected = currentOptIdx === optIdx;
+      const ingDisplayName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
+      const iconUrl = ing.icon || (window.I18N && window.I18N.getIngredientIcon(ing.name)) || '';
+      return `
+        <button type="button" class="box-ing-opt-btn ${isSelected ? 'active' : ''}" data-slot-idx="${slot.slotIdx}" data-opt-idx="${optIdx}" title="${escapeHtml(ingDisplayName)}" aria-label="${escapeHtml(ingDisplayName)}" onclick="window.PokemonApp.setPokedexModalIng(${slot.slotIdx}, ${optIdx})">
+          <img src="${iconUrl}" class="box-ing-opt-icon" alt="${escapeHtml(ingDisplayName)}" loading="lazy">
+        </button>
+      `;
+    }).join('');
+
+    return `
+      <div class="box-ing-slot-group ${isUnlocked ? '' : 'slot-locked'}" style="${isUnlocked ? '' : 'opacity:0.6;'}">
+        <span class="box-ing-lvl-tag">${slot.tag}</span>
+        <div class="box-ing-options-list">${optButtons}</div>
+      </div>
+      ${sIdx < 2 ? '<span class="box-ing-slot-sep">|</span>' : ''}
+    `;
+  }).join('');
+}
+
+function updatePokedexSubskillUI() {
+  const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+  const subskills = pokedexModalState.subskills;
+  const currentLevel = pokedexModalState.level;
+  const slotLevels = [10, 25, 50, 70, 80];
+
+  // 1. 更新 5 個插槽按鈕
+  const slotContainer = document.getElementById('pokedex-subskill-slots-row');
+  if (slotContainer) {
+    slotContainer.innerHTML = slotLevels.map((lvl, idx) => {
+      const slotNum = idx + 1;
+      const isActive = slotNum === pokedexActiveSubskillSlot;
+      const skName = subskills[idx] || '';
+      const isUnlocked = currentLevel >= lvl;
+
+      let badgeHtml = '';
+      if (!skName) {
+        badgeHtml = `<span class="slot-val-badge slot-val-empty">${isEN ? '-- None --' : '-- 未解鎖 --'}</span>`;
+      } else {
+        const skObj = POKEDEX_MODAL_SUBSKILLS.find(s => s.name === skName);
+        const tier = skObj ? skObj.tier : 'white';
+        const skLabel = isEN ? (skObj ? skObj.name_en : skName) : skName;
+        badgeHtml = `<span class="slot-val-badge box-subskill-pill subskill-${tier}">${escapeHtml(skLabel)}</span>`;
+      }
+
+      return `
+        <button type="button" class="box-subskill-slot-btn ${isActive ? 'active' : ''} ${isUnlocked ? '' : 'slot-under-lvl'}" data-slot="${slotNum}" onclick="window.PokemonApp.selectPokedexSubskillSlot(${slotNum})" title="Lv.${lvl} ${isUnlocked ? '' : (isEN ? '(Level not reached)' : '(等級未達標)')}">
+          <span class="slot-lvl-header">Lv.${lvl}</span>
+          ${badgeHtml}
+        </button>
+      `;
+    }).join('');
+  }
+
+  // 2. 獲取已被選取的副技能
+  const usedSkills = new Set();
+  subskills.forEach(s => { if (s) usedSkills.add(s); });
+
+  // 3. 更新平鋪選擇盤
+  ['gold', 'blue', 'white'].forEach(tier => {
+    const chipContainer = document.getElementById(`pokedex-subskill-chips-${tier}`);
+    if (!chipContainer) return;
+
+    const skillsInTier = POKEDEX_MODAL_SUBSKILLS.filter(s => s.tier === tier);
+    chipContainer.innerHTML = skillsInTier.map(sk => {
+      const skDisplayName = isEN ? sk.name_en : sk.name;
+      const isUsed = usedSkills.has(sk.name);
+      return `
+        <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" ${isUsed ? 'disabled' : ''} onclick="window.PokemonApp.choosePokedexSubskill('${escapeHtml(sk.name)}')" title="${escapeHtml(skDisplayName)}${isUsed ? (isEN ? ' (Selected)' : '（已選用）') : ''}">
+          <span>${escapeHtml(skDisplayName)}</span>
+          ${isUsed ? '<span style="font-size:10px;opacity:0.8;margin-left:2px;">✓</span>' : ''}
+        </button>
+      `;
+    }).join('');
+  });
 }
 
 function calculatePokedexIngredientFormulas() {
@@ -3646,8 +3847,7 @@ function renderPokedexDetailModalContent() {
   // 6D 評估計算
   const chosenIngs = (pkm.ingredients || []).map((ing, i) => {
     const selIdx = pokedexModalState.ingSlots[i] || 0;
-    const cur = (pkm.ingredients && pkm.ingredients[selIdx]) ? pkm.ingredients[selIdx].name : (ing.name || '');
-    return cur;
+    return (pkm.ingredients && pkm.ingredients[selIdx]) ? pkm.ingredients[selIdx].name : (ing.name || '');
   });
 
   let evaluation = null;
@@ -3674,31 +3874,31 @@ function renderPokedexDetailModalContent() {
 
   modalEl.innerHTML = `
     <div class="pokedex-modal-backdrop-dismiss" onclick="window.PokemonApp.closePokemonDetailModal()"></div>
-    <div class="pokedex-modal-dialog" role="dialog" aria-modal="true">
-      <!-- 頂部標題列 -->
-      <div class="pokedex-modal-header">
-        <div class="pokedex-modal-header-left">
+    <div class="box-modal-dialog pokedex-modal-dialog" role="dialog" aria-modal="true">
+      <!-- 頂部標題列 (採用手動新增彈窗結構) -->
+      <div class="box-modal-header pokedex-modal-header">
+        <div class="box-modal-title pokedex-modal-title">
           ${iconUrl ? `<img src="${iconUrl}" class="pokedex-header-avatar" alt="${pkmName}" loading="lazy">` : ''}
           <div class="pokedex-header-info">
             <div class="pokedex-header-no">No.${pkm.formatted_no || ''}</div>
-            <h2 class="pokedex-header-title">
-              ${pkmName}
+            <div class="pokedex-header-name-row">
+              <span class="pokedex-header-pkm-name font-bold">${pkmName}</span>
               ${!isEN && pkm.name_en ? `<span class="pokedex-header-title-en">${pkm.name_en}</span>` : ''}
-            </h2>
-            <div class="pokedex-header-tags">
-              <span class="pokedex-tag pokedex-tag-type">${window.I18N ? window.I18N.getTypeIconSvg(pkm.type, 14) : ''} ${typeName}</span>
-              <span class="pokedex-tag pokedex-tag-spec">${specName}</span>
             </div>
           </div>
+          <div class="pokedex-header-tags">
+            <span class="pokedex-tag pokedex-tag-type">${window.I18N ? window.I18N.getTypeIconSvg(pkm.type, 14) : ''} ${typeName}</span>
+            <span class="pokedex-tag pokedex-tag-spec">${specName}</span>
+          </div>
         </div>
-        <button type="button" class="pokedex-modal-close-btn" onclick="window.PokemonApp.closePokemonDetailModal()" aria-label="${isEN ? 'Close' : '關閉'}">✕</button>
+        <button type="button" class="box-modal-close pokedex-modal-close-btn" onclick="window.PokemonApp.closePokemonDetailModal()" aria-label="${isEN ? 'Close' : '關閉'}">✕</button>
       </div>
 
       <!-- 彈窗內容主體 (雙欄/響應式) -->
-      <div class="pokedex-modal-body">
-        <!-- 左欄：基本資料、評級與六維雷達圖 -->
+      <div class="box-modal-body pokedex-modal-body">
+        <!-- 左欄：基本資料卡片、強度評測與六維雷達圖 -->
         <div class="pokedex-modal-col pokedex-left-col">
-          <!-- 基本數據卡片 -->
+          <!-- 基礎數值卡片 -->
           <div class="pokedex-stats-panel">
             <div class="pokedex-panel-heading">${t('pokedex.base_stats', '基礎數值')}</div>
             <div class="pokedex-stats-grid">
@@ -3729,7 +3929,7 @@ function renderPokedexDetailModalContent() {
             </div>
           </div>
 
-          <!-- 強度評估報告盒 -->
+          <!-- 強度評估報告盒與雷達圖 -->
           <div class="pokedex-appraisal-verdict-box" style="border-color: ${evaluation.gradeColor};">
             <div class="verdict-score-group">
               <div class="verdict-grade" style="color: ${evaluation.gradeColor};">${evaluation.grade}</div>
@@ -3746,55 +3946,71 @@ function renderPokedexDetailModalContent() {
           </div>
         </div>
 
-        <!-- 右欄：自訂配置選項與食材加成算法拆解 -->
-        <div class="pokedex-modal-col pokedex-right-col">
-          <!-- 快捷操作列 -->
-          <div class="pokedex-presets-bar">
-            <span class="pokedex-presets-label">${t('pokedex.custom_controls', '客製化模擬設定')}</span>
-            <div class="pokedex-presets-btns">
-              <button type="button" class="pokedex-btn-preset preset-god" onclick="window.PokemonApp.applyPokedexGodPreset()">[★] ${t('pokedex.preset_god', '畢業神配置')}</button>
-              <button type="button" class="pokedex-btn-preset preset-reset" onclick="window.PokemonApp.applyPokedexResetPreset()">[↺] ${t('pokedex.preset_reset', '重置')}</button>
-            </div>
-          </div>
+        <!-- 右欄：完全基於手動新增寶可夢的表單組件 + 快捷配置 -->
+        <div class="pokedex-modal-col pokedex-right-col box-modal-form">
+          <div class="box-form-grid pokedex-controls-container">
+            <!-- 1. 頂部單行：等級輸入與滑桿 + 快捷配置按鈕 -->
+            <div class="box-form-row-3col box-full-width pokedex-top-row">
+              <div class="box-form-group flex-level" style="width: 80px; flex-shrink: 0;">
+                <label class="box-form-label" for="pokedex-poke-level">${t('box.modal_poke_level', '等級')}</label>
+                <input type="number" id="pokedex-poke-level" class="box-form-input pokedex-level-num-input" min="1" max="100" value="${pokedexModalState.level}" placeholder="1~100" onchange="window.PokemonApp.setPokedexModalLevel(this.value)">
+              </div>
 
-          <!-- 設定控制項容器 (單層純淨容器，無多重外框) -->
-          <div class="pokedex-controls-container">
-            <!-- 1. 等級滑桿與數值 -->
-            <div class="pokedex-ctrl-row pokedex-ctrl-level">
-              <label for="pokedex-level-slider" class="pokedex-ctrl-title">${t('pokedex.level_slider', '等級設定')}：<span class="pokedex-val-badge">Lv. ${pokedexModalState.level}</span></label>
-              <div class="pokedex-level-slider-wrap">
-                <input type="range" id="pokedex-level-slider" min="1" max="100" value="${pokedexModalState.level}" class="pokedex-slider" oninput="window.PokemonApp.setPokedexModalLevel(this.value)">
-                <input type="number" id="pokedex-level-input" min="1" max="100" value="${pokedexModalState.level}" class="pokedex-level-num-input" onchange="window.PokemonApp.setPokedexModalLevel(this.value)">
+              <div class="box-form-group" style="flex: 1 1 180px; min-width: 140px;">
+                <label class="box-form-label" for="pokedex-level-slider">${t('pokedex.level_slider', '等級滑動調整')} (<span class="pokedex-val-badge">Lv. <span id="pokedex-level-val-text">${pokedexModalState.level}</span></span>)</label>
+                <div class="pokedex-level-slider-wrap" style="height: 34px; display: flex; align-items: center;">
+                  <input type="range" id="pokedex-level-slider" min="1" max="100" value="${pokedexModalState.level}" class="pokedex-slider" oninput="window.PokemonApp.setPokedexModalLevel(this.value)">
+                </div>
+              </div>
+
+              <div class="box-form-group pokedex-presets-wrap" style="flex: 0 0 auto;">
+                <label class="box-form-label">${t('pokedex.custom_controls', '客製化模擬設定')}</label>
+                <div class="pokedex-presets-btns" style="height: 34px; display: flex; align-items: center;">
+                  <button type="button" class="pokedex-btn-preset preset-god" onclick="window.PokemonApp.applyPokedexGodPreset()" title="${t('pokedex.preset_god', '畢業神配置')}">[★] ${t('pokedex.preset_god', '畢業神配置')}</button>
+                  <button type="button" class="pokedex-btn-preset preset-reset" onclick="window.PokemonApp.applyPokedexResetPreset()" title="${t('pokedex.preset_reset', '重置')}">[↺] ${t('pokedex.preset_reset', '重置')}</button>
+                </div>
               </div>
             </div>
 
-            <!-- 2. 性格、主技能等級、睡飽飽獎章 -->
-            <div class="pokedex-ctrl-grid-3">
-              <!-- 性格 -->
-              <div class="pokedex-ctrl-item">
-                <label for="pokedex-nature-select" class="pokedex-ctrl-label">${t('box.modal_poke_nature', '性格')}</label>
-                <select id="pokedex-nature-select" class="pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalNature(this.value)">
-                  ${POKEDEX_MODAL_NATURES.map(n => {
-                    const natLabel = isEN ? `${n.name_en} (${n.buff_en ? n.buff_en + (n.debuff_en ? ' / ' + n.debuff_en : '') : 'Neutral'})` : `${n.name} (${n.buff ? n.buff + (n.debuff ? ' / ' + n.debuff : '') : '無增減'})`;
-                    return `<option value="${n.name}" ${pokedexModalState.nature === n.name ? 'selected' : ''}>${natLabel}</option>`;
-                  }).join('')}
-                </select>
-              </div>
+            <!-- 2. 食材組合平鋪選擇器 (採用手動新增彈窗 .box-ing-strip) -->
+            <div class="box-form-group box-full-width box-form-row-inline">
+              <label class="box-form-label box-form-inline-label">${t('box.modal_poke_ing', '食材組合')}</label>
+              <div class="box-ing-strip" id="pokedex-ing-strip"></div>
+            </div>
 
-              <!-- 主技能等級 -->
-              <div class="pokedex-ctrl-item">
-                <label for="pokedex-skill-lvl-select" class="pokedex-ctrl-label">${t('pokedex.main_skill_level', '主技能等級')}</label>
-                <select id="pokedex-skill-lvl-select" class="pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalSkillLevel(this.value)">
+            <!-- 3. 主技能資訊 (採用手動新增彈窗 .box-mainskill-row) -->
+            <div class="box-form-group box-full-width box-form-row-inline box-mainskill-row">
+              <label class="box-form-label box-form-inline-label" for="pokedex-poke-skill-level">${t('box.modal_main_skill', '主技能資訊')}</label>
+              <div class="box-form-inline-control box-mainskill-control">
+                <span id="pokedex-poke-main-skill-name" class="box-mainskill-name-badge">${pkm.main_skill || '--'}</span>
+                <select id="pokedex-poke-skill-level" class="box-form-select box-mainskill-select pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalSkillLevel(this.value)">
                   ${Array.from({ length: maxSkillLvl }, (_, i) => i + 1).map(lvl => `
                     <option value="${lvl}" ${pokedexModalState.skillLevel === lvl ? 'selected' : ''}>Lv. ${lvl}</option>
                   `).join('')}
                 </select>
               </div>
+            </div>
 
-              <!-- 睡飽飽獎章 -->
-              <div class="pokedex-ctrl-item">
-                <label for="pokedex-ribbon-select" class="pokedex-ctrl-label">${t('box.modal_poke_ribbon', '睡飽飽獎章')}</label>
-                <select id="pokedex-ribbon-select" class="pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalRibbon(this.value)">
+            <!-- 4. 性格選單 (採用手動新增彈窗 .box-form-row-inline) -->
+            <div class="box-form-group box-full-width box-form-row-inline">
+              <label class="box-form-label box-form-inline-label" for="pokedex-poke-nature">${t('box.modal_poke_nature', '性格')}</label>
+              <div class="box-form-inline-control">
+                <select id="pokedex-poke-nature" class="box-form-select pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalNature(this.value)">
+                  ${POKEDEX_MODAL_NATURES.map(n => {
+                    const natDisplayName = (window.I18N && typeof window.I18N.getNatureName === 'function') ? window.I18N.getNatureName(n.name) : n.name;
+                    const buffLabel = isEN ? (n.buff_en || n.buff) : n.buff;
+                    const debuffLabel = isEN ? (n.debuff_en || n.debuff) : n.debuff;
+                    return `<option value="${n.name}" ${pokedexModalState.nature === n.name ? 'selected' : ''}>${natDisplayName} (${buffLabel}${debuffLabel ? ' / ' + debuffLabel : ' (Neutral)'})</option>`;
+                  }).join('')}
+                </select>
+              </div>
+            </div>
+
+            <!-- 5. 睡飽飽獎章選單 (採用手動新增彈窗 .box-form-row-inline) -->
+            <div class="box-form-group box-full-width box-form-row-inline">
+              <label class="box-form-label box-form-inline-label" for="pokedex-poke-ribbon">${t('box.modal_poke_ribbon', '睡飽飽獎章')}</label>
+              <div class="box-form-inline-control">
+                <select id="pokedex-poke-ribbon" class="box-form-select pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalRibbon(this.value)">
                   <option value="0" ${pokedexModalState.ribbon === 0 ? 'selected' : ''}>${t('box.ribbon_none', '未佩戴 (0h)')}</option>
                   <option value="1" ${pokedexModalState.ribbon === 1 ? 'selected' : ''}>${t('box.ribbon_lv1', '200 小時 (+1 持有上限)')}</option>
                   <option value="2" ${pokedexModalState.ribbon === 2 ? 'selected' : ''}>${t('box.ribbon_lv2', '500 小時 (+3 持有上限 · 幫速加成)')}</option>
@@ -3804,74 +4020,46 @@ function renderPokedexDetailModalContent() {
               </div>
             </div>
 
-            <!-- 3. 食材組合解鎖選擇器 (Lv.1, Lv.30, Lv.60) -->
-            ${(pkm.ingredients && pkm.ingredients.length > 0) ? `
-              <div class="pokedex-ctrl-row">
-                <div class="pokedex-ctrl-label">${t('pokedex.ingredients_title', '食材組合 (Lv.1 / 30 / 60)')}</div>
-                <div class="pokedex-ing-slots-grid">
-                  ${[0, 1, 2].map(slotIdx => {
-                    const reqLv = slotIdx === 0 ? 1 : (slotIdx === 1 ? 30 : 60);
-                    const isUnlocked = pokedexModalState.level >= reqLv;
-                    const maxOpts = Math.min(slotIdx + 1, pkm.ingredients.length);
-                    return `
-                      <div class="pokedex-ing-slot-box ${isUnlocked ? 'slot-active' : 'slot-locked'}">
-                        <div class="slot-header">
-                          <span class="slot-lv-tag">Lv.${reqLv}</span>
-                          ${!isUnlocked ? `<span class="slot-lock-text">${isEN ? '(Locked)' : '(未解鎖)'}</span>` : ''}
-                        </div>
-                        <select class="pokedex-custom-select pokedex-ing-select" onchange="window.PokemonApp.setPokedexModalIng(${slotIdx}, this.value)">
-                          ${Array.from({ length: maxOpts }, (_, optIdx) => {
-                            const ingItem = pkm.ingredients[optIdx] || pkm.ingredients[0];
-                            const ingName = isEN ? (window.I18N ? window.I18N.getIngredientName(ingItem.name) : ingItem.name) : ingItem.name;
-                            let count = 1;
-                            if (slotIdx === 0) count = ingItem.l1 || 1;
-                            else if (slotIdx === 1) count = ingItem.l30 || ingItem.l1 || 1;
-                            else count = ingItem.l60 || ingItem.l30 || ingItem.l1 || 1;
-                            return `<option value="${optIdx}" ${pokedexModalState.ingSlots[slotIdx] === optIdx ? 'selected' : ''}>${ingName} x${count}</option>`;
-                          }).join('')}
-                        </select>
-                      </div>
-                    `;
-                  }).join('')}
-                </div>
+            <!-- 6. 副技能配置：單行 5 階插槽 + 平鋪副技能選擇盤 (完全比照手動新增彈窗) -->
+            <div class="box-form-group box-full-width">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <label class="box-form-label">${t('box.modal_poke_subskills', '副技能配置')}</label>
+                <button type="button" id="pokedex-subskill-clear-all-btn" class="box-subskill-clear-btn" onclick="window.PokemonApp.clearAllPokedexSubskills()" title="${t('box.modal_clear_all_subskills', '清空全部副技能')}">✕ ${t('box.modal_clear_all_subskills', '清空全部')}</button>
               </div>
-            ` : ''}
 
-            <!-- 4. 副技能五插槽 (Lv.10, Lv.25, Lv.50, Lv.70, Lv.80) -->
-            <div class="pokedex-ctrl-row">
-              <div class="pokedex-ctrl-label">${t('pokedex.subskills_title', '副技能自訂 (5個槽位)')}</div>
-              <div class="pokedex-subskills-grid">
-                ${[10, 25, 50, 70, 80].map((slotLv, sIdx) => {
-                  const currentVal = pokedexModalState.subskills[sIdx] || '';
-                  const isUnlocked = pokedexModalState.level >= slotLv;
-                  return `
-                    <div class="pokedex-subskill-slot ${isUnlocked ? 'subskill-unlocked' : 'subskill-locked'}">
-                      <div class="subskill-slot-top">
-                        <span class="subskill-lv-badge">Lv.${slotLv}</span>
-                        ${!isUnlocked ? `<span class="subskill-status-locked">${isEN ? 'Locked' : '尚未解鎖'}</span>` : ''}
-                      </div>
-                      <select class="pokedex-custom-select pokedex-subskill-select" onchange="window.PokemonApp.setPokedexModalSubskill(${sIdx}, this.value)">
-                        <option value="">${isEN ? '(None)' : '(無)'}</option>
-                        ${POKEDEX_MODAL_SUBSKILLS.map(sk => {
-                          const skLabel = isEN ? sk.name_en : sk.name;
-                          return `<option value="${sk.name}" ${currentVal === sk.name ? 'selected' : ''}>[${sk.tier === 'gold' ? '金' : (sk.tier === 'blue' ? '藍' : '白')}] ${skLabel}</option>`;
-                        }).join('')}
-                      </select>
-                    </div>
-                  `;
-                }).join('')}
+              <!-- 單行 5 階插槽列 -->
+              <div class="box-subskill-slots-row" id="pokedex-subskill-slots-row"></div>
+
+              <!-- 平鋪副技能選擇盤 -->
+              <div class="box-subskill-palette" id="pokedex-subskill-palette">
+                <div class="subskill-tier-section">
+                  <div class="subskill-tier-label gold-label">${t('box.modal_gold_skills', '金色頂級技能')}</div>
+                  <div class="subskill-chips-row" id="pokedex-subskill-chips-gold"></div>
+                </div>
+                <div class="subskill-tier-section">
+                  <div class="subskill-tier-label blue-label">${t('box.modal_blue_skills', '藍色高階技能')}</div>
+                  <div class="subskill-chips-row" id="pokedex-subskill-chips-blue"></div>
+                </div>
+                <div class="subskill-tier-section">
+                  <div class="subskill-tier-label white-label">${t('box.modal_white_skills', '白色基礎技能')}</div>
+                  <div class="subskill-chips-row" id="pokedex-subskill-chips-white"></div>
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- 5. 核心亮點：食材產能算法拆解卡片 (Ingredient Yield Formula Breakdown) -->
-          <div class="pokedex-calc-formula-card" id="pokedex-calc-formula-container">
-            ${renderPokedexFormulaBreakdownHTML(formulaData)}
-          </div>
+        <!-- 底部跨欄：食材產能算法拆解卡片 (全寬展示) -->
+        <div class="pokedex-calc-formula-card box-full-width" id="pokedex-calc-formula-container">
+          ${renderPokedexFormulaBreakdownHTML(formulaData)}
         </div>
       </div>
     </div>
   `;
+
+  // 初始化食材平鋪選擇器與副技能插槽選擇盤
+  renderPokedexIngredientStrip();
+  updatePokedexSubskillUI();
 }
 
 function renderPokedexFormulaBreakdownHTML(f) {
@@ -4040,6 +4228,11 @@ PokemonApp.setPokedexModalSubskill = setPokedexModalSubskill;
 PokemonApp.setPokedexModalSkillLevel = setPokedexModalSkillLevel;
 PokemonApp.setPokedexModalRibbon = setPokedexModalRibbon;
 PokemonApp.setPokedexModalIng = setPokedexModalIng;
+PokemonApp.selectPokedexSubskillSlot = selectPokedexSubskillSlot;
+PokemonApp.choosePokedexSubskill = choosePokedexSubskill;
+PokemonApp.clearAllPokedexSubskills = clearAllPokedexSubskills;
+PokemonApp.renderPokedexIngredientStrip = renderPokedexIngredientStrip;
+PokemonApp.updatePokedexSubskillUI = updatePokedexSubskillUI;
 PokemonApp.calculatePokedexIngredientFormulas = calculatePokedexIngredientFormulas;
 PokemonApp.getPokedexModalState = () => pokedexModalState;
 
