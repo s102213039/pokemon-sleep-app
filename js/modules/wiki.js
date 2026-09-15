@@ -11859,7 +11859,7 @@
     return isLadderSkillDrawExpected;
   }
 
-  // 食材精選S 專屬寶可夢主技能期望值加成 (主技能最高等級 Lv.7, 每次 18 顆 + 技能機率提升M +36%)
+  // 食材精選S 專屬寶可夢主技能期望值加成 (主技能最高等級 Lv.7, 每次 18 顆; 技能型寶可夢以專屬 1.5 倍發動機率計算, 食材型寶可夢以基礎 1.0 倍保守估計)
   // 排除暴擊、大成功與碎片，依候選食材池等機率 1/K 均分推導之日獲取期望值
   const INGREDIENT_DRAW_SKILL_EXPECTATIONS = {
     '穿山王': {
@@ -11871,43 +11871,43 @@
       ingredients: ['沉甸甸南瓜', '吉利蛋南瓜', '南瓜', '萌綠玉米', '玉米', '窩心洋芋', '洋芋', 'Plump Pumpkin', 'Greengrass Corn', 'Soft Potato', 'pumpkin', 'corn', 'potato']
     },
     '烏鴉頭頭': {
-      bonus: 28,
+      bonus: 27,
       ingredients: ['醒腦咖啡豆', '醒晨咖啡', '咖啡', '萌綠大豆', '大豆', '豆製肉', '美味蘑菇', '蘑菇', 'Rousing Coffee', 'Greengrass Soybeans', 'Bean Sausage', 'Tasty Mushroom', 'coffee', 'soy', 'soybeans', 'meat', 'sausage', 'beansausage', 'mushroom']
     },
     'Honchkrow': {
-      bonus: 28,
+      bonus: 27,
       ingredients: ['醒腦咖啡豆', '醒晨咖啡', '咖啡', '萌綠大豆', '大豆', '豆製肉', '美味蘑菇', '蘑菇', 'Rousing Coffee', 'Greengrass Soybeans', 'Bean Sausage', 'Tasty Mushroom', 'coffee', 'soy', 'soybeans', 'meat', 'sausage', 'beansausage', 'mushroom']
     },
     '岩殿居蟹': {
-      bonus: 36,
+      bonus: 35,
       ingredients: ['嫩亮酪梨', '酪梨', '窩心洋芋', '洋芋', '純粹油', '純油', 'Glossy Avocado', 'Soft Potato', 'Pure Oil', 'avocado', 'glossyavocado', 'potato', 'oil']
     },
     'Crustle': {
-      bonus: 36,
+      bonus: 35,
       ingredients: ['嫩亮酪梨', '酪梨', '窩心洋芋', '洋芋', '純粹油', '純油', 'Glossy Avocado', 'Soft Potato', 'Pure Oil', 'avocado', 'glossyavocado', 'potato', 'oil']
     },
     '摔角鷹人': {
-      bonus: 38,
+      bonus: 37,
       ingredients: ['火辣香草', '透心涼香草', '香草', '暖暖薑', '豆製肉', 'Fiery Herb', 'Warming Ginger', 'Bean Sausage', 'herb', 'ginger', 'meat', 'sausage', 'beansausage']
     },
     'Hawlucha': {
-      bonus: 38,
+      bonus: 37,
       ingredients: ['火辣香草', '透心涼香草', '香草', '暖暖薑', '豆製肉', 'Fiery Herb', 'Warming Ginger', 'Bean Sausage', 'herb', 'ginger', 'meat', 'sausage', 'beansausage']
     },
     '蝶結萌虻': {
-      bonus: 19,
+      bonus: 13,
       ingredients: ['甜甜蜜', '蜜糖', '蜂蜜', '純粹油', '純油', '萌綠玉米', '玉米', 'Honey', 'Pure Oil', 'Greengrass Corn', 'honey', 'oil', 'corn']
     },
     'Ribombee': {
-      bonus: 19,
+      bonus: 13,
       ingredients: ['甜甜蜜', '蜜糖', '蜂蜜', '純粹油', '純油', '萌綠玉米', '玉米', 'Honey', 'Pure Oil', 'Greengrass Corn', 'honey', 'oil', 'corn']
     },
     '大嘴娃': {
-      bonus: 16,
+      bonus: 10,
       ingredients: ['窩心洋芋', '洋芋', '純粹油', '純油', '萌綠玉米', '玉米', '好眠番茄', '番茄', 'Soft Potato', 'Pure Oil', 'Greengrass Corn', 'Snoozy Tomato', 'potato', 'oil', 'corn', 'tomato']
     },
     'Mawile': {
-      bonus: 16,
+      bonus: 10,
       ingredients: ['窩心洋芋', '洋芋', '純粹油', '純油', '萌綠玉米', '玉米', '好眠番茄', '番茄', 'Soft Potato', 'Pure Oil', 'Greengrass Corn', 'Snoozy Tomato', 'potato', 'oil', 'corn', 'tomato']
     }
   };
@@ -12510,6 +12510,26 @@
     const modal = document.getElementById('ladder-recipe-modal');
     if (modal) {
       modal.style.display = 'none';
+    }
+  }
+
+  function openSkillDrawHelpModal(e) {
+    if (e && typeof e.stopPropagation === 'function') {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const modal = document.getElementById('ladder-skill-help-modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      try { document.body.style.overflow = 'hidden'; } catch (err) {}
+    }
+  }
+
+  function closeSkillDrawHelpModal() {
+    const modal = document.getElementById('ladder-skill-help-modal');
+    if (modal) {
+      modal.style.display = 'none';
+      try { document.body.style.overflow = ''; } catch (err) {}
     }
   }
 
@@ -15620,6 +15640,12 @@
       const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
       const minDefaultThreshold = isUnfilteredDefault ? 30 : (DEFAULT_LADDER_MIN_THRESHOLDS[ing.id] || 20);
 
+      const reqCount = highlightedIngMap ? highlightedIngMap.get(ing.name) : null;
+      const isHighlighted = reqCount !== null && reqCount !== undefined;
+      const isDimmed = highlightedIngMap && !isHighlighted;
+      const targetDishNeed = (isHighlighted && reqCount) ? reqCount : dishInfo.need;
+      const targetDishName = isHighlighted ? (isEN ? (activeHighlightRecipe.name_en || activeHighlightRecipe.name_cn) : activeHighlightRecipe.name_cn) : dishName;
+
       // 取得該軌道符合篩選之寶可夢與型態變體
       const filteredPokemonList = ing.pokemon.map((p, pIdx) => {
         const pkmSpec = getPokemonLadderSpecialty(p.name);
@@ -15653,16 +15679,16 @@
           if (pkmMaxCount < top5Threshold) return null;
           variants = variants.slice(0, 1);
         } else if (ladderSupplyFilter === 'MEALS_3') {
-          // 滿載 3 餐：日產量 >= 核心大菜 3 餐所需總量
+          // 滿載 3 餐：日產量 >= 當前料理 3 餐所需總量 (選定料理時以選定料理需求計算)
           variants = variants.filter(v => {
             const scaled = Math.round(v.count * mult) + skillBonus;
-            return scaled >= dishInfo.need * 3;
+            return scaled >= targetDishNeed * 3;
           });
         } else if (ladderSupplyFilter === 'MEALS_2') {
-          // 充足 2 餐：日產量 >= 核心大菜 2 餐所需總量
+          // 充足 2 餐：日產量 >= 當前料理 2 餐所需總量 (選定料理時以選定料理需求計算)
           variants = variants.filter(v => {
             const scaled = Math.round(v.count * mult) + skillBonus;
-            return scaled >= dishInfo.need * 2;
+            return scaled >= targetDishNeed * 2;
           });
         }
 
@@ -15680,6 +15706,11 @@
         ing,
         dishInfo,
         dishName,
+        targetDishNeed,
+        targetDishName,
+        isHighlighted,
+        isDimmed,
+        reqCount,
         ingName,
         filteredPokemonList,
         isTrackEmpty: filteredPokemonList.length === 0
@@ -15850,7 +15881,7 @@
           </div>
 
           <!-- 常規食材軌道 (18種食材，依篩選動態縮放) -->
-          ${processedMainTracks.map(({ ing, dishInfo, dishName, ingName, filteredPokemonList, isTrackEmpty }, trackIdx) => {
+          ${processedMainTracks.map(({ ing, dishInfo, dishName, targetDishNeed, targetDishName, isHighlighted, isDimmed, reqCount, ingName, filteredPokemonList, isTrackEmpty }, trackIdx) => {
             // 計算該軌道最低產量起點，用於畫出前方點狀前導虛線
             let minTrackCount = maxVal;
             filteredPokemonList.forEach(p => {
@@ -15906,10 +15937,6 @@
             }
 
             const visiblePkmGroupNames = new Set(trackNodes.map(n => n.p.name));
-
-            const reqCount = highlightedIngMap ? highlightedIngMap.get(ing.name) : null;
-            const isHighlighted = reqCount !== null && reqCount !== undefined;
-            const isDimmed = highlightedIngMap && !isHighlighted;
             const highlightClass = isHighlighted ? 'ladder-track-highlighted' : (isDimmed ? 'ladder-track-dimmed' : '');
             const threeMealsTarget = isHighlighted ? (reqCount * 3) : null;
 
@@ -15917,7 +15944,7 @@
             <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''} ${highlightClass}" data-ladder-ing="${ing.id}">
               <div class="ladder-track-header ${isDimmed ? 'ladder-track-disabled-header' : 'clickable-ing-header'}" 
                    ${isDimmed ? 'tabindex="-1"' : `onclick="window.WikiDB.openIngredientRankingModal('${ing.id}')" role="button" tabindex="0"`} 
-                   title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isDimmed ? (isEN ? 'Not in current recipe' : '非此料理所需食材') : (isEN ? 'Key Dish: ' : '核心大菜：') + dishName + (isEN ? ' · Click to view rankings' : ' · 點擊查看產量排名')}">
+                   title="${ingName} (${isEN ? 'Base Energy' : '基礎能量'} ${ing.energy}) · ${isHighlighted ? (isEN ? 'Selected Dish: ' : '選定料理: ') + targetDishName + ` (${targetDishNeed}${isEN ? '/meal' : '顆/餐'})` : (isDimmed ? (isEN ? 'Not in current recipe' : '非此料理所需食材') : (isEN ? 'Key Dish: ' : '核心大菜: ') + dishName)} · ${isEN ? 'Click to view rankings' : '點擊查看產量排名'}">
                 <div class="ladder-track-ing-main">
                   <img src="${ing.icon}" class="ladder-ing-icon" alt="${ingName}">
                 </div>
@@ -15944,12 +15971,12 @@
                     const maxCount = Math.max(...scaledCounts);
                     const minPct = parseFloat(getPosPct(minCount));
                     const maxPct = parseFloat(getPosPct(maxCount));
-                    const widthPct = Math.max(maxPct - minPct, 1.2).toFixed(2);
+                    const widthPct = Math.max(0.5, (maxPct - minPct)).toFixed(2);
                     return `
-                      <div class="ladder-pkm-span-line" 
+                      <div class="ladder-span-bar" 
                            data-pkm-group="${p.name}" 
                            style="left: ${minPct}%; width: ${widthPct}%;"
-                           title="${pkmDisplayName} ${isEN ? 'Range:' : '配方跨度：'}${minCount} ~ ${maxCount} ${isEN ? '/day' : '顆/天'}">
+                           title="${pkmDisplayName} ${isEN ? 'Range: ' : '配方跨度: '}${minCount} ~ ${maxCount} ${isEN ? '/day' : '顆/天'}">
                       </div>
                     `;
                   }).join('')}
@@ -15976,8 +16003,8 @@
                         offsetPx = Math.round((itemIdx - (groupSize - 1) / 2) * staggerStep);
                       }
 
-                      // 大菜供應能力試算
-                      const mealsPerDay = (node.scaledCount / dishInfo.need).toFixed(1);
+                      // 料理供應能力試算 (若有選取料理則依選定料理單餐需求計算，否則依核心大菜計算)
+                      const mealsPerDay = (node.scaledCount / targetDishNeed).toFixed(1);
                       let dishTag = '';
                       let dishBadgeClass = '';
                       if (mealsPerDay >= 3.0) {
@@ -15995,6 +16022,7 @@
                       const alignClass = basePosPct > 55 ? 'align-right' : (basePosPct < 22 ? 'align-left' : 'align-center');
                       const leftStyle = offsetPx === 0 ? `${basePosPct}%` : `calc(${basePosPct}% + ${offsetPx}px)`;
                       const hasSkillDraw = node.skillBonus > 0;
+                      const dishLabel = isHighlighted ? (isEN ? 'Selected Dish: ' : '選定料理: ') : (isEN ? 'Key Dish: ' : '核心大菜: ');
 
                       return `
                         <div class="ladder-node ${node.isTopNode ? 'node-top1' : ''} ${hasSkillDraw ? 'node-has-skill-draw' : ''} ${alignClass} ${popupDirectionClass} recipe-${node.v.recipe.toLowerCase()} ${groupSize > 1 ? 'node-in-cluster' : ''}" 
@@ -16027,9 +16055,9 @@
                               </div>
                             ` : ''}
 
-                            <!-- 頂級大菜供貨能力指標 -->
+                            <!-- 料理供貨能力指標 (動態對應選定料理) -->
                             <div class="tooltip-dish-box">
-                              <div class="tooltip-dish-title">${isEN ? 'Key Dish: ' : '核心大菜：'}<span class="text-white font-bold">${dishName}</span> (${dishInfo.need}${isEN ? '/meal' : '顆/餐'})</div>
+                              <div class="tooltip-dish-title">${dishLabel}<span class="text-white font-bold">${targetDishName}</span> (${targetDishNeed}${isEN ? '/meal' : '顆/餐'})</div>
                               <div class="tooltip-dish-badge ${dishBadgeClass}">${dishTag}</div>
                             </div>
 
@@ -16689,7 +16717,7 @@
     ));
 
     container.innerHTML = `
-      <!-- 🍲 天梯頂級料理食材高亮懸浮按鈕 (FAB) -->
+      <!-- 天梯頂級料理食材高亮懸浮按鈕 (FAB) -->
       <button type="button" id="ladder-recipe-highlight-fab" class="ladder-recipe-highlight-fab ${ladderHighlightRecipe ? 'has-active' : ''}" onclick="window.WikiDB.openLadderRecipeModal()" title="${isEN ? 'Highlight by Top Recipe' : '選取料理高亮食材'}" aria-label="${isEN ? 'Highlight by Top Recipe' : '選取料理高亮食材'}" style="${(isWikiMainActive && currentWikiSubTab === 'ingredients') ? 'display:flex;' : 'display:none;'}">
         <span class="recipe-fab-icon">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -16701,7 +16729,7 @@
         <span id="ladder-recipe-fab-badge" class="ladder-recipe-fab-badge" style="${ladderHighlightRecipe ? 'display:flex;' : 'display:none;'}">✓</span>
       </button>
 
-      <!-- 🍲 天梯頂級料理食材高亮彈窗 (Modal) -->
+      <!-- 天梯頂級料理食材高亮彈窗 (Modal) -->
       <div id="ladder-recipe-modal" class="ladder-recipe-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="ladder-recipe-modal-title">
         <div class="ladder-recipe-modal-backdrop" onclick="window.WikiDB.closeLadderRecipeModal()"></div>
         <div class="ladder-recipe-modal-dialog">
@@ -16734,8 +16762,64 @@
         </div>
       </div>
 
+      <!-- 食材精選S 期望值計算規則說明彈窗 (Modal) -->
+      <div id="ladder-skill-help-modal" class="ladder-recipe-modal ladder-skill-help-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="ladder-skill-help-modal-title">
+        <div class="ladder-recipe-modal-backdrop" onclick="window.WikiDB.closeSkillDrawHelpModal()"></div>
+        <div class="ladder-recipe-modal-dialog">
+          <div class="ladder-recipe-modal-header">
+            <div class="ladder-recipe-modal-title-group">
+              <h3 id="ladder-skill-help-modal-title" class="ladder-recipe-modal-title">${isEN ? 'Ingredient Draw S Expectation Rules' : '食材精選S 期望產量計算規則'}</h3>
+              <p class="ladder-recipe-modal-subtitle">${isEN ? 'Main Skill Lv.7 Yield Expectation & Specialty Multiplier Logic' : '主技能 Lv.7 滿級期望值推導與專長機率乘數規則說明'}</p>
+            </div>
+            <button type="button" class="ladder-recipe-modal-close" onclick="window.WikiDB.closeSkillDrawHelpModal()" aria-label="${isEN ? 'Close' : '關閉'}">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="ladder-recipe-modal-body ladder-skill-help-body">
+            <div class="skill-help-card">
+              <div class="skill-help-item">
+                <div class="skill-help-badge badge-skill">${isEN ? 'Skill Specialty' : '技能型寶可夢'}</div>
+                <div class="skill-help-content">
+                  <div class="skill-help-title">${isEN ? '1.5x Skill Trigger Multiplier' : '享有 1.5 倍技能發動機率乘數'}</div>
+                  <div class="skill-help-desc">${isEN ? 'Applicable to Sandslash (+27), Honchkrow (+27), Crustle (+35), and Hawlucha (+37). Reflects high skill trigger efficiency for skill specialists.' : '適用於穿山王 (+27)、烏鴉頭頭 (+27)、岩殿居蟹 (+35)、摔角鷹人 (+37)，體現技能型專長之高發動期望優勢。'}</div>
+                </div>
+              </div>
+              <div class="skill-help-item">
+                <div class="skill-help-badge badge-ing">${isEN ? 'Ingr. Specialty' : '食材型寶可夢'}</div>
+                <div class="skill-help-content">
+                  <div class="skill-help-title">${isEN ? '1.0x Base Rate (Most Conservative)' : '以 1.0 倍基礎發動率計算 (最保守估計)'}</div>
+                  <div class="skill-help-desc">${isEN ? 'Applicable to Ribombee (+13) and Mawile (+10). Calculated without any skill trigger bonus multiplier to provide the safest, most realistic estimate.' : '適用於蝶結萌虻 (+13) 與大嘴娃 (+10)，不給予任何技能機率加成乘數，作為最保守可靠的產量基準。'}</div>
+                </div>
+              </div>
+              <div class="skill-help-item">
+                <div class="skill-help-badge badge-calc">${isEN ? 'Calculation' : '期望值公式'}</div>
+                <div class="skill-help-content">
+                  <div class="skill-help-title">${isEN ? 'Lv.7 (18 items) / Pool Size K' : 'Lv.7 (18 顆) / 候選食材數 K'}</div>
+                  <div class="skill-help-desc">${isEN ? 'Daily Triggers = (86400 / (Interval / 2.22)) * (Skill Rate * Multiplier). Yield per ingredient = Triggers * 18 / K (equally distributed across candidate pool).' : '日發動次數 = (86400 / (基礎幫忙間隔 / 2.22)) * (技能發動率 * 乘數)。各食材產量 = 發動次數 * 18 / K (依食材池等機率 1/K 均分)。'}</div>
+                </div>
+              </div>
+              <div class="skill-help-item">
+                <div class="skill-help-badge badge-color">${isEN ? 'Visuals' : '視覺標示'}</div>
+                <div class="skill-help-content">
+                  <div class="skill-help-title">${isEN ? 'Purple Badges vs Golden Crown' : '技能專屬紫色徽章 vs 冠軍黃金王冠'}</div>
+                  <div class="skill-help-desc">${isEN ? 'Ingredient Selection bonuses are shown in distinctive purple badges and breakdown lines, completely separated from the Golden Crown and avatar glow of Rank 1 Champions.' : '食材精選加成數值與拆解標示採用技能型專屬紫色系，與天梯產量第一名 (冠軍 TOP 1) 之黃金王冠與頭像光圈徹底區隔。'}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ladder-recipe-modal-footer">
+            <button type="button" class="ladder-recipe-btn-cancel" onclick="window.WikiDB.closeSkillDrawHelpModal()">
+              ${isEN ? 'Close' : '關閉'}
+            </button>
+          </div>
+        </div>
+      </div>
+
       ${isMobileH5 ? `
-        <!-- 🎛️ 右下懸浮天梯篩選按鈕 (與圖鑑/料理完全一致的 FAB 結構) -->
+        <!-- 右下懸浮天梯篩選按鈕 (與圖鑑/料理完全一致的 FAB 結構) -->
         <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Open Filters' : '展開天梯篩選器'}" aria-label="${isEN ? 'Open Filters' : '展開天梯篩選器'}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
           <span class="bookmark-icon">
             <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -16852,11 +16936,14 @@
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Specialty Type' : '寶可夢專長'}</span>
-              <label class="ladder-top15-switch-label" title="${isEN ? 'Include Lv.7 Ingredient Draw S main skill yield expectation (Skill Trigger M)' : '納入主技能食材精選S (Lv.7 滿級) 期望產量加成 (以自帶技能機率提升M計算)'}">
-                <input type="checkbox" id="ladder-skill-draw-toggle" class="ladder-switch-input" ${isLadderSkillDrawExpected ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSkillDrawExpected(this.checked)">
-                <span class="ladder-switch-slider"></span>
-                <span class="ladder-switch-text">${isEN ? 'Ingr. Draw' : '食材精選'}</span>
-              </label>
+              <div class="ladder-switch-with-help">
+                <label class="ladder-top15-switch-label" title="${isEN ? 'Lv.7 Ingredient Draw S Yield: Skill specialty applies 1.5x trigger rate (Skill Trigger M), Ingredient specialty applies 1.0x baseline. Click ? for details.' : '食材精選S (Lv.7) 期望加成：技能型採用1.5倍技能機率 (技能提升M補正)，食材型採用1.0倍基準發動率。點擊問號查看計算詳情。'}">
+                  <input type="checkbox" id="ladder-skill-draw-toggle" class="ladder-switch-input" ${isLadderSkillDrawExpected ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSkillDrawExpected(this.checked)">
+                  <span class="ladder-switch-slider"></span>
+                  <span class="ladder-switch-text">${isEN ? 'Ingr. Draw' : '食材精選'}</span>
+                </label>
+                <button type="button" class="ladder-help-icon-btn" onclick="window.WikiDB.openSkillDrawHelpModal(event)" title="${isEN ? 'Ingredient Draw S Yield Rules' : '查看食材精選技能期望產量計算規則'}" aria-label="${isEN ? 'Skill Help' : '技能說明'}">?</button>
+              </div>
             </div>
             <div class="sidebar-skills-list">
               <button type="button" class="tag-btn ${ladderSpecialtyFilter === 'ALL' ? 'active' : ''}" data-specialty-filter="ALL" onclick="window.WikiDB.setLadderSpecialtyFilter('ALL')">${isEN ? 'All' : '全部'}</button>
@@ -17494,6 +17581,8 @@
     TOP_RECIPES_BY_CATEGORY: TOP_RECIPES_BY_CATEGORY,
     openLadderRecipeModal: openLadderRecipeModal,
     closeLadderRecipeModal: closeLadderRecipeModal,
+    openSkillDrawHelpModal: openSkillDrawHelpModal,
+    closeSkillDrawHelpModal: closeSkillDrawHelpModal,
     selectLadderHighlightRecipe: selectLadderHighlightRecipe,
     clearLadderHighlightRecipe: clearLadderHighlightRecipe,
     switchLadderRecipeCategory: switchLadderRecipeCategory,
@@ -17565,6 +17654,8 @@
   window.TOP_RECIPES_BY_CATEGORY = TOP_RECIPES_BY_CATEGORY;
   window.openLadderRecipeModal = openLadderRecipeModal;
   window.closeLadderRecipeModal = closeLadderRecipeModal;
+  window.openSkillDrawHelpModal = openSkillDrawHelpModal;
+  window.closeSkillDrawHelpModal = closeSkillDrawHelpModal;
   window.selectLadderHighlightRecipe = selectLadderHighlightRecipe;
   window.clearLadderHighlightRecipe = clearLadderHighlightRecipe;
   window.switchLadderRecipeCategory = switchLadderRecipeCategory;
