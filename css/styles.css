@@ -14211,7 +14211,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 }
 
 .ladder-help-icon-btn {
-  display: inline-flex;
+  display: none; /* 網頁桌面版隱藏問號按鈕，改以系統自帶滑鼠懸停 tooltip 展示 */
   align-items: center;
   justify-content: center;
   width: 17px;
@@ -14230,6 +14230,16 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   user-select: none;
   -webkit-user-select: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* 僅於移動端 H5 App 與小螢幕顯示問號按鈕 (觸控螢幕無滑鼠懸停) */
+@media (max-width: 768px) {
+  .ladder-help-icon-btn {
+    display: inline-flex;
+  }
+}
+.mobile-h5-app .ladder-help-icon-btn {
+  display: inline-flex;
 }
 
 .ladder-help-icon-btn:hover {
