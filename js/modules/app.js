@@ -3830,6 +3830,50 @@ function calculatePokedexIngredientFormulas() {
   };
 }
 
+const STAGE3_INHERITED_MIN_LEVELS = {
+  '大食花': 16, 'Victreebel': 16,
+  '隆隆岩': 19, 'Golem': 19,
+  '自爆磁怪': 23, 'Magnezone': 23,
+  '耿鬼': 19, 'Gengar': 19,
+  '艾路雷朵': 15, 'Gallade': 15,
+  '鍬農炮蟲': 15, 'Vikavolt': 15,
+  '巴布土撥': 14, 'Pawmot': 14
+};
+
+function getPokedexMinEvolutionLevel(pkm) {
+  if (!pkm) return 1;
+  const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || (pkm.name && pkm.name.en) || '';
+  if (STAGE3_INHERITED_MIN_LEVELS[name]) {
+    return STAGE3_INHERITED_MIN_LEVELS[name];
+  }
+  if (!pkm.evo_req) return 1;
+  const match = pkm.evo_req.match(/Lv\.?\s*(\d+)/i);
+  if (match) {
+    return parseInt(match[1], 10) || 1;
+  }
+  return 1;
+}
+
+function renderPokedexEvoGuardBadgeHTML(pkm, level) {
+  const minLv = getPokedexMinEvolutionLevel(pkm);
+  if (minLv <= 1) return '';
+  const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+  const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+  const currentLevel = parseInt(level, 10) || 1;
+  const isBelow = currentLevel < minLv;
+  if (isBelow) {
+    const tipTpl = t('pokedex.evo_guard_tip_below', '此形態最低進化等級為 Lv.{0}，點擊可快速調整至門檻等級');
+    const tip = tipTpl.replace('{0}', minLv);
+    const label = t('pokedex.evo_guard_below', '進化門檻 Lv.');
+    return `<button type="button" class="pokedex-evo-guard-badge evo-warning" onclick="window.PokemonApp.setPokedexModalLevel(${minLv})" title="${tip}">[!] ${label}${minLv}</button>`;
+  } else {
+    const tipTpl = t('pokedex.evo_guard_tip_met', '已達此形態最低進化門檻 (Lv.{0}+)');
+    const tip = tipTpl.replace('{0}', minLv);
+    const label = t('pokedex.evo_guard_met', '已達門檻 Lv.');
+    return `<span class="pokedex-evo-guard-badge evo-passed" title="${tip}">[✓] ${label}${minLv}+</span>`;
+  }
+}
+
 function renderPokedexDetailModalContent() {
   const modalEl = document.getElementById('pokedex-detail-modal');
   if (!modalEl) return;
@@ -3891,6 +3935,7 @@ function renderPokedexDetailModalContent() {
           <div class="pokedex-header-tags">
             <span class="pokedex-tag pokedex-tag-type">${window.I18N ? window.I18N.getTypeIconSvg(pkm.type, 14) : ''} ${typeName}</span>
             <span class="pokedex-tag pokedex-tag-spec">${specName}</span>
+            ${pkm.evo_req ? `<span class="pokedex-tag pokedex-tag-evo" title="${t('pokedex.evo_req', '進化條件')}">${pkm.evo_req}</span>` : ''}
           </div>
         </div>
         <button type="button" class="box-modal-close pokedex-modal-close-btn" onclick="window.PokemonApp.closePokemonDetailModal()" aria-label="${isEN ? 'Close' : '關閉'}">✕</button>
@@ -3958,9 +4003,12 @@ function renderPokedexDetailModalContent() {
                 <input type="number" id="pokedex-poke-level" class="box-form-input pokedex-level-num-input" min="1" max="100" value="${pokedexModalState.level}" placeholder="1~100" onchange="window.PokemonApp.setPokedexModalLevel(this.value)">
               </div>
 
-              <div class="box-form-group pokedex-level-ctrl-group" style="flex: 1 1 200px; min-width: 140px;">
+              <div class="box-form-group pokedex-level-ctrl-group ${getPokedexMinEvolutionLevel(pkm) > 1 && pokedexModalState.level < getPokedexMinEvolutionLevel(pkm) ? 'has-evo-warning' : ''}" style="flex: 1 1 200px; min-width: 140px;">
                 <div class="pokedex-level-header-row">
-                  <label class="box-form-label" for="pokedex-level-slider" style="margin-bottom:0;">${t('pokedex.level_slider', '等級設定')} (<span class="pokedex-val-badge">Lv. <span id="pokedex-level-val-text">${pokedexModalState.level}</span></span>)</label>
+                  <div class="pokedex-level-header-left">
+                    <label class="box-form-label" for="pokedex-level-slider" style="margin-bottom:0;">${t('pokedex.level_slider', '等級設定')} (<span class="pokedex-val-badge">Lv. <span id="pokedex-level-val-text">${pokedexModalState.level}</span></span>)</label>
+                    <span id="pokedex-evo-guard-container">${renderPokedexEvoGuardBadgeHTML(pkm, pokedexModalState.level)}</span>
+                  </div>
                   <div class="pokedex-level-pins" id="pokedex-level-pins">
                     ${[10, 25, 30, 50, 60, 70, 80, 100].map(lv => `
                       <button type="button" class="pokedex-level-pin-btn ${pokedexModalState.level === lv ? 'active' : ''} ${[30, 50, 60, 80].includes(lv) ? 'pin-milestone' : ''}" onclick="window.PokemonApp.setPokedexModalLevel(${lv})" title="Lv.${lv}">${lv}</button>
@@ -4214,6 +4262,17 @@ function updatePokedexModalAppraisalLive() {
   const levelBadge = document.querySelector('.pokedex-val-badge');
   if (levelBadge) levelBadge.textContent = `Lv. ${pokedexModalState.level}`;
 
+  const evoGuardContainer = document.getElementById('pokedex-evo-guard-container');
+  if (evoGuardContainer && pkm) {
+    evoGuardContainer.innerHTML = renderPokedexEvoGuardBadgeHTML(pkm, pokedexModalState.level);
+  }
+
+  const levelCtrlGroup = document.querySelector('.pokedex-level-ctrl-group');
+  if (levelCtrlGroup && pkm) {
+    const minLv = getPokedexMinEvolutionLevel(pkm);
+    levelCtrlGroup.classList.toggle('has-evo-warning', minLv > 1 && pokedexModalState.level < minLv);
+  }
+
   document.querySelectorAll('.pokedex-level-pin-btn').forEach(btn => {
     const pinLv = parseInt(btn.textContent, 10);
     btn.classList.toggle('active', pinLv === pokedexModalState.level);
@@ -4256,11 +4315,15 @@ PokemonApp.clearAllPokedexSubskills = clearAllPokedexSubskills;
 PokemonApp.renderPokedexIngredientStrip = renderPokedexIngredientStrip;
 PokemonApp.updatePokedexSubskillUI = updatePokedexSubskillUI;
 PokemonApp.calculatePokedexIngredientFormulas = calculatePokedexIngredientFormulas;
+PokemonApp.getPokedexMinEvolutionLevel = getPokedexMinEvolutionLevel;
+PokemonApp.renderPokedexEvoGuardBadgeHTML = renderPokedexEvoGuardBadgeHTML;
 PokemonApp.getPokedexModalState = () => pokedexModalState;
 
 if (typeof window !== 'undefined') {
   window.openPokemonDetailModal = openPokemonDetailModal;
   window.closePokemonDetailModal = closePokemonDetailModal;
+  window.getPokedexMinEvolutionLevel = getPokedexMinEvolutionLevel;
+  window.renderPokedexEvoGuardBadgeHTML = renderPokedexEvoGuardBadgeHTML;
 }
 
 if (typeof module !== 'undefined' && module.exports) {
@@ -4277,6 +4340,8 @@ if (typeof module !== 'undefined' && module.exports) {
     getItemHelpInterval: (p) => getItemHelpInterval(p),
     DEFAULT_SVG_ICON,
     PokemonApp,
+    getPokedexMinEvolutionLevel,
+    renderPokedexEvoGuardBadgeHTML,
     BASE_SKILLS,
     COMPOSITE_SKILL_MAP,
     SPECIAL_SKILL_DETAILS,

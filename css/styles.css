@@ -22357,6 +22357,12 @@ body.mobile-h5-app.values-active,
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
+.pokedex-tag-evo {
+  background: rgba(168, 85, 247, 0.12);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
 .pokedex-modal-close-btn {
   background: transparent;
   border: none;
@@ -22681,6 +22687,57 @@ body.mobile-h5-app.values-active,
   border-color: #38bdf8 !important;
   font-weight: 900;
   box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+}
+
+.pokedex-level-header-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.pokedex-evo-guard-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 1.5px 7px;
+  border-radius: 9999px;
+  text-decoration: none;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.pokedex-evo-guard-badge.evo-warning {
+  background: rgba(239, 68, 68, 0.14);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  cursor: pointer;
+}
+
+.pokedex-evo-guard-badge.evo-warning:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.6);
+  transform: translateY(-1px);
+}
+
+.pokedex-evo-guard-badge.evo-passed {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  cursor: default;
+}
+
+.pokedex-level-ctrl-group.has-evo-warning .pokedex-val-badge {
+  background: rgba(239, 68, 68, 0.14);
+  color: #f87171;
+}
+
+.pokedex-level-ctrl-group.has-evo-warning .pokedex-slider {
+  accent-color: #ef4444;
 }
 
 .pokedex-level-slider-wrap {

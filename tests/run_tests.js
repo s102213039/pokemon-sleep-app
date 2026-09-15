@@ -6449,6 +6449,60 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
 
   // 13. Zero Emoji check in modal templates
   assert(!modalEl.innerHTML.includes('🔥') && !modalEl.innerHTML.includes('⭐') && !modalEl.innerHTML.includes('✨'), 'Modal HTML must not contain emojis');
+
+  // 14. Test Evolution Form Level Guard (進化階段最低等級提示)
+  assert(typeof PokemonApp.getPokedexMinEvolutionLevel === 'function', 'getPokedexMinEvolutionLevel must be exported');
+  assert(typeof PokemonApp.renderPokedexEvoGuardBadgeHTML === 'function', 'renderPokedexEvoGuardBadgeHTML must be exported');
+
+  // 14A. Test min evolution level resolution across forms & inherited stages
+  const pkmBulbasaur = dataset.find(p => p.formatted_no === '001');
+  const pkmIvysaur = dataset.find(p => p.formatted_no === '002');
+  const pkmVenusaur = dataset.find(p => p.formatted_no === '003');
+  const pkmTyranitar = dataset.find(p => p.name_cn === '班基拉斯');
+  const pkmDragonite = dataset.find(p => p.name_cn === '快龍');
+  const pkmVictreebel = dataset.find(p => p.name_cn === '大食花');
+  const pkmGengar = dataset.find(p => p.name_cn === '耿鬼');
+  const pkmGolem = dataset.find(p => p.name_cn === '隆隆岩');
+  const pkmMagnezone = dataset.find(p => p.name_cn === '自爆磁怪');
+  const pkmGallade = dataset.find(p => p.name_cn === '艾路雷朵');
+  const pkmVikavolt = dataset.find(p => p.name_cn === '鍬農炮蟲');
+  const pkmPawmot = dataset.find(p => p.name_cn === '巴布土撥');
+  const pkmPikachu = dataset.find(p => p.formatted_no === '025');
+
+  assertEquals(PokemonApp.getPokedexMinEvolutionLevel(pkmBulbasaur), 1, 'Bulbasaur (base) min evolution level must be 1');
+  assertEquals(PokemonApp.getPokedexMinEvolutionLevel(pkmIvysaur), 12, 'Ivysaur min evolution level must be 12 (Lv.12 + 40 糖)');
+  assertEquals(PokemonApp.getPokedexMinEvolutionLevel(pkmVenusaur), 24, 'Venusaur min evolution level must be 24 (Lv.24 + 80 糖)');
+  assertEquals(PokemonApp.getPokedexMinEvolutionLevel(pkmTyranitar), 41, 'Tyranitar min evolution level must be 41 (Lv.41 + 100 糖)');
+  assertEquals(PokemonApp.getPokedexMinEvolutionLevel(pkmDragonite), 41, 'Dragonite min evolution level must be 41 (Lv.41 + 100 糖)');
+  assertEquals(PokemonApp.getPokedexMinEvolutionLevel(pkmVictreebel), 16, 'Victreebel min evolution level must be 16 (inherited from Weepinbell)');
+  assertEquals(PokemonApp.getPokedexMinEvolutionLevel(pkmGengar), 19, 'Gengar min evolution level must be 19 (inherited from Haunter)');
+  assertEquals(PokemonApp.getPokedexMinEvolutionLevel(pkmGolem), 19, 'Golem min evolution level must be 19 (inherited from Graveler)');
+  assertEquals(PokemonApp.getPokedexMinEvolutionLevel(pkmMagnezone), 23, 'Magnezone min evolution level must be 23 (inherited from Magneton)');
+  assertEquals(PokemonApp.getPokedexMinEvolutionLevel(pkmGallade), 15, 'Gallade min evolution level must be 15 (inherited from Kirlia)');
+  assertEquals(PokemonApp.getPokedexMinEvolutionLevel(pkmVikavolt), 15, 'Vikavolt min evolution level must be 15 (inherited from Charjabug)');
+  assertEquals(PokemonApp.getPokedexMinEvolutionLevel(pkmPawmot), 14, 'Pawmot min evolution level must be 14 (inherited from Pawmo)');
+  assertEquals(PokemonApp.getPokedexMinEvolutionLevel(pkmPikachu), 1, 'Pikachu (no level req) min evolution level must be 1');
+
+  // 14B. Test badge HTML rendering in modal (warning vs passed states)
+  const warnHtml = PokemonApp.renderPokedexEvoGuardBadgeHTML(pkmVenusaur, 10);
+  assert(warnHtml.includes('evo-warning'), 'At Lv.10 (< 24), badge must have .evo-warning class');
+  assert(warnHtml.includes('[!]'), 'At Lv.10, badge must display [!] warning indicator');
+  assert(warnHtml.includes('24'), 'At Lv.10, badge must display threshold level 24');
+
+  const passHtml = PokemonApp.renderPokedexEvoGuardBadgeHTML(pkmVenusaur, 25);
+  assert(passHtml.includes('evo-passed'), 'At Lv.25 (>= 24), badge must have .evo-passed class');
+  assert(passHtml.includes('[✓]'), 'At Lv.25, badge must display [✓] satisfied indicator');
+
+  const baseHtml = PokemonApp.renderPokedexEvoGuardBadgeHTML(pkmBulbasaur, 10);
+  assertEquals(baseHtml, '', 'Base form Pokemon must render empty string (no guard badge)');
+
+  // 14C. Verify CSS and i18n rules for evolution guard
+  assert(stylesCss.includes('.pokedex-evo-guard-badge'), 'styles.css must contain .pokedex-evo-guard-badge');
+  assert(stylesCss.includes('.pokedex-tag-evo'), 'styles.css must contain .pokedex-tag-evo');
+  assert(stylesCss.includes('.pokedex-level-ctrl-group.has-evo-warning'), 'styles.css must contain .pokedex-level-ctrl-group.has-evo-warning');
+  assert(i18nJs.includes('pokedex.evo_guard_below'), 'i18n.js must contain pokedex.evo_guard_below');
+  assert(i18nJs.includes('pokedex.evo_guard_met'), 'i18n.js must contain pokedex.evo_guard_met');
+  assert(i18nJs.includes('pokedex.evo_req'), 'i18n.js must contain pokedex.evo_req');
 });
 
 // Final Summary Output
