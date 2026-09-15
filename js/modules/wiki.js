@@ -12520,8 +12520,12 @@
     }
     const modal = document.getElementById('ladder-skill-help-modal');
     if (modal) {
-      modal.style.display = 'flex';
-      try { document.body.style.overflow = 'hidden'; } catch (err) {}
+      const isVisible = modal.style.display === 'block' || modal.style.display === 'flex';
+      if (isVisible) {
+        closeSkillDrawHelpModal();
+      } else {
+        modal.style.display = 'block';
+      }
     }
   }
 
@@ -12529,7 +12533,6 @@
     const modal = document.getElementById('ladder-skill-help-modal');
     if (modal) {
       modal.style.display = 'none';
-      try { document.body.style.overflow = ''; } catch (err) {}
     }
   }
 
@@ -16762,45 +16765,6 @@
         </div>
       </div>
 
-      <!-- 食材精選S 期望值計算規則說明彈窗 (H5 App Modal) -->
-      <div id="ladder-skill-help-modal" class="ladder-recipe-modal ladder-skill-help-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="ladder-skill-help-modal-title">
-        <div class="ladder-recipe-modal-backdrop" onclick="window.WikiDB.closeSkillDrawHelpModal()"></div>
-        <div class="ladder-recipe-modal-dialog">
-          <div class="ladder-recipe-modal-header">
-            <div class="ladder-recipe-modal-title-group">
-              <h3 id="ladder-skill-help-modal-title" class="ladder-recipe-modal-title">${isEN ? 'Ingredient Draw S Rules' : '食材精選S 計算規則'}</h3>
-            </div>
-            <button type="button" class="ladder-recipe-modal-close" onclick="window.WikiDB.closeSkillDrawHelpModal()" aria-label="${isEN ? 'Close' : '關閉'}">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          </div>
-          <div class="ladder-recipe-modal-body ladder-skill-help-body">
-            <div class="skill-help-card">
-              <div class="skill-help-item">
-                <div class="skill-help-badge badge-skill">${isEN ? 'Skill' : '技能型'}</div>
-                <div class="skill-help-content">
-                  <div class="skill-help-title">${isEN ? 'Skill specialty applies 1.5x trigger rate' : '技能型寶可夢享有 1.5 倍技能發動機率乘數'}</div>
-                </div>
-              </div>
-              <div class="skill-help-item">
-                <div class="skill-help-badge badge-ing">${isEN ? 'Ingredient' : '食材型'}</div>
-                <div class="skill-help-content">
-                  <div class="skill-help-title">${isEN ? 'Ingredient specialty applies 1.0x baseline' : '食材型寶可夢以 1.0 倍基礎發動率計算'}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="ladder-recipe-modal-footer">
-            <button type="button" class="ladder-recipe-btn-cancel" onclick="window.WikiDB.closeSkillDrawHelpModal()">
-              ${isEN ? 'Close' : '關閉'}
-            </button>
-          </div>
-        </div>
-      </div>
-
       ${isMobileH5 ? `
         <!-- 右下懸浮天梯篩選按鈕 (與圖鑑/料理完全一致的 FAB 結構) -->
         <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Open Filters' : '展開天梯篩選器'}" aria-label="${isEN ? 'Open Filters' : '展開天梯篩選器'}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
@@ -16926,6 +16890,14 @@
                   <span class="ladder-switch-text">${isEN ? 'Ingr. Draw' : '食材精選'}</span>
                 </label>
                 <button type="button" class="ladder-help-icon-btn" onclick="window.WikiDB.openSkillDrawHelpModal(event)" title="${isEN ? 'Skill specialty applies 1.5x trigger rate\nIngredient specialty applies 1.0x baseline' : '技能型寶可夢享有 1.5 倍技能發動機率乘數\n食材型寶可夢以 1.0 倍基礎發動率計算'}" aria-label="${isEN ? 'Skill Help' : '技能說明'}">?</button>
+                <!-- 食材精選S 說明提示框 (點選?展示，格式與樣式與網頁版本滑鼠懸停框一致) -->
+                <div id="ladder-skill-help-modal" class="ladder-skill-tooltip-popover" style="display:none;" role="tooltip">
+                  <div class="ladder-skill-tooltip-backdrop" onclick="window.WikiDB.closeSkillDrawHelpModal()"></div>
+                  <div class="ladder-skill-tooltip-bubble">
+                    <div class="ladder-skill-tooltip-line">${isEN ? 'Skill specialty applies 1.5x trigger rate' : '技能型寶可夢享有 1.5 倍技能發動機率乘數'}</div>
+                    <div class="ladder-skill-tooltip-line">${isEN ? 'Ingredient specialty applies 1.0x baseline' : '食材型寶可夢以 1.0 倍基礎發動率計算'}</div>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="sidebar-skills-list">
