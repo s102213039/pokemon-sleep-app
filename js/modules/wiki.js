@@ -16762,14 +16762,13 @@
         </div>
       </div>
 
-      <!-- 食材精選S 期望值計算規則說明彈窗 (Modal) -->
+      <!-- 食材精選S 期望值計算規則說明彈窗 (H5 App Modal) -->
       <div id="ladder-skill-help-modal" class="ladder-recipe-modal ladder-skill-help-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="ladder-skill-help-modal-title">
         <div class="ladder-recipe-modal-backdrop" onclick="window.WikiDB.closeSkillDrawHelpModal()"></div>
         <div class="ladder-recipe-modal-dialog">
           <div class="ladder-recipe-modal-header">
             <div class="ladder-recipe-modal-title-group">
-              <h3 id="ladder-skill-help-modal-title" class="ladder-recipe-modal-title">${isEN ? 'Ingredient Draw S Expectation Rules' : '食材精選S 期望產量計算規則'}</h3>
-              <p class="ladder-recipe-modal-subtitle">${isEN ? 'Main Skill Lv.7 Yield Expectation & Specialty Multiplier Logic' : '主技能 Lv.7 滿級期望值推導與專長機率乘數規則說明'}</p>
+              <h3 id="ladder-skill-help-modal-title" class="ladder-recipe-modal-title">${isEN ? 'Ingredient Draw S Rules' : '食材精選S 計算規則'}</h3>
             </div>
             <button type="button" class="ladder-recipe-modal-close" onclick="window.WikiDB.closeSkillDrawHelpModal()" aria-label="${isEN ? 'Close' : '關閉'}">
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -16781,31 +16780,15 @@
           <div class="ladder-recipe-modal-body ladder-skill-help-body">
             <div class="skill-help-card">
               <div class="skill-help-item">
-                <div class="skill-help-badge badge-skill">${isEN ? 'Skill Specialty' : '技能型寶可夢'}</div>
+                <div class="skill-help-badge badge-skill">${isEN ? 'Skill' : '技能型'}</div>
                 <div class="skill-help-content">
-                  <div class="skill-help-title">${isEN ? '1.5x Skill Trigger Multiplier' : '享有 1.5 倍技能發動機率乘數'}</div>
-                  <div class="skill-help-desc">${isEN ? 'Applicable to Sandslash (+27), Honchkrow (+27), Crustle (+35), and Hawlucha (+37). Reflects high skill trigger efficiency for skill specialists.' : '適用於穿山王 (+27)、烏鴉頭頭 (+27)、岩殿居蟹 (+35)、摔角鷹人 (+37)，體現技能型專長之高發動期望優勢。'}</div>
+                  <div class="skill-help-title">${isEN ? 'Skill specialty applies 1.5x trigger rate' : '技能型寶可夢享有 1.5 倍技能發動機率乘數'}</div>
                 </div>
               </div>
               <div class="skill-help-item">
-                <div class="skill-help-badge badge-ing">${isEN ? 'Ingr. Specialty' : '食材型寶可夢'}</div>
+                <div class="skill-help-badge badge-ing">${isEN ? 'Ingredient' : '食材型'}</div>
                 <div class="skill-help-content">
-                  <div class="skill-help-title">${isEN ? '1.0x Base Rate (Most Conservative)' : '以 1.0 倍基礎發動率計算 (最保守估計)'}</div>
-                  <div class="skill-help-desc">${isEN ? 'Applicable to Ribombee (+13) and Mawile (+10). Calculated without any skill trigger bonus multiplier to provide the safest, most realistic estimate.' : '適用於蝶結萌虻 (+13) 與大嘴娃 (+10)，不給予任何技能機率加成乘數，作為最保守可靠的產量基準。'}</div>
-                </div>
-              </div>
-              <div class="skill-help-item">
-                <div class="skill-help-badge badge-calc">${isEN ? 'Calculation' : '期望值公式'}</div>
-                <div class="skill-help-content">
-                  <div class="skill-help-title">${isEN ? 'Lv.7 (18 items) / Pool Size K' : 'Lv.7 (18 顆) / 候選食材數 K'}</div>
-                  <div class="skill-help-desc">${isEN ? 'Daily Triggers = (86400 / (Interval / 2.22)) * (Skill Rate * Multiplier). Yield per ingredient = Triggers * 18 / K (equally distributed across candidate pool).' : '日發動次數 = (86400 / (基礎幫忙間隔 / 2.22)) * (技能發動率 * 乘數)。各食材產量 = 發動次數 * 18 / K (依食材池等機率 1/K 均分)。'}</div>
-                </div>
-              </div>
-              <div class="skill-help-item">
-                <div class="skill-help-badge badge-color">${isEN ? 'Visuals' : '視覺標示'}</div>
-                <div class="skill-help-content">
-                  <div class="skill-help-title">${isEN ? 'Purple Badges vs Golden Crown' : '技能專屬紫色徽章 vs 冠軍黃金王冠'}</div>
-                  <div class="skill-help-desc">${isEN ? 'Ingredient Selection bonuses are shown in distinctive purple badges and breakdown lines, completely separated from the Golden Crown and avatar glow of Rank 1 Champions.' : '食材精選加成數值與拆解標示採用技能型專屬紫色系，與天梯產量第一名 (冠軍 TOP 1) 之黃金王冠與頭像光圈徹底區隔。'}</div>
+                  <div class="skill-help-title">${isEN ? 'Ingredient specialty applies 1.0x baseline' : '食材型寶可夢以 1.0 倍基礎發動率計算'}</div>
                 </div>
               </div>
             </div>
@@ -16937,12 +16920,12 @@
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Specialty Type' : '寶可夢專長'}</span>
               <div class="ladder-switch-with-help">
-                <label class="ladder-top15-switch-label" title="${isEN ? 'Lv.7 Ingredient Draw S Yield: Skill specialty applies 1.5x trigger rate (Skill Trigger M), Ingredient specialty applies 1.0x baseline. Click ? for details.' : '食材精選S (Lv.7) 期望加成：技能型採用1.5倍技能機率 (技能提升M補正)，食材型採用1.0倍基準發動率。點擊問號查看計算詳情。'}">
+                <label class="ladder-top15-switch-label" title="${isEN ? 'Skill specialty applies 1.5x trigger rate\nIngredient specialty applies 1.0x baseline' : '技能型寶可夢享有 1.5 倍技能發動機率乘數\n食材型寶可夢以 1.0 倍基礎發動率計算'}">
                   <input type="checkbox" id="ladder-skill-draw-toggle" class="ladder-switch-input" ${isLadderSkillDrawExpected ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSkillDrawExpected(this.checked)">
                   <span class="ladder-switch-slider"></span>
                   <span class="ladder-switch-text">${isEN ? 'Ingr. Draw' : '食材精選'}</span>
                 </label>
-                <button type="button" class="ladder-help-icon-btn" onclick="window.WikiDB.openSkillDrawHelpModal(event)" title="${isEN ? 'Ingredient Draw S Yield Rules' : '查看食材精選技能期望產量計算規則'}" aria-label="${isEN ? 'Skill Help' : '技能說明'}">?</button>
+                <button type="button" class="ladder-help-icon-btn" onclick="window.WikiDB.openSkillDrawHelpModal(event)" title="${isEN ? 'Skill specialty applies 1.5x trigger rate\nIngredient specialty applies 1.0x baseline' : '技能型寶可夢享有 1.5 倍技能發動機率乘數\n食材型寶可夢以 1.0 倍基礎發動率計算'}" aria-label="${isEN ? 'Skill Help' : '技能說明'}">?</button>
               </div>
             </div>
             <div class="sidebar-skills-list">

@@ -6205,6 +6205,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Ingredient
   assert(mockContainer.innerHTML.includes('ladder-skill-help-modal'), 'Rendered layout must include ladder-skill-help-modal dialog');
   assert(mockContainer.innerHTML.includes('ladder-switch-with-help'), 'Sidebar must include ladder-switch-with-help container');
   assert(mockContainer.innerHTML.includes('ladder-help-icon-btn'), 'Sidebar must include ladder-help-icon-btn question mark button');
+  assert(mockContainer.innerHTML.includes('技能型寶可夢享有 1.5 倍技能發動機率乘數'), 'Switch title must include 技能型寶可夢享有 1.5 倍技能發動機率乘數');
+  assert(mockContainer.innerHTML.includes('食材型寶可夢以 1.0 倍基礎發動率計算'), 'Switch title must include 食材型寶可夢以 1.0 倍基礎發動率計算');
 
   // 5. Test Help Modal Methods
   assert(typeof WikiDB.openSkillDrawHelpModal === 'function', 'openSkillDrawHelpModal must be exported');
