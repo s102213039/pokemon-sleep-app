@@ -231,27 +231,27 @@
 
     // 評級判定
     let grade = 'B';
-    let gradeTitle = isEN ? '⏳ Usable' : '⏳ 過渡可用 (Usable)';
+    let gradeTitle = isEN ? '[~] Usable' : '[~] 過渡可用 (Usable)';
     let gradeColor = '#94a3b8';
     if (compositeScore >= 90) {
       grade = 'S+';
-      gradeTitle = isEN ? '👑 God Tier' : '👑 頂級畢業 (God Tier)';
+      gradeTitle = isEN ? '[★] God Tier' : '[★] 頂級畢業 (God Tier)';
       gradeColor = '#eab308';
     } else if (compositeScore >= 80) {
       grade = 'S';
-      gradeTitle = isEN ? '🌟 High Potential' : '🌟 強力主力 (High Potential)';
+      gradeTitle = isEN ? '[★] High Potential' : '[★] 強力主力 (High Potential)';
       gradeColor = '#38bdf8';
     } else if (compositeScore >= 68) {
       grade = 'A';
-      gradeTitle = isEN ? '👍 Solid Pick' : '👍 實用良品 (Solid Pick)';
+      gradeTitle = isEN ? '[+] Solid Pick' : '[+] 實用良品 (Solid Pick)';
       gradeColor = '#10b981';
     } else if (compositeScore >= 55) {
       grade = 'B';
-      gradeTitle = isEN ? '⏳ Usable' : '⏳ 過渡可用 (Usable)';
+      gradeTitle = isEN ? '[~] Usable' : '[~] 過渡可用 (Usable)';
       gradeColor = '#a855f7';
     } else {
       grade = 'C';
-      gradeTitle = isEN ? '🍬 Recycle' : '🍬 換糖回收 (Recycle)';
+      gradeTitle = isEN ? '[-] Recycle' : '[-] 換糖回收 (Recycle)';
       gradeColor = '#ef4444';
     }
 
