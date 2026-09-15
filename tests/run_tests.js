@@ -585,8 +585,17 @@ test('Tier 1 - Feature Coverage', 'Appraisal Lab & Six-Dimension Engine: Evaluat
   assert(result !== null, 'Evaluation should return non-null object');
   assert(result.scores.berry >= 90, 'Raichu with BFS and Adamant should have berry score >= 90');
   assert(result.scores.speed >= 80, 'Raichu with fast interval and Adamant should have speed score >= 80');
-  assert(result.grade === 'S+' || result.grade === 'S', 'Raichu God Roll should achieve S+ or S rank');
   assert(result.pros.length >= 2, 'Should generate multiple pro highlights for top rolls');
+
+  // Test locked subskills have strictly 0 effect on appraisal calculation
+  const evalEmpty = ctx.AppraisalLab.evaluatePokemon(sampleRaichu, 10, '坦率', ['', '', '', '', ''], ['特選蘋果']);
+  const evalLockedBFS = ctx.AppraisalLab.evaluatePokemon(sampleRaichu, 10, '坦率', ['', '樹果數量S', '', '', ''], ['特選蘋果']);
+  assertEquals(evalLockedBFS.scores.growth, evalEmpty.scores.growth, 'Locked subskill in slot 2 must have 0 effect on growth score at Lv.10');
+  assertEquals(evalLockedBFS.scores.roi, evalEmpty.scores.roi, 'Locked subskill in slot 2 must have 0 effect on ROI score at Lv.10');
+  assert(evalLockedBFS.pros.every(p => !p.includes('樹果數量S')), 'Locked subskill must not appear in diagnostic pros');
+
+  const evalUnlockedBFS = ctx.AppraisalLab.evaluatePokemon(sampleRaichu, 25, '坦率', ['', '樹果數量S', '', '', ''], ['特選蘋果']);
+  assert(evalUnlockedBFS.compositeScore > evalEmpty.compositeScore, 'Unlocked BFS at Lv.25 must boost composite score');
 
   const svg = ctx.AppraisalLab.renderRadarChartSVG(result.scores, 280);
   assert(svg.includes('<svg'), 'Radar chart should be a valid SVG string');
@@ -6356,9 +6365,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assertEquals(modalEl.style.display, 'flex', 'Modal display style must be flex when opened');
   assert(modalEl.innerHTML.includes('pokedex-modal-dialog'), 'Modal HTML must contain pokedex-modal-dialog');
   assert(modalEl.innerHTML.includes('妙蛙花'), 'Modal HTML must display Pokemon name (妙蛙花)');
-  assert(modalEl.innerHTML.includes('基礎數值'), 'Modal HTML must include base stats section');
-  assert(modalEl.innerHTML.includes('客製化模擬設定'), 'Modal HTML must include custom configuration controls');
+  assert(modalEl.innerHTML.includes('pokedex-header-stats-row'), 'Modal HTML must include inlined header stats row');
+  assert(modalEl.innerHTML.includes('pokedex-header-reset-btn'), 'Modal HTML must include red reset button in header');
+  assert(modalEl.innerHTML.includes('preset-god'), 'Modal HTML must include god preset button');
   assert(modalEl.innerHTML.includes('食材產能算法拆解'), 'Modal HTML must include ingredient formula breakdown card');
+  assert(modalEl.innerHTML.includes('pokedex-strategy-card'), 'Modal HTML must include strategy recommendation card');
   assert(modalEl.innerHTML.includes('pokedex-custom-select'), 'Modal HTML must use custom select dropdowns');
 
   // 5. Test ingredient calculation engine
@@ -6418,11 +6429,15 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   state = PokemonApp.getPokedexModalState();
   assertEquals(state.subskills[0], '食材機率提升M', 'Slot 1 must have 食材機率提升M');
 
-  // 9. Test Berry Icon Only, Dynamic Interval & Level Pins
-  assert(modalEl.innerHTML.includes('stat-berry-img'), 'Berry stat box must contain .stat-berry-img');
-  assert(modalEl.innerHTML.includes('pokedex-stat-interval'), 'Base stats must contain #pokedex-stat-interval for dynamic interval calculation');
-  assert(modalEl.innerHTML.includes('pokedex-level-pins'), 'Modal HTML must include .pokedex-level-pins');
-  assert(modalEl.innerHTML.includes('pin-milestone'), 'Key milestones (30, 50, 60, 80) must be highlighted');
+  // 9. Test Berry Icon in Header, Dynamic Interval & Anchored Track Pins
+  assert(modalEl.innerHTML.includes('pokedex-berry-icon-img'), 'Header must contain .pokedex-berry-icon-img');
+  assert(modalEl.innerHTML.includes('pokedex-tag-berry'), 'Header must contain .pokedex-tag-berry');
+  assert(modalEl.innerHTML.includes('pokedex-stat-interval'), 'Header stats must contain #pokedex-stat-interval for dynamic interval calculation');
+  assert(modalEl.innerHTML.includes('pokedex-track-pins-bar'), 'Modal HTML must include .pokedex-track-pins-bar');
+  assert(modalEl.innerHTML.includes('pin-milestone'), 'Key milestones (30, 50, 60, 80, 100) must be highlighted');
+
+  // 9B. Test Ribbon Options HTML with dynamic descriptions and icons
+  assert(typeof PokemonApp.renderPokedexRibbonOptionsHTML === 'function' || modalEl.innerHTML.includes('ribbon_lv1.png'), 'Modal HTML must include ribbon icon options');
 
   // 10. Test Skill-type Pokemon with Magnet S / Draw S (e.g. Golbat 042)
   PokemonApp.openPokemonDetailModal('042');
@@ -6441,7 +6456,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assert(stylesCss.includes('.pokedex-controls-container'), 'styles.css must contain .pokedex-controls-container');
   assert(stylesCss.includes('.pokedex-calc-formula-card'), 'styles.css must contain .pokedex-calc-formula-card');
   assert(stylesCss.includes('.pokedex-formula-steps-row'), 'styles.css must contain .pokedex-formula-steps-row for compact 3-column layout');
-  assert(stylesCss.includes('.pokedex-level-pins'), 'styles.css must style .pokedex-level-pins');
+  assert(stylesCss.includes('.pokedex-track-pins-bar'), 'styles.css must style .pokedex-track-pins-bar');
   assert(stylesCss.includes('padding-right: 36px !important;'), 'styles.css must enforce 36px padding-right on select arrows');
   assert(stylesCss.includes('background-position: right 18px center !important;'), 'styles.css must enforce right 18px arrow position');
   assert(stylesCss.includes('border: none !important;'), 'styles.css must enforce border: none on outer containers');

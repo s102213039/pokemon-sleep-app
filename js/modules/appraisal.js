@@ -224,14 +224,17 @@
     }
     speedScore = Math.min(Math.max(Math.round(speedScore), 20), 100);
 
-    // 5. 後期成長 (Late-game Growth)
+    // 5. 後期成長 (Late-game Growth: 僅計入已達到等級解鎖門檻的副技能)
     let growthScore = 48;
-    const lateSubskills = subskillArr.slice(2);
-    lateSubskills.forEach(function(s) {
-      if (['樹果數量S', '幫手獎勵', '幫忙速度M', '食材機率提升M', '技能機率提升M'].indexOf(s) !== -1) {
-        growthScore += 12;
-      } else if (['睡眠EXP獎勵', '技能等級提升M', '持有上限提升L'].indexOf(s) !== -1) {
-        growthScore += 6;
+    subskillArr.forEach(function(s, idx) {
+      if (!s || idx < 2) return;
+      const isUnlocked = currentLv >= (slotLevels[idx] || 50);
+      if (isUnlocked) {
+        if (['樹果數量S', '幫手獎勵', '幫忙速度M', '食材機率提升M', '技能機率提升M'].indexOf(s) !== -1) {
+          growthScore += 12;
+        } else if (['睡眠EXP獎勵', '技能等級提升M', '持有上限提升L'].indexOf(s) !== -1) {
+          growthScore += 6;
+        }
       }
     });
     if (currentLv >= 60) growthScore += 12;
@@ -240,13 +243,18 @@
     if (nature.debuffType === 'exp') growthScore -= 4;
     growthScore = Math.min(Math.max(Math.round(growthScore), 20), 100);
 
-    // 6. 資源效益 (Resource Efficiency & ROI)
+    // 6. 資源效益 (Resource Efficiency & ROI: 僅計入已達到等級解鎖門檻的副技能)
     let roiScore = 50;
-    const earlySubskills = subskillArr.slice(0, 2);
-    if ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') && earlySubskills.indexOf('樹果數量S') !== -1) roiScore += 24;
-    if ((specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') && earlySubskills.indexOf('食材機率提升M') !== -1) roiScore += 22;
-    if ((specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') && earlySubskills.indexOf('技能機率提升M') !== -1) roiScore += 22;
-    if (earlySubskills.indexOf('幫手獎勵') !== -1 || earlySubskills.indexOf('幫忙速度M') !== -1) roiScore += 12;
+    subskillArr.forEach(function(s, idx) {
+      if (!s || idx >= 2) return;
+      const isUnlocked = currentLv >= (slotLevels[idx] || 10);
+      if (isUnlocked) {
+        if ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') && s === '樹果數量S') roiScore += 24;
+        if ((specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') && s === '食材機率提升M') roiScore += 22;
+        if ((specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') && s === '技能機率提升M') roiScore += 22;
+        if (s === '幫手獎勵' || s === '幫忙速度M') roiScore += 12;
+      }
+    });
     if (currentLv >= 30) roiScore += 6;
     if (currentLv >= 50) roiScore += 6;
     if (nature.buffType === 'exp') roiScore += 8;
@@ -266,26 +274,26 @@
 
     // 評級判定
     let grade = 'B';
-    let gradeTitle = isEN ? '[~] Usable' : '[~] 過渡可用 (Usable)';
-    let gradeColor = '#94a3b8';
+    let gradeTitle = isEN ? 'Usable' : '實用良品 (Usable)';
+    let gradeColor = '#10b981';
     if (compositeScore >= 90) {
-      grade = 'S+';
-      gradeTitle = isEN ? '[★] God Tier' : '[★] 頂級畢業 (God Tier)';
-      gradeColor = '#eab308';
-    } else if (compositeScore >= 80) {
       grade = 'S';
-      gradeTitle = isEN ? '[★] High Potential' : '[★] 強力主力 (High Potential)';
-      gradeColor = '#38bdf8';
-    } else if (compositeScore >= 68) {
+      gradeTitle = isEN ? '[★] Top Tier' : '[★] 頂級戰力 (Top Tier)';
+      gradeColor = '#f59e0b';
+    } else if (compositeScore >= 80) {
       grade = 'A';
-      gradeTitle = isEN ? '[+] Solid Pick' : '[+] 實用良品 (Solid Pick)';
-      gradeColor = '#10b981';
-    } else if (compositeScore >= 55) {
+      gradeTitle = isEN ? '[+] Strong Pick' : '[+] 強力主力 (Strong Pick)';
+      gradeColor = '#3b82f6';
+    } else if (compositeScore >= 70) {
       grade = 'B';
+      gradeTitle = isEN ? '[✓] Solid Choice' : '[✓] 優秀良品 (Solid Choice)';
+      gradeColor = '#10b981';
+    } else if (compositeScore >= 60) {
+      grade = 'C';
       gradeTitle = isEN ? '[~] Usable' : '[~] 過渡可用 (Usable)';
       gradeColor = '#a855f7';
     } else {
-      grade = 'C';
+      grade = 'D';
       gradeTitle = isEN ? '[-] Recycle' : '[-] 換糖回收 (Recycle)';
       gradeColor = '#ef4444';
     }
@@ -294,44 +302,41 @@
     const pros = [];
     const cons = [];
 
-    const hasBFSInTotal = subskillArr.indexOf('樹果數量S') !== -1;
+    const hasBFSInTotal = activeSubskills.indexOf('樹果數量S') !== -1;
     if (hasBFSInTotal) {
-      const isBFSUnlocked = currentLv >= (slotLevels[bfsIdx] || 10);
       pros.push(isEN
-        ? `[★] Equipped with God-tier sub-skill "Berry Finding S" (${isBFSUnlocked ? (bfsIdx <= 1 ? 'Early Lv.10/25 unlocked' : 'Unlocked') : 'Unlocks at Lv.' + slotLevels[bfsIdx]}), +1 berry per help.`
-        : '[★] 擁有神技「樹果數量S」(' + (isBFSUnlocked ? (bfsIdx <= 1 ? 'Lv.10/25 早期解鎖，極度強勢' : '已解鎖') : 'Lv.' + slotLevels[bfsIdx] + ' 解鎖') + ')，樹果產能躍升 +1 個。');
+        ? '[★] Equipped with active God-tier sub-skill "Berry Finding S", +1 berry per help.'
+        : '[★] 擁有已解鎖神技「樹果數量S」，樹果產能躍升 +1 個。');
     } else if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
       cons.push(isEN
-        ? '[!] Berry specialist without "Berry Finding S", ceiling is below top meta.'
-        : '[!] 樹果型專長未配置「樹果數量S」，上限與產能較難與頂標相比。');
+        ? '[!] Berry specialist without active "Berry Finding S", ceiling is below top meta.'
+        : '[!] 樹果型專長未激活「樹果數量S」，當前產能較難與頂標相比。');
     }
 
-    const hasIngMInTotal = subskillArr.indexOf('食材機率提升M') !== -1;
+    const hasIngMInTotal = activeSubskills.indexOf('食材機率提升M') !== -1;
     if (hasIngMInTotal) {
-      const isIngMUnlocked = currentLv >= (slotLevels[ingMIdx] || 10);
       pros.push(isEN
-        ? `[+] Features "Ingredient Finder M" (${isIngMUnlocked ? (ingMIdx <= 1 ? 'Early unlock powers recipes quickly' : 'Unlocked') : 'Unlocks at Lv.' + slotLevels[ingMIdx]}), greatly stabilizing ingredient supply.`
-        : '[+] 具備「食材機率提升M」(' + (isIngMUnlocked ? (ingMIdx <= 1 ? '前中期即可發力' : '已解鎖') : 'Lv.' + slotLevels[ingMIdx] + ' 解鎖') + ')，大幅提升料理食材供貨穩定度。');
+        ? '[+] Features active "Ingredient Finder M", greatly stabilizing ingredient supply.'
+        : '[+] 具備已解鎖「食材機率提升M」，大幅提升料理食材供貨穩定度。');
     }
 
-    const hasSkillMInTotal = subskillArr.indexOf('技能機率提升M') !== -1;
+    const hasSkillMInTotal = activeSubskills.indexOf('技能機率提升M') !== -1;
     if (hasSkillMInTotal) {
-      const isSkillMUnlocked = currentLv >= (slotLevels[skillMIdx] || 10);
       pros.push(isEN
-        ? `[+] Features "Skill Trigger M" (${isSkillMUnlocked ? 'Unlocked' : 'Unlocks at Lv.' + slotLevels[skillMIdx]}), significantly raising main skill activation frequency.`
-        : '[+] 擁有「技能機率提升M」(' + (isSkillMUnlocked ? '已解鎖' : 'Lv.' + slotLevels[skillMIdx] + ' 解鎖') + ')，主技能發動頻率顯著提高。');
+        ? '[+] Features active "Skill Trigger M", significantly raising main skill activation frequency.'
+        : '[+] 擁有已解鎖「技能機率提升M」，主技能發動頻率顯著提高。');
     }
 
-    if (subskillArr.indexOf('幫手獎勵') !== -1) {
+    if (activeSubskills.indexOf('幫手獎勵') !== -1) {
       pros.push(isEN
-        ? '[+] Features top-tier team aura "Helping Bonus", reducing team helping time by 5%.'
-        : '[+] 具備全隊頂級光環「幫手獎勵」，全員幫忙時間縮短 5%。');
+        ? '[+] Features active top-tier team aura "Helping Bonus", reducing team helping time by 5%.'
+        : '[+] 具備已解鎖全隊頂級光環「幫手獎勵」，全員幫忙時間縮短 5%。');
     }
 
-    if (subskillArr.indexOf('幫忙速度M') !== -1) {
+    if (activeSubskills.indexOf('幫忙速度M') !== -1) {
       pros.push(isEN
-        ? '[+] Features "Helping Speed M", shortening self helping interval by 14%.'
-        : '[+] 擁有「幫忙速度M」，自身幫忙間隔縮短 14%。');
+        ? '[+] Features active "Helping Speed M", shortening self helping interval by 14%.'
+        : '[+] 擁有已解鎖「幫忙速度M」，自身幫忙間隔縮短 14%。');
     }
 
     if (skillLevel >= 6) {
