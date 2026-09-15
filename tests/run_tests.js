@@ -6389,6 +6389,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
 
   // 7. Test God Preset & Reset Preset
   PokemonApp.applyPokedexGodPreset();
+  let godState = PokemonApp.getPokedexModalState();
+  assertEquals(godState.level, 60, 'God preset must set level to 60 (unlocking 3rd ing & 3 subskills)');
+  assertEquals(godState.ribbon, 4, 'God preset must set ribbon to 4 (max bonus)');
   const godFormulas = PokemonApp.calculatePokedexIngredientFormulas();
   assertEquals(godFormulas.natureIngMult, 1.2, 'God preset for ingredient Pokemon must set Quiet (+Ing) nature');
   assertEquals(godFormulas.subskillIngBonus, 54, 'God preset must activate Subskills M (+36%) + S (+18%) = +54%');
@@ -6415,28 +6418,36 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   state = PokemonApp.getPokedexModalState();
   assertEquals(state.subskills[0], '食材機率提升M', 'Slot 1 must have 食材機率提升M');
 
-  // 9. Test Skill-type Pokemon with Magnet S / Draw S (e.g. Golbat 042)
+  // 9. Test Berry Icon Only, Dynamic Interval & Level Pins
+  assert(modalEl.innerHTML.includes('stat-berry-img'), 'Berry stat box must contain .stat-berry-img');
+  assert(modalEl.innerHTML.includes('pokedex-stat-interval'), 'Base stats must contain #pokedex-stat-interval for dynamic interval calculation');
+  assert(modalEl.innerHTML.includes('pokedex-level-pins'), 'Modal HTML must include .pokedex-level-pins');
+  assert(modalEl.innerHTML.includes('pin-milestone'), 'Key milestones (30, 50, 60, 80) must be highlighted');
+
+  // 10. Test Skill-type Pokemon with Magnet S / Draw S (e.g. Golbat 042)
   PokemonApp.openPokemonDetailModal('042');
   const skillFormulas = PokemonApp.calculatePokedexIngredientFormulas();
   if (skillFormulas && skillFormulas.mainSkillLabel) {
     assert(skillFormulas.mainSkillExtraDaily >= 0, 'Skill Pokemon main skill extra daily yield must be calculated');
   }
 
-  // 10. Test modal close
+  // 11. Test modal close
   assert(typeof PokemonApp.closePokemonDetailModal === 'function', 'closePokemonDetailModal must be exported');
   PokemonApp.closePokemonDetailModal();
   assertEquals(modalEl.style.display, 'none', 'Modal display style must be none when closed');
 
-  // 10. Verify CSS Rule Compliance: Single Outer Frame, Dropdown Arrow Indentation, Zero Emoji
+  // 12. Verify CSS Rule Compliance: Single Outer Frame, Dropdown Arrow Indentation, Zero Emoji, Compact 3-col
   assert(stylesCss.includes('#pokedex-detail-modal'), 'styles.css must style #pokedex-detail-modal');
   assert(stylesCss.includes('.pokedex-controls-container'), 'styles.css must contain .pokedex-controls-container');
   assert(stylesCss.includes('.pokedex-calc-formula-card'), 'styles.css must contain .pokedex-calc-formula-card');
+  assert(stylesCss.includes('.pokedex-formula-steps-row'), 'styles.css must contain .pokedex-formula-steps-row for compact 3-column layout');
+  assert(stylesCss.includes('.pokedex-level-pins'), 'styles.css must style .pokedex-level-pins');
   assert(stylesCss.includes('padding-right: 36px !important;'), 'styles.css must enforce 36px padding-right on select arrows');
   assert(stylesCss.includes('background-position: right 18px center !important;'), 'styles.css must enforce right 18px arrow position');
   assert(stylesCss.includes('border: none !important;'), 'styles.css must enforce border: none on outer containers');
   assert(stylesCss.includes('background: transparent !important;'), 'styles.css must enforce transparent background on outer containers');
 
-  // 11. Zero Emoji check in modal templates
+  // 13. Zero Emoji check in modal templates
   assert(!modalEl.innerHTML.includes('🔥') && !modalEl.innerHTML.includes('⭐') && !modalEl.innerHTML.includes('✨'), 'Modal HTML must not contain emojis');
 });
 

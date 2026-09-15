@@ -95,25 +95,35 @@
   }
 
   /* ─── 核心評估演算法 ───────────────────────────────────── */
-  function evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel) {
+  function evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel) {
     if (!pkmData) return null;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    currentLv = currentLv || 30;
+    currentLv = parseInt(currentLv, 10) || 30;
     natureName = natureName || '坦率';
     subskills = subskills || [];
     ingredients = ingredients || [];
     ribbonLevel = parseInt(ribbonLevel, 10) || 0;
+    skillLevel = parseInt(skillLevel, 10) || 1;
 
     const specialty = pkmData.specialty || '樹果';
     const subskillArr = Array.isArray(subskills) ? subskills.map(function(s) { return typeof s === 'string' ? s : (s ? s.name : ''); }) : [];
     
+    // 計算已解鎖副技能 (解鎖門檻: Lv.10, 25, 50, 75, 100)
+    const slotLevels = [10, 25, 50, 75, 100];
+    const activeSubskills = [];
+    subskillArr.forEach(function(s, idx) {
+      if (s && currentLv >= (slotLevels[idx] || 10)) {
+        activeSubskills.push(s);
+      }
+    });
+
     // 性格修正
     const nature = (window.UserBox && window.UserBox.NATURE_DICT && window.UserBox.NATURE_DICT[natureName]) || { buffType: 'none', debuffType: 'none' };
     const natDisplayName = window.I18N ? window.I18N.getNatureName(natureName) : natureName;
 
-    // 1. 🍊 樹果產能 (Berry Power)
+    // 1. 樹果產能 (Berry Power)
     let berryScore = (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') ? 68 : ((specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') ? 35 : 30);
-    const hasBFS = subskillArr.indexOf('樹果數量S') !== -1;
+    const hasBFS = activeSubskills.indexOf('樹果數量S') !== -1;
     const bfsIdx = subskillArr.indexOf('樹果數量S');
     if (hasBFS) {
       if (bfsIdx === 0) berryScore += 32;
@@ -121,52 +131,68 @@
       else if (bfsIdx === 2) berryScore += 18;
       else berryScore += 12;
     }
-    if (subskillArr.indexOf('幫忙速度M') !== -1) berryScore += 8;
-    if (subskillArr.indexOf('幫手獎勵') !== -1) berryScore += 8;
+    if (activeSubskills.indexOf('幫忙速度M') !== -1) berryScore += 8;
+    if (activeSubskills.indexOf('幫手獎勵') !== -1) berryScore += 8;
     if (nature.buffType === 'speed') berryScore += 7;
     if (nature.debuffType === 'speed') berryScore -= 6;
+    // 等級幫忙速度提升 (每級縮短約 0.2%)
+    const berryLvBonus = Math.min(8, Math.floor((currentLv - 1) * 0.1));
+    berryScore += berryLvBonus;
     berryScore = Math.min(Math.max(Math.round(berryScore), 15), 100);
 
-    // 2. 🍲 食材產能 (Ingredient Power)
+    // 2. 食材產能 (Ingredient Power)
     let ingScore = (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') ? 68 : ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') ? 28 : 32);
-    const hasIngM = subskillArr.indexOf('食材機率提升M') !== -1;
+    const hasIngM = activeSubskills.indexOf('食材機率提升M') !== -1;
     const ingMIdx = subskillArr.indexOf('食材機率提升M');
     if (hasIngM) {
       if (ingMIdx === 0) ingScore += 24;
       else if (ingMIdx === 1) ingScore += 18;
       else ingScore += 12;
     }
-    if (subskillArr.indexOf('食材機率提升S') !== -1) ingScore += 7;
-    if (subskillArr.indexOf('幫忙速度M') !== -1) ingScore += 6;
-    if (subskillArr.indexOf('持有上限提升L') !== -1 || subskillArr.indexOf('持有上限提升M') !== -1) ingScore += 6;
+    if (activeSubskills.indexOf('食材機率提升S') !== -1) ingScore += 7;
+    if (activeSubskills.indexOf('幫忙速度M') !== -1) ingScore += 6;
+    if (activeSubskills.indexOf('持有上限提升L') !== -1 || activeSubskills.indexOf('持有上限提升M') !== -1) ingScore += 6;
     if (nature.buffType === 'ingredient') ingScore += 12;
     if (nature.debuffType === 'ingredient') ingScore -= 12;
     
+    // 等級食材解鎖加成 (Lv.30 解鎖第二格, Lv.60 解鎖第三格)
+    if (currentLv >= 60) ingScore += 6;
+    else if (currentLv >= 30) ingScore += 3;
+    else ingScore -= 6;
+
     // 食材組合 AAA/ABB 加分
-    if (ingredients.length >= 2) {
-      const isAAA = ingredients[0] === ingredients[1] && (ingredients[2] ? ingredients[0] === ingredients[2] : true);
+    if (ingredients.length >= 2 && currentLv >= 30) {
+      const isAAA = ingredients[0] === ingredients[1] && (ingredients[2] && currentLv >= 60 ? ingredients[0] === ingredients[2] : true);
       if (isAAA) ingScore += 6;
     }
     ingScore = Math.min(Math.max(Math.round(ingScore), 15), 100);
 
-    // 3. ⚡ 技能強度 (Skill Power)
+    // 3. 技能強度 (Skill Power)
     let skillScore = (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') ? 68 : 32;
-    const hasSkillM = subskillArr.indexOf('技能機率提升M') !== -1;
+    const hasSkillM = activeSubskills.indexOf('技能機率提升M') !== -1;
     const skillMIdx = subskillArr.indexOf('技能機率提升M');
     if (hasSkillM) {
       if (skillMIdx === 0) skillScore += 24;
       else if (skillMIdx === 1) skillScore += 18;
       else skillScore += 12;
     }
-    if (subskillArr.indexOf('技能機率提升S') !== -1) skillScore += 7;
-    if (subskillArr.indexOf('技能等級提升M') !== -1) skillScore += 12;
-    if (subskillArr.indexOf('技能等級提升S') !== -1) skillScore += 6;
+    if (activeSubskills.indexOf('技能機率提升S') !== -1) skillScore += 7;
+    if (activeSubskills.indexOf('技能等級提升M') !== -1) skillScore += 10;
+    if (activeSubskills.indexOf('技能等級提升S') !== -1) skillScore += 5;
     if (nature.buffType === 'skill') skillScore += 12;
     if (nature.debuffType === 'skill') skillScore -= 12;
+
+    // 主技能等級動態加成 (Lv.1 ~ Lv.7)
+    if (skillLevel > 1) {
+      skillScore += Math.min(20, Math.round((skillLevel - 1) * 3.5));
+    }
+    // 睡飽飽獎章加成
+    if (ribbonLevel >= 3) skillScore += (ribbonLevel === 4 ? 4 : 2);
+
     skillScore = Math.min(Math.max(Math.round(skillScore), 15), 100);
 
-    // 4. ⏱️ 幫忙速度 (Speed Power)
-    let speedScore = 55;
+    // 4. 幫忙速度 (Speed Power)
+    let speedScore = 50;
     let calculatedInterval = 0;
     if (pkmData.interval) {
       const parts = pkmData.interval.split(':');
@@ -176,9 +202,14 @@
       else if (totalSec < 3000) speedScore += 8;
       else if (totalSec > 4000) speedScore -= 8;
     }
-    if (subskillArr.indexOf('幫忙速度M') !== -1) speedScore += 14;
-    if (subskillArr.indexOf('幫忙速度S') !== -1) speedScore += 7;
-    if (subskillArr.indexOf('幫手獎勵') !== -1) speedScore += 8;
+
+    // 等級幫忙速度遞減加成 (每級約 0.2%)
+    const speedFromLv = Math.round(((currentLv - 1) * 0.002) * 60);
+    speedScore += speedFromLv;
+
+    if (activeSubskills.indexOf('幫忙速度M') !== -1) speedScore += 14;
+    if (activeSubskills.indexOf('幫忙速度S') !== -1) speedScore += 7;
+    if (activeSubskills.indexOf('幫手獎勵') !== -1) speedScore += 8;
     if (nature.buffType === 'speed') speedScore += 10;
     if (nature.debuffType === 'speed') speedScore -= 8;
 
@@ -193,27 +224,31 @@
     }
     speedScore = Math.min(Math.max(Math.round(speedScore), 20), 100);
 
-    // 5. 📈 後期成長 (Late-game Growth)
-    let growthScore = 50;
+    // 5. 後期成長 (Late-game Growth)
+    let growthScore = 48;
     const lateSubskills = subskillArr.slice(2);
     lateSubskills.forEach(function(s) {
       if (['樹果數量S', '幫手獎勵', '幫忙速度M', '食材機率提升M', '技能機率提升M'].indexOf(s) !== -1) {
-        growthScore += 15;
+        growthScore += 12;
       } else if (['睡眠EXP獎勵', '技能等級提升M', '持有上限提升L'].indexOf(s) !== -1) {
-        growthScore += 8;
+        growthScore += 6;
       }
     });
+    if (currentLv >= 60) growthScore += 12;
+    else if (currentLv >= 50) growthScore += 6;
     if (nature.buffType === 'exp') growthScore += 6;
     if (nature.debuffType === 'exp') growthScore -= 4;
     growthScore = Math.min(Math.max(Math.round(growthScore), 20), 100);
 
-    // 6. 💎 資源效益 (Resource Efficiency & ROI)
-    let roiScore = 55;
+    // 6. 資源效益 (Resource Efficiency & ROI)
+    let roiScore = 50;
     const earlySubskills = subskillArr.slice(0, 2);
-    if ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') && earlySubskills.indexOf('樹果數量S') !== -1) roiScore += 25;
+    if ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') && earlySubskills.indexOf('樹果數量S') !== -1) roiScore += 24;
     if ((specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') && earlySubskills.indexOf('食材機率提升M') !== -1) roiScore += 22;
     if ((specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') && earlySubskills.indexOf('技能機率提升M') !== -1) roiScore += 22;
     if (earlySubskills.indexOf('幫手獎勵') !== -1 || earlySubskills.indexOf('幫忙速度M') !== -1) roiScore += 12;
+    if (currentLv >= 30) roiScore += 6;
+    if (currentLv >= 50) roiScore += 6;
     if (nature.buffType === 'exp') roiScore += 8;
     if (nature.debuffType === 'exp') roiScore -= 8;
     roiScore = Math.min(Math.max(Math.round(roiScore), 20), 100);
@@ -255,68 +290,80 @@
       gradeColor = '#ef4444';
     }
 
-    // 深度優點與缺點分析 (Pros & Cons)
+    // 深度優點與缺點分析 (Pros & Cons, 嚴格遵守全域 Zero Emoji 規範)
     const pros = [];
     const cons = [];
 
-    if (hasBFS) {
+    const hasBFSInTotal = subskillArr.indexOf('樹果數量S') !== -1;
+    if (hasBFSInTotal) {
+      const isBFSUnlocked = currentLv >= (slotLevels[bfsIdx] || 10);
       pros.push(isEN
-        ? `✨ Equipped with God-tier sub-skill "Berry Finding S" (${bfsIdx <= 1 ? 'Early Lv.10/25 unlock, immense power' : 'Late unlock'}), +1 berry per help.`
-        : '✨ 擁有神技「樹果數量S」(' + (bfsIdx <= 1 ? 'Lv.10/25 早期解鎖，極度強勢' : '後期解鎖') + ')，樹果產能躍升 +1 個。');
+        ? `[★] Equipped with God-tier sub-skill "Berry Finding S" (${isBFSUnlocked ? (bfsIdx <= 1 ? 'Early Lv.10/25 unlocked' : 'Unlocked') : 'Unlocks at Lv.' + slotLevels[bfsIdx]}), +1 berry per help.`
+        : '[★] 擁有神技「樹果數量S」(' + (isBFSUnlocked ? (bfsIdx <= 1 ? 'Lv.10/25 早期解鎖，極度強勢' : '已解鎖') : 'Lv.' + slotLevels[bfsIdx] + ' 解鎖') + ')，樹果產能躍升 +1 個。');
     } else if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
       cons.push(isEN
-        ? '⚠️ Berry specialist without "Berry Finding S", ceiling is below top meta.'
-        : '⚠️ 樹果型專長未配置「樹果數量S」，上限與產能較難與頂標相比。');
+        ? '[!] Berry specialist without "Berry Finding S", ceiling is below top meta.'
+        : '[!] 樹果型專長未配置「樹果數量S」，上限與產能較難與頂標相比。');
     }
 
-    if (hasIngM) {
+    const hasIngMInTotal = subskillArr.indexOf('食材機率提升M') !== -1;
+    if (hasIngMInTotal) {
+      const isIngMUnlocked = currentLv >= (slotLevels[ingMIdx] || 10);
       pros.push(isEN
-        ? `🍲 Features "Ingredient Finder M" (${ingMIdx <= 1 ? 'Early unlock powers recipes quickly' : 'Late unlock'}), greatly stabilizing ingredient supply.`
-        : '🍲 具備「食材機率提升M」(' + (ingMIdx <= 1 ? '前中期即可發力' : '後期解鎖') + ')，大幅提升料理食材供貨穩定度。');
+        ? `[+] Features "Ingredient Finder M" (${isIngMUnlocked ? (ingMIdx <= 1 ? 'Early unlock powers recipes quickly' : 'Unlocked') : 'Unlocks at Lv.' + slotLevels[ingMIdx]}), greatly stabilizing ingredient supply.`
+        : '[+] 具備「食材機率提升M」(' + (isIngMUnlocked ? (ingMIdx <= 1 ? '前中期即可發力' : '已解鎖') : 'Lv.' + slotLevels[ingMIdx] + ' 解鎖') + ')，大幅提升料理食材供貨穩定度。');
     }
 
-    if (hasSkillM) {
+    const hasSkillMInTotal = subskillArr.indexOf('技能機率提升M') !== -1;
+    if (hasSkillMInTotal) {
+      const isSkillMUnlocked = currentLv >= (slotLevels[skillMIdx] || 10);
       pros.push(isEN
-        ? '⚡ Features "Skill Trigger M", significantly raising main skill activation frequency.'
-        : '⚡ 擁有「技能機率提升M」，主技能發動頻率顯著提高。');
+        ? `[+] Features "Skill Trigger M" (${isSkillMUnlocked ? 'Unlocked' : 'Unlocks at Lv.' + slotLevels[skillMIdx]}), significantly raising main skill activation frequency.`
+        : '[+] 擁有「技能機率提升M」(' + (isSkillMUnlocked ? '已解鎖' : 'Lv.' + slotLevels[skillMIdx] + ' 解鎖') + ')，主技能發動頻率顯著提高。');
     }
 
     if (subskillArr.indexOf('幫手獎勵') !== -1) {
       pros.push(isEN
-        ? '🤝 Features top-tier team aura "Helping Bonus", reducing team helping time by 5%.'
-        : '🤝 具備全隊頂級光環「幫手獎勵」，全員幫忙時間縮短 5%。');
+        ? '[+] Features top-tier team aura "Helping Bonus", reducing team helping time by 5%.'
+        : '[+] 具備全隊頂級光環「幫手獎勵」，全員幫忙時間縮短 5%。');
     }
 
     if (subskillArr.indexOf('幫忙速度M') !== -1) {
       pros.push(isEN
-        ? '⚡ Features "Helping Speed M", shortening self helping interval by 14%.'
-        : '⚡ 擁有「幫忙速度M」，自身幫忙間隔縮短 14%。');
+        ? '[+] Features "Helping Speed M", shortening self helping interval by 14%.'
+        : '[+] 擁有「幫忙速度M」，自身幫忙間隔縮短 14%。');
+    }
+
+    if (skillLevel >= 6) {
+      pros.push(isEN
+        ? `[★] High Main Skill Level (Lv.${skillLevel}), maximizing main skill trigger output.`
+        : `[★] 主技能等級達到 Lv.${skillLevel}，技能單次發動效益已達極限。`);
     }
 
     if (nature.buffType === 'speed') {
       pros.push(isEN
-        ? `🚀 Nature "${natDisplayName}" provides Speed of Help ▲ (+10%), boosting all production.`
-        : '🚀 性格「' + natureName + '」帶來幫忙速度▲ (+10%)，強化所有產出判定。');
+        ? `[+] Nature "${natDisplayName}" provides Speed of Help ▲ (+10%), boosting all production.`
+        : '[+] 性格「' + natureName + '」帶來幫忙速度▲ (+10%)，強化所有產出判定。');
     } else if (nature.debuffType === 'speed') {
       cons.push(isEN
-        ? `⚠️ Nature "${natDisplayName}" reduces Speed of Help ▼ (-7.5%), slightly impacting output.`
-        : '⚠️ 性格「' + natureName + '」幫忙速度▼ (-7.5%)，對全方位產出有微幅負面影響。');
+        ? `[-] Nature "${natDisplayName}" reduces Speed of Help ▼ (-7.5%), slightly impacting output.`
+        : '[-] 性格「' + natureName + '」幫忙速度▼ (-7.5%)，對全方位產出有微幅負面影響。');
     }
 
     if (nature.buffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
       pros.push(isEN
-        ? `🥩 Nature "${natDisplayName}" perfectly synergizes with Ingredient specialty (Ingredient Finder ▲ +20%).`
-        : '🥩 性格「' + natureName + '」完美契合食材型專長 (食材發現率▲ +20%)。');
+        ? `[+] Nature "${natDisplayName}" perfectly synergizes with Ingredient specialty (Ingredient Finder ▲ +20%).`
+        : '[+] 性格「' + natureName + '」完美契合食材型專長 (食材發現率▲ +20%)。');
     } else if (nature.debuffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
       cons.push(isEN
-        ? `❌ Nature "${natDisplayName}" reduces Ingredient Finding ▼ (-20%), severely weakening specialty advantage.`
-        : '❌ 性格「' + natureName + '」導致食材發現率▼ (-20%)，嚴重削弱食材專長優勢。');
+        ? `[-] Nature "${natDisplayName}" reduces Ingredient Finding ▼ (-20%), severely weakening specialty advantage.`
+        : '[-] 性格「' + natureName + '」導致食材發現率▼ (-20%)，嚴重削弱食材專長優勢。');
     }
 
     if (nature.buffType === 'skill' && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
       pros.push(isEN
-        ? `💖 Nature "${natDisplayName}" perfectly matches Skill specialty (Main Skill Trigger ▲ +20%).`
-        : '💖 性格「' + natureName + '」完美契合技能型專長 (主技能發動率▲ +20%)。');
+        ? `[+] Nature "${natDisplayName}" perfectly matches Skill specialty (Main Skill Trigger ▲ +20%).`
+        : '[+] 性格「' + natureName + '」完美契合技能型專長 (主技能發動率▲ +20%)。');
     }
 
     if (ribbonBonus.level > 0) {
@@ -335,8 +382,8 @@
 
     if (pros.length === 0) {
       pros.push(isEN
-        ? '💡 Well-balanced stats, suitable as a reliable placeholder support.'
-        : '💡 數值均衡，適合作為過渡期日常隊伍輔助成員。');
+        ? '[*] Well-balanced stats, suitable as a reliable placeholder support.'
+        : '[*] 數值均衡，適合作為過渡期日常隊伍輔助成員。');
     }
 
     // 升級消耗計算
@@ -406,10 +453,11 @@
     width = width || 340;
     height = height || 320;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCompact = width <= 250;
     const SIX_DIM_META = getSixDimMeta(isEN);
     const cx = width / 2;
     const cy = (height / 2) + 2;
-    const r = Math.min(width, height) / 2 - 58;
+    const r = Math.min(width, height) / 2 - (isCompact ? 34 : 58);
 
     const scoreKeys = ['berry', 'ingredient', 'skill', 'speed', 'growth', 'roi'];
     const angles = SIX_DIM_META.map(function (m) { return m.angle; });
@@ -448,37 +496,43 @@
       let lx = cx;
       let ly = cy;
       let textAnchor = 'middle';
+      const sideOffset = isCompact ? 6 : 10;
 
       if (i === 0) { // Top (樹果產能)
         lx = cx;
-        ly = cy - r - 22;
+        ly = cy - r - (isCompact ? 16 : 22);
         textAnchor = 'middle';
       } else if (i === 1) { // Top-Right (食材產能)
-        lx = cx + r * Math.cos(angles[i]) + 10;
-        ly = cy + r * Math.sin(angles[i]) - 8;
+        lx = cx + r * Math.cos(angles[i]) + sideOffset;
+        ly = cy + r * Math.sin(angles[i]) - (isCompact ? 5 : 8);
         textAnchor = 'start';
       } else if (i === 2) { // Bottom-Right (技能強度)
-        lx = cx + r * Math.cos(angles[i]) + 10;
-        ly = cy + r * Math.sin(angles[i]) + 4;
+        lx = cx + r * Math.cos(angles[i]) + sideOffset;
+        ly = cy + r * Math.sin(angles[i]) + (isCompact ? 3 : 4);
         textAnchor = 'start';
       } else if (i === 3) { // Bottom (幫忙速度)
         lx = cx;
-        ly = cy + r + 18;
+        ly = cy + r + (isCompact ? 14 : 18);
         textAnchor = 'middle';
       } else if (i === 4) { // Bottom-Left (後期成長)
-        lx = cx + r * Math.cos(angles[i]) - 10;
-        ly = cy + r * Math.sin(angles[i]) + 4;
+        lx = cx + r * Math.cos(angles[i]) - sideOffset;
+        ly = cy + r * Math.sin(angles[i]) + (isCompact ? 3 : 4);
         textAnchor = 'end';
       } else if (i === 5) { // Top-Left (資源效益)
-        lx = cx + r * Math.cos(angles[i]) - 10;
-        ly = cy + r * Math.sin(angles[i]) - 8;
+        lx = cx + r * Math.cos(angles[i]) - sideOffset;
+        ly = cy + r * Math.sin(angles[i]) - (isCompact ? 5 : 8);
         textAnchor = 'end';
       }
 
-      return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="4.5" fill="#38bdf8" stroke="#ffffff" stroke-width="1.5" />' +
+      const dotR = isCompact ? '3.5' : '4.5';
+      const labelFontSize = isCompact ? '9.5' : '11.5';
+      const scoreFontSize = isCompact ? '9' : '11';
+      const scoreDy = isCompact ? '11' : '13';
+
+      return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + dotR + '" fill="#38bdf8" stroke="#ffffff" stroke-width="1.5" />' +
              '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="' + textAnchor + '" class="radar-label">' +
-             '<tspan x="' + lx.toFixed(1) + '" dy="0" fill="var(--text-primary)" font-size="11.5" font-weight="700">' + p.meta.label + '</tspan>' +
-             '<tspan x="' + lx.toFixed(1) + '" dy="13" fill="#38bdf8" font-size="11" font-weight="800">' + p.score + (isEN ? ' pts' : ' 分') + '</tspan>' +
+             '<tspan x="' + lx.toFixed(1) + '" dy="0" fill="var(--text-primary)" font-size="' + labelFontSize + '" font-weight="700">' + p.meta.label + '</tspan>' +
+             '<tspan x="' + lx.toFixed(1) + '" dy="' + scoreDy + '" fill="#38bdf8" font-size="' + scoreFontSize + '" font-weight="800">' + p.score + (isEN ? ' pts' : ' 分') + '</tspan>' +
              '</text>';
     }).join('');
 
@@ -513,11 +567,9 @@
       pkmData = window.allPokemons.find(function(p) { return p.name_cn === pkmOrBoxItem.name || p.id === pkmOrBoxItem.pkmId; });
     }
 
-    if (!pkmData && window.allPokemons && window.allPokemons[0]) {
-      pkmData = window.allPokemons[0];
-    }
+    let skillLevel = parseInt(pkmOrBoxItem.skillLevel || pkmOrBoxItem.skill_level || 1, 10) || 1;
 
-    const evaluation = evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel);
+    const evaluation = evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel);
     if (!evaluation) return;
 
     let modal = document.getElementById('modal-appraisal-report');
