@@ -6255,6 +6255,173 @@ test('Tier 4 - Real-World Application Scenarios', 'Data Engine: Intelligent Retr
   assert(appIndexHtml.includes('[!]'), 'app/index.html must use [!] text icon');
 });
 
+test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal Modal: Open on Avatar Click, 6D Radar Appraisal, Dynamic Formula Breakdown & Ingredient Customization', () => {
+  const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+  const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+  const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+
+  // 1. Verify i18n keys for modal and formulas in both zh-TW and en-US
+  assert(i18nJs.includes('appraisal_modal_title'), 'i18n.js must define appraisal_modal_title');
+  assert(i18nJs.includes('base_stats'), 'i18n.js must define base_stats');
+  assert(i18nJs.includes('formula_title'), 'i18n.js must define formula_title');
+  assert(i18nJs.includes('final_ing_rate'), 'i18n.js must define final_ing_rate');
+  assert(i18nJs.includes('daily_helps'), 'i18n.js must define daily_helps');
+  assert(i18nJs.includes('daily_ing_yield'), 'i18n.js must define daily_ing_yield');
+  assert(i18nJs.includes('preset_god'), 'i18n.js must define preset_god');
+  assert(i18nJs.includes('preset_reset'), 'i18n.js must define preset_reset');
+
+  // 2. Verify Card and Table markup includes onclick trigger on avatars
+  assert(appJs.includes("openPokemonDetailModal('${p.id}')"), 'app.js renderCard/renderTable must attach openPokemonDetailModal to avatars');
+
+  // 3. Setup mock DOM and window environment
+  const mockElements = new Map();
+
+  global.window = {
+    PokemonApp,
+    I18N: {
+      getLanguage: () => 'zh-TW',
+      t: (k, def) => def,
+      getTypeName: (t) => t,
+      getTypeIconSvg: () => '',
+      getSpecialtyName: (s) => s,
+      getBerryName: (b) => b,
+      getIngredientName: (i) => i
+    },
+    AppraisalLab: {
+      evaluatePokemon: (pkm, level, nature, subskills, ings, ribbon) => ({
+        compositeScore: 85,
+        grade: 'S',
+        gradeTitle: '頂級戰力 (Top Tier)',
+        gradeColor: '#f59e0b',
+        scores: { berry: 80, ingredient: 90, skill: 85, speed: 85, growth: 80, roi: 85 }
+      }),
+      renderRadarChartSVG: () => '<svg class="mock-radar"></svg>',
+      getRemainingEvolutions: () => 0,
+      getRibbonBonus: () => ({ speedDiscount: 0.11 })
+    }
+  };
+  global.window.window = global.window;
+
+  global.document = {
+    defaultView: global.window,
+    body: {
+      style: {},
+      appendChild: (el) => {
+        if (el.id) mockElements.set(el.id, el);
+      }
+    },
+    getElementById: (id) => {
+      return mockElements.get(id) || null;
+    },
+    querySelector: (sel) => {
+      if (sel === '.verdict-grade') return { textContent: '', style: {} };
+      if (sel === '.verdict-title') return { textContent: '' };
+      if (sel === '.verdict-num') return { textContent: '' };
+      if (sel === '.pokedex-appraisal-verdict-box') return { style: {} };
+      if (sel === '.pokedex-radar-wrapper') return { innerHTML: '' };
+      if (sel === '.pokedex-val-badge') return { textContent: '' };
+      return null;
+    },
+    querySelectorAll: (sel) => {
+      return [];
+    },
+    createElement: (tag) => {
+      const el = {
+        tagName: tag.toUpperCase(),
+        id: '',
+        className: '',
+        style: {},
+        innerHTML: '',
+        classList: {
+          contains: () => false,
+          add: () => {},
+          remove: () => {}
+        }
+      };
+      return el;
+    }
+  };
+
+  // Initialize PokemonApp with dataset
+  PokemonApp.init([...dataset]);
+
+  // 4. Test opening Venusaur (003) detail modal
+  assert(typeof PokemonApp.openPokemonDetailModal === 'function', 'openPokemonDetailModal must be exported');
+  PokemonApp.openPokemonDetailModal('003');
+
+  const modalEl = mockElements.get('pokedex-detail-modal');
+  assert(modalEl !== null, 'pokedex-detail-modal must exist after openPokemonDetailModal');
+  assertEquals(modalEl.style.display, 'flex', 'Modal display style must be flex when opened');
+  assert(modalEl.innerHTML.includes('pokedex-modal-dialog'), 'Modal HTML must contain pokedex-modal-dialog');
+  assert(modalEl.innerHTML.includes('妙蛙花'), 'Modal HTML must display Pokemon name (妙蛙花)');
+  assert(modalEl.innerHTML.includes('基礎數值'), 'Modal HTML must include base stats section');
+  assert(modalEl.innerHTML.includes('客製化模擬設定'), 'Modal HTML must include custom configuration controls');
+  assert(modalEl.innerHTML.includes('食材產能算法拆解'), 'Modal HTML must include ingredient formula breakdown card');
+  assert(modalEl.innerHTML.includes('pokedex-custom-select'), 'Modal HTML must use custom select dropdowns');
+
+  // 5. Test ingredient calculation engine
+  assert(typeof PokemonApp.calculatePokedexIngredientFormulas === 'function', 'calculatePokedexIngredientFormulas must be exported');
+  const formulas = PokemonApp.calculatePokedexIngredientFormulas();
+  assert(formulas !== null, 'Formulas must return valid calculation results');
+  assert(formulas.baseIngRate > 20, 'Venusaur base ingredient rate must be > 20%');
+  assert(formulas.effectiveIntervalSec > 0, 'Effective interval must be positive');
+  assert(formulas.dailyHelps > 0, 'Daily helps must be positive');
+  assert(formulas.dailyIngDrops > 0, 'Daily ingredient drops must be positive');
+  assert(formulas.totalDailyIngredients > 0, 'Total daily ingredients yield must be positive');
+  assertEquals(formulas.unlockedSlotCount, 2, 'At default Lv.30, unlockedSlotCount must be 2');
+
+  // 6. Test Nature modifiers on ingredient rate
+  PokemonApp.setPokedexModalNature('坦率'); // Neutral
+  const neutralFormulas = PokemonApp.calculatePokedexIngredientFormulas();
+  assertEquals(neutralFormulas.natureIngMult, 1.0, 'Neutral nature must have 1.0x multiplier');
+
+  PokemonApp.setPokedexModalNature('冷靜'); // +Ingredient
+  const quietFormulas = PokemonApp.calculatePokedexIngredientFormulas();
+  assertEquals(quietFormulas.natureIngMult, 1.2, 'Quiet nature (+Ing) must have 1.2x multiplier');
+  assert(quietFormulas.finalIngRate > neutralFormulas.finalIngRate, 'Quiet nature must produce higher final ingredient rate than neutral');
+
+  PokemonApp.setPokedexModalNature('爽朗'); // -Ingredient
+  const jollyFormulas = PokemonApp.calculatePokedexIngredientFormulas();
+  assertEquals(jollyFormulas.natureIngMult, 0.8, 'Jolly nature (-Ing) must have 0.8x multiplier');
+  assert(jollyFormulas.finalIngRate < neutralFormulas.finalIngRate, 'Jolly nature must produce lower final ingredient rate than neutral');
+
+  // 7. Test God Preset & Reset Preset
+  PokemonApp.applyPokedexGodPreset();
+  const godFormulas = PokemonApp.calculatePokedexIngredientFormulas();
+  assertEquals(godFormulas.natureIngMult, 1.2, 'God preset for ingredient Pokemon must set Quiet (+Ing) nature');
+  assertEquals(godFormulas.subskillIngBonus, 54, 'God preset must activate Subskills M (+36%) + S (+18%) = +54%');
+  assert(godFormulas.finalIngRate > quietFormulas.finalIngRate, 'God preset must achieve peak final ingredient rate');
+
+  PokemonApp.applyPokedexResetPreset();
+  const resetFormulas = PokemonApp.calculatePokedexIngredientFormulas();
+  assertEquals(resetFormulas.natureIngMult, 1.0, 'Reset preset must set neutral nature (1.0x)');
+  assertEquals(resetFormulas.subskillIngBonus, 0, 'Reset preset must reset subskill ingredient bonus to 0%');
+
+  // 8. Test Skill-type Pokemon with Magnet S / Draw S (e.g. Golbat 042)
+  PokemonApp.openPokemonDetailModal('042');
+  const skillFormulas = PokemonApp.calculatePokedexIngredientFormulas();
+  if (skillFormulas && skillFormulas.mainSkillLabel) {
+    assert(skillFormulas.mainSkillExtraDaily >= 0, 'Skill Pokemon main skill extra daily yield must be calculated');
+  }
+
+  // 9. Test modal close
+  assert(typeof PokemonApp.closePokemonDetailModal === 'function', 'closePokemonDetailModal must be exported');
+  PokemonApp.closePokemonDetailModal();
+  assertEquals(modalEl.style.display, 'none', 'Modal display style must be none when closed');
+
+  // 10. Verify CSS Rule Compliance: Single Outer Frame, Dropdown Arrow Indentation, Zero Emoji
+  assert(stylesCss.includes('#pokedex-detail-modal'), 'styles.css must style #pokedex-detail-modal');
+  assert(stylesCss.includes('.pokedex-controls-container'), 'styles.css must contain .pokedex-controls-container');
+  assert(stylesCss.includes('.pokedex-calc-formula-card'), 'styles.css must contain .pokedex-calc-formula-card');
+  assert(stylesCss.includes('padding-right: 36px !important;'), 'styles.css must enforce 36px padding-right on select arrows');
+  assert(stylesCss.includes('background-position: right 18px center !important;'), 'styles.css must enforce right 18px arrow position');
+  assert(stylesCss.includes('border: none !important;'), 'styles.css must enforce border: none on outer containers');
+  assert(stylesCss.includes('background: transparent !important;'), 'styles.css must enforce transparent background on outer containers');
+
+  // 11. Zero Emoji check in modal templates
+  assert(!modalEl.innerHTML.includes('🔥') && !modalEl.innerHTML.includes('⭐') && !modalEl.innerHTML.includes('✨'), 'Modal HTML must not contain emojis');
+});
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

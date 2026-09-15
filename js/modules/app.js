@@ -1761,6 +1761,7 @@ if (typeof document !== 'undefined') {
       const VALID_BOX_SUBTABS = ['list', 'lab'];
 
       function switchMainTab(target) {
+        if (target === 'pokedex') target = 'pokemon';
         if (!VALID_MAIN_TABS.includes(target)) target = 'pokemon';
         try {
           const storage = getStorage();
@@ -2026,7 +2027,8 @@ if (typeof document !== 'undefined') {
       window.addEventListener('hashchange', () => {
         const rawHash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
         const parts = rawHash.split(/[/_?]/);
-        const main = parts[0];
+        let main = parts[0];
+        if (main === 'pokedex') main = 'pokemon';
         const sub = parts[1];
         if (VALID_MAIN_TABS.includes(main)) {
           const storage = getStorage();
@@ -2044,7 +2046,8 @@ if (typeof document !== 'undefined') {
       // 依網址 hash 或 localStorage 載入預設 tab 與子 tab
       const rawHash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
       const parts = rawHash.split(/[/_?]/);
-      const mainFromHash = parts[0];
+      let mainFromHash = parts[0];
+      if (mainFromHash === 'pokedex') mainFromHash = 'pokemon';
       const subFromHash = parts[1];
 
       let savedMainTab = null;
@@ -2824,8 +2827,8 @@ if (typeof document !== 'undefined') {
             return `
             <div class="pokemon-card">
               <div class="card-header">
-                ${iconUrl ? `<img class="pokemon-icon" src="${iconUrl}" alt="${pkmName}" loading="lazy" onerror="this.style.display='none';">` : ''}
-                <div class="card-title-group">
+                ${iconUrl ? `<img class="pokemon-icon" src="${iconUrl}" alt="${pkmName}" loading="lazy" onerror="this.style.display='none';" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">` : ''}
+                <div class="card-title-group" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">
                   <div class="pokemon-no">No.${p.formatted_no}</div>
                   <div class="pokemon-name" style="white-space:nowrap;">${pkmName}</div>
                   ${!isEN && p.name_en ? `<div class="pokemon-name-en" style="white-space:nowrap;">${p.name_en}</div>` : ''}
@@ -2922,9 +2925,9 @@ if (typeof document !== 'undefined') {
                 <tr>
                   ${isShowNo ? `<td class="td-no">${p.formatted_no}</td>` : ''}
                   <td class="td-icon">
-                    ${iconUrl ? `<img src="${iconUrl}" width="34" height="34" class="table-icon" alt="${pkmName}" title="${pkmName}" loading="lazy" onerror="this.style.display='none';">` : ''}
+                    ${iconUrl ? `<img src="${iconUrl}" width="34" height="34" class="table-icon" alt="${pkmName}" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}" loading="lazy" onerror="this.style.display='none';" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;">` : ''}
                   </td>
-                  <td class="td-name pokemon-name-cell">${pkmName}</td>
+                  <td class="td-name pokemon-name-cell" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">${pkmName}</td>
                   <td class="td-berry">${berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}" loading="lazy" onerror="this.style.display='none';">` : `<span class="berry-name-text">${berryName}</span>`}</td>
                   <td class="td-spec">${specName}</td>
                   <td class="td-carry">${p.carry || '--'}</td>
@@ -3262,6 +3265,787 @@ if (typeof document !== 'undefined') {
     PokemonApp.initBackToTop = initBackToTop;
     PokemonApp.initPullToRefresh = initPullToRefresh;
   });
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   圖鑑寶可夢懸浮窗：自訂副技能評測、六維強度評分與食材加成算法展示
+   (Pokédex Detail & Appraisal Modal with Real-time Ingredient Breakdown)
+   ═════════════════════════════════════════════════════════════════════════ */
+
+const POKEDEX_MODAL_NATURES = [
+  { name: '坦率', name_en: 'Hardy', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '', buffType: 'none', debuffType: 'none' },
+  { name: '孤僻', name_en: 'Lonely', buff: '幫忙速度▲', buff_en: 'Speed ▲', debuff: '活力回復量▼', debuff_en: 'Energy ▼', buffType: 'speed', debuffType: 'energy' },
+  { name: '勇敢', name_en: 'Brave', buff: '幫忙速度▲', buff_en: 'Speed ▲', debuff: 'EXP獲得量▼', debuff_en: 'EXP ▼', buffType: 'speed', debuffType: 'exp' },
+  { name: '固執', name_en: 'Adamant', buff: '幫忙速度▲', buff_en: 'Speed ▲', debuff: '食材機率▼', debuff_en: 'Ingr. ▼', buffType: 'speed', debuffType: 'ingredient' },
+  { name: '頑皮', name_en: 'Naughty', buff: '幫忙速度▲', buff_en: 'Speed ▲', debuff: '主技能發動機率▼', debuff_en: 'Skill ▼', buffType: 'speed', debuffType: 'skill' },
+  { name: '大膽', name_en: 'Bold', buff: '活力回復量▲', buff_en: 'Energy ▲', debuff: '幫忙速度▼', debuff_en: 'Speed ▼', buffType: 'energy', debuffType: 'speed' },
+  { name: '淘氣', name_en: 'Impish', buff: '活力回復量▲', buff_en: 'Energy ▲', debuff: '食材機率▼', debuff_en: 'Ingr. ▼', buffType: 'energy', debuffType: 'ingredient' },
+  { name: '樂天', name_en: 'Lax', buff: '活力回復量▲', buff_en: 'Energy ▲', debuff: '主技能發動機率▼', debuff_en: 'Skill ▼', buffType: 'energy', debuffType: 'skill' },
+  { name: '內斂', name_en: 'Modest', buff: '食材機率▲', buff_en: 'Ingr. ▲', debuff: '幫忙速度▼', debuff_en: 'Speed ▼', buffType: 'ingredient', debuffType: 'speed' },
+  { name: '慢吞吞', name_en: 'Mild', buff: '食材機率▲', buff_en: 'Ingr. ▲', debuff: '活力回復量▼', debuff_en: 'Energy ▼', buffType: 'ingredient', debuffType: 'energy' },
+  { name: '冷靜', name_en: 'Quiet', buff: '食材機率▲', buff_en: 'Ingr. ▲', debuff: 'EXP獲得量▼', debuff_en: 'EXP ▼', buffType: 'ingredient', debuffType: 'exp' },
+  { name: '馬虎', name_en: 'Rash', buff: '食材機率▲', buff_en: 'Ingr. ▲', debuff: '主技能發動機率▼', debuff_en: 'Skill ▼', buffType: 'ingredient', debuffType: 'skill' },
+  { name: '溫和', name_en: 'Calm', buff: '主技能發動機率▲', buff_en: 'Skill ▲', debuff: '幫忙速度▼', debuff_en: 'Speed ▼', buffType: 'skill', debuffType: 'speed' },
+  { name: '溫燥', name_en: 'Gentle', buff: '主技能發動機率▲', buff_en: 'Skill ▲', debuff: '活力回復量▼', debuff_en: 'Energy ▼', buffType: 'skill', debuffType: 'energy' },
+  { name: '慎重', name_en: 'Careful', buff: '主技能發動機率▲', buff_en: 'Skill ▲', debuff: '食材機率▼', debuff_en: 'Ingr. ▼', buffType: 'skill', debuffType: 'ingredient' },
+  { name: '浮躁', name_en: 'Sassy', buff: '主技能發動機率▲', buff_en: 'Skill ▲', debuff: 'EXP獲得量▼', debuff_en: 'EXP ▼', buffType: 'skill', debuffType: 'exp' },
+  { name: '膽小', name_en: 'Timid', buff: 'EXP獲得量▲', buff_en: 'EXP ▲', debuff: '幫忙速度▼', debuff_en: 'Speed ▼', buffType: 'exp', debuffType: 'speed' },
+  { name: '爽朗', name_en: 'Jolly', buff: 'EXP獲得量▲', buff_en: 'EXP ▲', debuff: '食材機率▼', debuff_en: 'Ingr. ▼', buffType: 'exp', debuffType: 'ingredient' },
+  { name: '急躁', name_en: 'Hasty', buff: 'EXP獲得量▲', buff_en: 'EXP ▲', debuff: '活力回復量▼', debuff_en: 'Energy ▼', buffType: 'exp', debuffType: 'energy' },
+  { name: '天真', name_en: 'Naive', buff: 'EXP獲得量▲', buff_en: 'EXP ▲', debuff: '主技能發動機率▼', debuff_en: 'Skill ▼', buffType: 'exp', debuffType: 'skill' },
+  { name: '害羞', name_en: 'Bashful', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '', buffType: 'none', debuffType: 'none' },
+  { name: '認真', name_en: 'Docile', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '', buffType: 'none', debuffType: 'none' },
+  { name: '勤奮', name_en: 'Serious', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '', buffType: 'none', debuffType: 'none' },
+  { name: '沉著', name_en: 'Quirky', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '', buffType: 'none', debuffType: 'none' }
+];
+
+const POKEDEX_MODAL_SUBSKILLS = [
+  // 金色技能 (Tier 1 Gold)
+  { name: '樹果數量S', name_en: 'Berry Finding S', tier: 'gold', desc: '幫忙時發現的樹果數量增加1個' },
+  { name: '幫手獎勵', name_en: 'Helping Bonus', tier: 'gold', desc: '隊伍全員的幫忙時間縮短5%' },
+  { name: '睡眠EXP獎勵', name_en: 'Sleep EXP Bonus', tier: 'gold', desc: '睡眠研究獲得的EXP提升14%' },
+  { name: '活力回復獎勵', name_en: 'Energy Recovery Bonus', tier: 'gold', desc: '隊伍全員睡眠活力回復量提升14%' },
+  { name: '夢之碎片獎勵', name_en: 'Dream Shard Bonus', tier: 'gold', desc: '睡眠研究獲得的夢之碎片增加6%' },
+  { name: '研究EXP獎勵', name_en: 'Research EXP Bonus', tier: 'gold', desc: '睡眠研究獲得的研究EXP增加6%' },
+  { name: '技能等級提升M', name_en: 'Skill Level Up M', tier: 'gold', desc: '主技能等級提升2級' },
+  // 藍色技能 (Tier 2 Silver/Blue)
+  { name: '幫忙速度M', name_en: 'Helping Speed M', tier: 'blue', desc: '幫忙時間縮短14%' },
+  { name: '食材機率提升M', name_en: 'Ingredient Finder M', tier: 'blue', desc: '發現食材的機率大幅提升 (+36%)' },
+  { name: '技能機率提升M', name_en: 'Skill Trigger M', tier: 'blue', desc: '發動主技能的機率大幅提升' },
+  { name: '技能等級提升S', name_en: 'Skill Level Up S', tier: 'blue', desc: '主技能等級提升1級' },
+  { name: '持有上限提升L', name_en: 'Inventory Up L', tier: 'blue', desc: '最大持有數量增加18' },
+  { name: '持有上限提升M', name_en: 'Inventory Up M', tier: 'blue', desc: '最大持有數量增加12' },
+  // 白色技能 (Tier 3 White)
+  { name: '幫忙速度S', name_en: 'Helping Speed S', tier: 'white', desc: '幫忙時間縮短7%' },
+  { name: '食材機率提升S', name_en: 'Ingredient Finder S', tier: 'white', desc: '發現食材的機率小幅提升 (+18%)' },
+  { name: '技能機率提升S', name_en: 'Skill Trigger S', tier: 'white', desc: '發動主技能的機率小幅提升' },
+  { name: '持有上限提升S', name_en: 'Inventory Up S', tier: 'white', desc: '最大持有數量增加6' },
+  { name: '活力回復提升S', name_en: 'Energy Recovery Up S', tier: 'white', desc: '自身的活力回復量提升' }
+];
+
+let pokedexModalState = {
+  pkmId: null,
+  pkm: null,
+  level: 30,
+  nature: '坦率',
+  subskills: ['', '', '', '', ''],
+  skillLevel: 1,
+  ribbon: 0,
+  ingSlots: [0, 0, 0] // 0, 1, 2 indices in pkm.ingredients
+};
+
+function getPokedexMainSkillMaxLvl(skillName) {
+  if (!skillName) return 6;
+  if (skillName.includes('能量充填') || skillName.includes('Charge Strength')) return 7;
+  if (skillName.includes('食材獲取') || skillName.includes('Ingredient Magnet')) return 7;
+  if (skillName.includes('食材精選') || skillName.includes('Ingredient Draw')) return 7;
+  if (skillName.includes('夢之碎片') || skillName.includes('Dream Shard')) return 7;
+  if (skillName.includes('料理等級') || skillName.includes('Cooking Power')) return 7;
+  return 6;
+}
+
+function parsePokedexIntervalToSec(intervalStr) {
+  if (!intervalStr || intervalStr === '--') return 3600;
+  const parts = intervalStr.split(':').map(n => parseInt(n, 10) || 0);
+  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  if (parts.length === 2) return parts[0] * 60 + parts[1];
+  return parseInt(intervalStr, 10) || 3600;
+}
+
+function formatPokedexIntervalSec(totalSec) {
+  if (!totalSec || totalSec <= 0) return '00:00';
+  const hrs = Math.floor(totalSec / 3600);
+  const mins = Math.floor((totalSec % 3600) / 60);
+  const secs = totalSec % 60;
+  if (hrs > 0) {
+    return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  }
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+function openPokemonDetailModal(pokemonId) {
+  const pokemons = PokemonApp.allPokemons || window.allPokemons || [];
+  const pkm = pokemons.find(p => String(p.id) === String(pokemonId) || p.formatted_no === pokemonId || p.name_cn === pokemonId || p.name_en === pokemonId);
+  if (!pkm) return;
+
+  pokedexModalState.pkmId = pkm.id;
+  pokedexModalState.pkm = pkm;
+  pokedexModalState.level = 30;
+  pokedexModalState.skillLevel = 1;
+  pokedexModalState.ribbon = 0;
+  pokedexModalState.ingSlots = [0, 0, 0];
+
+  // 根據專長給予智慧推薦預設值
+  const spec = pkm.specialty || '';
+  if (spec.includes('食材') || spec === 'Ingredients') {
+    pokedexModalState.nature = '冷靜';
+    pokedexModalState.subskills = ['食材機率提升M', '幫忙速度M', '食材機率提升S', '持有上限提升L', '幫手獎勵'];
+  } else if (spec.includes('樹果') || spec === 'Berries') {
+    pokedexModalState.nature = '固執';
+    pokedexModalState.subskills = ['樹果數量S', '幫忙速度M', '幫手獎勵', '幫忙速度S', '睡眠EXP獎勵'];
+  } else {
+    pokedexModalState.nature = '溫和';
+    pokedexModalState.subskills = ['技能機率提升M', '技能等級提升M', '幫忙速度M', '技能機率提升S', '幫手獎勵'];
+  }
+
+  let modalEl = document.getElementById('pokedex-detail-modal');
+  if (!modalEl) {
+    modalEl = document.createElement('div');
+    modalEl.id = 'pokedex-detail-modal';
+    modalEl.className = 'pokedex-modal-backdrop';
+    document.body.appendChild(modalEl);
+  }
+
+  modalEl.style.display = 'flex';
+  try { document.body.style.overflow = 'hidden'; } catch (e) {}
+
+  renderPokedexDetailModalContent();
+}
+
+function closePokemonDetailModal() {
+  const modalEl = document.getElementById('pokedex-detail-modal');
+  if (modalEl) {
+    modalEl.style.display = 'none';
+    try { document.body.style.overflow = ''; } catch (e) {}
+  }
+}
+
+function applyPokedexGodPreset() {
+  const pkm = pokedexModalState.pkm;
+  if (!pkm) return;
+  const spec = pkm.specialty || '';
+  pokedexModalState.level = 50;
+  if (spec.includes('食材') || spec === 'Ingredients') {
+    pokedexModalState.nature = '冷靜';
+    pokedexModalState.subskills = ['食材機率提升M', '幫忙速度M', '食材機率提升S', '持有上限提升L', '幫手獎勵'];
+    pokedexModalState.ingSlots = [0, 0, 0];
+  } else if (spec.includes('樹果') || spec === 'Berries') {
+    pokedexModalState.nature = '固執';
+    pokedexModalState.subskills = ['樹果數量S', '幫忙速度M', '幫手獎勵', '幫忙速度S', '睡眠EXP獎勵'];
+  } else {
+    pokedexModalState.nature = '溫和';
+    pokedexModalState.subskills = ['技能機率提升M', '技能等級提升M', '幫忙速度M', '技能機率提升S', '幫手獎勵'];
+    pokedexModalState.skillLevel = getPokedexMainSkillMaxLvl(pkm.main_skill);
+  }
+  renderPokedexDetailModalContent();
+}
+
+function applyPokedexResetPreset() {
+  pokedexModalState.level = 30;
+  pokedexModalState.nature = '坦率';
+  pokedexModalState.subskills = ['', '', '', '', ''];
+  pokedexModalState.skillLevel = 1;
+  pokedexModalState.ribbon = 0;
+  pokedexModalState.ingSlots = [0, 0, 0];
+  renderPokedexDetailModalContent();
+}
+
+function setPokedexModalLevel(val) {
+  pokedexModalState.level = Math.max(1, Math.min(100, parseInt(val, 10) || 1));
+  const numInput = document.getElementById('pokedex-level-input');
+  const slider = document.getElementById('pokedex-level-slider');
+  if (numInput && numInput.value != pokedexModalState.level) numInput.value = pokedexModalState.level;
+  if (slider && slider.value != pokedexModalState.level) slider.value = pokedexModalState.level;
+  updatePokedexModalAppraisalLive();
+}
+
+function setPokedexModalNature(val) {
+  pokedexModalState.nature = val || '坦率';
+  updatePokedexModalAppraisalLive();
+}
+
+function setPokedexModalSubskill(idx, val) {
+  pokedexModalState.subskills[idx] = val || '';
+  updatePokedexModalAppraisalLive();
+}
+
+function setPokedexModalSkillLevel(val) {
+  pokedexModalState.skillLevel = parseInt(val, 10) || 1;
+  updatePokedexModalAppraisalLive();
+}
+
+function setPokedexModalRibbon(val) {
+  pokedexModalState.ribbon = parseInt(val, 10) || 0;
+  updatePokedexModalAppraisalLive();
+}
+
+function setPokedexModalIng(slotIdx, val) {
+  pokedexModalState.ingSlots[slotIdx] = parseInt(val, 10) || 0;
+  updatePokedexModalAppraisalLive();
+}
+
+function calculatePokedexIngredientFormulas() {
+  const pkm = pokedexModalState.pkm;
+  if (!pkm) return null;
+
+  const currentLevel = pokedexModalState.level;
+  const currentNature = pokedexModalState.nature;
+  const subskills = pokedexModalState.subskills;
+  const ribbon = pokedexModalState.ribbon;
+  const skillLevel = pokedexModalState.skillLevel;
+  const ingSlots = pokedexModalState.ingSlots;
+
+  const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+  const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+
+  // 1. 基礎數值
+  const baseIngRate = parseFloat(pkm.ingredient_rate || '0') || 20.0;
+  const baseSkillRate = parseFloat(pkm.skill_rate || '0') || 2.0;
+  const baseIntervalSec = parsePokedexIntervalToSec(pkm.interval);
+
+  // 2. 副技能加成判定 (Lv.10, Lv.25, Lv.50, Lv.70, Lv.80)
+  const slotLevels = [10, 25, 50, 70, 80];
+  let subskillIngBonus = 0;
+  let subskillSpeedBonus = 0;
+  let subskillSkillBonus = 0;
+  const activeSubskillNames = [];
+
+  subskills.forEach((sName, idx) => {
+    if (!sName) return;
+    const isUnlocked = currentLevel >= slotLevels[idx];
+    if (isUnlocked) {
+      activeSubskillNames.push(sName);
+      if (sName === '食材機率提升M') subskillIngBonus += 36;
+      if (sName === '食材機率提升S') subskillIngBonus += 18;
+      if (sName === '幫忙速度M') subskillSpeedBonus += 14;
+      if (sName === '幫忙速度S') subskillSpeedBonus += 7;
+      if (sName === '幫手獎勵') subskillSpeedBonus += 5;
+      if (sName === '技能機率提升M') subskillSkillBonus += 36;
+      if (sName === '技能機率提升S') subskillSkillBonus += 18;
+    }
+  });
+
+  // 3. 性格修正
+  const natureObj = POKEDEX_MODAL_NATURES.find(n => n.name === currentNature) || { buffType: 'none', debuffType: 'none' };
+  let natureIngMult = 1.0;
+  if (natureObj.buffType === 'ingredient') natureIngMult = 1.20;
+  else if (natureObj.debuffType === 'ingredient') natureIngMult = 0.80;
+
+  let natureSpeedMult = 1.0;
+  if (natureObj.buffType === 'speed') natureSpeedMult = 0.9090909;
+  else if (natureObj.debuffType === 'speed') natureSpeedMult = 1.10;
+
+  let natureSkillMult = 1.0;
+  if (natureObj.buffType === 'skill') natureSkillMult = 1.20;
+  else if (natureObj.debuffType === 'skill') natureSkillMult = 0.80;
+
+  // 4. 最終食材發動率
+  const finalIngRate = baseIngRate * (1 + subskillIngBonus / 100) * natureIngMult;
+
+  // 5. 幫忙速度與每日幫忙次數
+  const levelSpeedDiscount = (currentLevel - 1) * 0.002;
+  const speedReduction = Math.min(0.35, subskillSpeedBonus / 100);
+
+  let ribbonDiscount = 0;
+  if (ribbon > 0 && window.AppraisalLab && typeof window.AppraisalLab.getRibbonBonus === 'function') {
+    const remEvos = window.AppraisalLab.getRemainingEvolutions(pkm);
+    const rBonus = window.AppraisalLab.getRibbonBonus(ribbon, remEvos);
+    ribbonDiscount = rBonus.speedDiscount || 0;
+  }
+
+  const effectiveIntervalSec = Math.max(600, Math.round(baseIntervalSec * (1 - levelSpeedDiscount) * (1 - speedReduction) * natureSpeedMult * (1 - ribbonDiscount)));
+  const dailyHelps = 86400 / effectiveIntervalSec;
+  const dailyIngDrops = dailyHelps * (finalIngRate / 100);
+
+  // 6. 各槽位食材掉落計算
+  const ingredientsList = pkm.ingredients || [];
+  let unlockedSlotCount = 1;
+  if (currentLevel >= 60) unlockedSlotCount = 3;
+  else if (currentLevel >= 30) unlockedSlotCount = 2;
+
+  const activeIngredientDetails = [];
+  const summaryYieldMap = new Map();
+
+  for (let s = 0; s < unlockedSlotCount; s++) {
+    const ingChoiceIdx = ingSlots[s] || 0;
+    const ingData = ingredientsList[ingChoiceIdx] || ingredientsList[0] || { name: '甜甜蜜', icon: '' };
+    let count = 1;
+    if (s === 0) count = parseInt(ingData.l1 || 1, 10);
+    else if (s === 1) count = parseInt(ingData.l30 || ingData.l1 || 1, 10);
+    else if (s === 2) count = parseInt(ingData.l60 || ingData.l30 || ingData.l1 || 1, 10);
+
+    const ingName = isEN ? (window.I18N ? window.I18N.getIngredientName(ingData.name) : ingData.name) : ingData.name;
+    const ingDailyCount = (dailyIngDrops * (count / unlockedSlotCount));
+
+    activeIngredientDetails.push({
+      slot: s + 1,
+      name: ingName,
+      rawName: ingData.name,
+      icon: ingData.icon || '',
+      count: count,
+      dailyYield: ingDailyCount
+    });
+
+    const prev = summaryYieldMap.get(ingData.name) || { name: ingName, icon: ingData.icon || '', daily: 0 };
+    prev.daily += ingDailyCount;
+    summaryYieldMap.set(ingData.name, prev);
+  }
+
+  let totalDailyIngredients = 0;
+  summaryYieldMap.forEach(item => {
+    totalDailyIngredients += item.daily;
+  });
+
+  // 7. 主技能附加期望
+  let mainSkillExtraDaily = 0;
+  let mainSkillLabel = '';
+  const finalSkillRate = baseSkillRate * (1 + subskillSkillBonus / 100) * natureSkillMult;
+  const dailyTriggers = dailyHelps * (finalSkillRate / 100);
+
+  if (pkm.main_skill && (pkm.main_skill.includes('食材獲取') || pkm.main_skill.includes('Ingredient Magnet'))) {
+    const magnetTable = [6, 8, 11, 14, 17, 21, 24];
+    const dropPerTrig = magnetTable[Math.min(skillLevel - 1, magnetTable.length - 1)] || 6;
+    mainSkillExtraDaily = dailyTriggers * dropPerTrig;
+    mainSkillLabel = `${isEN ? 'Magnet S' : '食材獲取S'} (Lv.${skillLevel})`;
+  } else if (pkm.main_skill && (pkm.main_skill.includes('食材精選') || pkm.main_skill.includes('Ingredient Draw'))) {
+    const drawTable = [4, 6, 8, 11, 14, 18, 18];
+    const dropPerTrig = drawTable[Math.min(skillLevel - 1, drawTable.length - 1)] || 4;
+    mainSkillExtraDaily = dailyTriggers * dropPerTrig;
+    mainSkillLabel = `${isEN ? 'Draw S' : '食材精選S'} (Lv.${skillLevel})`;
+  }
+
+  return {
+    baseIngRate,
+    subskillIngBonus,
+    natureIngMult,
+    finalIngRate,
+    baseIntervalSec,
+    effectiveIntervalSec,
+    dailyHelps,
+    dailyIngDrops,
+    unlockedSlotCount,
+    activeIngredientDetails,
+    summaryYieldList: Array.from(summaryYieldMap.values()),
+    totalDailyIngredients,
+    mainSkillExtraDaily,
+    mainSkillLabel,
+    dailyTriggers,
+    levelSpeedDiscount,
+    subskillSpeedBonus,
+    natureSpeedMult,
+    ribbonDiscount
+  };
+}
+
+function renderPokedexDetailModalContent() {
+  const modalEl = document.getElementById('pokedex-detail-modal');
+  if (!modalEl) return;
+  const pkm = pokedexModalState.pkm;
+  if (!pkm) return;
+
+  const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+  const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+
+  const pkmName = isEN ? (pkm.name_en || pkm.name_cn) : (pkm.name_cn || pkm.name_en);
+  const typeName = window.I18N ? window.I18N.getTypeName(pkm.type) : pkm.type;
+  const specName = window.I18N ? window.I18N.getSpecialtyName(pkm.specialty) : pkm.specialty;
+  const berry = (typeof getPokemonBerry === 'function') ? getPokemonBerry(pkm) : { name: '', icon: '' };
+  const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : berry.name;
+  const iconUrl = (typeof getIconUrl === 'function') ? getIconUrl(pkm) : (pkm.icon_url || '');
+
+  // 6D 評估計算
+  const chosenIngs = (pkm.ingredients || []).map((ing, i) => {
+    const selIdx = pokedexModalState.ingSlots[i] || 0;
+    const cur = (pkm.ingredients && pkm.ingredients[selIdx]) ? pkm.ingredients[selIdx].name : (ing.name || '');
+    return cur;
+  });
+
+  let evaluation = null;
+  if (window.AppraisalLab && typeof window.AppraisalLab.evaluatePokemon === 'function') {
+    evaluation = window.AppraisalLab.evaluatePokemon(pkm, pokedexModalState.level, pokedexModalState.nature, pokedexModalState.subskills, chosenIngs, pokedexModalState.ribbon);
+  }
+
+  if (!evaluation) {
+    evaluation = {
+      compositeScore: 75,
+      grade: 'A',
+      gradeTitle: isEN ? 'Solid Pick' : '實用良品 (Solid Pick)',
+      gradeColor: '#10b981',
+      scores: { berry: 60, ingredient: 70, skill: 65, speed: 65, growth: 60, roi: 65 }
+    };
+  }
+
+  const radarSVG = (window.AppraisalLab && typeof window.AppraisalLab.renderRadarChartSVG === 'function')
+    ? window.AppraisalLab.renderRadarChartSVG(evaluation.scores, 280, 250)
+    : '';
+
+  const formulaData = calculatePokedexIngredientFormulas();
+  const maxSkillLvl = getPokedexMainSkillMaxLvl(pkm.main_skill);
+
+  modalEl.innerHTML = `
+    <div class="pokedex-modal-backdrop-dismiss" onclick="window.PokemonApp.closePokemonDetailModal()"></div>
+    <div class="pokedex-modal-dialog" role="dialog" aria-modal="true">
+      <!-- 頂部標題列 -->
+      <div class="pokedex-modal-header">
+        <div class="pokedex-modal-header-left">
+          ${iconUrl ? `<img src="${iconUrl}" class="pokedex-header-avatar" alt="${pkmName}" loading="lazy">` : ''}
+          <div class="pokedex-header-info">
+            <div class="pokedex-header-no">No.${pkm.formatted_no || ''}</div>
+            <h2 class="pokedex-header-title">
+              ${pkmName}
+              ${!isEN && pkm.name_en ? `<span class="pokedex-header-title-en">${pkm.name_en}</span>` : ''}
+            </h2>
+            <div class="pokedex-header-tags">
+              <span class="pokedex-tag pokedex-tag-type">${window.I18N ? window.I18N.getTypeIconSvg(pkm.type, 14) : ''} ${typeName}</span>
+              <span class="pokedex-tag pokedex-tag-spec">${specName}</span>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="pokedex-modal-close-btn" onclick="window.PokemonApp.closePokemonDetailModal()" aria-label="${isEN ? 'Close' : '關閉'}">✕</button>
+      </div>
+
+      <!-- 彈窗內容主體 (雙欄/響應式) -->
+      <div class="pokedex-modal-body">
+        <!-- 左欄：基本資料、評級與六維雷達圖 -->
+        <div class="pokedex-modal-col pokedex-left-col">
+          <!-- 基本數據卡片 -->
+          <div class="pokedex-stats-panel">
+            <div class="pokedex-panel-heading">${t('pokedex.base_stats', '基礎數值')}</div>
+            <div class="pokedex-stats-grid">
+              <div class="pokedex-stat-box">
+                <span class="stat-k">${t('th.berry', '樹果')}</span>
+                <span class="stat-v">${berry.icon ? `<img src="${berry.icon}" class="stat-berry-img" alt="${berryName}">` : ''} ${berryName}</span>
+              </div>
+              <div class="pokedex-stat-box">
+                <span class="stat-k">${t('th.carry', '持有上限')}</span>
+                <span class="stat-v">${pkm.carry || '--'}</span>
+              </div>
+              <div class="pokedex-stat-box">
+                <span class="stat-k">${t('th.interval', '基礎間隔')}</span>
+                <span class="stat-v">${formatHelpInterval(pkm.interval)}</span>
+              </div>
+              <div class="pokedex-stat-box">
+                <span class="stat-k">${t('th.ingredient_rate', '食材機率')}</span>
+                <span class="stat-v">${pkm.ingredient_rate || '--'}</span>
+              </div>
+              <div class="pokedex-stat-box">
+                <span class="stat-k">${t('th.skill_rate', '技能機率')}</span>
+                <span class="stat-v">${pkm.skill_rate || '--'}</span>
+              </div>
+              <div class="pokedex-stat-box">
+                <span class="stat-k">${t('th.main_skill', '主技能')}</span>
+                <span class="stat-v stat-v-skill" title="${pkm.main_skill || ''}">${pkm.main_skill || '--'}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 強度評估報告盒 -->
+          <div class="pokedex-appraisal-verdict-box" style="border-color: ${evaluation.gradeColor};">
+            <div class="verdict-score-group">
+              <div class="verdict-grade" style="color: ${evaluation.gradeColor};">${evaluation.grade}</div>
+              <div class="verdict-details">
+                <div class="verdict-title">${evaluation.gradeTitle}</div>
+                <div class="verdict-score-text">${isEN ? 'Potential Score' : '綜合戰力評分'}：<span class="verdict-num font-bold">${evaluation.compositeScore}</span> / 100</div>
+              </div>
+            </div>
+            ${radarSVG ? `
+              <div class="pokedex-radar-wrapper">
+                ${radarSVG}
+              </div>
+            ` : ''}
+          </div>
+        </div>
+
+        <!-- 右欄：自訂配置選項與食材加成算法拆解 -->
+        <div class="pokedex-modal-col pokedex-right-col">
+          <!-- 快捷操作列 -->
+          <div class="pokedex-presets-bar">
+            <span class="pokedex-presets-label">${t('pokedex.custom_controls', '客製化模擬設定')}</span>
+            <div class="pokedex-presets-btns">
+              <button type="button" class="pokedex-btn-preset preset-god" onclick="window.PokemonApp.applyPokedexGodPreset()">[★] ${t('pokedex.preset_god', '畢業神配置')}</button>
+              <button type="button" class="pokedex-btn-preset preset-reset" onclick="window.PokemonApp.applyPokedexResetPreset()">[↺] ${t('pokedex.preset_reset', '重置')}</button>
+            </div>
+          </div>
+
+          <!-- 設定控制項容器 (單層純淨容器，無多重外框) -->
+          <div class="pokedex-controls-container">
+            <!-- 1. 等級滑桿與數值 -->
+            <div class="pokedex-ctrl-row pokedex-ctrl-level">
+              <label for="pokedex-level-slider" class="pokedex-ctrl-title">${t('pokedex.level_slider', '等級設定')}：<span class="pokedex-val-badge">Lv. ${pokedexModalState.level}</span></label>
+              <div class="pokedex-level-slider-wrap">
+                <input type="range" id="pokedex-level-slider" min="1" max="100" value="${pokedexModalState.level}" class="pokedex-slider" oninput="window.PokemonApp.setPokedexModalLevel(this.value)">
+                <input type="number" id="pokedex-level-input" min="1" max="100" value="${pokedexModalState.level}" class="pokedex-level-num-input" onchange="window.PokemonApp.setPokedexModalLevel(this.value)">
+              </div>
+            </div>
+
+            <!-- 2. 性格、主技能等級、睡飽飽獎章 -->
+            <div class="pokedex-ctrl-grid-3">
+              <!-- 性格 -->
+              <div class="pokedex-ctrl-item">
+                <label for="pokedex-nature-select" class="pokedex-ctrl-label">${t('box.modal_poke_nature', '性格')}</label>
+                <select id="pokedex-nature-select" class="pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalNature(this.value)">
+                  ${POKEDEX_MODAL_NATURES.map(n => {
+                    const natLabel = isEN ? `${n.name_en} (${n.buff_en ? n.buff_en + (n.debuff_en ? ' / ' + n.debuff_en : '') : 'Neutral'})` : `${n.name} (${n.buff ? n.buff + (n.debuff ? ' / ' + n.debuff : '') : '無增減'})`;
+                    return `<option value="${n.name}" ${pokedexModalState.nature === n.name ? 'selected' : ''}>${natLabel}</option>`;
+                  }).join('')}
+                </select>
+              </div>
+
+              <!-- 主技能等級 -->
+              <div class="pokedex-ctrl-item">
+                <label for="pokedex-skill-lvl-select" class="pokedex-ctrl-label">${t('pokedex.main_skill_level', '主技能等級')}</label>
+                <select id="pokedex-skill-lvl-select" class="pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalSkillLevel(this.value)">
+                  ${Array.from({ length: maxSkillLvl }, (_, i) => i + 1).map(lvl => `
+                    <option value="${lvl}" ${pokedexModalState.skillLevel === lvl ? 'selected' : ''}>Lv. ${lvl}</option>
+                  `).join('')}
+                </select>
+              </div>
+
+              <!-- 睡飽飽獎章 -->
+              <div class="pokedex-ctrl-item">
+                <label for="pokedex-ribbon-select" class="pokedex-ctrl-label">${t('box.modal_poke_ribbon', '睡飽飽獎章')}</label>
+                <select id="pokedex-ribbon-select" class="pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalRibbon(this.value)">
+                  <option value="0" ${pokedexModalState.ribbon === 0 ? 'selected' : ''}>${t('box.ribbon_none', '未佩戴 (0h)')}</option>
+                  <option value="1" ${pokedexModalState.ribbon === 1 ? 'selected' : ''}>${t('box.ribbon_lv1', '200 小時 (+1 持有上限)')}</option>
+                  <option value="2" ${pokedexModalState.ribbon === 2 ? 'selected' : ''}>${t('box.ribbon_lv2', '500 小時 (+3 持有上限 · 幫速加成)')}</option>
+                  <option value="3" ${pokedexModalState.ribbon === 3 ? 'selected' : ''}>${t('box.ribbon_lv3', '1000 小時 (+6 持有上限)')}</option>
+                  <option value="4" ${pokedexModalState.ribbon === 4 ? 'selected' : ''}>${t('box.ribbon_lv4', '2000 小時 (+8 持有上限 · 幫速最大加成)')}</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 3. 食材組合解鎖選擇器 (Lv.1, Lv.30, Lv.60) -->
+            ${(pkm.ingredients && pkm.ingredients.length > 0) ? `
+              <div class="pokedex-ctrl-row">
+                <div class="pokedex-ctrl-label">${t('pokedex.ingredients_title', '食材組合 (Lv.1 / 30 / 60)')}</div>
+                <div class="pokedex-ing-slots-grid">
+                  ${[0, 1, 2].map(slotIdx => {
+                    const reqLv = slotIdx === 0 ? 1 : (slotIdx === 1 ? 30 : 60);
+                    const isUnlocked = pokedexModalState.level >= reqLv;
+                    const maxOpts = Math.min(slotIdx + 1, pkm.ingredients.length);
+                    return `
+                      <div class="pokedex-ing-slot-box ${isUnlocked ? 'slot-active' : 'slot-locked'}">
+                        <div class="slot-header">
+                          <span class="slot-lv-tag">Lv.${reqLv}</span>
+                          ${!isUnlocked ? `<span class="slot-lock-text">${isEN ? '(Locked)' : '(未解鎖)'}</span>` : ''}
+                        </div>
+                        <select class="pokedex-custom-select pokedex-ing-select" onchange="window.PokemonApp.setPokedexModalIng(${slotIdx}, this.value)">
+                          ${Array.from({ length: maxOpts }, (_, optIdx) => {
+                            const ingItem = pkm.ingredients[optIdx] || pkm.ingredients[0];
+                            const ingName = isEN ? (window.I18N ? window.I18N.getIngredientName(ingItem.name) : ingItem.name) : ingItem.name;
+                            let count = 1;
+                            if (slotIdx === 0) count = ingItem.l1 || 1;
+                            else if (slotIdx === 1) count = ingItem.l30 || ingItem.l1 || 1;
+                            else count = ingItem.l60 || ingItem.l30 || ingItem.l1 || 1;
+                            return `<option value="${optIdx}" ${pokedexModalState.ingSlots[slotIdx] === optIdx ? 'selected' : ''}>${ingName} x${count}</option>`;
+                          }).join('')}
+                        </select>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- 4. 副技能五插槽 (Lv.10, Lv.25, Lv.50, Lv.70, Lv.80) -->
+            <div class="pokedex-ctrl-row">
+              <div class="pokedex-ctrl-label">${t('pokedex.subskills_title', '副技能自訂 (5個槽位)')}</div>
+              <div class="pokedex-subskills-grid">
+                ${[10, 25, 50, 70, 80].map((slotLv, sIdx) => {
+                  const currentVal = pokedexModalState.subskills[sIdx] || '';
+                  const isUnlocked = pokedexModalState.level >= slotLv;
+                  return `
+                    <div class="pokedex-subskill-slot ${isUnlocked ? 'subskill-unlocked' : 'subskill-locked'}">
+                      <div class="subskill-slot-top">
+                        <span class="subskill-lv-badge">Lv.${slotLv}</span>
+                        ${!isUnlocked ? `<span class="subskill-status-locked">${isEN ? 'Locked' : '尚未解鎖'}</span>` : ''}
+                      </div>
+                      <select class="pokedex-custom-select pokedex-subskill-select" onchange="window.PokemonApp.setPokedexModalSubskill(${sIdx}, this.value)">
+                        <option value="">${isEN ? '(None)' : '(無)'}</option>
+                        ${POKEDEX_MODAL_SUBSKILLS.map(sk => {
+                          const skLabel = isEN ? sk.name_en : sk.name;
+                          return `<option value="${sk.name}" ${currentVal === sk.name ? 'selected' : ''}>[${sk.tier === 'gold' ? '金' : (sk.tier === 'blue' ? '藍' : '白')}] ${skLabel}</option>`;
+                        }).join('')}
+                      </select>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. 核心亮點：食材產能算法拆解卡片 (Ingredient Yield Formula Breakdown) -->
+          <div class="pokedex-calc-formula-card" id="pokedex-calc-formula-container">
+            ${renderPokedexFormulaBreakdownHTML(formulaData)}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderPokedexFormulaBreakdownHTML(f) {
+  if (!f) return '';
+  const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+  const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+
+  const natureSign = f.natureIngMult > 1 ? `x${f.natureIngMult.toFixed(2)} (+20%)` : (f.natureIngMult < 1 ? `x${f.natureIngMult.toFixed(2)} (-20%)` : `x1.00`);
+  const subskillSign = f.subskillIngBonus > 0 ? `+${f.subskillIngBonus}%` : `+0%`;
+
+  return `
+    <div class="pokedex-formula-inner">
+      <div class="pokedex-formula-header">
+        <span class="pokedex-formula-badge font-bold">${t('pokedex.formula_title', '食材產能算法拆解')}</span>
+        <span class="pokedex-formula-total-badge">${isEN ? 'Total Yield:' : '總預估日產：'}<strong>${f.totalDailyIngredients.toFixed(1)}</strong> ${isEN ? 'items/day' : '顆/天'}</span>
+      </div>
+
+      <!-- 步驟 1：最終食材發動率計算 -->
+      <div class="pokedex-calc-step">
+        <div class="step-title">
+          <span class="step-index">1</span>
+          <span class="step-name">${t('pokedex.final_ing_rate', '最終食材發動率')}</span>
+          <span class="step-result-badge font-bold text-success">${f.finalIngRate.toFixed(2)}%</span>
+        </div>
+        <div class="step-formula-code">
+          <span class="formula-var" title="${isEN ? 'Base Rate' : '基礎食材機率'}">${f.baseIngRate.toFixed(1)}%</span>
+          <span class="formula-op">×</span>
+          <span class="formula-bracket">(</span>
+          <span class="formula-text">1</span>
+          <span class="formula-op">+</span>
+          <span class="formula-var" title="${isEN ? 'Subskills Boost' : '副技能食材提升'}">${subskillSign}</span>
+          <span class="formula-bracket">)</span>
+          <span class="formula-op">×</span>
+          <span class="formula-var" title="${isEN ? 'Nature Factor' : '性格修正倍率'}">${natureSign}</span>
+          <span class="formula-op">=</span>
+          <span class="formula-res font-bold text-accent">${f.finalIngRate.toFixed(2)}%</span>
+        </div>
+      </div>
+
+      <!-- 步驟 2：有效幫忙間隔與每日幫忙次數 -->
+      <div class="pokedex-calc-step">
+        <div class="step-title">
+          <span class="step-index">2</span>
+          <span class="step-name">${t('pokedex.daily_helps', '預估每日幫忙次數')}</span>
+          <span class="step-result-badge font-bold text-accent">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps/day' : '次/天'}</span>
+        </div>
+        <div class="step-formula-code">
+          <span class="formula-desc">${isEN ? 'Effective Interval' : '有效幫忙間隔'}：${formatPokedexIntervalSec(f.effectiveIntervalSec)}</span>
+          <span class="formula-sub">(${isEN ? 'Base' : '基礎'} ${formatPokedexIntervalSec(f.baseIntervalSec)}${f.levelSpeedDiscount > 0 ? ` · Lv -${(f.levelSpeedDiscount * 100).toFixed(1)}%` : ''}${f.subskillSpeedBonus > 0 ? ` · 副技 -${f.subskillSpeedBonus}%` : ''})</span>
+          <span class="formula-op">➔</span>
+          <span class="formula-res font-bold">86400s ÷ ${f.effectiveIntervalSec}s = ${f.dailyHelps.toFixed(1)} ${isEN ? 'helps' : '次'}</span>
+        </div>
+      </div>
+
+      <!-- 步驟 3：各品項食材單日產量精算 -->
+      <div class="pokedex-calc-step">
+        <div class="step-title">
+          <span class="step-index">3</span>
+          <span class="step-name">${t('pokedex.daily_ing_yield', '預估單日食材產量')}</span>
+          <span class="step-result-badge font-bold text-gold">${f.dailyIngDrops.toFixed(1)} ${isEN ? 'drops/day' : '次掉落/天'}</span>
+        </div>
+        <div class="pokedex-yield-items-grid">
+          ${f.summaryYieldList.map(item => `
+            <div class="pokedex-yield-pill">
+              ${item.icon ? `<img src="${item.icon}" class="yield-pill-img" alt="${item.name}" loading="lazy">` : ''}
+              <span class="yield-pill-name">${item.name}</span>
+              <span class="yield-pill-count font-bold text-success">${item.daily.toFixed(1)} ${isEN ? '/day' : '顆/天'}</span>
+            </div>
+          `).join('')}
+        </div>
+        ${f.mainSkillExtraDaily > 0 ? `
+          <div class="pokedex-skill-extra-yield">
+            <span class="extra-skill-tag font-bold">${t('pokedex.extra_skill_ing', '主技能期望附加食材')}</span>
+            <span class="extra-skill-desc">${f.mainSkillLabel} · ${isEN ? 'Triggers' : '日發動'} ~${f.dailyTriggers.toFixed(1)} ${isEN ? 'times' : '次'} ➔ <strong>+${f.mainSkillExtraDaily.toFixed(1)}</strong> ${isEN ? 'items/day' : '顆/天'}</span>
+          </div>
+        ` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function updatePokedexModalAppraisalLive() {
+  const pkm = pokedexModalState.pkm;
+  if (!pkm) return;
+
+  const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+
+  // 1. 重新計算評估
+  const chosenIngs = (pkm.ingredients || []).map((ing, i) => {
+    const selIdx = pokedexModalState.ingSlots[i] || 0;
+    return (pkm.ingredients && pkm.ingredients[selIdx]) ? pkm.ingredients[selIdx].name : (ing.name || '');
+  });
+
+  let evaluation = null;
+  if (window.AppraisalLab && typeof window.AppraisalLab.evaluatePokemon === 'function') {
+    evaluation = window.AppraisalLab.evaluatePokemon(pkm, pokedexModalState.level, pokedexModalState.nature, pokedexModalState.subskills, chosenIngs, pokedexModalState.ribbon);
+  }
+  if (!evaluation) {
+    evaluation = {
+      compositeScore: 75,
+      grade: 'A',
+      gradeTitle: isEN ? 'Solid Pick' : '實用良品 (Solid Pick)',
+      gradeColor: '#10b981',
+      scores: { berry: 60, ingredient: 70, skill: 65, speed: 65, growth: 60, roi: 65 }
+    };
+  }
+
+  // 2. 更新評估 UI
+  const gradeEl = document.querySelector('.verdict-grade');
+  const titleEl = document.querySelector('.verdict-title');
+  const numEl = document.querySelector('.verdict-num');
+  const verdictBox = document.querySelector('.pokedex-appraisal-verdict-box');
+  if (gradeEl) {
+    gradeEl.textContent = evaluation.grade;
+    gradeEl.style.color = evaluation.gradeColor;
+  }
+  if (titleEl) titleEl.textContent = evaluation.gradeTitle;
+  if (numEl) numEl.textContent = evaluation.compositeScore;
+  if (verdictBox) verdictBox.style.borderColor = evaluation.gradeColor;
+
+  // 3. 更新雷達圖
+  const radarWrapper = document.querySelector('.pokedex-radar-wrapper');
+  if (radarWrapper && window.AppraisalLab && typeof window.AppraisalLab.renderRadarChartSVG === 'function') {
+    radarWrapper.innerHTML = window.AppraisalLab.renderRadarChartSVG(evaluation.scores, 280, 250);
+  }
+
+  // 4. 更新食材產能算法拆解卡片
+  const formulaContainer = document.getElementById('pokedex-calc-formula-container');
+  if (formulaContainer) {
+    const formulaData = calculatePokedexIngredientFormulas();
+    formulaContainer.innerHTML = renderPokedexFormulaBreakdownHTML(formulaData);
+  }
+
+  // 5. 更新等級數值標籤與副技能解鎖狀態標記
+  const levelBadge = document.querySelector('.pokedex-val-badge');
+  if (levelBadge) levelBadge.textContent = `Lv. ${pokedexModalState.level}`;
+
+  const slotLvs = [10, 25, 50, 70, 80];
+  document.querySelectorAll('.pokedex-subskill-slot').forEach((slotEl, sIdx) => {
+    const isUnlocked = pokedexModalState.level >= slotLvs[sIdx];
+    slotEl.classList.toggle('subskill-unlocked', isUnlocked);
+    slotEl.classList.toggle('subskill-locked', !isUnlocked);
+    const statusText = slotEl.querySelector('.subskill-status-locked');
+    if (statusText) {
+      statusText.style.display = isUnlocked ? 'none' : 'inline-block';
+    }
+  });
+
+  // 更新食材插槽解鎖標籤
+  document.querySelectorAll('.pokedex-ing-slot-box').forEach((boxEl, sIdx) => {
+    const reqLv = sIdx === 0 ? 1 : (sIdx === 1 ? 30 : 60);
+    const isUnlocked = pokedexModalState.level >= reqLv;
+    boxEl.classList.toggle('slot-active', isUnlocked);
+    boxEl.classList.toggle('slot-locked', !isUnlocked);
+  });
+}
+
+// 導出至 PokemonApp 與 全域 window
+PokemonApp.openPokemonDetailModal = openPokemonDetailModal;
+PokemonApp.closePokemonDetailModal = closePokemonDetailModal;
+PokemonApp.applyPokedexGodPreset = applyPokedexGodPreset;
+PokemonApp.applyPokedexResetPreset = applyPokedexResetPreset;
+PokemonApp.setPokedexModalLevel = setPokedexModalLevel;
+PokemonApp.setPokedexModalNature = setPokedexModalNature;
+PokemonApp.setPokedexModalSubskill = setPokedexModalSubskill;
+PokemonApp.setPokedexModalSkillLevel = setPokedexModalSkillLevel;
+PokemonApp.setPokedexModalRibbon = setPokedexModalRibbon;
+PokemonApp.setPokedexModalIng = setPokedexModalIng;
+PokemonApp.calculatePokedexIngredientFormulas = calculatePokedexIngredientFormulas;
+PokemonApp.getPokedexModalState = () => pokedexModalState;
+
+if (typeof window !== 'undefined') {
+  window.openPokemonDetailModal = openPokemonDetailModal;
+  window.closePokemonDetailModal = closePokemonDetailModal;
 }
 
 if (typeof module !== 'undefined' && module.exports) {
