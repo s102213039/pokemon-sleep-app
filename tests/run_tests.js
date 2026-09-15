@@ -6154,31 +6154,33 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Ingredient
   assertEquals(mockStorage.get('pksleep_ladder_skill_draw'), 'true', 'localStorage must be updated to true');
 
   // 3. Verify exact mathematical expectations for all 6 Pokemon
+  // 技能型 (1.5倍技能機率乘數)：
   // 穿山王 (+27 on pumpkin, corn, potato)
   assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'corn', '萌綠玉米'), 27, 'Sandslash corn bonus must be +27');
   assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'pumpkin', '吉利蛋南瓜'), 27, 'Sandslash pumpkin bonus must be +27');
   assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'potato', '窩心洋芋'), 27, 'Sandslash potato bonus must be +27');
   assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'apple', '特選蘋果'), 0, 'Sandslash non-candidate ingredient bonus must be 0');
 
-  // 烏鴉頭頭 (+28 on coffee, soy, meat, mushroom)
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('烏鴉頭頭', 'coffee', '醒晨咖啡'), 28, 'Honchkrow coffee bonus must be +28');
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('烏鴉頭頭', 'soy', '醒晨大豆'), 28, 'Honchkrow soy bonus must be +28');
+  // 烏鴉頭頭 (+27 on coffee, soy, meat, mushroom)
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('烏鴉頭頭', 'coffee', '醒晨咖啡'), 27, 'Honchkrow coffee bonus must be +27');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('烏鴉頭頭', 'soy', '醒晨大豆'), 27, 'Honchkrow soy bonus must be +27');
   assertEquals(WikiDB.getPokemonSkillDrawBonus('烏鴉頭頭', 'apple', '特選蘋果'), 0, 'Honchkrow non-candidate ingredient bonus must be 0');
 
-  // 岩殿居蟹 (+36 on avocado, potato, oil)
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('岩殿居蟹', 'potato', '窩心洋芋'), 36, 'Crustle potato bonus must be +36');
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('岩殿居蟹', 'oil', '純油'), 36, 'Crustle oil bonus must be +36');
+  // 岩殿居蟹 (+35 on avocado, potato, oil)
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('岩殿居蟹', 'potato', '窩心洋芋'), 35, 'Crustle potato bonus must be +35');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('岩殿居蟹', 'oil', '純油'), 35, 'Crustle oil bonus must be +35');
 
-  // 摔角鷹人 (+38 on herb, ginger, meat)
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('摔角鷹人', 'herb', '透心涼香草'), 38, 'Hawlucha herb bonus must be +38');
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('摔角鷹人', 'ginger', '暖暖薑'), 38, 'Hawlucha ginger bonus must be +38');
+  // 摔角鷹人 (+37 on herb, ginger, meat)
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('摔角鷹人', 'herb', '透心涼香草'), 37, 'Hawlucha herb bonus must be +37');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('摔角鷹人', 'ginger', '暖暖薑'), 37, 'Hawlucha ginger bonus must be +37');
 
-  // 蝶結萌虻 (+19 on honey, oil, corn)
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('蝶結萌虻', 'honey', '蜜糖'), 19, 'Ribombee honey bonus must be +19');
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('蝶結萌虻', 'corn', '萌綠玉米'), 19, 'Ribombee corn bonus must be +19');
+  // 食材型 (1.0倍基準發動率，最保守估計)：
+  // 蝶結萌虻 (+13 on honey, oil, corn)
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('蝶結萌虻', 'honey', '蜜糖'), 13, 'Ribombee honey bonus must be +13');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('蝶結萌虻', 'corn', '萌綠玉米'), 13, 'Ribombee corn bonus must be +13');
 
-  // 大嘴娃 (+16 on potato, oil, corn, tomato)
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('大嘴娃', 'tomato', '番茄'), 16, 'Mawile tomato bonus must be +16');
+  // 大嘴娃 (+10 on potato, oil, corn, tomato)
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('大嘴娃', 'tomato', '番茄'), 10, 'Mawile tomato bonus must be +10');
 
   // Non-candidate Pokemon must have 0 bonus
   assertEquals(WikiDB.getPokemonSkillDrawBonus('妙蛙花', 'honey', '蜜糖'), 0, 'Venusaur must have 0 bonus');
@@ -6197,14 +6199,31 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Ingredient
   assert(ladderHtml.includes('tooltip-yield-breakdown'), 'Rendered ladder must contain tooltip-yield-breakdown');
   assert(ladderHtml.includes('食材精選S 獲取 (Lv.7)'), 'Rendered ladder tooltip must mention 食材精選S 獲取 (Lv.7)');
 
-  // 5. Test openIngredientRankingModal with Skill Draw Active
+  // 5. Test Wiki Layout with Skill Help Modal and Switch Button
+  const mockContainer = { innerHTML: '', style: {}, classList: { contains: () => false, add: () => {}, remove: () => {} } };
+  WikiDB.renderWikiLayout(mockContainer);
+  assert(mockContainer.innerHTML.includes('ladder-skill-help-modal'), 'Rendered layout must include ladder-skill-help-modal dialog');
+  assert(mockContainer.innerHTML.includes('ladder-switch-with-help'), 'Sidebar must include ladder-switch-with-help container');
+  assert(mockContainer.innerHTML.includes('ladder-help-icon-btn'), 'Sidebar must include ladder-help-icon-btn question mark button');
+
+  // 5. Test Help Modal Methods
+  assert(typeof WikiDB.openSkillDrawHelpModal === 'function', 'openSkillDrawHelpModal must be exported');
+  assert(typeof WikiDB.closeSkillDrawHelpModal === 'function', 'closeSkillDrawHelpModal must be exported');
+
+  // 6. Test Dynamic Recipe Tooltip when a Recipe is Selected
+  WikiDB.selectLadderHighlightRecipe('心跳加速鬼面鬆餅');
+  const recipeLadderHtml = WikiDB.renderCoordinateLadder();
+  assert(recipeLadderHtml.includes('選定料理: 心跳加速鬼面鬆餅'), 'Ladder tooltip must dynamically reference selected recipe 心跳加速鬼面鬆餅');
+  WikiDB.clearLadderHighlightRecipe();
+
+  // 7. Test openIngredientRankingModal with Skill Draw Active
   WikiDB.openIngredientRankingModal('corn');
   assert(modalContainer !== null, 'Ranking modal container must be created');
   assert(modalContainer.innerHTML.includes('ing-rank-split-line'), 'Ranking modal must display ing-rank-split-line for skill draw pokemons');
   assert(modalContainer.innerHTML.includes('split-drop'), 'Ranking modal must display split-drop');
   assert(modalContainer.innerHTML.includes('split-skill'), 'Ranking modal must display split-skill');
 
-  // 6. Test resetLadderFilters resets the toggle
+  // 8. Test resetLadderFilters resets the toggle
   WikiDB.resetLadderFilters();
 });
 
