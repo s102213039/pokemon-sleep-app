@@ -3352,15 +3352,34 @@
     "type": "超能力",
     "specialty": "技能",
     "sleep_type": "安然入睡",
-    "carry": "",
-    "ingredient_rate": "",
-    "skill_rate": "",
-    "interval": "",
+    "carry": "24",
+    "ingredient_rate": "16.00%",
+    "skill_rate": "2.90%",
+    "interval": "00:38:20",
     "main_skill": "精神擊破（樹果領域）",
     "evo_req": "",
     "is_final": "〇",
     "icon_url": "https://www.serebii.net/pokedex-sv/icon/150.png",
-    "ingredients": []
+    "ingredients": [
+      {
+        "name": "萌綠大豆",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasssoybeans.png",
+        "l1": "1",
+        "l30": "2",
+        "l60": "4"
+      },
+      {
+        "name": "萌綠玉米",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/greengrasscorn.png",
+        "l30": "2",
+        "l60": "3"
+      },
+      {
+        "name": "窩心洋芋",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/softpotato.png",
+        "l60": "3"
+      }
+    ]
   },
   {
     "id": "151",
