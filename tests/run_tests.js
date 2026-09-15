@@ -6399,14 +6399,30 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assertEquals(resetFormulas.natureIngMult, 1.0, 'Reset preset must set neutral nature (1.0x)');
   assertEquals(resetFormulas.subskillIngBonus, 0, 'Reset preset must reset subskill ingredient bonus to 0%');
 
-  // 8. Test Skill-type Pokemon with Magnet S / Draw S (e.g. Golbat 042)
+  // 8. Test Subskill Flow & Tiled Ingredients (matching Box Manual modal structure)
+  assert(modalEl.innerHTML.includes('box-subskill-slots-row'), 'Modal HTML must include .box-subskill-slots-row');
+  assert(modalEl.innerHTML.includes('box-subskill-palette'), 'Modal HTML must include .box-subskill-palette');
+  assert(modalEl.innerHTML.includes('box-ing-strip'), 'Modal HTML must include .box-ing-strip');
+  assert(modalEl.innerHTML.includes('box-mainskill-row'), 'Modal HTML must include .box-mainskill-row');
+  assert(typeof PokemonApp.selectPokedexSubskillSlot === 'function', 'selectPokedexSubskillSlot must be exported');
+  assert(typeof PokemonApp.choosePokedexSubskill === 'function', 'choosePokedexSubskill must be exported');
+  assert(typeof PokemonApp.clearAllPokedexSubskills === 'function', 'clearAllPokedexSubskills must be exported');
+  PokemonApp.clearAllPokedexSubskills();
+  let state = PokemonApp.getPokedexModalState();
+  assertEquals(state.subskills.every(s => s === ''), true, 'Clear all must empty all 5 subskills');
+  PokemonApp.selectPokedexSubskillSlot(1);
+  PokemonApp.choosePokedexSubskill('食材機率提升M');
+  state = PokemonApp.getPokedexModalState();
+  assertEquals(state.subskills[0], '食材機率提升M', 'Slot 1 must have 食材機率提升M');
+
+  // 9. Test Skill-type Pokemon with Magnet S / Draw S (e.g. Golbat 042)
   PokemonApp.openPokemonDetailModal('042');
   const skillFormulas = PokemonApp.calculatePokedexIngredientFormulas();
   if (skillFormulas && skillFormulas.mainSkillLabel) {
     assert(skillFormulas.mainSkillExtraDaily >= 0, 'Skill Pokemon main skill extra daily yield must be calculated');
   }
 
-  // 9. Test modal close
+  // 10. Test modal close
   assert(typeof PokemonApp.closePokemonDetailModal === 'function', 'closePokemonDetailModal must be exported');
   PokemonApp.closePokemonDetailModal();
   assertEquals(modalEl.style.display, 'none', 'Modal display style must be none when closed');

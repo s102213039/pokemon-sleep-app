@@ -22240,7 +22240,7 @@ body.mobile-h5-app.values-active,
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 960px;
+  max-width: 1040px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -22801,6 +22801,9 @@ body.mobile-h5-app.values-active,
 
 /* 食材產能算法拆解卡片 (Rule IX: 全域單層外框規範) */
 .pokedex-calc-formula-card {
+  grid-column: 1 / -1;
+  width: 100%;
+  box-sizing: border-box;
   border: none !important;
   background: transparent !important;
   padding: 0 !important;
@@ -23093,6 +23096,16 @@ body.mobile-h5-app.values-active,
     gap: 6px;
   }
 
+  #pokedex-detail-modal .subskill-chips-row {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 4px;
+  }
+
+  #pokedex-detail-modal .box-subskill-slots-row {
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 4px;
+  }
+
   .pokedex-presets-bar {
     flex-direction: row;
     align-items: center;
@@ -23117,6 +23130,16 @@ body.mobile-h5-app.values-active,
   grid-template-columns: 1fr !important;
   gap: 12px !important;
   padding: 10px !important;
+}
+
+.mobile-h5-app #pokedex-detail-modal .subskill-chips-row {
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app #pokedex-detail-modal .box-subskill-slots-row {
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 4px !important;
 }
 
 .mobile-h5-app .pokedex-ctrl-grid-3 {
