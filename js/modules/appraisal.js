@@ -135,12 +135,20 @@
     if (activeSubskills.indexOf('幫手獎勵') !== -1) berryScore += 8;
     if (nature.buffType === 'speed') berryScore += 7;
     if (nature.debuffType === 'speed') berryScore -= 6;
+    // 持有上限對樹果溢滿稍微延遲
+    if (activeSubskills.indexOf('持有上限提升L') !== -1) berryScore += 4;
+    else if (activeSubskills.indexOf('持有上限提升M') !== -1) berryScore += 2;
+    // 睡飽飽獎章加成 (提供背包與幫速縮短)
+    if (ribbonLevel === 4) berryScore += 6;
+    else if (ribbonLevel === 3) berryScore += 4;
+    else if (ribbonLevel === 2) berryScore += 3;
+    else if (ribbonLevel === 1) berryScore += 1;
     // 等級幫忙速度提升 (每級縮短約 0.2%)
     const berryLvBonus = Math.min(8, Math.floor((currentLv - 1) * 0.1));
     berryScore += berryLvBonus;
     berryScore = Math.min(Math.max(Math.round(berryScore), 15), 100);
 
-    // 2. 食材產能 (Ingredient Power)
+    // 2. 食材產能 (Ingredient Power: 持有上限、睡飽飽獎章與 AAA 食材配置為評分核心)
     let ingScore = (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') ? 68 : ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') ? 28 : 32);
     const hasIngM = activeSubskills.indexOf('食材機率提升M') !== -1;
     const ingMIdx = subskillArr.indexOf('食材機率提升M');
@@ -151,7 +159,19 @@
     }
     if (activeSubskills.indexOf('食材機率提升S') !== -1) ingScore += 10;
     if (activeSubskills.indexOf('幫忙速度M') !== -1) ingScore += 6;
-    if (activeSubskills.indexOf('持有上限提升L') !== -1 || activeSubskills.indexOf('持有上限提升M') !== -1) ingScore += 6;
+    if (activeSubskills.indexOf('幫手獎勵') !== -1) ingScore += 6;
+
+    // 持有上限提升 (Carry Limit: 睡眠/離線防溢滿核心，大幅提高食材評分)
+    if (activeSubskills.indexOf('持有上限提升L') !== -1) ingScore += 14;
+    else if (activeSubskills.indexOf('持有上限提升M') !== -1) ingScore += 8;
+    else if (activeSubskills.indexOf('持有上限提升S') !== -1) ingScore += 4;
+
+    // 睡飽飽獎章加成 (提供背包上限 + 幫速加成，食材必備)
+    if (ribbonLevel === 4) ingScore += 10;
+    else if (ribbonLevel === 3) ingScore += 7;
+    else if (ribbonLevel === 2) ingScore += 4;
+    else if (ribbonLevel === 1) ingScore += 2;
+
     if (nature.buffType === 'ingredient') ingScore += 12;
     if (nature.debuffType === 'ingredient') ingScore -= 12;
     
@@ -160,14 +180,41 @@
     else if (currentLv >= 30) ingScore += 3;
     else ingScore -= 6;
 
-    // 食材組合 AAA/ABB 加分
-    if (ingredients.length >= 2 && currentLv >= 30) {
-      const isAAA = ingredients[0] === ingredients[1] && (ingredients[2] && currentLv >= 60 ? ingredients[0] === ingredients[2] : true);
-      if (isAAA) ingScore += 6;
+    // 食材組合強度評估 (AAA 極品單色 / ABB 雙色量產 / AAB / ABC 嚴重稀釋)
+    if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
+      if (ingredients.length >= 3 && currentLv >= 60) {
+        const i0 = ingredients[0], i1 = ingredients[1], i2 = ingredients[2];
+        if (i0 && i1 && i2) {
+          if (i0 === i1 && i1 === i2) {
+            ingScore += 18; // AAA 極品單色，頂標評價
+          } else if (i0 !== i1 && i1 === i2) {
+            ingScore += 10; // ABB 雙色強勢量產
+          } else if (i0 === i1 && i1 !== i2) {
+            ingScore += 4;  // AAB
+          } else if (i0 !== i1 && i1 !== i2 && i0 !== i2) {
+            ingScore -= 8;  // ABC 嚴重稀釋，減分
+          }
+        }
+      } else if (ingredients.length >= 2 && currentLv >= 30) {
+        const i0 = ingredients[0], i1 = ingredients[1];
+        if (i0 && i1) {
+          if (i0 === i1) {
+            ingScore += 10; // AA 純色
+          } else {
+            ingScore += 4;  // AB
+          }
+        }
+      }
+    } else {
+      // 樹果/技能型食材組合判定
+      if (ingredients.length >= 2 && currentLv >= 30) {
+        const isAAA = ingredients[0] === ingredients[1] && (ingredients[2] && currentLv >= 60 ? ingredients[0] === ingredients[2] : true);
+        if (isAAA) ingScore += 4;
+      }
     }
     ingScore = Math.min(Math.max(Math.round(ingScore), 15), 100);
 
-    // 3. 技能強度 (Skill Power: 核心以技能機率為主，種子可替代之等級提升權重降級)
+    // 3. 技能強度 (Skill Power: 核心以技能機率與幫速為主，持有上限保障夜間雙發)
     let skillScore = (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') ? 68 : 32;
     const hasSkillM = activeSubskills.indexOf('技能機率提升M') !== -1;
     const skillMIdx = subskillArr.indexOf('技能機率提升M');
@@ -177,8 +224,23 @@
       else skillScore += 12;
     }
     if (activeSubskills.indexOf('技能機率提升S') !== -1) skillScore += 14;
+
+    // 幫忙速度對技能發動期望的直接貢獻
+    if (activeSubskills.indexOf('幫手獎勵') !== -1) skillScore += 8;
+    if (activeSubskills.indexOf('幫忙速度M') !== -1) skillScore += 8;
+    if (activeSubskills.indexOf('幫忙速度S') !== -1) skillScore += 4;
+    if (nature.buffType === 'speed') skillScore += 6;
+    if (nature.debuffType === 'speed') skillScore -= 6;
+
+    // 持有上限提升 (Carry Limit: 技能型夜間可累積 2 次技能發動，背包滿則無法觸發)
+    if (activeSubskills.indexOf('持有上限提升L') !== -1) skillScore += 8;
+    else if (activeSubskills.indexOf('持有上限提升M') !== -1) skillScore += 5;
+    else if (activeSubskills.indexOf('持有上限提升S') !== -1) skillScore += 2;
+
+    // 技能等級提升權重降級 (金種子可替代)
     if (activeSubskills.indexOf('技能等級提升M') !== -1) skillScore += 4;
     if (activeSubskills.indexOf('技能等級提升S') !== -1) skillScore += 2;
+
     if (nature.buffType === 'skill') skillScore += 12;
     if (nature.debuffType === 'skill') skillScore -= 12;
 
@@ -186,8 +248,11 @@
     if (skillLevel > 1) {
       skillScore += Math.min(20, Math.round((skillLevel - 1) * 3.5));
     }
-    // 睡飽飽獎章加成
-    if (ribbonLevel >= 3) skillScore += (ribbonLevel === 4 ? 4 : 2);
+    // 睡飽飽獎章加成 (背包上限累積 2 次發動 + 幫速縮短)
+    if (ribbonLevel === 4) skillScore += 8;
+    else if (ribbonLevel === 3) skillScore += 6;
+    else if (ribbonLevel === 2) skillScore += 4;
+    else if (ribbonLevel === 1) skillScore += 2;
 
     skillScore = Math.min(Math.max(Math.round(skillScore), 15), 100);
 
@@ -243,6 +308,8 @@
     });
     if (currentLv >= 60) growthScore += 12;
     else if (currentLv >= 50) growthScore += 6;
+    if (ribbonLevel === 4) growthScore += 6;
+    else if (ribbonLevel >= 2) growthScore += 3;
     if (nature.buffType === 'exp') growthScore += 6;
     if (nature.debuffType === 'exp') growthScore -= 4;
     growthScore = Math.min(Math.max(Math.round(growthScore), 20), 100);
@@ -256,14 +323,18 @@
         if ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') && s === '樹果數量S') roiScore += 24;
         if ((specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') && s === '食材機率提升M') roiScore += 22;
         if ((specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') && s === '食材機率提升S') roiScore += 12;
+        if ((specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') && s === '持有上限提升L') roiScore += 10;
         if ((specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') && s === '技能機率提升M') roiScore += 22;
         if ((specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') && s === '技能機率提升S') roiScore += 14;
+        if ((specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') && s === '持有上限提升L') roiScore += 6;
         if (s === '幫手獎勵' || s === '幫忙速度M') roiScore += 12;
         if (s === '幫忙速度S') roiScore += 6;
       }
     });
     if (currentLv >= 30) roiScore += 6;
     if (currentLv >= 50) roiScore += 6;
+    if (ribbonLevel === 4) roiScore += 6;
+    else if (ribbonLevel >= 2) roiScore += 3;
     if (nature.buffType === 'exp') roiScore += 8;
     if (nature.debuffType === 'exp') roiScore -= 8;
     roiScore = Math.min(Math.max(Math.round(roiScore), 20), 100);
@@ -390,6 +461,35 @@
           ? `[Ribbon Lv.${ribbonBonus.level}] Carry capacity increased by ${carryText}${remainingEvos === 0 ? ' (fully evolved/single-stage, no speed reduction)' : ''}.`
           : `[睡飽飽獎章 Lv.${ribbonBonus.level}] 持有上限增加 ${carryText}${remainingEvos === 0 ? '（最終形態/無進化型態無速度縮短）' : ''}。`);
       }
+    }
+
+    // 食材組合深度診斷 (AAA, ABB, ABC)
+    if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
+      if (ingredients.length >= 3 && currentLv >= 60) {
+        const i0 = ingredients[0], i1 = ingredients[1], i2 = ingredients[2];
+        if (i0 && i1 && i2) {
+          if (i0 === i1 && i1 === i2) {
+            pros.push(isEN
+              ? '[★] Pure mono-ingredient (AAA) configuration, maximizing targeted ingredient yield for top recipes.'
+              : '[★] 具備純色 AAA 食材配置，特定食材產量高度集中，為頂級食材專精配置。');
+          } else if (i0 !== i1 && i1 === i2) {
+            pros.push(isEN
+              ? '[+] Dual-ingredient (ABB) configuration, excellent mid-to-late game specialized output.'
+              : '[+] 具備 ABB 雙色食材配置，二階與三階食材量產能力卓越。');
+          } else if (i0 !== i1 && i1 !== i2 && i0 !== i2) {
+            cons.push(isEN
+              ? '[-] Split-ingredient (ABC) configuration, recipe ingredient dilution may lead to target ingredient deficit.'
+              : '[-] 三格食材分散 (ABC 配置)，產出種類分散可能導致特定主力料理原料短缺。');
+          }
+        }
+      }
+    }
+
+    // 持有上限防溢滿診斷
+    if (activeSubskills.indexOf('持有上限提升L') !== -1 || activeSubskills.indexOf('持有上限提升M') !== -1) {
+      pros.push(isEN
+        ? '[+] Active Inventory Up subskill prevents overnight inventory capping, sustaining ingredient and skill production.'
+        : '[+] 具備已解鎖「持有上限提升」，大幅延長離線/睡眠產出時間，避免背包溢滿阻斷食材與技能。');
     }
 
     if (pros.length === 0) {

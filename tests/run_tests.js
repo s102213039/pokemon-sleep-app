@@ -6562,6 +6562,39 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   const skillStrategyHtml = PokemonApp.renderPokedexStrategyCardHTML(skillMon);
   assert(!skillStrategyHtml.includes('技能等級提升M') && !skillStrategyHtml.includes('技能等級提升S'), 'Strategy card must not recommend Skill Level Up M/S');
   assert(skillStrategyHtml.includes('技能機率提升M') && skillStrategyHtml.includes('技能機率提升S'), 'Strategy card must recommend Skill Trigger M and S');
+
+  // 15E. Header Verdict Badge & Removal of Left Column Verdict Box
+  assert(modalHtmlNow.includes('pokedex-header-verdict-badge'), 'Header actions must contain pokedex-header-verdict-badge');
+  assert(modalHtmlNow.includes('pokedex-header-grade-text'), 'Header must contain pokedex-header-grade-text');
+  assert(modalHtmlNow.includes('pokedex-header-score-text'), 'Header must contain pokedex-header-score-text');
+  assert(!modalHtmlNow.includes('pokedex-appraisal-verdict-box'), 'Modal left column must not contain legacy verdict box');
+
+  // 15F. Level row layout: God preset on left next to level text, Reset preset on right
+  assert(modalHtmlNow.includes('pokedex-level-header-left') && modalHtmlNow.includes('preset-god'), 'Level header left must contain preset-god');
+  assert(modalHtmlNow.includes('pokedex-level-header-right') && modalHtmlNow.includes('preset-reset'), 'Level header right must contain preset-reset');
+
+  // 15G. Consolidated Calculation Box without 1 2 3 steps
+  assert(modalHtmlNow.includes('pokedex-calc-unified-box'), 'Modal must contain .pokedex-calc-unified-box');
+  assert(modalHtmlNow.includes('unified-calc-row'), 'Modal must contain .unified-calc-row');
+
+  // 15H. Appraisal Engine: Carry Limit, Ribbon, and AAA/ABC scoring
+  const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+  const appCtx = { window: {}, console };
+  appCtx.window = appCtx;
+  vm.createContext(appCtx);
+  vm.runInContext(appraisalCode, appCtx);
+
+  const ingMon = dataset.find(p => p.specialty === '食材' || p.specialty === 'Ingredients') || { specialty: '食材' };
+  const evalBaseline = appCtx.AppraisalLab.evaluatePokemon(ingMon, 60, '坦率', ['幫忙速度S'], ['甜甜蜜', '特選蘋果', '純純蜜'], 0, 1);
+  const evalCarryL = appCtx.AppraisalLab.evaluatePokemon(ingMon, 60, '坦率', ['持有上限提升L'], ['甜甜蜜', '特選蘋果', '純純蜜'], 0, 1);
+  assert(evalCarryL.scores.ingredient > evalBaseline.scores.ingredient, 'Inventory Up L must increase ingredient score for ingredient specialist');
+
+  const evalRibbon4 = appCtx.AppraisalLab.evaluatePokemon(ingMon, 60, '坦率', ['幫忙速度S'], ['甜甜蜜', '特選蘋果', '純純蜜'], 4, 1);
+  assert(evalRibbon4.scores.ingredient > evalBaseline.scores.ingredient, 'Ribbon Lv.4 must increase ingredient score');
+
+  const evalAAA = appCtx.AppraisalLab.evaluatePokemon(ingMon, 60, '坦率', ['幫忙速度S'], ['甜甜蜜', '甜甜蜜', '甜甜蜜'], 0, 1);
+  const evalABC = appCtx.AppraisalLab.evaluatePokemon(ingMon, 60, '坦率', ['幫忙速度S'], ['甜甜蜜', '特選蘋果', '純純蜜'], 0, 1);
+  assert(evalAAA.scores.ingredient > evalABC.scores.ingredient, 'Pure AAA configuration must score substantially higher than diluted ABC');
 });
 
 // Final Summary Output

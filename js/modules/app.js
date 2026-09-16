@@ -4092,27 +4092,19 @@ function renderPokedexDetailModalContent() {
         </div>
 
         <div class="pokedex-header-actions">
-          <button type="button" class="pokedex-header-reset-btn" onclick="window.PokemonApp.applyPokedexResetPreset()" title="${t('pokedex.preset_reset', '重置預設')}">[↺] ${t('pokedex.preset_reset', '重置預設')}</button>
+          <div class="pokedex-header-verdict-badge" id="pokedex-header-verdict-badge" style="border-color: ${evaluation.gradeColor};">
+            <span class="verdict-grade pokedex-header-grade-text" style="color: ${evaluation.gradeColor};">${evaluation.grade}</span>
+            <span class="pokedex-header-score-text"><span class="verdict-num font-bold">${evaluation.compositeScore}</span>/100</span>
+          </div>
           <button type="button" class="box-modal-close pokedex-modal-close-btn" onclick="window.PokemonApp.closePokemonDetailModal()" aria-label="${isEN ? 'Close' : '關閉'}">✕</button>
         </div>
       </div>
 
       <!-- 彈窗內容主體 (雙欄/響應式) -->
       <div class="box-modal-body pokedex-modal-body">
-        <!-- 左欄：強度評測 + 食材產能算法拆解與最佳配置指南 -->
+        <!-- 左欄：食材產能算法拆解與最佳配置指南 (空間最大化) -->
         <div class="pokedex-modal-col pokedex-left-col">
-          <!-- 強度評估報告盒 (保留上方綜合戰力評分，移除六項評估雷達圖) -->
-          <div class="pokedex-appraisal-verdict-box" style="border-color: ${evaluation.gradeColor};">
-            <div class="verdict-score-group">
-              <div class="verdict-grade" style="color: ${evaluation.gradeColor};">${evaluation.grade}</div>
-              <div class="verdict-details">
-                <div class="verdict-title">${evaluation.gradeTitle}</div>
-                <div class="verdict-score-text">${isEN ? 'Potential Score' : '綜合戰力評分'}：<span class="verdict-num font-bold">${evaluation.compositeScore}</span> / 100</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 食材產能算法拆解與策略指南 (移至左欄綜合評分下方) -->
+          <!-- 食材產能算法拆解與策略指南 -->
           <div class="pokedex-calc-formula-card" id="pokedex-calc-formula-container">
             ${renderPokedexFormulaBreakdownHTML(formulaData, pkm)}
           </div>
@@ -4121,14 +4113,15 @@ function renderPokedexDetailModalContent() {
         <!-- 右欄：表單控制項 (等級軌道圖釘、食材平鋪、主技能一行展示、性格、睡飽飽獎章、副技能) -->
         <div class="pokedex-modal-col pokedex-right-col box-modal-form">
           <div class="box-form-grid pokedex-controls-container">
-            <!-- 1. 等級軌道錨定滑桿 + 畢業神配置快捷按鈕 -->
+            <!-- 1. 等級軌道錨定滑桿 + 畢業神配置與重置預設快捷按鈕 -->
             <div class="box-form-group box-full-width pokedex-level-ctrl-group">
               <div class="pokedex-level-header-row">
                 <div class="pokedex-level-header-left">
                   <label class="box-form-label" for="pokedex-level-slider" style="margin-bottom:0;">${t('pokedex.level_slider', '等級設定')} (<span class="pokedex-val-badge font-bold">Lv. <span id="pokedex-level-val-text">${pokedexModalState.level}</span></span>)</label>
+                  <button type="button" class="pokedex-btn-preset preset-god" onclick="window.PokemonApp.applyPokedexGodPreset()" title="${t('pokedex.preset_god', '畢業神配置')}">[★] ${t('pokedex.preset_god', '畢業神配置')}</button>
                 </div>
                 <div class="pokedex-level-header-right">
-                  <button type="button" class="pokedex-btn-preset preset-god" onclick="window.PokemonApp.applyPokedexGodPreset()" title="${t('pokedex.preset_god', '畢業神配置')}">[★] ${t('pokedex.preset_god', '畢業神配置')}</button>
+                  <button type="button" class="pokedex-header-reset-btn pokedex-btn-preset preset-reset" onclick="window.PokemonApp.applyPokedexResetPreset()" title="${t('pokedex.preset_reset', '重置預設')}">[↺] ${t('pokedex.preset_reset', '重置預設')}</button>
                 </div>
               </div>
               <div class="pokedex-anchored-slider-wrap">
@@ -4260,16 +4253,15 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
         <span class="pokedex-formula-total-badge">${isEN ? 'Daily Yield:' : '預估總日產：'}<strong>${f.totalDailyIngredients.toFixed(1)}</strong> ${isEN ? 'items/day' : '顆/天'}</span>
       </div>
 
-      <!-- 緊湊橫向 3 欄排列 (Step 1 | Step 2 | Step 3) -->
-      <div class="pokedex-formula-steps-row">
-        <!-- 步驟 1：最終發動率精算 (食材發動率 & 技能發動率) -->
-        <div class="pokedex-calc-step pokedex-calc-rates-step">
-          <div class="step-title">
-            <span class="step-index">1</span>
-            <span class="step-name">${t('pokedex.final_ing_rate', '最終食材發動率')}</span>
-            <span class="step-result-badge font-bold text-success">${f.finalIngRate.toFixed(2)}%</span>
+      <!-- 單一整合精算卡片 (無 1 2 3 分步，白底大字體，流暢排版) -->
+      <div class="pokedex-calc-unified-box">
+        <!-- 第 1 列：最終食材發動率 -->
+        <div class="unified-calc-row">
+          <div class="calc-row-header">
+            <span class="calc-row-label font-bold">${t('pokedex.final_ing_rate', '最終食材發動率')}</span>
+            <span class="calc-row-result font-bold text-success">${f.finalIngRate.toFixed(2)}%</span>
           </div>
-          <div class="step-formula-code">
+          <div class="calc-row-formula">
             <span class="formula-var" title="${isEN ? 'Base Rate' : '基礎食材機率'}">${f.baseIngRate.toFixed(1)}%</span>
             <span class="formula-op">×</span>
             <span class="formula-text">(1+${subskillIngSign})</span>
@@ -4278,13 +4270,15 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             <span class="formula-op">=</span>
             <span class="formula-res font-bold text-success">${f.finalIngRate.toFixed(2)}%</span>
           </div>
+        </div>
 
-          <div class="step-title step-title-skill" style="margin-top: 5px;">
-            <span class="step-index step-index-skill">1s</span>
-            <span class="step-name">${isEN ? 'Final Skill Trigger Rate' : '最終技能發動率'}</span>
-            <span class="step-result-badge font-bold text-accent">${f.finalSkillRate.toFixed(2)}%</span>
+        <!-- 第 2 列：最終技能發動率 -->
+        <div class="unified-calc-row">
+          <div class="calc-row-header">
+            <span class="calc-row-label font-bold">${isEN ? 'Final Skill Trigger Rate' : '最終技能發動率'}</span>
+            <span class="calc-row-result font-bold text-accent">${f.finalSkillRate.toFixed(2)}%</span>
           </div>
-          <div class="step-formula-code">
+          <div class="calc-row-formula">
             <span class="formula-var" title="${isEN ? 'Base Skill Rate' : '基礎技能機率'}">${f.baseSkillRate.toFixed(1)}%</span>
             <span class="formula-op">×</span>
             <span class="formula-text">(1+${subskillSkillSign})</span>
@@ -4295,31 +4289,23 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
           </div>
         </div>
 
-        <!-- 步驟 2：有效幫忙間隔與每日幫忙次數 -->
-        <div class="pokedex-calc-step">
-          <div class="step-title">
-            <span class="step-index">2</span>
-            <span class="step-name">${t('pokedex.daily_helps', '預估每日幫忙次數')}</span>
-            <span class="step-result-badge font-bold text-accent">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps' : '次/天'}</span>
+        <!-- 第 3 列：有效幫忙頻率與技能發動期望 -->
+        <div class="unified-calc-row">
+          <div class="calc-row-header">
+            <span class="calc-row-label font-bold">${t('pokedex.daily_helps', '預估每日幫忙次數')}</span>
+            <span class="calc-row-result font-bold text-accent">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps/day' : '次/天'}</span>
           </div>
-          <div class="step-formula-code">
-            <span class="formula-desc">${formatPokedexIntervalSec(f.effectiveIntervalSec)}</span>
-            <span class="formula-sub">(${isEN ? 'Base' : '基'} ${formatPokedexIntervalSec(f.baseIntervalSec)}${f.levelSpeedDiscount > 0 ? `·Lv-${(f.levelSpeedDiscount * 100).toFixed(0)}%` : ''}${f.subskillSpeedBonus > 0 ? `·副-${f.subskillSpeedBonus}%` : ''})</span>
-            <span class="formula-op">➔</span>
-            <span class="formula-res font-bold">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps' : '次'}</span>
-          </div>
-          <div class="step-formula-code" style="margin-top: 4px;">
-            <span class="formula-desc">${isEN ? 'Daily Triggers:' : '預估每日發動：'}</span>
-            <span class="formula-res font-bold text-accent">${f.dailyTriggers.toFixed(2)} ${isEN ? 'times/day' : '次/天'}</span>
+          <div class="calc-row-stats-line">
+            <span class="calc-stat-sub">${isEN ? 'Interval: ' : '實質間隔：'}<strong class="text-primary">${formatPokedexIntervalSec(f.effectiveIntervalSec)}</strong> <span class="calc-stat-base">(${isEN ? 'Base' : '基礎'} ${formatPokedexIntervalSec(f.baseIntervalSec)}${f.levelSpeedDiscount > 0 ? ` · Lv-${(f.levelSpeedDiscount * 100).toFixed(0)}%` : ''}${f.subskillSpeedBonus > 0 ? ` · 副-${f.subskillSpeedBonus}%` : ''}${f.ribbonDiscount > 0 ? ` · 獎-${Math.round(f.ribbonDiscount * 100)}%` : ''})</span></span>
+            <span class="calc-stat-sub">${isEN ? 'Daily Triggers: ' : '預估每日發動：'}<strong class="text-accent font-bold">${f.dailyTriggers.toFixed(2)} ${isEN ? 'times/day' : '次/天'}</strong></span>
           </div>
         </div>
 
-        <!-- 步驟 3：各品項食材單日產量精算 -->
-        <div class="pokedex-calc-step">
-          <div class="step-title">
-            <span class="step-index">3</span>
-            <span class="step-name">${t('pokedex.daily_ing_yield', '食材單日產量')}</span>
-            <span class="step-result-badge font-bold text-gold">${f.dailyIngDrops.toFixed(1)} ${isEN ? 'drops' : '次掉落'}</span>
+        <!-- 第 4 列：食材單日產量與品項清單 -->
+        <div class="unified-calc-row">
+          <div class="calc-row-header">
+            <span class="calc-row-label font-bold">${t('pokedex.daily_ing_yield', '食材單日產量')}</span>
+            <span class="calc-row-result font-bold text-gold">${f.dailyIngDrops.toFixed(1)} ${isEN ? 'drops/day' : '次掉落/天'}</span>
           </div>
           <div class="pokedex-yield-items-grid">
             ${f.summaryYieldList.map(item => `
@@ -4333,7 +4319,7 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
         </div>
       </div>
 
-      <!-- 寶可夢特性定位與最佳適配副技能指南 (取代冗餘主技能附加食材) -->
+      <!-- 寶可夢特性定位與最佳適配副技能指南 -->
       ${renderPokedexStrategyCardHTML(pkm || (pokedexModalState && pokedexModalState.pkm))}
     </div>
   `;
@@ -4365,18 +4351,16 @@ function updatePokedexModalAppraisalLive() {
     };
   }
 
-  // 2. 更新評估 UI
+  // 2. 更新評估 UI (頂部右側徽章)
   const gradeEl = document.querySelector('.verdict-grade');
-  const titleEl = document.querySelector('.verdict-title');
   const numEl = document.querySelector('.verdict-num');
-  const verdictBox = document.querySelector('.pokedex-appraisal-verdict-box');
+  const verdictBadge = document.getElementById('pokedex-header-verdict-badge');
   if (gradeEl) {
     gradeEl.textContent = evaluation.grade;
     gradeEl.style.color = evaluation.gradeColor;
   }
-  if (titleEl) titleEl.textContent = evaluation.gradeTitle;
   if (numEl) numEl.textContent = evaluation.compositeScore;
-  if (verdictBox) verdictBox.style.borderColor = evaluation.gradeColor;
+  if (verdictBadge) verdictBadge.style.borderColor = evaluation.gradeColor;
 
   // 3. 更新食材產能算法拆解卡片與動態數值 (幫忙間隔、食材機率、技能機率)
   const formulaData = calculatePokedexIngredientFormulas();
