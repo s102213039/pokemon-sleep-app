@@ -4250,7 +4250,6 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
         <div style="display:flex;align-items:center;gap:8px;">
           <span class="pokedex-formula-badge font-bold">${t('pokedex.formula_title', '食材產能算法拆解')}</span>
         </div>
-        <span class="pokedex-formula-total-badge">${isEN ? 'Daily Yield:' : '預估總日產：'}<strong>${f.totalDailyIngredients.toFixed(1)}</strong> ${isEN ? 'items/day' : '顆/天'}</span>
       </div>
 
       <!-- 單一整合精算卡片 (無 1 2 3 分步，白底大字體，流暢排版) -->
