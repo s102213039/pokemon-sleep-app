@@ -4148,10 +4148,10 @@ function renderPokedexDetailModalContent() {
               <div class="box-ing-strip" id="pokedex-ing-strip"></div>
             </div>
 
-            <!-- 3. 主技能一行展示 (名稱 + 適中大小等級選擇框) -->
-            <div class="box-form-group box-full-width box-form-row-inline box-mainskill-row">
-              <label class="box-form-label box-form-inline-label" for="pokedex-poke-skill-level">${t('box.modal_main_skill_short', '主技能')}</label>
-              <div class="box-form-inline-control box-mainskill-control">
+            <!-- 3. 主技能與睡飽飽獎章並列行 (主技能無外框、選單貼近標題、睡飽飽獎章移至主技能右側) -->
+            <div class="box-form-group box-full-width box-form-row-inline box-mainskill-row pokedex-mainskill-ribbon-row">
+              <div class="pokedex-inline-unit pokedex-mainskill-unit">
+                <label class="box-form-label box-form-inline-label" for="pokedex-poke-skill-level">${t('box.modal_main_skill_short', '主技能')}</label>
                 <span id="pokedex-poke-main-skill-name" class="box-mainskill-name-badge">${escapeHtml(pkm.main_skill || '--')}</span>
                 <div class="box-mainskill-select-wrap">
                   <select id="pokedex-poke-skill-level" class="box-form-select box-mainskill-select pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalSkillLevel(this.value)">
@@ -4161,10 +4161,19 @@ function renderPokedexDetailModalContent() {
                   </select>
                 </div>
               </div>
+
+              <div class="pokedex-inline-unit pokedex-ribbon-unit">
+                <label class="box-form-label box-form-inline-label" for="pokedex-poke-ribbon">${t('box.modal_poke_ribbon', '睡飽飽獎章')}</label>
+                <div class="box-form-inline-control">
+                  <select id="pokedex-poke-ribbon" class="box-form-select pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalRibbon(this.value)">
+                    ${renderPokedexRibbonOptionsHTML(pkm, pokedexModalState.ribbon)}
+                  </select>
+                </div>
+              </div>
             </div>
 
             <!-- 4. 性格選單 -->
-            <div class="box-form-group box-full-width box-form-row-inline">
+            <div class="box-form-group box-full-width box-form-row-inline pokedex-nature-row">
               <label class="box-form-label box-form-inline-label" for="pokedex-poke-nature">${t('box.modal_poke_nature', '性格')}</label>
               <div class="box-form-inline-control">
                 <select id="pokedex-poke-nature" class="box-form-select pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalNature(this.value)">
@@ -4178,17 +4187,7 @@ function renderPokedexDetailModalContent() {
               </div>
             </div>
 
-            <!-- 5. 睡飽飽獎章選單 (官方圖示與動態數值加成) -->
-            <div class="box-form-group box-full-width box-form-row-inline">
-              <label class="box-form-label box-form-inline-label" for="pokedex-poke-ribbon">${t('box.modal_poke_ribbon', '睡飽飽獎章')}</label>
-              <div class="box-form-inline-control">
-                <select id="pokedex-poke-ribbon" class="box-form-select pokedex-custom-select" onchange="window.PokemonApp.setPokedexModalRibbon(this.value)">
-                  ${renderPokedexRibbonOptionsHTML(pkm, pokedexModalState.ribbon)}
-                </select>
-              </div>
-            </div>
-
-            <!-- 6. 副技能配置：單行 5 階插槽 + 平鋪副技能選擇盤 (清空按鈕無重複 ✕) -->
+            <!-- 6. 副技能配置：單行 5 階插槽 + 平鋪副技能選擇盤 (清空全部按鈕) -->
             <div class="box-form-group box-full-width">
               <div style="display:flex;justify-content:space-between;align-items:center;">
                 <label class="box-form-label">${t('box.modal_poke_subskills', '副技能配置')}</label>

@@ -23515,21 +23515,42 @@ body.mobile-h5-app.values-active,
   font-weight: 700 !important;
 }
 
-/* 圖鑑詳情彈窗專屬：下拉選單尺寸縮小與長度最適化 */
+/* 圖鑑詳情彈窗專屬：主技能無外框、選單貼近標題、睡飽飽獎章與主技能並列行 */
 #pokedex-detail-modal .box-form-row-inline {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-height: 32px;
 }
 
+#pokedex-detail-modal .pokedex-mainskill-ribbon-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 16px !important;
+  flex-wrap: wrap !important;
+  min-height: 32px;
+}
+
+#pokedex-detail-modal .pokedex-inline-unit {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-shrink: 0 !important;
+  min-width: 0;
+}
+
+/* 標籤更靠近下拉選單 (取消固定寬度，緊湊排列釋放右側空間) */
 #pokedex-detail-modal .box-form-inline-label {
-  width: 76px;
-  flex-shrink: 0;
+  width: auto !important;
+  min-width: 0 !important;
+  flex-shrink: 0 !important;
   font-size: 12.5px !important;
   font-weight: 700 !important;
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
+  margin-right: 2px !important;
 }
 
 #pokedex-detail-modal .box-form-inline-control {
@@ -23539,10 +23560,66 @@ body.mobile-h5-app.values-active,
   max-width: 100%;
 }
 
-/* 性格與睡飽飽獎章選框：最適長度 (270px) - 內容完整呈現、緊湊不冗長 */
-#pokedex-detail-modal .box-form-inline-control .custom-select-container,
-#pokedex-detail-modal .box-form-inline-control .pokedex-custom-select {
-  width: 270px !important;
+/* 主技能名稱純文字展示，徹底去除外框、陰影與背景底色 */
+#pokedex-detail-modal .box-mainskill-name-badge {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 4px 0 0 !important;
+  height: auto !important;
+  line-height: normal !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.2px;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-mainskill-name-badge,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-mainskill-name-badge,
+[data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .box-mainskill-name-badge,
+[data-theme="onyx"][data-theme-inverted="true"] #pokedex-detail-modal .box-mainskill-name-badge {
+  color: #0284c7 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-mainskill-name-badge,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-mainskill-name-badge,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .box-mainskill-name-badge,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .box-mainskill-name-badge {
+  color: #38bdf8 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* 主技能等級選框：70px 俐落寬度 */
+#pokedex-detail-modal .box-mainskill-select-wrap .custom-select-container,
+#pokedex-detail-modal .box-mainskill-select-wrap .pokedex-custom-select {
+  width: 70px !important;
+  min-width: 70px !important;
+  flex: 0 0 70px !important;
+}
+
+#pokedex-detail-modal .box-mainskill-control .custom-select-trigger,
+#pokedex-detail-modal .box-mainskill-select-wrap .custom-select-trigger {
+  height: 30px !important;
+  min-height: 30px !important;
+  line-height: 28px !important;
+  padding: 0 22px 0 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+/* 睡飽飽獎章選框：235px 最適長度，位在主技能右側 */
+#pokedex-detail-modal .pokedex-ribbon-unit .custom-select-container,
+#pokedex-detail-modal .pokedex-ribbon-unit .pokedex-custom-select {
+  width: 235px !important;
+  max-width: 100% !important;
+}
+
+/* 性格選框：260px 最適長度 */
+#pokedex-detail-modal .pokedex-nature-row .custom-select-container,
+#pokedex-detail-modal .pokedex-nature-row .pokedex-custom-select {
+  width: 260px !important;
   max-width: 100% !important;
 }
 
@@ -23573,32 +23650,6 @@ body.mobile-h5-app.values-active,
   height: 7px !important;
 }
 
-/* 主技能等級選框尺寸緊湊化：高度 30px、寬度 76px，與主技能名稱徽章等高 */
-#pokedex-detail-modal .box-mainskill-control .custom-select-container,
-#pokedex-detail-modal .box-mainskill-select-wrap .custom-select-container {
-  width: 76px !important;
-  min-width: 76px !important;
-  flex: 0 0 76px !important;
-}
-
-#pokedex-detail-modal .box-mainskill-control .custom-select-trigger,
-#pokedex-detail-modal .box-mainskill-select-wrap .custom-select-trigger {
-  height: 30px !important;
-  min-height: 30px !important;
-  line-height: 28px !important;
-  padding: 0 24px 0 8px !important;
-  font-size: 12px !important;
-  font-weight: 700 !important;
-}
-
-#pokedex-detail-modal .box-mainskill-name-badge {
-  height: 30px !important;
-  line-height: 28px !important;
-  padding: 0 10px !important;
-  font-size: 12.5px !important;
-  box-sizing: border-box !important;
-}
-
 /* 下拉選單選項清單微調 */
 #pokedex-detail-modal .custom-select-menu {
   top: calc(100% + 2px) !important;
@@ -23614,6 +23665,17 @@ body.mobile-h5-app.values-active,
 }
 
 @media (max-width: 480px) {
+  #pokedex-detail-modal .pokedex-mainskill-ribbon-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  #pokedex-detail-modal .pokedex-inline-unit {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+  #pokedex-detail-modal .pokedex-ribbon-unit .custom-select-container,
+  #pokedex-detail-modal .pokedex-nature-row .custom-select-container,
   #pokedex-detail-modal .box-form-inline-control,
   #pokedex-detail-modal .box-form-inline-control .custom-select-container,
   #pokedex-detail-modal .box-form-inline-control .pokedex-custom-select {
@@ -23813,10 +23875,6 @@ body.mobile-h5-app.values-active,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .slot-val-empty,
 [data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .slot-val-empty,
 [data-theme="onyx"][data-theme-inverted="true"] #pokedex-detail-modal .slot-val-empty,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-mainskill-name-badge,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-mainskill-name-badge,
-[data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .box-mainskill-name-badge,
-[data-theme="onyx"][data-theme-inverted="true"] #pokedex-detail-modal .box-mainskill-name-badge,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-val-badge,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-val-badge,
 [data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-val-badge,
