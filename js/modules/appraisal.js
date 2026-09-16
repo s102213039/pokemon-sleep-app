@@ -118,7 +118,24 @@
     });
 
     // 性格修正
-    const nature = (window.UserBox && window.UserBox.NATURE_DICT && window.UserBox.NATURE_DICT[natureName]) || { buffType: 'none', debuffType: 'none' };
+    const fallbackNatureDict = {
+      '冷靜': { buffType: 'ingredient', debuffType: 'exp' },
+      '內斂': { buffType: 'ingredient', debuffType: 'speed' },
+      '慢吞吞': { buffType: 'ingredient', debuffType: 'energy' },
+      '馬虎': { buffType: 'ingredient', debuffType: 'skill' },
+      '固執': { buffType: 'speed', debuffType: 'ingredient' },
+      '勇敢': { buffType: 'speed', debuffType: 'exp' },
+      '孤僻': { buffType: 'speed', debuffType: 'energy' },
+      '頑皮': { buffType: 'speed', debuffType: 'skill' },
+      '自大': { buffType: 'skill', debuffType: 'speed' },
+      '溫和': { buffType: 'skill', debuffType: 'speed' },
+      '慎重': { buffType: 'skill', debuffType: 'ingredient' },
+      '溫燥': { buffType: 'skill', debuffType: 'energy' },
+      '浮躁': { buffType: 'skill', debuffType: 'exp' }
+    };
+    const nature = (window.UserBox && window.UserBox.NATURE_DICT && window.UserBox.NATURE_DICT[natureName]) ||
+      (window.PokemonApp && window.PokemonApp.NATURE_DICT && window.PokemonApp.NATURE_DICT[natureName]) ||
+      fallbackNatureDict[natureName] || { buffType: 'none', debuffType: 'none' };
     const natDisplayName = window.I18N ? window.I18N.getNatureName(natureName) : natureName;
 
     // 1. 樹果產能 (Berry Power)
@@ -377,16 +394,17 @@
     const hasCarryS = activeSubskills.some(s => s === '持有上限提升S' || s === 'Inventory Up S');
 
     if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
-      if (hasCarryL) carrySynergy = 6;
-      else if (hasCarryM) carrySynergy = 4;
-      else if (hasCarryS) carrySynergy = 2;
+      if (hasCarryL) carrySynergy = 3.0;
+      else if (hasCarryM) carrySynergy = 2.0;
+      else if (hasCarryS) carrySynergy = 1.0;
     } else if (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') {
-      if (hasCarryL) carrySynergy = 4;
-      else if (hasCarryM) carrySynergy = 2.5;
-      else if (hasCarryS) carrySynergy = 1;
+      if (hasCarryL) carrySynergy = 2.0;
+      else if (hasCarryM) carrySynergy = 1.2;
+      else if (hasCarryS) carrySynergy = 0.6;
     } else {
-      if (hasCarryL) carrySynergy = 2;
-      else if (hasCarryM) carrySynergy = 1;
+      if (hasCarryL) carrySynergy = 1.0;
+      else if (hasCarryM) carrySynergy = 0.5;
+      else if (hasCarryS) carrySynergy = 0.2;
     }
 
     compositeScore += carrySynergy;
@@ -394,51 +412,67 @@
     // 專長契合與天花板綜效 (Specialty Synergy & Ceiling Bonuses)
     let specialtySynergy = 0;
     if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
-      if (nature.buffType === 'ingredient') specialtySynergy += 3;
-      if (ingredients.length >= 3 && currentLv >= 60 && ingredients[0] === ingredients[1] && ingredients[1] === ingredients[2]) specialtySynergy += 3;
-      else if (ingredients.length >= 2 && currentLv >= 30 && ingredients[0] === ingredients[1]) specialtySynergy += 1.5;
+      if (nature.buffType === 'ingredient') specialtySynergy += 1.2;
+      if (ingredients.length >= 3 && currentLv >= 60 && ingredients[0] === ingredients[1] && ingredients[1] === ingredients[2]) specialtySynergy += 1.2;
+      else if (ingredients.length >= 2 && currentLv >= 30 && ingredients[0] === ingredients[1]) specialtySynergy += 0.6;
       const hasIngM = activeSubskills.some(s => s === '食材機率提升M' || s === 'Ingredient Finder M');
       const hasIngS = activeSubskills.some(s => s === '食材機率提升S' || s === 'Ingredient Finder S');
       const hasSpeedM = activeSubskills.some(s => s === '幫忙速度M' || s === 'Helping Speed M');
       const hasHelpBonus = activeSubskills.some(s => s === '幫手獎勵' || s === 'Helping Bonus');
-      if (hasIngM && (hasIngS || hasSpeedM || hasHelpBonus)) specialtySynergy += 3;
-      if (ribbonLevel === 4) specialtySynergy += 2;
-      else if (ribbonLevel >= 2) specialtySynergy += 1;
+      if (hasIngM && (hasIngS || hasSpeedM || hasHelpBonus)) specialtySynergy += 1.2;
+      if (ribbonLevel === 4) specialtySynergy += 0.8;
+      else if (ribbonLevel >= 2) specialtySynergy += 0.4;
     } else if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
       const hasBFS = activeSubskills.some(s => s === '樹果數量S' || s === 'Berry Finding S');
       const hasSpeedM = activeSubskills.some(s => s === '幫忙速度M' || s === 'Helping Speed M');
       const hasHelpBonus = activeSubskills.some(s => s === '幫手獎勵' || s === 'Helping Bonus');
-      if (hasBFS) specialtySynergy += 4;
-      if (nature.buffType === 'speed') specialtySynergy += 3;
-      if (hasBFS && (hasSpeedM || hasHelpBonus)) specialtySynergy += 3;
-      if (ribbonLevel === 4) specialtySynergy += 2;
-      else if (ribbonLevel >= 2) specialtySynergy += 1;
+      if (hasBFS) specialtySynergy += 1.5;
+      if (nature.buffType === 'speed') specialtySynergy += 1.2;
+      if (hasBFS && (hasSpeedM || hasHelpBonus)) specialtySynergy += 1.2;
+      if (ribbonLevel === 4) specialtySynergy += 0.8;
+      else if (ribbonLevel >= 2) specialtySynergy += 0.4;
     } else {
       const hasSkillM = activeSubskills.some(s => s === '技能機率提升M' || s === 'Skill Trigger M');
       const hasSkillS = activeSubskills.some(s => s === '技能機率提升S' || s === 'Skill Trigger S');
       const hasSpeedM = activeSubskills.some(s => s === '幫忙速度M' || s === 'Helping Speed M');
       const hasHelpBonus = activeSubskills.some(s => s === '幫手獎勵' || s === 'Helping Bonus');
-      if (hasSkillM) specialtySynergy += 4;
-      if (nature.buffType === 'skill') specialtySynergy += 3;
-      if (hasSkillM && (hasSkillS || hasSpeedM || hasHelpBonus)) specialtySynergy += 3;
-      if (ribbonLevel === 4) specialtySynergy += 2;
-      else if (ribbonLevel >= 2) specialtySynergy += 1;
+      if (hasSkillM) specialtySynergy += 1.5;
+      if (nature.buffType === 'skill') specialtySynergy += 1.2;
+      if (hasSkillM && (hasSkillS || hasSpeedM || hasHelpBonus)) specialtySynergy += 1.2;
+      if (ribbonLevel === 4) specialtySynergy += 0.8;
+      else if (ribbonLevel >= 2) specialtySynergy += 0.4;
     }
     compositeScore += specialtySynergy;
 
     // 專長精通基準加成 (Specialty Mastery: 該有都有即能穩定達標 90+ S 級門檻)
     let specialtyMasteryBonus = 0;
     if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
-      if (ingScore >= 95) specialtyMasteryBonus = 8;
-      else if (ingScore >= 85) specialtyMasteryBonus = 4;
+      if (ingScore >= 95) specialtyMasteryBonus = 6;
+      else if (ingScore >= 85) specialtyMasteryBonus = 3;
     } else if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
-      if (berryScore >= 95) specialtyMasteryBonus = 8;
-      else if (berryScore >= 85) specialtyMasteryBonus = 4;
+      if (berryScore >= 95) specialtyMasteryBonus = 6;
+      else if (berryScore >= 85) specialtyMasteryBonus = 3;
     } else {
-      if (skillScore >= 95) specialtyMasteryBonus = 8;
-      else if (skillScore >= 85) specialtyMasteryBonus = 4;
+      if (skillScore >= 95) specialtyMasteryBonus = 6;
+      else if (skillScore >= 85) specialtyMasteryBonus = 3;
     }
     compositeScore += specialtyMasteryBonus;
+
+    // 主技能等級實質效益加成 (Main Skill Level Bonus: Lv.1 基礎 +0，Lv.2~7 逐級提升)
+    let skillLvlBonus = 0;
+    if (skillLevel > 1) {
+      if (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') {
+        // 技能型：主技能等級為核心輸出源，每級提供 +1.5 分 (Lv.6 = +7.5, Lv.7 = +9.0)
+        skillLvlBonus = (skillLevel - 1) * 1.5;
+      } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
+        // 食材型：食材獲取S/精選S等副產能，每級提供 +0.8 分 (Lv.6 = +4.0, Lv.7 = +4.8)
+        skillLvlBonus = (skillLevel - 1) * 0.8;
+      } else {
+        // 樹果型：能量充能等輔助，每級提供 +0.5 分 (Lv.6 = +2.5, Lv.7 = +3.0)
+        skillLvlBonus = (skillLevel - 1) * 0.5;
+      }
+    }
+    compositeScore += skillLvlBonus;
     compositeScore = Math.min(100, Math.max(20, Math.round(compositeScore)));
 
     // 評級判定 (新增 SSS, SS，明確劃分 98+, 95+, 90+, 80+, 70+, 60+, <60)

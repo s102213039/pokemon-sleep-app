@@ -4036,12 +4036,13 @@ function renderPokedexRibbonOptionsHTML(pkm, currentRibbon) {
     opt4Text = isEN ? '2000 hrs (+8 Carry Limit)' : '2000 小時 (+8 持有上限)';
   }
 
+  const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : (typeof window !== 'undefined' && window.location && window.location.pathname.includes('/app/') ? '../' : '');
   const optionsData = [
     { val: 0, text: isEN ? 'None (0h)' : '未佩戴 (0h)', icon: '' },
-    { val: 1, text: isEN ? '200 hrs (+1 Carry Limit)' : '200 小時 (+1 持有上限)', icon: 'assets/ribbons/ribbon_lv1.png' },
-    { val: 2, text: opt2Text, icon: 'assets/ribbons/ribbon_lv2.png' },
-    { val: 3, text: opt3Text, icon: 'assets/ribbons/ribbon_lv3.png' },
-    { val: 4, text: opt4Text, icon: 'assets/ribbons/ribbon_lv4.png' }
+    { val: 1, text: isEN ? '200 hrs (+1 Carry Limit)' : '200 小時 (+1 持有上限)', icon: `${base}assets/ribbons/ribbon_lv1.png` },
+    { val: 2, text: opt2Text, icon: `${base}assets/ribbons/ribbon_lv2.png` },
+    { val: 3, text: opt3Text, icon: `${base}assets/ribbons/ribbon_lv3.png` },
+    { val: 4, text: opt4Text, icon: `${base}assets/ribbons/ribbon_lv4.png` }
   ];
 
   return optionsData.map(o => `
@@ -4194,28 +4195,28 @@ function renderPokedexDetailModalContent() {
               <span class="pokedex-tag pokedex-tag-spec ${specClass}">${escapeHtml(specName)}</span>
             </div>
           </div>
+        </div>
 
-          <!-- 基礎數值雙欄縱向列 (左欄：幫忙間隔 & 持有；右欄：食材率 & 技能率，附帶括號基準差值) -->
-          <div class="pokedex-header-stats-row pokedex-header-stats-dual">
-            <div class="pokedex-header-stat-col">
-              <div class="pokedex-header-stat-item">
-                <span class="header-stat-k">${t('th.interval', '幫忙間隔')}</span>
-                <span class="header-stat-v font-bold" id="pokedex-stat-interval">${renderPokedexIntervalValue(formulaData, pkm)}</span>
-              </div>
-              <div class="pokedex-header-stat-item">
-                <span class="header-stat-k">${t('th.carry', '持有')}</span>
-                <span class="header-stat-v font-bold" id="pokedex-stat-carry">${renderPokedexCarryValue(formulaData, pkm)}</span>
-              </div>
+        <!-- 基礎數值雙欄縱向列 (左欄：幫忙間隔 & 持有；右欄：食材率 & 技能率，附帶括號基準差值) -->
+        <div class="pokedex-header-stats-row pokedex-header-stats-dual">
+          <div class="pokedex-header-stat-col">
+            <div class="pokedex-header-stat-item">
+              <span class="header-stat-k">${t('th.interval', '幫忙間隔')}</span>
+              <span class="header-stat-v font-bold" id="pokedex-stat-interval">${renderPokedexIntervalValue(formulaData, pkm)}</span>
             </div>
-            <div class="pokedex-header-stat-col">
-              <div class="pokedex-header-stat-item">
-                <span class="header-stat-k">${t('th.ingredient_rate', '食材率')}</span>
-                <span class="header-stat-v font-bold" id="pokedex-stat-ingredient-rate">${renderPokedexIngRateValue(formulaData, pkm)}</span>
-              </div>
-              <div class="pokedex-header-stat-item">
-                <span class="header-stat-k">${t('th.skill_rate', '技能率')}</span>
-                <span class="header-stat-v font-bold" id="pokedex-stat-skill-rate">${renderPokedexSkillRateValue(formulaData, pkm)}</span>
-              </div>
+            <div class="pokedex-header-stat-item">
+              <span class="header-stat-k">${t('th.carry', '持有')}</span>
+              <span class="header-stat-v font-bold" id="pokedex-stat-carry">${renderPokedexCarryValue(formulaData, pkm)}</span>
+            </div>
+          </div>
+          <div class="pokedex-header-stat-col">
+            <div class="pokedex-header-stat-item">
+              <span class="header-stat-k">${t('th.ingredient_rate', '食材率')}</span>
+              <span class="header-stat-v font-bold" id="pokedex-stat-ingredient-rate">${renderPokedexIngRateValue(formulaData, pkm)}</span>
+            </div>
+            <div class="pokedex-header-stat-item">
+              <span class="header-stat-k">${t('th.skill_rate', '技能率')}</span>
+              <span class="header-stat-v font-bold" id="pokedex-stat-skill-rate">${renderPokedexSkillRateValue(formulaData, pkm)}</span>
             </div>
           </div>
         </div>
@@ -4231,9 +4232,9 @@ function renderPokedexDetailModalContent() {
 
       <!-- 彈窗內容主體 (雙欄/響應式) -->
       <div class="box-modal-body pokedex-modal-body">
-        <!-- 左欄：食材產能算法拆解與最佳配置指南 (空間最大化) -->
+        <!-- 左欄：食材產能算法拆解 (空間最大化) -->
         <div class="pokedex-modal-col pokedex-left-col">
-          <!-- 食材產能算法拆解與策略指南 -->
+          <!-- 食材產能算法拆解 -->
           <div class="pokedex-calc-formula-card" id="pokedex-calc-formula-container">
             ${renderPokedexFormulaBreakdownHTML(formulaData, pkm)}
           </div>
@@ -4272,7 +4273,7 @@ function renderPokedexDetailModalContent() {
             </div>
 
             <!-- 2. 食材組合平鋪選擇器 -->
-            <div class="box-form-group box-full-width box-form-row-inline">
+            <div class="box-form-group box-full-width box-form-row-inline pokedex-ing-row">
               <label class="box-form-label box-form-inline-label">${t('box.modal_poke_ing', '食材組合')}</label>
               <div class="box-ing-strip" id="pokedex-ing-strip"></div>
             </div>
@@ -4343,6 +4344,11 @@ function renderPokedexDetailModalContent() {
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- 底部區塊：寶可夢特性定位與最佳適配副技能指南 (全寬置底) -->
+        <div class="pokedex-modal-strategy-wrap box-full-width" id="pokedex-strategy-wrap">
+          ${renderPokedexStrategyCardHTML(pkm)}
         </div>
       </div>
     </div>
@@ -4457,9 +4463,6 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
           ` : ''}
         </div>
       </div>
-
-      <!-- 寶可夢特性定位與最佳適配副技能指南 -->
-      ${renderPokedexStrategyCardHTML(pkm || (pokedexModalState && pokedexModalState.pkm))}
     </div>
   `;
 }
@@ -4506,6 +4509,12 @@ function updatePokedexModalAppraisalLive() {
   const formulaContainer = document.getElementById('pokedex-calc-formula-container');
   if (formulaContainer && formulaData) {
     formulaContainer.innerHTML = renderPokedexFormulaBreakdownHTML(formulaData, pkm);
+  }
+
+  // 更新置底的最佳配置指南卡片
+  const strategyContainer = document.getElementById('pokedex-strategy-wrap');
+  if (strategyContainer) {
+    strategyContainer.innerHTML = renderPokedexStrategyCardHTML(pkm);
   }
 
   const intervalEl = document.getElementById('pokedex-stat-interval');

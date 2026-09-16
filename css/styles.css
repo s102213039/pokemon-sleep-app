@@ -24242,64 +24242,222 @@ body.mobile-h5-app.values-active,
   }
 
   .pokedex-modal-header {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-    padding: 10px 14px;
-    position: relative;
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    grid-template-areas:
+      "main actions"
+      "stats stats" !important;
+    gap: 6px 8px !important;
+    padding: 8px 12px 6px !important;
+    position: static !important;
+    align-items: center !important;
   }
 
   .pokedex-modal-header-main {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-    width: 100%;
-    padding-right: 96px;
-    box-sizing: border-box;
+    grid-area: main;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    padding-right: 0 !important;
+    min-width: 0 !important;
   }
 
   .pokedex-modal-title {
-    width: 100%;
-    align-items: flex-start;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-width: 0 !important;
+    flex: 1 !important;
+    flex-wrap: nowrap !important;
   }
 
-  .pokedex-header-tags {
-    width: 100%;
-    margin-top: 4px;
+  .pokedex-header-avatar {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 8px !important;
+    padding: 1px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .pokedex-header-info {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: baseline !important;
+    gap: 5px !important;
+    min-width: 0 !important;
+    flex-shrink: 1 !important;
+  }
+
+  .pokedex-header-no {
+    font-size: 10px !important;
+    opacity: 0.8 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .pokedex-header-pkm-name {
+    font-size: 16px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    flex-shrink: 1 !important;
+  }
+
+  .pokedex-header-tags,
+  .pokedex-header-berry-spec-group {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .pokedex-header-tags .pokedex-tag {
+    padding: 1px 5px !important;
+    font-size: 10px !important;
+    height: 18px !important;
+    line-height: 16px !important;
+  }
+
+  .pokedex-berry-icon-img {
+    width: 14px !important;
+    height: 14px !important;
   }
 
   .pokedex-header-actions {
-    position: absolute;
-    top: 10px;
-    right: 12px;
+    grid-area: actions;
+    position: static !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
   }
 
-  .pokedex-header-stats-row {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    text-align: center;
-    gap: 4px;
-    padding: 4px 6px;
-    box-sizing: border-box;
+  .pokedex-header-verdict-badge {
+    padding: 2px 8px !important;
+    gap: 4px !important;
+    height: 28px !important;
+    border-radius: 6px !important;
+  }
+
+  .verdict-grade {
+    font-size: 17px !important;
+    line-height: 1 !important;
+  }
+
+  .pokedex-header-score-text {
+    font-size: 11px !important;
+  }
+
+  .pokedex-modal-close-btn {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 13px !important;
+    padding: 0 !important;
+  }
+
+  /* 第二列：全寬 4 欄緊湊數值條 (幫忙間隔、持有、食材率、技能率) */
+  .pokedex-header-stats-row.pokedex-header-stats-dual {
+    grid-area: stats;
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 4px !important;
+    padding: 4px 6px !important;
+    box-sizing: border-box !important;
+    border-radius: 6px !important;
+    background: rgba(0, 0, 0, 0.15) !important;
+    margin-top: 1px !important;
+  }
+
+  .pokedex-header-stat-col {
+    display: contents !important;
   }
 
   .pokedex-header-stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1px;
-    font-size: 11px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: 1px !important;
   }
 
   .header-stat-k {
-    font-size: 10px;
+    font-size: 9.5px !important;
+    white-space: nowrap !important;
+    opacity: 0.85 !important;
   }
 
   .header-stat-v {
-    font-size: 11.5px;
+    font-size: 11px !important;
+    white-space: nowrap !important;
+  }
+
+  .header-stat-diff {
+    font-size: 9px !important;
+    margin-left: 1px !important;
+  }
+
+  /* 食材組合整體往下擺，100% 寬度一行完整展示 */
+  #pokedex-detail-modal .pokedex-ing-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+  }
+
+  #pokedex-detail-modal .pokedex-ing-row .box-form-inline-label {
+    margin-bottom: 0 !important;
+    font-size: 12px !important;
+    align-self: flex-start !important;
+  }
+
+  #pokedex-detail-modal .pokedex-ing-row #pokedex-ing-strip {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+  }
+
+  /* 主技能與睡飽飽獎章在移動端自適應換行 */
+  #pokedex-detail-modal .pokedex-mainskill-ribbon-row {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  #pokedex-detail-modal .pokedex-inline-unit {
+    flex: 1 1 140px !important;
+    min-width: 0 !important;
+  }
+
+  /* 算法拆解換行自適應，防止橫向爆框 */
+  .calc-row-header {
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+
+  .calc-row-formula {
+    flex-wrap: wrap !important;
+    gap: 3px 5px !important;
+    font-size: 11px !important;
+    line-height: 1.4 !important;
+  }
+
+  .formula-derive {
+    display: block !important;
+    width: 100% !important;
+    margin-top: 3px !important;
+  }
+
+  /* 底部策略指南全寬置底 */
+  .pokedex-modal-strategy-wrap {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    margin-top: 8px !important;
   }
 
   .pokedex-modal-body {
@@ -24340,10 +24498,6 @@ body.mobile-h5-app.values-active,
   .pokedex-presets-bar {
     flex-direction: row;
     align-items: center;
-  }
-
-  .verdict-grade {
-    font-size: 30px;
   }
 }
 
@@ -24390,4 +24544,9 @@ body.mobile-h5-app.values-active,
 .mobile-h5-app .pokedex-ing-slots-grid {
   grid-template-columns: 1fr !important;
   gap: 6px !important;
+}
+
+.pokedex-modal-strategy-wrap {
+  grid-column: 1 / -1;
+  width: 100%;
 }

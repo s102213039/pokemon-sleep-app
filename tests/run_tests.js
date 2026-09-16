@@ -6600,17 +6600,23 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assert(evalCarryS.compositeScore > evalBaseline.compositeScore, 'Inventory Up S must score higher than baseline');
 
   // 15I. Grade Tiers & Core-Kit Expectation (A, S, SS, SSS)
-  const evalSolidIng = appCtx.AppraisalLab.evaluatePokemon(ingMon, 30, '坦率', ['食材機率提升M', '持有上限提升S'], ['甜甜蜜', '甜甜蜜'], 0, 1);
-  assert(evalSolidIng.compositeScore >= 90, 'Ingredient specialist with core kit (Ing M + Carry S + AA) must score >= 90 (S grade)');
+  const finalIngMon = dataset.find(p => (p.specialty === '食材' || p.specialty === 'Ingredients') && (p.is_final === '〇' || p.is_final === true || p.is_final === '1')) || ingMon;
+  const evalSolidIng = appCtx.AppraisalLab.evaluatePokemon(finalIngMon, 30, '冷靜', ['食材機率提升M', '持有上限提升S'], ['甜甜蜜', '甜甜蜜'], 0, 1);
+  assert(evalSolidIng.compositeScore >= 90, 'Final evolved ingredient specialist with core kit (Ing M + Carry S + AA) must score >= 90 (S grade)');
   assertEquals(evalSolidIng.grade, 'S', 'Score 90+ must receive S grade');
 
-  const evalEliteIng = appCtx.AppraisalLab.evaluatePokemon(ingMon, 60, '冷靜', ['食材機率提升M', '幫忙速度M', '持有上限提升L'], ['甜甜蜜', '甜甜蜜', '甜甜蜜'], 0, 1);
+  const evalEliteIng = appCtx.AppraisalLab.evaluatePokemon(finalIngMon, 60, '冷靜', ['食材機率提升M', '幫忙速度M', '持有上限提升L'], ['甜甜蜜', '甜甜蜜', '甜甜蜜'], 0, 1);
   assert(evalEliteIng.compositeScore >= 95, 'Elite ingredient specialist roll must score >= 95');
   assert(evalEliteIng.grade === 'SS' || evalEliteIng.grade === 'SSS', 'Elite roll must receive SS or SSS grade');
 
-  const evalGodIng = appCtx.AppraisalLab.evaluatePokemon(ingMon, 60, '冷靜', ['食材機率提升M', '食材機率提升S', '持有上限提升L'], ['甜甜蜜', '甜甜蜜', '甜甜蜜'], 4, 1);
+  const evalGodIng = appCtx.AppraisalLab.evaluatePokemon(finalIngMon, 60, '冷靜', ['食材機率提升M', '食材機率提升S', '持有上限提升L'], ['甜甜蜜', '甜甜蜜', '甜甜蜜'], 4, 6);
   assert(evalGodIng.compositeScore >= 98, 'God preset roll must score >= 98 (SSS grade)');
   assertEquals(evalGodIng.grade, 'SSS', 'Score 98+ must receive SSS grade');
+
+  // 15J. Main Skill Level Impact on Appraisal Score
+  const evalSkillLv1 = appCtx.AppraisalLab.evaluatePokemon(finalIngMon, 30, '冷靜', ['食材機率提升M'], ['甜甜蜜', '甜甜蜜'], 0, 1);
+  const evalSkillLv6 = appCtx.AppraisalLab.evaluatePokemon(finalIngMon, 30, '冷靜', ['食材機率提升M'], ['甜甜蜜', '甜甜蜜'], 0, 6);
+  assert(evalSkillLv6.compositeScore > evalSkillLv1.compositeScore, 'Higher main skill level must increase composite score');
 });
 
 // Final Summary Output
