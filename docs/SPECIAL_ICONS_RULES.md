@@ -14,8 +14,6 @@
    - 遊戲使用自定義虛擬 ID（例如萬聖節皮卡丘 `9001`、阿羅拉六尾 `7006`）。
    - **Serebii 伺服器並不存在 `9001.png` 或 `7006.png`**，而是採用語義化檔名（例如 `025-halloween.png`、`037-alolanvulpix.png`）。
    - 若直接以數字拼接 URL，會造成 **HTTP 404 圖片破圖**。
-3. **未開放／世代預覽寶可夢**（如超夢 `150`）：
-   - 官方 Sleep 圖庫尚未收錄該寶可夢獨立資源，需自動 fallback 至標準全圖鑑圖庫（如 `pokedex-sv/icon/150.png`）。
 
 ---
 
@@ -23,20 +21,19 @@
 
 | 遊戲 ID | 寶可夢名稱 (中) | 英文名稱 | 官方正確 Serebii 圖片 URL | 狀態 |
 | :--- | :--- | :--- | :--- | :--- |
-| **9001** | 皮卡丘（萬聖節） | Pikachu (Halloween) | `https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png` | ✅ 200 OK |
-| **9002** | 皮卡丘（佳節） | Pikachu (Holiday) | `https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png` | ✅ 200 OK |
-| **9003** | 皮卡丘（船長） | Pikachu (Captain) | `https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png` | ✅ 200 OK |
-| **9004** | 伊布（佳節） | Eevee (Holiday) | `https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png` | ✅ 200 OK |
-| **9005** | 伊布（萬聖節） | Eevee (Halloween) | `https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png` | ✅ 200 OK |
-| **9006** | 海豹球（佳節） | Spheal (Holiday) | `https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png` | ✅ 200 OK |
-| **7006** | 六尾（阿羅拉的樣子） | Vulpix (Alolan) | `https://www.serebii.net/pokemonsleep/pokemon/icon/037-alolanvulpix.png` | ✅ 200 OK |
-| **7007** | 九尾（阿羅拉的樣子） | Ninetales (Alolan) | `https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png` | ✅ 200 OK |
-| **7054** | 烏波（帕底亞的樣子） | Wooper (Paldean) | `https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png` | ✅ 200 OK |
-| **8001** | 顫弦蠑螈（低調的樣子） | Toxtricity (Low-Key) | `https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png` | ✅ 200 OK |
-| **150** | 超夢 | Mewtwo | `https://www.serebii.net/pokedex-sv/icon/150.png` | ✅ 200 OK |
-| **957** | 小鍛匠 | Tinkatink | `https://www.serebii.net/pokemonsleep/pokemon/icon/957.png` | ✅ 200 OK |
-| **958** | 巧鍛匠 | Tinkatuff | `https://www.serebii.net/pokemonsleep/pokemon/icon/958.png` | ✅ 200 OK |
-| **959** | 巨鍛匠 | Tinkaton | `https://www.serebii.net/pokemonsleep/pokemon/icon/959.png` | ✅ 200 OK |
+| **9001** | 皮卡丘（萬聖節） | Pikachu (Halloween) | `https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png` | [200 OK] |
+| **9002** | 皮卡丘（佳節） | Pikachu (Holiday) | `https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png` | [200 OK] |
+| **9003** | 皮卡丘（船長） | Pikachu (Captain) | `https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png` | [200 OK] |
+| **9004** | 伊布（佳節） | Eevee (Holiday) | `https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png` | [200 OK] |
+| **9005** | 伊布（萬聖節） | Eevee (Halloween) | `https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png` | [200 OK] |
+| **9006** | 海豹球（佳節） | Spheal (Holiday) | `https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png` | [200 OK] |
+| **7006** | 六尾（阿羅拉的樣子） | Vulpix (Alolan) | `https://www.serebii.net/pokemonsleep/pokemon/icon/037-alolanvulpix.png` | [200 OK] |
+| **7007** | 九尾（阿羅拉的樣子） | Ninetales (Alolan) | `https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png` | [200 OK] |
+| **7054** | 烏波（帕底亞的樣子） | Wooper (Paldean) | `https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png` | [200 OK] |
+| **8001** | 顫弦蠑螈（低調的樣子） | Toxtricity (Low-Key) | `https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png` | [200 OK] |
+| **957** | 小鍛匠 | Tinkatink | `https://www.serebii.net/pokemonsleep/pokemon/icon/957.png` | [200 OK] |
+| **958** | 巧鍛匠 | Tinkatuff | `https://www.serebii.net/pokemonsleep/pokemon/icon/958.png` | [200 OK] |
+| **959** | 巨鍛匠 | Tinkaton | `https://www.serebii.net/pokemonsleep/pokemon/icon/959.png` | [200 OK] |
 
 ---
 

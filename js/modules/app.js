@@ -17,7 +17,6 @@ const SPECIAL_ICON_MAP = {
   '7007': 'https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png',
   '7054': 'https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png',
   '8001': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png',
-  '150':  'https://www.serebii.net/pokedex-sv/icon/150.png',
   '皮卡丘（萬聖節）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png',
   '皮卡丘（佳節）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png',
   '皮卡丘（船長）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png',
@@ -32,8 +31,7 @@ const SPECIAL_ICON_MAP = {
   '烏波（帕底亞）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png',
   '海豹球（佳節）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png',
   '顫弦蠑螈（低調的樣子）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png',
-  '顫弦蠑螈（低調）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png',
-  '超夢': 'https://www.serebii.net/pokedex-sv/icon/150.png'
+  '顫弦蠑螈（低調）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png'
 };
 
 function getIconUrl(p) {
@@ -3831,6 +3829,10 @@ function calculatePokedexIngredientFormulas() {
     mainSkillExtraDaily,
     mainSkillLabel,
     dailyTriggers,
+    baseSkillRate,
+    subskillSkillBonus,
+    natureSkillMult,
+    finalSkillRate,
     levelSpeedDiscount,
     subskillSpeedBonus,
     natureSpeedMult,
@@ -4055,16 +4057,13 @@ function renderPokedexDetailModalContent() {
               <div class="pokedex-header-no">No.${pkm.formatted_no || ''}</div>
               <div class="pokedex-header-name-row">
                 <span class="pokedex-header-pkm-name font-bold">${escapeHtml(pkmName)}</span>
-                ${!isEN && pkm.name_en ? `<span class="pokedex-header-title-en">${escapeHtml(pkm.name_en)}</span>` : ''}
               </div>
             </div>
             <div class="pokedex-header-tags">
               <span class="pokedex-tag pokedex-tag-berry" title="${escapeHtml(berryName)}">
-                ${berry.icon ? `<img src="${berry.icon}" class="pokedex-berry-icon-img" alt="${escapeHtml(berryName)}" loading="lazy">` : ''}
-                <span class="pokedex-berry-name">${escapeHtml(berryName)}</span>
+                ${berry.icon ? `<img src="${berry.icon}" class="pokedex-berry-icon-img" alt="${escapeHtml(berryName)}" title="${escapeHtml(berryName)}" loading="lazy">` : ''}
               </span>
               <span class="pokedex-tag pokedex-tag-spec">${escapeHtml(specName)}</span>
-              ${pkm.evo_req ? `<span class="pokedex-tag pokedex-tag-evo" title="${t('pokedex.evo_req', '進化條件')}">${escapeHtml(pkm.evo_req)}</span>` : ''}
             </div>
           </div>
 
@@ -4072,7 +4071,7 @@ function renderPokedexDetailModalContent() {
           <div class="pokedex-header-stats-row">
             <div class="pokedex-header-stat-item">
               <span class="header-stat-k">${t('th.carry', '持有上限')}</span>
-              <span class="header-stat-v font-bold">${pkm.carry || '--'}</span>
+              <span class="header-stat-v font-bold" id="pokedex-stat-carry">${pkm.carry || '--'}</span>
             </div>
             <div class="pokedex-header-stat-item">
               <span class="header-stat-k">${t('th.interval', '幫忙間隔')}</span>
@@ -4080,11 +4079,11 @@ function renderPokedexDetailModalContent() {
             </div>
             <div class="pokedex-header-stat-item">
               <span class="header-stat-k">${t('th.ingredient_rate', '食材機率')}</span>
-              <span class="header-stat-v font-bold">${pkm.ingredient_rate || '--'}</span>
+              <span class="header-stat-v font-bold" id="pokedex-stat-ingredient-rate">${formulaData && typeof formulaData.finalIngRate === 'number' ? formulaData.finalIngRate.toFixed(2) + '%' : (pkm.ingredient_rate || '--')}</span>
             </div>
             <div class="pokedex-header-stat-item">
               <span class="header-stat-k">${t('th.skill_rate', '技能機率')}</span>
-              <span class="header-stat-v font-bold">${pkm.skill_rate || '--'}</span>
+              <span class="header-stat-v font-bold" id="pokedex-stat-skill-rate">${formulaData && typeof formulaData.finalSkillRate === 'number' ? formulaData.finalSkillRate.toFixed(2) + '%' : (pkm.skill_rate || '--')}</span>
             </div>
           </div>
         </div>
@@ -4097,9 +4096,9 @@ function renderPokedexDetailModalContent() {
 
       <!-- 彈窗內容主體 (雙欄/響應式) -->
       <div class="box-modal-body pokedex-modal-body">
-        <!-- 左欄：強度評測與六維雷達圖 + 食材產能算法拆解與最佳配置指南 -->
+        <!-- 左欄：強度評測 + 食材產能算法拆解與最佳配置指南 -->
         <div class="pokedex-modal-col pokedex-left-col">
-          <!-- 強度評估報告盒與雷達圖 -->
+          <!-- 強度評估報告盒 (保留上方綜合戰力評分，移除六項評估雷達圖) -->
           <div class="pokedex-appraisal-verdict-box" style="border-color: ${evaluation.gradeColor};">
             <div class="verdict-score-group">
               <div class="verdict-grade" style="color: ${evaluation.gradeColor};">${evaluation.grade}</div>
@@ -4108,11 +4107,6 @@ function renderPokedexDetailModalContent() {
                 <div class="verdict-score-text">${isEN ? 'Potential Score' : '綜合戰力評分'}：<span class="verdict-num font-bold">${evaluation.compositeScore}</span> / 100</div>
               </div>
             </div>
-            ${radarSVG ? `
-              <div class="pokedex-radar-wrapper">
-                ${radarSVG}
-              </div>
-            ` : ''}
           </div>
 
           <!-- 食材產能算法拆解與策略指南 (移至左欄綜合評分下方) -->
@@ -4361,13 +4355,7 @@ function updatePokedexModalAppraisalLive() {
   if (numEl) numEl.textContent = evaluation.compositeScore;
   if (verdictBox) verdictBox.style.borderColor = evaluation.gradeColor;
 
-  // 3. 更新雷達圖 (緊湊版 210 x 185)
-  const radarWrapper = document.querySelector('.pokedex-radar-wrapper');
-  if (radarWrapper && window.AppraisalLab && typeof window.AppraisalLab.renderRadarChartSVG === 'function') {
-    radarWrapper.innerHTML = window.AppraisalLab.renderRadarChartSVG(evaluation.scores, 210, 185);
-  }
-
-  // 4. 更新食材產能算法拆解卡片與動態幫忙間隔
+  // 3. 更新食材產能算法拆解卡片與動態數值 (幫忙間隔、食材機率、技能機率)
   const formulaData = calculatePokedexIngredientFormulas();
   const formulaContainer = document.getElementById('pokedex-calc-formula-container');
   if (formulaContainer && formulaData) {
@@ -4377,6 +4365,16 @@ function updatePokedexModalAppraisalLive() {
   const intervalEl = document.getElementById('pokedex-stat-interval');
   if (intervalEl && formulaData) {
     intervalEl.textContent = formatHelpInterval(formulaData.effectiveIntervalSec);
+  }
+
+  const skillRateEl = document.getElementById('pokedex-stat-skill-rate');
+  if (skillRateEl && formulaData && typeof formulaData.finalSkillRate === 'number') {
+    skillRateEl.textContent = `${formulaData.finalSkillRate.toFixed(2)}%`;
+  }
+
+  const ingRateEl = document.getElementById('pokedex-stat-ingredient-rate');
+  if (ingRateEl && formulaData && typeof formulaData.finalIngRate === 'number') {
+    ingRateEl.textContent = `${formulaData.finalIngRate.toFixed(2)}%`;
   }
 
   // 5. 更新等級數值標籤與重點圖釘狀態
