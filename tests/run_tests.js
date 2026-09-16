@@ -1716,8 +1716,8 @@ test('Tier 2 - Boundary & Corner Cases', 'Event Gantt Timeline Parser: Identifie
   assert(packs.length > 0, 'Gantt timeline should parse bundle packs');
 });
 
-test('Tier 2 - Boundary & Corner Cases', 'Special Pokemon icon resolution (9001-9006, 7006, 7007, 7054, 8001, 150) maps to valid Serebii URLs', () => {
-  const specialIds = ['9001', '9002', '9003', '9004', '9005', '9006', '7006', '7007', '7054', '8001', '150'];
+test('Tier 2 - Boundary & Corner Cases', 'Special Pokemon icon resolution (9001-9006, 7006, 7007, 7054, 8001) and Mewtwo standard icon resolution', () => {
+  const specialIds = ['9001', '9002', '9003', '9004', '9005', '9006', '7006', '7007', '7054', '8001'];
   specialIds.forEach(id => {
     const item = dataset.find(p => String(p.id) === id);
     if (item) {
@@ -1726,6 +1726,12 @@ test('Tier 2 - Boundary & Corner Cases', 'Special Pokemon icon resolution (9001-
       assert(!icon.includes(`pokemonsleep/pokemon/icon/${id}.png`), `Special item #${id} must not use naive numerical path pokemonsleep/pokemon/icon/${id}.png`);
     }
   });
+
+  const mewtwo = dataset.find(p => String(p.id) === '150');
+  if (mewtwo) {
+    const icon = getItemIcon(mewtwo);
+    assertEquals(icon, 'https://www.serebii.net/pokemonsleep/pokemon/icon/150.png', 'Mewtwo #150 icon should map to official Serebii pokemonsleep icon');
+  }
 });
 
 test('Tier 2 - Boundary & Corner Cases', 'Table column sort: carry/ingredient/skill default desc, interval default asc; same-col toggles; switching col uses that col default', () => {
@@ -6432,12 +6438,27 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   // 9. Test Berry Icon in Header, Dynamic Interval & Anchored Track Pins
   assert(modalEl.innerHTML.includes('pokedex-berry-icon-img'), 'Header must contain .pokedex-berry-icon-img');
   assert(modalEl.innerHTML.includes('pokedex-tag-berry'), 'Header must contain .pokedex-tag-berry');
+  assert(!modalEl.innerHTML.includes('pokedex-berry-name'), 'Header must not contain berry name text');
+  assert(!modalEl.innerHTML.includes('pokedex-header-title-en'), 'Header must not contain English name');
+  assert(!modalEl.innerHTML.includes('pokedex-tag-evo'), 'Header must not contain evolution requirement');
+  assert(!modalEl.innerHTML.includes('pokedex-radar-wrapper'), 'Verdict box must not contain radar chart wrapper');
   assert(modalEl.innerHTML.includes('pokedex-stat-interval'), 'Header stats must contain #pokedex-stat-interval for dynamic interval calculation');
+  assert(modalEl.innerHTML.includes('pokedex-stat-skill-rate'), 'Header stats must contain #pokedex-stat-skill-rate');
   assert(modalEl.innerHTML.includes('pokedex-track-pins-bar'), 'Modal HTML must include .pokedex-track-pins-bar');
   assert(modalEl.innerHTML.includes('pin-milestone'), 'Key milestones (30, 50, 60, 80, 100) must be highlighted');
 
   // 9B. Test Ribbon Options HTML with dynamic descriptions and icons
   assert(typeof PokemonApp.renderPokedexRibbonOptionsHTML === 'function' || modalEl.innerHTML.includes('ribbon_lv1.png'), 'Modal HTML must include ribbon icon options');
+
+  // 9C. Test Dynamic Skill Rate calculation on subskills change
+  PokemonApp.openPokemonDetailModal('003');
+  PokemonApp.clearAllPokedexSubskills();
+  PokemonApp.setPokedexModalNature('坦率');
+  const baseFm = PokemonApp.calculatePokedexIngredientFormulas();
+  PokemonApp.selectPokedexSubskillSlot(1);
+  PokemonApp.choosePokedexSubskill('技能機率提升M');
+  const boostedSkillFm = PokemonApp.calculatePokedexIngredientFormulas();
+  assert(boostedSkillFm.finalSkillRate > baseFm.finalSkillRate, 'Skill trigger rate must dynamically increase when 技能機率提升M is selected');
 
   // 10. Test Skill-type Pokemon with Magnet S / Draw S (e.g. Golbat 042)
   PokemonApp.openPokemonDetailModal('042');
