@@ -3795,11 +3795,38 @@ function calculatePokedexIngredientFormulas() {
     totalDailyIngredients += item.daily;
   });
 
-  // 7. 主技能附加期望
+  // 7. 持有上限計算 (基礎持有 + 副技能 + 睡飽飽獎章)
+  const baseCarry = parseInt(pkm.carry || pkm.carryCapacity || '0', 10) || 0;
+  let subskillCarryBonus = 0;
+  subskills.forEach((sName, idx) => {
+    if (!sName) return;
+    const isUnlocked = currentLevel >= slotLevels[idx];
+    if (isUnlocked) {
+      if (sName === '持有上限提升L') subskillCarryBonus += 18;
+      if (sName === '持有上限提升M') subskillCarryBonus += 12;
+      if (sName === '持有上限提升S') subskillCarryBonus += 6;
+    }
+  });
+
+  let ribbonCarryBonus = 0;
+  if (ribbon > 0 && window.AppraisalLab && typeof window.AppraisalLab.getRibbonBonus === 'function') {
+    const remEvos = window.AppraisalLab.getRemainingEvolutions(pkm);
+    const rBonus = window.AppraisalLab.getRibbonBonus(ribbon, remEvos);
+    ribbonCarryBonus = rBonus.carry || 0;
+  }
+
+  const effectiveCarry = baseCarry + subskillCarryBonus + ribbonCarryBonus;
+  const diffCarry = effectiveCarry - baseCarry;
+
+  // 8. 主技能附加期望
   let mainSkillExtraDaily = 0;
   let mainSkillLabel = '';
   const finalSkillRate = baseSkillRate * (1 + subskillSkillBonus / 100) * natureSkillMult;
   const dailyTriggers = dailyHelps * (finalSkillRate / 100);
+
+  const diffIngRate = finalIngRate - baseIngRate;
+  const diffSkillRate = finalSkillRate - baseSkillRate;
+  const diffSec = effectiveIntervalSec - baseIntervalSec;
 
   if (pkm.main_skill && (pkm.main_skill.includes('食材獲取') || pkm.main_skill.includes('Ingredient Magnet'))) {
     const magnetTable = [6, 8, 11, 14, 17, 21, 24];
@@ -3814,6 +3841,14 @@ function calculatePokedexIngredientFormulas() {
   }
 
   return {
+    baseCarry,
+    subskillCarryBonus,
+    ribbonCarryBonus,
+    effectiveCarry,
+    diffCarry,
+    diffIngRate,
+    diffSkillRate,
+    diffSec,
     baseIngRate,
     subskillIngBonus,
     natureIngMult,
@@ -3838,6 +3873,78 @@ function calculatePokedexIngredientFormulas() {
     natureSpeedMult,
     ribbonDiscount
   };
+}
+
+function formatPokedexIntervalDiff(diffSec) {
+  if (diffSec === 0) return { text: '(+0s)', cls: 'diff-zero' };
+  const absSec = Math.abs(diffSec);
+  const m = Math.floor(absSec / 60);
+  const s = absSec % 60;
+  const timeStr = m > 0 ? `${m}:${s < 10 ? '0' : ''}${s}` : `${s}s`;
+  if (diffSec < 0) {
+    return { text: `(-${timeStr})`, cls: 'diff-pos' };
+  } else {
+    return { text: `(+${timeStr})`, cls: 'diff-neg' };
+  }
+}
+
+function renderPokedexIntervalValue(f, pkm) {
+  if (!f) return formatHelpInterval(pkm ? pkm.interval : 0);
+  const mainVal = formatHelpInterval(f.effectiveIntervalSec);
+  const diff = formatPokedexIntervalDiff(f.diffSec);
+  return `${mainVal} <span class="header-stat-diff ${diff.cls}">${diff.text}</span>`;
+}
+
+function renderPokedexCarryValue(f, pkm) {
+  if (!f) {
+    const baseC = pkm ? (pkm.carry || pkm.carryCapacity || '--') : '--';
+    return `${baseC}`;
+  }
+  const diffVal = f.diffCarry;
+  let diffCls = 'diff-zero';
+  let diffSign = '+';
+  if (diffVal > 0) {
+    diffCls = 'diff-pos';
+    diffSign = '+';
+  } else if (diffVal < 0) {
+    diffCls = 'diff-neg';
+    diffSign = '';
+  }
+  return `${f.effectiveCarry} <span class="header-stat-diff ${diffCls}">(${diffSign}${diffVal})</span>`;
+}
+
+function renderPokedexIngRateValue(f, pkm) {
+  if (!f || typeof f.finalIngRate !== 'number') {
+    return pkm ? (pkm.ingredient_rate || '--') : '--';
+  }
+  const diffVal = f.diffIngRate;
+  let diffCls = 'diff-zero';
+  let diffSign = '+';
+  if (diffVal > 0.001) {
+    diffCls = 'diff-pos';
+    diffSign = '+';
+  } else if (diffVal < -0.001) {
+    diffCls = 'diff-neg';
+    diffSign = '';
+  }
+  return `${f.finalIngRate.toFixed(2)}% <span class="header-stat-diff ${diffCls}">(${diffSign}${diffVal.toFixed(2)}%)</span>`;
+}
+
+function renderPokedexSkillRateValue(f, pkm) {
+  if (!f || typeof f.finalSkillRate !== 'number') {
+    return pkm ? (pkm.skill_rate || '--') : '--';
+  }
+  const diffVal = f.diffSkillRate;
+  let diffCls = 'diff-zero';
+  let diffSign = '+';
+  if (diffVal > 0.001) {
+    diffCls = 'diff-pos';
+    diffSign = '+';
+  } else if (diffVal < -0.001) {
+    diffCls = 'diff-neg';
+    diffSign = '';
+  }
+  return `${f.finalSkillRate.toFixed(2)}% <span class="header-stat-diff ${diffCls}">(${diffSign}${diffVal.toFixed(2)}%)</span>`;
 }
 
 const STAGE3_INHERITED_MIN_LEVELS = {
@@ -4074,19 +4181,27 @@ function renderPokedexDetailModalContent() {
             </div>
           </div>
 
-          <!-- 基礎數值橫向列 (幫忙間隔、食材機率、技能機率) -->
-          <div class="pokedex-header-stats-row">
-            <div class="pokedex-header-stat-item">
-              <span class="header-stat-k">${t('th.interval', '幫忙間隔')}</span>
-              <span class="header-stat-v font-bold" id="pokedex-stat-interval">${formatHelpInterval(formulaData ? formulaData.effectiveIntervalSec : pkm.interval)}</span>
+          <!-- 基礎數值雙欄縱向列 (左欄：幫忙間隔 & 持有；右欄：食材率 & 技能率，附帶括號基準差值) -->
+          <div class="pokedex-header-stats-row pokedex-header-stats-dual">
+            <div class="pokedex-header-stat-col">
+              <div class="pokedex-header-stat-item">
+                <span class="header-stat-k">${t('th.interval', '幫忙間隔')}</span>
+                <span class="header-stat-v font-bold" id="pokedex-stat-interval">${renderPokedexIntervalValue(formulaData, pkm)}</span>
+              </div>
+              <div class="pokedex-header-stat-item">
+                <span class="header-stat-k">${t('th.carry', '持有')}</span>
+                <span class="header-stat-v font-bold" id="pokedex-stat-carry">${renderPokedexCarryValue(formulaData, pkm)}</span>
+              </div>
             </div>
-            <div class="pokedex-header-stat-item">
-              <span class="header-stat-k">${t('th.ingredient_rate', '食材機率')}</span>
-              <span class="header-stat-v font-bold" id="pokedex-stat-ingredient-rate">${formulaData && typeof formulaData.finalIngRate === 'number' ? formulaData.finalIngRate.toFixed(2) + '%' : (pkm.ingredient_rate || '--')}</span>
-            </div>
-            <div class="pokedex-header-stat-item">
-              <span class="header-stat-k">${t('th.skill_rate', '技能機率')}</span>
-              <span class="header-stat-v font-bold" id="pokedex-stat-skill-rate">${formulaData && typeof formulaData.finalSkillRate === 'number' ? formulaData.finalSkillRate.toFixed(2) + '%' : (pkm.skill_rate || '--')}</span>
+            <div class="pokedex-header-stat-col">
+              <div class="pokedex-header-stat-item">
+                <span class="header-stat-k">${t('th.ingredient_rate', '食材率')}</span>
+                <span class="header-stat-v font-bold" id="pokedex-stat-ingredient-rate">${renderPokedexIngRateValue(formulaData, pkm)}</span>
+              </div>
+              <div class="pokedex-header-stat-item">
+                <span class="header-stat-k">${t('th.skill_rate', '技能率')}</span>
+                <span class="header-stat-v font-bold" id="pokedex-stat-skill-rate">${renderPokedexSkillRateValue(formulaData, pkm)}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -4238,10 +4353,7 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
   const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
 
   const natureIngSign = f.natureIngMult > 1 ? `x${f.natureIngMult.toFixed(2)} (+20%)` : (f.natureIngMult < 1 ? `x${f.natureIngMult.toFixed(2)} (-20%)` : `x1.00`);
-  const subskillIngSign = f.subskillIngBonus > 0 ? `+${f.subskillIngBonus}%` : `+0%`;
-
   const natureSkillSign = f.natureSkillMult > 1 ? `x${f.natureSkillMult.toFixed(2)} (+20%)` : (f.natureSkillMult < 1 ? `x${f.natureSkillMult.toFixed(2)} (-20%)` : `x1.00`);
-  const subskillSkillSign = f.subskillSkillBonus > 0 ? `+${f.subskillSkillBonus}%` : `+0%`;
 
   return `
     <div class="pokedex-formula-inner">
@@ -4251,59 +4363,45 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
         </div>
       </div>
 
-      <!-- 單一整合精算卡片 (無 1 2 3 分步，白底大字體，流暢排版) -->
+      <!-- 單一整合精算卡片 (無冗餘外框，邏輯由間隔頻率 -> 食材產量 -> 技能期望，清晰順暢) -->
       <div class="pokedex-calc-unified-box">
-        <!-- 第 1 列：最終食材發動率 -->
+        <!-- 步驟 1：實質幫忙間隔與每日次數基準 -->
+        <div class="unified-calc-row">
+          <div class="calc-row-header">
+            <span class="calc-row-label font-bold">${isEN ? 'Helping Speed & Daily Helps' : '實質幫忙間隔與每日次數'}</span>
+            <div class="calc-row-header-values">
+              <span class="calc-val-main font-bold text-primary">${formatHelpInterval(f.effectiveIntervalSec)}</span>
+              <span class="calc-val-sep">·</span>
+              <span class="calc-val-sub font-bold text-accent">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps/day' : '次/天'}</span>
+            </div>
+          </div>
+          <div class="calc-row-formula">
+            <span class="calc-stat-base">${isEN ? 'Interval: ' : '間隔算法：'}${isEN ? 'Base' : '基礎'} ${formatPokedexIntervalSec(f.baseIntervalSec)}${f.levelSpeedDiscount > 0 ? ` · Lv-${(f.levelSpeedDiscount * 100).toFixed(0)}%` : ''}${f.subskillSpeedBonus > 0 ? ` · 副-${f.subskillSpeedBonus}%` : ''}${f.ribbonDiscount > 0 ? ` · 獎-${Math.round(f.ribbonDiscount * 100)}%` : ''}</span>
+            <span class="formula-op">➜</span>
+            <span class="formula-derive font-mono">${isEN ? '86400s ÷ ' : '86400秒 ÷ '}${f.effectiveIntervalSec}s = <strong>${f.dailyHelps.toFixed(1)} ${isEN ? 'helps/day' : '次/天'}</strong></span>
+          </div>
+        </div>
+
+        <!-- 步驟 2：最終食材發動率與單日掉落產量 -->
         <div class="unified-calc-row">
           <div class="calc-row-header">
             <span class="calc-row-label font-bold">${t('pokedex.final_ing_rate', '最終食材發動率')}</span>
-            <span class="calc-row-result font-bold text-success">${f.finalIngRate.toFixed(2)}%</span>
+            <div class="calc-row-header-values">
+              <span class="calc-val-main font-bold text-success">${f.finalIngRate.toFixed(2)}%</span>
+              <span class="calc-val-sep">·</span>
+              <span class="calc-val-sub font-bold text-gold">${f.dailyIngDrops.toFixed(1)} ${isEN ? 'drops/day' : '次掉落/天'}</span>
+            </div>
           </div>
           <div class="calc-row-formula">
             <span class="formula-var" title="${isEN ? 'Base Rate' : '基礎食材機率'}">${f.baseIngRate.toFixed(1)}%</span>
             <span class="formula-op">×</span>
-            <span class="formula-text">(1+${subskillIngSign})</span>
+            <span class="formula-text">(1 + ${f.subskillIngBonus}%)</span>
             <span class="formula-op">×</span>
             <span class="formula-var" title="${isEN ? 'Nature' : '性格'}">${natureIngSign}</span>
             <span class="formula-op">=</span>
             <span class="formula-res font-bold text-success">${f.finalIngRate.toFixed(2)}%</span>
-          </div>
-        </div>
-
-        <!-- 第 2 列：最終技能發動率 -->
-        <div class="unified-calc-row">
-          <div class="calc-row-header">
-            <span class="calc-row-label font-bold">${isEN ? 'Final Skill Trigger Rate' : '最終技能發動率'}</span>
-            <span class="calc-row-result font-bold text-accent">${f.finalSkillRate.toFixed(2)}%</span>
-          </div>
-          <div class="calc-row-formula">
-            <span class="formula-var" title="${isEN ? 'Base Skill Rate' : '基礎技能機率'}">${f.baseSkillRate.toFixed(1)}%</span>
-            <span class="formula-op">×</span>
-            <span class="formula-text">(1+${subskillSkillSign})</span>
-            <span class="formula-op">×</span>
-            <span class="formula-var" title="${isEN ? 'Nature' : '性格'}">${natureSkillSign}</span>
-            <span class="formula-op">=</span>
-            <span class="formula-res font-bold text-accent">${f.finalSkillRate.toFixed(2)}%</span>
-          </div>
-        </div>
-
-        <!-- 第 3 列：有效幫忙頻率與技能發動期望 -->
-        <div class="unified-calc-row">
-          <div class="calc-row-header">
-            <span class="calc-row-label font-bold">${t('pokedex.daily_helps', '預估每日幫忙次數')}</span>
-            <span class="calc-row-result font-bold text-accent">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps/day' : '次/天'}</span>
-          </div>
-          <div class="calc-row-stats-line">
-            <span class="calc-stat-sub">${isEN ? 'Interval: ' : '實質間隔：'}<strong class="text-primary">${formatPokedexIntervalSec(f.effectiveIntervalSec)}</strong> <span class="calc-stat-base">(${isEN ? 'Base' : '基礎'} ${formatPokedexIntervalSec(f.baseIntervalSec)}${f.levelSpeedDiscount > 0 ? ` · Lv-${(f.levelSpeedDiscount * 100).toFixed(0)}%` : ''}${f.subskillSpeedBonus > 0 ? ` · 副-${f.subskillSpeedBonus}%` : ''}${f.ribbonDiscount > 0 ? ` · 獎-${Math.round(f.ribbonDiscount * 100)}%` : ''})</span></span>
-            <span class="calc-stat-sub">${isEN ? 'Daily Triggers: ' : '預估每日發動：'}<strong class="text-accent font-bold">${f.dailyTriggers.toFixed(2)} ${isEN ? 'times/day' : '次/天'}</strong></span>
-          </div>
-        </div>
-
-        <!-- 第 4 列：食材單日產量與品項清單 -->
-        <div class="unified-calc-row">
-          <div class="calc-row-header">
-            <span class="calc-row-label font-bold">${t('pokedex.daily_ing_yield', '食材單日產量')}</span>
-            <span class="calc-row-result font-bold text-gold">${f.dailyIngDrops.toFixed(1)} ${isEN ? 'drops/day' : '次掉落/天'}</span>
+            <span class="formula-op">➜</span>
+            <span class="formula-derive font-mono">${f.dailyHelps.toFixed(1)}次 × ${f.finalIngRate.toFixed(2)}% = <strong>${f.dailyIngDrops.toFixed(1)} 次掉落/天</strong></span>
           </div>
           <div class="pokedex-yield-items-grid">
             ${f.summaryYieldList.map(item => `
@@ -4314,6 +4412,35 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
               </div>
             `).join('')}
           </div>
+        </div>
+
+        <!-- 步驟 3：最終技能發動率與單日發動次數 -->
+        <div class="unified-calc-row">
+          <div class="calc-row-header">
+            <span class="calc-row-label font-bold">${isEN ? 'Final Skill Trigger Rate' : '最終技能發動率'}</span>
+            <div class="calc-row-header-values">
+              <span class="calc-val-main font-bold text-accent">${f.finalSkillRate.toFixed(2)}%</span>
+              <span class="calc-val-sep">·</span>
+              <span class="calc-val-sub font-bold text-accent">${f.dailyTriggers.toFixed(2)} ${isEN ? 'times/day' : '次發動/天'}</span>
+            </div>
+          </div>
+          <div class="calc-row-formula">
+            <span class="formula-var" title="${isEN ? 'Base Skill Rate' : '基礎技能機率'}">${f.baseSkillRate.toFixed(1)}%</span>
+            <span class="formula-op">×</span>
+            <span class="formula-text">(1 + ${f.subskillSkillBonus}%)</span>
+            <span class="formula-op">×</span>
+            <span class="formula-var" title="${isEN ? 'Nature' : '性格'}">${natureSkillSign}</span>
+            <span class="formula-op">=</span>
+            <span class="formula-res font-bold text-accent">${f.finalSkillRate.toFixed(2)}%</span>
+            <span class="formula-op">➜</span>
+            <span class="formula-derive font-mono">${f.dailyHelps.toFixed(1)}次 × ${f.finalSkillRate.toFixed(2)}% = <strong>${f.dailyTriggers.toFixed(2)} 次/天</strong></span>
+          </div>
+          ${f.mainSkillExtraDaily > 0 ? `
+            <div class="calc-row-subskill-extra">
+              <span class="badge-skill-extra">${f.mainSkillLabel}</span>
+              <span class="text-skill-extra font-bold text-success">+${f.mainSkillExtraDaily.toFixed(1)} ${isEN ? 'extra ings/day' : '顆額外食材/天'}</span>
+            </div>
+          ` : ''}
         </div>
       </div>
 
@@ -4360,7 +4487,7 @@ function updatePokedexModalAppraisalLive() {
   if (numEl) numEl.textContent = evaluation.compositeScore;
   if (verdictBadge) verdictBadge.style.borderColor = evaluation.gradeColor;
 
-  // 3. 更新食材產能算法拆解卡片與動態數值 (幫忙間隔、食材機率、技能機率)
+  // 3. 更新食材產能算法拆解卡片與動態數值 (幫忙間隔、持有、食材率、技能率)
   const formulaData = calculatePokedexIngredientFormulas();
   const formulaContainer = document.getElementById('pokedex-calc-formula-container');
   if (formulaContainer && formulaData) {
@@ -4369,17 +4496,22 @@ function updatePokedexModalAppraisalLive() {
 
   const intervalEl = document.getElementById('pokedex-stat-interval');
   if (intervalEl && formulaData) {
-    intervalEl.textContent = formatHelpInterval(formulaData.effectiveIntervalSec);
+    intervalEl.innerHTML = renderPokedexIntervalValue(formulaData, pkm);
   }
 
-  const skillRateEl = document.getElementById('pokedex-stat-skill-rate');
-  if (skillRateEl && formulaData && typeof formulaData.finalSkillRate === 'number') {
-    skillRateEl.textContent = `${formulaData.finalSkillRate.toFixed(2)}%`;
+  const carryEl = document.getElementById('pokedex-stat-carry');
+  if (carryEl && formulaData) {
+    carryEl.innerHTML = renderPokedexCarryValue(formulaData, pkm);
   }
 
   const ingRateEl = document.getElementById('pokedex-stat-ingredient-rate');
   if (ingRateEl && formulaData && typeof formulaData.finalIngRate === 'number') {
-    ingRateEl.textContent = `${formulaData.finalIngRate.toFixed(2)}%`;
+    ingRateEl.innerHTML = renderPokedexIngRateValue(formulaData, pkm);
+  }
+
+  const skillRateEl = document.getElementById('pokedex-stat-skill-rate');
+  if (skillRateEl && formulaData && typeof formulaData.finalSkillRate === 'number') {
+    skillRateEl.innerHTML = renderPokedexSkillRateValue(formulaData, pkm);
   }
 
   // 5. 更新等級數值標籤與重點圖釘狀態

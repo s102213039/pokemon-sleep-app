@@ -22412,25 +22412,57 @@ body.mobile-h5-app.values-active,
   flex-wrap: wrap;
 }
 
+.pokedex-header-stats-row.pokedex-header-stats-dual {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 16px;
+}
+
+.pokedex-header-stat-col {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
 .pokedex-header-stat-item {
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
-  font-size: 14px;
+  font-size: 13.5px;
   white-space: nowrap;
 }
 
 .header-stat-k {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-muted, #94a3b8);
   font-weight: 600;
+  min-width: 48px;
 }
 
 .header-stat-v {
-  font-size: 16px;
+  font-size: 15px;
   color: var(--text-primary, #f8fafc);
   font-weight: 700;
   font-family: monospace, system-ui, -apple-system;
+}
+
+.header-stat-diff {
+  font-size: 11.5px;
+  font-weight: 600;
+  margin-left: 2px;
+}
+
+.header-stat-diff.diff-pos {
+  color: #10b981;
+}
+
+.header-stat-diff.diff-neg {
+  color: #ef4444;
+}
+
+.header-stat-diff.diff-zero {
+  color: var(--text-muted, #94a3b8);
+  opacity: 0.8;
 }
 
 .pokedex-header-actions {
@@ -23184,6 +23216,59 @@ body.mobile-h5-app.values-active,
   gap: 8px;
   font-size: 12px;
   color: var(--text-secondary, #475569);
+}
+
+.calc-row-header-values {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: monospace, system-ui, -apple-system;
+}
+
+.calc-val-main {
+  font-size: 14.5px;
+  font-weight: 700;
+}
+
+.calc-val-sep {
+  font-size: 12px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.calc-val-sub {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.formula-derive {
+  font-size: 12px;
+  color: var(--text-muted, #64748b);
+  margin-left: 2px;
+}
+
+.formula-derive strong {
+  color: var(--text-primary, #1e293b);
+}
+
+.calc-row-subskill-extra {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+  font-size: 12px;
+}
+
+.badge-skill-extra {
+  background: var(--bg-muted, #f1f5f9);
+  color: var(--text-secondary, #475569);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.text-skill-extra {
+  font-size: 12px;
 }
 
 .calc-stat-sub {
@@ -24004,6 +24089,28 @@ body.mobile-h5-app.values-active,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .unified-calc-row,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .unified-calc-row {
   border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .formula-derive,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .formula-derive,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .formula-derive,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .formula-derive {
+  color: #94a3b8 !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .formula-derive strong,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .formula-derive strong,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .formula-derive strong,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .formula-derive strong {
+  color: #f8fafc !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .badge-skill-extra,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .badge-skill-extra,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .badge-skill-extra,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .badge-skill-extra {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #cbd5e1 !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-yield-pill,

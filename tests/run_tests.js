@@ -6546,10 +6546,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assert(modalHtmlNow.includes('Lv.70') && modalHtmlNow.includes('Lv.80'), 'Modal subskill slots must display Lv.70 and Lv.80');
   assert(!modalHtmlNow.includes('Lv.75') && !modalHtmlNow.includes('Lv.100</span>'), 'Modal subskill slots must not display Lv.75 or Lv.100');
 
-  // 15B. Header layout: berry & specialty vertical stack, no carry stat, no evo guard badge
+  // 15B. Header layout: berry & specialty vertical stack, dual-column stats with carry, no evo guard badge
   assert(modalHtmlNow.includes('pokedex-header-berry-spec-group'), 'Header must contain vertical berry-spec group');
   assert(modalHtmlNow.includes('pokedex-tag-spec'), 'Header must contain specialty tag');
-  assert(!modalHtmlNow.includes('pokedex-stat-carry'), 'Header stats row must not contain carry limit stat');
+  assert(modalHtmlNow.includes('pokedex-stat-carry'), 'Header stats row must contain carry limit stat');
+  assert(modalHtmlNow.includes('pokedex-header-stats-dual'), 'Header stats row must use dual-column layout');
   assert(!modalHtmlNow.includes('pokedex-evo-guard-container'), 'Level control row must not contain evo guard badge');
 
   // 15C. Formula Breakdown: dual rates (ingredient & skill) and no dynamic calculation subtitle
