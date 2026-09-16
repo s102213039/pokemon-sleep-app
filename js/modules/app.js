@@ -3544,7 +3544,21 @@ function choosePokedexSubskill(skName) {
   if (!skName) return;
   if (pokedexModalState.subskills.includes(skName)) return;
 
-  pokedexModalState.subskills[pokedexActiveSubskillSlot - 1] = skName;
+  const targetSlotIdx = pokedexActiveSubskillSlot - 1;
+  pokedexModalState.subskills[targetSlotIdx] = skName;
+
+  // 若所選插槽等級門檻高於當前設定等級，自動提升等級至該插槽門檻，讓使用者立即看到該副技能生效
+  const slotLevels = [10, 25, 50, 70, 80];
+  const requiredLv = slotLevels[targetSlotIdx] || 10;
+  if (pokedexModalState.level < requiredLv) {
+    pokedexModalState.level = requiredLv;
+    const slider = document.getElementById('pokedex-level-slider');
+    if (slider) slider.value = requiredLv;
+    const lvText = document.getElementById('pokedex-level-val-text');
+    if (lvText) lvText.textContent = requiredLv;
+    const lvBadge = document.querySelector('.pokedex-val-badge');
+    if (lvBadge) lvBadge.textContent = `Lv. ${requiredLv}`;
+  }
 
   let nextEmpty = -1;
   for (let s = 1; s <= 5; s++) {
@@ -3802,9 +3816,9 @@ function calculatePokedexIngredientFormulas() {
     if (!sName) return;
     const isUnlocked = currentLevel >= slotLevels[idx];
     if (isUnlocked) {
-      if (sName === '持有上限提升L') subskillCarryBonus += 18;
-      if (sName === '持有上限提升M') subskillCarryBonus += 12;
-      if (sName === '持有上限提升S') subskillCarryBonus += 6;
+      if (sName === '持有上限提升L' || sName.includes('Inventory Up L')) subskillCarryBonus += 18;
+      else if (sName === '持有上限提升M' || sName.includes('Inventory Up M')) subskillCarryBonus += 12;
+      else if (sName === '持有上限提升S' || sName.includes('Inventory Up S')) subskillCarryBonus += 6;
     }
   });
 

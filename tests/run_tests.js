@@ -6593,9 +6593,24 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   const evalRibbon4 = appCtx.AppraisalLab.evaluatePokemon(ingMon, 60, '坦率', ['幫忙速度S'], ['甜甜蜜', '特選蘋果', '純純蜜'], 4, 1);
   assert(evalRibbon4.scores.ingredient > evalBaseline.scores.ingredient, 'Ribbon Lv.4 must increase ingredient score');
 
-  const evalAAA = appCtx.AppraisalLab.evaluatePokemon(ingMon, 60, '坦率', ['幫忙速度S'], ['甜甜蜜', '甜甜蜜', '甜甜蜜'], 0, 1);
-  const evalABC = appCtx.AppraisalLab.evaluatePokemon(ingMon, 60, '坦率', ['幫忙速度S'], ['甜甜蜜', '特選蘋果', '純純蜜'], 0, 1);
-  assert(evalAAA.scores.ingredient > evalABC.scores.ingredient, 'Pure AAA configuration must score substantially higher than diluted ABC');
+  const evalCarryM = appCtx.AppraisalLab.evaluatePokemon(ingMon, 60, '坦率', ['持有上限提升M'], ['甜甜蜜', '特選蘋果', '純純蜜'], 0, 1);
+  const evalCarryS = appCtx.AppraisalLab.evaluatePokemon(ingMon, 60, '坦率', ['持有上限提升S'], ['甜甜蜜', '特選蘋果', '純純蜜'], 0, 1);
+  assert(evalCarryL.compositeScore > evalCarryM.compositeScore, 'Inventory Up L must score higher than Inventory Up M');
+  assert(evalCarryM.compositeScore > evalCarryS.compositeScore, 'Inventory Up M must score higher than Inventory Up S');
+  assert(evalCarryS.compositeScore > evalBaseline.compositeScore, 'Inventory Up S must score higher than baseline');
+
+  // 15I. Grade Tiers & Core-Kit Expectation (A, S, SS, SSS)
+  const evalSolidIng = appCtx.AppraisalLab.evaluatePokemon(ingMon, 30, '坦率', ['食材機率提升M', '持有上限提升S'], ['甜甜蜜', '甜甜蜜'], 0, 1);
+  assert(evalSolidIng.compositeScore >= 90, 'Ingredient specialist with core kit (Ing M + Carry S + AA) must score >= 90 (S grade)');
+  assertEquals(evalSolidIng.grade, 'S', 'Score 90+ must receive S grade');
+
+  const evalEliteIng = appCtx.AppraisalLab.evaluatePokemon(ingMon, 60, '冷靜', ['食材機率提升M', '幫忙速度M', '持有上限提升L'], ['甜甜蜜', '甜甜蜜', '甜甜蜜'], 0, 1);
+  assert(evalEliteIng.compositeScore >= 95, 'Elite ingredient specialist roll must score >= 95');
+  assert(evalEliteIng.grade === 'SS' || evalEliteIng.grade === 'SSS', 'Elite roll must receive SS or SSS grade');
+
+  const evalGodIng = appCtx.AppraisalLab.evaluatePokemon(ingMon, 60, '冷靜', ['食材機率提升M', '食材機率提升S', '持有上限提升L'], ['甜甜蜜', '甜甜蜜', '甜甜蜜'], 4, 1);
+  assert(evalGodIng.compositeScore >= 98, 'God preset roll must score >= 98 (SSS grade)');
+  assertEquals(evalGodIng.grade, 'SSS', 'Score 98+ must receive SSS grade');
 });
 
 // Final Summary Output
