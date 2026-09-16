@@ -536,7 +536,7 @@
               <div class="box-card-section">
                 <div class="box-section-title">${isEN ? 'Sub-Skills' : '副技能組合'}</div>
                 <div class="box-subskills-grid">
-                  ${[10, 25, 50, 75, 100].map((lv, i) => {
+                  ${[10, 25, 50, 70, 80].map((lv, i) => {
                     const skName = (p.subskills || [])[i];
                     const sk = SUBSKILLS_DATA.find(s => s.name === skName);
                     const tier = sk ? sk.tier : 'empty';

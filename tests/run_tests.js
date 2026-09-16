@@ -6535,10 +6535,33 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   // 14C. Verify CSS and i18n rules for evolution guard
   assert(stylesCss.includes('.pokedex-evo-guard-badge'), 'styles.css must contain .pokedex-evo-guard-badge');
   assert(stylesCss.includes('.pokedex-tag-evo'), 'styles.css must contain .pokedex-tag-evo');
-  assert(stylesCss.includes('.pokedex-level-ctrl-group.has-evo-warning'), 'styles.css must contain .pokedex-level-ctrl-group.has-evo-warning');
+  assert(stylesCss.includes('.pokedex-level-ctrl-group'), 'styles.css must contain .pokedex-level-ctrl-group');
   assert(i18nJs.includes('pokedex.evo_guard_below'), 'i18n.js must contain pokedex.evo_guard_below');
   assert(i18nJs.includes('pokedex.evo_guard_met'), 'i18n.js must contain pokedex.evo_guard_met');
   assert(i18nJs.includes('pokedex.evo_req'), 'i18n.js must contain pokedex.evo_req');
+
+  // 15. Verify Lv.70 / Lv.80 Subskill Unlock Slots
+  PokemonApp.openPokemonDetailModal('003');
+  const modalHtmlNow = mockElements.get('pokedex-detail-modal').innerHTML;
+  assert(modalHtmlNow.includes('Lv.70') && modalHtmlNow.includes('Lv.80'), 'Modal subskill slots must display Lv.70 and Lv.80');
+  assert(!modalHtmlNow.includes('Lv.75') && !modalHtmlNow.includes('Lv.100</span>'), 'Modal subskill slots must not display Lv.75 or Lv.100');
+
+  // 15B. Header layout: berry & specialty vertical stack, no carry stat, no evo guard badge
+  assert(modalHtmlNow.includes('pokedex-header-berry-spec-group'), 'Header must contain vertical berry-spec group');
+  assert(modalHtmlNow.includes('pokedex-tag-spec'), 'Header must contain specialty tag');
+  assert(!modalHtmlNow.includes('pokedex-stat-carry'), 'Header stats row must not contain carry limit stat');
+  assert(!modalHtmlNow.includes('pokedex-evo-guard-container'), 'Level control row must not contain evo guard badge');
+
+  // 15C. Formula Breakdown: dual rates (ingredient & skill) and no dynamic calculation subtitle
+  assert(modalHtmlNow.includes('最終食材發動率'), 'Formula card must display 最終食材發動率');
+  assert(modalHtmlNow.includes('最終技能發動率'), 'Formula card must display 最終技能發動率');
+  assert(!modalHtmlNow.includes('動態幫忙與產能精算'), 'Formula card must not display 動態幫忙與產能精算 subtitle');
+
+  // 15D. Strategy card: no Skill Level Up M/S in recommended subskills
+  const skillMon = dataset.find(p => p.specialty === '技能' || p.specialty === 'Skills') || { specialty: '技能' };
+  const skillStrategyHtml = PokemonApp.renderPokedexStrategyCardHTML(skillMon);
+  assert(!skillStrategyHtml.includes('技能等級提升M') && !skillStrategyHtml.includes('技能等級提升S'), 'Strategy card must not recommend Skill Level Up M/S');
+  assert(skillStrategyHtml.includes('技能機率提升M') && skillStrategyHtml.includes('技能機率提升S'), 'Strategy card must recommend Skill Trigger M and S');
 });
 
 // Final Summary Output

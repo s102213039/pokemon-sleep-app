@@ -108,8 +108,8 @@
     const specialty = pkmData.specialty || '樹果';
     const subskillArr = Array.isArray(subskills) ? subskills.map(function(s) { return typeof s === 'string' ? s : (s ? s.name : ''); }) : [];
     
-    // 計算已解鎖副技能 (解鎖門檻: Lv.10, 25, 50, 75, 100)
-    const slotLevels = [10, 25, 50, 75, 100];
+    // 計算已解鎖副技能 (解鎖門檻: Lv.10, 25, 50, 70, 80)
+    const slotLevels = [10, 25, 50, 70, 80];
     const activeSubskills = [];
     subskillArr.forEach(function(s, idx) {
       if (s && currentLv >= (slotLevels[idx] || 10)) {
@@ -149,7 +149,7 @@
       else if (ingMIdx === 1) ingScore += 18;
       else ingScore += 12;
     }
-    if (activeSubskills.indexOf('食材機率提升S') !== -1) ingScore += 7;
+    if (activeSubskills.indexOf('食材機率提升S') !== -1) ingScore += 10;
     if (activeSubskills.indexOf('幫忙速度M') !== -1) ingScore += 6;
     if (activeSubskills.indexOf('持有上限提升L') !== -1 || activeSubskills.indexOf('持有上限提升M') !== -1) ingScore += 6;
     if (nature.buffType === 'ingredient') ingScore += 12;
@@ -167,7 +167,7 @@
     }
     ingScore = Math.min(Math.max(Math.round(ingScore), 15), 100);
 
-    // 3. 技能強度 (Skill Power)
+    // 3. 技能強度 (Skill Power: 核心以技能機率為主，種子可替代之等級提升權重降級)
     let skillScore = (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') ? 68 : 32;
     const hasSkillM = activeSubskills.indexOf('技能機率提升M') !== -1;
     const skillMIdx = subskillArr.indexOf('技能機率提升M');
@@ -176,9 +176,9 @@
       else if (skillMIdx === 1) skillScore += 18;
       else skillScore += 12;
     }
-    if (activeSubskills.indexOf('技能機率提升S') !== -1) skillScore += 7;
-    if (activeSubskills.indexOf('技能等級提升M') !== -1) skillScore += 10;
-    if (activeSubskills.indexOf('技能等級提升S') !== -1) skillScore += 5;
+    if (activeSubskills.indexOf('技能機率提升S') !== -1) skillScore += 14;
+    if (activeSubskills.indexOf('技能等級提升M') !== -1) skillScore += 4;
+    if (activeSubskills.indexOf('技能等級提升S') !== -1) skillScore += 2;
     if (nature.buffType === 'skill') skillScore += 12;
     if (nature.debuffType === 'skill') skillScore -= 12;
 
@@ -224,7 +224,7 @@
     }
     speedScore = Math.min(Math.max(Math.round(speedScore), 20), 100);
 
-    // 5. 後期成長 (Late-game Growth: 僅計入已達到等級解鎖門檻的副技能)
+    // 5. 後期成長 (Late-game Growth: 僅計入已達到等級解鎖門檻的副技能，拔除雞肋金技)
     let growthScore = 48;
     subskillArr.forEach(function(s, idx) {
       if (!s || idx < 2) return;
@@ -232,8 +232,12 @@
       if (isUnlocked) {
         if (['樹果數量S', '幫手獎勵', '幫忙速度M', '食材機率提升M', '技能機率提升M'].indexOf(s) !== -1) {
           growthScore += 12;
-        } else if (['睡眠EXP獎勵', '技能等級提升M', '持有上限提升L'].indexOf(s) !== -1) {
-          growthScore += 6;
+        } else if (['技能機率提升S', '食材機率提升S', '幫忙速度S', '持有上限提升L'].indexOf(s) !== -1) {
+          growthScore += 8;
+        } else if (['持有上限提升M', '持有上限提升S'].indexOf(s) !== -1) {
+          growthScore += 4;
+        } else if (['睡眠EXP獎勵', '技能等級提升M', '技能等級提升S', '夢之碎片獎勵', '研究EXP獎勵'].indexOf(s) !== -1) {
+          growthScore += 2;
         }
       }
     });
@@ -251,8 +255,11 @@
       if (isUnlocked) {
         if ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') && s === '樹果數量S') roiScore += 24;
         if ((specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') && s === '食材機率提升M') roiScore += 22;
+        if ((specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') && s === '食材機率提升S') roiScore += 12;
         if ((specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') && s === '技能機率提升M') roiScore += 22;
+        if ((specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') && s === '技能機率提升S') roiScore += 14;
         if (s === '幫手獎勵' || s === '幫忙速度M') roiScore += 12;
+        if (s === '幫忙速度S') roiScore += 6;
       }
     });
     if (currentLv >= 30) roiScore += 6;
@@ -639,12 +646,12 @@
 
               <!-- 副技能清單 -->
               <div class="appraisal-config-section">
-                <div class="appraisal-config-title">${isEN ? '🧩 Configured Sub-Skills' : '🧩 已配置副技能'}</div>
+                <div class="appraisal-config-title">${isEN ? '[#] Configured Sub-Skills' : '[#] 已配置副技能'}</div>
                 <div class="appraisal-subskills-list">
                   ${subskills && subskills.length > 0 ? subskills.map(function(s, idx) {
                     const rawName = typeof s === 'string' ? s : (s ? s.name : '');
                     const sName = window.I18N ? window.I18N.getSubSkillName(rawName) : rawName;
-                    const levels = [10, 25, 50, 75, 100];
+                    const levels = [10, 25, 50, 70, 80];
                     return rawName ? `<div class="appraisal-subskill-pill"><span class="subskill-lv-tag">Lv.${levels[idx]}</span> ${sName}</div>` : '';
                   }).join('') : `<span class="text-secondary text-sm">${isEN ? 'No sub-skills configured' : '無自訂副技能'}</span>`}
                 </div>

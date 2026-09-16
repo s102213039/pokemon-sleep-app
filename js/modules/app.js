@@ -3378,13 +3378,13 @@ function openPokemonDetailModal(pokemonId) {
   const spec = pkm.specialty || '';
   if (spec.includes('食材') || spec === 'Ingredients') {
     pokedexModalState.nature = '冷靜';
-    pokedexModalState.subskills = ['食材機率提升M', '幫忙速度M', '食材機率提升S', '持有上限提升L', '幫手獎勵'];
+    pokedexModalState.subskills = ['食材機率提升M', '幫手獎勵', '食材機率提升S', '幫忙速度M', '持有上限提升L'];
   } else if (spec.includes('樹果') || spec === 'Berries') {
     pokedexModalState.nature = '固執';
-    pokedexModalState.subskills = ['樹果數量S', '幫忙速度M', '幫手獎勵', '幫忙速度S', '睡眠EXP獎勵'];
+    pokedexModalState.subskills = ['樹果數量S', '幫手獎勵', '幫忙速度M', '幫忙速度S', '持有上限提升L'];
   } else {
-    pokedexModalState.nature = '溫和';
-    pokedexModalState.subskills = ['技能機率提升M', '技能等級提升M', '幫忙速度M', '技能機率提升S', '幫手獎勵'];
+    pokedexModalState.nature = '自大';
+    pokedexModalState.subskills = ['技能機率提升M', '幫手獎勵', '技能機率提升S', '幫忙速度M', '持有上限提升L'];
   }
 
   let modalEl = document.getElementById('pokedex-detail-modal');
@@ -3420,13 +3420,13 @@ function applyPokedexGodPreset() {
 
   if (spec.includes('食材') || spec === 'Ingredients') {
     pokedexModalState.nature = '冷靜';
-    pokedexModalState.subskills = ['食材機率提升M', '幫忙速度M', '食材機率提升S', '持有上限提升L', '幫手獎勵'];
+    pokedexModalState.subskills = ['食材機率提升M', '幫手獎勵', '食材機率提升S', '幫忙速度M', '持有上限提升L'];
   } else if (spec.includes('樹果') || spec === 'Berries') {
     pokedexModalState.nature = '固執';
-    pokedexModalState.subskills = ['樹果數量S', '幫忙速度M', '幫手獎勵', '幫忙速度S', '睡眠EXP獎勵'];
+    pokedexModalState.subskills = ['樹果數量S', '幫手獎勵', '幫忙速度M', '幫忙速度S', '持有上限提升L'];
   } else {
     pokedexModalState.nature = '自大';
-    pokedexModalState.subskills = ['技能機率提升M', '技能等級提升M', '幫忙速度M', '技能機率提升S', '幫手獎勵'];
+    pokedexModalState.subskills = ['技能機率提升M', '幫手獎勵', '技能機率提升S', '幫忙速度M', '持有上限提升L'];
   }
   pokedexActiveSubskillSlot = 1;
 
@@ -3630,7 +3630,7 @@ function updatePokedexSubskillUI() {
   const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
   const subskills = pokedexModalState.subskills;
   const currentLevel = pokedexModalState.level;
-  const slotLevels = [10, 25, 50, 75, 100];
+  const slotLevels = [10, 25, 50, 70, 80];
 
   // 1. 更新 5 個插槽按鈕
   const slotContainer = document.getElementById('pokedex-subskill-slots-row');
@@ -3702,8 +3702,8 @@ function calculatePokedexIngredientFormulas() {
   const baseSkillRate = parseFloat(pkm.skill_rate || '0') || 2.0;
   const baseIntervalSec = parsePokedexIntervalToSec(pkm.interval);
 
-  // 2. 副技能加成判定 (Lv.10, Lv.25, Lv.50, Lv.75, Lv.100)
-  const slotLevels = [10, 25, 50, 75, 100];
+  // 2. 副技能加成判定 (Lv.10, Lv.25, Lv.50, Lv.70, Lv.80)
+  const slotLevels = [10, 25, 50, 70, 80];
   let subskillIngBonus = 0;
   let subskillSpeedBonus = 0;
   let subskillSkillBonus = 0;
@@ -3948,8 +3948,8 @@ function renderPokedexStrategyCardHTML(pkm) {
     coreSkill = isEN ? 'Berry Finding S (BFS)' : '樹果數量S (BFS)';
     coreSkillDesc = isEN ? 'Mandatory god-tier skill (+1 berry per help)' : '核心必備神技 (每次幫忙樹果+1)';
     recommendedSubs = isEN
-      ? ['Berry Finding S', 'Helping Bonus', 'Helping Speed M', 'Helping Speed S']
-      : ['樹果數量S', '幫手獎勵', '幫忙速度M', '幫忙速度S'];
+      ? ['Berry Finding S', 'Helping Bonus', 'Helping Speed M', 'Helping Speed S', 'Inventory Up L']
+      : ['樹果數量S', '幫手獎勵', '幫忙速度M', '幫忙速度S', '持有上限提升L'];
     recommendedNatures = isEN ? 'Speed UP (Adamant / Brave / Naughty / Impish)' : '幫忙速度提升 (固執 / 勇敢 / 淘氣 / 慎重)';
   } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
     roleTitle = isEN ? 'Ingredient Supplier' : '料理食材專精供貨';
@@ -3959,8 +3959,8 @@ function renderPokedexStrategyCardHTML(pkm) {
     coreSkill = isEN ? 'Ingredient Finder M' : '食材機率提升M';
     coreSkillDesc = isEN ? 'Directly boosts ingredient drop chance (+36%)' : '直接大幅提升食材掉落機率 (+36%)';
     recommendedSubs = isEN
-      ? ['Ingredient Finder M', 'Inventory Up L', 'Helping Speed M', 'Helping Bonus']
-      : ['食材機率提升M', '持有上限提升L', '幫忙速度M', '幫手獎勵'];
+      ? ['Ingredient Finder M', 'Ingredient Finder S', 'Helping Bonus', 'Helping Speed M', 'Inventory Up L']
+      : ['食材機率提升M', '食材機率提升S', '幫手獎勵', '幫忙速度M', '持有上限提升L'];
     recommendedNatures = isEN ? 'Ingredient UP (Quiet / Modest / Mild / Rash)' : '食材發現率提升 (冷靜 / 內斂 / 慢吞吞 / 溫和)';
   } else {
     roleTitle = isEN ? 'Skill Trigger Specialist' : '高頻主技能輔助定位';
@@ -3970,8 +3970,8 @@ function renderPokedexStrategyCardHTML(pkm) {
     coreSkill = isEN ? 'Skill Trigger M' : '技能機率提升M';
     coreSkillDesc = isEN ? 'High-frequency activation (+36% trigger rate)' : '高頻發動核心 (+36% 技能機率)';
     recommendedSubs = isEN
-      ? ['Skill Trigger M', 'Skill Level Up M', 'Helping Speed M', 'Helping Bonus']
-      : ['技能機率提升M', '技能等級提升M', '幫忙速度M', '幫手獎勵'];
+      ? ['Skill Trigger M', 'Skill Trigger S', 'Helping Bonus', 'Helping Speed M', 'Inventory Up L']
+      : ['技能機率提升M', '技能機率提升S', '幫手獎勵', '幫忙速度M', '持有上限提升L'];
     recommendedNatures = isEN ? 'Main Skill UP (Sassy / Calm / Careful / Gentle)' : '主技能機率提升 (自大 / 慎重 / 溫和 / 浮躁)';
   }
 
@@ -4017,6 +4017,13 @@ function renderPokedexDetailModalContent() {
   const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : berry.name;
   const iconUrl = (typeof getIconUrl === 'function') ? getIconUrl(pkm) : (pkm.icon_url || '');
 
+  let specClass = 'spec-ingredient';
+  if (pkm.specialty && (pkm.specialty.includes('樹果') || pkm.specialty === 'Berries')) {
+    specClass = 'spec-berry';
+  } else if (pkm.specialty && (pkm.specialty.includes('技能') || pkm.specialty === 'Skills')) {
+    specClass = 'spec-skill';
+  }
+
   // 6D 評估計算
   const chosenIngs = (pkm.ingredients || []).map((ing, i) => {
     const selIdx = pokedexModalState.ingSlots[i] || 0;
@@ -4048,7 +4055,7 @@ function renderPokedexDetailModalContent() {
   modalEl.innerHTML = `
     <div class="pokedex-modal-backdrop-dismiss" onclick="window.PokemonApp.closePokemonDetailModal()"></div>
     <div class="box-modal-dialog pokedex-modal-dialog" role="dialog" aria-modal="true">
-      <!-- 頂部標題列 (含樹果圖示替換屬性、單行水平基礎數值、右上角重置預設) -->
+      <!-- 頂部標題列 (樹果與類型上下展示、單行水平基礎數值、右上角重置預設) -->
       <div class="box-modal-header pokedex-modal-header">
         <div class="pokedex-modal-header-main">
           <div class="box-modal-title pokedex-modal-title">
@@ -4059,20 +4066,16 @@ function renderPokedexDetailModalContent() {
                 <span class="pokedex-header-pkm-name font-bold">${escapeHtml(pkmName)}</span>
               </div>
             </div>
-            <div class="pokedex-header-tags">
+            <div class="pokedex-header-tags pokedex-header-berry-spec-group">
               <span class="pokedex-tag pokedex-tag-berry" title="${escapeHtml(berryName)}">
                 ${berry.icon ? `<img src="${berry.icon}" class="pokedex-berry-icon-img" alt="${escapeHtml(berryName)}" title="${escapeHtml(berryName)}" loading="lazy">` : ''}
               </span>
-              <span class="pokedex-tag pokedex-tag-spec">${escapeHtml(specName)}</span>
+              <span class="pokedex-tag pokedex-tag-spec ${specClass}">${escapeHtml(specName)}</span>
             </div>
           </div>
 
-          <!-- 基礎數值橫向列 (持有上限、幫忙間隔、食材機率、技能機率) -->
+          <!-- 基礎數值橫向列 (幫忙間隔、食材機率、技能機率) -->
           <div class="pokedex-header-stats-row">
-            <div class="pokedex-header-stat-item">
-              <span class="header-stat-k">${t('th.carry', '持有上限')}</span>
-              <span class="header-stat-v font-bold" id="pokedex-stat-carry">${pkm.carry || '--'}</span>
-            </div>
             <div class="pokedex-header-stat-item">
               <span class="header-stat-k">${t('th.interval', '幫忙間隔')}</span>
               <span class="header-stat-v font-bold" id="pokedex-stat-interval">${formatHelpInterval(formulaData ? formulaData.effectiveIntervalSec : pkm.interval)}</span>
@@ -4119,11 +4122,10 @@ function renderPokedexDetailModalContent() {
         <div class="pokedex-modal-col pokedex-right-col box-modal-form">
           <div class="box-form-grid pokedex-controls-container">
             <!-- 1. 等級軌道錨定滑桿 + 畢業神配置快捷按鈕 -->
-            <div class="box-form-group box-full-width pokedex-level-ctrl-group ${getPokedexMinEvolutionLevel(pkm) > 1 && pokedexModalState.level < getPokedexMinEvolutionLevel(pkm) ? 'has-evo-warning' : ''}">
+            <div class="box-form-group box-full-width pokedex-level-ctrl-group">
               <div class="pokedex-level-header-row">
                 <div class="pokedex-level-header-left">
                   <label class="box-form-label" for="pokedex-level-slider" style="margin-bottom:0;">${t('pokedex.level_slider', '等級設定')} (<span class="pokedex-val-badge font-bold">Lv. <span id="pokedex-level-val-text">${pokedexModalState.level}</span></span>)</label>
-                  <span id="pokedex-evo-guard-container">${renderPokedexEvoGuardBadgeHTML(pkm, pokedexModalState.level)}</span>
                 </div>
                 <div class="pokedex-level-header-right">
                   <button type="button" class="pokedex-btn-preset preset-god" onclick="window.PokemonApp.applyPokedexGodPreset()" title="${t('pokedex.preset_god', '畢業神配置')}">[★] ${t('pokedex.preset_god', '畢業神配置')}</button>
@@ -4243,23 +4245,25 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
   const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
   const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
 
-  const natureSign = f.natureIngMult > 1 ? `x${f.natureIngMult.toFixed(2)} (+20%)` : (f.natureIngMult < 1 ? `x${f.natureIngMult.toFixed(2)} (-20%)` : `x1.00`);
-  const subskillSign = f.subskillIngBonus > 0 ? `+${f.subskillIngBonus}%` : `+0%`;
+  const natureIngSign = f.natureIngMult > 1 ? `x${f.natureIngMult.toFixed(2)} (+20%)` : (f.natureIngMult < 1 ? `x${f.natureIngMult.toFixed(2)} (-20%)` : `x1.00`);
+  const subskillIngSign = f.subskillIngBonus > 0 ? `+${f.subskillIngBonus}%` : `+0%`;
+
+  const natureSkillSign = f.natureSkillMult > 1 ? `x${f.natureSkillMult.toFixed(2)} (+20%)` : (f.natureSkillMult < 1 ? `x${f.natureSkillMult.toFixed(2)} (-20%)` : `x1.00`);
+  const subskillSkillSign = f.subskillSkillBonus > 0 ? `+${f.subskillSkillBonus}%` : `+0%`;
 
   return `
     <div class="pokedex-formula-inner">
       <div class="pokedex-formula-header">
         <div style="display:flex;align-items:center;gap:8px;">
           <span class="pokedex-formula-badge font-bold">${t('pokedex.formula_title', '食材產能算法拆解')}</span>
-          <span class="pokedex-formula-subdesc">${isEN ? 'Dynamic Help & Yield Simulation' : '動態幫忙與產能精算'}</span>
         </div>
         <span class="pokedex-formula-total-badge">${isEN ? 'Daily Yield:' : '預估總日產：'}<strong>${f.totalDailyIngredients.toFixed(1)}</strong> ${isEN ? 'items/day' : '顆/天'}</span>
       </div>
 
       <!-- 緊湊橫向 3 欄排列 (Step 1 | Step 2 | Step 3) -->
       <div class="pokedex-formula-steps-row">
-        <!-- 步驟 1：最終食材發動率計算 -->
-        <div class="pokedex-calc-step">
+        <!-- 步驟 1：最終發動率精算 (食材發動率 & 技能發動率) -->
+        <div class="pokedex-calc-step pokedex-calc-rates-step">
           <div class="step-title">
             <span class="step-index">1</span>
             <span class="step-name">${t('pokedex.final_ing_rate', '最終食材發動率')}</span>
@@ -4268,11 +4272,26 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
           <div class="step-formula-code">
             <span class="formula-var" title="${isEN ? 'Base Rate' : '基礎食材機率'}">${f.baseIngRate.toFixed(1)}%</span>
             <span class="formula-op">×</span>
-            <span class="formula-text">(1+${subskillSign})</span>
+            <span class="formula-text">(1+${subskillIngSign})</span>
             <span class="formula-op">×</span>
-            <span class="formula-var" title="${isEN ? 'Nature' : '性格'}">${natureSign}</span>
+            <span class="formula-var" title="${isEN ? 'Nature' : '性格'}">${natureIngSign}</span>
             <span class="formula-op">=</span>
-            <span class="formula-res font-bold text-accent">${f.finalIngRate.toFixed(2)}%</span>
+            <span class="formula-res font-bold text-success">${f.finalIngRate.toFixed(2)}%</span>
+          </div>
+
+          <div class="step-title step-title-skill" style="margin-top: 5px;">
+            <span class="step-index step-index-skill">1s</span>
+            <span class="step-name">${isEN ? 'Final Skill Trigger Rate' : '最終技能發動率'}</span>
+            <span class="step-result-badge font-bold text-accent">${f.finalSkillRate.toFixed(2)}%</span>
+          </div>
+          <div class="step-formula-code">
+            <span class="formula-var" title="${isEN ? 'Base Skill Rate' : '基礎技能機率'}">${f.baseSkillRate.toFixed(1)}%</span>
+            <span class="formula-op">×</span>
+            <span class="formula-text">(1+${subskillSkillSign})</span>
+            <span class="formula-op">×</span>
+            <span class="formula-var" title="${isEN ? 'Nature' : '性格'}">${natureSkillSign}</span>
+            <span class="formula-op">=</span>
+            <span class="formula-res font-bold text-accent">${f.finalSkillRate.toFixed(2)}%</span>
           </div>
         </div>
 
@@ -4288,6 +4307,10 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             <span class="formula-sub">(${isEN ? 'Base' : '基'} ${formatPokedexIntervalSec(f.baseIntervalSec)}${f.levelSpeedDiscount > 0 ? `·Lv-${(f.levelSpeedDiscount * 100).toFixed(0)}%` : ''}${f.subskillSpeedBonus > 0 ? `·副-${f.subskillSpeedBonus}%` : ''})</span>
             <span class="formula-op">➔</span>
             <span class="formula-res font-bold">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps' : '次'}</span>
+          </div>
+          <div class="step-formula-code" style="margin-top: 4px;">
+            <span class="formula-desc">${isEN ? 'Daily Triggers:' : '預估每日發動：'}</span>
+            <span class="formula-res font-bold text-accent">${f.dailyTriggers.toFixed(2)} ${isEN ? 'times/day' : '次/天'}</span>
           </div>
         </div>
 
@@ -4382,14 +4405,13 @@ function updatePokedexModalAppraisalLive() {
   if (levelBadge) levelBadge.textContent = `Lv. ${pokedexModalState.level}`;
 
   const evoGuardContainer = document.getElementById('pokedex-evo-guard-container');
-  if (evoGuardContainer && pkm) {
-    evoGuardContainer.innerHTML = renderPokedexEvoGuardBadgeHTML(pkm, pokedexModalState.level);
+  if (evoGuardContainer) {
+    evoGuardContainer.innerHTML = '';
   }
 
   const levelCtrlGroup = document.querySelector('.pokedex-level-ctrl-group');
-  if (levelCtrlGroup && pkm) {
-    const minLv = getPokedexMinEvolutionLevel(pkm);
-    levelCtrlGroup.classList.toggle('has-evo-warning', minLv > 1 && pokedexModalState.level < minLv);
+  if (levelCtrlGroup) {
+    levelCtrlGroup.classList.remove('has-evo-warning');
   }
 
   document.querySelectorAll('.pokedex-track-pin-btn').forEach(btn => {
@@ -4401,7 +4423,7 @@ function updatePokedexModalAppraisalLive() {
     btn.classList.toggle('active', pinLv === pokedexModalState.level);
   });
 
-  const slotLvs = [10, 25, 50, 75, 100];
+  const slotLvs = [10, 25, 50, 70, 80];
   document.querySelectorAll('.pokedex-subskill-slot').forEach((slotEl, sIdx) => {
     const isUnlocked = pokedexModalState.level >= slotLvs[sIdx];
     slotEl.classList.toggle('subskill-unlocked', isUnlocked);
