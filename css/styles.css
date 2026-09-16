@@ -23515,6 +23515,113 @@ body.mobile-h5-app.values-active,
   font-weight: 700 !important;
 }
 
+/* 圖鑑詳情彈窗專屬：下拉選單尺寸縮小與長度最適化 */
+#pokedex-detail-modal .box-form-row-inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+}
+
+#pokedex-detail-modal .box-form-inline-label {
+  width: 76px;
+  flex-shrink: 0;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  margin-bottom: 0;
+}
+
+#pokedex-detail-modal .box-form-inline-control {
+  flex: 0 1 auto;
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+}
+
+/* 性格與睡飽飽獎章選框：最適長度 (270px) - 內容完整呈現、緊湊不冗長 */
+#pokedex-detail-modal .box-form-inline-control .custom-select-container,
+#pokedex-detail-modal .box-form-inline-control .pokedex-custom-select {
+  width: 270px !important;
+  max-width: 100% !important;
+}
+
+/* 觸發按鈕尺寸精緻化：高度縮小至 30px、字級 12px、精準內距 */
+#pokedex-detail-modal .custom-select-trigger {
+  height: 30px !important;
+  min-height: 30px !important;
+  line-height: 28px !important;
+  padding: 0 30px 0 10px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  background-image: none !important;
+  box-sizing: border-box !important;
+}
+
+/* 下拉選單箭頭微調，保持充足邊距與適當尺寸 (符合 Rule VI) */
+#pokedex-detail-modal .custom-select-arrow {
+  right: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: none !important;
+}
+
+#pokedex-detail-modal .custom-select-arrow svg {
+  width: 10px !important;
+  height: 7px !important;
+}
+
+/* 主技能等級選框尺寸緊湊化：高度 30px、寬度 76px，與主技能名稱徽章等高 */
+#pokedex-detail-modal .box-mainskill-control .custom-select-container,
+#pokedex-detail-modal .box-mainskill-select-wrap .custom-select-container {
+  width: 76px !important;
+  min-width: 76px !important;
+  flex: 0 0 76px !important;
+}
+
+#pokedex-detail-modal .box-mainskill-control .custom-select-trigger,
+#pokedex-detail-modal .box-mainskill-select-wrap .custom-select-trigger {
+  height: 30px !important;
+  min-height: 30px !important;
+  line-height: 28px !important;
+  padding: 0 24px 0 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+#pokedex-detail-modal .box-mainskill-name-badge {
+  height: 30px !important;
+  line-height: 28px !important;
+  padding: 0 10px !important;
+  font-size: 12.5px !important;
+  box-sizing: border-box !important;
+}
+
+/* 下拉選單選項清單微調 */
+#pokedex-detail-modal .custom-select-menu {
+  top: calc(100% + 2px) !important;
+  border-radius: 8px !important;
+  padding: 3px !important;
+  max-height: 220px !important;
+  z-index: 1050 !important;
+}
+
+#pokedex-detail-modal .custom-select-item {
+  padding: 6px 10px !important;
+  font-size: 12px !important;
+}
+
+@media (max-width: 480px) {
+  #pokedex-detail-modal .box-form-inline-control,
+  #pokedex-detail-modal .box-form-inline-control .custom-select-container,
+  #pokedex-detail-modal .box-form-inline-control .pokedex-custom-select {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
 @media (max-width: 768px) {
   .pokedex-formula-steps-row {
     grid-template-columns: 1fr;
@@ -23763,17 +23870,26 @@ body.mobile-h5-app.values-active,
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-custom-select,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .custom-select-trigger,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-custom-select,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .custom-select-trigger,
 [data-theme="midnight"][data-theme-inverted="true"] .pokedex-custom-select,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-custom-select {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230284c7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  background-size: 11px !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .custom-select-trigger,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .custom-select-trigger,
 [data-theme="midnight"][data-theme-inverted="true"] .custom-select-trigger,
-[data-theme="onyx"][data-theme-inverted="true"] .pokedex-custom-select,
 [data-theme="onyx"][data-theme-inverted="true"] .custom-select-trigger {
   background-color: #ffffff !important;
   border-color: #cbd5e1 !important;
   color: #0f172a !important;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230284c7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-image: none !important;
 }
 
 /* 深色主題適配：(Midnight / Onyx / Inverted Light) - 沉穩暗色、高對比清晰呈現 */
@@ -23926,16 +24042,26 @@ body.mobile-h5-app.values-active,
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-custom-select,
-[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .custom-select-trigger,
 [data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-custom-select,
-[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .custom-select-trigger,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-custom-select,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-custom-select {
+  background-color: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #f8fafc !important;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  background-size: 11px !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .custom-select-trigger,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .custom-select-trigger,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .custom-select-trigger,
-[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-custom-select,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .custom-select-trigger {
   background-color: #1e293b !important;
   border-color: rgba(255, 255, 255, 0.15) !important;
   color: #f8fafc !important;
+  background-image: none !important;
 }
 
 /* 移動端 H5 響應式佈局 */
