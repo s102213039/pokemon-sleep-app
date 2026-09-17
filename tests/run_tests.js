@@ -3921,9 +3921,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(/css\/styles\.css\?v=20260917_[34567]/.test(indexHtml), 'index.html styles.css must have current cache buster');
+  assert(/css\/styles\.css\?v=20260917_[345678]/.test(indexHtml), 'index.html styles.css must have current cache buster');
   assert(indexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'index.html wiki.js must be v=20260907_8');
-  assert(/css\/styles\.css\?v=20260917_[34567]/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
+  assert(/css\/styles\.css\?v=20260917_[345678]/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
   assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'app/index.html wiki.js must be v=20260907_8');
 });
 
@@ -6685,8 +6685,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   // Slider 1-100 range, red locked zone, and pins check in HTML
   assert(modalEl.innerHTML.includes('min="1"') && modalEl.innerHTML.includes('max="100"'), 'Slider input must maintain min="1" and max="100"');
   assert(modalEl.innerHTML.includes('pokedex-slider-locked-zone'), 'Slider must render red locked zone for Venusaur min evo level');
-  assert(modalEl.innerHTML.includes('data-pin-lv="10"') && modalEl.innerHTML.includes('pin-locked'), 'Pin Lv.10 below min evo level 24 must be rendered with pin-locked');
-  assert(modalEl.innerHTML.includes('data-pin-lv="24"') && modalEl.innerHTML.includes('pin-threshold'), 'Venusaur pins bar must include threshold pin for min evo level Lv.24');
+  assert(!modalEl.innerHTML.includes('data-pin-lv="10"'), 'Pin Lv.10 below min evo level 24 must NOT be rendered in pins bar');
+  assert(!modalEl.innerHTML.includes('data-pin-lv="24"'), 'Threshold pin Lv.24 must NOT be rendered to avoid collision with Lv.25');
+  assert(modalEl.innerHTML.includes('data-pin-lv="25"'), 'Venusaur pins bar must include Lv.25 milestone pin');
 
   // 15N. H5 Mobile Subskill 2-Row Downward Layout & Theme Colors
   assert(stylesCss.includes('grid-template-columns: repeat(6, 1fr)'), 'CSS must define 6-column grid for subskills on mobile');
@@ -6793,6 +6794,29 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
     const expectedWidth = ((50 - 1) / 99 * 100).toFixed(2);
     assert(fillBarEl.style.width === `${expectedWidth}%`, `Slider fill bar width must update dynamically (expected ${expectedWidth}%, got ${fillBarEl.style.width})`);
   }
+
+  // 15U. Unified Modal Theme Colors & Dynamic Inactive Subskill Tags
+  assert(stylesCss.includes('.pokedex-btn-preset.preset-god') && stylesCss.includes('color: #38bdf8;'), 'preset-god button must use sky blue theme in dark mode');
+  assert(stylesCss.includes('.slot-unreleased-tag.slot-tag-inactive'), 'styles.css must style .slot-tag-inactive for unreached levels');
+  assert(stylesCss.includes('.box-subskill-pill.pill-inactive'), 'styles.css must style .pill-inactive with line-through effect');
+
+  // Dynamic slot status testing
+  PokemonApp.openPokemonDetailModal(pikachuData);
+  PokemonApp.setPokedexModalLevel(30);
+  PokemonApp.selectPokedexSubskillSlot(3);
+  PokemonApp.choosePokedexSubskill('幫手獎勵');
+  const slotsRowEl = mockElements.get('pokedex-subskill-slots-row');
+  assert(slotsRowEl.innerHTML.includes('slot-tag-inactive'), 'Slot 3 at Lv.30 with subskill must display slot-tag-inactive');
+  assert(slotsRowEl.innerHTML.includes('效果尚未生效'), 'Slot 3 at Lv.30 with subskill must display 效果尚未生效');
+  assert(slotsRowEl.innerHTML.includes('pill-inactive'), 'Slot 3 at Lv.30 with subskill must display pill-inactive');
+
+  // Verify slots 4 & 5 (unreleased levels 70 and 80) do not contain duplicate -- 尚未開放 -- in badge
+  assert(!slotsRowEl.innerHTML.includes('-- 尚未開放 --'), 'Empty slots must not duplicate -- 尚未開放 -- in badge');
+  assert(slotsRowEl.innerHTML.includes('-- 未解鎖 --'), 'Empty slots below required level must display -- 未解鎖 --');
+
+  // Raise level to 50: Slot 3 effect becomes active
+  PokemonApp.setPokedexModalLevel(50);
+  assert(!slotsRowEl.innerHTML.includes('Lv.50 <span class="slot-unreleased-tag slot-tag-inactive">'), 'Slot 3 at Lv.50 must dynamically clear slot-tag-inactive');
 });
 
 // Final Summary Output

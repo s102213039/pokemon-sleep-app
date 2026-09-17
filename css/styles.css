@@ -22683,14 +22683,15 @@ body.mobile-h5-app.values-active,
 }
 
 .pokedex-btn-preset.preset-god {
-  background: rgba(245, 158, 11, 0.15);
-  border-color: rgba(245, 158, 11, 0.4);
-  color: #fbbf24;
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
 }
 
 .pokedex-btn-preset.preset-god:hover {
-  background: rgba(245, 158, 11, 0.25);
-  border-color: #f59e0b;
+  background: rgba(56, 189, 248, 0.22);
+  border-color: #38bdf8;
+  color: #7dd3fc;
 }
 
 .pokedex-btn-preset.preset-reset {
@@ -23156,13 +23157,34 @@ body.mobile-h5-app.values-active,
   font-size: 8.5px;
   font-weight: 600;
   line-height: 1;
-  padding: 1px 4px;
-  border-radius: 3px;
-  background: rgba(245, 158, 11, 0.16);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.32);
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(148, 163, 184, 0.16);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.32);
   margin-left: 3px;
   vertical-align: middle;
+}
+
+.slot-unreleased-tag.slot-tag-inactive,
+.slot-unreleased-tag.slot-tag-unreleased {
+  background: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.box-subskill-pill.pill-inactive {
+  opacity: 0.55;
+  filter: grayscale(35%);
+  text-decoration: line-through;
+  text-decoration-color: rgba(239, 68, 68, 0.85);
+  text-decoration-thickness: 1.5px;
+}
+
+.box-subskill-slot-btn.slot-effect-inactive {
+  opacity: 0.9;
 }
 
 .slot-val-badge.slot-val-unreleased {
@@ -24371,8 +24393,8 @@ body.mobile-h5-app.values-active,
 [data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .box-subskill-slot-btn.active,
 [data-theme="onyx"][data-theme-inverted="true"] #pokedex-detail-modal .box-subskill-slot-btn.active {
   background: #ffffff !important;
-  border-color: #f59e0b !important;
-  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25) !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.25) !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .track-pin-tick,
@@ -24416,9 +24438,18 @@ body.mobile-h5-app.values-active,
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .slot-unreleased-tag,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .slot-unreleased-tag {
-  background: #fef3c7;
-  color: #b45309;
-  border-color: #fde68a;
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #cbd5e1;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-inactive,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-unreleased,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-inactive,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-unreleased {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+  border-color: #fca5a5 !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-slider-track-bar,
@@ -24443,9 +24474,15 @@ body.mobile-h5-app.values-active,
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-btn-preset.preset-god,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-btn-preset.preset-god {
-  background: #fef3c7 !important;
-  border-color: #fde68a !important;
-  color: #b45309 !important;
+  background: rgba(2, 132, 199, 0.08) !important;
+  border-color: rgba(2, 132, 199, 0.25) !important;
+  color: #0284c7 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-btn-preset.preset-god:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-btn-preset.preset-god:hover {
+  background: rgba(2, 132, 199, 0.16) !important;
+  border-color: #0284c7 !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-custom-select,
@@ -24622,8 +24659,9 @@ body.mobile-h5-app.values-active,
 [data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-subskill-slot-btn.active,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .box-subskill-slot-btn.active,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .box-subskill-slot-btn.active {
-  background: rgba(245, 158, 11, 0.15) !important;
-  border-color: #f59e0b !important;
+  background: rgba(56, 189, 248, 0.12) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25) !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-ing-opt-btn,

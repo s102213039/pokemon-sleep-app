@@ -3619,23 +3619,6 @@ function choosePokedexSubskill(skName) {
   const targetSlotIdx = pokedexActiveSubskillSlot - 1;
   pokedexModalState.subskills[targetSlotIdx] = skName;
 
-  // 若所選插槽等級門檻高於當前設定等級，自動提升等級至該插槽門檻，讓使用者立即看到該副技能生效
-  const slotLevels = [10, 25, 50, 70, 80];
-  const minEvoLvl = getPokedexMinEvolutionLevel(pokedexModalState.pkm);
-  const requiredLv = Math.max(minEvoLvl, slotLevels[targetSlotIdx] || 10);
-  if (pokedexModalState.level < requiredLv) {
-    pokedexModalState.level = requiredLv;
-    const slider = document.getElementById('pokedex-level-slider');
-    if (slider) {
-      if (slider.min != minEvoLvl) slider.min = minEvoLvl;
-      slider.value = requiredLv;
-    }
-    const lvText = document.getElementById('pokedex-level-val-text');
-    if (lvText) lvText.textContent = requiredLv;
-    const lvBadge = document.querySelector('.pokedex-val-badge');
-    if (lvBadge) lvBadge.textContent = `Lv. ${requiredLv}`;
-  }
-
   let nextEmpty = -1;
   for (let s = 1; s <= 5; s++) {
     if (!pokedexModalState.subskills[s - 1]) {
@@ -3754,31 +3737,54 @@ function updatePokedexSubskillUI() {
       const slotNum = idx + 1;
       const isActive = slotNum === pokedexActiveSubskillSlot;
       const skName = subskills[idx] || '';
-      const isUnlocked = currentLevel >= lvl;
-      const isUnreleased = lvl > 60;
+      const isLevelReached = currentLevel >= lvl;
+      const isUnreleasedSlot = lvl > 60;
+      const isEffectActive = isLevelReached && !isUnreleasedSlot;
 
       let badgeHtml = '';
       if (!skName) {
-        if (isUnreleased) {
-          badgeHtml = `<span class="slot-val-badge slot-val-empty slot-val-unreleased">${isEN ? '-- Unreleased --' : '-- 尚未開放 --'}</span>`;
+        if (isLevelReached) {
+          badgeHtml = `<span class="slot-val-badge slot-val-empty">${isEN ? '-- Empty --' : '-- 未配置 --'}</span>`;
         } else {
-          badgeHtml = `<span class="slot-val-badge slot-val-empty">${isEN ? '-- None --' : '-- 未解鎖 --'}</span>`;
+          badgeHtml = `<span class="slot-val-badge slot-val-empty">${isEN ? '-- Locked --' : '-- 未解鎖 --'}</span>`;
         }
       } else {
         const skObj = POKEDEX_MODAL_SUBSKILLS.find(s => s.name === skName);
         const tier = skObj ? skObj.tier : 'white';
         const skLabel = isEN ? (skObj ? skObj.name_en : skName) : skName;
-        badgeHtml = `<span class="slot-val-badge box-subskill-pill subskill-${tier}">${escapeHtml(skLabel)}</span>`;
+        const inactiveCls = !isEffectActive ? 'pill-inactive' : '';
+        badgeHtml = `<span class="slot-val-badge box-subskill-pill subskill-${tier} ${inactiveCls}">${escapeHtml(skLabel)}</span>`;
       }
 
-      const unreleasedTagHtml = isUnreleased ? `<span class="slot-unreleased-tag">${isEN ? 'Unreleased' : '尚未開放'}</span>` : '';
-      const tooltipText = isUnreleased
-        ? `Lv.${lvl} (${isEN ? 'Unreleased in game / Simulation' : '遊戲尚未開放 / 模擬'})`
-        : (isUnlocked ? `Lv.${lvl}` : `Lv.${lvl} (${isEN ? 'Level not reached' : '等級未達標'})`);
+      let statusTagHtml = '';
+      if (skName) {
+        if (!isLevelReached) {
+          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-inactive">${isEN ? 'Inactive' : '效果尚未生效'}</span>`;
+        } else if (isUnreleasedSlot) {
+          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-unreleased">${isEN ? 'Unreleased' : '效果尚未生效'}</span>`;
+        }
+      } else {
+        if (isUnreleasedSlot) {
+          statusTagHtml = `<span class="slot-unreleased-tag">${isEN ? 'Unreleased' : '尚未開放'}</span>`;
+        }
+      }
+
+      const buttonClasses = ['box-subskill-slot-btn'];
+      if (isActive) buttonClasses.push('active');
+      if (!isLevelReached) buttonClasses.push('slot-under-lvl');
+      if (isUnreleasedSlot) buttonClasses.push('slot-unreleased');
+      if (skName && !isEffectActive) buttonClasses.push('slot-effect-inactive');
+
+      let tooltipText = `Lv.${lvl}`;
+      if (isUnreleasedSlot) {
+        tooltipText = `Lv.${lvl} (${isEN ? 'Unreleased in game / Simulation only' : '遊戲尚未開放 / 效果尚未生效'})`;
+      } else if (!isLevelReached) {
+        tooltipText = `Lv.${lvl} (${isEN ? `Requires Lv.${lvl}` : `需達 Lv.${lvl} 方可生效`})`;
+      }
 
       return `
-        <button type="button" class="box-subskill-slot-btn ${isActive ? 'active' : ''} ${isUnlocked ? '' : 'slot-under-lvl'} ${isUnreleased ? 'slot-unreleased' : ''}" data-slot="${slotNum}" onclick="window.PokemonApp.selectPokedexSubskillSlot(${slotNum})" title="${tooltipText}">
-          <span class="slot-lvl-header">Lv.${lvl} ${unreleasedTagHtml}</span>
+        <button type="button" class="${buttonClasses.join(' ')}" data-slot="${slotNum}" onclick="window.PokemonApp.selectPokedexSubskillSlot(${slotNum})" title="${tooltipText}">
+          <span class="slot-lvl-header">Lv.${lvl} ${statusTagHtml}</span>
           ${badgeHtml}
         </button>
       `;
@@ -4399,44 +4405,29 @@ function renderPokedexDetailModalContent() {
                 <div class="pokedex-track-pins-bar" id="pokedex-track-pins-bar">
                   ${(() => {
                     const allMilestones = [10, 25, 30, 50, 60, 70, 80, 100];
-                    let pins = [...allMilestones];
-                    if (minEvoLvl > 1 && !pins.includes(minEvoLvl)) {
-                      pins = [minEvoLvl, ...pins].sort((a, b) => a - b);
-                    }
+                    // 紅色不可滑動區間（低於最低進化等級）不展示快捷等級圖釘，亦不額外插入重疊門檻圖釘
+                    const pins = allMilestones.filter(lv => lv >= minEvoLvl);
                     return pins.map(lv => {
                       const pct = ((lv - 1) / 99) * 100;
-                      const isBelowMin = lv < minEvoLvl;
-                      const isThreshold = minEvoLvl > 1 && lv === minEvoLvl;
-                      const isReleasedMilestone = [10, 25, 30, 50, 60].includes(lv) || isThreshold;
+                      const isReleasedMilestone = [10, 25, 30, 50, 60].includes(lv);
                       const isUnreleased = lv > 60;
                       const isCap = lv === 60;
                       const isActive = pokedexModalState.level === lv;
                       const classes = ['pokedex-track-pin-btn'];
                       if (isActive) classes.push('active');
-                      if (isBelowMin) {
-                        classes.push('pin-locked');
-                      } else {
-                        if (isThreshold) classes.push('pin-threshold');
-                        if (isReleasedMilestone && !isUnreleased) classes.push('pin-milestone');
-                        if (isCap) classes.push('pin-cap');
-                        if (isUnreleased) classes.push('pin-unreleased');
-                      }
+                      if (isReleasedMilestone && !isUnreleased) classes.push('pin-milestone');
+                      if (isCap) classes.push('pin-cap');
+                      if (isUnreleased) classes.push('pin-unreleased');
 
                       let tooltip = `Lv.${lv}`;
-                      if (isBelowMin) {
-                        tooltip = `Lv.${lv} (${isEN ? `Locked: Below min evolution Lv.${minEvoLvl}` : `不可滑動：低於最低進化等級 Lv.${minEvoLvl}`})`;
-                      } else if (isThreshold) {
-                        tooltip = `Lv.${lv} (${isEN ? 'Min Evolution Level' : '最低進化門檻'})`;
-                      } else if (isUnreleased) {
-                        tooltip = `Lv.${lv} (${isEN ? 'Unreleased in game / Simulation' : '遊戲尚未開放 / 模擬'})`;
+                      if (isUnreleased) {
+                        tooltip = `Lv.${lv} (${isEN ? 'Unreleased in game / Simulation only' : '遊戲尚未開放 / 模擬'})`;
                       } else if (isCap) {
                         tooltip = `Lv.${lv} (${isEN ? 'Current Level Cap' : '目前等級上限'})`;
                       }
 
-                      const clickVal = isBelowMin ? minEvoLvl : lv;
-
                       return `
-                        <button type="button" class="${classes.join(' ')}" data-pin-lv="${lv}" style="left: ${pct.toFixed(2)}%;" onclick="window.PokemonApp.setPokedexModalLevel(${clickVal})" title="${tooltip}">
+                        <button type="button" class="${classes.join(' ')}" data-pin-lv="${lv}" style="left: ${pct.toFixed(2)}%;" onclick="window.PokemonApp.setPokedexModalLevel(${lv})" title="${tooltip}">
                           <span class="track-pin-tick"></span>
                           <span class="track-pin-label">${lv}</span>
                         </button>
@@ -4738,16 +4729,8 @@ function updatePokedexModalAppraisalLive() {
     btn.classList.toggle('active', pinLv === pokedexModalState.level);
   });
 
-  const slotLvs = [10, 25, 50, 70, 80];
-  document.querySelectorAll('.pokedex-subskill-slot').forEach((slotEl, sIdx) => {
-    const isUnlocked = pokedexModalState.level >= slotLvs[sIdx];
-    slotEl.classList.toggle('subskill-unlocked', isUnlocked);
-    slotEl.classList.toggle('subskill-locked', !isUnlocked);
-    const statusText = slotEl.querySelector('.subskill-status-locked');
-    if (statusText) {
-      statusText.style.display = isUnlocked ? 'none' : 'inline-block';
-    }
-  });
+  // 動態同步更新副技能狀態標籤與未生效標記
+  updatePokedexSubskillUI();
 
   // 更新食材插槽解鎖標籤
   document.querySelectorAll('.pokedex-ing-slot-box').forEach((boxEl, sIdx) => {
