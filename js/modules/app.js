@@ -3461,6 +3461,15 @@ function syncPokedexCustomSelects() {
   });
 }
 
+function flashSliderLockedWall() {
+  const lockedZone = document.getElementById('pokedex-slider-locked-zone');
+  if (lockedZone) {
+    lockedZone.classList.remove('locked-bounce');
+    void lockedZone.offsetWidth;
+    lockedZone.classList.add('locked-bounce');
+  }
+}
+
 function applyPokedexResetPreset() {
   const minEvoLvl = getPokedexMinEvolutionLevel(pokedexModalState.pkm);
   pokedexModalState.level = Math.max(minEvoLvl, 30);
@@ -3475,7 +3484,8 @@ function applyPokedexResetPreset() {
   const valText = document.getElementById('pokedex-level-val-text');
   const unreleasedTag = document.getElementById('pokedex-level-unreleased-tag');
   if (slider) {
-    slider.min = minEvoLvl;
+    slider.min = 1;
+    slider.max = 100;
     slider.value = pokedexModalState.level;
   }
   if (valText) valText.textContent = pokedexModalState.level;
@@ -3504,13 +3514,31 @@ function applyPokedexResetPreset() {
 
 function setPokedexModalLevel(val) {
   const minEvoLvl = getPokedexMinEvolutionLevel(pokedexModalState.pkm);
-  pokedexModalState.level = Math.max(minEvoLvl, Math.min(100, parseInt(val, 10) || minEvoLvl));
+  let parsed = parseInt(val, 10);
+  if (isNaN(parsed)) parsed = minEvoLvl;
+  let clamped = false;
+  if (parsed < minEvoLvl) {
+    parsed = minEvoLvl;
+    clamped = true;
+  } else if (parsed > 100) {
+    parsed = 100;
+  }
+  pokedexModalState.level = parsed;
+
   const slider = document.getElementById('pokedex-level-slider');
   const valText = document.getElementById('pokedex-level-val-text');
   const unreleasedTag = document.getElementById('pokedex-level-unreleased-tag');
   if (slider) {
-    if (slider.min != minEvoLvl) slider.min = minEvoLvl;
-    if (slider.value != pokedexModalState.level) slider.value = pokedexModalState.level;
+    if (slider.min != 1) slider.min = 1;
+    if (slider.max != 100) slider.max = 100;
+    if (parseInt(slider.value, 10) < minEvoLvl) {
+      slider.value = minEvoLvl;
+    } else if (slider.value != pokedexModalState.level) {
+      slider.value = pokedexModalState.level;
+    }
+    if (clamped) {
+      flashSliderLockedWall();
+    }
   }
   if (valText) valText.textContent = pokedexModalState.level;
   if (unreleasedTag) {
@@ -4306,32 +4334,57 @@ function renderPokedexDetailModalContent() {
                 </div>
               </div>
               <div class="pokedex-anchored-slider-wrap">
-                <input type="range" id="pokedex-level-slider" min="${minEvoLvl}" max="100" value="${pokedexModalState.level}" class="pokedex-slider" oninput="window.PokemonApp.setPokedexModalLevel(this.value)">
+                <div class="pokedex-slider-track-wrap">
+                  <div class="pokedex-slider-track-bar">
+                    ${minEvoLvl > 1 ? `
+                      <div class="pokedex-slider-locked-zone" id="pokedex-slider-locked-zone" style="width: ${((minEvoLvl - 1) / 99 * 100).toFixed(2)}%;" title="${isEN ? `Locked: Below min evolution Lv.${minEvoLvl}` : `不可滑動區間：低於最低進化等級 Lv.${minEvoLvl}`}">
+                        <span class="pokedex-slider-locked-edge"></span>
+                      </div>
+                    ` : ''}
+                  </div>
+                  <input type="range" id="pokedex-level-slider" min="1" max="100" value="${pokedexModalState.level}" class="pokedex-slider ${minEvoLvl > 1 ? 'has-locked-zone' : ''}" oninput="window.PokemonApp.setPokedexModalLevel(this.value)">
+                </div>
                 <div class="pokedex-track-pins-bar" id="pokedex-track-pins-bar">
                   ${(() => {
                     const allMilestones = [10, 25, 30, 50, 60, 70, 80, 100];
-                    let pins = allMilestones.filter(lv => lv >= minEvoLvl);
+                    let pins = [...allMilestones];
                     if (minEvoLvl > 1 && !pins.includes(minEvoLvl)) {
                       pins = [minEvoLvl, ...pins].sort((a, b) => a - b);
                     }
                     return pins.map(lv => {
-                      const pct = minEvoLvl >= 100 ? 100 : ((lv - minEvoLvl) / (100 - minEvoLvl)) * 100;
-                      const isReleasedMilestone = [10, 25, 30, 50, 60].includes(lv) || lv === minEvoLvl;
+                      const pct = ((lv - 1) / 99) * 100;
+                      const isBelowMin = lv < minEvoLvl;
+                      const isThreshold = minEvoLvl > 1 && lv === minEvoLvl;
+                      const isReleasedMilestone = [10, 25, 30, 50, 60].includes(lv) || isThreshold;
                       const isUnreleased = lv > 60;
                       const isCap = lv === 60;
                       const isActive = pokedexModalState.level === lv;
                       const classes = ['pokedex-track-pin-btn'];
                       if (isActive) classes.push('active');
-                      if (isReleasedMilestone && !isUnreleased) classes.push('pin-milestone');
-                      if (isCap) classes.push('pin-cap');
-                      if (isUnreleased) classes.push('pin-unreleased');
+                      if (isBelowMin) {
+                        classes.push('pin-locked');
+                      } else {
+                        if (isThreshold) classes.push('pin-threshold');
+                        if (isReleasedMilestone && !isUnreleased) classes.push('pin-milestone');
+                        if (isCap) classes.push('pin-cap');
+                        if (isUnreleased) classes.push('pin-unreleased');
+                      }
 
-                      const tooltip = isUnreleased
-                        ? `Lv.${lv} (${isEN ? 'Unreleased in game / Simulation' : '遊戲尚未開放 / 模擬'})`
-                        : (isCap ? `Lv.${lv} (${isEN ? 'Current Level Cap' : '目前等級上限'})` : `Lv.${lv}`);
+                      let tooltip = `Lv.${lv}`;
+                      if (isBelowMin) {
+                        tooltip = `Lv.${lv} (${isEN ? `Locked: Below min evolution Lv.${minEvoLvl}` : `不可滑動：低於最低進化等級 Lv.${minEvoLvl}`})`;
+                      } else if (isThreshold) {
+                        tooltip = `Lv.${lv} (${isEN ? 'Min Evolution Level' : '最低進化門檻'})`;
+                      } else if (isUnreleased) {
+                        tooltip = `Lv.${lv} (${isEN ? 'Unreleased in game / Simulation' : '遊戲尚未開放 / 模擬'})`;
+                      } else if (isCap) {
+                        tooltip = `Lv.${lv} (${isEN ? 'Current Level Cap' : '目前等級上限'})`;
+                      }
+
+                      const clickVal = isBelowMin ? minEvoLvl : lv;
 
                       return `
-                        <button type="button" class="${classes.join(' ')}" data-pin-lv="${lv}" style="left: ${pct.toFixed(2)}%;" onclick="window.PokemonApp.setPokedexModalLevel(${lv})" title="${tooltip}">
+                        <button type="button" class="${classes.join(' ')}" data-pin-lv="${lv}" style="left: ${pct.toFixed(2)}%;" onclick="window.PokemonApp.setPokedexModalLevel(${clickVal})" title="${tooltip}">
                           <span class="track-pin-tick"></span>
                           <span class="track-pin-label">${lv}</span>
                         </button>
@@ -4675,6 +4728,7 @@ PokemonApp.getPokedexMinEvolutionLevel = getPokedexMinEvolutionLevel;
 PokemonApp.renderPokedexEvoGuardBadgeHTML = renderPokedexEvoGuardBadgeHTML;
 PokemonApp.renderPokedexRibbonOptionsHTML = renderPokedexRibbonOptionsHTML;
 PokemonApp.renderPokedexStrategyCardHTML = renderPokedexStrategyCardHTML;
+PokemonApp.flashSliderLockedWall = flashSliderLockedWall;
 PokemonApp.getPokedexModalState = () => pokedexModalState;
 
 if (typeof window !== 'undefined') {

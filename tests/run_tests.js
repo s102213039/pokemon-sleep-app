@@ -3921,9 +3921,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(indexHtml.includes('css/styles.css?v=20260917_4') || indexHtml.includes('css/styles.css?v=20260917_3'), 'index.html styles.css must be v=20260917_4');
+  assert(/css\/styles\.css\?v=20260917_[345]/.test(indexHtml), 'index.html styles.css must be v=20260917_5');
   assert(indexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'index.html wiki.js must be v=20260907_8');
-  assert(appIndexHtml.includes('css/styles.css?v=20260917_4') || appIndexHtml.includes('css/styles.css?v=20260917_3'), 'app/index.html styles.css must be v=20260917_4');
+  assert(/css\/styles\.css\?v=20260917_[345]/.test(appIndexHtml), 'app/index.html styles.css must be v=20260917_5');
   assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'app/index.html wiki.js must be v=20260907_8');
 });
 
@@ -6682,10 +6682,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   vState = PokemonApp.getPokedexModalState();
   assertEquals(vState.level, 24, 'Setting level below min evolution level must be clamped to 24');
 
-  // Slider min and pins check in HTML
-  assert(modalEl.innerHTML.includes('min="24"'), 'Slider input must have min="24" for Venusaur');
-  assert(!modalEl.innerHTML.includes('data-pin-lv="10"'), 'Venusaur pins bar must NOT render milestone pin for Lv.10 which is below min evo level 24');
-  assert(modalEl.innerHTML.includes('data-pin-lv="24"'), 'Venusaur pins bar must include threshold pin for min evo level Lv.24');
+  // Slider 1-100 range, red locked zone, and pins check in HTML
+  assert(modalEl.innerHTML.includes('min="1"') && modalEl.innerHTML.includes('max="100"'), 'Slider input must maintain min="1" and max="100"');
+  assert(modalEl.innerHTML.includes('pokedex-slider-locked-zone'), 'Slider must render red locked zone for Venusaur min evo level');
+  assert(modalEl.innerHTML.includes('data-pin-lv="10"') && modalEl.innerHTML.includes('pin-locked'), 'Pin Lv.10 below min evo level 24 must be rendered with pin-locked');
+  assert(modalEl.innerHTML.includes('data-pin-lv="24"') && modalEl.innerHTML.includes('pin-threshold'), 'Venusaur pins bar must include threshold pin for min evo level Lv.24');
 
   // 15N. H5 Mobile Subskill 2-Row Downward Layout & Theme Colors
   assert(stylesCss.includes('grid-template-columns: repeat(6, 1fr)'), 'CSS must define 6-column grid for subskills on mobile');

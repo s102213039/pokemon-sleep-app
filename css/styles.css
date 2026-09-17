@@ -22845,14 +22845,6 @@ body.mobile-h5-app.values-active,
   gap: 10px;
 }
 
-.pokedex-slider {
-  flex: 1;
-  accent-color: var(--accent-blue, #38bdf8);
-  height: 6px;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
 /* 錨定於滑桿軌道之重點等級圖釘容器 */
 .pokedex-anchored-slider-wrap {
   position: relative;
@@ -22861,6 +22853,119 @@ body.mobile-h5-app.values-active,
   padding-bottom: 20px;
   display: flex;
   flex-direction: column;
+}
+
+.pokedex-slider-track-wrap {
+  position: relative;
+  width: 100%;
+  height: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.pokedex-slider-track-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.18);
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* 最低進化門檻限制之紅色禁區 (不可滑動區間) */
+.pokedex-slider-locked-zone {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    #ef4444,
+    #ef4444 5px,
+    #dc2626 5px,
+    #dc2626 10px
+  );
+  border-right: 2.5px solid #b91c1c;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.7);
+  pointer-events: none;
+  transition: filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pokedex-slider-locked-edge {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #ffffff;
+  opacity: 0.9;
+}
+
+.pokedex-slider-locked-zone.locked-bounce {
+  animation: lockedBounceAnim 0.35s ease;
+}
+
+@keyframes lockedBounceAnim {
+  0% { filter: brightness(1); box-shadow: 0 0 8px rgba(239, 68, 68, 0.7); }
+  50% { filter: brightness(1.6); box-shadow: 0 0 16px rgba(239, 68, 68, 1); }
+  100% { filter: brightness(1); box-shadow: 0 0 8px rgba(239, 68, 68, 0.7); }
+}
+
+.pokedex-slider {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  background: transparent;
+  accent-color: var(--accent-blue, #38bdf8);
+  cursor: pointer;
+  z-index: 2;
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.pokedex-slider::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 6px;
+}
+
+.pokedex-slider::-moz-range-track {
+  background: transparent;
+  height: 6px;
+}
+
+.pokedex-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #38bdf8;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  margin-top: -5px;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.pokedex-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #38bdf8;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.pokedex-slider:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
 }
 
 .pokedex-track-pins-bar {
@@ -23046,6 +23151,36 @@ body.mobile-h5-app.values-active,
   color: #94a3b8 !important;
   font-style: italic;
   letter-spacing: 0.2px;
+}
+
+/* 紅色鎖定圖釘效果 (低於最低進化等級區間) */
+.pokedex-track-pin-btn.pin-locked {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.pokedex-track-pin-btn.pin-locked .track-pin-tick {
+  background: #ef4444 !important;
+  height: 5px;
+  box-shadow: 0 0 4px rgba(239, 68, 68, 0.5);
+}
+
+.pokedex-track-pin-btn.pin-locked .track-pin-label {
+  color: #ef4444 !important;
+  text-decoration: line-through;
+  font-weight: 600;
+}
+
+/* 最低進化等級門檻圖釘效果 */
+.pokedex-track-pin-btn.pin-threshold .track-pin-tick {
+  background: #ef4444;
+  height: 6px;
+  box-shadow: 0 0 5px rgba(239, 68, 68, 0.7);
+}
+
+.pokedex-track-pin-btn.pin-threshold .track-pin-label {
+  color: #f87171;
+  font-weight: 800;
 }
 
 .box-mainskill-select-wrap {
@@ -24181,6 +24316,20 @@ body.mobile-h5-app.values-active,
   background: #fef3c7;
   color: #b45309;
   border-color: #fde68a;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-slider-track-bar,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-slider-track-bar,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-slider-track-bar,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-slider-track-bar {
+  background: rgba(15, 23, 42, 0.14);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-track-pin-btn.pin-threshold .track-pin-label,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-track-pin-btn.pin-threshold .track-pin-label,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-track-pin-btn.pin-threshold .track-pin-label,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-track-pin-btn.pin-threshold .track-pin-label {
+  color: #dc2626;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-track-pin-btn.active .track-pin-label,
