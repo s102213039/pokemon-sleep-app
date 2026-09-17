@@ -3473,11 +3473,19 @@ function applyPokedexResetPreset() {
 
   const slider = document.getElementById('pokedex-level-slider');
   const valText = document.getElementById('pokedex-level-val-text');
+  const unreleasedTag = document.getElementById('pokedex-level-unreleased-tag');
   if (slider) {
     slider.min = minEvoLvl;
     slider.value = pokedexModalState.level;
   }
   if (valText) valText.textContent = pokedexModalState.level;
+  if (unreleasedTag) {
+    if (pokedexModalState.level > 60) {
+      unreleasedTag.classList.remove('hidden');
+    } else {
+      unreleasedTag.classList.add('hidden');
+    }
+  }
 
   const natureSelect = document.getElementById('pokedex-poke-nature');
   if (natureSelect) natureSelect.value = pokedexModalState.nature;
@@ -3499,11 +3507,19 @@ function setPokedexModalLevel(val) {
   pokedexModalState.level = Math.max(minEvoLvl, Math.min(100, parseInt(val, 10) || minEvoLvl));
   const slider = document.getElementById('pokedex-level-slider');
   const valText = document.getElementById('pokedex-level-val-text');
+  const unreleasedTag = document.getElementById('pokedex-level-unreleased-tag');
   if (slider) {
     if (slider.min != minEvoLvl) slider.min = minEvoLvl;
     if (slider.value != pokedexModalState.level) slider.value = pokedexModalState.level;
   }
   if (valText) valText.textContent = pokedexModalState.level;
+  if (unreleasedTag) {
+    if (pokedexModalState.level > 60) {
+      unreleasedTag.classList.remove('hidden');
+    } else {
+      unreleasedTag.classList.add('hidden');
+    }
+  }
   const pins = document.querySelectorAll('#pokedex-track-pins-bar .pokedex-track-pin-btn');
   pins.forEach(pin => {
     const pinLv = parseInt(pin.getAttribute('data-pin-lv'), 10);
@@ -3674,10 +3690,15 @@ function updatePokedexSubskillUI() {
       const isActive = slotNum === pokedexActiveSubskillSlot;
       const skName = subskills[idx] || '';
       const isUnlocked = currentLevel >= lvl;
+      const isUnreleased = lvl > 60;
 
       let badgeHtml = '';
       if (!skName) {
-        badgeHtml = `<span class="slot-val-badge slot-val-empty">${isEN ? '-- None --' : '-- 未解鎖 --'}</span>`;
+        if (isUnreleased) {
+          badgeHtml = `<span class="slot-val-badge slot-val-empty slot-val-unreleased">${isEN ? '-- Unreleased --' : '-- 尚未開放 --'}</span>`;
+        } else {
+          badgeHtml = `<span class="slot-val-badge slot-val-empty">${isEN ? '-- None --' : '-- 未解鎖 --'}</span>`;
+        }
       } else {
         const skObj = POKEDEX_MODAL_SUBSKILLS.find(s => s.name === skName);
         const tier = skObj ? skObj.tier : 'white';
@@ -3685,9 +3706,14 @@ function updatePokedexSubskillUI() {
         badgeHtml = `<span class="slot-val-badge box-subskill-pill subskill-${tier}">${escapeHtml(skLabel)}</span>`;
       }
 
+      const unreleasedTagHtml = isUnreleased ? `<span class="slot-unreleased-tag">${isEN ? 'Unreleased' : '尚未開放'}</span>` : '';
+      const tooltipText = isUnreleased
+        ? `Lv.${lvl} (${isEN ? 'Unreleased in game / Simulation' : '遊戲尚未開放 / 模擬'})`
+        : (isUnlocked ? `Lv.${lvl}` : `Lv.${lvl} (${isEN ? 'Level not reached' : '等級未達標'})`);
+
       return `
-        <button type="button" class="box-subskill-slot-btn ${isActive ? 'active' : ''} ${isUnlocked ? '' : 'slot-under-lvl'}" data-slot="${slotNum}" onclick="window.PokemonApp.selectPokedexSubskillSlot(${slotNum})" title="Lv.${lvl} ${isUnlocked ? '' : (isEN ? '(Level not reached)' : '(等級未達標)')}">
-          <span class="slot-lvl-header">Lv.${lvl}</span>
+        <button type="button" class="box-subskill-slot-btn ${isActive ? 'active' : ''} ${isUnlocked ? '' : 'slot-under-lvl'} ${isUnreleased ? 'slot-unreleased' : ''}" data-slot="${slotNum}" onclick="window.PokemonApp.selectPokedexSubskillSlot(${slotNum})" title="${tooltipText}">
+          <span class="slot-lvl-header">Lv.${lvl} ${unreleasedTagHtml}</span>
           ${badgeHtml}
         </button>
       `;
@@ -4272,7 +4298,7 @@ function renderPokedexDetailModalContent() {
             <div class="box-form-group box-full-width pokedex-level-ctrl-group">
               <div class="pokedex-level-header-row">
                 <div class="pokedex-level-header-left">
-                  <label class="box-form-label" for="pokedex-level-slider" style="margin-bottom:0;">${t('pokedex.level_slider', '等級設定')} (<span class="pokedex-val-badge font-bold">Lv. <span id="pokedex-level-val-text">${pokedexModalState.level}</span></span>)</label>
+                  <label class="box-form-label" for="pokedex-level-slider" style="margin-bottom:0;">${t('pokedex.level_slider', '等級設定')} (<span class="pokedex-val-badge font-bold" id="pokedex-level-val-badge">Lv. <span id="pokedex-level-val-text">${pokedexModalState.level}</span><span id="pokedex-level-unreleased-tag" class="pokedex-unreleased-pill ${pokedexModalState.level > 60 ? '' : 'hidden'}">${t('pokedex.unreleased', '尚未開放')}</span></span>)</label>
                   <button type="button" class="pokedex-btn-preset preset-god" onclick="window.PokemonApp.applyPokedexGodPreset()" title="${t('pokedex.preset_god', '畢業神配置')}">[★] ${t('pokedex.preset_god', '畢業神配置')}</button>
                 </div>
                 <div class="pokedex-level-header-right">
@@ -4290,10 +4316,22 @@ function renderPokedexDetailModalContent() {
                     }
                     return pins.map(lv => {
                       const pct = minEvoLvl >= 100 ? 100 : ((lv - minEvoLvl) / (100 - minEvoLvl)) * 100;
-                      const isMilestone = [30, 50, 60, 80, 100].includes(lv) || lv === minEvoLvl;
+                      const isReleasedMilestone = [10, 25, 30, 50, 60].includes(lv) || lv === minEvoLvl;
+                      const isUnreleased = lv > 60;
+                      const isCap = lv === 60;
                       const isActive = pokedexModalState.level === lv;
+                      const classes = ['pokedex-track-pin-btn'];
+                      if (isActive) classes.push('active');
+                      if (isReleasedMilestone && !isUnreleased) classes.push('pin-milestone');
+                      if (isCap) classes.push('pin-cap');
+                      if (isUnreleased) classes.push('pin-unreleased');
+
+                      const tooltip = isUnreleased
+                        ? `Lv.${lv} (${isEN ? 'Unreleased in game / Simulation' : '遊戲尚未開放 / 模擬'})`
+                        : (isCap ? `Lv.${lv} (${isEN ? 'Current Level Cap' : '目前等級上限'})` : `Lv.${lv}`);
+
                       return `
-                        <button type="button" class="pokedex-track-pin-btn ${isActive ? 'active' : ''} ${isMilestone ? 'pin-milestone' : ''}" data-pin-lv="${lv}" style="left: ${pct.toFixed(2)}%;" onclick="window.PokemonApp.setPokedexModalLevel(${lv})" title="Lv.${lv}">
+                        <button type="button" class="${classes.join(' ')}" data-pin-lv="${lv}" style="left: ${pct.toFixed(2)}%;" onclick="window.PokemonApp.setPokedexModalLevel(${lv})" title="${tooltip}">
                           <span class="track-pin-tick"></span>
                           <span class="track-pin-label">${lv}</span>
                         </button>

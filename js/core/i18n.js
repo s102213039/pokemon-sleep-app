@@ -84,6 +84,8 @@
       'pokedex.no_results': '沒有符合篩選條件的寶可夢',
       'pokedex.no_results_desc': '找不到符合條件的寶可夢，請調整篩選條件或重置搜尋。',
       'pokedex.count_label': '隻寶可夢',
+      'pokedex.unreleased': '尚未開放',
+      'pokedex.level_cap': '目前上限',
       'pokedex.ref_data': '📊 參考資料來源',
       'pokedex.target_sheet': '📋 目標試算表',
 
@@ -424,6 +426,8 @@
       'pokedex.no_results': 'No Pokémon Found',
       'pokedex.no_results_desc': 'Please adjust your search criteria or reset filters.',
       'pokedex.count_label': 'Pokémon',
+      'pokedex.unreleased': 'Unreleased',
+      'pokedex.level_cap': 'Level Cap',
       'pokedex.ref_data': '📊 Reference Data',
       'pokedex.target_sheet': '📋 Target Sheet',
 

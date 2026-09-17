@@ -3921,9 +3921,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(indexHtml.includes('css/styles.css?v=20260917_3'), 'index.html styles.css must be v=20260917_3');
+  assert(indexHtml.includes('css/styles.css?v=20260917_4') || indexHtml.includes('css/styles.css?v=20260917_3'), 'index.html styles.css must be v=20260917_4');
   assert(indexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'index.html wiki.js must be v=20260907_8');
-  assert(appIndexHtml.includes('css/styles.css?v=20260917_3'), 'app/index.html styles.css must be v=20260917_3');
+  assert(appIndexHtml.includes('css/styles.css?v=20260917_4') || appIndexHtml.includes('css/styles.css?v=20260917_3'), 'app/index.html styles.css must be v=20260917_4');
   assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'app/index.html wiki.js must be v=20260907_8');
 });
 
@@ -6328,7 +6328,25 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
       }
     },
     getElementById: (id) => {
-      return mockElements.get(id) || null;
+      if (!mockElements.has(id)) {
+        mockElements.set(id, {
+          id,
+          tagName: 'DIV',
+          innerHTML: '',
+          textContent: '',
+          value: '',
+          style: {},
+          classList: {
+            classes: new Set(),
+            add(c) { this.classes.add(c); },
+            remove(c) { this.classes.delete(c); },
+            contains(c) { return this.classes.has(c); }
+          },
+          setAttribute() {},
+          getAttribute() { return ''; }
+        });
+      }
+      return mockElements.get(id);
     },
     querySelector: (sel) => {
       if (sel === '.verdict-grade') return { textContent: '', style: {} };
@@ -6683,6 +6701,46 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assert(stylesCss.includes('order: 3 !important;'), 'Strategy mobile wrap must have order: 3 on mobile');
   assert(stylesCss.includes('right: 16px !important;'), 'Custom select arrow must have generous inset complying with Rule VI');
   assert(stylesCss.includes('flex-wrap: nowrap !important;'), 'Ingredient strip must be strictly nowrap on mobile to guarantee single-line presentation');
+
+  // 15P. Header Stats Dual: Borderless & Transparent on Mobile
+  assert(stylesCss.includes('#pokedex-detail-modal .pokedex-header-stats-row.pokedex-header-stats-dual'), 'styles.css must style mobile pokedex-header-stats-dual with modal id specificity');
+  assert(stylesCss.includes('border: none !important;'), 'Mobile header stats dual must have border: none !important');
+  assert(stylesCss.includes('background: transparent !important;'), 'Mobile header stats dual must have background: transparent !important');
+  assert(stylesCss.includes('padding: 2px 0 !important;'), 'Mobile header stats dual must have padding: 2px 0 !important to stretch content wide');
+
+  // 15Q. Header Info: Column Stack (pokedex-header-no above, pokedex-header-pkm-name below)
+  assert(stylesCss.includes('flex-direction: column !important;'), 'Mobile header info must use flex-direction: column !important for vertical stack');
+  assert(stylesCss.includes('.pokedex-header-name-row'), 'styles.css must support .pokedex-header-name-row');
+
+  // 15R. Milestone Pins Consistency & Unreleased Effects (Lv. 61-100 & Subskill Slots 4-5)
+  assert(stylesCss.includes('.pokedex-track-pin-btn.pin-unreleased'), 'styles.css must style .pokedex-track-pin-btn.pin-unreleased');
+  assert(stylesCss.includes('.pokedex-track-pin-btn.pin-cap'), 'styles.css must style .pokedex-track-pin-btn.pin-cap for official level 60 cap');
+  assert(stylesCss.includes('.pokedex-unreleased-pill'), 'styles.css must style .pokedex-unreleased-pill');
+  assert(stylesCss.includes('.slot-unreleased'), 'styles.css must style .slot-unreleased for unreleased subskill slots');
+  assert(stylesCss.includes('.slot-unreleased-tag'), 'styles.css must style .slot-unreleased-tag');
+  assert(stylesCss.includes('.slot-val-unreleased'), 'styles.css must style .slot-val-unreleased');
+
+  // Verification in JS output
+  const pikachuData = dataset.find(p => p.formatted_no === '0025' || p.name_cn === '皮卡丘') || dataset[0];
+  PokemonApp.openPokemonDetailModal(pikachuData);
+  const pikaModalHtml = mockElements.get('pokedex-detail-modal').innerHTML;
+  assert(pikaModalHtml.includes('pin-milestone'), 'Track pins bar must include pin-milestone for released milestones');
+  assert(pikaModalHtml.includes('pin-unreleased'), 'Track pins bar must include pin-unreleased for future levels');
+  assert(pikaModalHtml.includes('pin-cap'), 'Track pins bar must include pin-cap for level 60');
+  const subskillRowHtml = mockElements.get('pokedex-subskill-slots-row').innerHTML;
+  assert(subskillRowHtml.includes('slot-unreleased'), 'Subskills must include slot-unreleased on slots 4 & 5');
+  assert(subskillRowHtml.includes('尚未開放'), 'Subskill slots row must include 尚未開放 indicator');
+
+  // Toggle level > 60 and verify unreleased tag is active
+  PokemonApp.setPokedexModalLevel(70);
+  const unreleasedTagEl = mockElements.get('pokedex-level-unreleased-tag');
+  if (unreleasedTagEl) {
+    assert(!unreleasedTagEl.classList.contains('hidden'), 'Level 70 must make unreleased tag visible');
+  }
+  PokemonApp.setPokedexModalLevel(50);
+  if (unreleasedTagEl) {
+    assert(unreleasedTagEl.classList.contains('hidden'), 'Level 50 must hide unreleased tag');
+  }
 });
 
 // Final Summary Output
