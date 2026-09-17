@@ -6643,6 +6643,38 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   // CSS Isolation Verification
   assert(stylesCss.includes('.pokedex-strategy-desktop-wrap'), 'styles.css must define .pokedex-strategy-desktop-wrap');
   assert(stylesCss.includes('.pokedex-strategy-mobile-wrap'), 'styles.css must define .pokedex-strategy-mobile-wrap');
+
+  // 15L. Zero-Subskills Appraisal Deflation Guard
+  // When subskills are cleared, score must never be inflated to S, SS, or SSS
+  const evalEmptyMax = appCtx.AppraisalLab.evaluatePokemon(finalIngMon, 60, '冷靜', ['', '', '', '', ''], ['甜甜蜜', '甜甜蜜', '甜甜蜜'], 4, 6);
+  assert(evalEmptyMax.compositeScore <= 74, `Cleared subskills must be capped at <= 74 (got ${evalEmptyMax.compositeScore})`);
+  assert(evalEmptyMax.grade !== 'SSS' && evalEmptyMax.grade !== 'SS' && evalEmptyMax.grade !== 'S', 'Cleared subskills must NEVER receive SSS, SS, or S grade');
+
+  const evalEmptyNeutral = appCtx.AppraisalLab.evaluatePokemon(finalIngMon, 30, '坦率', ['', '', '', '', ''], ['甜甜蜜', '甜甜蜜'], 0, 1);
+  assert(evalEmptyNeutral.compositeScore <= 65, `Neutral Lv.30 with empty subskills must score <= 65 (got ${evalEmptyNeutral.compositeScore})`);
+
+  // 15M. Dynamic Minimum Evolution Level Clamping & Pins
+  const venusaurData = dataset.find(p => p.formatted_no === '0003' || p.name_cn === '妙蛙花') || { evo_req: 'Lv.24 + 80 糖' };
+  PokemonApp.openPokemonDetailModal(venusaurData);
+  let vState = PokemonApp.getPokedexModalState();
+  assert(vState.level >= 24, 'Venusaur initial level must be clamped to at least min evolution level 24');
+
+  // Attempt to set below min evolution level
+  PokemonApp.setPokedexModalLevel(10);
+  vState = PokemonApp.getPokedexModalState();
+  assertEquals(vState.level, 24, 'Setting level below min evolution level must be clamped to 24');
+
+  // Slider min and pins check in HTML
+  assert(modalEl.innerHTML.includes('min="24"'), 'Slider input must have min="24" for Venusaur');
+  assert(!modalEl.innerHTML.includes('data-pin-lv="10"'), 'Venusaur pins bar must NOT render milestone pin for Lv.10 which is below min evo level 24');
+  assert(modalEl.innerHTML.includes('data-pin-lv="24"'), 'Venusaur pins bar must include threshold pin for min evo level Lv.24');
+
+  // 15N. H5 Mobile Subskill 2-Row Downward Layout & Theme Colors
+  assert(stylesCss.includes('grid-template-columns: repeat(6, 1fr)'), 'CSS must define 6-column grid for subskills on mobile');
+  assert(stylesCss.includes('grid-column: span 2'), 'CSS must span 2 columns for row 1 subskills');
+  assert(stylesCss.includes('grid-column: span 3'), 'CSS must span 3 columns for row 2 subskills');
+  assert(stylesCss.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-header-stats-row.pokedex-header-stats-dual'), 'CSS must adapt pokedex-header-stats-dual for dawn theme');
+  assert(!stylesCss.includes('justify-content: space-between !important;\n  }\n  #pokedex-detail-modal .pokedex-ribbon-unit'), 'CSS must eliminate space-between in pokedex-inline-unit');
 });
 
 // Final Summary Output

@@ -3367,9 +3367,10 @@ function openPokemonDetailModal(pokemonId) {
   const pkm = pokemons.find(p => String(p.id) === String(pokemonId) || p.formatted_no === pokemonId || p.name_cn === pokemonId || p.name_en === pokemonId);
   if (!pkm) return;
 
+  const minEvoLvl = getPokedexMinEvolutionLevel(pkm);
   pokedexModalState.pkmId = pkm.id;
   pokedexModalState.pkm = pkm;
-  pokedexModalState.level = 30;
+  pokedexModalState.level = Math.max(minEvoLvl, 30);
   pokedexModalState.skillLevel = 1;
   pokedexModalState.ribbon = 0;
   pokedexModalState.ingSlots = [0, 0, 0];
@@ -3413,7 +3414,8 @@ function applyPokedexGodPreset() {
   const pkm = pokedexModalState.pkm;
   if (!pkm) return;
   const spec = pkm.specialty || '';
-  pokedexModalState.level = 60;
+  const minEvoLvl = getPokedexMinEvolutionLevel(pkm);
+  pokedexModalState.level = Math.max(minEvoLvl, 60);
   pokedexModalState.ribbon = 4;
   pokedexModalState.skillLevel = getPokedexMainSkillMaxLvl(pkm.main_skill);
   pokedexModalState.ingSlots = [0, 0, 0];
@@ -3460,7 +3462,8 @@ function syncPokedexCustomSelects() {
 }
 
 function applyPokedexResetPreset() {
-  pokedexModalState.level = 30;
+  const minEvoLvl = getPokedexMinEvolutionLevel(pokedexModalState.pkm);
+  pokedexModalState.level = Math.max(minEvoLvl, 30);
   pokedexModalState.nature = '坦率';
   pokedexModalState.subskills = ['', '', '', '', ''];
   pokedexModalState.skillLevel = 1;
@@ -3470,7 +3473,10 @@ function applyPokedexResetPreset() {
 
   const slider = document.getElementById('pokedex-level-slider');
   const valText = document.getElementById('pokedex-level-val-text');
-  if (slider) slider.value = pokedexModalState.level;
+  if (slider) {
+    slider.min = minEvoLvl;
+    slider.value = pokedexModalState.level;
+  }
   if (valText) valText.textContent = pokedexModalState.level;
 
   const natureSelect = document.getElementById('pokedex-poke-nature');
@@ -3489,11 +3495,21 @@ function applyPokedexResetPreset() {
 }
 
 function setPokedexModalLevel(val) {
-  pokedexModalState.level = Math.max(1, Math.min(100, parseInt(val, 10) || 1));
+  const minEvoLvl = getPokedexMinEvolutionLevel(pokedexModalState.pkm);
+  pokedexModalState.level = Math.max(minEvoLvl, Math.min(100, parseInt(val, 10) || minEvoLvl));
   const slider = document.getElementById('pokedex-level-slider');
   const valText = document.getElementById('pokedex-level-val-text');
-  if (slider && slider.value != pokedexModalState.level) slider.value = pokedexModalState.level;
+  if (slider) {
+    if (slider.min != minEvoLvl) slider.min = minEvoLvl;
+    if (slider.value != pokedexModalState.level) slider.value = pokedexModalState.level;
+  }
   if (valText) valText.textContent = pokedexModalState.level;
+  const pins = document.querySelectorAll('#pokedex-track-pins-bar .pokedex-track-pin-btn');
+  pins.forEach(pin => {
+    const pinLv = parseInt(pin.getAttribute('data-pin-lv'), 10);
+    if (pinLv === pokedexModalState.level) pin.classList.add('active');
+    else pin.classList.remove('active');
+  });
   updatePokedexSubskillUI();
   renderPokedexIngredientStrip();
   updatePokedexModalAppraisalLive();
@@ -3549,11 +3565,15 @@ function choosePokedexSubskill(skName) {
 
   // 若所選插槽等級門檻高於當前設定等級，自動提升等級至該插槽門檻，讓使用者立即看到該副技能生效
   const slotLevels = [10, 25, 50, 70, 80];
-  const requiredLv = slotLevels[targetSlotIdx] || 10;
+  const minEvoLvl = getPokedexMinEvolutionLevel(pokedexModalState.pkm);
+  const requiredLv = Math.max(minEvoLvl, slotLevels[targetSlotIdx] || 10);
   if (pokedexModalState.level < requiredLv) {
     pokedexModalState.level = requiredLv;
     const slider = document.getElementById('pokedex-level-slider');
-    if (slider) slider.value = requiredLv;
+    if (slider) {
+      if (slider.min != minEvoLvl) slider.min = minEvoLvl;
+      slider.value = requiredLv;
+    }
     const lvText = document.getElementById('pokedex-level-val-text');
     if (lvText) lvText.textContent = requiredLv;
     const lvBadge = document.querySelector('.pokedex-val-badge');
@@ -4173,6 +4193,7 @@ function renderPokedexDetailModalContent() {
 
   const formulaData = calculatePokedexIngredientFormulas();
   const maxSkillLvl = getPokedexMainSkillMaxLvl(pkm.main_skill);
+  const minEvoLvl = getPokedexMinEvolutionLevel(pkm);
 
   modalEl.innerHTML = `
     <div class="pokedex-modal-backdrop-dismiss" onclick="window.PokemonApp.closePokemonDetailModal()"></div>
@@ -4259,19 +4280,26 @@ function renderPokedexDetailModalContent() {
                 </div>
               </div>
               <div class="pokedex-anchored-slider-wrap">
-                <input type="range" id="pokedex-level-slider" min="1" max="100" value="${pokedexModalState.level}" class="pokedex-slider" oninput="window.PokemonApp.setPokedexModalLevel(this.value)">
+                <input type="range" id="pokedex-level-slider" min="${minEvoLvl}" max="100" value="${pokedexModalState.level}" class="pokedex-slider" oninput="window.PokemonApp.setPokedexModalLevel(this.value)">
                 <div class="pokedex-track-pins-bar" id="pokedex-track-pins-bar">
-                  ${[10, 25, 30, 50, 60, 70, 80, 100].map(lv => {
-                    const pct = ((lv - 1) / 99) * 100;
-                    const isMilestone = [30, 50, 60, 80, 100].includes(lv);
-                    const isActive = pokedexModalState.level === lv;
-                    return `
-                      <button type="button" class="pokedex-track-pin-btn ${isActive ? 'active' : ''} ${isMilestone ? 'pin-milestone' : ''}" data-pin-lv="${lv}" style="left: ${pct.toFixed(2)}%;" onclick="window.PokemonApp.setPokedexModalLevel(${lv})" title="Lv.${lv}">
-                        <span class="track-pin-tick"></span>
-                        <span class="track-pin-label">${lv}</span>
-                      </button>
-                    `;
-                  }).join('')}
+                  ${(() => {
+                    const allMilestones = [10, 25, 30, 50, 60, 70, 80, 100];
+                    let pins = allMilestones.filter(lv => lv >= minEvoLvl);
+                    if (minEvoLvl > 1 && !pins.includes(minEvoLvl)) {
+                      pins = [minEvoLvl, ...pins].sort((a, b) => a - b);
+                    }
+                    return pins.map(lv => {
+                      const pct = minEvoLvl >= 100 ? 100 : ((lv - minEvoLvl) / (100 - minEvoLvl)) * 100;
+                      const isMilestone = [30, 50, 60, 80, 100].includes(lv) || lv === minEvoLvl;
+                      const isActive = pokedexModalState.level === lv;
+                      return `
+                        <button type="button" class="pokedex-track-pin-btn ${isActive ? 'active' : ''} ${isMilestone ? 'pin-milestone' : ''}" data-pin-lv="${lv}" style="left: ${pct.toFixed(2)}%;" onclick="window.PokemonApp.setPokedexModalLevel(${lv})" title="Lv.${lv}">
+                          <span class="track-pin-tick"></span>
+                          <span class="track-pin-label">${lv}</span>
+                        </button>
+                      `;
+                    }).join('');
+                  })()}
                 </div>
               </div>
             </div>

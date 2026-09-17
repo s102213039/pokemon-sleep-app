@@ -139,7 +139,7 @@
     const natDisplayName = window.I18N ? window.I18N.getNatureName(natureName) : natureName;
 
     // 1. 樹果產能 (Berry Power)
-    let berryScore = (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') ? 68 : ((specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') ? 35 : 30);
+    let berryScore = (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') ? 50 : ((specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') ? 25 : 25);
     const hasBFS = activeSubskills.indexOf('樹果數量S') !== -1;
     const bfsIdx = subskillArr.indexOf('樹果數量S');
     if (hasBFS) {
@@ -167,7 +167,7 @@
     berryScore = Math.min(Math.max(Math.round(berryScore), 15), 100);
 
     // 2. 食材產能 (Ingredient Power: 持有上限、睡飽飽獎章與 AAA 食材配置為評分核心)
-    let ingScore = (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') ? 72 : ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') ? 28 : 32);
+    let ingScore = (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') ? 50 : ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') ? 25 : 28);
     const hasIngM = activeSubskills.indexOf('食材機率提升M') !== -1 || activeSubskills.indexOf('Ingredient Finder M') !== -1;
     const ingMIdx = Math.max(subskillArr.indexOf('食材機率提升M'), subskillArr.indexOf('Ingredient Finder M'));
     if (hasIngM) {
@@ -233,7 +233,7 @@
     ingScore = Math.min(Math.max(Math.round(ingScore), 15), 100);
 
     // 3. 技能強度 (Skill Power: 核心以技能機率與幫速為主，持有上限保障夜間雙發)
-    let skillScore = (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') ? 68 : 32;
+    let skillScore = (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') ? 50 : 25;
     const hasSkillM = activeSubskills.indexOf('技能機率提升M') !== -1;
     const skillMIdx = subskillArr.indexOf('技能機率提升M');
     if (hasSkillM) {
@@ -444,17 +444,21 @@
     }
     compositeScore += specialtySynergy;
 
-    // 專長精通基準加成 (Specialty Mastery: 該有都有即能穩定達標 90+ S 級門檻)
+    // 專長精通基準加成 (Specialty Mastery: 必須包含有效專長副技能，該有都有即能穩定達標 90+ S 級門檻)
     let specialtyMasteryBonus = 0;
+    const hasCoreIng = activeSubskills.some(s => ['食材機率提升M', '食材機率提升S', 'Ingredient Finder M', 'Ingredient Finder S', '持有上限提升L', '持有上限提升M', '持有上限提升S', 'Inventory Up L', 'Inventory Up M', 'Inventory Up S', '幫手獎勵', 'Helping Bonus'].indexOf(s) !== -1);
+    const hasCoreBerry = activeSubskills.some(s => ['樹果數量S', 'Berry Finding S', '幫忙速度M', '幫忙速度S', 'Helping Speed M', 'Helping Speed S', '幫手獎勵', 'Helping Bonus'].indexOf(s) !== -1);
+    const hasCoreSkill = activeSubskills.some(s => ['技能機率提升M', '技能機率提升S', 'Skill Trigger M', 'Skill Trigger S', '幫手獎勵', 'Helping Bonus'].indexOf(s) !== -1);
+
     if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
-      if (ingScore >= 95) specialtyMasteryBonus = 6;
-      else if (ingScore >= 85) specialtyMasteryBonus = 3;
+      if (hasCoreIng && ingScore >= 95) specialtyMasteryBonus = activeSubskills.length >= 3 ? 6 : 4;
+      else if (hasCoreIng && ingScore >= 85) specialtyMasteryBonus = activeSubskills.length >= 2 ? 4 : 2;
     } else if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
-      if (berryScore >= 95) specialtyMasteryBonus = 6;
-      else if (berryScore >= 85) specialtyMasteryBonus = 3;
+      if (hasCoreBerry && berryScore >= 95) specialtyMasteryBonus = activeSubskills.length >= 3 ? 6 : 3;
+      else if (hasCoreBerry && berryScore >= 85) specialtyMasteryBonus = activeSubskills.length >= 2 ? 3 : 1;
     } else {
-      if (skillScore >= 95) specialtyMasteryBonus = 6;
-      else if (skillScore >= 85) specialtyMasteryBonus = 3;
+      if (hasCoreSkill && skillScore >= 95) specialtyMasteryBonus = activeSubskills.length >= 3 ? 6 : 4;
+      else if (hasCoreSkill && skillScore >= 85) specialtyMasteryBonus = activeSubskills.length >= 2 ? 4 : 2;
     }
     compositeScore += specialtyMasteryBonus;
 
@@ -473,6 +477,11 @@
       }
     }
     compositeScore += skillLvlBonus;
+
+    // 無副技能嚴格防溢上限：副技能清空狀態下絕對不可評為 S / SS / SSS
+    if (activeSubskills.length === 0) {
+      compositeScore = Math.min(74, compositeScore);
+    }
     compositeScore = Math.min(100, Math.max(20, Math.round(compositeScore)));
 
     // 評級判定 (新增 SSS, SS，明確劃分 98+, 95+, 90+, 80+, 70+, 60+, <60)
