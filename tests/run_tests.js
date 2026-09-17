@@ -3921,9 +3921,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(indexHtml.includes('css/styles.css?v=20260907_9'), 'index.html styles.css must be v=20260907_9');
+  assert(indexHtml.includes('css/styles.css?v=20260917_2'), 'index.html styles.css must be v=20260917_2');
   assert(indexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'index.html wiki.js must be v=20260907_8');
-  assert(appIndexHtml.includes('css/styles.css?v=20260907_9'), 'app/index.html styles.css must be v=20260907_9');
+  assert(appIndexHtml.includes('css/styles.css?v=20260917_2'), 'app/index.html styles.css must be v=20260917_2');
   assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'app/index.html wiki.js must be v=20260907_8');
 });
 
@@ -6673,8 +6673,15 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assert(stylesCss.includes('grid-template-columns: repeat(6, 1fr)'), 'CSS must define 6-column grid for subskills on mobile');
   assert(stylesCss.includes('grid-column: span 2'), 'CSS must span 2 columns for row 1 subskills');
   assert(stylesCss.includes('grid-column: span 3'), 'CSS must span 3 columns for row 2 subskills');
-  assert(stylesCss.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-header-stats-row.pokedex-header-stats-dual'), 'CSS must adapt pokedex-header-stats-dual for dawn theme');
+  assert(stylesCss.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-modal-dialog'), 'CSS must adapt pokedex modal for dawn theme');
   assert(!stylesCss.includes('justify-content: space-between !important;\n  }\n  #pokedex-detail-modal .pokedex-ribbon-unit'), 'CSS must eliminate space-between in pokedex-inline-unit');
+
+  // 15O. H5 Mobile Whitespace Elimination & Control Order
+  assert(!stylesCss.includes('flex: 1 1 140px'), 'CSS must NOT contain flex: 1 1 140px which stretches inline units vertically');
+  assert(stylesCss.includes('order: 1 !important;'), 'Right col (controls) must have order: 1 on mobile');
+  assert(stylesCss.includes('order: 2 !important;'), 'Left col (formula) must have order: 2 on mobile');
+  assert(stylesCss.includes('order: 3 !important;'), 'Strategy mobile wrap must have order: 3 on mobile');
+  assert(stylesCss.includes('right: 16px !important;'), 'Custom select arrow must have generous inset complying with Rule VI');
 });
 
 // Final Summary Output
