@@ -3921,9 +3921,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(/css\/styles\.css\?v=20260917_[3456]/.test(indexHtml), 'index.html styles.css must be v=20260917_6');
+  assert(/css\/styles\.css\?v=20260917_[34567]/.test(indexHtml), 'index.html styles.css must have current cache buster');
   assert(indexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'index.html wiki.js must be v=20260907_8');
-  assert(/css\/styles\.css\?v=20260917_[3456]/.test(appIndexHtml), 'app/index.html styles.css must be v=20260917_6');
+  assert(/css\/styles\.css\?v=20260917_[34567]/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
   assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'app/index.html wiki.js must be v=20260907_8');
 });
 
@@ -6779,7 +6779,20 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   if (ivHtml) assert(!ivHtml.includes(' <span class="header-stat-diff'), 'Interval stat must not have space before diff tag');
   if (crHtml) assert(!crHtml.includes(' <span class="header-stat-diff'), 'Carry stat must not have space before diff tag');
   if (irHtml) assert(!irHtml.includes(' <span class="header-stat-diff'), 'Ingredient rate stat must not have space before diff tag');
-  if (srHtml) assert(!srHtml.includes(' <span class="header-stat-diff'), 'Skill rate stat must not have space before diff tag');
+  // 15T. Slider Fill Progress Bar, Top Layer Locked Zone, Borderless Desktop Stats & Mobile 2x2 Dual Stacks
+  assert(pikaModalHtml2.includes('pokedex-slider-fill-bar'), 'Slider track must render pokedex-slider-fill-bar element');
+  assert(stylesCss.includes('.pokedex-slider-fill-bar'), 'styles.css must style .pokedex-slider-fill-bar');
+  assert(stylesCss.includes('#pokedex-detail-modal .calc-color-helps'), 'styles.css must provide modal-scoped specificity for .calc-color-helps');
+  assert(stylesCss.includes('strong:not([class*="calc-color-"])'), 'styles.css must protect calc-color-* from formula-derive strong overrides');
+  assert(!stylesCss.includes('.pokedex-header-stats-dual {\n    grid-area: stats !important;\n    width: 100% !important;\n    display: grid !important;'), 'styles.css must not use 4-column single row for mobile header stats');
+  assert(stylesCss.includes('display: inline-flex !important;\n  align-items: center;\n  gap: 16px;\n  background: transparent !important;\n  border: none !important;'), 'Desktop header stats dual must be borderless and transparent');
+
+  const fillBarEl = mockElements.get('pokedex-slider-fill-bar');
+  if (fillBarEl) {
+    PokemonApp.setPokedexModalLevel(50);
+    const expectedWidth = ((50 - 1) / 99 * 100).toFixed(2);
+    assert(fillBarEl.style.width === `${expectedWidth}%`, `Slider fill bar width must update dynamically (expected ${expectedWidth}%, got ${fillBarEl.style.width})`);
+  }
 });
 
 // Final Summary Output

@@ -3411,6 +3411,14 @@ function closePokemonDetailModal() {
   }
 }
 
+function updateSliderProgressFill(lvl) {
+  const fillBar = document.getElementById('pokedex-slider-fill-bar');
+  if (fillBar) {
+    const percent = Math.min(100, Math.max(0, ((lvl - 1) / 99) * 100));
+    fillBar.style.width = `${percent.toFixed(2)}%`;
+  }
+}
+
 function applyPokedexGodPreset() {
   const pkm = pokedexModalState.pkm;
   if (!pkm) return;
@@ -3437,6 +3445,7 @@ function applyPokedexGodPreset() {
   const valText = document.getElementById('pokedex-level-val-text');
   if (slider) slider.value = pokedexModalState.level;
   if (valText) valText.textContent = pokedexModalState.level;
+  updateSliderProgressFill(pokedexModalState.level);
 
   const natureSelect = document.getElementById('pokedex-poke-nature');
   if (natureSelect) natureSelect.value = pokedexModalState.nature;
@@ -3490,6 +3499,7 @@ function applyPokedexResetPreset() {
     slider.value = pokedexModalState.level;
   }
   if (valText) valText.textContent = pokedexModalState.level;
+  updateSliderProgressFill(pokedexModalState.level);
   if (unreleasedTag) {
     if (pokedexModalState.level > 60) {
       unreleasedTag.classList.remove('hidden');
@@ -3542,6 +3552,7 @@ function setPokedexModalLevel(val) {
     }
   }
   if (valText) valText.textContent = pokedexModalState.level;
+  updateSliderProgressFill(pokedexModalState.level);
   if (unreleasedTag) {
     if (pokedexModalState.level > 60) {
       unreleasedTag.classList.remove('hidden');
@@ -4376,6 +4387,7 @@ function renderPokedexDetailModalContent() {
               <div class="pokedex-anchored-slider-wrap">
                 <div class="pokedex-slider-track-wrap">
                   <div class="pokedex-slider-track-bar">
+                    <div class="pokedex-slider-fill-bar" id="pokedex-slider-fill-bar" style="width: ${((pokedexModalState.level - 1) / 99 * 100).toFixed(2)}%;"></div>
                     ${minEvoLvl > 1 ? `
                       <div class="pokedex-slider-locked-zone" id="pokedex-slider-locked-zone" style="width: ${((minEvoLvl - 1) / 99 * 100).toFixed(2)}%;" title="${isEN ? `Locked: Below min evolution Lv.${minEvoLvl}` : `不可滑動區間：低於最低進化等級 Lv.${minEvoLvl}`}">
                         <span class="pokedex-slider-locked-edge"></span>
@@ -4585,7 +4597,7 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             <span class="formula-op">=</span>
             <span class="formula-res font-bold calc-color-ing">${f.finalIngRate.toFixed(2)}%</span>
             <span class="formula-op">➜</span>
-            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}次</span> × <span class="calc-color-ing font-bold">${f.finalIngRate.toFixed(2)}%</span> = <strong class="calc-color-yield">${f.dailyIngDrops.toFixed(1)} ${isEN ? 'drops/day' : '次掉落/天'}</strong></span>
+            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-ing font-bold">${f.finalIngRate.toFixed(2)}%</span> = <strong class="calc-color-yield">${f.dailyIngDrops.toFixed(1)} ${isEN ? 'drops/day' : '次掉落/天'}</strong></span>
           </div>
           <div class="pokedex-yield-items-grid">
             ${f.summaryYieldList.map(item => `
@@ -4615,7 +4627,7 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             <span class="formula-op">=</span>
             <span class="formula-res font-bold calc-color-skill">${f.finalSkillRate.toFixed(2)}%</span>
             <span class="formula-op">➜</span>
-            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}次</span> × <span class="calc-color-skill font-bold">${f.finalSkillRate.toFixed(2)}%</span> = <strong class="calc-color-triggers">${f.dailyTriggers.toFixed(2)} ${isEN ? 'times/day' : '次/天'}</strong></span>
+            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-skill font-bold">${f.finalSkillRate.toFixed(2)}%</span> = <strong class="calc-color-triggers">${f.dailyTriggers.toFixed(2)} ${isEN ? 'times/day' : '次/天'}</strong></span>
           </div>
           ${f.mainSkillExtraDaily > 0 ? `
             <div class="calc-row-subskill-extra">
