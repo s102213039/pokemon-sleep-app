@@ -22415,7 +22415,7 @@ body.mobile-h5-app.values-active,
 .pokedex-header-stats-row.pokedex-header-stats-dual {
   display: inline-flex !important;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .pokedex-header-stat-col {
@@ -22428,7 +22428,7 @@ body.mobile-h5-app.values-active,
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
-  font-size: 13.5px;
+  font-size: 14px;
   white-space: nowrap;
 }
 
@@ -22440,16 +22440,16 @@ body.mobile-h5-app.values-active,
 }
 
 .header-stat-v {
-  font-size: 15px;
+  font-size: 15.5px;
   color: var(--text-primary, #f8fafc);
   font-weight: 700;
   font-family: monospace, system-ui, -apple-system;
 }
 
 .header-stat-diff {
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
-  margin-left: 2px;
+  margin-left: 1px;
 }
 
 .header-stat-diff.diff-pos {
@@ -23375,8 +23375,8 @@ body.mobile-h5-app.values-active,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 4px;
-  border-bottom: 1px solid var(--border-color-subtle, #e2e8f0);
+  padding-bottom: 0 !important;
+  border-bottom: none !important;
 }
 
 .pokedex-formula-badge {
@@ -23399,6 +23399,49 @@ body.mobile-h5-app.values-active,
   font-size: 15.5px;
   color: #10b981;
   font-family: monospace, system-ui, -apple-system;
+}
+
+/* 網頁版副技能展開按鈕維持隱藏，預設直接展示三大方框 */
+.pokedex-subskill-toggle-btn {
+  display: none !important;
+}
+
+/* 算法拆解跨步驟數值色彩連動系統 (Cross-Step Value Lineage) */
+.calc-color-helps {
+  color: #0284c7 !important;
+}
+.calc-color-ing {
+  color: #059669 !important;
+}
+.calc-color-skill {
+  color: #7c3aed !important;
+}
+.calc-color-yield {
+  color: #d97706 !important;
+}
+.calc-color-triggers {
+  color: #db2777 !important;
+}
+
+[data-theme="midnight"] .calc-color-helps,
+[data-theme="onyx"] .calc-color-helps {
+  color: #38bdf8 !important;
+}
+[data-theme="midnight"] .calc-color-ing,
+[data-theme="onyx"] .calc-color-ing {
+  color: #34d399 !important;
+}
+[data-theme="midnight"] .calc-color-skill,
+[data-theme="onyx"] .calc-color-skill {
+  color: #c084fc !important;
+}
+[data-theme="midnight"] .calc-color-yield,
+[data-theme="onyx"] .calc-color-yield {
+  color: #fbbf24 !important;
+}
+[data-theme="midnight"] .calc-color-triggers,
+[data-theme="onyx"] .calc-color-triggers {
+  color: #f472b6 !important;
 }
 
 /* 單一整合計算卡片 (白底、單層外框、大字體、高清晰度) */
@@ -24712,7 +24755,7 @@ body.mobile-h5-app.values-active,
     width: 100% !important;
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
-    gap: 4px !important;
+    gap: 3px !important;
     padding: 2px 0 !important;
     box-sizing: border-box !important;
     border-radius: 0 !important;
@@ -24737,18 +24780,18 @@ body.mobile-h5-app.values-active,
   }
 
   .header-stat-k {
-    font-size: 9.5px !important;
+    font-size: 10px !important;
     white-space: nowrap !important;
     opacity: 0.85 !important;
   }
 
   .header-stat-v {
-    font-size: 11px !important;
+    font-size: 12.5px !important;
     white-space: nowrap !important;
   }
 
   .header-stat-diff {
-    font-size: 9px !important;
+    font-size: 10px !important;
     margin-left: 1px !important;
   }
 
@@ -25059,7 +25102,48 @@ body.mobile-h5-app.values-active,
     display: grid !important;
     grid-template-columns: repeat(6, 1fr) !important;
     gap: 6px 4px !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 4px !important;
+  }
+
+  #pokedex-detail-modal .pokedex-subskill-toggle-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    box-sizing: border-box;
+    padding: 7px 12px !important;
+    margin-top: 2px !important;
+    margin-bottom: 6px !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.3px;
+    color: var(--accent-blue, #0284c7) !important;
+    background: var(--bg-card, #ffffff) !important;
+    border: 1px solid var(--border-color, #cbd5e1) !important;
+    border-radius: 8px !important;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+  }
+
+  #pokedex-detail-modal .pokedex-subskill-toggle-btn:active {
+    transform: scale(0.99);
+  }
+
+  #pokedex-detail-modal .pokedex-subskill-toggle-btn.is-expanded {
+    color: var(--text-secondary, #64748b) !important;
+    background: var(--bg-muted, #f1f5f9) !important;
+    border-color: var(--border-color-subtle, #e2e8f0) !important;
+  }
+
+  /* 移動端副技能三大方框平鋪選擇盤預設隱藏，點選展開後才顯示 */
+  #pokedex-detail-modal #pokedex-subskill-palette {
+    display: none !important;
+  }
+
+  #pokedex-detail-modal #pokedex-subskill-palette.palette-expanded {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
   }
 
   #pokedex-detail-modal .box-subskill-slot-btn:nth-child(1),
@@ -25112,7 +25196,7 @@ body.mobile-h5-app.values-active,
     "main actions"
     "stats stats" !important;
   gap: 6px 8px !important;
-  padding: 8px 12px 6px !important;
+  padding: 8px 8px 6px !important;
   position: static !important;
   align-items: center !important;
 }
@@ -25169,7 +25253,7 @@ body.mobile-h5-app.values-active,
   width: 100% !important;
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
-  gap: 4px !important;
+  gap: 3px !important;
   padding: 2px 0 !important;
   box-sizing: border-box !important;
   border-radius: 0 !important;
@@ -25437,7 +25521,48 @@ body.mobile-h5-app.values-active,
   display: grid !important;
   grid-template-columns: repeat(6, 1fr) !important;
   gap: 6px 4px !important;
-  margin-bottom: 8px !important;
+  margin-bottom: 4px !important;
+}
+
+.mobile-h5-app #pokedex-detail-modal .pokedex-subskill-toggle-btn {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 100% !important;
+  box-sizing: border-box;
+  padding: 7px 12px !important;
+  margin-top: 2px !important;
+  margin-bottom: 6px !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px;
+  color: var(--accent-blue, #0284c7) !important;
+  background: var(--bg-card, #ffffff) !important;
+  border: 1px solid var(--border-color, #cbd5e1) !important;
+  border-radius: 8px !important;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.mobile-h5-app #pokedex-detail-modal .pokedex-subskill-toggle-btn:active {
+  transform: scale(0.99);
+}
+
+.mobile-h5-app #pokedex-detail-modal .pokedex-subskill-toggle-btn.is-expanded {
+  color: var(--text-secondary, #64748b) !important;
+  background: var(--bg-muted, #f1f5f9) !important;
+  border-color: var(--border-color-subtle, #e2e8f0) !important;
+}
+
+/* 移動端副技能三大方框平鋪選擇盤預設隱藏，點選展開後才顯示 */
+.mobile-h5-app #pokedex-detail-modal #pokedex-subskill-palette {
+  display: none !important;
+}
+
+.mobile-h5-app #pokedex-detail-modal #pokedex-subskill-palette.palette-expanded {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
 }
 
 .mobile-h5-app #pokedex-detail-modal .box-subskill-slot-btn:nth-child(1),

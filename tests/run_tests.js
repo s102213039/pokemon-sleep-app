@@ -3921,9 +3921,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(/css\/styles\.css\?v=20260917_[345]/.test(indexHtml), 'index.html styles.css must be v=20260917_5');
+  assert(/css\/styles\.css\?v=20260917_[3456]/.test(indexHtml), 'index.html styles.css must be v=20260917_6');
   assert(indexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'index.html wiki.js must be v=20260907_8');
-  assert(/css\/styles\.css\?v=20260917_[345]/.test(appIndexHtml), 'app/index.html styles.css must be v=20260917_5');
+  assert(/css\/styles\.css\?v=20260917_[3456]/.test(appIndexHtml), 'app/index.html styles.css must be v=20260917_6');
   assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'app/index.html wiki.js must be v=20260907_8');
 });
 
@@ -6742,6 +6742,44 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   if (unreleasedTagEl) {
     assert(unreleasedTagEl.classList.contains('hidden'), 'Level 50 must hide unreleased tag');
   }
+
+  // 15S. Subskills Default Empty, Collapsible Palette, Clean Formula Breakdown & Spaceless Header Stats
+  PokemonApp.openPokemonDetailModal(pikachuData);
+  const pikaState = PokemonApp.getPokedexModalState();
+  assert(Array.isArray(pikaState.subskills) && pikaState.subskills.every(s => s === ''), 'Subskills must initially be empty (no selected subskills by default)');
+
+  const pikaModalHtml2 = mockElements.get('pokedex-detail-modal').innerHTML;
+  assert(pikaModalHtml2.includes('pokedex-subskill-toggle-btn'), 'Modal HTML must include full-width toggle button for H5 subskills collapse');
+  assert(pikaModalHtml2.includes('副技能展開'), 'Subskill toggle button must initially display 副技能展開');
+
+  // Test toggle functionality
+  assert(typeof PokemonApp.togglePokedexSubskillPalette === 'function', 'togglePokedexSubskillPalette must be exported');
+  PokemonApp.togglePokedexSubskillPalette();
+  const paletteEl = mockElements.get('pokedex-subskill-palette');
+  assert(paletteEl.classList.contains('palette-expanded'), 'Toggling must add palette-expanded class');
+  PokemonApp.togglePokedexSubskillPalette();
+  assert(!paletteEl.classList.contains('palette-expanded'), 'Toggling again must remove palette-expanded class');
+
+  // Formula Breakdown verification
+  assert(!pikaModalHtml2.includes('calc-stat-base'), 'Formula breakdown must not include calc-stat-base');
+  assert(!pikaModalHtml2.includes('(+20%)') && !pikaModalHtml2.includes('(-20%)'), 'Formula breakdown must not include bracketed notes (+20%)/(-20%)');
+  assert(pikaModalHtml2.includes('calc-color-helps'), 'Formula breakdown must include calc-color-helps for daily helps lineage');
+  assert(pikaModalHtml2.includes('calc-color-ing'), 'Formula breakdown must include calc-color-ing for ingredient rate lineage');
+  assert(pikaModalHtml2.includes('calc-color-skill'), 'Formula breakdown must include calc-color-skill for skill rate lineage');
+  assert(stylesCss.includes('.calc-color-helps'), 'styles.css must style .calc-color-helps');
+  assert(stylesCss.includes('.pokedex-subskill-toggle-btn'), 'styles.css must style .pokedex-subskill-toggle-btn');
+  assert(stylesCss.includes('.pokedex-formula-header') && stylesCss.includes('border-bottom: none !important;'), 'styles.css must remove white divider line under formula header');
+
+  // Spaceless stat numbers verification: no space before <span class="header-stat-diff
+  const formulasNow = PokemonApp.calculatePokedexIngredientFormulas();
+  const ivHtml = PokemonApp.renderPokedexIntervalValue ? PokemonApp.renderPokedexIntervalValue(formulasNow, pikachuData) : '';
+  const crHtml = PokemonApp.renderPokedexCarryValue ? PokemonApp.renderPokedexCarryValue(formulasNow, pikachuData) : '';
+  const irHtml = PokemonApp.renderPokedexIngRateValue ? PokemonApp.renderPokedexIngRateValue(formulasNow, pikachuData) : '';
+  const srHtml = PokemonApp.renderPokedexSkillRateValue ? PokemonApp.renderPokedexSkillRateValue(formulasNow, pikachuData) : '';
+  if (ivHtml) assert(!ivHtml.includes(' <span class="header-stat-diff'), 'Interval stat must not have space before diff tag');
+  if (crHtml) assert(!crHtml.includes(' <span class="header-stat-diff'), 'Carry stat must not have space before diff tag');
+  if (irHtml) assert(!irHtml.includes(' <span class="header-stat-diff'), 'Ingredient rate stat must not have space before diff tag');
+  if (srHtml) assert(!srHtml.includes(' <span class="header-stat-diff'), 'Skill rate stat must not have space before diff tag');
 });
 
 // Final Summary Output
