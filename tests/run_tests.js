@@ -6617,6 +6617,32 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   const evalSkillLv1 = appCtx.AppraisalLab.evaluatePokemon(finalIngMon, 30, '冷靜', ['食材機率提升M'], ['甜甜蜜', '甜甜蜜'], 0, 1);
   const evalSkillLv6 = appCtx.AppraisalLab.evaluatePokemon(finalIngMon, 30, '冷靜', ['食材機率提升M'], ['甜甜蜜', '甜甜蜜'], 0, 6);
   assert(evalSkillLv6.compositeScore > evalSkillLv1.compositeScore, 'Higher main skill level must increase composite score');
+
+  // 15K. Desktop vs Mobile Layout Isolation Verification
+  PokemonApp.openPokemonDetailModal(finalIngMon);
+  assert(modalEl && modalEl.innerHTML, 'Pokedex detail modal HTML must exist');
+
+  // Header verification: pokedex-header-stats-dual must be inside pokedex-modal-header-main before actions
+  const mainHeaderIdx = modalEl.innerHTML.indexOf('pokedex-modal-header-main');
+  const statsDualIdx = modalEl.innerHTML.indexOf('pokedex-header-stats-dual');
+  const headerActionsIdx = modalEl.innerHTML.indexOf('pokedex-header-actions');
+  assert(mainHeaderIdx !== -1 && statsDualIdx !== -1 && headerActionsIdx !== -1, 'Header components must exist in modal HTML');
+  assert(mainHeaderIdx < statsDualIdx && statsDualIdx < headerActionsIdx, 'pokedex-header-stats-dual must be nested inside header-main before header-actions');
+
+  // Left column verification: desktop strategy card must be nested inside pokedex-left-col
+  const leftColIdx = modalEl.innerHTML.indexOf('pokedex-left-col');
+  const rightColIdx = modalEl.innerHTML.indexOf('pokedex-right-col');
+  const deskStratIdx = modalEl.innerHTML.indexOf('id="pokedex-strategy-desktop-container"');
+  assert(leftColIdx !== -1 && rightColIdx !== -1 && deskStratIdx !== -1, 'Left col, right col, and desktop strategy container must exist');
+  assert(leftColIdx < deskStratIdx && deskStratIdx < rightColIdx, 'Desktop strategy card must be placed inside left column before right column to prevent layout breakage');
+
+  // Mobile strategy container verification: must be present as a separate container for mobile bottom display
+  const mobStratIdx = modalEl.innerHTML.indexOf('id="pokedex-strategy-mobile-container"');
+  assert(mobStratIdx !== -1 && mobStratIdx > rightColIdx, 'Mobile strategy container must exist at bottom of modal body after right column');
+
+  // CSS Isolation Verification
+  assert(stylesCss.includes('.pokedex-strategy-desktop-wrap'), 'styles.css must define .pokedex-strategy-desktop-wrap');
+  assert(stylesCss.includes('.pokedex-strategy-mobile-wrap'), 'styles.css must define .pokedex-strategy-mobile-wrap');
 });
 
 // Final Summary Output

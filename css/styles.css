@@ -24254,17 +24254,11 @@ body.mobile-h5-app.values-active,
   }
 
   .pokedex-modal-header-main {
-    grid-area: main;
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 8px !important;
-    width: 100% !important;
-    padding-right: 0 !important;
-    min-width: 0 !important;
+    display: contents !important;
   }
 
   .pokedex-modal-title {
+    grid-area: main !important;
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
@@ -24453,8 +24447,13 @@ body.mobile-h5-app.values-active,
     margin-top: 3px !important;
   }
 
-  /* 底部策略指南全寬置底 */
-  .pokedex-modal-strategy-wrap {
+  /* 策略指南顯示切換：移動端隱藏左欄內的桌面版，展示全寬置底的移動版 */
+  .pokedex-strategy-desktop-wrap {
+    display: none !important;
+  }
+
+  .pokedex-strategy-mobile-wrap {
+    display: block !important;
     grid-column: 1 / -1 !important;
     width: 100% !important;
     margin-top: 8px !important;
@@ -24511,10 +24510,49 @@ body.mobile-h5-app.values-active,
   border-radius: 14px !important;
 }
 
+.mobile-h5-app .pokedex-modal-header {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  grid-template-areas:
+    "main actions"
+    "stats stats" !important;
+  gap: 6px 8px !important;
+  padding: 8px 12px 6px !important;
+  position: static !important;
+  align-items: center !important;
+}
+
+.mobile-h5-app .pokedex-modal-header-main {
+  display: contents !important;
+}
+
+.mobile-h5-app .pokedex-modal-title {
+  grid-area: main !important;
+}
+
+.mobile-h5-app .pokedex-header-actions {
+  grid-area: actions !important;
+}
+
+.mobile-h5-app .pokedex-header-stats-row.pokedex-header-stats-dual {
+  grid-area: stats !important;
+}
+
 .mobile-h5-app .pokedex-modal-body {
   grid-template-columns: 1fr !important;
   gap: 12px !important;
   padding: 10px !important;
+}
+
+.mobile-h5-app .pokedex-strategy-desktop-wrap {
+  display: none !important;
+}
+
+.mobile-h5-app .pokedex-strategy-mobile-wrap {
+  display: block !important;
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  margin-top: 8px !important;
 }
 
 .mobile-h5-app #pokedex-detail-modal .subskill-chips-row {
@@ -24546,7 +24584,12 @@ body.mobile-h5-app.values-active,
   gap: 6px !important;
 }
 
-.pokedex-modal-strategy-wrap {
-  grid-column: 1 / -1;
+/* 桌面端預設：策略指南置於左欄內，隱藏全寬置底的移動端卡片 */
+.pokedex-strategy-desktop-wrap {
+  display: block;
   width: 100%;
+}
+
+.pokedex-strategy-mobile-wrap {
+  display: none !important;
 }
