@@ -24439,11 +24439,13 @@ body.mobile-h5-app.values-active,
     margin-left: 1px !important;
   }
 
-  /* 食材組合整體往下擺，100% 寬度一行完整展示 */
+  /* 食材組合整體往下擺，100% 寬度一行完整展示 (強制單行不換行) */
   #pokedex-detail-modal .pokedex-ing-row {
+    display: flex !important;
     flex-direction: column !important;
     align-items: stretch !important;
-    gap: 6px !important;
+    gap: 4px !important;
+    margin: 0 !important;
   }
 
   #pokedex-detail-modal .pokedex-ing-row .box-form-inline-label {
@@ -24455,9 +24457,66 @@ body.mobile-h5-app.values-active,
   #pokedex-detail-modal .pokedex-ing-row #pokedex-ing-strip {
     width: 100% !important;
     display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
     align-items: center !important;
     justify-content: space-between !important;
-    gap: 4px !important;
+    gap: 2px !important;
+    min-height: 28px !important;
+    box-sizing: border-box !important;
+  }
+
+  #pokedex-detail-modal .box-ing-slot-group {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 3px !important;
+    flex-shrink: 0 !important;
+    min-height: 26px !important;
+    height: 26px !important;
+  }
+
+  #pokedex-detail-modal .box-ing-lvl-tag {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    padding: 1px 4px !important;
+    line-height: 15px !important;
+    border-radius: 4px !important;
+    flex-shrink: 0 !important;
+  }
+
+  #pokedex-detail-modal .box-ing-options-list {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 2px !important;
+    flex-wrap: nowrap !important;
+    flex-shrink: 0 !important;
+    min-height: 26px !important;
+    height: 26px !important;
+  }
+
+  #pokedex-detail-modal .box-ing-opt-btn {
+    width: 26px !important;
+    height: 26px !important;
+    min-width: 26px !important;
+    min-height: 26px !important;
+    padding: 1.5px !important;
+    border-radius: 5px !important;
+    flex-shrink: 0 !important;
+  }
+
+  #pokedex-detail-modal .box-ing-opt-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  #pokedex-detail-modal .box-ing-slot-sep {
+    margin: 0 !important;
+    font-size: 10px !important;
+    opacity: 0.3 !important;
+    line-height: 26px !important;
+    flex-shrink: 0 !important;
   }
 
   /* 主技能與睡飽飽獎章在移動端直列緊湊排列，零多餘垂直留白 */
@@ -24854,6 +24913,7 @@ body.mobile-h5-app.values-active,
 }
 
 .mobile-h5-app #pokedex-detail-modal .pokedex-ing-row {
+  display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
   gap: 4px !important;
@@ -24869,10 +24929,66 @@ body.mobile-h5-app.values-active,
 .mobile-h5-app #pokedex-detail-modal .pokedex-ing-row #pokedex-ing-strip {
   width: 100% !important;
   display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
   align-items: center !important;
   justify-content: space-between !important;
-  gap: 4px !important;
+  gap: 2px !important;
   min-height: 28px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app #pokedex-detail-modal .box-ing-slot-group {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 3px !important;
+  flex-shrink: 0 !important;
+  min-height: 26px !important;
+  height: 26px !important;
+}
+
+.mobile-h5-app #pokedex-detail-modal .box-ing-lvl-tag {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  padding: 1px 4px !important;
+  line-height: 15px !important;
+  border-radius: 4px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app #pokedex-detail-modal .box-ing-options-list {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 2px !important;
+  flex-wrap: nowrap !important;
+  flex-shrink: 0 !important;
+  min-height: 26px !important;
+  height: 26px !important;
+}
+
+.mobile-h5-app #pokedex-detail-modal .box-ing-opt-btn {
+  width: 26px !important;
+  height: 26px !important;
+  min-width: 26px !important;
+  min-height: 26px !important;
+  padding: 1.5px !important;
+  border-radius: 5px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app #pokedex-detail-modal .box-ing-opt-icon {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.mobile-h5-app #pokedex-detail-modal .box-ing-slot-sep {
+  margin: 0 !important;
+  font-size: 10px !important;
+  opacity: 0.3 !important;
+  line-height: 26px !important;
+  flex-shrink: 0 !important;
 }
 
 .mobile-h5-app #pokedex-detail-modal .pokedex-mainskill-ribbon-row {

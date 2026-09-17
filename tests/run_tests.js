@@ -3921,9 +3921,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(indexHtml.includes('css/styles.css?v=20260917_2'), 'index.html styles.css must be v=20260917_2');
+  assert(indexHtml.includes('css/styles.css?v=20260917_3'), 'index.html styles.css must be v=20260917_3');
   assert(indexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'index.html wiki.js must be v=20260907_8');
-  assert(appIndexHtml.includes('css/styles.css?v=20260917_2'), 'app/index.html styles.css must be v=20260917_2');
+  assert(appIndexHtml.includes('css/styles.css?v=20260917_3'), 'app/index.html styles.css must be v=20260917_3');
   assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'app/index.html wiki.js must be v=20260907_8');
 });
 
@@ -6682,6 +6682,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assert(stylesCss.includes('order: 2 !important;'), 'Left col (formula) must have order: 2 on mobile');
   assert(stylesCss.includes('order: 3 !important;'), 'Strategy mobile wrap must have order: 3 on mobile');
   assert(stylesCss.includes('right: 16px !important;'), 'Custom select arrow must have generous inset complying with Rule VI');
+  assert(stylesCss.includes('flex-wrap: nowrap !important;'), 'Ingredient strip must be strictly nowrap on mobile to guarantee single-line presentation');
 });
 
 // Final Summary Output
