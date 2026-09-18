@@ -2968,7 +2968,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   color: var(--badge-special-text);
   font-weight: 500;
   font-size: 12px;
-  cursor: help;
+  cursor: pointer;
   user-select: none;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: center;
@@ -3057,8 +3057,8 @@ html[data-lang="en"] .subfilter-skill-btn,
 .global-skill-tooltip {
   position: fixed;
   z-index: 10000000 !important;
-  background: rgba(15, 23, 42, 0.94);
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(56, 189, 248, 0.35);
   border-radius: 10px;
   padding: 10px 14px;
   color: #f8fafc;
@@ -3066,12 +3066,12 @@ html[data-lang="en"] .subfilter-skill-btn,
   line-height: 1.55;
   max-width: 330px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   pointer-events: none;
   opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 0.12s ease, transform 0.12s ease;
+  transform: translateY(3px);
+  transition: opacity 0.08s ease, transform 0.08s ease;
 }
 
 .global-skill-tooltip.visible {
@@ -3177,7 +3177,7 @@ html[data-lang="en"] .subfilter-skill-btn,
 
 /* 曜石黑主題 (Onyx) */
 [data-theme="onyx"]:not([data-theme-inverted="true"]) .global-skill-tooltip {
-  background: rgba(18, 18, 20, 0.96) !important;
+  background: rgba(18, 18, 20, 0.85) !important;
   border: 1px solid rgba(255, 255, 255, 0.14) !important;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7) !important;
   color: #e2e8f0 !important;
@@ -21198,9 +21198,8 @@ body.mobile-h5-app.values-active,
 .ladder-recipe-modal-dialog {
   position: relative;
   width: 100%;
-  max-width: 520px;
-  max-height: 85vh;
-  max-height: 85dvh;
+  max-width: 500px;
+  max-height: min(490px, 80dvh);
   background: var(--bg-card, #0f172a);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
   border-radius: 18px;
@@ -21245,6 +21244,34 @@ body.mobile-h5-app.values-active,
   font-size: 11.5px;
   color: var(--text-secondary, #94a3b8);
   line-height: 1.4;
+}
+
+.ladder-recipe-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ladder-recipe-header-clear-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 7px;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.4;
+}
+
+.ladder-recipe-header-clear-btn:hover {
+  background: rgba(239, 68, 68, 0.22);
+  border-color: #ef4444;
 }
 
 .ladder-recipe-modal-close {
@@ -21310,6 +21337,7 @@ body.mobile-h5-app.values-active,
 
 .ladder-recipe-modal-body {
   flex: 1 1 auto;
+  max-height: 350px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding: 10px 14px 14px;
@@ -22069,18 +22097,26 @@ body.mobile-h5-app.values-active,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear,
 [data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-btn-clear,
-[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-clear {
-  background: #fee2e2;
-  border: 1px solid #fca5a5;
-  color: #b91c1c;
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-clear,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-header-clear-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-header-clear-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-header-clear-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-header-clear-btn {
+  background: #fee2e2 !important;
+  border: 1px solid #fca5a5 !important;
+  color: #b91c1c !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear:hover,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear:hover,
 [data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-btn-clear:hover,
-[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-clear:hover {
-  background: #fecaca;
-  color: #991b1b;
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-clear:hover,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-header-clear-btn:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-header-clear-btn:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-header-clear-btn:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-header-clear-btn:hover {
+  background: #fecaca !important;
+  color: #991b1b !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-cancel,

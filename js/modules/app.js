@@ -692,7 +692,7 @@ function renderSkillWithTooltip(skillName, pkm) {
 
   // 僅針對特殊/變體/複合主技能展示標籤與詳細說明，純基礎主技能（如能量填充S）保持純文字不展示說明
   if (detail) {
-    return `<span class="special-skill-badge" data-skill="${escapeHtml(cleanSkillKey)}" data-skill-detail="${escapeHtml(detail)}" title="${escapeHtml(plainTitle || detail)}"><span class="skill-name-text">${contentHtml}</span></span>`;
+    return `<span class="special-skill-badge" role="button" tabindex="0" data-skill="${escapeHtml(cleanSkillKey)}" data-skill-detail="${escapeHtml(detail)}" title="${escapeHtml(plainTitle || detail)}"><span class="skill-name-text">${contentHtml}</span></span>`;
   }
   if (isEN) {
     return `<span class="main-skill-text">${contentHtml}</span>`;
@@ -1311,16 +1311,15 @@ function hideGlobalTooltip() {
 }
 
 function toggleGlobalTooltip(anchorEl, title, body, tag) {
-  if (typeof document !== 'undefined') {
-    const tooltipEl = document.getElementById('global-skill-tooltip');
-    if (tooltipEl && tooltipEl.classList.contains('visible') && currentGlobalTooltipAnchor === anchorEl) {
-      if (Date.now() - lastGlobalTooltipShownTime < 500) {
-        isTooltipPinned = true;
-        return;
-      }
+  if (!anchorEl || typeof document === 'undefined') return;
+  const tooltipEl = document.getElementById('global-skill-tooltip');
+  if (tooltipEl && tooltipEl.classList.contains('visible') && currentGlobalTooltipAnchor === anchorEl) {
+    if (isTooltipPinned) {
       hideGlobalTooltip();
       return;
     }
+    isTooltipPinned = true;
+    return;
   }
   isTooltipPinned = true;
   showGlobalTooltip(anchorEl, title, body, tag);
@@ -3094,15 +3093,62 @@ if (typeof document !== 'undefined') {
     };
 
     function initSkillTooltips() {
-      document.addEventListener('touchstart', () => {
-        isTouchInteraction = true;
-      }, { passive: true });
-      document.addEventListener('touchend', () => {
-        setTimeout(() => { isTouchInteraction = false; }, 600);
+      let isRecentTouch = false;
+      let touchResetTimer = null;
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchStartTime = 0;
+      let didHandleTouchTap = false;
+
+      document.addEventListener('touchstart', (e) => {
+        isRecentTouch = true;
+        didHandleTouchTap = false;
+        if (touchResetTimer) clearTimeout(touchResetTimer);
+        if (e.touches && e.touches[0]) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          touchStartTime = Date.now();
+        }
       }, { passive: true });
 
+      document.addEventListener('touchend', (e) => {
+        if (touchResetTimer) clearTimeout(touchResetTimer);
+        touchResetTimer = setTimeout(() => {
+          isRecentTouch = false;
+        }, 350);
+
+        if (e.changedTouches && e.changedTouches[0]) {
+          const dx = Math.abs(e.changedTouches[0].clientX - touchStartX);
+          const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+          const dt = Date.now() - touchStartTime;
+
+          // 輕觸手勢判定 (位移極小且釋放迅速，代表點選觸發)
+          if (dx < 10 && dy < 10 && dt < 450) {
+            const badge = e.target.closest('.special-skill-badge');
+            if (badge) {
+              didHandleTouchTap = true;
+              if (e.cancelable) e.preventDefault();
+              const skillName = badge.dataset.skill || '';
+              const detail = badge.dataset.skillDetail || badge.getAttribute('title') || badge.dataset.nativeTitle || '';
+              if (!detail) return;
+              const titleName = (typeof window !== 'undefined' && window.I18N) ? window.I18N.getMainSkillName(skillName) : skillName;
+              toggleGlobalTooltip(badge, titleName, detail);
+              return;
+            }
+          }
+        }
+      }, { passive: false });
+
+      document.addEventListener('touchcancel', () => {
+        if (touchResetTimer) clearTimeout(touchResetTimer);
+        touchResetTimer = setTimeout(() => {
+          isRecentTouch = false;
+        }, 350);
+      }, { passive: true });
+
+      // 1. 滑鼠懸停 (Desktop Web 瞬時響應，無任何動畫延遲)
       document.addEventListener('mouseover', (e) => {
-        if (isTouchInteraction) return;
+        if (isRecentTouch) return;
 
         const badge = e.target.closest('.special-skill-badge');
         if (badge) {
@@ -3114,7 +3160,7 @@ if (typeof document !== 'undefined') {
           return;
         }
 
-        const helpBtn = e.target.closest('.ladder-formula-help-btn, .ladder-help-icon-btn');
+        const helpBtn = e.target.closest('.ladder-formula-help-btn, .ladder-help-icon-btn, .pokedex-formula-help-btn');
         if (helpBtn) {
           const help = getHelpButtonData(helpBtn);
           if (help) {
@@ -3124,40 +3170,58 @@ if (typeof document !== 'undefined') {
       });
 
       document.addEventListener('mouseout', (e) => {
-        if (isTooltipPinned) return;
+        if (isRecentTouch || isTooltipPinned) return;
         const badge = e.target.closest('.special-skill-badge');
-        const helpBtn = e.target.closest('.ladder-formula-help-btn, .ladder-help-icon-btn');
+        const helpBtn = e.target.closest('.ladder-formula-help-btn, .ladder-help-icon-btn, .pokedex-formula-help-btn');
         if (badge || helpBtn) {
           hideGlobalTooltip();
         }
       });
 
+      // 2. 點擊 / 輕觸事件 (Desktop 點擊固定與 Mobile 備援點選)
       document.addEventListener('click', (e) => {
-        const target = e.target;
-        if (target && target.closest && target.closest('.special-skill-badge, .pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .global-skill-tooltip, .pokedex-energy-help-bubble, .ladder-energy-help-bubble')) {
+        if (didHandleTouchTap) {
+          didHandleTouchTap = false;
           return;
         }
+
+        const badge = e.target.closest('.special-skill-badge');
+        if (badge) {
+          e.stopPropagation();
+          const skillName = badge.dataset.skill || '';
+          const detail = badge.dataset.skillDetail || badge.getAttribute('title') || badge.dataset.nativeTitle || '';
+          if (!detail) return;
+          const titleName = (typeof window !== 'undefined' && window.I18N) ? window.I18N.getMainSkillName(skillName) : skillName;
+          toggleGlobalTooltip(badge, titleName, detail);
+          return;
+        }
+
+        const helpBtn = e.target.closest('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn');
+        if (helpBtn) {
+          // 若有自帶 onclick，由自身控制，不執行外部關閉
+          return;
+        }
+
+        // 點擊懸浮窗本體不關閉
+        if (e.target.closest && e.target.closest('.global-skill-tooltip, .pokedex-energy-help-bubble, .ladder-energy-help-bubble')) {
+          return;
+        }
+
+        // 點擊其他任何非浮窗區域一律關閉所有懸浮說明
         dismissAllFloatingTooltips();
       });
 
+      // 3. 頁面或任何容器滾動時即時關閉所有浮窗
       window.addEventListener('scroll', () => {
         dismissAllFloatingTooltips();
       }, { capture: true, passive: true });
 
-      let touchStartX = 0;
-      let touchStartY = 0;
-      window.addEventListener('touchstart', (e) => {
-        if (e.touches && e.touches[0]) {
-          touchStartX = e.touches[0].clientX;
-          touchStartY = e.touches[0].clientY;
-        }
-      }, { capture: true, passive: true });
-
+      // 4. 移動滑動超過閥值時關閉所有浮窗
       window.addEventListener('touchmove', (e) => {
         if (e.touches && e.touches[0]) {
           const dx = Math.abs(e.touches[0].clientX - touchStartX);
           const dy = Math.abs(e.touches[0].clientY - touchStartY);
-          if (dx > 8 || dy > 8) {
+          if (dx > 20 || dy > 20) {
             dismissAllFloatingTooltips();
           }
         }
@@ -4877,11 +4941,7 @@ function togglePokedexEnergyHelp(event) {
     if (typeof event.preventDefault === 'function') event.preventDefault();
   }
   const popover = document.getElementById('pokedex-energy-help-popover');
-  if (popover) {
-    const isVisible = popover.style.display === 'block';
-    popover.style.display = isVisible ? 'none' : 'block';
-    return;
-  }
+  if (popover) popover.style.display = 'none';
   const btn = (event && (event.currentTarget || event.target)) || document.querySelector('.pokedex-formula-help-btn');
   const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
   const title = isEN ? 'Ideal Energy (0.45x) & 12h Daytime Baseline' : '理想活力 0.45x 與 12 小時基準說明';

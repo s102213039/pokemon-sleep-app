@@ -12486,7 +12486,6 @@
                 </div>
                 <div class="recipe-card-energy-row">
                   <span class="recipe-card-energy-num">${r.base_energy.toLocaleString()}</span>
-                  <span class="recipe-card-energy-unit">${isEN ? 'Base Energy' : '基礎能量'}</span>
                   <span class="recipe-card-pot">${isEN ? `Pot ${r.pot_size}` : `鍋容量 ${r.pot_size}`}</span>
                 </div>
               </div>
@@ -12505,21 +12504,6 @@
           </div>
         `;
       }).join('');
-    }
-
-    // 3. 渲染底部清除與取消按鈕
-    const footerEl = modal.querySelector('.ladder-recipe-modal-footer');
-    if (footerEl) {
-      footerEl.innerHTML = `
-        ${ladderHighlightRecipe ? `
-          <button type="button" class="ladder-recipe-btn-clear" onclick="window.WikiDB.clearLadderHighlightRecipe()">
-            ${isEN ? 'Clear' : '清除'}
-          </button>
-        ` : ''}
-        <button type="button" class="ladder-recipe-btn-cancel" onclick="window.WikiDB.closeLadderRecipeModal()">
-          ${isEN ? 'Close' : '關閉'}
-        </button>
-      `;
     }
   }
 
@@ -16788,26 +16772,21 @@
               <h3 id="ladder-recipe-modal-title" class="ladder-recipe-modal-title">${isEN ? 'Highlight Ingredients by Recipe' : '選取料理高亮食材'}</h3>
               <p class="ladder-recipe-modal-subtitle">${isEN ? 'Top 7 Base Energy Recipes per Category (Select recipe to highlight required ingredients)' : '三大分類各前 7 高能量料理，選取後天梯將自動標記所需食材'}</p>
             </div>
-            <button type="button" class="ladder-recipe-modal-close" onclick="window.WikiDB.closeLadderRecipeModal()" aria-label="${isEN ? 'Close' : '關閉'}">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
+            <div class="ladder-recipe-modal-actions">
+              <button type="button" class="ladder-recipe-header-clear-btn" onclick="window.WikiDB.clearLadderHighlightRecipe()" title="${isEN ? 'Clear Selection' : '清除選取'}">${isEN ? 'Clear' : '清除'}</button>
+              <button type="button" class="ladder-recipe-modal-close" onclick="window.WikiDB.closeLadderRecipeModal()" aria-label="${isEN ? 'Close' : '關閉'}">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
           </div>
           <div class="ladder-recipe-cat-bar">
             <!-- Dynamically populated on open -->
           </div>
           <div class="ladder-recipe-modal-body">
             <!-- Dynamically populated on open -->
-          </div>
-          <div class="ladder-recipe-modal-footer">
-            <button type="button" class="ladder-recipe-btn-clear" onclick="window.WikiDB.clearLadderHighlightRecipe()">
-              ${isEN ? 'Clear' : '清除'}
-            </button>
-            <button type="button" class="ladder-recipe-btn-cancel" onclick="window.WikiDB.closeLadderRecipeModal()">
-              ${isEN ? 'Close' : '關閉'}
-            </button>
           </div>
         </div>
       </div>

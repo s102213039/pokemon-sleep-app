@@ -7005,6 +7005,46 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(stylesCss.includes('height: calc(100dvh - 16px'), 'Mobile modal dialog must have stable 100dvh calculated height');
   });
 
+  // 15X. Recipe Modal Header Clear, Removed Energy Unit, 4-Item Height & Fast Differentiated Tooltip Triggers
+  test('Tier 4 - Real-World Application Scenarios', 'Recipe Modal Header Clear, Removed Energy Unit, 4-Item Height & Fast Differentiated Tooltip Triggers', () => {
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+    const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+    // 1. Recipe Modal UI Refinements
+    // Header must contain clear button
+    assert(wikiJs.includes('ladder-recipe-header-clear-btn'), 'wiki.js must include ladder-recipe-header-clear-btn in modal header');
+    assert(stylesCss.includes('.ladder-recipe-header-clear-btn'), 'styles.css must style .ladder-recipe-header-clear-btn');
+    assert(stylesCss.includes('.ladder-recipe-modal-actions'), 'styles.css must style .ladder-recipe-modal-actions');
+
+    // Modal template must NOT contain bottom footer
+    const modalMatch = wikiJs.match(/id="ladder-recipe-modal"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/);
+    assert(modalMatch !== null, 'wiki.js must contain #ladder-recipe-modal markup');
+    assert(!modalMatch[0].includes('ladder-recipe-modal-footer'), '#ladder-recipe-modal template must not contain footer');
+
+    // Recipe card must NOT contain recipe-card-energy-unit
+    assert(!wikiJs.includes('recipe-card-energy-unit'), 'wiki.js must remove recipe-card-energy-unit');
+
+    // Modal dialog and body must display ~4 items without being overly tall
+    assert(stylesCss.includes('max-height: min(490px, 80dvh);'), 'styles.css must restrict ladder-recipe-modal-dialog to min(490px, 80dvh)');
+    assert(stylesCss.includes('.ladder-recipe-modal-body {\n  flex: 1 1 auto;\n  max-height: 350px;'), 'styles.css must restrict ladder-recipe-modal-body to ~350px (approx 4 items)');
+
+    // 2. Differentiated Tooltip Triggers (Desktop Hover vs Mobile Tap)
+    // special-skill-badge must have cursor: pointer and role="button"
+    assert(stylesCss.includes('.special-skill-badge {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  background: var(--badge-special-bg);\n  border: 1px dashed var(--badge-special-border);\n  border-radius: 5px;\n  padding: 1.5px 6px;\n  color: var(--badge-special-text);\n  font-weight: 500;\n  font-size: 12px;\n  cursor: pointer;'), 'special-skill-badge must have cursor: pointer');
+    assert(appJs.includes('class="special-skill-badge" role="button" tabindex="0"'), 'special-skill-badge must include role="button" and tabindex="0"');
+
+    // initSkillTooltips must handle touchend for instant 0ms tap
+    assert(appJs.includes('didHandleTouchTap'), 'app.js must track didHandleTouchTap for instant touch response');
+    assert(appJs.includes('toggleGlobalTooltip(badge, titleName, detail)'), 'app.js must call toggleGlobalTooltip directly on badge tap/click');
+
+    // toggleGlobalTooltip must not have 500ms delay block
+    assert(!appJs.includes('lastGlobalTooltipShownTime < 500'), 'toggleGlobalTooltip must not suppress calls with 500ms delay');
+
+    // Tooltip styling must use translucent dark frosted glass
+    assert(stylesCss.includes('background: rgba(15, 23, 42, 0.82);'), 'global-skill-tooltip must use translucent frosted glass background rgba(15, 23, 42, 0.82)');
+  });
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');
