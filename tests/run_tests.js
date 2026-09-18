@@ -7249,6 +7249,80 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(stylesCss.includes('.strategy-card-title {'), 'styles.css must define .strategy-card-title');
   });
 
+  // ----------------------------------------------------
+  // Test 150: God Presets and Appraisal Engine for Berry Speed Natures and BFS Skill Specialists
+  // ----------------------------------------------------
+  test('Tier 4 - Real-World Application Scenarios', 'God Presets and Appraisal for Berry Speed Natures and BFS Skill Specialists', () => {
+    // 1. Verify isBfsSkillSpecialist logic in both PokemonApp and AppraisalLab
+    assert(typeof PokemonApp.isBfsSkillSpecialist === 'function', 'PokemonApp.isBfsSkillSpecialist must be a function');
+    
+    // Load appraisal.js in isolated vm context
+    const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const appCtx = { window: {}, console };
+    appCtx.window = appCtx;
+    vm.createContext(appCtx);
+    vm.runInContext(appraisalCode, appCtx);
+    assert(typeof appCtx.AppraisalLab.isBfsSkillSpecialist === 'function', 'AppraisalLab.isBfsSkillSpecialist must be exported');
+
+    // BFS-suited Skill Pokemon: Ampharos (Charge Strength M), Golduck, Gardevoir, Raikou, Mimikyu
+    const ampharos = { name_cn: '電龍', specialty: '技能', main_skill: '能量填充M' };
+    const golduck = { name_cn: '哥達鴨', specialty: '技能', main_skill: '能量填充S' };
+    const gardevoir = { name_cn: '沙奈朵', specialty: '技能', main_skill: '活力全體療癒S' };
+    const raikou = { name_cn: '雷公', specialty: '技能', main_skill: '幫手加速（電）' };
+    const mimikyu = { name_cn: '謎擬Q', specialty: '技能', main_skill: '畫皮（樹果遽增）' };
+
+    assert(PokemonApp.isBfsSkillSpecialist(ampharos) === true, 'Ampharos must be classified as BFS-suited Skill specialist');
+    assert(PokemonApp.isBfsSkillSpecialist(golduck) === true, 'Golduck must be classified as BFS-suited Skill specialist');
+    assert(PokemonApp.isBfsSkillSpecialist(gardevoir) === true, 'Gardevoir must be classified as BFS-suited Skill specialist');
+    assert(PokemonApp.isBfsSkillSpecialist(raikou) === true, 'Raikou must be classified as BFS-suited Skill specialist');
+    assert(PokemonApp.isBfsSkillSpecialist(mimikyu) === true, 'Mimikyu must be classified as BFS-suited Skill specialist');
+
+    assert(appCtx.AppraisalLab.isBfsSkillSpecialist(ampharos) === true, 'AppraisalLab must classify Ampharos as BFS-suited');
+
+    // Pure / Anti-BFS Skill Pokemon: Dedenne, Magnezone, Meowth
+    const dedenne = { name_cn: '咚咚鼠', specialty: '技能', main_skill: '美味大成功' };
+    const magnezone = { name_cn: '自爆磁怪', specialty: '技能', main_skill: '料理強化S' };
+    const meowth = { name_cn: '喵喵', specialty: '技能', main_skill: '夢之碎片獲取S' };
+
+    assert(PokemonApp.isBfsSkillSpecialist(dedenne) === false, 'Dedenne must NOT be classified as BFS-suited Skill specialist');
+    assert(PokemonApp.isBfsSkillSpecialist(magnezone) === false, 'Magnezone must NOT be classified as BFS-suited Skill specialist');
+    assert(PokemonApp.isBfsSkillSpecialist(meowth) === false, 'Meowth must NOT be classified as BFS-suited Skill specialist');
+    assert(appCtx.AppraisalLab.isBfsSkillSpecialist(dedenne) === false, 'AppraisalLab must NOT classify Dedenne as BFS-suited');
+
+    // Non-skill Pokemon
+    const pikachu = { name_cn: '皮卡丘', specialty: '樹果', main_skill: '能量填充S' };
+    const blastoise = { name_cn: '水箭龜', specialty: '食材', main_skill: '食材獲取S' };
+    assert(PokemonApp.isBfsSkillSpecialist(pikachu) === false, 'Berry specialist Pikachu must return false');
+    assert(PokemonApp.isBfsSkillSpecialist(blastoise) === false, 'Ingredient specialist Blastoise must return false');
+
+    // 2. Strategy Card recommendations
+    const berryStratHtml = PokemonApp.renderPokedexStrategyCardHTML(pikachu);
+    assert(berryStratHtml.includes('固執') && berryStratHtml.includes('降食材首選'), 'Berry strategy card must highlight Adamant as primary speed nature reducing ingredients');
+
+    const ampharosStratHtml = PokemonApp.renderPokedexStrategyCardHTML(ampharos);
+    assert(ampharosStratHtml.includes('技能與樹果雙修戰力定位'), 'Ampharos strategy card must display dual-role title');
+    assert(ampharosStratHtml.includes('樹果數量S'), 'Ampharos strategy card must include BFS as core/recommended skill');
+    assert(ampharosStratHtml.includes('慎重降食材最優'), 'Ampharos strategy card must recommend Careful nature');
+
+    const dedenneStratHtml = PokemonApp.renderPokedexStrategyCardHTML(dedenne);
+    assert(dedenneStratHtml.includes('高頻純戰術技能輔助定位'), 'Dedenne strategy card must display pure skill title');
+    assert(!dedenneStratHtml.includes('樹果數量S'), 'Dedenne strategy card must NOT recommend BFS');
+
+    // 3. Appraisal diagnostics
+    // Berry specialist with Adamant nature
+    const berryEval = appCtx.AppraisalLab.evaluatePokemon(pikachu, 60, '固執', ['樹果數量S', '幫忙速度M', '幫手獎勵'], ['特選蘋果', '特選蘋果', '特選蘋果'], 4, 1);
+    assert(berryEval.pros.some(p => p.includes('固執') && p.includes('樹果型第一神性格')), 'Appraisal pros must highlight Adamant as #1 God nature for Berry specialists');
+
+    // BFS Skill specialist with BFS and Careful nature
+    const ampharosEval = appCtx.AppraisalLab.evaluatePokemon(ampharos, 60, '慎重', ['技能機率提升M', '樹果數量S', '幫忙速度M'], ['特選蘋果', '特選蘋果', '特選蘋果'], 4, 6);
+    assert(ampharosEval.pros.some(p => p.includes('樹果數量S') && p.includes('雙專精頂標戰力')), 'Appraisal pros must highlight BFS unlocking dual-specialist power');
+    assert(ampharosEval.pros.some(p => p.includes('慎重') && p.includes('雙修技能型極品性格')), 'Appraisal pros must highlight Careful as optimal nature for BFS skill specialist');
+
+    // Dedenne with BFS warning
+    const dedenneEval = appCtx.AppraisalLab.evaluatePokemon(dedenne, 60, '自大', ['技能機率提升M', '樹果數量S'], ['特選蘋果', '特選蘋果', '特選蘋果'], 0, 1);
+    assert(dedenneEval.cons.some(c => c.includes('咚咚鼠') && c.includes('容易過早滿包限制主技能判定')), 'Appraisal cons must warn that BFS causes bag overflow on Dedenne');
+  });
+
 
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

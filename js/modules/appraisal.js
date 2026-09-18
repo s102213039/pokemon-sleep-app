@@ -1,5 +1,5 @@
 /**
- * appraisal.js — 🔮 寶可夢深度診斷評測室與六維雷達圖報告書 (Deep Dive Appraisal & Radar Chart Lab)
+ * appraisal.js — 寶可夢深度診斷評測室與六維雷達圖報告書 (Deep Dive Appraisal & Radar Chart Lab)
  * =========================================================================================
  * 功能：
  * 1. 六維能力評估演算法 (樹果力、食材力、技能頻率、幫速、後期成長、性價比)
@@ -92,6 +92,43 @@
       else if (remainingEvolutions === 2) speedDiscount = 0.25;
     }
     return { carry: carry, speedDiscount: speedDiscount, speed: speedDiscount, level: lvl };
+  }
+
+  /* ─── 技能型寶可夢是否適配「樹果數量S」判定 ─────────────────── */
+  function isBfsSkillSpecialist(pkm) {
+    if (!pkm) return false;
+    const spec = pkm.specialty || '';
+    if (!spec.includes('技能') && spec !== 'Skills') return false;
+
+    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+    const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
+
+    // 黑名單：極度忌諱或不適配樹果數量S（背包過小易塞滿卡技能判定、或為純碎片/擴鍋戰術）
+    if (name.includes('咚咚鼠') || name.includes('Dedenne')) return false;
+    if (name.includes('磁怪') || name.includes('Magne') || name.includes('冰伊布') || name.includes('Glaceon') || name.includes('火伊布') || name.includes('Flareon')) return false;
+    if (name.includes('喵喵') || name.includes('貓老大') || name.includes('Meowth') || name.includes('Persian')) return false;
+    if (name.includes('勾魂眼') || name.includes('Sableye') || name.includes('溶食獸') || name.includes('吞食獸') || name.includes('Gulpin') || name.includes('Swalot')) return false;
+    if (name.includes('利歐路') || name.includes('路卡利歐') || name.includes('Riolu') || name.includes('Lucario')) return false;
+
+    // 1. 能量填充類（Charge Strength: 咩利羊家族/電龍, 太陽伊布, 可達鴨/哥達鴨, 盆才怪/樹才怪, 飄飄球/隨風球, 嗡蝠/音波龍等）
+    if (skill.includes('能量填充') || skill.includes('Charge Strength') || skill.includes('蓄力')) return true;
+
+    // 2. 樹果遽增 / 樹果領域類（蜥蜴王家族, 烈焰猴家族, 勇士雄鷹家族, 謎擬Q, 超夢, 拉帝歐斯等）
+    if (skill.includes('樹果遽增') || skill.includes('樹果領域') || skill.includes('Berry Burst') || skill.includes('畫皮') || skill.includes('流星群') || skill.includes('精神擊破')) return true;
+
+    // 3. 幫手加速 / 幫手支援類（雷公, 炎帝, 水君, 風速狗, 雷伊布, 艾路雷朵）
+    if (skill.includes('幫手加速') || skill.includes('幫手支援') || skill.includes('Helper Boost') || skill.includes('Extra Helpful')) return true;
+
+    // 4. 頂級雙修補師與食材磁鐵（沙奈朵家族, 仙子伊布, 胖可丁家族, 水伊布, 克雷色利亞, 巴布土撥家族）
+    const dualPowerMons = [
+      '仙子伊布', '沙奈朵', '胖可丁', '水伊布', '克雷色利亞', '巴布土撥',
+      'Sylveon', 'Gardevoir', 'Wigglytuff', 'Vaporeon', 'Cresselia', 'Pawmot',
+      '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥',
+      'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo'
+    ];
+    if (dualPowerMons.some(m => name.includes(m))) return true;
+
+    return false;
   }
 
   /* ─── 核心評估演算法 ───────────────────────────────────── */
@@ -358,6 +395,7 @@
         if (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') {
           if (s === '技能機率提升M' || s === 'Skill Trigger M') roiScore += 22;
           if (s === '技能機率提升S' || s === 'Skill Trigger S') roiScore += 14;
+          if (isBfsSkillSpecialist(pkmData) && (s === '樹果數量S' || s === 'Berry Finding S')) roiScore += 20;
           if (s === '持有上限提升L' || s === 'Inventory Up L') roiScore += 8;
           else if (s === '持有上限提升M' || s === 'Inventory Up M') roiScore += 5;
           else if (s === '持有上限提升S' || s === 'Inventory Up S') roiScore += 3;
@@ -436,9 +474,12 @@
       const hasSkillS = activeSubskills.some(s => s === '技能機率提升S' || s === 'Skill Trigger S');
       const hasSpeedM = activeSubskills.some(s => s === '幫忙速度M' || s === 'Helping Speed M');
       const hasHelpBonus = activeSubskills.some(s => s === '幫手獎勵' || s === 'Helping Bonus');
+      const isBfsSkill = isBfsSkillSpecialist(pkmData);
+      const hasBFS = activeSubskills.some(s => s === '樹果數量S' || s === 'Berry Finding S');
       if (hasSkillM) specialtySynergy += 1.5;
       if (nature.buffType === 'skill') specialtySynergy += 1.2;
       if (hasSkillM && (hasSkillS || hasSpeedM || hasHelpBonus)) specialtySynergy += 1.2;
+      if (isBfsSkill && hasSkillM && hasBFS) specialtySynergy += 1.5;
       if (ribbonLevel === 4) specialtySynergy += 0.8;
       else if (ribbonLevel >= 2) specialtySynergy += 0.4;
     }
@@ -448,7 +489,11 @@
     let specialtyMasteryBonus = 0;
     const hasCoreIng = activeSubskills.some(s => ['食材機率提升M', '食材機率提升S', 'Ingredient Finder M', 'Ingredient Finder S', '持有上限提升L', '持有上限提升M', '持有上限提升S', 'Inventory Up L', 'Inventory Up M', 'Inventory Up S', '幫手獎勵', 'Helping Bonus'].indexOf(s) !== -1);
     const hasCoreBerry = activeSubskills.some(s => ['樹果數量S', 'Berry Finding S', '幫忙速度M', '幫忙速度S', 'Helping Speed M', 'Helping Speed S', '幫手獎勵', 'Helping Bonus'].indexOf(s) !== -1);
-    const hasCoreSkill = activeSubskills.some(s => ['技能機率提升M', '技能機率提升S', 'Skill Trigger M', 'Skill Trigger S', '幫手獎勵', 'Helping Bonus'].indexOf(s) !== -1);
+    const isBfsSkill = isBfsSkillSpecialist(pkmData);
+    const coreSkillList = isBfsSkill
+      ? ['技能機率提升M', '技能機率提升S', 'Skill Trigger M', 'Skill Trigger S', '樹果數量S', 'Berry Finding S', '幫手獎勵', 'Helping Bonus']
+      : ['技能機率提升M', '技能機率提升S', 'Skill Trigger M', 'Skill Trigger S', '幫手獎勵', 'Helping Bonus'];
+    const hasCoreSkill = activeSubskills.some(s => coreSkillList.indexOf(s) !== -1);
 
     if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
       if (hasCoreIng && ingScore >= 95) specialtyMasteryBonus = activeSubskills.length >= 3 ? 6 : 4;
@@ -523,10 +568,22 @@
     const cons = [];
 
     const hasBFSInTotal = activeSubskills.indexOf('樹果數量S') !== -1;
+    const pkmName = pkmData.name_cn || (pkmData.name && pkmData.name.cn) || pkmData.name_en || pkmData.name || '';
+
     if (hasBFSInTotal) {
-      pros.push(isEN
-        ? '[★] Equipped with active God-tier sub-skill "Berry Finding S", +1 berry per help.'
-        : '[★] 擁有已解鎖神技「樹果數量S」，樹果產能躍升 +1 個。');
+      if (isBfsSkill) {
+        pros.push(isEN
+          ? '[★] Equipped with "Berry Finding S", unlocking top-tier dual-specialist skill & berry power!'
+          : '[★] 具備已解鎖「樹果數量S」，成功解鎖技能與樹果雙專精頂標戰力！');
+      } else if (pkmName.includes('咚咚鼠') || pkmName.includes('Dedenne')) {
+        cons.push(isEN
+          ? '[!] Dedenne has very low carry limit; "Berry Finding S" causes early bag overflow and blocks main skill checks.'
+          : '[!] 咚咚鼠持有上限較低，擁有「樹果數量S」容易過早滿包限制主技能判定。');
+      } else {
+        pros.push(isEN
+          ? '[★] Equipped with active God-tier sub-skill "Berry Finding S", +1 berry per help.'
+          : '[★] 擁有已解鎖神技「樹果數量S」，樹果產能躍升 +1 個。');
+      }
     } else if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
       cons.push(isEN
         ? '[!] Berry specialist without active "Berry Finding S", ceiling is below top meta.'
@@ -566,9 +623,15 @@
     }
 
     if (nature.buffType === 'speed') {
-      pros.push(isEN
-        ? `[+] Nature "${natDisplayName}" provides Speed of Help ▲ (+10%), boosting all production.`
-        : '[+] 性格「' + natureName + '」帶來幫忙速度▲ (+10%)，強化所有產出判定。');
+      if ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') && natureName === '固執') {
+        pros.push(isEN
+          ? '[★] Nature "Adamant" is the #1 God nature for Berry specialists (Speed of Help ▲ +10%, Ingredient Finding ▼ converts help cycles directly into berry output).'
+          : '[★] 性格「固執」為樹果型第一神性格（幫忙速度▲ +10%，食材發現率▼ 進一步轉化樹果產量）。');
+      } else {
+        pros.push(isEN
+          ? `[+] Nature "${natDisplayName}" provides Speed of Help ▲ (+10%), boosting all production.`
+          : '[+] 性格「' + natureName + '」帶來幫忙速度▲ (+10%)，強化所有產出判定。');
+      }
     } else if (nature.debuffType === 'speed') {
       cons.push(isEN
         ? `[-] Nature "${natDisplayName}" reduces Speed of Help ▼ (-7.5%), slightly impacting output.`
@@ -586,9 +649,15 @@
     }
 
     if (nature.buffType === 'skill' && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
-      pros.push(isEN
-        ? `[+] Nature "${natDisplayName}" perfectly matches Skill specialty (Main Skill Trigger ▲ +20%).`
-        : '[+] 性格「' + natureName + '」完美契合技能型專長 (主技能發動率▲ +20%)。');
+      if (isBfsSkill && natureName === '慎重') {
+        pros.push(isEN
+          ? '[★] Nature "Careful" is optimal for dual-role Skill specialists (Main Skill Trigger ▲ +20%, Ingredient Finding ▼ mitigates inventory clogging to protect skill procs and berry output).'
+          : '[★] 性格「慎重」為雙修技能型極品性格（主技能機率▲ +20%，食材機率▼ 降低塞包風險以保障技能發動與樹果收益）。');
+      } else {
+        pros.push(isEN
+          ? `[+] Nature "${natDisplayName}" perfectly matches Skill specialty (Main Skill Trigger ▲ +20%).`
+          : '[+] 性格「' + natureName + '」完美契合技能型專長 (主技能發動率▲ +20%)。');
+      }
     }
 
     if (ribbonBonus.level > 0) {
@@ -846,13 +915,13 @@
         <!-- 頂部標題與關閉按鈕 -->
         <div class="appraisal-modal-header">
           <div class="appraisal-header-title-group">
-            <span class="appraisal-modal-badge">${isEN ? '🔮 Deep-Dive Diagnostic Report' : '🔮 深度能力診斷報告'}</span>
+            <span class="appraisal-modal-badge">${isEN ? '[★] Deep-Dive Diagnostic Report' : '[★] 深度能力診斷報告'}</span>
             <h2 class="appraisal-pokemon-title" style="display:flex;align-items:center;">
               ${displayName}
               ${!isEN && pkmData.name_en ? `<span class="appraisal-pokemon-en">${pkmData.name_en}</span>` : ''}
             </h2>
           </div>
-          <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closeModal()" title="${isEN ? 'Close' : '關閉'}">✕</button>
+          <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closeModal()" title="${isEN ? 'Close' : '關閉'}">[x]</button>
         </div>
 
         <!-- 報告核心主體 -->
@@ -872,7 +941,7 @@
 
               <!-- 性格 -->
               <div class="appraisal-config-section">
-                <div class="appraisal-config-title">${isEN ? '🧬 Nature' : '🧬 性格'}</div>
+                <div class="appraisal-config-title">${isEN ? '[*] Nature' : '[*] 性格'}</div>
                 <div class="appraisal-nature-badge">${natDisplayName}</div>
               </div>
 
@@ -917,7 +986,7 @@
               </div>
 
               <div class="appraisal-scores-breakdown">
-                <h4 class="appraisal-section-heading">${isEN ? '📊 6-Dimension Quantitative Analysis' : '📊 六維能力量化分析'}</h4>
+                <h4 class="appraisal-section-heading">${isEN ? '[*] 6-Dimension Quantitative Analysis' : '[*] 六維能力量化分析'}</h4>
                 ${SIX_DIM_META.map(function(m) {
                   const score = evaluation.scores[m.key] || 0;
                   return `
@@ -937,7 +1006,7 @@
 
             <!-- 中半部：專長深度點評與優缺點 -->
             <div class="appraisal-analysis-card">
-              <h4 class="appraisal-section-heading">${isEN ? '💡 Specialty, Nature & Sub-Skill Synergy Analysis' : '💡 專長與性格副技能協同點評'}</h4>
+              <h4 class="appraisal-section-heading">${isEN ? '[*] Specialty, Nature & Sub-Skill Synergy Analysis' : '[*] 專長與性格副技能協同點評'}</h4>
               
               <div class="appraisal-pros-list">
                 ${evaluation.pros.map(function(p) { return `<div class="appraisal-pro-item">${p}</div>`; }).join('')}
@@ -952,29 +1021,29 @@
 
             <!-- 下半部：關鍵里程碑升級消耗試算 -->
             <div class="appraisal-costs-card">
-              <h4 class="appraisal-section-heading">${isEN ? `🍬 Milestone Investment Calculator (Lv.${currentLv})` : `🍬 培育成本精算 (當前 Lv.${currentLv})`}</h4>
+              <h4 class="appraisal-section-heading">${isEN ? `[*] Milestone Investment Calculator (Lv.${currentLv})` : `[*] 培育成本精算 (當前 Lv.${currentLv})`}</h4>
               <div class="appraisal-costs-grid">
                 <div class="appraisal-cost-block">
-                  <div class="cost-milestone-title">${isEN ? '🎯 Reach Lv. 30' : '🎯 升至 Lv. 30'} <span class="cost-milestone-sub">${isEN ? '(Unlock 2nd Ingredient)' : '(解鎖第 2 食材)'}</span></div>
-                  ${currentLv >= 30 ? `<div class="cost-achieved">${isEN ? '✅ Completed' : '✅ 已達成'}</div>` : `
-                    <div class="cost-detail-row">🍬 ${isEN ? 'Species Candies: ' : '專屬糖果：'}<span class="cost-val">${evaluation.costs.to30.candies} ${isEN ? 'candies' : '顆'}</span> (${isEN ? 'Handy S' : '萬能S'}: ${evaluation.costs.to30.handyCandyS} / M: ${evaluation.costs.to30.handyCandyM})</div>
-                    <div class="cost-detail-row">✨ ${isEN ? 'Dream Shards: ' : '夢之碎片：'}<span class="cost-val">${evaluation.costs.to30.shards.toLocaleString()} ${isEN ? 'shards' : '碎片'}</span></div>
+                  <div class="cost-milestone-title">${isEN ? '[Lv.30] Reach Lv. 30' : '[Lv.30] 升至 Lv. 30'} <span class="cost-milestone-sub">${isEN ? '(Unlock 2nd Ingredient)' : '(解鎖第 2 食材)'}</span></div>
+                  ${currentLv >= 30 ? `<div class="cost-achieved">${isEN ? '[✓] Completed' : '[✓] 已達成'}</div>` : `
+                    <div class="cost-detail-row">${isEN ? 'Species Candies: ' : '專屬糖果：'}<span class="cost-val">${evaluation.costs.to30.candies} ${isEN ? 'candies' : '顆'}</span> (${isEN ? 'Handy S' : '萬能S'}: ${evaluation.costs.to30.handyCandyS} / M: ${evaluation.costs.to30.handyCandyM})</div>
+                    <div class="cost-detail-row">${isEN ? 'Dream Shards: ' : '夢之碎片：'}<span class="cost-val">${evaluation.costs.to30.shards.toLocaleString()} ${isEN ? 'shards' : '碎片'}</span></div>
                   `}
                 </div>
 
                 <div class="appraisal-cost-block">
-                  <div class="cost-milestone-title">${isEN ? '🚀 Reach Lv. 50' : '🚀 升至 Lv. 50'} <span class="cost-milestone-sub">${isEN ? '(Unlock 3rd Sub-Skill)' : '(解鎖第 3 副技能)'}</span></div>
-                  ${currentLv >= 50 ? `<div class="cost-achieved">${isEN ? '✅ Completed' : '✅ 已達成'}</div>` : `
-                    <div class="cost-detail-row">🍬 ${isEN ? 'Species Candies: ' : '專屬糖果：'}<span class="cost-val">${evaluation.costs.to50.candies} ${isEN ? 'candies' : '顆'}</span> (${isEN ? 'Handy S' : '萬能S'}: ${evaluation.costs.to50.handyCandyS} / M: ${evaluation.costs.to50.handyCandyM})</div>
-                    <div class="cost-detail-row">✨ ${isEN ? 'Dream Shards: ' : '夢之碎片：'}<span class="cost-val">${evaluation.costs.to50.shards.toLocaleString()} ${isEN ? 'shards' : '碎片'}</span></div>
+                  <div class="cost-milestone-title">${isEN ? '[Lv.50] Reach Lv. 50' : '[Lv.50] 升至 Lv. 50'} <span class="cost-milestone-sub">${isEN ? '(Unlock 3rd Sub-Skill)' : '(解鎖第 3 副技能)'}</span></div>
+                  ${currentLv >= 50 ? `<div class="cost-achieved">${isEN ? '[✓] Completed' : '[✓] 已達成'}</div>` : `
+                    <div class="cost-detail-row">${isEN ? 'Species Candies: ' : '專屬糖果：'}<span class="cost-val">${evaluation.costs.to50.candies} ${isEN ? 'candies' : '顆'}</span> (${isEN ? 'Handy S' : '萬能S'}: ${evaluation.costs.to50.handyCandyS} / M: ${evaluation.costs.to50.handyCandyM})</div>
+                    <div class="cost-detail-row">${isEN ? 'Dream Shards: ' : '夢之碎片：'}<span class="cost-val">${evaluation.costs.to50.shards.toLocaleString()} ${isEN ? 'shards' : '碎片'}</span></div>
                   `}
                 </div>
 
                 <div class="appraisal-cost-block">
-                  <div class="cost-milestone-title">${isEN ? '👑 Reach Lv. 60' : '👑 升至 Lv. 60'} <span class="cost-milestone-sub">${isEN ? '(Unlock 3rd Ingredient Max)' : '(解鎖第 3 食材完全體)'}</span></div>
-                  ${currentLv >= 60 ? `<div class="cost-achieved">${isEN ? '✅ Completed' : '✅ 已達成'}</div>` : `
-                    <div class="cost-detail-row">🍬 ${isEN ? 'Species Candies: ' : '專屬糖果：'}<span class="cost-val">${evaluation.costs.to60.candies} ${isEN ? 'candies' : '顆'}</span> (${isEN ? 'Handy S' : '萬能S'}: ${evaluation.costs.to60.handyCandyS} / M: ${evaluation.costs.to60.handyCandyM})</div>
-                    <div class="cost-detail-row">✨ ${isEN ? 'Dream Shards: ' : '夢之碎片：'}<span class="cost-val">${evaluation.costs.to60.shards.toLocaleString()} ${isEN ? 'shards' : '碎片'}</span></div>
+                  <div class="cost-milestone-title">${isEN ? '[Lv.60] Reach Lv. 60' : '[Lv.60] 升至 Lv. 60'} <span class="cost-milestone-sub">${isEN ? '(Unlock 3rd Ingredient Max)' : '(解鎖第 3 食材完全體)'}</span></div>
+                  ${currentLv >= 60 ? `<div class="cost-achieved">${isEN ? '[✓] Completed' : '[✓] 已達成'}</div>` : `
+                    <div class="cost-detail-row">${isEN ? 'Species Candies: ' : '專屬糖果：'}<span class="cost-val">${evaluation.costs.to60.candies} ${isEN ? 'candies' : '顆'}</span> (${isEN ? 'Handy S' : '萬能S'}: ${evaluation.costs.to60.handyCandyS} / M: ${evaluation.costs.to60.handyCandyM})</div>
+                    <div class="cost-detail-row">${isEN ? 'Dream Shards: ' : '夢之碎片：'}<span class="cost-val">${evaluation.costs.to60.shards.toLocaleString()} ${isEN ? 'shards' : '碎片'}</span></div>
                   `}
                 </div>
               </div>
@@ -1111,13 +1180,13 @@
             </label>
             ${labState.selectedBoxUid && labState.isCustomized ? `
               <button type="button" class="lab-box-reset-btn" onclick="window.AppraisalLab.resetToBoxOriginal()" title="${isEN ? 'Reset to Box Stats' : '重置為倉庫原始數值'}">
-                ${isEN ? '🔄 Reset' : '🔄 重置原始數值'}
+                ${isEN ? '[R] Reset' : '[R] 重置原始數值'}
               </button>
             ` : ''}
           </div>
 
           <select id="lab-box-select" class="lab-select lab-box-select" onchange="window.AppraisalLab.onBoxItemSelect(this.value)">
-            <option value="" ${!labState.selectedBoxUid ? 'selected' : ''}>${isEN ? '✨ Custom Simulation (Select Any Species)' : '✨ 自訂模擬 (自由挑選物種)'}</option>
+            <option value="" ${!labState.selectedBoxUid ? 'selected' : ''}>${isEN ? '[+] Custom Simulation (Select Any Species)' : '[+] 自訂模擬 (自由挑選物種)'}</option>
             ${userBox.map(function (item) {
               const bPkm = pokemons.find(function (p) { return p.id === item.pokemonId || p.name_cn === item.name; });
               const pDisplayName = isEN ? (bPkm ? (bPkm.name_en || bPkm.name_cn) : item.name) : item.name;
@@ -1130,7 +1199,7 @@
           ${userBox.length > 0 ? `
             <div class="lab-box-chips-scroll">
               <button type="button" class="lab-box-chip ${!labState.selectedBoxUid ? 'active' : ''}" onclick="window.AppraisalLab.onBoxItemSelect('')">
-                <span class="lab-box-chip-name">${isEN ? '✨ Custom' : '✨ 自訂模擬'}</span>
+                <span class="lab-box-chip-name">${isEN ? '[+] Custom' : '[+] 自訂模擬'}</span>
               </button>
               ${userBox.map(function (item) {
                 const bPkm = pokemons.find(function (p) { return p.id === item.pokemonId || p.name_cn === item.name; });
@@ -1315,6 +1384,7 @@
 
   /* ─── 全域導出 ─────────────────────────────────────────── */
   window.AppraisalLab = {
+    isBfsSkillSpecialist: isBfsSkillSpecialist,
     evaluatePokemon: evaluatePokemon,
     getRemainingEvolutions: getRemainingEvolutions,
     getRibbonBonus: getRibbonBonus,
