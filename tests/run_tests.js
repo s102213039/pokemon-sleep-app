@@ -6888,10 +6888,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
 test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-to-Refresh Modal Guard, Tens Alignment & Venusaur Lv.60 Verification', () => {
     const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
     const dataJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'data.json'), 'utf8'));
-    // 1. Tens alignment for skill and ingredient rates
+    // 1. Tens alignment for skill and ingredient rates (space-padded single digits, no leading zero)
     const srTensHtml = PokemonApp.renderPokedexSkillRateValue({ finalSkillRate: 2.10, diffSkillRate: 0 });
     const irTensHtml = PokemonApp.renderPokedexIngRateValue({ finalIngRate: 49.16, diffIngRate: 22.56 });
-    assert(srTensHtml.startsWith('02.10%'), `Skill rate must format single digits with leading zero for tens alignment (got ${srTensHtml})`);
+    assert(srTensHtml.startsWith('\u20072.10%'), `Skill rate must format single digits with figure space instead of zero (got ${srTensHtml})`);
     assert(irTensHtml.startsWith('49.16%'), `Ingredient rate must preserve two-digit representation (got ${irTensHtml})`);
     assertEquals(srTensHtml.split('<')[0].length, irTensHtml.split('<')[0].length, 'Formatted rate value length must match exactly (6 chars) to align percentage sign');
     assert(stylesCss.includes('font-variant-numeric: tabular-nums;'), 'styles.css must include tabular-nums for monospaced numeric alignment');
@@ -6903,10 +6903,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(stylesCss.includes('#pokedex-detail-modal') && stylesCss.includes('overscroll-behavior: contain !important;'), 'styles.css must contain overscroll on #pokedex-detail-modal');
     assert(stylesCss.includes('.pokedex-modal-body') && stylesCss.includes('overscroll-behavior-y: contain !important;'), 'styles.css must contain overscroll-y on .pokedex-modal-body');
 
-    // 3. Fast floating tooltip engine & frosted dark glass styling
+    // 3. Fast floating tooltip engine & theme-adaptive styling
     assert(typeof PokemonApp.showGlobalTooltip === 'function', 'PokemonApp must export showGlobalTooltip');
     assert(typeof PokemonApp.toggleGlobalTooltip === 'function', 'PokemonApp must export toggleGlobalTooltip');
-    assert(stylesCss.includes('.global-skill-tooltip') && stylesCss.includes('rgba(15, 23, 42, 0.94) !important;'), 'global-skill-tooltip must use translucent dark frosted glass');
+    assert(stylesCss.includes('.global-skill-tooltip') && stylesCss.includes('rgba(255, 255, 255, 0.96) !important;'), 'global-skill-tooltip must support light frosted glass in Dawn');
+    assert(stylesCss.includes('[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-energy-help-bubble'), 'styles.css must provide Dawn theme styling for energy help bubble');
     assert(stylesCss.includes('.global-skill-tooltip') && stylesCss.includes('z-index: 10000000 !important;'), 'global-skill-tooltip must have ultra-high z-index');
     assert(stylesCss.includes('.ladder-energy-help-popover') && stylesCss.includes('z-index: 100000 !important;'), 'ladder-energy-help-popover must have high z-index to prevent penetration');
 

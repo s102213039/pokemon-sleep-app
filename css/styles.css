@@ -3047,20 +3047,21 @@ html[data-lang="en"] .subfilter-skill-btn,
 }
 
 /* 全域懸停詳細說明浮動框 (Prominent, High-contrast, Legible Tooltip with Frosted Dark Glass) */
+/* 全域懸停詳細說明浮動框 (Prominent, High-contrast, Legible Tooltip with Frosted Glass) */
 .global-skill-tooltip {
   position: fixed;
   z-index: 10000000 !important;
-  background: rgba(15, 23, 42, 0.94) !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  background: rgba(15, 23, 42, 0.94);
+  border: 1px solid rgba(56, 189, 248, 0.3);
   border-radius: 10px;
   padding: 10px 14px;
-  color: #f8fafc !important;
+  color: #f8fafc;
   font-size: 13px;
   line-height: 1.55;
   max-width: 330px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   pointer-events: none;
   opacity: 0;
   transform: translateY(4px);
@@ -3070,6 +3071,7 @@ html[data-lang="en"] .subfilter-skill-btn,
 .global-skill-tooltip.visible {
   opacity: 1 !important;
   transform: translateY(0) !important;
+  pointer-events: auto;
 }
 
 .global-skill-tooltip .tooltip-header {
@@ -3077,7 +3079,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   align-items: center;
   gap: 6px;
   margin-bottom: 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   padding-bottom: 5px;
 }
 
@@ -3088,26 +3090,109 @@ html[data-lang="en"] .subfilter-skill-btn,
 .global-skill-tooltip .tooltip-title {
   font-size: 13.5px;
   font-weight: 700;
-  color: #38bdf8 !important;
+  color: #38bdf8;
 }
 
 .global-skill-tooltip .tooltip-tag {
   margin-left: auto;
   font-size: 10.5px;
   font-weight: 600;
-  background: rgba(56, 189, 248, 0.16) !important;
-  color: #38bdf8 !important;
-  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  background: rgba(56, 189, 248, 0.16);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
   border-radius: 4px;
   padding: 1px 5px;
 }
 
 .global-skill-tooltip .tooltip-body {
   font-size: 12.5px;
-  color: #e2e8f0 !important;
+  color: #e2e8f0;
   font-weight: 400;
   letter-spacing: 0.2px;
   line-height: 1.5;
+}
+
+/* 淺色主題適配 (Dawn, Inverted) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip,
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  color: #334155 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-header,
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-title,
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-title {
+  color: #0284c7 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-body,
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body {
+  color: #475569 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-tag,
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-tag {
+  background: rgba(2, 132, 199, 0.1) !important;
+  color: #0284c7 !important;
+  border: 1px solid rgba(2, 132, 199, 0.25) !important;
+}
+
+/* 翡翠淺色主題 (Emerald) */
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .global-skill-tooltip {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid #a7f3d0 !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+  color: #1e293b !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-title {
+  color: #059669 !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-body {
+  color: #374151 !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-tag {
+  background: rgba(5, 150, 105, 0.1) !important;
+  color: #059669 !important;
+  border: 1px solid rgba(5, 150, 105, 0.25) !important;
+}
+
+/* 曜石黑主題 (Onyx) */
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .global-skill-tooltip {
+  background: rgba(18, 18, 20, 0.96) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7) !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-title {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-body {
+  color: #a1a1aa !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-tag {
+  background: rgba(203, 213, 225, 0.14) !important;
+  color: #cbd5e1 !important;
+  border: 1px solid rgba(203, 213, 225, 0.3) !important;
 }
 
 /* Ingredients layout */
@@ -22457,6 +22542,7 @@ body.mobile-h5-app.values-active,
   font-weight: 700;
   font-family: monospace, system-ui, -apple-system;
   font-variant-numeric: tabular-nums;
+  white-space: pre;
 }
 
 .header-stat-diff {
@@ -23530,14 +23616,14 @@ body.mobile-h5-app.values-active,
   z-index: 2;
   padding: 10px 12px;
   border-radius: 8px;
-  background: rgba(15, 23, 42, 0.94) !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   font-size: 11.5px;
   line-height: 1.55;
-  color: #e2e8f0 !important;
+  color: #e2e8f0;
   word-break: break-word;
   box-sizing: border-box;
 }
@@ -23551,48 +23637,99 @@ body.mobile-h5-app.values-active,
 .energy-help-title {
   font-size: 12px;
   font-weight: 700;
-  color: #38bdf8 !important;
+  color: #38bdf8;
   margin-bottom: 5px;
 }
 
 .energy-help-body {
   font-size: 11.5px;
-  color: #cbd5e1 !important;
+  color: #cbd5e1;
 }
 
 .ladder-energy-help-bubble .energy-help-body {
   font-size: 11px;
 }
 
-/* 淺色模式與反轉模式的浮窗配色 (全域一致半透明黑玻璃質感，拒絕純白底) */
+/* 淺色模式與反轉模式的浮窗配色 (Dawn, Emerald, Inverted) */
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-energy-help-bubble,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-energy-help-bubble,
 [data-theme="midnight"][data-theme-inverted="true"] .pokedex-energy-help-bubble,
-[data-theme="midnight"][data-theme-inverted="true"] .ladder-energy-help-bubble,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-energy-help-bubble,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-energy-help-bubble,
-[data-theme="onyx"][data-theme-inverted="true"] .pokedex-energy-help-bubble,
-[data-theme="onyx"][data-theme-inverted="true"] .ladder-energy-help-bubble {
-  background: rgba(15, 23, 42, 0.94) !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6) !important;
-  color: #e2e8f0 !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-energy-help-bubble {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  color: #1e293b !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .energy-help-title,
-[data-theme="midnight"][data-theme-inverted="true"] .energy-help-title,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .energy-help-title,
-[data-theme="onyx"][data-theme-inverted="true"] .energy-help-title {
-  color: #38bdf8 !important;
+[data-theme="midnight"][data-theme-inverted="true"] .energy-help-title {
+  color: #0284c7 !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .energy-help-body,
-[data-theme="midnight"][data-theme-inverted="true"] .energy-help-body,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .energy-help-body,
-[data-theme="onyx"][data-theme-inverted="true"] .energy-help-body {
+[data-theme="midnight"][data-theme-inverted="true"] .energy-help-body {
+  color: #475569 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .energy-help-body .text-accent,
+[data-theme="midnight"][data-theme-inverted="true"] .energy-help-body .text-accent {
+  color: #0284c7 !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-energy-help-bubble,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-energy-help-bubble {
+  background: #ffffff !important;
+  border: 1px solid #a7f3d0 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+  color: #064e3b !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .energy-help-title {
+  color: #059669 !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .energy-help-body {
+  color: #374151 !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .energy-help-body .text-accent {
+  color: #059669 !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-energy-help-bubble,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .ladder-energy-help-bubble {
+  background: #141417 !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7) !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .energy-help-title {
+  color: #f1f5f9 !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .energy-help-body {
+  color: #a1a1aa !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .energy-help-body .text-accent {
   color: #cbd5e1 !important;
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-energy-help-bubble,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-energy-help-bubble {
+  background: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+  color: #18181b !important;
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .energy-help-title {
+  color: #09090b !important;
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .energy-help-body {
+  color: #52525b !important;
 }
 
 /* 按鈕各主題配色適配 */

@@ -1207,6 +1207,9 @@ function matchesPokemonSearch(p, query) {
 }
 
 let currentGlobalTooltipAnchor = null;
+let lastGlobalTooltipShownTime = 0;
+let isTooltipPinned = false;
+let isTouchInteraction = false;
 
 function getHelpButtonData(btn) {
   if (!btn || !btn.classList) return null;
@@ -1249,6 +1252,7 @@ function showGlobalTooltip(anchorEl, title, body, tag) {
   }
   if (!tooltipEl) return;
   currentGlobalTooltipAnchor = anchorEl;
+  lastGlobalTooltipShownTime = Date.now();
 
   if (anchorEl.getAttribute && anchorEl.getAttribute('title')) {
     anchorEl.dataset.nativeTitle = anchorEl.getAttribute('title');
@@ -1291,6 +1295,7 @@ function showGlobalTooltip(anchorEl, title, body, tag) {
 }
 
 function hideGlobalTooltip() {
+  isTooltipPinned = false;
   if (currentGlobalTooltipAnchor && currentGlobalTooltipAnchor.dataset && currentGlobalTooltipAnchor.dataset.nativeTitle) {
     currentGlobalTooltipAnchor.setAttribute('title', currentGlobalTooltipAnchor.dataset.nativeTitle);
     delete currentGlobalTooltipAnchor.dataset.nativeTitle;
@@ -1309,10 +1314,15 @@ function toggleGlobalTooltip(anchorEl, title, body, tag) {
   if (typeof document !== 'undefined') {
     const tooltipEl = document.getElementById('global-skill-tooltip');
     if (tooltipEl && tooltipEl.classList.contains('visible') && currentGlobalTooltipAnchor === anchorEl) {
+      if (Date.now() - lastGlobalTooltipShownTime < 500) {
+        isTooltipPinned = true;
+        return;
+      }
       hideGlobalTooltip();
       return;
     }
   }
+  isTooltipPinned = true;
   showGlobalTooltip(anchorEl, title, body, tag);
 }
 
@@ -3073,7 +3083,16 @@ if (typeof document !== 'undefined') {
     };
 
     function initSkillTooltips() {
+      document.addEventListener('touchstart', () => {
+        isTouchInteraction = true;
+      }, { passive: true });
+      document.addEventListener('touchend', () => {
+        setTimeout(() => { isTouchInteraction = false; }, 600);
+      }, { passive: true });
+
       document.addEventListener('mouseover', (e) => {
+        if (isTouchInteraction) return;
+
         const badge = e.target.closest('.special-skill-badge');
         if (badge) {
           const skillName = badge.dataset.skill || '';
@@ -3084,7 +3103,7 @@ if (typeof document !== 'undefined') {
           return;
         }
 
-        const helpBtn = e.target.closest('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn');
+        const helpBtn = e.target.closest('.ladder-formula-help-btn, .ladder-help-icon-btn');
         if (helpBtn) {
           const help = getHelpButtonData(helpBtn);
           if (help) {
@@ -3094,8 +3113,9 @@ if (typeof document !== 'undefined') {
       });
 
       document.addEventListener('mouseout', (e) => {
+        if (isTooltipPinned) return;
         const badge = e.target.closest('.special-skill-badge');
-        const helpBtn = e.target.closest('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn');
+        const helpBtn = e.target.closest('.ladder-formula-help-btn, .ladder-help-icon-btn');
         if (badge || helpBtn) {
           hideGlobalTooltip();
         }
@@ -3103,7 +3123,7 @@ if (typeof document !== 'undefined') {
 
       document.addEventListener('click', (e) => {
         const target = e.target;
-        if (target && target.closest && target.closest('.special-skill-badge, .pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .global-skill-tooltip')) {
+        if (target && target.closest && target.closest('.special-skill-badge, .pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .global-skill-tooltip, .pokedex-energy-help-bubble')) {
           return;
         }
         hideGlobalTooltip();
@@ -4192,7 +4212,9 @@ function renderPokedexCarryValue(f, pkm) {
 function formatRateWithTens(val) {
   if (typeof val !== 'number' || isNaN(val)) return '--';
   const parts = val.toFixed(2).split('.');
-  const intPart = parts[0].padStart(2, '0');
+  // When integer part is single-digit (e.g. 2.10%), pad with a figure space (\u2007)
+  // instead of '0', leaving a visual empty space of exact digit width for vertical % alignment.
+  const intPart = parts[0].length < 2 ? '\u2007' + parts[0] : parts[0];
   return `${intPart}.${parts[1]}%`;
 }
 
@@ -4797,6 +4819,12 @@ function togglePokedexEnergyHelp(event) {
     if (typeof event.stopPropagation === 'function') event.stopPropagation();
     if (typeof event.preventDefault === 'function') event.preventDefault();
   }
+  const popover = document.getElementById('pokedex-energy-help-popover');
+  if (popover) {
+    const isVisible = popover.style.display === 'block';
+    popover.style.display = isVisible ? 'none' : 'block';
+    return;
+  }
   const btn = (event && (event.currentTarget || event.target)) || document.querySelector('.pokedex-formula-help-btn');
   const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
   const title = isEN ? 'Ideal Energy Mechanics (0.45x)' : '理想活力 0.45x 係數說明';
@@ -4806,11 +4834,6 @@ function togglePokedexEnergyHelp(event) {
 
   if (PokemonApp && typeof PokemonApp.toggleGlobalTooltip === 'function') {
     PokemonApp.toggleGlobalTooltip(btn, title, body);
-  } else {
-    const popover = document.getElementById('pokedex-energy-help-popover');
-    if (!popover) return;
-    const isVisible = popover.style.display === 'block';
-    popover.style.display = isVisible ? 'none' : 'block';
   }
 }
 
@@ -4818,11 +4841,11 @@ function closePokedexEnergyHelp(event) {
   if (event && typeof event.stopPropagation === 'function') {
     event.stopPropagation();
   }
+  const popover = document.getElementById('pokedex-energy-help-popover');
+  if (popover) popover.style.display = 'none';
   if (PokemonApp && typeof PokemonApp.hideGlobalTooltip === 'function') {
     PokemonApp.hideGlobalTooltip();
   }
-  const popover = document.getElementById('pokedex-energy-help-popover');
-  if (popover) popover.style.display = 'none';
 }
 
 function updatePokedexModalAppraisalLive() {
