@@ -2102,8 +2102,8 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
-  padding: 2px 0 !important;
-  overflow: hidden !important;
+  padding: 4px 3px !important;
+  overflow: visible !important;
 }
 
 .subfilter-icon-btn {
@@ -2135,6 +2135,8 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
   background: rgba(56, 189, 248, 0.18) !important;
   border-color: var(--accent-blue, #38bdf8) !important;
   box-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
+  position: relative !important;
+  z-index: 2 !important;
 }
 
 [data-theme="onyx"] .subfilter-icon-btn.active {
@@ -2170,6 +2172,8 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
 .mobile-h5-app .sidebar-icon-grid {
   grid-template-columns: repeat(7, 1fr) !important;
   gap: 3px !important;
+  padding: 4px 3px !important;
+  overflow: visible !important;
 }
 
 .mobile-h5-app .subfilter-icon-btn {
@@ -2188,7 +2192,9 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
   background: rgba(56, 189, 248, 0.18) !important;
   border-color: var(--accent-blue, #38bdf8) !important;
   box-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
-  transform: scale(1.1) !important;
+  transform: scale(1.08) !important;
+  position: relative !important;
+  z-index: 2 !important;
 }
 
 .mobile-h5-app .subfilter-icon-img {
@@ -14644,6 +14650,8 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   gap: 3px !important;
   width: 100% !important;
   box-sizing: border-box !important;
+  padding: 4px 3px !important;
+  overflow: visible !important;
 }
 
 .mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid .ing-picker-btn {
@@ -14672,14 +14680,18 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   background: rgba(56, 189, 248, 0.18) !important;
   border-color: var(--accent-blue, #38bdf8) !important;
   box-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
-  transform: scale(1.1) !important;
+  transform: scale(1.08) !important;
+  position: relative !important;
+  z-index: 2 !important;
 }
 
 .mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid .ing-picker-btn.active-exclude {
   background: rgba(239, 68, 68, 0.2) !important;
   border-color: #ef4444 !important;
   box-shadow: 0 0 8px rgba(239, 68, 68, 0.4) !important;
-  transform: scale(1.1) !important;
+  transform: scale(1.08) !important;
+  position: relative !important;
+  z-index: 2 !important;
 }
 
 /* 🍲 H5 App 料理食譜 100% 寬度直列緊湊長方形卡片 (1-Column Rectangular Cards) */
@@ -22331,7 +22343,8 @@ body.mobile-h5-app.values-active,
   z-index: 2;
   width: 100%;
   max-width: 1040px;
-  max-height: 90vh;
+  height: 88vh;
+  max-height: 880px;
   display: flex;
   flex-direction: column;
   border-radius: 16px;
@@ -25877,13 +25890,14 @@ body.mobile-h5-app.values-active,
 }
 
 .mobile-h5-app #pokedex-detail-modal.pokedex-modal-backdrop {
-  padding: 6px !important;
+  align-items: flex-start !important;
+  padding: calc(8px + env(safe-area-inset-top, 0px)) 6px calc(8px + env(safe-area-inset-bottom, 0px)) !important;
 }
 
 .mobile-h5-app #pokedex-detail-modal .pokedex-modal-dialog {
   max-width: 100% !important;
-  max-height: 94vh !important;
-  height: auto !important;
+  height: calc(100dvh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+  max-height: calc(100dvh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
   border-radius: 14px !important;
   display: flex !important;
   flex-direction: column !important;

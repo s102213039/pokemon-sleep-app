@@ -1326,10 +1326,21 @@ function toggleGlobalTooltip(anchorEl, title, body, tag) {
   showGlobalTooltip(anchorEl, title, body, tag);
 }
 
+function dismissAllFloatingTooltips() {
+  hideGlobalTooltip();
+  if (typeof closePokedexEnergyHelp === 'function') {
+    closePokedexEnergyHelp();
+  }
+  if (typeof window !== 'undefined' && window.WikiDB && typeof window.WikiDB.closeLadderEnergyHelp === 'function') {
+    window.WikiDB.closeLadderEnergyHelp();
+  }
+}
+
 if (typeof window !== 'undefined') {
   window.showGlobalTooltip = showGlobalTooltip;
   window.hideGlobalTooltip = hideGlobalTooltip;
   window.toggleGlobalTooltip = toggleGlobalTooltip;
+  window.dismissAllFloatingTooltips = dismissAllFloatingTooltips;
 }
 
 const PokemonApp = {
@@ -3123,11 +3134,34 @@ if (typeof document !== 'undefined') {
 
       document.addEventListener('click', (e) => {
         const target = e.target;
-        if (target && target.closest && target.closest('.special-skill-badge, .pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .global-skill-tooltip, .pokedex-energy-help-bubble')) {
+        if (target && target.closest && target.closest('.special-skill-badge, .pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .global-skill-tooltip, .pokedex-energy-help-bubble, .ladder-energy-help-bubble')) {
           return;
         }
-        hideGlobalTooltip();
+        dismissAllFloatingTooltips();
       });
+
+      window.addEventListener('scroll', () => {
+        dismissAllFloatingTooltips();
+      }, { capture: true, passive: true });
+
+      let touchStartX = 0;
+      let touchStartY = 0;
+      window.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+        }
+      }, { capture: true, passive: true });
+
+      window.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches[0]) {
+          const dx = Math.abs(e.touches[0].clientX - touchStartX);
+          const dy = Math.abs(e.touches[0].clientY - touchStartY);
+          if (dx > 8 || dy > 8) {
+            dismissAllFloatingTooltips();
+          }
+        }
+      }, { capture: true, passive: true });
     }
 
     function initBackToTop() {
@@ -3766,24 +3800,38 @@ function selectPokedexSubskillSlot(slotNum) {
 
 function choosePokedexSubskill(skName) {
   if (!skName) return;
-  if (pokedexModalState.subskills.includes(skName)) return;
 
   const targetSlotIdx = pokedexActiveSubskillSlot - 1;
-  pokedexModalState.subskills[targetSlotIdx] = skName;
+  const existingSlotIdx = pokedexModalState.subskills.indexOf(skName);
 
-  let nextEmpty = -1;
-  for (let s = 1; s <= 5; s++) {
-    if (!pokedexModalState.subskills[s - 1]) {
-      nextEmpty = s;
-      break;
-    }
-  }
-  if (nextEmpty !== -1) {
-    pokedexActiveSubskillSlot = nextEmpty;
-  } else if (pokedexActiveSubskillSlot < 5) {
-    pokedexActiveSubskillSlot += 1;
+  if (existingSlotIdx === targetSlotIdx) {
+    // Already in target slot: clicking it again clears the slot
+    pokedexModalState.subskills[targetSlotIdx] = '';
+  } else if (existingSlotIdx !== -1) {
+    // Currently in another slot: swap with current skill in target slot
+    const currentInTarget = pokedexModalState.subskills[targetSlotIdx] || '';
+    pokedexModalState.subskills[existingSlotIdx] = currentInTarget;
+    pokedexModalState.subskills[targetSlotIdx] = skName;
   } else {
-    pokedexActiveSubskillSlot = 1;
+    // Fresh assignment
+    pokedexModalState.subskills[targetSlotIdx] = skName;
+  }
+
+  if (pokedexModalState.subskills[targetSlotIdx]) {
+    let nextEmpty = -1;
+    for (let s = 1; s <= 5; s++) {
+      if (!pokedexModalState.subskills[s - 1]) {
+        nextEmpty = s;
+        break;
+      }
+    }
+    if (nextEmpty !== -1) {
+      pokedexActiveSubskillSlot = nextEmpty;
+    } else if (pokedexActiveSubskillSlot < 5) {
+      pokedexActiveSubskillSlot += 1;
+    } else {
+      pokedexActiveSubskillSlot = 1;
+    }
   }
 
   updatePokedexSubskillUI();
@@ -3816,6 +3864,13 @@ function togglePokedexSubskillPalette() {
     else btn.textContent = label;
     if (pokedexSubskillPaletteExpanded) {
       btn.classList.add('is-expanded');
+      if (typeof requestAnimationFrame === 'function') {
+        requestAnimationFrame(() => {
+          if (typeof btn.scrollIntoView === 'function') {
+            btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        });
+      }
     } else {
       btn.classList.remove('is-expanded');
     }
@@ -3952,7 +4007,7 @@ function updatePokedexSubskillUI() {
       const skDisplayName = isEN ? sk.name_en : sk.name;
       const isUsed = usedSkills.has(sk.name);
       return `
-        <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" ${isUsed ? 'disabled' : ''} onclick="window.PokemonApp.choosePokedexSubskill('${escapeHtml(sk.name)}')" title="${escapeHtml(skDisplayName)}${isUsed ? (isEN ? ' (Selected)' : '（已選用）') : ''}">
+        <button type="button" class="box-subskill-chip subskill-${tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" onclick="window.PokemonApp.choosePokedexSubskill('${escapeHtml(sk.name)}')" title="${escapeHtml(skDisplayName)}${isUsed ? (isEN ? ' (Selected)' : '（已選用）') : ''}">
           <span>${escapeHtml(skDisplayName)}</span>
           ${isUsed ? '<span style="font-size:10px;opacity:0.8;margin-left:2px;">✓</span>' : ''}
         </button>
@@ -4046,8 +4101,9 @@ function calculatePokedexIngredientFormulas() {
 
   const effectiveIntervalSec = Math.max(600, Math.round(baseIntervalSec * (1 - levelSpeedDiscount) * (1 - speedReduction) * natureSpeedMult * (1 - ribbonDiscount)));
   const ENERGY_INTERVAL_MULT = 0.45;
+  const BASE_CALC_SECONDS = 43200; // 12 小時日間活躍基準 (12 hours = 43200s)
   const idealIntervalSec = Math.round(effectiveIntervalSec * ENERGY_INTERVAL_MULT * 10) / 10;
-  const dailyHelps = 86400 / (effectiveIntervalSec * ENERGY_INTERVAL_MULT);
+  const dailyHelps = BASE_CALC_SECONDS / (effectiveIntervalSec * ENERGY_INTERVAL_MULT);
   const dailyIngDrops = dailyHelps * (finalIngRate / 100);
 
   // 6. 各槽位食材掉落計算
@@ -4150,6 +4206,7 @@ function calculatePokedexIngredientFormulas() {
     baseIntervalSec,
     effectiveIntervalSec,
     energyIntervalMult: ENERGY_INTERVAL_MULT,
+    baseCalcSeconds: BASE_CALC_SECONDS,
     idealIntervalSec,
     dailyHelps,
     dailyIngDrops,
@@ -4723,16 +4780,16 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
       <div class="pokedex-formula-header">
         <div style="display:flex;align-items:center;gap:8px;">
           <span class="pokedex-formula-badge font-bold">${t('pokedex.formula_title', '食材產能算法拆解')}</span>
-          <button type="button" class="pokedex-formula-help-btn" onclick="window.PokemonApp.togglePokedexEnergyHelp(event)" title="${isEN ? 'Ideal Energy (>=80%) Helping Speed Mechanics' : '滿活力 (活力≥80%) 幫忙間隔 0.45x 說明'}" aria-label="Energy Info">?</button>
+          <button type="button" class="pokedex-formula-help-btn" onclick="window.PokemonApp.togglePokedexEnergyHelp(event)" title="${isEN ? 'Ideal Energy (>=80%) & 12h Daytime Baseline' : '滿活力 (活力≥80%) 幫忙間隔 0.45x 與 12 小時基準說明'}" aria-label="Energy Info">?</button>
         </div>
         <div id="pokedex-energy-help-popover" class="pokedex-energy-help-popover" style="display:none;" role="tooltip">
           <div class="pokedex-energy-help-backdrop" onclick="window.PokemonApp.closePokedexEnergyHelp(event)"></div>
           <div class="pokedex-energy-help-bubble">
-            <div class="energy-help-title font-bold">${isEN ? 'Ideal Energy Mechanics (0.45x)' : '理想活力 0.45x 係數說明'}</div>
+            <div class="energy-help-title font-bold">${isEN ? 'Ideal Energy (0.45x) & 12h Daytime Baseline' : '理想活力 0.45x 與 12 小時基準說明'}</div>
             <div class="energy-help-body">
               ${isEN
-                ? 'Under ideal energy (≥80%), helping interval is reduced to <span class="text-accent font-bold">0.45x</span> (~<span class="text-accent font-bold">2.22x yield</span>). Header stat shows 0-energy base; formulas calculate at full energy.'
-                : '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。圖鑑頂部為 0 活力基準，此處算法採滿活力實戰試算。'}
+                ? 'Under ideal energy (≥80%), helping interval is reduced to <span class="text-accent font-bold">0.45x</span> (~<span class="text-accent font-bold">2.22x yield</span>).<br>Calculation adopts a <span class="text-accent font-bold">12 hours (43200s)</span> daytime active baseline: general players have 12-16 hours waking time, and Pokémon sleep requires ~8.5h, so 12h represents realistic daytime active output without non-active sleep downtime.'
+                : '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。<br>此處算法採用 <span class="text-accent font-bold">12 小時 (43200秒)</span> 日間活躍基準：一般用戶非睡眠時間約 12-16 小時，且寶可夢睡飽需 8.5 小時，扣除夜間睡眠，以 12 小時試算最符合日間實際產能期望。'}
             </div>
           </div>
         </div>
@@ -4740,16 +4797,16 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
 
       <!-- 單一整合精算卡片 (無冗餘外框，邏輯由間隔頻率 -> 食材產量 -> 技能期望，清晰順暢) -->
       <div class="pokedex-calc-unified-box">
-        <!-- 步驟 1：實質幫忙間隔與每日次數基準 -->
+        <!-- 步驟 1：實質幫忙間隔與日間次數基準 (12h) -->
         <div class="unified-calc-row">
           <div class="calc-row-header">
-            <span class="calc-row-label font-bold">${isEN ? 'Helping Speed & Daily Helps' : '實質幫忙間隔與每日次數'}</span>
+            <span class="calc-row-label font-bold">${isEN ? 'Helping Speed & Active Helps (12h)' : '實質幫忙間隔與日間次數 (12h)'}</span>
             <div class="calc-row-header-values">
-              <span class="calc-val-main font-bold calc-color-helps">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps/day' : '次/天'}</span>
+              <span class="calc-val-main font-bold calc-color-helps">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps/12h' : '次/12h'}</span>
             </div>
           </div>
           <div class="calc-row-formula">
-            <span class="formula-derive font-mono">${isEN ? '86400s ÷ (' : '86400秒 ÷ ('}${f.effectiveIntervalSec}s × 0.45) = <strong class="calc-color-helps">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps/day' : '次/天'}</strong></span>
+            <span class="formula-derive font-mono">${isEN ? '43200s (12h) ÷ (' : '43200秒 (12h) ÷ ('}${f.effectiveIntervalSec}s × 0.45) = <strong class="calc-color-helps">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps/12h' : '次/12h'}</strong></span>
           </div>
         </div>
 
@@ -4770,7 +4827,7 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             <span class="formula-op">=</span>
             <span class="formula-res font-bold calc-color-ing">${f.finalIngRate.toFixed(2)}%</span>
             <span class="formula-op">➜</span>
-            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-ing font-bold">${f.finalIngRate.toFixed(2)}%</span> = <strong class="calc-color-yield">${f.dailyIngDrops.toFixed(1)} ${isEN ? 'drops/day' : '次掉落/天'}</strong></span>
+            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-ing font-bold">${f.finalIngRate.toFixed(2)}%</span> = <strong class="calc-color-yield">${f.dailyIngDrops.toFixed(1)} ${isEN ? 'drops/12h' : '次掉落/12h'}</strong></span>
           </div>
           <div class="pokedex-yield-items-grid">
             ${f.summaryYieldList.map(item => `
@@ -4800,12 +4857,12 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             <span class="formula-op">=</span>
             <span class="formula-res font-bold calc-color-skill">${f.finalSkillRate.toFixed(2)}%</span>
             <span class="formula-op">➜</span>
-            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-skill font-bold">${f.finalSkillRate.toFixed(2)}%</span> = <strong class="calc-color-triggers">${f.dailyTriggers.toFixed(2)} ${isEN ? 'times/day' : '次/天'}</strong></span>
+            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-skill font-bold">${f.finalSkillRate.toFixed(2)}%</span> = <strong class="calc-color-triggers">${f.dailyTriggers.toFixed(2)} ${isEN ? 'times/12h' : '次/12h'}</strong></span>
           </div>
           ${f.mainSkillExtraDaily > 0 ? `
             <div class="calc-row-subskill-extra">
               <span class="badge-skill-extra">${f.mainSkillLabel}</span>
-              <span class="text-skill-extra font-bold text-success">+${f.mainSkillExtraDaily.toFixed(1)} ${isEN ? 'extra ings/day' : '顆額外食材/天'}</span>
+              <span class="text-skill-extra font-bold text-success">+${f.mainSkillExtraDaily.toFixed(1)} ${isEN ? 'extra ings/12h' : '顆額外食材/12h'}</span>
             </div>
           ` : ''}
         </div>
@@ -4827,10 +4884,10 @@ function togglePokedexEnergyHelp(event) {
   }
   const btn = (event && (event.currentTarget || event.target)) || document.querySelector('.pokedex-formula-help-btn');
   const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
-  const title = isEN ? 'Ideal Energy Mechanics (0.45x)' : '理想活力 0.45x 係數說明';
+  const title = isEN ? 'Ideal Energy (0.45x) & 12h Daytime Baseline' : '理想活力 0.45x 與 12 小時基準說明';
   const body = isEN
-    ? 'Under ideal energy (≥80%), helping interval is reduced to <span class="text-accent font-bold">0.45x</span> (~<span class="text-accent font-bold">2.22x yield</span>). Header stat shows 0-energy base; formulas calculate at full energy.'
-    : '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。圖鑑頂部為 0 活力基準，此處算法採滿活力實戰試算。';
+    ? 'Under ideal energy (≥80%), helping interval is reduced to <span class="text-accent font-bold">0.45x</span> (~<span class="text-accent font-bold">2.22x yield</span>).<br>Calculation adopts a <span class="text-accent font-bold">12 hours (43200s)</span> daytime active baseline: general players have 12-16 hours waking time, and Pokémon sleep requires ~8.5h, so 12h represents realistic daytime active output without non-active sleep downtime.'
+    : '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。<br>此處算法採用 <span class="text-accent font-bold">12 小時 (43200秒)</span> 日間活躍基準：一般用戶非睡眠時間約 12-16 小時，且寶可夢睡飽需 8.5 小時，扣除夜間睡眠，以 12 小時試算最符合日間實際產能期望。';
 
   if (PokemonApp && typeof PokemonApp.toggleGlobalTooltip === 'function') {
     PokemonApp.toggleGlobalTooltip(btn, title, body);
@@ -4982,6 +5039,11 @@ PokemonApp.flashSliderLockedWall = flashSliderLockedWall;
 PokemonApp.togglePokedexSubskillPalette = togglePokedexSubskillPalette;
 PokemonApp.togglePokedexEnergyHelp = togglePokedexEnergyHelp;
 PokemonApp.closePokedexEnergyHelp = closePokedexEnergyHelp;
+PokemonApp.renderPokedexFormulaBreakdownHTML = renderPokedexFormulaBreakdownHTML;
+PokemonApp.showGlobalTooltip = showGlobalTooltip;
+PokemonApp.hideGlobalTooltip = hideGlobalTooltip;
+PokemonApp.toggleGlobalTooltip = toggleGlobalTooltip;
+PokemonApp.dismissAllFloatingTooltips = dismissAllFloatingTooltips;
 PokemonApp.renderPokedexIntervalValue = renderPokedexIntervalValue;
 PokemonApp.renderPokedexCarryValue = renderPokedexCarryValue;
 PokemonApp.renderPokedexIngRateValue = renderPokedexIngRateValue;
@@ -4995,9 +5057,14 @@ if (typeof window !== 'undefined') {
   window.renderPokedexEvoGuardBadgeHTML = renderPokedexEvoGuardBadgeHTML;
   window.renderPokedexRibbonOptionsHTML = renderPokedexRibbonOptionsHTML;
   window.renderPokedexStrategyCardHTML = renderPokedexStrategyCardHTML;
+  window.renderPokedexFormulaBreakdownHTML = renderPokedexFormulaBreakdownHTML;
   window.togglePokedexSubskillPalette = togglePokedexSubskillPalette;
   window.togglePokedexEnergyHelp = togglePokedexEnergyHelp;
   window.closePokedexEnergyHelp = closePokedexEnergyHelp;
+  window.showGlobalTooltip = showGlobalTooltip;
+  window.hideGlobalTooltip = hideGlobalTooltip;
+  window.toggleGlobalTooltip = toggleGlobalTooltip;
+  window.dismissAllFloatingTooltips = dismissAllFloatingTooltips;
 }
 
 if (typeof module !== 'undefined' && module.exports) {

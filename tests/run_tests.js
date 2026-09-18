@@ -6846,13 +6846,15 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assert(!slot5Html80.includes('pill-inactive'), 'Slot 5 at Lv.80 must NOT have pill-inactive');
   assert(!slot5Html80.includes('slot-unreleased-tag'), 'Slot 5 at Lv.80 must NOT display any status tag');
 
-  // Ideal Energy 0.45x Multiplier & Formula Breakdown verification
+  // Ideal Energy 0.45x Multiplier & Formula Breakdown verification (12h active baseline)
   const formulas80 = PokemonApp.calculatePokedexIngredientFormulas();
   assertEquals(formulas80.energyIntervalMult, 0.45, 'Formula engine must use 0.45 energy interval multiplier');
-  const expectedHelps = 86400 / (formulas80.effectiveIntervalSec * 0.45);
-  assertEquals(formulas80.dailyHelps.toFixed(2), expectedHelps.toFixed(2), 'dailyHelps must be 86400 / (effectiveIntervalSec * 0.45)');
+  assertEquals(formulas80.baseCalcSeconds, 43200, 'Formula engine must use 43200s (12h) active baseline');
+  const expectedHelps = 43200 / (formulas80.effectiveIntervalSec * 0.45);
+  assertEquals(formulas80.dailyHelps.toFixed(2), expectedHelps.toFixed(2), 'dailyHelps must be 43200 / (effectiveIntervalSec * 0.45)');
   assert(pikaModalHtml2.includes('pokedex-formula-help-btn'), 'Formula card must include [?] help button');
   assert(pikaModalHtml2.includes('pokedex-energy-help-popover'), 'Formula card must include energy popover');
+  assert(pikaModalHtml2.includes('43200'), 'Formula derive line must display 43200 in step 1');
   assert(pikaModalHtml2.includes('× 0.45) ='), 'Formula derive line must display × 0.45 in step 1');
   assert(stylesCss.includes('.pokedex-formula-help-btn'), 'styles.css must style .pokedex-formula-help-btn');
   assert(stylesCss.includes('.pokedex-energy-help-popover'), 'styles.css must style .pokedex-energy-help-popover');
@@ -6931,6 +6933,76 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assertEquals(triggersPerDay.toFixed(2), '1.90', 'Venusaur Lv.60 daily skill triggers must be 1.90');
     const extraIngs = triggersPerDay * 24; // 45.559...
     assertEquals(extraIngs.toFixed(1), '45.6', 'Venusaur Lv.60 Lv.7 skill extra ingredients must be 45.6');
+  });
+
+  // 15W. Tooltip Scroll Dismiss, 12h Daytime Yield Baseline, Filter Outline Unclipped & Subskill Swap
+  test('Tier 4 - Real-World Application Scenarios', 'Tooltip Scroll Dismiss, 12h Daytime Baseline, Unclipped Filters & Subskill Swap', () => {
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+    // 1. Tooltip dismiss on scroll, touch swipe, and outside click
+    assert(appJs.includes('dismissAllFloatingTooltips'), 'app.js must define dismissAllFloatingTooltips');
+    assert(appJs.includes("window.addEventListener('scroll'"), 'app.js must listen for scroll events to dismiss floating tooltips');
+    assert(appJs.includes("window.addEventListener('touchmove'"), 'app.js must listen for touchmove events to dismiss floating tooltips');
+    assert(typeof PokemonApp.dismissAllFloatingTooltips === 'function' || typeof global.dismissAllFloatingTooltips === 'function', 'dismissAllFloatingTooltips must be accessible');
+
+    // 2. 12-Hour Daytime Yield Baseline & Help Popover Explanation
+    const pikachuData = {
+      name_cn: '皮卡丘',
+      name_en: 'Pikachu',
+      formatted_no: '0025',
+      interval: '00:45:00',
+      ingredient_rate: '20.0',
+      skill_rate: '2.0',
+      specialty: '樹果',
+      ingredients: [{ name: '特選蘋果', l1: '1', l30: '2', l60: '4' }]
+    };
+    PokemonApp.openPokemonDetailModal(pikachuData);
+    PokemonApp.setPokedexModalLevel(60);
+    const formula12 = PokemonApp.calculatePokedexIngredientFormulas();
+    assertEquals(formula12.baseCalcSeconds, 43200, 'Formula engine must calculate over 43200 seconds (12h)');
+    const expectedHelps12 = 43200 / (formula12.effectiveIntervalSec * 0.45);
+    assertEquals(formula12.dailyHelps.toFixed(2), expectedHelps12.toFixed(2), 'dailyHelps must match 43200 / (interval * 0.45)');
+
+    const formulaHtml = PokemonApp.renderPokedexFormulaBreakdownHTML(formula12, pikachuData);
+    assert(formulaHtml.includes('43200秒 (12h)') || formulaHtml.includes('43200s (12h)'), 'Formula breakdown must derive helps using 43200 (12h)');
+    assert(formulaHtml.includes('次/12h') || formulaHtml.includes('helps/12h'), 'Formula breakdown must display helps/12h unit');
+    assert(formulaHtml.includes('次掉落/12h') || formulaHtml.includes('drops/12h'), 'Formula breakdown must display drops/12h unit');
+    assert(formulaHtml.includes('12-16') && formulaHtml.includes('8.5'), 'Popover must explain 12-16 waking hours and 8.5 sleep hours rationale');
+
+    // 3. Sidebar Filter Icon Grid Clipped Outline Comprehensive Check
+    assert(stylesCss.includes('.sidebar-icon-grid {\n  display: grid !important;\n  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;\n  gap: 3px !important;\n  width: 100% !important;\n  max-width: 100% !important;\n  box-sizing: border-box !important;\n  padding: 4px 3px !important;\n  overflow: visible !important;'), 'styles.css must allow sidebar-icon-grid visible overflow and padding');
+    assert(stylesCss.includes('.subfilter-icon-btn.active {\n  background: rgba(56, 189, 248, 0.18) !important;\n  border-color: var(--accent-blue, #38bdf8) !important;\n  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;\n  position: relative !important;\n  z-index: 2 !important;'), 'styles.css active subfilter buttons must have z-index: 2');
+    assert(stylesCss.includes('.mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid {\n  display: grid !important;\n  grid-template-columns: repeat(7, 1fr) !important;\n  gap: 3px !important;\n  width: 100% !important;\n  box-sizing: border-box !important;\n  padding: 4px 3px !important;\n  overflow: visible !important;'), 'recipe sidebar grid must also have overflow: visible and padding');
+
+    // 4. Subskill Palette Downward Expansion & Re-clickable Swap/Toggle
+    PokemonApp.clearAllPokedexSubskills();
+    PokemonApp.selectPokedexSubskillSlot(1);
+    PokemonApp.choosePokedexSubskill('樹果數量S');
+    PokemonApp.selectPokedexSubskillSlot(2);
+    PokemonApp.choosePokedexSubskill('幫手獎勵');
+
+    // Clicking already-used skill '樹果數量S' while target is slot 2 swaps slots 1 and 2
+    PokemonApp.selectPokedexSubskillSlot(2);
+    PokemonApp.choosePokedexSubskill('樹果數量S');
+    const currentSubs = PokemonApp.getPokedexModalState().subskills;
+    assertEquals(currentSubs[0], '幫手獎勵', 'Slot 1 must now hold 幫手獎勵 after swap');
+    assertEquals(currentSubs[1], '樹果數量S', 'Slot 2 must now hold 樹果數量S after swap');
+
+    // Clicking the same skill currently occupying slot 2 clears slot 2 (toggle)
+    PokemonApp.selectPokedexSubskillSlot(2);
+    PokemonApp.choosePokedexSubskill('樹果數量S');
+    assertEquals(PokemonApp.getPokedexModalState().subskills[1], '', 'Slot 2 must be cleared when clicking its own assigned skill');
+
+    // Verify subskill chips remain clickable (no disabled attribute)
+    PokemonApp.updatePokedexSubskillUI();
+    const goldChipsHtml = document.getElementById('pokedex-subskill-chips-gold').innerHTML;
+    assert(!goldChipsHtml.includes('disabled'), 'Subskill chips must never be disabled so users can tap to swap/replace');
+    assert(goldChipsHtml.includes('in-use'), 'In-use subskills must retain in-use class for visual feedback');
+
+    // Verify modal dialog stable height and downward expansion
+    assert(stylesCss.includes('height: 88vh;'), 'Desktop modal dialog must have stable 88vh height');
+    assert(stylesCss.includes('height: calc(100dvh - 16px'), 'Mobile modal dialog must have stable 100dvh calculated height');
   });
 
 // Final Summary Output
