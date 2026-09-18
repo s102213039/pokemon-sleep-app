@@ -3921,9 +3921,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(/css\/styles\.css\?v=20260917_[345678]/.test(indexHtml), 'index.html styles.css must have current cache buster');
+  assert(/css\/styles\.css\?v=(20260917_[345678]|20260918_\d+)/.test(indexHtml), 'index.html styles.css must have current cache buster');
   assert(indexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'index.html wiki.js must be v=20260907_8');
-  assert(/css\/styles\.css\?v=20260917_[345678]/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
+  assert(/css\/styles\.css\?v=(20260917_[345678]|20260918_\d+)/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
   assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'app/index.html wiki.js must be v=20260907_8');
 });
 
@@ -6730,8 +6730,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assert(pikaModalHtml.includes('pin-unreleased'), 'Track pins bar must include pin-unreleased for future levels');
   assert(pikaModalHtml.includes('pin-cap'), 'Track pins bar must include pin-cap for level 60');
   const subskillRowHtml = mockElements.get('pokedex-subskill-slots-row').innerHTML;
-  assert(subskillRowHtml.includes('slot-unreleased'), 'Subskills must include slot-unreleased on slots 4 & 5');
-  assert(subskillRowHtml.includes('尚未開放'), 'Subskill slots row must include 尚未開放 indicator');
+  assert(subskillRowHtml.includes('等級不足'), 'Subskill slots row must include 等級不足 indicator for unreached levels');
 
   // Toggle level > 60 and verify unreleased tag is active
   PokemonApp.setPokedexModalLevel(70);
@@ -6817,6 +6816,21 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   // Raise level to 50: Slot 3 effect becomes active
   PokemonApp.setPokedexModalLevel(50);
   assert(!slotsRowEl.innerHTML.includes('Lv.50 <span class="slot-unreleased-tag slot-tag-inactive">'), 'Slot 3 at Lv.50 must dynamically clear slot-tag-inactive');
+
+  // Raise level to 70: Slot 4 (Lv.70) is reached so it must NOT display any unreleased/under-lvl tag
+  PokemonApp.setPokedexModalLevel(70);
+  assert(!slotsRowEl.innerHTML.includes('Lv.70 <span class="slot-unreleased-tag'), 'Slot 4 at Lv.70 must NOT display 尚未開放 or 等級不足 tag');
+  assert(slotsRowEl.innerHTML.includes('Lv.80 <span class="slot-unreleased-tag slot-tag-under-lvl">等級不足</span>'), 'Slot 5 at Lv.70 must display 等級不足');
+
+  // Strategy card verification: core skill without brackets & tiered subskill chips
+  const stratCardHtml = PokemonApp.renderPokedexStrategyCardHTML(pikachuData);
+  assert(stratCardHtml.includes('strategy-item-core'), 'Strategy card must have strategy-item-core');
+  assert(!stratCardHtml.includes('(+36%)') && !stratCardHtml.includes('(BFS)'), 'Strategy card core skill must not contain bracketed explanations');
+  assert(stratCardHtml.includes('subskill-gold') && stratCardHtml.includes('subskill-blue') && stratCardHtml.includes('subskill-white'), 'Strategy card must include gold, blue, and white subskill chips');
+
+  // CSS verification: solid borders on slot-unreleased and borderless unified-calc-row
+  assert(stylesCss.includes('border-style: solid !important;') && stylesCss.includes('.box-subskill-slot-btn.slot-unreleased'), 'styles.css must enforce solid border on slot-unreleased');
+  assert(stylesCss.includes('.unified-calc-row {\n  display: flex;\n  flex-direction: column;\n  gap: 3px;\n  padding-bottom: 2px;\n  border-bottom: none !important;'), 'unified-calc-row must have border-bottom: none !important');
 });
 
 // Final Summary Output

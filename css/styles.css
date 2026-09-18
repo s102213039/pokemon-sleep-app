@@ -23126,23 +23126,23 @@ body.mobile-h5-app.values-active,
   display: none !important;
 }
 
-/* 副技能插槽尚未開放效果 (Lv.70, Lv.80) */
+/* 副技能插槽外框樣式統一 (所有插槽均使用一致的實線邊框與背景) */
 #pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased,
 .box-subskill-slot-btn.slot-unreleased {
-  border-style: dashed !important;
-  border-color: rgba(148, 163, 184, 0.35) !important;
-  background: rgba(15, 23, 42, 0.35) !important;
+  border-style: solid !important;
+  border-color: var(--border-color, rgba(255, 255, 255, 0.12)) !important;
+  background: var(--bg-card, #1e293b) !important;
 }
 
 #pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased.slot-under-lvl,
 .box-subskill-slot-btn.slot-unreleased.slot-under-lvl {
-  opacity: 0.75;
+  opacity: 0.85;
 }
 
 #pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased:hover,
 .box-subskill-slot-btn.slot-unreleased:hover {
-  border-color: rgba(148, 163, 184, 0.6) !important;
-  opacity: 0.95;
+  border-color: rgba(148, 163, 184, 0.5) !important;
+  opacity: 1;
 }
 
 #pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased.active,
@@ -23166,11 +23166,13 @@ body.mobile-h5-app.values-active,
   vertical-align: middle;
 }
 
+/* 等級不足與效果尚未生效之專用標籤 (紅色調、飽和度契合主題不刺眼) */
+.slot-unreleased-tag.slot-tag-under-lvl,
 .slot-unreleased-tag.slot-tag-inactive,
 .slot-unreleased-tag.slot-tag-unreleased {
-  background: rgba(239, 68, 68, 0.18);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.32);
   font-weight: 700;
   letter-spacing: 0.2px;
 }
@@ -23529,24 +23531,24 @@ body.mobile-h5-app.values-active,
   background: #ffffff;
   border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 8px;
-  padding: 10px 14px;
+  padding: 8px 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .unified-calc-row {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border-color-subtle, #f1f5f9);
+  gap: 3px;
+  padding-bottom: 2px;
+  border-bottom: none !important;
 }
 
 .unified-calc-row:last-child {
   padding-bottom: 0;
-  border-bottom: none;
+  border-bottom: none !important;
 }
 
 .calc-row-header {
@@ -23895,10 +23897,31 @@ body.mobile-h5-app.values-active,
   color: var(--text-muted, #64748b);
 }
 
+/* 核心神技：單行展示、字體放大 */
+.strategy-item.strategy-item-core {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap !important;
+}
+
+.strategy-core-k {
+  font-size: 14.5px !important;
+  font-weight: 800 !important;
+  white-space: nowrap;
+}
+
+.strategy-core-chip {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  padding: 4px 12px !important;
+  white-space: nowrap;
+}
+
 .strategy-chips-wrap {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   flex-wrap: wrap;
 }
 
@@ -23907,10 +23930,27 @@ body.mobile-h5-app.values-active,
   font-weight: 600;
   padding: 3px 9px;
   border-radius: 4px;
-  background: rgba(56, 189, 248, 0.1);
-  color: #0284c7;
-  border: 1px solid rgba(56, 189, 248, 0.25);
   white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+/* 推薦副技顏色分類：金色、藍色、白色 (深色模式) */
+.strategy-chip.subskill-gold {
+  background: rgba(245, 158, 11, 0.16) !important;
+  color: #fbbf24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+}
+
+.strategy-chip.subskill-blue {
+  background: rgba(56, 189, 248, 0.14) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.38) !important;
+}
+
+.strategy-chip.subskill-white {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #cbd5e1 !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 /* 副技能選擇盤：徹底移除最外層外框、底色與內距 (Single Frame Rule - 空間最大化) */
@@ -24353,6 +24393,27 @@ body.mobile-h5-app.values-active,
   border-color: #bae6fd !important;
 }
 
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .strategy-chip.subskill-gold,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .strategy-chip.subskill-gold {
+  background: #fef3c7 !important;
+  color: #b45309 !important;
+  border-color: #fde68a !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .strategy-chip.subskill-blue,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .strategy-chip.subskill-blue {
+  background: #e0f2fe !important;
+  color: #0284c7 !important;
+  border-color: #bae6fd !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .strategy-chip.subskill-white,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .strategy-chip.subskill-white {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border-color: #cbd5e1 !important;
+}
+
 /* 淺色主題：右欄所有控件灰底全面移除改純白 (#ffffff) */
 [data-theme="dawn"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-ing-slot-box,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-ing-slot-box,
@@ -24432,7 +24493,7 @@ body.mobile-h5-app.values-active,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased,
 [data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased,
 [data-theme="onyx"][data-theme-inverted="true"] #pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased {
-  background: #f8fafc !important;
+  background: #ffffff !important;
   border-color: #cbd5e1 !important;
 }
 
@@ -24443,13 +24504,15 @@ body.mobile-h5-app.values-active,
   border-color: #cbd5e1;
 }
 
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-under-lvl,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-inactive,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-unreleased,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-under-lvl,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-inactive,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-unreleased {
-  background: #fee2e2 !important;
-  color: #dc2626 !important;
-  border-color: #fca5a5 !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #b91c1c !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-slider-track-bar,
@@ -24561,7 +24624,7 @@ body.mobile-h5-app.values-active,
 [data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .unified-calc-row,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .unified-calc-row,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .unified-calc-row {
-  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+  border-bottom: none !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .formula-derive,

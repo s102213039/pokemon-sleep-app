@@ -3757,15 +3757,11 @@ function updatePokedexSubskillUI() {
       }
 
       let statusTagHtml = '';
-      if (skName) {
-        if (!isLevelReached) {
+      if (!isLevelReached) {
+        if (skName) {
           statusTagHtml = `<span class="slot-unreleased-tag slot-tag-inactive">${isEN ? 'Inactive' : '效果尚未生效'}</span>`;
-        } else if (isUnreleasedSlot) {
-          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-unreleased">${isEN ? 'Unreleased' : '效果尚未生效'}</span>`;
-        }
-      } else {
-        if (isUnreleasedSlot) {
-          statusTagHtml = `<span class="slot-unreleased-tag">${isEN ? 'Unreleased' : '尚未開放'}</span>`;
+        } else {
+          statusTagHtml = `<span class="slot-unreleased-tag slot-tag-under-lvl">${isEN ? 'Level Low' : '等級不足'}</span>`;
         }
       }
 
@@ -3776,10 +3772,10 @@ function updatePokedexSubskillUI() {
       if (skName && !isEffectActive) buttonClasses.push('slot-effect-inactive');
 
       let tooltipText = `Lv.${lvl}`;
-      if (isUnreleasedSlot) {
-        tooltipText = `Lv.${lvl} (${isEN ? 'Unreleased in game / Simulation only' : '遊戲尚未開放 / 效果尚未生效'})`;
-      } else if (!isLevelReached) {
-        tooltipText = `Lv.${lvl} (${isEN ? `Requires Lv.${lvl}` : `需達 Lv.${lvl} 方可生效`})`;
+      if (!isLevelReached) {
+        tooltipText = `Lv.${lvl} (${isEN ? `Requires Lv.${lvl}` : `等級不足：需達 Lv.${lvl} 方可生效`})`;
+      } else if (isUnreleasedSlot) {
+        tooltipText = `Lv.${lvl} (${isEN ? 'Simulation only' : '模擬等級'})`;
       }
 
       return `
@@ -4198,8 +4194,8 @@ function renderPokedexStrategyCardHTML(pkm) {
     roleDesc = isEN
       ? 'Primary scoring relies on high-speed berry output into Snorlax.'
       : '主要戰力仰賴高頻樹果產出累積能量，樹果數量與速度為絕對核心。';
-    coreSkill = isEN ? 'Berry Finding S (BFS)' : '樹果數量S (BFS)';
-    coreSkillDesc = isEN ? 'Mandatory god-tier skill (+1 berry per help)' : '核心必備神技 (每次幫忙樹果+1)';
+    coreSkill = isEN ? 'Berry Finding S' : '樹果數量S';
+    coreTier = 'gold';
     recommendedSubs = isEN
       ? ['Berry Finding S', 'Helping Bonus', 'Helping Speed M', 'Helping Speed S', 'Inventory Up L']
       : ['樹果數量S', '幫手獎勵', '幫忙速度M', '幫忙速度S', '持有上限提升L'];
@@ -4210,10 +4206,10 @@ function renderPokedexStrategyCardHTML(pkm) {
       ? 'Supplies vital recipe ingredients consistently to sustain high-pot dishes.'
       : '專注於高階料理食譜所需食材之穩定產出，食材機率與背包上限至關重要。';
     coreSkill = isEN ? 'Ingredient Finder M' : '食材機率提升M';
-    coreSkillDesc = isEN ? 'Directly boosts ingredient drop chance (+36%)' : '直接大幅提升食材掉落機率 (+36%)';
+    coreTier = 'blue';
     recommendedSubs = isEN
-      ? ['Ingredient Finder M', 'Ingredient Finder S', 'Helping Bonus', 'Helping Speed M', 'Inventory Up L']
-      : ['食材機率提升M', '食材機率提升S', '幫手獎勵', '幫忙速度M', '持有上限提升L'];
+      ? ['Helping Bonus', 'Ingredient Finder M', 'Ingredient Finder S', 'Helping Speed M', 'Helping Speed S', 'Inventory Up L']
+      : ['幫手獎勵', '食材機率提升M', '食材機率提升S', '幫忙速度M', '幫忙速度S', '持有上限提升L'];
     recommendedNatures = isEN ? 'Ingredient UP (Quiet / Modest / Mild / Rash)' : '食材發現率提升 (冷靜 / 內斂 / 慢吞吞 / 溫和)';
   } else {
     roleTitle = isEN ? 'Skill Trigger Specialist' : '高頻主技能輔助定位';
@@ -4221,12 +4217,17 @@ function renderPokedexStrategyCardHTML(pkm) {
       ? 'Relies on high skill trigger rate to activate decisive team support effects.'
       : '高頻觸發團隊充能、全員回復或強力戰術主技能，技能機率與等級為關鍵。';
     coreSkill = isEN ? 'Skill Trigger M' : '技能機率提升M';
-    coreSkillDesc = isEN ? 'High-frequency activation (+36% trigger rate)' : '高頻發動核心 (+36% 技能機率)';
+    coreTier = 'blue';
     recommendedSubs = isEN
-      ? ['Skill Trigger M', 'Skill Trigger S', 'Helping Bonus', 'Helping Speed M', 'Inventory Up L']
-      : ['技能機率提升M', '技能機率提升S', '幫手獎勵', '幫忙速度M', '持有上限提升L'];
+      ? ['Helping Bonus', 'Skill Trigger M', 'Skill Trigger S', 'Helping Speed M', 'Helping Speed S', 'Inventory Up L']
+      : ['幫手獎勵', '技能機率提升M', '技能機率提升S', '幫忙速度M', '幫忙速度S', '持有上限提升L'];
     recommendedNatures = isEN ? 'Main Skill UP (Sassy / Calm / Careful / Gentle)' : '主技能機率提升 (自大 / 慎重 / 溫和 / 浮躁)';
   }
+
+  const getSubskillTier = (name) => {
+    const sk = POKEDEX_MODAL_SUBSKILLS.find(item => item.name === name || item.name_en === name);
+    return sk ? sk.tier : 'white';
+  };
 
   return `
     <div class="pokedex-strategy-card">
@@ -4236,14 +4237,14 @@ function renderPokedexStrategyCardHTML(pkm) {
       </div>
       <div class="strategy-card-desc">${roleDesc}</div>
       <div class="strategy-details-grid">
-        <div class="strategy-item">
-          <span class="strategy-k">[★] ${isEN ? 'Core Skill' : '核心神技'}：</span>
-          <span class="strategy-v font-bold text-gold">${coreSkill} <span class="strategy-hint">(${coreSkillDesc})</span></span>
+        <div class="strategy-item strategy-item-core">
+          <span class="strategy-k strategy-core-k">[★] ${isEN ? 'Core Skill' : '核心神技'}：</span>
+          <span class="strategy-chip subskill-${coreTier} strategy-core-chip">${escapeHtml(coreSkill)}</span>
         </div>
         <div class="strategy-item">
           <span class="strategy-k">[+] ${isEN ? 'Recommended' : '推薦副技'}：</span>
           <div class="strategy-chips-wrap">
-            ${recommendedSubs.map(s => `<span class="strategy-chip">${escapeHtml(s)}</span>`).join('')}
+            ${recommendedSubs.map(s => `<span class="strategy-chip subskill-${getSubskillTier(s)}">${escapeHtml(s)}</span>`).join('')}
           </div>
         </div>
         <div class="strategy-item">
