@@ -7222,13 +7222,14 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(i18nJs.includes("'pokedex.formula_title': '產能算法精算拆解'"), 'i18n zh-TW formula_title must be 產能算法精算拆解');
     assert(i18nJs.includes("'pokedex.formula_title': 'Yield Formula Breakdown'"), 'i18n en-US formula_title must be Yield Formula Breakdown');
 
-    // 8. Verify strategy-card-desc and strategy-card-badge removed, title placed outside frame
+    // 8. Verify strategy-card-desc and strategy-card-badge removed, title placed inside frame on its own line
     const strategyFnStart = appJs.indexOf('function renderPokedexStrategyCardHTML');
     const strategyFnEnd = appJs.indexOf('function renderPokedexDetailModalContent');
     const strategyFnBody = appJs.substring(strategyFnStart, strategyFnEnd);
     assert(!strategyFnBody.includes('strategy-card-desc'), 'renderPokedexStrategyCardHTML must NOT render strategy-card-desc (removed per user request)');
     assert(!strategyFnBody.includes('strategy-card-badge'), 'renderPokedexStrategyCardHTML must NOT render strategy-card-badge (removed per user request)');
-    assert(strategyFnBody.includes('strategy-card-title pokedex-formula-badge font-bold'), 'renderPokedexStrategyCardHTML must render strategy-card-title with pokedex-formula-badge outside the card');
+    assert(strategyFnBody.includes('strategy-card-title pokedex-formula-badge font-bold'), 'renderPokedexStrategyCardHTML must render strategy-card-title with pokedex-formula-badge inside the card');
+    assert(strategyFnBody.indexOf('pokedex-strategy-card') < strategyFnBody.indexOf('strategy-card-title'), 'strategy-card-title must be placed inside pokedex-strategy-card');
     assert(strategyFnBody.includes('strategy-details-grid'), 'renderPokedexStrategyCardHTML must still render strategy-details-grid');
 
     // 9. Verify modal height auto-adaptation in CSS (narrowed to .pokedex-modal-dialog block)

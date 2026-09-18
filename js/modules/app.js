@@ -4674,8 +4674,8 @@ function renderPokedexStrategyCardHTML(pkm) {
   };
 
   return `
-    <div class="strategy-card-title pokedex-formula-badge font-bold">[★] ${roleTitle}</div>
     <div class="pokedex-strategy-card">
+      <div class="strategy-card-title pokedex-formula-badge font-bold">[★] ${roleTitle}</div>
       <div class="strategy-details-grid">
         <div class="strategy-item strategy-item-core">
           <span class="strategy-k strategy-core-k">[★] ${isEN ? 'Core Skill' : '核心神技'}：</span>
