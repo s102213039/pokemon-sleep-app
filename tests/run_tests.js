@@ -7000,8 +7000,13 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(!goldChipsHtml.includes('disabled'), 'Subskill chips must never be disabled so users can tap to swap/replace');
     assert(goldChipsHtml.includes('in-use'), 'In-use subskills must retain in-use class for visual feedback');
 
-    // Verify modal dialog stable height and downward expansion
-    assert(stylesCss.includes('height: 88vh;'), 'Desktop modal dialog must have stable 88vh height');
+    // Verify modal dialog content-adaptive height (no fixed 88vh, wraps to content)
+    // Extract just the .pokedex-modal-dialog rule block for targeted assertion
+    const pdxDialogStart = stylesCss.indexOf('.pokedex-modal-dialog {');
+    const pdxDialogBlock = pdxDialogStart >= 0 ? stylesCss.substring(pdxDialogStart, pdxDialogStart + 600) : '';
+    assert(pdxDialogBlock.includes('height: auto;'), 'pokedex-modal-dialog must use height: auto for content-adaptive sizing');
+    assert(stylesCss.includes('max-height: min(880px, 90vh);'), 'pokedex-modal-dialog must have max-height: min(880px, 90vh)');
+    assert(!pdxDialogBlock.includes('height: 88vh'), 'pokedex-modal-dialog must NOT use fixed height: 88vh (causes blank space at bottom)');
     assert(stylesCss.includes('height: calc(100dvh - 16px'), 'Mobile modal dialog must have stable 100dvh calculated height');
   });
 
@@ -7164,7 +7169,77 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(mockBtn.getAttribute('aria-expanded') === 'true', 'mockBtn must have aria-expanded="true" after first tap');
   });
 
-// Final Summary Output
+  // 16X. Berry Yield & Energy Calculation, strategy-card-desc Removal & Modal Height Auto-Adaptation
+  test('Tier 4 - Real-World Application Scenarios', 'Berry Yield Energy Calculation, Strategy Card Desc Removal & Modal Height Auto-Adaptation', () => {
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+    const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+
+    // 1. Verify BERRY_BASE_ENERGY_MAP is defined with correct energies
+    assert(appJs.includes('BERRY_BASE_ENERGY_MAP'), 'app.js must define BERRY_BASE_ENERGY_MAP');
+    assert(appJs.includes("'椰木果': 24"), 'BERRY_BASE_ENERGY_MAP must have 椰木果=24');
+    assert(appJs.includes("'芒念果': 26"), 'BERRY_BASE_ENERGY_MAP must have 芒念果=26');
+    assert(appJs.includes("'橙橙果': 31"), 'BERRY_BASE_ENERGY_MAP must have 橙橙果=31');
+    assert(appJs.includes("'巧可果': 35"), 'BERRY_BASE_ENERGY_MAP must have 巧可果=35');
+
+    // 2. Verify getBerryBaseEnergy and calculateSingleBerryEnergy functions are exported
+    assert(appJs.includes('function getBerryBaseEnergy'), 'app.js must define getBerryBaseEnergy');
+    assert(appJs.includes('function calculateSingleBerryEnergy'), 'app.js must define calculateSingleBerryEnergy');
+    assert(appJs.includes('PokemonApp.getBerryBaseEnergy = getBerryBaseEnergy'), 'PokemonApp must export getBerryBaseEnergy');
+    assert(appJs.includes('PokemonApp.calculateSingleBerryEnergy = calculateSingleBerryEnergy'), 'PokemonApp must export calculateSingleBerryEnergy');
+
+    // 3. Verify calculateSingleBerryEnergy formula uses correct growth formula
+    assert(appJs.includes('Math.max(base + (lv - 1), base * Math.pow(1.025, lv - 1))'), 'calculateSingleBerryEnergy must use correct growth formula max(base+(lv-1), base*1.025^(lv-1))');
+
+    // 4. Verify berry yield calculation variables in calculatePokedexIngredientFormulas
+    assert(appJs.includes('const isBerrySpec'), 'calculatePokedexIngredientFormulas must compute isBerrySpec');
+    assert(appJs.includes('const berriesPerHelp'), 'calculatePokedexIngredientFormulas must compute berriesPerHelp');
+    assert(appJs.includes('const dailyBerryHelps'), 'calculatePokedexIngredientFormulas must compute dailyBerryHelps');
+    assert(appJs.includes('const dailyBerryCount'), 'calculatePokedexIngredientFormulas must compute dailyBerryCount');
+    assert(appJs.includes('const dailyBerryEnergy'), 'calculatePokedexIngredientFormulas must compute dailyBerryEnergy');
+    assert(appJs.includes('const dailyBerryEnergyFav'), 'calculatePokedexIngredientFormulas must compute dailyBerryEnergyFav');
+
+    // 5. Verify berry yield fields in return object
+    assert(appJs.includes('berryName,'), 'formula return must include berryName');
+    assert(appJs.includes('singleBerryEnergy,'), 'formula return must include singleBerryEnergy');
+    assert(appJs.includes('dailyBerryHelps,'), 'formula return must include dailyBerryHelps');
+    assert(appJs.includes('dailyBerryCount,'), 'formula return must include dailyBerryCount');
+    assert(appJs.includes('dailyBerryEnergy,'), 'formula return must include dailyBerryEnergy');
+    assert(appJs.includes('dailyBerryEnergyFav,'), 'formula return must include dailyBerryEnergyFav');
+
+    // 6. Verify Step 2 berry calculation block is rendered in formula breakdown HTML
+    assert(appJs.includes("'Berry Yield & Energy (12h)'"), 'renderPokedexFormulaBreakdownHTML must include EN berry step header');
+    assert(appJs.includes("'樹果產量與單日能量 (12h)'"), 'renderPokedexFormulaBreakdownHTML must include ZH berry step header');
+    assert(appJs.includes('calc-color-berry'), 'renderPokedexFormulaBreakdownHTML must use calc-color-berry class');
+    assert(appJs.includes('pokedex-berry-yield-pill'), 'renderPokedexFormulaBreakdownHTML must use pokedex-berry-yield-pill');
+    assert(appJs.includes('dailyBerryEnergyFav.toLocaleString'), 'renderPokedexFormulaBreakdownHTML must display dailyBerryEnergyFav');
+
+    // 7. Verify formula title updated to 產能算法精算拆解 (general yield, not just ingredient)
+    assert(appJs.includes("'產能算法精算拆解'"), 'app.js fallback title must be 產能算法精算拆解');
+    assert(i18nJs.includes("'pokedex.formula_title': '產能算法精算拆解'"), 'i18n zh-TW formula_title must be 產能算法精算拆解');
+    assert(i18nJs.includes("'pokedex.formula_title': 'Yield Formula Breakdown'"), 'i18n en-US formula_title must be Yield Formula Breakdown');
+
+    // 8. Verify strategy-card-desc element removed from renderPokedexStrategyCardHTML
+    const strategyFnStart = appJs.indexOf('function renderPokedexStrategyCardHTML');
+    const strategyFnEnd = appJs.indexOf('function renderPokedexDetailModalContent');
+    const strategyFnBody = appJs.substring(strategyFnStart, strategyFnEnd);
+    assert(!strategyFnBody.includes('strategy-card-desc'), 'renderPokedexStrategyCardHTML must NOT render strategy-card-desc (removed per user request)');
+    assert(strategyFnBody.includes('strategy-card-header'), 'renderPokedexStrategyCardHTML must still render strategy-card-header');
+    assert(strategyFnBody.includes('strategy-details-grid'), 'renderPokedexStrategyCardHTML must still render strategy-details-grid');
+
+    // 9. Verify modal height auto-adaptation in CSS (narrowed to .pokedex-modal-dialog block)
+    const pdxBlock2Start = stylesCss.indexOf('.pokedex-modal-dialog {');
+    const pdxBlock2 = pdxBlock2Start >= 0 ? stylesCss.substring(pdxBlock2Start, pdxBlock2Start + 600) : '';
+    assert(pdxBlock2.includes('height: auto;'), 'CSS .pokedex-modal-dialog must have height: auto');
+    assert(stylesCss.includes('max-height: min(880px, 90vh);'), 'CSS must have max-height: min(880px, 90vh)');
+    assert(!pdxBlock2.includes('height: 88vh'), 'CSS .pokedex-modal-dialog must NOT use fixed height: 88vh');
+
+    // 10. Verify calc-color-berry CSS class defined
+    assert(stylesCss.includes('.calc-color-berry'), 'styles.css must define .calc-color-berry');
+    assert(stylesCss.includes('pokedex-berry-yield-pill'), 'styles.css must define .pokedex-berry-yield-pill styles');
+  });
+
+
 console.log('\n======================================================');
 console.log('                   Test Results Summary');
 console.log('======================================================');

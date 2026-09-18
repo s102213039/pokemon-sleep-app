@@ -350,6 +350,65 @@ if (typeof window !== 'undefined') {
   window.getPokemonBerry = getPokemonBerry;
 }
 
+/* --- 樹果基礎能量對照表與單顆能量成長公式 --- */
+const BERRY_BASE_ENERGY_MAP = {
+  // 飛行: 椰木果 / Pamtre (24)
+  '椰木果': 24, 'Pamtre': 24, 'pamtre': 24,
+  // 蟲: 木子果 / 芭亞果 / Lum (24)
+  '木子果': 24, '芭亞果': 24, 'Lum': 24, 'lum': 24,
+  // 電: 異奇果 / Grepa (25)
+  '異奇果': 25, 'Grepa': 25, 'grepa': 25,
+  // 幽靈: 檬果 / Bluk (26)
+  '檬果': 26, 'Bluk': 26, 'bluk': 26,
+  // 妖精: 桃桃果 / Pecha (26)
+  '桃桃果': 26, 'Pecha': 26, 'pecha': 26,
+  // 超能力: 芒念果 / Mago (26)
+  '芒念果': 26, 'Mago': 26, 'mago': 26,
+  // 火: 蘋野果 / Leppa (27)
+  '蘋野果': 27, 'Leppa': 27, 'leppa': 27,
+  // 格鬥: 櫻子果 / Cheri (27)
+  '櫻子果': 27, 'Cheri': 27, 'cheri': 27,
+  // 一般: 柿仔果 / Persim (28)
+  '柿仔果': 28, 'Persim': 28, 'persim': 28,
+  // 地面: 勿花果 / Figy (29)
+  '勿花果': 29, 'Figy': 29, 'figy': 29,
+  // 岩石: 文柚果 / Sitrus (30)
+  '文柚果': 30, 'Sitrus': 30, 'sitrus': 30,
+  // 草: 榴石果 / 墨莓果 / Durin (30)
+  '榴石果': 30, '墨莓果': 30, 'Durin': 30, 'durin': 30,
+  // 水: 橙橙果 / Oran (31)
+  '橙橙果': 31, 'Oran': 31, 'oran': 31,
+  // 惡: 芭拉果 / 威嘻果 / Wiki (31)
+  '芭拉果': 31, '威嘻果': 31, 'Wiki': 31, 'wiki': 31,
+  // 毒: 零餘果 / Chesto (32)
+  '零餘果': 32, 'Chesto': 32, 'chesto': 32,
+  // 冰: 生薑果 / 羅子果 / Rawst (32)
+  '生薑果': 32, '羅子果': 32, 'Rawst': 32, 'rawst': 32,
+  // 鋼: 靛莓果 / 刺角果 / Belue (33)
+  '靛莓果': 33, '刺角果': 33, 'Belue': 33, 'belue': 33,
+  // 龍: 巧可果 / 亞雪果 / Yache (35)
+  '巧可果': 35, '亞雪果': 35, 'Yache': 35, 'yache': 35
+};
+
+function getBerryBaseEnergy(nameOrType) {
+  if (!nameOrType) return 26;
+  if (BERRY_BASE_ENERGY_MAP[nameOrType]) return BERRY_BASE_ENERGY_MAP[nameOrType];
+  const bName = TYPE_TO_BERRY[nameOrType];
+  if (bName && BERRY_BASE_ENERGY_MAP[bName]) return BERRY_BASE_ENERGY_MAP[bName];
+  return 26;
+}
+
+function calculateSingleBerryEnergy(baseEnergy, level) {
+  const lv = Math.max(1, parseInt(level, 10) || 1);
+  const base = Math.max(20, parseInt(baseEnergy, 10) || 26);
+  return Math.round(Math.max(base + (lv - 1), base * Math.pow(1.025, lv - 1)));
+}
+
+if (typeof window !== 'undefined') {
+  window.getBerryBaseEnergy = getBerryBaseEnergy;
+  window.calculateSingleBerryEnergy = calculateSingleBerryEnergy;
+}
+
 /* ─── ⚡ 基礎主技能與複合/專屬技能映射系統 ─────────── */
 const BASE_SKILLS = [
   { key: '食材獲取S', label: '食材獲取S', label_en: 'Ingr. Mag. S', icon: '🍎' },
@@ -4234,7 +4293,25 @@ function calculatePokedexIngredientFormulas() {
   const dailyHelps = BASE_CALC_SECONDS / (effectiveIntervalSec * ENERGY_INTERVAL_MULT);
   const dailyIngDrops = dailyHelps * (finalIngRate / 100);
 
-  // 6. 各槽位食材掉落計算
+  // 6. 樹果產量與單日能量 (12h) 精算
+  const berryObj = (typeof getPokemonBerry === 'function') ? getPokemonBerry(pkm) : { name: '', icon: '' };
+  const berryName = isEN ? (window.I18N ? window.I18N.getBerryName(berryObj.name) : berryObj.name) : berryObj.name;
+  const berryRawName = berryObj.name || '';
+  const berryIcon = berryObj.icon || '';
+  const berryBaseEnergy = getBerryBaseEnergy(berryRawName || pkm.type);
+  const singleBerryEnergy = calculateSingleBerryEnergy(berryBaseEnergy, currentLevel);
+
+  const isBerrySpec = !!(pkm.specialty && (pkm.specialty.includes('樹果') || pkm.specialty === 'Berries' || pkm.specialty === 'berry'));
+  const baseBerryCount = isBerrySpec ? 2 : 1;
+  const hasBFS = activeSubskillNames.some(s => s === '樹果數量S' || s.includes('Berry Finding'));
+  const berriesPerHelp = baseBerryCount + (hasBFS ? 1 : 0);
+
+  const dailyBerryHelps = Math.max(0, dailyHelps - dailyIngDrops);
+  const dailyBerryCount = dailyBerryHelps * berriesPerHelp;
+  const dailyBerryEnergy = Math.round(dailyBerryCount * singleBerryEnergy);
+  const dailyBerryEnergyFav = dailyBerryEnergy * 2;
+
+  // 7. 各槽位食材掉落計算
   const ingredientsList = pkm.ingredients || [];
   let unlockedSlotCount = 1;
   if (currentLevel >= 60) unlockedSlotCount = 3;
@@ -4273,7 +4350,7 @@ function calculatePokedexIngredientFormulas() {
     totalDailyIngredients += item.daily;
   });
 
-  // 7. 持有上限計算 (基礎持有 + 副技能 + 睡飽飽獎章)
+  // 8. 持有上限計算 (基礎持有 + 副技能 + 睡飽飽獎章)
   const baseCarry = parseInt(pkm.carry || pkm.carryCapacity || '0', 10) || 0;
   let subskillCarryBonus = 0;
   subskills.forEach((sName, idx) => {
@@ -4296,7 +4373,7 @@ function calculatePokedexIngredientFormulas() {
   const effectiveCarry = baseCarry + subskillCarryBonus + ribbonCarryBonus;
   const diffCarry = effectiveCarry - baseCarry;
 
-  // 8. 主技能附加期望
+  // 9. 主技能附加期望
   let mainSkillExtraDaily = 0;
   let mainSkillLabel = '';
   const finalSkillRate = baseSkillRate * (1 + subskillSkillBonus / 100) * natureSkillMult;
@@ -4338,6 +4415,19 @@ function calculatePokedexIngredientFormulas() {
     idealIntervalSec,
     dailyHelps,
     dailyIngDrops,
+    berryName,
+    berryRawName,
+    berryIcon,
+    berryBaseEnergy,
+    singleBerryEnergy,
+    isBerrySpec,
+    baseBerryCount,
+    hasBFS,
+    berriesPerHelp,
+    dailyBerryHelps,
+    dailyBerryCount,
+    dailyBerryEnergy,
+    dailyBerryEnergyFav,
     unlockedSlotCount,
     activeIngredientDetails,
     summaryYieldList: Array.from(summaryYieldMap.values()),
@@ -4589,7 +4679,6 @@ function renderPokedexStrategyCardHTML(pkm) {
         <span class="strategy-card-title font-bold">[★] ${roleTitle}</span>
         <span class="strategy-card-badge">${isEN ? 'Strategy Guide' : '最佳配置指南'}</span>
       </div>
-      <div class="strategy-card-desc">${roleDesc}</div>
       <div class="strategy-details-grid">
         <div class="strategy-item strategy-item-core">
           <span class="strategy-k strategy-core-k">[★] ${isEN ? 'Core Skill' : '核心神技'}：</span>
@@ -4907,7 +4996,7 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
     <div class="pokedex-formula-inner">
       <div class="pokedex-formula-header">
         <div style="display:flex;align-items:center;gap:8px;">
-          <span class="pokedex-formula-badge font-bold">${t('pokedex.formula_title', '食材產能算法拆解')}</span>
+          <span class="pokedex-formula-badge font-bold">${t('pokedex.formula_title', '產能算法精算拆解')}</span>
           <button type="button" class="pokedex-formula-help-btn" onclick="window.PokemonApp.togglePokedexEnergyHelp(event)" title="${isEN ? 'Ideal Energy (>=80%) & 12h Daytime Baseline' : '滿活力 (活力≥80%) 幫忙間隔 0.45x 與 12 小時基準說明'}" aria-label="Energy Info">?</button>
         </div>
         <div id="pokedex-energy-help-popover" class="pokedex-energy-help-popover" style="display:none;" role="tooltip">
@@ -4923,7 +5012,7 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
         </div>
       </div>
 
-      <!-- 單一整合精算卡片 (無冗餘外框，邏輯由間隔頻率 -> 食材產量 -> 技能期望，清晰順暢) -->
+      <!-- 單一整合精算卡片 (無冗餘外框，邏輯由間隔頻率 -> 樹果能量 -> 食材產量 -> 技能期望，清晰順暢) -->
       <div class="pokedex-calc-unified-box">
         <!-- 步驟 1：實質幫忙間隔與日間次數基準 (12h) -->
         <div class="unified-calc-row">
@@ -4938,7 +5027,31 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
           </div>
         </div>
 
-        <!-- 步驟 2：最終食材發動率與單日掉落產量 -->
+        <!-- 步驟 2：樹果產量與單日能量 (12h) -->
+        <div class="unified-calc-row">
+          <div class="calc-row-header">
+            <span class="calc-row-label font-bold">${isEN ? 'Berry Yield & Energy (12h)' : '樹果產量與單日能量 (12h)'}</span>
+            <div class="calc-row-header-values">
+              <span class="calc-val-main font-bold calc-color-berry">${f.dailyBerryEnergy.toLocaleString()} ${isEN ? 'Strength' : '能量'}</span>
+              <span class="calc-val-sub calc-color-berry-fav" title="${isEN ? 'Favorite Berry (2x Energy)' : '順果喜好樹果 (2x 能量)'}">(${isEN ? 'Fav ' : '順果 '}${f.dailyBerryEnergyFav.toLocaleString()})</span>
+            </div>
+          </div>
+          <div class="calc-row-formula">
+            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyBerryHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-berry font-bold">${f.berriesPerHelp}${isEN ? ' berries' : '顆'}</span> = <strong class="calc-color-berry">${f.dailyBerryCount.toFixed(1)} ${isEN ? 'berries' : '顆'}</strong></span>
+            <span class="formula-op">➜</span>
+            <span class="formula-derive font-mono"><span class="calc-color-berry font-bold">${f.dailyBerryCount.toFixed(1)}${isEN ? ' berries' : '顆'}</span> × <span class="formula-var" title="${isEN ? 'Single Berry Energy' : '單顆能量'}">${f.singleBerryEnergy}</span> = <strong class="calc-color-berry">${f.dailyBerryEnergy.toLocaleString()} ${isEN ? 'Strength' : '能量'}</strong></span>
+          </div>
+          <div class="pokedex-yield-items-grid">
+            <div class="pokedex-yield-pill pokedex-berry-yield-pill">
+              ${f.berryIcon ? `<img src="${f.berryIcon}" class="yield-pill-img" alt="${escapeHtml(f.berryName)}" loading="lazy">` : ''}
+              <span class="yield-pill-name">${escapeHtml(f.berryName)}</span>
+              <span class="yield-pill-count font-bold calc-color-berry">${f.dailyBerryCount.toFixed(1)} ${isEN ? 'berries' : '顆'}</span>
+              <span class="yield-pill-sub font-mono">(${f.singleBerryEnergy} ${isEN ? 'energy/ea' : '能量/顆'})</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 步驟 3：最終食材發動率與單日掉落產量 -->
         <div class="unified-calc-row">
           <div class="calc-row-header">
             <span class="calc-row-label font-bold">${t('pokedex.final_ing_rate', '最終食材發動率')}</span>
@@ -4968,7 +5081,7 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
           </div>
         </div>
 
-        <!-- 步驟 3：最終技能發動率與單日發動次數 -->
+        <!-- 步驟 4：最終技能發動率與單日發動次數 -->
         <div class="unified-calc-row">
           <div class="calc-row-header">
             <span class="calc-row-label font-bold">${isEN ? 'Final Skill Trigger Rate' : '最終技能發動率'}</span>
@@ -5155,6 +5268,9 @@ PokemonApp.clearAllPokedexSubskills = clearAllPokedexSubskills;
 PokemonApp.renderPokedexIngredientStrip = renderPokedexIngredientStrip;
 PokemonApp.updatePokedexSubskillUI = updatePokedexSubskillUI;
 PokemonApp.calculatePokedexIngredientFormulas = calculatePokedexIngredientFormulas;
+PokemonApp.getBerryBaseEnergy = getBerryBaseEnergy;
+PokemonApp.calculateSingleBerryEnergy = calculateSingleBerryEnergy;
+PokemonApp.BERRY_BASE_ENERGY_MAP = BERRY_BASE_ENERGY_MAP;
 PokemonApp.getPokedexMinEvolutionLevel = getPokedexMinEvolutionLevel;
 PokemonApp.renderPokedexEvoGuardBadgeHTML = renderPokedexEvoGuardBadgeHTML;
 PokemonApp.renderPokedexRibbonOptionsHTML = renderPokedexRibbonOptionsHTML;
@@ -5210,6 +5326,9 @@ if (typeof module !== 'undefined' && module.exports) {
     BASE_SKILLS,
     COMPOSITE_SKILL_MAP,
     SPECIAL_SKILL_DETAILS,
+    getBerryBaseEnergy,
+    calculateSingleBerryEnergy,
+    BERRY_BASE_ENERGY_MAP,
     matchesSkill,
     renderSkillWithTooltip,
     initBackToTop: (typeof PokemonApp !== 'undefined' && PokemonApp.initBackToTop) ? PokemonApp.initBackToTop : undefined,
