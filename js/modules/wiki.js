@@ -11756,15 +11756,29 @@
       if (typeof event.stopPropagation === 'function') event.stopPropagation();
       if (typeof event.preventDefault === 'function') event.preventDefault();
     }
-    const popover = document.getElementById('ladder-energy-help-popover');
-    if (!popover) return;
-    const isVisible = popover.style.display === 'block';
-    popover.style.display = isVisible ? 'none' : 'block';
+    const btn = (event && (event.currentTarget || event.target)) || document.querySelector('.ladder-formula-help-btn');
+    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+    const title = isEN ? 'Baseline: Lv.60 Ideal Energy' : '天梯基準：Lv.60 滿活力';
+    const body = isEN
+      ? 'Calculated at Lv.60 under ideal energy (≥80%, 0.45x interval) for daily yield.'
+      : '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算單日產能。';
+
+    if (window.PokemonApp && typeof window.PokemonApp.toggleGlobalTooltip === 'function') {
+      window.PokemonApp.toggleGlobalTooltip(btn, title, body);
+    } else {
+      const popover = document.getElementById('ladder-energy-help-popover');
+      if (!popover) return;
+      const isVisible = popover.style.display === 'block';
+      popover.style.display = isVisible ? 'none' : 'block';
+    }
   }
 
   function closeLadderEnergyHelp(event) {
     if (event && typeof event.stopPropagation === 'function') {
       event.stopPropagation();
+    }
+    if (window.PokemonApp && typeof window.PokemonApp.hideGlobalTooltip === 'function') {
+      window.PokemonApp.hideGlobalTooltip();
     }
     const popover = document.getElementById('ladder-energy-help-popover');
     if (popover) popover.style.display = 'none';
@@ -12537,18 +12551,32 @@
       e.stopPropagation();
       e.preventDefault();
     }
-    const modal = document.getElementById('ladder-skill-help-modal');
-    if (modal) {
-      const isVisible = modal.style.display === 'block' || modal.style.display === 'flex';
-      if (isVisible) {
-        closeSkillDrawHelpModal();
-      } else {
-        modal.style.display = 'block';
+    const btn = (e && (e.currentTarget || e.target)) || document.querySelector('.ladder-help-icon-btn');
+    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+    const title = isEN ? 'Specialty Trigger Multipliers' : '專長發動機率加成';
+    const body = isEN
+      ? 'Skill specialty applies 1.5x trigger rate.<br>Ingredient specialty applies 1.0x baseline.'
+      : '技能型寶可夢享有 1.5 倍技能發動機率乘數。<br>食材型寶可夢以 1.0 倍基礎發動率計算。';
+
+    if (window.PokemonApp && typeof window.PokemonApp.toggleGlobalTooltip === 'function') {
+      window.PokemonApp.toggleGlobalTooltip(btn, title, body);
+    } else {
+      const modal = document.getElementById('ladder-skill-help-modal');
+      if (modal) {
+        const isVisible = modal.style.display === 'block' || modal.style.display === 'flex';
+        if (isVisible) {
+          closeSkillDrawHelpModal();
+        } else {
+          modal.style.display = 'block';
+        }
       }
     }
   }
 
   function closeSkillDrawHelpModal() {
+    if (window.PokemonApp && typeof window.PokemonApp.hideGlobalTooltip === 'function') {
+      window.PokemonApp.hideGlobalTooltip();
+    }
     const modal = document.getElementById('ladder-skill-help-modal');
     if (modal) {
       modal.style.display = 'none';

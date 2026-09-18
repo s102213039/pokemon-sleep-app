@@ -3046,30 +3046,30 @@ html[data-lang="en"] .subfilter-skill-btn,
   align-items: center;
 }
 
-/* 全域懸停詳細說明浮動框 (Prominent, High-contrast, Legible Tooltip) */
+/* 全域懸停詳細說明浮動框 (Prominent, High-contrast, Legible Tooltip with Frosted Dark Glass) */
 .global-skill-tooltip {
   position: fixed;
-  z-index: 999999;
-  background: var(--bg-card-solid);
-  border: 1.5px solid var(--accent-blue);
+  z-index: 10000000 !important;
+  background: rgba(15, 23, 42, 0.94) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
   border-radius: 10px;
-  padding: 12px 16px;
-  color: var(--text-primary);
-  font-size: 13.5px;
+  padding: 10px 14px;
+  color: #f8fafc !important;
+  font-size: 13px;
   line-height: 1.55;
-  max-width: 340px;
-  box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  max-width: 330px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
   pointer-events: none;
   opacity: 0;
   transform: translateY(4px);
-  transition: opacity 0.18s ease, transform 0.18s ease;
+  transition: opacity 0.12s ease, transform 0.12s ease;
 }
 
 .global-skill-tooltip.visible {
-  opacity: 1;
-  transform: translateY(0);
+  opacity: 1 !important;
+  transform: translateY(0) !important;
 }
 
 .global-skill-tooltip .tooltip-header {
@@ -3077,7 +3077,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   align-items: center;
   gap: 6px;
   margin-bottom: 6px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
   padding-bottom: 5px;
 }
 
@@ -3086,27 +3086,28 @@ html[data-lang="en"] .subfilter-skill-btn,
 }
 
 .global-skill-tooltip .tooltip-title {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #38bdf8 !important;
 }
 
 .global-skill-tooltip .tooltip-tag {
   margin-left: auto;
   font-size: 10.5px;
   font-weight: 600;
-  background: var(--badge-special-bg);
-  color: var(--badge-special-text);
-  border: 1px solid var(--badge-special-border);
+  background: rgba(56, 189, 248, 0.16) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
   border-radius: 4px;
   padding: 1px 5px;
 }
 
 .global-skill-tooltip .tooltip-body {
-  font-size: 13.5px;
-  color: var(--text-secondary);
+  font-size: 12.5px;
+  color: #e2e8f0 !important;
   font-weight: 400;
   letter-spacing: 0.2px;
+  line-height: 1.5;
 }
 
 /* Ingredients layout */
@@ -22222,6 +22223,9 @@ body.mobile-h5-app.values-active,
   -webkit-backdrop-filter: blur(8px);
   padding: 16px;
   box-sizing: border-box;
+  overscroll-behavior: contain !important;
+  overscroll-behavior-y: contain !important;
+  -webkit-overflow-scrolling: touch;
   animation: pokedexModalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -22251,6 +22255,9 @@ body.mobile-h5-app.values-active,
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   box-sizing: border-box;
+  overscroll-behavior: contain !important;
+  overscroll-behavior-y: contain !important;
+  -webkit-overflow-scrolling: touch;
   animation: pokedexDialogScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -22449,6 +22456,7 @@ body.mobile-h5-app.values-active,
   color: var(--text-primary, #f8fafc);
   font-weight: 700;
   font-family: monospace, system-ui, -apple-system;
+  font-variant-numeric: tabular-nums;
 }
 
 .header-stat-diff {
@@ -22554,6 +22562,9 @@ body.mobile-h5-app.values-active,
   gap: 12px;
   padding: 12px 16px;
   overflow-y: auto;
+  overscroll-behavior: contain !important;
+  overscroll-behavior-y: contain !important;
+  -webkit-overflow-scrolling: touch;
   flex: 1;
   min-height: 0;
   box-sizing: border-box;
@@ -23504,7 +23515,7 @@ body.mobile-h5-app.values-active,
   top: calc(100% + 4px);
   left: 8px;
   right: 8px;
-  z-index: 999;
+  z-index: 100000 !important;
 }
 
 .pokedex-energy-help-backdrop {
@@ -23519,12 +23530,14 @@ body.mobile-h5-app.values-active,
   z-index: 2;
   padding: 10px 12px;
   border-radius: 8px;
-  background: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  background: rgba(15, 23, 42, 0.94) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
   font-size: 11.5px;
   line-height: 1.55;
-  color: #e2e8f0;
+  color: #e2e8f0 !important;
   word-break: break-word;
   box-sizing: border-box;
 }
@@ -23538,70 +23551,48 @@ body.mobile-h5-app.values-active,
 .energy-help-title {
   font-size: 12px;
   font-weight: 700;
-  color: #38bdf8;
+  color: #38bdf8 !important;
   margin-bottom: 5px;
 }
 
 .energy-help-body {
   font-size: 11.5px;
-  color: #cbd5e1;
+  color: #cbd5e1 !important;
 }
 
 .ladder-energy-help-bubble .energy-help-body {
   font-size: 11px;
 }
 
-/* 淺色模式與反轉模式的浮窗配色 (Dawn, Emerald, Inverted) */
+/* 淺色模式與反轉模式的浮窗配色 (全域一致半透明黑玻璃質感，拒絕純白底) */
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-energy-help-bubble,
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-energy-help-bubble,
 [data-theme="midnight"][data-theme-inverted="true"] .pokedex-energy-help-bubble,
-[data-theme="midnight"][data-theme-inverted="true"] .ladder-energy-help-bubble {
-  background: #ffffff;
-  border-color: #cbd5e1;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  color: #1e293b;
-}
-
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-energy-help-bubble,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-energy-help-bubble,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-energy-help-bubble {
-  background: #ffffff;
-  border-color: #a7f3d0;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  color: #064e3b;
-}
-
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-energy-help-bubble,
 [data-theme="onyx"][data-theme-inverted="true"] .pokedex-energy-help-bubble,
 [data-theme="onyx"][data-theme-inverted="true"] .ladder-energy-help-bubble {
-  background: #ffffff;
-  border-color: #e4e4e7;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  color: #18181b;
+  background: rgba(15, 23, 42, 0.94) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6) !important;
+  color: #e2e8f0 !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .energy-help-title,
-[data-theme="midnight"][data-theme-inverted="true"] .energy-help-title {
-  color: #0284c7;
-}
-
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .energy-help-title {
-  color: #059669;
-}
-
+[data-theme="midnight"][data-theme-inverted="true"] .energy-help-title,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .energy-help-title,
 [data-theme="onyx"][data-theme-inverted="true"] .energy-help-title {
-  color: #09090b;
+  color: #38bdf8 !important;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .energy-help-body,
-[data-theme="midnight"][data-theme-inverted="true"] .energy-help-body {
-  color: #475569;
-}
-
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .energy-help-body {
-  color: #374151;
-}
-
+[data-theme="midnight"][data-theme-inverted="true"] .energy-help-body,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .energy-help-body,
 [data-theme="onyx"][data-theme-inverted="true"] .energy-help-body {
-  color: #52525b;
+  color: #cbd5e1 !important;
 }
 
 /* 按鈕各主題配色適配 */

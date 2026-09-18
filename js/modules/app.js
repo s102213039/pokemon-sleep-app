@@ -1206,6 +1206,122 @@ function matchesPokemonSearch(p, query) {
   return false;
 }
 
+let currentGlobalTooltipAnchor = null;
+
+function getHelpButtonData(btn) {
+  if (!btn || !btn.classList) return null;
+  const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+  if (btn.classList.contains('ladder-formula-help-btn')) {
+    return {
+      title: isEN ? 'Baseline: Lv.60 Ideal Energy' : '天梯基準：Lv.60 滿活力',
+      body: isEN
+        ? 'Calculated at Lv.60 under ideal energy (≥80%, 0.45x interval) for daily yield.'
+        : '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算單日產能。'
+    };
+  }
+  if (btn.classList.contains('pokedex-formula-help-btn')) {
+    return {
+      title: isEN ? 'Ideal Energy Mechanics (0.45x)' : '理想活力 0.45x 係數說明',
+      body: isEN
+        ? 'Under ideal energy (≥80%), helping interval is reduced to <span class="text-accent font-bold">0.45x</span> (~<span class="text-accent font-bold">2.22x yield</span>). Header stat shows 0-energy base; formulas calculate at full energy.'
+        : '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。圖鑑頂部為 0 活力基準，此處算法採滿活力實戰試算。'
+    };
+  }
+  if (btn.classList.contains('ladder-help-icon-btn')) {
+    return {
+      title: isEN ? 'Specialty Trigger Multipliers' : '專長發動機率加成',
+      body: isEN
+        ? 'Skill specialty applies 1.5x trigger rate.<br>Ingredient specialty applies 1.0x baseline.'
+        : '技能型寶可夢享有 1.5 倍技能發動機率乘數。<br>食材型寶可夢以 1.0 倍基礎發動率計算。'
+    };
+  }
+  return null;
+}
+
+function showGlobalTooltip(anchorEl, title, body, tag) {
+  if (typeof document === 'undefined' || !anchorEl || (!title && !body)) return;
+  let tooltipEl = document.getElementById('global-skill-tooltip');
+  if (!tooltipEl && document.body) {
+    tooltipEl = document.createElement('div');
+    tooltipEl.id = 'global-skill-tooltip';
+    tooltipEl.className = 'global-skill-tooltip';
+    document.body.appendChild(tooltipEl);
+  }
+  if (!tooltipEl) return;
+  currentGlobalTooltipAnchor = anchorEl;
+
+  if (anchorEl.getAttribute && anchorEl.getAttribute('title')) {
+    anchorEl.dataset.nativeTitle = anchorEl.getAttribute('title');
+    anchorEl.removeAttribute('title');
+  }
+
+  tooltipEl.innerHTML = `
+    <div class="tooltip-header">
+      <strong class="tooltip-title">${title || ''}</strong>
+      ${tag ? `<span class="tooltip-tag">${tag}</span>` : ''}
+    </div>
+    <div class="tooltip-body">${body || ''}</div>
+  `;
+  tooltipEl.style.display = 'block';
+
+  if (typeof anchorEl.getBoundingClientRect === 'function') {
+    const rect = anchorEl.getBoundingClientRect();
+    const tooltipRect = (typeof tooltipEl.getBoundingClientRect === 'function') ? tooltipEl.getBoundingClientRect() : { width: 300, height: 120 };
+
+    let top = rect.top - tooltipRect.height - 10;
+    let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+
+    if (top < 10) {
+      top = rect.bottom + 8;
+    }
+    const winHeight = (typeof window !== 'undefined' && window.innerHeight) ? window.innerHeight : 800;
+    const winWidth = (typeof window !== 'undefined' && window.innerWidth) ? window.innerWidth : 1200;
+    if (top + tooltipRect.height > winHeight - 10) {
+      top = winHeight - tooltipRect.height - 10;
+    }
+    if (left < 14) left = 14;
+    if (left + tooltipRect.width > winWidth - 14) {
+      left = winWidth - tooltipRect.width - 14;
+    }
+
+    tooltipEl.style.top = `${Math.max(10, top)}px`;
+    tooltipEl.style.left = `${Math.max(14, left)}px`;
+  }
+  tooltipEl.classList.add('visible');
+}
+
+function hideGlobalTooltip() {
+  if (currentGlobalTooltipAnchor && currentGlobalTooltipAnchor.dataset && currentGlobalTooltipAnchor.dataset.nativeTitle) {
+    currentGlobalTooltipAnchor.setAttribute('title', currentGlobalTooltipAnchor.dataset.nativeTitle);
+    delete currentGlobalTooltipAnchor.dataset.nativeTitle;
+  }
+  currentGlobalTooltipAnchor = null;
+  if (typeof document !== 'undefined') {
+    const tooltipEl = document.getElementById('global-skill-tooltip');
+    if (tooltipEl) {
+      tooltipEl.classList.remove('visible');
+      tooltipEl.style.display = 'none';
+    }
+  }
+}
+
+function toggleGlobalTooltip(anchorEl, title, body, tag) {
+  if (typeof document !== 'undefined') {
+    const tooltipEl = document.getElementById('global-skill-tooltip');
+    if (tooltipEl && tooltipEl.classList.contains('visible') && currentGlobalTooltipAnchor === anchorEl) {
+      hideGlobalTooltip();
+      return;
+    }
+  }
+  showGlobalTooltip(anchorEl, title, body, tag);
+}
+
+if (typeof window !== 'undefined') {
+  window.showGlobalTooltip = showGlobalTooltip;
+  window.hideGlobalTooltip = hideGlobalTooltip;
+  window.toggleGlobalTooltip = toggleGlobalTooltip;
+}
+
 const PokemonApp = {
   allPokemons: [],
   currentSearch: '',
@@ -1219,6 +1335,9 @@ const PokemonApp = {
   selectedSkills: new Set(),
   currentSort: 'no-asc',
   viewMode: 'table',
+  showGlobalTooltip,
+  hideGlobalTooltip,
+  toggleGlobalTooltip,
 
   init(data) {
     this.allPokemons = data || [];
@@ -2954,65 +3073,40 @@ if (typeof document !== 'undefined') {
     };
 
     function initSkillTooltips() {
-      let tooltipEl = document.getElementById('global-skill-tooltip');
-      if (!tooltipEl) {
-        tooltipEl = document.createElement('div');
-        tooltipEl.id = 'global-skill-tooltip';
-        tooltipEl.className = 'global-skill-tooltip';
-        document.body.appendChild(tooltipEl);
-      }
-
       document.addEventListener('mouseover', (e) => {
         const badge = e.target.closest('.special-skill-badge');
-        if (badge && tooltipEl) {
+        if (badge) {
           const skillName = badge.dataset.skill || '';
-          const detail = badge.dataset.skillDetail || badge.getAttribute('title') || '';
+          const detail = badge.dataset.skillDetail || badge.getAttribute('title') || badge.dataset.nativeTitle || '';
           if (!detail) return;
-
-          // Temporarily suppress native browser title to avoid tiny double tooltip
-          badge.dataset.nativeTitle = badge.getAttribute('title') || '';
-          badge.removeAttribute('title');
-
-          const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
           const titleName = (typeof window !== 'undefined' && window.I18N) ? window.I18N.getMainSkillName(skillName) : skillName;
+          showGlobalTooltip(badge, titleName, detail);
+          return;
+        }
 
-          tooltipEl.innerHTML = `
-            <div class="tooltip-header">
-              <strong class="tooltip-title">${titleName}</strong>
-            </div>
-            <div class="tooltip-body">${detail}</div>
-          `;
-          tooltipEl.style.display = 'block';
-
-          const rect = badge.getBoundingClientRect();
-          const tooltipRect = tooltipEl.getBoundingClientRect();
-
-          let top = rect.top - tooltipRect.height - 10;
-          let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
-
-          if (top < 10) {
-            top = rect.bottom + 10;
+        const helpBtn = e.target.closest('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn');
+        if (helpBtn) {
+          const help = getHelpButtonData(helpBtn);
+          if (help) {
+            showGlobalTooltip(helpBtn, help.title, help.body);
           }
-          if (left < 14) left = 14;
-          if (left + tooltipRect.width > window.innerWidth - 14) {
-            left = window.innerWidth - tooltipRect.width - 14;
-          }
-
-          tooltipEl.style.top = `${top}px`;
-          tooltipEl.style.left = `${left}px`;
-          tooltipEl.classList.add('visible');
         }
       });
 
       document.addEventListener('mouseout', (e) => {
         const badge = e.target.closest('.special-skill-badge');
-        if (badge && tooltipEl) {
-          if (badge.dataset.nativeTitle) {
-            badge.setAttribute('title', badge.dataset.nativeTitle);
-          }
-          tooltipEl.classList.remove('visible');
-          tooltipEl.style.display = 'none';
+        const helpBtn = e.target.closest('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn');
+        if (badge || helpBtn) {
+          hideGlobalTooltip();
         }
+      });
+
+      document.addEventListener('click', (e) => {
+        const target = e.target;
+        if (target && target.closest && target.closest('.special-skill-badge, .pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .global-skill-tooltip')) {
+          return;
+        }
+        hideGlobalTooltip();
       });
     }
 
@@ -3175,8 +3269,28 @@ if (typeof document !== 'undefined') {
         }
       }
 
+      function isModalOrDrawerActive() {
+        if (typeof document === 'undefined') return false;
+        if (document.body && document.body.classList) {
+          if (document.body.classList.contains('modal-open') || document.body.classList.contains('pokedex-modal-open')) {
+            return true;
+          }
+        }
+        const pokedexModal = document.getElementById('pokedex-detail-modal');
+        if (pokedexModal && (pokedexModal.style.display === 'flex' || pokedexModal.style.display === 'block')) {
+          return true;
+        }
+        const activeModal = document.querySelector('.modal-overlay.active, .subskill-sheet-modal.active, .appraisal-modal-overlay.active, .pokedex-modal-backdrop:not([style*="display: none"]):not([style*="display:none"])');
+        if (activeModal) return true;
+        return false;
+      }
+
       document.addEventListener('touchstart', (e) => {
         if (isRefreshing || !e.touches || !e.touches[0]) return;
+        if (isModalOrDrawerActive()) {
+          isTracking = false;
+          return;
+        }
         // 嚴格判定：只有在最頂部時才允許判斷觸發下拉刷新
         if (getActiveScrollTop() > 2) {
           isTracking = false;
@@ -3185,7 +3299,7 @@ if (typeof document !== 'undefined') {
 
         // 避免在開啟的側邊欄或彈窗內誤觸發全頁下拉刷新
         const target = e.target;
-        if (target && target.closest && target.closest('.pokemon-filter-sidebar:not(.collapsed), .recipe-filter-sidebar:not(.collapsed), .ladder-fixed-sidebar:not(.collapsed), .modal-overlay.active, .subskill-sheet-modal.active, .appraisal-modal-overlay.active')) {
+        if (target && target.closest && target.closest('#pokedex-detail-modal, .pokedex-modal-backdrop, .pokedex-modal-dialog, .pokedex-modal-body, .pokemon-filter-sidebar:not(.collapsed), .recipe-filter-sidebar:not(.collapsed), .ladder-fixed-sidebar:not(.collapsed), .modal-overlay.active, .subskill-sheet-modal.active, .appraisal-modal-overlay.active')) {
           isTracking = false;
           return;
         }
@@ -3200,6 +3314,14 @@ if (typeof document !== 'undefined') {
 
       document.addEventListener('touchmove', (e) => {
         if (!isTracking || isRefreshing || !e.touches || !e.touches[0]) return;
+        if (isModalOrDrawerActive()) {
+          isTracking = false;
+          if (currentPull > 0) {
+            currentPull = 0;
+            updatePtrUI(0);
+          }
+          return;
+        }
         const currentY = e.touches[0].clientY;
         const currentX = e.touches[0].clientX;
         const deltaY = currentY - touchStartY;
@@ -3398,7 +3520,12 @@ function openPokemonDetailModal(pokemonId) {
   }
 
   modalEl.style.display = 'flex';
-  try { document.body.style.overflow = 'hidden'; } catch (e) {}
+  try {
+    document.body.style.overflow = 'hidden';
+    if (document.body && document.body.classList) {
+      document.body.classList.add('pokedex-modal-open');
+    }
+  } catch (e) {}
 
   renderPokedexDetailModalContent();
 }
@@ -3407,7 +3534,12 @@ function closePokemonDetailModal() {
   const modalEl = document.getElementById('pokedex-detail-modal');
   if (modalEl) {
     modalEl.style.display = 'none';
-    try { document.body.style.overflow = ''; } catch (e) {}
+    try {
+      document.body.style.overflow = '';
+      if (document.body && document.body.classList) {
+        document.body.classList.remove('pokedex-modal-open');
+      }
+    } catch (e) {}
   }
 }
 
@@ -4057,9 +4189,18 @@ function renderPokedexCarryValue(f, pkm) {
   return `${f.effectiveCarry}<span class="header-stat-diff ${diffCls}">(${diffSign}${diffVal})</span>`;
 }
 
+function formatRateWithTens(val) {
+  if (typeof val !== 'number' || isNaN(val)) return '--';
+  const parts = val.toFixed(2).split('.');
+  const intPart = parts[0].padStart(2, '0');
+  return `${intPart}.${parts[1]}%`;
+}
+
 function renderPokedexIngRateValue(f, pkm) {
   if (!f || typeof f.finalIngRate !== 'number') {
-    return pkm ? (pkm.ingredient_rate || '--') : '--';
+    if (!pkm || !pkm.ingredient_rate) return '--';
+    const num = parseFloat(pkm.ingredient_rate);
+    return isNaN(num) ? pkm.ingredient_rate : formatRateWithTens(num);
   }
   const diffVal = f.diffIngRate;
   let diffCls = 'diff-zero';
@@ -4071,12 +4212,14 @@ function renderPokedexIngRateValue(f, pkm) {
     diffCls = 'diff-neg';
     diffSign = '';
   }
-  return `${f.finalIngRate.toFixed(2)}%<span class="header-stat-diff ${diffCls}">(${diffSign}${diffVal.toFixed(2)}%)</span>`;
+  return `${formatRateWithTens(f.finalIngRate)}<span class="header-stat-diff ${diffCls}">(${diffSign}${diffVal.toFixed(2)}%)</span>`;
 }
 
 function renderPokedexSkillRateValue(f, pkm) {
   if (!f || typeof f.finalSkillRate !== 'number') {
-    return pkm ? (pkm.skill_rate || '--') : '--';
+    if (!pkm || !pkm.skill_rate) return '--';
+    const num = parseFloat(pkm.skill_rate);
+    return isNaN(num) ? pkm.skill_rate : formatRateWithTens(num);
   }
   const diffVal = f.diffSkillRate;
   let diffCls = 'diff-zero';
@@ -4088,7 +4231,7 @@ function renderPokedexSkillRateValue(f, pkm) {
     diffCls = 'diff-neg';
     diffSign = '';
   }
-  return `${f.finalSkillRate.toFixed(2)}%<span class="header-stat-diff ${diffCls}">(${diffSign}${diffVal.toFixed(2)}%)</span>`;
+  return `${formatRateWithTens(f.finalSkillRate)}<span class="header-stat-diff ${diffCls}">(${diffSign}${diffVal.toFixed(2)}%)</span>`;
 }
 
 const STAGE3_INHERITED_MIN_LEVELS = {
@@ -4654,15 +4797,29 @@ function togglePokedexEnergyHelp(event) {
     if (typeof event.stopPropagation === 'function') event.stopPropagation();
     if (typeof event.preventDefault === 'function') event.preventDefault();
   }
-  const popover = document.getElementById('pokedex-energy-help-popover');
-  if (!popover) return;
-  const isVisible = popover.style.display === 'block';
-  popover.style.display = isVisible ? 'none' : 'block';
+  const btn = (event && (event.currentTarget || event.target)) || document.querySelector('.pokedex-formula-help-btn');
+  const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+  const title = isEN ? 'Ideal Energy Mechanics (0.45x)' : '理想活力 0.45x 係數說明';
+  const body = isEN
+    ? 'Under ideal energy (≥80%), helping interval is reduced to <span class="text-accent font-bold">0.45x</span> (~<span class="text-accent font-bold">2.22x yield</span>). Header stat shows 0-energy base; formulas calculate at full energy.'
+    : '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。圖鑑頂部為 0 活力基準，此處算法採滿活力實戰試算。';
+
+  if (PokemonApp && typeof PokemonApp.toggleGlobalTooltip === 'function') {
+    PokemonApp.toggleGlobalTooltip(btn, title, body);
+  } else {
+    const popover = document.getElementById('pokedex-energy-help-popover');
+    if (!popover) return;
+    const isVisible = popover.style.display === 'block';
+    popover.style.display = isVisible ? 'none' : 'block';
+  }
 }
 
 function closePokedexEnergyHelp(event) {
   if (event && typeof event.stopPropagation === 'function') {
     event.stopPropagation();
+  }
+  if (PokemonApp && typeof PokemonApp.hideGlobalTooltip === 'function') {
+    PokemonApp.hideGlobalTooltip();
   }
   const popover = document.getElementById('pokedex-energy-help-popover');
   if (popover) popover.style.display = 'none';

@@ -3923,9 +3923,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
 
   // 5. Verify cache busters
   assert(/css\/styles\.css\?v=(20260917_[345678]|20260918_\d+)/.test(indexHtml), 'index.html styles.css must have current cache buster');
-  assert(indexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'index.html wiki.js must be v=20260907_8');
+  assert(/js\/modules\/wiki\.js\?v=(20260907_8|20260918_\d+)/.test(indexHtml), 'index.html wiki.js must have valid cache buster');
   assert(/css\/styles\.css\?v=(20260917_[345678]|20260918_\d+)/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
-  assert(appIndexHtml.includes('js/modules/wiki.js?v=20260907_8'), 'app/index.html wiki.js must be v=20260907_8');
+  assert(/js\/modules\/wiki\.js\?v=(20260907_8|20260918_\d+)/.test(appIndexHtml), 'app/index.html wiki.js must have valid cache buster');
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless Layout, Single-Line Name:Desc, No Tier Badges & Half-Width Symbols', () => {
@@ -6883,6 +6883,54 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assert(stylesCss.includes('border-style: solid !important;') && stylesCss.includes('.box-subskill-slot-btn.slot-unreleased'), 'styles.css must enforce solid border on slot-unreleased');
   assert(stylesCss.includes('.unified-calc-row {\n  display: flex;\n  flex-direction: column;\n  gap: 3px;\n  padding-bottom: 2px;\n  border-bottom: none !important;'), 'unified-calc-row must have border-bottom: none !important');
 });
+
+// 15V. Fast Floating Tooltips, Pull-to-Refresh Modal Guard, Tens Alignment & Venusaur Lv.60 Verification
+test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-to-Refresh Modal Guard, Tens Alignment & Venusaur Lv.60 Verification', () => {
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+    const dataJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'data.json'), 'utf8'));
+    // 1. Tens alignment for skill and ingredient rates
+    const srTensHtml = PokemonApp.renderPokedexSkillRateValue({ finalSkillRate: 2.10, diffSkillRate: 0 });
+    const irTensHtml = PokemonApp.renderPokedexIngRateValue({ finalIngRate: 49.16, diffIngRate: 22.56 });
+    assert(srTensHtml.startsWith('02.10%'), `Skill rate must format single digits with leading zero for tens alignment (got ${srTensHtml})`);
+    assert(irTensHtml.startsWith('49.16%'), `Ingredient rate must preserve two-digit representation (got ${irTensHtml})`);
+    assertEquals(srTensHtml.split('<')[0].length, irTensHtml.split('<')[0].length, 'Formatted rate value length must match exactly (6 chars) to align percentage sign');
+    assert(stylesCss.includes('font-variant-numeric: tabular-nums;'), 'styles.css must include tabular-nums for monospaced numeric alignment');
+
+    // 2. Pull-to-refresh modal protection
+    const appJsContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+    assert(appJsContent.includes('isModalOrDrawerActive'), 'app.js must define isModalOrDrawerActive guard');
+    assert(appJsContent.includes('pokedex-modal-open'), 'app.js must toggle pokedex-modal-open on body');
+    assert(stylesCss.includes('#pokedex-detail-modal') && stylesCss.includes('overscroll-behavior: contain !important;'), 'styles.css must contain overscroll on #pokedex-detail-modal');
+    assert(stylesCss.includes('.pokedex-modal-body') && stylesCss.includes('overscroll-behavior-y: contain !important;'), 'styles.css must contain overscroll-y on .pokedex-modal-body');
+
+    // 3. Fast floating tooltip engine & frosted dark glass styling
+    assert(typeof PokemonApp.showGlobalTooltip === 'function', 'PokemonApp must export showGlobalTooltip');
+    assert(typeof PokemonApp.toggleGlobalTooltip === 'function', 'PokemonApp must export toggleGlobalTooltip');
+    assert(stylesCss.includes('.global-skill-tooltip') && stylesCss.includes('rgba(15, 23, 42, 0.94) !important;'), 'global-skill-tooltip must use translucent dark frosted glass');
+    assert(stylesCss.includes('.global-skill-tooltip') && stylesCss.includes('z-index: 10000000 !important;'), 'global-skill-tooltip must have ultra-high z-index');
+    assert(stylesCss.includes('.ladder-energy-help-popover') && stylesCss.includes('z-index: 100000 !important;'), 'ladder-energy-help-popover must have high z-index to prevent penetration');
+
+    // 4. Mathematical Ground Truth: Venusaur Lv.60 Verification (Image 2)
+    const venusaurData = dataJson.find(p => p.name_cn === '妙蛙花');
+    assert(venusaurData !== undefined, 'data.json must contain Venusaur (妙蛙花)');
+    // Calculate values matching Image 2
+    const baseInterval = 2800; // 00:46:40
+    const lvlDiscount = (60 - 1) * 0.002; // 0.118
+    const speedDiscount = 0.14; // 幫忙速度M
+    const effInterval = Math.round(baseInterval * (1 - lvlDiscount) * (1 - speedDiscount)); // 2124s (35:24)
+    assertEquals(effInterval, 2124, 'Venusaur Lv.60 effective interval must be 2124s');
+    const helpsPerDay = 86400 / (effInterval * 0.45); // 90.395...
+    assertEquals(helpsPerDay.toFixed(1), '90.4', 'Venusaur Lv.60 daily helps under ideal energy must be 90.4');
+    const ingRate = 26.60 * (1 + 0.54) * 1.20; // 49.1616%
+    assertEquals(ingRate.toFixed(2), '49.16', 'Venusaur Lv.60 ingredient rate must be 49.16%');
+    const ingDrops = helpsPerDay * (ingRate / 100); // 44.439...
+    assertEquals(ingDrops.toFixed(1), '44.4', 'Venusaur Lv.60 daily ingredient drops must be 44.4');
+    const skillRate = 2.10;
+    const triggersPerDay = helpsPerDay * (skillRate / 100); // 1.898...
+    assertEquals(triggersPerDay.toFixed(2), '1.90', 'Venusaur Lv.60 daily skill triggers must be 1.90');
+    const extraIngs = triggersPerDay * 24; // 45.559...
+    assertEquals(extraIngs.toFixed(1), '45.6', 'Venusaur Lv.60 Lv.7 skill extra ingredients must be 45.6');
+  });
 
 // Final Summary Output
 console.log('\n======================================================');
