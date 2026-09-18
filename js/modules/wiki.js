@@ -11751,6 +11751,25 @@
     }
   }
 
+  function toggleLadderEnergyHelp(event) {
+    if (event) {
+      if (typeof event.stopPropagation === 'function') event.stopPropagation();
+      if (typeof event.preventDefault === 'function') event.preventDefault();
+    }
+    const popover = document.getElementById('ladder-energy-help-popover');
+    if (!popover) return;
+    const isVisible = popover.style.display === 'block';
+    popover.style.display = isVisible ? 'none' : 'block';
+  }
+
+  function closeLadderEnergyHelp(event) {
+    if (event && typeof event.stopPropagation === 'function') {
+      event.stopPropagation();
+    }
+    const popover = document.getElementById('ladder-energy-help-popover');
+    if (popover) popover.style.display = 'none';
+  }
+
   function getCurrentSubTab() {
     return currentWikiSubTab;
   }
@@ -16811,11 +16830,24 @@
 
         <div class="sidebar-header">
           <button type="button" id="ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.toggleLadderSidebar(false)" title="${isEN ? 'Collapse Filters' : '收合側邊欄'}" aria-label="${isEN ? 'Collapse Filters' : '收合側邊欄'}">◀</button>
-          <div class="sidebar-title-group">
+          <div class="sidebar-title-group" style="display:flex;align-items:center;gap:6px;">
             <span class="sidebar-title">${isEN ? 'Ladder Filters' : '天梯篩選器'}</span>
-            <span class="sidebar-baseline-tag" style="font-size: 9.5px; color: var(--text-muted); letter-spacing: 0.2px;">${isEN ? 'Baseline: Lv.60 Ideal Energy (0.45x)' : '基準：Lv.60 滿活力 (0.45x)'}</span>
+            <button type="button" class="pokedex-formula-help-btn ladder-formula-help-btn" onclick="window.WikiDB.toggleLadderEnergyHelp(event)" title="${isEN ? 'Baseline: Lv.60 Ideal Energy (0.45x)' : '基準：Lv.60 滿活力 (0.45x)'}" aria-label="Ladder Energy Info">?</button>
           </div>
           <button type="button" id="ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${isEN ? 'Reset All Filters' : '重設所有條件'}">${isEN ? 'Reset All' : '全部重設'}</button>
+
+          <!-- 天梯基準滿活力浮窗 (Toast-style Popover) -->
+          <div id="ladder-energy-help-popover" class="ladder-energy-help-popover" style="display:none;" role="tooltip">
+            <div class="pokedex-energy-help-backdrop" onclick="window.WikiDB.closeLadderEnergyHelp(event)"></div>
+            <div class="pokedex-energy-help-bubble ladder-energy-help-bubble">
+              <div class="energy-help-title font-bold">${isEN ? 'Baseline: Lv.60 Ideal Energy' : '天梯基準：Lv.60 滿活力'}</div>
+              <div class="energy-help-body">
+                ${isEN
+                  ? 'Calculated at Lv.60 under ideal energy (≥80%, 0.45x interval) for daily yield.'
+                  : '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算單日產能。'}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="sidebar-scrollable-content">
@@ -17543,7 +17575,9 @@
     clearLadderHighlightRecipe: clearLadderHighlightRecipe,
     switchLadderRecipeCategory: switchLadderRecipeCategory,
     getLadderRecipeCategory: () => ladderRecipeCategory,
-    getLadderHighlightRecipe: () => ladderHighlightRecipe
+    getLadderHighlightRecipe: () => ladderHighlightRecipe,
+    toggleLadderEnergyHelp: toggleLadderEnergyHelp,
+    closeLadderEnergyHelp: closeLadderEnergyHelp
   };
 
   window.WikiDB = WikiDBExport;
@@ -17557,6 +17591,8 @@
   window.sortIslandSpawns = sortIslandSpawns;
   window.getIslandSpawnsSort = getIslandSpawnsSort;
   window.toggleLadderSidebar = toggleLadderSidebar;
+  window.toggleLadderEnergyHelp = toggleLadderEnergyHelp;
+  window.closeLadderEnergyHelp = closeLadderEnergyHelp;
   window.switchLadderView = switchLadderView;
   window.filterWikiSkills = filterWikiSkills;
   window.filterWikiIngredients = filterWikiIngredients;

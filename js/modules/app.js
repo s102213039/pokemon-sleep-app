@@ -4189,6 +4189,7 @@ function renderPokedexStrategyCardHTML(pkm) {
   let roleDesc = '';
   let coreSkill = '';
   let coreSkillDesc = '';
+  let coreTier = 'gold';
   let recommendedSubs = [];
   let recommendedNatures = '';
 
@@ -4557,18 +4558,16 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
       <div class="pokedex-formula-header">
         <div style="display:flex;align-items:center;gap:8px;">
           <span class="pokedex-formula-badge font-bold">${t('pokedex.formula_title', '食材產能算法拆解')}</span>
-          <div class="pokedex-energy-help-container" style="position:relative;display:inline-flex;align-items:center;">
-            <button type="button" class="pokedex-formula-help-btn" onclick="window.PokemonApp.togglePokedexEnergyHelp(event)" title="${isEN ? 'Ideal Energy (>=100%) Helping Speed Mechanics' : '滿活力 (活力≥100%) 幫忙間隔 0.45x 說明'}" aria-label="Energy Info">?</button>
-            <div id="pokedex-energy-help-popover" class="pokedex-energy-help-popover" style="display:none;" role="tooltip">
-              <div class="pokedex-energy-help-backdrop" onclick="window.PokemonApp.closePokedexEnergyHelp(event)"></div>
-              <div class="pokedex-energy-help-bubble">
-                <div class="energy-help-title font-bold">${isEN ? 'Ideal Energy Mechanics (0.45x Interval)' : '理想活力 0.45x 係數機制說明'}</div>
-                <div class="energy-help-body">
-                  ${isEN
-                    ? 'In Pokémon Sleep, maintaining team energy at <span class="text-success font-bold">80%~150%</span> (ideal full energy condition) shortens helping interval to <span class="text-accent font-bold">0.45x</span> (approx. <span class="text-accent font-bold">2.22x frequency</span>). The Pokédex header stat displays the base 0-energy interval, while daily yield formulas below apply the ideal 0.45x multiplier for realistic daily production.'
-                    : '在 Pokémon Sleep 實戰中，當寶可夢活力維持在 <span class="text-success font-bold">80%~150%</span>（理想活力 / 滿活力 100%+）時，幫忙間隔會縮短為 <span class="text-accent font-bold">0.45 倍</span>（相當於幫忙頻率與產能提升為 <span class="text-accent font-bold">約 2.22 倍</span>）。上方圖鑑狀態列展示 0 活力原始基礎間隔，此處算法與日產能均採用滿活力 (x0.45) 進行實戰精算。'}
-                </div>
-              </div>
+          <button type="button" class="pokedex-formula-help-btn" onclick="window.PokemonApp.togglePokedexEnergyHelp(event)" title="${isEN ? 'Ideal Energy (>=80%) Helping Speed Mechanics' : '滿活力 (活力≥80%) 幫忙間隔 0.45x 說明'}" aria-label="Energy Info">?</button>
+        </div>
+        <div id="pokedex-energy-help-popover" class="pokedex-energy-help-popover" style="display:none;" role="tooltip">
+          <div class="pokedex-energy-help-backdrop" onclick="window.PokemonApp.closePokedexEnergyHelp(event)"></div>
+          <div class="pokedex-energy-help-bubble">
+            <div class="energy-help-title font-bold">${isEN ? 'Ideal Energy Mechanics (0.45x)' : '理想活力 0.45x 係數說明'}</div>
+            <div class="energy-help-body">
+              ${isEN
+                ? 'Under ideal energy (≥80%), helping interval is reduced to <span class="text-accent font-bold">0.45x</span> (~<span class="text-accent font-bold">2.22x yield</span>). Header stat shows 0-energy base; formulas calculate at full energy.'
+                : '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。圖鑑頂部為 0 活力基準，此處算法採滿活力實戰試算。'}
             </div>
           </div>
         </div>

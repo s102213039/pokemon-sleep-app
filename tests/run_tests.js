@@ -975,7 +975,8 @@ test('Tier 1 - Feature Coverage', 'WikiDB Namespace & Event Handler Methods Inte
     'onLadderSearch', 'clearLadderSearch',
     'setLadderRecipeFilter', 'refreshCoordinateLadder', 'handleLadderGroupHover',
     'handleLadderGroupHoverOut', 'recalcTriggerChance', 'recalcSleepDays',
-    'openIngredientRankingModal', 'closeIngredientRankingModal', 'updateLadderActiveFilterBadge'
+    'openIngredientRankingModal', 'closeIngredientRankingModal', 'updateLadderActiveFilterBadge',
+    'toggleLadderEnergyHelp', 'closeLadderEnergyHelp'
   ];
 
   wikiMethods.forEach(method => {
@@ -6861,6 +6862,22 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assert(stratCardHtml.includes('strategy-item-core'), 'Strategy card must have strategy-item-core');
   assert(!stratCardHtml.includes('(+36%)') && !stratCardHtml.includes('(BFS)'), 'Strategy card core skill must not contain bracketed explanations');
   assert(stratCardHtml.includes('subskill-gold') && stratCardHtml.includes('subskill-blue') && stratCardHtml.includes('subskill-white'), 'Strategy card must include gold, blue, and white subskill chips');
+
+  // Ladder ? help button & popover verification
+  const wikiCodeFile = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+  assert(wikiCodeFile.includes('toggleLadderEnergyHelp'), 'wiki.js must define toggleLadderEnergyHelp');
+  assert(wikiCodeFile.includes('closeLadderEnergyHelp'), 'wiki.js must define closeLadderEnergyHelp');
+  assert(wikiCodeFile.includes('ladder-formula-help-btn'), 'wiki.js must render ladder-formula-help-btn');
+  assert(wikiCodeFile.includes('ladder-energy-help-popover'), 'wiki.js must render ladder-energy-help-popover');
+  assert(stylesCss.includes('.ladder-formula-help-btn'), 'styles.css must style .ladder-formula-help-btn');
+  assert(stylesCss.includes('.ladder-energy-help-popover'), 'styles.css must style .ladder-energy-help-popover');
+  assert(stylesCss.includes('.ladder-fixed-sidebar .sidebar-header {\n  position: relative;\n  overflow: visible !important;'), 'styles.css must allow ladder sidebar-header overflow for popover');
+
+  // Dedicated Onyx theme verification
+  assert(stylesCss.includes('[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-modal-dialog {\n  background: #09090b !important;'), 'styles.css must style onyx modal dialog in obsidian black #09090b');
+  assert(stylesCss.includes('[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-calc-unified-box {\n  background: #141417 !important;'), 'styles.css must style onyx calc box in #141417');
+  assert(stylesCss.includes('[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-subskill-slot-btn.active {\n  background: rgba(203, 213, 225, 0.14) !important;\n  border-color: #cbd5e1 !important;'), 'styles.css must style onyx active slot button in cool silver #cbd5e1');
+  assert(stylesCss.includes('[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-energy-help-bubble'), 'styles.css must style onyx help popovers');
 
   // CSS verification: solid borders on slot-unreleased and borderless unified-calc-row
   assert(stylesCss.includes('border-style: solid !important;') && stylesCss.includes('.box-subskill-slot-btn.slot-unreleased'), 'styles.css must enforce solid border on slot-unreleased');
