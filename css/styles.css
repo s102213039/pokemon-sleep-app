@@ -24361,6 +24361,29 @@ body.mobile-h5-app.values-active,
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
+.pokedex-calc-unified-box .pokedex-strategy-card,
+#pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="dawn"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="emerald"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="midnight"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="onyx"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card {
+  margin-top: 4px !important;
+  background: transparent !important;
+  border: none !important;
+  border-top: 1px solid var(--border-color, #e2e8f0) !important;
+  border-radius: 0 !important;
+  padding: 6px 0 0 0 !important;
+  box-shadow: none !important;
+  gap: 5px !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card {
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
 .strategy-card-badge {
   font-size: 11.5px;
   font-weight: 700;

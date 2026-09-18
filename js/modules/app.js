@@ -4805,15 +4805,11 @@ function renderPokedexDetailModalContent() {
 
       <!-- 彈窗內容主體 (雙欄/響應式) -->
       <div class="box-modal-body pokedex-modal-body">
-        <!-- 左欄：食材產能算法拆解與最佳配置指南 (空間最大化) -->
+        <!-- 左欄：食材產能算法拆解與最佳配置指南 (空間最大化，單一整合外框) -->
         <div class="pokedex-modal-col pokedex-left-col">
-          <!-- 食材產能算法拆解 -->
+          <!-- 食材產能算法拆解與最佳配置 (單一整合卡片) -->
           <div class="pokedex-calc-formula-card" id="pokedex-calc-formula-container">
             ${renderPokedexFormulaBreakdownHTML(formulaData, pkm)}
-          </div>
-          <!-- 桌面端專屬：最佳配置指南卡片 (放置於左欄下方，緊湊填補左欄留白) -->
-          <div class="pokedex-strategy-desktop-wrap" id="pokedex-strategy-desktop-container">
-            ${renderPokedexStrategyCardHTML(pkm)}
           </div>
         </div>
 
@@ -5096,6 +5092,11 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
               <span class="text-skill-extra font-bold text-success">+${f.mainSkillExtraDaily.toFixed(1)} ${isEN ? 'extra ings' : '顆額外食材'}</span>
             </div>
           ` : ''}
+        </div>
+
+        <!-- 桌面端專屬：最佳配置指南 (收納於同一個外框內，增加到下一行) -->
+        <div class="pokedex-strategy-desktop-wrap" id="pokedex-strategy-desktop-container">
+          ${renderPokedexStrategyCardHTML(pkm)}
         </div>
       </div>
     </div>

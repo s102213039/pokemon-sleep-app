@@ -7229,8 +7229,12 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(!strategyFnBody.includes('strategy-card-desc'), 'renderPokedexStrategyCardHTML must NOT render strategy-card-desc (removed per user request)');
     assert(!strategyFnBody.includes('strategy-card-badge'), 'renderPokedexStrategyCardHTML must NOT render strategy-card-badge (removed per user request)');
     assert(strategyFnBody.includes('strategy-card-title pokedex-formula-badge font-bold'), 'renderPokedexStrategyCardHTML must render strategy-card-title with pokedex-formula-badge inside the card');
-    assert(strategyFnBody.indexOf('pokedex-strategy-card') < strategyFnBody.indexOf('strategy-card-title'), 'strategy-card-title must be placed inside pokedex-strategy-card');
     assert(strategyFnBody.includes('strategy-details-grid'), 'renderPokedexStrategyCardHTML must still render strategy-details-grid');
+    const formulaFnStart = appJs.indexOf('function renderPokedexFormulaBreakdownHTML');
+    const formulaFnEnd = appJs.indexOf('function togglePokedexEnergyHelp');
+    const formulaFnBody = appJs.substring(formulaFnStart, formulaFnEnd);
+    assert(formulaFnBody.includes('pokedex-strategy-desktop-container'), 'Desktop strategy container must be nested inside renderPokedexFormulaBreakdownHTML unified box');
+    assert(stylesCss.includes('.pokedex-calc-unified-box .pokedex-strategy-card'), 'styles.css must style pokedex-strategy-card inside pokedex-calc-unified-box');
 
     // 9. Verify modal height auto-adaptation in CSS (narrowed to .pokedex-modal-dialog block)
     const pdxBlock2Start = stylesCss.indexOf('.pokedex-modal-dialog {');
