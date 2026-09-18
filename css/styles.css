@@ -23131,7 +23131,7 @@ body.mobile-h5-app.values-active,
 .box-subskill-slot-btn.slot-unreleased {
   border-style: solid !important;
   border-color: var(--border-color, rgba(255, 255, 255, 0.12)) !important;
-  background: var(--bg-card, #1e293b) !important;
+  background: var(--bg-card-inner, #1e293b) !important;
 }
 
 #pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased.slot-under-lvl,
@@ -23446,6 +23446,120 @@ body.mobile-h5-app.values-active,
 /* 網頁版副技能展開按鈕維持隱藏，預設直接展示三大方框 */
 .pokedex-subskill-toggle-btn {
   display: none !important;
+}
+
+/* ─── 活力 0.45x 係數說明按鈕與浮窗 (Energy Help Button & Popover) ─── */
+.pokedex-energy-help-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.pokedex-formula-help-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.pokedex-formula-help-btn:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+  transform: scale(1.08);
+}
+
+.pokedex-formula-help-btn:active {
+  transform: scale(0.95);
+}
+
+.pokedex-energy-help-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 999;
+  width: 290px;
+  max-width: calc(100vw - 32px);
+}
+
+.pokedex-energy-help-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: transparent;
+}
+
+.pokedex-energy-help-bubble {
+  position: relative;
+  z-index: 2;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: #e2e8f0;
+}
+
+.energy-help-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #38bdf8;
+  margin-bottom: 5px;
+}
+
+.energy-help-body {
+  font-size: 11.5px;
+  color: #cbd5e1;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-energy-help-bubble,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-energy-help-bubble,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-energy-help-bubble,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-energy-help-bubble {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  color: #1e293b;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .energy-help-title,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .energy-help-title,
+[data-theme="midnight"][data-theme-inverted="true"] .energy-help-title,
+[data-theme="onyx"][data-theme-inverted="true"] .energy-help-title {
+  color: #0284c7;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .energy-help-body,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .energy-help-body,
+[data-theme="midnight"][data-theme-inverted="true"] .energy-help-body,
+[data-theme="onyx"][data-theme-inverted="true"] .energy-help-body {
+  color: #475569;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-formula-help-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-formula-help-btn {
+  border-color: rgba(2, 132, 199, 0.4);
+  background: rgba(2, 132, 199, 0.08);
+  color: #0284c7;
 }
 
 /* 算法拆解跨步驟數值色彩連動系統 (Cross-Step Value Lineage) */

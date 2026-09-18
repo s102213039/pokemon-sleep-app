@@ -6822,6 +6822,40 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assert(!slotsRowEl.innerHTML.includes('Lv.70 <span class="slot-unreleased-tag'), 'Slot 4 at Lv.70 must NOT display 尚未開放 or 等級不足 tag');
   assert(slotsRowEl.innerHTML.includes('Lv.80 <span class="slot-unreleased-tag slot-tag-under-lvl">等級不足</span>'), 'Slot 5 at Lv.70 must display 等級不足');
 
+  // Test Slot 4 & 5 Subskills at Lv.70 & Lv.80
+  PokemonApp.selectPokedexSubskillSlot(4);
+  PokemonApp.choosePokedexSubskill('幫忙速度M');
+  PokemonApp.selectPokedexSubskillSlot(5);
+  PokemonApp.choosePokedexSubskill('持有上限提升L');
+
+  // At Lv.70: Slot 4 is reached (active, NO pill-inactive, has subskill-blue), Slot 5 is NOT reached (pill-inactive, has slot-tag-inactive)
+  PokemonApp.setPokedexModalLevel(70);
+  const slotButtons70 = slotsRowEl.innerHTML.split('</button>');
+  const slot4Html70 = slotButtons70.find(b => b.includes('data-slot="4"')) || '';
+  const slot5Html70 = slotButtons70.find(b => b.includes('data-slot="5"')) || '';
+  assert(slot4Html70.includes('subskill-blue') && !slot4Html70.includes('slot-unreleased-tag'), 'Slot 4 at Lv.70 must not display unreleased/inactive tags');
+  assert(!slot4Html70.includes('pill-inactive'), 'Slot 4 at Lv.70 must NOT have pill-inactive');
+  assert(slot5Html70.includes('pill-inactive'), 'Slot 5 at Lv.70 must have pill-inactive');
+  assert(slot5Html70.includes('slot-tag-inactive') && slot5Html70.includes('效果尚未生效'), 'Slot 5 at Lv.70 must show 效果尚未生效');
+
+  // Raise level to Lv.80: Slot 5 becomes active, NO pill-inactive, NO status tag
+  PokemonApp.setPokedexModalLevel(80);
+  const slotButtons80 = slotsRowEl.innerHTML.split('</button>');
+  const slot5Html80 = slotButtons80.find(b => b.includes('data-slot="5"')) || '';
+  assert(!slot5Html80.includes('pill-inactive'), 'Slot 5 at Lv.80 must NOT have pill-inactive');
+  assert(!slot5Html80.includes('slot-unreleased-tag'), 'Slot 5 at Lv.80 must NOT display any status tag');
+
+  // Ideal Energy 0.45x Multiplier & Formula Breakdown verification
+  const formulas80 = PokemonApp.calculatePokedexIngredientFormulas();
+  assertEquals(formulas80.energyIntervalMult, 0.45, 'Formula engine must use 0.45 energy interval multiplier');
+  const expectedHelps = 86400 / (formulas80.effectiveIntervalSec * 0.45);
+  assertEquals(formulas80.dailyHelps.toFixed(2), expectedHelps.toFixed(2), 'dailyHelps must be 86400 / (effectiveIntervalSec * 0.45)');
+  assert(pikaModalHtml2.includes('pokedex-formula-help-btn'), 'Formula card must include [?] help button');
+  assert(pikaModalHtml2.includes('pokedex-energy-help-popover'), 'Formula card must include energy popover');
+  assert(pikaModalHtml2.includes('× 0.45) ='), 'Formula derive line must display × 0.45 in step 1');
+  assert(stylesCss.includes('.pokedex-formula-help-btn'), 'styles.css must style .pokedex-formula-help-btn');
+  assert(stylesCss.includes('.pokedex-energy-help-popover'), 'styles.css must style .pokedex-energy-help-popover');
+
   // Strategy card verification: core skill without brackets & tiered subskill chips
   const stratCardHtml = PokemonApp.renderPokedexStrategyCardHTML(pikachuData);
   assert(stratCardHtml.includes('strategy-item-core'), 'Strategy card must have strategy-item-core');

@@ -13027,7 +13027,7 @@
             <img src="${ingData.icon}" class="ing-rank-header-icon" alt="${ingName}">
             <div class="ing-rank-header-text">
               <div class="ing-rank-header-title">${ingName} <span class="ing-rank-header-energy">[${isEN ? 'Energy' : '能量'} ${ingData.energy || ''}]</span></div>
-              <div class="ing-rank-header-sub">${isEN ? 'Key Dish:' : '核心大菜：'} ${dishName} (${dishInfo.need}${isEN ? '/meal' : '顆/餐'}) · ${rankingList.length} ${isEN ? 'Pokémon' : '隻寶可夢'}</div>
+              <div class="ing-rank-header-sub">${isEN ? 'Key Dish:' : '核心大菜：'} ${dishName} (${dishInfo.need}${isEN ? '/meal' : '顆/餐'}) · ${isEN ? 'Ideal Energy (0.45x)' : '滿活力 (0.45x)'} · ${rankingList.length} ${isEN ? 'Pokémon' : '隻寶可夢'}</div>
             </div>
           </div>
           <button type="button" class="ing-rank-close-btn" onclick="window.WikiDB.closeIngredientRankingModal()" title="${isEN ? 'Close' : '關閉'}" aria-label="Close">
@@ -16813,6 +16813,7 @@
           <button type="button" id="ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.toggleLadderSidebar(false)" title="${isEN ? 'Collapse Filters' : '收合側邊欄'}" aria-label="${isEN ? 'Collapse Filters' : '收合側邊欄'}">◀</button>
           <div class="sidebar-title-group">
             <span class="sidebar-title">${isEN ? 'Ladder Filters' : '天梯篩選器'}</span>
+            <span class="sidebar-baseline-tag" style="font-size: 9.5px; color: var(--text-muted); letter-spacing: 0.2px;">${isEN ? 'Baseline: Lv.60 Ideal Energy (0.45x)' : '基準：Lv.60 滿活力 (0.45x)'}</span>
           </div>
           <button type="button" id="ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${isEN ? 'Reset All Filters' : '重設所有條件'}">${isEN ? 'Reset All' : '全部重設'}</button>
         </div>

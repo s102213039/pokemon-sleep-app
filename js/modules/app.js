@@ -3739,7 +3739,7 @@ function updatePokedexSubskillUI() {
       const skName = subskills[idx] || '';
       const isLevelReached = currentLevel >= lvl;
       const isUnreleasedSlot = lvl > 60;
-      const isEffectActive = isLevelReached && !isUnreleasedSlot;
+      const isEffectActive = isLevelReached;
 
       let badgeHtml = '';
       if (!skName) {
@@ -3768,14 +3768,13 @@ function updatePokedexSubskillUI() {
       const buttonClasses = ['box-subskill-slot-btn'];
       if (isActive) buttonClasses.push('active');
       if (!isLevelReached) buttonClasses.push('slot-under-lvl');
-      if (isUnreleasedSlot) buttonClasses.push('slot-unreleased');
       if (skName && !isEffectActive) buttonClasses.push('slot-effect-inactive');
 
       let tooltipText = `Lv.${lvl}`;
       if (!isLevelReached) {
         tooltipText = `Lv.${lvl} (${isEN ? `Requires Lv.${lvl}` : `等級不足：需達 Lv.${lvl} 方可生效`})`;
       } else if (isUnreleasedSlot) {
-        tooltipText = `Lv.${lvl} (${isEN ? 'Simulation only' : '模擬等級'})`;
+        tooltipText = `Lv.${lvl} (${isEN ? 'Simulation Level' : '模擬等級'})`;
       }
 
       return `
@@ -3894,7 +3893,9 @@ function calculatePokedexIngredientFormulas() {
   }
 
   const effectiveIntervalSec = Math.max(600, Math.round(baseIntervalSec * (1 - levelSpeedDiscount) * (1 - speedReduction) * natureSpeedMult * (1 - ribbonDiscount)));
-  const dailyHelps = 86400 / effectiveIntervalSec;
+  const ENERGY_INTERVAL_MULT = 0.45;
+  const idealIntervalSec = Math.round(effectiveIntervalSec * ENERGY_INTERVAL_MULT * 10) / 10;
+  const dailyHelps = 86400 / (effectiveIntervalSec * ENERGY_INTERVAL_MULT);
   const dailyIngDrops = dailyHelps * (finalIngRate / 100);
 
   // 6. 各槽位食材掉落計算
@@ -3996,6 +3997,8 @@ function calculatePokedexIngredientFormulas() {
     finalIngRate,
     baseIntervalSec,
     effectiveIntervalSec,
+    energyIntervalMult: ENERGY_INTERVAL_MULT,
+    idealIntervalSec,
     dailyHelps,
     dailyIngDrops,
     unlockedSlotCount,
@@ -4554,6 +4557,20 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
       <div class="pokedex-formula-header">
         <div style="display:flex;align-items:center;gap:8px;">
           <span class="pokedex-formula-badge font-bold">${t('pokedex.formula_title', '食材產能算法拆解')}</span>
+          <div class="pokedex-energy-help-container" style="position:relative;display:inline-flex;align-items:center;">
+            <button type="button" class="pokedex-formula-help-btn" onclick="window.PokemonApp.togglePokedexEnergyHelp(event)" title="${isEN ? 'Ideal Energy (>=100%) Helping Speed Mechanics' : '滿活力 (活力≥100%) 幫忙間隔 0.45x 說明'}" aria-label="Energy Info">?</button>
+            <div id="pokedex-energy-help-popover" class="pokedex-energy-help-popover" style="display:none;" role="tooltip">
+              <div class="pokedex-energy-help-backdrop" onclick="window.PokemonApp.closePokedexEnergyHelp(event)"></div>
+              <div class="pokedex-energy-help-bubble">
+                <div class="energy-help-title font-bold">${isEN ? 'Ideal Energy Mechanics (0.45x Interval)' : '理想活力 0.45x 係數機制說明'}</div>
+                <div class="energy-help-body">
+                  ${isEN
+                    ? 'In Pokémon Sleep, maintaining team energy at <span class="text-success font-bold">80%~150%</span> (ideal full energy condition) shortens helping interval to <span class="text-accent font-bold">0.45x</span> (approx. <span class="text-accent font-bold">2.22x frequency</span>). The Pokédex header stat displays the base 0-energy interval, while daily yield formulas below apply the ideal 0.45x multiplier for realistic daily production.'
+                    : '在 Pokémon Sleep 實戰中，當寶可夢活力維持在 <span class="text-success font-bold">80%~150%</span>（理想活力 / 滿活力 100%+）時，幫忙間隔會縮短為 <span class="text-accent font-bold">0.45 倍</span>（相當於幫忙頻率與產能提升為 <span class="text-accent font-bold">約 2.22 倍</span>）。上方圖鑑狀態列展示 0 活力原始基礎間隔，此處算法與日產能均採用滿活力 (x0.45) 進行實戰精算。'}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -4568,7 +4585,7 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             </div>
           </div>
           <div class="calc-row-formula">
-            <span class="formula-derive font-mono">${isEN ? '86400s ÷ ' : '86400秒 ÷ '}${f.effectiveIntervalSec}s = <strong class="calc-color-helps">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps/day' : '次/天'}</strong></span>
+            <span class="formula-derive font-mono">${isEN ? '86400s ÷ (' : '86400秒 ÷ ('}${f.effectiveIntervalSec}s × 0.45) = <strong class="calc-color-helps">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps/day' : '次/天'}</strong></span>
           </div>
         </div>
 
@@ -4631,6 +4648,25 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
       </div>
     </div>
   `;
+}
+
+function togglePokedexEnergyHelp(event) {
+  if (event) {
+    if (typeof event.stopPropagation === 'function') event.stopPropagation();
+    if (typeof event.preventDefault === 'function') event.preventDefault();
+  }
+  const popover = document.getElementById('pokedex-energy-help-popover');
+  if (!popover) return;
+  const isVisible = popover.style.display === 'block';
+  popover.style.display = isVisible ? 'none' : 'block';
+}
+
+function closePokedexEnergyHelp(event) {
+  if (event && typeof event.stopPropagation === 'function') {
+    event.stopPropagation();
+  }
+  const popover = document.getElementById('pokedex-energy-help-popover');
+  if (popover) popover.style.display = 'none';
 }
 
 function updatePokedexModalAppraisalLive() {
@@ -4765,6 +4801,8 @@ PokemonApp.renderPokedexRibbonOptionsHTML = renderPokedexRibbonOptionsHTML;
 PokemonApp.renderPokedexStrategyCardHTML = renderPokedexStrategyCardHTML;
 PokemonApp.flashSliderLockedWall = flashSliderLockedWall;
 PokemonApp.togglePokedexSubskillPalette = togglePokedexSubskillPalette;
+PokemonApp.togglePokedexEnergyHelp = togglePokedexEnergyHelp;
+PokemonApp.closePokedexEnergyHelp = closePokedexEnergyHelp;
 PokemonApp.renderPokedexIntervalValue = renderPokedexIntervalValue;
 PokemonApp.renderPokedexCarryValue = renderPokedexCarryValue;
 PokemonApp.renderPokedexIngRateValue = renderPokedexIngRateValue;
@@ -4779,6 +4817,8 @@ if (typeof window !== 'undefined') {
   window.renderPokedexRibbonOptionsHTML = renderPokedexRibbonOptionsHTML;
   window.renderPokedexStrategyCardHTML = renderPokedexStrategyCardHTML;
   window.togglePokedexSubskillPalette = togglePokedexSubskillPalette;
+  window.togglePokedexEnergyHelp = togglePokedexEnergyHelp;
+  window.closePokedexEnergyHelp = closePokedexEnergyHelp;
 }
 
 if (typeof module !== 'undefined' && module.exports) {
