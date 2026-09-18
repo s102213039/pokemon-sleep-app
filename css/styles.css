@@ -24296,6 +24296,19 @@ body.mobile-h5-app.values-active,
   margin-left: 2px;
 }
 
+.berry-pill-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.berry-pill-inline .yield-pill-name {
+  font-size: 12px;
+  color: var(--text-secondary, #64748b);
+}
+
 .pokedex-skill-extra-yield-compact {
   margin-top: 2px;
   padding: 3px 8px;

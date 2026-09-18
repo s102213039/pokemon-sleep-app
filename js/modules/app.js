@@ -5014,40 +5014,30 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
 
       <!-- 單一整合精算卡片 (無冗餘外框，邏輯由間隔頻率 -> 樹果能量 -> 食材產量 -> 技能期望，清晰順暢) -->
       <div class="pokedex-calc-unified-box">
-        <!-- 步驟 1：實質幫忙間隔與日間次數基準 (12h) -->
+        <!-- 步驟 1：實質幫忙間隔與日間次數基準 -->
         <div class="unified-calc-row">
           <div class="calc-row-header">
             <span class="calc-row-label font-bold">${isEN ? 'Helping Speed & Active Helps (12h)' : '實質幫忙間隔與日間次數 (12h)'}</span>
             <div class="calc-row-header-values">
-              <span class="calc-val-main font-bold calc-color-helps">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps/12h' : '次/12h'}</span>
+              <span class="calc-val-main font-bold calc-color-helps">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps' : '次'}</span>
             </div>
           </div>
           <div class="calc-row-formula">
-            <span class="formula-derive font-mono">${isEN ? '43200s (12h) ÷ (' : '43200秒 (12h) ÷ ('}${f.effectiveIntervalSec}s × 0.45) = <strong class="calc-color-helps">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps/12h' : '次/12h'}</strong></span>
+            <span class="formula-derive font-mono">${isEN ? '43200s (12h) ÷ (' : '43200秒 (12h) ÷ ('}${f.effectiveIntervalSec}s × 0.45) = <strong class="calc-color-helps">${f.dailyHelps.toFixed(1)} ${isEN ? 'helps' : '次'}</strong></span>
           </div>
         </div>
 
-        <!-- 步驟 2：樹果產量與單日能量 (12h) -->
+        <!-- 步驟 2：樹果產量與單日能量 -->
         <div class="unified-calc-row">
           <div class="calc-row-header">
             <span class="calc-row-label font-bold">${isEN ? 'Berry Yield & Energy (12h)' : '樹果產量與單日能量 (12h)'}</span>
             <div class="calc-row-header-values">
               <span class="calc-val-main font-bold calc-color-berry">${f.dailyBerryEnergy.toLocaleString()} ${isEN ? 'Strength' : '能量'}</span>
-              <span class="calc-val-sub calc-color-berry-fav" title="${isEN ? 'Favorite Berry (2x Energy)' : '順果喜好樹果 (2x 能量)'}">(${isEN ? 'Fav ' : '順果 '}${f.dailyBerryEnergyFav.toLocaleString()})</span>
             </div>
           </div>
           <div class="calc-row-formula">
-            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyBerryHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-berry font-bold">${f.berriesPerHelp}${isEN ? ' berries' : '顆'}</span> = <strong class="calc-color-berry">${f.dailyBerryCount.toFixed(1)} ${isEN ? 'berries' : '顆'}</strong></span>
-            <span class="formula-op">➜</span>
-            <span class="formula-derive font-mono"><span class="calc-color-berry font-bold">${f.dailyBerryCount.toFixed(1)}${isEN ? ' berries' : '顆'}</span> × <span class="formula-var" title="${isEN ? 'Single Berry Energy' : '單顆能量'}">${f.singleBerryEnergy}</span> = <strong class="calc-color-berry">${f.dailyBerryEnergy.toLocaleString()} ${isEN ? 'Strength' : '能量'}</strong></span>
-          </div>
-          <div class="pokedex-yield-items-grid">
-            <div class="pokedex-yield-pill pokedex-berry-yield-pill">
-              ${f.berryIcon ? `<img src="${f.berryIcon}" class="yield-pill-img" alt="${escapeHtml(f.berryName)}" loading="lazy">` : ''}
-              <span class="yield-pill-name">${escapeHtml(f.berryName)}</span>
-              <span class="yield-pill-count font-bold calc-color-berry">${f.dailyBerryCount.toFixed(1)} ${isEN ? 'berries' : '顆'}</span>
-              <span class="yield-pill-sub font-mono">(${f.singleBerryEnergy} ${isEN ? 'energy/ea' : '能量/顆'})</span>
-            </div>
+            <span class="formula-derive font-mono"><span class="formula-var font-bold">${f.dailyBerryHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-berry font-bold">${f.berriesPerHelp}${isEN ? ' berries' : '顆'}</span> × <span class="formula-var" title="${isEN ? 'Single Berry Energy' : '單顆能量'}">${f.singleBerryEnergy}</span> = <strong class="calc-color-berry">${f.dailyBerryEnergy.toLocaleString()} ${isEN ? 'Strength' : '能量'}</strong></span>
+            <span class="formula-derive font-mono berry-pill-inline">${f.berryIcon ? `<img src="${f.berryIcon}" class="yield-pill-img" alt="${escapeHtml(f.berryName)}" loading="lazy" style="vertical-align:middle;margin-right:2px;">` : ''}<span class="yield-pill-name">${escapeHtml(f.berryName)}</span> <span class="calc-color-berry font-bold">${f.singleBerryEnergy} ${isEN ? 'energy/ea' : '能量/顆'}</span> <span class="calc-color-berry-fav" title="${isEN ? 'Favorite Berry (2x Energy)' : '順果 (喜好樹果 2x 能量)'}">${isEN ? '· Fav ' : '· 順果 '}<span class="font-bold">${f.dailyBerryEnergyFav.toLocaleString()}</span></span></span>
           </div>
         </div>
 
@@ -5068,16 +5058,8 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             <span class="formula-op">=</span>
             <span class="formula-res font-bold calc-color-ing">${f.finalIngRate.toFixed(2)}%</span>
             <span class="formula-op">➜</span>
-            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-ing font-bold">${f.finalIngRate.toFixed(2)}%</span> = <strong class="calc-color-yield">${f.dailyIngDrops.toFixed(1)} ${isEN ? 'drops/12h' : '次掉落/12h'}</strong></span>
-          </div>
-          <div class="pokedex-yield-items-grid">
-            ${f.summaryYieldList.map(item => `
-              <div class="pokedex-yield-pill">
-                ${item.icon ? `<img src="${item.icon}" class="yield-pill-img" alt="${escapeHtml(item.name)}" loading="lazy">` : ''}
-                <span class="yield-pill-name">${escapeHtml(item.name)}</span>
-                <span class="yield-pill-count font-bold calc-color-yield">${item.daily.toFixed(1)}</span>
-              </div>
-            `).join('')}
+            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-ing font-bold">${f.finalIngRate.toFixed(2)}%</span> = <strong class="calc-color-yield">${f.dailyIngDrops.toFixed(1)} ${isEN ? 'drops' : '次掉落'}</strong></span>
+            ${f.summaryYieldList.map(item => `<span class="formula-derive font-mono">${item.icon ? `<img src="${item.icon}" class="yield-pill-img" alt="${escapeHtml(item.name)}" loading="lazy" style="vertical-align:middle;margin-right:2px;">` : ''}<span class="yield-pill-name">${escapeHtml(item.name)}</span> <span class="yield-pill-count font-bold calc-color-yield">${item.daily.toFixed(1)}</span></span>`).join('')}
           </div>
         </div>
 
@@ -5098,14 +5080,9 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             <span class="formula-op">=</span>
             <span class="formula-res font-bold calc-color-skill">${f.finalSkillRate.toFixed(2)}%</span>
             <span class="formula-op">➜</span>
-            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-skill font-bold">${f.finalSkillRate.toFixed(2)}%</span> = <strong class="calc-color-triggers">${f.dailyTriggers.toFixed(2)} ${isEN ? 'times/12h' : '次/12h'}</strong></span>
+            <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-skill font-bold">${f.finalSkillRate.toFixed(2)}%</span> = <strong class="calc-color-triggers">${f.dailyTriggers.toFixed(2)} ${isEN ? 'triggers' : '次'}</strong></span>
+            ${f.mainSkillExtraDaily > 0 ? `<span class="formula-derive font-mono"><span class="badge-skill-extra">${f.mainSkillLabel}</span> <span class="text-skill-extra font-bold text-success">+${f.mainSkillExtraDaily.toFixed(1)} ${isEN ? 'extra ings' : '顆額外食材'}</span></span>` : ''}
           </div>
-          ${f.mainSkillExtraDaily > 0 ? `
-            <div class="calc-row-subskill-extra">
-              <span class="badge-skill-extra">${f.mainSkillLabel}</span>
-              <span class="text-skill-extra font-bold text-success">+${f.mainSkillExtraDaily.toFixed(1)} ${isEN ? 'extra ings/12h' : '顆額外食材/12h'}</span>
-            </div>
-          ` : ''}
         </div>
       </div>
     </div>
