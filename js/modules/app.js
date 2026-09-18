@@ -1224,10 +1224,10 @@ function getHelpButtonData(btn) {
   }
   if (btn.classList.contains('pokedex-formula-help-btn')) {
     return {
-      title: isEN ? 'Ideal Energy Mechanics (0.45x)' : '理想活力 0.45x 係數說明',
+      title: isEN ? 'Ideal Energy (0.45x) & 12h Daytime Baseline' : '理想活力 0.45x 與 12 小時基準說明',
       body: isEN
-        ? 'Under ideal energy (≥80%), helping interval is reduced to <span class="text-accent font-bold">0.45x</span> (~<span class="text-accent font-bold">2.22x yield</span>). Header stat shows 0-energy base; formulas calculate at full energy.'
-        : '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。圖鑑頂部為 0 活力基準，此處算法採滿活力實戰試算。'
+        ? 'Under ideal energy (≥80%), helping interval is reduced to <span class="text-accent font-bold">0.45x</span> (~<span class="text-accent font-bold">2.22x yield</span>).<br>Calculation adopts a <span class="text-accent font-bold">12 hours (43200s)</span> daytime active baseline: general players have 12-16 hours waking time, and Pokémon sleep requires ~8.5h, so 12h represents realistic daytime active output without non-active sleep downtime.'
+        : '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。<br>此處算法採用 <span class="text-accent font-bold">12 小時 (43200秒)</span> 日間活躍基準：一般用戶非睡眠時間約 12-16 小時，且寶可夢睡飽需 8.5 小時，扣除夜間睡眠，以 12 小時試算最符合日間實際產能期望。'
     };
   }
   if (btn.classList.contains('ladder-help-icon-btn')) {
@@ -1251,8 +1251,32 @@ function showGlobalTooltip(anchorEl, title, body, tag) {
     document.body.appendChild(tooltipEl);
   }
   if (!tooltipEl) return;
+
+  if (currentGlobalTooltipAnchor && currentGlobalTooltipAnchor !== anchorEl) {
+    if (currentGlobalTooltipAnchor.classList) {
+      currentGlobalTooltipAnchor.classList.remove('active');
+    }
+    if (typeof currentGlobalTooltipAnchor.setAttribute === 'function') {
+      currentGlobalTooltipAnchor.setAttribute('aria-expanded', 'false');
+    }
+    if (typeof currentGlobalTooltipAnchor.blur === 'function') {
+      currentGlobalTooltipAnchor.blur();
+    }
+    if (currentGlobalTooltipAnchor.dataset && currentGlobalTooltipAnchor.dataset.nativeTitle) {
+      currentGlobalTooltipAnchor.setAttribute('title', currentGlobalTooltipAnchor.dataset.nativeTitle);
+      delete currentGlobalTooltipAnchor.dataset.nativeTitle;
+    }
+  }
+
   currentGlobalTooltipAnchor = anchorEl;
   lastGlobalTooltipShownTime = Date.now();
+
+  if (anchorEl.classList) {
+    anchorEl.classList.add('active');
+  }
+  if (typeof anchorEl.setAttribute === 'function') {
+    anchorEl.setAttribute('aria-expanded', 'true');
+  }
 
   if (anchorEl.getAttribute && anchorEl.getAttribute('title')) {
     anchorEl.dataset.nativeTitle = anchorEl.getAttribute('title');
@@ -1296,9 +1320,20 @@ function showGlobalTooltip(anchorEl, title, body, tag) {
 
 function hideGlobalTooltip() {
   isTooltipPinned = false;
-  if (currentGlobalTooltipAnchor && currentGlobalTooltipAnchor.dataset && currentGlobalTooltipAnchor.dataset.nativeTitle) {
-    currentGlobalTooltipAnchor.setAttribute('title', currentGlobalTooltipAnchor.dataset.nativeTitle);
-    delete currentGlobalTooltipAnchor.dataset.nativeTitle;
+  if (currentGlobalTooltipAnchor) {
+    if (currentGlobalTooltipAnchor.classList) {
+      currentGlobalTooltipAnchor.classList.remove('active');
+    }
+    if (typeof currentGlobalTooltipAnchor.setAttribute === 'function') {
+      currentGlobalTooltipAnchor.setAttribute('aria-expanded', 'false');
+    }
+    if (typeof currentGlobalTooltipAnchor.blur === 'function') {
+      currentGlobalTooltipAnchor.blur();
+    }
+    if (currentGlobalTooltipAnchor.dataset && currentGlobalTooltipAnchor.dataset.nativeTitle) {
+      currentGlobalTooltipAnchor.setAttribute('title', currentGlobalTooltipAnchor.dataset.nativeTitle);
+      delete currentGlobalTooltipAnchor.dataset.nativeTitle;
+    }
   }
   currentGlobalTooltipAnchor = null;
   if (typeof document !== 'undefined') {
@@ -1314,6 +1349,10 @@ function toggleGlobalTooltip(anchorEl, title, body, tag) {
   if (!anchorEl || typeof document === 'undefined') return;
   const tooltipEl = document.getElementById('global-skill-tooltip');
   if (tooltipEl && tooltipEl.classList.contains('visible') && currentGlobalTooltipAnchor === anchorEl) {
+    if (Date.now() - lastGlobalTooltipShownTime < 250) {
+      isTooltipPinned = true;
+      return;
+    }
     if (isTooltipPinned) {
       hideGlobalTooltip();
       return;
@@ -1332,6 +1371,19 @@ function dismissAllFloatingTooltips() {
   }
   if (typeof window !== 'undefined' && window.WikiDB && typeof window.WikiDB.closeLadderEnergyHelp === 'function') {
     window.WikiDB.closeLadderEnergyHelp();
+  }
+  if (typeof document !== 'undefined') {
+    const helpButtons = document.querySelectorAll('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .special-skill-badge');
+    helpButtons.forEach(btn => {
+      btn.classList.remove('active');
+      btn.setAttribute('aria-expanded', 'false');
+      if (typeof btn.blur === 'function') {
+        btn.blur();
+      }
+    });
+    if (document.activeElement && typeof document.activeElement.blur === 'function' && document.activeElement !== document.body) {
+      document.activeElement.blur();
+    }
   }
 }
 
@@ -3135,6 +3187,17 @@ if (typeof document !== 'undefined') {
               toggleGlobalTooltip(badge, titleName, detail);
               return;
             }
+
+            const helpBtn = e.target.closest('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn');
+            if (helpBtn) {
+              didHandleTouchTap = true;
+              if (e.cancelable) e.preventDefault();
+              const help = getHelpButtonData(helpBtn);
+              if (help) {
+                toggleGlobalTooltip(helpBtn, help.title, help.body);
+              }
+              return;
+            }
           }
         }
       }, { passive: false });
@@ -3221,7 +3284,7 @@ if (typeof document !== 'undefined') {
         if (e.touches && e.touches[0]) {
           const dx = Math.abs(e.touches[0].clientX - touchStartX);
           const dy = Math.abs(e.touches[0].clientY - touchStartY);
-          if (dx > 20 || dy > 20) {
+          if (dx > 10 || dy > 10) {
             dismissAllFloatingTooltips();
           }
         }
@@ -3649,6 +3712,7 @@ function openPokemonDetailModal(pokemonId) {
 }
 
 function closePokemonDetailModal() {
+  dismissAllFloatingTooltips();
   const modalEl = document.getElementById('pokedex-detail-modal');
   if (modalEl) {
     modalEl.style.display = 'none';

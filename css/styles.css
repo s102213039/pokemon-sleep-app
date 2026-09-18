@@ -14335,12 +14335,22 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   display: inline-flex;
 }
 
-.ladder-help-icon-btn:hover {
-  background: #a855f7;
-  color: #ffffff;
-  border-color: #a855f7;
-  box-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
+.ladder-help-icon-btn.active {
+  background: #a855f7 !important;
+  color: #ffffff !important;
+  border-color: #a855f7 !important;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.5) !important;
   transform: scale(1.08);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ladder-help-icon-btn:hover {
+    background: #a855f7;
+    color: #ffffff;
+    border-color: #a855f7;
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
+    transform: scale(1.08);
+  }
 }
 
 .ladder-help-icon-btn:active {
@@ -14353,11 +14363,21 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   color: #7e22ce;
 }
 
-[data-theme="dawn"] .ladder-help-icon-btn:hover {
-  background: #7e22ce;
-  color: #ffffff;
-  border-color: #7e22ce;
-  box-shadow: 0 0 8px rgba(126, 34, 206, 0.4);
+[data-theme="dawn"] .ladder-help-icon-btn.active {
+  background: #7e22ce !important;
+  color: #ffffff !important;
+  border-color: #7e22ce !important;
+  box-shadow: 0 0 8px rgba(126, 34, 206, 0.4) !important;
+  transform: scale(1.08);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="dawn"] .ladder-help-icon-btn:hover {
+    background: #7e22ce;
+    color: #ffffff;
+    border-color: #7e22ce;
+    box-shadow: 0 0 8px rgba(126, 34, 206, 0.4);
+  }
 }
 
 [data-theme="emerald"] .ladder-help-icon-btn {
@@ -23619,13 +23639,32 @@ body.mobile-h5-app.values-active,
   flex-shrink: 0;
 }
 
-.pokedex-formula-help-btn:hover,
-.ladder-formula-help-btn:hover {
-  background: #0284c7;
-  color: #ffffff;
-  border-color: #0284c7;
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+.pokedex-formula-help-btn:focus,
+.ladder-formula-help-btn:focus,
+.pokedex-formula-help-btn:focus-visible,
+.ladder-formula-help-btn:focus-visible {
+  outline: none !important;
+  box-shadow: none;
+}
+
+.pokedex-formula-help-btn.active,
+.ladder-formula-help-btn.active {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5) !important;
   transform: scale(1.08);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pokedex-formula-help-btn:hover,
+  .ladder-formula-help-btn:hover {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #0284c7;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+    transform: scale(1.08);
+  }
 }
 
 .pokedex-formula-help-btn:active,
@@ -23791,14 +23830,27 @@ body.mobile-h5-app.values-active,
   color: #0284c7;
 }
 
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn:hover,
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-formula-help-btn:hover,
-[data-theme="midnight"][data-theme-inverted="true"] .pokedex-formula-help-btn:hover,
-[data-theme="midnight"][data-theme-inverted="true"] .ladder-formula-help-btn:hover {
-  background: #0284c7;
-  color: #ffffff;
-  border-color: #0284c7;
-  box-shadow: 0 0 8px rgba(2, 132, 199, 0.35);
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn.active,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-formula-help-btn.active,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-formula-help-btn.active,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-formula-help-btn.active {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 8px rgba(2, 132, 199, 0.35) !important;
+  transform: scale(1.08);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn:hover,
+  [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-formula-help-btn:hover,
+  [data-theme="midnight"][data-theme-inverted="true"] .pokedex-formula-help-btn:hover,
+  [data-theme="midnight"][data-theme-inverted="true"] .ladder-formula-help-btn:hover {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #0284c7;
+    box-shadow: 0 0 8px rgba(2, 132, 199, 0.35);
+  }
 }
 
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn,
@@ -23808,12 +23860,23 @@ body.mobile-h5-app.values-active,
   color: #059669;
 }
 
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn:hover,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-formula-help-btn:hover {
-  background: #059669;
-  color: #ffffff;
-  border-color: #059669;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.35);
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn.active,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-formula-help-btn.active {
+  background: #059669 !important;
+  color: #ffffff !important;
+  border-color: #059669 !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.35) !important;
+  transform: scale(1.08);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn:hover,
+  [data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-formula-help-btn:hover {
+    background: #059669;
+    color: #ffffff;
+    border-color: #059669;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.35);
+  }
 }
 
 [data-theme="onyx"][data-theme-inverted="true"] .pokedex-formula-help-btn,
@@ -23823,12 +23886,23 @@ body.mobile-h5-app.values-active,
   color: #18181b;
 }
 
-[data-theme="onyx"][data-theme-inverted="true"] .pokedex-formula-help-btn:hover,
-[data-theme="onyx"][data-theme-inverted="true"] .ladder-formula-help-btn:hover {
-  background: #18181b;
-  color: #ffffff;
-  border-color: #18181b;
-  box-shadow: 0 0 8px rgba(24, 24, 27, 0.35);
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-formula-help-btn.active,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-formula-help-btn.active {
+  background: #18181b !important;
+  color: #ffffff !important;
+  border-color: #18181b !important;
+  box-shadow: 0 0 8px rgba(24, 24, 27, 0.35) !important;
+  transform: scale(1.08);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="onyx"][data-theme-inverted="true"] .pokedex-formula-help-btn:hover,
+  [data-theme="onyx"][data-theme-inverted="true"] .ladder-formula-help-btn:hover {
+    background: #18181b;
+    color: #ffffff;
+    border-color: #18181b;
+    box-shadow: 0 0 8px rgba(24, 24, 27, 0.35);
+  }
 }
 
 /* 算法拆解跨步驟數值色彩連動系統 (Cross-Step Value Lineage) */
@@ -25311,12 +25385,23 @@ body.mobile-h5-app.values-active,
   color: #e2e8f0 !important;
 }
 
-[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn:hover,
-[data-theme="onyx"]:not([data-theme-inverted="true"]) .ladder-formula-help-btn:hover {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn.active,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .ladder-formula-help-btn.active {
   background: rgba(203, 213, 225, 0.25) !important;
   border-color: #cbd5e1 !important;
   color: #ffffff !important;
   box-shadow: 0 0 8px rgba(203, 213, 225, 0.35) !important;
+  transform: scale(1.08);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn:hover,
+  [data-theme="onyx"]:not([data-theme-inverted="true"]) .ladder-formula-help-btn:hover {
+    background: rgba(203, 213, 225, 0.25) !important;
+    border-color: #cbd5e1 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 8px rgba(203, 213, 225, 0.35) !important;
+  }
 }
 
 [data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-energy-help-bubble,

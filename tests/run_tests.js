@@ -7045,6 +7045,125 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(stylesCss.includes('background: rgba(15, 23, 42, 0.82);'), 'global-skill-tooltip must use translucent frosted glass background rgba(15, 23, 42, 0.82)');
   });
 
+  // Test 148: Help Button State Restoration & Zero-Lag First-Tap Reopening Verification
+  test('Tier 4 - Real-World Application Scenarios', 'Help Button State Restoration & Zero-Lag First-Tap Reopening Verification', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const appJs = fs.readFileSync(path.join(__dirname, '../js/modules/app.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(__dirname, '../css/styles.css'), 'utf8');
+
+    // 1. dismissAllFloatingTooltips must reset all help buttons and blur activeElement
+    assert(appJs.includes('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .special-skill-badge'), 'dismissAllFloatingTooltips must query all formula and skill buttons');
+    assert(appJs.includes("btn.classList.remove('active')"), 'dismissAllFloatingTooltips must remove active class from buttons');
+    assert(appJs.includes("btn.setAttribute('aria-expanded', 'false')"), 'dismissAllFloatingTooltips must set aria-expanded="false"');
+    assert(appJs.includes('document.activeElement.blur()'), 'dismissAllFloatingTooltips must blur document.activeElement');
+
+    // 2. showGlobalTooltip must activate anchorEl
+    assert(appJs.includes("anchorEl.classList.add('active')"), 'showGlobalTooltip must add active class to anchorEl');
+    assert(appJs.includes("anchorEl.setAttribute('aria-expanded', 'true')"), 'showGlobalTooltip must set aria-expanded="true" on anchorEl');
+
+    // 3. hideGlobalTooltip must deactivate currentGlobalTooltipAnchor
+    assert(appJs.includes("currentGlobalTooltipAnchor.classList.remove('active')"), 'hideGlobalTooltip must remove active class from anchor');
+    assert(appJs.includes("currentGlobalTooltipAnchor.blur()"), 'hideGlobalTooltip must blur currentGlobalTooltipAnchor');
+
+    // 4. initSkillTooltips must handle help buttons on touchend for 0ms instant mobile tap
+    assert(appJs.includes("e.target.closest('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn')"), 'touchend must handle pokedex and ladder help buttons');
+    assert(appJs.includes('toggleGlobalTooltip(helpBtn, help.title, help.body)'), 'touchend must invoke toggleGlobalTooltip directly for helpBtn');
+
+    // 5. touchmove threshold must be 10px
+    assert(appJs.includes('dx > 10 || dy > 10'), 'touchmove threshold must be 10px for responsive slide dismiss');
+
+    // 6. closePokemonDetailModal must dismiss all floating tooltips
+    assert(appJs.includes('function closePokemonDetailModal() {\n  dismissAllFloatingTooltips();'), 'closePokemonDetailModal must call dismissAllFloatingTooltips');
+
+    // 7. CSS active classes and pointer fine media queries
+    assert(stylesCss.includes('.pokedex-formula-help-btn.active'), 'styles.css must style .pokedex-formula-help-btn.active');
+    assert(stylesCss.includes('.ladder-formula-help-btn.active'), 'styles.css must style .ladder-formula-help-btn.active');
+    assert(stylesCss.includes('.ladder-help-icon-btn.active'), 'styles.css must style .ladder-help-icon-btn.active');
+    assert(stylesCss.includes('@media (hover: hover) and (pointer: fine)'), 'styles.css must wrap help button hover rules with pointer fine media query');
+
+    // 8. Functional Mock Test
+    const mockBtn = {
+      classList: {
+        _classes: new Set(),
+        add(c) { this._classes.add(c); },
+        remove(c) { this._classes.delete(c); },
+        contains(c) { return this._classes.has(c); }
+      },
+      _attrs: {},
+      setAttribute(k, v) { this._attrs[k] = String(v); },
+      getAttribute(k) { return this._attrs[k] || null; },
+      removeAttribute(k) { delete this._attrs[k]; },
+      blurred: false,
+      blur() { this.blurred = true; },
+      getBoundingClientRect() {
+        return { top: 100, left: 100, width: 20, height: 20 };
+      }
+    };
+
+    // Load functions into isolated context
+    const vm = require('vm');
+    const sandbox = {
+      document: {
+        body: { appendChild() {} },
+        createElement(tag) {
+          return {
+            id: '',
+            className: '',
+            style: {},
+            classList: {
+              _classes: new Set(),
+              add(c) { this._classes.add(c); },
+              remove(c) { this._classes.delete(c); },
+              contains(c) { return this._classes.has(c); }
+            },
+            innerHTML: '',
+            getBoundingClientRect() { return { width: 250, height: 100 }; }
+          };
+        },
+        getElementById(id) {
+          return this._elements && this._elements[id] ? this._elements[id] : null;
+        },
+        querySelectorAll(sel) {
+          return [mockBtn];
+        },
+        activeElement: mockBtn
+      },
+      window: { innerWidth: 1000, innerHeight: 800 },
+      Date
+    };
+    sandbox.window.document = sandbox.document;
+    sandbox.document._elements = {};
+
+    const scriptCode = `
+      let currentGlobalTooltipAnchor = null;
+      let lastGlobalTooltipShownTime = 0;
+      let isTooltipPinned = false;
+
+      ${appJs.substring(appJs.indexOf('function showGlobalTooltip'), appJs.indexOf('if (typeof window !== \'undefined\') {\n  window.showGlobalTooltip'))}
+    `;
+
+    vm.createContext(sandbox);
+    vm.runInContext(scriptCode, sandbox);
+
+    // Step A: Show tooltip on button
+    sandbox.showGlobalTooltip(mockBtn, 'Test Title', 'Test Body');
+    assert(mockBtn.classList.contains('active'), 'mockBtn must have .active after showGlobalTooltip');
+    assert(mockBtn.getAttribute('aria-expanded') === 'true', 'mockBtn aria-expanded must be true');
+
+    // Step B: User slides/scrolls -> dismissAllFloatingTooltips
+    mockBtn.blurred = false;
+    sandbox.dismissAllFloatingTooltips();
+    assert(!mockBtn.classList.contains('active'), 'mockBtn must not have .active after dismissAllFloatingTooltips');
+    assert(mockBtn.getAttribute('aria-expanded') === 'false', 'mockBtn aria-expanded must be false');
+    assert(mockBtn.blurred === true, 'mockBtn must have been blurred after dismissAllFloatingTooltips');
+
+    // Step C: Next tap on mockBtn -> toggleGlobalTooltip must open on FIRST TAP
+    sandbox.toggleGlobalTooltip(mockBtn, 'Test Title', 'Test Body');
+    assert(mockBtn.classList.contains('active'), 'mockBtn must immediately open and become active on first tap after scroll');
+    assert(mockBtn.getAttribute('aria-expanded') === 'true', 'mockBtn must have aria-expanded="true" after first tap');
+  });
+
 // Final Summary Output
 console.log('\n======================================================');
 console.log('                   Test Results Summary');
