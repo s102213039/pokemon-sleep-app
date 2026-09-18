@@ -4674,11 +4674,8 @@ function renderPokedexStrategyCardHTML(pkm) {
   };
 
   return `
+    <div class="strategy-card-title pokedex-formula-badge font-bold">[★] ${roleTitle}</div>
     <div class="pokedex-strategy-card">
-      <div class="strategy-card-header">
-        <span class="strategy-card-title font-bold">[★] ${roleTitle}</span>
-        <span class="strategy-card-badge">${isEN ? 'Strategy Guide' : '最佳配置指南'}</span>
-      </div>
       <div class="strategy-details-grid">
         <div class="strategy-item strategy-item-core">
           <span class="strategy-k strategy-core-k">[★] ${isEN ? 'Core Skill' : '核心神技'}：</span>
@@ -5037,7 +5034,10 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
           </div>
           <div class="calc-row-formula">
             <span class="formula-derive font-mono"><span class="formula-var font-bold">${f.dailyBerryHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-berry font-bold">${f.berriesPerHelp}${isEN ? ' berries' : '顆'}</span> × <span class="formula-var" title="${isEN ? 'Single Berry Energy' : '單顆能量'}">${f.singleBerryEnergy}</span> = <strong class="calc-color-berry">${f.dailyBerryEnergy.toLocaleString()} ${isEN ? 'Strength' : '能量'}</strong></span>
-            <span class="formula-derive font-mono berry-pill-inline">${f.berryIcon ? `<img src="${f.berryIcon}" class="yield-pill-img" alt="${escapeHtml(f.berryName)}" loading="lazy" style="vertical-align:middle;margin-right:2px;">` : ''}<span class="yield-pill-name">${escapeHtml(f.berryName)}</span> <span class="calc-color-berry font-bold">${f.singleBerryEnergy} ${isEN ? 'energy/ea' : '能量/顆'}</span> <span class="calc-color-berry-fav" title="${isEN ? 'Favorite Berry (2x Energy)' : '順果 (喜好樹果 2x 能量)'}">${isEN ? '· Fav ' : '· 順果 '}<span class="font-bold">${f.dailyBerryEnergyFav.toLocaleString()}</span></span></span>
+          </div>
+          <div class="berry-row-detail font-mono">
+            <span class="berry-detail-left">${f.berryIcon ? `<img src="${f.berryIcon}" class="yield-pill-img" alt="${escapeHtml(f.berryName)}" loading="lazy" style="vertical-align:middle;margin-right:2px;">` : ''}<span class="yield-pill-name">${escapeHtml(f.berryName)}</span> <span class="calc-color-berry font-bold">${f.singleBerryEnergy} ${isEN ? 'energy/ea' : '能量/顆'}</span></span>
+            <span class="calc-color-berry-fav font-bold" title="${isEN ? 'Favorite Berry (2x Energy)' : '順果 (喜好樹果 2x 能量)'}">${isEN ? 'Fav ' : '順果 '}${f.dailyBerryEnergyFav.toLocaleString()} ${isEN ? 'Strength' : '能量'}</span>
           </div>
         </div>
 
@@ -5059,7 +5059,15 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             <span class="formula-res font-bold calc-color-ing">${f.finalIngRate.toFixed(2)}%</span>
             <span class="formula-op">➜</span>
             <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-ing font-bold">${f.finalIngRate.toFixed(2)}%</span> = <strong class="calc-color-yield">${f.dailyIngDrops.toFixed(1)} ${isEN ? 'drops' : '次掉落'}</strong></span>
-            ${f.summaryYieldList.map(item => `<span class="formula-derive font-mono">${item.icon ? `<img src="${item.icon}" class="yield-pill-img" alt="${escapeHtml(item.name)}" loading="lazy" style="vertical-align:middle;margin-right:2px;">` : ''}<span class="yield-pill-name">${escapeHtml(item.name)}</span> <span class="yield-pill-count font-bold calc-color-yield">${item.daily.toFixed(1)}</span></span>`).join('')}
+          </div>
+          <div class="pokedex-yield-items-grid">
+            ${f.summaryYieldList.map(item => `
+              <div class="pokedex-yield-pill">
+                ${item.icon ? `<img src="${item.icon}" class="yield-pill-img" alt="${escapeHtml(item.name)}" loading="lazy">` : ''}
+                <span class="yield-pill-name">${escapeHtml(item.name)}</span>
+                <span class="yield-pill-count font-bold calc-color-yield">${item.daily.toFixed(1)}</span>
+              </div>
+            `).join('')}
           </div>
         </div>
 
@@ -5081,8 +5089,13 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             <span class="formula-res font-bold calc-color-skill">${f.finalSkillRate.toFixed(2)}%</span>
             <span class="formula-op">➜</span>
             <span class="formula-derive font-mono"><span class="calc-color-helps font-bold">${f.dailyHelps.toFixed(1)}${isEN ? ' helps' : '次'}</span> × <span class="calc-color-skill font-bold">${f.finalSkillRate.toFixed(2)}%</span> = <strong class="calc-color-triggers">${f.dailyTriggers.toFixed(2)} ${isEN ? 'triggers' : '次'}</strong></span>
-            ${f.mainSkillExtraDaily > 0 ? `<span class="formula-derive font-mono"><span class="badge-skill-extra">${f.mainSkillLabel}</span> <span class="text-skill-extra font-bold text-success">+${f.mainSkillExtraDaily.toFixed(1)} ${isEN ? 'extra ings' : '顆額外食材'}</span></span>` : ''}
           </div>
+          ${f.mainSkillExtraDaily > 0 ? `
+            <div class="calc-row-subskill-extra">
+              <span class="badge-skill-extra">${f.mainSkillLabel}</span>
+              <span class="text-skill-extra font-bold text-success">+${f.mainSkillExtraDaily.toFixed(1)} ${isEN ? 'extra ings' : '顆額外食材'}</span>
+            </div>
+          ` : ''}
         </div>
       </div>
     </div>

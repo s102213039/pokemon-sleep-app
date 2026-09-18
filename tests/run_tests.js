@@ -7212,7 +7212,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(appJs.includes("'Berry Yield & Energy (12h)'"), 'renderPokedexFormulaBreakdownHTML must include EN berry step header');
     assert(appJs.includes("'樹果產量與單日能量 (12h)'"), 'renderPokedexFormulaBreakdownHTML must include ZH berry step header');
     assert(appJs.includes('calc-color-berry'), 'renderPokedexFormulaBreakdownHTML must use calc-color-berry class');
-    assert(appJs.includes('berry-pill-inline'), 'renderPokedexFormulaBreakdownHTML must use berry-pill-inline for compact berry info row');
+    assert(appJs.includes('berry-row-detail'), 'renderPokedexFormulaBreakdownHTML must use berry-row-detail for space-between energy row');
+    assert(appJs.includes('berry-detail-left'), 'renderPokedexFormulaBreakdownHTML must use berry-detail-left');
     assert(appJs.includes('dailyBerryEnergyFav.toLocaleString'), 'renderPokedexFormulaBreakdownHTML must display dailyBerryEnergyFav');
 
 
@@ -7221,12 +7222,13 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(i18nJs.includes("'pokedex.formula_title': '產能算法精算拆解'"), 'i18n zh-TW formula_title must be 產能算法精算拆解');
     assert(i18nJs.includes("'pokedex.formula_title': 'Yield Formula Breakdown'"), 'i18n en-US formula_title must be Yield Formula Breakdown');
 
-    // 8. Verify strategy-card-desc element removed from renderPokedexStrategyCardHTML
+    // 8. Verify strategy-card-desc and strategy-card-badge removed, title placed outside frame
     const strategyFnStart = appJs.indexOf('function renderPokedexStrategyCardHTML');
     const strategyFnEnd = appJs.indexOf('function renderPokedexDetailModalContent');
     const strategyFnBody = appJs.substring(strategyFnStart, strategyFnEnd);
     assert(!strategyFnBody.includes('strategy-card-desc'), 'renderPokedexStrategyCardHTML must NOT render strategy-card-desc (removed per user request)');
-    assert(strategyFnBody.includes('strategy-card-header'), 'renderPokedexStrategyCardHTML must still render strategy-card-header');
+    assert(!strategyFnBody.includes('strategy-card-badge'), 'renderPokedexStrategyCardHTML must NOT render strategy-card-badge (removed per user request)');
+    assert(strategyFnBody.includes('strategy-card-title pokedex-formula-badge font-bold'), 'renderPokedexStrategyCardHTML must render strategy-card-title with pokedex-formula-badge outside the card');
     assert(strategyFnBody.includes('strategy-details-grid'), 'renderPokedexStrategyCardHTML must still render strategy-details-grid');
 
     // 9. Verify modal height auto-adaptation in CSS (narrowed to .pokedex-modal-dialog block)
@@ -7236,9 +7238,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(stylesCss.includes('max-height: min(880px, 90vh);'), 'CSS must have max-height: min(880px, 90vh)');
     assert(!pdxBlock2.includes('height: 88vh'), 'CSS .pokedex-modal-dialog must NOT use fixed height: 88vh');
 
-    // 10. Verify calc-color-berry CSS class defined and berry-pill-inline style present
+    // 10. Verify calc-color-berry CSS class defined and berry-row-detail style present
     assert(stylesCss.includes('.calc-color-berry'), 'styles.css must define .calc-color-berry');
-    assert(stylesCss.includes('berry-pill-inline'), 'styles.css must define .berry-pill-inline for inline berry info');
+    assert(stylesCss.includes('berry-row-detail'), 'styles.css must define .berry-row-detail for space-between layout');
+    assert(stylesCss.includes('.strategy-card-title {'), 'styles.css must define .strategy-card-title');
   });
 
 
