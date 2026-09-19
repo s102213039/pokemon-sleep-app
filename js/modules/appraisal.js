@@ -96,18 +96,8 @@
 
   /* ─── 技能型寶可夢是否適配「樹果數量S」判定 ─────────────────── */
   function isBfsSkillSpecialist(pkm) {
-    if (!pkm) return false;
-    const spec = pkm.specialty || '';
-    if (!spec.includes('技能') && spec !== 'Skills') return false;
-
-    const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
-
-    // 1. 樹果遽增 / 樹果領域類（蜥蜴王家族, 烈焰猴家族, 勇士雄鷹家族, 謎擬Q, 超夢, 拉帝歐斯等）——主技能與產果直接綁定
-    if (skill.includes('樹果遽增') || skill.includes('樹果領域') || skill.includes('Berry Burst') || skill.includes('畫皮') || skill.includes('流星群') || skill.includes('精神擊破')) return true;
-
-    // 2. 傳說神獸幫手加速 / 支援類（雷公, 炎帝, 水君, 風速狗, 雷伊布, 艾路雷朵）——白值極高且技能放大全隊產量
-    if (skill.includes('幫手加速') || skill.includes('幫手支援') || skill.includes('Helper Boost') || skill.includes('Extra Helpful')) return true;
-
+    // 經社群深入研究與玩家驗證，所有技能型寶可夢核心定位皆為追求主技能發動。
+    // 滿包進入偷吃樹果狀態將徹底阻斷技能判定，因此標準神配一律回歸純技能發動專精。
     return false;
   }
 
@@ -119,6 +109,16 @@
     const healerNames = ['沙奈朵', '仙子伊布', '胖可丁', '巴布土撥', '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥',
                          'Gardevoir', 'Sylveon', 'Wigglytuff', 'Pawmot', 'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo'];
     return healerNames.some(h => name.includes(h));
+  }
+
+  function isHelperBoostSkillSpecialist(pkm) {
+    if (!pkm) return false;
+    const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
+    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+    if (skill.includes('幫手加速') || skill.includes('幫手支援') || skill.includes('Helper Boost') || skill.includes('Extra Helpful')) return true;
+    const beastNames = ['雷公', '炎帝', '水君', '風速狗', '雷伊布', '艾路雷朵',
+                        'Raikou', 'Entei', 'Suicune', 'Arcanine', 'Jolteon', 'Gallade'];
+    return beastNames.some(b => name.includes(b));
   }
 
   function isChargeStrengthSkillSpecialist(pkm) {
@@ -568,10 +568,11 @@
     const pros = [];
     const cons = [];
 
-    const hasBFSInTotal = activeSubskills.indexOf('樹果數量S') !== -1;
+    const hasBFSInTotal = activeSubskills.indexOf('樹果數量S') !== -1 || activeSubskills.indexOf('Berry Finding S') !== -1;
     const pkmName = pkmData.name_cn || (pkmData.name && pkmData.name.cn) || pkmData.name_en || pkmData.name || '';
 
     const isHealer = isHealerSkillSpecialist(pkmData);
+    const isHelper = isHelperBoostSkillSpecialist(pkmData);
     const isCharge = isChargeStrengthSkillSpecialist(pkmData);
 
     if (hasBFSInTotal) {
@@ -579,6 +580,10 @@
         pros.push(isEN
           ? '[★] Equipped with "Berry Finding S", perfectly unlocking dual-specialist berry & skill power!'
           : '[★] 具備已解鎖「樹果數量S」，完美契合樹果/加速型技能之雙專精頂標戰力！');
+      } else if (isHelper) {
+        cons.push(isEN
+          ? '[!] Helper Boost base proc rate is extremely low (~2%); "Berry Finding S" causes rapid bag overflow and blocks main skill checks, crowding out trigger subskills.'
+          : '[!] 傳說神獸「幫手加速」基礎機率極低（約2%），持有「樹果數量S」會迅速塞滿背包並阻斷主技能判定，嚴重排擠關鍵技能機率與持有上限。');
       } else if (isHealer) {
         cons.push(isEN
           ? '[!] Healer relies on all-day skill procs; "Berry Finding S" causes rapid bag overflow and blocks healing procs (especially overnight).'
@@ -1398,6 +1403,7 @@
   window.AppraisalLab = {
     isBfsSkillSpecialist: isBfsSkillSpecialist,
     isHealerSkillSpecialist: isHealerSkillSpecialist,
+    isHelperBoostSkillSpecialist: isHelperBoostSkillSpecialist,
     isChargeStrengthSkillSpecialist: isChargeStrengthSkillSpecialist,
     evaluatePokemon: evaluatePokemon,
     getRemainingEvolutions: getRemainingEvolutions,

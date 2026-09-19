@@ -7257,9 +7257,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
   // Test 150: God Presets and Appraisal Engine for Berry Speed Natures and BFS Skill Specialists
   // ----------------------------------------------------
   test('Tier 4 - Real-World Application Scenarios', 'God Presets and Appraisal for Berry Speed Natures and BFS Skill Specialists', () => {
-    // 1. Verify isBfsSkillSpecialist, isHealerSkillSpecialist, and isChargeStrengthSkillSpecialist
+    // 1. Verify isBfsSkillSpecialist, isHealerSkillSpecialist, isHelperBoostSkillSpecialist, and isChargeStrengthSkillSpecialist
     assert(typeof PokemonApp.isBfsSkillSpecialist === 'function', 'PokemonApp.isBfsSkillSpecialist must be a function');
     assert(typeof PokemonApp.isHealerSkillSpecialist === 'function', 'PokemonApp.isHealerSkillSpecialist must be a function');
+    assert(typeof PokemonApp.isHelperBoostSkillSpecialist === 'function', 'PokemonApp.isHelperBoostSkillSpecialist must be a function');
     assert(typeof PokemonApp.isChargeStrengthSkillSpecialist === 'function', 'PokemonApp.isChargeStrengthSkillSpecialist must be a function');
     
     // Load appraisal.js in isolated vm context
@@ -7270,14 +7271,18 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     vm.runInContext(appraisalCode, appCtx);
     assert(typeof appCtx.AppraisalLab.isBfsSkillSpecialist === 'function', 'AppraisalLab.isBfsSkillSpecialist must be exported');
     assert(typeof appCtx.AppraisalLab.isHealerSkillSpecialist === 'function', 'AppraisalLab.isHealerSkillSpecialist must be exported');
+    assert(typeof appCtx.AppraisalLab.isHelperBoostSkillSpecialist === 'function', 'AppraisalLab.isHelperBoostSkillSpecialist must be exported');
     assert(typeof appCtx.AppraisalLab.isChargeStrengthSkillSpecialist === 'function', 'AppraisalLab.isChargeStrengthSkillSpecialist must be exported');
 
-    // Undisputed BFS-suited Skill Pokemon: Mimikyu (Berry Burst), Raikou (Helper Boost)
-    const mimikyu = { name_cn: '謎擬Q', specialty: '技能', main_skill: '畫皮（樹果遽增）' };
+    // Legendary Beasts & Helper Boost: Raikou, Entei, Suicune - strictly pure skill, NOT BFS
     const raikou = { name_cn: '雷公', specialty: '技能', main_skill: '幫手加速（電）' };
-    assert(PokemonApp.isBfsSkillSpecialist(mimikyu) === true, 'Mimikyu must be classified as BFS-suited Skill specialist');
-    assert(PokemonApp.isBfsSkillSpecialist(raikou) === true, 'Raikou must be classified as BFS-suited Skill specialist');
-    assert(appCtx.AppraisalLab.isBfsSkillSpecialist(mimikyu) === true, 'AppraisalLab must classify Mimikyu as BFS-suited');
+    const entei = { name_cn: '炎帝', specialty: '技能', main_skill: '幫手加速（火）' };
+    const suicune = { name_cn: '水君', specialty: '技能', main_skill: '幫手加速（水）' };
+    assert(PokemonApp.isBfsSkillSpecialist(raikou) === false, 'Raikou must NOT be classified as BFS-suited');
+    assert(PokemonApp.isHelperBoostSkillSpecialist(raikou) === true, 'Raikou must be classified as Helper Boost specialist');
+    assert(PokemonApp.isHelperBoostSkillSpecialist(entei) === true, 'Entei must be classified as Helper Boost specialist');
+    assert(PokemonApp.isHelperBoostSkillSpecialist(suicune) === true, 'Suicune must be classified as Helper Boost specialist');
+    assert(appCtx.AppraisalLab.isHelperBoostSkillSpecialist(raikou) === true, 'AppraisalLab must classify Raikou as Helper Boost');
 
     // Healers: Gardevoir - strictly pure skill healer, NOT default BFS
     const gardevoir = { name_cn: '沙奈朵', specialty: '技能', main_skill: '活力全體療癒S' };
@@ -7310,6 +7315,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     const berryStratHtml = PokemonApp.renderPokedexStrategyCardHTML(pikachu);
     assert(berryStratHtml.includes('固執') && berryStratHtml.includes('降食材首選'), 'Berry strategy card must highlight Adamant as primary speed nature reducing ingredients');
 
+    const raikouStratHtml = PokemonApp.renderPokedexStrategyCardHTML(raikou);
+    assert(raikouStratHtml.includes('傳說幫手加速核心定位'), 'Raikou strategy card must display helper core title');
+    assert(!raikouStratHtml.includes('樹果數量S'), 'Raikou strategy card must strictly avoid BFS');
+
     const gardevoirStratHtml = PokemonApp.renderPokedexStrategyCardHTML(gardevoir);
     assert(gardevoirStratHtml.includes('全隊活力療癒核心定位'), 'Gardevoir strategy card must display healer core title');
     assert(!gardevoirStratHtml.includes('樹果數量S'), 'Gardevoir strategy card must NOT recommend BFS');
@@ -7318,10 +7327,6 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(ampharosStratHtml.includes('高頻單體充能直傷定位'), 'Ampharos strategy card must display direct charge title');
     assert(ampharosStratHtml.includes('樹果數量S'), 'Ampharos strategy card includes BFS as optional hybrid');
     assert(ampharosStratHtml.includes('慎重降食材最優'), 'Ampharos strategy card must recommend Careful nature');
-
-    const mimikyuStratHtml = PokemonApp.renderPokedexStrategyCardHTML(mimikyu);
-    assert(mimikyuStratHtml.includes('樹果與技能雙修戰力定位'), 'Mimikyu strategy card must display dual-role title');
-    assert(mimikyuStratHtml.includes('樹果數量S'), 'Mimikyu strategy card must include BFS as core skill');
 
     const dedenneStratHtml = PokemonApp.renderPokedexStrategyCardHTML(dedenne);
     assert(dedenneStratHtml.includes('高頻純戰術技能輔助定位'), 'Dedenne strategy card must display pure tactical title');
@@ -7332,6 +7337,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     const berryEval = appCtx.AppraisalLab.evaluatePokemon(pikachu, 60, '固執', ['樹果數量S', '幫忙速度M', '幫手獎勵'], ['特選蘋果', '特選蘋果', '特選蘋果'], 4, 1);
     assert(berryEval.pros.some(p => p.includes('固執') && p.includes('樹果型第一神性格')), 'Appraisal pros must highlight Adamant as #1 God nature for Berry specialists');
 
+    // Raikou with BFS warning
+    const raikouEval = appCtx.AppraisalLab.evaluatePokemon(raikou, 60, '慎重', ['技能機率提升M', '樹果數量S', '幫手獎勵'], ['特選蘋果', '特選蘋果', '特選蘋果'], 4, 6);
+    assert(raikouEval.cons.some(c => c.includes('幫手加速') && c.includes('阻斷主技能判定')), 'Appraisal cons must warn that BFS on Raikou blocks Helper Boost procs');
+
     // Healer with BFS warning
     const gardevoirEval = appCtx.AppraisalLab.evaluatePokemon(gardevoir, 60, '慎重', ['技能機率提升M', '樹果數量S', '幫手獎勵'], ['特選蘋果', '特選蘋果', '特選蘋果'], 4, 6);
     assert(gardevoirEval.cons.some(c => c.includes('活力療癒補師') && c.includes('阻斷主技能判定')), 'Appraisal cons must warn that BFS on Healer blocks healing procs');
@@ -7339,10 +7348,6 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     // Charge Strength specialist with BFS (hybrid acknowledgement)
     const ampharosEval = appCtx.AppraisalLab.evaluatePokemon(ampharos, 60, '慎重', ['技能機率提升M', '樹果數量S', '幫忙速度M'], ['特選蘋果', '特選蘋果', '特選蘋果'], 4, 6);
     assert(ampharosEval.pros.some(p => p.includes('樹果數量S') && p.includes('高額樹果副輸出')), 'Appraisal pros must highlight BFS on Charge Strength as hybrid power');
-
-    // Berry Burst specialist with BFS
-    const mimikyuEval = appCtx.AppraisalLab.evaluatePokemon(mimikyu, 60, '慎重', ['技能機率提升M', '樹果數量S', '幫忙速度M'], ['特選蘋果', '特選蘋果', '特選蘋果'], 4, 6);
-    assert(mimikyuEval.pros.some(p => p.includes('樹果數量S') && p.includes('完美契合樹果/加速型技能')), 'Appraisal pros must highlight BFS on Berry Burst specialist');
 
     // Dedenne with BFS warning
     const dedenneEval = appCtx.AppraisalLab.evaluatePokemon(dedenne, 60, '自大', ['技能機率提升M', '樹果數量S'], ['特選蘋果', '特選蘋果', '特選蘋果'], 0, 1);

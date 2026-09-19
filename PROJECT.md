@@ -18,13 +18,13 @@
 | # | Feature | Description | Milestone | Source |
 |---|---------|-------------|-----------|--------|
 | 1 | **Dedicated App Entry & Safe Area** | `app/index.html` standalone document, viewport fit-cover, zero 404 resource links | M1 | Survey (DONE) |
-| 2 | **2-Character Minimal Bottom Dock** | 5 fixed tabs: 【⚡ 圖鑑】, 【🍲 料理】, 【📚 百科】, 【📦 盒子】, 【📰 最新】 with active states & safe area padding | M1 | Survey (DONE) |
+| 2 | **2-Character Minimal Bottom Dock** | 5 fixed tabs: 【圖鑑】, 【料理】, 【百科】, 【盒子】, 【最新】 with active states & safe area padding | M1 | Survey (DONE) |
 | 3 | **Smart Routing & Anti-Loop Guard** | Mobile auto-detection in `index.html`, remember choice toggle, switch to desktop link in `/app/` | M1 | Survey (DONE) |
-| 4 | **Pokedex Mobile View (⚡ 圖鑑)** | App search bar with 1-tap clear, horizontal type & specialty filter chips, 2-column compact card grid | M2 | Survey (DONE) |
-| 5 | **Recipes Mobile View (🍲 料理)** | Horizontal category segmented control (全部/咖哩/沙拉/甜點), pot capacity stepper (-/+), tasty multiplier toggle, 1-col recipe cards | M2 | Survey (DONE) |
-| 6 | **Wiki Mobile View (📚 百科)** | 5 top sub-tabs (主技能, 副技能/性格, 評級, 食材天梯, 能量), sticky first-column scrolling data tables, sleep EXP calculator | M2 | Survey (DONE) |
-| 7 | **Box & OCR Mobile View (📦 盒子)** | Photo/screenshot OCR card, batch deduplication, box management, RaenonX PR calculations | M3 | Survey (DONE) |
-| 8 | **News & Gantt Mobile View (📰 最新)** | Touch horizontal scrolling event Gantt timeline, AI highlight summaries | M3 | Survey (DONE) |
+| 4 | **Pokedex Mobile View (圖鑑)** | App search bar with 1-tap clear, horizontal type & specialty filter chips, 2-column compact card grid | M2 | Survey (DONE) |
+| 5 | **Recipes Mobile View (料理)** | Horizontal category segmented control (全部/咖哩/沙拉/甜點), pot capacity stepper (-/+), tasty multiplier toggle, 1-col recipe cards | M2 | Survey (DONE) |
+| 6 | **Wiki Mobile View (百科)** | 5 top sub-tabs (主技能, 副技能/性格, 評級, 食材天梯, 能量), sticky first-column scrolling data tables, sleep EXP calculator | M2 | Survey (DONE) |
+| 7 | **Box & OCR Mobile View (盒子)** | Photo/screenshot OCR card, batch deduplication, box management, RaenonX PR calculations | M3 | Survey (DONE) |
+| 8 | **News & Gantt Mobile View (最新)** | Touch horizontal scrolling event Gantt timeline, AI highlight summaries | M3 | Survey (DONE) |
 | 9 | **Bottom Sheet Drawer & Modal System** | Pokedex advanced filter sheet, Box add/edit sheet (anti-duplicate subskill palette, locked height ing slots), Appraisal 6D modal | M3 | Survey (DONE) |
 | 10 | **Full Feature Parity & Lab Appraisal** | Six-dimension appraisal engine, responsive SVG radar charts, evolution calculator, milestone cost calculations | M3 | Survey (DONE) |
 | 11 | **Bilingual Engine & 4 Themes Support** | Complete zh-TW & en-US i18n support for mobile components; 4 themes (Midnight, Onyx, Dawn, Emerald) synchronized via localStorage | M4 | Survey (DONE) |
@@ -94,5 +94,12 @@
 - `js/modules/box.js` — Box database, OCR processing, bottom sheet editor, PR engine
 - `js/modules/news.js` — News feed, touch Gantt chart, AI summary cards
 - `js/modules/appraisal.js` — 6D appraisal lab, SVG radar chart modal
-- `tests/run_tests.js` — Unified 4-tier automated test suite (90 tests)
+- `tests/run_tests.js` — Unified 4-tier automated test suite (151 tests)
+
+## Documentation & Meta Specifications
+- `docs/SKILL_SPECIALISTS_AND_BFS_META_ANALYSIS.md` — 技能型寶可夢與樹果數量S（BFS）適配深度研究與戰術定位技術規範（含底層滿包機制、神獸/補師/充能/純戰術四大定位與數值模型精算）
+- `docs/OPTIMAL_BUILDS_AND_META_LOGIC.md` — 寶可夢畢業神配置、樹果性格與技能型樹果數量S適配機制技術規範
+- `docs/THEME_COLOR_SPEC.md` — 主題顏色適配規範與色彩變數標準
+- `docs/SIDEBAR_HANDLE_RULE.md` — 側邊欄展開與書籤把手防覆蓋規範
+- `docs/SPECIAL_ICONS_RULES.md` — 特殊圖示與向量繪製規範
 
