@@ -100,35 +100,35 @@
     const spec = pkm.specialty || '';
     if (!spec.includes('技能') && spec !== 'Skills') return false;
 
-    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
     const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
 
-    // 黑名單：極度忌諱或不適配樹果數量S（背包過小易塞滿卡技能判定、或為純碎片/擴鍋戰術）
-    if (name.includes('咚咚鼠') || name.includes('Dedenne')) return false;
-    if (name.includes('磁怪') || name.includes('Magne') || name.includes('冰伊布') || name.includes('Glaceon') || name.includes('火伊布') || name.includes('Flareon')) return false;
-    if (name.includes('喵喵') || name.includes('貓老大') || name.includes('Meowth') || name.includes('Persian')) return false;
-    if (name.includes('勾魂眼') || name.includes('Sableye') || name.includes('溶食獸') || name.includes('吞食獸') || name.includes('Gulpin') || name.includes('Swalot')) return false;
-    if (name.includes('利歐路') || name.includes('路卡利歐') || name.includes('Riolu') || name.includes('Lucario')) return false;
-
-    // 1. 能量填充類（Charge Strength: 咩利羊家族/電龍, 太陽伊布, 可達鴨/哥達鴨, 盆才怪/樹才怪, 飄飄球/隨風球, 嗡蝠/音波龍等）
-    if (skill.includes('能量填充') || skill.includes('Charge Strength') || skill.includes('蓄力')) return true;
-
-    // 2. 樹果遽增 / 樹果領域類（蜥蜴王家族, 烈焰猴家族, 勇士雄鷹家族, 謎擬Q, 超夢, 拉帝歐斯等）
+    // 1. 樹果遽增 / 樹果領域類（蜥蜴王家族, 烈焰猴家族, 勇士雄鷹家族, 謎擬Q, 超夢, 拉帝歐斯等）——主技能與產果直接綁定
     if (skill.includes('樹果遽增') || skill.includes('樹果領域') || skill.includes('Berry Burst') || skill.includes('畫皮') || skill.includes('流星群') || skill.includes('精神擊破')) return true;
 
-    // 3. 幫手加速 / 幫手支援類（雷公, 炎帝, 水君, 風速狗, 雷伊布, 艾路雷朵）
+    // 2. 傳說神獸幫手加速 / 支援類（雷公, 炎帝, 水君, 風速狗, 雷伊布, 艾路雷朵）——白值極高且技能放大全隊產量
     if (skill.includes('幫手加速') || skill.includes('幫手支援') || skill.includes('Helper Boost') || skill.includes('Extra Helpful')) return true;
 
-    // 4. 頂級雙修補師與食材磁鐵（沙奈朵家族, 仙子伊布, 胖可丁家族, 水伊布, 克雷色利亞, 巴布土撥家族）
-    const dualPowerMons = [
-      '仙子伊布', '沙奈朵', '胖可丁', '水伊布', '克雷色利亞', '巴布土撥',
-      'Sylveon', 'Gardevoir', 'Wigglytuff', 'Vaporeon', 'Cresselia', 'Pawmot',
-      '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥',
-      'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo'
-    ];
-    if (dualPowerMons.some(m => name.includes(m))) return true;
-
     return false;
+  }
+
+  function isHealerSkillSpecialist(pkm) {
+    if (!pkm) return false;
+    const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
+    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+    if (skill.includes('活力全體療癒') || skill.includes('Energy for Everyone') || skill.includes('療癒')) return true;
+    const healerNames = ['沙奈朵', '仙子伊布', '胖可丁', '巴布土撥', '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥',
+                         'Gardevoir', 'Sylveon', 'Wigglytuff', 'Pawmot', 'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo'];
+    return healerNames.some(h => name.includes(h));
+  }
+
+  function isChargeStrengthSkillSpecialist(pkm) {
+    if (!pkm) return false;
+    const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
+    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+    if (skill.includes('能量填充') || skill.includes('Charge Strength') || skill.includes('蓄力')) return true;
+    const chargeNames = ['電龍', '咩利羊', '茸茸羊', '太陽伊布', '可達鴨', '哥達鴨', '樹才怪', '盆才怪', '隨風球', '飄飄球', '音波龍', '嗡蝠',
+                         'Ampharos', 'Mareep', 'Flaaffy', 'Espeon', 'Psyduck', 'Golduck', 'Sudowoodo', 'Bonsly', 'Drifblim', 'Drifloon', 'Noivern', 'Noibat'];
+    return chargeNames.some(c => name.includes(c));
   }
 
   /* ─── 核心評估演算法 ───────────────────────────────────── */
@@ -396,6 +396,7 @@
           if (s === '技能機率提升M' || s === 'Skill Trigger M') roiScore += 22;
           if (s === '技能機率提升S' || s === 'Skill Trigger S') roiScore += 14;
           if (isBfsSkillSpecialist(pkmData) && (s === '樹果數量S' || s === 'Berry Finding S')) roiScore += 20;
+          else if (isChargeStrengthSkillSpecialist(pkmData) && (s === '樹果數量S' || s === 'Berry Finding S')) roiScore += 10;
           if (s === '持有上限提升L' || s === 'Inventory Up L') roiScore += 8;
           else if (s === '持有上限提升M' || s === 'Inventory Up M') roiScore += 5;
           else if (s === '持有上限提升S' || s === 'Inventory Up S') roiScore += 3;
@@ -570,15 +571,26 @@
     const hasBFSInTotal = activeSubskills.indexOf('樹果數量S') !== -1;
     const pkmName = pkmData.name_cn || (pkmData.name && pkmData.name.cn) || pkmData.name_en || pkmData.name || '';
 
+    const isHealer = isHealerSkillSpecialist(pkmData);
+    const isCharge = isChargeStrengthSkillSpecialist(pkmData);
+
     if (hasBFSInTotal) {
       if (isBfsSkill) {
         pros.push(isEN
-          ? '[★] Equipped with "Berry Finding S", unlocking top-tier dual-specialist skill & berry power!'
-          : '[★] 具備已解鎖「樹果數量S」，成功解鎖技能與樹果雙專精頂標戰力！');
-      } else if (pkmName.includes('咚咚鼠') || pkmName.includes('Dedenne')) {
+          ? '[★] Equipped with "Berry Finding S", perfectly unlocking dual-specialist berry & skill power!'
+          : '[★] 具備已解鎖「樹果數量S」，完美契合樹果/加速型技能之雙專精頂標戰力！');
+      } else if (isHealer) {
         cons.push(isEN
-          ? '[!] Dedenne has very low carry limit; "Berry Finding S" causes early bag overflow and blocks main skill checks.'
-          : '[!] 咚咚鼠持有上限較低，擁有「樹果數量S」容易過早滿包限制主技能判定。');
+          ? '[!] Healer relies on all-day skill procs; "Berry Finding S" causes rapid bag overflow and blocks healing procs (especially overnight).'
+          : '[!] 活力療癒補師首重全隊活力維持，「樹果數量S」會大幅加速滿包並阻斷主技能判定（尤其睡眠過夜期間），需高頻清包。');
+      } else if (isCharge) {
+        pros.push(isEN
+          ? '[+] Equipped with "Berry Finding S" for high-strength hybrid berry output (ensure frequent collection to avoid bag overflow blocking skill procs).'
+          : '[+] 具備「樹果數量S」解鎖高額樹果副輸出，兼顧單兵直傷與產果（需留意及時清包避免阻斷主技能判定）。');
+      } else if (pkmName.includes('咚咚鼠') || pkmName.includes('Dedenne') || pkmName.includes('磁怪') || pkmName.includes('Magne') || pkmName.includes('喵喵') || pkmName.includes('Meowth')) {
+        cons.push(isEN
+          ? '[!] Tactical skill specialist; "Berry Finding S" causes early bag overflow and blocks main skill checks.'
+          : '[!] 純戰術型技能寶可夢持有上限較低，擁有「樹果數量S」容易過早滿包限制主技能判定。');
       } else {
         pros.push(isEN
           ? '[★] Equipped with active God-tier sub-skill "Berry Finding S", +1 berry per help.'
@@ -1385,6 +1397,8 @@
   /* ─── 全域導出 ─────────────────────────────────────────── */
   window.AppraisalLab = {
     isBfsSkillSpecialist: isBfsSkillSpecialist,
+    isHealerSkillSpecialist: isHealerSkillSpecialist,
+    isChargeStrengthSkillSpecialist: isChargeStrengthSkillSpecialist,
     evaluatePokemon: evaluatePokemon,
     getRemainingEvolutions: getRemainingEvolutions,
     getRibbonBonus: getRibbonBonus,

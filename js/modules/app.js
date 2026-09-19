@@ -3797,8 +3797,8 @@ function isBfsSkillSpecialist(pkm) {
   const spec = pkm.specialty || '';
   if (!spec.includes('技能') && spec !== 'Skills') return false;
 
-  const name = pkm.name_cn || pkm.name_en || '';
   const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
 
   // 黑名單：極度忌諱或不適配樹果數量S（背包過小易塞滿卡技能判定、或為純碎片/擴鍋戰術）
   if (name.includes('咚咚鼠') || name.includes('Dedenne')) return false;
@@ -3807,25 +3807,33 @@ function isBfsSkillSpecialist(pkm) {
   if (name.includes('勾魂眼') || name.includes('Sableye') || name.includes('溶食獸') || name.includes('吞食獸') || name.includes('Gulpin') || name.includes('Swalot')) return false;
   if (name.includes('利歐路') || name.includes('路卡利歐') || name.includes('Riolu') || name.includes('Lucario')) return false;
 
-  // 1. 能量填充類（Charge Strength: 咩利羊家族/電龍, 太陽伊布, 可達鴨/哥達鴨, 盆才怪/樹才怪, 飄飄球/隨風球, 嗡蝠/音波龍等）
-  if (skill.includes('能量填充') || skill.includes('Charge Strength') || skill.includes('蓄力')) return true;
-
-  // 2. 樹果遽增 / 樹果領域類（蜥蜴王家族, 烈焰猴家族, 勇士雄鷹家族, 謎擬Q, 超夢, 拉帝歐斯等）
+  // 1. 樹果遽增 / 樹果領域類（蜥蜴王家族, 烈焰猴家族, 勇士雄鷹家族, 謎擬Q, 超夢, 拉帝歐斯等）——主技能與產果直接綁定
   if (skill.includes('樹果遽增') || skill.includes('樹果領域') || skill.includes('Berry Burst') || skill.includes('畫皮') || skill.includes('流星群') || skill.includes('精神擊破')) return true;
 
-  // 3. 幫手加速 / 幫手支援類（雷公, 炎帝, 水君, 風速狗, 雷伊布, 艾路雷朵）
+  // 2. 傳說神獸幫手加速 / 支援類（雷公, 炎帝, 水君, 風速狗, 雷伊布, 艾路雷朵）——白值極高且技能放大全隊產量
   if (skill.includes('幫手加速') || skill.includes('幫手支援') || skill.includes('Helper Boost') || skill.includes('Extra Helpful')) return true;
 
-  // 4. 頂級雙修補師與食材磁鐵（沙奈朵家族, 仙子伊布, 胖可丁家族, 水伊布, 克雷色利亞, 巴布土撥家族）
-  const dualPowerMons = [
-    '仙子伊布', '沙奈朵', '胖可丁', '水伊布', '克雷色利亞', '巴布土撥',
-    'Sylveon', 'Gardevoir', 'Wigglytuff', 'Vaporeon', 'Cresselia', 'Pawmot',
-    '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥',
-    'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo'
-  ];
-  if (dualPowerMons.some(m => name.includes(m))) return true;
-
   return false;
+}
+
+function isHealerSkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('活力全體療癒') || skill.includes('Energy for Everyone') || skill.includes('療癒')) return true;
+  const healerNames = ['沙奈朵', '仙子伊布', '胖可丁', '巴布土撥', '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥',
+                       'Gardevoir', 'Sylveon', 'Wigglytuff', 'Pawmot', 'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo'];
+  return healerNames.some(h => name.includes(h));
+}
+
+function isChargeStrengthSkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('能量填充') || skill.includes('Charge Strength') || skill.includes('蓄力')) return true;
+  const chargeNames = ['電龍', '咩利羊', '茸茸羊', '太陽伊布', '可達鴨', '哥達鴨', '樹才怪', '盆才怪', '隨風球', '飄飄球', '音波龍', '嗡蝠',
+                       'Ampharos', 'Mareep', 'Flaaffy', 'Espeon', 'Psyduck', 'Golduck', 'Sudowoodo', 'Bonsly', 'Drifblim', 'Drifloon', 'Noivern', 'Noibat'];
+  return chargeNames.some(c => name.includes(c));
 }
 
 function applyPokedexGodPreset() {
@@ -3845,12 +3853,14 @@ function applyPokedexGodPreset() {
     pokedexModalState.nature = '固執';
     pokedexModalState.subskills = ['樹果數量S', '幫手獎勵', '幫忙速度M', '幫忙速度S', '持有上限提升L'];
   } else {
-    // 技能型判斷：區分適合樹果數量S的雙修/直傷型 與 需純技能發動率的純戰術型
+    // 技能型判斷：
+    // 1. 社群公認無爭議之產果型技能（樹果遽增 / 幫手加速，如謎擬Q、雷公等）神配採用樹果數量S
+    // 2. 補師（沙奈朵等）、單體充能型（電龍等）與純戰術型，採用社群正統無爭議之「純技能高頻極致發動」神配
     if (isBfsSkillSpecialist(pkm)) {
       pokedexModalState.nature = '慎重'; // 主技能機率▲ (+20%), 食材機率▼ (-20% 降低塞包風險，保障主技能判定並最大化樹果輸出)
       pokedexModalState.subskills = ['技能機率提升M', '樹果數量S', '幫手獎勵', '幫忙速度M', '持有上限提升L'];
     } else {
-      pokedexModalState.nature = '自大'; // 主技能機率▲ (+20%)
+      pokedexModalState.nature = '慎重'; // 主技能機率▲ (+20%), 食材機率▼ (-20% 降低塞包風險，全力保障主技能判定)
       pokedexModalState.subskills = ['技能機率提升M', '幫手獎勵', '技能機率提升S', '幫忙速度M', '持有上限提升L'];
     }
   }
@@ -4699,22 +4709,47 @@ function renderPokedexStrategyCardHTML(pkm) {
     recommendedNatures = isEN ? 'Ingredient UP (Quiet / Modest / Mild / Rash)' : '食材發現率提升 (冷靜 / 內斂 / 慢吞吞 / 溫和)';
   } else {
     const isBfsSkill = isBfsSkillSpecialist(pkm);
+    const isHealer = isHealerSkillSpecialist(pkm);
+    const isCharge = isChargeStrengthSkillSpecialist(pkm);
+
     if (isBfsSkill) {
-      roleTitle = isEN ? 'Dual-Role Skill & Berry Specialist' : '技能與樹果雙修戰力定位';
+      roleTitle = isEN ? 'Dual-Role Skill & Berry Specialist' : '樹果與技能雙修戰力定位';
       roleDesc = isEN
-        ? 'Combines high skill trigger frequency with Berry Finding S for massive dual-source Snorlax strength.'
-        : '兼具高頻主技能發動與樹果數量S輸出，在穩定發動技能的同時大幅推高卡比獸能量。';
+        ? 'Main skill directly spawns berries or accelerates team helps. Perfectly synergies with Berry Finding S for massive dual output.'
+        : '主技能直接產出樹果或加速全隊幫忙，完美適配「樹果數量S」實現技能與樹果雙源爆發輸出。';
       coreSkill = isEN ? ['Skill Trigger M', 'Berry Finding S'] : ['技能機率提升M', '樹果數量S'];
       coreTier = 'gold';
       recommendedSubs = isEN
         ? ['Skill Trigger M', 'Berry Finding S', 'Helping Bonus', 'Helping Speed M', 'Inventory Up L', 'Skill Trigger S']
         : ['技能機率提升M', '樹果數量S', '幫手獎勵', '幫忙速度M', '持有上限提升L', '技能機率提升S'];
       recommendedNatures = isEN ? 'Main Skill UP (Careful / Sassy / Calm / Gentle)' : '主技能機率提升 (慎重 / 自大 / 溫和 / 浮躁，慎重降食材最優)';
-    } else {
-      roleTitle = isEN ? 'Pure Skill Trigger Specialist' : '高頻純戰術技能輔助定位';
+    } else if (isHealer) {
+      roleTitle = isEN ? 'All-Day Team Healer Core' : '全隊活力療癒核心定位';
       roleDesc = isEN
-        ? 'Relies on maximum skill activation frequency; avoids inventory clogging to ensure high-priority procs.'
-        : '極度依賴高頻主技能發動，需避免背包過快塞滿，優先追求技能機率與持有上限。';
+        ? 'Maintains team energy >80% for maximum 2.2x speed. Focuses purely on skill procs; avoids Berry Finding S which causes early bag overflow and blocks healing procs.'
+        : '維持全員高活力以常駐最高幫忙速。專精雙技能機率提升，避免「樹果數量S」加速滿包導致無法觸發療癒技能。';
+      coreSkill = isEN ? 'Skill Trigger M' : '技能機率提升M';
+      coreTier = 'blue';
+      recommendedSubs = isEN
+        ? ['Skill Trigger M', 'Helping Bonus', 'Skill Trigger S', 'Helping Speed M', 'Helping Speed S', 'Inventory Up L']
+        : ['技能機率提升M', '幫手獎勵', '技能機率提升S', '幫忙速度M', '幫忙速度S', '持有上限提升L'];
+      recommendedNatures = isEN ? 'Main Skill UP (Careful / Sassy / Calm / Gentle)' : '主技能機率提升 (慎重 / 自大 / 溫和 / 浮躁，慎重降食材最優)';
+    } else if (isCharge) {
+      roleTitle = isEN ? 'High-Frequency Direct Charge Power' : '高頻單體充能直傷定位';
+      roleDesc = isEN
+        ? 'Delivers massive direct Snorlax Strength via Charge Strength M. Maximizing skill triggers is the undisputed standard; active players can also opt for BFS hybrid variant.'
+        : '依賴「能量填充M」單次提供極高直傷能量。標準神配首選雙技機極致發動；勤勞收包玩家亦可選擇樹果S雙修分支。';
+      coreSkill = isEN ? 'Skill Trigger M' : '技能機率提升M';
+      coreTier = 'blue';
+      recommendedSubs = isEN
+        ? ['Skill Trigger M', 'Helping Bonus', 'Skill Trigger S', 'Helping Speed M', 'Inventory Up L', 'Berry Finding S']
+        : ['技能機率提升M', '幫手獎勵', '技能機率提升S', '幫忙速度M', '持有上限提升L', '樹果數量S'];
+      recommendedNatures = isEN ? 'Main Skill UP (Careful / Sassy / Calm / Gentle)' : '主技能機率提升 (慎重 / 自大 / 溫和 / 浮躁，慎重降食材最優)';
+    } else {
+      roleTitle = isEN ? 'Pure Tactical Skill Specialist' : '高頻純戰術技能輔助定位';
+      roleDesc = isEN
+        ? 'Relies on maximum skill activation frequency; strictly avoids Berry Finding S to prevent early bag overflow from blocking procs.'
+        : '極度依賴高頻主技能發動，需避免背包過快塞滿（嚴格忌諱樹果S），優先追求技能機率與持有上限。';
       coreSkill = isEN ? 'Skill Trigger M' : '技能機率提升M';
       coreTier = 'blue';
       recommendedSubs = isEN
@@ -5326,6 +5361,8 @@ PokemonApp.getPokedexMinEvolutionLevel = getPokedexMinEvolutionLevel;
 PokemonApp.renderPokedexEvoGuardBadgeHTML = renderPokedexEvoGuardBadgeHTML;
 PokemonApp.renderPokedexRibbonOptionsHTML = renderPokedexRibbonOptionsHTML;
 PokemonApp.isBfsSkillSpecialist = isBfsSkillSpecialist;
+PokemonApp.isHealerSkillSpecialist = isHealerSkillSpecialist;
+PokemonApp.isChargeStrengthSkillSpecialist = isChargeStrengthSkillSpecialist;
 PokemonApp.renderPokedexStrategyCardHTML = renderPokedexStrategyCardHTML;
 PokemonApp.flashSliderLockedWall = flashSliderLockedWall;
 PokemonApp.togglePokedexSubskillPalette = togglePokedexSubskillPalette;
@@ -5350,6 +5387,8 @@ if (typeof window !== 'undefined') {
   window.renderPokedexRibbonOptionsHTML = renderPokedexRibbonOptionsHTML;
   window.renderPokedexStrategyCardHTML = renderPokedexStrategyCardHTML;
   window.isBfsSkillSpecialist = isBfsSkillSpecialist;
+  window.isHealerSkillSpecialist = isHealerSkillSpecialist;
+  window.isChargeStrengthSkillSpecialist = isChargeStrengthSkillSpecialist;
   window.renderPokedexFormulaBreakdownHTML = renderPokedexFormulaBreakdownHTML;
   window.togglePokedexSubskillPalette = togglePokedexSubskillPalette;
   window.togglePokedexEnergyHelp = togglePokedexEnergyHelp;
