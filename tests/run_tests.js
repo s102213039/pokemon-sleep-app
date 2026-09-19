@@ -7327,6 +7327,35 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(dedenneEval.cons.some(c => c.includes('咚咚鼠') && c.includes('容易過早滿包限制主技能判定')), 'Appraisal cons must warn that BFS causes bag overflow on Dedenne');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Table Dynamic Height Adaptation and Dock Clearance', () => {
+    const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+    // 1. Verify body dock padding clearance
+    assert(
+      css.includes('padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px)) !important;'),
+      'body.mobile-h5-app must reserve dock clearance via padding-bottom'
+    );
+
+    // 2. Verify table-container uses flex: 0 1 auto so filtered lists collapse dynamically
+    assert(
+      css.includes('.mobile-h5-app.pokemon-active .table-container') && css.includes('flex: 0 1 auto !important;'),
+      'Pokemon table container must use flex: 0 1 auto for dynamic height adaptation'
+    );
+
+    // 3. Verify content-area has padding-bottom buffer
+    assert(
+      css.includes('.mobile-h5-app.pokemon-active .pokemon-main-content .content-area') &&
+      css.includes('padding-bottom: 8px !important;'),
+      'content-area must have padding-bottom: 8px buffer above dock'
+    );
+
+    // 4. Verify panels inherit 100% height without fragile calc
+    assert(
+      css.includes('.mobile-h5-app.pokemon-active #panel-pokemon {\n  height: 100% !important;'),
+      '#panel-pokemon must use height: 100% to inherit cleanly from body'
+    );
+  });
+
 
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

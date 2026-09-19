@@ -13758,15 +13758,17 @@ body.mobile-h5-app.pokemon-active,
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
+  padding-bottom: 8px !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app.pokemon-active .table-container,
 .mobile-h5-app.pokemon-active .pokemon-table-container {
-  flex: 1 1 auto !important;
+  flex: 0 1 auto !important;
   min-height: 0 !important;
   max-height: 100% !important;
   width: calc(100% - 24px) !important;
-  margin: 0 12px 0 !important;
+  margin: 0 12px !important;
   padding: 0 !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 14px !important;
@@ -13776,6 +13778,7 @@ body.mobile-h5-app.pokemon-active,
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch;
   position: relative;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app.pokemon-active .pokemon-table tbody tr:last-child td {
