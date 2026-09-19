@@ -7551,25 +7551,34 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
       '#panel-news must not use overflow: visible which breaks scrolling'
     );
 
-    // 3. Ladder scrolling: ladder-active must allow overflow-y: auto instead of rigid overflow: hidden
+    // 3. Ladder single-screen view: ladder-active must use overflow: hidden for zero-scroll full view
     assert(
       css.includes('.mobile-h5-app.ladder-active #panel-wiki') &&
-      css.includes('overflow-y: auto !important;'),
-      '#panel-wiki during ladder-active must allow vertical scrolling'
+      css.includes('overflow: hidden !important;'),
+      '#panel-wiki during ladder-active must use overflow: hidden for single-screen full view'
     );
 
-    // 4. Subpanel ingredients: must use overflow: visible to allow smooth container scrolling
+    // 4. Subpanel ingredients: must use flex: 1 1 auto and overflow: hidden to fit all 18 tracks on screen
     assert(
       css.includes('.mobile-h5-app #wiki-subpanel-ingredients.active {') &&
-      css.includes('overflow: visible !important;'),
-      '#wiki-subpanel-ingredients.active must use overflow: visible'
+      css.includes('overflow: hidden !important;') &&
+      css.includes('flex: 1 1 auto !important;'),
+      '#wiki-subpanel-ingredients.active must use flex: 1 1 auto and overflow: hidden'
     );
 
-    // 5. Tail box container: must reserve safety margin above bottom dock
+    // 5. Tail box container: must sit at bottom above the dock with margin-top: auto
     assert(
       css.includes('.mobile-h5-app .ladder-tail-standalone-container {') &&
-      css.includes('margin-bottom: 28px !important;'),
-      'ladder tail box must have bottom margin buffer above dock'
+      css.includes('margin-top: auto !important;') &&
+      css.includes('margin-bottom: 2px !important;'),
+      'ladder tail box must sit cleanly above dock without scrolling or overflow'
+    );
+
+    // 6. Pokédex viewport: content-area must support #content-area and .content-area with flex adaptation
+    assert(
+      css.includes('.mobile-h5-app.pokemon-active .pokemon-main-content #content-area,') &&
+      css.includes('.mobile-h5-app.pokemon-active .pokemon-main-content .content-area {'),
+      'pokedex view must adapt #content-area and .content-area dynamically'
     );
   });
 
