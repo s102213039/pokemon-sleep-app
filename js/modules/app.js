@@ -4976,7 +4976,8 @@ function renderPokedexDetailModalContent() {
 
   modalEl.innerHTML = `
     <div class="pokedex-modal-backdrop-dismiss" onclick="window.PokemonApp.closePokemonDetailModal()"></div>
-    <div class="box-modal-dialog pokedex-modal-dialog" role="dialog" aria-modal="true">
+    <div class="box-modal-dialog pokedex-modal-dialog mobile-box-sheet bottom-sheet mobile-modal-sheet" role="dialog" aria-modal="true">
+      <div class="sheet-drag-handle"></div>
       <!-- 頂部標題列 (樹果與類型上下展示、單行水平基礎數值、右上角重置預設) -->
       <div class="box-modal-header pokedex-modal-header">
         <div class="pokedex-modal-header-main">

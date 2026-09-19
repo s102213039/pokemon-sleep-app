@@ -3926,10 +3926,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+)/.test(indexHtml), 'index.html styles.css must have current cache buster');
-  assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+)/.test(indexHtml), 'index.html wiki.js must have valid cache buster');
-  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+)/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
-  assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+)/.test(appIndexHtml), 'app/index.html wiki.js must have valid cache buster');
+  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+|2026092\d_\d+)/.test(indexHtml), 'index.html styles.css must have current cache buster');
+  assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+|2026092\d_\d+)/.test(indexHtml), 'index.html wiki.js must have valid cache buster');
+  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+|2026092\d_\d+)/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
+  assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+|2026092\d_\d+)/.test(appIndexHtml), 'app/index.html wiki.js must have valid cache buster');
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless Layout, Single-Line Name:Desc, No Tier Badges & Half-Width Symbols', () => {
@@ -7011,8 +7011,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     const pdxDialogBlock = pdxDialogStart >= 0 ? stylesCss.substring(pdxDialogStart, pdxDialogStart + 600) : '';
     assert(pdxDialogBlock.includes('height: auto;'), 'pokedex-modal-dialog must use height: auto for content-adaptive sizing');
     assert(stylesCss.includes('max-height: min(880px, 90vh);'), 'pokedex-modal-dialog must have max-height: min(880px, 90vh)');
-    assert(!pdxDialogBlock.includes('height: 88vh'), 'pokedex-modal-dialog must NOT use fixed height: 88vh (causes blank space at bottom)');
-    assert(stylesCss.includes('height: calc(100dvh - 16px'), 'Mobile modal dialog must have stable 100dvh calculated height');
+    assert(stylesCss.includes('max-height: 92dvh !important;'), 'Mobile pokedex modal dialog must have bottom-sheet height matching box modal (92dvh)');
   });
 
   // 15X. Recipe Modal Header Clear, Removed Energy Unit, 4-Item Height & Fast Differentiated Tooltip Triggers
@@ -7036,8 +7035,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(!wikiJs.includes('recipe-card-energy-unit'), 'wiki.js must remove recipe-card-energy-unit');
 
     // Modal dialog and body must display ~4 items without being overly tall
-    assert(stylesCss.includes('max-height: min(490px, 80dvh);'), 'styles.css must restrict ladder-recipe-modal-dialog to min(490px, 80dvh)');
-    assert(stylesCss.includes('.ladder-recipe-modal-body {\n  flex: 1 1 auto;\n  max-height: 350px;'), 'styles.css must restrict ladder-recipe-modal-body to ~350px (approx 4 items)');
+    assert(stylesCss.includes('max-height: min(580px, 86dvh);'), 'styles.css must restrict ladder-recipe-modal-dialog to min(580px, 86dvh)');
+    assert(stylesCss.includes('.ladder-recipe-modal-body {\n  flex: 1 1 auto;\n  max-height: 420px;'), 'styles.css must restrict ladder-recipe-modal-body to ~420px (approx 4 items)');
 
     // 2. Differentiated Tooltip Triggers (Desktop Hover vs Mobile Tap)
     // special-skill-badge must have cursor: pointer and role="button"

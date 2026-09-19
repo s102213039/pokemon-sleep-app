@@ -12510,6 +12510,9 @@
   function openLadderRecipeModal() {
     const modal = document.getElementById('ladder-recipe-modal');
     if (!modal) return;
+    if (typeof document !== 'undefined' && document.body && modal.parentElement !== document.body) {
+      document.body.appendChild(modal);
+    }
     // 若當前已有選取料理，自動切換至該料理之分類
     if (ladderHighlightRecipe) {
       const found = ALL_TOP_CATEGORY_RECIPES.find(r => r.name_cn === ladderHighlightRecipe || r.name_en === ladderHighlightRecipe);
@@ -16770,7 +16773,7 @@
           <div class="ladder-recipe-modal-header">
             <div class="ladder-recipe-modal-title-group">
               <h3 id="ladder-recipe-modal-title" class="ladder-recipe-modal-title">${isEN ? 'Highlight Ingredients by Recipe' : '選取料理高亮食材'}</h3>
-              <p class="ladder-recipe-modal-subtitle">${isEN ? 'Top 7 Base Energy Recipes per Category (Select recipe to highlight required ingredients)' : '三大分類各前 7 高能量料理，選取後天梯將自動標記所需食材'}</p>
+              <p class="ladder-recipe-modal-subtitle">${isEN ? 'Top 7 High Score Recipes, Mark Ingredients' : '各前7高分料理，標記所需食材'}</p>
             </div>
             <div class="ladder-recipe-modal-actions">
               <button type="button" class="ladder-recipe-header-clear-btn" onclick="window.WikiDB.clearLadderHighlightRecipe()" title="${isEN ? 'Clear Selection' : '清除選取'}">${isEN ? 'Clear' : '清除'}</button>
