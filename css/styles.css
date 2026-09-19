@@ -13811,12 +13811,19 @@ body.mobile-h5-app.pokemon-active,
 /* ─── 📱 H5 App 主視圖與面板容器（獨立容器滾動，固定瀏覽器網址列防止跳動） ─── */
 .mobile-h5-app .mobile-main-container,
 .mobile-h5-app .app-main-viewport {
-  height: 100% !important;
-  max-height: 100% !important;
+  position: fixed !important;
+  top: calc(52px + env(safe-area-inset-top, 0px)) !important;
+  bottom: calc(62px + env(safe-area-inset-bottom, 0px)) !important;
+  left: 0 !important;
+  right: 0 !important;
   width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
   overflow: hidden !important;
-  position: relative !important;
+  position: fixed !important;
   box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .mobile-h5-app #panel-pokemon,
@@ -16707,14 +16714,14 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   margin: 0 !important;
 }
 
-/* 🥗 食材天梯與 🫐 能量速查專屬：滿版視窗鎖定，完全禁止任何外部頁面滾動與多餘留白 */
+/* 🥗 食材天梯與 🫐 能量速查專屬：全視窗自適應滾動，頂部子標籤吸頂置頂，底部保留安全間距 */
 body.mobile-h5-app.ladder-active,
 .mobile-h5-app.ladder-active body,
 body.mobile-h5-app.values-active,
 .mobile-h5-app.values-active body {
   overflow: hidden !important;
-  height: 100dvh !important;
-  max-height: 100dvh !important;
+  height: 100% !important;
+  max-height: 100% !important;
 }
 
 .mobile-h5-app.ladder-active #panel-wiki:not([style*="display: none"]):not([style*="display:none"]),
@@ -16723,7 +16730,10 @@ body.mobile-h5-app.values-active,
 .mobile-h5-app.values-active .wiki-main-container {
   height: 100% !important;
   max-height: 100% !important;
-  overflow: hidden !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
   padding: 0 !important;
   margin: 0 !important;
   display: flex !important;
@@ -16732,46 +16742,38 @@ body.mobile-h5-app.values-active,
 
 .mobile-h5-app.ladder-active .wiki-subnav-bar,
 .mobile-h5-app.values-active .wiki-subnav-bar {
-  position: relative !important;
+  position: sticky !important;
   top: 0 !important;
+  z-index: 90 !important;
   flex-shrink: 0 !important;
 }
 
 .mobile-h5-app #wiki-subpanel-ingredients.active {
-  display: flex !important;
-  flex-direction: column !important;
-  flex: 1 1 auto !important;
-  height: 0 !important;
-  min-height: 0 !important;
-  box-sizing: border-box !important;
-  padding: 2px 4px 0 4px !important;
-  margin: 0 !important;
+  display: block !important;
   width: 100% !important;
-  overflow: hidden !important;
+  height: auto !important;
+  min-height: 100% !important;
+  box-sizing: border-box !important;
+  padding: 4px 6px 32px 6px !important;
+  margin: 0 !important;
+  overflow: visible !important;
   background: transparent !important;
 }
 
 .mobile-h5-app #wiki-ingredient-ladder-coordinate {
-  display: flex !important;
-  flex-direction: column !important;
-  flex: 1 1 auto !important;
-  height: 100% !important;
-  max-height: 100% !important;
-  min-height: 0 !important;
+  display: block !important;
   width: 100% !important;
+  height: auto !important;
   box-sizing: border-box !important;
-  overflow: hidden !important;
+  overflow: visible !important;
 }
 
 .mobile-h5-app .wiki-coordinate-ladder-wrapper {
-  display: flex !important;
-  flex-direction: column !important;
-  flex: 1 1 auto !important;
-  height: 100% !important;
-  max-height: 100% !important;
-  min-height: 0 !important;
-  overflow: hidden !important;
+  display: block !important;
   width: 100% !important;
+  height: auto !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
   box-sizing: border-box !important;
   padding: 0 !important;
   background: transparent !important;
@@ -16787,13 +16789,10 @@ body.mobile-h5-app.values-active,
 .mobile-h5-app .wiki-coordinate-ladder {
   display: flex !important;
   flex-direction: column !important;
-  flex: 1 1 auto !important;
-  height: 100% !important;
-  max-height: 100% !important;
-  min-height: 0 !important;
-  justify-content: space-between !important;
-  min-width: 0 !important;
   width: 100% !important;
+  height: auto !important;
+  gap: 2px !important;
+  min-width: 0 !important;
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
@@ -16801,16 +16800,15 @@ body.mobile-h5-app.values-active,
 }
 
 .mobile-h5-app .ladder-ruler-header {
-  flex: 0 0 18px !important;
-  height: 18px !important;
-  margin-bottom: 2px !important;
+  flex: 0 0 20px !important;
+  height: 20px !important;
+  margin-bottom: 4px !important;
 }
 
 .mobile-h5-app .ladder-track-row {
-  flex: 1 1 0 !important;
-  height: auto !important;
-  min-height: 0 !important;
-  max-height: 42px !important;
+  flex: 0 0 34px !important;
+  height: 34px !important;
+  min-height: 34px !important;
   display: flex !important;
   align-items: center !important;
   padding: 0 !important;
@@ -16856,12 +16854,13 @@ body.mobile-h5-app.values-active,
 
 .mobile-h5-app .ladder-tail-standalone-container {
   flex: 0 0 auto !important;
-  margin-top: auto !important;
-  margin-bottom: 2px !important;
-  padding: 2px 0 0 0 !important;
+  margin-top: 10px !important;
+  margin-bottom: 28px !important;
+  padding: 4px 0 16px 0 !important;
   display: flex !important;
   justify-content: flex-start !important;
   width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .ladder-tail-standalone-box {
@@ -17344,10 +17343,14 @@ body.mobile-h5-app.values-active,
 /* H5 App 最新公告專屬原生排版 (Mobile News & Updates Layout) */
 .mobile-h5-app #panel-news {
   width: 100% !important;
-  height: auto !important;
-  max-height: none !important;
-  overflow: visible !important;
-  padding: 0 0 24px 0 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+  padding: 0 0 28px 0 !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app #panel-news .controls-container {

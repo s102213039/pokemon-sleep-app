@@ -7526,6 +7526,53 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assertEquals(PokemonApp.getPokedexModalState().level, 5, 'Base form Paldean Wooper allows setting level down to 5');
   });
 
+  // ----------------------------------------------------
+  // Test 154: Mobile H5 Viewport Boundary Isolation, News Scrolling & Ladder Adaptation
+  // ----------------------------------------------------
+  test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Boundary Isolation, News Scrolling & Ladder Dynamic Adaptation', () => {
+    const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+    // 1. Viewport boundary isolation: main viewport must be explicitly anchored between header and dock
+    assert(
+      css.includes('.mobile-h5-app .app-main-viewport {') &&
+      css.includes('top: calc(52px + env(safe-area-inset-top, 0px)) !important;') &&
+      css.includes('bottom: calc(62px + env(safe-area-inset-bottom, 0px)) !important;'),
+      'app-main-viewport must be anchored between top header and bottom dock'
+    );
+
+    // 2. News panel scrolling: #panel-news must have overflow-y: auto and never overflow: visible
+    assert(
+      css.includes('.mobile-h5-app #panel-news {') &&
+      css.includes('overflow-y: auto !important;'),
+      '#panel-news must have overflow-y: auto !important for native touch scrolling'
+    );
+    assert(
+      !css.includes('.mobile-h5-app #panel-news {\n  width: 100% !important;\n  height: auto !important;\n  max-height: none !important;\n  overflow: visible !important;'),
+      '#panel-news must not use overflow: visible which breaks scrolling'
+    );
+
+    // 3. Ladder scrolling: ladder-active must allow overflow-y: auto instead of rigid overflow: hidden
+    assert(
+      css.includes('.mobile-h5-app.ladder-active #panel-wiki') &&
+      css.includes('overflow-y: auto !important;'),
+      '#panel-wiki during ladder-active must allow vertical scrolling'
+    );
+
+    // 4. Subpanel ingredients: must use overflow: visible to allow smooth container scrolling
+    assert(
+      css.includes('.mobile-h5-app #wiki-subpanel-ingredients.active {') &&
+      css.includes('overflow: visible !important;'),
+      '#wiki-subpanel-ingredients.active must use overflow: visible'
+    );
+
+    // 5. Tail box container: must reserve safety margin above bottom dock
+    assert(
+      css.includes('.mobile-h5-app .ladder-tail-standalone-container {') &&
+      css.includes('margin-bottom: 28px !important;'),
+      'ladder tail box must have bottom margin buffer above dock'
+    );
+  });
+
 console.log('\n======================================================');
 console.log('                   Test Results Summary');
 console.log('======================================================');
