@@ -7383,6 +7383,91 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     );
   });
 
+  // ----------------------------------------------------
+  // Test 152: Main Skill Yield for All Specialties & Compact Strategy Card Layout
+  // ----------------------------------------------------
+  test('Tier 4 - Real-World Application Scenarios', 'Main Skill Actual Yield Display for All Specialties & Compact Strategy Card Polish', () => {
+    // 1. Verify getPokedexMainSkillYield is exported
+    assert(typeof PokemonApp.getPokedexMainSkillYield === 'function', 'PokemonApp.getPokedexMainSkillYield must be a function');
+
+    // 2. Test Ingredient Magnet S (Chinese & English)
+    const ingMagnetCn = PokemonApp.getPokedexMainSkillYield('食材獲取S', 6, 4.5, false);
+    assert(ingMagnetCn !== null, 'Ingredient Magnet yield must not be null');
+    assertEquals(ingMagnetCn.mainSkillLabel, '食材獲取S (Lv.6)', 'Magnet Chinese label');
+    assertEquals(ingMagnetCn.mainSkillValueText, '+94.5 顆額外食材', 'Magnet Chinese daily text');
+    assertEquals(ingMagnetCn.mainSkillSingleText, '單次 21 顆', 'Magnet Chinese single text');
+
+    const ingMagnetEn = PokemonApp.getPokedexMainSkillYield('食材獲取S', 6, 4.5, true);
+    assertEquals(ingMagnetEn.mainSkillLabel, 'Magnet S (Lv.6)', 'Magnet English label');
+    assertEquals(ingMagnetEn.mainSkillValueText, '+94.5 extra ings', 'Magnet English daily text');
+    assertEquals(ingMagnetEn.mainSkillSingleText, 'yield 21 ings', 'Magnet English single text');
+
+    // 3. Test Charge Strength M (Ampharos / Espeon)
+    const chargeMCn = PokemonApp.getPokedexMainSkillYield('能量填充M', 7, 5.0, false);
+    assert(chargeMCn !== null, 'Charge Strength M yield must not be null');
+    assertEquals(chargeMCn.mainSkillLabel, '能量填充M (Lv.7)', 'Charge M label');
+    assertEquals(chargeMCn.mainSkillValueText, '+32,045 點能量', 'Charge M daily text');
+    assertEquals(chargeMCn.mainSkillSingleText, '單次 6,409 能量', 'Charge M single text');
+
+    // 4. Test Charge Strength S (Pikachu / Raichu)
+    const chargeSCn = PokemonApp.getPokedexMainSkillYield('能量填充S', 5, 2.0, false);
+    assert(chargeSCn !== null, 'Charge Strength S yield must not be null');
+    assertEquals(chargeSCn.mainSkillLabel, '能量填充S (Lv.5)', 'Charge S label');
+    assertEquals(chargeSCn.mainSkillValueText, '+2,992 點能量', 'Charge S daily text');
+    assertEquals(chargeSCn.mainSkillSingleText, '單次 1,496 能量', 'Charge S single text');
+
+    // 5. Test Energy for Everyone (E4E - Gardevoir / Sylveon / Wigglytuff)
+    const e4eCn = PokemonApp.getPokedexMainSkillYield('活力全體療癒S', 6, 4.0, false);
+    assert(e4eCn !== null, 'E4E yield must not be null');
+    assertEquals(e4eCn.mainSkillLabel, '活力全體療癒S (Lv.6)', 'E4E label');
+    assertEquals(e4eCn.mainSkillValueText, '+72.0 點全員活力', 'E4E daily text');
+    assertEquals(e4eCn.mainSkillSingleText, '單次 18 點', 'E4E single text');
+
+    // 6. Test Helper Boost (Raikou / Entei / Suicune)
+    const helperBoostCn = PokemonApp.getPokedexMainSkillYield('幫手加速（電）', 6, 2.0, false);
+    assert(helperBoostCn !== null, 'Helper Boost yield must not be null');
+    assertEquals(helperBoostCn.mainSkillLabel, '幫手加速（電） (Lv.6)', 'Helper Boost label');
+    assertEquals(helperBoostCn.mainSkillValueText, '+22.0 次全員幫忙', 'Helper Boost daily text');
+    assertEquals(helperBoostCn.mainSkillSingleText, '單次最高 11 次', 'Helper Boost single text');
+
+    // 7. Test Cooking Power Up S (Magnezone)
+    const cookingPowerCn = PokemonApp.getPokedexMainSkillYield('料理強化S', 6, 3.0, false);
+    assert(cookingPowerCn !== null, 'Cooking Power Up yield must not be null');
+    assertEquals(cookingPowerCn.mainSkillLabel, '料理強化S (Lv.6)', 'Cooking Power Up label');
+    assertEquals(cookingPowerCn.mainSkillValueText, '+81.0 鍋子容量', 'Cooking Power Up daily text');
+    assertEquals(cookingPowerCn.mainSkillSingleText, '單次 +27 容量', 'Cooking Power Up single text');
+
+    // 8. Test Tasty Chance S (Dedenne)
+    const tastyChanceCn = PokemonApp.getPokedexMainSkillYield('料理成功S', 6, 3.5, false);
+    assert(tastyChanceCn !== null, 'Tasty Chance yield must not be null');
+    assertEquals(tastyChanceCn.mainSkillLabel, '料理成功S (Lv.6)', 'Tasty Chance label');
+    assertEquals(tastyChanceCn.mainSkillValueText, '+35.0% 大成功機率', 'Tasty Chance daily text');
+    assertEquals(tastyChanceCn.mainSkillSingleText, '單次 +10%', 'Tasty Chance single text');
+
+    // 9. Verify calculatePokedexIngredientFormulas integration for various specialists
+    // 9a. Test Ampharos (Skill specialist with Charge Strength M)
+    PokemonApp.openPokemonDetailModal('181');
+    const ampharosFm = PokemonApp.calculatePokedexIngredientFormulas();
+    assert(ampharosFm.mainSkillLabel.includes('能量填充M'), 'Ampharos mainSkillLabel must include 能量填充M');
+    assert(ampharosFm.mainSkillValueText.includes('點能量'), 'Ampharos mainSkillValueText must contain 點能量');
+    assert(ampharosFm.mainSkillSingleText.includes('能量'), 'Ampharos mainSkillSingleText must contain 能量');
+
+    // 9b. Verify HTML breakdown rendering includes calc-row-subskill-extra
+    const breakdownHtml = PokemonApp.renderPokedexFormulaBreakdownHTML(ampharosFm);
+    assert(breakdownHtml.includes('calc-row-subskill-extra'), 'Breakdown HTML must render .calc-row-subskill-extra');
+    assert(breakdownHtml.includes('badge-skill-extra'), 'Breakdown HTML must render badge-skill-extra');
+    assert(breakdownHtml.includes('text-skill-extra'), 'Breakdown HTML must render text-skill-extra');
+    assert(breakdownHtml.includes('text-skill-single'), 'Breakdown HTML must render text-skill-single');
+
+    // 10. Verify CSS styles for compact strategy cards & un-enlarged core skill
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+    assert(stylesCss.includes('gap: 3px !important;'), 'Pokedex strategy card must use tight 3px gap');
+    assert(stylesCss.includes('.strategy-details-grid {\n  display: flex;\n  flex-direction: column;\n  gap: 3px;'), 'Strategy grid must have 3px gap');
+    assert(stylesCss.includes('.strategy-core-k {\n  font-size: 12.5px !important;'), 'Core skill key must be standard 12.5px without enlargement');
+    assert(stylesCss.includes('.strategy-core-chip {\n  font-size: 12px !important;'), 'Core skill chip must be standard 12px without enlargement');
+    assert(stylesCss.includes('.text-skill-single {\n  font-size: 11px;'), 'styles.css must style .text-skill-single');
+  });
+
 
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

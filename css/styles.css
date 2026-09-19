@@ -24115,9 +24115,10 @@ body.mobile-h5-app.values-active,
 .calc-row-subskill-extra {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 3px;
+  gap: 6px;
+  margin-top: 4px;
   font-size: 12px;
+  flex-wrap: wrap;
 }
 
 .badge-skill-extra {
@@ -24127,10 +24128,16 @@ body.mobile-h5-app.values-active,
   border-radius: 4px;
   font-size: 11px;
   font-weight: 600;
+  flex-shrink: 0;
 }
 
 .text-skill-extra {
   font-size: 12px;
+}
+
+.text-skill-single {
+  font-size: 11px;
+  color: var(--text-muted, #94a3b8);
 }
 
 .calc-stat-sub {
@@ -24337,26 +24344,27 @@ body.mobile-h5-app.values-active,
 }
 
 /* 寶可夢特性定位與最佳適配副技能指南卡片 (白底純淨呈現) */
-/* 寶可夢特性定位與最佳適配副技能指南卡片 (白底大字體呈現) */
+/* 寶可夢特性定位與最佳適配副技能指南卡片 (緊湊精緻呈現) */
 .strategy-card-title {
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 13px !important;
+  font-weight: 700 !important;
   color: var(--accent-blue, #0284c7);
-  letter-spacing: 0.3px;
-  margin-top: 0;
-  margin-bottom: 2px;
+  letter-spacing: 0.2px;
+  margin-top: 0 !important;
+  margin-bottom: 0px !important;
+  line-height: 1.3 !important;
 }
 
 .pokedex-strategy-card {
-  margin-top: 8px;
+  margin-top: 4px;
   background: #ffffff;
   border: 1px solid var(--border-color, #e2e8f0);
-  border-radius: 8px;
-  padding: 10px 14px;
+  border-radius: 6px;
+  padding: 6px 10px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  gap: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .pokedex-calc-unified-box .pokedex-strategy-card,
@@ -24365,14 +24373,14 @@ body.mobile-h5-app.values-active,
 [data-theme="emerald"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
 [data-theme="midnight"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
 [data-theme="onyx"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card {
-  margin-top: 4px !important;
+  margin-top: 3px !important;
   background: transparent !important;
   border: none !important;
   border-top: 1px solid var(--border-color, #e2e8f0) !important;
   border-radius: 0 !important;
-  padding: 6px 0 0 0 !important;
+  padding: 4px 0 0 0 !important;
   box-shadow: none !important;
-  gap: 5px !important;
+  gap: 3px !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
@@ -24401,68 +24409,69 @@ body.mobile-h5-app.values-active,
 .strategy-details-grid {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  margin-top: 2px;
+  gap: 3px;
+  margin-top: 0px;
 }
 
 .strategy-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
+  gap: 5px;
+  font-size: 12.5px;
   flex-wrap: wrap;
+  line-height: 1.35;
 }
 
 .strategy-k {
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-muted, #64748b);
   flex-shrink: 0;
-  font-size: 13px;
+  font-size: 12.5px;
 }
 
 .strategy-v {
   font-weight: 600;
-  font-size: 13px;
+  font-size: 12.5px;
 }
 
 .strategy-hint {
   font-weight: 400;
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--text-muted, #64748b);
 }
 
-/* 核心神技：單行展示、字體放大 */
+/* 核心神技：保持標準大小，不特意加大 */
 .strategy-item.strategy-item-core {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: nowrap !important;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .strategy-core-k {
-  font-size: 14.5px !important;
-  font-weight: 800 !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
   white-space: nowrap;
 }
 
 .strategy-core-chip {
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  padding: 4px 12px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 2px 8px !important;
   white-space: nowrap;
 }
 
 .strategy-chips-wrap {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   flex-wrap: wrap;
 }
 
 .strategy-chip {
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 3px 9px;
+  padding: 2px 7px;
   border-radius: 4px;
   white-space: nowrap;
   transition: all 0.2s ease;
