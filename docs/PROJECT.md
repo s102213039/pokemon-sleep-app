@@ -63,6 +63,7 @@ Features:
 - `TEST_READY.md` published upon completion of test infrastructure.
 
 ## Standards & Policies
+- [OPTIMAL_BUILDS_AND_META_LOGIC.md](OPTIMAL_BUILDS_AND_META_LOGIC.md) — 寶可夢畢業神配置、樹果性格與技能型樹果數量S適配機制技術規範
 - [THEME_COLOR_SPEC.md](THEME_COLOR_SPEC.md) — Mandatory theme color specification & pre/post execution check protocol across 4 themes (Midnight, Onyx, Dawn, Emerald) and inverted modes.
 - [SIDEBAR_HANDLE_RULE.md](SIDEBAR_HANDLE_RULE.md) — Sidebar bookmark handle visibility rules.
 - **Zero Emoji Policy**: Strict prohibition of emojis in all UI elements, logs, text, and markdown files.
