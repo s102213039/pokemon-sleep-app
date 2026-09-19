@@ -13600,7 +13600,7 @@ body.mobile-h5-surface {
   overflow: hidden !important;
   overscroll-behavior: none !important;
   padding-top: calc(52px + env(safe-area-inset-top, 0px)) !important;
-  padding-bottom: 0 !important;
+  padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px)) !important;
   margin: 0 !important;
   box-sizing: border-box !important;
   background-color: var(--bg-dark);
@@ -13722,12 +13722,11 @@ body.mobile-h5-app.pokemon-active,
   overflow: hidden !important;
   height: 100dvh !important;
   max-height: 100dvh !important;
-  padding-bottom: 0 !important;
 }
 
 .mobile-h5-app.pokemon-active #panel-pokemon {
-  height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 72px - env(safe-area-inset-bottom, 0px)) !important;
-  max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 72px - env(safe-area-inset-bottom, 0px)) !important;
+  height: 100% !important;
+  max-height: 100% !important;
   overflow: hidden !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -13822,8 +13821,8 @@ body.mobile-h5-app.pokemon-active,
 .mobile-h5-app #panel-wiki,
 .mobile-h5-app #panel-box,
 .mobile-h5-app #panel-news {
-  height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 72px - env(safe-area-inset-bottom, 0px)) !important;
-  max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 72px - env(safe-area-inset-bottom, 0px)) !important;
+  height: 100% !important;
+  max-height: 100% !important;
   box-sizing: border-box !important;
 }
 
@@ -15248,13 +15247,12 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
-  height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
-  max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
+  height: 100% !important;
+  max-height: 100% !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch !important;
   overscroll-behavior-y: contain !important;
-  padding-bottom: 28px !important;
 }
 
 .mobile-h5-app .wiki-main-container {
@@ -16714,15 +16712,14 @@ body.mobile-h5-app.values-active,
   overflow: hidden !important;
   height: 100dvh !important;
   max-height: 100dvh !important;
-  padding-bottom: 0 !important;
 }
 
 .mobile-h5-app.ladder-active #panel-wiki:not([style*="display: none"]):not([style*="display:none"]),
 .mobile-h5-app.ladder-active .wiki-main-container,
 .mobile-h5-app.values-active #panel-wiki:not([style*="display: none"]):not([style*="display:none"]),
 .mobile-h5-app.values-active .wiki-main-container {
-  height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
-  max-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 64px - env(safe-area-inset-bottom, 0px)) !important;
+  height: 100% !important;
+  max-height: 100% !important;
   overflow: hidden !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -16741,8 +16738,7 @@ body.mobile-h5-app.values-active,
   display: flex !important;
   flex-direction: column !important;
   flex: 1 1 auto !important;
-  height: calc(100dvh - 52px - 42px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
-  max-height: calc(100dvh - 52px - 42px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+  height: 0 !important;
   min-height: 0 !important;
   box-sizing: border-box !important;
   padding: 2px 4px 0 4px !important;
@@ -16922,8 +16918,7 @@ body.mobile-h5-app.values-active,
   display: flex !important;
   flex-direction: column !important;
   flex: 1 1 auto !important;
-  height: calc(100dvh - 52px - 42px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
-  max-height: calc(100dvh - 52px - 42px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+  height: 0 !important;
   min-height: 0 !important;
   box-sizing: border-box !important;
   overflow-y: auto !important;

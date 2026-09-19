@@ -3671,9 +3671,13 @@ test('Tier 1 - Feature Coverage', 'Mobile Pokemon Table Safe Area and Bottom Doc
   assert(css.includes('.pokemon-table tbody tr:last-child td'), 'styles.css must style .pokemon-table tbody tr:last-child td');
   assert(css.includes('env(safe-area-inset-bottom'), 'tr:last-child td must account for env(safe-area-inset-bottom)');
 
-  // 2. Check mobile viewport panel height formula for #panel-pokemon
+  // 2. Check mobile viewport panel height approach for #panel-pokemon
+  // New approach: body has padding-bottom for dock space, panels use height:100% to inherit correctly
   assert(css.includes('#panel-pokemon {'), 'styles.css must define mobile #panel-pokemon height rule');
-  assert(css.includes('100dvh - 52px - env(safe-area-inset-top'), '#panel-pokemon must deduct top bar and bottom dock clearance');
+  assert(
+    css.includes('height: 100% !important;') && css.includes('padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px)) !important;'),
+    '#panel-pokemon must use height:100% with body padding-bottom accounting for dock clearance'
+  );
 
   // 3. Check drawer smooth slide transition delay for visibility
   assert(css.includes('visibility 0s 0.28s'), 'Drawer sidebars must delay visibility change until slide-out completes');
@@ -3922,9 +3926,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(/css\/styles\.css\?v=(20260917_[345678]|20260918_\d+)/.test(indexHtml), 'index.html styles.css must have current cache buster');
+  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+)/.test(indexHtml), 'index.html styles.css must have current cache buster');
   assert(/js\/modules\/wiki\.js\?v=(20260907_8|20260918_\d+)/.test(indexHtml), 'index.html wiki.js must have valid cache buster');
-  assert(/css\/styles\.css\?v=(20260917_[345678]|20260918_\d+)/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
+  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+)/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
   assert(/js\/modules\/wiki\.js\?v=(20260907_8|20260918_\d+)/.test(appIndexHtml), 'app/index.html wiki.js must have valid cache buster');
 });
 
@@ -5856,7 +5860,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Ba
   assert(css.includes('.ladder-recipe-cat-bar'), 'styles.css must style recipe category switcher bar');
   assert(css.includes('.ladder-recipe-banner-ings'), 'styles.css must style banner ingredient chips container');
   assert(css.includes('bottom: calc(138px + env(safe-area-inset-bottom, 0px)) !important;'), 'styles.css must position mobile ladder FAB above filter FAB');
-  assert(css.includes('height: calc(100dvh - 52px - env(safe-area-inset-top, 0px) - 72px - env(safe-area-inset-bottom, 0px)) !important;'), 'styles.css must reserve 72px bottom clearance for dock and margin');
+  assert(css.includes('padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px)) !important;'), 'styles.css body must reserve dock clearance via padding-bottom for all panels');
 
   // 2. Top Recipes by Category and Logic in wiki.js
   assert(wikiJs.includes('const TOP_RECIPES_BY_CATEGORY = {'), 'wiki.js must define TOP_RECIPES_BY_CATEGORY');
