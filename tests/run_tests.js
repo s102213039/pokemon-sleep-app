@@ -7558,12 +7558,17 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
       '#panel-wiki during ladder-active must use overflow: hidden for single-screen full view'
     );
 
-    // 4. Subpanel ingredients: must use flex: 1 1 auto and overflow: hidden to fit all 18 tracks on screen
+    // 4. Subpanel ingredients: must use flex: 1 1 auto, min-height: 0 and overflow: hidden to fit all 18 tracks on screen
     assert(
       css.includes('.mobile-h5-app #wiki-subpanel-ingredients.active {') &&
       css.includes('overflow: hidden !important;') &&
       css.includes('flex: 1 1 auto !important;'),
       '#wiki-subpanel-ingredients.active must use flex: 1 1 auto and overflow: hidden'
+    );
+    assert(
+      css.includes('.mobile-h5-app .wiki-main-container {') &&
+      css.includes('min-height: 0 !important;'),
+      '.mobile-h5-app .wiki-main-container must reset min-height to 0 to prevent pushing dock'
     );
 
     // 5. Tail box container: must sit at bottom above the dock with margin-top: auto
