@@ -3927,9 +3927,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
 
   // 5. Verify cache busters
   assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+)/.test(indexHtml), 'index.html styles.css must have current cache buster');
-  assert(/js\/modules\/wiki\.js\?v=(20260907_8|20260918_\d+)/.test(indexHtml), 'index.html wiki.js must have valid cache buster');
+  assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+)/.test(indexHtml), 'index.html wiki.js must have valid cache buster');
   assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+)/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
-  assert(/js\/modules\/wiki\.js\?v=(20260907_8|20260918_\d+)/.test(appIndexHtml), 'app/index.html wiki.js must have valid cache buster');
+  assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+)/.test(appIndexHtml), 'app/index.html wiki.js must have valid cache buster');
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless Layout, Single-Line Name:Desc, No Tier Badges & Half-Width Symbols', () => {
@@ -7468,6 +7468,63 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(stylesCss.includes('.text-skill-single {\n  font-size: 11px;'), 'styles.css must style .text-skill-single');
   });
 
+  // ----------------------------------------------------
+  // Test 153: Evolution Levels & Level Adjustment Constraints Verification
+  // ----------------------------------------------------
+  test('Tier 4 - Real-World Application Scenarios', 'Evolution Levels and Level Adjustment Constraints Comprehensive Audit', () => {
+    // 1. Verify Clodsire (土王 980) and Paldean Wooper (烏波 7054)
+    const clod = dataset.find(p => p.formatted_no === '980' || p.name_cn === '土王');
+    assert(clod !== undefined, 'Clodsire must exist in dataset');
+    assertEquals(clod.evo_req, 'Lv.15 + 40 糖', 'Clodsire evo_req must be Lv.15 + 40 糖');
+    const clodMinLvl = PokemonApp.getPokedexMinEvolutionLevel(clod);
+    assertEquals(clodMinLvl, 15, 'Clodsire minimum evolution level must be 15');
+
+    const paldeanWooper = dataset.find(p => p.formatted_no === '7054');
+    assert(paldeanWooper !== undefined, 'Paldean Wooper must exist in dataset');
+    assert(paldeanWooper.name_cn.includes('帕底亞'), 'Paldean Wooper name must contain 帕底亞');
+    assertEquals(paldeanWooper.evo_req, '', 'Paldean Wooper base form evo_req must be empty');
+    const wooperMinLvl = PokemonApp.getPokedexMinEvolutionLevel(paldeanWooper);
+    assertEquals(wooperMinLvl, 1, 'Paldean Wooper minimum level must be 1');
+
+    // 2. Verify legitimate stone/item/sleep evolution pokemon have minLevel = 1
+    const stoneAndSleepNames = ['雷丘', '風速狗', '九尾', '水伊布', '仙子伊布', '路卡利歐', '大綱蛇', '波克基斯'];
+    stoneAndSleepNames.forEach(name => {
+      const p = dataset.find(x => x.name_cn === name);
+      if (p) {
+        const minLvl = PokemonApp.getPokedexMinEvolutionLevel(p);
+        assertEquals(minLvl, 1, `${name} has no level requirement in Pokemon Sleep and should allow minLevel = 1`);
+      }
+    });
+
+    // 3. Verify Stage 3 inherited level evolutions
+    const stage3Inherited = [
+      { name: '大食花', expected: 16 },
+      { name: '隆隆岩', expected: 19 },
+      { name: '自爆磁怪', expected: 23 },
+      { name: '耿鬼', expected: 19 },
+      { name: '艾路雷朵', expected: 15 },
+      { name: '鍬農炮蟲', expected: 15 },
+      { name: '巴布土撥', expected: 14 }
+    ];
+    stage3Inherited.forEach(item => {
+      const p = dataset.find(x => x.name_cn === item.name);
+      if (p) {
+        const minLvl = PokemonApp.getPokedexMinEvolutionLevel(p);
+        assertEquals(minLvl, item.expected, `${item.name} must inherit stage 2 min level of ${item.expected}`);
+      }
+    });
+
+    // 4. Verify Pokédex Modal Level Clamping for Clodsire (土王)
+    PokemonApp.openPokemonDetailModal('980');
+    assert(PokemonApp.getPokedexModalState().level >= 15, 'Clodsire modal level must be >= 15 upon opening');
+    PokemonApp.setPokedexModalLevel(5); // Try to set below 15
+    assertEquals(PokemonApp.getPokedexModalState().level, 15, 'Setting Clodsire level below 15 must clamp to 15');
+
+    // 5. Verify Pokédex Modal Level Setting for Base form (Paldean Wooper)
+    PokemonApp.openPokemonDetailModal('7054');
+    PokemonApp.setPokedexModalLevel(5);
+    assertEquals(PokemonApp.getPokedexModalState().level, 5, 'Base form Paldean Wooper allows setting level down to 5');
+  });
 
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

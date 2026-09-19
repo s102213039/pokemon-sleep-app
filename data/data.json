@@ -4163,7 +4163,7 @@
   {
     "id": "7054",
     "formatted_no": "7054",
-    "name_cn": "烏波（阿羅拉的樣子）",
+    "name_cn": "烏波（帕底亞的樣子）",
     "name_en": "Wooper (Paldea Form)",
     "name_jp": "ウパー  (パルデアのすがた)",
     "type": "毒",
@@ -4174,7 +4174,7 @@
     "skill_rate": "5.60%",
     "interval": "01:46:40",
     "main_skill": "活力填充S",
-    "evo_req": "Lv.15 + 40 糖",
+    "evo_req": "",
     "is_final": "",
     "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png",
     "ingredients": [
@@ -4250,7 +4250,7 @@
     "skill_rate": "5.50%",
     "interval": "00:58:20",
     "main_skill": "活力填充S",
-    "evo_req": "",
+    "evo_req": "Lv.15 + 40 糖",
     "is_final": "〇",
     "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/980.png",
     "ingredients": [
