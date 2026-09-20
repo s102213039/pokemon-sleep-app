@@ -1444,12 +1444,14 @@
     }
 
     modal.style.display = 'flex';
+    if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(modal);
   }
 
   function closeBoxEditModal() {
     const modal = document.getElementById('box-edit-modal');
     if (modal) {
       modal.style.display = 'none';
+      if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
       const dialog = modal.querySelector ? modal.querySelector('.box-modal-dialog') : null;
       if (dialog && dialog.classList) {
         dialog.classList.remove('has-screenshot');
@@ -2442,21 +2444,21 @@
     if (guideThumbWrap && guideLightbox) {
       guideThumbWrap.addEventListener('click', (e) => {
         e.stopPropagation();
-        guideLightbox.style.display = 'flex';
+        guideLightbox.style.display = 'flex'; if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(guideLightbox);
       });
     }
 
     if (guideLightboxClose && guideLightbox) {
       guideLightboxClose.addEventListener('click', (e) => {
         e.stopPropagation();
-        guideLightbox.style.display = 'none';
+        guideLightbox.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
       });
     }
 
     if (guideLightbox) {
       guideLightbox.addEventListener('click', (e) => {
         if (e.target === guideLightbox) {
-          guideLightbox.style.display = 'none';
+          guideLightbox.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
         }
       });
     }

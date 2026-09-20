@@ -7775,7 +7775,7 @@ input[type="number"] {
 .box-guide-lightbox-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 10050;
   background: rgba(0, 0, 0, 0.82);
   backdrop-filter: blur(8px);
   display: flex;
@@ -14174,7 +14174,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   background-color: var(--bg-sidebar, #0a0f1d) !important;
   background: var(--bg-sidebar, #0a0f1d) !important;
   border-radius: 0 !important;
-  z-index: 10005 !important;
+  z-index: 10050 !important;
   box-shadow: -8px 0 32px rgba(0, 0, 0, 0.7) !important;
   border-left: 1px solid var(--border-color) !important;
   border-right: none !important;
@@ -14228,16 +14228,47 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   right: 0 !important;
   height: 100% !important;
   height: 100dvh !important;
-  background: rgba(0, 0, 0, 0.5) !important;
-  backdrop-filter: blur(4px) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
-  z-index: 9999 !important;
+  background: rgba(0, 0, 0, 0.55) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  z-index: 10040 !important;
 }
 
 .mobile-h5-app .sidebar-backdrop.active {
   display: block !important;
   opacity: 1 !important;
   pointer-events: auto !important;
+}
+
+.mobile-h5-app.overlay-open {
+  overscroll-behavior: none !important;
+  overscroll-behavior-y: none !important;
+}
+
+.mobile-h5-app.overlay-open .mobile-app-header,
+.mobile-h5-app.overlay-open .bottom-dock,
+.mobile-h5-app.overlay-open .mobile-bottom-dock,
+.mobile-h5-app.overlay-open .bottom-dock-nav {
+  z-index: 2 !important;
+}
+
+.mobile-h5-app .sidebar-backdrop,
+.mobile-h5-app .pokemon-filter-sidebar,
+.mobile-h5-app .recipe-filter-sidebar,
+.mobile-h5-app .ladder-fixed-sidebar,
+.mobile-h5-app .pokedex-modal-backdrop,
+.mobile-h5-app .box-modal-backdrop,
+.mobile-h5-app .settings-modal-overlay,
+.mobile-h5-app .ladder-recipe-modal,
+.mobile-h5-app .appraisal-modal-backdrop,
+.mobile-h5-app .box-guide-lightbox-backdrop {
+  overscroll-behavior: none !important;
+  overscroll-behavior-y: contain !important;
+}
+
+.mobile-h5-app .sidebar-scrollable-content {
+  overscroll-behavior: contain !important;
+  overscroll-behavior-y: contain !important;
 }
 
 .mobile-h5-app .pokemon-filter-sidebar.collapsed,

@@ -11727,6 +11727,7 @@
         window.setSidebarSavedState('pksleep_ladder_sidebar_open', false);
       }
     } else {
+      if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(sidebar);
       sidebar.classList.remove('collapsed');
       sidebar.style.setProperty('display', 'flex', 'important');
       if (backdrop && (isMobileH5 || window.innerWidth <= 1024)) {
@@ -11749,6 +11750,7 @@
         window.setSidebarSavedState('pksleep_ladder_sidebar_open', true);
       }
     }
+    if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
   }
 
   function toggleLadderEnergyHelp(event) {
@@ -12524,6 +12526,7 @@
     }
     renderLadderRecipeModalContent();
     modal.style.display = 'flex';
+    if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
   }
 
   function closeLadderRecipeModal() {
@@ -12531,6 +12534,7 @@
     if (modal) {
       modal.style.display = 'none';
     }
+    if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
   }
 
   function openSkillDrawHelpModal(e) {

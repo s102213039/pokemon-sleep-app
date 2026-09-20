@@ -1497,6 +1497,107 @@ PokemonApp.renderSkillWithTooltip = renderSkillWithTooltip;
 PokemonApp.formatHelpInterval = formatHelpInterval;
 PokemonApp.matchesPokemonSearch = matchesPokemonSearch;
 PokemonApp.toPinyin = toPinyin;
+
+const MOBILE_OVERLAY_IDS = [
+  'pokemon-filter-sidebar', 'sidebar-backdrop',
+  'recipe-filter-sidebar', 'recipe-sidebar-backdrop',
+  'ladder-filter-sidebar', 'ladder-sidebar-backdrop',
+  'pokedex-detail-modal', 'box-edit-modal', 'box-guide-lightbox-modal',
+  'settings-modal', 'ladder-recipe-modal', 'modal-appraisal-report'
+];
+
+function isMobileH5Surface() {
+  try {
+    return !!(typeof document !== 'undefined' && document.body && document.body.classList && document.body.classList.contains('mobile-h5-app'));
+  } catch (e) {
+    return false;
+  }
+}
+
+function portalOverlayToBody(el) {
+  if (!el || typeof document === 'undefined' || !document.body) return;
+  if (!isMobileH5Surface()) return;
+  try {
+    if (el.parentElement !== document.body && typeof document.body.appendChild === 'function') {
+      document.body.appendChild(el);
+    }
+  } catch (e) {}
+}
+
+function isInlineDisplayNone(el) {
+  if (!el) return true;
+  const d = (el.style && el.style.display) || '';
+  if (d === 'none') return true;
+  const attr = (typeof el.getAttribute === 'function') ? (el.getAttribute('style') || '') : '';
+  if (/display\s*:\s*none/i.test(attr) && d !== 'flex' && d !== 'block') return true;
+  return false;
+}
+
+function isDrawerVisiblyOpen(el) {
+  if (!el || !el.classList || el.classList.contains('collapsed')) return false;
+  if (isInlineDisplayNone(el)) return false;
+  return true;
+}
+
+function isAnyOverlayOpen() {
+  if (typeof document === 'undefined') return false;
+  try {
+    if (document.body && document.body.classList) {
+      if (document.body.classList.contains('pokedex-modal-open') || document.body.classList.contains('modal-open')) return true;
+    }
+    if (document.querySelector && document.querySelector('.sidebar-backdrop.active')) return true;
+    if (isDrawerVisiblyOpen(document.getElementById('pokemon-filter-sidebar'))) return true;
+    if (isDrawerVisiblyOpen(document.getElementById('recipe-filter-sidebar'))) return true;
+    if (isDrawerVisiblyOpen(document.getElementById('ladder-filter-sidebar'))) return true;
+    for (let i = 0; i < MOBILE_OVERLAY_IDS.length; i++) {
+      const id = MOBILE_OVERLAY_IDS[i];
+      if (id.indexOf('sidebar') !== -1 || id.indexOf('backdrop') !== -1) continue;
+      const el = document.getElementById(id);
+      if (el && !isInlineDisplayNone(el)) return true;
+    }
+    if (document.querySelector) {
+      const appraisal = document.querySelector('.appraisal-modal-backdrop');
+      if (appraisal && !isInlineDisplayNone(appraisal)) return true;
+    }
+  } catch (e) {}
+  return false;
+}
+
+function syncOverlayOpenState() {
+  if (typeof document === 'undefined' || !document.body || !document.body.classList) return;
+  try {
+    if (isAnyOverlayOpen()) document.body.classList.add('overlay-open');
+    else document.body.classList.remove('overlay-open');
+  } catch (e) {}
+}
+
+function portalMobileOverlays(extraEl) {
+  if (isMobileH5Surface()) {
+    for (let i = 0; i < MOBILE_OVERLAY_IDS.length; i++) {
+      const node = (typeof document !== 'undefined' && document.getElementById) ? document.getElementById(MOBILE_OVERLAY_IDS[i]) : null;
+      if (node) portalOverlayToBody(node);
+    }
+    if (extraEl) portalOverlayToBody(extraEl);
+    try {
+      if (document.querySelectorAll) {
+        const extras = document.querySelectorAll('.appraisal-modal-backdrop, .ladder-recipe-modal');
+        for (let i = 0; i < extras.length; i++) portalOverlayToBody(extras[i]);
+      }
+    } catch (e) {}
+  }
+  syncOverlayOpenState();
+}
+
+if (typeof window !== 'undefined') {
+  window.portalOverlayToBody = portalOverlayToBody;
+  window.portalMobileOverlays = portalMobileOverlays;
+  window.syncOverlayOpenState = syncOverlayOpenState;
+  window.isAnyOverlayOpen = isAnyOverlayOpen;
+}
+PokemonApp.portalOverlayToBody = portalOverlayToBody;
+PokemonApp.portalMobileOverlays = portalMobileOverlays;
+PokemonApp.syncOverlayOpenState = syncOverlayOpenState;
+PokemonApp.isAnyOverlayOpen = isAnyOverlayOpen;
 PokemonApp.levenshteinDistance = levenshteinDistance;
 PokemonApp.isSubsequence = isSubsequence;
 
@@ -1682,6 +1783,7 @@ function toggleSidebar(forceState) {
       setSidebarSavedState('pksleep_dex_sidebar_open', false);
     }
   } else {
+    if (typeof portalMobileOverlays === 'function') portalMobileOverlays(sidebar);
     sidebar.classList.remove('collapsed');
     if (typeof window !== 'undefined' && window.innerWidth <= 1024 && backdrop) {
       backdrop.classList.add('active');
@@ -1699,6 +1801,7 @@ function toggleSidebar(forceState) {
       setSidebarSavedState('pksleep_dex_sidebar_open', true);
     }
   }
+  if (typeof syncOverlayOpenState === 'function') syncOverlayOpenState();
 }
 
 if (typeof window !== 'undefined') {
@@ -1867,11 +1970,12 @@ if (typeof document !== 'undefined') {
         applyTheme(currentTheme);
         updateLangButtons();
         settingsModal.style.display = 'flex';
+        if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(settingsModal);
       });
 
       if (settingsCloseBtn) {
         settingsCloseBtn.addEventListener('click', () => {
-          settingsModal.style.display = 'none';
+          settingsModal.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
         });
       }
 
@@ -1881,16 +1985,16 @@ if (typeof document !== 'undefined') {
           if (val) {
             ghPat = val;
             localStorage.setItem(GH_PAT_KEY, val);
-            settingsModal.style.display = 'none';
+            settingsModal.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
             if (syncStatus) syncStatus.innerHTML = `<span style="color:#4ade80;">✅ PAT Token 已儲存！現在可以點擊同步資料。</span>`;
           } else {
-            settingsModal.style.display = 'none';
+            settingsModal.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
           }
         });
       }
 
       settingsModal.addEventListener('click', (e) => {
-        if (e.target === settingsModal) settingsModal.style.display = 'none';
+        if (e.target === settingsModal) settingsModal.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
       });
     }
 
@@ -2783,6 +2887,7 @@ if (typeof document !== 'undefined') {
           }
           setSidebarSavedState('pksleep_dex_sidebar_open', false);
         } else {
+          if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(sidebar);
           sidebar.classList.remove('collapsed');
           if (window.innerWidth <= 1024 && backdrop) {
             backdrop.classList.add('active');
@@ -2798,6 +2903,7 @@ if (typeof document !== 'undefined') {
           }
           setSidebarSavedState('pksleep_dex_sidebar_open', true);
         }
+        if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
       }
       window.toggleSidebar = toggleSidebar;
       PokemonApp.toggleSidebar = toggleSidebar;
@@ -2815,6 +2921,8 @@ if (typeof document !== 'undefined') {
             bookmarkHandle.style.pointerEvents = 'none';
             bookmarkHandle.style.visibility = 'hidden';
           }
+          if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(sidebar);
+          if (window.innerWidth <= 1024 && backdrop) backdrop.classList.add('active');
         } else {
           sidebar.classList.add('collapsed');
           if (bookmarkHandle) {
@@ -3512,16 +3620,18 @@ if (typeof document !== 'undefined') {
       function isModalOrDrawerActive() {
         if (typeof document === 'undefined') return false;
         if (document.body && document.body.classList) {
-          if (document.body.classList.contains('modal-open') || document.body.classList.contains('pokedex-modal-open')) {
+          if (document.body.classList.contains('overlay-open') || document.body.classList.contains('modal-open') || document.body.classList.contains('pokedex-modal-open')) {
             return true;
           }
         }
+        if (typeof window.isAnyOverlayOpen === 'function' && window.isAnyOverlayOpen()) return true;
         const pokedexModal = document.getElementById('pokedex-detail-modal');
         if (pokedexModal && (pokedexModal.style.display === 'flex' || pokedexModal.style.display === 'block')) {
           return true;
         }
-        const activeModal = document.querySelector('.modal-overlay.active, .subskill-sheet-modal.active, .appraisal-modal-overlay.active, .pokedex-modal-backdrop:not([style*="display: none"]):not([style*="display:none"])');
+        const activeModal = document.querySelector('.sidebar-backdrop.active, .modal-overlay.active, .subskill-sheet-modal.active, .appraisal-modal-overlay.active, .appraisal-modal-backdrop, .pokedex-modal-backdrop:not([style*="display: none"]):not([style*="display:none"]), #settings-modal:not([style*="display: none"]):not([style*="display:none"]), #box-edit-modal:not([style*="display: none"]):not([style*="display:none"]), #ladder-recipe-modal:not([style*="display: none"]):not([style*="display:none"]), #box-guide-lightbox-modal:not([style*="display: none"]):not([style*="display:none"])');
         if (activeModal) return true;
+        if (document.querySelector('#pokemon-filter-sidebar:not(.collapsed), #recipe-filter-sidebar:not(.collapsed), #ladder-filter-sidebar:not(.collapsed), .ladder-fixed-sidebar:not(.collapsed)')) return true;
         return false;
       }
 
@@ -3529,6 +3639,8 @@ if (typeof document !== 'undefined') {
         if (isRefreshing || !e.touches || !e.touches[0]) return;
         if (isModalOrDrawerActive()) {
           isTracking = false;
+          touchStartY = e.touches[0].clientY;
+          touchStartX = e.touches[0].clientX;
           return;
         }
         // 嚴格判定：只有在最頂部時才允許判斷觸發下拉刷新
@@ -3539,7 +3651,7 @@ if (typeof document !== 'undefined') {
 
         // 避免在開啟的側邊欄或彈窗內誤觸發全頁下拉刷新
         const target = e.target;
-        if (target && target.closest && target.closest('#pokedex-detail-modal, .pokedex-modal-backdrop, .pokedex-modal-dialog, .pokedex-modal-body, .pokemon-filter-sidebar:not(.collapsed), .recipe-filter-sidebar:not(.collapsed), .ladder-fixed-sidebar:not(.collapsed), .modal-overlay.active, .subskill-sheet-modal.active, .appraisal-modal-overlay.active')) {
+        if (target && target.closest && target.closest('#pokedex-detail-modal, .pokedex-modal-backdrop, .pokedex-modal-dialog, .pokedex-modal-body, .pokemon-filter-sidebar, .recipe-filter-sidebar, .ladder-fixed-sidebar, .sidebar-backdrop, .modal-overlay, .subskill-sheet-modal, .appraisal-modal-overlay, .appraisal-modal-backdrop, #settings-modal, #box-edit-modal, #ladder-recipe-modal, #box-guide-lightbox-modal, .box-guide-lightbox-backdrop')) {
           isTracking = false;
           return;
         }
@@ -3553,15 +3665,23 @@ if (typeof document !== 'undefined') {
       }, { passive: true });
 
       document.addEventListener('touchmove', (e) => {
-        if (!isTracking || isRefreshing || !e.touches || !e.touches[0]) return;
+        if (isRefreshing || !e.touches || !e.touches[0]) return;
         if (isModalOrDrawerActive()) {
           isTracking = false;
           if (currentPull > 0) {
             currentPull = 0;
             updatePtrUI(0);
           }
+          const t = e.target;
+          const scrollable = t && t.closest ? t.closest('.sidebar-scrollable-content, .pokedex-modal-body, .box-modal-body, .settings-modal-body, .ladder-recipe-modal-body, .appraisal-modal-body, .box-guide-lightbox-dialog') : null;
+          if (!scrollable || scrollable.scrollTop <= 0) {
+            if (e.touches[0].clientY > touchStartY && e.cancelable) {
+              e.preventDefault();
+            }
+          }
           return;
         }
+        if (!isTracking) return;
         const currentY = e.touches[0].clientY;
         const currentX = e.touches[0].clientX;
         const deltaY = currentY - touchStartY;
@@ -3587,7 +3707,7 @@ if (typeof document !== 'undefined') {
         // 阻尼係數計算下拉位移
         currentPull = Math.min(MAX_PULL, Math.pow(deltaY, 0.8) * 1.8);
         updatePtrUI(currentPull);
-      }, { passive: true });
+      }, { passive: false });
 
       document.addEventListener('touchend', () => {
         if (!isTracking || isRefreshing) return;
@@ -3765,6 +3885,7 @@ function openPokemonDetailModal(pokemonId) {
     if (document.body && document.body.classList) {
       document.body.classList.add('pokedex-modal-open');
     }
+    if (typeof portalMobileOverlays === 'function') portalMobileOverlays(modalEl);
   } catch (e) {}
 
   renderPokedexDetailModalContent();
@@ -3780,6 +3901,7 @@ function closePokemonDetailModal() {
       if (document.body && document.body.classList) {
         document.body.classList.remove('pokedex-modal-open');
       }
+      if (typeof syncOverlayOpenState === 'function') syncOverlayOpenState();
     } catch (e) {}
   }
 }

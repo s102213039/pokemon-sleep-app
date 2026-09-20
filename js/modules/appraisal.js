@@ -1070,14 +1070,14 @@
       </div>
     `;
 
-    modal.style.display = 'flex';
+    modal.style.display = 'flex'; if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(modal);
     document.body.style.overflow = 'hidden';
   }
 
   function closeAppraisalModal() {
     const modal = document.getElementById('modal-appraisal-report');
     if (modal) {
-      modal.style.display = 'none';
+      modal.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
       document.body.style.overflow = '';
     }
   }

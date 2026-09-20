@@ -7674,6 +7674,32 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assertEquals(localStore['pksleep_active_island_legendary_only'], 'false', 'localStorage must reflect false');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Mobile Overlay Portal Covers App Bar/Dock And Blocks Pull-To-Refresh', () => {
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+    const recipesJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'recipes.js'), 'utf8');
+    const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+    assert(appJs.includes('function portalMobileOverlays'), 'app.js must define portalMobileOverlays');
+    assert(appJs.includes("classList.add('overlay-open')"), 'app.js must mark body overlay-open');
+    assert(appJs.includes("classList.contains('overlay-open')"), 'pull-to-refresh must respect overlay-open');
+    assert(appJs.includes('e.preventDefault()'), 'overlay pull-down must preventDefault');
+    assert(recipesJs.includes('window.portalMobileOverlays'), 'recipes.js must portal filter drawer');
+    assert(wikiJs.includes('window.portalMobileOverlays'), 'wiki.js must portal ladder drawer');
+    assert(boxJs.includes('window.portalMobileOverlays'), 'box.js must portal edit/lightbox overlays');
+    assert(appraisalJs.includes('window.portalMobileOverlays'), 'appraisal.js must portal report overlay');
+    assert(wikiJs.includes('window.syncOverlayOpenState'), 'wiki.js must sync overlay-open on ladder recipe modal');
+
+    assert(css.includes('.mobile-h5-app.overlay-open'), 'CSS must define overlay-open stacking');
+    assert(css.includes('.mobile-h5-app.overlay-open .mobile-app-header'), 'CSS must drop app bar under overlay');
+    assert(css.includes('.mobile-h5-app.overlay-open .bottom-dock'), 'CSS must drop bottom dock under overlay');
+    assert(css.includes('z-index: 10040 !important;'), 'sidebar backdrop must sit above header/dock');
+    assert(css.includes('z-index: 10050 !important;'), 'filter drawer must sit above blurred chrome');
+    assert(css.includes('.mobile-h5-app .sidebar-scrollable-content') && css.includes('overscroll-behavior-y: contain !important;'), 'filter drawer must contain overscroll');
+  });
+
 console.log('\n======================================================');
 console.log('                   Test Results Summary');
 console.log('======================================================');

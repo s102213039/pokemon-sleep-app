@@ -817,6 +817,7 @@
           window.setSidebarSavedState('pksleep_recipe_sidebar_open', false);
         }
       } else {
+        if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(sidebar);
         sidebar.classList.remove('collapsed');
         if (backdrop) {
           backdrop.classList.add('active');
@@ -834,6 +835,7 @@
           window.setSidebarSavedState('pksleep_recipe_sidebar_open', true);
         }
       }
+      if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
     }
     window.toggleRecipeSidebar = toggleRecipeSidebar;
 
@@ -860,6 +862,8 @@
           bookmarkHandle.style.pointerEvents = 'none';
           bookmarkHandle.style.visibility = 'hidden';
         }
+        if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(sidebar);
+        if (backdrop) backdrop.classList.add('active');
       } else {
         sidebar.classList.add('collapsed');
         if (bookmarkHandle) {

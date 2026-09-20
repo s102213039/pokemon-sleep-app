@@ -410,3 +410,14 @@
    - 新增 Tier 4 測試案例：`English Concise Translations & Island Legendary Pokemon Filter Switch`。
    - 驗證點涵蓋：CSS 類名定義、英文精簡詞條、神獸切換開關函數導出、localStorage 讀寫、萌綠之島神獸過濾（包含雷公/炎帝/水君、排除普通寶可夢）及關閉還原。
    - 測試結果：**155 / 155 項測試 100% 全數通過（0 失敗）**。
+
+## 需求十一：H5 側邊篩選器與浮窗蓋過 App Bar／Dock，並禁止下拉重新（2026-09-20）
+
+### 問題
+行動版篩選抽層與遮罩掛在 `.app-main-viewport` 內，被 `overflow: hidden` 裁切；頂部 App Bar（z-index 999）與底部 Dock（z-index 1000）維持高亮，無法進入背景模糊。在篩選器內下拉仍會觸發自訂／瀏覽器下拉重新。
+
+### 修復
+1. 新增共用 `portalMobileOverlays`：H5 開啟時將圖鑑／料理／天梯篩選器與 backdrop、圖鑑評鑑、盒子編輯、截圖 Lightbox、設定、天梯料理浮窗、評測報告移至 `document.body`。
+2. `body.overlay-open`：App Bar／Dock 降至 z-index 2；遮罩 z-index 10040、抽層 10050；遮罩 `backdrop-filter: blur(8px)` 覆蓋全螢幕。
+3. 下拉重新：`overlay-open` 時不追蹤 PTR；在浮層頂部下拉 `preventDefault`；抽層內容 `overscroll-behavior: contain`。
+4. 測試：**156 / 156** 通過。快取 `v=20260920_4`。
