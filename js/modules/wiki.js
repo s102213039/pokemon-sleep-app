@@ -11852,7 +11852,9 @@
   let isLadderIngS = false;
   let isLadderSpeedM = false;
   let isLadderSpeedS = false;
-  let ladderNature = 'NONE'; // 'NONE' | 'ING' | 'SPEED'
+  let ladderNatureIng = false;
+  let ladderNatureSpeed = false;
+  let ladderNature = 'NONE'; // 'NONE' | 'ING' | 'SPEED' (0 or 2 selected = NONE)
   let ladderSearchQuery = '';
   let ladderSupplyFilter = 'ALL'; // 'ALL' | 'TOP' | 'MEALS_3' | 'MEALS_2'
   let ladderRecipeFilter = 'ALL'; // 'ALL' | 'AAA' | 'ABB' | 'AXX'
@@ -12649,10 +12651,11 @@
     if (isLadderSpeedS) speedReduction += 0.07;
     if (speedReduction > 0) mult *= (1.0 / (1.0 - speedReduction));
 
-    // 性格加成 (單選):
-    if (ladderNature === 'ING') {
+    // 性格加成：兩項可獨立勾選；全不選或全選皆視為無修正
+    const natureMode = getLadderNature();
+    if (natureMode === 'ING') {
       mult *= 1.20; // 性格食材機率▲ (+20%)
-    } else if (ladderNature === 'SPEED') {
+    } else if (natureMode === 'SPEED') {
       mult *= (1.0 / 0.9090909); // 性格幫忙速度▲ (-9.09% 間隔，約 +10% 幫忙次數)
     }
 
@@ -12679,24 +12682,52 @@
     refreshCoordinateLadder();
   }
 
-  function setLadderNature(natureType) {
-    ladderNature = natureType || 'NONE';
+  function getLadderNature() {
+    if (ladderNatureIng === ladderNatureSpeed) return 'NONE';
+    return ladderNatureIng ? 'ING' : 'SPEED';
+  }
+
+  function syncLadderNatureButtons() {
+    ladderNature = getLadderNature();
     document.querySelectorAll('[data-nature-filter]').forEach(btn => {
-      if (btn.getAttribute('data-nature-filter') === ladderNature) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
+      const key = btn.getAttribute('data-nature-filter');
+      const on = (key === 'ING' && ladderNatureIng) || (key === 'SPEED' && ladderNatureSpeed);
+      btn.classList.toggle('active', on);
     });
+  }
+
+  function setLadderNature(natureType) {
+    if (natureType === 'ING') {
+      ladderNatureIng = true;
+      ladderNatureSpeed = false;
+    } else if (natureType === 'SPEED') {
+      ladderNatureIng = false;
+      ladderNatureSpeed = true;
+    } else {
+      ladderNatureIng = false;
+      ladderNatureSpeed = false;
+    }
+    syncLadderNatureButtons();
+    refreshCoordinateLadder();
+  }
+
+  function toggleLadderNatureFilter(type) {
+    if (type === 'ING') ladderNatureIng = !ladderNatureIng;
+    else if (type === 'SPEED') ladderNatureSpeed = !ladderNatureSpeed;
+    syncLadderNatureButtons();
     refreshCoordinateLadder();
   }
 
   function toggleLadderNatureIng(checked) {
-    setLadderNature(checked ? 'ING' : 'NONE');
+    ladderNatureIng = !!checked;
+    syncLadderNatureButtons();
+    refreshCoordinateLadder();
   }
 
   function toggleLadderNatureSpeed(checked) {
-    setLadderNature(checked ? 'SPEED' : 'NONE');
+    ladderNatureSpeed = !!checked;
+    syncLadderNatureButtons();
+    refreshCoordinateLadder();
   }
 
   function onLadderSearch(val) {
@@ -12821,14 +12852,9 @@
 
     switchLadderView('coordinate');
 
-    ladderNature = 'NONE';
-    document.querySelectorAll('[data-nature-filter]').forEach(btn => {
-      if (btn.getAttribute('data-nature-filter') === 'NONE') {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
-    });
+    ladderNatureIng = false;
+    ladderNatureSpeed = false;
+    syncLadderNatureButtons();
 
     isLadderIngM = false;
     isLadderIngS = false;
@@ -15400,7 +15426,7 @@
         </div>
       </div>
 
-      <div class="wiki-two-col-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px; margin-bottom:16px;">
+      <div class="island-triple-grid">
         <div class="island-table-card">
           <div class="wiki-card-header">
             <h3 class="wiki-card-title">${isEN ? 'Snorlax Rank Energy Progression' : '卡比獸評級所需能量'}</h3>
@@ -15447,9 +15473,8 @@
             ${isEN ? '* Min Rank (100pt): Lowest Snorlax rank and energy required to reach this spawn count with 100 Sleep Score (8.5 hrs). Drowsy Power = Snorlax Strength × Sleep Score.' : '* 睡眠分數100: 以睡滿 100 分 (8.5小時) 換算, 當天早晨達成該隻數所需之卡比獸最低能量與對應評級. 睡意之力 = 卡比獸能量 × 睡眠分數.'}
           </div>
         </div>
-      </div>
 
-      <div class="island-spawns-card" style="margin-bottom:16px;">
+      <div class="island-spawns-card">
         <div class="wiki-card-header" style="flex-wrap:wrap; gap:10px 14px; justify-content:space-between; align-items:center;">
           <div class="island-spawns-title-wrap" style="display:inline-flex; align-items:center; gap:10px; flex-wrap:wrap;">
             <h3 class="wiki-card-title" style="margin:0;">${isEN ? 'Habitats & Sleep Styles' : '棲息寶可夢與各星級睡姿解鎖門檻'}</h3>
@@ -15490,6 +15515,7 @@
             </tbody>
           </table>
         </div>
+      </div>
       </div>
     `;
   }
@@ -17067,15 +17093,14 @@
             </label>
           </div>
 
-          <!-- 7. 性格補正模擬 (Nature Boost Simulation - 單選) -->
+          <!-- 7. 性格補正模擬 (Nature Boost Simulation - 可獨立勾選；全不選或全選 = 無修正) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Nature Boost' : '性格補正模擬'}</span>
             </div>
             <div class="sidebar-skills-list sidebar-2col-tags">
-              <button type="button" class="tag-btn ${ladderNature === 'NONE' ? 'active' : ''}" data-nature-filter="NONE" onclick="window.WikiDB.setLadderNature('NONE')">${isEN ? 'Neutral' : '無修正'}</button>
-              <button type="button" class="tag-btn ${ladderNature === 'ING' ? 'active' : ''}" data-nature-filter="ING" onclick="window.WikiDB.setLadderNature('ING')">${isEN ? 'Ing. Rate ▲ (+20%)' : '食材機率▲ (+20%)'}</button>
-              <button type="button" class="tag-btn ${ladderNature === 'SPEED' ? 'active' : ''}" data-nature-filter="SPEED" onclick="window.WikiDB.setLadderNature('SPEED')">${isEN ? 'Help Speed ▲ (+10%)' : '幫忙速度▲ (+10%)'}</button>
+              <button type="button" class="tag-btn ${ladderNatureIng ? 'active' : ''}" data-nature-filter="ING" onclick="window.WikiDB.toggleLadderNatureFilter('ING')">${isEN ? 'Ing. Rate ▲ (+20%)' : '食材機率▲ (+20%)'}</button>
+              <button type="button" class="tag-btn ${ladderNatureSpeed ? 'active' : ''}" data-nature-filter="SPEED" onclick="window.WikiDB.toggleLadderNatureFilter('SPEED')">${isEN ? 'Help Speed ▲ (+10%)' : '幫忙速度▲ (+10%)'}</button>
             </div>
           </div>
         </div>
@@ -17619,6 +17644,8 @@
     toggleLadderSpeedS: toggleLadderSpeedS,
     toggleLadderNatureIng: toggleLadderNatureIng,
     toggleLadderNatureSpeed: toggleLadderNatureSpeed,
+    toggleLadderNatureFilter: toggleLadderNatureFilter,
+    getLadderNature: getLadderNature,
     setLadderNature: setLadderNature,
     onLadderSearch: onLadderSearch,
     clearLadderSearch: clearLadderSearch,
@@ -17714,6 +17741,8 @@
   window.toggleLadderSpeedS = toggleLadderSpeedS;
   window.toggleLadderNatureIng = toggleLadderNatureIng;
   window.toggleLadderNatureSpeed = toggleLadderNatureSpeed;
+  window.toggleLadderNatureFilter = toggleLadderNatureFilter;
+  window.getLadderNature = getLadderNature;
   window.setLadderNature = setLadderNature;
   window.onLadderSearch = onLadderSearch;
   window.clearLadderSearch = clearLadderSearch;

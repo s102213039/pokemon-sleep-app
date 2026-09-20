@@ -971,7 +971,7 @@ test('Tier 1 - Feature Coverage', 'WikiDB Namespace & Event Handler Methods Inte
     'switchBoost', 'switchHelperBoost', 'toggleDetail', 'toggleDetailTable',
     'updateBerryLevel', 'updateBerryIsland', 'toggleBerryFavorite', 'toggleFavorite',
     'toggleLadderIngM', 'toggleLadderIngS', 'toggleLadderSpeedM', 'toggleLadderSpeedS',
-    'toggleLadderNatureIng', 'toggleLadderNatureSpeed', 'setLadderNature',
+    'toggleLadderNatureIng', 'toggleLadderNatureSpeed', 'toggleLadderNatureFilter', 'setLadderNature',
     'onLadderSearch', 'clearLadderSearch',
     'setLadderRecipeFilter', 'refreshCoordinateLadder', 'handleLadderGroupHover',
     'handleLadderGroupHoverOut', 'recalcTriggerChance', 'recalcSleepDays',
@@ -2618,6 +2618,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Sub-skills
 
   assert(wikiCode.includes('data-nature-filter="ING"'), 'Template should contain data-nature-filter="ING"');
   assert(wikiCode.includes('data-nature-filter="SPEED"'), 'Template should contain data-nature-filter="SPEED"');
+  assert(!wikiCode.includes('data-nature-filter="NONE"'), 'Nature filter must not keep Neutral as a third option');
+  assert(wikiCode.includes("toggleLadderNatureFilter('ING')"), 'Nature options must be independently toggleable');
+  assert(wikiCode.includes('if (ladderNatureIng === ladderNatureSpeed) return \'NONE\''), 'Selecting none or both natures must equal no correction');
+  assert(wikiCode.includes('class="island-triple-grid"'), 'Islands desktop layout must place three major blocks in one row');
   assert(wikiCode.includes('id="ladder-ing-s-toggle"'), 'Template should contain ladder-ing-s-toggle');
   assert(wikiCode.includes('id="ladder-speed-s-toggle"'), 'Template should contain ladder-speed-s-toggle');
   assert(wikiCode.includes('ladder-track-header') && wikiCode.includes('ladder-ing-icon'), 'Template should render ladder-track-header and ladder-ing-icon');
@@ -4856,6 +4860,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Berries Single Line La
   assert(!html.includes('class="wiki-card island-overview-card"'), 'Hero block must not have outer wiki-card border');
   assert(!html.includes('island-ex-card'), 'EX card must be completely removed from DOM');
   assert(html.includes('class="island-table-card"'), 'Two-col tables must use borderless island-table-card');
+  assert(cssCode.includes('.island-triple-grid {') && cssCode.includes('grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.05fr) minmax(0, 1.28fr);'), 'Islands must use compact 3-column grid');
+  assert(cssCode.includes('.wiki-ratings-container {') && cssCode.includes('grid-template-columns: repeat(3, minmax(0, 1fr));'), 'Ratings guide must use 3-across desktop grid');
+  assert(cssCode.includes('.mobile-h5-app #pokemon-filter-sidebar .sidebar-scrollable-content') && cssCode.includes('gap: 6px !important;'), 'Pokedex H5 filter must compress vertical gap');
   assert(html.includes('class="island-spawns-card"'), 'Spawns section must use borderless island-spawns-card');
   assert(!html.includes('<div class="wiki-card" style="margin-bottom:16px;">'), 'Spawns section must not have outer wiki-card box');
 
