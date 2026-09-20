@@ -7586,6 +7586,94 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     );
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'English Concise Translations & Island Legendary Pokemon Filter Switch', () => {
+    const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+    const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+    // 1. Verify CSS styles for island legendary switch
+    assert(stylesCss.includes('.island-spawns-title-wrap'), 'CSS must define .island-spawns-title-wrap');
+    assert(stylesCss.includes('.island-legendary-switch-label'), 'CSS must define .island-legendary-switch-label');
+
+    // 2. Setup VM environment for wiki and i18n
+    const localStore = {};
+    const sandbox = {
+      window: {
+        localStorage: {
+          getItem: (k) => localStore[k] || null,
+          setItem: (k, v) => { localStore[k] = String(v); },
+          removeItem: (k) => { delete localStore[k]; }
+        },
+        innerWidth: 1024,
+        location: { hash: '#wiki/islands', search: '' },
+        document: {
+          documentElement: {
+            setAttribute: () => {},
+            getAttribute: () => null
+          },
+          getElementById: () => null,
+          querySelectorAll: () => [],
+          addEventListener: () => {}
+        }
+      },
+      localStorage: {
+        getItem: (k) => localStore[k] || null,
+        setItem: (k, v) => { localStore[k] = String(v); },
+        removeItem: (k) => { delete localStore[k]; }
+      },
+      document: {
+        documentElement: {
+          setAttribute: () => {},
+          getAttribute: () => null
+        },
+        getElementById: () => null,
+        querySelectorAll: () => [],
+        addEventListener: () => {}
+      },
+      console: console
+    };
+
+    vm.createContext(sandbox);
+    vm.runInContext(i18nCode, sandbox);
+    vm.runInContext(wikiCode, sandbox);
+
+    // 3. Verify concise English translations
+    sandbox.window.I18N.setLanguage('en-US');
+    assertEquals(sandbox.window.I18N.t('pokedex.reset_all'), 'Reset', 'pokedex.reset_all should be Reset');
+    assertEquals(sandbox.window.I18N.t('pokedex.filter_sidebar_title'), 'Filter', 'pokedex.filter_sidebar_title should be Filter');
+    assertEquals(sandbox.window.I18N.t('recipe.clear_all'), 'Clear', 'recipe.clear_all should be Clear');
+    assertEquals(sandbox.window.I18N.t('recipe.calc_settings'), 'Simulation', 'recipe.calc_settings should be Simulation');
+    assertEquals(sandbox.window.I18N.t('wiki.islands_legendary_toggle'), 'Legendary', 'wiki.islands_legendary_toggle should be Legendary');
+    assertEquals(sandbox.window.I18N.t('wiki.subtab_skills'), 'Main Skills', 'wiki.subtab_skills should be Main Skills');
+    assertEquals(sandbox.window.I18N.t('box.modal_save'), 'Save', 'box.modal_save should be Save');
+
+    // 4. Verify Island Legendary Switch functions exist in WikiDB
+    assert(typeof sandbox.window.WikiDB.toggleIslandLegendaryOnly === 'function', 'WikiDB must export toggleIslandLegendaryOnly');
+    assert(typeof sandbox.window.WikiDB.getSavedIslandLegendaryOnly === 'function', 'WikiDB must export getSavedIslandLegendaryOnly');
+    assert(typeof sandbox.window.WikiDB.getIsIslandLegendaryOnly === 'function', 'WikiDB must export getIsIslandLegendaryOnly');
+
+    // 5. Select Greengrass and render normal spawns (legendary switch OFF)
+    sandbox.window.WikiDB.selectIsland('greengrass');
+    sandbox.window.WikiDB.toggleIslandLegendaryOnly(false);
+    let htmlAll = sandbox.window.WikiDB.renderIslandsSubpanel();
+    assert(htmlAll.includes('id="island-legendary-switch"'), 'markup must include island-legendary-switch');
+    assert(htmlAll.includes('Pikachu') || htmlAll.includes('Bulbasaur'), 'normal spawns must include regular Pokemon');
+
+    // 6. Toggle Legendary Switch ON
+    sandbox.window.WikiDB.toggleIslandLegendaryOnly(true);
+    assertEquals(sandbox.window.WikiDB.getIsIslandLegendaryOnly(), true, 'legendary toggle must be true');
+    assertEquals(localStore['pksleep_active_island_legendary_only'], 'true', 'localStorage must persist legendary state');
+
+    let htmlLeg = sandbox.window.WikiDB.renderIslandsSubpanel();
+    assert(htmlLeg.includes('Raikou') || htmlLeg.includes('Entei') || htmlLeg.includes('Suicune'), 'legendary filter must include legendary dogs');
+    assert(!htmlLeg.includes('Caterpie') && !htmlLeg.includes('Pidgey'), 'legendary filter must exclude common Pokemon');
+
+    // 7. Toggle Legendary Switch OFF
+    sandbox.window.WikiDB.toggleIslandLegendaryOnly(false);
+    assertEquals(sandbox.window.WikiDB.getIsIslandLegendaryOnly(), false, 'legendary toggle must be false');
+    assertEquals(localStore['pksleep_active_island_legendary_only'], 'false', 'localStorage must reflect false');
+  });
+
 console.log('\n======================================================');
 console.log('                   Test Results Summary');
 console.log('======================================================');

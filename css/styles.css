@@ -20696,6 +20696,35 @@ body.mobile-h5-app.values-active,
   border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
 }
 
+/* Island Habitats Header & Legendary Switch */
+.island-spawns-title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.island-legendary-switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  margin: 0;
+  flex-shrink: 0;
+  padding: 3px 8px 3px 6px;
+  border-radius: 14px;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.12));
+  transition: all 0.2s ease;
+}
+
+.island-legendary-switch-label:hover {
+  background: var(--bg-card-hover, rgba(255, 255, 255, 0.08));
+  border-color: var(--accent-blue, rgba(56, 189, 248, 0.4));
+}
+
 /* Sleep Filters Segmented Bar */
 .island-sleep-filters {
   display: flex;

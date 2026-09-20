@@ -11713,7 +11713,7 @@
       if (bookmarkHandle) {
         bookmarkHandle.classList.remove('drawer-open');
         bookmarkHandle.setAttribute('aria-expanded', 'false');
-        bookmarkHandle.title = isEN ? 'Expand Ladder Filters' : '展開天梯篩選側邊欄';
+        bookmarkHandle.title = isEN ? 'Expand Filter' : '展開天梯篩選側邊欄';
         bookmarkHandle.style.opacity = '1';
         bookmarkHandle.style.pointerEvents = 'auto';
         bookmarkHandle.style.display = 'flex';
@@ -11735,7 +11735,7 @@
       if (bookmarkHandle) {
         bookmarkHandle.classList.add('drawer-open');
         bookmarkHandle.setAttribute('aria-expanded', 'true');
-        bookmarkHandle.title = isEN ? 'Collapse Ladder Filters' : '收合天梯篩選側邊欄';
+        bookmarkHandle.title = isEN ? 'Collapse Filter' : '收合天梯篩選側邊欄';
         bookmarkHandle.style.opacity = '0';
         bookmarkHandle.style.pointerEvents = 'none';
         bookmarkHandle.style.display = 'none';
@@ -14653,11 +14653,49 @@
     return 'all';
   }
 
+  const STORAGE_KEY_ISLAND_LEGENDARY = 'pksleep_active_island_legendary_only';
+
+  const LEGENDARY_POKEMON_SET = new Set([
+    '雷公', '炎帝', '水君', '超夢', '夢幻', '拉帝亞斯', '拉帝歐斯', '克雷色利亞', '達克萊伊',
+    '急凍鳥', '閃電鳥', '火焰鳥', '洛奇亞', '鳳王', '雪拉比', '蓋歐卡', '固拉多', '烈空坐', '基拉祈', '代歐奇希斯'
+  ]);
+  const LEGENDARY_POKEMON_EN_SET = new Set([
+    'Raikou', 'Entei', 'Suicune', 'Mewtwo', 'Mew', 'Latias', 'Latios', 'Cresselia', 'Darkrai',
+    'Articuno', 'Zapdos', 'Moltres', 'Lugia', 'Ho-Oh', 'Celebi', 'Kyogre', 'Groudon', 'Rayquaza', 'Jirachi', 'Deoxys'
+  ]);
+
+  function isLegendaryPokemon(p) {
+    if (!p) return false;
+    return LEGENDARY_POKEMON_SET.has(p.name) || LEGENDARY_POKEMON_EN_SET.has(p.name_en);
+  }
+
+  function getSavedIslandLegendaryOnly() {
+    try {
+      const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (storage) {
+        return storage.getItem(STORAGE_KEY_ISLAND_LEGENDARY) === 'true';
+      }
+    } catch (e) {}
+    return false;
+  }
+
   let currentIslandId = getSavedIslandId();
   let isExpertModeActive = getSavedIslandExpertMode();
   let currentIslandSleepType = getSavedIslandSleepType();
+  let isIslandLegendaryOnly = getSavedIslandLegendaryOnly();
   let islandSpawnsSortCol = null;
   let islandSpawnsSortDir = null;
+
+  function toggleIslandLegendaryOnly(checked) {
+    isIslandLegendaryOnly = typeof checked === 'boolean' ? checked : !isIslandLegendaryOnly;
+    try {
+      const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (storage) {
+        storage.setItem(STORAGE_KEY_ISLAND_LEGENDARY, isIslandLegendaryOnly ? 'true' : 'false');
+      }
+    } catch (e) {}
+    refreshIslandsSubpanel();
+  }
 
   function selectIsland(islandId, isExpert = false) {
     if (!islandId) return;
@@ -15192,9 +15230,15 @@
       slumbering: isEN ? 'Slumbering' : '深深入眠'
     };
 
-    const dozingList = (island.spawns && island.spawns.dozing) ? island.spawns.dozing.map(p => ({ ...p, sleepType: 'dozing' })) : [];
-    const snoozingList = (island.spawns && island.spawns.snoozing) ? island.spawns.snoozing.map(p => ({ ...p, sleepType: 'snoozing' })) : [];
-    const slumberingList = (island.spawns && island.spawns.slumbering) ? island.spawns.slumbering.map(p => ({ ...p, sleepType: 'slumbering' })) : [];
+    let dozingList = (island.spawns && island.spawns.dozing) ? island.spawns.dozing.map(p => ({ ...p, sleepType: 'dozing' })) : [];
+    let snoozingList = (island.spawns && island.spawns.snoozing) ? island.spawns.snoozing.map(p => ({ ...p, sleepType: 'snoozing' })) : [];
+    let slumberingList = (island.spawns && island.spawns.slumbering) ? island.spawns.slumbering.map(p => ({ ...p, sleepType: 'slumbering' })) : [];
+
+    if (isIslandLegendaryOnly) {
+      dozingList = dozingList.filter(isLegendaryPokemon);
+      snoozingList = snoozingList.filter(isLegendaryPokemon);
+      slumberingList = slumberingList.filter(isLegendaryPokemon);
+    }
 
     let spawnList = [];
     if (currentIslandSleepType === 'all') {
@@ -15252,35 +15296,47 @@
       });
     }
 
-    const spawnsRows = spawnList.map(p => {
-      const pName = isEN ? p.name_en : p.name;
-      const pkmAvatar = getPokemonAvatarUrl(p.name, p.name_en);
-      const pkmDex = getIslandPokemonDexCode(p);
-      const dexNum = parseInt(pkmDex, 10);
-      const dexPrefix = isNaN(dexNum) ? '' : `#${String(dexNum).padStart(3, '0')} `;
-      const sleepTypeName = p.sleepType ? (sleepTypeNameMap[p.sleepType] || '') : '';
-      const tooltipText = `${dexPrefix}${pName}${sleepTypeName ? ' (' + sleepTypeName + ')' : ''}`;
-      return `
-        <tr data-sleep-type="${p.sleepType || ''}">
-          <td style="vertical-align:middle; text-align:center; padding:3px 4px;">
-            <div class="island-pkm-item island-pkm-icon-only" title="${tooltipText}">
-              <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${tooltipText}" loading="lazy" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokedex-sv/icon/${pkmDex}.png';}">
-            </div>
+    let spawnsRows = '';
+    if (spawnList.length === 0) {
+      const emptyMsg = isIslandLegendaryOnly
+        ? (isEN ? 'No legendary Pokémon found for current selection' : '目前選取條件下無棲息之神獸寶可夢')
+        : (isEN ? 'No Pokémon found' : '目前無符合條件之寶可夢');
+      spawnsRows = `
+        <tr>
+          <td colspan="5" style="vertical-align:middle; text-align:center; padding:24px 12px; color:var(--text-secondary); font-size:13px;">
+            ${emptyMsg}
           </td>
-          <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${formatSnorlaxRankBadge(p.s1)}</td>
-          <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${formatSnorlaxRankBadge(p.s2)}</td>
-          <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${formatSnorlaxRankBadge(p.s3)}</td>
-          <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${formatSnorlaxRankBadge(p.s4)}</td>
         </tr>
       `;
-    }).join('');
+    } else {
+      spawnsRows = spawnList.map(p => {
+        const pName = isEN ? p.name_en : p.name;
+        const pkmAvatar = getPokemonAvatarUrl(p.name, p.name_en);
+        const pkmDex = getIslandPokemonDexCode(p);
+        const dexNum = parseInt(pkmDex, 10);
+        const dexPrefix = isNaN(dexNum) ? '' : `#${String(dexNum).padStart(3, '0')} `;
+        const sleepTypeName = p.sleepType ? (sleepTypeNameMap[p.sleepType] || '') : '';
+        const tooltipText = `${dexPrefix}${pName}${sleepTypeName ? ' (' + sleepTypeName + ')' : ''}`;
+        return `
+          <tr data-sleep-type="${p.sleepType || ''}">
+            <td style="vertical-align:middle; text-align:center; padding:3px 4px;">
+              <div class="island-pkm-item island-pkm-icon-only" title="${tooltipText}">
+                <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${tooltipText}" loading="lazy" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokedex-sv/icon/${pkmDex}.png';}">
+              </div>
+            </td>
+            <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${formatSnorlaxRankBadge(p.s1)}</td>
+            <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${formatSnorlaxRankBadge(p.s2)}</td>
+            <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${formatSnorlaxRankBadge(p.s3)}</td>
+            <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${formatSnorlaxRankBadge(p.s4)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
 
-    const totalCount = (island.spawns.dozing ? island.spawns.dozing.length : 0) +
-      (island.spawns.snoozing ? island.spawns.snoozing.length : 0) +
-      (island.spawns.slumbering ? island.spawns.slumbering.length : 0);
-    const dozingCount = island.spawns.dozing ? island.spawns.dozing.length : 0;
-    const snoozingCount = island.spawns.snoozing ? island.spawns.snoozing.length : 0;
-    const slumberingCount = island.spawns.slumbering ? island.spawns.slumbering.length : 0;
+    const totalCount = dozingList.length + snoozingList.length + slumberingList.length;
+    const dozingCount = dozingList.length;
+    const snoozingCount = snoozingList.length;
+    const slumberingCount = slumberingList.length;
 
     const basePath = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) || '';
     const starImgSrc = `${basePath}assets/star.png`;
@@ -15341,7 +15397,7 @@
               <thead>
                 <tr>
                   <th style="width:45%;">${isEN ? 'Rank' : '卡比獸評級'}</th>
-                  <th style="width:55%;">${isEN ? 'Required Energy' : '所需能量 (累計)'}</th>
+                  <th style="width:55%;">${isEN ? 'Energy' : '所需能量 (累計)'}</th>
                 </tr>
               </thead>
               <tbody>
@@ -15353,36 +15409,43 @@
 
         <div class="island-table-card">
           <div class="wiki-card-header">
-            <h3 class="wiki-card-title">${isEN ? 'Drowsy Power Spawn Tiers' : '睡意之力與出現隻數門檻'}</h3>
+            <h3 class="wiki-card-title">${isEN ? 'Drowsy Power Spawns' : '睡意之力與出現隻數門檻'}</h3>
           </div>
           <div class="wiki-table-wrapper" style="margin-top:8px;">
             <table class="wiki-data-table">
               <thead>
                 <tr>
-                  <th style="width:28%;">${isEN ? 'Morning Spawns' : '早晨出現隻數'}</th>
-                  <th style="width:40%;">${isEN ? 'Min Drowsy Power' : '最低睡意之力門檻'}</th>
-                  <th style="width:32%; text-align:center;">${isEN ? 'Min Rank (100 Score)' : '睡眠分數100'}</th>
+                  <th style="width:28%;">${isEN ? 'Spawns' : '早晨出現隻數'}</th>
+                  <th style="width:40%;">${isEN ? 'Drowsy Power' : '最低睡意之力門檻'}</th>
+                  <th style="width:32%; text-align:center;">${isEN ? 'Min Rank (100pt)' : '睡眠分數100'}</th>
                 </tr>
               </thead>
               <tbody>
                 ${drowsyRows}
                 <tr>
                   <td class="font-bold text-accent" style="vertical-align:middle;">+1 (9 ${isEN ? 'Pokemon' : '隻'})</td>
-                  <td class="text-secondary" style="vertical-align:middle;">${isEN ? 'Good Camp Ticket (+1 & Hungry)' : '露營券(+1且貪吃)'}</td>
+                  <td class="text-secondary" style="vertical-align:middle;">${isEN ? 'Good Camp Ticket' : '露營券(+1且貪吃)'}</td>
                   <td class="text-secondary" style="vertical-align:middle; text-align:center;">-</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <div style="font-size:11.5px; color:var(--text-secondary); margin-top:6px; padding:0 2px; line-height:1.4;">
-            ${isEN ? '* Min Rank (100 Score): Lowest Snorlax rank and energy required to reach this spawn count assuming a 100 Sleep Score (8.5 hrs). Drowsy Power = Snorlax Strength × Sleep Score.' : '* 睡眠分數100: 以睡滿 100 分 (8.5小時) 換算, 當天早晨達成該隻數所需之卡比獸最低能量與對應評級. 睡意之力 = 卡比獸能量 × 睡眠分數.'}
+            ${isEN ? '* Min Rank (100pt): Lowest Snorlax rank and energy required to reach this spawn count with 100 Sleep Score (8.5 hrs). Drowsy Power = Snorlax Strength × Sleep Score.' : '* 睡眠分數100: 以睡滿 100 分 (8.5小時) 換算, 當天早晨達成該隻數所需之卡比獸最低能量與對應評級. 睡意之力 = 卡比獸能量 × 睡眠分數.'}
           </div>
         </div>
       </div>
 
       <div class="island-spawns-card" style="margin-bottom:16px;">
-        <div class="wiki-card-header" style="flex-wrap:wrap; gap:12px; justify-content:space-between; align-items:center;">
-          <h3 class="wiki-card-title">${isEN ? 'Pokemon Sleep Types & Posture Unlock Tiers' : '棲息寶可夢與各星級睡姿解鎖門檻'}</h3>
+        <div class="wiki-card-header" style="flex-wrap:wrap; gap:10px 14px; justify-content:space-between; align-items:center;">
+          <div class="island-spawns-title-wrap" style="display:inline-flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <h3 class="wiki-card-title" style="margin:0;">${isEN ? 'Habitats & Sleep Styles' : '棲息寶可夢與各星級睡姿解鎖門檻'}</h3>
+            <label class="island-legendary-switch-label" title="${isEN ? 'Show Legendary Pokémon Only' : '僅展示神獸寶可夢'}">
+              <input type="checkbox" id="island-legendary-switch" class="ladder-switch-input" ${isIslandLegendaryOnly ? 'checked' : ''} onchange="window.WikiDB.toggleIslandLegendaryOnly(this.checked)">
+              <span class="ladder-switch-slider"></span>
+              <span class="ladder-switch-text font-bold">${isEN ? 'Legendary' : '神獸寶可夢'}</span>
+            </label>
+          </div>
           <div class="island-sleep-filters">
             <button type="button" class="island-sleep-btn ${currentIslandSleepType === 'all' ? 'active' : ''}" onclick="window.WikiDB.filterIslandSleepType('all')">
               ${isEN ? 'All' : '全部'} <span class="island-sleep-count">${totalCount}</span>
@@ -15426,6 +15489,7 @@
     currentIslandId = getSavedIslandId();
     isExpertModeActive = getSavedIslandExpertMode();
     currentIslandSleepType = getSavedIslandSleepType();
+    isIslandLegendaryOnly = getSavedIslandLegendaryOnly();
     const wikiContainer = document.getElementById('panel-wiki');
     if (!wikiContainer) return;
 
@@ -16796,7 +16860,7 @@
 
       ${isMobileH5 ? `
         <!-- 右下懸浮天梯篩選按鈕 (與圖鑑/料理完全一致的 FAB 結構) -->
-        <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Open Filters' : '展開天梯篩選器'}" aria-label="${isEN ? 'Open Filters' : '展開天梯篩選器'}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
+        <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" onclick="window.WikiDB.openLadderSidebar()" title="${isEN ? 'Filter' : '展開天梯篩選器'}" aria-label="${isEN ? 'Filter' : '展開天梯篩選器'}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}">
           <span class="bookmark-icon">
             <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="4" y1="21" x2="4" y2="14"></line>
@@ -16815,10 +16879,10 @@
       ` : ''}
 
       <!-- 天梯專屬側邊篩選器 (Mobile: 抽屜式 / Desktop: 左側滑動) -->
-      <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialLadderCollapsed}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Ladder Filters' : '天梯篩選器'}">
+      <aside id="ladder-filter-sidebar" class="pokemon-filter-sidebar ladder-fixed-sidebar ${initialLadderCollapsed}" style="${currentWikiSubTab === 'ingredients' ? 'display:flex;' : 'display:none;'}" aria-label="${isEN ? 'Filters' : '天梯篩選器'}">
         ${!isMobileH5 ? `
           <!-- 側邊欄垂直中央書籤標籤 (Desktop: 抽屜把手，展開時自動隱藏，收合時展示) -->
-          <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleLadderSidebar(true)" title="${isEN ? 'Expand Ladder Filters' : '展開天梯篩選側邊欄'}" aria-label="${isEN ? 'Expand Ladder Filters' : '展開天梯篩選側邊欄'}">
+          <button type="button" id="ladder-sidebar-bookmark-handle" class="sidebar-bookmark-handle" onclick="window.WikiDB.toggleLadderSidebar(true)" title="${isEN ? 'Expand Filter' : '展開天梯篩選側邊欄'}" aria-label="${isEN ? 'Expand Filter' : '展開天梯篩選側邊欄'}">
             <span class="bookmark-icon">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="4" y1="21" x2="4" y2="14"></line>
@@ -16839,12 +16903,12 @@
         ` : ''}
 
         <div class="sidebar-header">
-          <button type="button" id="ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.toggleLadderSidebar(false)" title="${isEN ? 'Collapse Filters' : '收合側邊欄'}" aria-label="${isEN ? 'Collapse Filters' : '收合側邊欄'}">◀</button>
+          <button type="button" id="ladder-sidebar-close-btn" class="sidebar-close-btn" onclick="window.WikiDB.toggleLadderSidebar(false)" title="${isEN ? 'Collapse Filter' : '收合側邊欄'}" aria-label="${isEN ? 'Collapse Filter' : '收合側邊欄'}">◀</button>
           <div class="sidebar-title-group" style="display:flex;align-items:center;gap:6px;">
-            <span class="sidebar-title">${isEN ? 'Ladder Filters' : '天梯篩選器'}</span>
+            <span class="sidebar-title">${isEN ? 'Filters' : '天梯篩選器'}</span>
             <button type="button" class="pokedex-formula-help-btn ladder-formula-help-btn" onclick="window.WikiDB.toggleLadderEnergyHelp(event)" title="${isEN ? 'Baseline: Lv.60 Ideal Energy (0.45x)' : '基準：Lv.60 滿活力 (0.45x)'}" aria-label="Ladder Energy Info">?</button>
           </div>
-          <button type="button" id="ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${isEN ? 'Reset All Filters' : '重設所有條件'}">${isEN ? 'Reset All' : '全部重設'}</button>
+          <button type="button" id="ladder-reset-all-btn" class="sidebar-reset-btn" onclick="window.WikiDB.resetLadderFilters()" title="${isEN ? 'Reset Filters' : '重設所有條件'}">${isEN ? 'Reset' : '全部重設'}</button>
 
           <!-- 天梯基準滿活力浮窗 (Toast-style Popover) -->
           <div id="ladder-energy-help-popover" class="ladder-energy-help-popover" style="display:none;" role="tooltip">
@@ -16889,10 +16953,10 @@
               </label>
             </div>
             <div class="sidebar-skills-list sidebar-2col-tags">
-              <button type="button" class="tag-btn ${ladderSortOrder === 'ENERGY_ASC' ? 'active' : ''}" data-sort-order="ENERGY_ASC" onclick="window.WikiDB.setLadderSortOrder('ENERGY_ASC')">${isEN ? 'Energy: Low to High' : '能量：低到高'}</button>
-              <button type="button" class="tag-btn ${ladderSortOrder === 'ENERGY_DESC' ? 'active' : ''}" data-sort-order="ENERGY_DESC" onclick="window.WikiDB.setLadderSortOrder('ENERGY_DESC')">${isEN ? 'Energy: High to Low' : '能量：高到低'}</button>
-              <button type="button" class="tag-btn ${ladderSortOrder === 'YIELD_DESC' ? 'active' : ''}" data-sort-order="YIELD_DESC" onclick="window.WikiDB.setLadderSortOrder('YIELD_DESC')">${isEN ? 'Yield: High to Low' : '產量：多到少'}</button>
-              <button type="button" class="tag-btn ${ladderSortOrder === 'DEMAND_DESC' ? 'active' : ''}" data-sort-order="DEMAND_DESC" onclick="window.WikiDB.setLadderSortOrder('DEMAND_DESC')">${isEN ? 'Demand: High to Low' : '大菜需求：多到少'}</button>
+              <button type="button" class="tag-btn ${ladderSortOrder === 'ENERGY_ASC' ? 'active' : ''}" data-sort-order="ENERGY_ASC" onclick="window.WikiDB.setLadderSortOrder('ENERGY_ASC')">${isEN ? 'Energy: Asc' : '能量：低到高'}</button>
+              <button type="button" class="tag-btn ${ladderSortOrder === 'ENERGY_DESC' ? 'active' : ''}" data-sort-order="ENERGY_DESC" onclick="window.WikiDB.setLadderSortOrder('ENERGY_DESC')">${isEN ? 'Energy: Desc' : '能量：高到低'}</button>
+              <button type="button" class="tag-btn ${ladderSortOrder === 'YIELD_DESC' ? 'active' : ''}" data-sort-order="YIELD_DESC" onclick="window.WikiDB.setLadderSortOrder('YIELD_DESC')">${isEN ? 'Yield: Desc' : '產量：多到少'}</button>
+              <button type="button" class="tag-btn ${ladderSortOrder === 'DEMAND_DESC' ? 'active' : ''}" data-sort-order="DEMAND_DESC" onclick="window.WikiDB.setLadderSortOrder('DEMAND_DESC')">${isEN ? 'Demand: Desc' : '大菜需求：多到少'}</button>
             </div>
           </div>
 
@@ -17008,12 +17072,12 @@
         <!-- 二級子分頁導航 (Sub-tabs) - 精簡無大標題橫幅 -->
         <div class="wiki-subnav-bar">
           <div class="wiki-subnav-tabs" role="tablist">
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills' ? 'active' : ''}" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${isMobileH5 ? (isEN ? 'Skills' : '主技能') : (isEN ? 'Main Skills DB' : '主技能數值庫')}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'subskills' ? 'active' : ''}" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${isMobileH5 ? (isEN ? 'Subskills' : '副技性格') : (isEN ? 'Sub-Skills & Natures' : '副技能與性格指南')}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isMobileH5 ? (isEN ? 'Ladder' : '食材天梯') : (isEN ? 'Ingredient Yield Ladder' : '食材產量天梯榜')}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isMobileH5 ? (isEN ? 'Values' : '能量速查') : (isEN ? 'Berry & Ing. Values' : '樹果與食材能量')}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isMobileH5 ? (isEN ? 'Growth' : '培育指南') : (isEN ? 'Growth & Tier Guide' : '培育與評級指南')}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'islands' ? 'active' : ''}" data-subtab="islands" onclick="window.WikiDB.switchSubTab('islands')">${isMobileH5 ? (isEN ? 'Islands' : '島嶼營地') : (isEN ? 'Research Camps & EX' : '島嶼營地與EX模式')}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills' ? 'active' : ''}" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${isMobileH5 ? (isEN ? 'Skills' : '主技能') : (isEN ? 'Main Skills' : '主技能數值庫')}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'subskills' ? 'active' : ''}" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${isMobileH5 ? (isEN ? 'Subskills' : '副技性格') : (isEN ? 'Sub-Skills' : '副技能與性格指南')}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isMobileH5 ? (isEN ? 'Ladder' : '食材天梯') : (isEN ? 'Ingredient Ladder' : '食材產量天梯榜')}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isMobileH5 ? (isEN ? 'Values' : '能量速查') : (isEN ? 'Berry & Ings' : '樹果與食材能量')}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isMobileH5 ? (isEN ? 'Growth' : '培育指南') : (isEN ? 'Tier Guide' : '培育與評級指南')}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'islands' ? 'active' : ''}" data-subtab="islands" onclick="window.WikiDB.switchSubTab('islands')">${isMobileH5 ? (isEN ? 'Islands' : '島嶼營地') : (isEN ? 'Camps & EX' : '島嶼營地與EX模式')}</button>
           </div>
         </div>
 
@@ -17021,13 +17085,13 @@
         <div id="wiki-subpanel-skills" class="wiki-subpanel ${currentWikiSubTab === 'skills' ? 'active' : ''}" style="${currentWikiSubTab === 'skills' ? '' : 'display:none;'}">
           <div class="wiki-control-bar">
             <div class="wiki-filter-pills">
-              <span class="wiki-pill-label">${isEN ? 'Skill Type:' : '技能類型：'}</span>
-              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'all' ? 'active' : ''}" data-skill-cat="all" onclick="window.WikiDB.filterSkills('all')">${isEN ? 'All Skills' : '全部技能'} (${MAIN_SKILLS_DATA.length})</button>
+              <span class="wiki-pill-label">${isEN ? 'Category:' : '技能類型：'}</span>
+              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'all' ? 'active' : ''}" data-skill-cat="all" onclick="window.WikiDB.filterSkills('all')">${isEN ? 'All' : '全部技能'} (${MAIN_SKILLS_DATA.length})</button>
               <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'energy' ? 'active' : ''}" data-skill-cat="energy" onclick="window.WikiDB.filterSkills('energy')">${isEN ? 'Strength' : '能量系'}</button>
-              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'energy_heal' ? 'active' : ''}" data-skill-cat="energy_heal" onclick="window.WikiDB.filterSkills('energy_heal')">${isEN ? 'Energy Recovery' : '活力系'}</button>
+              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'energy_heal' ? 'active' : ''}" data-skill-cat="energy_heal" onclick="window.WikiDB.filterSkills('energy_heal')">${isEN ? 'Recovery' : '活力系'}</button>
               <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'ingredient' ? 'active' : ''}" data-skill-cat="ingredient" onclick="window.WikiDB.filterSkills('ingredient')">${isEN ? 'Ingredients' : '食材與料理'}</button>
-              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'special' ? 'active' : ''}" data-skill-cat="special" onclick="window.WikiDB.filterSkills('special')">${isEN ? 'Legend & Special' : '神獸與特殊專屬'}</button>
-              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'shards' ? 'active' : ''}" data-skill-cat="shards" onclick="window.WikiDB.filterSkills('shards')">${isEN ? 'Dream Shards' : '夢之碎片'}</button>
+              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'special' ? 'active' : ''}" data-skill-cat="special" onclick="window.WikiDB.filterSkills('special')">${isEN ? 'Special' : '神獸與特殊專屬'}</button>
+              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'shards' ? 'active' : ''}" data-skill-cat="shards" onclick="window.WikiDB.filterSkills('shards')">${isEN ? 'Shards' : '夢之碎片'}</button>
             </div>
           </div>
 
@@ -17041,7 +17105,7 @@
           <!-- 主技能發動機率矩陣速查表 -->
           <div class="wiki-card wiki-card-trigger-matrix">
             <div class="wiki-card-header">
-              <h3 class="wiki-card-title">${isEN ? 'Main Skill Trigger Chance Matrix' : '主技能發動機率矩陣'}</h3>
+              <h3 class="wiki-card-title">${isEN ? 'Trigger Chance Matrix' : '主技能發動機率矩陣'}</h3>
             </div>
             <div class="wiki-rule-banner">
               ${isEN 
@@ -17056,9 +17120,9 @@
                   <tr>
                     <th style="text-align: center;">${isEN ? 'Sub-Skills' : '副技能組合'}</th>
                     <th style="text-align: center;">${isEN ? 'Nature' : '性格'}</th>
-                    <th class="col-hide-mobile" style="text-align: center;">${isEN ? 'Calculation Formula' : '乘算計算式'}</th>
-                    <th style="text-align: center;">${isEN ? 'Total Multiplier' : '總倍率'}</th>
-                    <th class="col-hide-mobile" style="text-align: center;">${isEN ? 'Trigger Tier' : '發動強度評級'}</th>
+                    <th class="col-hide-mobile" style="text-align: center;">${isEN ? 'Formula' : '乘算計算式'}</th>
+                    <th style="text-align: center;">${isEN ? 'Multiplier' : '總倍率'}</th>
+                    <th class="col-hide-mobile" style="text-align: center;">${isEN ? 'Tier' : '發動強度評級'}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -17193,7 +17257,7 @@
           <!-- 睡飽飽獎章加成指南 (Good-Night Ribbon Quick Guide) -->
           <div class="wiki-card wiki-card-ribbon-guide" style="margin-top: 16px;">
             <div class="wiki-card-header" style="margin-bottom: 8px;">
-              <h3 class="wiki-card-title">${isEN ? 'Good-Night Ribbon Quick Guide' : '睡飽飽獎章加成指南'}</h3>
+              <h3 class="wiki-card-title">${isEN ? 'Good-Night Ribbon Guide' : '睡飽飽獎章加成指南'}</h3>
             </div>
 
             <div class="ribbon-compact-tiers">
@@ -17242,14 +17306,14 @@
           <!-- 副技能完整階級與數值說明表格 -->
           <div class="wiki-card wiki-card-subskills-overview" style="margin-top: 20px;">
             <div class="wiki-card-header">
-              <h3 class="wiki-card-title">${isEN ? 'Sub-Skills Complete Tier & Stats Overview' : '副技能階級與數值總覽'}</h3>
+              <h3 class="wiki-card-title">${isEN ? 'Sub-Skills Overview' : '副技能階級與數值總覽'}</h3>
             </div>
             <div class="wiki-table-wrapper" style="margin-top: 10px;">
               <table class="wiki-data-table wiki-subskills-table">
                 <thead>
                   <tr>
-                    <th class="col-subskills-tags" style="text-align: center;">${isEN ? 'Skill Tags' : '技能標籤'}</th>
-                    <th class="col-subskills-effect">${isEN ? 'Detailed Effect' : '詳細效果說明'}</th>
+                    <th class="col-subskills-tags" style="text-align: center;">${isEN ? 'Skills' : '技能標籤'}</th>
+                    <th class="col-subskills-effect">${isEN ? 'Effect' : '詳細效果說明'}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -17271,15 +17335,15 @@
           <!-- 性格五維加成倍率表 -->
           <div class="wiki-card wiki-card-natures-table" style="margin-top: 20px;">
             <div class="wiki-card-header">
-              <h3 class="wiki-card-title">${isEN ? 'Nature 5-Stat Multiplier Table' : '性格五維屬性倍率表'}</h3>
+              <h3 class="wiki-card-title">${isEN ? 'Nature Modifiers' : '性格五維屬性倍率表'}</h3>
             </div>
             <div class="wiki-table-wrapper" style="margin-top: 10px;">
               <table class="wiki-data-table">
                 <thead>
                   <tr>
                     <th style="text-align: center;">${isEN ? 'Stat' : '屬性項目'}</th>
-                    <th style="text-align: center;">${isEN ? '▲ Nature' : '▲ 性格'}</th>
-                    <th style="text-align: center;">${isEN ? '▼ Nature' : '▼ 性格'}</th>
+                    <th style="text-align: center;">${isEN ? '▲ Up' : '▲ 性格'}</th>
+                    <th style="text-align: center;">${isEN ? '▼ Down' : '▼ 性格'}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -17313,7 +17377,7 @@
         <div id="wiki-subpanel-ratings" class="wiki-subpanel ${currentWikiSubTab === 'ratings' ? 'active' : ''}" style="${currentWikiSubTab === 'ratings' ? '' : 'display:none;'}">
           <!-- 區塊 1: 核心養成週期指引 -->
           <div class="wiki-section-heading">
-            <h3 class="wiki-section-title">${isEN ? 'Core Growth & Investment Cycle Guide' : '新手與進階養成核心週期指引'}</h3>
+            <h3 class="wiki-section-title">${isEN ? 'Growth & Investment Guide' : '新手與進階養成核心週期指引'}</h3>
             <p class="wiki-section-subtitle">${isEN ? 'Key milestones, energy management, and seed mechanics for early to late-game development.' : '掌握前期突破門檻,活力常駐加成與種子珍稀資源的養成核心思維.'}</p>
           </div>
           <div class="wiki-card">
@@ -17351,7 +17415,7 @@
 
           <!-- 區塊 2: 三大專長畢業評級榜 -->
           <div class="wiki-section-heading" style="margin-top: 24px;">
-            <h3 class="wiki-section-title">${isEN ? 'Specialty Graduation Tier Guide' : '三大專長畢業評級指南'}</h3>
+            <h3 class="wiki-section-title">${isEN ? 'Graduation Tier Guide' : '三大專長畢業評級指南'}</h3>
             <p class="wiki-section-subtitle">${isEN ? 'Optimal sub-skill and nature combinations for Berry, Ingredient, and Skill specialists.' : '樹果,食材,技能三大專長的頂級副技能與黃金性格搭配方向.'}</p>
           </div>
           <div class="wiki-ratings-container">
@@ -17362,7 +17426,7 @@
 
           <!-- 區塊 3: 睡眠天數升級試算器 -->
           <div class="wiki-section-heading" style="margin-top: 24px;">
-            <h3 class="wiki-section-title">${isEN ? 'Pokémon Sleep EXP & Days Calculator' : '寶可夢睡眠升級天數計算器'}</h3>
+            <h3 class="wiki-section-title">${isEN ? 'Sleep EXP Calculator' : '寶可夢睡眠升級天數計算器'}</h3>
             <p class="wiki-section-subtitle">${isEN ? 'Based on 100 daily sleep score (100 base EXP), calculates required sleep days and EXP from current to target level.' : '依據每日睡滿100分(100 EXP基礎),計算從目前等級升至目標等級所需睡眠天數與經驗值.'}</p>
           </div>
           <div class="wiki-card wiki-calc-card">
@@ -17370,12 +17434,12 @@
               <div class="calc-form-col">
                 <div class="calc-form-row calc-form-row-levels">
                   <div class="calc-field-group calc-field-cur">
-                    <label class="calc-label" for="calc-sleep-cur-lv">${isEN ? 'Current Level:' : '目前等級:'}</label>
+                    <label class="calc-label" for="calc-sleep-cur-lv">${isEN ? 'Current:' : '目前等級:'}</label>
                     <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="79" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
                   </div>
 
                   <div class="calc-field-group calc-field-target">
-                    <label class="calc-label" for="calc-sleep-target-lv">${isEN ? 'Target Level:' : '目標等級:'}</label>
+                    <label class="calc-label" for="calc-sleep-target-lv">${isEN ? 'Target:' : '目標等級:'}</label>
                     <select id="calc-sleep-target-lv" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
                       <option value="30">Lv.30</option>
                       <option value="50">Lv.50</option>
@@ -17391,13 +17455,13 @@
                     <label class="calc-switch-label">
                       <input type="checkbox" id="calc-sleep-exp-subskill" class="switch-checkbox" onchange="window.WikiDB.recalcSleepDays()">
                       <span class="switch-slider"></span>
-                      <span class="switch-text">${isEN ? 'Sleep EXP Bonus (+14%)' : '睡眠EXP獎勵 (+14%)'}</span>
+                      <span class="switch-text">${isEN ? 'Sleep EXP (+14%)' : '睡眠EXP獎勵 (+14%)'}</span>
                     </label>
                   </div>
 
                   <div class="calc-field-group calc-field-nature">
                     <select id="calc-sleep-nature-select" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
-                      <option value="1.0">${isEN ? 'Neutral EXP Nature' : '性格無EXP修正'}</option>
+                      <option value="1.0">${isEN ? 'Neutral EXP' : '性格無EXP修正'}</option>
                       <option value="1.18">${isEN ? 'EXP Up ▲ (+18%)' : '性格EXP▲ (+18%)'}</option>
                       <option value="0.82">${isEN ? 'EXP Down ▼ (-18%)' : '性格EXP▼ (-18%)'}</option>
                     </select>
@@ -17406,7 +17470,7 @@
               </div>
 
               <div class="calc-result-box">
-                <div class="calc-result-label">${isEN ? 'Estimated Sleep Days' : '預估所需睡眠天數'}</div>
+                <div class="calc-result-label">${isEN ? 'Estimated Days' : '預估所需睡眠天數'}</div>
                 <div id="calc-sleep-days-result" class="calc-result-val">${isEN ? '120 Days' : '120 天'}</div>
                 <div id="calc-sleep-exp-result" class="calc-result-badge">${isEN ? 'Approx. 11,992 EXP' : '約需 11,992 EXP'}</div>
                 <div id="calc-sleep-candies-result" class="calc-result-candies">${isEN ? 'Approx. 480 Candies (25 EXP/ea)' : '約需 480 顆糖果 (每顆 25 EXP)'}</div>
@@ -17587,7 +17651,10 @@
     getLadderRecipeCategory: () => ladderRecipeCategory,
     getLadderHighlightRecipe: () => ladderHighlightRecipe,
     toggleLadderEnergyHelp: toggleLadderEnergyHelp,
-    closeLadderEnergyHelp: closeLadderEnergyHelp
+    closeLadderEnergyHelp: closeLadderEnergyHelp,
+    toggleIslandLegendaryOnly: toggleIslandLegendaryOnly,
+    getSavedIslandLegendaryOnly: getSavedIslandLegendaryOnly,
+    getIsIslandLegendaryOnly: () => isIslandLegendaryOnly
   };
 
   window.WikiDB = WikiDBExport;
@@ -17600,6 +17667,8 @@
   window.getCurrentIslandSleepType = () => currentIslandSleepType;
   window.sortIslandSpawns = sortIslandSpawns;
   window.getIslandSpawnsSort = getIslandSpawnsSort;
+  window.toggleIslandLegendaryOnly = toggleIslandLegendaryOnly;
+  window.getSavedIslandLegendaryOnly = getSavedIslandLegendaryOnly;
   window.toggleLadderSidebar = toggleLadderSidebar;
   window.toggleLadderEnergyHelp = toggleLadderEnergyHelp;
   window.closeLadderEnergyHelp = closeLadderEnergyHelp;
