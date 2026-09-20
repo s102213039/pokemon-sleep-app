@@ -11852,9 +11852,12 @@
   let isLadderIngS = false;
   let isLadderSpeedM = false;
   let isLadderSpeedS = false;
+  let isLadderSkillM = false;
+  let isLadderSkillS = false;
   let ladderNatureIng = false;
   let ladderNatureSpeed = false;
-  let ladderNature = 'NONE'; // 'NONE' | 'ING' | 'SPEED' (0 or 2 selected = NONE)
+  let ladderNatureSkill = false;
+  let ladderNature = 'NONE'; // 'NONE' | 'ING' | 'SPEED' | 'SKILL' | 'MIXED'
   let ladderSearchQuery = '';
   let ladderSupplyFilter = 'ALL'; // 'ALL' | 'TOP' | 'MEALS_3' | 'MEALS_2'
   let ladderRecipeFilter = 'ALL'; // 'ALL' | 'AAA' | 'ABB' | 'AXX'
@@ -11961,7 +11964,9 @@
       const lowerTarget = target.toLowerCase();
       return target === cleanIngName || lowerTarget === lowerIngId || target === ingId;
     });
-    return matched ? entry.bonus : 0;
+    const bonus = matched ? entry.bonus : 0;
+    if (!bonus) return 0;
+    return Math.round(bonus * getLadderSkillTriggerMultiplier());
   }
 
   // 3.0.0 食材天梯相同產量配方動態合併核心 (Dynamic Recipe Wildcard Merger)
@@ -12443,6 +12448,72 @@
 
   let ladderRecipeCategory = 'curry';
   let ladderHighlightRecipe = null;
+  let ladderRecipeMultiSelect = false;
+  let ladderHighlightRecipes = [];
+
+  const RECIPE_MARK_PALETTE = [
+    { fg: '#0369a1', color: '#0ea5e9', bg: 'rgba(14, 165, 233, 0.18)' },
+    { fg: '#b45309', color: '#d97706', bg: 'rgba(217, 119, 6, 0.18)' },
+    { fg: '#6d28d9', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.18)' },
+    { fg: '#be123c', color: '#f43f5e', bg: 'rgba(244, 63, 94, 0.16)' },
+    { fg: '#047857', color: '#10b981', bg: 'rgba(16, 185, 129, 0.18)' },
+    { fg: '#c2410c', color: '#f97316', bg: 'rgba(249, 115, 22, 0.18)' },
+    { fg: '#3730a3', color: '#6366f1', bg: 'rgba(99, 102, 241, 0.18)' }
+  ];
+
+  function getRecipeMarkStyle(index) {
+    return RECIPE_MARK_PALETTE[index % RECIPE_MARK_PALETTE.length];
+  }
+
+  function getActiveHighlightRecipes() {
+    const names = ladderRecipeMultiSelect
+      ? ladderHighlightRecipes.slice()
+      : (ladderHighlightRecipe ? [ladderHighlightRecipe] : []);
+    const seen = new Set();
+    const list = [];
+    names.forEach(n => {
+      const rec = ALL_TOP_CATEGORY_RECIPES.find(r => r.name_cn === n || r.name_en === n);
+      if (!rec) return;
+      if (seen.has(rec.name_cn)) return;
+      seen.add(rec.name_cn);
+      list.push(rec);
+    });
+    return list;
+  }
+
+  function buildHighlightIngState() {
+    const recipes = getActiveHighlightRecipes();
+    const map = new Map();
+    const marks = new Map();
+    recipes.forEach((rec, idx) => {
+      const style = getRecipeMarkStyle(idx);
+      (rec.ingredients || []).forEach(item => {
+        const entry = { count: item.count, recipe: rec, ...style };
+        const keys = [item.name];
+        if (item.name === '美味尾巴') keys.push('Slowpoke Tail');
+        if (item.name === 'Slowpoke Tail') keys.push('美味尾巴');
+        keys.forEach(key => {
+          const arr = marks.get(key) || [];
+          arr.push(entry);
+          marks.set(key, arr);
+          map.set(key, Math.max(map.get(key) || 0, item.count || 0));
+        });
+      });
+    });
+    return { recipes, map, marks };
+  }
+
+  function isHighlightRecipeSelected(recipeName) {
+    const recipes = getActiveHighlightRecipes();
+    return recipes.some(r => r.name_cn === recipeName || r.name_en === recipeName);
+  }
+
+  function renderIngQtyMarks(markList) {
+    if (!markList || !markList.length) return '';
+    return `<div class="ladder-ing-qty-marks">${markList.map(m =>
+      `<span class="ladder-ing-qty-mark" style="color:${m.fg};border-color:${m.color};background:${m.bg}">×${m.count}</span>`
+    ).join('')}</div>`;
+  }
 
   function getOverlayEl(id) {
     if (typeof window !== 'undefined' && typeof window.resolveUniqueOverlay === 'function') {
@@ -12482,7 +12553,7 @@
     if (bodyEl) {
       const list = TOP_RECIPES_BY_CATEGORY[ladderRecipeCategory] || [];
       bodyEl.innerHTML = list.map((r, rIdx) => {
-        const isCurrent = (ladderHighlightRecipe === r.name_cn || ladderHighlightRecipe === r.name_en);
+        const isCurrent = isHighlightRecipeSelected(r.name_cn);
         const displayName = isEN ? r.name_en : r.name_cn;
         return `
           <div class="ladder-recipe-card ${isCurrent ? 'selected' : ''}" onclick="window.WikiDB.selectLadderHighlightRecipe('${r.name_cn}')" role="button" tabindex="0">
@@ -12526,15 +12597,14 @@
     } else if (typeof document !== 'undefined' && document.body && modal.parentElement !== document.body) {
       document.body.appendChild(modal);
     }
-    // 若當前已有選取料理，自動切換至該料理之分類
-    if (ladderHighlightRecipe) {
-      const found = ALL_TOP_CATEGORY_RECIPES.find(r => r.name_cn === ladderHighlightRecipe || r.name_en === ladderHighlightRecipe);
-      if (found) {
-        if (found.category === '咖哩') ladderRecipeCategory = 'curry';
-        else if (found.category === '沙拉') ladderRecipeCategory = 'salad';
-        else if (found.category === '甜點') ladderRecipeCategory = 'dessert';
-      }
+    const firstSelected = getActiveHighlightRecipes()[0];
+    if (firstSelected) {
+      if (firstSelected.category === '咖哩') ladderRecipeCategory = 'curry';
+      else if (firstSelected.category === '沙拉') ladderRecipeCategory = 'salad';
+      else if (firstSelected.category === '甜點') ladderRecipeCategory = 'dessert';
     }
+    const multiToggle = modal.querySelector('#ladder-recipe-multi-toggle');
+    if (multiToggle) multiToggle.checked = !!ladderRecipeMultiSelect;
     renderLadderRecipeModalContent(modal);
     modal.style.display = 'flex';
     if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
@@ -12586,18 +12656,49 @@
   }
 
   function selectLadderHighlightRecipe(recipeName) {
+    if (ladderRecipeMultiSelect) {
+      const idx = ladderHighlightRecipes.indexOf(recipeName);
+      if (idx >= 0) ladderHighlightRecipes.splice(idx, 1);
+      else ladderHighlightRecipes.push(recipeName);
+      ladderHighlightRecipe = ladderHighlightRecipes[0] || null;
+      renderLadderRecipeModalContent();
+      updateLadderRecipeFabState();
+      refreshCoordinateLadder();
+      return;
+    }
     if (ladderHighlightRecipe === recipeName) {
       ladderHighlightRecipe = null;
+      ladderHighlightRecipes = [];
     } else {
       ladderHighlightRecipe = recipeName;
+      ladderHighlightRecipes = [recipeName];
     }
     closeLadderRecipeModal();
     updateLadderRecipeFabState();
     refreshCoordinateLadder();
   }
 
+  function toggleLadderRecipeMultiSelect(enabled) {
+    const next = !!enabled;
+    const current = getActiveHighlightRecipes().map(r => r.name_cn);
+    ladderRecipeMultiSelect = next;
+    if (next) {
+      ladderHighlightRecipes = current.slice();
+      ladderHighlightRecipe = ladderHighlightRecipes[0] || null;
+    } else {
+      ladderHighlightRecipe = current[0] || null;
+      ladderHighlightRecipes = ladderHighlightRecipe ? [ladderHighlightRecipe] : [];
+    }
+    const toggle = document.getElementById('ladder-recipe-multi-toggle');
+    if (toggle) toggle.checked = next;
+    renderLadderRecipeModalContent();
+    updateLadderRecipeFabState();
+    refreshCoordinateLadder();
+  }
+
   function clearLadderHighlightRecipe() {
     ladderHighlightRecipe = null;
+    ladderHighlightRecipes = [];
     closeLadderRecipeModal();
     updateLadderRecipeFabState();
     refreshCoordinateLadder();
@@ -12607,12 +12708,19 @@
     const fab = document.getElementById('ladder-recipe-highlight-fab');
     if (!fab) return;
     const badge = document.getElementById('ladder-recipe-fab-badge');
-    if (ladderHighlightRecipe) {
+    const count = getActiveHighlightRecipes().length;
+    if (count > 0) {
       fab.classList.add('has-active');
-      if (badge) badge.style.display = 'flex';
+      if (badge) {
+        badge.style.display = 'flex';
+        badge.textContent = count > 1 ? String(count) : '✓';
+      }
     } else {
       fab.classList.remove('has-active');
-      if (badge) badge.style.display = 'none';
+      if (badge) {
+        badge.style.display = 'none';
+        badge.textContent = '✓';
+      }
     }
   }
 
@@ -12651,61 +12759,114 @@
     if (isLadderSpeedS) speedReduction += 0.07;
     if (speedReduction > 0) mult *= (1.0 / (1.0 - speedReduction));
 
-    // 性格加成：兩項可獨立勾選；全不選或全選皆視為無修正
-    const natureMode = getLadderNature();
-    if (natureMode === 'ING') {
-      mult *= 1.20; // 性格食材機率▲ (+20%)
-    } else if (natureMode === 'SPEED') {
-      mult *= (1.0 / 0.9090909); // 性格幫忙速度▲ (-9.09% 間隔，約 +10% 幫忙次數)
+    // 性格加成：可獨立勾選；全不選或全選皆視為無修正
+    if (getLadderNature() !== 'NONE') {
+      if (ladderNatureIng) mult *= 1.20;
+      if (ladderNatureSpeed) mult *= (1.0 / 0.9090909);
     }
 
     return mult;
   }
 
+  function getLadderSkillTriggerMultiplier() {
+    let m = 1.0;
+    let boost = 0;
+    if (isLadderSkillM) boost += 0.36;
+    if (isLadderSkillS) boost += 0.18;
+    if (boost > 0) m *= (1.0 + boost);
+    if (getLadderNature() !== 'NONE' && ladderNatureSkill) m *= 1.20;
+    return m;
+  }
+
   function toggleLadderIngM(checked) {
-    isLadderIngM = !!checked;
+    isLadderIngM = (checked === undefined) ? !isLadderIngM : !!checked;
+    syncLadderSubskillButtons();
     refreshCoordinateLadder();
   }
 
   function toggleLadderIngS(checked) {
-    isLadderIngS = !!checked;
+    isLadderIngS = (checked === undefined) ? !isLadderIngS : !!checked;
+    syncLadderSubskillButtons();
     refreshCoordinateLadder();
   }
 
   function toggleLadderSpeedM(checked) {
-    isLadderSpeedM = !!checked;
+    isLadderSpeedM = (checked === undefined) ? !isLadderSpeedM : !!checked;
+    syncLadderSubskillButtons();
     refreshCoordinateLadder();
   }
 
   function toggleLadderSpeedS(checked) {
-    isLadderSpeedS = !!checked;
+    isLadderSpeedS = (checked === undefined) ? !isLadderSpeedS : !!checked;
+    syncLadderSubskillButtons();
     refreshCoordinateLadder();
   }
 
+  function toggleLadderSkillM(checked) {
+    isLadderSkillM = (checked === undefined) ? !isLadderSkillM : !!checked;
+    syncLadderSubskillButtons();
+    refreshCoordinateLadder();
+  }
+
+  function toggleLadderSkillS(checked) {
+    isLadderSkillS = (checked === undefined) ? !isLadderSkillS : !!checked;
+    syncLadderSubskillButtons();
+    refreshCoordinateLadder();
+  }
+
+  function toggleLadderSubskill(key) {
+    if (key === 'ING_M') isLadderIngM = !isLadderIngM;
+    else if (key === 'ING_S') isLadderIngS = !isLadderIngS;
+    else if (key === 'SPEED_M') isLadderSpeedM = !isLadderSpeedM;
+    else if (key === 'SPEED_S') isLadderSpeedS = !isLadderSpeedS;
+    else if (key === 'SKILL_M') isLadderSkillM = !isLadderSkillM;
+    else if (key === 'SKILL_S') isLadderSkillS = !isLadderSkillS;
+    syncLadderSubskillButtons();
+    refreshCoordinateLadder();
+  }
+
+  function syncLadderSubskillButtons() {
+    const flags = {
+      ING_M: isLadderIngM,
+      ING_S: isLadderIngS,
+      SPEED_M: isLadderSpeedM,
+      SPEED_S: isLadderSpeedS,
+      SKILL_M: isLadderSkillM,
+      SKILL_S: isLadderSkillS
+    };
+    document.querySelectorAll('[data-subskill-boost]').forEach(btn => {
+      const key = btn.getAttribute('data-subskill-boost');
+      btn.classList.toggle('active', !!flags[key]);
+    });
+  }
+
   function getLadderNature() {
-    if (ladderNatureIng === ladderNatureSpeed) return 'NONE';
-    return ladderNatureIng ? 'ING' : 'SPEED';
+    const selected = [];
+    if (ladderNatureIng) selected.push('ING');
+    if (ladderNatureSpeed) selected.push('SPEED');
+    if (ladderNatureSkill) selected.push('SKILL');
+    if (selected.length === 0 || selected.length === 3) return 'NONE';
+    if (selected.length === 1) return selected[0];
+    return 'MIXED';
   }
 
   function syncLadderNatureButtons() {
     ladderNature = getLadderNature();
     document.querySelectorAll('[data-nature-filter]').forEach(btn => {
       const key = btn.getAttribute('data-nature-filter');
-      const on = (key === 'ING' && ladderNatureIng) || (key === 'SPEED' && ladderNatureSpeed);
+      const on = (key === 'ING' && ladderNatureIng) || (key === 'SPEED' && ladderNatureSpeed) || (key === 'SKILL' && ladderNatureSkill);
       btn.classList.toggle('active', on);
     });
   }
 
   function setLadderNature(natureType) {
-    if (natureType === 'ING') {
-      ladderNatureIng = true;
-      ladderNatureSpeed = false;
-    } else if (natureType === 'SPEED') {
-      ladderNatureIng = false;
-      ladderNatureSpeed = true;
-    } else {
+    ladderNatureIng = natureType === 'ING';
+    ladderNatureSpeed = natureType === 'SPEED';
+    ladderNatureSkill = natureType === 'SKILL';
+    if (natureType !== 'ING' && natureType !== 'SPEED' && natureType !== 'SKILL') {
       ladderNatureIng = false;
       ladderNatureSpeed = false;
+      ladderNatureSkill = false;
     }
     syncLadderNatureButtons();
     refreshCoordinateLadder();
@@ -12714,6 +12875,7 @@
   function toggleLadderNatureFilter(type) {
     if (type === 'ING') ladderNatureIng = !ladderNatureIng;
     else if (type === 'SPEED') ladderNatureSpeed = !ladderNatureSpeed;
+    else if (type === 'SKILL') ladderNatureSkill = !ladderNatureSkill;
     syncLadderNatureButtons();
     refreshCoordinateLadder();
   }
@@ -12854,12 +13016,16 @@
 
     ladderNatureIng = false;
     ladderNatureSpeed = false;
+    ladderNatureSkill = false;
     syncLadderNatureButtons();
 
     isLadderIngM = false;
     isLadderIngS = false;
     isLadderSpeedM = false;
     isLadderSpeedS = false;
+    isLadderSkillM = false;
+    isLadderSkillS = false;
+    syncLadderSubskillButtons();
     isLadderSkillDrawExpected = false;
     try {
       if (typeof localStorage !== 'undefined') {
@@ -12930,7 +13096,7 @@
     if (ladderRecipeFilter && ladderRecipeFilter !== 'ALL') count++;
     if (ladderSpecialtyFilter && ladderSpecialtyFilter !== 'ALL') count++;
     if (ladderSortOrder && ladderSortOrder !== 'ENERGY_ASC') count++;
-    if (isLadderIngM || isLadderIngS || isLadderSpeedM || isLadderSpeedS) count++;
+    if (isLadderIngM || isLadderIngS || isLadderSpeedM || isLadderSpeedS || isLadderSkillM || isLadderSkillS) count++;
     if (ladderNature && ladderNature !== 'NONE') count++;
     if (isLadderSkillDrawExpected) count++;
 
@@ -12969,12 +13135,10 @@
     if (!ingData) return;
 
     // 若當前有高亮料理，且點選的食材非該料理所需食材，則禁止開啟與選取
-    if (ladderHighlightRecipe) {
-      const activeRecipe = ALL_TOP_CATEGORY_RECIPES.find(r => r.name_cn === ladderHighlightRecipe || r.name_en === ladderHighlightRecipe);
-      if (activeRecipe && activeRecipe.ingredients) {
-        const isRecipeIng = activeRecipe.ingredients.some(i => i.name === ingData.name || (i.name === '美味尾巴' && ingId === 'tail'));
-        if (!isRecipeIng) return;
-      }
+    const activeRecipes = getActiveHighlightRecipes();
+    if (activeRecipes.length) {
+      const isRecipeIng = activeRecipes.some(rec => rec.ingredients && rec.ingredients.some(i => i.name === ingData.name || (i.name === '美味尾巴' && ingId === 'tail') || (i.name === 'Slowpoke Tail' && ingId === 'tail')));
+      if (!isRecipeIng) return;
     }
 
     const ingName = isEN ? ((window.I18N && window.I18N.getIngredientName(ingData.name)) || ingData.name) : ingData.name;
@@ -15753,18 +15917,11 @@
     const mult = getLadderMultiplier();
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     
-    // 高亮特定料理食材
-    let activeHighlightRecipe = null;
-    let highlightedIngMap = null;
-    if (ladderHighlightRecipe) {
-      activeHighlightRecipe = ALL_TOP_CATEGORY_RECIPES.find(r => r.name_cn === ladderHighlightRecipe || r.name_en === ladderHighlightRecipe);
-      if (activeHighlightRecipe) {
-        highlightedIngMap = new Map();
-        activeHighlightRecipe.ingredients.forEach(item => {
-          highlightedIngMap.set(item.name, item.count);
-        });
-      }
-    }
+    const highlightState = buildHighlightIngState();
+    const activeHighlightRecipes = highlightState.recipes;
+    const highlightedIngMap = activeHighlightRecipes.length ? highlightState.map : null;
+    const highlightMarks = highlightState.marks;
+    const activeHighlightRecipe = activeHighlightRecipes[0] || null;
 
     // 分離 18 種常規食材與 1 種獨立美味尾巴
     const mainTracks = data.filter(ing => ing.id !== 'tail');
@@ -15780,11 +15937,16 @@
       const ingName = isEN ? (window.I18N.getIngredientName(ing.name) || ing.name) : ing.name;
       const minDefaultThreshold = isUnfilteredDefault ? 30 : (DEFAULT_LADDER_MIN_THRESHOLDS[ing.id] || 20);
 
+      const reqMarks = highlightMarks.get(ing.name) || [];
       const reqCount = highlightedIngMap ? highlightedIngMap.get(ing.name) : null;
-      const isHighlighted = reqCount !== null && reqCount !== undefined;
+      const isHighlighted = reqMarks.length > 0;
       const isDimmed = highlightedIngMap && !isHighlighted;
       const targetDishNeed = (isHighlighted && reqCount) ? reqCount : dishInfo.need;
-      const targetDishName = isHighlighted ? (isEN ? (activeHighlightRecipe.name_en || activeHighlightRecipe.name_cn) : activeHighlightRecipe.name_cn) : dishName;
+      const targetDishName = isHighlighted
+        ? (activeHighlightRecipes.length > 1
+          ? (isEN ? `${activeHighlightRecipes.length} recipes` : `${activeHighlightRecipes.length} 道料理`)
+          : (isEN ? (activeHighlightRecipe.name_en || activeHighlightRecipe.name_cn) : activeHighlightRecipe.name_cn))
+        : dishName;
 
       // 取得該軌道符合篩選之寶可夢與型態變體
       const filteredPokemonList = ing.pokemon.map((p, pIdx) => {
@@ -15851,6 +16013,7 @@
         isHighlighted,
         isDimmed,
         reqCount,
+        reqMarks,
         ingName,
         filteredPokemonList,
         isTrackEmpty: filteredPokemonList.length === 0
@@ -15938,14 +16101,14 @@
     // 若有選取料理，計算該料理所有食材之最大三餐及格線需求 (3 Meals Max Target)
     // 若當前範圍數量不足以把及格線畫上，則將最大及格線當作最大展示數量，務必展示出及格線
     let maxPassingTarget = 0;
-    if (activeHighlightRecipe && activeHighlightRecipe.ingredients) {
-      activeHighlightRecipe.ingredients.forEach(item => {
+    activeHighlightRecipes.forEach(rec => {
+      (rec.ingredients || []).forEach(item => {
         if (item.name !== '美味尾巴' && item.name !== 'Slowpoke Tail') {
           const target = (item.count || 0) * 3;
           if (target > maxPassingTarget) maxPassingTarget = target;
         }
       });
-    }
+    });
     if (maxPassingTarget > maxVal) {
       maxVal = Math.ceil(maxPassingTarget / 10) * 10;
     }
@@ -15977,25 +16140,40 @@
     return `
       <div class="wiki-coordinate-ladder-wrapper">
         <div class="wiki-coordinate-ladder" onmouseover="window.WikiDB.handleLadderGroupHover(event)" onmouseout="window.WikiDB.handleLadderGroupHoverOut(event)">
-          ${activeHighlightRecipe ? `
-            <div class="ladder-recipe-banner">
-              <div class="ladder-recipe-banner-left">
-                <img src="${activeHighlightRecipe.icon}" class="ladder-recipe-banner-icon" alt="${isEN ? activeHighlightRecipe.name_en : activeHighlightRecipe.name_cn}">
-                <div class="ladder-recipe-banner-text">
-                  <span class="ladder-recipe-banner-title">${isEN ? activeHighlightRecipe.name_en : activeHighlightRecipe.name_cn}</span>
-                  <span class="ladder-recipe-banner-sub">${activeHighlightRecipe.category} · ${isEN ? 'Base Energy' : '基礎能量'} ${activeHighlightRecipe.base_energy.toLocaleString()}</span>
-                </div>
-              </div>
-              <div class="ladder-recipe-banner-ings">
-                ${activeHighlightRecipe.ingredients.map(item => {
-                  const itemDisplayName = isEN ? ((window.I18N && window.I18N.getIngredientName(item.name)) || item.name) : item.name;
+          ${activeHighlightRecipes.length ? `
+            <div class="ladder-recipe-banner ${activeHighlightRecipes.length > 1 ? 'ladder-recipe-banner-multi' : ''}">
+              <div class="ladder-recipe-banner-recipes">
+                ${activeHighlightRecipes.map((rec, idx) => {
+                  const style = getRecipeMarkStyle(idx);
+                  const recName = isEN ? rec.name_en : rec.name_cn;
                   return `
-                    <div class="ladder-recipe-banner-ing-chip" title="${itemDisplayName}">
-                      <img src="${item.icon}" class="ladder-banner-ing-icon" alt="${itemDisplayName}">
-                      <strong class="ladder-banner-ing-count">×${item.count}</strong>
+                    <div class="ladder-recipe-banner-recipe-chip" style="border-color:${style.color};background:${style.bg}">
+                      <span class="ladder-recipe-banner-recipe-dot" style="background:${style.color}"></span>
+                      <img src="${rec.icon}" class="ladder-recipe-banner-icon" alt="${recName}">
+                      <span class="ladder-recipe-banner-title">${recName}</span>
                     </div>
                   `;
                 }).join('')}
+              </div>
+              <div class="ladder-recipe-banner-ings">
+                ${(() => {
+                  const seen = new Set();
+                  const chips = [];
+                  activeHighlightRecipes.forEach(rec => {
+                    (rec.ingredients || []).forEach(item => {
+                      if (seen.has(item.name)) return;
+                      seen.add(item.name);
+                      const itemDisplayName = isEN ? ((window.I18N && window.I18N.getIngredientName(item.name)) || item.name) : item.name;
+                      chips.push(`
+                        <div class="ladder-recipe-banner-ing-chip" title="${itemDisplayName}">
+                          <img src="${item.icon}" class="ladder-banner-ing-icon" alt="${itemDisplayName}">
+                          ${renderIngQtyMarks(highlightMarks.get(item.name) || [])}
+                        </div>
+                      `);
+                    });
+                  });
+                  return chips.join('');
+                })()}
               </div>
               <button type="button" class="ladder-recipe-banner-clear-btn" onclick="window.WikiDB.clearLadderHighlightRecipe()" title="${isEN ? 'Clear recipe highlight' : '清除料理高亮'}">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
@@ -16021,7 +16199,7 @@
           </div>
 
           <!-- 常規食材軌道 (18種食材，依篩選動態縮放) -->
-          ${processedMainTracks.map(({ ing, dishInfo, dishName, targetDishNeed, targetDishName, isHighlighted, isDimmed, reqCount, ingName, filteredPokemonList, isTrackEmpty }, trackIdx) => {
+          ${processedMainTracks.map(({ ing, dishInfo, dishName, targetDishNeed, targetDishName, isHighlighted, isDimmed, reqCount, reqMarks, ingName, filteredPokemonList, isTrackEmpty }, trackIdx) => {
             // 計算該軌道最低產量起點，用於畫出前方點狀前導虛線
             let minTrackCount = maxVal;
             filteredPokemonList.forEach(p => {
@@ -16078,7 +16256,7 @@
 
             const visiblePkmGroupNames = new Set(trackNodes.map(n => n.p.name));
             const highlightClass = isHighlighted ? 'ladder-track-highlighted' : (isDimmed ? 'ladder-track-dimmed' : '');
-            const threeMealsTarget = isHighlighted ? (reqCount * 3) : null;
+            const passingTargets = (reqMarks || []).map(m => ({ ...m, target: m.count * 3 }));
 
             return `
             <div class="ladder-track-row ${isTrackEmpty ? 'ladder-track-empty' : ''} ${isTopTrack ? 'ladder-track-top' : ''} ${highlightClass}" data-ladder-ing="${ing.id}">
@@ -16210,14 +16388,14 @@
                 </div>
 
                 <!-- 三餐及格線 (3 Meals Passing Line) - 置於節點容器後，確保不被覆蓋 -->
-                ${isHighlighted && threeMealsTarget !== null ? `
-                  <div class="ladder-passing-line-container" style="left: ${getPosPct(threeMealsTarget)}%;" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${threeMealsTarget} ${isEN ? 'items' : '顆'}">
+                ${passingTargets.map(m => `
+                  <div class="ladder-passing-line-container" style="left: ${getPosPct(m.target)}%; --ladder-passing-line-color: ${m.color}; --ladder-passing-line-glow: ${m.color};" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${m.target} ${isEN ? 'items' : '顆'}">
                     <div class="ladder-passing-line"></div>
-                    <div class="ladder-passing-badge">
-                      <span class="ladder-passing-num">${threeMealsTarget}</span>
+                    <div class="ladder-passing-badge" style="color:${m.fg};border-color:${m.color}">
+                      <span class="ladder-passing-num">${m.target}</span>
                     </div>
                   </div>
-                ` : ''}
+                `).join('')}
               </div>
             </div>
           `;
@@ -16225,10 +16403,12 @@
 
           <!-- 獨立美味尾巴專屬天梯小看板 (0 ~ 20 獨立刻度，支援高亮與及格線) -->
           ${tailIng ? (() => {
+            const tailReqMarks = highlightMarks.get('美味尾巴') || highlightMarks.get('Slowpoke Tail') || [];
             const tailReqCount = highlightedIngMap ? (highlightedIngMap.get('美味尾巴') || highlightedIngMap.get('Slowpoke Tail')) : null;
-            const isTailHighlighted = tailReqCount !== null && tailReqCount !== undefined;
+            const isTailHighlighted = tailReqMarks.length > 0;
             const isTailDimmed = highlightedIngMap && !isTailHighlighted;
-            const tailThreeMealsTarget = isTailHighlighted ? (tailReqCount * 3) : null;
+            const tailPassingTargets = tailReqMarks.map(m => ({ ...m, target: m.count * 3 }));
+            const tailThreeMealsTarget = isTailHighlighted ? Math.max(...tailPassingTargets.map(m => m.target)) : null;
 
             let tailMax = 20;
             if (isTailHighlighted && tailThreeMealsTarget > tailMax) {
@@ -16394,14 +16574,14 @@
                       </div>
 
                       <!-- 尾巴三餐及格線 - 置於節點容器後，確保不被覆蓋 -->
-                      ${isTailHighlighted && tailThreeMealsTarget !== null ? `
-                        <div class="ladder-passing-line-container" style="left: ${getTailPct(tailThreeMealsTarget)}%;" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${tailThreeMealsTarget} ${isEN ? 'items' : '顆'}">
+                      ${tailPassingTargets.map(m => `
+                        <div class="ladder-passing-line-container" style="left: ${getTailPct(m.target)}%; --ladder-passing-line-color: ${m.color}; --ladder-passing-line-glow: ${m.color};" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${m.target} ${isEN ? 'items' : '顆'}">
                           <div class="ladder-passing-line"></div>
-                          <div class="ladder-passing-badge">
-                            <span class="ladder-passing-num">${tailThreeMealsTarget}</span>
+                          <div class="ladder-passing-badge" style="color:${m.fg};border-color:${m.color}">
+                            <span class="ladder-passing-num">${m.target}</span>
                           </div>
                         </div>
-                      ` : ''}
+                      `).join('')}
                     </div>
 
                     <div class="ladder-track-header ladder-track-header-right">
@@ -16875,7 +17055,16 @@
         <div class="ladder-recipe-modal-dialog">
           <div class="ladder-recipe-modal-header">
             <div class="ladder-recipe-modal-title-group">
-              <h3 id="ladder-recipe-modal-title" class="ladder-recipe-modal-title">${isEN ? 'Highlight Ingredients by Recipe' : '選取料理高亮食材'}</h3>
+              <div class="ladder-recipe-modal-title-row">
+                <h3 id="ladder-recipe-modal-title" class="ladder-recipe-modal-title">${isEN ? 'Highlight Ingredients by Recipe' : '選取料理高亮食材'}</h3>
+                <label class="ladder-multi-select-label" for="ladder-recipe-multi-toggle">
+                  <span class="ladder-multi-select-text">${isEN ? 'Multi' : '多選'}</span>
+                  <div class="sidebar-switch-wrapper">
+                    <input type="checkbox" id="ladder-recipe-multi-toggle" class="switch-checkbox" ${ladderRecipeMultiSelect ? 'checked' : ''} onchange="window.WikiDB.toggleLadderRecipeMultiSelect(this.checked)">
+                    <span class="switch-slider"></span>
+                  </div>
+                </label>
+              </div>
               <p class="ladder-recipe-modal-subtitle">${isEN ? 'Top 7 High Score Recipes, Mark Ingredients' : '各前7高分料理，標記所需食材'}</p>
             </div>
             <div class="ladder-recipe-modal-actions">
@@ -17060,37 +17249,14 @@
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Sub-Skills' : '副技能補正模擬'}</span>
             </div>
-            <label class="sidebar-final-evo-label" for="ladder-ing-m-toggle" title="${isEN ? 'Ingredient Finder M (+36%)' : '食材發現機率提升M (+36%)'}">
-              <span class="sidebar-final-evo-text">${isEN ? 'Ing. Finder M (+36%)' : '食材機率提升M (+36%)'}</span>
-              <div class="sidebar-switch-wrapper">
-                <input type="checkbox" id="ladder-ing-m-toggle" class="switch-checkbox" ${isLadderIngM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderIngM(this.checked)">
-                <span class="switch-slider"></span>
-              </div>
-            </label>
-
-            <label class="sidebar-final-evo-label" for="ladder-ing-s-toggle" title="${isEN ? 'Ingredient Finder S (+18%)' : '食材發現機率提升S (+18%)'}" style="margin-top: 6px;">
-              <span class="sidebar-final-evo-text">${isEN ? 'Ing. Finder S (+18%)' : '食材機率提升S (+18%)'}</span>
-              <div class="sidebar-switch-wrapper">
-                <input type="checkbox" id="ladder-ing-s-toggle" class="switch-checkbox" ${isLadderIngS ? 'checked' : ''} onchange="window.WikiDB.toggleLadderIngS(this.checked)">
-                <span class="switch-slider"></span>
-              </div>
-            </label>
-
-            <label class="sidebar-final-evo-label" for="ladder-speed-m-toggle" title="${isEN ? 'Helping Speed M (+16.3% helps)' : '幫忙速度提升M (-14% 間隔時間，約 +16.3% 幫忙次數)'}" style="margin-top: 6px;">
-              <span class="sidebar-final-evo-text">${isEN ? 'Helping Speed M (+16.3%)' : '幫忙速度提升M (+16.3%)'}</span>
-              <div class="sidebar-switch-wrapper">
-                <input type="checkbox" id="ladder-speed-m-toggle" class="switch-checkbox" ${isLadderSpeedM ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSpeedM(this.checked)">
-                <span class="switch-slider"></span>
-              </div>
-            </label>
-
-            <label class="sidebar-final-evo-label" for="ladder-speed-s-toggle" title="${isEN ? 'Helping Speed S (+7.5% helps)' : '幫忙速度提升S (-7% 間隔時間，約 +7.5% 幫忙次數)'}" style="margin-top: 6px;">
-              <span class="sidebar-final-evo-text">${isEN ? 'Helping Speed S (+7.5%)' : '幫忙速度提升S (+7.5%)'}</span>
-              <div class="sidebar-switch-wrapper">
-                <input type="checkbox" id="ladder-speed-s-toggle" class="switch-checkbox" ${isLadderSpeedS ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSpeedS(this.checked)">
-                <span class="switch-slider"></span>
-              </div>
-            </label>
+            <div class="sidebar-skills-list sidebar-2col-tags">
+              <button type="button" class="tag-btn ${isLadderIngM ? 'active' : ''}" id="ladder-ing-m-toggle" data-subskill-boost="ING_M" onclick="window.WikiDB.toggleLadderSubskill('ING_M')">${isEN ? 'Ing Finder M' : '食材機率M'}</button>
+              <button type="button" class="tag-btn ${isLadderIngS ? 'active' : ''}" id="ladder-ing-s-toggle" data-subskill-boost="ING_S" onclick="window.WikiDB.toggleLadderSubskill('ING_S')">${isEN ? 'Ing Finder S' : '食材機率S'}</button>
+              <button type="button" class="tag-btn ${isLadderSpeedM ? 'active' : ''}" id="ladder-speed-m-toggle" data-subskill-boost="SPEED_M" onclick="window.WikiDB.toggleLadderSubskill('SPEED_M')">${isEN ? 'Help Speed M' : '幫忙速度M'}</button>
+              <button type="button" class="tag-btn ${isLadderSpeedS ? 'active' : ''}" id="ladder-speed-s-toggle" data-subskill-boost="SPEED_S" onclick="window.WikiDB.toggleLadderSubskill('SPEED_S')">${isEN ? 'Help Speed S' : '幫忙速度S'}</button>
+              <button type="button" class="tag-btn ${isLadderSkillM ? 'active' : ''}" id="ladder-skill-m-toggle" data-subskill-boost="SKILL_M" onclick="window.WikiDB.toggleLadderSubskill('SKILL_M')">${isEN ? 'Skill Trigger M' : '技能機率M'}</button>
+              <button type="button" class="tag-btn ${isLadderSkillS ? 'active' : ''}" id="ladder-skill-s-toggle" data-subskill-boost="SKILL_S" onclick="window.WikiDB.toggleLadderSubskill('SKILL_S')">${isEN ? 'Skill Trigger S' : '技能機率S'}</button>
+            </div>
           </div>
 
           <!-- 7. 性格補正模擬 (Nature Boost Simulation - 可獨立勾選；全不選或全選 = 無修正) -->
@@ -17099,8 +17265,9 @@
               <span class="sidebar-section-title">${isEN ? 'Nature Boost' : '性格補正模擬'}</span>
             </div>
             <div class="sidebar-skills-list sidebar-2col-tags">
-              <button type="button" class="tag-btn ${ladderNatureIng ? 'active' : ''}" data-nature-filter="ING" onclick="window.WikiDB.toggleLadderNatureFilter('ING')">${isEN ? 'Ing. Rate ▲ (+20%)' : '食材機率▲ (+20%)'}</button>
-              <button type="button" class="tag-btn ${ladderNatureSpeed ? 'active' : ''}" data-nature-filter="SPEED" onclick="window.WikiDB.toggleLadderNatureFilter('SPEED')">${isEN ? 'Help Speed ▲ (+10%)' : '幫忙速度▲ (+10%)'}</button>
+              <button type="button" class="tag-btn ${ladderNatureIng ? 'active' : ''}" data-nature-filter="ING" onclick="window.WikiDB.toggleLadderNatureFilter('ING')">${isEN ? 'Ing Rate ▲' : '食材機率▲'}</button>
+              <button type="button" class="tag-btn ${ladderNatureSpeed ? 'active' : ''}" data-nature-filter="SPEED" onclick="window.WikiDB.toggleLadderNatureFilter('SPEED')">${isEN ? 'Help Speed ▲' : '幫忙速度▲'}</button>
+              <button type="button" class="tag-btn ${ladderNatureSkill ? 'active' : ''}" data-nature-filter="SKILL" onclick="window.WikiDB.toggleLadderNatureFilter('SKILL')">${isEN ? 'Skill Chance ▲' : '技能機率▲'}</button>
             </div>
           </div>
         </div>
@@ -17642,11 +17809,15 @@
     toggleLadderIngS: toggleLadderIngS,
     toggleLadderSpeedM: toggleLadderSpeedM,
     toggleLadderSpeedS: toggleLadderSpeedS,
+    toggleLadderSkillM: toggleLadderSkillM,
+    toggleLadderSkillS: toggleLadderSkillS,
+    toggleLadderSubskill: toggleLadderSubskill,
     toggleLadderNatureIng: toggleLadderNatureIng,
     toggleLadderNatureSpeed: toggleLadderNatureSpeed,
     toggleLadderNatureFilter: toggleLadderNatureFilter,
     getLadderNature: getLadderNature,
     setLadderNature: setLadderNature,
+    toggleLadderRecipeMultiSelect: toggleLadderRecipeMultiSelect,
     onLadderSearch: onLadderSearch,
     clearLadderSearch: clearLadderSearch,
     setLadderSupplyFilter: setLadderSupplyFilter,
@@ -17739,9 +17910,13 @@
   window.toggleLadderIngS = toggleLadderIngS;
   window.toggleLadderSpeedM = toggleLadderSpeedM;
   window.toggleLadderSpeedS = toggleLadderSpeedS;
+  window.toggleLadderSkillM = toggleLadderSkillM;
+  window.toggleLadderSkillS = toggleLadderSkillS;
+  window.toggleLadderSubskill = toggleLadderSubskill;
   window.toggleLadderNatureIng = toggleLadderNatureIng;
   window.toggleLadderNatureSpeed = toggleLadderNatureSpeed;
   window.toggleLadderNatureFilter = toggleLadderNatureFilter;
+  window.toggleLadderRecipeMultiSelect = toggleLadderRecipeMultiSelect;
   window.getLadderNature = getLadderNature;
   window.setLadderNature = setLadderNature;
   window.onLadderSearch = onLadderSearch;

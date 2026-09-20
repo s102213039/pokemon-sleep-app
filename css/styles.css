@@ -8200,10 +8200,10 @@ input[type="number"] {
    ========================================================= */
 
 .wiki-main-container {
-  max-width: 1360px;
-  width: 96%;
+  max-width: 1200px;
+  width: 92%;
   margin: 14px auto 24px;
-  padding: 0 12px;
+  padding: 0 16px;
   box-sizing: border-box;
   min-height: calc(100vh - 90px);
   display: flex;
@@ -21466,12 +21466,37 @@ body.mobile-h5-app.values-active,
   gap: 12px;
 }
 
+.ladder-recipe-modal-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .ladder-recipe-modal-title {
   margin: 0;
   font-size: 16px;
   font-weight: 700;
   color: var(--text-primary, #f8fafc);
   line-height: 1.3;
+}
+
+.ladder-multi-select-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.ladder-multi-select-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.2px;
 }
 
 .ladder-recipe-modal-subtitle {
@@ -21919,6 +21944,7 @@ body.mobile-h5-app.values-active,
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 12px;
   background: rgba(2, 132, 199, 0.12);
   border: 1px solid rgba(56, 189, 248, 0.35);
@@ -21928,6 +21954,56 @@ body.mobile-h5-app.values-active,
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   min-height: 46px;
+}
+
+.ladder-recipe-banner-recipes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.ladder-recipe-banner-recipe-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px 3px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04));
+}
+
+.ladder-recipe-banner-recipe-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ladder-ing-qty-marks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  justify-content: center;
+  margin-top: 2px;
+  max-width: 56px;
+}
+
+.ladder-recipe-banner-ing-chip .ladder-ing-qty-marks {
+  max-width: none;
+  margin-top: 0;
+}
+
+.ladder-ing-qty-mark {
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.1;
+  padding: 1px 3px;
+  border-radius: 4px;
+  border: 1px solid;
+  white-space: nowrap;
 }
 
 .ladder-recipe-banner-left {

@@ -971,7 +971,7 @@ test('Tier 1 - Feature Coverage', 'WikiDB Namespace & Event Handler Methods Inte
     'switchBoost', 'switchHelperBoost', 'toggleDetail', 'toggleDetailTable',
     'updateBerryLevel', 'updateBerryIsland', 'toggleBerryFavorite', 'toggleFavorite',
     'toggleLadderIngM', 'toggleLadderIngS', 'toggleLadderSpeedM', 'toggleLadderSpeedS',
-    'toggleLadderNatureIng', 'toggleLadderNatureSpeed', 'toggleLadderNatureFilter', 'setLadderNature',
+    'toggleLadderIngM', 'toggleLadderSubskill', 'toggleLadderNatureIng', 'toggleLadderNatureSpeed', 'toggleLadderNatureFilter', 'toggleLadderRecipeMultiSelect', 'setLadderNature',
     'onLadderSearch', 'clearLadderSearch',
     'setLadderRecipeFilter', 'refreshCoordinateLadder', 'handleLadderGroupHover',
     'handleLadderGroupHoverOut', 'recalcTriggerChance', 'recalcSleepDays',
@@ -2620,7 +2620,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Sub-skills
   assert(wikiCode.includes('data-nature-filter="SPEED"'), 'Template should contain data-nature-filter="SPEED"');
   assert(!wikiCode.includes('data-nature-filter="NONE"'), 'Nature filter must not keep Neutral as a third option');
   assert(wikiCode.includes("toggleLadderNatureFilter('ING')"), 'Nature options must be independently toggleable');
-  assert(wikiCode.includes('if (ladderNatureIng === ladderNatureSpeed) return \'NONE\''), 'Selecting none or both natures must equal no correction');
+  assert(wikiCode.includes('data-nature-filter="SKILL"'), 'Nature filter must include Skill Chance up');
+  assert(wikiCode.includes("toggleLadderSubskill('SKILL_M')"), 'Sub-skill boosts must be multi-select tags including Skill Trigger M');
+  assert(wikiCode.includes('id="ladder-recipe-multi-toggle"'), 'Recipe highlight modal must include multi-select switch');
+  assert(wikiCode.includes('function toggleLadderRecipeMultiSelect'), 'Multi recipe highlight must be toggleable');
+  assert(!wikiCode.includes('食材機率提升M (+36%)'), 'Sub-skill labels must drop parenthetical deltas');
   assert(wikiCode.includes('class="island-triple-grid"'), 'Islands desktop layout must place three major blocks in one row');
   assert(wikiCode.includes('id="ladder-ing-s-toggle"'), 'Template should contain ladder-ing-s-toggle');
   assert(wikiCode.includes('id="ladder-speed-s-toggle"'), 'Template should contain ladder-speed-s-toggle');
@@ -4862,6 +4866,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Berries Single Line La
   assert(html.includes('class="island-table-card"'), 'Two-col tables must use borderless island-table-card');
   assert(cssCode.includes('.island-triple-grid {') && cssCode.includes('grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.05fr) minmax(0, 1.28fr);'), 'Islands must use compact 3-column grid');
   assert(cssCode.includes('.wiki-ratings-container {') && cssCode.includes('grid-template-columns: repeat(3, minmax(0, 1fr));'), 'Ratings guide must use 3-across desktop grid');
+  assert(cssCode.includes('.wiki-main-container {\n  max-width: 1200px;\n  width: 92%;'), 'Wiki desktop main width must match other tabs at 1200px / 92%');
   assert(cssCode.includes('.mobile-h5-app #pokemon-filter-sidebar .sidebar-scrollable-content') && cssCode.includes('gap: 6px !important;'), 'Pokedex H5 filter must compress vertical gap');
   assert(html.includes('class="island-spawns-card"'), 'Spawns section must use borderless island-spawns-card');
   assert(!html.includes('<div class="wiki-card" style="margin-bottom:16px;">'), 'Spawns section must not have outer wiki-card box');
