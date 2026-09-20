@@ -17258,17 +17258,20 @@ body.mobile-h5-app.values-active,
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  margin-bottom: 12px !important;
+  margin: 0 -12px 8px !important;
+  width: calc(100% + 24px) !important;
 }
 
 .mobile-h5-app .island-hero-banner {
-  border-radius: 10px !important;
-  min-height: 84px !important;
-  padding: 12px 14px !important;
-  margin-bottom: 12px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  min-height: 128px !important;
+  padding: 14px 14px 44px !important;
+  margin: 0 0 4px 0 !important;
   display: flex !important;
   align-items: flex-start !important;
-  background-position: center 30% !important;
+  background-position: center 32% !important;
 }
 
 .mobile-h5-app .island-hero-content {
@@ -20556,25 +20559,47 @@ body.mobile-h5-app.values-active,
 /* Island Hero Card & Overview Section */
 .island-overview-card {
   padding: 0;
-  margin-bottom: 16px;
+  margin: 0 -16px 8px;
+  width: calc(100% + 32px);
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
 }
 
 .island-hero-banner {
-  border-radius: 12px;
+  border-radius: 0;
   background-size: cover;
-  background-position: center 30%;
-  padding: 16px 20px;
-  margin-bottom: 16px;
-  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.12));
+  background-position: center 32%;
+  padding: 20px 20px 56px;
+  margin: 0 0 8px 0;
+  border: none;
   position: relative;
   overflow: hidden;
-  min-height: 92px;
+  min-height: 148px;
   display: flex;
   align-items: flex-start;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  box-shadow: none;
+}
+
+.island-hero-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.32) 0%, rgba(0, 0, 0, 0.12) 42%, transparent 68%);
+}
+
+.island-hero-banner::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 62%;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(180deg, transparent 0%, var(--bg-dark) 100%);
 }
 
 .island-hero-content {
@@ -20584,6 +20609,8 @@ body.mobile-h5-app.values-active,
   align-items: flex-start;
   width: 100%;
   gap: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .island-title-group {

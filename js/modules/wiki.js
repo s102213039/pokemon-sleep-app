@@ -11899,39 +11899,39 @@
     return isLadderSkillDrawExpected;
   }
 
-  // 食材精選S 專屬寶可夢主技能期望值加成 (主技能最高等級 Lv.7, 每次 18 顆; 技能型寶可夢以專屬 1.5 倍發動機率計算, 食材型寶可夢以基礎 1.0 倍保守估計)
+  // 食材精選S 專屬寶可夢主技能期望值加成 (主技能最高等級 Lv.7, 每次 18 顆; 全部專長以 1.0 倍發動機率為基準, 技能機率M/S與性格▲由篩選器另行疊加)
   // 排除暴擊、大成功與碎片，依候選食材池等機率 1/K 均分推導之日獲取期望值
   const INGREDIENT_DRAW_SKILL_EXPECTATIONS = {
     '穿山王': {
-      bonus: 27,
+      bonus: 18,
       ingredients: ['沉甸甸南瓜', '吉利蛋南瓜', '南瓜', '萌綠玉米', '玉米', '窩心洋芋', '洋芋', 'Plump Pumpkin', 'Greengrass Corn', 'Soft Potato', 'pumpkin', 'corn', 'potato']
     },
     'Sandslash': {
-      bonus: 27,
+      bonus: 18,
       ingredients: ['沉甸甸南瓜', '吉利蛋南瓜', '南瓜', '萌綠玉米', '玉米', '窩心洋芋', '洋芋', 'Plump Pumpkin', 'Greengrass Corn', 'Soft Potato', 'pumpkin', 'corn', 'potato']
     },
     '烏鴉頭頭': {
-      bonus: 27,
+      bonus: 18,
       ingredients: ['醒腦咖啡豆', '醒晨咖啡', '咖啡', '萌綠大豆', '大豆', '豆製肉', '美味蘑菇', '蘑菇', 'Rousing Coffee', 'Greengrass Soybeans', 'Bean Sausage', 'Tasty Mushroom', 'coffee', 'soy', 'soybeans', 'meat', 'sausage', 'beansausage', 'mushroom']
     },
     'Honchkrow': {
-      bonus: 27,
+      bonus: 18,
       ingredients: ['醒腦咖啡豆', '醒晨咖啡', '咖啡', '萌綠大豆', '大豆', '豆製肉', '美味蘑菇', '蘑菇', 'Rousing Coffee', 'Greengrass Soybeans', 'Bean Sausage', 'Tasty Mushroom', 'coffee', 'soy', 'soybeans', 'meat', 'sausage', 'beansausage', 'mushroom']
     },
     '岩殿居蟹': {
-      bonus: 35,
+      bonus: 23,
       ingredients: ['嫩亮酪梨', '酪梨', '窩心洋芋', '洋芋', '純粹油', '純油', 'Glossy Avocado', 'Soft Potato', 'Pure Oil', 'avocado', 'glossyavocado', 'potato', 'oil']
     },
     'Crustle': {
-      bonus: 35,
+      bonus: 23,
       ingredients: ['嫩亮酪梨', '酪梨', '窩心洋芋', '洋芋', '純粹油', '純油', 'Glossy Avocado', 'Soft Potato', 'Pure Oil', 'avocado', 'glossyavocado', 'potato', 'oil']
     },
     '摔角鷹人': {
-      bonus: 37,
+      bonus: 25,
       ingredients: ['火辣香草', '透心涼香草', '香草', '暖暖薑', '豆製肉', 'Fiery Herb', 'Warming Ginger', 'Bean Sausage', 'herb', 'ginger', 'meat', 'sausage', 'beansausage']
     },
     'Hawlucha': {
-      bonus: 37,
+      bonus: 25,
       ingredients: ['火辣香草', '透心涼香草', '香草', '暖暖薑', '豆製肉', 'Fiery Herb', 'Warming Ginger', 'Bean Sausage', 'herb', 'ginger', 'meat', 'sausage', 'beansausage']
     },
     '蝶結萌虻': {
@@ -12627,8 +12627,8 @@
     const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
     const title = isEN ? 'Specialty Trigger Multipliers' : '專長發動機率加成';
     const body = isEN
-      ? 'Skill specialty applies 1.5x trigger rate.<br>Ingredient specialty applies 1.0x baseline.'
-      : '技能型寶可夢享有 1.5 倍技能發動機率乘數。<br>食材型寶可夢以 1.0 倍基礎發動率計算。';
+      ? 'All specialties use a 1.0x trigger baseline.<br>Use Skill Trigger M/S and Skill Chance ▲ to simulate boosts.'
+      : '所有專長皆以 1.0 倍發動機率為基準。<br>請用技能機率M/S與技能機率▲模擬補正。';
 
     if (window.PokemonApp && typeof window.PokemonApp.toggleGlobalTooltip === 'function') {
       window.PokemonApp.toggleGlobalTooltip(btn, title, body);
@@ -15579,7 +15579,7 @@
       </div>
 
       <div class="island-overview-card">
-        <div class="island-hero-banner" style="background-image: linear-gradient(180deg, rgba(8, 14, 26, 0.65) 0%, rgba(8, 14, 26, 0.38) 50%, rgba(8, 14, 26, 0.65) 100%), url('${island.image}');">
+        <div class="island-hero-banner" style="background-image: url('${island.image}');">
           <div class="island-hero-content">
             <div class="island-title-group">
               <h3 class="island-hero-title">${isEN ? (isExpert ? island.name_en + ' EX' : island.name_en) : (isExpert ? island.name + ' EX' : island.name)}</h3>
@@ -17219,18 +17219,18 @@
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Specialty Type' : '寶可夢專長'}</span>
               <div class="ladder-switch-with-help">
-                <label class="ladder-top15-switch-label" title="${isEN ? 'Skill specialty applies 1.5x trigger rate\nIngredient specialty applies 1.0x baseline' : '技能型寶可夢享有 1.5 倍技能發動機率乘數\n食材型寶可夢以 1.0 倍基礎發動率計算'}">
+                <label class="ladder-top15-switch-label" title="${isEN ? 'All specialties use a 1.0x trigger baseline\nUse Skill Trigger M/S and Skill Chance ▲ to simulate boosts' : '所有專長皆以 1.0 倍發動機率為基準\n請用技能機率M/S與技能機率▲模擬補正'}">
                   <input type="checkbox" id="ladder-skill-draw-toggle" class="ladder-switch-input" ${isLadderSkillDrawExpected ? 'checked' : ''} onchange="window.WikiDB.toggleLadderSkillDrawExpected(this.checked)">
                   <span class="ladder-switch-slider"></span>
                   <span class="ladder-switch-text">${isEN ? 'Ingr. Draw' : '食材精選'}</span>
                 </label>
-                <button type="button" class="ladder-help-icon-btn" onclick="window.WikiDB.openSkillDrawHelpModal(event)" title="${isEN ? 'Skill specialty applies 1.5x trigger rate\nIngredient specialty applies 1.0x baseline' : '技能型寶可夢享有 1.5 倍技能發動機率乘數\n食材型寶可夢以 1.0 倍基礎發動率計算'}" aria-label="${isEN ? 'Skill Help' : '技能說明'}">?</button>
+                <button type="button" class="ladder-help-icon-btn" onclick="window.WikiDB.openSkillDrawHelpModal(event)" title="${isEN ? 'All specialties use a 1.0x trigger baseline\nUse Skill Trigger M/S and Skill Chance ▲ to simulate boosts' : '所有專長皆以 1.0 倍發動機率為基準\n請用技能機率M/S與技能機率▲模擬補正'}" aria-label="${isEN ? 'Skill Help' : '技能說明'}">?</button>
                 <!-- 食材精選S 說明提示框 (點選?展示，格式與樣式與網頁版本滑鼠懸停框一致) -->
                 <div id="ladder-skill-help-modal" class="ladder-skill-tooltip-popover" style="display:none;" role="tooltip">
                   <div class="ladder-skill-tooltip-backdrop" onclick="window.WikiDB.closeSkillDrawHelpModal()"></div>
                   <div class="ladder-skill-tooltip-bubble">
-                    <div class="ladder-skill-tooltip-line">${isEN ? 'Skill specialty applies 1.5x trigger rate' : '技能型寶可夢享有 1.5 倍技能發動機率乘數'}</div>
-                    <div class="ladder-skill-tooltip-line">${isEN ? 'Ingredient specialty applies 1.0x baseline' : '食材型寶可夢以 1.0 倍基礎發動率計算'}</div>
+                    <div class="ladder-skill-tooltip-line">${isEN ? 'All specialties use a 1.0x trigger baseline' : '所有專長皆以 1.0 倍發動機率為基準'}</div>
+                    <div class="ladder-skill-tooltip-line">${isEN ? 'Use Skill Trigger M/S and Skill Chance ▲ to simulate boosts' : '請用技能機率M/S與技能機率▲模擬補正'}</div>
                   </div>
                 </div>
               </div>

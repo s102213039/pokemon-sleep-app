@@ -1293,8 +1293,8 @@ function getHelpButtonData(btn) {
     return {
       title: isEN ? 'Specialty Trigger Multipliers' : '專長發動機率加成',
       body: isEN
-        ? 'Skill specialty applies 1.5x trigger rate.<br>Ingredient specialty applies 1.0x baseline.'
-        : '技能型寶可夢享有 1.5 倍技能發動機率乘數。<br>食材型寶可夢以 1.0 倍基礎發動率計算。'
+        ? 'All specialties use a 1.0x trigger baseline.<br>Use Skill Trigger M/S and Skill Chance ▲ to simulate boosts.'
+        : '所有專長皆以 1.0 倍發動機率為基準。<br>請用技能機率M/S與技能機率▲模擬補正。'
     };
   }
   return null;

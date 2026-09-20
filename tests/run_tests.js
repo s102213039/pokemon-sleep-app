@@ -4886,6 +4886,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Berries Single Line La
 test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified National Dex Ordering & Tooltips', () => {
   const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
   const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+  const cssCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
 
   const mockCtx = {
     window: {
@@ -4960,6 +4961,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   // 5. Verify Cyan (fixed berries) renders inside hero banner with shortened label
   assert(htmlCyan.includes('喜好樹果:'), 'Cyan must render shortened label 喜好樹果:');
   assert(/<div class="island-hero-banner"[^>]*>[\s\S]*?<div class="island-title-group">[\s\S]*?<div class="island-berries-section">/.test(htmlCyan), 'Hero banner must contain title group followed by berries section');
+  assert(cssCode.includes('.island-hero-banner::after') && cssCode.includes('var(--bg-dark)'), 'Island hero must fade into page background without a framed border');
 
   // 6. Verify Drowsy Power spawn tiers table renders 3 columns with 100-score rank badge, energy and formula footnote
   assert(htmlCyan.includes('最低睡意之力門檻'), 'Drowsy power table must include 最低睡意之力門檻 header');
@@ -6186,25 +6188,25 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Ingredient
   assertEquals(mockStorage.get('pksleep_ladder_skill_draw'), 'true', 'localStorage must be updated to true');
 
   // 3. Verify exact mathematical expectations for all 6 Pokemon
-  // 技能型 (1.5倍技能機率乘數)：
+  // 技能型 (1.0倍發動機率基準)：
   // 穿山王 (+27 on pumpkin, corn, potato)
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'corn', '萌綠玉米'), 27, 'Sandslash corn bonus must be +27');
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'pumpkin', '吉利蛋南瓜'), 27, 'Sandslash pumpkin bonus must be +27');
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'potato', '窩心洋芋'), 27, 'Sandslash potato bonus must be +27');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'corn', '萌綠玉米'), 18, 'Sandslash corn bonus must be +18 at 1.0x baseline');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'pumpkin', '吉利蛋南瓜'), 18, 'Sandslash pumpkin bonus must be +18 at 1.0x baseline');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'potato', '窩心洋芋'), 18, 'Sandslash potato bonus must be +18 at 1.0x baseline');
   assertEquals(WikiDB.getPokemonSkillDrawBonus('穿山王', 'apple', '特選蘋果'), 0, 'Sandslash non-candidate ingredient bonus must be 0');
 
   // 烏鴉頭頭 (+27 on coffee, soy, meat, mushroom)
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('烏鴉頭頭', 'coffee', '醒晨咖啡'), 27, 'Honchkrow coffee bonus must be +27');
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('烏鴉頭頭', 'soy', '醒晨大豆'), 27, 'Honchkrow soy bonus must be +27');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('烏鴉頭頭', 'coffee', '醒晨咖啡'), 18, 'Honchkrow coffee bonus must be +18 at 1.0x baseline');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('烏鴉頭頭', 'soy', '醒晨大豆'), 18, 'Honchkrow soy bonus must be +18 at 1.0x baseline');
   assertEquals(WikiDB.getPokemonSkillDrawBonus('烏鴉頭頭', 'apple', '特選蘋果'), 0, 'Honchkrow non-candidate ingredient bonus must be 0');
 
   // 岩殿居蟹 (+35 on avocado, potato, oil)
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('岩殿居蟹', 'potato', '窩心洋芋'), 35, 'Crustle potato bonus must be +35');
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('岩殿居蟹', 'oil', '純油'), 35, 'Crustle oil bonus must be +35');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('岩殿居蟹', 'potato', '窩心洋芋'), 23, 'Crustle potato bonus must be +23 at 1.0x baseline');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('岩殿居蟹', 'oil', '純油'), 23, 'Crustle oil bonus must be +23 at 1.0x baseline');
 
   // 摔角鷹人 (+37 on herb, ginger, meat)
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('摔角鷹人', 'herb', '透心涼香草'), 37, 'Hawlucha herb bonus must be +37');
-  assertEquals(WikiDB.getPokemonSkillDrawBonus('摔角鷹人', 'ginger', '暖暖薑'), 37, 'Hawlucha ginger bonus must be +37');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('摔角鷹人', 'herb', '透心涼香草'), 25, 'Hawlucha herb bonus must be +25 at 1.0x baseline');
+  assertEquals(WikiDB.getPokemonSkillDrawBonus('摔角鷹人', 'ginger', '暖暖薑'), 25, 'Hawlucha ginger bonus must be +25 at 1.0x baseline');
 
   // 食材型 (1.0倍基準發動率，最保守估計)：
   // 蝶結萌虻 (+13 on honey, oil, corn)
@@ -6237,8 +6239,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Ingredient
   assert(mockContainer.innerHTML.includes('ladder-skill-help-modal'), 'Rendered layout must include ladder-skill-help-modal dialog');
   assert(mockContainer.innerHTML.includes('ladder-switch-with-help'), 'Sidebar must include ladder-switch-with-help container');
   assert(mockContainer.innerHTML.includes('ladder-help-icon-btn'), 'Sidebar must include ladder-help-icon-btn question mark button');
-  assert(mockContainer.innerHTML.includes('技能型寶可夢享有 1.5 倍技能發動機率乘數'), 'Switch title must include 技能型寶可夢享有 1.5 倍技能發動機率乘數');
-  assert(mockContainer.innerHTML.includes('食材型寶可夢以 1.0 倍基礎發動率計算'), 'Switch title must include 食材型寶可夢以 1.0 倍基礎發動率計算');
+  assert(mockContainer.innerHTML.includes('所有專長皆以 1.0 倍發動機率為基準'), 'Switch title must include 1.0x trigger baseline');
+  assert(mockContainer.innerHTML.includes('請用技能機率M/S與技能機率▲模擬補正'), 'Switch title must point to skill-chance filters');
 
   // 5. Test Help Modal Methods
   assert(typeof WikiDB.openSkillDrawHelpModal === 'function', 'openSkillDrawHelpModal must be exported');
