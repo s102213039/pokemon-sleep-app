@@ -1514,6 +1514,57 @@ function isMobileH5Surface() {
   }
 }
 
+const SIDEBAR_BACKDROP_BY_ID = {
+  'pokemon-filter-sidebar': 'sidebar-backdrop',
+  'recipe-filter-sidebar': 'recipe-sidebar-backdrop',
+  'ladder-filter-sidebar': 'ladder-sidebar-backdrop'
+};
+
+function queryAllById(id) {
+  if (!id || typeof document === 'undefined') return [];
+  try {
+    if (document.querySelectorAll) {
+      return Array.prototype.slice.call(document.querySelectorAll('[id="' + id + '"]'));
+    }
+  } catch (e) {}
+  const one = document.getElementById ? document.getElementById(id) : null;
+  return one ? [one] : [];
+}
+
+function isOverlayShown(el) {
+  if (!el) return false;
+  const d = (el.style && el.style.display) || '';
+  return d === 'flex' || d === 'block';
+}
+
+function resolveUniqueOverlay(id) {
+  const nodes = queryAllById(id);
+  if (!nodes.length) return null;
+  if (nodes.length === 1) return nodes[0];
+  let keep = null;
+  for (let i = 0; i < nodes.length; i++) {
+    if (isOverlayShown(nodes[i])) { keep = nodes[i]; break; }
+  }
+  if (!keep) {
+    for (let i = 0; i < nodes.length; i++) {
+      const n = nodes[i];
+      if (n && typeof n.closest === 'function') {
+        if (n.closest('#panel-wiki') || n.closest('#panel-pokemon') || n.closest('#panel-recipes') || n.closest('#panel-box')) {
+          keep = n;
+          break;
+        }
+      }
+    }
+  }
+  if (!keep) keep = nodes[nodes.length - 1];
+  for (let i = 0; i < nodes.length; i++) {
+    if (nodes[i] !== keep && nodes[i].parentNode && typeof nodes[i].parentNode.removeChild === 'function') {
+      try { nodes[i].parentNode.removeChild(nodes[i]); } catch (e) {}
+    }
+  }
+  return keep;
+}
+
 function portalOverlayToBody(el) {
   if (!el || typeof document === 'undefined' || !document.body) return;
   if (!isMobileH5Surface()) return;
@@ -1546,14 +1597,16 @@ function isAnyOverlayOpen() {
       if (document.body.classList.contains('pokedex-modal-open') || document.body.classList.contains('modal-open')) return true;
     }
     if (document.querySelector && document.querySelector('.sidebar-backdrop.active')) return true;
-    if (isDrawerVisiblyOpen(document.getElementById('pokemon-filter-sidebar'))) return true;
-    if (isDrawerVisiblyOpen(document.getElementById('recipe-filter-sidebar'))) return true;
-    if (isDrawerVisiblyOpen(document.getElementById('ladder-filter-sidebar'))) return true;
+    if (isDrawerVisiblyOpen(resolveUniqueOverlay('pokemon-filter-sidebar'))) return true;
+    if (isDrawerVisiblyOpen(resolveUniqueOverlay('recipe-filter-sidebar'))) return true;
+    if (isDrawerVisiblyOpen(resolveUniqueOverlay('ladder-filter-sidebar'))) return true;
     for (let i = 0; i < MOBILE_OVERLAY_IDS.length; i++) {
       const id = MOBILE_OVERLAY_IDS[i];
       if (id.indexOf('sidebar') !== -1 || id.indexOf('backdrop') !== -1) continue;
-      const el = document.getElementById(id);
-      if (el && !isInlineDisplayNone(el)) return true;
+      const nodes = queryAllById(id);
+      for (let j = 0; j < nodes.length; j++) {
+        if (nodes[j] && !isInlineDisplayNone(nodes[j])) return true;
+      }
     }
     if (document.querySelector) {
       const appraisal = document.querySelector('.appraisal-modal-backdrop');
@@ -1572,30 +1625,33 @@ function syncOverlayOpenState() {
 }
 
 function portalMobileOverlays(extraEl) {
-  if (isMobileH5Surface()) {
-    for (let i = 0; i < MOBILE_OVERLAY_IDS.length; i++) {
-      const node = (typeof document !== 'undefined' && document.getElementById) ? document.getElementById(MOBILE_OVERLAY_IDS[i]) : null;
-      if (node) portalOverlayToBody(node);
+  if (isMobileH5Surface() && extraEl) {
+    portalOverlayToBody(extraEl);
+    if (extraEl.id && SIDEBAR_BACKDROP_BY_ID[extraEl.id]) {
+      const backdrop = resolveUniqueOverlay(SIDEBAR_BACKDROP_BY_ID[extraEl.id]);
+      if (backdrop) portalOverlayToBody(backdrop);
     }
-    if (extraEl) portalOverlayToBody(extraEl);
-    try {
-      if (document.querySelectorAll) {
-        const extras = document.querySelectorAll('.appraisal-modal-backdrop, .ladder-recipe-modal');
-        for (let i = 0; i < extras.length; i++) portalOverlayToBody(extras[i]);
-      }
-    } catch (e) {}
   }
   syncOverlayOpenState();
+}
+
+function pruneOverlayDuplicates(ids) {
+  const list = (ids && ids.length) ? ids : MOBILE_OVERLAY_IDS;
+  for (let i = 0; i < list.length; i++) resolveUniqueOverlay(list[i]);
 }
 
 if (typeof window !== 'undefined') {
   window.portalOverlayToBody = portalOverlayToBody;
   window.portalMobileOverlays = portalMobileOverlays;
+  window.resolveUniqueOverlay = resolveUniqueOverlay;
+  window.pruneOverlayDuplicates = pruneOverlayDuplicates;
   window.syncOverlayOpenState = syncOverlayOpenState;
   window.isAnyOverlayOpen = isAnyOverlayOpen;
 }
 PokemonApp.portalOverlayToBody = portalOverlayToBody;
 PokemonApp.portalMobileOverlays = portalMobileOverlays;
+PokemonApp.resolveUniqueOverlay = resolveUniqueOverlay;
+PokemonApp.pruneOverlayDuplicates = pruneOverlayDuplicates;
 PokemonApp.syncOverlayOpenState = syncOverlayOpenState;
 PokemonApp.isAnyOverlayOpen = isAnyOverlayOpen;
 PokemonApp.levenshteinDistance = levenshteinDistance;

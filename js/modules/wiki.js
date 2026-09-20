@@ -11696,9 +11696,9 @@
   }
 
   function toggleLadderSidebar(forceState) {
-    const sidebar = document.getElementById('ladder-filter-sidebar');
-    const backdrop = document.getElementById('ladder-sidebar-backdrop');
-    const bookmarkHandle = document.getElementById('ladder-sidebar-bookmark-handle');
+    const sidebar = getOverlayEl('ladder-filter-sidebar');
+    const backdrop = getOverlayEl('ladder-sidebar-backdrop');
+    const bookmarkHandle = getOverlayEl('ladder-sidebar-bookmark-handle');
     const ladderRecipeFab = document.getElementById('ladder-recipe-highlight-fab');
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
@@ -12442,14 +12442,21 @@
   let ladderRecipeCategory = 'curry';
   let ladderHighlightRecipe = null;
 
+  function getOverlayEl(id) {
+    if (typeof window !== 'undefined' && typeof window.resolveUniqueOverlay === 'function') {
+      return window.resolveUniqueOverlay(id);
+    }
+    return (typeof document !== 'undefined' && document.getElementById) ? document.getElementById(id) : null;
+  }
+
   function switchLadderRecipeCategory(cat) {
     if (cat !== 'curry' && cat !== 'salad' && cat !== 'dessert') return;
     ladderRecipeCategory = cat;
     renderLadderRecipeModalContent();
   }
 
-  function renderLadderRecipeModalContent() {
-    const modal = document.getElementById('ladder-recipe-modal');
+  function renderLadderRecipeModalContent(modalEl) {
+    const modal = modalEl || getOverlayEl('ladder-recipe-modal');
     if (!modal) return;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
@@ -12510,9 +12517,11 @@
   }
 
   function openLadderRecipeModal() {
-    const modal = document.getElementById('ladder-recipe-modal');
+    const modal = getOverlayEl('ladder-recipe-modal');
     if (!modal) return;
-    if (typeof document !== 'undefined' && document.body && modal.parentElement !== document.body) {
+    if (typeof window.portalMobileOverlays === 'function') {
+      window.portalMobileOverlays(modal);
+    } else if (typeof document !== 'undefined' && document.body && modal.parentElement !== document.body) {
       document.body.appendChild(modal);
     }
     // 若當前已有選取料理，自動切換至該料理之分類
@@ -12524,13 +12533,13 @@
         else if (found.category === '甜點') ladderRecipeCategory = 'dessert';
       }
     }
-    renderLadderRecipeModalContent();
+    renderLadderRecipeModalContent(modal);
     modal.style.display = 'flex';
     if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
   }
 
   function closeLadderRecipeModal() {
-    const modal = document.getElementById('ladder-recipe-modal');
+    const modal = getOverlayEl('ladder-recipe-modal');
     if (modal) {
       modal.style.display = 'none';
     }
@@ -17527,6 +17536,16 @@
       <!-- 遮罩層 (Backdrop for Mobile Drawer - 阻斷點擊穿透) -->
       <div id="ladder-sidebar-backdrop" class="sidebar-backdrop" onclick="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeLadderSidebar()" ontouchend="event.preventDefault(); event.stopPropagation(); window.WikiDB.closeLadderSidebar()" ontouchstart="event.stopPropagation()"></div>
     `;
+
+    if (typeof window.pruneOverlayDuplicates === 'function') {
+      window.pruneOverlayDuplicates([
+        'ladder-recipe-modal',
+        'ladder-filter-sidebar',
+        'ladder-sidebar-backdrop',
+        'ladder-sidebar-bookmark-handle',
+        'ladder-recipe-highlight-fab'
+      ]);
+    }
 
     try {
       initCalcCustomSelects();

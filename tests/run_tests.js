@@ -7691,6 +7691,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(boxJs.includes('window.portalMobileOverlays'), 'box.js must portal edit/lightbox overlays');
     assert(appraisalJs.includes('window.portalMobileOverlays'), 'appraisal.js must portal report overlay');
     assert(wikiJs.includes('window.syncOverlayOpenState'), 'wiki.js must sync overlay-open on ladder recipe modal');
+    assert(appJs.includes('function resolveUniqueOverlay'), 'app.js must dedupe duplicate overlay IDs');
+    assert(appJs.includes('SIDEBAR_BACKDROP_BY_ID'), 'app.js must portal only the opened sidebar plus its backdrop');
+    assert(!appJs.includes("querySelectorAll('.appraisal-modal-backdrop, .ladder-recipe-modal')"), 'app.js must not bulk-portal every overlay');
+    assert(wikiJs.includes('renderLadderRecipeModalContent(modal)'), 'wiki.js must fill the same modal node being shown');
+    assert(wikiJs.includes("window.pruneOverlayDuplicates"), 'wiki re-render must prune orphan overlay copies');
 
     assert(css.includes('.mobile-h5-app.overlay-open'), 'CSS must define overlay-open stacking');
     assert(css.includes('.mobile-h5-app.overlay-open .mobile-app-header'), 'CSS must drop app bar under overlay');

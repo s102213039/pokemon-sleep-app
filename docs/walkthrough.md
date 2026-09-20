@@ -421,3 +421,15 @@
 2. `body.overlay-open`：App Bar／Dock 降至 z-index 2；遮罩 z-index 10040、抽層 10050；遮罩 `backdrop-filter: blur(8px)` 覆蓋全螢幕。
 3. 下拉重新：`overlay-open` 時不追蹤 PTR；在浮層頂部下拉 `preventDefault`；抽層內容 `overscroll-behavior: contain`。
 4. 測試：**156 / 156** 通過。快取 `v=20260920_4`。
+
+### 問題（同日續修）
+開過其他篩選器或浮窗後，「選取料理高亮食材」只剩標題、沒有料理資料。
+
+根因：先前 `portalMobileOverlays` 會把**所有**浮層（含百科用 `innerHTML` 重繪的 `#ladder-recipe-modal`、天梯側欄）一次搬到 `body`。切分頁或 `WikiDB.init()` 重繪時再生成同 ID 空殼。`getElementById` 填資料進舊節點，卻把新的空窗 `display:flex` 顯示出來。圖鑑／料理靜態側欄較不易中招，但天梯浮窗、天梯篩選、Lightbox 這類會被重繪的節點都會。
+
+### 修復
+1. 只搬「正在打開」的那一個浮層（側欄另帶自己的 backdrop）。
+2. `resolveUniqueOverlay` 清掉重複 ID。
+3. `renderLadderRecipeModalContent(modal)` 必須寫入正在顯示的同一個節點。
+4. `renderWikiLayout` 結束後 `pruneOverlayDuplicates`。
+5. 測試 156/156。快取 `v=20260920_5`。
