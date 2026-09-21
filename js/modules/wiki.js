@@ -12608,16 +12608,22 @@
     const multiToggle = modal.querySelector('#ladder-recipe-multi-toggle');
     if (multiToggle) multiToggle.checked = !!ladderRecipeMultiSelect;
     renderLadderRecipeModalContent(modal);
+    if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
     modal.style.display = 'flex';
     if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
   }
 
   function closeLadderRecipeModal() {
     const modal = getOverlayEl('ladder-recipe-modal');
-    if (modal) {
-      modal.style.display = 'none';
+    const done = () => {
+      if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
+    };
+    if (modal && typeof window.animateOverlayClose === 'function') {
+      window.animateOverlayClose(modal, done);
+    } else {
+      if (modal) modal.style.display = 'none';
+      done();
     }
-    if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
   }
 
   function openSkillDrawHelpModal(e) {
@@ -13301,6 +13307,7 @@
       </div>
     `;
 
+    if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
     modal.style.display = 'flex';
     modal.onclick = closeIngredientRankingModal;
 
@@ -13315,9 +13322,13 @@
 
   function closeIngredientRankingModal() {
     const modal = document.getElementById('wiki-ingredient-ranking-modal');
-    if (modal) {
+    if (!modal) return;
+    const wipe = () => { modal.innerHTML = ''; };
+    if (typeof window.animateOverlayClose === 'function') {
+      window.animateOverlayClose(modal, wipe);
+    } else {
       modal.style.display = 'none';
-      modal.innerHTML = '';
+      wipe();
     }
   }
 
@@ -15285,7 +15296,9 @@
     });
     if (typeof document.querySelectorAll !== 'function' || typeof document.querySelector !== 'function') return;
     if (currentWikiSubTab !== 'islands') {
-      document.querySelectorAll('.island-scene-layer').forEach(el => el.remove());
+      document.querySelectorAll('.island-scene-layer').forEach(el => {
+        if (el.classList) el.classList.add('island-scene-hidden');
+      });
       return;
     }
     const host = isH5 ? islandsPanel : panelWiki;
@@ -15301,6 +15314,7 @@
     }
     const island = ISLANDS_DATA.find(i => i.id === currentIslandId) || ISLANDS_DATA[0];
     const src = islandSceneSrc(island);
+    if (layer.classList) layer.classList.remove('island-scene-hidden');
     const img = layer.querySelector && layer.querySelector('.island-scene-photo');
     if (img && src) img.src = src;
     host.classList.add('has-island-scene');

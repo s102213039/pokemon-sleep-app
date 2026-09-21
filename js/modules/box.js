@@ -1443,20 +1443,21 @@
       }
     }
 
+    if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
     modal.style.display = 'flex';
     if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(modal);
   }
 
   function closeBoxEditModal() {
     const modal = document.getElementById('box-edit-modal');
-    if (modal) {
-      modal.style.display = 'none';
+    if (!modal) return;
+    const done = () => {
       if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
       const dialog = modal.querySelector ? modal.querySelector('.box-modal-dialog') : null;
-      if (dialog && dialog.classList) {
-        dialog.classList.remove('has-screenshot');
-      }
-    }
+      if (dialog && dialog.classList) dialog.classList.remove('has-screenshot');
+    };
+    if (typeof window.animateOverlayClose === 'function') window.animateOverlayClose(modal, done);
+    else { modal.style.display = 'none'; done(); }
   }
 
   /* ─── 儲存編輯表單 ─────────────────────────────────────── */
@@ -2444,6 +2445,7 @@
     if (guideThumbWrap && guideLightbox) {
       guideThumbWrap.addEventListener('click', (e) => {
         e.stopPropagation();
+        if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(guideLightbox);
         guideLightbox.style.display = 'flex'; if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(guideLightbox);
       });
     }
@@ -2451,14 +2453,16 @@
     if (guideLightboxClose && guideLightbox) {
       guideLightboxClose.addEventListener('click', (e) => {
         e.stopPropagation();
-        guideLightbox.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
+        if (typeof window.animateOverlayClose === 'function') window.animateOverlayClose(guideLightbox, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
+        else { guideLightbox.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); }
       });
     }
 
     if (guideLightbox) {
       guideLightbox.addEventListener('click', (e) => {
         if (e.target === guideLightbox) {
-          guideLightbox.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
+          if (typeof window.animateOverlayClose === 'function') window.animateOverlayClose(guideLightbox, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
+        else { guideLightbox.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); }
         }
       });
     }

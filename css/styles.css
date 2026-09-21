@@ -20660,6 +20660,10 @@ body:not(.mobile-h5-app) #panel-wiki.has-island-scene .island-scene-photo {
   object-position: center top;
 }
 
+.island-scene-layer.island-scene-hidden {
+  display: none !important;
+}
+
 .island-scene-photo {
   display: block;
   width: 100%;
@@ -20667,6 +20671,17 @@ body:not(.mobile-h5-app) #panel-wiki.has-island-scene .island-scene-photo {
   object-fit: cover;
   object-position: center top;
   opacity: 0.55;
+}
+
+body:not(.mobile-h5-app) .island-scene-photo {
+  opacity: 0.32;
+}
+
+html[data-theme="midnight"]:not([data-theme-inverted="true"]) body:not(.mobile-h5-app) .island-scene-photo,
+html[data-theme="onyx"]:not([data-theme-inverted="true"]) body:not(.mobile-h5-app) .island-scene-photo,
+html[data-theme="dawn"][data-theme-inverted="true"] body:not(.mobile-h5-app) .island-scene-photo,
+html[data-theme="emerald"][data-theme-inverted="true"] body:not(.mobile-h5-app) .island-scene-photo {
+  opacity: 0.16;
 }
 
 .island-scene-fade {
@@ -27100,4 +27115,73 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
 
 .pokedex-strategy-mobile-wrap {
   display: none !important;
+}
+
+body:not(.mobile-h5-app) #wiki-subpanel-subskills .wiki-card {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0 0 18px;
+}
+
+body:not(.mobile-h5-app) #wiki-subpanel-ratings > .wiki-card:not(.wiki-calc-card) {
+  padding: 8px 10px;
+}
+
+body:not(.mobile-h5-app) #wiki-subpanel-ratings .wiki-strategy-grid {
+  gap: 8px;
+}
+
+.mobile-h5-app .mobile-box-sheet {
+  animation: pokedexSheetSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.settings-modal-container,
+.box-modal-dialog,
+.box-guide-lightbox-dialog {
+  animation: pokedexDialogScaleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.overlay-closing.pokedex-modal-backdrop,
+.overlay-closing.box-modal-backdrop,
+.overlay-closing.appraisal-modal-backdrop,
+.overlay-closing.settings-modal-overlay,
+.overlay-closing.ladder-recipe-modal,
+.overlay-closing.ing-rank-modal-overlay,
+.overlay-closing.box-guide-lightbox-backdrop {
+  animation: overlayFadeOut 0.22s ease forwards !important;
+  pointer-events: none;
+}
+
+.overlay-closing .pokedex-modal-dialog,
+.overlay-closing .box-modal-dialog,
+.overlay-closing .appraisal-modal-container,
+.overlay-closing .ladder-recipe-modal-dialog,
+.overlay-closing .ing-rank-dialog,
+.overlay-closing .settings-modal-container,
+.overlay-closing .box-guide-lightbox-dialog {
+  animation: overlayDialogOut 0.22s ease forwards !important;
+}
+
+.mobile-h5-app #pokedex-detail-modal.overlay-closing .pokedex-modal-dialog,
+.mobile-h5-app #box-edit-modal.overlay-closing .mobile-box-sheet,
+.mobile-h5-app .overlay-closing .mobile-modal-sheet,
+.mobile-h5-app .overlay-closing .mobile-settings-sheet {
+  animation: overlaySheetOut 0.24s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+}
+
+@keyframes overlayFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes overlayDialogOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(12px) scale(0.97); }
+}
+
+@keyframes overlaySheetOut {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
 }

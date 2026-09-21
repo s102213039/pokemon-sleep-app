@@ -1070,16 +1070,20 @@
       </div>
     `;
 
+    if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
     modal.style.display = 'flex'; if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(modal);
     document.body.style.overflow = 'hidden';
   }
 
   function closeAppraisalModal() {
     const modal = document.getElementById('modal-appraisal-report');
-    if (modal) {
-      modal.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
+    if (!modal) return;
+    const done = () => {
+      if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
       document.body.style.overflow = '';
-    }
+    };
+    if (typeof window.animateOverlayClose === 'function') window.animateOverlayClose(modal, done);
+    else { modal.style.display = 'none'; done(); }
   }
 
   function escapeHtml(str) {

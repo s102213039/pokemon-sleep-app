@@ -2025,13 +2025,14 @@ if (typeof document !== 'undefined') {
         if (ghPatInput) ghPatInput.value = ghPat || '';
         applyTheme(currentTheme);
         updateLangButtons();
+        prepareOverlayOpen(settingsModal);
         settingsModal.style.display = 'flex';
         if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(settingsModal);
       });
 
       if (settingsCloseBtn) {
         settingsCloseBtn.addEventListener('click', () => {
-          settingsModal.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
+          animateOverlayClose(settingsModal, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
         });
       }
 
@@ -2041,16 +2042,16 @@ if (typeof document !== 'undefined') {
           if (val) {
             ghPat = val;
             localStorage.setItem(GH_PAT_KEY, val);
-            settingsModal.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
+            animateOverlayClose(settingsModal, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
             if (syncStatus) syncStatus.innerHTML = `<span style="color:#4ade80;">✅ PAT Token 已儲存！現在可以點擊同步資料。</span>`;
           } else {
-            settingsModal.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
+            animateOverlayClose(settingsModal, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
           }
         });
       }
 
       settingsModal.addEventListener('click', (e) => {
-        if (e.target === settingsModal) settingsModal.style.display = 'none'; if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
+        if (e.target === settingsModal) animateOverlayClose(settingsModal, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
       });
     }
 
@@ -3935,6 +3936,7 @@ function openPokemonDetailModal(pokemonId) {
     document.body.appendChild(modalEl);
   }
 
+  prepareOverlayOpen(modalEl);
   modalEl.style.display = 'flex';
   try {
     document.body.style.overflow = 'hidden';
@@ -3947,18 +3949,65 @@ function openPokemonDetailModal(pokemonId) {
   renderPokedexDetailModalContent();
 }
 
+
+function prepareOverlayOpen(el) {
+  if (!el) return;
+  el.__closeGen = (el.__closeGen || 0) + 1;
+  if (el.classList && el.classList.remove) el.classList.remove('overlay-closing');
+}
+
+function animateOverlayClose(el, done) {
+  const finishNow = () => {
+    if (el && el.classList && el.classList.remove) el.classList.remove('overlay-closing');
+    if (el && el.style) el.style.display = 'none';
+    if (typeof done === 'function') done();
+  };
+  if (!el || !el.style) {
+    if (typeof done === 'function') done();
+    return;
+  }
+  if (typeof el.addEventListener !== 'function') {
+    finishNow();
+    return;
+  }
+  const gen = (el.__closeGen || 0) + 1;
+  el.__closeGen = gen;
+  if (el.classList && el.classList.add) el.classList.add('overlay-closing');
+  let finished = false;
+  const finish = () => {
+    if (finished || el.__closeGen !== gen) return;
+    finished = true;
+    finishNow();
+  };
+  const onEnd = (ev) => {
+    const name = ev && ev.animationName;
+    if (name !== 'overlayFadeOut' && name !== 'overlayDialogOut' && name !== 'overlaySheetOut') return;
+    el.removeEventListener('animationend', onEnd);
+    finish();
+  };
+  el.addEventListener('animationend', onEnd);
+  setTimeout(finish, 360);
+}
+
+if (typeof window !== 'undefined') {
+  window.prepareOverlayOpen = prepareOverlayOpen;
+  window.animateOverlayClose = animateOverlayClose;
+}
+
 function closePokemonDetailModal() {
   dismissAllFloatingTooltips();
   const modalEl = document.getElementById('pokedex-detail-modal');
   if (modalEl) {
-    modalEl.style.display = 'none';
-    try {
-      document.body.style.overflow = '';
-      if (document.body && document.body.classList) {
-        document.body.classList.remove('pokedex-modal-open');
-      }
-      if (typeof syncOverlayOpenState === 'function') syncOverlayOpenState();
-    } catch (e) {}
+    const cleanup = () => {
+      try {
+        document.body.style.overflow = '';
+        if (document.body && document.body.classList) {
+          document.body.classList.remove('pokedex-modal-open');
+        }
+        if (typeof syncOverlayOpenState === 'function') syncOverlayOpenState();
+      } catch (e) {}
+    };
+    animateOverlayClose(modalEl, cleanup);
   }
 }
 
