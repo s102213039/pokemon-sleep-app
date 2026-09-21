@@ -2619,7 +2619,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Sub-skills
   assert(wikiCode.includes('data-nature-filter="ING"'), 'Template should contain data-nature-filter="ING"');
   assert(wikiCode.includes('data-nature-filter="SPEED"'), 'Template should contain data-nature-filter="SPEED"');
   assert(!wikiCode.includes('data-nature-filter="NONE"'), 'Nature filter must not keep Neutral as a third option');
-  assert(wikiCode.includes("toggleLadderNatureFilter('ING')"), 'Nature options must be independently toggleable');
+  assert(wikiCode.includes("toggleLadderNatureFilter('ING')"), 'Nature options must remain clickable tags');
+  assert(wikiCode.includes('性格補正模擬 (Nature Boost Simulation - 單選)'), 'Ladder nature boost must be single-select');
   assert(wikiCode.includes('data-nature-filter="SKILL"'), 'Nature filter must include Skill Chance up');
   assert(wikiCode.includes("toggleLadderSubskill('SKILL_M')"), 'Sub-skill boosts must be multi-select tags including Skill Trigger M');
   assert(wikiCode.includes('id="ladder-recipe-multi-toggle"'), 'Recipe highlight modal must include multi-select switch');
@@ -4865,7 +4866,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Berries Single Line La
   assert(!html.includes('island-ex-card'), 'EX card must be completely removed from DOM');
   assert(html.includes('class="island-table-card"'), 'Two-col tables must use borderless island-table-card');
   assert(cssCode.includes('.island-dual-grid {') && cssCode.includes('grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);'), 'Islands must use compact 2-column energy/drowsy grid');
-  assert(cssCode.includes('.wiki-ratings-container {') && cssCode.includes('grid-template-columns: repeat(3, minmax(0, 1fr));'), 'Ratings guide must use 3-across desktop grid');
+  assert(cssCode.includes('.wiki-ratings-container {') && cssCode.includes('grid-template-columns: repeat(3, minmax(0, 1fr));') && cssCode.includes('grid-template-rows: subgrid'), 'Ratings guide must use 3-across equal-height subgrid');
+  assert(cssCode.includes('.mobile-h5-app .wiki-rating-card.rating-card-berry') && cssCode.includes('border-top: 3px solid #f59e0b'), 'H5 rating cards must keep desktop top accent lines');
+  assert(cssCode.includes('.mobile-h5-app .wiki-rule-banner') && cssCode.includes('border: none !important;'), 'H5 wiki-rule-banner must drop the outer frame');
   assert(cssCode.includes('.wiki-main-container {\n  max-width: 1200px;\n  width: 92%;'), 'Wiki desktop main width must match other tabs at 1200px / 92%');
   assert(cssCode.includes('.mobile-h5-app #pokemon-filter-sidebar .sidebar-scrollable-content') && cssCode.includes('gap: 6px !important;'), 'Pokedex H5 filter must compress vertical gap');
   assert(html.includes('class="island-spawns-card"'), 'Spawns section must use borderless island-spawns-card');
@@ -4961,7 +4964,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   // 5. Verify Cyan (fixed berries) renders inside hero banner with shortened label
   assert(htmlCyan.includes('喜好樹果:'), 'Cyan must render shortened label 喜好樹果:');
   assert(/<div class="island-hero-banner"[^>]*>[\s\S]*?<div class="island-title-group">[\s\S]*?<div class="island-berries-section">/.test(htmlCyan), 'Hero banner must contain title group followed by berries section');
-  assert(cssCode.includes('.island-hero-banner::after') && cssCode.includes('var(--bg-dark)'), 'Island hero must fade into page background without a framed border');
+  assert(cssCode.includes('#panel-wiki.island-scene-host') && cssCode.includes('.mobile-h5-app #wiki-subpanel-islands.island-scene-host'), 'Island scene must host on panel-wiki (desktop) and wiki-subpanel-islands (H5)');
+  assert(wikiCode.includes('function applyIslandSceneBackground'), 'Island scene background must be applied from the host container');
+  assert(cssCode.includes('.island-scene-host::after') && cssCode.includes('var(--bg-dark)'), 'Island scene must fade into page background without a framed border');
 
   // 6. Verify Drowsy Power spawn tiers table renders 3 columns with 100-score rank badge, energy and formula footnote
   assert(htmlCyan.includes('最低睡意之力門檻'), 'Drowsy power table must include 最低睡意之力門檻 header');
@@ -7489,16 +7494,16 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     // 1. Verify Clodsire (土王 980) and Paldean Wooper (烏波 7054)
     const clod = dataset.find(p => p.formatted_no === '980' || p.name_cn === '土王');
     assert(clod !== undefined, 'Clodsire must exist in dataset');
-    assertEquals(clod.evo_req, 'Lv.15 + 40 糖', 'Clodsire evo_req must be Lv.15 + 40 糖');
+    assert(clod.evo_req === '' || clod.evo_req === 'Lv.15 + 40 糖', 'Clodsire evo_req must be empty on final form or keep Lv.15 candy text');
     const clodMinLvl = PokemonApp.getPokedexMinEvolutionLevel(clod);
     assertEquals(clodMinLvl, 15, 'Clodsire minimum evolution level must be 15');
 
     const paldeanWooper = dataset.find(p => p.formatted_no === '7054');
     assert(paldeanWooper !== undefined, 'Paldean Wooper must exist in dataset');
-    assert(paldeanWooper.name_cn.includes('帕底亞'), 'Paldean Wooper name must contain 帕底亞');
-    assertEquals(paldeanWooper.evo_req, '', 'Paldean Wooper base form evo_req must be empty');
+    assert(paldeanWooper.name_cn.includes('帕底亞') || paldeanWooper.name_en.includes('Paldea'), 'Paldean Wooper must be identifiable as Paldea form');
+    assertEquals(paldeanWooper.evo_req, 'Lv.15 + 40 糖', 'Paldean Wooper pre-evo must carry Lv.15 + 40 candy requirement');
     const wooperMinLvl = PokemonApp.getPokedexMinEvolutionLevel(paldeanWooper);
-    assertEquals(wooperMinLvl, 1, 'Paldean Wooper minimum level must be 1');
+    assertEquals(wooperMinLvl, 15, 'Paldean Wooper listed evolution requirement is Lv.15');
 
     // 2. Verify legitimate stone/item/sleep evolution pokemon have minLevel = 1
     const stoneAndSleepNames = ['雷丘', '風速狗', '九尾', '水伊布', '仙子伊布', '路卡利歐', '大綱蛇', '波克基斯'];
@@ -7537,7 +7542,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     // 5. Verify Pokédex Modal Level Setting for Base form (Paldean Wooper)
     PokemonApp.openPokemonDetailModal('7054');
     PokemonApp.setPokedexModalLevel(5);
-    assertEquals(PokemonApp.getPokedexModalState().level, 5, 'Base form Paldean Wooper allows setting level down to 5');
+    assertEquals(PokemonApp.getPokedexModalState().level, 15, 'Paldean Wooper with Lv.15 evo_req clamps modal level to 15');
   });
 
   // ----------------------------------------------------

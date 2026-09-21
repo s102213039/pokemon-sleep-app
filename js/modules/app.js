@@ -4894,6 +4894,7 @@ function renderPokedexSkillRateValue(f, pkm) {
 }
 
 const STAGE3_INHERITED_MIN_LEVELS = {
+  '土王': 15, 'Clodsire': 15,
   '大食花': 16, 'Victreebel': 16,
   '隆隆岩': 19, 'Golem': 19,
   '自爆磁怪': 23, 'Magnezone': 23,

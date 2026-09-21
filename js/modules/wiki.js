@@ -11685,6 +11685,8 @@
         recalcSleepDays();
       } catch (e) {}
     }
+
+    try { applyIslandSceneBackground(); } catch (e) {}
   }
 
   function openLadderSidebar() {
@@ -12759,7 +12761,7 @@
     if (isLadderSpeedS) speedReduction += 0.07;
     if (speedReduction > 0) mult *= (1.0 / (1.0 - speedReduction));
 
-    // 性格加成：可獨立勾選；全不選或全選皆視為無修正
+    // 性格加成：單選；未選視為無修正
     if (getLadderNature() !== 'NONE') {
       if (ladderNatureIng) mult *= 1.20;
       if (ladderNatureSpeed) mult *= (1.0 / 0.9090909);
@@ -12873,21 +12875,40 @@
   }
 
   function toggleLadderNatureFilter(type) {
-    if (type === 'ING') ladderNatureIng = !ladderNatureIng;
-    else if (type === 'SPEED') ladderNatureSpeed = !ladderNatureSpeed;
-    else if (type === 'SKILL') ladderNatureSkill = !ladderNatureSkill;
+    const currentlyOn =
+      (type === 'ING' && ladderNatureIng) ||
+      (type === 'SPEED' && ladderNatureSpeed) ||
+      (type === 'SKILL' && ladderNatureSkill);
+    ladderNatureIng = false;
+    ladderNatureSpeed = false;
+    ladderNatureSkill = false;
+    if (!currentlyOn) {
+      if (type === 'ING') ladderNatureIng = true;
+      else if (type === 'SPEED') ladderNatureSpeed = true;
+      else if (type === 'SKILL') ladderNatureSkill = true;
+    }
     syncLadderNatureButtons();
     refreshCoordinateLadder();
   }
 
   function toggleLadderNatureIng(checked) {
-    ladderNatureIng = !!checked;
+    const on = !!checked;
+    ladderNatureIng = on;
+    if (on) {
+      ladderNatureSpeed = false;
+      ladderNatureSkill = false;
+    }
     syncLadderNatureButtons();
     refreshCoordinateLadder();
   }
 
   function toggleLadderNatureSpeed(checked) {
-    ladderNatureSpeed = !!checked;
+    const on = !!checked;
+    ladderNatureSpeed = on;
+    if (on) {
+      ladderNatureIng = false;
+      ladderNatureSkill = false;
+    }
     syncLadderNatureButtons();
     refreshCoordinateLadder();
   }
@@ -15237,11 +15258,38 @@
     return { col: islandSpawnsSortCol, dir: islandSpawnsSortDir };
   }
 
+  function applyIslandSceneBackground() {
+    const island = ISLANDS_DATA.find(i => i.id === currentIslandId) || ISLANDS_DATA[0];
+    const url = (currentWikiSubTab === 'islands' && island && island.image) ? ('url("' + island.image + '")') : '';
+    const isH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    const panelWiki = document.getElementById('panel-wiki');
+    const islandsPanel = document.getElementById('wiki-subpanel-islands');
+    if (panelWiki) {
+      if (!isH5 && url) {
+        panelWiki.style.backgroundImage = url;
+        panelWiki.classList.add('island-scene-host');
+      } else {
+        panelWiki.style.backgroundImage = '';
+        panelWiki.classList.remove('island-scene-host');
+      }
+    }
+    if (islandsPanel) {
+      if (isH5 && url) {
+        islandsPanel.style.backgroundImage = url;
+        islandsPanel.classList.add('island-scene-host');
+      } else {
+        islandsPanel.style.backgroundImage = '';
+        islandsPanel.classList.remove('island-scene-host');
+      }
+    }
+  }
+
   function refreshIslandsSubpanel() {
     const panel = document.getElementById('wiki-subpanel-islands');
     if (panel) {
       panel.innerHTML = renderIslandsSubpanel();
     }
+    applyIslandSceneBackground();
   }
 
   function renderIslandsSubpanel() {
@@ -15579,7 +15627,7 @@
       </div>
 
       <div class="island-overview-card">
-        <div class="island-hero-banner" style="background-image: url('${island.image}');">
+        <div class="island-hero-banner">
           <div class="island-hero-content">
             <div class="island-title-group">
               <h3 class="island-hero-title">${isEN ? (isExpert ? island.name_en + ' EX' : island.name_en) : (isExpert ? island.name + ' EX' : island.name)}</h3>
@@ -17250,7 +17298,7 @@
             </div>
           </div>
 
-          <!-- 7. 性格補正模擬 (Nature Boost Simulation - 可獨立勾選；全不選或全選 = 無修正) -->
+          <!-- 7. 性格補正模擬 (Nature Boost Simulation - 單選) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
               <span class="sidebar-section-title">${isEN ? 'Nature Boost' : '性格補正模擬'}</span>
