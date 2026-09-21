@@ -15587,10 +15587,7 @@
             </div>
             ${berriesHtml}
           </div>
-        </div>
-      </div>
-
-      <div class="island-triple-grid">
+          <div class="island-dual-grid">
         <div class="island-table-card">
           <div class="wiki-card-header">
             <h3 class="wiki-card-title">${isEN ? 'Snorlax Rank Energy Progression' : '卡比獸評級所需能量'}</h3>
@@ -15625,18 +15622,13 @@
               </thead>
               <tbody>
                 ${drowsyRows}
-                <tr>
-                  <td class="font-bold text-accent" style="vertical-align:middle;">+1 (9 ${isEN ? 'Pokemon' : '隻'})</td>
-                  <td class="text-secondary" style="vertical-align:middle;">${isEN ? 'Good Camp Ticket' : '露營券(+1且貪吃)'}</td>
-                  <td class="text-secondary" style="vertical-align:middle; text-align:center;">-</td>
-                </tr>
               </tbody>
             </table>
           </div>
-          <div style="font-size:11.5px; color:var(--text-secondary); margin-top:6px; padding:0 2px; line-height:1.4;">
-            ${isEN ? '* Min Rank (100pt): Lowest Snorlax rank and energy required to reach this spawn count with 100 Sleep Score (8.5 hrs). Drowsy Power = Snorlax Strength × Sleep Score.' : '* 睡眠分數100: 以睡滿 100 分 (8.5小時) 換算, 當天早晨達成該隻數所需之卡比獸最低能量與對應評級. 睡意之力 = 卡比獸能量 × 睡眠分數.'}
+        </div>
           </div>
         </div>
+      </div>
 
       <div class="island-spawns-card">
         <div class="wiki-card-header" style="flex-wrap:wrap; gap:10px 14px; justify-content:space-between; align-items:center;">
@@ -15679,7 +15671,6 @@
             </tbody>
           </table>
         </div>
-      </div>
       </div>
     `;
   }

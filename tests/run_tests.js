@@ -2625,7 +2625,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Sub-skills
   assert(wikiCode.includes('id="ladder-recipe-multi-toggle"'), 'Recipe highlight modal must include multi-select switch');
   assert(wikiCode.includes('function toggleLadderRecipeMultiSelect'), 'Multi recipe highlight must be toggleable');
   assert(!wikiCode.includes('食材機率提升M (+36%)'), 'Sub-skill labels must drop parenthetical deltas');
-  assert(wikiCode.includes('class="island-triple-grid"'), 'Islands desktop layout must place three major blocks in one row');
+  assert(wikiCode.includes('class="island-dual-grid"'), 'Islands layout must place rank energy and drowsy tables in one row');
   assert(wikiCode.includes('id="ladder-ing-s-toggle"'), 'Template should contain ladder-ing-s-toggle');
   assert(wikiCode.includes('id="ladder-speed-s-toggle"'), 'Template should contain ladder-speed-s-toggle');
   assert(wikiCode.includes('ladder-track-header') && wikiCode.includes('ladder-ing-icon'), 'Template should render ladder-track-header and ladder-ing-icon');
@@ -4864,7 +4864,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Berries Single Line La
   assert(!html.includes('class="wiki-card island-overview-card"'), 'Hero block must not have outer wiki-card border');
   assert(!html.includes('island-ex-card'), 'EX card must be completely removed from DOM');
   assert(html.includes('class="island-table-card"'), 'Two-col tables must use borderless island-table-card');
-  assert(cssCode.includes('.island-triple-grid {') && cssCode.includes('grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.05fr) minmax(0, 1.28fr);'), 'Islands must use compact 3-column grid');
+  assert(cssCode.includes('.island-dual-grid {') && cssCode.includes('grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);'), 'Islands must use compact 2-column energy/drowsy grid');
   assert(cssCode.includes('.wiki-ratings-container {') && cssCode.includes('grid-template-columns: repeat(3, minmax(0, 1fr));'), 'Ratings guide must use 3-across desktop grid');
   assert(cssCode.includes('.wiki-main-container {\n  max-width: 1200px;\n  width: 92%;'), 'Wiki desktop main width must match other tabs at 1200px / 92%');
   assert(cssCode.includes('.mobile-h5-app #pokemon-filter-sidebar .sidebar-scrollable-content') && cssCode.includes('gap: 6px !important;'), 'Pokedex H5 filter must compress vertical gap');
@@ -4966,8 +4966,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   // 6. Verify Drowsy Power spawn tiers table renders 3 columns with 100-score rank badge, energy and formula footnote
   assert(htmlCyan.includes('最低睡意之力門檻'), 'Drowsy power table must include 最低睡意之力門檻 header');
   assert(htmlCyan.includes('睡眠分數100'), 'Drowsy power table must include 睡眠分數100 header');
-  assert(htmlCyan.includes('露營券(+1且貪吃)'), 'Drowsy power table must render 露營券(+1且貪吃)');
-  assert(htmlCyan.includes('睡眠分數100: 以睡滿 100 分 (8.5小時) 換算'), 'Drowsy power table must render 100-score conversion formula footnote');
+  assert(!htmlCyan.includes('露營券(+1且貪吃)'), 'Drowsy power table must not render 露營券 row');
+  assert(!htmlCyan.includes('睡眠分數100: 以睡滿 100 分 (8.5小時) 換算'), 'Drowsy power table must not render 100-score conversion formula footnote');
+  assert(!htmlCyan.includes('Good Camp Ticket'), 'Drowsy power table must not render Good Camp Ticket row');
 
   mockCtx.window.WikiDB.selectIsland('greengrass');
   const htmlGreen = mockCtx.window.WikiDB.renderIslandsSubpanel();
