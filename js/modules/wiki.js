@@ -15274,6 +15274,7 @@
   }
 
   function placeIslandSceneLayer() {
+    const isH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const panelWiki = document.getElementById('panel-wiki');
     const islandsPanel = document.getElementById('wiki-subpanel-islands');
     [panelWiki, islandsPanel].forEach(el => {
@@ -15287,7 +15288,7 @@
       document.querySelectorAll('.island-scene-layer').forEach(el => el.remove());
       return;
     }
-    const host = islandsPanel;
+    const host = isH5 ? islandsPanel : panelWiki;
     if (!host) return;
     const layer = (islandsPanel && islandsPanel.querySelector && islandsPanel.querySelector('.island-scene-layer'))
       || document.querySelector('.island-scene-layer');

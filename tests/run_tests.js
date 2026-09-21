@@ -4967,7 +4967,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   assert(htmlCyan.includes('class="island-scene-layer"') && htmlCyan.includes('assets/islands/hd/cyan.jpg'), 'Island scene must be a separate photo layer using local HD camp artwork');
   assert(cssCode.includes('.island-scene-layer') && cssCode.includes('z-index: 0') && cssCode.includes('position: absolute'), 'Island photo layer sits above page color and below content');
   assert(!cssCode.includes('#panel-wiki.island-scene-host'), 'Island artwork must not be applied as a full panel background-image');
-  assert(wikiCode.includes('function placeIslandSceneLayer') && wikiCode.includes('const host = islandsPanel'), 'Island scene layer must be placed only on wiki-subpanel-islands');
+  assert(wikiCode.includes('function placeIslandSceneLayer') && wikiCode.includes('isH5 ? islandsPanel : panelWiki'), 'Desktop island scene hosts on panel-wiki; H5 stays on wiki-subpanel-islands');
   ['greengrass','cyan','taupe','snowdrop','lapis','oldgold','amber'].forEach(id => {
     assert(fs.existsSync(path.join(WORKSPACE_ROOT, 'assets', 'islands', 'hd', id + '.jpg')), 'HD island scene missing: ' + id);
   });
