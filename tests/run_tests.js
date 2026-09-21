@@ -4964,9 +4964,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   // 5. Verify Cyan (fixed berries) renders inside hero banner with shortened label
   assert(htmlCyan.includes('喜好樹果:'), 'Cyan must render shortened label 喜好樹果:');
   assert(/<div class="island-hero-banner"[^>]*>[\s\S]*?<div class="island-title-group">[\s\S]*?<div class="island-berries-section">/.test(htmlCyan), 'Hero banner must contain title group followed by berries section');
-  assert(cssCode.includes('#panel-wiki.island-scene-host') && cssCode.includes('.mobile-h5-app #wiki-subpanel-islands.island-scene-host'), 'Island scene must host on panel-wiki (desktop) and wiki-subpanel-islands (H5)');
-  assert(wikiCode.includes('function applyIslandSceneBackground'), 'Island scene background must be applied from the host container');
-  assert(cssCode.includes('.island-scene-host::after') && cssCode.includes('var(--bg-dark)'), 'Island scene must fade into page background without a framed border');
+  assert(htmlCyan.includes('class="island-scene-photo"') && htmlCyan.includes('cyanbeach.jpg'), 'Island scene must render a full-width photo from the island image');
+  assert(cssCode.includes('.island-scene-photo') && cssCode.includes('max-height: 320px'), 'Island photo height must follow the image and stay a banner, not a full-page wallpaper');
+  assert(cssCode.includes('.island-scene-fade') && cssCode.includes('var(--bg-dark)'), 'Island photo must fade into the original page background');
+  assert(wikiCode.includes('function clearIslandSceneHost'), 'Leftover full-panel island wallpaper must be cleared');
 
   // 6. Verify Drowsy Power spawn tiers table renders 3 columns with 100-score rank badge, energy and formula footnote
   assert(htmlCyan.includes('最低睡意之力門檻'), 'Drowsy power table must include 最低睡意之力門檻 header');

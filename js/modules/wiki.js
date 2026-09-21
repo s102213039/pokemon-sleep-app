@@ -11686,7 +11686,7 @@
       } catch (e) {}
     }
 
-    try { applyIslandSceneBackground(); } catch (e) {}
+    try { clearIslandSceneHost(); } catch (e) {}
   }
 
   function openLadderSidebar() {
@@ -15258,30 +15258,14 @@
     return { col: islandSpawnsSortCol, dir: islandSpawnsSortDir };
   }
 
-  function applyIslandSceneBackground() {
-    const island = ISLANDS_DATA.find(i => i.id === currentIslandId) || ISLANDS_DATA[0];
-    const url = (currentWikiSubTab === 'islands' && island && island.image) ? ('url("' + island.image + '")') : '';
-    const isH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+  function clearIslandSceneHost() {
     const panelWiki = document.getElementById('panel-wiki');
     const islandsPanel = document.getElementById('wiki-subpanel-islands');
-    if (panelWiki) {
-      if (!isH5 && url) {
-        panelWiki.style.backgroundImage = url;
-        panelWiki.classList.add('island-scene-host');
-      } else {
-        panelWiki.style.backgroundImage = '';
-        panelWiki.classList.remove('island-scene-host');
-      }
-    }
-    if (islandsPanel) {
-      if (isH5 && url) {
-        islandsPanel.style.backgroundImage = url;
-        islandsPanel.classList.add('island-scene-host');
-      } else {
-        islandsPanel.style.backgroundImage = '';
-        islandsPanel.classList.remove('island-scene-host');
-      }
-    }
+    [panelWiki, islandsPanel].forEach(el => {
+      if (!el) return;
+      el.style.backgroundImage = '';
+      el.classList.remove('island-scene-host');
+    });
   }
 
   function refreshIslandsSubpanel() {
@@ -15289,7 +15273,7 @@
     if (panel) {
       panel.innerHTML = renderIslandsSubpanel();
     }
-    applyIslandSceneBackground();
+    clearIslandSceneHost();
   }
 
   function renderIslandsSubpanel() {
@@ -15628,6 +15612,11 @@
 
       <div class="island-overview-card">
         <div class="island-hero-banner">
+          <div class="island-scene-photo-wrap">
+            <img class="island-scene-photo" src="${island.image}" alt="" aria-hidden="true">
+            <div class="island-scene-fade"></div>
+          </div>
+          <div class="island-hero-body">
           <div class="island-hero-content">
             <div class="island-title-group">
               <h3 class="island-hero-title">${isEN ? (isExpert ? island.name_en + ' EX' : island.name_en) : (isExpert ? island.name + ' EX' : island.name)}</h3>
@@ -15674,6 +15663,7 @@
             </table>
           </div>
         </div>
+          </div>
           </div>
         </div>
       </div>

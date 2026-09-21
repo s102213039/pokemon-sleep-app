@@ -1,6 +1,15 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
 
+## 需求十七：島嶼圖改回加層橫幅，不再當整頁 wallpaper（2026-09-21）
+
+1. 頁面底色維持原本 `--bg-dark`。島嶼圖只作為滿寬加層，高度跟圖片走（桌面最高 320px、H5 最高 210px），底部漸層沒入底色。
+2. 撤掉 `#panel-wiki` / `#wiki-subpanel-islands` 整頁 cover 與 H5 重疊 grid，修復 H5 整屏模糊無法操作。
+3. 快取 `v=20260921_5`。
+
+---
+
+
 ## 需求十六：島嶼沉浸式場景、評級等高對齊、天梯性格單選（2026-09-21）
 
 1. **島嶼背景**：H5 掛在 `#wiki-subpanel-islands`、網頁掛在 `#panel-wiki`；從 header / app bar 下方鋪滿，去掉頂部 padding 造成的空隙，長漸層沒入頁面。
