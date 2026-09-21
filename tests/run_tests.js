@@ -4972,6 +4972,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
     assert(fs.existsSync(path.join(WORKSPACE_ROOT, 'assets', 'islands', 'hd', id + '.jpg')), 'HD island scene missing: ' + id);
   });
   assert(cssCode.includes('.island-scene-fade') && cssCode.includes('var(--bg-dark)'), 'Island photo must fade into the original page background');
+  assert(cssCode.includes('#panel-wiki.has-island-scene > .wiki-main-container') && cssCode.includes('margin-top: 0'), 'Desktop island scene must ignore wiki-main top margin');
+  assert(cssCode.includes('body:not(.mobile-h5-app) #wiki-subpanel-islands .wiki-table-wrapper') && cssCode.includes('background: var(--bg-card-solid, var(--bg-dark))'), 'Desktop island tables must use solid card backgrounds');
 
   // 6. Verify Drowsy Power spawn tiers table renders 3 columns with 100-score rank badge, energy and formula footnote
   assert(htmlCyan.includes('最低睡意之力門檻'), 'Drowsy power table must include 最低睡意之力門檻 header');

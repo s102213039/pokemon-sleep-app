@@ -20646,6 +20646,12 @@ body:not(.mobile-h5-app) #panel-wiki.has-island-scene > .island-scene-layer {
   width: 100%;
 }
 
+/* Content keeps inset; scene ignores collapsed 14px top margin */
+body:not(.mobile-h5-app) #panel-wiki.has-island-scene > .wiki-main-container {
+  margin-top: 0;
+  padding-top: 14px;
+}
+
 body:not(.mobile-h5-app) #panel-wiki.has-island-scene > .island-scene-photo,
 body:not(.mobile-h5-app) #panel-wiki.has-island-scene .island-scene-photo {
   width: 100%;
@@ -20941,6 +20947,22 @@ body:not(.mobile-h5-app) #panel-wiki.has-island-scene .island-scene-photo {
   border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
 }
 
+body:not(.mobile-h5-app) #wiki-subpanel-islands .wiki-table-wrapper {
+  background: var(--bg-card-solid, var(--bg-dark));
+}
+
+body:not(.mobile-h5-app) #wiki-subpanel-islands .wiki-data-table tbody td {
+  background: var(--table-row-odd-solid, var(--bg-card-solid, var(--bg-dark)));
+}
+
+body:not(.mobile-h5-app) #wiki-subpanel-islands .wiki-data-table tbody tr:nth-child(even) td {
+  background: var(--table-row-even-solid, var(--bg-card-inner, #131f38));
+}
+
+body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
+  background: var(--bg-card-solid, var(--bg-dark));
+}
+
 .island-dual-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
@@ -20971,7 +20993,7 @@ body:not(.mobile-h5-app) #panel-wiki.has-island-scene .island-scene-photo {
 .island-dual-grid .wiki-table-wrapper {
   margin-top: 4px !important;
   flex: 1 1 auto;
-  background: color-mix(in srgb, var(--bg-card-solid, var(--bg-dark)) 78%, transparent);
+  background: var(--bg-card-solid, var(--bg-dark));
 }
 
 .island-dual-grid .wiki-data-table th,
