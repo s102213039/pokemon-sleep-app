@@ -11686,7 +11686,7 @@
       } catch (e) {}
     }
 
-    try { clearIslandSceneHost(); } catch (e) {}
+    try { placeIslandSceneLayer(); } catch (e) {}
   }
 
   function openLadderSidebar() {
@@ -13906,6 +13906,7 @@
       name: "萌綠之島",
       name_en: "Greengrass Isle",
       image: "https://www.serebii.net/pokemonsleep/locations/greengrassisle.jpg",
+      imageScene: "https://www.serebii.net/pokemonsleep/snorlax/greengrassisle.jpg",
       badgeColor: "#22c55e",
       unlockGoal: 0,
       unlockGoalText: "初始營地 (0種睡姿)",
@@ -14161,6 +14162,7 @@
       name: "天青沙灘",
       name_en: "Cyan Beach",
       image: "https://www.serebii.net/pokemonsleep/locations/cyanbeach.jpg",
+      imageScene: "https://www.serebii.net/pokemonsleep/snorlax/cyanbeach.jpg",
       badgeColor: "#06b6d4",
       unlockGoal: 20,
       unlockGoalText: "登錄 20 種睡姿",
@@ -14299,6 +14301,7 @@
       name: "灰褐洞窟",
       name_en: "Taupe Hollow",
       image: "https://www.serebii.net/pokemonsleep/locations/taupehollow.jpg",
+      imageScene: "https://www.serebii.net/pokemonsleep/snorlax/taupehollow.jpg",
       badgeColor: "#f97316",
       unlockGoal: 70,
       unlockGoalText: "登錄 70 種睡姿",
@@ -14412,6 +14415,7 @@
       name: "白花雪原",
       name_en: "Snowdrop Tundra",
       image: "https://www.serebii.net/pokemonsleep/locations/snowdroptundra.jpg",
+      imageScene: "https://www.serebii.net/pokemonsleep/snorlax/snowdroptundra.jpg",
       badgeColor: "#38bdf8",
       unlockGoal: 150,
       unlockGoalText: "登錄 150 種睡姿",
@@ -14516,6 +14520,7 @@
       name: "拉碧絲湖畔",
       name_en: "Lapis Lakeside",
       image: "https://www.serebii.net/pokemonsleep/locations/lapislakeside.jpg",
+      imageScene: "https://www.serebii.net/pokemonsleep/snorlax/lapislakeside.jpg",
       badgeColor: "#10b981",
       unlockGoal: 240,
       unlockGoalText: "登錄 240 種睡姿",
@@ -14628,6 +14633,7 @@
       name: "黃金舊發電廠",
       name_en: "Old Gold Power Plant",
       image: "https://www.serebii.net/pokemonsleep/locations/oldgoldpowerplant.jpg",
+      imageScene: "https://www.serebii.net/pokemonsleep/snorlax/oldgoldpowerplant.jpg",
       badgeColor: "#a855f7",
       unlockGoal: 340,
       unlockGoalText: "登錄 340 種睡姿",
@@ -14736,6 +14742,7 @@
       name: "琥褐溪谷",
       name_en: "Amber Canyon",
       image: "https://www.serebii.net/pokemonsleep/locations/ambercanyon.jpg",
+      imageScene: "https://www.serebii.net/pokemonsleep/snorlax/ambercanyon.jpg",
       badgeColor: "#d97706",
       unlockGoal: 450,
       unlockGoalText: "登錄 450 種睡姿",
@@ -15258,14 +15265,37 @@
     return { col: islandSpawnsSortCol, dir: islandSpawnsSortDir };
   }
 
-  function clearIslandSceneHost() {
+  function placeIslandSceneLayer() {
+    const isH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const panelWiki = document.getElementById('panel-wiki');
     const islandsPanel = document.getElementById('wiki-subpanel-islands');
     [panelWiki, islandsPanel].forEach(el => {
       if (!el) return;
       el.style.backgroundImage = '';
       el.classList.remove('island-scene-host');
+      el.classList.remove('has-island-scene');
     });
+    if (typeof document.querySelectorAll !== 'function' || typeof document.querySelector !== 'function') return;
+    if (currentWikiSubTab !== 'islands') {
+      document.querySelectorAll('.island-scene-layer').forEach(el => el.remove());
+      return;
+    }
+    const host = isH5 ? islandsPanel : panelWiki;
+    if (!host) return;
+    const layer = (islandsPanel && islandsPanel.querySelector && islandsPanel.querySelector('.island-scene-layer'))
+      || document.querySelector('.island-scene-layer');
+    if (!layer) return;
+    document.querySelectorAll('.island-scene-layer').forEach(el => {
+      if (el !== layer && el.remove) el.remove();
+    });
+    if (layer.parentElement !== host && host.insertBefore) {
+      host.insertBefore(layer, host.firstChild);
+    }
+    const island = ISLANDS_DATA.find(i => i.id === currentIslandId) || ISLANDS_DATA[0];
+    const src = island && (island.imageScene || island.image);
+    const img = layer.querySelector && layer.querySelector('.island-scene-photo');
+    if (img && src) img.src = src;
+    host.classList.add('has-island-scene');
   }
 
   function refreshIslandsSubpanel() {
@@ -15273,7 +15303,7 @@
     if (panel) {
       panel.innerHTML = renderIslandsSubpanel();
     }
-    clearIslandSceneHost();
+    placeIslandSceneLayer();
   }
 
   function renderIslandsSubpanel() {
@@ -15603,7 +15633,12 @@
       `;
     }
 
+    const sceneSrc = island.imageScene || island.image;
     return `
+      <div class="island-scene-layer" aria-hidden="true">
+        <img class="island-scene-photo" src="${sceneSrc}" alt="">
+        <div class="island-scene-fade"></div>
+      </div>
       <div class="island-nav-strip">
         ${normalNavHtml}
         <div class="island-nav-divider" title="${isEN ? 'EX Expert Mode' : 'EX 專家模式'}"></div>
@@ -15612,10 +15647,6 @@
 
       <div class="island-overview-card">
         <div class="island-hero-banner">
-          <div class="island-scene-photo-wrap">
-            <img class="island-scene-photo" src="${island.image}" alt="" aria-hidden="true">
-            <div class="island-scene-fade"></div>
-          </div>
           <div class="island-hero-body">
           <div class="island-hero-content">
             <div class="island-title-group">
