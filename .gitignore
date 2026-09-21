@@ -22,3 +22,6 @@ node_modules/
 package.json
 package-lock.json
 scratch/
+# Local agent scratch (upscalers, tmp)
+.agent-tmp/
+assets/islands/hd-snorlax/

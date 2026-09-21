@@ -17257,11 +17257,14 @@ body.mobile-h5-app.values-active,
   left: -10px !important;
   right: -10px !important;
   width: auto !important;
+  height: min(62vw, 300px);
 }
 
 .mobile-h5-app .island-scene-photo {
-  max-height: none !important;
-  height: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center top !important;
 }
 
 .mobile-h5-app .island-nav-strip {
@@ -20620,7 +20623,6 @@ body.mobile-h5-app.values-active,
   background-image: none;
 }
 
-#panel-wiki.has-island-scene,
 #wiki-subpanel-islands.has-island-scene,
 #wiki-subpanel-islands.active {
   position: relative;
@@ -20654,7 +20656,6 @@ body.mobile-h5-app.values-active,
   background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--bg-dark) 22%, transparent) 38%, color-mix(in srgb, var(--bg-dark) 68%, transparent) 74%, var(--bg-dark) 100%);
 }
 
-#panel-wiki.has-island-scene > *:not(.island-scene-layer),
 #wiki-subpanel-islands.has-island-scene > *:not(.island-scene-layer),
 #wiki-subpanel-islands.active > *:not(.island-scene-layer) {
   position: relative;

@@ -4964,10 +4964,13 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   // 5. Verify Cyan (fixed berries) renders inside hero banner with shortened label
   assert(htmlCyan.includes('喜好樹果:'), 'Cyan must render shortened label 喜好樹果:');
   assert(/<div class="island-hero-banner"[^>]*>[\s\S]*?<div class="island-title-group">[\s\S]*?<div class="island-berries-section">/.test(htmlCyan), 'Hero banner must contain title group followed by berries section');
-  assert(htmlCyan.includes('class="island-scene-layer"') && htmlCyan.includes('/snorlax/cyanbeach.jpg'), 'Island scene must be a separate photo layer using the taller camp artwork');
+  assert(htmlCyan.includes('class="island-scene-layer"') && htmlCyan.includes('assets/islands/hd/cyan.jpg'), 'Island scene must be a separate photo layer using local HD camp artwork');
   assert(cssCode.includes('.island-scene-layer') && cssCode.includes('z-index: 0') && cssCode.includes('position: absolute'), 'Island photo layer sits above page color and below content');
   assert(!cssCode.includes('#panel-wiki.island-scene-host'), 'Island artwork must not be applied as a full panel background-image');
-  assert(wikiCode.includes('function placeIslandSceneLayer'), 'Island scene layer must be placed on wiki-subpanel-islands (H5) or panel-wiki (desktop)');
+  assert(wikiCode.includes('function placeIslandSceneLayer') && wikiCode.includes('const host = islandsPanel'), 'Island scene layer must be placed only on wiki-subpanel-islands');
+  ['greengrass','cyan','taupe','snowdrop','lapis','oldgold','amber'].forEach(id => {
+    assert(fs.existsSync(path.join(WORKSPACE_ROOT, 'assets', 'islands', 'hd', id + '.jpg')), 'HD island scene missing: ' + id);
+  });
   assert(cssCode.includes('.island-scene-fade') && cssCode.includes('var(--bg-dark)'), 'Island photo must fade into the original page background');
 
   // 6. Verify Drowsy Power spawn tiers table renders 3 columns with 100-score rank badge, energy and formula footnote

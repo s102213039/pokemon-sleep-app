@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>島嶼場景 原圖 vs 高清</title>
+  <style>
+    body { font-family: sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 24px; }
+    h1 { font-size: 20px; margin: 0 0 8px; }
+    p { color: #94a3b8; margin: 0 0 24px; }
+    .island { margin-bottom: 36px; }
+    .island h2 { font-size: 16px; margin: 0 0 12px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    figure { margin: 0; background: #1e293b; padding: 8px; }
+    figcaption { font-size: 12px; color: #94a3b8; margin-bottom: 8px; word-break: break-all; }
+    img { width: 100%; height: auto; display: block; background: #334155; }
+    code { font-size: 11px; }
+    @media (max-width: 800px) { .row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <h1>島嶼場景：原圖 vs Real-ESRGAN 4x</h1>
+  <p>左欄是 Serebii 原圖（約 640x343）。右欄是 AI 超解析後的本地檔（約 2560x1372）。路徑相對於專案根目錄。</p>
+  <section class="island">
+    <h2>萌綠之島 (greengrass)</h2>
+    <div class="row">
+      <figure>
+        <figcaption>舊：<code>assets/islands/original/greengrassisle-location.jpg</code></figcaption>
+        <img src="original/greengrassisle-location.jpg" alt="萌綠之島 original">
+      </figure>
+      <figure>
+        <figcaption>新：<code>assets/islands/hd/greengrass.jpg</code></figcaption>
+        <img src="hd/greengrass.jpg" alt="萌綠之島 hd">
+      </figure>
+    </div>
+  </section>
+  <section class="island">
+    <h2>天青沙灘 (cyan)</h2>
+    <div class="row">
+      <figure>
+        <figcaption>舊：<code>assets/islands/original/cyanbeach-location.jpg</code></figcaption>
+        <img src="original/cyanbeach-location.jpg" alt="天青沙灘 original">
+      </figure>
+      <figure>
+        <figcaption>新：<code>assets/islands/hd/cyan.jpg</code></figcaption>
+        <img src="hd/cyan.jpg" alt="天青沙灘 hd">
+      </figure>
+    </div>
+  </section>
+  <section class="island">
+    <h2>灰褐洞窟 (taupe)</h2>
+    <div class="row">
+      <figure>
+        <figcaption>舊：<code>assets/islands/original/taupehollow-location.jpg</code></figcaption>
+        <img src="original/taupehollow-location.jpg" alt="灰褐洞窟 original">
+      </figure>
+      <figure>
+        <figcaption>新：<code>assets/islands/hd/taupe.jpg</code></figcaption>
+        <img src="hd/taupe.jpg" alt="灰褐洞窟 hd">
+      </figure>
+    </div>
+  </section>
+  <section class="island">
+    <h2>白花雪原 (snowdrop)</h2>
+    <div class="row">
+      <figure>
+        <figcaption>舊：<code>assets/islands/original/snowdroptundra-location.jpg</code></figcaption>
+        <img src="original/snowdroptundra-location.jpg" alt="白花雪原 original">
+      </figure>
+      <figure>
+        <figcaption>新：<code>assets/islands/hd/snowdrop.jpg</code></figcaption>
+        <img src="hd/snowdrop.jpg" alt="白花雪原 hd">
+      </figure>
+    </div>
+  </section>
+  <section class="island">
+    <h2>拉碧絲湖畔 (lapis)</h2>
+    <div class="row">
+      <figure>
+        <figcaption>舊：<code>assets/islands/original/lapislakeside-location.jpg</code></figcaption>
+        <img src="original/lapislakeside-location.jpg" alt="拉碧絲湖畔 original">
+      </figure>
+      <figure>
+        <figcaption>新：<code>assets/islands/hd/lapis.jpg</code></figcaption>
+        <img src="hd/lapis.jpg" alt="拉碧絲湖畔 hd">
+      </figure>
+    </div>
+  </section>
+  <section class="island">
+    <h2>黃金舊發電廠 (oldgold)</h2>
+    <div class="row">
+      <figure>
+        <figcaption>舊：<code>assets/islands/original/oldgoldpowerplant-location.jpg</code></figcaption>
+        <img src="original/oldgoldpowerplant-location.jpg" alt="黃金舊發電廠 original">
+      </figure>
+      <figure>
+        <figcaption>新：<code>assets/islands/hd/oldgold.jpg</code></figcaption>
+        <img src="hd/oldgold.jpg" alt="黃金舊發電廠 hd">
+      </figure>
+    </div>
+  </section>
+  <section class="island">
+    <h2>琥褐溪谷 (amber)</h2>
+    <div class="row">
+      <figure>
+        <figcaption>舊：<code>assets/islands/original/ambercanyon-location.jpg</code></figcaption>
+        <img src="original/ambercanyon-location.jpg" alt="琥褐溪谷 original">
+      </figure>
+      <figure>
+        <figcaption>新：<code>assets/islands/hd/amber.jpg</code></figcaption>
+        <img src="hd/amber.jpg" alt="琥褐溪谷 hd">
+      </figure>
+    </div>
+  </section>
+</body>
+</html>

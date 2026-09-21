@@ -13906,7 +13906,7 @@
       name: "萌綠之島",
       name_en: "Greengrass Isle",
       image: "https://www.serebii.net/pokemonsleep/locations/greengrassisle.jpg",
-      imageScene: "https://www.serebii.net/pokemonsleep/snorlax/greengrassisle.jpg",
+      imageScene: "assets/islands/hd/greengrass.jpg",
       badgeColor: "#22c55e",
       unlockGoal: 0,
       unlockGoalText: "初始營地 (0種睡姿)",
@@ -14162,7 +14162,7 @@
       name: "天青沙灘",
       name_en: "Cyan Beach",
       image: "https://www.serebii.net/pokemonsleep/locations/cyanbeach.jpg",
-      imageScene: "https://www.serebii.net/pokemonsleep/snorlax/cyanbeach.jpg",
+      imageScene: "assets/islands/hd/cyan.jpg",
       badgeColor: "#06b6d4",
       unlockGoal: 20,
       unlockGoalText: "登錄 20 種睡姿",
@@ -14301,7 +14301,7 @@
       name: "灰褐洞窟",
       name_en: "Taupe Hollow",
       image: "https://www.serebii.net/pokemonsleep/locations/taupehollow.jpg",
-      imageScene: "https://www.serebii.net/pokemonsleep/snorlax/taupehollow.jpg",
+      imageScene: "assets/islands/hd/taupe.jpg",
       badgeColor: "#f97316",
       unlockGoal: 70,
       unlockGoalText: "登錄 70 種睡姿",
@@ -14415,7 +14415,7 @@
       name: "白花雪原",
       name_en: "Snowdrop Tundra",
       image: "https://www.serebii.net/pokemonsleep/locations/snowdroptundra.jpg",
-      imageScene: "https://www.serebii.net/pokemonsleep/snorlax/snowdroptundra.jpg",
+      imageScene: "assets/islands/hd/snowdrop.jpg",
       badgeColor: "#38bdf8",
       unlockGoal: 150,
       unlockGoalText: "登錄 150 種睡姿",
@@ -14520,7 +14520,7 @@
       name: "拉碧絲湖畔",
       name_en: "Lapis Lakeside",
       image: "https://www.serebii.net/pokemonsleep/locations/lapislakeside.jpg",
-      imageScene: "https://www.serebii.net/pokemonsleep/snorlax/lapislakeside.jpg",
+      imageScene: "assets/islands/hd/lapis.jpg",
       badgeColor: "#10b981",
       unlockGoal: 240,
       unlockGoalText: "登錄 240 種睡姿",
@@ -14633,7 +14633,7 @@
       name: "黃金舊發電廠",
       name_en: "Old Gold Power Plant",
       image: "https://www.serebii.net/pokemonsleep/locations/oldgoldpowerplant.jpg",
-      imageScene: "https://www.serebii.net/pokemonsleep/snorlax/oldgoldpowerplant.jpg",
+      imageScene: "assets/islands/hd/oldgold.jpg",
       badgeColor: "#a855f7",
       unlockGoal: 340,
       unlockGoalText: "登錄 340 種睡姿",
@@ -14742,7 +14742,7 @@
       name: "琥褐溪谷",
       name_en: "Amber Canyon",
       image: "https://www.serebii.net/pokemonsleep/locations/ambercanyon.jpg",
-      imageScene: "https://www.serebii.net/pokemonsleep/snorlax/ambercanyon.jpg",
+      imageScene: "assets/islands/hd/amber.jpg",
       badgeColor: "#d97706",
       unlockGoal: 450,
       unlockGoalText: "登錄 450 種睡姿",
@@ -15265,8 +15265,15 @@
     return { col: islandSpawnsSortCol, dir: islandSpawnsSortDir };
   }
 
+  function islandSceneSrc(island) {
+    const basePath = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) || '';
+    const rel = island && (island.imageScene || island.image);
+    if (!rel) return '';
+    if (/^https?:\/\//.test(rel)) return rel;
+    return `${basePath}${rel}`;
+  }
+
   function placeIslandSceneLayer() {
-    const isH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const panelWiki = document.getElementById('panel-wiki');
     const islandsPanel = document.getElementById('wiki-subpanel-islands');
     [panelWiki, islandsPanel].forEach(el => {
@@ -15280,7 +15287,7 @@
       document.querySelectorAll('.island-scene-layer').forEach(el => el.remove());
       return;
     }
-    const host = isH5 ? islandsPanel : panelWiki;
+    const host = islandsPanel;
     if (!host) return;
     const layer = (islandsPanel && islandsPanel.querySelector && islandsPanel.querySelector('.island-scene-layer'))
       || document.querySelector('.island-scene-layer');
@@ -15292,7 +15299,7 @@
       host.insertBefore(layer, host.firstChild);
     }
     const island = ISLANDS_DATA.find(i => i.id === currentIslandId) || ISLANDS_DATA[0];
-    const src = island && (island.imageScene || island.image);
+    const src = islandSceneSrc(island);
     const img = layer.querySelector && layer.querySelector('.island-scene-photo');
     if (img && src) img.src = src;
     host.classList.add('has-island-scene');
@@ -15633,7 +15640,7 @@
       `;
     }
 
-    const sceneSrc = island.imageScene || island.image;
+    const sceneSrc = islandSceneSrc(island);
     return `
       <div class="island-scene-layer" aria-hidden="true">
         <img class="island-scene-photo" src="${sceneSrc}" alt="">

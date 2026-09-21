@@ -1,5 +1,13 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
+## 需求十九：島嶼圖只掛在島嶼分頁頂部，並改用高清場景（2026-09-21）
+
+1. 場景層只掛在 `#wiki-subpanel-islands`（桌面與 H5 相同），不再掛到整個 `#panel-wiki`，避免變成 1207x2925 整頁糊圖。
+2. 場景圖改為 Real-ESRGAN 4x 高清島嶼橫幅（約 2560x1372），來源為 Serebii locations 原圖，不是卡比獸立繪。
+3. 對照頁：`assets/islands/compare.html`。快取 `v=20260921_7`。
+
+---
+
 
 ## 需求十八：島嶼圖改為獨立圖層，改用更高的營地場景圖（2026-09-21）
 
