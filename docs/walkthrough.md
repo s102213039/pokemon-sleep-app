@@ -546,3 +546,14 @@
 3. `renderLadderRecipeModalContent(modal)` 必須寫入正在顯示的同一個節點。
 4. `renderWikiLayout` 結束後 `pruneOverlayDuplicates`。
 5. 測試 156/156。快取 `v=20260920_5`。
+
+
+## 需求二十四：副技能大類外框、島嶼圖層重建、養成指引內距、關閉動畫（2026-09-22）
+
+線上 GitHub Pages 當時仍在部署上一版（index 仍為 `v=20260921_10`），使用者看到的是舊 CSS/JS。同時本機上一版選擇器不夠強、島嶼圖層在 innerHTML 重繪或第一次進入時可能找不到。
+
+1. 桌面 `#wiki/subskills` 各大類 `.wiki-card`（含主技能發動機率矩陣）以 `!important` 去掉外框、底與陰影，只留內部表格框。
+2. 島嶼圖層改為 `ensureIslandSceneLayer`：找不到就新建；切走只隱藏；`refreshIslandsSubpanel` 先把現有圖層移出再重繪；第一次進入若尚未渲染會先 `refresh`。
+3. 「新手與進階養成核心週期指引」加上 `.wiki-strategy-card`，內距 `8px 10px !important`。
+4. 圖鑑等浮窗關閉用較高優先的 `#pokedex-detail-modal.overlay-closing`，時長 0.32s。
+5. 快取 `v=20260922_01`。

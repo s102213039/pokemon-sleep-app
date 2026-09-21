@@ -27117,16 +27117,21 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
   display: none !important;
 }
 
-body:not(.mobile-h5-app) #wiki-subpanel-subskills .wiki-card {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  border-radius: 0;
-  padding: 0 0 18px;
+body:not(.mobile-h5-app) #wiki-subpanel-subskills .wiki-card,
+body:not(.mobile-h5-app) #wiki-subpanel-subskills .wiki-card-trigger-matrix,
+body:not(.mobile-h5-app) #wiki-subpanel-subskills .wiki-card-speed-guide,
+body:not(.mobile-h5-app) #wiki-subpanel-subskills .wiki-card-subskills-overview,
+body:not(.mobile-h5-app) #wiki-subpanel-subskills .wiki-card-natures-table {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 0 18px !important;
 }
 
+body:not(.mobile-h5-app) #wiki-subpanel-ratings .wiki-strategy-card,
 body:not(.mobile-h5-app) #wiki-subpanel-ratings > .wiki-card:not(.wiki-calc-card) {
-  padding: 8px 10px;
+  padding: 8px 10px !important;
 }
 
 body:not(.mobile-h5-app) #wiki-subpanel-ratings .wiki-strategy-grid {
@@ -27143,6 +27148,7 @@ body:not(.mobile-h5-app) #wiki-subpanel-ratings .wiki-strategy-grid {
   animation: pokedexDialogScaleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+#pokedex-detail-modal.overlay-closing.pokedex-modal-backdrop,
 .overlay-closing.pokedex-modal-backdrop,
 .overlay-closing.box-modal-backdrop,
 .overlay-closing.appraisal-modal-backdrop,
@@ -27150,10 +27156,11 @@ body:not(.mobile-h5-app) #wiki-subpanel-ratings .wiki-strategy-grid {
 .overlay-closing.ladder-recipe-modal,
 .overlay-closing.ing-rank-modal-overlay,
 .overlay-closing.box-guide-lightbox-backdrop {
-  animation: overlayFadeOut 0.22s ease forwards !important;
+  animation: overlayFadeOut 0.32s ease forwards !important;
   pointer-events: none;
 }
 
+#pokedex-detail-modal.overlay-closing .pokedex-modal-dialog,
 .overlay-closing .pokedex-modal-dialog,
 .overlay-closing .box-modal-dialog,
 .overlay-closing .appraisal-modal-container,
@@ -27161,14 +27168,14 @@ body:not(.mobile-h5-app) #wiki-subpanel-ratings .wiki-strategy-grid {
 .overlay-closing .ing-rank-dialog,
 .overlay-closing .settings-modal-container,
 .overlay-closing .box-guide-lightbox-dialog {
-  animation: overlayDialogOut 0.22s ease forwards !important;
+  animation: overlayDialogOut 0.32s ease forwards !important;
 }
 
 .mobile-h5-app #pokedex-detail-modal.overlay-closing .pokedex-modal-dialog,
 .mobile-h5-app #box-edit-modal.overlay-closing .mobile-box-sheet,
 .mobile-h5-app .overlay-closing .mobile-modal-sheet,
 .mobile-h5-app .overlay-closing .mobile-settings-sheet {
-  animation: overlaySheetOut 0.24s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+  animation: overlaySheetOut 0.32s cubic-bezier(0.4, 0, 1, 1) forwards !important;
 }
 
 @keyframes overlayFadeOut {

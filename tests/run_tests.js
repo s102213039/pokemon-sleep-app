@@ -4975,8 +4975,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   assert(cssCode.includes('.island-scene-photo') && cssCode.includes('opacity: 0.55'), 'Island scene photo must be slightly transparent');
   assert(cssCode.includes('opacity: 0.16'), 'Dark themes must fade the desktop island scene further');
   assert(wikiCode.includes('island-scene-hidden'), 'Leaving the islands tab must hide the scene instead of deleting it');
-  assert(cssCode.includes('body:not(.mobile-h5-app) #wiki-subpanel-subskills .wiki-card') && cssCode.includes('border: none'), 'Desktop subskill category cards must drop the outer frame');
+  assert(wikiCode.includes('function ensureIslandSceneLayer'), 'Island scene must be recreated if missing on first visit');
+  assert(cssCode.includes('body:not(.mobile-h5-app) #wiki-subpanel-subskills .wiki-card') && cssCode.includes('border: none !important'), 'Desktop subskill category cards must drop the outer frame');
+  assert(cssCode.includes('.wiki-strategy-card') && cssCode.includes('padding: 8px 10px !important'), 'Growth guide card padding must shrink to 8px/10px');
   assert(cssCode.includes('@keyframes overlaySheetOut') && cssCode.includes('@keyframes overlayDialogOut'), 'Modal close animations must reverse the open motion');
+  assert(cssCode.includes('#pokedex-detail-modal.overlay-closing'), 'Pokedex close animation must beat the open keyframes by ID');
   assert(cssCode.includes('#panel-wiki.has-island-scene > .wiki-main-container') && cssCode.includes('margin-top: 0'), 'Desktop island scene must ignore wiki-main top margin');
   assert(cssCode.includes('body:not(.mobile-h5-app) #wiki-subpanel-islands .wiki-table-wrapper') && cssCode.includes('background: var(--bg-card-solid, var(--bg-dark))'), 'Desktop island tables must use solid card backgrounds');
 

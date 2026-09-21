@@ -3986,7 +3986,7 @@ function animateOverlayClose(el, done) {
     finish();
   };
   el.addEventListener('animationend', onEnd);
-  setTimeout(finish, 360);
+  setTimeout(finish, 420);
 }
 
 if (typeof window !== 'undefined') {

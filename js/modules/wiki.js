@@ -11686,7 +11686,18 @@
       } catch (e) {}
     }
 
-    try { placeIslandSceneLayer(); } catch (e) {}
+    if (targetTab === 'islands') {
+      try {
+        const islandsPanel = document.getElementById('wiki-subpanel-islands');
+        if (islandsPanel && !islandsPanel.querySelector('.island-nav-strip')) {
+          refreshIslandsSubpanel();
+        } else {
+          placeIslandSceneLayer();
+        }
+      } catch (e) {}
+    } else {
+      try { placeIslandSceneLayer(); } catch (e) {}
+    }
   }
 
   function openLadderSidebar() {
@@ -15284,18 +15295,41 @@
     return `${basePath}${rel}`;
   }
 
+  function ensureIslandSceneLayer(host) {
+    if (typeof document === 'undefined' || typeof document.querySelector !== 'function') return null;
+    let layer = document.querySelector('.island-scene-layer');
+    if (!layer && typeof document.createElement === 'function') {
+      layer = document.createElement('div');
+      layer.className = 'island-scene-layer';
+      layer.setAttribute('aria-hidden', 'true');
+      layer.innerHTML = '<img class="island-scene-photo" alt=""><div class="island-scene-fade"></div>';
+    }
+    if (!layer) return null;
+    if (host && layer.parentElement !== host && typeof host.insertBefore === 'function') {
+      host.insertBefore(layer, host.firstChild);
+    }
+    if (typeof document.querySelectorAll === 'function') {
+      document.querySelectorAll('.island-scene-layer').forEach(el => {
+        if (el !== layer && el.remove) el.remove();
+      });
+    }
+    return layer;
+  }
+
   function placeIslandSceneLayer() {
     const isH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const panelWiki = document.getElementById('panel-wiki');
     const islandsPanel = document.getElementById('wiki-subpanel-islands');
-    [panelWiki, islandsPanel].forEach(el => {
+    const clearHost = (el) => {
       if (!el) return;
       el.style.backgroundImage = '';
       el.classList.remove('island-scene-host');
       el.classList.remove('has-island-scene');
-    });
+    };
     if (typeof document.querySelectorAll !== 'function' || typeof document.querySelector !== 'function') return;
     if (currentWikiSubTab !== 'islands') {
+      clearHost(panelWiki);
+      clearHost(islandsPanel);
       document.querySelectorAll('.island-scene-layer').forEach(el => {
         if (el.classList) el.classList.add('island-scene-hidden');
       });
@@ -15303,25 +15337,27 @@
     }
     const host = isH5 ? islandsPanel : panelWiki;
     if (!host) return;
-    const layer = (islandsPanel && islandsPanel.querySelector && islandsPanel.querySelector('.island-scene-layer'))
-      || document.querySelector('.island-scene-layer');
+    const layer = ensureIslandSceneLayer(host);
     if (!layer) return;
-    document.querySelectorAll('.island-scene-layer').forEach(el => {
-      if (el !== layer && el.remove) el.remove();
-    });
-    if (layer.parentElement !== host && host.insertBefore) {
-      host.insertBefore(layer, host.firstChild);
-    }
     const island = ISLANDS_DATA.find(i => i.id === currentIslandId) || ISLANDS_DATA[0];
     const src = islandSceneSrc(island);
     if (layer.classList) layer.classList.remove('island-scene-hidden');
     const img = layer.querySelector && layer.querySelector('.island-scene-photo');
     if (img && src) img.src = src;
     host.classList.add('has-island-scene');
+    if (panelWiki !== host) clearHost(panelWiki);
+    if (islandsPanel !== host) clearHost(islandsPanel);
   }
 
   function refreshIslandsSubpanel() {
     const panel = document.getElementById('wiki-subpanel-islands');
+    const panelWiki = document.getElementById('panel-wiki');
+    const live = (typeof document !== 'undefined' && document.querySelector)
+      ? document.querySelector('.island-scene-layer')
+      : null;
+    if (live && panelWiki && live.parentElement !== panelWiki && typeof panelWiki.insertBefore === 'function') {
+      panelWiki.insertBefore(live, panelWiki.firstChild);
+    }
     if (panel) {
       panel.innerHTML = renderIslandsSubpanel();
     }
@@ -17667,7 +17703,7 @@
             <h3 class="wiki-section-title">${isEN ? 'Growth & Investment Guide' : '新手與進階養成核心週期指引'}</h3>
             <p class="wiki-section-subtitle">${isEN ? 'Key milestones, energy management, and seed mechanics for early to late-game development.' : '掌握前期突破門檻,活力常駐加成與種子珍稀資源的養成核心思維.'}</p>
           </div>
-          <div class="wiki-card">
+          <div class="wiki-card wiki-strategy-card">
             <div class="wiki-strategy-grid">
               <div class="strategy-item strategy-early">
                 <div class="strategy-header">
