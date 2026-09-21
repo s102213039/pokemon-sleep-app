@@ -20666,6 +20666,7 @@ body:not(.mobile-h5-app) #panel-wiki.has-island-scene .island-scene-photo {
   height: auto;
   object-fit: cover;
   object-position: center top;
+  opacity: 0.55;
 }
 
 .island-scene-fade {

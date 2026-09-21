@@ -1,5 +1,13 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
+## 需求二十二：島嶼高清圖 TinyPNG 壓縮與背景半透明（2026-09-21）
+
+1. `assets/islands/hd/*.jpg` 以 TinyPNG 壓縮。
+2. 場景圖 `opacity: 0.55`，降低搶眼程度。
+3. 快取 `v=20260921_10`。
+
+---
+
 ## 需求二十一：島嶼場景貼齊 header，桌面列表改實底（2026-09-21）
 
 1. 桌面場景不受 `.wiki-main-container` 頂部 14px margin 影響，貼齊 header；內容改用 padding 維持內距。
