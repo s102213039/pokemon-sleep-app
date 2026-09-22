@@ -571,3 +571,10 @@
 
 桌面與 H5 的 `.island-hero-content` 改為橫向：`island-title-group` 在左、`.island-berries-section` 在右，中間 gap 約 16–20px。
 快取 `v=20260922_03`。
+
+
+## 需求二十七：桌面圖鑑彈窗去掉拖柄、下拉依內容寬度（2026-09-22）
+
+1. 網頁版隱藏 `#pokedex-detail-modal .sheet-drag-handle`（H5 保留）。
+2. 性格與睡飽飽獎章 `custom-select-rf` 改 `width: max-content`，取消省略號。
+3. 快取 `v=20260922_04`。

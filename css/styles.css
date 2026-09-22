@@ -27273,3 +27273,35 @@ body:not(.mobile-h5-app) #wiki-subpanel-ratings .wiki-strategy-grid {
   from { transform: translateY(0); }
   to { transform: translateY(100%); }
 }
+
+
+body:not(.mobile-h5-app) #pokedex-detail-modal .sheet-drag-handle,
+body:not(.mobile-h5-app) .box-modal-dialog > .sheet-drag-handle {
+  display: none !important;
+}
+
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-ribbon-unit .custom-select-container,
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-nature-row .custom-select-container,
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-ribbon-unit .custom-select-rf,
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-nature-row .custom-select-rf {
+  width: max-content !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  flex: 0 0 auto !important;
+}
+
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-ribbon-unit .custom-select-trigger,
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-nature-row .custom-select-trigger {
+  width: max-content !important;
+  white-space: nowrap !important;
+}
+
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-ribbon-unit .custom-select-label,
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-nature-row .custom-select-label,
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-ribbon-unit .custom-select-label span,
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-nature-row .custom-select-label span {
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+  max-width: none !important;
+}

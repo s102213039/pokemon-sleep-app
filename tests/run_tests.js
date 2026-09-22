@@ -4982,6 +4982,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   assert(cssCode.includes('.wiki-strategy-card') && cssCode.includes('padding: 8px 10px !important'), 'Growth guide card padding must shrink to 8px/10px');
   assert(cssCode.includes('@keyframes overlaySheetOut') && cssCode.includes('@keyframes overlayDialogOut'), 'Modal close animations must reverse the open motion');
   assert(cssCode.includes('#pokedex-detail-modal.overlay-closing'), 'Pokedex close animation must beat the open keyframes by ID');
+  assert(cssCode.includes('body:not(.mobile-h5-app) #pokedex-detail-modal .sheet-drag-handle') && cssCode.includes('display: none !important'), 'Desktop pokedex modal must hide the sheet drag handle');
+  assert(cssCode.includes('body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-nature-row .custom-select-label') && cssCode.includes('text-overflow: clip !important'), 'Desktop nature/ribbon custom selects must show full text');
   assert(cssCode.includes('.island-dual-grid .wiki-data-table tbody tr') && cssCode.includes('height: 1%'), 'Island energy rows must share the stretched table height');
   assert(cssCode.includes('#box-edit-modal .box-modal-header-cancel') && cssCode.includes('#box-edit-modal .box-modal-header-confirm'), 'Box modal cancel/confirm live in the header');
   assert(cssCode.includes('.mobile-h5-app .mobile-controls-container') && cssCode.includes('background: transparent !important'), 'H5 controls-container must drop the header bar background');
