@@ -15716,14 +15716,14 @@
           <div class="island-dual-grid">
         <div class="island-table-card">
           <div class="wiki-card-header">
-            <h3 class="wiki-card-title">${isEN ? 'Snorlax Rank Energy Progression' : '卡比獸評級所需能量'}</h3>
+            <h3 class="wiki-card-title">${isEN ? 'Rank Energy' : '評級所需能量'}</h3>
           </div>
           <div class="wiki-table-wrapper" style="margin-top:8px;">
             <table class="wiki-data-table">
               <thead>
                 <tr>
-                  <th style="width:45%;">${isEN ? 'Rank' : '卡比獸評級'}</th>
-                  <th style="width:55%;">${isEN ? 'Energy' : '所需能量 (累計)'}</th>
+                  <th style="width:45%;">${isEN ? 'Rank' : '評級'}</th>
+                  <th style="width:55%;">${isEN ? 'Energy' : '所需能量'}</th>
                 </tr>
               </thead>
               <tbody>
@@ -15735,15 +15735,15 @@
 
         <div class="island-table-card">
           <div class="wiki-card-header">
-            <h3 class="wiki-card-title">${isEN ? 'Drowsy Power Spawns' : '睡意之力與出現隻數門檻'}</h3>
+            <h3 class="wiki-card-title">${isEN ? 'Spawn Thresholds' : '出現數門檻'}</h3>
           </div>
           <div class="wiki-table-wrapper" style="margin-top:8px;">
             <table class="wiki-data-table">
               <thead>
                 <tr>
-                  <th style="width:28%;">${isEN ? 'Spawns' : '早晨出現隻數'}</th>
-                  <th style="width:40%;">${isEN ? 'Drowsy Power' : '最低睡意之力門檻'}</th>
-                  <th style="width:32%; text-align:center;">${isEN ? 'Min Rank (100pt)' : '睡眠分數100'}</th>
+                  <th style="width:28%;">${isEN ? 'Spawns' : '出現數'}</th>
+                  <th style="width:40%;">${isEN ? 'Min Power' : '最低門檻'}</th>
+                  <th style="width:32%; text-align:center;">${isEN ? '100pt Rank' : '分數100分'}</th>
                 </tr>
               </thead>
               <tbody>

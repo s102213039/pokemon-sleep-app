@@ -4579,7 +4579,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Islands Subpanel DOM Renderin
   ctxEn.window.WikiDB.selectIsland('greengrass');
   const htmlEn = ctxEn.window.WikiDB.renderIslandsSubpanel();
   assert(htmlEn.includes('Greengrass Isle'), 'en-US must render English name');
-  assert(htmlEn.includes('Snorlax Rank Energy Progression'), 'en-US must render English card title');
+  assert(htmlEn.includes('Rank Energy'), 'en-US must render English rank energy title');
   assert(!emojiRegex.test(htmlEn), 'en-US html must not contain emoji');
 });
 
@@ -4980,12 +4980,16 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   assert(cssCode.includes('.wiki-strategy-card') && cssCode.includes('padding: 8px 10px !important'), 'Growth guide card padding must shrink to 8px/10px');
   assert(cssCode.includes('@keyframes overlaySheetOut') && cssCode.includes('@keyframes overlayDialogOut'), 'Modal close animations must reverse the open motion');
   assert(cssCode.includes('#pokedex-detail-modal.overlay-closing'), 'Pokedex close animation must beat the open keyframes by ID');
+  assert(cssCode.includes('.island-dual-grid .wiki-data-table tbody tr') && cssCode.includes('height: 1%'), 'Island energy rows must share the stretched table height');
+  assert(cssCode.includes('#box-edit-modal .box-modal-header-cancel') && cssCode.includes('#box-edit-modal .box-modal-header-confirm'), 'Box modal cancel/confirm live in the header');
+  assert(cssCode.includes('.mobile-h5-app .mobile-controls-container') && cssCode.includes('background: transparent !important'), 'H5 controls-container must drop the header bar background');
   assert(cssCode.includes('#panel-wiki.has-island-scene > .wiki-main-container') && cssCode.includes('margin-top: 0'), 'Desktop island scene must ignore wiki-main top margin');
   assert(cssCode.includes('body:not(.mobile-h5-app) #wiki-subpanel-islands .wiki-table-wrapper') && cssCode.includes('background: var(--bg-card-solid, var(--bg-dark))'), 'Desktop island tables must use solid card backgrounds');
 
   // 6. Verify Drowsy Power spawn tiers table renders 3 columns with 100-score rank badge, energy and formula footnote
-  assert(htmlCyan.includes('最低睡意之力門檻'), 'Drowsy power table must include 最低睡意之力門檻 header');
-  assert(htmlCyan.includes('睡眠分數100'), 'Drowsy power table must include 睡眠分數100 header');
+  assert(htmlCyan.includes('最低門檻'), 'Drowsy power table must include 最低門檻 header');
+  assert(htmlCyan.includes('分數100分'), 'Drowsy power table must include 分數100分 header');
+  assert(htmlCyan.includes('評級所需能量') && htmlCyan.includes('出現數門檻'), 'Island dual tables must use shortened Chinese titles');
   assert(!htmlCyan.includes('露營券(+1且貪吃)'), 'Drowsy power table must not render 露營券 row');
   assert(!htmlCyan.includes('睡眠分數100: 以睡滿 100 分 (8.5小時) 換算'), 'Drowsy power table must not render 100-score conversion formula footnote');
   assert(!htmlCyan.includes('Good Camp Ticket'), 'Drowsy power table must not render Good Camp Ticket row');

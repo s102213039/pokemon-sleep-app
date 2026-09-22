@@ -288,7 +288,7 @@
       'appraisal.ribbon_label': '睡飽飽獎章：',
       'wiki.ribbon_title': '睡飽飽獎章與幫忙速度加成指南',
       'box.modal_cancel': '取消',
-      'box.modal_save': '確認儲存入庫',
+      'box.modal_save': '確定',
       'pokedex.appraisal_modal_title': '寶可夢能力評測與客製化試算',
       'pokedex.base_stats': '基礎數值',
       'pokedex.custom_controls': '客製化模擬設定',
