@@ -565,3 +565,9 @@
 2. 島嶼雙欄表標題精簡（評級所需能量、出現數門檻等）；左表列高均分填滿與右表對齊的高度。
 3. H5 `controls-container` 去底，與圖鑑 `search-input` 同一套透明容器＋輸入框自身底色。
 4. 快取 `v=20260922_02`。
+
+
+## 需求二十六：島嶼喜好樹果排在標題後方（2026-09-22）
+
+桌面與 H5 的 `.island-hero-content` 改為橫向：`island-title-group` 在左、`.island-berries-section` 在右，中間 gap 約 16–20px。
+快取 `v=20260922_03`。

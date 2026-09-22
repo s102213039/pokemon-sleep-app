@@ -4839,6 +4839,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Berries Single Line La
   assert(cssCode.includes('.island-berries-label {') && cssCode.includes('white-space: nowrap;') && cssCode.includes('flex-shrink: 0;'), 'Desktop island-berries-label must be nowrap and non-shrinking');
   assert(cssCode.includes('.mobile-h5-app .island-berries-section') && cssCode.includes('flex-direction: row !important;') && cssCode.includes('flex-wrap: nowrap !important;'), 'Mobile island-berries-section must be single line row');
   assert(cssCode.includes('.mobile-h5-app .island-berries-label') && cssCode.includes('width: auto !important;') && cssCode.includes('white-space: nowrap !important;'), 'Mobile island-berries-label must be width auto and nowrap');
+  assert(cssCode.includes('.island-hero-content {') && cssCode.includes('flex-direction: row;') && cssCode.includes('gap: 14px 20px;'), 'Desktop berries sit after the island title with horizontal gap');
+  assert(cssCode.includes('.mobile-h5-app .island-hero-content') && cssCode.includes('flex-direction: row !important;') && cssCode.includes('gap: 10px 16px !important;'), 'H5 berries sit after the island title with horizontal gap');
 
   // 2. CSS Verification: Berry chips must have borders removed
   assert(cssCode.includes('.island-berry-chip {') && cssCode.includes('border: none !important;') && cssCode.includes('background: transparent !important;'), 'Desktop berry chips must have border removed');
