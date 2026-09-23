@@ -1063,11 +1063,11 @@ test('Tier 1 - Feature Coverage', 'Helping Speed Limit & Calculation Matrix: Sub
   assertEquals(baseline.intervalRatio, 1.000, 'Baseline interval ratio should be 1.000');
   assertEquals(baseline.outputBoostDisplay, '+0.00%', 'Baseline output boost should be +0.00%');
 
-  // 5. Speed Down row: 1.100 interval, -9.09% boost
+  // 5. Speed Down row: patched +7.5% interval (1.075), -6.98% boost
   const downRow = matrix.find(r => r.grade.includes('性格減速'));
   assert(downRow, 'Speed down row missing');
-  assertEquals(downRow.intervalRatio, 1.100, 'Speed down interval ratio should be 1.100');
-  assertEquals(downRow.outputBoostDisplay, '-9.09%', 'Speed down output boost should be -9.09%');
+  assertEquals(downRow.intervalRatio, 1.075, 'Speed down interval ratio should be 1.075');
+  assertEquals(downRow.outputBoostDisplay, '-6.98%', 'Speed down output boost should be -6.98%');
 });
 
 // --- NEW Tier 1 Tests: Mobile H5 App Shell & Dock System ---
@@ -2644,7 +2644,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Sub-skills
     if (speedReduction > 0) mult *= (1.0 / (1.0 - speedReduction));
 
     if (nature === 'ING') mult *= 1.20;
-    if (nature === 'SPEED') mult *= (1.0 / 0.9090909);
+    if (nature === 'SPEED') mult *= (1.0 / 0.90);
     return mult;
   }
 
@@ -3488,16 +3488,16 @@ test('Tier 1 - Feature Coverage', 'Wiki Subskills Helping Speed Matrix Nature/In
   assert(html.includes('幫忙速度極限與計算機制指南'), 'Wiki layout missing Helping Speed Matrix table');
 
   // 1. Check nature arrow formatting: only ▲, ▼, - in the content
-  assert(html.includes('class="matrix-rate-up font-bold" style="font-size: 15px;" title="幫忙速度上升">▲</span>'), 'Nature up must render as ▲');
-  assert(html.includes('class="matrix-rate-down font-bold" style="font-size: 15px;" title="幫忙速度下降">▼</span>'), 'Nature down must render as ▼');
-  assert(html.includes('class="text-muted font-bold" style="font-size: 15px;" title="無修正">-</span>'), 'Nature neutral must render as -');
+  assert(html.includes('▲ 上升'), 'Nature up must render as ▲ 上升');
+  assert(html.includes('▼ 下降'), 'Nature down must render as ▼ 下降');
+  assert(html.includes('✕'), 'Nature neutral must render as ✕');
 
   // 2. Check helping interval ratio format: ${row.intervalRatio}x
   assert(html.includes('0.585x'), 'Interval ratio should include 0.585x');
   assert(html.includes('0.666x'), 'Interval ratio should include 0.666x');
   assert(html.includes('0.711x'), 'Interval ratio should include 0.711x');
   assert(html.includes('1x') || html.includes('1.000x'), 'Interval ratio should include 1x');
-  assert(html.includes('1.1x') || html.includes('1.100x'), 'Interval ratio should include 1.1x');
+  assert(html.includes('1.075x'), 'Interval ratio should include 1.075x for speed-down nature');
 });
 
 test('Tier 1 - Feature Coverage', 'Ingredient Ladder Top 15 Mobile Optimization and Lazy Loading', () => {
@@ -4984,6 +4984,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   assert(cssCode.includes('#pokedex-detail-modal.overlay-closing'), 'Pokedex close animation must beat the open keyframes by ID');
   assert(cssCode.includes('body:not(.mobile-h5-app) #pokedex-detail-modal .sheet-drag-handle') && cssCode.includes('display: none !important'), 'Desktop pokedex modal must hide the sheet drag handle');
   assert(cssCode.includes('body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-nature-row .custom-select-label') && cssCode.includes('text-overflow: clip !important'), 'Desktop nature/ribbon custom selects must show full text');
+  assert(cssCode.includes('body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box') && cssCode.includes('flex: 1 1 auto'), 'Desktop calc box must stretch to the subskill palette');
+  assert(wikiCode.includes('function scrollActiveIslandTabIntoView'), 'Island nav must keep the selected camp in view');
+  assert(cssCode.includes('.island-spawns-card > .wiki-card-header') && cssCode.includes('position: sticky'), 'H5 island habitats header must stick while the list scrolls');
   assert(cssCode.includes('.island-dual-grid .wiki-data-table tbody tr') && cssCode.includes('height: 1%'), 'Island energy rows must share the stretched table height');
   assert(cssCode.includes('#box-edit-modal .box-modal-header-cancel') && cssCode.includes('#box-edit-modal .box-modal-header-confirm'), 'Box modal cancel/confirm live in the header');
   assert(cssCode.includes('.mobile-h5-app .mobile-controls-container') && cssCode.includes('background: transparent !important'), 'H5 controls-container must drop the header bar background');

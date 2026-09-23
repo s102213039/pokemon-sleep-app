@@ -1066,12 +1066,12 @@
       nature: "▼ 幫忙速度下降",
       nature_en: "▼ Speed Down",
       natureBadge: "down",
-      calc: "1.00 × 1.10",
-      intervalRatio: 1.100,
-      intervalDisplay: "110.0%",
-      intervalDiff: "+10.0%",
-      outputMultiplier: 0.9091,
-      outputBoostDisplay: "-9.09%",
+      calc: "1.00 × 1.075",
+      intervalRatio: 1.075,
+      intervalDisplay: "107.5%",
+      intervalDiff: "+7.5%",
+      outputMultiplier: 0.9302,
+      outputBoostDisplay: "-6.98%",
       grade: "D (性格減速削弱)",
       grade_en: "D (Nature Impair)"
     }
@@ -12781,7 +12781,7 @@
     // 性格加成：單選；未選視為無修正
     if (getLadderNature() !== 'NONE') {
       if (ladderNatureIng) mult *= 1.20;
-      if (ladderNatureSpeed) mult *= (1.0 / 0.9090909);
+      if (ladderNatureSpeed) mult *= (1.0 / 0.90);
     }
 
     return mult;
@@ -15349,6 +15349,23 @@
     if (islandsPanel !== host) clearHost(islandsPanel);
   }
 
+  function scrollActiveIslandTabIntoView() {
+    const strip = typeof document !== 'undefined' && document.querySelector
+      ? document.querySelector('#wiki-subpanel-islands .island-nav-strip')
+      : null;
+    if (!strip) return;
+    const active = strip.querySelector && strip.querySelector('.island-tab-btn.active');
+    if (!active || typeof active.getBoundingClientRect !== 'function') return;
+    const stripRect = strip.getBoundingClientRect();
+    const btnRect = active.getBoundingClientRect();
+    const pad = 12;
+    if (btnRect.left < stripRect.left) {
+      strip.scrollLeft += (btnRect.left - stripRect.left) - pad;
+    } else if (btnRect.right > stripRect.right) {
+      strip.scrollLeft += (btnRect.right - stripRect.right) + pad;
+    }
+  }
+
   function refreshIslandsSubpanel() {
     const panel = document.getElementById('wiki-subpanel-islands');
     const panelWiki = document.getElementById('panel-wiki');
@@ -15362,6 +15379,7 @@
       panel.innerHTML = renderIslandsSubpanel();
     }
     placeIslandSceneLayer();
+    try { scrollActiveIslandTabIntoView(); } catch (e) {}
   }
 
   function renderIslandsSubpanel() {
@@ -17557,10 +17575,10 @@
                       </td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">
                         ${row.natureBadge === 'up' 
-                          ? `<span class="matrix-rate-up font-bold" style="font-size: 15px;" title="${isEN ? 'Speed Up' : '幫忙速度上升'}">▲</span>` 
+                          ? `<span class="matrix-rate-up">${isEN ? '▲ Up' : '▲ 上升'}</span>` 
                           : (row.natureBadge === 'down' 
-                            ? `<span class="matrix-rate-down font-bold" style="font-size: 15px;" title="${isEN ? 'Speed Down' : '幫忙速度下降'}">▼</span>` 
-                            : `<span class="text-muted font-bold" style="font-size: 15px;" title="${isEN ? 'Neutral' : '無修正'}">-</span>`)}
+                            ? `<span class="matrix-rate-down">${isEN ? '▼ Down' : '▼ 下降'}</span>` 
+                            : `<span class="text-muted font-bold" style="font-size: 13px;">✕</span>`)}
                       </td>
                       <td class="col-hide-mobile" style="vertical-align: middle; text-align: center;"><code class="matrix-calc-code">${row.calc}</code></td>
                       <td style="vertical-align: middle; text-align: center; white-space: nowrap;">

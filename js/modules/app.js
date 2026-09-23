@@ -4682,8 +4682,8 @@ function calculatePokedexIngredientFormulas() {
   else if (natureObj.debuffType === 'ingredient') natureIngMult = 0.80;
 
   let natureSpeedMult = 1.0;
-  if (natureObj.buffType === 'speed') natureSpeedMult = 0.9090909;
-  else if (natureObj.debuffType === 'speed') natureSpeedMult = 1.10;
+  if (natureObj.buffType === 'speed') natureSpeedMult = 0.90;
+  else if (natureObj.debuffType === 'speed') natureSpeedMult = 1.075;
 
   let natureSkillMult = 1.0;
   if (natureObj.buffType === 'skill') natureSkillMult = 1.20;

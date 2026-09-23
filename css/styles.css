@@ -27305,3 +27305,37 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-nature-row .custom-selec
   white-space: nowrap !important;
   max-width: none !important;
 }
+
+
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-modal-body {
+  align-items: stretch;
+}
+
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-left-col,
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-right-col {
+  height: 100%;
+  min-height: 0;
+}
+
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-formula-card,
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-formula-inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+}
+
+body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
+  flex: 1 1 auto;
+}
+
+.mobile-h5-app #wiki-subpanel-islands .island-spawns-card > .wiki-card-header {
+  position: sticky !important;
+  top: 40px !important;
+  z-index: 25 !important;
+  background: var(--bg-card-solid, var(--bg-dark)) !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  margin-top: 0 !important;
+}
