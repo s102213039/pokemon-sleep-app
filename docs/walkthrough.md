@@ -1,10 +1,10 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
-## 需求：H5 島嶼棲息整卡吸頂後才開列表捲動（2026-09-23）
+## 需求：H5 島嶼棲息 CoordinatorLayout 吸頂（2026-09-23）
 
-1. `.island-spawns-card` sticky（無底色、overflow visible），標題＋篩選＋列表視窗一起釘在子分頁列下。
-2. 外層 `#panel-wiki` 先滑到底並判定吸頂後，才幫卡片加上 `is-spawns-pinned`、開放表格內部捲動；未吸頂時列表 overflow hidden。
-3. 快取 `v=20260923_03`。
+1. 放棄 CSS sticky。錨點 `.island-spawns-coordinator` 先跟著外層滑；碰到子分頁列後卡片 `position:fixed` 真正釘住（標題＋篩選＋列表視窗，無卡片底色）。
+2. 吸頂後才開放列表內部捲動（巢狀 nested scroll：列表到頂再交還外層）。
+3. 快取 `v=20260923_04`。
 
 ---
 
