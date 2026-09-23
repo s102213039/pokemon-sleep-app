@@ -4986,7 +4986,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   assert(cssCode.includes('body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-nature-row .custom-select-label') && cssCode.includes('text-overflow: clip !important'), 'Desktop nature/ribbon custom selects must show full text');
   assert(cssCode.includes('body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box') && cssCode.includes('flex: 1 1 auto'), 'Desktop calc box must stretch to the subskill palette');
   assert(wikiCode.includes('function scrollActiveIslandTabIntoView'), 'Island nav must keep the selected camp in view');
-  assert(cssCode.includes('.island-spawns-card > .wiki-card-header') && cssCode.includes('position: sticky'), 'H5 island habitats header must stick while the list scrolls');
+  assert(cssCode.includes('#wiki-subpanel-islands .island-spawns-card > .wiki-table-wrapper') && cssCode.includes('overscroll-behavior: contain'), 'H5 island habitats card must pin and scroll the list internally');
   assert(cssCode.includes('.island-dual-grid .wiki-data-table tbody tr') && cssCode.includes('height: 1%'), 'Island energy rows must share the stretched table height');
   assert(cssCode.includes('#box-edit-modal .box-modal-header-cancel') && cssCode.includes('#box-edit-modal .box-modal-header-confirm'), 'Box modal cancel/confirm live in the header');
   assert(cssCode.includes('.mobile-h5-app .mobile-controls-container') && cssCode.includes('background: transparent !important'), 'H5 controls-container must drop the header bar background');

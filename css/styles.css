@@ -27330,12 +27330,47 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
   flex: 1 1 auto;
 }
 
-.mobile-h5-app #wiki-subpanel-islands .island-spawns-card > .wiki-card-header {
+.mobile-h5-app #wiki-subpanel-islands .island-spawns-card {
+  display: flex !important;
+  flex-direction: column !important;
   position: sticky !important;
   top: 40px !important;
-  z-index: 25 !important;
+  z-index: 20 !important;
+  max-height: calc(100dvh - 52px - 62px - 40px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  background: var(--bg-card-solid, var(--bg-dark)) !important;
+}
+
+.mobile-h5-app #wiki-subpanel-islands .island-spawns-card > .wiki-card-header {
+  position: relative !important;
+  top: auto !important;
+  flex-shrink: 0 !important;
+  z-index: 2 !important;
   background: var(--bg-card-solid, var(--bg-dark)) !important;
   padding-top: 8px !important;
   padding-bottom: 8px !important;
   margin-top: 0 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-islands .island-spawns-card > .wiki-table-wrapper {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+  margin-top: 0 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-islands .island-spawns-compact-table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-islands .island-spawns-compact-table thead th {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 3 !important;
+  background: var(--table-th-solid, var(--bg-card-solid, var(--bg-dark))) !important;
 }
