@@ -11697,6 +11697,7 @@
         try { bindIslandSpawnsCoordinator(); } catch (e) {}
       } catch (e) {}
     } else {
+      try { releaseIslandSpawnsPin(); } catch (e) {}
       try { placeIslandSceneLayer(); } catch (e) {}
     }
   }
@@ -15378,8 +15379,31 @@
     return { scroller: scroller, host: host, card: card, wrap: wrap, subnav: subnav };
   }
 
+  function islandSpawnsTabActive() {
+    if (currentWikiSubTab !== 'islands') return false;
+    const panel = document.getElementById('wiki-subpanel-islands');
+    return !!(panel && panel.classList.contains('active') && panel.style.display !== 'none');
+  }
+
+  function releaseIslandSpawnsPin() {
+    const els = getIslandSpawnsCoordinatorEls();
+    if (els.card) {
+      els.card.classList.remove('is-spawns-pinned');
+      els.card.style.left = '';
+      els.card.style.width = '';
+      els.card.style.removeProperty('--spawns-pin-top');
+      els.card.style.removeProperty('--spawns-pin-h');
+    }
+    if (els.host) els.host.style.height = '';
+    if (els.wrap) els.wrap.scrollTop = 0;
+  }
+
   function applyIslandSpawnsCoordinator() {
     if (!document.body || !document.body.classList.contains('mobile-h5-app')) return;
+    if (!islandSpawnsTabActive()) {
+      releaseIslandSpawnsPin();
+      return;
+    }
     const els = getIslandSpawnsCoordinatorEls();
     if (!els.scroller || !els.host || !els.card || !els.wrap) return;
     const sRect = els.scroller.getBoundingClientRect();

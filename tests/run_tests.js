@@ -4987,6 +4987,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Island Spawns Unified Nationa
   assert(cssCode.includes('body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box') && cssCode.includes('flex: 1 1 auto'), 'Desktop calc box must stretch to the subskill palette');
   assert(wikiCode.includes('function scrollActiveIslandTabIntoView'), 'Island nav must keep the selected camp in view');
   assert(wikiCode.includes('function bindIslandSpawnsCoordinator') && wikiCode.includes('is-spawns-pinned') && wikiCode.includes('island-spawns-coordinator'), 'H5 island habitats must pin like CoordinatorLayout after outer scroll');
+  assert(wikiCode.includes('function islandSpawnsTabActive') && wikiCode.includes("currentWikiSubTab !== 'islands'"), 'Habitats pin must not adjust scroll on other wiki subtabs');
   assert(cssCode.includes('.island-spawns-card.is-spawns-pinned') && cssCode.includes('position: fixed !important'), 'H5 island habitats pin must use fixed positioning, not CSS sticky');
   assert(cssCode.includes('.island-dual-grid .wiki-data-table tbody tr') && cssCode.includes('height: 1%'), 'Island energy rows must share the stretched table height');
   assert(cssCode.includes('#box-edit-modal .box-modal-header-cancel') && cssCode.includes('#box-edit-modal .box-modal-header-confirm'), 'Box modal cancel/confirm live in the header');
