@@ -15382,27 +15382,33 @@
     if (!document.body || !document.body.classList.contains('mobile-h5-app')) return;
     const els = getIslandSpawnsCoordinatorEls();
     if (!els.scroller || !els.host || !els.card || !els.wrap) return;
-    const subnavH = els.subnav ? els.subnav.getBoundingClientRect().height : 40;
     const sRect = els.scroller.getBoundingClientRect();
-    const pinTop = sRect.top + subnavH;
-    const pinH = Math.max(160, sRect.height - subnavH);
-    els.host.style.height = pinH + 'px';
-    const shouldPin = els.host.getBoundingClientRect().top <= pinTop + 0.5;
-    if (shouldPin) {
-      const hostRect = els.host.getBoundingClientRect();
-      els.card.classList.add('is-spawns-pinned');
-      els.card.style.top = pinTop + 'px';
-      els.card.style.left = hostRect.left + 'px';
-      els.card.style.width = hostRect.width + 'px';
-      els.card.style.height = pinH + 'px';
-    } else {
+    const pinTop = els.subnav ? els.subnav.getBoundingClientRect().bottom : sRect.top;
+    const pinH = Math.max(160, Math.round(sRect.bottom - pinTop));
+    els.card.style.setProperty('--spawns-pin-h', pinH + 'px');
+    const hostTop = els.host.getBoundingClientRect().top;
+    const shouldPin = hostTop <= pinTop + 0.5;
+    if (!shouldPin) {
       els.card.classList.remove('is-spawns-pinned');
-      els.card.style.top = '';
       els.card.style.left = '';
       els.card.style.width = '';
-      els.card.style.height = '';
+      els.card.style.removeProperty('--spawns-pin-top');
+      els.host.style.height = '';
       els.wrap.scrollTop = 0;
+      return;
     }
+    const overshoot = pinTop - hostTop;
+    if (overshoot > 1) {
+      els.scroller.scrollTop -= overshoot;
+    }
+    if (!els.host.style.height) {
+      els.host.style.height = pinH + 'px';
+    }
+    const hostRect = els.host.getBoundingClientRect();
+    els.card.classList.add('is-spawns-pinned');
+    els.card.style.setProperty('--spawns-pin-top', pinTop + 'px');
+    els.card.style.left = hostRect.left + 'px';
+    els.card.style.width = hostRect.width + 'px';
   }
 
   function consumeIslandSpawnsNestedDy(dy) {

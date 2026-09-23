@@ -27348,8 +27348,8 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
   display: flex !important;
   flex-direction: column !important;
   position: relative !important;
-  top: auto !important;
-  height: 100% !important;
+  height: auto !important;
+  max-height: var(--spawns-pin-h, 70dvh) !important;
   min-height: 0 !important;
   overflow: hidden !important;
   background: transparent !important;
@@ -27358,6 +27358,9 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
 .mobile-h5-app #wiki-subpanel-islands .island-spawns-card.is-spawns-pinned {
   position: fixed !important;
   z-index: 20 !important;
+  top: var(--spawns-pin-top, 84px) !important;
+  height: var(--spawns-pin-h, 70dvh) !important;
+  max-height: none !important;
 }
 
 .mobile-h5-app #wiki-subpanel-islands .island-spawns-card > .wiki-card-header {
