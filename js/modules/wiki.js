@@ -11694,6 +11694,7 @@
         } else {
           placeIslandSceneLayer();
         }
+        try { bindIslandSpawnsFreezePane(); } catch (e) {}
       } catch (e) {}
     } else {
       try { placeIslandSceneLayer(); } catch (e) {}
@@ -15366,6 +15367,69 @@
     }
   }
 
+  let islandSpawnsTouchY = 0;
+
+  function islandSpawnsOuterAtEnd(scroller) {
+    return scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2;
+  }
+
+  function syncIslandSpawnsFreezePane() {
+    if (!document.body || !document.body.classList.contains('mobile-h5-app')) return;
+    const scroller = document.getElementById('panel-wiki');
+    const card = document.querySelector('#wiki-subpanel-islands .island-spawns-card');
+    const wrap = card && card.querySelector(':scope > .wiki-table-wrapper');
+    const subnav = document.querySelector('#panel-wiki .wiki-subnav-bar');
+    if (!scroller || !card || !wrap) return;
+    const subnavH = subnav ? Math.round(subnav.getBoundingClientRect().height) : 40;
+    card.style.setProperty('--island-spawns-sticky-top', subnavH + 'px');
+    card.style.maxHeight = Math.max(160, scroller.clientHeight - subnavH) + 'px';
+    const pinned = card.getBoundingClientRect().top <= scroller.getBoundingClientRect().top + subnavH + 1;
+    const allowList = pinned && islandSpawnsOuterAtEnd(scroller);
+    card.classList.toggle('is-spawns-pinned', allowList);
+    if (!allowList) wrap.scrollTop = 0;
+  }
+
+  function onIslandSpawnsWrapTouchStart(e) {
+    if (e.touches && e.touches[0]) islandSpawnsTouchY = e.touches[0].clientY;
+  }
+
+  function onIslandSpawnsWrapTouchMove(e) {
+    const scroller = document.getElementById('panel-wiki');
+    const wrap = e.currentTarget;
+    if (!scroller || !e.touches || !e.touches[0]) return;
+    const y = e.touches[0].clientY;
+    const dy = islandSpawnsTouchY - y;
+    islandSpawnsTouchY = y;
+    if (dy < 0 && wrap.scrollTop <= 0) {
+      const card = wrap.closest('.island-spawns-card');
+      if (card) card.classList.remove('is-spawns-pinned');
+      scroller.scrollTop += dy;
+      e.preventDefault();
+      return;
+    }
+    if (dy > 0 && !islandSpawnsOuterAtEnd(scroller)) {
+      e.preventDefault();
+    }
+  }
+
+  function bindIslandSpawnsFreezePane() {
+    if (!document.body || !document.body.classList.contains('mobile-h5-app')) return;
+    const scroller = document.getElementById('panel-wiki');
+    const wrap = document.querySelector('#wiki-subpanel-islands .island-spawns-card > .wiki-table-wrapper');
+    if (scroller && scroller.dataset.spawnsFreezeBound !== '1') {
+      scroller.dataset.spawnsFreezeBound = '1';
+      scroller.addEventListener('scroll', syncIslandSpawnsFreezePane, { passive: true });
+      window.addEventListener('resize', syncIslandSpawnsFreezePane);
+    }
+    if (wrap && wrap.dataset.spawnsFreezeBound !== '1') {
+      wrap.dataset.spawnsFreezeBound = '1';
+      wrap.addEventListener('scroll', syncIslandSpawnsFreezePane, { passive: true });
+      wrap.addEventListener('touchstart', onIslandSpawnsWrapTouchStart, { passive: true });
+      wrap.addEventListener('touchmove', onIslandSpawnsWrapTouchMove, { passive: false });
+    }
+    syncIslandSpawnsFreezePane();
+  }
+
   function refreshIslandsSubpanel() {
     const panel = document.getElementById('wiki-subpanel-islands');
     const panelWiki = document.getElementById('panel-wiki');
@@ -15380,6 +15444,7 @@
     }
     placeIslandSceneLayer();
     try { scrollActiveIslandTabIntoView(); } catch (e) {}
+    try { bindIslandSpawnsFreezePane(); } catch (e) {}
   }
 
   function renderIslandsSubpanel() {

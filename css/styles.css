@@ -27334,12 +27334,12 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
   display: flex !important;
   flex-direction: column !important;
   position: sticky !important;
-  top: 40px !important;
+  top: var(--island-spawns-sticky-top, 40px) !important;
   z-index: 20 !important;
   max-height: calc(100dvh - 52px - 62px - 40px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
   min-height: 0 !important;
-  overflow: hidden !important;
-  background: var(--bg-card-solid, var(--bg-dark)) !important;
+  overflow: visible !important;
+  background: transparent !important;
 }
 
 .mobile-h5-app #wiki-subpanel-islands .island-spawns-card > .wiki-card-header {
@@ -27347,7 +27347,7 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
   top: auto !important;
   flex-shrink: 0 !important;
   z-index: 2 !important;
-  background: var(--bg-card-solid, var(--bg-dark)) !important;
+  background: transparent !important;
   padding-top: 8px !important;
   padding-bottom: 8px !important;
   margin-top: 0 !important;
@@ -27357,10 +27357,13 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
   flex: 1 1 auto !important;
   min-height: 0 !important;
   overflow-x: auto !important;
+  overflow-y: hidden !important;
+  margin-top: 0 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-islands .island-spawns-card.is-spawns-pinned > .wiki-table-wrapper {
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
-  overscroll-behavior: contain !important;
-  margin-top: 0 !important;
 }
 
 .mobile-h5-app #wiki-subpanel-islands .island-spawns-compact-table {

@@ -1,10 +1,10 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
-## 需求：H5 島嶼棲息卡整卡吸頂＋列表內部捲動（2026-09-23）
+## 需求：H5 島嶼棲息整卡吸頂後才開列表捲動（2026-09-23）
 
-1. 不再只讓 `.wiki-card-header` sticky：整張 `.island-spawns-card`（標題、神獸開關、睡眠篩選）釘在子分頁列下方。
-2. 卡片高度限制在剩餘視窗內，`.wiki-table-wrapper` 內部捲動列表，表頭 sticky 在捲動區頂。
-3. 快取 `v=20260923_02`。
+1. `.island-spawns-card` sticky（無底色、overflow visible），標題＋篩選＋列表視窗一起釘在子分頁列下。
+2. 外層 `#panel-wiki` 先滑到底並判定吸頂後，才幫卡片加上 `is-spawns-pinned`、開放表格內部捲動；未吸頂時列表 overflow hidden。
+3. 快取 `v=20260923_03`。
 
 ---
 
