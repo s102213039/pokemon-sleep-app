@@ -22209,16 +22209,16 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 12px;
   background: rgba(2, 132, 199, 0.12);
   border: 1px solid rgba(56, 189, 248, 0.35);
   border-radius: 12px;
-  padding: 6px 14px;
-  margin-bottom: 12px;
+  padding: 4px 12px;
+  margin-bottom: 10px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  min-height: 46px;
+  min-height: 42px;
 }
 
 .ladder-recipe-banner-recipes {
@@ -22234,10 +22234,10 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 8px 3px 6px;
-  border-radius: 999px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04));
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
 }
 
 .ladder-recipe-banner-recipe-dot {
@@ -22310,22 +22310,27 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
 .ladder-recipe-banner-clear-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  background: rgba(239, 68, 68, 0.18);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  color: #fca5a5;
-  font-size: 11.5px;
-  font-weight: 600;
-  padding: 4px 9px;
-  border-radius: 6px;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0;
+  background: rgba(239, 68, 68, 0.16);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  color: #f87171;
+  border-radius: 50%;
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
 .ladder-recipe-banner-clear-btn:hover {
   background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.7);
+  color: #fca5a5;
+  transform: scale(1.05);
 }
 
 /* Banner Ingredients List (Inline next to recipe) */
@@ -22526,6 +22531,7 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
   background: #fee2e2;
   border: 1px solid #fca5a5;
   color: #b91c1c;
+  border-radius: 50%;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-clear-btn:hover,
@@ -22534,6 +22540,7 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
 [data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-clear-btn:hover {
   background: #fecaca;
   color: #991b1b;
+  border-color: #f87171;
 }
 
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ings,
@@ -22768,11 +22775,11 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
 /* Mobile H5 Condensed Single-Row Recipe Banner */
 .mobile-h5-app .ladder-recipe-banner,
 .mobile-h5-html .ladder-recipe-banner {
-  padding: 5px 8px;
+  padding: 4px 10px;
   gap: 8px;
   margin-bottom: 8px;
   border-radius: 10px;
-  min-height: 44px;
+  min-height: 42px;
   height: auto;
 }
 
@@ -22787,6 +22794,14 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
   height: 38px;
   min-width: 38px;
   border-radius: 8px;
+}
+
+.mobile-h5-app .ladder-recipe-banner-recipe-chip,
+.mobile-h5-html .ladder-recipe-banner-recipe-chip {
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 /* 旁邊的料理名稱與類型還有基礎能量都不要了 */
@@ -22839,18 +22854,24 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
 
 .mobile-h5-app .ladder-recipe-banner-clear-btn,
 .mobile-h5-html .ladder-recipe-banner-clear-btn {
-  padding: 4px 8px !important;
-  font-size: 11px !important;
-  border-radius: 5px !important;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 @media (max-width: 768px) {
   .ladder-recipe-banner {
-    padding: 5px 8px;
+    padding: 4px 10px;
     gap: 8px;
     margin-bottom: 8px;
     border-radius: 10px;
-    min-height: 44px;
+    min-height: 42px;
     height: auto;
   }
 
@@ -22863,6 +22884,13 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
     height: 38px;
     min-width: 38px;
     border-radius: 8px;
+  }
+
+  .ladder-recipe-banner-recipe-chip {
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
 
   .ladder-recipe-banner-text {
@@ -22906,9 +22934,15 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
   }
 
   .ladder-recipe-banner-clear-btn {
-    padding: 4px 8px !important;
-    font-size: 11px !important;
-    border-radius: 5px !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 }
 

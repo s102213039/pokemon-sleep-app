@@ -16416,40 +16416,18 @@
                   const style = getRecipeMarkStyle(idx);
                   const recName = isEN ? rec.name_en : rec.name_cn;
                   return `
-                    <div class="ladder-recipe-banner-recipe-chip" style="border-color:${style.color};background:${style.bg}">
-                      <span class="ladder-recipe-banner-recipe-dot" style="background:${style.color}"></span>
+                    <div class="ladder-recipe-banner-recipe-chip" title="${recName}">
+                      ${activeHighlightRecipes.length > 1 ? `<span class="ladder-recipe-banner-recipe-dot" style="background:${style.color}"></span>` : ''}
                       <img src="${rec.icon}" class="ladder-recipe-banner-icon" alt="${recName}">
-                      <span class="ladder-recipe-banner-title">${recName}</span>
                     </div>
                   `;
                 }).join('')}
               </div>
-              <div class="ladder-recipe-banner-ings">
-                ${(() => {
-                  const seen = new Set();
-                  const chips = [];
-                  activeHighlightRecipes.forEach(rec => {
-                    (rec.ingredients || []).forEach(item => {
-                      if (seen.has(item.name)) return;
-                      seen.add(item.name);
-                      const itemDisplayName = isEN ? ((window.I18N && window.I18N.getIngredientName(item.name)) || item.name) : item.name;
-                      chips.push(`
-                        <div class="ladder-recipe-banner-ing-chip" title="${itemDisplayName}">
-                          <img src="${item.icon}" class="ladder-banner-ing-icon" alt="${itemDisplayName}">
-                          ${renderIngQtyMarks(highlightMarks.get(item.name) || [])}
-                        </div>
-                      `);
-                    });
-                  });
-                  return chips.join('');
-                })()}
-              </div>
-              <button type="button" class="ladder-recipe-banner-clear-btn" onclick="window.WikiDB.clearLadderHighlightRecipe()" title="${isEN ? 'Clear recipe highlight' : '清除料理高亮'}">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <button type="button" class="ladder-recipe-banner-clear-btn" onclick="window.WikiDB.clearLadderHighlightRecipe()" title="${isEN ? 'Clear recipe highlight' : '清除料理高亮'}" aria-label="${isEN ? 'Clear' : '清除'}">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
-                <span>${isEN ? 'Clear' : '清除'}</span>
               </button>
             </div>
           ` : ''}

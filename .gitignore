@@ -24,4 +24,5 @@ package-lock.json
 scratch/
 # Local agent scratch (upscalers, tmp)
 .agent-tmp/
+.claude-flow/
 assets/islands/hd-snorlax/

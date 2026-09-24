@@ -7753,6 +7753,51 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(css.includes('.mobile-h5-app .sidebar-scrollable-content') && css.includes('overscroll-behavior-y: contain !important;'), 'filter drawer must contain overscroll');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Ladder Recipe Banner Simplification: Icon-Only Presentation, Borderless Dish, Red Circular X Clear Button, and Zero Ingredient Chips', () => {
+    const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+    const css = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+    // 1. Static code assertions
+    assert(!wikiJs.includes('ladder-recipe-banner-ings'), 'wiki.js must NOT render .ladder-recipe-banner-ings in the banner');
+    assert(!wikiJs.includes('ladder-recipe-banner-ing-chip'), 'wiki.js must NOT render .ladder-recipe-banner-ing-chip in the banner');
+    assert(!wikiJs.includes('ladder-recipe-banner-title'), 'wiki.js must NOT render .ladder-recipe-banner-title (dish name text)');
+    assert(!wikiJs.includes('<span>${isEN ? \'Clear\' : \'清除\'}</span>'), 'Clear button must NOT render text, only X icon');
+    assert(wikiJs.includes('class="ladder-recipe-banner-clear-btn"'), 'Clear button must exist');
+
+    // 2. CSS Style assertions
+    assert(css.includes('.ladder-recipe-banner-recipe-chip {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  padding: 0;\n  border: none;\n  background: transparent;\n  box-shadow: none;\n}'), 'recipe chip must be borderless and backgroundless');
+    assert(css.includes('.ladder-recipe-banner-clear-btn') && css.includes('border-radius: 50%'), 'clear button must have circular border-radius');
+    assert(css.includes('.mobile-h5-app .ladder-recipe-banner-clear-btn') && css.includes('border-radius: 50% !important;'), 'mobile clear button must be circular');
+
+    // 3. Functional / DOM verification with WikiDB
+    const ctx = {
+      localStorage: { getItem: () => 'zh-TW', setItem: () => {} },
+      window: { localStorage: { getItem: () => 'zh-TW', setItem: () => {} }, addEventListener: () => {} },
+      document: {
+        readyState: 'complete',
+        addEventListener: () => {},
+        getElementById: () => null,
+        querySelectorAll: () => []
+      }
+    };
+    vm.createContext(ctx);
+    vm.runInContext(wikiJs, ctx);
+
+    ctx.window.WikiDB.selectLadderHighlightRecipe('彈跳咖哩烏龍麵');
+    const renderedHtml = ctx.window.WikiDB.renderCoordinateLadder();
+
+    assert(renderedHtml.includes('class="ladder-recipe-banner'), 'Rendered ladder must include recipe banner when active');
+    assert(renderedHtml.includes('class="ladder-recipe-banner-icon"'), 'Banner must render dish icon');
+    assert(!renderedHtml.includes('ladder-recipe-banner-ing-chip'), 'Banner must NOT contain ingredient chips');
+    assert(!renderedHtml.includes('ladder-recipe-banner-title'), 'Banner must NOT contain dish name title');
+    assert(renderedHtml.includes('class="ladder-recipe-banner-clear-btn"'), 'Banner must contain clear button');
+    assert(!renderedHtml.includes('<span>清除</span>'), 'Clear button must NOT contain text');
+    assert(renderedHtml.includes('<line x1="18" y1="6" x2="6" y2="18"></line>'), 'Clear button must contain X SVG');
+
+    // Clean up
+    ctx.window.WikiDB.clearLadderHighlightRecipe();
+  });
+
 console.log('\n======================================================');
 console.log('                   Test Results Summary');
 console.log('======================================================');

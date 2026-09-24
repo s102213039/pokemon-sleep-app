@@ -1,10 +1,67 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
-## 需求：H5 島嶼棲息 CoordinatorLayout 吸頂（2026-09-23）
+## 交接：2026-09-22 至 2026-09-24 已完成（下一個 agent 先讀）
 
-1. 外層先滑。棲息卡頂到子分頁列後 `position:fixed` 貼齊子分頁下緣，高度只到面板底。
-2. 吸頂後列表才內部捲動。離開島嶼子分頁會解除吸頂，不再改其他百科子分頁的捲動。
-3. 快取 `v=20260923_06`。
+使用者已確認這一批「大致可以」。不要重做，也不要退回下面列的行為。快取 `v=20260924_01`，測試 `node tests/run_tests.js` 為 157/157。線上：`https://s102213039.github.io/pokemon-sleep-app/`。預覽用系統瀏覽器 `open`，不要用 Cursor 內建瀏覽器。全域禁止 Emoji。
+
+改完靜態資源必須同時改 `index.html` 與 `app/index.html` 的 `?v=`，否則 GitHub Pages 會看到舊檔。
+
+### 已完成需求
+
+1. **副技能外框、島嶼圖層、養成指引、關閉動畫**（`532d365`，快取曾為 `v=20260922_01`）
+   - 桌面 `#wiki/subskills` 各大類 `.wiki-card` 去掉外框、底、陰影，只留內部表格框。
+   - 島嶼圖層用 `ensureIslandSceneLayer`：找不到就建；切走只加 `island-scene-hidden`；`refreshIslandsSubpanel` 先把圖層移出再重繪 innerHTML。
+   - 「新手與進階養成核心週期指引」`.wiki-strategy-card` 內距縮小。
+   - 浮窗關閉用反向動畫；圖鑑要靠 `#pokedex-detail-modal.overlay-closing` 蓋過開啟動畫。
+
+2. **盒子彈窗頂欄、島嶼表文案與列高**（`143d781`）
+   - `#box-edit-modal`：取消在標題左、標題在中、確定在右；不要右上關閉鈕。中文儲存是「確定」。
+   - 島嶼雙表標題用短名（評級所需能量、出現數門檻）。左表列高均分，跟右表底對齊。
+   - H5 `.mobile-controls-container` 透明，不要頂欄底色。
+
+3. **喜好樹果在標題旁邊**（`5c09999`）
+   - 桌面與 H5：`.island-hero-content` 橫向，`.island-title-group` 在左、`.island-berries-section` 在右，中間留空隙。
+
+4. **桌面圖鑑彈窗**（`2fd2824`、`2397482`）
+   - 網頁版隱藏 `#pokedex-detail-modal .sheet-drag-handle`。H5 保留。
+   - 性格與睡飽飽獎章 `.custom-select-rf` 用 `width: max-content`，不要省略號。
+   - `.pokedex-calc-unified-box` 拉高，對齊右欄最後一個 `.subskill-tier-section` 底邊。
+
+5. **島嶼導覽選中可見**（`2397482`）
+   - `scrollActiveIslandTabIntoView`：重繪 `.island-nav-strip` 後只把選中營地捲進可視範圍，不要把整條捲回起點。
+
+6. **幫忙間隔性格降速**（`2397482`）
+   - 官方減輕後是間隔 **+7.5%（1.075 倍，產能 -6.98%）**，不是舊的 +10% / 1.10。
+   - `HELPING_SPEED_MATRIX` 降速列 `intervalRatio: 1.075`。`app.js` 的 `natureSpeedMult` 降速為 `1.075`、加速為 `0.90`。
+   - 性格欄符號跟上方矩陣一致：`▲ 上升` / `▼ 下降` / `✕`。
+
+7. **H5 島嶼棲息整卡吸頂**（`ab2f458` 到 `244f651`，使用者已接受）
+   - 只做 H5 `#wiki/islands`。吸頂對象是整張 `.island-spawns-card`（`.wiki-card-header`、神獸開關、睡眠篩選、下方列表視窗），不是只釘標題。
+   - 卡片不要實心底色。
+   - 外層先滑 `#panel-wiki`。卡頂碰到 `.wiki-subnav-bar` 下緣才 `position: fixed` 釘住，高度只到百科面板底。
+   - 釘住前 `.wiki-table-wrapper` 不能內部滑。加上 `is-spawns-pinned` 之後列表才內部滑。列表滑回頂再往上，交還外層並解除釘住。
+   - 不要用 CSS `position: sticky`。這個捲動鏈會讓 sticky 失效；只釘 header 使用者已拒絕。
+   - 不要在卡片上寫 `top: auto !important` 或 `height: 100% !important`。這兩個會蓋掉釘住座標，標題會停在畫面中間、上面空一大塊。
+   - 釘住座標用 `--spawns-pin-top`、`--spawns-pin-h`，對齊子分頁列的 `getBoundingClientRect().bottom`。
+
+8. **天梯選取料理橫條精簡與按鈕圖示化**（快取 `v=20260924_01`）
+   - 移除頂部 `.ladder-recipe-banner-ings` 與所有食材晶片，不額外展示食材。
+   - 選取料理去除料理名稱文字，只展示料理圖示（`<img class="ladder-recipe-banner-icon">`）。
+   - 選取料理完全移除外框與背景（`.ladder-recipe-banner-recipe-chip` 採 `border: none; background: transparent; padding: 0;`）。多選時保留顏色圓點標記。
+   - 清除按鈕移除文字（「清除」/「Clear」），改用純向量「X」圖示（`<svg>`），維持紅色主題配色，並改為圓形外框（`border-radius: 50%`，尺寸 28x28px）。
+
+### 吸頂實作位置（接續時不要改壞）
+
+- `js/modules/wiki.js`
+  - `islandSpawnsTabActive`：`currentWikiSubTab !== 'islands'` 或子面板未顯示時必須直接 return。
+  - `releaseIslandSpawnsPin`：離開島嶼子分頁時呼叫。隱藏中的節點 `getBoundingClientRect()` 是 0，若仍去改 `#panel-wiki.scrollTop`，其他百科子分頁會一頓一頓滑不動。
+  - `applyIslandSpawnsCoordinator` / `bindIslandSpawnsCoordinator`：捲動監聽掛在 `#panel-wiki`，但只有島嶼子分頁能改 `scrollTop`。
+  - 標記 DOM：`.island-spawns-coordinator` > `.island-spawns-card` > `.wiki-card-header` + `.wiki-table-wrapper`。
+- `css/styles.css` 末段 `.mobile-h5-app #wiki-subpanel-islands .island-spawns-card.is-spawns-pinned`：`position: fixed`。未釘住時列表 `overflow-y: hidden`，釘住後才 `overflow-y: auto`。
+
+### 尚未交給下一個 agent 的新需求
+
+使用者沒有提出下一個功能。若要改百科捲動，先確認主技能、副技性格、食材天梯、能量速查、培育指南仍能正常滑，再動島嶼吸頂。
 
 ---
 
