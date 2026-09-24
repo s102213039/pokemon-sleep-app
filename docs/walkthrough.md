@@ -2,7 +2,7 @@
 
 ## 交接：2026-09-22 至 2026-09-24 已完成（下一個 agent 先讀）
 
-使用者已確認這一批「大致可以」。不要重做，也不要退回下面列的行為。快取 `v=20260924_01`，測試 `node tests/run_tests.js` 為 157/157。線上：`https://s102213039.github.io/pokemon-sleep-app/`。預覽用系統瀏覽器 `open`，不要用 Cursor 內建瀏覽器。全域禁止 Emoji。
+使用者已確認這一批「大致可以」。不要重做，也不要退回下面列的行為。HEAD `ca0afe8`，快取 `v=20260924_01`，測試 `node tests/run_tests.js` 為 157/157。線上：`https://s102213039.github.io/pokemon-sleep-app/`。預覽用系統瀏覽器 `open`，不要用 Cursor 內建瀏覽器。全域禁止 Emoji。
 
 改完靜態資源必須同時改 `index.html` 與 `app/index.html` 的 `?v=`，否則 GitHub Pages 會看到舊檔。
 
