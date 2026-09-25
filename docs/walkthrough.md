@@ -8,31 +8,47 @@
 
 ### 已完成需求
 
-1. **H5 App 全域滾動條完全隱藏與島嶼營地多餘空白修正**（快取 `v=20260925_04`，測試 159/159）
-   - **全域滾動條隱藏**：原生 App 無 scrollbar，透過 `html.mobile-h5-html *` 與 `body.mobile-h5-app *` 全域設定 `scrollbar-width: none !important;` 與 `::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }`，並修復 `.mobile-h5-app .wiki-subnav-tabs` 曾顯式指定 `display: block` 的滾動條。
-   - **島嶼營地短內容多餘滾動與空白留白消除**：
-     - 成因分析：H5 模式下 `body` 已保留 62px 避讓底部導航列，而 `#panel-wiki` 內的 `.wiki-main-container` 存在 24px 下內距，`#wiki-subpanel-islands.active` 亦有 32px 下內距，合計 56px 的虛擬空白導致即便只有 4 列寶可夢（如神獸篩選）時，`scrollHeight` 依然略大於視窗高度 40-50px，產生不必要的向下滾動並在底部露出空洞黑塊。
-     - 修正措施：
-       1. `#wiki-subpanel-islands.active` 底部 padding 設為 0。
-       2. `.mobile-h5-app.islands-active .wiki-main-container` 及 `:has(#wiki-subpanel-islands.active)` 底部 padding 設為 0。
-       3. 緊湊化 `.island-overview-card` 下邊距（降為 8px）與 `.island-hero-body` 內距。
-       4. `applyIslandSpawnsCoordinator` 增加容量守衛：當列表所需總高度小於等於可用吸頂高度時（`totalCardNeededH <= pinH`），嚴禁吸頂，不擴展 `els.host.style.height`，卡片維持 `height: auto` 自然高度。
-       5. 當篩選條件切換造成內容縮短時，自動將捲動位置限制在 `maxScroll` 之內，杜絕畫面停留在空洞區域。
-
-2. **島嶼 5 官方正式名稱修正為「寶藍湖畔」**（`bfea139`）
-   - 將全專案（`wiki.js`、`i18n.js`、`news.js`、`compare.html` 及各測試）中誤用的「拉碧絲湖畔」徹底更正為遊戲內官方譯名「**寶藍湖畔**」。
-
-3. **天梯選取料理橫條精簡與按鈕圖示化**（快取曾為 `v=20260924_01`）
-   - 移除頂部 `.ladder-recipe-banner-ings` 與所有食材晶片，不額外展示食材。
-   - 選取料理去除料理名稱文字，只展示料理圖示（`<img class="ladder-recipe-banner-icon">`）。
-   - 選取料理完全移除外框與背景（`.ladder-recipe-banner-recipe-chip` 採 `border: none; background: transparent; padding: 0;`）。多選時保留顏色圓點標記。
-   - 清除按鈕移除文字（「清除」/「Clear」），改用純向量「X」圖示（`<svg>`），維持紅色主題配色，並改為圓形外框（`border-radius: 50%`，尺寸 28x28px）。
-
-4. **副技能外框、島嶼圖層、養成指引、關閉動畫**（`532d365`）
+1. **副技能外框、島嶼圖層、養成指引、關閉動畫**（`532d365`，快取曾為 `v=20260922_01`）
    - 桌面 `#wiki/subskills` 各大類 `.wiki-card` 去掉外框、底、陰影，只留內部表格框。
    - 島嶼圖層用 `ensureIslandSceneLayer`：找不到就建；切走只加 `island-scene-hidden`；`refreshIslandsSubpanel` 先把圖層移出再重繪 innerHTML。
    - 「新手與進階養成核心週期指引」`.wiki-strategy-card` 內距縮小。
    - 浮窗關閉用反向動畫；圖鑑要靠 `#pokedex-detail-modal.overlay-closing` 蓋過開啟動畫。
+
+2. **盒子彈窗頂欄、島嶼表文案與列高**（`143d781`）
+   - `#box-edit-modal`：取消在標題左、標題在中、確定在右；不要右上關閉鈕。中文儲存是「確定」。
+   - 島嶼雙表標題用短名（評級所需能量、出現數門檻）。左表列高均分，跟右表底對齊。
+   - H5 `.mobile-controls-container` 透明，不要頂欄底色。
+
+3. **喜好樹果在標題旁邊**（`5c09999`）
+   - 桌面與 H5：`.island-hero-content` 橫向，`.island-title-group` 在左、`.island-berries-section` 在右，中間留空隙。
+
+4. **桌面圖鑑彈窗**（`2fd2824`、`2397482`）
+   - 網頁版隱藏 `#pokedex-detail-modal .sheet-drag-handle`。H5 保留。
+   - 性格與睡飽飽獎章 `.custom-select-rf` 用 `width: max-content`，不要省略號。
+   - `.pokedex-calc-unified-box` 拉高，對齊右欄最後一個 `.subskill-tier-section` 底邊。
+
+5. **島嶼導覽選中可見**（`2397482`）
+   - `scrollActiveIslandTabIntoView`：重繪 `.island-nav-strip` 後只把選中營地捲進可視範圍，不要把整條捲回起點。
+
+6. **幫忙間隔性格降速**（`2397482`）
+   - 官方減輕後是間隔 **+7.5%（1.075 倍，產能 -6.98%）**，不是舊的 +10% / 1.10。
+   - `HELPING_SPEED_MATRIX` 降速列 `intervalRatio: 1.075`。`app.js` 的 `natureSpeedMult` 降速為 `1.075`、加速為 `0.90`。
+   - 性格欄符號跟上方矩陣一致：`▲ 上升` / `▼ 下降` / `✕`。
+
+7. **H5 島嶼棲息整卡吸頂**（`ab2f458` 到 `244f651`，使用者已接受）
+   - 只做 H5 `#wiki/islands`。吸頂對象是整張 `.island-spawns-card`（`.wiki-card-header`、神獸開關、睡眠篩選、下方列表視窗），不是只釘標題。
+   - 卡片不要實心底色。
+   - 外層先滑 `#panel-wiki`。卡頂碰到 `.wiki-subnav-bar` 下緣才 `position: fixed` 釘住，高度只到百科面板底。
+   - 釘住前 `.wiki-table-wrapper` 不能內部滑。加上 `is-spawns-pinned` 之後列表才內部滑。列表滑回頂再往上，交還外層並解除釘住。
+   - 不要用 CSS `position: sticky`。這個捲動鏈會讓 sticky 失效；只釘 header 使用者已拒絕。
+   - 不要在卡片上寫 `top: auto !important` 或 `height: 100% !important`。這兩個會蓋掉釘住座標，標題會停在畫面中間、上面空一大塊。
+   - 釘住座標用 `--spawns-pin-top`、`--spawns-pin-h`，對齊子分頁列的 `getBoundingClientRect().bottom`。
+
+8. **天梯選取料理橫條精簡與按鈕圖示化**（快取 `v=20260924_01`）
+   - 移除頂部 `.ladder-recipe-banner-ings` 與所有食材晶片，不額外展示食材。
+   - 選取料理去除料理名稱文字，只展示料理圖示（`<img class="ladder-recipe-banner-icon">`）。
+   - 選取料理完全移除外框與背景（`.ladder-recipe-banner-recipe-chip` 採 `border: none; background: transparent; padding: 0;`）。多選時保留顏色圓點標記。
+   - 清除按鈕移除文字（「清除」/「Clear」），改用純向量「X」圖示（`<svg>`），維持紅色主題配色，並改為圓形外框（`border-radius: 50%`，尺寸 28x28px）。
 
 ### 吸頂實作位置（接續時不要改壞）
 

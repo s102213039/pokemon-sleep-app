@@ -1061,12 +1061,6 @@ body,
 /* 2. Webkit (Chrome, Safari, iOS Safari, Android Chrome, Edge Chromium, Opera) */
 html::-webkit-scrollbar,
 body::-webkit-scrollbar,
-.view-panel::-webkit-scrollbar,
-#panel-pokemon::-webkit-scrollbar,
-#panel-recipes::-webkit-scrollbar,
-#panel-wiki::-webkit-scrollbar,
-#panel-box::-webkit-scrollbar,
-#panel-news::-webkit-scrollbar,
 .pokemon-table-container::-webkit-scrollbar,
 .table-container::-webkit-scrollbar,
 .box-table-container::-webkit-scrollbar,
@@ -13701,26 +13695,7 @@ body.mobile-h5-surface {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Hide all scrollbars globally in H5 App mode (Native app-like feel) */
-html.mobile-h5-html,
-html.mobile-h5-html *,
-body.mobile-h5-app,
-body.mobile-h5-app * {
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE 10+ and Edge */
-}
-
-html.mobile-h5-html::-webkit-scrollbar,
-html.mobile-h5-html *::-webkit-scrollbar,
-body.mobile-h5-app::-webkit-scrollbar,
-body.mobile-h5-app *::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  background: transparent !important;
-}
-
-/* 頂部 App Header (完全填滿、零左右邊距) */
+/* 📱 頂部 App Header (完全填滿、零左右邊距) */
 .mobile-app-header {
   position: fixed;
   top: 0;
@@ -15486,11 +15461,6 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   min-height: 0 !important;
 }
 
-.mobile-h5-app.islands-active .wiki-main-container,
-.mobile-h5-app .wiki-main-container:has(#wiki-subpanel-islands.active) {
-  padding-bottom: 0 !important;
-}
-
 .mobile-h5-app .wiki-subnav-bar {
   position: sticky !important;
   top: 0 !important;
@@ -15516,17 +15486,25 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   -webkit-overflow-scrolling: touch !important;
   gap: 3px !important;
   padding: 4px 6px !important;
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--border-color, rgba(255, 255, 255, 0.25)) transparent !important;
   width: 100% !important;
   margin: 0 !important;
   box-sizing: border-box !important;
 }
 
 .mobile-h5-app .wiki-subnav-tabs::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
+  height: 2.5px !important;
+  display: block !important;
+}
+
+.mobile-h5-app .wiki-subnav-tabs::-webkit-scrollbar-thumb {
+  background: var(--border-color, rgba(255, 255, 255, 0.25)) !important;
+  border-radius: 2px !important;
+}
+
+.mobile-h5-app .wiki-subnav-tabs::-webkit-scrollbar-track {
+  background: transparent !important;
 }
 
 .mobile-h5-app .wiki-subtab-btn {
@@ -17319,7 +17297,7 @@ body.mobile-h5-app.values-active,
 /* 8. Sub-Tab 6: 7大研究營地與EX專家模式 (Research Camps & EX Mode Mobile App Layout) */
 .mobile-h5-app #wiki-subpanel-islands.active {
   display: block !important;
-  padding: 0 10px 0 10px !important;
+  padding: 0 10px 32px 10px !important;
   box-sizing: border-box !important;
   width: 100% !important;
   min-height: 0 !important;
@@ -17393,7 +17371,7 @@ body.mobile-h5-app.values-active,
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  margin: 0 -10px 8px !important;
+  margin: 0 -10px 12px !important;
   width: calc(100% + 20px) !important;
 }
 
@@ -17407,8 +17385,8 @@ body.mobile-h5-app.values-active,
 }
 
 .mobile-h5-app .island-hero-body {
-  padding: 6px 10px 8px !important;
-  gap: 8px !important;
+  padding: 8px 10px 12px !important;
+  gap: 10px !important;
 }
 
 .mobile-h5-app .island-hero-content {
@@ -27394,8 +27372,6 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
 .mobile-h5-app #wiki-subpanel-islands .island-spawns-coordinator {
   position: relative !important;
   width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
 }
 
 .mobile-h5-app #wiki-subpanel-islands .island-spawns-card {
@@ -27403,12 +27379,10 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
   flex-direction: column !important;
   position: relative !important;
   height: auto !important;
-  max-height: none !important;
+  max-height: var(--spawns-pin-h, 70dvh) !important;
   min-height: 0 !important;
-  overflow: visible !important;
+  overflow: hidden !important;
   background: transparent !important;
-  margin: 0 !important;
-  padding: 0 !important;
 }
 
 .mobile-h5-app #wiki-subpanel-islands .island-spawns-card.is-spawns-pinned {
@@ -27417,7 +27391,6 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
   top: var(--spawns-pin-top, 84px) !important;
   height: var(--spawns-pin-h, 70dvh) !important;
   max-height: none !important;
-  overflow: hidden !important;
 }
 
 .mobile-h5-app #wiki-subpanel-islands .island-spawns-card > .wiki-card-header {
@@ -27426,8 +27399,8 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
   flex-shrink: 0 !important;
   z-index: 2 !important;
   background: transparent !important;
-  padding-top: 6px !important;
-  padding-bottom: 6px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
   margin-top: 0 !important;
 }
 
@@ -27436,8 +27409,7 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
   min-height: 0 !important;
   overflow-x: auto !important;
   overflow-y: hidden !important;
-  margin-top: 4px !important;
-  margin-bottom: 0 !important;
+  margin-top: 0 !important;
 }
 
 .mobile-h5-app #wiki-subpanel-islands .island-spawns-card.is-spawns-pinned > .wiki-table-wrapper {
@@ -27448,7 +27420,6 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
 .mobile-h5-app #wiki-subpanel-islands .island-spawns-compact-table {
   border-collapse: separate !important;
   border-spacing: 0 !important;
-  margin-bottom: 0 !important;
 }
 
 .mobile-h5-app #wiki-subpanel-islands .island-spawns-compact-table thead th {
@@ -27456,23 +27427,4 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
   top: 0 !important;
   z-index: 3 !important;
   background: var(--table-th-solid, var(--bg-card-solid, var(--bg-dark))) !important;
-}
-
-/* Universal final safeguard: Ensure zero scrollbars anywhere in H5 App mode */
-html.mobile-h5-html,
-html.mobile-h5-html *,
-body.mobile-h5-app,
-body.mobile-h5-app * {
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
-}
-
-html.mobile-h5-html::-webkit-scrollbar,
-html.mobile-h5-html *::-webkit-scrollbar,
-body.mobile-h5-app::-webkit-scrollbar,
-body.mobile-h5-app *::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  background: transparent !important;
 }
