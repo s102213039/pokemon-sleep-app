@@ -7859,6 +7859,79 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(css.includes('html {\n  background-color: var(--bg-dark);'), 'HTML element must have background-color: var(--bg-dark) for seamless bounce/rubber-band edges');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Calc Input Num Focusability, Selection, and Non-Destructive Tooltip Dismiss Verification', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const vm = require('vm');
+    const appJs = fs.readFileSync(path.join(__dirname, '../js/modules/app.js'), 'utf8');
+    const wikiJs = fs.readFileSync(path.join(__dirname, '../js/modules/wiki.js'), 'utf8');
+    const css = fs.readFileSync(path.join(__dirname, '../css/styles.css'), 'utf8');
+
+    // 1. dismissAllFloatingTooltips must protect form fields from being blurred
+    assert(appJs.includes("activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT'"), 'dismissAllFloatingTooltips must check if activeElement is a form field');
+    assert(appJs.includes('if (!isFormField) {\n        document.activeElement.blur();'), 'dismissAllFloatingTooltips must only blur non-form elements');
+
+    // 2. CSS must define robust focus and selection rules for calc-input-num (desktop and mobile)
+    assert(css.includes('.calc-input-num:focus') && css.includes('.calc-input-num:focus-visible'), 'CSS must define focus & focus-visible for calc-input-num');
+    assert(css.includes('.mobile-h5-app .calc-input-num:focus') && css.includes('border-color: var(--accent-blue, #38bdf8) !important;'), 'Mobile CSS must define high-priority border-color on focus');
+    assert(css.includes('.mobile-h5-app .calc-input-num') && css.includes('user-select: text !important;'), 'Mobile calc-input-num must have user-select: text !important');
+
+    // 3. wiki.js calc-sleep-cur-lv must have inputmode and auto-selection attributes
+    assert(wikiJs.includes('id="calc-sleep-cur-lv"') && wikiJs.includes('inputmode="numeric"'), 'calc-sleep-cur-lv must specify inputmode="numeric"');
+    assert(wikiJs.includes('onfocus="this.select()"') && wikiJs.includes('onclick="this.select()"'), 'calc-sleep-cur-lv must trigger this.select() on focus and click');
+    assert(wikiJs.includes("curLvInput.addEventListener('focus'"), 'curLvInput must bind focus listener for auto-selection');
+
+    // 4. Functional VM verification: dismissAllFloatingTooltips must NOT blur input elements
+    const mockInput = {
+      tagName: 'INPUT',
+      id: 'calc-sleep-cur-lv',
+      blurred: false,
+      blur() { this.blurred = true; }
+    };
+    const mockBtn = {
+      tagName: 'BUTTON',
+      id: 'test-btn',
+      blurred: false,
+      classList: { remove: () => {} },
+      setAttribute: () => {},
+      blur() { this.blurred = true; }
+    };
+
+    const sandbox = {
+      window: {
+        innerWidth: 375,
+        innerHeight: 667,
+        WikiDB: { closeLadderEnergyHelp: () => {} }
+      },
+      document: {
+        body: {},
+        activeElement: mockInput,
+        querySelectorAll: () => [],
+        getElementById: () => null
+      }
+    };
+
+    const funcCode = `
+      let currentGlobalTooltipAnchor = null;
+      let lastGlobalTooltipShownTime = 0;
+      let isTooltipPinned = false;
+      ${appJs.substring(appJs.indexOf('function hideGlobalTooltip'), appJs.indexOf('if (typeof window !== \'undefined\') {\n  window.showGlobalTooltip'))}
+    `;
+    vm.createContext(sandbox);
+    vm.runInContext(funcCode, sandbox);
+
+    // Call dismissAllFloatingTooltips when activeElement is mockInput
+    sandbox.dismissAllFloatingTooltips();
+    assert(mockInput.blurred === false, 'dismissAllFloatingTooltips must NOT blur an active INPUT element');
+
+    // Call dismissAllFloatingTooltips when activeElement is mockBtn
+    sandbox.document.activeElement = mockBtn;
+    sandbox.dismissAllFloatingTooltips();
+    assert(mockBtn.blurred === true, 'dismissAllFloatingTooltips MUST blur a non-form element');
+  });
+
+
+
 
 
 console.log('\n======================================================');

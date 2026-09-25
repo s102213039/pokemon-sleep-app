@@ -9456,6 +9456,9 @@ input[type="number"] {
 .calc-input-num {
   background-image: none;
   padding-right: 12px;
+  cursor: text;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .calc-select:hover,
@@ -9464,9 +9467,13 @@ input[type="number"] {
 }
 
 .calc-select:focus,
-.calc-input-num:focus {
-  border-color: var(--accent-blue, #38bdf8);
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+.calc-select:focus-visible,
+.calc-input-num:focus,
+.calc-input-num:focus-visible {
+  border-color: var(--accent-blue, #38bdf8) !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35) !important;
+  outline: 2px solid var(--accent-blue, #38bdf8) !important;
+  outline-offset: 1px !important;
 }
 
 .calc-select option {
@@ -16718,14 +16725,29 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .calc-input-num {
   width: 100% !important;
   box-sizing: border-box !important;
-  padding: 6px 8px !important;
-  font-size: 13px !important;
+  padding: 6px 10px !important;
+  font-size: 13.5px !important;
   height: 36px !important;
   min-height: 36px !important;
   border-radius: 8px !important;
   background-color: var(--bg-input, var(--bg-card-inner)) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-primary) !important;
+  cursor: text !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease !important;
+}
+
+.mobile-h5-app .calc-input-num:focus,
+.mobile-h5-app .calc-input-num:focus-visible {
+  border-color: var(--accent-blue, #38bdf8) !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35) !important;
+  background-color: var(--bg-card-hover, rgba(56, 189, 248, 0.08)) !important;
+  outline: 2px solid var(--accent-blue, #38bdf8) !important;
+  outline-offset: 1px !important;
 }
 
 .mobile-h5-app .calc-select {

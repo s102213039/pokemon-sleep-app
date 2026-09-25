@@ -708,6 +708,18 @@
    - 背景漸層遮罩 `.island-scene-fade` 調整為覆蓋全視窗高度（`height: 100%`），上方保留場景通透度、下方平滑漸變融入背景主題色，徹底消除水平切線。
    - 行動版 H5 App（`.mobile-h5-app`）同步將島嶼場景圖層設為 `position: fixed !important; inset: 0 !important; height: 100dvh !important;`，解除 300px 高度限制，滾動時全程跟隨。
    - 全域 `html` 元素補上 `background-color: var(--bg-dark);`，確保橡皮筋回彈與捲動邊緣無任何斷層。
-3. 快取更新至 `v=20260925_07`，自動化測試套件新增專項測試，全部 160 項測試 100% 通過。
+## 需求三十三：睡眠經驗值計算機輸入框 focusable 與選取狀態修復（2026-09-26）
+
+1. 問題根因深度定位：
+   - 核心失焦根因：在全域懸浮 Tooltip 關閉函式 `dismissAllFloatingTooltips()` 中，原本無差別執行 `if (document.activeElement && typeof document.activeElement.blur === 'function' && document.activeElement !== document.body) { document.activeElement.blur(); }`。當使用者在頁面上點擊任意輸入框（如 `.calc-input-num`），瀏覽器首先在 mousedown / pointerdown 賦予 focus，但緊接著觸發的 click 事件會呼叫 `dismissAllFloatingTooltips()`，導致輸入框在剛獲得焦點的瞬間立即被強行 blur 失焦，造成「focusable 都無法在他身上、點擊完全無反應」的現象。
+   - 軟鍵盤彈起失焦：在行動端，鍵盤彈起時常伴隨容器捲動觸發 scroll 事件，而 scroll 事件監聽器同樣呼叫了 `dismissAllFloatingTooltips()`，導致行動端鍵盤一彈起就因失焦而立刻縮回。
+   - 視覺樣式缺失：在 `.mobile-h5-app .calc-input-num` 中設置了 `border: 1px solid var(--border-color) !important;` 與 `outline: none;`，使得既有的 `:focus` 樣式因權重不足被覆蓋，即便處於焦點狀態邊框顏色亦完全不變，無任何焦點回饋。
+   - 數值選取不便：未設置 `onfocus="this.select()"` 與 `onclick="this.select()"`，且缺乏 `inputmode="numeric"` 宣告，行動端不易叫出純數字鍵盤，且預設數值無法於點擊時自動全選替換。
+2. 完整修復與體驗強化：
+   - 保護表單控制元件免於誤失焦：在 `dismissAllFloatingTooltips()` 中加入標籤與編輯狀態判斷（`activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT' || document.activeElement.isContentEditable`），保證使用者點擊、聚焦或編輯表單元件時絕對不被強行 blur，只對非表單元件執行失焦。
+   - 增強焦點與選取樣式：為 `.calc-input-num` 與 `.mobile-h5-app .calc-input-num` 補上高權重 `:focus`、`:focus-visible` 樣式，邊框高亮為亮藍色（`var(--accent-blue, #38bdf8) !important`），並具備 `outline: 2px solid var(--accent-blue, #38bdf8) !important` 與外發光光暈；明確標記 `cursor: text !important;` 與 `user-select: text !important; -webkit-user-select: text !important;`。
+   - 優化輸入體驗與全選：在 `#calc-sleep-cur-lv` 加入 `inputmode="numeric"`、`pattern="[0-9]*"`、`autocomplete="off"`，並在 HTML 與事件監聽器中綁定 `focus` / `click` 自動執行 `this.select()`，點擊即可一鍵替換目前等級。
+3. 快取更新至 `v=20260926_01`，自動化測試套件新增專項測試，全部 161 項測試 100% 通過。
+
 
 

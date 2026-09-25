@@ -13788,6 +13788,12 @@
     if (curLvInput) {
       curLvInput.oninput = recalcSleepDays;
       curLvInput.onchange = recalcSleepDays;
+      curLvInput.addEventListener('focus', function () {
+        if (typeof this.select === 'function') this.select();
+      });
+      curLvInput.addEventListener('click', function () {
+        if (typeof this.select === 'function') this.select();
+      });
     }
 
     const targetLvInput = document.getElementById('calc-sleep-target-lv');
@@ -17882,7 +17888,7 @@
                 <div class="calc-form-row calc-form-row-levels">
                   <div class="calc-field-group calc-field-cur">
                     <label class="calc-label" for="calc-sleep-cur-lv">${isEN ? 'Current:' : '目前等級:'}</label>
-                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="79" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
+                    <input type="number" id="calc-sleep-cur-lv" class="calc-input-num" value="1" min="1" max="79" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onfocus="this.select()" onclick="this.select()" oninput="window.WikiDB.recalcSleepDays()" onchange="window.WikiDB.recalcSleepDays()">
                   </div>
 
                   <div class="calc-field-group calc-field-target">

@@ -1441,7 +1441,11 @@ function dismissAllFloatingTooltips() {
       }
     });
     if (document.activeElement && typeof document.activeElement.blur === 'function' && document.activeElement !== document.body) {
-      document.activeElement.blur();
+      const activeTag = (document.activeElement.tagName || '').toUpperCase();
+      const isFormField = activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT' || document.activeElement.isContentEditable;
+      if (!isFormField) {
+        document.activeElement.blur();
+      }
     }
   }
 }
