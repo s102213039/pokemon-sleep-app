@@ -8,14 +8,21 @@
 
 ### 已完成需求
 
-1. **H5 App 全域滾動條徹底隱藏**（快取 `v=20260925_05`，HEAD `fbaea13`，測試 159/159）
+1. **H5 App wiki-card-header 整體向上微調**（快取 `v=20260925_06`，測試 159/159）
+   - 依使用者需求，僅針對 H5 App 版本（`.mobile-h5-app`）將所有百科卡片標題列（`.wiki-card-header`）整體向上微調。
+   - `.mobile-h5-app .wiki-card-header`：加入 `margin-top: -4px !important;`，緊湊頂部空間。
+   - `.mobile-h5-app #wiki-subpanel-subskills .wiki-card-header`：加入 `margin-top: -4px !important;`。
+   - `.mobile-h5-app .island-dual-grid .wiki-card-header`：加入 `margin-top: -3px !important;`。
+   - `.mobile-h5-app #wiki-subpanel-islands .island-spawns-card > .wiki-card-header`：將 `padding-top` 由 8px 調降為 3px、加入 `margin-top: -4px !important;`、`padding-bottom` 微調為 6px，使棲息解鎖標題列與切換開關整齊上移。
+
+2. **H5 App 全域滾動條徹底隱藏**（快取 `v=20260925_05`，HEAD `fbaea13`）
    - 原生 App 在各視圖滑動時不展示滾動條。
    - 在 `css/styles.css` 中配置全域隱藏規則：`html.mobile-h5-html *` 與 `body.mobile-h5-app *` 套用 `scrollbar-width: none !important;`、`-ms-overflow-style: none !important;` 以及 `::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; }`。
    - 移除了 `.mobile-h5-app .wiki-subnav-tabs` 曾顯式指定 `display: block` 的滾動條。
    - 在主要面板（`.view-panel`、`#panel-pokemon`、`#panel-recipes`、`#panel-wiki`、`#panel-box`、`#panel-news`）加入通用隱藏清單，並在樣式表末端加入最終防護規則，保證在所有 WebKit、Firefox、Edge 及 iOS/Android WebView 中均無滾動條。
    - 保留所有視圖原生的觸控、滾動與手勢邏輯，不更動任何 JavaScript、高度、邊距或協調器程式碼。
 
-2. **島嶼 5 官方正式名稱修正為「寶藍湖畔」**（`bfea139`）
+3. **島嶼 5 官方正式名稱修正為「寶藍湖畔」**（`bfea139`）
    - 將全專案（`wiki.js`、`i18n.js`、`news.js`、`compare.html` 及各測試）中誤用的「拉碧絲湖畔」徹底更正為遊戲內官方譯名「**寶藍湖畔**」。
 
 3. **副技能外框、島嶼圖層、養成指引、關閉動畫**（`532d365`，快取曾為 `v=20260922_01`）

@@ -15607,6 +15607,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
+  margin-top: -4px !important;
   margin-bottom: 8px !important;
 }
 
@@ -16203,6 +16204,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
+  margin-top: -4px !important;
   margin-bottom: 6px !important;
   padding-left: 2px !important;
 }
@@ -21126,6 +21128,11 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
   gap: 8px !important;
+}
+
+.mobile-h5-app .island-dual-grid .wiki-card-header {
+  margin-top: -3px !important;
+  margin-bottom: 4px !important;
 }
 
 .mobile-h5-app .island-dual-grid .wiki-card-title {
@@ -27422,9 +27429,9 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
   flex-shrink: 0 !important;
   z-index: 2 !important;
   background: transparent !important;
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
-  margin-top: 0 !important;
+  padding-top: 3px !important;
+  padding-bottom: 6px !important;
+  margin-top: -4px !important;
 }
 
 .mobile-h5-app #wiki-subpanel-islands .island-spawns-card > .wiki-table-wrapper {

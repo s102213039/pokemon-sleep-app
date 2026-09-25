@@ -7833,6 +7833,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
 
     // 2. View panels explicitly in WebKit scrollbar suppression list
     assert(css.includes('#panel-wiki::-webkit-scrollbar') && css.includes('#panel-pokemon::-webkit-scrollbar'), 'Main panels must be in webkit scrollbar suppression list');
+
+    // 3. Mobile H5 App wiki-card-header shifted up
+    assert(css.includes('.mobile-h5-app .wiki-card-header') && css.includes('margin-top: -4px !important;'), 'Mobile wiki-card-header must be shifted up with negative margin-top');
+    assert(css.includes('.mobile-h5-app #wiki-subpanel-islands .island-spawns-card > .wiki-card-header'), 'Island spawns header must have dedicated mobile styling');
   });
 
 
