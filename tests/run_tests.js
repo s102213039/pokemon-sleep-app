@@ -7823,6 +7823,18 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(newsJs.includes("'寶藍湖畔': 'Lapis Lakeside'"), "news.js ISLAND_MAP must contain official name '寶藍湖畔'");
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'H5 App Complete Scrollbar Suppression Across All Views', () => {
+    const css = fs.readFileSync(path.join(__dirname, '../css/styles.css'), 'utf8');
+
+    // 1. Universal H5 Scrollbar suppression rules
+    assert(css.includes('body.mobile-h5-app *') && css.includes('scrollbar-width: none !important;'), 'H5 app elements must have scrollbar-width: none !important');
+    assert(css.includes('body.mobile-h5-app *::-webkit-scrollbar') && css.includes('display: none !important;'), 'H5 app webkit scrollbars must have display: none !important');
+    assert(css.includes('.mobile-h5-app .wiki-subnav-tabs::-webkit-scrollbar') && css.includes('display: none !important;'), 'Wiki subnav tabs scrollbar must be hidden');
+
+    // 2. View panels explicitly in WebKit scrollbar suppression list
+    assert(css.includes('#panel-wiki::-webkit-scrollbar') && css.includes('#panel-pokemon::-webkit-scrollbar'), 'Main panels must be in webkit scrollbar suppression list');
+  });
+
 
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

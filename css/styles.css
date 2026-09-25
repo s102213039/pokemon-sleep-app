@@ -1053,7 +1053,13 @@ body,
 .h5-recipe-ing-section,
 .mobile-touch-scroll,
 .hide-scrollbar,
-.no-scrollbar {
+.no-scrollbar,
+.view-panel,
+#panel-pokemon,
+#panel-recipes,
+#panel-wiki,
+#panel-box,
+#panel-news {
   scrollbar-width: none !important; /* Firefox */
   -ms-overflow-style: none !important; /* IE 10+ and Edge */
 }
@@ -1061,6 +1067,12 @@ body,
 /* 2. Webkit (Chrome, Safari, iOS Safari, Android Chrome, Edge Chromium, Opera) */
 html::-webkit-scrollbar,
 body::-webkit-scrollbar,
+.view-panel::-webkit-scrollbar,
+#panel-pokemon::-webkit-scrollbar,
+#panel-recipes::-webkit-scrollbar,
+#panel-wiki::-webkit-scrollbar,
+#panel-box::-webkit-scrollbar,
+#panel-news::-webkit-scrollbar,
 .pokemon-table-container::-webkit-scrollbar,
 .table-container::-webkit-scrollbar,
 .box-table-container::-webkit-scrollbar,
@@ -13695,7 +13707,26 @@ body.mobile-h5-surface {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* 📱 頂部 App Header (完全填滿、零左右邊距) */
+/* Hide all scrollbars globally in H5 App mode (Native app-like feel) */
+html.mobile-h5-html,
+html.mobile-h5-html *,
+body.mobile-h5-app,
+body.mobile-h5-app * {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE 10+ and Edge */
+}
+
+html.mobile-h5-html::-webkit-scrollbar,
+html.mobile-h5-html *::-webkit-scrollbar,
+body.mobile-h5-app::-webkit-scrollbar,
+body.mobile-h5-app *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* 頂部 App Header (完全填滿、零左右邊距) */
 .mobile-app-header {
   position: fixed;
   top: 0;
@@ -15486,25 +15517,17 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   -webkit-overflow-scrolling: touch !important;
   gap: 3px !important;
   padding: 4px 6px !important;
-  scrollbar-width: thin !important;
-  scrollbar-color: var(--border-color, rgba(255, 255, 255, 0.25)) transparent !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
   width: 100% !important;
   margin: 0 !important;
   box-sizing: border-box !important;
 }
 
 .mobile-h5-app .wiki-subnav-tabs::-webkit-scrollbar {
-  height: 2.5px !important;
-  display: block !important;
-}
-
-.mobile-h5-app .wiki-subnav-tabs::-webkit-scrollbar-thumb {
-  background: var(--border-color, rgba(255, 255, 255, 0.25)) !important;
-  border-radius: 2px !important;
-}
-
-.mobile-h5-app .wiki-subnav-tabs::-webkit-scrollbar-track {
-  background: transparent !important;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .mobile-h5-app .wiki-subtab-btn {
@@ -27427,4 +27450,23 @@ body:not(.mobile-h5-app) #pokedex-detail-modal .pokedex-calc-unified-box {
   top: 0 !important;
   z-index: 3 !important;
   background: var(--table-th-solid, var(--bg-card-solid, var(--bg-dark))) !important;
+}
+
+/* Universal final safeguard: Ensure zero scrollbars anywhere in H5 App mode */
+html.mobile-h5-html,
+html.mobile-h5-html *,
+body.mobile-h5-app,
+body.mobile-h5-app * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+html.mobile-h5-html::-webkit-scrollbar,
+html.mobile-h5-html *::-webkit-scrollbar,
+body.mobile-h5-app::-webkit-scrollbar,
+body.mobile-h5-app *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
 }
