@@ -7823,6 +7823,31 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(newsJs.includes("'寶藍湖畔': 'Lapis Lakeside'"), "news.js ISLAND_MAP must contain official name '寶藍湖畔'");
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'H5 App Scrollbar Suppression & Island Subpanel Zero Trailing Blank Space', () => {
+    const css = fs.readFileSync(path.join(__dirname, '../css/styles.css'), 'utf8');
+    const wikiJs = fs.readFileSync(path.join(__dirname, '../js/modules/wiki.js'), 'utf8');
+    const appJs = fs.readFileSync(path.join(__dirname, '../js/modules/app.js'), 'utf8');
+
+    // 1. Universal H5 Scrollbar suppression
+    assert(css.includes('body.mobile-h5-app *') && css.includes('scrollbar-width: none !important;'), 'H5 app elements must have scrollbar-width: none !important');
+    assert(css.includes('body.mobile-h5-app *::-webkit-scrollbar') && css.includes('display: none !important;'), 'H5 app webkit scrollbars must have display: none !important');
+    assert(css.includes('.mobile-h5-app .wiki-subnav-tabs::-webkit-scrollbar') && css.includes('display: none !important;'), 'Wiki subnav tabs scrollbar must be hidden');
+
+    // 2. Zero bottom padding on island subpanel & wiki-main-container
+    assert(css.includes('.mobile-h5-app #wiki-subpanel-islands.active') && css.includes('padding: 0 10px 0 10px !important;'), 'Island subpanel active must have 0 bottom padding');
+    assert(css.includes('.mobile-h5-app.islands-active .wiki-main-container') && css.includes('padding-bottom: 0 !important;'), 'Wiki main container must have 0 bottom padding when islands tab is active');
+
+    // 3. Coordinator guards short table from artificial height expansion
+    assert(wikiJs.includes('totalCardNeededH > pinH'), 'Coordinator must check totalCardNeededH > pinH before pinning');
+    assert(wikiJs.includes('releaseIslandSpawnsPin()'), 'Coordinator must release pin when pinning is not needed');
+    assert(wikiJs.includes('maxScroll'), 'Coordinator must clamp scroll to maxScroll when table content fits');
+
+    // 4. islands-active body class toggling in both wiki.js and app.js
+    assert(wikiJs.includes("targetTab === 'islands'") && wikiJs.includes("document.body.classList.add('islands-active')"), 'wiki.js must add islands-active class');
+    assert(appJs.includes("isIsl") && appJs.includes("document.body.classList.add('islands-active')"), 'app.js must add islands-active class');
+    assert(appJs.includes("document.body.classList.remove('islands-active')"), 'app.js must remove islands-active class when leaving wiki');
+  });
+
 
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

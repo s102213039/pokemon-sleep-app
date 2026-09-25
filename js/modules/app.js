@@ -2215,6 +2215,7 @@ if (typeof document !== 'undefined') {
         if (target !== 'wiki') {
           document.body.classList.remove('ladder-active');
           document.body.classList.remove('values-active');
+          document.body.classList.remove('islands-active');
           const curLadderHandle = document.getElementById('ladder-sidebar-bookmark-handle');
           if (curLadderHandle && curLadderHandle.style) {
             curLadderHandle.style.display = 'none';
@@ -2287,6 +2288,7 @@ if (typeof document !== 'undefined') {
           }
           const isIng = wikiSubTab === 'ingredients';
           const isVal = wikiSubTab === 'values';
+          const isIsl = wikiSubTab === 'islands';
           if (isMobileH5) {
             if (isIng) {
               document.body.classList.add('ladder-active');
@@ -2297,6 +2299,11 @@ if (typeof document !== 'undefined') {
               document.body.classList.add('values-active');
             } else {
               document.body.classList.remove('values-active');
+            }
+            if (isIsl) {
+              document.body.classList.add('islands-active');
+            } else {
+              document.body.classList.remove('islands-active');
             }
           }
           if (ladderSidebar) {

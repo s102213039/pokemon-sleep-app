@@ -11614,6 +11614,11 @@
       } else {
         document.body.classList.remove('values-active');
       }
+      if (isWikiMainActive && targetTab === 'islands') {
+        document.body.classList.add('islands-active');
+      } else {
+        document.body.classList.remove('islands-active');
+      }
     }
 
     if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
@@ -15411,15 +15416,22 @@
     const pinTop = els.subnav ? els.subnav.getBoundingClientRect().bottom : sRect.top;
     const pinH = Math.max(160, Math.round(sRect.bottom - pinTop));
     els.card.style.setProperty('--spawns-pin-h', pinH + 'px');
+
+    const headerEl = els.card.querySelector('.wiki-card-header');
+    const headerH = headerEl ? headerEl.offsetHeight : 0;
+    const tableEl = els.wrap.firstElementChild;
+    const tableH = tableEl ? tableEl.offsetHeight : els.wrap.scrollHeight;
+    const totalCardNeededH = headerH + tableH + 16;
+    const canPin = totalCardNeededH > pinH;
+
     const hostTop = els.host.getBoundingClientRect().top;
-    const shouldPin = hostTop <= pinTop + 0.5;
+    const shouldPin = canPin && (hostTop <= pinTop + 0.5);
     if (!shouldPin) {
-      els.card.classList.remove('is-spawns-pinned');
-      els.card.style.left = '';
-      els.card.style.width = '';
-      els.card.style.removeProperty('--spawns-pin-top');
-      els.host.style.height = '';
-      els.wrap.scrollTop = 0;
+      releaseIslandSpawnsPin();
+      const maxScroll = Math.max(0, els.scroller.scrollHeight - els.scroller.clientHeight);
+      if (els.scroller.scrollTop > maxScroll) {
+        els.scroller.scrollTop = maxScroll;
+      }
       return;
     }
     const overshoot = pinTop - hostTop;
@@ -15446,8 +15458,10 @@
     }
     if (dy > 0) {
       const max = els.wrap.scrollHeight - els.wrap.clientHeight;
-      els.wrap.scrollTop = Math.min(max, els.wrap.scrollTop + dy);
-      return;
+      if (max > 0) {
+        els.wrap.scrollTop = Math.min(max, els.wrap.scrollTop + dy);
+        return;
+      }
     }
     if (els.wrap.scrollTop > 0) {
       els.wrap.scrollTop = Math.max(0, els.wrap.scrollTop + dy);
@@ -15512,6 +15526,12 @@
     placeIslandSceneLayer();
     try { scrollActiveIslandTabIntoView(); } catch (e) {}
     try { bindIslandSpawnsCoordinator(); } catch (e) {}
+    if (panelWiki) {
+      const maxScroll = Math.max(0, panelWiki.scrollHeight - panelWiki.clientHeight);
+      if (panelWiki.scrollTop > maxScroll) {
+        panelWiki.scrollTop = maxScroll;
+      }
+    }
   }
 
   function renderIslandsSubpanel() {
