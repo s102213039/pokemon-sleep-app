@@ -7839,6 +7839,27 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(css.includes('.mobile-h5-app #wiki-subpanel-islands .island-spawns-card > .wiki-card-header'), 'Island spawns header must have dedicated mobile styling');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Island Scene Background Full Page Follow and Fault Line Elimination', () => {
+    const css = fs.readFileSync(path.join(__dirname, '../css/styles.css'), 'utf8');
+
+    // 1. Desktop & Universal Island Scene Layer must be fixed to viewport following entire page scroll
+    assert(css.includes('.island-scene-layer') && css.includes('position: fixed !important;'), 'Island scene layer must use fixed positioning to follow page scroll');
+    assert(css.includes('.island-scene-layer') && css.includes('width: 100vw !important;') && css.includes('height: 100vh !important;'), 'Island scene layer must span 100vw and 100vh');
+    assert(css.includes('body:not(.mobile-h5-app) #panel-wiki.has-island-scene > .island-scene-layer') && css.includes('position: fixed !important;'), 'Desktop island scene layer must be fixed');
+
+    // 2. Mobile Island Scene Layer must be fixed to avoid 300px cutoff
+    assert(css.includes('.mobile-h5-app #wiki-subpanel-islands.has-island-scene > .island-scene-layer') && css.includes('position: fixed !important;'), 'Mobile island scene layer must be fixed');
+    assert(css.includes('.mobile-h5-app .island-scene-photo') && css.includes('height: 100% !important;'), 'Mobile island scene photo must cover full height');
+
+    // 3. Island photo must cover full height and position properly
+    assert(css.includes('.island-scene-photo') && css.includes('height: 100% !important;') && css.includes('object-fit: cover !important;'), 'Island scene photo must cover container with 100% height');
+    assert(css.includes('.island-scene-fade') && css.includes('height: 100%;'), 'Island scene fade must span 100% height without abrupt cutoff line');
+
+    // 4. Global html background color
+    assert(css.includes('html {\n  background-color: var(--bg-dark);'), 'HTML element must have background-color: var(--bg-dark) for seamless bounce/rubber-band edges');
+  });
+
+
 
 console.log('\n======================================================');
 console.log('                   Test Results Summary');

@@ -685,3 +685,29 @@
 4. 官方島嶼名稱確認與校正：經查證與確認《Pokémon Sleep》官方遊戲內繁體中文正式名稱為「寶藍湖畔」（Lapis Lakeside），全站資料庫（`wiki.js`、`i18n.js`、`news.js` 及對比頁面）全面統一修正為官方正式譯名「寶藍湖畔」，並保留相容別名映射。全 7 大營地官方中文名稱為：萌綠之島、天青沙灘、灰褐洞窟、白花雪原、寶藍湖畔、黃金舊發電廠、琥褐溪谷。
 5. 快取更新至 `v=20260925_03`，全站 158 項自動化測試全數 PASS。
 
+
+## 需求三十一：H5 App 全局滾動條徹底隱藏與卡片標題向上微調（2026-09-25）
+
+1. H5 App 全局隱藏滾動條（Native App 沉浸體驗）：
+   - 在 `css/styles.css` 為 `html.mobile-h5-html *` 與 `body.mobile-h5-app *` 加入強制的 `scrollbar-width: none !important;` 與 `-ms-overflow-style: none !important;`。
+   - 對所有 Webkit 滾動條選擇器加上 `display: none !important; width: 0 !important; height: 0 !important;`，涵蓋百科子導覽分頁（`.wiki-subnav-tabs`）、各主面板（`#panel-pokemon`, `#panel-recipes`, `#panel-wiki`, `#panel-box`, `#panel-news`）以及表格容器。
+   - 保留原生流暢滾動能力，不破壞 CoordinatorLayout 聯動吸頂與滾動體驗。
+2. H5 App 卡片標題（`.wiki-card-header`）向上微調：
+   - 針對行動版 H5 App 的 `.wiki-card-header` 加入 `margin-top: -4px !important;` 與精準內距微調，使卡片內容與頂欄視覺更緊湊精緻。
+3. 快取更新至 `v=20260925_06`。
+
+
+## 需求三十二：頁面背景跟隨整頁面滾動與背景圖斷層消除（2026-09-25）
+
+1. 問題根因分析：
+   - 先前島嶼場景圖層（`.island-scene-layer`）採用 `position: absolute; top: 0;` 與固定/自動高度（桌面版高度依原圖等比約 700px，行動端 `height: min(62vw, 300px)`）。
+   - 當使用者在島嶼分頁往下滑動檢視棲息寶可夢與睡姿解鎖門檻表格時，該場景圖層會隨著內容向上捲動並在約 700px 處結束，露出一道生硬的水平截斷邊界（斷層），下方只剩純深色背景。
+2. 徹底重構為視窗固定背景（跟隨整頁面滾動）：
+   - 將 `.island-scene-layer` 調整為 `position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100vw !important; height: 100vh !important; height: 100dvh !important; z-index: 0 !important; pointer-events: none !important; overflow: hidden !important;`。
+   - 內部場景圖 `.island-scene-photo` 調整為 `position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; object-fit: cover !important; object-position: center top !important;`，完美覆蓋整個視窗，在任何滾動高度皆完整展示，不再出現任何生硬截斷。
+   - 背景漸層遮罩 `.island-scene-fade` 調整為覆蓋全視窗高度（`height: 100%`），上方保留場景通透度、下方平滑漸變融入背景主題色，徹底消除水平切線。
+   - 行動版 H5 App（`.mobile-h5-app`）同步將島嶼場景圖層設為 `position: fixed !important; inset: 0 !important; height: 100dvh !important;`，解除 300px 高度限制，滾動時全程跟隨。
+   - 全域 `html` 元素補上 `background-color: var(--bg-dark);`，確保橡皮筋回彈與捲動邊緣無任何斷層。
+3. 快取更新至 `v=20260925_07`，自動化測試套件新增專項測試，全部 160 項測試 100% 通過。
+
+

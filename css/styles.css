@@ -704,6 +704,10 @@
   padding: 0;
 }
 
+html {
+  background-color: var(--bg-dark);
+}
+
 body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background-color: var(--bg-dark);
@@ -17333,17 +17337,35 @@ body.mobile-h5-app.values-active,
 
 .mobile-h5-app #wiki-subpanel-islands.has-island-scene > .island-scene-layer,
 .mobile-h5-app #wiki-subpanel-islands.active > .island-scene-layer {
-  left: -10px !important;
-  right: -10px !important;
-  width: auto !important;
-  height: min(62vw, 300px);
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
 }
 
 .mobile-h5-app .island-scene-photo {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
   width: 100% !important;
   height: 100% !important;
   object-fit: cover !important;
   object-position: center top !important;
+  opacity: 0.28 !important;
+}
+
+html[data-theme="midnight"]:not([data-theme-inverted="true"]) .mobile-h5-app .island-scene-photo,
+html[data-theme="onyx"]:not([data-theme-inverted="true"]) .mobile-h5-app .island-scene-photo,
+html[data-theme="dawn"][data-theme-inverted="true"] .mobile-h5-app .island-scene-photo,
+html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-scene-photo {
+  opacity: 0.16 !important;
 }
 
 .mobile-h5-app .island-nav-strip {
@@ -20720,19 +20742,27 @@ body.mobile-h5-app.values-active,
 }
 
 .island-scene-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
 }
 
 body:not(.mobile-h5-app) #panel-wiki.has-island-scene > .island-scene-layer {
-  left: 0;
-  right: 0;
-  width: 100%;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
 }
 
 /* Content keeps inset; scene ignores collapsed 14px top margin */
@@ -20743,10 +20773,13 @@ body:not(.mobile-h5-app) #panel-wiki.has-island-scene > .wiki-main-container {
 
 body:not(.mobile-h5-app) #panel-wiki.has-island-scene > .island-scene-photo,
 body:not(.mobile-h5-app) #panel-wiki.has-island-scene .island-scene-photo {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  object-position: center top;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center top !important;
 }
 
 .island-scene-layer.island-scene-hidden {
@@ -20755,11 +20788,15 @@ body:not(.mobile-h5-app) #panel-wiki.has-island-scene .island-scene-photo {
 
 .island-scene-photo {
   display: block;
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  object-position: center top;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center top !important;
   opacity: 0.55;
+  pointer-events: none;
 }
 
 body:not(.mobile-h5-app) .island-scene-photo {
@@ -20775,12 +20812,21 @@ html[data-theme="emerald"][data-theme-inverted="true"] body:not(.mobile-h5-app) 
 
 .island-scene-fade {
   position: absolute;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 58%;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--bg-dark) 22%, transparent) 38%, color-mix(in srgb, var(--bg-dark) 68%, transparent) 74%, var(--bg-dark) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.1) 0%,
+    transparent 15%,
+    transparent 65%,
+    color-mix(in srgb, var(--bg-dark) 40%, transparent) 85%,
+    color-mix(in srgb, var(--bg-dark) 70%, transparent) 100%
+  );
 }
 
 #panel-wiki.has-island-scene > *:not(.island-scene-layer),
