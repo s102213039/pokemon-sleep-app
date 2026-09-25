@@ -12467,13 +12467,14 @@
   let ladderHighlightRecipes = [];
 
   const RECIPE_MARK_PALETTE = [
-    { fg: '#0369a1', color: '#0ea5e9', bg: 'rgba(14, 165, 233, 0.18)' },
-    { fg: '#b45309', color: '#d97706', bg: 'rgba(217, 119, 6, 0.18)' },
-    { fg: '#6d28d9', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.18)' },
-    { fg: '#be123c', color: '#f43f5e', bg: 'rgba(244, 63, 94, 0.16)' },
-    { fg: '#047857', color: '#10b981', bg: 'rgba(16, 185, 129, 0.18)' },
-    { fg: '#c2410c', color: '#f97316', bg: 'rgba(249, 115, 22, 0.18)' },
-    { fg: '#3730a3', color: '#6366f1', bg: 'rgba(99, 102, 241, 0.18)' }
+    { fg: '#0284c7', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.2)' },  // 1. 晴空藍 (Sky Blue)
+    { fg: '#b45309', color: '#fbbf24', bg: 'rgba(251, 191, 36, 0.2)' },  // 2. 琥珀金黃 (Amber Gold)
+    { fg: '#c026d3', color: '#e879f9', bg: 'rgba(232, 121, 249, 0.2)' }, // 3. 桃紅洋紅 (Fuchsia Magenta)
+    { fg: '#059669', color: '#34d399', bg: 'rgba(52, 211, 153, 0.2)' },  // 4. 翡翠綠 (Emerald Green)
+    { fg: '#ea580c', color: '#fb923c', bg: 'rgba(251, 146, 60, 0.2)' },  // 5. 鮮亮橘 (Vivid Orange)
+    { fg: '#7c3aed', color: '#a78bfa', bg: 'rgba(167, 139, 250, 0.2)' }, // 6. 魅惑紫 (Electric Violet)
+    { fg: '#dc2626', color: '#f87171', bg: 'rgba(248, 113, 113, 0.2)' }, // 7. 珊瑚紅 (Coral Red)
+    { fg: '#0d9488', color: '#2dd4bf', bg: 'rgba(45, 212, 191, 0.2)' }   // 8. 湖水青綠 (Seafoam Teal)
   ];
 
   function getRecipeMarkStyle(index) {
@@ -15858,7 +15859,6 @@
           <div class="island-hero-content">
             <div class="island-title-group">
               <h3 class="island-hero-title">${isEN ? (isExpert ? island.name_en + ' EX' : island.name_en) : (isExpert ? island.name + ' EX' : island.name)}</h3>
-              <span class="island-title-en">${isEN ? (isExpert ? island.name + ' EX' : island.name) : (isExpert ? island.name_en + ' EX' : island.name_en)}</span>
             </div>
             ${berriesHtml}
           </div>
@@ -16638,7 +16638,7 @@
                 ${passingTargets.map(m => `
                   <div class="ladder-passing-line-container" style="left: ${getPosPct(m.target)}%; --ladder-passing-line-color: ${m.color}; --ladder-passing-line-glow: ${m.color};" title="${isEN ? '3 Meals Target: ' : '三餐及格線: '}${m.target} ${isEN ? 'items' : '顆'}">
                     <div class="ladder-passing-line"></div>
-                    <div class="ladder-passing-badge" style="color:${m.fg};border-color:${m.color}">
+                    <div class="ladder-passing-badge" style="color:${m.color};border-color:${m.color}">
                       <span class="ladder-passing-num">${m.target}</span>
                     </div>
                   </div>
@@ -16719,7 +16719,6 @@
                         </div>
                       `).join('')}
                     </div>
-                    <div class="ladder-tail-ruler-spacer"></div>
                   </div>
 
                   <div class="ladder-tail-track-row ${isTailEmpty ? 'ladder-track-empty' : ''} ${isTailDimmed ? 'ladder-track-dimmed' : (isTailHighlighted ? 'ladder-track-highlighted' : '')}" data-ladder-ing="tail">
@@ -16829,10 +16828,6 @@
                           </div>
                         </div>
                       `).join('')}
-                    </div>
-
-                    <div class="ladder-track-header ladder-track-header-right">
-                      <img src="${tailIng.icon}" class="ladder-ing-icon" alt="${isEN ? 'Slowpoke Tail' : '美味尾巴'}">
                     </div>
                   </div>
                 </div>

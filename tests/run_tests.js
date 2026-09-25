@@ -7798,6 +7798,31 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     ctx.window.WikiDB.clearLadderHighlightRecipe();
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder & Islands Polish: Tail Redundant Icon Removal, Track Blue Highlight Neutralization, Single-Language Island Title & Official Name Validation', () => {
+    const wikiJs = fs.readFileSync(path.join(__dirname, '../js/modules/wiki.js'), 'utf8');
+    const css = fs.readFileSync(path.join(__dirname, '../css/styles.css'), 'utf8');
+    const i18nJs = fs.readFileSync(path.join(__dirname, '../js/core/i18n.js'), 'utf8');
+    const newsJs = fs.readFileSync(path.join(__dirname, '../js/modules/news.js'), 'utf8');
+
+    // 1. Redundant tail icon & ruler spacer removed from ladder
+    assert(!wikiJs.includes('ladder-track-header-right'), 'Ladder tail track must NOT contain redundant ladder-track-header-right');
+    const tailSpacers = wikiJs.match(/class="ladder-tail-ruler-spacer"/g) || [];
+    assert(tailSpacers.length === 1, 'Ladder tail ruler must have exactly 1 spacer on the left, trailing spacer removed');
+
+    // 2. Track blue highlight neutralized
+    assert(css.includes('.ladder-track-row.ladder-track-highlighted') && css.includes('background: transparent !important;'), 'Highlighted track must have transparent background');
+    assert(css.includes('border-left: none !important;'), 'Highlighted track must not have blue left border');
+    assert(css.includes('box-shadow: none !important;'), 'Highlighted track must not have blue box shadow');
+
+    // 3. Island Title localized presentation (no English subtitle forcing berries to next line)
+    assert(!wikiJs.includes('<span class="island-title-en">'), 'Island hero must not include redundant English subtitle');
+
+    // 4. Official Island Name (拉碧絲湖畔) verification
+    assert(i18nJs.includes("'拉碧絲湖畔'"), "i18n.js ISLAND_NAMES must contain official name '拉碧絲湖畔'");
+    assert(newsJs.includes("'拉碧絲湖畔'"), "news.js ISLAND_MAP must contain official name '拉碧絲湖畔'");
+  });
+
+
 console.log('\n======================================================');
 console.log('                   Test Results Summary');
 console.log('======================================================');

@@ -922,6 +922,7 @@
     '天青沙灘': 'Cyan Beach',
     '灰褐洞窟': 'Taupe Hollow',
     '白花雪原': 'Snowdrop Tundra',
+    '拉碧絲湖畔': 'Lapis Lakeside',
     '寶藍湖畔': 'Lapis Lakeside',
     '黃金舊發電廠': 'Old Gold Power Plant',
     '琥褐溪谷': 'Amber Canyon'
@@ -1104,7 +1105,7 @@
     formatted = formatted.replace(/([1-4](?:\.\d+)?(?:倍|x)|\+\d{1,3}(?:[,，]\d{3})*pt|(?:\d{1,3}(?:[,，]\d{3})+|\d+)\s*(?:鑽石|Diamonds))/gi, '<span class="hl-mult">$1</span>');
 
     // 5. 島嶼 / 營地名稱高亮 (無 Emoji)
-    formatted = formatted.replace(/(Greengrass Isle EX|Greengrass Isle|Cyan Beach EX|Cyan Beach|Taupe Hollow|Snowdrop Tundra|Lapis Lakeside|Old Gold Power Plant|Amber Canyon|萌綠之島EX|天青沙灘EX|萌綠之島|天青沙灘|灰褐洞窟|白花雪原|寶藍湖畔|黃金舊發電廠|琥褐溪谷)/g, '<span class="hl-island">$1</span>');
+    formatted = formatted.replace(/(Greengrass Isle EX|Greengrass Isle|Cyan Beach EX|Cyan Beach|Taupe Hollow|Snowdrop Tundra|Lapis Lakeside|Old Gold Power Plant|Amber Canyon|萌綠之島EX|天青沙灘EX|萌綠之島|天青沙灘|灰褐洞窟|白花雪原|拉碧絲湖畔|寶藍湖畔|黃金舊發電廠|琥褐溪谷)/g, '<span class="hl-island">$1</span>');
 
     return formatted;
   }

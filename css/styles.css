@@ -10572,7 +10572,7 @@ input[type="number"] {
   flex: 1;
   position: relative;
   height: 100%;
-  margin: 0 4px;
+  margin: 0 14px 0 4px;
 }
 
 .ladder-tail-tick {
@@ -10598,7 +10598,7 @@ input[type="number"] {
   height: 100%;
   display: flex;
   align-items: center;
-  margin: 0 4px;
+  margin: 0 14px 0 4px;
 }
 
 .ladder-track-header-right {
@@ -17118,11 +17118,11 @@ body.mobile-h5-app.values-active,
 }
 
 .mobile-h5-app .ladder-tail-ruler-scale {
-  margin: 0 2px !important;
+  margin: 0 14px 0 4px !important;
 }
 
 .mobile-h5-app .ladder-tail-canvas {
-  margin: 0 2px !important;
+  margin: 0 14px 0 4px !important;
 }
 
 .mobile-h5-app .node-avatar-wrapper {
@@ -22382,11 +22382,11 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
   letter-spacing: -0.2px;
 }
 
-.ladder-track-row.ladder-track-highlighted {
-  background: rgba(56, 189, 248, 0.08) !important;
-  border-left: 3px solid var(--accent-color, #38bdf8) !important;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.2) !important;
-  transition: background 0.25s ease, border-left 0.25s ease, box-shadow 0.25s ease;
+.ladder-track-row.ladder-track-highlighted,
+.ladder-tail-track-row.ladder-track-highlighted {
+  background: transparent !important;
+  border-left: none !important;
+  box-shadow: none !important;
 }
 
 .ladder-highlight-req-chip {
@@ -22579,16 +22579,12 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
 /* 2. Highlighted Track Row in Light Theme */
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-track-row.ladder-track-highlighted,
 [data-theme="midnight"][data-theme-inverted="true"] .ladder-track-row.ladder-track-highlighted,
-[data-theme="onyx"][data-theme-inverted="true"] .ladder-track-row.ladder-track-highlighted {
-  background: rgba(2, 132, 199, 0.08) !important;
-  border-left: 3px solid #0284c7 !important;
-  box-shadow: 0 0 10px rgba(2, 132, 199, 0.12) !important;
-}
-
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-track-row.ladder-track-highlighted {
-  background: rgba(71, 85, 105, 0.08) !important;
-  border-left: 3px solid #475569 !important;
-  box-shadow: 0 0 10px rgba(71, 85, 105, 0.12) !important;
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-track-row.ladder-track-highlighted,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-track-row.ladder-track-highlighted,
+.ladder-tail-track-row.ladder-track-highlighted {
+  background: transparent !important;
+  border-left: none !important;
+  box-shadow: none !important;
 }
 
 /* 3. Modal Components in Light Theme */
