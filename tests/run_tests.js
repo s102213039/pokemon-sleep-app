@@ -7817,9 +7817,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     // 3. Island Title localized presentation (no English subtitle forcing berries to next line)
     assert(!wikiJs.includes('<span class="island-title-en">'), 'Island hero must not include redundant English subtitle');
 
-    // 4. Official Island Name (拉碧絲湖畔) verification
-    assert(i18nJs.includes("'拉碧絲湖畔'"), "i18n.js ISLAND_NAMES must contain official name '拉碧絲湖畔'");
-    assert(newsJs.includes("'拉碧絲湖畔'"), "news.js ISLAND_MAP must contain official name '拉碧絲湖畔'");
+    // 4. Official Island Name (寶藍湖畔) verification
+    assert(wikiJs.includes('name: "寶藍湖畔"'), "wiki.js ISLANDS_DATA must contain official name '寶藍湖畔'");
+    assert(i18nJs.includes("'寶藍湖畔': { 'zh-TW': '寶藍湖畔'"), "i18n.js ISLAND_NAMES must contain official name '寶藍湖畔'");
+    assert(newsJs.includes("'寶藍湖畔': 'Lapis Lakeside'"), "news.js ISLAND_MAP must contain official name '寶藍湖畔'");
   });
 
 

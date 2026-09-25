@@ -1041,8 +1041,8 @@
     '天青沙灘EX': { 'zh-TW': '天青沙灘EX', 'en-US': 'Cyan Beach EX' },
     '灰褐洞窟': { 'zh-TW': '灰褐洞窟', 'en-US': 'Taupe Hollow' },
     '白花雪原': { 'zh-TW': '白花雪原', 'en-US': 'Snowdrop Tundra' },
-    '拉碧絲湖畔': { 'zh-TW': '拉碧絲湖畔', 'en-US': 'Lapis Lakeside' },
-    '寶藍湖畔': { 'zh-TW': '拉碧絲湖畔', 'en-US': 'Lapis Lakeside' },
+    '寶藍湖畔': { 'zh-TW': '寶藍湖畔', 'en-US': 'Lapis Lakeside' },
+    '拉碧絲湖畔': { 'zh-TW': '寶藍湖畔', 'en-US': 'Lapis Lakeside' },
     '黃金舊發電廠': { 'zh-TW': '黃金舊發電廠', 'en-US': 'Old Gold Power Plant' },
     '琥褐溪谷': { 'zh-TW': '琥褐溪谷', 'en-US': 'Amber Canyon' }
   };

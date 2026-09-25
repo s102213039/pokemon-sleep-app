@@ -14542,7 +14542,7 @@
     },
     {
       id: "lapis",
-      name: "拉碧絲湖畔",
+      name: "寶藍湖畔",
       name_en: "Lapis Lakeside",
       image: "https://www.serebii.net/pokemonsleep/locations/lapislakeside.jpg",
       imageScene: "assets/islands/hd/lapis.jpg",
