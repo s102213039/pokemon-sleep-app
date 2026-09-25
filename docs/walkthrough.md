@@ -8,7 +8,17 @@
 
 ### 已完成需求
 
-1. **副技能外框、島嶼圖層、養成指引、關閉動畫**（`532d365`，快取曾為 `v=20260922_01`）
+1. **H5 App 全域滾動條徹底隱藏**（快取 `v=20260925_05`，HEAD `fbaea13`，測試 159/159）
+   - 原生 App 在各視圖滑動時不展示滾動條。
+   - 在 `css/styles.css` 中配置全域隱藏規則：`html.mobile-h5-html *` 與 `body.mobile-h5-app *` 套用 `scrollbar-width: none !important;`、`-ms-overflow-style: none !important;` 以及 `::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; }`。
+   - 移除了 `.mobile-h5-app .wiki-subnav-tabs` 曾顯式指定 `display: block` 的滾動條。
+   - 在主要面板（`.view-panel`、`#panel-pokemon`、`#panel-recipes`、`#panel-wiki`、`#panel-box`、`#panel-news`）加入通用隱藏清單，並在樣式表末端加入最終防護規則，保證在所有 WebKit、Firefox、Edge 及 iOS/Android WebView 中均無滾動條。
+   - 保留所有視圖原生的觸控、滾動與手勢邏輯，不更動任何 JavaScript、高度、邊距或協調器程式碼。
+
+2. **島嶼 5 官方正式名稱修正為「寶藍湖畔」**（`bfea139`）
+   - 將全專案（`wiki.js`、`i18n.js`、`news.js`、`compare.html` 及各測試）中誤用的「拉碧絲湖畔」徹底更正為遊戲內官方譯名「**寶藍湖畔**」。
+
+3. **副技能外框、島嶼圖層、養成指引、關閉動畫**（`532d365`，快取曾為 `v=20260922_01`）
    - 桌面 `#wiki/subskills` 各大類 `.wiki-card` 去掉外框、底、陰影，只留內部表格框。
    - 島嶼圖層用 `ensureIslandSceneLayer`：找不到就建；切走只加 `island-scene-hidden`；`refreshIslandsSubpanel` 先把圖層移出再重繪 innerHTML。
    - 「新手與進階養成核心週期指引」`.wiki-strategy-card` 內距縮小。
