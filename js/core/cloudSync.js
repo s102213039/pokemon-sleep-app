@@ -14,10 +14,10 @@
   const STORAGE_KEY_USER_BOX = 'PKMSLEEP_USER_BOX_V1';
   const STORAGE_KEY_CONFIG = 'PKMSLEEP_SUPABASE_CONFIG_V1';
 
-  // 預設可填入全域 Supabase 專案配置（若使用者未在 UI 自訂，以此為基準）
+  // 預設全域中央雲端資料庫配置 (Supabase BaaS - 全使用者統一共享)
   const DEFAULT_CONFIG = {
-    url: (typeof window !== 'undefined' && window.__SUPABASE_URL__) || '',
-    anonKey: (typeof window !== 'undefined' && window.__SUPABASE_ANON_KEY__) || ''
+    url: (typeof window !== 'undefined' && window.__SUPABASE_URL__) || 'https://tyoeegvqszobiosaaxbb.supabase.co',
+    anonKey: (typeof window !== 'undefined' && window.__SUPABASE_ANON_KEY__) || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5b2VlZ3Zxc3pvYmlvc2FheGJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA0MDA5MzksImV4cCI6MjEwNTk3NjkzOX0.CKJzWnjeoBM8jue9XnflKUctg7DBD2l6skqu-61rgF4'
   };
 
   let supabaseClient = null;
@@ -167,7 +167,15 @@
       if (error) {
         syncStatus = currentUser ? 'synced' : 'guest';
         updateSyncUI();
-        return { success: false, error: error.message };
+        let errMsg = error.message || '註冊失敗';
+        if (errMsg.includes('User already registered')) {
+          errMsg = '此帳號已被註冊，請直接點擊「登入帳號」。';
+        } else if (errMsg.includes('Password should be at least 6 characters')) {
+          errMsg = '密碼長度至少需為 6 個字元！';
+        } else if (errMsg.includes('valid email')) {
+          errMsg = '請輸入格式正確的電子郵件信箱！';
+        }
+        return { success: false, error: errMsg };
       }
 
       if (data && data.user) {
@@ -212,7 +220,13 @@
       if (error) {
         syncStatus = currentUser ? 'synced' : 'guest';
         updateSyncUI();
-        return { success: false, error: error.message };
+        let errMsg = error.message || '登入失敗';
+        if (errMsg.includes('Invalid login credentials')) {
+          errMsg = '帳號或密碼錯誤，請檢查後重新輸入！';
+        } else if (errMsg.includes('Email not confirmed')) {
+          errMsg = '此帳號信箱尚未驗證。請檢查收件匣驗證連結，或請管理員於 Supabase 後台關閉驗證信設定。';
+        }
+        return { success: false, error: errMsg };
       }
 
       if (data && data.user) {
@@ -619,17 +633,15 @@
           </div>
         `;
       } else {
-        const config = getActiveConfig();
-        const hasConfig = !!(config.url && config.anonKey);
         modalStatus.innerHTML = `
           <div class="auth-status-card status-guest">
             <div class="auth-status-row">
               <span class="status-indicator-dot dot-guest"></span>
-              <strong>${isEN ? 'Local Guest Mode' : '本機訪客模式 (未登入)'}</strong>
+              <strong>${isEN ? 'Local Guest Mode (Not Logged In)' : '本機訪客模式 (未登入)'}</strong>
             </div>
-            <div class="auth-sub-hint">${hasConfig 
-              ? (isEN ? 'Sign in with your account to automatically sync your Pokémon between phone and PC.' : '輸入帳號密碼登入或註冊，即可自動在手機與電腦間同步寶可夢。')
-              : (isEN ? 'Supabase project not yet configured. You can expand Settings below to connect your own Supabase project.' : '尚未配置 Supabase 專案。可展開下方「進階配置」填入個人 Supabase 專案網址與金鑰。')}</div>
+            <div class="auth-sub-hint">${isEN 
+              ? 'Sign in or register below to automatically sync your Pokémon box between phone and PC.' 
+              : '輸入電子郵件信箱與密碼登入或註冊，即可自動在手機與電腦間同步寶可夢倉庫。'}</div>
           </div>
         `;
       }
@@ -672,7 +684,6 @@
 
   function createAuthModalDOM() {
     const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
-    const config = getActiveConfig();
 
     const div = document.createElement('div');
     div.id = 'cloud-auth-modal';
@@ -705,7 +716,12 @@
               <label for="cloud-auth-password" class="cloud-auth-label">${isEN ? 'Password (Min. 6 chars)' : '密碼 (至少 6 個字元)'}</label>
               <div class="cloud-auth-password-wrap">
                 <input type="password" id="cloud-auth-password" class="cloud-auth-input" placeholder="••••••••" autocomplete="current-password">
-                <button type="button" id="cloud-auth-pwd-toggle" class="cloud-auth-pwd-toggle" title="顯示/隱藏密碼">👁</button>
+                <button type="button" id="cloud-auth-pwd-toggle" class="cloud-auth-pwd-toggle" title="${isEN ? 'Toggle password visibility' : '顯示或隱藏密碼'}">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
               </div>
             </div>
 
@@ -722,29 +738,6 @@
             <div class="cloud-auth-btn-row">
               <button type="button" id="cloud-auth-manual-sync-btn" class="cloud-auth-btn btn-primary">${isEN ? 'Sync Now' : '立即手動同步'}</button>
               <button type="button" id="cloud-auth-signout-btn" class="cloud-auth-btn btn-danger">${isEN ? 'Sign Out' : '登出帳號'}</button>
-            </div>
-          </div>
-
-          <!-- 進階配置折疊卡片 -->
-          <div class="cloud-config-accordion">
-            <button type="button" id="cloud-config-toggle-btn" class="cloud-config-toggle">
-              <span>${isEN ? 'Advanced: Supabase Server Configuration' : '進階設定：Supabase 伺服器配置'}</span>
-              <svg viewBox="0 0 12 8" width="10" height="6"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M1 1.5L6 6.5L11 1.5"/></svg>
-            </button>
-            <div id="cloud-config-content" class="cloud-config-content" style="display:none;">
-              <p class="cloud-config-hint">${isEN ? 'Enter your own Supabase project URL and anon public key to host your private database.' : '可填入您自己的 Supabase Project URL 與 public anon key，所有資料庫權限將完全由您掌控。'}</p>
-              <div class="cloud-auth-input-group">
-                <label for="cloud-config-url" class="cloud-auth-label">Project URL</label>
-                <input type="text" id="cloud-config-url" class="cloud-auth-input" placeholder="https://xyzcompany.supabase.co" value="${escapeHtml(config.url || '')}">
-              </div>
-              <div class="cloud-auth-input-group">
-                <label for="cloud-config-key" class="cloud-auth-label">Anon Public Key</label>
-                <input type="text" id="cloud-config-key" class="cloud-auth-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." value="${escapeHtml(config.anonKey || '')}">
-              </div>
-              <div class="cloud-auth-btn-row" style="margin-top: 8px;">
-                <button type="button" id="cloud-config-save-btn" class="cloud-auth-btn btn-secondary" style="font-size:12px;padding:6px 12px;">${isEN ? 'Save Configuration' : '儲存配置'}</button>
-                <button type="button" id="cloud-config-clear-btn" class="cloud-auth-btn btn-outline" style="font-size:12px;padding:6px 12px;">${isEN ? 'Reset' : '重設'}</button>
-              </div>
             </div>
           </div>
         </div>
