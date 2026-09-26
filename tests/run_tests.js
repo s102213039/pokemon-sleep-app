@@ -8054,6 +8054,29 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
 
     sandbox.window.CloudSync.saveRememberedAuth('player99', 'mypass123', false);
     assertEquals(sandbox.window.CloudSync.getRememberedAuth(), null, 'Clearing remember-me should return null');
+
+    // 8. Box Auth Overlay verification
+    assertEquals(typeof sandbox.window.CloudSync.updateBoxAuthOverlay, 'function', 'updateBoxAuthOverlay must be a function');
+    assertEquals(typeof sandbox.window.CloudSync.dismissBoxAuthOverlay, 'function', 'dismissBoxAuthOverlay must be a function');
+
+    // Simulate panel-box in DOM
+    const panelBoxEl = sandbox.document.createElement('div');
+    panelBoxEl.id = 'panel-box';
+    sandbox.document.body.appendChild(panelBoxEl);
+
+    // Call updateBoxAuthOverlay when guest
+    sandbox.window.CloudSync.updateBoxAuthOverlay();
+    const overlayEl = sandbox.document.getElementById('box-auth-overlay');
+    assert(overlayEl !== null, 'box-auth-overlay must be created in panel-box when guest');
+    assertEquals(overlayEl.style.display, 'flex', 'box-auth-overlay must be displayed as flex when guest');
+
+    // Test dismissBoxAuthOverlay
+    sandbox.window.CloudSync.dismissBoxAuthOverlay();
+    assertEquals(overlayEl.style.display, 'none', 'dismissBoxAuthOverlay must hide overlay');
+
+    // Test resetDismissed on tab switch
+    sandbox.window.CloudSync.updateBoxAuthOverlay(true);
+    assertEquals(overlayEl.style.display, 'flex', 'updateBoxAuthOverlay(true) must restore overlay when guest clicks tab');
   });
 
 

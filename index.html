@@ -98,7 +98,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=20260926_08">
+  <link rel="stylesheet" href="css/styles.css?v=20260926_09">
   <!-- 全域錯誤診斷與日誌攔截器 (Global Error & Diagnostic Logger) -->
   <script>
     (function() {
@@ -805,6 +805,30 @@
 
     <!-- Panel 4: 寶可夢倉庫 -->
     <div id="panel-box" class="view-panel" style="display:none;">
+      <!-- 未登入引導遮罩 (未登入時展示，點選跳出登入視窗) -->
+      <div id="box-auth-overlay" class="box-auth-overlay">
+        <div class="box-auth-prompt-card" onclick="window.CloudSync && window.CloudSync.openAuthModal('signin')">
+          <div class="box-auth-prompt-icon-wrap">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+            </svg>
+          </div>
+          <h3 class="box-auth-prompt-title">登入啟用寶可夢雲端倉庫</h3>
+          <p class="box-auth-prompt-desc">登入或自訂帳號註冊，即可享有電腦與手機跨裝置秒級雙向同步、即時雲端備份與完整寶可夢管理功能。</p>
+          <button type="button" class="box-auth-prompt-btn cloud-auth-btn btn-primary" onclick="event.stopPropagation(); window.CloudSync && window.CloudSync.openAuthModal('signin')">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+            <span>立即登入 / 註冊帳號</span>
+          </button>
+          <div class="box-auth-prompt-guest-row" onclick="event.stopPropagation()">
+            <button type="button" class="box-auth-guest-link" onclick="window.CloudSync && window.CloudSync.dismissBoxAuthOverlay()">以本機訪客模式暫時使用 (離線模式)</button>
+          </div>
+        </div>
+      </div>
+
       <section class="controls-container" aria-label="Box Controls">
         <!-- 頂部智能錄入與備份功能區 -->
         <div class="box-top-banner">
@@ -814,7 +838,7 @@
           </div>
           <div class="box-banner-actions">
             <input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
-            <button type="button" id="box-cloud-sync-btn" class="box-btn box-btn-cloud-sync is-guest" title="管理雲端同步與帳號登入">
+            <button type="button" id="box-cloud-sync-btn" class="box-btn box-btn-cloud-sync is-guest" title="管理雲端同步與帳號登入" style="display:none;">
               <span class="sync-dot dot-guest"></span>
               <span class="sync-text">雲端同步：訪客</span>
             </button>
@@ -1231,9 +1255,9 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
-  <script src="js/core/cloudSync.js?v=20260926_08"></script>
+  <script src="js/core/cloudSync.js?v=20260926_09"></script>
   <script src="js/core/i18n.js?v=20260926_03"></script>
-  <script src="js/modules/app.js?v=20260926_03"></script>
+  <script src="js/modules/app.js?v=20260926_09"></script>
   <script src="js/modules/recipes.js?v=20260926_03"></script>
   <script src="js/modules/wiki.js?v=20260926_03"></script>
   <script src="js/modules/box.js?v=20260926_03"></script>

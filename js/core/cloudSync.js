@@ -672,6 +672,7 @@
     boxSyncBtns.forEach(btn => {
       if (!btn) return;
       if (currentUser) {
+        btn.style.display = 'inline-flex';
         btn.classList.add('is-logged-in');
         btn.classList.remove('is-guest');
         btn.innerHTML = `
@@ -680,13 +681,10 @@
         `;
         btn.title = isEN ? `Logged in as ${userDisplay}. Click to manage sync.` : `已登入：${userDisplay}。點擊管理雲端同步。`;
       } else {
+        // 尚未登入時依使用者需求隱藏此按鈕，改由倉庫 Tab 輕微遮罩引導登入
+        btn.style.display = 'none';
         btn.classList.remove('is-logged-in');
         btn.classList.add('is-guest');
-        btn.innerHTML = `
-          <span class="sync-dot dot-guest"></span>
-          <span class="sync-text">${isEN ? 'Cloud Sync (Sign In)' : '雲端同步 (登入/註冊)'}</span>
-        `;
-        btn.title = isEN ? 'Operating in local guest mode. Click to sign in or register.' : '目前為本機訪客模式。點擊登入或註冊以啟用即時同步。';
       }
     });
 
@@ -694,17 +692,14 @@
     const mobileChip = document.getElementById('box-mobile-cloud-sync-btn');
     if (mobileChip) {
       if (currentUser) {
+        mobileChip.style.display = 'inline-flex';
         mobileChip.classList.add('is-logged-in');
         mobileChip.innerHTML = `
           <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
           <span class="view-chip-text sync-text">${escapeHtml(userDisplay)}</span>
         `;
       } else {
-        mobileChip.classList.remove('is-logged-in');
-        mobileChip.innerHTML = `
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
-          <span class="view-chip-text sync-text">${isEN ? 'Sign In' : '登入/同步'}</span>
-        `;
+        mobileChip.style.display = 'none';
       }
     }
 
@@ -737,7 +732,7 @@
       }
     }
 
-    // 3. 切換彈窗內的按鈕展示與標題
+    // 6. 切換彈窗內的按鈕展示與標題
     const loginSection = document.getElementById('cloud-auth-form-section');
     const userSection = document.getElementById('cloud-auth-user-section');
     const titleEl = document.getElementById('cloud-auth-title-text');
@@ -759,6 +754,82 @@
         userSection.style.display = 'none';
       }
     }
+
+    // 7. 更新倉庫 Tab 未登入引導遮罩狀態
+    updateBoxAuthOverlay();
+  }
+
+  let guestDismissed = false;
+
+  function dismissBoxAuthOverlay() {
+    guestDismissed = true;
+    const overlay = document.getElementById('box-auth-overlay');
+    if (overlay) {
+      overlay.style.display = 'none';
+    }
+    try {
+      const overlays = document.querySelectorAll('.box-auth-overlay');
+      if (overlays && overlays.forEach) {
+        overlays.forEach(el => {
+          el.style.display = 'none';
+        });
+      }
+    } catch (e) {}
+  }
+
+  function updateBoxAuthOverlay(resetDismissed = false) {
+    if (resetDismissed) {
+      guestDismissed = false;
+    }
+    const panelBox = document.getElementById('panel-box');
+    if (!panelBox) return;
+
+    let overlay = document.getElementById('box-auth-overlay');
+    if (currentUser) {
+      guestDismissed = false;
+      if (overlay) overlay.style.display = 'none';
+      return;
+    }
+
+    if (guestDismissed) {
+      if (overlay) overlay.style.display = 'none';
+      return;
+    }
+
+    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'box-auth-overlay';
+      overlay.className = 'box-auth-overlay';
+      panelBox.insertBefore(overlay, panelBox.firstChild);
+    }
+
+    overlay.style.display = 'flex';
+    overlay.innerHTML = `
+      <div class="box-auth-prompt-card">
+        <div class="box-auth-prompt-icon-wrap">
+          <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+          </svg>
+        </div>
+        <h3 class="box-auth-prompt-title">${isEN ? 'Sign In to Pokémon Sleep Cloud Box' : '登入啟用寶可夢雲端倉庫'}</h3>
+        <p class="box-auth-prompt-desc">${isEN 
+          ? 'Sign in or register an account to enable real-time cross-device sync, cloud backup, and Pokémon box management.' 
+          : '登入或自訂帳號註冊，即可享有電腦與手機跨裝置秒級雙向同步、即時雲端備份與完整寶可夢管理功能。'}</p>
+        <button type="button" class="box-auth-prompt-btn cloud-auth-btn btn-primary" onclick="window.CloudSync && window.CloudSync.openAuthModal('signin')">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <polyline points="10 17 15 12 10 7"></polyline>
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+          </svg>
+          <span>${isEN ? 'Sign In / Register' : '立即登入 / 註冊帳號'}</span>
+        </button>
+        <div class="box-auth-prompt-guest-row">
+          <button type="button" class="box-auth-guest-link" onclick="window.CloudSync && window.CloudSync.dismissBoxAuthOverlay()">${isEN ? 'Continue as local guest (offline mode)' : '以本機訪客模式暫時使用 (離線模式)'}</button>
+        </div>
+      </div>
+    `;
   }
 
   function switchAuthView(mode) {
@@ -1133,6 +1204,8 @@
     openAuthModal,
     closeAuthModal,
     switchAuthView,
+    updateBoxAuthOverlay,
+    dismissBoxAuthOverlay,
     getRememberedAuth,
     saveRememberedAuth,
     onRemoteUpdate,

@@ -13621,6 +13621,149 @@ input[type="number"] {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   ☁️ 倉庫未登入引導遮罩 (Box Auth Guidance Overlay)
+   ═══════════════════════════════════════════════════════════════ */
+#panel-box {
+  position: relative !important;
+}
+
+.box-auth-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  min-height: 100%;
+  z-index: 99;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 16px 40px;
+  box-sizing: border-box;
+  background: rgba(10, 15, 29, 0.68);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeInModal 0.2s ease-out;
+}
+
+.box-auth-prompt-card {
+  position: sticky;
+  top: 140px;
+  max-width: 440px;
+  width: 100%;
+  background: var(--bg-card-solid, var(--bg-card, #1e293b));
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 32px 26px 24px;
+  text-align: center;
+  box-shadow: var(--shadow-lg, 0 20px 45px rgba(0, 0, 0, 0.45));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.box-auth-prompt-card:hover {
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.55);
+}
+
+.box-auth-prompt-icon-wrap {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  background: var(--badge-special-bg, rgba(56, 189, 248, 0.12));
+  color: var(--color-accent-blue, #38bdf8);
+  border: 1px solid var(--badge-special-border, rgba(56, 189, 248, 0.35));
+}
+
+.box-auth-prompt-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 10px 0;
+  letter-spacing: 0.3px;
+}
+
+.box-auth-prompt-desc {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin: 0 0 22px 0;
+  max-width: 360px;
+}
+
+.box-auth-prompt-btn {
+  width: 100%;
+  max-width: 280px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.box-auth-prompt-guest-row {
+  margin-top: 14px;
+}
+
+.box-auth-guest-link {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px 8px;
+  transition: color 0.15s ease;
+}
+
+.box-auth-guest-link:hover {
+  color: var(--text-primary);
+}
+
+/* 主題適配 - 遮罩背景色 */
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .box-auth-overlay {
+  background: rgba(10, 10, 12, 0.72);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .box-auth-overlay,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .box-auth-overlay,
+[data-theme="midnight"][data-theme-inverted="true"] .box-auth-overlay,
+[data-theme="onyx"][data-theme-inverted="true"] .box-auth-overlay {
+  background: rgba(248, 250, 252, 0.72);
+}
+
+[data-theme="dawn"][data-theme-inverted="true"] .box-auth-overlay {
+  background: rgba(28, 25, 23, 0.72);
+}
+
+[data-theme="emerald"][data-theme-inverted="true"] .box-auth-overlay {
+  background: rgba(15, 23, 42, 0.72);
+}
+
+/* 行動端適配 */
+@media (max-width: 600px) {
+  .box-auth-overlay {
+    padding: 32px 14px 28px;
+  }
+  .box-auth-prompt-card {
+    top: 70px;
+    padding: 24px 18px 20px;
+  }
+  .box-auth-prompt-title {
+    font-size: 16px;
+  }
+  .box-auth-prompt-desc {
+    font-size: 12.5px;
+    margin-bottom: 18px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
    ⚙️ 系統設定彈窗與主題切換器 (Settings Modal & Theme Picker)
    ═══════════════════════════════════════════════════════════════ */
 .settings-modal-overlay {

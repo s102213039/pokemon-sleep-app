@@ -2255,6 +2255,9 @@ if (typeof document !== 'undefined') {
         } else if (target === 'box' && panelBox && tabBox) {
           tabBox.classList.add('active');
           panelBox.style.display = 'block';
+          if (window.CloudSync && typeof window.CloudSync.updateBoxAuthOverlay === 'function') {
+            window.CloudSync.updateBoxAuthOverlay(true);
+          }
           let boxSubtab = 'list';
           try {
             const storage = getStorage();
