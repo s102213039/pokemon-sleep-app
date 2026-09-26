@@ -13188,48 +13188,81 @@ input[type="number"] {
 
 .cloud-auth-btn-row {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .cloud-auth-btn {
   flex: 1;
-  padding: 8px 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 16px;
+  min-height: 38px;
   font-size: 13px;
   font-weight: 600;
+  letter-spacing: 0.2px;
   border-radius: 8px;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all 0.2s ease;
+  box-sizing: border-box;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: center;
+  user-select: none;
 }
 
+.cloud-auth-btn:active {
+  transform: scale(0.98);
+}
+
+.cloud-auth-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* 預設 / 深邃夜空 (Midnight Dark) */
 .cloud-auth-btn.btn-primary {
-  background: var(--accent-blue, #38bdf8);
-  color: #ffffff;
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+  border-color: rgba(56, 189, 248, 0.45);
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
 }
 
-.cloud-auth-btn.btn-primary:hover {
-  filter: brightness(1.1);
-}
-
-.cloud-auth-btn.btn-secondary {
-  background: var(--bg-hover, rgba(255, 255, 255, 0.08));
-  border-color: var(--border-color);
-  color: var(--text-primary);
-}
-
-.cloud-auth-btn.btn-secondary:hover {
-  background: var(--bg-hover-strong, rgba(255, 255, 255, 0.14));
+.cloud-auth-btn.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%);
+  border-color: rgba(56, 189, 248, 0.7);
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.5);
+  transform: translateY(-1px);
 }
 
 .cloud-auth-btn.btn-danger {
-  background: rgba(239, 68, 68, 0.12);
-  border-color: rgba(239, 68, 68, 0.35);
-  color: #ef4444;
+  background: rgba(239, 68, 68, 0.16);
+  border-color: rgba(248, 113, 113, 0.45);
+  color: #fca5a5 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
-.cloud-auth-btn.btn-danger:hover {
-  background: rgba(239, 68, 68, 0.22);
+.cloud-auth-btn.btn-danger:hover:not(:disabled) {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+  transform: translateY(-1px);
+}
+
+.cloud-auth-btn.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #f1f5f9;
+}
+
+.cloud-auth-btn.btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
 }
 
 .cloud-auth-btn.btn-outline {
@@ -13238,24 +13271,309 @@ input[type="number"] {
   color: var(--text-muted);
 }
 
+/* 曜石暗影 (Onyx Dark) 主題適配 */
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  border-color: rgba(96, 165, 250, 0.5);
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.35);
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  border-color: rgba(96, 165, 250, 0.8);
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.5);
+  transform: translateY(-1px);
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-danger {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(248, 113, 113, 0.45);
+  color: #fca5a5 !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-danger:hover:not(:disabled) {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.45);
+  transform: translateY(-1px);
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #d4d4d8;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .cloud-auth-switch-btn {
+  color: #60a5fa;
+}
+
+/* 晨曦暖陽 (Dawn Light) 主題適配 */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-primary {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border-color: #0284c7;
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  border-color: #0369a1;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+  transform: translateY(-1px);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-danger {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #b91c1c !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-danger:hover:not(:disabled) {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+  transform: translateY(-1px);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-secondary {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-secondary:hover:not(:disabled) {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .cloud-auth-switch-btn {
+  color: #0284c7;
+}
+
+/* 雅緻灰石 (Emerald Light) 主題適配 */
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-primary {
+  background: linear-gradient(135deg, #0f766e 0%, #047857 100%);
+  border-color: #0f766e;
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(15, 118, 110, 0.25);
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #115e59 0%, #065f46 100%);
+  border-color: #115e59;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.4);
+  transform: translateY(-1px);
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-danger {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #b91c1c !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-danger:hover:not(:disabled) {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+  transform: translateY(-1px);
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-secondary {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .cloud-auth-btn.btn-secondary:hover:not(:disabled) {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .cloud-auth-switch-btn {
+  color: #0f766e;
+}
+
+/* 反色主題 1: 深邃夜空反色 (Midnight Inverted) */
+[data-theme="midnight"][data-theme-inverted="true"] .cloud-auth-btn.btn-primary {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border-color: #0284c7;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+}
+
+[data-theme="midnight"][data-theme-inverted="true"] .cloud-auth-btn.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+[data-theme="midnight"][data-theme-inverted="true"] .cloud-auth-btn.btn-danger {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #b91c1c !important;
+}
+
+[data-theme="midnight"][data-theme-inverted="true"] .cloud-auth-btn.btn-danger:hover:not(:disabled) {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+[data-theme="midnight"][data-theme-inverted="true"] .cloud-auth-switch-btn {
+  color: #0284c7;
+}
+
+/* 反色主題 2: 曜石暗影反色 (Onyx Inverted) */
+[data-theme="onyx"][data-theme-inverted="true"] .cloud-auth-btn.btn-primary {
+  background: linear-gradient(135deg, #18181b 0%, #27272a 100%);
+  border-color: #18181b;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .cloud-auth-btn.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #27272a 0%, #3f3f46 100%);
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .cloud-auth-btn.btn-danger {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #b91c1c !important;
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .cloud-auth-btn.btn-danger:hover:not(:disabled) {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .cloud-auth-switch-btn {
+  color: #2563eb;
+}
+
+/* 反色主題 3: 晨曦暖陽反色 (Dawn Inverted) */
+[data-theme="dawn"][data-theme-inverted="true"] .cloud-auth-btn.btn-primary {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  border-color: #f59e0b;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(217, 119, 6, 0.35);
+}
+
+[data-theme="dawn"][data-theme-inverted="true"] .cloud-auth-btn.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #b45309 0%, #92400e 100%);
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.5);
+  transform: translateY(-1px);
+}
+
+[data-theme="dawn"][data-theme-inverted="true"] .cloud-auth-btn.btn-danger {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(248, 113, 113, 0.45);
+  color: #fca5a5 !important;
+}
+
+[data-theme="dawn"][data-theme-inverted="true"] .cloud-auth-btn.btn-danger:hover:not(:disabled) {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+[data-theme="dawn"][data-theme-inverted="true"] .cloud-auth-switch-btn {
+  color: #fbbf24;
+}
+
+/* 反色主題 4: 雅緻灰石反色 (Emerald Inverted) */
+[data-theme="emerald"][data-theme-inverted="true"] .cloud-auth-btn.btn-primary {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  border-color: #10b981;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.35);
+}
+
+[data-theme="emerald"][data-theme-inverted="true"] .cloud-auth-btn.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.5);
+  transform: translateY(-1px);
+}
+
+[data-theme="emerald"][data-theme-inverted="true"] .cloud-auth-btn.btn-danger {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(248, 113, 113, 0.45);
+  color: #fca5a5 !important;
+}
+
+[data-theme="emerald"][data-theme-inverted="true"] .cloud-auth-btn.btn-danger:hover:not(:disabled) {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+[data-theme="emerald"][data-theme-inverted="true"] .cloud-auth-switch-btn {
+  color: #34d399;
+}
+
 .cloud-auth-msg {
   padding: 8px 12px;
   border-radius: 6px;
   font-size: 12px;
   margin-bottom: 12px;
   line-height: 1.4;
+  font-weight: 500;
 }
 
 .cloud-auth-msg.msg-error {
-  background: rgba(239, 68, 68, 0.12);
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
 }
 
 .cloud-auth-msg.msg-success {
-  background: rgba(16, 185, 129, 0.12);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+/* 淺色主題的訊息框字色加深以確保對比度 */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .cloud-auth-msg.msg-error,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .cloud-auth-msg.msg-error,
+[data-theme="midnight"][data-theme-inverted="true"] .cloud-auth-msg.msg-error,
+[data-theme="onyx"][data-theme-inverted="true"] .cloud-auth-msg.msg-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .cloud-auth-msg.msg-success,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .cloud-auth-msg.msg-success,
+[data-theme="midnight"][data-theme-inverted="true"] .cloud-auth-msg.msg-success,
+[data-theme="onyx"][data-theme-inverted="true"] .cloud-auth-msg.msg-success {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
 }
 
 /* 記住帳號密碼核取方塊與頁尾切換連結 */
@@ -13273,7 +13591,7 @@ input[type="number"] {
 
 .cloud-auth-remember-row input[type="checkbox"] {
   cursor: pointer;
-  accent-color: var(--accent-blue, #38bdf8);
+  accent-color: #0284c7;
   width: 15px;
   height: 15px;
   margin: 0;
@@ -13295,11 +13613,11 @@ input[type="number"] {
   padding: 0 4px;
   text-decoration: underline;
   font-size: 12px;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease, color 0.15s ease;
 }
 
 .cloud-auth-switch-btn:hover {
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 /* ═══════════════════════════════════════════════════════════════

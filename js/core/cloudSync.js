@@ -737,9 +737,19 @@
       }
     }
 
-    // 3. 切換彈窗內的按鈕展示
+    // 3. 切換彈窗內的按鈕展示與標題
     const loginSection = document.getElementById('cloud-auth-form-section');
     const userSection = document.getElementById('cloud-auth-user-section');
+    const titleEl = document.getElementById('cloud-auth-title-text');
+    if (titleEl) {
+      if (currentUser) {
+        titleEl.textContent = isEN ? 'Cloud Account Management' : '雲端帳號與同步管理';
+      } else if (authViewMode === 'signup') {
+        titleEl.textContent = isEN ? 'Register Pokémon Sleep Cloud Account' : '註冊寶可夢雲端帳號';
+      } else {
+        titleEl.textContent = isEN ? 'Sign In to Pokémon Sleep Cloud' : '登入寶可夢雲端帳號';
+      }
+    }
     if (loginSection && userSection) {
       if (currentUser) {
         loginSection.style.display = 'none';
@@ -761,7 +771,7 @@
     if (msgBox) msgBox.style.display = 'none';
 
     if (authViewMode === 'signup') {
-      if (titleEl) titleEl.textContent = isEN ? 'Register Pokémon Sleep Cloud Account' : '註冊寶可夢雲端帳號';
+      if (titleEl && !currentUser) titleEl.textContent = isEN ? 'Register Pokémon Sleep Cloud Account' : '註冊寶可夢雲端帳號';
       if (signinView) signinView.style.display = 'none';
       if (signupView) signupView.style.display = 'block';
 
@@ -773,7 +783,7 @@
       }
       if (signupUser && typeof signupUser.focus === 'function') signupUser.focus();
     } else {
-      if (titleEl) titleEl.textContent = isEN ? 'Sign In to Pokémon Sleep Cloud' : '登入寶可夢雲端帳號';
+      if (titleEl && !currentUser) titleEl.textContent = isEN ? 'Sign In to Pokémon Sleep Cloud' : '登入寶可夢雲端帳號';
       if (signinView) signinView.style.display = 'block';
       if (signupView) signupView.style.display = 'none';
 
@@ -836,10 +846,11 @@
           <!-- 狀態卡片 -->
           <div id="cloud-auth-status-info"></div>
 
+          <!-- 通用訊息提示框 (置於狀態卡片下方，登入前後皆可顯示操作反饋) -->
+          <div id="cloud-auth-msg" class="cloud-auth-msg" style="display:none; margin-top: 10px;"></div>
+
           <!-- 登入與註冊表單區塊 (未登入時展示) -->
           <div id="cloud-auth-form-section" style="margin-top: 14px;">
-            <!-- 通用訊息提示框 -->
-            <div id="cloud-auth-msg" class="cloud-auth-msg" style="display:none;"></div>
 
             <!-- 視窗 1: 登入表單 (預設展示) -->
             <div id="cloud-auth-signin-view">
