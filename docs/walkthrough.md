@@ -2,10 +2,14 @@
 
 ## 交接：2026-09-26 已完成（Supabase 帳密驗證、跨裝置雙軌即時同步與智慧合併）
 
-- **靜態快取標籤**：`v=20260926_02`
+- **靜態快取標籤**：`v=20260926_03`
 - **測試狀態**：162/162 自動化測試全數通過（含 Supabase CloudSync 模組初始化、Union Merge 聯集合併與倉庫掛接測試）
 - **主要完成功能**：
-  1. **雲端核心模組 (`js/core/cloudSync.js`)**：
+  1. **全域與顯眼「登入 / 註冊」按鈕配置**：
+     - 桌面端頂部導航欄（右上角 `.header-actions`）新增全域 `[登入 / 註冊]` 按鈕（`#header-cloud-auth-btn`），任何頁籤皆可一鍵呼出登入彈窗；登入後即時切換為綠點與使用者帳號名。
+     - 手機 H5 端頂部導航欄（`.mobile-header-actions`）新增個人帳號頭像按鈕（`#mobile-header-auth-btn`），並在系統設定彈窗（`#settings-modal`）內加入顯眼的「雲端即時同步 [登入 / 註冊]」操作列。
+     - 倉庫 Tab 頂部按鈕文案明確標註為 `[雲端同步 (登入/註冊)]`，徹底消除先前的隱蔽性。
+  2. **雲端核心模組 (`js/core/cloudSync.js`)**：
      - 封裝 `@supabase/supabase-js` 官方 SDK。
      - 支援簡約「帳號（Email）+ 密碼」註冊與登入（`signUpWithPassword`、`signInWithPassword`、`signOut`）。
      - 具備防抖推送（800ms Debounce）與 WebSocket Realtime（`postgres_changes`）跨裝置秒級推送監聽。

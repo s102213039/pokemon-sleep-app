@@ -525,32 +525,86 @@
   function updateSyncUI() {
     if (typeof document === 'undefined') return;
     const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+    const userDisplay = currentUser && currentUser.email ? currentUser.email.split('@')[0] : 'User';
 
-    // 1. 更新頂部狀態標籤 (桌面端與手機端按鈕)
-    const syncBtns = document.querySelectorAll('.box-btn-cloud-sync, #box-cloud-sync-btn, .box-cloud-sync-chip');
-    syncBtns.forEach(btn => {
+    // 1. 更新桌面導航頂欄登入按鈕 (#header-cloud-auth-btn)
+    const headerAuthBtn = document.getElementById('header-cloud-auth-btn');
+    if (headerAuthBtn) {
+      if (currentUser) {
+        headerAuthBtn.classList.add('is-logged-in');
+        headerAuthBtn.classList.remove('is-guest');
+        headerAuthBtn.innerHTML = `
+          <span class="sync-dot dot-active"></span>
+          <span class="header-auth-text">${escapeHtml(userDisplay)}</span>
+        `;
+        headerAuthBtn.title = isEN ? `Logged in: ${currentUser.email}. Click to manage sync.` : `已登入：${currentUser.email}。點擊管理雲端同步。`;
+      } else {
+        headerAuthBtn.classList.remove('is-logged-in');
+        headerAuthBtn.classList.add('is-guest');
+        headerAuthBtn.innerHTML = `
+          <span class="sync-dot dot-guest"></span>
+          <span class="header-auth-text">${isEN ? 'Sign In / Register' : '登入 / 註冊'}</span>
+        `;
+        headerAuthBtn.title = isEN ? 'Sign in or register to enable cloud sync.' : '登入或註冊帳號以啟用手機/電腦即時同步。';
+      }
+    }
+
+    // 2. 更新手機端頂部導航頭像按鈕 (#mobile-header-auth-btn)
+    const mobileHeaderBtn = document.getElementById('mobile-header-auth-btn');
+    if (mobileHeaderBtn) {
+      if (currentUser) {
+        mobileHeaderBtn.classList.add('is-logged-in');
+        mobileHeaderBtn.classList.remove('is-guest');
+        mobileHeaderBtn.title = isEN ? `Logged in: ${currentUser.email}` : `已登入：${currentUser.email}`;
+      } else {
+        mobileHeaderBtn.classList.remove('is-logged-in');
+        mobileHeaderBtn.classList.add('is-guest');
+        mobileHeaderBtn.title = isEN ? 'Sign In / Register' : '雲端帳號 登入 / 註冊';
+      }
+    }
+
+    // 3. 更新倉庫頂部按鈕 (#box-cloud-sync-btn)
+    const boxSyncBtns = document.querySelectorAll('.box-btn-cloud-sync, #box-cloud-sync-btn');
+    boxSyncBtns.forEach(btn => {
       if (!btn) return;
       if (currentUser) {
         btn.classList.add('is-logged-in');
         btn.classList.remove('is-guest');
-        const userDisplay = currentUser.email ? currentUser.email.split('@')[0] : 'User';
         btn.innerHTML = `
           <span class="sync-dot dot-active"></span>
           <span class="sync-text">${isEN ? `Synced: ${escapeHtml(userDisplay)}` : `已同步：${escapeHtml(userDisplay)}`}</span>
         `;
-        btn.title = isEN ? `Logged in as ${currentUser.email}. Click to manage cloud sync.` : `已登入：${currentUser.email}。點擊管理雲端同步。`;
+        btn.title = isEN ? `Logged in as ${currentUser.email}. Click to manage sync.` : `已登入：${currentUser.email}。點擊管理雲端同步。`;
       } else {
         btn.classList.remove('is-logged-in');
         btn.classList.add('is-guest');
         btn.innerHTML = `
           <span class="sync-dot dot-guest"></span>
-          <span class="sync-text">${isEN ? 'Cloud: Guest' : '雲端同步：訪客'}</span>
+          <span class="sync-text">${isEN ? 'Cloud Sync (Sign In)' : '雲端同步 (登入/註冊)'}</span>
         `;
-        btn.title = isEN ? 'Operating in local guest mode. Click to sign in and enable cloud sync.' : '目前為本機訪客模式。點擊登入以啟用手機/電腦即時同步。';
+        btn.title = isEN ? 'Operating in local guest mode. Click to sign in or register.' : '目前為本機訪客模式。點擊登入或註冊以啟用即時同步。';
       }
     });
 
-    // 2. 更新彈窗內狀態
+    // 4. 更新手機端工具列晶片 (#box-mobile-cloud-sync-btn)
+    const mobileChip = document.getElementById('box-mobile-cloud-sync-btn');
+    if (mobileChip) {
+      if (currentUser) {
+        mobileChip.classList.add('is-logged-in');
+        mobileChip.innerHTML = `
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+          <span class="view-chip-text sync-text">${escapeHtml(userDisplay)}</span>
+        `;
+      } else {
+        mobileChip.classList.remove('is-logged-in');
+        mobileChip.innerHTML = `
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+          <span class="view-chip-text sync-text">${isEN ? 'Sign In' : '登入/同步'}</span>
+        `;
+      }
+    }
+
+    // 5. 更新彈窗內狀態
     const modalStatus = document.getElementById('cloud-auth-status-info');
     if (modalStatus) {
       if (currentUser) {

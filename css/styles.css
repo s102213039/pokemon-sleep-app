@@ -12935,6 +12935,36 @@ input[type="number"] {
 /* ───────────────────────────────────────────────────────────────
    雲端資料庫與帳號同步樣式 (Supabase Cloud Sync & Auth Modal)
    ─────────────────────────────────────────────────────────────── */
+.header-auth-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card, rgba(30, 41, 59, 0.7));
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.header-auth-btn:hover {
+  background: var(--bg-hover, rgba(255, 255, 255, 0.08));
+  border-color: var(--accent-blue, #38bdf8);
+}
+
+.header-auth-btn.is-logged-in {
+  border-color: rgba(16, 185, 129, 0.45);
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.mobile-header-btn.is-logged-in {
+  color: #10b981 !important;
+}
+
 .box-btn-cloud-sync {
   display: inline-flex;
   align-items: center;
