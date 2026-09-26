@@ -723,41 +723,11 @@
       }
     }
 
-    // 3. 更新倉庫頂部按鈕 (#box-cloud-sync-btn)
-    const boxSyncBtns = document.querySelectorAll('.box-btn-cloud-sync, #box-cloud-sync-btn');
+    // 3. 倉庫區塊依需求全面移除「已同步：帳號」展示（統一由頂部導覽列帳號狀態管理）
+    const boxSyncBtns = document.querySelectorAll('.box-btn-cloud-sync, #box-cloud-sync-btn, #box-mobile-cloud-sync-btn');
     boxSyncBtns.forEach(btn => {
-      if (!btn) return;
-      if (currentUser) {
-        btn.style.display = 'inline-flex';
-        btn.classList.add('is-logged-in');
-        btn.classList.remove('is-guest');
-        btn.innerHTML = `
-          <span class="sync-dot dot-active"></span>
-          <span class="sync-text">${isEN ? `Synced: ${escapeHtml(userDisplay)}` : `已同步：${escapeHtml(userDisplay)}`}</span>
-        `;
-        btn.title = isEN ? `Logged in as ${userDisplay}. Click to manage sync.` : `已登入：${userDisplay}。點擊管理雲端同步。`;
-      } else {
-        // 尚未登入時依使用者需求隱藏此按鈕，改由倉庫 Tab 輕微遮罩引導登入
-        btn.style.display = 'none';
-        btn.classList.remove('is-logged-in');
-        btn.classList.add('is-guest');
-      }
+      if (btn) btn.style.display = 'none';
     });
-
-    // 4. 更新手機端工具列晶片 (#box-mobile-cloud-sync-btn)
-    const mobileChip = document.getElementById('box-mobile-cloud-sync-btn');
-    if (mobileChip) {
-      if (currentUser) {
-        mobileChip.style.display = 'inline-flex';
-        mobileChip.classList.add('is-logged-in');
-        mobileChip.innerHTML = `
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
-          <span class="view-chip-text sync-text">${escapeHtml(userDisplay)}</span>
-        `;
-      } else {
-        mobileChip.style.display = 'none';
-      }
-    }
 
     // 5. 更新彈窗內狀態
     const modalStatus = document.getElementById('cloud-auth-status-info');

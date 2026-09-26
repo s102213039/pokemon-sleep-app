@@ -766,11 +766,7 @@
               <option value="pr-asc" data-i18n="box.sort_pr_asc">PR 評分由低到高</option>
               <option value="id-asc" data-i18n="box.sort_dex_asc">全國圖鑑編號</option>
             </select>
-            <div class="box-view-toggle-chips" aria-label="展示方式與雲端同步">
-              <button type="button" class="view-chip-btn box-cloud-sync-chip" id="box-mobile-cloud-sync-btn" onclick="window.CloudSync && window.CloudSync.openAuthModal()" title="雲端同步與帳號登入" style="display:none;">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
-                <span class="view-chip-text sync-text">雲端</span>
-              </button>
+            <div class="box-view-toggle-chips" aria-label="展示方式">
               <button type="button" id="box-toggle-grid" class="view-chip-btn active" title="卡片視圖">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
                   <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
@@ -1214,7 +1210,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
-  <script src="../js/core/cloudSync.js?v=20260926_10"></script>
+  <script src="../js/core/cloudSync.js?v=20260926_11"></script>
   <script src="../js/core/i18n.js?v=20260926_03"></script>
   <script src="../js/modules/app.js?v=20260926_09"></script>
   <script src="../js/modules/recipes.js?v=20260926_03"></script>

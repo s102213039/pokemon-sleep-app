@@ -833,15 +833,11 @@
         <!-- 頂部智能錄入與備份功能區 -->
         <div class="box-top-banner">
           <div class="box-banner-text">
-            <h2 class="box-banner-title" data-i18n="box.banner_title">📦 我的寶可夢倉庫 & 截圖智能辨識</h2>
+            <h2 class="box-banner-title" data-i18n="box.banner_title">我的寶可夢倉庫 & 截圖智能辨識</h2>
             <p class="box-banner-desc" data-i18n="box.banner_desc">支援上傳遊戲截圖自動辨識等級、食材組合、副技能與性格，亦可隨時手動錄入與編輯。</p>
           </div>
           <div class="box-banner-actions">
             <input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
-            <button type="button" id="box-cloud-sync-btn" class="box-btn box-btn-cloud-sync is-guest" title="管理雲端同步與帳號登入" style="display:none;">
-              <span class="sync-dot dot-guest"></span>
-              <span class="sync-text">雲端同步：訪客</span>
-            </button>
             <button type="button" id="box-appraisal-lab-btn" class="box-btn" style="background: linear-gradient(135deg, #8b5cf6, #38bdf8); color: #ffffff; border: 1px solid rgba(168, 85, 247, 0.4); font-weight: 700;" onclick="window.AppraisalLab.toggleLab()" title="開啟/收合 寶可夢六維深度診斷評測實驗室" data-i18n="box.appraisal_lab">深度評測室</button>
             <button type="button" id="box-manual-add-btn" class="box-btn box-btn-primary" data-i18n="box.add_pokemon">手動新增寶可夢</button>
             <button type="button" id="box-export-btn" class="box-btn box-btn-secondary" title="匯出個人倉庫為 JSON 備份檔" data-i18n="box.export_backup">匯出備份</button>
@@ -1255,7 +1251,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
-  <script src="js/core/cloudSync.js?v=20260926_10"></script>
+  <script src="js/core/cloudSync.js?v=20260926_11"></script>
   <script src="js/core/i18n.js?v=20260926_03"></script>
   <script src="js/modules/app.js?v=20260926_09"></script>
   <script src="js/modules/recipes.js?v=20260926_03"></script>
