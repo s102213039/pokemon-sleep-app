@@ -12851,7 +12851,7 @@ input[type="number"] {
   text-overflow: ellipsis;
 }
 
-/* 🔔 倉庫專屬浮動 Toast 系統 */
+/* 倉庫與雲端浮動 Toast 系統 */
 .box-toast-container {
   position: fixed;
   bottom: 24px;
@@ -12861,6 +12861,20 @@ input[type="number"] {
   flex-direction: column;
   gap: 10px;
   pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .box-toast-container {
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    right: 14px;
+    left: 14px;
+    align-items: center;
+  }
+  .box-toast-item {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 420px !important;
+  }
 }
 
 .box-toast-item {
@@ -12890,13 +12904,32 @@ input[type="number"] {
 }
 
 .box-toast-item.toast-success {
-  border-color: rgba(16, 185, 129, 0.5);
+  border-color: rgba(16, 185, 129, 0.45);
+  border-left: 4px solid #10b981;
+}
+
+.box-toast-item.toast-warning {
+  border-color: rgba(245, 158, 11, 0.45);
+  border-left: 4px solid #f59e0b;
+}
+
+.box-toast-item.toast-info {
+  border-color: rgba(56, 189, 248, 0.45);
+  border-left: 4px solid #38bdf8;
+}
+
+.box-toast-item.toast-error {
+  border-color: rgba(239, 68, 68, 0.45);
+  border-left: 4px solid #ef4444;
 }
 
 .box-toast-icon {
-  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
   margin-top: 2px;
+  flex-shrink: 0;
 }
 
 .box-toast-body {

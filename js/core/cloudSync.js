@@ -269,6 +269,8 @@
       if (data && data.user) {
         currentUser = data.user;
         syncStatus = 'synced';
+        closeAuthModal();
+        dismissBoxAuthOverlay();
         notifyAuthStateChanged();
         subscribeToRealtime();
         await triggerInitialSyncAndMerge();
@@ -322,6 +324,8 @@
       if (data && data.user) {
         currentUser = data.user;
         syncStatus = 'synced';
+        closeAuthModal();
+        dismissBoxAuthOverlay();
         notifyAuthStateChanged();
         subscribeToRealtime();
         await triggerInitialSyncAndMerge();
@@ -623,6 +627,58 @@
     authStateCallbacks.forEach(cb => {
       try { cb(currentUser); } catch (e) {}
     });
+  }
+
+  /* ─── 浮動 Toast 系統 (支援右下角狀態提醒與多端通知) ───────────── */
+  function showToast(title, message, type = 'success') {
+    if (typeof document === 'undefined') return null;
+    let container = document.getElementById('box-toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'box-toast-container';
+      container.className = 'box-toast-container';
+      if (document.body) {
+        document.body.appendChild(container);
+      }
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `box-toast-item toast-${type}`;
+
+    let iconSvg = '';
+    if (type === 'success') {
+      iconSvg = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>';
+    } else if (type === 'warning') {
+      iconSvg = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+    } else if (type === 'error') {
+      iconSvg = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+    } else {
+      iconSvg = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+    }
+
+    toast.innerHTML = `
+      <div class="box-toast-icon">${iconSvg}</div>
+      <div class="box-toast-body">
+        <div class="box-toast-title">${escapeHtml(title)}</div>
+        <div class="box-toast-msg">${escapeHtml(message)}</div>
+      </div>
+      <button type="button" class="box-toast-close" onclick="this.parentElement && this.parentElement.remove()" aria-label="關閉">✕</button>
+    `;
+
+    if (container && typeof container.appendChild === 'function') {
+      container.appendChild(toast);
+    }
+
+    setTimeout(() => {
+      if (toast && toast.parentElement) {
+        toast.classList.add('toast-fadeout');
+        setTimeout(() => {
+          if (toast && toast.parentElement) toast.remove();
+        }, 300);
+      }
+    }, 4500);
+
+    return toast;
   }
 
   /* ─── UI 狀態與彈窗管理 ───────────────────────────────────── */
@@ -1076,13 +1132,64 @@
       if (msgBox) msgBox.style.display = 'none';
     }
 
+    // 鍵盤 Enter 鍵快速提交
+    if (signinUser) {
+      signinUser.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          if (signinPwd && !signinPwd.value) {
+            signinPwd.focus();
+          } else if (signInBtn) {
+            signInBtn.click();
+          }
+        }
+      });
+    }
+    if (signinPwd) {
+      signinPwd.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && signInBtn) {
+          signInBtn.click();
+        }
+      });
+    }
+
+    if (signupUser) {
+      signupUser.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && signupPwd && !signupPwd.value) {
+          signupPwd.focus();
+        }
+      });
+    }
+    if (signupPwd) {
+      signupPwd.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && signupConfirm && !signupConfirm.value) {
+          signupConfirm.focus();
+        }
+      });
+    }
+    if (signupConfirm) {
+      signupConfirm.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && signUpBtn) {
+          signUpBtn.click();
+        }
+      });
+    }
+
     // 登入操作
     if (signInBtn) {
       signInBtn.onclick = async () => {
         clearMsg();
-        const account = signinUser ? signinUser.value : '';
+        const account = signinUser ? signinUser.value.trim() : '';
         const pwd = signinPwd ? signinPwd.value : '';
         const isRemember = rememberCheck ? rememberCheck.checked : false;
+
+        if (!account) {
+          showMsg('請輸入自訂帳號！');
+          return;
+        }
+        if (!pwd) {
+          showMsg('請輸入密碼！');
+          return;
+        }
 
         signInBtn.disabled = true;
         signInBtn.textContent = '登入中...';
@@ -1092,8 +1199,11 @@
 
         if (res.success) {
           saveRememberedAuth(account, pwd, isRemember);
-          showMsg('登入成功！已啟動跨裝置即時同步。', false);
-          setTimeout(() => closeAuthModal(), 1200);
+          // 立即關閉視窗與遮罩，直接進入主頁面，絕不展示任何確認框或過渡畫面
+          closeAuthModal();
+          dismissBoxAuthOverlay();
+          // 使用右下角浮動 Toast 進行狀態提醒
+          showToast('登入成功', `歡迎回來，${account}！已連線雲端即時同步。`, 'success');
         } else {
           showMsg(res.error || '登入失敗，請檢查帳號密碼！');
         }
@@ -1104,7 +1214,7 @@
     if (signUpBtn) {
       signUpBtn.onclick = async () => {
         clearMsg();
-        const account = signupUser ? signupUser.value : '';
+        const account = signupUser ? signupUser.value.trim() : '';
         const pwd = signupPwd ? signupPwd.value : '';
         const confirm = signupConfirm ? signupConfirm.value : '';
 
@@ -1129,8 +1239,10 @@
 
         if (res.success) {
           saveRememberedAuth(account, pwd, true);
-          showMsg('註冊成功！已自動登入並建立雲端倉庫。', false);
-          setTimeout(() => closeAuthModal(), 1200);
+          // 立即關閉視窗與遮罩，直接進入主頁面
+          closeAuthModal();
+          dismissBoxAuthOverlay();
+          showToast('註冊成功', `歡迎使用，${account}！已自動登入並建立雲端倉庫。`, 'success');
         } else {
           showMsg(res.error || '註冊失敗，請稍後再試！');
         }
@@ -1141,8 +1253,12 @@
     if (signOutBtn) {
       signOutBtn.onclick = async () => {
         clearMsg();
+        signOutBtn.disabled = true;
         await signOut();
-        showMsg('已成功登出，目前為本機訪客模式。', false);
+        signOutBtn.disabled = false;
+        closeAuthModal();
+        updateBoxAuthOverlay(true);
+        showToast('已登出', '目前已切換為本機訪客模式。', 'info');
       };
     }
 
@@ -1155,7 +1271,8 @@
         await triggerInitialSyncAndMerge();
         manualSyncBtn.disabled = false;
         manualSyncBtn.textContent = '立即手動同步';
-        showMsg('手動同步完成！', false);
+        closeAuthModal();
+        showToast('手動同步完成', '寶可夢倉庫已與雲端完成最新同步。', 'success');
       };
     }
   }
@@ -1208,6 +1325,7 @@
     dismissBoxAuthOverlay,
     getRememberedAuth,
     saveRememberedAuth,
+    showToast,
     onRemoteUpdate,
     onAuthStateChange,
     saveCustomConfig,
@@ -1218,6 +1336,8 @@
   };
 
   if (typeof window !== 'undefined') {
+    window.showToast = showToast;
+    window.showAppToast = showToast;
     window.CloudSync = CloudSyncModule;
   }
 

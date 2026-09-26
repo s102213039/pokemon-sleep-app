@@ -2282,39 +2282,47 @@
 
   /* ─── 浮動 Toast 系統 ─────────────────────────────────────── */
   function showBoxToast(title, message, type = 'success') {
+    if (typeof window !== 'undefined' && typeof window.showToast === 'function') {
+      return window.showToast(title, message, type);
+    }
     let container = document.getElementById('box-toast-container');
     if (!container) {
       container = document.createElement('div');
       container.id = 'box-toast-container';
       container.className = 'box-toast-container';
-      document.body.appendChild(container);
+      if (document.body) {
+        document.body.appendChild(container);
+      }
     }
 
     const toast = document.createElement('div');
     toast.className = `box-toast-item toast-${type}`;
     toast.innerHTML = `
-      <div class="box-toast-icon">${type === 'success' ? '[OK]' : (type === 'warning' ? '[!]' : '[i]')}</div>
+      <div class="box-toast-icon">[i]</div>
       <div class="box-toast-body">
         <div class="box-toast-title">${escapeHtml(title)}</div>
         <div class="box-toast-msg">${escapeHtml(message)}</div>
       </div>
-      <button type="button" class="box-toast-close" onclick="this.parentElement.remove()">✕</button>
+      <button type="button" class="box-toast-close" onclick="this.parentElement && this.parentElement.remove()">✕</button>
     `;
 
-    container.appendChild(toast);
+    if (container && typeof container.appendChild === 'function') {
+      container.appendChild(toast);
+    }
 
     setTimeout(() => {
-      if (toast.parentElement) {
+      if (toast && toast.parentElement) {
         toast.classList.add('toast-fadeout');
         setTimeout(() => toast.remove(), 300);
       }
     }, 4500);
+    return toast;
   }
 
   /* ─── 備份匯出與匯入 ─────────────────────────────────────── */
   function exportBoxJSON() {
     if (userBox.length === 0) {
-      alert('倉庫內目前沒有任何寶可夢可匯出！');
+      showBoxToast('匯出提醒', '倉庫內目前沒有任何寶可夢可匯出！', 'warning');
       return;
     }
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userBox, null, 2));
@@ -2343,13 +2351,13 @@
             });
             saveUserBox();
             renderBox();
-            alert(`成功匯入 ${imported.length} 隻寶可夢！`);
+            showBoxToast('匯入成功', `成功匯入 ${imported.length} 隻寶可夢！`, 'success');
           }
         } else {
-          alert('匯入檔案格式錯誤，請確認為正確的 JSON 備份檔！');
+          showBoxToast('匯入失敗', '匯入檔案格式錯誤，請確認為正確的 JSON 備份檔！', 'warning');
         }
       } catch (err) {
-        alert('解析 JSON 備份檔案失敗：' + err.message);
+        showBoxToast('解析失敗', '解析 JSON 備份檔案失敗：' + err.message, 'error');
       }
     };
     reader.readAsText(file);

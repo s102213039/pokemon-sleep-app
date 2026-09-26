@@ -8077,6 +8077,22 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     // Test resetDismissed on tab switch
     sandbox.window.CloudSync.updateBoxAuthOverlay(true);
     assertEquals(overlayEl.style.display, 'flex', 'updateBoxAuthOverlay(true) must restore overlay when guest clicks tab');
+
+    // 9. Floating Toast notification system verification
+    assertEquals(typeof sandbox.window.showToast, 'function', 'showToast must be globally available on window');
+    assertEquals(typeof sandbox.window.CloudSync.showToast, 'function', 'showToast must be exported on CloudSync');
+
+    const toastEl = sandbox.window.showToast('登入成功', '歡迎回來，測試帳號！', 'success');
+    assert(toastEl !== null, 'showToast must return created toast DOM element');
+    const toastContainer = sandbox.document.getElementById('box-toast-container');
+    assert(toastContainer !== null, '#box-toast-container must exist in DOM');
+    assert(toastEl.className.includes('toast-success'), 'Toast element must have toast-success class');
+
+    const warnToast = sandbox.window.showToast('同步異常', '網路連線逾時', 'warning');
+    assert(warnToast.className.includes('toast-warning'), 'Toast element must have toast-warning class');
+
+    const infoToast = sandbox.window.showToast('已登出', '切換為訪客模式', 'info');
+    assert(infoToast.className.includes('toast-info'), 'Toast element must have toast-info class');
   });
 
 
