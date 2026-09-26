@@ -99,6 +99,9 @@
     } catch (e) {
       console.error('Failed to save user box:', e);
     }
+    if (typeof window !== 'undefined' && window.CloudSync && typeof window.CloudSync.pushCloudBox === 'function') {
+      window.CloudSync.pushCloudBox(userBox);
+    }
   }
 
   /* ─── 獲取寶可夢基礎資訊 ─────────────────────────────────── */
@@ -2587,6 +2590,40 @@
         switchBoxSubtab('lab');
       }
     } catch (e) {}
+
+    // 6. 雲端同步監聽與回調綁定 (Supabase CloudSync)
+    if (typeof window !== 'undefined' && window.CloudSync) {
+      window.CloudSync.onRemoteUpdate((remoteBox) => {
+        userBox = Array.isArray(remoteBox) ? remoteBox : [];
+        try {
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(userBox));
+          }
+        } catch (e) {}
+        renderBox();
+        if (window.AppraisalLab && typeof window.AppraisalLab.updateBoxItems === 'function') {
+          window.AppraisalLab.updateBoxItems();
+        }
+        showBoxToast('雲端同步成功', '已從其他裝置即時同步最新寶可夢倉庫資料！', 'success');
+      });
+
+      window.CloudSync.onAuthStateChange(() => {
+        loadUserBox();
+        renderBox();
+        if (window.AppraisalLab && typeof window.AppraisalLab.updateBoxItems === 'function') {
+          window.AppraisalLab.updateBoxItems();
+        }
+      });
+    }
+
+    const cloudSyncBtns = document.querySelectorAll('.box-btn-cloud-sync, #box-cloud-sync-btn');
+    cloudSyncBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (window.CloudSync && typeof window.CloudSync.openAuthModal === 'function') {
+          window.CloudSync.openAuthModal();
+        }
+      });
+    });
   }
 
   const STORAGE_KEY_BOX_SUBTAB = 'pksleep_active_box_subtab';

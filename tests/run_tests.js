@@ -7930,6 +7930,50 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(mockBtn.blurred === true, 'dismissAllFloatingTooltips MUST blur a non-form element');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Supabase CloudSync: Module Initialization, Union Merge Algorithm & Box Integration', () => {
+    const cloudSync = require(path.join(WORKSPACE_ROOT, 'js', 'core', 'cloudSync.js'));
+    assert(cloudSync !== null, 'cloudSync module should export successfully');
+    assertEquals(typeof cloudSync.mergePokemonBoxes, 'function', 'mergePokemonBoxes should be a function');
+    assertEquals(typeof cloudSync.signInWithPassword, 'function', 'signInWithPassword should be a function');
+    assertEquals(typeof cloudSync.signUpWithPassword, 'function', 'signUpWithPassword should be a function');
+    assertEquals(typeof cloudSync.isLoggedIn, 'function', 'isLoggedIn should be a function');
+    assertEquals(cloudSync.isLoggedIn(), false, 'isLoggedIn should default to false in guest mode');
+    assertEquals(cloudSync.getStatus(), 'guest', 'getStatus should default to guest mode without config');
+
+    // Test mergePokemonBoxes
+    // 1. Remote has Pikachu, Local has Charmander (Union merge)
+    const local = [
+      { uid: 'pkm_local_1', pokemonId: '4', name: '小火龍', level: 12, nature: '固執', subskills: ['樹果數量S'], ing1: '豆製肉', createdAt: 1000 }
+    ];
+    const remote = [
+      { uid: 'pkm_remote_1', pokemonId: '25', name: '皮卡丘', level: 25, nature: '爽朗', subskills: ['幫手獎勵'], ing1: '特選蘋果', createdAt: 500 }
+    ];
+
+    const merged1 = cloudSync.mergePokemonBoxes(local, remote);
+    assertEquals(merged1.length, 2, 'Union merge should contain both items');
+    assert(merged1.some(p => p.uid === 'pkm_local_1'), 'Merged should contain local item');
+    assert(merged1.some(p => p.uid === 'pkm_remote_1'), 'Merged should contain remote item');
+
+    // 2. Conflict resolution: same uid, local is newer
+    const localUpdated = [
+      { uid: 'pkm_remote_1', pokemonId: '25', name: '皮卡丘', level: 30, nature: '爽朗', subskills: ['幫手獎勵'], ing1: '特選蘋果', updatedAt: 2000 }
+    ];
+    const merged2 = cloudSync.mergePokemonBoxes(localUpdated, remote);
+    assertEquals(merged2.length, 1, 'Same UID should not duplicate');
+    assertEquals(merged2[0].level, 30, 'Newer timestamp should take precedence');
+
+    // 3. Fingerprint deduplication: different UID but same exact pokemon attributes
+    const localDuplicate = [
+      { uid: 'pkm_new_rand', pokemonId: '25', name: '皮卡丘', level: 25, nature: '爽朗', subskills: ['幫手獎勵'], ing1: '特選蘋果', createdAt: 1000 }
+    ];
+    const merged3 = cloudSync.mergePokemonBoxes(localDuplicate, remote);
+    assertEquals(merged3.length, 1, 'Exact fingerprint duplicate should not be added twice');
+
+    // 4. Empty arrays handling
+    assertArrayEquals(cloudSync.mergePokemonBoxes([], remote), remote, 'Empty local returns remote');
+    assertArrayEquals(cloudSync.mergePokemonBoxes(local, []), local, 'Empty remote returns local');
+  });
+
 
 
 
