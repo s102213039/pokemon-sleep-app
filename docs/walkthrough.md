@@ -1,31 +1,27 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
-## 交接：2026-09-26 已完成（Supabase 帳密驗證、跨裝置雙軌即時同步與智慧合併）
+## 交接：2026-09-26 已完成（全域中央 Supabase 資料庫配置、極簡免設定帳號同步與 v=20260926_04）
 
-- **靜態快取標籤**：`v=20260926_03`
+- **靜態快取標籤**：`v=20260926_04`
 - **測試狀態**：162/162 自動化測試全數通過（含 Supabase CloudSync 模組初始化、Union Merge 聯集合併與倉庫掛接測試）
-- **主要完成功能**：
-  1. **全域與顯眼「登入 / 註冊」按鈕配置**：
-     - 桌面端頂部導航欄（右上角 `.header-actions`）新增全域 `[登入 / 註冊]` 按鈕（`#header-cloud-auth-btn`），任何頁籤皆可一鍵呼出登入彈窗；登入後即時切換為綠點與使用者帳號名。
-     - 手機 H5 端頂部導航欄（`.mobile-header-actions`）新增個人帳號頭像按鈕（`#mobile-header-auth-btn`），並在系統設定彈窗（`#settings-modal`）內加入顯眼的「雲端即時同步 [登入 / 註冊]」操作列。
-     - 倉庫 Tab 頂部按鈕文案明確標註為 `[雲端同步 (登入/註冊)]`，徹底消除先前的隱蔽性。
-  2. **雲端核心模組 (`js/core/cloudSync.js`)**：
-     - 封裝 `@supabase/supabase-js` 官方 SDK。
-     - 支援簡約「帳號（Email）+ 密碼」註冊與登入（`signUpWithPassword`、`signInWithPassword`、`signOut`）。
-     - 具備防抖推送（800ms Debounce）與 WebSocket Realtime（`postgres_changes`）跨裝置秒級推送監聽。
-     - 零配置平滑降級：若使用者未登入或未配置專案，自動無感以本機「訪客模式」運作，不跳任何 Uncaught 報錯，100% 保持離線與既有功能完整性。
-  2. **雙向智慧聯集合併演算法 (`mergePokemonBoxes`)**：
+- **架構釐清與實作**：
+  1. **中央多租戶雲端架構（Central Multi-Tenant BaaS）**：
+     - 使用者確認本專案提供的 Supabase 實例（`https://tyoeegvqszobiosaaxbb.supabase.co`）為**全域中央統一資料庫**，供所有使用本 App 的玩家共同使用。
+     - 一般使用者無需亦嚴禁配置任何資料庫連線參數（URL 與 Key）。
+     - 前端核心 `js/core/cloudSync.js` 的 `DEFAULT_CONFIG` 已直接硬編碼配置中央 Supabase 的 Project URL 與 Public Anon Key。
+     - 每個使用者透過 Supabase Auth 自建獨立帳號，以 `auth.uid()` 配合 Postgres Row Level Security (RLS) 實現各玩家資料 100% 獨立隔離與隱私安全。
+  2. **極簡免設定登入/註冊彈窗 (`#cloud-auth-modal`)**：
+     - 徹底移除彈窗內的「進階設定：Supabase 伺服器配置」手動輸入折疊卡片，一般使用者僅需點擊 `[登入 / 註冊]`，輸入 Email/帳號 與 密碼，即可一秒註冊或登入。
+     - 密碼顯示/隱藏切換按鈕全面替換為純向量 SVG 圖標，嚴格落實全域零 Emoji 規範（Zero Emoji Policy）。
+     - 新增直觀的中文錯誤提示轉譯（如「帳號或密碼錯誤」、「此帳號已被註冊」、「密碼長度至少需為 6 個字元」等）。
+  3. **雙向智慧聯集合併演算法 (`mergePokemonBoxes`)**：
      - 首次登入或跨裝置合併時，依據寶可夢 UID、特徵指紋（`name + level + nature + subskills + ingredients`）與更新時間戳記執行去重聯集合併，確保離線與線上任何新增的寶可夢皆不會被互相覆蓋。
-  3. **倉庫模組雙向連動 (`js/modules/box.js`)**：
-     - 在 `saveUserBox()` 中自動掛接 `CloudSync.pushCloudBox(userBox)`。
+  4. **倉庫模組雙向連動 (`js/modules/box.js`)**：
+     - 在 `saveUserBox()` 中自動掛接 `CloudSync.pushCloudBox(userBox)`（800ms 防抖推送）。
      - 註冊 `onRemoteUpdate` 與 `onAuthStateChange`，當手機或另一台裝置同步時，自動更新本地 `userBox`、LocalStorage，並即時重繪卡片與更新評測室快選名單。
-  4. **雙端 UI 狀態整合與極簡認證彈窗 (`#cloud-auth-modal`)**：
-     - 桌面端頂部橫幅加入「雲端同步狀態膠囊」（`#box-cloud-sync-btn`），即時反映訪客/已同步狀態與使用者名稱。
-     - 手機 H5 端在控制列加入「雲端」快捷按鈕（`#box-mobile-cloud-sync-btn`）。
-     - 彈窗包含極簡帳號密碼登入、一秒註冊、登出、手動同步，以及可折疊的「自訂 Supabase 伺服器配置（URL & Anon Key）」，讓使用者自由填入個人專案或預設配置。
   5. **規範檢核**：
-     - 嚴格遵守零 Emoji 規範（Zero Emoji Policy），所有狀態圖示均採用純向量 SVG 與純文字標籤。
-     - 嚴格遵守單一外框規範（Single Frame Rule），彈窗內無巢狀多重外框。
+     - 嚴格遵守零 Emoji 規範（Zero Emoji Policy）。
+     - 嚴格遵守單一外框規範（Single Frame Rule）。
      - 完美適配 Midnight、Onyx、Dawn、Emerald 四大主題。
 
 ---
