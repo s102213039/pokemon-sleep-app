@@ -142,17 +142,74 @@
     }
   }
 
+  /* ─── 帳號與密碼規格校驗 ───────────────────────────────────── */
+  function parseAndValidateAccount(input) {
+    const raw = (input || '').trim();
+    if (!raw) {
+      return { valid: false, error: '請輸入使用者帳號！' };
+    }
+
+    // 兼容可能輸入完整 Email 的情況
+    if (raw.includes('@')) {
+      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw)) {
+        return { valid: true, username: raw.split('@')[0], email: raw.toLowerCase() };
+      }
+      return { valid: false, error: '電子郵件格式不正確！' };
+    }
+
+    // 純帳號校驗：3 ~ 20 個字元，僅限英文、數字、底線
+    if (raw.length < 3 || raw.length > 20) {
+      return { valid: false, error: '帳號長度需介於 3 到 20 個字元之間！' };
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(raw)) {
+      return { valid: false, error: '帳號僅允許英文字母、數字與底線 (_)，不可包含空格或特殊符號！' };
+    }
+
+    const cleanUsername = raw.toLowerCase();
+    // 內部映射為 Supabase 唯一識別安全憑證
+    return {
+      valid: true,
+      username: cleanUsername,
+      email: `${cleanUsername}@pkmsleep.internal`
+    };
+  }
+
+  function validatePassword(password) {
+    if (!password) {
+      return { valid: false, error: '請輸入密碼！' };
+    }
+    if (password.length < 6 || password.length > 32) {
+      return { valid: false, error: '密碼長度需介於 6 到 32 個字元之間！' };
+    }
+    if (/\s/.test(password)) {
+      return { valid: false, error: '密碼不可包含空白字元！' };
+    }
+    // 避免全部為相同字元，例如 111111 或 aaaaaa
+    if (/^(.)\1+$/.test(password)) {
+      return { valid: false, error: '密碼過於簡單，請勿使用連續單一相同字元！' };
+    }
+    // 常見極弱密碼黑名單
+    const weakPasswords = ['123456', '12345678', 'password', 'abcdef', '654321', 'qwerty', '000000'];
+    if (weakPasswords.includes(password.toLowerCase())) {
+      return { valid: false, error: '密碼過於簡單，請更換較安全的組合！' };
+    }
+    return { valid: true };
+  }
+
   /* ─── 帳號密碼註冊與登入 ───────────────────────────────────── */
-  async function signUpWithPassword(email, password) {
+  async function signUpWithPassword(accountInput, password) {
     if (!supabaseClient) {
-      return { success: false, error: '尚未配置 Supabase 專案網址與金鑰，請先於設定中填入！' };
+      return { success: false, error: '雲端同步服務未初始化，請稍後再試！' };
     }
-    const cleanEmail = (email || '').trim();
-    if (!cleanEmail || !cleanEmail.includes('@')) {
-      return { success: false, error: '請輸入有效的電子郵件地址！' };
+
+    const accResult = parseAndValidateAccount(accountInput);
+    if (!accResult.valid) {
+      return { success: false, error: accResult.error };
     }
-    if (!password || password.length < 6) {
-      return { success: false, error: '密碼長度至少需為 6 個字元！' };
+
+    const pwdResult = validatePassword(password);
+    if (!pwdResult.valid) {
+      return { success: false, error: pwdResult.error };
     }
 
     try {
@@ -160,7 +217,7 @@
       updateSyncUI();
 
       const { data, error } = await supabaseClient.auth.signUp({
-        email: cleanEmail,
+        email: accResult.email,
         password: password
       });
 
@@ -169,11 +226,9 @@
         updateSyncUI();
         let errMsg = error.message || '註冊失敗';
         if (errMsg.includes('User already registered')) {
-          errMsg = '此帳號已被註冊，請直接點擊「登入帳號」。';
+          errMsg = '此帳號已被註冊，請直接點擊「登入帳號」！';
         } else if (errMsg.includes('Password should be at least 6 characters')) {
           errMsg = '密碼長度至少需為 6 個字元！';
-        } else if (errMsg.includes('valid email')) {
-          errMsg = '請輸入格式正確的電子郵件信箱！';
         }
         return { success: false, error: errMsg };
       }
@@ -188,7 +243,7 @@
         return { success: true, user: data.user, session: data.session };
       }
 
-      return { success: true, message: '註冊確認信已寄送至信箱，請查收驗證後登入！' };
+      return { success: true, message: '註冊成功！' };
     } catch (err) {
       syncStatus = currentUser ? 'synced' : 'guest';
       updateSyncUI();
@@ -196,14 +251,16 @@
     }
   }
 
-  async function signInWithPassword(email, password) {
+  async function signInWithPassword(accountInput, password) {
     if (!supabaseClient) {
-      return { success: false, error: '尚未配置 Supabase 專案網址與金鑰，請先於設定中填入！' };
+      return { success: false, error: '雲端同步服務未初始化，請稍後再試！' };
     }
-    const cleanEmail = (email || '').trim();
-    if (!cleanEmail) {
-      return { success: false, error: '請輸入帳號或電子郵件！' };
+
+    const accResult = parseAndValidateAccount(accountInput);
+    if (!accResult.valid) {
+      return { success: false, error: accResult.error };
     }
+
     if (!password) {
       return { success: false, error: '請輸入密碼！' };
     }
@@ -213,7 +270,7 @@
       updateSyncUI();
 
       const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email: cleanEmail,
+        email: accResult.email,
         password: password
       });
 
@@ -224,7 +281,7 @@
         if (errMsg.includes('Invalid login credentials')) {
           errMsg = '帳號或密碼錯誤，請檢查後重新輸入！';
         } else if (errMsg.includes('Email not confirmed')) {
-          errMsg = '此帳號信箱尚未驗證。請檢查收件匣驗證連結，或請管理員於 Supabase 後台關閉驗證信設定。';
+          errMsg = '登入失敗：請管理員於 Supabase 後台關閉「Confirm email」驗證設定。';
         }
         return { success: false, error: errMsg };
       }
@@ -551,7 +608,7 @@
           <span class="sync-dot dot-active"></span>
           <span class="header-auth-text">${escapeHtml(userDisplay)}</span>
         `;
-        headerAuthBtn.title = isEN ? `Logged in: ${currentUser.email}. Click to manage sync.` : `已登入：${currentUser.email}。點擊管理雲端同步。`;
+        headerAuthBtn.title = isEN ? `Logged in: ${userDisplay}. Click to manage sync.` : `已登入：${userDisplay}。點擊管理雲端同步。`;
       } else {
         headerAuthBtn.classList.remove('is-logged-in');
         headerAuthBtn.classList.add('is-guest');
@@ -569,7 +626,7 @@
       if (currentUser) {
         mobileHeaderBtn.classList.add('is-logged-in');
         mobileHeaderBtn.classList.remove('is-guest');
-        mobileHeaderBtn.title = isEN ? `Logged in: ${currentUser.email}` : `已登入：${currentUser.email}`;
+        mobileHeaderBtn.title = isEN ? `Logged in: ${userDisplay}` : `已登入：${userDisplay}`;
       } else {
         mobileHeaderBtn.classList.remove('is-logged-in');
         mobileHeaderBtn.classList.add('is-guest');
@@ -588,7 +645,7 @@
           <span class="sync-dot dot-active"></span>
           <span class="sync-text">${isEN ? `Synced: ${escapeHtml(userDisplay)}` : `已同步：${escapeHtml(userDisplay)}`}</span>
         `;
-        btn.title = isEN ? `Logged in as ${currentUser.email}. Click to manage sync.` : `已登入：${currentUser.email}。點擊管理雲端同步。`;
+        btn.title = isEN ? `Logged in as ${userDisplay}. Click to manage sync.` : `已登入：${userDisplay}。點擊管理雲端同步。`;
       } else {
         btn.classList.remove('is-logged-in');
         btn.classList.add('is-guest');
@@ -628,7 +685,7 @@
               <span class="status-indicator-dot dot-active"></span>
               <strong>${isEN ? 'Cloud Sync Active' : '雲端即時同步中'}</strong>
             </div>
-            <div class="auth-account-text">${isEN ? 'Account: ' : '登入帳號：'}${escapeHtml(currentUser.email || 'User')}</div>
+            <div class="auth-account-text">${isEN ? 'Account: ' : '登入帳號：'}${escapeHtml(userDisplay)}</div>
             <div class="auth-sub-hint">${isEN ? 'Data is synced in real-time across your PC and mobile devices.' : '倉庫資料已自動與雲端連動，手機與電腦雙向秒級同步。'}</div>
           </div>
         `;
@@ -640,8 +697,8 @@
               <strong>${isEN ? 'Local Guest Mode (Not Logged In)' : '本機訪客模式 (未登入)'}</strong>
             </div>
             <div class="auth-sub-hint">${isEN 
-              ? 'Sign in or register below to automatically sync your Pokémon box between phone and PC.' 
-              : '輸入電子郵件信箱與密碼登入或註冊，即可自動在手機與電腦間同步寶可夢倉庫。'}</div>
+              ? 'Enter username and password below to automatically sync your Pokémon box between phone and PC.' 
+              : '輸入帳號與密碼登入或註冊，即可自動在手機與電腦間同步寶可夢倉庫。'}</div>
           </div>
         `;
       }
@@ -708,14 +765,14 @@
           <!-- 登入與註冊表單區塊 (未登入時展示) -->
           <div id="cloud-auth-form-section" style="margin-top: 14px;">
             <div class="cloud-auth-input-group">
-              <label for="cloud-auth-email" class="cloud-auth-label">${isEN ? 'Email / Account' : '電子信箱 / 帳號'}</label>
-              <input type="email" id="cloud-auth-email" class="cloud-auth-input" placeholder="user@example.com" autocomplete="username">
+              <label for="cloud-auth-username" class="cloud-auth-label">${isEN ? 'Username / Account' : '自訂帳號'}</label>
+              <input type="text" id="cloud-auth-username" class="cloud-auth-input" placeholder="${isEN ? '3-20 chars (e.g. trainer123)' : '3 ~ 20 位英文、數字或底線 (例如：trainer123)'}" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20">
             </div>
 
             <div class="cloud-auth-input-group">
-              <label for="cloud-auth-password" class="cloud-auth-label">${isEN ? 'Password (Min. 6 chars)' : '密碼 (至少 6 個字元)'}</label>
+              <label for="cloud-auth-password" class="cloud-auth-label">${isEN ? 'Password (6-32 chars)' : '自訂密碼 (6 ~ 32 位)'}</label>
               <div class="cloud-auth-password-wrap">
-                <input type="password" id="cloud-auth-password" class="cloud-auth-input" placeholder="••••••••" autocomplete="current-password">
+                <input type="password" id="cloud-auth-password" class="cloud-auth-input" placeholder="${isEN ? 'At least 6 characters' : '請輸入至少 6 位密碼'}" autocomplete="current-password" maxlength="32">
                 <button type="button" id="cloud-auth-pwd-toggle" class="cloud-auth-pwd-toggle" title="${isEN ? 'Toggle password visibility' : '顯示或隱藏密碼'}">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -749,7 +806,7 @@
   }
 
   function bindAuthModalEvents() {
-    const emailInput = document.getElementById('cloud-auth-email');
+    const userInput = document.getElementById('cloud-auth-username') || document.getElementById('cloud-auth-email');
     const pwdInput = document.getElementById('cloud-auth-password');
     const pwdToggle = document.getElementById('cloud-auth-pwd-toggle');
     const signInBtn = document.getElementById('cloud-auth-signin-btn');
@@ -757,13 +814,6 @@
     const signOutBtn = document.getElementById('cloud-auth-signout-btn');
     const manualSyncBtn = document.getElementById('cloud-auth-manual-sync-btn');
     const msgBox = document.getElementById('cloud-auth-msg');
-
-    const configToggle = document.getElementById('cloud-config-toggle-btn');
-    const configContent = document.getElementById('cloud-config-content');
-    const configUrl = document.getElementById('cloud-config-url');
-    const configKey = document.getElementById('cloud-config-key');
-    const configSave = document.getElementById('cloud-config-save-btn');
-    const configClear = document.getElementById('cloud-config-clear-btn');
 
     if (pwdToggle && pwdInput) {
       pwdToggle.onclick = () => {
@@ -785,11 +835,11 @@
     if (signInBtn) {
       signInBtn.onclick = async () => {
         clearMsg();
-        const email = emailInput ? emailInput.value : '';
+        const account = userInput ? userInput.value : '';
         const pwd = pwdInput ? pwdInput.value : '';
         signInBtn.disabled = true;
         signInBtn.textContent = '登入中...';
-        const res = await signInWithPassword(email, pwd);
+        const res = await signInWithPassword(account, pwd);
         signInBtn.disabled = false;
         signInBtn.textContent = '登入帳號';
         if (res.success) {
@@ -804,11 +854,11 @@
     if (signUpBtn) {
       signUpBtn.onclick = async () => {
         clearMsg();
-        const email = emailInput ? emailInput.value : '';
+        const account = userInput ? userInput.value : '';
         const pwd = pwdInput ? pwdInput.value : '';
         signUpBtn.disabled = true;
         signUpBtn.textContent = '註冊中...';
-        const res = await signUpWithPassword(email, pwd);
+        const res = await signUpWithPassword(account, pwd);
         signUpBtn.disabled = false;
         signUpBtn.textContent = '一秒註冊';
         if (res.success) {
@@ -902,7 +952,9 @@
     onAuthStateChange,
     saveCustomConfig,
     clearCustomConfig,
-    mergePokemonBoxes
+    mergePokemonBoxes,
+    parseAndValidateAccount,
+    validatePassword
   };
 
   if (typeof window !== 'undefined') {

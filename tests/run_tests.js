@@ -7972,6 +7972,27 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     // 4. Empty arrays handling
     assertArrayEquals(cloudSync.mergePokemonBoxes([], remote), remote, 'Empty local returns remote');
     assertArrayEquals(cloudSync.mergePokemonBoxes(local, []), local, 'Empty remote returns local');
+
+    // 5. Account & Password validation tests
+    assertEquals(cloudSync.parseAndValidateAccount('').valid, false, 'Empty account should be invalid');
+    assertEquals(cloudSync.parseAndValidateAccount('ab').valid, false, 'Account < 3 chars should be invalid');
+    assertEquals(cloudSync.parseAndValidateAccount('a'.repeat(21)).valid, false, 'Account > 20 chars should be invalid');
+    assertEquals(cloudSync.parseAndValidateAccount('trainer name').valid, false, 'Account with spaces should be invalid');
+    assertEquals(cloudSync.parseAndValidateAccount('trainer!@#').valid, false, 'Account with symbols should be invalid');
+    
+    const validAcc = cloudSync.parseAndValidateAccount('trainer_99');
+    assertEquals(validAcc.valid, true, 'trainer_99 should be valid account');
+    assertEquals(validAcc.username, 'trainer_99', 'Username should be preserved');
+    assertEquals(validAcc.email, 'trainer_99@pkmsleep.internal', 'Should map to internal identifier');
+
+    // Password validation tests
+    assertEquals(cloudSync.validatePassword('').valid, false, 'Empty password should be invalid');
+    assertEquals(cloudSync.validatePassword('12345').valid, false, 'Password < 6 chars should be invalid');
+    assertEquals(cloudSync.validatePassword('a'.repeat(33)).valid, false, 'Password > 32 chars should be invalid');
+    assertEquals(cloudSync.validatePassword('pass word').valid, false, 'Password with spaces should be invalid');
+    assertEquals(cloudSync.validatePassword('111111').valid, false, 'All same chars password should be invalid');
+    assertEquals(cloudSync.validatePassword('123456').valid, false, 'Trivial password should be invalid');
+    assertEquals(cloudSync.validatePassword('strong_pass99').valid, true, 'Valid password should pass');
   });
 
 
