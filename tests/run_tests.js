@@ -8036,6 +8036,24 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
       openModalError = err;
     }
     assertEquals(openModalError, null, 'openAuthModal must not throw any ReferenceError or uncaught exceptions');
+
+    // 7. View switching and remember-me verification
+    assertEquals(typeof sandbox.window.CloudSync.switchAuthView, 'function', 'switchAuthView must be a function');
+    sandbox.window.CloudSync.switchAuthView('signup');
+    sandbox.window.CloudSync.switchAuthView('signin');
+
+    let fakeStorage = {};
+    sandbox.localStorage.getItem = (k) => fakeStorage[k] || null;
+    sandbox.localStorage.setItem = (k, v) => { fakeStorage[k] = v; };
+    sandbox.localStorage.removeItem = (k) => { delete fakeStorage[k]; };
+
+    sandbox.window.CloudSync.saveRememberedAuth('player99', 'mypass123', true);
+    const remembered = sandbox.window.CloudSync.getRememberedAuth();
+    assertEquals(remembered.account, 'player99', 'Remembered account must match');
+    assertEquals(remembered.password, 'mypass123', 'Remembered password must match');
+
+    sandbox.window.CloudSync.saveRememberedAuth('player99', 'mypass123', false);
+    assertEquals(sandbox.window.CloudSync.getRememberedAuth(), null, 'Clearing remember-me should return null');
   });
 
 

@@ -13,6 +13,7 @@
 
   const STORAGE_KEY_USER_BOX = 'PKMSLEEP_USER_BOX_V1';
   const STORAGE_KEY_CONFIG = 'PKMSLEEP_SUPABASE_CONFIG_V1';
+  const STORAGE_KEY_REMEMBER = 'PKMSLEEP_REMEMBER_AUTH_V1';
 
   // 預設全域中央雲端資料庫配置 (Supabase BaaS - 全使用者統一共享)
   const DEFAULT_CONFIG = {
@@ -28,6 +29,38 @@
   let authStateCallbacks = [];
   let syncStatus = 'guest'; // 'guest' | 'connecting' | 'synced' | 'syncing' | 'offline' | 'error'
   let lastSyncError = '';
+  let authViewMode = 'signin'; // 'signin' | 'signup'
+
+  /* ─── 記住帳號與密碼管理 ───────────────────────────────────── */
+  function getRememberedAuth() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const raw = localStorage.getItem(STORAGE_KEY_REMEMBER);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed.account === 'string') {
+            return parsed;
+          }
+        }
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  function saveRememberedAuth(account, password, remember) {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        if (remember) {
+          localStorage.setItem(STORAGE_KEY_REMEMBER, JSON.stringify({
+            account: (account || '').trim(),
+            password: password || ''
+          }));
+        } else {
+          localStorage.removeItem(STORAGE_KEY_REMEMBER);
+        }
+      }
+    } catch (e) {}
+  }
 
   /* ─── 讀取與儲存配置 ───────────────────────────────────────── */
   function getActiveConfig() {
@@ -718,7 +751,47 @@
     }
   }
 
-  function openAuthModal() {
+  function switchAuthView(mode) {
+    authViewMode = (mode === 'signup') ? 'signup' : 'signin';
+    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+    const titleEl = document.getElementById('cloud-auth-title-text');
+    const signinView = document.getElementById('cloud-auth-signin-view');
+    const signupView = document.getElementById('cloud-auth-signup-view');
+    const msgBox = document.getElementById('cloud-auth-msg');
+    if (msgBox) msgBox.style.display = 'none';
+
+    if (authViewMode === 'signup') {
+      if (titleEl) titleEl.textContent = isEN ? 'Register Pokémon Sleep Cloud Account' : '註冊寶可夢雲端帳號';
+      if (signinView) signinView.style.display = 'none';
+      if (signupView) signupView.style.display = 'block';
+
+      // 若使用者在登入框已輸入過帳號，自動帶入註冊框
+      const signinUser = document.getElementById('cloud-auth-username');
+      const signupUser = document.getElementById('cloud-signup-username');
+      if (signinUser && signupUser && signinUser.value && !signupUser.value) {
+        signupUser.value = signinUser.value.trim();
+      }
+      if (signupUser && typeof signupUser.focus === 'function') signupUser.focus();
+    } else {
+      if (titleEl) titleEl.textContent = isEN ? 'Sign In to Pokémon Sleep Cloud' : '登入寶可夢雲端帳號';
+      if (signinView) signinView.style.display = 'block';
+      if (signupView) signupView.style.display = 'none';
+
+      // 檢查是否有儲存的帳密
+      const remembered = getRememberedAuth();
+      const signinUser = document.getElementById('cloud-auth-username');
+      const signinPwd = document.getElementById('cloud-auth-password');
+      const rememberCheck = document.getElementById('cloud-auth-remember-check');
+      if (remembered) {
+        if (signinUser && !signinUser.value) signinUser.value = remembered.account || '';
+        if (signinPwd && !signinPwd.value) signinPwd.value = remembered.password || '';
+        if (rememberCheck) rememberCheck.checked = true;
+      }
+      if (signinUser && typeof signinUser.focus === 'function') signinUser.focus();
+    }
+  }
+
+  function openAuthModal(mode = 'signin') {
     let modal = document.getElementById('cloud-auth-modal');
     if (!modal) {
       createAuthModalDOM();
@@ -727,6 +800,7 @@
     if (modal) {
       modal.style.display = 'flex';
       modal.setAttribute('aria-hidden', 'false');
+      switchAuthView(mode);
       updateSyncUI();
     }
   }
@@ -753,7 +827,7 @@
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
             </svg>
-            <span>${isEN ? 'Pokémon Box Cloud Sync' : '寶可夢倉庫 雲端雙軌同步'}</span>
+            <span id="cloud-auth-title-text">${isEN ? 'Sign In to Pokémon Sleep Cloud' : '登入寶可夢雲端帳號'}</span>
           </div>
           <button type="button" class="cloud-auth-close-btn" onclick="window.CloudSync.closeAuthModal()" aria-label="關閉">✕</button>
         </div>
@@ -764,29 +838,82 @@
 
           <!-- 登入與註冊表單區塊 (未登入時展示) -->
           <div id="cloud-auth-form-section" style="margin-top: 14px;">
-            <div class="cloud-auth-input-group">
-              <label for="cloud-auth-username" class="cloud-auth-label">${isEN ? 'Username / Account' : '自訂帳號'}</label>
-              <input type="text" id="cloud-auth-username" class="cloud-auth-input" placeholder="${isEN ? '3-20 chars (e.g. trainer123)' : '3 ~ 20 位英文、數字或底線 (例如：trainer123)'}" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20">
-            </div>
+            <!-- 通用訊息提示框 -->
+            <div id="cloud-auth-msg" class="cloud-auth-msg" style="display:none;"></div>
 
-            <div class="cloud-auth-input-group">
-              <label for="cloud-auth-password" class="cloud-auth-label">${isEN ? 'Password (6-32 chars)' : '自訂密碼 (6 ~ 32 位)'}</label>
-              <div class="cloud-auth-password-wrap">
-                <input type="password" id="cloud-auth-password" class="cloud-auth-input" placeholder="${isEN ? 'At least 6 characters' : '請輸入至少 6 位密碼'}" autocomplete="current-password" maxlength="32">
-                <button type="button" id="cloud-auth-pwd-toggle" class="cloud-auth-pwd-toggle" title="${isEN ? 'Toggle password visibility' : '顯示或隱藏密碼'}">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                </button>
+            <!-- 視窗 1: 登入表單 (預設展示) -->
+            <div id="cloud-auth-signin-view">
+              <div class="cloud-auth-input-group">
+                <label for="cloud-auth-username" class="cloud-auth-label">${isEN ? 'Account / Username' : '帳號'}</label>
+                <input type="text" id="cloud-auth-username" class="cloud-auth-input" placeholder="${isEN ? 'Enter username' : '請輸入自訂帳號'}" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20">
+              </div>
+
+              <div class="cloud-auth-input-group">
+                <label for="cloud-auth-password" class="cloud-auth-label">${isEN ? 'Password' : '密碼'}</label>
+                <div class="cloud-auth-password-wrap">
+                  <input type="password" id="cloud-auth-password" class="cloud-auth-input" placeholder="${isEN ? 'Enter password' : '請輸入密碼'}" autocomplete="current-password" maxlength="32">
+                  <button type="button" id="cloud-auth-pwd-toggle" class="cloud-auth-pwd-toggle" title="${isEN ? 'Toggle password visibility' : '顯示或隱藏密碼'}">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 記住帳號與密碼 -->
+              <label class="cloud-auth-remember-row" for="cloud-auth-remember-check">
+                <input type="checkbox" id="cloud-auth-remember-check">
+                <span>${isEN ? 'Remember account & password' : '記住帳號與密碼'}</span>
+              </label>
+
+              <button type="button" id="cloud-auth-signin-btn" class="cloud-auth-btn btn-primary" style="width: 100%;">${isEN ? 'Sign In' : '登入帳號'}</button>
+
+              <div class="cloud-auth-footer-link">
+                ${isEN ? "Don't have an account yet?" : '還沒有雲端帳號？'}
+                <button type="button" id="cloud-switch-to-signup" class="cloud-auth-switch-btn">${isEN ? 'Register Now' : '一鍵註冊'}</button>
               </div>
             </div>
 
-            <div id="cloud-auth-msg" class="cloud-auth-msg" style="display:none;"></div>
+            <!-- 視窗 2: 註冊表單 (獨立視窗) -->
+            <div id="cloud-auth-signup-view" style="display: none;">
+              <div class="cloud-auth-input-group">
+                <label for="cloud-signup-username" class="cloud-auth-label">${isEN ? 'Set Username' : '自訂帳號'}</label>
+                <input type="text" id="cloud-signup-username" class="cloud-auth-input" placeholder="${isEN ? '3-20 characters (letters, numbers, _)' : '3 ~ 20 位英文、數字或底線'}" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20">
+              </div>
 
-            <div class="cloud-auth-btn-row">
-              <button type="button" id="cloud-auth-signin-btn" class="cloud-auth-btn btn-primary">${isEN ? 'Sign In' : '登入帳號'}</button>
-              <button type="button" id="cloud-auth-signup-btn" class="cloud-auth-btn btn-secondary">${isEN ? 'Register New' : '一秒註冊'}</button>
+              <div class="cloud-auth-input-group">
+                <label for="cloud-signup-password" class="cloud-auth-label">${isEN ? 'Set Password' : '自訂密碼'}</label>
+                <div class="cloud-auth-password-wrap">
+                  <input type="password" id="cloud-signup-password" class="cloud-auth-input" placeholder="${isEN ? '6-32 characters' : '6 ~ 32 位密碼'}" autocomplete="new-password" maxlength="32">
+                  <button type="button" id="cloud-signup-pwd-toggle" class="cloud-auth-pwd-toggle" title="${isEN ? 'Toggle password visibility' : '顯示或隱藏密碼'}">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="cloud-auth-input-group">
+                <label for="cloud-signup-pwd-confirm" class="cloud-auth-label">${isEN ? 'Confirm Password' : '確認密碼'}</label>
+                <div class="cloud-auth-password-wrap">
+                  <input type="password" id="cloud-signup-pwd-confirm" class="cloud-auth-input" placeholder="${isEN ? 'Repeat password' : '請再次輸入密碼'}" autocomplete="new-password" maxlength="32">
+                  <button type="button" id="cloud-signup-confirm-toggle" class="cloud-auth-pwd-toggle" title="${isEN ? 'Toggle password visibility' : '顯示或隱藏密碼'}">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <button type="button" id="cloud-auth-signup-btn" class="cloud-auth-btn btn-primary" style="width: 100%;">${isEN ? 'Create Account' : '立即建立帳號'}</button>
+
+              <div class="cloud-auth-footer-link">
+                ${isEN ? 'Already have an account?' : '已經有雲端帳號？'}
+                <button type="button" id="cloud-switch-to-signin" class="cloud-auth-switch-btn">${isEN ? 'Back to Sign In' : '返回登入'}</button>
+              </div>
             </div>
           </div>
 
@@ -802,23 +929,58 @@
     `;
 
     document.body.appendChild(div);
+
+    // 點擊彈窗外部背景關閉彈窗
+    div.addEventListener('click', (e) => {
+      if (e.target === div) {
+        closeAuthModal();
+      }
+    });
+
     bindAuthModalEvents();
   }
 
   function bindAuthModalEvents() {
-    const userInput = document.getElementById('cloud-auth-username') || document.getElementById('cloud-auth-email');
-    const pwdInput = document.getElementById('cloud-auth-password');
-    const pwdToggle = document.getElementById('cloud-auth-pwd-toggle');
+    // 登入元件
+    const signinUser = document.getElementById('cloud-auth-username');
+    const signinPwd = document.getElementById('cloud-auth-password');
+    const signinPwdToggle = document.getElementById('cloud-auth-pwd-toggle');
+    const rememberCheck = document.getElementById('cloud-auth-remember-check');
     const signInBtn = document.getElementById('cloud-auth-signin-btn');
+    const switchToSignupBtn = document.getElementById('cloud-switch-to-signup');
+
+    // 註冊元件
+    const signupUser = document.getElementById('cloud-signup-username');
+    const signupPwd = document.getElementById('cloud-signup-password');
+    const signupPwdToggle = document.getElementById('cloud-signup-pwd-toggle');
+    const signupConfirm = document.getElementById('cloud-signup-pwd-confirm');
+    const signupConfirmToggle = document.getElementById('cloud-signup-confirm-toggle');
     const signUpBtn = document.getElementById('cloud-auth-signup-btn');
+    const switchToSigninBtn = document.getElementById('cloud-switch-to-signin');
+
+    // 通用元件
     const signOutBtn = document.getElementById('cloud-auth-signout-btn');
     const manualSyncBtn = document.getElementById('cloud-auth-manual-sync-btn');
     const msgBox = document.getElementById('cloud-auth-msg');
 
-    if (pwdToggle && pwdInput) {
-      pwdToggle.onclick = () => {
-        pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
-      };
+    // 密碼顯示/隱藏切換
+    function setupPwdToggle(btn, input) {
+      if (btn && input) {
+        btn.onclick = () => {
+          input.type = input.type === 'password' ? 'text' : 'password';
+        };
+      }
+    }
+    setupPwdToggle(signinPwdToggle, signinPwd);
+    setupPwdToggle(signupPwdToggle, signupPwd);
+    setupPwdToggle(signupConfirmToggle, signupConfirm);
+
+    // 切換頁面事件
+    if (switchToSignupBtn) {
+      switchToSignupBtn.onclick = () => switchAuthView('signup');
+    }
+    if (switchToSigninBtn) {
+      switchToSigninBtn.onclick = () => switchAuthView('signin');
     }
 
     function showMsg(text, isError = true) {
@@ -832,17 +994,22 @@
       if (msgBox) msgBox.style.display = 'none';
     }
 
+    // 登入操作
     if (signInBtn) {
       signInBtn.onclick = async () => {
         clearMsg();
-        const account = userInput ? userInput.value : '';
-        const pwd = pwdInput ? pwdInput.value : '';
+        const account = signinUser ? signinUser.value : '';
+        const pwd = signinPwd ? signinPwd.value : '';
+        const isRemember = rememberCheck ? rememberCheck.checked : false;
+
         signInBtn.disabled = true;
         signInBtn.textContent = '登入中...';
         const res = await signInWithPassword(account, pwd);
         signInBtn.disabled = false;
         signInBtn.textContent = '登入帳號';
+
         if (res.success) {
+          saveRememberedAuth(account, pwd, isRemember);
           showMsg('登入成功！已啟動跨裝置即時同步。', false);
           setTimeout(() => closeAuthModal(), 1200);
         } else {
@@ -851,17 +1018,35 @@
       };
     }
 
+    // 註冊操作
     if (signUpBtn) {
       signUpBtn.onclick = async () => {
         clearMsg();
-        const account = userInput ? userInput.value : '';
-        const pwd = pwdInput ? pwdInput.value : '';
+        const account = signupUser ? signupUser.value : '';
+        const pwd = signupPwd ? signupPwd.value : '';
+        const confirm = signupConfirm ? signupConfirm.value : '';
+
+        if (!account) {
+          showMsg('請輸入自訂帳號！');
+          return;
+        }
+        if (!pwd) {
+          showMsg('請輸入自訂密碼！');
+          return;
+        }
+        if (pwd !== confirm) {
+          showMsg('兩次輸入的密碼不一致，請重新檢查！');
+          return;
+        }
+
         signUpBtn.disabled = true;
-        signUpBtn.textContent = '註冊中...';
+        signUpBtn.textContent = '建立中...';
         const res = await signUpWithPassword(account, pwd);
         signUpBtn.disabled = false;
-        signUpBtn.textContent = '一秒註冊';
+        signUpBtn.textContent = '立即建立帳號';
+
         if (res.success) {
+          saveRememberedAuth(account, pwd, true);
           showMsg('註冊成功！已自動登入並建立雲端倉庫。', false);
           setTimeout(() => closeAuthModal(), 1200);
         } else {
@@ -870,6 +1055,7 @@
       };
     }
 
+    // 登出操作
     if (signOutBtn) {
       signOutBtn.onclick = async () => {
         clearMsg();
@@ -878,6 +1064,7 @@
       };
     }
 
+    // 手動同步操作
     if (manualSyncBtn) {
       manualSyncBtn.onclick = async () => {
         clearMsg();
@@ -901,6 +1088,18 @@
       .replace(/'/g, '&#39;');
   }
 
+  /* ─── 全域鍵盤快捷鍵 (Escape 鍵關閉彈窗) ─────────────────── */
+  if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('cloud-auth-modal');
+        if (modal && modal.style.display !== 'none') {
+          closeAuthModal();
+        }
+      }
+    });
+  }
+
   /* ─── 頁面載入完成後自動初始化 ───────────────────────────── */
   if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
     window.addEventListener('DOMContentLoaded', () => {
@@ -922,6 +1121,9 @@
     getStatus: () => syncStatus,
     openAuthModal,
     closeAuthModal,
+    switchAuthView,
+    getRememberedAuth,
+    saveRememberedAuth,
     onRemoteUpdate,
     onAuthStateChange,
     saveCustomConfig,
