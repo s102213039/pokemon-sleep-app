@@ -7993,6 +7993,49 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assertEquals(cloudSync.validatePassword('111111').valid, false, 'All same chars password should be invalid');
     assertEquals(cloudSync.validatePassword('123456').valid, false, 'Trivial password should be invalid');
     assertEquals(cloudSync.validatePassword('strong_pass99').valid, true, 'Valid password should pass');
+
+    // 6. DOM Auth Modal creation and event binding test
+    const code = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'cloudSync.js'), 'utf8');
+    const docElements = {};
+    const mockDoc = {
+      getElementById: (id) => {
+        if (!docElements[id]) {
+          docElements[id] = {
+            id,
+            style: {},
+            setAttribute: () => {},
+            classList: { add: () => {}, remove: () => {}, toggle: () => {} },
+            addEventListener: () => {}
+          };
+        }
+        return docElements[id];
+      },
+      querySelectorAll: () => [],
+      createElement: (tag) => ({
+        tagName: tag,
+        style: {},
+        setAttribute: () => {},
+        classList: { add: () => {}, remove: () => {} }
+      }),
+      body: { appendChild: () => {} }
+    };
+    const sandbox = {
+      window: { addEventListener: () => {} },
+      document: mockDoc,
+      localStorage: { getItem: () => null, setItem: () => {}, removeItem: () => {} },
+      console,
+      setTimeout: () => {}
+    };
+    sandbox.window.window = sandbox.window;
+    vm.createContext(sandbox);
+    vm.runInContext(code, sandbox);
+    let openModalError = null;
+    try {
+      sandbox.window.CloudSync.openAuthModal();
+    } catch (err) {
+      openModalError = err;
+    }
+    assertEquals(openModalError, null, 'openAuthModal must not throw any ReferenceError or uncaught exceptions');
   });
 
 

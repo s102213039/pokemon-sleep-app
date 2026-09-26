@@ -889,32 +889,6 @@
         showMsg('手動同步完成！', false);
       };
     }
-
-    if (configToggle && configContent) {
-      configToggle.onclick = () => {
-        const isClosed = configContent.style.display === 'none';
-        configContent.style.display = isClosed ? 'block' : 'none';
-        configToggle.classList.toggle('is-open', isClosed);
-      };
-    }
-
-    if (configSave) {
-      configSave.onclick = () => {
-        const url = configUrl ? configUrl.value : '';
-        const key = configKey ? configKey.value : '';
-        saveCustomConfig(url, key);
-        showMsg('Supabase 伺服器配置已儲存並重新連線！', false);
-      };
-    }
-
-    if (configClear) {
-      configClear.onclick = () => {
-        clearCustomConfig();
-        if (configUrl) configUrl.value = '';
-        if (configKey) configKey.value = '';
-        showMsg('已重設為預設配置！', false);
-      };
-    }
   }
 
   function escapeHtml(str) {
