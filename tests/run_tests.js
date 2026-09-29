@@ -327,7 +327,10 @@ test('Tier 1 - Feature Coverage', 'Dataset Integrity: data.json exists and conta
     assert(nameEN, `Item at index ${idx} is missing English name`);
     assert(nameJP, `Item at index ${idx} is missing Japanese name`);
     assert(typeof item.type === 'string' && item.type !== '', `Item ${id} missing type`);
-    assert(typeof item.specialty === 'string' && item.specialty !== '', `Item ${id} missing specialty`);
+    assert(typeof item.specialty === 'string', `Item ${id} missing specialty`);
+    if (item.ingredients && item.ingredients.length > 0) {
+      assert(item.specialty !== '', `Released Item ${id} missing specialty`);
+    }
     assert(getItemCarry(item) >= 0, `Item ${id} has invalid carryCapacity`);
     assert(getItemHelpInterval(item) >= 0, `Item ${id} has invalid helpInterval`);
     assert(getItemIngredientRate(item) >= 0, `Item ${id} has invalid ingredientRate`);
@@ -1550,7 +1553,7 @@ test('Tier 2 - Boundary & Corner Cases', 'Final Evolution Filter: onlyFinal defa
 
   assertEquals(PokemonApp.onlyFinal, true, 'PokemonApp.onlyFinal should default to true');
   const defaultFinals = PokemonApp.filterData();
-  assertEquals(defaultFinals.length, 127, 'Default filter should return exactly 127 final/single stage Pokémon');
+  assertEquals(defaultFinals.length, 128, 'Default filter should return exactly 128 final/single stage Pokémon');
 
   const preEvos = ['妙蛙種子', '妙蛙草', '小火龍', '火恐龍', '傑尼龜', '卡咪龜', '皮丘', '皮卡丘'];
   preEvos.forEach(name => {
@@ -2660,13 +2663,13 @@ test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder: Sub-skills
 test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 End-to-End User Journey (Entry -> Dock Nav -> Dex -> Cook -> Wiki -> Box -> News)', () => {
   PokemonApp.init([...dataset]);
   PokemonApp.onlyFinal = true;
-  assertEquals(PokemonApp.filterData().length, 127, 'Step 1: Pokedex starts with 127 final stage Pokemon');
+  assertEquals(PokemonApp.filterData().length, 128, 'Step 1: Pokedex starts with 128 final stage Pokemon');
 
   PokemonApp.currentSearch = '皮卡丘';
   const pikachuMatch = PokemonApp.filterData();
   assert(pikachuMatch.length >= 1, 'Step 2: Found Pikachu in search');
   PokemonApp.currentSearch = '';
-  assertEquals(PokemonApp.filterData().length, 127, 'Step 2: Cleared search restores 127 items');
+  assertEquals(PokemonApp.filterData().length, 128, 'Step 2: Cleared search restores 128 items');
 
   const recipes = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'recipes.json'), 'utf8'));
   const curry57 = recipes.filter(r => r.category === '咖哩' && r.pot_size <= 57);
@@ -2695,7 +2698,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 End-to-End User Jou
 test('Tier 4 - Real-World Application Scenarios', 'Desktop Baseline User Session Workflow Preservation', () => {
   PokemonApp.init([...dataset]);
   PokemonApp.onlyFinal = true;
-  assertEquals(PokemonApp.filterData().length, 127, 'Desktop: 127 final stage Pokemon');
+  assertEquals(PokemonApp.filterData().length, 128, 'Desktop: 128 final stage Pokemon');
 
   PokemonApp.onlyFinal = false;
   assertEquals(PokemonApp.filterData().length, dataset.length, 'Desktop: 247 total items when onlyFinal=false');

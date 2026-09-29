@@ -1,5 +1,31 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
+## 交接：2026-09-29 已完成（徹底消除重複雲端同步提示、自推回聲防護與 v=20260929_01）
+
+- **靜態快取標籤**：`v=20260929_01`
+- **測試狀態**：162/162 自動化測試全數通過
+- **徹底消除重複「雲端同步成功」提示問題（Eliminate Duplicate Sync Toasts）**：
+  1. **回調重複註冊防護（Init Guard）**：
+     - 修復 `box.js` 中 `initBoxEvents()` 缺乏初始化防護旗標，造成每次頁面切換或重複呼叫時，向 `window.CloudSync.onRemoteUpdate` 重複推入最多 4 個相同回調函式的問題。加入 `boxEventsInitialized` 防護，確保事件監聽與回調註冊僅執行一次。
+  2. **內容雜湊比對與防自我回聲（Self-Echo Broadcast Loop Prevention）**：
+     - 在 `cloudSync.js` 與 `box.js` 雙軌加入資料內容雜湊比對（`lastPushedBoxHash` 與 `lastReceivedBoxHash`）。
+     - 本地推播時記錄推播內容與時間戳記（`lastLocalPushTime`）；當 Supabase Realtime 廣播回傳時，若距離本地推播小於 4 秒或資料內容與本地完全一致，判定為自推回聲並安全靜默忽略，不再觸發重複渲染與彈窗提示。
+  3. **初始同步條件判定優化（Empty & Identical Guard）**：
+     - 在 `triggerInitialSyncAndMerge()` 中，當本地倉庫與遠端倉庫皆為空（`[]`）或完全相同時，不再強制執行 `pushRemoteBox()`，徹底斬斷初始化時自我推播的惡性循環。
+  4. **登入生命週期雙重初始化防護（Auth Lifecycle Guard）**：
+     - 修復 `getSession()` 與 `onAuthStateChange('SIGNED_IN')` 並發執行時重複觸發初始同步與重複建立 WebSocket 訂閱的問題。加入 `initialSyncPromise` 與 `isRealtimeSubscribed` 旗標，確保全域僅存在單一即時連線頻道。
+  5. **吐司提示去重節流與堆疊上限（Toast Deduplication & Max Limit）**：
+     - 在 `showToast()` 實作訊息指紋與 2.5 秒節流機制，完全阻止短時間內相同標題與內容的重複彈窗。
+     - 限制畫面上同時可見的吐司卡片最多為 2 張，過多時自動平滑淡出最舊的通知卡片，杜絕通知卡片多重堆疊覆蓋畫面。
+  6. **兼容自動同步機器人新增寶可夢（Foongus / Amoonguss）**：
+     - 機器人自動導入之 590 哎呀球菇與 591 敗露球菇同步補齊 `i18n.js` 雙語辭典，並更新自動化測試斷言至 128 隻最終形態，維持 162/162 測試通過。
+  7. **規範檢核**：
+     - 100% 遵循全域零 Emoji 規範（Zero Emoji Policy）。
+     - 100% 遵循單一外框規範（Single Frame Rule）。
+     - 所有終端指令一律加上 `rtk` 前綴。
+
+---
+
 ## 交接：2026-09-26 已完成（倉庫 Tab 未登入輕微遮罩引導登入、隱藏訪客同步按鈕與 v=20260926_09）
 
 - **靜態快取標籤**：`v=20260926_09`
