@@ -629,7 +629,7 @@ test('Tier 1 - Feature Coverage', 'Ingredient Ladder: Recipe Supply mappings & C
 
   assert(ctx.WikiDB && ctx.WikiDB.TOP_RECIPES_FOR_INGREDIENTS, 'WikiDB should export TOP_RECIPES_FOR_INGREDIENTS');
   const recipes = ctx.WikiDB.TOP_RECIPES_FOR_INGREDIENTS;
-  assert(recipes.corn.name === '採蜜可可鬆餅' || recipes.corn.name === '煉獄玉米乾酪咖哩', 'Corn top recipe should be highest energy dish');
+  assert(recipes.corn.name === '採蜜巧克力格子鬆餅' || recipes.corn.name === '採蜜可可鬆餅' || recipes.corn.name === '煉獄玉米乾酪咖哩', 'Corn top recipe should be highest energy dish');
   assert(recipes.corn.need === 28 || recipes.corn.need === 27, 'Corn requirement per meal should be accurate');
 
   assert(typeof ctx.WikiDB.onLadderSearch === 'function', 'onLadderSearch should be a function');
@@ -3938,10 +3938,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+|2026092\d_\d+)/.test(indexHtml), 'index.html styles.css must have current cache buster');
-  assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+|2026092\d_\d+)/.test(indexHtml), 'index.html wiki.js must have valid cache buster');
-  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+|2026092\d_\d+)/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
-  assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+|2026092\d_\d+)/.test(appIndexHtml), 'app/index.html wiki.js must have valid cache buster');
+  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+|202609[23]\d_\d+)/.test(indexHtml), 'index.html styles.css must have current cache buster');
+  assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+|202609[23]\d_\d+)/.test(indexHtml), 'index.html wiki.js must have valid cache buster');
+  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+|202609[23]\d_\d+)/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
+  assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+|202609[23]\d_\d+)/.test(appIndexHtml), 'app/index.html wiki.js must have valid cache buster');
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless Layout, Single-Line Name:Desc, No Tier Badges & Half-Width Symbols', () => {
@@ -5946,13 +5946,13 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Ba
   assertEquals(byCat.curry[0].base_energy, 25539, 'Curry #1 energy must be 25539');
   assertEquals(byCat.curry[6].name_cn, '萌綠咖哩麵包', 'Curry #7 must be 萌綠咖哩麵包');
 
-  assertEquals(byCat.salad[0].name_cn, '熱水溫沙拉', 'Salad #1 must be 熱水溫沙拉');
+  assertEquals(byCat.salad[0].name_cn, '大塊滿滿熱水沙拉', 'Salad #1 must be 大塊滿滿熱水沙拉');
   assertEquals(byCat.salad[0].base_energy, 25356, 'Salad #1 energy must be 25356');
   assertEquals(byCat.salad[6].name_cn, '萌綠沙拉', 'Salad #7 must be 萌綠沙拉');
 
-  assertEquals(byCat.dessert[0].name_cn, '採蜜可可鬆餅', 'Dessert #1 must be 採蜜可可鬆餅');
+  assertEquals(byCat.dessert[0].name_cn, '採蜜巧克力格子鬆餅', 'Dessert #1 must be 採蜜巧克力格子鬆餅');
   assertEquals(byCat.dessert[0].base_energy, 25484, 'Dessert #1 energy must be 25484');
-  assertEquals(byCat.dessert[6].name_cn, '青草攪拌器果昔', 'Dessert #7 must be 青草攪拌器果昔');
+  assertEquals(byCat.dessert[6].name_cn, '青草攪拌器冰沙', 'Dessert #7 must be 青草攪拌器冰沙');
 
   // Verify category switching
   assertEquals(ctx.window.WikiDB.getLadderRecipeCategory(), 'curry', 'Initial category should be curry');
@@ -5962,8 +5962,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Viewport Address Ba
   assertEquals(ctx.window.WikiDB.getLadderRecipeCategory(), 'dessert', 'Category should switch to dessert');
 
   // 4. Test Highlighting interaction
-  ctx.window.WikiDB.selectLadderHighlightRecipe('熱水溫沙拉');
-  assertEquals(ctx.window.WikiDB.getLadderHighlightRecipe(), '熱水溫沙拉', 'Active highlight recipe must be 熱水溫沙拉');
+  ctx.window.WikiDB.selectLadderHighlightRecipe('大塊滿滿熱水沙拉');
+  assertEquals(ctx.window.WikiDB.getLadderHighlightRecipe(), '大塊滿滿熱水沙拉', 'Active highlight recipe must be 大塊滿滿熱水沙拉');
 
   ctx.window.WikiDB.clearLadderHighlightRecipe();
   assertEquals(ctx.window.WikiDB.getLadderHighlightRecipe(), null, 'Active highlight recipe must be cleared');
@@ -8101,6 +8101,52 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     const dupToast = sandbox.window.showToast('已登出', '切換為訪客模式', 'info');
     assertEquals(dupToast, null, 'showToast must suppress immediate duplicate toast notifications within 2.5s');
     assert(!toastContainer.children || toastContainer.children.length <= 2, '#box-toast-container must cap visible toasts to at most 2 items');
+  });
+
+  test('Tier 4 - Real-World Application Scenarios', 'Traditional Chinese Localization & Main Skills Audit: Verifies 居合斬, 健美, 波導彈, 精神擊破, and official recipes in recipes.json', () => {
+    const recipesData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'recipes.json'), 'utf8'));
+    const pkmData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', 'data.json'), 'utf8'));
+
+    // 1. Verify recipe names in recipes.json
+    const cutCurry = recipesData.find(r => r.name_en === 'Cut Sukiyaki Curry');
+    assert(cutCurry !== undefined, 'Cut Sukiyaki Curry recipe must exist');
+    assertEquals(cutCurry.name_cn, '居合斬壽喜燒咖哩', 'Cut Sukiyaki Curry must be translated as 居合斬壽喜燒咖哩 (not 一字斬)');
+
+    const bulkCurry = recipesData.find(r => r.name_en === 'Bulk Up Bean Curry');
+    assert(bulkCurry !== undefined, 'Bulk Up Bean Curry recipe must exist');
+    assertEquals(bulkCurry.name_cn, '健美豆子咖哩', 'Bulk Up Bean Curry must be translated as 健美豆子咖哩');
+
+    const heartyCurry = recipesData.find(r => r.name_en === 'Hearty Cheeseburger Curry');
+    assert(heartyCurry !== undefined, 'Hearty Cheeseburger Curry recipe must exist');
+    assertEquals(heartyCurry.name_cn, '吃飽飽起司肉排咖哩', 'Hearty Cheeseburger Curry must be translated as 吃飽飽起司肉排咖哩');
+
+    const sweetPotato = recipesData.find(r => r.name_en === 'Fluffy Sweet Potatoes');
+    assert(sweetPotato !== undefined, 'Fluffy Sweet Potatoes recipe must exist');
+    assertEquals(sweetPotato.name_cn, '熟成甜薯燒', 'Fluffy Sweet Potatoes must be 熟成甜薯燒');
+
+    // 2. Verify Mawile skill typo fix in data.json
+    const mawile = pkmData.find(p => p.id === '303' || p.name_cn === '大嘴娃' || p.name_en === 'Mawile');
+    assert(mawile !== undefined, 'Mawile (#303) must exist in data.json');
+    assertEquals(mawile.main_skill, '怪力鉗（食材精選S）', 'Mawile main_skill must be Traditional Chinese 怪力鉗 (not 怪力钳)');
+
+    // 3. Verify getPokedexMainSkillYield for 健美（料理輔助S）
+    const bulkUpYield = PokemonApp.getPokedexMainSkillYield('健美（料理輔助S）', 1, 2.0, false);
+    assert(bulkUpYield.mainSkillValueText.includes('顆食材') && bulkUpYield.mainSkillValueText.includes('大成功率'), '健美 yield must include both ingredients and tasty chance');
+    assertEquals(bulkUpYield.mainSkillValueText, '+12.0 顆食材 & +2.0% 大成功率', 'Lv1 健美 with 2 triggers should be 12.0 ings and 2.0% tasty');
+    assert(bulkUpYield.mainSkillSingleText.includes('6 顆食材') && bulkUpYield.mainSkillSingleText.includes('+1% 大成功率'), '健美 Lv1 single should be 6 ings, +1% tasty');
+    assert(bulkUpYield.mainSkillDesc.length > 0, '健美 mainSkillDesc must not be empty');
+
+    // 4. Verify getPokedexMainSkillYield for 波導彈（夢之碎片獲取S）
+    const auraYield = PokemonApp.getPokedexMainSkillYield('波導彈（夢之碎片獲取S）', 1, 2.0, false);
+    assert(auraYield.mainSkillValueText.includes('碎片') && auraYield.mainSkillValueText.includes('能量'), '波導彈 yield must include both shards and strength');
+
+    // 5. Verify getPokedexMainSkillYield for 精神擊破（樹果領域）
+    const psyYield = PokemonApp.getPokedexMainSkillYield('精神擊破（樹果領域）', 1, 2.0, false);
+    assert(psyYield.mainSkillValueText.includes('點能量 + 樹果領域'), '精神擊破 yield must include strength and berry field');
+
+    // 6. Verify getSkillDescription for both special and base skills
+    const baseDesc = PokemonApp.getSkillDescription('能量填充S', false);
+    assert(baseDesc.includes('增加卡比獸的能量'), 'Base skill description must be returned by getSkillDescription');
   });
 
 

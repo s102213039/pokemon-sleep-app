@@ -12091,25 +12091,25 @@
   }
 
   const TOP_RECIPES_FOR_INGREDIENTS = {
-    apple: { name: '蘋果酸優格風味沙拉', name_en: 'Apple Acid Yogurt-Dressed Salad', need: 28, type: '沙拉', type_en: 'Salad', energy: 19293, secondary: '麻麻刺刺香料可樂 (35)', secondary_en: 'Zing Zap Spiced Cola (35)' },
+    apple: { name: '蘋果酸優格沙拉', name_en: 'Apple Acid Yogurt-Dressed Salad', need: 28, type: '沙拉', type_en: 'Salad', energy: 19293, secondary: '電光香料可樂 (35)', secondary_en: 'Zing Zap Spiced Cola (35)' },
     milk: { name: '茂盛焗烤酪梨', name_en: 'Overgrow Avocado Gratin', need: 41, type: '咖哩', type_en: 'Curry', energy: 24802, secondary: '土王閃電泡芙 (26)', secondary_en: 'Clodsire Eclair (26)' },
-    soybeans: { name: '重踏酪梨醬薯片', name_en: 'Bulldoze Guacamole and Chips', need: 22, type: '沙拉', type_en: 'Salad', energy: 25162, secondary: '覺醒力量醒腦燉湯 (28)', secondary_en: 'Hidden Power Perk-Up Stew (28)' },
-    honey: { name: '採蜜可可鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 38, type: '甜點', type_en: 'Dessert', energy: 25484, secondary: '心跳加速鬼面鬆餅 (32)', secondary_en: 'Scary Face Pancakes (32)' },
-    sausage: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 20, type: '咖哩', type_en: 'Curry', energy: 25539, secondary: '一字斬壽喜燒咖哩 (26)', secondary_en: 'Cut Sukiyaki Curry (26)' },
-    ginger: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 39, type: '咖哩', type_en: 'Curry', energy: 25539, secondary: '麻麻刺刺香料可樂 (20)', secondary_en: 'Zing Zap Spiced Cola (20)' },
-    tomato: { name: '心跳加速鬼面鬆餅', name_en: 'Scary Face Pancakes', need: 29, type: '甜點', type_en: 'Dessert', energy: 24354, secondary: '蘋果酸優格風味沙拉 (23)', secondary_en: 'Apple Acid Yogurt-Dressed Salad (23)' },
-    egg: { name: '心跳加速鬼面鬆餅', name_en: 'Scary Face Pancakes', need: 24, type: '甜點', type_en: 'Dessert', energy: 24354, secondary: '一字斬壽喜燒咖哩 (22)', secondary_en: 'Cut Sukiyaki Curry (22)' },
-    oil: { name: '採蜜可可鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 28, type: '甜點', type_en: 'Dessert', energy: 25484, secondary: '茂盛焗烤酪梨 (32)', secondary_en: 'Overgrow Avocado Gratin (32)' },
-    potato: { name: '熱水溫沙拉', name_en: 'Scald Chunky Salad', need: 30, type: '沙拉', type_en: 'Salad', energy: 25356, secondary: '茂盛焗烤酪梨 (20)', secondary_en: 'Overgrow Avocado Gratin (20)' },
-    herb: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 22, type: '咖哩', type_en: 'Curry', energy: 25539, secondary: '重踏酪梨醬薯片 (30)', secondary_en: 'Bulldoze Guacamole and Chips (30)' },
-    corn: { name: '採蜜可可鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 28, type: '甜點', type_en: 'Dessert', energy: 25484, secondary: '熱水溫沙拉 (18)', secondary_en: 'Scald Chunky Salad (18)' },
-    cacao: { name: '採蜜可可鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 21, type: '甜點', type_en: 'Dessert', energy: 25484, secondary: '土王閃電泡芙 (30)', secondary_en: 'Clodsire Eclair (30)' },
-    coffee: { name: '土王閃電泡芙', name_en: 'Clodsire Eclair', need: 24, type: '甜點', type_en: 'Dessert', energy: 20885, secondary: '不服輸咖啡風味沙拉 (28)', secondary_en: 'Defiant Coffee-Dressed Salad (28)' },
-    glossyavocado: { name: '重踏酪梨醬薯片', name_en: 'Bulldoze Guacamole and Chips', need: 28, type: '沙拉', type_en: 'Salad', energy: 25162, secondary: '茂盛焗烤酪梨 (22)', secondary_en: 'Overgrow Avocado Gratin (22)' },
-    mushroom: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 31, type: '咖哩', type_en: 'Curry', energy: 25539, secondary: '熱水溫沙拉 (27)', secondary_en: 'Scald Chunky Salad (27)' },
-    leek: { name: '一字斬壽喜燒咖哩', name_en: 'Cut Sukiyaki Curry', need: 27, type: '咖哩', type_en: 'Curry', energy: 20655, secondary: '麻麻刺刺香料可樂 (20)', secondary_en: 'Zing Zap Spiced Cola (20)' },
-    pumpkin: { name: '熱水溫沙拉', name_en: 'Scald Chunky Salad', need: 20, type: '沙拉', type_en: 'Salad', energy: 25356, secondary: '心跳加速鬼面鬆餅 (18)', secondary_en: 'Scary Face Pancakes (18)' },
-    tail: { name: '呆呆獸尾巴的胡椒沙拉', name_en: 'Slowpoke Tail Pepper Salad', need: 10, type: '沙拉', type_en: 'Salad', energy: 8169, secondary: '炙烤尾巴咖哩 (8)', secondary_en: 'Grilled Tail Curry (8)' }
+    soybeans: { name: '重踏酪梨醬脆片', name_en: 'Bulldoze Guacamole and Chips', need: 22, type: '沙拉', type_en: 'Salad', energy: 25162, secondary: '覺醒力量濃湯 (28)', secondary_en: 'Hidden Power Perk-Up Stew (28)' },
+    honey: { name: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 38, type: '甜點', type_en: 'Dessert', energy: 25484, secondary: '心跳加速鬼面鬆餅 (32)', secondary_en: 'Scary Face Pancakes (32)' },
+    sausage: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 20, type: '咖哩', type_en: 'Curry', energy: 25539, secondary: '居合斬壽喜燒咖哩 (26)', secondary_en: 'Cut Sukiyaki Curry (26)' },
+    ginger: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 39, type: '咖哩', type_en: 'Curry', energy: 25539, secondary: '電光香料可樂 (20)', secondary_en: 'Zing Zap Spiced Cola (20)' },
+    tomato: { name: '心跳加速鬼面鬆餅', name_en: 'Scary Face Pancakes', need: 29, type: '甜點', type_en: 'Dessert', energy: 24354, secondary: '蘋果酸優格沙拉 (23)', secondary_en: 'Apple Acid Yogurt-Dressed Salad (23)' },
+    egg: { name: '心跳加速鬼面鬆餅', name_en: 'Scary Face Pancakes', need: 24, type: '甜點', type_en: 'Dessert', energy: 24354, secondary: '居合斬壽喜燒咖哩 (22)', secondary_en: 'Cut Sukiyaki Curry (22)' },
+    oil: { name: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 28, type: '甜點', type_en: 'Dessert', energy: 25484, secondary: '茂盛焗烤酪梨 (32)', secondary_en: 'Overgrow Avocado Gratin (32)' },
+    potato: { name: '大塊滿滿熱水沙拉', name_en: 'Scald Chunky Salad', need: 30, type: '沙拉', type_en: 'Salad', energy: 25356, secondary: '茂盛焗烤酪梨 (20)', secondary_en: 'Overgrow Avocado Gratin (20)' },
+    herb: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 22, type: '咖哩', type_en: 'Curry', energy: 25539, secondary: '重踏酪梨醬脆片 (30)', secondary_en: 'Bulldoze Guacamole and Chips (30)' },
+    corn: { name: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 28, type: '甜點', type_en: 'Dessert', energy: 25484, secondary: '大塊滿滿熱水沙拉 (18)', secondary_en: 'Scald Chunky Salad (18)' },
+    cacao: { name: '採蜜巧克力格子鬆餅', name_en: 'Honey Gather Chocolate Waffles', need: 21, type: '甜點', type_en: 'Dessert', energy: 25484, secondary: '土王閃電泡芙 (30)', secondary_en: 'Clodsire Eclair (30)' },
+    coffee: { name: '土王閃電泡芙', name_en: 'Clodsire Eclair', need: 24, type: '甜點', type_en: 'Dessert', energy: 20885, secondary: '不服輸咖啡沙拉 (28)', secondary_en: 'Defiant Coffee-Dressed Salad (28)' },
+    glossyavocado: { name: '重踏酪梨醬脆片', name_en: 'Bulldoze Guacamole and Chips', need: 28, type: '沙拉', type_en: 'Salad', energy: 25162, secondary: '茂盛焗烤酪梨 (22)', secondary_en: 'Overgrow Avocado Gratin (22)' },
+    mushroom: { name: '彈跳咖哩烏龍麵', name_en: 'Bounce Curry Udon', need: 31, type: '咖哩', type_en: 'Curry', energy: 25539, secondary: '大塊滿滿熱水沙拉 (27)', secondary_en: 'Scald Chunky Salad (27)' },
+    leek: { name: '居合斬壽喜燒咖哩', name_en: 'Cut Sukiyaki Curry', need: 27, type: '咖哩', type_en: 'Curry', energy: 20655, secondary: '電光香料可樂 (20)', secondary_en: 'Zing Zap Spiced Cola (20)' },
+    pumpkin: { name: '大塊滿滿熱水沙拉', name_en: 'Scald Chunky Salad', need: 20, type: '沙拉', type_en: 'Salad', energy: 25356, secondary: '心跳加速鬼面鬆餅 (18)', secondary_en: 'Scary Face Pancakes (18)' },
+    tail: { name: '呆呆獸尾巴的胡椒沙拉', name_en: 'Slowpoke Tail Pepper Salad', need: 10, type: '沙拉', type_en: 'Salad', energy: 8169, secondary: '炙燒尾肉咖哩 (8)', secondary_en: 'Grilled Tail Curry (8)' }
   };
 
   // 食材天梯各分類前 7 高基礎能量之頂級大菜 (咖哩、沙拉、甜點三大類各 7 種)
@@ -12144,7 +12144,7 @@
         ]
       },
       {
-        name_cn: '一字斬壽喜燒咖哩',
+        name_cn: '居合斬壽喜燒咖哩',
         name_en: 'Cut Sukiyaki Curry',
         category: '咖哩',
         pot_size: 101,
@@ -12158,7 +12158,7 @@
         ]
       },
       {
-        name_cn: '覺醒力量醒腦燉湯',
+        name_cn: '覺醒力量濃湯',
         name_en: 'Hidden Power Perk-Up Stew',
         category: '咖哩',
         pot_size: 92,
@@ -12172,7 +12172,7 @@
         ]
       },
       {
-        name_cn: '扮演南瓜濃湯',
+        name_cn: '扮演南瓜精濃湯',
         name_en: 'Role Play Pumpkaboo Stew',
         category: '咖哩',
         pot_size: 69,
@@ -12216,7 +12216,7 @@
     ],
     salad: [
       {
-        name_cn: '熱水溫沙拉',
+        name_cn: '大塊滿滿熱水沙拉',
         name_en: 'Scald Chunky Salad',
         category: '沙拉',
         pot_size: 95,
@@ -12230,7 +12230,7 @@
         ]
       },
       {
-        name_cn: '重踏酪梨醬薯片',
+        name_cn: '重踏酪梨醬脆片',
         name_en: 'Bulldoze Guacamole and Chips',
         category: '沙拉',
         pot_size: 105,
@@ -12244,7 +12244,7 @@
         ]
       },
       {
-        name_cn: '不服輸咖啡風味沙拉',
+        name_cn: '不服輸咖啡沙拉',
         name_en: 'Defiant Coffee-Dressed Salad',
         category: '沙拉',
         pot_size: 100,
@@ -12258,7 +12258,7 @@
         ]
       },
       {
-        name_cn: '蘋果酸優格風味沙拉',
+        name_cn: '蘋果酸優格沙拉',
         name_en: 'Apple Acid Yogurt-Dressed Salad',
         category: '沙拉',
         pot_size: 104,
@@ -12316,7 +12316,7 @@
     ],
     dessert: [
       {
-        name_cn: '採蜜可可鬆餅',
+        name_cn: '採蜜巧克力格子鬆餅',
         name_en: 'Honey Gather Chocolate Waffles',
         category: '甜點',
         pot_size: 115,
@@ -12358,7 +12358,7 @@
         ]
       },
       {
-        name_cn: '麻麻刺刺香料可樂',
+        name_cn: '電光香料可樂',
         name_en: 'Zing Zap Spiced Cola',
         category: '甜點',
         pot_size: 87,
@@ -12386,7 +12386,7 @@
         ]
       },
       {
-        name_cn: '午茶玉米司康',
+        name_cn: '茶會玉米司康',
         name_en: 'Teatime Corn Scones',
         category: '甜點',
         pot_size: 67,
@@ -12400,7 +12400,7 @@
         ]
       },
       {
-        name_cn: '青草攪拌器果昔',
+        name_cn: '青草攪拌器冰沙',
         name_en: 'Leaf Tornado Smoothie',
         category: '甜點',
         pot_size: 48,
@@ -12417,7 +12417,7 @@
 
   const TAIL_FEATURED_RECIPES = [
     {
-      name_cn: '炙烤尾巴咖哩',
+      name_cn: '炙燒尾肉咖哩',
       name_en: 'Grilled Tail Curry',
       category: '咖哩',
       pot_size: 33,
