@@ -8093,6 +8093,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
 
     const infoToast = sandbox.window.showToast('已登出', '切換為訪客模式', 'info');
     assert(infoToast.className.includes('toast-info'), 'Toast element must have toast-info class');
+
+    // 10. Toast Deduplication & Flood Suppression verification
+    const dupToast = sandbox.window.showToast('已登出', '切換為訪客模式', 'info');
+    assertEquals(dupToast, null, 'showToast must suppress immediate duplicate toast notifications within 2.5s');
+    assert(!toastContainer.children || toastContainer.children.length <= 2, '#box-toast-container must cap visible toasts to at most 2 items');
   });
 
 

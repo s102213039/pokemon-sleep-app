@@ -2375,8 +2375,11 @@
   }
 
   /* ─── 初始化事件監聽器 ───────────────────────────────────── */
+  let boxEventsInitialized = false;
   function initBoxEvents() {
     loadUserBox();
+    if (boxEventsInitialized) return;
+    boxEventsInitialized = true;
 
     // 1. 拖曳上傳與截圖掃描
     const dropzone = document.getElementById('box-dropzone');
@@ -2601,7 +2604,20 @@
 
     // 6. 雲端同步監聽與回調綁定 (Supabase CloudSync)
     if (typeof window !== 'undefined' && window.CloudSync) {
+      let lastReceivedBoxHash = '';
       window.CloudSync.onRemoteUpdate((remoteBox) => {
+        const newHash = JSON.stringify(remoteBox || []);
+        let currentLocalHash = '';
+        try {
+          currentLocalHash = localStorage.getItem(STORAGE_KEY) || '[]';
+        } catch (e) {}
+
+        // 若雲端推送的內容與目前本地完全一樣，或與上次接收的完全一樣，直接略過，不重複渲染亦不彈出 Toast
+        if (newHash === currentLocalHash || newHash === lastReceivedBoxHash) {
+          return;
+        }
+        lastReceivedBoxHash = newHash;
+
         userBox = Array.isArray(remoteBox) ? remoteBox : [];
         try {
           if (typeof localStorage !== 'undefined') {

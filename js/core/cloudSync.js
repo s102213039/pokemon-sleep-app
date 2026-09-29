@@ -30,6 +30,12 @@
   let syncStatus = 'guest'; // 'guest' | 'connecting' | 'synced' | 'syncing' | 'offline' | 'error'
   let lastSyncError = '';
   let authViewMode = 'signin'; // 'signin' | 'signup'
+  let lastPushedBoxHash = '';
+  let lastLocalPushTime = 0;
+  let initialSyncPromise = null;
+  let isRealtimeSubscribed = false;
+  let lastToastSignature = '';
+  let lastToastTime = 0;
 
   /* ─── 記住帳號與密碼管理 ───────────────────────────────────── */
   function getRememberedAuth() {
@@ -452,13 +458,17 @@
   async function pushRemoteBox(boxData) {
     if (!supabaseClient || !currentUser) return false;
 
+    const dataArray = Array.isArray(boxData) ? boxData : [];
+    lastPushedBoxHash = JSON.stringify(dataArray);
+    lastLocalPushTime = Date.now();
+
     try {
       syncStatus = 'syncing';
       updateSyncUI();
 
       const payload = {
         user_id: currentUser.id,
-        box_data: Array.isArray(boxData) ? boxData : [],
+        box_data: dataArray,
         updated_at: new Date().toISOString()
       };
 
@@ -490,59 +500,86 @@
   /* ─── 首次登入與初始雙軌合併 ───────────────────────────────── */
   async function triggerInitialSyncAndMerge() {
     if (!supabaseClient || !currentUser) return;
+    if (initialSyncPromise) return initialSyncPromise;
 
-    try {
-      syncStatus = 'syncing';
-      updateSyncUI();
-
-      // 1. 取得本機既有 LocalStorage 資料
-      let localBox = [];
+    initialSyncPromise = (async () => {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY_USER_BOX);
-        if (raw) localBox = JSON.parse(raw);
-        if (!Array.isArray(localBox)) localBox = [];
-      } catch (e) {
-        localBox = [];
+        syncStatus = 'syncing';
+        updateSyncUI();
+
+        // 1. 取得本機既有 LocalStorage 資料
+        let localBox = [];
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY_USER_BOX);
+          if (raw) localBox = JSON.parse(raw);
+          if (!Array.isArray(localBox)) localBox = [];
+        } catch (e) {
+          localBox = [];
+        }
+
+        // 2. 取得雲端既有資料
+        const remoteBox = await fetchRemoteBox();
+
+        let finalMerged = [];
+        let shouldPush = false;
+
+        if (remoteBox === null) {
+          // 雲端尚未建立此記錄或查詢失敗：若本機有資料才推送
+          if (localBox.length > 0) {
+            finalMerged = localBox;
+            shouldPush = true;
+          } else {
+            finalMerged = [];
+          }
+        } else if (remoteBox.length === 0 && localBox.length > 0) {
+          // 雲端是空倉庫，本機有資料：上傳本機資料至雲端
+          finalMerged = localBox;
+          shouldPush = true;
+        } else if (remoteBox.length > 0 && localBox.length === 0) {
+          // 本機是空倉庫，雲端有資料：以雲端資料更新本機，無需推回雲端
+          finalMerged = remoteBox;
+          shouldPush = false;
+        } else if (remoteBox.length === 0 && localBox.length === 0) {
+          // 兩端皆為空：維持空倉庫，不執行任何推送，避免產生多餘 Realtime 廣播
+          finalMerged = [];
+          shouldPush = false;
+        } else {
+          // 兩端皆有資料：比對是否完全相同
+          if (JSON.stringify(localBox) === JSON.stringify(remoteBox)) {
+            finalMerged = localBox;
+            shouldPush = false;
+          } else {
+            finalMerged = mergePokemonBoxes(localBox, remoteBox);
+            shouldPush = true;
+          }
+        }
+
+        if (shouldPush) {
+          await pushRemoteBox(finalMerged);
+        }
+
+        // 3. 寫回本機 LocalStorage 並通知 Box 模組更新
+        try {
+          localStorage.setItem(STORAGE_KEY_USER_BOX, JSON.stringify(finalMerged));
+        } catch (e) {}
+
+        if (typeof window !== 'undefined' && window.PokemonBoxApp && typeof window.PokemonBoxApp.setUserBox === 'function') {
+          window.PokemonBoxApp.setUserBox(finalMerged);
+        }
+
+        syncStatus = 'synced';
+        updateSyncUI();
+      } catch (err) {
+        console.error('[CloudSync] Initial sync failed:', err);
+        syncStatus = 'error';
+        lastSyncError = err.message || '首次同步失敗';
+        updateSyncUI();
+      } finally {
+        initialSyncPromise = null;
       }
+    })();
 
-      // 2. 取得雲端既有資料
-      const remoteBox = await fetchRemoteBox();
-
-      let finalMerged = [];
-      if (remoteBox === null) {
-        // 雲端尚未建立此記錄或查詢失敗：直接上傳本機資料
-        finalMerged = localBox;
-        await pushRemoteBox(finalMerged);
-      } else if (remoteBox.length === 0 && localBox.length > 0) {
-        // 雲端是空倉庫，本機有資料：上傳本機資料至雲端
-        finalMerged = localBox;
-        await pushRemoteBox(finalMerged);
-      } else if (remoteBox.length > 0 && localBox.length === 0) {
-        // 本機是空倉庫，雲端有資料：以雲端資料覆蓋本機
-        finalMerged = remoteBox;
-      } else {
-        // 兩端皆有資料：執行智慧聯集合併
-        finalMerged = mergePokemonBoxes(localBox, remoteBox);
-        await pushRemoteBox(finalMerged);
-      }
-
-      // 3. 寫回本機 LocalStorage 並通知 Box 模組更新
-      try {
-        localStorage.setItem(STORAGE_KEY_USER_BOX, JSON.stringify(finalMerged));
-      } catch (e) {}
-
-      if (typeof window !== 'undefined' && window.PokemonBoxApp && typeof window.PokemonBoxApp.setUserBox === 'function') {
-        window.PokemonBoxApp.setUserBox(finalMerged);
-      }
-
-      syncStatus = 'synced';
-      updateSyncUI();
-    } catch (err) {
-      console.error('[CloudSync] Initial sync failed:', err);
-      syncStatus = 'error';
-      lastSyncError = err.message || '首次同步失敗';
-      updateSyncUI();
-    }
+    return initialSyncPromise;
   }
 
   /* ─── 帶防抖 (Debounce) 的外部推送介面 ─────────────────────── */
@@ -561,7 +598,9 @@
   /* ─── WebSocket Realtime 跨裝置即時推送監聽 ───────────────── */
   function subscribeToRealtime() {
     if (!supabaseClient || !currentUser) return;
+    if (isRealtimeSubscribed && realtimeChannel) return;
     unsubscribeRealtime();
+    isRealtimeSubscribed = true;
 
     try {
       realtimeChannel = supabaseClient
@@ -583,10 +622,12 @@
         .subscribe();
     } catch (err) {
       console.warn('[CloudSync] Realtime subscription error:', err);
+      isRealtimeSubscribed = false;
     }
   }
 
   function unsubscribeRealtime() {
+    isRealtimeSubscribed = false;
     if (realtimeChannel && supabaseClient) {
       try {
         supabaseClient.removeChannel(realtimeChannel);
@@ -596,14 +637,30 @@
   }
 
   function handleRemoteUpdateReceived(remoteBox) {
-    // 收到來自另一裝置的更新
+    const remoteData = Array.isArray(remoteBox) ? remoteBox : [];
+    const remoteHash = JSON.stringify(remoteData);
+    let localHash = '';
     try {
-      localStorage.setItem(STORAGE_KEY_USER_BOX, JSON.stringify(remoteBox));
+      localHash = localStorage.getItem(STORAGE_KEY_USER_BOX) || '[]';
+    } catch (e) {}
+
+    // 1. 若收到的資料與本機現存內容完全一致，表示無任何實質變更，直接略過
+    if (remoteHash === localHash) {
+      return;
+    }
+
+    // 2. 若此更新為本機剛推送後的自身回環 (Echo)，且內容與本機剛推送的完全吻合，直接略過
+    if (remoteHash === lastPushedBoxHash && (Date.now() - lastLocalPushTime < 4000)) {
+      return;
+    }
+
+    try {
+      localStorage.setItem(STORAGE_KEY_USER_BOX, remoteHash);
     } catch (e) {}
 
     // 通知外部註冊之回調
     remoteUpdateCallbacks.forEach(cb => {
-      try { cb(remoteBox); } catch (e) {}
+      try { cb(remoteData); } catch (e) {}
     });
 
     syncStatus = 'synced';
@@ -612,13 +669,13 @@
 
   /* ─── 監聽器與回調註冊 ─────────────────────────────────────── */
   function onRemoteUpdate(cb) {
-    if (typeof cb === 'function') {
+    if (typeof cb === 'function' && !remoteUpdateCallbacks.includes(cb)) {
       remoteUpdateCallbacks.push(cb);
     }
   }
 
   function onAuthStateChange(cb) {
-    if (typeof cb === 'function') {
+    if (typeof cb === 'function' && !authStateCallbacks.includes(cb)) {
       authStateCallbacks.push(cb);
     }
   }
@@ -632,6 +689,16 @@
   /* ─── 浮動 Toast 系統 (支援右下角狀態提醒與多端通知) ───────────── */
   function showToast(title, message, type = 'success') {
     if (typeof document === 'undefined') return null;
+
+    // 1. 防重複與節流：若 2.5 秒內有完全相同標題與內容的 Toast，直接略過
+    const now = Date.now();
+    const sig = `${title}__${message}`;
+    if (sig === lastToastSignature && (now - lastToastTime) < 2500) {
+      return null;
+    }
+    lastToastSignature = sig;
+    lastToastTime = now;
+
     let container = document.getElementById('box-toast-container');
     if (!container) {
       container = document.createElement('div');
@@ -640,6 +707,12 @@
       if (document.body) {
         document.body.appendChild(container);
       }
+    }
+
+    // 2. 限制畫面上最多保留 2 個最新通知，避免多重疊層遮蔽介面
+    if (container && container.children && container.children.length >= 2) {
+      const oldest = container.firstElementChild;
+      if (oldest) oldest.remove();
     }
 
     const toast = document.createElement('div');

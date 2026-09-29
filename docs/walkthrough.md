@@ -837,3 +837,25 @@
    - 移除桌面端倉庫標題中的裝飾性 Emoji（遵循零 Emoji 規範）。
    - 更新 `js/core/cloudSync.js` 的 `updateSyncUI()` 邏輯，全面移除倉庫按鈕更新分支並強制隱藏任何殘留元素。
 3. 快取更新至 `v=20260926_11`，自動化測試套件（162 項測試）全數通過。
+
+## 需求三十六：修復雲端同步成功 Toast 多重觸發與自身廣播回環（2026-09-29）
+
+1. 問題根因深度剖析：
+   - 回調重複註冊（Callback Leak）：`window.initUserBox()` 在資料載入或分頁切換時被多次呼叫，其內部執行的 `initBoxEvents()` 缺乏初始化防重保護（`boxEventsInitialized`），導致 `window.CloudSync.onRemoteUpdate` 被重複綁定高達 4 次。
+   - 自身廣播回環（Self-Echo）：客戶端在初次連線時執行 `triggerInitialSyncAndMerge()`，當本機與雲端皆為空倉庫（`[]`）時仍無條件執行 `pushRemoteBox`。此操作觸發 Supabase Realtime 的 `postgres_changes` 事件，將自身剛推送的更新廣播回本機，誤觸發「已從其他裝置即時同步」通知。
+   - 缺乏內容實質差異比對：`handleRemoteUpdateReceived` 未核對傳入的資料是否與本地既有資料相同，即使內容完全一致亦盲目執行回調並彈出通知。
+   - 雙重認證生命週期並行：`getSession()` 與 `onAuthStateChange('SIGNED_IN')` 在頁面啟動時同時觸發初始合併同步。
+   - 通知視窗缺乏節流與堆疊上限：同一時間接收到的多個相同訊息未被過濾，全數累積呈現於右下角。
+2. 完整修復與機制強化：
+   - 模組事件防重註冊：在 `box.js` 的 `initBoxEvents()` 加入 `boxEventsInitialized` 標記，確保 DOM 事件與雲端同步監聽回調僅註冊一次；同時在 `cloudSync.js` 的 `onRemoteUpdate` 與 `onAuthStateChange` 加入陣列去重保護。
+   - 智能比對與消除多餘推送：
+     - 若本地與雲端皆為空倉庫（`localBox.length === 0 && remoteBox.length === 0`），不執行任何推送。
+     - 若本地資料與雲端資料完全相同，亦不執行重複推送。
+     - 使用 `initialSyncPromise` 確保並行啟動時初始同步僅執行一次。
+   - 自身廣播回環（Echo）抑制機制：
+     - 在 `pushRemoteBox` 時記錄推送內容特徵碼（`lastPushedBoxHash`）與時間戳記（`lastLocalPushTime`）。
+     - 當 WebSocket 收到更新時，若接收內容與本地現存資料一致，或於 4 秒內與本機推送內容一致，判定為本機自身回環，立即略過不觸發回調與通知。
+   - Toast 系統防重、節流與卡片數量上限：
+     - `showToast` 加入 2.5 秒內相同標題與內文的重複略過保護。
+     - 限制容器內最多同時呈現 2 張最新通知，超額自動淡出舊卡片，徹底消除多重卡片堆疊覆蓋介面的問題。
+3. 快取更新至 `v=20260929_01`，自動化測試套件（162 項測試）全數通過。
