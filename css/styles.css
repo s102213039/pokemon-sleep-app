@@ -7965,6 +7965,25 @@ input[type="number"] {
   border: 1px solid rgba(220, 38, 38, 0.5);
 }
 
+/* 滿級潛力副徽章 (小尺寸、一般較不明顯顏色、無高亮) */
+.box-pr-badge-potential {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.1 !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+  background: rgba(148, 163, 184, 0.12) !important;
+  color: #94a3b8 !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  letter-spacing: 0.2px;
+  user-select: none;
+  white-space: nowrap;
+}
+
 .box-pr-summary-bar {
   background: var(--bg-card-inner);
   border: 1px solid var(--border-color);
@@ -20523,6 +20542,21 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   padding: 1px 6px !important;
   border-radius: 6px !important;
   line-height: 1.2 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-pr-badge-potential {
+  font-size: 8.5px !important;
+  font-weight: 500 !important;
+  padding: 0px 4px !important;
+  border-radius: 3px !important;
+  line-height: 1.1 !important;
+  background: rgba(148, 163, 184, 0.12) !important;
+  color: #94a3b8 !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
   white-space: nowrap !important;
   flex-shrink: 0 !important;
 }

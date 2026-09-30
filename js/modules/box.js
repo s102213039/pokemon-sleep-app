@@ -530,11 +530,11 @@
                   <div class="box-card-name-row">
                     <span class="box-card-name">${escapeHtml(pkmDisplayName)}</span>
                     <span class="box-card-level">Lv.${p.level || 1}</span>
-                    <div class="box-dual-pr-badges" style="display:inline-flex;gap:4px;align-items:center;flex-wrap:wrap;">
-                      <span class="box-pr-badge ${prInfo.currentTierBadgeClass || prInfo.tierBadgeClass}" title="${isEN ? `Current Level Rating: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr} pts)` : `當前實力評級: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr}分)`}">
+                    <div class="box-dual-pr-badges" style="display:inline-flex;flex-direction:column;gap:2px;align-items:flex-end;margin-left:auto;">
+                      <span class="box-pr-badge ${prInfo.currentTierBadgeClass || prInfo.tierBadgeClass}" style="font-size:11px;padding:1px 6px;" title="${isEN ? `Current Level Rating: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr} pts)` : `當前實力評級: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr}分)`}">
                         ${isEN ? `Cur: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})` : `當前: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})`}
                       </span>
-                      <span class="box-pr-badge ${prInfo.potentialTierBadgeClass || prInfo.tierBadgeClass}" title="${isEN ? `Max Potential Rating: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr} pts)` : `畢業潛力評級: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr}分)`}">
+                      <span class="box-pr-badge-potential" title="${isEN ? `Max Potential Rating: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr} pts)` : `滿級潛力評級: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr}分)`}">
                         ${isEN ? `Pot: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})` : `潛力: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})`}
                       </span>
                     </div>
@@ -684,11 +684,11 @@
                   </td>
                   <td><span class="box-table-lvl">Lv.${p.level || 1}</span></td>
                   <td>
-                    <div class="box-table-dual-badges" style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;">
-                      <span class="box-pr-badge ${prInfo.currentTierBadgeClass || prInfo.tierBadgeClass}" style="font-size:11px;padding:1px 6px;">
+                    <div class="box-table-dual-badges" style="display:flex;flex-direction:column;gap:2px;align-items:flex-start;">
+                      <span class="box-pr-badge ${prInfo.currentTierBadgeClass || prInfo.tierBadgeClass}" style="font-size:11px;padding:1px 6px;" title="${isEN ? `Current Level Rating: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr} pts)` : `當前實力評級: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr}分)`}">
                         ${isEN ? `Cur: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})` : `當前: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})`}
                       </span>
-                      <span class="box-pr-badge ${prInfo.potentialTierBadgeClass || prInfo.tierBadgeClass}" style="font-size:11px;padding:1px 6px;">
+                      <span class="box-pr-badge-potential" title="${isEN ? `Max Potential Rating: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr} pts)` : `滿級潛力評級: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr}分)`}">
                         ${isEN ? `Pot: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})` : `潛力: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})`}
                       </span>
                     </div>
