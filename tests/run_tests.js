@@ -6614,11 +6614,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assert(i18nJs.includes('pokedex.evo_guard_met'), 'i18n.js must contain pokedex.evo_guard_met');
   assert(i18nJs.includes('pokedex.evo_req'), 'i18n.js must contain pokedex.evo_req');
 
-  // 15. Verify Lv.70 / Lv.80 Subskill Unlock Slots
+  // 15. Verify Lv.75 / Lv.100 Subskill Unlock Slots (Updated to official game thresholds)
   PokemonApp.openPokemonDetailModal('003');
   const modalHtmlNow = mockElements.get('pokedex-detail-modal').innerHTML;
-  assert(modalHtmlNow.includes('Lv.70') && modalHtmlNow.includes('Lv.80'), 'Modal subskill slots must display Lv.70 and Lv.80');
-  assert(!modalHtmlNow.includes('Lv.75') && !modalHtmlNow.includes('Lv.100</span>'), 'Modal subskill slots must not display Lv.75 or Lv.100');
+  assert(modalHtmlNow.includes('Lv.75') && modalHtmlNow.includes('Lv.100'), 'Modal subskill slots must display Lv.75 and Lv.100');
+  assert(!modalHtmlNow.includes('Lv.70') && !modalHtmlNow.includes('Lv.80'), 'Modal subskill slots must not display legacy Lv.70 or Lv.80');
 
   // 15B. Header layout: berry & specialty vertical stack, dual-column stats with carry, no evo guard badge
   assert(modalHtmlNow.includes('pokedex-header-berry-spec-group'), 'Header must contain vertical berry-spec group');
@@ -6873,33 +6873,33 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   PokemonApp.setPokedexModalLevel(50);
   assert(!slotsRowEl.innerHTML.includes('Lv.50 <span class="slot-unreleased-tag slot-tag-inactive">'), 'Slot 3 at Lv.50 must dynamically clear slot-tag-inactive');
 
-  // Raise level to 70: Slot 4 (Lv.70) is reached so it must NOT display any unreleased/under-lvl tag
-  PokemonApp.setPokedexModalLevel(70);
-  assert(!slotsRowEl.innerHTML.includes('Lv.70 <span class="slot-unreleased-tag'), 'Slot 4 at Lv.70 must NOT display 尚未開放 or 等級不足 tag');
-  assert(slotsRowEl.innerHTML.includes('Lv.80 <span class="slot-unreleased-tag slot-tag-under-lvl">等級不足</span>'), 'Slot 5 at Lv.70 must display 等級不足');
+  // Raise level to 75: Slot 4 (Lv.75) is reached so it must NOT display any unreleased/under-lvl tag
+  PokemonApp.setPokedexModalLevel(75);
+  assert(!slotsRowEl.innerHTML.includes('Lv.75 <span class="slot-unreleased-tag'), 'Slot 4 at Lv.75 must NOT display 尚未開放 or 等級不足 tag');
+  assert(slotsRowEl.innerHTML.includes('Lv.100 <span class="slot-unreleased-tag slot-tag-under-lvl">等級不足</span>'), 'Slot 5 at Lv.75 must display 等級不足');
 
-  // Test Slot 4 & 5 Subskills at Lv.70 & Lv.80
+  // Test Slot 4 & 5 Subskills at Lv.75 & Lv.100
   PokemonApp.selectPokedexSubskillSlot(4);
   PokemonApp.choosePokedexSubskill('幫忙速度M');
   PokemonApp.selectPokedexSubskillSlot(5);
   PokemonApp.choosePokedexSubskill('持有上限提升L');
 
-  // At Lv.70: Slot 4 is reached (active, NO pill-inactive, has subskill-blue), Slot 5 is NOT reached (pill-inactive, has slot-tag-inactive)
-  PokemonApp.setPokedexModalLevel(70);
-  const slotButtons70 = slotsRowEl.innerHTML.split('</button>');
-  const slot4Html70 = slotButtons70.find(b => b.includes('data-slot="4"')) || '';
-  const slot5Html70 = slotButtons70.find(b => b.includes('data-slot="5"')) || '';
-  assert(slot4Html70.includes('subskill-blue') && !slot4Html70.includes('slot-unreleased-tag'), 'Slot 4 at Lv.70 must not display unreleased/inactive tags');
-  assert(!slot4Html70.includes('pill-inactive'), 'Slot 4 at Lv.70 must NOT have pill-inactive');
-  assert(slot5Html70.includes('pill-inactive'), 'Slot 5 at Lv.70 must have pill-inactive');
-  assert(slot5Html70.includes('slot-tag-inactive') && slot5Html70.includes('效果尚未生效'), 'Slot 5 at Lv.70 must show 效果尚未生效');
+  // At Lv.75: Slot 4 is reached (active, NO pill-inactive, has subskill-blue), Slot 5 is NOT reached (pill-inactive, has slot-tag-inactive)
+  PokemonApp.setPokedexModalLevel(75);
+  const slotButtons75 = slotsRowEl.innerHTML.split('</button>');
+  const slot4Html75 = slotButtons75.find(b => b.includes('data-slot="4"')) || '';
+  const slot5Html75 = slotButtons75.find(b => b.includes('data-slot="5"')) || '';
+  assert(slot4Html75.includes('subskill-blue') && !slot4Html75.includes('slot-unreleased-tag'), 'Slot 4 at Lv.75 must not display unreleased/inactive tags');
+  assert(!slot4Html75.includes('pill-inactive'), 'Slot 4 at Lv.75 must NOT have pill-inactive');
+  assert(slot5Html75.includes('pill-inactive'), 'Slot 5 at Lv.75 must have pill-inactive');
+  assert(slot5Html75.includes('slot-tag-inactive') && slot5Html75.includes('效果尚未生效'), 'Slot 5 at Lv.75 must show 效果尚未生效');
 
-  // Raise level to Lv.80: Slot 5 becomes active, NO pill-inactive, NO status tag
-  PokemonApp.setPokedexModalLevel(80);
-  const slotButtons80 = slotsRowEl.innerHTML.split('</button>');
-  const slot5Html80 = slotButtons80.find(b => b.includes('data-slot="5"')) || '';
-  assert(!slot5Html80.includes('pill-inactive'), 'Slot 5 at Lv.80 must NOT have pill-inactive');
-  assert(!slot5Html80.includes('slot-unreleased-tag'), 'Slot 5 at Lv.80 must NOT display any status tag');
+  // Raise level to Lv.100: Slot 5 becomes active, NO pill-inactive, NO status tag
+  PokemonApp.setPokedexModalLevel(100);
+  const slotButtons100 = slotsRowEl.innerHTML.split('</button>');
+  const slot5Html100 = slotButtons100.find(b => b.includes('data-slot="5"')) || '';
+  assert(!slot5Html100.includes('pill-inactive'), 'Slot 5 at Lv.100 must NOT have pill-inactive');
+  assert(!slot5Html100.includes('slot-unreleased-tag'), 'Slot 5 at Lv.100 must NOT display any status tag');
 
   // Ideal Energy 0.45x Multiplier & Formula Breakdown verification (12h active baseline)
   const formulas80 = PokemonApp.calculatePokedexIngredientFormulas();
@@ -8239,6 +8239,61 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(typeof appCtx.AppraisalLab.isSlakingFamily === 'function', 'AppraisalLab.isSlakingFamily must be exported');
     assert(typeof PokemonApp.isSlowpokeFamily === 'function', 'PokemonApp.isSlowpokeFamily must be exported');
     assert(typeof PokemonApp.isSlakingFamily === 'function', 'PokemonApp.isSlakingFamily must be exported');
+  });
+
+  test('Tier 4 - Real-World Application Scenarios', 'Dynamic Level Appraisal Dual-Track Ratings and Milestone Leap Projections Verification', () => {
+    const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+    const appCtx = { window: {}, console };
+    appCtx.window = appCtx;
+    vm.createContext(appCtx);
+    vm.runInContext(appraisalCode, appCtx);
+    vm.runInContext(boxCode, appCtx);
+
+    const pikachu = dataset.find(p => p.name_cn === '皮卡丘');
+    const slowpoke = dataset.find(p => p.name_cn === '呆呆獸');
+
+    // 1. Early God Roll: Lv.10 Pikachu with BFS at Slot 1 and Adamant nature reaches S grade (>= 90 pts)
+    const earlyGodRoll = appCtx.AppraisalLab.evaluatePokemon(pikachu, 10, '固執', ['樹果數量S'], ['特選蘋果'], 0, 1);
+    assert(earlyGodRoll.compositeScore >= 90, `Early Lv.10 god roll with BFS should reach S grade (>= 90 pts), got ${earlyGodRoll.compositeScore}`);
+    assertEquals(earlyGodRoll.grade, 'S', 'Lv.10 god roll with BFS should receive S grade');
+
+    // 2. Locked Core Skill: Lv.10 Pikachu with BFS at Slot 2 (Lv.25) capped at B/C (<= 72 pts) current, reaches SS/SSS (>= 95 pts) potential, with milestone leap hint
+    const lockedBfsPkm = appCtx.AppraisalLab.evaluatePokemon(pikachu, 10, '固執', ['幫忙速度S', '樹果數量S', '幫手獎勵', '幫忙速度M', '技能機率提升M'], ['特選蘋果', '特選蘋果', '特選蘋果'], 0, 1);
+    assert(lockedBfsPkm.currentScore <= 72, `Current level rating without active BFS should be capped at <= 72, got ${lockedBfsPkm.currentScore}`);
+    assert(['B', 'C'].includes(lockedBfsPkm.currentGrade), `Current grade should be B or C, got ${lockedBfsPkm.currentGrade}`);
+    assert(lockedBfsPkm.potentialScore >= 95, `Potential score with BFS + Helping Bonus + Speed at Lv.100 should be >= 95 (SS/SSS), got ${lockedBfsPkm.potentialScore}`);
+    assert(['SS', 'SSS'].includes(lockedBfsPkm.potentialGrade), `Potential grade should be SS or SSS, got ${lockedBfsPkm.potentialGrade}`);
+    assert(lockedBfsPkm.milestones && lockedBfsPkm.milestones.length > 0, 'Milestone leap predictions should exist for locked BFS');
+    assert(lockedBfsPkm.milestones.some(m => m.level === 25 && m.skill === '樹果數量S'), 'Lv.25 milestone for BFS must be detected');
+    assert(lockedBfsPkm.milestoneNote && lockedBfsPkm.milestoneNote.includes('Lv.25') && lockedBfsPkm.milestoneNote.includes('樹果數量S'), 'Milestone diagnostic note must mention Lv.25 and 樹果數量S');
+
+    // 3. Slowpoke Lv.10 with Delicious Tail at Lv.30 generates a Lv.30 milestone projection hint
+    const slowpokeLv10 = appCtx.AppraisalLab.evaluatePokemon(slowpoke, 10, '坦率', ['食材機率提升M'], ['放鬆可可', '美味尾巴', '美味尾巴'], 0, 1);
+    assert(slowpokeLv10.milestones.some(m => m.level === 30 && m.type === 'ingredient' && m.skill === '美味尾巴'), 'Slowpoke Lv.30 tail milestone must be detected');
+    assert(slowpokeLv10.milestoneNote && slowpokeLv10.milestoneNote.includes('美味尾巴'), 'Slowpoke milestone note must mention 美味尾巴');
+
+    // 4. Box.calculatePokemonPR returns dual-track properties
+    const boxPkm = {
+      name: '皮卡丘',
+      level: 10,
+      nature: '固執',
+      subskills: ['幫忙速度S', '樹果數量S', '幫手獎勵', '幫忙速度M', '技能機率提升M'],
+      ing1: '特選蘋果',
+      ing2: '特選蘋果',
+      ing3: '特選蘋果',
+      ribbon: 0,
+      skillLevel: 1
+    };
+    const prResult = appCtx.PokemonBoxApp.calculatePokemonPR(boxPkm, pikachu);
+    assert(typeof prResult.currentScore === 'number', 'calculatePokemonPR must return numeric currentScore');
+    assert(typeof prResult.currentGrade === 'string', 'calculatePokemonPR must return currentGrade');
+    assert(typeof prResult.potentialScore === 'number', 'calculatePokemonPR must return numeric potentialScore');
+    assert(typeof prResult.potentialGrade === 'string', 'calculatePokemonPR must return potentialGrade');
+    assert(typeof prResult.currentTierBadgeClass === 'string', 'calculatePokemonPR must return currentTierBadgeClass');
+    assert(typeof prResult.potentialTierBadgeClass === 'string', 'calculatePokemonPR must return potentialTierBadgeClass');
+    assert(Array.isArray(prResult.milestones), 'calculatePokemonPR must return milestones array');
+    assert(prResult.milestones.some(m => m.level === 25), 'calculatePokemonPR milestones must include Lv.25 milestone');
   });
 
 

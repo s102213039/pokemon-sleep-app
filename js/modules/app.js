@@ -4588,7 +4588,7 @@ function updatePokedexSubskillUI() {
   const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
   const subskills = pokedexModalState.subskills;
   const currentLevel = pokedexModalState.level;
-  const slotLevels = [10, 25, 50, 70, 80];
+  const slotLevels = [10, 25, 50, 75, 100];
 
   // 1. 更新 5 個插槽按鈕
   const slotContainer = document.getElementById('pokedex-subskill-slots-row');
@@ -5015,8 +5015,8 @@ function calculatePokedexIngredientFormulas() {
   const baseSkillRate = parseFloat(pkm.skill_rate || '0') || 2.0;
   const baseIntervalSec = parsePokedexIntervalToSec(pkm.interval);
 
-  // 2. 副技能加成判定 (Lv.10, Lv.25, Lv.50, Lv.70, Lv.80)
-  const slotLevels = [10, 25, 50, 70, 80];
+  // 2. 副技能加成判定 (Lv.10, Lv.25, Lv.50, Lv.75, Lv.100)
+  const slotLevels = [10, 25, 50, 75, 100];
   let subskillIngBonus = 0;
   let subskillSpeedBonus = 0;
   let subskillSkillBonus = 0;
@@ -5615,10 +5615,16 @@ function renderPokedexDetailModalContent() {
           </div>
         </div>
 
-        <div class="pokedex-header-actions">
-          <div class="pokedex-header-verdict-badge" id="pokedex-header-verdict-badge" style="border-color: ${evaluation.gradeColor};">
-            <span class="verdict-grade pokedex-header-grade-text" style="color: ${evaluation.gradeColor};">${evaluation.grade}</span>
-            <span class="pokedex-header-score-text"><span class="verdict-num font-bold">${evaluation.compositeScore}</span>/100</span>
+        <div class="pokedex-header-actions" style="display:flex;align-items:center;gap:8px;">
+          <div class="pokedex-header-verdict-badge current-track" id="pokedex-header-verdict-badge" style="border-color: ${(evaluation.current || evaluation).gradeColor};" title="${isEN ? `Current Level Rating (Lv.${pokedexModalState.level})` : `當前實力評級 (Lv.${pokedexModalState.level})`}">
+            <span style="font-size:10px;color:#94a3b8;display:block;line-height:1;margin-bottom:2px;">${isEN ? `Lv.${pokedexModalState.level}` : `當前 Lv.${pokedexModalState.level}`}</span>
+            <span class="verdict-grade pokedex-header-grade-text" style="color: ${(evaluation.current || evaluation).gradeColor};">${(evaluation.current || evaluation).grade}</span>
+            <span class="pokedex-header-score-text"><span class="verdict-num font-bold">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
+          </div>
+          <div class="pokedex-header-verdict-badge potential-track" id="pokedex-header-potential-badge" style="border-color: ${(evaluation.potential || evaluation).gradeColor};" title="${isEN ? 'Max Potential Rating (Lv.100)' : '畢業潛力評級 (Lv.100)'}">
+            <span style="font-size:10px;color:#94a3b8;display:block;line-height:1;margin-bottom:2px;">${isEN ? 'Lv.100 Pot' : '滿級潛力'}</span>
+            <span class="verdict-potential-grade pokedex-header-grade-text" style="color: ${(evaluation.potential || evaluation).gradeColor};">${(evaluation.potential || evaluation).grade}</span>
+            <span class="pokedex-header-score-text"><span class="verdict-potential-num font-bold">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
           </div>
           <button type="button" class="box-modal-close pokedex-modal-close-btn" onclick="window.PokemonApp.closePokemonDetailModal()" aria-label="${isEN ? 'Close' : '關閉'}">✕</button>
         </div>
@@ -5662,7 +5668,7 @@ function renderPokedexDetailModalContent() {
                 </div>
                 <div class="pokedex-track-pins-bar" id="pokedex-track-pins-bar">
                   ${(() => {
-                    const allMilestones = [10, 25, 30, 50, 60, 70, 80, 100];
+                    const allMilestones = [10, 25, 30, 50, 60, 75, 100];
                     // 紅色不可滑動區間（低於最低進化等級）不展示快捷等級圖釘，亦不額外插入重疊門檻圖釘
                     const pins = allMilestones.filter(lv => lv >= minEvoLvl);
                     return pins.map(lv => {
@@ -5984,16 +5990,36 @@ function updatePokedexModalAppraisalLive() {
     };
   }
 
-  // 2. 更新評估 UI (頂部右側徽章)
-  const gradeEl = document.querySelector('.verdict-grade');
-  const numEl = document.querySelector('.verdict-num');
-  const verdictBadge = document.getElementById('pokedex-header-verdict-badge');
-  if (gradeEl) {
-    gradeEl.textContent = evaluation.grade;
-    gradeEl.style.color = evaluation.gradeColor;
+  // 2. 更新評估 UI (頂部右側雙軌徽章)
+  const curGradeEl = document.querySelector('.verdict-grade');
+  const curNumEl = document.querySelector('.verdict-num');
+  const curBadge = document.getElementById('pokedex-header-verdict-badge');
+  const potGradeEl = document.querySelector('.verdict-potential-grade');
+  const potNumEl = document.querySelector('.verdict-potential-num');
+  const potBadge = document.getElementById('pokedex-header-potential-badge');
+
+  const curEval = evaluation.current || evaluation;
+  const potEval = evaluation.potential || evaluation;
+
+  if (curGradeEl) {
+    curGradeEl.textContent = curEval.grade;
+    curGradeEl.style.color = curEval.gradeColor;
   }
-  if (numEl) numEl.textContent = evaluation.compositeScore;
-  if (verdictBadge) verdictBadge.style.borderColor = evaluation.gradeColor;
+  if (curNumEl) curNumEl.textContent = curEval.compositeScore;
+  if (curBadge) {
+    curBadge.style.borderColor = curEval.gradeColor;
+    if (typeof curBadge.querySelector === 'function') {
+      const curLvLabel = curBadge.querySelector('span:first-child');
+      if (curLvLabel) curLvLabel.textContent = isEN ? `Lv.${pokedexModalState.level}` : `當前 Lv.${pokedexModalState.level}`;
+    }
+  }
+
+  if (potGradeEl) {
+    potGradeEl.textContent = potEval.grade;
+    potGradeEl.style.color = potEval.gradeColor;
+  }
+  if (potNumEl) potNumEl.textContent = potEval.compositeScore;
+  if (potBadge) potBadge.style.borderColor = potEval.gradeColor;
 
   // 3. 更新食材產能算法拆解卡片與動態數值 (幫忙間隔、持有、食材率、技能率)
   const formulaData = calculatePokedexIngredientFormulas();

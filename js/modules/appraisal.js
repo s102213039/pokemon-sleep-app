@@ -143,25 +143,32 @@
     return ['請假王', '過動猿', '懶人獺', 'Slaking', 'Vigoroth', 'Slakoth'].some(s => name.includes(s));
   }
 
-  /* ─── 核心評估演算法 (嚴格門檻淘汰與特化評估新體系) ──────────── */
-  function evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel) {
+  /* ─── 核心評估演算法 (單一維度/等級計算核心) ──────────── */
+  function evaluateSingle(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, isPotential) {
     if (!pkmData) return null;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    currentLv = parseInt(currentLv, 10) || 30;
     natureName = natureName || '坦率';
     subskills = subskills || [];
     ingredients = ingredients || [];
     ribbonLevel = parseInt(ribbonLevel, 10) || 0;
     skillLevel = parseInt(skillLevel, 10) || 1;
 
+    // 若為畢業潛力 (isPotential)，統一以 Lv.100 全解鎖規格計算
+    if (isPotential) {
+      currentLv = 100;
+    } else {
+      currentLv = parseInt(currentLv, 10) || 30;
+    }
+
     const specialty = pkmData.specialty || '樹果';
     const subskillArr = Array.isArray(subskills) ? subskills.map(function(s) { return typeof s === 'string' ? s : (s ? s.name : ''); }) : [];
     
-    // 計算已解鎖副技能 (解鎖門檻: Lv.10, 25, 50, 70, 80)
-    const slotLevels = [10, 25, 50, 70, 80];
+    // 計算已解鎖副技能 (官方最新解鎖門檻: Lv.10, 25, 50, 75, 100)
+    const slotLevels = [10, 25, 50, 75, 100];
+    const unlockedSlotLimit = isPotential ? 5 : slotLevels.filter(lvl => currentLv >= lvl).length;
     const activeSubskills = [];
     subskillArr.forEach(function(s, idx) {
-      if (s && currentLv >= (slotLevels[idx] || 10)) {
+      if (s && (isPotential || currentLv >= (slotLevels[idx] || 10))) {
         activeSubskills.push(s);
       }
     });
@@ -397,7 +404,7 @@
     let growthScore = 48;
     subskillArr.forEach(function(s, idx) {
       if (!s || idx < 2) return;
-      const isUnlocked = currentLv >= (slotLevels[idx] || 50);
+      const isUnlocked = isPotential || currentLv >= (slotLevels[idx] || 50);
       if (isUnlocked) {
         if (['樹果數量S', '幫手獎勵', '幫忙速度M', '食材機率提升M', '技能機率提升M', 'Berry Finding S', 'Helping Bonus', 'Helping Speed M', 'Ingredient Finder M', 'Skill Trigger M'].indexOf(s) !== -1) {
           growthScore += 14;
@@ -424,7 +431,7 @@
     let roiScore = 40;
     subskillArr.forEach(function(s, idx) {
       if (!s || idx >= 2) return;
-      const isUnlocked = currentLv >= (slotLevels[idx] || 10);
+      const isUnlocked = isPotential || currentLv >= (slotLevels[idx] || 10);
       if (isUnlocked) {
         if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
           if (s === '樹果數量S' || s === 'Berry Finding S') roiScore += 24;
@@ -523,16 +530,29 @@
     const hasCoreSkill = activeSubskills.some(s => ['技能機率提升M', '技能機率提升S', 'Skill Trigger M', 'Skill Trigger S', '幫手獎勵', 'Helping Bonus'].indexOf(s) !== -1);
 
     if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
-      if (hasCoreIng && ingScore >= 95) specialtyMasteryBonus = activeSubskills.length >= 3 ? 6 : 4;
-      else if (hasCoreIng && ingScore >= 85) specialtyMasteryBonus = activeSubskills.length >= 2 ? 4 : 2;
+      if (hasCoreIng && ingScore >= 95) specialtyMasteryBonus = activeSubskills.length >= 3 ? 6 : (activeSubskills.length >= 1 ? 5 : 2);
+      else if (hasCoreIng && ingScore >= 85) specialtyMasteryBonus = activeSubskills.length >= 2 ? 4 : (activeSubskills.length >= 1 ? 3 : 2);
     } else if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
-      if (hasCoreBerry && berryScore >= 95) specialtyMasteryBonus = activeSubskills.length >= 3 ? 6 : 4;
-      else if (hasCoreBerry && berryScore >= 85) specialtyMasteryBonus = activeSubskills.length >= 2 ? 4 : 2;
+      if (hasCoreBerry && berryScore >= 95) specialtyMasteryBonus = activeSubskills.length >= 3 ? 6 : (activeSubskills.length >= 1 ? 5 : 2);
+      else if (hasCoreBerry && berryScore >= 85) specialtyMasteryBonus = activeSubskills.length >= 2 ? 4 : (activeSubskills.length >= 1 ? 3 : 2);
     } else {
-      if (hasCoreSkill && skillScore >= 95) specialtyMasteryBonus = activeSubskills.length >= 3 ? 6 : 4;
-      else if (hasCoreSkill && skillScore >= 85) specialtyMasteryBonus = activeSubskills.length >= 2 ? 4 : 2;
+      if (hasCoreSkill && skillScore >= 95) specialtyMasteryBonus = activeSubskills.length >= 3 ? 6 : (activeSubskills.length >= 1 ? 5 : 2);
+      else if (hasCoreSkill && skillScore >= 85) specialtyMasteryBonus = activeSubskills.length >= 2 ? 4 : (activeSubskills.length >= 1 ? 3 : 2);
     }
     compositeScore += specialtyMasteryBonus;
+
+    // 階段相對評分制加成 (Stage-Relative Scoring Bonus for Early Stage Powerhouses Lv.10~24)
+    let stageMasteryBonus = 0;
+    if (!isPotential && unlockedSlotLimit === 1) {
+      if ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') && (hasBFS || activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1)) {
+        stageMasteryBonus = 8.0;
+      } else if ((specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') && hasCoreIng) {
+        stageMasteryBonus = 8.0;
+      } else if ((specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') && (hasCoreSkill || isHybridBfsCandidate)) {
+        stageMasteryBonus = 8.0;
+      }
+    }
+    compositeScore += stageMasteryBonus;
 
     // 幫手獎勵全隊頂級戰略加成
     if (activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1) {
@@ -556,9 +576,11 @@
     if (isSlowpoke) {
       const hasTailLv30 = ingredients.length >= 2 && (ingredients[1] === '美味尾巴' || (ingredients[1] && ingredients[1].includes('尾巴')) || (ingredients[1] && ingredients[1].includes('Tail')));
       if (hasTailLv30) {
-        compositeScore += 14.0;
-        if (nature.buffType === 'exp' || activeSubskills.indexOf('睡眠EXP獎勵') !== -1) {
-          compositeScore += 4.0; // 加速解鎖獎勵
+        if (currentLv >= 30) {
+          compositeScore += 14.0;
+          if (nature.buffType === 'exp' || activeSubskills.indexOf('睡眠EXP獎勵') !== -1) {
+            compositeScore += 4.0; // 加速解鎖獎勵
+          }
         }
       } else {
         compositeScore -= 20.0;
@@ -604,8 +626,8 @@
       }
     }
 
-    // 4. 無副技能嚴格防溢上限：副技能清空狀態下絕對不可評為 S / SS / SSS / A
-    if (activeSubskills.length === 0) {
+    // 4. 無副技能嚴格防溢上限：副技能清空狀態或未解鎖副技能狀態下絕對不可評為 S / SS / SSS / A
+    if (activeSubskills.length === 0 || unlockedSlotLimit === 0) {
       compositeScore = Math.min(62, compositeScore);
     }
 
@@ -872,6 +894,110 @@
     };
   }
 
+  /* ─── 升級里程碑質變預測 (Milestone Leap Projections) ─────────── */
+  function calculateMilestoneProjections(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, currentEval) {
+    if (!pkmData || !currentEval) return [];
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const subskillArr = Array.isArray(subskills) ? subskills.map(function(s) { return typeof s === 'string' ? s : (s ? s.name : ''); }) : [];
+    const milestones = [];
+    const candidateLevels = [25, 30, 50, 75, 100];
+    const slotLevels = [10, 25, 50, 75, 100];
+    const isSlowpoke = isSlowpokeFamily(pkmData);
+
+    candidateLevels.forEach(function(targetLv) {
+      if (targetLv <= currentLv) return;
+
+      let targetSkillName = '';
+      let isKeyMilestone = false;
+      let milestoneType = 'subskill';
+
+      if (targetLv === 30) {
+        if (isSlowpoke) {
+          const hasTailLv30 = ingredients.length >= 2 && (ingredients[1] === '美味尾巴' || (ingredients[1] && ingredients[1].includes('尾巴')) || (ingredients[1] && ingredients[1].includes('Tail')));
+          if (hasTailLv30) {
+            targetSkillName = isEN ? 'Slowpoke Tail' : '美味尾巴';
+            milestoneType = 'ingredient';
+            isKeyMilestone = true;
+          }
+        } else if (ingredients.length >= 2 && ingredients[1]) {
+          targetSkillName = window.I18N ? window.I18N.getIngredientName(ingredients[1]) : ingredients[1];
+          milestoneType = 'ingredient';
+        }
+      }
+
+      const slotIdx = slotLevels.indexOf(targetLv);
+      if (slotIdx !== -1 && subskillArr[slotIdx]) {
+        const skName = subskillArr[slotIdx];
+        const isCore = ['樹果數量S', '幫手獎勵', '食材機率提升M', '技能機率提升M', '幫忙速度M', '持有上限提升L', 'Berry Finding S', 'Helping Bonus', 'Ingredient Finder M', 'Skill Trigger M', 'Helping Speed M', 'Inventory Up L'].indexOf(skName) !== -1;
+        if (isCore) {
+          targetSkillName = window.I18N ? window.I18N.getSubSkillName(skName) : skName;
+          milestoneType = 'subskill';
+          isKeyMilestone = true;
+        } else if (!targetSkillName) {
+          targetSkillName = window.I18N ? window.I18N.getSubSkillName(skName) : skName;
+          milestoneType = 'subskill';
+        }
+      }
+
+      if (!targetSkillName && !isKeyMilestone) return;
+
+      const projEval = evaluateSingle(pkmData, targetLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, false);
+      if (!projEval) return;
+
+      const scoreDiff = projEval.compositeScore - currentEval.compositeScore;
+      if (scoreDiff >= 3 || projEval.grade !== currentEval.grade || isKeyMilestone) {
+        const skillDisplay = targetSkillName || (isEN ? `Lv.${targetLv} Unlock` : `Lv.${targetLv} 解鎖`);
+        const milestoneText = isEN
+          ? `Recommended to prioritize Lv.${targetLv} to unlock "${skillDisplay}": rating leaps from ${currentEval.grade} (${currentEval.compositeScore} pts) to ${projEval.grade} (${projEval.compositeScore} pts)!`
+          : `建議優先升至 Lv.${targetLv} 解鎖「${skillDisplay}」，評級將由 ${currentEval.grade} 級（${currentEval.compositeScore}分）質變躍升至 ${projEval.grade} 級（${projEval.compositeScore}分）！`;
+
+        milestones.push({
+          level: targetLv,
+          type: milestoneType,
+          skill: targetSkillName,
+          currentScore: currentEval.compositeScore,
+          projectedScore: projEval.compositeScore,
+          currentGrade: currentEval.grade,
+          projectedGrade: projEval.grade,
+          scoreDiff: scoreDiff,
+          text: milestoneText
+        });
+      }
+    });
+
+    milestones.sort(function(a, b) {
+      return a.level - b.level;
+    });
+    return milestones;
+  }
+
+  /* ─── 對外入口：雙軌評級與里程碑評定 (Dual-Track Appraisal API) ─────── */
+  function evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel) {
+    if (!pkmData) return null;
+    currentLv = parseInt(currentLv, 10) || 30;
+
+    const currentEval = evaluateSingle(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, false);
+    if (!currentEval) return null;
+
+    const potentialEval = evaluateSingle(pkmData, 100, natureName, subskills, ingredients, ribbonLevel, skillLevel, true);
+    const milestones = calculateMilestoneProjections(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, currentEval);
+
+    if (currentEval.diagnostics) {
+      currentEval.diagnostics.milestones = milestones;
+    }
+
+    return Object.assign({}, currentEval, {
+      current: currentEval,
+      potential: potentialEval,
+      currentScore: currentEval.compositeScore,
+      currentGrade: currentEval.grade,
+      potentialScore: potentialEval ? potentialEval.compositeScore : currentEval.compositeScore,
+      potentialGrade: potentialEval ? potentialEval.grade : currentEval.grade,
+      milestones: milestones,
+      milestoneNote: milestones.length > 0 ? milestones[0].text : ''
+    });
+  }
+
   /* ─── 升級成本精算 ─────────────────────────────────────── */
   function calculateMilestoneCost(fromLv, targetLv, nature) {
     if (fromLv >= targetLv) {
@@ -1093,19 +1219,41 @@
                   ${subskills && subskills.length > 0 ? subskills.map(function(s, idx) {
                     const rawName = typeof s === 'string' ? s : (s ? s.name : '');
                     const sName = window.I18N ? window.I18N.getSubSkillName(rawName) : rawName;
-                    const levels = [10, 25, 50, 70, 80];
+                    const levels = [10, 25, 50, 75, 100];
                     return rawName ? `<div class="appraisal-subskill-pill"><span class="subskill-lv-tag">Lv.${levels[idx]}</span> ${sName}</div>` : '';
                   }).join('') : `<span class="text-secondary text-sm">${isEN ? 'No sub-skills configured' : '無自訂副技能'}</span>`}
                 </div>
               </div>
             </div>
 
-            <!-- 綜合評級卡片 -->
-            <div class="appraisal-verdict-box" style="border-color: ${evaluation.gradeColor};">
-              <div class="appraisal-grade-large" style="color: ${evaluation.gradeColor};">${evaluation.grade}</div>
-              <div class="appraisal-grade-title">${evaluation.gradeTitle}</div>
-              <div class="appraisal-composite-score">${isEN ? 'Overall Potential Score: ' : '綜合潛力分：'}<span class="font-bold text-accent">${evaluation.compositeScore}</span> / 100</div>
+            <!-- 雙軌綜合評級卡片 (當前實力 + 畢業潛力) -->
+            <div class="appraisal-dual-verdict-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
+              <!-- 當前實力 (Current Level Rating) -->
+              <div class="appraisal-verdict-box appraisal-verdict-current" style="border:1.5px solid ${(evaluation.current || evaluation).gradeColor};background:rgba(15,23,42,0.65);border-radius:10px;padding:10px 8px;text-align:center;">
+                <div style="font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">${isEN ? `Current (Lv.${currentLv})` : `當前實力 (Lv.${currentLv})`}</div>
+                <div class="appraisal-grade-large" style="color:${(evaluation.current || evaluation).gradeColor};font-size:30px;font-weight:900;line-height:1.1;">${(evaluation.current || evaluation).grade}</div>
+                <div class="appraisal-grade-title" style="font-size:11px;margin:2px 0;color:${(evaluation.current || evaluation).gradeColor};">${(evaluation.current || evaluation).gradeTitle}</div>
+                <div class="appraisal-composite-score" style="font-size:12px;color:#e2e8f0;"><span class="font-bold text-accent">${(evaluation.current || evaluation).compositeScore}</span> / 100</div>
+              </div>
+              <!-- 畢業潛力 (Lv.100 Potential Rating) -->
+              <div class="appraisal-verdict-box appraisal-verdict-potential" style="border:1.5px solid ${(evaluation.potential || evaluation).gradeColor};background:rgba(15,23,42,0.65);border-radius:10px;padding:10px 8px;text-align:center;">
+                <div style="font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">${isEN ? 'Max Potential (Lv.100)' : '畢業潛力 (Lv.100)'}</div>
+                <div class="appraisal-grade-large" style="color:${(evaluation.potential || evaluation).gradeColor};font-size:30px;font-weight:900;line-height:1.1;">${(evaluation.potential || evaluation).grade}</div>
+                <div class="appraisal-grade-title" style="font-size:11px;margin:2px 0;color:${(evaluation.potential || evaluation).gradeColor};">${(evaluation.potential || evaluation).gradeTitle}</div>
+                <div class="appraisal-composite-score" style="font-size:12px;color:#e2e8f0;"><span class="font-bold text-accent">${(evaluation.potential || evaluation).compositeScore}</span> / 100</div>
+              </div>
             </div>
+
+            <!-- 升級里程碑質變預測 -->
+            ${evaluation.milestones && evaluation.milestones.length > 0 ? `
+              <div class="appraisal-milestones-card" style="margin-top:10px;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.3);border-radius:8px;padding:8px 10px;">
+                <div style="font-size:11px;font-weight:700;color:#facc15;margin-bottom:4px;display:flex;align-items:center;gap:4px;">
+                  <span>[^]</span>
+                  <span>${isEN ? 'Milestone Projections' : '升級里程碑質變預測'}</span>
+                </div>
+                ${evaluation.milestones.map(m => `<div style="font-size:11px;color:#e2e8f0;line-height:1.4;margin-bottom:3px;">${escapeHtml(m.text)}</div>`).join('')}
+              </div>
+            ` : ''}
           </div>
 
           <!-- 右欄：雷達圖 + 六維量表 + 深度點評 + 糖果升級試算 -->
@@ -1405,11 +1553,11 @@
               </select>
             </div>
 
-            <!-- 5 個副技能槽位選擇 (Lv.10, 25, 50, 70, 80) -->
+            <!-- 5 個副技能槽位選擇 (Lv.10, 25, 50, 75, 100) -->
             <div class="lab-control-group">
-              <label class="lab-control-label">${isEN ? 'Sub-Skill Setup (Lv.10, 25, 50, 70, 80):' : '副技能配置 (Lv.10, 25, 50, 70, 80)：'}</label>
+              <label class="lab-control-label">${isEN ? 'Sub-Skill Setup (Lv.10, 25, 50, 75, 100):' : '副技能配置 (Lv.10, 25, 50, 75, 100)：'}</label>
               <div class="lab-subskills-picker">
-                ${[10, 25, 50, 70, 80].map(function (lv, idx) {
+                ${[10, 25, 50, 75, 100].map(function (lv, idx) {
                   return '<div class="lab-subskill-slot"><span class="slot-lv-label">Lv.' + lv + '</span><select class="lab-select-subskill" onchange="window.AppraisalLab.onSubskillChange(' + idx + ', this.value)"><option value="">' + (isEN ? '(None)' : '(無)') + '</option>' +
                     subskillPool.map(function (s) {
                       const sDisplayName = window.I18N ? window.I18N.getSubSkillName(s.name) : s.name;
@@ -1449,9 +1597,17 @@
                 </div>
               </div>
 
-              <div class="lab-preview-verdict" style="border-color: ${evaluation.gradeColor}; color: ${evaluation.gradeColor};">
-                <span class="lab-grade-char">${evaluation.grade}</span>
-                <span class="lab-grade-title">${evaluation.gradeTitle}</span>
+              <div class="lab-preview-dual-verdict" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <div class="lab-preview-verdict lab-verdict-cur" style="border-color: ${(evaluation.current || evaluation).gradeColor}; color: ${(evaluation.current || evaluation).gradeColor}; padding:4px 8px; border-radius:8px; text-align:center;">
+                  <span style="font-size:10px;display:block;color:#94a3b8;font-weight:700;">${isEN ? `Current Lv.${labState.level}` : `當前 Lv.${labState.level}`}</span>
+                  <span class="lab-grade-char" style="font-size:20px;line-height:1.1;">${(evaluation.current || evaluation).grade}</span>
+                  <span style="font-size:11px;font-weight:700;display:block;">${(evaluation.current || evaluation).compositeScore} ${isEN ? 'pts' : '分'}</span>
+                </div>
+                <div class="lab-preview-verdict lab-verdict-pot" style="border-color: ${(evaluation.potential || evaluation).gradeColor}; color: ${(evaluation.potential || evaluation).gradeColor}; padding:4px 8px; border-radius:8px; text-align:center;">
+                  <span style="font-size:10px;display:block;color:#94a3b8;font-weight:700;">${isEN ? 'Potential Lv.100' : '滿級潛力 Lv.100'}</span>
+                  <span class="lab-grade-char" style="font-size:20px;line-height:1.1;">${(evaluation.potential || evaluation).grade}</span>
+                  <span style="font-size:11px;font-weight:700;display:block;">${(evaluation.potential || evaluation).compositeScore} ${isEN ? 'pts' : '分'}</span>
+                </div>
               </div>
             </div>
 
@@ -1460,10 +1616,20 @@
               ${radarSVG}
             </div>
 
-            <!-- 下方的深度診斷評語 -->
+            <!-- 下方的深度診斷評語與升級里程碑預測 -->
             <div class="lab-pros-box">
               ${evaluation.pros.map(function (p) { return '<div class="lab-bullet-item">' + p + '</div>'; }).join('')}
             </div>
+
+            ${evaluation.milestones && evaluation.milestones.length > 0 ? `
+              <div class="lab-milestones-box" style="margin-top:10px;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.3);border-radius:8px;padding:8px 12px;">
+                <div style="font-size:11px;font-weight:700;color:#facc15;margin-bottom:4px;display:flex;align-items:center;gap:4px;">
+                  <span>[^]</span>
+                  <span>${isEN ? 'Level-Up Milestone Projections' : '升級里程碑質變預測'}</span>
+                </div>
+                ${evaluation.milestones.map(m => `<div style="font-size:11px;color:#e2e8f0;line-height:1.4;margin-bottom:3px;">${escapeHtml(m.text)}</div>`).join('')}
+              </div>
+            ` : ''}
           </div>
         </div>
       </div>
@@ -1525,6 +1691,8 @@
     isChargeStrengthSkillSpecialist: isChargeStrengthSkillSpecialist,
     isSlowpokeFamily: isSlowpokeFamily,
     isSlakingFamily: isSlakingFamily,
+    evaluateSingle: evaluateSingle,
+    calculateMilestoneProjections: calculateMilestoneProjections,
     evaluatePokemon: evaluatePokemon,
     getRemainingEvolutions: getRemainingEvolutions,
     getRibbonBonus: getRibbonBonus,

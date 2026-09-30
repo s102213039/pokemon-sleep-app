@@ -194,7 +194,7 @@
       };
     }
 
-    // ─── 階段 2：及格線以上的高階精確評分 (覆蓋 Lv.10, 25, 50, 70, 80) ───
+    // ─── 階段 2：及格線以上的高階精確評分 (覆蓋 Lv.10, 25, 50, 75, 100) ───
     let score = 0;
     const highlights = [];
 
@@ -216,9 +216,9 @@
       if (debuff === 'speed') { score -= 15; }
     }
 
-    // 2. 5 格副技能解鎖權重 (Lv.10: 30%, Lv.25: 30%, Lv.50: 20%, Lv.70: 12%, Lv.80: 8%)
+    // 2. 5 格副技能解鎖權重 (Lv.10: 30%, Lv.25: 30%, Lv.50: 20%, Lv.75: 12%, Lv.100: 8%)
     const slotWeights = [0.30, 0.30, 0.20, 0.12, 0.08];
-    const lvlLabels = [10, 25, 50, 70, 80];
+    const lvlLabels = [10, 25, 50, 75, 100];
 
     subskills.forEach((skName, idx) => {
       const w = slotWeights[idx] || 0.08;
@@ -303,8 +303,52 @@
       tierBadgeClass = 'pr-tier-s';
     }
 
+    // 4. AppraisalLab 雙軌評分與升級里程碑整合 (Dual-Track Rating & Milestone Projection)
+    const lab = (typeof window !== 'undefined' && window.AppraisalLab) || (typeof AppraisalLab !== 'undefined' ? AppraisalLab : null);
+    let currentGrade = tier;
+    let currentScore = pr;
+    let potentialGrade = tier;
+    let potentialScore = pr;
+    let currentTierBadgeClass = tierBadgeClass;
+    let potentialTierBadgeClass = tierBadgeClass;
+    let milestones = [];
+    let milestoneNote = '';
+
+    const gradeToBadgeClass = {
+      'SSS': 'pr-tier-sss',
+      'SS': 'pr-tier-ss',
+      'S': 'pr-tier-s',
+      'A': 'pr-tier-a',
+      'B': 'pr-tier-b',
+      'C': 'pr-tier-c',
+      'D': 'pr-tier-d'
+    };
+
+    if (lab && typeof lab.evaluatePokemon === 'function' && base) {
+      const currentLv = parseInt(pkm.level, 10) || 30;
+      const subArr = pkm.subskills || [];
+      const ingArr = [pkm.ing1, pkm.ing2, pkm.ing3].filter(Boolean);
+      const ribLvl = parseInt(pkm.ribbon, 10) || 0;
+      const skLvl = parseInt(pkm.skillLevel, 10) || 1;
+      const appResult = lab.evaluatePokemon(base, currentLv, pkm.nature, subArr, ingArr, ribLvl, skLvl);
+      if (appResult) {
+        currentGrade = (appResult.current && appResult.current.grade) || appResult.grade;
+        currentScore = (appResult.current && appResult.current.compositeScore) || appResult.compositeScore;
+        potentialGrade = (appResult.potential && appResult.potential.grade) || appResult.grade;
+        potentialScore = (appResult.potential && appResult.potential.compositeScore) || appResult.compositeScore;
+        currentTierBadgeClass = gradeToBadgeClass[currentGrade] || 'pr-tier-b';
+        potentialTierBadgeClass = gradeToBadgeClass[potentialGrade] || 'pr-tier-b';
+        milestones = appResult.milestones || [];
+        if (milestones.length > 0) {
+          milestoneNote = milestones[0].text;
+        }
+      }
+    }
+
     let summaryNote = '';
-    if (highlights.length > 0) {
+    if (milestoneNote) {
+      summaryNote = milestoneNote;
+    } else if (highlights.length > 0) {
       summaryNote = highlights.slice(0, 3).join(' · ');
     } else {
       summaryNote = isEN ? 'Solid baseline starter' : '及格主力，基礎能力扎實';
@@ -314,6 +358,14 @@
       pr,
       tier,
       tierBadgeClass,
+      currentGrade,
+      currentScore,
+      potentialGrade,
+      potentialScore,
+      currentTierBadgeClass,
+      potentialTierBadgeClass,
+      milestones,
+      milestoneNote,
       summaryNote,
       highlights,
       score: Math.round(score * 10) / 10
@@ -478,9 +530,14 @@
                   <div class="box-card-name-row">
                     <span class="box-card-name">${escapeHtml(pkmDisplayName)}</span>
                     <span class="box-card-level">Lv.${p.level || 1}</span>
-                    <span class="box-pr-badge ${prInfo.tierBadgeClass}" title="PR: ${prInfo.pr}/100">
-                      PR ${prInfo.pr} · ${prInfo.tier}
-                    </span>
+                    <div class="box-dual-pr-badges" style="display:inline-flex;gap:4px;align-items:center;flex-wrap:wrap;">
+                      <span class="box-pr-badge ${prInfo.currentTierBadgeClass || prInfo.tierBadgeClass}" title="${isEN ? `Current Level Rating: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr} pts)` : `當前實力評級: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr}分)`}">
+                        ${isEN ? `Cur: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})` : `當前: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})`}
+                      </span>
+                      <span class="box-pr-badge ${prInfo.potentialTierBadgeClass || prInfo.tierBadgeClass}" title="${isEN ? `Max Potential Rating: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr} pts)` : `畢業潛力評級: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr}分)`}">
+                        ${isEN ? `Pot: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})` : `潛力: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})`}
+                      </span>
+                    </div>
                   </div>
                   ${p.nickname ? `<div class="box-card-nickname">${escapeHtml(p.nickname)}</div>` : ''}
                   <div class="box-card-tags">
@@ -539,7 +596,7 @@
               <div class="box-card-section">
                 <div class="box-section-title">${isEN ? 'Sub-Skills' : '副技能組合'}</div>
                 <div class="box-subskills-grid">
-                  ${[10, 25, 50, 70, 80].map((lv, i) => {
+                  ${[10, 25, 50, 75, 100].map((lv, i) => {
                     const skName = (p.subskills || [])[i];
                     const sk = SUBSKILLS_DATA.find(s => s.name === skName);
                     const tier = sk ? sk.tier : 'empty';
@@ -627,9 +684,14 @@
                   </td>
                   <td><span class="box-table-lvl">Lv.${p.level || 1}</span></td>
                   <td>
-                    <span class="box-pr-badge ${prInfo.tierBadgeClass}">
-                      PR ${prInfo.pr} · ${prInfo.tier}
-                    </span>
+                    <div class="box-table-dual-badges" style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;">
+                      <span class="box-pr-badge ${prInfo.currentTierBadgeClass || prInfo.tierBadgeClass}" style="font-size:11px;padding:1px 6px;">
+                        ${isEN ? `Cur: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})` : `當前: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})`}
+                      </span>
+                      <span class="box-pr-badge ${prInfo.potentialTierBadgeClass || prInfo.tierBadgeClass}" style="font-size:11px;padding:1px 6px;">
+                        ${isEN ? `Pot: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})` : `潛力: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})`}
+                      </span>
+                    </div>
                   </td>
                   <td>
                     ${berry && berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}">` : `<span class="berry-name-text">${berryName || '--'}</span>`}
@@ -1906,8 +1968,8 @@
     if (!pkm || carryVal == null || isNaN(carryVal)) return 0;
     const baseCarry = parseInt(pkm.carry, 10) || 20;
 
-    // 副技能解鎖等級門檻：Lv.10, Lv.25, Lv.50, Lv.70, Lv.80 (容錯 70/75 與 80/100)
-    const unlockThresholds = [10, 25, 50, 70, 80];
+    // 副技能解鎖等級門檻：Lv.10, Lv.25, Lv.50, Lv.75, Lv.100
+    const unlockThresholds = [10, 25, 50, 75, 100];
     let subskillCarryBonus = 0;
     const actualLvl = parseInt(currentLvl, 10) || 1;
 
