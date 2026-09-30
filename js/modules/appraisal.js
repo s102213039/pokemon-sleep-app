@@ -163,8 +163,8 @@
     const specialty = pkmData.specialty || '樹果';
     const subskillArr = Array.isArray(subskills) ? subskills.map(function(s) { return typeof s === 'string' ? s : (s ? s.name : ''); }) : [];
     
-    // 計算已解鎖副技能 (官方最新解鎖門檻: Lv.10, 25, 50, 75, 100)
-    const slotLevels = [10, 25, 50, 75, 100];
+    // 計算已解鎖副技能 (官方最新解鎖門檻: Lv.10, 25, 50, 70, 80)
+    const slotLevels = [10, 25, 50, 70, 80];
     const unlockedSlotLimit = isPotential ? 5 : slotLevels.filter(lvl => currentLv >= lvl).length;
     const activeSubskills = [];
     subskillArr.forEach(function(s, idx) {
@@ -900,8 +900,8 @@
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const subskillArr = Array.isArray(subskills) ? subskills.map(function(s) { return typeof s === 'string' ? s : (s ? s.name : ''); }) : [];
     const milestones = [];
-    const candidateLevels = [25, 30, 50, 75, 100];
-    const slotLevels = [10, 25, 50, 75, 100];
+    const candidateLevels = [25, 30, 50, 70, 80];
+    const slotLevels = [10, 25, 50, 70, 80];
     const isSlowpoke = isSlowpokeFamily(pkmData);
 
     candidateLevels.forEach(function(targetLv) {
@@ -1255,7 +1255,7 @@
               <div class="appraisal-config-section">
                 <div class="appraisal-config-title">${isEN ? '[#] Sub-Skills (2+2+1)' : '[#] 副技能配置 (2+2+1)'}</div>
                 <div class="appraisal-subskills-grid">
-                  ${[10, 25, 50, 75, 100].map(function(lv, idx) {
+                  ${[10, 25, 50, 70, 80].map(function(lv, idx) {
                     const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
                     const sName = rawName ? (window.I18N ? window.I18N.getSubSkillName(rawName) : rawName) : '--';
                     const tier = getSkillTier(rawName);
@@ -1631,11 +1631,11 @@
               </select>
             </div>
 
-            <!-- 5 個副技能槽位選擇 (Lv.10, 25, 50, 75, 100) -->
+            <!-- 5 個副技能槽位選擇 (Lv.10, 25, 50, 70, 80) -->
             <div class="lab-control-group">
-              <label class="lab-control-label">${isEN ? 'Sub-Skill Setup (Lv.10, 25, 50, 75, 100):' : '副技能配置 (Lv.10, 25, 50, 75, 100)：'}</label>
+              <label class="lab-control-label">${isEN ? 'Sub-Skill Setup (Lv.10, 25, 50, 70, 80):' : '副技能配置 (Lv.10, 25, 50, 70, 80)：'}</label>
               <div class="lab-subskills-picker">
-                ${[10, 25, 50, 75, 100].map(function (lv, idx) {
+                ${[10, 25, 50, 70, 80].map(function (lv, idx) {
                   return '<div class="lab-subskill-slot"><span class="slot-lv-label">Lv.' + lv + '</span><select class="lab-select-subskill" onchange="window.AppraisalLab.onSubskillChange(' + idx + ', this.value)"><option value="">' + (isEN ? '(None)' : '(無)') + '</option>' +
                     subskillPool.map(function (s) {
                       const sDisplayName = window.I18N ? window.I18N.getSubSkillName(s.name) : s.name;

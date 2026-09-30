@@ -5820,9 +5820,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Box Main Skill Level Control 
   const ribbonE = boxModule.deduceRibbonFromCarry(heracross, 52, subskillsHera, 28);
   assertEquals(ribbonE, 4, 'Carry 28 with base 20 must deduce Ribbon Lv.4');
 
-  // Scenario F: Heracross reaches Lv.75! Inventory Up S (+6) is now unlocked!
+  // Scenario F: Heracross reaches Lv.70! Inventory Up S (+6) is now unlocked!
   // If screenshot shows Carry 27, diff = 27 - 20 - 6 = +1 -> Ribbon Lv.1
-  const ribbonF = boxModule.deduceRibbonFromCarry(heracross, 75, subskillsHera, 27);
+  const ribbonF = boxModule.deduceRibbonFromCarry(heracross, 70, subskillsHera, 27);
   assertEquals(ribbonF, 1, 'Carry 27 with base 20 and unlocked Inventory S (+6) must deduce Ribbon Lv.1');
 
   // 5. Verify OCR Parsing of Image 1 text extracts skillLevel = 7 and ribbon = 1
@@ -6614,11 +6614,12 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assert(i18nJs.includes('pokedex.evo_guard_met'), 'i18n.js must contain pokedex.evo_guard_met');
   assert(i18nJs.includes('pokedex.evo_req'), 'i18n.js must contain pokedex.evo_req');
 
-  // 15. Verify Lv.75 / Lv.100 Subskill Unlock Slots (Updated to official game thresholds)
+  // 15. Verify Lv.70 / Lv.80 Subskill Unlock Slots (Updated to official Ver.3.6.0 thresholds)
   PokemonApp.openPokemonDetailModal('003');
   const modalHtmlNow = mockElements.get('pokedex-detail-modal').innerHTML;
-  assert(modalHtmlNow.includes('Lv.75') && modalHtmlNow.includes('Lv.100'), 'Modal subskill slots must display Lv.75 and Lv.100');
-  assert(!modalHtmlNow.includes('Lv.70') && !modalHtmlNow.includes('Lv.80'), 'Modal subskill slots must not display legacy Lv.70 or Lv.80');
+  const slotsRowHtml = mockElements.get('pokedex-subskill-slots-row').innerHTML;
+  assert(slotsRowHtml.includes('Lv.70') && slotsRowHtml.includes('Lv.80'), 'Modal subskill slots must display official thresholds Lv.70 and Lv.80');
+  assert(!slotsRowHtml.includes('Lv.75') && !slotsRowHtml.includes('Lv.100'), 'Modal subskill slots must not display old legacy Lv.75 or Lv.100');
 
   // 15B. Header layout: berry & specialty vertical stack, dual-column stats with carry, no evo guard badge
   assert(modalHtmlNow.includes('pokedex-header-berry-spec-group'), 'Header must contain vertical berry-spec group');
@@ -6873,33 +6874,33 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   PokemonApp.setPokedexModalLevel(50);
   assert(!slotsRowEl.innerHTML.includes('Lv.50 <span class="slot-unreleased-tag slot-tag-inactive">'), 'Slot 3 at Lv.50 must dynamically clear slot-tag-inactive');
 
-  // Raise level to 75: Slot 4 (Lv.75) is reached so it must NOT display any unreleased/under-lvl tag
-  PokemonApp.setPokedexModalLevel(75);
-  assert(!slotsRowEl.innerHTML.includes('Lv.75 <span class="slot-unreleased-tag'), 'Slot 4 at Lv.75 must NOT display 尚未開放 or 等級不足 tag');
-  assert(slotsRowEl.innerHTML.includes('Lv.100 <span class="slot-unreleased-tag slot-tag-under-lvl">等級不足</span>'), 'Slot 5 at Lv.75 must display 等級不足');
+  // Raise level to 70: Slot 4 (Lv.70) is reached so it must NOT display any unreleased/under-lvl tag
+  PokemonApp.setPokedexModalLevel(70);
+  assert(!slotsRowEl.innerHTML.includes('Lv.70 <span class="slot-unreleased-tag'), 'Slot 4 at Lv.70 must NOT display 尚未開放 or 等級不足 tag');
+  assert(slotsRowEl.innerHTML.includes('Lv.80 <span class="slot-unreleased-tag slot-tag-under-lvl">等級不足</span>'), 'Slot 5 at Lv.70 must display 等級不足');
 
-  // Test Slot 4 & 5 Subskills at Lv.75 & Lv.100
+  // Test Slot 4 & 5 Subskills at Lv.70 & Lv.80
   PokemonApp.selectPokedexSubskillSlot(4);
   PokemonApp.choosePokedexSubskill('幫忙速度M');
   PokemonApp.selectPokedexSubskillSlot(5);
   PokemonApp.choosePokedexSubskill('持有上限提升L');
 
-  // At Lv.75: Slot 4 is reached (active, NO pill-inactive, has subskill-blue), Slot 5 is NOT reached (pill-inactive, has slot-tag-inactive)
-  PokemonApp.setPokedexModalLevel(75);
-  const slotButtons75 = slotsRowEl.innerHTML.split('</button>');
-  const slot4Html75 = slotButtons75.find(b => b.includes('data-slot="4"')) || '';
-  const slot5Html75 = slotButtons75.find(b => b.includes('data-slot="5"')) || '';
-  assert(slot4Html75.includes('subskill-blue') && !slot4Html75.includes('slot-unreleased-tag'), 'Slot 4 at Lv.75 must not display unreleased/inactive tags');
-  assert(!slot4Html75.includes('pill-inactive'), 'Slot 4 at Lv.75 must NOT have pill-inactive');
-  assert(slot5Html75.includes('pill-inactive'), 'Slot 5 at Lv.75 must have pill-inactive');
-  assert(slot5Html75.includes('slot-tag-inactive') && slot5Html75.includes('效果尚未生效'), 'Slot 5 at Lv.75 must show 效果尚未生效');
+  // At Lv.70: Slot 4 is reached (active, NO pill-inactive, has subskill-blue), Slot 5 is NOT reached (pill-inactive, has slot-tag-inactive)
+  PokemonApp.setPokedexModalLevel(70);
+  const slotButtons70 = slotsRowEl.innerHTML.split('</button>');
+  const slot4Html70 = slotButtons70.find(b => b.includes('data-slot="4"')) || '';
+  const slot5Html70 = slotButtons70.find(b => b.includes('data-slot="5"')) || '';
+  assert(slot4Html70.includes('subskill-blue') && !slot4Html70.includes('slot-unreleased-tag'), 'Slot 4 at Lv.70 must not display unreleased/inactive tags');
+  assert(!slot4Html70.includes('pill-inactive'), 'Slot 4 at Lv.70 must NOT have pill-inactive');
+  assert(slot5Html70.includes('pill-inactive'), 'Slot 5 at Lv.70 must have pill-inactive');
+  assert(slot5Html70.includes('slot-tag-inactive') && slot5Html70.includes('效果尚未生效'), 'Slot 5 at Lv.70 must show 效果尚未生效');
 
-  // Raise level to Lv.100: Slot 5 becomes active, NO pill-inactive, NO status tag
-  PokemonApp.setPokedexModalLevel(100);
-  const slotButtons100 = slotsRowEl.innerHTML.split('</button>');
-  const slot5Html100 = slotButtons100.find(b => b.includes('data-slot="5"')) || '';
-  assert(!slot5Html100.includes('pill-inactive'), 'Slot 5 at Lv.100 must NOT have pill-inactive');
-  assert(!slot5Html100.includes('slot-unreleased-tag'), 'Slot 5 at Lv.100 must NOT display any status tag');
+  // Raise level to Lv.80: Slot 5 becomes active, NO pill-inactive, NO status tag
+  PokemonApp.setPokedexModalLevel(80);
+  const slotButtons80 = slotsRowEl.innerHTML.split('</button>');
+  const slot5Html80 = slotButtons80.find(b => b.includes('data-slot="5"')) || '';
+  assert(!slot5Html80.includes('pill-inactive'), 'Slot 5 at Lv.80 must NOT have pill-inactive');
+  assert(!slot5Html80.includes('slot-unreleased-tag'), 'Slot 5 at Lv.80 must NOT display any status tag');
 
   // Ideal Energy 0.45x Multiplier & Formula Breakdown verification (12h active baseline)
   const formulas80 = PokemonApp.calculatePokedexIngredientFormulas();
@@ -8428,14 +8429,14 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(html.includes('box-subskills-grid'), 'Card must render box-subskills-grid');
     assert(!html.includes('subskill-lv-badge'), 'Subskills must not display redundant Lv.xx badges');
     
-    // In Lv.35: Slot 0 (Lv.10) and Slot 1 (Lv.25) are unlocked; Slot 2 (Lv.50), Slot 3 (Lv.75), Slot 4 (Lv.100) are locked
+    // In Lv.35: Slot 0 (Lv.10) and Slot 1 (Lv.25) are unlocked; Slot 2 (Lv.50), Slot 3 (Lv.70), Slot 4 (Lv.80) are locked
     const subskillMatches = [...html.matchAll(/<div class="box-subskill-pill\s+([^"]+)"/g)];
     assertEquals(subskillMatches.length, 5, 'Must render exactly 5 subskill pills');
     assert(!subskillMatches[0][1].includes('subskill-locked'), 'Slot 1 (Lv.10) must be unlocked at Lv.35');
     assert(!subskillMatches[1][1].includes('subskill-locked'), 'Slot 2 (Lv.25) must be unlocked at Lv.35');
     assert(subskillMatches[2][1].includes('subskill-locked'), 'Slot 3 (Lv.50) must be locked at Lv.35');
-    assert(subskillMatches[3][1].includes('subskill-locked'), 'Slot 4 (Lv.75) must be locked at Lv.35');
-    assert(subskillMatches[4][1].includes('subskill-locked'), 'Slot 5 (Lv.100) must be locked at Lv.35');
+    assert(subskillMatches[3][1].includes('subskill-locked'), 'Slot 4 (Lv.70) must be locked at Lv.35');
+    assert(subskillMatches[4][1].includes('subskill-locked'), 'Slot 5 (Lv.80) must be locked at Lv.35');
 
     // Verify Nature single-row display
     assert(html.includes('box-nature-single-row'), 'Nature must render as box-nature-single-row');
@@ -8447,6 +8448,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
       if (tag === 'div') createdModal = el;
       return el;
     };
+
     appCtx.AppraisalLab.openModal({
       pkm: charizard,
       level: 52,
@@ -8466,31 +8468,31 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(modalHtml.includes('強力噴火龍'), 'Appraisal modal summary bar must display summary note');
   });
 
-  test('Tier 4 - Real-World Application Scenarios', 'Box Dynamic Visibility & Official Subskills Lv.75/100 Standards Verification', () => {
+  test('Tier 4 - Real-World Application Scenarios', 'Box Dynamic Visibility & Official Subskills Lv.70/80 Standards Verification', () => {
     // 1. Verify index.html & app/index.html subskill headers
     const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
     const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
     const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
     const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
 
-    // Both desktop & mobile modal slots must contain Lv.75 & Lv.100 and NO Lv.70 / Lv.80
-    assert(indexHtml.includes('<span class="slot-lvl-header">Lv.75</span>'), 'index.html must have Lv.75 slot header');
-    assert(indexHtml.includes('<span class="slot-lvl-header">Lv.100</span>'), 'index.html must have Lv.100 slot header');
-    assert(!indexHtml.includes('<span class="slot-lvl-header">Lv.70</span>'), 'index.html must not have Lv.70 slot header');
-    assert(!indexHtml.includes('<span class="slot-lvl-header">Lv.80</span>'), 'index.html must not have Lv.80 slot header');
+    // Both desktop & mobile modal slots must contain Lv.70 & Lv.80 and NO Lv.75 / Lv.100
+    assert(indexHtml.includes('<span class="slot-lvl-header">Lv.70</span>'), 'index.html must have Lv.70 slot header');
+    assert(indexHtml.includes('<span class="slot-lvl-header">Lv.80</span>'), 'index.html must have Lv.80 slot header');
+    assert(!indexHtml.includes('<span class="slot-lvl-header">Lv.75</span>'), 'index.html must not have Lv.75 slot header');
+    assert(!indexHtml.includes('<span class="slot-lvl-header">Lv.100</span>'), 'index.html must not have Lv.100 slot header');
 
-    assert(appIndexHtml.includes('<span class="slot-lvl-header">Lv.75</span>'), 'app/index.html must have Lv.75 slot header');
-    assert(appIndexHtml.includes('<span class="slot-lvl-header">Lv.100</span>'), 'app/index.html must have Lv.100 slot header');
-    assert(!appIndexHtml.includes('<span class="slot-lvl-header">Lv.70</span>'), 'app/index.html must not have Lv.70 slot header');
-    assert(!appIndexHtml.includes('<span class="slot-lvl-header">Lv.80</span>'), 'app/index.html must not have Lv.80 slot header');
+    assert(appIndexHtml.includes('<span class="slot-lvl-header">Lv.70</span>'), 'app/index.html must have Lv.70 slot header');
+    assert(appIndexHtml.includes('<span class="slot-lvl-header">Lv.80</span>'), 'app/index.html must have Lv.80 slot header');
+    assert(!appIndexHtml.includes('<span class="slot-lvl-header">Lv.75</span>'), 'app/index.html must not have Lv.75 slot header');
+    assert(!appIndexHtml.includes('<span class="slot-lvl-header">Lv.100</span>'), 'app/index.html must not have Lv.100 slot header');
 
-    // Table header in box.js must state Lv.10 ~ 100
-    assert(boxJs.includes("副技能 (Lv.10 ~ 100)"), 'box.js table header must display Lv.10 ~ 100');
-    assert(!boxJs.includes("副技能 (Lv.10 ~ 80)"), 'box.js must not display legacy Lv.10 ~ 80');
+    // Table header in box.js must state Lv.10 ~ 80
+    assert(boxJs.includes("副技能 (Lv.10 ~ 80)"), 'box.js table header must display Lv.10 ~ 80');
+    assert(!boxJs.includes("副技能 (Lv.10 ~ 100)"), 'box.js must not display legacy Lv.10 ~ 100');
 
-    // i18n guide description must state Lv.10 至 Lv.100
-    assert(i18nJs.includes("Lv.10 至 Lv.100"), 'i18n.js must describe Lv.10 至 Lv.100');
-    assert(!i18nJs.includes("Lv.10 至 Lv.80"), 'i18n.js must not describe legacy Lv.10 至 Lv.80');
+    // i18n guide description must state Lv.10 至 Lv.80
+    assert(i18nJs.includes("Lv.10 至 Lv.80"), 'i18n.js must describe Lv.10 至 Lv.80');
+    assert(!i18nJs.includes("Lv.10 至 Lv.100"), 'i18n.js must not describe legacy Lv.10 至 Lv.100');
 
     // 2. Test syncBoxVisibility dynamic DOM behavior
     const mockElements = new Map();

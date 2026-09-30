@@ -4588,7 +4588,7 @@ function updatePokedexSubskillUI() {
   const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
   const subskills = pokedexModalState.subskills;
   const currentLevel = pokedexModalState.level;
-  const slotLevels = [10, 25, 50, 75, 100];
+  const slotLevels = [10, 25, 50, 70, 80];
 
   // 1. 更新 5 個插槽按鈕
   const slotContainer = document.getElementById('pokedex-subskill-slots-row');
@@ -5015,8 +5015,8 @@ function calculatePokedexIngredientFormulas() {
   const baseSkillRate = parseFloat(pkm.skill_rate || '0') || 2.0;
   const baseIntervalSec = parsePokedexIntervalToSec(pkm.interval);
 
-  // 2. 副技能加成判定 (Lv.10, Lv.25, Lv.50, Lv.75, Lv.100)
-  const slotLevels = [10, 25, 50, 75, 100];
+  // 2. 副技能加成判定 (Lv.10, Lv.25, Lv.50, Lv.70, Lv.80)
+  const slotLevels = [10, 25, 50, 70, 80];
   let subskillIngBonus = 0;
   let subskillSpeedBonus = 0;
   let subskillSkillBonus = 0;
@@ -5672,7 +5672,7 @@ function renderPokedexDetailModalContent() {
                 </div>
                 <div class="pokedex-track-pins-bar" id="pokedex-track-pins-bar">
                   ${(() => {
-                    const allMilestones = [10, 25, 30, 50, 60, 75, 100];
+                    const allMilestones = [10, 25, 30, 50, 60, 70, 80];
                     // 紅色不可滑動區間（低於最低進化等級）不展示快捷等級圖釘，亦不額外插入重疊門檻圖釘
                     const pins = allMilestones.filter(lv => lv >= minEvoLvl);
                     return pins.map(lv => {

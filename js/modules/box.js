@@ -116,7 +116,7 @@
     ) || null;
   }
 
-  /* ─── RaenonX 級潛力 PR 評分演算法 (含核心及格線快速檢驗與 Lv.75/100 覆蓋) ─── */
+  /* ─── RaenonX 級潛力 PR 評分演算法 (含核心及格線快速檢驗與 Lv.70/80 覆蓋) ─── */
   function calculatePokemonPR(pkm, baseData = null) {
     const base = baseData || findPokemonBase(pkm.pokemonId || pkm.name);
     const specialty = (base && base.specialty) || pkm.specialty || '樹果';
@@ -194,7 +194,7 @@
       };
     }
 
-    // ─── 階段 2：及格線以上的高階精確評分 (覆蓋 Lv.10, 25, 50, 75, 100) ───
+    // ─── 階段 2：及格線以上的高階精確評分 (覆蓋 Lv.10, 25, 50, 70, 80) ───
     let score = 0;
     const highlights = [];
 
@@ -216,9 +216,9 @@
       if (debuff === 'speed') { score -= 15; }
     }
 
-    // 2. 5 格副技能解鎖權重 (Lv.10: 30%, Lv.25: 30%, Lv.50: 20%, Lv.75: 12%, Lv.100: 8%)
+    // 2. 5 格副技能解鎖權重 (Lv.10: 30%, Lv.25: 30%, Lv.50: 20%, Lv.70: 12%, Lv.80: 8%)
     const slotWeights = [0.30, 0.30, 0.20, 0.12, 0.08];
-    const lvlLabels = [10, 25, 50, 75, 100];
+    const lvlLabels = [10, 25, 50, 70, 80];
 
     subskills.forEach((skName, idx) => {
       const w = slotWeights[idx] || 0.08;
@@ -641,7 +641,7 @@
               <div class="box-card-section">
                 <div class="box-section-title">${isEN ? 'Sub-Skills' : '副技能組合'}</div>
                 <div class="box-subskills-grid">
-                  ${[10, 25, 50, 75, 100].map((lv, i) => {
+                  ${[10, 25, 50, 70, 80].map((lv, i) => {
                     const skName = (p.subskills || [])[i];
                     const sk = SUBSKILLS_DATA.find(s => s.name === skName);
                     const tier = sk ? sk.tier : 'empty';
@@ -700,7 +700,7 @@
               <th>${t('th.ing1', 'Lv.1 食材')}</th>
               <th>${t('th.ing2', 'Lv.30 食材')}</th>
               <th>${t('th.ing3', 'Lv.60 食材')}</th>
-              <th>${isEN ? 'Sub-Skills' : '副技能 (Lv.10 ~ 100)'}</th>
+              <th>${isEN ? 'Sub-Skills' : '副技能 (Lv.10 ~ 80)'}</th>
               <th>${isEN ? 'Nature' : '性格'}</th>
               <th>${isEN ? 'Actions' : '操作'}</th>
             </tr>
@@ -2138,13 +2138,13 @@
     if (!pkm || carryVal == null || isNaN(carryVal)) return 0;
     const baseCarry = parseInt(pkm.carry, 10) || 20;
 
-    // 副技能解鎖等級門檻：Lv.10, Lv.25, Lv.50, Lv.75, Lv.100
-    const unlockThresholds = [10, 25, 50, 75, 100];
+    // 副技能解鎖等級門檻：Lv.10, Lv.25, Lv.50, Lv.70, Lv.80
+    const unlockThresholds = [10, 25, 50, 70, 80];
     let subskillCarryBonus = 0;
     const actualLvl = parseInt(currentLvl, 10) || 1;
 
     for (let i = 0; i < (subskillsList || []).length; i++) {
-      const reqLvl = unlockThresholds[i] || 100;
+      const reqLvl = unlockThresholds[i] || 80;
       if (actualLvl >= reqLvl) {
         const skName = subskillsList[i];
         if (skName === '持有上限提升S') subskillCarryBonus += 6;
