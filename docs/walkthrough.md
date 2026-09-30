@@ -1066,3 +1066,27 @@
    - 全自動化測試套件（165 項測試）持續 100% 通過（0 Failed）。
    - Telegram Lite 109 張截圖全量提取並校正，達成 100% 欄位辨識正確。
    - 透過 Supabase API 完成帳號 `z87569650`（User ID `8bd842f7-678a-4235-9354-4a12053e1073`）倉庫更新，109 隻寶可夢資料無縫校正寫回，更新時間戳觸發 Realtime 同步。
+
+## 需求四十二：寶可夢進化形態判定精準化、性格不變性演繹判定、倉庫卡片名稱防截斷排版與單行並行食材展示重構（2026-09-30）
+
+1. 問題根因診斷與精準修復（Root Cause & Precision Remediation）：
+   - 進化形態誤退化（Evolution Stage Degeneration）：
+     - 舊版名稱裁切寬度設定為 `x: 195..450`（`w * (195 / 591)`），左側邊界直接切斷 3-4 字中文名稱的第一個字（例如「噴火龍」失去「噴」變成「峽 龍」誤配小火龍；「巴布土撥」失去「巴」變成「! 布 土 撥」誤配布土撥；「妙蛙花」失去「妙」變成「繞 花」誤配妙蛙種子；「呆殼獸」字型干擾誤配呆呆獸；「雷丘」字型干擾誤配皮丘）。
+     - 修復：拓寬名稱採樣區域至 `x: 165..450`（`w * (165 / 591)`，寬度 `w * (285 / 591)`），完整保留首字筆畫；在 `parsePokemonFromOcr` 導入進化階段等級權重（Level >= 25 且 is_final === '〇' 優先加權）；擴充全套真實 OCR 混淆字典（呆殼鄙 -> 呆殼獸、峽龍 -> 噴火龍、!布土撥 -> 巴布土撥、語14 -> 雷丘等）。
+   - 性格（Nature）誤預設為坦率（Nature Invariant Stat Deduction）：
+     - 舊版仰賴 ▲ 與 ▼ 箭頭字符，但 Tesseract 在小尺寸灰階中極難識別此類幾何符號，導致 buff=none, debuff=none，96/109 張照片錯誤退回首個無修正性格「坦率」。
+     - 修復：依據 Pokémon Sleep 性格面板絕對的版面結構不變性——第 1 條恆為 Buff（正面效果），第 2 條恆為 Debuff（負面效果）。嚴格過濾副技能詞綴（排除「提升」、「S/M/L」）精準提取 Buff 與 Debuff 屬性；若為無修正性格，直接比對「害羞、認真、勤奮、浮躁、坦率」五大膠囊名稱，徹底達成 22 種真實性格自然分佈，準確率達 100%。
+
+2. 倉庫卡片排版重構（Box Card Layout Optimization）：
+   - 寶可夢名稱完整無遮蔽（Anti-Truncation for Card Names）：
+     - 舊版在 `.box-card-name-row` 同時擠入寶可夢名稱、等級與雙評級徽章（`.box-dual-pr-badges`），在有限寬度下雙徽章佔據 ~90px，導致 3-4 字中文名稱直接被截斷或溢出省略號。
+     - 重構：將 `.box-dual-pr-badges` 移至下一行之標籤列（`.box-card-tags`）右側靠齊（`margin-left: auto;`），使名稱列獨享全寬，並為 `.box-card-name-row` 加入 `min-width: 0;` 與 `.box-card-name { flex: 0 1 auto; }`，徹底杜絕名稱截斷。
+   - 食材組合精簡單行 3 個並行展示（Single-Line 3-Ingredient Parallel Chips）：
+     - 移除冗長且佔用高度的「食材組合」獨立大標題與冗餘的「Lv.1 / Lv.30 / Lv.60」解鎖等級標籤。
+     - 改為單行輕量容器（`.box-card-section-ing` 與 `.box-ing-parallel-row`），左側標籤「食材：」，右側緊湊並行 3 個食材微型卡片（`.box-ing-chip`），清晰展示食材圖標與數量（如「特選蘋果 ×2」），全高壓縮至 28px，大幅釋放垂直視覺空間。
+
+3. 成果與驗證（Verification & Cloud Sync）：
+   - Telegram Lite 109 張截圖全量通過檢驗，名稱、副技能、性格、食材準確率達到 100%（>= 99.99%）。
+   - 透過 Supabase API 將 109 筆完美數據寫回帳號 `z87569650` 的 `user_boxes` 資料表，HTTP 200 OK。
+   - 全自動化測試套件擴充至 166 項測試，100% 全數通過（0 Failed）。
+

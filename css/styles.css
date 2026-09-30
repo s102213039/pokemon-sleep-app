@@ -6509,6 +6509,7 @@ input[type=range].rf-slider.event-slider {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
 .box-card-name {
@@ -6518,6 +6519,7 @@ input[type=range].rf-slider.event-slider {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 0 1 auto;
 }
 
 .box-card-level {
@@ -6528,6 +6530,7 @@ input[type=range].rf-slider.event-slider {
   padding: 2px 7px;
   border-radius: 6px;
   border: 1px solid rgba(56, 189, 248, 0.25);
+  flex-shrink: 0;
 }
 
 .box-card-nickname {
@@ -6586,6 +6589,75 @@ input[type=range].rf-slider.event-slider {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+/* 食材組合 - 精簡單行3個食材並行展示 (Single-line Compact Parallel Ingredients) */
+.box-card-section-ing {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.box-ing-parallel-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.box-ing-row-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.box-ing-chips-grid {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.box-ing-chip {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 6px;
+  padding: 3px 6px;
+  min-height: 26px;
+  box-sizing: border-box;
+}
+
+.box-ing-chip-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.box-ing-chip-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--badge-special-text);
+  background: var(--badge-special-bg);
+  border: 1px solid var(--badge-special-border);
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-family: monospace;
+  line-height: 1;
+}
+
+.box-ing-chip.is-empty .box-ing-chip-empty {
+  font-size: 11px;
+  color: var(--text-muted);
 }
 
 .box-section-title {

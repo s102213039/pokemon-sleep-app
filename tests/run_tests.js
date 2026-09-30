@@ -8296,11 +8296,66 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(prResult.milestones.some(m => m.level === 25), 'calculatePokemonPR milestones must include Lv.25 milestone');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Box Card Layout Non-Truncation, Single-Line 3-Ingredient Parallel Rendering & Evolution Stage Disambiguation Verification', () => {
+    const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+    const appCtx = { window: {}, console };
+    appCtx.window = appCtx;
+    vm.createContext(appCtx);
+    vm.runInContext(appraisalCode, appCtx);
+    vm.runInContext(boxCode, appCtx);
+    const pkmData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/data.json'), 'utf8'));
+    appCtx.PokemonBoxApp.setAllPokemons(pkmData);
 
+    // 1. Evolution Stage & OCR Confusion Disambiguation
+    const charizardOcr = 'Lv. 52 峽龍\n持有上限 24個\n能量填充S Lv.5\n食材機率提升S\n幫忙速度M\n食材發現率 ▲▲\nEXP獲得量 ▼▼';
+    const parsedCharizard = appCtx.PokemonBoxApp.parsePokemonFromOcr(charizardOcr, null, pkmData);
+    assertEquals(parsedCharizard.name, '噴火龍', '峽龍 OCR must resolve to 噴火龍 (Charizard)');
 
+    const pawmotOcr = 'Lv. 35 !布土撥\n持有上限 22個\n電光一閃 Lv.3\n幫忙速度S\n食材機率提升M\n主技能發動機率 ▲▲\n幫忙速度 ▼▼';
+    const parsedPawmot = appCtx.PokemonBoxApp.parsePokemonFromOcr(pawmotOcr, null, pkmData);
+    assertEquals(parsedPawmot.name, '巴布土撥', '!布土撥 OCR must resolve to 巴布土撥 (Pawmot)');
 
+    const slowbroOcr = 'Lv. 30 呆殼鄙\n持有上限 21個\n能量填充S Lv.3\n技能機率提升M\n幫手獎勵\n食材發現率 ▲▲\n幫忙速度 ▼▼';
+    const parsedSlowbro = appCtx.PokemonBoxApp.parsePokemonFromOcr(slowbroOcr, null, pkmData);
+    assertEquals(parsedSlowbro.name, '呆殼獸', '呆殼鄙 OCR must resolve to 呆殼獸 (Slowbro)');
 
-console.log('\n======================================================');
+    // 2. DOM Box Card Layout Verification
+    const testList = [{
+      uid: 'test_card_1',
+      pokemonId: '6',
+      name: '噴火龍',
+      level: 52,
+      nature: '溫順',
+      ribbon: 3,
+      ing1: '豆製肉',
+      ing2: '豆製肉',
+      ing3: '豆製肉',
+      subskills: ['幫忙速度S', '技能等級提升M', '食材機率提升S', '技能機率提升M', '夢之碎片獎勵']
+    }];
+
+    const container = new MiniElement('div', 'box-container');
+    appCtx.PokemonBoxApp.renderBoxGrid(testList, container);
+
+    const html = container.innerHTML;
+    assert(html.includes('box-card-name-row'), 'Box card must render box-card-name-row');
+    assert(html.includes('box-card-name'), 'Box card must render box-card-name');
+    assert(html.includes('box-card-section-ing'), 'Box card must render box-card-section-ing');
+    assert(html.includes('box-ing-parallel-row'), 'Box card must render box-ing-parallel-row');
+    assert(html.includes('box-ing-chips-grid'), 'Box card must render box-ing-chips-grid');
+
+    // Verify dual PR badges are NOT inside box-card-name-row (preventing name clipping)
+    const nameRowMatch = html.match(/<div class="box-card-name-row">([\s\S]*?)<\/div>/);
+    assert(nameRowMatch, 'name row markup must exist');
+    assert(!nameRowMatch[1].includes('box-dual-pr-badges'), 'box-card-name-row must NOT contain box-dual-pr-badges (relocated to box-card-tags to prevent name truncation)');
+
+    // Verify ingredients no longer contain redundant Lv.1, Lv.30, Lv.60 labels
+    const ingSectionMatch = html.match(/<div class="box-card-section box-card-section-ing">([\s\S]*?)<\/div>\s*<\/div>/);
+    assert(ingSectionMatch, 'ingredient section markup must exist');
+    assert(!ingSectionMatch[1].includes('Lv.1'), 'Single-line compact ingredients must not include redundant Lv.1 badge');
+    assert(!ingSectionMatch[1].includes('Lv.30'), 'Single-line compact ingredients must not include redundant Lv.30 badge');
+    assert(!ingSectionMatch[1].includes('Lv.60'), 'Single-line compact ingredients must not include redundant Lv.60 badge');
+  });
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

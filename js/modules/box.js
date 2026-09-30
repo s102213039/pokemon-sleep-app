@@ -460,11 +460,15 @@
   }
 
   function renderBoxCardIngSlot(ingName, slotLv, basePkm, slotIdx) {
+    if (typeof basePkm === 'number' && slotIdx === undefined) {
+      slotIdx = basePkm;
+      basePkm = slotLv;
+      slotLv = '';
+    }
     if (!ingName || ingName === '--') {
       return `
-        <div class="box-ing-slot">
-          <span class="box-slot-tag">${slotLv}</span>
-          <span class="box-slot-val" style="color:var(--text-muted);font-size:11px;">--</span>
+        <div class="box-ing-chip is-empty">
+          <span class="box-ing-chip-empty">--</span>
         </div>
       `;
     }
@@ -475,12 +479,9 @@
     const count = getIngCountFromBase(basePkm, slotIdx, ingName);
 
     return `
-      <div class="box-ing-slot" title="${escapeHtml(displayName)} ×${count}">
-        <span class="box-slot-tag">${slotLv}</span>
-        <div class="box-slot-content">
-          ${iconUrl ? `<img src="${iconUrl}" class="box-slot-icon" alt="${escapeHtml(displayName)}">` : ''}
-          <span class="box-slot-count">×${count}</span>
-        </div>
+      <div class="box-ing-chip" title="${escapeHtml(displayName)} ×${count}">
+        ${iconUrl ? `<img src="${iconUrl}" class="box-ing-chip-icon" alt="${escapeHtml(displayName)}">` : ''}
+        <span class="box-ing-chip-count">×${count}</span>
       </div>
     `;
   }
@@ -530,14 +531,6 @@
                   <div class="box-card-name-row">
                     <span class="box-card-name">${escapeHtml(pkmDisplayName)}</span>
                     <span class="box-card-level">Lv.${p.level || 1}</span>
-                    <div class="box-dual-pr-badges" style="display:inline-flex;flex-direction:column;gap:2px;align-items:flex-end;margin-left:auto;">
-                      <span class="box-pr-badge ${prInfo.currentTierBadgeClass || prInfo.tierBadgeClass}" style="font-size:11px;padding:1px 6px;" title="${isEN ? `Current Level Rating: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr} pts)` : `當前實力評級: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr}分)`}">
-                        ${isEN ? `Cur: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})` : `當前: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})`}
-                      </span>
-                      <span class="box-pr-badge-potential" title="${isEN ? `Max Potential Rating: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr} pts)` : `滿級潛力評級: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr}分)`}">
-                        ${isEN ? `Pot: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})` : `潛力: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})`}
-                      </span>
-                    </div>
                   </div>
                   ${p.nickname ? `<div class="box-card-nickname">${escapeHtml(p.nickname)}</div>` : ''}
                   <div class="box-card-tags">
@@ -551,6 +544,14 @@
                         <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${p.ribbon}.png" class="box-ribbon-icon" alt="Ribbon" />
                       </span>
                     ` : ''}
+                    <div class="box-dual-pr-badges" style="display:inline-flex;gap:4px;align-items:center;margin-left:auto;">
+                      <span class="box-pr-badge ${prInfo.currentTierBadgeClass || prInfo.tierBadgeClass}" style="font-size:10px;padding:1px 6px;" title="${isEN ? `Current Level Rating: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr} pts)` : `當前實力評級: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr}分)`}">
+                        ${isEN ? `Cur: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})` : `當前: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})`}
+                      </span>
+                      <span class="box-pr-badge-potential" style="font-size:10px;padding:1px 6px;" title="${isEN ? `Max Potential Rating: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr} pts)` : `滿級潛力評級: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr}分)`}">
+                        ${isEN ? `Pot: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})` : `潛力: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})`}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div class="box-card-actions">
@@ -582,13 +583,15 @@
                 <span class="box-pr-summary-text">${escapeHtml(prInfo.summaryNote)}</span>
               </div>
 
-              <!-- 食材插槽組合 (圖標與數量徽章) -->
-              <div class="box-card-section">
-                <div class="box-section-title">${isEN ? 'Ingredients' : '食材組合'}</div>
-                <div class="box-ing-slots">
-                  ${renderBoxCardIngSlot(p.ing1, 'Lv.1', base, 0)}
-                  ${renderBoxCardIngSlot(p.ing2, 'Lv.30', base, 1)}
-                  ${renderBoxCardIngSlot(p.ing3, 'Lv.60', base, 2)}
+              <!-- 食材插槽組合 (精簡單行3個食材並行展示) -->
+              <div class="box-card-section box-card-section-ing">
+                <div class="box-ing-parallel-row">
+                  <span class="box-ing-row-label">${isEN ? 'Ingredients:' : '食材：'}</span>
+                  <div class="box-ing-chips-grid">
+                    ${renderBoxCardIngSlot(p.ing1, base, 0)}
+                    ${renderBoxCardIngSlot(p.ing2, base, 1)}
+                    ${renderBoxCardIngSlot(p.ing3, base, 2)}
+                  </div>
                 </div>
               </div>
 
@@ -1756,7 +1759,41 @@
     ['禮物', '信使鳥'],
     ['其拉克羅斯', '赫拉克羅斯'],
     ['其拉克', '赫拉克羅斯'],
-    ['拉克羅斯', '赫拉克羅斯']
+    ['拉克羅斯', '赫拉克羅斯'],
+    ['峽龍', '噴火龍'],
+    ['峽', '噴'],
+    ['!布土撥', '巴布土撥'],
+    ['布土撥', '巴布土撥'],
+    ['繞花', '妙蛙花'],
+    ['箭傾', '水箭龜'],
+    ['箭龜', '水箭龜'],
+    ['呆殼鄙', '呆殼獸'],
+    ['殼鄙', '殼獸'],
+    ['語14', '雷丘'],
+    ['2大蝶', '巴大蝶'],
+    ['虧龍', '快龍'],
+    ['隆岩', '隆隆岩'],
+    ['農炮蟲', '鍬農炮蟲'],
+    ['著熊', '穿著熊'],
+    ['結萌蛇', '蝶結萌虻'],
+    ['士可多拉', '波士可多拉'],
+    ['食花', '大食花'],
+    ['大鯨', '浩大鯨'],
+    ['歡浪舞鴨', '狂歡浪舞鴨'],
+    ['!炮猴', '投擲猴'],
+    ['牙海猴', '帝牙海獅'],
+    ['蔥鴨', '大蔥鴨'],
+    ['克基斯', '波克基斯'],
+    ['蜴王', '蜥蜴王'],
+    ['波龍', '三首惡龍'],
+    ['柏怪', '阿柏怪'],
+    ['瓜怪人', '南瓜怪人'],
+    ['紋巨聲鱷', '骨紋巨聲鱷'],
+    ['基拉斯', '班基拉斯'],
+    ['福蛋', '幸福蛋'],
+    ['咚鼠', '咚咚鼠'],
+    ['琴貓', '向尾喵'],
+    ['勃梭魯', '阿勃梭魯']
   ];
 
   function buildOcrCompositeCanvas(img) {
@@ -1971,7 +2008,7 @@
 
     // 各個錨點視圖切片
     const binLv = cropAndEnhance(Math.round(w * (105 / 591)), Math.round(h * (125 / 1280)), Math.round(w * (110 / 591)), Math.round(h * (50 / 1280)), 3.0, 'red_channel');
-    const binName = cropAndEnhance(Math.round(w * (195 / 591)), Math.round(h * (125 / 1280)), Math.round(w * (255 / 591)), Math.round(h * (50 / 1280)), 2.5, 'contrast');
+    const binName = cropAndEnhance(Math.round(w * (165 / 591)), Math.round(h * (125 / 1280)), Math.round(w * (285 / 591)), Math.round(h * (50 / 1280)), 2.5, 'contrast');
     const specialty = cropAndEnhance(Math.round(w * (40 / 591)), Math.round(h * (200 / 1280)), Math.round(w * (180 / 591)), Math.round(h * (50 / 1280)), 2.0, 'binarize', 135);
     const carryNum = cropAndEnhance(Math.round(w * (200 / 591)), Math.round(h * (365 / 1280)), Math.round(w * (320 / 591)), Math.round(h * (55 / 1280)), 2.0, 'binarize', 135);
     const mainSkill = cropAndEnhance(Math.round(w * (140 / 591)), Math.round(h * (555 / 1280)), Math.round(w * (400 / 591)), Math.round(h * (40 / 1280)), 2.0, 'contrast');
@@ -2112,7 +2149,24 @@
   function parsePokemonFromOcr(text, rgbSlots, allPokemons, meta) {
     const clean = normalizeOcrText(text);
 
-    // 1. 寶可夢名稱智能交叉比對 (主技能唯一性 + 名稱子字串 / 混淆字修正)
+
+    // 1. 等級預先萃取 (優先從頂部資訊卡辨識，避開主技能等級如 Lv.7)
+    let level = 30;
+    const mainSkillIdx = text.indexOf('健美') !== -1 ? text.indexOf('健美') : (text.indexOf('料理') !== -1 ? text.indexOf('料理') : -1);
+    const headerPart = mainSkillIdx > 0 ? text.substring(0, mainSkillIdx) : text;
+    const mHeader = headerPart.match(/Lv\.?\s*(\d{1,2})/i) || headerPart.match(/LV\s*(\d{1,2})/i) || normalizeOcrText(headerPart).match(/Lv\.?(\d{1,2})/i);
+    if (mHeader) {
+      const parsedLvl = parseInt(mHeader[1], 10);
+      if (parsedLvl >= 1 && parsedLvl <= 75) level = parsedLvl;
+    } else {
+      const mAny = text.match(/Lv\.?\s*(\d{1,2})/i) || normalizeOcrText(text).match(/Lv\.?(\d{1,2})/i);
+      if (mAny) {
+        const parsedLvl = parseInt(mAny[1], 10);
+        if (parsedLvl >= 1 && parsedLvl <= 75) level = parsedLvl;
+      }
+    }
+
+    // 2. 寶可夢名稱智能交叉比對 (主技能唯一性 + 名稱子字串 / 混淆字修正 + 進化階段權重)
     let bestPkm = null;
     let maxScore = -1;
 
@@ -2161,25 +2215,14 @@
         if (clean.includes(p.specialty)) score += 25;
       }
 
+      // 進化階段優先權 (當等級 >= 25 且為最終進化，給予適當權重以避免降級為基礎階)
+      if (level >= 25 && p.is_final === '〇') {
+        score += 15;
+      }
+
       if (score > maxScore) {
         maxScore = score;
         bestPkm = p;
-      }
-    }
-
-    // 2. 等級萃取 (優先從頂部資訊卡辨識，避開主技能等級如 Lv.7)
-    let level = 30;
-    const mainSkillIdx = text.indexOf('健美') !== -1 ? text.indexOf('健美') : (text.indexOf('料理') !== -1 ? text.indexOf('料理') : -1);
-    const headerPart = mainSkillIdx > 0 ? text.substring(0, mainSkillIdx) : text;
-    const mHeader = headerPart.match(/Lv\.?\s*(\d{1,2})/i) || headerPart.match(/LV\s*(\d{1,2})/i) || normalizeOcrText(headerPart).match(/Lv\.?(\d{1,2})/i);
-    if (mHeader) {
-      const parsedLvl = parseInt(mHeader[1], 10);
-      if (parsedLvl >= 1 && parsedLvl <= 75) level = parsedLvl;
-    } else {
-      const mAny = text.match(/Lv\.?\s*(\d{1,2})/i) || normalizeOcrText(text).match(/Lv\.?(\d{1,2})/i);
-      if (mAny) {
-        const parsedLvl = parseInt(mAny[1], 10);
-        if (parsedLvl >= 1 && parsedLvl <= 75) level = parsedLvl;
       }
     }
 
@@ -2226,12 +2269,12 @@
 
     if (!nameMatched) {
       function getStatType(str) {
-        if (str.includes('食材發現率') || str.includes('食材發現')) return 'ingredient';
+        if (str.includes('提升') || str.match(/[SML]$/i)) return null;
+        if (str.includes('食材發現率') || str.includes('食材發現') || str.includes('僵材') || str.includes('僵堵')) return 'ingredient';
         if (str.includes('主技能發動機率') || str.includes('主技能發動') || str.includes('主技能')) return 'skill';
-        if (str.includes('活力回復量') || str.includes('活力回復') || str.includes('活力')) return 'energy';
-        if (str.includes('EXP獲得量') || str.includes('EXP獲得') || str.includes('EXP')) return 'exp';
-        if (str.includes('幫忙速度') && !str.includes('提升') && !str.match(/[SML]$/i)) return 'speed';
-        if (str.includes('幫速')) return 'speed';
+        if (str.includes('活力回復量') || str.includes('活力回復') || str.includes('活力') || str.includes('洗衣')) return 'energy';
+        if (str.includes('EXP獲得量') || str.includes('EXP獲得') || str.includes('EXP') || str.includes('交得')) return 'exp';
+        if (str.includes('幫忙速度') || str.includes('幫速') || str.includes('圭尺')) return 'speed';
         return null;
       }
 
@@ -2254,7 +2297,13 @@
         const match = NATURE_DATA.find(n => n.buffType === buffStat && n.debuffType === debuffStat);
         if (match) nature = match.name;
       } else if (clean.includes('沒有性格') || clean.includes('特色')) {
-        nature = '坦率';
+        for (const n of ['害羞', '認真', '勤奮', '浮躁', '坦率']) {
+          if (clean.includes(n)) {
+            nature = n;
+            break;
+          }
+        }
+        if (!nature) nature = '坦率';
       }
     }
 
@@ -2973,6 +3022,8 @@
       getUserBox: () => userBox,
       setUserBox: (box) => { userBox = box; saveUserBox(); renderBox(); },
       renderBox: renderBox,
+      renderBoxGrid,
+      renderBoxCardIngSlot,
       getCurrentSubTab: getSavedBoxSubtab,
       switchSubTab: switchBoxSubtab,
       calculatePokemonPR,
@@ -2997,6 +3048,8 @@
     NATURE_DATA.forEach(n => { NATURE_DICT[n.name] = n; });
     module.exports = {
       PokemonBoxApp: typeof window !== 'undefined' ? window.PokemonBoxApp : {
+        renderBoxGrid,
+        renderBoxCardIngSlot,
         calculatePokemonPR,
         getMainSkillMaxLevel,
         updateRibbonSelectOptions,
@@ -3011,6 +3064,8 @@
         NATURE_DICT,
         SUBSKILLS_DATA
       },
+      renderBoxGrid,
+      renderBoxCardIngSlot,
       calculatePokemonPR,
       getMainSkillMaxLevel,
       updateRibbonSelectOptions,
