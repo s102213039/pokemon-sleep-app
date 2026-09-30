@@ -1163,9 +1163,42 @@
     const radarSVG = renderRadarChartSVG(evaluation.scores, 280);
     const SIX_DIM_META = getSixDimMeta(isEN);
     const displayName = isEN ? (pkmData.name_en || pkmData.name_cn) : (pkmData.name_cn || pkmData.name_en);
-    const typeName = window.I18N ? window.I18N.getTypeName(pkmData.type) : pkmData.type;
     const specName = window.I18N ? window.I18N.getSpecialtyName(pkmData.specialty) : pkmData.specialty;
     const natDisplayName = window.I18N ? window.I18N.getNatureName(natureName) : natureName;
+
+    const berry = (typeof window.getPokemonBerry === 'function') 
+      ? window.getPokemonBerry(pkmData) 
+      : (pkmData.berry || { name: '', icon: '' });
+    const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--');
+
+    let specClass = 'spec-ingredient';
+    if (pkmData.specialty && (pkmData.specialty.includes('樹果') || pkmData.specialty === 'Berries')) {
+      specClass = 'spec-berry';
+    } else if (pkmData.specialty && (pkmData.specialty.includes('技能') || pkmData.specialty === 'Skills')) {
+      specClass = 'spec-skill';
+    }
+
+    const goldSkills = new Set(['幫手獎勵', '樹果數量S', '技能等級提升M', '夢之碎片獎勵', '睡眠EXP獎勵', '研究EXP獎勵', '活力回復獎勵']);
+    const blueSkills = new Set(['幫忙速度M', '食材機率提升M', '技能機率提升M', '技能等級提升S', '持有上限提升L', '持有上限提升M']);
+    const subskillPool = (window.UserBox && window.UserBox.SUBSKILLS_DATA) || (window.PokemonBoxApp && window.PokemonBoxApp.SUBSKILLS_DATA) || [];
+    function getSkillTier(sName) {
+      if (!sName) return 'white';
+      const found = subskillPool.find(s => s.name === sName);
+      if (found && found.tier) return found.tier;
+      if (goldSkills.has(sName)) return 'gold';
+      if (blueSkills.has(sName)) return 'blue';
+      return 'white';
+    }
+
+    let summaryNote = pkmOrBoxItem.summaryNote || '';
+    if (!summaryNote) {
+      if (evaluation.milestones && evaluation.milestones.length > 0) {
+        summaryNote = evaluation.milestones[0].text;
+      } else {
+        const cur = evaluation.current || evaluation;
+        summaryNote = isEN ? `${cur.grade} Grade - ${cur.gradeTitle}` : `${cur.grade} 級評價 - ${cur.gradeTitle}`;
+      }
+    }
 
     modal.innerHTML = `
       <div class="appraisal-modal-container">
@@ -1191,39 +1224,60 @@
                 <span class="appraisal-level-badge">Lv. ${currentLv}</span>
               </div>
               
-              <div class="appraisal-specialty-row">
-                <span class="appraisal-type-tag" style="display:inline-flex;align-items:center;gap:4px;">${window.I18N ? window.I18N.getTypeIconSvg(pkmData.type, 16) : ''} <span>${typeName} ${isEN ? 'Type' : '屬性'}</span></span>
-                <span class="appraisal-spec-tag">${specName} ${isEN ? 'Specialty' : '專長'}</span>
+              <div class="appraisal-specialty-row" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;">
+                <span class="appraisal-berry-tag" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.06);padding:3px 10px;border-radius:6px;font-size:13px;font-weight:700;color:var(--text-primary);" title="${escapeHtml(berryName)}">
+                  ${berry.icon ? `<img src="${berry.icon}" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(berryName)}">` : ''}
+                  <span>${escapeHtml(berryName)}</span>
+                </span>
+                <span class="appraisal-spec-tag ${specClass}" style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:6px;font-size:13px;font-weight:700;">${specName} ${isEN ? 'Specialty' : '專長'}</span>
               </div>
 
               <!-- 性格 -->
               <div class="appraisal-config-section">
                 <div class="appraisal-config-title">${isEN ? '[*] Nature' : '[*] 性格'}</div>
-                <div class="appraisal-nature-badge">${natDisplayName}</div>
+                <div class="appraisal-nature-badge" style="font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:8px;padding:6px 10px;">
+                  <span>${natDisplayName}</span>
+                </div>
               </div>
 
               <!-- 睡飽飽獎章 -->
               ${ribbonLevel > 0 ? `
                 <div class="appraisal-config-section">
                   <div class="appraisal-config-title">${isEN ? 'Good-Night Ribbon' : '睡飽飽獎章'}</div>
-                  <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;padding:4px 8px;border-radius:6px;background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;font-size:12px;font-weight:600;">
-                    ${isEN ? `Tier ${ribbonLevel} (+${evaluation.ribbonBonus.carry} Carry${evaluation.ribbonBonus.speedDiscount > 0 ? ` · -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}% Speed` : ''})` : `第 ${ribbonLevel} 階段 (+${evaluation.ribbonBonus.carry} 持有${evaluation.ribbonBonus.speedDiscount > 0 ? ` · 幫速 -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}%` : ''})`}
+                  <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:6px;background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;font-size:13px;font-weight:700;">
+                    <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" style="width:22px;height:22px;object-fit:contain;" alt="Ribbon" />
+                    <span>${isEN ? `Tier ${ribbonLevel} (+${evaluation.ribbonBonus.carry} Carry${evaluation.ribbonBonus.speedDiscount > 0 ? ` · -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}% Speed` : ''})` : `第 ${ribbonLevel} 階段 (+${evaluation.ribbonBonus.carry} 持有${evaluation.ribbonBonus.speedDiscount > 0 ? ` · 幫速 -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}%` : ''})`}</span>
                   </div>
                 </div>
               ` : ''}
 
-              <!-- 副技能清單 -->
+              <!-- 副技能清單 (2+2+1 遊戲同款外框顏色與排列) -->
               <div class="appraisal-config-section">
-                <div class="appraisal-config-title">${isEN ? '[#] Configured Sub-Skills' : '[#] 已配置副技能'}</div>
-                <div class="appraisal-subskills-list">
-                  ${subskills && subskills.length > 0 ? subskills.map(function(s, idx) {
-                    const rawName = typeof s === 'string' ? s : (s ? s.name : '');
-                    const sName = window.I18N ? window.I18N.getSubSkillName(rawName) : rawName;
-                    const levels = [10, 25, 50, 75, 100];
-                    return rawName ? `<div class="appraisal-subskill-pill"><span class="subskill-lv-tag">Lv.${levels[idx]}</span> ${sName}</div>` : '';
-                  }).join('') : `<span class="text-secondary text-sm">${isEN ? 'No sub-skills configured' : '無自訂副技能'}</span>`}
+                <div class="appraisal-config-title">${isEN ? '[#] Sub-Skills (2+2+1)' : '[#] 副技能配置 (2+2+1)'}</div>
+                <div class="appraisal-subskills-grid">
+                  ${[10, 25, 50, 75, 100].map(function(lv, idx) {
+                    const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
+                    const sName = rawName ? (window.I18N ? window.I18N.getSubSkillName(rawName) : rawName) : '--';
+                    const tier = getSkillTier(rawName);
+                    const isUnlocked = currentLv >= lv;
+                    const lockClass = !isUnlocked ? 'subskill-locked' : '';
+                    const titleText = rawName 
+                      ? (isEN ? `${sName} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''})` : `${sName} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''})`)
+                      : (isEN ? `Lv.${lv} Slot` : `Lv.${lv} 欄位`);
+                    return `
+                      <div class="appraisal-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
+                        <span class="subskill-name">${escapeHtml(sName)}</span>
+                      </div>
+                    `;
+                  }).join('')}
                 </div>
               </div>
+            </div>
+
+            <!-- PR 智能簡評欄 (遷入彈窗內部展示) -->
+            <div class="appraisal-summary-bar" style="margin-top:10px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.25);border-radius:8px;padding:8px 12px;display:flex;align-items:flex-start;gap:8px;">
+              <span style="font-size:12.5px;font-weight:800;color:#38bdf8;white-space:nowrap;flex-shrink:0;">${isEN ? 'Appraisal Note:' : '智能簡評：'}</span>
+              <span style="font-size:12.5px;color:#e2e8f0;line-height:1.4;">${escapeHtml(summaryNote)}</span>
             </div>
 
             <!-- 雙軌綜合評級卡片 (當前實力 + 畢業潛力) -->
@@ -1335,11 +1389,35 @@
     if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
     modal.style.display = 'flex'; if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(modal);
     document.body.style.overflow = 'hidden';
+
+    // 點選遮罩外部關閉與 Escape 鍵關閉
+    modal.onclick = function(e) {
+      if (e.target === modal) {
+        closeAppraisalModal();
+      }
+    };
+    if (modal._onKeydown && typeof window.removeEventListener === 'function') {
+      window.removeEventListener('keydown', modal._onKeydown);
+    }
+    modal._onKeydown = function(e) {
+      if (e.key === 'Escape') {
+        closeAppraisalModal();
+      }
+    };
+    if (typeof window.addEventListener === 'function') {
+      window.addEventListener('keydown', modal._onKeydown);
+    }
   }
 
   function closeAppraisalModal() {
     const modal = document.getElementById('modal-appraisal-report');
     if (!modal) return;
+    if (modal._onKeydown) {
+      if (typeof window.removeEventListener === 'function') {
+        window.removeEventListener('keydown', modal._onKeydown);
+      }
+      modal._onKeydown = null;
+    }
     const done = () => {
       if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
       document.body.style.overflow = '';

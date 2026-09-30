@@ -6559,30 +6559,53 @@ input[type=range].rf-slider.event-slider {
 }
 
 .box-card-actions {
-  display: flex;
+  display: inline-flex;
+  align-items: center;
   gap: 6px;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .box-action-btn {
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  width: 28px;
-  height: 28px;
-  display: flex;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  color: var(--text-secondary);
+  transition: all 0.18s ease;
+  padding: 0;
 }
 
-.box-action-btn:hover {
-  background: var(--bg-card-hover);
-  color: var(--text-primary);
-  border-color: var(--accent-color);
-  transform: scale(1.08);
+.box-action-btn.btn-appraise {
+  color: #38bdf8;
+}
+.box-action-btn.btn-appraise:hover {
+  background: rgba(56, 189, 248, 0.15);
+  color: #7dd3fc;
+  transform: scale(1.15);
+}
+
+.box-action-btn.btn-edit {
+  color: #fbbf24;
+}
+.box-action-btn.btn-edit:hover {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fde047;
+  transform: scale(1.15);
+}
+
+.box-action-btn.btn-delete {
+  color: #f87171;
+}
+.box-action-btn.btn-delete:hover {
+  background: rgba(248, 113, 113, 0.15);
+  color: #fca5a5;
+  transform: scale(1.15);
 }
 
 .box-card-section {
@@ -6617,41 +6640,36 @@ input[type=range].rf-slider.event-slider {
 .box-ing-chips-grid {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
   flex: 1;
   min-width: 0;
 }
 
 .box-ing-chip {
-  flex: 1;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 4px;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color-subtle);
-  border-radius: 6px;
-  padding: 3px 6px;
-  min-height: 26px;
+  background: transparent;
+  border: none;
+  padding: 0;
   box-sizing: border-box;
 }
 
 .box-ing-chip-icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
   flex-shrink: 0;
 }
 
 .box-ing-chip-count {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--badge-special-text);
-  background: var(--badge-special-bg);
-  border: 1px solid var(--badge-special-border);
-  border-radius: 4px;
-  padding: 1px 4px;
-  font-family: monospace;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: inherit;
   line-height: 1;
 }
 
@@ -6727,7 +6745,18 @@ input[type=range].rf-slider.event-slider {
   text-overflow: ellipsis;
 }
 
-/* 副技能膠囊標籤 */
+/* 副技能網格 2+2+1 排列 (In-game 2+2+1 layout) */
+.box-subskills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+.box-subskills-grid .box-subskill-pill:nth-child(5) {
+  grid-column: 1 / 2;
+}
+
 .box-subskill-pills {
   display: flex;
   flex-wrap: wrap;
@@ -6737,12 +6766,32 @@ input[type=range].rf-slider.event-slider {
 .box-subskill-pill {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 8px;
+  justify-content: center;
+  padding: 5px 8px;
   border-radius: 6px;
-  font-size: 11.5px;
+  font-size: 12.5px;
   font-weight: 700;
   user-select: none;
+  text-align: center;
+  min-width: 0;
+  box-sizing: border-box;
+  transition: opacity 0.2s ease;
+}
+
+.box-subskill-pill .subskill-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.box-subskill-pill.subskill-locked {
+  opacity: 0.45;
+  border-style: dashed;
+  filter: grayscale(0.35);
 }
 
 .subskill-lvl {
@@ -6779,7 +6828,37 @@ input[type=range].rf-slider.event-slider {
   border: 1px solid var(--border-color);
 }
 
-/* 性格展示 */
+/* 性格展示 (單行無外框) */
+.box-nature-single-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  font-size: 12.5px;
+  flex-wrap: nowrap;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.box-nature-name {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.box-nature-effects {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 2px;
+}
+
+.nature-neutral {
+  color: var(--text-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
 .box-nature-badge {
   background: var(--bg-card-inner);
   border: 1px solid var(--border-color-subtle);
@@ -12323,24 +12402,45 @@ input[type="number"] {
   margin-bottom: 14px;
 }
 
-.appraisal-type-tag {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 2px 8px;
+.appraisal-berry-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  padding: 3px 10px;
   border-radius: 6px;
-  background: rgba(56, 189, 248, 0.15);
-  color: var(--accent-blue);
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .appraisal-spec-tag {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 6px;
   background: rgba(234, 179, 8, 0.15);
   color: #d97706;
   border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.appraisal-spec-tag.spec-berry {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.appraisal-spec-tag.spec-ingredient {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.appraisal-spec-tag.spec-skill {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.35);
 }
 
 [data-theme="midnight"] .appraisal-spec-tag,
@@ -12355,20 +12455,31 @@ input[type="number"] {
 }
 
 .appraisal-config-title {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-muted);
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .appraisal-nature-badge {
   background: var(--bg-card-inner-subtle);
   border: 1px solid var(--border-color-subtle);
-  padding: 4px 10px;
+  padding: 6px 12px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--text-primary);
+}
+
+.appraisal-subskills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+.appraisal-subskills-grid .appraisal-subskill-pill:nth-child(5) {
+  grid-column: 1 / 2;
 }
 
 .appraisal-subskills-list {
@@ -12378,15 +12489,31 @@ input[type="number"] {
 }
 
 .appraisal-subskill-pill {
-  background: var(--bg-card-inner-subtle);
-  border: 1px solid var(--border-color-subtle);
-  padding: 3px 8px;
+  padding: 6px 8px;
   border-radius: 6px;
-  font-size: 11.5px;
-  color: var(--text-primary);
+  font-size: 12.5px;
+  font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  text-align: center;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.appraisal-subskill-pill .subskill-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.appraisal-subskill-pill.subskill-locked {
+  opacity: 0.45;
+  border-style: dashed;
+  filter: grayscale(0.35);
 }
 
 .subskill-lv-tag {
@@ -20658,22 +20785,23 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
 }
 
 .mobile-h5-app .box-card-actions {
-  display: flex !important;
+  display: inline-flex !important;
   align-items: center !important;
   gap: 4px !important;
+  margin-left: auto !important;
   flex-shrink: 0 !important;
 }
 
 .mobile-h5-app .box-action-btn {
-  width: 28px !important;
-  height: 28px !important;
-  border-radius: 6px !important;
-  display: flex !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 4px !important;
+  display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   font-size: 13px !important;
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  border: 1px solid var(--border-color) !important;
+  background: transparent !important;
+  border: none !important;
   cursor: pointer !important;
   transition: all 0.15s ease !important;
   padding: 0 !important;
@@ -20768,28 +20896,26 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
 
 .mobile-h5-app .box-subskills-grid {
   display: grid !important;
-  grid-template-columns: repeat(5, 1fr) !important;
-  gap: 4px !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 5px !important;
   width: 100% !important;
 }
 
-.mobile-h5-app .box-subskill-pill {
-  padding: 3px 2px !important;
-  border-radius: 5px !important;
-  text-align: center !important;
-  font-size: 9.5px !important;
-  line-height: 1.15 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  min-width: 0 !important;
-  overflow: hidden !important;
+.mobile-h5-app .box-subskills-grid .box-subskill-pill:nth-child(5) {
+  grid-column: 1 / 2 !important;
 }
 
-.mobile-h5-app .box-subskill-pill .subskill-lv-badge {
-  font-size: 8.5px !important;
-  opacity: 0.85 !important;
-  font-weight: 700 !important;
+.mobile-h5-app .box-subskill-pill {
+  padding: 4px 6px !important;
+  border-radius: 6px !important;
+  text-align: center !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
 }
 
 .mobile-h5-app .box-subskill-pill .subskill-name {
@@ -20798,6 +20924,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   width: 100% !important;
+  font-size: 12px !important;
 }
 
 .mobile-h5-app .box-card-footer {

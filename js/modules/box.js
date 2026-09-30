@@ -451,12 +451,20 @@
       return slotIdx === 0 ? 1 : (slotIdx === 1 ? 2 : 4);
     }
     const found = basePkm.ingredients.find(ig => ig.name === ingName);
-    if (found && typeof found.count === 'number') {
-      return found.count;
+    if (found) {
+      if (slotIdx === 0 && found.l1 !== undefined) return parseInt(found.l1, 10);
+      if (slotIdx === 1 && found.l30 !== undefined) return parseInt(found.l30, 10);
+      if (slotIdx === 2 && found.l60 !== undefined) return parseInt(found.l60, 10);
+      if (typeof found.count === 'number') return found.count;
     }
-    if (slotIdx === 0) return 1;
-    if (slotIdx === 1) return (basePkm.ingredients[1] && basePkm.ingredients[1].count) || 2;
-    return (basePkm.ingredients[2] && basePkm.ingredients[2].count) || 4;
+    const slotIng = basePkm.ingredients[slotIdx];
+    if (slotIng) {
+      if (slotIdx === 0 && slotIng.l1 !== undefined) return parseInt(slotIng.l1, 10);
+      if (slotIdx === 1 && slotIng.l30 !== undefined) return parseInt(slotIng.l30, 10);
+      if (slotIdx === 2 && slotIng.l60 !== undefined) return parseInt(slotIng.l60, 10);
+      if (typeof slotIng.count === 'number') return slotIng.count;
+    }
+    return slotIdx === 0 ? 1 : (slotIdx === 1 ? 2 : 4);
   }
 
   function renderBoxCardIngSlot(ingName, slotLv, basePkm, slotIdx) {
@@ -531,6 +539,27 @@
                   <div class="box-card-name-row">
                     <span class="box-card-name">${escapeHtml(pkmDisplayName)}</span>
                     <span class="box-card-level">Lv.${p.level || 1}</span>
+                    <div class="box-card-actions">
+                      <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${isEN ? 'Appraisal Report' : '深度診斷報告書與六維雷達圖'}">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="12" y1="16" x2="12" y2="12"></line>
+                          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                      </button>
+                      <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="${isEN ? 'Edit' : '編輯寶可夢'}">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                      </button>
+                      <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="${isEN ? 'Delete' : '刪除寶可夢'}">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="3 6 5 6 21 6"></polyline>
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                   ${p.nickname ? `<div class="box-card-nickname">${escapeHtml(p.nickname)}</div>` : ''}
                   <div class="box-card-tags">
@@ -544,46 +573,11 @@
                         <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${p.ribbon}.png" class="box-ribbon-icon" alt="Ribbon" />
                       </span>
                     ` : ''}
-                    <div class="box-dual-pr-badges" style="display:inline-flex;gap:4px;align-items:center;margin-left:auto;">
-                      <span class="box-pr-badge ${prInfo.currentTierBadgeClass || prInfo.tierBadgeClass}" style="font-size:10px;padding:1px 6px;" title="${isEN ? `Current Level Rating: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr} pts)` : `當前實力評級: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr}分)`}">
-                        ${isEN ? `Cur: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})` : `當前: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})`}
-                      </span>
-                      <span class="box-pr-badge-potential" style="font-size:10px;padding:1px 6px;" title="${isEN ? `Max Potential Rating: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr} pts)` : `滿級潛力評級: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr}分)`}">
-                        ${isEN ? `Pot: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})` : `潛力: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})`}
-                      </span>
-                    </div>
                   </div>
                 </div>
-                <div class="box-card-actions">
-                  <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${isEN ? 'Appraisal Report' : '深度診斷報告書與六維雷達圖'}">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <line x1="12" y1="16" x2="12" y2="12"></line>
-                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                  </button>
-                  <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="${isEN ? 'Edit' : '編輯寶可夢'}">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                    </svg>
-                  </button>
-                  <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="${isEN ? 'Delete' : '刪除寶可夢'}">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="3 6 5 6 21 6"></polyline>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
-                  </button>
-                </div>
               </div>
 
-              <!-- PR 智能簡評 -->
-              <div class="box-pr-summary-bar">
-                <span class="box-pr-summary-label">${isEN ? 'PR Rating:' : '潛力評價：'}</span>
-                <span class="box-pr-summary-text">${escapeHtml(prInfo.summaryNote)}</span>
-              </div>
-
-              <!-- 食材插槽組合 (精簡單行3個食材並行展示) -->
+              <!-- 食材插槽組合 (精簡單行3個食材並行展示，無外框) -->
               <div class="box-card-section box-card-section-ing">
                 <div class="box-ing-parallel-row">
                   <span class="box-ing-row-label">${isEN ? 'Ingredients:' : '食材：'}</span>
@@ -595,7 +589,7 @@
                 </div>
               </div>
 
-              <!-- 副技能清單 -->
+              <!-- 副技能清單 (2+2+1 遊戲同款排列，無前置等級標籤，按解鎖狀態呈現) -->
               <div class="box-card-section">
                 <div class="box-section-title">${isEN ? 'Sub-Skills' : '副技能組合'}</div>
                 <div class="box-subskills-grid">
@@ -604,9 +598,13 @@
                     const sk = SUBSKILLS_DATA.find(s => s.name === skName);
                     const tier = sk ? sk.tier : 'empty';
                     const displaySkName = skName ? (window.I18N ? window.I18N.getSubSkillName(skName) : skName) : '--';
+                    const isUnlocked = (p.level || 1) >= lv;
+                    const lockClass = !isUnlocked ? 'subskill-locked' : '';
+                    const titleText = sk 
+                      ? (isEN ? `${sk.name_en || sk.name} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''}): ${sk.desc_en || sk.desc}` : `${sk.name} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''}): ${sk.desc}`)
+                      : (isEN ? `Slot ${i + 1} (Lv.${lv})` : `第 ${i + 1} 欄位 (Lv.${lv})`);
                     return `
-                      <div class="box-subskill-pill subskill-${tier}" title="${sk ? sk.desc : ''}">
-                        <span class="subskill-lv-badge">Lv.${lv}</span>
+                      <div class="box-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
                         <span class="subskill-name">${escapeHtml(displaySkName)}</span>
                       </div>
                     `;
@@ -614,20 +612,20 @@
                 </div>
               </div>
 
-              <!-- 性格與修正 -->
+              <!-- 性格與修正 (同一行展示，無外框) -->
               <div class="box-card-footer">
-                <div class="box-nature-info">
+                <div class="box-nature-single-row">
                   <span class="box-nature-label">${isEN ? 'Nature:' : '性格：'}</span>
-                  <span class="box-nature-badge">${escapeHtml(natureDisplayName || (isEN ? 'Hardy' : '坦率'))}</span>
+                  <span class="box-nature-name font-bold">${escapeHtml(natureDisplayName || (isEN ? 'Hardy' : '坦率'))}</span>
+                  ${natureObj && natureObj.buff ? `
+                    <span class="box-nature-effects">
+                      ${natureObj.buff !== '無增減' ? `
+                        <span class="nature-buff">▲▲ ${isEN ? (natureObj.buff_en || natureObj.buff) : natureObj.buff}</span>
+                        <span class="nature-debuff">▼▼ ${isEN ? (natureObj.debuff_en || natureObj.debuff) : natureObj.debuff}</span>
+                      ` : `<span class="nature-neutral">${isEN ? 'Neutral' : '無修正'}</span>`}
+                    </span>
+                  ` : ''}
                 </div>
-                ${natureObj && natureObj.buff ? `
-                  <div class="box-nature-effects">
-                    ${natureObj.buff !== '無增減' ? `
-                      <span class="nature-buff">${isEN ? (natureObj.buff_en || natureObj.buff) : natureObj.buff}</span>
-                      <span class="nature-debuff">${isEN ? (natureObj.debuff_en || natureObj.debuff) : natureObj.debuff}</span>
-                    ` : `<span class="nature-neutral">${isEN ? 'Neutral' : '無修正'}</span>`}
-                  </div>
-                ` : ''}
               </div>
             </div>
           `;
@@ -764,13 +762,16 @@
             window.switchBoxSubtab('lab');
           } else {
             const base = findPokemonBase(item.pokemonId || item.name);
+            const prInfo = calculatePokemonPR(item, base);
             window.AppraisalLab.openModal({
               pkm: base,
               level: item.level || 30,
               nature: item.nature || '坦率',
               subskills: item.subskills || [],
               ingredients: [item.ing1, item.ing2, item.ing3],
-              ribbon: item.ribbon || 0
+              ribbon: item.ribbon || 0,
+              nickname: item.nickname || '',
+              summaryNote: (prInfo && prInfo.summaryNote) || ''
             });
           }
         }
@@ -3024,6 +3025,7 @@
       renderBox: renderBox,
       renderBoxGrid,
       renderBoxCardIngSlot,
+      getIngCountFromBase,
       getCurrentSubTab: getSavedBoxSubtab,
       switchSubTab: switchBoxSubtab,
       calculatePokemonPR,
@@ -3050,6 +3052,7 @@
       PokemonBoxApp: typeof window !== 'undefined' ? window.PokemonBoxApp : {
         renderBoxGrid,
         renderBoxCardIngSlot,
+        getIngCountFromBase,
         calculatePokemonPR,
         getMainSkillMaxLevel,
         updateRibbonSelectOptions,
@@ -3066,6 +3069,7 @@
       },
       renderBoxGrid,
       renderBoxCardIngSlot,
+      getIngCountFromBase,
       calculatePokemonPR,
       getMainSkillMaxLevel,
       updateRibbonSelectOptions,

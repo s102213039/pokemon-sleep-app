@@ -8356,6 +8356,116 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(!ingSectionMatch[1].includes('Lv.30'), 'Single-line compact ingredients must not include redundant Lv.30 badge');
     assert(!ingSectionMatch[1].includes('Lv.60'), 'Single-line compact ingredients must not include redundant Lv.60 badge');
   });
+
+  test('Tier 4 - Real-World Application Scenarios', 'Box Redesign: 2+2+1 Subskills, Borderless Layout, Accurate Ingredients & Appraisal Modal Verification', () => {
+    // 1. Verify index.html does not contain the zombie box-count-badge
+    const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    assert(!indexHtml.includes('id="box-count-badge"'), 'index.html must not contain zombie box-count-badge stats-bar');
+
+    // 2. Load modules in sandbox
+    const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+    const pkmData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/data.json'), 'utf8'));
+
+    const appCtx = {
+      window: {},
+      document: {
+        body: new MiniElement('body', ''),
+        createElement: (tag) => new MiniElement(tag, ''),
+        getElementById: () => null,
+        querySelectorAll: () => []
+      },
+      console
+    };
+    appCtx.window = appCtx;
+    appCtx.allPokemons = pkmData;
+    vm.createContext(appCtx);
+    vm.runInContext(appraisalCode, appCtx);
+    vm.runInContext(boxCode, appCtx);
+    appCtx.PokemonBoxApp.setAllPokemons(pkmData);
+
+    // 3. Verify getIngCountFromBase reads l1, l30, l60 accurately
+    const charizard = pkmData.find(p => p.name_cn === '噴火龍');
+    assert(charizard, 'Charizard data must exist');
+    const countL1 = appCtx.PokemonBoxApp.getIngCountFromBase(charizard, 0, '豆製肉');
+    const countL30 = appCtx.PokemonBoxApp.getIngCountFromBase(charizard, 1, '豆製肉');
+    const countL60 = appCtx.PokemonBoxApp.getIngCountFromBase(charizard, 2, '豆製肉');
+    assertEquals(countL1, 2, 'Charizard Lv.1 sausage count must be 2');
+    assertEquals(countL30, 5, 'Charizard Lv.30 sausage count must be 5');
+    assertEquals(countL60, 7, 'Charizard Lv.60 sausage count must be 7');
+
+    // 4. Render Box Card with a Lv.35 Pokémon to verify subskills unlock states (10, 25 unlocked; 50, 75, 100 locked)
+    const testList = [{
+      uid: 'test_card_pawmot',
+      pokemonId: '100',
+      name: '巴布土撥',
+      level: 35,
+      nature: '固執',
+      ribbon: 2,
+      ing1: '特選蘋果',
+      ing2: '特選蘋果',
+      ing3: '特選蘋果',
+      subskills: ['幫忙速度S', '食材機率提升M', '幫手獎勵', '技能機率提升M', '樹果數量S']
+    }];
+
+    const container = new MiniElement('div', 'box-container');
+    appCtx.PokemonBoxApp.renderBoxGrid(testList, container);
+    const html = container.innerHTML;
+
+    // Verify actions inside name-row
+    const nameRowMatch = html.match(/<div class="box-card-name-row">([\s\S]*?)<\/div>/);
+    assert(nameRowMatch, 'name row markup must exist');
+    assert(nameRowMatch[1].includes('box-card-actions'), 'box-card-actions must be inside box-card-name-row');
+    assert(nameRowMatch[1].includes('btn-appraise'), 'box-card-actions must contain btn-appraise');
+    assert(nameRowMatch[1].includes('btn-edit'), 'box-card-actions must contain btn-edit');
+    assert(nameRowMatch[1].includes('btn-delete'), 'box-card-actions must contain btn-delete');
+
+    // Verify outer card does NOT contain PR badges or summary bar
+    assert(!html.includes('box-dual-pr-badges'), 'Outer card must not contain box-dual-pr-badges');
+    assert(!html.includes('box-pr-summary-bar'), 'Outer card must not contain box-pr-summary-bar');
+
+    // Verify 2+2+1 Subskills layout and locked status according to Lv.35
+    assert(html.includes('box-subskills-grid'), 'Card must render box-subskills-grid');
+    assert(!html.includes('subskill-lv-badge'), 'Subskills must not display redundant Lv.xx badges');
+    
+    // In Lv.35: Slot 0 (Lv.10) and Slot 1 (Lv.25) are unlocked; Slot 2 (Lv.50), Slot 3 (Lv.75), Slot 4 (Lv.100) are locked
+    const subskillMatches = [...html.matchAll(/<div class="box-subskill-pill\s+([^"]+)"/g)];
+    assertEquals(subskillMatches.length, 5, 'Must render exactly 5 subskill pills');
+    assert(!subskillMatches[0][1].includes('subskill-locked'), 'Slot 1 (Lv.10) must be unlocked at Lv.35');
+    assert(!subskillMatches[1][1].includes('subskill-locked'), 'Slot 2 (Lv.25) must be unlocked at Lv.35');
+    assert(subskillMatches[2][1].includes('subskill-locked'), 'Slot 3 (Lv.50) must be locked at Lv.35');
+    assert(subskillMatches[3][1].includes('subskill-locked'), 'Slot 4 (Lv.75) must be locked at Lv.35');
+    assert(subskillMatches[4][1].includes('subskill-locked'), 'Slot 5 (Lv.100) must be locked at Lv.35');
+
+    // Verify Nature single-row display
+    assert(html.includes('box-nature-single-row'), 'Nature must render as box-nature-single-row');
+
+    // 5. Verify Appraisal Modal Structure
+    let createdModal = null;
+    appCtx.document.createElement = (tag) => {
+      const el = new MiniElement(tag, '');
+      if (tag === 'div') createdModal = el;
+      return el;
+    };
+    appCtx.AppraisalLab.openModal({
+      pkm: charizard,
+      level: 52,
+      nature: '溫順',
+      subskills: ['幫忙速度S', '技能等級提升M', '食材機率提升S', '技能機率提升M', '夢之碎片獎勵'],
+      ingredients: ['豆製肉', '豆製肉', '豆製肉'],
+      ribbon: 3,
+      summaryNote: '強力噴火龍'
+    });
+
+    assert(createdModal, 'Modal element must be created');
+    const modalHtml = createdModal.innerHTML;
+    assert(!modalHtml.includes('appraisal-type-tag'), 'Appraisal modal must NOT contain appraisal-type-tag');
+    assert(modalHtml.includes('appraisal-berry-tag'), 'Appraisal modal must contain appraisal-berry-tag with berry icon');
+    assert(modalHtml.includes('appraisal-subskills-grid'), 'Appraisal modal must render appraisal-subskills-grid in 2+2+1 format');
+    assert(modalHtml.includes('appraisal-summary-bar'), 'Appraisal modal must render appraisal-summary-bar');
+    assert(modalHtml.includes('強力噴火龍'), 'Appraisal modal summary bar must display summary note');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {
