@@ -8149,6 +8149,98 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(baseDesc.includes('增加卡比獸的能量'), 'Base skill description must be returned by getSkillDescription');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Rebuilt Strict Pokemon Appraisal Engine & Disqualification Gating Rules Verification', () => {
+    const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const appCtx = { window: {}, console };
+    appCtx.window = appCtx;
+    vm.createContext(appCtx);
+    vm.runInContext(appraisalCode, appCtx);
+
+    const pikachu = dataset.find(p => p.name_cn === '皮卡丘');
+    const blastoise = dataset.find(p => p.name_cn === '水箭龜');
+    const gardevoir = dataset.find(p => p.name_cn === '沙奈朵');
+    const slowpoke = dataset.find(p => p.name_cn === '呆呆獸');
+    const ampharos = dataset.find(p => p.name_cn === '電龍');
+
+    // 1. Berry Specialists Rules
+    // 1a. Mediocre wild Berry mon without BFS drops to D/C (<= 60)
+    const berryWild = appCtx.AppraisalLab.evaluatePokemon(pikachu, 30, '坦率', ['幫忙速度S'], ['特選蘋果', '特選蘋果'], 0, 1);
+    assert(berryWild.compositeScore <= 60, 'Berry mon without BFS and neutral/low kit must drop to D/C (<= 60)');
+    assertEquals(berryWild.grade, 'D', 'Score <= 60 should be D grade');
+
+    // 1b. Non-BFS Berry mon hard cap (<= 72), except extreme speed
+    const berryNoBfsGood = appCtx.AppraisalLab.evaluatePokemon(pikachu, 50, '坦率', ['幫忙速度M', '持有上限提升L'], ['特選蘋果', '特選蘋果', '特選蘋果'], 0, 1);
+    assert(berryNoBfsGood.compositeScore <= 72, 'Berry specialist without BFS is capped at <= 72 (B/C grade)');
+
+    // 1c. Extreme speed exception: Helping Bonus + Helping Speed M + Speed nature allowed up to A (<= 85)
+    const berryExtremeSpeed = appCtx.AppraisalLab.evaluatePokemon(pikachu, 50, '固執', ['幫手獎勵', '幫忙速度M'], ['特選蘋果', '特選蘋果', '特選蘋果'], 0, 1);
+    assert(berryExtremeSpeed.compositeScore >= 80 && berryExtremeSpeed.compositeScore <= 85, 'Extreme speed kit without BFS exceptionally qualifies for A tier (80~85)');
+    assertEquals(berryExtremeSpeed.grade, 'A', 'Extreme speed should achieve A grade');
+    assert(berryExtremeSpeed.pros.some(p => p.includes('極限幫速配置')), 'Extreme speed pro diagnosis must be present');
+
+    // 1d. Speed Down nature fatal penalty for Berry mon
+    const berrySpeedDown = appCtx.AppraisalLab.evaluatePokemon(pikachu, 30, '內斂', ['樹果數量S'], ['特選蘋果', '特選蘋果'], 0, 1);
+    assert(berrySpeedDown.compositeScore <= 64, 'Berry mon with Speed Down nature must be heavily penalized (<= 64)');
+    assert(berrySpeedDown.cons.some(c => c.includes('幫忙速度▼')), 'Cons must warn about Speed Down nature penalty');
+
+    // 2. Ingredient Specialists Rules
+    // 2a. Ingredient Down nature fatal flaw: strictly drops to <= 62 (D/C)
+    const ingDown = appCtx.AppraisalLab.evaluatePokemon(blastoise, 30, '淘氣', ['食材機率提升M'], ['特選牛奶', '特選牛奶'], 0, 1);
+    assert(ingDown.compositeScore <= 62, 'Ingredient specialist with Ingredient Down nature must drop to <= 62 (D/C grade)');
+    assert(ingDown.cons.some(c => c.includes('致命缺陷') && c.includes('食材發現率▼')), 'Cons must warn that Ingredient Down nature is a fatal disqualification');
+
+    // 2b. ABC ingredient combo capped at A (<= 88)
+    const ingAbc = appCtx.AppraisalLab.evaluatePokemon(blastoise, 60, '冷靜', ['食材機率提升M', '食材機率提升S', '幫手獎勵'], ['特選牛奶', '波士可可', '鮮濃雪原純乳酪'], 0, 1);
+    assert(ingAbc.compositeScore <= 88, 'ABC ingredient combination must be capped at <= 88 (cannot reach S/SS/SSS)');
+    assertEquals(ingAbc.grade, 'A', 'ABC combination must be capped at A grade');
+    assert(ingAbc.cons.some(c => c.includes('ABC') && c.includes('嚴重稀釋')), 'Cons must warn of ABC recipe dilution');
+
+    // 2c. BFS without Inventory Up on ingredient mon penalized and warned
+    const ingBfsNoCarry = appCtx.AppraisalLab.evaluatePokemon(blastoise, 30, '坦率', ['樹果數量S'], ['特選牛奶', '特選牛奶'], 0, 1);
+    assert(ingBfsNoCarry.cons.some(c => c.includes('缺乏「持有上限提升」') && c.includes('偷吃樹果')), 'Cons must warn BFS on ingredient mon without inventory up leads to rapid overflow');
+
+    // 3. Skill Specialists Rules
+    // 3a. Healer with Skill Down nature locked to D (<= 58)
+    const healerSkillDown = appCtx.AppraisalLab.evaluatePokemon(gardevoir, 30, '樂天', ['技能機率提升M'], ['特選蘋果', '特選蘋果'], 0, 1);
+    assert(healerSkillDown.compositeScore <= 58, 'Healer with Skill Down nature must be locked to D grade (<= 58)');
+    assertEquals(healerSkillDown.grade, 'D', 'Healer with Skill Down must receive D grade');
+
+    // 3b. Healer without any skill triggers or nature boost locked to C (<= 68)
+    const healerNoSkill = appCtx.AppraisalLab.evaluatePokemon(gardevoir, 30, '坦率', ['幫忙速度S'], ['特選蘋果', '特選蘋果'], 0, 1);
+    assert(healerNoSkill.compositeScore <= 68, 'Healer without any skill boost must be locked to C/D grade (<= 68)');
+    assert(healerNoSkill.cons.some(c => c.includes('缺乏任何主技能發動率副技能')), 'Cons must warn healer lacks skill boosts');
+
+    // 3c. Hybrid BFS compensation for Charge Strength
+    const ampharosHybrid = appCtx.AppraisalLab.evaluatePokemon(ampharos, 60, '坦率', ['樹果數量S', '幫忙速度M'], ['特選蘋果', '特選蘋果', '特選蘋果'], 0, 1);
+    assert(ampharosHybrid.pros.some(p => p.includes('樹果數量S') && p.includes('高額樹果副輸出')), 'Charge Strength hybrid with BFS must highlight berry output in pros');
+
+    // 4. Special Cases: Slowpoke Family
+    // 4a. Lv.30 unlocks Slowpoke Tail (+14 strategic unlock bonus)
+    const slowpokeTail = appCtx.AppraisalLab.evaluatePokemon(slowpoke, 30, '坦率', ['食材機率提升M'], ['放鬆可可', '美味尾巴'], 0, 1);
+    assert(slowpokeTail.pros.some(p => p.includes('美味尾巴') && p.includes('首要戰略解鎖使命')), 'Slowpoke with Lv.30 Tail must highlight strategic unlock in pros');
+
+    // 4b. Lv.30 lacks Slowpoke Tail (-20 penalty, capped at <= 64)
+    const slowpokeNoTail = appCtx.AppraisalLab.evaluatePokemon(slowpoke, 30, '坦率', ['食材機率提升M'], ['放鬆可可', '放鬆可可'], 0, 1);
+    assert(slowpokeNoTail.compositeScore <= 64, 'Slowpoke without Lv.30 tail must be penalized to <= 64');
+    assert(slowpokeNoTail.cons.some(c => c.includes('致命失職') && c.includes('未出「美味尾巴」')), 'Slowpoke without tail must have fatal mission failure con');
+    assert(slowpokeTail.compositeScore > slowpokeNoTail.compositeScore + 25, 'Slowpoke with Tail must score substantially higher than without tail');
+
+    // 5. Cleared / Empty Subskills
+    const emptySubPkm = appCtx.AppraisalLab.evaluatePokemon(pikachu, 30, '坦率', [], ['特選蘋果', '特選蘋果'], 0, 1);
+    assert(emptySubPkm.compositeScore <= 62, 'Empty subskills at Lv.30 must be capped at <= 62 (D/C grade)');
+
+    // 6. Universal Helping Bonus
+    const withHB = appCtx.AppraisalLab.evaluatePokemon(pikachu, 30, '坦率', ['幫手獎勵'], ['特選蘋果', '特選蘋果'], 0, 1);
+    const withoutHB = appCtx.AppraisalLab.evaluatePokemon(pikachu, 30, '坦率', [], ['特選蘋果', '特選蘋果'], 0, 1);
+    assert(withHB.compositeScore > withoutHB.compositeScore, 'Helping Bonus must provide cross-specialty team value');
+
+    // 7. Export helpers verification
+    assert(typeof appCtx.AppraisalLab.isSlowpokeFamily === 'function', 'AppraisalLab.isSlowpokeFamily must be exported');
+    assert(typeof appCtx.AppraisalLab.isSlakingFamily === 'function', 'AppraisalLab.isSlakingFamily must be exported');
+    assert(typeof PokemonApp.isSlowpokeFamily === 'function', 'PokemonApp.isSlowpokeFamily must be exported');
+    assert(typeof PokemonApp.isSlakingFamily === 'function', 'PokemonApp.isSlakingFamily must be exported');
+  });
+
 
 
 

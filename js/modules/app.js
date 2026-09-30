@@ -4244,6 +4244,18 @@ function isChargeStrengthSkillSpecialist(pkm) {
   return chargeNames.some(c => name.includes(c));
 }
 
+function isSlowpokeFamily(pkm) {
+  if (!pkm) return false;
+  const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+  return ['呆呆獸', '呆殼獸', '呆呆王', 'Slowpoke', 'Slowbro', 'Slowking'].some(s => name.includes(s));
+}
+
+function isSlakingFamily(pkm) {
+  if (!pkm) return false;
+  const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+  return ['請假王', '過動猿', '懶人獺', 'Slaking', 'Vigoroth', 'Slakoth'].some(s => name.includes(s));
+}
+
 function applyPokedexGodPreset() {
   const pkm = pokedexModalState.pkm;
   if (!pkm) return;
@@ -6082,6 +6094,8 @@ PokemonApp.isBfsSkillSpecialist = isBfsSkillSpecialist;
 PokemonApp.isHealerSkillSpecialist = isHealerSkillSpecialist;
 PokemonApp.isHelperBoostSkillSpecialist = isHelperBoostSkillSpecialist;
 PokemonApp.isChargeStrengthSkillSpecialist = isChargeStrengthSkillSpecialist;
+PokemonApp.isSlowpokeFamily = isSlowpokeFamily;
+PokemonApp.isSlakingFamily = isSlakingFamily;
 PokemonApp.renderPokedexStrategyCardHTML = renderPokedexStrategyCardHTML;
 PokemonApp.flashSliderLockedWall = flashSliderLockedWall;
 PokemonApp.togglePokedexSubskillPalette = togglePokedexSubskillPalette;
@@ -6112,6 +6126,8 @@ if (typeof window !== 'undefined') {
   window.isHealerSkillSpecialist = isHealerSkillSpecialist;
   window.isHelperBoostSkillSpecialist = isHelperBoostSkillSpecialist;
   window.isChargeStrengthSkillSpecialist = isChargeStrengthSkillSpecialist;
+  window.isSlowpokeFamily = isSlowpokeFamily;
+  window.isSlakingFamily = isSlakingFamily;
   window.getPokedexMainSkillYield = getPokedexMainSkillYield;
   window.renderPokedexFormulaBreakdownHTML = renderPokedexFormulaBreakdownHTML;
   window.togglePokedexSubskillPalette = togglePokedexSubskillPalette;

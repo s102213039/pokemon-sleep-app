@@ -94,7 +94,7 @@
     return { carry: carry, speedDiscount: speedDiscount, speed: speedDiscount, level: lvl };
   }
 
-  /* ─── 技能型寶可夢是否適配「樹果數量S」判定 ─────────────────── */
+  /* ─── 特殊寶可夢類型定位識別 (Specialty Category Helpers) ─────────────── */
   function isBfsSkillSpecialist(pkm) {
     // 經社群深入研究與玩家驗證，所有技能型寶可夢核心定位皆為追求主技能發動。
     // 滿包進入偷吃樹果狀態將徹底阻斷技能判定，因此標準神配一律回歸純技能發動專精。
@@ -131,7 +131,19 @@
     return chargeNames.some(c => name.includes(c));
   }
 
-  /* ─── 核心評估演算法 ───────────────────────────────────── */
+  function isSlowpokeFamily(pkm) {
+    if (!pkm) return false;
+    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+    return ['呆呆獸', '呆殼獸', '呆呆王', 'Slowpoke', 'Slowbro', 'Slowking'].some(s => name.includes(s));
+  }
+
+  function isSlakingFamily(pkm) {
+    if (!pkm) return false;
+    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+    return ['請假王', '過動猿', '懶人獺', 'Slaking', 'Vigoroth', 'Slakoth'].some(s => name.includes(s));
+  }
+
+  /* ─── 核心評估演算法 (嚴格門檻淘汰與特化評估新體系) ──────────── */
   function evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel) {
     if (!pkmData) return null;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
@@ -156,159 +168,199 @@
 
     // 性格修正
     const fallbackNatureDict = {
-      '冷靜': { buffType: 'ingredient', debuffType: 'exp' },
-      '內斂': { buffType: 'ingredient', debuffType: 'speed' },
-      '慢吞吞': { buffType: 'ingredient', debuffType: 'energy' },
-      '馬虎': { buffType: 'ingredient', debuffType: 'skill' },
+      // 幫忙速度▲
       '固執': { buffType: 'speed', debuffType: 'ingredient' },
+      'Adamant': { buffType: 'speed', debuffType: 'ingredient' },
       '勇敢': { buffType: 'speed', debuffType: 'exp' },
-      '孤僻': { buffType: 'speed', debuffType: 'energy' },
+      'Brave': { buffType: 'speed', debuffType: 'exp' },
+      '怕寂寞': { buffType: 'speed', debuffType: 'energy' },
+      'Lonely': { buffType: 'speed', debuffType: 'energy' },
       '頑皮': { buffType: 'speed', debuffType: 'skill' },
-      '自大': { buffType: 'skill', debuffType: 'speed' },
+      'Naughty': { buffType: 'speed', debuffType: 'skill' },
+      // 食材機率▲
+      '內斂': { buffType: 'ingredient', debuffType: 'speed' },
+      'Modest': { buffType: 'ingredient', debuffType: 'speed' },
+      '冷靜': { buffType: 'ingredient', debuffType: 'exp' },
+      'Quiet': { buffType: 'ingredient', debuffType: 'exp' },
+      '慢吞吞': { buffType: 'ingredient', debuffType: 'energy' },
+      'Mild': { buffType: 'ingredient', debuffType: 'energy' },
+      '馬虎': { buffType: 'ingredient', debuffType: 'skill' },
+      'Rash': { buffType: 'ingredient', debuffType: 'skill' },
+      // 主技能發動機率▲
       '溫和': { buffType: 'skill', debuffType: 'speed' },
+      'Calm': { buffType: 'skill', debuffType: 'speed' },
       '慎重': { buffType: 'skill', debuffType: 'ingredient' },
-      '溫燥': { buffType: 'skill', debuffType: 'energy' },
-      '浮躁': { buffType: 'skill', debuffType: 'exp' }
+      'Careful': { buffType: 'skill', debuffType: 'ingredient' },
+      '自大': { buffType: 'skill', debuffType: 'exp' },
+      'Sassy': { buffType: 'skill', debuffType: 'exp' },
+      '溫順': { buffType: 'skill', debuffType: 'energy' },
+      'Gentle': { buffType: 'skill', debuffType: 'energy' },
+      // 活力回復量▲
+      '大膽': { buffType: 'energy', debuffType: 'speed' },
+      'Bold': { buffType: 'energy', debuffType: 'speed' },
+      '淘氣': { buffType: 'energy', debuffType: 'ingredient' },
+      'Impish': { buffType: 'energy', debuffType: 'ingredient' },
+      '悠閒': { buffType: 'energy', debuffType: 'exp' },
+      'Relaxed': { buffType: 'energy', debuffType: 'exp' },
+      '樂天': { buffType: 'energy', debuffType: 'skill' },
+      'Lax': { buffType: 'energy', debuffType: 'skill' },
+      // EXP獲得量▲
+      '膽小': { buffType: 'exp', debuffType: 'speed' },
+      'Timid': { buffType: 'exp', debuffType: 'speed' },
+      '爽朗': { buffType: 'exp', debuffType: 'ingredient' },
+      'Jolly': { buffType: 'exp', debuffType: 'ingredient' },
+      '急躁': { buffType: 'exp', debuffType: 'energy' },
+      'Hasty': { buffType: 'exp', debuffType: 'energy' },
+      '天真': { buffType: 'exp', debuffType: 'skill' },
+      'Naive': { buffType: 'exp', debuffType: 'skill' },
+      // 無增減
+      '坦率': { buffType: 'none', debuffType: 'none' },
+      'Hardy': { buffType: 'none', debuffType: 'none' },
+      '害羞': { buffType: 'none', debuffType: 'none' },
+      'Bashful': { buffType: 'none', debuffType: 'none' },
+      '認真': { buffType: 'none', debuffType: 'none' },
+      'Docile': { buffType: 'none', debuffType: 'none' },
+      '勤奮': { buffType: 'none', debuffType: 'none' },
+      'Serious': { buffType: 'none', debuffType: 'none' },
+      '浮躁': { buffType: 'none', debuffType: 'none' },
+      'Quirky': { buffType: 'none', debuffType: 'none' }
     };
     const nature = (window.UserBox && window.UserBox.NATURE_DICT && window.UserBox.NATURE_DICT[natureName]) ||
       (window.PokemonApp && window.PokemonApp.NATURE_DICT && window.PokemonApp.NATURE_DICT[natureName]) ||
       fallbackNatureDict[natureName] || { buffType: 'none', debuffType: 'none' };
     const natDisplayName = window.I18N ? window.I18N.getNatureName(natureName) : natureName;
 
+    const isHealer = isHealerSkillSpecialist(pkmData);
+    const isHelper = isHelperBoostSkillSpecialist(pkmData);
+    const isCharge = isChargeStrengthSkillSpecialist(pkmData);
+    const isSlowpoke = isSlowpokeFamily(pkmData);
+    const isSlaking = isSlakingFamily(pkmData);
+    const pkmName = pkmData.name_cn || (pkmData.name && pkmData.name.cn) || pkmData.name_en || pkmData.name || '';
+
     // 1. 樹果產能 (Berry Power)
-    let berryScore = (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') ? 50 : ((specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') ? 25 : 25);
-    const hasBFS = activeSubskills.indexOf('樹果數量S') !== -1;
-    const bfsIdx = subskillArr.indexOf('樹果數量S');
+    let berryScore = (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') ? 40 : 20;
+    const hasBFS = activeSubskills.indexOf('樹果數量S') !== -1 || activeSubskills.indexOf('Berry Finding S') !== -1;
+    const bfsIdx = Math.max(subskillArr.indexOf('樹果數量S'), subskillArr.indexOf('Berry Finding S'));
     if (hasBFS) {
-      if (bfsIdx === 0) berryScore += 32;
-      else if (bfsIdx === 1) berryScore += 26;
+      if (bfsIdx === 0) berryScore += 36;
+      else if (bfsIdx === 1) berryScore += 28;
       else if (bfsIdx === 2) berryScore += 18;
-      else berryScore += 12;
+      else berryScore += 10;
     }
-    if (activeSubskills.indexOf('幫忙速度M') !== -1) berryScore += 8;
-    if (activeSubskills.indexOf('幫手獎勵') !== -1) berryScore += 8;
-    if (nature.buffType === 'speed') berryScore += 7;
-    if (nature.debuffType === 'speed') berryScore -= 6;
-    // 持有上限對樹果溢滿稍微延遲
-    if (activeSubskills.indexOf('持有上限提升L') !== -1 || activeSubskills.indexOf('Inventory Up L') !== -1) berryScore += 6;
-    else if (activeSubskills.indexOf('持有上限提升M') !== -1 || activeSubskills.indexOf('Inventory Up M') !== -1) berryScore += 4;
-    else if (activeSubskills.indexOf('持有上限提升S') !== -1 || activeSubskills.indexOf('Inventory Up S') !== -1) berryScore += 2;
-    // 睡飽飽獎章加成 (提供背包與幫速縮短)
+    if (activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1) berryScore += 10;
+    if (activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1) berryScore += 10;
+    if (activeSubskills.indexOf('幫忙速度S') !== -1 || activeSubskills.indexOf('Helping Speed S') !== -1) berryScore += 5;
+    if (nature.buffType === 'speed') {
+      berryScore += (natureName === '固執' && (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries')) ? 14 : 8;
+    }
+    if (nature.debuffType === 'speed') berryScore -= 18;
+    if (nature.buffType === 'ingredient' && (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries')) {
+      berryScore -= 10; // 稀釋樹果掉落判定
+    }
     if (ribbonLevel === 4) berryScore += 6;
-    else if (ribbonLevel === 3) berryScore += 4;
-    else if (ribbonLevel === 2) berryScore += 3;
-    else if (ribbonLevel === 1) berryScore += 1;
-    // 等級幫忙速度提升 (每級縮短約 0.2%)
-    const berryLvBonus = Math.min(8, Math.floor((currentLv - 1) * 0.1));
+    else if (ribbonLevel >= 2) berryScore += 3;
+    const berryLvBonus = Math.min(6, Math.floor((currentLv - 1) * 0.08));
     berryScore += berryLvBonus;
     berryScore = Math.min(Math.max(Math.round(berryScore), 15), 100);
 
-    // 2. 食材產能 (Ingredient Power: 持有上限、睡飽飽獎章與 AAA 食材配置為評分核心)
-    let ingScore = (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') ? 50 : ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') ? 25 : 28);
+    // 2. 食材產能 (Ingredient Power)
+    let ingScore = (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') ? 40 : 20;
     const hasIngM = activeSubskills.indexOf('食材機率提升M') !== -1 || activeSubskills.indexOf('Ingredient Finder M') !== -1;
     const ingMIdx = Math.max(subskillArr.indexOf('食材機率提升M'), subskillArr.indexOf('Ingredient Finder M'));
     if (hasIngM) {
       if (ingMIdx === 0) ingScore += 26;
       else if (ingMIdx === 1) ingScore += 20;
-      else ingScore += 14;
+      else if (ingMIdx === 2) ingScore += 14;
+      else ingScore += 8;
     }
     if (activeSubskills.indexOf('食材機率提升S') !== -1 || activeSubskills.indexOf('Ingredient Finder S') !== -1) ingScore += 12;
     if (activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1) ingScore += 8;
     if (activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1) ingScore += 8;
 
-    // 持有上限提升 (Carry Limit: 睡眠/離線防溢滿核心，大幅提高食材評分，S/M/L 階梯明顯區分)
+    // 持有上限提升 (Carry Limit)
     if (activeSubskills.indexOf('持有上限提升L') !== -1 || activeSubskills.indexOf('Inventory Up L') !== -1) ingScore += 18;
     else if (activeSubskills.indexOf('持有上限提升M') !== -1 || activeSubskills.indexOf('Inventory Up M') !== -1) ingScore += 12;
     else if (activeSubskills.indexOf('持有上限提升S') !== -1 || activeSubskills.indexOf('Inventory Up S') !== -1) ingScore += 6;
 
-    // 睡飽飽獎章加成 (提供背包上限 + 幫速加成，食材必備)
     if (ribbonLevel === 4) ingScore += 10;
     else if (ribbonLevel === 3) ingScore += 7;
     else if (ribbonLevel === 2) ingScore += 4;
     else if (ribbonLevel === 1) ingScore += 2;
 
-    if (nature.buffType === 'ingredient') ingScore += 15;
-    if (nature.debuffType === 'ingredient') ingScore -= 12;
-    
-    // 等級食材解鎖加成 (Lv.30 解鎖第二格, Lv.60 解鎖第三格)
-    if (currentLv >= 60) ingScore += 6;
-    else if (currentLv >= 30) ingScore += 3;
+    if (nature.buffType === 'ingredient') ingScore += 16;
+    if (nature.debuffType === 'ingredient') ingScore -= 25; // 致命負面
+
+    if (currentLv >= 60) ingScore += 8;
+    else if (currentLv >= 30) ingScore += 4;
     else ingScore -= 6;
 
-    // 食材組合強度評估 (AAA 極品單色 / ABB 雙色量產 / AAB / ABC 嚴重稀釋)
+    let isABCCombination = false;
     if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
       if (ingredients.length >= 3 && currentLv >= 60) {
         const i0 = ingredients[0], i1 = ingredients[1], i2 = ingredients[2];
         if (i0 && i1 && i2) {
           if (i0 === i1 && i1 === i2) {
-            ingScore += 18; // AAA 極品單色，頂標評價
+            ingScore += 18; // AAA 極品純色
           } else if (i0 !== i1 && i1 === i2) {
-            ingScore += 10; // ABB 雙色強勢量產
+            ingScore += 12; // ABB 強勢雙色量產
           } else if (i0 === i1 && i1 !== i2) {
             ingScore += 4;  // AAB
           } else if (i0 !== i1 && i1 !== i2 && i0 !== i2) {
-            ingScore -= 8;  // ABC 嚴重稀釋，減分
+            ingScore -= 12; // ABC 三色雜菜
+            isABCCombination = true;
           }
         }
       } else if (ingredients.length >= 2 && currentLv >= 30) {
         const i0 = ingredients[0], i1 = ingredients[1];
         if (i0 && i1) {
-          if (i0 === i1) {
-            ingScore += 10; // AA 純色
-          } else {
-            ingScore += 4;  // AB
-          }
+          if (i0 === i1) ingScore += 10; // AA 純色
+          else ingScore += 4;           // AB
         }
       }
-    } else {
-      // 樹果/技能型食材組合判定
-      if (ingredients.length >= 2 && currentLv >= 30) {
-        const isAAA = ingredients[0] === ingredients[1] && (ingredients[2] && currentLv >= 60 ? ingredients[0] === ingredients[2] : true);
-        if (isAAA) ingScore += 4;
+
+      // 食材型帶 BFS 但無持有上限提升：易滿包阻斷產料
+      const hasCarryBuff = activeSubskills.some(s => s.includes('持有上限') || s.includes('Inventory Up'));
+      if (hasBFS && !hasCarryBuff) {
+        ingScore -= 6;
       }
     }
     ingScore = Math.min(Math.max(Math.round(ingScore), 15), 100);
 
-    // 3. 技能強度 (Skill Power: 核心以技能機率與幫速為主，持有上限保障夜間雙發)
-    let skillScore = (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') ? 50 : 25;
-    const hasSkillM = activeSubskills.indexOf('技能機率提升M') !== -1;
-    const skillMIdx = subskillArr.indexOf('技能機率提升M');
+    // 3. 技能強度 (Skill Power)
+    let skillScore = (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') ? 40 : 20;
+    const hasSkillM = activeSubskills.indexOf('技能機率提升M') !== -1 || activeSubskills.indexOf('Skill Trigger M') !== -1;
+    const skillMIdx = Math.max(subskillArr.indexOf('技能機率提升M'), subskillArr.indexOf('Skill Trigger M'));
     if (hasSkillM) {
-      if (skillMIdx === 0) skillScore += 24;
-      else if (skillMIdx === 1) skillScore += 18;
-      else skillScore += 12;
+      if (skillMIdx === 0) skillScore += 26;
+      else if (skillMIdx === 1) skillScore += 20;
+      else if (skillMIdx === 2) skillScore += 14;
+      else skillScore += 8;
     }
-    if (activeSubskills.indexOf('技能機率提升S') !== -1) skillScore += 14;
+    const hasSkillS = activeSubskills.indexOf('技能機率提升S') !== -1 || activeSubskills.indexOf('Skill Trigger S') !== -1;
+    if (hasSkillS) skillScore += 14;
+    if (activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1) skillScore += 8;
+    if (activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1) skillScore += 8;
 
-    // 幫忙速度對技能發動期望的直接貢獻
-    if (activeSubskills.indexOf('幫手獎勵') !== -1) skillScore += 8;
-    if (activeSubskills.indexOf('幫忙速度M') !== -1) skillScore += 8;
-    if (activeSubskills.indexOf('幫忙速度S') !== -1) skillScore += 4;
-    if (nature.buffType === 'speed') skillScore += 6;
-    if (nature.debuffType === 'speed') skillScore -= 6;
+    if (nature.buffType === 'skill') skillScore += 16;
+    if (nature.debuffType === 'skill') skillScore -= 25; // 致命減技
 
-    // 持有上限提升 (Carry Limit: 技能型夜間可累積 2 次技能發動，背包滿則無法觸發)
+    if (skillLevel > 1) {
+      skillScore += Math.min(20, Math.round((skillLevel - 1) * 3.5));
+    }
+    if (ribbonLevel === 4) skillScore += 8;
+    else if (ribbonLevel >= 2) skillScore += 4;
+
     if (activeSubskills.indexOf('持有上限提升L') !== -1 || activeSubskills.indexOf('Inventory Up L') !== -1) skillScore += 10;
     else if (activeSubskills.indexOf('持有上限提升M') !== -1 || activeSubskills.indexOf('Inventory Up M') !== -1) skillScore += 6;
     else if (activeSubskills.indexOf('持有上限提升S') !== -1 || activeSubskills.indexOf('Inventory Up S') !== -1) skillScore += 3;
 
-    // 技能等級提升權重降級 (金種子可替代)
-    if (activeSubskills.indexOf('技能等級提升M') !== -1) skillScore += 4;
-    if (activeSubskills.indexOf('技能等級提升S') !== -1) skillScore += 2;
-
-    if (nature.buffType === 'skill') skillScore += 12;
-    if (nature.debuffType === 'skill') skillScore -= 12;
-
-    // 主技能等級動態加成 (Lv.1 ~ Lv.7)
-    if (skillLevel > 1) {
-      skillScore += Math.min(20, Math.round((skillLevel - 1) * 3.5));
+    // 補師嚴審：減技能或無任何技能加成者嚴懲
+    if (isHealer) {
+      if (nature.debuffType === 'skill') skillScore = Math.min(35, skillScore);
+      else if (!hasSkillM && !hasSkillS && nature.buffType !== 'skill') {
+        skillScore = Math.min(50, skillScore);
+      }
     }
-    // 睡飽飽獎章加成 (背包上限累積 2 次發動 + 幫速縮短)
-    if (ribbonLevel === 4) skillScore += 8;
-    else if (ribbonLevel === 3) skillScore += 6;
-    else if (ribbonLevel === 2) skillScore += 4;
-    else if (ribbonLevel === 1) skillScore += 2;
-
     skillScore = Math.min(Math.max(Math.round(skillScore), 15), 100);
 
     // 4. 幫忙速度 (Speed Power)
@@ -320,22 +372,17 @@
       calculatedInterval = totalSec;
       if (totalSec < 2400) speedScore += 15;
       else if (totalSec < 3000) speedScore += 8;
-      else if (totalSec > 4000) speedScore -= 8;
+      else if (totalSec > 3800) speedScore -= 8;
     }
-
-    // 等級幫忙速度遞減加成 (每級約 0.2%)
-    const speedFromLv = Math.round(((currentLv - 1) * 0.002) * 60);
+    const speedFromLv = Math.round(((currentLv - 1) * 0.002) * 50);
     speedScore += speedFromLv;
 
-    if (activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1) speedScore += 14;
-    if (activeSubskills.indexOf('幫忙速度S') !== -1 || activeSubskills.indexOf('Helping Speed S') !== -1) speedScore += 7;
-    if (activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1) speedScore += 8;
-    if (nature.buffType === 'speed') speedScore += 10;
-    if (nature.debuffType === 'speed') {
-      speedScore -= (specialty === '食材' || specialty === 'Ingredients' || specialty.indexOf('食材') !== -1) ? 3 : 8;
-    }
+    if (activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1) speedScore += 18;
+    if (activeSubskills.indexOf('幫忙速度S') !== -1 || activeSubskills.indexOf('Helping Speed S') !== -1) speedScore += 8;
+    if (activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1) speedScore += 12;
+    if (nature.buffType === 'speed') speedScore += 12;
+    if (nature.debuffType === 'speed') speedScore -= 14;
 
-    // 睡飽飽獎章加成 (Good-Night Ribbon Bonus)
     const remainingEvos = getRemainingEvolutions(pkmData);
     const ribbonBonus = getRibbonBonus(ribbonLevel, remainingEvos);
     if (ribbonBonus.speedDiscount > 0) {
@@ -344,37 +391,37 @@
         calculatedInterval = Math.round(calculatedInterval * (1 - ribbonBonus.speedDiscount));
       }
     }
-    speedScore = Math.min(Math.max(Math.round(speedScore), 20), 100);
+    speedScore = Math.min(Math.max(Math.round(speedScore), 15), 100);
 
-    // 5. 後期成長 (Late-game Growth: 僅計入已達到等級解鎖門檻的副技能，拔除雞肋金技)
+    // 5. 後期成長 (Late-game Growth)
     let growthScore = 48;
     subskillArr.forEach(function(s, idx) {
       if (!s || idx < 2) return;
       const isUnlocked = currentLv >= (slotLevels[idx] || 50);
       if (isUnlocked) {
         if (['樹果數量S', '幫手獎勵', '幫忙速度M', '食材機率提升M', '技能機率提升M', 'Berry Finding S', 'Helping Bonus', 'Helping Speed M', 'Ingredient Finder M', 'Skill Trigger M'].indexOf(s) !== -1) {
-          growthScore += 12;
+          growthScore += 14;
         } else if (['技能機率提升S', '食材機率提升S', '幫忙速度S', '持有上限提升L', 'Skill Trigger S', 'Ingredient Finder S', 'Helping Speed S', 'Inventory Up L'].indexOf(s) !== -1) {
           growthScore += 10;
         } else if (['持有上限提升M', 'Inventory Up M'].indexOf(s) !== -1) {
-          growthScore += 7;
+          growthScore += 6;
         } else if (['持有上限提升S', 'Inventory Up S'].indexOf(s) !== -1) {
-          growthScore += 4;
+          growthScore += 3;
         } else if (['睡眠EXP獎勵', '技能等級提升M', '技能等級提升S', '夢之碎片獎勵', '研究EXP獎勵'].indexOf(s) !== -1) {
           growthScore += 2;
         }
       }
     });
-    if (currentLv >= 60) growthScore += 12;
-    else if (currentLv >= 50) growthScore += 6;
+    if (currentLv >= 60) growthScore += 10;
+    else if (currentLv >= 50) growthScore += 5;
     if (ribbonLevel === 4) growthScore += 6;
     else if (ribbonLevel >= 2) growthScore += 3;
     if (nature.buffType === 'exp') growthScore += 6;
     if (nature.debuffType === 'exp') growthScore -= 4;
-    growthScore = Math.min(Math.max(Math.round(growthScore), 20), 100);
+    growthScore = Math.min(Math.max(Math.round(growthScore), 15), 100);
 
-    // 6. 資源效益 (Resource Efficiency & ROI: 僅計入已達到等級解鎖門檻的副技能)
-    let roiScore = 50;
+    // 6. 資源效益 (Resource Efficiency & ROI)
+    let roiScore = 40;
     subskillArr.forEach(function(s, idx) {
       if (!s || idx >= 2) return;
       const isUnlocked = currentLv >= (slotLevels[idx] || 10);
@@ -383,7 +430,6 @@
           if (s === '樹果數量S' || s === 'Berry Finding S') roiScore += 24;
           if (s === '持有上限提升L' || s === 'Inventory Up L') roiScore += 6;
           else if (s === '持有上限提升M' || s === 'Inventory Up M') roiScore += 4;
-          else if (s === '持有上限提升S' || s === 'Inventory Up S') roiScore += 2;
         }
         if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
           if (s === '食材機率提升M' || s === 'Ingredient Finder M') roiScore += 22;
@@ -395,11 +441,7 @@
         if (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') {
           if (s === '技能機率提升M' || s === 'Skill Trigger M') roiScore += 22;
           if (s === '技能機率提升S' || s === 'Skill Trigger S') roiScore += 14;
-          if (isBfsSkillSpecialist(pkmData) && (s === '樹果數量S' || s === 'Berry Finding S')) roiScore += 20;
-          else if (isChargeStrengthSkillSpecialist(pkmData) && (s === '樹果數量S' || s === 'Berry Finding S')) roiScore += 10;
           if (s === '持有上限提升L' || s === 'Inventory Up L') roiScore += 8;
-          else if (s === '持有上限提升M' || s === 'Inventory Up M') roiScore += 5;
-          else if (s === '持有上限提升S' || s === 'Inventory Up S') roiScore += 3;
         }
         if (s === '幫手獎勵' || s === 'Helping Bonus' || s === '幫忙速度M' || s === 'Helping Speed M') roiScore += 12;
         if (s === '幫忙速度S' || s === 'Helping Speed S') roiScore += 6;
@@ -414,19 +456,26 @@
     if (specialty === '食材' || specialty === 'Ingredients' || specialty.indexOf('食材') !== -1) {
       if (nature.buffType === 'ingredient') roiScore += 10;
     }
-    roiScore = Math.min(Math.max(Math.round(roiScore), 20), 100);
+    roiScore = Math.min(Math.max(Math.round(roiScore), 15), 100);
 
-    // 綜合加權評分 (專長特化主導，不因非本質維度拖累專業型寶可夢)
+    // ─── 綜合加權評分 (Specialty-Weighted Composite Score) ─────────────
     let compositeScore = 0;
+    const isHybridBfsCandidate = (isCharge || isHelper || isSlaking) && hasBFS;
+
     if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
       compositeScore = (berryScore * 0.50) + (speedScore * 0.24) + (roiScore * 0.14) + (growthScore * 0.12);
     } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
       compositeScore = (ingScore * 0.50) + (speedScore * 0.24) + (roiScore * 0.14) + (growthScore * 0.12);
     } else {
-      compositeScore = (skillScore * 0.50) + (speedScore * 0.24) + (roiScore * 0.14) + (growthScore * 0.12);
+      if (isHybridBfsCandidate) {
+        // 技能型 BFS 雙修產能補償：以樹果高額副輸出補足總能量期望
+        compositeScore = (skillScore * 0.32) + (berryScore * 0.32) + (speedScore * 0.22) + (roiScore * 0.14);
+      } else {
+        compositeScore = (skillScore * 0.50) + (speedScore * 0.24) + (roiScore * 0.14) + (growthScore * 0.12);
+      }
     }
 
-    // 持有上限綜效加成 (Carry Limit Synergy: 離線防溢滿核心，S/M/L 明顯區分)
+    // 持有上限綜效加成 (Carry Limit Synergy)
     let carrySynergy = 0;
     const hasCarryL = activeSubskills.some(s => s === '持有上限提升L' || s === 'Inventory Up L');
     const hasCarryM = activeSubskills.some(s => s === '持有上限提升M' || s === 'Inventory Up M');
@@ -440,97 +489,129 @@
       if (hasCarryL) carrySynergy = 2.0;
       else if (hasCarryM) carrySynergy = 1.2;
       else if (hasCarryS) carrySynergy = 0.6;
-    } else {
-      if (hasCarryL) carrySynergy = 1.0;
-      else if (hasCarryM) carrySynergy = 0.5;
-      else if (hasCarryS) carrySynergy = 0.2;
     }
-
     compositeScore += carrySynergy;
 
     // 專長契合與天花板綜效 (Specialty Synergy & Ceiling Bonuses)
     let specialtySynergy = 0;
     if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
-      if (nature.buffType === 'ingredient') specialtySynergy += 1.2;
-      if (ingredients.length >= 3 && currentLv >= 60 && ingredients[0] === ingredients[1] && ingredients[1] === ingredients[2]) specialtySynergy += 1.2;
-      else if (ingredients.length >= 2 && currentLv >= 30 && ingredients[0] === ingredients[1]) specialtySynergy += 0.6;
-      const hasIngM = activeSubskills.some(s => s === '食材機率提升M' || s === 'Ingredient Finder M');
-      const hasIngS = activeSubskills.some(s => s === '食材機率提升S' || s === 'Ingredient Finder S');
-      const hasSpeedM = activeSubskills.some(s => s === '幫忙速度M' || s === 'Helping Speed M');
-      const hasHelpBonus = activeSubskills.some(s => s === '幫手獎勵' || s === 'Helping Bonus');
-      if (hasIngM && (hasIngS || hasSpeedM || hasHelpBonus)) specialtySynergy += 1.2;
-      if (ribbonLevel === 4) specialtySynergy += 0.8;
-      else if (ribbonLevel >= 2) specialtySynergy += 0.4;
+      if (nature.buffType === 'ingredient') specialtySynergy += 2.0;
+      if (hasIngM) specialtySynergy += 2.0;
+      if (ingredients.length >= 3 && currentLv >= 60 && ingredients[0] === ingredients[1] && ingredients[1] === ingredients[2]) specialtySynergy += 1.5;
+      else if (ingredients.length >= 2 && currentLv >= 30 && ingredients[0] === ingredients[1]) specialtySynergy += 1.0;
+      if (ribbonLevel === 4) specialtySynergy += 1.0;
+      else if (ribbonLevel >= 2) specialtySynergy += 0.5;
     } else if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
-      const hasBFS = activeSubskills.some(s => s === '樹果數量S' || s === 'Berry Finding S');
-      const hasSpeedM = activeSubskills.some(s => s === '幫忙速度M' || s === 'Helping Speed M');
-      const hasHelpBonus = activeSubskills.some(s => s === '幫手獎勵' || s === 'Helping Bonus');
-      if (hasBFS) specialtySynergy += 1.5;
-      if (nature.buffType === 'speed') specialtySynergy += 1.2;
-      if (hasBFS && (hasSpeedM || hasHelpBonus)) specialtySynergy += 1.2;
-      if (ribbonLevel === 4) specialtySynergy += 0.8;
-      else if (ribbonLevel >= 2) specialtySynergy += 0.4;
+      if (hasBFS) specialtySynergy += 3.0;
+      if (nature.buffType === 'speed') specialtySynergy += 2.0;
+      if (hasBFS && (activeSubskills.some(s => s.includes('幫忙速度') || s.includes('幫手獎勵')))) specialtySynergy += 2.0;
+      if (ribbonLevel === 4) specialtySynergy += 1.0;
+      else if (ribbonLevel >= 2) specialtySynergy += 0.5;
     } else {
-      const hasSkillM = activeSubskills.some(s => s === '技能機率提升M' || s === 'Skill Trigger M');
-      const hasSkillS = activeSubskills.some(s => s === '技能機率提升S' || s === 'Skill Trigger S');
-      const hasSpeedM = activeSubskills.some(s => s === '幫忙速度M' || s === 'Helping Speed M');
-      const hasHelpBonus = activeSubskills.some(s => s === '幫手獎勵' || s === 'Helping Bonus');
-      const isBfsSkill = isBfsSkillSpecialist(pkmData);
-      const hasBFS = activeSubskills.some(s => s === '樹果數量S' || s === 'Berry Finding S');
-      if (hasSkillM) specialtySynergy += 1.5;
-      if (nature.buffType === 'skill') specialtySynergy += 1.2;
-      if (hasSkillM && (hasSkillS || hasSpeedM || hasHelpBonus)) specialtySynergy += 1.2;
-      if (isBfsSkill && hasSkillM && hasBFS) specialtySynergy += 1.5;
-      if (ribbonLevel === 4) specialtySynergy += 0.8;
-      else if (ribbonLevel >= 2) specialtySynergy += 0.4;
+      if (hasSkillM) specialtySynergy += 3.0;
+      if (nature.buffType === 'skill') specialtySynergy += 2.0;
+      if (isHybridBfsCandidate) specialtySynergy += 4.5; // 雙修突破加分
+      if (ribbonLevel === 4) specialtySynergy += 1.0;
+      else if (ribbonLevel >= 2) specialtySynergy += 0.5;
     }
     compositeScore += specialtySynergy;
 
-    // 專長精通基準加成 (Specialty Mastery: 必須包含有效專長副技能，該有都有即能穩定達標 90+ S 級門檻)
+    // 專長精通基準加成 (Specialty Mastery)
     let specialtyMasteryBonus = 0;
     const hasCoreIng = activeSubskills.some(s => ['食材機率提升M', '食材機率提升S', 'Ingredient Finder M', 'Ingredient Finder S', '持有上限提升L', '持有上限提升M', '持有上限提升S', 'Inventory Up L', 'Inventory Up M', 'Inventory Up S', '幫手獎勵', 'Helping Bonus'].indexOf(s) !== -1);
     const hasCoreBerry = activeSubskills.some(s => ['樹果數量S', 'Berry Finding S', '幫忙速度M', '幫忙速度S', 'Helping Speed M', 'Helping Speed S', '幫手獎勵', 'Helping Bonus'].indexOf(s) !== -1);
-    const isBfsSkill = isBfsSkillSpecialist(pkmData);
-    const coreSkillList = isBfsSkill
-      ? ['技能機率提升M', '技能機率提升S', 'Skill Trigger M', 'Skill Trigger S', '樹果數量S', 'Berry Finding S', '幫手獎勵', 'Helping Bonus']
-      : ['技能機率提升M', '技能機率提升S', 'Skill Trigger M', 'Skill Trigger S', '幫手獎勵', 'Helping Bonus'];
-    const hasCoreSkill = activeSubskills.some(s => coreSkillList.indexOf(s) !== -1);
+    const hasCoreSkill = activeSubskills.some(s => ['技能機率提升M', '技能機率提升S', 'Skill Trigger M', 'Skill Trigger S', '幫手獎勵', 'Helping Bonus'].indexOf(s) !== -1);
 
     if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
       if (hasCoreIng && ingScore >= 95) specialtyMasteryBonus = activeSubskills.length >= 3 ? 6 : 4;
       else if (hasCoreIng && ingScore >= 85) specialtyMasteryBonus = activeSubskills.length >= 2 ? 4 : 2;
     } else if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
-      if (hasCoreBerry && berryScore >= 95) specialtyMasteryBonus = activeSubskills.length >= 3 ? 6 : 3;
-      else if (hasCoreBerry && berryScore >= 85) specialtyMasteryBonus = activeSubskills.length >= 2 ? 3 : 1;
+      if (hasCoreBerry && berryScore >= 95) specialtyMasteryBonus = activeSubskills.length >= 3 ? 6 : 4;
+      else if (hasCoreBerry && berryScore >= 85) specialtyMasteryBonus = activeSubskills.length >= 2 ? 4 : 2;
     } else {
       if (hasCoreSkill && skillScore >= 95) specialtyMasteryBonus = activeSubskills.length >= 3 ? 6 : 4;
       else if (hasCoreSkill && skillScore >= 85) specialtyMasteryBonus = activeSubskills.length >= 2 ? 4 : 2;
     }
     compositeScore += specialtyMasteryBonus;
 
-    // 主技能等級實質效益加成 (Main Skill Level Bonus: Lv.1 基礎 +0，Lv.2~7 逐級提升)
+    // 幫手獎勵全隊頂級戰略加成
+    if (activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1) {
+      compositeScore += 3.5;
+    }
+
+    // 主技能等級實質效益加成
     let skillLvlBonus = 0;
     if (skillLevel > 1) {
       if (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') {
-        // 技能型：主技能等級為核心輸出源，每級提供 +1.5 分 (Lv.6 = +7.5, Lv.7 = +9.0)
         skillLvlBonus = (skillLevel - 1) * 1.5;
       } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
-        // 食材型：食材獲取S/精選S等副產能，每級提供 +0.8 分 (Lv.6 = +4.0, Lv.7 = +4.8)
         skillLvlBonus = (skillLevel - 1) * 0.8;
       } else {
-        // 樹果型：能量充能等輔助，每級提供 +0.5 分 (Lv.6 = +2.5, Lv.7 = +3.0)
         skillLvlBonus = (skillLevel - 1) * 0.5;
       }
     }
     compositeScore += skillLvlBonus;
 
-    // 無副技能嚴格防溢上限：副技能清空狀態下絕對不可評為 S / SS / SSS
-    if (activeSubskills.length === 0) {
-      compositeScore = Math.min(74, compositeScore);
+    // 呆呆獸家族 (Slowpoke Family) 尾巴戰略解鎖判定
+    if (isSlowpoke) {
+      const hasTailLv30 = ingredients.length >= 2 && (ingredients[1] === '美味尾巴' || (ingredients[1] && ingredients[1].includes('尾巴')) || (ingredients[1] && ingredients[1].includes('Tail')));
+      if (hasTailLv30) {
+        compositeScore += 14.0;
+        if (nature.buffType === 'exp' || activeSubskills.indexOf('睡眠EXP獎勵') !== -1) {
+          compositeScore += 4.0; // 加速解鎖獎勵
+        }
+      } else {
+        compositeScore -= 20.0;
+        compositeScore = Math.min(64, compositeScore); // 未出尾巴核心失職
+      }
     }
-    compositeScore = Math.min(100, Math.max(20, Math.round(compositeScore)));
 
-    // 評級判定 (新增 SSS, SS，明確劃分 98+, 95+, 90+, 80+, 70+, 60+, <60)
+    // ─── 嚴格淘汰門檻與分數截斷 (Strict Disqualifications & Hard Caps) ─
+    // 1. 樹果型門檻：無 BFS 原則上封頂 72 (B/C級)；極致幫速特例放寬至 85 (A級)
+    if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
+      if (!hasBFS) {
+        const hasHB = activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1;
+        const hasSpeedM = activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1;
+        const isExtremeSpeed = hasHB && hasSpeedM && (nature.buffType === 'speed');
+        if (isExtremeSpeed) {
+          compositeScore = Math.min(85, compositeScore);
+        } else {
+          compositeScore = Math.min(72, compositeScore);
+        }
+      }
+      // 樹果型減幫速致命扣分
+      if (nature.debuffType === 'speed') {
+        compositeScore = Math.min(64, compositeScore);
+      }
+    }
+
+    // 2. 食材型門檻：減食材性格直接鎖死於 C/D 級 (<= 62)；ABC 雜菜組合封頂 A 級 (<= 88)
+    if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
+      if (nature.debuffType === 'ingredient') {
+        compositeScore = Math.min(62, compositeScore);
+      }
+      if (isABCCombination) {
+        compositeScore = Math.min(88, compositeScore);
+      }
+    }
+
+    // 3. 技能型門檻：補師減技能性格鎖死 D 級 (<= 58)；補師完全無發動率加成鎖死 C 級 (<= 68)
+    if (isHealer) {
+      if (nature.debuffType === 'skill') {
+        compositeScore = Math.min(58, compositeScore);
+      } else if (!hasSkillM && !hasSkillS && nature.buffType !== 'skill') {
+        compositeScore = Math.min(68, compositeScore);
+      }
+    }
+
+    // 4. 無副技能嚴格防溢上限：副技能清空狀態下絕對不可評為 S / SS / SSS / A
+    if (activeSubskills.length === 0) {
+      compositeScore = Math.min(62, compositeScore);
+    }
+
+    compositeScore = Math.min(100, Math.max(15, Math.round(compositeScore)));
+
+    // 評級判定 (7 級制: SSS, SS, S, A, B, C, D)
     let grade = 'B';
     let gradeTitle = isEN ? 'Solid Choice' : '實用良品 (Solid Choice)';
     let gradeColor = '#10b981';
@@ -564,23 +645,14 @@
       gradeColor = '#ef4444';
     }
 
-    // 深度優點與缺點分析 (Pros & Cons, 嚴格遵守全域 Zero Emoji 規範)
+    // 深度優點與缺點分析 (Pros & Cons)
     const pros = [];
     const cons = [];
 
     const hasBFSInTotal = activeSubskills.indexOf('樹果數量S') !== -1 || activeSubskills.indexOf('Berry Finding S') !== -1;
-    const pkmName = pkmData.name_cn || (pkmData.name && pkmData.name.cn) || pkmData.name_en || pkmData.name || '';
-
-    const isHealer = isHealerSkillSpecialist(pkmData);
-    const isHelper = isHelperBoostSkillSpecialist(pkmData);
-    const isCharge = isChargeStrengthSkillSpecialist(pkmData);
 
     if (hasBFSInTotal) {
-      if (isBfsSkill) {
-        pros.push(isEN
-          ? '[★] Equipped with "Berry Finding S", perfectly unlocking dual-specialist berry & skill power!'
-          : '[★] 具備已解鎖「樹果數量S」，完美契合樹果/加速型技能之雙專精頂標戰力！');
-      } else if (isHelper) {
+      if (isHelper) {
         cons.push(isEN
           ? '[!] Helper Boost base proc rate is extremely low (~2%); "Berry Finding S" causes rapid bag overflow and blocks main skill checks, crowding out trigger subskills.'
           : '[!] 傳說神獸「幫手加速」基礎機率極低（約2%），持有「樹果數量S」會迅速塞滿背包並阻斷主技能判定，嚴重排擠關鍵技能機率與持有上限。');
@@ -588,46 +660,90 @@
         cons.push(isEN
           ? '[!] Healer relies on all-day skill procs; "Berry Finding S" causes rapid bag overflow and blocks healing procs (especially overnight).'
           : '[!] 活力療癒補師首重全隊活力維持，「樹果數量S」會大幅加速滿包並阻斷主技能判定（尤其睡眠過夜期間），需高頻清包。');
-      } else if (isCharge) {
+      } else if (isCharge || isSlaking) {
         pros.push(isEN
-          ? '[+] Equipped with "Berry Finding S" for high-strength hybrid berry output (ensure frequent collection to avoid bag overflow blocking skill procs).'
-          : '[+] 具備「樹果數量S」解鎖高額樹果副輸出，兼顧單兵直傷與產果（需留意及時清包避免阻斷主技能判定）。');
+          ? '[★] Equipped with "Berry Finding S" for high-strength hybrid berry output (ensure frequent collection to avoid bag overflow blocking skill procs).'
+          : '[★] 具備「樹果數量S」解鎖高額樹果副輸出，兼顧單兵直傷與產果（需留意及時清包避免阻斷主技能判定）。');
       } else if (pkmName.includes('咚咚鼠') || pkmName.includes('Dedenne') || pkmName.includes('磁怪') || pkmName.includes('Magne') || pkmName.includes('喵喵') || pkmName.includes('Meowth')) {
         cons.push(isEN
           ? '[!] Tactical skill specialist; "Berry Finding S" causes early bag overflow and blocks main skill checks.'
           : '[!] 純戰術型技能寶可夢持有上限較低，擁有「樹果數量S」容易過早滿包限制主技能判定。');
+      } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
+        const hasCarryBuff = activeSubskills.some(s => s.includes('持有上限') || s.includes('Inventory Up'));
+        if (hasCarryBuff) {
+          pros.push(isEN
+            ? '[+] Features "Berry Finding S" backed by Inventory Up, providing bonus berry value without hurting ingredient capacity.'
+            : '[+] 具備「樹果數量S」並搭配「持有上限提升」，兼顧穩定副產能且不易過早滿包。');
+        } else {
+          cons.push(isEN
+            ? '[-] "Berry Finding S" on ingredient specialist without Inventory Up causes rapid overflow, blocking ingredient drops during sleep.'
+            : '[-] 食材型持有「樹果數量S」但缺乏「持有上限提升」，易在離線期間快速滿包並提前進入偷吃樹果狀態阻斷產料。');
+        }
       } else {
         pros.push(isEN
           ? '[★] Equipped with active God-tier sub-skill "Berry Finding S", +1 berry per help.'
           : '[★] 擁有已解鎖神技「樹果數量S」，樹果產能躍升 +1 個。');
       }
     } else if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
-      cons.push(isEN
-        ? '[!] Berry specialist without active "Berry Finding S", ceiling is below top meta.'
-        : '[!] 樹果型專長未激活「樹果數量S」，當前產能較難與頂標相比。');
+      const hasHB = activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1;
+      const hasSpeedM = activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1;
+      if (hasHB && hasSpeedM && nature.buffType === 'speed') {
+        pros.push(isEN
+          ? '[+] Features extreme speed kit (Helping Bonus + Helping Speed M + Speed Up Nature), qualifying as a viable core support.'
+          : '[+] 具備「幫手獎勵 + 幫忙速度M + 加幫速性格」之極限幫速配置，成功特例躋身主力行列！');
+      } else {
+        cons.push(isEN
+          ? '[-] Berry specialist without active "Berry Finding S", production ceiling is capped below top tier.'
+          : '[-] 樹果型專長未激活「樹果數量S」，核心產能與頂標差距明顯，上限封頂於過渡可用（最高B級）。');
+      }
     }
 
-    const hasIngMInTotal = activeSubskills.indexOf('食材機率提升M') !== -1;
+    if (isSlowpoke) {
+      const hasTailLv30 = ingredients.length >= 2 && (ingredients[1] === '美味尾巴' || (ingredients[1] && ingredients[1].includes('尾巴')) || (ingredients[1] && ingredients[1].includes('Tail')));
+      if (hasTailLv30) {
+        pros.push(isEN
+          ? '[★] Lv.30 unlocks the most valuable ingredient "Slowpoke Tail", fulfilling primary strategic unlock mission!'
+          : '[★] Lv.30 解鎖遊戲最頂級食材「美味尾巴」，達成呆呆獸家族首要戰略解鎖使命！');
+      } else {
+        cons.push(isEN
+          ? '[-] Lv.30 does NOT yield "Slowpoke Tail", failing its core strategic unlock role.'
+          : '[-] 致命失職：Lv.30 未出「美味尾巴」，喪失呆呆獸家族核心戰略解鎖價值。');
+      }
+    }
+
+    if (isHealer) {
+      if (nature.debuffType === 'skill') {
+        cons.push(isEN
+          ? '[-] Critical flaw: Healer has Main Skill Trigger Down nature, failing to sustain team energy.'
+          : '[-] 致命缺陷：補師性格為減主技能發動率（-20%），全天期望回能嚴重不足，無法勝任隊伍基石。');
+      } else if (!hasSkillM && !hasSkillS && nature.buffType !== 'skill') {
+        cons.push(isEN
+          ? '[!] Lacks any active Skill Trigger subskills or nature boost; healing frequency is too low for reliable team recovery.'
+          : '[!] 缺乏任何主技能發動率副技能或性格加成，發動期望偏低，無法穩定維持全隊活力。');
+      }
+    }
+
+    const hasIngMInTotal = activeSubskills.indexOf('食材機率提升M') !== -1 || activeSubskills.indexOf('Ingredient Finder M') !== -1;
     if (hasIngMInTotal) {
       pros.push(isEN
         ? '[+] Features active "Ingredient Finder M", greatly stabilizing ingredient supply.'
         : '[+] 具備已解鎖「食材機率提升M」，大幅提升料理食材供貨穩定度。');
     }
 
-    const hasSkillMInTotal = activeSubskills.indexOf('技能機率提升M') !== -1;
+    const hasSkillMInTotal = activeSubskills.indexOf('技能機率提升M') !== -1 || activeSubskills.indexOf('Skill Trigger M') !== -1;
     if (hasSkillMInTotal) {
       pros.push(isEN
         ? '[+] Features active "Skill Trigger M", significantly raising main skill activation frequency.'
         : '[+] 擁有已解鎖「技能機率提升M」，主技能發動頻率顯著提高。');
     }
 
-    if (activeSubskills.indexOf('幫手獎勵') !== -1) {
+    if (activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1) {
       pros.push(isEN
-        ? '[+] Features active top-tier team aura "Helping Bonus", reducing team helping time by 5%.'
-        : '[+] 具備已解鎖全隊頂級光環「幫手獎勵」，全員幫忙時間縮短 5%。');
+        ? '[★] Features active top-tier team aura "Helping Bonus", reducing team helping time by 5%.'
+        : '[★] 具備已解鎖全隊頂級光環「幫手獎勵」，全員幫忙時間縮短 5%（相當於全隊淨產能大幅提升）。');
     }
 
-    if (activeSubskills.indexOf('幫忙速度M') !== -1) {
+    if (activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1) {
       pros.push(isEN
         ? '[+] Features active "Helping Speed M", shortening self helping interval by 14%.'
         : '[+] 擁有已解鎖「幫忙速度M」，自身幫忙間隔縮短 14%。');
@@ -651,8 +767,8 @@
       }
     } else if (nature.debuffType === 'speed') {
       cons.push(isEN
-        ? `[-] Nature "${natDisplayName}" reduces Speed of Help ▼ (-7.5%), slightly impacting output.`
-        : '[-] 性格「' + natureName + '」幫忙速度▼ (-7.5%)，對全方位產出有微幅負面影響。');
+        ? `[-] Nature "${natDisplayName}" reduces Speed of Help ▼ (-7.5%), severely impacting output.`
+        : '[-] 性格「' + natureName + '」幫忙速度▼ (-7.5%)，對全方位產出有顯著負面影響。');
     }
 
     if (nature.buffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
@@ -661,20 +777,18 @@
         : '[+] 性格「' + natureName + '」完美契合食材型專長 (食材發現率▲ +20%)。');
     } else if (nature.debuffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
       cons.push(isEN
-        ? `[-] Nature "${natDisplayName}" reduces Ingredient Finding ▼ (-20%), severely weakening specialty advantage.`
-        : '[-] 性格「' + natureName + '」導致食材發現率▼ (-20%)，嚴重削弱食材專長優勢。');
+        ? `[-] Nature "${natDisplayName}" reduces Ingredient Finding ▼ (-20%), severely weakening specialty advantage (disqualification flaw).`
+        : '[-] 致命缺陷：性格「' + natureName + '」導致食材發現率▼ (-20%)，產料嚴重不足，建議換糖回收。');
     }
 
     if (nature.buffType === 'skill' && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
-      if (isBfsSkill && natureName === '慎重') {
-        pros.push(isEN
-          ? '[★] Nature "Careful" is optimal for dual-role Skill specialists (Main Skill Trigger ▲ +20%, Ingredient Finding ▼ mitigates inventory clogging to protect skill procs and berry output).'
-          : '[★] 性格「慎重」為雙修技能型極品性格（主技能機率▲ +20%，食材機率▼ 降低塞包風險以保障技能發動與樹果收益）。');
-      } else {
-        pros.push(isEN
-          ? `[+] Nature "${natDisplayName}" perfectly matches Skill specialty (Main Skill Trigger ▲ +20%).`
-          : '[+] 性格「' + natureName + '」完美契合技能型專長 (主技能發動率▲ +20%)。');
-      }
+      pros.push(isEN
+        ? `[+] Nature "${natDisplayName}" perfectly matches Skill specialty (Main Skill Trigger ▲ +20%).`
+        : '[+] 性格「' + natureName + '」完美契合技能型專長 (主技能發動率▲ +20%)。');
+    } else if (nature.debuffType === 'skill' && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
+      cons.push(isEN
+        ? `[-] Nature "${natDisplayName}" reduces Main Skill Trigger ▼ (-20%), severely crippling skill output.`
+        : '[-] 致命缺陷：性格「' + natureName + '」導致主技能發動率▼ (-20%)，嚴重閹割核心發動頻率。');
     }
 
     if (ribbonBonus.level > 0) {
@@ -699,15 +813,15 @@
           if (i0 === i1 && i1 === i2) {
             pros.push(isEN
               ? '[★] Pure mono-ingredient (AAA) configuration, maximizing targeted ingredient yield for top recipes.'
-              : '[★] 具備純色 AAA 食材配置，特定食材產量高度集中，為頂級食材專精配置。');
+              : '[★] 具備極品純色 AAA 食材配置，特定食材產量高度集中，為頂級食材專精配置。');
           } else if (i0 !== i1 && i1 === i2) {
             pros.push(isEN
               ? '[+] Dual-ingredient (ABB) configuration, excellent mid-to-late game specialized output.'
-              : '[+] 具備 ABB 雙色食材配置，二階與三階食材量產能力卓越。');
+              : '[+] 具備強勢 ABB 雙色食材配置，二階與三階食材量產能力卓越。');
           } else if (i0 !== i1 && i1 !== i2 && i0 !== i2) {
             cons.push(isEN
-              ? '[-] Split-ingredient (ABC) configuration, recipe ingredient dilution may lead to target ingredient deficit.'
-              : '[-] 三格食材分散 (ABC 配置)，產出種類分散可能導致特定主力料理原料短缺。');
+              ? '[-] Split-ingredient (ABC) configuration, recipe ingredient dilution caps overall potential.'
+              : '[-] 三格食材分散 (ABC 雜菜配置)，產出種類嚴重稀釋難以穩定供應主力食譜，評級上限受限於A級。');
           }
         }
       }
@@ -722,8 +836,8 @@
 
     if (pros.length === 0) {
       pros.push(isEN
-        ? '[*] Well-balanced stats, suitable as a reliable placeholder support.'
-        : '[*] 數值均衡，適合作為過渡期日常隊伍輔助成員。');
+        ? '[*] Basic stats, suitable as a temporary placeholder.'
+        : '[*] 數值平庸，適合作為過渡期日常隊伍替補成員。');
     }
 
     // 升級消耗計算
@@ -1409,6 +1523,8 @@
     isHealerSkillSpecialist: isHealerSkillSpecialist,
     isHelperBoostSkillSpecialist: isHelperBoostSkillSpecialist,
     isChargeStrengthSkillSpecialist: isChargeStrengthSkillSpecialist,
+    isSlowpokeFamily: isSlowpokeFamily,
+    isSlakingFamily: isSlakingFamily,
     evaluatePokemon: evaluatePokemon,
     getRemainingEvolutions: getRemainingEvolutions,
     getRibbonBonus: getRibbonBonus,
