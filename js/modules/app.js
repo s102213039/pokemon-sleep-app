@@ -5615,16 +5615,20 @@ function renderPokedexDetailModalContent() {
           </div>
         </div>
 
-        <div class="pokedex-header-actions" style="display:flex;align-items:center;gap:8px;">
-          <div class="pokedex-header-verdict-badge current-track" id="pokedex-header-verdict-badge" style="border-color: ${(evaluation.current || evaluation).gradeColor};" title="${isEN ? `Current Level Rating (Lv.${pokedexModalState.level})` : `當前實力評級 (Lv.${pokedexModalState.level})`}">
-            <span style="font-size:10px;color:#94a3b8;display:block;line-height:1;margin-bottom:2px;">${isEN ? `Lv.${pokedexModalState.level}` : `當前 Lv.${pokedexModalState.level}`}</span>
-            <span class="verdict-grade pokedex-header-grade-text" style="color: ${(evaluation.current || evaluation).gradeColor};">${(evaluation.current || evaluation).grade}</span>
-            <span class="pokedex-header-score-text"><span class="verdict-num font-bold">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
-          </div>
-          <div class="pokedex-header-verdict-badge potential-track" id="pokedex-header-potential-badge" style="border-color: ${(evaluation.potential || evaluation).gradeColor};" title="${isEN ? 'Max Potential Rating (Lv.100)' : '畢業潛力評級 (Lv.100)'}">
-            <span style="font-size:10px;color:#94a3b8;display:block;line-height:1;margin-bottom:2px;">${isEN ? 'Lv.100 Pot' : '滿級潛力'}</span>
-            <span class="verdict-potential-grade pokedex-header-grade-text" style="color: ${(evaluation.potential || evaluation).gradeColor};">${(evaluation.potential || evaluation).grade}</span>
-            <span class="pokedex-header-score-text"><span class="verdict-potential-num font-bold">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
+        <div class="pokedex-header-actions" style="display:flex;align-items:center;gap:10px;">
+          <div class="pokedex-dual-verdict-column" style="display:flex;flex-direction:column;gap:3px;align-items:flex-end;">
+            <!-- 當前實力 (主要，清晰亮眼) -->
+            <div class="pokedex-header-verdict-badge current-track" id="pokedex-header-verdict-badge" style="border-color: ${(evaluation.current || evaluation).gradeColor};" title="${isEN ? `Current Level Rating (Lv.${pokedexModalState.level})` : `當前實力評級 (Lv.${pokedexModalState.level})`}">
+              <span class="pokedex-verdict-track-lbl" style="font-size:10px;color:#94a3b8;line-height:1;">${isEN ? `Lv.${pokedexModalState.level}` : `當前 Lv.${pokedexModalState.level}`}</span>
+              <span class="verdict-grade pokedex-header-grade-text" style="color: ${(evaluation.current || evaluation).gradeColor};font-size:14px;font-weight:900;line-height:1;">${(evaluation.current || evaluation).grade}</span>
+              <span class="pokedex-header-score-text" style="font-size:11px;"><span class="verdict-num font-bold">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
+            </div>
+            <!-- 滿級潛力 (次要，小一點，上下並行在下方，一般較不明顯的顏色，不要高亮) -->
+            <div class="pokedex-header-verdict-badge potential-track" id="pokedex-header-potential-badge" title="${isEN ? 'Max Potential Rating (Lv.100)' : '畢業潛力評級 (Lv.100)'}">
+              <span class="pokedex-verdict-track-lbl" style="font-size:9px;color:#64748b;line-height:1;">${isEN ? 'Lv.100 Pot' : '滿級潛力'}</span>
+              <span class="verdict-potential-grade pokedex-header-grade-text" style="color:#94a3b8;font-size:11px;font-weight:700;line-height:1;">${(evaluation.potential || evaluation).grade}</span>
+              <span class="pokedex-header-score-text" style="font-size:10px;color:#94a3b8;"><span class="verdict-potential-num" style="font-weight:600;">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
+            </div>
           </div>
           <button type="button" class="box-modal-close pokedex-modal-close-btn" onclick="window.PokemonApp.closePokemonDetailModal()" aria-label="${isEN ? 'Close' : '關閉'}">✕</button>
         </div>
@@ -6009,17 +6013,19 @@ function updatePokedexModalAppraisalLive() {
   if (curBadge) {
     curBadge.style.borderColor = curEval.gradeColor;
     if (typeof curBadge.querySelector === 'function') {
-      const curLvLabel = curBadge.querySelector('span:first-child');
+      const curLvLabel = curBadge.querySelector('.pokedex-verdict-track-lbl') || curBadge.querySelector('span:first-child');
       if (curLvLabel) curLvLabel.textContent = isEN ? `Lv.${pokedexModalState.level}` : `當前 Lv.${pokedexModalState.level}`;
     }
   }
 
   if (potGradeEl) {
     potGradeEl.textContent = potEval.grade;
-    potGradeEl.style.color = potEval.gradeColor;
+    potGradeEl.style.color = '#94a3b8';
   }
   if (potNumEl) potNumEl.textContent = potEval.compositeScore;
-  if (potBadge) potBadge.style.borderColor = potEval.gradeColor;
+  if (potBadge) {
+    potBadge.style.borderColor = 'rgba(148, 163, 184, 0.25)';
+  }
 
   // 3. 更新食材產能算法拆解卡片與動態數值 (幫忙間隔、持有、食材率、技能率)
   const formulaData = calculatePokedexIngredientFormulas();

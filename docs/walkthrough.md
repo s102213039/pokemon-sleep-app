@@ -1019,9 +1019,11 @@
      - 縮小尺寸：字級調小至 `9.5px`（行動端 `8.5px`），內距縮減為 `1px 5px`，字重 `500`。
      - 低調不刺眼：移除彩色高亮漸層與外發光陰影（`box-shadow: none !important; text-shadow: none !important;`），採用微透明板岩灰底色 `rgba(148, 163, 184, 0.12)`、淡灰邊框 `rgba(148, 163, 184, 0.22)` 與次級文字顏色 `#94a3b8`。
    - 上下並行佈局（Vertical Stacked Layout）：
+     - 圖鑑詳情彈窗（Pokedex Detail Modal）：`.pokedex-header-actions` 新增 `.pokedex-dual-verdict-column` 垂直縱向堆疊容器，「當前」實力徽章居上保持鮮明對比，「滿級潛力」徽章縮小居下，字級降為 9.5px、微透明灰底無外發光與高亮，節省約 50% 頂欄水平寬度，完美適配桌機與行動端。
      - 倉庫卡片（Grid View）：`.box-dual-pr-badges` 調整為 `flex-direction: column; gap: 2px; align-items: flex-end; margin-left: auto;`，「當前」實力徽章居上，「潛力」評級徽章居下，緊湊排列不擠壓名稱。
      - 倉庫表格（Table View）：評級欄同樣垂直排列，結構統一。
-   - 快取版本升級至 `v=20260930_04`。
+     - 深度評測室（Appraisal Lab）：同步將滿級潛力卡片改為低調暗化樣式，避免高亮喧賓奪主。
+   - 快取版本升級至 `v=20260930_05`。
 
 2. 寶可夢抓捕完美個體機率與全維度數學精算研究：
    - 建立專門深入研究報告文件：`docs/POKEMON_RECRUITMENT_PROBABILITY_ANALYSIS.md`（同步更新至共用文件中心）。

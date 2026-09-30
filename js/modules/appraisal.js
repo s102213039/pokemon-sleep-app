@@ -1235,12 +1235,12 @@
                 <div class="appraisal-grade-title" style="font-size:11px;margin:2px 0;color:${(evaluation.current || evaluation).gradeColor};">${(evaluation.current || evaluation).gradeTitle}</div>
                 <div class="appraisal-composite-score" style="font-size:12px;color:#e2e8f0;"><span class="font-bold text-accent">${(evaluation.current || evaluation).compositeScore}</span> / 100</div>
               </div>
-              <!-- 畢業潛力 (Lv.100 Potential Rating) -->
-              <div class="appraisal-verdict-box appraisal-verdict-potential" style="border:1.5px solid ${(evaluation.potential || evaluation).gradeColor};background:rgba(15,23,42,0.65);border-radius:10px;padding:10px 8px;text-align:center;">
-                <div style="font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">${isEN ? 'Max Potential (Lv.100)' : '畢業潛力 (Lv.100)'}</div>
-                <div class="appraisal-grade-large" style="color:${(evaluation.potential || evaluation).gradeColor};font-size:30px;font-weight:900;line-height:1.1;">${(evaluation.potential || evaluation).grade}</div>
-                <div class="appraisal-grade-title" style="font-size:11px;margin:2px 0;color:${(evaluation.potential || evaluation).gradeColor};">${(evaluation.potential || evaluation).gradeTitle}</div>
-                <div class="appraisal-composite-score" style="font-size:12px;color:#e2e8f0;"><span class="font-bold text-accent">${(evaluation.potential || evaluation).compositeScore}</span> / 100</div>
+              <!-- 畢業潛力 (Lv.100 Potential Rating) - 較小且低調顏色 -->
+              <div class="appraisal-verdict-box appraisal-verdict-potential" style="border:1px solid rgba(148,163,184,0.25);background:rgba(15,23,42,0.45);border-radius:10px;padding:8px;text-align:center;opacity:0.88;">
+                <div style="font-size:10px;font-weight:600;color:#94a3b8;margin-bottom:3px;text-transform:uppercase;">${isEN ? 'Max Potential (Lv.100)' : '畢業潛力 (Lv.100)'}</div>
+                <div class="appraisal-grade-large" style="color:#94a3b8;font-size:24px;font-weight:700;line-height:1.1;">${(evaluation.potential || evaluation).grade}</div>
+                <div class="appraisal-grade-title" style="font-size:10px;margin:2px 0;color:#64748b;">${(evaluation.potential || evaluation).gradeTitle}</div>
+                <div class="appraisal-composite-score" style="font-size:11px;color:#94a3b8;"><span class="font-bold">${(evaluation.potential || evaluation).compositeScore}</span> / 100</div>
               </div>
             </div>
 
@@ -1603,10 +1603,10 @@
                   <span class="lab-grade-char" style="font-size:20px;line-height:1.1;">${(evaluation.current || evaluation).grade}</span>
                   <span style="font-size:11px;font-weight:700;display:block;">${(evaluation.current || evaluation).compositeScore} ${isEN ? 'pts' : '分'}</span>
                 </div>
-                <div class="lab-preview-verdict lab-verdict-pot" style="border-color: ${(evaluation.potential || evaluation).gradeColor}; color: ${(evaluation.potential || evaluation).gradeColor}; padding:4px 8px; border-radius:8px; text-align:center;">
-                  <span style="font-size:10px;display:block;color:#94a3b8;font-weight:700;">${isEN ? 'Potential Lv.100' : '滿級潛力 Lv.100'}</span>
-                  <span class="lab-grade-char" style="font-size:20px;line-height:1.1;">${(evaluation.potential || evaluation).grade}</span>
-                  <span style="font-size:11px;font-weight:700;display:block;">${(evaluation.potential || evaluation).compositeScore} ${isEN ? 'pts' : '分'}</span>
+                <div class="lab-preview-verdict lab-verdict-pot" style="border: 1px solid rgba(148,163,184,0.25); color: #94a3b8; background: rgba(148,163,184,0.08); padding:3px 6px; border-radius:6px; text-align:center; opacity:0.88;">
+                  <span style="font-size:9px;display:block;color:#64748b;font-weight:600;">${isEN ? 'Potential Lv.100' : '滿級潛力 Lv.100'}</span>
+                  <span class="lab-grade-char" style="font-size:16px;line-height:1.1;color:#94a3b8;">${(evaluation.potential || evaluation).grade}</span>
+                  <span style="font-size:10px;font-weight:600;display:block;color:#94a3b8;">${(evaluation.potential || evaluation).compositeScore} ${isEN ? 'pts' : '分'}</span>
                 </div>
               </div>
             </div>

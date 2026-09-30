@@ -24261,6 +24261,13 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
   flex-shrink: 0;
 }
 
+.pokedex-dual-verdict-column {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-end;
+}
+
 .pokedex-header-verdict-badge {
   display: inline-flex;
   align-items: center;
@@ -24270,6 +24277,49 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
   border-radius: 8px;
   padding: 3px 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.pokedex-header-verdict-badge.current-track {
+  gap: 6px;
+  padding: 2px 8px;
+  height: 24px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.pokedex-header-verdict-badge.potential-track {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 1px 7px !important;
+  height: 19px !important;
+  min-height: 19px !important;
+  border-radius: 4px !important;
+  background: rgba(148, 163, 184, 0.1) !important;
+  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  font-size: 10px !important;
+  color: #94a3b8 !important;
+  opacity: 0.88 !important;
+}
+
+.pokedex-header-verdict-badge.potential-track .verdict-potential-grade {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #94a3b8 !important;
+  line-height: 1 !important;
+  text-shadow: none !important;
+}
+
+.pokedex-header-verdict-badge.potential-track .pokedex-header-score-text {
+  font-size: 10px !important;
+  color: #94a3b8 !important;
+}
+
+.pokedex-header-verdict-badge.potential-track .verdict-potential-num {
+  font-weight: 500 !important;
+  color: #94a3b8 !important;
 }
 
 .pokedex-header-grade-text {
@@ -27224,6 +27274,33 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
     align-items: center !important;
     gap: 6px !important;
     flex-shrink: 0 !important;
+  }
+
+  .pokedex-dual-verdict-column {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    align-items: flex-end !important;
+  }
+
+  .pokedex-header-verdict-badge.current-track {
+    padding: 1px 6px !important;
+    gap: 4px !important;
+    height: 22px !important;
+    border-radius: 5px !important;
+  }
+
+  .pokedex-header-verdict-badge.potential-track {
+    padding: 0px 5px !important;
+    gap: 3px !important;
+    height: 16px !important;
+    min-height: 16px !important;
+    border-radius: 3px !important;
+    font-size: 8.5px !important;
+  }
+
+  .pokedex-header-verdict-badge.potential-track .verdict-potential-grade {
+    font-size: 10px !important;
   }
 
   .pokedex-header-verdict-badge {
