@@ -116,7 +116,7 @@
     ) || null;
   }
 
-  /* ─── 👑 RaenonX 級潛力 PR 評分演算法 (含核心及格線快速檢驗與 Lv.70/80 覆蓋) ─── */
+  /* ─── RaenonX 級潛力 PR 評分演算法 (含核心及格線快速檢驗與 Lv.75/100 覆蓋) ─── */
   function calculatePokemonPR(pkm, baseData = null) {
     const base = baseData || findPokemonBase(pkm.pokemonId || pkm.name);
     const specialty = (base && base.specialty) || pkm.specialty || '樹果';
@@ -406,7 +406,55 @@
     });
   }
 
+  let boxUserForcedGuideVisible = false;
+
+  function syncBoxVisibility() {
+    if (typeof document === 'undefined') return;
+    const hasItems = userBox && userBox.length > 0;
+    const dropzone = document.getElementById('box-dropzone');
+    const guideCard = document.getElementById('box-screenshot-guide-card');
+    const searchFilterRow = typeof document.querySelector === 'function' ? document.querySelector('.search-filter-row') : null;
+    const toolbarControlRow = typeof document.querySelector === 'function' ? document.querySelector('.box-toolbar-control-row') : null;
+    const toggleGuideBtn = document.getElementById('box-toggle-guide-btn');
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+
+    // On desktop, dropzone is div.box-dropzone; on mobile H5, it is button.box-fab-scan
+    const isDesktopDropzone = dropzone && !dropzone.classList.contains('box-fab-btn');
+
+    if (hasItems) {
+      const showGuide = boxUserForcedGuideVisible;
+      if (isDesktopDropzone) {
+        dropzone.style.display = showGuide ? '' : 'none';
+      }
+      if (guideCard) {
+        guideCard.style.display = showGuide ? '' : 'none';
+      }
+      if (toggleGuideBtn) {
+        toggleGuideBtn.style.display = '';
+        toggleGuideBtn.textContent = showGuide
+          ? (isEN ? 'Hide Guide' : '收合指引')
+          : (isEN ? 'Screenshot Guide' : '截圖拖曳與指引');
+      }
+      if (searchFilterRow) searchFilterRow.style.display = '';
+      if (toolbarControlRow) toolbarControlRow.style.display = '';
+    } else {
+      boxUserForcedGuideVisible = false;
+      if (isDesktopDropzone) {
+        dropzone.style.display = '';
+      }
+      if (guideCard) {
+        guideCard.style.display = '';
+      }
+      if (toggleGuideBtn) {
+        toggleGuideBtn.style.display = 'none';
+      }
+      if (searchFilterRow) searchFilterRow.style.display = 'none';
+      if (toolbarControlRow) toolbarControlRow.style.display = 'none';
+    }
+  }
+
   function renderBox() {
+    syncBoxVisibility();
     const container = document.getElementById('box-content-area');
     if (!container) return;
 
@@ -652,7 +700,7 @@
               <th>${t('th.ing1', 'Lv.1 食材')}</th>
               <th>${t('th.ing2', 'Lv.30 食材')}</th>
               <th>${t('th.ing3', 'Lv.60 食材')}</th>
-              <th>${isEN ? 'Sub-Skills' : '副技能 (Lv.10 ~ 80)'}</th>
+              <th>${isEN ? 'Sub-Skills' : '副技能 (Lv.10 ~ 100)'}</th>
               <th>${isEN ? 'Nature' : '性格'}</th>
               <th>${isEN ? 'Actions' : '操作'}</th>
             </tr>
@@ -1825,11 +1873,30 @@
       sCtx = sampleCanvas.getContext('2d');
       sCtx.drawImage(img, 0, 0, w, h);
 
-      // 食材色彩取樣 (Slot 1, 2, 3)
+      // 動態偵測白色卡片頂部邊界 (cardTop)
+      let cardTop = Math.round(h * 0.05);
+      try {
+        for (let y = Math.round(h * 0.02); y < Math.round(h * 0.16); y++) {
+          const rowData = sCtx.getImageData(Math.round(w * 0.3), y, Math.round(w * 0.4), 1).data;
+          let whiteCount = 0;
+          const total = rowData.length / 4;
+          for (let i = 0; i < rowData.length; i += 4) {
+            if (rowData[i] > 230 && rowData[i + 1] > 230 && rowData[i + 2] > 220) whiteCount++;
+          }
+          if (whiteCount / total > 0.70) {
+            cardTop = y;
+            break;
+          }
+        }
+      } catch (e) {}
+      meta.cardTop = cardTop;
+
+      // 食材色彩取樣 (Slot 1, 2, 3，依據 cardTop 動態計算)
+      const ingBaseY = cardTop + Math.round(h * (140 / 1280));
       const ingSlotCoords = [
-        { x: Math.round(w * (265 / 591)), y: Math.round(h * (195 / 1280)) },
-        { x: Math.round(w * (370 / 591)), y: Math.round(h * (195 / 1280)) },
-        { x: Math.round(w * (475 / 591)), y: Math.round(h * (195 / 1280)) }
+        { x: Math.round(w * (265 / 591)), y: ingBaseY },
+        { x: Math.round(w * (370 / 591)), y: ingBaseY },
+        { x: Math.round(w * (475 / 591)), y: ingBaseY }
       ];
       const boxW = Math.max(5, Math.round(w * (60 / 591)));
       const boxH = Math.max(5, Math.round(h * (60 / 1280)));
@@ -2007,12 +2074,16 @@
       return cropAndEnhance(sx, sy, sw, sh, 2.5, mode);
     }
 
-    // 各個錨點視圖切片
-    const binLv = cropAndEnhance(Math.round(w * (105 / 591)), Math.round(h * (125 / 1280)), Math.round(w * (110 / 591)), Math.round(h * (50 / 1280)), 3.0, 'red_channel');
-    const binName = cropAndEnhance(Math.round(w * (165 / 591)), Math.round(h * (125 / 1280)), Math.round(w * (285 / 591)), Math.round(h * (50 / 1280)), 2.5, 'contrast');
-    const specialty = cropAndEnhance(Math.round(w * (40 / 591)), Math.round(h * (200 / 1280)), Math.round(w * (180 / 591)), Math.round(h * (50 / 1280)), 2.0, 'binarize', 135);
-    const carryNum = cropAndEnhance(Math.round(w * (200 / 591)), Math.round(h * (365 / 1280)), Math.round(w * (320 / 591)), Math.round(h * (55 / 1280)), 2.0, 'binarize', 135);
-    const mainSkill = cropAndEnhance(Math.round(w * (140 / 591)), Math.round(h * (555 / 1280)), Math.round(w * (400 / 591)), Math.round(h * (40 / 1280)), 2.0, 'contrast');
+    // 各個錨點視圖切片 (以 cardTop 及 cardBotY 為核心動態位移，徹底告別死板固定座標)
+    const cardTop = meta.cardTop || Math.round(h * 0.05);
+    const nameY = cardTop + Math.round(h * (48 / 1280));
+    const nameH = Math.round(h * (52 / 1280));
+
+    const binLv = cropAndEnhance(Math.round(w * (90 / 591)), nameY, Math.round(w * (125 / 591)), nameH, 3.0, 'red_channel');
+    const binName = cropAndEnhance(Math.round(w * (150 / 591)), nameY, Math.round(w * (300 / 591)), nameH, 2.5, 'contrast');
+    const specialty = cropAndEnhance(Math.round(w * (40 / 591)), cardTop + Math.round(h * (125 / 1280)), Math.round(w * (180 / 591)), Math.round(h * (50 / 1280)), 2.0, 'binarize', 135);
+    const carryNum = cropAndEnhance(Math.round(w * (200 / 591)), cardTop + Math.round(h * (290 / 1280)), Math.round(w * (320 / 591)), Math.round(h * (55 / 1280)), 2.0, 'binarize', 135);
+    const mainSkill = cropAndEnhance(Math.round(w * (140 / 591)), cardTop + Math.round(h * (480 / 1280)), Math.round(w * (400 / 591)), Math.round(h * (40 / 1280)), 2.0, 'contrast');
 
     const slotCanvases = slotCoords.map((coord, idx) => {
       const tier = meta.slotTiers[idx] || 'white';
@@ -2022,7 +2093,10 @@
       };
     });
 
-    const nature = cropAndEnhance(Math.round(w * (40 / 591)), Math.round(h * (1075 / 1280)), Math.round(w * (510 / 591)), Math.round(h * (85 / 1280)), 2.0, 'contrast');
+    const natureY = cardBotY + Math.round(h * (300 / 1280));
+    const natureH = Math.round(h * (90 / 1280));
+    const safeNatureY = Math.min(h - natureH - 4, Math.max(0, natureY));
+    const nature = cropAndEnhance(Math.round(w * (40 / 591)), safeNatureY, Math.round(w * (510 / 591)), natureH, 2.0, 'contrast');
 
     const parts = [
       { name: 'NAME', canvas: binName },
@@ -2692,6 +2766,19 @@
       });
     }
 
+    const uploadBtn = document.getElementById('box-upload-btn');
+    if (uploadBtn && fileInput) {
+      uploadBtn.addEventListener('click', () => fileInput.click());
+    }
+
+    const toggleGuideBtn = document.getElementById('box-toggle-guide-btn');
+    if (toggleGuideBtn) {
+      toggleGuideBtn.addEventListener('click', () => {
+        boxUserForcedGuideVisible = !boxUserForcedGuideVisible;
+        syncBoxVisibility();
+      });
+    }
+
     // 全域剪貼簿貼上監聽 (Ctrl+V / Cmd+V 支援單張或多張截圖連續入庫)
     window.addEventListener('paste', (e) => {
       const panelBox = document.getElementById('panel-box');
@@ -3023,6 +3110,8 @@
       getUserBox: () => userBox,
       setUserBox: (box) => { userBox = box; saveUserBox(); renderBox(); },
       renderBox: renderBox,
+      syncBoxVisibility,
+      setBoxUserForcedGuideVisible: (v) => { boxUserForcedGuideVisible = v; },
       renderBoxGrid,
       renderBoxCardIngSlot,
       getIngCountFromBase,
@@ -3050,6 +3139,11 @@
     NATURE_DATA.forEach(n => { NATURE_DICT[n.name] = n; });
     module.exports = {
       PokemonBoxApp: typeof window !== 'undefined' ? window.PokemonBoxApp : {
+        getUserBox: () => userBox,
+        setUserBox: (box) => { userBox = box; saveUserBox(); renderBox(); },
+        renderBox: renderBox,
+        syncBoxVisibility,
+        setBoxUserForcedGuideVisible: (v) => { boxUserForcedGuideVisible = v; },
         renderBoxGrid,
         renderBoxCardIngSlot,
         getIngCountFromBase,
@@ -3067,6 +3161,9 @@
         NATURE_DICT,
         SUBSKILLS_DATA
       },
+      renderBox: renderBox,
+      syncBoxVisibility,
+      setBoxUserForcedGuideVisible: (v) => { boxUserForcedGuideVisible = v; },
       renderBoxGrid,
       renderBoxCardIngSlot,
       getIngCountFromBase,

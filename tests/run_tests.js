@@ -8466,6 +8466,99 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(modalHtml.includes('強力噴火龍'), 'Appraisal modal summary bar must display summary note');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Box Dynamic Visibility & Official Subskills Lv.75/100 Standards Verification', () => {
+    // 1. Verify index.html & app/index.html subskill headers
+    const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+    const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+
+    // Both desktop & mobile modal slots must contain Lv.75 & Lv.100 and NO Lv.70 / Lv.80
+    assert(indexHtml.includes('<span class="slot-lvl-header">Lv.75</span>'), 'index.html must have Lv.75 slot header');
+    assert(indexHtml.includes('<span class="slot-lvl-header">Lv.100</span>'), 'index.html must have Lv.100 slot header');
+    assert(!indexHtml.includes('<span class="slot-lvl-header">Lv.70</span>'), 'index.html must not have Lv.70 slot header');
+    assert(!indexHtml.includes('<span class="slot-lvl-header">Lv.80</span>'), 'index.html must not have Lv.80 slot header');
+
+    assert(appIndexHtml.includes('<span class="slot-lvl-header">Lv.75</span>'), 'app/index.html must have Lv.75 slot header');
+    assert(appIndexHtml.includes('<span class="slot-lvl-header">Lv.100</span>'), 'app/index.html must have Lv.100 slot header');
+    assert(!appIndexHtml.includes('<span class="slot-lvl-header">Lv.70</span>'), 'app/index.html must not have Lv.70 slot header');
+    assert(!appIndexHtml.includes('<span class="slot-lvl-header">Lv.80</span>'), 'app/index.html must not have Lv.80 slot header');
+
+    // Table header in box.js must state Lv.10 ~ 100
+    assert(boxJs.includes("副技能 (Lv.10 ~ 100)"), 'box.js table header must display Lv.10 ~ 100');
+    assert(!boxJs.includes("副技能 (Lv.10 ~ 80)"), 'box.js must not display legacy Lv.10 ~ 80');
+
+    // i18n guide description must state Lv.10 至 Lv.100
+    assert(i18nJs.includes("Lv.10 至 Lv.100"), 'i18n.js must describe Lv.10 至 Lv.100');
+    assert(!i18nJs.includes("Lv.10 至 Lv.80"), 'i18n.js must not describe legacy Lv.10 至 Lv.80');
+
+    // 2. Test syncBoxVisibility dynamic DOM behavior
+    const mockElements = new Map();
+    function createMockEl(id, className = '') {
+      return {
+        id,
+        className,
+        classList: {
+          contains: (cls) => className.split(' ').includes(cls),
+          add: () => {},
+          remove: () => {}
+        },
+        style: { display: '' },
+        textContent: '',
+        setAttribute: () => {}
+      };
+    }
+
+    const dropzoneEl = createMockEl('box-dropzone', 'box-dropzone');
+    const guideCardEl = createMockEl('box-screenshot-guide-card', 'box-screenshot-guide-card');
+    const searchFilterEl = createMockEl('search-filter-row', 'search-filter-row');
+    const toggleGuideBtnEl = createMockEl('box-toggle-guide-btn', 'box-btn');
+
+    mockElements.set('box-dropzone', dropzoneEl);
+    mockElements.set('box-screenshot-guide-card', guideCardEl);
+    mockElements.set('.search-filter-row', searchFilterEl);
+    mockElements.set('box-toggle-guide-btn', toggleGuideBtnEl);
+
+    const testDoc = {
+      getElementById: (id) => mockElements.get(id) || null,
+      querySelector: (sel) => mockElements.get(sel) || null
+    };
+
+    const boxModule = require(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'));
+    const boxApp = boxModule.PokemonBoxApp;
+
+    // Simulate empty box (userBox.length === 0)
+    global.document = testDoc;
+    boxApp.setUserBox([]);
+    boxApp.syncBoxVisibility();
+
+    assertEquals(dropzoneEl.style.display, '', 'Dropzone must be visible when box is empty');
+    assertEquals(guideCardEl.style.display, '', 'Guide card must be visible when box is empty');
+    assertEquals(searchFilterEl.style.display, 'none', 'Search filter row must be hidden when box is empty');
+    assertEquals(toggleGuideBtnEl.style.display, 'none', 'Toggle guide button must be hidden when box is empty');
+
+    // Simulate populated box (userBox.length > 0)
+    boxApp.setUserBox([{ uid: 'test-1', name: '皮卡丘', level: 25 }]);
+    boxApp.syncBoxVisibility();
+
+    assertEquals(dropzoneEl.style.display, 'none', 'Dropzone must be hidden when box has Pokémon');
+    assertEquals(guideCardEl.style.display, 'none', 'Guide card must be hidden when box has Pokémon');
+    assertEquals(searchFilterEl.style.display, '', 'Search filter row must be visible when box has Pokémon');
+    assertEquals(toggleGuideBtnEl.style.display, '', 'Toggle guide button must be visible when box has Pokémon');
+
+    // Test toggle override (User clicks "截圖拖曳與指引")
+    boxApp.setBoxUserForcedGuideVisible(true);
+    boxApp.syncBoxVisibility();
+    assertEquals(dropzoneEl.style.display, '', 'Dropzone must become visible when manually toggled on');
+    assertEquals(guideCardEl.style.display, '', 'Guide card must become visible when manually toggled on');
+
+    // Toggle off
+    boxApp.setBoxUserForcedGuideVisible(false);
+    boxApp.syncBoxVisibility();
+    assertEquals(dropzoneEl.style.display, 'none', 'Dropzone must be hidden again when toggled off');
+    assertEquals(guideCardEl.style.display, 'none', 'Guide card must be hidden again when toggled off');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

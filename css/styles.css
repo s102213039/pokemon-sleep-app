@@ -25106,7 +25106,7 @@ body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
   font-weight: 800;
 }
 
-/* 尚未開放等級之圖釘效果 (Lv.70, Lv.80, Lv.100) */
+/* 尚未開放等級之圖釘效果 (Lv.75, Lv.100) */
 .pokedex-track-pin-btn.pin-unreleased .track-pin-tick {
   width: 0;
   height: 5px;

@@ -838,6 +838,8 @@
           </div>
           <div class="box-banner-actions">
             <input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
+            <button type="button" id="box-upload-btn" class="box-btn" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: 1px solid rgba(16, 185, 129, 0.4); font-weight: 700;" title="上傳遊戲截圖自動辨識" data-i18n="box.upload_screenshots">上傳截圖辨識</button>
+            <button type="button" id="box-toggle-guide-btn" class="box-btn box-btn-secondary" style="display:none;" title="展開/收合 截圖拖曳與示範指引" data-i18n="box.toggle_guide">截圖指引</button>
             <button type="button" id="box-appraisal-lab-btn" class="box-btn" style="background: linear-gradient(135deg, #8b5cf6, #38bdf8); color: #ffffff; border: 1px solid rgba(168, 85, 247, 0.4); font-weight: 700;" onclick="window.AppraisalLab.toggleLab()" title="開啟/收合 寶可夢六維深度診斷評測實驗室" data-i18n="box.appraisal_lab">深度評測室</button>
             <button type="button" id="box-manual-add-btn" class="box-btn box-btn-primary" data-i18n="box.add_pokemon">手動新增寶可夢</button>
             <button type="button" id="box-export-btn" class="box-btn box-btn-secondary" title="匯出個人倉庫為 JSON 備份檔" data-i18n="box.export_backup">匯出備份</button>
@@ -928,7 +930,7 @@
                   <span class="box-guide-num">[4]</span>
                   <div class="box-guide-item-content">
                     <strong data-i18n="box.guide_item4_title">副技能欄位 (全部 5 格)</strong>
-                    <p data-i18n="box.guide_item4_desc">完整露出 Lv.10 至 Lv.80 (或 100) 共 5 個副技能方塊按鈕, 無選單或彈窗覆蓋遮擋。</p>
+                    <p data-i18n="box.guide_item4_desc">完整露出 Lv.10 至 Lv.100 共 5 個副技能方塊按鈕, 無選單或彈窗覆蓋遮擋。</p>
                   </div>
                 </div>
                 <div class="box-guide-item">
@@ -1192,11 +1194,11 @@
                   <span class="slot-val-badge slot-val-empty">-- 未解鎖 --</span>
                 </button>
                 <button type="button" class="box-subskill-slot-btn" data-slot="4">
-                  <span class="slot-lvl-header">Lv.70</span>
+                  <span class="slot-lvl-header">Lv.75</span>
                   <span class="slot-val-badge slot-val-empty">-- 未解鎖 --</span>
                 </button>
                 <button type="button" class="box-subskill-slot-btn" data-slot="5">
-                  <span class="slot-lvl-header">Lv.80</span>
+                  <span class="slot-lvl-header">Lv.100</span>
                   <span class="slot-val-badge slot-val-empty">-- 未解鎖 --</span>
                 </button>
               </div>
