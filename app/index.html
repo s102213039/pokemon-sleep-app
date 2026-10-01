@@ -718,7 +718,115 @@
     </div>
 
     <!-- Panel 4: 寶可夢倉庫 -->
-    <div id="panel-box" class="view-panel app-panel" style="display:none;">
+    <div id="panel-box" class="view-panel box-layout-view app-panel" style="display:none;">
+      <!-- 🎛️ 右下懸浮篩選按鈕 (Draggable Floating Action Button) -->
+      <button type="button" id="box-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" title="展開倉庫篩選器" aria-label="展開倉庫篩選器">
+        <span class="bookmark-icon">
+          <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="21" x2="4" y2="14"></line>
+            <line x1="4" y1="10" x2="4" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12" y2="3"></line>
+            <line x1="20" y1="21" x2="20" y2="16"></line>
+            <line x1="20" y1="12" x2="20" y2="3"></line>
+            <line x1="1" y1="14" x2="7" y2="14"></line>
+            <line x1="9" y1="8" x2="15" y2="8"></line>
+            <line x1="17" y1="16" x2="23" y2="16"></line>
+          </svg>
+        </span>
+        <span id="box-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
+      </button>
+
+      <!-- ➡️ 右側抽屜式篩選器 -->
+      <aside id="box-filter-sidebar" class="pokemon-filter-sidebar box-filter-sidebar collapsed" aria-label="寶可夢倉庫篩選器">
+        <div class="sidebar-header">
+          <button type="button" id="box-sidebar-close-btn" class="sidebar-close-btn" title="收合">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          <div class="sidebar-title-group">
+            <span class="sidebar-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"></line>
+                <line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line>
+                <line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line>
+                <line x1="9" y1="8" x2="15" y2="8"></line>
+                <line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+            </span>
+            <span class="sidebar-title" data-i18n="box.filter_sidebar_title">倉庫進階篩選</span>
+          </div>
+          <button type="button" id="box-sidebar-reset-all-btn" class="sidebar-reset-btn" data-i18n="pokedex.reset_all">全部重設</button>
+        </div>
+
+        <div class="sidebar-scrollable-content">
+          <!-- 最終進化 & 初始食材 & 編號 1行 Switch Row (3 Columns) -->
+          <div class="sidebar-switches-grid">
+            <label class="sidebar-switch-compact" for="box-final-evo-toggle">
+              <span class="sidebar-final-evo-text" data-i18n="pokedex.only_final">最終進化</span>
+              <div class="sidebar-switch-wrapper">
+                <input type="checkbox" id="box-final-evo-toggle" class="switch-checkbox">
+                <span class="switch-slider"></span>
+              </div>
+            </label>
+            <label class="sidebar-switch-compact" for="box-initial-ing-toggle">
+              <span class="sidebar-final-evo-text" data-i18n="pokedex.only_initial_ing">初始食材</span>
+              <div class="sidebar-switch-wrapper">
+                <input type="checkbox" id="box-initial-ing-toggle" class="switch-checkbox">
+                <span class="switch-slider"></span>
+              </div>
+            </label>
+            <label class="sidebar-switch-compact" for="box-show-no-toggle">
+              <span class="sidebar-final-evo-text" data-i18n="pokedex.show_no">編號</span>
+              <div class="sidebar-switch-wrapper">
+                <input type="checkbox" id="box-show-no-toggle" class="switch-checkbox">
+                <span class="switch-slider"></span>
+              </div>
+            </label>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title" data-i18n="pokedex.specialty_title">專長類型</span>
+            </div>
+            <div id="box-specialty-filter-tags" class="sidebar-specialty-tags"></div>
+          </div>
+
+          <div id="box-detail-subfilters-container" class="detail-subfilters-container">
+            <div id="box-subfilter-berry-group" class="sidebar-section">
+              <div class="sidebar-section-header">
+                <span class="sidebar-section-title" data-i18n="pokedex.berry_title">樹果類型</span>
+                <button type="button" id="box-clear-berries-btn" class="sidebar-section-clear-btn" style="display:none;" data-i18n="pokedex.clear">清空</button>
+              </div>
+              <div id="box-berry-filter-tags" class="sidebar-icon-grid"></div>
+            </div>
+
+            <div id="box-subfilter-ingredient-group" class="sidebar-section">
+              <div class="sidebar-section-header">
+                <span class="sidebar-section-title" data-i18n="pokedex.ingredient_title">出產食材</span>
+                <button type="button" id="box-clear-ingredients-pkm-btn" class="sidebar-section-clear-btn" style="display:none;" data-i18n="pokedex.clear">清空</button>
+              </div>
+              <div id="box-ingredient-pkm-filter-tags" class="sidebar-icon-grid"></div>
+            </div>
+
+            <div id="box-subfilter-skill-group" class="sidebar-section">
+              <div class="sidebar-section-header">
+                <span class="sidebar-section-title" data-i18n="pokedex.skill_title">主技能</span>
+                <button type="button" id="box-clear-skills-btn" class="sidebar-section-clear-btn" style="display:none;" data-i18n="pokedex.clear">清空</button>
+              </div>
+              <div id="box-skill-filter-tags" class="sidebar-skills-list"></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div id="box-sidebar-backdrop" class="sidebar-backdrop"></div>
       <!-- 未登入引導遮罩 (未登入時展示，點選跳出登入視窗) -->
       <div id="box-auth-overlay" class="box-auth-overlay">
         <div class="box-auth-prompt-card" onclick="window.CloudSync && window.CloudSync.openAuthModal('signin')">

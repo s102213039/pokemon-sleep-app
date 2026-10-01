@@ -1677,15 +1677,24 @@ if (typeof window !== 'undefined') {
   window.formatHelpInterval = formatHelpInterval;
   window.matchesPokemonSearch = matchesPokemonSearch;
   window.toPinyin = toPinyin;
+  window.BERRY_DATA = BERRY_DATA;
+  window.TYPE_TO_BERRY = TYPE_TO_BERRY;
+  window.BASE_SKILLS = BASE_SKILLS;
+  window.matchesSkill = matchesSkill;
 }
 PokemonApp.renderSkillWithTooltip = renderSkillWithTooltip;
 PokemonApp.formatHelpInterval = formatHelpInterval;
 PokemonApp.matchesPokemonSearch = matchesPokemonSearch;
 PokemonApp.toPinyin = toPinyin;
+PokemonApp.BERRY_DATA = BERRY_DATA;
+PokemonApp.TYPE_TO_BERRY = TYPE_TO_BERRY;
+PokemonApp.BASE_SKILLS = BASE_SKILLS;
+PokemonApp.matchesSkill = matchesSkill;
 
 const MOBILE_OVERLAY_IDS = [
   'pokemon-filter-sidebar', 'sidebar-backdrop',
   'recipe-filter-sidebar', 'recipe-sidebar-backdrop',
+  'box-filter-sidebar', 'box-sidebar-backdrop',
   'ladder-filter-sidebar', 'ladder-sidebar-backdrop',
   'pokedex-detail-modal', 'box-edit-modal', 'box-guide-lightbox-modal',
   'settings-modal', 'ladder-recipe-modal', 'modal-appraisal-report'
@@ -1702,6 +1711,7 @@ function isMobileH5Surface() {
 const SIDEBAR_BACKDROP_BY_ID = {
   'pokemon-filter-sidebar': 'sidebar-backdrop',
   'recipe-filter-sidebar': 'recipe-sidebar-backdrop',
+  'box-filter-sidebar': 'box-sidebar-backdrop',
   'ladder-filter-sidebar': 'ladder-sidebar-backdrop'
 };
 
@@ -1784,6 +1794,7 @@ function isAnyOverlayOpen() {
     if (document.querySelector && document.querySelector('.sidebar-backdrop.active')) return true;
     if (isDrawerVisiblyOpen(resolveUniqueOverlay('pokemon-filter-sidebar'))) return true;
     if (isDrawerVisiblyOpen(resolveUniqueOverlay('recipe-filter-sidebar'))) return true;
+    if (isDrawerVisiblyOpen(resolveUniqueOverlay('box-filter-sidebar'))) return true;
     if (isDrawerVisiblyOpen(resolveUniqueOverlay('ladder-filter-sidebar'))) return true;
     for (let i = 0; i < MOBILE_OVERLAY_IDS.length; i++) {
       const id = MOBILE_OVERLAY_IDS[i];
@@ -2381,6 +2392,9 @@ if (typeof document !== 'undefined') {
         const recipeBackdrop = document.getElementById('recipe-sidebar-backdrop');
         const ladderSidebar = document.getElementById('ladder-filter-sidebar');
         const ladderBackdrop = document.getElementById('ladder-sidebar-backdrop');
+        const boxSidebar = document.getElementById('box-filter-sidebar');
+        const boxBookmarkHandle = document.getElementById('box-sidebar-bookmark-handle');
+        const boxBackdrop = document.getElementById('box-sidebar-backdrop');
         const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
 
         // 隱藏非當前分頁的側邊欄 DOM（不覆寫其內部 collapsed 記憶狀態）
@@ -2395,6 +2409,12 @@ if (typeof document !== 'undefined') {
           if (bookmarkHandle) bookmarkHandle.style.display = 'none';
           if (filterSidebar) filterSidebar.style.display = 'none';
           if (backdrop) backdrop.classList.remove('active');
+        }
+
+        if (target !== 'box') {
+          if (boxBookmarkHandle) boxBookmarkHandle.style.display = 'none';
+          if (boxSidebar) boxSidebar.style.display = 'none';
+          if (boxBackdrop) boxBackdrop.classList.remove('active');
         }
 
         if (target !== 'wiki') {
@@ -2447,6 +2467,38 @@ if (typeof document !== 'undefined') {
               boxSubtab = saved;
             }
           } catch (e) {}
+          if (boxSidebar) {
+            if (boxSubtab === 'list') {
+              boxSidebar.style.display = 'flex';
+              const isBoxOpen = getSidebarSavedState('pksleep_box_sidebar_open', false);
+              if (isBoxOpen && !isMobileH5 && window.innerWidth > 1024) {
+                boxSidebar.classList.remove('collapsed');
+              } else {
+                boxSidebar.classList.add('collapsed');
+                if (boxBackdrop) boxBackdrop.classList.remove('active');
+              }
+            } else {
+              boxSidebar.style.display = 'none';
+              boxSidebar.classList.add('collapsed');
+              if (boxBackdrop) boxBackdrop.classList.remove('active');
+            }
+          }
+          if (boxBookmarkHandle) {
+            const isCollapsed = boxSidebar ? boxSidebar.classList.contains('collapsed') : true;
+            if (boxSubtab === 'list' && isCollapsed) {
+              boxBookmarkHandle.classList.remove('drawer-open');
+              boxBookmarkHandle.style.display = 'flex';
+              boxBookmarkHandle.style.opacity = '1';
+              boxBookmarkHandle.style.pointerEvents = 'auto';
+              boxBookmarkHandle.style.visibility = 'visible';
+            } else {
+              if (boxSubtab === 'list' && !isCollapsed) boxBookmarkHandle.classList.add('drawer-open');
+              boxBookmarkHandle.style.display = 'none';
+              boxBookmarkHandle.style.opacity = '0';
+              boxBookmarkHandle.style.pointerEvents = 'none';
+              boxBookmarkHandle.style.visibility = 'hidden';
+            }
+          }
           if (typeof window.switchBoxSubtab === 'function') {
             try { window.switchBoxSubtab(boxSubtab); } catch (e) {}
           } else if (window.PokemonBoxApp && typeof window.PokemonBoxApp.renderBox === 'function') {
@@ -2871,6 +2923,8 @@ if (typeof document !== 'undefined') {
         }
       });
       uniqueIngredients = Array.from(uniqueIngredientsMap.entries()).map(([name, icon]) => ({ name, icon }));
+      PokemonApp.uniqueIngredients = uniqueIngredients;
+      if (typeof window !== 'undefined') window.uniqueIngredients = uniqueIngredients;
 
       // 計算 15 種基礎主技能對應的寶可夢數量（含複合技能與專屬變體技能）
       BASE_SKILLS.forEach(b => {
@@ -3302,14 +3356,18 @@ if (typeof document !== 'undefined') {
           if (typeof window.toggleSidebar === 'function') {
             window.toggleSidebar(false);
           }
-          document.querySelectorAll('.pokemon-filter-sidebar, .recipe-filter-sidebar, .ladder-fixed-sidebar').forEach(sb => {
+          if (typeof window.toggleBoxSidebar === 'function') {
+            window.toggleBoxSidebar(false);
+          }
+          document.querySelectorAll('.pokemon-filter-sidebar, .recipe-filter-sidebar, .box-filter-sidebar, .ladder-fixed-sidebar').forEach(sb => {
             sb.classList.add('collapsed');
           });
           document.querySelectorAll('.sidebar-backdrop').forEach(bd => bd.classList.remove('active'));
           const f1 = document.getElementById('sidebar-bookmark-handle');
           const f2 = document.getElementById('recipe-sidebar-bookmark-handle');
           const f3 = document.getElementById('ladder-sidebar-bookmark-handle');
-          [f1, f2, f3].forEach(f => {
+          const f4 = document.getElementById('box-sidebar-bookmark-handle');
+          [f1, f2, f3, f4].forEach(f => {
             if (f) {
               f.style.opacity = '1';
               f.style.pointerEvents = 'auto';

@@ -8869,6 +8869,152 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(PokemonApp.pokedexModalState.subskills.includes('技能機率提升M'), 'Mimikyu God Preset must include Skill Trigger M');
   });
 
+  // ----------------------------------------------------
+  // Test 172: Pokemon Box Comprehensive Filter Sidebar, Multi-Criteria Filtering & Mobile Drawer Verification
+  // ----------------------------------------------------
+  test('Tier 4 - Real-World Application Scenarios', 'Pokemon Box Filter Sidebar: Desktop & Mobile Markup, Multi-Criteria Filtering & State Reset Integrity', () => {
+    // 1. Verify Desktop Markup in index.html
+    const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    assert(indexHtml.includes('id="panel-box"'), 'index.html must have panel-box');
+    assert(indexHtml.includes('box-layout-view'), 'index.html must have box-layout-view container');
+    assert(indexHtml.includes('id="box-filter-sidebar"'), 'index.html must have box-filter-sidebar element');
+    assert(indexHtml.includes('id="box-sidebar-bookmark-handle"'), 'index.html must have box-sidebar-bookmark-handle element');
+    assert(indexHtml.includes('id="box-sidebar-backdrop"'), 'index.html must have box-sidebar-backdrop element');
+    assert(indexHtml.includes('class="box-main-content"'), 'index.html must have box-main-content wrapper');
+
+    // Verify all sidebar controls and subfilters in index.html
+    assert(indexHtml.includes('id="box-final-evo-toggle"'), 'index.html must have box-final-evo-toggle switch');
+    assert(indexHtml.includes('id="box-initial-ing-toggle"'), 'index.html must have box-initial-ing-toggle switch');
+    assert(indexHtml.includes('id="box-show-no-toggle"'), 'index.html must have box-show-no-toggle switch');
+    assert(indexHtml.includes('id="box-specialty-filter-tags"'), 'index.html must have box-specialty-filter-tags');
+    assert(indexHtml.includes('id="box-berry-filter-tags"'), 'index.html must have box-berry-filter-tags');
+    assert(indexHtml.includes('id="box-clear-berries-btn"'), 'index.html must have box-clear-berries-btn');
+    assert(indexHtml.includes('id="box-ingredient-pkm-filter-tags"'), 'index.html must have box-ingredient-pkm-filter-tags');
+    assert(indexHtml.includes('id="box-clear-ingredients-pkm-btn"'), 'index.html must have box-clear-ingredients-pkm-btn');
+    assert(indexHtml.includes('id="box-skill-filter-tags"'), 'index.html must have box-skill-filter-tags');
+    assert(indexHtml.includes('id="box-clear-skills-btn"'), 'index.html must have box-clear-skills-btn');
+    assert(indexHtml.includes('id="box-sidebar-reset-all-btn"'), 'index.html must have box-sidebar-reset-all-btn');
+    assert(indexHtml.includes('id="box-sidebar-close-btn"'), 'index.html must have box-sidebar-close-btn');
+
+    // 2. Verify Mobile H5 Markup in app/index.html
+    const appHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+    assert(appHtml.includes('id="box-filter-sidebar"'), 'app/index.html must have box-filter-sidebar');
+    assert(appHtml.includes('id="box-sidebar-bookmark-handle"'), 'app/index.html must have box-sidebar-bookmark-handle FAB');
+    assert(appHtml.includes('sidebar-fab-btn'), 'app/index.html box handle must have sidebar-fab-btn class');
+    assert(appHtml.includes('id="box-sidebar-backdrop"'), 'app/index.html must have box-sidebar-backdrop');
+    assert(appHtml.includes('id="box-specialty-filter-tags"'), 'app/index.html must have box-specialty-filter-tags');
+    assert(appHtml.includes('id="box-berry-filter-tags"'), 'app/index.html must have box-berry-filter-tags');
+    assert(appHtml.includes('id="box-ingredient-pkm-filter-tags"'), 'app/index.html must have box-ingredient-pkm-filter-tags');
+    assert(appHtml.includes('id="box-skill-filter-tags"'), 'app/index.html must have box-skill-filter-tags');
+
+    // 3. Verify CSS rules in css/styles.css
+    const cssContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+    assert(cssContent.includes('.box-filter-sidebar'), 'styles.css must style box-filter-sidebar');
+    assert(cssContent.includes('.box-layout-view'), 'styles.css must style box-layout-view');
+    assert(cssContent.includes('.box-main-content'), 'styles.css must style box-main-content');
+    assert(cssContent.includes('#box-filter-sidebar:not(.collapsed)'), 'styles.css must style open state of box-filter-sidebar');
+    assert(cssContent.includes('.mobile-h5-app #box-filter-sidebar'), 'styles.css must support mobile H5 box filter sidebar');
+
+    // 4. Verify i18n entries in js/core/i18n.js
+    const i18nContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+    assert(i18nContent.includes("'box.filter_sidebar_title': '倉庫篩選器'"), 'i18n zh-TW must have box.filter_sidebar_title');
+    assert(i18nContent.includes("'box.filter_bookmark': '篩選'"), 'i18n zh-TW must have box.filter_bookmark');
+    assert(i18nContent.includes("'box.filter_sidebar_title': 'Box Filters'"), 'i18n en-US must have box.filter_sidebar_title');
+    assert(i18nContent.includes("'box.filter_bookmark': 'Filter'"), 'i18n en-US must have box.filter_bookmark');
+
+    // 5. Verify App Architecture in js/modules/app.js
+    const appJsContent = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+    assert(appJsContent.includes("'box-filter-sidebar'"), 'app.js MOBILE_OVERLAY_IDS must register box-filter-sidebar');
+    assert(appJsContent.includes("'box-sidebar-backdrop'"), 'app.js SIDEBAR_BACKDROP_BY_ID must register box-sidebar-backdrop');
+
+    // 6. Verify Multi-Criteria Filtering Logic in js/modules/box.js
+    const boxModule = require(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'));
+    assert(typeof boxModule.getFilteredBox === 'function', 'boxModule.getFilteredBox must be a function');
+    assert(typeof boxModule.setBoxFilterState === 'function', 'boxModule.setBoxFilterState must be a function');
+    assert(typeof boxModule.resetBoxFilters === 'function', 'boxModule.resetBoxFilters must be a function');
+
+    const sampleBox = [
+      { name: '雷丘', specialty: '樹果', type: '電', is_final: true, main_skill: '能量填充S', ing1: '特選蘋果', ing2: '純純油', ingredients: ['特選蘋果', '純純油'] },
+      { name: '皮卡丘', specialty: '樹果', type: '電', is_final: false, main_skill: '能量填充S', ing1: '特選蘋果', ingredients: ['特選蘋果'] },
+      { name: '小拳石', specialty: '樹果', type: '岩石', is_final: false, main_skill: '蓄力（能量填充S）', ing1: '特選大豆', ingredients: ['特選大豆'] },
+      { name: '妙蛙種子', specialty: '食材', type: '草', is_final: false, main_skill: '食材獲取S', ing1: '甜甜蜜', ingredients: ['甜甜蜜'] },
+      { name: '電龍', specialty: '技能', type: '電', is_final: true, main_skill: '能量填充M', ing1: '特選蘋果', ing2: '特選蛋', ingredients: ['特選蘋果', '特選蛋'] },
+      { name: '噴火龍', specialty: '食材', type: '火', is_final: true, main_skill: '食材獲取S', ing1: '暖暖醬油', ing2: '火辣生薑', ingredients: ['暖暖醬油', '火辣生薑'] }
+    ];
+    boxModule.setUserBox(sampleBox);
+    assertEquals(boxModule.getFilteredBox().length, 6, 'Total unfiltered sample box size should be 6');
+
+    // Specialty filter: 樹果
+    boxModule.setBoxFilterState({ selectedSpecialties: ['樹果'] });
+    const berrySpecList = boxModule.getFilteredBox().map(p => p.name);
+    assertEquals(berrySpecList.length, 3, 'Berry specialty filter should return 3 Pokemon');
+    assert(berrySpecList.includes('雷丘') && berrySpecList.includes('皮卡丘') && berrySpecList.includes('小拳石'), 'Berry specialty should return Raichu, Pikachu, Geodude');
+
+    // Multi-specialty filter: 樹果 + 技能
+    boxModule.setBoxFilterState({ selectedSpecialties: ['樹果', '技能'] });
+    const berrySkillList = boxModule.getFilteredBox().map(p => p.name);
+    assertEquals(berrySkillList.length, 4, 'Berry + Skill specialty filter should return 4 Pokemon');
+    assert(berrySkillList.includes('雷丘') && berrySkillList.includes('皮卡丘') && berrySkillList.includes('小拳石') && berrySkillList.includes('電龍'), 'Berry + Skill specialty should return Raichu, Pikachu, Geodude, Ampharos');
+
+    // Final evolution toggle (with 樹果 + 技能)
+    boxModule.setBoxFilterState({ onlyFinal: true });
+    const finalBerrySkillList = boxModule.getFilteredBox().map(p => p.name);
+    assertEquals(finalBerrySkillList.length, 2, 'Final evolution of Berry+Skill should return 2 Pokemon');
+    assert(finalBerrySkillList.includes('雷丘') && finalBerrySkillList.includes('電龍'), 'Final evolution should retain Raichu and Ampharos');
+
+    // Reset filters
+    boxModule.resetBoxFilters();
+    assertEquals(boxModule.getFilteredBox().length, 6, 'Reset filters should restore all 6 Pokemon');
+
+    // Berry filter: 異奇果 (Grepa Berry - Electric)
+    boxModule.setBoxFilterState({ selectedBerries: ['異奇果'] });
+    const grepaList = boxModule.getFilteredBox().map(p => p.name);
+    assertEquals(grepaList.length, 3, 'Grepa berry should match Electric Pokemon (Raichu, Pikachu, Ampharos)');
+    assert(grepaList.includes('雷丘') && grepaList.includes('皮卡丘') && grepaList.includes('電龍'), 'Grepa berry should match Raichu, Pikachu, Ampharos');
+
+    // Ingredient filter: any ingredient matching '特選蛋'
+    boxModule.resetBoxFilters();
+    boxModule.setBoxFilterState({ selectedIngredients: ['特選蛋'] });
+    const eggList = boxModule.getFilteredBox().map(p => p.name);
+    assertEquals(eggList.length, 1, 'Egg ingredient should match Ampharos');
+    assertEquals(eggList[0], '電龍', 'Ampharos should be the only egg provider in sample');
+
+    // Ingredient filter: initial ingredient only with '特選蛋'
+    boxModule.setBoxFilterState({ onlyInitialIng: true });
+    const initialEggList = boxModule.getFilteredBox();
+    assertEquals(initialEggList.length, 0, 'Ampharos has apple as Lv.1 ing, so initial egg search returns 0');
+
+    // Ingredient filter: initial ingredient only with '特選蘋果'
+    boxModule.setBoxFilterState({ selectedIngredients: ['特選蘋果'] });
+    const initialAppleList = boxModule.getFilteredBox().map(p => p.name);
+    assertEquals(initialAppleList.length, 3, 'Raichu, Pikachu, Ampharos all have apple as Lv.1 ingredient');
+
+    // Main skill filter: base skill '能量填充S' should match composite variant '蓄力（能量填充S）'
+    boxModule.resetBoxFilters();
+    boxModule.setBoxFilterState({ selectedSkills: ['能量填充S'] });
+    const skillList = boxModule.getFilteredBox().map(p => p.name);
+    assertEquals(skillList.length, 3, 'Skill 能量填充S should match Raichu, Pikachu, and Geodude');
+    assert(skillList.includes('小拳石'), 'Geodude composite skill 蓄力（能量填充S） should match base skill 能量填充S');
+
+    // Main skill filter: '食材獲取S'
+    boxModule.resetBoxFilters();
+    boxModule.setBoxFilterState({ selectedSkills: ['食材獲取S'] });
+    const skillIngList = boxModule.getFilteredBox().map(p => p.name);
+    assertEquals(skillIngList.length, 2, 'Skill 食材獲取S should match Bulbasaur and Charizard');
+    assert(skillIngList.includes('妙蛙種子') && skillIngList.includes('噴火龍'), 'Bulbasaur and Charizard should match 食材獲取S');
+
+    // Main skill filter: '能量填充M'
+    boxModule.resetBoxFilters();
+    boxModule.setBoxFilterState({ selectedSkills: ['能量填充M'] });
+    const skillMList = boxModule.getFilteredBox().map(p => p.name);
+    assertEquals(skillMList.length, 1, 'Skill 能量填充M should only match Ampharos');
+    assertEquals(skillMList[0], '電龍', 'Ampharos should match 能量填充M');
+
+    // Reset filters restores full collection
+    boxModule.resetBoxFilters();
+    assertEquals(boxModule.getFilteredBox().length, 6, 'Reset must restore full collection');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

@@ -804,7 +804,98 @@
     <div id="panel-wiki" class="view-panel" style="display:none;"></div>
 
     <!-- Panel 4: 寶可夢倉庫 -->
-    <div id="panel-box" class="view-panel" style="display:none;">
+    <div id="panel-box" class="view-panel box-layout-view" style="display:none;">
+      <!-- ⬅️ 左側抽屜式側邊欄 (Left Sliding Box Filter Sidebar) -->
+      <aside id="box-filter-sidebar" class="pokemon-filter-sidebar box-filter-sidebar collapsed" aria-label="寶可夢倉庫篩選器">
+        <!-- 🔖 側邊欄垂直中央書籤標籤 (Vertically Centered Bookmark Drawer Handle) -->
+        <button type="button" id="box-sidebar-bookmark-handle" class="sidebar-bookmark-handle" title="展開 / 收合倉庫篩選側邊欄" aria-label="切換倉庫篩選側邊欄">
+          <span class="bookmark-icon">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+          </span>
+          <span class="bookmark-text" data-i18n="box.filter_bookmark">篩選</span>
+          <span class="bookmark-arrow">◀</span>
+          <span id="box-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
+        </button>
+
+        <div class="sidebar-header">
+          <button type="button" id="box-sidebar-close-btn" class="sidebar-close-btn" title="收合側邊欄" aria-label="收合側邊欄">◀</button>
+          <div class="sidebar-title-group">
+            <span class="sidebar-title" data-i18n="box.filter_sidebar_title">倉庫篩選器</span>
+          </div>
+          <button type="button" id="box-sidebar-reset-all-btn" class="sidebar-reset-btn" title="重設所有篩選條件" data-i18n="pokedex.reset_all">全部重設</button>
+        </div>
+
+        <div class="sidebar-scrollable-content">
+          <!-- 僅最終進化 & 僅初始食材 & 顯示編號 (Desktop Switches) -->
+          <div class="sidebar-section desktop-switches-section" style="display:flex;flex-direction:column;gap:6px;">
+            <label class="sidebar-final-evo-label" for="box-final-evo-toggle" title="只展示最終進化或無後續進化可能的寶可夢">
+              <span class="sidebar-final-evo-text" data-i18n="pokedex.only_final">僅最終進化</span>
+              <div class="sidebar-switch-wrapper">
+                <input type="checkbox" id="box-final-evo-toggle" class="switch-checkbox">
+                <span class="switch-slider"></span>
+              </div>
+            </label>
+            <label class="sidebar-final-evo-label" for="box-initial-ing-toggle" title="只展示初始食材（Lv.1 食材）與選中食材相符的寶可夢">
+              <span class="sidebar-final-evo-text" data-i18n="pokedex.only_initial_ing">僅初始食材</span>
+              <div class="sidebar-switch-wrapper">
+                <input type="checkbox" id="box-initial-ing-toggle" class="switch-checkbox">
+                <span class="switch-slider"></span>
+              </div>
+            </label>
+            <label class="sidebar-final-evo-label" for="box-show-no-toggle" title="在列表中展示寶可夢全國圖鑑編號">
+              <span class="sidebar-final-evo-text" data-i18n="pokedex.show_no">顯示編號</span>
+              <div class="sidebar-switch-wrapper">
+                <input type="checkbox" id="box-show-no-toggle" class="switch-checkbox">
+                <span class="switch-slider"></span>
+              </div>
+            </label>
+          </div>
+
+          <!-- 1. 專長類型 (Specialty) -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title" data-i18n="pokedex.specialty_title">專長類型</span>
+            </div>
+            <div id="box-specialty-filter-tags" class="sidebar-specialty-tags"></div>
+          </div>
+
+          <!-- 全開放細節篩選器 (Sub-Filters: Berry, Ingredient, Skills) -->
+          <div id="box-detail-subfilters-container" class="detail-subfilters-container">
+            <!-- 2. 樹果細節篩選 (Berry Sub-Filter - Icon Only, Always Open) -->
+            <div id="box-subfilter-berry-group" class="sidebar-section">
+              <div class="sidebar-section-header">
+                <span class="sidebar-section-title" data-i18n="pokedex.berry_title">樹果類型</span>
+                <button type="button" id="box-clear-berries-btn" class="sidebar-section-clear-btn" style="display:none;" data-i18n="pokedex.clear">清空</button>
+              </div>
+              <div id="box-berry-filter-tags" class="sidebar-icon-grid"></div>
+            </div>
+
+            <!-- 3. 食材細節篩選 (Ingredient Sub-Filter - Icon Only, Always Open) -->
+            <div id="box-subfilter-ingredient-group" class="sidebar-section">
+              <div class="sidebar-section-header">
+                <span class="sidebar-section-title" data-i18n="pokedex.ingredient_title">出產食材</span>
+                <button type="button" id="box-clear-ingredients-pkm-btn" class="sidebar-section-clear-btn" style="display:none;" data-i18n="pokedex.clear">清空</button>
+              </div>
+              <div id="box-ingredient-pkm-filter-tags" class="sidebar-icon-grid"></div>
+            </div>
+
+            <!-- 4. 主技能細節篩選 (Main Skill Sub-Filter - Name Only, 2-Column Grid, Always Open) -->
+            <div id="box-subfilter-skill-group" class="sidebar-section">
+              <div class="sidebar-section-header">
+                <span class="sidebar-section-title" data-i18n="pokedex.skill_title">主技能</span>
+                <button type="button" id="box-clear-skills-btn" class="sidebar-section-clear-btn" style="display:none;" data-i18n="pokedex.clear">清空</button>
+              </div>
+              <div id="box-skill-filter-tags" class="sidebar-skills-list"></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 側邊欄半透明遮罩 (Mobile / Tablet Backdrop) -->
+      <div id="box-sidebar-backdrop" class="sidebar-backdrop"></div>
+
       <!-- 未登入引導遮罩 (未登入時展示，點選跳出登入視窗) -->
       <div id="box-auth-overlay" class="box-auth-overlay">
         <div class="box-auth-prompt-card" onclick="window.CloudSync && window.CloudSync.openAuthModal('signin')">
@@ -829,7 +920,9 @@
         </div>
       </div>
 
-      <section class="controls-container" aria-label="Box Controls">
+      <!-- ➡️ 倉庫主要內容區 (Right Main Content Area) -->
+      <div class="box-main-content">
+        <section class="controls-container" aria-label="Box Controls">
         <!-- 頂部智能錄入與備份功能區 -->
         <div class="box-top-banner">
           <div class="box-banner-text">
@@ -996,6 +1089,7 @@
       <section class="box-content-container">
         <div id="box-content-area"></div>
       </section>
+      </div>
     </div>
 
     <!-- Panel 4: 最新更新與新聞 -->

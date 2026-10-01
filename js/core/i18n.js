@@ -224,6 +224,8 @@
       'ladder.speed_m_toggle': '⚡ 幫速M (+16.3%)',
 
       // Box & Appraisal
+      'box.filter_sidebar_title': '倉庫篩選器',
+      'box.filter_bookmark': '篩選',
       'box.title': '我的寶可夢倉庫與截圖智能辨識',
       'box.desc': '支援上傳遊戲截圖自動辨識等級、食材組合、副技能與性格，亦可隨時手動錄入與編輯。',
       'box.banner_title': '我的寶可夢倉庫與截圖智能辨識',
@@ -573,6 +575,8 @@
       'ladder.speed_m_toggle': '⚡ Speed M (+16.3%)',
 
       // Box & Appraisal
+      'box.filter_sidebar_title': 'Box Filters',
+      'box.filter_bookmark': 'Filter',
       'box.title': 'Pokémon Box & OCR',
       'box.desc': 'Batch auto-recognize Level, Ingredients, Sub-skills, and Nature from screenshots or manual entry.',
       'box.banner_title': 'Pokémon Box & OCR',

@@ -1703,6 +1703,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
 
 .pokemon-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle,
 .recipe-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle,
+.box-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle,
 .ladder-fixed-sidebar:not(.collapsed) .sidebar-bookmark-handle,
 .ladder-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle {
   display: none !important;
@@ -1713,6 +1714,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
 
 .pokemon-filter-sidebar.collapsed .sidebar-bookmark-handle,
 .recipe-filter-sidebar.collapsed .sidebar-bookmark-handle,
+.box-filter-sidebar.collapsed .sidebar-bookmark-handle,
 .ladder-fixed-sidebar.collapsed .sidebar-bookmark-handle,
 .ladder-filter-sidebar.collapsed .sidebar-bookmark-handle {
   display: flex !important;
@@ -3677,18 +3679,21 @@ html[lang="en"] .recipe-name-wrapper,
   margin-bottom: 8px;
 }
 
-.recipe-layout-view {
+.recipe-layout-view,
+.box-layout-view {
   position: relative;
   width: 100%;
 }
 
-.recipe-main-content {
+.recipe-main-content,
+.box-main-content {
   width: 100%;
   margin: 0 auto;
   min-height: calc(100vh - 120px);
 }
 
-.recipe-main-content .controls-container {
+.recipe-main-content .controls-container,
+.box-main-content .controls-container {
   max-width: 1200px;
   width: 92%;
   margin: 24px auto 16px;
@@ -15563,6 +15568,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .sidebar-bookmark-handle.drawer-open,
 .mobile-h5-app #panel-pokemon:has(#pokemon-filter-sidebar:not(.collapsed)) #sidebar-bookmark-handle,
 .mobile-h5-app #panel-recipes:has(#recipe-filter-sidebar:not(.collapsed)) #recipe-sidebar-bookmark-handle,
+.mobile-h5-app #panel-box:has(#box-filter-sidebar:not(.collapsed)) #box-sidebar-bookmark-handle,
 .mobile-h5-app #panel-wiki:has(#ladder-filter-sidebar:not(.collapsed)) #ladder-sidebar-bookmark-handle {
   display: none !important;
   opacity: 0 !important;
@@ -15574,6 +15580,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app.pokemon-active #sidebar-bookmark-handle:not(.drawer-open),
 .mobile-h5-app #panel-pokemon:not([style*="display: none"]):not([style*="display:none"]) #sidebar-bookmark-handle:not(.drawer-open),
 .mobile-h5-app #panel-recipes:not([style*="display: none"]):not([style*="display:none"]) #recipe-sidebar-bookmark-handle:not(.drawer-open),
+.mobile-h5-app #panel-box:not([style*="display: none"]):not([style*="display:none"]) #box-sidebar-bookmark-handle:not(.drawer-open),
 .mobile-h5-app.ladder-active #ladder-sidebar-bookmark-handle:not(.drawer-open) {
   display: flex !important;
   opacity: 1 !important;
@@ -15689,57 +15696,69 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   gap: 12px !important;
 }
 
-.mobile-h5-app #pokemon-filter-sidebar .sidebar-header {
+.mobile-h5-app #pokemon-filter-sidebar .sidebar-header,
+.mobile-h5-app #box-filter-sidebar .sidebar-header {
   height: 44px !important;
   padding: 0 10px !important;
 }
 
-.mobile-h5-app #pokemon-filter-sidebar .sidebar-scrollable-content {
+.mobile-h5-app #pokemon-filter-sidebar .sidebar-scrollable-content,
+.mobile-h5-app #box-filter-sidebar .sidebar-scrollable-content {
   height: calc(100% - 44px) !important;
   padding: 6px 10px calc(16px + env(safe-area-inset-bottom, 0px)) !important;
   gap: 6px !important;
 }
 
-.mobile-h5-app #pokemon-filter-sidebar .sidebar-section {
+.mobile-h5-app #pokemon-filter-sidebar .sidebar-section,
+.mobile-h5-app #box-filter-sidebar .sidebar-section {
   gap: 2px !important;
   margin: 0 !important;
 }
 
-.mobile-h5-app #pokemon-filter-sidebar .sidebar-section-header {
+.mobile-h5-app #pokemon-filter-sidebar .sidebar-section-header,
+.mobile-h5-app #box-filter-sidebar .sidebar-section-header {
   padding: 0 !important;
   min-height: 0 !important;
   margin: 0 !important;
 }
 
-.mobile-h5-app #pokemon-filter-sidebar .sidebar-section-title {
+.mobile-h5-app #pokemon-filter-sidebar .sidebar-section-title,
+.mobile-h5-app #box-filter-sidebar .sidebar-section-title {
   font-size: 12px !important;
   line-height: 1.2 !important;
   margin: 0 !important;
 }
 
-.mobile-h5-app #pokemon-filter-sidebar .sidebar-icon-grid {
+.mobile-h5-app #pokemon-filter-sidebar .sidebar-icon-grid,
+.mobile-h5-app #box-filter-sidebar .sidebar-icon-grid {
   padding: 1px 0 !important;
   gap: 2px !important;
 }
 
 .mobile-h5-app #pokemon-filter-sidebar .sidebar-skills-list,
-.mobile-h5-app #pokemon-filter-sidebar .sidebar-specialty-tags {
+.mobile-h5-app #pokemon-filter-sidebar .sidebar-specialty-tags,
+.mobile-h5-app #box-filter-sidebar .sidebar-skills-list,
+.mobile-h5-app #box-filter-sidebar .sidebar-specialty-tags {
   gap: 3px !important;
 }
 
 .mobile-h5-app #pokemon-filter-sidebar .sidebar-specialty-tags .tag-btn,
-.mobile-h5-app #pokemon-filter-sidebar .sidebar-skills-list .tag-btn {
+.mobile-h5-app #pokemon-filter-sidebar .sidebar-skills-list .tag-btn,
+.mobile-h5-app #box-filter-sidebar .sidebar-specialty-tags .tag-btn,
+.mobile-h5-app #box-filter-sidebar .sidebar-skills-list .tag-btn {
   min-height: 24px !important;
   padding: 2px 0 !important;
   font-size: 12px !important;
 }
 
-.mobile-h5-app #pokemon-filter-sidebar .sidebar-switches-grid {
+.mobile-h5-app #pokemon-filter-sidebar .sidebar-switches-grid,
+.mobile-h5-app #box-filter-sidebar .sidebar-switches-grid {
   gap: 4px !important;
   margin: 0 !important;
 }
 
-.mobile-h5-app #pokemon-filter-sidebar .detail-subfilters-container {
+.mobile-h5-app #pokemon-filter-sidebar .detail-subfilters-container,
+.mobile-h5-app #box-filter-sidebar .detail-subfilters-container {
   display: flex !important;
   flex-direction: column !important;
   gap: 6px !important;
