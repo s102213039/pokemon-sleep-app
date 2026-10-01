@@ -12441,49 +12441,43 @@ input[type="number"] {
 
 .appraisal-specialty-row {
   display: flex;
-  gap: 6px;
-  margin-bottom: 14px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  margin-bottom: 6px;
 }
 
 .appraisal-berry-tag {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color-subtle);
-  padding: 3px 10px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary);
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
 .appraisal-spec-tag {
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 6px;
-  background: rgba(234, 179, 8, 0.15);
-  color: #d97706;
-  border: 1px solid rgba(234, 179, 8, 0.3);
+  padding: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--text-primary);
 }
 
 .appraisal-spec-tag.spec-berry {
-  background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
-  border-color: rgba(239, 68, 68, 0.35);
+  color: #f87171 !important;
 }
 
 .appraisal-spec-tag.spec-ingredient {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
-  border-color: rgba(16, 185, 129, 0.35);
+  color: #34d399 !important;
 }
 
 .appraisal-spec-tag.spec-skill {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
-  border-color: rgba(56, 189, 248, 0.35);
+  color: #38bdf8 !important;
 }
 
 [data-theme="midnight"] .appraisal-spec-tag,
@@ -12493,15 +12487,12 @@ input[type="number"] {
 
 .appraisal-config-section {
   width: 100%;
-  margin-top: 10px;
+  margin-top: 8px;
   text-align: left;
 }
 
 .appraisal-config-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-muted);
-  margin-bottom: 5px;
+  display: none !important;
 }
 
 .appraisal-nature-badge {
@@ -12509,9 +12500,15 @@ input[type="number"] {
   border: 1px solid var(--border-color-subtle);
   padding: 6px 12px;
   border-radius: 6px;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .appraisal-subskills-grid {
@@ -12605,18 +12602,19 @@ input[type="number"] {
 .appraisal-right-col {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
 .appraisal-chart-flex {
   display: grid;
-  grid-template-columns: 270px 1fr;
-  gap: 20px;
+  grid-template-columns: 240px 1fr;
+  gap: 16px;
   align-items: center;
   background: transparent;
   border: none;
   border-radius: 0;
   padding: 0;
+  margin: 0;
 }
 
 .appraisal-radar-wrapper {

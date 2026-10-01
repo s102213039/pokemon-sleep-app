@@ -48,6 +48,35 @@
     100: 680000
   };
 
+  /* 官方 25 種性格與數值修正定義表 */
+  const NATURE_DATA = [
+    { name: '固執', name_en: 'Adamant', buff: '幫忙速度▲', buff_en: 'Speed ▲', debuff: '食材機率▼', debuff_en: 'Ingr. ▼' },
+    { name: '勇敢', name_en: 'Brave', buff: '幫忙速度▲', buff_en: 'Speed ▲', debuff: 'EXP獲得量▼', debuff_en: 'EXP ▼' },
+    { name: '怕寂寞', name_en: 'Lonely', buff: '幫忙速度▲', buff_en: 'Speed ▲', debuff: '活力回復量▼', debuff_en: 'Energy ▼' },
+    { name: '頑皮', name_en: 'Naughty', buff: '幫忙速度▲', buff_en: 'Speed ▲', debuff: '主技能發動機率▼', debuff_en: 'Skill ▼' },
+    { name: '內斂', name_en: 'Modest', buff: '食材機率▲', buff_en: 'Ingr. ▲', debuff: '幫忙速度▼', debuff_en: 'Speed ▼' },
+    { name: '冷靜', name_en: 'Quiet', buff: '食材機率▲', buff_en: 'Ingr. ▲', debuff: 'EXP獲得量▼', debuff_en: 'EXP ▼' },
+    { name: '慢吞吞', name_en: 'Mild', buff: '食材機率▲', buff_en: 'Ingr. ▲', debuff: '活力回復量▼', debuff_en: 'Energy ▼' },
+    { name: '馬虎', name_en: 'Rash', buff: '食材機率▲', buff_en: 'Ingr. ▲', debuff: '主技能發動機率▼', debuff_en: 'Skill ▼' },
+    { name: '溫和', name_en: 'Calm', buff: '主技能發動機率▲', buff_en: 'Skill ▲', debuff: '幫忙速度▼', debuff_en: 'Speed ▼' },
+    { name: '慎重', name_en: 'Careful', buff: '主技能發動機率▲', buff_en: 'Skill ▲', debuff: '食材機率▼', debuff_en: 'Ingr. ▼' },
+    { name: '自大', name_en: 'Sassy', buff: '主技能發動機率▲', buff_en: 'Skill ▲', debuff: 'EXP獲得量▼', debuff_en: 'EXP ▼' },
+    { name: '溫順', name_en: 'Gentle', buff: '主技能發動機率▲', buff_en: 'Skill ▲', debuff: '活力回復量▼', debuff_en: 'Energy ▼' },
+    { name: '大膽', name_en: 'Bold', buff: '活力回復量▲', buff_en: 'Energy ▲', debuff: '幫忙速度▼', debuff_en: 'Speed ▼' },
+    { name: '淘氣', name_en: 'Impish', buff: '活力回復量▲', buff_en: 'Energy ▲', debuff: '食材機率▼', debuff_en: 'Ingr. ▼' },
+    { name: '悠閒', name_en: 'Relaxed', buff: '活力回復量▲', buff_en: 'Energy ▲', debuff: 'EXP獲得量▼', debuff_en: 'EXP ▼' },
+    { name: '樂天', name_en: 'Lax', buff: '活力回復量▲', buff_en: 'Energy ▲', debuff: '主技能發動機率▼', debuff_en: 'Skill ▼' },
+    { name: '膽小', name_en: 'Timid', buff: 'EXP獲得量▲', buff_en: 'EXP ▲', debuff: '幫忙速度▼', debuff_en: 'Speed ▼' },
+    { name: '爽朗', name_en: 'Jolly', buff: 'EXP獲得量▲', buff_en: 'EXP ▲', debuff: '食材機率▼', debuff_en: 'Ingr. ▼' },
+    { name: '急躁', name_en: 'Hasty', buff: 'EXP獲得量▲', buff_en: 'EXP ▲', debuff: '活力回復量▼', debuff_en: 'Energy ▼' },
+    { name: '天真', name_en: 'Naive', buff: 'EXP獲得量▲', buff_en: 'EXP ▲', debuff: '主技能發動機率▼', debuff_en: 'Skill ▼' },
+    { name: '坦率', name_en: 'Hardy', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '' },
+    { name: '害羞', name_en: 'Bashful', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '' },
+    { name: '認真', name_en: 'Docile', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '' },
+    { name: '勤奮', name_en: 'Serious', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '' },
+    { name: '浮躁', name_en: 'Quirky', buff: '無增減', buff_en: 'Neutral', debuff: '', debuff_en: '' }
+  ];
+
   /* ─── 剩餘可進化次數判定與睡飽飽獎章加成 ───────────────────── */
   const THREE_STAGE_BASE_NAMES = new Set([
     '妙蛙種子', '小火龍', '傑尼龜', '綠毛蟲', '皮丘', '皮寶寶', '寶寶丁', '喇叭芽',
@@ -1160,22 +1189,39 @@
       document.body.appendChild(modal);
     }
 
-    const radarSVG = renderRadarChartSVG(evaluation.scores, 280);
+    const radarSVG = renderRadarChartSVG(evaluation.scores, 240, 210);
     const SIX_DIM_META = getSixDimMeta(isEN);
     const displayName = isEN ? (pkmData.name_en || pkmData.name_cn) : (pkmData.name_cn || pkmData.name_en);
-    const specName = window.I18N ? window.I18N.getSpecialtyName(pkmData.specialty) : pkmData.specialty;
     const natDisplayName = window.I18N ? window.I18N.getNatureName(natureName) : natureName;
+
+    // 性格修正對象解析 (上升/下降實際影響，無影響則顯示無影響提示)
+    const natureObj = NATURE_DATA.find(n => n.name === natureName || n.name_en === natureName);
+    let natureEffectHtml = '';
+    if (natureObj && natureObj.buff && natureObj.buff !== '無增減') {
+      const buffLabel = isEN ? (natureObj.buff_en || natureObj.buff) : natureObj.buff;
+      const debuffLabel = isEN ? (natureObj.debuff_en || natureObj.debuff) : natureObj.debuff;
+      natureEffectHtml = `
+        <span class="nature-buff" style="color:#38bdf8;font-size:12px;font-weight:700;">▲▲ ${buffLabel}</span>
+        <span class="nature-debuff" style="color:#f87171;font-size:12px;font-weight:700;">▼▼ ${debuffLabel}</span>
+      `;
+    } else {
+      natureEffectHtml = `<span class="nature-neutral" style="color:#94a3b8;font-size:12px;font-weight:600;">(${isEN ? 'No Effect' : '無影響'})</span>`;
+    }
 
     const berry = (typeof window.getPokemonBerry === 'function') 
       ? window.getPokemonBerry(pkmData) 
       : (pkmData.berry || { name: '', icon: '' });
     const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--');
 
+    // 專長型態 (不展示「專長」二字，僅展示 食材型 / 技能型 / 樹果型，無外框)
+    let specTypeLabel = isEN ? 'Ingredient' : '食材型';
     let specClass = 'spec-ingredient';
     if (pkmData.specialty && (pkmData.specialty.includes('樹果') || pkmData.specialty === 'Berries')) {
       specClass = 'spec-berry';
+      specTypeLabel = isEN ? 'Berries' : '樹果型';
     } else if (pkmData.specialty && (pkmData.specialty.includes('技能') || pkmData.specialty === 'Skills')) {
       specClass = 'spec-skill';
+      specTypeLabel = isEN ? 'Skills' : '技能型';
     }
 
     const goldSkills = new Set(['幫手獎勵', '樹果數量S', '技能等級提升M', '夢之碎片獎勵', '睡眠EXP獎勵', '研究EXP獎勵', '活力回復獎勵']);
@@ -1249,36 +1295,34 @@
                 <span class="appraisal-level-badge">Lv. ${currentLv}</span>
               </div>
               
-              <div class="appraisal-specialty-row" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;">
-                <span class="appraisal-berry-tag" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.06);padding:3px 10px;border-radius:6px;font-size:13px;font-weight:700;color:var(--text-primary);" title="${escapeHtml(berryName)}">
-                  ${berry.icon ? `<img src="${berry.icon}" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(berryName)}">` : ''}
-                  <span>${escapeHtml(berryName)}</span>
+              <!-- 樹果與專長 (無外框，樹果不展示文字名稱僅圖示，專長僅展示 樹果型/食材型/技能型) -->
+              <div class="appraisal-specialty-row" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;">
+                <span class="appraisal-berry-tag" style="display:inline-flex;align-items:center;background:transparent;border:none;padding:0;" title="${escapeHtml(berryName)}">
+                  ${berry.icon ? `<img src="${berry.icon}" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(berryName)}">` : ''}
                 </span>
-                <span class="appraisal-spec-tag ${specClass}" style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:6px;font-size:13px;font-weight:700;">${specName} ${isEN ? 'Specialty' : '專長'}</span>
+                <span class="appraisal-spec-tag ${specClass}" style="display:inline-flex;align-items:center;background:transparent;border:none;padding:0;font-size:13.5px;font-weight:700;">${specTypeLabel}</span>
               </div>
 
-              <!-- 性格 -->
-              <div class="appraisal-config-section">
-                <div class="appraisal-config-title">${isEN ? '[*] Nature' : '[*] 性格'}</div>
-                <div class="appraisal-nature-badge" style="font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:8px;padding:6px 12px;">
-                  <span>${natDisplayName}</span>
+              <!-- 性格與修正 (無多餘標題，同一行展示名稱與上升/下降影響，無影響則顯示無影響提示) -->
+              <div class="appraisal-config-section" style="margin-top:10px;">
+                <div class="appraisal-nature-badge" style="font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 12px;flex-wrap:wrap;">
+                  <span class="font-bold text-white">${natDisplayName}</span>
+                  ${natureEffectHtml}
                 </div>
               </div>
 
-              <!-- 睡飽飽獎章 -->
+              <!-- 睡飽飽獎章 (無多餘標題) -->
               ${ribbonLevel > 0 ? `
-                <div class="appraisal-config-section">
-                  <div class="appraisal-config-title">${isEN ? 'Good-Night Ribbon' : '睡飽飽獎章'}</div>
-                  <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:6px;background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;font-size:13px;font-weight:700;">
-                    <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" style="width:22px;height:22px;object-fit:contain;" alt="Ribbon" />
+                <div class="appraisal-config-section" style="margin-top:8px;display:flex;justify-content:center;">
+                  <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:6px;background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;font-size:12.5px;font-weight:700;">
+                    <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" style="width:20px;height:20px;object-fit:contain;" alt="Ribbon" />
                     <span>${isEN ? `Tier ${ribbonLevel} (+${evaluation.ribbonBonus.carry} Carry${evaluation.ribbonBonus.speedDiscount > 0 ? ` · -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}% Speed` : ''})` : `第 ${ribbonLevel} 階段 (+${evaluation.ribbonBonus.carry} 持有${evaluation.ribbonBonus.speedDiscount > 0 ? ` · 幫速 -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}%` : ''})`}</span>
                   </div>
                 </div>
               ` : ''}
 
-              <!-- 副技能清單 (2+2+1 遊戲同款外框顏色與排列) -->
-              <div class="appraisal-config-section">
-                <div class="appraisal-config-title">${isEN ? '[#] Sub-Skills (2+2+1)' : '[#] 副技能配置 (2+2+1)'}</div>
+              <!-- 副技能清單 (2+2+1 遊戲同款外框顏色與排列，無多餘標題) -->
+              <div class="appraisal-config-section" style="margin-top:10px;">
                 <div class="appraisal-subskills-grid">
                   ${[10, 25, 50, 70, 80].map(function(lv, idx) {
                     const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
@@ -1299,12 +1343,6 @@
               </div>
             </div>
 
-            <!-- PR 智能簡評欄 (純淨簡評提示條) -->
-            <div class="appraisal-summary-bar">
-              <span style="font-size:12.5px;font-weight:800;color:#38bdf8;white-space:nowrap;flex-shrink:0;">${isEN ? 'Appraisal Note:' : '智能簡評：'}</span>
-              <span style="font-size:12.5px;color:#e2e8f0;line-height:1.4;">${escapeHtml(summaryNote)}</span>
-            </div>
-
             <!-- 升級里程碑質變預測 (若有) -->
             ${evaluation.milestones && evaluation.milestones.length > 0 ? `
               <div class="appraisal-milestones-card">
@@ -1317,9 +1355,9 @@
             ` : ''}
           </div>
 
-          <!-- 右欄：雷達圖 + 六維量表 + 深度點評 (精簡排版，純淨無外框容器) -->
+          <!-- 右欄：雷達圖 + 六維量表 + 深度點評 + 智能簡評 (精簡排版，純淨無外框容器) -->
           <div class="appraisal-right-col">
-            <!-- 上半部：雷達圖與六維能量條 -->
+            <!-- 上半部：雷達圖與六維能量條 (縮小上下邊距) -->
             <div class="appraisal-chart-flex">
               <div class="appraisal-radar-wrapper">
                 ${radarSVG}
@@ -1344,7 +1382,7 @@
               </div>
             </div>
 
-            <!-- 下半部：專長深度點評與優缺點 -->
+            <!-- 中半部：專長深度點評與優缺點 -->
             <div class="appraisal-analysis-card">
               <h4 class="appraisal-section-heading">${isEN ? '[*] Specialty, Nature & Sub-Skill Synergy Analysis' : '[*] 專長與性格副技能協同點評'}</h4>
               
@@ -1357,6 +1395,12 @@
                   ${evaluation.cons.map(function(c) { return `<div class="appraisal-con-item">${c}</div>`; }).join('')}
                 </div>
               ` : ''}
+            </div>
+
+            <!-- 右邊最下方：PR 智能簡評欄 (純淨簡評提示條) -->
+            <div class="appraisal-summary-bar">
+              <span style="font-size:12.5px;font-weight:800;color:#38bdf8;white-space:nowrap;flex-shrink:0;">${isEN ? 'Appraisal Note:' : '智能簡評：'}</span>
+              <span style="font-size:12.5px;color:#e2e8f0;line-height:1.4;">${escapeHtml(summaryNote)}</span>
             </div>
           </div>
         </div>

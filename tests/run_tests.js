@@ -8469,6 +8469,12 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(!modalHtml.includes('appraisal-costs-card'), 'Appraisal modal must NOT contain appraisal-costs-card');
     assert(modalHtml.includes('appraisal-dual-verdict-column'), 'Appraisal modal header must contain appraisal-dual-verdict-column');
     assert(!modalHtml.includes('>[x]<'), 'Appraisal modal close button must NOT use plain [x] text');
+    assert(!modalHtml.includes('appraisal-config-title'), 'Appraisal modal must NOT contain appraisal-config-title');
+    assert(modalHtml.includes('▲▲') || modalHtml.includes('無影響'), 'Appraisal modal must display nature effect modifiers or neutral hint');
+    assert(!modalHtml.includes('Specialty') && !modalHtml.includes('專長</span>'), 'Appraisal modal spec tag must only show type without redundant specialty label');
+    const rightColIdx = modalHtml.indexOf('appraisal-right-col');
+    const summaryBarIdx = modalHtml.indexOf('appraisal-summary-bar');
+    assert(summaryBarIdx > rightColIdx, 'appraisal-summary-bar must be located inside appraisal-right-col at the bottom');
   });
 
   test('Tier 4 - Real-World Application Scenarios', 'Box Dynamic Visibility & Official Subskills Lv.70/80 Standards Verification', () => {
