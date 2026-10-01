@@ -9130,6 +9130,26 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(appraisalJs.includes("const isMobileH5 = typeof document !== 'undefined'"), 'isMobileH5 must be explicitly declared in renderAppraisalLabContainer');
   });
 
+  // ─── Test 175: Pokédex Edge-to-Edge List & Direct Mobile Emulation Transition ────
+  test('Tier 1 - Feature Coverage', 'Pokédex Edge-to-Edge List & Direct Mobile Emulation Transition', () => {
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+    const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app/index.html'), 'utf8');
+
+    // 1. Pokédex table edge-to-edge layout on mobile H5
+    assert(stylesCss.includes('.mobile-h5-app.pokemon-active .table-container') && stylesCss.includes('margin: 0 !important;'), 'Pokedex table container must have 0 side margins on mobile');
+    assert(stylesCss.includes('.mobile-h5-app.pokemon-active .table-container') && stylesCss.includes('width: 100% !important;'), 'Pokedex table container must be 100% width on mobile');
+    assert(stylesCss.includes('.mobile-h5-app.pokemon-active .table-container') && stylesCss.includes('border-radius: 0 !important;'), 'Pokedex table container must have 0 border-radius');
+    assert(stylesCss.includes('.mobile-h5-app #panel-pokemon .pokemon-table'), 'Pokedex table must have dedicated full-width mobile rule');
+
+    // 2. Direct mobile transition on resize in index.html
+    assert(indexHtml.includes("localStorage.removeItem('pksleep_view_pref')"), 'index.html must clear stale desktop preference on mobile transition');
+    assert(indexHtml.includes('if (curWidth && (curWidth <= 768 || isNowMobileUA))'), 'index.html must detect <= 768px on resize');
+
+    // 3. Direct desktop transition on resize in app/index.html
+    assert(appIndexHtml.includes('if (!isMobileUA && window.innerWidth && window.innerWidth > 768)'), 'app/index.html must redirect to desktop on > 768px without getting stuck');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {
