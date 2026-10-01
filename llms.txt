@@ -1,0 +1,36 @@
+# Pokémon Sleep Web App (Desktop + Mobile H5)
+
+> High-performance Vanilla JS Pokémon Sleep web application providing dual surfaces (Desktop SPA + Mobile H5), comprehensive Pokédex, recipe calculator, wiki database, box management with OCR recognition, and deep 6D appraisal lab.
+
+## System Architecture
+- Dual Surfaces:
+  - Desktop SPA: `index.html` (multi-column responsive layout)
+  - Mobile H5 App: `app/index.html` (safe area, 2-character bottom dock, bottom sheets)
+- Shared Core Data: `data/data.json`, `data/recipes.json`, `data/news.json`, `data/special_icons.json`
+- Module Layer:
+  - `js/core/i18n.js`: Bilingual engine (zh-TW, en-US)
+  - `js/core/cloudSync.js`: Supabase cloud sync & conflict resolution
+  - `js/modules/app.js`: Pokédex core, search, filters, modal detail controller
+  - `js/modules/appraisal.js`: 6D radar appraisal engine, scoring & intelligent summaries
+  - `js/modules/box.js`: Pokémon box manager, OCR engine, Good-Night Ribbon PR calculations
+  - `js/modules/wiki.js`: Game wiki, subskills, natures, ingredient ladder, sleep EXP
+  - `js/modules/recipes.js`: Cooking recipes, pot capacity stepper, dish bonuses
+  - `js/modules/news.js`: News events, touch Gantt chart, event banners
+- Styles: `css/styles.css` (4 themes: Midnight, Onyx, Dawn, Emerald; strictly scoped `.mobile-h5-app`)
+
+## Authoritative Documentation & Specifications
+- `docs/SKILL_SPECIALISTS_AND_BFS_META_ANALYSIS.md`: Authoritative specification on Skill Specialists & Berry Finding S (BFS) synergy, Sneaky Snacking mechanics, Berry Burst, Charge Strength dual-track, and legendary beast mechanics.
+- `docs/OPTIMAL_BUILDS_AND_META_LOGIC.md`: Pokémon God Presets, nature ladders, and appraisal algorithms.
+- `docs/THEME_COLOR_SPEC.md`: 4-Theme contrast specifications and pre/post check protocols.
+- `docs/SIDEBAR_HANDLE_RULE.md`: Sidebar bookmark handle visibility and collapsed/expanded rules.
+- `docs/SPECIAL_ICONS_RULES.md`: Vector SVG icon rendering specifications.
+- `docs/POKEMON_RECRUITMENT_PROBABILITY_ANALYSIS.md`: Math models for sleep style encounter rates and biscuit efficiency.
+- `docs/walkthrough.md`: Historical progression and technical logs for Demands 1-44.
+
+## Critical Engineering Constraints
+- Zero Emoji Policy: Strict prohibition of emojis anywhere in UI text, code, logs, and markdown files.
+- Single Frame Rule: No redundant nested outer borders around card grids, lists, or tables.
+- Dropdown Arrow Rule: Select arrows must have right inset (`padding-right: 36px`, `background-position: right 18px center`).
+- Shell Command Rule: Always prefix shell commands with `rtk`.
+- Test Verification: `rtk node tests/run_tests.js` (171 tests, must always pass 100%).
+- Agent Docs Protocol: Canonical path `~/.gemini/agent-docs/projects/pokemon-sleep-app/`.
