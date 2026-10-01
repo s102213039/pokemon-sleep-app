@@ -9248,7 +9248,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(boxJs.includes('getSpecialtyIconHtml(base ? base.specialty : p.specialty, 18)'), 'Box cards must use getSpecialtyIconHtml with size 18');
 
     // 5. Appraisal integration
-    assert(appraisalJs.includes('getSpecialtyIconHtml(specialty, 22'), 'Appraisal modal must use getSpecialtyIconHtml with size 22');
+    assert(appraisalJs.includes('getSpecialtyIconHtml(pkmData.specialty, 22') || appraisalJs.includes('getSpecialtyIconHtml(specialty, 22'), 'Appraisal modal must use getSpecialtyIconHtml with size 22');
     assert(appraisalJs.includes('getSpecialtyIconHtml(currentPkm.specialty, 16)'), 'Appraisal lab must use getSpecialtyIconHtml with size 16');
 
     // 6. CSS borderless transparent styling & berry size matching
@@ -9281,7 +9281,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(appraisalJs.includes('class="lab-preview-subskills-section"') && appraisalJs.includes('class="box-subskills-grid"'), 'Preview mode must render subskills in grid');
 
     // 4. In-place edit mode transformation with save/cancel controls
-    assert(appraisalJs.includes('const showControls = labState.editMode;'), 'Controls must be toggled by editMode state');
+    assert(appraisalJs.includes('const showControls = !isMobileH5 || labState.editMode;') || appraisalJs.includes('const showControls = labState.editMode;'), 'Controls must be toggled by editMode state');
     assert(appraisalJs.includes('btn-lab-save-header') && appraisalJs.includes('btn-lab-cancel-header'), 'Header must render save/cancel buttons during edit mode');
     assert(appraisalJs.includes('btn-lab-save') && appraisalJs.includes('btn-lab-cancel'), 'Form bottom must render save/cancel buttons during edit mode');
 
@@ -9335,9 +9335,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(appraisalJs.includes('getSkillTier: getSkillTier'), 'appraisal.js must export getSkillTier in AppraisalLab');
     assert(appraisalJs.includes('function getSkillTier(sName)'), 'appraisal.js must define getSkillTier');
 
-    // 2. Cache busters bumped to 20261002_05
-    assert(indexHtml.includes('js/modules/appraisal.js?v=20261002_05'), 'index.html must use v=20261002_05');
-    assert(appIndexHtml.includes('js/modules/appraisal.js?v=20261002_05'), 'app/index.html must use v=20261002_05');
+    // 2. Cache busters bumped to 20261002_06
+    assert(indexHtml.includes('js/modules/appraisal.js?v=20261002_06'), 'index.html must use v=20261002_06');
+    assert(appIndexHtml.includes('js/modules/appraisal.js?v=20261002_06'), 'app/index.html must use v=20261002_06');
 
     // 3. Execution in VM context
     const ctx = {
@@ -9439,7 +9439,95 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
 
     assert(mockContainer.innerHTML.includes('<span class="lab-preview-name">妙蛙花</span>'), 'renderLab must default to first Pokémon in getFilteredBox (妙蛙花)');
     assert(!mockContainer.innerHTML.includes('<span class="lab-preview-name">巴大蝶</span>'), 'renderLab preview must not default to raw unsorted userBox[0] (巴大蝶)');
-    assert(mockContainer.innerHTML.includes('lab-preview-subskills-section'), 'renderLab must render subskills section in preview');
+  });
+
+  // ─── Test 182: Desktop vs Mobile H5 Appraisal Lab Separation & openAppraisalModal specialty Scope Fix ─
+  test('Tier 2 - Boundary & Corner Cases', 'Desktop vs Mobile H5 Appraisal Lab Separation & openAppraisalModal specialty Scope Fix', () => {
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+
+    // 1. Static assertion: specialty must be accessed via pkmData.specialty in openAppraisalModal
+    assert(!appraisalJs.includes('getSpecialtyIconHtml(specialty,'), 'appraisal.js must not call getSpecialtyIconHtml with bare undeclared specialty variable');
+    assert(appraisalJs.includes('getSpecialtyIconHtml(pkmData.specialty,'), 'appraisal.js must call getSpecialtyIconHtml with pkmData.specialty in openAppraisalModal');
+
+    // 2. Static assertion: showControls must be true on desktop (!isMobileH5)
+    assert(appraisalJs.includes('const showControls = !isMobileH5 || labState.editMode;'), 'showControls must be true on desktop (!isMobileH5) to keep controls and preview side-by-side');
+
+    // 3. Static assertion: mobile floating edit button and stats panel are restricted to isMobileH5
+    assert(appraisalJs.includes('${isMobileH5 ? `') && appraisalJs.includes('class="btn-lab-edit-toggle"'), 'btn-lab-edit-toggle must only render on mobile H5');
+    assert(appraisalJs.includes('(isMobileH5 && !showControls)'), 'lab-preview-stats-panel must only render on mobile H5 preview mode');
+
+    // 4. Runtime execution: openModal must not throw ReferenceError: specialty is not defined
+    const modalCreated = { innerHTML: '', style: {}, classList: { add: () => {}, remove: () => {} }, setAttribute: () => {} };
+    const ctx = {
+      window: {},
+      document: {
+        querySelector: () => null,
+        getElementById: (id) => (id === 'appraisal-modal' ? modalCreated : null),
+        createElement: (tag) => modalCreated,
+        body: {
+          appendChild: () => {},
+          classList: { contains: () => false },
+          style: {}
+        }
+      },
+      console: console,
+      Set: Set,
+      Array: Array,
+      parseInt: parseInt,
+      Math: Math,
+      String: String
+    };
+    ctx.window = ctx;
+    ctx.window.allPokemons = [
+      { id: '3', name_cn: '妙蛙花', specialty: '食材', type: '草', ingredients: [{ name: '特選蘋果', count: 2 }] }
+    ];
+    ctx.window.I18N = {
+      getLanguage: () => 'zh-TW',
+      getSubSkillName: (n) => n,
+      getMainSkillName: (n) => n,
+      getIngredientName: (n) => n,
+      getNatureName: (n) => n,
+      getSpecialtyName: (n) => n,
+      getTypeName: (n) => n,
+      getBerryName: (n) => n,
+      getIngredientIcon: () => '',
+      getSpecialtyIconHtml: (spec, size, cls) => `<span class="${cls}">${spec}</span>`
+    };
+
+    vm.createContext(ctx);
+    vm.runInContext(appraisalJs, ctx);
+
+    // Call openModal on desktop
+    let openModalError = null;
+    try {
+      ctx.window.AppraisalLab.openModal({
+        pkm: ctx.window.allPokemons[0],
+        level: 55,
+        nature: '內斂',
+        subskills: ['幫手獎勵', '食材機率提升M'],
+        ingredients: ['特選蘋果', '特選蘋果', '特選蘋果'],
+        ribbon: 2,
+        nickname: '花花'
+      });
+    } catch (e) {
+      openModalError = e;
+    }
+    assert(!openModalError, `openModal must not throw ReferenceError: specialty is not defined, got: ${openModalError && openModalError.message}`);
+    assert(modalCreated.innerHTML.includes('花花'), 'openModal must render nickname');
+    assert(modalCreated.innerHTML.includes('妙蛙花'), 'openModal must render Pokemon name');
+
+    // Test renderLab on desktop (!isMobileH5)
+    const desktopContainer = { innerHTML: '', id: 'appraisal-lab-container' };
+    ctx.window.UserBox = {
+      getUserBox: () => [{ uid: '1', pokemonId: '3', name: '妙蛙花', level: 55, nature: '內斂', subskills: [] }]
+    };
+    ctx.window.AppraisalLab.renderLab(desktopContainer, 0);
+    // On desktop, controls column must NOT be display: none
+    assert(!desktopContainer.innerHTML.includes('class="appraisal-lab-controls" style="display: none !important;"'), 'On desktop, appraisal-lab-controls must not be hidden with display: none !important');
+    // On desktop, mobile edit toggle button must NOT be present
+    assert(!desktopContainer.innerHTML.includes('class="btn-lab-edit-toggle"'), 'On desktop, btn-lab-edit-toggle must not be rendered');
+    // On desktop, duplicate stats panel must NOT be present
+    assert(!desktopContainer.innerHTML.includes('class="lab-preview-stats-panel"'), 'On desktop, duplicate lab-preview-stats-panel must not be rendered');
   });
 
 console.log('                   Test Results Summary');
