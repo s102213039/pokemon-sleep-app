@@ -9150,6 +9150,32 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(appIndexHtml.includes('if (!isMobileUA && window.innerWidth && window.innerWidth > 768)'), 'app/index.html must redirect to desktop on > 768px without getting stuck');
   });
 
+  // ─── Test 176: Pokédex & Box Snug Icon Column, Specialty Distinct Colors & Table Square Corners ────
+  test('Tier 1 - Feature Coverage', 'Pokédex & Box Snug Icon Column, Specialty Distinct Colors & Table Square Corners', () => {
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
+
+    // 1. Snug icon column width matching icon dimensions 100%
+    assert(stylesCss.includes('.pokemon-table .th-icon') && stylesCss.includes('width: 34px !important;'), 'th-icon must be 34px wide');
+    assert(stylesCss.includes('.pokemon-table .td-icon') && stylesCss.includes('width: 34px !important;'), 'td-icon must be 34px wide');
+    assert(stylesCss.includes('.table-icon') && stylesCss.includes('width: 34px !important;'), 'table-icon must be 34px wide');
+    assert(boxJs.includes('<th class="th-icon"'), 'box.js table must use th-icon class for icon column');
+    assert(boxJs.includes('<td class="td-icon"'), 'box.js table must use td-icon class for icon column');
+    assert(stylesCss.includes('.pokemon-table.box-table .th-icon') && stylesCss.includes('left: 0 !important;'), 'box-table icon header must stick to left: 0');
+    assert(stylesCss.includes('.pokemon-table.box-table .td-icon') && stylesCss.includes('left: 0 !important;'), 'box-table icon cell must stick to left: 0');
+
+    // 2. Specialty badge distinct colors preserved on mobile H5
+    assert(!stylesCss.includes('.mobile-h5-app .box-spec-tag {\n  font-size: 10px !important;\n  padding: 1px 5px !important;\n  border-radius: 4px !important;\n  background: var(--table-row-odd-solid'), 'mobile-h5-app box-spec-tag must not override background to solid dark');
+    assert(stylesCss.includes('.mobile-h5-app .box-spec-tag.spec-berry'), 'mobile-h5-app must define berry specialty badge style');
+    assert(stylesCss.includes('.mobile-h5-app .box-spec-tag.spec-ingredient'), 'mobile-h5-app must define ingredient specialty badge style');
+    assert(stylesCss.includes('.mobile-h5-app .box-spec-tag.spec-skill'), 'mobile-h5-app must define skill specialty badge style');
+
+    // 3. Square corners for tables across the app
+    assert(stylesCss.includes('.pokemon-table thead th:first-child,\n.pokemon-table thead th:last-child {\n  border-radius: 0 !important;'), 'Table header corners must have 0 border-radius');
+    assert(stylesCss.includes('.mobile-h5-app .pokemon-table thead th:first-child,\n.mobile-h5-app .pokemon-table thead th:last-child'), 'Mobile table corners must be square');
+    assert(stylesCss.includes('.mobile-h5-app .pokemon-table.hide-no thead th:first-child,\n.mobile-h5-app .pokemon-table.hide-no tbody tr:last-child td:first-child {\n  border-radius: 0 !important;'), 'Mobile hide-no corners must be square');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

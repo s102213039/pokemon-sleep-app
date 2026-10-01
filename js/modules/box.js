@@ -1298,7 +1298,7 @@
         <table class="pokemon-table box-table">
           <thead>
             <tr>
-              <th style="text-align:center;">${t('th.icon', '圖示')}</th>
+              <th class="th-icon" style="text-align:center;">${t('th.icon', '圖示')}</th>
               <th style="text-align:center;">${t('th.level', '等級')}</th>
               <th style="text-align:center;">${isEN ? 'Name / Nickname' : '寶可夢 / 暱稱'}</th>
               <th style="text-align:center;">${t('th.ribbon', '獎章')}</th>
@@ -1328,8 +1328,8 @@
 
               return `
                 <tr data-uid="${p.uid}">
-                  <td style="text-align:center;">
-                    <div class="table-icon-wrapper" style="margin:0 auto;">
+                  <td class="td-icon" style="text-align:center;">
+                    <div class="table-icon-wrapper" style="margin:0 auto;width:34px;height:34px;">
                       ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="table-icon" onerror="this.style.display='none';">` : ''}
                     </div>
                   </td>

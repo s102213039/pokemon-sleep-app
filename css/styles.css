@@ -2666,7 +2666,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none; /* Firefox: 隱藏橫向滾動條 */
   -ms-overflow-style: none; /* IE/Edge */
-  border-radius: var(--radius-lg);
+  border-radius: 0 !important;
   border: 1px solid var(--border-color);
   background: var(--bg-card);
   position: relative;
@@ -2787,14 +2787,15 @@ html[data-lang="en"] .subfilter-skill-btn,
   background-color: var(--table-th-solid, #0a0f1d) !important;
   color: var(--text-th) !important;
   font-weight: 700 !important;
-  min-width: 46px !important;
-  max-width: 46px !important;
-  width: 46px !important;
-  padding: 11px 4px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  width: 34px !important;
+  padding: 8px 0 !important;
   box-sizing: border-box !important;
   text-align: center !important;
   border-right: 1px solid var(--border-color) !important;
   box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
+  font-size: 11px !important;
 }
 
 .pokemon-table .td-icon,
@@ -2802,38 +2803,51 @@ html[data-lang="en"] .subfilter-skill-btn,
   position: sticky !important;
   left: 44px !important;
   z-index: 20 !important;
-  min-width: 46px !important;
-  max-width: 46px !important;
-  width: 46px !important;
-  padding: 4px 4px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  width: 34px !important;
+  padding: 3px 0 !important;
   box-sizing: border-box !important;
   text-align: center !important;
   border-right: 1px solid var(--border-color) !important;
   box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* ─── 📌 關鍵置前：隱藏 No. 欄位時，圖示 (th-icon, td-icon) 自動貼齊 left: 0 ─── */
+/* ─── 📌 關鍵置前：隱藏 No. 欄位或 Box 列表時，圖示 (th-icon, td-icon) 自動貼齊 left: 0 ─── */
 .pokemon-table.hide-no .th-icon,
 .pokemon-table.hide-no .td-icon,
-.pokemon-table.hide-no thead .th-icon {
+.pokemon-table.hide-no thead .th-icon,
+.pokemon-table.box-table .th-icon,
+.pokemon-table.box-table .td-icon,
+.mobile-h5-app #panel-box .pokemon-table.box-table .th-icon,
+.mobile-h5-app #panel-box .pokemon-table.box-table .td-icon {
   left: 0 !important;
 }
 
-.pokemon-table.hide-no thead th:first-child {
-  border-top-left-radius: 13px !important;
+.pokemon-table.hide-no thead th:first-child,
+.pokemon-table thead th:first-child,
+.pokemon-table thead th:last-child {
+  border-radius: 0 !important;
 }
 
-.pokemon-table.hide-no tbody tr:last-child td:first-child {
-  border-bottom-left-radius: 13px !important;
+.pokemon-table.hide-no tbody tr:last-child td:first-child,
+.pokemon-table tbody tr:last-child td:first-child,
+.pokemon-table tbody tr:last-child td:last-child {
+  border-radius: 0 !important;
 }
 
 .table-icon {
-  width: 32px;
-  height: 32px;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
   border-radius: 6px;
   object-fit: contain;
   background: rgba(255, 255, 255, 0.05);
-  padding: 2px;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  display: block !important;
+  margin: 0 auto !important;
   vertical-align: middle;
 }
 
@@ -4851,9 +4865,10 @@ input[type=range].rf-slider.event-slider {
     position: sticky !important;
     left: 44px !important;
     z-index: 20 !important;
-    min-width: 46px !important;
-    max-width: 46px !important;
-    width: 46px !important;
+    min-width: 34px !important;
+    max-width: 34px !important;
+    width: 34px !important;
+    padding: 3px 0 !important;
     border-right: 1px solid var(--border-color) !important;
     box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
   }
@@ -4869,7 +4884,9 @@ input[type=range].rf-slider.event-slider {
 
   .pokemon-table.hide-no .th-icon,
   .pokemon-table.hide-no .td-icon,
-  .pokemon-table.hide-no thead .th-icon {
+  .pokemon-table.hide-no thead .th-icon,
+  .pokemon-table.box-table .th-icon,
+  .pokemon-table.box-table .td-icon {
     left: 0 !important;
   }
 
@@ -6567,19 +6584,22 @@ input[type=range].rf-slider.event-slider {
   box-sizing: border-box;
 }
 
-.box-spec-tag.spec-berry {
+.box-spec-tag.spec-berry,
+.mobile-h5-app .box-spec-tag.spec-berry {
   background: rgba(34, 197, 94, 0.18) !important;
   border: 1.5px solid #22c55e !important;
   color: #4ade80 !important;
 }
 
-.box-spec-tag.spec-ingredient {
+.box-spec-tag.spec-ingredient,
+.mobile-h5-app .box-spec-tag.spec-ingredient {
   background: rgba(234, 179, 8, 0.18) !important;
   border: 1.5px solid #eab308 !important;
   color: #facc15 !important;
 }
 
-.box-spec-tag.spec-skill {
+.box-spec-tag.spec-skill,
+.mobile-h5-app .box-spec-tag.spec-skill {
   background: rgba(14, 165, 233, 0.18) !important;
   border: 1.5px solid #38bdf8 !important;
   color: #38bdf8 !important;
@@ -12525,21 +12545,24 @@ input[type="number"] {
 }
 
 [data-theme="light"] .appraisal-spec-tag.spec-berry,
-[data-theme="light"] .box-spec-tag.spec-berry {
+[data-theme="light"] .box-spec-tag.spec-berry,
+.mobile-h5-app[data-theme="light"] .box-spec-tag.spec-berry {
   background: #dcfce7 !important;
   border: 1.5px solid #16a34a !important;
   color: #15803d !important;
 }
 
 [data-theme="light"] .appraisal-spec-tag.spec-ingredient,
-[data-theme="light"] .box-spec-tag.spec-ingredient {
+[data-theme="light"] .box-spec-tag.spec-ingredient,
+.mobile-h5-app[data-theme="light"] .box-spec-tag.spec-ingredient {
   background: #fef9c3 !important;
   border: 1.5px solid #ca8a04 !important;
   color: #854d0e !important;
 }
 
 [data-theme="light"] .appraisal-spec-tag.spec-skill,
-[data-theme="light"] .box-spec-tag.spec-skill {
+[data-theme="light"] .box-spec-tag.spec-skill,
+.mobile-h5-app[data-theme="light"] .box-spec-tag.spec-skill {
   background: #e0f2fe !important;
   border: 1.5px solid #0284c7 !important;
   color: #0369a1 !important;
@@ -15417,20 +15440,11 @@ body.mobile-h5-app.pokemon-active,
   padding: 6px 4px !important;
 }
 
-.mobile-h5-app .pokemon-table thead th:first-child {
-  border-top-left-radius: 13px !important;
-}
-
-.mobile-h5-app .pokemon-table thead th:last-child {
-  border-top-right-radius: 13px !important;
-}
-
-.mobile-h5-app .pokemon-table tbody tr:last-child td:first-child {
-  border-bottom-left-radius: 13px !important;
-}
-
+.mobile-h5-app .pokemon-table thead th:first-child,
+.mobile-h5-app .pokemon-table thead th:last-child,
+.mobile-h5-app .pokemon-table tbody tr:last-child td:first-child,
 .mobile-h5-app .pokemon-table tbody tr:last-child td:last-child {
-  border-bottom-right-radius: 13px !important;
+  border-radius: 0 !important;
 }
 
 .mobile-h5-app .pokemon-table .th-type,
@@ -15554,19 +15568,18 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   background-color: var(--table-th-solid, #0a0f1d) !important;
 }
 
-/* ─── 隱藏 No. 欄位時：th-icon / td-icon 置於 left: 0 ─── */
+/* ─── 隱藏 No. 欄位或 Box 列表時：th-icon / td-icon 置於 left: 0 ─── */
 .mobile-h5-app .pokemon-table.hide-no thead .th-icon,
 .mobile-h5-app .pokemon-table.hide-no .th-icon,
-.mobile-h5-app .pokemon-table.hide-no .td-icon {
+.mobile-h5-app .pokemon-table.hide-no .td-icon,
+.mobile-h5-app #panel-box .pokemon-table.box-table .th-icon,
+.mobile-h5-app #panel-box .pokemon-table.box-table .td-icon {
   left: 0 !important;
 }
 
-.mobile-h5-app .pokemon-table.hide-no thead th:first-child {
-  border-top-left-radius: 13px !important;
-}
-
+.mobile-h5-app .pokemon-table.hide-no thead th:first-child,
 .mobile-h5-app .pokemon-table.hide-no tbody tr:last-child td:first-child {
-  border-bottom-left-radius: 13px !important;
+  border-radius: 0 !important;
 }
 
 /* ─── 🎛️ H5 App 右下懸浮篩選按鈕 (輕量扁平微陰影，無刺眼炫光) ─── */
@@ -21124,9 +21137,6 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   font-size: 10px !important;
   padding: 1px 5px !important;
   border-radius: 4px !important;
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  color: var(--text-secondary) !important;
-  border: 1px solid var(--border-color) !important;
 }
 
 .mobile-h5-app .box-card-actions {
