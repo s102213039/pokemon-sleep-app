@@ -9325,6 +9325,100 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(resetBoxCode.includes("sortSelect.value = 'id-asc';"), 'resetBoxFilters must update sortSelect UI value to id-asc');
   });
 
+  // ─── Test 181: Appraisal Lab Scope Integrity: getSkillTier Module Scope & Error-Free Lab Render ─
+  test('Tier 2 - Boundary & Corner Cases', 'Appraisal Lab Scope Integrity: getSkillTier Module Scope & Error-Free Lab Render', () => {
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app/index.html'), 'utf8');
+
+    // 1. Static check: getSkillTier is in AppraisalLab exports and defined in module scope
+    assert(appraisalJs.includes('getSkillTier: getSkillTier'), 'appraisal.js must export getSkillTier in AppraisalLab');
+    assert(appraisalJs.includes('function getSkillTier(sName)'), 'appraisal.js must define getSkillTier');
+
+    // 2. Cache busters bumped to 20261002_04
+    assert(indexHtml.includes('js/modules/appraisal.js?v=20261002_04'), 'index.html must use v=20261002_04');
+    assert(appIndexHtml.includes('js/modules/appraisal.js?v=20261002_04'), 'app/index.html must use v=20261002_04');
+
+    // 3. Execution in VM context
+    const ctx = {
+      window: {},
+      document: {
+        querySelector: () => null,
+        getElementById: (id) => ({
+          id,
+          style: {},
+          innerHTML: ''
+        }),
+        body: { classList: { contains: () => false } }
+      },
+      console: console,
+      Set: Set,
+      Array: Array,
+      parseInt: parseInt,
+      Math: Math,
+      String: String
+    };
+    ctx.window = ctx;
+    ctx.window.allPokemons = [
+      { id: '1', name_cn: '妙蛙種子', specialty: '食材', type: '草', ingredients: [{ name: '特選蘋果', count: 1 }] }
+    ];
+    ctx.window.UserBox = {
+      SUBSKILLS_DATA: [
+        { name: '樹果數量S', tier: 'gold' },
+        { name: '幫手獎勵', tier: 'gold' },
+        { name: '幫忙速度M', tier: 'blue' }
+      ],
+      NATURE_DATA: [
+        { name: '固執', buff: '幫忙速度▲', debuff: '食材機率▼' }
+      ],
+      getUserBox: () => [
+        {
+          uid: 'pkm-1',
+          pokemonId: '1',
+          name: '妙蛙種子',
+          level: 25,
+          nature: '固執',
+          subskills: ['樹果數量S', '幫忙速度M', '', '', ''],
+          ingredients: ['特選蘋果', '特選蘋果', '特選蘋果'],
+          ribbon: 1
+        }
+      ]
+    };
+    ctx.window.I18N = {
+      getLanguage: () => 'zh-TW',
+      getSubSkillName: (n) => n,
+      getMainSkillName: (n) => n,
+      getIngredientName: (n) => n,
+      getNatureName: (n) => n,
+      getSpecialtyName: (n) => n,
+      getTypeName: (n) => n,
+      getIngredientIcon: () => ''
+    };
+
+    vm.createContext(ctx);
+    vm.runInContext(appraisalJs, ctx);
+
+    assert(typeof ctx.window.AppraisalLab === 'object', 'AppraisalLab must be defined on window');
+    assert(typeof ctx.window.AppraisalLab.getSkillTier === 'function', 'getSkillTier must be a function on AppraisalLab');
+
+    // Verify tier calculations
+    assert(ctx.window.AppraisalLab.getSkillTier('幫手獎勵') === 'gold', '幫手獎勵 must be gold');
+    assert(ctx.window.AppraisalLab.getSkillTier('幫忙速度M') === 'blue', '幫忙速度M must be blue');
+    assert(ctx.window.AppraisalLab.getSkillTier('') === 'white', 'empty subskill must be white');
+
+    // Verify renderLab executes without ReferenceError
+    const mockContainer = { innerHTML: '', id: 'appraisal-lab-container' };
+    let renderError = null;
+    try {
+      ctx.window.AppraisalLab.renderLab(mockContainer, 0);
+    } catch (e) {
+      renderError = e;
+    }
+    assert(!renderError, `renderLab must not throw ReferenceError: getSkillTier is not defined, got: ${renderError && renderError.message}`);
+
+    assert(mockContainer.innerHTML.includes('lab-preview-subskills-section'), 'renderLab must render subskills section in preview');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

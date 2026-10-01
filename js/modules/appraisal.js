@@ -1725,6 +1725,20 @@
     return slotIdx === 0 ? 1 : (slotIdx === 1 ? 2 : 4);
   }
 
+  /* ─── 副技能分級判斷 ───────────────────────────────────── */
+  const GOLD_SUBSKILLS = new Set(['幫手獎勵', '樹果數量S', '技能等級提升M', '夢之碎片獎勵', '睡眠EXP獎勵', '研究EXP獎勵', '活力回復獎勵']);
+  const BLUE_SUBSKILLS = new Set(['幫忙速度M', '食材機率提升M', '技能機率提升M', '技能等級提升S', '持有上限提升L', '持有上限提升M']);
+
+  function getSkillTier(sName) {
+    if (!sName) return 'white';
+    const subskillPool = (typeof window !== 'undefined' && ((window.UserBox && window.UserBox.SUBSKILLS_DATA) || (window.PokemonBoxApp && window.PokemonBoxApp.SUBSKILLS_DATA))) || [];
+    const found = subskillPool.find(function (s) { return s.name === sName; });
+    if (found && found.tier) return found.tier;
+    if (GOLD_SUBSKILLS.has(sName)) return 'gold';
+    if (BLUE_SUBSKILLS.has(sName)) return 'blue';
+    return 'white';
+  }
+
   /* ─── 診斷報告書彈窗管理 ───────────────────────────────── */
   function openAppraisalModal(pkmOrBoxItem) {
     if (!pkmOrBoxItem) return;
@@ -1807,18 +1821,6 @@
     } else if (pkmData.specialty && (pkmData.specialty.includes('技能') || pkmData.specialty === 'Skills')) {
       specClass = 'spec-skill';
       specTypeLabel = isEN ? 'Skills' : '技能型';
-    }
-
-    const goldSkills = new Set(['幫手獎勵', '樹果數量S', '技能等級提升M', '夢之碎片獎勵', '睡眠EXP獎勵', '研究EXP獎勵', '活力回復獎勵']);
-    const blueSkills = new Set(['幫忙速度M', '食材機率提升M', '技能機率提升M', '技能等級提升S', '持有上限提升L', '持有上限提升M']);
-    const subskillPool = (window.UserBox && window.UserBox.SUBSKILLS_DATA) || (window.PokemonBoxApp && window.PokemonBoxApp.SUBSKILLS_DATA) || [];
-    function getSkillTier(sName) {
-      if (!sName) return 'white';
-      const found = subskillPool.find(s => s.name === sName);
-      if (found && found.tier) return found.tier;
-      if (goldSkills.has(sName)) return 'gold';
-      if (blueSkills.has(sName)) return 'blue';
-      return 'white';
     }
 
     let summaryNote = pkmOrBoxItem.summaryNote || '';
@@ -2708,6 +2710,7 @@
     openModal: openAppraisalModal,
     closeModal: closeAppraisalModal,
     renderLab: renderAppraisalLabContainer,
+    getSkillTier: getSkillTier,
     loadBoxItem: loadBoxItem,
     onBoxItemSelect: onBoxItemSelect,
     resetToBoxOriginal: resetToBoxOriginal,
