@@ -1297,6 +1297,24 @@
     return lookupBilingualDict(SPECIALTY_NAMES, spec) || spec;
   }
 
+  function getSpecialtyKey(spec) {
+    if (!spec) return 'berry';
+    const str = String(spec).toLowerCase();
+    if (str.includes('樹果') || str.includes('berry') || str === 'berries') return 'berry';
+    if (str.includes('食材') || str.includes('ingredient') || str === 'ingredients') return 'ingredient';
+    if (str.includes('技能') || str.includes('skill') || str === 'skills') return 'skill';
+    return 'berry';
+  }
+
+  function getSpecialtyIconHtml(spec, size = 22, extraClass = '') {
+    const key = getSpecialtyKey(spec);
+    const specClass = 'spec-' + key;
+    const basePath = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : (typeof window !== 'undefined' && window.location && window.location.pathname.includes('/app/') ? '../' : '');
+    const title = getSpecialtyName(spec) || spec || '';
+    const s = size || 22;
+    return `<span class="box-spec-tag ${specClass} specialty-icon-wrap ${extraClass}" title="${safeEscape(title)}" style="display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;padding:0;line-height:1;vertical-align:middle;"><img src="${basePath}assets/specialty/${key}.png" srcset="${basePath}assets/specialty/${key}@2x.png 2x" class="specialty-icon spec-${key}" width="${s}" height="${s}" alt="${safeEscape(title)}" loading="lazy" style="width:${s}px;height:${s}px;object-fit:contain;vertical-align:middle;display:inline-block;pointer-events:none;" /></span>`;
+  }
+
   const INGREDIENT_ICONS = {
     '特選蘋果': 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png',
     'Fancy Apple': 'https://www.serebii.net/pokemonsleep/ingredients/fancyapple.png',
@@ -1788,6 +1806,8 @@
     TYPE_SVG_PATHS,
     TYPE_CANONICAL_MAP,
     getSpecialtyName,
+    getSpecialtyKey,
+    getSpecialtyIconHtml,
     getIngredientName,
     getIngredientIcon,
     getBerryName,
@@ -1817,6 +1837,8 @@
 
   if (typeof window !== 'undefined') {
     window.I18N = I18NExport;
+    window.getSpecialtyIconHtml = getSpecialtyIconHtml;
+    window.getSpecialtyKey = getSpecialtyKey;
     window.updateSearchInputHighlight = updateSearchInputHighlight;
   }
 

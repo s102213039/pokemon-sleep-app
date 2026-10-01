@@ -3520,7 +3520,7 @@ if (typeof document !== 'undefined') {
                 </div>
                 <div class="stat-item">
                   <span class="stat-label">${t('th.specialty', '得意')}</span>
-                  <span class="stat-value" style="white-space:nowrap;"><span class="box-spec-tag ${specClass}">${specName}</span></span>
+                  <span class="stat-value" style="white-space:nowrap;">${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(p.specialty, 22) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}</span>
                 </div>
                 <div class="stat-item">
                   <span class="stat-label">${t('th.carry', '持有')}</span>
@@ -3602,7 +3602,7 @@ if (typeof document !== 'undefined') {
                   </td>
                   <td class="td-name pokemon-name-cell" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">${pkmName}</td>
                   <td class="td-berry">${berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}" loading="lazy" onerror="this.style.display='none';">` : `<span class="berry-name-text">${berryName}</span>`}</td>
-                  <td class="td-spec" style="text-align:center;"><span class="box-spec-tag ${specClass}">${specName}</span></td>
+                  <td class="td-spec" style="text-align:center;">${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(p.specialty, 24) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}</td>
                   <td class="td-carry">${p.carry || '--'}</td>
                   <td class="td-ing">${p.ingredients && p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${window.I18N ? window.I18N.getIngredientName(p.ingredients[0].name) : p.ingredients[0].name}" loading="lazy" title="${window.I18N ? window.I18N.getIngredientName(p.ingredients[0].name) : p.ingredients[0].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[0],0)}</div>` : '--'}</td>
                   <td class="td-ing">${p.ingredients && p.ingredients[1] ? `<div class="ing-cell">${p.ingredients[1].icon ? `<img class="ing-icon" src="${p.ingredients[1].icon}" alt="${window.I18N ? window.I18N.getIngredientName(p.ingredients[1].name) : p.ingredients[1].name}" loading="lazy" title="${window.I18N ? window.I18N.getIngredientName(p.ingredients[1].name) : p.ingredients[1].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[1],1)}</div>` : '--'}</td>
@@ -3966,9 +3966,17 @@ if (typeof document !== 'undefined') {
           return;
         }
 
-        // 避免在開啟的側邊欄或彈窗內誤觸發全頁下拉刷新
+        // 避免在開啟的側邊欄、彈窗、懸浮按鈕或導覽列內誤觸發全頁下拉刷新
         const target = e.target;
-        if (target && target.closest && target.closest('#pokedex-detail-modal, .pokedex-modal-backdrop, .pokedex-modal-dialog, .pokedex-modal-body, .pokemon-filter-sidebar, .recipe-filter-sidebar, .ladder-fixed-sidebar, .sidebar-backdrop, .modal-overlay, .subskill-sheet-modal, .appraisal-modal-overlay, .appraisal-modal-backdrop, #settings-modal, #box-edit-modal, #ladder-recipe-modal, #box-guide-lightbox-modal, .box-guide-lightbox-backdrop')) {
+        if (target && target.closest && target.closest(
+          '.sidebar-bookmark-handle, .sidebar-fab-btn, .box-fab-container, .box-fab-btn, ' +
+          '.bottom-dock, .mobile-bottom-dock, .bottom-dock-nav, .dock-item, ' +
+          '.app-header, .mobile-app-header, ' +
+          '#pokedex-detail-modal, .pokedex-modal-backdrop, .pokedex-modal-dialog, .pokedex-modal-body, ' +
+          '.pokemon-filter-sidebar, .recipe-filter-sidebar, .box-filter-sidebar, .ladder-fixed-sidebar, ' +
+          '.sidebar-backdrop, .modal-overlay, .subskill-sheet-modal, .appraisal-modal-overlay, .appraisal-modal-backdrop, ' +
+          '#settings-modal, #box-edit-modal, #box-delete-confirm-modal, #ladder-recipe-modal, #box-guide-lightbox-modal, .box-guide-lightbox-backdrop'
+        )) {
           isTracking = false;
           return;
         }
@@ -3983,6 +3991,19 @@ if (typeof document !== 'undefined') {
 
       document.addEventListener('touchmove', (e) => {
         if (isRefreshing || !e.touches || !e.touches[0]) return;
+        const targetEl = e.target;
+        if (targetEl && targetEl.closest && targetEl.closest(
+          '.sidebar-bookmark-handle, .sidebar-fab-btn, .box-fab-container, .box-fab-btn, ' +
+          '.bottom-dock, .mobile-bottom-dock, .bottom-dock-nav, .dock-item, ' +
+          '.app-header, .mobile-app-header'
+        )) {
+          isTracking = false;
+          if (currentPull > 0) {
+            currentPull = 0;
+            updatePtrUI(0);
+          }
+          return;
+        }
         if (isModalOrDrawerActive()) {
           isTracking = false;
           if (currentPull > 0) {
@@ -5740,7 +5761,7 @@ function renderPokedexDetailModalContent() {
               <span class="pokedex-tag pokedex-tag-berry" title="${escapeHtml(berryName)}">
                 ${berry.icon ? `<img src="${berry.icon}" class="pokedex-berry-icon-img" alt="${escapeHtml(berryName)}" title="${escapeHtml(berryName)}" loading="lazy">` : ''}
               </span>
-              <span class="pokedex-tag pokedex-tag-spec ${specClass}">${escapeHtml(specName)}</span>
+              ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(pkm.specialty, 24, 'pokedex-tag pokedex-tag-spec') : `<span class="pokedex-tag pokedex-tag-spec ${specClass}">${escapeHtml(specName)}</span>`}
             </div>
           </div>
 

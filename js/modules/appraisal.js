@@ -1914,12 +1914,12 @@
                 <span class="appraisal-level-badge">Lv. ${currentLv}</span>
               </div>
               
-              <!-- 樹果與專長 (專長使用遊戲同款藥丸徽章) -->
+              <!-- 樹果與專長 (專長使用精緻圓形圖示) -->
               <div class="appraisal-specialty-row" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;">
                 <span class="appraisal-berry-tag" style="display:inline-flex;align-items:center;background:transparent;border:none;padding:0;" title="${escapeHtml(berryName)}">
                   ${berry.icon ? `<img src="${berry.icon}" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(berryName)}">` : ''}
                 </span>
-                <span class="appraisal-spec-tag ${specClass}">${specTypeLabel}</span>
+                ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(specialty, 24, 'appraisal-spec-icon-wrap') : `<span class="appraisal-spec-tag ${specClass}">${specTypeLabel}</span>`}
               </div>
 
               <!-- 主技能名稱與等級 (Appraisal Main Skill) -->
@@ -2470,7 +2470,7 @@
                   </div>
                   <div class="lab-preview-spec" style="display:flex;align-items:center;gap:6px;margin-top:2px;">
                     ${(function() { const b = typeof window !== 'undefined' && window.getPokemonBerry ? window.getPokemonBerry(currentPkm) : null; return b && b.icon ? '<img src="' + b.icon + '" alt="' + escapeHtml(b.name || '') + '" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;" loading="lazy">' : ''; })()} 
-                    <span class="box-spec-tag ${specClass}" style="font-size:11px;padding:1px 6px;">${specName}</span>
+                    ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(currentPkm.specialty, 20) : `<span class="box-spec-tag ${specClass}" style="font-size:11px;padding:1px 6px;">${specName}</span>`}
                     <span style="font-size:12px;color:var(--text-muted);">Lv.${labState.level}</span>
                   </div>
                 </div>

@@ -1220,7 +1220,7 @@
                     <span class="pkm-berry-icon-wrapper" title="${berryName}">
                       <img src="${berry.icon}" alt="${berryName}" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;">
                     </span>` : ''}
-                    <span class="box-spec-tag ${specClass}">${specName}</span>
+                    ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(base ? base.specialty : p.specialty, 20) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}
                     ${p.ribbon ? `
                       <span class="box-ribbon-tag" title="${isEN ? `Good-Night Ribbon Tier ${p.ribbon}` : `睡飽飽獎章`}">
                         <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${p.ribbon}.png" class="box-ribbon-icon" alt="Ribbon" />
@@ -1301,12 +1301,11 @@
               <th class="th-icon" style="text-align:center;">${t('th.icon', '圖示')}</th>
               <th style="text-align:center;">${t('th.level', '等級')}</th>
               <th style="text-align:center;">${isEN ? 'Name / Nickname' : '寶可夢 / 暱稱'}</th>
-              <th style="text-align:center;">${t('th.ribbon', '獎章')}</th>
-              <th style="text-align:center;">${t('th.specialty', '得意')}</th>
+              <th class="th-spec" style="text-align:center;">${t('th.specialty', '得意')}</th>
               <th style="text-align:center;">${t('th.berry', '樹果')}</th>
-              <th style="text-align:center;">${t('th.ing1', 'Lv.1 食材')}</th>
-              <th style="text-align:center;">${t('th.ing2', 'Lv.30 食材')}</th>
-              <th style="text-align:center;">${t('th.ing3', 'Lv.60 食材')}</th>
+              <th style="text-align:center;">${isEN ? 'Ing 1' : '食1'}</th>
+              <th style="text-align:center;">${isEN ? 'Ing 2' : '食2'}</th>
+              <th style="text-align:center;">${isEN ? 'Ing 3' : '食3'}</th>
               <th style="text-align:center;">${t('th.actions', '操作')}</th>
             </tr>
           </thead>
@@ -1343,15 +1342,8 @@
                     </div>
                     ${p.nickname ? `<div style="font-size:11px;color:var(--accent-color);text-align:center;">${escapeHtml(p.nickname)}</div>` : ''}
                   </td>
-                  <td style="text-align:center;">
-                    ${p.ribbon ? `
-                      <span class="box-ribbon-tag" title="${isEN ? `Good-Night Ribbon Tier ${p.ribbon}` : `睡飽飽獎章`}" style="display:inline-flex;align-items:center;justify-content:center;">
-                        <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${p.ribbon}.png" class="box-ribbon-icon" alt="Ribbon" style="width:20px;height:20px;object-fit:contain;" />
-                      </span>
-                    ` : `<span class="ribbon-empty" style="color:var(--text-muted);font-weight:600;">-</span>`}
-                  </td>
-                  <td style="text-align:center;">
-                    <span class="box-spec-tag ${specClass}">${specName}</span>
+                  <td class="td-spec" style="text-align:center;">
+                    ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(base ? base.specialty : p.specialty, 24) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}
                   </td>
                   <td style="text-align:center;">
                     ${berry && berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}">` : `<span class="berry-name-text">${berryName || '--'}</span>`}
@@ -1393,6 +1385,92 @@
     `;
 
     bindCardActions(container);
+  }
+
+  /* ─── 二次確認刪除彈窗 (Delete Confirmation Modal) ─── */
+  function openDeleteConfirmModal(item) {
+    if (!item) return;
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const base = findPokemonBase(item.pokemonId || item.name);
+    const pkmName = isEN ? (base ? (base.name_en || base.name_cn) : item.name) : (item.name || (base ? base.name_cn : '未知'));
+    const displayName = item.nickname ? `${pkmName} (${item.nickname})` : pkmName;
+    const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
+
+    let modal = document.getElementById('box-delete-confirm-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'box-delete-confirm-modal';
+      modal.className = 'box-modal-backdrop modal-overlay';
+      modal.style.zIndex = '10050';
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="box-modal-dialog" style="max-width:360px;width:90%;border-radius:16px;padding:22px 20px;text-align:center;box-sizing:border-box;margin:auto;background:var(--bg-card-solid);border:1px solid var(--border-color);box-shadow:var(--shadow-lg);">
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(239, 68, 68, 0.15);border:1.5px solid rgba(239, 68, 68, 0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:#ef4444;">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+        </div>
+        <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">
+          ${isEN ? 'Delete Pokémon?' : '確認刪除寶可夢？'}
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:8px 0 14px;padding:8px 12px;background:rgba(255,255,255,0.04);border-radius:8px;border:1px solid var(--border-color-subtle, rgba(255,255,255,0.08));">
+          ${iconUrl ? `<img src="${iconUrl}" width="32" height="32" style="border-radius:4px;object-fit:contain;" alt="">` : ''}
+          <div style="text-align:left;">
+            <div style="font-size:13px;font-weight:700;color:var(--text-primary);">${escapeHtml(displayName)}</div>
+            <div style="font-size:11px;color:var(--text-muted);font-weight:600;">Lv.${item.level || 1}</div>
+          </div>
+        </div>
+        <p style="font-size:12.5px;color:var(--text-secondary);line-height:1.5;margin:0 0 20px;">
+          ${isEN 
+            ? 'Are you sure you want to delete this Pokémon from your Box? This action cannot be undone.' 
+            : '確定要將此隻寶可夢從倉庫中永久刪除嗎？刪除後將無法還原。'}
+        </p>
+        <div style="display:flex;gap:10px;justify-content:center;">
+          <button type="button" id="box-delete-cancel-btn" style="flex:1;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;background:var(--bg-card);border:1px solid var(--border-color);color:var(--text-secondary);cursor:pointer;">
+            ${isEN ? 'Cancel' : '取消'}
+          </button>
+          <button type="button" id="box-delete-confirm-btn" style="flex:1;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:700;background:#ef4444;border:none;color:#ffffff;cursor:pointer;">
+            ${isEN ? 'Confirm Delete' : '確認刪除'}
+          </button>
+        </div>
+      </div>
+    `;
+
+    modal.style.display = 'flex';
+    document.body.classList.add('modal-open');
+
+    function closeModal() {
+      modal.style.display = 'none';
+      document.body.classList.remove('modal-open');
+    }
+
+    const cancelBtn = modal.querySelector('#box-delete-cancel-btn');
+    if (cancelBtn) cancelBtn.onclick = closeModal;
+
+    modal.onclick = (e) => {
+      if (e.target === modal) closeModal();
+    };
+
+    const confirmBtn = modal.querySelector('#box-delete-confirm-btn');
+    if (confirmBtn) {
+      confirmBtn.onclick = () => {
+        userBox = userBox.filter(p => p.uid !== item.uid);
+        saveUserBox();
+        renderBox();
+        closeModal();
+        if (typeof showToast === 'function') {
+          showToast(isEN ? `Deleted ${displayName}` : `已刪除「${displayName}」`);
+        }
+      };
+    }
+  }
+  if (typeof window !== 'undefined') {
+    window.openDeleteConfirmModal = openDeleteConfirmModal;
   }
 
   function bindCardActions(container) {
@@ -1438,12 +1516,8 @@
         e.stopPropagation();
         const uid = btn.getAttribute('data-uid');
         const item = userBox.find(p => p.uid === uid);
-        const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-        const msg = isEN ? `Are you sure you want to delete "${item.name || 'this Pokémon'}" from your Box?` : `確定要從倉庫刪除「${item.name || '這隻寶可夢'}」嗎？`;
-        if (item && confirm(msg)) {
-          userBox = userBox.filter(p => p.uid !== uid);
-          saveUserBox();
-          renderBox();
+        if (item) {
+          openDeleteConfirmModal(item);
         }
       });
     });

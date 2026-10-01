@@ -2873,11 +2873,15 @@ html[data-lang="en"] .subfilter-skill-btn,
 }
 
 .mobile-h5-app .pokemon-table .th-spec,
-.mobile-h5-app .pokemon-table .td-spec {
-  min-width: 58px;
-  width: auto;
+.mobile-h5-app .pokemon-table .td-spec,
+.mobile-h5-app .box-table .th-spec,
+.mobile-h5-app .box-table .td-spec {
+  min-width: 32px !important;
+  width: 32px !important;
+  max-width: 34px !important;
   white-space: nowrap !important;
-  text-align: center;
+  text-align: center !important;
+  padding: 4px 1px !important;
 }
 
 .mobile-h5-app .pokemon-table .ing-cell .ing-qty-group,
@@ -2911,12 +2915,20 @@ html[data-lang="en"] .subfilter-skill-btn,
 }
 
 .th-spec, .td-spec {
-  min-width: 48px;
-  width: 48px;
+  min-width: 38px;
+  width: 38px;
   text-align: center;
   font-size: 12px;
-  padding: 6px 2px !important;
+  padding: 4px 2px !important;
   white-space: nowrap !important;
+}
+
+.box-table .th-spec,
+.box-table .td-spec {
+  min-width: 38px;
+  width: 38px;
+  text-align: center;
+  padding: 4px 2px !important;
 }
 
 .th-carry, .td-carry {
@@ -4898,8 +4910,8 @@ input[type=range].rf-slider.event-slider {
 
   .pokemon-table .th-spec,
   .pokemon-table .td-spec {
-    min-width: 58px;
-    width: auto;
+    min-width: 32px !important;
+    width: 32px !important;
     white-space: nowrap !important;
     text-align: center;
   }
@@ -6604,6 +6616,38 @@ input[type=range].rf-slider.event-slider {
   border: 1.5px solid #38bdf8 !important;
   color: #38bdf8 !important;
 }
+
+/* 圓形專長圖示樣式 (取代文字與外框底色) */
+.specialty-icon-wrap,
+.box-spec-tag.specialty-icon-wrap,
+.mobile-h5-app .box-spec-tag.specialty-icon-wrap,
+[data-theme="light"] .box-spec-tag.specialty-icon-wrap,
+.appraisal-spec-icon-wrap {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
+}
+
+.specialty-icon {
+  object-fit: contain;
+  vertical-align: middle;
+  display: inline-block;
+  pointer-events: none;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.specialty-icon-wrap:active .specialty-icon {
+  transform: scale(0.92);
+}
+
 
 /* 食材尚未開放透明樣式 (外側卡片與內側彈窗通用) */
 .box-ing-chip.ing-locked,
@@ -15280,10 +15324,12 @@ body.mobile-h5-app.pokemon-active,
 .mobile-h5-app.pokemon-active .pokemon-main-content .content-area {
   flex: 1 1 auto !important;
   min-height: 0 !important;
+  height: 100% !important;
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
-  padding-bottom: 8px !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
   box-sizing: border-box !important;
 }
 
@@ -15299,12 +15345,14 @@ body.mobile-h5-app.pokemon-active,
 
 .mobile-h5-app.pokemon-active .table-container,
 .mobile-h5-app.pokemon-active .pokemon-table-container {
-  flex: 0 1 auto !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
   min-height: 0 !important;
   max-height: 100% !important;
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 !important;
+  margin-bottom: 0 !important;
   padding: 0 !important;
   border-radius: 0 !important;
   border-left: none !important;
@@ -15644,6 +15692,11 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
 .mobile-h5-app .sidebar-bookmark-handle:active,
 .mobile-h5-app .sidebar-fab-btn:active {
   transform: scale(0.92) !important;
+}
+
+/* 盒子頁面篩選按鈕：置於新增寶可夢 FAB (box-fab-container) 的上方，避免初始重疊覆蓋 */
+.mobile-h5-app #box-sidebar-bookmark-handle {
+  bottom: calc(180px + env(safe-area-inset-bottom, 0px)) !important;
 }
 
 .mobile-h5-app .sidebar-bookmark-handle .bookmark-text,
@@ -20785,17 +20838,6 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
 .mobile-h5-app .box-subpanel-view {
   width: 100% !important;
   box-sizing: border-box !important;
-}
-
-.mobile-h5-app .box-toolbar-container {
-  padding: 12px 12px 6px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 8px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-  background: transparent !important;
-  border: none !important;
 }
 
 /* 2. 單行精緻工具控制列 (佔 100% 寬度，左側排序選單，右側展示方式切換) */

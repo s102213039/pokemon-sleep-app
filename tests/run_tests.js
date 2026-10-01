@@ -7414,17 +7414,17 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
       'body.mobile-h5-app must reserve dock clearance via padding-bottom'
     );
 
-    // 2. Verify table-container uses flex: 0 1 auto so filtered lists collapse dynamically
+    // 2. Verify table-container seamlessly touches bottom dock without margin
     assert(
-      css.includes('.mobile-h5-app.pokemon-active .table-container') && css.includes('flex: 0 1 auto !important;'),
-      'Pokemon table container must use flex: 0 1 auto for dynamic height adaptation'
+      css.includes('.mobile-h5-app.pokemon-active .table-container') && css.includes('margin-bottom: 0 !important;'),
+      'Pokemon table container must have 0 margin-bottom to touch bottom dock'
     );
 
-    // 3. Verify content-area has padding-bottom buffer
+    // 3. Verify content-area has zero margin/padding buffer to dock cleanly
     assert(
       css.includes('.mobile-h5-app.pokemon-active .pokemon-main-content .content-area') &&
-      css.includes('padding-bottom: 8px !important;'),
-      'content-area must have padding-bottom: 8px buffer above dock'
+      css.includes('padding-bottom: 0 !important;'),
+      'content-area must have padding-bottom: 0 buffer above dock'
     );
 
     // 4. Verify panels inherit 100% height without fragile calc
@@ -9038,24 +9038,22 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(boxJs.includes("if (isMobileH5 || boxViewMode === 'table')"), 'box.js must force table view on mobile H5');
 
     // 3. Box Table Columns Overhaul
-    // Header order: icon -> level -> name (centered) -> ribbon (centered) -> specialty -> berry
+    // Header order: icon -> level -> name (centered) -> specialty -> berry -> 食1 -> 食2 -> 食3
     const lvlThIdx = boxJs.indexOf("t('th.level', '等級')");
     const nameThIdx = boxJs.indexOf("isEN ? 'Name / Nickname' : '寶可夢 / 暱稱'");
-    const ribbonThIdx = boxJs.indexOf("t('th.ribbon', '獎章')");
     const specThIdx = boxJs.indexOf("t('th.specialty', '得意')");
     const berryThIdx = boxJs.indexOf("t('th.berry', '樹果')");
-    assert(lvlThIdx !== -1 && nameThIdx !== -1 && ribbonThIdx !== -1 && specThIdx !== -1 && berryThIdx !== -1, 'All required th keys must exist');
+    assert(lvlThIdx !== -1 && nameThIdx !== -1 && specThIdx !== -1 && berryThIdx !== -1, 'All required th keys must exist');
     assert(lvlThIdx < nameThIdx, 'Level column must precede Name column');
-    assert(nameThIdx < ribbonThIdx, 'Ribbon column must follow Name column');
-    assert(ribbonThIdx < specThIdx, 'Specialty column must follow Ribbon column');
+    assert(nameThIdx < specThIdx, 'Specialty column must follow Name column');
     assert(specThIdx < berryThIdx, 'Berry column must follow Specialty column');
+
+    // Ingredient headers simplified to 食1, 食2, 食3
+    assert(boxJs.includes("isEN ? 'Ing 1' : '食1'") && boxJs.includes("isEN ? 'Ing 2' : '食2'") && boxJs.includes("isEN ? 'Ing 3' : '食3'"), 'Ingredient columns must be simplified to 食1, 食2, 食3');
 
     // Name and Nickname horizontally centered
     assert(boxJs.includes('justify-content:center;gap:4px;flex-wrap:wrap;text-align:center;'), 'table-name-cn must be centered');
     assert(boxJs.includes('text-align:center;">${escapeHtml(p.nickname)}</div>'), 'nickname must be centered');
-
-    // Ribbon display: icon or '-'
-    assert(boxJs.includes('box-ribbon-tag') && boxJs.includes('ribbon-empty') && boxJs.includes('>-<'), 'Ribbon column must display icon or "-" for empty');
 
     // PR score, Subskills, Nature removed from list table
     const renderTableCode = boxJs.substring(boxJs.indexOf('function renderBoxTable(list'), boxJs.indexOf('function bindCardActions'));
@@ -9174,6 +9172,88 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(stylesCss.includes('.pokemon-table thead th:first-child,\n.pokemon-table thead th:last-child {\n  border-radius: 0 !important;'), 'Table header corners must have 0 border-radius');
     assert(stylesCss.includes('.mobile-h5-app .pokemon-table thead th:first-child,\n.mobile-h5-app .pokemon-table thead th:last-child'), 'Mobile table corners must be square');
     assert(stylesCss.includes('.mobile-h5-app .pokemon-table.hide-no thead th:first-child,\n.mobile-h5-app .pokemon-table.hide-no tbody tr:last-child td:first-child {\n  border-radius: 0 !important;'), 'Mobile hide-no corners must be square');
+  });
+
+  // ─── Test 177: Filter FAB Positioning, Box Toolbar Cleanup, Pull-to-Refresh Floating Guard, and Delete Confirmation Modal Verification ────
+  test('Tier 1 - Feature Coverage', 'Filter FAB Positioning, Box Toolbar Cleanup, Pull-to-Refresh Floating Guard, and Delete Confirmation Modal Verification', () => {
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+    const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app/index.html'), 'utf8');
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/app.js'), 'utf8');
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
+
+    // 1. Filter FAB positioned safely above box-fab-container
+    assert(
+      stylesCss.includes('.mobile-h5-app #box-sidebar-bookmark-handle') &&
+      stylesCss.includes('bottom: calc(180px + env(safe-area-inset-bottom, 0px)) !important;'),
+      'Box sidebar bookmark handle must be elevated above box-fab-container'
+    );
+
+    // 2. Box toolbar removed from mobile H5 app while keeping OCR helper cards intact
+    assert(!appIndexHtml.includes('class="box-toolbar-container"'), 'box-toolbar-container must be removed from app/index.html');
+    assert(appIndexHtml.includes('id="box-screenshot-guide-card"'), 'box-screenshot-guide-card must be preserved for scanner fallback');
+
+    // 3. Pull-to-refresh must ignore floating handles, FABs, and dock
+    assert(
+      appJs.includes('.sidebar-bookmark-handle, .sidebar-fab-btn, .box-fab-container, .box-fab-btn') &&
+      appJs.includes('.bottom-dock, .mobile-bottom-dock, .bottom-dock-nav, .dock-item'),
+      'Pull-to-refresh touch listeners must suppress activation on floating elements'
+    );
+
+    // 4. Pokédex table container zero padding/margin touching bottom dock
+    assert(
+      stylesCss.includes('.mobile-h5-app.pokemon-active .pokemon-main-content #content-area') &&
+      stylesCss.includes('padding-bottom: 0 !important;') &&
+      stylesCss.includes('margin-bottom: 0 !important;'),
+      'Pokedex content-area must touch bottom dock with 0 margin/padding'
+    );
+
+    // 5. Box delete action secondary confirmation modal
+    assert(boxJs.includes('openDeleteConfirmModal'), 'box.js must define openDeleteConfirmModal');
+    assert(boxJs.includes("'box-delete-confirm-modal'"), 'box.js must handle box-delete-confirm-modal');
+    assert(boxJs.includes('id="box-delete-confirm-btn"'), 'box.js must provide confirm delete button');
+    assert(boxJs.includes('id="box-delete-cancel-btn"'), 'box.js must provide cancel delete button');
+  });
+
+  // ─── Test 178: Pure Specialty Icons (Berry, Ingredient, Skill) Across All Views ────
+  test('Tier 1 - Feature Coverage', 'Pure Specialty Icons (Berry, Ingredient, Skill) Across All Views & Elimination of Text Badges', () => {
+    const i18n = require(path.join(WORKSPACE_ROOT, 'js/core/i18n.js'));
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/app.js'), 'utf8');
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+
+    // 1. Asset existence
+    assert(fs.existsSync(path.join(WORKSPACE_ROOT, 'assets/specialty/berry.png')), 'assets/specialty/berry.png must exist');
+    assert(fs.existsSync(path.join(WORKSPACE_ROOT, 'assets/specialty/ingredient.png')), 'assets/specialty/ingredient.png must exist');
+    assert(fs.existsSync(path.join(WORKSPACE_ROOT, 'assets/specialty/skill.png')), 'assets/specialty/skill.png must exist');
+
+    // 2. Helper functions in i18n
+    assert(typeof i18n.getSpecialtyIconHtml === 'function', 'i18n must export getSpecialtyIconHtml');
+    assert(typeof i18n.getSpecialtyKey === 'function', 'i18n must export getSpecialtyKey');
+    assertEquals(i18n.getSpecialtyKey('樹果'), 'berry', '樹果 key must be berry');
+    assertEquals(i18n.getSpecialtyKey('食材'), 'ingredient', '食材 key must be ingredient');
+    assertEquals(i18n.getSpecialtyKey('技能'), 'skill', '技能 key must be skill');
+
+    const berryHtml = i18n.getSpecialtyIconHtml('樹果', 24);
+    assert(berryHtml.includes('assets/specialty/berry.png') && berryHtml.includes('spec-berry'), 'berry icon HTML must include image and class');
+    assert(berryHtml.includes('specialty-icon-wrap'), 'icon must have specialty-icon-wrap class');
+
+    // 3. Pokédex integration
+    assert(appJs.includes('getSpecialtyIconHtml(p.specialty, 24)'), 'Pokédex table must use getSpecialtyIconHtml');
+    assert(appJs.includes('getSpecialtyIconHtml(p.specialty, 22)'), 'Pokédex cards must use getSpecialtyIconHtml');
+    assert(appJs.includes('getSpecialtyIconHtml(pkm.specialty, 24'), 'Pokédex detail modal must use getSpecialtyIconHtml');
+
+    // 4. Box integration
+    assert(boxJs.includes('getSpecialtyIconHtml(base ? base.specialty : p.specialty, 24)'), 'Box table must use getSpecialtyIconHtml');
+    assert(boxJs.includes('getSpecialtyIconHtml(base ? base.specialty : p.specialty, 20)'), 'Box cards must use getSpecialtyIconHtml');
+
+    // 5. Appraisal integration
+    assert(appraisalJs.includes('getSpecialtyIconHtml(specialty, 24'), 'Appraisal modal must use getSpecialtyIconHtml');
+    assert(appraisalJs.includes('getSpecialtyIconHtml(currentPkm.specialty, 20)'), 'Appraisal lab must use getSpecialtyIconHtml');
+
+    // 6. CSS borderless transparent styling
+    assert(stylesCss.includes('.specialty-icon-wrap') && stylesCss.includes('background: transparent !important;'), 'specialty-icon-wrap must be transparent');
+    assert(stylesCss.includes('.specialty-icon {') && stylesCss.includes('border-radius: 50%;'), 'specialty-icon must be circular');
   });
 
 console.log('                   Test Results Summary');
