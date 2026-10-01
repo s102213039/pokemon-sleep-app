@@ -8466,6 +8466,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(modalHtml.includes('appraisal-subskills-grid'), 'Appraisal modal must render appraisal-subskills-grid in 2+2+1 format');
     assert(modalHtml.includes('appraisal-summary-bar'), 'Appraisal modal must render appraisal-summary-bar');
     assert(modalHtml.includes('強力噴火龍'), 'Appraisal modal summary bar must display summary note');
+    assert(!modalHtml.includes('appraisal-costs-card'), 'Appraisal modal must NOT contain appraisal-costs-card');
+    assert(modalHtml.includes('appraisal-dual-verdict-column'), 'Appraisal modal header must contain appraisal-dual-verdict-column');
+    assert(!modalHtml.includes('>[x]<'), 'Appraisal modal close button must NOT use plain [x] text');
   });
 
   test('Tier 4 - Real-World Application Scenarios', 'Box Dynamic Visibility & Official Subskills Lv.70/80 Standards Verification', () => {

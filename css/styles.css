@@ -12285,15 +12285,21 @@ input[type="number"] {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: 14px 22px;
+  min-height: 64px;
   border-bottom: 1px solid var(--border-color);
   background: var(--bg-card);
+  gap: 16px;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .appraisal-header-title-group {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .appraisal-modal-badge {
@@ -12304,6 +12310,7 @@ input[type="number"] {
   background: rgba(168, 85, 247, 0.2);
   border: 1px solid rgba(168, 85, 247, 0.5);
   color: #c084fc;
+  line-height: 1.2;
 }
 
 .appraisal-pokemon-title {
@@ -12314,6 +12321,7 @@ input[type="number"] {
   display: flex;
   align-items: baseline;
   gap: 8px;
+  line-height: 1.2;
 }
 
 .appraisal-pokemon-en {
@@ -12322,50 +12330,85 @@ input[type="number"] {
   color: var(--text-muted);
 }
 
-.appraisal-close-btn {
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
-  font-size: 16px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
+.appraisal-header-actions {
   display: flex;
   align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.appraisal-dual-verdict-column {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-end;
   justify-content: center;
-  transition: all 0.15s ease;
+}
+
+.appraisal-dual-verdict-column .pokedex-header-verdict-badge.current-track {
+  background: var(--bg-card-inner, #1e293b);
+}
+
+.appraisal-dual-verdict-column .pokedex-header-score-text {
+  color: var(--text-primary, #f8fafc);
+}
+
+.appraisal-dual-verdict-column .pokedex-header-score-text .verdict-num {
+  color: var(--text-primary, #f8fafc);
+}
+
+.appraisal-dual-verdict-column .pokedex-header-verdict-badge.potential-track {
+  background: rgba(148, 163, 184, 0.1) !important;
+  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+}
+
+.appraisal-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted, #94a3b8);
+  font-size: 18px;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
 }
 
 .appraisal-close-btn:hover {
-  background: #ef4444;
-  color: #ffffff;
-  border-color: #ef4444;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary, #ffffff);
 }
 
 .appraisal-modal-body {
   display: grid;
   grid-template-columns: 280px 1fr;
-  gap: 20px;
-  padding: 20px;
+  gap: 28px;
+  padding: 22px 24px;
 }
 
-/* 左欄：基本卡片與評級 */
+/* 左欄：基本卡片與配置 (純淨無外框) */
 .appraisal-left-col {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .appraisal-profile-card {
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 16px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  width: 100%;
 }
 
 .appraisal-avatar-wrapper {
@@ -12558,22 +12601,22 @@ input[type="number"] {
   color: var(--text-muted);
 }
 
-/* 右欄：雷達圖 + 量表 + 深度分析 */
+/* 右欄：雷達圖 + 量表 + 深度分析 (無外框卡片，純淨展示) */
 .appraisal-right-col {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .appraisal-chart-flex {
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 16px;
+  grid-template-columns: 270px 1fr;
+  gap: 20px;
   align-items: center;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 14px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
 }
 
 .appraisal-radar-wrapper {
@@ -12595,7 +12638,7 @@ input[type="number"] {
 }
 
 .appraisal-section-heading {
-  margin: 0 0 6px 0;
+  margin: 0 0 8px 0;
   font-size: 13.5px;
   font-weight: 800;
   color: var(--accent-blue);
@@ -12633,13 +12676,12 @@ input[type="number"] {
   transition: width 0.4s ease;
 }
 
-/* 點評卡片 */
-.appraisal-analysis-card,
-.appraisal-costs-card {
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 14px;
+/* 點評卡片 (純淨無外框，僅保留文字項目邊框) */
+.appraisal-analysis-card {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
 }
 
 .appraisal-pros-list,
@@ -12675,52 +12717,27 @@ input[type="number"] {
   color: #fca5a5;
 }
 
-/* 里程碑成本格 */
-.appraisal-costs-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.appraisal-cost-block {
-  background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+.appraisal-summary-bar {
+  margin-top: 6px;
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.25);
   border-radius: 8px;
-  padding: 10px;
+  padding: 8px 12px;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: flex-start;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.cost-milestone-title {
-  font-size: 12px;
-  font-weight: 800;
-  color: #fbbf24;
-  margin-bottom: 2px;
-}
-
-.cost-milestone-sub {
-  font-size: 10px;
-  font-weight: normal;
-  color: #94a3b8;
-}
-
-.cost-achieved {
-  font-size: 12px;
-  font-weight: 700;
-  color: #10b981;
-  padding: 4px 0;
-}
-
-.cost-detail-row {
-  font-size: 11px;
-  color: #cbd5e1;
-}
-
-.cost-val {
-  font-weight: 800;
-  color: #38bdf8;
+.appraisal-milestones-card {
+  margin-top: 6px;
+  background: rgba(234, 179, 8, 0.08);
+  border: 1px solid rgba(234, 179, 8, 0.25);
+  border-radius: 8px;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 /* ═══════════════════════════════════════════════════════════════

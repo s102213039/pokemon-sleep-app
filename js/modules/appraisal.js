@@ -1202,21 +1202,46 @@
 
     modal.innerHTML = `
       <div class="appraisal-modal-container">
-        <!-- 頂部標題與關閉按鈕 -->
+        <!-- 頂部標題列 (高度加寬，垂直置中，整合雙軌評級與極簡關閉鈕) -->
         <div class="appraisal-modal-header">
           <div class="appraisal-header-title-group">
-            <span class="appraisal-modal-badge">${isEN ? '[★] Deep-Dive Diagnostic Report' : '[★] 深度能力診斷報告'}</span>
-            <h2 class="appraisal-pokemon-title" style="display:flex;align-items:center;">
+            <span class="appraisal-modal-badge">${isEN ? '[★] Diagnostic Report' : '[★] 深度能力診斷報告'}</span>
+            <h2 class="appraisal-pokemon-title">
               ${displayName}
               ${!isEN && pkmData.name_en ? `<span class="appraisal-pokemon-en">${pkmData.name_en}</span>` : ''}
             </h2>
           </div>
-          <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closeModal()" title="${isEN ? 'Close' : '關閉'}">[x]</button>
+
+          <div class="appraisal-header-actions">
+            <!-- 雙軌綜合評級徽章 (對齊圖鑑彈窗風格，垂直置中，當前亮眼 + 滿級低調) -->
+            <div class="appraisal-dual-verdict-column">
+              <!-- 當前實力 (Current Level Rating) -->
+              <div class="pokedex-header-verdict-badge current-track" style="border-color: ${(evaluation.current || evaluation).gradeColor};" title="${isEN ? `Current Level Rating (Lv.${currentLv})` : `當前實力評級 (Lv.${currentLv})`}">
+                <span class="pokedex-verdict-track-lbl" style="font-size:10px;color:#94a3b8;line-height:1;">${isEN ? `Lv.${currentLv}` : `當前 Lv.${currentLv}`}</span>
+                <span class="verdict-grade pokedex-header-grade-text" style="color: ${(evaluation.current || evaluation).gradeColor};font-size:14px;font-weight:900;line-height:1;">${(evaluation.current || evaluation).grade}</span>
+                <span class="pokedex-header-score-text" style="font-size:11px;"><span class="verdict-num font-bold">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
+              </div>
+              <!-- 滿級潛力 (Max Potential Rating) -->
+              <div class="pokedex-header-verdict-badge potential-track" title="${isEN ? 'Max Potential Rating (Lv.100)' : '畢業潛力評級 (Lv.100)'}">
+                <span class="pokedex-verdict-track-lbl" style="font-size:9px;color:#64748b;line-height:1;">${isEN ? 'Lv.100 Pot' : '滿級潛力'}</span>
+                <span class="verdict-potential-grade pokedex-header-grade-text" style="color:#94a3b8;font-size:11px;font-weight:700;line-height:1;">${(evaluation.potential || evaluation).grade}</span>
+                <span class="pokedex-header-score-text" style="font-size:10px;color:#94a3b8;"><span class="verdict-potential-num" style="font-weight:600;">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
+              </div>
+            </div>
+
+            <!-- 極簡關閉按鈕 -->
+            <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closeModal()" title="${isEN ? 'Close' : '關閉'}" aria-label="${isEN ? 'Close' : '關閉'}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
         </div>
 
-        <!-- 報告核心主體 -->
+        <!-- 報告核心主體 (精簡雙欄排版，徹底去除多餘巢狀容器外框) -->
         <div class="appraisal-modal-body">
-          <!-- 左欄：寶可夢基本卡片與配置 -->
+          <!-- 左欄：寶可夢基本卡片與配置 (純淨無外框容器) -->
           <div class="appraisal-left-col">
             <div class="appraisal-profile-card">
               <div class="appraisal-avatar-wrapper">
@@ -1235,7 +1260,7 @@
               <!-- 性格 -->
               <div class="appraisal-config-section">
                 <div class="appraisal-config-title">${isEN ? '[*] Nature' : '[*] 性格'}</div>
-                <div class="appraisal-nature-badge" style="font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:8px;padding:6px 10px;">
+                <div class="appraisal-nature-badge" style="font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:8px;padding:6px 12px;">
                   <span>${natDisplayName}</span>
                 </div>
               </div>
@@ -1274,33 +1299,15 @@
               </div>
             </div>
 
-            <!-- PR 智能簡評欄 (遷入彈窗內部展示) -->
-            <div class="appraisal-summary-bar" style="margin-top:10px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.25);border-radius:8px;padding:8px 12px;display:flex;align-items:flex-start;gap:8px;">
+            <!-- PR 智能簡評欄 (純淨簡評提示條) -->
+            <div class="appraisal-summary-bar">
               <span style="font-size:12.5px;font-weight:800;color:#38bdf8;white-space:nowrap;flex-shrink:0;">${isEN ? 'Appraisal Note:' : '智能簡評：'}</span>
               <span style="font-size:12.5px;color:#e2e8f0;line-height:1.4;">${escapeHtml(summaryNote)}</span>
             </div>
 
-            <!-- 雙軌綜合評級卡片 (當前實力 + 畢業潛力) -->
-            <div class="appraisal-dual-verdict-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
-              <!-- 當前實力 (Current Level Rating) -->
-              <div class="appraisal-verdict-box appraisal-verdict-current" style="border:1.5px solid ${(evaluation.current || evaluation).gradeColor};background:rgba(15,23,42,0.65);border-radius:10px;padding:10px 8px;text-align:center;">
-                <div style="font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">${isEN ? `Current (Lv.${currentLv})` : `當前實力 (Lv.${currentLv})`}</div>
-                <div class="appraisal-grade-large" style="color:${(evaluation.current || evaluation).gradeColor};font-size:30px;font-weight:900;line-height:1.1;">${(evaluation.current || evaluation).grade}</div>
-                <div class="appraisal-grade-title" style="font-size:11px;margin:2px 0;color:${(evaluation.current || evaluation).gradeColor};">${(evaluation.current || evaluation).gradeTitle}</div>
-                <div class="appraisal-composite-score" style="font-size:12px;color:#e2e8f0;"><span class="font-bold text-accent">${(evaluation.current || evaluation).compositeScore}</span> / 100</div>
-              </div>
-              <!-- 畢業潛力 (Lv.100 Potential Rating) - 較小且低調顏色 -->
-              <div class="appraisal-verdict-box appraisal-verdict-potential" style="border:1px solid rgba(148,163,184,0.25);background:rgba(15,23,42,0.45);border-radius:10px;padding:8px;text-align:center;opacity:0.88;">
-                <div style="font-size:10px;font-weight:600;color:#94a3b8;margin-bottom:3px;text-transform:uppercase;">${isEN ? 'Max Potential (Lv.100)' : '畢業潛力 (Lv.100)'}</div>
-                <div class="appraisal-grade-large" style="color:#94a3b8;font-size:24px;font-weight:700;line-height:1.1;">${(evaluation.potential || evaluation).grade}</div>
-                <div class="appraisal-grade-title" style="font-size:10px;margin:2px 0;color:#64748b;">${(evaluation.potential || evaluation).gradeTitle}</div>
-                <div class="appraisal-composite-score" style="font-size:11px;color:#94a3b8;"><span class="font-bold">${(evaluation.potential || evaluation).compositeScore}</span> / 100</div>
-              </div>
-            </div>
-
-            <!-- 升級里程碑質變預測 -->
+            <!-- 升級里程碑質變預測 (若有) -->
             ${evaluation.milestones && evaluation.milestones.length > 0 ? `
-              <div class="appraisal-milestones-card" style="margin-top:10px;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.3);border-radius:8px;padding:8px 10px;">
+              <div class="appraisal-milestones-card">
                 <div style="font-size:11px;font-weight:700;color:#facc15;margin-bottom:4px;display:flex;align-items:center;gap:4px;">
                   <span>[^]</span>
                   <span>${isEN ? 'Milestone Projections' : '升級里程碑質變預測'}</span>
@@ -1310,7 +1317,7 @@
             ` : ''}
           </div>
 
-          <!-- 右欄：雷達圖 + 六維量表 + 深度點評 + 糖果升級試算 -->
+          <!-- 右欄：雷達圖 + 六維量表 + 深度點評 (精簡排版，純淨無外框容器) -->
           <div class="appraisal-right-col">
             <!-- 上半部：雷達圖與六維能量條 -->
             <div class="appraisal-chart-flex">
@@ -1337,7 +1344,7 @@
               </div>
             </div>
 
-            <!-- 中半部：專長深度點評與優缺點 -->
+            <!-- 下半部：專長深度點評與優缺點 -->
             <div class="appraisal-analysis-card">
               <h4 class="appraisal-section-heading">${isEN ? '[*] Specialty, Nature & Sub-Skill Synergy Analysis' : '[*] 專長與性格副技能協同點評'}</h4>
               
@@ -1350,36 +1357,6 @@
                   ${evaluation.cons.map(function(c) { return `<div class="appraisal-con-item">${c}</div>`; }).join('')}
                 </div>
               ` : ''}
-            </div>
-
-            <!-- 下半部：關鍵里程碑升級消耗試算 -->
-            <div class="appraisal-costs-card">
-              <h4 class="appraisal-section-heading">${isEN ? `[*] Milestone Investment Calculator (Lv.${currentLv})` : `[*] 培育成本精算 (當前 Lv.${currentLv})`}</h4>
-              <div class="appraisal-costs-grid">
-                <div class="appraisal-cost-block">
-                  <div class="cost-milestone-title">${isEN ? '[Lv.30] Reach Lv. 30' : '[Lv.30] 升至 Lv. 30'} <span class="cost-milestone-sub">${isEN ? '(Unlock 2nd Ingredient)' : '(解鎖第 2 食材)'}</span></div>
-                  ${currentLv >= 30 ? `<div class="cost-achieved">${isEN ? '[✓] Completed' : '[✓] 已達成'}</div>` : `
-                    <div class="cost-detail-row">${isEN ? 'Species Candies: ' : '專屬糖果：'}<span class="cost-val">${evaluation.costs.to30.candies} ${isEN ? 'candies' : '顆'}</span> (${isEN ? 'Handy S' : '萬能S'}: ${evaluation.costs.to30.handyCandyS} / M: ${evaluation.costs.to30.handyCandyM})</div>
-                    <div class="cost-detail-row">${isEN ? 'Dream Shards: ' : '夢之碎片：'}<span class="cost-val">${evaluation.costs.to30.shards.toLocaleString()} ${isEN ? 'shards' : '碎片'}</span></div>
-                  `}
-                </div>
-
-                <div class="appraisal-cost-block">
-                  <div class="cost-milestone-title">${isEN ? '[Lv.50] Reach Lv. 50' : '[Lv.50] 升至 Lv. 50'} <span class="cost-milestone-sub">${isEN ? '(Unlock 3rd Sub-Skill)' : '(解鎖第 3 副技能)'}</span></div>
-                  ${currentLv >= 50 ? `<div class="cost-achieved">${isEN ? '[✓] Completed' : '[✓] 已達成'}</div>` : `
-                    <div class="cost-detail-row">${isEN ? 'Species Candies: ' : '專屬糖果：'}<span class="cost-val">${evaluation.costs.to50.candies} ${isEN ? 'candies' : '顆'}</span> (${isEN ? 'Handy S' : '萬能S'}: ${evaluation.costs.to50.handyCandyS} / M: ${evaluation.costs.to50.handyCandyM})</div>
-                    <div class="cost-detail-row">${isEN ? 'Dream Shards: ' : '夢之碎片：'}<span class="cost-val">${evaluation.costs.to50.shards.toLocaleString()} ${isEN ? 'shards' : '碎片'}</span></div>
-                  `}
-                </div>
-
-                <div class="appraisal-cost-block">
-                  <div class="cost-milestone-title">${isEN ? '[Lv.60] Reach Lv. 60' : '[Lv.60] 升至 Lv. 60'} <span class="cost-milestone-sub">${isEN ? '(Unlock 3rd Ingredient Max)' : '(解鎖第 3 食材完全體)'}</span></div>
-                  ${currentLv >= 60 ? `<div class="cost-achieved">${isEN ? '[✓] Completed' : '[✓] 已達成'}</div>` : `
-                    <div class="cost-detail-row">${isEN ? 'Species Candies: ' : '專屬糖果：'}<span class="cost-val">${evaluation.costs.to60.candies} ${isEN ? 'candies' : '顆'}</span> (${isEN ? 'Handy S' : '萬能S'}: ${evaluation.costs.to60.handyCandyS} / M: ${evaluation.costs.to60.handyCandyM})</div>
-                    <div class="cost-detail-row">${isEN ? 'Dream Shards: ' : '夢之碎片：'}<span class="cost-val">${evaluation.costs.to60.shards.toLocaleString()} ${isEN ? 'shards' : '碎片'}</span></div>
-                  `}
-                </div>
-              </div>
             </div>
           </div>
         </div>
