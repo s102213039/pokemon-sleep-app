@@ -71,7 +71,7 @@
   let currentSearch = '';
   let selectedType = 'ALL';
   let selectedSpecialty = 'ALL';
-  let sortBy = 'created-desc';
+  let sortBy = 'id-asc';
   let boxViewMode = 'grid'; // 'grid' | 'table'
   let allPokemonsRef = [];
 
@@ -331,7 +331,10 @@
     boxOnlyFinal = false;
     boxOnlyInitialIng = false;
     boxShowNo = false;
+    sortBy = 'id-asc';
     if (typeof document !== 'undefined') {
+      const sortSelect = document.getElementById('box-sort-select');
+      if (sortSelect) sortSelect.value = 'id-asc';
       const finalToggle = document.getElementById('box-final-evo-toggle');
       const initialToggle = document.getElementById('box-initial-ing-toggle');
       const showNoToggle = document.getElementById('box-show-no-toggle');
@@ -967,13 +970,38 @@
       }
       return true;
     }).sort((a, b) => {
-      if (sortBy === 'pr-desc') return calculatePokemonPR(b).pr - calculatePokemonPR(a).pr;
-      if (sortBy === 'pr-asc') return calculatePokemonPR(a).pr - calculatePokemonPR(b).pr;
+      const getPkmDexId = (p) => {
+        if (!p) return 99999;
+        const base = findPokemonBase(p.pokemonId || p.name);
+        if (base) {
+          if (base.formatted_no && !isNaN(parseInt(base.formatted_no, 10))) {
+            return parseInt(base.formatted_no, 10);
+          }
+          if (base.id && !isNaN(parseInt(base.id, 10))) {
+            return parseInt(base.id, 10);
+          }
+        }
+        if (p.pokemonId && !isNaN(parseInt(p.pokemonId, 10))) {
+          return parseInt(p.pokemonId, 10);
+        }
+        return 99999;
+      };
+
       if (sortBy === 'level-desc') return (b.level || 1) - (a.level || 1);
       if (sortBy === 'level-asc') return (a.level || 1) - (b.level || 1);
-      if (sortBy === 'id-asc') return (parseInt(a.pokemonId || 0, 10)) - (parseInt(b.pokemonId || 0, 10));
+      if (sortBy === 'id-desc' || sortBy === 'dex-desc') {
+        const idA = getPkmDexId(a);
+        const idB = getPkmDexId(b);
+        if (idA !== idB) return idB - idA;
+        return (b.level || 1) - (a.level || 1);
+      }
       if (sortBy === 'created-asc') return (a.createdAt || 0) - (b.createdAt || 0);
-      return (b.createdAt || 0) - (a.createdAt || 0); // created-desc default
+      if (sortBy === 'created-desc') return (b.createdAt || 0) - (a.createdAt || 0);
+      // Default: 'id-asc' / 'dex-asc' (編號由低到高)
+      const idA = getPkmDexId(a);
+      const idB = getPkmDexId(b);
+      if (idA !== idB) return idA - idB;
+      return (b.level || 1) - (a.level || 1);
     });
   }
 

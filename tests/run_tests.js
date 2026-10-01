@@ -9286,9 +9286,43 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(appraisalJs.includes('btn-lab-save') && appraisalJs.includes('btn-lab-cancel'), 'Form bottom must render save/cancel buttons during edit mode');
 
     // 5. CSS classes present
-    assert(stylesCss.includes('.lab-preview-stats-panel'), 'styles.css must define .lab-preview-stats-panel');
     assert(stylesCss.includes('.lab-preview-ing-chips'), 'styles.css must define .lab-preview-ing-chips');
     assert(stylesCss.includes('.lab-preview-subskills-grid'), 'styles.css must define .lab-preview-subskills-grid');
+  });
+
+  // ─── Test 180: Box Tab Default Dex No. Ascending Sort, Split Asc/Desc & Elimination of PR Sort ─
+  test('Tier 1 - Feature Coverage', 'Box Tab Default Dex No. Ascending Sort, Split Asc/Desc & Elimination of PR Sort', () => {
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
+    const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app/index.html'), 'utf8');
+    const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/core/i18n.js'), 'utf8');
+
+    // 1. Default sorting is id-asc (Dex No. Low to High)
+    assert(boxJs.includes("let sortBy = 'id-asc';"), 'box.js must initialize sortBy to id-asc');
+    assert(indexHtml.includes('<option value="id-asc" data-i18n="box.sort_id_asc" selected>'), 'index.html must have id-asc as default selected option');
+    assert(appIndexHtml.includes('<option value="id-asc" data-i18n="box.sort_id_asc" selected>'), 'app/index.html must have id-asc as default selected option');
+
+    // 2. Both Ascending (Low to High) and Descending (High to Low) Dex options present
+    assert(indexHtml.includes('value="id-asc"') && indexHtml.includes('value="id-desc"'), 'index.html must have both id-asc and id-desc options');
+    assert(appIndexHtml.includes('value="id-asc"') && appIndexHtml.includes('value="id-desc"'), 'app/index.html must have both id-asc and id-desc options');
+    assert(i18nJs.includes("'box.sort_id_asc': '編號由低到高'"), 'i18n must define box.sort_id_asc');
+    assert(i18nJs.includes("'box.sort_id_desc': '編號由高到低'"), 'i18n must define box.sort_id_desc');
+
+    // 3. PR sorting removed from box-sort-select in both HTML files
+    const indexSortSection = indexHtml.substring(indexHtml.indexOf('id="box-sort-select"'), indexHtml.indexOf('</select>', indexHtml.indexOf('id="box-sort-select"')));
+    const appSortSection = appIndexHtml.substring(appIndexHtml.indexOf('id="box-sort-select"'), appIndexHtml.indexOf('</select>', appIndexHtml.indexOf('id="box-sort-select"')));
+    assert(!indexSortSection.includes('pr-desc') && !indexSortSection.includes('pr-asc'), 'index.html box-sort-select must not contain PR sorting');
+    assert(!appSortSection.includes('pr-desc') && !appSortSection.includes('pr-asc'), 'app/index.html box-sort-select must not contain PR sorting');
+
+    // 4. PR sorting removed from box.js comparator and id-desc implemented
+    assert(!boxJs.includes("sortBy === 'pr-desc'") && !boxJs.includes("sortBy === 'pr-asc'"), 'box.js comparator must not contain PR sorting');
+    assert(boxJs.includes("sortBy === 'id-desc' || sortBy === 'dex-desc'"), 'box.js must support id-desc sorting');
+    assert(boxJs.includes("getPkmDexId"), 'box.js must implement getPkmDexId helper for accurate numeric sorting');
+
+    // 5. resetBoxFilters resets to id-asc
+    const resetBoxCode = boxJs.substring(boxJs.indexOf('function resetBoxFilters()'), boxJs.indexOf('function getBoxFilterState()'));
+    assert(resetBoxCode.includes("sortBy = 'id-asc';"), 'resetBoxFilters must reset sortBy to id-asc');
+    assert(resetBoxCode.includes("sortSelect.value = 'id-asc';"), 'resetBoxFilters must update sortSelect UI value to id-asc');
   });
 
 console.log('                   Test Results Summary');

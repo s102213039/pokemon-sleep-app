@@ -126,7 +126,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=20261002_02">
+  <link rel="stylesheet" href="css/styles.css?v=20261002_03">
   <!-- 全域錯誤診斷與日誌攔截器 (Global Error & Diagnostic Logger) -->
   <script>
     (function() {
@@ -862,12 +862,11 @@
               <span class="sidebar-section-title" data-i18n="box.sort_title">排序方式</span>
             </div>
             <select id="box-sort-select" class="sort-select box-sort-select" aria-label="倉庫排序" style="width:100%;height:36px;border-radius:10px;background:var(--table-row-odd-solid, #0d1527);border:1px solid var(--border-color);color:var(--text-primary);padding:0 12px;font-size:13px;font-weight:600;">
-              <option value="pr-desc" data-i18n="box.sort_pr_desc">PR 評分由高到低</option>
-              <option value="created-desc" data-i18n="box.sort_recent">最近加入</option>
+              <option value="id-asc" data-i18n="box.sort_id_asc" selected>編號由低到高</option>
+              <option value="id-desc" data-i18n="box.sort_id_desc">編號由高到低</option>
               <option value="level-desc" data-i18n="box.sort_level_desc">等級由高到低</option>
               <option value="level-asc" data-i18n="box.sort_level_asc">等級由低到高</option>
-              <option value="pr-asc" data-i18n="box.sort_pr_asc">PR 評分由低到高</option>
-              <option value="id-asc" data-i18n="box.sort_dex_asc">全國圖鑑編號</option>
+              <option value="created-desc" data-i18n="box.sort_recent">最近加入</option>
             </select>
           </div>
 
@@ -1377,12 +1376,12 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
   <script src="js/core/cloudSync.js?v=20260930_01"></script>
-  <script src="js/core/i18n.js?v=20261002_02"></script>
-  <script src="js/modules/app.js?v=20261002_02"></script>
+  <script src="js/core/i18n.js?v=20261002_03"></script>
+  <script src="js/modules/app.js?v=20261002_03"></script>
   <script src="js/modules/recipes.js?v=20260930_01"></script>
   <script src="js/modules/wiki.js?v=20260930_01"></script>
-  <script src="js/modules/box.js?v=20261002_02"></script>
+  <script src="js/modules/box.js?v=20261002_03"></script>
   <script src="js/modules/news.js?v=20260930_01"></script>
-  <script src="js/modules/appraisal.js?v=20261002_02"></script>
+  <script src="js/modules/appraisal.js?v=20261002_03"></script>
 </body>
 </html>
