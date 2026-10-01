@@ -1220,7 +1220,7 @@
                     <span class="pkm-berry-icon-wrapper" title="${berryName}">
                       <img src="${berry.icon}" alt="${berryName}" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;">
                     </span>` : ''}
-                    ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(base ? base.specialty : p.specialty, 20) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}
+                    ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(base ? base.specialty : p.specialty, 18) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}
                     ${p.ribbon ? `
                       <span class="box-ribbon-tag" title="${isEN ? `Good-Night Ribbon Tier ${p.ribbon}` : `睡飽飽獎章`}">
                         <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${p.ribbon}.png" class="box-ribbon-icon" alt="Ribbon" />
@@ -1343,7 +1343,7 @@
                     ${p.nickname ? `<div style="font-size:11px;color:var(--accent-color);text-align:center;">${escapeHtml(p.nickname)}</div>` : ''}
                   </td>
                   <td class="td-spec" style="text-align:center;">
-                    ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(base ? base.specialty : p.specialty, 24) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}
+                    ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(base ? base.specialty : p.specialty, 20) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}
                   </td>
                   <td style="text-align:center;">
                     ${berry && berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}">` : `<span class="berry-name-text">${berryName || '--'}</span>`}

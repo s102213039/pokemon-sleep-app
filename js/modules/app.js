@@ -3520,7 +3520,7 @@ if (typeof document !== 'undefined') {
                 </div>
                 <div class="stat-item">
                   <span class="stat-label">${t('th.specialty', '得意')}</span>
-                  <span class="stat-value" style="white-space:nowrap;">${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(p.specialty, 22) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}</span>
+                  <span class="stat-value" style="white-space:nowrap;">${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(p.specialty, 20) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}</span>
                 </div>
                 <div class="stat-item">
                   <span class="stat-label">${t('th.carry', '持有')}</span>
@@ -3602,7 +3602,7 @@ if (typeof document !== 'undefined') {
                   </td>
                   <td class="td-name pokemon-name-cell" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">${pkmName}</td>
                   <td class="td-berry">${berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}" loading="lazy" onerror="this.style.display='none';">` : `<span class="berry-name-text">${berryName}</span>`}</td>
-                  <td class="td-spec" style="text-align:center;">${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(p.specialty, 24) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}</td>
+                  <td class="td-spec" style="text-align:center;">${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(p.specialty, 20) : `<span class="box-spec-tag ${specClass}">${specName}</span>`}</td>
                   <td class="td-carry">${p.carry || '--'}</td>
                   <td class="td-ing">${p.ingredients && p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${window.I18N ? window.I18N.getIngredientName(p.ingredients[0].name) : p.ingredients[0].name}" loading="lazy" title="${window.I18N ? window.I18N.getIngredientName(p.ingredients[0].name) : p.ingredients[0].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[0],0)}</div>` : '--'}</td>
                   <td class="td-ing">${p.ingredients && p.ingredients[1] ? `<div class="ing-cell">${p.ingredients[1].icon ? `<img class="ing-icon" src="${p.ingredients[1].icon}" alt="${window.I18N ? window.I18N.getIngredientName(p.ingredients[1].name) : p.ingredients[1].name}" loading="lazy" title="${window.I18N ? window.I18N.getIngredientName(p.ingredients[1].name) : p.ingredients[1].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[1],1)}</div>` : '--'}</td>
@@ -5761,7 +5761,7 @@ function renderPokedexDetailModalContent() {
               <span class="pokedex-tag pokedex-tag-berry" title="${escapeHtml(berryName)}">
                 ${berry.icon ? `<img src="${berry.icon}" class="pokedex-berry-icon-img" alt="${escapeHtml(berryName)}" title="${escapeHtml(berryName)}" loading="lazy">` : ''}
               </span>
-              ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(pkm.specialty, 24, 'pokedex-tag pokedex-tag-spec') : `<span class="pokedex-tag pokedex-tag-spec ${specClass}">${escapeHtml(specName)}</span>`}
+              ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(pkm.specialty, 20, 'pokedex-tag pokedex-tag-spec') : `<span class="pokedex-tag pokedex-tag-spec ${specClass}">${escapeHtml(specName)}</span>`}
             </div>
           </div>
 

@@ -9234,26 +9234,29 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assertEquals(i18n.getSpecialtyKey('食材'), 'ingredient', '食材 key must be ingredient');
     assertEquals(i18n.getSpecialtyKey('技能'), 'skill', '技能 key must be skill');
 
-    const berryHtml = i18n.getSpecialtyIconHtml('樹果', 24);
+    const berryHtml = i18n.getSpecialtyIconHtml('樹果', 20);
     assert(berryHtml.includes('assets/specialty/berry.png') && berryHtml.includes('spec-berry'), 'berry icon HTML must include image and class');
     assert(berryHtml.includes('specialty-icon-wrap'), 'icon must have specialty-icon-wrap class');
 
     // 3. Pokédex integration
-    assert(appJs.includes('getSpecialtyIconHtml(p.specialty, 24)'), 'Pokédex table must use getSpecialtyIconHtml');
-    assert(appJs.includes('getSpecialtyIconHtml(p.specialty, 22)'), 'Pokédex cards must use getSpecialtyIconHtml');
-    assert(appJs.includes('getSpecialtyIconHtml(pkm.specialty, 24'), 'Pokédex detail modal must use getSpecialtyIconHtml');
+    assert(appJs.includes('getSpecialtyIconHtml(p.specialty, 20)'), 'Pokédex table must use getSpecialtyIconHtml with size 20');
+    assert(appJs.includes('getSpecialtyIconHtml(p.specialty, 20)'), 'Pokédex cards must use getSpecialtyIconHtml with size 20');
+    assert(appJs.includes('getSpecialtyIconHtml(pkm.specialty, 20'), 'Pokédex detail modal must use getSpecialtyIconHtml with size 20');
 
     // 4. Box integration
-    assert(boxJs.includes('getSpecialtyIconHtml(base ? base.specialty : p.specialty, 24)'), 'Box table must use getSpecialtyIconHtml');
-    assert(boxJs.includes('getSpecialtyIconHtml(base ? base.specialty : p.specialty, 20)'), 'Box cards must use getSpecialtyIconHtml');
+    assert(boxJs.includes('getSpecialtyIconHtml(base ? base.specialty : p.specialty, 20)'), 'Box table must use getSpecialtyIconHtml with size 20');
+    assert(boxJs.includes('getSpecialtyIconHtml(base ? base.specialty : p.specialty, 18)'), 'Box cards must use getSpecialtyIconHtml with size 18');
 
     // 5. Appraisal integration
-    assert(appraisalJs.includes('getSpecialtyIconHtml(specialty, 24'), 'Appraisal modal must use getSpecialtyIconHtml');
-    assert(appraisalJs.includes('getSpecialtyIconHtml(currentPkm.specialty, 20)'), 'Appraisal lab must use getSpecialtyIconHtml');
+    assert(appraisalJs.includes('getSpecialtyIconHtml(specialty, 22'), 'Appraisal modal must use getSpecialtyIconHtml with size 22');
+    assert(appraisalJs.includes('getSpecialtyIconHtml(currentPkm.specialty, 16)'), 'Appraisal lab must use getSpecialtyIconHtml with size 16');
 
-    // 6. CSS borderless transparent styling
+    // 6. CSS borderless transparent styling & berry size matching
     assert(stylesCss.includes('.specialty-icon-wrap') && stylesCss.includes('background: transparent !important;'), 'specialty-icon-wrap must be transparent');
     assert(stylesCss.includes('.specialty-icon {') && stylesCss.includes('border-radius: 50%;'), 'specialty-icon must be circular');
+    assert(stylesCss.includes('.pokemon-table .td-spec .specialty-icon') && stylesCss.includes('width: 20px !important;'), 'pokemon table spec icon must be 20px matching berry');
+    assert(stylesCss.includes('.mobile-h5-app .pokemon-table .td-spec .specialty-icon') && stylesCss.includes('width: 20px !important;'), 'mobile pokemon table spec icon must be 20px matching berry');
+    assert(stylesCss.includes('.lab-preview-spec .specialty-icon') && stylesCss.includes('width: 16px !important;'), 'lab preview spec icon must be 16px matching berry');
   });
 
 console.log('                   Test Results Summary');

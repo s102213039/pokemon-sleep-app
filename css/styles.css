@@ -6648,6 +6648,52 @@ input[type=range].rf-slider.event-slider {
   transform: scale(0.92);
 }
 
+/* 列表表格：得意圖示大小與樹果圖示 (20px) 保持一致 */
+.pokemon-table .td-spec .specialty-icon,
+.box-table .td-spec .specialty-icon {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.mobile-h5-app .pokemon-table .td-spec .specialty-icon,
+.mobile-h5-app .box-table .td-spec .specialty-icon {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* 卡片與標籤空間：根據展示空間微調大小 */
+.stat-item .specialty-icon {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.box-card-tags .specialty-icon {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.appraisal-specialty-row .specialty-icon {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.lab-preview-spec .specialty-icon {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.pokedex-header-berry-spec-group .specialty-icon {
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 768px) {
+  .pokedex-header-berry-spec-group .specialty-icon {
+    width: 16px !important;
+    height: 16px !important;
+  }
+}
+
 
 /* 食材尚未開放透明樣式 (外側卡片與內側彈窗通用) */
 .box-ing-chip.ing-locked,

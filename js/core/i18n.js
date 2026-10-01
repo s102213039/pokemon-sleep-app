@@ -1306,12 +1306,12 @@
     return 'berry';
   }
 
-  function getSpecialtyIconHtml(spec, size = 22, extraClass = '') {
+  function getSpecialtyIconHtml(spec, size = 20, extraClass = '') {
     const key = getSpecialtyKey(spec);
     const specClass = 'spec-' + key;
     const basePath = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : (typeof window !== 'undefined' && window.location && window.location.pathname.includes('/app/') ? '../' : '');
     const title = getSpecialtyName(spec) || spec || '';
-    const s = size || 22;
+    const s = size || 20;
     return `<span class="box-spec-tag ${specClass} specialty-icon-wrap ${extraClass}" title="${safeEscape(title)}" style="display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;padding:0;line-height:1;vertical-align:middle;"><img src="${basePath}assets/specialty/${key}.png" srcset="${basePath}assets/specialty/${key}@2x.png 2x" class="specialty-icon spec-${key}" width="${s}" height="${s}" alt="${safeEscape(title)}" loading="lazy" style="width:${s}px;height:${s}px;object-fit:contain;vertical-align:middle;display:inline-block;pointer-events:none;" /></span>`;
   }
 
