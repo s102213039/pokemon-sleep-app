@@ -9264,7 +9264,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
 
     // 1. Auto-select first box Pokémon and clean empty state
-    assert(appraisalJs.includes('loadBoxItem(userBox[0])'), 'Appraisal lab must default to first box Pokémon');
+    assert(appraisalJs.includes('loadBoxItem(activeList[0])') || appraisalJs.includes('loadBoxItem(displayBoxList[0])') || appraisalJs.includes('loadBoxItem(userBox[0])'), 'Appraisal lab must default to first box Pokémon in current sort order');
     assert(appraisalJs.includes('lab-box-empty-container'), 'Appraisal lab must provide clean empty state when userBox is empty');
     assert(!appraisalJs.includes('Custom Simulation (Select Any Species)') && !appraisalJs.includes('自訂模擬 (自由挑選物種)'), 'Scratch simulation species picker must be removed from Box lab');
 
@@ -9335,9 +9335,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(appraisalJs.includes('getSkillTier: getSkillTier'), 'appraisal.js must export getSkillTier in AppraisalLab');
     assert(appraisalJs.includes('function getSkillTier(sName)'), 'appraisal.js must define getSkillTier');
 
-    // 2. Cache busters bumped to 20261002_04
-    assert(indexHtml.includes('js/modules/appraisal.js?v=20261002_04'), 'index.html must use v=20261002_04');
-    assert(appIndexHtml.includes('js/modules/appraisal.js?v=20261002_04'), 'app/index.html must use v=20261002_04');
+    // 2. Cache busters bumped to 20261002_05
+    assert(indexHtml.includes('js/modules/appraisal.js?v=20261002_05'), 'index.html must use v=20261002_05');
+    assert(appIndexHtml.includes('js/modules/appraisal.js?v=20261002_05'), 'app/index.html must use v=20261002_05');
 
     // 3. Execution in VM context
     const ctx = {
@@ -9360,29 +9360,50 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     };
     ctx.window = ctx;
     ctx.window.allPokemons = [
-      { id: '1', name_cn: '妙蛙種子', specialty: '食材', type: '草', ingredients: [{ name: '特選蘋果', count: 1 }] }
+      { id: '1', name_cn: '妙蛙種子', specialty: '食材', type: '草', ingredients: [{ name: '特選蘋果', count: 1 }] },
+      { id: '3', name_cn: '妙蛙花', specialty: '食材', type: '草', ingredients: [{ name: '特選蘋果', count: 2 }] },
+      { id: '12', name_cn: '巴大蝶', specialty: '樹果', type: '蟲', ingredients: [{ name: '甜甜蜜', count: 1 }] }
     ];
+    // Raw userBox has Butterfree (No. 12) at index 0, but sorted getFilteredBox has Venusaur (No. 3) at index 0
+    const rawBox = [
+      {
+        uid: 'pkm-butterfree-12',
+        pokemonId: '12',
+        name: '巴大蝶',
+        level: 30,
+        nature: '天真',
+        subskills: ['樹果數量S', '持有上限提升M', '', '', ''],
+        ingredients: ['甜甜蜜', '好眠番茄', '甜甜蜜'],
+        ribbon: 4
+      },
+      {
+        uid: 'pkm-venusaur-3',
+        pokemonId: '3',
+        name: '妙蛙花',
+        level: 55,
+        nature: '內斂',
+        subskills: ['幫手獎勵', '食材機率提升M', '', '', ''],
+        ingredients: ['特選蘋果', '特選蘋果', '特選蘋果'],
+        ribbon: 2
+      }
+    ];
+    const sortedFilteredBox = [rawBox[1], rawBox[0]]; // Venusaur first!
+
     ctx.window.UserBox = {
       SUBSKILLS_DATA: [
         { name: '樹果數量S', tier: 'gold' },
         { name: '幫手獎勵', tier: 'gold' },
-        { name: '幫忙速度M', tier: 'blue' }
+        { name: '幫忙速度M', tier: 'blue' },
+        { name: '持有上限提升M', tier: 'blue' },
+        { name: '食材機率提升M', tier: 'blue' }
       ],
       NATURE_DATA: [
-        { name: '固執', buff: '幫忙速度▲', debuff: '食材機率▼' }
+        { name: '固執', buff: '幫忙速度▲', debuff: '食材機率▼' },
+        { name: '天真', buff: 'EXP獲得量▲', debuff: '主技能發動機率▼' },
+        { name: '內斂', buff: '食材機率▲', debuff: '幫忙速度▼' }
       ],
-      getUserBox: () => [
-        {
-          uid: 'pkm-1',
-          pokemonId: '1',
-          name: '妙蛙種子',
-          level: 25,
-          nature: '固執',
-          subskills: ['樹果數量S', '幫忙速度M', '', '', ''],
-          ingredients: ['特選蘋果', '特選蘋果', '特選蘋果'],
-          ribbon: 1
-        }
-      ]
+      getUserBox: () => rawBox,
+      getFilteredBox: () => sortedFilteredBox
     };
     ctx.window.I18N = {
       getLanguage: () => 'zh-TW',
@@ -9406,7 +9427,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(ctx.window.AppraisalLab.getSkillTier('幫忙速度M') === 'blue', '幫忙速度M must be blue');
     assert(ctx.window.AppraisalLab.getSkillTier('') === 'white', 'empty subskill must be white');
 
-    // Verify renderLab executes without ReferenceError
+    // Verify renderLab executes and defaults to sortedFilteredBox[0] (Venusaur), NOT rawBox[0] (Butterfree)
     const mockContainer = { innerHTML: '', id: 'appraisal-lab-container' };
     let renderError = null;
     try {
@@ -9416,6 +9437,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     }
     assert(!renderError, `renderLab must not throw ReferenceError: getSkillTier is not defined, got: ${renderError && renderError.message}`);
 
+    assert(mockContainer.innerHTML.includes('<span class="lab-preview-name">妙蛙花</span>'), 'renderLab must default to first Pokémon in getFilteredBox (妙蛙花)');
+    assert(!mockContainer.innerHTML.includes('<span class="lab-preview-name">巴大蝶</span>'), 'renderLab preview must not default to raw unsorted userBox[0] (巴大蝶)');
     assert(mockContainer.innerHTML.includes('lab-preview-subskills-section'), 'renderLab must render subskills section in preview');
   });
 

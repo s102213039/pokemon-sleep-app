@@ -2237,9 +2237,14 @@
       return;
     }
 
-    // 若尚未選中任何倉庫寶可夢，或選中的寶可夢已不存在，預設載入倉庫中第一隻寶可夢
-    if ((!labState.selectedBoxUid || !userBox.some(function (p) { return p.uid === labState.selectedBoxUid; })) && userBox.length > 0) {
-      loadBoxItem(userBox[0]);
+    // 若尚未選中任何倉庫寶可夢，或選中的寶可夢已不存在，預設載入倉庫列表中第一隻寶可夢（依當前排序與篩選順序）
+    const displayBoxList = (window.UserBox && typeof window.UserBox.getFilteredBox === 'function')
+      ? window.UserBox.getFilteredBox()
+      : userBox;
+    const activeList = displayBoxList.length > 0 ? displayBoxList : userBox;
+
+    if ((!labState.selectedBoxUid || !userBox.some(function (p) { return p.uid === labState.selectedBoxUid; })) && activeList.length > 0) {
+      loadBoxItem(activeList[0]);
     }
 
     const currentPkm = pokemons.find(function (p) { return p.id === labState.selectedPkmId; }) || pokemons[0];
@@ -2333,7 +2338,7 @@
           </div>
 
           <select id="lab-box-select" class="lab-select lab-box-select" onchange="window.AppraisalLab.onBoxItemSelect(this.value)">
-            ${userBox.map(function (item) {
+            ${activeList.map(function (item) {
               const bPkm = pokemons.find(function (p) { return p.id === item.pokemonId || p.name_cn === item.name; });
               const pDisplayName = isEN ? (bPkm ? (bPkm.name_en || bPkm.name_cn) : item.name) : item.name;
               const nickText = item.nickname ? `${item.nickname} (${pDisplayName})` : pDisplayName;
@@ -2342,9 +2347,9 @@
             }).join('')}
           </select>
 
-          ${userBox.length > 0 ? `
+          ${activeList.length > 0 ? `
             <div class="lab-box-chips-scroll">
-              ${userBox.map(function (item) {
+              ${activeList.map(function (item) {
                 const bPkm = pokemons.find(function (p) { return p.id === item.pokemonId || p.name_cn === item.name; });
                 const pDisplayName = isEN ? (bPkm ? (bPkm.name_en || bPkm.name_cn) : item.name) : item.name;
                 const avatarUrl = (bPkm && (bPkm.icon_url || bPkm.icon)) || (bPkm && bPkm.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${bPkm.formatted_no}.png` : '') || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
