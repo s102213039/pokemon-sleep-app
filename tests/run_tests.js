@@ -9100,6 +9100,33 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(i18nJs.includes("'box.edit_stats': '修改數值'"), 'i18n must have edit_stats key');
   });
 
+  // ─── Test 174: Appraisal Lab H5 Polish & Radar Maximization ─────────────
+  test('Tier 1 - Feature Coverage', 'Appraisal Lab H5 Polish: Linkage Group Omission, No Type SVGs/Icons, Icon-Only Top-Right Edit Button & Radar Maximization', () => {
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+
+    // 1. lab-box-linkage-group omitted on H5
+    assert(appraisalJs.includes('${!isMobileH5 ? `') && appraisalJs.includes('lab-box-linkage-group'), 'lab-box-linkage-group must be conditionally omitted on H5');
+    assert(stylesCss.includes('.mobile-h5-app .lab-box-linkage-group') && stylesCss.includes('display: none !important;'), 'styles.css must hide lab-box-linkage-group on H5');
+
+    // 2. lab-inbox-tag removed
+    assert(!appraisalJs.includes('lab-inbox-tag'), 'lab-inbox-tag must be removed from appraisal lab');
+
+    // 3. Type SVG removed, replaced with berry icon
+    assert(!appraisalJs.includes('getTypeIconSvg'), 'appraisal.js must not use getTypeIconSvg anymore');
+    assert(appraisalJs.includes('window.getPokemonBerry'), 'appraisal.js must use tree berry icon instead of type');
+
+    // 4. btn-lab-edit-toggle is icon-only and inside lab-preview-header-right
+    assert(appraisalJs.includes('class="btn-lab-edit-toggle"') && appraisalJs.includes('<svg viewBox="0 0 24 24"'), 'btn-lab-edit-toggle must be icon-only');
+    const editBtnSnippet = appraisalJs.substring(appraisalJs.indexOf('class="btn-lab-edit-toggle"'), appraisalJs.indexOf('</button>', appraisalJs.indexOf('class="btn-lab-edit-toggle"')));
+    assert(!editBtnSnippet.includes('修改數值') && !editBtnSnippet.includes('Edit Stats'), 'btn-lab-edit-toggle must not contain text');
+
+    // 5. radar-svg-chart maximized display
+    assert(!stylesCss.includes('max-height: 250px;'), 'radar-svg-chart must not have 250px max-height constraint');
+    assert(stylesCss.includes('.lab-preview-only-layout') && stylesCss.includes('grid-template-columns: 1fr !important;'), 'lab-preview-only-layout must expand to 100% width');
+    assert(stylesCss.includes('.lab-chart-container .radar-svg-chart') && stylesCss.includes('aspect-ratio: 340 / 310;'), 'radar-svg-chart must scale responsively with aspect-ratio');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

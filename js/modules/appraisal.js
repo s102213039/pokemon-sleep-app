@@ -2270,7 +2270,8 @@
 
     targetElement.innerHTML = `
       <div class="appraisal-lab-seamless-view">
-        <!-- 1. 倉庫快速選取區 (User Box Linkage) -->
+        ${!isMobileH5 ? `
+        <!-- 1. 倉庫快速選取區 (User Box Linkage) (僅桌面版需要時保留) -->
         <div class="lab-control-group lab-box-linkage-group">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
             <label for="lab-box-select" class="lab-control-label font-bold text-accent">
@@ -2317,6 +2318,7 @@
             <div class="lab-box-empty-hint">${isEN ? 'Tip: Register Pokémon in Box tab to evaluate your personal collection here!' : '提示：在【寶可夢倉庫】新增登錄寶可夢後，即可在此一鍵選取並評測你的專屬寶可夢！'}</div>
           `}
         </div>
+        ` : ''}
 
         ${labState.selectedBoxUid && labState.editMode ? `
           <div class="lab-edit-mode-banner" style="display:flex;align-items:center;justify-content:space-between;background:var(--card-bg, #1e293b);padding:10px 14px;border-radius:10px;margin-bottom:12px;border:1px solid var(--accent-color, #38bdf8);">
@@ -2353,8 +2355,9 @@
                   ${pokemons.map(function (p) {
                     const pName = isEN ? (p.name_en || p.name_cn) : p.name_cn;
                     const pSpec = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : p.specialty;
-                    const pType = window.I18N ? window.I18N.getTypeName(p.type) : p.type;
-                    return '<option value="' + p.id + '" ' + (p.id === labState.selectedPkmId ? 'selected' : '') + '>#' + p.formatted_no + ' ' + pName + ' (' + pSpec + ' / ' + pType + ')</option>';
+                    const bObj = (typeof window !== 'undefined' && window.getPokemonBerry) ? window.getPokemonBerry(p) : (p.berry || {});
+                    const pBerryName = (window.I18N && bObj.name) ? window.I18N.getBerryName(bObj.name) : (bObj.name || (window.I18N ? window.I18N.getTypeName(p.type) : p.type));
+                    return '<option value="' + p.id + '" ' + (p.id === labState.selectedPkmId ? 'selected' : '') + '>#' + p.formatted_no + ' ' + pName + ' (' + pSpec + ' / ' + pBerryName + ')</option>';
                   }).join('')}
                 </select>
               </div>
@@ -2446,7 +2449,7 @@
 
           <!-- 即時評測展示 (簡介 + 六邊形雷達圖 + 下方評語) -->
           <div class="appraisal-lab-preview ${!showControls ? 'lab-preview-fullwidth' : ''}">
-            <div class="lab-preview-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+            <div class="lab-preview-header" style="position:relative;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
               <div class="lab-preview-pokemon-info">
                 <img src="${currentPkm.icon_url}" class="lab-preview-icon" alt="${displayName}">
                 <div>
@@ -2460,38 +2463,34 @@
                         <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${labState.ribbon}.png" class="lab-ribbon-icon" alt="Ribbon" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;" />
                       </span>
                     ` : ''}
-                    ${labState.selectedBoxUid ? (labState.isCustomized ? `
+                    ${labState.selectedBoxUid && labState.isCustomized ? `
                       <span class="lab-sim-tag" style="background:rgba(234,179,8,0.18); color:#facc15; border:1px solid rgba(234,179,8,0.35); font-size:11px; padding:1px 6px; border-radius:4px; font-weight:600;">${isEN ? 'Simulating' : '模擬調校中'}</span>
-                    ` : `
-                      <span class="lab-inbox-tag" style="background:rgba(56,189,248,0.18); color:#38bdf8; border:1px solid rgba(56,189,248,0.35); font-size:11px; padding:1px 6px; border-radius:4px; font-weight:600;">${isEN ? 'In Box' : '倉庫實體'}</span>
-                    `) : ''}
+                    ` : ''}
                   </div>
                   <div class="lab-preview-spec" style="display:flex;align-items:center;gap:6px;margin-top:2px;">
-                    ${window.I18N ? window.I18N.getTypeIconSvg(currentPkm.type, 16) : ''} 
+                    ${(function() { const b = typeof window !== 'undefined' && window.getPokemonBerry ? window.getPokemonBerry(currentPkm) : null; return b && b.icon ? '<img src="' + b.icon + '" alt="' + escapeHtml(b.name || '') + '" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;" loading="lazy">' : ''; })()} 
                     <span class="box-spec-tag ${specClass}" style="font-size:11px;padding:1px 6px;">${specName}</span>
                     <span style="font-size:12px;color:var(--text-muted);">Lv.${labState.level}</span>
                   </div>
                 </div>
               </div>
 
-              <div class="lab-preview-header-right" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-                ${labState.selectedBoxUid ? `
-                  ${!labState.editMode ? `
-                    <button type="button" class="btn-lab-edit-toggle" onclick="window.AppraisalLab.enterEditMode()" title="${isEN ? 'Edit Pokémon Stats' : '修改寶可夢數值'}" style="background:var(--accent-color, #38bdf8);color:#0f172a;font-weight:700;padding:6px 14px;border-radius:8px;border:none;cursor:pointer;font-size:12.5px;display:inline-flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(56,189,248,0.25);">
-                      <span>[✎]</span>
-                      <span>${isEN ? 'Edit Stats' : '修改數值'}</span>
+              <div class="lab-preview-header-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+                ${labState.selectedBoxUid && !labState.editMode ? `
+                  <button type="button" class="btn-lab-edit-toggle" onclick="window.AppraisalLab.enterEditMode()" title="${isEN ? 'Edit Pokémon Stats' : '修改寶可夢數值'}" style="background:var(--accent-color, #38bdf8);color:#0f172a;width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(56,189,248,0.25);padding:0;" aria-label="${isEN ? 'Edit Pokémon Stats' : '修改寶可夢數值'}">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </button>
+                ` : ''}
+                ${labState.selectedBoxUid && labState.editMode ? `
+                  <div style="display:flex;gap:6px;">
+                    <button type="button" class="btn-lab-save-header" onclick="window.AppraisalLab.saveEditMode()" style="background:#22c55e;color:#0f172a;font-weight:700;padding:5px 10px;border-radius:8px;border:none;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:4px;">
+                      <span>[✓]</span>
+                      <span>${isEN ? 'Save' : '保存'}</span>
                     </button>
-                  ` : `
-                    <div style="display:flex;gap:6px;">
-                      <button type="button" class="btn-lab-save-header" onclick="window.AppraisalLab.saveEditMode()" style="background:#22c55e;color:#0f172a;font-weight:700;padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:4px;">
-                        <span>[✓]</span>
-                        <span>${isEN ? 'Save' : '保存修改'}</span>
-                      </button>
-                      <button type="button" class="btn-lab-cancel-header" onclick="window.AppraisalLab.cancelEditMode()" style="background:rgba(148,163,184,0.2);color:var(--text-main, #f1f5f9);padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-size:12px;">
-                        ${isEN ? 'Cancel' : '取消'}
-                      </button>
-                    </div>
-                  `}
+                    <button type="button" class="btn-lab-cancel-header" onclick="window.AppraisalLab.cancelEditMode()" style="background:rgba(148,163,184,0.2);color:var(--text-main, #f1f5f9);padding:5px 10px;border-radius:8px;border:none;cursor:pointer;font-size:12px;">
+                      ${isEN ? 'Cancel' : '取消'}
+                    </button>
+                  </div>
                 ` : ''}
 
                 <div class="lab-preview-dual-verdict" style="display:flex;gap:8px;align-items:center;">
