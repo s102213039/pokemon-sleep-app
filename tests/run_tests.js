@@ -9125,6 +9125,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(!stylesCss.includes('max-height: 250px;'), 'radar-svg-chart must not have 250px max-height constraint');
     assert(stylesCss.includes('.lab-preview-only-layout') && stylesCss.includes('grid-template-columns: 1fr !important;'), 'lab-preview-only-layout must expand to 100% width');
     assert(stylesCss.includes('.lab-chart-container .radar-svg-chart') && stylesCss.includes('aspect-ratio: 340 / 310;'), 'radar-svg-chart must scale responsively with aspect-ratio');
+
+    // 6. Runtime variable guard: isMobileH5 declaration in renderAppraisalLabContainer
+    assert(appraisalJs.includes("const isMobileH5 = typeof document !== 'undefined'"), 'isMobileH5 must be explicitly declared in renderAppraisalLabContainer');
   });
 
 console.log('                   Test Results Summary');

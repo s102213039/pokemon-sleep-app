@@ -2207,6 +2207,7 @@
   function renderAppraisalLabContainer(targetElement) {
     if (!targetElement) return;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isMobileH5 = typeof document !== 'undefined' && (!!document.querySelector('.mobile-h5-app') || (document.body && document.body.classList.contains('mobile-h5-app')));
 
     const pokemons = window.allPokemons || (window.PokemonApp && window.PokemonApp.allPokemons) || [];
     const userBox = (window.UserBox && typeof window.UserBox.getUserBox === 'function') ? window.UserBox.getUserBox() : [];
