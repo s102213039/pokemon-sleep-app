@@ -9254,9 +9254,41 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     // 6. CSS borderless transparent styling & berry size matching
     assert(stylesCss.includes('.specialty-icon-wrap') && stylesCss.includes('background: transparent !important;'), 'specialty-icon-wrap must be transparent');
     assert(stylesCss.includes('.specialty-icon {') && stylesCss.includes('border-radius: 50%;'), 'specialty-icon must be circular');
-    assert(stylesCss.includes('.pokemon-table .td-spec .specialty-icon') && stylesCss.includes('width: 20px !important;'), 'pokemon table spec icon must be 20px matching berry');
     assert(stylesCss.includes('.mobile-h5-app .pokemon-table .td-spec .specialty-icon') && stylesCss.includes('width: 20px !important;'), 'mobile pokemon table spec icon must be 20px matching berry');
     assert(stylesCss.includes('.lab-preview-spec .specialty-icon') && stylesCss.includes('width: 16px !important;'), 'lab preview spec icon must be 16px matching berry');
+  });
+
+  // ─── Test 179: Appraisal Lab Box-First Default, Top-Right Absolute Edit Button & Complete Stats Preview ─
+  test('Tier 1 - Feature Coverage', 'Appraisal Lab Box-First Default, Top-Right Absolute Edit Button & Complete Stats Preview', () => {
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+
+    // 1. Auto-select first box Pokémon and clean empty state
+    assert(appraisalJs.includes('loadBoxItem(userBox[0])'), 'Appraisal lab must default to first box Pokémon');
+    assert(appraisalJs.includes('lab-box-empty-container'), 'Appraisal lab must provide clean empty state when userBox is empty');
+    assert(!appraisalJs.includes('Custom Simulation (Select Any Species)') && !appraisalJs.includes('自訂模擬 (自由挑選物種)'), 'Scratch simulation species picker must be removed from Box lab');
+
+    // 2. Absolute top-right edit action buttons
+    assert(appraisalJs.includes('class="lab-preview-header-right" style="position:absolute;top:0;right:0;'), 'Header right actions must be positioned at top:0 right:0');
+    assert(stylesCss.includes('.lab-preview-header-right') && stylesCss.includes('position: absolute !important;'), 'styles.css must enforce absolute top-right for lab-preview-header-right');
+    assert(stylesCss.includes('.lab-preview-header') && stylesCss.includes('padding-right: 50px !important;'), 'lab-preview-header must have padding-right >= 48px to prevent overlapping with button');
+
+    // 3. Complete Pokémon data rendered in preview mode
+    assert(appraisalJs.includes('class="lab-preview-stats-panel"'), 'Preview mode must render complete stats panel');
+    assert(appraisalJs.includes('class="lab-preview-mainskill-row"'), 'Preview mode must render main skill row');
+    assert(appraisalJs.includes('class="lab-preview-ing-chips"') && appraisalJs.includes('class="lab-preview-ing-chip"'), 'Preview mode must render ingredient chips');
+    assert(appraisalJs.includes('class="lab-preview-nature-row"') && appraisalJs.includes('▲▲') && appraisalJs.includes('▼▼'), 'Preview mode must render nature row with buff and debuff');
+    assert(appraisalJs.includes('class="lab-preview-subskills-section"') && appraisalJs.includes('class="box-subskills-grid"'), 'Preview mode must render subskills in grid');
+
+    // 4. In-place edit mode transformation with save/cancel controls
+    assert(appraisalJs.includes('const showControls = labState.editMode;'), 'Controls must be toggled by editMode state');
+    assert(appraisalJs.includes('btn-lab-save-header') && appraisalJs.includes('btn-lab-cancel-header'), 'Header must render save/cancel buttons during edit mode');
+    assert(appraisalJs.includes('btn-lab-save') && appraisalJs.includes('btn-lab-cancel'), 'Form bottom must render save/cancel buttons during edit mode');
+
+    // 5. CSS classes present
+    assert(stylesCss.includes('.lab-preview-stats-panel'), 'styles.css must define .lab-preview-stats-panel');
+    assert(stylesCss.includes('.lab-preview-ing-chips'), 'styles.css must define .lab-preview-ing-chips');
+    assert(stylesCss.includes('.lab-preview-subskills-grid'), 'styles.css must define .lab-preview-subskills-grid');
   });
 
 console.log('                   Test Results Summary');
