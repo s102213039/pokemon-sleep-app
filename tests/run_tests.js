@@ -3938,10 +3938,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+|202609[23]\d_\d+)/.test(indexHtml), 'index.html styles.css must have current cache buster');
-  assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+|202609[23]\d_\d+)/.test(indexHtml), 'index.html wiki.js must have valid cache buster');
-  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+|202609[23]\d_\d+)/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
-  assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+|202609[23]\d_\d+)/.test(appIndexHtml), 'app/index.html wiki.js must have valid cache buster');
+  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+|202609[23]\d_\d+|202610\d{2}_\d+)/.test(indexHtml), 'index.html styles.css must have current cache buster');
+  assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+|202609[23]\d_\d+|202610\d{2}_\d+)/.test(indexHtml), 'index.html wiki.js must have valid cache buster');
+  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+|202609[23]\d_\d+|202610\d{2}_\d+)/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
+  assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+|202609[23]\d_\d+|202610\d{2}_\d+)/.test(appIndexHtml), 'app/index.html wiki.js must have valid cache buster');
 });
 
 test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Borderless Layout, Single-Line Name:Desc, No Tier Badges & Half-Width Symbols', () => {
@@ -8480,6 +8480,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(modalHtml.includes('height="100%"'), 'Appraisal radar SVG must use 100% height');
     assert(modalHtml.includes('nature-pill-capsule'), 'Appraisal modal must render in-game nature pill capsule');
     assert(modalHtml.includes('nature-capsule-tag'), 'Appraisal modal must render in-game nature capsule tag');
+    assert(modalHtml.includes('appraisal-mainskill-row'), 'Appraisal modal must render main skill row');
+    assert(modalHtml.includes('appraisal-mainskill-level'), 'Appraisal modal must render main skill level');
+    assert(modalHtml.includes('appraisal-ing-parallel-row'), 'Appraisal modal must render ingredients parallel row');
+    assert(modalHtml.includes('appraisal-spec-tag spec-ingredient'), 'Appraisal modal spec tag must contain spec-ingredient class');
   });
 
   test('Tier 4 - Real-World Application Scenarios', 'Specialty-Specific Intelligent Summary & In-Game Nature Display Verification', () => {
@@ -8625,6 +8629,133 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     boxApp.syncBoxVisibility();
     assertEquals(dropzoneEl.style.display, 'none', 'Dropzone must be hidden again when toggled off');
     assertEquals(guideCardEl.style.display, 'none', 'Guide card must be hidden again when toggled off');
+  });
+
+  test('Tier 4 - Real-World Application Scenarios', 'Main Skill & Level, Ingredient Level Unlock Transparency & Specialty Badge Styles', () => {
+    const cssCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+    const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+    const pkmData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/data.json'), 'utf8'));
+
+    // 1. Verify CSS styles for in-game specialty rounded pills and locked ingredient transparency
+    assert(cssCode.includes('.box-spec-tag.spec-berry') && cssCode.includes('.box-spec-tag.spec-ingredient') && cssCode.includes('.box-spec-tag.spec-skill'), 'CSS must define berry, ingredient, and skill specialty badge styles for box cards');
+    assert(cssCode.includes('.appraisal-spec-tag.spec-berry') && cssCode.includes('.appraisal-spec-tag.spec-ingredient') && cssCode.includes('.appraisal-spec-tag.spec-skill'), 'CSS must define berry, ingredient, and skill specialty badge styles for appraisal modal');
+    assert(cssCode.includes('.pokedex-tag-spec.spec-berry') && cssCode.includes('.pokedex-tag-spec.spec-ingredient') && cssCode.includes('.pokedex-tag-spec.spec-skill'), 'CSS must define berry, ingredient, and skill specialty badge styles for pokedex modal');
+    assert(cssCode.includes('border-radius: 9999px'), 'Specialty badges must use in-game rounded pill border-radius: 9999px');
+    assert(cssCode.includes('.box-ing-chip.ing-locked') && cssCode.includes('.appraisal-ing-chip.ing-locked'), 'CSS must define ing-locked class with transparency and grayscale for locked ingredient slots');
+
+    // 2. Setup sandbox execution context
+    const appCtx = {
+      window: {},
+      document: {
+        body: new MiniElement('body', ''),
+        createElement: (tag) => new MiniElement(tag, ''),
+        getElementById: () => null,
+        querySelectorAll: () => []
+      },
+      console
+    };
+    appCtx.window = appCtx;
+    appCtx.allPokemons = pkmData;
+    appCtx.I18N = {
+      getLanguage: () => 'zh-TW',
+      t: (k, def) => def,
+      getNatureName: (n) => n,
+      getSubSkillName: (s) => s,
+      getSpecialtyName: (s) => (s ? (s.includes('型') ? s : s + '型') : '--'),
+      getMainSkillName: (m) => m,
+      getIngredientName: (i) => i,
+      getIngredientIcon: (i) => `assets/ingredients/${i}.png`,
+      getBerryName: (b) => b
+    };
+    appCtx.getPokemonBerry = (p) => ({ name: '蘋野果', icon: 'assets/berries/rawst.png' });
+    appCtx.getItemIcon = (p) => 'assets/icons/pkm.png';
+
+    vm.createContext(appCtx);
+    vm.runInContext(boxCode, appCtx);
+    vm.runInContext(appraisalCode, appCtx);
+    appCtx.PokemonBoxApp.setAllPokemons(pkmData);
+
+    const pikachu = pkmData.find(p => p.name_cn === '皮卡丘') || { id: '025', name_cn: '皮卡丘', specialty: '樹果', main_skill: '能量填充S', ingredients: [{ name: '特選蘋果', count: 1, l1: 1 }, { name: '暖暖薑', count: 2, l30: 2 }, { name: '特選蛋', count: 4, l60: 4 }] };
+    const venusaur = pkmData.find(p => p.name_cn === '妙蛙花') || { id: '003', name_cn: '妙蛙花', specialty: '食材', main_skill: '食材獲取S', ingredients: [{ name: '特選蘋果', count: 1, l1: 1 }, { name: '番茄', count: 2, l30: 2 }, { name: '甜甜蜜', count: 4, l60: 4 }] };
+    const ampharos = pkmData.find(p => p.name_cn === '電龍') || { id: '181', name_cn: '電龍', specialty: '技能', main_skill: '能量填充M', ingredients: [{ name: '特選蘋果', count: 1, l1: 1 }, { name: '純純油', count: 2, l30: 2 }, { name: '特選蛋', count: 4, l60: 4 }] };
+
+    // 3. Verify Box Grid Rendering: Specialty pills and ingredient unlock statuses
+    // Pikachu Lv.20: slot 0 (Lv.1) unlocked, slot 1 (Lv.30) locked, slot 2 (Lv.60) locked
+    const boxContainer = new MiniElement('div', 'box-grid-wrap');
+    appCtx.PokemonBoxApp.renderBoxGrid([
+      { uid: 'pkm-berry', name: '皮卡丘', pokemonId: pikachu.id, level: 20, nature: '坦率', ing1: '特選蘋果', ing2: '暖暖薑', ing3: '特選蛋', subskills: [] },
+      { uid: 'pkm-ing', name: '妙蛙花', pokemonId: venusaur.id, level: 45, nature: '坦率', ing1: '特選蘋果', ing2: '番茄', ing3: '甜甜蜜', subskills: [] },
+      { uid: 'pkm-skill', name: '電龍', pokemonId: ampharos.id, level: 75, nature: '坦率', ing1: '特選蘋果', ing2: '純純油', ing3: '特選蛋', subskills: [] }
+    ], boxContainer);
+
+    const boxHtml = boxContainer.innerHTML;
+    // Verify specialty classes
+    assert(boxHtml.includes('box-spec-tag spec-berry'), 'Pikachu box card must have spec-berry class');
+    assert(boxHtml.includes('box-spec-tag spec-ingredient'), 'Venusaur box card must have spec-ingredient class');
+    assert(boxHtml.includes('box-spec-tag spec-skill'), 'Ampharos box card must have spec-skill class');
+
+    // Verify ingredient unlock levels:
+    const cards = boxHtml.split('<div class="box-card" data-uid="');
+    const pikaCard = cards[1] || '';
+    const pikaIngChips = [...pikaCard.matchAll(/<div class="box-ing-chip(\s+[^"]*)?"/g)];
+    assertEquals(pikaIngChips.length, 3, 'Pikachu must have 3 ingredient chips');
+    assert(!(pikaIngChips[0][1] || '').includes('ing-locked'), 'Pikachu Slot 1 (Lv.1) must be unlocked at Lv.20');
+    assert((pikaIngChips[1][1] || '').includes('ing-locked'), 'Pikachu Slot 2 (Lv.30) must be locked at Lv.20');
+    assert((pikaIngChips[2][1] || '').includes('ing-locked'), 'Pikachu Slot 3 (Lv.60) must be locked at Lv.20');
+
+    // Verify ingredient unlock levels for Venusaur Lv.45:
+    const venuCard = cards[2] || '';
+    const venuIngChips = [...venuCard.matchAll(/<div class="box-ing-chip(\s+[^"]*)?"/g)];
+    assertEquals(venuIngChips.length, 3, 'Venusaur must have 3 ingredient chips');
+    assert(!(venuIngChips[0][1] || '').includes('ing-locked'), 'Venusaur Slot 1 (Lv.1) must be unlocked at Lv.45');
+    assert(!(venuIngChips[1][1] || '').includes('ing-locked'), 'Venusaur Slot 2 (Lv.30) must be unlocked at Lv.45');
+    assert((venuIngChips[2][1] || '').includes('ing-locked'), 'Venusaur Slot 3 (Lv.60) must be locked at Lv.45');
+
+    // Verify ingredient unlock levels for Ampharos Lv.75:
+    const amphCard = cards[3] || '';
+    const amphIngChips = [...amphCard.matchAll(/<div class="box-ing-chip(\s+[^"]*)?"/g)];
+    assertEquals(amphIngChips.length, 3, 'Ampharos must have 3 ingredient chips');
+    assert(!(amphIngChips[0][1] || '').includes('ing-locked'), 'Ampharos Slot 1 (Lv.1) must be unlocked at Lv.75');
+    assert(!(amphIngChips[1][1] || '').includes('ing-locked'), 'Ampharos Slot 2 (Lv.30) must be unlocked at Lv.75');
+    assert(!(amphIngChips[2][1] || '').includes('ing-locked'), 'Ampharos Slot 3 (Lv.60) must be unlocked at Lv.75');
+
+    // 4. Verify Appraisal Modal Rendering: Main Skill & Level, Ingredients & Level Unlock Transparency
+    let appraisalModalEl = null;
+    appCtx.document.createElement = (tag) => {
+      const el = new MiniElement(tag, '');
+      if (tag === 'div') appraisalModalEl = el;
+      return el;
+    };
+
+    appCtx.AppraisalLab.openModal({
+      pkm: ampharos,
+      level: 25,
+      skillLevel: 5,
+      nature: '冷靜',
+      subskills: ['技能機率提升M', '幫忙速度M'],
+      ingredients: ['特選蘋果', '純純油', '特選蛋']
+    });
+
+    assert(appraisalModalEl, 'Appraisal modal element must be generated');
+    const appModalHtml = appraisalModalEl.innerHTML;
+
+    // Verify main skill name and level
+    assert(appModalHtml.includes('appraisal-mainskill-row'), 'Appraisal modal must contain appraisal-mainskill-row');
+    assert(appModalHtml.includes('appraisal-mainskill-name'), 'Appraisal modal must contain appraisal-mainskill-name');
+    assert(appModalHtml.includes('能量填充M') || appModalHtml.includes('Charge Strength M'), 'Appraisal modal must display correct main skill name');
+    assert(appModalHtml.includes('Lv.5'), 'Appraisal modal must display correct skill level Lv.5');
+
+    // Verify ingredients and transparency at Lv.25
+    assert(appModalHtml.includes('appraisal-ing-parallel-row'), 'Appraisal modal must contain appraisal-ing-parallel-row');
+    const modalChips = [...appModalHtml.matchAll(/<div class="appraisal-ing-chip(\s+[^"]*)?"/g)];
+    assertEquals(modalChips.length, 3, 'Appraisal modal must render 3 ingredient chips');
+    assert(!(modalChips[0][1] || '').includes('ing-locked'), 'Slot 1 must be unlocked at Lv.25 in appraisal modal');
+    assert((modalChips[1][1] || '').includes('ing-locked'), 'Slot 2 must be locked at Lv.25 in appraisal modal');
+    assert((modalChips[2][1] || '').includes('ing-locked'), 'Slot 3 must be locked at Lv.25 in appraisal modal');
+
+    // Verify specialty badge in appraisal modal
+    assert(appModalHtml.includes('appraisal-spec-tag spec-skill'), 'Ampharos appraisal modal spec tag must have spec-skill class');
   });
 
 console.log('                   Test Results Summary');

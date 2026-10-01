@@ -518,15 +518,32 @@
     return slotIdx === 0 ? 1 : (slotIdx === 1 ? 2 : 4);
   }
 
-  function renderBoxCardIngSlot(ingName, slotLv, basePkm, slotIdx) {
-    if (typeof basePkm === 'number' && slotIdx === undefined) {
-      slotIdx = basePkm;
-      basePkm = slotLv;
-      slotLv = '';
+  function renderBoxCardIngSlot(ingName, arg2, arg3, arg4, arg5) {
+    let basePkm = arg2;
+    let slotIdx = 0;
+    let currentLv = undefined;
+
+    if (typeof arg2 === 'string' && typeof arg3 === 'object') {
+      basePkm = arg3;
+      slotIdx = typeof arg4 === 'number' ? arg4 : 0;
+      currentLv = typeof arg5 === 'number' ? arg5 : undefined;
+    } else if (typeof arg3 === 'number') {
+      basePkm = arg2;
+      slotIdx = arg3;
+      currentLv = typeof arg4 === 'number' ? arg4 : undefined;
+    } else if (typeof arg2 === 'object' && typeof arg3 === 'undefined') {
+      basePkm = arg2;
+      slotIdx = 0;
     }
+
+    const unlockLv = slotIdx === 0 ? 1 : (slotIdx === 1 ? 30 : 60);
+    const isUnlocked = currentLv === undefined || currentLv >= unlockLv;
+    const lockClass = !isUnlocked ? ' ing-locked' : '';
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+
     if (!ingName || ingName === '--') {
       return `
-        <div class="box-ing-chip is-empty">
+        <div class="box-ing-chip is-empty${lockClass}">
           <span class="box-ing-chip-empty">--</span>
         </div>
       `;
@@ -536,28 +553,35 @@
       ? window.I18N.getIngredientIcon(ingName) 
       : '';
     const count = getIngCountFromBase(basePkm, slotIdx, ingName);
+    const lockTitleSuffix = !isUnlocked ? (isEN ? ' (Locked)' : ' (未開放)') : '';
 
     return `
-      <div class="box-ing-chip" title="${escapeHtml(displayName)} ×${count}">
+      <div class="box-ing-chip${lockClass}" title="${escapeHtml(displayName)} ×${count}${lockTitleSuffix}">
         ${iconUrl ? `<img src="${iconUrl}" class="box-ing-chip-icon" alt="${escapeHtml(displayName)}">` : ''}
         <span class="box-ing-chip-count">×${count}</span>
       </div>
     `;
   }
 
-  function renderBoxTableIngCell(ingName, basePkm, slotIdx) {
+  function renderBoxTableIngCell(ingName, basePkm, slotIdx, currentLv) {
+    const unlockLv = slotIdx === 0 ? 1 : (slotIdx === 1 ? 30 : 60);
+    const isUnlocked = currentLv === undefined || currentLv >= unlockLv;
+    const lockClass = !isUnlocked ? ' ing-locked' : '';
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+
     if (!ingName || ingName === '--') {
-      return `<td><span class="text-muted" style="font-size:11px;">--</span></td>`;
+      return `<td><span class="text-muted${lockClass}" style="font-size:11px;">--</span></td>`;
     }
     const displayName = window.I18N ? window.I18N.getIngredientName(ingName) : ingName;
     const iconUrl = (window.I18N && typeof window.I18N.getIngredientIcon === 'function') 
       ? window.I18N.getIngredientIcon(ingName) 
       : '';
     const count = getIngCountFromBase(basePkm, slotIdx, ingName);
+    const lockTitleSuffix = !isUnlocked ? (isEN ? ' (Locked)' : ' (未開放)') : '';
 
     return `
-      <td class="td-ing" title="${escapeHtml(displayName)} ×${count}">
-        <div class="ing-cell">
+      <td class="td-ing" title="${escapeHtml(displayName)} ×${count}${lockTitleSuffix}">
+        <div class="ing-cell${lockClass}">
           ${iconUrl ? `<img src="${iconUrl}" class="ing-icon" alt="${escapeHtml(displayName)}">` : ''}
           <span class="ing-count">×${count}</span>
         </div>
@@ -576,6 +600,13 @@
           const prInfo = calculatePokemonPR(p, base);
           const pkmDisplayName = isEN ? (base ? (base.name_en || base.name_cn) : p.name) : (p.name || (base ? base.name_cn : '未知'));
           const specName = window.I18N ? window.I18N.getSpecialtyName((base && base.specialty) || p.specialty || '--') : ((base && base.specialty) || p.specialty || '--');
+          let specClass = 'spec-ingredient';
+          const rawSpec = (base && base.specialty) || p.specialty || '';
+          if (rawSpec.includes('樹果') || rawSpec === 'Berries') {
+            specClass = 'spec-berry';
+          } else if (rawSpec.includes('技能') || rawSpec === 'Skills') {
+            specClass = 'spec-skill';
+          }
           const natureDisplayName = window.I18N ? window.I18N.getNatureName(p.nature) : p.nature;
           const berry = (window.getPokemonBerry && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : null);
           const berryName = berry ? (window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--')) : '';
@@ -618,7 +649,7 @@
                     <span class="pkm-berry-icon-wrapper" title="${berryName}">
                       <img src="${berry.icon}" alt="${berryName}" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;">
                     </span>` : ''}
-                    <span class="box-spec-tag">${specName}</span>
+                    <span class="box-spec-tag ${specClass}">${specName}</span>
                     ${p.ribbon ? `
                       <span class="box-ribbon-tag" title="${isEN ? `Good-Night Ribbon Tier ${p.ribbon}` : `睡飽飽獎章`}">
                         <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${p.ribbon}.png" class="box-ribbon-icon" alt="Ribbon" />
@@ -628,14 +659,14 @@
                 </div>
               </div>
 
-              <!-- 食材插槽組合 (精簡單行3個食材並行展示，無外框) -->
+              <!-- 食材插槽組合 (精簡單行3個食材並行展示，未解鎖插槽半透明) -->
               <div class="box-card-section box-card-section-ing">
                 <div class="box-ing-parallel-row">
                   <span class="box-ing-row-label">${isEN ? 'Ingredients:' : '食材：'}</span>
                   <div class="box-ing-chips-grid">
-                    ${renderBoxCardIngSlot(p.ing1, base, 0)}
-                    ${renderBoxCardIngSlot(p.ing2, base, 1)}
-                    ${renderBoxCardIngSlot(p.ing3, base, 2)}
+                    ${renderBoxCardIngSlot(p.ing1, base, 0, p.level || 1)}
+                    ${renderBoxCardIngSlot(p.ing2, base, 1, p.level || 1)}
+                    ${renderBoxCardIngSlot(p.ing3, base, 2, p.level || 1)}
                   </div>
                 </div>
               </div>
@@ -716,6 +747,13 @@
               const prInfo = calculatePokemonPR(p, base);
               const pkmDisplayName = isEN ? (base ? (base.name_en || base.name_cn) : p.name) : (p.name || (base ? base.name_cn : '未知'));
               const specName = window.I18N ? window.I18N.getSpecialtyName((base && base.specialty) || p.specialty || '--') : ((base && base.specialty) || p.specialty || '--');
+              let specClass = 'spec-ingredient';
+              const rawSpec = (base && base.specialty) || p.specialty || '';
+              if (rawSpec.includes('樹果') || rawSpec === 'Berries') {
+                specClass = 'spec-berry';
+              } else if (rawSpec.includes('技能') || rawSpec === 'Skills') {
+                specClass = 'spec-skill';
+              }
               const natureDisplayName = window.I18N ? window.I18N.getNatureName(p.nature) : p.nature;
               const berry = (window.getPokemonBerry && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : null);
               const berryName = berry ? (window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--')) : '';
@@ -748,10 +786,10 @@
                   <td>
                     ${berry && berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}">` : `<span class="berry-name-text">${berryName || '--'}</span>`}
                   </td>
-                  <td>${specName}</td>
-                  ${renderBoxTableIngCell(p.ing1, base, 0)}
-                  ${renderBoxTableIngCell(p.ing2, base, 1)}
-                  ${renderBoxTableIngCell(p.ing3, base, 2)}
+                  <td><span class="box-spec-tag ${specClass}">${specName}</span></td>
+                  ${renderBoxTableIngCell(p.ing1, base, 0, p.level || 1)}
+                  ${renderBoxTableIngCell(p.ing2, base, 1, p.level || 1)}
+                  ${renderBoxTableIngCell(p.ing3, base, 2, p.level || 1)}
                   <td>
                     <div style="display:flex;flex-wrap:wrap;gap:4px;">
                       ${(p.subskills || []).map((skName) => {

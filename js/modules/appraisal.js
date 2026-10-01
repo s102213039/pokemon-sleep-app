@@ -1444,6 +1444,27 @@
            '</svg>';
   }
 
+  function getIngCountFromBase(basePkm, slotIdx, ingName) {
+    if (!basePkm || !basePkm.ingredients) {
+      return slotIdx === 0 ? 1 : (slotIdx === 1 ? 2 : 4);
+    }
+    const found = basePkm.ingredients.find(function(ig) { return ig.name === ingName; });
+    if (found) {
+      if (slotIdx === 0 && found.l1 !== undefined) return parseInt(found.l1, 10);
+      if (slotIdx === 1 && found.l30 !== undefined) return parseInt(found.l30, 10);
+      if (slotIdx === 2 && found.l60 !== undefined) return parseInt(found.l60, 10);
+      if (typeof found.count === 'number') return found.count;
+    }
+    const slotIng = basePkm.ingredients[slotIdx];
+    if (slotIng) {
+      if (slotIdx === 0 && slotIng.l1 !== undefined) return parseInt(slotIng.l1, 10);
+      if (slotIdx === 1 && slotIng.l30 !== undefined) return parseInt(slotIng.l30, 10);
+      if (slotIdx === 2 && slotIng.l60 !== undefined) return parseInt(slotIng.l60, 10);
+      if (typeof slotIng.count === 'number') return slotIng.count;
+    }
+    return slotIdx === 0 ? 1 : (slotIdx === 1 ? 2 : 4);
+  }
+
   /* ─── 診斷報告書彈窗管理 ───────────────────────────────── */
   function openAppraisalModal(pkmOrBoxItem) {
     if (!pkmOrBoxItem) return;
@@ -1545,6 +1566,45 @@
       summaryNote = generateIntelligentSummary(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, evaluation);
     }
 
+    // 主技能資訊 (Main Skill & Level)
+    const rawMainSkill = (pkmData && pkmData.main_skill) || (pkmData && pkmData.skill && pkmData.skill.name) || pkmOrBoxItem.main_skill || '';
+    const mainSkillName = rawMainSkill ? (window.I18N ? window.I18N.getMainSkillName(rawMainSkill) : rawMainSkill) : (isEN ? 'Main Skill' : '主技能');
+    const skillLvl = skillLevel || 1;
+
+    // 食材組合資訊 (Ingredients & Quantity, 3 Slots with Level Unlock)
+    const ingSlotNames = [
+      (ingredients && ingredients[0]) ? (typeof ingredients[0] === 'string' ? ingredients[0] : ingredients[0].name) : (pkmOrBoxItem.ing1 || (pkmData && pkmData.ingredients && pkmData.ingredients[0] ? pkmData.ingredients[0].name : '')),
+      (ingredients && ingredients[1]) ? (typeof ingredients[1] === 'string' ? ingredients[1] : ingredients[1].name) : (pkmOrBoxItem.ing2 || (pkmData && pkmData.ingredients && pkmData.ingredients[1] ? pkmData.ingredients[1].name : '')),
+      (ingredients && ingredients[2]) ? (typeof ingredients[2] === 'string' ? ingredients[2] : ingredients[2].name) : (pkmOrBoxItem.ing3 || (pkmData && pkmData.ingredients && pkmData.ingredients[2] ? pkmData.ingredients[2].name : ''))
+    ];
+
+    const ingChipsHtml = [0, 1, 2].map(function(idx) {
+      const unlockLv = idx === 0 ? 1 : (idx === 1 ? 30 : 60);
+      const isUnlocked = currentLv >= unlockLv;
+      const lockClass = !isUnlocked ? ' ing-locked' : '';
+      const ingName = ingSlotNames[idx];
+      const lockTitleSuffix = !isUnlocked ? (isEN ? ' (Locked)' : ' (未開放)') : '';
+
+      if (!ingName || ingName === '--') {
+        return `
+          <div class="appraisal-ing-chip is-empty${lockClass}">
+            <span class="appraisal-ing-chip-empty">--</span>
+          </div>
+        `;
+      }
+      const displayName = window.I18N ? window.I18N.getIngredientName(ingName) : ingName;
+      const iconUrl = (window.I18N && typeof window.I18N.getIngredientIcon === 'function')
+        ? window.I18N.getIngredientIcon(ingName)
+        : '';
+      const count = getIngCountFromBase(pkmData, idx, ingName);
+      return `
+        <div class="appraisal-ing-chip${lockClass}" title="${escapeHtml(displayName)} ×${count}${lockTitleSuffix}">
+          ${iconUrl ? `<img src="${iconUrl}" class="appraisal-ing-chip-icon" alt="${escapeHtml(displayName)}">` : ''}
+          <span class="appraisal-ing-chip-count">×${count}</span>
+        </div>
+      `;
+    }).join('');
+
     modal.innerHTML = `
       <div class="appraisal-modal-container">
         <!-- 頂部標題列 (高度加寬，垂直置中，整合雙軌評級與極簡關閉鈕) -->
@@ -1594,12 +1654,27 @@
                 <span class="appraisal-level-badge">Lv. ${currentLv}</span>
               </div>
               
-              <!-- 樹果與專長 (無外框，樹果不展示文字名稱僅圖示，專長僅展示 樹果型/食材型/技能型) -->
+              <!-- 樹果與專長 (專長使用遊戲同款藥丸徽章) -->
               <div class="appraisal-specialty-row" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;">
                 <span class="appraisal-berry-tag" style="display:inline-flex;align-items:center;background:transparent;border:none;padding:0;" title="${escapeHtml(berryName)}">
                   ${berry.icon ? `<img src="${berry.icon}" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(berryName)}">` : ''}
                 </span>
-                <span class="appraisal-spec-tag ${specClass}" style="display:inline-flex;align-items:center;background:transparent;border:none;padding:0;font-size:13.5px;font-weight:700;">${specTypeLabel}</span>
+                <span class="appraisal-spec-tag ${specClass}">${specTypeLabel}</span>
+              </div>
+
+              <!-- 主技能名稱與等級 (Appraisal Main Skill) -->
+              <div class="appraisal-mainskill-row">
+                <span class="appraisal-mainskill-label">${isEN ? 'Main Skill:' : '主技能：'}</span>
+                <span class="appraisal-mainskill-name">${escapeHtml(mainSkillName)}</span>
+                <span class="appraisal-mainskill-level">Lv.${skillLvl}</span>
+              </div>
+
+              <!-- 食材三階插槽組合 (Appraisal Ingredients, 尚未開放插槽半透明) -->
+              <div class="appraisal-ing-parallel-row">
+                <span class="appraisal-ing-row-label">${isEN ? 'Ingredients:' : '食材：'}</span>
+                <div class="appraisal-ing-chips-grid">
+                  ${ingChipsHtml}
+                </div>
               </div>
 
               <!-- 遊戲同款性格展示 (膠囊外框 + 性格標籤 + 右側上下條目，純淨無外框容器) -->
