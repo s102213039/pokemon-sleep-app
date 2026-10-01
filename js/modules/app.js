@@ -4207,20 +4207,28 @@ function updateSliderProgressFill(lvl) {
   }
 }
 
+// 1. 樹果遽增型 (Berry Burst Specialists): 主技能為樹果遽增/畫皮/流星群，天然以產果為核心
+function isBerryBurstSkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('樹果遽增') || skill.includes('Berry Burst') || skill.includes('畫皮') || skill.includes('流星群')) return true;
+  const burstNames = ['木守宮', '森林蜥蜴', '蜥蜴王', '小火焰猴', '猛火猴', '烈焰猴', '毛頭小鷹', '勇士雄鷹', '謎擬Q', '拉帝歐斯',
+                      'Treecko', 'Grovyle', 'Sceptile', 'Chimchar', 'Monferno', 'Infernape', 'Rufflet', 'Braviary', 'Mimikyu', 'Latios'];
+  return burstNames.some(b => name.includes(b));
+}
+
 function isBfsSkillSpecialist(pkm) {
-  // 經社群深入研究與玩家驗證，所有技能型寶可夢（包含補師、傳說神獸幫手加速、充能直傷與純戰術）
-  // 核心定位皆為追求主技能發動；滿包進入偷吃樹果狀態將徹底阻斷技能判定。
-  // 因此技能型標準畢業神配一律回歸純技能發動專精，不強制綁定樹果數量S。
-  return false;
+  return isBerryBurstSkillSpecialist(pkm);
 }
 
 function isHealerSkillSpecialist(pkm) {
   if (!pkm) return false;
   const skill = pkm.main_skill || '';
   const name = pkm.name_cn || pkm.name_en || '';
-  if (skill.includes('活力全體療癒') || skill.includes('Energy for Everyone') || skill.includes('療癒')) return true;
-  const healerNames = ['沙奈朵', '仙子伊布', '胖可丁', '巴布土撥', '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥',
-                       'Gardevoir', 'Sylveon', 'Wigglytuff', 'Pawmot', 'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo'];
+  if (skill.includes('活力全體療癒') || skill.includes('Energy for Everyone') || skill.includes('新月祈禱') || skill.includes('樹果汁') || skill.includes('治癒波動') || skill.includes('活力療癒') || skill.includes('活力氣場') || skill.includes('Energizing Cheer')) return true;
+  const healerNames = ['沙奈朵', '仙子伊布', '胖可丁', '巴布土撥', '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥', '克雷色利亞', '壺壺', '拉帝亞斯', '托戈德瑪爾',
+                       'Gardevoir', 'Sylveon', 'Wigglytuff', 'Pawmot', 'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo', 'Cresselia', 'Shuckle', 'Latias', 'Togedemaru'];
   return healerNames.some(h => name.includes(h));
 }
 
@@ -4229,8 +4237,8 @@ function isHelperBoostSkillSpecialist(pkm) {
   const skill = pkm.main_skill || '';
   const name = pkm.name_cn || pkm.name_en || '';
   if (skill.includes('幫手加速') || skill.includes('幫手支援') || skill.includes('Helper Boost') || skill.includes('Extra Helpful')) return true;
-  const beastNames = ['雷公', '炎帝', '水君', '風速狗', '雷伊布', '艾路雷朵',
-                      'Raikou', 'Entei', 'Suicune', 'Arcanine', 'Jolteon', 'Gallade'];
+  const beastNames = ['雷公', '炎帝', '水君', '風速狗', '卡蒂狗', '雷伊布', '艾路雷朵',
+                      'Raikou', 'Entei', 'Suicune', 'Arcanine', 'Growlithe', 'Jolteon', 'Gallade'];
   return beastNames.some(b => name.includes(b));
 }
 
@@ -4238,10 +4246,68 @@ function isChargeStrengthSkillSpecialist(pkm) {
   if (!pkm) return false;
   const skill = pkm.main_skill || '';
   const name = pkm.name_cn || pkm.name_en || '';
-  if (skill.includes('能量填充') || skill.includes('Charge Strength') || skill.includes('蓄力')) return true;
-  const chargeNames = ['電龍', '咩利羊', '茸茸羊', '太陽伊布', '可達鴨', '哥達鴨', '樹才怪', '盆才怪', '隨風球', '飄飄球', '音波龍', '嗡蝠',
-                       'Ampharos', 'Mareep', 'Flaaffy', 'Espeon', 'Psyduck', 'Golduck', 'Sudowoodo', 'Bonsly', 'Drifblim', 'Drifloon', 'Noivern', 'Noibat'];
+  if (skill.includes('能量填充') || skill.includes('Charge Strength') || skill.includes('蓄力') || skill.includes('夢魘')) return true;
+  const chargeNames = ['電龍', '咩利羊', '茸茸羊', '太陽伊布', '可達鴨', '哥達鴨', '樹才怪', '盆才怪', '隨風球', '飄飄球', '音波龍', '嗡蝠', '達克萊伊',
+                       'Ampharos', 'Mareep', 'Flaaffy', 'Espeon', 'Psyduck', 'Golduck', 'Sudowoodo', 'Bonsly', 'Drifblim', 'Drifloon', 'Noivern', 'Noibat', 'Darkrai'];
   return chargeNames.some(c => name.includes(c));
+}
+
+function isPotExpanderSkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('料理強化') || skill.includes('Cooking Power') || skill.includes('負電')) return true;
+  const potNames = ['小磁怪', '三合一磁怪', '自爆磁怪', '火伊布', '冰伊布', '負電拍拍', '顫弦蠑螈',
+                    'Magnemite', 'Magneton', 'Magnezone', 'Flareon', 'Glaceon', 'Minun', 'Toxtricity'];
+  return potNames.some(p => name.includes(p));
+}
+
+function isExtraTastySkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('料理成功') || skill.includes('美味大成功') || skill.includes('Extra Tasty') || skill.includes('Tasty Chance')) return true;
+  const tastyNames = ['咚咚鼠', '海豹球（佳節）', '古月鳥', 'Dedenne', 'Spheal (Holiday)', 'Cramorant'];
+  return tastyNames.some(t => name.includes(t));
+}
+
+function isDreamShardSkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('夢之碎片') || skill.includes('Dream Shard') || skill.includes('波導彈')) return true;
+  const shardNames = ['利歐路', '路卡利歐', '喵喵', '貓老大', '勾魂眼', '溶食獸', '吞食獸',
+                      'Riolu', 'Lucario', 'Meowth', 'Persian', 'Sableye', 'Gulpin', 'Swalot'];
+  return shardNames.some(s => name.includes(s));
+}
+
+function isIngredientSkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('食材獲取') || skill.includes('食材精選') || skill.includes('正電') || skill.includes('怪力鉗') || skill.includes('超幸運') || skill.includes('健美') || skill.includes('禮物')) return true;
+  const ingNames = ['水伊布', '伊布', '毒電嬰', '正電拍拍', '穿山鼠', '穿山王', '石居蟹', '岩殿居蟹', '摔角鷹人', '赫拉克羅斯', '黑暗鴉', '烏鴉頭頭',
+                    'Vaporeon', 'Eevee', 'Toxel', 'Plusle', 'Sandshrew', 'Sandslash', 'Dwebble', 'Crustle', 'Hawlucha', 'Heracross', 'Murkrow', 'Honchkrow'];
+  return ingNames.some(i => name.includes(i));
+}
+
+function isMetronomeSkillSpecialist(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('揮指') || skill.includes('十項全能') || skill.includes('Metronome')) return true;
+  const metronomeNames = ['波克比', '波克基古', '波克基斯', '夢幻', '皮寶寶', 'Togepi', 'Togetic', 'Togekiss', 'Mew', 'Cleffa'];
+  return metronomeNames.some(m => name.includes(m));
+}
+
+function isLegendaryPokemon(pkm) {
+  if (!pkm) return false;
+  const skill = pkm.main_skill || '';
+  const name = pkm.name_cn || pkm.name_en || '';
+  if (skill.includes('精神擊破') || skill.includes('十項全能') || skill.includes('新月祈禱') || skill.includes('流星群') || skill.includes('夢魘')) return true;
+  const legendaryNames = ['雷公', '炎帝', '水君', '超夢', '夢幻', '克雷色利亞', '達克萊伊', '拉帝歐斯', '拉帝亞斯',
+                          'Raikou', 'Entei', 'Suicune', 'Mewtwo', 'Mew', 'Cresselia', 'Darkrai', 'Latios', 'Latias'];
+  return legendaryNames.some(l => name.includes(l));
 }
 
 function isSlowpokeFamily(pkm) {
@@ -4272,6 +4338,10 @@ function applyPokedexGodPreset() {
   } else if (spec.includes('樹果') || spec === 'Berries') {
     pokedexModalState.nature = '固執';
     pokedexModalState.subskills = ['樹果數量S', '幫手獎勵', '幫忙速度M', '幫忙速度S', '持有上限提升L'];
+  } else if (isBerryBurstSkillSpecialist(pkm)) {
+    // 樹果遽增型：完美結合樹果數量S與主技能爆發
+    pokedexModalState.nature = '慎重';
+    pokedexModalState.subskills = ['樹果數量S', '技能機率提升M', '幫手獎勵', '幫忙速度M', '持有上限提升L'];
   } else {
     // 技能型：全數回歸社群正統無爭議之「純技能高頻極致發動」神配
     // 避免任何樹果S加速塞包導致滿包（偷吃樹果）阻斷主技能判定
@@ -5432,11 +5502,23 @@ function renderPokedexStrategyCardHTML(pkm) {
       : ['幫手獎勵', '食材機率提升M', '食材機率提升S', '幫忙速度M', '幫忙速度S', '持有上限提升L'];
     recommendedNatures = isEN ? 'Ingredient UP (Quiet / Modest / Mild / Rash)' : '食材發現率提升 (冷靜 / 內斂 / 慢吞吞 / 溫和)';
   } else {
+    const isBerryBurst = isBerryBurstSkillSpecialist(pkm);
     const isHealer = isHealerSkillSpecialist(pkm);
     const isHelper = isHelperBoostSkillSpecialist(pkm);
     const isCharge = isChargeStrengthSkillSpecialist(pkm);
 
-    if (isHealer) {
+    if (isBerryBurst) {
+      roleTitle = isEN ? 'Berry Burst Hybrid Cannon' : '樹果遽增爆發定位';
+      roleDesc = isEN
+        ? 'Main skill directly bursts berries for Snorlax. Synergizes exceptionally well with Berry Finding S for massive dual-yield berry output.'
+        : '專長雖為技能型，但主技能能直接引爆海量樹果（含隊友樹果與大成功翻倍）。樹果數量S與技能機率雙修能達成天花板級產能，樹果週活動享有 1.4 倍加成。';
+      coreSkill = isEN ? ['Berry Finding S', 'Skill Trigger M'] : ['樹果數量S', '技能機率提升M'];
+      coreTier = 'gold';
+      recommendedSubs = isEN
+        ? ['Berry Finding S', 'Skill Trigger M', 'Helping Bonus', 'Helping Speed M', 'Inventory Up L', 'Skill Trigger S']
+        : ['樹果數量S', '技能機率提升M', '幫手獎勵', '幫忙速度M', '持有上限提升L', '技能機率提升S'];
+      recommendedNatures = isEN ? 'Skill UP or Speed UP (Careful / Adamant / Brave / Sassy)' : '主技能或幫速提升 (慎重 / 固執 / 勇敢 / 自大)';
+    } else if (isHealer) {
       roleTitle = isEN ? 'All-Day Team Healer Core' : '全隊活力療癒核心定位';
       roleDesc = isEN
         ? 'Maintains team energy >80% for maximum 2.2x speed. Focuses purely on skill procs; avoids Berry Finding S which causes early bag overflow and blocks healing procs.'
@@ -6125,7 +6207,16 @@ PokemonApp.renderPokedexRibbonOptionsHTML = renderPokedexRibbonOptionsHTML;
 PokemonApp.isBfsSkillSpecialist = isBfsSkillSpecialist;
 PokemonApp.isHealerSkillSpecialist = isHealerSkillSpecialist;
 PokemonApp.isHelperBoostSkillSpecialist = isHelperBoostSkillSpecialist;
+PokemonApp.isBerryBurstSkillSpecialist = isBerryBurstSkillSpecialist;
+PokemonApp.isHealerSkillSpecialist = isHealerSkillSpecialist;
+PokemonApp.isHelperBoostSkillSpecialist = isHelperBoostSkillSpecialist;
 PokemonApp.isChargeStrengthSkillSpecialist = isChargeStrengthSkillSpecialist;
+PokemonApp.isPotExpanderSkillSpecialist = isPotExpanderSkillSpecialist;
+PokemonApp.isExtraTastySkillSpecialist = isExtraTastySkillSpecialist;
+PokemonApp.isDreamShardSkillSpecialist = isDreamShardSkillSpecialist;
+PokemonApp.isIngredientSkillSpecialist = isIngredientSkillSpecialist;
+PokemonApp.isMetronomeSkillSpecialist = isMetronomeSkillSpecialist;
+PokemonApp.isLegendaryPokemon = isLegendaryPokemon;
 PokemonApp.isSlowpokeFamily = isSlowpokeFamily;
 PokemonApp.isSlakingFamily = isSlakingFamily;
 PokemonApp.renderPokedexStrategyCardHTML = renderPokedexStrategyCardHTML;
@@ -6143,6 +6234,13 @@ PokemonApp.renderPokedexCarryValue = renderPokedexCarryValue;
 PokemonApp.renderPokedexIngRateValue = renderPokedexIngRateValue;
 PokemonApp.renderPokedexSkillRateValue = renderPokedexSkillRateValue;
 PokemonApp.getPokedexModalState = () => pokedexModalState;
+PokemonApp.setPokedexModalState = (newState) => { pokedexModalState = Object.assign(pokedexModalState, newState); return pokedexModalState; };
+Object.defineProperty(PokemonApp, 'pokedexModalState', {
+  get() { return pokedexModalState; },
+  set(val) { pokedexModalState = val; },
+  configurable: true,
+  enumerable: true
+});
 PokemonApp.getPokedexMainSkillYield = getPokedexMainSkillYield;
 PokemonApp.getSkillDescription = getSkillDescription;
 PokemonApp.BASE_SKILL_DETAILS = BASE_SKILL_DETAILS;
@@ -6154,10 +6252,17 @@ if (typeof window !== 'undefined') {
   window.renderPokedexEvoGuardBadgeHTML = renderPokedexEvoGuardBadgeHTML;
   window.renderPokedexRibbonOptionsHTML = renderPokedexRibbonOptionsHTML;
   window.renderPokedexStrategyCardHTML = renderPokedexStrategyCardHTML;
+  window.isBerryBurstSkillSpecialist = isBerryBurstSkillSpecialist;
   window.isBfsSkillSpecialist = isBfsSkillSpecialist;
   window.isHealerSkillSpecialist = isHealerSkillSpecialist;
   window.isHelperBoostSkillSpecialist = isHelperBoostSkillSpecialist;
   window.isChargeStrengthSkillSpecialist = isChargeStrengthSkillSpecialist;
+  window.isPotExpanderSkillSpecialist = isPotExpanderSkillSpecialist;
+  window.isExtraTastySkillSpecialist = isExtraTastySkillSpecialist;
+  window.isDreamShardSkillSpecialist = isDreamShardSkillSpecialist;
+  window.isIngredientSkillSpecialist = isIngredientSkillSpecialist;
+  window.isMetronomeSkillSpecialist = isMetronomeSkillSpecialist;
+  window.isLegendaryPokemon = isLegendaryPokemon;
   window.isSlowpokeFamily = isSlowpokeFamily;
   window.isSlakingFamily = isSlakingFamily;
   window.getPokedexMainSkillYield = getPokedexMainSkillYield;

@@ -8758,6 +8758,117 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(appModalHtml.includes('appraisal-spec-tag spec-skill'), 'Ampharos appraisal modal spec tag must have spec-skill class');
   });
 
+  // ----------------------------------------------------
+  // Test 171: Comprehensive Special Strategic Archetypes (Berry Burst, BFS Hybrids, Legendaries, Tactical)
+  // ----------------------------------------------------
+  test('Tier 4 - Real-World Application Scenarios', 'Comprehensive Special Strategic Archetypes: Berry Burst, BFS Hybrids, Legendaries & Tactical Specialists', () => {
+    const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const appCtx = { window: {}, console };
+    appCtx.window = appCtx;
+    vm.createContext(appCtx);
+    vm.runInContext(appraisalCode, appCtx);
+
+    // 1. Verify archetype helper functions on PokemonApp and AppraisalLab
+    assert(typeof PokemonApp.isBerryBurstSkillSpecialist === 'function', 'PokemonApp.isBerryBurstSkillSpecialist must be a function');
+    assert(typeof appCtx.AppraisalLab.isBerryBurstSkillSpecialist === 'function', 'AppraisalLab.isBerryBurstSkillSpecialist must be a function');
+    assert(typeof PokemonApp.isPotExpanderSkillSpecialist === 'function', 'PokemonApp.isPotExpanderSkillSpecialist must be a function');
+    assert(typeof PokemonApp.isExtraTastySkillSpecialist === 'function', 'PokemonApp.isExtraTastySkillSpecialist must be a function');
+    assert(typeof PokemonApp.isDreamShardSkillSpecialist === 'function', 'PokemonApp.isDreamShardSkillSpecialist must be a function');
+    assert(typeof PokemonApp.isIngredientSkillSpecialist === 'function', 'PokemonApp.isIngredientSkillSpecialist must be a function');
+    assert(typeof PokemonApp.isMetronomeSkillSpecialist === 'function', 'PokemonApp.isMetronomeSkillSpecialist must be a function');
+    assert(typeof PokemonApp.isLegendaryPokemon === 'function', 'PokemonApp.isLegendaryPokemon must be a function');
+
+    // 2. Berry Burst Skill Specialists: Mimikyu, Sceptile, Infernape, Latios, Braviary
+    const mimikyu = { name_cn: '謎擬Q', specialty: '技能', main_skill: '畫皮（樹果遽增）' };
+    const sceptile = { name_cn: '蜥蜴王', specialty: '技能', main_skill: '樹果遽增' };
+    const infernape = { name_cn: '烈焰猴', specialty: '技能', main_skill: '樹果遽增' };
+    const latios = { name_cn: '拉帝歐斯', specialty: '技能', main_skill: '流星群（樹果遽增）' };
+    const braviary = { name_cn: '勇士雄鷹', specialty: '技能', main_skill: '樹果遽增' };
+
+    assert(PokemonApp.isBerryBurstSkillSpecialist(mimikyu) === true, 'Mimikyu must be Berry Burst specialist');
+    assert(PokemonApp.isBerryBurstSkillSpecialist(sceptile) === true, 'Sceptile must be Berry Burst specialist');
+    assert(PokemonApp.isBerryBurstSkillSpecialist(infernape) === true, 'Infernape must be Berry Burst specialist');
+    assert(PokemonApp.isBerryBurstSkillSpecialist(latios) === true, 'Latios must be Berry Burst specialist');
+    assert(PokemonApp.isBerryBurstSkillSpecialist(braviary) === true, 'Braviary must be Berry Burst specialist');
+    assert(PokemonApp.isBfsSkillSpecialist(mimikyu) === true, 'Mimikyu must be BFS-compatible as Berry Burst');
+
+    // 3. Strategy Card: Mimikyu must have Berry Burst title and BFS recommendation
+    const mimikyuStratHtml = PokemonApp.renderPokedexStrategyCardHTML(mimikyu);
+    assert(mimikyuStratHtml.includes('樹果遽增爆發定位'), 'Mimikyu strategy card must have Berry Burst title');
+    assert(mimikyuStratHtml.includes('樹果數量S'), 'Mimikyu strategy card must recommend BFS');
+
+    // 4. Appraisal Evaluation for Berry Burst with BFS: Mimikyu
+    const mimikyuEval = appCtx.AppraisalLab.evaluatePokemon(
+      mimikyu, 60, '慎重',
+      ['樹果數量S', '技能機率提升M', '幫手獎勵', '幫忙速度M', '持有上限提升L'],
+      ['特選蘋果', '特選蘋果', '特選蘋果'],
+      4, 6
+    );
+    assert(mimikyuEval.pros.some(p => p.includes('樹果遽增') && p.includes('樹果數量S')), 'Mimikyu appraisal pros must highlight Berry Burst + BFS synergy');
+    assert(mimikyuEval.summaryNote.includes('樹果爆發') || mimikyuEval.summaryNote.includes('樹果遽增'), 'Mimikyu summary must highlight Berry Burst surge');
+    assert(mimikyuEval.compositeScore >= 90, 'Mimikyu God preset with BFS must score in top tier');
+
+    // 5. Charge Strength BFS Hybrid: Ampharos & Espeon
+    const ampharos = { name_cn: '電龍', specialty: '技能', main_skill: '能量填充M' };
+    const ampharosHybridEval = appCtx.AppraisalLab.evaluatePokemon(
+      ampharos, 60, '慎重',
+      ['技能機率提升M', '樹果數量S', '幫手獎勵', '幫忙速度M', '持有上限提升L'],
+      ['特選蘋果', '特選蘋果', '特選蘋果'],
+      4, 6
+    );
+    assert(ampharosHybridEval.pros.some(p => p.includes('雙修') || p.includes('高額樹果副輸出')), 'Ampharos appraisal must acknowledge hybrid BFS power');
+    assert(ampharosHybridEval.summaryNote.includes('雙修') || ampharosHybridEval.summaryNote.includes('砲台'), 'Ampharos summary must detail dual-track hybrid strengths');
+
+    // 6. Legendary Beasts (Raikou) Helper Boost Evaluation
+    const raikou = { name_cn: '雷公', specialty: '技能', main_skill: '幫手加速（電）' };
+    const raikouEval = appCtx.AppraisalLab.evaluatePokemon(
+      raikou, 60, '慎重',
+      ['技能機率提升M', '幫手獎勵', '技能機率提升S', '持有上限提升L', '幫忙速度M'],
+      ['特選蘋果', '特選蘋果', '特選蘋果'],
+      4, 6
+    );
+    assert(raikouEval.summaryNote.includes('純色隊') || raikouEval.summaryNote.includes('幫手加速'), 'Raikou summary must analyze mono-type team amplification');
+    assert(PokemonApp.isLegendaryPokemon(raikou) === true, 'Raikou must be classified as Legendary');
+
+    // 7. Tactical Specialists: Dedenne (Extra Tasty), Magnezone (Pot Expander), Lucario (Dream Shard)
+    const dedenne = { name_cn: '咚咚鼠', specialty: '技能', main_skill: '料理成功S' };
+    assert(PokemonApp.isExtraTastySkillSpecialist(dedenne) === true, 'Dedenne must be Extra Tasty specialist');
+    const dedenneEval = appCtx.AppraisalLab.evaluatePokemon(
+      dedenne, 50, '慎重',
+      ['技能機率提升M', '幫手獎勵', '技能機率提升S'],
+      ['特選蘋果', '特選蘋果', '特選蘋果'],
+      0, 6
+    );
+    assert(dedenneEval.summaryNote.includes('大成功') || dedenneEval.summaryNote.includes('美味') || dedenneEval.summaryNote.includes('爆擊'), 'Dedenne summary must focus on dish critical success stacking');
+
+    const magnezone = { name_cn: '自爆磁怪', specialty: '技能', main_skill: '料理強化S' };
+    assert(PokemonApp.isPotExpanderSkillSpecialist(magnezone) === true, 'Magnezone must be Pot Expander specialist');
+    const magnezoneEval = appCtx.AppraisalLab.evaluatePokemon(
+      magnezone, 50, '慎重',
+      ['技能機率提升M', '幫手獎勵', '持有上限提升L'],
+      ['特選蘋果', '特選蘋果', '特選蘋果'],
+      0, 6
+    );
+    assert(magnezoneEval.summaryNote.includes('擴鍋') || magnezoneEval.summaryNote.includes('料理強化'), 'Magnezone summary must focus on pot expansion');
+
+    const lucario = { name_cn: '路卡利歐', specialty: '技能', main_skill: '波導彈（夢之碎片獲取S）' };
+    assert(PokemonApp.isDreamShardSkillSpecialist(lucario) === true, 'Lucario must be Dream Shard specialist');
+    const lucarioEval = appCtx.AppraisalLab.evaluatePokemon(
+      lucario, 50, '慎重',
+      ['技能機率提升M', '夢之碎片獎勵', '幫手獎勵'],
+      ['特選蘋果', '特選蘋果', '特選蘋果'],
+      0, 6
+    );
+    assert(lucarioEval.summaryNote.includes('夢之碎片'), 'Lucario summary must focus on Dream Shards');
+
+    // 8. Pokedex Modal God Preset for Berry Burst: Mimikyu
+    global.document = createMockDocument();
+    PokemonApp.pokedexModalState = { pkm: mimikyu, level: 60, ribbon: 4, skillLevel: 6, ingSlots: [0, 0, 0], nature: '坦率', subskills: [] };
+    PokemonApp.applyPokedexGodPreset();
+    assert(PokemonApp.pokedexModalState.subskills.includes('樹果數量S'), 'Mimikyu God Preset must include BFS');
+    assert(PokemonApp.pokedexModalState.subskills.includes('技能機率提升M'), 'Mimikyu God Preset must include Skill Trigger M');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

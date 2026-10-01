@@ -124,48 +124,128 @@
   }
 
   /* ─── 特殊寶可夢類型定位識別 (Specialty Category Helpers) ─────────────── */
-  function isBfsSkillSpecialist(pkm) {
-    // 經社群深入研究與玩家驗證，所有技能型寶可夢核心定位皆為追求主技能發動。
-    // 滿包進入偷吃樹果狀態將徹底阻斷技能判定，因此標準神配一律回歸純技能發動專精。
-    return false;
+
+  // 1. 樹果遽增型 (Berry Burst Specialists): 主技能為樹果遽增/畫皮/流星群，天然以產果為核心
+  function isBerryBurstSkillSpecialist(pkm) {
+    if (!pkm) return false;
+    const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
+    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+    if (skill.includes('樹果遽增') || skill.includes('Berry Burst') || skill.includes('畫皮') || skill.includes('流星群')) return true;
+    const burstNames = ['木守宮', '森林蜥蜴', '蜥蜴王', '小火焰猴', '猛火猴', '烈焰猴', '毛頭小鷹', '勇士雄鷹', '謎擬Q', '拉帝歐斯',
+                        'Treecko', 'Grovyle', 'Sceptile', 'Chimchar', 'Monferno', 'Infernape', 'Rufflet', 'Braviary', 'Mimikyu', 'Latios'];
+    return burstNames.some(b => name.includes(b));
   }
 
+  // 2. 樹果數量S相性判定：樹果遽增型為天生契合型
+  function isBfsSkillSpecialist(pkm) {
+    return isBerryBurstSkillSpecialist(pkm);
+  }
+
+  // 3. 活力全體療癒/單體療癒補師 (Healers: E4E & Energizing)
   function isHealerSkillSpecialist(pkm) {
     if (!pkm) return false;
     const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
     const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
-    if (skill.includes('活力全體療癒') || skill.includes('Energy for Everyone') || skill.includes('療癒')) return true;
-    const healerNames = ['沙奈朵', '仙子伊布', '胖可丁', '巴布土撥', '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥',
-                         'Gardevoir', 'Sylveon', 'Wigglytuff', 'Pawmot', 'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo'];
+    if (skill.includes('活力全體療癒') || skill.includes('Energy for Everyone') || skill.includes('新月祈禱') || skill.includes('樹果汁') || skill.includes('治癒波動') || skill.includes('活力療癒') || skill.includes('活力氣場') || skill.includes('Energizing Cheer')) return true;
+    const healerNames = ['沙奈朵', '仙子伊布', '胖可丁', '巴布土撥', '拉魯拉絲', '奇鲁莉安', '寶寶丁', '胖丁', '布撥', '布土撥', '克雷色利亞', '壺壺', '拉帝亞斯', '托戈德瑪爾',
+                         'Gardevoir', 'Sylveon', 'Wigglytuff', 'Pawmot', 'Ralts', 'Kirlia', 'Igglybuff', 'Jigglypuff', 'Pawmi', 'Pawmo', 'Cresselia', 'Shuckle', 'Latias', 'Togedemaru'];
     return healerNames.some(h => name.includes(h));
   }
 
+  // 4. 幫手加速/支援型 (Helper Boost & Extra Helpful Specialists)
   function isHelperBoostSkillSpecialist(pkm) {
     if (!pkm) return false;
     const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
     const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
     if (skill.includes('幫手加速') || skill.includes('幫手支援') || skill.includes('Helper Boost') || skill.includes('Extra Helpful')) return true;
-    const beastNames = ['雷公', '炎帝', '水君', '風速狗', '雷伊布', '艾路雷朵',
-                        'Raikou', 'Entei', 'Suicune', 'Arcanine', 'Jolteon', 'Gallade'];
+    const beastNames = ['雷公', '炎帝', '水君', '風速狗', '卡蒂狗', '雷伊布', '艾路雷朵',
+                        'Raikou', 'Entei', 'Suicune', 'Arcanine', 'Growlithe', 'Jolteon', 'Gallade'];
     return beastNames.some(b => name.includes(b));
   }
 
+  // 5. 單體充能直傷型 (Charge Strength Specialists: Ampharos, Espeon, Golduck, etc.)
   function isChargeStrengthSkillSpecialist(pkm) {
     if (!pkm) return false;
     const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
     const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
-    if (skill.includes('能量填充') || skill.includes('Charge Strength') || skill.includes('蓄力')) return true;
-    const chargeNames = ['電龍', '咩利羊', '茸茸羊', '太陽伊布', '可達鴨', '哥達鴨', '樹才怪', '盆才怪', '隨風球', '飄飄球', '音波龍', '嗡蝠',
-                         'Ampharos', 'Mareep', 'Flaaffy', 'Espeon', 'Psyduck', 'Golduck', 'Sudowoodo', 'Bonsly', 'Drifblim', 'Drifloon', 'Noivern', 'Noibat'];
+    if (skill.includes('能量填充') || skill.includes('Charge Strength') || skill.includes('蓄力') || skill.includes('夢魘')) return true;
+    const chargeNames = ['電龍', '咩利羊', '茸茸羊', '太陽伊布', '可達鴨', '哥達鴨', '樹才怪', '盆才怪', '隨風球', '飄飄球', '音波龍', '嗡蝠', '達克萊伊',
+                         'Ampharos', 'Mareep', 'Flaaffy', 'Espeon', 'Psyduck', 'Golduck', 'Sudowoodo', 'Bonsly', 'Drifblim', 'Drifloon', 'Noivern', 'Noibat', 'Darkrai'];
     return chargeNames.some(c => name.includes(c));
   }
 
+  // 6. 料理擴鍋型 (Pot Expanders: Cooking Power Up S)
+  function isPotExpanderSkillSpecialist(pkm) {
+    if (!pkm) return false;
+    const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
+    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+    if (skill.includes('料理強化') || skill.includes('Cooking Power') || skill.includes('負電')) return true;
+    const potNames = ['小磁怪', '三合一磁怪', '自爆磁怪', '火伊布', '冰伊布', '負電拍拍', '顫弦蠑螈',
+                      'Magnemite', 'Magneton', 'Magnezone', 'Flareon', 'Glaceon', 'Minun', 'Toxtricity'];
+    return potNames.some(p => name.includes(p));
+  }
+
+  // 7. 料理美味度/成功率型 (Extra Tasty / Cooking Success Specialists: Dedenne, Cramorant, etc.)
+  function isExtraTastySkillSpecialist(pkm) {
+    if (!pkm) return false;
+    const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
+    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+    if (skill.includes('料理成功') || skill.includes('美味大成功') || skill.includes('Extra Tasty') || skill.includes('Tasty Chance')) return true;
+    const tastyNames = ['咚咚鼠', '海豹球（佳節）', '古月鳥', 'Dedenne', 'Spheal (Holiday)', 'Cramorant'];
+    return tastyNames.some(t => name.includes(t));
+  }
+
+  // 8. 夢之碎片型 (Dream Shard Magnet Specialists: Lucario, Persian, Sableye, Swalot)
+  function isDreamShardSkillSpecialist(pkm) {
+    if (!pkm) return false;
+    const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
+    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+    if (skill.includes('夢之碎片') || skill.includes('Dream Shard') || skill.includes('波導彈')) return true;
+    const shardNames = ['利歐路', '路卡利歐', '喵喵', '貓老大', '勾魂眼', '溶食獸', '吞食獸',
+                        'Riolu', 'Lucario', 'Meowth', 'Persian', 'Sableye', 'Gulpin', 'Swalot'];
+    return shardNames.some(s => name.includes(s));
+  }
+
+  // 9. 食材獲取/精選型技能寵 (Ingredient Magnet / Draw Specialists: Vaporeon, Hawlucha, Heracross, etc.)
+  function isIngredientSkillSpecialist(pkm) {
+    if (!pkm) return false;
+    const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
+    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+    if (skill.includes('食材獲取') || skill.includes('食材精選') || skill.includes('正電') || skill.includes('怪力鉗') || skill.includes('超幸運') || skill.includes('健美') || skill.includes('禮物')) return true;
+    const ingNames = ['水伊布', '伊布', '毒電嬰', '正電拍拍', '穿山鼠', '穿山王', '石居蟹', '岩殿居蟹', '摔角鷹人', '赫拉克羅斯', '黑暗鴉', '烏鴉頭頭',
+                      'Vaporeon', 'Eevee', 'Toxel', 'Plusle', 'Sandshrew', 'Sandslash', 'Dwebble', 'Crustle', 'Hawlucha', 'Heracross', 'Murkrow', 'Honchkrow'];
+    return ingNames.some(i => name.includes(i));
+  }
+
+  // 10. 隨機揮指型 (Metronome Specialists: Togekiss, Mew)
+  function isMetronomeSkillSpecialist(pkm) {
+    if (!pkm) return false;
+    const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
+    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+    if (skill.includes('揮指') || skill.includes('十項全能') || skill.includes('Metronome')) return true;
+    const metronomeNames = ['波克比', '波克基古', '波克基斯', '夢幻', '皮寶寶', 'Togepi', 'Togetic', 'Togekiss', 'Mew', 'Cleffa'];
+    return metronomeNames.some(m => name.includes(m));
+  }
+
+  // 11. 傳說/幻之神獸判定 (Legendary & Mythical Pokemon)
+  function isLegendaryPokemon(pkm) {
+    if (!pkm) return false;
+    const skill = pkm.main_skill || (pkm.skill && pkm.skill.name) || '';
+    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
+    if (skill.includes('精神擊破') || skill.includes('十項全能') || skill.includes('新月祈禱') || skill.includes('流星群') || skill.includes('夢魘')) return true;
+    const legendaryNames = ['雷公', '炎帝', '水君', '超夢', '夢幻', '克雷色利亞', '達克萊伊', '拉帝歐斯', '拉帝亞斯',
+                            'Raikou', 'Entei', 'Suicune', 'Mewtwo', 'Mew', 'Cresselia', 'Darkrai', 'Latios', 'Latias'];
+    return legendaryNames.some(l => name.includes(l));
+  }
+
+  // 12. 呆呆獸家族 (Slowpoke Family - Tail Opener)
   function isSlowpokeFamily(pkm) {
     if (!pkm) return false;
     const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
     return ['呆呆獸', '呆殼獸', '呆呆王', 'Slowpoke', 'Slowbro', 'Slowking'].some(s => name.includes(s));
   }
 
+  // 13. 請假王家族 (Slaking Family)
   function isSlakingFamily(pkm) {
     if (!pkm) return false;
     const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || pkm.name || '';
@@ -266,9 +346,16 @@
       fallbackNatureDict[natureName] || { buffType: 'none', debuffType: 'none' };
     const natDisplayName = window.I18N ? window.I18N.getNatureName(natureName) : natureName;
 
+    const isBerryBurst = isBerryBurstSkillSpecialist(pkmData);
     const isHealer = isHealerSkillSpecialist(pkmData);
     const isHelper = isHelperBoostSkillSpecialist(pkmData);
     const isCharge = isChargeStrengthSkillSpecialist(pkmData);
+    const isPotExpander = isPotExpanderSkillSpecialist(pkmData);
+    const isExtraTasty = isExtraTastySkillSpecialist(pkmData);
+    const isDreamShard = isDreamShardSkillSpecialist(pkmData);
+    const isIngSkill = isIngredientSkillSpecialist(pkmData);
+    const isMetronome = isMetronomeSkillSpecialist(pkmData);
+    const isLegendary = isLegendaryPokemon(pkmData);
     const isSlowpoke = isSlowpokeFamily(pkmData);
     const isSlaking = isSlakingFamily(pkmData);
     const pkmName = pkmData.name_cn || (pkmData.name && pkmData.name.cn) || pkmData.name_en || pkmData.name || '';
@@ -496,16 +583,19 @@
 
     // ─── 綜合加權評分 (Specialty-Weighted Composite Score) ─────────────
     let compositeScore = 0;
-    const isHybridBfsCandidate = (isCharge || isHelper || isSlaking) && hasBFS;
+    const isHybridBfsCandidate = (isBerryBurst || isCharge || isSlaking) && hasBFS;
 
     if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
       compositeScore = (berryScore * 0.50) + (speedScore * 0.24) + (roiScore * 0.14) + (growthScore * 0.12);
     } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
       compositeScore = (ingScore * 0.50) + (speedScore * 0.24) + (roiScore * 0.14) + (growthScore * 0.12);
     } else {
-      if (isHybridBfsCandidate) {
-        // 技能型 BFS 雙修產能補償：以樹果高額副輸出補足總能量期望
-        compositeScore = (skillScore * 0.32) + (berryScore * 0.32) + (speedScore * 0.22) + (roiScore * 0.14);
+      if (isBerryBurst && hasBFS) {
+        // 樹果遽增型持有 BFS：主技能直接爆發樹果，一般幫忙亦產出+1樹果，雙輪極限產能
+        compositeScore = (berryScore * 0.40) + (skillScore * 0.35) + (speedScore * 0.15) + (roiScore * 0.10);
+      } else if (isHybridBfsCandidate) {
+        // 充能直傷型 BFS 雙修產能補償：以樹果高額副輸出補足總能量期望
+        compositeScore = (skillScore * 0.34) + (berryScore * 0.32) + (speedScore * 0.20) + (roiScore * 0.14);
       } else {
         compositeScore = (skillScore * 0.50) + (speedScore * 0.24) + (roiScore * 0.14) + (growthScore * 0.12);
       }
@@ -546,7 +636,8 @@
     } else {
       if (hasSkillM) specialtySynergy += 3.0;
       if (nature.buffType === 'skill') specialtySynergy += 2.0;
-      if (isHybridBfsCandidate) specialtySynergy += 4.5; // 雙修突破加分
+      if (isBerryBurst && hasBFS) specialtySynergy += 5.0; // 樹果遽增極致契合
+      else if (isHybridBfsCandidate) specialtySynergy += 4.5; // 雙修突破加分
       if (ribbonLevel === 4) specialtySynergy += 1.0;
       else if (ribbonLevel >= 2) specialtySynergy += 0.5;
     }
@@ -703,7 +794,11 @@
     const hasBFSInTotal = activeSubskills.indexOf('樹果數量S') !== -1 || activeSubskills.indexOf('Berry Finding S') !== -1;
 
     if (hasBFSInTotal) {
-      if (isHelper) {
+      if (isBerryBurst) {
+        pros.push(isEN
+          ? '[★] Perfectly synergizes with "Berry Burst"! "Berry Finding S" increases base helps by +1 berry while main skill unleashes massive team berry bursts, forming an elite island pusher (maximize yields via regular collection).'
+          : '[★] 完美契合「樹果遽增」機制！具備「樹果數量S」能在常態幫忙中額外產出樹果，同時透過主技能引爆全隊樹果能量，為島嶼衝分第一梯隊打手！（勤勞清包收益最大化）');
+      } else if (isHelper) {
         cons.push(isEN
           ? '[!] Helper Boost base proc rate is extremely low (~2%); "Berry Finding S" causes rapid bag overflow and blocks main skill checks, crowding out trigger subskills.'
           : '[!] 傳說神獸「幫手加速」基礎機率極低（約2%），持有「樹果數量S」會迅速塞滿背包並阻斷主技能判定，嚴重排擠關鍵技能機率與持有上限。');
@@ -715,7 +810,7 @@
         pros.push(isEN
           ? '[★] Equipped with "Berry Finding S" for high-strength hybrid berry output (ensure frequent collection to avoid bag overflow blocking skill procs).'
           : '[★] 具備「樹果數量S」解鎖高額樹果副輸出，兼顧單兵直傷與產果（需留意及時清包避免阻斷主技能判定）。');
-      } else if (pkmName.includes('咚咚鼠') || pkmName.includes('Dedenne') || pkmName.includes('磁怪') || pkmName.includes('Magne') || pkmName.includes('喵喵') || pkmName.includes('Meowth')) {
+      } else if (isExtraTasty || isPotExpander || isDreamShard || pkmName.includes('咚咚鼠') || pkmName.includes('Dedenne') || pkmName.includes('磁怪') || pkmName.includes('Magne') || pkmName.includes('喵喵') || pkmName.includes('Meowth')) {
         cons.push(isEN
           ? '[!] Tactical skill specialist; "Berry Finding S" causes early bag overflow and blocks main skill checks.'
           : '[!] 純戰術型技能寶可夢持有上限較低，擁有「樹果數量S」容易過早滿包限制主技能判定。');
@@ -893,6 +988,62 @@
         : '[+] 具備已解鎖「持有上限提升」，大幅延長離線/睡眠產出時間，避免背包溢滿阻斷食材與技能。');
     }
 
+    // 樹果遽增型特殊診斷 (未帶 BFS 時)
+    if (isBerryBurst && !hasBFSInTotal) {
+      pros.push(isEN
+        ? '[★] Berry Burst Specialist: Main skill detonates instant berry energy for Snorlax (and copies teammate berries); 1.4x boosted during Buncha Berries events.'
+        : '[★] 樹果遽增戰略型：主技能發動直接為卡比獸爆發樹果能量（並隨機獲取隊友樹果）；果實纍纍樹果週享有 1.4 倍加成！');
+    }
+
+    // 充能直傷型特殊診斷 (未帶 BFS 時)
+    if (isCharge && !hasBFSInTotal) {
+      pros.push(isEN
+        ? '[+] High-Frequency Direct Charge: Pure skill build consistently fires Charge Strength throughout the day without inventory overflow risks.'
+        : '[+] 高頻單兵充能直傷：正統純技能流派，全天穩定發動能量填充，無背包過早滿包阻斷技能之顧慮。');
+    }
+
+    // 傳說神獸特殊診斷
+    if (isLegendary) {
+      pros.push(isEN
+        ? '[★] Legendary / Mythical Pokemon with signature mechanics, high base helping output and indispensable mono-type or domain tactical value.'
+        : '[★] 傳說/幻之寶可夢專屬機制：素質基礎高，在特定同屬性純色隊或領域戰術中具備無可替代的戰略地位。');
+    }
+
+    // 料理大成功 (咚咚鼠)
+    if (isExtraTasty) {
+      pros.push(isEN
+        ? '[+] Extra Tasty Specialist: Stacks dish critical success chance, tailor-made for exploding weekend master recipes.'
+        : '[+] 料理大成功戰術手：疊加料理美味機率，專為週末大餐爆擊（數十萬能量突破）而生的高階戰略組件。');
+    }
+
+    // 料理擴鍋 (自爆磁怪)
+    if (isPotExpander) {
+      pros.push(isEN
+        ? '[+] Cooking Power Up Specialist: Expands pot capacity to cook limit-breaking high-tier recipes.'
+        : '[+] 料理擴鍋戰術手：突破鍋子容量上限，烹調極限大菜（如煉獄咖哩/太妃糖豆漿）不可或缺的擴容手。');
+    }
+
+    // 夢之碎片 (路卡利歐)
+    if (isDreamShard) {
+      pros.push(isEN
+        ? '[+] Dream Shard Farmer: High shard acquisition yield, essential for Candy Boost weeks and late-game leveling.'
+        : '[+] 夢之碎片收割手：高效獲取夢之碎片，為糖果強化週與後期高昂養成成本提供源源不絕的資金。');
+    }
+
+    // 食材獲取 (水伊布)
+    if (isIngSkill) {
+      pros.push(isEN
+        ? '[+] Ingredient Stockpile Specialist: Rapidly restocks ingredient inventory to resolve cooking shortages.'
+        : '[+] 應急食材庫存手：能高頻補充隨機食材庫存，化解大菜料理缺料危機。');
+    }
+
+    // 揮指隨機戰術 (波克基斯)
+    if (isMetronome) {
+      pros.push(isEN
+        ? '[+] Metronome Specialist: Triggers unpredictable random skills with unmatched fun and high lucky ceilings.'
+        : '[+] 隨機揮指戰術手：能隨機發動全遊戲主技能，具備極高趣味性與驚喜爆發上限。');
+    }
+
     if (pros.length === 0) {
       pros.push(isEN
         ? '[*] Basic stats, suitable as a temporary placeholder.'
@@ -1063,10 +1214,16 @@
 
     // 特殊角色識別
     const isSlowpoke = isSlowpokeFamily(pkmData);
-    const isHealer = mainSkill.includes('全員') || mainSkill.includes('活力療癒') || mainSkill.includes('活力氣場') || mainSkill.includes('Energy for Everyone') || mainSkill.includes('Energizing Cheer') || isHealerSkillSpecialist(pkmData);
-    const isPotExpander = mainSkill.includes('料理強化') || mainSkill.includes('Cooking Power');
-    const isHelperBoost = mainSkill.includes('幫手加速') || mainSkill.includes('Helper Boost');
-    const isChargeStrength = mainSkill.includes('能量填充') || mainSkill.includes('Charge Strength');
+    const isBerryBurst = isBerryBurstSkillSpecialist(pkmData);
+    const isHealer = isHealerSkillSpecialist(pkmData);
+    const isHelperBoost = isHelperBoostSkillSpecialist(pkmData);
+    const isChargeStrength = isChargeStrengthSkillSpecialist(pkmData);
+    const isPotExpander = isPotExpanderSkillSpecialist(pkmData);
+    const isExtraTasty = isExtraTastySkillSpecialist(pkmData);
+    const isDreamShard = isDreamShardSkillSpecialist(pkmData);
+    const isIngSkill = isIngredientSkillSpecialist(pkmData);
+    const isMetronome = isMetronomeSkillSpecialist(pkmData);
+    const isLegendary = isLegendaryPokemon(pkmData);
 
     // 關鍵副技能持有檢測
     const hasBFS_active = activeNames.indexOf('樹果數量S') !== -1 || activeNames.indexOf('Berry Finding S') !== -1;
@@ -1139,8 +1296,31 @@
       }
     }
 
-    // 3. 技能型專精分析
+    // 3. 技能型專精分析 (全面精細化劃分各大戰略流派)
     if (isSkill) {
+      // 3.1 樹果遽增型 (Berry Burst: 謎擬Q, 蜥蜴王, 烈焰猴, 勇士雄鷹, 拉帝歐斯)
+      if (isBerryBurst) {
+        if (hasBFS_active) {
+          if (hasSkillM_active || buff === 'skill') {
+            return isEN
+              ? 'Top-Tier Berry Burst Cannon! "Berry Burst" combined with "Berry Finding S" yields double help berries and triggers explosive team berry surges (Mimikyu doubles on Great Success!). An apex island pusher for active collectors; 1.4x boosted during Buncha Berries events.'
+              : '天花板級樹果爆發砲台！「樹果遽增」主技能與「樹果數量S」完美結合，單次幫忙穩定產出加倍樹果，技能觸發更能引爆全隊巨額樹果能量（謎擬Q大成功翻倍爆發更強）！在喜愛樹果島嶼或樹果週（1.4倍加成）為頂尖衝分主力，勤勞收包可享極限產能。';
+          }
+          return isEN
+            ? 'Berry Burst Pusher: Equipped with "Berry Finding S" for high baseline berry generation, synergizing with Berry Burst procs for strong island push power. Regular collection recommended.'
+            : '樹果遽增推進主力：具備「樹果數量S」大幅提升常態樹果產量，配合主技能隨機爆發隊友樹果，具備極佳的推分爆發力。建議勤勞收包並搭配主技能種子或技能機率副技能。';
+        }
+        if (hasSkillM_active || buff === 'skill') {
+          return isEN
+            ? 'High-Frequency Berry Burst Core: Excellent main skill trigger rate triggers frequent berry surges directly into Snorlax. Unlocking BFS or leveling main skill offers enormous burst potential (1.4x during Berry Weeks).'
+            : '高頻樹果遽增核心：主技能發動率卓越，能頻繁為卡比獸爆發樹果能量；若未來能解鎖樹果數量S或配合樹果週活動（1.4倍加成），將具備天花板級爆發上限！';
+        }
+        return isEN
+          ? 'Berry Burst Specialist: Main skill "Berry Burst" provides instant team berry surges. Prioritize skill seeds and skill trigger subskills for maximum efficiency.'
+          : '樹果遽增技能型：主技能為「樹果遽增」，能瞬間爆發樹果能量，建議搭配主技能種子或技能機率副技能以提升發動次數。';
+      }
+
+      // 3.2 活力全體療癒補師 (Healers: 沙奈朵, 仙子伊布, 胖可丁, 巴布土撥, 克雷色利亞, 壺壺)
       if (isHealer) {
         if (debuff === 'skill') {
           return isEN
@@ -1168,6 +1348,72 @@
           : '及格團隊補師：具備穩健的發動頻率，能提供基礎活力續航，協助隊伍維持日間高水準工作效率。';
       }
 
+      // 3.3 傳說神獸幫手加速型 (Helper Boost: 雷公, 炎帝, 水君, 風速狗, 雷伊布, 艾路雷朵)
+      if (isHelperBoost) {
+        if (hasSkillM_active || buff === 'skill') {
+          return isEN
+            ? 'Mono-Type Team Amplifier: "Helper Boost" triggers instant team-wide production cycles, scaling higher with more unique same-type team members! Prioritizes Skill Triggers and Helping Bonus to avoid self-bag overflow, while teammates carry BFS to massively amplify output.'
+            : '同屬性純色隊終極放大器！主技能「幫手加速」單次發動可引爆全隊即時產出，隊伍中同屬性不同種類寶可夢越多倍率越高。神獸本體首重技能機率與持有上限防溢滿，而將樹果數量S交由「隊友」攜帶以最大化技能爆發收益！';
+        }
+        return isEN
+          ? 'Mono-Type Helper Specialist: "Helper Boost" triggers instant multi-helps for all same-type members. Skill trigger subskills and Main Skill Seeds are primary priorities.'
+          : '同屬性純色隊發動機：主技能「幫手加速」能帶動同屬性隊員進行多次額外幫忙。基礎發動率偏低（約2%），極度依賴技能機率副技能與主技能種子投入。';
+      }
+
+      // 3.4 單體充能直傷型 (Charge Strength S/M: 電龍, 太陽伊布, 哥達鴨, 樹才怪, 隨風球, 音波龍, 達克萊伊)
+      if (isChargeStrength) {
+        if (hasBFS_active) {
+          if (hasSkillM_active || buff === 'skill') {
+            return isEN
+              ? 'Top-Tier Hybrid Charge Cannon! Unlocks the "Charge Strength + Berry Finding S" dual-track form. On favorite berry islands (e.g. Ampharos at Power Plant, Espeon at Lakeside, Golduck at Beach), active collectors achieve the ultimate theoretical energy ceiling (thousands in direct skill strength + double island berries)! Collect regularly to prevent bag overflow.'
+              : '頂級雙修能量砲台！解鎖「能量填充 + 樹果數量S」雙修形態。在對應喜好樹果島嶼上（如電龍在發電廠、太陽伊布在湖畔、哥達鴨在海灘），為勤勞收包玩家提供極限級總能量期望（單次直傷數千 + 每次雙倍島嶼樹果）！放置時需注意及時清包以防滿包阻斷技能判定。';
+          }
+          return isEN
+            ? 'Hybrid Charge Producer: "Berry Finding S" provides high-value island berry yield alongside steady Charge Strength direct energy. High-frequency collection is recommended to prevent Sneaky Snacking from halting skill checks.'
+            : '雙修型單兵直傷手：持有「樹果數量S」提供可觀樹果副產能，配合主技能能量填充提供穩定分數進帳，建議高頻收包以防滿包偷吃阻斷技能。';
+        }
+        if (hasSkillM_active || buff === 'skill') {
+          return isEN
+            ? 'High-Yield Energy Cannon: Leverages frequent "Charge Strength" activations for heavy single-target Snorlax point generation.'
+            : '強力單兵能量砲台：倚賴「能量填充」提供高額直傷分數，發動機率加成顯著，具備極佳的單兵獨立產分戰鬥力。';
+        }
+        return isEN
+          ? 'Charge Strength Specialist: Provides steady direct Snorlax energy, depending primarily on skill trigger rate and main skill level.'
+          : '單兵能量手：主技能為直接提升卡比獸能量，依賴主技能等級與發動頻率支撐產能。';
+      }
+
+      // 3.5 傳說/幻之寶可夢專屬機制 (超夢, 夢幻, 達克萊伊, 克雷色利亞)
+      if (isLegendary) {
+        if (mainSkill.includes('精神擊破') || mainSkill.includes('樹果領域')) {
+          return isEN
+            ? 'Legendary Berry Field Engine! Signature move "Psystrike" deploys a Berry Field, massively multiplying specific berry yields for team-wide strategic breakthroughs.'
+            : '傳說樹果領域核心！專屬主技能「精神擊破」能展開樹果領域，全面提升特定屬性樹果能量，為全隊帶來跨維度的戰略爆發！';
+        }
+        if (mainSkill.includes('十項全能') || mainSkill.includes('揮指')) {
+          return isEN
+            ? 'Mythical All-Rounder! Signature move "Decathlon" draws from an unpredictable repertoire of master skills, serving as an adaptable wildcard.'
+            : '幻之十項全能戰術手！專屬主技能「十項全能」技能池深不可測，為全隊提供極具彈性的戰術補強與意外上限。';
+        }
+        if (mainSkill.includes('夢魘')) {
+          return isEN
+            ? 'Mythical Dark Charge Burst! Signature move "Bad Dreams" unleashes massive direct energy points with outstanding base speed.'
+            : '幻之惡系直傷爆發手！專屬主技能「夢魘」單次提供巨額卡比獸直傷能量，基礎速度快，為頂級獨立產分戰力。';
+        }
+      }
+
+      // 3.6 料理美味度/大成功型 (Extra Tasty: 咚咚鼠, 海豹球佳節)
+      if (isExtraTasty) {
+        if (hasSkillM_active || buff === 'skill') {
+          return isEN
+            ? 'Premier Extra Tasty Specialist: High trigger rate stacks dish crit probability rapidly, tailor-made for exploding weekend master dishes with multi-hundred-thousand point bursts! Strictly avoid BFS to protect skill procs.'
+            : '料理大成功爆擊手：主技能「料理成功S」能不斷疊加下次料理的大成功機率，專為每週衝擊大師高階時引爆週末大餐（數十萬能量爆擊）的終極戰術組件！首重技能機率與持有上限，嚴禁樹果S阻斷判定。';
+        }
+        return isEN
+          ? 'Tactical Extra Tasty Specialist: Stacks dish critical success chance to prepare for explosive cooking scores during event weeks.'
+          : '料理大成功戰術手：疊加料理美味機率，專為週末大餐爆擊儲備機率，建議提高技能機率與持有上限。';
+      }
+
+      // 3.7 料理擴鍋型 (Pot Expanders: 自爆磁怪, 火伊布, 冰伊布, 負電拍拍, 顫弦蠑螈)
       if (isPotExpander) {
         if (hasSkillM_active || buff === 'skill') {
           return isEN
@@ -1179,21 +1425,35 @@
           : '戰術擴鍋專門：主技能「料理強化S」能擴充鍋容量，適合週末囤積鍋空間以衝擊極限大型食譜。';
       }
 
-      if (isHelperBoost) {
-        return isEN
-          ? 'Mono-Type Team Amplifier: "Helper Boost" triggers instant team-wide production cycles. Skill trigger subskills and Main Skill Seeds are primary priorities.'
-          : '同屬性純色隊終極放大器：主技能「幫手加速」單次發動可引爆全隊即時產出，技能發動機率與主技能種子投入為核心指標。';
-      }
-
-      if (isChargeStrength) {
+      // 3.8 夢之碎片型 (Dream Shards: 路卡利歐, 喵喵, 貓老大, 勾魂眼, 吞食獸)
+      if (isDreamShard) {
         if (hasSkillM_active || buff === 'skill') {
           return isEN
-            ? 'High-Yield Energy Cannon: Leverages frequent "Charge Strength" activations for heavy single-target Snorlax point generation.'
-            : '強力單兵能量砲台：倚賴「能量填充」提供高額直傷分數，發動機率加成顯著，具備極佳的單兵獨立產分戰鬥力。';
+            ? 'Premier Dream Shard Harvester: High trigger rate paired with Dream Shard subskills yields massive currency during Good Sleep Days and Candy Boost weeks!'
+            : '夢之碎片頂級收割手：高頻發動夢之碎片主技能，在好眠日活動與糖果強化週是不可或缺的頂尖資金農夫！';
         }
         return isEN
-          ? 'Charge Strength Specialist: Provides steady direct Snorlax energy, depending primarily on skill trigger rate and main skill level.'
-          : '單兵能量手：主技能為直接提升卡比獸能量，依賴主技能等級與發動頻率支撐產能。';
+          ? 'Dream Shard Specialist: Main skill provides direct Dream Shards, crucial for sustaining high late-game candy power-up costs.'
+          : '夢之碎片專門手：主技能為直接獲取夢之碎片，為後期高昂的寶可夢升級糖果消耗提供資金支持。';
+      }
+
+      // 3.9 食材獲取/精選型技能寵 (Ingredient Draw: 水伊布, 伊布, 毒電嬰, 正電拍拍, 穿山王, 摔角鷹人, 赫拉克羅斯)
+      if (isIngSkill) {
+        if (hasSkillM_active || buff === 'skill') {
+          return isEN
+            ? 'Rapid Stockpile Emergency Support: High trigger rate pours abundant random ingredients into inventory, instantly curing recipe ingredient shortages!'
+            : '應急食材爆發中樞：高額技能發動率能瞬間填補龐大食材庫存，化解高階料理缺料危機，是食材告急時的最佳急救隊員！';
+        }
+        return isEN
+          ? 'Ingredient Draw Specialist: Main skill fetches bonus random ingredients to support daily kitchen consumption.'
+          : '應急食材補給手：主技能為獲取額外隨機食材，能輔助日常烹飪食材供給。';
+      }
+
+      // 3.10 隨機揮指型 (Metronome: 波克基斯, 波克比, 夢幻)
+      if (isMetronome) {
+        return isEN
+          ? 'Wildcard Metronome Specialist: Triggers unpredictable random skills across the game, delivering high excitement and unexpected score leaps.'
+          : '隨機揮指戰術手：能隨機發動全遊戲主技能，具備極高趣味性與意外上限，在日常探索中常有驚喜表現。';
       }
 
       if (debuff === 'skill') {
@@ -2150,10 +2410,17 @@
 
   /* ─── 全域導出 ─────────────────────────────────────────── */
   window.AppraisalLab = {
+    isBerryBurstSkillSpecialist: isBerryBurstSkillSpecialist,
     isBfsSkillSpecialist: isBfsSkillSpecialist,
     isHealerSkillSpecialist: isHealerSkillSpecialist,
     isHelperBoostSkillSpecialist: isHelperBoostSkillSpecialist,
     isChargeStrengthSkillSpecialist: isChargeStrengthSkillSpecialist,
+    isPotExpanderSkillSpecialist: isPotExpanderSkillSpecialist,
+    isExtraTastySkillSpecialist: isExtraTastySkillSpecialist,
+    isDreamShardSkillSpecialist: isDreamShardSkillSpecialist,
+    isIngredientSkillSpecialist: isIngredientSkillSpecialist,
+    isMetronomeSkillSpecialist: isMetronomeSkillSpecialist,
+    isLegendaryPokemon: isLegendaryPokemon,
     isSlowpokeFamily: isSlowpokeFamily,
     isSlakingFamily: isSlakingFamily,
     evaluateSingle: evaluateSingle,
