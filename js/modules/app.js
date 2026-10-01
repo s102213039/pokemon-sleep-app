@@ -3480,6 +3480,13 @@ if (typeof document !== 'undefined') {
             const iconUrl = getIconUrl(p);
             const pkmName = isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en);
             const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
+            let specClass = 'spec-ingredient';
+            const rawSpec = p.specialty || '';
+            if (rawSpec.includes('樹果') || rawSpec === 'Berries') {
+              specClass = 'spec-berry';
+            } else if (rawSpec.includes('技能') || rawSpec === 'Skills') {
+              specClass = 'spec-skill';
+            }
             const berry = getPokemonBerry(p);
             const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--');
 
@@ -3513,7 +3520,7 @@ if (typeof document !== 'undefined') {
                 </div>
                 <div class="stat-item">
                   <span class="stat-label">${t('th.specialty', '得意')}</span>
-                  <span class="stat-value" style="white-space:nowrap;">${specName}</span>
+                  <span class="stat-value" style="white-space:nowrap;"><span class="box-spec-tag ${specClass}">${specName}</span></span>
                 </div>
                 <div class="stat-item">
                   <span class="stat-label">${t('th.carry', '持有')}</span>
@@ -3577,6 +3584,13 @@ if (typeof document !== 'undefined') {
                 const iconUrl = getIconUrl(p);
                 const pkmName = isEN ? (p.name_en || p.name_cn) : (p.name_cn || p.name_en);
                 const specName = window.I18N ? window.I18N.getSpecialtyName(p.specialty) : (p.specialty || '--');
+                let specClass = 'spec-ingredient';
+                const rawSpec = p.specialty || '';
+                if (rawSpec.includes('樹果') || rawSpec === 'Berries') {
+                  specClass = 'spec-berry';
+                } else if (rawSpec.includes('技能') || rawSpec === 'Skills') {
+                  specClass = 'spec-skill';
+                }
                 const berry = getPokemonBerry(p);
                 const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--');
 
@@ -3588,7 +3602,7 @@ if (typeof document !== 'undefined') {
                   </td>
                   <td class="td-name pokemon-name-cell" onclick="window.PokemonApp.openPokemonDetailModal('${p.id}')" style="cursor:pointer;" title="${window.I18N ? window.I18N.t('pokedex.click_appraise', '點擊查看詳細資訊與強度評測') : '點擊查看詳細資訊與強度評測'}">${pkmName}</td>
                   <td class="td-berry">${berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}" loading="lazy" onerror="this.style.display='none';">` : `<span class="berry-name-text">${berryName}</span>`}</td>
-                  <td class="td-spec">${specName}</td>
+                  <td class="td-spec" style="text-align:center;"><span class="box-spec-tag ${specClass}">${specName}</span></td>
                   <td class="td-carry">${p.carry || '--'}</td>
                   <td class="td-ing">${p.ingredients && p.ingredients[0] ? `<div class="ing-cell">${p.ingredients[0].icon ? `<img class="ing-icon" src="${p.ingredients[0].icon}" alt="${window.I18N ? window.I18N.getIngredientName(p.ingredients[0].name) : p.ingredients[0].name}" loading="lazy" title="${window.I18N ? window.I18N.getIngredientName(p.ingredients[0].name) : p.ingredients[0].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[0],0)}</div>` : '--'}</td>
                   <td class="td-ing">${p.ingredients && p.ingredients[1] ? `<div class="ing-cell">${p.ingredients[1].icon ? `<img class="ing-icon" src="${p.ingredients[1].icon}" alt="${window.I18N ? window.I18N.getIngredientName(p.ingredients[1].name) : p.ingredients[1].name}" loading="lazy" title="${window.I18N ? window.I18N.getIngredientName(p.ingredients[1].name) : p.ingredients[1].name}" onerror="this.style.display='none';">` : ''}${ingQtyBadges(p.ingredients[1],1)}</div>` : '--'}</td>

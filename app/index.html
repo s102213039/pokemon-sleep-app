@@ -42,6 +42,23 @@
         var isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(navigator.userAgent) ||
           (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
+        // Dynamic Viewport / Emulation Exit Listener (e.g. Closing DevTools device toolbar)
+        var appResizeTimer = null;
+        window.addEventListener('resize', function() {
+          clearTimeout(appResizeTimer);
+          appResizeTimer = setTimeout(function() {
+            try {
+              var curSearch = window.location.search || '';
+              if (curSearch.indexOf('view=mobile') !== -1) return;
+              var curUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(navigator.userAgent) ||
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+              if (!curUA && window.innerWidth && window.innerWidth > 768) {
+                window.location.replace(getDesktopUrl());
+              }
+            } catch (err) {}
+          }, 200);
+        });
+
         if (viewQuery === 'mobile') {
           try {
             localStorage.setItem('pksleep_view_pref', 'mobile');
@@ -766,6 +783,21 @@
         </div>
 
         <div class="sidebar-scrollable-content">
+          <!-- 倉庫排序方式 (Sort By) -->
+          <div class="sidebar-section box-sort-section" style="margin-bottom: 8px;">
+            <div class="sidebar-section-header">
+              <span class="sidebar-section-title" data-i18n="box.sort_title">排序方式</span>
+            </div>
+            <select id="box-sort-select" class="sort-select box-sort-select" aria-label="倉庫排序" style="width:100%;height:36px;border-radius:10px;background:var(--table-row-odd-solid, #0d1527);border:1px solid var(--border-color);color:var(--text-primary);padding:0 12px;font-size:13px;font-weight:600;">
+              <option value="pr-desc" data-i18n="box.sort_pr_desc">PR 評分由高到低</option>
+              <option value="created-desc" data-i18n="box.sort_recent">最近加入</option>
+              <option value="level-desc" data-i18n="box.sort_level_desc">等級由高到低</option>
+              <option value="level-asc" data-i18n="box.sort_level_asc">等級由低到高</option>
+              <option value="pr-asc" data-i18n="box.sort_pr_asc">PR 評分由低到高</option>
+              <option value="id-asc" data-i18n="box.sort_dex_asc">全國圖鑑編號</option>
+            </select>
+          </div>
+
           <!-- 最終進化 & 初始食材 & 編號 1行 Switch Row (3 Columns) -->
           <div class="sidebar-switches-grid">
             <label class="sidebar-switch-compact" for="box-final-evo-toggle">
@@ -864,36 +896,6 @@
       <!-- 1. 寶可夢倉庫子分頁 (Subpanel List) -->
       <div id="box-subpanel-list" class="box-subpanel-view" style="display:block;">
         <section class="box-toolbar-container">
-          <!-- 單行精緻工具控制列 (100% 寬度，左側排序選單，右側展示方式切換) -->
-          <div class="box-toolbar-control-row">
-            <select id="box-sort-select" class="sort-select box-sort-select" aria-label="倉庫排序">
-              <option value="pr-desc" data-i18n="box.sort_pr_desc">PR 評分由高到低</option>
-              <option value="created-desc" data-i18n="box.sort_recent">最近加入</option>
-              <option value="level-desc" data-i18n="box.sort_level_desc">等級由高到低</option>
-              <option value="level-asc" data-i18n="box.sort_level_asc">等級由低到高</option>
-              <option value="pr-asc" data-i18n="box.sort_pr_asc">PR 評分由低到高</option>
-              <option value="id-asc" data-i18n="box.sort_dex_asc">全國圖鑑編號</option>
-            </select>
-            <div class="box-view-toggle-chips" aria-label="展示方式">
-              <button type="button" id="box-toggle-grid" class="view-chip-btn active" title="卡片視圖">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
-                  <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
-                  <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
-                  <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
-                  <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
-                </svg>
-                <span class="view-chip-text" data-i18n="box.view_cards">卡片</span>
-              </button>
-              <button type="button" id="box-toggle-table" class="view-chip-btn" title="列表視圖">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
-                  <rect x="3" y="4" width="18" height="3" rx="1"></rect>
-                  <rect x="3" y="10.5" width="18" height="3" rx="1"></rect>
-                  <rect x="3" y="17" width="18" height="3" rx="1"></rect>
-                </svg>
-                <span class="view-chip-text" data-i18n="box.view_table">列表</span>
-              </button>
-            </div>
-          </div>
 
           <!-- 標準截圖示範例與必備資訊指引卡片 -->
           <div id="box-screenshot-guide-card" class="box-screenshot-guide-card" style="margin: 8px 12px 12px;">

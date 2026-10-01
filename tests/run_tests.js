@@ -8556,8 +8556,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(!appIndexHtml.includes('<span class="slot-lvl-header">Lv.75</span>'), 'app/index.html must not have Lv.75 slot header');
     assert(!appIndexHtml.includes('<span class="slot-lvl-header">Lv.100</span>'), 'app/index.html must not have Lv.100 slot header');
 
-    // Table header in box.js must state Lv.10 ~ 80
-    assert(boxJs.includes("副技能 (Lv.10 ~ 80)"), 'box.js table header must display Lv.10 ~ 80');
+    // Box subskills must adhere to Lv.10 ~ 80 standard and not legacy Lv.100
+    assert(boxJs.includes("[10, 25, 50, 70, 80]"), 'box.js subskills array must include standard levels up to 80');
     assert(!boxJs.includes("副技能 (Lv.10 ~ 100)"), 'box.js must not display legacy Lv.10 ~ 100');
 
     // i18n guide description must state Lv.10 至 Lv.80
@@ -9013,6 +9013,91 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     // Reset filters restores full collection
     boxModule.resetBoxFilters();
     assertEquals(boxModule.getFilteredBox().length, 6, 'Reset must restore full collection');
+  });
+
+  test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Box Overhaul, Appraisal In-Place Edit, Edge-to-Edge Layout & Unified Specialty Styling', () => {
+    const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+    const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+
+    // 1. Responsive Auto-Switch resize listeners registered before early returns
+    assert(indexHtml.includes("window.addEventListener('resize'"), 'index.html must register resize listener');
+    assert(appIndexHtml.includes("window.addEventListener('resize'"), 'app/index.html must register resize listener');
+    const indexResizeIdx = indexHtml.indexOf("window.addEventListener('resize'");
+    const indexEarlyReturnIdx = indexHtml.indexOf("return; // Stay on index.html");
+    assert(indexResizeIdx < indexEarlyReturnIdx, 'index.html resize listener must be attached before early return');
+
+    // 2. Mobile H5 Box tab: No cards/table toggle chips, forced table mode
+    assert(!appIndexHtml.includes('id="box-toggle-grid"'), 'app/index.html must not contain box-toggle-grid');
+    assert(!appIndexHtml.includes('id="box-toggle-table"'), 'app/index.html must not contain box-toggle-table');
+    assert(!appIndexHtml.includes('class="box-toolbar-control-row"'), 'app/index.html must not contain old box-toolbar-control-row');
+    assert(boxJs.includes("if (isMobileH5 || boxViewMode === 'table')"), 'box.js must force table view on mobile H5');
+
+    // 3. Box Table Columns Overhaul
+    // Header order: icon -> level -> name (centered) -> ribbon (centered) -> specialty -> berry
+    const lvlThIdx = boxJs.indexOf("t('th.level', '等級')");
+    const nameThIdx = boxJs.indexOf("isEN ? 'Name / Nickname' : '寶可夢 / 暱稱'");
+    const ribbonThIdx = boxJs.indexOf("t('th.ribbon', '獎章')");
+    const specThIdx = boxJs.indexOf("t('th.specialty', '得意')");
+    const berryThIdx = boxJs.indexOf("t('th.berry', '樹果')");
+    assert(lvlThIdx !== -1 && nameThIdx !== -1 && ribbonThIdx !== -1 && specThIdx !== -1 && berryThIdx !== -1, 'All required th keys must exist');
+    assert(lvlThIdx < nameThIdx, 'Level column must precede Name column');
+    assert(nameThIdx < ribbonThIdx, 'Ribbon column must follow Name column');
+    assert(ribbonThIdx < specThIdx, 'Specialty column must follow Ribbon column');
+    assert(specThIdx < berryThIdx, 'Berry column must follow Specialty column');
+
+    // Name and Nickname horizontally centered
+    assert(boxJs.includes('justify-content:center;gap:4px;flex-wrap:wrap;text-align:center;'), 'table-name-cn must be centered');
+    assert(boxJs.includes('text-align:center;">${escapeHtml(p.nickname)}</div>'), 'nickname must be centered');
+
+    // Ribbon display: icon or '-'
+    assert(boxJs.includes('box-ribbon-tag') && boxJs.includes('ribbon-empty') && boxJs.includes('>-<'), 'Ribbon column must display icon or "-" for empty');
+
+    // PR score, Subskills, Nature removed from list table
+    const renderTableCode = boxJs.substring(boxJs.indexOf('function renderBoxTable(list'), boxJs.indexOf('function bindCardActions'));
+    assert(!renderTableCode.includes("box-table-dual-badges"), 'Box table must not contain PR dual badges');
+    assert(!renderTableCode.includes("box-subskill-pill"), 'Box table must not contain subskills pills');
+    assert(!renderTableCode.includes("nature-buff"), 'Box table must not contain nature buff in table rows');
+
+    // Row click navigation to Appraisal Lab
+    assert(boxJs.includes(".box-table tbody tr[data-uid]"), 'Table rows must be selectable');
+    assert(boxJs.includes("window.AppraisalLab.loadBoxItem(item)"), 'Row click must load box item into Appraisal Lab');
+
+    // 4. Appraisal Lab In-Place Edit Mode
+    assert(appraisalJs.includes("editMode: false"), 'labState must track editMode');
+    assert(appraisalJs.includes("function enterEditMode()"), 'appraisal.js must implement enterEditMode');
+    assert(appraisalJs.includes("function saveEditMode()"), 'appraisal.js must implement saveEditMode');
+    assert(appraisalJs.includes("function cancelEditMode()"), 'appraisal.js must implement cancelEditMode');
+    assert(appraisalJs.includes("function onNicknameChange(val)"), 'appraisal.js must implement onNicknameChange');
+    assert(appraisalJs.includes("function onIngredientChange(slotIdx, val)"), 'appraisal.js must implement onIngredientChange');
+    assert(appraisalJs.includes("btn-lab-edit-toggle"), 'Preview mode must render [✎] 修改數值 button');
+    assert(appraisalJs.includes("lab-edit-mode-banner"), 'Edit mode must render edit banner');
+    assert(appraisalJs.includes("window.UserBox.setUserBox(userBox)"), 'saveEditMode must update userBox');
+
+    // 5. Box Sort Dropdown in Filter Sidebar with Inset Arrow
+    assert(indexHtml.includes('id="box-filter-sidebar"') && indexHtml.includes('id="box-sort-select"'), 'index.html must have box-sort-select inside sidebar');
+    assert(appIndexHtml.includes('id="box-filter-sidebar"') && appIndexHtml.includes('id="box-sort-select"'), 'app/index.html must have box-sort-select inside sidebar');
+    assert(stylesCss.includes('.box-sort-select'), 'css must define .box-sort-select');
+    assert(stylesCss.includes('padding: 0 38px 0 14px !important;'), '.box-sort-select must have right padding >= 36px');
+    assert(stylesCss.includes('background-position: right 18px center !important;'), '.box-sort-select arrow must be inset from border');
+
+    // 6. Mobile Edge-to-Edge List Layout
+    assert(stylesCss.includes('.mobile-h5-app .box-content-container') && stylesCss.includes('padding: 0 0 90px 0 !important;'), 'box-content-container must have 0 side margins on mobile');
+    assert(stylesCss.includes('.mobile-h5-app #panel-box .table-container') && stylesCss.includes('margin: 0 !important;'), 'table-container must have 0 margin on mobile');
+
+    // 7. Unified Specialty Background Colors
+    assert(appJs.includes('<span class="box-spec-tag ${specClass}">${specName}</span>'), 'Pokédex table and cards must use unified box-spec-tag with specClass');
+    assert(stylesCss.includes('.box-spec-tag.spec-berry') && stylesCss.includes('.box-spec-tag.spec-ingredient') && stylesCss.includes('.box-spec-tag.spec-skill'), 'styles.css must style all three specialty classes');
+    assert(stylesCss.includes('[data-theme="light"] .appraisal-spec-tag.spec-berry') && stylesCss.includes('[data-theme="light"] .box-spec-tag.spec-berry'), 'styles.css must support light theme for spec tags');
+
+    // 8. i18n Dictionary
+    assert(i18nJs.includes("'th.ribbon': '獎章'"), 'i18n must have ribbon key');
+    assert(i18nJs.includes("'box.sort_title': '排序方式'"), 'i18n must have sort_title key');
+    assert(i18nJs.includes("'box.edit_stats': '修改數值'"), 'i18n must have edit_stats key');
   });
 
 console.log('                   Test Results Summary');

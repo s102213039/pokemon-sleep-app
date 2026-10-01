@@ -108,6 +108,8 @@
       'th.ing2_mobile': '食2',
       'th.ing3_mobile': '食3',
       'th.ingredients': '食材',
+      'th.ribbon': '獎章',
+      'th.level': '等級',
       'th.actions': '操作',
 
       'card.type': '屬性',
@@ -226,6 +228,11 @@
       // Box & Appraisal
       'box.filter_sidebar_title': '倉庫篩選器',
       'box.filter_bookmark': '篩選',
+      'box.sort_title': '排序方式',
+      'box.edit_stats': '修改數值',
+      'box.save_changes': '保存修改',
+      'box.cancel_edit': '取消修改',
+      'box.edit_success': '已成功保存修改！',
       'box.title': '我的寶可夢倉庫與截圖智能辨識',
       'box.desc': '支援上傳遊戲截圖自動辨識等級、食材組合、副技能與性格，亦可隨時手動錄入與編輯。',
       'box.banner_title': '我的寶可夢倉庫與截圖智能辨識',
@@ -459,6 +466,8 @@
       'th.ing2': 'Ing2',
       'th.ing3': 'Ing3',
       'th.ingredients': 'Ings',
+      'th.ribbon': 'Ribbon',
+      'th.level': 'Level',
       'th.actions': 'Action',
 
       'card.type': 'Type',
@@ -577,6 +586,11 @@
       // Box & Appraisal
       'box.filter_sidebar_title': 'Box Filters',
       'box.filter_bookmark': 'Filter',
+      'box.sort_title': 'Sort By',
+      'box.edit_stats': 'Edit Stats',
+      'box.save_changes': 'Save Changes',
+      'box.cancel_edit': 'Cancel',
+      'box.edit_success': 'Changes saved successfully!',
       'box.title': 'Pokémon Box & OCR',
       'box.desc': 'Batch auto-recognize Level, Ingredients, Sub-skills, and Nature from screenshots or manual entry.',
       'box.banner_title': 'Pokémon Box & OCR',

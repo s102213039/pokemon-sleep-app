@@ -1053,10 +1053,11 @@
         return;
       }
 
-      if (boxViewMode === 'grid') {
-        renderBoxGrid(filtered, container);
-      } else {
+      const isMobileH5 = typeof document !== 'undefined' && (!!document.querySelector('.mobile-h5-app') || (document.body && document.body.classList.contains('mobile-h5-app')));
+      if (isMobileH5 || boxViewMode === 'table') {
         renderBoxTable(filtered, container);
+      } else {
+        renderBoxGrid(filtered, container);
       }
     } catch (err) {
       console.error('Error rendering Box:', err);
@@ -1290,31 +1291,29 @@
   function renderBoxTable(list, container) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+
     container.innerHTML = `
       <div class="table-container">
         <table class="pokemon-table box-table">
           <thead>
             <tr>
-              <th>${t('th.icon', '圖示')}</th>
-              <th>${isEN ? 'Name / Nickname' : '寶可夢 / 暱稱'}</th>
-              <th>${isEN ? 'Level' : '等級'}</th>
-              <th>${isEN ? 'PR Rank' : 'PR 評分'}</th>
-              <th>${t('th.berry', '樹果')}</th>
-              <th>${t('th.specialty', '得意')}</th>
-              <th>${t('th.ing1', 'Lv.1 食材')}</th>
-              <th>${t('th.ing2', 'Lv.30 食材')}</th>
-              <th>${t('th.ing3', 'Lv.60 食材')}</th>
-              <th>${isEN ? 'Sub-Skills' : '副技能 (Lv.10 ~ 80)'}</th>
-              <th>${isEN ? 'Nature' : '性格'}</th>
-              <th>${isEN ? 'Actions' : '操作'}</th>
+              <th style="text-align:center;">${t('th.icon', '圖示')}</th>
+              <th style="text-align:center;">${t('th.level', '等級')}</th>
+              <th style="text-align:center;">${isEN ? 'Name / Nickname' : '寶可夢 / 暱稱'}</th>
+              <th style="text-align:center;">${t('th.ribbon', '獎章')}</th>
+              <th style="text-align:center;">${t('th.specialty', '得意')}</th>
+              <th style="text-align:center;">${t('th.berry', '樹果')}</th>
+              <th style="text-align:center;">${t('th.ing1', 'Lv.1 食材')}</th>
+              <th style="text-align:center;">${t('th.ing2', 'Lv.30 食材')}</th>
+              <th style="text-align:center;">${t('th.ing3', 'Lv.60 食材')}</th>
+              <th style="text-align:center;">${t('th.actions', '操作')}</th>
             </tr>
           </thead>
           <tbody>
             ${list.map(p => {
               const base = findPokemonBase(p.pokemonId || p.name);
               const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
-              const natureObj = NATURE_DATA.find(n => n.name === p.nature);
-              const prInfo = calculatePokemonPR(p, base);
               const pkmDisplayName = isEN ? (base ? (base.name_en || base.name_cn) : p.name) : (p.name || (base ? base.name_cn : '未知'));
               const specName = window.I18N ? window.I18N.getSpecialtyName((base && base.specialty) || p.specialty || '--') : ((base && base.specialty) || p.specialty || '--');
               let specClass = 'spec-ingredient';
@@ -1324,71 +1323,59 @@
               } else if (rawSpec.includes('技能') || rawSpec === 'Skills') {
                 specClass = 'spec-skill';
               }
-              const natureDisplayName = window.I18N ? window.I18N.getNatureName(p.nature) : p.nature;
               const berry = (window.getPokemonBerry && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : null);
               const berryName = berry ? (window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--')) : '';
 
               return `
                 <tr data-uid="${p.uid}">
-                  <td>
-                    <div class="table-icon-wrapper">
+                  <td style="text-align:center;">
+                    <div class="table-icon-wrapper" style="margin:0 auto;">
                       ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="table-icon" onerror="this.style.display='none';">` : ''}
                     </div>
                   </td>
-                  <td>
-                    <div class="table-name-cn" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
-                      <span>${escapeHtml(pkmDisplayName)}</span>
-                      ${p.ribbon ? `<span class="box-ribbon-tag" title="${isEN ? `Good-Night Ribbon Tier ${p.ribbon}` : `睡飽飽獎章`}"><img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${p.ribbon}.png" class="box-ribbon-icon" alt="Ribbon" /></span>` : ''}
-                    </div>
-                    ${p.nickname ? `<div style="font-size:11px;color:var(--accent-color);">${escapeHtml(p.nickname)}</div>` : ''}
+                  <td style="text-align:center;">
+                    <span class="box-table-lvl" style="font-weight:700;">Lv.${p.level || 1}</span>
                   </td>
-                  <td><span class="box-table-lvl">Lv.${p.level || 1}</span></td>
-                  <td>
-                    <div class="box-table-dual-badges" style="display:flex;flex-direction:column;gap:2px;align-items:flex-start;">
-                      <span class="box-pr-badge ${prInfo.currentTierBadgeClass || prInfo.tierBadgeClass}" style="font-size:11px;padding:1px 6px;" title="${isEN ? `Current Level Rating: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr} pts)` : `當前實力評級: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr}分)`}">
-                        ${isEN ? `Cur: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})` : `當前: ${prInfo.currentGrade || prInfo.tier} (${prInfo.currentScore || prInfo.pr})`}
-                      </span>
-                      <span class="box-pr-badge-potential" title="${isEN ? `Max Potential Rating: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr} pts)` : `滿級潛力評級: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr}分)`}">
-                        ${isEN ? `Pot: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})` : `潛力: ${prInfo.potentialGrade || prInfo.tier} (${prInfo.potentialScore || prInfo.pr})`}
-                      </span>
+                  <td style="text-align:center;">
+                    <div class="table-name-cn" style="display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;text-align:center;">
+                      ${boxShowNo ? `<span class="box-card-dex-no" style="font-size:11px;color:var(--text-muted);font-weight:600;">No.${base ? (base.formatted_no || base.id) : (p.pokemonId || '')}</span>` : ''}
+                      <span style="font-weight:600;">${escapeHtml(pkmDisplayName)}</span>
                     </div>
+                    ${p.nickname ? `<div style="font-size:11px;color:var(--accent-color);text-align:center;">${escapeHtml(p.nickname)}</div>` : ''}
                   </td>
-                  <td>
+                  <td style="text-align:center;">
+                    ${p.ribbon ? `
+                      <span class="box-ribbon-tag" title="${isEN ? `Good-Night Ribbon Tier ${p.ribbon}` : `睡飽飽獎章`}" style="display:inline-flex;align-items:center;justify-content:center;">
+                        <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${p.ribbon}.png" class="box-ribbon-icon" alt="Ribbon" style="width:20px;height:20px;object-fit:contain;" />
+                      </span>
+                    ` : `<span class="ribbon-empty" style="color:var(--text-muted);font-weight:600;">-</span>`}
+                  </td>
+                  <td style="text-align:center;">
+                    <span class="box-spec-tag ${specClass}">${specName}</span>
+                  </td>
+                  <td style="text-align:center;">
                     ${berry && berry.icon ? `<img src="${berry.icon}" width="22" height="22" class="table-berry-icon" alt="${berryName}" title="${berryName}">` : `<span class="berry-name-text">${berryName || '--'}</span>`}
                   </td>
-                  <td><span class="box-spec-tag ${specClass}">${specName}</span></td>
                   ${renderBoxTableIngCell(p.ing1, base, 0, p.level || 1)}
                   ${renderBoxTableIngCell(p.ing2, base, 1, p.level || 1)}
                   ${renderBoxTableIngCell(p.ing3, base, 2, p.level || 1)}
-                  <td>
-                    <div style="display:flex;flex-wrap:wrap;gap:4px;">
-                      ${(p.subskills || []).map((skName) => {
-                        const sk = SUBSKILLS_DATA.find(s => s.name === skName);
-                        const tier = sk ? sk.tier : 'white';
-                        const displaySkName = window.I18N ? window.I18N.getSubSkillName(skName) : skName;
-                        return `<span class="box-subskill-pill subskill-${tier}" style="font-size:11px;padding:1px 6px;">${escapeHtml(displaySkName)}</span>`;
-                      }).join('')}
-                    </div>
-                  </td>
-                  <td>
-                    <div><strong>${escapeHtml(natureDisplayName || (isEN ? 'Hardy' : '坦率'))}</strong></div>
-                    ${natureObj && natureObj.buff ? `<div style="font-size:10.5px;" class="nature-buff">${natureObj.buff !== '無增減' ? (isEN ? `${natureObj.buff_en} ${natureObj.debuff_en}` : `${natureObj.buff} ${natureObj.debuff}`) : (isEN ? 'Neutral' : '無修正')}</div>` : ''}
-                  </td>
-                  <td>
-                    <div style="display:flex;gap:6px;">
-                      <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${isEN ? 'Appraisal Report' : '深度診斷報告'}">
-                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <line x1="12" y1="16" x2="12" y2="12"></line>
-                          <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                        </svg>
-                      </button>
-                      <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="${isEN ? 'Edit' : '編輯'}">
-                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
-                      </button>
+                  <td style="text-align:center;">
+                    <div style="display:flex;gap:6px;justify-content:center;align-items:center;">
+                      ${!isMobileH5 ? `
+                        <button type="button" class="box-action-btn btn-appraise" data-uid="${p.uid}" title="${isEN ? 'Appraisal Report' : '深度診斷報告'}">
+                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                          </svg>
+                        </button>
+                        <button type="button" class="box-action-btn btn-edit" data-uid="${p.uid}" title="${isEN ? 'Edit' : '編輯'}">
+                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                          </svg>
+                        </button>
+                      ` : ''}
                       <button type="button" class="box-action-btn btn-delete" data-uid="${p.uid}" title="${isEN ? 'Delete' : '刪除'}">
                         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <polyline points="3 6 5 6 21 6"></polyline>
@@ -1457,6 +1444,36 @@
           userBox = userBox.filter(p => p.uid !== uid);
           saveUserBox();
           renderBox();
+        }
+      });
+    });
+
+    // 點擊表格整行直接進入深度評測室 (H5 App 體驗優化)
+    container.querySelectorAll('.box-table tbody tr[data-uid]').forEach(row => {
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('.box-action-btn') || e.target.closest('button')) return;
+        const uid = row.getAttribute('data-uid');
+        const item = userBox.find(p => p.uid === uid);
+        if (item && window.AppraisalLab) {
+          const isMobileH5 = typeof document !== 'undefined' && (!!document.querySelector('.mobile-h5-app') || (document.body && document.body.classList.contains('mobile-h5-app')));
+          if (isMobileH5 && typeof window.switchBoxSubtab === 'function') {
+            window.AppraisalLab.loadBoxItem(item);
+            window.switchBoxSubtab('lab');
+          } else {
+            const base = findPokemonBase(item.pokemonId || item.name);
+            const prInfo = calculatePokemonPR(item, base);
+            window.AppraisalLab.openModal({
+              pkm: base,
+              level: item.level || 30,
+              nature: item.nature || '坦率',
+              subskills: item.subskills || [],
+              ingredients: [item.ing1, item.ing2, item.ing3],
+              ribbon: item.ribbon || 0,
+              nickname: item.nickname || '',
+              summaryNote: (prInfo && prInfo.summaryNote) || ''
+            });
+          }
         }
       });
     });
