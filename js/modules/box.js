@@ -324,13 +324,14 @@
       'D': 'pr-tier-d'
     };
 
+    let appResult = null;
     if (lab && typeof lab.evaluatePokemon === 'function' && base) {
       const currentLv = parseInt(pkm.level, 10) || 30;
       const subArr = pkm.subskills || [];
       const ingArr = [pkm.ing1, pkm.ing2, pkm.ing3].filter(Boolean);
       const ribLvl = parseInt(pkm.ribbon, 10) || 0;
       const skLvl = parseInt(pkm.skillLevel, 10) || 1;
-      const appResult = lab.evaluatePokemon(base, currentLv, pkm.nature, subArr, ingArr, ribLvl, skLvl);
+      appResult = lab.evaluatePokemon(base, currentLv, pkm.nature, subArr, ingArr, ribLvl, skLvl);
       if (appResult) {
         currentGrade = (appResult.current && appResult.current.grade) || appResult.grade;
         currentScore = (appResult.current && appResult.current.compositeScore) || appResult.compositeScore;
@@ -346,7 +347,9 @@
     }
 
     let summaryNote = '';
-    if (milestoneNote) {
+    if (appResult && (appResult.intelligentSummary || appResult.summaryNote)) {
+      summaryNote = appResult.intelligentSummary || appResult.summaryNote;
+    } else if (milestoneNote) {
       summaryNote = milestoneNote;
     } else if (highlights.length > 0) {
       summaryNote = highlights.slice(0, 3).join(' · ');

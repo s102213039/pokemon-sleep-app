@@ -8478,6 +8478,60 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(!modalHtml.includes('appraisal-milestones-card'), 'Appraisal modal must NOT contain appraisal-milestones-card');
     assert(modalHtml.includes('class="radar-svg-chart"'), 'Appraisal modal must contain radar-svg-chart');
     assert(modalHtml.includes('height="100%"'), 'Appraisal radar SVG must use 100% height');
+    assert(modalHtml.includes('nature-pill-capsule'), 'Appraisal modal must render in-game nature pill capsule');
+    assert(modalHtml.includes('nature-capsule-tag'), 'Appraisal modal must render in-game nature capsule tag');
+  });
+
+  test('Tier 4 - Real-World Application Scenarios', 'Specialty-Specific Intelligent Summary & In-Game Nature Display Verification', () => {
+    const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const appCtx = { window: {}, console };
+    appCtx.window = appCtx;
+    vm.createContext(appCtx);
+    vm.runInContext(appraisalCode, appCtx);
+
+    const quaquaval = dataset.find(p => p.name_cn === '狂歡浪舞鴨') || { name_cn: '狂歡浪舞鴨', specialty: '食材', main_skill: '能量填充S' };
+    const gardevoir = dataset.find(p => p.name_cn === '沙奈朵') || { name_cn: '沙奈朵', specialty: '技能', main_skill: '全員活力回復S' };
+    const slowpoke = dataset.find(p => p.name_cn === '呆呆獸') || { name_cn: '呆呆獸', specialty: '技能', main_skill: '能量填充S' };
+    const raichu = dataset.find(p => p.name_cn === '雷丘') || { name_cn: '雷丘', specialty: '樹果', main_skill: '能量填充S' };
+
+    // 1. 食材型寶可夢（狂歡浪舞鴨）評估：嚴禁推薦技能機率提升S/M，專注於食材供貨與速度
+    const ingResult = appCtx.AppraisalLab.evaluatePokemon(
+      quaquaval, 55, '自大',
+      ['食材機率提升S', '幫忙速度M', '食材機率提升M', '技能機率提升S', '技能機率提升M'],
+      ['美味大蔥', '美味大蔥', '美味大蔥'],
+      0, 1
+    );
+    assert(!ingResult.summaryNote.includes('解鎖「技能機率提升S」'), 'Ingredient specialist must NEVER recommend unlocking Skill Trigger S');
+    assert(ingResult.summaryNote.includes('食材') || ingResult.summaryNote.includes('供貨') || ingResult.summaryNote.includes('料理'), 'Ingredient specialist summary must focus on food supply');
+
+    // 2. 活力補師（沙奈朵）評估：專注於全隊活力維持與技能發動期望，嚴禁挑剔食材組合
+    const healerResult = appCtx.AppraisalLab.evaluatePokemon(
+      gardevoir, 50, '溫和',
+      ['技能機率提升M', '幫忙速度M', '技能機率提升S', '幫手獎勵', '持有上限提升L'],
+      ['特選蘋果', '暖暖生薑', '暖暖生薑'],
+      0, 6
+    );
+    assert(!healerResult.summaryNote.includes('AAA') && !healerResult.summaryNote.includes('缺乏食材'), 'Healer summary must not criticize ingredient spread');
+    assert(healerResult.summaryNote.includes('回能') || healerResult.summaryNote.includes('補師') || healerResult.summaryNote.includes('活力') || healerResult.summaryNote.includes('2.2'), 'Healer summary must highlight healing engine and team vitality');
+
+    // 3. 樹果型（雷丘）評估：核心為 BFS 與幫速，絕不要求食材機率
+    const berryResult = appCtx.AppraisalLab.evaluatePokemon(
+      raichu, 50, '固執',
+      ['樹果數量S', '幫手獎勵', '幫忙速度M', '持有上限提升L', '睡眠EXP獎勵'],
+      ['特選蘋果', '特選蘋果', '特選蘋果'],
+      0, 1
+    );
+    assert(!berryResult.summaryNote.includes('缺乏食材'), 'Berry specialist must not demand ingredient finder');
+    assert(berryResult.summaryNote.includes('樹果數量S') || berryResult.summaryNote.includes('樹果S') || berryResult.summaryNote.includes('砲台'), 'Berry specialist summary must highlight BFS or berry output');
+
+    // 4. 呆呆獸家族（呆呆獸）戰略開圖：精準分析 Lv.30 美味尾巴
+    const slowpokeTail = appCtx.AppraisalLab.evaluatePokemon(
+      slowpoke, 30, '坦率',
+      ['幫忙速度S', '持有上限提升S'],
+      ['放鬆可可', '美味尾巴', '美味尾巴'],
+      0, 1
+    );
+    assert(slowpokeTail.summaryNote.includes('美味尾巴') && slowpokeTail.summaryNote.includes('戰略'), 'Slowpoke with Tail must receive strategic unlock summary');
   });
 
   test('Tier 4 - Real-World Application Scenarios', 'Box Dynamic Visibility & Official Subskills Lv.70/80 Standards Verification', () => {

@@ -775,7 +775,7 @@
     }
 
     const hasIngMInTotal = activeSubskills.indexOf('食材機率提升M') !== -1 || activeSubskills.indexOf('Ingredient Finder M') !== -1;
-    if (hasIngMInTotal) {
+    if (hasIngMInTotal && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
       pros.push(isEN
         ? '[+] Features active "Ingredient Finder M", greatly stabilizing ingredient supply.'
         : '[+] 具備已解鎖「食材機率提升M」，大幅提升料理食材供貨穩定度。');
@@ -783,9 +783,17 @@
 
     const hasSkillMInTotal = activeSubskills.indexOf('技能機率提升M') !== -1 || activeSubskills.indexOf('Skill Trigger M') !== -1;
     if (hasSkillMInTotal) {
-      pros.push(isEN
-        ? '[+] Features active "Skill Trigger M", significantly raising main skill activation frequency.'
-        : '[+] 擁有已解鎖「技能機率提升M」，主技能發動頻率顯著提高。');
+      if (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') {
+        pros.push(isEN
+          ? '[+] Features active "Skill Trigger M", significantly raising main skill activation frequency.'
+          : '[+] 擁有已解鎖「技能機率提升M」，主技能發動頻率顯著提高。');
+      } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
+        if (pkmData.main_skill && (pkmData.main_skill.includes('食材') || pkmData.main_skill.includes('Ingredient'))) {
+          pros.push(isEN
+            ? '[+] Unlocked "Skill Trigger M" synergizes with ingredient-fetching main skill for bonus food supplies.'
+            : '[+] 具備已解鎖「技能機率提升M」，輔助觸發食材獲取主技能，提供額外料理補給。');
+        }
+      }
     }
 
     if (activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1) {
@@ -800,7 +808,7 @@
         : '[+] 擁有已解鎖「幫忙速度M」，自身幫忙間隔縮短 14%。');
     }
 
-    if (skillLevel >= 6) {
+    if (skillLevel >= 6 && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
       pros.push(isEN
         ? `[★] High Main Skill Level (Lv.${skillLevel}), maximizing main skill trigger output.`
         : `[★] 主技能等級達到 Lv.${skillLevel}，技能單次發動效益已達極限。`);
@@ -923,7 +931,7 @@
     };
   }
 
-  /* ─── 升級里程碑質變預測 (Milestone Leap Projections) ─────────── */
+  /* ─── 升級里程碑質變預測 (Specialty-Aware Milestone Leap Projections) ─── */
   function calculateMilestoneProjections(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, currentEval) {
     if (!pkmData || !currentEval) return [];
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
@@ -932,6 +940,10 @@
     const candidateLevels = [25, 30, 50, 70, 80];
     const slotLevels = [10, 25, 50, 70, 80];
     const isSlowpoke = isSlowpokeFamily(pkmData);
+    const specialty = pkmData.specialty || '';
+    const isBerry = specialty.includes('樹果') || specialty === 'Berries';
+    const isIng = specialty.includes('食材') || specialty === 'Ingredients';
+    const isSkill = specialty.includes('技能') || specialty === 'Skills';
 
     candidateLevels.forEach(function(targetLv) {
       if (targetLv <= currentLv) return;
@@ -948,7 +960,7 @@
             milestoneType = 'ingredient';
             isKeyMilestone = true;
           }
-        } else if (ingredients.length >= 2 && ingredients[1]) {
+        } else if (isIng && ingredients.length >= 2 && ingredients[1]) {
           targetSkillName = window.I18N ? window.I18N.getIngredientName(ingredients[1]) : ingredients[1];
           milestoneType = 'ingredient';
         }
@@ -957,14 +969,21 @@
       const slotIdx = slotLevels.indexOf(targetLv);
       if (slotIdx !== -1 && subskillArr[slotIdx]) {
         const skName = subskillArr[slotIdx];
-        const isCore = ['樹果數量S', '幫手獎勵', '食材機率提升M', '技能機率提升M', '幫忙速度M', '持有上限提升L', 'Berry Finding S', 'Helping Bonus', 'Ingredient Finder M', 'Skill Trigger M', 'Helping Speed M', 'Inventory Up L'].indexOf(skName) !== -1;
-        if (isCore) {
+
+        // 嚴格依照專長過濾核心副技能，杜絕跨專長亂推薦
+        let isSpecialtyCore = false;
+        if (isBerry) {
+          isSpecialtyCore = ['樹果數量S', '幫手獎勵', '幫忙速度M', 'Berry Finding S', 'Helping Bonus', 'Helping Speed M'].indexOf(skName) !== -1;
+        } else if (isIng) {
+          isSpecialtyCore = ['食材機率提升M', '幫手獎勵', '幫忙速度M', '持有上限提升L', '食材機率提升S', '持有上限提升M', 'Ingredient Finder M', 'Helping Bonus', 'Helping Speed M', 'Inventory Up L', 'Ingredient Finder S', 'Inventory Up M'].indexOf(skName) !== -1;
+        } else if (isSkill) {
+          isSpecialtyCore = ['技能機率提升M', '幫手獎勵', '幫忙速度M', '技能等級提升M', '技能機率提升S', 'Skill Trigger M', 'Helping Bonus', 'Helping Speed M', 'Skill Level Up M', 'Skill Trigger S'].indexOf(skName) !== -1;
+        }
+
+        if (isSpecialtyCore) {
           targetSkillName = window.I18N ? window.I18N.getSubSkillName(skName) : skName;
           milestoneType = 'subskill';
           isKeyMilestone = true;
-        } else if (!targetSkillName) {
-          targetSkillName = window.I18N ? window.I18N.getSubSkillName(skName) : skName;
-          milestoneType = 'subskill';
         }
       }
 
@@ -974,11 +993,21 @@
       if (!projEval) return;
 
       const scoreDiff = projEval.compositeScore - currentEval.compositeScore;
-      if (scoreDiff >= 3 || projEval.grade !== currentEval.grade || isKeyMilestone) {
+      const isGradeLeap = projEval.grade !== currentEval.grade && scoreDiff > 0;
+      const isScoreLeap = scoreDiff >= 3;
+
+      if (isGradeLeap || isScoreLeap || (isKeyMilestone && scoreDiff > 0)) {
         const skillDisplay = targetSkillName || (isEN ? `Lv.${targetLv} Unlock` : `Lv.${targetLv} 解鎖`);
-        const milestoneText = isEN
-          ? `Recommended to prioritize Lv.${targetLv} to unlock "${skillDisplay}": rating leaps from ${currentEval.grade} (${currentEval.compositeScore} pts) to ${projEval.grade} (${projEval.compositeScore} pts)!`
-          : `建議優先升至 Lv.${targetLv} 解鎖「${skillDisplay}」，評級將由 ${currentEval.grade} 級（${currentEval.compositeScore}分）質變躍升至 ${projEval.grade} 級（${projEval.compositeScore}分）！`;
+        let milestoneText = '';
+        if (isGradeLeap) {
+          milestoneText = isEN
+            ? `Recommended to prioritize Lv.${targetLv} to unlock "${skillDisplay}": rating leaps from ${currentEval.grade} (${currentEval.compositeScore} pts) to ${projEval.grade} (${projEval.compositeScore} pts)!`
+            : `建議優先升至 Lv.${targetLv} 解鎖「${skillDisplay}」，評級將由 ${currentEval.grade} 級（${currentEval.compositeScore}分）跨階躍升至 ${projEval.grade} 級（${projEval.compositeScore}分）！`;
+        } else {
+          milestoneText = isEN
+            ? `Recommended to train to Lv.${targetLv} to unlock core "${skillDisplay}": overall score increases from ${currentEval.compositeScore} pts to ${projEval.compositeScore} pts.`
+            : `建議培育至 Lv.${targetLv} 解鎖核心「${skillDisplay}」，綜合能力將由 ${currentEval.compositeScore} 分實質提升至 ${projEval.compositeScore} 分。`;
+        }
 
         milestones.push({
           level: targetLv,
@@ -1000,6 +1029,259 @@
     return milestones;
   }
 
+  /* ─── 智能深度簡評生成引擎 (Intelligent Appraisal Summary Engine) ─── */
+  function generateIntelligentSummary(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, evaluation) {
+    if (!pkmData) return '';
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const specialty = pkmData.specialty || '';
+    const isBerry = specialty.includes('樹果') || specialty === 'Berries';
+    const isIng = specialty.includes('食材') || specialty === 'Ingredients';
+    const isSkill = specialty.includes('技能') || specialty === 'Skills';
+    const mainSkill = pkmData.main_skill || '';
+    const currentGrade = (evaluation && evaluation.current && evaluation.current.grade) || (evaluation && evaluation.grade) || 'B';
+    const currentScore = (evaluation && evaluation.current && evaluation.current.compositeScore) || (evaluation && evaluation.compositeScore) || 50;
+
+    const subskillArr = Array.isArray(subskills) ? subskills.map(function(s) { return typeof s === 'string' ? s : (s ? s.name : ''); }) : [];
+    const slotLevels = [10, 25, 50, 70, 80];
+    const activeSubskills = [];
+    const futureSubskills = [];
+    slotLevels.forEach(function(lv, idx) {
+      const sk = subskillArr[idx];
+      if (!sk) return;
+      if (currentLv >= lv) {
+        activeSubskills.push({ name: sk, level: lv });
+      } else {
+        futureSubskills.push({ name: sk, level: lv });
+      }
+    });
+
+    const activeNames = activeSubskills.map(function(s) { return s.name; });
+
+    const natureObj = NATURE_DATA.find(function(n) { return n.name === natureName || n.name_en === natureName; });
+    const buff = natureObj ? natureObj.buffType : 'none';
+    const debuff = natureObj ? natureObj.debuffType : 'none';
+
+    // 特殊角色識別
+    const isSlowpoke = isSlowpokeFamily(pkmData);
+    const isHealer = mainSkill.includes('全員') || mainSkill.includes('活力療癒') || mainSkill.includes('活力氣場') || mainSkill.includes('Energy for Everyone') || mainSkill.includes('Energizing Cheer') || isHealerSkillSpecialist(pkmData);
+    const isPotExpander = mainSkill.includes('料理強化') || mainSkill.includes('Cooking Power');
+    const isHelperBoost = mainSkill.includes('幫手加速') || mainSkill.includes('Helper Boost');
+    const isChargeStrength = mainSkill.includes('能量填充') || mainSkill.includes('Charge Strength');
+
+    // 關鍵副技能持有檢測
+    const hasBFS_active = activeNames.indexOf('樹果數量S') !== -1 || activeNames.indexOf('Berry Finding S') !== -1;
+    const hasBFS_future = futureSubskills.find(function(s) { return s.name === '樹果數量S' || s.name === 'Berry Finding S'; });
+
+    const hasHB_active = activeNames.indexOf('幫手獎勵') !== -1 || activeNames.indexOf('Helping Bonus') !== -1;
+
+    const hasIngM_active = activeNames.indexOf('食材機率提升M') !== -1 || activeNames.indexOf('Ingredient Finder M') !== -1;
+    const hasIngS_active = activeNames.indexOf('食材機率提升S') !== -1 || activeNames.indexOf('Ingredient Finder S') !== -1;
+    const hasIngM_future = futureSubskills.find(function(s) { return s.name === '食材機率提升M' || s.name === 'Ingredient Finder M'; });
+
+    const hasSkillM_active = activeNames.indexOf('技能機率提升M') !== -1 || activeNames.indexOf('Skill Trigger M') !== -1;
+    const hasSkillS_active = activeNames.indexOf('技能機率提升S') !== -1 || activeNames.indexOf('Skill Trigger S') !== -1;
+    const hasSkillM_future = futureSubskills.find(function(s) { return s.name === '技能機率提升M' || s.name === 'Skill Trigger M'; });
+
+    const hasSpeedM_active = activeNames.indexOf('幫忙速度M') !== -1 || activeNames.indexOf('Helping Speed M') !== -1;
+
+    const hasInv_active = activeNames.some(function(s) { return s.indexOf('持有上限') !== -1 || s.indexOf('Inventory Up') !== -1; });
+
+    // 食材組合分析
+    const ingArr = (ingredients || []).filter(Boolean);
+    const isAAA = ingArr.length >= 3 && ingArr[0] === ingArr[1] && ingArr[1] === ingArr[2];
+    const isABB = ingArr.length >= 3 && ingArr[0] !== ingArr[1] && ingArr[1] === ingArr[2];
+    const isABC = ingArr.length >= 3 && ingArr[0] !== ingArr[1] && ingArr[1] !== ingArr[2] && ingArr[0] !== ingArr[2];
+    const hasTailLv30 = ingArr.length >= 2 && (ingArr[1] === '美味尾巴' || (ingArr[1] && ingArr[1].indexOf('尾巴') !== -1) || (ingArr[1] && ingArr[1].indexOf('Tail') !== -1));
+
+    // 1. 呆呆獸家族 (核心戰略使命：解鎖美味尾巴)
+    if (isSlowpoke) {
+      if (hasTailLv30) {
+        return isEN
+          ? 'Strategic Unlock Specialist: Lv.30 unlocks "Slowpoke Tail", fulfilling the primary strategic mission of unlocking the highest-energy ingredient in Pokémon Sleep!'
+          : '戰略解鎖專門手：Lv.30 精準解鎖「美味尾巴」，圓滿達成全遊戲最高能量食材之戰略開圖使命！解鎖後可常駐作為後備庫存手。';
+      } else {
+        return isEN
+          ? 'Fatal Strategic Flaw: Lv.30 fails to roll "Slowpoke Tail", missing the essential strategic unlock value of the Slowpoke family.'
+          : '戰略定位失職：Lv.30 未能開出「美味尾巴」，喪失了呆呆獸家族核心戰略開圖價值，建議作為過渡替補或換糖。';
+      }
+    }
+
+    // 2. 樹果型專精分析
+    if (isBerry) {
+      if (hasBFS_active) {
+        if (hasHB_active || hasSpeedM_active || buff === 'speed' || debuff === 'ingredient') {
+          return isEN
+            ? 'Top-Tier Berry Cannon! "Berry Finding S" combined with excellent Speed boosts produces 3 berries per help cycle, serving as the ultimate Snorlax energy engine.'
+            : '天花板級樹果砲台！解鎖第一神技「樹果數量S（樹果S）」配合極致幫忙速度加成，單次幫忙穩定產出 3 顆樹果，卡比獸能量滾雪球的最強主力。';
+        } else {
+          return isEN
+            ? 'Core Berry Anchor: Unlocked God-tier "Berry Finding S", providing +1 berry per cycle and delivering strong, reliable island pushing power.'
+            : '畢業級樹果主力：已解鎖第一核心神技「樹果數量S（樹果S）」，單次產果直接 +1，具備極強的島嶼推分實力。';
+        }
+      } else if (hasBFS_future) {
+        return isEN
+          ? `High Potential Seed: "Berry Finding S" unlocks at Lv.${hasBFS_future.level}. Recommended to prioritize training to unlock this game-changing leap in berry output!`
+          : `未來潛力股：核心神技「樹果數量S（樹果S）」將於 Lv.${hasBFS_future.level} 解鎖，建議作為重點種子培育，解鎖後產能將迎來決定性質變！`;
+      } else {
+        if (hasHB_active && (hasSpeedM_active || buff === 'speed')) {
+          return isEN
+            ? 'High-Speed Auxiliary: Lacks "Berry Finding S", but extreme speed kit (Helping Bonus + Speed buffs) makes it a valuable team accelerator and transitional anchor.'
+            : '極限速攻流：雖缺乏「樹果數量S」，但憑藉「幫手獎勵 + 幫忙速度加成」大幅縮短全員幫忙間隔，適合作為優質團隊加速掛件與過渡主力。';
+        } else if (debuff === 'speed') {
+          return isEN
+            ? 'Severely Handicapped: Speed Down nature directly cripples help cycles. Combined with no BFS, output is too low for competitive island production.'
+            : '致命減速：性格減幫忙速度（-7.5%）拖慢節奏，且未持有「樹果數量S」，產能難以支撐島嶼進度。';
+        } else {
+          return isEN
+            ? 'Transitional Berry Specialist: Lacks core "Berry Finding S", capping output at 2 berries per help. Suitable as an early island transitional placeholder.'
+            : '過渡型樹果手：缺乏核心神技「樹果數量S」，單次僅能產出 2 顆樹果，產能上限受限，適合作為島嶼前期拓荒過渡。';
+        }
+      }
+    }
+
+    // 3. 技能型專精分析
+    if (isSkill) {
+      if (isHealer) {
+        if (debuff === 'skill') {
+          return isEN
+            ? 'Fatal Healer Flaw: Main Skill Trigger Down nature (-20%) cripples daily activation rate, failing to maintain team energy above the 80% speed threshold.'
+            : '致命硬傷：補師性格為減少主技能機率（-20%），全天期望回能次數嚴重不足，難以維持全隊 80% 以上極限活力運轉。';
+        }
+        if (hasSkillM_active && (buff === 'skill' || hasSpeedM_active || hasHB_active)) {
+          const extraNote = hasBFS_active ? (isEN ? ' (Note: BFS accelerates bag overflow; clear inventory before sleep to prevent blocked procs).' : '（注意：持有樹果S易過早滿包，睡前務必清空背包避免阻斷技能判定）。') : '';
+          return isEN
+            ? `Top-tier Team Healer Engine! High trigger rate guarantees 4-6 procs daily, locking the team at high energy for 2.2x maximum helping speed.${extraNote}`
+            : `頂尖隊伍回能引擎！雙重技能發動機率加成，全天期望觸發 4~6 次以上，能牢牢鎖定全隊高活力上限，享受 2.2 倍極限幫忙速！${extraNote}`;
+        }
+        if (!hasSkillM_active && !hasSkillS_active && buff !== 'skill') {
+          if (hasSkillM_future) {
+            return isEN
+              ? `Promising Healer: Core "Skill Trigger M" unlocks at Lv.${hasSkillM_future.level}. Prioritize leveling to establish reliable team energy coverage.`
+              : `潛力補師：關鍵「技能機率提升M」將於 Lv.${hasSkillM_future.level} 解鎖，建議優先培育升級以構築全隊回能防線。`;
+          }
+          return isEN
+            ? 'Insufficient Trigger Rate: Lacks active Skill Trigger subskills or nature boost; healing frequency is too low to sustain all-day team vitality.'
+            : '發動期望不足：缺乏主技能機率提升副技能或性格加成，發動頻率偏低，無法勝任穩定維持全隊活力的隊伍核心基石。';
+        }
+        return isEN
+          ? 'Qualified Team Healer: Decent trigger rate for stable energy support, helping the team maintain high daytime work efficiency.'
+          : '及格團隊補師：具備穩健的發動頻率，能提供基礎活力續航，協助隊伍維持日間高水準工作效率。';
+      }
+
+      if (isPotExpander) {
+        if (hasSkillM_active || buff === 'skill') {
+          return isEN
+            ? 'Premier Pot Expander: High main skill trigger rate expands pot size rapidly, tailor-made for breaking cooking limits on weekends!'
+            : '極品戰術擴鍋手：具備優秀的主技能發動加成，能高頻擴充鍋子容量，專為週末衝擊頂級極限大菜（突破鍋子上限）而生！';
+        }
+        return isEN
+          ? 'Tactical Pot Specialist: Main skill "Cooking Power Up S" expands pot capacity for preparing high-tier recipes during event weeks.'
+          : '戰術擴鍋專門：主技能「料理強化S」能擴充鍋容量，適合週末囤積鍋空間以衝擊極限大型食譜。';
+      }
+
+      if (isHelperBoost) {
+        return isEN
+          ? 'Mono-Type Team Amplifier: "Helper Boost" triggers instant team-wide production cycles. Skill trigger subskills and Main Skill Seeds are primary priorities.'
+          : '同屬性純色隊終極放大器：主技能「幫手加速」單次發動可引爆全隊即時產出，技能發動機率與主技能種子投入為核心指標。';
+      }
+
+      if (isChargeStrength) {
+        if (hasSkillM_active || buff === 'skill') {
+          return isEN
+            ? 'High-Yield Energy Cannon: Leverages frequent "Charge Strength" activations for heavy single-target Snorlax point generation.'
+            : '強力單兵能量砲台：倚賴「能量填充」提供高額直傷分數，發動機率加成顯著，具備極佳的單兵獨立產分戰鬥力。';
+        }
+        return isEN
+          ? 'Charge Strength Specialist: Provides steady direct Snorlax energy, depending primarily on skill trigger rate and main skill level.'
+          : '單兵能量手：主技能為直接提升卡比獸能量，依賴主技能等級與發動頻率支撐產能。';
+      }
+
+      if (debuff === 'skill') {
+        return isEN
+          ? 'Fatal Specialty Flaw: Nature reduces Main Skill Trigger (-20%), severely crippling core activation frequency.'
+          : '致命缺陷：性格減少主技能發動機率（-20%），嚴重閹割核心發動頻率，不符技能型定位。';
+      }
+      if (hasSkillM_active || buff === 'skill') {
+        if (hasSkillM_future) {
+          return isEN
+            ? `Specialized Skill Anchor: Strong active skill trigger frequency, with further performance leaps upon reaching Lv.${hasSkillM_future.level}.`
+            : `專精技能主力：當前技能發動表現活躍，且後續 Lv.${hasSkillM_future.level} 仍有技能提升空間，戰術運轉流暢。`;
+        }
+        return isEN
+          ? 'Specialized Skill Anchor: Excellent skill trigger bonuses ensure high activation frequency for stable specialty performance.'
+          : '專精技能主力：優質的技能機率加成確保了穩定的觸發頻率，能充分發揮技能專長優勢。';
+      }
+      if (hasSkillM_future) {
+        return isEN
+          ? `Future Skill Prospect: Core "Skill Trigger M" unlocks at Lv.${hasSkillM_future.level}. Prioritize leveling to unleash true skill potential.`
+          : `潛力技能手：關鍵「技能機率提升M」將於 Lv.${hasSkillM_future.level} 解鎖，建議優先培育升級以釋放核心潛力。`;
+      }
+      return isEN
+        ? 'Standard Skill Specialist: Baseline skill trigger rate; suitable as a situational support or transitional pick.'
+        : '常規技能手：技能觸發率處於基準線，適合作為特定情境替補或過渡成員。';
+    }
+
+    // 4. 食材型專精分析 (嚴禁混入技能型要求)
+    if (isIng) {
+      if (debuff === 'ingredient') {
+        return isEN
+          ? 'Fatal Specialty Flaw: Nature reduces Ingredient Finding (-20%), causing frequent berry dilution and unstable cooking supply. Not recommended for major investment.'
+          : '致命短板：性格減少食材發現率（-20%），產出頻繁被樹果稀釋，極難穩定供應主力食譜所需食材，不建議投入過多資源。';
+      }
+
+      let ingSpreadDesc = '';
+      if (isAAA) {
+        ingSpreadDesc = isEN ? ' Features pure mono-ingredient (AAA) spread for maximum focused output.' : '搭配極品純色 AAA 食材配置，特定食材產量高度集中。';
+      } else if (isABB) {
+        ingSpreadDesc = isEN ? ' Features strong ABB dual spread, excelling in mid-to-late advanced ingredient yield.' : '搭配強勢 ABB 雙色配置，二階與三階食材量產能力卓越。';
+      } else if (isABC) {
+        ingSpreadDesc = isEN ? ' Split ABC spread dilutes single ingredient yield.' : '三色 ABC 雜色配置略微稀釋單項食材產量。';
+      }
+
+      if (hasIngM_active || buff === 'ingredient') {
+        if (hasBFS_active) {
+          if (hasInv_active) {
+            return isEN
+              ? `Top Hybrid Specialist: Active "Ingredient Finder M" backed by BFS and Inventory Up provides exceptional food yields with massive bonus berries.`
+              : `極品雙修食材手！食材機率大幅提升搭配「樹果數量S」與「持有上限提升」，食材爆發力極強且兼顧頂級樹果副產能！`;
+          } else {
+            return isEN
+              ? `High-Burst Hybrid: Excellent ingredient rate and BFS provide huge dual yield, but inventory caps fast overnight—collect regularly.`
+              : `高爆發雙修型：食材機率優異並持有「樹果數量S」，但缺乏持有上限容易在睡眠期間提早滿包阻斷產料，建議勤勞收成。`;
+          }
+        }
+
+        return isEN
+          ? `Premier Kitchen Anchor! High ingredient finding rate ensures abundant cooking supply for top recipes.${ingSpreadDesc}`
+          : `頂級食材供應中樞！高額食材發現率確保了穩定龐大的料理供應，做大菜的最佳後勤基石。${ingSpreadDesc}`;
+      }
+
+      if (!hasIngM_active && !hasIngS_active && buff !== 'ingredient') {
+        if (hasIngM_future) {
+          return isEN
+            ? `Future Ingredient Prospect: Core "Ingredient Finder M" unlocks at Lv.${hasIngM_future.level}. Prioritize leveling to establish reliable kitchen supply.`
+            : `潛力食材手：關鍵「食材機率提升M」將於 Lv.${hasIngM_future.level} 解鎖，建議優先培育升級以構築主力供貨能力。`;
+        }
+        if (hasSpeedM_active || buff === 'speed' || hasHB_active) {
+          return isEN
+            ? 'Speed-Driven Producer: Lacks direct ingredient finder boost, but high helping speed compensates to provide acceptable general output.'
+            : '幫速彌補型：雖缺乏直接食材機率提升，但憑藉優良的幫忙速度維持了合格的基礎供貨，適合作為實用過渡。';
+        }
+        return isEN
+          ? 'Lacks Ingredient Output: Missing ingredient finder and speed boosts; yields are insufficient to sustain demanding high-tier dishes.'
+          : '缺乏食材爆發力：前中期未持有食材機率加成或顯著幫速，產量難以滿足高階大型料理（如大菜咖哩/沙拉）的消耗需求。';
+      }
+
+      return isEN
+        ? `Solid Ingredient Provider: Steady supply for regular meals, serving reliably in daily cooking rotations.${ingSpreadDesc}`
+        : `穩健食材供應手：供貨節奏穩定，足以勝任日常食譜輪替與食材儲備。${ingSpreadDesc}`;
+    }
+
+    return isEN
+      ? `${currentGrade} Grade (${currentScore} pts) - Reliable team member with balanced baseline performance.`
+      : `${currentGrade} 級（${currentScore}分）- 基礎素質均衡，適合作為隊伍實用成員。`;
+  }
+
   /* ─── 對外入口：雙軌評級與里程碑評定 (Dual-Track Appraisal API) ─────── */
   function evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel) {
     if (!pkmData) return null;
@@ -1015,6 +1297,8 @@
       currentEval.diagnostics.milestones = milestones;
     }
 
+    const intelligentSummary = generateIntelligentSummary(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, currentEval);
+
     return Object.assign({}, currentEval, {
       current: currentEval,
       potential: potentialEval,
@@ -1023,7 +1307,9 @@
       potentialScore: potentialEval ? potentialEval.compositeScore : currentEval.compositeScore,
       potentialGrade: potentialEval ? potentialEval.grade : currentEval.grade,
       milestones: milestones,
-      milestoneNote: milestones.length > 0 ? milestones[0].text : ''
+      milestoneNote: milestones.length > 0 ? milestones[0].text : '',
+      summaryNote: intelligentSummary,
+      intelligentSummary: intelligentSummary
     });
   }
 
@@ -1196,18 +1482,34 @@
     const displayName = isEN ? (pkmData.name_en || pkmData.name_cn) : (pkmData.name_cn || pkmData.name_en);
     const natDisplayName = window.I18N ? window.I18N.getNatureName(natureName) : natureName;
 
-    // 性格修正對象解析 (上升/下降實際影響，無影響則顯示無影響提示)
-    const natureObj = NATURE_DATA.find(n => n.name === natureName || n.name_en === natureName);
+    // 遊戲同款性格展示排版 (In-Game Style Nature Display)
+    const natureObj = NATURE_DATA.find(function(n) { return n.name === natureName || n.name_en === natureName; });
     let natureEffectHtml = '';
     if (natureObj && natureObj.buff && natureObj.buff !== '無增減') {
-      const buffLabel = isEN ? (natureObj.buff_en || natureObj.buff) : natureObj.buff;
-      const debuffLabel = isEN ? (natureObj.debuff_en || natureObj.debuff) : natureObj.debuff;
+      const rawBuff = isEN ? (natureObj.buff_en || natureObj.buff) : natureObj.buff;
+      const rawDebuff = isEN ? (natureObj.debuff_en || natureObj.debuff) : natureObj.debuff;
+      const buffLabel = rawBuff.replace(/[▲▼]/g, '').trim();
+      const debuffLabel = rawDebuff.replace(/[▲▼]/g, '').trim();
       natureEffectHtml = `
-        <span class="nature-buff" style="color:#38bdf8;font-size:12px;font-weight:700;">▲▲ ${buffLabel}</span>
-        <span class="nature-debuff" style="color:#f87171;font-size:12px;font-weight:700;">▼▼ ${debuffLabel}</span>
+        <div class="nature-effects-group">
+          <div class="nature-effect-row nature-buff-row">
+            <span class="nature-effect-label">${escapeHtml(buffLabel)}</span>
+            <span class="nature-arrows-up">▲▲</span>
+          </div>
+          <div class="nature-effect-row nature-debuff-row">
+            <span class="nature-effect-label">${escapeHtml(debuffLabel)}</span>
+            <span class="nature-arrows-down">▼▼</span>
+          </div>
+        </div>
       `;
     } else {
-      natureEffectHtml = `<span class="nature-neutral" style="color:#94a3b8;font-size:12px;font-weight:600;">(${isEN ? 'No Effect' : '無影響'})</span>`;
+      natureEffectHtml = `
+        <div class="nature-effects-group">
+          <div class="nature-effect-neutral">
+            ${isEN ? 'Has no distinctive personality traits' : '沒有性格帶來的特色（無影響）'}
+          </div>
+        </div>
+      `;
     }
 
     const berry = (typeof window.getPokemonBerry === 'function') 
@@ -1239,13 +1541,8 @@
     }
 
     let summaryNote = pkmOrBoxItem.summaryNote || '';
-    if (!summaryNote) {
-      if (evaluation.milestones && evaluation.milestones.length > 0) {
-        summaryNote = evaluation.milestones[0].text;
-      } else {
-        const cur = evaluation.current || evaluation;
-        summaryNote = isEN ? `${cur.grade} Grade - ${cur.gradeTitle}` : `${cur.grade} 級評價 - ${cur.gradeTitle}`;
-      }
+    if (!summaryNote || summaryNote.includes('質變躍升') || summaryNote.includes('建議優先升至') || summaryNote.includes('未達')) {
+      summaryNote = generateIntelligentSummary(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, evaluation);
     }
 
     modal.innerHTML = `
@@ -1305,10 +1602,13 @@
                 <span class="appraisal-spec-tag ${specClass}" style="display:inline-flex;align-items:center;background:transparent;border:none;padding:0;font-size:13.5px;font-weight:700;">${specTypeLabel}</span>
               </div>
 
-              <!-- 性格與修正 (無多餘標題，同一行展示名稱與上升/下降影響，無影響則顯示無影響提示) -->
-              <div class="appraisal-config-section" style="margin-top:10px;">
-                <div class="appraisal-nature-badge" style="font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 12px;flex-wrap:wrap;">
-                  <span class="font-bold text-white">${natDisplayName}</span>
+              <!-- 遊戲同款性格展示 (膠囊外框 + 性格標籤 + 右側上下條目，純淨無外框容器) -->
+              <div class="appraisal-config-section" style="margin-top:12px;display:flex;justify-content:center;">
+                <div class="appraisal-nature-game-card">
+                  <div class="nature-pill-capsule">
+                    <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
+                    <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
+                  </div>
                   ${natureEffectHtml}
                 </div>
               </div>
@@ -1784,6 +2084,8 @@
     evaluateSingle: evaluateSingle,
     calculateMilestoneProjections: calculateMilestoneProjections,
     evaluatePokemon: evaluatePokemon,
+    generateSummary: generateIntelligentSummary,
+    generateIntelligentSummary: generateIntelligentSummary,
     getRemainingEvolutions: getRemainingEvolutions,
     getRibbonBonus: getRibbonBonus,
     renderRadarChartSVG: renderRadarChartSVG,
