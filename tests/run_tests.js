@@ -8475,6 +8475,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     const rightColIdx = modalHtml.indexOf('appraisal-right-col');
     const summaryBarIdx = modalHtml.indexOf('appraisal-summary-bar');
     assert(summaryBarIdx > rightColIdx, 'appraisal-summary-bar must be located inside appraisal-right-col at the bottom');
+    assert(!modalHtml.includes('appraisal-milestones-card'), 'Appraisal modal must NOT contain appraisal-milestones-card');
+    assert(modalHtml.includes('class="radar-svg-chart"'), 'Appraisal modal must contain radar-svg-chart');
+    assert(modalHtml.includes('height="100%"'), 'Appraisal radar SVG must use 100% height');
   });
 
   test('Tier 4 - Real-World Application Scenarios', 'Box Dynamic Visibility & Official Subskills Lv.70/80 Standards Verification', () => {

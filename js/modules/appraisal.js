@@ -1060,13 +1060,15 @@
   /* ─── 原生 SVG 六維雷達圖生成器 (完美對稱正規六邊形 + 頂點直接標註分數) ───────────────────────── */
   function renderRadarChartSVG(scores, width, height) {
     width = width || 340;
-    height = height || 320;
+    height = height || 240;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isCompact = width <= 250;
     const SIX_DIM_META = getSixDimMeta(isEN);
     const cx = width / 2;
     const cy = (height / 2) + 2;
-    const r = Math.min(width, height) / 2 - (isCompact ? 34 : 58);
+    const marginY = isCompact ? 22 : 30;
+    const marginX = isCompact ? 36 : 52;
+    const r = Math.min((width - marginX * 2) / 2, (height - marginY * 2) / 2);
 
     const scoreKeys = ['berry', 'ingredient', 'skill', 'speed', 'growth', 'roi'];
     const angles = SIX_DIM_META.map(function (m) { return m.angle; });
@@ -1145,7 +1147,7 @@
              '</text>';
     }).join('');
 
-    return '<svg viewBox="0 0 ' + width + ' ' + height + '" class="radar-svg-chart" width="100%" height="auto" style="max-width:' + width + 'px; display:block; margin:0 auto;" xmlns="http://www.w3.org/2000/svg">' +
+    return '<svg viewBox="0 0 ' + width + ' ' + height + '" class="radar-svg-chart" width="100%" height="100%" style="display:block; margin:0 auto;" xmlns="http://www.w3.org/2000/svg">' +
            '<defs><linearGradient id="radarFillGradient" x1="0%" y1="0%" x2="100%" y2="100%">' +
            '<stop offset="0%" stop-color="rgba(56, 189, 248, 0.45)" />' +
            '<stop offset="100%" stop-color="rgba(234, 179, 8, 0.35)" />' +
@@ -1189,7 +1191,7 @@
       document.body.appendChild(modal);
     }
 
-    const radarSVG = renderRadarChartSVG(evaluation.scores, 240, 210);
+    const radarSVG = renderRadarChartSVG(evaluation.scores, 340, 240);
     const SIX_DIM_META = getSixDimMeta(isEN);
     const displayName = isEN ? (pkmData.name_en || pkmData.name_cn) : (pkmData.name_cn || pkmData.name_en);
     const natDisplayName = window.I18N ? window.I18N.getNatureName(natureName) : natureName;
@@ -1342,17 +1344,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- 升級里程碑質變預測 (若有) -->
-            ${evaluation.milestones && evaluation.milestones.length > 0 ? `
-              <div class="appraisal-milestones-card">
-                <div style="font-size:11px;font-weight:700;color:#facc15;margin-bottom:4px;display:flex;align-items:center;gap:4px;">
-                  <span>[^]</span>
-                  <span>${isEN ? 'Milestone Projections' : '升級里程碑質變預測'}</span>
-                </div>
-                ${evaluation.milestones.map(m => `<div style="font-size:11px;color:#e2e8f0;line-height:1.4;margin-bottom:3px;">${escapeHtml(m.text)}</div>`).join('')}
-              </div>
-            ` : ''}
           </div>
 
           <!-- 右欄：雷達圖 + 六維量表 + 深度點評 + 智能簡評 (精簡排版，純淨無外框容器) -->
