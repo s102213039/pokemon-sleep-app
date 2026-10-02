@@ -9574,15 +9574,33 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
 
     // 1. Static assertion: Edit mode hides radar chart and commentary below
     assert(appraisalJs.includes("${!labState.editMode ? `\n            <!-- 六邊形能力圖"), 'Radar chart and comments must be strictly gated by !labState.editMode');
-    assert(appraisalJs.includes("class=\"btn-lab-save btn-lab-save-header\""), 'Save button must be rendered in header during edit mode');
-    assert(appraisalJs.includes("class=\"btn-lab-cancel btn-lab-cancel-header\""), 'Cancel button must be rendered in header during edit mode');
+    assert(appraisalJs.includes("btn-lab-save-header"), 'Save button must be rendered in header during edit mode');
+    assert(appraisalJs.includes("btn-lab-cancel-header"), 'Cancel button must be rendered in header during edit mode');
     assert(appraisalJs.includes("window.AppraisalLab.onSkillLevelChange"), 'AppraisalLab must support onSkillLevelChange');
     assert(appraisalJs.includes("window.AppraisalLab.clearAllSubskills"), 'AppraisalLab must support clearAllSubskills');
 
     // 2. Runtime execution: Browse mode vs Edit mode state transition
-    const mockContainer = { innerHTML: '', id: 'appraisal-lab-container' };
+    const customizedElements = [];
+    const mockContainer = {
+      innerHTML: '',
+      id: 'appraisal-lab-container',
+      querySelector: (sel) => {
+        if (sel.startsWith('#')) {
+          const id = sel.substring(1);
+          if (mockContainer.innerHTML.includes(`id="${id}"`)) {
+            return { id, parentNode: mockContainer, _customized: false, style: {}, classList: { contains: () => false }, dispatchEvent: () => {} };
+          }
+        }
+        return null;
+      }
+    };
     const ctx = {
-      window: {},
+      window: {
+        setupCustomSelect: (el) => {
+          el._customized = true;
+          customizedElements.push(el);
+        }
+      },
       document: {
         querySelector: () => null,
         getElementById: (id) => (id === 'appraisal-lab-container' ? mockContainer : null),
@@ -9595,7 +9613,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
       Math: Math,
       String: String
     };
-    ctx.window = ctx;
+    ctx.window.window = ctx.window;
+    ctx.window.document = ctx.document;
     ctx.window.allPokemons = [
       { id: '3', name_cn: '妙蛙花', specialty: '食材', type: '草', main_skill: '食材獲取S', ingredients: [{ name: '特選蘋果', count: 2 }, { name: '暖暖薑', count: 1 }] }
     ];
@@ -9637,15 +9656,25 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(mockContainer.innerHTML.includes('lab-edit-header-title'), 'Edit mode must render header title');
     assert(!mockContainer.innerHTML.includes('lab-edit-bottom-actions'), 'Edit mode must strictly omit bottom action buttons');
 
-    // Header layout ordering: Save on left, Title in middle, Cancel on right
-    const savePos = mockContainer.innerHTML.indexOf('btn-lab-save-header');
-    const titlePos = mockContainer.innerHTML.indexOf('lab-edit-header-title');
+    // Header layout ordering: Cancel on left, Title in middle, Confirm/Save on right (matching box-modal-header)
     const cancelPos = mockContainer.innerHTML.indexOf('btn-lab-cancel-header');
-    assert(savePos < titlePos && titlePos < cancelPos, 'Edit mode header must place Save on left, Title in center, Cancel on right');
+    const titlePos = mockContainer.innerHTML.indexOf('lab-edit-header-title');
+    const savePos = mockContainer.innerHTML.indexOf('btn-lab-save-header');
+    assert(cancelPos < titlePos && titlePos < savePos, 'Edit mode header must place Cancel on left, Title in center, Confirm/Save on right');
 
+    // Form layout: 2-column structure matching box-edit-modal
+    assert(mockContainer.innerHTML.includes('box-pkm-level-row'), 'Edit mode must render 2-col box-pkm-level-row for Name and Level');
     assert(mockContainer.innerHTML.includes('id="lab-nickname-input"'), 'Edit mode must render nickname input');
+    assert(mockContainer.innerHTML.includes('id="lab-nature-select"'), 'Edit mode must render nature select');
+    assert(mockContainer.innerHTML.includes('id="lab-ribbon-select"'), 'Edit mode must render ribbon select');
+    assert(mockContainer.innerHTML.includes('id="lab-mainskill-select"'), 'Edit mode must render main skill select');
     assert(mockContainer.innerHTML.includes('class="box-subskill-palette"'), 'Edit mode must render subskill palette');
     assert(mockContainer.innerHTML.includes('class="box-subskill-slots-row"'), 'Edit mode must render subskill slots row');
+
+    // Custom select initialization assertions
+    assert(customizedElements.some(el => el.id === 'lab-nature-select'), 'Nature select must be initialized with setupCustomSelect');
+    assert(customizedElements.some(el => el.id === 'lab-ribbon-select'), 'Ribbon select must be initialized with setupCustomSelect');
+    assert(customizedElements.some(el => el.id === 'lab-mainskill-select'), 'Main skill select must be initialized with setupCustomSelect');
 
     // Test subskill slot picking and chip selection
     ctx.window.AppraisalLab.selectSubskillSlot(2);
