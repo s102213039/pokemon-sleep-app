@@ -9662,15 +9662,17 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     const savePos = mockContainer.innerHTML.indexOf('btn-lab-save-header');
     assert(cancelPos < titlePos && titlePos < savePos, 'Edit mode header must place Cancel on left, Title in center, Confirm/Save on right');
 
-    // Form layout: 2-column structure matching box-edit-modal
-    assert(mockContainer.innerHTML.includes('box-pkm-level-row'), 'Edit mode must render 2-col box-pkm-level-row for Name and Level');
+    // Form layout: Fixed Pokemon Identity, Level+MainSkill row, 3+2 subskills
+    assert(mockContainer.innerHTML.includes('box-pkm-identity-card'), 'Edit mode must render read-only box-pkm-identity-card');
+    assert(!mockContainer.innerHTML.includes('id="lab-poke-search"'), 'Edit mode must strictly disallow modifying Pokemon species');
+    assert(mockContainer.innerHTML.includes('box-level-mainskill-row'), 'Edit mode must render Level and Main Skill in one row');
     assert(mockContainer.innerHTML.includes('box-nickname-ribbon-row'), 'Edit mode must render box-nickname-ribbon-row for Nickname and Ribbon');
     assert(mockContainer.innerHTML.includes('id="lab-nickname-input"'), 'Edit mode must render nickname input');
     assert(mockContainer.innerHTML.includes('id="lab-nature-select"'), 'Edit mode must render nature select');
     assert(mockContainer.innerHTML.includes('id="lab-ribbon-select"'), 'Edit mode must render ribbon select');
     assert(mockContainer.innerHTML.includes('id="lab-mainskill-select"'), 'Edit mode must render main skill select');
     assert(mockContainer.innerHTML.includes('class="box-subskill-palette"'), 'Edit mode must render subskill palette');
-    assert(mockContainer.innerHTML.includes('class="box-subskill-slots-row"'), 'Edit mode must render subskill slots row');
+    assert(mockContainer.innerHTML.includes('box-subskill-slots-3plus2'), 'Edit mode must render subskill slots in 3+2 layout');
 
     // Verify Row 2 Ribbon before Row 3 Nature and concise text without hours
     const ribbonPos = mockContainer.innerHTML.indexOf('id="lab-ribbon-select"');

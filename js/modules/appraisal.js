@@ -2336,6 +2336,17 @@
     if (labState.selectedBoxUid) {
       labState.isCustomized = true;
     }
+    const nickEl = document.getElementById('lab-pkm-identity-nick');
+    if (nickEl) {
+      const trimmed = (val || '').trim();
+      if (trimmed) {
+        nickEl.textContent = `(${trimmed})`;
+        nickEl.style.display = '';
+      } else {
+        nickEl.textContent = '';
+        nickEl.style.display = 'none';
+      }
+    }
   }
 
   function onIngredientChange(slotIdx, val) {
@@ -2504,6 +2515,7 @@
     const berryIconHtml = berryObj && berryObj.icon 
       ? '<img src="' + berryObj.icon + '" alt="' + escapeHtml(berryObj.name || '') + '" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;" loading="lazy">' 
       : '';
+    const berryName = berryObj && berryObj.name ? (window.I18N ? window.I18N.getBerryName(berryObj.name) : berryObj.name) : '';
     const specialtyIconHtml = (window.I18N && window.I18N.getSpecialtyIconHtml) 
       ? window.I18N.getSpecialtyIconHtml(currentPkm.specialty, 16) 
       : '<span class="box-spec-tag ' + specClass + '" style="font-size:11px;padding:1px 6px;">' + specName + '</span>';
@@ -2825,33 +2837,50 @@
             <!-- 編輯表單：完全比照手動新增寶可夢 (box-modal-form) 的 6 大標準配置區 -->
             <form class="box-modal-form lab-edit-form" onsubmit="event.preventDefault(); window.AppraisalLab.saveEditMode();">
               <div class="box-form-grid">
-                <!-- 1. 頂部雙欄：寶可夢名稱 + 等級 -->
-                <div class="box-form-row-2col box-pkm-level-row box-full-width">
-                  <!-- 寶可夢名稱 (Combobox) -->
-                  <div class="box-form-group flex-name">
-                    <label class="box-form-label" for="lab-poke-search">${isEN ? 'Pokémon Name' : '寶可夢名稱'} <span style="color:#ef4444;">*</span></label>
-                    <div class="box-pkm-select-row">
-                      <div class="box-pkm-avatar-slot" id="lab-poke-avatar-slot">
-                        <img id="lab-poke-selected-avatar" class="box-pkm-selected-avatar" src="${escapeHtml(currentPkm.icon_url || '')}" alt="${escapeHtml(displayName)}">
-                      </div>
-                      <div class="box-pkm-combobox" id="lab-pkm-combobox">
-                        <input type="text" id="lab-poke-search" class="box-form-input box-pkm-search-input" value="${escapeHtml(displayName)}" placeholder="${isEN ? 'Search Pokémon...' : '中文 / 英文 / 編號'}" autocomplete="off" required>
-                        <button type="button" id="lab-pkm-dropdown-toggle" class="box-pkm-toggle-btn" aria-label="${isEN ? 'Toggle Pokémon list' : '展開寶可夢列表'}">
-                          <svg viewBox="0 0 12 8" width="12" height="8"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M1 1.5L6 6.5L11 1.5"/></svg>
-                        </button>
-                        <div id="lab-pkm-dropdown" class="box-pkm-dropdown" style="display:none;" role="listbox"></div>
-                      </div>
-                    </div>
+                <!-- 1. 固定寶可夢資訊 (純展示不可修改，帶入頭像、名稱、自訂暱稱與屬性) -->
+                <div class="box-pkm-identity-card box-full-width">
+                  <div class="box-pkm-identity-avatar-slot">
+                    <img class="box-pkm-identity-avatar" src="${escapeHtml(currentPkm.icon_url || '')}" alt="${escapeHtml(displayName)}">
                   </div>
-
-                  <!-- 等級 -->
-                  <div class="box-form-group flex-level">
-                    <label class="box-form-label" for="lab-level-num-input">${isEN ? 'Level' : '等級'} <span style="color:#ef4444;">*</span></label>
-                    <input type="number" id="lab-level-num-input" class="box-form-input" min="1" max="100" value="${labState.level}" placeholder="1~100" onchange="window.AppraisalLab.onLevelChange(this.value, false)" required>
+                  <div class="box-pkm-identity-info">
+                    <div class="box-pkm-identity-title">
+                      <span class="box-pkm-identity-name">${escapeHtml(displayName)}</span>
+                      <span class="box-pkm-identity-nick" id="lab-pkm-identity-nick" style="${labState.nickname ? '' : 'display:none;'}">(${escapeHtml(labState.nickname)})</span>
+                    </div>
+                    <div class="box-pkm-identity-meta">
+                      <span>#${currentPkm.formatted_no || currentPkm.id}</span>
+                      <span>·</span>
+                      <span>${specName}</span>
+                      <span>·</span>
+                      <span>${window.I18N ? window.I18N.getTypeName(currentPkm.type) : currentPkm.type}${isEN ? ' Type' : '屬性'}</span>
+                      ${berryName ? `<span>·</span><span>${berryName}</span>` : ''}
+                    </div>
                   </div>
                 </div>
 
-                <!-- 2. 雙欄：自訂暱稱 + 睡飽飽獎章 (自訂下拉元件 setupCustomSelect) -->
+                <!-- 2. 等級 + 主技能 (主技能置於等級後面，等級輸入框縮小至最高100等) -->
+                <div class="box-form-row-2col box-level-mainskill-row box-full-width">
+                  <!-- 等級 -->
+                  <div class="box-form-group flex-level-compact">
+                    <label class="box-form-label" for="lab-level-num-input">${isEN ? 'Level' : '等級'} <span style="color:#ef4444;">*</span></label>
+                    <input type="number" id="lab-level-num-input" class="box-form-input lab-level-compact-input" min="1" max="100" value="${labState.level}" placeholder="100" onchange="window.AppraisalLab.onLevelChange(this.value, false)" required>
+                  </div>
+
+                  <!-- 主技能：展示技能名稱與等級調整選單 (自訂下拉元件 setupCustomSelect) -->
+                  <div class="box-form-group flex-mainskill-compact">
+                    <label class="box-form-label" for="lab-mainskill-select">${isEN ? 'Main Skill' : '主技能'} <span style="color:#ef4444;">*</span></label>
+                    <div class="box-mainskill-inline-wrap">
+                      <span class="box-mainskill-name-badge" title="${escapeHtml(mainSkillName)}">${escapeHtml(mainSkillName)}</span>
+                      <select id="lab-mainskill-select" class="box-form-select box-mainskill-select" onchange="window.AppraisalLab.onSkillLevelChange(this.value)">
+                        ${Array.from({ length: maxSkillLvl }, (_, i) => i + 1).map(lvl => `
+                          <option value="${lvl}" ${skillLvl === lvl ? 'selected' : ''}>Lv. ${lvl}</option>
+                        `).join('')}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. 雙欄：自訂暱稱 + 睡飽飽獎章 (自訂下拉元件 setupCustomSelect) -->
                 <div class="box-form-row-2col box-nickname-ribbon-row box-full-width">
                   <!-- 自訂暱稱 -->
                   <div class="box-form-group flex-nickname">
@@ -2872,7 +2901,7 @@
                   </div>
                 </div>
 
-                <!-- 3. 單欄全寬：性格 (自訂下拉元件 setupCustomSelect) -->
+                <!-- 4. 單欄全寬：性格 (自訂下拉元件 setupCustomSelect) -->
                 <div class="box-form-group box-full-width flex-nature">
                   <label class="box-form-label" for="lab-nature-select">${isEN ? 'Nature' : '性格'} <span style="color:#ef4444;">*</span></label>
                   <select id="lab-nature-select" class="box-form-select" required onchange="window.AppraisalLab.onNatureChange(this.value)">
@@ -2883,19 +2912,6 @@
                       return '<option value="' + n.name + '" ' + (n.name === labState.nature ? 'selected' : '') + '>' + nName + ' (' + buffLabel + (debuffLabel ? ' / ' + debuffLabel : '') + ')</option>';
                     }).join('')}
                   </select>
-                </div>
-
-                <!-- 4. 主技能：展示技能名稱與等級調整選單 (自訂下拉元件 setupCustomSelect) -->
-                <div class="box-form-group box-full-width box-form-row-inline box-mainskill-row">
-                  <label class="box-form-label box-form-inline-label" for="lab-mainskill-select">${isEN ? 'Main Skill' : '主技能資訊'}</label>
-                  <div class="box-form-inline-control box-mainskill-control">
-                    <span class="box-mainskill-name-badge" title="${escapeHtml(mainSkillName)}">${escapeHtml(mainSkillName)}</span>
-                    <select id="lab-mainskill-select" class="box-form-select box-mainskill-select" onchange="window.AppraisalLab.onSkillLevelChange(this.value)">
-                      ${Array.from({ length: maxSkillLvl }, (_, i) => i + 1).map(lvl => `
-                        <option value="${lvl}" ${skillLvl === lvl ? 'selected' : ''}>Lv. ${lvl}</option>
-                      `).join('')}
-                    </select>
-                  </div>
                 </div>
 
                 <!-- 5. 食材組合：標籤與純圖標選項同一行展示 -->
@@ -2929,15 +2945,15 @@
                   </div>
                 </div>
 
-                <!-- 6. 5 格副技能配置：單行 5 階插槽 + 平鋪副技能選擇盤 -->
+                <!-- 6. 5 格副技能配置：3+2 階插槽 + 平鋪副技能選擇盤 -->
                 <div class="box-form-group box-full-width">
                   <div style="display:flex;justify-content:space-between;align-items:center;">
                     <label class="box-form-label">${isEN ? 'Sub-Skills' : '副技能組合'}</label>
                     <button type="button" class="box-subskill-clear-btn" onclick="window.AppraisalLab.clearAllSubskills()" title="${isEN ? 'Clear All Subskills' : '清空全部副技能'}">✕ ${isEN ? 'Clear All' : '清空全部'}</button>
                   </div>
 
-                  <!-- 單行 5 階插槽列 -->
-                  <div class="box-subskill-slots-row" id="lab-subskill-slots-row">
+                  <!-- 3+2 階插槽列 -->
+                  <div class="box-subskill-slots-row box-subskill-slots-3plus2" id="lab-subskill-slots-row">
                     ${[
                       { slot: 1, lv: 10 },
                       { slot: 2, lv: 25 },

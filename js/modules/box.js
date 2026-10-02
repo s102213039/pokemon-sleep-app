@@ -1760,7 +1760,7 @@
     const toggleBtn = document.getElementById('box-pkm-dropdown-toggle');
     if (!searchInput || !nameHidden || !dropdown) return;
 
-    const CHEVRON_ICON = `<svg viewBox="0 0 12 8" width="12" height="8"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M1 1.5L6 6.5L11 1.5"/></svg>`;
+    const CHEVRON_ICON = `<svg viewBox="0 0 12 8" width="8" height="5"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M1 1.5L6 6.5L11 1.5"/></svg>`;
     const CLEAR_ICON = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
 
     function syncToggleBtnIcon() {
