@@ -9336,8 +9336,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(appraisalJs.includes('function getSkillTier(sName)'), 'appraisal.js must define getSkillTier');
 
     // 2. Cache busters bumped to 20261002_07 or newer
-    assert(indexHtml.match(/js\/modules\/appraisal\.js\?v=20261002_0[78]/), 'index.html must use v=20261002_07 or newer');
-    assert(appIndexHtml.match(/js\/modules\/appraisal\.js\?v=20261002_0[78]/), 'app/index.html must use v=20261002_07 or newer');
+    assert(indexHtml.match(/js\/modules\/appraisal\.js\?v=20261002_(?:0[7-9]|\d{2})/), 'index.html must use v=20261002_07 or newer');
+    assert(appIndexHtml.match(/js\/modules\/appraisal\.js\?v=20261002_(?:0[7-9]|\d{2})/), 'app/index.html must use v=20261002_07 or newer');
 
     // 3. Execution in VM context
     const ctx = {
@@ -9566,6 +9566,82 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(cssCode.includes('body.box-lab-active #box-sidebar-bookmark-handle'), 'CSS must hide #box-sidebar-bookmark-handle under box-lab-active');
     assert(cssCode.includes('body.box-lab-active #box-fab-container'), 'CSS must hide #box-fab-container under box-lab-active');
     assert(cssCode.includes('.mobile-h5-app #panel-box:not(.box-lab-active)'), 'CSS must exclude box-lab-active from auto-displaying bookmark handle');
+  });
+
+  // ─── Test 184: Appraisal Lab In-Place Edit Mode & Radar Concealment ────────
+  test('Tier 4 - Real-World Application Scenarios', 'Appraisal Lab In-Place Edit Mode & Radar Concealment', () => {
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+
+    // 1. Static assertion: Edit mode hides radar chart and commentary below
+    assert(appraisalJs.includes("${!labState.editMode ? `\n            <!-- 六邊形能力圖"), 'Radar chart and comments must be strictly gated by !labState.editMode');
+    assert(appraisalJs.includes("class=\"btn-lab-save btn-lab-save-header\""), 'Save button must be rendered in header during edit mode');
+    assert(appraisalJs.includes("class=\"btn-lab-cancel btn-lab-cancel-header\""), 'Cancel button must be rendered in header during edit mode');
+    assert(appraisalJs.includes("window.AppraisalLab.onSkillLevelChange"), 'AppraisalLab must support onSkillLevelChange');
+    assert(appraisalJs.includes("window.AppraisalLab.clearAllSubskills"), 'AppraisalLab must support clearAllSubskills');
+
+    // 2. Runtime execution: Browse mode vs Edit mode state transition
+    const mockContainer = { innerHTML: '', id: 'appraisal-lab-container' };
+    const ctx = {
+      window: {},
+      document: {
+        querySelector: () => null,
+        getElementById: (id) => (id === 'appraisal-lab-container' ? mockContainer : null),
+        body: { classList: { contains: () => false }, style: {} }
+      },
+      console: console,
+      Set: Set,
+      Array: Array,
+      parseInt: parseInt,
+      Math: Math,
+      String: String
+    };
+    ctx.window = ctx;
+    ctx.window.allPokemons = [
+      { id: '3', name_cn: '妙蛙花', specialty: '食材', type: '草', main_skill: '食材獲取S', ingredients: [{ name: '特選蘋果', count: 2 }, { name: '暖暖薑', count: 1 }] }
+    ];
+    ctx.window.I18N = {
+      getLanguage: () => 'zh-TW',
+      getSubSkillName: (n) => n,
+      getMainSkillName: (n) => n,
+      getIngredientName: (n) => n,
+      getNatureName: (n) => n,
+      getSpecialtyName: (n) => n,
+      getTypeName: (n) => n,
+      getBerryName: (n) => n,
+      getIngredientIcon: () => '',
+      getSpecialtyIconHtml: (spec, size, cls) => `<span class="${cls}">${spec}</span>`
+    };
+    ctx.window.UserBox = {
+      getUserBox: () => [{ uid: 'b1', pokemonId: '3', name: '妙蛙花', level: 30, nature: '坦率', subskills: ['樹果數量S'], nickname: '花花', ribbon: 0, skillLevel: 2 }],
+      setUserBox: (box) => { ctx.window.UserBox._saved = box; },
+      NATURE_DATA: [{ name: '固執', buff: '幫忙速度', debuff: '食材發現率' }, { name: '坦率', buff: '無增減', debuff: '' }],
+      SUBSKILLS_DATA: [{ name: '樹果數量S', tier: 'gold' }, { name: '幫忙速度M', tier: 'blue' }]
+    };
+
+    vm.createContext(ctx);
+    vm.runInContext(appraisalJs, ctx);
+
+    // Initial render in Browse Mode
+    ctx.window.AppraisalLab.renderLab(mockContainer);
+    assert(mockContainer.innerHTML.includes('class="lab-chart-container"'), 'Browse mode must render radar chart');
+    assert(mockContainer.innerHTML.includes('class="lab-pros-box"'), 'Browse mode must render pros box');
+    assert(mockContainer.innerHTML.includes('class="btn-lab-edit-toggle"'), 'Browse mode must render edit button in header right');
+    assert(!mockContainer.innerHTML.includes('btn-lab-save-header'), 'Browse mode must not render save button in header');
+
+    // Switch to Edit Mode
+    ctx.window.AppraisalLab.enterEditMode();
+    assert(!mockContainer.innerHTML.includes('class="lab-chart-container"'), 'Edit mode must strictly hide radar chart');
+    assert(!mockContainer.innerHTML.includes('class="lab-pros-box"'), 'Edit mode must strictly hide pros box');
+    assert(mockContainer.innerHTML.includes('btn-lab-save-header'), 'Edit mode must render save button in header');
+    assert(mockContainer.innerHTML.includes('btn-lab-cancel-header'), 'Edit mode must render cancel button in header');
+    assert(mockContainer.innerHTML.includes('id="lab-nickname-input"'), 'Edit mode must render nickname input');
+    assert(mockContainer.innerHTML.includes('class="box-ing-opt-btn'), 'Edit mode must render ingredient option buttons');
+    assert(mockContainer.innerHTML.includes('class="lab-select-subskill"'), 'Edit mode must render subskill selects');
+
+    // Cancel Edit Mode
+    ctx.window.AppraisalLab.cancelEditMode();
+    assert(mockContainer.innerHTML.includes('class="lab-chart-container"'), 'Cancelling edit mode must restore radar chart');
+    assert(mockContainer.innerHTML.includes('class="btn-lab-edit-toggle"'), 'Cancelling edit mode must restore edit toggle button');
   });
 
 console.log('                   Test Results Summary');
