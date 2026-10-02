@@ -2837,29 +2837,18 @@
             <!-- 編輯表單：完全比照手動新增寶可夢 (box-modal-form) 的 6 大標準配置區 -->
             <form class="box-modal-form lab-edit-form" onsubmit="event.preventDefault(); window.AppraisalLab.saveEditMode();">
               <div class="box-form-grid">
-                <!-- 1. 固定寶可夢資訊 (純展示不可修改，帶入頭像、名稱、自訂暱稱與屬性) -->
-                <div class="box-pkm-identity-card box-full-width">
-                  <div class="box-pkm-identity-avatar-slot">
-                    <img class="box-pkm-identity-avatar" src="${escapeHtml(currentPkm.icon_url || '')}" alt="${escapeHtml(displayName)}">
-                  </div>
-                  <div class="box-pkm-identity-info">
-                    <div class="box-pkm-identity-title">
-                      <span class="box-pkm-identity-name">${escapeHtml(displayName)}</span>
-                      <span class="box-pkm-identity-nick" id="lab-pkm-identity-nick" style="${labState.nickname ? '' : 'display:none;'}">(${escapeHtml(labState.nickname)})</span>
-                    </div>
-                    <div class="box-pkm-identity-meta">
-                      <span>#${currentPkm.formatted_no || currentPkm.id}</span>
-                      <span>·</span>
-                      <span>${specName}</span>
-                      <span>·</span>
-                      <span>${window.I18N ? window.I18N.getTypeName(currentPkm.type) : currentPkm.type}${isEN ? ' Type' : '屬性'}</span>
-                      ${berryName ? `<span>·</span><span>${berryName}</span>` : ''}
+                <!-- 1. 頂部單行：寶可夢 (圖示 + 名稱，不可修改) + 等級 + 主技能 -->
+                <div class="box-form-row-top box-pkm-level-mainskill-row box-level-mainskill-row box-full-width">
+                  <!-- 寶可夢 (純展示不可修改，帶入頭像與名稱) -->
+                  <div class="box-form-group flex-pkm-compact">
+                    <label class="box-form-label">${isEN ? 'Pokémon' : '寶可夢'}</label>
+                    <div class="box-pkm-display-slot">
+                      <img class="box-pkm-display-avatar" src="${escapeHtml(currentPkm.icon_url || '')}" alt="${escapeHtml(displayName)}">
+                      <span class="box-pkm-display-name">${escapeHtml(displayName)}</span>
+                      <span class="box-pkm-display-nick" id="lab-pkm-identity-nick" style="${labState.nickname ? '' : 'display:none;'}">(${escapeHtml(labState.nickname)})</span>
                     </div>
                   </div>
-                </div>
 
-                <!-- 2. 等級 + 主技能 (主技能置於等級後面，等級輸入框縮小至最高100等) -->
-                <div class="box-form-row-2col box-level-mainskill-row box-full-width">
                   <!-- 等級 -->
                   <div class="box-form-group flex-level-compact">
                     <label class="box-form-label" for="lab-level-num-input">${isEN ? 'Level' : '等級'} <span style="color:#ef4444;">*</span></label>
@@ -2986,28 +2975,6 @@
               </div>
             </form>
           `}
-
-          ${!labState.editMode ? `
-            <!-- 六邊形能力圖 (標題與分數直接印在各頂點) (僅瀏覽模式展示，修改模式不展示) -->
-            <div class="lab-chart-container">
-              ${radarSVG}
-            </div>
-
-            <!-- 下方的深度診斷評語與升級里程碑預測 (僅瀏覽模式展示，修改模式不展示) -->
-            <div class="lab-pros-box">
-              ${evaluation.pros.map(function (p) { return '<div class="lab-bullet-item">' + p + '</div>'; }).join('')}
-            </div>
-
-            ${evaluation.milestones && evaluation.milestones.length > 0 ? `
-              <div class="lab-milestones-box" style="margin-top:10px;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.3);border-radius:8px;padding:8px 12px;">
-                <div style="font-size:11px;font-weight:700;color:#facc15;margin-bottom:4px;display:flex;align-items:center;gap:4px;">
-                  <span>[^]</span>
-                  <span>${isEN ? 'Level-Up Milestone Projections' : '升級里程碑質變預測'}</span>
-                </div>
-                ${evaluation.milestones.map(m => `<div style="font-size:11px;color:#e2e8f0;line-height:1.4;margin-bottom:3px;">${escapeHtml(m.text)}</div>`).join('')}
-              </div>
-            ` : ''}
-          ` : ''}
         </div>
       </div>
     `;

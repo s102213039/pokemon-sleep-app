@@ -9573,7 +9573,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
 
     // 1. Static assertion: Edit mode hides radar chart and commentary below
-    assert(appraisalJs.includes("${!labState.editMode ? `\n            <!-- 六邊形能力圖"), 'Radar chart and comments must be strictly gated by !labState.editMode');
+    assert(appraisalJs.includes("${!labState.editMode ?") && appraisalJs.includes('class="lab-chart-container"'), 'Radar chart and comments must be strictly gated by !labState.editMode');
     assert(appraisalJs.includes("btn-lab-save-header"), 'Save button must be rendered in header during edit mode');
     assert(appraisalJs.includes("btn-lab-cancel-header"), 'Cancel button must be rendered in header during edit mode');
     assert(appraisalJs.includes("window.AppraisalLab.onSkillLevelChange"), 'AppraisalLab must support onSkillLevelChange');
@@ -9640,9 +9640,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     vm.createContext(ctx);
     vm.runInContext(appraisalJs, ctx);
 
-    // Initial render in Browse Mode
+    // Initial render in Browse Mode: must have exactly ONE radar chart container
     ctx.window.AppraisalLab.renderLab(mockContainer);
     assert(mockContainer.innerHTML.includes('class="lab-chart-container"'), 'Browse mode must render radar chart');
+    const radarMatches = (mockContainer.innerHTML.match(/class="lab-chart-container"/g) || []).length;
+    assertEquals(radarMatches, 1, 'Browse mode must render exactly ONE radar chart container without duplication');
     assert(mockContainer.innerHTML.includes('class="lab-pros-box"'), 'Browse mode must render pros box');
     assert(mockContainer.innerHTML.includes('class="btn-lab-edit-toggle"'), 'Browse mode must render edit button in header right');
     assert(!mockContainer.innerHTML.includes('btn-lab-save-header'), 'Browse mode must not render save button in header');
@@ -9662,8 +9664,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     const savePos = mockContainer.innerHTML.indexOf('btn-lab-save-header');
     assert(cancelPos < titlePos && titlePos < savePos, 'Edit mode header must place Cancel on left, Title in center, Confirm/Save on right');
 
-    // Form layout: Fixed Pokemon Identity, Level+MainSkill row, 3+2 subskills
-    assert(mockContainer.innerHTML.includes('box-pkm-identity-card'), 'Edit mode must render read-only box-pkm-identity-card');
+    // Form layout: Fixed Pokemon Display, Level+MainSkill row, 3+2 subskills
+    assert(mockContainer.innerHTML.includes('box-pkm-display-slot'), 'Edit mode must render read-only box-pkm-display-slot');
+    assert(!mockContainer.innerHTML.includes('box-pkm-identity-card'), 'Edit mode must not render redundant outer box-pkm-identity-card');
     assert(!mockContainer.innerHTML.includes('id="lab-poke-search"'), 'Edit mode must strictly disallow modifying Pokemon species');
     assert(mockContainer.innerHTML.includes('box-level-mainskill-row'), 'Edit mode must render Level and Main Skill in one row');
     assert(mockContainer.innerHTML.includes('box-nickname-ribbon-row'), 'Edit mode must render box-nickname-ribbon-row for Nickname and Ribbon');

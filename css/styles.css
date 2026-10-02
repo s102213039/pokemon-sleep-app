@@ -13428,70 +13428,48 @@ input[type="number"] {
   width: 100% !important;
 }
 
-.lab-edit-form .box-pkm-identity-card {
+.lab-edit-form .box-pkm-level-mainskill-row {
   display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  padding: 4px 8px !important;
-  background: var(--table-row-odd-solid, #0d1527) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: 8px !important;
-  box-sizing: border-box !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  gap: 6px !important;
   width: 100% !important;
+  box-sizing: border-box !important;
 }
 
-.lab-edit-form .box-pkm-identity-avatar-slot {
-  width: 28px !important;
-  height: 28px !important;
-  flex: 0 0 28px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.lab-edit-form .box-pkm-identity-avatar {
-  width: 28px !important;
-  height: 28px !important;
-  object-fit: contain !important;
-}
-
-.lab-edit-form .box-pkm-identity-info {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 1px !important;
-  flex: 1 !important;
+.lab-edit-form .flex-pkm-compact {
+  flex: 1 1 auto !important;
   min-width: 0 !important;
 }
 
-.lab-edit-form .box-pkm-identity-title {
+.lab-edit-form .box-pkm-display-slot {
   display: flex !important;
   align-items: center !important;
-  gap: 6px !important;
-  white-space: nowrap !important;
+  gap: 5px !important;
+  height: 34px !important;
   overflow: hidden !important;
 }
 
-.lab-edit-form .box-pkm-identity-name {
+.lab-edit-form .box-pkm-display-avatar {
+  width: 26px !important;
+  height: 26px !important;
+  flex: 0 0 26px !important;
+  object-fit: contain !important;
+}
+
+.lab-edit-form .box-pkm-display-name {
   font-size: 13px !important;
   font-weight: 700 !important;
   color: var(--text-primary) !important;
-}
-
-.lab-edit-form .box-pkm-identity-nick {
-  font-size: 12px !important;
-  font-weight: 500 !important;
-  color: var(--text-secondary) !important;
+  white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
-  white-space: nowrap !important;
 }
 
-.lab-edit-form .box-pkm-identity-meta {
+.lab-edit-form .box-pkm-display-nick {
   font-size: 11px !important;
-  color: var(--text-muted) !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 4px !important;
+  font-weight: 500 !important;
+  color: var(--text-secondary) !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -13505,23 +13483,14 @@ input[type="number"] {
   box-sizing: border-box !important;
 }
 
-.lab-edit-form .box-level-mainskill-row {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: flex-end !important;
-  gap: 8px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
 .lab-edit-form .flex-level-compact {
-  width: 54px !important;
-  min-width: 54px !important;
-  flex: 0 0 54px !important;
+  width: 48px !important;
+  min-width: 48px !important;
+  flex: 0 0 48px !important;
 }
 
 .lab-edit-form .lab-level-compact-input {
-  width: 54px !important;
+  width: 48px !important;
   height: 34px !important;
   text-align: center !important;
   padding: 0 2px !important;
@@ -13530,29 +13499,30 @@ input[type="number"] {
 }
 
 .lab-edit-form .flex-mainskill-compact {
-  flex: 1 !important;
+  flex: 1.35 1 auto !important;
   min-width: 0 !important;
 }
 
 .lab-edit-form .box-mainskill-inline-wrap {
   display: flex !important;
   align-items: center !important;
-  gap: 6px !important;
+  gap: 4px !important;
   width: 100% !important;
+  height: 34px !important;
 }
 
 .lab-edit-form .box-mainskill-name-badge {
-  flex: 1 !important;
+  flex: 1 1 auto !important;
   min-width: 0 !important;
   height: 34px !important;
-  line-height: 34px !important;
-  padding: 0 8px !important;
-  border-radius: 8px !important;
+  line-height: 32px !important;
+  padding: 0 5px !important;
+  border-radius: 6px !important;
   background: rgba(56, 189, 248, 0.12) !important;
   border: 1px solid rgba(56, 189, 248, 0.3) !important;
   color: #38bdf8 !important;
   font-weight: 700 !important;
-  font-size: 12px !important;
+  font-size: 11px !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -13561,22 +13531,22 @@ input[type="number"] {
 }
 
 .lab-edit-form .box-mainskill-inline-wrap .custom-select-container {
-  width: 76px !important;
-  min-width: 76px !important;
-  flex: 0 0 76px !important;
+  width: 56px !important;
+  min-width: 56px !important;
+  flex: 0 0 56px !important;
 }
 
 .lab-edit-form .box-mainskill-inline-wrap .custom-select-trigger {
   height: 34px !important;
   min-height: 34px !important;
-  padding: 4px 20px 4px 8px !important;
-  font-size: 12px !important;
+  padding: 2px 13px 2px 5px !important;
+  font-size: 11px !important;
   font-weight: 700 !important;
-  border-radius: 8px !important;
+  border-radius: 6px !important;
 }
 
 .lab-edit-form .box-mainskill-inline-wrap .custom-select-arrow {
-  right: 7px !important;
+  right: 4px !important;
 }
 
 .lab-edit-form .box-nickname-ribbon-row {
