@@ -13338,6 +13338,288 @@ input[type="number"] {
   transform: scale(1.05);
 }
 
+/* 深度評測室修改模式頂部導航列：單行展示 (保存靠左，標題居中，取消靠右) */
+.lab-preview-header.lab-edit-header {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding-right: 0 !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 4px !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+.lab-edit-header .btn-lab-save-header {
+  flex-shrink: 0 !important;
+  height: 30px !important;
+  padding: 0 12px !important;
+  background: #22c55e !important;
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  font-size: 12.5px !important;
+  border-radius: 8px !important;
+  border: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  cursor: pointer !important;
+}
+
+.lab-edit-header-title {
+  flex: 1 1 auto !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+  font-size: 14.5px !important;
+  color: var(--text-primary) !important;
+  margin: 0 4px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.lab-edit-header .btn-lab-cancel-header {
+  flex-shrink: 0 !important;
+  height: 30px !important;
+  padding: 0 12px !important;
+  background: rgba(148, 163, 184, 0.15) !important;
+  color: var(--text-primary) !important;
+  font-size: 12.5px !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border-color) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+}
+
+/* 深度評測室修改模式：整頁緊湊一體化單頁佈局 */
+.lab-edit-form {
+  margin-top: 4px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  width: 100% !important;
+}
+
+.lab-edit-form .lab-edit-row-top {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-height: 30px !important;
+}
+
+.lab-edit-form .lab-edit-pkm-info {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-shrink: 0 !important;
+}
+
+.lab-edit-form .lab-edit-avatar {
+  width: 28px !important;
+  height: 28px !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+}
+
+.lab-edit-form .lab-edit-pkm-name {
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  color: var(--text-primary) !important;
+  white-space: nowrap !important;
+}
+
+.lab-edit-form .lab-edit-level-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  flex-shrink: 0 !important;
+}
+
+.lab-edit-form .lab-edit-lbl {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.lab-edit-form .lab-edit-level-input {
+  width: 48px !important;
+  height: 28px !important;
+  padding: 0 4px !important;
+  text-align: center !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+}
+
+.lab-edit-form .lab-edit-nickname-group {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+.lab-edit-form .lab-edit-nickname-input {
+  width: 100% !important;
+  height: 28px !important;
+  font-size: 12px !important;
+  padding: 0 8px !important;
+}
+
+.lab-edit-form .lab-edit-row-inline {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-height: 28px !important;
+}
+
+.lab-edit-form .box-ing-strip {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 2px 6px !important;
+  margin: 0 !important;
+  overflow-x: auto !important;
+  min-width: 0 !important;
+}
+
+.lab-edit-form .box-ing-opt-btn {
+  width: 26px !important;
+  height: 26px !important;
+  padding: 2px !important;
+}
+
+.lab-edit-form .box-ing-opt-icon {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.lab-edit-form .lab-edit-row-split {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-height: 28px !important;
+}
+
+.lab-edit-form .lab-edit-unit {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex: 1 1 50% !important;
+  min-width: 0 !important;
+}
+
+.lab-edit-form .box-mainskill-name-badge {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 75px !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.lab-edit-form .box-form-select {
+  height: 28px !important;
+  padding: 0 28px 0 6px !important;
+  font-size: 11.5px !important;
+}
+
+.lab-edit-form .lab-edit-nature-capsule {
+  margin: 0 !important;
+  padding: 1px 4px !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.lab-edit-form .lab-edit-nature-capsule .nature-pill-capsule {
+  padding: 1px 4px !important;
+  font-size: 10px !important;
+}
+
+.lab-edit-form .lab-edit-nature-capsule .nature-effects-group {
+  gap: 4px !important;
+}
+
+.lab-edit-form .lab-edit-nature-capsule .nature-effect-label {
+  font-size: 10px !important;
+}
+
+.lab-edit-form .box-subskill-clear-btn {
+  padding: 1px 6px !important;
+  font-size: 11px !important;
+  line-height: 16px !important;
+}
+
+.lab-edit-form .box-subskill-slots-row {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 4px !important;
+  margin-bottom: 4px !important;
+}
+
+.lab-edit-form .box-subskill-slot-btn {
+  padding: 3px 2px !important;
+  min-height: 36px !important;
+}
+
+.lab-edit-form .box-subskill-slot-btn .slot-lvl-header {
+  font-size: 9.5px !important;
+}
+
+.lab-edit-form .box-subskill-slot-btn .slot-val-badge {
+  font-size: 10px !important;
+  padding: 1px 2px !important;
+  white-space: nowrap !important;
+}
+
+.lab-edit-form .box-subskill-palette {
+  background: transparent !important;
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08)) !important;
+  border-radius: 8px !important;
+  padding: 4px 6px !important;
+  margin-top: 2px !important;
+  gap: 3px !important;
+}
+
+.lab-edit-form .subskill-tier-section {
+  gap: 2px !important;
+}
+
+.lab-edit-form .subskill-tier-label {
+  font-size: 9.5px !important;
+  line-height: 11px !important;
+}
+
+.lab-edit-form .subskill-chips-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 3px !important;
+}
+
+.lab-edit-form .box-subskill-chip {
+  padding: 2px 5px !important;
+  font-size: 10.5px !important;
+  height: 22px !important;
+  line-height: 18px !important;
+  border-radius: 4px !important;
+}
+
 .lab-preview-stats-panel {
   display: flex;
   flex-direction: column;

@@ -2712,184 +2712,154 @@
               </div>
             ` : ''}
           ` : `
-            <!-- 修改模式：參照手動新增/編輯彈窗 (box-edit-modal) 佈局，下方雷達圖與評語不展示 -->
-            <div class="lab-preview-header" style="position:relative;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--border-color-subtle, rgba(255,255,255,0.08));padding-bottom:12px;">
-              <div style="display:flex;align-items:center;gap:8px;">
-                <div style="font-weight:700;font-size:15px;color:var(--text-primary);display:flex;align-items:center;gap:6px;">
-                  <span>${isEN ? 'Edit Pokémon Stats' : '修改寶可夢數值'}</span>
-                  <span style="font-size:11px;padding:2px 6px;border-radius:4px;background:rgba(56,189,248,0.15);color:var(--accent-color, #38bdf8);font-weight:600;">${isEN ? 'Edit Mode' : '修改模式'}</span>
-                </div>
+            <!-- 修改模式：緊湊一頁式佈局，單行標頭（保存靠左、標題居中、取消靠右），下方雷達圖與評語不展示 -->
+            <div class="lab-preview-header lab-edit-header">
+              <!-- 左方：保存按鈕 -->
+              <button type="button" class="btn-lab-save btn-lab-save-header" onclick="window.AppraisalLab.saveEditMode()">
+                <span>[✓]</span>
+                <span>${isEN ? 'Save' : '保存'}</span>
+              </button>
+
+              <!-- 中間：標題 -->
+              <div class="lab-edit-header-title">
+                ${isEN ? 'Edit Pokémon Stats' : '修改寶可夢數值'}
               </div>
-              <div style="display:flex;gap:8px;">
-                <button type="button" class="btn-lab-save btn-lab-save-header" onclick="window.AppraisalLab.saveEditMode()" style="background:#22c55e;color:#0f172a;font-weight:700;padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-size:12.5px;display:inline-flex;align-items:center;gap:4px;">
-                  <span>[✓]</span>
-                  <span>${isEN ? 'Save' : '保存'}</span>
-                </button>
-                <button type="button" class="btn-lab-cancel btn-lab-cancel-header" onclick="window.AppraisalLab.cancelEditMode()" style="background:rgba(148,163,184,0.2);color:var(--text-main, #f1f5f9);padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-size:12.5px;">
-                  ${isEN ? 'Cancel' : '取消'}
-                </button>
-              </div>
+
+              <!-- 右方：取消按鈕 -->
+              <button type="button" class="btn-lab-cancel btn-lab-cancel-header" onclick="window.AppraisalLab.cancelEditMode()">
+                ${isEN ? 'Cancel' : '取消'}
+              </button>
             </div>
 
-            <!-- 編輯表單：使用 box-form-grid 與 box-edit-modal 完全一致的控制項 -->
-            <form class="box-modal-form lab-edit-form" onsubmit="event.preventDefault(); window.AppraisalLab.saveEditMode();" style="margin-top:12px;">
-              <div class="box-form-grid">
-                <!-- 1. 頂部單行：寶可夢名稱 + 等級 + 自訂暱稱 -->
-                <div class="box-form-row-3col box-full-width">
-                  <div class="box-form-group flex-name">
-                    <label class="box-form-label">${isEN ? 'Pokémon Name' : '寶可夢名稱'}</label>
-                    <div class="box-pkm-select-row" style="display:flex;align-items:center;gap:8px;height:34px;">
-                      <div class="box-pkm-avatar-slot" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:var(--table-row-odd-solid, #0d1527);border:1px solid var(--border-color);border-radius:8px;flex-shrink:0;">
-                        <img src="${currentPkm.icon_url}" class="box-pkm-selected-avatar" alt="${escapeHtml(displayName)}" style="width:28px;height:28px;object-fit:contain;">
-                      </div>
-                      <div style="display:flex;flex-direction:column;gap:1px;min-width:0;">
-                        <span style="font-weight:700;font-size:13.5px;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${displayName}</span>
-                        <div style="display:flex;align-items:center;gap:4px;">${berryIconHtml}${specialtyIconHtml}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="box-form-group flex-level">
-                    <label class="box-form-label" for="lab-level-num-input">${isEN ? 'Level' : '等級'} <span style="color:#ef4444;">*</span></label>
-                    <input type="number" id="lab-level-num-input" class="box-form-input" min="1" max="100" value="${labState.level}" placeholder="1~100" onchange="window.AppraisalLab.onLevelChange(this.value, false)" required>
-                  </div>
-
-                  <div class="box-form-group flex-nickname">
-                    <label class="box-form-label" for="lab-nickname-input">${isEN ? 'Custom Nickname' : '自訂暱稱'}</label>
-                    <input type="text" id="lab-nickname-input" class="box-form-input" value="${escapeHtml(labState.nickname)}" placeholder="${isEN ? 'e.g. Berry Specialist...' : '例如：首隻樹果S神坦...'}" oninput="window.AppraisalLab.onNicknameChange(this.value)">
-                  </div>
+            <!-- 編輯表單：緊湊單頁展示全部可修改數值 -->
+            <form class="box-modal-form lab-edit-form" onsubmit="event.preventDefault(); window.AppraisalLab.saveEditMode();">
+              <!-- 1. 頂部單行：寶可夢名稱 + 等級 + 自訂暱稱 -->
+              <div class="lab-edit-row-top">
+                <div class="lab-edit-pkm-info">
+                  <img src="${currentPkm.icon_url}" class="lab-edit-avatar" alt="${escapeHtml(displayName)}">
+                  <span class="lab-edit-pkm-name">${displayName}</span>
+                  <div style="display:inline-flex;align-items:center;gap:3px;">${berryIconHtml}${specialtyIconHtml}</div>
                 </div>
 
-                <!-- 2. 食材組合：標籤與純圖標選項同一行展示 -->
-                <div class="box-form-group box-full-width box-form-row-inline">
-                  <label class="box-form-label box-form-inline-label">${isEN ? 'Ingredients' : '食材組合'}</label>
-                  <div class="box-ing-strip">
-                    ${[
-                      { level: 1, allowed: uniqueLv1, slotIdx: 0, tag: 'Lv.1' },
-                      { level: 30, allowed: uniqueLv30, slotIdx: 1, tag: 'Lv.30' },
-                      { level: 60, allowed: uniqueLv60, slotIdx: 2, tag: 'Lv.60' }
-                    ].map((slot, sIdx) => {
-                      const curVal = labState.ingredients[slot.slotIdx] || (slot.allowed[0] ? slot.allowed[0].name : '');
-                      const optButtons = slot.allowed.map((ing) => {
-                        const isSelected = curVal === ing.name;
-                        const ingDisplayName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
-                        const iconUrl = ing.icon || (window.I18N && window.I18N.getIngredientIcon(ing.name)) || '';
-                        return `
-                          <button type="button" class="box-ing-opt-btn ${isSelected ? 'active' : ''}" title="${escapeHtml(ingDisplayName)}" aria-label="${escapeHtml(ingDisplayName)}" onclick="window.AppraisalLab.onIngredientChange(${slot.slotIdx}, '${escapeHtml(ing.name)}')">
-                            <img src="${iconUrl}" class="box-ing-opt-icon" alt="${escapeHtml(ingDisplayName)}" loading="lazy">
-                          </button>
-                        `;
-                      }).join('');
+                <div class="lab-edit-level-group">
+                  <label class="lab-edit-lbl" for="lab-level-num-input">Lv.</label>
+                  <input type="number" id="lab-level-num-input" class="box-form-input lab-edit-level-input" min="1" max="100" value="${labState.level}" placeholder="1~100" onchange="window.AppraisalLab.onLevelChange(this.value, false)" required>
+                </div>
+
+                <div class="lab-edit-nickname-group">
+                  <input type="text" id="lab-nickname-input" class="box-form-input lab-edit-nickname-input" value="${escapeHtml(labState.nickname)}" placeholder="${isEN ? 'Nickname...' : '自訂暱稱...'}" oninput="window.AppraisalLab.onNicknameChange(this.value)">
+                </div>
+              </div>
+
+              <!-- 2. 食材組合：單行純圖示選項展示 -->
+              <div class="lab-edit-row-inline">
+                <span class="lab-edit-lbl">${isEN ? 'Food' : '食材'}</span>
+                <div class="box-ing-strip">
+                  ${[
+                    { level: 1, allowed: uniqueLv1, slotIdx: 0, tag: 'Lv.1' },
+                    { level: 30, allowed: uniqueLv30, slotIdx: 1, tag: 'Lv.30' },
+                    { level: 60, allowed: uniqueLv60, slotIdx: 2, tag: 'Lv.60' }
+                  ].map((slot, sIdx) => {
+                    const curVal = labState.ingredients[slot.slotIdx] || (slot.allowed[0] ? slot.allowed[0].name : '');
+                    const optButtons = slot.allowed.map((ing) => {
+                      const isSelected = curVal === ing.name;
+                      const ingDisplayName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
+                      const iconUrl = ing.icon || (window.I18N && window.I18N.getIngredientIcon(ing.name)) || '';
                       return `
-                        <div class="box-ing-slot-group">
-                          <span class="box-ing-lvl-tag">${slot.tag}</span>
-                          <div class="box-ing-options-list">${optButtons}</div>
-                        </div>
-                        ${sIdx < 2 ? '<span class="box-ing-slot-sep">|</span>' : ''}
-                      `;
-                    }).join('')}
-                  </div>
-                </div>
-
-                <!-- 3. 主技能：展示技能名稱與等級調整選單 -->
-                <div class="box-form-group box-full-width box-form-row-inline box-mainskill-row">
-                  <label class="box-form-label box-form-inline-label" for="lab-mainskill-select">${isEN ? 'Main Skill' : '主技能資訊'}</label>
-                  <div class="box-form-inline-control box-mainskill-control">
-                    <span class="box-mainskill-name-badge">${escapeHtml(mainSkillName)}</span>
-                    <select id="lab-mainskill-select" class="box-form-select box-mainskill-select" onchange="window.AppraisalLab.onSkillLevelChange(this.value)">
-                      ${Array.from({ length: maxSkillLvl }, (_, i) => i + 1).map(lvl => `
-                        <option value="${lvl}" ${skillLvl === lvl ? 'selected' : ''}>Lv. ${lvl}</option>
-                      `).join('')}
-                    </select>
-                    ${helpIntervalFormatted ? '<span style="font-size:11.5px;color:var(--text-muted);margin-left:auto;">' + (isEN ? 'Interval:' : '幫忙間隔:') + ' <strong style="color:var(--text-primary);">' + helpIntervalFormatted + '</strong></span>' : ''}
-                    ${carryLimitVal ? '<span style="font-size:11.5px;color:var(--text-muted);">' + (isEN ? 'Carry:' : '持有:') + ' <strong style="color:var(--text-primary);">' + carryLimitVal + '</strong></span>' : ''}
-                  </div>
-                </div>
-
-                <!-- 4. 性格：標籤與選單同一行展示 -->
-                <div class="box-form-group box-full-width box-form-row-inline">
-                  <label class="box-form-label box-form-inline-label" for="lab-nature-select">${isEN ? 'Nature' : '性格'} <span style="color:#ef4444;">*</span></label>
-                  <div class="box-form-inline-control" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-                    <select id="lab-nature-select" class="box-form-select" onchange="window.AppraisalLab.onNatureChange(this.value)" style="flex:1;min-width:180px;">
-                      ${natures.map(function (n) {
-                        const nName = window.I18N ? window.I18N.getNatureName(n.name) : n.name;
-                        const buffLabel = isEN ? (n.buff_en || n.buff) : n.buff;
-                        const debuffLabel = isEN ? (n.debuff_en || n.debuff) : n.debuff;
-                        return '<option value="' + n.name + '" ' + (n.name === labState.nature ? 'selected' : '') + '>' + nName + ' (' + buffLabel + (debuffLabel ? ' / ' + debuffLabel : '') + ')</option>';
-                      }).join('')}
-                    </select>
-                    <div class="appraisal-nature-game-card" style="margin:0;">
-                      <div class="nature-pill-capsule">
-                        <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
-                        <span class="nature-capsule-name">${escapeHtml(natureDisplayName)}</span>
-                      </div>
-                      ${labNatureEffectHtml}
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 5. 睡飽飽獎章：標籤與選單同一行展示 -->
-                <div class="box-form-group box-full-width box-form-row-inline">
-                  <label class="box-form-label box-form-inline-label" for="lab-ribbon-select">${isEN ? 'Ribbon' : '睡飽飽獎章'}</label>
-                  <div class="box-form-inline-control">
-                    <select id="lab-ribbon-select" class="box-form-select" onchange="window.AppraisalLab.onRibbonChange(this.value)">
-                      <option value="0" ${labState.ribbon === 0 ? 'selected' : ''}>${isEN ? 'None (0h)' : '未佩戴 (0h)'}</option>
-                      <option value="1" ${labState.ribbon === 1 ? 'selected' : ''}>${isEN ? '200 hrs (+1 Carry)' : '200 小時 (+1 持有上限)'}</option>
-                      <option value="2" ${labState.ribbon === 2 ? 'selected' : ''}>${ribbonOpt2}</option>
-                      <option value="3" ${labState.ribbon === 3 ? 'selected' : ''}>${ribbonOpt3}</option>
-                      <option value="4" ${labState.ribbon === 4 ? 'selected' : ''}>${ribbonOpt4}</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- 6. 5 格副技能配置：單行 5 階插槽 + 平鋪副技能選擇盤 -->
-                <div class="box-form-group box-full-width">
-                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                    <label class="box-form-label">${isEN ? 'Sub-Skills' : '副技能配置'}</label>
-                    <button type="button" class="box-subskill-clear-btn" onclick="window.AppraisalLab.clearAllSubskills()" title="${isEN ? 'Clear All Subskills' : '清空全部副技能'}">✕ ${isEN ? 'Clear All' : '清空全部'}</button>
-                  </div>
-
-                  <!-- 單行 5 階插槽列 -->
-                  <div class="box-subskill-slots-row" id="lab-subskill-slots-row">
-                    ${[
-                      { slot: 1, lv: 10 },
-                      { slot: 2, lv: 25 },
-                      { slot: 3, lv: 50 },
-                      { slot: 4, lv: 70 },
-                      { slot: 5, lv: 80 }
-                    ].map(sInfo => {
-                      const isActive = (labState.activeSubskillSlot || 1) === sInfo.slot;
-                      const curVal = labState.subskills[sInfo.slot - 1] || '';
-                      const tier = getSkillTier(curVal);
-                      const skDisplayName = curVal ? (window.I18N ? window.I18N.getSubSkillName(curVal) : curVal) : '';
-                      return `
-                        <button type="button" class="box-subskill-slot-btn ${isActive ? 'active' : ''}" data-slot="${sInfo.slot}" onclick="window.AppraisalLab.selectSubskillSlot(${sInfo.slot})">
-                          <span class="slot-lvl-header">Lv.${sInfo.lv}</span>
-                          ${curVal ? `
-                            <span class="slot-val-badge box-subskill-pill subskill-${tier}">${escapeHtml(skDisplayName)}</span>
-                          ` : `
-                            <span class="slot-val-badge slot-val-empty">${isEN ? '-- None --' : '-- 未解鎖 --'}</span>
-                          `}
+                        <button type="button" class="box-ing-opt-btn ${isSelected ? 'active' : ''}" title="${escapeHtml(ingDisplayName)}" aria-label="${escapeHtml(ingDisplayName)}" onclick="window.AppraisalLab.onIngredientChange(${slot.slotIdx}, '${escapeHtml(ing.name)}')">
+                          <img src="${iconUrl}" class="box-ing-opt-icon" alt="${escapeHtml(ingDisplayName)}" loading="lazy">
                         </button>
                       `;
-                    }).join('')}
-                  </div>
+                    }).join('');
+                    return `
+                      <div class="box-ing-slot-group">
+                        <span class="box-ing-lvl-tag">${slot.tag}</span>
+                        <div class="box-ing-options-list">${optButtons}</div>
+                      </div>
+                      ${sIdx < 2 ? '<span class="box-ing-slot-sep">|</span>' : ''}
+                    `;
+                  }).join('')}
+                </div>
+              </div>
 
-                  <!-- 平鋪副技能選擇盤 -->
-                  <div class="box-subskill-palette" id="lab-subskill-palette">
-                    ${paletteSectionsHtml}
+              <!-- 3. 主技能與睡飽飽獎章並列一行 -->
+              <div class="lab-edit-row-split">
+                <div class="lab-edit-unit">
+                  <span class="lab-edit-lbl">${isEN ? 'Skill' : '主技能'}</span>
+                  <span class="box-mainskill-name-badge" title="${escapeHtml(mainSkillName)}">${escapeHtml(mainSkillName)}</span>
+                  <select id="lab-mainskill-select" class="box-form-select box-mainskill-select" onchange="window.AppraisalLab.onSkillLevelChange(this.value)">
+                    ${Array.from({ length: maxSkillLvl }, (_, i) => i + 1).map(lvl => `
+                      <option value="${lvl}" ${skillLvl === lvl ? 'selected' : ''}>Lv.${lvl}</option>
+                    `).join('')}
+                  </select>
+                </div>
+                <div class="lab-edit-unit">
+                  <span class="lab-edit-lbl">${isEN ? 'Ribbon' : '獎章'}</span>
+                  <select id="lab-ribbon-select" class="box-form-select" onchange="window.AppraisalLab.onRibbonChange(this.value)">
+                    <option value="0" ${labState.ribbon === 0 ? 'selected' : ''}>${isEN ? '0h' : '未佩戴 (0h)'}</option>
+                    <option value="1" ${labState.ribbon === 1 ? 'selected' : ''}>${isEN ? '200h' : '200h (+1持有)'}</option>
+                    <option value="2" ${labState.ribbon === 2 ? 'selected' : ''}>${isEN ? '500h' : '500h (+3持有·速)'}</option>
+                    <option value="3" ${labState.ribbon === 3 ? 'selected' : ''}>${isEN ? '1000h' : '1000h (+6持有)'}</option>
+                    <option value="4" ${labState.ribbon === 4 ? 'selected' : ''}>${isEN ? '2000h' : '2000h (+8持有·極速)'}</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- 4. 性格與遊戲同款膠囊卡片並列一行 -->
+              <div class="lab-edit-row-inline">
+                <span class="lab-edit-lbl">${isEN ? 'Nature' : '性格'}</span>
+                <select id="lab-nature-select" class="box-form-select" style="flex:1;min-width:0;" onchange="window.AppraisalLab.onNatureChange(this.value)">
+                  ${natures.map(function (n) {
+                    const nName = window.I18N ? window.I18N.getNatureName(n.name) : n.name;
+                    const buffLabel = isEN ? (n.buff_en || n.buff) : n.buff;
+                    const debuffLabel = isEN ? (n.debuff_en || n.debuff) : n.debuff;
+                    return '<option value="' + n.name + '" ' + (n.name === labState.nature ? 'selected' : '') + '>' + nName + ' (' + buffLabel + (debuffLabel ? ' / ' + debuffLabel : '') + ')</option>';
+                  }).join('')}
+                </select>
+                <div class="appraisal-nature-game-card lab-edit-nature-capsule">
+                  <div class="nature-pill-capsule">
+                    <span class="nature-capsule-name">${escapeHtml(natureDisplayName)}</span>
                   </div>
+                  ${labNatureEffectHtml}
+                </div>
+              </div>
+
+              <!-- 5. 5 格副技能配置：單行 5 階插槽 + 平鋪副技能選擇盤 -->
+              <div class="lab-edit-subskills-section" style="width:100%;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+                  <span class="lab-edit-lbl">${isEN ? 'Sub-Skills' : '副技能配置'}</span>
+                  <button type="button" class="box-subskill-clear-btn" onclick="window.AppraisalLab.clearAllSubskills()" title="${isEN ? 'Clear All Subskills' : '清空全部副技能'}">✕ ${isEN ? 'Clear All' : '清空全部'}</button>
                 </div>
 
-                <!-- 下方儲存/取消動作列 -->
-                <div class="lab-edit-bottom-actions" style="display:flex;gap:12px;margin-top:16px;">
-                  <button type="button" class="btn-lab-save" onclick="window.AppraisalLab.saveEditMode()" style="flex:1;height:42px;background:#22c55e;color:#0f172a;font-weight:700;border-radius:10px;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px;">
-                    <span>[✓]</span>
-                    <span>${isEN ? 'Save Changes' : '保存修改'}</span>
-                  </button>
-                  <button type="button" class="btn-lab-cancel" onclick="window.AppraisalLab.cancelEditMode()" style="flex:1;height:42px;background:rgba(148,163,184,0.15);color:var(--text-primary);border-radius:10px;border:1px solid var(--border-color);cursor:pointer;font-size:14px;">
-                    <span>${isEN ? 'Cancel' : '取消'}</span>
-                  </button>
+                <!-- 單行 5 階插槽列 -->
+                <div class="box-subskill-slots-row" id="lab-subskill-slots-row">
+                  ${[
+                    { slot: 1, lv: 10 },
+                    { slot: 2, lv: 25 },
+                    { slot: 3, lv: 50 },
+                    { slot: 4, lv: 70 },
+                    { slot: 5, lv: 80 }
+                  ].map(sInfo => {
+                    const isActive = (labState.activeSubskillSlot || 1) === sInfo.slot;
+                    const curVal = labState.subskills[sInfo.slot - 1] || '';
+                    const tier = getSkillTier(curVal);
+                    const skDisplayName = curVal ? (window.I18N ? window.I18N.getSubSkillName(curVal) : curVal) : '';
+                    return `
+                      <button type="button" class="box-subskill-slot-btn ${isActive ? 'active' : ''}" data-slot="${sInfo.slot}" onclick="window.AppraisalLab.selectSubskillSlot(${sInfo.slot})">
+                        <span class="slot-lvl-header">Lv.${sInfo.lv}</span>
+                        ${curVal ? `
+                          <span class="slot-val-badge box-subskill-pill subskill-${tier}">${escapeHtml(skDisplayName)}</span>
+                        ` : `
+                          <span class="slot-val-badge slot-val-empty">${isEN ? '-- None --' : '-- 未解鎖 --'}</span>
+                        `}
+                      </button>
+                    `;
+                  }).join('')}
+                </div>
+
+                <!-- 平鋪副技能選擇盤 -->
+                <div class="box-subskill-palette" id="lab-subskill-palette">
+                  ${paletteSectionsHtml}
                 </div>
               </div>
             </form>

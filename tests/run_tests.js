@@ -9634,6 +9634,15 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(!mockContainer.innerHTML.includes('class="lab-pros-box"'), 'Edit mode must strictly hide pros box');
     assert(mockContainer.innerHTML.includes('btn-lab-save-header'), 'Edit mode must render save button in header');
     assert(mockContainer.innerHTML.includes('btn-lab-cancel-header'), 'Edit mode must render cancel button in header');
+    assert(mockContainer.innerHTML.includes('lab-edit-header-title'), 'Edit mode must render header title');
+    assert(!mockContainer.innerHTML.includes('lab-edit-bottom-actions'), 'Edit mode must strictly omit bottom action buttons');
+
+    // Header layout ordering: Save on left, Title in middle, Cancel on right
+    const savePos = mockContainer.innerHTML.indexOf('btn-lab-save-header');
+    const titlePos = mockContainer.innerHTML.indexOf('lab-edit-header-title');
+    const cancelPos = mockContainer.innerHTML.indexOf('btn-lab-cancel-header');
+    assert(savePos < titlePos && titlePos < cancelPos, 'Edit mode header must place Save on left, Title in center, Cancel on right');
+
     assert(mockContainer.innerHTML.includes('id="lab-nickname-input"'), 'Edit mode must render nickname input');
     assert(mockContainer.innerHTML.includes('class="box-subskill-palette"'), 'Edit mode must render subskill palette');
     assert(mockContainer.innerHTML.includes('class="box-subskill-slots-row"'), 'Edit mode must render subskill slots row');
