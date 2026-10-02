@@ -1729,9 +1729,30 @@
   const GOLD_SUBSKILLS = new Set(['幫手獎勵', '樹果數量S', '技能等級提升M', '夢之碎片獎勵', '睡眠EXP獎勵', '研究EXP獎勵', '活力回復獎勵']);
   const BLUE_SUBSKILLS = new Set(['幫忙速度M', '食材機率提升M', '技能機率提升M', '技能等級提升S', '持有上限提升L', '持有上限提升M']);
 
+  const DEFAULT_SUBSKILLS_DATA = [
+    { name: '樹果數量S', tier: 'gold' },
+    { name: '幫手獎勵', tier: 'gold' },
+    { name: '睡眠EXP獎勵', tier: 'gold' },
+    { name: '活力回復獎勵', tier: 'gold' },
+    { name: '夢之碎片獎勵', tier: 'gold' },
+    { name: '研究EXP獎勵', tier: 'gold' },
+    { name: '技能等級提升M', tier: 'gold' },
+    { name: '幫忙速度M', tier: 'blue' },
+    { name: '食材機率提升M', tier: 'blue' },
+    { name: '技能機率提升M', tier: 'blue' },
+    { name: '技能等級提升S', tier: 'blue' },
+    { name: '持有上限提升L', tier: 'blue' },
+    { name: '持有上限提升M', tier: 'blue' },
+    { name: '幫忙速度S', tier: 'white' },
+    { name: '食材機率提升S', tier: 'white' },
+    { name: '技能機率提升S', tier: 'white' },
+    { name: '持有上限提升S', tier: 'white' },
+    { name: '活力回復提升S', tier: 'white' }
+  ];
+
   function getSkillTier(sName) {
     if (!sName) return 'white';
-    const subskillPool = (typeof window !== 'undefined' && ((window.UserBox && window.UserBox.SUBSKILLS_DATA) || (window.PokemonBoxApp && window.PokemonBoxApp.SUBSKILLS_DATA))) || [];
+    const subskillPool = (typeof window !== 'undefined' && ((window.UserBox && window.UserBox.SUBSKILLS_DATA) || (window.PokemonBoxApp && window.PokemonBoxApp.SUBSKILLS_DATA))) || DEFAULT_SUBSKILLS_DATA;
     const found = subskillPool.find(function (s) { return s.name === sName; });
     if (found && found.tier) return found.tier;
     if (GOLD_SUBSKILLS.has(sName)) return 'gold';
@@ -2097,7 +2118,8 @@
     skillLevel: 1,
     isCustomized: false,
     editMode: false,
-    editBackup: null
+    editBackup: null,
+    activeSubskillSlot: 1
   };
 
   function getMainSkillMaxLvl(skillName) {
@@ -2136,6 +2158,7 @@
     labState.isCustomized = false;
     labState.editMode = false;
     labState.editBackup = null;
+    labState.activeSubskillSlot = 1;
   }
 
   function onBoxItemSelect(uid) {
@@ -2146,6 +2169,7 @@
       labState.isCustomized = false;
       labState.editMode = false;
       labState.editBackup = null;
+      labState.activeSubskillSlot = 1;
       updateLabUI();
       return;
     }
@@ -2154,6 +2178,7 @@
       loadBoxItem(item);
       labState.editMode = false;
       labState.editBackup = null;
+      labState.activeSubskillSlot = 1;
       updateLabUI();
     }
   }
@@ -2178,6 +2203,7 @@
       subskills: (labState.subskills || []).slice()
     };
     labState.editMode = true;
+    labState.activeSubskillSlot = 1;
     updateLabUI();
   }
 
@@ -2195,10 +2221,33 @@
       resetToBoxOriginal();
     }
     labState.editMode = false;
+    labState.activeSubskillSlot = 1;
     updateLabUI();
   }
 
   function saveEditMode() {
+    const levelInp = document.getElementById('lab-level-num-input');
+    if (levelInp) {
+      const lv = parseInt(levelInp.value, 10);
+      if (lv >= 1 && lv <= 100) labState.level = lv;
+    }
+    const nickInp = document.getElementById('lab-nickname-input');
+    if (nickInp) {
+      labState.nickname = nickInp.value.trim();
+    }
+    const natureSel = document.getElementById('lab-nature-select');
+    if (natureSel && natureSel.value) {
+      labState.nature = natureSel.value;
+    }
+    const ribbonSel = document.getElementById('lab-ribbon-select');
+    if (ribbonSel && ribbonSel.value != null) {
+      labState.ribbon = parseInt(ribbonSel.value, 10) || 0;
+    }
+    const skillSel = document.getElementById('lab-mainskill-select');
+    if (skillSel && skillSel.value) {
+      labState.skillLevel = parseInt(skillSel.value, 10) || 1;
+    }
+
     if (!labState.selectedBoxUid) {
       labState.editMode = false;
       labState.editBackup = null;
@@ -2237,6 +2286,39 @@
     }
   }
 
+  function selectSubskillSlot(slotNum) {
+    labState.activeSubskillSlot = Math.max(1, Math.min(5, parseInt(slotNum, 10) || 1));
+    updateLabUI();
+  }
+
+  function onSubskillChipSelect(skName) {
+    if (!skName) return;
+    const currentSlotIdx = Math.max(0, Math.min(4, (labState.activeSubskillSlot || 1) - 1));
+    const usedIdx = labState.subskills.indexOf(skName);
+    if (usedIdx !== -1 && usedIdx !== currentSlotIdx) {
+      return;
+    }
+    labState.subskills[currentSlotIdx] = skName;
+    if (labState.selectedBoxUid) {
+      labState.isCustomized = true;
+    }
+    let nextEmptySlot = -1;
+    for (let s = 1; s <= 5; s++) {
+      if (!labState.subskills[s - 1]) {
+        nextEmptySlot = s;
+        break;
+      }
+    }
+    if (nextEmptySlot !== -1) {
+      labState.activeSubskillSlot = nextEmptySlot;
+    } else if (labState.activeSubskillSlot < 5) {
+      labState.activeSubskillSlot += 1;
+    } else {
+      labState.activeSubskillSlot = 1;
+    }
+    updateLabUI();
+  }
+
   function onNicknameChange(val) {
     labState.nickname = val || '';
     if (labState.selectedBoxUid) {
@@ -2262,6 +2344,7 @@
 
   function clearAllSubskills() {
     labState.subskills = ['', '', '', '', ''];
+    labState.activeSubskillSlot = 1;
     if (labState.selectedBoxUid) {
       labState.isCustomized = true;
     }
@@ -2272,6 +2355,7 @@
     if (!targetElement) return;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isMobileH5 = typeof document !== 'undefined' && (!!document.querySelector('.mobile-h5-app') || (document.body && document.body.classList.contains('mobile-h5-app')));
+    const showControls = labState.editMode;
 
     const pokemons = window.allPokemons || (window.PokemonApp && window.PokemonApp.allPokemons) || [];
     const userBox = (window.UserBox && typeof window.UserBox.getUserBox === 'function') ? window.UserBox.getUserBox() : [];
@@ -2408,7 +2492,33 @@
       ribbonOpt4 = isEN ? '2000 hrs (+8 Carry · Speed -12%)' : '2000 小時 (+8 持有上限 · 幫速最大加成 -12%)';
     }
 
-    const showControls = labState.editMode;
+
+    // 副技能平鋪選擇盤晶片 HTML (修改模式使用)
+    const usedSkills = new Set(labState.subskills.filter(Boolean));
+    const subskillTiers = [
+      { tier: 'gold', label: isEN ? 'Gold Skills' : '金色頂級技能', labelClass: 'gold-label' },
+      { tier: 'blue', label: isEN ? 'Blue Skills' : '藍色高階技能', labelClass: 'blue-label' },
+      { tier: 'white', label: isEN ? 'White Skills' : '白色基礎技能', labelClass: 'white-label' }
+    ];
+    const paletteSectionsHtml = subskillTiers.map(function (t) {
+      const skillsInTier = subskillPool.filter(function (s) { return s.tier === t.tier; });
+      const chipsHtml = skillsInTier.map(function (sk) {
+        const skDisplayName = window.I18N ? window.I18N.getSubSkillName(sk.name) : sk.name;
+        const isUsed = usedSkills.has(sk.name);
+        return `
+          <button type="button" class="box-subskill-chip subskill-${t.tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" ${isUsed ? 'disabled' : ''} onclick="window.AppraisalLab.onSubskillChipSelect('${escapeHtml(sk.name)}')" title="${escapeHtml(skDisplayName)}${isUsed ? (isEN ? ' (Already Selected)' : '（已選用）') : ''}">
+            <span>${escapeHtml(skDisplayName)}</span>
+            ${isUsed ? '<span style="font-size:10px;opacity:0.8;margin-left:2px;">[✓]</span>' : ''}
+          </button>
+        `;
+      }).join('');
+      return `
+        <div class="subskill-tier-section">
+          <div class="subskill-tier-label ${t.labelClass}">${t.label}</div>
+          <div class="subskill-chips-row">${chipsHtml}</div>
+        </div>
+      `;
+    }).join('');
 
     targetElement.innerHTML = `
       <div class="appraisal-lab-seamless-view">
@@ -2462,35 +2572,23 @@
         <div class="appraisal-lab-controls" style="display: none !important;"></div>
         ${labState.editMode ? '<div class="lab-edit-mode-banner" style="display:none;"></div>' : ''}
 
-        <!-- 即時評測展示 (簡介 + 數值面板；瀏覽模式下包含雷達圖與評語，修改模式下無縫就地編輯) -->
+        <!-- 即時評測展示 (簡介 + 數值面板；瀏覽模式下包含雷達圖與評語，修改模式下為手動新增彈窗風格表單) -->
         <div class="appraisal-lab-preview lab-preview-fullwidth">
-          <div class="lab-preview-header" style="position:relative;display:flex;${isMobileH5 ? 'flex-direction:column;gap:8px;' : 'justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;'}padding-right:50px;border-bottom:1px solid var(--border-color-subtle, rgba(255,255,255,0.08));padding-bottom:12px;">
-            <!-- 最右上方固定操作按鈕：瀏覽模式下為鉛筆修改按鈕，修改模式下為保存/取消按鈕 -->
-            <div class="lab-preview-header-right" style="position:absolute;top:0;right:0;z-index:5;">
-              ${!labState.editMode ? `
+          ${!labState.editMode ? `
+            <div class="lab-preview-header" style="position:relative;display:flex;${isMobileH5 ? 'flex-direction:column;gap:8px;' : 'justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;'}padding-right:50px;border-bottom:1px solid var(--border-color-subtle, rgba(255,255,255,0.08));padding-bottom:12px;">
+              <!-- 最右上方固定操作按鈕：瀏覽模式下為鉛筆修改按鈕 -->
+              <div class="lab-preview-header-right" style="position:absolute;top:0;right:0;z-index:5;">
                 <button type="button" class="btn-lab-edit-toggle" onclick="window.AppraisalLab.enterEditMode()" title="${isEN ? 'Edit Pokémon Stats' : '修改寶可夢數值'}" style="background:var(--accent-color, #38bdf8);color:#0f172a;width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(56,189,248,0.25);padding:0;" aria-label="${isEN ? 'Edit Pokémon Stats' : '修改寶可夢數值'}">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </button>
-              ` : `
-                <div style="display:flex;gap:6px;">
-                  <button type="button" class="btn-lab-save btn-lab-save-header" onclick="window.AppraisalLab.saveEditMode()" style="background:#22c55e;color:#0f172a;font-weight:700;padding:5px 10px;border-radius:8px;border:none;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:4px;">
-                    <span>[✓]</span>
-                    <span>${isEN ? 'Save' : '保存'}</span>
-                  </button>
-                  <button type="button" class="btn-lab-cancel btn-lab-cancel-header" onclick="window.AppraisalLab.cancelEditMode()" style="background:rgba(148,163,184,0.2);color:var(--text-main, #f1f5f9);padding:5px 10px;border-radius:8px;border:none;cursor:pointer;font-size:12px;">
-                    ${isEN ? 'Cancel' : '取消'}
-                  </button>
-                </div>
-              `}
-            </div>
+              </div>
 
-            <!-- 左上方：頭像、名稱、暱稱、等級、獎章、得意、樹果 -->
-            <div class="lab-preview-pokemon-info">
-              <img src="${currentPkm.icon_url}" class="lab-preview-icon" alt="${displayName}">
-              <div style="flex:1;">
-                <div class="lab-preview-name-row" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-                  <span class="lab-preview-name">${displayName}</span>
-                  ${!labState.editMode ? `
+              <!-- 左上方：頭像、名稱、暱稱、等級、獎章、得意、樹果 -->
+              <div class="lab-preview-pokemon-info">
+                <img src="${currentPkm.icon_url}" class="lab-preview-icon" alt="${displayName}">
+                <div style="flex:1;">
+                  <div class="lab-preview-name-row" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                    <span class="lab-preview-name">${displayName}</span>
                     ${labState.nickname ? `
                       <span class="lab-nickname-tag">${escapeHtml(labState.nickname)}</span>
                     ` : ''}
@@ -2499,38 +2597,16 @@
                         <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${labState.ribbon}.png" class="lab-ribbon-icon" alt="Ribbon" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;" />
                       </span>
                     ` : ''}
-                  ` : `
-                    <input type="text" id="lab-nickname-input" class="lab-input lab-edit-nickname-input" value="${escapeHtml(labState.nickname)}" placeholder="${isEN ? 'Nickname (optional)' : '自訂暱稱 (可選)'}" oninput="window.AppraisalLab.onNicknameChange(this.value)" style="height:28px;border-radius:6px;border:1px solid var(--border-color);background:var(--table-row-odd-solid, #0d1527);color:var(--text-primary);padding:0 8px;font-size:12px;max-width:140px;">
-                  `}
-                </div>
-                <div class="lab-preview-spec" style="display:flex;align-items:center;gap:6px;margin-top:2px;flex-wrap:wrap;">
-                  ${berryIconHtml}
-                  ${specialtyIconHtml}
-                  ${!labState.editMode ? `
+                  </div>
+                  <div class="lab-preview-spec" style="display:flex;align-items:center;gap:6px;margin-top:2px;flex-wrap:wrap;">
+                    ${berryIconHtml}
+                    ${specialtyIconHtml}
                     <span style="font-size:12px;color:var(--text-muted);font-weight:600;">Lv.${labState.level}</span>
-                  ` : `
-                    <div style="display:inline-flex;align-items:center;gap:4px;">
-                      <span style="font-size:12px;color:var(--accent-color, #38bdf8);font-weight:700;">Lv.</span>
-                      <input type="number" id="lab-level-num-input" min="1" max="100" value="${labState.level}" class="lab-level-number-input" onchange="window.AppraisalLab.onLevelChange(this.value, false)" style="width:48px;height:26px;border-radius:6px;border:1px solid var(--border-color);background:var(--table-row-odd-solid, #0d1527);color:var(--text-primary);text-align:center;font-size:12px;font-weight:700;">
-                      <input type="range" id="lab-level-slider" min="1" max="100" value="${labState.level}" class="lab-slider" style="width:90px;vertical-align:middle;" oninput="window.AppraisalLab.onLevelChange(this.value, true)" onchange="window.AppraisalLab.onLevelChange(this.value, false)">
-                    </div>
-                    <div style="display:inline-flex;align-items:center;gap:4px;">
-                      <span style="font-size:11.5px;color:var(--text-muted);font-weight:700;">${isEN ? 'Ribbon:' : '獎章:'}</span>
-                      <select id="lab-ribbon-select" class="lab-select" onchange="window.AppraisalLab.onRibbonChange(this.value)" style="height:26px;font-size:11.5px;padding:0 26px 0 6px;border-radius:6px;">
-                        <option value="0" ${labState.ribbon === 0 ? 'selected' : ''}>${isEN ? '0h (None)' : '0h (未佩戴)'}</option>
-                        <option value="1" ${labState.ribbon === 1 ? 'selected' : ''}>${isEN ? '200h (+1)' : '200h (+1)'}</option>
-                        <option value="2" ${labState.ribbon === 2 ? 'selected' : ''}>${ribbonOpt2}</option>
-                        <option value="3" ${labState.ribbon === 3 ? 'selected' : ''}>${ribbonOpt3}</option>
-                        <option value="4" ${labState.ribbon === 4 ? 'selected' : ''}>${ribbonOpt4}</option>
-                      </select>
-                    </div>
-                  `}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            ${!labState.editMode ? `
-              <!-- 雙軌評級 (當前評級與滿級潛力評級) (僅瀏覽模式展示，修改模式不展示) -->
+              <!-- 雙軌評級 (當前評級與滿級潛力評級) (僅瀏覽模式展示) -->
               <div class="lab-preview-dual-verdict" style="display:flex;gap:8px;align-items:center;margin-top:2px;">
                 <div class="lab-preview-verdict lab-verdict-cur" style="border-color: ${(evaluation.current || evaluation).gradeColor}; color: ${(evaluation.current || evaluation).gradeColor}; padding:4px 8px; border-radius:8px; text-align:center;">
                   <span style="font-size:10px;display:block;color:#94a3b8;font-weight:700;">${isEN ? `Current Lv.${labState.level}` : `當前 Lv.${labState.level}`}</span>
@@ -2543,36 +2619,26 @@
                   <span style="font-size:10px;font-weight:600;display:block;color:#94a3b8;">${(evaluation.potential || evaluation).compositeScore} ${isEN ? 'pts' : '分'}</span>
                 </div>
               </div>
-            ` : ''}
-          </div>
-
-          <!-- 寶可夢數據面板 (主技能、食材、性格、副技能) -->
-          <div class="lab-preview-stats-panel" style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
-            <!-- 主技能名稱與等級 + 幫忙間隔與持有上限 -->
-            <div class="lab-preview-mainskill-row" style="display:flex;align-items:center;gap:8px;font-size:12.5px;flex-wrap:wrap;">
-              <span style="font-weight:700;color:var(--text-muted);font-size:11.5px;">${isEN ? 'Main Skill:' : '主技能：'}</span>
-              <span style="font-weight:700;color:var(--text-primary);">${escapeHtml(mainSkillName)}</span>
-              ${!labState.editMode ? `
-                <span class="lab-skill-lvl-badge" style="background:rgba(56,189,248,0.15);color:var(--accent-color, #38bdf8);padding:1px 6px;border-radius:4px;font-size:11px;font-weight:700;">Lv.${skillLvl}</span>
-              ` : `
-                <select class="lab-select lab-skill-select" onchange="window.AppraisalLab.onSkillLevelChange(this.value)" style="height:26px;font-size:11.5px;padding:0 26px 0 6px;border-radius:6px;">
-                  ${Array.from({ length: maxSkillLvl }, (_, i) => i + 1).map(lvl => `
-                    <option value="${lvl}" ${skillLvl === lvl ? 'selected' : ''}>Lv.${lvl}</option>
-                  `).join('')}
-                </select>
-              `}
-              ${helpIntervalFormatted ? `
-                <span style="font-size:11.5px;color:var(--text-muted);margin-left:auto;">${isEN ? 'Interval:' : '幫忙間隔:'} <strong style="color:var(--text-primary);">${helpIntervalFormatted}</strong></span>
-              ` : ''}
-              ${carryLimitVal ? `
-                <span style="font-size:11.5px;color:var(--text-muted);">${isEN ? 'Carry:' : '持有:'} <strong style="color:var(--text-primary);">${carryLimitVal}</strong></span>
-              ` : ''}
             </div>
 
-            <!-- 食材組合 (Lv.1, Lv.30, Lv.60) -->
-            <div class="lab-preview-ing-row" style="display:flex;align-items:center;gap:8px;font-size:12.5px;flex-wrap:nowrap;white-space:nowrap;overflow-x:auto;">
-              <span style="font-weight:700;color:var(--text-muted);font-size:11.5px;flex-shrink:0;">${isEN ? 'Ingredients:' : '食材：'}</span>
-              ${!labState.editMode ? `
+            <!-- 寶可夢數據面板 (主技能、食材、性格、副技能) -->
+            <div class="lab-preview-stats-panel" style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+              <!-- 主技能名稱與等級 + 幫忙間隔與持有上限 -->
+              <div class="lab-preview-mainskill-row" style="display:flex;align-items:center;gap:8px;font-size:12.5px;flex-wrap:wrap;">
+                <span style="font-weight:700;color:var(--text-muted);font-size:11.5px;">${isEN ? 'Main Skill:' : '主技能：'}</span>
+                <span style="font-weight:700;color:var(--text-primary);">${escapeHtml(mainSkillName)}</span>
+                <span class="lab-skill-lvl-badge" style="background:rgba(56,189,248,0.15);color:var(--accent-color, #38bdf8);padding:1px 6px;border-radius:4px;font-size:11px;font-weight:700;">Lv.${skillLvl}</span>
+                ${helpIntervalFormatted ? `
+                  <span style="font-size:11.5px;color:var(--text-muted);margin-left:auto;">${isEN ? 'Interval:' : '幫忙間隔:'} <strong style="color:var(--text-primary);">${helpIntervalFormatted}</strong></span>
+                ` : ''}
+                ${carryLimitVal ? `
+                  <span style="font-size:11.5px;color:var(--text-muted);">${isEN ? 'Carry:' : '持有:'} <strong style="color:var(--text-primary);">${carryLimitVal}</strong></span>
+                ` : ''}
+              </div>
+
+              <!-- 食材組合 (Lv.1, Lv.30, Lv.60) (純圖標單行展示) -->
+              <div class="lab-preview-ing-row" style="display:flex;align-items:center;gap:8px;font-size:12.5px;flex-wrap:nowrap;white-space:nowrap;overflow-x:auto;">
+                <span style="font-weight:700;color:var(--text-muted);font-size:11.5px;flex-shrink:0;">${isEN ? 'Ingredients:' : '食材：'}</span>
                 <div class="lab-preview-ing-chips" style="display:flex;gap:6px;align-items:center;flex-wrap:nowrap;">
                   ${[0, 1, 2].map(function (idx) {
                     const unlockLv = idx === 0 ? 1 : (idx === 1 ? 30 : 60);
@@ -2589,72 +2655,24 @@
                     `;
                   }).join('')}
                 </div>
-              ` : `
-                <!-- 參考 pokedex-detail-modal & box-edit-modal 的 box-ing-strip 平鋪選擇器 (純圖示、無名稱無數量) -->
-                <div class="box-ing-strip" style="display:inline-flex;gap:8px;align-items:center;flex-wrap:nowrap;">
-                  ${[
-                    { level: 1, allowed: uniqueLv1, slotIdx: 0, tag: 'Lv.1' },
-                    { level: 30, allowed: uniqueLv30, slotIdx: 1, tag: 'Lv.30' },
-                    { level: 60, allowed: uniqueLv60, slotIdx: 2, tag: 'Lv.60' }
-                  ].map((slot, sIdx) => {
-                    const curVal = labState.ingredients[slot.slotIdx] || (slot.allowed[0] ? slot.allowed[0].name : '');
-                    const optButtons = slot.allowed.map((ing) => {
-                      const isSelected = curVal === ing.name;
-                      const ingDisplayName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
-                      const iconUrl = ing.icon || (window.I18N && window.I18N.getIngredientIcon(ing.name)) || '';
-                      return `
-                        <button type="button" class="box-ing-opt-btn ${isSelected ? 'active' : ''}" title="${escapeHtml(ingDisplayName)}" aria-label="${escapeHtml(ingDisplayName)}" onclick="window.AppraisalLab.onIngredientChange(${slot.slotIdx}, '${ing.name}')">
-                          <img src="${iconUrl}" class="box-ing-opt-icon" alt="${escapeHtml(ingDisplayName)}" loading="lazy">
-                        </button>
-                      `;
-                    }).join('');
-                    return `
-                      <div class="box-ing-slot-group">
-                        <span class="box-ing-lvl-tag">${slot.tag}</span>
-                        <div class="box-ing-options-list">${optButtons}</div>
-                      </div>
-                      ${sIdx < 2 ? '<span class="box-ing-slot-sep" style="opacity:0.4;font-size:11px;">|</span>' : ''}
-                    `;
-                  }).join('')}
-                </div>
-              `}
-            </div>
-
-            <!-- 性格展示 (與網頁評測彈窗風格一致；修改模式提供性格選單 + 即時膠囊回饋) -->
-            <div class="lab-preview-nature-row" style="margin:4px 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-              ${labState.editMode ? `
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <span style="font-weight:700;color:var(--text-muted);font-size:11.5px;">${isEN ? 'Nature:' : '性格：'}</span>
-                  <select id="lab-nature-select" class="lab-select" onchange="window.AppraisalLab.onNatureChange(this.value)" style="height:32px;font-size:12px;padding:0 32px 0 8px;border-radius:6px;">
-                    ${natures.map(function (n) {
-                      const nName = window.I18N ? window.I18N.getNatureName(n.name) : n.name;
-                      const buffLabel = isEN ? (n.buff_en || n.buff) : n.buff;
-                      const debuffLabel = isEN ? (n.debuff_en || n.debuff) : n.debuff;
-                      return '<option value="' + n.name + '" ' + (n.name === labState.nature ? 'selected' : '') + '>' + nName + ' (' + buffLabel + ' / ' + debuffLabel + ')</option>';
-                    }).join('')}
-                  </select>
-                </div>
-              ` : ''}
-              <div class="appraisal-nature-game-card" style="margin:0;">
-                <div class="nature-pill-capsule">
-                  <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
-                  <span class="nature-capsule-name">${escapeHtml(natureDisplayName)}</span>
-                </div>
-                ${labNatureEffectHtml}
               </div>
-            </div>
 
-            <!-- 副技能清單 (Lv.10, Lv.25, Lv.50, Lv.70, Lv.80) 2+2+1 排列 -->
-            <div class="lab-preview-subskills-section">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                <span style="font-weight:700;color:var(--text-muted);font-size:11.5px;">${isEN ? 'Sub-Skills:' : '副技能：'}</span>
-                ${labState.editMode ? `
-                  <button type="button" class="box-subskill-clear-btn" onclick="window.AppraisalLab.clearAllSubskills()" style="background:transparent;border:none;color:var(--accent-color, #38bdf8);font-size:11.5px;cursor:pointer;padding:2px 6px;">
-                    ${isEN ? 'Clear All' : '清空全部'}
-                  </button>
-                ` : ''}
+              <!-- 性格展示 (遊戲膠囊風格) -->
+              <div class="lab-preview-nature-row" style="margin:4px 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <div class="appraisal-nature-game-card" style="margin:0;">
+                  <div class="nature-pill-capsule">
+                    <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
+                    <span class="nature-capsule-name">${escapeHtml(natureDisplayName)}</span>
+                  </div>
+                  ${labNatureEffectHtml}
+                </div>
               </div>
-              ${!labState.editMode ? `
+
+              <!-- 副技能清單 (Lv.10, Lv.25, Lv.50, Lv.70, Lv.80) 2+2+1 排列 -->
+              <div class="lab-preview-subskills-section">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                  <span style="font-weight:700;color:var(--text-muted);font-size:11.5px;">${isEN ? 'Sub-Skills:' : '副技能：'}</span>
+                </div>
                 <div class="box-subskills-grid" style="display:grid;grid-template-columns:repeat(2, 1fr);gap:6px;">
                   ${[10, 25, 50, 70, 80].map(function (lv, idx) {
                     const sName = labState.subskills[idx] || '';
@@ -2671,42 +2689,211 @@
                     `;
                   }).join('')}
                 </div>
-              ` : `
-                <!-- 修改模式副技能 2+2+1 排列插槽選單 -->
-                <div class="lab-subskills-picker" style="display:grid;grid-template-columns:repeat(2, 1fr);gap:6px;">
-                  ${[10, 25, 50, 70, 80].map(function (lv, idx) {
-                    const isFifth = idx === 4;
-                    const curSub = labState.subskills[idx] || '';
-                    return `
-                      <div class="lab-subskill-slot" style="${isFifth ? 'grid-column: 1 / 2; width: 100%;' : ''}">
-                        <span class="slot-lv-label">Lv.${lv}</span>
-                        <select class="lab-select-subskill" onchange="window.AppraisalLab.onSubskillChange(${idx}, this.value)">
-                          <option value="">${isEN ? '(None)' : '(無)'}</option>
-                          ${subskillPool.map(function (s) {
-                            const sDisplayName = window.I18N ? window.I18N.getSubSkillName(s.name) : s.name;
-                            return '<option value="' + s.name + '" ' + (curSub === s.name ? 'selected' : '') + '>' + sDisplayName + '</option>';
-                          }).join('')}
-                        </select>
-                      </div>
-                    `;
-                  }).join('')}
-                </div>
-              `}
+              </div>
             </div>
 
-            ${labState.editMode ? `
-              <!-- 修改模式下方確認/取消動作列 -->
-              <div class="lab-edit-bottom-actions" style="display:flex;gap:10px;margin-top:16px;">
-                <button type="button" class="btn-lab-save" onclick="window.AppraisalLab.saveEditMode()" style="flex:1;height:40px;background:#22c55e;color:#0f172a;font-weight:700;border-radius:10px;border:none;cursor:pointer;font-size:13.5px;display:flex;align-items:center;justify-content:center;gap:6px;">
-                  <span>[✓]</span>
-                  <span>${isEN ? 'Save Changes' : '保存修改'}</span>
-                </button>
-                <button type="button" class="btn-lab-cancel" onclick="window.AppraisalLab.cancelEditMode()" style="flex:1;height:40px;background:rgba(148,163,184,0.15);color:var(--text-primary);border-radius:10px;border:1px solid var(--border-color);cursor:pointer;font-size:13.5px;">
-                  <span>${isEN ? 'Cancel' : '取消'}</span>
-                </button>
+            <!-- 六邊形能力圖 (標題與分數直接印在各頂點) (僅瀏覽模式展示，修改模式不展示) -->
+            <div class="lab-chart-container">
+              ${radarSVG}
+            </div>
+
+            <!-- 下方的深度診斷評語與升級里程碑預測 (僅瀏覽模式展示，修改模式不展示) -->
+            <div class="lab-pros-box">
+              ${evaluation.pros.map(function (p) { return '<div class="lab-bullet-item">' + p + '</div>'; }).join('')}
+            </div>
+
+            ${evaluation.milestones && evaluation.milestones.length > 0 ? `
+              <div class="lab-milestones-box" style="margin-top:10px;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.3);border-radius:8px;padding:8px 12px;">
+                <div style="font-size:11px;font-weight:700;color:#facc15;margin-bottom:4px;display:flex;align-items:center;gap:4px;">
+                  <span>[^]</span>
+                  <span>${isEN ? 'Level-Up Milestone Projections' : '升級里程碑質變預測'}</span>
+                </div>
+                ${evaluation.milestones.map(m => `<div style="font-size:11px;color:#e2e8f0;line-height:1.4;margin-bottom:3px;">${escapeHtml(m.text)}</div>`).join('')}
               </div>
             ` : ''}
-          </div>
+          ` : `
+            <!-- 修改模式：參照手動新增/編輯彈窗 (box-edit-modal) 佈局，下方雷達圖與評語不展示 -->
+            <div class="lab-preview-header" style="position:relative;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--border-color-subtle, rgba(255,255,255,0.08));padding-bottom:12px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="font-weight:700;font-size:15px;color:var(--text-primary);display:flex;align-items:center;gap:6px;">
+                  <span>${isEN ? 'Edit Pokémon Stats' : '修改寶可夢數值'}</span>
+                  <span style="font-size:11px;padding:2px 6px;border-radius:4px;background:rgba(56,189,248,0.15);color:var(--accent-color, #38bdf8);font-weight:600;">${isEN ? 'Edit Mode' : '修改模式'}</span>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button type="button" class="btn-lab-save btn-lab-save-header" onclick="window.AppraisalLab.saveEditMode()" style="background:#22c55e;color:#0f172a;font-weight:700;padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-size:12.5px;display:inline-flex;align-items:center;gap:4px;">
+                  <span>[✓]</span>
+                  <span>${isEN ? 'Save' : '保存'}</span>
+                </button>
+                <button type="button" class="btn-lab-cancel btn-lab-cancel-header" onclick="window.AppraisalLab.cancelEditMode()" style="background:rgba(148,163,184,0.2);color:var(--text-main, #f1f5f9);padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-size:12.5px;">
+                  ${isEN ? 'Cancel' : '取消'}
+                </button>
+              </div>
+            </div>
+
+            <!-- 編輯表單：使用 box-form-grid 與 box-edit-modal 完全一致的控制項 -->
+            <form class="box-modal-form lab-edit-form" onsubmit="event.preventDefault(); window.AppraisalLab.saveEditMode();" style="margin-top:12px;">
+              <div class="box-form-grid">
+                <!-- 1. 頂部單行：寶可夢名稱 + 等級 + 自訂暱稱 -->
+                <div class="box-form-row-3col box-full-width">
+                  <div class="box-form-group flex-name">
+                    <label class="box-form-label">${isEN ? 'Pokémon Name' : '寶可夢名稱'}</label>
+                    <div class="box-pkm-select-row" style="display:flex;align-items:center;gap:8px;height:34px;">
+                      <div class="box-pkm-avatar-slot" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:var(--table-row-odd-solid, #0d1527);border:1px solid var(--border-color);border-radius:8px;flex-shrink:0;">
+                        <img src="${currentPkm.icon_url}" class="box-pkm-selected-avatar" alt="${escapeHtml(displayName)}" style="width:28px;height:28px;object-fit:contain;">
+                      </div>
+                      <div style="display:flex;flex-direction:column;gap:1px;min-width:0;">
+                        <span style="font-weight:700;font-size:13.5px;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${displayName}</span>
+                        <div style="display:flex;align-items:center;gap:4px;">${berryIconHtml}${specialtyIconHtml}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="box-form-group flex-level">
+                    <label class="box-form-label" for="lab-level-num-input">${isEN ? 'Level' : '等級'} <span style="color:#ef4444;">*</span></label>
+                    <input type="number" id="lab-level-num-input" class="box-form-input" min="1" max="100" value="${labState.level}" placeholder="1~100" onchange="window.AppraisalLab.onLevelChange(this.value, false)" required>
+                  </div>
+
+                  <div class="box-form-group flex-nickname">
+                    <label class="box-form-label" for="lab-nickname-input">${isEN ? 'Custom Nickname' : '自訂暱稱'}</label>
+                    <input type="text" id="lab-nickname-input" class="box-form-input" value="${escapeHtml(labState.nickname)}" placeholder="${isEN ? 'e.g. Berry Specialist...' : '例如：首隻樹果S神坦...'}" oninput="window.AppraisalLab.onNicknameChange(this.value)">
+                  </div>
+                </div>
+
+                <!-- 2. 食材組合：標籤與純圖標選項同一行展示 -->
+                <div class="box-form-group box-full-width box-form-row-inline">
+                  <label class="box-form-label box-form-inline-label">${isEN ? 'Ingredients' : '食材組合'}</label>
+                  <div class="box-ing-strip">
+                    ${[
+                      { level: 1, allowed: uniqueLv1, slotIdx: 0, tag: 'Lv.1' },
+                      { level: 30, allowed: uniqueLv30, slotIdx: 1, tag: 'Lv.30' },
+                      { level: 60, allowed: uniqueLv60, slotIdx: 2, tag: 'Lv.60' }
+                    ].map((slot, sIdx) => {
+                      const curVal = labState.ingredients[slot.slotIdx] || (slot.allowed[0] ? slot.allowed[0].name : '');
+                      const optButtons = slot.allowed.map((ing) => {
+                        const isSelected = curVal === ing.name;
+                        const ingDisplayName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
+                        const iconUrl = ing.icon || (window.I18N && window.I18N.getIngredientIcon(ing.name)) || '';
+                        return `
+                          <button type="button" class="box-ing-opt-btn ${isSelected ? 'active' : ''}" title="${escapeHtml(ingDisplayName)}" aria-label="${escapeHtml(ingDisplayName)}" onclick="window.AppraisalLab.onIngredientChange(${slot.slotIdx}, '${escapeHtml(ing.name)}')">
+                            <img src="${iconUrl}" class="box-ing-opt-icon" alt="${escapeHtml(ingDisplayName)}" loading="lazy">
+                          </button>
+                        `;
+                      }).join('');
+                      return `
+                        <div class="box-ing-slot-group">
+                          <span class="box-ing-lvl-tag">${slot.tag}</span>
+                          <div class="box-ing-options-list">${optButtons}</div>
+                        </div>
+                        ${sIdx < 2 ? '<span class="box-ing-slot-sep">|</span>' : ''}
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+
+                <!-- 3. 主技能：展示技能名稱與等級調整選單 -->
+                <div class="box-form-group box-full-width box-form-row-inline box-mainskill-row">
+                  <label class="box-form-label box-form-inline-label" for="lab-mainskill-select">${isEN ? 'Main Skill' : '主技能資訊'}</label>
+                  <div class="box-form-inline-control box-mainskill-control">
+                    <span class="box-mainskill-name-badge">${escapeHtml(mainSkillName)}</span>
+                    <select id="lab-mainskill-select" class="box-form-select box-mainskill-select" onchange="window.AppraisalLab.onSkillLevelChange(this.value)">
+                      ${Array.from({ length: maxSkillLvl }, (_, i) => i + 1).map(lvl => `
+                        <option value="${lvl}" ${skillLvl === lvl ? 'selected' : ''}>Lv. ${lvl}</option>
+                      `).join('')}
+                    </select>
+                    ${helpIntervalFormatted ? '<span style="font-size:11.5px;color:var(--text-muted);margin-left:auto;">' + (isEN ? 'Interval:' : '幫忙間隔:') + ' <strong style="color:var(--text-primary);">' + helpIntervalFormatted + '</strong></span>' : ''}
+                    ${carryLimitVal ? '<span style="font-size:11.5px;color:var(--text-muted);">' + (isEN ? 'Carry:' : '持有:') + ' <strong style="color:var(--text-primary);">' + carryLimitVal + '</strong></span>' : ''}
+                  </div>
+                </div>
+
+                <!-- 4. 性格：標籤與選單同一行展示 -->
+                <div class="box-form-group box-full-width box-form-row-inline">
+                  <label class="box-form-label box-form-inline-label" for="lab-nature-select">${isEN ? 'Nature' : '性格'} <span style="color:#ef4444;">*</span></label>
+                  <div class="box-form-inline-control" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <select id="lab-nature-select" class="box-form-select" onchange="window.AppraisalLab.onNatureChange(this.value)" style="flex:1;min-width:180px;">
+                      ${natures.map(function (n) {
+                        const nName = window.I18N ? window.I18N.getNatureName(n.name) : n.name;
+                        const buffLabel = isEN ? (n.buff_en || n.buff) : n.buff;
+                        const debuffLabel = isEN ? (n.debuff_en || n.debuff) : n.debuff;
+                        return '<option value="' + n.name + '" ' + (n.name === labState.nature ? 'selected' : '') + '>' + nName + ' (' + buffLabel + (debuffLabel ? ' / ' + debuffLabel : '') + ')</option>';
+                      }).join('')}
+                    </select>
+                    <div class="appraisal-nature-game-card" style="margin:0;">
+                      <div class="nature-pill-capsule">
+                        <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
+                        <span class="nature-capsule-name">${escapeHtml(natureDisplayName)}</span>
+                      </div>
+                      ${labNatureEffectHtml}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 5. 睡飽飽獎章：標籤與選單同一行展示 -->
+                <div class="box-form-group box-full-width box-form-row-inline">
+                  <label class="box-form-label box-form-inline-label" for="lab-ribbon-select">${isEN ? 'Ribbon' : '睡飽飽獎章'}</label>
+                  <div class="box-form-inline-control">
+                    <select id="lab-ribbon-select" class="box-form-select" onchange="window.AppraisalLab.onRibbonChange(this.value)">
+                      <option value="0" ${labState.ribbon === 0 ? 'selected' : ''}>${isEN ? 'None (0h)' : '未佩戴 (0h)'}</option>
+                      <option value="1" ${labState.ribbon === 1 ? 'selected' : ''}>${isEN ? '200 hrs (+1 Carry)' : '200 小時 (+1 持有上限)'}</option>
+                      <option value="2" ${labState.ribbon === 2 ? 'selected' : ''}>${ribbonOpt2}</option>
+                      <option value="3" ${labState.ribbon === 3 ? 'selected' : ''}>${ribbonOpt3}</option>
+                      <option value="4" ${labState.ribbon === 4 ? 'selected' : ''}>${ribbonOpt4}</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- 6. 5 格副技能配置：單行 5 階插槽 + 平鋪副技能選擇盤 -->
+                <div class="box-form-group box-full-width">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                    <label class="box-form-label">${isEN ? 'Sub-Skills' : '副技能配置'}</label>
+                    <button type="button" class="box-subskill-clear-btn" onclick="window.AppraisalLab.clearAllSubskills()" title="${isEN ? 'Clear All Subskills' : '清空全部副技能'}">✕ ${isEN ? 'Clear All' : '清空全部'}</button>
+                  </div>
+
+                  <!-- 單行 5 階插槽列 -->
+                  <div class="box-subskill-slots-row" id="lab-subskill-slots-row">
+                    ${[
+                      { slot: 1, lv: 10 },
+                      { slot: 2, lv: 25 },
+                      { slot: 3, lv: 50 },
+                      { slot: 4, lv: 70 },
+                      { slot: 5, lv: 80 }
+                    ].map(sInfo => {
+                      const isActive = (labState.activeSubskillSlot || 1) === sInfo.slot;
+                      const curVal = labState.subskills[sInfo.slot - 1] || '';
+                      const tier = getSkillTier(curVal);
+                      const skDisplayName = curVal ? (window.I18N ? window.I18N.getSubSkillName(curVal) : curVal) : '';
+                      return `
+                        <button type="button" class="box-subskill-slot-btn ${isActive ? 'active' : ''}" data-slot="${sInfo.slot}" onclick="window.AppraisalLab.selectSubskillSlot(${sInfo.slot})">
+                          <span class="slot-lvl-header">Lv.${sInfo.lv}</span>
+                          ${curVal ? `
+                            <span class="slot-val-badge box-subskill-pill subskill-${tier}">${escapeHtml(skDisplayName)}</span>
+                          ` : `
+                            <span class="slot-val-badge slot-val-empty">${isEN ? '-- None --' : '-- 未解鎖 --'}</span>
+                          `}
+                        </button>
+                      `;
+                    }).join('')}
+                  </div>
+
+                  <!-- 平鋪副技能選擇盤 -->
+                  <div class="box-subskill-palette" id="lab-subskill-palette">
+                    ${paletteSectionsHtml}
+                  </div>
+                </div>
+
+                <!-- 下方儲存/取消動作列 -->
+                <div class="lab-edit-bottom-actions" style="display:flex;gap:12px;margin-top:16px;">
+                  <button type="button" class="btn-lab-save" onclick="window.AppraisalLab.saveEditMode()" style="flex:1;height:42px;background:#22c55e;color:#0f172a;font-weight:700;border-radius:10px;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px;">
+                    <span>[✓]</span>
+                    <span>${isEN ? 'Save Changes' : '保存修改'}</span>
+                  </button>
+                  <button type="button" class="btn-lab-cancel" onclick="window.AppraisalLab.cancelEditMode()" style="flex:1;height:42px;background:rgba(148,163,184,0.15);color:var(--text-primary);border-radius:10px;border:1px solid var(--border-color);cursor:pointer;font-size:14px;">
+                    <span>${isEN ? 'Cancel' : '取消'}</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          `}
 
           ${!labState.editMode ? `
             <!-- 六邊形能力圖 (標題與分數直接印在各頂點) (僅瀏覽模式展示，修改模式不展示) -->
@@ -2829,6 +3016,9 @@
     onIngredientChange: onIngredientChange,
     onSkillLevelChange: onSkillLevelChange,
     clearAllSubskills: clearAllSubskills,
+    selectSubskillSlot: selectSubskillSlot,
+    onSubskillSlotSelect: selectSubskillSlot,
+    onSubskillChipSelect: onSubskillChipSelect,
     onPkmChange: onPkmChange,
     onLevelChange: onLevelChange,
     onNatureChange: onNatureChange,

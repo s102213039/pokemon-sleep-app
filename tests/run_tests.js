@@ -9635,8 +9635,13 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(mockContainer.innerHTML.includes('btn-lab-save-header'), 'Edit mode must render save button in header');
     assert(mockContainer.innerHTML.includes('btn-lab-cancel-header'), 'Edit mode must render cancel button in header');
     assert(mockContainer.innerHTML.includes('id="lab-nickname-input"'), 'Edit mode must render nickname input');
-    assert(mockContainer.innerHTML.includes('class="box-ing-opt-btn'), 'Edit mode must render ingredient option buttons');
-    assert(mockContainer.innerHTML.includes('class="lab-select-subskill"'), 'Edit mode must render subskill selects');
+    assert(mockContainer.innerHTML.includes('class="box-subskill-palette"'), 'Edit mode must render subskill palette');
+    assert(mockContainer.innerHTML.includes('class="box-subskill-slots-row"'), 'Edit mode must render subskill slots row');
+
+    // Test subskill slot picking and chip selection
+    ctx.window.AppraisalLab.selectSubskillSlot(2);
+    ctx.window.AppraisalLab.onSubskillChipSelect('幫忙速度M');
+    assert(mockContainer.innerHTML.includes('幫忙速度M'), 'Selected chip must be reflected in subskills');
 
     // Cancel Edit Mode
     ctx.window.AppraisalLab.cancelEditMode();
