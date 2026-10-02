@@ -2567,21 +2567,22 @@
     const uniqueLv30 = Array.from(new Set([ingA.name, ingB.name])).map(n => baseIngList.find(i => i.name === n) || { name: n });
     const uniqueLv60 = Array.from(new Set([ingA.name, ingB.name, ingC.name])).map(n => baseIngList.find(i => i.name === n) || { name: n });
 
-    // 睡飽飽獎章動態效果文案 (依據寶可夢進化次數)
+    // 睡飽飽獎章動態效果文案 (依據寶可夢進化次數，去除非必要的XXX小時文字，只保留效果)
     const ribbonEvos = getRemainingEvolutions(currentPkm);
-    let ribbonOpt2 = isEN ? '500 hrs (+3 Carry Limit · Speed Boost)' : '500 小時 (+3 持有上限 · 幫速加成)';
-    let ribbonOpt3 = isEN ? '1000 hrs (+6 Carry Limit)' : '1000 小時 (+6 持有上限)';
-    let ribbonOpt4 = isEN ? '2000 hrs (+8 Carry Limit · Max Speed Boost)' : '2000 小時 (+8 持有上限 · 幫速最大加成)';
+    let ribbonOpt2 = isEN ? '+3 Carry Limit · Speed Boost' : '+3 持有上限 · 幫速加成';
+    let ribbonOpt3 = isEN ? '+6 Carry Limit' : '+6 持有上限';
+    let ribbonOpt4 = isEN ? '+8 Carry Limit · Max Speed Boost' : '+8 持有上限 · 幫速最大加成';
     if (ribbonEvos === 2) {
-      ribbonOpt2 = isEN ? '500 hrs (+3 Carry Limit · Speed -11%)' : '500 小時 (+3 持有上限 · 幫速加成 -11%)';
-      ribbonOpt4 = isEN ? '2000 hrs (+8 Carry Limit · Speed -25%)' : '2000 小時 (+8 持有上限 · 幫速最大加成 -25%)';
+      ribbonOpt2 = isEN ? '+3 Carry Limit · Speed -11%' : '+3 持有上限 · 幫速加成 -11%';
+      ribbonOpt4 = isEN ? '+8 Carry Limit · Speed -25%' : '+8 持有上限 · 幫速最大加成 -25%';
     } else if (ribbonEvos === 1) {
-      ribbonOpt2 = isEN ? '500 hrs (+3 Carry Limit · Speed -5%)' : '500 小時 (+3 持有上限 · 幫速加成 -5%)';
-      ribbonOpt4 = isEN ? '2000 hrs (+8 Carry Limit · Speed -12%)' : '2000 小時 (+8 持有上限 · 幫速最大加成 -12%)';
+      ribbonOpt2 = isEN ? '+3 Carry Limit · Speed -5%' : '+3 持有上限 · 幫速加成 -5%';
+      ribbonOpt4 = isEN ? '+8 Carry Limit · Speed -12%' : '+8 持有上限 · 幫速最大加成 -12%';
     } else {
-      ribbonOpt2 = isEN ? '500 hrs (+3 Carry Limit)' : '500 小時 (+3 持有上限)';
-      ribbonOpt4 = isEN ? '2000 hrs (+8 Carry Limit)' : '2000 小時 (+8 持有上限)';
+      ribbonOpt2 = isEN ? '+3 Carry Limit' : '+3 持有上限';
+      ribbonOpt4 = isEN ? '+8 Carry Limit' : '+8 持有上限';
     }
+    const ribbonBase = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
 
 
     // 副技能平鋪選擇盤晶片 HTML (修改模式使用)
@@ -2664,7 +2665,7 @@
         ${labState.editMode ? '<div class="lab-edit-mode-banner" style="display:none;"></div>' : ''}
 
         <!-- 即時評測展示 (簡介 + 數值面板；瀏覽模式下包含雷達圖與評語，修改模式下為手動新增彈窗風格表單) -->
-        <div class="appraisal-lab-preview lab-preview-fullwidth">
+        <div class="appraisal-lab-preview lab-preview-fullwidth ${labState.editMode ? 'lab-preview-edit-mode' : ''}">
           ${!labState.editMode ? `
             <div class="lab-preview-header" style="position:relative;display:flex;${isMobileH5 ? 'flex-direction:column;gap:8px;' : 'justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;'}padding-right:50px;border-bottom:1px solid var(--border-color-subtle, rgba(255,255,255,0.08));padding-bottom:12px;">
               <!-- 最右上方固定操作按鈕：瀏覽模式下為鉛筆修改按鈕 -->
@@ -2850,40 +2851,38 @@
                   </div>
                 </div>
 
-                <!-- 2. 雙欄：自訂暱稱 + 性格 (自訂下拉元件 setupCustomSelect) -->
-                <div class="box-form-row-2col box-full-width">
+                <!-- 2. 雙欄：自訂暱稱 + 睡飽飽獎章 (自訂下拉元件 setupCustomSelect) -->
+                <div class="box-form-row-2col box-nickname-ribbon-row box-full-width">
                   <!-- 自訂暱稱 -->
                   <div class="box-form-group flex-nickname">
                     <label class="box-form-label" for="lab-nickname-input">${isEN ? 'Nickname' : '自訂暱稱'}</label>
                     <input type="text" id="lab-nickname-input" class="box-form-input" value="${escapeHtml(labState.nickname)}" placeholder="${isEN ? 'e.g., BFS God...' : '例如：首隻樹果S神坦...'}" oninput="window.AppraisalLab.onNicknameChange(this.value)">
                   </div>
 
-                  <!-- 性格 (自訂下拉元件 setupCustomSelect) -->
-                  <div class="box-form-group flex-nature">
-                    <label class="box-form-label" for="lab-nature-select">${isEN ? 'Nature' : '性格'} <span style="color:#ef4444;">*</span></label>
-                    <select id="lab-nature-select" class="box-form-select" required onchange="window.AppraisalLab.onNatureChange(this.value)">
-                      ${natures.map(function (n) {
-                        const nName = window.I18N ? window.I18N.getNatureName(n.name) : n.name;
-                        const buffLabel = isEN ? (n.buff_en || n.buff) : n.buff;
-                        const debuffLabel = isEN ? (n.debuff_en || n.debuff) : n.debuff;
-                        return '<option value="' + n.name + '" ' + (n.name === labState.nature ? 'selected' : '') + '>' + nName + ' (' + buffLabel + (debuffLabel ? ' / ' + debuffLabel : '') + ')</option>';
-                      }).join('')}
+                  <!-- 睡飽飽獎章 (自訂下拉元件 setupCustomSelect) -->
+                  <div class="box-form-group flex-ribbon">
+                    <label class="box-form-label" for="lab-ribbon-select">${isEN ? 'Good-Night Ribbon' : '睡飽飽獎章'}</label>
+                    <select id="lab-ribbon-select" class="box-form-select" onchange="window.AppraisalLab.onRibbonChange(this.value)">
+                      <option value="0" ${labState.ribbon === 0 ? 'selected' : ''}>${isEN ? 'None' : '未佩戴'}</option>
+                      <option value="1" data-icon="${ribbonBase}assets/ribbons/ribbon_lv1.png" ${labState.ribbon === 1 ? 'selected' : ''}>${isEN ? '+1 Carry Limit' : '+1 持有上限'}</option>
+                      <option value="2" data-icon="${ribbonBase}assets/ribbons/ribbon_lv2.png" ${labState.ribbon === 2 ? 'selected' : ''}>${ribbonOpt2}</option>
+                      <option value="3" data-icon="${ribbonBase}assets/ribbons/ribbon_lv3.png" ${labState.ribbon === 3 ? 'selected' : ''}>${ribbonOpt3}</option>
+                      <option value="4" data-icon="${ribbonBase}assets/ribbons/ribbon_lv4.png" ${labState.ribbon === 4 ? 'selected' : ''}>${ribbonOpt4}</option>
                     </select>
                   </div>
                 </div>
 
-                <!-- 3. 睡飽飽獎章：標籤與選單同一行展示 (自訂下拉元件 setupCustomSelect) -->
-                <div class="box-form-group box-full-width box-form-row-inline">
-                  <label class="box-form-label box-form-inline-label" for="lab-ribbon-select">${isEN ? 'Good-Night Ribbon' : '睡飽飽獎章'}</label>
-                  <div class="box-form-inline-control">
-                    <select id="lab-ribbon-select" class="box-form-select" onchange="window.AppraisalLab.onRibbonChange(this.value)">
-                      <option value="0" ${labState.ribbon === 0 ? 'selected' : ''}>${isEN ? 'None (0h)' : '未佩戴 (0h)'}</option>
-                      <option value="1" data-icon="assets/ribbons/ribbon_lv1.png" ${labState.ribbon === 1 ? 'selected' : ''}>${isEN ? '200 hrs (+1 Carry Limit)' : '200 小時 (+1 持有上限)'}</option>
-                      <option value="2" data-icon="assets/ribbons/ribbon_lv2.png" ${labState.ribbon === 2 ? 'selected' : ''}>${ribbonOpt2}</option>
-                      <option value="3" data-icon="assets/ribbons/ribbon_lv3.png" ${labState.ribbon === 3 ? 'selected' : ''}>${ribbonOpt3}</option>
-                      <option value="4" data-icon="assets/ribbons/ribbon_lv4.png" ${labState.ribbon === 4 ? 'selected' : ''}>${ribbonOpt4}</option>
-                    </select>
-                  </div>
+                <!-- 3. 單欄全寬：性格 (自訂下拉元件 setupCustomSelect) -->
+                <div class="box-form-group box-full-width flex-nature">
+                  <label class="box-form-label" for="lab-nature-select">${isEN ? 'Nature' : '性格'} <span style="color:#ef4444;">*</span></label>
+                  <select id="lab-nature-select" class="box-form-select" required onchange="window.AppraisalLab.onNatureChange(this.value)">
+                    ${natures.map(function (n) {
+                      const nName = window.I18N ? window.I18N.getNatureName(n.name) : n.name;
+                      const buffLabel = isEN ? (n.buff_en || n.buff) : n.buff;
+                      const debuffLabel = isEN ? (n.debuff_en || n.debuff) : n.debuff;
+                      return '<option value="' + n.name + '" ' + (n.name === labState.nature ? 'selected' : '') + '>' + nName + ' (' + buffLabel + (debuffLabel ? ' / ' + debuffLabel : '') + ')</option>';
+                    }).join('')}
+                  </select>
                 </div>
 
                 <!-- 4. 主技能：展示技能名稱與等級調整選單 (自訂下拉元件 setupCustomSelect) -->

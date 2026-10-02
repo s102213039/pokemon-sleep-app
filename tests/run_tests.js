@@ -9664,12 +9664,22 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
 
     // Form layout: 2-column structure matching box-edit-modal
     assert(mockContainer.innerHTML.includes('box-pkm-level-row'), 'Edit mode must render 2-col box-pkm-level-row for Name and Level');
+    assert(mockContainer.innerHTML.includes('box-nickname-ribbon-row'), 'Edit mode must render box-nickname-ribbon-row for Nickname and Ribbon');
     assert(mockContainer.innerHTML.includes('id="lab-nickname-input"'), 'Edit mode must render nickname input');
     assert(mockContainer.innerHTML.includes('id="lab-nature-select"'), 'Edit mode must render nature select');
     assert(mockContainer.innerHTML.includes('id="lab-ribbon-select"'), 'Edit mode must render ribbon select');
     assert(mockContainer.innerHTML.includes('id="lab-mainskill-select"'), 'Edit mode must render main skill select');
     assert(mockContainer.innerHTML.includes('class="box-subskill-palette"'), 'Edit mode must render subskill palette');
     assert(mockContainer.innerHTML.includes('class="box-subskill-slots-row"'), 'Edit mode must render subskill slots row');
+
+    // Verify Row 2 Ribbon before Row 3 Nature and concise text without hours
+    const ribbonPos = mockContainer.innerHTML.indexOf('id="lab-ribbon-select"');
+    const naturePos = mockContainer.innerHTML.indexOf('id="lab-nature-select"');
+    assert(ribbonPos < naturePos, 'Ribbon select must appear before Nature select in DOM (Row 2 Ribbon, Row 3 Nature)');
+    assert(!mockContainer.innerHTML.includes('200 小時'), 'Ribbon options must strip hours from text');
+    assert(!mockContainer.innerHTML.includes('500 小時'), 'Ribbon options must strip hours from text');
+    assert(mockContainer.innerHTML.includes('+1 持有上限'), 'Ribbon Lv.1 must contain clean "+1 持有上限" effect text');
+    assert(mockContainer.innerHTML.includes('assets/ribbons/ribbon_lv1.png'), 'Ribbon Lv.1 must have data-icon with ribbon image');
 
     // Custom select initialization assertions
     assert(customizedElements.some(el => el.id === 'lab-nature-select'), 'Nature select must be initialized with setupCustomSelect');
