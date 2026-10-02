@@ -6808,15 +6808,10 @@ input[type=range].rf-slider.event-slider {
   flex-shrink: 0;
 }
 
-.box-ing-chip-count {
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--text-primary);
-  background: transparent;
-  border: none;
-  padding: 0;
-  font-family: inherit;
-  line-height: 1;
+.box-ing-chip-count,
+.ing-count,
+.appraisal-ing-chip-count {
+  display: none !important;
 }
 
 .box-ing-chip.is-empty .box-ing-chip-empty {
@@ -13392,10 +13387,10 @@ input[type="number"] {
 }
 
 .lab-preview-subskills-grid .subskill-last-slot {
-  grid-column: 1 / -1;
-  max-width: 50%;
-  margin: 0 auto;
+  grid-column: 1 / 2;
   width: 100%;
+  max-width: none;
+  margin: 0;
 }
 
 .lab-preview-pokemon-info {
@@ -15809,16 +15804,41 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   pointer-events: none !important;
 }
 
-/* 🎛️ Mobile H5 側邊欄抽屜收合且面板為活躍狀態時，FAB 按鈕明確展示 */
+/* Mobile H5 側邊欄抽屜收合且面板為活躍狀態時，FAB 按鈕明確展示 (排除深度評測室) */
 .mobile-h5-app.pokemon-active #sidebar-bookmark-handle:not(.drawer-open),
 .mobile-h5-app #panel-pokemon:not([style*="display: none"]):not([style*="display:none"]) #sidebar-bookmark-handle:not(.drawer-open),
 .mobile-h5-app #panel-recipes:not([style*="display: none"]):not([style*="display:none"]) #recipe-sidebar-bookmark-handle:not(.drawer-open),
-.mobile-h5-app #panel-box:not([style*="display: none"]):not([style*="display:none"]) #box-sidebar-bookmark-handle:not(.drawer-open),
+.mobile-h5-app #panel-box:not(.box-lab-active):not([style*="display: none"]):not([style*="display:none"]):not(:has(#box-subpanel-lab:not([style*="display: none"]):not([style*="display:none"]))) #box-sidebar-bookmark-handle:not(.drawer-open),
 .mobile-h5-app.ladder-active #ladder-sidebar-bookmark-handle:not(.drawer-open) {
   display: flex !important;
   opacity: 1 !important;
   visibility: visible !important;
   pointer-events: auto !important;
+}
+
+/* 深度評測室 (Lab) 模式下，全面徹底隱藏側邊欄書籤標籤、FAB 按鈕以及盒子新增 FAB 容器 */
+body.box-lab-active #box-sidebar-bookmark-handle,
+body.box-lab-active .sidebar-bookmark-handle,
+body.box-lab-active .sidebar-fab-btn,
+body.box-lab-active #box-fab-container,
+body.box-lab-active .box-fab-container,
+#panel-box.box-lab-active #box-sidebar-bookmark-handle,
+#panel-box.box-lab-active .sidebar-bookmark-handle,
+#panel-box.box-lab-active .sidebar-fab-btn,
+#panel-box.box-lab-active #box-fab-container,
+#panel-box.box-lab-active .box-fab-container,
+#panel-box:has(#box-subpanel-lab:not([style*="display: none"]):not([style*="display:none"])) #box-sidebar-bookmark-handle,
+#panel-box:has(#box-subpanel-lab:not([style*="display: none"]):not([style*="display:none"])) .sidebar-bookmark-handle,
+#panel-box:has(#box-subpanel-lab:not([style*="display: none"]):not([style*="display:none"])) .sidebar-fab-btn,
+#panel-box:has(#box-subpanel-lab:not([style*="display: none"]):not([style*="display:none"])) #box-fab-container,
+#panel-box:has(#box-subpanel-lab:not([style*="display: none"]):not([style*="display:none"])) .box-fab-container,
+.mobile-h5-app #panel-box.box-lab-active #box-sidebar-bookmark-handle,
+.mobile-h5-app #panel-box.box-lab-active .box-fab-container,
+.mobile-h5-app body.box-lab-active .box-fab-container {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 .mobile-h5-app .sidebar-bookmark-handle:active,

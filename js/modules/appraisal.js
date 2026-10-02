@@ -1861,9 +1861,8 @@
         : '';
       const count = getIngCountFromBase(pkmData, idx, ingName);
       return `
-        <div class="appraisal-ing-chip${lockClass}" title="${escapeHtml(displayName)} ×${count}${lockTitleSuffix}">
+        <div class="appraisal-ing-chip${lockClass}" title="${escapeHtml(displayName)}${lockTitleSuffix}">
           ${iconUrl ? `<img src="${iconUrl}" class="appraisal-ing-chip-icon" alt="${escapeHtml(displayName)}">` : ''}
-          <span class="appraisal-ing-chip-count">×${count}</span>
         </div>
       `;
     }).join('');
@@ -2280,6 +2279,33 @@
     const skillLvl = labState.skillLevel || (boxItem && (boxItem.skillLevel || boxItem.mainSkillLevel)) || 1;
     const natureDisplayName = window.I18N ? window.I18N.getNatureName(labState.nature) : labState.nature;
     const natureObj = natures.find(function (n) { return n.name === labState.nature; });
+    let labNatureEffectHtml = '';
+    if (natureObj && natureObj.buff && natureObj.buff !== '無增減') {
+      const rawBuff = isEN ? (natureObj.buff_en || natureObj.buff) : natureObj.buff;
+      const rawDebuff = isEN ? (natureObj.debuff_en || natureObj.debuff) : natureObj.debuff;
+      const buffLabel = rawBuff.replace(/[▲▼]/g, '').trim();
+      const debuffLabel = rawDebuff.replace(/[▲▼]/g, '').trim();
+      labNatureEffectHtml = `
+        <div class="nature-effects-group">
+          <div class="nature-effect-row nature-buff-row">
+            <span class="nature-effect-label">${escapeHtml(buffLabel)}</span>
+            <span class="nature-arrows-up">▲▲</span>
+          </div>
+          <div class="nature-effect-row nature-debuff-row">
+            <span class="nature-effect-label">${escapeHtml(debuffLabel)}</span>
+            <span class="nature-arrows-down">▼▼</span>
+          </div>
+        </div>
+      `;
+    } else {
+      labNatureEffectHtml = `
+        <div class="nature-effects-group">
+          <div class="nature-effect-neutral">
+            ${isEN ? 'Has no distinctive personality traits' : '沒有性格帶來的特色（無影響）'}
+          </div>
+        </div>
+      `;
+    }
 
     const baseFreq = currentPkm.base_frequency || currentPkm.frequency || 0;
     const ribbonBonus = evaluation && evaluation.ribbonBonus ? evaluation.ribbonBonus : { carry: 0, speedDiscount: 0 };
@@ -2558,40 +2584,36 @@
                   ` : ''}
                 </div>
 
-                <!-- 食材組合 (Lv.1, Lv.30, Lv.60) -->
-                <div class="lab-preview-ing-row" style="display:flex;align-items:center;gap:8px;font-size:12.5px;flex-wrap:wrap;">
-                  <span style="font-weight:700;color:var(--text-muted);font-size:11.5px;">${isEN ? 'Ingredients:' : '食材：'}</span>
-                  <div class="lab-preview-ing-chips" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                <!-- 食材組合 (Lv.1, Lv.30, Lv.60) 單行純圖示展示，無名稱無數量 -->
+                <div class="lab-preview-ing-row" style="display:flex;align-items:center;gap:8px;font-size:12.5px;flex-wrap:nowrap;white-space:nowrap;overflow-x:auto;">
+                  <span style="font-weight:700;color:var(--text-muted);font-size:11.5px;flex-shrink:0;">${isEN ? 'Ingredients:' : '食材：'}</span>
+                  <div class="lab-preview-ing-chips" style="display:flex;gap:6px;align-items:center;flex-wrap:nowrap;">
                     ${[0, 1, 2].map(function (idx) {
                       const unlockLv = idx === 0 ? 1 : (idx === 1 ? 30 : 60);
                       const isUnlocked = labState.level >= unlockLv;
                       const ingName = labState.ingredients[idx] || '';
-                      const count = getIngCountFromBase(currentPkm, idx, ingName);
                       const ingDisplayName = ingName ? (window.I18N ? window.I18N.getIngredientName(ingName) : ingName) : '--';
                       const iconUrl = ingName && window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(ingName) : '';
                       const lockStyle = !isUnlocked ? 'opacity:0.45;filter:grayscale(0.5);' : '';
                       return `
-                        <div class="lab-preview-ing-chip" style="display:inline-flex;align-items:center;gap:4px;background:var(--table-row-odd-solid, #0d1527);border:1px solid var(--border-color);border-radius:6px;padding:3px 8px;font-size:11.5px;${lockStyle}" title="${escapeHtml(ingDisplayName)} ×${count}${!isUnlocked ? (isEN ? ' (Locked Lv.' + unlockLv + ')' : ' (Lv.' + unlockLv + ' 解鎖)') : ''}">
+                        <div class="lab-preview-ing-chip" style="display:inline-flex;align-items:center;gap:4px;background:var(--table-row-odd-solid, #0d1527);border:1px solid var(--border-color);border-radius:6px;padding:3px 6px;font-size:11.5px;${lockStyle}" title="${escapeHtml(ingDisplayName)}${!isUnlocked ? (isEN ? ' (Locked Lv.' + unlockLv + ')' : ' (Lv.' + unlockLv + ' 解鎖)') : ''}">
                           <span style="font-size:9.5px;color:var(--text-muted);font-weight:700;">Lv.${unlockLv}</span>
-                          ${iconUrl ? `<img src="${iconUrl}" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(ingDisplayName)}">` : ''}
-                          <span style="color:var(--text-primary);font-weight:600;">${escapeHtml(ingDisplayName)}</span>
-                          <span style="color:var(--accent-color, #38bdf8);font-weight:700;font-size:11px;">×${count}</span>
+                          ${iconUrl ? `<img src="${iconUrl}" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(ingDisplayName)}">` : ''}
                         </div>
                       `;
                     }).join('')}
                   </div>
                 </div>
 
-                <!-- 性格與修正 -->
-                <div class="lab-preview-nature-row" style="display:flex;align-items:center;gap:8px;font-size:12.5px;flex-wrap:wrap;">
-                  <span style="font-weight:700;color:var(--text-muted);font-size:11.5px;">${isEN ? 'Nature:' : '性格：'}</span>
-                  <span style="font-weight:800;color:var(--text-primary);">${escapeHtml(natureDisplayName)}</span>
-                  ${natureObj && natureObj.buff && natureObj.buff !== '無增減' ? `
-                    <span style="font-size:11.5px;color:#22c55e;font-weight:700;">▲▲ ${escapeHtml(isEN ? (natureObj.buff_en || natureObj.buff) : natureObj.buff)}</span>
-                    <span style="font-size:11.5px;color:#ef4444;font-weight:700;">▼▼ ${escapeHtml(isEN ? (natureObj.debuff_en || natureObj.debuff) : natureObj.debuff)}</span>
-                  ` : `
-                    <span style="font-size:11.5px;color:var(--text-muted);">${isEN ? 'Neutral' : '無修正'}</span>
-                  `}
+                <!-- 遊戲同款性格展示 (與網頁評測彈窗風格完全一致) -->
+                <div class="lab-preview-nature-row" style="margin:4px 0;display:flex;justify-content:flex-start;">
+                  <div class="appraisal-nature-game-card" style="margin:0;">
+                    <div class="nature-pill-capsule">
+                      <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
+                      <span class="nature-capsule-name">${escapeHtml(natureDisplayName)}</span>
+                    </div>
+                    ${labNatureEffectHtml}
+                  </div>
                 </div>
 
                 <!-- 副技能清單 (Lv.10, Lv.25, Lv.50, Lv.70, Lv.80) 2+2+1 排列 -->
@@ -2604,9 +2626,8 @@
                       const tier = getSkillTier(sName);
                       const isUnlocked = labState.level >= lv;
                       const lockClass = !isUnlocked ? 'subskill-locked' : '';
-                      const isLast = idx === 4;
                       return `
-                        <div class="box-subskill-pill subskill-${tier} ${lockClass}" style="${isLast ? 'grid-column: 1 / -1; max-width: 50%; margin: 0 auto; width: 100%;' : ''}" title="${escapeHtml(displaySName)} (Lv.${lv}${!isUnlocked ? (isEN ? ' Locked' : ' 未解鎖') : ''})">
+                        <div class="box-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(displaySName)} (Lv.${lv}${!isUnlocked ? (isEN ? ' Locked' : ' 未解鎖') : ''})">
                           <span style="font-size:9.5px;color:var(--text-muted);font-weight:800;margin-right:4px;">Lv.${lv}</span>
                           <span class="subskill-name">${escapeHtml(displaySName)}</span>
                         </div>

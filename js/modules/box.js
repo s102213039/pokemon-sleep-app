@@ -1154,9 +1154,8 @@
     const lockTitleSuffix = !isUnlocked ? (isEN ? ' (Locked)' : ' (未開放)') : '';
 
     return `
-      <div class="box-ing-chip${lockClass}" title="${escapeHtml(displayName)} ×${count}${lockTitleSuffix}">
+      <div class="box-ing-chip${lockClass}" title="${escapeHtml(displayName)}${lockTitleSuffix}">
         ${iconUrl ? `<img src="${iconUrl}" class="box-ing-chip-icon" alt="${escapeHtml(displayName)}">` : ''}
-        <span class="box-ing-chip-count">×${count}</span>
       </div>
     `;
   }
@@ -1178,10 +1177,9 @@
     const lockTitleSuffix = !isUnlocked ? (isEN ? ' (Locked)' : ' (未開放)') : '';
 
     return `
-      <td class="td-ing" title="${escapeHtml(displayName)} ×${count}${lockTitleSuffix}">
+      <td class="td-ing" title="${escapeHtml(displayName)}${lockTitleSuffix}">
         <div class="ing-cell${lockClass}">
           ${iconUrl ? `<img src="${iconUrl}" class="ing-icon" alt="${escapeHtml(displayName)}">` : ''}
-          <span class="ing-count">×${count}</span>
         </div>
       </td>
     `;
@@ -3791,13 +3789,21 @@
     const subpanelLab = document.getElementById('box-subpanel-lab');
     const fabContainer = document.getElementById('box-fab-container');
     const desktopLabBtn = document.getElementById('box-appraisal-lab-btn');
+    const panelBox = document.getElementById('panel-box');
 
     if (tab === 'lab') {
+      if (document.body) document.body.classList.add('box-lab-active');
+      if (panelBox) panelBox.classList.add('box-lab-active');
       if (subtabLab) subtabLab.classList.add('active');
       if (subtabList) subtabList.classList.remove('active');
       if (subpanelList) subpanelList.style.display = 'none';
       if (subpanelLab) subpanelLab.style.display = 'block';
-      if (fabContainer) fabContainer.style.display = 'none';
+      if (fabContainer && fabContainer.style) {
+        fabContainer.style.display = 'none';
+        if (typeof fabContainer.style.setProperty === 'function') {
+          fabContainer.style.setProperty('display', 'none', 'important');
+        }
+      }
       if (desktopLabBtn) desktopLabBtn.classList.add('active');
       const boxSidebar = document.getElementById('box-filter-sidebar');
       const boxBookmarkHandle = document.getElementById('box-sidebar-bookmark-handle');
@@ -3806,12 +3812,23 @@
         boxSidebar.style.display = 'none';
         boxSidebar.classList.add('collapsed');
       }
-      if (boxBookmarkHandle) {
+      if (boxBookmarkHandle && boxBookmarkHandle.style) {
         boxBookmarkHandle.style.display = 'none';
         boxBookmarkHandle.style.opacity = '0';
         boxBookmarkHandle.style.pointerEvents = 'none';
         boxBookmarkHandle.style.visibility = 'hidden';
+        if (typeof boxBookmarkHandle.style.setProperty === 'function') {
+          boxBookmarkHandle.style.setProperty('display', 'none', 'important');
+        }
       }
+      document.querySelectorAll('#panel-box .sidebar-fab-btn, #panel-box .sidebar-bookmark-handle, #panel-box .box-fab-container').forEach(el => {
+        if (el && el.style) {
+          el.style.display = 'none';
+          if (typeof el.style.setProperty === 'function') {
+            el.style.setProperty('display', 'none', 'important');
+          }
+        }
+      });
       if (boxBackdrop) boxBackdrop.classList.remove('active');
       const labContainer = document.getElementById('appraisal-lab-container');
       if (labContainer) {
@@ -3821,18 +3838,33 @@
         }
       }
     } else {
+      if (document.body) document.body.classList.remove('box-lab-active');
+      if (panelBox) panelBox.classList.remove('box-lab-active');
       if (subtabList) subtabList.classList.add('active');
       if (subtabLab) subtabLab.classList.remove('active');
       if (subpanelList) subpanelList.style.display = 'block';
       if (subpanelLab) subpanelLab.style.display = 'none';
-      if (fabContainer) fabContainer.style.display = 'flex';
+      if (fabContainer && fabContainer.style) {
+        if (typeof fabContainer.style.removeProperty === 'function') {
+          fabContainer.style.removeProperty('display');
+        }
+        fabContainer.style.display = 'flex';
+      }
+      document.querySelectorAll('#panel-box .box-fab-container').forEach(el => {
+        if (el && el.style && typeof el.style.removeProperty === 'function') {
+          el.style.removeProperty('display');
+        }
+      });
       if (desktopLabBtn) desktopLabBtn.classList.remove('active');
       const boxSidebar = document.getElementById('box-filter-sidebar');
       const boxBookmarkHandle = document.getElementById('box-sidebar-bookmark-handle');
       if (boxSidebar) {
         boxSidebar.style.display = 'flex';
       }
-      if (boxBookmarkHandle) {
+      if (boxBookmarkHandle && boxBookmarkHandle.style) {
+        if (typeof boxBookmarkHandle.style.removeProperty === 'function') {
+          boxBookmarkHandle.style.removeProperty('display');
+        }
         const isCollapsed = boxSidebar ? boxSidebar.classList.contains('collapsed') : true;
         if (isCollapsed) {
           boxBookmarkHandle.classList.remove('drawer-open');
@@ -3842,6 +3874,11 @@
           boxBookmarkHandle.style.visibility = 'visible';
         }
       }
+      document.querySelectorAll('#panel-box .sidebar-fab-btn, #panel-box .sidebar-bookmark-handle').forEach(el => {
+        if (el && el.style && typeof el.style.removeProperty === 'function') {
+          el.style.removeProperty('display');
+        }
+      });
       const labContainer = document.getElementById('appraisal-lab-container');
       if (labContainer && !subpanelLab) {
         labContainer.style.display = 'none';

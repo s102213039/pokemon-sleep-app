@@ -9335,9 +9335,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(appraisalJs.includes('getSkillTier: getSkillTier'), 'appraisal.js must export getSkillTier in AppraisalLab');
     assert(appraisalJs.includes('function getSkillTier(sName)'), 'appraisal.js must define getSkillTier');
 
-    // 2. Cache busters bumped to 20261002_07
-    assert(indexHtml.includes('js/modules/appraisal.js?v=20261002_07'), 'index.html must use v=20261002_07');
-    assert(appIndexHtml.includes('js/modules/appraisal.js?v=20261002_07'), 'app/index.html must use v=20261002_07');
+    // 2. Cache busters bumped to 20261002_07 or newer
+    assert(indexHtml.match(/js\/modules\/appraisal\.js\?v=20261002_0[78]/), 'index.html must use v=20261002_07 or newer');
+    assert(appIndexHtml.match(/js\/modules\/appraisal\.js\?v=20261002_0[78]/), 'app/index.html must use v=20261002_07 or newer');
 
     // 3. Execution in VM context
     const ctx = {
@@ -9528,6 +9528,44 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(desktopContainer.innerHTML.includes('class="btn-lab-edit-toggle"'), 'On desktop, btn-lab-edit-toggle must be rendered in preview mode header');
     // On desktop, complete stats panel MUST be present in preview
     assert(desktopContainer.innerHTML.includes('class="lab-preview-stats-panel"'), 'On desktop, complete lab-preview-stats-panel must be rendered in preview mode');
+  });
+
+  test('Tier 4 - Real-World Application Scenarios', 'Appraisal Lab In-Game Nature Card, Single-Line Icon Ingredients, 5th Subskill Normal Column & Lab FAB Suppression', () => {
+    const appraisalCode = fs.readFileSync(path.join(__dirname, '../js/modules/appraisal.js'), 'utf8');
+    const boxCode = fs.readFileSync(path.join(__dirname, '../js/modules/box.js'), 'utf8');
+    const cssCode = fs.readFileSync(path.join(__dirname, '../css/styles.css'), 'utf8');
+
+    // 1. Appraisal Lab nature display must use in-game capsule style
+    assert(appraisalCode.includes('class="appraisal-nature-game-card"'), 'Appraisal Lab must render nature with appraisal-nature-game-card');
+    assert(appraisalCode.includes('class="nature-pill-capsule"'), 'Appraisal Lab must render nature with nature-pill-capsule');
+    assert(appraisalCode.includes('labNatureEffectHtml'), 'Appraisal Lab must compute labNatureEffectHtml matching modal style');
+
+    // 2. 5th subskill must not be restricted with max-width: 50% or forced grid-column: 1 / -1
+    assert(!appraisalCode.includes('max-width: 50%'), 'Appraisal Lab must not restrict 5th subskill with max-width: 50%');
+    assert(!appraisalCode.includes('grid-column: 1 / -1'), 'Appraisal Lab must not force 5th subskill with grid-column: 1 / -1');
+    assert(cssCode.includes('.lab-preview-subskills-grid .subskill-last-slot {\n  grid-column: 1 / 2;'), 'CSS subskill-last-slot must use grid-column: 1 / 2');
+
+    // 3. Ingredients display in Lab preview must be single line, icon-only, no text names, no count numbers
+    assert(appraisalCode.includes('class="lab-preview-ing-row" style="display:flex;align-items:center;gap:8px;font-size:12.5px;flex-wrap:nowrap;white-space:nowrap;overflow-x:auto;"'), 'Lab preview ingredients row must be flex-wrap: nowrap single line');
+    // In lab preview chip, check that it does not render ${escapeHtml(ingDisplayName)} as text or count span
+    const chipTemplateMatch = appraisalCode.match(/<div class="lab-preview-ing-chip"[\s\S]*?<\/div>/);
+    assert(chipTemplateMatch, 'Must find lab-preview-ing-chip template in appraisal.js');
+    const chipTemplate = chipTemplateMatch[0];
+    assert(!chipTemplate.includes('${escapeHtml(ingDisplayName)}</span>'), 'Lab preview ingredient chip must not display text name');
+    assert(!chipTemplate.includes('×${count}'), 'Lab preview ingredient chip must not display count');
+
+    // 4. Box card, table, and modal ingredient chips must not display count numbers
+    assert(!boxCode.includes('<span class="box-ing-chip-count">×${count}</span>'), 'Box card ingredient slot must not display count span');
+    assert(!boxCode.includes('<span class="ing-count">×${count}</span>'), 'Box table ingredient cell must not display ing-count span');
+    assert(!appraisalCode.includes('<span class="appraisal-ing-chip-count">×${count}</span>'), 'Appraisal modal ingredient chip must not display count span');
+    assert(cssCode.includes('.box-ing-chip-count,\n.ing-count,\n.appraisal-ing-chip-count {\n  display: none !important;'), 'CSS must enforce display: none !important on ing-count and chip count elements');
+
+    // 5. FAB and bookmark handle must be thoroughly hidden in lab subtab
+    assert(boxCode.includes("body.classList.add('box-lab-active')"), 'switchBoxSubtab(lab) must add box-lab-active class to body');
+    assert(boxCode.includes("panelBox.classList.add('box-lab-active')"), 'switchBoxSubtab(lab) must add box-lab-active class to panelBox');
+    assert(cssCode.includes('body.box-lab-active #box-sidebar-bookmark-handle'), 'CSS must hide #box-sidebar-bookmark-handle under box-lab-active');
+    assert(cssCode.includes('body.box-lab-active #box-fab-container'), 'CSS must hide #box-fab-container under box-lab-active');
+    assert(cssCode.includes('.mobile-h5-app #panel-box:not(.box-lab-active)'), 'CSS must exclude box-lab-active from auto-displaying bookmark handle');
   });
 
 console.log('                   Test Results Summary');
