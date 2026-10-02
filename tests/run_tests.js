@@ -9335,9 +9335,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(appraisalJs.includes('getSkillTier: getSkillTier'), 'appraisal.js must export getSkillTier in AppraisalLab');
     assert(appraisalJs.includes('function getSkillTier(sName)'), 'appraisal.js must define getSkillTier');
 
-    // 2. Cache busters bumped to 20261002_06
-    assert(indexHtml.includes('js/modules/appraisal.js?v=20261002_06'), 'index.html must use v=20261002_06');
-    assert(appIndexHtml.includes('js/modules/appraisal.js?v=20261002_06'), 'app/index.html must use v=20261002_06');
+    // 2. Cache busters bumped to 20261002_07
+    assert(indexHtml.includes('js/modules/appraisal.js?v=20261002_07'), 'index.html must use v=20261002_07');
+    assert(appIndexHtml.includes('js/modules/appraisal.js?v=20261002_07'), 'app/index.html must use v=20261002_07');
 
     // 3. Execution in VM context
     const ctx = {
@@ -9441,20 +9441,20 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(!mockContainer.innerHTML.includes('<span class="lab-preview-name">巴大蝶</span>'), 'renderLab preview must not default to raw unsorted userBox[0] (巴大蝶)');
   });
 
-  // ─── Test 182: Desktop vs Mobile H5 Appraisal Lab Separation & openAppraisalModal specialty Scope Fix ─
-  test('Tier 2 - Boundary & Corner Cases', 'Desktop vs Mobile H5 Appraisal Lab Separation & openAppraisalModal specialty Scope Fix', () => {
+  // ─── Test 182: Appraisal Lab Clean Preview Default, Edit Toggle Transformation & openAppraisalModal Scope Fix ─
+  test('Tier 2 - Boundary & Corner Cases', 'Appraisal Lab Clean Preview Default, Edit Toggle Transformation & openAppraisalModal Scope Fix', () => {
     const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
 
     // 1. Static assertion: specialty must be accessed via pkmData.specialty in openAppraisalModal
     assert(!appraisalJs.includes('getSpecialtyIconHtml(specialty,'), 'appraisal.js must not call getSpecialtyIconHtml with bare undeclared specialty variable');
     assert(appraisalJs.includes('getSpecialtyIconHtml(pkmData.specialty,'), 'appraisal.js must call getSpecialtyIconHtml with pkmData.specialty in openAppraisalModal');
 
-    // 2. Static assertion: showControls must be true on desktop (!isMobileH5)
-    assert(appraisalJs.includes('const showControls = !isMobileH5 || labState.editMode;'), 'showControls must be true on desktop (!isMobileH5) to keep controls and preview side-by-side');
+    // 2. Static assertion: showControls must be toggled by editMode state
+    assert(appraisalJs.includes('const showControls = labState.editMode;'), 'showControls must be controlled by labState.editMode so settings form is hidden by default');
 
-    // 3. Static assertion: mobile floating edit button and stats panel are restricted to isMobileH5
-    assert(appraisalJs.includes('${isMobileH5 ? `') && appraisalJs.includes('class="btn-lab-edit-toggle"'), 'btn-lab-edit-toggle must only render on mobile H5');
-    assert(appraisalJs.includes('(isMobileH5 && !showControls)'), 'lab-preview-stats-panel must only render on mobile H5 preview mode');
+    // 3. Static assertion: edit toggle button and stats panel are rendered in preview mode on all platforms
+    assert(appraisalJs.includes('class="btn-lab-edit-toggle"'), 'btn-lab-edit-toggle must render in header right');
+    assert(appraisalJs.includes('class="lab-preview-stats-panel"'), 'lab-preview-stats-panel must render in preview mode');
 
     // 4. Runtime execution: openModal must not throw ReferenceError: specialty is not defined
     const modalCreated = { innerHTML: '', style: {}, classList: { add: () => {}, remove: () => {} }, setAttribute: () => {} };
@@ -9516,18 +9516,18 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(modalCreated.innerHTML.includes('花花'), 'openModal must render nickname');
     assert(modalCreated.innerHTML.includes('妙蛙花'), 'openModal must render Pokemon name');
 
-    // Test renderLab on desktop (!isMobileH5)
+    // Test renderLab on desktop (!isMobileH5) - clean preview mode by default
     const desktopContainer = { innerHTML: '', id: 'appraisal-lab-container' };
     ctx.window.UserBox = {
       getUserBox: () => [{ uid: '1', pokemonId: '3', name: '妙蛙花', level: 55, nature: '內斂', subskills: [] }]
     };
     ctx.window.AppraisalLab.renderLab(desktopContainer, 0);
-    // On desktop, controls column must NOT be display: none
-    assert(!desktopContainer.innerHTML.includes('class="appraisal-lab-controls" style="display: none !important;"'), 'On desktop, appraisal-lab-controls must not be hidden with display: none !important');
-    // On desktop, mobile edit toggle button must NOT be present
-    assert(!desktopContainer.innerHTML.includes('class="btn-lab-edit-toggle"'), 'On desktop, btn-lab-edit-toggle must not be rendered');
-    // On desktop, duplicate stats panel must NOT be present
-    assert(!desktopContainer.innerHTML.includes('class="lab-preview-stats-panel"'), 'On desktop, duplicate lab-preview-stats-panel must not be rendered');
+    // On desktop, controls column must BE display: none !important by default (settings form hidden)
+    assert(desktopContainer.innerHTML.includes('class="appraisal-lab-controls" style="display: none !important;"'), 'On desktop, settings controls form must be hidden by default in preview mode');
+    // On desktop, edit toggle button MUST be present in header right
+    assert(desktopContainer.innerHTML.includes('class="btn-lab-edit-toggle"'), 'On desktop, btn-lab-edit-toggle must be rendered in preview mode header');
+    // On desktop, complete stats panel MUST be present in preview
+    assert(desktopContainer.innerHTML.includes('class="lab-preview-stats-panel"'), 'On desktop, complete lab-preview-stats-panel must be rendered in preview mode');
   });
 
 console.log('                   Test Results Summary');

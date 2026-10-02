@@ -2462,9 +2462,14 @@ if (typeof document !== 'undefined') {
           let boxSubtab = 'list';
           try {
             const storage = getStorage();
-            const saved = storage ? storage.getItem('pksleep_active_box_subtab') : null;
-            if (saved === 'list' || saved === 'lab') {
-              boxSubtab = saved;
+            if (typeof window !== 'undefined' && window.location && window.location.hash === '#box/lab') {
+              boxSubtab = 'lab';
+            } else {
+              boxSubtab = 'list';
+              if (storage) {
+                storage.setItem('pksleep_active_box_subtab', 'list');
+                storage.setItem('pksleep_box_subtab', 'list');
+              }
             }
           } catch (e) {}
           if (boxSidebar) {

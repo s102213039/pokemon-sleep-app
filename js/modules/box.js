@@ -3750,8 +3750,9 @@
       if (typeof window !== 'undefined' && window.location && window.location.hash) {
         const rawHash = window.location.hash.replace(/^#/, '');
         const parts = rawHash.split(/[/_?]/);
-        if (parts[0] === 'box' && VALID_BOX_SUBTABS.includes(parts[1])) {
-          return parts[1];
+        if (parts[0] === 'box') {
+          if (parts[1] === 'lab') return 'lab';
+          return 'list';
         }
       }
       const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);

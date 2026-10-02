@@ -2320,7 +2320,7 @@
       ribbonOpt4 = isEN ? '2000 hrs (+8 Carry · Speed -12%)' : '2000 小時 (+8 持有上限 · 幫速最大加成 -12%)';
     }
 
-    const showControls = !isMobileH5 || labState.editMode;
+    const showControls = labState.editMode;
 
     targetElement.innerHTML = `
       <div class="appraisal-lab-seamless-view">
@@ -2481,27 +2481,25 @@
 
           <!-- 即時評測展示 (簡介 + 數值面板 + 六邊形雷達圖 + 下方評語) -->
           <div class="appraisal-lab-preview ${!showControls ? 'lab-preview-fullwidth' : ''}">
-            <div class="lab-preview-header" style="position:relative;display:flex;${isMobileH5 ? 'flex-direction:column;gap:8px;padding-right:50px;' : 'justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;'}border-bottom:1px solid var(--border-color-subtle, rgba(255,255,255,0.08));padding-bottom:12px;">
-              ${isMobileH5 ? `
-                <!-- 最右上方固定操作按鈕：僅行動端需要浮動修改按鈕 -->
-                <div class="lab-preview-header-right" style="position:absolute;top:0;right:0;z-index:5;">
-                  ${!labState.editMode ? `
-                    <button type="button" class="btn-lab-edit-toggle" onclick="window.AppraisalLab.enterEditMode()" title="${isEN ? 'Edit Pokémon Stats' : '修改寶可夢數值'}" style="background:var(--accent-color, #38bdf8);color:#0f172a;width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(56,189,248,0.25);padding:0;" aria-label="${isEN ? 'Edit Pokémon Stats' : '修改寶可夢數值'}">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <div class="lab-preview-header" style="position:relative;display:flex;${isMobileH5 ? 'flex-direction:column;gap:8px;' : 'justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;'}padding-right:50px;border-bottom:1px solid var(--border-color-subtle, rgba(255,255,255,0.08));padding-bottom:12px;">
+              <!-- 最右上方固定操作按鈕：預覽模式下為鉛筆修改按鈕，編輯模式下為保存/取消 -->
+              <div class="lab-preview-header-right" style="position:absolute;top:0;right:0;z-index:5;">
+                ${!labState.editMode ? `
+                  <button type="button" class="btn-lab-edit-toggle" onclick="window.AppraisalLab.enterEditMode()" title="${isEN ? 'Edit Pokémon Stats' : '修改寶可夢數值'}" style="background:var(--accent-color, #38bdf8);color:#0f172a;width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(56,189,248,0.25);padding:0;" aria-label="${isEN ? 'Edit Pokémon Stats' : '修改寶可夢數值'}">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </button>
+                ` : `
+                  <div style="display:flex;gap:6px;">
+                    <button type="button" class="btn-lab-save-header" onclick="window.AppraisalLab.saveEditMode()" style="background:#22c55e;color:#0f172a;font-weight:700;padding:5px 10px;border-radius:8px;border:none;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:4px;">
+                      <span>[✓]</span>
+                      <span>${isEN ? 'Save' : '保存'}</span>
                     </button>
-                  ` : `
-                    <div style="display:flex;gap:6px;">
-                      <button type="button" class="btn-lab-save-header" onclick="window.AppraisalLab.saveEditMode()" style="background:#22c55e;color:#0f172a;font-weight:700;padding:5px 10px;border-radius:8px;border:none;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:4px;">
-                        <span>[✓]</span>
-                        <span>${isEN ? 'Save' : '保存'}</span>
-                      </button>
-                      <button type="button" class="btn-lab-cancel-header" onclick="window.AppraisalLab.cancelEditMode()" style="background:rgba(148,163,184,0.2);color:var(--text-main, #f1f5f9);padding:5px 10px;border-radius:8px;border:none;cursor:pointer;font-size:12px;">
-                        ${isEN ? 'Cancel' : '取消'}
-                      </button>
-                    </div>
-                  `}
-                </div>
-              ` : ''}
+                    <button type="button" class="btn-lab-cancel-header" onclick="window.AppraisalLab.cancelEditMode()" style="background:rgba(148,163,184,0.2);color:var(--text-main, #f1f5f9);padding:5px 10px;border-radius:8px;border:none;cursor:pointer;font-size:12px;">
+                      ${isEN ? 'Cancel' : '取消'}
+                    </button>
+                  </div>
+                `}
+              </div>
 
               <!-- 左上方：頭像、名稱、獎章、得意、樹果、等級 -->
               <div class="lab-preview-pokemon-info">
@@ -2544,8 +2542,8 @@
               </div>
             </div>
 
-            ${(isMobileH5 && !showControls) ? `
-              <!-- 預覽模式完整寶可夢數據面板 (僅行動端全寬預覽模式需要) -->
+            ${!showControls ? `
+              <!-- 預覽模式完整寶可夢數據面板 (主技能、食材、性格、副技能) -->
               <div class="lab-preview-stats-panel" style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
                 <!-- 主技能名稱與等級 + 幫忙間隔與持有上限 -->
                 <div class="lab-preview-mainskill-row" style="display:flex;align-items:center;gap:8px;font-size:12.5px;flex-wrap:wrap;">
@@ -2737,26 +2735,14 @@
       if (container) {
         const isHidden = container.style.display === 'none' || getComputedStyle(container).display === 'none';
         const willOpen = isHidden;
-        container.style.display = willOpen ? 'block' : 'none';
-        if (willOpen) {
-          renderAppraisalLabContainer(container);
+        if (typeof window.switchBoxSubtab === 'function') {
+          window.switchBoxSubtab(willOpen ? 'lab' : 'list');
+        } else {
+          container.style.display = willOpen ? 'block' : 'none';
+          if (willOpen) {
+            renderAppraisalLabContainer(container);
+          }
         }
-        try {
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('pksleep_active_box_subtab', willOpen ? 'lab' : 'list');
-          }
-          const desktopLabBtn = document.getElementById('box-appraisal-lab-btn');
-          if (desktopLabBtn) {
-            desktopLabBtn.classList.toggle('active', willOpen);
-          }
-          if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
-            const curHash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
-            const mainPart = curHash.split(/[/_?]/)[0];
-            if (mainPart === 'box' || !mainPart) {
-              window.history.replaceState(null, '', willOpen ? '#box/lab' : '#box');
-            }
-          }
-        } catch (e) {}
       }
     }
   };
