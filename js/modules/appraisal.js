@@ -2442,8 +2442,7 @@
     teamStrategy: 'balanced', // 'balanced' | 'berries' | 'ingredients' | 'skills'
     cookingType: 'curry',     // 'curry' | 'salad' | 'dessert'
     greengrassBerries: ['桃桃果', '橙橙果', '櫻子果'],
-    compareUidA: null,
-    compareUidB: null,
+    compareSlots: [null, null, null],
     selectedBoxUid: '',
     selectedPkmId: '1',
     level: 30,
@@ -2458,6 +2457,25 @@
     editBackup: null,
     activeSubskillSlot: 1
   };
+
+  Object.defineProperty(labState, 'compareUidA', {
+    get: function() { return (this.compareSlots && this.compareSlots[0]) || null; },
+    set: function(v) { if (!Array.isArray(this.compareSlots)) this.compareSlots = [null, null, null]; this.compareSlots[0] = v || null; },
+    configurable: true,
+    enumerable: true
+  });
+  Object.defineProperty(labState, 'compareUidB', {
+    get: function() { return (this.compareSlots && this.compareSlots[1]) || null; },
+    set: function(v) { if (!Array.isArray(this.compareSlots)) this.compareSlots = [null, null, null]; this.compareSlots[1] = v || null; },
+    configurable: true,
+    enumerable: true
+  });
+  Object.defineProperty(labState, 'compareUidC', {
+    get: function() { return (this.compareSlots && this.compareSlots[2]) || null; },
+    set: function(v) { if (!Array.isArray(this.compareSlots)) this.compareSlots = [null, null, null]; this.compareSlots[2] = v || null; },
+    configurable: true,
+    enumerable: true
+  });
 
   const COOKING_CATEGORY_KEY_INGREDIENTS = {
     curry: ['豆製肉', '好眠番茄', '暖暖薑', '火辣香草', '萌綠玉米', '粗枝大蔥', '品鮮蘑菇', '特選蛋', '美味尾巴', 'Bean Sausage', 'Snoozy Tomato', 'Warming Ginger', 'Fiery Herb', 'Greengrass Corn', 'Large Leek', 'Tasty Mushroom', 'Fancy Egg', 'Slowpoke Tail'],
@@ -2496,10 +2514,14 @@
       if (['curry', 'salad', 'dessert'].includes(sCooking)) labState.cookingType = sCooking;
       const sGgBerries = JSON.parse(localStorage.getItem('pksleep_lab_greengrass_berries') || 'null');
       if (Array.isArray(sGgBerries) && sGgBerries.length === 3) labState.greengrassBerries = sGgBerries;
-      const sCompare = JSON.parse(localStorage.getItem('pksleep_lab_compare_uids') || 'null');
-      if (sCompare) {
-        labState.compareUidA = sCompare.a || null;
-        labState.compareUidB = sCompare.b || null;
+      const sCompareSlots = JSON.parse(localStorage.getItem('pksleep_lab_compare_slots') || 'null');
+      if (Array.isArray(sCompareSlots) && sCompareSlots.length > 0) {
+        labState.compareSlots = [sCompareSlots[0] || null, sCompareSlots[1] || null, sCompareSlots[2] || null];
+      } else {
+        const sCompare = JSON.parse(localStorage.getItem('pksleep_lab_compare_uids') || 'null');
+        if (sCompare) {
+          labState.compareSlots = [sCompare.a || null, sCompare.b || null, sCompare.c || null];
+        }
       }
     }
   } catch (e) {}
@@ -3369,23 +3391,77 @@
   }
 
   function setCompareSlot(slot, uid) {
-    if (slot === 'a') labState.compareUidA = uid;
-    else if (slot === 'b') labState.compareUidB = uid;
+    let idx = 0;
+    if (typeof slot === 'number') idx = slot;
+    else if (String(slot).toLowerCase() === 'b' || slot === '1') idx = 1;
+    else if (String(slot).toLowerCase() === 'c' || slot === '2') idx = 2;
+    else idx = 0;
+
+    if (!Array.isArray(labState.compareSlots)) {
+      labState.compareSlots = [null, null, null];
+    }
+
+    if (uid) {
+      const otherIdx = labState.compareSlots.findIndex((u, i) => u === uid && i !== idx);
+      if (otherIdx !== -1) {
+        if (typeof window !== 'undefined' && typeof window.showToast === 'function') {
+          const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+          window.showToast(isEN ? 'This Pokémon is already selected in comparison!' : '該寶可夢已在對比選手名單中，無法重複選擇！');
+        }
+        return;
+      }
+    }
+
+    labState.compareSlots[idx] = uid || null;
     try {
       if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('pksleep_lab_compare_uids', JSON.stringify({ a: labState.compareUidA, b: labState.compareUidB }));
+        localStorage.setItem('pksleep_lab_compare_slots', JSON.stringify(labState.compareSlots));
+        localStorage.setItem('pksleep_lab_compare_uids', JSON.stringify({
+          a: labState.compareSlots[0],
+          b: labState.compareSlots[1],
+          c: labState.compareSlots[2]
+        }));
       }
     } catch (e) {}
     updateLabUI();
   }
 
+  function clearCompareSlot(slot) {
+    let idx = 0;
+    if (typeof slot === 'number') idx = slot;
+    else if (String(slot).toLowerCase() === 'b' || slot === '1') idx = 1;
+    else if (String(slot).toLowerCase() === 'c' || slot === '2') idx = 2;
+    else idx = 0;
+
+    if (Array.isArray(labState.compareSlots) && idx >= 0 && idx < 3) {
+      labState.compareSlots[idx] = null;
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('pksleep_lab_compare_slots', JSON.stringify(labState.compareSlots));
+          localStorage.setItem('pksleep_lab_compare_uids', JSON.stringify({
+            a: labState.compareSlots[0],
+            b: labState.compareSlots[1],
+            c: labState.compareSlots[2]
+          }));
+        }
+      } catch (e) {}
+      updateLabUI();
+    }
+  }
+
   function swapCompareSlots() {
-    const tmp = labState.compareUidA;
-    labState.compareUidA = labState.compareUidB;
-    labState.compareUidB = tmp;
+    if (!Array.isArray(labState.compareSlots)) labState.compareSlots = [null, null, null];
+    const tmp = labState.compareSlots[0];
+    labState.compareSlots[0] = labState.compareSlots[1];
+    labState.compareSlots[1] = tmp;
     try {
       if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('pksleep_lab_compare_uids', JSON.stringify({ a: labState.compareUidA, b: labState.compareUidB }));
+        localStorage.setItem('pksleep_lab_compare_slots', JSON.stringify(labState.compareSlots));
+        localStorage.setItem('pksleep_lab_compare_uids', JSON.stringify({
+          a: labState.compareSlots[0],
+          b: labState.compareSlots[1],
+          c: labState.compareSlots[2]
+        }));
       }
     } catch (e) {}
     updateLabUI();
@@ -3411,9 +3487,18 @@
     const favBerries = getIslandFavoredBerries(labState.teamIslandId);
     const favTypes = getIslandFavoredTypes(labState.teamIslandId);
 
+    let compareTargetIdx = 0;
+    if (opts.type === 'compare') {
+      if (typeof opts.compareSlot === 'number') compareTargetIdx = opts.compareSlot;
+      else if (String(opts.compareSlot).toLowerCase() === 'b' || opts.compareSlot === '1') compareTargetIdx = 1;
+      else if (String(opts.compareSlot).toLowerCase() === 'c' || opts.compareSlot === '2') compareTargetIdx = 2;
+      else compareTargetIdx = 0;
+    }
+    const compareLetter = ['A', 'B', 'C'][compareTargetIdx] || 'A';
+
     const title = opts.type === 'team'
       ? (isEN ? `Select Member for Slot ${opts.slotIndex + 1}` : `挑選隊員 (隊員槽位 ${opts.slotIndex + 1})`)
-      : (isEN ? `Select Pokémon for Slot ${String(opts.compareSlot || 'A').toUpperCase()}` : `挑選選手 ${String(opts.compareSlot || 'A').toUpperCase()}`);
+      : (isEN ? `Select Pokémon for Player ${compareLetter}` : `挑選選手 ${compareLetter}`);
 
     function generatePickerItemsHtml(query = '', filter = 'all') {
       const q = (query || '').trim().toLowerCase();
@@ -3445,9 +3530,17 @@
         return `<div style="padding:30px;text-align:center;color:var(--text-muted);font-size:13px;grid-column:1/-1;">${isEN ? 'No matching Pokémon found in Box' : '倉庫中未找到符合條件之寶可夢'}</div>`;
       }
 
-      let selectedUids = [];
-      if (opts.type === 'compare') selectedUids = [String(opts.compareSlot || 'a').toLowerCase() === 'b' ? labState.compareUidB : labState.compareUidA];
-      else if (opts.type === 'team') selectedUids = (labState.teamSlots || []).filter(Boolean);
+      // Check occupied in comparison
+      const occupiedInOtherSlot = new Set();
+      let currentSelectedUid = null;
+      if (opts.type === 'compare' && Array.isArray(labState.compareSlots)) {
+        currentSelectedUid = labState.compareSlots[compareTargetIdx] || null;
+        labState.compareSlots.forEach((uid, idx) => {
+          if (uid && idx !== compareTargetIdx) occupiedInOtherSlot.add(uid);
+        });
+      } else if (opts.type === 'team' && Array.isArray(labState.teamSlots)) {
+        currentSelectedUid = labState.teamSlots[opts.slotIndex] || null;
+      }
 
       return filtered.map(item => {
         const base = findBasePkm(item.pokemonId || item.name);
@@ -3457,11 +3550,21 @@
         const isFav = favBerries.includes(berry.name || '') || favTypes.includes(berry.type || (base ? base.type : '') || '');
         const specHtml = (window.I18N && window.I18N.getSpecialtyIconHtml && base) ? window.I18N.getSpecialtyIconHtml(base.specialty, 16) : '';
         const natDisplayName = window.I18N ? window.I18N.getNatureName(item.nature) : item.nature;
-        const isSel = selectedUids.includes(item.uid);
+
+        const isOccupied = occupiedInOtherSlot.has(item.uid);
+        const isSel = (item.uid === currentSelectedUid);
+
+        let clickAttr;
+        if (isOccupied) {
+          const toastMsg = isEN ? 'This Pokémon is already selected in comparison!' : '該寶可夢已在對比選手名單中，無法重複選擇！';
+          clickAttr = `onclick="if(typeof window.showToast==='function')window.showToast('${toastMsg}');"`;
+        } else {
+          clickAttr = `onclick="window.AppraisalLab.onPickerSelect('${item.uid}')"`;
+        }
 
         return `
-          <div class="lab-picker-card ${isSel ? 'selected' : ''} ${isFav ? 'fav' : ''}" data-uid="${item.uid}" onclick="window.AppraisalLab.onPickerSelect('${item.uid}')">
-            ${isFav ? `<span class="lab-picker-fav-badge">2x</span>` : ''}
+          <div class="lab-picker-card ${isSel ? 'selected' : ''} ${isOccupied ? 'occupied disabled' : ''} ${isFav ? 'fav' : ''}" data-uid="${item.uid}" ${clickAttr} title="${isOccupied ? (isEN ? 'Already in comparison' : '已在對比選手中') : ''}">
+            ${isOccupied ? `<span class="lab-picker-occupied-badge">${isEN ? 'In Comparison' : '已在對比中'}</span>` : ''}
             <div class="lab-picker-avatar">
               <img src="${avatarUrl}" alt="${escapeHtml(pDisplayName)}" loading="lazy">
               <span class="lab-picker-lv">Lv.${item.level || 1}</span>
@@ -3556,7 +3659,8 @@
     if (activePickerState.type === 'team') {
       setTeamSlot(activePickerState.slotIndex, uid);
     } else if (activePickerState.type === 'compare') {
-      setCompareSlot(activePickerState.compareSlot, uid);
+      const slot = activePickerState.compareSlot !== undefined ? activePickerState.compareSlot : (activePickerState.slotIndex || 0);
+      setCompareSlot(slot, uid);
     }
     closeLabPicker();
   }
@@ -4016,120 +4120,262 @@
     return `${m}分${s ? `${s}秒` : ''}`;
   }
 
-  /* ─── 寶可夢對比 HTML 產生器 (Side-by-Side Comparison Renderer) ──────── */
+  /* ─── 寶可夢對比 HTML 產生器 (最多 3 位選手並排比較) ──────── */
+  const COMPARE_COLORS = ['#38bdf8', '#c084fc', '#f59e0b'];
+  const COMPARE_LETTERS = ['A', 'B', 'C'];
+  const COMPARE_MAX = 3;
+
   function renderComparisonView(userBox, pokemons, isEN, isMobileH5) {
     if (userBox.length === 0) {
       return `<div style="padding:40px;text-align:center;color:var(--text-muted);">${isEN ? 'Please register Pokémon in Box first' : '請先在寶可夢倉庫新增寶可夢後再來對比！'}</div>`;
     }
 
-    if (!labState.compareUidA && userBox.length > 0) labState.compareUidA = userBox[0].uid;
-    if (!labState.compareUidB && userBox.length > 1) labState.compareUidB = userBox[1].uid;
-    else if (!labState.compareUidB && userBox.length === 1) labState.compareUidB = userBox[0].uid;
-
-    const itemA = userBox.find(p => p.uid === labState.compareUidA) || userBox[0];
-    const itemB = userBox.find(p => p.uid === labState.compareUidB) || userBox[1] || itemA;
-
-    const baseA = findBasePkm(itemA.pokemonId || itemA.name);
-    const baseB = findBasePkm(itemB.pokemonId || itemB.name);
-
-    const nameA = isEN ? (baseA ? (baseA.name_en || baseA.name_cn) : itemA.name) : (itemA.name || (baseA ? baseA.name_cn : ''));
-    const nameB = isEN ? (baseB ? (baseB.name_en || baseB.name_cn) : itemB.name) : (itemB.name || (baseB ? baseB.name_cn : ''));
-
-    const evalA = evaluatePokemon(baseA, itemA.level || 30, itemA.nature || '坦率', itemA.subskills || [], [itemA.ing1, itemA.ing2, itemA.ing3], itemA.ribbon || 0, itemA.skillLevel || 1) || { scores: {}, compositeScore: 0, grade: 'B' };
-    const evalB = evaluatePokemon(baseB, itemB.level || 30, itemB.nature || '坦率', itemB.subskills || [], [itemB.ing1, itemB.ing2, itemB.ing3], itemB.ribbon || 0, itemB.skillLevel || 1) || { scores: {}, compositeScore: 0, grade: 'B' };
-
-    const perfA = calculatePokemonComparisonPerformance(itemA, baseA);
-    const perfB = calculatePokemonComparisonPerformance(itemB, baseB);
-
-    // 1. Total Daily Energy Comparison
-    const totalA = perfA.totalDailyEnergy;
-    const totalB = perfB.totalDailyEnergy;
-    const diffEnergy = totalA - totalB;
-    const pctEnergy = totalB > 0 ? ((diffEnergy / totalB) * 100).toFixed(1) : '0';
-    const energyBarWidthA = Math.max(10, Math.min(90, Math.round((totalA / (totalA + totalB || 1)) * 100)));
-    const energyBarWidthB = 100 - energyBarWidthA;
-
-    let energyLeadBadge = '';
-    if (diffEnergy > 0) {
-      energyLeadBadge = `<span class="lab-compare-kpi-badge lead-a">A ${isEN ? 'Leads' : '領先'} +${diffEnergy.toLocaleString()} (${pctEnergy}%)</span>`;
-    } else if (diffEnergy < 0) {
-      energyLeadBadge = `<span class="lab-compare-kpi-badge lead-b">B ${isEN ? 'Leads' : '領先'} +${Math.abs(diffEnergy).toLocaleString()} (${Math.abs(pctEnergy)}%)</span>`;
-    } else {
-      energyLeadBadge = `<span class="lab-compare-kpi-badge tie">${isEN ? 'Tie' : '持平'}</span>`;
+    if (!Array.isArray(labState.compareSlots)) {
+      labState.compareSlots = [null, null, null];
+    }
+    while (labState.compareSlots.length < COMPARE_MAX) {
+      labState.compareSlots.push(null);
     }
 
-    const diffBerry = perfA.dailyBerryEnergy - perfB.dailyBerryEnergy;
-    const diffBerryText = diffBerry > 0 ? `A +${diffBerry.toLocaleString()}` : (diffBerry < 0 ? `B +${Math.abs(diffBerry).toLocaleString()}` : (isEN ? 'Tie' : '持平'));
+    // 清理已在倉庫中不存在的 uid
+    labState.compareSlots = labState.compareSlots.map(uid => (uid && userBox.some(p => p.uid === uid) ? uid : null));
 
-    const diffIngEnergy = perfA.totalDailyIngredientEnergy - perfB.totalDailyIngredientEnergy;
-    const diffIngEnergyText = diffIngEnergy > 0 ? `A +${diffIngEnergy.toLocaleString()}` : (diffIngEnergy < 0 ? `B +${Math.abs(diffIngEnergy).toLocaleString()}` : (isEN ? 'Tie' : '持平'));
+    // 收集目前已選之選手
+    const activePlayers = [];
+    [0, 1, 2].forEach(i => {
+      const uid = labState.compareSlots[i];
+      if (!uid) return;
+      const item = userBox.find(p => p.uid === uid);
+      if (!item) return;
+      const base = findBasePkm(item.pokemonId || item.name);
+      activePlayers.push({
+        slotIndex: i,
+        letter: COMPARE_LETTERS[i],
+        color: COMPARE_COLORS[i],
+        item,
+        base,
+        perf: calculatePokemonComparisonPerformance(item, base)
+      });
+    });
 
-    const diffSkillEnergy = perfA.dailySkillEnergy - perfB.dailySkillEnergy;
-    const diffSkillEnergyText = diffSkillEnergy > 0 ? `A +${diffSkillEnergy.toLocaleString()}` : (diffSkillEnergy < 0 ? `B +${Math.abs(diffSkillEnergy).toLocaleString()}` : (isEN ? 'Tie' : '持平'));
+    const N = activePlayers.length;
+    const fmt = n => Number(n).toLocaleString();
+    const pLabel = p => `${isEN ? 'Player' : '選手'} ${p.letter}`;
+    const unitIng = isEN ? 'items/day' : '顆/日';
+    const fallbackAvatar = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
 
-    // 2. Total Daily Ingredients Comparison
-    const ingA = perfA.totalDailyIngredientsCount;
-    const ingB = perfB.totalDailyIngredientsCount;
-    const diffIng = Math.round((ingA - ingB) * 10) / 10;
-    const pctIng = ingB > 0 ? ((diffIng / ingB) * 100).toFixed(1) : '0';
-    const ingBarWidthA = Math.max(10, Math.min(90, Math.round((ingA / (ingA + ingB || 1)) * 100)));
-    const ingBarWidthB = 100 - ingBarWidthA;
+    // ── 頂部：3 個選手槽位 (選手 A vs 選手 B vs 選手 C) ──
+    const slotCardHtml = i => {
+      const letter = COMPARE_LETTERS[i];
+      const color = COMPARE_COLORS[i];
+      const uid = labState.compareSlots[i];
+      const item = uid ? userBox.find(p => p.uid === uid) : null;
 
-    let ingLeadBadge = '';
-    if (diffIng > 0) {
-      ingLeadBadge = `<span class="lab-compare-kpi-badge lead-a">A ${isEN ? 'Yields +' : '多產 +'} ${diffIng} ${isEN ? 'items/day' : '顆/日'} (${pctIng}%)</span>`;
-    } else if (diffIng < 0) {
-      ingLeadBadge = `<span class="lab-compare-kpi-badge lead-b">B ${isEN ? 'Yields +' : '多產 +'} ${Math.abs(diffIng)} ${isEN ? 'items/day' : '顆/日'} (${Math.abs(pctIng)}%)</span>`;
-    } else {
-      ingLeadBadge = `<span class="lab-compare-kpi-badge tie">${isEN ? 'Tie' : '持平'}</span>`;
+      if (!item) {
+        return `
+          <button type="button" class="lab-compare-vs-player lab-compare-empty-slot slot-${letter.toLowerCase()}" style="border-top-color:${color};" onclick="window.AppraisalLab.openPicker({ type: 'compare', compareSlot: ${i} })">
+            <span class="lab-compare-slot-letter" style="background:${color};">${isEN ? 'Player' : '選手'} ${letter}</span>
+            <div class="lab-compare-empty-content">
+              <span class="lab-compare-empty-plus">+</span>
+              <span class="lab-compare-empty-text">${isEN ? `Pick Player ${letter}` : `挑選選手 ${letter}`}</span>
+            </div>
+          </button>
+        `;
+      }
+
+      const base = findBasePkm(item.pokemonId || item.name);
+      const avatarUrl = (base && (base.icon_url || base.icon)) || (base && base.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${base.formatted_no}.png` : '') || fallbackAvatar;
+      const berry = (typeof window.getPokemonBerry === 'function' && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : {});
+      const specHtml = (window.I18N && window.I18N.getSpecialtyIconHtml && base) ? window.I18N.getSpecialtyIconHtml(base.specialty, 18) : '';
+      const natDisplayName = window.I18N ? window.I18N.getNatureName(item.nature) : item.nature;
+      const rawSkill = (base && (base.main_skill || (base.skill && base.skill.name))) || item.main_skill || '';
+      const skillName = rawSkill ? (window.I18N ? window.I18N.getMainSkillName(rawSkill) : rawSkill) : '--';
+      const skillLabel = `${skillName} Lv.${item.skillLevel || 1}`;
+
+      return `
+        <div class="lab-compare-vs-player slot-${letter.toLowerCase()}" style="border-top-color:${color};">
+          <div class="lab-compare-vs-header-top">
+            <span class="lab-compare-slot-letter" style="background:${color};">${isEN ? 'Player' : '選手'} ${letter}</span>
+            <button type="button" class="lab-compare-remove-btn" aria-label="${isEN ? 'Remove' : '移除'}" title="${isEN ? 'Remove' : '移除'}" onclick="window.AppraisalLab.clearCompareSlot(${i})">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="lab-compare-vs-top">
+            <div class="lab-compare-vs-avatar-wrap">
+              <img src="${avatarUrl}" class="lab-compare-vs-avatar" alt="${isEN ? 'Player' : '選手'} ${letter}" loading="lazy">
+              <span class="lab-compare-vs-lvl">Lv.${item.level || 1}</span>
+            </div>
+            <button type="button" class="box-btn box-btn-secondary lab-compare-change-btn" onclick="window.AppraisalLab.openPicker({ type: 'compare', compareSlot: ${i} })">
+              ${isEN ? 'Change' : '更換選手'}
+            </button>
+          </div>
+          <div class="lab-compare-vs-info">
+            ${specHtml}
+            ${berry.icon ? `<img src="${berry.icon}" class="lab-compare-mini-berry" alt="Berry" title="${escapeHtml(berry.name || '')}">` : ''}
+            <span class="lab-compare-vs-tag nat-tag">${natDisplayName}</span>
+            <span class="lab-compare-vs-tag skill-tag">${skillLabel}</span>
+          </div>
+        </div>
+      `;
+    };
+
+    const headerHtml = `
+      <div class="lab-compare-vs-header">
+        ${slotCardHtml(0)}
+        <div class="lab-compare-vs-divider">
+          <div class="lab-compare-vs-badge">VS</div>
+        </div>
+        ${slotCardHtml(1)}
+        <div class="lab-compare-vs-divider">
+          <div class="lab-compare-vs-badge">VS</div>
+        </div>
+        ${slotCardHtml(2)}
+      </div>
+      <div class="lab-compare-pick-hint" style="margin-bottom:12px;font-size:12px;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+        <span>[*] ${isEN ? `Selected ${N}/${COMPARE_MAX}. Tap a slot to pick Pokémon (max 3, no duplicates).` : `已選 ${N}/${COMPARE_MAX} 位選手，點選上方槽位自選寶可夢（最多3位，不可重複選擇同一隻）`}</span>
+        ${N > 0 ? `<button type="button" class="box-btn box-btn-secondary" style="font-size:11px;padding:2px 8px;" onclick="[0,1,2].forEach(i=>window.AppraisalLab.clearCompareSlot(i));">${isEN ? 'Clear All' : '清空對比'}</button>` : ''}
+      </div>
+    `;
+
+    // ── 下方比較容器 (無論選滿與否，均常駐於 DOM) ──
+    if (N < 2) {
+      return `
+        <div class="lab-compare-view-container">
+          ${headerHtml}
+          <div class="lab-compare-kpi-card" id="lab-compare-energy">
+            <div class="lab-compare-kpi-head">
+              <div class="lab-compare-kpi-title">
+                <span>[*]</span>
+                <span>${isEN ? 'Daily Total Energy Output' : '每日預估總能量比較'}</span>
+              </div>
+            </div>
+            <div class="lab-compare-empty-section-hint">
+              ${isEN ? 'Select at least 2 Pokémon above to compare estimated daily energy output.' : '請在上方挑選至少 2 位選手進行每日預估總能量比較'}
+            </div>
+          </div>
+
+          <div class="lab-compare-kpi-card" id="lab-compare-ingredients">
+            <div class="lab-compare-kpi-head">
+              <div class="lab-compare-kpi-title">
+                <span>[*]</span>
+                <span>${isEN ? 'Daily Ingredient Yield Comparison' : '每日食材產量比較'}</span>
+              </div>
+            </div>
+            <div class="lab-compare-empty-section-hint">
+              ${isEN ? 'Select at least 2 Pokémon above to compare ingredient yields.' : '請在上方挑選至少 2 位選手進行每日食材產量比較'}
+            </div>
+          </div>
+
+          <div class="lab-compare-kpi-card" id="lab-compare-skills">
+            <div class="lab-compare-kpi-head">
+              <div class="lab-compare-kpi-title">
+                <span>[#]</span>
+                <span>${isEN ? 'Skill Procs, Speed & Specs' : '技能發動與幫手效能對照'}</span>
+              </div>
+            </div>
+            <div class="lab-compare-empty-section-hint">
+              ${isEN ? 'Select at least 2 Pokémon above to compare skill procs and helper speed.' : '請在上方挑選至少 2 位選手進行技能發動與幫手效能對照'}
+            </div>
+          </div>
+        </div>
+      `;
     }
 
-    // 3. Distinct Ingredients Total Aggregation
-    const aggA = {};
-    const aggB = {};
+    // N >= 2 時：進行多選手深度數據對照
+    const bestIdxOf = (vals, higher) => {
+      if (higher === null || higher === undefined) return [];
+      const target = higher ? Math.max.apply(null, vals) : Math.min.apply(null, vals);
+      if (vals.every(v => v === vals[0])) return [];
+      return vals.map((v, i) => (v === target ? i : -1)).filter(i => i >= 0);
+    };
 
-    (perfA.itemizedIngredients || []).forEach(slot => {
-      if (slot.isUnlocked && slot.name && slot.name !== '--') {
-        aggA[slot.name] = (aggA[slot.name] || 0) + (slot.dailyCount || 0);
-      }
+    const letterChip = p => `<span class="lab-compare-slot-letter small" style="background:${p.color};">${p.letter}</span>`;
+
+    const barRowsHtml = (vals, texts) => {
+      const max = Math.max.apply(null, vals.concat([0.0001]));
+      return activePlayers.map((p, i) => {
+        const pct = vals[i] > 0 ? Math.max(4, Math.round((vals[i] / max) * 100)) : 0;
+        return `
+          <div class="lab-cmp-bar-row">
+            ${letterChip(p)}
+            <div class="lab-cmp-bar-track"><div class="lab-cmp-bar-fill" style="width:${pct}%;background:${p.color};"></div></div>
+            <span class="lab-cmp-bar-val" style="color:${p.color};">${texts[i]}</span>
+          </div>`;
+      }).join('');
+    };
+
+    const leadBadge = (vals, formatDiff) => {
+      const sorted = vals.map((v, i) => ({ v, i })).sort((a, b) => b.v - a.v);
+      const diff = sorted[0].v - sorted[1].v;
+      if (diff <= 0) return `<span class="lab-compare-kpi-badge tie">${isEN ? 'Tie' : '持平'}</span>`;
+      const lead = activePlayers[sorted[0].i];
+      const pct = sorted[1].v > 0 ? ((diff / sorted[1].v) * 100).toFixed(1) : null;
+      return `<span class="lab-compare-kpi-badge" style="background:${lead.color}2e;color:${lead.color};border:1px solid ${lead.color}59;">${lead.letter} ${isEN ? 'Leads' : '領先'} +${formatDiff(diff)}${pct ? ` (${pct}%)` : ''}</span>`;
+    };
+
+    const tableHtml = rows => `
+      <div class="lab-cmp-table" style="--n:${N};">
+        <div class="lab-cmp-row lab-cmp-head"><span></span>${activePlayers.map(p => `<span class="lab-cmp-val">${letterChip(p)}</span>`).join('')}</div>
+        ${rows.map(r => {
+          const bests = bestIdxOf(r.vals, r.higher);
+          return `<div class="lab-cmp-row"><span class="lab-cmp-label">${r.label}</span>${activePlayers.map((p, i) => `<span class="lab-cmp-val${bests.includes(i) ? ' best' : ''}" style="--pc:${p.color};">${r.texts[i]}</span>`).join('')}</div>`;
+        }).join('')}
+      </div>`;
+
+    const num = (label, getter, higher, textFn) => {
+      const vals = activePlayers.map(p => getter(p.perf));
+      return { label, vals, higher, texts: vals.map((v, i) => (textFn ? textFn(v, activePlayers[i]) : fmt(v))) };
+    };
+
+    // ── 每日能量 ──
+    const energyVals = activePlayers.map(p => p.perf.totalDailyEnergy);
+    const energyHtml = `
+      <div class="lab-compare-kpi-card" id="lab-compare-energy">
+        <div class="lab-compare-kpi-head">
+          <div class="lab-compare-kpi-title"><span>[*]</span><span>${isEN ? 'Daily Total Energy Output' : '每日預估總能量比較'}</span></div>
+          ${leadBadge(energyVals, d => fmt(d))}
+        </div>
+        ${barRowsHtml(energyVals, energyVals.map(v => `${fmt(v)}`))}
+        ${tableHtml([
+          num(isEN ? 'Berry Energy' : '樹果能量', x => x.dailyBerryEnergy, true),
+          num(isEN ? 'Ingredient Energy' : '食材能量', x => x.totalDailyIngredientEnergy, true),
+          num(isEN ? 'Skill Energy (Est)' : '主技能能量', x => x.dailySkillEnergy, true)
+        ])}
+      </div>`;
+
+    // ── 每日食材 (跨插槽食材產量總和對照) ──
+    const aggs = activePlayers.map(p => {
+      const agg = {};
+      (p.perf.itemizedIngredients || []).forEach(slot => {
+        if (slot.isUnlocked && slot.name && slot.name !== '--') agg[slot.name] = (agg[slot.name] || 0) + (slot.dailyCount || 0);
+      });
+      return agg;
     });
+    const names = Array.from(new Set([].concat.apply([], aggs.map(a => Object.keys(a)))));
+    const sumOf = n => aggs.reduce((s, a) => s + (a[n] || 0), 0);
+    names.sort((a, b) => sumOf(b) - sumOf(a));
 
-    (perfB.itemizedIngredients || []).forEach(slot => {
-      if (slot.isUnlocked && slot.name && slot.name !== '--') {
-        aggB[slot.name] = (aggB[slot.name] || 0) + (slot.dailyCount || 0);
-      }
-    });
-
-    const allDistinctIngNames = Array.from(new Set([...Object.keys(aggA), ...Object.keys(aggB)]));
-    allDistinctIngNames.sort((a, b) => ((aggA[b] || 0) + (aggB[b] || 0)) - ((aggA[a] || 0) + (aggB[a] || 0)));
-
-    let distinctIngRowsHtml = '';
-    if (allDistinctIngNames.length === 0) {
-      distinctIngRowsHtml = `<div style="text-align:center;color:var(--text-muted);padding:14px;font-size:12px;">${isEN ? 'No ingredients unlocked yet' : '雙方目前均無解鎖之食材'}</div>`;
+    let distinctIngRowsHtml;
+    if (names.length === 0) {
+      distinctIngRowsHtml = `<div style="text-align:center;color:var(--text-muted);padding:14px;font-size:12px;">${isEN ? 'No ingredients unlocked yet' : '目前均無解鎖之食材'}</div>`;
     } else {
-      distinctIngRowsHtml = allDistinctIngNames.map(ingName => {
-        const countA = Math.round((aggA[ingName] || 0) * 10) / 10;
-        const countB = Math.round((aggB[ingName] || 0) * 10) / 10;
-        const diff = Math.round((countA - countB) * 10) / 10;
-        const nameText = window.I18N ? window.I18N.getIngredientName(ingName) : ingName;
-        const icon = (window.I18N && typeof window.I18N.getIngredientIcon === 'function') ? window.I18N.getIngredientIcon(ingName) : '';
-
+      distinctIngRowsHtml = names.map(n => {
+        const vals = aggs.map(a => Math.round((a[n] || 0) * 10) / 10);
+        const nameText = window.I18N ? window.I18N.getIngredientName(n) : n;
+        const icon = (window.I18N && typeof window.I18N.getIngredientIcon === 'function') ? window.I18N.getIngredientIcon(n) : '';
+        const holders = vals.filter(v => v > 0).length;
         let badge = '';
-        if (countA > 0 && countB === 0) {
-          badge = `<span class="lab-compare-kpi-badge lead-a">A ${isEN ? 'Exclusive' : '獨佔'} +${countA}</span>`;
-        } else if (countB > 0 && countA === 0) {
-          badge = `<span class="lab-compare-kpi-badge lead-b">B ${isEN ? 'Exclusive' : '獨佔'} +${countB}</span>`;
-        } else if (diff > 0) {
-          badge = `<span class="lab-compare-kpi-badge lead-a">A +${diff}</span>`;
-        } else if (diff < 0) {
-          badge = `<span class="lab-compare-kpi-badge lead-b">B +${Math.abs(diff)}</span>`;
+        const top = Math.max.apply(null, vals);
+        const topIdx = vals.map((v, i) => (v === top ? i : -1)).filter(i => i >= 0);
+        if (holders === 1) {
+          const p = activePlayers[vals.findIndex(v => v > 0)];
+          badge = `<span class="lab-compare-kpi-badge" style="background:${p.color}2e;color:${p.color};border:1px solid ${p.color}59;">${p.letter} ${isEN ? 'Exclusive' : '獨佔'}</span>`;
+        } else if (topIdx.length === 1) {
+          const p = activePlayers[topIdx[0]];
+          badge = `<span class="lab-compare-kpi-badge" style="background:${p.color}2e;color:${p.color};border:1px solid ${p.color}59;">${p.letter} ${isEN ? 'Leads' : '領先'}</span>`;
         } else {
           badge = `<span class="lab-compare-kpi-badge tie">${isEN ? 'Tie' : '持平'}</span>`;
         }
-
-        const pctA = (countA + countB > 0) ? Math.max(8, Math.min(92, Math.round((countA / (countA + countB)) * 100))) : 50;
-        const pctB = 100 - pctA;
-
         return `
           <div class="lab-compare-distinct-row">
             <div class="lab-compare-distinct-head">
@@ -4139,261 +4385,84 @@
               </div>
               <div>${badge}</div>
             </div>
-            <div class="lab-compare-distinct-yields">
-              <span class="lab-compare-distinct-val slot-a">A: ~${countA} ${isEN ? 'items/day' : '顆/日'}</span>
-              <span class="lab-compare-distinct-val slot-b">B: ~${countB} ${isEN ? 'items/day' : '顆/日'}</span>
-            </div>
-            <div class="lab-compare-bar-container" style="height:6px;">
-              <div class="lab-compare-bar-a" style="width:${pctA}%;"></div>
-              <div class="lab-compare-bar-b" style="width:${pctB}%;"></div>
-            </div>
-          </div>
-        `;
+            ${barRowsHtml(vals, vals.map(v => `${v} ${unitIng}`))}
+          </div>`;
       }).join('');
     }
 
-    // Top Header info (Avatar, change button, specialty, berry, nature, skill - NO names, NO grades, NO energy/ingredient numbers)
-    const avatarUrlA = (baseA && (baseA.icon_url || baseA.icon)) || (baseA && baseA.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${baseA.formatted_no}.png` : '') || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
-    const avatarUrlB = (baseB && (baseB.icon_url || baseB.icon)) || (baseB && baseB.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${baseB.formatted_no}.png` : '') || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
-    const berryA = (typeof window.getPokemonBerry === 'function' && baseA) ? window.getPokemonBerry(baseA) : (baseA && baseA.berry ? baseA.berry : {});
-    const berryB = (typeof window.getPokemonBerry === 'function' && baseB) ? window.getPokemonBerry(baseB) : (baseB && baseB.berry ? baseB.berry : {});
-    const specHtmlA = (window.I18N && window.I18N.getSpecialtyIconHtml && baseA) ? window.I18N.getSpecialtyIconHtml(baseA.specialty, 18) : '';
-    const specHtmlB = (window.I18N && window.I18N.getSpecialtyIconHtml && baseB) ? window.I18N.getSpecialtyIconHtml(baseB.specialty, 18) : '';
-    const natDisplayNameA = window.I18N ? window.I18N.getNatureName(itemA.nature) : itemA.nature;
-    const natDisplayNameB = window.I18N ? window.I18N.getNatureName(itemB.nature) : itemB.nature;
-    const skillNameA = (baseA && baseA.main_skill) ? (window.I18N ? window.I18N.getMainSkillName(baseA.main_skill) : baseA.main_skill) : '--';
-    const skillNameB = (baseB && baseB.main_skill) ? (window.I18N ? window.I18N.getMainSkillName(baseB.main_skill) : baseB.main_skill) : '--';
-    const skillLabelA = `${skillNameA} Lv.${itemA.skillLevel || 1}`;
-    const skillLabelB = `${skillNameB} Lv.${itemB.skillLevel || 1}`;
+    const ingVals = activePlayers.map(p => p.perf.totalDailyIngredientsCount);
+    const ingredientsHtml = `
+      <div class="lab-compare-kpi-card" id="lab-compare-ingredients">
+        <div class="lab-compare-kpi-head">
+          <div class="lab-compare-kpi-title"><span>[*]</span><span>${isEN ? 'Daily Ingredient Yield Comparison' : '每日食材產量比較'}</span></div>
+          ${leadBadge(ingVals, d => `${Math.round(d * 10) / 10} ${unitIng}`)}
+        </div>
+        ${barRowsHtml(ingVals, ingVals.map(v => `${v} ${unitIng}`))}
+        <div class="lab-compare-distinct-list" style="margin-top:6px;">
+          <div class="lab-compare-distinct-caption" style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">${isEN ? 'Per-ingredient total yield (each ingredient compared separately):' : '各食材總和產量對照（不同食材獨立比較）：'}</div>
+          ${distinctIngRowsHtml}
+        </div>
+      </div>`;
 
-    // Dynamic Verdict & Advice
-    let verdictSummary = '';
-    if (diffEnergy > 1000 && diffIng > 5) {
-      verdictSummary = isEN
-        ? `【Player A】 demonstrates complete dominance in both total energy (+${diffEnergy.toLocaleString()} pts, +${pctEnergy}%) and ingredient yield (+${diffIng} items/day). Strongest all-around choice for active deployment.`
-        : `【選手 A】在每日預估總能量 (+${diffEnergy.toLocaleString()} 能量, +${pctEnergy}%) 與食材產量 (+${diffIng} 顆/日) 均展現全面優勢，為現階段最推薦的主力派遣選手。`;
-    } else if (diffEnergy < -1000 && diffIng < -5) {
-      verdictSummary = isEN
-        ? `【Player B】 dominates both total energy (+${Math.abs(diffEnergy).toLocaleString()} pts, +${Math.abs(pctEnergy)}%) and ingredient yield (+${Math.abs(diffIng)} items/day). Clearly the superior investment.`
-        : `【選手 B】在每日預估總能量 (+${Math.abs(diffEnergy).toLocaleString()} 能量, +${Math.abs(pctEnergy)}%) 與食材產量 (+${Math.abs(diffIng)} 顆/日) 雙雙領先，具備極高的實用戰略價值。`;
-    } else if (diffEnergy > 1500) {
-      verdictSummary = isEN
-        ? `【Player A】 leads substantially in total daily energy (+${diffEnergy.toLocaleString()} pts, +${pctEnergy}%), ideal for island rank pushing. 【Player B】 yields ${perfB.totalDailyIngredientsCount} items/day in ingredients, making it suited for cooking-focused strategies.`
-        : `【選手 A】在每日預估總能量大幅領先 (+${diffEnergy.toLocaleString()} 能量, +${pctEnergy}%)，適合卡比獸衝分！而【選手 B】每日產出 ${perfB.totalDailyIngredientsCount} 顆食材，適合作為備選的料理供糧手。`;
-    } else if (diffEnergy < -1500) {
-      verdictSummary = isEN
-        ? `【Player B】 leads substantially in total daily energy (+${Math.abs(diffEnergy).toLocaleString()} pts, +${Math.abs(pctEnergy)}%), superior for raw island power. 【Player A】 produces ${perfA.totalDailyIngredientsCount} items/day in ingredients.`
-        : `【選手 B】在每日預估總能量大幅領先 (+${Math.abs(diffEnergy).toLocaleString()} 能量, +${Math.abs(pctEnergy)}%)，適合卡比獸衝分！而【選手 A】每日產出 ${perfA.totalDailyIngredientsCount} 顆食材。`;
-    } else if (diffIng > 8) {
-      verdictSummary = isEN
-        ? `【Player A】 provides superior daily ingredient production (+${diffIng} items/day, +${pctIng}%), making it significantly better for high-pot recipes. Overall energy is close.`
-        : `【選手 A】在食材產能上更為優異 (每日多產 +${diffIng} 顆, +${pctIng}%)，特別適合支撐大鍋料理；兩者每日總能量差距有限。`;
-    } else if (diffIng < -8) {
-      verdictSummary = isEN
-        ? `【Player B】 provides superior daily ingredient production (+${Math.abs(diffIng)} items/day, +${Math.abs(pctIng)}%), making it significantly better for high-pot recipes. Overall energy is close.`
-        : `【選手 B】在食材產能上更為優異 (每日多產 +${Math.abs(diffIng)} 顆, +${Math.abs(pctIng)}%)，特別適合支撐大鍋料理；兩者每日總能量差距有限。`;
-    } else {
-      verdictSummary = isEN
-        ? `Both players are very closely matched in both total energy (${perfA.totalDailyEnergy.toLocaleString()} vs ${perfB.totalDailyEnergy.toLocaleString()}) and ingredient yield. Consider choosing based on island favored berry and current cooking recipe demands.`
-        : `兩位選手在每日總能量 (${perfA.totalDailyEnergy.toLocaleString()} vs ${perfB.totalDailyEnergy.toLocaleString()}) 與食材產能上旗鼓相當！建議依照當週營地的喜愛樹果屬性與預備製作的料理食譜進行調配。`;
+    // ── 技能發動與幫手效能全面對照 ──
+    const skillLabel = p => {
+      const nm = (p.base && (p.base.main_skill || (p.base.skill && p.base.skill.name))) || p.item.main_skill || '--';
+      const locNm = window.I18N ? window.I18N.getMainSkillName(nm) : nm;
+      return `${locNm} Lv.${p.item.skillLevel || 1}`;
+    };
+    const specRows = [
+      { label: isEN ? 'Level' : '等級', vals: activePlayers.map(p => p.perf.level), higher: null, texts: activePlayers.map(p => `Lv.${p.perf.level}`) },
+      num(isEN ? 'Help Interval' : '幫手週期', x => x.effectiveInterval, false, v => formatSecsToMinSec(v, isEN)),
+      num(isEN ? 'Daily Helps' : '每日幫手次數', x => x.dailyHelps, true, v => `${v} ${isEN ? '/day' : '次'}`),
+      num(isEN ? 'Ingredient Rate' : '食材掉落率', x => Math.round(x.effectiveIngRate * 1000) / 10, true, v => `${v}%`),
+      num(isEN ? 'Berries / Day' : '每日樹果數量', x => x.dailyBerryCount, true),
+      num(isEN ? 'Energy / Berry' : '單顆樹果能量', x => x.singleBerryPower, true),
+      { label: isEN ? 'Main Skill' : '主技能', vals: activePlayers.map(() => 0), higher: null, texts: activePlayers.map(p => skillLabel(p)) },
+      num(isEN ? 'Skill Proc Rate' : '技能發動率', x => Math.round(x.effectiveSkillRate * 1000) / 10, true, v => `${v}%`),
+      num(isEN ? 'Skill Procs / Day' : '技能每日發動次數', x => x.dailySkillProcs, true, v => `~${v} ${isEN ? '/day' : '次'}`),
+      num(isEN ? 'Avg Proc Interval' : '技能平均發動間隔', x => (x.dailySkillProcs > 0 ? Math.round((24 / x.dailySkillProcs) * 10) / 10 : 9999), false, v => (v >= 9999 ? '--' : `${v} ${isEN ? 'h' : '小時'}`)),
+      num(isEN ? 'Skill Energy / Day' : '主技能每日能量', x => x.dailySkillEnergy, true),
+      { label: isEN ? 'Nature' : '性格', vals: activePlayers.map(() => 0), higher: null, texts: activePlayers.map(p => (window.I18N ? window.I18N.getNatureName(p.item.nature) : p.item.nature)) }
+    ];
+    const specHtml = `
+      <div class="lab-compare-kpi-card lab-compare-matchup-table" id="lab-compare-skills">
+        <div class="lab-compare-kpi-head">
+          <div class="lab-compare-kpi-title"><span>[#]</span><span>${isEN ? 'Skill Procs, Speed & Specs' : '技能發動與幫手效能對照'}</span></div>
+        </div>
+        ${tableHtml(specRows)}
+      </div>`;
+
+    // ── 結論與培育建議 ──
+    const topOf = vals => vals.indexOf(Math.max.apply(null, vals));
+    const allEqual = vals => vals.every(v => v === vals[0]);
+    const skillProcVals = activePlayers.map(p => p.perf.dailySkillProcs);
+    const parts = [];
+    if (!allEqual(energyVals)) {
+      const p = activePlayers[topOf(energyVals)];
+      parts.push(isEN ? `${pLabel(p)} has the highest daily energy (${fmt(p.perf.totalDailyEnergy)}).` : `【${pLabel(p)}】每日總能量最高 (${fmt(p.perf.totalDailyEnergy)})，適合衝島嶼分數。`);
     }
+    if (!allEqual(ingVals)) {
+      const p = activePlayers[topOf(ingVals)];
+      parts.push(isEN ? `${pLabel(p)} yields the most ingredients (${p.perf.totalDailyIngredientsCount} ${unitIng}).` : `【${pLabel(p)}】食材產量最高 (${p.perf.totalDailyIngredientsCount} ${unitIng})，適合支撐大鍋料理。`);
+    }
+    if (!allEqual(skillProcVals)) {
+      const p = activePlayers[topOf(skillProcVals)];
+      parts.push(isEN ? `${pLabel(p)} procs its main skill most often (~${p.perf.dailySkillProcs}/day).` : `【${pLabel(p)}】主技能發動最頻繁 (約 ${p.perf.dailySkillProcs} 次/日)。`);
+    }
+    const verdictSummary = parts.length ? parts.join(isEN ? ' ' : '') : (isEN ? 'All selected Pokémon are evenly matched.' : '所選寶可夢各項表現旗鼓相當，可依營地喜愛樹果與預備料理自行調配。');
 
     return `
       <div class="lab-compare-view-container">
-        <!-- 選手 A vs 選手 B 橫向對決列 (Player A vs Player B VS Header) -->
-        <div class="lab-compare-vs-header">
-          <div class="lab-compare-vs-player slot-a">
-            <div class="lab-compare-vs-top">
-              <div class="lab-compare-vs-avatar-wrap">
-                <img src="${avatarUrlA}" class="lab-compare-vs-avatar" alt="Player A" loading="lazy">
-                <span class="lab-compare-vs-lvl">Lv.${itemA.level || 1}</span>
-              </div>
-              <button type="button" class="box-btn box-btn-secondary lab-compare-change-btn" onclick="window.AppraisalLab.openPicker({ type: 'compare', compareSlot: 'a' })">
-                ${isEN ? 'Change' : '更換選手'}
-              </button>
-            </div>
-            <div class="lab-compare-vs-info">
-              ${specHtmlA}
-              ${berryA.icon ? `<img src="${berryA.icon}" class="lab-compare-mini-berry" alt="Berry" title="${escapeHtml(berryA.name || '')}">` : ''}
-              <span class="lab-compare-vs-tag nat-tag">${natDisplayNameA}</span>
-              <span class="lab-compare-vs-tag skill-tag">${skillLabelA}</span>
-            </div>
-          </div>
-
-          <div class="lab-compare-vs-divider">
-            <div class="lab-compare-vs-badge">VS</div>
-          </div>
-
-          <div class="lab-compare-vs-player slot-b">
-            <div class="lab-compare-vs-top">
-              <div class="lab-compare-vs-avatar-wrap">
-                <img src="${avatarUrlB}" class="lab-compare-vs-avatar" alt="Player B" loading="lazy">
-                <span class="lab-compare-vs-lvl">Lv.${itemB.level || 1}</span>
-              </div>
-              <button type="button" class="box-btn box-btn-secondary lab-compare-change-btn" onclick="window.AppraisalLab.openPicker({ type: 'compare', compareSlot: 'b' })">
-                ${isEN ? 'Change' : '更換選手'}
-              </button>
-            </div>
-            <div class="lab-compare-vs-info">
-              ${specHtmlB}
-              ${berryB.icon ? `<img src="${berryB.icon}" class="lab-compare-mini-berry" alt="Berry" title="${escapeHtml(berryB.name || '')}">` : ''}
-              <span class="lab-compare-vs-tag nat-tag">${natDisplayNameB}</span>
-              <span class="lab-compare-vs-tag skill-tag">${skillLabelB}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 每日預估總能量對決看板 (Daily Energy Yield Comparison) -->
-        <div class="lab-compare-kpi-card" id="lab-compare-energy">
-          <div class="lab-compare-kpi-head">
-            <div class="lab-compare-kpi-title">
-              <span>[*]</span>
-              <span>${isEN ? 'Daily Total Energy Output' : '每日預估總能量比較'}</span>
-            </div>
-            ${energyLeadBadge}
-          </div>
-
-          <div class="lab-compare-score-row">
-            <div class="lab-compare-score-val slot-a">
-              ${totalA.toLocaleString()}<span class="lab-compare-score-unit">${isEN ? 'pts/day' : '能量/日'}</span>
-            </div>
-            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-align:center;">
-              VS
-            </div>
-            <div class="lab-compare-score-val slot-b">
-              ${totalB.toLocaleString()}<span class="lab-compare-score-unit">${isEN ? 'pts/day' : '能量/日'}</span>
-            </div>
-          </div>
-
-          <div class="lab-compare-bar-container">
-            <div class="lab-compare-bar-a" style="width:${energyBarWidthA}%;"></div>
-            <div class="lab-compare-bar-b" style="width:${energyBarWidthB}%;"></div>
-          </div>
-
-          <div class="lab-compare-subgrid">
-            <div class="lab-compare-subitem">
-              <span class="lab-compare-subitem-lbl">${isEN ? 'Berry Energy' : '樹果能量'}</span>
-              <div class="lab-compare-subitem-vals">
-                <span style="color:#38bdf8;">${perfA.dailyBerryEnergy.toLocaleString()}</span>
-                <span style="color:var(--text-muted);font-size:10px;">${diffBerryText}</span>
-                <span style="color:#c084fc;">${perfB.dailyBerryEnergy.toLocaleString()}</span>
-              </div>
-            </div>
-            <div class="lab-compare-subitem">
-              <span class="lab-compare-subitem-lbl">${isEN ? 'Ingredient Energy' : '食材能量'}</span>
-              <div class="lab-compare-subitem-vals">
-                <span style="color:#38bdf8;">${perfA.totalDailyIngredientEnergy.toLocaleString()}</span>
-                <span style="color:var(--text-muted);font-size:10px;">${diffIngEnergyText}</span>
-                <span style="color:#c084fc;">${perfB.totalDailyIngredientEnergy.toLocaleString()}</span>
-              </div>
-            </div>
-            <div class="lab-compare-subitem">
-              <span class="lab-compare-subitem-lbl">${isEN ? 'Skill Energy (Est)' : '主技能能量'}</span>
-              <div class="lab-compare-subitem-vals">
-                <span style="color:#38bdf8;">${perfA.dailySkillEnergy.toLocaleString()}</span>
-                <span style="color:var(--text-muted);font-size:10px;">${diffSkillEnergyText}</span>
-                <span style="color:#c084fc;">${perfB.dailySkillEnergy.toLocaleString()}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 每日食材產量比較看板 (Daily Ingredient Yields Breakdown) -->
-        <div class="lab-compare-kpi-card" id="lab-compare-ingredients">
-          <div class="lab-compare-kpi-head">
-            <div class="lab-compare-kpi-title">
-              <span>[*]</span>
-              <span>${isEN ? 'Daily Ingredient Yield Comparison' : '每日食材產量比較'}</span>
-            </div>
-            ${ingLeadBadge}
-          </div>
-
-          <div class="lab-compare-score-row">
-            <div class="lab-compare-score-val slot-a">
-              ${ingA}<span class="lab-compare-score-unit">${isEN ? 'items/day' : '顆/日'}</span>
-            </div>
-            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-align:center;">
-              VS
-            </div>
-            <div class="lab-compare-score-val slot-b">
-              ${ingB}<span class="lab-compare-score-unit">${isEN ? 'items/day' : '顆/日'}</span>
-            </div>
-          </div>
-
-          <div class="lab-compare-bar-container">
-            <div class="lab-compare-bar-a" style="width:${ingBarWidthA}%;"></div>
-            <div class="lab-compare-bar-b" style="width:${ingBarWidthB}%;"></div>
-          </div>
-
-          <div class="lab-compare-distinct-list" style="margin-top:8px;">
-            <div style="font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:2px;">
-              ${isEN ? 'Distinct Ingredients Total Yield Matchup:' : '各食材總和產量對照（不同食材獨立比較）：'}
-            </div>
-            ${distinctIngRowsHtml}
-          </div>
-        </div>
-
-        <!-- 幫手運作效能與機率全面對照 (Helping Speed & Probability Matchup) -->
-        <div class="lab-compare-matchup-table" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:14px;margin-bottom:14px;">
-          <div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
-            <span>[#]</span>
-            <span>${isEN ? 'Operational Specs & Helping Rates' : '幫手運作效能與機率全面對照'}</span>
-          </div>
-
-          <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
-            <div class="lab-compare-spec-row">
-              <span style="color:#38bdf8;font-weight:700;width:35%;">${isEN ? 'Player A' : '選手 A'} Lv.${itemA.level || 1}</span>
-              <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Level' : '等級'}</span>
-              <span style="color:#c084fc;font-weight:700;width:35%;text-align:right;">${isEN ? 'Player B' : '選手 B'} Lv.${itemB.level || 1}</span>
-            </div>
-
-            <div class="lab-compare-spec-row">
-              <span style="color:#38bdf8;font-weight:600;width:35%;">${formatSecsToMinSec(perfA.effectiveInterval, isEN)}</span>
-              <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Help Interval' : '幫手週期'}</span>
-              <span style="color:#c084fc;font-weight:600;width:35%;text-align:right;">${formatSecsToMinSec(perfB.effectiveInterval, isEN)}</span>
-            </div>
-
-            <div class="lab-compare-spec-row">
-              <span style="color:#38bdf8;font-weight:600;width:35%;">${perfA.dailyHelps} ${isEN ? 'helps/day' : '次/日'}</span>
-              <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Daily Helps' : '每日幫手次數'}</span>
-              <span style="color:#c084fc;font-weight:600;width:35%;text-align:right;">${perfB.dailyHelps} ${isEN ? 'helps/day' : '次/日'}</span>
-            </div>
-
-            <div class="lab-compare-spec-row">
-              <span style="color:#38bdf8;font-weight:600;width:35%;">${(perfA.effectiveIngRate * 100).toFixed(1)}%</span>
-              <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Ingredient Rate' : '食材掉落率'}</span>
-              <span style="color:#c084fc;font-weight:600;width:35%;text-align:right;">${(perfB.effectiveIngRate * 100).toFixed(1)}%</span>
-            </div>
-
-            <div class="lab-compare-spec-row">
-              <span style="color:#38bdf8;font-weight:600;width:35%;">${(perfA.effectiveSkillRate * 100).toFixed(1)}% (~${perfA.dailySkillProcs}${isEN ? '/day' : '次'})</span>
-              <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Skill Rate' : '技能發動率/日'}</span>
-              <span style="color:#c084fc;font-weight:600;width:35%;text-align:right;">${(perfB.effectiveSkillRate * 100).toFixed(1)}% (~${perfB.dailySkillProcs}${isEN ? '/day' : '次'})</span>
-            </div>
-
-            <div class="lab-compare-spec-row">
-              <span style="color:#38bdf8;font-weight:600;width:35%;">${window.I18N ? window.I18N.getNatureName(itemA.nature) : itemA.nature}</span>
-              <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Nature' : '性格'}</span>
-              <span style="color:#c084fc;font-weight:600;width:35%;text-align:right;">${window.I18N ? window.I18N.getNatureName(itemB.nature) : itemB.nature}</span>
-            </div>
-
-            <div class="lab-compare-spec-row" style="border-bottom:none;">
-              <span style="color:#38bdf8;font-weight:600;width:35%;">${(baseA && baseA.main_skill) ? (window.I18N ? window.I18N.getMainSkillName(baseA.main_skill) : baseA.main_skill) : '--'} (Lv.${itemA.skillLevel || 1})</span>
-              <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Main Skill' : '主技能'}</span>
-              <span style="color:#c084fc;font-weight:600;width:35%;text-align:right;">${(baseB && baseB.main_skill) ? (window.I18N ? window.I18N.getMainSkillName(baseB.main_skill) : baseB.main_skill) : '--'} (Lv.${itemB.skillLevel || 1})</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 深度研究室對比結論與培育建議 -->
+        ${headerHtml}
+        ${energyHtml}
+        ${ingredientsHtml}
+        ${specHtml}
         <div class="lab-compare-verdict-card" style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.25);border-radius:10px;padding:14px;">
           <div style="font-size:12.5px;font-weight:800;color:var(--accent-color,#38bdf8);margin-bottom:6px;display:flex;align-items:center;gap:4px;">
             <span>[*]</span>
             <span>${isEN ? 'Research Lab Comparative Verdict & Advice' : '深度研究室對比結論與培育建議'}</span>
           </div>
-          <div style="font-size:12px;color:#e2e8f0;line-height:1.5;">
-            ${verdictSummary}
-          </div>
+          <div style="font-size:12px;color:#e2e8f0;line-height:1.6;">${verdictSummary}</div>
         </div>
       </div>
     `;
@@ -4580,9 +4649,6 @@
     if (labState.teamSlots.every(s => !s) && userBox.length > 0) {
       autoOptimizeTeam(false);
     }
-    if (!labState.compareUidA && userBox.length > 0) labState.compareUidA = userBox[0].uid;
-    if (!labState.compareUidB && userBox.length > 1) labState.compareUidB = userBox[1].uid;
-    else if (!labState.compareUidB && userBox.length === 1) labState.compareUidB = userBox[0].uid;
 
     targetElement.innerHTML = `
       <div class="appraisal-lab-seamless-view">
@@ -4739,6 +4805,7 @@
     setCookingType: setCookingType,
     setGreengrassBerry: setGreengrassBerry,
     setCompareSlot: setCompareSlot,
+    clearCompareSlot: clearCompareSlot,
     swapCompareSlots: swapCompareSlots,
     openPicker: openLabPicker,
     closePicker: closeLabPicker,

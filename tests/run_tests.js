@@ -10349,13 +10349,17 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     const mockContainer = mockDOMElement('appraisal-lab-container');
     ctx.window.AppraisalLab.renderLab(mockContainer);
 
-    // 4. Test Comparison View Overhaul
+    // 4. Test Comparison View Overhaul (default empty, user selects up to 3 players)
     ctx.window.AppraisalLab.switchSubTab('compare');
     assert(mockContainer.innerHTML.includes('lab-compare-vs-header'), 'Compare view must render VS header');
     assert(mockContainer.innerHTML.includes('lab-compare-vs-badge'), 'Compare view must render VS badge');
     assert(mockContainer.innerHTML.includes('slot-a') && mockContainer.innerHTML.includes('slot-b'), 'Compare view must render slot-a and slot-b');
     assert(!mockContainer.innerHTML.includes('swapCompareSlots'), 'Compare view must not render swap button');
     
+    // Pick 2 players (Player A: box-pkm-1 妙蛙花, Player B: box-pkm-2 水箭龜)
+    ctx.window.AppraisalLab.setCompareSlot(0, 'box-pkm-1');
+    ctx.window.AppraisalLab.setCompareSlot(1, 'box-pkm-2');
+
     const vsHeaderHtml = mockContainer.innerHTML.slice(
       mockContainer.innerHTML.indexOf('lab-compare-vs-header'),
       mockContainer.innerHTML.indexOf('lab-compare-energy')
@@ -10367,6 +10371,15 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     assert(mockContainer.innerHTML.includes('lab-compare-distinct-list'), 'Compare view must render distinct ingredients list');
     assert(mockContainer.innerHTML.includes('lab-compare-distinct-row'), 'Compare view must render distinct ingredient rows');
     assert(mockContainer.innerHTML.includes('特選蘋果') || mockContainer.innerHTML.includes('甜甜蜜'), 'Distinct rows must include ingredient names');
+
+    // Test duplicate prevention: selecting box-pkm-1 for slot 2 should be blocked
+    ctx.window.AppraisalLab.setCompareSlot(2, 'box-pkm-1');
+    assert(mockContainer.innerHTML.includes('挑選選手 C') || mockContainer.innerHTML.includes('Pick Player C'), 'Duplicate selection in comparison must be prevented');
+
+    // Test 3-player comparison: select box-pkm-3 (雷丘) for slot 2
+    ctx.window.AppraisalLab.setCompareSlot(2, 'box-pkm-3');
+    assert(mockContainer.innerHTML.includes('lab-compare-skills'), 'Compare view must render skill procs comparison');
+    assert(mockContainer.innerHTML.includes('技能發動與幫手效能對照'), 'Compare view must render skill procs table');
 
     // 5. Test Team Builder Config Variables
     ctx.window.AppraisalLab.switchSubTab('team');
@@ -10407,6 +10420,156 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     assert(stylesCss.includes('.appraisal-edit-btn'), 'styles.css must style .appraisal-edit-btn');
     assert(stylesCss.includes('.lab-picker-card'), 'styles.css must style .lab-picker-card grid cards');
     assert(stylesCss.includes('.lab-picker-avatar'), 'styles.css must style .lab-picker-avatar');
+  });
+
+  // ─── Test 191: 3-Player Comparison, Default Empty Slots, Duplicate Prevention & Skill Procs ─
+  test('Tier 4 - Real-World Application Scenarios', '3-Player Comparison, Default Empty Slots, Duplicate Prevention & Skill Procs', () => {
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+
+    // 1. Static CSS verification
+    assert(stylesCss.includes('.lab-picker-occupied-badge'), 'styles.css must style .lab-picker-occupied-badge');
+    assert(stylesCss.includes('.lab-picker-card.occupied'), 'styles.css must style .lab-picker-card.occupied');
+    assert(!stylesCss.includes('.lab-picker-fav-badge'), 'styles.css must not style .lab-picker-fav-badge (2x badge removed)');
+    assert(stylesCss.includes('.lab-compare-vs-player.slot-c'), 'styles.css must style .slot-c for 3rd player');
+    assert(stylesCss.includes('.lab-cmp-bar-row'), 'styles.css must style .lab-cmp-bar-row');
+    assert(stylesCss.includes('.lab-cmp-table'), 'styles.css must style .lab-cmp-table');
+
+    // 2. VM runtime test
+    const mockElements = new Map();
+    const createdElements = [];
+    const mockDOMElement = (id = '', tagName = 'div') => {
+      const el = {
+        id: id,
+        tagName: tagName.toUpperCase(),
+        innerHTML: '',
+        value: '',
+        style: { display: '' },
+        classList: {
+          classes: new Set(),
+          add(c) { this.classes.add(c); },
+          remove(c) { this.classes.delete(c); },
+          contains(c) { return this.classes.has(c); }
+        },
+        querySelectorAll: () => [],
+        querySelector: () => null,
+        appendChild: (child) => { createdElements.push(child); return child; },
+        addEventListener: () => {}
+      };
+      if (id) mockElements.set(id, el);
+      return el;
+    };
+
+    const mockStorage = new Map();
+    const toasts = [];
+    const ctx = {
+      window: {
+        IS_MOBILE_H5: false,
+        showToast: (msg) => toasts.push(msg),
+        localStorage: {
+          getItem: (k) => mockStorage.get(k) || null,
+          setItem: (k, v) => mockStorage.set(k, String(v)),
+          removeItem: (k) => mockStorage.delete(k)
+        },
+        I18N: {
+          getLanguage: () => 'zh-TW',
+          getSubSkillName: (n) => n,
+          getMainSkillName: (n) => n,
+          getIngredientName: (n) => n,
+          getNatureName: (n) => n,
+          getSpecialtyName: (n) => n,
+          getTypeName: (n) => n,
+          getBerryName: (n) => n,
+          getIngredientIcon: () => 'assets/ingredients/test.png',
+          getSpecialtyIconHtml: (spec, size, cls) => `<span class="${cls}">${spec}</span>`
+        },
+        PokemonApp: {
+          getPokemons: () => [
+            { id: 3, name_cn: '妙蛙花', specialty: '食材', base_frequency: 2800, main_skill: '食材獲取S', ingredients: [{ name: '特選蘋果', count: 2 }] },
+            { id: 9, name_cn: '水箭龜', specialty: '食材', base_frequency: 2700, main_skill: '食材獲取S', ingredients: [{ name: '哞哞鮮奶', count: 2 }] },
+            { id: 26, name_cn: '雷丘', specialty: '樹果', base_frequency: 2200, main_skill: '能量填充S', ingredients: [{ name: '特選蘋果', count: 2 }] }
+          ]
+        },
+        UserBox: {
+          getUserBox: () => [
+            { uid: 'pkm-1', pokemonId: 3, name: '妙蛙花', level: 50, nature: '冷靜', subskills: [], ing1: '特選蘋果' },
+            { uid: 'pkm-2', pokemonId: 9, name: '水箭龜', level: 50, nature: '內斂', subskills: [], ing1: '哞哞鮮奶' },
+            { uid: 'pkm-3', pokemonId: 26, name: '雷丘', level: 60, nature: '固執', subskills: [], ing1: '特選蘋果' }
+          ]
+        },
+        document: {
+          getElementById: (id) => mockElements.get(id) || null,
+          querySelector: (s) => (s && s.startsWith('#') ? (mockElements.get(s.slice(1)) || null) : null),
+          querySelectorAll: () => [],
+          createElement: (tag) => {
+            const el = mockDOMElement('', tag);
+            createdElements.push(el);
+            return el;
+          },
+          body: {
+            style: {},
+            classList: { contains: () => false },
+            appendChild: (el) => { if (el.id) mockElements.set(el.id, el); }
+          }
+        },
+        console: console,
+        getComputedStyle: () => ({ display: 'block' }),
+        setupCustomSelect: () => {}
+      }
+    };
+    ctx.window.allPokemons = ctx.window.PokemonApp.getPokemons();
+    ctx.window.window = ctx.window;
+    ctx.document = ctx.window.document;
+    ctx.localStorage = ctx.window.localStorage;
+    vm.createContext(ctx);
+    vm.runInContext(appraisalJs, ctx);
+
+    const mockContainer = mockDOMElement('appraisal-lab-container');
+    ctx.window.AppraisalLab.renderLab(mockContainer);
+    ctx.window.AppraisalLab.switchSubTab('compare');
+
+    // 1. Initial State: default NO pokemon selected
+    assert(mockContainer.innerHTML.includes('挑選選手 A') || mockContainer.innerHTML.includes('Pick Player A'), 'Slot A must be empty by default');
+    assert(mockContainer.innerHTML.includes('挑選選手 B') || mockContainer.innerHTML.includes('Pick Player B'), 'Slot B must be empty by default');
+    assert(mockContainer.innerHTML.includes('挑選選手 C') || mockContainer.innerHTML.includes('Pick Player C'), 'Slot C must be empty by default');
+
+    // 2. Select Player A and Player B
+    ctx.window.AppraisalLab.setCompareSlot(0, 'pkm-1');
+    ctx.window.AppraisalLab.setCompareSlot(1, 'pkm-2');
+    assert(!mockContainer.innerHTML.includes('挑選選手 A'), 'Slot A must now be occupied');
+    assert(!mockContainer.innerHTML.includes('挑選選手 B'), 'Slot B must now be occupied');
+    assert(mockContainer.innerHTML.includes('挑選選手 C'), 'Slot C must still be empty');
+
+    // 3. Duplicate selection guard
+    toasts.length = 0;
+    ctx.window.AppraisalLab.setCompareSlot(2, 'pkm-1'); // pkm-1 already in slot 0
+    assert(mockContainer.innerHTML.includes('挑選選手 C'), 'Slot C must reject duplicate pkm-1');
+    assert(toasts.some(t => t.includes('無法重複選擇') || t.includes('already selected')), 'Toast must notify user about duplicate');
+
+    // 4. Select Player C with pkm-3
+    ctx.window.AppraisalLab.setCompareSlot(2, 'pkm-3');
+    assert(!mockContainer.innerHTML.includes('挑選選手 C'), 'Slot C must now be occupied with 3rd player');
+    assert(mockContainer.innerHTML.includes('slot-c'), 'Compare view must render slot-c');
+
+    // 5. Verify Skill Procs comparison metrics
+    assert(mockContainer.innerHTML.includes('lab-compare-skills'), 'Compare view must include skills comparison');
+    assert(mockContainer.innerHTML.includes('技能發動率'), 'Skills table must compare 技能發動率');
+    assert(mockContainer.innerHTML.includes('技能每日發動次數'), 'Skills table must compare 技能每日發動次數');
+    assert(mockContainer.innerHTML.includes('技能平均發動間隔'), 'Skills table must compare 技能平均發動間隔');
+    assert(mockContainer.innerHTML.includes('主技能每日能量'), 'Skills table must compare 主技能每日能量');
+
+    // 6. Test picker modal has no 2x badge and shows occupied state
+    ctx.window.AppraisalLab.openPicker({ type: 'compare', compareSlot: 0 });
+    const pickerModal = mockElements.get('modal-lab-picker');
+    assert(pickerModal !== null, 'modal-lab-picker must be created');
+    assert(!pickerModal.innerHTML.includes('lab-picker-fav-badge'), 'Picker modal must not contain 2x badge');
+    assert(!pickerModal.innerHTML.includes('>2x<'), 'Picker modal must not display 2x text');
+    assert(pickerModal.innerHTML.includes('lab-picker-occupied-badge'), 'Picker modal must show occupied badge for other slots');
+    assert(pickerModal.innerHTML.includes('已在對比中'), 'Picker modal must display 已在對比中');
+
+    // 7. Test clearCompareSlot
+    ctx.window.AppraisalLab.clearCompareSlot(1);
+    assert(mockContainer.innerHTML.includes('挑選選手 B'), 'Slot B must be reset to empty after clearCompareSlot');
   });
 
 console.log('                   Test Results Summary');
