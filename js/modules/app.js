@@ -5533,27 +5533,27 @@ function renderPokedexRibbonOptionsHTML(pkm, currentRibbon) {
 
   const currentVal = parseInt(currentRibbon, 10) || 0;
   let opt2Text = '';
-  let opt3Text = isEN ? '1000 hrs (+6 Carry Limit)' : '1000 小時 (+6 持有上限)';
+  let opt3Text = isEN ? '+6 Carry Limit' : '+6 持有上限';
   let opt4Text = '';
 
   if (!pkm) {
-    opt2Text = isEN ? '500 hrs (+3 Carry Limit · Speed Boost)' : '500 小時 (+3 持有上限 · 幫速加成)';
-    opt4Text = isEN ? '2000 hrs (+8 Carry Limit · Max Speed Boost)' : '2000 小時 (+8 持有上限 · 幫速最大加成)';
+    opt2Text = isEN ? '+3 Carry Limit · Speed Boost' : '+3 持有上限 · 幫速加成';
+    opt4Text = isEN ? '+8 Carry Limit · Max Speed Boost' : '+8 持有上限 · 幫速最大加成';
   } else if (remainingEvos === 2) {
-    opt2Text = isEN ? '500 hrs (+3 Carry Limit · Speed -11%)' : '500 小時 (+3 持有上限 · 幫速加成 -11%)';
-    opt4Text = isEN ? '2000 hrs (+8 Carry Limit · Speed -25%)' : '2000 小時 (+8 持有上限 · 幫速最大加成 -25%)';
+    opt2Text = isEN ? '+3 Carry Limit · Speed -11%' : '+3 持有上限 · 幫速加成 -11%';
+    opt4Text = isEN ? '+8 Carry Limit · Speed -25%' : '+8 持有上限 · 幫速最大加成 -25%';
   } else if (remainingEvos === 1) {
-    opt2Text = isEN ? '500 hrs (+3 Carry Limit · Speed -5%)' : '500 小時 (+3 持有上限 · 幫速加成 -5%)';
-    opt4Text = isEN ? '2000 hrs (+8 Carry Limit · Speed -12%)' : '2000 小時 (+8 持有上限 · 幫速最大加成 -12%)';
+    opt2Text = isEN ? '+3 Carry Limit · Speed -5%' : '+3 持有上限 · 幫速加成 -5%';
+    opt4Text = isEN ? '+8 Carry Limit · Speed -12%' : '+8 持有上限 · 幫速最大加成 -12%';
   } else {
-    opt2Text = isEN ? '500 hrs (+3 Carry Limit)' : '500 小時 (+3 持有上限)';
-    opt4Text = isEN ? '2000 hrs (+8 Carry Limit)' : '2000 小時 (+8 持有上限)';
+    opt2Text = isEN ? '+3 Carry Limit' : '+3 持有上限';
+    opt4Text = isEN ? '+8 Carry Limit' : '+8 持有上限';
   }
 
   const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : (typeof window !== 'undefined' && window.location && window.location.pathname.includes('/app/') ? '../' : '');
   const optionsData = [
-    { val: 0, text: isEN ? 'None (0h)' : '未佩戴 (0h)', icon: '' },
-    { val: 1, text: isEN ? '200 hrs (+1 Carry Limit)' : '200 小時 (+1 持有上限)', icon: `${base}assets/ribbons/ribbon_lv1.png` },
+    { val: 0, text: isEN ? 'None' : '未佩戴', icon: '' },
+    { val: 1, text: isEN ? '+1 Carry Limit' : '+1 持有上限', icon: `${base}assets/ribbons/ribbon_lv1.png` },
     { val: 2, text: opt2Text, icon: `${base}assets/ribbons/ribbon_lv2.png` },
     { val: 3, text: opt3Text, icon: `${base}assets/ribbons/ribbon_lv3.png` },
     { val: 4, text: opt4Text, icon: `${base}assets/ribbons/ribbon_lv4.png` }
@@ -5852,7 +5852,7 @@ function renderPokedexDetailModalContent() {
                 </div>
                 <div class="pokedex-track-pins-bar" id="pokedex-track-pins-bar">
                   ${(() => {
-                    const allMilestones = [10, 25, 30, 50, 60, 70, 80];
+                    const allMilestones = [10, 25, 30, 50, 60, 70, 80, 100];
                     // 紅色不可滑動區間（低於最低進化等級）不展示快捷等級圖釘，亦不額外插入重疊門檻圖釘
                     const pins = allMilestones.filter(lv => lv >= minEvoLvl);
                     return pins.map(lv => {
@@ -5861,9 +5861,8 @@ function renderPokedexDetailModalContent() {
                       const isUnreleased = lv > 60;
                       const isCap = lv === 60;
                       const isActive = pokedexModalState.level === lv;
-                      const classes = ['pokedex-track-pin-btn'];
+                      const classes = ['pokedex-track-pin-btn', 'pin-milestone'];
                       if (isActive) classes.push('active');
-                      if (isReleasedMilestone && !isUnreleased) classes.push('pin-milestone');
                       if (isCap) classes.push('pin-cap');
                       if (isUnreleased) classes.push('pin-unreleased');
 

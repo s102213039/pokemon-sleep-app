@@ -9977,6 +9977,98 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(pickerModal.style.display === 'none', 'closePicker must set display to none');
   });
 
+test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Button, Unified Milestone Colors & Compact Dropdown Arrows', () => {
+  const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+  const recipesJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'recipes.js'), 'utf8');
+  const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+  // 1. Verify Lv. 100 milestone in app.js allMilestones
+  assert(appJs.includes('[10, 25, 30, 50, 60, 70, 80, 100]'), 'app.js allMilestones must include 100');
+
+  // 2. Setup mock DOM and open Pokemon Detail Modal for Pikachu (0025)
+  const mockElements = new Map();
+  global.document = {
+    defaultView: global.window,
+    body: {
+      style: {},
+      appendChild: (el) => {
+        if (el.id) mockElements.set(el.id, el);
+      }
+    },
+    getElementById: (id) => {
+      if (!mockElements.has(id)) {
+        mockElements.set(id, {
+          id,
+          tagName: 'DIV',
+          innerHTML: '',
+          textContent: '',
+          value: '',
+          style: {},
+          classList: {
+            classes: new Set(),
+            add(c) { this.classes.add(c); },
+            remove(c) { this.classes.delete(c); },
+            contains(c) { return this.classes.has(c); }
+          },
+          setAttribute() {},
+          getAttribute() { return ''; }
+        });
+      }
+      return mockElements.get(id);
+    },
+    querySelector: () => ({ textContent: '', style: {} }),
+    querySelectorAll: () => [],
+    createElement: (tag) => ({
+      tagName: tag.toUpperCase(),
+      id: '',
+      className: '',
+      style: {},
+      innerHTML: '',
+      classList: { contains: () => false, add: () => {}, remove: () => {} }
+    })
+  };
+
+  PokemonApp.init([...dataset]);
+  const pikachuData = dataset.find(p => p.formatted_no === '0025' || p.name_cn === '皮卡丘') || dataset[0];
+  PokemonApp.openPokemonDetailModal(pikachuData.id || pikachuData.formatted_no || '0025');
+  const modalEl = mockElements.get('pokedex-detail-modal');
+  assert(modalEl !== undefined && modalEl !== null, 'pokedex-detail-modal element must be created');
+  const modalHtml = modalEl.innerHTML;
+
+  assert(modalHtml.includes('data-pin-lv="100"'), 'Pokedex detail modal track pins bar must include Lv. 100 pin');
+  assert(modalHtml.includes('data-pin-lv="70"'), 'Track pins bar must include Lv. 70 pin');
+  assert(modalHtml.includes('data-pin-lv="80"'), 'Track pins bar must include Lv. 80 pin');
+
+  // 3. Verify all pins have pin-milestone class
+  const pin100Match = modalHtml.match(/<button[^>]*data-pin-lv="100"[^>]*>/);
+  assert(pin100Match && pin100Match[0].includes('pin-milestone'), 'Lv. 100 pin must include pin-milestone class');
+  const pin70Match = modalHtml.match(/<button[^>]*data-pin-lv="70"[^>]*>/);
+  assert(pin70Match && pin70Match[0].includes('pin-milestone'), 'Lv. 70 pin must include pin-milestone class');
+
+  // 4. Verify CSS unifies pin-unreleased colors with pin-milestone
+  assert(stylesCss.includes('.pokedex-track-pin-btn.pin-unreleased .track-pin-label') &&
+         stylesCss.includes('color: #38bdf8;') &&
+         stylesCss.includes('font-weight: 700;'),
+         'pin-unreleased label must have unified cyan color (#38bdf8) and font-weight: 700');
+
+  // 5. Verify compact dropdown arrow in recipes.js and styles.css
+  assert(recipesJs.includes('width="7" height="4.5"'), 'recipes.js custom-select-arrow SVG must be 7x4.5');
+  assert(stylesCss.includes('width: 7px !important;') && stylesCss.includes('height: 4.5px !important;'),
+         'styles.css must size select arrow SVG to 7x4.5px');
+  assert(stylesCss.includes('#pokedex-detail-modal .custom-select-arrow') &&
+         stylesCss.includes('right: 10px !important;'),
+         'Pokedex detail modal select arrow must be positioned at right: 10px');
+  assert(stylesCss.includes('#pokedex-detail-modal .custom-select-trigger') &&
+         stylesCss.includes('padding: 0 24px 0 8px !important;'),
+         'Pokedex detail modal select trigger must provide compact 24px right padding');
+
+  // 6. Verify clean ribbon descriptions without redundant hours
+  const ribbonHtml = PokemonApp.renderPokedexRibbonOptionsHTML(pikachuData, 0);
+  assert(!ribbonHtml.includes('2000 小時') && !ribbonHtml.includes('2000 hrs'), 'Ribbon options HTML must not contain redundant 2000 hours text');
+  assert(!ribbonHtml.includes('500 小時') && !ribbonHtml.includes('500 hrs'), 'Ribbon options HTML must not contain redundant 500 hours text');
+  assert(ribbonHtml.includes('+8 持有上限') || ribbonHtml.includes('+8 Carry Limit'), 'Ribbon options HTML must contain +8 Carry Limit bonus');
+});
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

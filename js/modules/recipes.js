@@ -328,7 +328,7 @@
 
     const arrowSpan = document.createElement('span');
     arrowSpan.className = 'custom-select-arrow';
-    arrowSpan.innerHTML = `<svg viewBox="0 0 12 8" width="8" height="5"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M1 1.5L6 6.5L11 1.5"/></svg>`;
+    arrowSpan.innerHTML = `<svg viewBox="0 0 12 8" width="7" height="4.5"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M1 1.5L6 6.5L11 1.5"/></svg>`;
 
     triggerBtn.appendChild(labelSpan);
     triggerBtn.appendChild(arrowSpan);
