@@ -126,7 +126,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=20261003_02">
+  <link rel="stylesheet" href="css/styles.css?v=20261003_03">
   <!-- 全域錯誤診斷與日誌攔截器 (Global Error & Diagnostic Logger) -->
   <script>
     (function() {
@@ -964,29 +964,32 @@
 
       <!-- ➡️ 倉庫主要內容區 (Right Main Content Area) -->
       <div class="box-main-content">
-        <section class="controls-container" aria-label="Box Controls">
-        <!-- 頂部智能錄入與備份功能區 -->
-        <div class="box-top-banner">
-          <div class="box-banner-text">
-            <h2 class="box-banner-title" data-i18n="box.banner_title">我的寶可夢倉庫 & 截圖智能辨識</h2>
-            <p class="box-banner-desc" data-i18n="box.banner_desc">支援上傳遊戲截圖自動辨識等級、食材組合、副技能與性格，亦可隨時手動錄入與編輯。</p>
-          </div>
-          <div class="box-banner-actions">
-            <input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
-            <button type="button" id="box-upload-btn" class="box-btn" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: 1px solid rgba(16, 185, 129, 0.4); font-weight: 700;" title="上傳遊戲截圖自動辨識" data-i18n="box.upload_screenshots">上傳截圖辨識</button>
-            <button type="button" id="box-toggle-guide-btn" class="box-btn box-btn-secondary" style="display:none;" title="展開/收合 截圖拖曳與示範指引" data-i18n="box.toggle_guide">截圖指引</button>
-            <button type="button" id="box-appraisal-lab-btn" class="box-btn" style="background: linear-gradient(135deg, #8b5cf6, #38bdf8); color: #ffffff; border: 1px solid rgba(168, 85, 247, 0.4); font-weight: 700;" onclick="window.AppraisalLab.toggleLab()" title="開啟/收合 深度研究室" data-i18n="box.appraisal_lab">深度研究室</button>
-            <button type="button" id="box-manual-add-btn" class="box-btn box-btn-primary" data-i18n="box.add_pokemon">手動新增寶可夢</button>
-            <button type="button" id="box-export-btn" class="box-btn box-btn-secondary" title="匯出個人倉庫為 JSON 備份檔" data-i18n="box.export_backup">匯出備份</button>
-            <label class="box-btn box-btn-secondary" style="cursor:pointer;margin:0;" title="從 JSON 檔案匯入還原倉庫" data-i18n="box.import_backup">
-              匯入還原
-              <input type="file" id="box-import-input" accept=".json" style="display:none;">
-            </label>
-          </div>
-        </div>
+        <!-- 頂部 Segmented 子分頁切換列 -->
+        <nav class="box-subnav-bar" aria-label="倉庫次級分頁">
+          <button type="button" id="box-subtab-list" class="box-subnav-item active" data-subtab="list" onclick="window.switchBoxSubtab && window.switchBoxSubtab('list')">
+            <span class="subnav-label" data-i18n="box.tab_list">寶可夢倉庫</span>
+          </button>
+          <button type="button" id="box-subtab-lab" class="box-subnav-item" data-subtab="lab" onclick="window.switchBoxSubtab && window.switchBoxSubtab('lab')">
+            <span class="subnav-label" data-i18n="box.tab_lab">深度研究室</span>
+          </button>
+        </nav>
 
-        <!-- 寶可夢六維深度評測實驗室容器 (Appraisal Lab) -->
-        <div id="appraisal-lab-container" style="display:none; margin-bottom: 20px;"></div>
+        <!-- 1. 寶可夢倉庫子分頁 (Subpanel List) -->
+        <div id="box-subpanel-list" class="box-subpanel-view" style="display:block;">
+          <section class="controls-container" aria-label="Box Controls">
+          <!-- 頂部智能錄入功能區 -->
+          <div class="box-top-banner">
+            <div class="box-banner-text">
+              <h2 class="box-banner-title" data-i18n="box.banner_title">我的寶可夢倉庫 & 截圖智能辨識</h2>
+              <p class="box-banner-desc" data-i18n="box.banner_desc">支援上傳遊戲截圖自動辨識等級、食材組合、副技能與性格，亦可隨時手動錄入與編輯。</p>
+            </div>
+            <div class="box-banner-actions">
+              <input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
+              <button type="button" id="box-upload-btn" class="box-btn" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: 1px solid rgba(16, 185, 129, 0.4); font-weight: 700;" title="上傳遊戲截圖自動辨識" data-i18n="box.upload_screenshots">上傳截圖辨識</button>
+              <button type="button" id="box-toggle-guide-btn" class="box-btn box-btn-secondary" style="display:none;" title="展開/收合 截圖拖曳與示範指引" data-i18n="box.toggle_guide">截圖指引</button>
+              <button type="button" id="box-manual-add-btn" class="box-btn box-btn-primary" data-i18n="box.add_pokemon">手動新增寶可夢</button>
+            </div>
+          </div>
 
         <!-- 截圖拖曳與剪貼簿貼上區 -->
         <div id="box-dropzone" class="box-dropzone">
@@ -1121,6 +1124,15 @@
       <section class="box-content-container">
         <div id="box-content-area"></div>
       </section>
+      </div>
+
+      <!-- 2. 深度研究室子分頁 (Subpanel Lab) -->
+      <div id="box-subpanel-lab" class="box-subpanel-view" style="display:none;">
+        <section class="box-lab-content-container controls-container" style="max-width:1200px;width:100%;">
+          <!-- 寶可夢六維深度評測實驗室容器 (Appraisal Lab) -->
+          <div id="appraisal-lab-container" class="appraisal-lab-standalone-panel"></div>
+        </section>
+      </div>
       </div>
     </div>
 
@@ -1380,8 +1392,8 @@
   <script src="js/modules/app.js?v=20261003_02"></script>
   <script src="js/modules/recipes.js?v=20261003_02"></script>
   <script src="js/modules/wiki.js?v=20260930_01"></script>
-  <script src="js/modules/box.js?v=20261003_01"></script>
+  <script src="js/modules/box.js?v=20261003_03"></script>
   <script src="js/modules/news.js?v=20260930_01"></script>
-  <script src="js/modules/appraisal.js?v=20261003_01"></script>
+  <script src="js/modules/appraisal.js?v=20261003_03"></script>
 </body>
 </html>

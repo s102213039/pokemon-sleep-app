@@ -1888,10 +1888,169 @@
       `;
     }).join('');
 
-    modal.innerHTML = `
-      <div class="appraisal-modal-container">
-        <!-- 頂部標題列 (高度加寬，垂直置中，整合雙軌評級與極簡關閉鈕) -->
-        <div class="appraisal-modal-header">
+    const isMobileH5 = typeof document !== 'undefined' && (
+      (document.body && document.body.classList && document.body.classList.contains('mobile-h5-app')) ||
+      (typeof document.querySelector === 'function' && !!document.querySelector('.mobile-h5-app')) ||
+      (typeof window !== 'undefined' && (window.IS_MOBILE_H5 || (window.location && window.location.pathname && window.location.pathname.includes('/app/'))))
+    );
+
+    if (isMobileH5) {
+      modal.className = 'box-modal-backdrop modal-overlay appraisal-modal-backdrop mobile-modal-backdrop';
+      modal.innerHTML = `
+        <div class="box-modal-dialog mobile-box-sheet bottom-sheet mobile-modal-sheet" role="dialog" aria-modal="true">
+          <div class="sheet-drag-handle"></div>
+          <div class="box-modal-header">
+            <button type="button" class="box-modal-header-cancel" onclick="window.AppraisalLab.closeModal()">${isEN ? 'Close' : '關閉'}</button>
+            <h3 class="box-modal-title">${displayName}${nickname ? ` (${escapeHtml(nickname)})` : ''}</h3>
+            ${pkmOrBoxItem && pkmOrBoxItem.rawItem ? `
+              <button type="button" class="box-modal-header-confirm" onclick="window.AppraisalLab.closeModal(); if(window.UserBox && typeof window.UserBox.openBoxEditModal === 'function') { const b = (window.UserBox.getUserBox && window.UserBox.getUserBox().find(p=>p.uid==='${pkmOrBoxItem.rawItem.uid}')) || ${JSON.stringify(pkmOrBoxItem.rawItem).replace(/"/g, '&quot;')}; window.UserBox.openBoxEditModal(b); }">${isEN ? 'Edit' : '編輯'}</button>
+            ` : `<span style="width:48px;"></span>`}
+          </div>
+
+          <div class="box-modal-body appraisal-modal-sheet-body">
+            <!-- 頂部頭像、雙軌評級與專長標籤列 -->
+            <div class="appraisal-h5-header-summary">
+              <div class="appraisal-h5-avatar-wrap">
+                <img src="${pkmData.icon_url}" class="appraisal-avatar-img" alt="${displayName}">
+                <span class="appraisal-level-badge">Lv. ${currentLv}</span>
+              </div>
+              <div class="appraisal-h5-info-col">
+                <div class="appraisal-h5-name-row">
+                  <span class="appraisal-h5-pkm-name font-bold">${displayName}</span>
+                  ${nickname ? `<span class="appraisal-h5-nick">(${escapeHtml(nickname)})</span>` : ''}
+                  ${!isEN && pkmData.name_en ? `<span class="appraisal-pokemon-en" style="font-size:11.5px;color:var(--text-muted);">${pkmData.name_en}</span>` : ''}
+                </div>
+                <div class="appraisal-specialty-row" style="display:flex;align-items:center;gap:8px;margin-top:2px;">
+                  <span class="appraisal-berry-tag" style="display:inline-flex;align-items:center;background:transparent;border:none;padding:0;" title="${escapeHtml(berryName)}">
+                    ${berry.icon ? `<img src="${berry.icon}" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(berryName)}">` : ''}
+                  </span>
+                  ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(pkmData.specialty, 20, 'appraisal-spec-icon-wrap') : `<span class="appraisal-spec-tag ${specClass}">${specTypeLabel}</span>`}
+                </div>
+              </div>
+              <!-- 雙軌綜合評級徽章 -->
+              <div class="appraisal-dual-verdict-column" style="margin-left:auto;flex-shrink:0;">
+                <div class="pokedex-header-verdict-badge current-track" style="border-color: ${(evaluation.current || evaluation).gradeColor};">
+                  <span class="pokedex-verdict-track-lbl" style="font-size:9.5px;color:#94a3b8;line-height:1;">${isEN ? `Lv.${currentLv}` : `當前 Lv.${currentLv}`}</span>
+                  <span class="verdict-grade pokedex-header-grade-text" style="color: ${(evaluation.current || evaluation).gradeColor};font-size:13.5px;font-weight:900;line-height:1;">${(evaluation.current || evaluation).grade}</span>
+                  <span class="pokedex-header-score-text" style="font-size:10.5px;"><span class="verdict-num font-bold">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
+                </div>
+                <div class="pokedex-header-verdict-badge potential-track">
+                  <span class="pokedex-verdict-track-lbl" style="font-size:8.5px;color:#64748b;line-height:1;">${isEN ? 'Lv.100 Pot' : '滿級潛力'}</span>
+                  <span class="verdict-potential-grade pokedex-header-grade-text" style="color:#94a3b8;font-size:11px;font-weight:700;line-height:1;">${(evaluation.potential || evaluation).grade}</span>
+                  <span class="pokedex-header-score-text" style="font-size:9.5px;color:#94a3b8;"><span class="verdict-potential-num" style="font-weight:600;">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 主技能資訊 -->
+            <div class="appraisal-mainskill-row" style="margin-top:2px;">
+              <span class="appraisal-mainskill-label">${isEN ? 'Main Skill:' : '主技能：'}</span>
+              <span class="appraisal-mainskill-name">${escapeHtml(mainSkillName)}</span>
+              <span class="appraisal-mainskill-level">Lv.${skillLvl}</span>
+            </div>
+
+            <!-- 食材三階插槽組合 (3 Slots Parallel) -->
+            <div class="appraisal-ing-parallel-row">
+              <span class="appraisal-ing-row-label">${isEN ? 'Ingredients:' : '食材：'}</span>
+              <div class="appraisal-ing-chips-grid">
+                ${ingChipsHtml}
+              </div>
+            </div>
+
+            <!-- 性格展示 (遊戲同款卡片) -->
+            <div class="appraisal-config-section" style="margin-top:2px;display:flex;justify-content:center;">
+              <div class="appraisal-nature-game-card">
+                <div class="nature-pill-capsule">
+                  <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
+                  <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
+                </div>
+                ${natureEffectHtml}
+              </div>
+            </div>
+
+            <!-- 睡飽飽獎章 (若有) -->
+            ${ribbonLevel > 0 ? `
+              <div class="appraisal-config-section" style="margin-top:2px;display:flex;justify-content:center;">
+                <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:6px;background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;font-size:12px;font-weight:700;">
+                  <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" style="width:18px;height:18px;object-fit:contain;" alt="Ribbon" />
+                  <span>${isEN ? `Tier ${ribbonLevel} (+${evaluation.ribbonBonus.carry} Carry${evaluation.ribbonBonus.speedDiscount > 0 ? ` · -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}% Speed` : ''})` : `第 ${ribbonLevel} 階段 (+${evaluation.ribbonBonus.carry} 持有${evaluation.ribbonBonus.speedDiscount > 0 ? ` · 幫速 -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}%` : ''})`}</span>
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- 副技能清單 (2+2+1 排列) -->
+            <div class="appraisal-config-section" style="margin-top:2px;">
+              <div class="appraisal-subskills-grid">
+                ${[10, 25, 50, 70, 80].map(function(lv, idx) {
+                  const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
+                  const sName = rawName ? (window.I18N ? window.I18N.getSubSkillName(rawName) : rawName) : '--';
+                  const tier = getSkillTier(rawName);
+                  const isUnlocked = currentLv >= lv;
+                  const lockClass = !isUnlocked ? 'subskill-locked' : '';
+                  const titleText = rawName 
+                    ? (isEN ? `${sName} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''})` : `${sName} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''})`)
+                    : (isEN ? `Lv.${lv} Slot` : `Lv.${lv} 欄位`);
+                  return `
+                    <div class="appraisal-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
+                      <span class="subskill-name">${escapeHtml(sName)}</span>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <!-- 雷達圖與六維能量條 -->
+            <div class="appraisal-chart-flex" style="margin-top:6px;">
+              <div class="appraisal-radar-wrapper" style="width:100%;max-width:320px;margin:0 auto;">
+                ${renderRadarChartSVG(evaluation.scores, 320, 220)}
+              </div>
+
+              <div class="appraisal-scores-breakdown" style="width:100%;">
+                <h4 class="appraisal-section-heading">${isEN ? '[*] 6-Dimension Quantitative Analysis' : '[*] 六維能力量化分析'}</h4>
+                ${SIX_DIM_META.map(function(m) {
+                  const score = evaluation.scores[m.key] || 0;
+                  return `
+                    <div class="appraisal-dim-row" title="${m.desc}">
+                      <div class="appraisal-dim-label">
+                        <span>${m.icon} ${m.label}</span>
+                        <span class="font-bold text-white">${score} ${isEN ? 'pts' : '分'}</span>
+                      </div>
+                      <div class="appraisal-dim-bar-bg">
+                        <div class="appraisal-dim-bar-fill" style="width: ${score}%;"></div>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <!-- 專長深度點評與優缺點 -->
+            <div class="appraisal-analysis-card" style="margin-top:6px;">
+              <h4 class="appraisal-section-heading">${isEN ? '[*] Specialty, Nature & Sub-Skill Synergy Analysis' : '[*] 專長與性格副技能協同點評'}</h4>
+              <div class="appraisal-pros-list">
+                ${evaluation.pros.map(function(p) { return `<div class="appraisal-pro-item">${p}</div>`; }).join('')}
+              </div>
+              ${evaluation.cons.length > 0 ? `
+                <div class="appraisal-cons-list">
+                  ${evaluation.cons.map(function(c) { return `<div class="appraisal-con-item">${c}</div>`; }).join('')}
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- 智能簡評欄 -->
+            <div class="appraisal-summary-bar" style="margin-top:6px;">
+              <span style="font-size:12.5px;font-weight:800;color:#38bdf8;white-space:nowrap;flex-shrink:0;">${isEN ? 'Appraisal Note:' : '智能簡評：'}</span>
+              <span style="font-size:12.5px;color:#e2e8f0;line-height:1.4;">${escapeHtml(summaryNote)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      modal.className = 'appraisal-modal-backdrop';
+      modal.innerHTML = `
+        <div class="appraisal-modal-container">
+          <!-- 頂部標題列 (高度加寬，垂直置中，整合雙軌評級與極簡關閉鈕) -->
+          <div class="appraisal-modal-header">
           <div class="appraisal-header-title-group">
             <span class="appraisal-modal-badge">${isEN ? '[★] Diagnostic Report' : '[★] 深度能力診斷報告'}</span>
             <h2 class="appraisal-pokemon-title">
@@ -2063,6 +2222,7 @@
         </div>
       </div>
     `;
+    }
 
     if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
     modal.style.display = 'flex'; if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(modal);
@@ -2892,11 +3052,9 @@
 
   /* ─── 子分頁與營地/槽位切換控制 (Tab & Slot Actions) ───────────────── */
   function switchSubTab(tab) {
-    if (!['team', 'compare', 'single'].includes(tab)) tab = 'team';
+    if (!['team', 'compare'].includes(tab)) tab = 'team';
     labState.currentSubTab = tab;
-    if (tab !== 'single') {
-      labState.editMode = false;
-    }
+    labState.editMode = false;
     updateLabUI();
   }
 
@@ -3727,9 +3885,6 @@
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'compare' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('compare')">
             <span class="lab-subtab-title">${isEN ? 'Pokémon Comparison' : '寶可夢對比'}</span>
           </button>
-          <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'single' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('single')">
-            <span class="lab-subtab-title">${isEN ? 'Single Appraisal' : '單體評測'}</span>
-          </button>
         </div>
         ` : ''}
 
@@ -3739,364 +3894,10 @@
         </div>
 
         <!-- 2. 寶可夢對比子面板 (Side-by-Side Comparison) -->
-        <div id="lab-subpanel-compare" class="lab-subpanel" style="${labState.currentSubTab === 'compare' && !labState.editMode ? '' : 'display:none;'}">
+        <div id="lab-subpanel-compare" class="lab-subpanel" style="${labState.currentSubTab === 'compare' ? '' : 'display:none;'}">
           ${renderComparisonView(userBox, pokemons, isEN, isMobileH5)}
         </div>
-
-        <!-- 3. 單體評測子面板 (Single Appraisal Preview & In-Place Edit Mode) -->
-        <div id="lab-subpanel-single" class="lab-subpanel" style="${labState.currentSubTab === 'single' || labState.editMode ? '' : 'display:none;'}">
-          ${!isMobileH5 ? `
-        <!-- 1. 倉庫快速選取區 (User Box Linkage) (僅桌面版需要時保留) -->
-        <div class="lab-control-group lab-box-linkage-group">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <label for="lab-box-select" class="lab-control-label font-bold text-accent">
-              ${isEN ? 'Select from My Box:' : '從我的倉庫選取：'}
-            </label>
-            ${labState.selectedBoxUid && labState.isCustomized ? `
-              <button type="button" class="lab-box-reset-btn" onclick="window.AppraisalLab.resetToBoxOriginal()" title="${isEN ? 'Reset to Box Stats' : '重置為倉庫原始數值'}">
-                ${isEN ? '[R] Reset' : '[R] 重置原始數值'}
-              </button>
-            ` : ''}
-          </div>
-
-          <select id="lab-box-select" class="lab-select lab-box-select" onchange="window.AppraisalLab.onBoxItemSelect(this.value)">
-            ${activeList.map(function (item) {
-              const bPkm = pokemons.find(function (p) { return p.id === item.pokemonId || p.name_cn === item.name; });
-              const pDisplayName = isEN ? (bPkm ? (bPkm.name_en || bPkm.name_cn) : item.name) : item.name;
-              const nickText = item.nickname ? `${item.nickname} (${pDisplayName})` : pDisplayName;
-              const natText = window.I18N ? window.I18N.getNatureName(item.nature) : item.nature;
-              return '<option value="' + item.uid + '" ' + (labState.selectedBoxUid === item.uid ? 'selected' : '') + '>Lv.' + (item.level || 1) + ' ' + escapeHtml(nickText) + ' · ' + natText + '</option>';
-            }).join('')}
-          </select>
-
-          ${activeList.length > 0 ? `
-            <div class="lab-box-chips-scroll">
-              ${activeList.map(function (item) {
-                const bPkm = pokemons.find(function (p) { return p.id === item.pokemonId || p.name_cn === item.name; });
-                const pDisplayName = isEN ? (bPkm ? (bPkm.name_en || bPkm.name_cn) : item.name) : item.name;
-                const avatarUrl = (bPkm && (bPkm.icon_url || bPkm.icon)) || (bPkm && bPkm.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${bPkm.formatted_no}.png` : '') || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
-                const isSelected = labState.selectedBoxUid === item.uid;
-                return `
-                  <button type="button" class="lab-box-chip ${isSelected ? 'active' : ''}" onclick="window.AppraisalLab.onBoxItemSelect('${item.uid}')" title="${escapeHtml(item.nickname || pDisplayName)}">
-                    <img src="${avatarUrl}" class="lab-box-chip-icon" alt="${escapeHtml(item.name)}" loading="lazy">
-                    <span class="lab-box-chip-name">${escapeHtml(item.nickname || pDisplayName)}</span>
-                    <span class="lab-box-chip-lv">Lv.${item.level || 1}</span>
-                  </button>
-                `;
-              }).join('')}
-            </div>
-          ` : `
-            <div class="lab-box-empty-hint">${isEN ? 'Tip: Register Pokémon in Box tab to evaluate your personal collection here!' : '提示：在【寶可夢倉庫】新增登錄寶可夢後，即可在此一鍵選取並評測你的專屬寶可夢！'}</div>
-          `}
-        </div>
-        ` : ''}
-
-        <!-- 兼容空容器：保持測試與樣式相容 -->
-        <div class="appraisal-lab-controls" style="display: none !important;"></div>
-        ${labState.editMode ? '<div class="lab-edit-mode-banner" style="display:none;"></div>' : ''}
-
-        <!-- 即時評測展示 (簡介 + 數值面板；瀏覽模式下包含雷達圖與評語，修改模式下為手動新增彈窗風格表單) -->
-        <div class="appraisal-lab-preview lab-preview-fullwidth ${labState.editMode ? 'lab-preview-edit-mode' : ''}">
-          ${!labState.editMode ? `
-            <div class="lab-preview-header" style="position:relative;display:flex;${isMobileH5 ? 'flex-direction:column;gap:8px;' : 'justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;'}padding-right:50px;border-bottom:1px solid var(--border-color-subtle, rgba(255,255,255,0.08));padding-bottom:12px;">
-              <!-- 最右上方固定操作按鈕：瀏覽模式下為鉛筆修改按鈕 -->
-              <div class="lab-preview-header-right" style="position:absolute;top:0;right:0;z-index:5;">
-                <button type="button" class="btn-lab-edit-toggle" onclick="window.AppraisalLab.enterEditMode()" title="${isEN ? 'Edit Pokémon Stats' : '修改寶可夢數值'}" style="background:var(--accent-color, #38bdf8);color:#0f172a;width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(56,189,248,0.25);padding:0;" aria-label="${isEN ? 'Edit Pokémon Stats' : '修改寶可夢數值'}">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                </button>
-              </div>
-
-              <!-- 左上方：頭像、名稱、暱稱、等級、獎章、得意、樹果 -->
-              <div class="lab-preview-pokemon-info">
-                <img src="${currentPkm.icon_url}" class="lab-preview-icon" alt="${displayName}">
-                <div style="flex:1;">
-                  <div class="lab-preview-name-row" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-                    <span class="lab-preview-name">${displayName}</span>
-                    ${labState.nickname ? `
-                      <span class="lab-nickname-tag">${escapeHtml(labState.nickname)}</span>
-                    ` : ''}
-                    ${labState.ribbon > 0 ? `
-                      <span class="lab-ribbon-tag" title="${isEN ? `Good-Night Ribbon Tier ${labState.ribbon}` : `睡飽飽獎章`}" style="display:inline-flex;align-items:center;">
-                        <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${labState.ribbon}.png" class="lab-ribbon-icon" alt="Ribbon" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;" />
-                      </span>
-                    ` : ''}
-                  </div>
-                  <div class="lab-preview-spec" style="display:flex;align-items:center;gap:6px;margin-top:2px;flex-wrap:wrap;">
-                    ${berryIconHtml}
-                    ${specialtyIconHtml}
-                    <span style="font-size:12px;color:var(--text-muted);font-weight:600;">Lv.${labState.level}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 雙軌評級 (當前評級與滿級潛力評級) (僅瀏覽模式展示) -->
-              <div class="lab-preview-dual-verdict" style="display:flex;gap:8px;align-items:center;margin-top:2px;">
-                <div class="lab-preview-verdict lab-verdict-cur" style="border-color: ${(evaluation.current || evaluation).gradeColor}; color: ${(evaluation.current || evaluation).gradeColor}; padding:4px 8px; border-radius:8px; text-align:center;">
-                  <span style="font-size:10px;display:block;color:#94a3b8;font-weight:700;">${isEN ? `Current Lv.${labState.level}` : `當前 Lv.${labState.level}`}</span>
-                  <span class="lab-grade-char" style="font-size:20px;line-height:1.1;">${(evaluation.current || evaluation).grade}</span>
-                  <span style="font-size:11px;font-weight:700;display:block;">${(evaluation.current || evaluation).compositeScore} ${isEN ? 'pts' : '分'}</span>
-                </div>
-                <div class="lab-preview-verdict lab-verdict-pot" style="border: 1px solid rgba(148,163,184,0.25); color: #94a3b8; background: rgba(148,163,184,0.08); padding:3px 6px; border-radius:6px; text-align:center; opacity:0.88;">
-                  <span style="font-size:9px;display:block;color:#64748b;font-weight:600;">${isEN ? 'Potential Lv.100' : '滿級潛力 Lv.100'}</span>
-                  <span class="lab-grade-char" style="font-size:16px;line-height:1.1;color:#94a3b8;">${(evaluation.potential || evaluation).grade}</span>
-                  <span style="font-size:10px;font-weight:600;display:block;color:#94a3b8;">${(evaluation.potential || evaluation).compositeScore} ${isEN ? 'pts' : '分'}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 寶可夢數據面板 (主技能、食材、性格、副技能) -->
-            <div class="lab-preview-stats-panel" style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
-              <!-- 主技能名稱與等級 + 幫忙間隔與持有上限 -->
-              <div class="lab-preview-mainskill-row" style="display:flex;align-items:center;gap:8px;font-size:12.5px;flex-wrap:wrap;">
-                <span style="font-weight:700;color:var(--text-muted);font-size:11.5px;">${isEN ? 'Main Skill:' : '主技能：'}</span>
-                <span style="font-weight:700;color:var(--text-primary);">${escapeHtml(mainSkillName)}</span>
-                <span class="lab-skill-lvl-badge" style="background:rgba(56,189,248,0.15);color:var(--accent-color, #38bdf8);padding:1px 6px;border-radius:4px;font-size:11px;font-weight:700;">Lv.${skillLvl}</span>
-                ${helpIntervalFormatted ? `
-                  <span style="font-size:11.5px;color:var(--text-muted);margin-left:auto;">${isEN ? 'Interval:' : '幫忙間隔:'} <strong style="color:var(--text-primary);">${helpIntervalFormatted}</strong></span>
-                ` : ''}
-                ${carryLimitVal ? `
-                  <span style="font-size:11.5px;color:var(--text-muted);">${isEN ? 'Carry:' : '持有:'} <strong style="color:var(--text-primary);">${carryLimitVal}</strong></span>
-                ` : ''}
-              </div>
-
-              <!-- 食材組合 (Lv.1, Lv.30, Lv.60) (純圖標單行展示) -->
-              <div class="lab-preview-ing-row" style="display:flex;align-items:center;gap:8px;font-size:12.5px;flex-wrap:nowrap;white-space:nowrap;overflow-x:auto;">
-                <span style="font-weight:700;color:var(--text-muted);font-size:11.5px;flex-shrink:0;">${isEN ? 'Ingredients:' : '食材：'}</span>
-                <div class="lab-preview-ing-chips" style="display:flex;gap:6px;align-items:center;flex-wrap:nowrap;">
-                  ${[0, 1, 2].map(function (idx) {
-                    const unlockLv = idx === 0 ? 1 : (idx === 1 ? 30 : 60);
-                    const isUnlocked = labState.level >= unlockLv;
-                    const ingName = labState.ingredients[idx] || '';
-                    const ingDisplayName = ingName ? (window.I18N ? window.I18N.getIngredientName(ingName) : ingName) : '--';
-                    const iconUrl = ingName && window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(ingName) : '';
-                    const lockStyle = !isUnlocked ? 'opacity:0.45;filter:grayscale(0.5);' : '';
-                    return `
-                      <div class="lab-preview-ing-chip" style="display:inline-flex;align-items:center;gap:4px;background:var(--table-row-odd-solid, #0d1527);border:1px solid var(--border-color);border-radius:6px;padding:3px 6px;font-size:11.5px;${lockStyle}" title="${escapeHtml(ingDisplayName)}${!isUnlocked ? (isEN ? ' (Locked Lv.' + unlockLv + ')' : ' (Lv.' + unlockLv + ' 解鎖)') : ''}">
-                        <span style="font-size:9.5px;color:var(--text-muted);font-weight:700;">Lv.${unlockLv}</span>
-                        ${iconUrl ? `<img src="${iconUrl}" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(ingDisplayName)}">` : ''}
-                      </div>
-                    `;
-                  }).join('')}
-                </div>
-              </div>
-
-              <!-- 性格展示 (遊戲膠囊風格) -->
-              <div class="lab-preview-nature-row" style="margin:4px 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-                <div class="appraisal-nature-game-card" style="margin:0;">
-                  <div class="nature-pill-capsule">
-                    <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
-                    <span class="nature-capsule-name">${escapeHtml(natureDisplayName)}</span>
-                  </div>
-                  ${labNatureEffectHtml}
-                </div>
-              </div>
-
-              <!-- 副技能清單 (Lv.10, Lv.25, Lv.50, Lv.70, Lv.80) 2+2+1 排列 -->
-              <div class="lab-preview-subskills-section">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                  <span style="font-weight:700;color:var(--text-muted);font-size:11.5px;">${isEN ? 'Sub-Skills:' : '副技能：'}</span>
-                </div>
-                <div class="box-subskills-grid" style="display:grid;grid-template-columns:repeat(2, 1fr);gap:6px;">
-                  ${[10, 25, 50, 70, 80].map(function (lv, idx) {
-                    const sName = labState.subskills[idx] || '';
-                    const displaySName = sName ? (window.I18N ? window.I18N.getSubSkillName(sName) : sName) : '--';
-                    const tier = getSkillTier(sName);
-                    const isUnlocked = labState.level >= lv;
-                    const lockClass = !isUnlocked ? 'subskill-locked' : '';
-                    const isFifth = idx === 4;
-                    return `
-                      <div class="box-subskill-pill subskill-${tier} ${lockClass} ${isFifth ? 'subskill-last-slot' : ''}" style="${isFifth ? 'grid-column: 1 / 2; width: 100%;' : ''}" title="${escapeHtml(displaySName)} (Lv.${lv}${!isUnlocked ? (isEN ? ' Locked' : ' 未解鎖') : ''})">
-                        <span style="font-size:9.5px;color:var(--text-muted);font-weight:800;margin-right:4px;">Lv.${lv}</span>
-                        <span class="subskill-name">${escapeHtml(displaySName)}</span>
-                      </div>
-                    `;
-                  }).join('')}
-                </div>
-              </div>
-            </div>
-
-            <!-- 六邊形能力圖 (標題與分數直接印在各頂點) (僅瀏覽模式展示，修改模式不展示) -->
-            <div class="lab-chart-container">
-              ${radarSVG}
-            </div>
-
-            <!-- 下方的深度診斷評語與升級里程碑預測 (僅瀏覽模式展示，修改模式不展示) -->
-            <div class="lab-pros-box">
-              ${evaluation.pros.map(function (p) { return '<div class="lab-bullet-item">' + p + '</div>'; }).join('')}
-            </div>
-
-            ${evaluation.milestones && evaluation.milestones.length > 0 ? `
-              <div class="lab-milestones-box" style="margin-top:10px;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.3);border-radius:8px;padding:8px 12px;">
-                <div style="font-size:11px;font-weight:700;color:#facc15;margin-bottom:4px;display:flex;align-items:center;gap:4px;">
-                  <span>[^]</span>
-                  <span>${isEN ? 'Level-Up Milestone Projections' : '升級里程碑質變預測'}</span>
-                </div>
-                ${evaluation.milestones.map(m => `<div style="font-size:11px;color:#e2e8f0;line-height:1.4;margin-bottom:3px;">${escapeHtml(m.text)}</div>`).join('')}
-              </div>
-            ` : ''}
-          ` : `
-            <!-- 修改模式：參照 box-edit-modal 標準排版（取消靠左、標題居中、確定靠右），下方雷達圖與評語不展示 -->
-            <div class="box-modal-header lab-preview-header lab-edit-header">
-              <!-- 左方：取消按鈕 -->
-              <button type="button" class="box-modal-header-cancel btn-lab-cancel btn-lab-cancel-header" onclick="window.AppraisalLab.cancelEditMode()">
-                ${isEN ? 'Cancel' : '取消'}
-              </button>
-
-              <!-- 中間：標題 -->
-              <h3 class="box-modal-title lab-edit-header-title">
-                ${isEN ? 'Edit Pokémon Stats' : '修改寶可夢數值'}
-              </h3>
-
-              <!-- 右方：確定按鈕 -->
-              <button type="button" class="box-modal-header-confirm btn-lab-save btn-lab-save-header" onclick="window.AppraisalLab.saveEditMode()">
-                ${isEN ? 'Save' : '確定'}
-              </button>
-            </div>
-
-            <!-- 編輯表單：完全比照手動新增寶可夢 (box-modal-form) 的 6 大標準配置區 -->
-            <form class="box-modal-form lab-edit-form" onsubmit="event.preventDefault(); window.AppraisalLab.saveEditMode();">
-              <div class="box-form-grid">
-                <!-- 1. 頂部單行：寶可夢 (圖示 + 名稱，不可修改) + 等級 + 主技能 -->
-                <div class="box-form-row-top box-pkm-level-mainskill-row box-level-mainskill-row box-full-width">
-                  <!-- 寶可夢 (純展示不可修改，帶入頭像與名稱) -->
-                  <div class="box-form-group flex-pkm-compact">
-                    <label class="box-form-label">${isEN ? 'Pokémon' : '寶可夢'}</label>
-                    <div class="box-pkm-display-slot">
-                      <img class="box-pkm-display-avatar" src="${escapeHtml(currentPkm.icon_url || '')}" alt="${escapeHtml(displayName)}">
-                      <span class="box-pkm-display-name">${escapeHtml(displayName)}</span>
-                      <span class="box-pkm-display-nick" id="lab-pkm-identity-nick" style="${labState.nickname ? '' : 'display:none;'}">(${escapeHtml(labState.nickname)})</span>
-                    </div>
-                  </div>
-
-                  <!-- 等級 -->
-                  <div class="box-form-group flex-level-compact">
-                    <label class="box-form-label" for="lab-level-num-input">${isEN ? 'Level' : '等級'} <span style="color:#ef4444;">*</span></label>
-                    <input type="number" id="lab-level-num-input" class="box-form-input lab-level-compact-input" min="1" max="100" value="${labState.level}" placeholder="100" onchange="window.AppraisalLab.onLevelChange(this.value, false)" required>
-                  </div>
-
-                  <!-- 主技能：展示技能名稱與等級調整選單 (自訂下拉元件 setupCustomSelect) -->
-                  <div class="box-form-group flex-mainskill-compact">
-                    <label class="box-form-label" for="lab-mainskill-select">${isEN ? 'Main Skill' : '主技能'} <span style="color:#ef4444;">*</span></label>
-                    <div class="box-mainskill-inline-wrap">
-                      <span class="box-mainskill-name-badge" title="${escapeHtml(mainSkillName)}">${escapeHtml(mainSkillName)}</span>
-                      <select id="lab-mainskill-select" class="box-form-select box-mainskill-select" onchange="window.AppraisalLab.onSkillLevelChange(this.value)">
-                        ${Array.from({ length: maxSkillLvl }, (_, i) => i + 1).map(lvl => `
-                          <option value="${lvl}" ${skillLvl === lvl ? 'selected' : ''}>Lv. ${lvl}</option>
-                        `).join('')}
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 3. 雙欄：自訂暱稱 + 睡飽飽獎章 (自訂下拉元件 setupCustomSelect) -->
-                <div class="box-form-row-2col box-nickname-ribbon-row box-full-width">
-                  <!-- 自訂暱稱 -->
-                  <div class="box-form-group flex-nickname">
-                    <label class="box-form-label" for="lab-nickname-input">${isEN ? 'Nickname' : '自訂暱稱'}</label>
-                    <input type="text" id="lab-nickname-input" class="box-form-input" value="${escapeHtml(labState.nickname)}" placeholder="${isEN ? 'e.g., BFS God...' : '例如：首隻樹果S神坦...'}" oninput="window.AppraisalLab.onNicknameChange(this.value)">
-                  </div>
-
-                  <!-- 睡飽飽獎章 (自訂下拉元件 setupCustomSelect) -->
-                  <div class="box-form-group flex-ribbon">
-                    <label class="box-form-label" for="lab-ribbon-select">${isEN ? 'Good-Night Ribbon' : '睡飽飽獎章'}</label>
-                    <select id="lab-ribbon-select" class="box-form-select" onchange="window.AppraisalLab.onRibbonChange(this.value)">
-                      <option value="0" ${labState.ribbon === 0 ? 'selected' : ''}>${isEN ? 'None' : '未佩戴'}</option>
-                      <option value="1" data-icon="${ribbonBase}assets/ribbons/ribbon_lv1.png" ${labState.ribbon === 1 ? 'selected' : ''}>${isEN ? '+1 Carry Limit' : '+1 持有上限'}</option>
-                      <option value="2" data-icon="${ribbonBase}assets/ribbons/ribbon_lv2.png" ${labState.ribbon === 2 ? 'selected' : ''}>${ribbonOpt2}</option>
-                      <option value="3" data-icon="${ribbonBase}assets/ribbons/ribbon_lv3.png" ${labState.ribbon === 3 ? 'selected' : ''}>${ribbonOpt3}</option>
-                      <option value="4" data-icon="${ribbonBase}assets/ribbons/ribbon_lv4.png" ${labState.ribbon === 4 ? 'selected' : ''}>${ribbonOpt4}</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- 4. 單欄全寬：性格 (自訂下拉元件 setupCustomSelect) -->
-                <div class="box-form-group box-full-width flex-nature">
-                  <label class="box-form-label" for="lab-nature-select">${isEN ? 'Nature' : '性格'} <span style="color:#ef4444;">*</span></label>
-                  <select id="lab-nature-select" class="box-form-select" required onchange="window.AppraisalLab.onNatureChange(this.value)">
-                    ${natures.map(function (n) {
-                      const nName = window.I18N ? window.I18N.getNatureName(n.name) : n.name;
-                      const buffLabel = isEN ? (n.buff_en || n.buff) : n.buff;
-                      const debuffLabel = isEN ? (n.debuff_en || n.debuff) : n.debuff;
-                      return '<option value="' + n.name + '" ' + (n.name === labState.nature ? 'selected' : '') + '>' + nName + ' (' + buffLabel + (debuffLabel ? ' / ' + debuffLabel : '') + ')</option>';
-                    }).join('')}
-                  </select>
-                </div>
-
-                <!-- 5. 食材組合：標籤與純圖標選項同一行展示 -->
-                <div class="box-form-group box-full-width box-form-row-inline">
-                  <label class="box-form-label box-form-inline-label">${isEN ? 'Ingredients' : '食材組合'}</label>
-                  <div class="box-ing-strip">
-                    ${[
-                      { level: 1, allowed: uniqueLv1, slotIdx: 0, tag: 'Lv.1' },
-                      { level: 30, allowed: uniqueLv30, slotIdx: 1, tag: 'Lv.30' },
-                      { level: 60, allowed: uniqueLv60, slotIdx: 2, tag: 'Lv.60' }
-                    ].map((slot, sIdx) => {
-                      const curVal = labState.ingredients[slot.slotIdx] || (slot.allowed[0] ? slot.allowed[0].name : '');
-                      const optButtons = slot.allowed.map((ing) => {
-                        const isSelected = curVal === ing.name;
-                        const ingDisplayName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
-                        const iconUrl = ing.icon || (window.I18N && window.I18N.getIngredientIcon(ing.name)) || '';
-                        return `
-                          <button type="button" class="box-ing-opt-btn ${isSelected ? 'active' : ''}" title="${escapeHtml(ingDisplayName)}" aria-label="${escapeHtml(ingDisplayName)}" onclick="window.AppraisalLab.onIngredientChange(${slot.slotIdx}, '${escapeHtml(ing.name)}')">
-                            <img src="${iconUrl}" class="box-ing-opt-icon" alt="${escapeHtml(ingDisplayName)}" loading="lazy">
-                          </button>
-                        `;
-                      }).join('');
-                      return `
-                        <div class="box-ing-slot-group">
-                          <span class="box-ing-lvl-tag">${slot.tag}</span>
-                          <div class="box-ing-options-list">${optButtons}</div>
-                        </div>
-                        ${sIdx < 2 ? '<span class="box-ing-slot-sep">|</span>' : ''}
-                      `;
-                    }).join('')}
-                  </div>
-                </div>
-
-                <!-- 6. 5 格副技能配置：3+2 階插槽 + 平鋪副技能選擇盤 -->
-                <div class="box-form-group box-full-width">
-                  <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <label class="box-form-label">${isEN ? 'Sub-Skills' : '副技能組合'}</label>
-                    <button type="button" class="box-subskill-clear-btn" onclick="window.AppraisalLab.clearAllSubskills()" title="${isEN ? 'Clear All Subskills' : '清空全部副技能'}">✕ ${isEN ? 'Clear All' : '清空全部'}</button>
-                  </div>
-
-                  <!-- 3+2 階插槽列 -->
-                  <div class="box-subskill-slots-row box-subskill-slots-3plus2" id="lab-subskill-slots-row">
-                    ${[
-                      { slot: 1, lv: 10 },
-                      { slot: 2, lv: 25 },
-                      { slot: 3, lv: 50 },
-                      { slot: 4, lv: 70 },
-                      { slot: 5, lv: 80 }
-                    ].map(sInfo => {
-                      const isActive = (labState.activeSubskillSlot || 1) === sInfo.slot;
-                      const curVal = labState.subskills[sInfo.slot - 1] || '';
-                      const tier = getSkillTier(curVal);
-                      const skDisplayName = curVal ? (window.I18N ? window.I18N.getSubSkillName(curVal) : curVal) : '';
-                      return `
-                        <button type="button" class="box-subskill-slot-btn ${isActive ? 'active' : ''}" data-slot="${sInfo.slot}" onclick="window.AppraisalLab.selectSubskillSlot(${sInfo.slot})">
-                          <span class="slot-lvl-header">Lv.${sInfo.lv}</span>
-                          ${curVal ? `
-                            <span class="slot-val-badge box-subskill-pill subskill-${tier}">${escapeHtml(skDisplayName)}</span>
-                          ` : `
-                            <span class="slot-val-badge slot-val-empty">${isEN ? '-- None --' : '-- 未解鎖 --'}</span>
-                          `}
-                        </button>
-                      `;
-                    }).join('')}
-                  </div>
-
-                  <!-- 平鋪副技能選擇盤 -->
-                  <div class="box-subskill-palette" id="lab-subskill-palette">
-                    ${paletteSectionsHtml}
-                  </div>
-                </div>
-              </div>
-            </form>
-          `}
-        </div>
       </div>
-    </div>
     `;
 
     if (labState.editMode) {

@@ -21664,7 +21664,46 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   box-sizing: border-box !important;
 }
 
-/* 1. 頂部 Segmented 子分頁切換列 (📦 寶可夢倉庫 vs 🔮 深度評測室) */
+/* 電腦版 寶可夢倉庫次級分頁切換列 (倉庫 vs 深度研究室) */
+body:not(.mobile-h5-app) .box-subnav-bar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin: 0 0 16px 0 !important;
+  padding: 0 0 2px 0 !important;
+  border-bottom: 2px solid var(--border-color, rgba(255, 255, 255, 0.08)) !important;
+  background: transparent !important;
+}
+
+body:not(.mobile-h5-app) .box-subnav-item {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 18px !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 3px solid transparent !important;
+  margin-bottom: -4px !important;
+  color: var(--text-muted, #94a3b8) !important;
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  border-radius: 6px 6px 0 0 !important;
+}
+
+body:not(.mobile-h5-app) .box-subnav-item:hover {
+  color: var(--text-primary, #f8fafc) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+body:not(.mobile-h5-app) .box-subnav-item.active {
+  color: var(--color-primary, #6366f1) !important;
+  border-bottom-color: var(--color-primary, #6366f1) !important;
+  background: transparent !important;
+}
+
+/* 1. 頂部 Segmented 子分頁切換列 (寶可夢倉庫 vs 深度研究室) */
 .mobile-h5-app .box-subnav-bar {
   display: flex !important;
   width: 100% !important;
@@ -22543,7 +22582,8 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   background: rgba(0, 0, 0, 0.2) !important;
 }
 
-.mobile-h5-app #box-edit-modal .mobile-box-sheet .box-modal-header {
+.mobile-h5-app #box-edit-modal .mobile-box-sheet .box-modal-header,
+.mobile-h5-app #modal-appraisal-report .mobile-box-sheet .box-modal-header {
   display: grid !important;
   grid-template-columns: minmax(48px, 1fr) auto minmax(48px, 1fr) !important;
   align-items: center !important;
@@ -22553,7 +22593,8 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   flex-shrink: 0 !important;
 }
 
-.mobile-h5-app #box-edit-modal .box-modal-header-cancel {
+.mobile-h5-app #box-edit-modal .box-modal-header-cancel,
+.mobile-h5-app #modal-appraisal-report .box-modal-header-cancel {
   font-size: 15px !important;
   font-weight: 600 !important;
   color: var(--text-secondary) !important;
@@ -22563,11 +22604,132 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   padding: 6px 0 !important;
 }
 
-.mobile-h5-app #box-edit-modal .box-modal-header-confirm {
+.mobile-h5-app #box-edit-modal .box-modal-header-confirm,
+.mobile-h5-app #modal-appraisal-report .box-modal-header-confirm {
   height: 32px !important;
   padding: 0 12px !important;
   font-size: 13.5px !important;
   border-radius: 8px !important;
+}
+
+.mobile-h5-app #modal-appraisal-report.box-modal-backdrop,
+.mobile-h5-app .appraisal-modal-backdrop.mobile-modal-backdrop {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.72) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  z-index: 1050 !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app #modal-appraisal-report .mobile-box-sheet {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  background: var(--bg-card-solid, #131d31) !important;
+  border-top-left-radius: 20px !important;
+  border-top-right-radius: 20px !important;
+  border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.12)) !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  box-shadow: 0 -10px 32px rgba(0, 0, 0, 0.6) !important;
+  z-index: 1100 !important;
+  max-height: 88vh !important;
+  max-height: 88dvh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .appraisal-modal-sheet-body {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+  padding: 8px 14px 28px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .appraisal-h5-header-summary {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 8px 10px !important;
+  background: var(--bg-card-subtle, rgba(255, 255, 255, 0.03)) !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.06)) !important;
+}
+
+.mobile-h5-app .appraisal-h5-avatar-wrap {
+  position: relative !important;
+  width: 50px !important;
+  height: 50px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .appraisal-h5-avatar-wrap .appraisal-avatar-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.mobile-h5-app .appraisal-h5-avatar-wrap .appraisal-level-badge {
+  position: absolute !important;
+  bottom: -4px !important;
+  right: -4px !important;
+  background: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #f8fafc !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  padding: 1px 4px !important;
+  border-radius: 6px !important;
+  line-height: 1 !important;
+}
+
+.mobile-h5-app .appraisal-h5-info-col {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+.mobile-h5-app .appraisal-h5-name-row {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+}
+
+.mobile-h5-app .appraisal-h5-pkm-name {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary, #ffffff) !important;
+}
+
+.mobile-h5-app .appraisal-h5-nick {
+  font-size: 12.5px !important;
+  color: var(--text-muted, #94a3b8) !important;
 }
 
 .mobile-h5-app .mobile-box-sheet .box-modal-title {

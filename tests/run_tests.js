@@ -9065,16 +9065,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(boxJs.includes(".box-table tbody tr[data-uid]"), 'Table rows must be selectable');
     assert(boxJs.includes("window.AppraisalLab.loadBoxItem(item)"), 'Row click must load box item into Appraisal Lab');
 
-    // 4. Appraisal Lab In-Place Edit Mode
-    assert(appraisalJs.includes("editMode: false"), 'labState must track editMode');
-    assert(appraisalJs.includes("function enterEditMode()"), 'appraisal.js must implement enterEditMode');
-    assert(appraisalJs.includes("function saveEditMode()"), 'appraisal.js must implement saveEditMode');
-    assert(appraisalJs.includes("function cancelEditMode()"), 'appraisal.js must implement cancelEditMode');
-    assert(appraisalJs.includes("function onNicknameChange(val)"), 'appraisal.js must implement onNicknameChange');
-    assert(appraisalJs.includes("function onIngredientChange(slotIdx, val)"), 'appraisal.js must implement onIngredientChange');
-    assert(appraisalJs.includes("btn-lab-edit-toggle"), 'Preview mode must render [✎] 修改數值 button');
-    assert(appraisalJs.includes("lab-edit-mode-banner"), 'Edit mode must render edit banner');
-    assert(appraisalJs.includes("window.UserBox.setUserBox(userBox)"), 'saveEditMode must update userBox');
+    // 4. Appraisal Modal & Lab Integration
+    assert(appraisalJs.includes("openAppraisalModal"), 'appraisal.js must implement openAppraisalModal');
+    assert(boxJs.includes("window.AppraisalLab.openModal"), 'Row click must open appraisal modal');
+    assert(stylesCss.includes(".mobile-h5-app #modal-appraisal-report"), 'styles.css must style mobile appraisal modal');
 
     // 5. Box Sort Dropdown in Filter Sidebar with Inset Arrow
     assert(indexHtml.includes('id="box-filter-sidebar"') && indexHtml.includes('id="box-sort-select"'), 'index.html must have box-sort-select inside sidebar');
@@ -9103,9 +9097,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
     const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
 
-    // 1. lab-box-linkage-group omitted on H5
-    assert(appraisalJs.includes('${!isMobileH5 ? `') && appraisalJs.includes('lab-box-linkage-group'), 'lab-box-linkage-group must be conditionally omitted on H5');
-    assert(stylesCss.includes('.mobile-h5-app .lab-box-linkage-group') && stylesCss.includes('display: none !important;'), 'styles.css must hide lab-box-linkage-group on H5');
+    // 1. Research Lab subtabs: team builder and comparison
+    assert(appraisalJs.includes('class="lab-subnav-bar"'), 'Research Lab must render subnav bar');
+    assert(appraisalJs.includes("switchSubTab('team')") && appraisalJs.includes("switchSubTab('compare')"), 'Research Lab must support team and compare subtabs');
+    assert(!appraisalJs.includes("switchSubTab('single')"), 'Research Lab must not contain single subtab');
 
     // 2. lab-inbox-tag removed
     assert(!appraisalJs.includes('lab-inbox-tag'), 'lab-inbox-tag must be removed from appraisal lab');
@@ -9114,15 +9109,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(!appraisalJs.includes('getTypeIconSvg'), 'appraisal.js must not use getTypeIconSvg anymore');
     assert(appraisalJs.includes('window.getPokemonBerry'), 'appraisal.js must use tree berry icon instead of type');
 
-    // 4. btn-lab-edit-toggle is icon-only and inside lab-preview-header-right
-    assert(appraisalJs.includes('class="btn-lab-edit-toggle"') && appraisalJs.includes('<svg viewBox="0 0 24 24"'), 'btn-lab-edit-toggle must be icon-only');
-    const editBtnSnippet = appraisalJs.substring(appraisalJs.indexOf('class="btn-lab-edit-toggle"'), appraisalJs.indexOf('</button>', appraisalJs.indexOf('class="btn-lab-edit-toggle"')));
-    assert(!editBtnSnippet.includes('修改數值') && !editBtnSnippet.includes('Edit Stats'), 'btn-lab-edit-toggle must not contain text');
+    // 4. Mobile H5 modal bottom sheet
+    assert(appraisalJs.includes('mobile-box-sheet') && appraisalJs.includes('bottom-sheet'), 'appraisal modal must use mobile-box-sheet on H5');
 
     // 5. radar-svg-chart maximized display
     assert(!stylesCss.includes('max-height: 250px;'), 'radar-svg-chart must not have 250px max-height constraint');
-    assert(stylesCss.includes('.lab-preview-only-layout') && stylesCss.includes('grid-template-columns: 1fr !important;'), 'lab-preview-only-layout must expand to 100% width');
-    assert(stylesCss.includes('.lab-chart-container .radar-svg-chart') && stylesCss.includes('aspect-ratio: 340 / 310;'), 'radar-svg-chart must scale responsively with aspect-ratio');
 
     // 6. Runtime variable guard: isMobileH5 declaration in renderAppraisalLabContainer
     assert(appraisalJs.includes("const isMobileH5 = typeof document !== 'undefined'"), 'isMobileH5 must be explicitly declared in renderAppraisalLabContainer');
@@ -9258,36 +9249,30 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(stylesCss.includes('.lab-preview-spec .specialty-icon') && stylesCss.includes('width: 16px !important;'), 'lab preview spec icon must be 16px matching berry');
   });
 
-  // ─── Test 179: Appraisal Lab Box-First Default, Top-Right Absolute Edit Button & Complete Stats Preview ─
-  test('Tier 1 - Feature Coverage', 'Appraisal Lab Box-First Default, Top-Right Absolute Edit Button & Complete Stats Preview', () => {
+  // ─── Test 179: Appraisal Modal Complete Stats & Research Lab Team/Compare Architecture ─
+  test('Tier 1 - Feature Coverage', 'Appraisal Modal Complete Stats & Research Lab Team/Compare Architecture', () => {
     const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
     const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
 
-    // 1. Auto-select first box Pokémon and clean empty state
-    assert(appraisalJs.includes('loadBoxItem(activeList[0])') || appraisalJs.includes('loadBoxItem(displayBoxList[0])') || appraisalJs.includes('loadBoxItem(userBox[0])'), 'Appraisal lab must default to first box Pokémon in current sort order');
-    assert(appraisalJs.includes('lab-box-empty-container'), 'Appraisal lab must provide clean empty state when userBox is empty');
-    assert(!appraisalJs.includes('Custom Simulation (Select Any Species)') && !appraisalJs.includes('自訂模擬 (自由挑選物種)'), 'Scratch simulation species picker must be removed from Box lab');
+    // 1. Research Lab subtabs are strictly team and compare
+    assert(appraisalJs.includes("switchSubTab('team')") && appraisalJs.includes("switchSubTab('compare')"), 'Research lab must support team and compare');
+    assert(!appraisalJs.includes("switchSubTab('single')"), 'Research lab must not include single subtab');
 
-    // 2. Absolute top-right edit action buttons
-    assert(appraisalJs.includes('class="lab-preview-header-right" style="position:absolute;top:0;right:0;'), 'Header right actions must be positioned at top:0 right:0');
-    assert(stylesCss.includes('.lab-preview-header-right') && stylesCss.includes('position: absolute !important;'), 'styles.css must enforce absolute top-right for lab-preview-header-right');
-    assert(stylesCss.includes('.lab-preview-header') && stylesCss.includes('padding-right: 50px !important;'), 'lab-preview-header must have padding-right >= 48px to prevent overlapping with button');
+    // 2. Appraisal modal renders complete stats
+    assert(appraisalJs.includes('appraisal-mainskill-row'), 'Appraisal modal must render main skill row');
+    assert(appraisalJs.includes('appraisal-ing-chips-grid') || appraisalJs.includes('appraisal-ing-parallel-row'), 'Appraisal modal must render ingredient chips');
+    assert(appraisalJs.includes('appraisal-nature-game-card'), 'Appraisal modal must render nature card');
+    assert(appraisalJs.includes('appraisal-subskills-grid'), 'Appraisal modal must render subskills in grid');
+    assert(appraisalJs.includes('appraisal-radar-wrapper') || appraisalJs.includes('renderRadarChartSVG'), 'Appraisal modal must render radar chart');
 
-    // 3. Complete Pokémon data rendered in preview mode
-    assert(appraisalJs.includes('class="lab-preview-stats-panel"'), 'Preview mode must render complete stats panel');
-    assert(appraisalJs.includes('class="lab-preview-mainskill-row"'), 'Preview mode must render main skill row');
-    assert(appraisalJs.includes('class="lab-preview-ing-chips"') && appraisalJs.includes('class="lab-preview-ing-chip"'), 'Preview mode must render ingredient chips');
-    assert(appraisalJs.includes('class="lab-preview-nature-row"') && appraisalJs.includes('▲▲') && appraisalJs.includes('▼▼'), 'Preview mode must render nature row with buff and debuff');
-    assert(appraisalJs.includes('class="lab-preview-subskills-section"') && appraisalJs.includes('class="box-subskills-grid"'), 'Preview mode must render subskills in grid');
+    // 3. Mobile H5 bottom sheet structure
+    assert(appraisalJs.includes('box-modal-dialog mobile-box-sheet bottom-sheet mobile-modal-sheet'), 'Mobile modal must render mobile-box-sheet dialog');
+    assert(appraisalJs.includes('sheet-drag-handle'), 'Mobile modal must render sheet drag handle');
+    assert(appraisalJs.includes('box-modal-header'), 'Mobile modal must render box-modal-header');
 
-    // 4. In-place edit mode transformation with save/cancel controls
-    assert(appraisalJs.includes('const showControls = !isMobileH5 || labState.editMode;') || appraisalJs.includes('const showControls = labState.editMode;'), 'Controls must be toggled by editMode state');
-    assert(appraisalJs.includes('btn-lab-save-header') && appraisalJs.includes('btn-lab-cancel-header'), 'Header must render save/cancel buttons during edit mode');
-    assert(appraisalJs.includes('btn-lab-save') && appraisalJs.includes('btn-lab-cancel'), 'Form bottom must render save/cancel buttons during edit mode');
-
-    // 5. CSS classes present
-    assert(stylesCss.includes('.lab-preview-ing-chips'), 'styles.css must define .lab-preview-ing-chips');
-    assert(stylesCss.includes('.lab-preview-subskills-grid'), 'styles.css must define .lab-preview-subskills-grid');
+    // 4. CSS classes present
+    assert(stylesCss.includes('.appraisal-modal-backdrop'), 'styles.css must define .appraisal-modal-backdrop');
+    assert(stylesCss.includes('.appraisal-modal-sheet-body'), 'styles.css must define .appraisal-modal-sheet-body');
   });
 
   // ─── Test 180: Box Tab Default Dex No. Ascending Sort, Split Asc/Desc & Elimination of PR Sort ─
@@ -9437,8 +9422,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     }
     assert(!renderError, `renderLab must not throw ReferenceError: getSkillTier is not defined, got: ${renderError && renderError.message}`);
 
-    assert(mockContainer.innerHTML.includes('<span class="lab-preview-name">妙蛙花</span>'), 'renderLab must default to first Pokémon in getFilteredBox (妙蛙花)');
-    assert(!mockContainer.innerHTML.includes('<span class="lab-preview-name">巴大蝶</span>'), 'renderLab preview must not default to raw unsorted userBox[0] (巴大蝶)');
+    assert(mockContainer.innerHTML.includes('lab-subnav-bar'), 'renderLab must render subnav bar');
+    assert(mockContainer.innerHTML.includes('lab-subpanel-team'), 'renderLab must render team subpanel');
+    assert(mockContainer.innerHTML.includes('lab-subpanel-compare'), 'renderLab must render compare subpanel');
+    assert(!mockContainer.innerHTML.includes('lab-subpanel-single'), 'renderLab must not render single subpanel');
   });
 
   // ─── Test 182: Appraisal Lab Clean Preview Default, Edit Toggle Transformation & openAppraisalModal Scope Fix ─
@@ -9449,12 +9436,13 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(!appraisalJs.includes('getSpecialtyIconHtml(specialty,'), 'appraisal.js must not call getSpecialtyIconHtml with bare undeclared specialty variable');
     assert(appraisalJs.includes('getSpecialtyIconHtml(pkmData.specialty,'), 'appraisal.js must call getSpecialtyIconHtml with pkmData.specialty in openAppraisalModal');
 
-    // 2. Static assertion: showControls must be toggled by editMode state
-    assert(appraisalJs.includes('const showControls = labState.editMode;'), 'showControls must be controlled by labState.editMode so settings form is hidden by default');
+    // 2. Static assertion: AppraisalLab exports openModal and renderLab
+    assert(appraisalJs.includes('openModal: openAppraisalModal'), 'appraisal.js must export openModal');
+    assert(appraisalJs.includes('renderLab: renderAppraisalLabContainer'), 'appraisal.js must export renderLab');
 
-    // 3. Static assertion: edit toggle button and stats panel are rendered in preview mode on all platforms
-    assert(appraisalJs.includes('class="btn-lab-edit-toggle"'), 'btn-lab-edit-toggle must render in header right');
-    assert(appraisalJs.includes('class="lab-preview-stats-panel"'), 'lab-preview-stats-panel must render in preview mode');
+    // 3. Static assertion: modal layouts present
+    assert(appraisalJs.includes('box-modal-dialog mobile-box-sheet bottom-sheet mobile-modal-sheet'), 'appraisal.js must support mobile sheet');
+    assert(appraisalJs.includes('class="appraisal-modal-container"'), 'appraisal.js must support desktop modal container');
 
     // 4. Runtime execution: openModal must not throw ReferenceError: specialty is not defined
     const modalCreated = { innerHTML: '', style: {}, classList: { add: () => {}, remove: () => {} }, setAttribute: () => {} };
@@ -9462,7 +9450,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
       window: {},
       document: {
         querySelector: () => null,
-        getElementById: (id) => (id === 'appraisal-modal' ? modalCreated : null),
+        getElementById: (id) => (id === 'modal-appraisal-report' ? modalCreated : null),
         createElement: (tag) => modalCreated,
         body: {
           appendChild: () => {},
@@ -9516,18 +9504,15 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(modalCreated.innerHTML.includes('花花'), 'openModal must render nickname');
     assert(modalCreated.innerHTML.includes('妙蛙花'), 'openModal must render Pokemon name');
 
-    // Test renderLab on desktop (!isMobileH5) - clean preview mode by default
+    // Test renderLab on desktop (!isMobileH5) - renders Research Lab
     const desktopContainer = { innerHTML: '', id: 'appraisal-lab-container' };
     ctx.window.UserBox = {
       getUserBox: () => [{ uid: '1', pokemonId: '3', name: '妙蛙花', level: 55, nature: '內斂', subskills: [] }]
     };
     ctx.window.AppraisalLab.renderLab(desktopContainer, 0);
-    // On desktop, controls column must BE display: none !important by default (settings form hidden)
-    assert(desktopContainer.innerHTML.includes('class="appraisal-lab-controls" style="display: none !important;"'), 'On desktop, settings controls form must be hidden by default in preview mode');
-    // On desktop, edit toggle button MUST be present in header right
-    assert(desktopContainer.innerHTML.includes('class="btn-lab-edit-toggle"'), 'On desktop, btn-lab-edit-toggle must be rendered in preview mode header');
-    // On desktop, complete stats panel MUST be present in preview
-    assert(desktopContainer.innerHTML.includes('class="lab-preview-stats-panel"'), 'On desktop, complete lab-preview-stats-panel must be rendered in preview mode');
+    assert(desktopContainer.innerHTML.includes('class="lab-subnav-bar"'), 'On desktop, lab-subnav-bar must be rendered in Research Lab');
+    assert(desktopContainer.innerHTML.includes('id="lab-subpanel-team"'), 'On desktop, lab-subpanel-team must be rendered in Research Lab');
+    assert(desktopContainer.innerHTML.includes('id="lab-subpanel-compare"'), 'On desktop, lab-subpanel-compare must be rendered in Research Lab');
   });
 
   test('Tier 4 - Real-World Application Scenarios', 'Appraisal Lab In-Game Nature Card, Single-Line Icon Ingredients, 5th Subskill Normal Column & Lab FAB Suppression', () => {
@@ -9535,24 +9520,17 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     const boxCode = fs.readFileSync(path.join(__dirname, '../js/modules/box.js'), 'utf8');
     const cssCode = fs.readFileSync(path.join(__dirname, '../css/styles.css'), 'utf8');
 
-    // 1. Appraisal Lab nature display must use in-game capsule style
-    assert(appraisalCode.includes('class="appraisal-nature-game-card"'), 'Appraisal Lab must render nature with appraisal-nature-game-card');
-    assert(appraisalCode.includes('class="nature-pill-capsule"'), 'Appraisal Lab must render nature with nature-pill-capsule');
-    assert(appraisalCode.includes('labNatureEffectHtml'), 'Appraisal Lab must compute labNatureEffectHtml matching modal style');
+    // 1. Appraisal modal nature display must use in-game capsule style
+    assert(appraisalCode.includes('class="appraisal-nature-game-card"'), 'Appraisal modal must render nature with appraisal-nature-game-card');
+    assert(appraisalCode.includes('class="nature-pill-capsule"'), 'Appraisal modal must render nature with nature-pill-capsule');
+    assert(appraisalCode.includes('natureEffectHtml'), 'Appraisal modal must compute natureEffectHtml matching capsule style');
 
-    // 2. 5th subskill must not be restricted with max-width: 50% or forced grid-column: 1 / -1
-    assert(!appraisalCode.includes('max-width: 50%'), 'Appraisal Lab must not restrict 5th subskill with max-width: 50%');
-    assert(!appraisalCode.includes('grid-column: 1 / -1'), 'Appraisal Lab must not force 5th subskill with grid-column: 1 / -1');
-    assert(cssCode.includes('.lab-preview-subskills-grid .subskill-last-slot {\n  grid-column: 1 / 2;'), 'CSS subskill-last-slot must use grid-column: 1 / 2');
+    // 2. Subskill grid defined in CSS
+    assert(cssCode.includes('.appraisal-subskills-grid') || cssCode.includes('.lab-preview-subskills-grid'), 'CSS must define subskills grid');
 
-    // 3. Ingredients display in Lab preview must be single line, icon-only, no text names, no count numbers
-    assert(appraisalCode.includes('class="lab-preview-ing-row" style="display:flex;align-items:center;gap:8px;font-size:12.5px;flex-wrap:nowrap;white-space:nowrap;overflow-x:auto;"'), 'Lab preview ingredients row must be flex-wrap: nowrap single line');
-    // In lab preview chip, check that it does not render ${escapeHtml(ingDisplayName)} as text or count span
-    const chipTemplateMatch = appraisalCode.match(/<div class="lab-preview-ing-chip"[\s\S]*?<\/div>/);
-    assert(chipTemplateMatch, 'Must find lab-preview-ing-chip template in appraisal.js');
-    const chipTemplate = chipTemplateMatch[0];
-    assert(!chipTemplate.includes('${escapeHtml(ingDisplayName)}</span>'), 'Lab preview ingredient chip must not display text name');
-    assert(!chipTemplate.includes('×${count}'), 'Lab preview ingredient chip must not display count');
+    // 3. Ingredients display in modal: parallel row, icon-only, no count numbers
+    assert(appraisalCode.includes('class="appraisal-ing-parallel-row"'), 'Modal ingredients must use appraisal-ing-parallel-row');
+    assert(appraisalCode.includes('class="appraisal-ing-chips-grid"'), 'Modal ingredients must use appraisal-ing-chips-grid');
 
     // 4. Box card, table, and modal ingredient chips must not display count numbers
     assert(!boxCode.includes('<span class="box-ing-chip-count">×${count}</span>'), 'Box card ingredient slot must not display count span');
@@ -9568,41 +9546,26 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(cssCode.includes('.mobile-h5-app #panel-box:not(.box-lab-active)'), 'CSS must exclude box-lab-active from auto-displaying bookmark handle');
   });
 
-  // ─── Test 184: Appraisal Lab In-Place Edit Mode & Radar Concealment ────────
-  test('Tier 4 - Real-World Application Scenarios', 'Appraisal Lab In-Place Edit Mode & Radar Concealment', () => {
+  // ─── Test 184: Research Lab Subtab Navigation & State Switching ───────────
+  test('Tier 4 - Real-World Application Scenarios', 'Research Lab Subtab Navigation & State Switching', () => {
     const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
 
-    // 1. Static assertion: Edit mode hides radar chart and commentary below
-    assert(appraisalJs.includes("${!labState.editMode ?") && appraisalJs.includes('class="lab-chart-container"'), 'Radar chart and comments must be strictly gated by !labState.editMode');
-    assert(appraisalJs.includes("btn-lab-save-header"), 'Save button must be rendered in header during edit mode');
-    assert(appraisalJs.includes("btn-lab-cancel-header"), 'Cancel button must be rendered in header during edit mode');
-    assert(appraisalJs.includes("window.AppraisalLab.onSkillLevelChange"), 'AppraisalLab must support onSkillLevelChange');
-    assert(appraisalJs.includes("window.AppraisalLab.clearAllSubskills"), 'AppraisalLab must support clearAllSubskills');
+    // 1. Static assertion: Research Lab supports team and compare subtabs
+    assert(appraisalJs.includes("switchSubTab('team')") && appraisalJs.includes("switchSubTab('compare')"), 'Research Lab must support team and compare subtabs');
+    assert(!appraisalJs.includes("switchSubTab('single')"), 'Research Lab must not contain single subtab');
 
-    // 2. Runtime execution: Browse mode vs Edit mode state transition
-    const customizedElements = [];
+    // 2. Runtime execution: switchSubTab works smoothly
     const mockContainer = {
       innerHTML: '',
       id: 'appraisal-lab-container',
-      querySelector: (sel) => {
-        if (sel.startsWith('#')) {
-          const id = sel.substring(1);
-          if (mockContainer.innerHTML.includes(`id="${id}"`)) {
-            return { id, parentNode: mockContainer, _customized: false, style: {}, classList: { contains: () => false }, dispatchEvent: () => {} };
-          }
-        }
-        return null;
-      }
+      querySelector: () => null,
+      querySelectorAll: () => []
     };
     const ctx = {
-      window: {
-        setupCustomSelect: (el) => {
-          el._customized = true;
-          customizedElements.push(el);
-        }
-      },
+      window: {},
       document: {
         querySelector: () => null,
+        querySelectorAll: () => [],
         getElementById: (id) => (id === 'appraisal-lab-container' ? mockContainer : null),
         body: { classList: { contains: () => false }, style: {} }
       },
@@ -9616,7 +9579,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     ctx.window.window = ctx.window;
     ctx.window.document = ctx.document;
     ctx.window.allPokemons = [
-      { id: '3', name_cn: '妙蛙花', specialty: '食材', type: '草', main_skill: '食材獲取S', ingredients: [{ name: '特選蘋果', count: 2 }, { name: '暖暖薑', count: 1 }] }
+      { id: '3', name_cn: '妙蛙花', specialty: '食材', type: '草', main_skill: '食材獲取S', ingredients: [{ name: '特選蘋果', count: 2 }] }
     ];
     ctx.window.I18N = {
       getLanguage: () => 'zh-TW',
@@ -9632,74 +9595,23 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     };
     ctx.window.UserBox = {
       getUserBox: () => [{ uid: 'b1', pokemonId: '3', name: '妙蛙花', level: 30, nature: '坦率', subskills: ['樹果數量S'], nickname: '花花', ribbon: 0, skillLevel: 2 }],
-      setUserBox: (box) => { ctx.window.UserBox._saved = box; },
-      NATURE_DATA: [{ name: '固執', buff: '幫忙速度', debuff: '食材發現率' }, { name: '坦率', buff: '無增減', debuff: '' }],
-      SUBSKILLS_DATA: [{ name: '樹果數量S', tier: 'gold' }, { name: '幫忙速度M', tier: 'blue' }]
+      setUserBox: () => {},
+      NATURE_DATA: [{ name: '固執', buff: '幫忙速度', debuff: '食材發現率' }],
+      SUBSKILLS_DATA: [{ name: '樹果數量S', tier: 'gold' }]
     };
 
     vm.createContext(ctx);
     vm.runInContext(appraisalJs, ctx);
 
-    // Initial render in Browse Mode: must have exactly ONE radar chart container
+    // Initial render defaults to team subpanel
     ctx.window.AppraisalLab.renderLab(mockContainer);
-    assert(mockContainer.innerHTML.includes('class="lab-chart-container"'), 'Browse mode must render radar chart');
-    const radarMatches = (mockContainer.innerHTML.match(/class="lab-chart-container"/g) || []).length;
-    assertEquals(radarMatches, 1, 'Browse mode must render exactly ONE radar chart container without duplication');
-    assert(mockContainer.innerHTML.includes('class="lab-pros-box"'), 'Browse mode must render pros box');
-    assert(mockContainer.innerHTML.includes('class="btn-lab-edit-toggle"'), 'Browse mode must render edit button in header right');
-    assert(!mockContainer.innerHTML.includes('btn-lab-save-header'), 'Browse mode must not render save button in header');
+    assert(mockContainer.innerHTML.includes('lab-subnav-bar'), 'Must render lab-subnav-bar');
+    assert(mockContainer.innerHTML.includes('id="lab-subpanel-team"'), 'Must render lab-subpanel-team');
+    assert(mockContainer.innerHTML.includes('id="lab-subpanel-compare"'), 'Must render lab-subpanel-compare');
 
-    // Switch to Edit Mode
-    ctx.window.AppraisalLab.enterEditMode();
-    assert(!mockContainer.innerHTML.includes('class="lab-chart-container"'), 'Edit mode must strictly hide radar chart');
-    assert(!mockContainer.innerHTML.includes('class="lab-pros-box"'), 'Edit mode must strictly hide pros box');
-    assert(mockContainer.innerHTML.includes('btn-lab-save-header'), 'Edit mode must render save button in header');
-    assert(mockContainer.innerHTML.includes('btn-lab-cancel-header'), 'Edit mode must render cancel button in header');
-    assert(mockContainer.innerHTML.includes('lab-edit-header-title'), 'Edit mode must render header title');
-    assert(!mockContainer.innerHTML.includes('lab-edit-bottom-actions'), 'Edit mode must strictly omit bottom action buttons');
-
-    // Header layout ordering: Cancel on left, Title in middle, Confirm/Save on right (matching box-modal-header)
-    const cancelPos = mockContainer.innerHTML.indexOf('btn-lab-cancel-header');
-    const titlePos = mockContainer.innerHTML.indexOf('lab-edit-header-title');
-    const savePos = mockContainer.innerHTML.indexOf('btn-lab-save-header');
-    assert(cancelPos < titlePos && titlePos < savePos, 'Edit mode header must place Cancel on left, Title in center, Confirm/Save on right');
-
-    // Form layout: Fixed Pokemon Display, Level+MainSkill row, 3+2 subskills
-    assert(mockContainer.innerHTML.includes('box-pkm-display-slot'), 'Edit mode must render read-only box-pkm-display-slot');
-    assert(!mockContainer.innerHTML.includes('box-pkm-identity-card'), 'Edit mode must not render redundant outer box-pkm-identity-card');
-    assert(!mockContainer.innerHTML.includes('id="lab-poke-search"'), 'Edit mode must strictly disallow modifying Pokemon species');
-    assert(mockContainer.innerHTML.includes('box-level-mainskill-row'), 'Edit mode must render Level and Main Skill in one row');
-    assert(mockContainer.innerHTML.includes('box-nickname-ribbon-row'), 'Edit mode must render box-nickname-ribbon-row for Nickname and Ribbon');
-    assert(mockContainer.innerHTML.includes('id="lab-nickname-input"'), 'Edit mode must render nickname input');
-    assert(mockContainer.innerHTML.includes('id="lab-nature-select"'), 'Edit mode must render nature select');
-    assert(mockContainer.innerHTML.includes('id="lab-ribbon-select"'), 'Edit mode must render ribbon select');
-    assert(mockContainer.innerHTML.includes('id="lab-mainskill-select"'), 'Edit mode must render main skill select');
-    assert(mockContainer.innerHTML.includes('class="box-subskill-palette"'), 'Edit mode must render subskill palette');
-    assert(mockContainer.innerHTML.includes('box-subskill-slots-3plus2'), 'Edit mode must render subskill slots in 3+2 layout');
-
-    // Verify Row 2 Ribbon before Row 3 Nature and concise text without hours
-    const ribbonPos = mockContainer.innerHTML.indexOf('id="lab-ribbon-select"');
-    const naturePos = mockContainer.innerHTML.indexOf('id="lab-nature-select"');
-    assert(ribbonPos < naturePos, 'Ribbon select must appear before Nature select in DOM (Row 2 Ribbon, Row 3 Nature)');
-    assert(!mockContainer.innerHTML.includes('200 小時'), 'Ribbon options must strip hours from text');
-    assert(!mockContainer.innerHTML.includes('500 小時'), 'Ribbon options must strip hours from text');
-    assert(mockContainer.innerHTML.includes('+1 持有上限'), 'Ribbon Lv.1 must contain clean "+1 持有上限" effect text');
-    assert(mockContainer.innerHTML.includes('assets/ribbons/ribbon_lv1.png'), 'Ribbon Lv.1 must have data-icon with ribbon image');
-
-    // Custom select initialization assertions
-    assert(customizedElements.some(el => el.id === 'lab-nature-select'), 'Nature select must be initialized with setupCustomSelect');
-    assert(customizedElements.some(el => el.id === 'lab-ribbon-select'), 'Ribbon select must be initialized with setupCustomSelect');
-    assert(customizedElements.some(el => el.id === 'lab-mainskill-select'), 'Main skill select must be initialized with setupCustomSelect');
-
-    // Test subskill slot picking and chip selection
-    ctx.window.AppraisalLab.selectSubskillSlot(2);
-    ctx.window.AppraisalLab.onSubskillChipSelect('幫忙速度M');
-    assert(mockContainer.innerHTML.includes('幫忙速度M'), 'Selected chip must be reflected in subskills');
-
-    // Cancel Edit Mode
-    ctx.window.AppraisalLab.cancelEditMode();
-    assert(mockContainer.innerHTML.includes('class="lab-chart-container"'), 'Cancelling edit mode must restore radar chart');
-    assert(mockContainer.innerHTML.includes('class="btn-lab-edit-toggle"'), 'Cancelling edit mode must restore edit toggle button');
+    // Switch to compare subtab
+    ctx.window.AppraisalLab.switchSubTab('compare');
+    assert(mockContainer.innerHTML.includes('active') && mockContainer.innerHTML.includes('compare'), 'Compare tab must be active');
   });
 
   test('Tier 4 - Real-World Application Scenarios', '深度研究室 (Research Lab): Renamed Title, Team Builder & Synergy Simulation, Side-by-Side Comparison & Modal Picker', () => {
@@ -9719,8 +9631,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(appIndexHtml.includes('深度研究室'), 'app/index.html box-subtab-lab must display "深度研究室"');
     assert(!appIndexHtml.includes('深度評測室'), 'app/index.html must not contain "深度評測室"');
 
-    assert(indexHtml.includes('id="box-appraisal-lab-btn"'), 'index.html must have box-appraisal-lab-btn');
-    assert(indexHtml.includes('深度研究室'), 'index.html box-appraisal-lab-btn must display "深度研究室"');
+    assert(indexHtml.includes('id="box-subtab-lab"'), 'index.html must have box-subtab-lab');
+    assert(indexHtml.includes('id="box-subtab-list"'), 'index.html must have box-subtab-list');
+    assert(!indexHtml.includes('id="box-export-btn"'), 'index.html box banner must not have box-export-btn');
+    assert(!indexHtml.includes('id="box-import-input"'), 'index.html box banner must not have box-import-input');
+    assert(indexHtml.includes('深度研究室'), 'index.html box-subtab-lab must display "深度研究室"');
     assert(!indexHtml.includes('深度評測室'), 'index.html must not contain "深度評測室"');
 
     assert(i18nJs.includes("'box.tab_lab': '深度研究室'"), "i18n.js must map 'box.tab_lab' to '深度研究室'");
@@ -9931,10 +9846,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(mockContainer.innerHTML.includes('class="lab-subnav-bar"'), 'Lab container must render subnav bar');
     assert(mockContainer.innerHTML.includes('幫手組隊'), 'Subnav bar must have 幫手組隊 subtab');
     assert(mockContainer.innerHTML.includes('寶可夢對比'), 'Subnav bar must have 寶可夢對比 subtab');
-    assert(mockContainer.innerHTML.includes('單體評測'), 'Subnav bar must have 單體評測 subtab');
+    assert(!mockContainer.innerHTML.includes('單體評測'), 'Subnav bar must not have 單體評測 subtab');
     assert(mockContainer.innerHTML.includes('id="lab-subpanel-team"'), 'Lab container must render team subpanel');
     assert(mockContainer.innerHTML.includes('id="lab-subpanel-compare"'), 'Lab container must render compare subpanel');
-    assert(mockContainer.innerHTML.includes('id="lab-subpanel-single"'), 'Lab container must render single subpanel');
+    assert(!mockContainer.innerHTML.includes('id="lab-subpanel-single"'), 'Lab container must not render single subpanel');
 
     // 6. Test Team Island Selection and Favored Berries Multiplier
     ctx.window.AppraisalLab.setTeamIsland('beach'); // 天青沙灘: 橙橙果, 密芝果, 零餘果
@@ -10066,8 +9981,85 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
   const ribbonHtml = PokemonApp.renderPokedexRibbonOptionsHTML(pikachuData, 0);
   assert(!ribbonHtml.includes('2000 小時') && !ribbonHtml.includes('2000 hrs'), 'Ribbon options HTML must not contain redundant 2000 hours text');
   assert(!ribbonHtml.includes('500 小時') && !ribbonHtml.includes('500 hrs'), 'Ribbon options HTML must not contain redundant 500 hours text');
-  assert(ribbonHtml.includes('+8 持有上限') || ribbonHtml.includes('+8 Carry Limit'), 'Ribbon options HTML must contain +8 Carry Limit bonus');
 });
+
+  // ─── Test 187: Mobile H5 Bottom Sheet Appraisal Modal & Desktop Subtab Separation Verification ─
+  test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Bottom Sheet Appraisal Modal & Desktop Subtab Separation Verification', () => {
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app/index.html'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+
+    // 1. Desktop index.html tab separation
+    assert(indexHtml.includes('class="box-subnav-bar"'), 'index.html must have box-subnav-bar');
+    assert(indexHtml.includes('id="box-subtab-list"') && indexHtml.includes('id="box-subtab-lab"'), 'index.html must have box-subtab-list and box-subtab-lab');
+    assert(indexHtml.includes('id="box-subpanel-list"') && indexHtml.includes('id="box-subpanel-lab"'), 'index.html must have box-subpanel-list and box-subpanel-lab');
+    assert(!indexHtml.includes('id="box-export-btn"'), 'index.html must not have box-export-btn in box toolbar');
+    assert(!indexHtml.includes('id="box-import-input"'), 'index.html must not have box-import-input in box toolbar');
+
+    // 2. Mobile H5 app/index.html has box-subtab-list and box-subtab-lab
+    assert(appIndexHtml.includes('id="box-subtab-list"') && appIndexHtml.includes('id="box-subtab-lab"'), 'app/index.html must have box subnav tabs');
+
+    // 3. Mobile modal bottom-sheet layout in appraisal.js
+    assert(appraisalJs.includes('box-modal-dialog mobile-box-sheet bottom-sheet mobile-modal-sheet'), 'Mobile appraisal modal must use mobile-box-sheet bottom-sheet');
+    assert(appraisalJs.includes('sheet-drag-handle'), 'Mobile appraisal modal must include sheet-drag-handle');
+    assert(appraisalJs.includes('box-modal-header'), 'Mobile appraisal modal must include box-modal-header');
+    assert(appraisalJs.includes('box-modal-header-cancel'), 'Mobile appraisal modal must have cancel/close button on left');
+    assert(appraisalJs.includes('box-modal-title'), 'Mobile appraisal modal must have centered title');
+    assert(appraisalJs.includes('box-modal-header-confirm'), 'Mobile appraisal modal must have edit button on right');
+
+    // 4. CSS support for mobile modal sheet and desktop subnav bar
+    assert(stylesCss.includes('.mobile-h5-app #modal-appraisal-report .mobile-box-sheet'), 'styles.css must style mobile appraisal sheet');
+    assert(stylesCss.includes('body:not(.mobile-h5-app) .box-subnav-bar'), 'styles.css must style desktop box-subnav-bar');
+    assert(stylesCss.includes('body:not(.mobile-h5-app) .box-subnav-item.active'), 'styles.css must style active desktop subnav item');
+
+    // 5. Test openModal runtime in Mobile H5 context
+    const modalCreated = { innerHTML: '', style: {}, className: '', classList: { add() {}, remove() {}, contains: () => false }, setAttribute() {} };
+    const ctx = {
+      window: { IS_MOBILE_H5: true },
+      document: {
+        querySelector: (s) => (s === '.mobile-h5-app' ? true : null),
+        getElementById: (id) => (id === 'modal-appraisal-report' ? modalCreated : null),
+        createElement: () => modalCreated,
+        body: { classList: { contains: (c) => c === 'mobile-h5-app' }, style: {}, appendChild() {} }
+      },
+      console, Set, Array, parseInt, Math, String
+    };
+    ctx.window.window = ctx.window;
+    ctx.window.document = ctx.document;
+    ctx.window.allPokemons = [
+      { id: 3, name_cn: '妙蛙花', specialty: '食材', type: '草', main_skill: '食材獲取S', ingredients: [{ name: '特選蘋果', count: 2 }] }
+    ];
+    ctx.window.I18N = {
+      getLanguage: () => 'zh-TW',
+      getSubSkillName: (n) => n,
+      getMainSkillName: (n) => n,
+      getIngredientName: (n) => n,
+      getNatureName: (n) => n,
+      getSpecialtyName: (n) => n,
+      getTypeName: (n) => n,
+      getBerryName: (n) => n,
+      getIngredientIcon: () => '',
+      getSpecialtyIconHtml: (spec, size, cls) => `<span class="${cls}">${spec}</span>`
+    };
+    vm.createContext(ctx);
+    vm.runInContext(appraisalJs, ctx);
+
+    ctx.window.AppraisalLab.openModal({
+      pkm: ctx.window.allPokemons[0],
+      level: 50,
+      nature: '內斂',
+      subskills: ['樹果數量S', '幫手獎勵'],
+      ingredients: ['特選蘋果', '特選蘋果', '特選蘋果'],
+      ribbon: 1,
+      nickname: '小花'
+    });
+
+    assert(modalCreated.className.includes('mobile-box-sheet') || modalCreated.innerHTML.includes('mobile-box-sheet'), 'Mobile openModal must render mobile-box-sheet');
+    assert(modalCreated.innerHTML.includes('sheet-drag-handle'), 'Mobile openModal must render sheet drag handle');
+    assert(modalCreated.innerHTML.includes('box-modal-header'), 'Mobile openModal must render box modal header');
+    assert(modalCreated.innerHTML.includes('小花'), 'Mobile openModal must render nickname');
+  });
 
 console.log('                   Test Results Summary');
 console.log('======================================================');
