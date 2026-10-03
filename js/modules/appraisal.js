@@ -1763,6 +1763,9 @@
   /* ─── 診斷報告書彈窗管理 ───────────────────────────────── */
   function openAppraisalModal(pkmOrBoxItem) {
     if (!pkmOrBoxItem) return;
+    if (window.AppraisalLab) {
+      window.AppraisalLab._currentBoxItem = (pkmOrBoxItem && pkmOrBoxItem.rawItem) ? pkmOrBoxItem.rawItem : (pkmOrBoxItem && pkmOrBoxItem.uid ? pkmOrBoxItem : null);
+    }
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
     let pkmData = null;
@@ -1902,8 +1905,8 @@
           <div class="box-modal-header">
             <button type="button" class="box-modal-header-cancel" onclick="window.AppraisalLab.closeModal()">${isEN ? 'Close' : '關閉'}</button>
             <h3 class="box-modal-title">${displayName}${nickname ? ` (${escapeHtml(nickname)})` : ''}</h3>
-            ${pkmOrBoxItem && pkmOrBoxItem.rawItem ? `
-              <button type="button" class="box-modal-header-confirm" onclick="window.AppraisalLab.closeModal(); if(window.UserBox && typeof window.UserBox.openBoxEditModal === 'function') { const b = (window.UserBox.getUserBox && window.UserBox.getUserBox().find(p=>p.uid==='${pkmOrBoxItem.rawItem.uid}')) || ${JSON.stringify(pkmOrBoxItem.rawItem).replace(/"/g, '&quot;')}; window.UserBox.openBoxEditModal(b); }">${isEN ? 'Edit' : '編輯'}</button>
+            ${pkmOrBoxItem && (pkmOrBoxItem.rawItem || pkmOrBoxItem.uid) ? `
+              <button type="button" class="box-modal-header-confirm" onclick="window.AppraisalLab.openCurrentEditModal()">${isEN ? 'Edit' : '編輯'}</button>
             ` : `<span style="width:48px;"></span>`}
           </div>
 
@@ -2077,8 +2080,8 @@
             </div>
 
             <!-- 編輯按鈕 (若來自倉庫) -->
-            ${pkmOrBoxItem && pkmOrBoxItem.rawItem ? `
-              <button type="button" class="appraisal-edit-btn" onclick="window.AppraisalLab.closeModal(); if(window.UserBox && typeof window.UserBox.openBoxEditModal === 'function') { const b = (window.UserBox.getUserBox && window.UserBox.getUserBox().find(p=>p.uid==='${pkmOrBoxItem.rawItem.uid}')) || ${JSON.stringify(pkmOrBoxItem.rawItem).replace(/"/g, '&quot;')}; window.UserBox.openBoxEditModal(b); }" title="${isEN ? 'Edit Pokémon Stats' : '編輯寶可夢數值'}" style="background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.4);color:#38bdf8;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">
+            ${pkmOrBoxItem && (pkmOrBoxItem.rawItem || pkmOrBoxItem.uid) ? `
+              <button type="button" class="appraisal-edit-btn" onclick="window.AppraisalLab.openCurrentEditModal()" title="${isEN ? 'Edit Pokémon Stats' : '編輯寶可夢數值'}">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                 <span>${isEN ? 'Edit' : '編輯數值'}</span>
               </button>
@@ -2225,7 +2228,11 @@
     }
 
     if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
-    modal.style.display = 'flex'; if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(modal);
+    if (modal.style && typeof modal.style.removeProperty === 'function') {
+      modal.style.removeProperty('display');
+    }
+    modal.style.display = 'flex';
+    if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(modal);
     document.body.style.overflow = 'hidden';
 
     // 點選遮罩外部關閉與 Escape 鍵關閉
@@ -2247,6 +2254,29 @@
     }
   }
 
+  function openCurrentEditModal() {
+    const item = window.AppraisalLab ? window.AppraisalLab._currentBoxItem : null;
+    const modal = document.getElementById('modal-appraisal-report');
+    if (modal) {
+      if (modal._onKeydown && typeof window.removeEventListener === 'function') {
+        window.removeEventListener('keydown', modal._onKeydown);
+      }
+      modal._onKeydown = null;
+      if (modal.classList) modal.classList.remove('overlay-closing');
+      if (modal.style) {
+        if (typeof modal.style.setProperty === 'function') modal.style.setProperty('display', 'none', 'important');
+        else modal.style.display = 'none';
+      }
+    }
+    if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
+    document.body.style.overflow = '';
+    if (!item) return;
+    if (window.UserBox && typeof window.UserBox.openBoxEditModal === 'function') {
+      const fresh = (typeof window.UserBox.getUserBox === 'function' && window.UserBox.getUserBox().find(p => p.uid === item.uid)) || item;
+      window.UserBox.openBoxEditModal(fresh);
+    }
+  }
+
   function closeAppraisalModal() {
     const modal = document.getElementById('modal-appraisal-report');
     if (!modal) return;
@@ -2257,11 +2287,18 @@
       modal._onKeydown = null;
     }
     const done = () => {
+      if (modal && modal.style) {
+        if (typeof modal.style.setProperty === 'function') modal.style.setProperty('display', 'none', 'important');
+        else modal.style.display = 'none';
+      }
       if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
       document.body.style.overflow = '';
     };
-    if (typeof window.animateOverlayClose === 'function') window.animateOverlayClose(modal, done);
-    else { modal.style.display = 'none'; done(); }
+    if (typeof window.animateOverlayClose === 'function') {
+      window.animateOverlayClose(modal, done);
+    } else {
+      done();
+    }
   }
 
   function escapeHtml(str) {
@@ -2294,6 +2331,28 @@
     { id: 'belue',  name: '靛莓果', type: '鋼',   energy: 33, icon: 'https://www.serebii.net/pokemonsleep/berries/belueberry.png' },
     { id: 'yache',  name: '巧可果', type: '龍',   energy: 35, icon: 'https://www.serebii.net/pokemonsleep/berries/yacheberry.png' }
   ];
+
+  const INGREDIENTS_ENERGY_MAP = {
+    '特選蘋果': 90, 'Fancy Apple': 90,
+    '哞哞鮮奶': 98, 'Moomoo Milk': 98,
+    '萌綠大豆': 100, 'Greengrass Soybeans': 100,
+    '甜甜蜜': 101, 'Honey': 101,
+    '豆製肉': 103, 'Bean Sausage': 103,
+    '暖暖薑': 109, 'Warming Ginger': 109,
+    '好眠番茄': 110, 'Snoozy Tomato': 110,
+    '特選蛋': 115, 'Fancy Egg': 115,
+    '純粹油': 121, 'Pure Oil': 121,
+    '窩心洋芋': 124, 'Soft Potato': 124,
+    '火辣香草': 130, 'Fiery Herb': 130,
+    '萌綠玉米': 140, 'Greengrass Corn': 140,
+    '放鬆可可': 151, 'Soothing Cacao': 151,
+    '醒腦咖啡豆': 153, 'Rousing Coffee': 153,
+    '嫩亮酪梨': 162, 'Glossy Avocado': 162,
+    '品鮮蘑菇': 167, 'Tasty Mushroom': 167,
+    '粗枝大蔥': 185, 'Large Leek': 185,
+    '沉甸甸南瓜': 250, 'Plump Pumpkin': 250,
+    '美味尾巴': 342, 'Slowpoke Tail': 342
+  };
 
   const LAB_ISLANDS = [
     {
@@ -3503,6 +3562,188 @@
     `;
   }
 
+  /* ─── 寶可夢對比數據精算器 (Performance Metrics Calculator for Compare) ─ */
+  function calculatePokemonComparisonPerformance(item, base) {
+    if (!item) return null;
+    const level = parseInt(item.level, 10) || 30;
+    const nature = item.nature || '坦率';
+    const subskills = Array.isArray(item.subskills) ? item.subskills : [];
+    const ribbon = parseInt(item.ribbon, 10) || 0;
+    const ribbonBonus = getRibbonBonus(base, ribbon);
+    const skillLevel = parseInt(item.skillLevel || item.skill_level || 1, 10) || 1;
+
+    // 1. Helping speed & intervals
+    const baseFreq = (base && (base.base_frequency || base.frequency)) ? (base.base_frequency || base.frequency) : 3600;
+    let freq = baseFreq * (1 - (level - 1) * 0.002);
+
+    let subSpeedDiscount = 0;
+    if (subskills.includes('幫忙速度M')) subSpeedDiscount += 0.14;
+    if (subskills.includes('幫忙速度S')) subSpeedDiscount += 0.07;
+    if (subskills.includes('幫手獎勵')) subSpeedDiscount += 0.05;
+    freq = freq * (1 - Math.min(0.35, subSpeedDiscount));
+
+    if (ribbonBonus && ribbonBonus.speedDiscount > 0) {
+      freq = freq * (1 - ribbonBonus.speedDiscount);
+    }
+
+    const nat = NATURE_DATA.find(n => n.name === nature || n.name_en === nature);
+    if (nat) {
+      if (nat.buff && nat.buff.includes('幫忙速度')) freq *= 0.90;
+      if (nat.debuff && nat.debuff.includes('幫忙速度')) freq *= 1.075;
+    }
+
+    const energySpeedMultiplier = 2.22; // ~80% daytime active energy level
+    const effectiveInterval = Math.max(300, Math.round(freq / energySpeedMultiplier));
+    const dailyHelps = Math.max(1, Math.round(86400 / effectiveInterval));
+
+    // 2. Ingredients & yield rate
+    let baseIngRate = 0.20;
+    if (base && base.ingredient_rate) {
+      baseIngRate = parseFloat(base.ingredient_rate) / 100;
+    } else if (base && base.specialty && (base.specialty.includes('食材') || base.specialty === 'Ingredients')) {
+      baseIngRate = 0.28;
+    }
+
+    let ingRateMultiplier = 1.0;
+    if (subskills.includes('食材機率提升M')) ingRateMultiplier *= 1.36;
+    if (subskills.includes('食材機率提升S')) ingRateMultiplier *= 1.18;
+    if (nat && nat.buff && nat.buff.includes('食材')) ingRateMultiplier *= 1.20;
+    if (nat && nat.debuff && nat.debuff.includes('食材')) ingRateMultiplier *= 0.80;
+
+    const effectiveIngRate = Math.min(0.65, Math.max(0.05, baseIngRate * ingRateMultiplier));
+    const dailyIngHelps = dailyHelps * effectiveIngRate;
+
+    const rawIngSlots = [
+      item.ing1 || (base && base.ingredients && base.ingredients[0] ? base.ingredients[0].name : ''),
+      item.ing2 || (base && base.ingredients && base.ingredients[1] ? base.ingredients[1].name : ''),
+      item.ing3 || (base && base.ingredients && base.ingredients[2] ? base.ingredients[2].name : '')
+    ];
+
+    const slotMetas = [
+      { slotIdx: 0, unlockLv: 1, isUnlocked: true, name: rawIngSlots[0] },
+      { slotIdx: 1, unlockLv: 30, isUnlocked: level >= 30, name: rawIngSlots[1] },
+      { slotIdx: 2, unlockLv: 60, isUnlocked: level >= 60, name: rawIngSlots[2] }
+    ];
+
+    const unlockedSlots = slotMetas.filter(s => s.isUnlocked && s.name && s.name !== '--');
+    const numUnlocked = Math.max(1, unlockedSlots.length);
+    const helpsPerUnlockedSlot = dailyIngHelps / numUnlocked;
+
+    let totalDailyIngredientsCount = 0;
+    let totalDailyIngredientEnergy = 0;
+    const itemizedIngredients = [];
+
+    slotMetas.forEach(s => {
+      const dropCount = getIngCountFromBase(base, s.slotIdx, s.name);
+      const isUnlocked = s.isUnlocked;
+      let dailyCount = 0;
+      let dailyEnergy = 0;
+      const baseEnergy = (s.name && INGREDIENTS_ENERGY_MAP[s.name]) ? INGREDIENTS_ENERGY_MAP[s.name] : 110;
+
+      if (isUnlocked && s.name && s.name !== '--') {
+        dailyCount = helpsPerUnlockedSlot * dropCount;
+        dailyEnergy = Math.round(dailyCount * baseEnergy);
+        totalDailyIngredientsCount += dailyCount;
+        totalDailyIngredientEnergy += dailyEnergy;
+      }
+
+      itemizedIngredients.push({
+        slotIdx: s.slotIdx,
+        unlockLv: s.unlockLv,
+        isUnlocked: isUnlocked,
+        name: s.name || '',
+        dropCount: dropCount,
+        dailyCount: Math.round(dailyCount * 10) / 10,
+        dailyEnergy: dailyEnergy,
+        baseEnergy: baseEnergy
+      });
+    });
+
+    // 3. Berries
+    const berry = (typeof window.getPokemonBerry === 'function' && base) ? window.getPokemonBerry(base) : ((base && base.berry) || {});
+    let berryCount = (base && base.specialty && (base.specialty.includes('樹果') || base.specialty === 'Berries')) ? 2 : 1;
+    if (subskills.includes('樹果數量S')) berryCount += 1;
+
+    const bValueObj = (typeof BERRY_VALUES_DATA !== 'undefined' ? BERRY_VALUES_DATA : []).find(b => b.name === (berry.name || ''));
+    const baseBerryEnergy = bValueObj ? bValueObj.energy : 28;
+    const singleBerryPower = Math.max(1, baseBerryEnergy + level - 1);
+    const dailyBerryHelps = dailyHelps * (1 - effectiveIngRate);
+    const dailyBerryCount = Math.round(dailyBerryHelps * berryCount);
+    const dailyBerryEnergy = Math.round(dailyBerryCount * singleBerryPower);
+
+    // 4. Main Skill
+    const mainSkillName = (base && (base.main_skill || (base.skill && base.skill.name))) || item.main_skill || '';
+    let baseSkillRate = 0.035;
+    if (base && base.skill_rate) {
+      baseSkillRate = parseFloat(base.skill_rate) / 100;
+    } else if (base && base.specialty && (base.specialty.includes('技能') || base.specialty === 'Skills')) {
+      baseSkillRate = 0.055;
+    }
+
+    let skillMultiplier = 1.0;
+    if (subskills.includes('技能機率提升M')) skillMultiplier *= 1.36;
+    if (subskills.includes('技能機率提升S')) skillMultiplier *= 1.18;
+    if (nat && nat.buff && nat.buff.includes('主技能')) skillMultiplier *= 1.20;
+    if (nat && nat.debuff && nat.debuff.includes('主技能')) skillMultiplier *= 0.80;
+
+    const effectiveSkillRate = Math.min(0.35, Math.max(0.01, baseSkillRate * skillMultiplier));
+    const dailySkillProcs = Math.round((dailyHelps * effectiveSkillRate) * 100) / 100;
+
+    let dailySkillEnergy = 0;
+    const lvlIdx = Math.max(0, skillLevel - 1);
+    if (mainSkillName.includes('能量填充M') || mainSkillName.includes('Bad Dreams')) {
+      const tbl = [880, 1251, 1726, 2383, 3290, 4546, 6400];
+      dailySkillEnergy = Math.round(dailySkillProcs * (tbl[Math.min(lvlIdx, tbl.length - 1)] || 880));
+    } else if (mainSkillName.includes('能量填充S') || mainSkillName.includes('Charge Str. S') || mainSkillName.includes('Charge Strength S')) {
+      if (mainSkillName.includes('隨機') || mainSkillName.includes('Random')) {
+        const tbl = [500, 712, 982, 1354, 1870, 2583, 4015];
+        dailySkillEnergy = Math.round(dailySkillProcs * (tbl[Math.min(lvlIdx, tbl.length - 1)] || 500));
+      } else {
+        const tbl = [400, 569, 785, 1083, 1496, 2066, 3212];
+        dailySkillEnergy = Math.round(dailySkillProcs * (tbl[Math.min(lvlIdx, tbl.length - 1)] || 400));
+      }
+    } else if (mainSkillName.includes('食材獲取') || mainSkillName.includes('Ingredient Magnet')) {
+      const tbl = [6, 8, 11, 14, 17, 21, 24];
+      const count = tbl[Math.min(lvlIdx, tbl.length - 1)] || 6;
+      dailySkillEnergy = Math.round(dailySkillProcs * count * 115);
+    } else if (mainSkillName.includes('活力全體療癒') || mainSkillName.includes('Energy for Everyone')) {
+      dailySkillEnergy = Math.round(dailySkillProcs * 1800);
+    } else {
+      dailySkillEnergy = Math.round(dailySkillProcs * 650);
+    }
+
+    const totalDailyEnergy = dailyBerryEnergy + totalDailyIngredientEnergy + dailySkillEnergy;
+
+    return {
+      level,
+      effectiveInterval,
+      dailyHelps,
+      effectiveIngRate,
+      effectiveSkillRate,
+      dailyBerryCount,
+      dailyBerryEnergy,
+      singleBerryPower,
+      berryCount,
+      berry,
+      totalDailyIngredientsCount: Math.round(totalDailyIngredientsCount * 10) / 10,
+      totalDailyIngredientEnergy,
+      itemizedIngredients,
+      mainSkillName,
+      skillLevel,
+      dailySkillProcs,
+      dailySkillEnergy,
+      totalDailyEnergy
+    };
+  }
+
+  function formatSecsToMinSec(seconds, isEN) {
+    if (!seconds) return '--';
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    if (isEN) return `${m}m ${s ? `${s}s` : ''}`.trim();
+    return `${m}分${s ? `${s}秒` : ''}`;
+  }
+
   /* ─── 寶可夢對比 HTML 產生器 (Side-by-Side Comparison Renderer) ──────── */
   function renderComparisonView(userBox, pokemons, isEN, isMobileH5) {
     if (userBox.length === 0) {
@@ -3525,44 +3766,99 @@
     const evalA = evaluatePokemon(baseA, itemA.level || 30, itemA.nature || '坦率', itemA.subskills || [], [itemA.ing1, itemA.ing2, itemA.ing3], itemA.ribbon || 0, itemA.skillLevel || 1) || { scores: {}, compositeScore: 0, grade: 'B' };
     const evalB = evaluatePokemon(baseB, itemB.level || 30, itemB.nature || '坦率', itemB.subskills || [], [itemB.ing1, itemB.ing2, itemB.ing3], itemB.ribbon || 0, itemB.skillLevel || 1) || { scores: {}, compositeScore: 0, grade: 'B' };
 
-    const dualRadarSvg = renderDualRadarChartSVG(evalA.scores, evalB.scores, nameA, nameB, 360, 310);
+    const perfA = calculatePokemonComparisonPerformance(itemA, baseA);
+    const perfB = calculatePokemonComparisonPerformance(itemB, baseB);
 
-    const SIX_DIM_META = getSixDimMeta(isEN);
-    const diffBarsHtml = SIX_DIM_META.map(m => {
-      const sA = evalA.scores[m.key] || 0;
-      const sB = evalB.scores[m.key] || 0;
-      const diff = sA - sB;
-      let winnerBadge = '';
-      if (diff > 0) {
-        winnerBadge = `<span style="background:rgba(56,189,248,0.18);color:#38bdf8;padding:1px 6px;border-radius:4px;font-weight:700;font-size:10.5px;">A +${diff} ${isEN ? 'pts (Lead)' : '分 (領先)'}</span>`;
-      } else if (diff < 0) {
-        winnerBadge = `<span style="background:rgba(168,85,247,0.18);color:#c084fc;padding:1px 6px;border-radius:4px;font-weight:700;font-size:10.5px;">B +${Math.abs(diff)} ${isEN ? 'pts (Lead)' : '分 (領先)'}</span>`;
-      } else {
-        winnerBadge = `<span style="background:rgba(148,163,184,0.15);color:#94a3b8;padding:1px 6px;border-radius:4px;font-size:10.5px;">${isEN ? 'Tie' : '持平'}</span>`;
+    // 1. Total Daily Energy Comparison
+    const totalA = perfA.totalDailyEnergy;
+    const totalB = perfB.totalDailyEnergy;
+    const diffEnergy = totalA - totalB;
+    const pctEnergy = totalB > 0 ? ((diffEnergy / totalB) * 100).toFixed(1) : '0';
+    const energyBarWidthA = Math.max(10, Math.min(90, Math.round((totalA / (totalA + totalB || 1)) * 100)));
+    const energyBarWidthB = 100 - energyBarWidthA;
+
+    let energyLeadBadge = '';
+    if (diffEnergy > 0) {
+      energyLeadBadge = `<span class="lab-compare-kpi-badge lead-a">A ${isEN ? 'Leads' : '領先'} +${diffEnergy.toLocaleString()} (${pctEnergy}%)</span>`;
+    } else if (diffEnergy < 0) {
+      energyLeadBadge = `<span class="lab-compare-kpi-badge lead-b">B ${isEN ? 'Leads' : '領先'} +${Math.abs(diffEnergy).toLocaleString()} (${Math.abs(pctEnergy)}%)</span>`;
+    } else {
+      energyLeadBadge = `<span class="lab-compare-kpi-badge tie">${isEN ? 'Tie' : '持平'}</span>`;
+    }
+
+    const diffBerry = perfA.dailyBerryEnergy - perfB.dailyBerryEnergy;
+    const diffBerryText = diffBerry > 0 ? `A +${diffBerry.toLocaleString()}` : (diffBerry < 0 ? `B +${Math.abs(diffBerry).toLocaleString()}` : (isEN ? 'Tie' : '持平'));
+
+    const diffIngEnergy = perfA.totalDailyIngredientEnergy - perfB.totalDailyIngredientEnergy;
+    const diffIngEnergyText = diffIngEnergy > 0 ? `A +${diffIngEnergy.toLocaleString()}` : (diffIngEnergy < 0 ? `B +${Math.abs(diffIngEnergy).toLocaleString()}` : (isEN ? 'Tie' : '持平'));
+
+    const diffSkillEnergy = perfA.dailySkillEnergy - perfB.dailySkillEnergy;
+    const diffSkillEnergyText = diffSkillEnergy > 0 ? `A +${diffSkillEnergy.toLocaleString()}` : (diffSkillEnergy < 0 ? `B +${Math.abs(diffSkillEnergy).toLocaleString()}` : (isEN ? 'Tie' : '持平'));
+
+    // 2. Total Daily Ingredients Comparison
+    const ingA = perfA.totalDailyIngredientsCount;
+    const ingB = perfB.totalDailyIngredientsCount;
+    const diffIng = Math.round((ingA - ingB) * 10) / 10;
+    const pctIng = ingB > 0 ? ((diffIng / ingB) * 100).toFixed(1) : '0';
+    const ingBarWidthA = Math.max(10, Math.min(90, Math.round((ingA / (ingA + ingB || 1)) * 100)));
+    const ingBarWidthB = 100 - ingBarWidthA;
+
+    let ingLeadBadge = '';
+    if (diffIng > 0) {
+      ingLeadBadge = `<span class="lab-compare-kpi-badge lead-a">A ${isEN ? 'Yields +' : '多產 +'} ${diffIng} ${isEN ? 'items/day' : '顆/日'} (${pctIng}%)</span>`;
+    } else if (diffIng < 0) {
+      ingLeadBadge = `<span class="lab-compare-kpi-badge lead-b">B ${isEN ? 'Yields +' : '多產 +'} ${Math.abs(diffIng)} ${isEN ? 'items/day' : '顆/日'} (${Math.abs(pctIng)}%)</span>`;
+    } else {
+      ingLeadBadge = `<span class="lab-compare-kpi-badge tie">${isEN ? 'Tie' : '持平'}</span>`;
+    }
+
+    // 3. Itemized Slot Breakdown
+    const slotNamesEn = ['Slot 1 (Lv.1)', 'Slot 2 (Lv.30)', 'Slot 3 (Lv.60)'];
+    const slotNamesZh = ['第 1 欄位 (Lv.1)', '第 2 欄位 (Lv.30)', '第 3 欄位 (Lv.60)'];
+
+    const ingSlotRowsHtml = [0, 1, 2].map(idx => {
+      const slotLabel = isEN ? slotNamesEn[idx] : slotNamesZh[idx];
+      const slotA = perfA.itemizedIngredients.find(x => x.slotIdx === idx) || { name: '', dropCount: 0, dailyCount: 0, dailyEnergy: 0, isUnlocked: false, unlockLv: idx === 0 ? 1 : (idx === 1 ? 30 : 60) };
+      const slotB = perfB.itemizedIngredients.find(x => x.slotIdx === idx) || { name: '', dropCount: 0, dailyCount: 0, dailyEnergy: 0, isUnlocked: false, unlockLv: idx === 0 ? 1 : (idx === 1 ? 30 : 60) };
+
+      function renderSlotSide(slotData, colorHex, isSideB) {
+        if (!slotData.name || slotData.name === '--') {
+          return `<div class="lab-compare-slot-side ${isSideB ? 'side-b' : ''}" style="color:var(--text-muted);font-size:11px;">--</div>`;
+        }
+        const nameText = window.I18N ? window.I18N.getIngredientName(slotData.name) : slotData.name;
+        const icon = (window.I18N && typeof window.I18N.getIngredientIcon === 'function') ? window.I18N.getIngredientIcon(slotData.name) : '';
+        if (!slotData.isUnlocked) {
+          return `
+            <div class="lab-compare-slot-side ${isSideB ? 'side-b' : ''}" style="opacity:0.45;">
+              ${icon ? `<img src="${icon}" class="lab-compare-slot-icon" alt="${escapeHtml(nameText)}">` : ''}
+              <div class="lab-compare-slot-meta">
+                <span class="lab-compare-slot-name">${escapeHtml(nameText)}</span>
+                <span class="lab-compare-slot-yield" style="color:var(--text-muted);">${isEN ? `Locked (Lv.${slotData.unlockLv})` : `Lv.${slotData.unlockLv} 未開放`}</span>
+              </div>
+            </div>
+          `;
+        }
+        return `
+          <div class="lab-compare-slot-side ${isSideB ? 'side-b' : ''}">
+            ${icon ? `<img src="${icon}" class="lab-compare-slot-icon" alt="${escapeHtml(nameText)}">` : ''}
+            <div class="lab-compare-slot-meta">
+              <span class="lab-compare-slot-name">${escapeHtml(nameText)} <small style="font-weight:normal;color:var(--text-muted);">x${slotData.dropCount}</small></span>
+              <span class="lab-compare-slot-yield" style="color:${colorHex};">~${slotData.dailyCount} ${isEN ? 'items/day' : '顆/日'} <small style="color:var(--text-muted);">(+${slotData.dailyEnergy.toLocaleString()}能)</small></span>
+            </div>
+          </div>
+        `;
       }
 
       return `
-        <div class="lab-diff-row">
-          <div style="width:120px;font-weight:700;color:var(--text-secondary);display:flex;align-items:center;gap:4px;">
-            <span>${m.icon}</span>
-            <span>${m.label}</span>
-          </div>
-          <div style="flex:1;display:flex;align-items:center;gap:8px;">
-            <span style="font-weight:800;color:#38bdf8;width:32px;text-align:right;">${sA}</span>
-            <div style="flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;display:flex;overflow:hidden;">
-              <div style="width:${sA / (sA + sB || 1) * 100}%;background:#38bdf8;"></div>
-              <div style="width:${sB / (sA + sB || 1) * 100}%;background:#c084fc;"></div>
-            </div>
-            <span style="font-weight:800;color:#c084fc;width:32px;text-align:left;">${sB}</span>
-          </div>
-          <div style="width:90px;text-align:right;">
-            ${winnerBadge}
-          </div>
+        <div class="lab-compare-slot-row">
+          ${renderSlotSide(slotA, '#38bdf8', false)}
+          <span class="lab-compare-slot-tag">${slotLabel}</span>
+          ${renderSlotSide(slotB, '#c084fc', true)}
         </div>
       `;
     }).join('');
 
-    function renderSideCard(item, base, slot, evaluation, colorHex) {
+    function renderSideCard(item, base, slot, evaluation, colorHex, perf) {
       const pDisplayName = isEN ? (base ? (base.name_en || base.name_cn) : item.name) : (item.name || (base ? base.name_cn : ''));
       const avatarUrl = (base && (base.icon_url || base.icon)) || (base && base.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${base.formatted_no}.png` : '') || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
       const berry = (typeof window.getPokemonBerry === 'function' && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : {});
@@ -3600,24 +3896,45 @@
               <div style="font-size:10px;font-weight:700;">${evaluation.compositeScore || 0}分</div>
             </div>
           </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.06);font-size:11.5px;">
+            <span style="color:var(--text-muted);">${isEN ? 'Total Energy' : '預估總能量'}: <strong style="color:${colorHex};font-size:12.5px;">${(perf ? perf.totalDailyEnergy : 0).toLocaleString()}</strong></span>
+            <span style="color:var(--text-muted);">${isEN ? 'Ingredients' : '食材產量'}: <strong style="color:var(--text-primary);font-size:12.5px;">${perf ? perf.totalDailyIngredientsCount : 0} 顆/日</strong></span>
+          </div>
         </div>
       `;
     }
 
+    // Dynamic Verdict & Advice
     let verdictSummary = '';
-    const diffScore = (evalA.compositeScore || 0) - (evalB.compositeScore || 0);
-    if (diffScore > 5) {
+    if (diffEnergy > 1000 && diffIng > 5) {
       verdictSummary = isEN
-        ? `${nameA} leads overall with a composite score delta of +${diffScore} pts. Superior in active production consistency and current build synergy.`
-        : `【${nameA}】整體綜合評級較高 (+${diffScore} 分)，在目前階段的實用產能與技能契合度更勝一籌。`;
-    } else if (diffScore < -5) {
+        ? `【${nameA}】 demonstrates complete dominance in both total energy (+${diffEnergy.toLocaleString()} pts, +${pctEnergy}%) and ingredient yield (+${diffIng} items/day). Strongest all-around choice for active deployment.`
+        : `【${nameA}】在每日預估總能量 (+${diffEnergy.toLocaleString()} 能量, +${pctEnergy}%) 與食材產量 (+${diffIng} 顆/日) 均展現全面優勢，為現階段最推薦的主力派遣選手。`;
+    } else if (diffEnergy < -1000 && diffIng < -5) {
       verdictSummary = isEN
-        ? `${nameB} leads overall with a composite score delta of +${Math.abs(diffScore)} pts. Shows higher productivity output and optimization value.`
-        : `【${nameB}】整體綜合評級較高 (+${Math.abs(diffScore)} 分)，在隊伍輸出與戰略價值上更為突出。`;
+        ? `【${nameB}】 dominates both total energy (+${Math.abs(diffEnergy).toLocaleString()} pts, +${Math.abs(pctEnergy)}%) and ingredient yield (+${Math.abs(diffIng)} items/day). Clearly the superior investment.`
+        : `【${nameB}】在每日預估總能量 (+${Math.abs(diffEnergy).toLocaleString()} 能量, +${Math.abs(pctEnergy)}%) 與食材產量 (+${Math.abs(diffIng)} 顆/日) 雙雙領先，具備極高的實用戰略價值。`;
+    } else if (diffEnergy > 1500) {
+      verdictSummary = isEN
+        ? `【${nameA}】 leads substantially in total daily energy (+${diffEnergy.toLocaleString()} pts, +${pctEnergy}%), ideal for island rank pushing. 【${nameB}】 yields ${perfB.totalDailyIngredientsCount} items/day in ingredients, making it suited for cooking-focused strategies.`
+        : `【${nameA}】在每日預估總能量大幅領先 (+${diffEnergy.toLocaleString()} 能量, +${pctEnergy}%)，適合卡比獸衝分！而【${nameB}】每日產出 ${perfB.totalDailyIngredientsCount} 顆食材，適合作為備選的料理供糧手。`;
+    } else if (diffEnergy < -1500) {
+      verdictSummary = isEN
+        ? `【${nameB}】 leads substantially in total daily energy (+${Math.abs(diffEnergy).toLocaleString()} pts, +${Math.abs(pctEnergy)}%), superior for raw island power. 【${nameA}】 produces ${perfA.totalDailyIngredientsCount} items/day in ingredients.`
+        : `【${nameB}】在每日預估總能量大幅領先 (+${Math.abs(diffEnergy).toLocaleString()} 能量, +${Math.abs(pctEnergy)}%)，適合卡比獸衝分！而【${nameA}】每日產出 ${perfA.totalDailyIngredientsCount} 顆食材。`;
+    } else if (diffIng > 8) {
+      verdictSummary = isEN
+        ? `【${nameA}】 provides superior daily ingredient production (+${diffIng} items/day, +${pctIng}%), making it significantly better for high-pot recipes. Overall energy is close.`
+        : `【${nameA}】在食材產能上更為優異 (每日多產 +${diffIng} 顆, +${pctIng}%)，特別適合支撐大鍋料理；兩者每日總能量差距有限。`;
+    } else if (diffIng < -8) {
+      verdictSummary = isEN
+        ? `【${nameB}】 provides superior daily ingredient production (+${Math.abs(diffIng)} items/day, +${Math.abs(pctIng)}%), making it significantly better for high-pot recipes. Overall energy is close.`
+        : `【${nameB}】在食材產能上更為優異 (每日多產 +${Math.abs(diffIng)} 顆, +${Math.abs(pctIng)}%)，特別適合支撐大鍋料理；兩者每日總能量差距有限。`;
     } else {
       verdictSummary = isEN
-        ? `Both Pokémon are very close in overall performance. Consider choosing based on island favored berry match and cooking recipe requirements.`
-        : `兩隻寶可夢整體綜合評級旗鼓相當！建議依據本週研究營地的喜愛樹果屬性與預備製作的料理食譜需求進行派遣。`;
+        ? `Both Pokémon are very closely matched in both total energy (${perfA.totalDailyEnergy.toLocaleString()} vs ${perfB.totalDailyEnergy.toLocaleString()}) and ingredient yield. Consider choosing based on island favored berry and current cooking recipe demands.`
+        : `兩隻寶可夢在每日總能量 (${perfA.totalDailyEnergy.toLocaleString()} vs ${perfB.totalDailyEnergy.toLocaleString()}) 與食材產能上旗鼓相當！建議依照當週營地的喜愛樹果屬性與預備製作的料理食譜進行調配。`;
     }
 
     return `
@@ -3630,56 +3947,157 @@
         </div>
 
         <div class="lab-compare-grid">
-          ${renderSideCard(itemA, baseA, 'a', evalA, '#38bdf8')}
-          ${renderSideCard(itemB, baseB, 'b', evalB, '#c084fc')}
+          ${renderSideCard(itemA, baseA, 'a', evalA, '#38bdf8', perfA)}
+          ${renderSideCard(itemB, baseB, 'b', evalB, '#c084fc', perfB)}
         </div>
 
-        <div class="lab-compare-chart-box">
-          <div class="lab-dual-chart-container" style="width:100%;max-width:360px;display:flex;justify-content:center;">
-            ${dualRadarSvg}
+        <!-- 每日預估總能量對決看板 (Daily Energy Yield Comparison) -->
+        <div class="lab-compare-kpi-card" id="lab-compare-energy">
+          <div class="lab-compare-kpi-head">
+            <div class="lab-compare-kpi-title">
+              <span>[★]</span>
+              <span>${isEN ? 'Daily Total Energy Output' : '每日預估總能量比較'}</span>
+            </div>
+            ${energyLeadBadge}
           </div>
-          <div class="lab-compare-diff-list">
-            ${diffBarsHtml}
+
+          <div class="lab-compare-score-row">
+            <div class="lab-compare-score-val slot-a">
+              ${totalA.toLocaleString()}<span class="lab-compare-score-unit">${isEN ? 'pts/day' : '能量/日'}</span>
+            </div>
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-align:center;">
+              VS
+            </div>
+            <div class="lab-compare-score-val slot-b">
+              ${totalB.toLocaleString()}<span class="lab-compare-score-unit">${isEN ? 'pts/day' : '能量/日'}</span>
+            </div>
+          </div>
+
+          <div class="lab-compare-bar-container">
+            <div class="lab-compare-bar-a" style="width:${energyBarWidthA}%;"></div>
+            <div class="lab-compare-bar-b" style="width:${energyBarWidthB}%;"></div>
+          </div>
+
+          <div class="lab-compare-subgrid">
+            <div class="lab-compare-subitem">
+              <span class="lab-compare-subitem-lbl">${isEN ? 'Berry Energy' : '樹果能量'}</span>
+              <div class="lab-compare-subitem-vals">
+                <span style="color:#38bdf8;">${perfA.dailyBerryEnergy.toLocaleString()}</span>
+                <span style="color:var(--text-muted);font-size:10px;">${diffBerryText}</span>
+                <span style="color:#c084fc;">${perfB.dailyBerryEnergy.toLocaleString()}</span>
+              </div>
+            </div>
+            <div class="lab-compare-subitem">
+              <span class="lab-compare-subitem-lbl">${isEN ? 'Ingredient Energy' : '食材能量'}</span>
+              <div class="lab-compare-subitem-vals">
+                <span style="color:#38bdf8;">${perfA.totalDailyIngredientEnergy.toLocaleString()}</span>
+                <span style="color:var(--text-muted);font-size:10px;">${diffIngEnergyText}</span>
+                <span style="color:#c084fc;">${perfB.totalDailyIngredientEnergy.toLocaleString()}</span>
+              </div>
+            </div>
+            <div class="lab-compare-subitem">
+              <span class="lab-compare-subitem-lbl">${isEN ? 'Skill Energy (Est)' : '主技能能量'}</span>
+              <div class="lab-compare-subitem-vals">
+                <span style="color:#38bdf8;">${perfA.dailySkillEnergy.toLocaleString()}</span>
+                <span style="color:var(--text-muted);font-size:10px;">${diffSkillEnergyText}</span>
+                <span style="color:#c084fc;">${perfB.dailySkillEnergy.toLocaleString()}</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="lab-compare-matchup-table" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:14px;margin-bottom:16px;">
+        <!-- 每日食材產量比較看板 (Daily Ingredient Yields Breakdown) -->
+        <div class="lab-compare-kpi-card" id="lab-compare-ingredients">
+          <div class="lab-compare-kpi-head">
+            <div class="lab-compare-kpi-title">
+              <span>[★]</span>
+              <span>${isEN ? 'Daily Ingredient Yield Comparison' : '每日食材產量比較'}</span>
+            </div>
+            ${ingLeadBadge}
+          </div>
+
+          <div class="lab-compare-score-row">
+            <div class="lab-compare-score-val slot-a">
+              ${ingA}<span class="lab-compare-score-unit">${isEN ? 'items/day' : '顆/日'}</span>
+            </div>
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-align:center;">
+              VS
+            </div>
+            <div class="lab-compare-score-val slot-b">
+              ${ingB}<span class="lab-compare-score-unit">${isEN ? 'items/day' : '顆/日'}</span>
+            </div>
+          </div>
+
+          <div class="lab-compare-bar-container">
+            <div class="lab-compare-bar-a" style="width:${ingBarWidthA}%;"></div>
+            <div class="lab-compare-bar-b" style="width:${ingBarWidthB}%;"></div>
+          </div>
+
+          <div class="lab-compare-slot-grid" style="margin-top:6px;">
+            <div style="font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:2px;">
+              ${isEN ? 'Ingredient Slots Detailed Matchup:' : '各等級食材插槽產量細項對照：'}
+            </div>
+            ${ingSlotRowsHtml}
+          </div>
+        </div>
+
+        <!-- 幫手運作效能與機率全面對照 (Helping Speed & Probability Matchup) -->
+        <div class="lab-compare-matchup-table" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:14px;margin-bottom:14px;">
           <div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
             <span>[#]</span>
-            <span>${isEN ? 'Configuration & Build Matchup' : '配置與天賦全面對照'}</span>
+            <span>${isEN ? 'Operational Specs & Helping Rates' : '幫手運作效能與機率全面對照'}</span>
           </div>
 
           <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+            <div class="lab-compare-spec-row">
               <span style="color:#38bdf8;font-weight:700;width:35%;">${nameA} Lv.${itemA.level || 1}</span>
               <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Level' : '等級'}</span>
               <span style="color:#c084fc;font-weight:700;width:35%;text-align:right;">${nameB} Lv.${itemB.level || 1}</span>
             </div>
 
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+            <div class="lab-compare-spec-row">
+              <span style="color:#38bdf8;font-weight:600;width:35%;">${formatSecsToMinSec(perfA.effectiveInterval, isEN)}</span>
+              <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Help Interval' : '幫手週期'}</span>
+              <span style="color:#c084fc;font-weight:600;width:35%;text-align:right;">${formatSecsToMinSec(perfB.effectiveInterval, isEN)}</span>
+            </div>
+
+            <div class="lab-compare-spec-row">
+              <span style="color:#38bdf8;font-weight:600;width:35%;">${perfA.dailyHelps} ${isEN ? 'helps/day' : '次/日'}</span>
+              <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Daily Helps' : '每日幫手次數'}</span>
+              <span style="color:#c084fc;font-weight:600;width:35%;text-align:right;">${perfB.dailyHelps} ${isEN ? 'helps/day' : '次/日'}</span>
+            </div>
+
+            <div class="lab-compare-spec-row">
+              <span style="color:#38bdf8;font-weight:600;width:35%;">${(perfA.effectiveIngRate * 100).toFixed(1)}%</span>
+              <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Ingredient Rate' : '食材掉落率'}</span>
+              <span style="color:#c084fc;font-weight:600;width:35%;text-align:right;">${(perfB.effectiveIngRate * 100).toFixed(1)}%</span>
+            </div>
+
+            <div class="lab-compare-spec-row">
+              <span style="color:#38bdf8;font-weight:600;width:35%;">${(perfA.effectiveSkillRate * 100).toFixed(1)}% (~${perfA.dailySkillProcs}${isEN ? '/day' : '次'})</span>
+              <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Skill Rate' : '技能發動率/日'}</span>
+              <span style="color:#c084fc;font-weight:600;width:35%;text-align:right;">${(perfB.effectiveSkillRate * 100).toFixed(1)}% (~${perfB.dailySkillProcs}${isEN ? '/day' : '次'})</span>
+            </div>
+
+            <div class="lab-compare-spec-row">
               <span style="color:#38bdf8;font-weight:600;width:35%;">${window.I18N ? window.I18N.getNatureName(itemA.nature) : itemA.nature}</span>
               <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Nature' : '性格'}</span>
               <span style="color:#c084fc;font-weight:600;width:35%;text-align:right;">${window.I18N ? window.I18N.getNatureName(itemB.nature) : itemB.nature}</span>
             </div>
 
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+            <div class="lab-compare-spec-row" style="border-bottom:none;">
               <span style="color:#38bdf8;font-weight:600;width:35%;">${(baseA && baseA.main_skill) ? (window.I18N ? window.I18N.getMainSkillName(baseA.main_skill) : baseA.main_skill) : '--'} (Lv.${itemA.skillLevel || 1})</span>
-              <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Skill' : '主技能'}</span>
+              <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Main Skill' : '主技能'}</span>
               <span style="color:#c084fc;font-weight:600;width:35%;text-align:right;">${(baseB && baseB.main_skill) ? (window.I18N ? window.I18N.getMainSkillName(baseB.main_skill) : baseB.main_skill) : '--'} (Lv.${itemB.skillLevel || 1})</span>
-            </div>
-
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
-              <span style="color:#38bdf8;font-weight:600;width:35%;">${[itemA.ing1, itemA.ing2, itemA.ing3].filter(Boolean).map(n => window.I18N ? window.I18N.getIngredientName(n) : n).join(' · ') || '--'}</span>
-              <span style="color:var(--text-muted);font-weight:700;width:30%;text-align:center;">${isEN ? 'Ingredients' : '食材組合'}</span>
-              <span style="color:#c084fc;font-weight:600;width:35%;text-align:right;">${[itemB.ing1, itemB.ing2, itemB.ing3].filter(Boolean).map(n => window.I18N ? window.I18N.getIngredientName(n) : n).join(' · ') || '--'}</span>
             </div>
           </div>
         </div>
 
+        <!-- 深度研究室對比結論與培育建議 -->
         <div class="lab-compare-verdict-card" style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.25);border-radius:10px;padding:14px;">
           <div style="font-size:12.5px;font-weight:800;color:var(--accent-color,#38bdf8);margin-bottom:6px;display:flex;align-items:center;gap:4px;">
             <span>[*]</span>
-            <span>${isEN ? 'Research Lab Comparative Verdict' : '深度研究室對比結論與培育建議'}</span>
+            <span>${isEN ? 'Research Lab Comparative Verdict & Advice' : '深度研究室對比結論與培育建議'}</span>
           </div>
           <div style="font-size:12px;color:#e2e8f0;line-height:1.5;">
             ${verdictSummary}
@@ -3996,6 +4414,8 @@
     calculateMilestoneCost: calculateMilestoneCost,
     openModal: openAppraisalModal,
     closeModal: closeAppraisalModal,
+    openCurrentEditModal: openCurrentEditModal,
+    calculatePokemonComparisonPerformance: calculatePokemonComparisonPerformance,
     renderLab: renderAppraisalLabContainer,
     getSkillTier: getSkillTier,
     loadBoxItem: loadBoxItem,
@@ -4048,5 +4468,6 @@
   // 全域別名
   window.openAppraisalModal = openAppraisalModal;
   window.closeAppraisalModal = closeAppraisalModal;
+  window.openCurrentEditModal = openCurrentEditModal;
 
 })();

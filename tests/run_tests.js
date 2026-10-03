@@ -9867,9 +9867,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     ctx.window.AppraisalLab.switchSubTab('compare');
     assert(mockContainer.innerHTML.includes('lab-compare-grid'), 'Compare view must render lab-compare-grid');
     assert(mockContainer.innerHTML.includes('選手 A'), 'Compare view must render 選手 A');
-    assert(mockContainer.innerHTML.includes('選手 B'), 'Compare view must render 選手 B');
-    assert(mockContainer.innerHTML.includes('lab-dual-chart-container'), 'Compare view must render dual radar chart');
-    assert(mockContainer.innerHTML.includes('lab-diff-row'), 'Compare view must render dimension difference rows');
+    assert(mockContainer.innerHTML.includes('lab-compare-energy'), 'Compare view must render daily energy comparison');
+    assert(mockContainer.innerHTML.includes('lab-compare-ingredients'), 'Compare view must render daily ingredient yield comparison');
+    assert(mockContainer.innerHTML.includes('每日預估總能量比較'), 'Compare view must render total daily energy label');
+    assert(mockContainer.innerHTML.includes('每日食材產量比較'), 'Compare view must render daily ingredient comparison label');
 
     // Test Swap Slots
     ctx.window.AppraisalLab.swapCompareSlots();
@@ -10059,6 +10060,107 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     assert(modalCreated.innerHTML.includes('sheet-drag-handle'), 'Mobile openModal must render sheet drag handle');
     assert(modalCreated.innerHTML.includes('box-modal-header'), 'Mobile openModal must render box modal header');
     assert(modalCreated.innerHTML.includes('小花'), 'Mobile openModal must render nickname');
+  });
+
+  // ─── Test 188: Modal Dismissal, In-Place Edit Trigger & Compare View Overhaul Verification ─
+  test('Tier 4 - Real-World Application Scenarios', 'Modal Dismissal, In-Place Edit Trigger & Compare View Overhaul Verification', () => {
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+
+    // 1. Verify CSS rules for backdrop display none and modal sheet close animation
+    assert(stylesCss.includes('#modal-appraisal-report[style*="display: none"]') ||
+           stylesCss.includes('.mobile-h5-app #modal-appraisal-report[style*="display: none"]'),
+           'styles.css must have display: none !important rule for modal-appraisal-report');
+    assert(stylesCss.includes('.mobile-h5-app #modal-appraisal-report.overlay-closing .mobile-box-sheet'),
+           'styles.css must have exit animation for mobile appraisal report sheet');
+    assert(stylesCss.includes('#modal-appraisal-report .box-modal-header-confirm'),
+           'styles.css must style box-modal-header-confirm for appraisal modal');
+
+    // 2. Verify JS methods exist
+    assert(appraisalJs.includes('openCurrentEditModal'), 'appraisal.js must define openCurrentEditModal');
+    assert(appraisalJs.includes('calculatePokemonComparisonPerformance'), 'appraisal.js must define calculatePokemonComparisonPerformance');
+    assert(appraisalJs.includes('lab-compare-energy'), 'appraisal.js must include lab-compare-energy');
+    assert(appraisalJs.includes('lab-compare-ingredients'), 'appraisal.js must include lab-compare-ingredients');
+    assert(!appraisalJs.includes('${JSON.stringify(pkmOrBoxItem.rawItem).replace(/"/g, \'&quot;\')}'),
+           'appraisal.js must not contain raw stringified JSON in inline onclick attribute');
+
+    // 3. Test runtime behavior in VM
+    let editOpenedWith = null;
+    const modalEl = {
+      id: 'modal-appraisal-report',
+      style: {
+        display: 'flex',
+        setProperty(prop, val) { this[prop] = val; },
+        removeProperty(prop) { delete this[prop]; }
+      },
+      classList: {
+        classes: new Set(),
+        add(c) { this.classes.add(c); },
+        remove(c) { this.classes.delete(c); },
+        contains(c) { return this.classes.has(c); }
+      },
+      className: '',
+      innerHTML: '',
+      setAttribute() {}
+    };
+
+    const ctx = {
+      window: {
+        IS_MOBILE_H5: true,
+        UserBox: {
+          getUserBox: () => [{ uid: 'test-pkm-1', name: '妙蛙花', level: 50 }],
+          openBoxEditModal: (item) => { editOpenedWith = item; }
+        }
+      },
+      document: {
+        querySelector: (s) => (s === '.mobile-h5-app' ? true : null),
+        getElementById: (id) => (id === 'modal-appraisal-report' ? modalEl : null),
+        createElement: () => modalEl,
+        body: { classList: { contains: (c) => c === 'mobile-h5-app' }, style: {}, appendChild() {} }
+      },
+      console, Set, Array, parseInt, Math, String
+    };
+    ctx.window.window = ctx.window;
+    ctx.window.document = ctx.document;
+    ctx.window.allPokemons = [
+      { id: 3, name_cn: '妙蛙花', specialty: '食材', type: '草', main_skill: '食材獲取S', ingredients: [{ name: '特選蘋果', count: 2 }] }
+    ];
+    ctx.window.I18N = {
+      getLanguage: () => 'zh-TW',
+      getSubSkillName: (n) => n,
+      getMainSkillName: (n) => n,
+      getIngredientName: (n) => n,
+      getNatureName: (n) => n,
+      getSpecialtyName: (n) => n,
+      getTypeName: (n) => n,
+      getBerryName: (n) => n,
+      getIngredientIcon: () => '',
+      getSpecialtyIconHtml: (spec, size, cls) => `<span class="${cls}">${spec}</span>`
+    };
+
+    vm.createContext(ctx);
+    vm.runInContext(appraisalJs, ctx);
+
+    // Open modal with raw item
+    ctx.window.AppraisalLab.openModal({
+      pkm: ctx.window.allPokemons[0],
+      level: 50,
+      nature: '坦率',
+      subskills: [],
+      rawItem: { uid: 'test-pkm-1', name: '妙蛙花', level: 50 }
+    });
+
+    assert(ctx.window.AppraisalLab._currentBoxItem !== null, 'openModal must store _currentBoxItem');
+    assert(ctx.window.AppraisalLab._currentBoxItem.uid === 'test-pkm-1', 'stored item must match passed rawItem');
+
+    // Call openCurrentEditModal
+    ctx.window.AppraisalLab.openCurrentEditModal();
+    assert(modalEl.style.display === 'none', 'openCurrentEditModal must hide appraisal modal');
+    assert(editOpenedWith !== null && editOpenedWith.uid === 'test-pkm-1', 'openCurrentEditModal must open UserBox edit modal with item');
+
+    // Call closeModal
+    ctx.window.AppraisalLab.closeModal();
+    assert(modalEl.style.display === 'none', 'closeModal must set modal display to none');
   });
 
 console.log('                   Test Results Summary');

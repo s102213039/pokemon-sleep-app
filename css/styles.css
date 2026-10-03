@@ -14129,6 +14129,216 @@ input[type="number"] {
   font-size: 12px;
 }
 
+/* 寶可夢深度對比看板：能量與食材產量高對比視圖 (Comparison Dashboard) */
+.lab-compare-kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lab-compare-kpi-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lab-compare-kpi-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lab-compare-kpi-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.lab-compare-kpi-badge.lead-a {
+  background: rgba(56, 189, 248, 0.18);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.lab-compare-kpi-badge.lead-b {
+  background: rgba(192, 132, 252, 0.18);
+  color: #c084fc;
+  border: 1px solid rgba(192, 132, 252, 0.35);
+}
+
+.lab-compare-kpi-badge.tie {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.lab-compare-score-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.lab-compare-score-val {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.1;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+.lab-compare-score-val.slot-a {
+  color: #38bdf8;
+}
+
+.lab-compare-score-val.slot-b {
+  color: #c084fc;
+  text-align: right;
+}
+
+.lab-compare-score-unit {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+.lab-compare-bar-container {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+.lab-compare-bar-a {
+  background: linear-gradient(90deg, #0284c7, #38bdf8);
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.lab-compare-bar-b {
+  background: linear-gradient(90deg, #c084fc, #9333ea);
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.lab-compare-subgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.05));
+}
+
+.lab-compare-subitem {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 11.5px;
+}
+
+.lab-compare-subitem-lbl {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.lab-compare-subitem-vals {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.lab-compare-slot-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lab-compare-slot-row {
+  display: grid;
+  grid-template-columns: 1fr 60px 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.04));
+}
+
+.lab-compare-slot-side {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lab-compare-slot-side.side-b {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.lab-compare-slot-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.lab-compare-slot-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.lab-compare-slot-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lab-compare-slot-yield {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.lab-compare-slot-tag {
+  justify-self: center;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.lab-compare-spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 12px;
+}
+
 /* 自訂隊員/選手挑選彈窗 (Picker Modal) */
 .lab-picker-modal {
   position: fixed;
@@ -22585,16 +22795,31 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
 .mobile-h5-app #box-edit-modal .mobile-box-sheet .box-modal-header,
 .mobile-h5-app #modal-appraisal-report .mobile-box-sheet .box-modal-header {
   display: grid !important;
-  grid-template-columns: minmax(48px, 1fr) auto minmax(48px, 1fr) !important;
+  grid-template-columns: 60px 1fr 60px !important;
   align-items: center !important;
-  padding: 2px 14px 8px !important;
+  padding: 4px 16px 10px 16px !important;
   border: none !important;
   background: transparent !important;
   flex-shrink: 0 !important;
 }
 
+.mobile-h5-app #modal-appraisal-report .box-modal-title {
+  margin: 0 !important;
+  text-align: center !important;
+  justify-self: center !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 100% !important;
+}
+
 .mobile-h5-app #box-edit-modal .box-modal-header-cancel,
 .mobile-h5-app #modal-appraisal-report .box-modal-header-cancel {
+  justify-self: start !important;
+  text-align: left !important;
   font-size: 15px !important;
   font-weight: 600 !important;
   color: var(--text-secondary) !important;
@@ -22602,14 +22827,25 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   border: none !important;
   box-shadow: none !important;
   padding: 6px 0 !important;
+  cursor: pointer !important;
 }
 
+#box-edit-modal .box-modal-header-confirm,
+#modal-appraisal-report .box-modal-header-confirm,
 .mobile-h5-app #box-edit-modal .box-modal-header-confirm,
 .mobile-h5-app #modal-appraisal-report .box-modal-header-confirm {
+  justify-self: end !important;
+  background: var(--accent-gradient, linear-gradient(135deg, #6366f1, #38bdf8)) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: none !important;
   height: 32px !important;
-  padding: 0 12px !important;
-  font-size: 13.5px !important;
+  padding: 0 14px !important;
   border-radius: 8px !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
 }
 
 .mobile-h5-app #modal-appraisal-report.box-modal-backdrop,
@@ -22625,12 +22861,21 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
   z-index: 1050 !important;
-  display: flex !important;
+  display: flex;
   align-items: flex-end !important;
   justify-content: center !important;
   padding: 0 !important;
   margin: 0 !important;
   box-sizing: border-box !important;
+}
+
+.mobile-h5-app #modal-appraisal-report[style*="display: none"],
+.mobile-h5-app #modal-appraisal-report[style*="display:none"],
+.mobile-h5-app .appraisal-modal-backdrop[style*="display: none"],
+.mobile-h5-app .appraisal-modal-backdrop[style*="display:none"],
+#modal-appraisal-report[style*="display: none"],
+#modal-appraisal-report[style*="display:none"] {
+  display: none !important;
 }
 
 .mobile-h5-app #modal-appraisal-report .mobile-box-sheet {
@@ -30054,6 +30299,7 @@ body:not(.mobile-h5-app) #wiki-subpanel-ratings .wiki-strategy-grid {
 
 .mobile-h5-app #pokedex-detail-modal.overlay-closing .pokedex-modal-dialog,
 .mobile-h5-app #box-edit-modal.overlay-closing .mobile-box-sheet,
+.mobile-h5-app #modal-appraisal-report.overlay-closing .mobile-box-sheet,
 .mobile-h5-app .overlay-closing .mobile-modal-sheet,
 .mobile-h5-app .overlay-closing .mobile-settings-sheet {
   animation: overlaySheetOut 0.32s cubic-bezier(0.4, 0, 1, 1) forwards !important;
