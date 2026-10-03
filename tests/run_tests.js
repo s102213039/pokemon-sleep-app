@@ -10393,6 +10393,22 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     assert(mockContainer.innerHTML.includes('lab-team-slot-card'), 'Optimized team must render team cards');
   });
 
+  // ─── Test 190: Appraisal edit flow wiring and grid picker ─
+  test('Tier 4 - Real-World Application Scenarios', 'Appraisal Edit Flow Wiring (UserBox export, reopen after edit) & Grid Picker Cards', () => {
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+
+    const exportBlock = boxJs.slice(boxJs.indexOf('window.PokemonBoxApp = {'), boxJs.indexOf('window.UserBox = window.PokemonBoxApp'));
+    assert(exportBlock.includes('openBoxEditModal'), 'PokemonBoxApp must export openBoxEditModal');
+    assert(exportBlock.includes('closeBoxEditModal'), 'PokemonBoxApp must export closeBoxEditModal');
+    assert(boxJs.includes('reopenAfterEdit'), 'closeBoxEditModal must call AppraisalLab.reopenAfterEdit');
+    assert(appraisalJs.includes('reopenAfterEdit: reopenAfterEdit'), 'AppraisalLab must export reopenAfterEdit');
+    assert(stylesCss.includes('.appraisal-edit-btn'), 'styles.css must style .appraisal-edit-btn');
+    assert(stylesCss.includes('.lab-picker-card'), 'styles.css must style .lab-picker-card grid cards');
+    assert(stylesCss.includes('.lab-picker-avatar'), 'styles.css must style .lab-picker-avatar');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

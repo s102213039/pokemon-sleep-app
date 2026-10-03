@@ -2321,6 +2321,9 @@
       if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
       const dialog = modal.querySelector ? modal.querySelector('.box-modal-dialog') : null;
       if (dialog && dialog.classList) dialog.classList.remove('has-screenshot');
+      if (window.AppraisalLab && typeof window.AppraisalLab.reopenAfterEdit === 'function') {
+        window.AppraisalLab.reopenAfterEdit();
+      }
     };
     if (typeof window.animateOverlayClose === 'function') window.animateOverlayClose(modal, done);
     else { modal.style.display = 'none'; done(); }
@@ -3943,6 +3946,8 @@
       updateModalMainSkill,
       deduceRibbonFromCarry,
       initPokemonCombobox,
+      openBoxEditModal,
+      closeBoxEditModal,
       setAllPokemons: (p) => { allPokemonsRef = p || []; },
       buildOcrCompositeCanvas,
       parsePokemonFromOcr,

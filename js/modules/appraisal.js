@@ -2273,8 +2273,32 @@
     if (!item) return;
     if (window.UserBox && typeof window.UserBox.openBoxEditModal === 'function') {
       const fresh = (typeof window.UserBox.getUserBox === 'function' && window.UserBox.getUserBox().find(p => p.uid === item.uid)) || item;
+      if (window.AppraisalLab) window.AppraisalLab._reopenUid = item.uid;
       window.UserBox.openBoxEditModal(fresh);
     }
+  }
+
+  function reopenAfterEdit() {
+    const lab = window.AppraisalLab;
+    if (!lab || !lab._reopenUid) return;
+    const uid = lab._reopenUid;
+    lab._reopenUid = null;
+    const box = (window.UserBox && typeof window.UserBox.getUserBox === 'function') ? window.UserBox.getUserBox() : [];
+    const item = box.find(p => p.uid === uid);
+    if (!item) return;
+    const pokemons = window.allPokemons || [];
+    const base = findBasePkm(item.pokemonId || item.name) || pokemons.find(p => p.name_cn === item.name);
+    openAppraisalModal({
+      pkm: base,
+      level: item.level || 30,
+      nature: item.nature || '坦率',
+      subskills: item.subskills || [],
+      ingredients: [item.ing1, item.ing2, item.ing3],
+      ribbon: item.ribbon || 0,
+      nickname: item.nickname || '',
+      skillLevel: item.skillLevel || 1,
+      rawItem: item
+    });
   }
 
   function closeAppraisalModal() {
@@ -3421,32 +3445,34 @@
         return `<div style="padding:30px;text-align:center;color:var(--text-muted);font-size:13px;grid-column:1/-1;">${isEN ? 'No matching Pokémon found in Box' : '倉庫中未找到符合條件之寶可夢'}</div>`;
       }
 
+      let selectedUids = [];
+      if (opts.type === 'compare') selectedUids = [String(opts.compareSlot || 'a').toLowerCase() === 'b' ? labState.compareUidB : labState.compareUidA];
+      else if (opts.type === 'team') selectedUids = (labState.teamSlots || []).filter(Boolean);
+
       return filtered.map(item => {
         const base = findBasePkm(item.pokemonId || item.name);
         const pDisplayName = isEN ? (base ? (base.name_en || base.name_cn) : item.name) : (item.name || (base ? base.name_cn : ''));
         const avatarUrl = (base && (base.icon_url || base.icon)) || (base && base.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${base.formatted_no}.png` : '') || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
         const berry = (typeof window.getPokemonBerry === 'function' && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : {});
         const isFav = favBerries.includes(berry.name || '') || favTypes.includes(berry.type || (base ? base.type : '') || '');
-        const specName = window.I18N && base ? window.I18N.getSpecialtyName(base.specialty) : (base ? base.specialty : '');
+        const specHtml = (window.I18N && window.I18N.getSpecialtyIconHtml && base) ? window.I18N.getSpecialtyIconHtml(base.specialty, 16) : '';
         const natDisplayName = window.I18N ? window.I18N.getNatureName(item.nature) : item.nature;
+        const isSel = selectedUids.includes(item.uid);
 
         return `
-          <div class="lab-picker-card" data-uid="${item.uid}" onclick="window.AppraisalLab.onPickerSelect('${item.uid}')">
-            <div style="position:relative;flex-shrink:0;">
-              <img src="${avatarUrl}" style="width:40px;height:40px;object-fit:contain;" alt="${escapeHtml(pDisplayName)}" loading="lazy">
-              <span style="position:absolute;bottom:-4px;right:-4px;background:#0f172a;border:1px solid #334155;border-radius:4px;padding:0 3px;font-size:9.5px;font-weight:800;color:#94a3b8;">Lv.${item.level || 1}</span>
+          <div class="lab-picker-card ${isSel ? 'selected' : ''} ${isFav ? 'fav' : ''}" data-uid="${item.uid}" onclick="window.AppraisalLab.onPickerSelect('${item.uid}')">
+            ${isFav ? `<span class="lab-picker-fav-badge">2x</span>` : ''}
+            <div class="lab-picker-avatar">
+              <img src="${avatarUrl}" alt="${escapeHtml(pDisplayName)}" loading="lazy">
+              <span class="lab-picker-lv">Lv.${item.level || 1}</span>
             </div>
-            <div style="flex:1;min-width:0;">
-              <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
-                <span style="font-size:12.5px;font-weight:700;color:var(--text-primary);">${escapeHtml(pDisplayName)}</span>
-                ${item.nickname ? `<span style="font-size:11px;color:var(--accent-color,#38bdf8);">(${escapeHtml(item.nickname)})</span>` : ''}
-              </div>
-              <div style="display:flex;align-items:center;gap:6px;margin-top:2px;font-size:11px;color:var(--text-muted);flex-wrap:wrap;">
-                ${berry.icon ? `<img src="${berry.icon}" style="width:14px;height:14px;object-fit:contain;vertical-align:middle;" alt="Berry">` : ''}
-                ${isFav ? `<span style="background:rgba(234,179,8,0.2);color:#facc15;padding:0 4px;border-radius:3px;font-weight:700;font-size:10px;">2x 喜愛</span>` : ''}
-                <span>${specName}</span>
-                <span>·</span>
-                <span>${natDisplayName}</span>
+            <div class="lab-picker-meta">
+              <div class="lab-picker-name">${escapeHtml(pDisplayName)}</div>
+              ${item.nickname ? `<div class="lab-picker-nick">${escapeHtml(item.nickname)}</div>` : ''}
+              <div class="lab-picker-sub">
+                ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry">` : ''}
+                ${specHtml}
+                <span class="lab-picker-nature">${natDisplayName || ''}</span>
               </div>
             </div>
           </div>
@@ -4681,6 +4707,7 @@
     openModal: openAppraisalModal,
     closeModal: closeAppraisalModal,
     openCurrentEditModal: openCurrentEditModal,
+    reopenAfterEdit: reopenAfterEdit,
     calculatePokemonComparisonPerformance: calculatePokemonComparisonPerformance,
     renderLab: renderAppraisalLabContainer,
     getSkillTier: getSkillTier,
