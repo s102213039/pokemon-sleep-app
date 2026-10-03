@@ -9865,7 +9865,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
 
     // 8. Test Comparison Subtab
     ctx.window.AppraisalLab.switchSubTab('compare');
-    assert(mockContainer.innerHTML.includes('lab-compare-grid'), 'Compare view must render lab-compare-grid');
+    assert(mockContainer.innerHTML.includes('lab-compare-vs-header'), 'Compare view must render lab-compare-vs-header');
     assert(mockContainer.innerHTML.includes('選手 A'), 'Compare view must render 選手 A');
     assert(mockContainer.innerHTML.includes('lab-compare-energy'), 'Compare view must render daily energy comparison');
     assert(mockContainer.innerHTML.includes('lab-compare-ingredients'), 'Compare view must render daily ingredient yield comparison');
@@ -9874,7 +9874,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
 
     // Test Swap Slots
     ctx.window.AppraisalLab.swapCompareSlots();
-    assert(mockContainer.innerHTML.includes('lab-compare-grid'), 'Swap slots must re-render comparison grid');
+    assert(mockContainer.innerHTML.includes('lab-compare-vs-header'), 'Swap slots must re-render comparison header');
 
     // 9. Test Custom Picker Modal
     ctx.window.AppraisalLab.openPicker({ type: 'team', slotIndex: 0 });
@@ -10161,6 +10161,236 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     // Call closeModal
     ctx.window.AppraisalLab.closeModal();
     assert(modalEl.style.display === 'none', 'closeModal must set modal display to none');
+  });
+
+  // ─── Test 189: Research Lab Overhaul: VS Header Matchup, Cross-Slot Distinct Ingredients & Team Config Variables ─
+  test('Tier 4 - Real-World Application Scenarios', 'Research Lab Overhaul: VS Header Matchup, Cross-Slot Distinct Ingredients & Team Config Variables', () => {
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+
+    // 1. Static CSS verification
+    assert(stylesCss.includes('.lab-compare-vs-header'), 'styles.css must style .lab-compare-vs-header');
+    assert(stylesCss.includes('.lab-compare-distinct-row'), 'styles.css must style .lab-compare-distinct-row');
+    assert(stylesCss.includes('.lab-team-config-panel'), 'styles.css must style .lab-team-config-panel');
+    assert(stylesCss.includes('.lab-greengrass-berries-config'), 'styles.css must style .lab-greengrass-berries-config');
+    assert(stylesCss.includes('.lab-berry-select'), 'styles.css must style .lab-berry-select');
+    assert(stylesCss.includes('.lab-compare-vs-badge'), 'styles.css must style .lab-compare-vs-badge');
+
+    // 2. Static JS verification
+    assert(appraisalJs.includes('COOKING_CATEGORY_KEY_INGREDIENTS'), 'appraisal.js must define COOKING_CATEGORY_KEY_INGREDIENTS');
+    assert(appraisalJs.includes('setTeamStrategy: setTeamStrategy'), 'appraisal.js must export setTeamStrategy');
+    assert(appraisalJs.includes('setCookingType: setCookingType'), 'appraisal.js must export setCookingType');
+    assert(appraisalJs.includes('setGreengrassBerry: setGreengrassBerry'), 'appraisal.js must export setGreengrassBerry');
+    assert(appraisalJs.includes('distinctIngRowsHtml'), 'appraisal.js must aggregate distinct ingredients');
+    const compViewFn = appraisalJs.slice(appraisalJs.indexOf('function renderComparisonView'), appraisalJs.indexOf('function renderTeamBuilderView'));
+    assert(!compViewFn.includes('swapCompareSlots'), 'renderComparisonView must not render swapCompareSlots button');
+
+    // 3. VM runtime execution
+    const mockElements = new Map();
+    const createdElements = [];
+    const mockDOMElement = (id = '', tagName = 'div') => {
+      const el = {
+        id: id,
+        tagName: tagName.toUpperCase(),
+        innerHTML: '',
+        value: '',
+        style: { display: '' },
+        classList: {
+          classes: new Set(),
+          add(c) { this.classes.add(c); },
+          remove(c) { this.classes.delete(c); },
+          contains(c) { return this.classes.has(c); }
+        },
+        querySelectorAll: () => [],
+        querySelector: () => null,
+        appendChild: (child) => { createdElements.push(child); return child; },
+        addEventListener: () => {}
+      };
+      if (id) mockElements.set(id, el);
+      return el;
+    };
+
+    const mockStorage = new Map();
+    const ctx = {
+      window: {
+        IS_MOBILE_H5: false,
+        localStorage: {
+          getItem: (k) => mockStorage.get(k) || null,
+          setItem: (k, v) => mockStorage.set(k, String(v)),
+          removeItem: (k) => mockStorage.delete(k)
+        },
+        I18N: {
+          getLanguage: () => 'zh-TW',
+          getSubSkillName: (n) => n,
+          getMainSkillName: (n) => n,
+          getIngredientName: (n) => n,
+          getNatureName: (n) => n,
+          getSpecialtyName: (n) => n,
+          getTypeName: (n) => n,
+          getBerryName: (n) => n,
+          getIngredientIcon: () => 'assets/ingredients/test.png',
+          getSpecialtyIconHtml: (spec, size, cls) => `<span class="${cls}">${spec}</span>`
+        },
+        PokemonApp: {
+          getPokemons: () => [
+            {
+              id: 3,
+              name_cn: '妙蛙花',
+              name_en: 'Venusaur',
+              type: '草',
+              specialty: '食材',
+              base_frequency: 2800,
+              berry: { name: '榴果', type: '草', power: 26, count: 1, icon: 'assets/berries/durin.png' },
+              main_skill: '食材獲取S',
+              skill: { name: '食材獲取S' },
+              subskills: ['食材機率提升M', '幫手獎勵', '幫手速度M', '持有上限提升L', '技能機率M']
+            },
+            {
+              id: 9,
+              name_cn: '水箭龜',
+              name_en: 'Blastoise',
+              type: '水',
+              specialty: '食材',
+              base_frequency: 2700,
+              berry: { name: '橙橙果', type: '水', power: 25, count: 1, icon: 'assets/berries/oran.png' },
+              main_skill: '食材獲取S',
+              skill: { name: '食材獲取S' },
+              subskills: ['食材機率提升M', '持有上限提升L', '幫手速度M', '技能機率S', '樹果數量S']
+            },
+            {
+              id: 26,
+              name_cn: '雷丘',
+              name_en: 'Raichu',
+              type: '電',
+              specialty: '樹果',
+              base_frequency: 2200,
+              berry: { name: '零餘果', type: '電', power: 25, count: 2, icon: 'assets/berries/rawst.png' },
+              main_skill: '能量填充S',
+              skill: { name: '能量填充S' },
+              subskills: ['樹果數量S', '幫手速度M', '幫手獎勵', '食材機率提升M', '持有上限提升L']
+            }
+          ]
+        },
+        UserBox: {
+          getUserBox: () => [
+            {
+              uid: 'box-pkm-1',
+              pokemonId: 3,
+              name: '妙蛙花',
+              nickname: '大蒜蛙',
+              level: 50,
+              nature: '冷靜',
+              subskills: ['食材機率提升M', '幫手獎勵'],
+              ing1: '特選蘋果',
+              ing2: '甜甜蜜',
+              ing3: '甜甜蜜',
+              ribbon: 2,
+              skillLevel: 4
+            },
+            {
+              uid: 'box-pkm-2',
+              pokemonId: 9,
+              name: '水箭龜',
+              nickname: '烏龜大叔',
+              level: 50,
+              nature: '內斂',
+              subskills: ['食材機率提升M', '幫手速度M'],
+              ing1: '哞哞鮮奶',
+              ing2: '哞哞鮮奶',
+              ing3: '可可豆',
+              ribbon: 1,
+              skillLevel: 3
+            },
+            {
+              uid: 'box-pkm-3',
+              pokemonId: 26,
+              name: '雷丘',
+              nickname: '閃電',
+              level: 60,
+              nature: '固執',
+              subskills: ['樹果數量S', '幫手速度M'],
+              ing1: '特選蘋果',
+              ing2: '暖暖薑',
+              ing3: '暖暖薑',
+              ribbon: 3,
+              skillLevel: 6
+            }
+          ]
+        },
+        document: {
+          getElementById: (id) => mockElements.get(id) || null,
+          querySelector: (s) => (s && s.startsWith('#') ? (mockElements.get(s.slice(1)) || null) : null),
+          querySelectorAll: () => [],
+          createElement: (tag) => {
+            const el = mockDOMElement('', tag);
+            createdElements.push(el);
+            return el;
+          },
+          body: {
+            style: {},
+            classList: { contains: () => false },
+            appendChild: (el) => {
+              if (el.id) mockElements.set(el.id, el);
+            }
+          }
+        },
+        console: console,
+        getComputedStyle: () => ({ display: 'block' }),
+        setupCustomSelect: () => {}
+      }
+    };
+    ctx.window.allPokemons = ctx.window.PokemonApp.getPokemons();
+    ctx.window.window = ctx.window;
+    ctx.document = ctx.window.document;
+    ctx.localStorage = ctx.window.localStorage;
+    vm.createContext(ctx);
+    vm.runInContext(appraisalJs, ctx);
+
+    const mockContainer = mockDOMElement('appraisal-lab-container');
+    ctx.window.AppraisalLab.renderLab(mockContainer);
+
+    // 4. Test Comparison View Overhaul
+    ctx.window.AppraisalLab.switchSubTab('compare');
+    assert(mockContainer.innerHTML.includes('lab-compare-vs-header'), 'Compare view must render VS header');
+    assert(mockContainer.innerHTML.includes('lab-compare-vs-badge'), 'Compare view must render VS badge');
+    assert(mockContainer.innerHTML.includes('slot-a') && mockContainer.innerHTML.includes('slot-b'), 'Compare view must render slot-a and slot-b');
+    assert(!mockContainer.innerHTML.includes('swapCompareSlots'), 'Compare view must not render swap button');
+    
+    const vsHeaderHtml = mockContainer.innerHTML.slice(
+      mockContainer.innerHTML.indexOf('lab-compare-vs-header'),
+      mockContainer.innerHTML.indexOf('lab-compare-energy')
+    );
+    assert(!vsHeaderHtml.includes('妙蛙花'), 'VS header must not display Pokemon name');
+    assert(!vsHeaderHtml.includes('水箭龜'), 'VS header must not display Pokemon name');
+    assert(!vsHeaderHtml.includes('評級'), 'VS header must not display rating grade');
+
+    assert(mockContainer.innerHTML.includes('lab-compare-distinct-list'), 'Compare view must render distinct ingredients list');
+    assert(mockContainer.innerHTML.includes('lab-compare-distinct-row'), 'Compare view must render distinct ingredient rows');
+    assert(mockContainer.innerHTML.includes('特選蘋果') || mockContainer.innerHTML.includes('甜甜蜜'), 'Distinct rows must include ingredient names');
+
+    // 5. Test Team Builder Config Variables
+    ctx.window.AppraisalLab.switchSubTab('team');
+    assert(mockContainer.innerHTML.includes('lab-team-config-panel'), 'Team view must render config panel');
+    assert(mockContainer.innerHTML.includes('綜合隊'), 'Team view must render balanced strategy option');
+    assert(mockContainer.innerHTML.includes('樹果隊'), 'Team view must render berry strategy option');
+    assert(mockContainer.innerHTML.includes('食材隊'), 'Team view must render ingredient strategy option');
+    assert(mockContainer.innerHTML.includes('技能隊'), 'Team view must render skill strategy option');
+
+    // Test setting strategy
+    ctx.window.AppraisalLab.setTeamStrategy('ingredient');
+    assert(mockContainer.innerHTML.includes('lab-team-pill active'), 'Active strategy pill must be highlighted');
+
+    // Test setting cooking type
+    ctx.window.AppraisalLab.setCookingType('dessert');
+
+    // Test Greengrass Isle dynamic berries
+    ctx.window.AppraisalLab.setTeamIsland('greengrass');
+    assert(mockContainer.innerHTML.includes('lab-greengrass-berries-config'), 'Greengrass Isle must render berry selector');
+    ctx.window.AppraisalLab.setGreengrassBerry(0, '零餘果');
+
+    // Test autoOptimizeTeam execution
+    ctx.window.AppraisalLab.autoOptimizeTeam();
+    assert(mockContainer.innerHTML.includes('lab-team-slot-card'), 'Optimized team must render team cards');
   });
 
 console.log('                   Test Results Summary');
