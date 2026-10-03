@@ -1506,24 +1506,19 @@
         const uid = btn.getAttribute('data-uid');
         const item = userBox.find(p => p.uid === uid);
         if (item && window.AppraisalLab) {
-          const isMobileH5 = document.body.classList.contains('mobile-h5-app');
-          if (isMobileH5 && typeof window.switchBoxSubtab === 'function') {
-            window.AppraisalLab.loadBoxItem(item);
-            window.switchBoxSubtab('lab');
-          } else {
-            const base = findPokemonBase(item.pokemonId || item.name);
-            const prInfo = calculatePokemonPR(item, base);
-            window.AppraisalLab.openModal({
-              pkm: base,
-              level: item.level || 30,
-              nature: item.nature || '坦率',
-              subskills: item.subskills || [],
-              ingredients: [item.ing1, item.ing2, item.ing3],
-              ribbon: item.ribbon || 0,
-              nickname: item.nickname || '',
-              summaryNote: (prInfo && prInfo.summaryNote) || ''
-            });
-          }
+          const base = findPokemonBase(item.pokemonId || item.name);
+          const prInfo = calculatePokemonPR(item, base);
+          window.AppraisalLab.openModal({
+            pkm: base,
+            level: item.level || 30,
+            nature: item.nature || '坦率',
+            subskills: item.subskills || [],
+            ingredients: [item.ing1, item.ing2, item.ing3],
+            ribbon: item.ribbon || 0,
+            nickname: item.nickname || '',
+            summaryNote: (prInfo && prInfo.summaryNote) || '',
+            rawItem: item
+          });
         }
       });
     });
@@ -1548,7 +1543,7 @@
       });
     });
 
-    // 點擊表格整行直接進入深度評測室 (H5 App 體驗優化)
+    // 點擊表格整行開啟寶可夢深度診斷評測彈窗
     container.querySelectorAll('.box-table tbody tr[data-uid]').forEach(row => {
       row.style.cursor = 'pointer';
       row.addEventListener('click', (e) => {
@@ -1556,24 +1551,50 @@
         const uid = row.getAttribute('data-uid');
         const item = userBox.find(p => p.uid === uid);
         if (item && window.AppraisalLab) {
-          const isMobileH5 = typeof document !== 'undefined' && (!!document.querySelector('.mobile-h5-app') || (document.body && document.body.classList.contains('mobile-h5-app')));
-          if (isMobileH5 && typeof window.switchBoxSubtab === 'function') {
+          if (typeof window.AppraisalLab.loadBoxItem === 'function') {
             window.AppraisalLab.loadBoxItem(item);
-            window.switchBoxSubtab('lab');
-          } else {
-            const base = findPokemonBase(item.pokemonId || item.name);
-            const prInfo = calculatePokemonPR(item, base);
-            window.AppraisalLab.openModal({
-              pkm: base,
-              level: item.level || 30,
-              nature: item.nature || '坦率',
-              subskills: item.subskills || [],
-              ingredients: [item.ing1, item.ing2, item.ing3],
-              ribbon: item.ribbon || 0,
-              nickname: item.nickname || '',
-              summaryNote: (prInfo && prInfo.summaryNote) || ''
-            });
           }
+          const base = findPokemonBase(item.pokemonId || item.name);
+          const prInfo = calculatePokemonPR(item, base);
+          window.AppraisalLab.openModal({
+            pkm: base,
+            level: item.level || 30,
+            nature: item.nature || '坦率',
+            subskills: item.subskills || [],
+            ingredients: [item.ing1, item.ing2, item.ing3],
+            ribbon: item.ribbon || 0,
+            nickname: item.nickname || '',
+            summaryNote: (prInfo && prInfo.summaryNote) || '',
+            rawItem: item
+          });
+        }
+      });
+    });
+
+    // 點擊卡片開啟寶可夢深度診斷評測彈窗
+    container.querySelectorAll('.box-card[data-uid]').forEach(card => {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.box-card-actions') || e.target.closest('button')) return;
+        const uid = card.getAttribute('data-uid');
+        const item = userBox.find(p => p.uid === uid);
+        if (item && window.AppraisalLab) {
+          if (typeof window.AppraisalLab.loadBoxItem === 'function') {
+            window.AppraisalLab.loadBoxItem(item);
+          }
+          const base = findPokemonBase(item.pokemonId || item.name);
+          const prInfo = calculatePokemonPR(item, base);
+          window.AppraisalLab.openModal({
+            pkm: base,
+            level: item.level || 30,
+            nature: item.nature || '坦率',
+            subskills: item.subskills || [],
+            ingredients: [item.ing1, item.ing2, item.ing3],
+            ribbon: item.ribbon || 0,
+            nickname: item.nickname || '',
+            summaryNote: (prInfo && prInfo.summaryNote) || '',
+            rawItem: item
+          });
         }
       });
     });

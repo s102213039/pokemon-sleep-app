@@ -13883,6 +13883,339 @@ input[type="number"] {
   }
 }
 
+/* ===============================================================
+   深度研究室 (Research Lab: Subnav, Team Builder, Comparison, Picker)
+   =============================================================== */
+
+.lab-subnav-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08));
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.lab-subnav-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.lab-subtab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lab-subtab-btn:hover {
+  background: var(--bg-card-hover, rgba(56, 189, 248, 0.08));
+  color: var(--text-primary);
+  border-color: var(--accent-color, #38bdf8);
+}
+
+.lab-subtab-btn.active {
+  background: var(--accent-color, #38bdf8);
+  color: #0f172a;
+  border-color: var(--accent-color, #38bdf8);
+  font-weight: 700;
+  box-shadow: 0 2px 10px rgba(56, 189, 248, 0.3);
+}
+
+.lab-subpanel {
+  width: 100%;
+  animation: fadeIn 0.2s ease;
+}
+
+/* 幫手組隊 (Team Builder & Simulator) */
+.lab-team-view-container,
+.lab-compare-view-container {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.lab-island-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.lab-island-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lab-island-pill:hover {
+  border-color: var(--accent-color, #38bdf8);
+  color: var(--text-primary);
+}
+
+.lab-island-pill.active {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: var(--accent-color, #38bdf8);
+  color: var(--accent-color, #38bdf8);
+}
+
+.lab-island-berry-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #facc15;
+}
+
+.lab-team-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.lab-team-slot-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.lab-team-slot-card:hover {
+  border-color: var(--accent-color, #38bdf8);
+}
+
+.lab-team-slot-empty {
+  min-height: 220px;
+  border: 1.5px dashed var(--border-color);
+  background: rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lab-team-slot-empty:hover {
+  border-color: var(--accent-color, #38bdf8);
+  background: rgba(56, 189, 248, 0.05);
+}
+
+.lab-team-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.lab-metric-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lab-metric-value {
+  font-size: 24px;
+  font-weight: 900;
+  color: #facc15;
+  line-height: 1.2;
+}
+
+.lab-metric-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* 寶可夢對比 (Pokémon Comparison) */
+.lab-compare-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.lab-compare-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lab-compare-card.slot-a {
+  border-top: 3px solid #38bdf8;
+}
+
+.lab-compare-card.slot-b {
+  border-top: 3px solid #c084fc;
+}
+
+.lab-compare-chart-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.lab-dual-chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lab-compare-diff-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lab-diff-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.05));
+  font-size: 12px;
+}
+
+/* 自訂隊員/選手挑選彈窗 (Picker Modal) */
+.lab-picker-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.lab-picker-container {
+  background: var(--bg-card-solid, #1e293b);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 680px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.lab-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.lab-picker-search-bar {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lab-picker-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lab-picker-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lab-picker-item:hover {
+  border-color: var(--accent-color, #38bdf8);
+  background: var(--bg-card-hover, rgba(56, 189, 248, 0.08));
+}
+
+@media (max-width: 900px) {
+  .lab-team-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .lab-team-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+  .lab-compare-chart-box {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .lab-team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .lab-compare-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
 /* ═══════════════════════════════════════════════════════════════
    📸 多圖批次智能辨識 (Batch OCR Progress & Floating Toast)
    ═══════════════════════════════════════════════════════════════ */

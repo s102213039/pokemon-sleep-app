@@ -9336,8 +9336,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(appraisalJs.includes('function getSkillTier(sName)'), 'appraisal.js must define getSkillTier');
 
     // 2. Cache busters bumped to 20261002_07 or newer
-    assert(indexHtml.match(/js\/modules\/appraisal\.js\?v=20261002_(?:0[7-9]|\d{2})/), 'index.html must use v=20261002_07 or newer');
-    assert(appIndexHtml.match(/js\/modules\/appraisal\.js\?v=20261002_(?:0[7-9]|\d{2})/), 'app/index.html must use v=20261002_07 or newer');
+    assert(indexHtml.match(/js\/modules\/appraisal\.js\?v=202610(?:02_(?:0[7-9]|\d{2})|0[3-9]_\d{2})/), 'index.html must use v=20261002_07 or newer');
+    assert(appIndexHtml.match(/js\/modules\/appraisal\.js\?v=202610(?:02_(?:0[7-9]|\d{2})|0[3-9]_\d{2})/), 'app/index.html must use v=20261002_07 or newer');
 
     // 3. Execution in VM context
     const ctx = {
@@ -9700,6 +9700,281 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     ctx.window.AppraisalLab.cancelEditMode();
     assert(mockContainer.innerHTML.includes('class="lab-chart-container"'), 'Cancelling edit mode must restore radar chart');
     assert(mockContainer.innerHTML.includes('class="btn-lab-edit-toggle"'), 'Cancelling edit mode must restore edit toggle button');
+  });
+
+  test('Tier 4 - Real-World Application Scenarios', '深度研究室 (Research Lab): Renamed Title, Team Builder & Synergy Simulation, Side-by-Side Comparison & Modal Picker', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const vm = require('vm');
+
+    const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+    const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+    // 1. Verify renaming in HTML and i18n
+    assert(appIndexHtml.includes('id="box-subtab-lab"'), 'app/index.html must have box-subtab-lab');
+    assert(appIndexHtml.includes('深度研究室'), 'app/index.html box-subtab-lab must display "深度研究室"');
+    assert(!appIndexHtml.includes('深度評測室'), 'app/index.html must not contain "深度評測室"');
+
+    assert(indexHtml.includes('id="box-appraisal-lab-btn"'), 'index.html must have box-appraisal-lab-btn');
+    assert(indexHtml.includes('深度研究室'), 'index.html box-appraisal-lab-btn must display "深度研究室"');
+    assert(!indexHtml.includes('深度評測室'), 'index.html must not contain "深度評測室"');
+
+    assert(i18nJs.includes("'box.tab_lab': '深度研究室'"), "i18n.js must map 'box.tab_lab' to '深度研究室'");
+    assert(i18nJs.includes("'box.appraisal_lab': '深度研究室'"), "i18n.js must map 'box.appraisal_lab' to '深度研究室'");
+    assert(i18nJs.includes("'box.appraisal_lab_btn': '深度研究室'"), "i18n.js must map 'box.appraisal_lab_btn' to '深度研究室'");
+    assert(i18nJs.includes("'box.tab_lab': 'Research Lab'"), "i18n.js must map 'box.tab_lab' to 'Research Lab' in en-US");
+
+    // 2. Verify Box list interaction opens modal directly
+    const bindCardActionsMatch = boxJs.match(/function bindCardActions[\s\S]*?^  \}/m);
+    assert(bindCardActionsMatch, 'box.js must define bindCardActions');
+    assert(!bindCardActionsMatch[0].includes("switchBoxSubtab('lab')"), 'bindCardActions must not force tab switch to lab');
+    assert(bindCardActionsMatch[0].includes('window.AppraisalLab.openModal('), 'bindCardActions must open appraisal modal');
+
+    // 3. Verify CSS classes exist for Research Lab
+    assert(stylesCss.includes('.lab-subnav-bar'), 'styles.css must include .lab-subnav-bar');
+    assert(stylesCss.includes('.lab-subtab-btn'), 'styles.css must include .lab-subtab-btn');
+    assert(stylesCss.includes('.lab-team-grid'), 'styles.css must include .lab-team-grid');
+    assert(stylesCss.includes('.lab-team-slot-card'), 'styles.css must include .lab-team-slot-card');
+    assert(stylesCss.includes('.lab-compare-grid'), 'styles.css must include .lab-compare-grid');
+    assert(stylesCss.includes('.lab-compare-chart-box'), 'styles.css must include .lab-compare-chart-box');
+    assert(stylesCss.includes('.lab-picker-modal'), 'styles.css must include .lab-picker-modal');
+
+    // 4. Test Research Lab VM execution & State
+    const mockStorage = {};
+    const mockElements = new Map();
+    const createdElements = [];
+
+    const mockDOMElement = (id, tag = 'DIV') => {
+      const el = {
+        id,
+        tagName: tag.toUpperCase(),
+        innerHTML: '',
+        textContent: '',
+        value: '',
+        style: {},
+        classList: {
+          classes: new Set(),
+          add(c) { this.classes.add(c); },
+          remove(c) { this.classes.delete(c); },
+          contains(c) { return this.classes.has(c); }
+        },
+        querySelector(selector) {
+          if (selector.startsWith('#')) return mockElements.get(selector.slice(1)) || null;
+          return null;
+        },
+        querySelectorAll() { return []; },
+        addEventListener() {},
+        removeEventListener() {}
+      };
+      if (id) mockElements.set(id, el);
+      return el;
+    };
+
+    const ctx = {
+      window: {
+        localStorage: {
+          getItem: (k) => mockStorage[k] || null,
+          setItem: (k, v) => { mockStorage[k] = String(v); },
+          removeItem: (k) => { delete mockStorage[k]; }
+        },
+        I18N: {
+          getLanguage: () => 'zh-TW',
+          t: (k, def) => def || k,
+          getMainSkillName: (k) => k,
+          getSubSkillName: (k) => k,
+          getNatureName: (k) => k,
+          getIngredientName: (k) => k,
+          getBerryName: (k) => k,
+          getSpecialtyName: (s) => s,
+          getTypeName: (t) => t,
+          getIngredientIcon: () => '',
+          getSpecialtyIconHtml: () => '<span class="spec-icon"></span>'
+        },
+        PokemonApp: {
+          getPokemons: () => [
+            {
+              id: 25,
+              name_cn: '皮卡丘',
+              name_en: 'Pikachu',
+              type: '電',
+              specialty: '樹果',
+              base_frequency: 2700,
+              berry: { name: '零餘果', type: '電', power: 25, count: 2, icon: 'assets/berries/rawst.png' },
+              main_skill: '能量填充S',
+              skill: { name: '能量填充S' },
+              subskills: ['樹果數量S', '幫手獎勵', '幫忙速度M', '技能機率M', '持有上限提升L']
+            },
+            {
+              id: 26,
+              name_cn: '雷丘',
+              name_en: 'Raichu',
+              type: '電',
+              specialty: '樹果',
+              base_frequency: 2200,
+              berry: { name: '零餘果', type: '電', power: 25, count: 2, icon: 'assets/berries/rawst.png' },
+              main_skill: '能量填充S',
+              skill: { name: '能量填充S' },
+              subskills: ['樹果數量S', '幫手速度M', '幫手獎勵', '食材機率提升M', '持有上限提升L']
+            },
+            {
+              id: 175,
+              name_cn: '波克比',
+              name_en: 'Togepi',
+              type: '妖精',
+              specialty: '技能',
+              base_frequency: 3600,
+              berry: { name: '密芝果', type: '妖精', power: 26, count: 1, icon: 'assets/berries/pecha.png' },
+              main_skill: '活力療癒S',
+              skill: { name: '活力療癒S' },
+              subskills: ['技能機率M', '技能機率S', '幫手速度M', '技能等級提升M', '幫手獎勵']
+            }
+          ]
+        },
+        UserBox: {
+          getUserBox: () => [
+            {
+              uid: 'box-pkm-1',
+              pokemonId: 25,
+              name: '皮卡丘',
+              nickname: '閃電皮卡',
+              level: 50,
+              nature: '固執',
+              subskills: ['樹果數量S', '幫手獎勵', '幫忙速度M'],
+              ing1: '特選蘋果',
+              ing2: '特選蘋果',
+              ing3: '暖暖薑',
+              ribbon: 2,
+              skillLevel: 3
+            },
+            {
+              uid: 'box-pkm-2',
+              pokemonId: 26,
+              name: '雷丘',
+              nickname: '雷霆戰神',
+              level: 60,
+              nature: '勇敢',
+              subskills: ['樹果數量S', '幫手速度M', '幫手獎勵'],
+              ing1: '特選蘋果',
+              ing2: '暖暖薑',
+              ing3: '暖暖薑',
+              ribbon: 4,
+              skillLevel: 6
+            },
+            {
+              uid: 'box-pkm-3',
+              pokemonId: 175,
+              name: '波克比',
+              nickname: '小護士',
+              level: 30,
+              nature: '溫柔',
+              subskills: ['技能機率M', '技能機率S', '幫手速度M'],
+              ing1: '特選蛋',
+              ing2: '特選蛋',
+              ing3: '特選蛋',
+              ribbon: 1,
+              skillLevel: 5
+            }
+          ]
+        },
+        document: {
+          getElementById: (id) => mockElements.get(id) || null,
+          querySelector: (s) => (s && s.startsWith('#') ? (mockElements.get(s.slice(1)) || null) : null),
+          querySelectorAll: () => [],
+          createElement: (tag) => {
+            const el = mockDOMElement('', tag);
+            createdElements.push(el);
+            return el;
+          },
+          body: {
+            style: {},
+            classList: { contains: () => false },
+            appendChild: (el) => {
+              if (el.id) mockElements.set(el.id, el);
+            }
+          }
+        },
+        console: console,
+        getComputedStyle: () => ({ display: 'block' }),
+        setupCustomSelect: () => {}
+      }
+    };
+    ctx.window.allPokemons = ctx.window.PokemonApp.getPokemons();
+    ctx.window.window = ctx.window;
+    ctx.document = ctx.window.document;
+    ctx.localStorage = ctx.window.localStorage;
+    vm.createContext(ctx);
+
+    // Run appraisal.js in VM
+    vm.runInContext(appraisalJs, ctx);
+
+    assert(typeof ctx.window.AppraisalLab === 'object', 'AppraisalLab must be exported to window');
+    assert(typeof ctx.window.AppraisalLab.switchSubTab === 'function', 'switchSubTab must be exported');
+    assert(typeof ctx.window.AppraisalLab.setTeamIsland === 'function', 'setTeamIsland must be exported');
+    assert(typeof ctx.window.AppraisalLab.setTeamSlot === 'function', 'setTeamSlot must be exported');
+    assert(typeof ctx.window.AppraisalLab.clearTeamSlot === 'function', 'clearTeamSlot must be exported');
+    assert(typeof ctx.window.AppraisalLab.clearAllTeamSlots === 'function', 'clearAllTeamSlots must be exported');
+    assert(typeof ctx.window.AppraisalLab.autoOptimizeTeam === 'function', 'autoOptimizeTeam must be exported');
+    assert(typeof ctx.window.AppraisalLab.setCompareSlot === 'function', 'setCompareSlot must be exported');
+    assert(typeof ctx.window.AppraisalLab.swapCompareSlots === 'function', 'swapCompareSlots must be exported');
+    assert(typeof ctx.window.AppraisalLab.openPicker === 'function', 'openPicker must be exported');
+    assert(typeof ctx.window.AppraisalLab.closePicker === 'function', 'closePicker must be exported');
+    assert(typeof ctx.window.AppraisalLab.simulateTeamPerformance === 'function', 'simulateTeamPerformance must be exported');
+
+    // 5. Test Lab Container Rendering (Subnav & Team Subtab default)
+    const mockContainer = mockDOMElement('appraisal-lab-container');
+    ctx.window.AppraisalLab.renderLab(mockContainer);
+
+    assert(mockContainer.innerHTML.includes('class="lab-subnav-bar"'), 'Lab container must render subnav bar');
+    assert(mockContainer.innerHTML.includes('幫手組隊'), 'Subnav bar must have 幫手組隊 subtab');
+    assert(mockContainer.innerHTML.includes('寶可夢對比'), 'Subnav bar must have 寶可夢對比 subtab');
+    assert(mockContainer.innerHTML.includes('單體評測'), 'Subnav bar must have 單體評測 subtab');
+    assert(mockContainer.innerHTML.includes('id="lab-subpanel-team"'), 'Lab container must render team subpanel');
+    assert(mockContainer.innerHTML.includes('id="lab-subpanel-compare"'), 'Lab container must render compare subpanel');
+    assert(mockContainer.innerHTML.includes('id="lab-subpanel-single"'), 'Lab container must render single subpanel');
+
+    // 6. Test Team Island Selection and Favored Berries Multiplier
+    ctx.window.AppraisalLab.setTeamIsland('beach'); // 天青沙灘: 橙橙果, 密芝果, 零餘果
+    assert(mockContainer.innerHTML.includes('天青沙灘'), 'Team view must reflect active island 天青沙灘');
+
+    // 7. Test Team Simulation
+    const userBox = ctx.window.UserBox.getUserBox();
+    const simResult = ctx.window.AppraisalLab.simulateTeamPerformance(userBox, 'beach');
+    assert(simResult.totalDailyBerryEnergy > 0, 'Team simulation must compute total daily berry energy');
+    assert(simResult.hasHealer === true, 'Team with Togepi (活力療癒S) must register healer');
+    assert(simResult.totalDailySkillProcs > 0, 'Team simulation must estimate skill procs');
+    assert(simResult.helpingBonusCount >= 2, 'Team with multiple helping bonus should count stacks');
+
+    // 8. Test Comparison Subtab
+    ctx.window.AppraisalLab.switchSubTab('compare');
+    assert(mockContainer.innerHTML.includes('lab-compare-grid'), 'Compare view must render lab-compare-grid');
+    assert(mockContainer.innerHTML.includes('選手 A'), 'Compare view must render 選手 A');
+    assert(mockContainer.innerHTML.includes('選手 B'), 'Compare view must render 選手 B');
+    assert(mockContainer.innerHTML.includes('lab-dual-chart-container'), 'Compare view must render dual radar chart');
+    assert(mockContainer.innerHTML.includes('lab-diff-row'), 'Compare view must render dimension difference rows');
+
+    // Test Swap Slots
+    ctx.window.AppraisalLab.swapCompareSlots();
+    assert(mockContainer.innerHTML.includes('lab-compare-grid'), 'Swap slots must re-render comparison grid');
+
+    // 9. Test Custom Picker Modal
+    ctx.window.AppraisalLab.openPicker({ type: 'team', slotIndex: 0 });
+    const pickerModal = mockElements.get('modal-lab-picker');
+    assert(pickerModal !== null && pickerModal !== undefined, 'openPicker must create modal-lab-picker');
+    assert(pickerModal.innerHTML.includes('lab-picker-search-bar'), 'Picker modal must have search bar');
+    assert(pickerModal.innerHTML.includes('lab-picker-list'), 'Picker modal must have items list');
+    assert(pickerModal.innerHTML.includes('皮卡丘'), 'Picker modal items list must include box items');
+
+    // Test Select in Picker
+    ctx.window.AppraisalLab.onPickerSelect('box-pkm-2');
+    assert(pickerModal.style.display === 'none', 'Selecting item must close picker modal');
+
+    // Close Picker
+    ctx.window.AppraisalLab.closePicker();
+    assert(pickerModal.style.display === 'none', 'closePicker must set display to none');
   });
 
 console.log('                   Test Results Summary');
