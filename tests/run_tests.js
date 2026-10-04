@@ -10639,6 +10639,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     assert(appraisalJs.includes('appraisal-dual-verdict-column'), 'Mobile appraisal header must contain dual verdict column in place of title');
     assert(!appraisalJs.includes('第 ${ribbonLevel} 階段'), 'appraisal.js must not contain "第 X 階段" text');
     assert(!appraisalJs.includes('Tier ${ribbonLevel}'), 'appraisal.js must not contain "Tier X" text');
+    assert(!appraisalJs.includes('appraisal-pokemon-en'), 'appraisal.js must NOT contain appraisal-pokemon-en');
+    assert(appraisalJs.includes('appraisal-h5-pkm-name font-bold'), 'appraisal.js must give appraisal-h5-pkm-name font-bold');
+    assert(appraisalJs.includes("${isEN ? 'Current' : '當前'}"), 'dual verdict column current label must be simplified to Current / 當前');
+    assert(appraisalJs.includes("${isEN ? 'Max Lv' : '滿級'}"), 'dual verdict column max label must be simplified to Max Lv / 滿級');
 
     // Check that mainskill row, ing parallel row, and config section are inside appraisal-h5-header-summary
     const summaryStart = appraisalJs.indexOf('<div class="appraisal-h5-header-summary">');
@@ -10647,11 +10651,13 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     const summaryChunk = appraisalJs.slice(summaryStart, summaryEnd);
     assert(summaryChunk.includes('appraisal-mainskill-row'), 'appraisal-mainskill-row must be inside appraisal-h5-header-summary');
     assert(summaryChunk.includes('appraisal-ing-parallel-row'), 'appraisal-ing-parallel-row must be inside appraisal-h5-header-summary');
+    assert(summaryChunk.includes('appraisal-h5-subinfo-row'), 'appraisal-h5-subinfo-row must be inside appraisal-h5-header-summary');
     assert(summaryChunk.includes('appraisal-config-section'), 'appraisal-config-section must be inside appraisal-h5-header-summary');
     assert(summaryChunk.includes('appraisal-ribbon-badge'), 'appraisal-ribbon-badge must be inside appraisal-h5-header-summary');
 
     // 4. CSS single frame rule & styling checks
     assert(stylesCss.includes('.mobile-h5-app .appraisal-h5-header-summary'), 'styles.css must style appraisal-h5-header-summary');
+    assert(stylesCss.includes('.mobile-h5-app .appraisal-h5-subinfo-row'), 'styles.css must style appraisal-h5-subinfo-row');
     assert(stylesCss.includes('#modal-appraisal-report .box-modal-header-confirm'), 'styles.css must style modal-appraisal-report confirm button');
   });
 
@@ -10784,6 +10790,32 @@ Lv.7
 `;
     const parsedCompositeSeeds = parseOcr(compositeGoldenSeeds, null, pkmData);
     assertEquals(parsedCompositeSeeds.skillLevel, 7, 'Parsed skill level with seeds from [MAINSKILL_LV] must be 7');
+
+    // 7. Universal multi-line and OCR typo scenario checks (No pixel color dependency)
+    assert(!boxCode.includes('mainSkillTop'), 'box.js must not contain hardcoded pixel color detection (mainSkillTop)');
+
+    const twoLineSkillOcr = `
+Lv. 64 水箭龜
+SP 4,858
+持有上限 53個
+食材獲取S
+Lv. 2
+隨機獲得8個食材。
+幫忙速度M
+`;
+    const parsedTwoLine = parseOcr(twoLineSkillOcr, null, pkmData);
+    assertEquals(parsedTwoLine.skillLevel, 2, 'Two-line OCR separated skill and level must be recognized as Lv. 2');
+
+    const typoSkillOcr = `
+Lv. 62 魔幻假面喵
+SP 4,316
+料理強化S
+1v. 3
+持有上限 52個
+幫忙速度M
+`;
+    const parsedTypo = parseOcr(typoSkillOcr, null, pkmData);
+    assertEquals(parsedTypo.skillLevel, 3, 'OCR typo 1v. 3 must be recognized as Lv. 3');
   });
 
 console.log('                   Test Results Summary');

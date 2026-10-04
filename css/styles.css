@@ -23750,21 +23750,29 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   line-height: 1 !important;
 }
 
-.mobile-h5-app .appraisal-h5-header-summary .appraisal-mainskill-row {
+.mobile-h5-app .appraisal-h5-subinfo-row {
   display: flex !important;
   align-items: center !important;
-  justify-content: flex-start !important;
   gap: 8px !important;
-  padding: 2px 0 !important;
+  margin-top: 3px !important;
+  flex-wrap: wrap !important;
+}
+
+.mobile-h5-app .appraisal-h5-header-summary .appraisal-mainskill-row {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 4px !important;
+  padding: 0 !important;
   margin: 0 !important;
 }
 
 .mobile-h5-app .appraisal-h5-header-summary .appraisal-ing-parallel-row {
-  display: flex !important;
+  display: inline-flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
-  gap: 8px !important;
-  padding: 2px 0 !important;
+  gap: 4px !important;
+  padding: 0 !important;
   margin: 0 !important;
 }
 
@@ -23809,7 +23817,7 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
 
 .mobile-h5-app .appraisal-h5-name-row {
   display: flex !important;
-  align-items: baseline !important;
+  align-items: center !important;
   gap: 6px !important;
   flex-wrap: wrap !important;
 }
