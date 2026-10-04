@@ -2647,7 +2647,6 @@
     ['大符英', '大竺葵'],
     ['!焰欽', '烈焰猴'],
     ['焰欽', '烈焰猴'],
-    ['禮物', '信使鳥'],
     ['其拉克羅斯', '赫拉克羅斯'],
     ['其拉克', '赫拉克羅斯'],
     ['拉克羅斯', '赫拉克羅斯'],
@@ -2925,11 +2924,11 @@
     const binName = cropAndEnhance(Math.round(w * (150 / 591)), nameY, Math.round(w * (300 / 591)), nameH, 2.5, 'contrast');
     const specialty = cropAndEnhance(Math.round(w * (40 / 591)), cardTop + Math.round(h * (125 / 1280)), Math.round(w * (180 / 591)), Math.round(h * (50 / 1280)), 2.0, 'binarize', 135);
     const carryNum = cropAndEnhance(Math.round(w * (200 / 591)), cardTop + Math.round(h * (290 / 1280)), Math.round(w * (320 / 591)), Math.round(h * (55 / 1280)), 2.0, 'binarize', 135);
-    // 主技能區域通用水平切片 (寬鬆覆蓋 0.37h ~ 0.54h 主技能卡片橫帶)
-    const msY = Math.round(h * 0.37);
-    const msH = Math.round(h * 0.17);
-    const msX = Math.round(w * 0.05);
-    const msW = Math.round(w * 0.90);
+    // 主技能區域通用水平切片 (寬鬆覆蓋 0.28h ~ 0.58h 主技能卡片橫帶，徹底涵蓋任何機型或位移)
+    const msY = meta.cardTop ? Math.max(0, meta.cardTop + Math.round(h * (300 / 1280))) : Math.round(h * 0.28);
+    const msH = Math.round(h * 0.28);
+    const msX = Math.round(w * 0.04);
+    const msW = Math.round(w * 0.92);
     const mainSkill = cropAndEnhance(msX, msY, msW, msH, 2.0, 'contrast');
 
     const slotCanvases = slotCoords.map((coord, idx) => {
@@ -3158,7 +3157,7 @@
     const milestoneLvRegex = /Lv\.?\s*(?:10|25|30|50|60|70|75|80|100)\b/i;
 
     // A. 優先檢查 [MAINSKILL_LV] 專屬等級標籤 (若有)
-    const msLvSectionMatch = text.match(/\[MAINSKILL_LV\]([\s\S]*?)(?:\[|$)/i);
+    const msLvSectionMatch = text.match(/\[MAINSKILL_LV\]([\s\S]*?)(?=\n\s*\[[A-Z0-9_:]+\]|$)/i) || text.match(/\[MAINSKILL_LV\]([\s\S]*?)(?:\[|$)/i);
     if (msLvSectionMatch) {
       const msLvText = msLvSectionMatch[1];
       const mLvl = msLvText.match(msLevelRegex) || msLvText.match(/(?:^|\D)([1-8])(?:\D|$)/);
@@ -3173,14 +3172,17 @@
 
     // B. 檢查 [MAINSKILL] 切片標籤區塊 (支援水平切片文字)
     if (!foundSkillLevel) {
-      const msSectionMatch = text.match(/\[MAINSKILL\]([\s\S]*?)(?:\[|$)/i);
+      const msSectionMatch = text.match(/\[MAINSKILL\]([\s\S]*?)(?=\n\s*\[[A-Z0-9_:]+\]|$)/i) || text.match(/\[MAINSKILL\]([\s\S]*?)(?:\[|$)/i);
       if (msSectionMatch) {
         const msText = msSectionMatch[1];
         const msLines = msText.split('\n').map(l => l.trim()).filter(Boolean);
         for (let idx = 0; idx < msLines.length; idx++) {
           const line = msLines[idx];
           const normLine = normalizeOcrText(line);
-          const mLvl = line.match(msLevelRegex) || normLine.match(/Lv\.?([1-8])$/i);
+          // 排除說明中的數量 (如 8個、5點、200能量)
+          if (line.match(/\d+\s*(?:個|點|能量|點數)/) && !msLevelRegex.test(line)) continue;
+
+          const mLvl = line.match(msLevelRegex) || normLine.match(/Lv\.?([1-8])$/i) || line.match(/(?:[SML\)\]]|\b)\s*([1-8])$/);
           if (mLvl) {
             const parsedLvl = parseInt(mLvl[1], 10);
             if (parsedLvl >= 1 && parsedLvl <= maxAllowedSkillLvl) {
@@ -3210,11 +3212,14 @@
     // C. 通用全文本語意掃描引擎 (支援整張截圖 OCR 文字，無像素座標硬編碼)
     if (!foundSkillLevel) {
       const allOcrLines = text.split('\n');
-      const mainSkillKeywords = bestPkm && bestPkm.main_skill ? [
-        bestPkm.main_skill,
-        bestPkm.main_skill.replace(/[SML]$/i, ''),
-        '料理', '食材', '能量', '活力', '幫手', '金幣', '碎片', '揮指', '健美', '填充', '怪力', '療癒', '磁鐵', '下一次', '卡比獸', '增加', '獲得', 'skill', 'Skill'
-      ] : ['料理', '食材', '能量', '活力', '幫手', '金幣', '碎片', '揮指', '健美', '填充', '怪力', '療癒', '磁鐵', '下一次', '卡比獸', '增加', '獲得', 'skill', 'Skill'];
+      const mainSkillKeywords = ['料理', '食材', '能量', '活力', '幫手', '金幣', '碎片', '揮指', '健美', '填充', '怪力', '療癒', '磁鐵', '下一次', '卡比獸', '增加', '獲得', 'skill', 'Skill'];
+      if (bestPkm && bestPkm.main_skill) {
+        const ms = bestPkm.main_skill;
+        mainSkillKeywords.push(ms);
+        mainSkillKeywords.push(ms.replace(/[SML]$/i, ''));
+        if (ms.includes('(')) mainSkillKeywords.push(ms.split('(')[0]);
+        if (ms.includes('（')) mainSkillKeywords.push(ms.split('（')[0]);
+      }
 
       // 階段 1：掃描包含主技能語意關鍵字之行，及其上下相鄰行 (處理 OCR 斷行或位移)
       for (let i = 0; i < allOcrLines.length; i++) {
@@ -3226,24 +3231,33 @@
 
         const hasKeyword = mainSkillKeywords.some(kw => kw && (line.includes(kw) || normLine.includes(kw)));
         if (hasKeyword) {
-          // 先查同本行
-          let mLvl = line.match(msLevelRegex) || normLine.match(/Lv\.?([1-8])$/i);
-          if (mLvl) {
-            const parsedLvl = parseInt(mLvl[1], 10);
-            if (parsedLvl >= 1 && parsedLvl <= maxAllowedSkillLvl) {
-              skillLevel = parsedLvl;
-              foundSkillLevel = true;
-              break;
+          // 先查同本行 (排除技能說明內數量干擾)
+          if (!line.match(/\d+\s*(?:個|點|能量|點數)/) || msLevelRegex.test(line)) {
+            let mLvl = line.match(msLevelRegex) || normLine.match(/Lv\.?([1-8])$/i) || line.match(/(?:[SML\)\]]|\b)\s*([1-8])$/);
+            if (mLvl) {
+              const parsedLvl = parseInt(mLvl[1], 10);
+              if (parsedLvl >= 1 && parsedLvl <= maxAllowedSkillLvl) {
+                skillLevel = parsedLvl;
+                foundSkillLevel = true;
+                break;
+              }
             }
           }
-          // 同行若無等級，檢查下鄰行 (OCR 常常把技能名放一行、Lv. X 放下一行)
-          if (i + 1 < allOcrLines.length) {
-            const nextLine = allOcrLines[i + 1];
-            const normNext = normalizeOcrText(nextLine);
-            if (!normNext.includes('SP') && !milestoneLvRegex.test(normNext)) {
-              const mNext = nextLine.match(msLevelRegex) || normNext.match(/Lv\.?([1-8])$/i) || nextLine.match(/(?:^|\D)([1-8])(?:\D|$)/);
-              if (mNext) {
-                const parsedLvl = parseInt(mNext[1], 10);
+
+          // 同行若無等級，檢查前後相鄰窗口 [i-2 .. i+2] 行 (OCR 常常把技能名放一行、Lv. X 放下一行或隔行)
+          for (const offset of [1, -1, 2, -2]) {
+            const idx = i + offset;
+            if (idx >= 0 && idx < allOcrLines.length) {
+              const adjLine = allOcrLines[idx];
+              const adjNorm = normalizeOcrText(adjLine);
+              if (adjNorm.includes('SP') || milestoneLvRegex.test(adjNorm)) continue;
+              if (bestPkm && adjNorm.includes(bestPkm.name_cn)) continue;
+              if (adjNorm.includes('持有上限') || adjNorm.includes('幫忙間隔') || adjNorm.includes('性格')) continue;
+              if (adjLine.match(/\d+\s*(?:個|點|能量|點數)/) && !msLevelRegex.test(adjLine)) continue;
+
+              const mAdj = adjLine.match(msLevelRegex) || adjNorm.match(/Lv\.?([1-8])$/i) || adjLine.match(/^\s*([1-8])\s*$/);
+              if (mAdj) {
+                const parsedLvl = parseInt(mAdj[1], 10);
                 if (parsedLvl >= 1 && parsedLvl <= maxAllowedSkillLvl) {
                   skillLevel = parsedLvl;
                   foundSkillLevel = true;
@@ -3252,26 +3266,11 @@
               }
             }
           }
-          // 檢查上鄰行
-          if (i - 1 >= 0) {
-            const prevLine = allOcrLines[i - 1];
-            const normPrev = normalizeOcrText(prevLine);
-            if (!normPrev.includes('SP') && !milestoneLvRegex.test(normPrev) && !(bestPkm && normPrev.includes(bestPkm.name_cn))) {
-              const mPrev = prevLine.match(msLevelRegex) || normPrev.match(/Lv\.?([1-8])$/i);
-              if (mPrev) {
-                const parsedLvl = parseInt(mPrev[1], 10);
-                if (parsedLvl >= 1 && parsedLvl <= maxAllowedSkillLvl) {
-                  skillLevel = parsedLvl;
-                  foundSkillLevel = true;
-                  break;
-                }
-              }
-            }
-          }
+          if (foundSkillLevel) break;
         }
       }
 
-      // 階段 2：全文過濾兜底 (避開寶可夢自身等級、SP、持有上限、副技能/食材里程碑等級)
+      // 階段 2：全文過濾兜底 (避開寶可夢自身等級、SP、持有上限、副技能/食材里程碑等級與說明數量)
       if (!foundSkillLevel) {
         for (const line of allOcrLines) {
           const normLine = normalizeOcrText(line);
@@ -3279,6 +3278,7 @@
           if (normLine.includes('持有上限') || normLine.includes('幫忙間隔') || normLine.includes('性格')) continue;
           if (milestoneLvRegex.test(normLine)) continue;
           if (level && line.includes(String(level))) continue;
+          if (line.match(/\d+\s*(?:個|點|能量|點數)/) && !msLevelRegex.test(line)) continue;
 
           const mLvl = line.match(msLevelRegex) || normLine.match(/Lv\.?([1-8])$/i);
           if (mLvl) {

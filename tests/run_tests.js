@@ -10818,6 +10818,64 @@ SP 4,316
     assertEquals(parsedTypo.skillLevel, 3, 'OCR typo 1v. 3 must be recognized as Lv. 3');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Universal OCR Text Engine: 100% Species Coverage & Multi-Pattern 99%+ Accuracy Audit', () => {
+    const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+    const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const appCtx = { window: {}, console };
+    appCtx.window = appCtx;
+    vm.createContext(appCtx);
+    vm.runInContext(appraisalCode, appCtx);
+    vm.runInContext(boxCode, appCtx);
+    const pkmData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/data.json'), 'utf8'));
+    appCtx.PokemonBoxApp.setAllPokemons(pkmData);
+    const parseOcr = appCtx.PokemonBoxApp.parsePokemonFromOcr;
+
+    let totalCases = 0;
+    let passedCases = 0;
+    const failures = [];
+
+    for (const pkm of pkmData) {
+      const ms = pkm.main_skill || '食材獲取S';
+      const maxLvl = ms.includes('夢之碎片') ? 8 : (ms.includes('能量填充') || ms.includes('食材獲取') || ms.includes('幫手支援') || ms.includes('料理輔助') ? 7 : 6);
+
+      for (let lvl = 1; lvl <= maxLvl; lvl++) {
+        const testPatterns = [
+          // 1. 同行標準：技能名 + Lv. X + 說明
+          `Lv. 50 ${pkm.name_cn}\nSP 2500\n持有上限 30個\n${ms} Lv. ${lvl}\n隨機獲得8個食材\n幫忙速度M`,
+          // 2. 跨行斷行：技能名 \n Lv. X \n 說明
+          `Lv. 50 ${pkm.name_cn}\nSP 2500\n持有上限 30個\n${ms}\nLv. ${lvl}\n隨機獲得8個食材\n幫忙速度M`,
+          // 3. 錯字變體：1v. X
+          `Lv. 50 ${pkm.name_cn}\nSP 2500\n持有上限 30個\n${ms}\n1v. ${lvl}\n隨機獲得8個食材\n幫忙速度M`,
+          // 4. 錯字變體：v. X
+          `Lv. 50 ${pkm.name_cn}\nSP 2500\n持有上限 30個\n${ms}\nv. ${lvl}\n隨機獲得8個食材\n幫忙速度M`,
+          // 5. 複合切片 Canvas Section 標籤
+          `[NAME]\n${pkm.name_cn}\n[MAINSKILL]\n${ms}\n[MAINSKILL_LV]\nLv.${lvl}\n[SLOT1:blue]\n持有上限提升L`,
+          // 6. 無 Lv. 純後綴數字
+          `Lv. 50 ${pkm.name_cn}\nSP 2500\n${ms} ${lvl}\n持有上限 30個\n幫忙速度M`,
+          // 7. 帶有冒號與主技能前綴
+          `Lv. 50 ${pkm.name_cn}\nSP 2500\n主技能：${ms} Lv. ${lvl}\n持有上限 30個\n幫忙速度M`,
+          // 8. 同行且說明緊接在後
+          `Lv. 50 ${pkm.name_cn}\nSP 2500\n${ms} Lv. ${lvl} 隨機獲得8個食材\n持有上限 30個\n幫忙速度M`
+        ];
+
+        for (const pat of testPatterns) {
+          totalCases++;
+          const res = parseOcr(pat, null, pkmData);
+          if (res && res.skillLevel === lvl) {
+            passedCases++;
+          } else {
+            failures.push({ name: pkm.name_cn, ms, expected: lvl, got: res ? res.skillLevel : null });
+          }
+        }
+      }
+    }
+
+    const accuracy = passedCases / totalCases;
+    assert(totalCases >= 10000, `Must evaluate at least 10000 permutations, got ${totalCases}`);
+    assert(accuracy >= 0.99, `Universal OCR engine accuracy must be >= 99%, got ${(accuracy * 100).toFixed(2)}% (${passedCases}/${totalCases})`);
+    assertEquals(failures.length, 0, `All ${totalCases} test cases must pass without error (100% accuracy)`);
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {
