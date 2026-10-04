@@ -836,7 +836,7 @@
       const subArr = pkm.subskills || [];
       const ingArr = [pkm.ing1, pkm.ing2, pkm.ing3].filter(Boolean);
       const ribLvl = parseInt(pkm.ribbon, 10) || 0;
-      const skLvl = parseInt(pkm.skillLevel, 10) || 1;
+      const skLvl = getEffectiveSkillLevel(pkm, base);
       appResult = lab.evaluatePokemon(base, currentLv, pkm.nature, subArr, ingArr, ribLvl, skLvl);
       if (appResult) {
         currentGrade = (appResult.current && appResult.current.grade) || appResult.grade;
@@ -1730,6 +1730,69 @@
     return 7;
   }
 
+  /* ─── 最終階段 3 階進化形態清單 (進化兩次，基礎主技能 +2) ─────── */
+  const STAGE3_FINAL_NAMES = new Set([
+    '妙蛙花', '噴火龍', '水箭龜', '巴大蝶', '雷丘', '皮可西', '胖可丁',
+    '大食花', '隆隆岩', '耿鬼', '自爆磁怪', '幸福蛋', '波克基斯', '電龍',
+    '快龍', '火爆獸', '大力鱷', '班基拉斯', '蜥蜴王', '火焰雞', '巨沼怪',
+    '沙奈朵', '艾路雷朵', '請假王', '波士可多拉', '沙漠蜻蜓', '帝牙海獅',
+    '暴飛龍', '土台龜', '烈焰猴', '帝王拿波', '倫琴貓', '鍬農炮蟲',
+    '魔幻假面喵', '骨紋巨聲鱷', '狂歡浪舞鴨', '巴布土撥', '巨鍛匠',
+    'Venusaur', 'Charizard', 'Blastoise', 'Butterfree', 'Raichu', 'Clefable', 'Wigglytuff',
+    'Victreebel', 'Golem', 'Gengar', 'Magnezone', 'Blissey', 'Togekiss', 'Ampharos',
+    'Dragonite', 'Typhlosion', 'Feraligatr', 'Tyranitar', 'Sceptile', 'Blaziken', 'Swampert',
+    'Gardevoir', 'Gallade', 'Slaking', 'Aggron', 'Flygon', 'Walrein',
+    'Salamence', 'Torterra', 'Infernape', 'Empoleon', 'Luxray', 'Vikavolt',
+    'Meowscarada', 'Skeledirge', 'Quaquaval', 'Pawmot', 'Tinkaton'
+  ]);
+
+  /* ─── 取得寶可夢的進化階段 (1 基礎 / 2 一階進化 / 3 二階最終進化) ─── */
+  function getPokemonEvolutionStage(pkm) {
+    if (!pkm) return 1;
+    const name = pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || (pkm.name && pkm.name.en) || '';
+    if (STAGE3_FINAL_NAMES.has(name)) return 3;
+    if (pkm.evo_req && String(pkm.evo_req).trim()) {
+      return 2;
+    }
+    return 1;
+  }
+
+  /* ─── 取得已解鎖副技能的主技能等級加成 (技能等級提升S/M) ────────── */
+  function getSubskillLevelBonus(subskills, currentLv) {
+    if (!Array.isArray(subskills) || subskills.length === 0) return 0;
+    const thresholds = [10, 25, 50, 70, 80];
+    let bonus = 0;
+    subskills.forEach((sub, idx) => {
+      const unlockLv = thresholds[idx] || 100;
+      if ((currentLv || 1) >= unlockLv) {
+        const name = typeof sub === 'string' ? sub : (sub && (sub.name || sub.name_cn) ? (sub.name || sub.name_cn) : '');
+        if (name.includes('技能等級提升M') || name.includes('Skill Level Up M')) {
+          bonus += 2;
+        } else if (name.includes('技能等級提升S') || name.includes('Skill Level Up S')) {
+          bonus += 1;
+        }
+      }
+    });
+    return bonus;
+  }
+
+  /* ─── 計算實際有效主技能等級 (結合進化次數基礎、副技能解鎖加成與自訂上限) ── */
+  function getEffectiveSkillLevel(pkmOrBoxItem, basePkm) {
+    const pkm = pkmOrBoxItem || {};
+    const base = basePkm || (typeof findPokemonBase === 'function' ? findPokemonBase(pkm.name || pkm.name_cn || pkm.pokemonId) : null) || pkm;
+    const currentLv = parseInt(pkm.level, 10) || 30;
+    const stage = getPokemonEvolutionStage(base);
+    const subskills = pkm.subskills || [];
+    const subBonus = getSubskillLevelBonus(subskills, currentLv);
+    const naturalLvl = stage + subBonus;
+
+    const savedLvl = parseInt(pkm.skillLevel || pkm.skill_level || (pkm.rawItem && pkm.rawItem.skillLevel), 10);
+    let effective = (!isNaN(savedLvl) && savedLvl > 0) ? Math.max(savedLvl, naturalLvl) : naturalLvl;
+
+    const maxLvl = base && base.main_skill ? getMainSkillMaxLevel(base.main_skill) : 8;
+    return Math.min(maxLvl, Math.max(1, effective));
+  }
+
   /* ─── 主技能展示與等級更新 (動態依技能上限調整 Lv.1 ~ Lv.max) ─── */
   function updateModalMainSkill(p, targetLevel = null) {
     const skillEl = document.getElementById('modal-poke-main-skill-name');
@@ -1751,7 +1814,13 @@
         desiredLvl = parseInt(targetLevel, 10);
       } else {
         const cur = parseInt(skillLevelSelect.value, 10);
-        desiredLvl = !isNaN(cur) && cur > 0 ? cur : 1;
+        if (!isNaN(cur) && cur > 0) {
+          desiredLvl = cur;
+        } else if (p) {
+          desiredLvl = getEffectiveSkillLevel({ level: 30, subskills: [] }, p);
+        } else {
+          desiredLvl = 1;
+        }
       }
       const clampedLvl = Math.max(1, Math.min(maxLvl, desiredLvl));
 
@@ -1929,8 +1998,16 @@
       updateSelectedPokemonAvatar(p);
       syncToggleBtnIcon();
       renderTiledIngredientPickers(p, existing);
+      let defLvl = null;
+      if (existing && existing.skillLevel != null) {
+        defLvl = getEffectiveSkillLevel(existing, p);
+      } else if (p) {
+        const currentLevelInput = document.getElementById('modal-poke-level');
+        const curLv = parseInt(currentLevelInput ? currentLevelInput.value : '', 10) || 30;
+        defLvl = getEffectiveSkillLevel({ level: curLv, subskills: [] }, p);
+      }
       updateRibbonSelectOptions(p);
-      updateModalMainSkill(p);
+      updateModalMainSkill(p, defLvl);
     }
 
     if (initialPkm) {
@@ -2294,7 +2371,14 @@
     }
 
     // 4.6 主技能展示與技能等級選單 (依據該主技能上限動態生成 Lv.1 ~ Lv.max)
-    const initialSkillLevel = existingItem && existingItem.skillLevel != null ? existingItem.skillLevel : 1;
+    let initialSkillLevel;
+    if (existingItem) {
+      initialSkillLevel = getEffectiveSkillLevel(existingItem, currentSelectedPkm);
+    } else if (currentSelectedPkm) {
+      initialSkillLevel = getEffectiveSkillLevel({ level: 30, subskills: [] }, currentSelectedPkm);
+    } else {
+      initialSkillLevel = 1;
+    }
     updateModalMainSkill(currentSelectedPkm, initialSkillLevel);
 
     // 5. 初始化副技能單行插槽 + 選擇盤
@@ -2364,13 +2448,19 @@
     const base = findPokemonBase(pokeName);
     const maxSkillLvl = base && base.main_skill ? getMainSkillMaxLevel(base.main_skill) : 8;
     const rawSkillLevel = skillLevelSelect ? (parseInt(skillLevelSelect.value, 10) || 1) : 1;
-    const parsedSkillLevel = Math.max(1, Math.min(maxSkillLvl, rawSkillLevel));
 
     const subskills = [];
     for (let slot = 1; slot <= 5; slot++) {
       const s = document.getElementById(`modal-subskill-${slot}`);
       if (s && s.value) subskills.push(s.value);
     }
+
+    const effectiveFromForm = getEffectiveSkillLevel({
+      level: parsedLevel,
+      skillLevel: rawSkillLevel,
+      subskills: subskills
+    }, base);
+    const parsedSkillLevel = Math.max(1, Math.min(maxSkillLvl, effectiveFromForm));
 
     const ribbonVal = ribbonSelect ? (parseInt(ribbonSelect.value, 10) || 0) : 0;
 
@@ -3286,7 +3376,7 @@
       type: bestPkm ? bestPkm.type : (allPokemons[0] ? allPokemons[0].type : ''),
       specialty: bestPkm ? bestPkm.specialty : (allPokemons[0] ? allPokemons[0].specialty : ''),
       level,
-      skillLevel,
+      skillLevel: getEffectiveSkillLevel({ level, skillLevel, subskills: finalSubskills }, bestPkm),
       ribbon: deducedRibbon,
       nature,
       subskills: finalSubskills,
@@ -3942,6 +4032,9 @@
       switchSubTab: switchBoxSubtab,
       calculatePokemonPR,
       getMainSkillMaxLevel,
+      getEffectiveSkillLevel,
+      getPokemonEvolutionStage,
+      getSubskillLevelBonus,
       updateRibbonSelectOptions,
       updateModalMainSkill,
       deduceRibbonFromCarry,
@@ -3980,6 +4073,9 @@
         getIngCountFromBase,
         calculatePokemonPR,
         getMainSkillMaxLevel,
+        getEffectiveSkillLevel,
+        getPokemonEvolutionStage,
+        getSubskillLevelBonus,
         updateRibbonSelectOptions,
         updateModalMainSkill,
         deduceRibbonFromCarry,
@@ -4008,6 +4104,9 @@
       getIngCountFromBase,
       calculatePokemonPR,
       getMainSkillMaxLevel,
+      getEffectiveSkillLevel,
+      getPokemonEvolutionStage,
+      getSubskillLevelBonus,
       updateRibbonSelectOptions,
       updateModalMainSkill,
       deduceRibbonFromCarry,

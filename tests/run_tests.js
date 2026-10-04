@@ -10006,7 +10006,7 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     assert(appraisalJs.includes('sheet-drag-handle'), 'Mobile appraisal modal must include sheet-drag-handle');
     assert(appraisalJs.includes('box-modal-header'), 'Mobile appraisal modal must include box-modal-header');
     assert(appraisalJs.includes('box-modal-header-cancel'), 'Mobile appraisal modal must have cancel/close button on left');
-    assert(appraisalJs.includes('box-modal-title'), 'Mobile appraisal modal must have centered title');
+    assert(appraisalJs.includes('appraisal-dual-verdict-column') && !appraisalJs.includes('<h3 class="box-modal-title">'), 'Mobile appraisal modal header must have dual-verdict column in place of box-modal-title');
     assert(appraisalJs.includes('box-modal-header-confirm'), 'Mobile appraisal modal must have edit button on right');
 
     // 4. CSS support for mobile modal sheet and desktop subnav bar
@@ -10570,6 +10570,89 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     // 7. Test clearCompareSlot
     ctx.window.AppraisalLab.clearCompareSlot(1);
     assert(mockContainer.innerHTML.includes('挑選選手 B'), 'Slot B must be reset to empty after clearCompareSlot');
+  });
+
+  // ─── Test 192: Appraisal Skill Level Correction & Mobile Appraisal Layout Overhaul Verification ─
+  test('Tier 4 - Real-World Application Scenarios', 'Appraisal Skill Level Correction & Mobile Appraisal Layout Overhaul Verification', () => {
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+
+    // 1. Verify getEffectiveSkillLevel and helper exports in box.js and appraisal.js
+    assert(boxJs.includes('getEffectiveSkillLevel'), 'box.js must implement getEffectiveSkillLevel');
+    assert(boxJs.includes('STAGE3_FINAL_NAMES'), 'box.js must define STAGE3_FINAL_NAMES');
+    assert(boxJs.includes('getPokemonEvolutionStage'), 'box.js must implement getPokemonEvolutionStage');
+    assert(boxJs.includes('getSubskillLevelBonus'), 'box.js must implement getSubskillLevelBonus');
+
+    assert(appraisalJs.includes('getEffectiveSkillLevel'), 'appraisal.js must implement getEffectiveSkillLevel');
+    assert(appraisalJs.includes('STAGE3_FINAL_NAMES'), 'appraisal.js must define STAGE3_FINAL_NAMES');
+
+    // 2. Functional verification of effective skill level logic
+    const { getEffectiveSkillLevel } = require(path.join(WORKSPACE_ROOT, 'js/modules/box.js'));
+    assert(typeof getEffectiveSkillLevel === 'function', 'getEffectiveSkillLevel must be an exported function');
+
+    // Basic stage 1 (Bulbasaur) without subskills
+    const bulbasaur = { name_cn: '妙蛙種子', level: 10, subskills: [] };
+    assertEquals(getEffectiveSkillLevel(bulbasaur, bulbasaur), 1, 'Bulbasaur base skill level must be 1');
+
+    // Stage 2 (Ivysaur)
+    const ivysaur = { name_cn: '妙蛙草', level: 25, evo_req: 'Lv.12 + 40 糖', subskills: [] };
+    assertEquals(getEffectiveSkillLevel(ivysaur, ivysaur), 2, 'Ivysaur base skill level must be 2');
+
+    // Stage 3 (Venusaur) without subskills
+    const venusaurBase = { name_cn: '妙蛙花', level: 30, evo_req: 'Lv.24 + 80 糖', is_final: '〇', main_skill: '食材獲取S' };
+    assertEquals(getEffectiveSkillLevel(venusaurBase, venusaurBase), 3, 'Venusaur base skill level must be 3');
+
+    // Venusaur at Lv.55 with 技能等級提升M at slot 1 (Lv.25) -> 3 + 2 = 5!
+    const venusaurWithSkillM = {
+      name_cn: '妙蛙花',
+      level: 55,
+      evo_req: 'Lv.24 + 80 糖',
+      is_final: '〇',
+      main_skill: '食材獲取S',
+      subskills: ['持有上限提升S', '技能等級提升M', '技能機率提升S']
+    };
+    assertEquals(getEffectiveSkillLevel(venusaurWithSkillM, venusaurWithSkillM), 5, 'Venusaur Lv.55 with Skill Level Up M must have effective skill level 5');
+
+    // Locked subskills do not increase skill level early
+    const venusaurLocked = {
+      name_cn: '妙蛙花',
+      level: 20,
+      evo_req: 'Lv.24 + 80 糖',
+      is_final: '〇',
+      main_skill: '食材獲取S',
+      subskills: ['持有上限提升S', '技能等級提升M'] // slot 1 unlocks at 25, current is 20
+    };
+    assertEquals(getEffectiveSkillLevel(venusaurLocked, venusaurLocked), 3, 'Locked Skill Level Up M at Lv.20 must not grant bonus early');
+
+    // User manual seed upgrade higher than natural level is preserved
+    const venusaurWithSeeds = {
+      name_cn: '妙蛙花',
+      level: 55,
+      skillLevel: 7,
+      subskills: ['持有上限提升S', '技能等級提升M']
+    };
+    assertEquals(getEffectiveSkillLevel(venusaurWithSeeds, venusaurBase), 7, 'User manual seeds upgrade must be preserved');
+
+    // 3. Mobile Appraisal sheet DOM structure
+    assert(!appraisalJs.includes('<h3 class="box-modal-title">'), 'Mobile appraisal sheet must have box-modal-title removed');
+    assert(appraisalJs.includes('appraisal-dual-verdict-column'), 'Mobile appraisal header must contain dual verdict column in place of title');
+    assert(!appraisalJs.includes('第 ${ribbonLevel} 階段'), 'appraisal.js must not contain "第 X 階段" text');
+    assert(!appraisalJs.includes('Tier ${ribbonLevel}'), 'appraisal.js must not contain "Tier X" text');
+
+    // Check that mainskill row, ing parallel row, and config section are inside appraisal-h5-header-summary
+    const summaryStart = appraisalJs.indexOf('<div class="appraisal-h5-header-summary">');
+    const summaryEnd = appraisalJs.indexOf('<!-- 雷達圖與六維能量條 -->');
+    assert(summaryStart !== -1 && summaryEnd !== -1 && summaryStart < summaryEnd, 'appraisal-h5-header-summary must precede radar chart');
+    const summaryChunk = appraisalJs.slice(summaryStart, summaryEnd);
+    assert(summaryChunk.includes('appraisal-mainskill-row'), 'appraisal-mainskill-row must be inside appraisal-h5-header-summary');
+    assert(summaryChunk.includes('appraisal-ing-parallel-row'), 'appraisal-ing-parallel-row must be inside appraisal-h5-header-summary');
+    assert(summaryChunk.includes('appraisal-config-section'), 'appraisal-config-section must be inside appraisal-h5-header-summary');
+    assert(summaryChunk.includes('appraisal-ribbon-badge'), 'appraisal-ribbon-badge must be inside appraisal-h5-header-summary');
+
+    // 4. CSS single frame rule & styling checks
+    assert(stylesCss.includes('.mobile-h5-app .appraisal-h5-header-summary'), 'styles.css must style appraisal-h5-header-summary');
+    assert(stylesCss.includes('#modal-appraisal-report .box-modal-header-confirm'), 'styles.css must style modal-appraisal-report confirm button');
   });
 
 console.log('                   Test Results Summary');
