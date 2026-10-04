@@ -10655,6 +10655,137 @@ test('Tier 4 - Real-World Application Scenarios', 'Milestone Shortcut Lv. 100 Bu
     assert(stylesCss.includes('#modal-appraisal-report .box-modal-header-confirm'), 'styles.css must style modal-appraisal-report confirm button');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Screenshot OCR Main Skill Level Recognition & Golden Seed Ground Truth Audit', () => {
+    const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+    const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const appCtx = { window: {}, console };
+    appCtx.window = appCtx;
+    vm.createContext(appCtx);
+    vm.runInContext(appraisalCode, appCtx);
+    vm.runInContext(boxCode, appCtx);
+    const pkmData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/data.json'), 'utf8'));
+    appCtx.PokemonBoxApp.setAllPokemons(pkmData);
+
+    const parseOcr = appCtx.PokemonBoxApp.parsePokemonFromOcr;
+
+    // 1. Blastoise Screenshot (Stage 3, but wild caught / evolved with Lv.2 main skill, MUST NOT be overridden to Lv.3)
+    const blastoiseOcr = `
+Lv. 64 水箭龜
+SP 4,858
+持有上限 53個
+食材獲取S Lv. 2
+隨機獲得8個食材。
+持有上限提升L
+食材機率提升M
+幫忙速度M
+持有上限提升S
+技能機率提升S
+浮躁
+沒有性格帶來的特色
+`;
+    const parsedBlastoise = parseOcr(blastoiseOcr, null, pkmData);
+    assertEquals(parsedBlastoise.name, '水箭龜', 'Parsed name must be 水箭龜');
+    assertEquals(parsedBlastoise.level, 64, 'Parsed level must be 64');
+    assertEquals(parsedBlastoise.skillLevel, 2, 'Blastoise skill level must be strictly Lv. 2 from screenshot without stage override');
+
+    // 2. Meowscarada Screenshot (Lv.3 main skill)
+    const meowscaradaOcr = `
+Lv. 62 魔幻假面喵
+SP 4,316
+持有上限 52個
+料理強化S Lv. 3
+增加下一次料理時的鍋子容量
+幫忙速度M
+食材機率提升M
+持有上限提升L
+技能機率提升M
+研究EXP獎勵
+急躁
+EXP獲得量 ▲▲
+活力回復量 ▼▼
+`;
+    const parsedMeowscarada = parseOcr(meowscaradaOcr, null, pkmData);
+    assertEquals(parsedMeowscarada.name, '魔幻假面喵', 'Parsed name must be 魔幻假面喵');
+    assertEquals(parsedMeowscarada.skillLevel, 3, 'Meowscarada skill level must be strictly Lv. 3 from screenshot');
+
+    // 3. Meganium Screenshot (Lv.4 main skill)
+    const meganiumOcr = `
+Lv. 26 大竺葵
+SP 1,439
+持有上限 30個
+能量填充S Lv. 4
+卡比獸的能量增加
+樹果數量S
+技能等級提升S
+持有上限提升L
+持有上限提升M
+食材機率提升S
+溫和
+主技能發動機率 ▲▲
+幫忙速度 ▼▼
+`;
+    const parsedMeganium = parseOcr(meganiumOcr, null, pkmData);
+    assertEquals(parsedMeganium.name, '大竺葵', 'Parsed name must be 大竺葵');
+    assertEquals(parsedMeganium.skillLevel, 4, 'Meganium skill level must be strictly Lv. 4 from screenshot');
+
+    // 4. Heracross Screenshot with Golden Seeds (Stage 1 with Lv. 7 main skill, MUST NOT be demoted to 1 or 3)
+    const heracrossOcr = `
+Lv. 52 赫拉克羅斯
+SP 6,920
+持有上限 21個
+健美（料理輔助S） Lv. 7
+隨機獲得24個食材
+技能機率提升M
+技能等級提升M
+幫忙速度M
+持有上限提升S
+食材機率提升S
+慎重
+主技能發動機率 ▲▲
+食材發現率 ▼▼
+`;
+    const parsedHeracross = parseOcr(heracrossOcr, null, pkmData);
+    assertEquals(parsedHeracross.name, '赫拉克羅斯', 'Parsed name must be 赫拉克羅斯');
+    assertEquals(parsedHeracross.skillLevel, 7, 'Heracross fed with golden seeds must be strictly Lv. 7 from screenshot');
+
+    // 5. Composite Canvas Section format with [MAINSKILL_LV]
+    const compositeCanvasOcr = `
+[NAME]
+水箭龜
+[BIN_LV]
+Lv. 64
+[CARRY_NUM]
+53個
+[MAINSKILL]
+食材獲取S
+[MAINSKILL_LV]
+Lv.2
+[SLOT1:blue]
+持有上限提升L
+`;
+    const parsedComposite = parseOcr(compositeCanvasOcr, null, pkmData);
+    assertEquals(parsedComposite.name, '水箭龜', 'Parsed name from composite canvas must be 水箭龜');
+    assertEquals(parsedComposite.skillLevel, 2, 'Parsed skill level from [MAINSKILL_LV] section must be 2');
+
+    // 6. Composite Canvas Section with Golden Seeds Heracross
+    const compositeGoldenSeeds = `
+[NAME]
+赫拉克羅斯
+[BIN_LV]
+Lv. 52
+[CARRY_NUM]
+21個
+[MAINSKILL]
+健美（料理輔助S）
+[MAINSKILL_LV]
+Lv.7
+[SLOT1:blue]
+技能機率提升M
+`;
+    const parsedCompositeSeeds = parseOcr(compositeGoldenSeeds, null, pkmData);
+    assertEquals(parsedCompositeSeeds.skillLevel, 7, 'Parsed skill level with seeds from [MAINSKILL_LV] must be 7');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

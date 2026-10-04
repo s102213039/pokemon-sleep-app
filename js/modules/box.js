@@ -1787,7 +1787,7 @@
     const naturalLvl = stage + subBonus;
 
     const savedLvl = parseInt(pkm.skillLevel || pkm.skill_level || (pkm.rawItem && pkm.rawItem.skillLevel), 10);
-    let effective = (!isNaN(savedLvl) && savedLvl > 0) ? Math.max(savedLvl, naturalLvl) : naturalLvl;
+    let effective = (!isNaN(savedLvl) && savedLvl > 0) ? savedLvl : naturalLvl;
 
     const maxLvl = base && base.main_skill ? getMainSkillMaxLevel(base.main_skill) : 8;
     return Math.min(maxLvl, Math.max(1, effective));
@@ -2782,6 +2782,28 @@
           break;
         }
       }
+
+      // 動態偵測主技能卡片頂部邊界 (mainSkillTop)
+      let mainSkillTop = null;
+      const msScanStartX = Math.round(w * 0.25);
+      const msScanEndX = Math.round(w * 0.75);
+      const msScanW = msScanEndX - msScanStartX;
+      for (let y = Math.round(h * 0.35); y < Math.round(h * 0.50); y++) {
+        const rowData = sCtx.getImageData(msScanStartX, y, msScanW, 1).data;
+        let matchCount = 0;
+        const total = rowData.length / 4;
+        for (let i = 0; i < rowData.length; i += 4) {
+          const r = rowData[i], g = rowData[i + 1], b = rowData[i + 2];
+          if (r > 180 && r < 250 && g > 150 && g < 235 && b > 100 && b < 185 && (r - b > 35) && (g - b > 15)) {
+            matchCount++;
+          }
+        }
+        if (matchCount / total > 0.50) {
+          mainSkillTop = y;
+          break;
+        }
+      }
+      meta.mainSkillTop = mainSkillTop;
     } catch (e) {}
 
     // 副技能按鈕座標計算
@@ -2925,7 +2947,17 @@
     const binName = cropAndEnhance(Math.round(w * (150 / 591)), nameY, Math.round(w * (300 / 591)), nameH, 2.5, 'contrast');
     const specialty = cropAndEnhance(Math.round(w * (40 / 591)), cardTop + Math.round(h * (125 / 1280)), Math.round(w * (180 / 591)), Math.round(h * (50 / 1280)), 2.0, 'binarize', 135);
     const carryNum = cropAndEnhance(Math.round(w * (200 / 591)), cardTop + Math.round(h * (290 / 1280)), Math.round(w * (320 / 591)), Math.round(h * (55 / 1280)), 2.0, 'binarize', 135);
-    const mainSkill = cropAndEnhance(Math.round(w * (140 / 591)), cardTop + Math.round(h * (480 / 1280)), Math.round(w * (400 / 591)), Math.round(h * (40 / 1280)), 2.0, 'contrast');
+    const msTop = meta.mainSkillTop || (meta.cardBotY ? Math.max(Math.round(h * 0.38), meta.cardBotY - Math.round(h * (125 / 1280))) : (cardTop + Math.round(h * (515 / 1280))));
+    const msY = msTop + Math.round(h * (10 / 1280));
+    const msH = Math.round(h * (55 / 1280));
+    const msX = Math.round(w * (130 / 591));
+    const msW = Math.round(w * (420 / 591));
+    const mainSkill = cropAndEnhance(msX, msY, msW, msH, 2.5, 'contrast');
+
+    // 專屬精準主技能等級 (Lv.X) 徽章切片 (針對右側等級數字區域特化增強)
+    const msLvX = Math.round(w * (450 / 591));
+    const msLvW = Math.round(w * (100 / 591));
+    const mainSkillLv = cropAndEnhance(msLvX, msY, msLvW, msH, 3.0, 'contrast');
 
     const slotCanvases = slotCoords.map((coord, idx) => {
       const tier = meta.slotTiers[idx] || 'white';
@@ -2946,6 +2978,7 @@
       { name: 'SPECIALTY', canvas: specialty },
       { name: 'CARRY_NUM', canvas: carryNum },
       { name: 'MAINSKILL', canvas: mainSkill },
+      { name: 'MAINSKILL_LV', canvas: mainSkillLv },
       ...slotCanvases,
       { name: 'NATURE', canvas: nature }
     ].filter(p => !!p.canvas);
@@ -3143,19 +3176,94 @@
       }
     }
 
-    // 2.5 主技能等級萃取 (依據該主技能上限 1~6, 7 或 8 級)
-    let skillLevel = 1;
+    // 2.5 主技能等級萃取 (精準提取截圖上的真實等級，支援主技能種子與真實狀態)
+    let skillLevel = null;
+    let foundSkillLevel = false;
     const maxAllowedSkillLvl = bestPkm && bestPkm.main_skill ? getMainSkillMaxLevel(bestPkm.main_skill) : 8;
-    const allOcrLines = text.split('\n');
-    for (const line of allOcrLines) {
-      const normLine = normalizeOcrText(line);
-      if (normLine.includes('SP') || (bestPkm && normLine.includes(bestPkm.name_cn))) continue;
-      const mSkillLvl = line.match(/(?:Lv\.?|LV)\s*([1-8])\b/) || normLine.match(/Lv\.?([1-8])$/);
-      if (mSkillLvl) {
-        const parsedSkillLvl = parseInt(mSkillLvl[1], 10);
-        if (parsedSkillLvl >= 1 && parsedSkillLvl <= maxAllowedSkillLvl) {
-          skillLevel = parsedSkillLvl;
-          break;
+
+    // A. 優先檢查 [MAINSKILL_LV] 專屬等級切片區塊 (來自預處理 Composite Canvas)
+    const msLvSectionMatch = text.match(/\[MAINSKILL_LV\]([\s\S]*?)(?:\[|$)/i);
+    if (msLvSectionMatch) {
+      const msLvText = msLvSectionMatch[1];
+      const mLvl = msLvText.match(/(?:Lv\.?|LV|tv\.?|1v\.?|lv\.?|iv\.?|v\.?|y\.?)\s*([1-8])\b/i) ||
+                   msLvText.match(/(?:^|\D)([1-8])(?:\D|$)/);
+      if (mLvl) {
+        const parsedLvl = parseInt(mLvl[1], 10);
+        if (parsedLvl >= 1 && parsedLvl <= maxAllowedSkillLvl) {
+          skillLevel = parsedLvl;
+          foundSkillLevel = true;
+        }
+      }
+    }
+
+    // B. 若未匹配，檢查 [MAINSKILL] 標籤切片區塊
+    if (!foundSkillLevel) {
+      const msSectionMatch = text.match(/\[MAINSKILL\]([\s\S]*?)(?:\[|$)/i);
+      if (msSectionMatch) {
+        const msText = msSectionMatch[1];
+        const msLines = msText.split('\n');
+        for (const line of msLines) {
+          const normLine = normalizeOcrText(line);
+          const mLvl = line.match(/(?:Lv\.?|LV|tv\.?|1v\.?|lv\.?|iv\.?|v\.?|y\.?)\s*([1-8])\b/i) ||
+                       normLine.match(/Lv\.?([1-8])$/i) ||
+                       line.match(/(?:等級|等|Level)\s*([1-8])\b/i);
+          if (mLvl) {
+            const parsedLvl = parseInt(mLvl[1], 10);
+            if (parsedLvl >= 1 && parsedLvl <= maxAllowedSkillLvl) {
+              skillLevel = parsedLvl;
+              foundSkillLevel = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    // C. 若無切片標籤，搜尋全文中緊鄰主技能名稱或說明之行 (如未切片的原圖 OCR 文字)
+    if (!foundSkillLevel) {
+      const allOcrLines = text.split('\n');
+      const mainSkillKeywords = bestPkm && bestPkm.main_skill ? [
+        bestPkm.main_skill,
+        bestPkm.main_skill.replace(/[SML]$/i, ''),
+        '料理', '食材', '能量', '活力', '幫手', '金幣', '碎片', '揮指', '健美', '填充'
+      ] : ['料理', '食材', '能量', '活力', '幫手', '金幣', '碎片', '揮指', '健美', '填充'];
+
+      for (let i = 0; i < allOcrLines.length; i++) {
+        const line = allOcrLines[i];
+        const normLine = normalizeOcrText(line);
+        if (normLine.includes('SP') || (bestPkm && normLine.includes(bestPkm.name_cn))) continue;
+        if (normLine.includes('持有上限') || normLine.includes('幫忙間隔')) continue;
+        if (normLine.match(/Lv\.?\s*(?:10|25|50|70|80|100)/i)) continue;
+
+        const hasKeyword = mainSkillKeywords.some(kw => kw && normLine.includes(kw));
+        const mLvl = line.match(/(?:Lv\.?|LV|tv\.?|1v\.?|lv\.?|iv\.?|v\.?|y\.?)\s*([1-8])\b/i) || normLine.match(/Lv\.?([1-8])$/i);
+        if (mLvl && hasKeyword) {
+          const parsedLvl = parseInt(mLvl[1], 10);
+          if (parsedLvl >= 1 && parsedLvl <= maxAllowedSkillLvl) {
+            skillLevel = parsedLvl;
+            foundSkillLevel = true;
+            break;
+          }
+        }
+      }
+
+      // D. 全文通用行匹配 (避開寶可夢自身等級、SP、持有上限、副技能解鎖等級)
+      if (!foundSkillLevel) {
+        for (const line of allOcrLines) {
+          const normLine = normalizeOcrText(line);
+          if (normLine.includes('SP') || (bestPkm && normLine.includes(bestPkm.name_cn))) continue;
+          if (normLine.includes('持有上限') || normLine.includes('幫忙間隔')) continue;
+          if (normLine.match(/Lv\.?\s*(?:10|25|50|70|80|100)/i)) continue;
+
+          const mLvl = line.match(/(?:Lv\.?|LV|tv\.?|1v\.?|lv\.?|iv\.?|v\.?|y\.?)\s*([1-8])\b/i) || normLine.match(/Lv\.?([1-8])$/i);
+          if (mLvl) {
+            const parsedLvl = parseInt(mLvl[1], 10);
+            if (parsedLvl >= 1 && parsedLvl <= maxAllowedSkillLvl) {
+              skillLevel = parsedLvl;
+              foundSkillLevel = true;
+              break;
+            }
+          }
         }
       }
     }
@@ -3376,7 +3484,7 @@
       type: bestPkm ? bestPkm.type : (allPokemons[0] ? allPokemons[0].type : ''),
       specialty: bestPkm ? bestPkm.specialty : (allPokemons[0] ? allPokemons[0].specialty : ''),
       level,
-      skillLevel: getEffectiveSkillLevel({ level, skillLevel, subskills: finalSubskills }, bestPkm),
+      skillLevel: foundSkillLevel ? skillLevel : getEffectiveSkillLevel({ level, subskills: finalSubskills }, bestPkm),
       ribbon: deducedRibbon,
       nature,
       subskills: finalSubskills,

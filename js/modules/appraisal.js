@@ -168,7 +168,7 @@
     const naturalLvl = stage + subBonus;
 
     const savedLvl = parseInt(pkm.skillLevel || pkm.skill_level || (pkm.rawItem && pkm.rawItem.skillLevel), 10);
-    let effective = (!isNaN(savedLvl) && savedLvl > 0) ? Math.max(savedLvl, naturalLvl) : naturalLvl;
+    let effective = (!isNaN(savedLvl) && savedLvl > 0) ? savedLvl : naturalLvl;
 
     const maxLvl = base && base.main_skill ? getMainSkillMaxLevel(base.main_skill) : 8;
     return Math.min(maxLvl, Math.max(1, effective));
