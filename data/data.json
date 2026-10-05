@@ -7530,17 +7530,36 @@
     "name_en": "Foongus",
     "name_jp": "タマゲタケ",
     "type": "毒",
-    "specialty": "",
+    "specialty": "食材",
     "sleep_type": "淺淺入夢",
     "carry": "12",
-    "ingredient_rate": "",
-    "skill_rate": "",
-    "interval": "",
-    "main_skill": "",
+    "ingredient_rate": "17.40%",
+    "skill_rate": "3.50%",
+    "interval": "01:35:00",
+    "main_skill": "能量填充S",
     "evo_req": "",
     "is_final": "",
     "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/590.png",
-    "ingredients": []
+    "ingredients": [
+      {
+        "name": "品鮮蘑菇",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      {
+        "name": "特選蛋",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png",
+        "l30": "7",
+        "l60": "10"
+      },
+      {
+        "name": "好眠番茄",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png",
+        "l60": "11"
+      }
+    ]
   },
   {
     "id": "591",
@@ -7549,17 +7568,36 @@
     "name_en": "Amoonguss",
     "name_jp": "モロバレル",
     "type": "毒",
-    "specialty": "",
+    "specialty": "食材",
     "sleep_type": "淺淺入夢",
     "carry": "19",
-    "ingredient_rate": "",
-    "skill_rate": "",
-    "interval": "",
-    "main_skill": "",
+    "ingredient_rate": "20.40%",
+    "skill_rate": "4.70%",
+    "interval": "00:58:20",
+    "main_skill": "能量填充S",
     "evo_req": "Lv.29 + 40 糖",
     "is_final": "〇",
     "icon_url": "https://www.serebii.net/pokemonsleep/pokemon/icon/591.png",
-    "ingredients": []
+    "ingredients": [
+      {
+        "name": "品鮮蘑菇",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png",
+        "l1": "2",
+        "l30": "5",
+        "l60": "7"
+      },
+      {
+        "name": "特選蛋",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/fancyegg.png",
+        "l30": "7",
+        "l60": "10"
+      },
+      {
+        "name": "好眠番茄",
+        "icon": "https://www.serebii.net/pokemonsleep/ingredients/snoozytomato.png",
+        "l60": "11"
+      }
+    ]
   },
   {
     "id": "627",
