@@ -16,7 +16,7 @@
     ]
   },
   {
-    "name_cn": "炙燒尾肉咖哩",
+    "name_cn": "炙烤尾巴咖哩",
     "name_en": "Grilled Tail Curry",
     "category": "咖哩",
     "pot_size": 33,
@@ -167,7 +167,7 @@
     ]
   },
   {
-    "name_cn": "吃飽飽起司肉排咖哩",
+    "name_cn": "健美起司堡咖哩",
     "name_en": "Hearty Cheeseburger Curry",
     "category": "咖哩",
     "pot_size": 16,
@@ -188,7 +188,7 @@
     ]
   },
   {
-    "name_cn": "窩心白醬濃湯",
+    "name_cn": "馬鈴薯蘑菇濃湯",
     "name_en": "Soft Potato Chowder",
     "category": "咖哩",
     "pot_size": 22,
@@ -214,7 +214,7 @@
     ]
   },
   {
-    "name_cn": "單純白醬濃湯",
+    "name_cn": "樸實馬鈴薯濃湯",
     "name_en": "Simple Chowder",
     "category": "咖哩",
     "pot_size": 7,
@@ -230,7 +230,7 @@
     ]
   },
   {
-    "name_cn": "豆製肉排咖哩",
+    "name_cn": "豆腸咖哩堡",
     "name_en": "Beanburger Curry",
     "category": "咖哩",
     "pot_size": 7,
@@ -246,7 +246,7 @@
     ]
   },
   {
-    "name_cn": "寶寶甜蜜咖哩",
+    "name_cn": "溫和蜂蜜咖哩",
     "name_en": "Mild Honey Curry",
     "category": "咖哩",
     "pot_size": 7,
@@ -293,7 +293,7 @@
     ]
   },
   {
-    "name_cn": "日照炸肉排咖哩",
+    "name_cn": "酥脆炸豬排咖哩",
     "name_en": "Drought Katsu Curry",
     "category": "咖哩",
     "pot_size": 15,
@@ -314,7 +314,7 @@
     ]
   },
   {
-    "name_cn": "入口即化蛋捲咖哩",
+    "name_cn": "熔岩蛋包咖哩",
     "name_en": "Melty Omelette Curry",
     "category": "咖哩",
     "pot_size": 16,
@@ -335,7 +335,7 @@
     ]
   },
   {
-    "name_cn": "健美豆子咖哩",
+    "name_cn": "吃飽飽起司肉醬咖哩",
     "name_en": "Bulk Up Bean Curry",
     "category": "咖哩",
     "pot_size": 26,
@@ -366,7 +366,7 @@
     ]
   },
   {
-    "name_cn": "柔軟玉米濃湯",
+    "name_cn": "柔嫩玉米濃湯",
     "name_en": "Limber Corn Stew",
     "category": "咖哩",
     "pot_size": 30,
@@ -423,7 +423,7 @@
     ]
   },
   {
-    "name_cn": "迷昏拳辣味咖哩",
+    "name_cn": "迷昏香味咖哩",
     "name_en": "Dizzy Punch Spicy Curry",
     "category": "咖哩",
     "pot_size": 33,
@@ -449,7 +449,7 @@
     ]
   },
   {
-    "name_cn": "覺醒力量濃湯",
+    "name_cn": "覺醒力量醒腦燉湯",
     "name_en": "Hidden Power Perk-Up Stew",
     "category": "咖哩",
     "pot_size": 92,
@@ -480,7 +480,7 @@
     ]
   },
   {
-    "name_cn": "居合斬壽喜燒咖哩",
+    "name_cn": "一字斬壽喜燒咖哩",
     "name_en": "Cut Sukiyaki Curry",
     "category": "咖哩",
     "pot_size": 101,
@@ -511,7 +511,7 @@
     ]
   },
   {
-    "name_cn": "扮演南瓜精濃湯",
+    "name_cn": "扮演南瓜濃湯",
     "name_en": "Role Play Pumpkaboo Stew",
     "category": "咖哩",
     "pot_size": 69,
@@ -687,7 +687,7 @@
     ]
   },
   {
-    "name_cn": "撥雪凱撒沙拉",
+    "name_cn": "雪隱凱薩沙拉",
     "name_en": "Snow Cloak Caesar Salad",
     "category": "沙拉",
     "pot_size": 16,
@@ -739,7 +739,7 @@
     ]
   },
   {
-    "name_cn": "濕潤豆腐沙拉",
+    "name_cn": "水幕豆腐沙拉",
     "name_en": "Water Veil Tofu Salad",
     "category": "沙拉",
     "pot_size": 24,
@@ -760,7 +760,7 @@
     ]
   },
   {
-    "name_cn": "蠻力豪邁沙拉",
+    "name_cn": "超能力極限沙拉",
     "name_en": "Superpower Extreme Salad",
     "category": "沙拉",
     "pot_size": 23,
@@ -791,7 +791,7 @@
     ]
   },
   {
-    "name_cn": "豆製火腿沙拉",
+    "name_cn": "豆火腿沙拉",
     "name_en": "Bean Ham Salad",
     "category": "沙拉",
     "pot_size": 8,
@@ -823,7 +823,7 @@
     ]
   },
   {
-    "name_cn": "哞哞起司番茄沙拉",
+    "name_cn": "莫札瑞拉起司沙拉",
     "name_en": "Moomoo Caprese Salad",
     "category": "沙拉",
     "pot_size": 23,
@@ -849,7 +849,7 @@
     ]
   },
   {
-    "name_cn": "心情不定肉沙拉淋巧克力醬",
+    "name_cn": "唱反調可可肉沙拉",
     "name_en": "Contrary Chocolate Meat Salad",
     "category": "沙拉",
     "pot_size": 23,
@@ -912,7 +912,7 @@
     ]
   },
   {
-    "name_cn": "免疫蔥花沙拉",
+    "name_cn": "免疫大蔥沙拉",
     "name_en": "Immunity Leek Salad",
     "category": "沙拉",
     "pot_size": 15,
@@ -933,7 +933,7 @@
     ]
   },
   {
-    "name_cn": "迷人蘋果起司沙拉",
+    "name_cn": "蘋果起司沙拉",
     "name_en": "Dazzling Apple Cheese Salad",
     "category": "沙拉",
     "pot_size": 23,
@@ -1120,7 +1120,7 @@
     ]
   },
   {
-    "name_cn": "不服輸咖啡沙拉",
+    "name_cn": "不服輸咖啡風味沙拉",
     "name_en": "Defiant Coffee-Dressed Salad",
     "category": "沙拉",
     "pot_size": 100,
@@ -1182,7 +1182,7 @@
     ]
   },
   {
-    "name_cn": "蘋果酸優格沙拉",
+    "name_cn": "蘋果酸優格風味沙拉",
     "name_en": "Apple Acid Yogurt-Dressed Salad",
     "category": "沙拉",
     "pot_size": 104,
@@ -1239,7 +1239,7 @@
     ]
   },
   {
-    "name_cn": "重踏酪梨醬脆片",
+    "name_cn": "重踏酪梨醬薯片",
     "name_en": "Bulldoze Guacamole and Chips",
     "category": "沙拉",
     "pot_size": 105,
@@ -1270,7 +1270,7 @@
     ]
   },
   {
-    "name_cn": "大塊滿滿熱水沙拉",
+    "name_cn": "熱水溫沙拉",
     "name_en": "Scald Chunky Salad",
     "category": "沙拉",
     "pot_size": 95,
@@ -1301,7 +1301,7 @@
     ]
   },
   {
-    "name_cn": "熟成甜薯燒",
+    "name_cn": "軟綿烤地瓜",
     "name_en": "Fluffy Sweet Potatoes",
     "category": "甜點",
     "pot_size": 14,
@@ -1322,7 +1322,7 @@
     ]
   },
   {
-    "name_cn": "不屈薑餅",
+    "name_cn": "不屈生薑餅乾",
     "name_en": "Steadfast Ginger Cookies",
     "category": "甜點",
     "pot_size": 35,
@@ -1369,7 +1369,7 @@
     ]
   },
   {
-    "name_cn": "手製勁爽汽水",
+    "name_cn": "手作勁爽汽水",
     "name_en": "Craft Soda Pop",
     "category": "甜點",
     "pot_size": 9,
@@ -1385,7 +1385,7 @@
     ]
   },
   {
-    "name_cn": "火花薑茶",
+    "name_cn": "火花生薑茶",
     "name_en": "Ember Ginger Tea",
     "category": "甜點",
     "pot_size": 16,
@@ -1406,7 +1406,7 @@
     ]
   },
   {
-    "name_cn": "胖丁百匯布丁",
+    "name_cn": "胖丁水果布丁",
     "name_en": "Jigglypuff's Fruity Flan",
     "category": "甜點",
     "pot_size": 55,
@@ -1437,7 +1437,7 @@
     ]
   },
   {
-    "name_cn": "惡魔之吻水果牛奶",
+    "name_cn": "迷人果昔",
     "name_en": "Lovely Kiss Smoothie",
     "category": "甜點",
     "pot_size": 35,
@@ -1468,7 +1468,7 @@
     ]
   },
   {
-    "name_cn": "祈願蘋果派",
+    "name_cn": "幸運祈願蘋果派",
     "name_en": "Lucky Chant Apple Pie",
     "category": "甜點",
     "pot_size": 16,
@@ -1489,7 +1489,7 @@
     ]
   },
   {
-    "name_cn": "橙夢的排毒茶",
+    "name_cn": "奈羅利恢復茶",
     "name_en": "Neroli's Restorative Tea",
     "category": "甜點",
     "pot_size": 35,
@@ -1515,7 +1515,7 @@
     ]
   },
   {
-    "name_cn": "甜甜香氣巧克力蛋糕",
+    "name_cn": "甜香可可蛋糕",
     "name_en": "Sweet Scent Chocolate Cake",
     "category": "甜點",
     "pot_size": 24,
@@ -1541,7 +1541,7 @@
     ]
   },
   {
-    "name_cn": "哞哞熱鮮奶",
+    "name_cn": "溫熱哞哞鮮奶",
     "name_en": "Warm Moomoo Milk",
     "category": "甜點",
     "pot_size": 7,
@@ -1557,7 +1557,7 @@
     ]
   },
   {
-    "name_cn": "輕裝豆香蛋糕",
+    "name_cn": "無關天氣大豆蛋糕",
     "name_en": "Cloud Nine Soy Cake",
     "category": "甜點",
     "pot_size": 15,
@@ -1578,7 +1578,7 @@
     ]
   },
   {
-    "name_cn": "活力蛋白飲",
+    "name_cn": "活力蛋白質果昔",
     "name_en": "Hustle Protein Smoothie",
     "category": "甜點",
     "pot_size": 23,
@@ -1599,7 +1599,7 @@
     ]
   },
   {
-    "name_cn": "我行我素蔬菜汁",
+    "name_cn": "堅毅蔬菜汁",
     "name_en": "Stalwart Vegetable Juice",
     "category": "甜點",
     "pot_size": 16,
@@ -1620,7 +1620,7 @@
     ]
   },
   {
-    "name_cn": "大馬拉薩達",
+    "name_cn": "馬拉薩達",
     "name_en": "Big Malasada",
     "category": "甜點",
     "pot_size": 23,
@@ -1646,7 +1646,7 @@
     ]
   },
   {
-    "name_cn": "大力士豆香甜甜圈",
+    "name_cn": "大力士大豆甜甜圈",
     "name_en": "Huge Power Soy Donuts",
     "category": "甜點",
     "pot_size": 35,
@@ -1698,7 +1698,7 @@
     ]
   },
   {
-    "name_cn": "茶會玉米司康",
+    "name_cn": "午茶玉米司康",
     "name_en": "Teatime Corn Scones",
     "category": "甜點",
     "pot_size": 67,
@@ -1729,7 +1729,7 @@
     ]
   },
   {
-    "name_cn": "花瓣舞巧克力塔",
+    "name_cn": "花瓣舞可可塔",
     "name_en": "Petal Dance Chocolate Tart",
     "category": "甜點",
     "pot_size": 22,
@@ -1807,7 +1807,7 @@
     ]
   },
   {
-    "name_cn": "電光香料可樂",
+    "name_cn": "麻麻刺刺香料可樂",
     "name_en": "Zing Zap Spiced Cola",
     "category": "甜點",
     "pot_size": 87,
@@ -1838,7 +1838,7 @@
     ]
   },
   {
-    "name_cn": "破格玉米香提拉米蘇",
+    "name_cn": "破格玉米提拉米蘇",
     "name_en": "Mold Breaker Corn Tiramisu",
     "category": "甜點",
     "pot_size": 40,
@@ -1926,7 +1926,7 @@
     ]
   },
   {
-    "name_cn": "青草攪拌器冰沙",
+    "name_cn": "青草攪拌器果昔",
     "name_en": "Leaf Tornado Smoothie",
     "category": "甜點",
     "pot_size": 48,
@@ -1952,7 +1952,7 @@
     ]
   },
   {
-    "name_cn": "採蜜巧克力格子鬆餅",
+    "name_cn": "採蜜可可鬆餅",
     "name_en": "Honey Gather Chocolate Waffles",
     "category": "甜點",
     "pot_size": 115,
