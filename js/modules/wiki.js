@@ -14017,68 +14017,51 @@
     const style = getSleepStyleData(pkmName, star);
     if (!style) return;
 
+    if (!anchorEl && event && event.target) {
+      anchorEl = event.target.closest('.island-sleep-cell-wrap') || event.target;
+    } else if (anchorEl && anchorEl.target) {
+      event = anchorEl;
+      anchorEl = event.target.closest('.island-sleep-cell-wrap') || event.target;
+    }
+
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-    const pkmAvatar = getPokemonAvatarUrl(pkmName, pkmName);
-    const styleTitle = isEN ? style.name_en : style.name;
-    const styleJp = style.name_jp || '';
-    const badgeHtml = formatSnorlaxRankBadge(rankStr);
+    const shardsLabel = isEN ? 'Dream Shards: ' : '夢之碎片：';
+    const expLabel = isEN ? 'Research EXP: ' : '研究EXP：';
+    const candyLabel = isEN ? 'Candy: ' : '糖果數量：';
 
-    const backdrop = document.createElement('div');
-    backdrop.id = 'island-sleep-popover-backdrop';
-    backdrop.className = 'island-sleep-popover-backdrop';
-    backdrop.onclick = closeSleepStylePopover;
-
-    const card = document.createElement('div');
-    card.id = 'island-sleep-popover';
-    card.className = 'island-sleep-popover-card';
-    card.onclick = function(e) { e.stopPropagation(); };
-
-    card.innerHTML = `
-      <div class="island-sleep-popover-header">
-        <div class="popover-pkm-info">
-          <img src="${pkmAvatar}" class="popover-avatar" alt="${pkmName}" onerror="this.style.display='none'">
-          <div class="popover-name-group">
-            <div class="popover-pkm-name font-bold">${pkmName}</div>
-            <div class="popover-style-name">${star}${isEN ? ' Star' : '星'} ${styleTitle} ${styleJp ? '<span style="font-size:10.5px; opacity:0.8;">(' + styleJp + ')</span>' : ''}</div>
-          </div>
-        </div>
-        <button type="button" class="popover-close-btn" onclick="window.WikiDB.closeSleepStylePopover()" aria-label="Close">
-          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
-      </div>
-
-      <div class="popover-section-grid">
-        <div class="popover-grid-item">
-          <span class="popover-item-label">${isEN ? 'Unlock Rank' : '卡比獸評級門檻'}</span>
-          <div class="popover-item-val">${badgeHtml}</div>
-        </div>
-        <div class="popover-grid-item">
-          <span class="popover-item-label">${isEN ? 'Dream Shards' : '基礎夢之碎片'}</span>
-          <div class="popover-item-val text-blue font-bold">+${style.shards}</div>
-        </div>
-        <div class="popover-grid-item">
-          <span class="popover-item-label">${isEN ? 'Research EXP' : '基礎研究EXP'}</span>
-          <div class="popover-item-val text-green font-bold">+${style.exp}</div>
-        </div>
-        <div class="popover-grid-item">
-          <span class="popover-item-label">${isEN ? 'Candy Count' : '基礎糖果數量'}</span>
-          <div class="popover-item-val text-orange font-bold">+${style.candy}</div>
-        </div>
-      </div>
-
-      <div class="popover-tip-card">
-        <div class="popover-tip-title">${isEN ? 'Research Yield Insights' : '結算研究效益提示'}</div>
-        <div class="popover-tip-desc">
-          ${isEN 
-            ? `• Rank Max Overflow: At max rank (Lv.70), EXP converts 1:1 into Shards for a total of <b>${style.shards + style.exp}</b> Shards.<br>• Boost Items: Luck Incense yields x2 Shards (<b>${style.shards * 2}</b>); Focus Incense yields x2 EXP (<b>${style.exp * 2}</b>).`
-            : `• 滿級溢出轉換：若研究等級已達上限(Lv.70)，研究EXP以 1:1 全額轉為碎片，單次結算總計獲得 <b>${style.shards + style.exp}</b> 夢之碎片！<br>• 道具倍率試算：幸運薰香獲得雙倍碎片 (<b>${style.shards * 2}</b>)；專注薰香獲得雙倍EXP (<b>${style.exp * 2}</b>)。`
-          }
-        </div>
-      </div>
+    const tip = document.createElement('div');
+    tip.id = 'island-sleep-popover';
+    tip.className = 'island-sleep-hover-tooltip';
+    tip.innerHTML = `
+      <div class="island-sleep-tip-line">${shardsLabel}${style.shards}</div>
+      <div class="island-sleep-tip-line">${expLabel}${style.exp}</div>
+      <div class="island-sleep-tip-line">${candyLabel}${style.candy}</div>
     `;
 
-    document.body.appendChild(backdrop);
-    document.body.appendChild(card);
+    document.body.appendChild(tip);
+
+    if (anchorEl && typeof anchorEl.getBoundingClientRect === 'function') {
+      const rect = anchorEl.getBoundingClientRect();
+      const tipRect = tip.getBoundingClientRect();
+      let top = rect.top - tipRect.height - 8;
+      let left = rect.left + (rect.width / 2) - (tipRect.width / 2);
+
+      if (top < 8) {
+        top = rect.bottom + 8;
+      }
+      const winWidth = (typeof window !== 'undefined' && window.innerWidth) ? window.innerWidth : 1024;
+      const winHeight = (typeof window !== 'undefined' && window.innerHeight) ? window.innerHeight : 768;
+      if (left < 10) left = 10;
+      if (left + tipRect.width > winWidth - 10) {
+        left = winWidth - tipRect.width - 10;
+      }
+      if (top + tipRect.height > winHeight - 8) {
+        top = winHeight - tipRect.height - 8;
+      }
+
+      tip.style.top = `${Math.round(top)}px`;
+      tip.style.left = `${Math.round(left)}px`;
+    }
   }
 
   // --- 8. 7大研究島嶼營地與EX專家模式資料庫 (Research Camps & EX Mode DB) ---
@@ -15808,12 +15791,6 @@
         return `<div class="island-sleep-cell-wrap">${badgeHtml}</div>`;
       }
 
-      const styleTitle = isEN ? style.name_en : style.name;
-      const shardTitle = isEN ? 'Dream Shards' : '夢之碎片';
-      const expTitle = isEN ? 'Research EXP' : '研究EXP';
-      const candyTitle = isEN ? 'Candies' : '糖果數量';
-      const cellTooltip = `${p.name} (${star}${isEN ? ' Star' : '星'} ${styleTitle})\n${isEN ? 'Snorlax Rank' : '解鎖門檻'}: ${rankStr}\n${shardTitle}: +${style.shards}\n${expTitle}: +${style.exp}\n${candyTitle}: +${style.candy}\n(${isEN ? 'Click to view details & bonuses' : '點擊查看睡姿詳情與效益試算'})`;
-
       const safePkmName = (p.name || '').replace(/'/g, "\\'");
 
       return `
@@ -15821,7 +15798,8 @@
              data-pkm="${safePkmName}" 
              data-star="${star}" 
              data-rank="${rankStr}"
-             title="${cellTooltip}"
+             onmouseenter="window.WikiDB.showSleepStylePopover('${safePkmName}', ${star}, '${rankStr}', this, event)"
+             onmouseleave="window.WikiDB.closeSleepStylePopover()"
              onclick="window.WikiDB.showSleepStylePopover('${safePkmName}', ${star}, '${rankStr}', this, event)">
           ${badgeHtml}
         </div>
