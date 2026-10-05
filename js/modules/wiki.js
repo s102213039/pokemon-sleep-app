@@ -13965,6 +13965,44 @@
     return null;
   }
 
+  function formatSnorlaxRankBadge(rankStr, isEN) {
+    if (typeof isEN === 'undefined') {
+      isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    }
+    if (!rankStr || rankStr === '-') {
+      return `<span class="rank-badge rank-dash" title="${isEN ? 'Unavailable' : '未出現'}">-</span>`;
+    }
+    const parts = rankStr.trim().split(/\s+/);
+    const tier = (parts[0] || '').toLowerCase();
+    const num = parts[1] || '';
+    const tierTitle = isEN ? rankStr : (
+      tier === 'basic' ? `普通 (Basic) ${num}` :
+      tier === 'great' ? `超級 (Great) ${num}` :
+      tier === 'ultra' ? `高級 (Ultra) ${num}` :
+      tier === 'master' ? `大師 (Master) ${num}` : rankStr
+    );
+
+    let ballSvg = '';
+    if (tier === 'basic') {
+      ballSvg = `<svg class="pokeball-svg ball-basic" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#334155" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#ef4444"/><line x1="1" y1="8" x2="15" y2="8" stroke="#334155" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#334155" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#334155"/></svg>`;
+    } else if (tier === 'great') {
+      ballSvg = `<svg class="pokeball-svg ball-great" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#2563eb"/><path d="M 2.6,5.2 A 7,7 0 0,1 5.2,2.6 L 5.8,5.8 Z" fill="#ef4444"/><path d="M 13.4,5.2 A 7,7 0 0,0 10.8,2.6 L 10.2,5.8 Z" fill="#ef4444"/><line x1="1" y1="8" x2="15" y2="8" stroke="#1e3a8a" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#1e3a8a"/></svg>`;
+    } else if (tier === 'ultra') {
+      ballSvg = `<svg class="pokeball-svg ball-ultra" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#0f172a" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#1e293b"/><path d="M 3.2,7.5 L 4.4,2.2 L 5.8,2.4 L 4.8,7.5 Z" fill="#facc15"/><path d="M 12.8,7.5 L 11.6,2.2 L 10.2,2.4 L 11.2,7.5 Z" fill="#facc15"/><line x1="1" y1="8" x2="15" y2="8" stroke="#0f172a" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#0f172a" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#0f172a"/></svg>`;
+    } else if (tier === 'master') {
+      ballSvg = `<svg class="pokeball-svg ball-master" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#4c1d95" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#7e22ce"/><circle cx="4.5" cy="4.5" r="1.6" fill="#ec4899"/><circle cx="11.5" cy="4.5" r="1.6" fill="#ec4899"/><path d="M 6.8,3.2 L 7.2,4.8 L 8,4 L 8.8,4.8 L 9.2,3.2" fill="none" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="8" x2="15" y2="8" stroke="#4c1d95" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#4c1d95" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#4c1d95"/></svg>`;
+    } else {
+      return `<span class="rank-badge">${rankStr}</span>`;
+    }
+
+    return `
+      <span class="rank-badge rank-${tier}" title="${tierTitle}">
+        ${ballSvg}
+        <span class="rank-num">${num}</span>
+      </span>
+    `;
+  }
+
   function closeSleepStylePopover() {
     const pop = document.getElementById('island-sleep-popover');
     if (pop && pop.parentNode) pop.parentNode.removeChild(pop);
@@ -18303,10 +18341,12 @@
     getSavedIslandSleepRewards: getSavedIslandSleepRewards,
     getIsIslandSleepRewardsVisible: () => isIslandSleepRewardsVisible,
     showSleepStylePopover: showSleepStylePopover,
-    closeSleepStylePopover: closeSleepStylePopover
+    closeSleepStylePopover: closeSleepStylePopover,
+    formatSnorlaxRankBadge: formatSnorlaxRankBadge
   };
 
   window.WikiDB = WikiDBExport;
+  window.formatSnorlaxRankBadge = formatSnorlaxRankBadge;
 
   // 同步掛載至 window 根層級以防止任何命名空間呼叫錯誤
   window.switchWikiSubTab = switchWikiSubTab;
