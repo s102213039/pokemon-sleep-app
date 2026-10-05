@@ -7851,11 +7851,11 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(css.includes('.island-scene-layer') && css.includes('width: 100vw !important;') && css.includes('height: 100vh !important;'), 'Island scene layer must span 100vw and 100vh');
     assert(css.includes('body:not(.mobile-h5-app) #panel-wiki.has-island-scene > .island-scene-layer') && css.includes('position: fixed !important;'), 'Desktop island scene layer must be fixed');
 
-    // 2. Mobile Island Scene Layer must be fixed to avoid 300px cutoff
-    assert(css.includes('.mobile-h5-app #wiki-subpanel-islands.has-island-scene > .island-scene-layer') && css.includes('position: fixed !important;'), 'Mobile island scene layer must be fixed');
-    assert(css.includes('.mobile-h5-app .island-scene-photo') && css.includes('height: 100% !important;'), 'Mobile island scene photo must cover full height');
+    // 2. Mobile Island Scene Layer fills 100% width with height determined by aspect ratio
+    assert(css.includes('.mobile-h5-app #wiki-subpanel-islands.has-island-scene > .island-scene-layer') && css.includes('width: calc(100% + 20px) !important;'), 'Mobile island scene layer must span 100% width');
+    assert(css.includes('.mobile-h5-app .island-scene-photo') && css.includes('aspect-ratio: 2560 / 1372 !important;'), 'Mobile island scene photo height must be determined by width aspect-ratio');
 
-    // 3. Island photo must cover full height and position properly
+    // 3. Desktop Island photo must cover full height and position properly
     assert(css.includes('.island-scene-photo') && css.includes('height: 100% !important;') && css.includes('object-fit: cover !important;'), 'Island scene photo must cover container with 100% height');
     assert(css.includes('.island-scene-fade') && css.includes('height: 100%;'), 'Island scene fade must span 100% height without abrupt cutoff line');
 
@@ -10874,6 +10874,44 @@ SP 4,316
     assert(totalCases >= 10000, `Must evaluate at least 10000 permutations, got ${totalCases}`);
     assert(accuracy >= 0.99, `Universal OCR engine accuracy must be >= 99%, got ${(accuracy * 100).toFixed(2)}% (${passedCases}/${totalCases})`);
     assertEquals(failures.length, 0, `All ${totalCases} test cases must pass without error (100% accuracy)`);
+  });
+
+  // ─── Test 195: Appraisal Breakdown Elimination, Desktop Layout Polish, Unified Island Popover & News Workflow Verification ─
+  test('Tier 4 - Real-World Application Scenarios', 'Appraisal Breakdown Elimination, Desktop Layout Polish, Unified Island Popover & News Workflow Verification', () => {
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/wiki.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+    const syncAllPy = fs.readFileSync(path.join(WORKSPACE_ROOT, 'scripts/sync_all.py'), 'utf8');
+    const updateDataYml = fs.readFileSync(path.join(WORKSPACE_ROOT, '.github/workflows/update-data.yml'), 'utf8');
+    const syncYml = fs.readFileSync(path.join(WORKSPACE_ROOT, '.github/workflows/sync.yml'), 'utf8');
+    const newsJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/news.json'), 'utf8'));
+
+    // 1. appraisal-scores-breakdown completely removed from appraisal.js
+    assert(!appraisalJs.includes('appraisal-scores-breakdown'), 'appraisal.js must not contain appraisal-scores-breakdown in any view');
+
+    // 2. Desktop appraisal layout uses appraisal-desktop-content-grid and appraisal-radar-block
+    assert(appraisalJs.includes('appraisal-desktop-content-grid'), 'appraisal.js must use appraisal-desktop-content-grid for desktop');
+    assert(appraisalJs.includes('appraisal-radar-block'), 'appraisal.js must use appraisal-radar-block');
+    assert(stylesCss.includes('body:not(.mobile-h5-app) .appraisal-desktop-content-grid'), 'styles.css must style appraisal-desktop-content-grid for desktop');
+
+    // 3. Island sleep cells: render clean badge triggering popover without inline bulky chips
+    assert(wikiJs.includes('function renderIslandSleepCell'), 'wiki.js must define renderIslandSleepCell');
+    assert(wikiJs.includes('showSleepStylePopover'), 'wiki.js must implement showSleepStylePopover');
+    assert(!wikiJs.includes('island-sleep-inline-rewards'), 'wiki.js must not contain bulky inline rewards chips in habitat cells');
+
+    // 4. Mobile H5 Island Scene: 100% width with aspect ratio height
+    assert(stylesCss.includes('.mobile-h5-app #wiki-subpanel-islands.has-island-scene > .island-scene-layer'), 'styles.css must style mobile island scene layer');
+    assert(stylesCss.includes('aspect-ratio: 2560 / 1372 !important;'), 'styles.css must enforce aspect-ratio for mobile island photo');
+
+    // 5. News Automation in GitHub Actions & Scripts
+    assert(syncAllPy.includes('build_news.py'), 'scripts/sync_all.py must include build_news.py');
+    assert(updateDataYml.includes('build_news.py'), '.github/workflows/update-data.yml must execute build_news.py');
+    assert(updateDataYml.includes('data/news.json'), '.github/workflows/update-data.yml must commit data/news.json');
+    assert(syncYml.includes('data/news.json'), '.github/workflows/sync.yml must commit data/news.json');
+
+    // 6. Fresh news data loaded
+    assert(Array.isArray(newsJson) && newsJson.length > 0, 'data/news.json must be a non-empty array');
+    assert(newsJson.some(n => n.date && n.date.startsWith('2026-10')), 'data/news.json must contain up-to-date October 2026 articles');
   });
 
 console.log('                   Test Results Summary');

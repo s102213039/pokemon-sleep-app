@@ -2082,24 +2082,6 @@
               <div class="appraisal-radar-wrapper" style="width:100%;max-width:320px;margin:0 auto;">
                 ${renderRadarChartSVG(evaluation.scores, 320, 220)}
               </div>
-
-              <div class="appraisal-scores-breakdown" style="width:100%;">
-                <h4 class="appraisal-section-heading">${isEN ? '[*] 6-Dimension Quantitative Analysis' : '[*] 六維能力量化分析'}</h4>
-                ${SIX_DIM_META.map(function(m) {
-                  const score = evaluation.scores[m.key] || 0;
-                  return `
-                    <div class="appraisal-dim-row" title="${m.desc}">
-                      <div class="appraisal-dim-label">
-                        <span>${m.icon} ${m.label}</span>
-                        <span class="font-bold text-white">${score} ${isEN ? 'pts' : '分'}</span>
-                      </div>
-                      <div class="appraisal-dim-bar-bg">
-                        <div class="appraisal-dim-bar-fill" style="width: ${score}%;"></div>
-                      </div>
-                    </div>
-                  `;
-                }).join('')}
-              </div>
             </div>
 
             <!-- 專長深度點評與優缺點 -->
@@ -2248,46 +2230,29 @@
             </div>
           </div>
 
-          <!-- 右欄：雷達圖 + 六維量表 + 深度點評 + 智能簡評 (精簡排版，純淨無外框容器) -->
+          <!-- 右欄：雷達圖 + 協同深度點評 + 智能簡評 (精簡雙區塊並排排版，純淨無外框容器) -->
           <div class="appraisal-right-col">
-            <!-- 上半部：雷達圖與六維能量條 (縮小上下邊距) -->
-            <div class="appraisal-chart-flex">
-              <div class="appraisal-radar-wrapper">
-                ${radarSVG}
-              </div>
-
-              <div class="appraisal-scores-breakdown">
-                <h4 class="appraisal-section-heading">${isEN ? '[*] 6-Dimension Quantitative Analysis' : '[*] 六維能力量化分析'}</h4>
-                ${SIX_DIM_META.map(function(m) {
-                  const score = evaluation.scores[m.key] || 0;
-                  return `
-                    <div class="appraisal-dim-row" title="${m.desc}">
-                      <div class="appraisal-dim-label">
-                        <span>${m.icon} ${m.label}</span>
-                        <span class="font-bold text-white">${score} ${isEN ? 'pts' : '分'}</span>
-                      </div>
-                      <div class="appraisal-dim-bar-bg">
-                        <div class="appraisal-dim-bar-fill" style="width: ${score}%;"></div>
-                      </div>
-                    </div>
-                  `;
-                }).join('')}
-              </div>
-            </div>
-
-            <!-- 中半部：專長深度點評與優缺點 -->
-            <div class="appraisal-analysis-card">
-              <h4 class="appraisal-section-heading">${isEN ? '[*] Specialty, Nature & Sub-Skill Synergy Analysis' : '[*] 專長與性格副技能協同點評'}</h4>
-              
-              <div class="appraisal-pros-list">
-                ${evaluation.pros.map(function(p) { return `<div class="appraisal-pro-item">${p}</div>`; }).join('')}
-              </div>
-
-              ${evaluation.cons.length > 0 ? `
-                <div class="appraisal-cons-list">
-                  ${evaluation.cons.map(function(c) { return `<div class="appraisal-con-item">${c}</div>`; }).join('')}
+            <div class="appraisal-desktop-content-grid">
+              <!-- 左側：六維能力雷達圖 (自適應置中) -->
+              <div class="appraisal-radar-block">
+                <h4 class="appraisal-section-heading">${isEN ? '[*] 6-Dimension Capability Radar' : '[*] 六維能力雷達圖'}</h4>
+                <div class="appraisal-radar-wrapper">
+                  ${radarSVG}
                 </div>
-              ` : ''}
+              </div>
+
+              <!-- 右側：專長深度點評與優缺點 -->
+              <div class="appraisal-analysis-card">
+                <h4 class="appraisal-section-heading">${isEN ? '[*] Specialty & Synergy Analysis' : '[*] 專長與性格副技能協同點評'}</h4>
+                <div class="appraisal-pros-list">
+                  ${evaluation.pros.map(function(p) { return `<div class="appraisal-pro-item">${p}</div>`; }).join('')}
+                </div>
+                ${evaluation.cons.length > 0 ? `
+                  <div class="appraisal-cons-list">
+                    ${evaluation.cons.map(function(c) { return `<div class="appraisal-con-item">${c}</div>`; }).join('')}
+                  </div>
+                ` : ''}
+              </div>
             </div>
 
             <!-- 右邊最下方：PR 智能簡評欄 (純淨簡評提示條) -->

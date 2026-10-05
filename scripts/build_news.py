@@ -112,12 +112,12 @@ def deep_ai_extract_sections(category, title, clean_text):
     if schedule_items:
         sections.append({
             "key": "schedule",
-            "title": "⏰ 活動時間與營地",
-            "icon": "⏰",
+            "title": "活動時間與營地",
+            "icon": "[Time]",
             "items": schedule_items[:4]
         })
 
-    # 1.5 🦄 新登場寶可夢專屬資訊 (New Debut Pokemon)
+    # 1.5 新登場寶可夢專屬資訊 (New Debut Pokemon)
     debut_match = re.search(r'能新遇見的寶可夢\s*(.*?)(?:敬請期待|注意事項|$)', clean_text, re.DOTALL)
     if debut_match:
         debut_block = debut_match.group(1)
@@ -125,44 +125,44 @@ def deep_ai_extract_sections(category, title, clean_text):
         sleep_types = re.findall(r'([^：:\n]+[：:](?:安然入睡|深灰入睡|半夢半醒|淺灰入睡)[^\n]*)', clean_text)
         debut_items = []
         if debut_pokes:
-            debut_items.append(f"✨ 登場寶可夢：{'、'.join(debut_pokes[:6])}")
+            debut_items.append(f"登場寶可夢：{'、'.join(debut_pokes[:6])}")
         if sleep_types:
-            debut_items.append(f"💤 睡眠類型：{' · '.join(sleep_types[:4])}")
+            debut_items.append(f"睡眠類型：{' · '.join(sleep_types[:4])}")
         if debut_items:
             sections.append({
                 "key": "debut",
-                "title": "🦄 新登場寶可夢情報",
-                "icon": "🦄",
+                "title": "新登場寶可夢情報",
+                "icon": "[Pokemon]",
                 "items": debut_items
             })
 
-    # 2. ⚡ 核心獎勵與倍率加成 (Bonus & Multipliers)
+    # 2. 核心獎勵與倍率加成 (Bonus & Multipliers)
     bonus_items = []
     # 料理倍率
     food_matches = re.findall(r'([^\n]*料理[^\n]*倍[^\n]*)', clean_text)
     for m in food_matches:
         m_clean = re.sub(r'^[・\-\*]\s*', '', m).strip()
         if len(m_clean) > 5 and m_clean not in bonus_items:
-            bonus_items.append(f"🍲 {m_clean}")
+            bonus_items.append(m_clean)
 
     # 睡意之力
     drowsy_matches = re.findall(r'([^\n]*睡意之[力量][^\n]*倍[^\n]*)', clean_text)
     for m in drowsy_matches:
         m_clean = re.sub(r'^[・\-\*]\s*', '', m).strip()
         if len(m_clean) > 4 and m_clean not in bonus_items:
-            bonus_items.append(f"🌕 {m_clean}")
+            bonus_items.append(m_clean)
 
     # 貪吃 / 睡眠EXP / 糖果 / 睡眠點數
-    for keyword, emoji, prefix in [
-        ('貪吃', '😋', '點心時間：'),
-        ('睡眠EXP', '💤', '經驗提升：'),
-        ('糖果', '🍬', '糖果加成：'),
-        ('紅利睡眠點數', '🎁', '睡眠點數：')
+    for keyword, prefix in [
+        ('貪吃', '點心時間：'),
+        ('睡眠EXP', '經驗提升：'),
+        ('糖果', '糖果加成：'),
+        ('紅利睡眠點數', '睡眠點數：')
     ]:
         for line in text_blocks:
             if keyword in line and len(line.strip()) < 80:
                 line_clean = re.sub(r'^[・\-\*]\s*', '', line).strip()
-                item_str = f"{emoji} {line_clean}"
+                item_str = line_clean
                 if item_str not in bonus_items and not any(line_clean in b for b in bonus_items):
                     bonus_items.append(item_str)
                     break
@@ -170,12 +170,12 @@ def deep_ai_extract_sections(category, title, clean_text):
     if bonus_items:
         sections.append({
             "key": "bonus",
-            "title": "⚡ 核心獎勵與倍率加成",
-            "icon": "⚡",
+            "title": "核心獎勵與倍率加成",
+            "icon": "[Bonus]",
             "items": bonus_items[:6]
         })
 
-    # 3. 🌟 機率提升寶可夢 (Rate-up Pokemon Breakdown)
+    # 3. 機率提升寶可夢 (Rate-up Pokemon Breakdown)
     rateup_items = []
     rateup_match = re.search(r'機率提升\s*(.*?)(?:各營地能遇見的寶可夢|各項目詳情|注意事項|$)', clean_text, re.DOTALL)
     if rateup_match:
@@ -189,12 +189,12 @@ def deep_ai_extract_sections(category, title, clean_text):
     if rateup_items:
         sections.append({
             "key": "rateup",
-            "title": "🌟 機率提升寶可夢",
-            "icon": "🌟",
+            "title": "機率提升寶可夢",
+            "icon": "[RateUp]",
             "items": rateup_items
         })
 
-    # 4. 🏝️ 各島嶼/營地專屬出現寶可夢 (Island Breakdown)
+    # 4. 各島嶼/營地專屬出現寶可夢 (Island Breakdown)
     island_items = []
     islands_match = re.search(r'各營地能遇見的寶可夢\s*(.*?)(?:各項目詳情|注意事項|商品詳情|$)', clean_text, re.DOTALL)
     if islands_match:
@@ -203,17 +203,17 @@ def deep_ai_extract_sections(category, title, clean_text):
         for island_name, pokes in islands:
             pokes_clean = '、'.join([p.strip() for p in re.split(r'[,、\s]+', pokes.strip()) if p.strip()])
             if pokes_clean and len(pokes_clean) > 2:
-                island_items.append(f"🏝️ {island_name.strip()}：{pokes_clean}")
+                island_items.append(f"{island_name.strip()}：{pokes_clean}")
 
     if island_items:
         sections.append({
             "key": "islands",
-            "title": "🏝️ 各營地出現寶可夢一覽",
-            "icon": "🏝️",
+            "title": "各營地出現寶可夢一覽",
+            "icon": "[Camp]",
             "items": island_items[:8]
         })
 
-    # 5. 🛍️ 商城禮包與道具包詳情 (Shop Packs & Bundles)
+    # 5. 商城禮包與道具包詳情 (Shop Packs & Bundles)
     pack_items = []
     pack_matches = re.findall(r'(「[^」]+包[^」]*」[^\n]*)\s*(.*?)(?=(?:「[^」]+包|※僅限|注意事項|$))', clean_text, re.DOTALL)
     for p_name, p_content in pack_matches:
@@ -228,34 +228,34 @@ def deep_ai_extract_sections(category, title, clean_text):
         limit_str = f"（限購 {limit_match.group(1)}）" if limit_match else ""
         if lines:
             details_str = '、'.join(lines[:6])
-            pack_items.append(f"🛍️ {p_name_clean} {limit_str}：{details_str}")
+            pack_items.append(f"{p_name_clean} {limit_str}：{details_str}")
 
     if pack_items:
         sections.append({
             "key": "shop",
-            "title": "🛍️ 禮包與商城道具包一覽",
-            "icon": "🛍️",
+            "title": "禮包與商城道具包一覽",
+            "icon": "[Shop]",
             "items": pack_items[:6]
         })
 
-    # 6. ⚙️ 版本更新與技能調整 (Version Updates & Adjustments)
+    # 6. 版本更新與技能調整 (Version Updates & Adjustments)
     update_items = []
     for section_kw, s_title, s_icon in [
-        ('新功能', '✨ 新增功能', '✨'),
-        ('平衡調整', '⚖️ 平衡調整與技能變更', '⚖️'),
-        ('問題修正', '🐛 異常問題修復', '🐛')
+        ('新功能', '新增功能', '[New]'),
+        ('平衡調整', '平衡調整與技能變更', '[Balance]'),
+        ('問題修正', '異常問題修復', '[Fix]')
     ]:
         match = re.search(rf'{section_kw}\s*(.*?)(?=(?:平衡調整|新功能|其他|問題修正|異常|$))', clean_text, re.DOTALL)
         if match:
             u_lines = [re.sub(r'^[・\-\*]\s*', '', l).strip() for l in match.group(1).split('\n') if len(l.strip()) > 3 and not l.strip().startswith('※')]
             if u_lines:
-                update_items.append(f"{s_icon} {s_title}：{'；'.join(u_lines[:4])}")
+                update_items.append(f"{s_title}：{'；'.join(u_lines[:4])}")
 
     if update_items:
         sections.append({
             "key": "updates",
-            "title": "⚙️ 更新與平衡調整內容",
-            "icon": "⚙️",
+            "title": "更新與平衡調整內容",
+            "icon": "[Update]",
             "items": update_items
         })
 
@@ -272,8 +272,8 @@ def deep_ai_extract_sections(category, title, clean_text):
         if general_highlights:
             sections.append({
                 "key": "general",
-                "title": "💡 核心重點摘要",
-                "icon": "💡",
+                "title": "核心重點摘要",
+                "icon": "[Info]",
                 "items": general_highlights
             })
 
@@ -295,13 +295,13 @@ def deep_ai_extract_sections(category, title, clean_text):
                 flat_highlights.append(it)
 
     if not flat_highlights:
-        fallback_item = f"📌 {title}"
-        flat_highlights = [fallback_item, "💡 詳情請參閱官方公告內容與說明"]
+        fallback_item = f"[*] {title}"
+        flat_highlights = [fallback_item, "[*] 詳情請參閱官方公告內容與說明"]
         if not sections:
             sections.append({
                 "key": "general",
-                "title": "💡 核心重點摘要",
-                "icon": "💡",
+                "title": "核心重點摘要",
+                "icon": "[Info]",
                 "items": flat_highlights
             })
 
@@ -419,13 +419,13 @@ def translate_item_to_en(item_zh):
 def determine_badge_type(category, title):
     cat_str = f"{category} {title}".lower()
     if '活動' in cat_str or '企畫' in cat_str or '企劃' in cat_str or '好眠日' in cat_str or 'event' in cat_str:
-        return 'event', '🏆 活動企劃', '#f59e0b'
+        return 'event', '活動企劃', '#f59e0b'
     elif '更新' in cat_str or 'version' in cat_str or 'ver.' in cat_str:
-        return 'update', '⚙️ 版本更新', '#3b82f6'
+        return 'update', '版本更新', '#3b82f6'
     elif '維護' in cat_str or 'maintenance' in cat_str:
-        return 'maintenance', '🔧 維護公告', '#ef4444'
+        return 'maintenance', '維護公告', '#ef4444'
     else:
-        return 'notice', '📢 重要通知', '#8b5cf6'
+        return 'notice', '重要通知', '#8b5cf6'
 
 def extract_pokemon_highlights(title, clean_text):
     debut_pokes = []

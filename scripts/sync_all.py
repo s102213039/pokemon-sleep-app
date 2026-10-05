@@ -20,15 +20,16 @@ if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-WEBAPP_DIR = BASE_DIR
+WEBAPP_DIR = os.path.dirname(BASE_DIR)
 SYNC_SCRIPT = os.path.join(BASE_DIR, 'pokemon_sleep_sync.py')
 DATA_BUILDER = os.path.join(BASE_DIR, 'build_webapp_data.py')
-RECIPE_SYNC = os.path.join(BASE_DIR, 'scripts', 'sync_data.py')
+RECIPE_SYNC = os.path.join(BASE_DIR, 'sync_data.py')
+NEWS_BUILDER = os.path.join(BASE_DIR, 'build_news.py')
 
 # Token loaded from environment variable GH_PAT or local config file (never hardcoded)
 GH_TOKEN = os.environ.get('GH_PAT', '')
 if not GH_TOKEN:
-    config_path = os.path.join(BASE_DIR, '.gh_token')
+    config_path = os.path.join(WEBAPP_DIR, '.gh_token')
     if os.path.exists(config_path):
         with open(config_path, 'r') as f:
             GH_TOKEN = f.read().strip()
@@ -52,13 +53,14 @@ def step1_sync_google_sheet():
         log(f"Step 1 Warning: Google Sheet sync exited with code {res.returncode}")
 
 def step2_rebuild_webapp_data():
-    log("Step 2: Rebuilding webapp data.json & recipes.json...")
+    log("Step 2: Rebuilding webapp data.json, recipes.json & news.json...")
     res1 = subprocess.run([sys.executable, DATA_BUILDER], cwd=BASE_DIR, capture_output=False)
     res2 = subprocess.run([sys.executable, RECIPE_SYNC], cwd=BASE_DIR, capture_output=False)
-    if res1.returncode == 0 and res2.returncode == 0:
-        log("Step 2 Done: data.json & recipes.json rebuilt!")
+    res3 = subprocess.run([sys.executable, NEWS_BUILDER], cwd=BASE_DIR, capture_output=False)
+    if res1.returncode == 0 and res2.returncode == 0 and res3.returncode == 0:
+        log("Step 2 Done: data.json, recipes.json & news.json rebuilt!")
     else:
-        log(f"Step 2 Warning: data.json ({res1.returncode}), recipes.json ({res2.returncode})")
+        log(f"Step 2 Warning: data.json ({res1.returncode}), recipes.json ({res2.returncode}), news.json ({res3.returncode})")
 
 def step3_push_to_github():
     log("Step 3: Pushing updated site to GitHub Pages...")
