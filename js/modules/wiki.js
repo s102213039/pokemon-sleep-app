@@ -6065,6 +6065,35 @@
                     ]
                 },
                 {
+                    "name": "敗露球菇",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/591.png",
+                    "recipe": "ABB",
+                    "count": 68,
+                    "note": "ABB 特選蛋 主力產出",
+                    "isTop": false,
+                    "variants": [
+                        {
+                            "recipe": "ABB",
+                            "count": 68,
+                            "note": "ABB 特選蛋 主力產出"
+                        },
+                        {
+                            "recipe": "AAB",
+                            "count": 40,
+                            "note": "AAB 雙產特選蛋"
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 28,
+                            "note": "ABX 特選蛋 兼顧",
+                            "origRecipes": [
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
                     "name": "暴雪王",
                     "specialty": "食材",
                     "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/460.png",
@@ -10193,19 +10222,59 @@
             "icon": "https://www.serebii.net/pokemonsleep/ingredients/tastymushroom.png",
             "pokemon": [
                 {
+                    "name": "敗露球菇",
+                    "specialty": "食材",
+                    "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/591.png",
+                    "recipe": "AAA",
+                    "count": 55,
+                    "note": "AAA 品鮮蘑菇 純種產出",
+                    "isTop": true,
+                    "variants": [
+                        {
+                            "recipe": "AAA",
+                            "count": 55,
+                            "note": "AAA 品鮮蘑菇 純種產出",
+                            "isTop": true
+                        },
+                        {
+                            "recipe": "ABA",
+                            "count": 35,
+                            "note": "ABA 雙品鮮蘑菇 產出"
+                        },
+                        {
+                            "recipe": "AAX",
+                            "count": 26,
+                            "note": "AAX 雙品鮮蘑菇 產出",
+                            "origRecipes": [
+                                "AAB",
+                                "AAC"
+                            ]
+                        },
+                        {
+                            "recipe": "ABX",
+                            "count": 9,
+                            "note": "ABX 單品鮮蘑菇 混產",
+                            "origRecipes": [
+                                "ABB",
+                                "ABC"
+                            ]
+                        }
+                    ]
+                },
+                {
                     "name": "花岩怪",
                     "specialty": "食材",
                     "icon": "https://www.serebii.net/pokemonsleep/pokemon/icon/442.png",
                     "recipe": "AAA",
                     "count": 52,
                     "note": "AAA 品鮮蘑菇 純種產出",
-                    "isTop": true,
+                    "isTop": false,
                     "variants": [
                         {
                             "recipe": "AAA",
                             "count": 52,
                             "note": "AAA 品鮮蘑菇 純種產出",
-                            "isTop": true
+                            "isTop": false
                         },
                         {
                             "recipe": "ABA",

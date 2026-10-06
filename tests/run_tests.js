@@ -3100,10 +3100,10 @@ test('Tier 1 - Feature Coverage', 'Ingredient Ladder Universal Simplified Recipe
 
   assertEquals(duplicateCountErrors, 0, 'No Pokemon should have duplicate-yield variants');
   assertEquals(xxcCount, 108, 'Ingredient C track entries must be unified into universal XXC (108 variants)');
-  assertEquals(aaxCount, 114, 'Pos A dual ingredients must be unified into universal AAX (114 variants)');
-  assertEquals(abaCount, 114, 'ABA combinations must be 114 variants for Pos A pokemons with Lv.60 A');
-  assertEquals(aaaCount, 114, 'AAA combinations must be 114 variants');
-  assertEquals(abbCount, 114, 'ABB combinations must be 114 variants');
+  assertEquals(aaxCount, 115, 'Pos A dual ingredients must be unified into universal AAX (115 variants)');
+  assertEquals(abaCount, 115, 'ABA combinations must be 115 variants for Pos A pokemons with Lv.60 A');
+  assertEquals(aaaCount, 115, 'AAA combinations must be 115 variants');
+  assertEquals(abbCount, 115, 'ABB combinations must be 115 variants');
 
   // Verify specific Skeledirge calculations on Apple track
   const appleTrack = ladderData.find(i => i.id === 'apple');
