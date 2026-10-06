@@ -12959,18 +12959,19 @@ input[type="number"] {
   color: var(--text-muted);
 }
 
-/* 右欄：雷達圖 + 協同深度點評 + 智能簡評 (無外框卡片，純淨展示) */
+/* 右欄：雷達圖 + 智能簡評 + 專長協同深度點評 (無外框卡片，純淨展示) */
 .appraisal-right-col {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-width: 0;
 }
 
 body:not(.mobile-h5-app) .appraisal-desktop-content-grid {
-  display: grid;
-  grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
-  gap: 20px;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
 }
 
 body:not(.mobile-h5-app) .appraisal-radar-block {
@@ -12996,7 +12997,9 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100%;
+  max-width: 360px;
+  height: 220px;
+  margin: 0 auto;
   min-width: 0;
 }
 
@@ -13015,6 +13018,7 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   display: flex;
   align-items: center;
   gap: 6px;
+  width: 100%;
 }
 
 .appraisal-dim-row {
@@ -13046,49 +13050,8 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   transition: width 0.4s ease;
 }
 
-/* 點評卡片 (純淨無外框，僅保留文字項目邊框) */
-.appraisal-analysis-card {
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  padding: 0;
-}
-
-.appraisal-pros-list,
-.appraisal-cons-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 6px;
-}
-
-.appraisal-pro-item {
-  font-size: 12px;
-  color: var(--text-primary);
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  padding: 6px 10px;
-  border-radius: 6px;
-  line-height: 1.4;
-}
-
-.appraisal-con-item {
-  font-size: 12px;
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  padding: 6px 10px;
-  border-radius: 6px;
-  line-height: 1.4;
-}
-
-[data-theme="midnight"] .appraisal-con-item,
-[data-theme="onyx"] .appraisal-con-item {
-  color: #fca5a5;
-}
-
 .appraisal-summary-bar {
-  margin-top: 6px;
+  margin-top: 2px;
   background: rgba(56, 189, 248, 0.08);
   border: 1px solid rgba(56, 189, 248, 0.25);
   border-radius: 8px;
@@ -13098,6 +13061,69 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   gap: 8px;
   box-sizing: border-box;
   width: 100%;
+}
+
+.appraisal-summary-label {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--accent-blue, #38bdf8);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.appraisal-summary-text {
+  font-size: 12.5px;
+  color: var(--text-primary, #e2e8f0);
+  line-height: 1.45;
+}
+
+/* 點評卡片 (純淨無外框，在智能簡評下方，寬度 100% 等寬) */
+.appraisal-analysis-card {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.appraisal-pros-list,
+.appraisal-cons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.appraisal-pro-item {
+  font-size: 12px;
+  color: var(--text-primary);
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  padding: 7px 12px;
+  border-radius: 8px;
+  line-height: 1.45;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.appraisal-con-item {
+  font-size: 12px;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.22);
+  padding: 7px 12px;
+  border-radius: 8px;
+  line-height: 1.45;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+[data-theme="midnight"] .appraisal-con-item,
+[data-theme="onyx"] .appraisal-con-item {
+  color: #fca5a5;
 }
 
 /* ═══════════════════════════════════════════════════════════════

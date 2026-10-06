@@ -2230,10 +2230,10 @@
             </div>
           </div>
 
-          <!-- 右欄：雷達圖 + 協同深度點評 + 智能簡評 (精簡雙區塊並排排版，純淨無外框容器) -->
+          <!-- 右欄：雷達圖 + 智能簡評 + 專長深度點評 (純淨無外框容器) -->
           <div class="appraisal-right-col">
             <div class="appraisal-desktop-content-grid">
-              <!-- 左側：六維能力雷達圖 (自適應置中) -->
+              <!-- 頂部：六維能力雷達圖 (自適應置中) -->
               <div class="appraisal-radar-block">
                 <h4 class="appraisal-section-heading">${isEN ? '[*] 6-Dimension Capability Radar' : '[*] 六維能力雷達圖'}</h4>
                 <div class="appraisal-radar-wrapper">
@@ -2241,7 +2241,13 @@
                 </div>
               </div>
 
-              <!-- 右側：專長深度點評與優缺點 -->
+              <!-- 中部：PR 智能簡評欄 (純淨簡評提示條) -->
+              <div class="appraisal-summary-bar">
+                <span class="appraisal-summary-label">${isEN ? 'Appraisal Note:' : '智能簡評：'}</span>
+                <span class="appraisal-summary-text">${escapeHtml(summaryNote)}</span>
+              </div>
+
+              <!-- 下方：專長深度點評與優缺點 (在智能簡評下方，同樣長度) -->
               <div class="appraisal-analysis-card">
                 <h4 class="appraisal-section-heading">${isEN ? '[*] Specialty & Synergy Analysis' : '[*] 專長與性格副技能協同點評'}</h4>
                 <div class="appraisal-pros-list">
@@ -2253,12 +2259,6 @@
                   </div>
                 ` : ''}
               </div>
-            </div>
-
-            <!-- 右邊最下方：PR 智能簡評欄 (純淨簡評提示條) -->
-            <div class="appraisal-summary-bar">
-              <span style="font-size:12.5px;font-weight:800;color:#38bdf8;white-space:nowrap;flex-shrink:0;">${isEN ? 'Appraisal Note:' : '智能簡評：'}</span>
-              <span style="font-size:12.5px;color:#e2e8f0;line-height:1.4;">${escapeHtml(summaryNote)}</span>
             </div>
           </div>
         </div>
