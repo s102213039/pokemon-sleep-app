@@ -10914,6 +10914,51 @@ SP 4,316
     assert(newsJson.some(n => n.date && n.date.startsWith('2026-10')), 'data/news.json must contain up-to-date October 2026 articles');
   });
 
+  test('Tier 1 - Feature Coverage', 'Foongus & Amoonguss Full-Stack Data Integrity Audit (Pokedex, Habitats, Sleep Styles, OCR, Sprites)', () => {
+    // 1. data/data.json verification
+    const pkmData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/data.json'), 'utf8'));
+    const foongus = pkmData.find(p => p.formatted_no === '590' || p.id === '590' || p.name_cn === '哎呀球菇');
+    const amoonguss = pkmData.find(p => p.formatted_no === '591' || p.id === '591' || p.name_cn === '敗露球菇');
+    assert(foongus, 'data/data.json must contain 哎呀球菇 (#590)');
+    assert(amoonguss, 'data/data.json must contain 敗露球菇 (#591)');
+    assertEquals(foongus.specialty, '食材', '哎呀球菇 specialty must be 食材');
+    assertEquals(amoonguss.specialty, '食材', '敗露球菇 specialty must be 食材');
+    assertEquals(foongus.type, '毒', '哎呀球菇 type must be 毒');
+    assertEquals(amoonguss.type, '毒', '敗露球菇 type must be 毒');
+    assertEquals(foongus.sleep_type, '淺淺入夢', '哎呀球菇 sleep_type must be 淺淺入夢');
+    assertEquals(amoonguss.sleep_type, '淺淺入夢', '敗露球菇 sleep_type must be 淺淺入夢');
+
+    // 2. data/sleep_styles.json verification
+    const sleepStylesJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/sleep_styles.json'), 'utf8'));
+    assert(sleepStylesJson.byName['哎呀球菇'], 'data/sleep_styles.json must include 哎呀球菇 in byName');
+    assert(sleepStylesJson.byName['敗露球菇'], 'data/sleep_styles.json must include 敗露球菇 in byName');
+    assert(sleepStylesJson.byNo['590'], 'data/sleep_styles.json must include 590 in byNo');
+    assert(sleepStylesJson.byNo['591'], 'data/sleep_styles.json must include 591 in byNo');
+    assertEquals(sleepStylesJson.byName['哎呀球菇']['1'].name, '偽裝睡', '哎呀球菇 1 star sleep style must be 偽裝睡');
+    assertEquals(sleepStylesJson.byName['敗露球菇']['2'].name, '誘敵睡', '敗露球菇 2 star sleep style must be 誘敵睡');
+
+    // 3. js/modules/wiki.js verification (habitats, fallback sprites, specialty map)
+    const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/wiki.js'), 'utf8');
+    assert(wikiCode.includes('"哎呀球菇": "590"'), 'wiki.js POKEMON_SPRITE_FALLBACK must contain 哎呀球菇');
+    assert(wikiCode.includes('"敗露球菇": "591"'), 'wiki.js POKEMON_SPRITE_FALLBACK must contain 敗露球菇');
+    assert(wikiCode.includes('"哎呀球菇": "食材"'), 'wiki.js POKEMON_SPECIALTY_MAP must contain 哎呀球菇');
+    assert(wikiCode.includes('"敗露球菇": "食材"'), 'wiki.js POKEMON_SPECIALTY_MAP must contain 敗露球菇');
+
+    // Island spawns in Greengrass, Lapis, Amber
+    assert(wikiCode.includes('{ name: "哎呀球菇", name_en: "Foongus", type: "毒"'), 'wiki.js must include 哎呀球菇 in habitat spawns');
+    assert(wikiCode.includes('{ name: "敗露球菇", name_en: "Amoonguss", type: "毒"'), 'wiki.js must include 敗露球菇 in habitat spawns');
+
+    // 4. js/modules/box.js OCR Confusion Map
+    const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
+    assert(boxCode.includes("['敗露菇', '敗露球菇']"), 'box.js OCR_CONFUSION_MAP must contain 敗露菇 -> 敗露球菇');
+    assert(boxCode.includes("['哎呀菇', '哎呀球菇']"), 'box.js OCR_CONFUSION_MAP must contain 哎呀菇 -> 哎呀球菇');
+
+    // 5. js/core/i18n.js
+    const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/core/i18n.js'), 'utf8');
+    assert(i18nCode.includes('"哎呀球菇":"Foongus"'), 'i18n.js must map 哎呀球菇 to Foongus');
+    assert(i18nCode.includes('"敗露球菇":"Amoonguss"'), 'i18n.js must map 敗露球菇 to Amoonguss');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

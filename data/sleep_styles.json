@@ -8695,6 +8695,82 @@
         "shards": 9000,
         "candy": 25
       }
+    },
+    "哎呀球菇": {
+      "1": {
+        "star": 1,
+        "name": "偽裝睡",
+        "name_en": "Mimic Sleep",
+        "name_jp": "モドキ寝",
+        "exp": 116,
+        "shards": 109,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "搖晃傘蓋睡",
+        "name_en": "Cap-Bobbing Sleep",
+        "name_jp": "カサゆらゆら寝",
+        "exp": 280,
+        "shards": 260,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "吹孢子睡",
+        "name_en": "Spore-Blowing Sleep",
+        "name_jp": "ほうしふき寝",
+        "exp": 850,
+        "shards": 800,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1200,
+        "shards": 1150,
+        "candy": 10
+      }
+    },
+    "敗露球菇": {
+      "1": {
+        "star": 1,
+        "name": "偽裝睡",
+        "name_en": "Mimic Sleep",
+        "name_jp": "モドキ寝",
+        "exp": 637,
+        "shards": 585,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "誘敵睡",
+        "name_en": "Luring Sleep",
+        "name_jp": "おびきよせ寝",
+        "exp": 1450,
+        "shards": 1350,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "散播孢子睡",
+        "name_en": "Spore-Releasing Sleep",
+        "name_jp": "ほうしばらまき寝",
+        "exp": 3600,
+        "shards": 3400,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 5100,
+        "shards": 4800,
+        "candy": 12
+      }
     }
   },
   "byNo": {
@@ -17210,6 +17286,82 @@
         "name_jp": "ほりすすみ寝",
         "exp": 1707,
         "shards": 5091,
+        "candy": 12
+      }
+    },
+    "590": {
+      "1": {
+        "star": 1,
+        "name": "偽裝睡",
+        "name_en": "Mimic Sleep",
+        "name_jp": "モドキ寝",
+        "exp": 116,
+        "shards": 109,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "搖晃傘蓋睡",
+        "name_en": "Cap-Bobbing Sleep",
+        "name_jp": "カサゆらゆら寝",
+        "exp": 280,
+        "shards": 260,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "吹孢子睡",
+        "name_en": "Spore-Blowing Sleep",
+        "name_jp": "ほうしふき寝",
+        "exp": 850,
+        "shards": 800,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1200,
+        "shards": 1150,
+        "candy": 10
+      }
+    },
+    "591": {
+      "1": {
+        "star": 1,
+        "name": "偽裝睡",
+        "name_en": "Mimic Sleep",
+        "name_jp": "モドキ寝",
+        "exp": 637,
+        "shards": 585,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "誘敵睡",
+        "name_en": "Luring Sleep",
+        "name_jp": "おびきよせ寝",
+        "exp": 1450,
+        "shards": 1350,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "散播孢子睡",
+        "name_en": "Spore-Releasing Sleep",
+        "name_jp": "ほうしばらまき寝",
+        "exp": 3600,
+        "shards": 3400,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 5100,
+        "shards": 4800,
         "candy": 12
       }
     }
