@@ -2649,47 +2649,44 @@
     ['焰欽', '烈焰猴'],
     ['其拉克羅斯', '赫拉克羅斯'],
     ['其拉克', '赫拉克羅斯'],
-    ['拉克羅斯', '赫拉克羅斯'],
     ['峽龍', '噴火龍'],
     ['峽', '噴'],
     ['!布土撥', '巴布土撥'],
-    ['布土撥', '巴布土撥'],
     ['繞花', '妙蛙花'],
     ['箭傾', '水箭龜'],
-    ['箭龜', '水箭龜'],
     ['呆殼鄙', '呆殼獸'],
     ['殼鄙', '殼獸'],
     ['語14', '雷丘'],
     ['2大蝶', '巴大蝶'],
     ['虧龍', '快龍'],
-    ['隆岩', '隆隆岩'],
-    ['農炮蟲', '鍬農炮蟲'],
-    ['著熊', '穿著熊'],
     ['結萌蛇', '蝶結萌虻'],
-    ['士可多拉', '波士可多拉'],
-    ['食花', '大食花'],
-    ['大鯨', '浩大鯨'],
-    ['歡浪舞鴨', '狂歡浪舞鴨'],
     ['!炮猴', '投擲猴'],
     ['牙海猴', '帝牙海獅'],
-    ['蔥鴨', '大蔥鴨'],
-    ['克基斯', '波克基斯'],
-    ['蜴王', '蜥蜴王'],
-    ['波龍', '三首惡龍'],
-    ['柏怪', '阿柏怪'],
-    ['瓜怪人', '南瓜怪人'],
-    ['紋巨聲鱷', '骨紋巨聲鱷'],
-    ['基拉斯', '班基拉斯'],
-    ['福蛋', '幸福蛋'],
-    ['咚鼠', '咚咚鼠'],
-    ['琴貓', '向尾喵'],
     ['勃梭魯', '阿勃梭魯'],
     ['敗露菇', '敗露球菇'],
-    ['敗露球', '敗露球菇'],
-    ['露球菇', '敗露球菇'],
     ['哎呀菇', '哎呀球菇'],
-    ['哎呀球', '哎呀球菇'],
-    ['呀球菇', '哎呀球菇']
+    ['夢萝触', '夢夢蝕'],
+    ['梦萝触', '夢夢蝕'],
+    ['怪龍', '怪顎龍'],
+    ['偏琴', '倫琴貓'],
+    ['狂浪舞鸭', '狂歡浪舞鴨'],
+    ['狂浪舞鴨', '狂歡浪舞鴨'],
+    ['温和', '溫和'],
+    ['顽皮', '頑皮'],
+    ['温顺', '溫順'],
+    ['内敛', '內斂'],
+    ['认真', '認真'],
+    ['冷静', '冷靜'],
+    ['大胆', '大膽'],
+    ['大瞻', '大膽'],
+    ['悠间', '悠閒'],
+    ['悠闲', '悠閒'],
+    ['淘气', '淘氣'],
+    ['乐天', '樂天'],
+    ['马虎', '馬虎'],
+    ['胆小', '膽小'],
+    ['脍小', '膽小'],
+    ['固执', '固執']
   ];
 
   function buildOcrCompositeCanvas(img) {
@@ -3024,6 +3021,12 @@
       .replace(/機傘/g, '機率')
       .replace(/革忙/g, '幫忙')
       .replace(/事忙/g, '幫忙')
+      .replace(/紫忙/g, '幫忙')
+      .replace(/类动/g, '獎勵')
+      .replace(/奖励/g, '獎勵')
+      .replace(/树果/g, '樹果')
+      .replace(/数量/g, '數量')
+      .replace(/等级/g, '等級')
       .replace(/[5$]/g, 'S')
       .replace(/知$/g, 'M')
       .replace(/W$/g, 'M');
@@ -3330,7 +3333,7 @@
         if (str.includes('主技能發動機率') || str.includes('主技能發動') || str.includes('主技能')) return 'skill';
         if (str.includes('活力回復量') || str.includes('活力回復') || str.includes('活力') || str.includes('洗衣')) return 'energy';
         if (str.includes('EXP獲得量') || str.includes('EXP獲得') || str.includes('EXP') || str.includes('交得')) return 'exp';
-        if (str.includes('幫忙速度') || str.includes('幫速') || str.includes('圭尺')) return 'speed';
+        if (str.includes('幫忙速度') || str.includes('忙速度') || str.includes('幫速') || str.includes('圭尺')) return 'speed';
         return null;
       }
 
@@ -3352,14 +3355,21 @@
       if (buffStat && debuffStat) {
         const match = NATURE_DATA.find(n => n.buffType === buffStat && n.debuffType === debuffStat);
         if (match) nature = match.name;
-      } else if (clean.includes('沒有性格') || clean.includes('特色')) {
+      } else if (clean.includes('沒有性格') || clean.includes('没有性格') || clean.includes('特色')) {
         for (const n of ['害羞', '認真', '勤奮', '浮躁', '坦率']) {
           if (clean.includes(n)) {
             nature = n;
             break;
           }
         }
-        if (!nature) nature = '坦率';
+        if (!nameMatched || !nature || nature === '慎重') {
+          if (clean.includes('害') || clean.includes('羞')) nature = '害羞';
+          else if (clean.includes('真')) nature = '認真';
+          else if (clean.includes('勤') || clean.includes('奮') || clean.includes('奋')) nature = '勤奮';
+          else if (clean.includes('浮') || clean.includes('躁')) nature = '浮躁';
+          else if (clean.includes('坦') || clean.includes('率')) nature = '坦率';
+          else nature = '坦率';
+        }
       }
     }
 
@@ -3387,6 +3397,12 @@
 
     if (subskills.filter(Boolean).length < 5) {
       function matchLineToSubskill(line) {
+        if (!line) return null;
+        if (line.includes('回復量') || line.includes('發現率') || line.includes('獲得量') || line.includes('發動機率')) return null;
+        if (line.includes('隨機') || line.includes('效果') || line.includes('移動') || line.includes('每29分') || line.includes('不僅如此')) return null;
+        if (line.includes('能量') || line.includes('回復活力') || line.includes('點數') || line.includes('增加') || line.includes('成功')) return null;
+        if (/^Lv\.?\s*\d+$/i.test(line) || /^LV\s*\d+$/i.test(line)) return null;
+
         const c = normalizeOcrText(line)
           .replace(/[5$]/g, 'S')
           .replace(/知$/g, 'M')
@@ -3412,9 +3428,9 @@
               for (const char of cleanSk) {
                 if (c.includes(char)) overlap++;
               }
-              if (overlap >= 2) {
+              if (overlap >= 3) {
                 s = overlap * 15;
-                if (c.includes(lastChar)) s += 10;
+                if (c.includes(lastChar)) s += 15;
               }
             }
           }
@@ -3423,7 +3439,7 @@
             best = sk.name;
           }
         }
-        return maxS >= 40 ? best : null;
+        return maxS >= 50 ? best : null;
       }
 
       const rawLines = text.split('\n').map(l => l.trim()).filter(Boolean);
@@ -3431,10 +3447,8 @@
       const extractedList = [];
 
       for (const line of rawLines) {
-        if (line.includes('隨機') || line.includes('效果') || line.includes('移動') || line.includes('每29分')) continue;
-        if (line.includes('發動機率') || line.includes('發現率') || line.includes('食材發現')) continue;
         if (line.includes('健美') || line.includes('料理輔助')) continue;
-        if ((line.includes('持有上限') && !line.includes('提升')) || line.includes('料理漂亮') || line.includes('成功') || line.includes('持續到')) continue;
+        if ((line.includes('持有上限') && !line.includes('提升')) || line.includes('料理漂亮') || line.includes('持續到')) continue;
         if (line.includes('SP') || (line.includes('個') && !line.includes('提升'))) continue;
 
         const matched = matchLineToSubskill(line);
@@ -3557,7 +3571,18 @@
         };
 
         try {
-          if (worker) {
+          if (typeof window !== 'undefined' && window.OcrAiEngine && typeof window.OcrAiEngine.recognize === 'function' && window.OcrAiEngine.isLoaded && window.OcrAiEngine.isLoaded()) {
+            try {
+              const aiRet = await window.OcrAiEngine.recognize(img);
+              if (aiRet && aiRet.text) {
+                result = parsePokemonFromOcr(aiRet.text, [], allPokemonsRef, null);
+              }
+            } catch (aiErr) {
+              console.warn('[AI OCR Error, falling back to standard OCR]:', aiErr);
+            }
+          }
+
+          if (!result.name && worker) {
             let compositeCanvas = null;
             let rgbSlots = [];
             let meta = null;
