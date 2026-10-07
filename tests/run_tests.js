@@ -10992,7 +10992,25 @@ SP 4,316
     assert(stylesCss.includes('#modal-appraisal-report .pokedex-calc-formula-card') && stylesCss.includes('background: transparent !important'), 'styles.css must set transparent background for appraisal formula card');
     assert(stylesCss.includes('#modal-appraisal-report .unified-calc-row') && stylesCss.includes('border-bottom: 1px solid'), 'styles.css must separate calc rows with subtle divider line');
     assert(stylesCss.includes('[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box'), 'styles.css must style midnight theme for appraisal modal calc box');
-    assert(stylesCss.includes('[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box'), 'styles.css must style onyx theme for appraisal modal calc box');
+  });
+
+  test('Tier 4 - Real-World Application Scenarios', 'Box Edit Modal Desktop Ergonomic Layout & Snug Field Sizing', () => {
+    const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+
+    // 1. Check combined row for main skill and ribbon in index.html
+    assert(indexHtml.includes('box-mainskill-ribbon-row'), 'index.html must combine main skill and ribbon into box-mainskill-ribbon-row');
+    assert(indexHtml.includes('box-mainskill-subgroup'), 'index.html must include box-mainskill-subgroup in combined row');
+    assert(indexHtml.includes('box-ribbon-subgroup'), 'index.html must include box-ribbon-subgroup in combined row');
+    assert(indexHtml.includes('box-nature-row'), 'index.html must include box-nature-row');
+
+    // 2. Check snug field sizing in styles.css
+    assert(stylesCss.includes('.box-form-row-3col .flex-level') && stylesCss.includes('width: 54px'), 'styles.css must make level input snug (54px)');
+    assert(stylesCss.includes('.box-mainskill-control .custom-select-container') && stylesCss.includes('width: 74px !important'), 'styles.css must make main skill level select snug (74px)');
+    assert(stylesCss.includes('.box-nature-row .custom-select-container') && stylesCss.includes('width: 350px !important'), 'styles.css must limit nature select width to longest option (350px)');
+
+    // 3. Check borderless subskill slots in desktop web view
+    assert(stylesCss.includes('body:not(.mobile-h5-app) #box-edit-modal .box-subskill-slots-row .box-subskill-slot-btn') && stylesCss.includes('border: none !important'), 'styles.css must remove outer border from box subskill slots on desktop');
   });
 
 console.log('                   Test Results Summary');

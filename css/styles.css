@@ -829,7 +829,7 @@ html[data-lang="en"] .box-form-row-3col .flex-name,
 
 html[data-lang="en"] .box-form-row-3col .flex-level,
 [data-lang="en"] .box-form-row-3col .flex-level {
-  width: 58px;
+  width: 54px;
 }
 
 html[data-lang="en"] .box-subskill-chip,
@@ -7279,8 +7279,13 @@ input[type="number"] {
 }
 
 .box-form-row-3col .flex-level {
-  width: 76px;
+  width: 54px;
   flex-shrink: 0;
+}
+
+.box-form-row-3col .flex-level .box-form-input {
+  text-align: center;
+  padding: 6px 2px;
 }
 
 .box-form-row-3col .flex-nickname {
@@ -7343,12 +7348,80 @@ input[type="number"] {
   }
 }
 
-/* 主技能資訊展示與等級調整列 */
+/* 主技能與睡飽飽獎章合併為同一行展示 (桌面網頁版) */
+.box-mainskill-ribbon-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 16px !important;
+  width: 100% !important;
+}
+
+.box-form-inline-subgroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.box-mainskill-subgroup {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.box-ribbon-subgroup {
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.box-ribbon-subgroup .box-ribbon-label {
+  width: auto !important;
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+
+.box-ribbon-control {
+  flex: 1;
+  min-width: 160px;
+  max-width: 250px;
+}
+
+.box-ribbon-control .custom-select-container {
+  width: 100% !important;
+  min-width: 160px;
+}
+
+/* 性格下拉選單長度依最長選項緊湊收束 */
+.box-nature-row .box-nature-control,
+.box-nature-row .box-form-inline-control {
+  flex: 0 0 auto !important;
+  width: auto !important;
+}
+
+.box-nature-row .custom-select-container,
+#box-edit-modal #modal-poke-nature + .custom-select-container {
+  width: 350px !important;
+  max-width: 100% !important;
+  flex: 0 0 350px;
+}
+
+.box-nature-row select.box-form-select {
+  width: 350px !important;
+  max-width: 100% !important;
+}
+
+/* 主技能資訊展示與等級調整列 (剛好多一點點精緻收束) */
 .box-mainskill-control {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  gap: 6px;
+  flex-wrap: nowrap;
   justify-content: flex-start;
 }
 
@@ -7389,9 +7462,9 @@ input[type="number"] {
 }
 
 .box-mainskill-control .custom-select-container {
-  width: 96px !important;
-  min-width: 96px !important;
-  flex: 0 0 96px;
+  width: 74px !important;
+  min-width: 74px !important;
+  flex: 0 0 74px;
 }
 
 .box-mainskill-control .custom-select-trigger {
@@ -7407,9 +7480,9 @@ input[type="number"] {
 }
 
 .box-mainskill-select {
-  width: 96px;
+  width: 74px;
   height: 32px;
-  padding: 4px 10px;
+  padding: 4px 8px;
   padding-right: 22px;
   font-size: 12px;
   font-weight: 700;
@@ -7778,6 +7851,46 @@ input[type="number"] {
   background: rgba(251, 191, 36, 0.08);
   box-shadow: 0 0 10px rgba(251, 191, 36, 0.35);
   transform: translateY(-2px);
+}
+
+/* 網頁桌面版：去除副技能槽外框，呈現輕盈純淨卡片 (Single Frame Rule) */
+body:not(.mobile-h5-app) #box-edit-modal .box-subskill-slots-row .box-subskill-slot-btn,
+body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn {
+  border: none !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: none !important;
+}
+
+body:not(.mobile-h5-app) #box-edit-modal .box-subskill-slots-row .box-subskill-slot-btn:hover,
+body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn:hover {
+  border: none !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+body:not(.mobile-h5-app) #box-edit-modal .box-subskill-slots-row .box-subskill-slot-btn.active,
+body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.active {
+  border: none !important;
+  background: rgba(251, 191, 36, 0.14) !important;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.25) !important;
+  transform: translateY(-2px);
+}
+
+body:not(.mobile-h5-app) #box-edit-modal .box-subskill-slots-row .box-subskill-slot-btn.slot-unreleased,
+body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unreleased {
+  border: none !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border: none !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.active,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.active {
+  background: rgba(245, 158, 11, 0.15) !important;
+  border: none !important;
 }
 
 .slot-lvl-header {

@@ -126,7 +126,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=20261007_03">
+  <link rel="stylesheet" href="css/styles.css?v=20261007_04">
   <!-- 全域錯誤診斷與日誌攔截器 (Global Error & Diagnostic Logger) -->
   <script>
     (function() {
@@ -1264,42 +1264,43 @@
               </div>
             </div>
 
-            <!-- 3. 主技能：展示技能名稱與等級調整選單 -->
-            <div class="box-form-group box-full-width box-form-row-inline box-mainskill-row">
-              <label class="box-form-label box-form-inline-label" for="modal-poke-skill-level" data-i18n="box.modal_main_skill">主技能資訊</label>
-              <div class="box-form-inline-control box-mainskill-control">
-                <span id="modal-poke-main-skill-name" class="box-mainskill-name-badge">--</span>
-                <select id="modal-poke-skill-level" class="box-form-select box-mainskill-select">
-                  <option value="1">Lv. 1</option>
-                  <option value="2">Lv. 2</option>
-                  <option value="3">Lv. 3</option>
-                  <option value="4">Lv. 4</option>
-                  <option value="5">Lv. 5</option>
-                  <option value="6">Lv. 6</option>
-                  <option value="7">Lv. 7</option>
-                </select>
+            <!-- 3. 主技能與睡飽飽獎章：同一行展示 (網頁桌面版) -->
+            <div class="box-form-group box-full-width box-form-row-inline box-mainskill-row box-mainskill-ribbon-row">
+              <div class="box-form-inline-subgroup box-mainskill-subgroup">
+                <label class="box-form-label box-form-inline-label" for="modal-poke-skill-level" data-i18n="box.modal_main_skill">主技能資訊</label>
+                <div class="box-form-inline-control box-mainskill-control">
+                  <span id="modal-poke-main-skill-name" class="box-mainskill-name-badge">--</span>
+                  <select id="modal-poke-skill-level" class="box-form-select box-mainskill-select">
+                    <option value="1">Lv. 1</option>
+                    <option value="2">Lv. 2</option>
+                    <option value="3">Lv. 3</option>
+                    <option value="4">Lv. 4</option>
+                    <option value="5">Lv. 5</option>
+                    <option value="6">Lv. 6</option>
+                    <option value="7">Lv. 7</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="box-form-inline-subgroup box-ribbon-subgroup">
+                <label class="box-form-label box-form-inline-label box-ribbon-label" for="modal-poke-ribbon" data-i18n="box.modal_poke_ribbon">睡飽飽獎章</label>
+                <div class="box-form-inline-control box-ribbon-control">
+                  <select id="modal-poke-ribbon" class="box-form-select">
+                    <option value="0" data-i18n="box.ribbon_none">未佩戴 (0h)</option>
+                    <option value="1" data-icon="assets/ribbons/ribbon_lv1.png" data-i18n="box.ribbon_lv1">200 小時 (+1 持有上限)</option>
+                    <option value="2" data-icon="assets/ribbons/ribbon_lv2.png" data-i18n="box.ribbon_lv2">500 小時 (+3 持有上限 · 幫速加成)</option>
+                    <option value="3" data-icon="assets/ribbons/ribbon_lv3.png" data-i18n="box.ribbon_lv3">1000 小時 (+6 持有上限)</option>
+                    <option value="4" data-icon="assets/ribbons/ribbon_lv4.png" data-i18n="box.ribbon_lv4">2000 小時 (+8 持有上限 · 幫速最大加成)</option>
+                  </select>
+                </div>
               </div>
             </div>
 
-            <!-- 性格：標籤與選單同一行展示 -->
-            <div class="box-form-group box-full-width box-form-row-inline">
+            <!-- 性格：標籤與選單同一行展示 (下拉框貼合最長選項長度) -->
+            <div class="box-form-group box-full-width box-form-row-inline box-nature-row">
               <label class="box-form-label box-form-inline-label" for="modal-poke-nature" data-i18n="box.modal_poke_nature">性格 <span style="color:#ef4444;">*</span></label>
-              <div class="box-form-inline-control">
+              <div class="box-form-inline-control box-nature-control">
                 <select id="modal-poke-nature" class="box-form-select" required></select>
-              </div>
-            </div>
-
-            <!-- 睡飽飽獎章：標籤與選單同一行展示 -->
-            <div class="box-form-group box-full-width box-form-row-inline">
-              <label class="box-form-label box-form-inline-label" for="modal-poke-ribbon" data-i18n="box.modal_poke_ribbon">睡飽飽獎章</label>
-              <div class="box-form-inline-control">
-                <select id="modal-poke-ribbon" class="box-form-select">
-                  <option value="0" data-i18n="box.ribbon_none">未佩戴 (0h)</option>
-                  <option value="1" data-icon="assets/ribbons/ribbon_lv1.png" data-i18n="box.ribbon_lv1">200 小時 (+1 持有上限)</option>
-                  <option value="2" data-icon="assets/ribbons/ribbon_lv2.png" data-i18n="box.ribbon_lv2">500 小時 (+3 持有上限 · 幫速加成)</option>
-                  <option value="3" data-icon="assets/ribbons/ribbon_lv3.png" data-i18n="box.ribbon_lv3">1000 小時 (+6 持有上限)</option>
-                  <option value="4" data-icon="assets/ribbons/ribbon_lv4.png" data-i18n="box.ribbon_lv4">2000 小時 (+8 持有上限 · 幫速最大加成)</option>
-                </select>
               </div>
             </div>
 
