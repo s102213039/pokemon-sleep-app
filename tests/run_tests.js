@@ -10974,7 +10974,9 @@ SP 4,316
     assert(appraisalJs.includes('renderPokedexFormulaBreakdownHTML'), 'appraisal.js must call renderPokedexFormulaBreakdownHTML');
     assert(appraisalJs.includes('appraisal-calc-col'), 'appraisal.js desktop layout must include appraisal-calc-col');
     assert(appraisalJs.includes('appraisal-calc-mobile-wrap'), 'appraisal.js mobile layout must include appraisal-calc-mobile-wrap');
-    assert(appraisalJs.includes('appraisal-header-stats-dual'), 'appraisal.js header must render dual stats row');
+    assert(appraisalJs.includes('appraisal-header-stats-dual'), 'appraisal.js must render dual stats row');
+    assert(appraisalJs.includes('appraisal-stats-section'), 'appraisal.js must place dual stats in appraisal-stats-section');
+    assert(appraisalJs.includes('Ing Rate') && appraisalJs.includes('Skill Rate'), 'appraisal.js must support concise EN labels (Ing Rate, Skill Rate)');
 
     // 3. Strict check: No modification controls in appraisal calculation view
     assert(!appraisalJs.includes('pokedex-calc-slider'), 'appraisal.js must NOT contain pokedex-calc-slider (pure display)');
@@ -10983,6 +10985,8 @@ SP 4,316
     // 4. Check CSS styling & theme support
     assert(stylesCss.includes('.appraisal-calc-col'), 'styles.css must style .appraisal-calc-col');
     assert(stylesCss.includes('.appraisal-calc-mobile-wrap'), 'styles.css must style .appraisal-calc-mobile-wrap');
+    assert(stylesCss.includes('#modal-appraisal-report .pokedex-calc-formula-card') && stylesCss.includes('background: transparent !important'), 'styles.css must set transparent background for appraisal formula card');
+    assert(stylesCss.includes('#modal-appraisal-report .unified-calc-row') && stylesCss.includes('border-bottom: 1px solid'), 'styles.css must separate calc rows with subtle divider line');
     assert(stylesCss.includes('[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box'), 'styles.css must style midnight theme for appraisal modal calc box');
     assert(stylesCss.includes('[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box'), 'styles.css must style onyx theme for appraisal modal calc box');
   });

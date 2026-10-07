@@ -2139,30 +2139,6 @@
               </h2>
             </div>
 
-            <!-- 基礎數值雙欄縱向列 (左欄：幫忙間隔 & 持有；右欄：食材率 & 技能率，附帶括號基準差值) -->
-            <div class="pokedex-header-stats-row pokedex-header-stats-dual appraisal-header-stats-dual">
-              <div class="pokedex-header-stat-col">
-                <div class="pokedex-header-stat-item">
-                  <span class="header-stat-k">${isEN ? 'Frequency' : '幫忙間隔'}</span>
-                  <span class="header-stat-v font-bold" id="appraisal-stat-interval">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIntervalValue === 'function') ? window.PokemonApp.renderPokedexIntervalValue(formulaData, pkmData) : '--'}</span>
-                </div>
-                <div class="pokedex-header-stat-item">
-                  <span class="header-stat-k">${isEN ? 'Carry' : '持有'}</span>
-                  <span class="header-stat-v font-bold" id="appraisal-stat-carry">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexCarryValue === 'function') ? window.PokemonApp.renderPokedexCarryValue(formulaData, pkmData) : '--'}</span>
-                </div>
-              </div>
-              <div class="pokedex-header-stat-col">
-                <div class="pokedex-header-stat-item">
-                  <span class="header-stat-k">${isEN ? 'Ingredient Rate' : '食材率'}</span>
-                  <span class="header-stat-v font-bold" id="appraisal-stat-ingredient-rate">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIngRateValue === 'function') ? window.PokemonApp.renderPokedexIngRateValue(formulaData, pkmData) : '--'}</span>
-                </div>
-                <div class="pokedex-header-stat-item">
-                  <span class="header-stat-k">${isEN ? 'Skill Rate' : '技能率'}</span>
-                  <span class="header-stat-v font-bold" id="appraisal-stat-skill-rate">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexSkillRateValue === 'function') ? window.PokemonApp.renderPokedexSkillRateValue(formulaData, pkmData) : '--'}</span>
-                </div>
-              </div>
-            </div>
-
             <div class="appraisal-header-actions">
               <!-- 雙軌綜合評級徽章 (對齊圖鑑彈窗風格，垂直置中，當前亮眼 + 滿級低調) -->
               <div class="appraisal-dual-verdict-column">
@@ -2198,7 +2174,7 @@
             </div>
           </div>
 
-          <!-- 報告核心主體 (精簡雙欄排版，徹底去除多餘巢狀容器外框) -->
+          <!-- 報告核心主體 (精簡三欄排版，徹底去除多餘巢狀容器外框) -->
           <div class="appraisal-modal-body">
             <!-- 左欄：寶可夢基本卡片與配置 (純淨無外框容器) -->
             <div class="appraisal-left-col">
@@ -2270,6 +2246,32 @@
                         </div>
                       `;
                     }).join('')}
+                  </div>
+                </div>
+
+                <!-- 基礎數值雙欄縱向列 (移動至副技能網格下方，緊湊整潔無溢出) -->
+                <div class="appraisal-config-section appraisal-stats-section" style="margin-top:12px;width:100%;">
+                  <div class="pokedex-header-stats-row pokedex-header-stats-dual appraisal-header-stats-dual">
+                    <div class="pokedex-header-stat-col">
+                      <div class="pokedex-header-stat-item">
+                        <span class="header-stat-k">${isEN ? 'Frequency' : '幫忙間隔'}</span>
+                        <span class="header-stat-v font-bold" id="appraisal-stat-interval">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIntervalValue === 'function') ? window.PokemonApp.renderPokedexIntervalValue(formulaData, pkmData) : '--'}</span>
+                      </div>
+                      <div class="pokedex-header-stat-item">
+                        <span class="header-stat-k">${isEN ? 'Carry' : '持有'}</span>
+                        <span class="header-stat-v font-bold" id="appraisal-stat-carry">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexCarryValue === 'function') ? window.PokemonApp.renderPokedexCarryValue(formulaData, pkmData) : '--'}</span>
+                      </div>
+                    </div>
+                    <div class="pokedex-header-stat-col">
+                      <div class="pokedex-header-stat-item">
+                        <span class="header-stat-k">${isEN ? 'Ing Rate' : '食材率'}</span>
+                        <span class="header-stat-v font-bold" id="appraisal-stat-ingredient-rate">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIngRateValue === 'function') ? window.PokemonApp.renderPokedexIngRateValue(formulaData, pkmData) : '--'}</span>
+                      </div>
+                      <div class="pokedex-header-stat-item">
+                        <span class="header-stat-k">${isEN ? 'Skill Rate' : '技能率'}</span>
+                        <span class="header-stat-v font-bold" id="appraisal-stat-skill-rate">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexSkillRateValue === 'function') ? window.PokemonApp.renderPokedexSkillRateValue(formulaData, pkmData) : '--'}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
