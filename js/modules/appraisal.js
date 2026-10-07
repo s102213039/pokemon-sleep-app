@@ -1974,6 +1974,18 @@
       `;
     }).join('');
 
+    const formulaData = (window.PokemonApp && typeof window.PokemonApp.calculatePokedexIngredientFormulas === 'function')
+      ? window.PokemonApp.calculatePokedexIngredientFormulas({
+          pkm: pkmData,
+          level: currentLv,
+          nature: natureName,
+          subskills: subskills,
+          ingredients: ingSlotNames,
+          ribbon: ribbonLevel,
+          skillLevel: skillLevel
+        })
+      : null;
+
     const isMobileH5 = typeof document !== 'undefined' && (
       (document.body && document.body.classList && document.body.classList.contains('mobile-h5-app')) ||
       (typeof document.querySelector === 'function' && !!document.querySelector('.mobile-h5-app')) ||
@@ -2077,6 +2089,15 @@
               </div>
             </div>
 
+            <!-- 食材與技能產能算法精算拆解 (純展示無調整組件) -->
+            ${(formulaData && window.PokemonApp && typeof window.PokemonApp.renderPokedexFormulaBreakdownHTML === 'function') ? `
+              <div class="appraisal-calc-mobile-wrap" style="margin-top:8px;width:100%;">
+                <div class="pokedex-calc-formula-card">
+                  ${window.PokemonApp.renderPokedexFormulaBreakdownHTML(formulaData, pkmData)}
+                </div>
+              </div>
+            ` : ''}
+
             <!-- 雷達圖與六維能量條 -->
             <div class="appraisal-chart-flex" style="margin-top:6px;">
               <div class="appraisal-radar-wrapper" style="width:100%;max-width:320px;margin:0 auto;">
@@ -2111,124 +2132,157 @@
         <div class="appraisal-modal-container">
           <!-- 頂部標題列 (高度加寬，垂直置中，整合雙軌評級與極簡關閉鈕) -->
           <div class="appraisal-modal-header">
-          <div class="appraisal-header-title-group">
-            <span class="appraisal-modal-badge">${isEN ? '[★] Diagnostic Report' : '[★] 深度能力診斷報告'}</span>
-            <h2 class="appraisal-pokemon-title">
-              ${nickname ? `<span class="appraisal-pokemon-nickname">${escapeHtml(nickname)}</span> <span class="appraisal-pokemon-base-name" style="font-size:0.85em;color:var(--text-secondary);font-weight:normal;">(${displayName})</span>` : displayName}
-            </h2>
-          </div>
+            <div class="appraisal-header-title-group">
+              <span class="appraisal-modal-badge">${isEN ? '[★] Diagnostic Report' : '[★] 深度能力診斷報告'}</span>
+              <h2 class="appraisal-pokemon-title">
+                ${nickname ? `<span class="appraisal-pokemon-nickname">${escapeHtml(nickname)}</span> <span class="appraisal-pokemon-base-name" style="font-size:0.85em;color:var(--text-secondary);font-weight:normal;">(${displayName})</span>` : displayName}
+              </h2>
+            </div>
 
-          <div class="appraisal-header-actions">
-            <!-- 雙軌綜合評級徽章 (對齊圖鑑彈窗風格，垂直置中，當前亮眼 + 滿級低調) -->
-            <div class="appraisal-dual-verdict-column">
-              <!-- 當前實力 (Current Level Rating) -->
-              <div class="pokedex-header-verdict-badge current-track" style="border-color: ${(evaluation.current || evaluation).gradeColor};" title="${isEN ? `Current Level Rating (Lv.${currentLv})` : `當前實力評級 (Lv.${currentLv})`}">
-                <span class="pokedex-verdict-track-lbl" style="font-size:10px;color:#94a3b8;line-height:1;">${isEN ? 'Current' : '當前'}</span>
-                <span class="verdict-grade pokedex-header-grade-text" style="color: ${(evaluation.current || evaluation).gradeColor};font-size:14px;font-weight:900;line-height:1;">${(evaluation.current || evaluation).grade}</span>
-                <span class="pokedex-header-score-text" style="font-size:11px;"><span class="verdict-num font-bold">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
+            <!-- 基礎數值雙欄縱向列 (左欄：幫忙間隔 & 持有；右欄：食材率 & 技能率，附帶括號基準差值) -->
+            <div class="pokedex-header-stats-row pokedex-header-stats-dual appraisal-header-stats-dual">
+              <div class="pokedex-header-stat-col">
+                <div class="pokedex-header-stat-item">
+                  <span class="header-stat-k">${isEN ? 'Frequency' : '幫忙間隔'}</span>
+                  <span class="header-stat-v font-bold" id="appraisal-stat-interval">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIntervalValue === 'function') ? window.PokemonApp.renderPokedexIntervalValue(formulaData, pkmData) : '--'}</span>
+                </div>
+                <div class="pokedex-header-stat-item">
+                  <span class="header-stat-k">${isEN ? 'Carry' : '持有'}</span>
+                  <span class="header-stat-v font-bold" id="appraisal-stat-carry">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexCarryValue === 'function') ? window.PokemonApp.renderPokedexCarryValue(formulaData, pkmData) : '--'}</span>
+                </div>
               </div>
-              <!-- 滿級潛力 (Max Potential Rating) -->
-              <div class="pokedex-header-verdict-badge potential-track" title="${isEN ? 'Max Potential Rating (Lv.100)' : '畢業潛力評級 (Lv.100)'}">
-                <span class="pokedex-verdict-track-lbl" style="font-size:9px;color:#64748b;line-height:1;">${isEN ? 'Max Lv' : '滿級'}</span>
-                <span class="verdict-potential-grade pokedex-header-grade-text" style="color:#94a3b8;font-size:11px;font-weight:700;line-height:1;">${(evaluation.potential || evaluation).grade}</span>
-                <span class="pokedex-header-score-text" style="font-size:10px;color:#94a3b8;"><span class="verdict-potential-num" style="font-weight:600;">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
+              <div class="pokedex-header-stat-col">
+                <div class="pokedex-header-stat-item">
+                  <span class="header-stat-k">${isEN ? 'Ingredient Rate' : '食材率'}</span>
+                  <span class="header-stat-v font-bold" id="appraisal-stat-ingredient-rate">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIngRateValue === 'function') ? window.PokemonApp.renderPokedexIngRateValue(formulaData, pkmData) : '--'}</span>
+                </div>
+                <div class="pokedex-header-stat-item">
+                  <span class="header-stat-k">${isEN ? 'Skill Rate' : '技能率'}</span>
+                  <span class="header-stat-v font-bold" id="appraisal-stat-skill-rate">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexSkillRateValue === 'function') ? window.PokemonApp.renderPokedexSkillRateValue(formulaData, pkmData) : '--'}</span>
+                </div>
               </div>
             </div>
 
-            <!-- 編輯按鈕 (若來自倉庫) -->
-            ${pkmOrBoxItem && (pkmOrBoxItem.rawItem || pkmOrBoxItem.uid) ? `
-              <button type="button" class="appraisal-edit-btn" onclick="window.AppraisalLab.openCurrentEditModal()" title="${isEN ? 'Edit Pokémon Stats' : '編輯寶可夢數值'}">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                <span>${isEN ? 'Edit' : '編輯數值'}</span>
-              </button>
-            ` : ''}
-
-            <!-- 極簡關閉按鈕 -->
-            <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closeModal()" title="${isEN ? 'Close' : '關閉'}" aria-label="${isEN ? 'Close' : '關閉'}">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- 報告核心主體 (精簡雙欄排版，徹底去除多餘巢狀容器外框) -->
-        <div class="appraisal-modal-body">
-          <!-- 左欄：寶可夢基本卡片與配置 (純淨無外框容器) -->
-          <div class="appraisal-left-col">
-            <div class="appraisal-profile-card">
-              <div class="appraisal-avatar-wrapper">
-                <img src="${pkmData.icon_url}" class="appraisal-avatar-img" alt="${displayName}">
-                <span class="appraisal-level-badge">Lv. ${currentLv}</span>
-              </div>
-              
-              <!-- 樹果與專長 (專長使用精緻圓形圖示) -->
-              <div class="appraisal-specialty-row" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;">
-                <span class="appraisal-berry-tag" style="display:inline-flex;align-items:center;background:transparent;border:none;padding:0;" title="${escapeHtml(berryName)}">
-                  ${berry.icon ? `<img src="${berry.icon}" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(berryName)}">` : ''}
-                </span>
-                ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(pkmData.specialty, 22, 'appraisal-spec-icon-wrap') : `<span class="appraisal-spec-tag ${specClass}">${specTypeLabel}</span>`}
-              </div>
-
-              <!-- 主技能名稱與等級 (Appraisal Main Skill) -->
-              <div class="appraisal-mainskill-row">
-                <span class="appraisal-mainskill-label">${isEN ? 'Main Skill:' : '主技能：'}</span>
-                <span class="appraisal-mainskill-name">${escapeHtml(mainSkillName)}</span>
-                <span class="appraisal-mainskill-level">Lv.${skillLvl}</span>
-              </div>
-
-              <!-- 食材三階插槽組合 (Appraisal Ingredients, 尚未開放插槽半透明) -->
-              <div class="appraisal-ing-parallel-row">
-                <span class="appraisal-ing-row-label">${isEN ? 'Ingredients:' : '食材：'}</span>
-                <div class="appraisal-ing-chips-grid">
-                  ${ingChipsHtml}
+            <div class="appraisal-header-actions">
+              <!-- 雙軌綜合評級徽章 (對齊圖鑑彈窗風格，垂直置中，當前亮眼 + 滿級低調) -->
+              <div class="appraisal-dual-verdict-column">
+                <!-- 當前實力 (Current Level Rating) -->
+                <div class="pokedex-header-verdict-badge current-track" style="border-color: ${(evaluation.current || evaluation).gradeColor};" title="${isEN ? `Current Level Rating (Lv.${currentLv})` : `當前實力評級 (Lv.${currentLv})`}">
+                  <span class="pokedex-verdict-track-lbl" style="font-size:10px;color:#94a3b8;line-height:1;">${isEN ? 'Current' : '當前'}</span>
+                  <span class="verdict-grade pokedex-header-grade-text" style="color: ${(evaluation.current || evaluation).gradeColor};font-size:14px;font-weight:900;line-height:1;">${(evaluation.current || evaluation).grade}</span>
+                  <span class="pokedex-header-score-text" style="font-size:11px;"><span class="verdict-num font-bold">${(evaluation.current || evaluation).compositeScore}</span>/100</span>
+                </div>
+                <!-- 滿級潛力 (Max Potential Rating) -->
+                <div class="pokedex-header-verdict-badge potential-track" title="${isEN ? 'Max Potential Rating (Lv.100)' : '畢業潛力評級 (Lv.100)'}">
+                  <span class="pokedex-verdict-track-lbl" style="font-size:9px;color:#64748b;line-height:1;">${isEN ? 'Max Lv' : '滿級'}</span>
+                  <span class="verdict-potential-grade pokedex-header-grade-text" style="color:#94a3b8;font-size:11px;font-weight:700;line-height:1;">${(evaluation.potential || evaluation).grade}</span>
+                  <span class="pokedex-header-score-text" style="font-size:10px;color:#94a3b8;"><span class="verdict-potential-num" style="font-weight:600;">${(evaluation.potential || evaluation).compositeScore}</span>/100</span>
                 </div>
               </div>
 
-              <!-- 遊戲同款性格展示 (膠囊外框 + 性格標籤 + 右側上下條目，純淨無外框容器) -->
-              <div class="appraisal-config-section" style="margin-top:12px;display:flex;justify-content:center;">
-                <div class="appraisal-nature-game-card">
-                  <div class="nature-pill-capsule">
-                    <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
-                    <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
-                  </div>
-                  ${natureEffectHtml}
-                </div>
-              </div>
-
-              <!-- 睡飽飽獎章 (無多餘標題) -->
-              ${ribbonLevel > 0 ? `
-                <div class="appraisal-config-section" style="margin-top:8px;display:flex;justify-content:center;">
-                  <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:6px;background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;font-size:12.5px;font-weight:700;">
-                    <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" style="width:20px;height:20px;object-fit:contain;" alt="Ribbon" />
-                    <span>${isEN ? `+${evaluation.ribbonBonus.carry} Carry${evaluation.ribbonBonus.speedDiscount > 0 ? ` · -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}% Speed` : ''}` : `+${evaluation.ribbonBonus.carry} 持有${evaluation.ribbonBonus.speedDiscount > 0 ? ` · 幫速 -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}%` : ''}`}</span>
-                  </div>
-                </div>
+              <!-- 編輯按鈕 (若來自倉庫) -->
+              ${pkmOrBoxItem && (pkmOrBoxItem.rawItem || pkmOrBoxItem.uid) ? `
+                <button type="button" class="appraisal-edit-btn" onclick="window.AppraisalLab.openCurrentEditModal()" title="${isEN ? 'Edit Pokémon Stats' : '編輯寶可夢數值'}">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                  <span>${isEN ? 'Edit' : '編輯數值'}</span>
+                </button>
               ` : ''}
 
-              <!-- 副技能清單 (2+2+1 遊戲同款外框顏色與排列，無多餘標題) -->
-              <div class="appraisal-config-section" style="margin-top:10px;">
-                <div class="appraisal-subskills-grid">
-                  ${[10, 25, 50, 70, 80].map(function(lv, idx) {
-                    const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
-                    const sName = rawName ? (window.I18N ? window.I18N.getSubSkillName(rawName) : rawName) : '--';
-                    const tier = getSkillTier(rawName);
-                    const isUnlocked = currentLv >= lv;
-                    const lockClass = !isUnlocked ? 'subskill-locked' : '';
-                    const titleText = rawName 
-                      ? (isEN ? `${sName} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''})` : `${sName} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''})`)
-                      : (isEN ? `Lv.${lv} Slot` : `Lv.${lv} 欄位`);
-                    return `
-                      <div class="appraisal-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
-                        <span class="subskill-name">${escapeHtml(sName)}</span>
-                      </div>
-                    `;
-                  }).join('')}
+              <!-- 極簡關閉按鈕 -->
+              <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closeModal()" title="${isEN ? 'Close' : '關閉'}" aria-label="${isEN ? 'Close' : '關閉'}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- 報告核心主體 (精簡雙欄排版，徹底去除多餘巢狀容器外框) -->
+          <div class="appraisal-modal-body">
+            <!-- 左欄：寶可夢基本卡片與配置 (純淨無外框容器) -->
+            <div class="appraisal-left-col">
+              <div class="appraisal-profile-card">
+                <div class="appraisal-avatar-wrapper">
+                  <img src="${pkmData.icon_url}" class="appraisal-avatar-img" alt="${displayName}">
+                  <span class="appraisal-level-badge">Lv. ${currentLv}</span>
+                </div>
+                
+                <!-- 樹果與專長 (專長使用精緻圓形圖示) -->
+                <div class="appraisal-specialty-row" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;">
+                  <span class="appraisal-berry-tag" style="display:inline-flex;align-items:center;background:transparent;border:none;padding:0;" title="${escapeHtml(berryName)}">
+                    ${berry.icon ? `<img src="${berry.icon}" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(berryName)}">` : ''}
+                  </span>
+                  ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(pkmData.specialty, 22, 'appraisal-spec-icon-wrap') : `<span class="appraisal-spec-tag ${specClass}">${specTypeLabel}</span>`}
+                </div>
+
+                <!-- 主技能名稱與等級 (Appraisal Main Skill) -->
+                <div class="appraisal-mainskill-row">
+                  <span class="appraisal-mainskill-label">${isEN ? 'Main Skill:' : '主技能：'}</span>
+                  <span class="appraisal-mainskill-name">${escapeHtml(mainSkillName)}</span>
+                  <span class="appraisal-mainskill-level">Lv.${skillLvl}</span>
+                </div>
+
+                <!-- 食材三階插槽組合 (Appraisal Ingredients, 尚未開放插槽半透明) -->
+                <div class="appraisal-ing-parallel-row">
+                  <span class="appraisal-ing-row-label">${isEN ? 'Ingredients:' : '食材：'}</span>
+                  <div class="appraisal-ing-chips-grid">
+                    ${ingChipsHtml}
+                  </div>
+                </div>
+
+                <!-- 遊戲同款性格展示 (膠囊外框 + 性格標籤 + 右側上下條目，純淨無外框容器) -->
+                <div class="appraisal-config-section" style="margin-top:12px;display:flex;justify-content:center;">
+                  <div class="appraisal-nature-game-card">
+                    <div class="nature-pill-capsule">
+                      <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
+                      <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
+                    </div>
+                    ${natureEffectHtml}
+                  </div>
+                </div>
+
+                <!-- 睡飽飽獎章 (無多餘標題) -->
+                ${ribbonLevel > 0 ? `
+                  <div class="appraisal-config-section" style="margin-top:8px;display:flex;justify-content:center;">
+                    <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:6px;background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;font-size:12.5px;font-weight:700;">
+                      <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" style="width:20px;height:20px;object-fit:contain;" alt="Ribbon" />
+                      <span>${isEN ? `+${evaluation.ribbonBonus.carry} Carry${evaluation.ribbonBonus.speedDiscount > 0 ? ` · -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}% Speed` : ''}` : `+${evaluation.ribbonBonus.carry} 持有${evaluation.ribbonBonus.speedDiscount > 0 ? ` · 幫速 -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}%` : ''}`}</span>
+                    </div>
+                  </div>
+                ` : ''}
+
+                <!-- 副技能清單 (2+2+1 遊戲同款外框顏色與排列，無多餘標題) -->
+                <div class="appraisal-config-section" style="margin-top:10px;">
+                  <div class="appraisal-subskills-grid">
+                    ${[10, 25, 50, 70, 80].map(function(lv, idx) {
+                      const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
+                      const sName = rawName ? (window.I18N ? window.I18N.getSubSkillName(rawName) : rawName) : '--';
+                      const tier = getSkillTier(rawName);
+                      const isUnlocked = currentLv >= lv;
+                      const lockClass = !isUnlocked ? 'subskill-locked' : '';
+                      const titleText = rawName 
+                        ? (isEN ? `${sName} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''})` : `${sName} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''})`)
+                        : (isEN ? `Lv.${lv} Slot` : `Lv.${lv} 欄位`);
+                      return `
+                        <div class="appraisal-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
+                          <span class="subskill-name">${escapeHtml(sName)}</span>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+
+            <!-- 中欄：食材與技能產能算法精算拆解 (純展示無調整組件，空間最大化單一整合外框) -->
+            <div class="appraisal-calc-col">
+              <div class="pokedex-calc-formula-card" id="appraisal-calc-formula-container">
+                ${(formulaData && window.PokemonApp && typeof window.PokemonApp.renderPokedexFormulaBreakdownHTML === 'function')
+                  ? window.PokemonApp.renderPokedexFormulaBreakdownHTML(formulaData, pkmData)
+                  : ''}
+              </div>
+            </div>
 
           <!-- 右欄：雷達圖 + 智能簡評 + 專長深度點評 (純淨無外框容器) -->
           <div class="appraisal-right-col">

@@ -12430,7 +12430,7 @@ input[type="number"] {
   border: 1px solid var(--border-color);
   border-radius: 16px;
   width: 100%;
-  max-width: 960px;
+  max-width: 1240px;
   max-height: 92vh;
   overflow-y: auto;
   box-shadow: var(--shadow-lg);
@@ -12551,9 +12551,53 @@ input[type="number"] {
 
 .appraisal-modal-body {
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 28px;
-  padding: 22px 24px;
+  grid-template-columns: 260px minmax(360px, 1fr) 350px;
+  gap: 20px;
+  padding: 20px 24px;
+  align-items: start;
+}
+
+@media (max-width: 1140px) {
+  .appraisal-modal-body {
+    grid-template-columns: 260px 1fr;
+  }
+  .appraisal-calc-col {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .appraisal-modal-body {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 12px;
+  }
+}
+
+/* 中欄：食材與技能產能算法精算拆解 (純淨無外框) */
+.appraisal-calc-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+}
+
+.appraisal-calc-col .pokedex-calc-formula-card {
+  margin-top: 0 !important;
+}
+
+.appraisal-calc-col .pokedex-calc-unified-box {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.appraisal-calc-mobile-wrap {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.appraisal-calc-mobile-wrap .pokedex-calc-formula-card {
+  margin-top: 0 !important;
 }
 
 /* 左欄：基本卡片與配置 (純淨無外框) */
@@ -28953,10 +28997,15 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 
 .pokedex-calc-unified-box .pokedex-strategy-card,
 #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+#modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card,
 [data-theme="dawn"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="dawn"] #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card,
 [data-theme="emerald"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="emerald"] #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card,
 [data-theme="midnight"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
-[data-theme="onyx"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card {
+[data-theme="midnight"] #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="onyx"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="onyx"] #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
   margin-top: 3px !important;
   background: transparent !important;
   border: none !important;
@@ -28968,9 +29017,13 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card,
 [data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
-[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card {
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
   border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
@@ -29704,80 +29757,116 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-calc-unified-box,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-calc-unified-box,
-[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-calc-unified-box {
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .pokedex-calc-unified-box,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-calc-unified-box,
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .pokedex-calc-unified-box {
   background: #1e293b !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
   box-shadow: none !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-row-label,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .calc-row-label,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-row-label,
-[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-row-label {
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .calc-row-label,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-row-label,
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .calc-row-label {
   color: #f8fafc !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-row-formula,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .calc-row-formula,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-row-formula,
-[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-row-formula {
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .calc-row-formula,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-row-formula,
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .calc-row-formula {
   background: rgba(0, 0, 0, 0.25) !important;
   color: #94a3b8 !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .formula-var,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .formula-var,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .formula-var,
-[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .formula-var {
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .formula-var,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .formula-var,
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .formula-var {
   color: #f8fafc !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .unified-calc-row,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .unified-calc-row,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .unified-calc-row,
-[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .unified-calc-row {
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .unified-calc-row,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .unified-calc-row,
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .unified-calc-row {
   border-bottom: none !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .formula-derive,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .formula-derive,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .formula-derive,
-[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .formula-derive {
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .formula-derive,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .formula-derive,
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .formula-derive {
   color: #94a3b8 !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .formula-derive strong:not([class*="calc-color-"]),
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .formula-derive strong:not([class*="calc-color-"]),
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .formula-derive strong:not([class*="calc-color-"]),
-[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .formula-derive strong:not([class*="calc-color-"]) {
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .formula-derive strong:not([class*="calc-color-"]),
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .formula-derive strong:not([class*="calc-color-"]),
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .formula-derive strong:not([class*="calc-color-"]) {
   color: #f8fafc !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .badge-skill-extra,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .badge-skill-extra,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .badge-skill-extra,
-[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .badge-skill-extra {
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .badge-skill-extra,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .badge-skill-extra,
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .badge-skill-extra {
   background: rgba(255, 255, 255, 0.08) !important;
   color: #cbd5e1 !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-yield-pill,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-yield-pill,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-yield-pill,
-[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-yield-pill {
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .pokedex-yield-pill,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-yield-pill,
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .pokedex-yield-pill {
   background: rgba(0, 0, 0, 0.25) !important;
   border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .yield-pill-name,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .yield-pill-name,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .yield-pill-name,
-[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .yield-pill-name {
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .yield-pill-name,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .yield-pill-name,
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .yield-pill-name {
   color: #f8fafc !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-strategy-card,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-strategy-card,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-strategy-card,
-[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-strategy-card {
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .pokedex-strategy-card,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-strategy-card,
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .pokedex-strategy-card {
   background: #1e293b !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 [data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .strategy-card-desc,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .strategy-card-desc,
 [data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .strategy-card-desc,
-[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .strategy-card-desc {
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .strategy-card-desc,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .strategy-card-desc,
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .strategy-card-desc {
   color: #cbd5e1 !important;
 }
 
@@ -29886,51 +29975,68 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
   box-shadow: none !important;
 }
 
-[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-row-label {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box {
+  background: #141417 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: none !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-row-label,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .calc-row-label {
   color: #f4f4f5 !important;
 }
 
-[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-row-formula {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-row-formula,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .calc-row-formula {
   background: rgba(0, 0, 0, 0.4) !important;
   color: #a1a1aa !important;
 }
 
-[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .formula-var {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .formula-var,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .formula-var {
   color: #f4f4f5 !important;
 }
 
-[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .unified-calc-row {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .unified-calc-row,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .unified-calc-row {
   border-bottom: none !important;
 }
 
-[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .formula-derive {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .formula-derive,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .formula-derive {
   color: #a1a1aa !important;
 }
 
-[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .formula-derive strong:not([class*="calc-color-"]) {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .formula-derive strong:not([class*="calc-color-"]),
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .formula-derive strong:not([class*="calc-color-"]) {
   color: #f4f4f5 !important;
 }
 
-[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .badge-skill-extra {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .badge-skill-extra,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .badge-skill-extra {
   background: rgba(255, 255, 255, 0.08) !important;
   color: #cbd5e1 !important;
 }
 
-[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-yield-pill {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-yield-pill,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-yield-pill {
   background: rgba(0, 0, 0, 0.4) !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .yield-pill-name {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .yield-pill-name,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .yield-pill-name {
   color: #f4f4f5 !important;
 }
 
-[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-strategy-card {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-strategy-card,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-strategy-card {
   background: #141417 !important;
   border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
-[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .strategy-card-desc {
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .strategy-card-desc,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .strategy-card-desc {
   color: #d4d4d8 !important;
 }
 

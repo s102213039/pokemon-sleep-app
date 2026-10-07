@@ -5164,16 +5164,39 @@ function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN
   };
 }
 
-function calculatePokedexIngredientFormulas() {
-  const pkm = pokedexModalState.pkm;
+function getIngCountFromBase(basePkm, slotIdx, ingName) {
+  if (!basePkm || !basePkm.ingredients) {
+    return slotIdx === 0 ? 1 : (slotIdx === 1 ? 2 : 4);
+  }
+  const found = basePkm.ingredients.find(function(ig) { return ig.name === ingName; });
+  if (found) {
+    if (slotIdx === 0 && found.l1 !== undefined) return parseInt(found.l1, 10);
+    if (slotIdx === 1 && found.l30 !== undefined) return parseInt(found.l30, 10);
+    if (slotIdx === 2 && found.l60 !== undefined) return parseInt(found.l60, 10);
+    if (typeof found.count === 'number') return found.count;
+  }
+  const slotIng = basePkm.ingredients[slotIdx];
+  if (slotIng) {
+    if (slotIdx === 0 && slotIng.l1 !== undefined) return parseInt(slotIng.l1, 10);
+    if (slotIdx === 1 && slotIng.l30 !== undefined) return parseInt(slotIng.l30, 10);
+    if (slotIdx === 2 && slotIng.l60 !== undefined) return parseInt(slotIng.l60, 10);
+    if (typeof slotIng.count === 'number') return slotIng.count;
+  }
+  return slotIdx === 0 ? 1 : (slotIdx === 1 ? 2 : 4);
+}
+
+function calculatePokedexIngredientFormulas(customState) {
+  const state = customState || pokedexModalState;
+  const pkm = (state && state.pkm) || pokedexModalState.pkm;
   if (!pkm) return null;
 
-  const currentLevel = pokedexModalState.level;
-  const currentNature = pokedexModalState.nature;
-  const subskills = pokedexModalState.subskills;
-  const ribbon = pokedexModalState.ribbon;
-  const skillLevel = pokedexModalState.skillLevel;
-  const ingSlots = pokedexModalState.ingSlots;
+  const currentLevel = (state && state.level != null) ? state.level : pokedexModalState.level;
+  const currentNature = (state && state.nature != null) ? state.nature : pokedexModalState.nature;
+  const subskills = (state && state.subskills != null) ? state.subskills : pokedexModalState.subskills;
+  const ribbon = (state && state.ribbon != null) ? state.ribbon : pokedexModalState.ribbon;
+  const skillLevel = (state && state.skillLevel != null) ? state.skillLevel : pokedexModalState.skillLevel;
+  const ingSlots = (state && state.ingSlots != null) ? state.ingSlots : pokedexModalState.ingSlots;
+  const customIngredients = (state && (state.customIngredients || state.ingredients)) ? (state.customIngredients || state.ingredients) : null;
 
   const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
   const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
@@ -5190,23 +5213,24 @@ function calculatePokedexIngredientFormulas() {
   let subskillSkillBonus = 0;
   const activeSubskillNames = [];
 
-  subskills.forEach((sName, idx) => {
+  subskills.forEach((s, idx) => {
+    const sName = (typeof s === 'string') ? s : (s && s.name ? s.name : '');
     if (!sName) return;
     const isUnlocked = currentLevel >= slotLevels[idx];
     if (isUnlocked) {
       activeSubskillNames.push(sName);
-      if (sName === '食材機率提升M') subskillIngBonus += 36;
-      if (sName === '食材機率提升S') subskillIngBonus += 18;
-      if (sName === '幫忙速度M') subskillSpeedBonus += 14;
-      if (sName === '幫忙速度S') subskillSpeedBonus += 7;
-      if (sName === '幫手獎勵') subskillSpeedBonus += 5;
-      if (sName === '技能機率提升M') subskillSkillBonus += 36;
-      if (sName === '技能機率提升S') subskillSkillBonus += 18;
+      if (sName === '食材機率提升M' || sName.includes('Ingredient Finder M')) subskillIngBonus += 36;
+      if (sName === '食材機率提升S' || sName.includes('Ingredient Finder S')) subskillIngBonus += 18;
+      if (sName === '幫忙速度M' || sName.includes('Helping Speed M')) subskillSpeedBonus += 14;
+      if (sName === '幫忙速度S' || sName.includes('Helping Speed S')) subskillSpeedBonus += 7;
+      if (sName === '幫手獎勵' || sName.includes('Helping Bonus')) subskillSpeedBonus += 5;
+      if (sName === '技能機率提升M' || sName.includes('Skill Trigger M')) subskillSkillBonus += 36;
+      if (sName === '技能機率提升S' || sName.includes('Skill Trigger S')) subskillSkillBonus += 18;
     }
   });
 
   // 3. 性格修正
-  const natureObj = POKEDEX_MODAL_NATURES.find(n => n.name === currentNature) || { buffType: 'none', debuffType: 'none' };
+  const natureObj = POKEDEX_MODAL_NATURES.find(n => n.name === currentNature || n.name_en === currentNature) || { buffType: 'none', debuffType: 'none' };
   let natureIngMult = 1.0;
   if (natureObj.buffType === 'ingredient') natureIngMult = 1.20;
   else if (natureObj.debuffType === 'ingredient') natureIngMult = 0.80;
@@ -5268,12 +5292,26 @@ function calculatePokedexIngredientFormulas() {
   const summaryYieldMap = new Map();
 
   for (let s = 0; s < unlockedSlotCount; s++) {
-    const ingChoiceIdx = ingSlots[s] || 0;
-    const ingData = ingredientsList[ingChoiceIdx] || ingredientsList[0] || { name: '甜甜蜜', icon: '' };
+    let ingData = null;
     let count = 1;
-    if (s === 0) count = parseInt(ingData.l1 || 1, 10);
-    else if (s === 1) count = parseInt(ingData.l30 || ingData.l1 || 1, 10);
-    else if (s === 2) count = parseInt(ingData.l60 || ingData.l30 || ingData.l1 || 1, 10);
+    if (customIngredients && customIngredients[s]) {
+      const cItem = customIngredients[s];
+      const cName = (typeof cItem === 'string') ? cItem : (cItem.name || '');
+      const found = ingredientsList.find(i => i.name === cName || i.name_en === cName);
+      if (found) {
+        ingData = found;
+      } else {
+        const icon = (window.I18N && typeof window.I18N.getIngredientIcon === 'function') ? window.I18N.getIngredientIcon(cName) : '';
+        ingData = { name: cName, icon: icon };
+      }
+      count = getIngCountFromBase(pkm, s, ingData.name);
+    } else {
+      const ingChoiceIdx = ingSlots[s] || 0;
+      ingData = ingredientsList[ingChoiceIdx] || ingredientsList[0] || { name: '甜甜蜜', icon: '' };
+      if (s === 0) count = parseInt(ingData.l1 || 1, 10);
+      else if (s === 1) count = parseInt(ingData.l30 || ingData.l1 || 1, 10);
+      else if (s === 2) count = parseInt(ingData.l60 || ingData.l30 || ingData.l1 || 1, 10);
+    }
 
     const ingName = isEN ? (window.I18N ? window.I18N.getIngredientName(ingData.name) : ingData.name) : ingData.name;
     const ingDailyCount = (dailyIngDrops * (count / unlockedSlotCount));
@@ -5300,7 +5338,8 @@ function calculatePokedexIngredientFormulas() {
   // 8. 持有上限計算 (基礎持有 + 副技能 + 睡飽飽獎章)
   const baseCarry = parseInt(pkm.carry || pkm.carryCapacity || '0', 10) || 0;
   let subskillCarryBonus = 0;
-  subskills.forEach((sName, idx) => {
+  subskills.forEach((s, idx) => {
+    const sName = (typeof s === 'string') ? s : (s && s.name ? s.name : '');
     if (!sName) return;
     const isUnlocked = currentLevel >= slotLevels[idx];
     if (isUnlocked) {
@@ -6295,6 +6334,7 @@ PokemonApp.clearAllPokedexSubskills = clearAllPokedexSubskills;
 PokemonApp.renderPokedexIngredientStrip = renderPokedexIngredientStrip;
 PokemonApp.updatePokedexSubskillUI = updatePokedexSubskillUI;
 PokemonApp.calculatePokedexIngredientFormulas = calculatePokedexIngredientFormulas;
+PokemonApp.getIngCountFromBase = getIngCountFromBase;
 PokemonApp.getBerryBaseEnergy = getBerryBaseEnergy;
 PokemonApp.calculateSingleBerryEnergy = calculateSingleBerryEnergy;
 PokemonApp.BERRY_BASE_ENERGY_MAP = BERRY_BASE_ENERGY_MAP;
@@ -6363,6 +6403,7 @@ if (typeof window !== 'undefined') {
   window.isSlowpokeFamily = isSlowpokeFamily;
   window.isSlakingFamily = isSlakingFamily;
   window.getPokedexMainSkillYield = getPokedexMainSkillYield;
+  window.getIngCountFromBase = getIngCountFromBase;
   window.renderPokedexFormulaBreakdownHTML = renderPokedexFormulaBreakdownHTML;
   window.togglePokedexSubskillPalette = togglePokedexSubskillPalette;
   window.togglePokedexEnergyHelp = togglePokedexEnergyHelp;

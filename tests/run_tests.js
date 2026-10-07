@@ -10959,6 +10959,34 @@ SP 4,316
     assert(i18nCode.includes('"敗露球菇":"Amoonguss"'), 'i18n.js must map 敗露球菇 to Amoonguss');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Pokedex Formula Breakdown Integrated into Appraisal Report Modal Without Modification Components', () => {
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/app.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+
+    // 1. Check core calculation engine function export and custom state support
+    assert(appJs.includes('calculatePokedexIngredientFormulas'), 'app.js must define calculatePokedexIngredientFormulas');
+    assert(appJs.includes('renderPokedexFormulaBreakdownHTML'), 'app.js must define renderPokedexFormulaBreakdownHTML');
+    assert(appJs.includes('getIngCountFromBase'), 'app.js must define getIngCountFromBase helper');
+
+    // 2. Check appraisal.js integration
+    assert(appraisalJs.includes('calculatePokedexIngredientFormulas'), 'appraisal.js must call calculatePokedexIngredientFormulas');
+    assert(appraisalJs.includes('renderPokedexFormulaBreakdownHTML'), 'appraisal.js must call renderPokedexFormulaBreakdownHTML');
+    assert(appraisalJs.includes('appraisal-calc-col'), 'appraisal.js desktop layout must include appraisal-calc-col');
+    assert(appraisalJs.includes('appraisal-calc-mobile-wrap'), 'appraisal.js mobile layout must include appraisal-calc-mobile-wrap');
+    assert(appraisalJs.includes('appraisal-header-stats-dual'), 'appraisal.js header must render dual stats row');
+
+    // 3. Strict check: No modification controls in appraisal calculation view
+    assert(!appraisalJs.includes('pokedex-calc-slider'), 'appraisal.js must NOT contain pokedex-calc-slider (pure display)');
+    assert(!appraisalJs.includes('box-subskill-palette'), 'appraisal.js must NOT contain subskill palette editor (pure display)');
+
+    // 4. Check CSS styling & theme support
+    assert(stylesCss.includes('.appraisal-calc-col'), 'styles.css must style .appraisal-calc-col');
+    assert(stylesCss.includes('.appraisal-calc-mobile-wrap'), 'styles.css must style .appraisal-calc-mobile-wrap');
+    assert(stylesCss.includes('[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box'), 'styles.css must style midnight theme for appraisal modal calc box');
+    assert(stylesCss.includes('[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box'), 'styles.css must style onyx theme for appraisal modal calc box');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {
