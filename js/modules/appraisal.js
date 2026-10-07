@@ -2087,6 +2087,32 @@
                   }).join('')}
                 </div>
               </div>
+
+              <!-- 基礎數值雙欄縱向列 (移動至副技能網格下方，緊湊整潔無溢出) -->
+              <div class="appraisal-config-section appraisal-stats-section" style="margin-top:8px;width:100%;">
+                <div class="pokedex-header-stats-row pokedex-header-stats-dual appraisal-header-stats-dual">
+                  <div class="pokedex-header-stat-col">
+                    <div class="pokedex-header-stat-item">
+                      <span class="header-stat-k">${isEN ? 'Frequency' : '幫忙間隔'}</span>
+                      <span class="header-stat-v font-bold" id="appraisal-stat-interval-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIntervalValue === 'function') ? window.PokemonApp.renderPokedexIntervalValue(formulaData, pkmData) : '--'}</span>
+                    </div>
+                    <div class="pokedex-header-stat-item">
+                      <span class="header-stat-k">${isEN ? 'Carry' : '持有'}</span>
+                      <span class="header-stat-v font-bold" id="appraisal-stat-carry-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexCarryValue === 'function') ? window.PokemonApp.renderPokedexCarryValue(formulaData, pkmData) : '--'}</span>
+                    </div>
+                  </div>
+                  <div class="pokedex-header-stat-col">
+                    <div class="pokedex-header-stat-item">
+                      <span class="header-stat-k">${isEN ? 'Ing Rate' : '食材率'}</span>
+                      <span class="header-stat-v font-bold" id="appraisal-stat-ingredient-rate-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexIngRateValue === 'function') ? window.PokemonApp.renderPokedexIngRateValue(formulaData, pkmData) : '--'}</span>
+                    </div>
+                    <div class="pokedex-header-stat-item">
+                      <span class="header-stat-k">${isEN ? 'Skill Rate' : '技能率'}</span>
+                      <span class="header-stat-v font-bold" id="appraisal-stat-skill-rate-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexSkillRateValue === 'function') ? window.PokemonApp.renderPokedexSkillRateValue(formulaData, pkmData) : '--'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- 食材與技能產能算法精算拆解 (純展示無調整組件) -->

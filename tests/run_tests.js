@@ -10985,6 +10985,10 @@ SP 4,316
     // 4. Check CSS styling & theme support
     assert(stylesCss.includes('.appraisal-calc-col'), 'styles.css must style .appraisal-calc-col');
     assert(stylesCss.includes('.appraisal-calc-mobile-wrap'), 'styles.css must style .appraisal-calc-mobile-wrap');
+    assert(stylesCss.includes('275px minmax(390px, 430px) 1fr'), 'styles.css must allocate compact middle column and 1fr wide right column in appraisal-modal-body');
+    assert(stylesCss.includes('.appraisal-left-col .appraisal-header-stats-dual') && stylesCss.includes('width: 100% !important'), 'styles.css must make appraisal dual stats 100% width');
+    assert(stylesCss.includes('.appraisal-left-col .appraisal-header-stats-dual .header-stat-v') && stylesCss.includes('font-size: 15px !important'), 'styles.css must maximize stats value font size to 15px');
+    assert(stylesCss.includes('#modal-appraisal-report .calc-val-main') && stylesCss.includes('font-size: 15px !important'), 'styles.css must enlarge calc main value to 15px for clarity');
     assert(stylesCss.includes('#modal-appraisal-report .pokedex-calc-formula-card') && stylesCss.includes('background: transparent !important'), 'styles.css must set transparent background for appraisal formula card');
     assert(stylesCss.includes('#modal-appraisal-report .unified-calc-row') && stylesCss.includes('border-bottom: 1px solid'), 'styles.css must separate calc rows with subtle divider line');
     assert(stylesCss.includes('[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box'), 'styles.css must style midnight theme for appraisal modal calc box');
