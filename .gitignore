@@ -6,9 +6,11 @@ token.json
 .env
 .env.*
 
-# Python cache
+# Python cache & virtual environments
 __pycache__/
 *.pyc
+.venv/
+*.venv*
 
 # Agent briefing files
 .agents/

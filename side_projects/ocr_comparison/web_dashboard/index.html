@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>Pokémon Sleep OCR 雙引擎對比評測儀表板</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --border: rgba(255, 255, 255, 0.1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 24px; }
+    h1 { font-size: 24px; margin-bottom: 8px; color: var(--text); }
+    .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+    
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 30px; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; text-align: center; }
+    .stat-label { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+    .stat-values { display: flex; justify-content: space-around; align-items: baseline; }
+    .val-tess { font-size: 20px; font-weight: 800; color: #f97316; }
+    .val-rapid { font-size: 24px; font-weight: 900; color: var(--accent); }
+    .val-legend { font-size: 11px; color: var(--muted); margin-top: 4px; display: flex; justify-content: space-around; }
+
+    .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; overflow-x: auto; margin-bottom: 30px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+    th { padding: 12px; border-bottom: 2px solid var(--border); color: var(--accent); }
+    td { padding: 12px; border-bottom: 1px solid var(--border); }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+    .tag-ok { background: rgba(34, 197, 94, 0.2); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.4); }
+    .tag-fail { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.4); }
+    
+    .case-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; }
+    .case-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; font-size: 12.5px; }
+    .case-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+    .case-title { font-size: 15px; font-weight: 800; color: var(--accent); }
+    .compare-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .col-engine { background: rgba(0,0,0,0.25); border-radius: 8px; padding: 10px; }
+    .col-title { font-weight: 800; margin-bottom: 6px; font-size: 12px; }
+    .col-tess .col-title { color: #f97316; }
+    .col-rapid .col-title { color: var(--accent); }
+    .raw-box { margin-top: 8px; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 6px; font-family: monospace; font-size: 10.5px; max-height: 120px; overflow-y: auto; white-space: pre-wrap; color: #cbd5e1; }
+  </style>
+</head>
+<body>
+  <h1>Pokémon Sleep AI OCR 雙引擎對比評測儀表板</h1>
+  <div class="subtitle">評測對象：Tesseract.js (傳統 LSTM) vs Umi-OCR 核心引擎 (PaddleOCR PP-OCRv4 深度學習) | 測試樣本：真實玩家 Telegram 截圖 15 張</div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">寶可夢名稱準確率</div>
+      <div class="stat-values">
+        <span class="val-tess">73.3%</span>
+        <span class="val-rapid">100%</span>
+      </div>
+      <div class="val-legend"><span>Tesseract</span><span>Umi-OCR</span></div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">寶可夢等級準確率</div>
+      <div class="stat-values">
+        <span class="val-tess">33.3%</span>
+        <span class="val-rapid">100%</span>
+      </div>
+      <div class="val-legend"><span>Tesseract</span><span>Umi-OCR</span></div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">性格 (Nature) 準確率</div>
+      <div class="stat-values">
+        <span class="val-tess">66.7%</span>
+        <span class="val-rapid">80%</span>
+      </div>
+      <div class="val-legend"><span>Tesseract</span><span>Umi-OCR</span></div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">副技能 (Subskills) 命中率</div>
+      <div class="stat-values">
+        <span class="val-tess">39.7%</span>
+        <span class="val-rapid">91.8%</span>
+      </div>
+      <div class="val-legend"><span>Tesseract</span><span>Umi-OCR</span></div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">完美全解析卡片率 (100%)</div>
+      <div class="stat-values">
+        <span class="val-tess">0%</span>
+        <span class="val-rapid">46.7%</span>
+      </div>
+      <div class="val-legend"><span>Tesseract</span><span>Umi-OCR</span></div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">平均單張耗時</div>
+      <div class="stat-values">
+        <span class="val-tess">469ms</span>
+        <span class="val-rapid">414ms</span>
+      </div>
+      <div class="val-legend"><span>Tesseract</span><span>Umi-OCR</span></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h2 style="font-size:16px;margin-bottom:14px;">各樣本辨識詳細比對表</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>截圖檔案</th>
+          <th>真值 (Ground Truth)</th>
+          <th>Tesseract 名稱/等級</th>
+          <th>Tesseract 性格</th>
+          <th>Tesseract 副技能</th>
+          <th>Umi-OCR 名稱/等級</th>
+          <th>Umi-OCR 性格</th>
+          <th>Umi-OCR 副技能</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            <td><code>photo_100_2026-09-30_19-52-23.jpg</code></td>
+            <td><strong>狂歡浪舞鴨</strong> Lv.55 (自大)</td>
+            <td>
+              <span class="tag tag-ok">狂歡浪舞鴨</span>
+              <span class="tag tag-ok">Lv.55</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">自大</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">1/5</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">狂歡浪舞鴨</span>
+              <span class="tag tag-ok">Lv.55</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">自大</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">4/5</span>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><code>photo_10_2026-09-30_19-52-23.jpg</code></td>
+            <td><strong>土王</strong> Lv.30 (急躁)</td>
+            <td>
+              <span class="tag tag-ok">土王</span>
+              <span class="tag tag-fail">Lv.6</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">急躁</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">2/5</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">土王</span>
+              <span class="tag tag-ok">Lv.30</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">急躁</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">3/5</span>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><code>photo_11_2026-09-30_19-52-23.jpg</code></td>
+            <td><strong>岩殿居蟹</strong> Lv.30 (固執)</td>
+            <td>
+              <span class="tag tag-ok">岩殿居蟹</span>
+              <span class="tag tag-fail">Lv.39</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">固執</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">2/5</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">岩殿居蟹</span>
+              <span class="tag tag-ok">Lv.30</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">固執</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">4/5</span>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><code>photo_12_2026-09-30_19-52-23.jpg</code></td>
+            <td><strong>達克萊伊</strong> Lv.30 (害羞)</td>
+            <td>
+              <span class="tag tag-ok">達克萊伊</span>
+              <span class="tag tag-fail">Lv.50</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">慎重</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">1/3</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">達克萊伊</span>
+              <span class="tag tag-ok">Lv.30</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">害羞</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">3/3</span>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><code>photo_14_2026-09-30_19-52-23.jpg</code></td>
+            <td><strong>烈焰猴</strong> Lv.30 (悠閒)</td>
+            <td>
+              <span class="tag tag-ok">烈焰猴</span>
+              <span class="tag tag-fail">Lv.39</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">悠閒</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">2/5</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">烈焰猴</span>
+              <span class="tag tag-ok">Lv.30</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">悠閒</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">5/5</span>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><code>photo_19_2026-09-30_19-52-23.jpg</code></td>
+            <td><strong>巨沼怪</strong> Lv.30 (認真)</td>
+            <td>
+              <span class="tag tag-ok">巨沼怪</span>
+              <span class="tag tag-fail">Lv.39</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">慎重</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">2/5</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">巨沼怪</span>
+              <span class="tag tag-ok">Lv.30</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">慎重</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">5/5</span>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><code>photo_2_2026-09-30_19-52-23.jpg</code></td>
+            <td><strong>魔幻假面喵</strong> Lv.62 (急躁)</td>
+            <td>
+              <span class="tag tag-ok">魔幻假面喵</span>
+              <span class="tag tag-ok">Lv.62</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">急躁</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">1/5</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">魔幻假面喵</span>
+              <span class="tag tag-ok">Lv.62</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">急躁</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">5/5</span>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><code>photo_53_2026-09-30_19-52-23.jpg</code></td>
+            <td><strong>謎擬Q</strong> Lv.31 (爽朗)</td>
+            <td>
+              <span class="tag tag-ok">謎擬Q</span>
+              <span class="tag tag-fail">Lv.6</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">爽朗</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">2/5</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">謎擬Q</span>
+              <span class="tag tag-ok">Lv.31</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">爽朗</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">4/5</span>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><code>photo_5_2026-09-30_19-52-23.jpg</code></td>
+            <td><strong>古月鳥</strong> Lv.28 (冷靜)</td>
+            <td>
+              <span class="tag tag-ok">古月鳥</span>
+              <span class="tag tag-ok">Lv.28</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">冷靜</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">3/5</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">古月鳥</span>
+              <span class="tag tag-ok">Lv.28</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">冷靜</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">5/5</span>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><code>photo_66_2026-09-30_19-52-23.jpg</code></td>
+            <td><strong>烈焰猴</strong> Lv.34 (溫順)</td>
+            <td>
+              <span class="tag tag-fail">六尾（阿羅拉的樣子）</span>
+              <span class="tag tag-fail">Lv.6</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">溫順</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">3/5</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">烈焰猴</span>
+              <span class="tag tag-ok">Lv.34</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">溫順</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">5/5</span>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><code>photo_71_2026-09-30_19-52-23.jpg</code></td>
+            <td><strong>蜥蜴王</strong> Lv.50 (勇敢)</td>
+            <td>
+              <span class="tag tag-ok">蜥蜴王</span>
+              <span class="tag tag-ok">Lv.50</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">勇敢</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">2/5</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">蜥蜴王</span>
+              <span class="tag tag-ok">Lv.50</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">勇敢</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">5/5</span>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><code>photo_3_2026-09-30_19-52-23.jpg</code></td>
+            <td><strong>大竺葵</strong> Lv.26 (溫和)</td>
+            <td>
+              <span class="tag tag-fail">南瓜怪人 (大顆種)</span>
+              <span class="tag tag-fail">Lv.30</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">溫和</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">3/5</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">大竺葵</span>
+              <span class="tag tag-ok">Lv.26</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">慎重</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">5/5</span>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><code>photo_48_2026-09-30_19-52-23.jpg</code></td>
+            <td><strong>冰伊布</strong> Lv.31 (坦率)</td>
+            <td>
+              <span class="tag tag-fail">三合一磁怪</span>
+              <span class="tag tag-fail">Lv.30</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">慎重</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">2/5</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">冰伊布</span>
+              <span class="tag tag-ok">Lv.31</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">慎重</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">5/5</span>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><code>photo_89_2026-09-30_19-52-23.jpg</code></td>
+            <td><strong>水伊布</strong> Lv.50 (固執)</td>
+            <td>
+              <span class="tag tag-fail">皮卡丘（船長）</span>
+              <span class="tag tag-fail">Lv.6</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">膽小</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">1/5</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">水伊布</span>
+              <span class="tag tag-ok">Lv.50</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">固執</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">4/5</span>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><code>photo_95_2026-09-30_19-52-23.jpg</code></td>
+            <td><strong>火伊布</strong> Lv.50 (固執)</td>
+            <td>
+              <span class="tag tag-ok">火伊布</span>
+              <span class="tag tag-ok">Lv.50</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">大膽</span>
+            </td>
+            <td>
+              <span class="tag tag-fail">2/5</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">火伊布</span>
+              <span class="tag tag-ok">Lv.50</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">固執</span>
+            </td>
+            <td>
+              <span class="tag tag-ok">5/5</span>
+            </td>
+          </tr>
+        
+      </tbody>
+    </table>
+  </div>
+
+  <h2 style="font-size:16px;margin-bottom:14px;">具體案例深入檢視 (Side-by-Side Cases)</h2>
+  <div class="case-grid">
+    
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-title">狂歡浪舞鴨 Lv.55 (自大)</span>
+          <span style="color:var(--muted);font-size:11px;">photo_100_2026-09-30_19-52-23.jpg</span>
+        </div>
+        <div class="compare-cols">
+          <div class="col-engine col-tess">
+            <div class="col-title">Tesseract.js (505ms)</div>
+            <div>名稱: 狂歡浪舞鴨</div>
+            <div>等級: Lv.55</div>
+            <div>技能等級: Lv.3</div>
+            <div>性格: 自大</div>
+            <div>副技能: 技能等級提升M, 技能機率提升M, 睡眠EXP獎勵</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>時
+生 念 : 2,636
+), 呈 Lv. 55 狂歡 浪 舞 鴨
+) - 會 Lv.6o
+C2 【 人 9 2
+佃 寬 2 圖 聯 每 33 分 14 秒
+翎 華 沁 三 還 了 35 但
+HtcS
+能 量 填充 M Lv.3
+【8, 卡 比 獸 的 能 量 增加 1,726。
+os [ae
+WASG 名 寬 謹 寬 國 讓 盂
+【 eu.70 】
+國 一 二 還
+ouvs0 1
+技能 機 率 提升 M
+主 技能 發 動機 率 和 生
+EXP 獲 得 量 。 窗 宁
+</div>
+          </div>
+          <div class="col-engine col-rapid">
+            <div class="col-title">Umi-OCR / RapidOCR (393.64ms)</div>
+            <div>名稱: 狂歡浪舞鴨</div>
+            <div>等級: Lv.55</div>
+            <div>技能等級: Lv.3</div>
+            <div>性格: 自大</div>
+            <div>副技能: 技能等級提升M, 食材機率提升S, 幫忙速度M, 食材機率提升M, 技能機率提升S</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>常忙能力
+sp2,636
+Lv.55狂浪舞鸭
+Lv.60
+食材
+*7
+聚忙間隔
+每33分14秒
+持有上限
+35個
+主技能/副技能
+能量填充M
+Lv.3
+卡比默的能量增加1，726。
+食材機率提升S
+帮忙速度M
+Lv.70
+食材機率提升M
+技能機率提升S
+Lv.80
+技能機率提升M
+能力详情
+性格
+主技能發動機率
+自大
+EXP獲得量
+返回</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-title">土王 Lv.30 (急躁)</span>
+          <span style="color:var(--muted);font-size:11px;">photo_10_2026-09-30_19-52-23.jpg</span>
+        </div>
+        <div class="compare-cols">
+          <div class="col-engine col-tess">
+            <div class="col-title">Tesseract.js (498ms)</div>
+            <div>名稱: 土王</div>
+            <div>等級: Lv.6</div>
+            <div>技能等級: Lv.2</div>
+            <div>性格: 急躁</div>
+            <div>副技能: 活力回復獎勵, 食材機率提升M, 研究EXP獎勵, 技能機率提升M, 睡眠EXP獎勵</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>時
+念 1183
+【 4 v.s0 土 王
+會 Lv.6o
+C2 【3 GC2
+儲 權 2 圖 障 。 每 54 分 57 秒 (0
+翎 匡 還 際 。 31 介
+一
+活力 填充 s Lv.2
+@, 讓 自 己 回 復活 力 16。
+持 有 上 限 提升 s | 食材 機 率 提升
+edW 軸 e 人 &gt; LIH 蟬 謂 江 讓 還 生 到
+(otso 】 【auzo 】
+技能 等 級 提升 S 研究 EXP 裝 勵
+oo 】
+技能 機 率 提升 M
+EXP 獲 得 量 人 條
+活力 回 復 量 池子
+</div>
+          </div>
+          <div class="col-engine col-rapid">
+            <div class="col-title">Umi-OCR / RapidOCR (409.75ms)</div>
+            <div>名稱: 土王</div>
+            <div>等級: Lv.30</div>
+            <div>技能等級: Lv.2</div>
+            <div>性格: 急躁</div>
+            <div>副技能: 活力回復提升S, 活力回復獎勵, 持有上限提升S, 食材機率提升S, 技能等級提升S</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>常忙能力
+sP1,183
+Lv.30土王
+Lv.60
+食材
+x2
+x4
+x7
+禁忙間隔
+每54分57秒
+持有上限
+31個
+主技能/副技能
+活力填充S
+LV.2
+镶自己回復活力16。
+持有上限提升S
+食材機率提升S
+Lv.50
+Lv.70
+技能等級提升S
+研究EXP类动
+Lv.80
+技能機率提升M
+能力详情
+性格
+EXP獲得量
+急躁
+活力回復量
+返回</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-title">岩殿居蟹 Lv.30 (固執)</span>
+          <span style="color:var(--muted);font-size:11px;">photo_11_2026-09-30_19-52-23.jpg</span>
+        </div>
+        <div class="compare-cols">
+          <div class="col-engine col-tess">
+            <div class="col-title">Tesseract.js (418ms)</div>
+            <div>名稱: 岩殿居蟹</div>
+            <div>等級: Lv.39</div>
+            <div>技能等級: Lv.4</div>
+            <div>性格: 固執</div>
+            <div>副技能: 食材機率提升S, 持有上限提升L, 技能機率提升M, 幫忙速度M, 食材機率提升M</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>時
++ 一 念 。 11895
+Lv. 39 岩 殿 居 蟹
+( 食 會 Lv.6o
+CD C3y C2
+令 藻 2 還 障 。 每 45 分 12 私 (0)
+翎 王 潤 還 且 22 介
+MZ 較 了 e ee
+食材 精選 S Lv.4
+0 從 特 定食 材 中 隨機 獲得 11 個 其 中 1 種 食材 。
+es
+【 ou.50 1】 【 ot.70 和 】
+持 有 上 限 提升 S 持 有 上 限 提升 L
+ouvs0
+技能 機 率 提升 M
+幫忙 速度 和 生
+食材 發 現 率 “字 字
+</div>
+          </div>
+          <div class="col-engine col-rapid">
+            <div class="col-title">Umi-OCR / RapidOCR (465.14ms)</div>
+            <div>名稱: 岩殿居蟹</div>
+            <div>等級: Lv.30</div>
+            <div>技能等級: Lv.4</div>
+            <div>性格: 固執</div>
+            <div>副技能: 食材機率提升S, 技能等級提升M, 技能機率提升S, 持有上限提升S, 持有上限提升L</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>常忙能力
+sP1,895
+Lv.30岩殿居蟹
+Lv.60
+食材
+x1
+x3
+x5
+禁忙間隔
+每45分12秒
+持有上限
+22個
+主技能/副技能
+食材精選S
+LV.4
+特定食材中随機獲得11個其中1種食材。
+技能等級提升M
+技能機率提升S
+Lv.50
+Lv.70
+持有上限提升S
+持有上限提升L
+Lv.80
+技能機率提升M
+能力详情
+性格
+忙速度
+固執
+食材發現率
+返回</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-title">達克萊伊 Lv.30 (害羞)</span>
+          <span style="color:var(--muted);font-size:11px;">photo_12_2026-09-30_19-52-23.jpg</span>
+        </div>
+        <div class="compare-cols">
+          <div class="col-engine col-tess">
+            <div class="col-title">Tesseract.js (501ms)</div>
+            <div>名稱: 達克萊伊</div>
+            <div>等級: Lv.50</div>
+            <div>技能等級: Lv.1</div>
+            <div>性格: 慎重</div>
+            <div>副技能: 技能等級提升M, 樹果數量S</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>時
+念 :&gt; 1,867
+如 Lv. 50 達 克 藥 仇
+命 Lv.eo
+個 加 己 還 轉 徐 翁
+GC2
+人 了 隊 - 革 基 圖 思 人 每 393 分 3 私
+人 還 2 有 4
+一 一 一 二
+夢魘 (能量 填充 M) Lv.1
+0 卡 比 獸 的 和 能量 增加 2,640
+且 讓 幫手 隊伍 中 惡 屬 性 以 外 的 寶 可 夢 活 力 下 降 12。
+【 euv50 】 【 ou.70 】
+樹 果 數 量 S -
+【 ouvs0 】
+ee
+</div>
+          </div>
+          <div class="col-engine col-rapid">
+            <div class="col-title">Umi-OCR / RapidOCR (404.4ms)</div>
+            <div>名稱: 達克萊伊</div>
+            <div>等級: Lv.30</div>
+            <div>技能等級: Lv.1</div>
+            <div>性格: 害羞</div>
+            <div>副技能: 技能等級提升M, 持有上限提升L, 幫忙速度M, 樹果數量S</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>常忙能力
+sP1,867
+Lv.30達克莱伊
+Lv.60
+食材
+禁忙間隔
+每39分9秒
+持有上限
+46個
+主技能/副技能
+夢魔（能量填充M）
+Lv.1
+卡比默的能量增加2，640，
+且镶手隧伍中恶性以外的寶可夢活力下降12。
+持有上限提升L
+帮忙速度M
+Lv.50
+口
+Lv.70
+樹果数量S
+Lv.80
+能力详情
+性格
+害羞
+没有性格帶來的特色
+返回</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-title">烈焰猴 Lv.30 (悠閒)</span>
+          <span style="color:var(--muted);font-size:11px;">photo_14_2026-09-30_19-52-23.jpg</span>
+        </div>
+        <div class="compare-cols">
+          <div class="col-engine col-tess">
+            <div class="col-title">Tesseract.js (558ms)</div>
+            <div>名稱: 烈焰猴</div>
+            <div>等級: Lv.39</div>
+            <div>技能等級: Lv.3</div>
+            <div>性格: 悠閒</div>
+            <div>副技能: 技能等級提升M, 活力回復獎勵, 睡眠EXP獎勵</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>時
+用 念 。, 1,982
+2 Lv. 39 烈焰 猴
+會 Lv.6o
+CD 【9 G 人 2
+翎 權 汪 障 。 每 37 分 40 私 (1
+個 富 選 還 且 34 介
+一 一 二 二 一 一 】
+樹 果 遠 增 Lv.3
+@ 獲得 21 個 樹 果 ,
+另外 還 會 獲得 各 2 個
+隊伍 中 的 寶 可 夢 會 撿 來 的 樹 果 。
+we 」 mm
+點 加計
+【ou:o 】 一
+技能 等 級 提升 S 技能 等 級 提升 M
+【 otvs0 4】
+活力 回 復 獎勵
+活力 回 復 量 生
+EXP 獲 得 量 字 字
+</div>
+          </div>
+          <div class="col-engine col-rapid">
+            <div class="col-title">Umi-OCR / RapidOCR (423.73ms)</div>
+            <div>名稱: 烈焰猴</div>
+            <div>等級: Lv.30</div>
+            <div>技能等級: Lv.3</div>
+            <div>性格: 悠閒</div>
+            <div>副技能: 持有上限提升S, 樹果數量S, 技能等級提升S, 技能等級提升M, 活力回復獎勵</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>常忙能力
+sP1,982
+Lv.30烈焰猴
+Lv.60
+食材
+x4
+繁忙間隔
+每37分40秒
+持有上限
+34個
+主技能/副技能
+樹果增
+Lv.3
+獲得21個樹果，
+另外還會獲得各2個
+隧伍中的實可夢會來的樹果。
+持有上限提升S
+樹果數量S
+Lv.50
+Lv.70
+技能等級提升S
+技能等级提升M
+LV.80
+活力回復
+能力情
+性格
+活力回復量
+悠間
+EXP獲得量
+返回</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-title">巨沼怪 Lv.30 (認真)</span>
+          <span style="color:var(--muted);font-size:11px;">photo_19_2026-09-30_19-52-23.jpg</span>
+        </div>
+        <div class="compare-cols">
+          <div class="col-engine col-tess">
+            <div class="col-title">Tesseract.js (485ms)</div>
+            <div>名稱: 巨沼怪</div>
+            <div>等級: Lv.39</div>
+            <div>技能等級: Lv.3</div>
+            <div>性格: 慎重</div>
+            <div>副技能: 食材機率提升M, 技能機率提升S, 技能等級提升S</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>由
+re 念 sp 1,963
+Lv. 39 巨 沼 怪
+會 Lv,
+所 3 【3 2
+令 權 還 隊 每 37 分 48 秒 (1)
+翎 葉 輛 且 30 介
+一 一 一 二 二 一 一 】
+料理 成 功 S Lv.3
+@ 料理 尖 亮 成 功 的 機 率 會 提升 690。
+效果 會 持續 到 料理 漂亮 成 功
+或 移動 營地 為 止 。
+【 ou.50 】 【eu.70 】
+技能 機 率 提升 S 持 有 上 限 提升 S
+etvs0 4】
+技能 等 級 提升 S
+os
+</div>
+          </div>
+          <div class="col-engine col-rapid">
+            <div class="col-title">Umi-OCR / RapidOCR (413.84ms)</div>
+            <div>名稱: 巨沼怪</div>
+            <div>等級: Lv.30</div>
+            <div>技能等級: Lv.3</div>
+            <div>性格: 慎重</div>
+            <div>副技能: 樹果數量S, 幫忙速度M, 技能機率提升S, 持有上限提升S, 技能等級提升S</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>常忙能力
+sP1,963
+LV.30巨沼怪
+LV.60
+食材
+x4
+繁忙間隔
+每37分48秒
+持有上限
+30個
+主技能/副技能
+料理成功S
+Lv.3
+料理漂亮成功的機率會提升6%。
+效果會持續到料理漂亮成功
+或移動營地為止。
+樹果数量S
+忙速度M
+Lv.50
+Lv.70
+技能機率提升S
+持有上限提升S
+LV.80
+技能等级提升S
+能力情
+性格
+真
+没有性格帶來的特色
+返回</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-title">魔幻假面喵 Lv.62 (急躁)</span>
+          <span style="color:var(--muted);font-size:11px;">photo_2_2026-09-30_19-52-23.jpg</span>
+        </div>
+        <div class="compare-cols">
+          <div class="col-engine col-tess">
+            <div class="col-title">Tesseract.js (298ms)</div>
+            <div>名稱: 魔幻假面喵</div>
+            <div>等級: Lv.62</div>
+            <div>技能等級: Lv.3</div>
+            <div>性格: 急躁</div>
+            <div>副技能: 研究EXP獎勵, 睡眠EXP獎勵, 活力回復獎勵</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>和 給 %s4,316
+THE Lv. 62 魔幻 假 面 )
+C2 【 人 3 【2
+食 歡 L 圖 障 每 32 分 43 私 (1
+翎 本 當 還 生 52 但
+料理 強化 S Lv.
+0 增加 下 一 次 料理 時 的 鍋子 容量
+讓 鍋子 能 多 放 12 個 食材 。
+【 ou.70 】
+選 _ mm my
+【 ouvs0 1】
+研究 EXP 獎 勵
+EXP 獲 得 量 和 條
+活力 回 復 量 字 守
+</div>
+          </div>
+          <div class="col-engine col-rapid">
+            <div class="col-title">Umi-OCR / RapidOCR (409.92ms)</div>
+            <div>名稱: 魔幻假面喵</div>
+            <div>等級: Lv.62</div>
+            <div>技能等級: Lv.3</div>
+            <div>性格: 急躁</div>
+            <div>副技能: 幫忙速度M, 食材機率提升M, 持有上限提升L, 技能機率提升M, 研究EXP獎勵</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>忙能力
+sp4,316
+Lv.62魔幻假面喵
+食材
+x2
+x5
+x7
+繁忙周隔
+每32分43秒
+持有上限
+52個
+主技能/副技能
+料理强化S
+LV.3
+增加下一次料理時的子容量，
+镶子能多放12个食材。
+忙速度M
+食材機率提升M
+Lv.70
+持有上限提升L
+技能機率提升M
+LV.80
+研究EXP
+能力详情
+性格
+EXP獲得量
+急躁
+活力回復量
+返回</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-title">謎擬Q Lv.31 (爽朗)</span>
+          <span style="color:var(--muted);font-size:11px;">photo_53_2026-09-30_19-52-23.jpg</span>
+        </div>
+        <div class="compare-cols">
+          <div class="col-engine col-tess">
+            <div class="col-title">Tesseract.js (541ms)</div>
+            <div>名稱: 謎擬Q</div>
+            <div>等級: Lv.6</div>
+            <div>技能等級: Lv.1</div>
+            <div>性格: 爽朗</div>
+            <div>副技能: 持有上限提升L, 持有上限提升S, 睡眠EXP獎勵, 食材機率提升M</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>時
+是 念 sp 1174
+Lv. 引 謎 擬 Q
+會 Lv.6o
+過 Go 同
+令 藻 2 還 障 。 每 39 分 10 私 (0)
+翎 王 潤 還 際 。 19 介
+一 一 二 二 一 一 】
+畫 皮 ( 樹 果 層 增 ) Lv
+人 獲得 8 個 樹 果 ,
+另外 還 會 獲得 各 1 個
+隊伍 中 的 寶 可 夢 會 撿 來 的 樹 果 。
+上
+| 詳
+【ouso 國 說 ou
+持 有 上 限 提升 L 持 有 上 限 提升 M
+【ouaso
+持 有 上 限 提升 S
+EXP 獲 得 量 人
+食材 發 現 率 “ 守 守
+</div>
+          </div>
+          <div class="col-engine col-rapid">
+            <div class="col-title">Umi-OCR / RapidOCR (420.85ms)</div>
+            <div>名稱: 謎擬Q</div>
+            <div>等級: Lv.31</div>
+            <div>技能等級: Lv.1</div>
+            <div>性格: 爽朗</div>
+            <div>副技能: 技能機率提升S, 持有上限提升L, 持有上限提升M, 持有上限提升S, 睡眠EXP獎勵</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>常忙能力
+sp1,174
+LV.31凝Q
+Lv.60
+食材
+x4
+禁忙間隔
+每39分10秒
+持有上限
+19個
+主技能/副技能
+畫皮（樹果增）
+Lv.1
+獲得8個樹果，
+另外還會獲得各1個
+隧伍中的實可夢會來的樹果。
+帮手励
+技能機率提升S
+Lv.50
+Lv.70
+持有上限提升L
+持有上限提升M
+LV.80
+持有上限提升S
+能力情
+性格
+EXP獲得量
+爽朗
+食材發現率
+返回</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-title">古月鳥 Lv.28 (冷靜)</span>
+          <span style="color:var(--muted);font-size:11px;">photo_5_2026-09-30_19-52-23.jpg</span>
+        </div>
+        <div class="compare-cols">
+          <div class="col-engine col-tess">
+            <div class="col-title">Tesseract.js (483ms)</div>
+            <div>名稱: 古月鳥</div>
+            <div>等級: Lv.28</div>
+            <div>技能等級: Lv.1</div>
+            <div>性格: 冷靜</div>
+            <div>副技能: 食材機率提升M, 幫忙速度S, 技能機率提升S, 睡眠EXP獎勵</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>時
+用 念 sp 1137
+天 Lv.28 十 月 鳥
+命 bo 劍 6o
+G9 0G9 (9
+令 權 2 還 隊 。 每 42 分 34 私 (0
+令 葉 還 且 25 介
+Li d__
+料理 成 功 S Lv.1
+@ 料理 漂亮 成 功 的 機 率 會 提升 490。
+效果 會 持續 到 料理 漂亮 成 功
+或 移動 營地 為 止 。
+we [ee
+點 點 點 國 請
+【 eu.50 】 eu70 4】
+幫忙 速度 S 食材 機 率 提 升 S
+euvs0 2】
+技能 機 率 提升 S
+食材 發 現 率 全
+EXP 獲 得 量 字 字
+</div>
+          </div>
+          <div class="col-engine col-rapid">
+            <div class="col-title">Umi-OCR / RapidOCR (445.71ms)</div>
+            <div>名稱: 古月鳥</div>
+            <div>等級: Lv.28</div>
+            <div>技能等級: Lv.1</div>
+            <div>性格: 冷靜</div>
+            <div>副技能: 持有上限提升S, 食材機率提升M, 幫忙速度S, 食材機率提升S, 技能機率提升S</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>常忙能力
+sP1,137
+Lv.28古月烏
+LV,30
+Lv.60
+食材
+x2
+x5
+x7
+禁忙間隔
+每42分34秒
+持有上限
+25個
+主技能/副技能
+料理成功S
+Lv.1
+料理漂亮成功的機率會提升4%。
+效果會持續到料理漂亮成功
+或移動營地為止。
+持有上限提升S
+食材機率提升M
+Lv.50
+Lv.70
+忙速度S
+食材機率提升S
+LV.80
+技能機率提升S
+能力情
+性格
+食材發現率
+冷靜
+EXP獲得量
+返回</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-title">烈焰猴 Lv.34 (溫順)</span>
+          <span style="color:var(--muted);font-size:11px;">photo_66_2026-09-30_19-52-23.jpg</span>
+        </div>
+        <div class="compare-cols">
+          <div class="col-engine col-tess">
+            <div class="col-title">Tesseract.js (585ms)</div>
+            <div>名稱: 六尾（阿羅拉的樣子）</div>
+            <div>等級: Lv.6</div>
+            <div>技能等級: Lv.3</div>
+            <div>性格: 溫順</div>
+            <div>副技能: 幫忙速度S, 樹果數量S, 持有上限提升M, 技能機率提升M, 活力回復獎勵</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>由
+用 金: 1,645
+二 2 uv 2 列 媽 緞 |
+劍 Lv. 6o
+CD GC3 G 人
+個 區 還 及 。 每 4 分 44 秒 (0)
+領 琴 已 二 還 及 34 介
+一 一 一 一 一 】
+樹 果 達 增 Lv.3
+@ 獲得 21 個 樹 果 ,
+另外 還 會 獲得 各 2 個
+隊伍 中 的 寶 可 夢 會 撿 來 的 樹 果 。
+
+持 有 上 限 提升 | | 幫忙 速度 S
+ae
+eu.50 】 eu70 4】
+
+樹 果 數 量 S 技能 機 率 提升 S
+ouv30 ~
+
+持 有 上 限 提升 M
+
+主 技能 發 動機 率 ” 和 全
+活力 回 復 量 字 字
+</div>
+          </div>
+          <div class="col-engine col-rapid">
+            <div class="col-title">Umi-OCR / RapidOCR (417.41ms)</div>
+            <div>名稱: 烈焰猴</div>
+            <div>等級: Lv.34</div>
+            <div>技能等級: Lv.3</div>
+            <div>性格: 溫順</div>
+            <div>副技能: 持有上限提升S, 幫忙速度S, 樹果數量S, 技能機率提升S, 持有上限提升M</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>常忙能力
+sP1,645
+Lv.34烈焰猴
+Lv.60
+食材
+x4
+繁忙間隔
+每34分44秒
+持有上限
+34個
+主技能/副技能
+樹果增
+Lv.3
+獲得21個樹果，
+另外還會獲得各2個
+隧伍中的實可夢會來的樹果。
+持有上限提升S
+忙速度S
+Lv.50
+Lv.70
+樹果数量S
+技能機率提升S
+LV.80
+持有上限提升M
+能力情
+性格
+主技能發動機率
+温顺
+活力回復量
+返回</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-title">蜥蜴王 Lv.50 (勇敢)</span>
+          <span style="color:var(--muted);font-size:11px;">photo_71_2026-09-30_19-52-23.jpg</span>
+        </div>
+        <div class="compare-cols">
+          <div class="col-engine col-tess">
+            <div class="col-title">Tesseract.js (507ms)</div>
+            <div>名稱: 蜥蜴王</div>
+            <div>等級: Lv.50</div>
+            <div>技能等級: Lv.3</div>
+            <div>性格: 勇敢</div>
+            <div>副技能: 食材機率提升M, 持有上限提升M, 幫忙速度M, 睡眠EXP獎勵</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>生
+念 &gt; 4,945
+Lv. 50 蜥蜴 王
+0 會 Lv.6o
+0 Ca
+翎 國 還 障 。 每 31 分 7 私 (1,
+全 2 了 4
+0
+樹 果 吉 增 Lv.e
+人 獲得 30 個 樹 果 ,
+另外 還 會 獲得 各 5 個
+隊伍 中 的 寶 可 夢 會 撿 來 的 樹 果 。
+【atzo 】 讓
+食材 機 率 提升 S 食材 機 率 提升 M
+計時 但 國 對 對 Ha 說 宇 到
+【otoo 】
+持 有 上 限 提升 M
+幫忙 速度 和
+EXP 獲 得 量 “字 字
+</div>
+          </div>
+          <div class="col-engine col-rapid">
+            <div class="col-title">Umi-OCR / RapidOCR (400.75ms)</div>
+            <div>名稱: 蜥蜴王</div>
+            <div>等級: Lv.50</div>
+            <div>技能等級: Lv.6</div>
+            <div>性格: 勇敢</div>
+            <div>副技能: 樹果數量S, 持有上限提升L, 食材機率提升S, 食材機率提升M, 持有上限提升M</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>常忙能力
+sp4,945
+Lv.50蜥蜴王
+Lv.60
+食材
+x3
+繁忙間隔
+每31分7秒
+持有上限
+45個
+主技能/副技能
+樹果增
+Lv.6
+獲得30個樹果，
+另外還會獲得各5個
+隧伍中的寶可夢會來的樹果。
+樹果数量S
+持有上限提升L
+Lv.70
+食材機率提升S
+食材機率提升M
+LV.80
+持有上限提升M
+能力情
+性格
+忙速度
+勇敢
+EXP獲得量
+返回</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-title">大竺葵 Lv.26 (溫和)</span>
+          <span style="color:var(--muted);font-size:11px;">photo_3_2026-09-30_19-52-23.jpg</span>
+        </div>
+        <div class="compare-cols">
+          <div class="col-engine col-tess">
+            <div class="col-title">Tesseract.js (450ms)</div>
+            <div>名稱: 南瓜怪人 (大顆種)</div>
+            <div>等級: Lv.30</div>
+            <div>技能等級: Lv.4</div>
+            <div>性格: 溫和</div>
+            <div>副技能: 樹果數量S, 持有上限提升L, 食材機率提升S, 技能機率提升M, 幫忙速度M</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>人 三 念 &gt; 1,439
+客人 uv2e 大 英
+會 Lv.30 會 Lv.6o
+CYD 對 2
+翎 區 還 障 。 每 47 分 39 私 (1
+令 富 選 輻 際 。 30 介
+人
+能 量 填充 S Lv.4
+【, 卡 比 獸 的 能 量 增加 542~~2,166。
+Lau.50 】 【 eu70 4】
+持 有 上 限 提升 L 持 有 上 限 提升 M
+【 etvs0 】
+食材 機 率 提升 S
+主 技能 發 動機 率 ” 和 全
+幫忙 速度 “字
+</div>
+          </div>
+          <div class="col-engine col-rapid">
+            <div class="col-title">Umi-OCR / RapidOCR (394.64ms)</div>
+            <div>名稱: 大竺葵</div>
+            <div>等級: Lv.26</div>
+            <div>技能等級: Lv.4</div>
+            <div>性格: 慎重</div>
+            <div>副技能: 樹果數量S, 技能等級提升S, 持有上限提升L, 持有上限提升M, 食材機率提升S</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>常忙能力
+sP1,439
+Lv.26大竺葵
+Lv.30
+Lv.60
+食材
+x1
+x3
+x4
+繁忙間隔
+每47分39秒
+持有上限
+30個
+主技能/副技能
+能量填充S
+LV.4
+卡比默的能量增加542~2，166。
+樹果数量S
+技能等级提升S
+Lv.50
+Lv.70
+持有上限提升L
+持有上限提升M
+Lv.80
+食材機率提升S
+能力详情
+性格
+主技能發動機率
+温和
+忙速度
+返回</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-title">冰伊布 Lv.31 (坦率)</span>
+          <span style="color:var(--muted);font-size:11px;">photo_48_2026-09-30_19-52-23.jpg</span>
+        </div>
+        <div class="compare-cols">
+          <div class="col-engine col-tess">
+            <div class="col-title">Tesseract.js (453ms)</div>
+            <div>名稱: 三合一磁怪</div>
+            <div>等級: Lv.30</div>
+            <div>技能等級: Lv.2</div>
+            <div>性格: 慎重</div>
+            <div>副技能: 食材機率提升S, 技能機率提升M</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>人
+和 念 mlo64
+Wu 大 !
+點 2 下
+G0 Go @
+令 歡 還 隊 。 每 50 分 8 私 (1
+個 葉 還 且 29 介
+人 】
+料理 強化 5 Lv
+0 增加 下 一 次 料理 時 的 負 子 容量 ,
+讓 鍋子 能 多 放 7 個 食材 。
+【ou.so ouo 】
+食材 機 率 提升 S 技能 機 率 提 升 S
+ouso 】
+技能 機 率 提升 M
+ee
+</div>
+          </div>
+          <div class="col-engine col-rapid">
+            <div class="col-title">Umi-OCR / RapidOCR (418.61ms)</div>
+            <div>名稱: 冰伊布</div>
+            <div>等級: Lv.31</div>
+            <div>技能等級: Lv.1</div>
+            <div>性格: 慎重</div>
+            <div>副技能: 持有上限提升M, 食材機率提升M, 食材機率提升S, 技能機率提升S, 技能機率提升M</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>常忙能力
+sP1,064
+Lv.31冰伊布
+LV.60
+食材
+x4
+禁忙間隔
+每50分8秒
+持有上限
+29個
+主技能/副技能
+料理强化S
+Lv.1
+增加下一次料理時的子容量，
+镶子能多放7個食材。
+持有上限提升M
+食材機率提升M
+Lv.50
+Lv.70
+食材機率提升S
+技能機率提升S
+Lv.80
+技能機率提升M
+能力详情
+性格
+勤
+没有性格帶來的特色
+返回</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-title">水伊布 Lv.50 (固執)</span>
+          <span style="color:var(--muted);font-size:11px;">photo_89_2026-09-30_19-52-23.jpg</span>
+        </div>
+        <div class="compare-cols">
+          <div class="col-engine col-tess">
+            <div class="col-title">Tesseract.js (359ms)</div>
+            <div>名稱: 皮卡丘（船長）</div>
+            <div>等級: Lv.6</div>
+            <div>技能等級: Lv.4</div>
+            <div>性格: 膽小</div>
+            <div>副技能: 食材機率提升S, 研究EXP獎勵, 幫忙速度M, 食材機率提升M</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>時
+念 sp 3,093
+和 會 Lv.6o
+CD 0C0D C3
+儲 國 還 障 。 每 41 分 56 私 (0)
+翎 隔 汪 還 了 30 但
+bcSZ_od
+食材 獲取 S Lv.4
+0 隨機 獲得 14 個 食材 。
+【 et.70 1】
+還 一
+【 euvs0 4】
+研究 EXP 獎 勵
+幫忙 速度 和 生
+食材 發 現 率 “字
+</div>
+          </div>
+          <div class="col-engine col-rapid">
+            <div class="col-title">Umi-OCR / RapidOCR (361.61ms)</div>
+            <div>名稱: 水伊布</div>
+            <div>等級: Lv.50</div>
+            <div>技能等級: Lv.4</div>
+            <div>性格: 固執</div>
+            <div>副技能: 食材機率提升S, 持有上限提升M, 技能機率提升M, 夢之碎片獎勵, 研究EXP獎勵</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>常忙能力
+sp3,093
+LV.50水伊布
+Lv.60
+食材
+繁忙間隔
+每41分56秒
+持有上限
+30個
+主技能/副技能
+食材獲取S
+LV.4
+随機獲得14個食材。
+持有上限提升M
+技能機率提升M
+Lv.70
+手
+萝之碎片励
+Lv.80
+研究EXP勋
+能力详情
+性格
+忙速度
+固執
+食材發現率
+返回</div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-title">火伊布 Lv.50 (固執)</span>
+          <span style="color:var(--muted);font-size:11px;">photo_95_2026-09-30_19-52-23.jpg</span>
+        </div>
+        <div class="compare-cols">
+          <div class="col-engine col-tess">
+            <div class="col-title">Tesseract.js (391ms)</div>
+            <div>名稱: 火伊布</div>
+            <div>等級: Lv.50</div>
+            <div>技能等級: Lv.7</div>
+            <div>性格: 大膽</div>
+            <div>副技能: 持有上限提升S, 活力回復獎勵, 幫忙速度M, 食材機率提升M</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>閃 念 。&quot; 4,71
+Lv. 509 火 伊 布
+GO Go G@
+翎 國 還 隊 每 36 分 31 私 (1)
+翎 隔 選 還 且 19 介
+人
+料理 強化 s Lv.7
+0 增加 下 一 次 料理 時 的 鍋子 容量 ,
+讓 鍋子 能 多 放 31 個 食材 。
+【eouyo 】
+技能 機 率 提升 s 持 有 上 限 提升 5
+同 還 ed 二 |
+【ouso 】
+活力 回 復 獎勵
+幫忙 速度 和 人
+食材 發 現 率
+</div>
+          </div>
+          <div class="col-engine col-rapid">
+            <div class="col-title">Umi-OCR / RapidOCR (428.09ms)</div>
+            <div>名稱: 火伊布</div>
+            <div>等級: Lv.50</div>
+            <div>技能等級: Lv.7</div>
+            <div>性格: 固執</div>
+            <div>副技能: 技能等級提升M, 技能機率提升M, 技能機率提升S, 持有上限提升S, 活力回復獎勵</div>
+            <div class="raw-box"><strong>原始 OCR 文本:</strong><br>常忙能力
+sp4,713
+LV.50火伊布
+Lv.60
+食材
+x4
+繁忙間隔
+每36分31秒
+持有上限
+19個
+主技能/副技能
+料理强化S
+Lv.7
+增加下一次料理時的子容量，
+镶子能多放31个食材。
+技能等級提升M
+技能機率提升M
+口
+Lv.70
+技能機率提升S
+持有上限提升S
+Lv.80
+活力回復
+能力详情
+性格
+忙速度
+固執
+食材發現率
+返回</div>
+          </div>
+        </div>
+      </div>
+    
+  </div>
+</body>
+</html>

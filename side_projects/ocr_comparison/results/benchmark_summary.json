@@ -1,0 +1,1323 @@
+{
+  "totalSamples": 15,
+  "metrics": {
+    "tesseract": {
+      "nameAccuracy": 73.3,
+      "levelAccuracy": 33.3,
+      "skillLevelAccuracy": 86.7,
+      "natureAccuracy": 66.7,
+      "subskillsAccuracy": 39.7,
+      "perfectCardAccuracy": 0,
+      "avgLatencyMs": 469
+    },
+    "rapidocr": {
+      "nameAccuracy": 100,
+      "levelAccuracy": 100,
+      "skillLevelAccuracy": 100,
+      "natureAccuracy": 80,
+      "subskillsAccuracy": 91.8,
+      "perfectCardAccuracy": 46.7,
+      "avgLatencyMs": 414
+    }
+  },
+  "details": [
+    {
+      "photo": "photo_100_2026-09-30_19-52-23.jpg",
+      "gt": {
+        "photo": "photo_100_2026-09-30_19-52-23.jpg",
+        "name": "狂歡浪舞鴨",
+        "pokemonId": "914",
+        "type": "格鬥",
+        "specialty": "食材",
+        "level": 55,
+        "skillLevel": 3,
+        "nature": "自大",
+        "ribbon": 3,
+        "ing1": "萌綠大豆",
+        "ing2": "粗枝大蔥",
+        "ing3": "萌綠大豆",
+        "subskills": [
+          "食材機率提升S",
+          "幫忙速度M",
+          "食材機率提升M",
+          "技能機率提升S",
+          "技能機率提升M"
+        ]
+      },
+      "tesseract": {
+        "latency_ms": 505,
+        "raw_text": "時\n生 念 : 2,636\n), 呈 Lv. 55 狂歡 浪 舞 鴨\n) - 會 Lv.6o\nC2 【 人 9 2\n佃 寬 2 圖 聯 每 33 分 14 秒\n翎 華 沁 三 還 了 35 但\nHtcS\n能 量 填充 M Lv.3\n【8, 卡 比 獸 的 能 量 增加 1,726。\nos [ae\nWASG 名 寬 謹 寬 國 讓 盂\n【 eu.70 】\n國 一 二 還\nouvs0 1\n技能 機 率 提升 M\n主 技能 發 動機 率 和 生\nEXP 獲 得 量 。 窗 宁\n",
+        "parsed": {
+          "name": "狂歡浪舞鴨",
+          "pokemonId": "914",
+          "type": "格鬥",
+          "specialty": "食材",
+          "level": 55,
+          "skillLevel": 3,
+          "ribbon": 0,
+          "nature": "自大",
+          "subskills": [
+            "技能等級提升M",
+            "技能機率提升M",
+            "睡眠EXP獎勵"
+          ],
+          "ing1": "萌綠大豆",
+          "ing2": "粗枝大蔥",
+          "ing3": "萌綠大豆"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 1,
+          "isPerfect": false
+        }
+      },
+      "rapidocr": {
+        "latency_ms": 393.64,
+        "raw_text": "常忙能力\nsp2,636\nLv.55狂浪舞鸭\nLv.60\n食材\n*7\n聚忙間隔\n每33分14秒\n持有上限\n35個\n主技能/副技能\n能量填充M\nLv.3\n卡比默的能量增加1，726。\n食材機率提升S\n帮忙速度M\nLv.70\n食材機率提升M\n技能機率提升S\nLv.80\n技能機率提升M\n能力详情\n性格\n主技能發動機率\n自大\nEXP獲得量\n返回",
+        "parsed": {
+          "name": "狂歡浪舞鴨",
+          "pokemonId": "914",
+          "type": "格鬥",
+          "specialty": "食材",
+          "level": 55,
+          "skillLevel": 3,
+          "ribbon": 3,
+          "nature": "自大",
+          "subskills": [
+            "技能等級提升M",
+            "食材機率提升S",
+            "幫忙速度M",
+            "食材機率提升M",
+            "技能機率提升S"
+          ],
+          "ing1": "萌綠大豆",
+          "ing2": "粗枝大蔥",
+          "ing3": "萌綠大豆"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 4,
+          "isPerfect": false
+        }
+      }
+    },
+    {
+      "photo": "photo_10_2026-09-30_19-52-23.jpg",
+      "gt": {
+        "photo": "photo_10_2026-09-30_19-52-23.jpg",
+        "name": "土王",
+        "pokemonId": "980",
+        "type": "毒",
+        "specialty": "食材",
+        "level": 30,
+        "skillLevel": 2,
+        "nature": "急躁",
+        "ribbon": 4,
+        "ing1": "放鬆可可",
+        "ing2": "醒腦咖啡豆",
+        "ing3": "醒腦咖啡豆",
+        "subskills": [
+          "持有上限提升S",
+          "食材機率提升S",
+          "技能等級提升S",
+          "研究EXP獎勵",
+          "技能機率提升M"
+        ]
+      },
+      "tesseract": {
+        "latency_ms": 498,
+        "raw_text": "時\n念 1183\n【 4 v.s0 土 王\n會 Lv.6o\nC2 【3 GC2\n儲 權 2 圖 障 。 每 54 分 57 秒 (0\n翎 匡 還 際 。 31 介\n一\n活力 填充 s Lv.2\n@, 讓 自 己 回 復活 力 16。\n持 有 上 限 提升 s | 食材 機 率 提升\nedW 軸 e 人 > LIH 蟬 謂 江 讓 還 生 到\n(otso 】 【auzo 】\n技能 等 級 提升 S 研究 EXP 裝 勵\noo 】\n技能 機 率 提升 M\nEXP 獲 得 量 人 條\n活力 回 復 量 池子\n",
+        "parsed": {
+          "name": "土王",
+          "pokemonId": "980",
+          "type": "毒",
+          "specialty": "食材",
+          "level": 6,
+          "skillLevel": 2,
+          "ribbon": 0,
+          "nature": "急躁",
+          "subskills": [
+            "活力回復獎勵",
+            "食材機率提升M",
+            "研究EXP獎勵",
+            "技能機率提升M",
+            "睡眠EXP獎勵"
+          ],
+          "ing1": "放鬆可可",
+          "ing2": "醒腦咖啡豆",
+          "ing3": "放鬆可可"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": false,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 2,
+          "isPerfect": false
+        }
+      },
+      "rapidocr": {
+        "latency_ms": 409.75,
+        "raw_text": "常忙能力\nsP1,183\nLv.30土王\nLv.60\n食材\nx2\nx4\nx7\n禁忙間隔\n每54分57秒\n持有上限\n31個\n主技能/副技能\n活力填充S\nLV.2\n镶自己回復活力16。\n持有上限提升S\n食材機率提升S\nLv.50\nLv.70\n技能等級提升S\n研究EXP类动\nLv.80\n技能機率提升M\n能力详情\n性格\nEXP獲得量\n急躁\n活力回復量\n返回",
+        "parsed": {
+          "name": "土王",
+          "pokemonId": "980",
+          "type": "毒",
+          "specialty": "食材",
+          "level": 30,
+          "skillLevel": 2,
+          "ribbon": 3,
+          "nature": "急躁",
+          "subskills": [
+            "活力回復提升S",
+            "活力回復獎勵",
+            "持有上限提升S",
+            "食材機率提升S",
+            "技能等級提升S"
+          ],
+          "ing1": "放鬆可可",
+          "ing2": "醒腦咖啡豆",
+          "ing3": "放鬆可可"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 3,
+          "isPerfect": false
+        }
+      }
+    },
+    {
+      "photo": "photo_11_2026-09-30_19-52-23.jpg",
+      "gt": {
+        "photo": "photo_11_2026-09-30_19-52-23.jpg",
+        "name": "岩殿居蟹",
+        "pokemonId": "558",
+        "type": "蟲",
+        "specialty": "技能",
+        "level": 30,
+        "skillLevel": 4,
+        "nature": "固執",
+        "ribbon": 0,
+        "ing1": "嫩亮酪梨",
+        "ing2": "窩心洋芋",
+        "ing3": "窩心洋芋",
+        "subskills": [
+          "技能等級提升M",
+          "技能機率提升S",
+          "持有上限提升S",
+          "持有上限提升L",
+          "技能機率提升M"
+        ]
+      },
+      "tesseract": {
+        "latency_ms": 418,
+        "raw_text": "時\n+ 一 念 。 11895\nLv. 39 岩 殿 居 蟹\n( 食 會 Lv.6o\nCD C3y C2\n令 藻 2 還 障 。 每 45 分 12 私 (0)\n翎 王 潤 還 且 22 介\nMZ 較 了 e ee\n食材 精選 S Lv.4\n0 從 特 定食 材 中 隨機 獲得 11 個 其 中 1 種 食材 。\nes\n【 ou.50 1】 【 ot.70 和 】\n持 有 上 限 提升 S 持 有 上 限 提升 L\nouvs0\n技能 機 率 提升 M\n幫忙 速度 和 生\n食材 發 現 率 “字 字\n",
+        "parsed": {
+          "name": "岩殿居蟹",
+          "pokemonId": "558",
+          "type": "蟲",
+          "specialty": "技能",
+          "level": 39,
+          "skillLevel": 4,
+          "ribbon": 0,
+          "nature": "固執",
+          "subskills": [
+            "食材機率提升S",
+            "持有上限提升L",
+            "技能機率提升M",
+            "幫忙速度M",
+            "食材機率提升M"
+          ],
+          "ing1": "嫩亮酪梨",
+          "ing2": "窩心洋芋",
+          "ing3": "嫩亮酪梨"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": false,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 2,
+          "isPerfect": false
+        }
+      },
+      "rapidocr": {
+        "latency_ms": 465.14,
+        "raw_text": "常忙能力\nsP1,895\nLv.30岩殿居蟹\nLv.60\n食材\nx1\nx3\nx5\n禁忙間隔\n每45分12秒\n持有上限\n22個\n主技能/副技能\n食材精選S\nLV.4\n特定食材中随機獲得11個其中1種食材。\n技能等級提升M\n技能機率提升S\nLv.50\nLv.70\n持有上限提升S\n持有上限提升L\nLv.80\n技能機率提升M\n能力详情\n性格\n忙速度\n固執\n食材發現率\n返回",
+        "parsed": {
+          "name": "岩殿居蟹",
+          "pokemonId": "558",
+          "type": "蟲",
+          "specialty": "技能",
+          "level": 30,
+          "skillLevel": 4,
+          "ribbon": 0,
+          "nature": "固執",
+          "subskills": [
+            "食材機率提升S",
+            "技能等級提升M",
+            "技能機率提升S",
+            "持有上限提升S",
+            "持有上限提升L"
+          ],
+          "ing1": "嫩亮酪梨",
+          "ing2": "窩心洋芋",
+          "ing3": "嫩亮酪梨"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 4,
+          "isPerfect": false
+        }
+      }
+    },
+    {
+      "photo": "photo_12_2026-09-30_19-52-23.jpg",
+      "gt": {
+        "photo": "photo_12_2026-09-30_19-52-23.jpg",
+        "name": "達克萊伊",
+        "pokemonId": "491",
+        "type": "惡",
+        "specialty": "全部",
+        "level": 30,
+        "skillLevel": 1,
+        "nature": "害羞",
+        "ribbon": 4,
+        "ing1": "豆製肉",
+        "ing2": "",
+        "ing3": "",
+        "subskills": [
+          "持有上限提升L",
+          "幫忙速度M",
+          "樹果數量S"
+        ]
+      },
+      "tesseract": {
+        "latency_ms": 501,
+        "raw_text": "時\n念 :> 1,867\n如 Lv. 50 達 克 藥 仇\n命 Lv.eo\n個 加 己 還 轉 徐 翁\nGC2\n人 了 隊 - 革 基 圖 思 人 每 393 分 3 私\n人 還 2 有 4\n一 一 一 二\n夢魘 (能量 填充 M) Lv.1\n0 卡 比 獸 的 和 能量 增加 2,640\n且 讓 幫手 隊伍 中 惡 屬 性 以 外 的 寶 可 夢 活 力 下 降 12。\n【 euv50 】 【 ou.70 】\n樹 果 數 量 S -\n【 ouvs0 】\nee\n",
+        "parsed": {
+          "name": "達克萊伊",
+          "pokemonId": "491",
+          "type": "惡",
+          "specialty": "全部",
+          "level": 50,
+          "skillLevel": 1,
+          "ribbon": 0,
+          "nature": "慎重",
+          "subskills": [
+            "技能等級提升M",
+            "樹果數量S"
+          ],
+          "ing1": "",
+          "ing2": "",
+          "ing3": ""
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": false,
+          "skillLevelOk": true,
+          "natureOk": false,
+          "subskillsCorrect": 1,
+          "isPerfect": false
+        }
+      },
+      "rapidocr": {
+        "latency_ms": 404.4,
+        "raw_text": "常忙能力\nsP1,867\nLv.30達克莱伊\nLv.60\n食材\n禁忙間隔\n每39分9秒\n持有上限\n46個\n主技能/副技能\n夢魔（能量填充M）\nLv.1\n卡比默的能量增加2，640，\n且镶手隧伍中恶性以外的寶可夢活力下降12。\n持有上限提升L\n帮忙速度M\nLv.50\n口\nLv.70\n樹果数量S\nLv.80\n能力详情\n性格\n害羞\n没有性格帶來的特色\n返回",
+        "parsed": {
+          "name": "達克萊伊",
+          "pokemonId": "491",
+          "type": "惡",
+          "specialty": "全部",
+          "level": 30,
+          "skillLevel": 1,
+          "ribbon": 0,
+          "nature": "害羞",
+          "subskills": [
+            "技能等級提升M",
+            "持有上限提升L",
+            "幫忙速度M",
+            "樹果數量S"
+          ],
+          "ing1": "",
+          "ing2": "",
+          "ing3": ""
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 3,
+          "isPerfect": true
+        }
+      }
+    },
+    {
+      "photo": "photo_14_2026-09-30_19-52-23.jpg",
+      "gt": {
+        "photo": "photo_14_2026-09-30_19-52-23.jpg",
+        "name": "烈焰猴",
+        "pokemonId": "392",
+        "type": "格鬥",
+        "specialty": "技能",
+        "level": 30,
+        "skillLevel": 3,
+        "nature": "悠閒",
+        "ribbon": 3,
+        "ing1": "火辣香草",
+        "ing2": "火辣香草",
+        "ing3": "暖暖薑",
+        "subskills": [
+          "持有上限提升S",
+          "樹果數量S",
+          "技能等級提升S",
+          "技能等級提升M",
+          "活力回復獎勵"
+        ]
+      },
+      "tesseract": {
+        "latency_ms": 558,
+        "raw_text": "時\n用 念 。, 1,982\n2 Lv. 39 烈焰 猴\n會 Lv.6o\nCD 【9 G 人 2\n翎 權 汪 障 。 每 37 分 40 私 (1\n個 富 選 還 且 34 介\n一 一 二 二 一 一 】\n樹 果 遠 增 Lv.3\n@ 獲得 21 個 樹 果 ,\n另外 還 會 獲得 各 2 個\n隊伍 中 的 寶 可 夢 會 撿 來 的 樹 果 。\nwe 」 mm\n點 加計\n【ou:o 】 一\n技能 等 級 提升 S 技能 等 級 提升 M\n【 otvs0 4】\n活力 回 復 獎勵\n活力 回 復 量 生\nEXP 獲 得 量 字 字\n",
+        "parsed": {
+          "name": "烈焰猴",
+          "pokemonId": "392",
+          "type": "格鬥",
+          "specialty": "技能",
+          "level": 39,
+          "skillLevel": 3,
+          "ribbon": 0,
+          "nature": "悠閒",
+          "subskills": [
+            "技能等級提升M",
+            "活力回復獎勵",
+            "睡眠EXP獎勵"
+          ],
+          "ing1": "火辣香草",
+          "ing2": "暖暖薑",
+          "ing3": "火辣香草"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": false,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 2,
+          "isPerfect": false
+        }
+      },
+      "rapidocr": {
+        "latency_ms": 423.73,
+        "raw_text": "常忙能力\nsP1,982\nLv.30烈焰猴\nLv.60\n食材\nx4\n繁忙間隔\n每37分40秒\n持有上限\n34個\n主技能/副技能\n樹果增\nLv.3\n獲得21個樹果，\n另外還會獲得各2個\n隧伍中的實可夢會來的樹果。\n持有上限提升S\n樹果數量S\nLv.50\nLv.70\n技能等級提升S\n技能等级提升M\nLV.80\n活力回復\n能力情\n性格\n活力回復量\n悠間\nEXP獲得量\n返回",
+        "parsed": {
+          "name": "烈焰猴",
+          "pokemonId": "392",
+          "type": "格鬥",
+          "specialty": "技能",
+          "level": 30,
+          "skillLevel": 3,
+          "ribbon": 0,
+          "nature": "悠閒",
+          "subskills": [
+            "持有上限提升S",
+            "樹果數量S",
+            "技能等級提升S",
+            "技能等級提升M",
+            "活力回復獎勵"
+          ],
+          "ing1": "火辣香草",
+          "ing2": "暖暖薑",
+          "ing3": "火辣香草"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 5,
+          "isPerfect": true
+        }
+      }
+    },
+    {
+      "photo": "photo_19_2026-09-30_19-52-23.jpg",
+      "gt": {
+        "photo": "photo_19_2026-09-30_19-52-23.jpg",
+        "name": "巨沼怪",
+        "pokemonId": "260",
+        "type": "地面",
+        "specialty": "樹果",
+        "level": 30,
+        "skillLevel": 3,
+        "nature": "認真",
+        "ribbon": 0,
+        "ing1": "萌綠玉米",
+        "ing2": "萌綠玉米",
+        "ing3": "萌綠玉米",
+        "subskills": [
+          "樹果數量S",
+          "幫忙速度M",
+          "技能機率提升S",
+          "持有上限提升S",
+          "技能等級提升S"
+        ]
+      },
+      "tesseract": {
+        "latency_ms": 485,
+        "raw_text": "由\nre 念 sp 1,963\nLv. 39 巨 沼 怪\n會 Lv,\n所 3 【3 2\n令 權 還 隊 每 37 分 48 秒 (1)\n翎 葉 輛 且 30 介\n一 一 一 二 二 一 一 】\n料理 成 功 S Lv.3\n@ 料理 尖 亮 成 功 的 機 率 會 提升 690。\n效果 會 持續 到 料理 漂亮 成 功\n或 移動 營地 為 止 。\n【 ou.50 】 【eu.70 】\n技能 機 率 提升 S 持 有 上 限 提升 S\netvs0 4】\n技能 等 級 提升 S\nos\n",
+        "parsed": {
+          "name": "巨沼怪",
+          "pokemonId": "260",
+          "type": "地面",
+          "specialty": "樹果",
+          "level": 39,
+          "skillLevel": 3,
+          "ribbon": 0,
+          "nature": "慎重",
+          "subskills": [
+            "食材機率提升M",
+            "技能機率提升S",
+            "技能等級提升S"
+          ],
+          "ing1": "萌綠玉米",
+          "ing2": "哞哞鮮奶",
+          "ing3": "萌綠玉米"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": false,
+          "skillLevelOk": true,
+          "natureOk": false,
+          "subskillsCorrect": 2,
+          "isPerfect": false
+        }
+      },
+      "rapidocr": {
+        "latency_ms": 413.84,
+        "raw_text": "常忙能力\nsP1,963\nLV.30巨沼怪\nLV.60\n食材\nx4\n繁忙間隔\n每37分48秒\n持有上限\n30個\n主技能/副技能\n料理成功S\nLv.3\n料理漂亮成功的機率會提升6%。\n效果會持續到料理漂亮成功\n或移動營地為止。\n樹果数量S\n忙速度M\nLv.50\nLv.70\n技能機率提升S\n持有上限提升S\nLV.80\n技能等级提升S\n能力情\n性格\n真\n没有性格帶來的特色\n返回",
+        "parsed": {
+          "name": "巨沼怪",
+          "pokemonId": "260",
+          "type": "地面",
+          "specialty": "樹果",
+          "level": 30,
+          "skillLevel": 3,
+          "ribbon": 0,
+          "nature": "慎重",
+          "subskills": [
+            "樹果數量S",
+            "幫忙速度M",
+            "技能機率提升S",
+            "持有上限提升S",
+            "技能等級提升S"
+          ],
+          "ing1": "萌綠玉米",
+          "ing2": "哞哞鮮奶",
+          "ing3": "萌綠玉米"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": false,
+          "subskillsCorrect": 5,
+          "isPerfect": false
+        }
+      }
+    },
+    {
+      "photo": "photo_2_2026-09-30_19-52-23.jpg",
+      "gt": {
+        "photo": "photo_2_2026-09-30_19-52-23.jpg",
+        "name": "魔幻假面喵",
+        "pokemonId": "908",
+        "type": "惡",
+        "specialty": "食材",
+        "level": 62,
+        "skillLevel": 3,
+        "nature": "急躁",
+        "ribbon": 4,
+        "ing1": "窩心洋芋",
+        "ing2": "窩心洋芋",
+        "ing3": "窩心洋芋",
+        "subskills": [
+          "幫忙速度M",
+          "食材機率提升M",
+          "持有上限提升L",
+          "技能機率提升M",
+          "研究EXP獎勵"
+        ]
+      },
+      "tesseract": {
+        "latency_ms": 298,
+        "raw_text": "和 給 %s4,316\nTHE Lv. 62 魔幻 假 面 )\nC2 【 人 3 【2\n食 歡 L 圖 障 每 32 分 43 私 (1\n翎 本 當 還 生 52 但\n料理 強化 S Lv.\n0 增加 下 一 次 料理 時 的 鍋子 容量\n讓 鍋子 能 多 放 12 個 食材 。\n【 ou.70 】\n選 _ mm my\n【 ouvs0 1】\n研究 EXP 獎 勵\nEXP 獲 得 量 和 條\n活力 回 復 量 字 守\n",
+        "parsed": {
+          "name": "魔幻假面喵",
+          "pokemonId": "908",
+          "type": "惡",
+          "specialty": "食材",
+          "level": 62,
+          "skillLevel": 3,
+          "ribbon": 0,
+          "nature": "急躁",
+          "subskills": [
+            "研究EXP獎勵",
+            "睡眠EXP獎勵",
+            "活力回復獎勵"
+          ],
+          "ing1": "窩心洋芋",
+          "ing2": "哞哞鮮奶",
+          "ing3": "窩心洋芋"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 1,
+          "isPerfect": false
+        }
+      },
+      "rapidocr": {
+        "latency_ms": 409.92,
+        "raw_text": "忙能力\nsp4,316\nLv.62魔幻假面喵\n食材\nx2\nx5\nx7\n繁忙周隔\n每32分43秒\n持有上限\n52個\n主技能/副技能\n料理强化S\nLV.3\n增加下一次料理時的子容量，\n镶子能多放12个食材。\n忙速度M\n食材機率提升M\nLv.70\n持有上限提升L\n技能機率提升M\nLV.80\n研究EXP\n能力详情\n性格\nEXP獲得量\n急躁\n活力回復量\n返回",
+        "parsed": {
+          "name": "魔幻假面喵",
+          "pokemonId": "908",
+          "type": "惡",
+          "specialty": "食材",
+          "level": 62,
+          "skillLevel": 3,
+          "ribbon": 3,
+          "nature": "急躁",
+          "subskills": [
+            "幫忙速度M",
+            "食材機率提升M",
+            "持有上限提升L",
+            "技能機率提升M",
+            "研究EXP獎勵"
+          ],
+          "ing1": "窩心洋芋",
+          "ing2": "哞哞鮮奶",
+          "ing3": "窩心洋芋"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 5,
+          "isPerfect": true
+        }
+      }
+    },
+    {
+      "photo": "photo_53_2026-09-30_19-52-23.jpg",
+      "gt": {
+        "photo": "photo_53_2026-09-30_19-52-23.jpg",
+        "name": "謎擬Q",
+        "pokemonId": "778",
+        "type": "幽靈",
+        "specialty": "技能",
+        "level": 31,
+        "skillLevel": 1,
+        "nature": "爽朗",
+        "ribbon": 0,
+        "ing1": "特選蘋果",
+        "ing2": "醒腦咖啡豆",
+        "ing3": "特選蘋果",
+        "subskills": [
+          "幫手獎勵",
+          "技能機率提升S",
+          "持有上限提升L",
+          "持有上限提升M",
+          "持有上限提升S"
+        ]
+      },
+      "tesseract": {
+        "latency_ms": 541,
+        "raw_text": "時\n是 念 sp 1174\nLv. 引 謎 擬 Q\n會 Lv.6o\n過 Go 同\n令 藻 2 還 障 。 每 39 分 10 私 (0)\n翎 王 潤 還 際 。 19 介\n一 一 二 二 一 一 】\n畫 皮 ( 樹 果 層 增 ) Lv\n人 獲得 8 個 樹 果 ,\n另外 還 會 獲得 各 1 個\n隊伍 中 的 寶 可 夢 會 撿 來 的 樹 果 。\n上\n| 詳\n【ouso 國 說 ou\n持 有 上 限 提升 L 持 有 上 限 提升 M\n【ouaso\n持 有 上 限 提升 S\nEXP 獲 得 量 人\n食材 發 現 率 “ 守 守\n",
+        "parsed": {
+          "name": "謎擬Q",
+          "pokemonId": "778",
+          "type": "幽靈",
+          "specialty": "技能",
+          "level": 6,
+          "skillLevel": 1,
+          "ribbon": 0,
+          "nature": "爽朗",
+          "subskills": [
+            "持有上限提升L",
+            "持有上限提升S",
+            "睡眠EXP獎勵",
+            "食材機率提升M"
+          ],
+          "ing1": "特選蘋果",
+          "ing2": "醒腦咖啡豆",
+          "ing3": "特選蘋果"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": false,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 2,
+          "isPerfect": false
+        }
+      },
+      "rapidocr": {
+        "latency_ms": 420.85,
+        "raw_text": "常忙能力\nsp1,174\nLV.31凝Q\nLv.60\n食材\nx4\n禁忙間隔\n每39分10秒\n持有上限\n19個\n主技能/副技能\n畫皮（樹果增）\nLv.1\n獲得8個樹果，\n另外還會獲得各1個\n隧伍中的實可夢會來的樹果。\n帮手励\n技能機率提升S\nLv.50\nLv.70\n持有上限提升L\n持有上限提升M\nLV.80\n持有上限提升S\n能力情\n性格\nEXP獲得量\n爽朗\n食材發現率\n返回",
+        "parsed": {
+          "name": "謎擬Q",
+          "pokemonId": "778",
+          "type": "幽靈",
+          "specialty": "技能",
+          "level": 31,
+          "skillLevel": 1,
+          "ribbon": 0,
+          "nature": "爽朗",
+          "subskills": [
+            "技能機率提升S",
+            "持有上限提升L",
+            "持有上限提升M",
+            "持有上限提升S",
+            "睡眠EXP獎勵"
+          ],
+          "ing1": "特選蘋果",
+          "ing2": "醒腦咖啡豆",
+          "ing3": "特選蘋果"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 4,
+          "isPerfect": false
+        }
+      }
+    },
+    {
+      "photo": "photo_5_2026-09-30_19-52-23.jpg",
+      "gt": {
+        "photo": "photo_5_2026-09-30_19-52-23.jpg",
+        "name": "古月鳥",
+        "pokemonId": "845",
+        "type": "飛行",
+        "specialty": "食材",
+        "level": 28,
+        "skillLevel": 1,
+        "nature": "冷靜",
+        "ribbon": 4,
+        "ing1": "純粹油",
+        "ing2": "純粹油",
+        "ing3": "純粹油",
+        "subskills": [
+          "持有上限提升S",
+          "食材機率提升M",
+          "幫忙速度S",
+          "食材機率提升S",
+          "技能機率提升S"
+        ]
+      },
+      "tesseract": {
+        "latency_ms": 483,
+        "raw_text": "時\n用 念 sp 1137\n天 Lv.28 十 月 鳥\n命 bo 劍 6o\nG9 0G9 (9\n令 權 2 還 隊 。 每 42 分 34 私 (0\n令 葉 還 且 25 介\nLi d__\n料理 成 功 S Lv.1\n@ 料理 漂亮 成 功 的 機 率 會 提升 490。\n效果 會 持續 到 料理 漂亮 成 功\n或 移動 營地 為 止 。\nwe [ee\n點 點 點 國 請\n【 eu.50 】 eu70 4】\n幫忙 速度 S 食材 機 率 提 升 S\neuvs0 2】\n技能 機 率 提升 S\n食材 發 現 率 全\nEXP 獲 得 量 字 字\n",
+        "parsed": {
+          "name": "古月鳥",
+          "pokemonId": "845",
+          "type": "飛行",
+          "specialty": "食材",
+          "level": 28,
+          "skillLevel": 1,
+          "ribbon": 0,
+          "nature": "冷靜",
+          "subskills": [
+            "食材機率提升M",
+            "幫忙速度S",
+            "技能機率提升S",
+            "睡眠EXP獎勵"
+          ],
+          "ing1": "純粹油",
+          "ing2": "窩心洋芋",
+          "ing3": "純粹油"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 3,
+          "isPerfect": false
+        }
+      },
+      "rapidocr": {
+        "latency_ms": 445.71,
+        "raw_text": "常忙能力\nsP1,137\nLv.28古月烏\nLV,30\nLv.60\n食材\nx2\nx5\nx7\n禁忙間隔\n每42分34秒\n持有上限\n25個\n主技能/副技能\n料理成功S\nLv.1\n料理漂亮成功的機率會提升4%。\n效果會持續到料理漂亮成功\n或移動營地為止。\n持有上限提升S\n食材機率提升M\nLv.50\nLv.70\n忙速度S\n食材機率提升S\nLV.80\n技能機率提升S\n能力情\n性格\n食材發現率\n冷靜\nEXP獲得量\n返回",
+        "parsed": {
+          "name": "古月鳥",
+          "pokemonId": "845",
+          "type": "飛行",
+          "specialty": "食材",
+          "level": 28,
+          "skillLevel": 1,
+          "ribbon": 0,
+          "nature": "冷靜",
+          "subskills": [
+            "持有上限提升S",
+            "食材機率提升M",
+            "幫忙速度S",
+            "食材機率提升S",
+            "技能機率提升S"
+          ],
+          "ing1": "純粹油",
+          "ing2": "窩心洋芋",
+          "ing3": "純粹油"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 5,
+          "isPerfect": true
+        }
+      }
+    },
+    {
+      "photo": "photo_66_2026-09-30_19-52-23.jpg",
+      "gt": {
+        "photo": "photo_66_2026-09-30_19-52-23.jpg",
+        "name": "烈焰猴",
+        "pokemonId": "392",
+        "type": "格鬥",
+        "specialty": "技能",
+        "level": 34,
+        "skillLevel": 3,
+        "nature": "溫順",
+        "ribbon": 3,
+        "ing1": "火辣香草",
+        "ing2": "暖暖薑",
+        "ing3": "暖暖薑",
+        "subskills": [
+          "持有上限提升S",
+          "幫忙速度S",
+          "樹果數量S",
+          "技能機率提升S",
+          "持有上限提升M"
+        ]
+      },
+      "tesseract": {
+        "latency_ms": 585,
+        "raw_text": "由\n用 金: 1,645\n二 2 uv 2 列 媽 緞 |\n劍 Lv. 6o\nCD GC3 G 人\n個 區 還 及 。 每 4 分 44 秒 (0)\n領 琴 已 二 還 及 34 介\n一 一 一 一 一 】\n樹 果 達 增 Lv.3\n@ 獲得 21 個 樹 果 ,\n另外 還 會 獲得 各 2 個\n隊伍 中 的 寶 可 夢 會 撿 來 的 樹 果 。\n\n持 有 上 限 提升 | | 幫忙 速度 S\nae\neu.50 】 eu70 4】\n\n樹 果 數 量 S 技能 機 率 提升 S\nouv30 ~\n\n持 有 上 限 提升 M\n\n主 技能 發 動機 率 ” 和 全\n活力 回 復 量 字 字\n",
+        "parsed": {
+          "name": "六尾（阿羅拉的樣子）",
+          "pokemonId": "7006",
+          "type": "冰",
+          "specialty": "樹果",
+          "level": 6,
+          "skillLevel": 3,
+          "ribbon": 4,
+          "nature": "溫順",
+          "subskills": [
+            "幫忙速度S",
+            "樹果數量S",
+            "持有上限提升M",
+            "技能機率提升M",
+            "活力回復獎勵"
+          ],
+          "ing1": "萌綠大豆",
+          "ing2": "萌綠玉米",
+          "ing3": "萌綠大豆"
+        },
+        "eval": {
+          "nameOk": false,
+          "levelOk": false,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 3,
+          "isPerfect": false
+        }
+      },
+      "rapidocr": {
+        "latency_ms": 417.41,
+        "raw_text": "常忙能力\nsP1,645\nLv.34烈焰猴\nLv.60\n食材\nx4\n繁忙間隔\n每34分44秒\n持有上限\n34個\n主技能/副技能\n樹果增\nLv.3\n獲得21個樹果，\n另外還會獲得各2個\n隧伍中的實可夢會來的樹果。\n持有上限提升S\n忙速度S\nLv.50\nLv.70\n樹果数量S\n技能機率提升S\nLV.80\n持有上限提升M\n能力情\n性格\n主技能發動機率\n温顺\n活力回復量\n返回",
+        "parsed": {
+          "name": "烈焰猴",
+          "pokemonId": "392",
+          "type": "格鬥",
+          "specialty": "技能",
+          "level": 34,
+          "skillLevel": 3,
+          "ribbon": 0,
+          "nature": "溫順",
+          "subskills": [
+            "持有上限提升S",
+            "幫忙速度S",
+            "樹果數量S",
+            "技能機率提升S",
+            "持有上限提升M"
+          ],
+          "ing1": "火辣香草",
+          "ing2": "暖暖薑",
+          "ing3": "火辣香草"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 5,
+          "isPerfect": true
+        }
+      }
+    },
+    {
+      "photo": "photo_71_2026-09-30_19-52-23.jpg",
+      "gt": {
+        "photo": "photo_71_2026-09-30_19-52-23.jpg",
+        "name": "蜥蜴王",
+        "pokemonId": "254",
+        "type": "草",
+        "specialty": "技能",
+        "level": 50,
+        "skillLevel": 6,
+        "nature": "勇敢",
+        "ribbon": 4,
+        "ing1": "特選蛋",
+        "ing2": "醒腦咖啡豆",
+        "ing3": "醒腦咖啡豆",
+        "subskills": [
+          "樹果數量S",
+          "持有上限提升L",
+          "食材機率提升S",
+          "食材機率提升M",
+          "持有上限提升M"
+        ]
+      },
+      "tesseract": {
+        "latency_ms": 507,
+        "raw_text": "生\n念 > 4,945\nLv. 50 蜥蜴 王\n0 會 Lv.6o\n0 Ca\n翎 國 還 障 。 每 31 分 7 私 (1,\n全 2 了 4\n0\n樹 果 吉 增 Lv.e\n人 獲得 30 個 樹 果 ,\n另外 還 會 獲得 各 5 個\n隊伍 中 的 寶 可 夢 會 撿 來 的 樹 果 。\n【atzo 】 讓\n食材 機 率 提升 S 食材 機 率 提升 M\n計時 但 國 對 對 Ha 說 宇 到\n【otoo 】\n持 有 上 限 提升 M\n幫忙 速度 和\nEXP 獲 得 量 “字 字\n",
+        "parsed": {
+          "name": "蜥蜴王",
+          "pokemonId": "254",
+          "type": "草",
+          "specialty": "技能",
+          "level": 50,
+          "skillLevel": 3,
+          "ribbon": 0,
+          "nature": "勇敢",
+          "subskills": [
+            "食材機率提升M",
+            "持有上限提升M",
+            "幫忙速度M",
+            "睡眠EXP獎勵"
+          ],
+          "ing1": "特選蛋",
+          "ing2": "醒腦咖啡豆",
+          "ing3": "特選蛋"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": false,
+          "natureOk": true,
+          "subskillsCorrect": 2,
+          "isPerfect": false
+        }
+      },
+      "rapidocr": {
+        "latency_ms": 400.75,
+        "raw_text": "常忙能力\nsp4,945\nLv.50蜥蜴王\nLv.60\n食材\nx3\n繁忙間隔\n每31分7秒\n持有上限\n45個\n主技能/副技能\n樹果增\nLv.6\n獲得30個樹果，\n另外還會獲得各5個\n隧伍中的寶可夢會來的樹果。\n樹果数量S\n持有上限提升L\nLv.70\n食材機率提升S\n食材機率提升M\nLV.80\n持有上限提升M\n能力情\n性格\n忙速度\n勇敢\nEXP獲得量\n返回",
+        "parsed": {
+          "name": "蜥蜴王",
+          "pokemonId": "254",
+          "type": "草",
+          "specialty": "技能",
+          "level": 50,
+          "skillLevel": 6,
+          "ribbon": 0,
+          "nature": "勇敢",
+          "subskills": [
+            "樹果數量S",
+            "持有上限提升L",
+            "食材機率提升S",
+            "食材機率提升M",
+            "持有上限提升M"
+          ],
+          "ing1": "特選蛋",
+          "ing2": "醒腦咖啡豆",
+          "ing3": "特選蛋"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 5,
+          "isPerfect": true
+        }
+      }
+    },
+    {
+      "photo": "photo_3_2026-09-30_19-52-23.jpg",
+      "gt": {
+        "photo": "photo_3_2026-09-30_19-52-23.jpg",
+        "name": "大竺葵",
+        "pokemonId": "154",
+        "type": "草",
+        "specialty": "樹果",
+        "level": 26,
+        "skillLevel": 4,
+        "nature": "溫和",
+        "ribbon": 4,
+        "ing1": "放鬆可可",
+        "ing2": "甜甜蜜",
+        "ing3": "放鬆可可",
+        "subskills": [
+          "樹果數量S",
+          "技能等級提升S",
+          "持有上限提升L",
+          "持有上限提升M",
+          "食材機率提升S"
+        ]
+      },
+      "tesseract": {
+        "latency_ms": 450,
+        "raw_text": "人 三 念 > 1,439\n客人 uv2e 大 英\n會 Lv.30 會 Lv.6o\nCYD 對 2\n翎 區 還 障 。 每 47 分 39 私 (1\n令 富 選 輻 際 。 30 介\n人\n能 量 填充 S Lv.4\n【, 卡 比 獸 的 能 量 增加 542~~2,166。\nLau.50 】 【 eu70 4】\n持 有 上 限 提升 L 持 有 上 限 提升 M\n【 etvs0 】\n食材 機 率 提升 S\n主 技能 發 動機 率 ” 和 全\n幫忙 速度 “字\n",
+        "parsed": {
+          "name": "南瓜怪人 (大顆種)",
+          "pokemonId": "711",
+          "type": "幽靈",
+          "specialty": "食材",
+          "level": 30,
+          "skillLevel": 4,
+          "ribbon": 0,
+          "nature": "溫和",
+          "subskills": [
+            "樹果數量S",
+            "持有上限提升L",
+            "食材機率提升S",
+            "技能機率提升M",
+            "幫忙速度M"
+          ],
+          "ing1": "沉甸甸南瓜",
+          "ing2": "萌綠大豆",
+          "ing3": "沉甸甸南瓜"
+        },
+        "eval": {
+          "nameOk": false,
+          "levelOk": false,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 3,
+          "isPerfect": false
+        }
+      },
+      "rapidocr": {
+        "latency_ms": 394.64,
+        "raw_text": "常忙能力\nsP1,439\nLv.26大竺葵\nLv.30\nLv.60\n食材\nx1\nx3\nx4\n繁忙間隔\n每47分39秒\n持有上限\n30個\n主技能/副技能\n能量填充S\nLV.4\n卡比默的能量增加542~2，166。\n樹果数量S\n技能等级提升S\nLv.50\nLv.70\n持有上限提升L\n持有上限提升M\nLv.80\n食材機率提升S\n能力详情\n性格\n主技能發動機率\n温和\n忙速度\n返回",
+        "parsed": {
+          "name": "大竺葵",
+          "pokemonId": "154",
+          "type": "草",
+          "specialty": "樹果",
+          "level": 26,
+          "skillLevel": 4,
+          "ribbon": 0,
+          "nature": "慎重",
+          "subskills": [
+            "樹果數量S",
+            "技能等級提升S",
+            "持有上限提升L",
+            "持有上限提升M",
+            "食材機率提升S"
+          ],
+          "ing1": "放鬆可可",
+          "ing2": "甜甜蜜",
+          "ing3": "放鬆可可"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": false,
+          "subskillsCorrect": 5,
+          "isPerfect": false
+        }
+      }
+    },
+    {
+      "photo": "photo_48_2026-09-30_19-52-23.jpg",
+      "gt": {
+        "photo": "photo_48_2026-09-30_19-52-23.jpg",
+        "name": "冰伊布",
+        "pokemonId": "471",
+        "type": "冰",
+        "specialty": "技能",
+        "level": 31,
+        "skillLevel": 1,
+        "nature": "坦率",
+        "ribbon": 4,
+        "ing1": "哞哞鮮奶",
+        "ing2": "哞哞鮮奶",
+        "ing3": "哞哞鮮奶",
+        "subskills": [
+          "持有上限提升M",
+          "食材機率提升M",
+          "食材機率提升S",
+          "技能機率提升S",
+          "技能機率提升M"
+        ]
+      },
+      "tesseract": {
+        "latency_ms": 453,
+        "raw_text": "人\n和 念 mlo64\nWu 大 !\n點 2 下\nG0 Go @\n令 歡 還 隊 。 每 50 分 8 私 (1\n個 葉 還 且 29 介\n人 】\n料理 強化 5 Lv\n0 增加 下 一 次 料理 時 的 負 子 容量 ,\n讓 鍋子 能 多 放 7 個 食材 。\n【ou.so ouo 】\n食材 機 率 提升 S 技能 機 率 提 升 S\nouso 】\n技能 機 率 提升 M\nee\n",
+        "parsed": {
+          "name": "三合一磁怪",
+          "pokemonId": "82",
+          "type": "鋼",
+          "specialty": "技能",
+          "level": 30,
+          "skillLevel": 2,
+          "ribbon": 0,
+          "nature": "慎重",
+          "subskills": [
+            "食材機率提升S",
+            "技能機率提升M"
+          ],
+          "ing1": "純粹油",
+          "ing2": "火辣香草",
+          "ing3": "純粹油"
+        },
+        "eval": {
+          "nameOk": false,
+          "levelOk": false,
+          "skillLevelOk": false,
+          "natureOk": false,
+          "subskillsCorrect": 2,
+          "isPerfect": false
+        }
+      },
+      "rapidocr": {
+        "latency_ms": 418.61,
+        "raw_text": "常忙能力\nsP1,064\nLv.31冰伊布\nLV.60\n食材\nx4\n禁忙間隔\n每50分8秒\n持有上限\n29個\n主技能/副技能\n料理强化S\nLv.1\n增加下一次料理時的子容量，\n镶子能多放7個食材。\n持有上限提升M\n食材機率提升M\nLv.50\nLv.70\n食材機率提升S\n技能機率提升S\nLv.80\n技能機率提升M\n能力详情\n性格\n勤\n没有性格帶來的特色\n返回",
+        "parsed": {
+          "name": "冰伊布",
+          "pokemonId": "471",
+          "type": "冰",
+          "specialty": "技能",
+          "level": 31,
+          "skillLevel": 1,
+          "ribbon": 0,
+          "nature": "慎重",
+          "subskills": [
+            "持有上限提升M",
+            "食材機率提升M",
+            "食材機率提升S",
+            "技能機率提升S",
+            "技能機率提升M"
+          ],
+          "ing1": "哞哞鮮奶",
+          "ing2": "放鬆可可",
+          "ing3": "哞哞鮮奶"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": false,
+          "subskillsCorrect": 5,
+          "isPerfect": false
+        }
+      }
+    },
+    {
+      "photo": "photo_89_2026-09-30_19-52-23.jpg",
+      "gt": {
+        "photo": "photo_89_2026-09-30_19-52-23.jpg",
+        "name": "水伊布",
+        "pokemonId": "134",
+        "type": "水",
+        "specialty": "技能",
+        "level": 50,
+        "skillLevel": 4,
+        "nature": "固執",
+        "ribbon": 4,
+        "ing1": "哞哞鮮奶",
+        "ing2": "放鬆可可",
+        "ing3": "豆製肉",
+        "subskills": [
+          "持有上限提升M",
+          "技能機率提升M",
+          "幫手獎勵",
+          "夢之碎片獎勵",
+          "研究EXP獎勵"
+        ]
+      },
+      "tesseract": {
+        "latency_ms": 359,
+        "raw_text": "時\n念 sp 3,093\n和 會 Lv.6o\nCD 0C0D C3\n儲 國 還 障 。 每 41 分 56 私 (0)\n翎 隔 汪 還 了 30 但\nbcSZ_od\n食材 獲取 S Lv.4\n0 隨機 獲得 14 個 食材 。\n【 et.70 1】\n還 一\n【 euvs0 4】\n研究 EXP 獎 勵\n幫忙 速度 和 生\n食材 發 現 率 “字\n",
+        "parsed": {
+          "name": "皮卡丘（船長）",
+          "pokemonId": "9007",
+          "type": "電",
+          "specialty": "樹果",
+          "level": 6,
+          "skillLevel": 4,
+          "ribbon": 0,
+          "nature": "膽小",
+          "subskills": [
+            "食材機率提升S",
+            "研究EXP獎勵",
+            "幫忙速度M",
+            "食材機率提升M"
+          ],
+          "ing1": "特選蘋果",
+          "ing2": "暖暖薑",
+          "ing3": "特選蘋果"
+        },
+        "eval": {
+          "nameOk": false,
+          "levelOk": false,
+          "skillLevelOk": true,
+          "natureOk": false,
+          "subskillsCorrect": 1,
+          "isPerfect": false
+        }
+      },
+      "rapidocr": {
+        "latency_ms": 361.61,
+        "raw_text": "常忙能力\nsp3,093\nLV.50水伊布\nLv.60\n食材\n繁忙間隔\n每41分56秒\n持有上限\n30個\n主技能/副技能\n食材獲取S\nLV.4\n随機獲得14個食材。\n持有上限提升M\n技能機率提升M\nLv.70\n手\n萝之碎片励\nLv.80\n研究EXP勋\n能力详情\n性格\n忙速度\n固執\n食材發現率\n返回",
+        "parsed": {
+          "name": "水伊布",
+          "pokemonId": "134",
+          "type": "水",
+          "specialty": "技能",
+          "level": 50,
+          "skillLevel": 4,
+          "ribbon": 0,
+          "nature": "固執",
+          "subskills": [
+            "食材機率提升S",
+            "持有上限提升M",
+            "技能機率提升M",
+            "夢之碎片獎勵",
+            "研究EXP獎勵"
+          ],
+          "ing1": "哞哞鮮奶",
+          "ing2": "放鬆可可",
+          "ing3": "哞哞鮮奶"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 4,
+          "isPerfect": false
+        }
+      }
+    },
+    {
+      "photo": "photo_95_2026-09-30_19-52-23.jpg",
+      "gt": {
+        "photo": "photo_95_2026-09-30_19-52-23.jpg",
+        "name": "火伊布",
+        "pokemonId": "136",
+        "type": "火",
+        "specialty": "技能",
+        "level": 50,
+        "skillLevel": 7,
+        "nature": "固執",
+        "ribbon": 0,
+        "ing1": "哞哞鮮奶",
+        "ing2": "放鬆可可",
+        "ing3": "哞哞鮮奶",
+        "subskills": [
+          "技能等級提升M",
+          "技能機率提升M",
+          "技能機率提升S",
+          "持有上限提升S",
+          "活力回復獎勵"
+        ]
+      },
+      "tesseract": {
+        "latency_ms": 391,
+        "raw_text": "閃 念 。\" 4,71\nLv. 509 火 伊 布\nGO Go G@\n翎 國 還 隊 每 36 分 31 私 (1)\n翎 隔 選 還 且 19 介\n人\n料理 強化 s Lv.7\n0 增加 下 一 次 料理 時 的 鍋子 容量 ,\n讓 鍋子 能 多 放 31 個 食材 。\n【eouyo 】\n技能 機 率 提升 s 持 有 上 限 提升 5\n同 還 ed 二 |\n【ouso 】\n活力 回 復 獎勵\n幫忙 速度 和 人\n食材 發 現 率\n",
+        "parsed": {
+          "name": "火伊布",
+          "pokemonId": "136",
+          "type": "火",
+          "specialty": "技能",
+          "level": 50,
+          "skillLevel": 7,
+          "ribbon": 3,
+          "nature": "大膽",
+          "subskills": [
+            "持有上限提升S",
+            "活力回復獎勵",
+            "幫忙速度M",
+            "食材機率提升M"
+          ],
+          "ing1": "哞哞鮮奶",
+          "ing2": "放鬆可可",
+          "ing3": "哞哞鮮奶"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": false,
+          "subskillsCorrect": 2,
+          "isPerfect": false
+        }
+      },
+      "rapidocr": {
+        "latency_ms": 428.09,
+        "raw_text": "常忙能力\nsp4,713\nLV.50火伊布\nLv.60\n食材\nx4\n繁忙間隔\n每36分31秒\n持有上限\n19個\n主技能/副技能\n料理强化S\nLv.7\n增加下一次料理時的子容量，\n镶子能多放31个食材。\n技能等級提升M\n技能機率提升M\n口\nLv.70\n技能機率提升S\n持有上限提升S\nLv.80\n活力回復\n能力详情\n性格\n忙速度\n固執\n食材發現率\n返回",
+        "parsed": {
+          "name": "火伊布",
+          "pokemonId": "136",
+          "type": "火",
+          "specialty": "技能",
+          "level": 50,
+          "skillLevel": 7,
+          "ribbon": 0,
+          "nature": "固執",
+          "subskills": [
+            "技能等級提升M",
+            "技能機率提升M",
+            "技能機率提升S",
+            "持有上限提升S",
+            "活力回復獎勵"
+          ],
+          "ing1": "哞哞鮮奶",
+          "ing2": "放鬆可可",
+          "ing3": "哞哞鮮奶"
+        },
+        "eval": {
+          "nameOk": true,
+          "levelOk": true,
+          "skillLevelOk": true,
+          "natureOk": true,
+          "subskillsCorrect": 5,
+          "isPerfect": true
+        }
+      }
+    }
+  ]
+}
