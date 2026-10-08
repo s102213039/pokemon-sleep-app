@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/styles.css?v=20261008_04">
+  <link rel="stylesheet" href="../css/styles.css?v=20261008_05">
 
   <!-- 全域路徑基準與錯誤診斷攔截器 -->
   <script>
@@ -229,7 +229,7 @@
 </head>
 <body class="mobile-h5-app mobile-h5-surface pokemon-active">
 
-  <!-- 📱 頂部 App 導航欄 (Mobile App Header) -->
+  <!--  頂部 App 導航欄 (Mobile App Header) -->
   <header class="mobile-app-header app-top-header">
     <div class="mobile-header-container">
       <div class="mobile-brand app-brand-area">
@@ -243,7 +243,7 @@
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
         </button>
-        <!-- ⚙️ 系統設定按鈕 (大一點、靠右) -->
+        <!--  系統設定按鈕 (大一點、靠右) -->
         <button id="sync-config-btn" class="mobile-header-btn settings-btn icon-action-btn borderless-btn" title="系統設定與主題切換" aria-label="系統設定">
           <svg class="header-svg-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"></circle>
@@ -254,7 +254,7 @@
     </div>
   </header>
 
-  <!-- ⚙️ 系統設定彈窗 (App-Native Window Dialog) -->
+  <!--  系統設定彈窗 (App-Native Window Dialog) -->
   <div id="settings-modal" class="settings-modal-overlay modal-overlay" style="display:none;">
     <div class="settings-modal-container app-settings-dialog">
       <div class="settings-modal-header">
@@ -398,11 +398,11 @@
     </div>
   </div>
 
-  <!-- 📦 主內容面板區域 (Main View Panels) -->
+  <!--  主內容面板區域 (Main View Panels) -->
   <main class="mobile-main-container app-main-viewport">
-    <!-- Panel 1: ⚡ 寶可夢圖鑑 -->
+    <!-- Panel 1:  寶可夢圖鑑 -->
     <div id="panel-pokemon" class="view-panel pokemon-layout-view app-panel" style="display:block;">
-      <!-- 🎛️ 右下懸浮篩選按鈕 (Draggable Floating Action Button) -->
+      <!--  右下懸浮篩選按鈕 (Draggable Floating Action Button) -->
       <button type="button" id="sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" title="展開圖鑑篩選器" aria-label="展開圖鑑篩選器">
         <span class="bookmark-icon">
           <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -420,7 +420,7 @@
         <span id="sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
       </button>
 
-      <!-- ➡️ 右側抽屜式篩選器 -->
+      <!--  右側抽屜式篩選器 -->
       <aside id="pokemon-filter-sidebar" class="pokemon-filter-sidebar collapsed" aria-label="寶可夢圖鑑篩選器">
         <div class="sidebar-header">
           <button type="button" id="sidebar-close-btn" class="sidebar-close-btn" title="收合">
@@ -547,9 +547,9 @@
       </div>
     </div>
 
-    <!-- Panel 2: 🍲 料理食譜 -->
+    <!-- Panel 2:  料理食譜 -->
     <div id="panel-recipes" class="view-panel recipe-layout-view app-panel" style="display:none;">
-      <!-- 🍲 右下懸浮料理篩選按鈕 (Draggable Floating Action Button) -->
+      <!--  右下懸浮料理篩選按鈕 (Draggable Floating Action Button) -->
       <button type="button" id="recipe-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" title="展開料理篩選器" aria-label="展開料理篩選器">
         <span class="bookmark-icon">
           <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -561,7 +561,7 @@
         <span id="recipe-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
       </button>
 
-      <!-- ➡️ 右側抽屜式料理篩選器 -->
+      <!--  右側抽屜式料理篩選器 -->
       <aside id="recipe-filter-sidebar" class="pokemon-filter-sidebar recipe-filter-sidebar collapsed" aria-label="料理食譜篩選器">
         <div class="sidebar-header">
           <button type="button" id="recipe-sidebar-close-btn" class="sidebar-close-btn" title="收合">
@@ -747,14 +747,14 @@
       </div>
     </div>
 
-    <!-- Panel 3: 📚 數據百科 -->
+    <!-- Panel 3:  數據百科 -->
     <div id="panel-wiki" class="view-panel app-panel" style="display:none;">
       <!-- 由百科模組動態渲染 5 大 Sub-Tabs 與 Sticky 表格 -->
     </div>
 
     <!-- Panel 4: 寶可夢倉庫 -->
     <div id="panel-box" class="view-panel box-layout-view app-panel" style="display:none;">
-      <!-- 🎛️ 右下懸浮篩選按鈕 (Draggable Floating Action Button) -->
+      <!--  右下懸浮篩選按鈕 (Draggable Floating Action Button) -->
       <button type="button" id="box-sidebar-bookmark-handle" class="sidebar-bookmark-handle sidebar-fab-btn" title="展開倉庫篩選器" aria-label="展開倉庫篩選器">
         <span class="bookmark-icon">
           <svg class="fab-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -772,7 +772,7 @@
         <span id="box-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
       </button>
 
-      <!-- ➡️ 右側抽屜式篩選器 -->
+      <!--  右側抽屜式篩選器 -->
       <aside id="box-filter-sidebar" class="pokemon-filter-sidebar box-filter-sidebar collapsed" aria-label="寶可夢倉庫篩選器">
         <div class="sidebar-header">
           <button type="button" id="box-sidebar-close-btn" class="sidebar-close-btn" title="收合">
@@ -1015,7 +1015,7 @@
           </div>
         </div>
 
-        <!-- 📰 移動端頁面最底部簡約來源備註 (Minimal News Footer) -->
+        <!--  移動端頁面最底部簡約來源備註 (Minimal News Footer) -->
         <footer class="news-minimal-footer">
           <p class="news-footer-source" data-i18n-html="news.source_full_hint">
             由 AI 自動提煉核心亮點 · 來源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 繁體中文官方網站</a>
@@ -1025,9 +1025,9 @@
     </div>
   </main>
 
-  <!-- ⚓ 2 字極簡原生底部導覽欄 (Bottom Dock Navigation) -->
+  <!--  2 字極簡原生底部導覽欄 (Bottom Dock Navigation) -->
   <nav id="bottom-dock" class="bottom-dock" aria-label="底部主要分頁導航">
-    <!-- 1. ⚡ 圖鑑 (#tab-pokemon) -->
+    <!-- 1.  圖鑑 (#tab-pokemon) -->
     <button type="button" id="tab-pokemon" class="dock-tab dock-tab-btn active" data-tab="pokemon" aria-label="圖鑑">
       <span class="dock-icon">
         <svg class="dock-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1041,7 +1041,7 @@
       <span id="badge-pokemon" class="dock-badge" style="display:none;"></span>
     </button>
 
-    <!-- 2. 🍲 料理 (#tab-recipes) -->
+    <!-- 2.  料理 (#tab-recipes) -->
     <button type="button" id="tab-recipes" class="dock-tab dock-tab-btn" data-tab="recipes" aria-label="料理">
       <span class="dock-icon">
         <svg class="dock-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1054,7 +1054,7 @@
       <span id="badge-recipes" class="dock-badge" style="display:none;"></span>
     </button>
 
-    <!-- 3. 📚 百科 (#tab-wiki) -->
+    <!-- 3.  百科 (#tab-wiki) -->
     <button type="button" id="tab-wiki" class="dock-tab dock-tab-btn" data-tab="wiki" aria-label="百科">
       <span class="dock-icon">
         <svg class="dock-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1068,7 +1068,7 @@
       <span id="badge-wiki" class="dock-badge" style="display:none;"></span>
     </button>
 
-    <!-- 4. 📦 盒子 (#tab-box) -->
+    <!-- 4.  盒子 (#tab-box) -->
     <button type="button" id="tab-box" class="dock-tab dock-tab-btn" data-tab="box" aria-label="盒子">
       <span class="dock-icon">
         <svg class="dock-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1081,7 +1081,7 @@
       <span id="badge-box" class="dock-badge" style="display:none;"></span>
     </button>
 
-    <!-- 5. 📰 最新 (#tab-news) -->
+    <!-- 5.  最新 (#tab-news) -->
     <button type="button" id="tab-news" class="dock-tab dock-tab-btn" data-tab="news" aria-label="最新">
       <span class="dock-icon">
         <svg class="dock-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1273,10 +1273,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
   <script src="../js/core/cloudSync.js?v=20260930_01"></script>
-  <script src="../js/core/i18n.js?v=20261008_04"></script>
-  <script src="../js/modules/app.js?v=20261008_04"></script>
-  <script src="../js/modules/recipes.js?v=20261008_04"></script>
-  <script src="../js/modules/wiki.js?v=20261008_04"></script>
+  <script src="../js/core/i18n.js?v=20261008_05"></script>
+  <script src="../js/modules/app.js?v=20261008_05"></script>
+  <script src="../js/modules/recipes.js?v=20261008_05"></script>
+  <script src="../js/modules/wiki.js?v=20261008_05"></script>
   <script src="../js/modules/box.js?v=20261006_03"></script>
   <script src="../js/modules/news.js?v=20261005_02"></script>
   <script src="../js/modules/appraisal.js?v=20261007_03"></script>

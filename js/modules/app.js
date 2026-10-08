@@ -142,7 +142,7 @@ function sortPokemonList(list, sortKey) {
   return out;
 }
 
-/* ─── 🎛️ 懸浮按鈕觸控 / 滑鼠平滑拖曳控制器 (Draggable FAB Controller) ─── */
+/* ─── 懸浮按鈕觸控 / 滑鼠平滑拖曳控制器 (Draggable FAB Controller) ─── */
 function makeFloatingDraggable(el, onClick) {
   if (!el || el._hasDragInit) return;
   el._hasDragInit = true;
@@ -283,7 +283,7 @@ function ingQtyBadges(ing, idx) {
   return `<span class="ing-qty-group" title="${ingDisplayName}">${qtys.map(q => `<span class="ing-qty">${q}</span>`).join('<span class="ing-arrow">→</span>')}</span>`;
 }
 
-/* ─── 🫐 樹果與屬性對應字典 (Berry & Type Mapping) ───────── */
+/* ─── 樹果與屬性對應字典 (Berry & Type Mapping) ───────── */
 const BERRY_DATA = [
   { name: '柿仔果', type: '一般',   icon: 'https://www.serebii.net/pokemonsleep/berries/persimberry.png' },
   { name: '蘋野果', type: '火',     icon: 'https://www.serebii.net/pokemonsleep/berries/leppaberry.png' },
@@ -409,23 +409,23 @@ if (typeof window !== 'undefined') {
   window.calculateSingleBerryEnergy = calculateSingleBerryEnergy;
 }
 
-/* ─── ⚡ 基礎主技能與複合/專屬技能映射系統 ─────────── */
+/* ─── 基礎主技能與複合/專屬技能映射系統 ─────────── */
 const BASE_SKILLS = [
-  { key: '食材獲取S', label: '食材獲取S', label_en: 'Ingr. Mag. S', icon: '🍎' },
-  { key: '食材精選S', label: '食材精選S', label_en: 'Ingr. Select S', icon: '🥗' },
-  { key: '活力全體療癒S', label: '全體療癒S', label_en: 'Energy All S', icon: '💚' },
-  { key: '活力療癒S', label: '活力療癒S', label_en: 'Energy Cheer S', icon: '💖' },
-  { key: '活力填充S', label: '活力填充S', label_en: 'Charge Ene. S', icon: '🔋' },
-  { key: '能量填充M', label: '能量填充M', label_en: 'Charge Str. M', icon: '⚡' },
-  { key: '能量填充S', label: '能量填充S', label_en: 'Charge Str. S', icon: '⚡' },
-  { key: '料理強化S', label: '料理強化S', label_en: 'Cook Power S', icon: '🍲' },
-  { key: '料理成功S', label: '料理成功S', label_en: 'Tasty Chance S', icon: '✨' },
-  { key: '幫手支援S', label: '幫手支援S', label_en: 'Extra Help S', icon: '🤝' },
-  { key: '幫手加速', label: '幫手加速', label_en: 'Helper Boost', icon: '🚀' },
-  { key: '樹果遽增', label: '樹果遽增', label_en: 'Berry Burst', icon: '🫐' },
-  { key: '夢之碎片獲取S', label: '夢碎獲取S', label_en: 'Dream Shard S', icon: '💎' },
-  { key: '揮指', label: '揮指', label_en: 'Metronome', icon: '🎲' },
-  { key: '技能複製', label: '技能複製', label_en: 'Skill Copy', icon: '🎭' }
+  { key: '食材獲取S', label: '食材獲取S', label_en: 'Ingr. Mag. S' },
+  { key: '食材精選S', label: '食材精選S', label_en: 'Ingr. Select S' },
+  { key: '活力全體療癒S', label: '全體療癒S', label_en: 'Energy All S' },
+  { key: '活力療癒S', label: '活力療癒S', label_en: 'Energy Cheer S' },
+  { key: '活力填充S', label: '活力填充S', label_en: 'Charge Ene. S' },
+  { key: '能量填充M', label: '能量填充M', label_en: 'Charge Str. M' },
+  { key: '能量填充S', label: '能量填充S', label_en: 'Charge Str. S' },
+  { key: '料理強化S', label: '料理強化S', label_en: 'Cook Power S' },
+  { key: '料理成功S', label: '料理成功S', label_en: 'Tasty Chance S' },
+  { key: '幫手支援S', label: '幫手支援S', label_en: 'Extra Help S' },
+  { key: '幫手加速', label: '幫手加速', label_en: 'Helper Boost' },
+  { key: '樹果遽增', label: '樹果遽增', label_en: 'Berry Burst' },
+  { key: '夢之碎片獲取S', label: '夢碎獲取S', label_en: 'Dream Shard S' },
+  { key: '揮指', label: '揮指', label_en: 'Metronome' },
+  { key: '技能複製', label: '技能複製', label_en: 'Skill Copy' }
 ];
 
 const COMPOSITE_SKILL_MAP = {
@@ -486,7 +486,7 @@ const COMPOSITE_SKILL_MAP = {
   '變身（技能複製）': ['技能複製']
 };
 
-/* ─── 📖 特殊主技能官方詳細說明字典 (Special Main Skill Official In-Game Descriptions) ─ */
+/* ─── 特殊主技能官方詳細說明字典 (Special Main Skill Official In-Game Descriptions) ─ */
 const SPECIAL_SKILL_DETAILS = {
   // === 真正複合主技能 (True Composite Skills) ===
   '健美（料理輔助S）': {
@@ -955,7 +955,7 @@ function matchesSkill(pokemonSkill, targetBaseSkill) {
   return false;
 }
 
-/* ─── 🔍 智慧寬鬆搜尋引擎 (Phonetic Pinyin / Subsequence / Typo-tolerant Fuzzy Search) ─── */
+/* ─── 智慧寬鬆搜尋引擎 (Phonetic Pinyin / Subsequence / Typo-tolerant Fuzzy Search) ─── */
 const PINYIN_TABLE = [
   ['a', '啊阿'],
   ['ai', '艾愛矮哀埃礙癌呆'],
@@ -1942,7 +1942,7 @@ Object.assign(PokemonApp, {
         if (!isMewAll && !this.selectedSpecialties.has(pSpec)) return false;
       }
 
-      // 👑 僅最終進化篩選 (Only Final Evolution)
+      // 僅最終進化篩選 (Only Final Evolution)
       if (this.onlyFinal) {
         const isFinal = p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1';
         if (!isFinal) return false;
@@ -1999,7 +1999,7 @@ Object.assign(PokemonApp, {
   }
 });
 
-// 🛑 遮罩層專屬事件消費器 (Backdrop Event Consumer - 徹底阻斷穿透至底層元件)
+// 遮罩層專屬事件消費器 (Backdrop Event Consumer - 徹底阻斷穿透至底層元件)
 function bindBackdropDismiss(backdropEl, closeFn) {
   if (!backdropEl || backdropEl._hasDismissBound) return;
   backdropEl._hasDismissBound = true;
@@ -2021,7 +2021,7 @@ function bindBackdropDismiss(backdropEl, closeFn) {
   });
 }
 
-// 📱 手勢右滑收合控制 (Swipe Right to Close Sidebar Helper - 支援全組件區域右滑且不干擾點選與滑桿)
+// 手勢右滑收合控制 (Swipe Right to Close Sidebar Helper - 支援全組件區域右滑且不干擾點選與滑桿)
 function bindSidebarSwipeRightToClose(sidebarEl, closeFn) {
   if (!sidebarEl || sidebarEl._hasSwipeRightListener) return;
   sidebarEl._hasSwipeRightListener = true;
@@ -2194,7 +2194,7 @@ if (typeof document !== 'undefined') {
 
     let ghPat = localStorage.getItem(GH_PAT_KEY) || '';
 
-    /* ─── 🎨 主題與外觀系統 (Theme System - 4 Themes × 2 Normal/Inverted = 8 Themes) ─── */
+    /* ─── 主題與外觀系統 (Theme System - 4 Themes × 2 Normal/Inverted = 8 Themes) ─── */
     const STORAGE_KEY_THEME = 'user_theme';
     const STORAGE_KEY_THEME_INVERT = 'user_theme_inverted';
     let currentTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'midnight';
@@ -2261,7 +2261,7 @@ if (typeof document !== 'undefined') {
       }
     });
 
-    /* ─── 🌐 語言系統 (Language System) ─── */
+    /* ─── 語言系統 (Language System) ─── */
     function updateLangButtons() {
       const currentLang = window.I18N ? window.I18N.getLanguage() : 'zh-TW';
       document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -2285,7 +2285,7 @@ if (typeof document !== 'undefined') {
 
     updateLangButtons();
 
-    /* ─── ⚙️ 設定彈窗控制 ─── */
+    /* ───  設定彈窗控制 ─── */
     const syncConfigBtn    = document.getElementById('sync-config-btn');
     const settingsModal    = document.getElementById('settings-modal');
     const settingsCloseBtn = document.getElementById('settings-modal-close-btn');
@@ -2315,7 +2315,7 @@ if (typeof document !== 'undefined') {
             ghPat = val;
             localStorage.setItem(GH_PAT_KEY, val);
             animateOverlayClose(settingsModal, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
-            if (syncStatus) syncStatus.innerHTML = `<span style="color:#4ade80;">✅ PAT Token 已儲存！現在可以點擊同步資料。</span>`;
+            if (syncStatus) syncStatus.innerHTML = `<span style="color:#4ade80;">[✓] PAT Token 已儲存！現在可以點擊同步資料。</span>`;
           } else {
             animateOverlayClose(settingsModal, () => { if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState(); });
           }
@@ -2332,15 +2332,15 @@ if (typeof document !== 'undefined') {
         if (!ghPat) {
           if (syncStatus) {
             syncStatus.innerHTML = `
-              <span style="color:#fbbf24;">⚠️ 尚未設定 GitHub PAT Token。</span><br>
-              請先點擊 <strong>⚙️ 設定</strong> 並填入你的 GitHub PAT。
+              <span style="color:#fbbf24;">[!] 尚未設定 GitHub PAT Token。</span><br>
+              請先點擊 <strong>設定</strong> 並填入你的 GitHub PAT。
             `;
           }
           return;
         }
 
         syncBtn.disabled = true;
-        syncBtn.textContent = '⏳ 觸發同步中...';
+        syncBtn.textContent = '觸發同步中...';
         if (syncStatus) syncStatus.textContent = '';
 
         try {
@@ -2361,7 +2361,7 @@ if (typeof document !== 'undefined') {
           if (res.status === 204) {
             if (syncStatus) {
               syncStatus.innerHTML = `
-                <span style="color:#4ade80;">✅ GitHub Actions 同步已觸發！</span><br>
+                <span style="color:#4ade80;">[✓] GitHub Actions 同步已觸發！</span><br>
                 <span style="font-size:12px;color:#94a3b8;">約 60-120 秒後資料更新至 GitHub Pages。
                   <a href="https://github.com/${GH_OWNER}/${GH_REPO}/actions" target="_blank"
                     style="color:#38bdf8;">查看進度 ↗</a>
@@ -2370,16 +2370,16 @@ if (typeof document !== 'undefined') {
             }
             setTimeout(() => location.reload(), 90000);
           } else if (res.status === 401 || res.status === 403) {
-            if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">❌ PAT Token 無效或權限不足，請重新設定。</span>`;
+            if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">[X] PAT Token 無效或權限不足，請重新設定。</span>`;
           } else {
             const body = await res.text();
-            if (syncStatus) syncStatus.innerHTML = `<span style="color:#fbbf24;">⚠️ 回應 ${res.status}：${body.slice(0, 120)}</span>`;
+            if (syncStatus) syncStatus.innerHTML = `<span style="color:#fbbf24;">[!] 回應 ${res.status}：${body.slice(0, 120)}</span>`;
           }
         } catch (e) {
-          if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">❌ 網路錯誤：${e.message}</span>`;
+          if (syncStatus) syncStatus.innerHTML = `<span style="color:#ef4444;">[X] 網路錯誤：${e.message}</span>`;
         } finally {
           syncBtn.disabled = false;
-          syncBtn.textContent = '🔄 同步資料';
+          syncBtn.textContent = '同步資料';
         }
       });
     }
@@ -2400,7 +2400,7 @@ if (typeof document !== 'undefined') {
 
       if (!tabPokemon || !tabRecipes || !panelPokemon || !panelRecipes) return;
 
-      /* ─── 💾 側邊欄展開/收合狀態持久化管理 (僅限桌面版，H5/移動端一律預設收合且不套用暫時記憶) ─── */
+      /* ─── 側邊欄展開/收合狀態持久化管理 (僅限桌面版，H5/移動端一律預設收合且不套用暫時記憶) ─── */
       function getSidebarSavedState(key, defaultOpen = true) {
         const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
         const isSmallScreen = typeof window !== 'undefined' && window.innerWidth <= 1024;
@@ -2939,7 +2939,7 @@ if (typeof document !== 'undefined') {
         const typeName = isEN && window.I18N ? window.I18N.getTypeName(b.type) : b.type;
         return `
           <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-berry="${b.name}" title="${berryName} (${typeName})" aria-label="${berryName}">
-            ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" alt="${berryName}" loading="lazy" onerror="this.style.display='none';">` : '🫐'}
+            ${b.icon ? `<img src="${b.icon}" class="subfilter-icon-img" alt="${berryName}" loading="lazy" onerror="this.style.display='none';">` : ''}
           </button>
         `;
       }).join('');
@@ -2956,7 +2956,7 @@ if (typeof document !== 'undefined') {
         const ingName = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
         return `
           <button type="button" class="subfilter-icon-btn ${isActive ? 'active' : ''}" data-ing="${ing.name}" title="${ingName}" aria-label="${ingName}">
-            ${ing.icon ? `<img src="${ing.icon}" class="subfilter-icon-img" alt="${ingName}" loading="lazy" onerror="this.style.display='none';">` : '🥗'}
+            ${ing.icon ? `<img src="${ing.icon}" class="subfilter-icon-img" alt="${ingName}" loading="lazy" onerror="this.style.display='none';">` : ''}
           </button>
         `;
       }).join('');
@@ -3221,7 +3221,7 @@ if (typeof document !== 'undefined') {
         });
       }
 
-      // ⬅️ 左側抽屜式側邊欄展開與收合控制 (Left Sliding Sidebar Controller)
+      //  左側抽屜式側邊欄展開與收合控制 (Left Sliding Sidebar Controller)
       const sidebar = document.getElementById('pokemon-filter-sidebar');
       const bookmarkHandle = document.getElementById('sidebar-bookmark-handle');
       const closeBtn = document.getElementById('sidebar-close-btn');
@@ -3327,7 +3327,7 @@ if (typeof document !== 'undefined') {
         closeBtn.addEventListener('click', () => toggleSidebar(false));
       }
 
-      // 🛑 遮罩層專屬事件消費器 (Backdrop Event Consumer - 徹底阻斷穿透至底層元件)
+      // 遮罩層專屬事件消費器 (Backdrop Event Consumer - 徹底阻斷穿透至底層元件)
       function bindBackdropDismiss(backdropEl, closeFn) {
         if (!backdropEl || backdropEl._hasDismissBound) return;
         backdropEl._hasDismissBound = true;
@@ -3354,7 +3354,7 @@ if (typeof document !== 'undefined') {
         bindBackdropDismiss(backdrop, () => toggleSidebar(false));
       }
 
-      // 📱 手勢右滑收合控制 (Swipe Right to Close Sidebar Helper - 支援全組件區域右滑且不干擾點選與滑桿)
+      // 手勢右滑收合控制 (Swipe Right to Close Sidebar Helper - 支援全組件區域右滑且不干擾點選與滑桿)
       function bindSidebarSwipeRightToClose(sidebarEl, closeFn) {
         if (!sidebarEl || sidebarEl._hasSwipeRightListener) return;
         sidebarEl._hasSwipeRightListener = true;
@@ -3422,7 +3422,7 @@ if (typeof document !== 'undefined') {
         bindSidebarSwipeRightToClose(sidebar, () => toggleSidebar(false));
       }
 
-      // 🌐 全域防護：點擊遮罩層 (sidebar-backdrop) 時優雅收合側邊欄並消費事件
+      // 全域防護：點擊遮罩層 (sidebar-backdrop) 時優雅收合側邊欄並消費事件
       document.addEventListener('touchend', (e) => {
         const target = e.target;
         if (target && target.classList && target.classList.contains('sidebar-backdrop')) {
@@ -3472,7 +3472,7 @@ if (typeof document !== 'undefined') {
           if (!isMewAll && !selectedSpecialties.has(p.specialty)) return false;
         }
 
-        // 👑 僅最終進化篩選 (Only Final Evolution)
+        // 僅最終進化篩選 (Only Final Evolution)
         if (onlyFinal) {
           const isFinal = p.is_final === '〇' || p.is_final === 'O' || p.is_final === 'o' || p.is_final === true || p.is_final === '1';
           if (!isFinal) return false;
@@ -3621,7 +3621,7 @@ if (typeof document !== 'undefined') {
                 </div>
               </div>
               <div class="card-skill-footer">
-                <span class="card-skill-label">⚡ ${t('th.main_skill', '主技能')}</span>
+                <span class="card-skill-label">${t('th.main_skill', '主技能')}</span>
                 <span class="card-skill-value">${renderSkillWithTooltip(p.main_skill, p)}</span>
               </div>
             </div>
@@ -3988,7 +3988,7 @@ if (typeof document !== 'undefined') {
       updateBackToTopVisibility();
     }
 
-    // 🔄 原生 App 風格下拉刷新指示器 (Native App Pull-to-Refresh Controller)
+    // 原生 App 風格下拉刷新指示器 (Native App Pull-to-Refresh Controller)
     function initPullToRefresh() {
       if (typeof document === 'undefined') return;
       let ptrEl = document.getElementById('pull-to-refresh-indicator');

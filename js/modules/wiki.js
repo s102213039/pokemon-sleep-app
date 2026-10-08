@@ -1,6 +1,6 @@
 /**
  * =========================================================
- * 📚 Pokémon Sleep 數據百科與知識庫 (Wiki & Strategy Guide)
+ * Pokémon Sleep 數據百科與知識庫 (Wiki & Strategy Guide)
  * 實體化 Google 試算表圖表與官方最新拆包數據 (v2.7.0)
  * =========================================================
  */
@@ -121,7 +121,7 @@
     {
       id: "charge_energy_s_fixed",
       name: "能量填充S",
-      icon: "⚡",
+      icon: "",
       category: "energy",
       catName: "能量系",
       desc: "增加卡比獸的能量（固定數值 400 ~ 3,212）。",
@@ -134,7 +134,7 @@
     {
       id: "charge_energy_s_range",
       name: "能量填充S (隨機)",
-      icon: "🎲",
+      icon: "",
       category: "energy",
       catName: "能量系",
       desc: "隨機增加卡比獸能量（在最小~最大區間浮動）。",
@@ -157,7 +157,7 @@
     {
       id: "charge_energy_m",
       name: "能量填充M",
-      icon: "🔥",
+      icon: "",
       category: "energy",
       catName: "能量系",
       desc: "大量增加卡比獸的能量（固定數值 880 ~ 6,409）。",
@@ -170,7 +170,7 @@
     {
       id: "charge_stock_s",
       name: "蓄力（能量填充S）",
-      icon: "🔋",
+      icon: "",
       category: "energy",
       catName: "能量系",
       desc: "發動蓄積或噴放。依蓄積次數（0~10次）暴增能量，最高達 90,940 能量！",
@@ -196,7 +196,7 @@
     {
       id: "nightmare_m",
       name: "夢魘（能量填充M）",
-      icon: "🌑",
+      icon: "",
       category: "special",
       catName: "神獸與特殊",
       desc: "卡比獸能量超大幅增加（最高達 18,515 能量），但非惡屬性隊友活力下降。",
@@ -211,7 +211,7 @@
     {
       id: "ingredient_magnet_s",
       name: "食材獲取S",
-      icon: "🥗",
+      icon: "",
       category: "ingredient",
       catName: "食材與料理",
       desc: "隨機獲得已解鎖的食材（全圖鑑已解鎖食材隨機抽選 6~24 個）。",
@@ -224,7 +224,7 @@
     {
       id: "ingredient_draw_s",
       name: "食材精選S",
-      icon: "🥗",
+      icon: "",
       category: "ingredient",
       catName: "食材與料理",
       desc: "從該寶可夢專屬的特定食材候選池中，隨機獲得其中 1 種食材（單一食材獲取量為 5~18 個）。",
@@ -240,7 +240,7 @@
     {
       id: "cooking_power_up_s",
       name: "料理強化S",
-      icon: "🍲",
+      icon: "",
       category: "ingredient",
       catName: "食材與料理",
       desc: "增加下次烹調時鍋子容量上限（7~31個），效果持續到料理大成功或換營地。",
@@ -255,7 +255,7 @@
     {
       id: "tasty_chance_s",
       name: "料理成功S",
-      icon: "✨",
+      icon: "",
       category: "ingredient",
       catName: "食材與料理",
       desc: "料理漂亮成功（大成功）機率提升（4%~10%），可持續疊加直到大成功為止。",
@@ -270,7 +270,7 @@
     {
       id: "helper_boost_s",
       name: "幫手支援S",
-      icon: "🤝",
+      icon: "",
       category: "special",
       catName: "神獸與特殊",
       desc: "隨機 1 隻隊友立刻完成多次幫忙產出（6~12次幫忙）。",
@@ -283,7 +283,7 @@
     {
       id: "helper_boost_type",
       name: "幫手加速（屬性）",
-      icon: "⚡",
+      icon: "",
       category: "special",
       catName: "神獸與特殊",
       desc: "隊伍同屬寶可夢立刻幫忙，同屬不同種類越多越強！",
@@ -304,7 +304,7 @@
     {
       id: "berry_burst",
       name: "樹果遽增",
-      icon: "🫐",
+      icon: "",
       category: "special",
       catName: "神獸與特殊",
       desc: "獲得自身產出的樹果，並額外獲得隊友撿來的樹果。",
@@ -321,7 +321,7 @@
     {
       id: "disguise_berry_burst",
       name: "畫皮（樹果遽增）",
-      icon: "🎭",
+      icon: "",
       category: "special",
       catName: "神獸與特殊",
       desc: "獲得自身與隊友的樹果。大成功時獲得 3 倍樹果。",
@@ -340,7 +340,7 @@
     {
       id: "dream_shard_magnet_s_fixed",
       name: "夢之碎片獲取S",
-      icon: "💎",
+      icon: "",
       category: "shards",
       catName: "夢之碎片",
       desc: "獲得夢之碎片（固定數量）。最高支援至 Lv.8！",
@@ -353,7 +353,7 @@
     {
       id: "dream_shard_magnet_s_range",
       name: "夢之碎片獲取S (隨機)",
-      icon: "🎰",
+      icon: "",
       category: "shards",
       catName: "夢之碎片",
       desc: "隨機獲得夢之碎片（在最小~最大區間浮動）。最高支援至 Lv.8！",
@@ -377,7 +377,7 @@
     {
       id: "charge_energy_self_s",
       name: "活力充填S",
-      icon: "🔋",
+      icon: "",
       category: "energy_heal",
       catName: "活力系",
       desc: "讓自身回復活力。",
@@ -390,7 +390,7 @@
     {
       id: "energizing_cheer_s",
       name: "活力療癒S",
-      icon: "💚",
+      icon: "",
       category: "energy_heal",
       catName: "活力系",
       desc: "隨機讓隊伍中的 1 隻隊友回復活力（12~44點，大幅度優先鎖定活力最低的寶可夢）。",
@@ -405,7 +405,7 @@
     {
       id: "energy_for_everyone_s",
       name: "活力全體療癒S",
-      icon: "💖",
+      icon: "",
       category: "energy_heal",
       catName: "活力系",
       desc: "讓全體隊友回復活力（主力補師核心招式）。",
@@ -418,7 +418,7 @@
     {
       id: "moonlight",
       name: "月光（活力充填S）",
-      icon: "🌙",
+      icon: "",
       category: "energy_heal",
       catName: "活力系",
       desc: "自己回復活力；大成功時額外隨機讓 1 隻隊友回復活力。",
@@ -435,7 +435,7 @@
     {
       id: "lunar_prayer",
       name: "新月祈禱（活力全體療癒S）",
-      icon: "🌠",
+      icon: "",
       category: "energy_heal",
       catName: "活力系",
       desc: "全隊回復活力，並額外獲得隊友撿來的樹果。",
@@ -460,7 +460,7 @@
       id: "transform",
       name: "變身",
       name_en: "Transform",
-      icon: "🧬",
+      icon: "",
       category: "special",
       catName: "神獸與特殊",
       desc: "隨機複製隊伍中 1 隻隊友的主技能發動。",
@@ -473,7 +473,7 @@
       id: "mimic",
       name: "模仿",
       name_en: "Mimic",
-      icon: "🎪",
+      icon: "",
       category: "special",
       catName: "神獸與特殊",
       desc: "隨機複製隊伍中 1 隻隊友的主技能發動。",
@@ -486,7 +486,7 @@
       id: "metronome",
       name: "揮指",
       name_en: "Metronome",
-      icon: "☝️",
+      icon: "",
       category: "special",
       catName: "神獸與特殊",
       desc: "從主技能庫中隨機抽選 1 種發動（部分未來特殊專屬招式除外）。",
@@ -17321,21 +17321,26 @@
   // 渲染技能卡片 (方案 C: 精華看板 + 點擊卡片展開/收合階梯)
   function renderSkillsCards(skills) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
 
     const catNameMap = {
       energy: isEN ? 'Strength' : '能量系',
       energy_heal: isEN ? 'Energy Heal' : '活力系',
-      ingredient: isEN ? 'Ingredients' : '食材與料理',
-      special: isEN ? 'Special/Legend' : '神獸與特殊專屬',
-      shards: isEN ? 'Dream Shards' : '夢之碎片'
+      ingredient: isEN ? 'Ingredients' : (isCN ? '食材与料理' : '食材與料理'),
+      special: isEN ? 'Special/Legend' : (isCN ? '神兽与特殊专属' : '神獸與特殊專屬'),
+      shards: isEN ? 'Dream Shards' : (isCN ? '梦之碎片' : '夢之碎片')
     };
+
+    const toSimp = (s) => (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') ? window.I18N.toSimplified(s) : s;
 
     return skills.map(skill => {
       let valuesHtml = '';
       const rawSkillName = skill.name || skill.id;
-      const skillName = isEN ? (window.I18N ? (window.I18N.getMainSkillName(rawSkillName) || skill.name_en || rawSkillName) : rawSkillName) : rawSkillName;
-      const catLabel = catNameMap[skill.category] || skill.catName;
-      const unitLabel = isEN ? (skill.unit_en || (skill.unit.includes('能量') ? ' Strength' : (skill.unit.includes('食材') ? ' Ingredients' : (skill.unit.includes('次') ? ' Helps' : (skill.unit.includes('點') ? ' Energy' : skill.unit))))) : skill.unit;
+      const skillName = (window.I18N && typeof window.I18N.getMainSkillName === 'function')
+        ? (window.I18N.getMainSkillName(rawSkillName) || skill.name_en || rawSkillName)
+        : (isEN ? (skill.name_en || rawSkillName) : (toSimp(rawSkillName)));
+      const catLabel = catNameMap[skill.category] || toSimp(skill.catName);
+      const unitLabel = isEN ? (skill.unit_en || (skill.unit.includes('能量') ? ' Strength' : (skill.unit.includes('食材') ? ' Ingredients' : (skill.unit.includes('次') ? ' Helps' : (skill.unit.includes('點') ? ' Energy' : skill.unit))))) : toSimp(skill.unit);
 
       if (skill.hasStackMatrix) {
         const sampleStrings = skill.matrix[10].vals.map(v => `${v.toLocaleString()} ${unitLabel}`);
@@ -17517,9 +17522,9 @@
         valuesHtml = `<div class="skill-level-chip"><span class="level-val">${unitLabel}</span></div>`;
       }
 
-      const skillDesc = isEN ? (skill.desc_en || skill.desc) : skill.desc;
-      const specialNote = skill.specialNote ? (isEN ? (skill.specialNote_en || skill.specialNote) : skill.specialNote) : null;
-      const penaltyNote = skill.penaltyNote ? (isEN ? (skill.penaltyNote_en || skill.penaltyNote) : skill.penaltyNote) : null;
+      const skillDesc = isEN ? (skill.desc_en || skill.desc) : (isCN && window.I18N ? window.I18N.toSimplified(skill.desc) : skill.desc);
+      const specialNote = skill.specialNote ? (isEN ? (skill.specialNote_en || skill.specialNote) : (isCN && window.I18N ? window.I18N.toSimplified(skill.specialNote) : skill.specialNote)) : null;
+      const penaltyNote = skill.penaltyNote ? (isEN ? (skill.penaltyNote_en || skill.penaltyNote) : (isCN && window.I18N ? window.I18N.toSimplified(skill.penaltyNote) : skill.penaltyNote)) : null;
 
       const isVisible = currentSkillsCategory === 'all' || skill.category === currentSkillsCategory;
       return `
@@ -17552,6 +17557,7 @@
   // 渲染 Wiki 主佈局與 5 大子分頁 (精簡二級選單列)
   function renderWikiLayout(container) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
     const isLadderOpen = typeof window.getSidebarSavedState === 'function' ? window.getSidebarSavedState('pksleep_ladder_sidebar_open', true) : true;
@@ -17803,12 +17809,12 @@
         <!-- 二級子分頁導航 (Sub-tabs) - 精簡無大標題橫幅 -->
         <div class="wiki-subnav-bar">
           <div class="wiki-subnav-tabs" role="tablist">
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills' ? 'active' : ''}" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${isMobileH5 ? (isEN ? 'Skills' : '主技能') : (isEN ? 'Main Skills' : '主技能數值庫')}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'subskills' ? 'active' : ''}" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${isMobileH5 ? (isEN ? 'Subskills' : '副技性格') : (isEN ? 'Sub-Skills' : '副技能與性格指南')}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isMobileH5 ? (isEN ? 'Ladder' : '食材天梯') : (isEN ? 'Ingredient Ladder' : '食材產量天梯榜')}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isMobileH5 ? (isEN ? 'Values' : '能量速查') : (isEN ? 'Berry & Ings' : '樹果與食材能量')}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isMobileH5 ? (isEN ? 'Growth' : '培育指南') : (isEN ? 'Tier Guide' : '培育與評級指南')}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'islands' ? 'active' : ''}" data-subtab="islands" onclick="window.WikiDB.switchSubTab('islands')">${isMobileH5 ? (isEN ? 'Islands' : '島嶼營地') : (isEN ? 'Camps & EX' : '島嶼營地與EX模式')}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'skills' ? 'active' : ''}" data-subtab="skills" onclick="window.WikiDB.switchSubTab('skills')">${isMobileH5 ? (isEN ? 'Skills' : (isCN ? '主技能' : '主技能')) : (isEN ? 'Main Skills' : (isCN ? '主技能数值库' : '主技能數值庫'))}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'subskills' ? 'active' : ''}" data-subtab="subskills" onclick="window.WikiDB.switchSubTab('subskills')">${isMobileH5 ? (isEN ? 'Subskills' : (isCN ? '副技性格' : '副技性格')) : (isEN ? 'Sub-Skills' : (isCN ? '副技能与性格指南' : '副技能與性格指南'))}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ingredients' ? 'active' : ''}" data-subtab="ingredients" onclick="window.WikiDB.switchSubTab('ingredients')">${isMobileH5 ? (isEN ? 'Ladder' : (isCN ? '食材天梯' : '食材天梯')) : (isEN ? 'Ingredient Ladder' : (isCN ? '食材产量天梯榜' : '食材產量天梯榜'))}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isMobileH5 ? (isEN ? 'Values' : (isCN ? '能量速查' : '能量速查')) : (isEN ? 'Berry & Ings' : (isCN ? '树果与食材能量' : '樹果與食材能量'))}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isMobileH5 ? (isEN ? 'Growth' : (isCN ? '培育指南' : '培育指南')) : (isEN ? 'Tier Guide' : (isCN ? '培育与评级指南' : '培育與評級指南'))}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'islands' ? 'active' : ''}" data-subtab="islands" onclick="window.WikiDB.switchSubTab('islands')">${isMobileH5 ? (isEN ? 'Islands' : (isCN ? '岛屿营地' : '島嶼營地')) : (isEN ? 'Camps & EX' : (isCN ? '岛屿营地与EX模式' : '島嶼營地與EX模式'))}</button>
           </div>
         </div>
 
@@ -17816,13 +17822,13 @@
         <div id="wiki-subpanel-skills" class="wiki-subpanel ${currentWikiSubTab === 'skills' ? 'active' : ''}" style="${currentWikiSubTab === 'skills' ? '' : 'display:none;'}">
           <div class="wiki-control-bar">
             <div class="wiki-filter-pills">
-              <span class="wiki-pill-label">${isEN ? 'Category:' : '技能類型：'}</span>
-              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'all' ? 'active' : ''}" data-skill-cat="all" onclick="window.WikiDB.filterSkills('all')">${isEN ? 'All' : '全部技能'} (${MAIN_SKILLS_DATA.length})</button>
+              <span class="wiki-pill-label">${isEN ? 'Category:' : (isCN ? '技能类型：' : '技能類型：')}</span>
+              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'all' ? 'active' : ''}" data-skill-cat="all" onclick="window.WikiDB.filterSkills('all')">${isEN ? 'All' : (isCN ? '全部技能' : '全部技能')} (${MAIN_SKILLS_DATA.length})</button>
               <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'energy' ? 'active' : ''}" data-skill-cat="energy" onclick="window.WikiDB.filterSkills('energy')">${isEN ? 'Strength' : '能量系'}</button>
               <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'energy_heal' ? 'active' : ''}" data-skill-cat="energy_heal" onclick="window.WikiDB.filterSkills('energy_heal')">${isEN ? 'Recovery' : '活力系'}</button>
-              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'ingredient' ? 'active' : ''}" data-skill-cat="ingredient" onclick="window.WikiDB.filterSkills('ingredient')">${isEN ? 'Ingredients' : '食材與料理'}</button>
-              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'special' ? 'active' : ''}" data-skill-cat="special" onclick="window.WikiDB.filterSkills('special')">${isEN ? 'Special' : '神獸與特殊專屬'}</button>
-              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'shards' ? 'active' : ''}" data-skill-cat="shards" onclick="window.WikiDB.filterSkills('shards')">${isEN ? 'Shards' : '夢之碎片'}</button>
+              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'ingredient' ? 'active' : ''}" data-skill-cat="ingredient" onclick="window.WikiDB.filterSkills('ingredient')">${isEN ? 'Ingredients' : (isCN ? '食材与料理' : '食材與料理')}</button>
+              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'special' ? 'active' : ''}" data-skill-cat="special" onclick="window.WikiDB.filterSkills('special')">${isEN ? 'Special' : (isCN ? '神兽与特殊专属' : '神獸與特殊專屬')}</button>
+              <button type="button" class="wiki-pill-btn ${currentSkillsCategory === 'shards' ? 'active' : ''}" data-skill-cat="shards" onclick="window.WikiDB.filterSkills('shards')">${isEN ? 'Shards' : (isCN ? '梦之碎片' : '夢之碎片')}</button>
             </div>
           </div>
 

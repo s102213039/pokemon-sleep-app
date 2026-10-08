@@ -432,10 +432,10 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   ☯️ 4 款明暗反色衍生主題 (4 Inverted Theme Variants)
+    4 款明暗反色衍生主題 (4 Inverted Theme Variants)
    ══════════════════════════════════════════════════════════════════ */
 
-/* 1. 🌌 深邃夜空 (Midnight) 反色版 ➔ 澄澈晴空 (Light Ice Sky & Royal Cyan) */
+/* 1.  深邃夜空 (Midnight) 反色版 ➔ 澄澈晴空 (Light Ice Sky & Royal Cyan) */
 [data-theme="midnight"][data-theme-inverted="true"] {
   --bg-dark: #f0f9ff;
   --bg-header: rgba(240, 249, 255, 0.94);
@@ -485,7 +485,7 @@
   --bg-radial-3: rgba(240, 249, 255, 0.98);
 }
 
-/* 2. 🌑 曜石暗影 (Onyx) 反色版 ➔ 純粹白金 (Pure Clean White & Titanium Slate) */
+/* 2.  曜石暗影 (Onyx) 反色版 ➔ 純粹白金 (Pure Clean White & Titanium Slate) */
 [data-theme="onyx"][data-theme-inverted="true"] {
   --bg-dark: #fafafa;
   --bg-header: rgba(250, 250, 250, 0.94);
@@ -535,7 +535,7 @@
   --bg-radial-3: rgba(250, 250, 250, 0.98);
 }
 
-/* 3. ☀️ 晨曦暖陽 (Dawn) 反色版 ➔ 琥珀夜宴 (Warm Amber Night & Cream Accents) */
+/* 3.  晨曦暖陽 (Dawn) 反色版 ➔ 琥珀夜宴 (Warm Amber Night & Cream Accents) */
 [data-theme="dawn"][data-theme-inverted="true"] {
   --bg-dark: #1c1917;
   --bg-header: rgba(28, 25, 23, 0.94);
@@ -585,7 +585,7 @@
   --bg-radial-3: rgba(28, 25, 23, 0.98);
 }
 
-/* 4. 🗿 雅緻灰石 (Emerald/Slate) 反色版 ➔ 曜岩冷夜 (Deep Slate Navy Night & Cold Titanium) */
+/* 4.  雅緻灰石 (Emerald/Slate) 反色版 ➔ 曜岩冷夜 (Deep Slate Navy Night & Cold Titanium) */
 [data-theme="emerald"][data-theme-inverted="true"] {
   --bg-dark: #0f172a;
   --bg-header: rgba(15, 23, 42, 0.94);
@@ -635,7 +635,7 @@
   --bg-radial-3: rgba(15, 23, 42, 0.98);
 }
 
-/* ☯️ 主題反色切換控制 (Theme Inversion Header Control - Minimalist) */
+/*  主題反色切換控制 (Theme Inversion Header Control - Minimalist) */
 .theme-invert-control-row,
 .app-theme-invert-control-row {
   margin: 0 0 0 auto !important;
@@ -1004,7 +1004,7 @@ html[data-lang="en"] .box-form-inline-label,
 }
 
 /* =========================================================
-   🚫 全域無邊界極簡滾動條隱藏系統 (Universal Scrollbar Hiding)
+    全域無邊界極簡滾動條隱藏系統 (Universal Scrollbar Hiding)
    隱藏所有列表、卡片、表格與容器的滾動條，同時保留絲滑滾動操作體驗
    ========================================================= */
 
@@ -1191,7 +1191,7 @@ body::-webkit-scrollbar,
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
 }
 
-/* 🔍 搜尋框有輸入文字時的醒目提示、發光呼吸動態與過濾中標籤 (Prominent Active Search & Pulsing Glow) */
+/*  搜尋框有輸入文字時的醒目提示、發光呼吸動態與過濾中標籤 (Prominent Active Search & Pulsing Glow) */
 @keyframes searchActivePulseGlow {
   0% {
     box-shadow: 0 0 0 2.5px rgba(129, 140, 248, 0.35), 0 2px 8px rgba(99, 102, 241, 0.2);
@@ -1262,7 +1262,7 @@ html[data-theme="emerald"]:not([data-theme-inverted="true"]) .search-input.has-v
   animation: searchActivePulseGlowEmerald 2s ease-in-out infinite !important;
 }
 
-/* ☯️ 反色模式下的醒目搜尋框 (Inverted Active Search Glows) */
+/*  反色模式下的醒目搜尋框 (Inverted Active Search Glows) */
 html[data-theme="midnight"][data-theme-inverted="true"] .search-input.has-value {
   border-color: #0284c7 !important;
   background: rgba(2, 132, 199, 0.08) !important;
@@ -1353,7 +1353,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-input.has-value {
   height: 15px;
 }
 
-/* 🏷️ 搜尋框內「條件篩選中」醒目標籤 (Active Filtering Pill Badge) */
+/*  搜尋框內「條件篩選中」醒目標籤 (Active Filtering Pill Badge) */
 .search-filtering-badge {
   position: absolute !important;
   right: 32px !important;
@@ -1393,7 +1393,7 @@ html[data-theme="emerald"]:not([data-theme-inverted="true"]) .search-filtering-b
   color: #ffffff !important;
 }
 
-/* ☯️ 反色模式下的過濾中徽章 */
+/*  反色模式下的過濾中徽章 */
 html[data-theme="midnight"][data-theme-inverted="true"] .search-filtering-badge {
   background: rgba(2, 132, 199, 0.14) !important;
   border-color: rgba(2, 132, 199, 0.4) !important;
@@ -1474,7 +1474,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
   transform: translateY(-50%) scale(1.1) !important;
 }
 
-/* 👑 最終進化切換開關 (Final Evolution Switch Button) */
+/*  最終進化切換開關 (Final Evolution Switch Button) */
 .final-evo-switch-label {
   display: inline-flex;
   align-items: center;
@@ -1666,7 +1666,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
 }
 
 /* =========================================================
-   🎛️ 寶可夢圖鑑左側懸浮固定篩選器 (Pokédex Left Fixed Floating Filter Sidebar)
+    寶可夢圖鑑左側懸浮固定篩選器 (Pokédex Left Fixed Floating Filter Sidebar)
    ========================================================= */
 
 .pokemon-layout-view {
@@ -1674,7 +1674,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
   width: 100%;
 }
 
-/* 🔖 側邊欄垂直中央書籤標籤（桌面端預設樣式） */
+/*  側邊欄垂直中央書籤標籤（桌面端預設樣式） */
 .sidebar-bookmark-handle {
   display: none;
   position: absolute;
@@ -1775,7 +1775,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
   justify-content: center;
 }
 
-/* ⬅️ 左側抽屜式滑動側邊欄 (Left Sliding Sidebar - 完美對齊頂部 Header 與頁面背景) */
+/*  左側抽屜式滑動側邊欄 (Left Sliding Sidebar - 完美對齊頂部 Header 與頁面背景) */
 .pokemon-filter-sidebar {
   position: fixed;
   top: 70px;
@@ -1901,7 +1901,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
   width: 100% !important;
 }
 
-/* 👑 側邊欄開關卡片 (Sidebar Switch Cards) */
+/*  側邊欄開關卡片 (Sidebar Switch Cards) */
 .sidebar-final-evo-label {
   display: flex;
   align-items: center;
@@ -2112,7 +2112,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
   box-shadow: 0 2px 8px rgba(51, 65, 85, 0.25);
 }
 
-/* 💻 電腦版側邊欄圖標網格 (Desktop 7-Columns 嚴格自適應分配寬度，絕不溢出) */
+/*  電腦版側邊欄圖標網格 (Desktop 7-Columns 嚴格自適應分配寬度，絕不溢出) */
 .sidebar-icon-grid {
   display: grid !important;
   grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
@@ -2186,7 +2186,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
   flex-shrink: 1 !important;
 }
 
-/* 📱 手機 H5 App 版專用側邊欄圖標網格 (7-Column Enlarged Borderless) */
+/*  手機 H5 App 版專用側邊欄圖標網格 (7-Column Enlarged Borderless) */
 .mobile-h5-app .sidebar-icon-grid {
   grid-template-columns: repeat(7, 1fr) !important;
   gap: 3px !important;
@@ -2220,7 +2220,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
   height: 28px !important;
 }
 
-/* ⚡ 主技能清單（雙列等寬，與類型按鈕完全一致的配置） */
+/*  主技能清單（雙列等寬，與類型按鈕完全一致的配置） */
 .sidebar-skills-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -2308,7 +2308,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   }
 }
 
-/* ➡️ 主要內容區：維持原本居中對齊與標準邊距 (Maintain Original Centered Margins) */
+/*  主要內容區：維持原本居中對齊與標準邊距 (Maintain Original Centered Margins) */
 .pokemon-main-content {
   width: 100%;
   margin: 0 auto;
@@ -2515,7 +2515,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   filter: none !important;
 }
 
-/* 🌈 18 種屬性專屬色彩 Tint (100% 穩定呈現色彩) */
+/*  18 種屬性專屬色彩 Tint (100% 穩定呈現色彩) */
 .pkm-type-icon.type-grass { fill: #4ad071 !important; color: #4ad071 !important; }
 .pkm-type-icon.type-fire { fill: #fb6c6c !important; color: #fb6c6c !important; }
 .pkm-type-icon.type-water { fill: #76befe !important; color: #76befe !important; }
@@ -2728,7 +2728,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   z-index: 1;
 }
 
-/* 🎨 確保整列所有儲存格（含 No. 與 圖示）背景顏色 100% 相同且完全實色 */
+/*  確保整列所有儲存格（含 No. 與 圖示）背景顏色 100% 相同且完全實色 */
 .pokemon-table tbody tr:nth-child(odd) td {
   background-color: var(--table-row-odd-solid, #0d1527) !important;
 }
@@ -2742,7 +2742,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   background-color: var(--table-row-hover-solid, #1c2e52) !important;
 }
 
-/* ─── 📌 關鍵置前：第 1 欄 No. (Top-Left 交叉處 z-index: 35，Body 左側 z-index: 20) ─── */
+/* ───  關鍵置前：第 1 欄 No. (Top-Left 交叉處 z-index: 35，Body 左側 z-index: 20) ─── */
 .pokemon-table .th-no,
 .mobile-h5-app .pokemon-table .th-no {
   position: sticky !important;
@@ -2777,7 +2777,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   font-size: 12.5px;
 }
 
-/* ─── 📌 關鍵置前：第 2 欄 圖示 (Top-Left 交叉處 z-index: 35，Body 左側 z-index: 20) ─── */
+/* ───  關鍵置前：第 2 欄 圖示 (Top-Left 交叉處 z-index: 35，Body 左側 z-index: 20) ─── */
 .pokemon-table .th-icon,
 .mobile-h5-app .pokemon-table .th-icon {
   position: sticky !important;
@@ -2813,7 +2813,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* ─── 📌 關鍵置前：隱藏 No. 欄位或 Box 列表時，圖示 (th-icon, td-icon) 自動貼齊 left: 0 ─── */
+/* ───  關鍵置前：隱藏 No. 欄位或 Box 列表時，圖示 (th-icon, td-icon) 自動貼齊 left: 0 ─── */
 .pokemon-table.hide-no .th-icon,
 .pokemon-table.hide-no .td-icon,
 .pokemon-table.hide-no thead .th-icon,
@@ -2999,7 +2999,7 @@ html[data-lang="en"] .subfilter-skill-btn,
 }
 
 /* =========================================================
-   ✨ 特殊主技能詳細說明提示 (Skill Tooltips & Special Badges)
+    特殊主技能詳細說明提示 (Skill Tooltips & Special Badges)
    ========================================================= */
 .special-skill-badge {
   display: inline-flex;
@@ -3421,7 +3421,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   animation: spin 1s linear infinite;
 }
 
-/* ─── 📱 App 風格全域中央載入元件 (App Loading View & Spinner) ─── */
+/* ───  App 風格全域中央載入元件 (App Loading View & Spinner) ─── */
 .app-loading-view,
 .loading-state {
   display: flex;
@@ -3746,7 +3746,7 @@ html[lang="en"] .recipe-name-wrapper,
   width: 100%;
 }
 
-/* 🍲 桌面版料理卡片緊湊排版 (Desktop Recipe Cards) */
+/*  桌面版料理卡片緊湊排版 (Desktop Recipe Cards) */
 .recipe-desktop-card {
   padding: 10px 12px !important;
   display: flex !important;
@@ -4638,7 +4638,7 @@ input[type=range].rf-slider.pot-slider {
 }
 
 @media (max-width: 768px) {
-  /* ─── 📱 手機端頂部 App Bar ─── */
+  /* ───  手機端頂部 App Bar ─── */
   header {
     height: 52px;
     padding: 0 12px;
@@ -4701,7 +4701,7 @@ input[type=range].rf-slider.pot-slider {
     border-radius: 8px;
   }
 
-  /* ─── 📱 手機端底部導航欄 (Mobile Bottom Navigation Dock) ─── */
+  /* ───  手機端底部導航欄 (Mobile Bottom Navigation Dock) ─── */
   .main-tab-toggle {
     position: fixed;
     bottom: 0;
@@ -4774,7 +4774,7 @@ input[type=range].rf-slider.pot-slider {
     max-width: none !important;
   }
 
-  /* ─── ⚡ 1. 寶可夢圖鑑手機適配 ─── */
+  /* ───  1. 寶可夢圖鑑手機適配 ─── */
   .pokemon-main-content .controls-container,
   .pokemon-main-content .stats-bar {
     max-width: calc(100% - 24px);
@@ -4985,7 +4985,7 @@ input[type=range].rf-slider.pot-slider {
     box-shadow: 8px 0 32px rgba(0, 0, 0, 0.7);
   }
 
-  /* ─── 🍲 2. 料理食譜手機適配 ─── */
+  /* ───  2. 料理食譜手機適配 ─── */
   .recipes-main-content .controls-container,
   .recipes-main-content .stats-bar,
   .recipes-main-content .recipe-grid,
@@ -5046,7 +5046,7 @@ input[type=range].rf-slider.pot-slider {
     border-radius: 12px;
   }
 
-  /* ─── 📚 3. 數據百科手機適配 ─── */
+  /* ───  3. 數據百科手機適配 ─── */
   .wiki-main-container {
     width: 100%;
     padding: 6px 8px;
@@ -5120,7 +5120,7 @@ input[type=range].rf-slider.pot-slider {
     width: 100%;
   }
 
-  /* ─── 📦 4. 寶可夢倉庫手機適配 ─── */
+  /* ───  4. 寶可夢倉庫手機適配 ─── */
   .box-container {
     width: 100%;
     padding: 6px 8px;
@@ -5246,7 +5246,7 @@ input[type=range].rf-slider.pot-slider {
     border-radius: 4px;
   }
 
-  /* ─── 📰 5. 最新消息手機適配 ─── */
+  /* ───  5. 最新消息手機適配 ─── */
   .news-container {
     width: 100%;
     padding: 6px 8px;
@@ -5287,7 +5287,7 @@ input[type=range].rf-slider.pot-slider {
     border-radius: 12px;
   }
 
-  /* ─── 🔮 全域彈窗手機適配 (Bottom Sheet 模式) ─── */
+  /* ───  全域彈窗手機適配 (Bottom Sheet 模式) ─── */
   .appraisal-modal-backdrop {
     padding: 0;
     align-items: flex-end;
@@ -5341,7 +5341,7 @@ input[type=range].rf-slider.pot-slider {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   📰 最新更新與新聞專區樣式 (News & Updates Styles)
+    最新更新與新聞專區樣式 (News & Updates Styles)
    ═══════════════════════════════════════════════════════════════ */
 .news-filter-card {
   background: var(--bg-card);
@@ -5446,7 +5446,7 @@ input[type=range].rf-slider.pot-slider {
   font-size: 12px;
 }
 
-/* 📰 新聞頁面極簡底部備註 (Minimal News Footer) */
+/*  新聞頁面極簡底部備註 (Minimal News Footer) */
 .news-minimal-footer {
   width: 100%;
   margin: 24px auto 10px;
@@ -5689,7 +5689,7 @@ input[type=range].rf-slider.pot-slider {
   50% { opacity: 1; transform: scale(1.04); }
 }
 
-/* 🏷️ 活動狀態標籤 (Status Badges: Expired / Ongoing / Upcoming) */
+/*  活動狀態標籤 (Status Badges: Expired / Ongoing / Upcoming) */
 .news-status-badge {
   font-size: 11px;
   font-weight: 700;
@@ -5738,7 +5738,7 @@ input[type=range].rf-slider.pot-slider {
   border-color: #7dd3fc;
 }
 
-/* ⚠️ 特殊醒目過期警告橫條 (Special Eye-Catching Expired Alert Banner) */
+/*  特殊醒目過期警告橫條 (Special Eye-Catching Expired Alert Banner) */
 .news-expired-alert-banner {
   display: flex;
   align-items: flex-start;
@@ -5834,7 +5834,7 @@ input[type=range].rf-slider.pot-slider {
   border-color: #f87171 !important;
 }
 
-/* 📅 日曆活動清單狀態標籤 (Calendar Event List Status Tag) */
+/*  日曆活動清單狀態標籤 (Calendar Event List Status Tag) */
 .news-cal-status-tag {
   font-size: 9.5px;
   font-weight: 700;
@@ -5923,7 +5923,7 @@ input[type=range].rf-slider.pot-slider {
   color: #38bdf8;
 }
 
-/* 🦄 新登場 / 焦點寶可夢頂部橫條 (無外框、極簡純淨排版) */
+/*  新登場 / 焦點寶可夢頂部橫條 (無外框、極簡純淨排版) */
 .news-debut-banner,
 .news-featured-banner {
   display: flex;
@@ -6129,7 +6129,7 @@ input[type=range].rf-slider.pot-slider {
   border-color: rgba(16, 185, 129, 0.4);
 }
 
-/* 🤖 AI 智能深度重點儀表板 (網頁版無灰底無外框純淨排版) */
+/*  AI 智能深度重點儀表板 (網頁版無灰底無外框純淨排版) */
 .news-ai-dashboard {
   background: transparent !important;
   border: none !important;
@@ -6360,7 +6360,7 @@ input[type=range].rf-slider.pot-slider {
 }
 
 /* =========================================================
-   📦 我的寶可夢倉庫 (My Pokémon Box & Screenshot Scanner)
+    我的寶可夢倉庫 (My Pokémon Box & Screenshot Scanner)
    ========================================================= */
 
 .box-top-banner {
@@ -7092,7 +7092,7 @@ input[type=range].rf-slider.pot-slider {
   line-height: 1.6;
 }
 
-/* 📸 倉庫編輯與核對彈窗 */
+/*  倉庫編輯與核對彈窗 */
 /* 全域移除所有數字輸入框的上下整數微調箭頭 (Global Number Input Spinners Removal) */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
@@ -7503,8 +7503,7 @@ input[type="number"] {
 .box-mainskill-select {
   width: 80px;
   height: 32px;
-  padding: 4px 8px;
-  padding-right: 28px;
+  padding: 4px 28px 4px 8px;
   font-size: 12px;
   font-weight: 700;
   background-position: right 14px center;
@@ -7542,8 +7541,7 @@ input[type="number"] {
   background: var(--bg-input);
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  padding: 6px 10px;
-  padding-right: 36px;
+  padding: 6px 36px 6px 10px;
   color: var(--text-primary);
   font-size: 12.5px;
   outline: none;
@@ -8455,7 +8453,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 }
 
 /* =========================================================
-   📅 官方活動與禮包時程甘特圖 (Gantt Schedule Timeline)
+    官方活動與禮包時程甘特圖 (Gantt Schedule Timeline)
    ========================================================= */
 
 .news-timeline-container {
@@ -8683,7 +8681,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   color: #c084fc;
 }
 
-/* 🌞 明亮主題甘特圖條目適配：深色飽和度底色 + 高清白字 (Light Theme Rich Saturated Bars) */
+/*  明亮主題甘特圖條目適配：深色飽和度底色 + 高清白字 (Light Theme Rich Saturated Bars) */
 [data-theme="dawn"] .gantt-bar-event,
 [data-theme="emerald"] .gantt-bar-event {
   background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
@@ -8749,7 +8747,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 }
 
 /* =========================================================
-   📚 數據百科與攻略知識庫 (Wiki & Strategy Database Styles)
+    數據百科與攻略知識庫 (Wiki & Strategy Database Styles)
    ========================================================= */
 
 .wiki-main-container {
@@ -8886,7 +8884,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   font-weight: 700;
 }
 
-/* ⚡ 主技能卡片網格 */
+/*  主技能卡片網格 */
 .wiki-skills-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -9049,7 +9047,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   font-feature-settings: 'tnum';
 }
 
-/* 🌟 方案 C: 主技能精華單行速查 (Lv.1 ➔ Lv.Max) */
+/*  方案 C: 主技能精華單行速查 (Lv.1 ➔ Lv.Max) */
 .wiki-skill-card.clickable-card {
   cursor: pointer;
   user-select: none;
@@ -9387,7 +9385,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   line-height: 1.4;
 }
 
-/* 🧩 百科全書外層主題標題與副標題 (Section Heading outside Card) */
+/*  百科全書外層主題標題與副標題 (Section Heading outside Card) */
 .wiki-section-heading {
   margin-bottom: 12px;
   padding: 0 4px;
@@ -9411,7 +9409,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   margin: 0;
 }
 
-/* 🧩 副技能 & 計算機卡片樣式 */
+/*  副技能 & 計算機卡片樣式 */
 .wiki-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -9485,7 +9483,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   color: #f87171;
 }
 
-/* 🌞 明亮主題高清晰深色化適配 (Light Themes Rich High-Contrast Overrides) */
+/*  明亮主題高清晰深色化適配 (Light Themes Rich High-Contrast Overrides) */
 [data-theme="dawn"] .matrix-rate-up,
 [data-theme="emerald"] .matrix-rate-up {
   color: #15803d; /* 深森林綠，在白底極清晰 */
@@ -10319,7 +10317,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   color: var(--text-primary);
 }
 
-/* 🎓 專長評級榜樣式 (Ratings Guide) */
+/*  專長評級榜樣式 (Ratings Guide) */
 .wiki-strategy-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -10672,7 +10670,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 }
 
 
-/* 🥗 Lv.60 食材天梯卡片網格 (Ladder Grid) */
+/*  Lv.60 食材天梯卡片網格 (Ladder Grid) */
 .wiki-ladder-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
@@ -10775,7 +10773,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   color: var(--text-secondary);
 }
 
-/* 📈 橫向視覺座標天梯圖 (Visual Coordinate Ladder System) */
+/*  橫向視覺座標天梯圖 (Visual Coordinate Ladder System) */
 .ladder-view-toggle-bar {
   display: flex;
   align-items: center;
@@ -11309,7 +11307,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   box-shadow: 0 0 0 2px var(--color-primary, #6366f1), 0 4px 12px rgba(0, 0, 0, 0.6);
 }
 
-/* 🥗 食材天梯榜 - 寶可夢節點浮窗 (Pokemon Node Tooltip) */
+/*  食材天梯榜 - 寶可夢節點浮窗 (Pokemon Node Tooltip) */
 .ladder-node-tooltip {
   position: absolute;
   bottom: calc(100% + 6px);
@@ -11523,7 +11521,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   margin-top: 2px;
 }
 
-/* 🔍 側邊欄專屬微型搜尋框 (Sidebar Search Box) */
+/*  側邊欄專屬微型搜尋框 (Sidebar Search Box) */
 .sidebar-search-box {
   position: relative;
   width: 100%;
@@ -11807,7 +11805,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 
 
 
-/* 🥗 食材產量天梯榜 - 外部固定側邊篩選器 (Left Fixed Sidebar Filter - Pokédex Style) */
+/*  食材產量天梯榜 - 外部固定側邊篩選器 (Left Fixed Sidebar Filter - Pokédex Style) */
 .ladder-fixed-sidebar .sidebar-header {
   position: relative;
   overflow: visible !important;
@@ -11854,7 +11852,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   box-sizing: border-box !important;
 }
 
-/* 🥗 食材天梯側邊欄選項按鈕字體微調與單行防折行 (Compact Font Size & Single Line Display) */
+/*  食材天梯側邊欄選項按鈕字體微調與單行防折行 (Compact Font Size & Single Line Display) */
 .ladder-fixed-sidebar .tag-btn {
   font-size: 11.5px !important;
   padding: 4.5px 3px !important;
@@ -11993,7 +11991,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   color: #5b21b6;
 }
 
-/* 🫐 樹果與食材基礎能量看板 (Image 1 實體化) */
+/*  樹果與食材基礎能量看板 (Image 1 實體化) */
 .values-board-container {
   display: flex;
   gap: 20px;
@@ -12544,7 +12542,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   🔮 寶可夢深度診斷評測室與六維雷達圖 (Appraisal Lab & Radar Chart)
+    寶可夢深度診斷評測室與六維雷達圖 (Appraisal Lab & Radar Chart)
    ═══════════════════════════════════════════════════════════════ */
 
 /* 診斷報告彈窗 Backdrop */
@@ -13574,7 +13572,7 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   🔮 獨立評測實驗室 (Appraisal Lab)
+    獨立評測實驗室 (Appraisal Lab)
    ═══════════════════════════════════════════════════════════════ */
 .appraisal-lab-card,
 .appraisal-lab-seamless-view {
@@ -15679,7 +15677,7 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
 
 
 /* ═══════════════════════════════════════════════════════════════
-   📸 多圖批次智能辨識 (Batch OCR Progress & Floating Toast)
+    多圖批次智能辨識 (Batch OCR Progress & Floating Toast)
    ═══════════════════════════════════════════════════════════════ */
 .batch-ocr-progress-card {
   width: 100%;
@@ -16543,7 +16541,7 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   ☁️ 倉庫未登入引導遮罩 (Box Auth Guidance Overlay)
+    倉庫未登入引導遮罩 (Box Auth Guidance Overlay)
    ═══════════════════════════════════════════════════════════════ */
 #panel-box {
   position: relative !important;
@@ -16686,7 +16684,7 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   ⚙️ 系統設定彈窗與主題切換器 (Settings Modal & Theme Picker)
+    系統設定彈窗與主題切換器 (Settings Modal & Theme Picker)
    ═══════════════════════════════════════════════════════════════ */
 .settings-modal-overlay {
   position: fixed;
@@ -16980,7 +16978,7 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   }
 }
 
-/* ─── 📱 H5 App 極簡規範設定彈窗 (App-Native Compact Settings Modal) ─── */
+/* ───  H5 App 極簡規範設定彈窗 (App-Native Compact Settings Modal) ─── */
 .app-settings-dialog {
   max-width: 380px !important;
   width: calc(100% - 32px) !important;
@@ -17268,7 +17266,7 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   color: var(--text-muted);
 }
 
-/* ─── 🛡️ 全域錯誤診斷與日誌展示樣式 (Diagnostic Logger UI) ─── */
+/* ───  全域錯誤診斷與日誌展示樣式 (Diagnostic Logger UI) ─── */
 .global-error-diagnostic-bar {
   display: none;
   position: sticky;
@@ -17632,7 +17630,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   stroke: var(--text-primary);
 }
 
-/* ─── ⚡ H5 App 圖鑑 Tab 專屬：精準適配螢幕視窗（非無限延伸），表頭吸頂置頂，底部直接在螢幕內呈現 ─── */
+/* ───  H5 App 圖鑑 Tab 專屬：精準適配螢幕視窗（非無限延伸），表頭吸頂置頂，底部直接在螢幕內呈現 ─── */
 body.mobile-h5-app.pokemon-active,
 .mobile-h5-app.pokemon-active body {
   overflow: hidden !important;
@@ -17751,7 +17749,7 @@ body.mobile-h5-app.pokemon-active,
   background-color: var(--table-th-solid, #0a0f1d) !important;
 }
 
-/* ─── 📱 H5 App 主視圖與面板容器（獨立容器滾動，固定瀏覽器網址列防止跳動） ─── */
+/* ───  H5 App 主視圖與面板容器（獨立容器滾動，固定瀏覽器網址列防止跳動） ─── */
 .mobile-h5-app .mobile-main-container,
 .mobile-h5-app .app-main-viewport {
   position: fixed !important;
@@ -17978,7 +17976,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   border-radius: 0 !important;
 }
 
-/* ─── 🎛️ H5 App 右下懸浮篩選按鈕 (輕量扁平微陰影，無刺眼炫光) ─── */
+/* ───  H5 App 右下懸浮篩選按鈕 (輕量扁平微陰影，無刺眼炫光) ─── */
 .mobile-h5-app .sidebar-bookmark-handle,
 .mobile-h5-app .sidebar-fab-btn {
   display: flex !important;
@@ -18012,7 +18010,7 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
-/* 🎛️ Mobile H5 側邊欄抽屜展開時，FAB 按鈕必須強制徹底隱藏（防遮擋、防誤觸） */
+/*  Mobile H5 側邊欄抽屜展開時，FAB 按鈕必須強制徹底隱藏（防遮擋、防誤觸） */
 .mobile-h5-app .sidebar-fab-btn.drawer-open,
 .mobile-h5-app .sidebar-bookmark-handle.drawer-open,
 .mobile-h5-app #panel-pokemon:has(#pokemon-filter-sidebar:not(.collapsed)) #sidebar-bookmark-handle,
@@ -18112,8 +18110,8 @@ body.box-lab-active .box-fab-container,
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
-/* ─── 🎛️ H5 App 右側抽屜式篩選器 (Right-side Sliding Drawer - Full Viewport Height) ─── */
-/* ─── 🎛️ H5 App 右側抽屜式篩選器 (Right-side Sliding Drawer - Full Viewport Height) ─── */
+/* ───  H5 App 右側抽屜式篩選器 (Right-side Sliding Drawer - Full Viewport Height) ─── */
+/* ───  H5 App 右側抽屜式篩選器 (Right-side Sliding Drawer - Full Viewport Height) ─── */
 .mobile-h5-app .pokemon-filter-sidebar,
 .mobile-h5-app .recipe-filter-sidebar,
 .mobile-h5-app .ladder-fixed-sidebar {
@@ -18466,7 +18464,7 @@ body.box-lab-active .box-fab-container,
   color: #c084fc;
 }
 
-/* ─── 🔄 原生 App 風格下拉刷新指示器 (Native Mobile Pull-to-Refresh) ─── */
+/* ───  原生 App 風格下拉刷新指示器 (Native Mobile Pull-to-Refresh) ─── */
 .ptr-indicator {
   position: fixed;
   top: calc(52px + env(safe-area-inset-top, 0px));
@@ -18547,7 +18545,7 @@ body.box-lab-active .box-fab-container,
   color: var(--accent-blue);
 }
 
-/* 🍲 H5 App 料理篩選器側邊欄專屬樣式 (Mobile Recipe Sidebar Drawer - Borderless & Ultra-Compact) */
+/*  H5 App 料理篩選器側邊欄專屬樣式 (Mobile Recipe Sidebar Drawer - Borderless & Ultra-Compact) */
 .mobile-h5-app .recipe-filter-sidebar .sidebar-scrollable-content {
   flex: 1 1 auto !important;
   width: 100% !important;
@@ -18788,7 +18786,7 @@ body.box-lab-active .box-fab-container,
   z-index: 2 !important;
 }
 
-/* 🍲 H5 App 料理食譜 100% 寬度直列緊湊長方形卡片 (1-Column Rectangular Cards) */
+/*  H5 App 料理食譜 100% 寬度直列緊湊長方形卡片 (1-Column Rectangular Cards) */
 .mobile-h5-app .recipe-main-content {
   width: 100% !important;
   max-width: 100% !important;
@@ -18940,7 +18938,7 @@ body.box-lab-active .box-fab-container,
   white-space: nowrap !important;
 }
 
-/* 🥦 食材展示 (Enlarged comfortable ingredients row) */
+/*  食材展示 (Enlarged comfortable ingredients row) */
 .h5-recipe-ing-section {
   display: flex !important;
   align-items: center !important;
@@ -18988,7 +18986,7 @@ body.box-lab-active .box-fab-container,
   font-weight: 700 !important;
 }
 
-/* ⚡ 右側上下等分/置中能量列 (Energy Column spanning full height with dynamic fit-content width) */
+/*  右側上下等分/置中能量列 (Energy Column spanning full height with dynamic fit-content width) */
 .h5-recipe-energy-col {
   display: flex !important;
   flex-direction: column !important;
@@ -19073,7 +19071,7 @@ body.box-lab-active .box-fab-container,
   background: rgba(245, 158, 11, 0.1);
 }
 
-/* ⚓ 2 字極簡原生底部 Dock 導覽列 */
+/*  2 字極簡原生底部 Dock 導覽列 */
 .bottom-dock,
 .mobile-bottom-dock,
 .bottom-dock-nav {
@@ -19197,7 +19195,7 @@ body.box-lab-active .box-fab-container,
   width: 32px;
 }
 
-/* 🔴 狀態 Badge 徽章支援 */
+/*  狀態 Badge 徽章支援 */
 .dock-badge {
   position: absolute;
   top: 2px;
@@ -19218,7 +19216,7 @@ body.box-lab-active .box-fab-container,
   pointer-events: none;
 }
 
-/* 📑 分段控制器 (Segmented Control / Subtab Pills) */
+/*  分段控制器 (Segmented Control / Subtab Pills) */
 .segmented-control,
 .mobile-segmented-bar,
 .subtab-pills {
@@ -19264,7 +19262,7 @@ body.box-lab-active .box-fab-container,
   box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
 }
 
-/* 📑 滑動抽屜與 Bottom Sheet 通用樣式 */
+/*  滑動抽屜與 Bottom Sheet 通用樣式 */
 .bottom-sheet,
 .mobile-drawer,
 .mobile-modal-sheet,
@@ -19302,7 +19300,7 @@ body.box-lab-active .box-fab-container,
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* 📌 數據百科黏性首列 (Sticky Column) */
+/*  數據百科黏性首列 (Sticky Column) */
 .sticky-col,
 .sticky-col-header {
   position: sticky;
@@ -19313,7 +19311,7 @@ body.box-lab-active .box-fab-container,
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   📚 MOBILE H5 DEDICATED WIKI TAB & SUB-TABS MODERN APP STYLING
+    MOBILE H5 DEDICATED WIKI TAB & SUB-TABS MODERN APP STYLING
    ═══════════════════════════════════════════════════════════════════════════════ */
 
 /* 1. 頂部 5 大 Sub-Tabs：平分寬度、單行展示、貼齊頂部無邊距、全主題自適應 */
@@ -19535,7 +19533,7 @@ body.box-lab-active .box-fab-container,
   border: 1px solid #cbd5e1 !important;
 }
 
-/* 3. ⚡ Sub-Tab 1: 主技能數值庫 */
+/* 3.  Sub-Tab 1: 主技能數值庫 */
 .mobile-h5-app .wiki-control-bar {
   margin-bottom: 10px !important;
   padding: 0 !important;
@@ -19643,7 +19641,7 @@ body.box-lab-active .box-fab-container,
   color: #b45309 !important;
 }
 
-/* 🌟 方案 C: 主技能精華單行速查 (手機端極簡適配) */
+/*  方案 C: 主技能精華單行速查 (手機端極簡適配) */
 .mobile-h5-app .wiki-skill-card.clickable-card {
   cursor: pointer !important;
   user-select: none !important;
@@ -19969,7 +19967,7 @@ body.box-lab-active .box-fab-container,
   width: 13.66% !important;
 }
 
-/* 4. 🧩 Sub-Tab 2: 副技能與性格指南 */
+/* 4.  Sub-Tab 2: 副技能與性格指南 */
 .mobile-h5-app .wiki-table-wrapper {
   overflow-x: auto !important;
   -webkit-overflow-scrolling: touch !important;
@@ -20013,7 +20011,7 @@ body.box-lab-active .box-fab-container,
   border-bottom: 1px solid var(--border-color-subtle) !important;
 }
 
-/* 🧩 子分頁 2: 副技能與性格指南 (手機端無外框極致放大排版) */
+/*  子分頁 2: 副技能與性格指南 (手機端無外框極致放大排版) */
 .wiki-subskill-tags-col {
   display: flex;
   gap: 3px 4px;
@@ -20374,7 +20372,7 @@ body.box-lab-active .box-fab-container,
   color: var(--text-primary) !important;
 }
 
-/* 5. 🎓 Sub-Tab 3: 培育與評級指南 */
+/* 5.  Sub-Tab 3: 培育與評級指南 */
 .mobile-h5-app .wiki-strategy-grid {
   display: flex !important;
   flex-direction: column !important;
@@ -20776,7 +20774,7 @@ body.box-lab-active .box-fab-container,
   padding: 6px 4px !important;
 }
 
-/* 6. 🥗 Sub-Tab 4: 食材產量天梯榜 */
+/* 6.  Sub-Tab 4: 食材產量天梯榜 */
 .mobile-h5-app .ladder-view-toggle-bar {
   display: flex !important;
   justify-content: space-between !important;
@@ -20814,7 +20812,7 @@ body.box-lab-active .box-fab-container,
   margin: 0 !important;
 }
 
-/* 🥗 食材天梯與 🫐 能量速查專屬：全視窗單屏滿版適配（零滑動，整頁全覽，尾巴置於導覽欄上方） */
+/*  食材天梯與  能量速查專屬：全視窗單屏滿版適配（零滑動，整頁全覽，尾巴置於導覽欄上方） */
 body.mobile-h5-app.ladder-active,
 .mobile-h5-app.ladder-active,
 body.mobile-h5-app.values-active,
@@ -21033,7 +21031,7 @@ body.mobile-h5-app.values-active,
   color: var(--text-primary) !important;
 }
 
-/* 7. 🫐 Sub-Tab 4: 樹果與食材能量 */
+/* 7.  Sub-Tab 4: 樹果與食材能量 */
 .mobile-h5-app #wiki-subpanel-values.active {
   display: flex !important;
   flex-direction: column !important;
@@ -21551,7 +21549,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   gap: 8px !important;
 }
 
-/* 🔎 1. 頂部搜尋列 App 風格 (與所有 Tab 保持 100% 統一元件規範) */
+/*  1. 頂部搜尋列 App 風格 (與所有 Tab 保持 100% 統一元件規範) */
 .mobile-h5-app .search-box,
 .mobile-h5-app .news-search-box {
   position: relative !important;
@@ -21623,7 +21621,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   height: 15px !important;
 }
 
-/* 🏷️ 2. 單行橫向滑動分類標籤 (Segmented Pill Chips - 1 Line) */
+/*  2. 單行橫向滑動分類標籤 (Segmented Pill Chips - 1 Line) */
 .mobile-h5-app .news-category-tags {
   display: flex !important;
   flex-wrap: nowrap !important;
@@ -21669,7 +21667,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   border-radius: 8px !important;
 }
 
-/* 📅 3. 壓縮無框版活動日曆 (Borderless Ultra-Compact Activity Calendar) ─── */
+/*  3. 壓縮無框版活動日曆 (Borderless Ultra-Compact Activity Calendar) ─── */
 /* 網頁桌面版：日曆與進行中活動左右並行 (Side-by-Side Parallel Layout) */
 .news-calendar-wrapper {
   background: transparent !important;
@@ -21874,7 +21872,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   background: rgba(99, 102, 241, 0.08) !important;
 }
 
-/* 🎨 貫穿整格的背景多層色塊 (Continuous Full-Cell Background Bands per Event) */
+/*  貫穿整格的背景多層色塊 (Continuous Full-Cell Background Bands per Event) */
 .news-cal-bg-bands {
   position: absolute !important;
   inset: 0 !important;
@@ -21952,7 +21950,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   pointer-events: none !important;
 }
 
-/* 🎯 日期數字：浮在背景色塊之上，字型放大至 13.5px，柔和陰影確保清晰 */
+/*  日期數字：浮在背景色塊之上，字型放大至 13.5px，柔和陰影確保清晰 */
 .news-cal-day-num {
   position: relative !important;
   z-index: 5 !important;
@@ -21981,7 +21979,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   color: #1e293b !important;
 }
 
-/* 💓 今日日期黃色圓點心跳動態 (Today Dot Heartbeat Pulse Animation) */
+/*  今日日期黃色圓點心跳動態 (Today Dot Heartbeat Pulse Animation) */
 @keyframes todayHeartbeat {
   0% {
     transform: translateX(-50%) scale(1);
@@ -22009,7 +22007,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   }
 }
 
-/* 🌟 今日（非選取狀態）：文字白色，下方保留黃色圓點心跳動態 (White Text with Heartbeat Yellow Dot) */
+/*  今日（非選取狀態）：文字白色，下方保留黃色圓點心跳動態 (White Text with Heartbeat Yellow Dot) */
 .news-cal-day-cell.is-today {
   outline: none !important;
   border: none !important;
@@ -22081,7 +22079,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   animation: todayHeartbeat 1.6s ease-in-out infinite !important;
 }
 
-/* 💡 選取日期：半透明灰色背景，無光暈，不遮擋活動進度條 (Selected Cell Translucent Gray - No Glow) */
+/*  選取日期：半透明灰色背景，無光暈，不遮擋活動進度條 (Selected Cell Translucent Gray - No Glow) */
 .news-cal-day-cell.is-selected {
   outline: none !important;
   border: none !important;
@@ -22288,7 +22286,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   line-height: 1.1 !important;
 }
 
-/* 🏷️ 活動列表 Badge 多彩標籤 (Dark Theme Default - 螢光高對比清晰配色) */
+/*  活動列表 Badge 多彩標籤 (Dark Theme Default - 螢光高對比清晰配色) */
 .news-cal-event-badge.badge-good-sleep {
   background: rgba(245, 158, 11, 0.25) !important;
   color: #fbbf24 !important;
@@ -22337,7 +22335,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   border: 1px solid rgba(244, 63, 94, 0.5) !important;
 }
 
-/* ☀️ 亮色主題下的 Badge 自適應 (深色高飽和字體) */
+/*  亮色主題下的 Badge 自適應 (深色高飽和字體) */
 [data-theme="dawn"] .news-cal-event-badge.badge-good-sleep,
 [data-theme="emerald"] .news-cal-event-badge.badge-good-sleep {
   background: rgba(245, 158, 11, 0.15) !important;
@@ -22440,7 +22438,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   display: none !important;
 }
 
-/* 📰 4. 新聞列表容器與折疊式 Accordion 卡片 (全主題自適應) */
+/*  4. 新聞列表容器與折疊式 Accordion 卡片 (全主題自適應) */
 .mobile-h5-app .news-content-container {
   padding: 0 12px 24px !important;
   width: 100% !important;
@@ -22537,7 +22535,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   margin: 0 !important;
 }
 
-/* 🦄 新登場 / 焦點寶可夢頂部橫條 (無外框、極簡純淨排版) */
+/*  新登場 / 焦點寶可夢頂部橫條 (無外框、極簡純淨排版) */
 .mobile-h5-app .news-debut-banner,
 .mobile-h5-app .news-featured-banner {
   padding: 2px 0 !important;
@@ -22566,7 +22564,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   -webkit-line-clamp: none !important;
 }
 
-/* 🤖 5. 展開後的 AI 深度重點區塊 (極簡純淨無框無背景排版) */
+/*  5. 展開後的 AI 深度重點區塊 (極簡純淨無框無背景排版) */
 .mobile-h5-app .news-accordion-body {
   padding: 4px 0 2px 0 !important;
   display: none !important;
@@ -22625,7 +22623,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   margin-bottom: 2px !important;
 }
 
-/* 🎨 深色主題配色 (Dark / Obsidian) 僅文字標題高亮，無底色無邊框 */
+/*  深色主題配色 (Dark / Obsidian) 僅文字標題高亮，無底色無邊框 */
 .news-sec-schedule,
 .news-sec-features,
 .news-sec-debut,
@@ -22744,7 +22742,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   color: #2563eb !important;
 }
 
-/* ☯️ 反色模式下各搜尋框專屬外觀 (Inverted Search Inputs) */
+/*  反色模式下各搜尋框專屬外觀 (Inverted Search Inputs) */
 [data-theme="midnight"][data-theme-inverted="true"] .search-input,
 [data-theme="midnight"][data-theme-inverted="true"] .news-search-input,
 [data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .search-input,
@@ -22858,7 +22856,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   text-decoration: none !important;
 }
 
-/* ─── 🥗 食材天梯單一食材排名浮窗 (Ingredient Output Ranking Modal) ─── */
+/* ───  食材天梯單一食材排名浮窗 (Ingredient Output Ranking Modal) ─── */
 .clickable-ing-header {
   cursor: pointer !important;
   transition: transform 0.15s ease, filter 0.15s ease !important;
@@ -23167,7 +23165,7 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   📦 MOBILE H5 DEDICATED POKÉMON BOX MODERN APP STYLING (SUBTABS & FAB)
+    MOBILE H5 DEDICATED POKÉMON BOX MODERN APP STYLING (SUBTABS & FAB)
    ═══════════════════════════════════════════════════════════════════════════════ */
 
 .mobile-h5-app #panel-box {
@@ -23306,7 +23304,7 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   color: var(--text-primary) !important;
   font-size: 12.5px !important;
   font-weight: 600 !important;
-  padding: 0 16px 0 14px !important;
+  padding: 0 18px 0 14px !important;
   cursor: pointer !important;
   width: 100% !important;
   box-sizing: border-box !important;
@@ -23976,7 +23974,7 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   color: var(--text-primary) !important;
 }
 
-/* ☀️ 11. 亮色主題自適應 (Dawn & Emerald) */
+/*  11. 亮色主題自適應 (Dawn & Emerald) */
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-subnav-bar,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-subnav-bar {
   background: #ffffff !important;
@@ -24055,7 +24053,7 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
 }
 
 /* ────────────────────────────────────────────────────────────
-   📱 12. 原生 App 寶可夢手動新增/編輯彈窗 (Mobile Box Modal Sheet)
+    12. 原生 App 寶可夢手動新增/編輯彈窗 (Mobile Box Modal Sheet)
    ──────────────────────────────────────────────────────────── */
 .mobile-h5-app .mobile-box-sheet {
   position: fixed !important;
@@ -24442,6 +24440,10 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   width: 100% !important;
 }
 
+.mobile-h5-app .mobile-box-sheet .box-form-select {
+  padding: 0 36px 0 10px !important;
+}
+
 /* 食材組合橫向條：嚴格單行展示，去除多餘外框與留白 */
 .mobile-h5-app .mobile-box-sheet .box-ing-strip {
   display: flex !important;
@@ -24566,7 +24568,7 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   padding: 1px 2px !important;
 }
 
-/* 🎯 副技能選擇盤：4 個一行，無多餘外框 */
+/*  副技能選擇盤：4 個一行，無多餘外框 */
 .mobile-h5-app .mobile-box-sheet .box-subskill-palette {
   background: transparent !important;
   border: none !important;
@@ -24648,7 +24650,7 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4) !important;
 }
 
-/* ☀️ 亮色主題自適應 (Dawn & Emerald) */
+/*  亮色主題自適應 (Dawn & Emerald) */
 [data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet,
 [data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet {
   background: #ffffff !important;
@@ -28499,8 +28501,7 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
   background-color: var(--bg-input, var(--bg-card-inner, #1e293b));
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
   border-radius: 7px;
-  padding: 6px 10px;
-  padding-right: 36px !important;
+  padding: 6px 36px 6px 10px !important;
   color: var(--text-primary, #f8fafc);
   font-size: 12px;
   outline: none;

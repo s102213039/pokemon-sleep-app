@@ -146,8 +146,10 @@
   function syncPotExpansionUI() {
     if (!potExpansionSlider || !potExpansionBadge) return;
     potExpansionSlider.value = potExpansion;
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     if (potExpansion === 0) {
-      potExpansionBadge.textContent = '+0 (無追加)';
+      potExpansionBadge.textContent = isEN ? '+0 (None)' : (isCN ? '+0 (无追加)' : '+0 (無追加)');
     } else {
       potExpansionBadge.textContent = `+${potExpansion} (+${(potExpansion * 100).toLocaleString()})`;
     }
@@ -292,7 +294,6 @@
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const categories = ['ALL', '咖哩', '沙拉', '甜點'];
-    const catEmoji   = { ALL:'', '咖哩':'🍛', '沙拉':'🥗', '甜點':'🍰' };
     const catLabels  = {
       ALL: isEN ? 'All' : '全部',
       '咖哩': isEN ? 'Curries' : (isCN ? '咖喱' : '咖哩'),
@@ -307,9 +308,8 @@
     categoryContainer.innerHTML = categories.map(cat => {
       const count = cat === 'ALL' ? allRecipes.length : (catCounts[cat] || 0);
       const active = cat === selectedCategory ? 'active' : '';
-      const prefix = catEmoji[cat] ? `${catEmoji[cat]} ` : '';
       return `<button class="tag-btn ${active}" data-cat="${cat}">
-        ${prefix}${catLabels[cat] || cat} (${count})
+        ${catLabels[cat] || cat} (${count})
       </button>`;
     }).join('');
 
@@ -779,13 +779,13 @@
 
   /* ─── Badge 輔助 ────────────────────────────────────── */
   function getBonusEmoji(pct) {
-    if (pct >= 78) return '🏆';
-    if (pct >= 61) return '🔥';
-    if (pct >= 48) return '⭐';
-    if (pct >= 35) return '✨';
-    if (pct >= 25) return '💧';
-    if (pct >= 21) return '💫';
-    return '•';
+    if (pct >= 78) return 'S';
+    if (pct >= 61) return 'A';
+    if (pct >= 48) return 'B';
+    if (pct >= 35) return 'C';
+    if (pct >= 25) return 'D';
+    if (pct >= 21) return 'E';
+    return '-';
   }
 
   function getBonusBadgeClass(pct) {
@@ -1024,13 +1024,15 @@
   /* ─── 渲染主入口 ────────────────────────────────────── */
   function render() {
     if (!contentArea || !countBadge) return;
+    syncPotExpansionUI();
     initCategoryFilters();
     updateRecipeActiveFilterBadge();
     const filtered = getFilteredRecipes();
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
 
-    const catLabels = { '咖哩': isEN ? 'Curry' : '咖哩', '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : '甜點' };
+    const catLabels = { '咖哩': isEN ? 'Curry' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : (isCN ? '甜点' : '甜點') };
     const catCounts = {};
     filtered.forEach(r => { catCounts[r.category] = (catCounts[r.category] || 0) + 1; });
     const breakdownHTML = Object.entries(catCounts).map(([cat, c]) => `${catLabels[cat] || cat} <strong>${c}</strong>`).join(' · ');
@@ -1073,8 +1075,9 @@
 
   function renderTable(recipes) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-    const catLabels = { '咖哩': isEN ? 'Curry' : '咖哩', '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : '甜點' };
+    const catLabels = { '咖哩': isEN ? 'Curry' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : (isCN ? '甜点' : '甜點') };
     const islandMult = (1 + islandBonus / 100).toFixed(2);
     const eventSub = eventBonus > 1.0 ? ` · ×${eventBonus.toFixed(2)}` : '';
     const potSub = potExpansion > 0 ? ` · +${potExpansion}料` : '';
@@ -1132,7 +1135,7 @@
                   </div>
                 </td>
                 <td style="vertical-align:middle;"><span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span></td>
-                <td style="vertical-align:middle;"><span class="pot-badge">🍲 ${r.pot_size}</span></td>
+                <td style="vertical-align:middle;"><span class="pot-badge">${r.pot_size}</span></td>
                 <td style="vertical-align:middle;">${renderIngRow(r.ingredients)}</td>
                 ${energyCellHTML}
               </tr>
@@ -1218,7 +1221,7 @@
             <div class="recipe-desktop-stats">
               <div class="recipe-stat-row">
                 <span class="stat-label">${t('recipe.th_pot', '鍋子容量')}</span>
-                <span class="stat-value pot-value">🍲 ${r.pot_size}</span>
+                <span class="stat-value pot-value">${r.pot_size}</span>
               </div>
               <div class="recipe-stat-row ${showTasty ? 'has-tasty-energy' : ''}" style="${showTasty ? 'align-items:flex-start;' : 'align-items:center;'}">
                 <div style="display:flex;flex-direction:column;align-items:flex-start;">

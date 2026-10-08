@@ -120,7 +120,7 @@
     }
   }
 
-  /* ─── 📅 官方活動與禮包甘特圖時程 (Gantt Schedule Timeline) ─── */
+  /* ─── 官方活動與禮包甘特圖時程 (Gantt Schedule Timeline) ─── */
   function extractEventSchedule(item) {
     let texts = [];
     if (item.sections) {
@@ -389,7 +389,7 @@
       const isToday = (calCurrentYear === _today.getFullYear() && calCurrentMonth === _today.getMonth() && d === _today.getDate());
       const isSelected = (d === calSelectedDay);
 
-      // 🌈 每個活動各自獨立的專屬色塊貫穿背景 (Head-Body-Foot 嚴格分段連續效果)
+      // 每個活動各自獨立的專屬色塊貫穿背景 (Head-Body-Foot 嚴格分段連續效果)
       let bgBandsHTML = '';
       if (activeEvents.length > 0) {
         const trackMap = {};
@@ -1014,7 +1014,7 @@
     let processed = String(text);
 
     // 移除所有 Emoji 字符
-    processed = processed.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}✨🔥⭐🛍️⏰⚡🏝️💡⚙️🍬🦄📢📌📅🔍🏖️🤖]/gu, '').trim();
+    processed = processed.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}]/gu, '').trim();
 
     if (isEN) {
       // 0. 優先調用中央 I18N 動態翻譯引擎 (單一來源規範)

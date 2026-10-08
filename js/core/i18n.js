@@ -814,7 +814,7 @@
       'pokedex.filter_sidebar_title': 'Filter',
       'pokedex.reset_all': 'Reset',
       'pokedex.only_final': 'Final Evo',
-      'pokedex.only_initial_ing': '🥗 Ing.1 only',
+      'pokedex.only_initial_ing': '\u{1F957} Ing.1 only',
       'pokedex.show_no': 'No.',
       'pokedex.specialty_title': 'Specialty',
       'pokedex.berry_title': 'Berries',
@@ -1625,7 +1625,7 @@
     }
   }
 
-  // ─── 🛡️ 全域正規化與多層級容錯查找引擎 (Universal Normalization Engine) ───
+  // ─── 全域正規化與多層級容錯查找引擎 (Universal Normalization Engine) ───
   function normalizeSearchKey(str) {
     if (!str || typeof str !== 'string') return '';
     return str
@@ -2082,9 +2082,9 @@
       .replace(/異常問題修復通知/g, 'Bug Fix Notice')
       .replace(/異常問題通知/g, 'Issue Notice')
       .replace(/錯誤代碼\s*[「"]?(\d+)[」"]?/g, 'Error Code "$1"')
-      .replace(/✨\s*新增功能/g, 'New Features')
-      .replace(/⚖️\s*平衡調整與技能變更/g, 'Balance Adjustments & Skill Changes')
-      .replace(/🐛\s*異常問題修復/g, 'Bug Fixes')
+      .replace(/[\u{2728}\s]*新增功能/gu, 'New Features')
+      .replace(/[\u{2696}\u{FE0F}\s]*平衡調整與技能變更/gu, 'Balance Adjustments & Skill Changes')
+      .replace(/[\u{1F41B}\s]*異常問題修復/gu, 'Bug Fixes')
       .replace(/波導彈/g, 'Aura Sphere')
       .replace(/夢之碎片獲取/g, 'Dream Shard Magnet ');
 
@@ -2135,8 +2135,8 @@
 
     // 12. 天梯點評與剩餘常用片語
     res = res
-      .replace(/👑\s*TOP 1 AAA\s*(.+?)\s*產量之王/g, '👑 TOP 1 AAA $1 Production King')
-      .replace(/👑\s*TOP 1\s*(.+?)\s*產量之王/g, '👑 TOP 1 $1 Production King')
+      .replace(/([\u{1F451}]?\s*)TOP 1 AAA\s*(.+?)\s*產量之王/gu, '$1TOP 1 AAA $2 Production King')
+      .replace(/([\u{1F451}]?\s*)TOP 1\s*(.+?)\s*產量之王/gu, '$1TOP 1 $2 Production King')
       .replace(/AAA\s*(.+?)\s*專精產出/g, 'AAA $1 Specialized Output')
       .replace(/ABB\s*(.+?)\s*主力產出/g, 'ABB $1 Main Output')
       .replace(/AAA\s*(.+?)\s*兼顧/g, 'AAA $1 Flex Output')
@@ -2247,7 +2247,7 @@
   }
 
   /**
-   * 🔍 全站搜尋框醒目提示與條件過濾標籤同步器
+   * 全站搜尋框醒目提示與條件過濾標籤同步器
    * 當搜尋框內有輸入文字時，自動為 input 與外層 container 加上 .has-value，
    * 並動態注入 / 更新「條件篩選中 (Filtered)」醒目標籤與清空按鈕
    */
