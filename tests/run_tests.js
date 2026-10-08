@@ -11119,6 +11119,54 @@ SP 4,316
     assert(stylesCss.includes('[data-theme="onyx"]') && stylesCss.includes('.pot-expansion-help-btn'), 'styles.css must support onyx theme for pot-expansion-help-btn');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Scheme A Event Bonus Slider Range (1.0-1.5), Simplified Chinese (zh-CN) Full Localization & UI Rules Audit', () => {
+    const desktopHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const mobileHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+    const i18nPath = path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js');
+    const i18nJs = fs.readFileSync(i18nPath, 'utf8');
+    const recipesJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'recipes.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+    // 1. Scheme A Event Bonus Slider Range (1.0 - 1.5)
+    assert(desktopHtml.includes('id="event-bonus-slider" class="rf-slider event-slider" min="1.0" max="1.5" step="0.25"'), 'index.html must set event-bonus-slider min=1.0 max=1.5 step=0.25');
+    assert(mobileHtml.includes('id="event-bonus-slider" class="rf-slider event-slider" min="1.0" max="1.5" step="0.25"'), 'app/index.html must set event-bonus-slider min=1.0 max=1.5 step=0.25');
+    assert(desktopHtml.includes('>1.50x</span>'), 'index.html must display 1.50x as upper limit for event bonus');
+    assert(mobileHtml.includes('>1.50x</span>'), 'app/index.html must display 1.50x as upper limit for event bonus');
+    assert(recipesJs.includes('updateSliderFill(eventSlider, 1.0, 1.5)'), 'recipes.js updateSliderFill must use 1.0 to 1.5 range');
+    assert(recipesJs.includes('Math.min(1.5, Math.max(1.0'), 'recipes.js loadPrefs must clamp eventBonus to 1.5');
+
+    // 2. Simplified Chinese (zh-CN) Language Switcher UI
+    assert(desktopHtml.includes('id="lang-btn-zh-cn"') && desktopHtml.includes('data-lang-val="zh-CN"'), 'index.html must contain #lang-btn-zh-cn with data-lang-val="zh-CN"');
+    assert(mobileHtml.includes('id="lang-btn-zh-cn"') && mobileHtml.includes('data-lang-val="zh-CN"'), 'app/index.html must contain #lang-btn-zh-cn with data-lang-val="zh-CN"');
+
+    // 3. i18n Engine & zh-CN Localization Completeness
+    assert(i18nJs.includes("'zh-CN': {"), 'i18n.js must define complete zh-CN dictionary');
+    assert(i18nJs.includes("'settings.lang_zh_cn': '简体中文'"), 'i18n.js zh-CN must define settings.lang_zh_cn');
+    assert(i18nJs.includes("toSimplified: toSimplifiedChinese"), 'i18n.js must export toSimplified converter');
+    assert(i18nJs.includes("SUPPORTED_LANGS = ['zh-TW', 'zh-CN', 'en-US']"), 'i18n.js must support zh-TW, zh-CN, and en-US');
+
+    // 4. Runtime i18n Testing
+    const i18n = require(i18nPath);
+    const origLang = i18n.getLanguage();
+    i18n.setLanguage('zh-CN');
+    assert(i18n.getLanguage() === 'zh-CN', 'i18n.getLanguage() must return zh-CN after setLanguage');
+    assert(i18n.getPokemonName('妙蛙種子') === '妙蛙种子', 'getPokemonName under zh-CN must return 妙蛙种子');
+    assert(i18n.getPokemonName('噴火龍') === '喷火龙', 'getPokemonName under zh-CN must return 喷火龙');
+    assert(i18n.getSpecialtyName('樹果') === '树果', 'getSpecialtyName under zh-CN must return 树果');
+    assert(i18n.getMainSkillName('活力全體療癒S') === '活力全体疗愈S', 'getMainSkillName under zh-CN must return 活力全体疗愈S');
+    assert(i18n.getIslandName('萌綠之島') === '萌绿之岛', 'getIslandName under zh-CN must return 萌绿之岛');
+    assert(i18n.t('recipe.slider_event') === '活动能量加成', 't("recipe.slider_event") must return 活动能量加成 in zh-CN');
+    assert(typeof i18n.toSimplified === 'function', 'i18n.toSimplified must be a function');
+    assert(i18n.toSimplified('截圖辨識') === '截图辨识', 'toSimplified("截圖辨識") must return 截图辨识');
+    i18n.setLanguage(origLang || 'zh-TW');
+
+    // 5. CSS Layout and Dropdown Selection Arrow Rules (Rule VI)
+    assert(stylesCss.includes('.lang-switcher-row') && stylesCss.includes('repeat(3, 1fr)'), 'styles.css .lang-switcher-row must use repeat(3, 1fr)');
+    assert(stylesCss.includes('.app-segmented-lang') && stylesCss.includes('repeat(3, 1fr)'), 'styles.css .app-segmented-lang must use repeat(3, 1fr)');
+    assert(stylesCss.includes('.pokedex-ing-select') && stylesCss.includes('padding-right: 26px !important'), '.pokedex-ing-select must have 26px padding-right per Rule VI');
+    assert(stylesCss.includes('.pokedex-subskill-select') && stylesCss.includes('padding: 3px 24px 3px 6px !important'), '.pokedex-subskill-select must have 24px padding-right per Rule VI');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

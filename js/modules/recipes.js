@@ -20,7 +20,7 @@
   let minPot              = 0;
   let recipeLevel         = 1;       // 1-70
   let islandBonus         = 0;       // 0-85 (%)
-  let eventBonus          = 1.0;     // 1.00 - 2.50 (step 0.25)
+  let eventBonus          = 1.0;     // 1.00 - 1.50 (step 0.25)
   let potExpansion        = 0;       // 0 - 200 (多餘食材追加個數)
   let showTasty           = false;   // 漂亮成功 (2x / 3x) 開關
 
@@ -57,7 +57,7 @@
       minPot           = Number(saved.minPot)   || 0;
       recipeLevel      = Number(saved.recipeLevel) || 1;
       islandBonus      = Number(saved.islandBonus) || 0;
-      eventBonus       = saved.eventBonus !== undefined ? Number(saved.eventBonus) : 1.0;
+      eventBonus       = saved.eventBonus !== undefined ? Math.min(1.5, Math.max(1.0, Number(saved.eventBonus))) : 1.0;
       potExpansion     = Number(saved.potExpansion) || 0;
       showTasty        = Boolean(saved.showTasty);
       sortOption       = saved.sortOption || 'energy-desc';
@@ -140,7 +140,7 @@
     if (!eventSlider || !eventBadge) return;
     eventSlider.value = eventBonus;
     eventBadge.textContent = `×${Number(eventBonus).toFixed(2)}`;
-    updateSliderFill(eventSlider, 1.0, 2.5);
+    updateSliderFill(eventSlider, 1.0, 1.5);
   }
 
   function syncPotExpansionUI() {
@@ -275,17 +275,29 @@
       }
     });
 
+  function getRecipeName(r) {
+    if (!r) return '';
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
+    if (isEN) return r.name_en || r.name_cn;
+    if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') {
+      return window.I18N.toSimplified(r.name_cn);
+    }
+    return r.name_cn;
+  }
+
   /* ─── 料理種類 Filter ────────────────────────────────── */
   function initCategoryFilters() {
     if (!categoryContainer) return;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const categories = ['ALL', '咖哩', '沙拉', '甜點'];
     const catEmoji   = { ALL:'', '咖哩':'🍛', '沙拉':'🥗', '甜點':'🍰' };
     const catLabels  = {
       ALL: isEN ? 'All' : '全部',
-      '咖哩': isEN ? 'Curries' : '咖哩',
+      '咖哩': isEN ? 'Curries' : (isCN ? '咖喱' : '咖哩'),
       '沙拉': isEN ? 'Salads' : '沙拉',
-      '甜點': isEN ? 'Desserts' : '甜點'
+      '甜點': isEN ? 'Desserts' : (isCN ? '甜点' : '甜點')
     };
     const catCounts  = {};
     categories.slice(1).forEach(cat => {
@@ -1085,7 +1097,7 @@
           <tbody>
             ${recipes.map(r => {
               const finalE        = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
-              const primaryName   = isEN ? (r.name_en || r.name_cn) : r.name_cn;
+              const primaryName   = getRecipeName(r);
               const secondaryName = isEN ? (r.name_cn !== primaryName ? r.name_cn : '') : (r.name_en || '');
               const energyCellHTML = `
                 <td class="recipe-energy-cell" style="vertical-align:middle;text-align:right;padding-right:32px;">
@@ -1135,7 +1147,8 @@
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
     const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-    const catLabels = { '咖哩': isEN ? 'Curry' : '咖哩', '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : '甜點' };
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
+    const catLabels = { '咖哩': isEN ? 'Curry' : (isCN ? '咖喱' : '咖哩'), '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : (isCN ? '甜点' : '甜點') };
     const islandMult = (1 + islandBonus / 100).toFixed(2);
     const eventSub = eventBonus > 1.0 ? ` · ×${eventBonus.toFixed(2)}` : '';
 
@@ -1144,7 +1157,7 @@
         <div class="h5-recipe-cards-list">
           ${recipes.map(r => {
             const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
-            const primaryName = isEN ? (r.name_en || r.name_cn) : r.name_cn;
+            const primaryName = getRecipeName(r);
             return `
             <div class="h5-recipe-card">
               <div class="h5-recipe-left-col">
@@ -1189,7 +1202,7 @@
       <div class="pokemon-grid">
         ${recipes.map(r => {
           const finalE     = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
-          const primaryName = isEN ? (r.name_en || r.name_cn) : r.name_cn;
+          const primaryName = getRecipeName(r);
           return `
           <div class="pokemon-card recipe-desktop-card">
             <div class="card-header" style="align-items:center;margin-bottom:6px;">

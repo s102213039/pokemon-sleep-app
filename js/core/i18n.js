@@ -51,6 +51,7 @@
       'settings.lang_section': '介面語言',
       'settings.lang_desc': '切換全站介面文字與寶可夢資料顯示語系。',
       'settings.lang_zh': '繁體中文',
+      'settings.lang_zh_cn': '簡體中文',
       'settings.lang_en': 'English',
       'settings.box_backup_section': '倉庫備份與還原',
       'settings.box_backup_desc': '將個人倉庫寶可夢匯出為 JSON 備份檔，或從本機檔案匯入還原。',
@@ -157,7 +158,7 @@
       'recipe.slider_island': '島嶼能量加成',
       'recipe.slider_island_desc': '0%→85%，每格 +5%（×1.00 ～ ×1.85）',
       'recipe.slider_event': '活動能量加成',
-      'recipe.slider_event_desc': '1.00x→2.50x，每格 +0.25x（活動限定倍率）',
+      'recipe.slider_event_desc': '1.00x→1.50x，每格 +0.25x（活動限定倍率）',
       'recipe.slider_pot_expansion': '擴鍋預測',
       'recipe.slider_pot_expansion_desc': '0~200個多餘食材，預設每個以100基礎能量計',
       'recipe.slider_pot_expansion_help_title': '擴鍋預測說明',
@@ -382,6 +383,381 @@
       'news.source_full_hint': '🤖 由 AI 自動提煉核心亮點 · 來源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 繁體中文官方網站</a>'
     },
 
+    'zh-CN': {
+      // App Branding & Navigation
+      'brand.title': 'Pokémon Sleep 资料库',
+      'brand.app_title': '宝可梦资料库',
+      'brand.subtitle': '几率、食材与属性完整线上检索',
+      'nav.pokemon': '宝可梦图鉴',
+      'nav.recipes': '料理食谱',
+      'nav.wiki': '数据百科',
+      'nav.box': '宝可梦仓库',
+      'nav.news': '最新公告',
+      'nav.sync': '同步资料',
+      'nav.settings': '设定',
+      'dock.pokemon': '图鉴',
+      'dock.recipes': '料理',
+      'dock.wiki': '百科',
+      'dock.box': '盒子',
+      'dock.news': '最新',
+      'nav.switch_desktop': '切换至桌面完整版',
+      'nav.desktop_label': '桌面版',
+      'nav.switch_to_mobile': '行动版',
+      'nav.switch_to_desktop': '桌面版',
+      'common.back_to_top': '回到顶部',
+
+      // Settings Modal
+      'settings.title': '系统设定',
+      'settings.theme_section': '外观主题',
+      'settings.theme_desc': '提供 2 组深色与 2 组明亮主题，适配各种光线环境。',
+      'settings.theme_midnight': '深邃夜空',
+      'settings.theme_midnight_sub': '科技深蓝黑 · 霓虹青紫点缀',
+      'settings.theme_onyx': '曜石暗影',
+      'settings.theme_onyx_sub': 'OLED 纯粹黑 · 钛金冷灰点缀',
+      'settings.theme_dawn': '晨曦暖阳',
+      'settings.theme_dawn_sub': '温润奶油白 · 蔚蓝暖阳点缀',
+      'settings.theme_emerald': '雅致灰石',
+      'settings.theme_emerald_sub': '极简浅灰底 · 冷钛深灰点缀',
+      'settings.theme_active': '使用中',
+      'settings.theme_invert': '反色模式',
+      'settings.theme_invert_desc': '反转当前主题的深浅底色，拓展出 4 款高反差风格。',
+      'settings.lang_section': '界面语言',
+      'settings.lang_desc': '切换全站界面文字与宝可梦资料显示语系。',
+      'settings.lang_zh': '繁体中文',
+      'settings.lang_zh_cn': '简体中文',
+      'settings.lang_en': 'English',
+      'settings.box_backup_section': '仓库备份与还原',
+      'settings.box_backup_desc': '将个人仓库宝可梦导出为 JSON 备份文件，或从本机文件导入还原。',
+      'settings.box_export_btn': '导出备份 JSON',
+      'settings.box_import_btn': '导入还原 JSON',
+      'settings.save': '保存设置',
+      'settings.close': '关闭',
+
+      // Search & Filters (Pokedex)
+      'pokedex.search_placeholder': '搜索宝可梦名称 (中/英/日) 或 No. 编号...',
+      'pokedex.filter_bookmark': '筛选',
+      'pokedex.filter_sidebar_title': '图鉴筛选器',
+      'pokedex.reset_all': '全部重设',
+      'pokedex.only_final': '最终进化',
+      'pokedex.only_initial_ing': '初始食材',
+      'pokedex.show_no': '编号',
+      'pokedex.specialty_title': '专长类型',
+      'pokedex.berry_title': '树果类型',
+      'pokedex.ingredient_title': '出产食材',
+      'pokedex.skill_title': '主技能',
+      'pokedex.clear': '清空',
+      'pokedex.view_cards': '卡片',
+      'pokedex.view_table': '表格',
+      'pokedex.sort_id_asc': '全国图鉴编号 (正序)',
+      'pokedex.sort_id_desc': '全国图鉴编号 (倒序)',
+      'pokedex.sort_carry_desc': '携带上限 (高到低)',
+      'pokedex.sort_ingredient_desc': '食材几率 (高到低)',
+      'pokedex.sort_skill_desc': '技能发动率 (高到低)',
+      'pokedex.sort_interval_asc': '⏱ 帮忙间隔 (快到慢)',
+      'pokedex.loading': '资料载入中，请稍候...',
+      'pokedex.no_results': '没有符合筛选条件的宝可梦',
+      'pokedex.no_results_desc': '找不到符合条件的宝可梦，请调整筛选条件或重置搜索。',
+      'pokedex.count_label': '只宝可梦',
+      'pokedex.unreleased': '尚未开放',
+      'pokedex.level_cap': '目前上限',
+      'pokedex.ref_data': '参考资料来源',
+      'pokedex.target_sheet': '目标试算表',
+
+      // Table Headers & Card Labels
+      'th.icon': '图示',
+      'th.name': '宝可梦',
+      'th.type': '属性',
+      'th.specialty': '得意',
+      'th.interval': '帮忙间隔',
+      'th.carry': '持有',
+      'th.friendship': '友情点数',
+      'th.ingredient_rate': '食材率',
+      'th.skill_rate': '技能率',
+      'th.berry': '树果',
+      'th.main_skill': '主技能',
+      'th.ing1': '食材1',
+      'th.ing2': '食材2',
+      'th.ing3': '食材3',
+      'th.ing1_mobile': '食1',
+      'th.ing2_mobile': '食2',
+      'th.ing3_mobile': '食3',
+      'th.ingredients': '食材',
+      'th.ribbon': '奖章',
+      'th.level': '等级',
+      'th.actions': '操作',
+
+      'card.type': '属性',
+      'card.specialty': '得意',
+      'card.carry': '持有',
+      'card.ing_rate': '食材率',
+      'card.skill_rate': '技能率',
+      'card.interval': '帮忙',
+      'card.skill': '主技能',
+
+      // Specialties
+      'spec.berry': '树果',
+      'spec.ingredient': '食材',
+      'spec.skill': '技能',
+      'spec.all': '全能',
+
+      // Recipes Panel
+      'recipe.search_placeholder': '搜索食谱名称 (中/英) 或食材关键字...',
+      'recipe.view_cards': '卡片',
+      'recipe.view_table': '表格',
+      'recipe.sort_energy_desc': '食谱能量 ↓（高→低）',
+      'recipe.sort_energy_asc': '食谱能量 ↑（低→高）',
+      'recipe.sort_pot_asc': '锅子容量 ↑（小→大）',
+      'recipe.sort_pot_desc': '锅子容量 ↓（大→小）',
+      'recipe.sort_bonus_desc': '食材加成 ↓（高→低）',
+      'recipe.sort_name_asc': '名称排序',
+      'recipe.filter_bookmark': '筛选',
+      'recipe.filter_sidebar_title': '食谱筛选器',
+      'recipe.calc_settings': '能量试算设定',
+      'recipe.all_categories': '全部',
+      'recipe.category_label': '料理种类',
+      'recipe.bonus_label': '最低食谱加成',
+      'recipe.pot_label': '最低锅子容量',
+      'recipe.all': '全部',
+      'recipe.pot_35': '≥ 35（中阶料理）',
+      'recipe.pot_55': '≥ 55（中高阶料理）',
+      'recipe.pot_67': '≥ 67（高阶大料理）',
+      'recipe.pot_87': '≥ 87（特阶大料理）',
+      'recipe.pot_100': '≥ 100（顶级究极）',
+      'recipe.cat_curry': '咖喱/浓汤',
+      'recipe.cat_salad': '沙拉',
+      'recipe.cat_dessert': '点心/饮料',
+      'recipe.slider_level': '食谱等级',
+      'recipe.slider_level_desc': '等级加成非线性，Lv.70 最高可达 +258%',
+      'recipe.slider_island': '岛屿能量加成',
+      'recipe.slider_island_desc': '0%→85%，每格 +5%（×1.00 ～ ×1.85）',
+      'recipe.slider_event': '活动能量加成',
+      'recipe.slider_event_desc': '1.00x→1.50x，每格 +0.25x（活动限定倍率）',
+      'recipe.slider_pot_expansion': '扩锅预测',
+      'recipe.slider_pot_expansion_desc': '0~200个多余食材，默认每个以100基础能量计',
+      'recipe.slider_pot_expansion_help_title': '扩锅预测说明',
+      'recipe.slider_pot_expansion_help_body': '默认每个追加食材以 <span class=',
+      'recipe.tasty_toggle': '漂亮成功分数',
+      'recipe.filter_included': '包含食材筛选',
+      'recipe.filter_excluded': '排除食材筛选',
+      'recipe.match_any': '含任一',
+      'recipe.match_all': '全部符合',
+      'recipe.clear_all': '全部清除',
+      'recipe.clear_excluded': '清除排除',
+      'recipe.included_hint': '点击食材图示，只显示<strong>包含</strong>该食材的食谱',
+      'recipe.excluded_hint': '点击食材图示，<strong>隐藏</strong>包含该食材的食谱（与「包含食材」互斥）',
+      'recipe.excluded_warn': '点击食材后，含该食材的食谱将被隐藏',
+      'recipe.stats_tip': '食材加成为每道食谱的<strong>固定数值</strong>；等级、岛屿与活动加成乘算于最终能量',
+      'recipe.count_badge': '道食谱',
+      'recipe.th_icon': '图示',
+      'recipe.th_name': '料理名称',
+      'recipe.th_dish': '料理名称',
+      'recipe.th_type': '分类',
+      'recipe.th_category': '种类',
+      'recipe.th_pot': '锅子容量',
+      'recipe.th_ingredients': '食材需求',
+      'recipe.th_base_energy': '基础能量',
+      'recipe.th_bonus': '加成',
+      'recipe.th_final_energy': '预估能量',
+      'recipes.filter_title': '食谱筛选器',
+      'recipes.reset_all': '全部重设',
+      'recipes.search_placeholder': '搜索食谱名称 (中/英) 或食材关键字...',
+      'recipes.loading': '食谱资料载入中，请稍候...',
+
+      // Wiki Panel
+      'wiki.title': '数据百科与攻略知识库',
+      'wiki.subtab_skills': '主技能数值库',
+      'wiki.subtab_subskills': '副技能与性格指南',
+      'wiki.subtab_ratings': '培育与评级指南',
+      'wiki.subtab_ingredients': '食材产量天梯榜',
+      'wiki.subtab_values': '树果与食材能量',
+      'wiki.tab_skills': '主技能数值库',
+      'wiki.tab_subskills': '副技能与性格指南',
+      'wiki.tab_ratings': '培育与评级指南',
+      'wiki.tab_ladder': '食材产量天梯榜',
+      'wiki.tab_values': '树果与食材能量',
+      'wiki.subtab_islands': '研究营地与岛屿',
+      'wiki.tab_islands': '研究营地与岛屿',
+      'wiki.islands_title': '7大研究营地与EX专家模式全览',
+      'wiki.islands_select_label': '选择研究营地：',
+      'wiki.islands_unlock_goal': '解锁门槛',
+      'wiki.islands_snorlax_mult': '卡比兽难度倍率',
+      'wiki.islands_fav_berries': '喜好树果',
+      'wiki.islands_expert_btn': '切换 EX 专家模式',
+      'wiki.islands_normal_btn': '返回一般营地',
+      'wiki.islands_ranks_title': '卡比兽评级门槛与睡意之力级距',
+      'wiki.islands_spawns_title': '各睡眠类型宝可梦与睡姿星级门槛',
+      'wiki.islands_legendary_toggle': '神兽宝可梦',
+      'wiki.islands_legendary_empty': '目前选取条件下无栖息之神兽宝可梦',
+      'wiki.islands_guide_title': '睡意之力与睡姿解锁核心规则',
+      'wiki.skill_type_label': '技能类型：',
+      'wiki.skill_all': '全部技能 (22)',
+      'wiki.skill_energy': '能量系',
+      'wiki.skill_energy_heal': '活力系',
+      'wiki.skill_ingredient': '食材与料理',
+      'wiki.skill_special': '神兽与特殊专属',
+      'wiki.skill_shards': '梦之碎片',
+      'ladder.search_placeholder': '跨轨道搜索宝可梦...',
+      'ladder.filter_all': '全部',
+      'ladder.filter_aaa': '仅看 AAA',
+      'ladder.filter_top': '仅看 TOP 1-2',
+      'ladder.ing_m_toggle': '食材几率M (+36%)',
+      'ladder.speed_m_toggle': '帮速M (+16.3%)',
+
+      // Box & Appraisal
+      'box.filter_sidebar_title': '仓库筛选器',
+      'box.filter_bookmark': '筛选',
+      'box.sort_title': '排序方式',
+      'box.edit_stats': '修改数值',
+      'box.save_changes': '保存修改',
+      'box.cancel_edit': '取消修改',
+      'box.edit_success': '已成功保存修改！',
+      'box.title': '我的宝可梦仓库与截图智能辨识',
+      'box.desc': '支援上传游戏截图自动辨识等级、食材组合、副技能与性格，亦可随时手动录入与编辑。',
+      'box.banner_title': '我的宝可梦仓库与截图智能辨识',
+      'box.banner_desc': '支援上传游戏截图自动辨识等级、食材组合、副技能与性格，亦可随时手动录入与编辑。',
+      'box.tab_list': '宝可梦仓库',
+      'box.tab_lab': '深度研究室',
+      'box.fab_scan': '截图辨识',
+      'box.fab_add': '手动新增',
+      'box.appraisal_lab_btn': '深度研究室',
+      'box.appraisal_lab': '深度研究室',
+      'lab.tab_team': '帮手组队',
+      'lab.tab_compare': '宝可梦对比',
+      'lab.tab_single': '单体评测',
+      'lab.team_title': '帮手队伍效益模拟',
+      'lab.compare_title': '宝可梦对比分析',
+      'box.manual_add': '手动新增宝可梦',
+      'box.add_pokemon': '手动新增宝可梦',
+      'box.add_pokemon_short': '手动新增',
+      'box.add_pokemon_sub': '自订数值录入',
+      'box.export': '导出备份',
+      'box.export_backup': '导出备份',
+      'box.import': '导入还原',
+      'box.import_backup': '导入还原',
+      'box.dropzone_title': '点击或多选/批次拖曳「宝可梦资料截图」至此，或直接按 Ctrl+V / Cmd+V 贴上',
+      'box.dropzone_sub': '自动批次辨识：宝可梦名称 · 等级 · Lv.1/30/60 食材组合 · 5 格副技能 · 性格加成 · 智能防重保护',
+      'box.dropzone_btn': '截图智能辨识',
+      'box.dropzone_sub_short': '支援单张 / 批次多选',
+      'box.search_placeholder': '搜索仓库宝可梦名称、暱称、性格、副技能...',
+      'box.sort_pr_desc': 'PR 评分由高到低',
+      'box.sort_created_desc': '最近加入',
+      'box.sort_recent': '最近加入',
+      'box.sort_level_desc': '等级由高到低',
+      'box.sort_level_asc': '等级由低到高',
+      'box.sort_pr_asc': 'PR 评分由低到高',
+      'box.sort_id_asc': '编号由低到高',
+      'box.sort_dex_asc': '编号由低到高',
+      'box.sort_id_desc': '编号由高到低',
+      'box.sort_dex_desc': '编号由高到低',
+      'box.view_cards': '卡片',
+      'box.view_table': '表格',
+      'box.empty_title': '目前尚未登录任何宝可梦',
+      'box.empty_desc': '请点击右下角按钮开始截图辨识或手动新增！',
+      'box.empty_hint': '请点击右下角的「截图辨识」或「手动新增」按钮开始建立你的帮手队伍！',
+      'box.modal_title': '截图辨识确认入库',
+      'box.modal_poke_name': '宝可梦名称',
+      'box.modal_poke_level': '等级',
+      'box.modal_poke_nickname': '自订暱称',
+      'box.modal_nickname_placeholder': '例如：首只树果S神坦...',
+      'box.modal_search_placeholder': '中文 / 英文 / 编号',
+      'box.modal_clear_all_subskills': '清空全部',
+      'box.modal_clear_active_subskill': '清空全部',
+      'box.modal_ing_lv1': 'Lv.1',
+      'box.modal_ing_lv30': 'Lv.30',
+      'box.modal_ing_lv60': 'Lv.60',
+      'box.modal_gold_skills': '金色顶级技能',
+      'box.modal_blue_skills': '蓝色高阶技能',
+      'box.modal_white_skills': '白色基础技能',
+      'box.modal_poke_ing': '食材组合',
+      'box.modal_poke_nature': '性格',
+      'box.modal_poke_subskills': '副技能组合',
+      'box.modal_poke_ribbon': '睡饱饱奖章',
+      'box.modal_main_skill': '主技能信息',
+      'box.modal_skill_level': '技能等级',
+      'box.ribbon_none': '未佩戴 (0h)',
+      'box.ribbon_lv1': '200 小时 (+1 持有上限)',
+      'box.ribbon_lv2': '500 小时 (+3 持有上限 · 帮速加成)',
+      'box.ribbon_lv3': '1000 小时 (+6 持有上限)',
+      'box.ribbon_lv4': '2000 小时 (+8 持有上限 · 帮速最大加成)',
+      'appraisal.ribbon_label': '睡饱饱奖章：',
+      'wiki.ribbon_title': '睡饱饱奖章与帮忙速度加成指南',
+      'box.modal_cancel': '取消',
+      'box.modal_save': '确定',
+      'pokedex.appraisal_modal_title': '宝可梦能力评测与客制化试算',
+      'pokedex.base_stats': '基础数值',
+      'pokedex.custom_controls': '客制化模拟设定',
+      'pokedex.formula_title': '产能算法精算拆解',
+      'pokedex.final_ing_rate': '最终食材发动率',
+      'pokedex.daily_helps': '预估每日帮忙次数',
+      'pokedex.daily_ing_yield': '预估单日食材产量',
+      'pokedex.preset_god': '毕业神配置',
+      'pokedex.preset_reset': '重置',
+      'pokedex.click_appraise': '点击查看详细信息与强度评测',
+      'pokedex.level_slider': '等级设定',
+      'pokedex.subskills_title': '副技能自订 (5个槽位)',
+      'pokedex.ingredients_title': '食材组合 (Lv.1 / 30 / 60)',
+      'pokedex.main_skill_level': '主技能等级',
+      'pokedex.extra_skill_ing': '主技能期望附加食材',
+      'pokedex.evo_req': '进化条件',
+      'pokedex.evo_guard_below': '进化门槛 Lv.',
+      'pokedex.evo_guard_met': '已达门槛 Lv.',
+      'pokedex.evo_guard_tip_below': '此形态最低进化等级为 Lv.{0}，点击可快速调整至门槛等级',
+      'pokedex.evo_guard_tip_met': '已达此形态最低进化门槛 (Lv.{0}+)',
+      'box.guide_title': '标准截图示范例与必备信息',
+      'box.guide_collapse': '收合说明',
+      'box.guide_expand': '展开说明',
+      'box.guide_click_zoom': '点击放大检视',
+      'box.guide_sample_label': '官方游戏详细信息全幅示范',
+      'box.guide_info_heading': '标准截图必备 5 大核心信息 (确保 100% 辨识率)：',
+      'box.guide_item1_title': '顶部信息 (名称与等级)',
+      'box.guide_item1_desc': '包含完整的宝可梦名称 (如 赫拉克罗斯) 与等级 (如 Lv. 52), 文字清晰无遮蔽。',
+      'box.guide_item2_title': '食材组合 (Lv.1 / 30 / 60)',
+      'box.guide_item2_desc': '清晰显示三个等级之解锁食材图示与获得数量 (如 甜甜蜜x1, 品鲜蘑菇x1, 甜甜蜜x4)。',
+      'box.guide_item3_title': '主技能信息',
+      'box.guide_item3_desc': '显示完整主技能名称 (如 健美 / 料理辅助S) 与目前技能等级 (如 Lv.7)。',
+      'box.guide_item4_title': '副技能栏位 (全部 5 格)',
+      'box.guide_item4_desc': '完整露出 Lv.10 至 Lv.80 共 5 个副技能方块按钮, 无选单或弹窗覆盖遮挡。',
+      'box.upload_screenshots': '上传截图辨识',
+      'box.toggle_guide': '截图指引',
+      'box.guide_item5_title': '性格与能力修正',
+      'box.guide_item5_desc': '底部性格名称 (如 慎重) 及对应的主技能发动率 / 食材发现率加减成箭头 (▲▲ / ▼▼)。',
+      'box.guide_tip_badge': '提示',
+      'box.guide_tip_text': '请截取游戏中「详细信息」完整画面, 避开半透明浮动选单覆盖, 即可实现高精准度秒速辨识！',
+      'appraisal.title': '宝可梦生涯诊断评测报告书',
+      'appraisal.radar_berry': '树果产能',
+      'appraisal.radar_ing': '食材产能',
+      'appraisal.radar_skill': '技能强度',
+      'appraisal.radar_speed': '帮忙速度',
+      'appraisal.radar_growth': '后期成长',
+      'appraisal.radar_roi': '资源效益',
+      'appraisal.select_from_box': '从我的仓库选取：',
+      'appraisal.custom_simulation': '自订模拟 (自由挑选物种)',
+      'appraisal.box_empty_tip': '提示：在【宝可梦仓库】登录宝可梦后，即可在此直接选取并诊断你的专属宝可梦！',
+      'appraisal.in_box_badge': '仓库实体',
+      'appraisal.simulated_badge': '模拟调校中',
+      'appraisal.reset_box_btn': '重置为仓库原始数值',
+      'appraisal.quick_pick': '快速切换仓库宝可梦：',
+
+      // Footer
+      'footer.copyright': 'Pokémon Sleep 宝可梦资料库 &copy; 2026 · <a href=',
+      'footer.sync_note': '同步功能透过 GitHub Actions 执行，点击「同步资料」后约需 60-120 秒生效。需先在「 设定」中填入 GitHub PAT Token。',
+
+      // News & Timeline
+      'news.title': '最新活动与官方更新公告',
+      'news.timeline_title': '⏰ 官方活动日程时间轴',
+      'news.search_placeholder': '搜索公告标题、关键字、宝可梦...',
+      'news.cat_all': '全部公告',
+      'news.cat_event': '活动预告',
+      'news.cat_maintenance': '系统维护',
+      'news.cat_update': '游戏更新',
+      'news.cat_bundle': '礼包信息',
+      'news.loading': '最新消息载入中，请稍候...',
+      'news.source_hint': '由 AI 自动提炼核心亮点 · 来源：',
+      'news.source_full_hint': '由 AI 自动提炼核心亮点 · 来源：<a href=',
+
+
+    },
+
     'en-US': {
       // App Branding & Navigation
       'brand.title': 'Pokémon Sleep Database',
@@ -423,6 +799,7 @@
       'settings.lang_section': 'Language',
       'settings.lang_desc': 'Switch interface display language.',
       'settings.lang_zh': 'Traditional Chinese',
+      'settings.lang_zh_cn': 'Simplified Chinese',
       'settings.lang_en': 'English',
       'settings.box_backup_section': 'Box Backup',
       'settings.box_backup_desc': 'Export your Pokémon box to JSON backup or import from file.',
@@ -530,7 +907,7 @@
       'recipe.slider_island': 'Island Bonus',
       'recipe.slider_island_desc': '0% to 85% (+5% step, ×1.00 ~ ×1.85)',
       'recipe.slider_event': 'Event Bonus',
-      'recipe.slider_event_desc': '1.00x to 2.50x (+0.25x step)',
+      'recipe.slider_event_desc': '1.00x to 1.50x (+0.25x step)',
       'recipe.slider_pot_expansion': 'Pot Expansion',
       'recipe.slider_pot_expansion_desc': '0-200 extra ingredients (100 base energy each)',
       'recipe.slider_pot_expansion_help_title': 'Pot Expansion Forecast',
@@ -1094,17 +1471,94 @@
   // 當前語言狀態
   let currentLang = DEFAULT_LANG;
 
+
+  // ─── 簡體中文高精度轉換引擎 (Traditional to Simplified Chinese Engine) ───
+  const T2S_TRAD = "並乾亂亞佇佈佔併來係俠倉個們倫偉側偵偽傑傘備傳債傷傾僅僑僕價儀儂億償優儲兇兌兒內兩冊冪凍凱別刪則剛劃劇劍勁動務勝勞勢勵勸勻匯匱區協卻厭參叢員問啞啟喚喪單喲嗇嗎嘔嘖嘗嘯噴噸嚀嚇嚥嚴囂圇國圍園圓圖團執堅報場塊塗墊墜墮壇壓壞壯壺壽夠夢夥夾奧奪奮妝娛婦媧媽嬌嬰孫學宮寢實寧審寫寬寵寶將專尋對導屆屜屢層屬岡島峽崗崙嶼帥師帳帶幣幫幹幾庫廈廚廠廢廣廳張強彈彌彎後徑從復徵徹悅悶惡惱愛態慣慮慶憐憑憤憫憲憶應懲懶懸懺懼戰戲戶捨捫捲掃掙掛採揀揚換揮損搖搶摟摯撈撐撥撫撲撿擁擇擊擋擔據擠擬擰擲擴擺擾攔攜攝攤攪攬敗敘敵數斂斬斷於昇時晉晝暈暢暫曆曉曠書會東桿條梟棗棟棲楊業極榮構槍樂樑樓標樞樣樹橋機橫檔檢檸檻櫃櫻欄權欽歐歡歲歷歸歿殭殺殼毀氈氣決沒沖況洩涼淚淨淵淺減渦測渾湊湧湯準溝溫滯滲滾滿漢漸漿潔潛潤澀澆澤濁濃濕濛濟濤濱濾瀏瀧灑灘災為烏無煉煙煥煩熒熱燈燒燙營燭爍爐爛爭爺爾牆牽狀獄獅獎獨獲獵獸獺現瑣瑪環瓏甕產畢畫異當疊瘋療癒癱發皺盜盞監盤盧盪眾睜瞞矯碩確碼磚礎礙礦祕禦禪禮禱稅種稱積穎穩穫窩窪窯競筆筍節範築篩簍簡簽籃籌籠籤糞糧糰糾紀約紅紋納紐純紗紙級紛細紹終絃組結絕絡給絨統絲絹綁經綜綠綢維綱網綴綿緊緋緒線緝緞緣編緩緬緯練緻縣縮縱總繃織繞繩繪繫繳繹繼繽續纍纏纖纜罰罵罷羅義習翹聖聞聯聰聲聳聶職聽聾肅脈脫脹腎腦腫腳腸膠膩膽膾臉臘臥臨臺與興舉舊艱艷荊莊莖華萊萬葉葷蓋蓮蔥蔦蔭蕩蕭薑薔薦薩藍藝藥蘆蘇蘋蘭處虛號虧蝕蝦螢蟲蟻蠑蠟蠻術衛衝補裝裡製複襖襪襬見規視親覺覽觀觸訂計訊討訓訕託記訝訣訪設許訴診註証詐評詛詞詠詢試詩詭話該詳誇誌認誕誘語誠誤誦說課調談請論諜諧諮諱諸諾謀謄謊謎講謝謠證識譜譯議護讀變讓讚豐豬貓貝負財貢貧貨販貪貫責貳貴買貸費貼賀賂資賊賓賚賜賞賠賢賣質賴賺購賽贅贈贊贏贖趕趙趨跡蹤躋躍軀軌軍軟軸較載輔輕輛輝輩輪輯輸轄轉轟辦辭辯農迴這連週進遊運過達違遙遞遠適遲遷選遺邁還邊邏郵鄉鄧鄰醜醫醬釁釋釘針釣鈉鈍鈕鈞鈣鈦鈴鉗鉛鉤銀銅銘銜銳銷鋁鋒鋪鋸鋼錄錐錘錢錦錨錯鍊鍋鍛鍬鍵鎖鎧鎮鎳鏈鏘鏡鏢鏽鐘鐮鐵鑑鑰鑲鑽長門閃閉開閏閑閒間閘閣閥閱閹闊關陣陰陳陸陽隊階際隨險隱隴隻雖雙雜雞離難雲電霧靂靈靜靦韌韓韻響頁頂頃項順須頌預頑頓頗領頭頰頻顆題額顎顏願顛類顧顫顯風颼飄飆飛飢飪飲飼飽飾餅養餌餒餓餘餡館餾饅饋饒馬駁駐駒駕駝駿騎騰驅驗驚驟髒體髮鬆鬥鬧鬱魘魚魯鮮鯊鯨鰍鰭鱉鱗鱷鳥鳳鳴鴉鴕鴨鴻鵝鵲鶴鷗鷹鹽麗麥麵麼黃點黨齊齋齡龍龐龜";
+  const T2S_SIMP = "并干乱亚伫布占并来系侠仓个们伦伟侧侦伪杰伞备传债伤倾仅侨仆价仪侬亿偿优储凶兑儿内两册幂冻凯别删则刚划剧剑劲动务胜劳势励劝匀汇匮区协却厌参丛员问哑启唤丧单哟啬吗呕啧尝啸喷吨咛吓咽严嚣囵国围园圆图团执坚报场块涂垫坠堕坛压坏壮壶寿够梦伙夹奥夺奋妆娱妇娲妈娇婴孙学宫寝实宁审写宽宠宝将专寻对导届屉屡层属冈岛峡岗仑屿帅师帐带币帮干几库厦厨厂废广厅张强弹弥弯后径从复征彻悦闷恶恼爱态惯虑庆怜凭愤悯宪忆应惩懒悬忏惧战戏户舍扪卷扫挣挂采拣扬换挥损摇抢搂挚捞撑拨抚扑捡拥择击挡担据挤拟拧掷扩摆扰拦携摄摊搅揽败叙敌数敛斩断于升时晋昼晕畅暂历晓旷书会东杆条枭枣栋栖杨业极荣构枪乐梁楼标枢样树桥机横档检柠槛柜樱栏权钦欧欢岁历归殁僵杀壳毁毡气决没冲况泄凉泪净渊浅减涡测浑凑涌汤准沟温滞渗滚满汉渐浆洁潜润涩浇泽浊浓湿蒙济涛滨滤浏泷洒滩灾为乌无炼烟焕烦荧热灯烧烫营烛烁炉烂争爷尔墙牵状狱狮奖独获猎兽獭现琐玛环珑瓮产毕画异当叠疯疗愈瘫发皱盗盏监盘卢荡众睁瞒矫硕确码砖础碍矿秘御禅礼祷税种称积颖稳获窝洼窑竞笔笋节范筑筛篓简签篮筹笼签粪粮团纠纪约红纹纳纽纯纱纸级纷细绍终弦组结绝络给绒统丝绢绑经综绿绸维纲网缀绵紧绯绪线缉缎缘编缓缅纬练致县缩纵总绷织绕绳绘系缴绎继缤续累缠纤缆罚骂罢罗义习翘圣闻联聪声耸聂职听聋肃脉脱胀肾脑肿脚肠胶腻胆脍脸腊卧临台与兴举旧艰艳荆庄茎华莱万叶荤盖莲葱茑荫荡萧姜蔷荐萨蓝艺药芦苏苹兰处虚号亏蚀虾萤虫蚁蝾蜡蛮术卫冲补装里制复袄袜摆见规视亲觉览观触订计讯讨训讪托记讶诀访设许诉诊注证诈评诅词咏询试诗诡话该详夸志认诞诱语诚误诵说课调谈请论谍谐咨讳诸诺谋誊谎谜讲谢谣证识谱译议护读变让赞丰猪猫贝负财贡贫货贩贪贯责贰贵买贷费贴贺赂资贼宾赉赐赏赔贤卖质赖赚购赛赘赠赞赢赎赶赵趋迹踪跻跃躯轨军软轴较载辅轻辆辉辈轮辑输辖转轰办辞辩农回这连周进游运过达违遥递远适迟迁选遗迈还边逻邮乡邓邻丑医酱衅释钉针钓钠钝钮钧钙钛铃钳铅钩银铜铭衔锐销铝锋铺锯钢录锥锤钱锦锚错炼锅锻锹键锁铠镇镍链锵镜镖锈钟镰铁鉴钥镶钻长门闪闭开闰闲闲间闸阁阀阅阉阔关阵阴陈陆阳队阶际随险隐陇只虽双杂鸡离难云电雾雳灵静腼韧韩韵响页顶顷项顺须颂预顽顿颇领头颊频颗题额颚颜愿颠类顾颤显风飕飘飙飞饥饪饮饲饱饰饼养饵馁饿余馅馆馏馒馈饶马驳驻驹驾驼骏骑腾驱验惊骤脏体发松斗闹郁魇鱼鲁鲜鲨鲸鳅鳍鳖鳞鳄鸟凤鸣鸦鸵鸭鸿鹅鹊鹤鸥鹰盐丽麦面么黄点党齐斋龄龙庞龟";
+  const T2S_INDEX = {};
+  for (let i = 0; i < T2S_TRAD.length; i++) {
+    T2S_INDEX[T2S_TRAD[i]] = T2S_SIMP[i];
+  }
+
+  const T2S_PHRASES = [
+    ['寶可夢', '宝可梦'],
+    ['樹果', '树果'],
+    ['幫手', '帮手'],
+    ['幫忙', '帮忙'],
+    ['咖哩', '咖喱'],
+    ['濃湯', '浓汤'],
+    ['點心', '点心'],
+    ['飲料', '饮料'],
+    ['隨機', '随机'],
+    ['倉庫', '仓库'],
+    ['截圖', '截图'],
+    ['辨識', '辨识'],
+    ['評級', '评级'],
+    ['獎章', '奖章'],
+    ['睡飽飽', '睡饱饱'],
+    ['夢之碎片', '梦之碎片'],
+    ['沙布蕾', '沙布蕾'],
+    ['薫香', '熏香'],
+    ['薰香', '熏香'],
+    ['擴鍋預測', '扩锅预测'],
+    ['擴鍋', '扩锅'],
+    ['多餘食材', '多余食材'],
+    ['追加食材', '追加食材'],
+    ['活動加成', '活动加成'],
+    ['活動能量加成', '活动能量加成'],
+    ['漂亮成功', '漂亮成功'],
+    ['介面語言', '界面语言'],
+    ['介面文字', '界面文字'],
+    ['介面', '界面'],
+    ['備份檔', '备份文件'],
+    ['檔案', '文件'],
+    ['匯出備份', '导出备份'],
+    ['匯出', '导出'],
+    ['匯入還原', '导入还原'],
+    ['匯入', '导入'],
+    ['儲存設定', '保存设置'],
+    ['儲存修改', '保存修改'],
+    ['儲存', '保存'],
+    ['搜尋', '搜索'],
+    ['資訊', '信息'],
+    ['預設', '默认'],
+    ['機率', '几率'],
+    ['點選', '点击'],
+    ['點擊', '点击']
+  ];
+
+  function toSimplifiedChinese(str) {
+    if (!str || typeof str !== 'string') return str;
+    let res = str;
+    for (let i = 0; i < T2S_PHRASES.length; i++) {
+      const pair = T2S_PHRASES[i];
+      if (res.includes(pair[0])) {
+        res = res.replaceAll(pair[0], pair[1]);
+      }
+    }
+    let out = '';
+    for (let i = 0; i < res.length; i++) {
+      const ch = res[i];
+      out += T2S_INDEX[ch] || ch;
+    }
+    return out;
+  }
+
+  const SUPPORTED_LANGS = ['zh-TW', 'zh-CN', 'en-US'];
+
   function initLanguage() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_LANG);
-      if (saved && (saved === 'zh-TW' || saved === 'en-US')) {
+      if (saved && SUPPORTED_LANGS.includes(saved)) {
         currentLang = saved;
       }
     } catch (e) {}
 
     if (typeof document !== 'undefined' && document.documentElement) {
-      document.documentElement.setAttribute('lang', currentLang === 'zh-TW' ? 'zh-Hant' : 'en');
-      document.documentElement.setAttribute('data-lang', currentLang === 'zh-TW' ? 'zh' : 'en');
+      const docLang = currentLang === 'zh-TW' ? 'zh-Hant' : (currentLang === 'zh-CN' ? 'zh-Hans' : 'en');
+      const dataLang = currentLang === 'zh-TW' ? 'zh-TW' : (currentLang === 'zh-CN' ? 'zh-CN' : 'en');
+      document.documentElement.setAttribute('lang', docLang);
+      document.documentElement.setAttribute('data-lang', dataLang);
       const onReady = () => {
         updatePageTranslations();
       };
@@ -1121,15 +1575,17 @@
   }
 
   function setLanguage(lang) {
-    if (lang !== 'zh-TW' && lang !== 'en-US') return;
+    if (!SUPPORTED_LANGS.includes(lang)) return;
     currentLang = lang;
     try {
       localStorage.setItem(STORAGE_KEY_LANG, lang);
     } catch (e) {}
 
     if (typeof document !== 'undefined' && document.documentElement) {
-      document.documentElement.setAttribute('lang', lang === 'zh-TW' ? 'zh-Hant' : 'en');
-      document.documentElement.setAttribute('data-lang', lang === 'zh-TW' ? 'zh' : 'en');
+      const docLang = lang === 'zh-TW' ? 'zh-Hant' : (lang === 'zh-CN' ? 'zh-Hans' : 'en');
+      const dataLang = lang === 'zh-TW' ? 'zh-TW' : (lang === 'zh-CN' ? 'zh-CN' : 'en');
+      document.documentElement.setAttribute('lang', docLang);
+      document.documentElement.setAttribute('data-lang', dataLang);
       updatePageTranslations();
     }
 
@@ -1193,18 +1649,26 @@
     const str = String(query).trim();
     if (!str) return '';
 
+    function getResultFromVal(val) {
+      if (typeof val === 'object') {
+        if (lang === 'zh-CN') {
+          return val['zh-CN'] || toSimplifiedChinese(val['zh-TW'] || val['en-US'] || str);
+        }
+        return val[lang] || val['en-US'] || str;
+      }
+      return lang === 'zh-CN' ? toSimplifiedChinese(val) : val;
+    }
+
     // Level 1: 直接精確命中 (Direct Fast Match)
     if (dict[str]) {
-      const val = dict[str];
-      return typeof val === 'object' ? (val[lang] || val['en-US'] || str) : val;
+      return getResultFromVal(dict[str]);
     }
 
     // Level 2: 標點符號與括號正規化比對 (Normalized Match)
     const normTarget = normalizeSearchKey(str);
     for (const key in dict) {
       if (normalizeSearchKey(key) === normTarget) {
-        const val = dict[key];
-        return typeof val === 'object' ? (val[lang] || val['en-US'] || str) : val;
+        return getResultFromVal(dict[key]);
       }
     }
 
@@ -1213,9 +1677,12 @@
     for (const key in dict) {
       const compactKey = key.replace(/\s+/g, '').replace(/（/g, '(').replace(/）/g, ')').replace(/恢/g, '回');
       if (compactKey === compactTarget) {
-        const val = dict[key];
-        return typeof val === 'object' ? (val[lang] || val['en-US'] || str) : val;
+        return getResultFromVal(dict[key]);
       }
+    }
+
+    if (lang === 'zh-CN') {
+      return toSimplifiedChinese(str);
     }
 
     return null;
@@ -1223,7 +1690,13 @@
 
   function t(key, fallback = '') {
     const dict = DICTIONARY[currentLang] || DICTIONARY[DEFAULT_LANG];
-    return dict[key] || fallback || key;
+    if (dict && dict[key] !== undefined) return dict[key];
+    if (currentLang === 'zh-CN') {
+      const twVal = DICTIONARY['zh-TW'] && DICTIONARY['zh-TW'][key];
+      if (twVal !== undefined) return toSimplifiedChinese(twVal);
+      if (fallback) return toSimplifiedChinese(fallback);
+    }
+    return fallback || key;
   }
 
   function getTypeName(type) {
@@ -1440,9 +1913,12 @@
   function getPokemonName(name) {
     if (!name) return '';
     if (typeof name === 'object') {
-      return currentLang === 'en-US' ? (name.name_en || name.name_cn || name.name) : (name.name_cn || name.name_en || name.name);
+      if (currentLang === 'en-US') return name.name_en || name.name_cn || name.name;
+      if (currentLang === 'zh-CN') return toSimplifiedChinese(name.name_cn || name.name_en || name.name);
+      return name.name_cn || name.name_en || name.name;
     }
     const str = String(name).trim();
+    if (currentLang === 'zh-CN') return toSimplifiedChinese(str);
     if (currentLang !== 'en-US') return str;
 
     // Level 1 & 2 & 3 字典比對
@@ -1474,6 +1950,7 @@
 
   function translateDynamicText(text) {
     if (!text || typeof text !== 'string') return text;
+    if (currentLang === 'zh-CN') return toSimplifiedChinese(text);
     if (currentLang !== 'en-US') return text;
 
     let res = text;
@@ -1757,14 +2234,16 @@
 
   function getItemName(item) {
     if (!item) return '';
-    const it = ITEM_NAMES[item];
-    return it ? (it[currentLang] || item) : item;
+    const res = lookupBilingualDict(ITEM_NAMES, item);
+    if (res) return res;
+    return currentLang === 'zh-CN' ? toSimplifiedChinese(item) : item;
   }
 
   function getIslandName(island) {
     if (!island) return '';
-    const isl = ISLAND_NAMES[island];
-    return isl ? (isl[currentLang] || island) : island;
+    const res = lookupBilingualDict(ISLAND_NAMES, island);
+    if (res) return res;
+    return currentLang === 'zh-CN' ? toSimplifiedChinese(island) : island;
   }
 
   /**
@@ -1822,6 +2301,7 @@
     t,
     getLanguage,
     setLanguage,
+    toSimplified: toSimplifiedChinese,
     updateSearchInputHighlight,
     getTypeName,
     getTypeIconSvg,
