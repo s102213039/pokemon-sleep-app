@@ -345,7 +345,7 @@ def main():
         if attr_val:
             no_to_attr[no] = attr_val.strip()
 
-    # 1.5 萃取食材名稱 ➡️ 食材圖示公式
+    # 1.5 萃取食材名稱 -> 食材圖示公式
     print("正在從參考表中萃取所有食材的圖示 URL...")
     ing_name_to_icon = {}
     for r in rows_ref:
@@ -366,7 +366,7 @@ def main():
                 ing_name_to_icon[name3.strip()] = icon3.strip()
     print(f"成功萃取了 {len(ing_name_to_icon)} 種不同食材的圖示對照。")
  
-    # 2. 讀取 Target (神奇寶貝Sleep) 格式與數值，建立 No. ➡️ 背景底色對照
+    # 2. 讀取 Target (神奇寶貝Sleep) 格式與數值，建立 No. -> 背景底色對照
     print("正在讀取 神奇寶貝Sleep 工作表格式與數據...")
     res_target = service.spreadsheets().get(
         spreadsheetId=target_spreadsheet_id,
@@ -977,7 +977,7 @@ def main():
     # 套用全新對齊的合併單元格
     requests.extend(merge_requests)
     
-    print("正在發送全局 batchUpdate (Unmerge ➡️ Write ➡️ Re-merge)...")
+    print("正在發送全局 batchUpdate (Unmerge -> Write -> Re-merge)...")
     service.spreadsheets().batchUpdate(
         spreadsheetId=target_spreadsheet_id,
         body={'requests': requests}

@@ -29,8 +29,8 @@
         ],
         "title_en": "Core Highlights & Overview",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "[*] 關於Ver.3.8.3的更新內容",
+          "[*] 詳情請參閱官方公告內容與說明"
         ]
       }
     ],
@@ -45,17 +45,17 @@
     "badge_label": "重要通知",
     "badge_color": "#8b5cf6",
     "title": "【來獲得午睡放鬆券吧！】寶可夢茁壯包vol.6",
-    "title_en": "[Special Pack] vol.6",
-    "overview_en": "Official announcement and news update for Pokemon Sleep.",
+    "title_en": "[Special Pack] Get Nap Relaxation Ticket! Pokemon Growth Bundle Vol. 6",
+    "overview_en": "Special growth bundles with incenses, handy candies, and nap tickets available in shop.",
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
     "featured_pokemon": [],
-    "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
+    "overview": "本商品裡裝有「 成長薰香 」、「 萬能糖果M 」等 能用來培育幫手寶可夢的道具 ，歡迎選購。",
     "highlights": [
       "銷售期間： 2026/10/11 4:00 ～ 2026/10/20 3:59",
-      "本商品裡裝有「 成長薰香 」、「 萬能糖果M 」等 能用來培育幫手寶可夢的道具 ，歡迎選購。",
-      "「寶可夢茁壯包vol.6」（S、M、L）！ ：本商品裡裝有「 成長薰香 」、「 萬能糖果M 」等 能用來培育幫手寶可夢的道具 ，歡迎選購。、此外，商品內容自本次起有所更新！、在",
-      "「寶可夢茁壯包L」裡裝有能在小卡比獸的午睡島使用的「 午睡放鬆券 」。 ：使用這個票券多多獲得EXP，培育幫手寶可夢吧！、銷售期間： 2026/10/11 4:00 ～ 2026/10/20 3:59"
+      "萬能糖果M×3",
+      "「寶可夢茁壯包S vol.6」（250鑽石） ：寶可沙布蕾×3、成長薰香×1、夢之塊S×2",
+      "「寶可夢茁壯包M vol.6」（1,200鑽石） ：超級沙布蕾×2、寶可沙布蕾×10、成長薰香×3、萬能糖果M×3"
     ],
     "sections": [
       {
@@ -67,7 +67,7 @@
         ],
         "title_en": "Event Schedule & Areas",
         "items_en": [
-          "Sales Period:  2026/10/11 4:00 ～ 2026/10/20 3:59"
+          "Sales Period: 2026/10/11 4:00 ～ 2026/10/20 3:59"
         ]
       },
       {
@@ -75,11 +75,11 @@
         "title": "核心獎勵與倍率加成",
         "icon": "[Bonus]",
         "items": [
-          "本商品裡裝有「 成長薰香 」、「 萬能糖果M 」等 能用來培育幫手寶可夢的道具 ，歡迎選購。"
+          "萬能糖果M×3"
         ],
         "title_en": "Core Bonuses & Multipliers",
         "items_en": [
-          "Special in-game event bonuses and featured rewards."
+          "Handy Candy M×3"
         ]
       },
       {
@@ -87,19 +87,15 @@
         "title": "禮包與商城道具包一覽",
         "icon": "[Shop]",
         "items": [
-          "「寶可夢茁壯包vol.6」（S、M、L）！ ：本商品裡裝有「 成長薰香 」、「 萬能糖果M 」等 能用來培育幫手寶可夢的道具 ，歡迎選購。、此外，商品內容自本次起有所更新！、在",
-          "「寶可夢茁壯包L」裡裝有能在小卡比獸的午睡島使用的「 午睡放鬆券 」。 ：使用這個票券多多獲得EXP，培育幫手寶可夢吧！、銷售期間： 2026/10/11 4:00 ～ 2026/10/20 3:59",
           "「寶可夢茁壯包S vol.6」（250鑽石） ：寶可沙布蕾×3、成長薰香×1、夢之塊S×2",
           "「寶可夢茁壯包M vol.6」（1,200鑽石） ：超級沙布蕾×2、寶可沙布蕾×10、成長薰香×3、萬能糖果M×3",
           "「寶可夢茁壯包L vol.6」（3,000鑽石） ：高級沙布蕾×3、超級沙布蕾×10、成長薰香×4、午睡放鬆券×1、萬能糖果M×4"
         ],
         "title_en": "Bundles & Shop Items",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Period: 26/10/11 4:00 ～ 2026/10",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "\"Pokemon Growth BundleS vol.6\" (250 Diamonds) ：Poké Biscuit×3, Growth Incense×1, Dream Cluster S×2",
+          "\"Pokemon Growth BundleM vol.6\" (1,200 Diamonds) ：Great Biscuit×2, Poké Biscuit×10, Growth Incense×3, Handy Candy M×3",
+          "\"Pokemon Growth BundleL vol.6\" (3,000 Diamonds) ：Ultra Biscuit×3, Great Biscuit×10, Growth Incense×4, Nap Relaxation Ticket×1, Handy Candy M×4"
         ]
       }
     ],
@@ -119,7 +115,7 @@
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
     "featured_pokemon": [],
-    "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
+    "overview": "目前已修復了遊戲中發生的以下異常問題。",
     "highlights": [
       "[*] 異常問題修復通知",
       "[*] 詳情請參閱官方公告內容與說明"
@@ -135,8 +131,8 @@
         ],
         "title_en": "Core Highlights & Overview",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "[*] 異常問題修復通知",
+          "[*] 詳情請參閱官方公告內容與說明"
         ]
       }
     ],
@@ -156,7 +152,7 @@
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
     "featured_pokemon": [],
-    "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
+    "overview": "目前已確認到遊戲中發生了以下異常問題。",
     "highlights": [
       "透過主技能獲得的食材數量變成1.5倍。"
     ],
@@ -170,7 +166,7 @@
         ],
         "title_en": "Core Highlights & Overview",
         "items_en": [
-          "Special in-game event bonuses and featured rewards."
+          "透過主技能獲得的食材數量變成1.5倍。"
         ]
       }
     ],
@@ -190,7 +186,7 @@
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
     "featured_pokemon": [],
-    "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
+    "overview": "目前已確認到遊戲中發生了以下異常問題。",
     "highlights": [
       "[*] 異常問題通知",
       "[*] 詳情請參閱官方公告內容與說明"
@@ -206,8 +202,8 @@
         ],
         "title_en": "Core Highlights & Overview",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "[*] 異常問題通知",
+          "[*] 詳情請參閱官方公告內容與說明"
         ]
       }
     ],
@@ -222,8 +218,8 @@
     "badge_label": "活動企劃",
     "badge_color": "#f59e0b",
     "title": "【企畫】寶可夢快快長大週vol.6",
-    "title_en": "[Campaign] vol.6",
-    "overview_en": "Official announcement and news update for Pokemon Sleep.",
+    "title_en": "[Campaign] Pokemon Growth Week Vol. 6",
+    "overview_en": "Earn extra Sleep EXP and research candies during Pokemon Growth Week to quickly raise your helpers!",
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
     "featured_pokemon": [],
@@ -245,8 +241,8 @@
         ],
         "title_en": "Event Schedule & Areas",
         "items_en": [
-          "Event Period: 10/12 4:00 ～ 10/19 3:59",
-          "Special in-game event bonuses and featured rewards."
+          "Event Period: 10/12 (Mon) 4:00 ～ 10/19 (Mon) 3:59",
+          "[Areas] - All Areas"
         ]
       },
       {
@@ -259,8 +255,8 @@
         ],
         "title_en": "Core Bonuses & Multipliers",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "本企畫為期1週，是 睡眠EXP 和 糖果獲得量 都會增加的特別期間。",
+          "當天第1 time(s)睡眠研究後的 糖果獲得量變成1.5倍 。"
         ]
       }
     ],
@@ -275,17 +271,17 @@
     "badge_label": "重要通知",
     "badge_color": "#8b5cf6",
     "title": "【來獲得哎呀球菇的薰香吧！】料理週滿足包vol.3",
-    "title_en": "[Special Pack] vol.3",
-    "overview_en": "Official announcement and news update for Pokemon Sleep.",
+    "title_en": "[Special Pack] Get Foongus Incense! Cooking Week Satisfaction Bundle Vol. 3",
+    "overview_en": "Cook delicious meals with extra pot capacity and earn bonus energy during Cooking Week!",
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
     "featured_pokemon": [],
-    "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
+    "overview": "本商品裡裝有 專門迎接 哎呀球菇 成為夥伴並且培育牠的道具 ，歡迎選購。",
     "highlights": [
       "銷售期間： 2026/10/5 6:00 ～ 2026/10/13 3:59",
       "萬能糖果S×4",
-      "「料理週滿足包vol.3」（S、M、L）！ ：本商品裡裝有 專門迎接 哎呀球菇 成為夥伴並且培育牠的道具 ，歡迎選購。、在哎呀球菇會登場的營地使用薰香，與牠相遇吧！、銷售期間： 2026/10/5 6:00 ～ 2026/10/13 3:59",
-      "「料理週滿足包Svol.3」（250鑽石） ：寶可沙布蕾×5、萬能糖果S×4、食材券S×1"
+      "「料理週滿足包Svol.3」（250鑽石） ：寶可沙布蕾×5、萬能糖果S×4、食材券S×1",
+      "「料理週滿足包Mvol.3」（1,200鑽石） ：超級沙布蕾×4、寶可沙布蕾×10、哎呀球菇的薰香×2、哎呀球菇的糖果×70"
     ],
     "sections": [
       {
@@ -297,7 +293,7 @@
         ],
         "title_en": "Event Schedule & Areas",
         "items_en": [
-          "Sales Period:  2026/10/5 6:00 ～ 2026/10/13 3:59"
+          "Sales Period: 2026/10/5 6:00 ～ 2026/10/13 3:59"
         ]
       },
       {
@@ -309,7 +305,7 @@
         ],
         "title_en": "Core Bonuses & Multipliers",
         "items_en": [
-          "Special in-game event bonuses and featured rewards."
+          "Handy Candy S×4"
         ]
       },
       {
@@ -317,17 +313,15 @@
         "title": "禮包與商城道具包一覽",
         "icon": "[Shop]",
         "items": [
-          "「料理週滿足包vol.3」（S、M、L）！ ：本商品裡裝有 專門迎接 哎呀球菇 成為夥伴並且培育牠的道具 ，歡迎選購。、在哎呀球菇會登場的營地使用薰香，與牠相遇吧！、銷售期間： 2026/10/5 6:00 ～ 2026/10/13 3:59",
           "「料理週滿足包Svol.3」（250鑽石） ：寶可沙布蕾×5、萬能糖果S×4、食材券S×1",
           "「料理週滿足包Mvol.3」（1,200鑽石） ：超級沙布蕾×4、寶可沙布蕾×10、哎呀球菇的薰香×2、哎呀球菇的糖果×70",
           "「料理週滿足包Lvol.3」（3,000鑽石） ：高級沙布蕾×3、超級沙布蕾×10、主技能種子×1、哎呀球菇的薰香×4、哎呀球菇的糖果×100、食材券M×2"
         ],
         "title_en": "Bundles & Shop Items",
         "items_en": [
-          "Period: 26/10/5 6:00 ～ 2026/10",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "\"Cooking Week Satisfaction BundleSvol.3\" (250 Diamonds) ：Poké Biscuit×5, Handy Candy S×4, 食材券S×1",
+          "\"Cooking Week Satisfaction BundleMvol.3\" (1,200 Diamonds) ：Great Biscuit×4, Poké Biscuit×10, Foongus Incense×2, Foongus的糖果×70",
+          "\"Cooking Week Satisfaction BundleLvol.3\" (3,000 Diamonds) ：Ultra Biscuit×3, Great Biscuit×10, Main Skill Seed×1, Foongus Incense×4, Foongus的糖果×100, 食材券M×2"
         ]
       }
     ],
@@ -342,16 +336,15 @@
     "badge_label": "重要通知",
     "badge_color": "#8b5cf6",
     "title": "【來獲得主技能種子（哎呀球菇）吧！】寶可夢培育包（哎呀球菇）vol.1",
-    "title_en": "[Special Pack] Pokemon Growth Pack Vol. 1",
-    "overview_en": "Helpful growth bundles to raise and strengthen your partner Pokemon.",
+    "title_en": "[Special Pack] Get Main Skill Seed (Foongus)! Pokemon Growth Pack (Foongus) Vol. 1",
+    "overview_en": "Foongus and Amoonguss make their debut appearance in sleep research!",
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
     "featured_pokemon": [],
-    "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
+    "overview": "商品裡裝有「 超級沙布蕾 」、「 哎呀球菇的糖果 」，以及「 主技能種子（哎呀球菇） 」等 能夠培育哎呀球菇的道具 。",
     "highlights": [
       "銷售期間： 2026/10/5 6:00 ～ 2026/10/13 3:59",
       "商品裡裝有「 超級沙布蕾 」、「 哎呀球菇的糖果 」，以及「 主技能種子（哎呀球菇） 」等 能夠培育哎呀球菇的道具 。",
-      "「寶可夢培育包（哎呀球菇）vol.1」！ ：哎呀球菇、 敗露球菇、銷售期間： 2026/10/5 6:00 ～ 2026/10/13 3:59",
       "「寶可夢培育包（哎呀球菇）vol.1」（1,200鑽石） ：超級沙布蕾×4、成長薰香×2、主技能種子（哎呀球菇）×1、哎呀球菇的糖果×70"
     ],
     "sections": [
@@ -364,7 +357,7 @@
         ],
         "title_en": "Event Schedule & Areas",
         "items_en": [
-          "Sales Period:  2026/10/5 6:00 ～ 2026/10/13 3:59"
+          "Sales Period: 2026/10/5 6:00 ～ 2026/10/13 3:59"
         ]
       },
       {
@@ -376,7 +369,7 @@
         ],
         "title_en": "Core Bonuses & Multipliers",
         "items_en": [
-          "Special in-game event bonuses and featured rewards."
+          "商品裡裝有\" Great Biscuit \", \" Foongus的糖果 \"，以及\" Main Skill Seed（Foongus） \"等 能夠培育Foongus的道具 。"
         ]
       },
       {
@@ -384,13 +377,11 @@
         "title": "禮包與商城道具包一覽",
         "icon": "[Shop]",
         "items": [
-          "「寶可夢培育包（哎呀球菇）vol.1」！ ：哎呀球菇、 敗露球菇、銷售期間： 2026/10/5 6:00 ～ 2026/10/13 3:59",
           "「寶可夢培育包（哎呀球菇）vol.1」（1,200鑽石） ：超級沙布蕾×4、成長薰香×2、主技能種子（哎呀球菇）×1、哎呀球菇的糖果×70"
         ],
         "title_en": "Bundles & Shop Items",
         "items_en": [
-          "Period: 26/10/5 6:00 ～ 2026/10",
-          "Special in-game event bonuses and featured rewards."
+          "\"Pokemon Growth Pack（Foongus）vol.1\" (1,200 Diamonds) ：Great Biscuit×4, Growth Incense×2, Main Skill Seed（Foongus）×1, Foongus的糖果×70"
         ]
       }
     ],
@@ -405,8 +396,8 @@
     "badge_label": "活動企劃",
     "badge_color": "#f59e0b",
     "title": "【企畫】「分量加大！料理週vol.3」",
-    "title_en": "[Campaign] 「！vol.3」",
-    "overview_en": "Official announcement and news update for Pokemon Sleep.",
+    "title_en": "[Campaign] Extra-Helpful Cooking Week Vol. 3",
+    "overview_en": "Cook delicious meals with extra pot capacity and earn bonus energy during Cooking Week!",
     "debut_pokemon": [
       "哎呀球菇",
       "敗露球菇"
@@ -436,9 +427,9 @@
         ],
         "title_en": "Event Schedule & Areas",
         "items_en": [
-          "Event Period: 10/5 4:00 ～ 10/12 3:59",
-          "Mission Period: 10/5 4:00 ～ 10/12 3:59",
-          "Special in-game event bonuses and featured rewards."
+          "Event Period: 10/5 (Mon) 4:00 ～ 10/12 (Mon) 3:59",
+          "Mission Period: 10/5 (Mon) 4:00 ～ 10/12 (Mon) 3:59",
+          "[Areas] - All Areas"
         ]
       },
       {
@@ -451,8 +442,8 @@
         ],
         "title_en": "Core Bonuses & Multipliers",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "料理的最終能量為 1.25倍 （ 漂亮成功時為2.5倍，在週日漂亮成功時為3.75倍 ）。",
+          "可以使用期間限定的\" 迷你糖果增強 \"。"
         ]
       },
       {
@@ -465,8 +456,8 @@
         ],
         "title_en": "Featured Rate-Up Pokemon",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "[Medium Rate Up] Foongus, Amoonguss",
+          "[Minor Rate Up] 妙蛙種子, 小火龍, 傑尼龜, 大蔥鴨, 鬼斯, 凱羅斯, 百變怪, 迷你龍, 烏波, 信使鳥, 大嘴娃, 可可多拉, 小福蛋, 花岩怪, 不良蛙, 萌虻, 古月鳥, 新葉喵, 呆火鱷, Cetoddle"
         ]
       },
       {
@@ -485,14 +476,14 @@
         ],
         "title_en": "Applicable Research Areas",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "Greengrass Isle：妙蛙種子, 小火龍, 傑尼龜, 大蔥鴨, 鬼斯, 凱羅斯, 百變怪, 烏波, 信使鳥, 大嘴娃, 小福蛋, 花岩怪, 不良蛙, Foongus, Amoonguss, 萌虻, 古月鳥, 新葉喵, 呆火鱷, Cetoddle",
+          "Cyan Beach：傑尼龜, 大蔥鴨, 凱羅斯, 百變怪, 烏波, 不良蛙, 萌虻, 古月鳥, 呆火鱷",
+          "灰褐洞窟：小火龍, 鬼斯, 百變怪, 呆火鱷",
+          "Snowdrop Tundra：百變怪, 信使鳥, 小福蛋, 花岩怪, 古月鳥, Cetoddle",
+          "寶藍Lapis Lakeside：妙蛙種子, 百變怪, 迷你龍, Foongus, Amoonguss, 新葉喵",
+          "Old Gold Power Plant：大蔥鴨, 鬼斯, 百變怪, 大嘴娃, 可可多拉",
+          "琥褐溪谷：凱羅斯, 百變怪, 大嘴娃, 小福蛋, 花岩怪, Foongus, Amoonguss",
+          "Greengrass IsleEX：妙蛙種子, 小火龍, 傑尼龜, 大蔥鴨, 凱羅斯, 百變怪, 信使鳥, 大嘴娃, 可可多拉, 小福蛋, 花岩怪, Foongus, Amoonguss, 萌虻, 古月鳥, 新葉喵, 呆火鱷, Cetoddle"
         ]
       }
     ],
@@ -507,8 +498,8 @@
     "badge_label": "重要通知",
     "badge_color": "#8b5cf6",
     "title": "【新登場】哎呀球菇、 敗露球菇",
-    "title_en": "[New Debut] 、",
-    "overview_en": "Official announcement and news update for Pokemon Sleep.",
+    "title_en": "[New Debut] Foongus & Amoonguss",
+    "overview_en": "Foongus and Amoonguss make their debut appearance in sleep research!",
     "debut_pokemon": [
       "哎呀球菇",
       "敗露球菇"
@@ -532,8 +523,8 @@
         ],
         "title_en": "Event Schedule & Areas",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "開始出現的時間 2026/10/5 15:00",
+          "[Areas] Greengrass Isle, 寶藍Lapis Lakeside, 琥褐溪谷, Greengrass IsleEX, Cyan BeachEX"
         ]
       },
       {
@@ -545,7 +536,7 @@
         ],
         "title_en": "New Pokemon Debut",
         "items_en": [
-          "Special in-game event bonuses and featured rewards."
+          "登場寶可夢：Foongus（毒屬性）, Amoonguss（毒屬性）"
         ]
       }
     ],
@@ -583,8 +574,8 @@
         ],
         "title_en": "Event Schedule & Areas",
         "items_en": [
-          "Event Period: 10/10 4:00 ～ 10/13 3:59",
-          "Special in-game event bonuses and featured rewards."
+          "Event Period: 10/10 (Sat) 4:00 ～ 10/13 (Tue) 3:59",
+          "[Areas] - All Areas"
         ]
       }
     ],
@@ -599,15 +590,14 @@
     "badge_label": "重要通知",
     "badge_color": "#8b5cf6",
     "title": "【來獲得沙布蕾吧！】新月日限定包vol.18",
-    "title_en": "[Special Pack] New Moon Day Bundle Vol. 18",
+    "title_en": "[Special Pack] Get Biscuits! New Moon Day Bundle Vol. 18",
     "overview_en": "Sleep soundly during the New Moon Day event to research dark and psychic Pokemon.",
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
     "featured_pokemon": [],
-    "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
+    "overview": "「新月日限定包」正適合本次活動，裡面裝滿了能讓寶可夢成為夥伴的道具，歡迎選購。",
     "highlights": [
       "銷售期間： 2026/10/9 4:00 ～ 2026/10/14 3:59",
-      "「新月日限定包」正適合本次活動，裡面裝滿了能讓寶可夢成為夥伴的道具，歡迎選購。 ：在新月日期間，把沙布蕾給肚子比平時更餓的寶可夢們，和牠們變得友好吧！、銷售期間： 2026/10/9 4:00 ～ 2026/10/14 3:59",
       "「新月日限定包vol.18」（1,200鑽石） ：高級沙布蕾×1、超級沙布蕾×3、寶可沙布蕾×10、友好薰香×3"
     ],
     "sections": [
@@ -620,7 +610,7 @@
         ],
         "title_en": "Event Schedule & Areas",
         "items_en": [
-          "Sales Period:  2026/10/9 4:00 ～ 2026/10/14 3:59"
+          "Sales Period: 2026/10/9 4:00 ～ 2026/10/14 3:59"
         ]
       },
       {
@@ -628,13 +618,11 @@
         "title": "禮包與商城道具包一覽",
         "icon": "[Shop]",
         "items": [
-          "「新月日限定包」正適合本次活動，裡面裝滿了能讓寶可夢成為夥伴的道具，歡迎選購。 ：在新月日期間，把沙布蕾給肚子比平時更餓的寶可夢們，和牠們變得友好吧！、銷售期間： 2026/10/9 4:00 ～ 2026/10/14 3:59",
           "「新月日限定包vol.18」（1,200鑽石） ：高級沙布蕾×1、超級沙布蕾×3、寶可沙布蕾×10、友好薰香×3"
         ],
         "title_en": "Bundles & Shop Items",
         "items_en": [
-          "Period: 26/10/9 4:00 ～ 2026/10",
-          "Special in-game event bonuses and featured rewards."
+          "\"New Moon Day Bundlevol.18\" (1,200 Diamonds) ：Ultra Biscuit×1, Great Biscuit×3, Poké Biscuit×10, 友好薰香×3"
         ]
       }
     ],
@@ -649,7 +637,7 @@
     "badge_label": "重要通知",
     "badge_color": "#8b5cf6",
     "title": "關於向特定研究者開放社群研究功能",
-    "title_en": "Pokemon Sleep Official Update",
+    "title_en": "Community Research Rollout for Selected Researchers",
     "overview_en": "Official announcement and news update for Pokemon Sleep.",
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
@@ -670,8 +658,8 @@
         ],
         "title_en": "Core Highlights & Overview",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "[*] 關於向特定研究者開放社群研究功能",
+          "[*] 詳情請參閱官方公告內容與說明"
         ]
       }
     ],
@@ -686,12 +674,12 @@
     "badge_label": "重要通知",
     "badge_color": "#8b5cf6",
     "title": "關於取得監護人同意",
-    "title_en": "Pokemon Sleep Official Update",
-    "overview_en": "Official announcement and news update for Pokemon Sleep.",
+    "title_en": "Regarding Parental Consent Requirements",
+    "overview_en": "New game version update with quality-of-life enhancements and bug fixes.",
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
     "featured_pokemon": [],
-    "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
+    "overview": "為了提供更加安全無虞的遊戲環境，《Pokémon Sleep》將在預定於 2026/10/22 9:00 進行的更新後，全新導入監護人同意系統。",
     "highlights": [
       "除了「同意遊玩《Pokémon Sleep》」以外，「社群研究」功能也必須另行獲得監護人同意後才能使用。",
       "※即使未能獲得此功能的使用同意，仍可以遊玩《Pokémon Sleep》。"
@@ -707,8 +695,8 @@
         ],
         "title_en": "Core Highlights & Overview",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "除了\"同意遊玩《Pokémon Sleep》\"以外，\"社群研究\"功能也必須另行獲得監護人同意後才能使用。",
+          "※即使未能獲得此功能的使用同意，仍可以遊玩《Pokémon Sleep》。"
         ]
       }
     ],
@@ -728,7 +716,7 @@
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
     "featured_pokemon": [],
-    "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
+    "overview": "目前已修復了遊戲中發生的以下異常問題。",
     "highlights": [
       "[*] 異常問題修復通知",
       "[*] 詳情請參閱官方公告內容與說明"
@@ -744,8 +732,8 @@
         ],
         "title_en": "Core Highlights & Overview",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "[*] 異常問題修復通知",
+          "[*] 詳情請參閱官方公告內容與說明"
         ]
       }
     ],
@@ -781,8 +769,8 @@
         ],
         "title_en": "Core Highlights & Overview",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "[*] 關於Ver.3.8.2的更新內容",
+          "[*] 詳情請參閱官方公告內容與說明"
         ]
       }
     ],
@@ -804,7 +792,7 @@
     "featured_pokemon": [
       "夢幻"
     ],
-    "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
+    "overview": "目前已修復了遊戲中發生的以下異常問題。",
     "highlights": [
       "[*] 異常問題修復通知",
       "[*] 詳情請參閱官方公告內容與說明"
@@ -820,8 +808,8 @@
         ],
         "title_en": "Core Highlights & Overview",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "[*] 異常問題修復通知",
+          "[*] 詳情請參閱官方公告內容與說明"
         ]
       }
     ],
@@ -843,7 +831,7 @@
     "featured_pokemon": [
       "超夢"
     ],
-    "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
+    "overview": "目前已修復了遊戲中發生的以下異常問題。",
     "highlights": [
       "[*] 異常問題修復通知",
       "[*] 詳情請參閱官方公告內容與說明"
@@ -859,8 +847,8 @@
         ],
         "title_en": "Core Highlights & Overview",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "[*] 異常問題修復通知",
+          "[*] 詳情請參閱官方公告內容與說明"
         ]
       }
     ],
@@ -880,7 +868,7 @@
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
     "featured_pokemon": [],
-    "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
+    "overview": "目前已修復了遊戲中發生的以下異常問題。",
     "highlights": [
       "[*] 異常問題修復通知",
       "[*] 詳情請參閱官方公告內容與說明"
@@ -896,8 +884,8 @@
         ],
         "title_en": "Core Highlights & Overview",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "[*] 異常問題修復通知",
+          "[*] 詳情請參閱官方公告內容與說明"
         ]
       }
     ],
@@ -933,8 +921,8 @@
         ],
         "title_en": "Core Highlights & Overview",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "[*] 關於Ver.3.8.1的更新內容",
+          "[*] 詳情請參閱官方公告內容與說明"
         ]
       }
     ],
@@ -976,8 +964,8 @@
         ],
         "title_en": "Event Schedule & Areas",
         "items_en": [
-          "Event Period: 9/26 4:00 ～ 9/29 3:59",
-          "Special in-game event bonuses and featured rewards."
+          "Event Period: 9/26 (Sat) 4:00 ～ 9/29 (Tue) 3:59",
+          "[Areas] - All Areas"
         ]
       },
       {
@@ -994,12 +982,12 @@
         ],
         "title_en": "Core Bonuses & Multipliers",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "睡意之力： 2倍",
+          "睡意之力： 1.5倍",
+          "睡意之力的倍率",
+          "在好眠日的\"滿月之日\"生效的\"睡意之力的倍率\"，將會根據 滿月之日是週幾而有所變化 。",
+          "■\"滿月之日\"的\"睡意之力\"倍率",
+          "※不論滿月前後的日子是週幾，\"睡意之力的倍率\"皆為1.5倍。"
         ]
       }
     ],
@@ -1022,8 +1010,7 @@
     "overview": "「好眠日限定包vol.39」介紹",
     "highlights": [
       "銷售期間： 2026/9/25 4:00 ～ 2026/9/30 3:59",
-      "「好眠日限定包vol.39」介紹 ：《Pokémon Sleep》將配合「好眠日」推出",
-      "「好眠日限定包vol.39」！ ：銷售期間： 2026/9/25 4:00 ～ 2026/9/30 3:59"
+      "「好眠日限定包vol.39」（1,500鑽石） ：超級沙布蕾×9、幸運薰香×2、成長薰香×2、專注薰香×2"
     ],
     "sections": [
       {
@@ -1035,7 +1022,7 @@
         ],
         "title_en": "Event Schedule & Areas",
         "items_en": [
-          "Sales Period:  2026/9/25 4:00 ～ 2026/9/30 3:59"
+          "Sales Period: 2026/9/25 4:00 ～ 2026/9/30 3:59"
         ]
       },
       {
@@ -1043,15 +1030,11 @@
         "title": "禮包與商城道具包一覽",
         "icon": "[Shop]",
         "items": [
-          "「好眠日限定包vol.39」介紹 ：《Pokémon Sleep》將配合「好眠日」推出",
-          "「好眠日限定包vol.39」！ ：銷售期間： 2026/9/25 4:00 ～ 2026/9/30 3:59",
           "「好眠日限定包vol.39」（1,500鑽石） ：超級沙布蕾×9、幸運薰香×2、成長薰香×2、專注薰香×2"
         ],
         "title_en": "Bundles & Shop Items",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Period: 26/9/25 4:00 ～ 2026/9",
-          "Special in-game event bonuses and featured rewards."
+          "\"Good Sleep Day Bundlevol.39\" (1,500 Diamonds) ：Great Biscuit×9, Luck Incense×2, Growth Incense×2, Focus Incense×2"
         ]
       }
     ],
@@ -1066,20 +1049,20 @@
     "badge_label": "重要通知",
     "badge_color": "#8b5cf6",
     "title": "【來獲得沙布蕾＆超夢的基因吧！】「超夢研究包vol.1」＆「超夢衝刺包vol.1」",
-    "title_en": "[Special Pack] 「vol.1」＆「vol.1」",
+    "title_en": "[Special Pack] Get Biscuits & Mewtwo Gene! Mewtwo Research Bundle Vol. 1 & Mewtwo Rush Bundle Vol. 1",
     "overview_en": "Team up with researchers worldwide to explore the uncharted areas of Greengrass Isle and discover Mewtwo!",
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
     "featured_pokemon": [
       "超夢"
     ],
-    "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
+    "overview": "自活動第1週起推出的「超夢研究包vol.1」（S、M、L）裡，裝有可以在「秘境研究！追尋超夢吧」活動中 迎接超夢成為夥伴並且培育牠的道具 。",
     "highlights": [
       "銷售期間： 2026/9/14 4:00 ～ 2026/9/29 3:59",
       "銷售期間： 2026/9/21 4:00 ～ 2026/9/29 3:59",
       "超夢的糖果×40",
-      "「超夢研究包vol.1」＆「超夢衝刺包vol.1」 ：誠摯感謝各位玩家遊玩《Pokémon Sleep》。、《Pokémon Sleep》將配合「秘境研究！追尋超夢吧」活動推出",
-      "「超夢研究包vol.1」（S、M、L）和「超夢衝刺包vol.1」（S、M、L）！ ：自活動第1週起推出的"
+      "「超夢研究包S vol.1」（250鑽石） ：寶可沙布蕾×4、友好薰香×1、超夢的基因×30",
+      "「超夢研究包M vol.1」（1,200鑽石） ：超級沙布蕾×6、好露營券×1、超夢的糖果×40、超夢的基因×120"
     ],
     "sections": [
       {
@@ -1092,8 +1075,8 @@
         ],
         "title_en": "Event Schedule & Areas",
         "items_en": [
-          "Sales Period:  2026/9/14 4:00 ～ 2026/9/29 3:59",
-          "Sales Period:  2026/9/21 4:00 ～ 2026/9/29 3:59"
+          "Sales Period: 2026/9/14 4:00 ～ 2026/9/29 3:59",
+          "Sales Period: 2026/9/21 4:00 ～ 2026/9/29 3:59"
         ]
       },
       {
@@ -1105,7 +1088,7 @@
         ],
         "title_en": "Core Bonuses & Multipliers",
         "items_en": [
-          "Special in-game event bonuses and featured rewards."
+          "Mewtwo的糖果×40"
         ]
       },
       {
@@ -1113,21 +1096,21 @@
         "title": "禮包與商城道具包一覽",
         "icon": "[Shop]",
         "items": [
-          "「超夢研究包vol.1」＆「超夢衝刺包vol.1」 ：誠摯感謝各位玩家遊玩《Pokémon Sleep》。、《Pokémon Sleep》將配合「秘境研究！追尋超夢吧」活動推出",
-          "「超夢研究包vol.1」（S、M、L）和「超夢衝刺包vol.1」（S、M、L）！ ：自活動第1週起推出的",
-          "「超夢研究包vol.1」（S、M、L）裡，裝有可以在「秘境研究！追尋超夢吧」活動中 迎接超夢成為夥伴並且培育牠的道具 。 ：此外，自活動第2週起將推出",
-          "「超夢衝刺包vol.1」（S、M、L）。 ：歡迎選購，讓它幫助您在活動的倒數1週作最後的衝刺！、超夢研究包、銷售期間： 2026/9/14 4:00 ～ 2026/9/29 3:59",
           "「超夢研究包S vol.1」（250鑽石） ：寶可沙布蕾×4、友好薰香×1、超夢的基因×30",
-          "「超夢研究包M vol.1」（1,200鑽石） ：超級沙布蕾×6、好露營券×1、超夢的糖果×40、超夢的基因×120"
+          "「超夢研究包M vol.1」（1,200鑽石） ：超級沙布蕾×6、好露營券×1、超夢的糖果×40、超夢的基因×120",
+          "「超夢研究包L vol.1」（3,000鑽石） ：高級沙布蕾×3、超級沙布蕾×10、友好薰香×4、夢之塊M×2、超夢的糖果×100、超夢的基因×240",
+          "「超夢衝刺包S vol.1」（250鑽石） ：寶可沙布蕾×5、超夢的基因×50",
+          "「超夢衝刺包M vol.1」（600鑽石） ：超級沙布蕾×4、超夢的基因×125",
+          "「超夢衝刺包L vol.1」（1,500鑽石） ：高級沙布蕾×1、超級沙布蕾×10、超夢的基因×200"
         ],
         "title_en": "Bundles & Shop Items",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards.",
-          "Period: 26/9/14 4:00 ～ 2026/9",
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "\"Mewtwo Research BundleS vol.1\" (250 Diamonds) ：Poké Biscuit×4, 友好薰香×1, Mewtwo Gene×30",
+          "\"Mewtwo Research BundleM vol.1\" (1,200 Diamonds) ：Great Biscuit×6, 好露營券×1, Mewtwo的糖果×40, Mewtwo Gene×120",
+          "\"Mewtwo Research BundleL vol.1\" (3,000 Diamonds) ：Ultra Biscuit×3, Great Biscuit×10, 友好薰香×4, Dream Cluster M×2, Mewtwo的糖果×100, Mewtwo Gene×240",
+          "\"Mewtwo Rush BundleS vol.1\" (250 Diamonds) ：Poké Biscuit×5, Mewtwo Gene×50",
+          "\"Mewtwo Rush BundleM vol.1\" (600 Diamonds) ：Great Biscuit×4, Mewtwo Gene×125",
+          "\"Mewtwo Rush BundleL vol.1\" (1,500 Diamonds) ：Ultra Biscuit×1, Great Biscuit×10, Mewtwo Gene×200"
         ]
       }
     ],
@@ -1142,18 +1125,17 @@
     "badge_label": "重要通知",
     "badge_color": "#8b5cf6",
     "title": "【來獲得主技能種子（超夢）吧！】寶可夢培育包（超夢）vol.1",
-    "title_en": "[Special Pack] Pokemon Growth Pack Vol. 1",
+    "title_en": "[Special Pack] Get Main Skill Seed (Mewtwo)! Pokemon Growth Pack (Mewtwo) Vol. 1",
     "overview_en": "Team up with researchers worldwide to explore the uncharted areas of Greengrass Isle and discover Mewtwo!",
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
     "featured_pokemon": [
       "超夢"
     ],
-    "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
+    "overview": "商品裡裝有「 超級沙布蕾 」、「 超夢的糖果 」，以及「 主技能種子（超夢） 」等 能夠培育超夢的道具 。",
     "highlights": [
       "銷售期間： 2026/9/14 4:00 ～ 2026/9/29 3:59",
       "商品裡裝有「 超級沙布蕾 」、「 超夢的糖果 」，以及「 主技能種子（超夢） 」等 能夠培育超夢的道具 。",
-      "「寶可夢培育包（超夢）vol.1」！ ：超夢、銷售期間： 2026/9/14 4:00 ～ 2026/9/29 3:59",
       "「寶可夢培育包（超夢）vol.1」（1,200鑽石） ：超級沙布蕾×4、成長薰香×2、主技能種子（超夢）×1、超夢的糖果×70"
     ],
     "sections": [
@@ -1166,7 +1148,7 @@
         ],
         "title_en": "Event Schedule & Areas",
         "items_en": [
-          "Sales Period:  2026/9/14 4:00 ～ 2026/9/29 3:59"
+          "Sales Period: 2026/9/14 4:00 ～ 2026/9/29 3:59"
         ]
       },
       {
@@ -1178,7 +1160,7 @@
         ],
         "title_en": "Core Bonuses & Multipliers",
         "items_en": [
-          "Special in-game event bonuses and featured rewards."
+          "商品裡裝有\" Great Biscuit \", \" Mewtwo的糖果 \"，以及\" Main Skill Seed（Mewtwo） \"等 能夠培育Mewtwo的道具 。"
         ]
       },
       {
@@ -1186,13 +1168,11 @@
         "title": "禮包與商城道具包一覽",
         "icon": "[Shop]",
         "items": [
-          "「寶可夢培育包（超夢）vol.1」！ ：超夢、銷售期間： 2026/9/14 4:00 ～ 2026/9/29 3:59",
           "「寶可夢培育包（超夢）vol.1」（1,200鑽石） ：超級沙布蕾×4、成長薰香×2、主技能種子（超夢）×1、超夢的糖果×70"
         ],
         "title_en": "Bundles & Shop Items",
         "items_en": [
-          "Period: 26/9/14 4:00 ～ 2026/9",
-          "Special in-game event bonuses and featured rewards."
+          "\"Pokemon Growth Pack（Mewtwo）vol.1\" (1,200 Diamonds) ：Great Biscuit×4, Growth Incense×2, Main Skill Seed（Mewtwo）×1, Mewtwo的糖果×70"
         ]
       }
     ],
@@ -1230,8 +1210,8 @@
         ],
         "title_en": "Updates & Balancing",
         "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
+          "新增功能：準備新活動, 新企畫；\"秘境研究！追尋Mewtwo吧\"",
+          "平衡調整與技能變更：調整寶可夢吃飽的機率；稍微調降傳說的寶可夢以外的寶可夢吃飽的機率。"
         ]
       }
     ],

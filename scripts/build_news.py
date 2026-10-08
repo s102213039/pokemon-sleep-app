@@ -160,7 +160,7 @@ def deep_ai_extract_sections(category, title, clean_text):
         ('紅利睡眠點數', '睡眠點數：')
     ]:
         for line in text_blocks:
-            if keyword in line and len(line.strip()) < 80:
+            if keyword in line and len(line.strip()) < 80 and '本商品' not in line and '歡迎選購' not in line and not line.strip().startswith('※'):
                 line_clean = re.sub(r'^[・\-\*]\s*', '', line).strip()
                 item_str = line_clean
                 if item_str not in bonus_items and not any(line_clean in b for b in bonus_items):
@@ -221,13 +221,15 @@ def deep_ai_extract_sections(category, title, clean_text):
         # 智能標準化鑽石金額 (例如 1，200鑽石 -> 1,200鑽石, 1 200鑽石 -> 1,200鑽石)
         p_name_clean = re.sub(r'(\d+)[，\s]+(\d{3})\s*鑽石', r'\1,\2鑽石', p_name_clean)
         p_name_clean = re.sub(r'(\d+)[，,](\d{3})\s*鑽石', r'\1,\2鑽石', p_name_clean)
-        # 提取道具清單
-        lines = [re.sub(r'^[・\-\*]\s*', '', l).strip() for l in p_content.strip().split('\n') if l.strip() and not l.strip().startswith('※') and not l.strip().startswith('商品')]
+        # 只提取具備數量的具體道具項目 (例如 寶可沙布蕾×3)
+        item_lines = [re.sub(r'^[・\-\*]\s*', '', l).strip() for l in p_content.strip().split('\n') if ('×' in l or 'x' in l.lower()) and not l.strip().startswith('※')]
+        if not item_lines and '鑽石' in p_name_clean:
+            item_lines = [re.sub(r'^[・\-\*]\s*', '', l).strip() for l in p_content.strip().split('\n') if l.strip() and not l.strip().startswith('※') and not l.strip().startswith('商品') and not any(k in l for k in ['本商品', '歡迎', '此外', '使用這個', '誠摯'])]
         # 提取限購
         limit_match = re.search(r'※僅限購買\s*(\d+次)', p_content)
         limit_str = f"（限購 {limit_match.group(1)}）" if limit_match else ""
-        if lines:
-            details_str = '、'.join(lines[:6])
+        if item_lines and ('鑽石' in p_name_clean or 'vol' in p_name_clean.lower() or any('×' in l for l in item_lines)):
+            details_str = '、'.join(item_lines[:6])
             pack_items.append(f"{p_name_clean} {limit_str}：{details_str}")
 
     if pack_items:
@@ -279,7 +281,19 @@ def deep_ai_extract_sections(category, title, clean_text):
 
     # 精準 Overview 提煉
     overview = ""
-    meaningful_lines = [l.strip() for l in text_blocks if len(l.strip()) > 15 and not l.strip().startswith('【') and not l.strip().startswith('・') and not l.strip().startswith('http') and 'Pokémon Sleep' not in l[:15]]
+    meaningful_lines = [
+        l.strip() for l in text_blocks
+        if len(l.strip()) > 15
+        and not l.strip().startswith('【')
+        and not l.strip().startswith('・')
+        and not l.strip().startswith('http')
+        and 'Pokémon Sleep' not in l[:20]
+        and '感謝各位玩家' not in l
+        and '誠摯感謝' not in l
+        and not l.strip().startswith('NEW')
+        and not l.strip().startswith('通知')
+        and not l.strip().startswith('更新內容')
+    ]
     if meaningful_lines:
         overview = meaningful_lines[0]
         if len(overview) > 130:
@@ -345,14 +359,30 @@ TITLE_TRANSLATIONS = [
     (r"第(\d+)次「好眠日」", r"\1th Good Sleep Day"),
     (r"「好眠日限定包vol\.(\d+)」介紹", r"Good Sleep Day Bundle Vol. \1"),
     (r"「好眠日限定包vol\.(\d+)」", r"Good Sleep Day Bundle Vol. \1"),
+    (r"好眠日限定包vol\.(\d+)", r"Good Sleep Day Bundle Vol. \1"),
     (r"合作紀念包", r"Collaboration Commemorative Bundle"),
-    (r"寶可夢培育包（([^）]+)）vol\.(\d+)", r"Pokemon Growth Pack Vol. \2"),
+    (r"「分量加大！料理週vol\.(\d+)」", r"Extra-Helpful Cooking Week Vol. \1"),
+    (r"分量加大！料理週vol\.(\d+)", r"Extra-Helpful Cooking Week Vol. \1"),
+    (r"寶可夢快快長大週vol\.(\d+)", r"Pokemon Growth Week Vol. \1"),
+    (r"料理週滿足包vol\.(\d+)", r"Cooking Week Satisfaction Bundle Vol. \1"),
+    (r"寶可夢茁壯包vol\.(\d+)", r"Pokemon Growth Bundle Vol. \1"),
+    (r"寶可夢茁壯包", r"Pokemon Growth Bundle"),
+    (r"「超夢研究包vol\.(\d+)」＆「超夢衝刺包vol\.(\d+)」", r"Mewtwo Research Bundle Vol. \1 & Mewtwo Rush Bundle Vol. \2"),
+    (r"「超夢研究包vol\.(\d+)」", r"Mewtwo Research Bundle Vol. \1"),
+    (r"「超夢衝刺包vol\.(\d+)」", r"Mewtwo Rush Bundle Vol. \1"),
+    (r"寶可夢培育包（哎呀球菇）vol\.(\d+)", r"Pokemon Growth Pack (Foongus) Vol. \1"),
+    (r"寶可夢培育包（超夢）vol\.(\d+)", r"Pokemon Growth Pack (Mewtwo) Vol. \1"),
+    (r"寶可夢培育包（([^）]+)）vol\.(\d+)", r"Pokemon Growth Pack (\1) Vol. \2"),
+    (r"寶可夢培育包", r"Pokemon Growth Pack"),
     (r"「寶可夢動畫合作週」", r"Pokemon Anime Collaboration Week"),
+    (r"哎呀球菇、\s*敗露球菇", r"Foongus & Amoonguss"),
     (r"小鍛匠、\s*巧鍛匠、\s*巨鍛匠", r"Tinkatink, Tinkatuff, Tinkaton"),
     (r"關於Ver\.(\d+\.\d+\.\d+)的更新內容", r"Ver. \1 Update Details"),
     (r"關於EX模式", r"About EX Mode"),
     (r"有關「主技能種子」的通知", r"Main Skill Seeds Notification"),
     (r"夏日嘉年華2026同樂包", r"Summer Festival 2026 Bundle"),
+    (r"關於向特定研究者開放社群研究功能", r"Community Research Rollout for Selected Researchers"),
+    (r"關於取得監護人同意", r"Regarding Parental Consent Requirements"),
     (r"【活動】", r"[Event] "),
     (r"【活動預告】", r"[Upcoming] "),
     (r"【企畫】", r"[Campaign] "),
@@ -360,7 +390,13 @@ TITLE_TRANSLATIONS = [
     (r"【通知】", r"[Notice] "),
     (r"【新登場】", r"[New Debut] "),
     (r"【特別禮物！】", r"[Special Gift] "),
-    (r"【來獲得([^】]+)吧！】", r"[Special Pack] ")
+    (r"【來獲得午睡放鬆券吧！】", r"[Special Pack] Get Nap Relaxation Ticket! "),
+    (r"【來獲得哎呀球菇的薰香吧！】", r"[Special Pack] Get Foongus Incense! "),
+    (r"【來獲得主技能種子（哎呀球菇）吧！】", r"[Special Pack] Get Main Skill Seed (Foongus)! "),
+    (r"【來獲得主技能種子（超夢）吧！】", r"[Special Pack] Get Main Skill Seed (Mewtwo)! "),
+    (r"【來獲得沙布蕾＆超夢的基因吧！】", r"[Special Pack] Get Biscuits & Mewtwo Gene! "),
+    (r"【來獲得沙布蕾吧！】", r"[Special Pack] Get Biscuits! "),
+    (r"【來獲得([^】]+)吧！】", r"[Special Pack] Get \1! ")
 ]
 
 OVERVIEW_TRANSLATIONS = {
@@ -368,6 +404,10 @@ OVERVIEW_TRANSLATIONS = {
     "好眠日": "Enjoy a restful night's sleep during the Good Sleep Day with multiplied Drowsy Power.",
     "超夢": "Team up with researchers worldwide to explore the uncharted areas of Greengrass Isle and discover Mewtwo!",
     "夢幻": "Witness the rare appearances of the Mythical Pokemon Mew in your sleep research!",
+    "料理週": "Cook delicious meals with extra pot capacity and earn bonus energy during Cooking Week!",
+    "長大週": "Earn extra Sleep EXP and research candies during Pokemon Growth Week to quickly raise your helpers!",
+    "茁壯包": "Special growth bundles with incenses, handy candies, and nap tickets available in shop.",
+    "哎呀球菇": "Foongus and Amoonguss make their debut appearance in sleep research!",
     "快照": "Take miracle snapshots of Mythical Pokemon during your sleep research to complete missions.",
     "Fitbit": "Fitbit devices are now supported on iOS for seamless sleep tracking.",
     "動畫": "Special collaboration campaign celebrating Pokemon Anime with bonus rewards.",
@@ -380,17 +420,99 @@ OVERVIEW_TRANSLATIONS = {
     "異常": "Notification regarding known issues and recent bug fixes in the app."
 }
 
+ITEM_DICT_EN = {
+    "寶可沙布蕾": "Poké Biscuit",
+    "超級沙布蕾": "Great Biscuit",
+    "高級沙布蕾": "Ultra Biscuit",
+    "大師沙布蕾": "Master Biscuit",
+    "成長薰香": "Growth Incense",
+    "幸運薰香": "Luck Incense",
+    "專注薰香": "Focus Incense",
+    "通透薰香": "Pure Incense",
+    "恢復薰香": "Recovery Incense",
+    "夢之塊S": "Dream Cluster S",
+    "夢之塊M": "Dream Cluster M",
+    "夢之塊": "Dream Cluster",
+    "萬能糖果S": "Handy Candy S",
+    "萬能糖果M": "Handy Candy M",
+    "萬能糖果L": "Handy Candy L",
+    "萬能糖果": "Handy Candy",
+    "主技能種子": "Main Skill Seed",
+    "副技能種子": "Sub Skill Seed",
+    "午睡放鬆券": "Nap Relaxation Ticket",
+    "超夢的基因": "Mewtwo Gene",
+    "哎呀球菇的薰香": "Foongus Incense",
+    "超夢的薰香": "Mewtwo Incense",
+    "夢幻的薰香": "Mew Incense",
+    "雷公的薰香": "Raikou Incense",
+    "炎帝的薰香": "Entei Incense",
+    "水君的薰香": "Suicune Incense",
+    "鑽石": "Diamonds",
+    "僅限購買": "Limit: ",
+    "限購": "Limit: ",
+    "次": " time(s)",
+    "寶可夢茁壯包": "Pokemon Growth Bundle",
+    "寶可夢培育包": "Pokemon Growth Pack",
+    "料理週滿足包": "Cooking Week Satisfaction Bundle",
+    "新月日限定包": "New Moon Day Bundle",
+    "好眠日限定包": "Good Sleep Day Bundle",
+    "超夢研究包": "Mewtwo Research Bundle",
+    "超夢衝刺包": "Mewtwo Rush Bundle",
+    "舉辦期間：": "Event Period: ",
+    "銷售期間：": "Sales Period: ",
+    "任務期間：": "Mission Period: ",
+    "兌換期間：": "Exchange Period: ",
+    "維護期間：": "Maintenance Period: ",
+    "實施時間：": "Implementation Time: ",
+    "開始出現的時間：": "Debut Time: ",
+    "【適用營地】": "[Areas] ",
+    "【機率小幅提升】": "[Minor Rate Up] ",
+    "【機率中幅提升】": "[Medium Rate Up] ",
+    "【機率大幅提升】": "[Major Rate Up] ",
+    "所有營地": "All Areas",
+    "萌綠之島": "Greengrass Isle",
+    "天青沙灘": "Cyan Beach",
+    "灰褐峽谷": "Taupe Hollow",
+    "白花雪原": "Snowdrop Tundra",
+    "雪原": "Snowdrop Tundra",
+    "拉碧斯拉祖利湖畔": "Lapis Lakeside",
+    "湖畔": "Lapis Lakeside",
+    "黃金舊發電廠": "Old Gold Power Plant",
+    "發電廠": "Old Gold Power Plant",
+    "哎呀球菇": "Foongus",
+    "敗露球菇": "Amoonguss",
+    "超夢": "Mewtwo",
+    "夢幻": "Mew",
+    "皮卡丘": "Pikachu",
+    "雷丘": "Raichu",
+    "伊布": "Eevee",
+    "小鍛匠": "Tinkatink",
+    "巧鍛匠": "Tinkatuff",
+    "巨鍛匠": "Tinkaton",
+    "走鯨": "Cetoddle",
+    "浩大鯨": "Cetitan",
+    "皮皮": "Clefairy",
+    "皮可西": "Clefable",
+    "皮寶寶": "Cleffa",
+    "本商品裡裝有": "Contains ",
+    "歡迎選購": "available in shop"
+}
+
 def translate_title_en(title_zh, title_en_from_web):
     if title_en_from_web and not re.search(r'[\u4e00-\u9fa5]', title_en_from_web) and len(title_en_from_web.strip()) > 3:
         return title_en_from_web.strip()
     res = title_zh
     for pattern, repl in TITLE_TRANSLATIONS:
         res = re.sub(pattern, repl, res)
-    if re.search(r'[\u4e00-\u9fa5]', res):
-        res = re.sub(r'[\u4e00-\u9fa5]+', '', res).strip()
-    if not res:
+    # 針對殘留的通用詞彙進行英譯轉換，避免直接暴力刪除
+    for zh, en in ITEM_DICT_EN.items():
+        if zh in res:
+            res = res.replace(zh, en)
+    res = res.replace("「", '"').replace("」", '"').replace("＆", " & ").replace("、", ", ")
+    res = re.sub(r'\s+', ' ', res).strip()
+    if not res or res in ['[Campaign]', '[Special Pack]', '[Notice]', '[Event]', '[New Debut]']:
         res = "Pokemon Sleep Official Update"
-    return res.strip()
+    return res
 
 def translate_overview_en(title_zh, overview_zh, preview_en):
     if preview_en and not re.search(r'[\u4e00-\u9fa5]', preview_en) and len(preview_en) > 20:
@@ -404,17 +526,20 @@ def translate_overview_en(title_zh, overview_zh, preview_en):
 
 def translate_item_to_en(item_zh):
     clean = re.sub(r'[\U00010000-\U0010ffff]', '', item_zh).strip()
-    clean = re.sub(r'\s*\([^\)]+\)', '', clean)
-    clean = clean.replace('舉辦期間：', 'Event Period: ').replace('銷售期間：', 'Sales Period: ').replace('任務期間：', 'Mission Period: ').replace('兌換期間：', 'Exchange Period: ')
-    clean = clean.replace('【適用營地】', '[Areas] ').replace('【機率小幅提升】', '[Rate Up] ').replace('【機率中幅提升】', '[Major Rate Up] ')
-    # 智能鑽石金額翻譯
-    clean = re.sub(r'[（\(](\d[\d,，\s]*)\s*鑽石[）\)]', lambda m: f" ({m.group(1).replace('，', ',').replace(' ', '')} Diamonds)", clean)
-    if re.search(r'[\u4e00-\u9fa5]', clean):
-        date_match = re.search(r'\d{1,2}/\d{1,2}.*?[～~-].*?\d{1,2}/\d{1,2}', clean)
-        if date_match:
-            return f"Period: {date_match.group(0)}"
-        return "Special in-game event bonuses and featured rewards."
-    return clean.strip()
+    for zh, en in ITEM_DICT_EN.items():
+        clean = clean.replace(zh, en)
+    clean = re.sub(r'[（\(](\d[\d,，\s]*)\s*(?:鑽石|Diamonds)[）\)]', lambda m: f" ({m.group(1).replace('，', ',').replace(' ', '')} Diamonds)", clean)
+    clean = re.sub(r'（限購\s*(\d+)次）', r'(Limit: \1)', clean)
+    clean = re.sub(r'\(週一\)', '(Mon)', clean)
+    clean = re.sub(r'\(週二\)', '(Tue)', clean)
+    clean = re.sub(r'\(週三\)', '(Wed)', clean)
+    clean = re.sub(r'\(週四\)', '(Thu)', clean)
+    clean = re.sub(r'\(週五\)', '(Fri)', clean)
+    clean = re.sub(r'\(週六\)', '(Sat)', clean)
+    clean = re.sub(r'\(週日\)', '(Sun)', clean)
+    clean = clean.replace("「", '"').replace("」", '"').replace("、", ", ").replace("・", "- ")
+    clean = re.sub(r'\s+', ' ', clean).strip()
+    return clean
 
 def determine_badge_type(category, title):
     cat_str = f"{category} {title}".lower()

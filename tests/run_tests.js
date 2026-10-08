@@ -11168,6 +11168,57 @@ SP 4,316
     assert(stylesCss.includes('.calc-select') && stylesCss.includes('padding: 9px 36px 9px 12px') && stylesCss.includes('background-position: right 18px center'), '.calc-select must conform to Rule VI inset arrow and padding');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Pokemon & News Data Auditing, Corrections & Runtime Dynamic Sync Engines', () => {
+    const dataJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/data.json'), 'utf8'));
+    const sleepStylesJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/sleep_styles.json'), 'utf8'));
+    const newsJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/news.json'), 'utf8'));
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/app.js'), 'utf8');
+    const recipesJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/recipes.js'), 'utf8');
+    const newsJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/news.js'), 'utf8');
+    const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/wiki.js'), 'utf8');
+
+    // 1. data/data.json audit and corrections
+    const wooperPaldea = dataJson.find(p => String(p.id) === '7054');
+    assert(wooperPaldea, 'data.json must contain ID 7054 (Paldean Wooper)');
+    assert(wooperPaldea.name_cn === '烏波（帕底亞的樣子）', 'ID 7054 must have name_cn 烏波（帕底亞的樣子）');
+    assert(!dataJson.some(p => p.name_cn === '烏波（阿羅拉的樣子）'), 'data.json must not contain erroneous 烏波（阿羅拉的樣子）');
+
+    const mawile = dataJson.find(p => String(p.id) === '303');
+    assert(mawile, 'data.json must contain ID 303 (Mawile)');
+    assert(mawile.main_skill === '怪力鉗（食材精選S）', 'Mawile main skill must be Traditional Chinese 怪力鉗（食材精選S）');
+    assert(!dataJson.some(p => p.main_skill && p.main_skill.includes('怪力钳')), 'data.json must not contain simplified 怪力钳');
+
+    // 2. data/sleep_styles.json 100% coverage and parenthesis aliases
+    assert(sleepStylesJson.byName['顫弦蠑螈 (低調的樣子)'] && sleepStylesJson.byName['顫弦蠑螈（低調的樣子）'], 'sleep_styles.json must support both half-width and full-width parenthesis for Toxtricity Low Key');
+    assert(sleepStylesJson.byName['顫弦蠑螈 (高調的樣子)'] && sleepStylesJson.byName['顫弦蠑螈（高調的樣子）'], 'sleep_styles.json must support both half-width and full-width parenthesis for Toxtricity Amped');
+    for (const pkm of dataJson) {
+      const byId = sleepStylesJson.byNo[String(pkm.id)];
+      const byName = sleepStylesJson.byName[pkm.name_cn];
+      assert(byId || byName, `Pokemon #${pkm.id} (${pkm.name_cn}) must have sleep styles defined in sleep_styles.json`);
+    }
+
+    // 3. data/news.json integrity and title cleaning
+    assert(Array.isArray(newsJson) && newsJson.length >= 20, 'news.json must contain at least 20 official news items');
+    for (const item of newsJson) {
+      assert(item.title && item.title.trim().length > 0, 'Every news item must have non-empty title');
+      assert(!item.title_en || !item.title_en.startsWith('[Campaign] vol.') && !item.title_en.startsWith('[New Debut] 、'), 'English titles must be clean and not broken regex artifacts');
+      assert(!item.title_en || !item.title_en.includes('「vol.1」＆「vol.1」'), 'English titles must not contain unreplaced quotes or repeated bundle tags');
+    }
+
+    // 4. Runtime dynamic sync in app.js, recipes.js, news.js, wiki.js
+    assert(appJs.includes('scheduleDynamicDataSync'), 'app.js must define scheduleDynamicDataSync');
+    assert(appJs.includes('https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json'), 'app.js must include remote raw GitHub candidate');
+
+    assert(recipesJs.includes('scheduleDynamicRecipesSync'), 'recipes.js must define scheduleDynamicRecipesSync');
+    assert(recipesJs.includes('https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json'), 'recipes.js must include remote raw GitHub candidate');
+
+    assert(newsJs.includes('scheduleDynamicNewsSync'), 'news.js must define scheduleDynamicNewsSync');
+    assert(newsJs.includes('https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/news.json'), 'news.js must include remote raw GitHub candidate');
+
+    assert(wikiJs.includes('loadDynamicSleepStyles'), 'wiki.js must define loadDynamicSleepStyles');
+    assert(wikiJs.includes('dynamicSleepStyles'), 'wiki.js must support dynamicSleepStyles in getSleepStyleData');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

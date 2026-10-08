@@ -30,11 +30,41 @@
   /* ─── 載入新聞資料 ───────────────────────────────────── */
   const CACHE_KEY_NEWS_JSON = 'pksleep_cache_news_json';
 
+  function scheduleDynamicNewsSync() {
+    if (typeof window === 'undefined' || typeof fetch === 'undefined') return;
+    // 網頁載入執行時，自動於背景非同步探測並動態抓取最新官方公告，不依賴使用者手動指令
+    setTimeout(() => {
+      const liveUrl = `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/news.json?t=${Date.now()}`;
+      fetch(liveUrl, { cache: 'no-store' })
+        .then(r => r.ok ? r.json() : null)
+        .then(freshData => {
+          if (Array.isArray(freshData) && freshData.length > 0) {
+            const currentIds = new Set(allNews.map(n => n.id));
+            const hasUpdate = freshData.length !== allNews.length || freshData.some(n => !currentIds.has(n.id));
+            if (hasUpdate) {
+              allNews = freshData;
+              try {
+                if (window.localStorage) {
+                  window.localStorage.setItem(CACHE_KEY_NEWS_JSON, JSON.stringify(freshData));
+                }
+              } catch (e) {}
+              renderEventTimeline();
+              initCategoryTags();
+              renderNews();
+              console.log('[News Engine] 動態連線取得最新官方公告完成，已自動更新至最新資料 (' + freshData.length + ' 筆)');
+            }
+          }
+        })
+        .catch(() => {});
+    }, 1500);
+  }
+
   async function loadNews() {
     try {
       const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
       const defaultCandidates = [
         `${base}data/news.json`,
+        `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/news.json`,
         `data/news.json`,
         `../data/news.json`,
         `${base}news.json`,
@@ -84,6 +114,7 @@
                 initCategoryTags();
                 initSearch();
                 renderNews();
+                scheduleDynamicNewsSync();
                 return;
               }
             }
@@ -105,6 +136,7 @@
       initCategoryTags();
       initSearch();
       renderNews();
+      scheduleDynamicNewsSync();
     } catch (err) {
       console.error('Failed to load news.json:', err);
       if (typeof window.__renderInPlaceError === 'function') {
@@ -338,6 +370,7 @@
   function renderEventTimeline() {
     if (!newsTimelineContainer) return;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const ganttData = parseEventTimeline(allNews);
     if (ganttData.length === 0) {
       newsTimelineContainer.style.display = 'none';
@@ -511,11 +544,11 @@
         <div class="news-calendar-events-box">
           <div class="news-cal-box-title-row">
             <div class="news-cal-box-title-left">
-              <span class="news-cal-box-heading">${selectedDateStr} ${isEN ? 'Active Events' : '進行中的活動與禮包'}</span>
-              <span class="news-cal-box-count">${selectedDateEvents.length} ${isEN ? 'items' : '項'}</span>
+              <span class="news-cal-box-heading">${selectedDateStr} ${isEN ? 'Active Events' : (isCN ? '进行中的活动与礼包' : '進行中的活動與禮包')}</span>
+              <span class="news-cal-box-count">${selectedDateEvents.length} ${isEN ? 'items' : (isCN ? '项' : '項')}</span>
             </div>
-            <button type="button" class="news-cal-filter-ongoing-btn ${filterOnlyOngoing ? 'active' : ''}" title="${isEN ? 'Filter card list below to currently ongoing events' : '在下方卡片列表展示所有正在進行的活動'}">
-              ${filterOnlyOngoing ? (isEN ? '✕ Reset Cards' : '✕ 還原全部卡片') : (isEN ? 'Show in Cards' : '在下方展示進行中活動')}
+            <button type="button" class="news-cal-filter-ongoing-btn ${filterOnlyOngoing ? 'active' : ''}" title="${isEN ? 'Filter card list below to currently ongoing events' : (isCN ? '在下方卡片列表展示所有正在进行的活动' : '在下方卡片列表展示所有正在進行的活動')}">
+              ${filterOnlyOngoing ? (isEN ? '✕ Reset Cards' : (isCN ? '✕ 还原全部卡片' : '✕ 還原全部卡片')) : (isEN ? 'Show in Cards' : (isCN ? '在下方展示进行中活动' : '在下方展示進行中活動'))}
             </button>
           </div>
           <div class="news-cal-events-scroll-list">
@@ -640,12 +673,13 @@
   function initCategoryTags() {
     if (!newsCategoryContainer) return;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
     const labels = {
-      ALL: isEN ? 'All' : '全部消息',
-      event: isEN ? 'Events' : '活動企劃',
-      update: isEN ? 'Updates' : '版本更新',
-      maintenance: isEN ? 'Maintenance' : '維護公告',
-      notice: isEN ? 'Notices' : '重要通知'
+      ALL: isEN ? 'All' : (isCN ? '全部消息' : '全部消息'),
+      event: isEN ? 'Events' : (isCN ? '活动企划' : '活動企劃'),
+      update: isEN ? 'Updates' : (isCN ? '版本更新' : '版本更新'),
+      maintenance: isEN ? 'Maintenance' : (isCN ? '维护公告' : '維護公告'),
+      notice: isEN ? 'Notices' : (isCN ? '重要通知' : '重要通知')
     };
 
     // 計算各分類數量
@@ -748,6 +782,7 @@
     if (!newsListContainer) return;
     const filtered = getFilteredNews();
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = window.I18N && window.I18N.getLanguage() === 'zh-CN';
 
     // 隱藏統計數量列
     if (newsCountBadge) {
@@ -757,8 +792,8 @@
     if (filtered.length === 0) {
       newsListContainer.innerHTML = `
         <div class="empty-state" style="padding: 50px 20px; text-align: center;">
-          <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">${isEN ? 'No matching news or updates found' : '找不到符合的新聞或公告'}</div>
-          <div style="font-size: 13px; color: var(--text-muted);">${isEN ? 'Try different keywords or switch to the "All" category.' : '請嘗試更換搜尋關鍵字，或切換至「全部消息」分類。'}</div>
+          <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">${isEN ? 'No matching news or updates found' : (isCN ? '找不到符合的新闻或公告' : '找不到符合的新聞或公告')}</div>
+          <div style="font-size: 13px; color: var(--text-muted);">${isEN ? 'Try different keywords or switch to the "All" category.' : (isCN ? '请尝试更换搜索关键字，或切换至“全部消息”分类。' : '請嘗試更換搜尋關鍵字，或切換至「全部消息」分類。')}</div>
         </div>
       `;
       return;
@@ -773,10 +808,11 @@
       if (item.debut_pokemon && item.debut_pokemon.length > 0) {
         debutBannerHTML = `
           <div class="news-debut-banner">
-            <span class="news-debut-label">${isEN ? 'Debut: ' : '新登場：'}</span>
+            <span class="news-debut-label">${isEN ? 'Debut: ' : (isCN ? '新登场：' : '新登場：')}</span>
             <div class="news-poke-pill-group">
               ${item.debut_pokemon.map(p => {
-                const pName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : p;
+                let pName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : p;
+                if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') pName = window.I18N.toSimplified(pName);
                 return `<span class="news-poke-pill-new">${escapeHtml(pName)}</span>`;
               }).join('')}
             </div>
@@ -785,10 +821,11 @@
       } else if (item.featured_pokemon && item.featured_pokemon.length > 0 && item.badge_key === 'event') {
         debutBannerHTML = `
           <div class="news-featured-banner">
-            <span class="news-featured-label">${isEN ? 'Focus: ' : '焦點：'}</span>
+            <span class="news-featured-label">${isEN ? 'Focus: ' : (isCN ? '焦点：' : '焦點：')}</span>
             <div class="news-poke-pill-group">
               ${item.featured_pokemon.map(p => {
-                const pName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : p;
+                let pName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(p) : p;
+                if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') pName = window.I18N.toSimplified(pName);
                 return `<span class="news-poke-pill-featured">${escapeHtml(pName)}</span>`;
               }).join('')}
             </div>
@@ -804,6 +841,9 @@
             <div class="news-ai-sections-grid">
               ${item.sections.map(sec => {
                 let secTitle = isEN ? (sec.title_en || sec.title) : sec.title;
+                if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') {
+                  secTitle = window.I18N.toSimplified(secTitle);
+                }
                 const secItems = isEN && sec.items_en ? sec.items_en : sec.items;
                 const cleanTitle = (secTitle || '').replace(/^[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\s]+/u, '').replace(/^[^\w\u4e00-\u9fa5\s]+/, '').trim();
                 return `
@@ -831,14 +871,18 @@
       }
 
       const categoryLabels = {
-        event: isEN ? 'Event' : '活動企劃',
-        update: isEN ? 'Update' : '版本更新',
-        maintenance: isEN ? 'Maintenance' : '維護公告',
-        notice: isEN ? 'Notice' : '重要通知'
+        event: isEN ? 'Event' : (isCN ? '活动企划' : '活動企劃'),
+        update: isEN ? 'Update' : (isCN ? '版本更新' : '版本更新'),
+        maintenance: isEN ? 'Maintenance' : (isCN ? '维护公告' : '維護公告'),
+        notice: isEN ? 'Notice' : (isCN ? '重要通知' : '重要通知')
       };
 
-      const displayTitle = isEN ? (item.title_en || item.title) : item.title;
-      const displayOverview = isEN ? (item.overview_en || item.overview) : item.overview;
+      let displayTitle = isEN ? (item.title_en || item.title) : item.title;
+      let displayOverview = isEN ? (item.overview_en || item.overview) : item.overview;
+      if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') {
+        displayTitle = window.I18N.toSimplified(displayTitle);
+        displayOverview = window.I18N.toSimplified(displayOverview);
+      }
 
       const isEvent = item.badge_key === 'event' || (item.title && (item.title.includes('活動') || item.title.includes('企畫') || item.title.includes('企劃') || item.title.includes('快照') || item.title.includes('新月日') || item.title.includes('好眠日') || item.title.includes('秘境') || item.title.includes('超夢') || item.title.includes('夢幻') || item.title.includes('任務')));
       const isPack = (item.title && (item.title.includes('包') || item.title.includes('限定包') || item.title.includes('培育包') || item.title.includes('同樂包') || item.title.includes('紀念包')));
@@ -858,12 +902,14 @@
 
       let statusBadgeHTML = '';
       if (timeStatus === 'expired') {
-        statusBadgeHTML = `<span class="news-status-badge status-expired">${isEN ? 'EXPIRED' : '已結束'}</span>`;
+        statusBadgeHTML = `<span class="news-status-badge status-expired">${isEN ? 'EXPIRED' : (isCN ? '已结束' : '已結束')}</span>`;
       } else if (timeStatus === 'ongoing') {
-        statusBadgeHTML = `<span class="news-status-badge status-ongoing">${isEN ? 'ONGOING' : '進行中'}</span>`;
+        statusBadgeHTML = `<span class="news-status-badge status-ongoing">${isEN ? 'ONGOING' : (isCN ? '进行中' : '進行中')}</span>`;
       } else if (timeStatus === 'upcoming') {
-        statusBadgeHTML = `<span class="news-status-badge status-upcoming">${isEN ? 'UPCOMING' : '即將開始'}</span>`;
+        statusBadgeHTML = `<span class="news-status-badge status-upcoming">${isEN ? 'UPCOMING' : (isCN ? '即将开始' : '即將開始')}</span>`;
       }
+
+      const badgeLabelText = categoryLabels[item.badge_key] || (isCN && window.I18N && typeof window.I18N.toSimplified === 'function' ? window.I18N.toSimplified(item.badge_label || item.category) : (item.badge_label || item.category)) || (isEN ? 'Notice' : '公告');
 
       return `
         <article class="news-card news-accordion-card ${isExpanded ? 'expanded' : ''} ${isLatest ? 'news-card-featured' : ''} ${timeStatus === 'expired' ? 'is-expired' : ''}" id="news-${item.id}" data-id="${item.id}">
@@ -871,13 +917,13 @@
             <div class="news-meta-left">
               <span class="news-date-badge">${item.date}</span>
               <span class="news-badge news-badge-${item.badge_key || 'notice'}" style="--badge-color:${item.badge_color || '#8b5cf6'};">
-                ${categoryLabels[item.badge_key] || item.badge_label || item.category || (isEN ? 'Notice' : '公告')}
+                ${badgeLabelText}
               </span>
               ${statusBadgeHTML}
               ${isLatest ? '<span class="news-latest-tag">NEW</span>' : ''}
             </div>
             <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-official-link-btn" onclick="event.stopPropagation()">
-              <span>${isEN ? 'Official ↗' : '官方原文 ↗'}</span>
+              <span>${isEN ? 'Official ↗' : (isCN ? '官方原文 ↗' : '官方原文 ↗')}</span>
             </a>
           </div>
 
@@ -1011,10 +1057,15 @@
   function formatAiListItem(text, item) {
     if (!text) return '';
     const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+    const isCN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'zh-CN';
     let processed = String(text);
 
     // 移除所有 Emoji 字符
     processed = processed.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}]/gu, '').trim();
+
+    if (isCN && window.I18N && typeof window.I18N.toSimplified === 'function') {
+      processed = window.I18N.toSimplified(processed);
+    }
 
     if (isEN) {
       // 0. 優先調用中央 I18N 動態翻譯引擎 (單一來源規範)

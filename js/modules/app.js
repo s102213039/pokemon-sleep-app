@@ -2811,6 +2811,7 @@ if (typeof document !== 'undefined') {
       const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
       const defaultCandidates = [
         `${base}data/data.json`,
+        `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json`,
         `data/data.json`,
         `../data/data.json`,
         `${base}data.json`,
@@ -2880,8 +2881,77 @@ if (typeof document !== 'undefined') {
       throw lastErr || new Error('Failed to load data.json from candidate paths: ' + cleanUrls.join(', '));
     };
 
+    function scheduleDynamicDataSync() {
+      if (typeof window === 'undefined' || typeof fetch === 'undefined') return;
+      let isSyncing = false;
+
+      async function runSyncCheck() {
+        if (isSyncing) return;
+        isSyncing = true;
+        try {
+          const liveUrl = `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json?t=${Date.now()}`;
+          const res = await fetch(liveUrl, { cache: 'no-store' });
+          if (!res.ok) return;
+          const freshData = await res.json();
+          if (!Array.isArray(freshData) || freshData.length === 0) return;
+
+          const currentLen = Array.isArray(allPokemons) ? allPokemons.length : 0;
+          const isDifferent = currentLen !== freshData.length ||
+            (freshData.length > 0 && allPokemons.length > 0 && (
+              freshData[0].id !== allPokemons[0].id ||
+              freshData[freshData.length - 1].id !== allPokemons[allPokemons.length - 1].id ||
+              freshData[0].name_cn !== allPokemons[0].name_cn
+            ));
+
+          if (isDifferent || !currentLen) {
+            console.log(`[Data Engine] 動態連線取得最新寶可夢資料庫 (${freshData.length} 筆)，正在原地更新...`);
+            allPokemons = freshData;
+            window.allPokemons = freshData;
+            try {
+              if (window.localStorage) {
+                window.localStorage.setItem(CACHE_KEY_DATA_JSON, JSON.stringify(freshData));
+                window.localStorage.setItem(CACHE_KEY_DATA_JSON_TIME, String(Date.now()));
+              }
+            } catch (e) {}
+
+            if (PokemonApp && typeof PokemonApp.init === 'function') {
+              PokemonApp.init(freshData);
+            }
+            if (typeof initFilters === 'function') {
+              initFilters();
+            }
+            if (typeof renderUI === 'function') {
+              renderUI();
+            }
+            if (window.initUserBox) {
+              window.initUserBox(freshData);
+            }
+            window.dispatchEvent(new CustomEvent('pokemon-data-updated', { detail: freshData }));
+          }
+        } catch (err) {
+          // 靜默處理網路連線異常
+        } finally {
+          isSyncing = false;
+        }
+      }
+
+      // 網頁執行後 2 秒進行背景動態比對更新
+      setTimeout(runSyncCheck, 2000);
+      // 每 15 分鐘定期背景動態獲取
+      setInterval(runSyncCheck, 15 * 60 * 1000);
+      // 使用者切回分頁時動態檢查
+      if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') {
+            runSyncCheck();
+          }
+        });
+      }
+    }
+
     fetchDataWithFallback(
       (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/data.json?t=${Date.now()}`,
+      `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json?t=${Date.now()}`,
       `data/data.json?t=${Date.now()}`,
       `../data/data.json?t=${Date.now()}`,
       `data.json?t=${Date.now()}`
@@ -2895,6 +2965,7 @@ if (typeof document !== 'undefined') {
         if (window.initUserBox) {
           window.initUserBox(data);
         }
+        scheduleDynamicDataSync();
       })
       .catch(err => {
         console.error('Error loading data.json:', err);

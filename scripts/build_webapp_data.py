@@ -99,6 +99,8 @@ for idx, r in enumerate(rows_ref):
         name_cn = '水箭龜'
     if no == 9003 and name_en == 'Pikachu (Captin)':
         name_en = 'Pikachu (Captain)'
+    if no == 7054 or name_en == 'Wooper (Paldea Form)':
+        name_cn = '烏波（帕底亞的樣子）'
 
     sleep_type = r[6].strip() if len(r) > 6 else ""
     type_attr = r[7].strip() if len(r) > 7 else ""
@@ -124,6 +126,8 @@ for idx, r in enumerate(rows_ref):
     interval = sync.format_interval_str(seconds_val)
 
     main_skill = sync.clean_val(r[sync.REF_MAPPING['主技能']])
+    if main_skill:
+        main_skill = main_skill.replace('怪力钳', '怪力鉗')
     evo_req = sync.clean_val(r[sync.REF_MAPPING['進化需求']])
     is_final = sync.clean_val(r[sync.REF_MAPPING['最終']])
 

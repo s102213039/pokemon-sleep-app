@@ -8771,6 +8771,1336 @@
         "shards": 4800,
         "candy": 12
       }
+    },
+    "六尾（阿羅拉的樣子）": {
+      "1": {
+        "star": 1,
+        "name": "蜷縮睡",
+        "name_en": "Curled-Up Sleep",
+        "name_jp": "まるまり寝",
+        "exp": 44,
+        "shards": 78,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "打瞌睡",
+        "name_en": "Nodding-Off Sleep",
+        "name_jp": "こっくり寝",
+        "exp": 329,
+        "shards": 590,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "細雪睡",
+        "name_en": "Powder Snow Sleep",
+        "name_jp": "こなゆき寝",
+        "exp": 1085,
+        "shards": 1947,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1566,
+        "shards": 2811,
+        "candy": 10
+      }
+    },
+    "九尾（阿羅拉的樣子）": {
+      "1": {
+        "star": 1,
+        "name": "伸展睡",
+        "name_en": "Stretching Sleep",
+        "name_jp": "のび寝",
+        "exp": 1392,
+        "shards": 1958,
+        "candy": 8
+      },
+      "2": {
+        "star": 2,
+        "name": "蓬鬆尾巴睡",
+        "name_en": "Fluffy-Tail Sleep",
+        "name_jp": "しっぽふわり寝",
+        "exp": 3933,
+        "shards": 5529,
+        "candy": 10
+      },
+      "3": {
+        "star": 3,
+        "name": "尾巴包覆睡",
+        "name_en": "Tail-Wrapped Sleep",
+        "name_jp": "しっぽつつまれ寝",
+        "exp": 10059,
+        "shards": 14143,
+        "candy": 13
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 13927,
+        "shards": 19580,
+        "candy": 14
+      }
+    },
+    "烏波（帕底亞的樣子）": {
+      "1": {
+        "star": 1,
+        "name": "笑咪咪睡",
+        "name_en": "Smiling Sleep",
+        "name_jp": "にこにこ寝",
+        "exp": 147,
+        "shards": 119,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "打大哈欠睡",
+        "name_en": "Big Yawn Sleep",
+        "name_jp": "おおあくび寝",
+        "exp": 493,
+        "shards": 390,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "陷入泥中睡",
+        "name_en": "Mud-Buried Sleep",
+        "name_jp": "どろにうまり寝",
+        "exp": 2303,
+        "shards": 1809,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 3076,
+        "shards": 2415,
+        "candy": 10
+      }
+    },
+    "顫弦蠑螈（高調的樣子）": {
+      "1": {
+        "star": 1,
+        "name": "坐著睡",
+        "name_en": "Sitting Sleep",
+        "name_jp": "すわり寝",
+        "exp": 1313,
+        "shards": 1847,
+        "candy": 8
+      },
+      "2": {
+        "star": 2,
+        "name": "擺姿勢招牌睡",
+        "name_en": "Signature-Pose Sleep",
+        "name_jp": "きめポーズ寝",
+        "exp": 3352,
+        "shards": 4713,
+        "candy": 10
+      },
+      "3": {
+        "star": 3,
+        "name": "夢中彈吉他睡",
+        "name_en": "Dream-Guitar Sleep",
+        "name_jp": "ゆめでギター寝",
+        "exp": 9052,
+        "shards": 12726,
+        "candy": 13
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 11989,
+        "shards": 16855,
+        "candy": 14
+      }
+    },
+    "顫弦蠑螈（低調的樣子）": {
+      "1": {
+        "star": 1,
+        "name": "坐著睡",
+        "name_en": "Sitting Sleep",
+        "name_jp": "すわり寝",
+        "exp": 1313,
+        "shards": 1847,
+        "candy": 8
+      },
+      "2": {
+        "star": 2,
+        "name": "夢中彈貝斯睡",
+        "name_en": "Dream-Bass Sleep",
+        "name_jp": "ゆめでベース寝",
+        "exp": 3352,
+        "shards": 4713,
+        "candy": 10
+      },
+      "3": {
+        "star": 3,
+        "name": "懶散睡",
+        "name_en": "Loafing Sleep",
+        "name_jp": "ぐうたら寝",
+        "exp": 9052,
+        "shards": 12726,
+        "candy": 13
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 11989,
+        "shards": 16855,
+        "candy": 14
+      }
+    },
+    "皮卡丘（萬聖節）": {
+      "1": {
+        "star": 1,
+        "name": "翹尾巴睡",
+        "name_en": "Tail-Erect Sleep",
+        "name_jp": "しっぽたち寝",
+        "exp": 67,
+        "shards": 195,
+        "candy": 5
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 82,
+        "shards": 242,
+        "candy": 7
+      },
+      "3": {
+        "star": 3,
+        "name": "放電睡",
+        "name_en": "Discharging Sleep",
+        "name_jp": "ほうでん寝",
+        "exp": 328,
+        "shards": 975,
+        "candy": 10
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 513,
+        "shards": 1527,
+        "candy": 11
+      }
+    },
+    "皮卡丘 (萬聖節)": {
+      "1": {
+        "star": 1,
+        "name": "翹尾巴睡",
+        "name_en": "Tail-Erect Sleep",
+        "name_jp": "しっぽたち寝",
+        "exp": 67,
+        "shards": 195,
+        "candy": 5
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 82,
+        "shards": 242,
+        "candy": 7
+      },
+      "3": {
+        "star": 3,
+        "name": "放電睡",
+        "name_en": "Discharging Sleep",
+        "name_jp": "ほうでん寝",
+        "exp": 328,
+        "shards": 975,
+        "candy": 10
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 513,
+        "shards": 1527,
+        "candy": 11
+      }
+    },
+    "皮卡丘（佳節）": {
+      "1": {
+        "star": 1,
+        "name": "翹尾巴睡",
+        "name_en": "Tail-Erect Sleep",
+        "name_jp": "しっぽたち寝",
+        "exp": 67,
+        "shards": 195,
+        "candy": 5
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 82,
+        "shards": 242,
+        "candy": 7
+      },
+      "3": {
+        "star": 3,
+        "name": "放電睡",
+        "name_en": "Discharging Sleep",
+        "name_jp": "ほうでん寝",
+        "exp": 328,
+        "shards": 975,
+        "candy": 10
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 513,
+        "shards": 1527,
+        "candy": 11
+      }
+    },
+    "皮卡丘 (佳節)": {
+      "1": {
+        "star": 1,
+        "name": "翹尾巴睡",
+        "name_en": "Tail-Erect Sleep",
+        "name_jp": "しっぽたち寝",
+        "exp": 67,
+        "shards": 195,
+        "candy": 5
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 82,
+        "shards": 242,
+        "candy": 7
+      },
+      "3": {
+        "star": 3,
+        "name": "放電睡",
+        "name_en": "Discharging Sleep",
+        "name_jp": "ほうでん寝",
+        "exp": 328,
+        "shards": 975,
+        "candy": 10
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 513,
+        "shards": 1527,
+        "candy": 11
+      }
+    },
+    "皮卡丘（船長）": {
+      "1": {
+        "star": 1,
+        "name": "翹尾巴睡",
+        "name_en": "Tail-Erect Sleep",
+        "name_jp": "しっぽたち寝",
+        "exp": 67,
+        "shards": 195,
+        "candy": 5
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 82,
+        "shards": 242,
+        "candy": 7
+      },
+      "3": {
+        "star": 3,
+        "name": "放電睡",
+        "name_en": "Discharging Sleep",
+        "name_jp": "ほうでん寝",
+        "exp": 328,
+        "shards": 975,
+        "candy": 10
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 513,
+        "shards": 1527,
+        "candy": 11
+      }
+    },
+    "皮卡丘 (船長)": {
+      "1": {
+        "star": 1,
+        "name": "翹尾巴睡",
+        "name_en": "Tail-Erect Sleep",
+        "name_jp": "しっぽたち寝",
+        "exp": 67,
+        "shards": 195,
+        "candy": 5
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 82,
+        "shards": 242,
+        "candy": 7
+      },
+      "3": {
+        "star": 3,
+        "name": "放電睡",
+        "name_en": "Discharging Sleep",
+        "name_jp": "ほうでん寝",
+        "exp": 328,
+        "shards": 975,
+        "candy": 10
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 513,
+        "shards": 1527,
+        "candy": 11
+      }
+    },
+    "伊布（佳節）": {
+      "1": {
+        "star": 1,
+        "name": "蜷縮睡",
+        "name_en": "Curled-Up Sleep",
+        "name_jp": "まるまり寝",
+        "exp": 27,
+        "shards": 75,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 228,
+        "shards": 676,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "元氣滿滿睡",
+        "name_en": "Energetic Sleep",
+        "name_jp": "げんきいっぱい寝",
+        "exp": 520,
+        "shards": 931,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 782,
+        "shards": 1401,
+        "candy": 10
+      }
+    },
+    "伊布 (佳節)": {
+      "1": {
+        "star": 1,
+        "name": "蜷縮睡",
+        "name_en": "Curled-Up Sleep",
+        "name_jp": "まるまり寝",
+        "exp": 27,
+        "shards": 75,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 228,
+        "shards": 676,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "元氣滿滿睡",
+        "name_en": "Energetic Sleep",
+        "name_jp": "げんきいっぱい寝",
+        "exp": 520,
+        "shards": 931,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 782,
+        "shards": 1401,
+        "candy": 10
+      }
+    },
+    "伊布（萬聖節）": {
+      "1": {
+        "star": 1,
+        "name": "蜷縮睡",
+        "name_en": "Curled-Up Sleep",
+        "name_jp": "まるまり寝",
+        "exp": 27,
+        "shards": 75,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 228,
+        "shards": 676,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "元氣滿滿睡",
+        "name_en": "Energetic Sleep",
+        "name_jp": "げんきいっぱい寝",
+        "exp": 520,
+        "shards": 931,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 782,
+        "shards": 1401,
+        "candy": 10
+      }
+    },
+    "伊布 (萬聖節)": {
+      "1": {
+        "star": 1,
+        "name": "蜷縮睡",
+        "name_en": "Curled-Up Sleep",
+        "name_jp": "まるまり寝",
+        "exp": 27,
+        "shards": 75,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 228,
+        "shards": 676,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "元氣滿滿睡",
+        "name_en": "Energetic Sleep",
+        "name_jp": "げんきいっぱい寝",
+        "exp": 520,
+        "shards": 931,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 782,
+        "shards": 1401,
+        "candy": 10
+      }
+    },
+    "海豹球（佳節）": {
+      "1": {
+        "star": 1,
+        "name": "噗通倒下睡",
+        "name_en": "Plop Sleep",
+        "name_jp": "こてん寝",
+        "exp": 27,
+        "shards": 75,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 228,
+        "shards": 676,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "拍手睡",
+        "name_en": "Hand-Clapping Sleep",
+        "name_jp": "てたたき寝",
+        "exp": 506,
+        "shards": 546,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 784,
+        "shards": 845,
+        "candy": 10
+      }
+    },
+    "海豹球 (佳節)": {
+      "1": {
+        "star": 1,
+        "name": "噗通倒下睡",
+        "name_en": "Plop Sleep",
+        "name_jp": "こてん寝",
+        "exp": 27,
+        "shards": 75,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 228,
+        "shards": 676,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "拍手睡",
+        "name_en": "Hand-Clapping Sleep",
+        "name_jp": "てたたき寝",
+        "exp": 506,
+        "shards": 546,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 784,
+        "shards": 845,
+        "candy": 10
+      }
+    },
+    "烏波（阿羅拉的樣子）": {
+      "1": {
+        "star": 1,
+        "name": "笑咪咪睡",
+        "name_en": "Smiling Sleep",
+        "name_jp": "にこにこ寝",
+        "exp": 128,
+        "shards": 120,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "打大哈欠睡",
+        "name_en": "Big Yawn Sleep",
+        "name_jp": "おおあくび寝",
+        "exp": 435,
+        "shards": 400,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "浮泥睡",
+        "name_en": "Mud-Floating Sleep",
+        "name_jp": "どろにうかび寝",
+        "exp": 1985,
+        "shards": 1815,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 2561,
+        "shards": 2340,
+        "candy": 10
+      }
+    },
+    "烏波 (阿羅拉的樣子)": {
+      "1": {
+        "star": 1,
+        "name": "笑咪咪睡",
+        "name_en": "Smiling Sleep",
+        "name_jp": "にこにこ寝",
+        "exp": 128,
+        "shards": 120,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "打大哈欠睡",
+        "name_en": "Big Yawn Sleep",
+        "name_jp": "おおあくび寝",
+        "exp": 435,
+        "shards": 400,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "浮泥睡",
+        "name_en": "Mud-Floating Sleep",
+        "name_jp": "どろにうかび寝",
+        "exp": 1985,
+        "shards": 1815,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 2561,
+        "shards": 2340,
+        "candy": 10
+      }
+    },
+    "南瓜精 (小顆種)": {
+      "1": {
+        "star": 1,
+        "name": "埋入泥沙睡",
+        "name_en": "Buried Sleep",
+        "name_jp": "うまり寝",
+        "exp": 44,
+        "shards": 78,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "飄浮撲翼睡",
+        "name_en": "Floating-Flutter Sleep",
+        "name_jp": "うかびぱたぱた寝",
+        "exp": 355,
+        "shards": 637,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "光芒映照睡",
+        "name_en": "Light-Illuminating Sleep",
+        "name_jp": "ひかりてらし寝",
+        "exp": 1992,
+        "shards": 3577,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 2772,
+        "shards": 4977,
+        "candy": 10
+      }
+    },
+    "南瓜精（小顆種）": {
+      "1": {
+        "star": 1,
+        "name": "埋入泥沙睡",
+        "name_en": "Buried Sleep",
+        "name_jp": "うまり寝",
+        "exp": 44,
+        "shards": 78,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "飄浮撲翼睡",
+        "name_en": "Floating-Flutter Sleep",
+        "name_jp": "うかびぱたぱた寝",
+        "exp": 355,
+        "shards": 637,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "光芒映照睡",
+        "name_en": "Light-Illuminating Sleep",
+        "name_jp": "ひかりてらし寝",
+        "exp": 1992,
+        "shards": 3577,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 2772,
+        "shards": 4977,
+        "candy": 10
+      }
+    },
+    "南瓜精 (中顆種)": {
+      "1": {
+        "star": 1,
+        "name": "埋入泥沙睡",
+        "name_en": "Buried Sleep",
+        "name_jp": "うまり寝",
+        "exp": 44,
+        "shards": 78,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "飄浮撲翼睡",
+        "name_en": "Floating-Flutter Sleep",
+        "name_jp": "うかびぱたぱた寝",
+        "exp": 355,
+        "shards": 637,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "光芒映照睡",
+        "name_en": "Light-Illuminating Sleep",
+        "name_jp": "ひかりてらし寝",
+        "exp": 1992,
+        "shards": 3577,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 2772,
+        "shards": 4977,
+        "candy": 10
+      }
+    },
+    "南瓜精（中顆種）": {
+      "1": {
+        "star": 1,
+        "name": "埋入泥沙睡",
+        "name_en": "Buried Sleep",
+        "name_jp": "うまり寝",
+        "exp": 44,
+        "shards": 78,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "飄浮撲翼睡",
+        "name_en": "Floating-Flutter Sleep",
+        "name_jp": "うかびぱたぱた寝",
+        "exp": 355,
+        "shards": 637,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "光芒映照睡",
+        "name_en": "Light-Illuminating Sleep",
+        "name_jp": "ひかりてらし寝",
+        "exp": 1992,
+        "shards": 3577,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 2772,
+        "shards": 4977,
+        "candy": 10
+      }
+    },
+    "南瓜精 (大顆種)": {
+      "1": {
+        "star": 1,
+        "name": "埋入泥沙睡",
+        "name_en": "Buried Sleep",
+        "name_jp": "うまり寝",
+        "exp": 44,
+        "shards": 78,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "飄浮撲翼睡",
+        "name_en": "Floating-Flutter Sleep",
+        "name_jp": "うかびぱたぱた寝",
+        "exp": 355,
+        "shards": 637,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "光芒映照睡",
+        "name_en": "Light-Illuminating Sleep",
+        "name_jp": "ひかりてらし寝",
+        "exp": 1992,
+        "shards": 3577,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 2772,
+        "shards": 4977,
+        "candy": 10
+      }
+    },
+    "南瓜精（大顆種）": {
+      "1": {
+        "star": 1,
+        "name": "埋入泥沙睡",
+        "name_en": "Buried Sleep",
+        "name_jp": "うまり寝",
+        "exp": 44,
+        "shards": 78,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "飄浮撲翼睡",
+        "name_en": "Floating-Flutter Sleep",
+        "name_jp": "うかびぱたぱた寝",
+        "exp": 355,
+        "shards": 637,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "光芒映照睡",
+        "name_en": "Light-Illuminating Sleep",
+        "name_jp": "ひかりてらし寝",
+        "exp": 1992,
+        "shards": 3577,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 2772,
+        "shards": 4977,
+        "candy": 10
+      }
+    },
+    "南瓜精 (巨顆種)": {
+      "1": {
+        "star": 1,
+        "name": "埋入泥沙睡",
+        "name_en": "Buried Sleep",
+        "name_jp": "うまり寝",
+        "exp": 44,
+        "shards": 78,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "飄浮撲翼睡",
+        "name_en": "Floating-Flutter Sleep",
+        "name_jp": "うかびぱたぱた寝",
+        "exp": 355,
+        "shards": 637,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "光芒映照睡",
+        "name_en": "Light-Illuminating Sleep",
+        "name_jp": "ひかりてらし寝",
+        "exp": 1992,
+        "shards": 3577,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 2772,
+        "shards": 4977,
+        "candy": 10
+      }
+    },
+    "南瓜精（巨顆種）": {
+      "1": {
+        "star": 1,
+        "name": "埋入泥沙睡",
+        "name_en": "Buried Sleep",
+        "name_jp": "うまり寝",
+        "exp": 44,
+        "shards": 78,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "飄浮撲翼睡",
+        "name_en": "Floating-Flutter Sleep",
+        "name_jp": "うかびぱたぱた寝",
+        "exp": 355,
+        "shards": 637,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "光芒映照睡",
+        "name_en": "Light-Illuminating Sleep",
+        "name_jp": "ひかりてらし寝",
+        "exp": 1992,
+        "shards": 3577,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 2772,
+        "shards": 4977,
+        "candy": 10
+      }
+    },
+    "南瓜怪人 (小顆種)": {
+      "1": {
+        "star": 1,
+        "name": "擁抱睡",
+        "name_en": "Hugging Sleep",
+        "name_jp": "だきしめ寝",
+        "exp": 891,
+        "shards": 1898,
+        "candy": 8
+      },
+      "2": {
+        "star": 2,
+        "name": "張開雙臂睡",
+        "name_en": "Arms-Wide Sleep",
+        "name_jp": "うでひろげ寝",
+        "exp": 2457,
+        "shards": 5233,
+        "candy": 10
+      },
+      "3": {
+        "star": 3,
+        "name": "驚嚇睡",
+        "name_en": "Astonishing Sleep",
+        "name_jp": "おどろかし寝",
+        "exp": 6631,
+        "shards": 14125,
+        "candy": 13
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 9098,
+        "shards": 19381,
+        "candy": 14
+      }
+    },
+    "南瓜怪人（小顆種）": {
+      "1": {
+        "star": 1,
+        "name": "擁抱睡",
+        "name_en": "Hugging Sleep",
+        "name_jp": "だきしめ寝",
+        "exp": 891,
+        "shards": 1898,
+        "candy": 8
+      },
+      "2": {
+        "star": 2,
+        "name": "張開雙臂睡",
+        "name_en": "Arms-Wide Sleep",
+        "name_jp": "うでひろげ寝",
+        "exp": 2457,
+        "shards": 5233,
+        "candy": 10
+      },
+      "3": {
+        "star": 3,
+        "name": "驚嚇睡",
+        "name_en": "Astonishing Sleep",
+        "name_jp": "おどろかし寝",
+        "exp": 6631,
+        "shards": 14125,
+        "candy": 13
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 9098,
+        "shards": 19381,
+        "candy": 14
+      }
+    },
+    "南瓜怪人 (中顆種)": {
+      "1": {
+        "star": 1,
+        "name": "擁抱睡",
+        "name_en": "Hugging Sleep",
+        "name_jp": "だきしめ寝",
+        "exp": 891,
+        "shards": 1898,
+        "candy": 8
+      },
+      "2": {
+        "star": 2,
+        "name": "張開雙臂睡",
+        "name_en": "Arms-Wide Sleep",
+        "name_jp": "うでひろげ寝",
+        "exp": 2457,
+        "shards": 5233,
+        "candy": 10
+      },
+      "3": {
+        "star": 3,
+        "name": "驚嚇睡",
+        "name_en": "Astonishing Sleep",
+        "name_jp": "おどろかし寝",
+        "exp": 6631,
+        "shards": 14125,
+        "candy": 13
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 9098,
+        "shards": 19381,
+        "candy": 14
+      }
+    },
+    "南瓜怪人（中顆種）": {
+      "1": {
+        "star": 1,
+        "name": "擁抱睡",
+        "name_en": "Hugging Sleep",
+        "name_jp": "だきしめ寝",
+        "exp": 891,
+        "shards": 1898,
+        "candy": 8
+      },
+      "2": {
+        "star": 2,
+        "name": "張開雙臂睡",
+        "name_en": "Arms-Wide Sleep",
+        "name_jp": "うでひろげ寝",
+        "exp": 2457,
+        "shards": 5233,
+        "candy": 10
+      },
+      "3": {
+        "star": 3,
+        "name": "驚嚇睡",
+        "name_en": "Astonishing Sleep",
+        "name_jp": "おどろかし寝",
+        "exp": 6631,
+        "shards": 14125,
+        "candy": 13
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 9098,
+        "shards": 19381,
+        "candy": 14
+      }
+    },
+    "南瓜怪人 (大顆種)": {
+      "1": {
+        "star": 1,
+        "name": "擁抱睡",
+        "name_en": "Hugging Sleep",
+        "name_jp": "だきしめ寝",
+        "exp": 891,
+        "shards": 1898,
+        "candy": 8
+      },
+      "2": {
+        "star": 2,
+        "name": "張開雙臂睡",
+        "name_en": "Arms-Wide Sleep",
+        "name_jp": "うでひろげ寝",
+        "exp": 2457,
+        "shards": 5233,
+        "candy": 10
+      },
+      "3": {
+        "star": 3,
+        "name": "驚嚇睡",
+        "name_en": "Astonishing Sleep",
+        "name_jp": "おどろかし寝",
+        "exp": 6631,
+        "shards": 14125,
+        "candy": 13
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 9098,
+        "shards": 19381,
+        "candy": 14
+      }
+    },
+    "南瓜怪人（大顆種）": {
+      "1": {
+        "star": 1,
+        "name": "擁抱睡",
+        "name_en": "Hugging Sleep",
+        "name_jp": "だきしめ寝",
+        "exp": 891,
+        "shards": 1898,
+        "candy": 8
+      },
+      "2": {
+        "star": 2,
+        "name": "張開雙臂睡",
+        "name_en": "Arms-Wide Sleep",
+        "name_jp": "うでひろげ寝",
+        "exp": 2457,
+        "shards": 5233,
+        "candy": 10
+      },
+      "3": {
+        "star": 3,
+        "name": "驚嚇睡",
+        "name_en": "Astonishing Sleep",
+        "name_jp": "おどろかし寝",
+        "exp": 6631,
+        "shards": 14125,
+        "candy": 13
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 9098,
+        "shards": 19381,
+        "candy": 14
+      }
+    },
+    "南瓜怪人 (巨顆種)": {
+      "1": {
+        "star": 1,
+        "name": "擁抱睡",
+        "name_en": "Hugging Sleep",
+        "name_jp": "だきしめ寝",
+        "exp": 891,
+        "shards": 1898,
+        "candy": 8
+      },
+      "2": {
+        "star": 2,
+        "name": "張開雙臂睡",
+        "name_en": "Arms-Wide Sleep",
+        "name_jp": "うでひろげ寝",
+        "exp": 2457,
+        "shards": 5233,
+        "candy": 10
+      },
+      "3": {
+        "star": 3,
+        "name": "驚嚇睡",
+        "name_en": "Astonishing Sleep",
+        "name_jp": "おどろかし寝",
+        "exp": 6631,
+        "shards": 14125,
+        "candy": 13
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 9098,
+        "shards": 19381,
+        "candy": 14
+      }
+    },
+    "南瓜怪人（巨顆種）": {
+      "1": {
+        "star": 1,
+        "name": "擁抱睡",
+        "name_en": "Hugging Sleep",
+        "name_jp": "だきしめ寝",
+        "exp": 891,
+        "shards": 1898,
+        "candy": 8
+      },
+      "2": {
+        "star": 2,
+        "name": "張開雙臂睡",
+        "name_en": "Arms-Wide Sleep",
+        "name_jp": "うでひろげ寝",
+        "exp": 2457,
+        "shards": 5233,
+        "candy": 10
+      },
+      "3": {
+        "star": 3,
+        "name": "驚嚇睡",
+        "name_en": "Astonishing Sleep",
+        "name_jp": "おどろかし寝",
+        "exp": 6631,
+        "shards": 14125,
+        "candy": 13
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 9098,
+        "shards": 19381,
+        "candy": 14
+      }
     }
   },
   "byNo": {
@@ -17363,6 +18693,2433 @@
         "exp": 5100,
         "shards": 4800,
         "candy": 12
+      }
+    },
+    "9001": {
+      "1": {
+        "star": 1,
+        "name": "翹尾巴睡",
+        "name_en": "Tail-Erect Sleep",
+        "name_jp": "しっぽたち寝",
+        "exp": 67,
+        "shards": 195,
+        "candy": 5
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 82,
+        "shards": 242,
+        "candy": 7
+      },
+      "3": {
+        "star": 3,
+        "name": "放電睡",
+        "name_en": "Discharging Sleep",
+        "name_jp": "ほうでん寝",
+        "exp": 328,
+        "shards": 975,
+        "candy": 10
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 513,
+        "shards": 1527,
+        "candy": 11
+      }
+    },
+    "9002": {
+      "1": {
+        "star": 1,
+        "name": "翹尾巴睡",
+        "name_en": "Tail-Erect Sleep",
+        "name_jp": "しっぽたち寝",
+        "exp": 67,
+        "shards": 195,
+        "candy": 5
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 82,
+        "shards": 242,
+        "candy": 7
+      },
+      "3": {
+        "star": 3,
+        "name": "放電睡",
+        "name_en": "Discharging Sleep",
+        "name_jp": "ほうでん寝",
+        "exp": 328,
+        "shards": 975,
+        "candy": 10
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 513,
+        "shards": 1527,
+        "candy": 11
+      }
+    },
+    "9003": {
+      "1": {
+        "star": 1,
+        "name": "翹尾巴睡",
+        "name_en": "Tail-Erect Sleep",
+        "name_jp": "しっぽたち寝",
+        "exp": 67,
+        "shards": 195,
+        "candy": 5
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 82,
+        "shards": 242,
+        "candy": 7
+      },
+      "3": {
+        "star": 3,
+        "name": "放電睡",
+        "name_en": "Discharging Sleep",
+        "name_jp": "ほうでん寝",
+        "exp": 328,
+        "shards": 975,
+        "candy": 10
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 513,
+        "shards": 1527,
+        "candy": 11
+      }
+    },
+    "9004": {
+      "1": {
+        "star": 1,
+        "name": "蜷縮睡",
+        "name_en": "Curled-Up Sleep",
+        "name_jp": "まるまり寝",
+        "exp": 27,
+        "shards": 75,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 228,
+        "shards": 676,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "元氣滿滿睡",
+        "name_en": "Energetic Sleep",
+        "name_jp": "げんきいっぱい寝",
+        "exp": 520,
+        "shards": 931,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 782,
+        "shards": 1401,
+        "candy": 10
+      }
+    },
+    "9005": {
+      "1": {
+        "star": 1,
+        "name": "蜷縮睡",
+        "name_en": "Curled-Up Sleep",
+        "name_jp": "まるまり寝",
+        "exp": 27,
+        "shards": 75,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 228,
+        "shards": 676,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "元氣滿滿睡",
+        "name_en": "Energetic Sleep",
+        "name_jp": "げんきいっぱい寝",
+        "exp": 520,
+        "shards": 931,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 782,
+        "shards": 1401,
+        "candy": 10
+      }
+    },
+    "9006": {
+      "1": {
+        "star": 1,
+        "name": "噗通倒下睡",
+        "name_en": "Plop Sleep",
+        "name_jp": "こてん寝",
+        "exp": 27,
+        "shards": 75,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 228,
+        "shards": 676,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "拍手睡",
+        "name_en": "Hand-Clapping Sleep",
+        "name_jp": "てたたき寝",
+        "exp": 506,
+        "shards": 546,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 784,
+        "shards": 845,
+        "candy": 10
+      }
+    },
+    "7054": {
+      "1": {
+        "star": 1,
+        "name": "笑咪咪睡",
+        "name_en": "Smiling Sleep",
+        "name_jp": "にこにこ寝",
+        "exp": 128,
+        "shards": 120,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "打大哈欠睡",
+        "name_en": "Big Yawn Sleep",
+        "name_jp": "おおあくび寝",
+        "exp": 435,
+        "shards": 400,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "浮泥睡",
+        "name_en": "Mud-Floating Sleep",
+        "name_jp": "どろにうかび寝",
+        "exp": 1985,
+        "shards": 1815,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 2561,
+        "shards": 2340,
+        "candy": 10
+      }
+    },
+    "7006": {
+      "1": {
+        "star": 1,
+        "name": "蜷縮睡",
+        "name_en": "Curled-Up Sleep",
+        "name_jp": "まるまり寝",
+        "exp": 44,
+        "shards": 78,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "打瞌睡",
+        "name_en": "Nodding-Off Sleep",
+        "name_jp": "こっくり寝",
+        "exp": 329,
+        "shards": 590,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "細雪睡",
+        "name_en": "Powder Snow Sleep",
+        "name_jp": "こなゆき寝",
+        "exp": 1085,
+        "shards": 1947,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1566,
+        "shards": 2811,
+        "candy": 10
+      }
+    },
+    "7007": {
+      "1": {
+        "star": 1,
+        "name": "伸展睡",
+        "name_en": "Stretching Sleep",
+        "name_jp": "のび寝",
+        "exp": 1392,
+        "shards": 1958,
+        "candy": 8
+      },
+      "2": {
+        "star": 2,
+        "name": "蓬鬆尾巴睡",
+        "name_en": "Fluffy-Tail Sleep",
+        "name_jp": "しっぽふわり寝",
+        "exp": 3933,
+        "shards": 5529,
+        "candy": 10
+      },
+      "3": {
+        "star": 3,
+        "name": "尾巴包覆睡",
+        "name_en": "Tail-Wrapped Sleep",
+        "name_jp": "しっぽつつまれ寝",
+        "exp": 10059,
+        "shards": 14143,
+        "candy": 13
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 13927,
+        "shards": 19580,
+        "candy": 14
+      }
+    },
+    "8001": {
+      "1": {
+        "star": 1,
+        "name": "坐著睡",
+        "name_en": "Sitting Sleep",
+        "name_jp": "すわり寝",
+        "exp": 1313,
+        "shards": 1847,
+        "candy": 8
+      },
+      "2": {
+        "star": 2,
+        "name": "夢中彈貝斯睡",
+        "name_en": "Dream-Bass Sleep",
+        "name_jp": "ゆめでベース寝",
+        "exp": 3352,
+        "shards": 4713,
+        "candy": 10
+      },
+      "3": {
+        "star": 3,
+        "name": "懶散睡",
+        "name_en": "Loafing Sleep",
+        "name_jp": "ぐうたら寝",
+        "exp": 9052,
+        "shards": 12726,
+        "candy": 13
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 11989,
+        "shards": 16855,
+        "candy": 14
+      }
+    },
+    "1": {
+      "1": {
+        "star": 1,
+        "name": "光合作用睡",
+        "name_en": "Sunbathing Sleep",
+        "name_jp": "こうごうせい寝",
+        "exp": 23,
+        "shards": 46,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "踏步睡",
+        "name_en": "Braced Sleep",
+        "name_jp": "ふんばり寝",
+        "exp": 122,
+        "shards": 255,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "伸藤睡",
+        "name_en": "Vine-Sprout Sleep",
+        "name_jp": "ツルだし寝",
+        "exp": 479,
+        "shards": 1005,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 720,
+        "shards": 1513,
+        "candy": 10
+      }
+    },
+    "2": {
+      "1": {
+        "star": 1,
+        "name": "光合作用睡",
+        "name_en": "Sunbathing Sleep",
+        "name_jp": "こうごうせい寝",
+        "exp": 122,
+        "shards": 255,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "踏步睡",
+        "name_en": "Braced Sleep",
+        "name_jp": "ふんばり寝",
+        "exp": 327,
+        "shards": 686,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "伸藤睡",
+        "name_en": "Vine-Sprout Sleep",
+        "name_jp": "ツルだし寝",
+        "exp": 1063,
+        "shards": 2234,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1530,
+        "shards": 3216,
+        "candy": 12
+      }
+    },
+    "3": {
+      "1": {
+        "star": 1,
+        "name": "光合作用睡",
+        "name_en": "Sunbathing Sleep",
+        "name_jp": "こうごうせい寝",
+        "exp": 587,
+        "shards": 1050,
+        "candy": 9
+      },
+      "2": {
+        "star": 2,
+        "name": "踏步睡",
+        "name_en": "Braced Sleep",
+        "name_jp": "ふんばり寝",
+        "exp": 1312,
+        "shards": 2351,
+        "candy": 11
+      },
+      "3": {
+        "star": 3,
+        "name": "伸藤睡",
+        "name_en": "Vine-Sprout Sleep",
+        "name_jp": "ツルだし寝",
+        "exp": 3266,
+        "shards": 5850,
+        "candy": 14
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 4449,
+        "shards": 7968,
+        "candy": 15
+      }
+    },
+    "4": {
+      "1": {
+        "star": 1,
+        "name": "劈啪火花睡",
+        "name_en": "Crackling Sleep",
+        "name_jp": "ぱちぱち寝",
+        "exp": 21,
+        "shards": 50,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "撫肚睡",
+        "name_en": "Belly-Rub Sleep",
+        "name_jp": "おなかさすり寝",
+        "exp": 109,
+        "shards": 278,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "露肚睡",
+        "name_en": "Exposed-Belly Sleep",
+        "name_jp": "おなかだし寝",
+        "exp": 427,
+        "shards": 1098,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 642,
+        "shards": 1652,
+        "candy": 10
+      }
+    },
+    "5": {
+      "1": {
+        "star": 1,
+        "name": "手臂枕睡",
+        "name_en": "Arm-Pillow Sleep",
+        "name_jp": "うでまくら寝",
+        "exp": 122,
+        "shards": 255,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "坐著睡",
+        "name_en": "Sitting Sleep",
+        "name_jp": "すわり寝",
+        "exp": 327,
+        "shards": 686,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "懶散睡",
+        "name_en": "Loafing Sleep",
+        "name_jp": "ぐうたら寝",
+        "exp": 1063,
+        "shards": 2234,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1530,
+        "shards": 3216,
+        "candy": 12
+      }
+    },
+    "6": {
+      "1": {
+        "star": 1,
+        "name": "趴臥睡",
+        "name_en": "Prone Sleep",
+        "name_jp": "はらばい寝",
+        "exp": 540,
+        "shards": 1134,
+        "candy": 9
+      },
+      "2": {
+        "star": 2,
+        "name": "抱胸睡",
+        "name_en": "Arms-Folded Sleep",
+        "name_jp": "うでぐみ寝",
+        "exp": 1208,
+        "shards": 2538,
+        "candy": 11
+      },
+      "3": {
+        "star": 3,
+        "name": "露肚睡",
+        "name_en": "Exposed-Belly Sleep",
+        "name_jp": "おなかだし寝",
+        "exp": 3005,
+        "shards": 6318,
+        "candy": 14
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 4093,
+        "shards": 8605,
+        "candy": 15
+      }
+    },
+    "7": {
+      "1": {
+        "star": 1,
+        "name": "縮入殼中睡",
+        "name_en": "Withdrawn-Shell Sleep",
+        "name_jp": "からにこもる寝",
+        "exp": 23,
+        "shards": 46,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "不入殼睡",
+        "name_en": "Out-of-Shell Sleep",
+        "name_jp": "こもらない寝",
+        "exp": 122,
+        "shards": 255,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "翻肚睡",
+        "name_en": "Belly-Up Sleep",
+        "name_jp": "ひっくりかえり寝",
+        "exp": 479,
+        "shards": 1005,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 720,
+        "shards": 1513,
+        "candy": 10
+      }
+    },
+    "8": {
+      "1": {
+        "star": 1,
+        "name": "縮入殼中睡",
+        "name_en": "Withdrawn-Shell Sleep",
+        "name_jp": "からにこもる寝",
+        "exp": 122,
+        "shards": 255,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "不入殼睡",
+        "name_en": "Out-of-Shell Sleep",
+        "name_jp": "こもらない寝",
+        "exp": 327,
+        "shards": 686,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "撲倒睡",
+        "name_en": "Face-Down Sleep",
+        "name_jp": "つっぷし寝",
+        "exp": 1063,
+        "shards": 2234,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1530,
+        "shards": 3216,
+        "candy": 12
+      }
+    },
+    "9": {
+      "1": {
+        "star": 1,
+        "name": "縮入殼中睡",
+        "name_en": "Withdrawn-Shell Sleep",
+        "name_jp": "からにこもる寝",
+        "exp": 540,
+        "shards": 1134,
+        "candy": 9
+      },
+      "2": {
+        "star": 2,
+        "name": "不入殼睡",
+        "name_en": "Out-of-Shell Sleep",
+        "name_jp": "こもらない寝",
+        "exp": 1208,
+        "shards": 2538,
+        "candy": 11
+      },
+      "3": {
+        "star": 3,
+        "name": "翻肚睡",
+        "name_en": "Belly-Up Sleep",
+        "name_jp": "ひっくりかえり寝",
+        "exp": 3005,
+        "shards": 6318,
+        "candy": 14
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 4093,
+        "shards": 8605,
+        "candy": 15
+      }
+    },
+    "10": {
+      "1": {
+        "star": 1,
+        "name": "貼地睡",
+        "name_en": "Flat Sleep",
+        "name_jp": "ぺったり寝",
+        "exp": 15,
+        "shards": 19,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "頭沉睡",
+        "name_en": "Heavy-Head Sleep",
+        "name_jp": "あたまおもい寝",
+        "exp": 94,
+        "shards": 103,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "吐絲睡",
+        "name_en": "Silk-Spinning Sleep",
+        "name_jp": "いとをはく寝",
+        "exp": 431,
+        "shards": 466,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 660,
+        "shards": 712,
+        "candy": 10
+      }
+    },
+    "11": {
+      "1": {
+        "star": 1,
+        "name": "靜止睡",
+        "name_en": "Still Sleep",
+        "name_jp": "じっと寝",
+        "exp": 33,
+        "shards": 38,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "搖晃睡",
+        "name_en": "Swaying Sleep",
+        "name_jp": "ゆらゆら寝",
+        "exp": 183,
+        "shards": 200,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "變硬睡",
+        "name_en": "Hardened Sleep",
+        "name_jp": "かたくなる寝",
+        "exp": 707,
+        "shards": 762,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1038,
+        "shards": 1118,
+        "candy": 12
+      }
+    },
+    "12": {
+      "1": {
+        "star": 1,
+        "name": "坐姿漂浮睡",
+        "name_en": "Sitting-Floating Sleep",
+        "name_jp": "すわりふゆう寝",
+        "exp": 407,
+        "shards": 729,
+        "candy": 9
+      },
+      "2": {
+        "star": 2,
+        "name": "漂浮睡",
+        "name_en": "Floating Sleep",
+        "name_jp": "ふゆう寝",
+        "exp": 951,
+        "shards": 1703,
+        "candy": 11
+      },
+      "3": {
+        "star": 3,
+        "name": "散播鱗粉睡",
+        "name_en": "Scale-Spreading Sleep",
+        "name_jp": "りんぷんだし寝",
+        "exp": 2502,
+        "shards": 4481,
+        "candy": 14
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 3408,
+        "shards": 6105,
+        "candy": 15
+      }
+    },
+    "19": {
+      "1": {
+        "star": 1,
+        "name": "抓臉睡",
+        "name_en": "Face-Scratch Sleep",
+        "name_jp": "かおかき寝",
+        "exp": 11,
+        "shards": 27,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "歪頭睡",
+        "name_en": "Head-Tilt Sleep",
+        "name_jp": "くびかしげ寝",
+        "exp": 58,
+        "shards": 167,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "啃門牙睡",
+        "name_en": "Teeth-Gnawing Sleep",
+        "name_jp": "まえばかじり寝",
+        "exp": 260,
+        "shards": 771,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 397,
+        "shards": 1181,
+        "candy": 10
+      }
+    },
+    "20": {
+      "1": {
+        "star": 1,
+        "name": "磨牙睡",
+        "name_en": "Tooth-Grinding Sleep",
+        "name_jp": "はぎしり寝",
+        "exp": 65,
+        "shards": 163,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "站立呆滯睡",
+        "name_en": "Stiff-Standing Sleep",
+        "name_jp": "ぼうだち寝",
+        "exp": 192,
+        "shards": 493,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "啃門牙睡",
+        "name_en": "Teeth-Gnawing Sleep",
+        "name_jp": "まえばかじり寝",
+        "exp": 663,
+        "shards": 1706,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 988,
+        "shards": 2544,
+        "candy": 12
+      }
+    },
+    "23": {
+      "1": {
+        "star": 1,
+        "name": "盤卷睡",
+        "name_en": "Coiled Sleep",
+        "name_jp": "とぐろ寝",
+        "exp": 11,
+        "shards": 26,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "伸縮睡",
+        "name_en": "Stretching Sleep",
+        "name_jp": "のびちぢみ寝",
+        "exp": 63,
+        "shards": 158,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "舒展睡",
+        "name_en": "Unwound Sleep",
+        "name_jp": "ほぐれ寝",
+        "exp": 284,
+        "shards": 729,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 434,
+        "shards": 1115,
+        "candy": 10
+      }
+    },
+    "24": {
+      "1": {
+        "star": 1,
+        "name": "盤卷睡",
+        "name_en": "Coiled Sleep",
+        "name_jp": "とぐろ寝",
+        "exp": 109,
+        "shards": 278,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "傾斜睡",
+        "name_en": "Tilted Sleep",
+        "name_jp": "かたむき寝",
+        "exp": 292,
+        "shards": 749,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "舒展睡",
+        "name_en": "Unwound Sleep",
+        "name_jp": "ほぐれ寝",
+        "exp": 948,
+        "shards": 2440,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1364,
+        "shards": 3514,
+        "candy": 12
+      }
+    },
+    "25": {
+      "1": {
+        "star": 1,
+        "name": "蜷縮睡",
+        "name_en": "Curled-Up Sleep",
+        "name_jp": "まるまり寝",
+        "exp": 11,
+        "shards": 27,
+        "candy": 5
+      },
+      "2": {
+        "star": 2,
+        "name": "垂耳睡",
+        "name_en": "Floppy-Eared Sleep",
+        "name_jp": "たれみみ寝",
+        "exp": 82,
+        "shards": 242,
+        "candy": 7
+      },
+      "3": {
+        "star": 3,
+        "name": "放電睡",
+        "name_en": "Discharging Sleep",
+        "name_jp": "ほうでん寝",
+        "exp": 328,
+        "shards": 975,
+        "candy": 10
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 513,
+        "shards": 1527,
+        "candy": 11
+      }
+    },
+    "26": {
+      "1": {
+        "star": 1,
+        "name": "搖尾巴睡",
+        "name_en": "Tail-Swaying Sleep",
+        "name_jp": "しっぽゆらゆら寝",
+        "exp": 334,
+        "shards": 859,
+        "candy": 9
+      },
+      "2": {
+        "star": 2,
+        "name": "坐著睡",
+        "name_en": "Sitting Sleep",
+        "name_jp": "すわり寝",
+        "exp": 781,
+        "shards": 2008,
+        "candy": 11
+      },
+      "3": {
+        "star": 3,
+        "name": "尾巴接地睡",
+        "name_en": "Tail-Grounded Sleep",
+        "name_jp": "しっぽアース寝",
+        "exp": 2053,
+        "shards": 5287,
+        "candy": 14
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 2796,
+        "shards": 7203,
+        "candy": 15
+      }
+    },
+    "27": {
+      "1": {
+        "star": 1,
+        "name": "露肚睡",
+        "name_en": "Exposed-Belly Sleep",
+        "name_jp": "おなかだし寝",
+        "exp": 93,
+        "shards": 148,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "打瞌睡",
+        "name_en": "Nodding-Off Sleep",
+        "name_jp": "こっくり寝",
+        "exp": 405,
+        "shards": 644,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "埋土睡",
+        "name_en": "Buried Sleep",
+        "name_jp": "つちうまり寝",
+        "exp": 2114,
+        "shards": 3359,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 2942,
+        "shards": 4673,
+        "candy": 10
+      }
+    },
+    "28": {
+      "1": {
+        "star": 1,
+        "name": "搓臉睡",
+        "name_en": "Face-Rubbing Sleep",
+        "name_jp": "かおごしごし寝",
+        "exp": 511,
+        "shards": 812,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "打瞌睡",
+        "name_en": "Nodding-Off Sleep",
+        "name_jp": "こっくり寝",
+        "exp": 1537,
+        "shards": 2442,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "埋土睡",
+        "name_en": "Buried Sleep",
+        "name_jp": "つちうまり寝",
+        "exp": 4969,
+        "shards": 7893,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 7953,
+        "shards": 12632,
+        "candy": 12
+      }
+    },
+    "35": {
+      "1": {
+        "star": 1,
+        "name": "安詳睡",
+        "name_en": "Peaceful Sleep",
+        "name_jp": "おだやか寝",
+        "exp": 53,
+        "shards": 60,
+        "candy": 5
+      },
+      "2": {
+        "star": 2,
+        "name": "打瞌睡",
+        "name_en": "Nodding-Off Sleep",
+        "name_jp": "こっくり寝",
+        "exp": 226,
+        "shards": 245,
+        "candy": 7
+      },
+      "3": {
+        "star": 3,
+        "name": "揮指睡",
+        "name_en": "Metronome Sleep",
+        "name_jp": "ゆびをふる寝",
+        "exp": 827,
+        "shards": 892,
+        "candy": 10
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1204,
+        "shards": 1297,
+        "candy": 11
+      }
+    },
+    "36": {
+      "1": {
+        "star": 1,
+        "name": "安詳睡",
+        "name_en": "Peaceful Sleep",
+        "name_jp": "おだやか寝",
+        "exp": 691,
+        "shards": 863,
+        "candy": 9
+      },
+      "2": {
+        "star": 2,
+        "name": "打瞌睡",
+        "name_en": "Nodding-Off Sleep",
+        "name_jp": "こっくり寝",
+        "exp": 1548,
+        "shards": 1929,
+        "candy": 11
+      },
+      "3": {
+        "star": 3,
+        "name": "揮指睡",
+        "name_en": "Metronome Sleep",
+        "name_jp": "ゆびをふる寝",
+        "exp": 3854,
+        "shards": 4799,
+        "candy": 14
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 5249,
+        "shards": 6535,
+        "candy": 15
+      }
+    },
+    "37": {
+      "1": {
+        "star": 1,
+        "name": "蜷縮睡",
+        "name_en": "Curled-Up Sleep",
+        "name_jp": "まるまり寝",
+        "exp": 29,
+        "shards": 71,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "打瞌睡",
+        "name_en": "Nodding-Off Sleep",
+        "name_jp": "こっくり寝",
+        "exp": 249,
+        "shards": 638,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "火花睡",
+        "name_en": "Ember Sleep",
+        "name_jp": "ひのこ寝",
+        "exp": 838,
+        "shards": 2156,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1212,
+        "shards": 3121,
+        "candy": 10
+      }
+    },
+    "38": {
+      "1": {
+        "star": 1,
+        "name": "伸展睡",
+        "name_en": "Stretching Sleep",
+        "name_jp": "のび寝",
+        "exp": 228,
+        "shards": 478,
+        "candy": 8
+      },
+      "2": {
+        "star": 2,
+        "name": "蓬鬆尾巴睡",
+        "name_en": "Fluffy-Tail Sleep",
+        "name_jp": "しっぽふわり寝",
+        "exp": 931,
+        "shards": 1956,
+        "candy": 10
+      },
+      "3": {
+        "star": 3,
+        "name": "尾巴棉被睡",
+        "name_en": "Tail-Blanket Sleep",
+        "name_jp": "しっぽふとん寝",
+        "exp": 2391,
+        "shards": 5026,
+        "candy": 13
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 3334,
+        "shards": 7008,
+        "candy": 14
+      }
+    },
+    "39": {
+      "1": {
+        "star": 1,
+        "name": "坐著睡",
+        "name_en": "Sitting Sleep",
+        "name_jp": "すわり寝",
+        "exp": 27,
+        "shards": 31,
+        "candy": 5
+      },
+      "2": {
+        "star": 2,
+        "name": "發呆睡",
+        "name_en": "Absentminded Sleep",
+        "name_jp": "ぼんやり寝",
+        "exp": 148,
+        "shards": 161,
+        "candy": 7
+      },
+      "3": {
+        "star": 3,
+        "name": "唱歌睡",
+        "name_en": "Singing Sleep",
+        "name_jp": "うたう寝",
+        "exp": 595,
+        "shards": 642,
+        "candy": 10
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 917,
+        "shards": 989,
+        "candy": 11
+      }
+    },
+    "40": {
+      "1": {
+        "star": 1,
+        "name": "微笑睡",
+        "name_en": "Smiling Sleep",
+        "name_jp": "ほほえみ寝",
+        "exp": 260,
+        "shards": 283,
+        "candy": 9
+      },
+      "2": {
+        "star": 2,
+        "name": "受驚睡",
+        "name_en": "Startled Sleep",
+        "name_jp": "びっくり寝",
+        "exp": 673,
+        "shards": 726,
+        "candy": 11
+      },
+      "3": {
+        "star": 3,
+        "name": "鼓腮睡",
+        "name_en": "Puffy Sleep",
+        "name_jp": "ぷくぷく寝",
+        "exp": 1985,
+        "shards": 2136,
+        "candy": 14
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 2764,
+        "shards": 2974,
+        "candy": 15
+      }
+    },
+    "50": {
+      "1": {
+        "star": 1,
+        "name": "地中睡",
+        "name_en": "Underground Sleep",
+        "name_jp": "ちちゅう寝",
+        "exp": 11,
+        "shards": 27,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "地上睡",
+        "name_en": "Aboveground Sleep",
+        "name_jp": "ちじょう寝",
+        "exp": 58,
+        "shards": 167,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "挖洞睡",
+        "name_en": "Digging Sleep",
+        "name_jp": "あなをほる寝",
+        "exp": 260,
+        "shards": 771,
+        "candy": 9
+      }
+    },
+    "51": {
+      "1": {
+        "star": 1,
+        "name": "地中睡",
+        "name_en": "Underground Sleep",
+        "name_jp": "ちちゅう寝",
+        "exp": 100,
+        "shards": 294,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "地上睡",
+        "name_en": "Aboveground Sleep",
+        "name_jp": "ちじょう寝",
+        "exp": 267,
+        "shards": 793,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "三胞胎和睦睡",
+        "name_en": "Friendly Triplets Sleep",
+        "name_jp": "みつごなかよし寝",
+        "exp": 867,
+        "shards": 2585,
+        "candy": 11
+      }
+    },
+    "52": {
+      "1": {
+        "star": 1,
+        "name": "蜷縮睡",
+        "name_en": "Curled-Up Sleep",
+        "name_jp": "まるまり寝",
+        "exp": 12,
+        "shards": 24,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "坐著睡",
+        "name_en": "Sitting Sleep",
+        "name_jp": "すわり寝",
+        "exp": 100,
+        "shards": 210,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "聚寶功睡",
+        "name_en": "Pay Day Sleep",
+        "name_jp": "ネコにこばん寝",
+        "exp": 402,
+        "shards": 843,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 629,
+        "shards": 1320,
+        "candy": 10
+      }
+    },
+    "53": {
+      "1": {
+        "star": 1,
+        "name": "優雅睡",
+        "name_en": "Graceful Sleep",
+        "name_jp": "ゆうが寝",
+        "exp": 122,
+        "shards": 255,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "踏步睡",
+        "name_en": "Braced Sleep",
+        "name_jp": "ふんばり寝",
+        "exp": 327,
+        "shards": 686,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "抱頭謝罪睡",
+        "name_en": "Apologetic Sleep",
+        "name_jp": "ごめん寝",
+        "exp": 1063,
+        "shards": 2234,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1530,
+        "shards": 3216,
+        "candy": 12
+      }
+    },
+    "54": {
+      "1": {
+        "star": 1,
+        "name": "頭痛睡",
+        "name_en": "Headache Sleep",
+        "name_jp": "ずつう寝",
+        "exp": 13,
+        "shards": 23,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "打大哈欠睡",
+        "name_en": "Big Yawn Sleep",
+        "name_jp": "おおあくび寝",
+        "exp": 76,
+        "shards": 135,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "撒嬌任性睡",
+        "name_en": "Tantrum Sleep",
+        "name_jp": "やだやだ寝",
+        "exp": 346,
+        "shards": 618,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 529,
+        "shards": 946,
+        "candy": 10
+      }
+    },
+    "55": {
+      "1": {
+        "star": 1,
+        "name": "手臂枕睡",
+        "name_en": "Arm-Pillow Sleep",
+        "name_jp": "うでまくら寝",
+        "exp": 132,
+        "shards": 236,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "抓屁股睡",
+        "name_en": "Scratching-Rump Sleep",
+        "name_jp": "おしりかき寝",
+        "exp": 355,
+        "shards": 636,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "游泳睡",
+        "name_en": "Swimming Sleep",
+        "name_jp": "およぎ寝",
+        "exp": 1155,
+        "shards": 2069,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1663,
+        "shards": 2979,
+        "candy": 12
+      }
+    },
+    "56": {
+      "1": {
+        "star": 1,
+        "name": "憤怒睡",
+        "name_en": "Angry Sleep",
+        "name_jp": "おこり寝",
+        "exp": 11,
+        "shards": 26,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "站立呆滯睡",
+        "name_en": "Stiff-Standing Sleep",
+        "name_jp": "ぼうだち寝",
+        "exp": 81,
+        "shards": 206,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "安詳睡",
+        "name_en": "Peaceful Sleep",
+        "name_jp": "おだやか寝",
+        "exp": 333,
+        "shards": 855,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 516,
+        "shards": 1325,
+        "candy": 10
+      }
+    },
+    "57": {
+      "1": {
+        "star": 1,
+        "name": "憤怒睡",
+        "name_en": "Angry Sleep",
+        "name_jp": "おこり寝",
+        "exp": 122,
+        "shards": 255,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "跺腳睡",
+        "name_en": "Stomping Sleep",
+        "name_jp": "じだんだ寝",
+        "exp": 327,
+        "shards": 686,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "安詳睡",
+        "name_en": "Peaceful Sleep",
+        "name_jp": "おだやか寝",
+        "exp": 1063,
+        "shards": 2234,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1530,
+        "shards": 3216,
+        "candy": 12
+      }
+    },
+    "58": {
+      "1": {
+        "star": 1,
+        "name": "伸展睡",
+        "name_en": "Stretching Sleep",
+        "name_jp": "のび寝",
+        "exp": 13,
+        "shards": 23,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "端坐睡",
+        "name_en": "Sitting-Pretty Sleep",
+        "name_jp": "おすわり寝",
+        "exp": 109,
+        "shards": 195,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "翻肚仰躺睡",
+        "name_en": "Belly-Up Sleep",
+        "name_jp": "へそてん寝",
+        "exp": 437,
+        "shards": 781,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 683,
+        "shards": 1223,
+        "candy": 10
+      }
+    },
+    "59": {
+      "1": {
+        "star": 1,
+        "name": "伏臥睡",
+        "name_en": "Lying-Down Sleep",
+        "name_jp": "ふせ寝",
+        "exp": 680,
+        "shards": 1218,
+        "candy": 8
+      },
+      "2": {
+        "star": 2,
+        "name": "端坐睡",
+        "name_en": "Sitting-Pretty Sleep",
+        "name_jp": "おすわり寝",
+        "exp": 1450,
+        "shards": 2597,
+        "candy": 10
+      },
+      "3": {
+        "star": 3,
+        "name": "翻肚仰躺睡",
+        "name_en": "Belly-Up Sleep",
+        "name_jp": "へそてん寝",
+        "exp": 3573,
+        "shards": 6400,
+        "candy": 13
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 4939,
+        "shards": 8846,
+        "candy": 14
+      }
+    },
+    "69": {
+      "1": {
+        "star": 1,
+        "name": "伸腿睡",
+        "name_en": "Legs-Extended Sleep",
+        "name_jp": "あしのばし寝",
+        "exp": 13,
+        "shards": 23,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "溶解液睡",
+        "name_en": "Acid Sleep",
+        "name_jp": "ようかいえき寝",
+        "exp": 87,
+        "shards": 155,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "扎根睡",
+        "name_en": "Rooted Sleep",
+        "name_jp": "ねをはる寝",
+        "exp": 376,
+        "shards": 673,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 576,
+        "shards": 1032,
+        "candy": 10
+      }
+    },
+    "70": {
+      "1": {
+        "star": 1,
+        "name": "溶解液睡",
+        "name_en": "Acid Sleep",
+        "name_jp": "ようかいえき寝",
+        "exp": 78,
+        "shards": 139,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "漂浮睡",
+        "name_en": "Floating Sleep",
+        "name_jp": "ふゆう寝",
+        "exp": 234,
+        "shards": 419,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "黏著睡",
+        "name_en": "Clinging Sleep",
+        "name_jp": "くっつき寝",
+        "exp": 808,
+        "shards": 1447,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1205,
+        "shards": 2157,
+        "candy": 12
+      }
+    },
+    "71": {
+      "1": {
+        "star": 1,
+        "name": "撲簌撲簌睡",
+        "name_en": "Fluffy-Puff Sleep",
+        "name_jp": "ばふばふ寝",
+        "exp": 407,
+        "shards": 729,
+        "candy": 9
+      },
+      "2": {
+        "star": 2,
+        "name": "藤蔓支撐睡",
+        "name_en": "Vine-Support Sleep",
+        "name_jp": "つるささえ寝",
+        "exp": 951,
+        "shards": 1703,
+        "candy": 11
+      },
+      "3": {
+        "star": 3,
+        "name": "翻肚睡",
+        "name_en": "Belly-Up Sleep",
+        "name_jp": "ひっくりかえり寝",
+        "exp": 2502,
+        "shards": 4481,
+        "candy": 14
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 3408,
+        "shards": 6105,
+        "candy": 15
+      }
+    },
+    "74": {
+      "1": {
+        "star": 1,
+        "name": "抱胸睡",
+        "name_en": "Arms-Folded Sleep",
+        "name_jp": "うでぐみ寝",
+        "exp": 11,
+        "shards": 26,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "忍耐睡",
+        "name_en": "Enduring Sleep",
+        "name_jp": "がまん寝",
+        "exp": 63,
+        "shards": 158,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "陷入泥中睡",
+        "name_en": "Sunken Sleep",
+        "name_jp": "めりこみ寝",
+        "exp": 284,
+        "shards": 729,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 434,
+        "shards": 1115,
+        "candy": 10
+      }
+    },
+    "75": {
+      "1": {
+        "star": 1,
+        "name": "側滾睡",
+        "name_en": "Tumbling Sleep",
+        "name_jp": "ごろーん寝",
+        "exp": 72,
+        "shards": 150,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "豪邁睡",
+        "name_en": "Boisterous Sleep",
+        "name_jp": "ごうかい寝",
+        "exp": 215,
+        "shards": 452,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "滾來滾去睡",
+        "name_en": "Rolling Sleep",
+        "name_jp": "ごろごろ寝",
+        "exp": 744,
+        "shards": 1562,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1109,
+        "shards": 2329,
+        "candy": 12
+      }
+    },
+    "76": {
+      "1": {
+        "star": 1,
+        "name": "沉穩睡",
+        "name_en": "Hefty Sleep",
+        "name_jp": "どっしり寝",
+        "exp": 587,
+        "shards": 1050,
+        "candy": 9
+      },
+      "2": {
+        "star": 2,
+        "name": "威風佇立睡",
+        "name_en": "Commanding-Stance Sleep",
+        "name_jp": "におうだち寝",
+        "exp": 1312,
+        "shards": 2351,
+        "candy": 11
+      },
+      "3": {
+        "star": 3,
+        "name": "滾來滾去睡",
+        "name_en": "Rolling Sleep",
+        "name_jp": "ごろごろ寝",
+        "exp": 3266,
+        "shards": 5850,
+        "candy": 14
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 4449,
+        "shards": 7968,
+        "candy": 15
+      }
+    },
+    "79": {
+      "1": {
+        "star": 1,
+        "name": "癱軟睡",
+        "name_en": "Limp Sleep",
+        "name_jp": "ぐでぐで寝",
+        "exp": 15,
+        "shards": 19,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "茫然睡",
+        "name_en": "Dazed Sleep",
+        "name_jp": "ぼーっと寝",
+        "exp": 122,
+        "shards": 133,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "呆鈍睡",
+        "name_en": "Goofy Sleep",
+        "name_jp": "まぬけだ寝",
+        "exp": 506,
+        "shards": 546,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 784,
+        "shards": 845,
+        "candy": 10
+      }
+    },
+    "80": {
+      "1": {
+        "star": 1,
+        "name": "和睦睡",
+        "name_en": "Harmonious Sleep",
+        "name_jp": "なかよし寝",
+        "exp": 142,
+        "shards": 218,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "流口水睡",
+        "name_en": "Drooling Sleep",
+        "name_jp": "よだれ寝",
+        "exp": 383,
+        "shards": 586,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "被咬尾巴睡",
+        "name_en": "Bitten-Tail Sleep",
+        "name_jp": "しっぽかまれ寝",
+        "exp": 1247,
+        "shards": 1904,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 1796,
+        "shards": 2741,
+        "candy": 12
+      }
+    },
+    "81": {
+      "1": {
+        "star": 1,
+        "name": "傾斜漂浮睡",
+        "name_en": "Tilted-Floating Sleep",
+        "name_jp": "かたむきふゆう寝",
+        "exp": 11,
+        "shards": 27,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "電磁漂浮睡",
+        "name_en": "Magnet-Rise Sleep",
+        "name_jp": "でんじふゆう寝",
+        "exp": 66,
+        "shards": 192,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "倒立漂浮睡",
+        "name_en": "Inverted-Floating Sleep",
+        "name_jp": "さかさふゆう寝",
+        "exp": 283,
+        "shards": 839,
+        "candy": 9
+      }
+    },
+    "82": {
+      "1": {
+        "star": 1,
+        "name": "連結漂浮睡",
+        "name_en": "Connected-Floating Sleep",
+        "name_jp": "れんけつふゆう寝",
+        "exp": 100,
+        "shards": 294,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "欲墜漂浮睡",
+        "name_en": "Falling-Floating Sleep",
+        "name_jp": "おちかけふゆう寝",
+        "exp": 267,
+        "shards": 793,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "散落漂浮睡",
+        "name_en": "Scattered-Floating Sleep",
+        "name_jp": "ばらばらふゆう寝",
+        "exp": 867,
+        "shards": 2585,
+        "candy": 11
+      }
+    },
+    "83": {
+      "1": {
+        "star": 1,
+        "name": "貼地睡",
+        "name_en": "Flat Sleep",
+        "name_jp": "ぺったり寝",
+        "exp": 553,
+        "shards": 867,
+        "candy": 7
+      },
+      "2": {
+        "star": 2,
+        "name": "持大蔥睡",
+        "name_en": "Leek-Wielding Sleep",
+        "name_jp": "クキかまえ寝",
+        "exp": 2337,
+        "shards": 3659,
+        "candy": 9
+      },
+      "3": {
+        "star": 3,
+        "name": "咬大蔥睡",
+        "name_en": "Leek-Chewing Sleep",
+        "name_jp": "クキかみ寝",
+        "exp": 8173,
+        "shards": 12797,
+        "candy": 12
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 10084,
+        "shards": 15787,
+        "candy": 13
+      }
+    },
+    "84": {
+      "1": {
+        "star": 1,
+        "name": "放哨睡",
+        "name_en": "Lookout Sleep",
+        "name_jp": "みはり寝",
+        "exp": 11,
+        "shards": 27,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "偷懶放哨睡",
+        "name_en": "Slacking-Lookout Sleep",
+        "name_jp": "みはりさぼり寝",
+        "exp": 58,
+        "shards": 167,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "雙胞胎睡",
+        "name_en": "Twin Sleep",
+        "name_jp": "ふたご寝",
+        "exp": 260,
+        "shards": 771,
+        "candy": 9
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 397,
+        "shards": 1181,
+        "candy": 10
+      }
+    },
+    "85": {
+      "1": {
+        "star": 1,
+        "name": "放哨睡",
+        "name_en": "Lookout Sleep",
+        "name_jp": "みはり寝",
+        "exp": 65,
+        "shards": 163,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "偷懶放哨睡",
+        "name_en": "Slacking-Lookout Sleep",
+        "name_jp": "みはりさぼり寝",
+        "exp": 192,
+        "shards": 493,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "三胞胎睡",
+        "name_en": "Triplet Sleep",
+        "name_jp": "みつご寝",
+        "exp": 663,
+        "shards": 1706,
+        "candy": 11
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 988,
+        "shards": 2544,
+        "candy": 12
+      }
+    },
+    "92": {
+      "1": {
+        "star": 1,
+        "name": "笑咪咪睡",
+        "name_en": "Smiling Sleep",
+        "name_jp": "にこにこ寝",
+        "exp": 11,
+        "shards": 27,
+        "candy": 4
+      },
+      "2": {
+        "star": 2,
+        "name": "瓦斯漂浮睡",
+        "name_en": "Gas-Floating Sleep",
+        "name_jp": "ガスふゆう寝",
+        "exp": 75,
+        "shards": 218,
+        "candy": 6
+      },
+      "3": {
+        "star": 3,
+        "name": "吐舌做鬼臉睡",
+        "name_en": "Tongue-Out Sleep",
+        "name_jp": "べろべろばー寝",
+        "exp": 305,
+        "shards": 905,
+        "candy": 9
+      }
+    },
+    "93": {
+      "1": {
+        "star": 1,
+        "name": "歪頭睡",
+        "name_en": "Head-Tilt Sleep",
+        "name_jp": "くびかしげ寝",
+        "exp": 67,
+        "shards": 195,
+        "candy": 6
+      },
+      "2": {
+        "star": 2,
+        "name": "瓦斯漂浮睡",
+        "name_en": "Gas-Floating Sleep",
+        "name_jp": "ガスふゆう寝",
+        "exp": 191,
+        "shards": 564,
+        "candy": 8
+      },
+      "3": {
+        "star": 3,
+        "name": "吐舌做鬼臉睡",
+        "name_en": "Tongue-Out Sleep",
+        "name_jp": "べろべろばー寝",
+        "exp": 653,
+        "shards": 1945,
+        "candy": 11
+      }
+    },
+    "94": {
+      "1": {
+        "star": 1,
+        "name": "惡作劇睡",
+        "name_en": "Mischief Sleep",
+        "name_jp": "いたずら寝",
+        "exp": 441,
+        "shards": 1311,
+        "candy": 9
+      },
+      "2": {
+        "star": 2,
+        "name": "壞笑睡",
+        "name_en": "Smirking Sleep",
+        "name_jp": "にやにや寝",
+        "exp": 985,
+        "shards": 2937,
+        "candy": 11
+      },
+      "3": {
+        "star": 3,
+        "name": "吐舌做鬼臉睡",
+        "name_en": "Tongue-Out Sleep",
+        "name_jp": "べろべろばー寝",
+        "exp": 2451,
+        "shards": 7311,
+        "candy": 14
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 3338,
+        "shards": 9959,
+        "candy": 15
+      }
+    },
+    "95": {
+      "1": {
+        "star": 1,
+        "name": "漩渦睡",
+        "name_en": "Swirling Sleep",
+        "name_jp": "うずまき寝",
+        "exp": 257,
+        "shards": 763,
+        "candy": 7
+      },
+      "2": {
+        "star": 2,
+        "name": "搖搖欲墜睡",
+        "name_en": "Wobbly Sleep",
+        "name_jp": "ぐらぐら寝",
+        "exp": 620,
+        "shards": 1845,
+        "candy": 9
+      },
+      "3": {
+        "star": 3,
+        "name": "持續挖掘睡",
+        "name_en": "Digging-Forward Sleep",
+        "name_jp": "ほりすすみ寝",
+        "exp": 1707,
+        "shards": 5091,
+        "candy": 12
+      }
+    },
+    "150": {
+      "1": {
+        "star": 1,
+        "name": "冥想睡",
+        "name_en": "Meditation Sleep",
+        "name_jp": "めいそう寝",
+        "exp": 2000,
+        "shards": 4500,
+        "candy": 18
+      },
+      "2": {
+        "star": 2,
+        "name": "漂浮睡",
+        "name_en": "Floating Sleep",
+        "name_jp": "ふゆう寝",
+        "exp": 2700,
+        "shards": 6000,
+        "candy": 22
+      },
+      "3": {
+        "star": 3,
+        "name": "精神擊破睡",
+        "name_en": "Psystrike Sleep",
+        "name_jp": "サイコブレイク寝",
+        "exp": 4000,
+        "shards": 9000,
+        "candy": 25
+      }
+    },
+    "0150": {
+      "1": {
+        "star": 1,
+        "name": "冥想睡",
+        "name_en": "Meditation Sleep",
+        "name_jp": "めいそう寝",
+        "exp": 2000,
+        "shards": 4500,
+        "candy": 18
+      },
+      "2": {
+        "star": 2,
+        "name": "漂浮睡",
+        "name_en": "Floating Sleep",
+        "name_jp": "ふゆう寝",
+        "exp": 2700,
+        "shards": 6000,
+        "candy": 22
+      },
+      "3": {
+        "star": 3,
+        "name": "精神擊破睡",
+        "name_en": "Psystrike Sleep",
+        "name_jp": "サイコブレイク寝",
+        "exp": 4000,
+        "shards": 9000,
+        "candy": 25
+      }
+    },
+    "9007": {
+      "1": {
+        "star": 1,
+        "name": "翹尾巴睡",
+        "name_en": "Tail-Erect Sleep",
+        "name_jp": "しっぽたち寝",
+        "exp": 67,
+        "shards": 195,
+        "candy": 5
+      },
+      "2": {
+        "star": 2,
+        "name": "送禮物睡",
+        "name_en": "Gift-Giving Sleep",
+        "name_jp": "プレゼント寝",
+        "exp": 82,
+        "shards": 242,
+        "candy": 7
+      },
+      "3": {
+        "star": 3,
+        "name": "放電睡",
+        "name_en": "Discharging Sleep",
+        "name_jp": "ほうでん寝",
+        "exp": 328,
+        "shards": 975,
+        "candy": 10
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 513,
+        "shards": 1527,
+        "candy": 11
       }
     }
   }

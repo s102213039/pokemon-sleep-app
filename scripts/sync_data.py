@@ -104,7 +104,7 @@ def save_json(path: Path, data: list):
     """儲存 JSON 檔案"""
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    log.info(f'✅ 已儲存 {path.name}（{len(data)} 筆）')
+    log.info(f'[OK] 已儲存 {path.name}（{len(data)} 筆）')
 
 
 def try_import(module_name: str):
@@ -122,14 +122,14 @@ def sync_to_user_google_sheet(data: list) -> bool:
     """
     sa_json = os.environ.get('GCP_SA_KEY') or os.environ.get('GSHEETS_SERVICE_ACCOUNT_JSON')
     if not sa_json:
-        log.info('💡 未設定 GCP_SA_KEY，跳過寫入用戶 Google Sheet。')
+        log.info('[INFO] 未設定 GCP_SA_KEY，跳過寫入用戶 Google Sheet。')
         log.info('   (若需寫回你的 Google Sheet，可在 GitHub Secrets 設定 GCP_SA_KEY)')
         return True
 
     try:
         gspread = try_import('gspread')
         if not gspread:
-            log.warning('⚠️ 需要安裝 gspread 以寫入 Google Sheet: pip install gspread google-auth')
+            log.warning('[WARN] 需要安裝 gspread 以寫入 Google Sheet: pip install gspread google-auth')
             return False
         
         from google.oauth2.service_account import Credentials
@@ -147,10 +147,10 @@ def sync_to_user_google_sheet(data: list) -> bool:
             
         sheet.clear()
         sheet.update('A1', rows)
-        log.info(f'✅ 已成功將最新資料寫回至 Google Sheet ({TARGET_USER_GSHEET_ID})')
+        log.info(f'[OK] 已成功將最新資料寫回至 Google Sheet ({TARGET_USER_GSHEET_ID})')
         return True
     except Exception as e:
-        log.error(f'❌ 寫入 Google Sheet 失敗: {e}')
+        log.error(f'[ERROR] 寫入 Google Sheet 失敗: {e}')
         return False
 
 
@@ -190,11 +190,18 @@ def sync_pokemon_data() -> bool:
                 continue
             if pid in existing_ids:
                 continue
+            name_cn = row.get('name_cn', row.get('中文名', ''))
+            if pid == 7054 or name_cn == '烏波（阿羅拉的樣子）':
+                name_cn = '烏波（帕底亞的樣子）'
+            main_skill = row.get('main_skill', '')
+            if '怪力钳' in main_skill:
+                main_skill = main_skill.replace('怪力钳', '怪力鉗')
+
             # 新增寶可夢
             new_entry = {
                 'id':             pid,
                 'formatted_no':   str(pid).zfill(4),
-                'name_cn':        row.get('name_cn', row.get('中文名', '')),
+                'name_cn':        name_cn,
                 'name_en':        row.get('name_en', row.get('英文名', '')),
                 'name_jp':        row.get('name_jp', ''),
                 'type':           row.get('type', row.get('屬性', '')),
@@ -203,7 +210,7 @@ def sync_pokemon_data() -> bool:
                 'ingredient_rate':row.get('ingredient_rate', ''),
                 'skill_rate':     row.get('skill_rate', ''),
                 'interval':       row.get('interval', ''),
-                'main_skill':     row.get('main_skill', ''),
+                'main_skill':     main_skill,
                 'icon_url':       get_icon_url(pid, str(pid).zfill(4) if pid < 1000 else str(pid)),
                 'ingredients':    []  # 需另行補充食材資料
             }
@@ -212,19 +219,29 @@ def sync_pokemon_data() -> bool:
             new_count += 1
             log.info(f'  新增寶可夢：#{pid} {new_entry["name_cn"]}')
 
-        if new_count > 0:
+        # 稽核並正規化既有資料
+        corrected_count = 0
+        for p in current:
+            if p.get('id') == 7054 and p.get('name_cn') != '烏波（帕底亞的樣子）':
+                p['name_cn'] = '烏波（帕底亞的樣子）'
+                corrected_count += 1
+            if '怪力钳' in p.get('main_skill', ''):
+                p['main_skill'] = p['main_skill'].replace('怪力钳', '怪力鉗')
+                corrected_count += 1
+
+        if new_count > 0 or corrected_count > 0:
             current.sort(key=lambda p: p.get('id', 9999))
             save_json(DATA_JSON, current)
-            log.info(f'✅ 新增 {new_count} 隻寶可夢')
+            log.info(f'[OK] 新增 {new_count} 隻寶可夢，校正 {corrected_count} 筆資料')
         else:
-            log.info('✅ 寶可夢資料無需更新')
+            log.info('[OK] 寶可夢資料無需更新')
             
         # 同步更新至用戶的 Google Sheet (如果有設定 GCP_SA_KEY)
         sync_to_user_google_sheet(current)
         return True
 
     except Exception as e:
-        log.error(f'❌ 同步寶可夢資料失敗：{e}')
+        log.error(f'[ERROR] 同步寶可夢資料失敗：{e}')
         return False
 
 
@@ -432,14 +449,14 @@ def sync_recipes_data() -> bool:
 
         if len(all_dishes) > 0:
             save_json(RECIPES_JSON, all_dishes)
-            log.info(f'✅ 成功同步 {len(all_dishes)} 道食譜至 recipes.json')
+            log.info(f'[OK] 成功同步 {len(all_dishes)} 道食譜至 recipes.json')
             return True
         else:
-            log.error('❌ 未獲取到任何食譜')
+            log.error('[ERROR] 未獲取到任何食譜')
             return False
 
     except Exception as e:
-        log.error(f'❌ 同步食譜資料失敗：{e}')
+        log.error(f'[ERROR] 同步食譜資料失敗：{e}')
         return False
 
 
@@ -464,12 +481,12 @@ def main():
             import build_news
             log.info('--- 開始同步官方新聞與更新 ---')
             build_news.main()
-            log.info('✅ 官方新聞與更新同步完成')
+            log.info('[OK] 官方新聞與更新同步完成')
         except Exception as e:
-            log.error(f'❌ 同步官方新聞失敗：{e}')
+            log.error(f'[ERROR] 同步官方新聞失敗：{e}')
 
     if success:
-        log.info('=== 同步完成 ✅ ===')
+        log.info('=== 同步完成 [OK] ===')
     else:
         log.warning('=== 同步部分失敗，請檢查上方錯誤訊息 ===')
         sys.exit(1)

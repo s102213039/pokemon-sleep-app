@@ -181,6 +181,7 @@
     const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
     const defaultCandidates = [
       `${base}data/recipes.json`,
+      `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json`,
       `data/recipes.json`,
       `../data/recipes.json`,
       `${base}recipes.json`,
@@ -249,8 +250,63 @@
     throw lastErr || new Error('Failed to load recipes.json from candidate paths: ' + cleanUrls.join(', '));
   };
 
+  function scheduleDynamicRecipesSync() {
+    if (typeof window === 'undefined' || typeof fetch === 'undefined') return;
+    let isSyncing = false;
+
+    async function runSyncCheck() {
+      if (isSyncing) return;
+      isSyncing = true;
+      try {
+        const liveUrl = `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json?t=${Date.now()}`;
+        const res = await fetch(liveUrl, { cache: 'no-store' });
+        if (!res.ok) return;
+        const freshData = await res.json();
+        if (!Array.isArray(freshData) || freshData.length === 0) return;
+
+        const currentLen = Array.isArray(allRecipes) ? allRecipes.length : 0;
+        const isDifferent = currentLen !== freshData.length ||
+          (freshData.length > 0 && allRecipes.length > 0 && (
+            freshData[0].name !== allRecipes[0].name ||
+            freshData[freshData.length - 1].name !== allRecipes[allRecipes.length - 1].name
+          ));
+
+        if (isDifferent || !currentLen) {
+          console.log(`[Recipe Engine] 動態連線取得最新食譜料理 (${freshData.length} 道)，正在原地更新...`);
+          allRecipes = freshData;
+          try {
+            if (window.localStorage) {
+              window.localStorage.setItem(CACHE_KEY_RECIPES_JSON, JSON.stringify(freshData));
+              window.localStorage.setItem(CACHE_KEY_RECIPES_JSON_TIME, String(Date.now()));
+            }
+          } catch (e) {}
+
+          if (typeof render === 'function') {
+            render();
+          }
+          window.dispatchEvent(new CustomEvent('recipes-data-updated', { detail: freshData }));
+        }
+      } catch (err) {
+        // 靜默處理網路異常
+      } finally {
+        isSyncing = false;
+      }
+    }
+
+    setTimeout(runSyncCheck, 2500);
+    setInterval(runSyncCheck, 15 * 60 * 1000);
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          runSyncCheck();
+        }
+      });
+    }
+  }
+
   fetchRecipesWithFallback(
     (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/recipes.json?t=${Date.now()}`,
+    `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json?t=${Date.now()}`,
     `data/recipes.json?t=${Date.now()}`,
     `../data/recipes.json?t=${Date.now()}`,
     `recipes.json?t=${Date.now()}`
@@ -267,6 +323,7 @@
       initSearch();
       initRecipeSidebarEvents();
       render();
+      scheduleDynamicRecipesSync();
     })
     .catch(err => {
       console.error('Error loading recipes.json:', err);
