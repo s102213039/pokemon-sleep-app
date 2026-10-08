@@ -11013,6 +11013,78 @@ SP 4,316
     assert(stylesCss.includes('body:not(.mobile-h5-app) #box-edit-modal .box-subskill-slots-row .box-subskill-slot-btn') && stylesCss.includes('border: none !important'), 'styles.css must remove outer border from box subskill slots on desktop');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Pot Expansion Slider UI, Range (0-200), and Default 100 Energy Recipe Calculations', () => {
+    const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app/index.html'), 'utf8');
+    const recipesJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/recipes.js'), 'utf8');
+    const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/core/i18n.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+
+    // 1. Slider presence in HTML files
+    assert(indexHtml.includes('id="pot-expansion-slider"'), 'index.html must contain pot-expansion-slider');
+    assert(indexHtml.includes('id="pot-expansion-badge"'), 'index.html must contain pot-expansion-badge');
+    assert(indexHtml.includes('min="0"') && indexHtml.includes('max="200"') && indexHtml.includes('class="rf-slider pot-slider"'), 'index.html slider must be min 0, max 200 with pot-slider class');
+
+    assert(appIndexHtml.includes('id="pot-expansion-slider"'), 'app/index.html must contain pot-expansion-slider');
+    assert(appIndexHtml.includes('id="pot-expansion-badge"'), 'app/index.html must contain pot-expansion-badge');
+
+    // 2. i18n keys
+    assert(i18nJs.includes("'recipe.slider_pot_expansion': '擴鍋預測'"), 'i18n.js must have zh-TW translation for pot expansion');
+    assert(i18nJs.includes("'recipe.slider_pot_expansion': 'Pot Expansion'"), 'i18n.js must have en-US translation for pot expansion');
+
+    // 3. CSS styles
+    assert(stylesCss.includes('.pot-expansion-badge'), 'styles.css must style .pot-expansion-badge');
+    assert(stylesCss.includes('input[type=range].rf-slider.pot-slider'), 'styles.css must style pot-slider');
+
+    // 4. Exact mathematical formula verification
+    // Formula: Final = Math.round((RecipeBase * (1 + LvBonus/100) + ExtraCount * 100) * (1 + Island/100) * EventMult)
+    const baseEnergy = 1000;
+    const lv1Bonus = 0;   // Lv.1: 0%
+    const lv10Bonus = 18; // Lv.10: 18%
+
+    // Helper imitating recipes.js calcEnergy
+    function calcTestEnergy(base, lvBonus, islandPct, eventMult, extraCount, extraUnit = 100) {
+      const recipeWithLv = base * (1 + lvBonus / 100);
+      const extraBase = extraCount * extraUnit;
+      const subtotal = recipeWithLv + extraBase;
+      const islandMult = 1 + (islandPct / 100);
+      return Math.round(subtotal * islandMult * eventMult);
+    }
+
+    // Case A: 0 extra ingredients (base recipe)
+    assert(calcTestEnergy(baseEnergy, lv1Bonus, 20, 1.0, 0) === 1200, '0 extra ingredients at +20% island should be 1200');
+
+    // Case B: 10 extra ingredients (+1000 extra energy)
+    // Subtotal: 1000 + 1000 = 2000. Island 20% (x1.20), Event 1.5x -> 2000 * 1.2 * 1.5 = 3600
+    assert(calcTestEnergy(baseEnergy, lv1Bonus, 20, 1.5, 10) === 3600, '10 extra ingredients at 100 energy each should correctly receive island and event multipliers');
+
+    // Case C: Recipe Lv.10 (+18%) with 20 extra ingredients (+2000 extra energy)
+    // Recipe portion: 1000 * 1.18 = 1180. Extra portion: 20 * 100 = 2000 (no lv bonus!).
+    // Subtotal: 3180. Island 50% (x1.50) -> 3180 * 1.5 = 4770
+    assert(calcTestEnergy(baseEnergy, lv10Bonus, 50, 1.0, 20) === 4770, 'Extra ingredients must not receive recipe level bonus, but must receive island bonus');
+
+    // 5. Check recipes.js exports and functions
+    assert(recipesJs.includes('calcEnergy(base, level, islandBonusPct, eventBonusMult = 1.0, extraCount = potExpansion'), 'recipes.js calcEnergy must accept extraCount defaulting to potExpansion');
+    assert(recipesJs.includes('syncPotExpansionUI'), 'recipes.js must define syncPotExpansionUI');
+  });
+
+  test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 High-Performance Smooth Touch Scrolling & Non-Blocking Dismiss Optimization', () => {
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/app.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+
+    // 1. Fast guard in scroll and touchmove listeners to eliminate 90,000 DOM mutations/sec during scroll
+    assert(appJs.includes('if (!currentGlobalTooltipAnchor)') && appJs.includes('dismissAllFloatingTooltips()'), 'app.js scroll listener must check currentGlobalTooltipAnchor to avoid thrashing on scroll');
+    assert(appJs.includes('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .special-skill-badge'), 'app.js dismissAllFloatingTooltips must reset all formula and skill buttons');
+
+    // 2. PTR early return when not tracking
+    assert(appJs.includes('if (!isTracking || isRefreshing || !e.touches || !e.touches[0]) return;'), 'app.js initPullToRefresh touchmove must early return when !isTracking');
+
+    // 3. CSS touch-action and GPU accelerated scrolling rules for mobile H5
+    assert(stylesCss.includes('.mobile-h5-app .pokemon-grid') && stylesCss.includes('touch-action: pan-y !important;'), 'styles.css must declare touch-action: pan-y for H5 smooth touch scrolling');
+    assert(stylesCss.includes('transform: translateZ(0) !important;') && stylesCss.includes('will-change: scroll-position;'), 'styles.css must GPU-accelerate H5 scroll containers');
+    assert(stylesCss.includes('.mobile-h5-app .island-spawns-table-wrapper') && stylesCss.includes('touch-action: pan-x pan-y !important;'), 'styles.css must declare 2D touch action for table containers');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

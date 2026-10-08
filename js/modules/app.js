@@ -1612,7 +1612,7 @@ function dismissAllFloatingTooltips() {
   if (typeof window !== 'undefined' && window.WikiDB && typeof window.WikiDB.closeLadderEnergyHelp === 'function') {
     window.WikiDB.closeLadderEnergyHelp();
   }
-  if (typeof document !== 'undefined') {
+  if (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function') {
     const helpButtons = document.querySelectorAll('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .special-skill-badge');
     helpButtons.forEach(btn => {
       btn.classList.remove('active');
@@ -3763,13 +3763,20 @@ if (typeof document !== 'undefined') {
         dismissAllFloatingTooltips();
       });
 
-      // 3. 頁面或任何容器滾動時即時關閉所有浮窗
+      // 3. 頁面或任何容器滾動時即時關閉所有浮窗 (若當前無開啟中的浮窗則快速跳過，避免滾動卡頓)
       window.addEventListener('scroll', () => {
+        if (!currentGlobalTooltipAnchor) {
+          const tEl = document.getElementById('global-skill-tooltip');
+          if (!tEl || (!tEl.classList.contains('visible') && tEl.style.display === 'none')) {
+            return;
+          }
+        }
         dismissAllFloatingTooltips();
       }, { capture: true, passive: true });
 
       // 4. 移動滑動超過閥值時關閉所有浮窗
       window.addEventListener('touchmove', (e) => {
+        if (!currentGlobalTooltipAnchor) return;
         if (e.touches && e.touches[0]) {
           const dx = Math.abs(e.touches[0].clientX - touchStartX);
           const dy = Math.abs(e.touches[0].clientY - touchStartY);
@@ -3995,7 +4002,7 @@ if (typeof document !== 'undefined') {
       }, { passive: true });
 
       document.addEventListener('touchmove', (e) => {
-        if (isRefreshing || !e.touches || !e.touches[0]) return;
+        if (!isTracking || isRefreshing || !e.touches || !e.touches[0]) return;
         const targetEl = e.target;
         if (targetEl && targetEl.closest && targetEl.closest(
           '.sidebar-bookmark-handle, .sidebar-fab-btn, .box-fab-container, .box-fab-btn, ' +
@@ -4024,7 +4031,6 @@ if (typeof document !== 'undefined') {
           }
           return;
         }
-        if (!isTracking) return;
         const currentY = e.touches[0].clientY;
         const currentX = e.touches[0].clientX;
         const deltaY = currentY - touchStartY;

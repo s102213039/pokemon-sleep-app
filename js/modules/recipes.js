@@ -21,6 +21,7 @@
   let recipeLevel         = 1;       // 1-70
   let islandBonus         = 0;       // 0-85 (%)
   let eventBonus          = 1.0;     // 1.00 - 2.50 (step 0.25)
+  let potExpansion        = 0;       // 0 - 200 (多餘食材追加個數)
   let showTasty           = false;   // 漂亮成功 (2x / 3x) 開關
 
   /* ─── 食譜等級加成倉率表（Lv.1-70）
@@ -57,6 +58,7 @@
       recipeLevel      = Number(saved.recipeLevel) || 1;
       islandBonus      = Number(saved.islandBonus) || 0;
       eventBonus       = saved.eventBonus !== undefined ? Number(saved.eventBonus) : 1.0;
+      potExpansion     = Number(saved.potExpansion) || 0;
       showTasty        = Boolean(saved.showTasty);
       sortOption       = saved.sortOption || 'energy-desc';
       viewMode         = saved.viewMode || 'table';
@@ -77,6 +79,7 @@
         recipeLevel,
         islandBonus,
         eventBonus,
+        potExpansion,
         showTasty,
         sortOption,
         viewMode,
@@ -105,6 +108,8 @@
   const islandBadge          = document.getElementById('island-bonus-badge');
   const eventSlider          = document.getElementById('event-bonus-slider');
   const eventBadge           = document.getElementById('event-bonus-badge');
+  const potExpansionSlider   = document.getElementById('pot-expansion-slider');
+  const potExpansionBadge    = document.getElementById('pot-expansion-badge');
   const tastyToggleBtn       = document.getElementById('tasty-toggle-btn');
 
   /* ─── 滑桿顏色 fill 更新 ────────────────────────────── */
@@ -136,6 +141,17 @@
     eventSlider.value = eventBonus;
     eventBadge.textContent = `×${Number(eventBonus).toFixed(2)}`;
     updateSliderFill(eventSlider, 1.0, 2.5);
+  }
+
+  function syncPotExpansionUI() {
+    if (!potExpansionSlider || !potExpansionBadge) return;
+    potExpansionSlider.value = potExpansion;
+    if (potExpansion === 0) {
+      potExpansionBadge.textContent = '+0 (無追加)';
+    } else {
+      potExpansionBadge.textContent = `+${potExpansion} (+${(potExpansion * 100).toLocaleString()})`;
+    }
+    updateSliderFill(potExpansionSlider, 0, 200);
   }
 
   function syncTastyUI() {
@@ -450,31 +466,45 @@
 
   /* ─── 滑桿控制 ───────────────────────────────────────── */
   function initSliders() {
-    if (!levelSlider || !islandSlider || !eventSlider) return;
-
-    syncLevelUI();
-    levelSlider.addEventListener('input', () => {
-      recipeLevel = parseInt(levelSlider.value, 10);
+    if (levelSlider) {
       syncLevelUI();
-      savePrefs();
-      render();
-    });
+      levelSlider.addEventListener('input', () => {
+        recipeLevel = parseInt(levelSlider.value, 10);
+        syncLevelUI();
+        savePrefs();
+        render();
+      });
+    }
 
-    syncIslandUI();
-    islandSlider.addEventListener('input', () => {
-      islandBonus = parseInt(islandSlider.value, 10);
+    if (islandSlider) {
       syncIslandUI();
-      savePrefs();
-      render();
-    });
+      islandSlider.addEventListener('input', () => {
+        islandBonus = parseInt(islandSlider.value, 10);
+        syncIslandUI();
+        savePrefs();
+        render();
+      });
+    }
 
-    syncEventUI();
-    eventSlider.addEventListener('input', () => {
-      eventBonus = parseFloat(eventSlider.value);
+    if (eventSlider) {
       syncEventUI();
-      savePrefs();
-      render();
-    });
+      eventSlider.addEventListener('input', () => {
+        eventBonus = parseFloat(eventSlider.value);
+        syncEventUI();
+        savePrefs();
+        render();
+      });
+    }
+
+    if (potExpansionSlider) {
+      syncPotExpansionUI();
+      potExpansionSlider.addEventListener('input', () => {
+        potExpansion = parseInt(potExpansionSlider.value, 10) || 0;
+        syncPotExpansionUI();
+        savePrefs();
+        render();
+      });
+    }
   }
 
   /* ─── 漂亮成功開關 ───────────────────────────────────── */
@@ -675,11 +705,24 @@
     }
   }
 
-  /* ─── 能量計算 ──────────────────────────────────────── */
-  function calcEnergy(base, level, islandBonusPct, eventBonusMult = 1.0) {
+  /* ─── 能量計算 (含食譜等級、多餘食材追加擴鍋、島嶼加成與活動加成) ──────────────────────── */
+  function calcEnergy(base, level, islandBonusPct, eventBonusMult = 1.0, extraCount = potExpansion, extraUnitEnergy = 100) {
+    // 1. 食譜等級加成（僅乘在食譜本體需求食材上，追加食材不享等級加成）
     const lvMultiplier     = 1 + (getLevelBonus(level) / 100);
+    const recipeBaseWithLv = base * lvMultiplier;
+
+    // 2. 多餘食材追加能量（依官方機制，預設以每個 100 點基礎能量計算）
+    const validExtraCount  = Math.max(0, Number(extraCount) || 0);
+    const extraBaseEnergy  = validExtraCount * (extraUnitEnergy || 100);
+
+    // 3. 鍋內所有食材小計
+    const potSubtotal      = recipeBaseWithLv + extraBaseEnergy;
+
+    // 4. 島嶼加成（適用於整鍋所有食材）
     const islandMultiplier = 1 + (islandBonusPct / 100);
-    return Math.round(base * lvMultiplier * islandMultiplier * eventBonusMult);
+
+    // 5. 活動加成（適用於最終總能量倍率）與整數四捨五入
+    return Math.round(potSubtotal * islandMultiplier * eventBonusMult);
   }
 
   /* ─── 篩選 + 排序 ───────────────────────────────────── */
@@ -988,8 +1031,9 @@
 
     let formulaParts = [];
     formulaParts.push(`Lv.${recipeLevel}${lvBonus > 0 ? ` (+${lvBonus}%)` : ''}`);
-    if (islandBonus > 0) formulaParts.push(`🏝️+${islandBonus}% (×${islandMult})`);
-    if (eventBonus > 1.0) formulaParts.push(`🎉×${eventMult}`);
+    if (islandBonus > 0) formulaParts.push(`+${islandBonus}% (×${islandMult})`);
+    if (eventBonus > 1.0) formulaParts.push(`×${eventMult}`);
+    if (potExpansion > 0) formulaParts.push(`+${potExpansion}料 (+${(potExpansion * 100).toLocaleString()})`);
 
     const formulaText = formulaParts.join(' · ');
 
@@ -1020,7 +1064,8 @@
     const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
     const catLabels = { '咖哩': isEN ? 'Curry' : '咖哩', '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : '甜點' };
     const islandMult = (1 + islandBonus / 100).toFixed(2);
-    const eventSub = eventBonus > 1.0 ? ` · 🎉×${eventBonus.toFixed(2)}` : '';
+    const eventSub = eventBonus > 1.0 ? ` · ×${eventBonus.toFixed(2)}` : '';
+    const potSub = potExpansion > 0 ? ` · +${potExpansion}料` : '';
     contentArea.innerHTML = `
       <div class="table-container">
         <table class="pokemon-table recipe-table">
@@ -1033,7 +1078,7 @@
               <th style="min-width:180px;">${t('recipe.th_ingredients', '食材需求')}</th>
               <th class="sortable th-energy" data-sort="energy" style="min-width:140px;text-align:right;padding-right:32px;">
                 ${t('recipe.th_final_energy', '預估能量')} <span class="sort-arrow"></span>
-                <div class="table-sub-header">Lv.${recipeLevel} · ×${islandMult}${eventSub}</div>
+                <div class="table-sub-header">Lv.${recipeLevel} · ×${islandMult}${eventSub}${potSub}</div>
               </th>
             </tr>
           </thead>
@@ -1092,7 +1137,7 @@
     const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
     const catLabels = { '咖哩': isEN ? 'Curry' : '咖哩', '沙拉': isEN ? 'Salad' : '沙拉', '甜點': isEN ? 'Dessert' : '甜點' };
     const islandMult = (1 + islandBonus / 100).toFixed(2);
-    const eventSub = eventBonus > 1.0 ? ` · 🎉×${eventBonus.toFixed(2)}` : '';
+    const eventSub = eventBonus > 1.0 ? ` · ×${eventBonus.toFixed(2)}` : '';
 
     if (isMobileH5) {
       contentArea.innerHTML = `
@@ -1109,7 +1154,7 @@
                     <span class="h5-recipe-name">${primaryName}</span>
                     <div class="h5-recipe-tags-row">
                       <span class="recipe-cat-badge cat-${r.category}">${catLabels[r.category] || r.category}</span>
-                      <span class="h5-recipe-pot">🍲 ${r.pot_size}</span>
+                      <span class="h5-recipe-pot">${r.pot_size}</span>
                     </div>
                   </div>
                 </div>
@@ -1209,6 +1254,15 @@
       render: function() {
         initCategoryFilters();
         initIngredientPicker();
+        render();
+      },
+      calcEnergy: calcEnergy,
+      getLevelBonus: getLevelBonus,
+      getPotExpansion: function() { return potExpansion; },
+      setPotExpansion: function(val) {
+        potExpansion = Math.min(200, Math.max(0, Number(val) || 0));
+        syncPotExpansionUI();
+        savePrefs();
         render();
       }
     };

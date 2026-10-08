@@ -4335,6 +4335,12 @@ html[lang="en"] .recipe-name-wrapper,
   border: 1px solid rgba(244, 63, 94, 0.35);
 }
 
+.pot-expansion-badge {
+  color: var(--accent-blue, #38bdf8);
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
 /* Range slider base */
 input[type=range].rf-slider {
   -webkit-appearance: none;
@@ -4375,6 +4381,11 @@ input[type=range].rf-slider.event-slider::-webkit-slider-thumb {
   box-shadow: 0 2px 6px rgba(244,63,94,0.4);
 }
 
+input[type=range].rf-slider.pot-slider::-webkit-slider-thumb {
+  background: linear-gradient(135deg, var(--accent-blue, #38bdf8), #0284c7);
+  box-shadow: 0 2px 6px rgba(56, 189, 248, 0.4);
+}
+
 input[type=range].rf-slider::-moz-range-thumb {
   width: 18px;
   height: 18px;
@@ -4410,6 +4421,16 @@ input[type=range].rf-slider.event-slider {
     to right,
     rgba(244, 63, 94, 0.7) 0%,
     rgba(244, 63, 94, 0.7) var(--slider-fill, 0%),
+    var(--border-color) var(--slider-fill, 0%),
+    var(--border-color) 100%
+  );
+}
+
+input[type=range].rf-slider.pot-slider {
+  background: linear-gradient(
+    to right,
+    rgba(56, 189, 248, 0.7) 0%,
+    rgba(56, 189, 248, 0.7) var(--slider-fill, 0%),
     var(--border-color) var(--slider-fill, 0%),
     var(--border-color) 100%
   );
@@ -17460,6 +17481,39 @@ body.mobile-h5-app *::-webkit-scrollbar {
   width: 0 !important;
   height: 0 !important;
   background: transparent !important;
+}
+
+/* H5 App 全域高效流暢觸控滾動優化 (High-Performance Smooth Touch Scrolling & GPU Compositing) */
+.mobile-h5-app .pokemon-grid,
+.mobile-h5-app .table-container,
+.mobile-h5-app .pokemon-table-container,
+.mobile-h5-app #panel-recipes,
+.mobile-h5-app #panel-wiki,
+.mobile-h5-app #panel-box,
+.mobile-h5-app #panel-news,
+.mobile-h5-app .sidebar-scrollable-content,
+.mobile-h5-app .pokedex-modal-body,
+.mobile-h5-app .box-modal-body,
+.mobile-h5-app .settings-modal-body,
+.mobile-h5-app .ladder-recipe-modal-body,
+.mobile-h5-app .appraisal-modal-body,
+.mobile-h5-app .appraisal-modal-sheet,
+.mobile-h5-app .subskill-sheet-body,
+.mobile-h5-app .box-guide-lightbox-body,
+.mobile-h5-app .island-spawns-table-wrapper,
+.mobile-h5-app .ingredient-ladder-container,
+.mobile-h5-app .content-error-stack {
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+  transform: translateZ(0) !important;
+  will-change: scroll-position;
+}
+
+/* 針對需要雙向滾動的表格容器提供雙向觸控手勢宣告 */
+.mobile-h5-app .table-container,
+.mobile-h5-app .pokemon-table-container,
+.mobile-h5-app .island-spawns-table-wrapper {
+  touch-action: pan-x pan-y !important;
 }
 
 /* 頂部 App Header (完全填滿、零左右邊距) */
