@@ -1,5 +1,42 @@
 [
   {
+    "id": "343532323837353838353737383337303538",
+    "url": "https://www.pokemonsleep.net/zh/news/343532323837353838353737383337303538/",
+    "date": "2026-10-08",
+    "category": "更新通知",
+    "badge_key": "update",
+    "badge_label": "版本更新",
+    "badge_color": "#3b82f6",
+    "title": "關於Ver.3.8.3的更新內容",
+    "title_en": "Ver. 3.8.3 Update Details",
+    "overview_en": "New game version update with quality-of-life enhancements and bug fixes.",
+    "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
+    "featured_pokemon": [],
+    "overview": "關於Ver.3.8.3的更新內容",
+    "highlights": [
+      "[*] 關於Ver.3.8.3的更新內容",
+      "[*] 詳情請參閱官方公告內容與說明"
+    ],
+    "sections": [
+      {
+        "key": "general",
+        "title": "核心重點摘要",
+        "icon": "[Info]",
+        "items": [
+          "[*] 關於Ver.3.8.3的更新內容",
+          "[*] 詳情請參閱官方公告內容與說明"
+        ],
+        "title_en": "Core Highlights & Overview",
+        "items_en": [
+          "Special in-game event bonuses and featured rewards.",
+          "Special in-game event bonuses and featured rewards."
+        ]
+      }
+    ],
+    "content_preview": "NEW\n\n更新通知\n\n2026/10/8\n2026/10/8 -->\n\n關於Ver.3.8.3的更新內容\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n本次更新已針對以下的內容進行改善。\n必須由商店將應用程式更新至最新版本。\n\n更新內容\n\n其他\n\n修正的異常問題"
+  },
+  {
     "id": "343531343533393333363232313332373433",
     "url": "https://www.pokemonsleep.net/zh/news/343531343533393333363232313332373433/",
     "date": "2026-10-07",
@@ -1199,42 +1236,5 @@
       }
     ],
     "content_preview": "NEW\n\n更新通知\n\n2026/9/9\n2026/9/9 -->\n\n關於Ver.3.8.0的更新內容\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n本次更新已針對以下的內容進行改善。\n必須由商店將應用程式更新至最新版本。\n\n更新內容\n\n新功能\n\n準備新活動、新企畫\n\n「秘境研究！追尋超夢吧」\n\n※詳情請查看活動、企畫的通知。\n\n平衡調整\n\n調整寶可夢吃飽的機率\n\n稍微調降傳說的寶可夢以外的寶可夢吃飽的機率。\n\n※關於傳說的寶可夢，至今為止在新月日生效的獎勵「在當天第1次的點心時間時會變得不容易吃飽」，今後會在傳說的寶可夢各自的登場活動期間生效（自「秘境研究！追尋超夢吧」活動起開始生效）。\n\n其他\n\n調整綜合商店的品項\n\n・高級沙布蕾的購買上限：3個→ 5 個\n\n增加可設置的薰香數量\n\n・薰香的設置上..."
-  },
-  {
-    "id": "343432303933373336323130343634373831",
-    "url": "https://www.pokemonsleep.net/zh/news/343432303933373336323130343634373831/",
-    "date": "2026-09-09",
-    "category": "異常問題",
-    "badge_key": "notice",
-    "badge_label": "重要通知",
-    "badge_color": "#8b5cf6",
-    "title": "異常問題修復通知",
-    "title_en": "Bug Fixes Notification",
-    "overview_en": "Notification regarding known issues and recent bug fixes in the app.",
-    "debut_pokemon": [],
-    "mid_rateup_pokemon": [],
-    "featured_pokemon": [],
-    "overview": "誠摯感謝各位玩家遊玩《Pokémon Sleep》。",
-    "highlights": [
-      "[*] 異常問題修復通知",
-      "[*] 詳情請參閱官方公告內容與說明"
-    ],
-    "sections": [
-      {
-        "key": "general",
-        "title": "核心重點摘要",
-        "icon": "[Info]",
-        "items": [
-          "[*] 異常問題修復通知",
-          "[*] 詳情請參閱官方公告內容與說明"
-        ],
-        "title_en": "Core Highlights & Overview",
-        "items_en": [
-          "Special in-game event bonuses and featured rewards.",
-          "Special in-game event bonuses and featured rewards."
-        ]
-      }
-    ],
-    "content_preview": "NEW\n\n異常問題\n\n2026/9/9\n2026/9/9 -->\n\n異常問題修復通知\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n目前已修復了遊戲中發生的以下異常問題。\n\n問題位置\n\n畫面：\n\n小卡比獸的午睡島\n\n領回寶可夢\n\n功能：\n\n寶可夢等級提升\n\nLv.70\n\n問題內容\n\n會無法進行遊戲。\n\n迴避方法\n\n可透過重新啟動遊戲解決問題。\n\n修復進度\n\n已於Ver.3.8.0修復完畢。\n\n造成各位玩家的不便，我們深感抱歉。\n\n今後也請繼續支持《Pokémon Sleep》。"
   }
 ]
