@@ -11219,6 +11219,33 @@ SP 4,316
     assert(wikiJs.includes('dynamicSleepStyles'), 'wiki.js must support dynamicSleepStyles in getSleepStyleData');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Appraisal Modal Stats Position Swap & Full-Width Enlarge Styling', () => {
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+
+    // 1. In appraisal-modal-sheet-body (Mobile H5 Appraisal Modal),
+    // stats dual row section (appraisal-stats-section) must appear BEFORE subskills grid (appraisal-subskills-grid)
+    const mobileSheetBodyIndex = appraisalJs.indexOf('appraisal-modal-sheet-body');
+    assert(mobileSheetBodyIndex !== -1, 'appraisal.js must contain appraisal-modal-sheet-body');
+
+    const mobileStatsIndex = appraisalJs.indexOf('appraisal-stats-section', mobileSheetBodyIndex);
+    const mobileSubskillsIndex = appraisalJs.indexOf('appraisal-subskills-grid', mobileSheetBodyIndex);
+
+    assert(mobileStatsIndex !== -1, 'appraisal.js must contain appraisal-stats-section in mobile sheet');
+    assert(mobileSubskillsIndex !== -1, 'appraisal.js must contain appraisal-subskills-grid in mobile sheet');
+    assert(mobileStatsIndex < mobileSubskillsIndex, 'appraisal-stats-section must appear before appraisal-subskills-grid in mobile H5 appraisal modal');
+
+    // 2. styles.css must define mobile H5 styles for appraisal-header-stats-dual:
+    // - display: grid !important with repeat(2, 1fr)
+    // - width: 100% !important to match subskills grid occupancy
+    // - header-stat-k font-size: 13px !important (enlarged)
+    // - header-stat-v font-size: 15.5px !important (enlarged)
+    assert(stylesCss.includes('.mobile-h5-app .appraisal-header-stats-dual'), 'styles.css must include mobile H5 styles for appraisal-header-stats-dual');
+    assert(stylesCss.includes('grid-template-columns: repeat(2, 1fr) !important'), 'styles.css must set 2-column repeat grid for mobile appraisal stats dual');
+    assert(stylesCss.includes('.mobile-h5-app .appraisal-header-stats-dual .header-stat-k') && stylesCss.includes('font-size: 13px !important'), 'styles.css must enlarge mobile appraisal stat key font size to 13px');
+    assert(stylesCss.includes('.mobile-h5-app .appraisal-header-stats-dual .header-stat-v') && stylesCss.includes('font-size: 15.5px !important'), 'styles.css must enlarge mobile appraisal stat val font size to 15.5px');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

@@ -31447,6 +31447,87 @@ body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
   margin-left: 1px !important;
 }
 
+/* 行動端 H5 診斷彈窗：基礎數值雙欄列 (與副技能網格同寬度 repeat(2, 1fr)，文字增大清晰可讀) */
+.mobile-h5-app .appraisal-header-stats-dual,
+.mobile-h5-app .appraisal-h5-header-summary .appraisal-header-stats-dual {
+  grid-area: unset !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 6px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 4px 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .appraisal-header-stats-dual .pokedex-header-stat-col,
+.mobile-h5-app .appraisal-h5-header-summary .appraisal-header-stats-dual .pokedex-header-stat-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  flex: 1 1 0 !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .appraisal-header-stats-dual .pokedex-header-stat-item,
+.mobile-h5-app .appraisal-h5-header-summary .appraisal-header-stats-dual .pokedex-header-stat-item {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: baseline !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .appraisal-header-stats-dual .header-stat-k,
+.mobile-h5-app .appraisal-h5-header-summary .appraisal-header-stats-dual .header-stat-k {
+  font-size: 13px !important;
+  color: var(--text-muted, #94a3b8) !important;
+  font-weight: 700 !important;
+  min-width: auto !important;
+  white-space: nowrap !important;
+  opacity: 0.9 !important;
+  letter-spacing: 0.2px !important;
+  text-align: left !important;
+}
+
+.mobile-h5-app .appraisal-header-stats-dual .header-stat-v,
+.mobile-h5-app .appraisal-h5-header-summary .appraisal-header-stats-dual .header-stat-v {
+  font-size: 15.5px !important;
+  font-weight: 800 !important;
+  color: var(--text-primary, #f8fafc) !important;
+  font-family: monospace, system-ui, -apple-system !important;
+  font-variant-numeric: tabular-nums !important;
+  white-space: nowrap !important;
+  text-align: right !important;
+}
+
+.mobile-h5-app .appraisal-header-stats-dual .header-stat-diff,
+.mobile-h5-app .appraisal-h5-header-summary .appraisal-header-stats-dual .header-stat-diff {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  margin-left: 2px !important;
+  display: inline !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .appraisal-header-stats-dual .header-stat-v,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .appraisal-header-stats-dual .header-stat-v {
+  color: #0f172a !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .appraisal-header-stats-dual .header-stat-k,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .appraisal-header-stats-dual .header-stat-k {
+  color: #64748b !important;
+}
+
 .mobile-h5-app #pokedex-detail-modal .pokedex-modal-body,
 .mobile-h5-app .pokedex-modal-body {
   display: flex !important;

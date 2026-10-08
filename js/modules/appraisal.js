@@ -2067,29 +2067,8 @@
                 </div>
               </div>
 
-              <!-- 副技能清單 (2+2+1 排列) -->
-              <div class="appraisal-config-section" style="margin-top:2px;width:100%;">
-                <div class="appraisal-subskills-grid">
-                  ${[10, 25, 50, 70, 80].map(function(lv, idx) {
-                    const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
-                    const sName = rawName ? (window.I18N ? window.I18N.getSubSkillName(rawName) : rawName) : '--';
-                    const tier = getSkillTier(rawName);
-                    const isUnlocked = currentLv >= lv;
-                    const lockClass = !isUnlocked ? 'subskill-locked' : '';
-                    const titleText = rawName 
-                      ? (isEN ? `${sName} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''})` : `${sName} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''})`)
-                      : (isEN ? `Lv.${lv} Slot` : `Lv.${lv} 欄位`);
-                    return `
-                      <div class="appraisal-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
-                        <span class="subskill-name">${escapeHtml(sName)}</span>
-                      </div>
-                    `;
-                  }).join('')}
-                </div>
-              </div>
-
-              <!-- 基礎數值雙欄縱向列 (移動至副技能網格下方，緊湊整潔無溢出) -->
-              <div class="appraisal-config-section appraisal-stats-section" style="margin-top:8px;width:100%;">
+              <!-- 基礎數值雙欄縱向列 (幫忙間隔/持有/食材率/技能率，佔位寬度契合副技能網格) -->
+              <div class="appraisal-config-section appraisal-stats-section" style="margin-top:4px;width:100%;">
                 <div class="pokedex-header-stats-row pokedex-header-stats-dual appraisal-header-stats-dual">
                   <div class="pokedex-header-stat-col">
                     <div class="pokedex-header-stat-item">
@@ -2111,6 +2090,27 @@
                       <span class="header-stat-v font-bold" id="appraisal-stat-skill-rate-m">${(window.PokemonApp && typeof window.PokemonApp.renderPokedexSkillRateValue === 'function') ? window.PokemonApp.renderPokedexSkillRateValue(formulaData, pkmData) : '--'}</span>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              <!-- 副技能清單 (2+2+1 排列) -->
+              <div class="appraisal-config-section" style="margin-top:6px;width:100%;">
+                <div class="appraisal-subskills-grid">
+                  ${[10, 25, 50, 70, 80].map(function(lv, idx) {
+                    const rawName = subskills && subskills[idx] ? (typeof subskills[idx] === 'string' ? subskills[idx] : subskills[idx].name) : '';
+                    const sName = rawName ? (window.I18N ? window.I18N.getSubSkillName(rawName) : rawName) : '--';
+                    const tier = getSkillTier(rawName);
+                    const isUnlocked = currentLv >= lv;
+                    const lockClass = !isUnlocked ? 'subskill-locked' : '';
+                    const titleText = rawName 
+                      ? (isEN ? `${sName} (Lv.${lv}${!isUnlocked ? ' - Locked' : ''})` : `${sName} (Lv.${lv}${!isUnlocked ? '未解鎖' : ''})`)
+                      : (isEN ? `Lv.${lv} Slot` : `Lv.${lv} 欄位`);
+                    return `
+                      <div class="appraisal-subskill-pill subskill-${tier} ${lockClass}" title="${escapeHtml(titleText)}">
+                        <span class="subskill-name">${escapeHtml(sName)}</span>
+                      </div>
+                    `;
+                  }).join('')}
                 </div>
               </div>
             </div>
