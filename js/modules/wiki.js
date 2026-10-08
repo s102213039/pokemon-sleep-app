@@ -18419,6 +18419,7 @@
   window.toggleLadderSidebar = toggleLadderSidebar;
   window.toggleLadderEnergyHelp = toggleLadderEnergyHelp;
   window.closeLadderEnergyHelp = closeLadderEnergyHelp;
+  window.closeSleepStylePopover = closeSleepStylePopover;
   window.switchLadderView = switchLadderView;
   window.filterWikiSkills = filterWikiSkills;
   window.filterWikiIngredients = filterWikiIngredients;

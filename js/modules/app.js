@@ -1454,6 +1454,16 @@ let isTouchInteraction = false;
 function getHelpButtonData(btn) {
   if (!btn || !btn.classList) return null;
   const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+  if (btn.classList.contains('pot-expansion-help-btn')) {
+    const defaultTitle = isEN ? 'Pot Expansion Forecast' : '擴鍋預測說明';
+    const defaultBody = isEN
+      ? 'Extra ingredients default to <span class="text-accent font-bold">100 base energy</span> each (standard average baseline for common fillers like Apple 90, Milk 98, Soybean 100, Honey 101, Sausage 103).<br>Formula: (Recipe Lv. Energy + Extra Ingredients × 100) × Island Bonus × Event Bonus.<br>Extra ingredients do not receive recipe level bonus, but fully benefit from island bonus, event bonus, and extra tasty multipliers.'
+      : '預設每個追加食材以 <span class="text-accent font-bold">100 基礎能量</span> 計算（常用溢出填鍋食材如蘋果90、牛奶98、大豆100、蜂蜜101、香腸103之平均基準）。<br>計算公式：(食譜等級能量 + 追加食材數 × 100) × (1 + 島嶼加成) × 活動加成。<br>追加食材不享有食譜等級加成，但全額享有島嶼加成、活動加成與大成功倍率。';
+    return {
+      title: (typeof window !== 'undefined' && window.I18N) ? window.I18N.t('recipe.slider_pot_expansion_help_title', defaultTitle) : defaultTitle,
+      body: (typeof window !== 'undefined' && window.I18N) ? window.I18N.t('recipe.slider_pot_expansion_help_body', defaultBody) : defaultBody
+    };
+  }
   if (btn.classList.contains('ladder-formula-help-btn')) {
     return {
       title: isEN ? 'Baseline: Lv.60 Ideal Energy' : '天梯基準：Lv.60 滿活力',
@@ -1604,23 +1614,78 @@ function toggleGlobalTooltip(anchorEl, title, body, tag) {
   showGlobalTooltip(anchorEl, title, body, tag);
 }
 
+function isAnyFloatingTooltipVisible() {
+  if (currentGlobalTooltipAnchor) return true;
+  if (typeof document === 'undefined') return false;
+  const gTip = document.getElementById('global-skill-tooltip');
+  if (gTip && (gTip.classList.contains('visible') || (gTip.style.display !== 'none' && gTip.style.display !== ''))) return true;
+  const pPop = document.getElementById('pokedex-energy-help-popover');
+  if (pPop && pPop.style.display !== 'none' && pPop.style.display !== '') return true;
+  const lPop = document.getElementById('ladder-energy-help-popover');
+  if (lPop && lPop.style.display !== 'none' && lPop.style.display !== '') return true;
+  const sPop = document.getElementById('ladder-skill-help-modal');
+  if (sPop && sPop.style.display !== 'none' && sPop.style.display !== '') return true;
+  if (document.getElementById('island-sleep-popover')) return true;
+  if (document.querySelector && document.querySelector('.ladder-node.tooltip-active')) return true;
+  return false;
+}
+
 function dismissAllFloatingTooltips() {
   hideGlobalTooltip();
   if (typeof closePokedexEnergyHelp === 'function') {
     closePokedexEnergyHelp();
   }
-  if (typeof window !== 'undefined' && window.WikiDB && typeof window.WikiDB.closeLadderEnergyHelp === 'function') {
-    window.WikiDB.closeLadderEnergyHelp();
+  if (typeof window !== 'undefined' && window.PokemonApp && typeof window.PokemonApp.closePokedexEnergyHelp === 'function') {
+    window.PokemonApp.closePokedexEnergyHelp();
   }
-  if (typeof document !== 'undefined' && typeof document.querySelectorAll === 'function') {
-    const helpButtons = document.querySelectorAll('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .special-skill-badge');
-    helpButtons.forEach(btn => {
-      btn.classList.remove('active');
-      btn.setAttribute('aria-expanded', 'false');
-      if (typeof btn.blur === 'function') {
-        btn.blur();
-      }
-    });
+  if (typeof window !== 'undefined' && window.WikiDB) {
+    if (typeof window.WikiDB.closeLadderEnergyHelp === 'function') {
+      window.WikiDB.closeLadderEnergyHelp();
+    }
+    if (typeof window.WikiDB.closeSkillDrawHelpModal === 'function') {
+      window.WikiDB.closeSkillDrawHelpModal();
+    }
+    if (typeof window.WikiDB.closeSleepStylePopover === 'function') {
+      window.WikiDB.closeSleepStylePopover();
+    }
+  }
+  if (typeof closeLadderEnergyHelp === 'function') {
+    closeLadderEnergyHelp();
+  }
+  if (typeof closeSkillDrawHelpModal === 'function') {
+    closeSkillDrawHelpModal();
+  }
+  if (typeof closeSleepStylePopover === 'function') {
+    closeSleepStylePopover();
+  }
+
+  if (typeof document !== 'undefined') {
+    const pPop = document.getElementById('pokedex-energy-help-popover');
+    if (pPop) pPop.style.display = 'none';
+    const lPop = document.getElementById('ladder-energy-help-popover');
+    if (lPop) lPop.style.display = 'none';
+    const sPop = document.getElementById('ladder-skill-help-modal');
+    if (sPop) sPop.style.display = 'none';
+    const islandPop = document.getElementById('island-sleep-popover');
+    if (islandPop && islandPop.parentNode) islandPop.parentNode.removeChild(islandPop);
+    const islandBackdrop = document.getElementById('island-sleep-popover-backdrop');
+    if (islandBackdrop && islandBackdrop.parentNode) islandBackdrop.parentNode.removeChild(islandBackdrop);
+
+    if (typeof document.querySelectorAll === 'function') {
+      const helpButtons = document.querySelectorAll(
+        '.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .special-skill-badge, .pot-expansion-help-btn'
+      );
+      helpButtons.forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-expanded', 'false');
+        if (typeof btn.blur === 'function') {
+          btn.blur();
+        }
+      });
+      const activeNodes = document.querySelectorAll('.ladder-node.tooltip-active');
+      activeNodes.forEach(node => node.classList.remove('tooltip-active'));
+    }
+
     if (document.activeElement && typeof document.activeElement.blur === 'function' && document.activeElement !== document.body) {
       const activeTag = (document.activeElement.tagName || '').toUpperCase();
       const isFormField = activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT' || document.activeElement.isContentEditable;
@@ -1635,6 +1700,7 @@ if (typeof window !== 'undefined') {
   window.showGlobalTooltip = showGlobalTooltip;
   window.hideGlobalTooltip = hideGlobalTooltip;
   window.toggleGlobalTooltip = toggleGlobalTooltip;
+  window.isAnyFloatingTooltipVisible = isAnyFloatingTooltipVisible;
   window.dismissAllFloatingTooltips = dismissAllFloatingTooltips;
 }
 
@@ -3641,7 +3707,8 @@ if (typeof document !== 'undefined') {
       let touchStartTime = 0;
       let didHandleTouchTap = false;
 
-      document.addEventListener('touchstart', (e) => {
+      // 1. 觸控開始 (Capture 捕獲：若點選外部立即關閉浮窗，並記錄觸控起點)
+      const onTouchStart = (e) => {
         isRecentTouch = true;
         didHandleTouchTap = false;
         if (touchResetTimer) clearTimeout(touchResetTimer);
@@ -3650,8 +3717,27 @@ if (typeof document !== 'undefined') {
           touchStartY = e.touches[0].clientY;
           touchStartTime = Date.now();
         }
-      }, { passive: true });
 
+        // 若當前有任何浮窗顯示中，檢查觸控目標是否在浮窗或觸發按鈕內
+        if (isAnyFloatingTooltipVisible()) {
+          const target = e.target;
+          const isInsideTooltip = target && target.closest && target.closest(
+            '.global-skill-tooltip, .pokedex-energy-help-bubble, .ladder-energy-help-bubble, .ladder-skill-tooltip-bubble, .island-sleep-hover-tooltip, .ladder-node-tooltip'
+          );
+          const isTriggerBtn = target && target.closest && target.closest(
+            '.pot-expansion-help-btn, .pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .special-skill-badge'
+          );
+          // 若點選的是其他任何非浮窗且非觸發按鈕的區域，立即關閉浮窗
+          if (!isInsideTooltip && !isTriggerBtn) {
+            dismissAllFloatingTooltips();
+          }
+        }
+      };
+
+      document.addEventListener('touchstart', onTouchStart, { capture: true, passive: true });
+      window.addEventListener('touchstart', onTouchStart, { capture: true, passive: true });
+
+      // 2. 觸控釋放 (輕觸手勢開關浮窗)
       document.addEventListener('touchend', (e) => {
         if (touchResetTimer) clearTimeout(touchResetTimer);
         touchResetTimer = setTimeout(() => {
@@ -3677,7 +3763,7 @@ if (typeof document !== 'undefined') {
               return;
             }
 
-            const helpBtn = e.target.closest('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn');
+            const helpBtn = e.target.closest('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn') || e.target.closest('.pot-expansion-help-btn');
             if (helpBtn) {
               didHandleTouchTap = true;
               if (e.cancelable) e.preventDefault();
@@ -3698,7 +3784,7 @@ if (typeof document !== 'undefined') {
         }, 350);
       }, { passive: true });
 
-      // 1. 滑鼠懸停 (Desktop Web 瞬時響應，無任何動畫延遲)
+      // 3. 滑鼠懸停 (Desktop Web 瞬時響應，無任何動畫延遲)
       document.addEventListener('mouseover', (e) => {
         if (isRecentTouch) return;
 
@@ -3712,7 +3798,7 @@ if (typeof document !== 'undefined') {
           return;
         }
 
-        const helpBtn = e.target.closest('.ladder-formula-help-btn, .ladder-help-icon-btn, .pokedex-formula-help-btn');
+        const helpBtn = e.target.closest('.ladder-formula-help-btn, .ladder-help-icon-btn, .pokedex-formula-help-btn') || e.target.closest('.pot-expansion-help-btn');
         if (helpBtn) {
           const help = getHelpButtonData(helpBtn);
           if (help) {
@@ -3724,13 +3810,13 @@ if (typeof document !== 'undefined') {
       document.addEventListener('mouseout', (e) => {
         if (isRecentTouch || isTooltipPinned) return;
         const badge = e.target.closest('.special-skill-badge');
-        const helpBtn = e.target.closest('.ladder-formula-help-btn, .ladder-help-icon-btn, .pokedex-formula-help-btn');
+        const helpBtn = e.target.closest('.pot-expansion-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .pokedex-formula-help-btn');
         if (badge || helpBtn) {
           hideGlobalTooltip();
         }
       });
 
-      // 2. 點擊 / 輕觸事件 (Desktop 點擊固定與 Mobile 備援點選)
+      // 4. 點擊事件 (Desktop 點擊固定/切換與 Mobile 備援點選)
       document.addEventListener('click', (e) => {
         if (didHandleTouchTap) {
           didHandleTouchTap = false;
@@ -3748,14 +3834,22 @@ if (typeof document !== 'undefined') {
           return;
         }
 
-        const helpBtn = e.target.closest('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn');
+        const helpBtn = e.target.closest('.pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn') || e.target.closest('.pot-expansion-help-btn');
         if (helpBtn) {
+          if (helpBtn.classList.contains('pot-expansion-help-btn')) {
+            e.stopPropagation();
+            const help = getHelpButtonData(helpBtn);
+            if (help) {
+              toggleGlobalTooltip(helpBtn, help.title, help.body);
+            }
+            return;
+          }
           // 若有自帶 onclick，由自身控制，不執行外部關閉
           return;
         }
 
         // 點擊懸浮窗本體不關閉
-        if (e.target.closest && e.target.closest('.global-skill-tooltip, .pokedex-energy-help-bubble, .ladder-energy-help-bubble')) {
+        if (e.target.closest && e.target.closest('.global-skill-tooltip, .pokedex-energy-help-bubble, .ladder-energy-help-bubble, .ladder-skill-tooltip-bubble, .island-sleep-hover-tooltip, .ladder-node-tooltip')) {
           return;
         }
 
@@ -3763,28 +3857,34 @@ if (typeof document !== 'undefined') {
         dismissAllFloatingTooltips();
       });
 
-      // 3. 頁面或任何容器滾動時即時關閉所有浮窗 (若當前無開啟中的浮窗則快速跳過，避免滾動卡頓)
-      window.addEventListener('scroll', () => {
+      // 5. 頁面或任何容器滾動時即時關閉所有浮窗 (若當前無開啟中的浮窗則快速跳過，避免滾動開銷)
+      const onScrollDismiss = () => {
         if (!currentGlobalTooltipAnchor) {
-          const tEl = document.getElementById('global-skill-tooltip');
-          if (!tEl || (!tEl.classList.contains('visible') && tEl.style.display === 'none')) {
-            return;
-          }
+          if (!isAnyFloatingTooltipVisible()) return;
         }
         dismissAllFloatingTooltips();
-      }, { capture: true, passive: true });
+      };
 
-      // 4. 移動滑動超過閥值時關閉所有浮窗
-      window.addEventListener('touchmove', (e) => {
-        if (!currentGlobalTooltipAnchor) return;
+      document.addEventListener('scroll', onScrollDismiss, { capture: true, passive: true });
+      window.addEventListener('scroll', onScrollDismiss, { capture: true, passive: true });
+      window.addEventListener('wheel', onScrollDismiss, { capture: true, passive: true });
+
+      // 6. 手指滑動位移時關閉所有浮窗 (H5 App 移動超過 3px 即判定為滑動瀏覽，立即關閉浮窗)
+      const onTouchMove = (e) => {
+        if (!currentGlobalTooltipAnchor) {
+          if (!isAnyFloatingTooltipVisible()) return;
+        }
         if (e.touches && e.touches[0]) {
           const dx = Math.abs(e.touches[0].clientX - touchStartX);
           const dy = Math.abs(e.touches[0].clientY - touchStartY);
-          if (dx > 10 || dy > 10) {
+          if (dx > 3 || dy > 3 || (dx > 10 || dy > 10)) {
             dismissAllFloatingTooltips();
           }
         }
-      }, { capture: true, passive: true });
+      };
+
+      document.addEventListener('touchmove', onTouchMove, { capture: true, passive: true });
+      window.addEventListener('touchmove', onTouchMove, { capture: true, passive: true });
     }
 
     function initBackToTop() {
@@ -6371,6 +6471,7 @@ PokemonApp.renderPokedexFormulaBreakdownHTML = renderPokedexFormulaBreakdownHTML
 PokemonApp.showGlobalTooltip = showGlobalTooltip;
 PokemonApp.hideGlobalTooltip = hideGlobalTooltip;
 PokemonApp.toggleGlobalTooltip = toggleGlobalTooltip;
+PokemonApp.isAnyFloatingTooltipVisible = isAnyFloatingTooltipVisible;
 PokemonApp.dismissAllFloatingTooltips = dismissAllFloatingTooltips;
 PokemonApp.renderPokedexIntervalValue = renderPokedexIntervalValue;
 PokemonApp.renderPokedexCarryValue = renderPokedexCarryValue;
@@ -6453,6 +6554,9 @@ if (typeof module !== 'undefined' && module.exports) {
     initPullToRefresh: (typeof PokemonApp !== 'undefined' && PokemonApp.initPullToRefresh) ? PokemonApp.initPullToRefresh : undefined,
     bindBackdropDismiss,
     bindSidebarSwipeRightToClose,
-    toggleSidebar
+    toggleSidebar,
+    isAnyFloatingTooltipVisible,
+    getHelpButtonData,
+    dismissAllFloatingTooltips
   };
 }

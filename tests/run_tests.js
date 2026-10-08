@@ -11085,6 +11085,40 @@ SP 4,316
     assert(stylesCss.includes('.mobile-h5-app .island-spawns-table-wrapper') && stylesCss.includes('touch-action: pan-x pan-y !important;'), 'styles.css must declare 2D touch action for table containers');
   });
 
+  // Test 152: Pot Expansion Help Tooltip, Full-Page Touch/Scroll Auto-Dismiss & Multi-Theme UI
+  test('Tier 4 - Real-World Application Scenarios', 'Pot Expansion Help Tooltip, Full-Page Touch/Scroll Auto-Dismiss & Multi-Theme UI', () => {
+    const desktopHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const mobileHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app/index.html'), 'utf8');
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/app.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+    const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/core/i18n.js'), 'utf8');
+
+    // 1. Structure in index.html & app/index.html
+    assert(desktopHtml.includes('class="pot-expansion-help-btn pokedex-formula-help-btn"'), 'index.html must include pot-expansion-help-btn');
+    assert(desktopHtml.includes('class="slider-label-with-help"'), 'index.html must wrap label and help btn in slider-label-with-help');
+    assert(mobileHtml.includes('class="pot-expansion-help-btn pokedex-formula-help-btn"'), 'app/index.html must include pot-expansion-help-btn');
+    assert(mobileHtml.includes('class="slider-label-with-help"'), 'app/index.html must wrap label and help btn in slider-label-with-help');
+
+    // 2. Help button data & i18n
+    assert(appJs.includes("btn.classList.contains('pot-expansion-help-btn')"), 'getHelpButtonData must support pot-expansion-help-btn');
+    assert(i18nJs.includes("'recipe.slider_pot_expansion_help_title'"), 'i18n.js must define recipe.slider_pot_expansion_help_title');
+    assert(i18nJs.includes("'recipe.slider_pot_expansion_help_body'"), 'i18n.js must define recipe.slider_pot_expansion_help_body');
+
+    // 3. Floating tooltip visibility and comprehensive dismiss
+    assert(appJs.includes('isAnyFloatingTooltipVisible'), 'app.js must define isAnyFloatingTooltipVisible');
+    assert(appJs.includes("document.addEventListener('touchstart', onTouchStart, { capture: true"), 'touchstart must be captured to dismiss floating tooltips immediately');
+    assert(appJs.includes("document.addEventListener('touchmove', onTouchMove, { capture: true"), 'touchmove must be captured to dismiss floating tooltips immediately');
+    assert(appJs.includes("document.addEventListener('scroll', onScrollDismiss, { capture: true"), 'scroll must be captured on document to dismiss floating tooltips');
+    assert(appJs.includes("window.addEventListener('wheel', onScrollDismiss"), 'wheel must be listened to dismiss floating tooltips');
+
+    // 4. CSS styling and theme coverage
+    assert(stylesCss.includes('.pot-expansion-help-btn'), 'styles.css must style .pot-expansion-help-btn');
+    assert(stylesCss.includes('.slider-label-with-help'), 'styles.css must style .slider-label-with-help');
+    assert(stylesCss.includes('[data-theme="dawn"]') && stylesCss.includes('.pot-expansion-help-btn'), 'styles.css must support dawn theme for pot-expansion-help-btn');
+    assert(stylesCss.includes('[data-theme="emerald"]') && stylesCss.includes('.pot-expansion-help-btn'), 'styles.css must support emerald theme for pot-expansion-help-btn');
+    assert(stylesCss.includes('[data-theme="onyx"]') && stylesCss.includes('.pot-expansion-help-btn'), 'styles.css must support onyx theme for pot-expansion-help-btn');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {
