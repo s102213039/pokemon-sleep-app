@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/styles.css?v=20261008_03">
+  <link rel="stylesheet" href="../css/styles.css?v=20261008_04">
 
   <!-- 全域路徑基準與錯誤診斷攔截器 -->
   <script>
@@ -169,7 +169,7 @@
           navigator.clipboard.writeText(text).then(function() {
             if (btnEl) {
               var oldText = btnEl.innerHTML;
-              btnEl.innerHTML = '✅ 已複製 (Copied!)';
+              btnEl.innerHTML = '[✓] 已複製 (Copied!)';
               setTimeout(function() { btnEl.innerHTML = oldText; }, 3000);
             }
           }).catch(function() { fallbackCopy(text, btnEl); });
@@ -611,12 +611,12 @@
           <!-- 3. 數值試算設定 (Level, Island, Event Sliders & Tasty Switch) -->
           <div class="sidebar-section">
             <div class="sidebar-section-header">
-              <span class="sidebar-section-title" data-i18n="recipe.calc_settings">📊 能量試算設定</span>
+              <span class="sidebar-section-title" data-i18n="recipe.calc_settings">能量試算設定</span>
             </div>
 
             <!-- 漂亮成功分數 Switch -->
             <label class="sidebar-final-evo-label sidebar-switch-compact" for="tasty-toggle-btn" title="切換是否展示漂亮成功分數（2x / 3x）" style="margin-bottom:8px;">
-              <span class="sidebar-final-evo-text" data-i18n="recipe.tasty_toggle">✨ 漂亮成功分數</span>
+              <span class="sidebar-final-evo-text" data-i18n="recipe.tasty_toggle">漂亮成功分數</span>
               <div class="sidebar-switch-wrapper">
                 <input type="checkbox" id="tasty-toggle-btn" class="switch-checkbox">
                 <span class="switch-slider"></span>
@@ -626,7 +626,7 @@
             <!-- 食譜等級滑桿 -->
             <div class="sidebar-slider-item" style="margin-bottom:12px;">
               <div class="slider-label-row">
-                <span class="rf-label" data-i18n="recipe.slider_level">📖 食譜等級</span>
+                <span class="rf-label" data-i18n="recipe.slider_level">食譜等級</span>
                 <span id="level-badge" class="slider-value-badge">Lv. 1</span>
               </div>
               <div class="slider-row">
@@ -639,7 +639,7 @@
             <!-- 島嶼加成滑桿 -->
             <div class="sidebar-slider-item" style="margin-bottom:12px;">
               <div class="slider-label-row">
-                <span class="rf-label" data-i18n="recipe.slider_island">🏝️ 島嶼加成</span>
+                <span class="rf-label" data-i18n="recipe.slider_island">島嶼加成</span>
                 <span id="island-bonus-badge" class="slider-value-badge island-bonus-badge">+0% (×1.00)</span>
               </div>
               <div class="slider-row">
@@ -701,7 +701,7 @@
           <!-- 5. 排除食材篩選器 -->
           <div class="sidebar-section">
             <div class="sidebar-section-header compact-header">
-              <span class="sidebar-section-title" data-i18n="recipe.filter_excluded">🔴 排除食材</span>
+              <span class="sidebar-section-title" data-i18n="recipe.filter_excluded">排除食材</span>
               <button type="button" id="clear-excluded-btn" class="sidebar-section-clear-btn" style="display:none;" data-i18n="pokedex.clear">清空</button>
             </div>
             <div id="excluded-ingredient-picker-tags" class="sidebar-icon-grid"></div>
@@ -806,7 +806,7 @@
             <div class="sidebar-section-header">
               <span class="sidebar-section-title" data-i18n="box.sort_title">排序方式</span>
             </div>
-            <select id="box-sort-select" class="sort-select box-sort-select" aria-label="倉庫排序" style="width:100%;height:36px;border-radius:10px;background:var(--table-row-odd-solid, #0d1527);border:1px solid var(--border-color);color:var(--text-primary);padding:0 12px;font-size:13px;font-weight:600;">
+            <select id="box-sort-select" class="sort-select box-sort-select" aria-label="倉庫排序" style="width:100%;height:36px;border-radius:10px;background:var(--table-row-odd-solid, #0d1527);border:1px solid var(--border-color);color:var(--text-primary);padding:0 38px 0 14px;font-size:13px;font-weight:600;">
               <option value="id-asc" data-i18n="box.sort_id_asc" selected>編號由低到高</option>
               <option value="id-desc" data-i18n="box.sort_id_desc">編號由高到低</option>
               <option value="level-desc" data-i18n="box.sort_level_desc">等級由高到低</option>
@@ -1018,7 +1018,7 @@
         <!-- 📰 移動端頁面最底部簡約來源備註 (Minimal News Footer) -->
         <footer class="news-minimal-footer">
           <p class="news-footer-source" data-i18n-html="news.source_full_hint">
-            🤖 由 AI 自動提煉核心亮點 · 來源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 繁體中文官方網站</a>
+            由 AI 自動提煉核心亮點 · 來源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 繁體中文官方網站</a>
           </p>
         </footer>
       </section>
@@ -1273,10 +1273,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
   <script src="../js/core/cloudSync.js?v=20260930_01"></script>
-  <script src="../js/core/i18n.js?v=20261008_03"></script>
-  <script src="../js/modules/app.js?v=20261008_03"></script>
-  <script src="../js/modules/recipes.js?v=20261008_03"></script>
-  <script src="../js/modules/wiki.js?v=20261006_03"></script>
+  <script src="../js/core/i18n.js?v=20261008_04"></script>
+  <script src="../js/modules/app.js?v=20261008_04"></script>
+  <script src="../js/modules/recipes.js?v=20261008_04"></script>
+  <script src="../js/modules/wiki.js?v=20261008_04"></script>
   <script src="../js/modules/box.js?v=20261006_03"></script>
   <script src="../js/modules/news.js?v=20261005_02"></script>
   <script src="../js/modules/appraisal.js?v=20261007_03"></script>

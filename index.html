@@ -126,7 +126,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=20261008_03">
+  <link rel="stylesheet" href="css/styles.css?v=20261008_04">
   <!-- 全域錯誤診斷與日誌攔截器 (Global Error & Diagnostic Logger) -->
   <script>
     (function() {
@@ -214,7 +214,7 @@
           navigator.clipboard.writeText(text).then(function() {
             if (btnEl) {
               var oldText = btnEl.innerHTML;
-              btnEl.innerHTML = '✅ 已複製錯誤日誌 (Copied!)';
+              btnEl.innerHTML = '[✓] 已複製錯誤日誌 (Copied!)';
               btnEl.style.background = '#059669';
               btnEl.style.borderColor = '#10b981';
               setTimeout(function() {
@@ -310,7 +310,9 @@
   <header>
     <div class="header-container">
       <div class="brand">
-        <div class="brand-logo">⚡</div>
+        <div class="brand-logo" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+        </div>
         <div>
           <h1 class="brand-title" data-i18n="brand.title">Pokémon Sleep 資料庫</h1>
           <div class="brand-subtitle" data-i18n="brand.subtitle">機率、食材與屬性完整線上檢索</div>
@@ -319,11 +321,11 @@
 
       <!-- 中央 SPA 切換 Switch Button (寶可夢圖鑑 <-> 料理食譜 <-> 數據百科 <-> 寶可夢倉庫 <-> 最新公告) -->
       <div class="main-tab-toggle">
-        <button id="tab-pokemon" class="toggle-btn active" data-i18n="nav.pokemon">⚡ 寶可夢圖鑑</button>
-        <button id="tab-recipes" class="toggle-btn" data-i18n="nav.recipes">🍲 料理食譜</button>
-        <button id="tab-wiki" class="toggle-btn" data-i18n="nav.wiki">📚 數據百科</button>
-        <button id="tab-box" class="toggle-btn" data-i18n="nav.box">📦 寶可夢倉庫</button>
-        <button id="tab-news" class="toggle-btn" data-i18n="nav.news">📰 最新公告</button>
+        <button id="tab-pokemon" class="toggle-btn active" data-i18n="nav.pokemon">寶可夢圖鑑</button>
+        <button id="tab-recipes" class="toggle-btn" data-i18n="nav.recipes">料理食譜</button>
+        <button id="tab-wiki" class="toggle-btn" data-i18n="nav.wiki">數據百科</button>
+        <button id="tab-box" class="toggle-btn" data-i18n="nav.box">寶可夢倉庫</button>
+        <button id="tab-news" class="toggle-btn" data-i18n="nav.news">最新公告</button>
       </div>
 
       <div class="header-actions">
@@ -331,8 +333,8 @@
           <span class="sync-dot dot-guest"></span>
           <span class="header-auth-text">登入 / 註冊</span>
         </button>
-        <button id="switch-to-mobile-btn" class="toggle-btn switch-view-btn" onclick="window.switchToMobileView()" title="切換至手機專屬 App 版" style="padding:6px 12px;font-size:12px;font-weight:700;" data-i18n="nav.switch_to_mobile">📱 行動版</button>
-        <button id="sync-config-btn" class="toggle-btn" title="系統設定與主題切換" style="padding:6px 12px;font-size:12px;font-weight:700;" data-i18n="nav.settings">⚙️ 設定</button>
+        <button id="switch-to-mobile-btn" class="toggle-btn switch-view-btn" onclick="window.switchToMobileView()" title="切換至手機專屬 App 版" style="padding:6px 12px;font-size:12px;font-weight:700;" data-i18n="nav.switch_to_mobile">行動版</button>
+        <button id="sync-config-btn" class="toggle-btn" title="系統設定與主題切換" style="padding:6px 12px;font-size:12px;font-weight:700;" data-i18n="nav.settings">設定</button>
       </div>
     </div>
   </header>
@@ -516,7 +518,11 @@
       <aside id="pokemon-filter-sidebar" class="pokemon-filter-sidebar" aria-label="寶可夢圖鑑篩選器">
         <!-- 🔖 側邊欄垂直中央書籤標籤 (Vertically Centered Bookmark Drawer Handle) -->
         <button type="button" id="sidebar-bookmark-handle" class="sidebar-bookmark-handle" title="展開 / 收合篩選側邊欄" aria-label="切換篩選側邊欄">
-          <span class="bookmark-icon">🎛️</span>
+          <span class="bookmark-icon">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+          </span>
           <span class="bookmark-text" data-i18n="pokedex.filter_bookmark">篩選</span>
           <span class="bookmark-arrow">◀</span>
           <span id="sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
@@ -620,8 +626,8 @@
 
             <!-- 頁面內容裡面的 卡片/表格 切換按鈕 -->
             <div class="view-mode-toggle">
-              <button id="toggle-grid" class="toggle-btn" data-i18n="pokedex.view_cards">🎴 卡片</button>
-              <button id="toggle-table" class="toggle-btn active" data-i18n="pokedex.view_table">📊 表格</button>
+              <button id="toggle-grid" class="toggle-btn" data-i18n="pokedex.view_cards">卡片</button>
+              <button id="toggle-table" class="toggle-btn active" data-i18n="pokedex.view_table">表格</button>
             </div>
             <select id="sort-select" style="display:none;"></select>
           </div>
@@ -632,9 +638,9 @@
           <span id="count-badge" data-i18n="pokedex.loading">載入中...</span>
           <div style="display:flex;gap:12px;align-items:center;">
             <a href="https://docs.google.com/spreadsheets/d/1JkV2QxGGFDBzUfDxfOhTD3hrJJzu9qCS4A6c_HicIDc/edit#gid=87785598"
-               target="_blank" data-i18n="pokedex.ref_data" style="color:var(--accent-color);text-decoration:none;font-size:12px;">📊 參考資料來源</a>
+               target="_blank" data-i18n="pokedex.ref_data" style="color:var(--accent-color);text-decoration:none;font-size:12px;">參考資料來源</a>
             <a href="https://docs.google.com/spreadsheets/d/1BD05wG8Gy3EUNzhg5mtErllr-Rkv20iFGsZ8kNsuUJ0/edit"
-               target="_blank" data-i18n="pokedex.target_sheet" style="color:var(--accent-color);text-decoration:none;font-size:12px;">📋 目標試算表</a>
+               target="_blank" data-i18n="pokedex.target_sheet" style="color:var(--accent-color);text-decoration:none;font-size:12px;">目標試算表</a>
           </div>
         </div>
 
@@ -653,7 +659,11 @@
       <aside id="recipe-filter-sidebar" class="pokemon-filter-sidebar recipe-filter-sidebar" aria-label="料理食譜篩選器">
         <!-- 🔖 側邊欄垂直中央書籤標籤 (Vertically Centered Bookmark Drawer Handle) -->
         <button type="button" id="recipe-sidebar-bookmark-handle" class="sidebar-bookmark-handle" title="展開 / 收合食譜篩選側邊欄" aria-label="切換食譜篩選側邊欄">
-          <span class="bookmark-icon">🍲</span>
+          <span class="bookmark-icon">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+          </span>
           <span class="bookmark-text" data-i18n="recipe.filter_bookmark">篩選</span>
           <span class="bookmark-arrow">◀</span>
           <span id="recipe-sidebar-bookmark-badge" class="sidebar-bookmark-badge" style="display:none;"></span>
@@ -816,8 +826,8 @@
             </div>
             <!-- 頁面內容裡面的 卡片/表格 切換按鈕 -->
             <div class="view-mode-toggle">
-              <button id="recipe-toggle-grid" class="toggle-btn" data-i18n="pokedex.view_cards">🎴 卡片</button>
-              <button id="recipe-toggle-table" class="toggle-btn active" data-i18n="pokedex.view_table">📊 表格</button>
+              <button id="recipe-toggle-grid" class="toggle-btn" data-i18n="pokedex.view_cards">卡片</button>
+              <button id="recipe-toggle-table" class="toggle-btn active" data-i18n="pokedex.view_table">表格</button>
             </div>
             <div class="sort-box">
               <select id="recipe-sort-select" class="sort-select" aria-label="食譜排序">
@@ -835,7 +845,7 @@
         <div class="stats-bar">
           <span id="recipe-count-badge" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">載入食譜中...</span>
           <div data-i18n-html="recipe.stats_tip" style="font-size:12px;color:var(--text-muted);">
-            💡 等級、島嶼與活動加成乘算於最終能量
+            等級、島嶼與活動加成乘算於最終能量
           </div>
         </div>
 
@@ -881,7 +891,7 @@
             <div class="sidebar-section-header">
               <span class="sidebar-section-title" data-i18n="box.sort_title">排序方式</span>
             </div>
-            <select id="box-sort-select" class="sort-select box-sort-select" aria-label="倉庫排序" style="width:100%;height:36px;border-radius:10px;background:var(--table-row-odd-solid, #0d1527);border:1px solid var(--border-color);color:var(--text-primary);padding:0 12px;font-size:13px;font-weight:600;">
+            <select id="box-sort-select" class="sort-select box-sort-select" aria-label="倉庫排序" style="width:100%;height:36px;border-radius:10px;background:var(--table-row-odd-solid, #0d1527);border:1px solid var(--border-color);color:var(--text-primary);padding:0 38px 0 14px;font-size:13px;font-weight:600;">
               <option value="id-asc" data-i18n="box.sort_id_asc" selected>編號由低到高</option>
               <option value="id-desc" data-i18n="box.sort_id_desc">編號由高到低</option>
               <option value="level-desc" data-i18n="box.sort_level_desc">等級由高到低</option>
@@ -1204,7 +1214,7 @@
         <!-- 📰 頁面最底部簡約來源備註 (Minimal News Footer) -->
         <footer class="news-minimal-footer">
           <p class="news-footer-source" data-i18n-html="news.source_full_hint">
-            🤖 由 AI 自動提煉核心亮點 · 來源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 繁體中文官方網站</a>
+            由 AI 自動提煉核心亮點 · 來源：<a href="https://www.pokemonsleep.net/zh/news/" target="_blank" rel="noopener noreferrer">Pokémon Sleep 繁體中文官方網站</a>
           </p>
         </footer>
       </section>
@@ -1409,10 +1419,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
   <script src="js/core/cloudSync.js?v=20260930_01"></script>
-  <script src="js/core/i18n.js?v=20261008_03"></script>
-  <script src="js/modules/app.js?v=20261008_03"></script>
-  <script src="js/modules/recipes.js?v=20261008_03"></script>
-  <script src="js/modules/wiki.js?v=20261006_03"></script>
+  <script src="js/core/i18n.js?v=20261008_04"></script>
+  <script src="js/modules/app.js?v=20261008_04"></script>
+  <script src="js/modules/recipes.js?v=20261008_04"></script>
+  <script src="js/modules/wiki.js?v=20261008_04"></script>
   <script src="js/modules/box.js?v=20261006_03"></script>
   <script src="js/modules/news.js?v=20261005_02"></script>
   <script src="js/modules/appraisal.js?v=20261007_03"></script>

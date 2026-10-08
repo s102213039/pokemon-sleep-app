@@ -11843,11 +11843,15 @@
       if (typeof event.preventDefault === 'function') event.preventDefault();
     }
     const btn = (event && (event.currentTarget || event.target)) || document.querySelector('.ladder-formula-help-btn');
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
-    const title = isEN ? 'Baseline: Lv.60 Ideal Energy' : '天梯基準：Lv.60 滿活力';
+    const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : 'zh-TW';
+    const isEN = lang === 'en-US';
+    const isCN = lang === 'zh-CN';
+    const title = isEN ? 'Baseline: Lv.60 Ideal Energy' : (isCN ? '天梯基准：Lv.60 满活力' : '天梯基準：Lv.60 滿活力');
     const body = isEN
       ? 'Calculated at Lv.60 under ideal energy (≥80%, 0.45x interval) for daily yield.'
-      : '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算單日產能。';
+      : (isCN
+        ? '以 Lv.60 满活力理想状态 (活力 ≥ 80%，间隔 0.45x) 试算单日产能。'
+        : '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算單日產能。');
 
     if (window.PokemonApp && typeof window.PokemonApp.toggleGlobalTooltip === 'function') {
       window.PokemonApp.toggleGlobalTooltip(btn, title, body);
@@ -12716,11 +12720,15 @@
       e.preventDefault();
     }
     const btn = (e && (e.currentTarget || e.target)) || document.querySelector('.ladder-help-icon-btn');
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
-    const title = isEN ? 'Specialty Trigger Multipliers' : '專長發動機率加成';
+    const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : 'zh-TW';
+    const isEN = lang === 'en-US';
+    const isCN = lang === 'zh-CN';
+    const title = isEN ? 'Specialty Trigger Multipliers' : (isCN ? '专长发动几率加成' : '專長發動機率加成');
     const body = isEN
       ? 'All specialties use a 1.0x trigger baseline.<br>Use Skill Trigger M/S and Skill Chance ▲ to simulate boosts.'
-      : '所有專長皆以 1.0 倍發動機率為基準。<br>請用技能機率M/S與技能機率▲模擬補正。';
+      : (isCN
+        ? '所有专长皆以 1.0 倍发动几率作为基准。<br>请用技能几率M/S与技能几率▲模拟补正。'
+        : '所有專長皆以 1.0 倍發動機率為基準。<br>請用技能機率M/S與技能機率▲模擬補正。');
 
     if (window.PokemonApp && typeof window.PokemonApp.toggleGlobalTooltip === 'function') {
       window.PokemonApp.toggleGlobalTooltip(btn, title, body);

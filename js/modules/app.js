@@ -1453,12 +1453,16 @@ let isTouchInteraction = false;
 
 function getHelpButtonData(btn) {
   if (!btn || !btn.classList) return null;
-  const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+  const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : 'zh-TW';
+  const isEN = lang === 'en-US';
+  const isCN = lang === 'zh-CN';
   if (btn.classList.contains('pot-expansion-help-btn')) {
-    const defaultTitle = isEN ? 'Pot Expansion Forecast' : '擴鍋預測說明';
+    const defaultTitle = isEN ? 'Pot Expansion Forecast' : (isCN ? '扩锅预测说明' : '擴鍋預測說明');
     const defaultBody = isEN
       ? 'Extra ingredients default to <span class="text-accent font-bold">100 base energy</span> each (standard average baseline for common fillers like Apple 90, Milk 98, Soybean 100, Honey 101, Sausage 103).<br>Formula: (Recipe Lv. Energy + Extra Ingredients × 100) × Island Bonus × Event Bonus.<br>Extra ingredients do not receive recipe level bonus, but fully benefit from island bonus, event bonus, and extra tasty multipliers.'
-      : '預設每個追加食材以 <span class="text-accent font-bold">100 基礎能量</span> 計算（常用溢出填鍋食材如蘋果90、牛奶98、大豆100、蜂蜜101、香腸103之平均基準）。<br>計算公式：(食譜等級能量 + 追加食材數 × 100) × (1 + 島嶼加成) × 活動加成。<br>追加食材不享有食譜等級加成，但全額享有島嶼加成、活動加成與大成功倍率。';
+      : (isCN
+        ? '默认每个追加食材以 <span class="text-accent font-bold">100 基础能量</span> 计算（常用溢出填锅食材如苹果90、牛奶98、大豆100、蜂蜜101、香肠103之平均基准）。<br>计算公式：(食谱等级能量 + 追加食材数 × 100) × (1 + 岛屿加成) × 活动加成。<br>追加食材不享有食谱等级加成，但全额享有岛屿加成、活动加成与大成功倍率。'
+        : '預設每個追加食材以 <span class="text-accent font-bold">100 基礎能量</span> 計算（常用溢出填鍋食材如蘋果90、牛奶98、大豆100、蜂蜜101、香腸103之平均基準）。<br>計算公式：(食譜等級能量 + 追加食材數 × 100) × (1 + 島嶼加成) × 活動加成。<br>追加食材不享有食譜等級加成，但全額享有島嶼加成、活動加成與大成功倍率。');
     return {
       title: (typeof window !== 'undefined' && window.I18N) ? window.I18N.t('recipe.slider_pot_expansion_help_title', defaultTitle) : defaultTitle,
       body: (typeof window !== 'undefined' && window.I18N) ? window.I18N.t('recipe.slider_pot_expansion_help_body', defaultBody) : defaultBody
@@ -1466,26 +1470,32 @@ function getHelpButtonData(btn) {
   }
   if (btn.classList.contains('ladder-formula-help-btn')) {
     return {
-      title: isEN ? 'Baseline: Lv.60 Ideal Energy' : '天梯基準：Lv.60 滿活力',
+      title: isEN ? 'Baseline: Lv.60 Ideal Energy' : (isCN ? '天梯基准：Lv.60 满活力' : '天梯基準：Lv.60 滿活力'),
       body: isEN
         ? 'Calculated at Lv.60 under ideal energy (≥80%, 0.45x interval) for daily yield.'
-        : '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算單日產能。'
+        : (isCN
+          ? '以 Lv.60 满活力理想状态 (活力 ≥ 80%，间隔 0.45x) 试算单日产能。'
+          : '以 Lv.60 滿活力理想狀態 (活力 ≥ 80%，間隔 0.45x) 試算單日產能。')
     };
   }
   if (btn.classList.contains('pokedex-formula-help-btn')) {
     return {
-      title: isEN ? 'Ideal Energy (0.45x) & 12h Daytime Baseline' : '理想活力 0.45x 與 12 小時基準說明',
+      title: isEN ? 'Ideal Energy (0.45x) & 12h Daytime Baseline' : (isCN ? '理想活力 0.45x 与 12 小时基准说明' : '理想活力 0.45x 與 12 小時基準說明'),
       body: isEN
         ? 'Under ideal energy (≥80%), helping interval is reduced to <span class="text-accent font-bold">0.45x</span> (~<span class="text-accent font-bold">2.22x yield</span>).<br>Calculation adopts a <span class="text-accent font-bold">12 hours (43200s)</span> daytime active baseline: general players have 12-16 hours waking time, and Pokémon sleep requires ~8.5h, so 12h represents realistic daytime active output without non-active sleep downtime.'
-        : '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。<br>此處算法採用 <span class="text-accent font-bold">12 小時 (43200秒)</span> 日間活躍基準：一般用戶非睡眠時間約 12-16 小時，且寶可夢睡飽需 8.5 小時，扣除夜間睡眠，以 12 小時試算最符合日間實際產能期望。'
+        : (isCN
+          ? '活力 ≥ 80% 理想状态下，帮忙间隔缩短为 <span class="text-accent font-bold">0.45 倍</span>（产能约 <span class="text-accent font-bold">2.22 倍</span>）。<br>此处算法采用 <span class="text-accent font-bold">12 小时 (43200秒)</span> 日间活跃基准：一般用户非睡眠时间约 12-16 小时，且宝可梦睡饱需 8.5 小时，扣除夜间睡眠，以 12 小时试算最符合日间实际产能期望。'
+          : '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。<br>此處算法採用 <span class="text-accent font-bold">12 小時 (43200秒)</span> 日間活躍基準：一般用戶非睡眠時間約 12-16 小時，且寶可夢睡飽需 8.5 小時，扣除夜間睡眠，以 12 小時試算最符合日間實際產能期望。')
     };
   }
   if (btn.classList.contains('ladder-help-icon-btn')) {
     return {
-      title: isEN ? 'Specialty Trigger Multipliers' : '專長發動機率加成',
+      title: isEN ? 'Specialty Trigger Multipliers' : (isCN ? '专长发动几率加成' : '專長發動機率加成'),
       body: isEN
         ? 'All specialties use a 1.0x trigger baseline.<br>Use Skill Trigger M/S and Skill Chance ▲ to simulate boosts.'
-        : '所有專長皆以 1.0 倍發動機率為基準。<br>請用技能機率M/S與技能機率▲模擬補正。'
+        : (isCN
+          ? '所有专长皆以 1.0 倍发动几率作为基准。<br>请用技能几率M/S与技能几率▲模拟补正。'
+          : '所有專長皆以 1.0 倍發動機率為基準。<br>請用技能機率M/S與技能機率▲模擬補正。')
     };
   }
   return null;
@@ -6270,11 +6280,15 @@ function togglePokedexEnergyHelp(event) {
   const popover = document.getElementById('pokedex-energy-help-popover');
   if (popover) popover.style.display = 'none';
   const btn = (event && (event.currentTarget || event.target)) || document.querySelector('.pokedex-formula-help-btn');
-  const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
-  const title = isEN ? 'Ideal Energy (0.45x) & 12h Daytime Baseline' : '理想活力 0.45x 與 12 小時基準說明';
+  const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : 'zh-TW';
+  const isEN = lang === 'en-US';
+  const isCN = lang === 'zh-CN';
+  const title = isEN ? 'Ideal Energy (0.45x) & 12h Daytime Baseline' : (isCN ? '理想活力 0.45x 与 12 小时基准说明' : '理想活力 0.45x 與 12 小時基準說明');
   const body = isEN
     ? 'Under ideal energy (≥80%), helping interval is reduced to <span class="text-accent font-bold">0.45x</span> (~<span class="text-accent font-bold">2.22x yield</span>).<br>Calculation adopts a <span class="text-accent font-bold">12 hours (43200s)</span> daytime active baseline: general players have 12-16 hours waking time, and Pokémon sleep requires ~8.5h, so 12h represents realistic daytime active output without non-active sleep downtime.'
-    : '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。<br>此處算法採用 <span class="text-accent font-bold">12 小時 (43200秒)</span> 日間活躍基準：一般用戶非睡眠時間約 12-16 小時，且寶可夢睡飽需 8.5 小時，扣除夜間睡眠，以 12 小時試算最符合日間實際產能期望。';
+    : (isCN
+      ? '活力 ≥ 80% 理想状态下，帮忙间隔缩短为 <span class="text-accent font-bold">0.45 倍</span>（产能约 <span class="text-accent font-bold">2.22 倍</span>）。<br>此处算法采用 <span class="text-accent font-bold">12 小时 (43200秒)</span> 日间活跃基准：一般用户非睡眠时间约 12-16 小时，且宝可梦睡饱需 8.5 小时，扣除夜间睡眠，以 12 小时试算最符合日间实际产能期望。'
+      : '活力 ≥ 80% 理想狀態下，幫忙間隔縮短為 <span class="text-accent font-bold">0.45 倍</span>（產能約 <span class="text-accent font-bold">2.22 倍</span>）。<br>此處算法採用 <span class="text-accent font-bold">12 小時 (43200秒)</span> 日間活躍基準：一般用戶非睡眠時間約 12-16 小時，且寶可夢睡飽需 8.5 小時，扣除夜間睡眠，以 12 小時試算最符合日間實際產能期望。');
 
   if (PokemonApp && typeof PokemonApp.toggleGlobalTooltip === 'function') {
     PokemonApp.toggleGlobalTooltip(btn, title, body);

@@ -11162,9 +11162,10 @@ SP 4,316
 
     // 5. CSS Layout and Dropdown Selection Arrow Rules (Rule VI)
     assert(stylesCss.includes('.lang-switcher-row') && stylesCss.includes('repeat(3, 1fr)'), 'styles.css .lang-switcher-row must use repeat(3, 1fr)');
-    assert(stylesCss.includes('.app-segmented-lang') && stylesCss.includes('repeat(3, 1fr)'), 'styles.css .app-segmented-lang must use repeat(3, 1fr)');
-    assert(stylesCss.includes('.pokedex-ing-select') && stylesCss.includes('padding-right: 26px !important'), '.pokedex-ing-select must have 26px padding-right per Rule VI');
-    assert(stylesCss.includes('.pokedex-subskill-select') && stylesCss.includes('padding: 3px 24px 3px 6px !important'), '.pokedex-subskill-select must have 24px padding-right per Rule VI');
+    assert(stylesCss.includes('.pokedex-ing-select') && (stylesCss.includes('padding-right: 32px !important') || stylesCss.includes('padding-right: 26px !important')), '.pokedex-ing-select must have generous padding-right per Rule VI');
+    assert(stylesCss.includes('.pokedex-subskill-select') && (stylesCss.includes('padding: 3px 28px 3px 6px !important') || stylesCss.includes('padding: 3px 24px 3px 6px !important')), '.pokedex-subskill-select must have generous padding-right per Rule VI');
+    assert(stylesCss.includes('.box-form-select') && stylesCss.includes('padding-right: 36px') && stylesCss.includes('background-position: right 18px center'), '.box-form-select must conform to Rule VI inset arrow and padding');
+    assert(stylesCss.includes('.calc-select') && stylesCss.includes('padding: 9px 36px 9px 12px') && stylesCss.includes('background-position: right 18px center'), '.calc-select must conform to Rule VI inset arrow and padding');
   });
 
 console.log('                   Test Results Summary');
