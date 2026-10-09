@@ -7039,6 +7039,56 @@ input[type=range].rf-slider.pot-slider {
   font-weight: 600;
 }
 
+/* 淨白薄荷消除個性效果標籤與說明樣式 */
+.nature-mint-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  white-space: nowrap;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .nature-mint-tag,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-mint-tag {
+  color: #047857;
+  background: rgba(5, 150, 105, 0.12);
+  border-color: rgba(5, 150, 105, 0.3);
+}
+
+.nature-effect-mint {
+  color: #10b981 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .nature-effect-mint,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-effect-mint {
+  color: #047857 !important;
+}
+
+.nature-capsule-mint-leaf {
+  display: inline-block;
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(16, 185, 129, 0.18);
+  color: #10b981;
+  font-weight: 700;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .nature-capsule-mint-leaf,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-capsule-mint-leaf {
+  background: rgba(5, 150, 105, 0.18);
+  color: #047857;
+}
+
 .box-nature-badge {
   background: var(--bg-card-inner);
   border: 1px solid var(--border-color-subtle);

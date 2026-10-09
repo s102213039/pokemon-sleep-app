@@ -336,7 +336,7 @@
   }
 
   /* ─── 核心評估演算法 (單一維度/等級計算核心) ──────────── */
-  function evaluateSingle(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, isPotential) {
+  function evaluateSingle(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, isPotential, cleanseMint) {
     if (!pkmData) return null;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     natureName = natureName || '坦率';
@@ -424,9 +424,13 @@
       '浮躁': { buffType: 'none', debuffType: 'none' },
       'Quirky': { buffType: 'none', debuffType: 'none' }
     };
-    const nature = (window.UserBox && window.UserBox.NATURE_DICT && window.UserBox.NATURE_DICT[natureName]) ||
+    const isMint = !!(cleanseMint || (pkmData && (pkmData.cleanseMint || pkmData.mint)));
+    let nature = (window.UserBox && window.UserBox.NATURE_DICT && window.UserBox.NATURE_DICT[natureName]) ||
       (window.PokemonApp && window.PokemonApp.NATURE_DICT && window.PokemonApp.NATURE_DICT[natureName]) ||
       fallbackNatureDict[natureName] || { buffType: 'none', debuffType: 'none' };
+    if (isMint) {
+      nature = { buffType: 'none', debuffType: 'none' };
+    }
     const natDisplayName = window.I18N ? window.I18N.getNatureName(natureName) : natureName;
 
     const isBerryBurst = isBerryBurstSkillSpecialist(pkmData);
@@ -1028,6 +1032,12 @@
         : '[-] 致命缺陷：性格「' + natureName + '」導致主技能發動率▼ (-20%)，嚴重閹割核心發動頻率。');
     }
 
+    if (isMint) {
+      pros.push(isEN
+        ? `[*] Cleanse Mint used: original nature "${natDisplayName}" neutralized to standard baseline.`
+        : `[*] 已使用淨白薄荷：原性格「${natDisplayName}」個性效果已被中和消除。`);
+    }
+
     if (ribbonBonus.level > 0) {
       const carryText = `+${ribbonBonus.carry}`;
       if (ribbonBonus.speedDiscount > 0) {
@@ -1291,9 +1301,10 @@
 
     const activeNames = activeSubskills.map(function(s) { return s.name; });
 
+    const isMint = !!(pkmData && (pkmData.cleanseMint || pkmData.mint));
     const natureObj = NATURE_DATA.find(function(n) { return n.name === natureName || n.name_en === natureName; });
-    const buff = natureObj ? natureObj.buffType : 'none';
-    const debuff = natureObj ? natureObj.debuffType : 'none';
+    const buff = isMint ? 'none' : (natureObj ? natureObj.buffType : 'none');
+    const debuff = isMint ? 'none' : (natureObj ? natureObj.debuffType : 'none');
 
     // 特殊角色識別
     const isSlowpoke = isSlowpokeFamily(pkmData);
@@ -1626,15 +1637,17 @@
   }
 
   /* ─── 對外入口：雙軌評級與里程碑評定 (Dual-Track Appraisal API) ─────── */
-  function evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel) {
+  function evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, cleanseMint) {
     if (!pkmData) return null;
     currentLv = parseInt(currentLv, 10) || 30;
+    const isMint = !!(cleanseMint || (pkmData && (pkmData.cleanseMint || pkmData.mint)));
+    const targetPkm = Object.assign({}, pkmData, { cleanseMint: isMint });
 
-    const currentEval = evaluateSingle(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, false);
+    const currentEval = evaluateSingle(targetPkm, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, false, isMint);
     if (!currentEval) return null;
 
-    const potentialEval = evaluateSingle(pkmData, 100, natureName, subskills, ingredients, ribbonLevel, skillLevel, true);
-    const milestones = calculateMilestoneProjections(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, currentEval);
+    const potentialEval = evaluateSingle(targetPkm, 100, natureName, subskills, ingredients, ribbonLevel, skillLevel, true, isMint);
+    const milestones = calculateMilestoneProjections(targetPkm, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, currentEval);
 
     if (currentEval.diagnostics) {
       currentEval.diagnostics.milestones = milestones;
@@ -1868,8 +1881,10 @@
 
     let skillLevel = getEffectiveSkillLevel(pkmOrBoxItem, pkmData);
     const nickname = (pkmOrBoxItem.nickname || '').trim();
+    const isMint = !!(pkmOrBoxItem.cleanseMint || pkmOrBoxItem.mint || (pkmData && (pkmData.cleanseMint || pkmData.mint)));
+    const targetPkmData = Object.assign({}, pkmData, { cleanseMint: isMint });
 
-    const evaluation = evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel);
+    const evaluation = evaluatePokemon(targetPkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, isMint);
     if (!evaluation) return;
 
     let modal = document.getElementById('modal-appraisal-report');
@@ -1888,7 +1903,15 @@
     // 遊戲同款性格展示排版 (In-Game Style Nature Display)
     const natureObj = NATURE_DATA.find(function(n) { return n.name === natureName || n.name_en === natureName; });
     let natureEffectHtml = '';
-    if (natureObj && natureObj.buff && natureObj.buff !== '無增減') {
+    if (isMint) {
+      natureEffectHtml = `
+        <div class="nature-effects-group">
+          <div class="nature-effect-neutral nature-effect-mint">
+            ${isEN ? 'Has no distinctive personality traits (Cleanse Mint used)' : '沒有性格帶來的特色（使用淨白薄荷消除個性效果）'}
+          </div>
+        </div>
+      `;
+    } else if (natureObj && natureObj.buff && natureObj.buff !== '無增減') {
       const rawBuff = isEN ? (natureObj.buff_en || natureObj.buff) : natureObj.buff;
       const rawDebuff = isEN ? (natureObj.debuff_en || natureObj.debuff) : natureObj.debuff;
       const buffLabel = rawBuff.replace(/[▲▼]/g, '').trim();
@@ -2061,7 +2084,7 @@
                 <div class="appraisal-nature-game-card">
                   <div class="nature-pill-capsule">
                     <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
-                    <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
+                    <span class="nature-capsule-name">${escapeHtml(natDisplayName)}${isMint ? '<span class="nature-capsule-mint-leaf">' + (isEN ? 'Mint' : '薄荷') + '</span>' : ''}</span>
                   </div>
                   ${natureEffectHtml}
                 </div>
@@ -2238,7 +2261,7 @@
                   <div class="appraisal-nature-game-card">
                     <div class="nature-pill-capsule">
                       <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
-                      <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
+                      <span class="nature-capsule-name">${escapeHtml(natDisplayName)}${isMint ? '<span class="nature-capsule-mint-leaf">' + (isEN ? 'Mint' : '薄荷') + '</span>' : ''}</span>
                     </div>
                     ${natureEffectHtml}
                   </div>
@@ -2685,6 +2708,7 @@
 
     labState.ribbon = parseInt(item.ribbon, 10) || 0;
     labState.nickname = item.nickname || '';
+    labState.cleanseMint = !!(item.cleanseMint || item.mint);
     labState.skillLevel = item.skillLevel || item.mainSkillLevel || 1;
     labState.isCustomized = false;
     labState.editMode = false;
@@ -2697,6 +2721,7 @@
     if (!uid) {
       labState.selectedBoxUid = '';
       labState.nickname = '';
+      labState.cleanseMint = false;
       labState.isCustomized = false;
       labState.editMode = false;
       labState.editBackup = null;
@@ -3140,7 +3165,8 @@
         freq = freq * (1 - ribbonBonus.speedDiscount);
       }
 
-      const nat = NATURE_DATA.find(n => n.name === nature);
+      const isMint = !!(item.cleanseMint || item.mint);
+      const nat = isMint ? null : NATURE_DATA.find(n => n.name === nature);
       if (nat) {
         if (nat.buff && nat.buff.includes('幫忙速度')) freq *= 0.90;
         if (nat.debuff && nat.debuff.includes('幫忙速度')) freq *= 1.075;
@@ -3254,7 +3280,8 @@
       const isFavored = favBerries.includes(berryName) || favTypes.includes(berryType);
 
       const subs = Array.isArray(item.subskills) ? item.subskills : [];
-      const nat = NATURE_DATA.find(n => n.name === item.nature);
+      const isMint = !!(item.cleanseMint || item.mint);
+      const nat = isMint ? null : NATURE_DATA.find(n => n.name === item.nature);
 
       const spec = base.specialty || '';
       const isBerrySpec = spec.includes('樹果') || spec === 'Berries';
@@ -3696,7 +3723,7 @@
               <div class="lab-picker-sub">
                 ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry">` : ''}
                 ${specHtml}
-                <span class="lab-picker-nature">${natDisplayName || ''}</span>
+                <span class="lab-picker-nature">${natDisplayName || ''}${(item.cleanseMint || item.mint) ? (isEN ? ' (Mint)' : ' (薄荷)') : ''}</span>
               </div>
             </div>
           </div>
@@ -3935,7 +3962,7 @@
             </div>
             <div style="display:flex;align-items:center;gap:4px;">
               <span style="color:var(--text-muted);font-weight:700;">${isEN ? 'Nat:' : '性格:'}</span>
-              <span>${escapeHtml(natureDisplayName)}</span>
+              <span>${escapeHtml(natureDisplayName)}${(item.cleanseMint || item.mint) ? ' <span class="nature-mint-tag">' + (isEN ? 'Mint' : '使用淨白薄荷消除個性效果') + '</span>' : ''}</span>
             </div>
           </div>
 
@@ -4083,7 +4110,8 @@
       freq = freq * (1 - ribbonBonus.speedDiscount);
     }
 
-    const nat = NATURE_DATA.find(n => n.name === nature || n.name_en === nature);
+    const isMint = !!(item.cleanseMint || item.mint);
+    const nat = isMint ? null : NATURE_DATA.find(n => n.name === nature || n.name_en === nature);
     if (nat) {
       if (nat.buff && nat.buff.includes('幫忙速度')) freq *= 0.90;
       if (nat.debuff && nat.debuff.includes('幫忙速度')) freq *= 1.075;
@@ -4543,7 +4571,10 @@
       num(isEN ? 'Skill Procs / Day' : '技能每日發動次數', x => x.dailySkillProcs, true, v => `~${v} ${isEN ? '/day' : '次'}`),
       num(isEN ? 'Avg Proc Interval' : '技能平均發動間隔', x => (x.dailySkillProcs > 0 ? Math.round((24 / x.dailySkillProcs) * 10) / 10 : 9999), false, v => (v >= 9999 ? '--' : `${v} ${isEN ? 'h' : '小時'}`)),
       num(isEN ? 'Skill Energy / Day' : '主技能每日能量', x => x.dailySkillEnergy, true),
-      { label: isEN ? 'Nature' : '性格', vals: activePlayers.map(() => 0), higher: null, texts: activePlayers.map(p => (window.I18N ? window.I18N.getNatureName(p.item.nature) : p.item.nature)) }
+      { label: isEN ? 'Nature' : '性格', vals: activePlayers.map(() => 0), higher: null, texts: activePlayers.map(p => {
+        const nName = window.I18N ? window.I18N.getNatureName(p.item.nature) : p.item.nature;
+        return (p.item.cleanseMint || p.item.mint) ? `${nName}${isEN ? ' (Mint)' : ' (薄荷)'}` : nName;
+      }) }
     ];
     const specHtml = `
       <div class="lab-compare-kpi-card lab-compare-matchup-table" id="lab-compare-skills">
@@ -4639,8 +4670,10 @@
     const natures = (window.UserBox && window.UserBox.NATURE_DATA) || [];
     const subskillPool = (window.UserBox && window.UserBox.SUBSKILLS_DATA) || [];
 
+    const isMint = !!(labState.cleanseMint || (boxItem && (boxItem.cleanseMint || boxItem.mint)));
+    const targetPkm = Object.assign({}, currentPkm, { cleanseMint: isMint });
     const skillLvl = labState.skillLevel || (boxItem && (boxItem.skillLevel || boxItem.mainSkillLevel)) || 1;
-    const evaluation = evaluatePokemon(currentPkm, labState.level, labState.nature, labState.subskills, labState.ingredients, labState.ribbon, skillLvl);
+    const evaluation = evaluatePokemon(targetPkm, labState.level, labState.nature, labState.subskills, labState.ingredients, labState.ribbon, skillLvl, isMint);
     const radarSVG = evaluation ? renderRadarChartSVG(evaluation.scores, 340, 310) : '';
     const displayName = isEN ? (currentPkm.name_en || currentPkm.name_cn) : currentPkm.name_cn;
     const specName = window.I18N ? window.I18N.getSpecialtyName(currentPkm.specialty) : currentPkm.specialty;
@@ -4668,7 +4701,15 @@
     const natureDisplayName = window.I18N ? window.I18N.getNatureName(labState.nature) : labState.nature;
     const natureObj = natures.find(function (n) { return n.name === labState.nature; });
     let labNatureEffectHtml = '';
-    if (natureObj && natureObj.buff && natureObj.buff !== '無增減') {
+    if (isMint) {
+      labNatureEffectHtml = `
+        <div class="nature-effects-group">
+          <div class="nature-effect-neutral nature-effect-mint">
+            ${isEN ? 'Has no distinctive personality traits (Cleanse Mint used)' : '沒有性格帶來的特色（使用淨白薄荷消除個性效果）'}
+          </div>
+        </div>
+      `;
+    } else if (natureObj && natureObj.buff && natureObj.buff !== '無增減') {
       const rawBuff = isEN ? (natureObj.buff_en || natureObj.buff) : natureObj.buff;
       const rawDebuff = isEN ? (natureObj.debuff_en || natureObj.debuff) : natureObj.debuff;
       const buffLabel = rawBuff.replace(/[▲▼]/g, '').trim();

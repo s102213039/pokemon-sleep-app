@@ -11272,8 +11272,13 @@ SP 4,316
     ].join('\n');
 
     const parsedAbsol = boxModule.parsePokemonFromOcr(absolMintOcr, null, [absolPkm]);
-    assertEquals(parsedAbsol.nature, '坦率', 'Absol with Cleanse Mint (慎重 + 沒有性格帶來的特色) must be resolved to 坦率');
+    assertEquals(parsedAbsol.nature, '慎重', 'Absol with Cleanse Mint (慎重 + 沒有性格帶來的特色) must preserve nature 慎重');
+    assertEquals(parsedAbsol.cleanseMint, true, 'Absol with Cleanse Mint must have cleanseMint: true');
     assertEquals(parsedAbsol.ribbon, 1, 'Absol Lv.52 (carry 40, base 21, subskill L +18) must have Ribbon Tier 1 (+1 carry, not Tier 4)');
+
+    const prAbsol = boxModule.calculatePokemonPR(parsedAbsol, absolPkm);
+    assert(prAbsol.highlights.some(h => h.includes('使用淨白薄荷消除個性效果')), 'Absol PR highlights must include Cleanse Mint note');
+    assert(!prAbsol.highlights.some(h => h.includes('食材發現率▼')), 'Absol with Cleanse Mint must not have ingredient down debuff highlight');
 
     // Simulate Flygon with Cleanse Mint
     const flygonPkm = { id: '330', name_cn: '沙漠蜻蜓', type: '地面', specialty: '食材', carry: 27, ingredients: [{ name: '嫩亮酪梨' }] };
@@ -11290,7 +11295,8 @@ SP 4,316
     ].join('\n');
 
     const parsedFlygon = boxModule.parsePokemonFromOcr(flygonMintOcr, null, [flygonPkm]);
-    assertEquals(parsedFlygon.nature, '坦率', 'Flygon with Cleanse Mint (爽朗 + 沒有性格帶來的特色) must be resolved to 坦率');
+    assertEquals(parsedFlygon.nature, '爽朗', 'Flygon with Cleanse Mint (爽朗 + 沒有性格帶來的特色) must preserve nature 爽朗');
+    assertEquals(parsedFlygon.cleanseMint, true, 'Flygon with Cleanse Mint must have cleanseMint: true');
     assertEquals(parsedFlygon.ribbon, 1, 'Flygon Lv.60 (carry 28, base 27, no carry subskills) must have Ribbon Tier 1');
 
     // Simulate Natural Neutral Nature (Bashful / 害羞)
@@ -11328,7 +11334,8 @@ SP 4,316
       const db = JSON.parse(fs.readFileSync(liveDbPath, 'utf8'));
       const liveAbsol = db.find(p => p.name === '阿勃梭魯' && p.level === 52);
       assert(liveAbsol, 'Absol Lv.52 must exist in db_live');
-      assertEquals(liveAbsol.nature, '坦率', 'Absol in db_live must have neutralized nature 坦率');
+      assertEquals(liveAbsol.nature, '慎重', 'Absol in db_live must preserve original nature 慎重');
+      assertEquals(liveAbsol.cleanseMint, true, 'Absol in db_live must have cleanseMint: true');
       assertEquals(liveAbsol.ribbon, 1, 'Absol in db_live must have ribbon 1');
 
       const tier4List = db.filter(p => (p.ribbon || 0) === 4);

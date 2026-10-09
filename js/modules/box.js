@@ -629,9 +629,10 @@
     const nature = pkm.nature || '坦率';
     const subskills = pkm.subskills || [];
 
+    const isMint = !!(pkm && (pkm.cleanseMint || pkm.mint));
     const natureObj = NATURE_DATA.find(n => n.name === nature) || { buffType: 'none', debuffType: 'none' };
-    const buff = natureObj.buffType;
-    const debuff = natureObj.debuffType;
+    const buff = isMint ? 'none' : natureObj.buffType;
+    const debuff = isMint ? 'none' : natureObj.debuffType;
     const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
 
     // 前三格核心技能 (Lv.10, Lv.25, Lv.50)
@@ -789,6 +790,10 @@
         score += ribbonBonus.carry * 0.8;
         highlights.push(isEN ? `Ribbon +${ribbonBonus.carry} Carry` : `獎章持有 +${ribbonBonus.carry}`);
       }
+    }
+
+    if (isMint) {
+      highlights.push(isEN ? 'Cleanse Mint: Neutralized Nature Effects' : '使用淨白薄荷消除個性效果');
     }
 
     // 3. 正規化至 PR 百分位數 [50 ~ 100] (及格線以上個體)
@@ -1296,14 +1301,18 @@
                 <div class="box-nature-single-row">
                   <span class="box-nature-label">${isEN ? 'Nature:' : '性格：'}</span>
                   <span class="box-nature-name font-bold">${escapeHtml(natureDisplayName || (isEN ? 'Hardy' : '坦率'))}</span>
-                  ${natureObj && natureObj.buff ? `
+                  ${(p.cleanseMint || p.mint) ? `
+                    <span class="box-nature-effects">
+                      <span class="nature-mint-tag" title="${isEN ? 'Cleanse Mint used: eliminated nature traits' : '使用淨白薄荷消除個性效果'}">${isEN ? 'Cleanse Mint (Neutralized)' : '使用淨白薄荷消除個性效果'}</span>
+                    </span>
+                  ` : (natureObj && natureObj.buff ? `
                     <span class="box-nature-effects">
                       ${natureObj.buff !== '無增減' ? `
                         <span class="nature-buff">▲▲ ${isEN ? (natureObj.buff_en || natureObj.buff) : natureObj.buff}</span>
                         <span class="nature-debuff">▼▼ ${isEN ? (natureObj.debuff_en || natureObj.debuff) : natureObj.debuff}</span>
                       ` : `<span class="nature-neutral">${isEN ? 'Neutral' : '無修正'}</span>`}
                     </span>
-                  ` : ''}
+                  ` : '')}
                 </div>
               </div>
             </div>
@@ -2355,6 +2364,12 @@
       }
     }
 
+    // 4.1 淨白薄荷核取方塊
+    const mintCheck = document.getElementById('modal-poke-mint');
+    if (mintCheck) {
+      mintCheck.checked = !!(existingItem && (existingItem.cleanseMint || existingItem.mint));
+    }
+
     // 4.5 睡飽飽獎章選單 (依據選取寶可夢更新動態文案)
     const currentSelectedPkm = existingItem 
       ? allPokemonsRef.find(p => p.id === existingItem.pokemonId || p.name_cn === existingItem.name) 
@@ -2463,6 +2478,8 @@
     const parsedSkillLevel = Math.max(1, Math.min(maxSkillLvl, effectiveFromForm));
 
     const ribbonVal = ribbonSelect ? (parseInt(ribbonSelect.value, 10) || 0) : 0;
+    const mintCheck = document.getElementById('modal-poke-mint');
+    const isMintChecked = !!(mintCheck && mintCheck.checked);
 
     const itemData = {
       uid: editingUid || ('pkm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6)),
@@ -2474,6 +2491,7 @@
       skillLevel: parsedSkillLevel,
       nickname: nickInput ? nickInput.value.trim() : '',
       nature: natureSelect ? natureSelect.value : '坦率',
+      cleanseMint: isMintChecked,
       ribbon: ribbonVal,
       ing1: ing1Select ? ing1Select.value : '',
       ing2: ing2Select ? ing2Select.value : '',
@@ -3317,28 +3335,48 @@
 
     // 3. 性格辨識 (名稱膠囊 + 屬性增減雙向演繹對照 + 薄荷中和偵測)
     const isMintOrNeutral = clean.includes('沒有性格') || clean.includes('没有性格') || clean.includes('特色') || clean.includes('带载') || clean.includes('帶來');
-    let nature = '慎重';
+    let nature = '坦率';
     let nameMatched = false;
+    let cleanseMint = false;
+
+    const neutralNatures = ['害羞', '認真', '勤奮', '浮躁', '坦率'];
+
+    // 優先在「性格」前後特定行或區域中尋找性格名稱，或在全文中尋找完整的2字性格名稱
+    const natureLine = (typeof allOcrLines !== 'undefined' && Array.isArray(allOcrLines)) ? (allOcrLines.find(l => l.includes('性格')) || '') : '';
+    const natureSearchTarget = natureLine ? normalizeOcrText(natureLine) : clean;
+
+    let matchedNatureObj = null;
     for (const n of NATURE_DATA) {
-      if (clean.includes(n.name)) {
-        nature = n.name;
-        nameMatched = true;
+      if (natureSearchTarget.includes(n.name)) {
+        matchedNatureObj = n;
         break;
       }
     }
-
-    if (isMintOrNeutral) {
-      // 檢查是否為原生中性性格；若為被薄荷中和之非中性性格（如慎重、爽朗），統一歸入中性「坦率」
-      const neutralNatures = ['害羞', '認真', '勤奮', '浮躁', '坦率'];
-      let matchedNeutral = neutralNatures.find(n => clean.includes(n));
-      if (!matchedNeutral) {
-        if (clean.includes('害') || clean.includes('羞')) matchedNeutral = '害羞';
-        else if (clean.includes('真')) matchedNeutral = '認真';
-        else if (clean.includes('勤') || clean.includes('奮') || clean.includes('奋')) matchedNeutral = '勤奮';
-        else if (clean.includes('浮') || clean.includes('躁')) matchedNeutral = '浮躁';
-        else if (clean.includes('坦') || clean.includes('率')) matchedNeutral = '坦率';
+    // 若在性格行未精確找到，再搜尋全文 (避開單字誤判)
+    if (!matchedNatureObj) {
+      for (const n of NATURE_DATA) {
+        if (clean.includes(n.name)) {
+          matchedNatureObj = n;
+          break;
+        }
       }
-      nature = matchedNeutral || '坦率';
+    }
+
+    if (matchedNatureObj) {
+      nature = matchedNatureObj.name;
+      nameMatched = true;
+      if (isMintOrNeutral) {
+        if (neutralNatures.includes(matchedNatureObj.name)) {
+          cleanseMint = false;
+        } else {
+          // 非中性性格（如「慎重」、「爽朗」）且文字顯示「沒有性格帶來的特色」：使用淨白薄荷消除個性效果，保留原性格名稱
+          cleanseMint = true;
+        }
+      }
+    } else if (isMintOrNeutral) {
+      // 找不到明確性格名稱但有「沒有性格帶來的特色」：預設中性「坦率」
+      nature = '坦率';
+      cleanseMint = false;
       nameMatched = true;
     } else if (!nameMatched) {
       function getStatType(str) {
@@ -3531,6 +3569,7 @@
       skillLevel: foundSkillLevel ? skillLevel : getEffectiveSkillLevel({ level, subskills: finalSubskills }, bestPkm),
       ribbon: deducedRibbon,
       nature,
+      cleanseMint: !!cleanseMint,
       subskills: finalSubskills,
       ing1,
       ing2,
