@@ -11554,6 +11554,44 @@ SP 4,316
     assert(gridHtml.includes('土王閃電泡芙') || gridHtml.includes('採蜜巧克力格子鬆餅') || gridHtml.includes('直通頂尖料理'), 'renderBoxGrid must include target dish names in card');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Appraisal Modal Embedded Summary Capsule, Radar Chart Maximization & Ribbon Badge Alignment Audit', () => {
+    const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const stylesCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+    // 1. Verify CSS styles for embedded appraisal summary capsule
+    assert(stylesCode.includes('.appraisal-summary-bar {'), 'styles.css must contain .appraisal-summary-bar');
+    assert(stylesCode.includes('position: relative;'), 'styles.css must have relative position for appraisal-summary-bar');
+    assert(stylesCode.includes('.appraisal-summary-label {'), 'styles.css must contain .appraisal-summary-label');
+    assert(stylesCode.includes('position: absolute;'), 'styles.css must have absolute position for appraisal-summary-label');
+    assert(stylesCode.includes('top: -8.5px;'), 'styles.css must place appraisal-summary-label on the top border');
+    assert(stylesCode.includes('border-radius: 9999px;'), 'styles.css must style appraisal-summary-label as a rounded pill/capsule');
+
+    // 2. Verify radar chart container enlargement
+    assert(stylesCode.includes('max-width: 380px;'), 'styles.css must enlarge appraisal-radar-wrapper max-width to 380px');
+    assert(stylesCode.includes('height: 270px;'), 'styles.css must enlarge appraisal-radar-wrapper height to 270px');
+
+    // 3. Verify title deletion across all versions
+    assert(!appraisalCode.includes('六維能力雷達圖'), 'appraisal.js must NOT contain 六維能力雷達圖 title in any template');
+    assert(!appraisalCode.includes('6-Dimension Capability Radar'), 'appraisal.js must NOT contain 6-Dimension Capability Radar title in any template');
+
+    // 4. Verify desktop modal appraisal-ribbon-badge is placed next to appraisal-specialty-row
+    const specRowIdx = appraisalCode.indexOf('appraisal-specialty-row');
+    const ribbonBadgeIdx = appraisalCode.indexOf('appraisal-ribbon-badge', specRowIdx);
+    const mainSkillIdx = appraisalCode.indexOf('appraisal-mainskill-row', specRowIdx);
+    assert(specRowIdx !== -1 && ribbonBadgeIdx !== -1 && ribbonBadgeIdx < mainSkillIdx,
+      'appraisal-ribbon-badge must be nested inside appraisal-specialty-row before main skill in desktop view');
+
+    // 5. Verify renderRadarChartSVG font enlargement
+    assert(appraisalCode.includes("labelFontSize = isCompact ? '10' : '13'"),
+      'renderRadarChartSVG must use enlarged vertex label font size (13px)');
+    assert(appraisalCode.includes("scoreFontSize = isCompact ? '9.5' : '12'"),
+      'renderRadarChartSVG must use enlarged vertex score font size (12px)');
+
+    // 6. Verify H5 and Desktop both use clean appraisal-summary-label without redundant colon
+    assert(appraisalCode.includes('<span class="appraisal-summary-label">${isEN ? \'Appraisal Note\' : \'智能簡評\'}</span>'),
+      'appraisal.js must render embedded summary label without colon');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

@@ -2109,15 +2109,15 @@
 
   /* ─── 原生 SVG 六維雷達圖生成器 (完美對稱正規六邊形 + 頂點直接標註分數) ───────────────────────── */
   function renderRadarChartSVG(scores, width, height) {
-    width = width || 340;
-    height = height || 240;
+    width = width || 360;
+    height = height || 270;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const isCompact = width <= 250;
     const SIX_DIM_META = getSixDimMeta(isEN);
     const cx = width / 2;
-    const cy = (height / 2) + 2;
-    const marginY = isCompact ? 22 : 30;
-    const marginX = isCompact ? 36 : 52;
+    const cy = (height / 2) + 1;
+    const marginY = isCompact ? 22 : 28;
+    const marginX = isCompact ? 36 : 46;
     const r = Math.min((width - marginX * 2) / 2, (height - marginY * 2) / 2);
 
     const scoreKeys = ['berry', 'ingredient', 'skill', 'speed', 'growth', 'roi'];
@@ -2157,42 +2157,42 @@
       let lx = cx;
       let ly = cy;
       let textAnchor = 'middle';
-      const sideOffset = isCompact ? 6 : 10;
+      const sideOffset = isCompact ? 6 : 8;
 
       if (i === 0) { // Top (樹果產能)
         lx = cx;
-        ly = cy - r - (isCompact ? 16 : 22);
+        ly = cy - r - (isCompact ? 16 : 19);
         textAnchor = 'middle';
       } else if (i === 1) { // Top-Right (食材產能)
         lx = cx + r * Math.cos(angles[i]) + sideOffset;
-        ly = cy + r * Math.sin(angles[i]) - (isCompact ? 5 : 8);
+        ly = cy + r * Math.sin(angles[i]) - (isCompact ? 5 : 7);
         textAnchor = 'start';
       } else if (i === 2) { // Bottom-Right (技能強度)
         lx = cx + r * Math.cos(angles[i]) + sideOffset;
-        ly = cy + r * Math.sin(angles[i]) + (isCompact ? 3 : 4);
+        ly = cy + r * Math.sin(angles[i]) + (isCompact ? 3 : 5);
         textAnchor = 'start';
       } else if (i === 3) { // Bottom (幫忙速度)
         lx = cx;
-        ly = cy + r + (isCompact ? 14 : 18);
+        ly = cy + r + (isCompact ? 13 : 15);
         textAnchor = 'middle';
       } else if (i === 4) { // Bottom-Left (後期成長)
         lx = cx + r * Math.cos(angles[i]) - sideOffset;
-        ly = cy + r * Math.sin(angles[i]) + (isCompact ? 3 : 4);
+        ly = cy + r * Math.sin(angles[i]) + (isCompact ? 3 : 5);
         textAnchor = 'end';
       } else if (i === 5) { // Top-Left (資源效益)
         lx = cx + r * Math.cos(angles[i]) - sideOffset;
-        ly = cy + r * Math.sin(angles[i]) - (isCompact ? 5 : 8);
+        ly = cy + r * Math.sin(angles[i]) - (isCompact ? 5 : 7);
         textAnchor = 'end';
       }
 
-      const dotR = isCompact ? '3.5' : '4.5';
-      const labelFontSize = isCompact ? '9.5' : '11.5';
-      const scoreFontSize = isCompact ? '9' : '11';
-      const scoreDy = isCompact ? '11' : '13';
+      const dotR = isCompact ? '3.5' : '4.8';
+      const labelFontSize = isCompact ? '10' : '13';
+      const scoreFontSize = isCompact ? '9.5' : '12';
+      const scoreDy = isCompact ? '11.5' : '14';
 
       return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + dotR + '" fill="#38bdf8" stroke="#ffffff" stroke-width="1.5" />' +
              '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="' + textAnchor + '" class="radar-label">' +
-             '<tspan x="' + lx.toFixed(1) + '" dy="0" fill="var(--text-primary)" font-size="' + labelFontSize + '" font-weight="700">' + p.meta.label + '</tspan>' +
+             '<tspan x="' + lx.toFixed(1) + '" dy="' + (i === 0 ? '-2' : '0') + '" fill="var(--text-primary)" font-size="' + labelFontSize + '" font-weight="700">' + p.meta.label + '</tspan>' +
              '<tspan x="' + lx.toFixed(1) + '" dy="' + scoreDy + '" fill="#38bdf8" font-size="' + scoreFontSize + '" font-weight="800">' + p.score + (isEN ? ' pts' : ' 分') + '</tspan>' +
              '</text>';
     }).join('');
@@ -2303,7 +2303,7 @@
       document.body.appendChild(modal);
     }
 
-    const radarSVG = renderRadarChartSVG(evaluation.scores, 340, 240);
+    const radarSVG = renderRadarChartSVG(evaluation.scores, 360, 270);
     const SIX_DIM_META = getSixDimMeta(isEN);
     const displayName = isEN ? (pkmData.name_en || pkmData.name_cn) : (pkmData.name_cn || pkmData.name_en);
     const natDisplayName = window.I18N ? window.I18N.getNatureName(natureName) : natureName;
@@ -2557,9 +2557,9 @@
             ` : ''}
 
             <!-- 雷達圖與六維能量條 -->
-            <div class="appraisal-chart-flex" style="margin-top:6px;">
-              <div class="appraisal-radar-wrapper" style="width:100%;max-width:320px;margin:0 auto;">
-                ${renderRadarChartSVG(evaluation.scores, 320, 220)}
+            <div class="appraisal-chart-flex" style="margin-top:4px;">
+              <div class="appraisal-radar-wrapper" style="width:100%;max-width:340px;height:255px;margin:0 auto;">
+                ${renderRadarChartSVG(evaluation.scores, 340, 255)}
               </div>
             </div>
 
@@ -2576,10 +2576,10 @@
               ` : ''}
             </div>
 
-            <!-- 智能簡評欄 -->
-            <div class="appraisal-summary-bar" style="margin-top:6px;">
-              <span style="font-size:12.5px;font-weight:800;color:#38bdf8;white-space:nowrap;flex-shrink:0;">${isEN ? 'Appraisal Note:' : '智能簡評：'}</span>
-              <span style="font-size:12.5px;color:#e2e8f0;line-height:1.4;">${escapeHtml(summaryNote)}</span>
+            <!-- 智能簡評欄 (嵌入式膠囊標籤) -->
+            <div class="appraisal-summary-bar">
+              <span class="appraisal-summary-label">${isEN ? 'Appraisal Note' : '智能簡評'}</span>
+              <span class="appraisal-summary-text">${escapeHtml(summaryNote)}</span>
             </div>
           </div>
         </div>
@@ -2642,12 +2642,18 @@
                   <span class="appraisal-level-badge">Lv. ${currentLv}</span>
                 </div>
                 
-                <!-- 樹果與專長 (專長使用精緻圓形圖示) -->
-                <div class="appraisal-specialty-row" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;">
+                <!-- 樹果與專長 + 睡飽飽獎章 (與 H5 版本同排並行) -->
+                <div class="appraisal-specialty-row" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;flex-wrap:wrap;">
                   <span class="appraisal-berry-tag" style="display:inline-flex;align-items:center;background:transparent;border:none;padding:0;" title="${escapeHtml(berryName)}">
                     ${berry.icon ? `<img src="${berry.icon}" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(berryName)}">` : ''}
                   </span>
                   ${(window.I18N && window.I18N.getSpecialtyIconHtml) ? window.I18N.getSpecialtyIconHtml(pkmData.specialty, 22, 'appraisal-spec-icon-wrap') : `<span class="appraisal-spec-tag ${specClass}">${specTypeLabel}</span>`}
+                  ${ribbonLevel > 0 ? `
+                    <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;font-size:11.5px;font-weight:700;">
+                      <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" style="width:16px;height:16px;object-fit:contain;" alt="Ribbon" />
+                      <span>+${evaluation.ribbonBonus.carry} ${isEN ? 'Carry' : '持有'}${evaluation.ribbonBonus.speedDiscount > 0 ? ` · ${isEN ? '-' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '% Spd' : '幫速 -' + Math.round(evaluation.ribbonBonus.speedDiscount * 100) + '%'}` : ''}</span>
+                    </div>
+                  ` : ''}
                 </div>
 
                 <!-- 主技能名稱與等級 (Appraisal Main Skill) -->
@@ -2675,16 +2681,6 @@
                     ${natureEffectHtml}
                   </div>
                 </div>
-
-                <!-- 睡飽飽獎章 (無多餘標題) -->
-                ${ribbonLevel > 0 ? `
-                  <div class="appraisal-config-section" style="margin-top:8px;display:flex;justify-content:center;">
-                    <div class="appraisal-ribbon-badge" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:6px;background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;font-size:12.5px;font-weight:700;">
-                      <img src="${(typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '')}assets/ribbons/ribbon_lv${ribbonLevel}.png" style="width:20px;height:20px;object-fit:contain;" alt="Ribbon" />
-                      <span>${isEN ? `+${evaluation.ribbonBonus.carry} Carry${evaluation.ribbonBonus.speedDiscount > 0 ? ` · -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}% Speed` : ''}` : `+${evaluation.ribbonBonus.carry} 持有${evaluation.ribbonBonus.speedDiscount > 0 ? ` · 幫速 -${Math.round(evaluation.ribbonBonus.speedDiscount * 100)}%` : ''}`}</span>
-                    </div>
-                  </div>
-                ` : ''}
 
                 <!-- 副技能清單 (2+2+1 遊戲同款外框顏色與排列，無多餘標題) -->
                 <div class="appraisal-config-section" style="margin-top:10px;">
@@ -2747,17 +2743,16 @@
           <!-- 右欄：雷達圖 + 智能簡評 + 專長深度點評 (純淨無外框容器) -->
           <div class="appraisal-right-col">
             <div class="appraisal-desktop-content-grid">
-              <!-- 頂部：六維能力雷達圖 (自適應置中) -->
+              <!-- 頂部：雷達圖區塊 (自適應置中，無冗餘標題) -->
               <div class="appraisal-radar-block">
-                <h4 class="appraisal-section-heading">${isEN ? '[*] 6-Dimension Capability Radar' : '[*] 六維能力雷達圖'}</h4>
                 <div class="appraisal-radar-wrapper">
                   ${radarSVG}
                 </div>
               </div>
 
-              <!-- 中部：PR 智能簡評欄 (純淨簡評提示條) -->
+              <!-- 中部：PR 智能簡評欄 (嵌入式膠囊標籤，不佔用內容展示空間) -->
               <div class="appraisal-summary-bar">
-                <span class="appraisal-summary-label">${isEN ? 'Appraisal Note:' : '智能簡評：'}</span>
+                <span class="appraisal-summary-label">${isEN ? 'Appraisal Note' : '智能簡評'}</span>
                 <span class="appraisal-summary-text">${escapeHtml(summaryNote)}</span>
               </div>
 
