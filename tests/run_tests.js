@@ -11401,7 +11401,18 @@ SP 4,316
       'box.js must auto-repair Absol Lv.52 and Flygon Lv.60 cleanseMint flag on load'
     );
 
-    // 7. Verify calculatePokedexIngredientFormulas simulation with Cleanse Mint
+    // 7. Verify nature-capsule-mint-leaf suppression (only explanation text with parentheses is used)
+    assert(
+      !appraisalJs.includes('nature-capsule-mint-leaf'),
+      'nature-capsule-mint-leaf must not be rendered in appraisal modal nature capsule'
+    );
+    assert(
+      stylesCss.includes('.nature-capsule-mint-leaf') &&
+      stylesCss.includes('display: none !important;'),
+      'nature-capsule-mint-leaf must be hidden in styles.css'
+    );
+
+    // 8. Verify calculatePokedexIngredientFormulas simulation with Cleanse Mint
     const mockApp = eval(`(() => {
       const POKEDEX_MODAL_NATURES = [
         { name: '慎重', name_en: 'Careful', buffType: 'skill', debuffType: 'ingredient' },

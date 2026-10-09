@@ -7072,21 +7072,7 @@ input[type=range].rf-slider.pot-slider {
 }
 
 .nature-capsule-mint-leaf {
-  display: inline-block;
-  font-size: 10px;
-  padding: 1px 5px;
-  border-radius: 3px;
-  background: rgba(16, 185, 129, 0.18);
-  color: #10b981;
-  font-weight: 700;
-  margin-left: 4px;
-  vertical-align: middle;
-}
-
-[data-theme="dawn"]:not([data-theme-inverted="true"]) .nature-capsule-mint-leaf,
-[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-capsule-mint-leaf {
-  background: rgba(5, 150, 105, 0.18);
-  color: #047857;
+  display: none !important;
 }
 
 .box-nature-badge {

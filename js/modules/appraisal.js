@@ -2085,7 +2085,7 @@
                 <div class="appraisal-nature-game-card">
                   <div class="nature-pill-capsule">
                     <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
-                    <span class="nature-capsule-name">${escapeHtml(natDisplayName)}${isMint ? '<span class="nature-capsule-mint-leaf">' + (isEN ? 'Mint' : '薄荷') + '</span>' : ''}</span>
+                    <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
                   </div>
                   ${natureEffectHtml}
                 </div>
@@ -2262,7 +2262,7 @@
                   <div class="appraisal-nature-game-card">
                     <div class="nature-pill-capsule">
                       <span class="nature-capsule-tag">${isEN ? 'Nature' : '性格'}</span>
-                      <span class="nature-capsule-name">${escapeHtml(natDisplayName)}${isMint ? '<span class="nature-capsule-mint-leaf">' + (isEN ? 'Mint' : '薄荷') + '</span>' : ''}</span>
+                      <span class="nature-capsule-name">${escapeHtml(natDisplayName)}</span>
                     </div>
                     ${natureEffectHtml}
                   </div>
