@@ -1881,7 +1881,7 @@
 
     let skillLevel = getEffectiveSkillLevel(pkmOrBoxItem, pkmData);
     const nickname = (pkmOrBoxItem.nickname || '').trim();
-    const isMint = !!(pkmOrBoxItem.cleanseMint || pkmOrBoxItem.mint || (pkmData && (pkmData.cleanseMint || pkmData.mint)));
+    const isMint = !!(pkmOrBoxItem.cleanseMint || pkmOrBoxItem.mint || (pkmOrBoxItem.rawItem && (pkmOrBoxItem.rawItem.cleanseMint || pkmOrBoxItem.rawItem.mint)) || (pkmData && (pkmData.cleanseMint || pkmData.mint)));
     const targetPkmData = Object.assign({}, pkmData, { cleanseMint: isMint });
 
     const evaluation = evaluatePokemon(targetPkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, isMint);
@@ -2005,7 +2005,8 @@
           subskills: subskills,
           ingredients: ingSlotNames,
           ribbon: ribbonLevel,
-          skillLevel: skillLevel
+          skillLevel: skillLevel,
+          cleanseMint: isMint
         })
       : null;
 

@@ -947,25 +947,6 @@
         <section class="box-content-container">
           <div id="box-content-area" class="box-cards-grid"></div>
         </section>
-
-        <!-- 原生 App 浮動操作按鈕區 (Floating Action Buttons - FAB) -->
-        <div class="box-fab-container" id="box-fab-container">
-          <input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
-          <button type="button" id="box-dropzone" class="box-fab-btn box-fab-scan" title="拍照 / 選取截圖辨識" aria-label="截圖智能辨識">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-              <circle cx="12" cy="13" r="4"></circle>
-            </svg>
-            <span class="fab-label" data-i18n="box.fab_scan">截圖辨識</span>
-          </button>
-          <button type="button" id="box-manual-add-btn" class="box-fab-btn box-fab-add" title="手動新增寶可夢" aria-label="手動新增">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            <span class="fab-label" data-i18n="box.fab_add">手動新增</span>
-          </button>
-        </div>
       </div>
 
       <!-- 2. 深度研究室子分頁 (Subpanel Lab) -->
@@ -1025,7 +1006,26 @@
     </div>
   </main>
 
-  <!--  2 字極簡原生底部導覽欄 (Bottom Dock Navigation) -->
+  <!-- 原生 App 浮動操作按鈕區 (Floating Action Buttons - FAB) 獨立掛載於頂層，不受滾動容器干擾 -->
+  <div class="box-fab-container" id="box-fab-container" style="display:none;">
+    <input type="file" id="box-file-input" accept="image/*" multiple style="display:none;">
+    <button type="button" id="box-dropzone" class="box-fab-btn box-fab-scan" title="拍照 / 選取截圖辨識" aria-label="截圖智能辨識">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+        <circle cx="12" cy="13" r="4"></circle>
+      </svg>
+      <span class="fab-label" data-i18n="box.fab_scan">截圖辨識</span>
+    </button>
+    <button type="button" id="box-manual-add-btn" class="box-fab-btn box-fab-add" title="手動新增寶可夢" aria-label="手動新增">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      <span class="fab-label" data-i18n="box.fab_add">手動新增</span>
+    </button>
+  </div>
+
+  <!-- 2 字極簡原生底部導覽欄 (Bottom Dock Navigation) -->
   <nav id="bottom-dock" class="bottom-dock" aria-label="底部主要分頁導航">
     <!-- 1.  圖鑑 (#tab-pokemon) -->
     <button type="button" id="tab-pokemon" class="dock-tab dock-tab-btn active" data-tab="pokemon" aria-label="圖鑑">

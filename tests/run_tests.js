@@ -11343,6 +11343,125 @@ SP 4,316
     }
   });
 
+  // =========================================================================
+  // Test 206: Cleanse Mint Formula Neutralization & Mobile H5 Box FAB Fixed Pinning
+  // =========================================================================
+  test('Tier 4 - Real-World Application Scenarios', 'Cleanse Mint Formula Neutralization & Mobile H5 Box FAB Fixed Pinning', () => {
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+    const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app/index.html'), 'utf8');
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/app.js'), 'utf8');
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+
+    // 1. Verify CSS transform elimination on mobile H5 scroll panels
+    assert(
+      stylesCss.includes('.mobile-h5-app #panel-box') &&
+      stylesCss.includes('transform: none !important;') &&
+      stylesCss.includes('contain: none !important;'),
+      'CSS must enforce transform: none and contain: none on mobile H5 panels to prevent breaking fixed containing block'
+    );
+    assert(
+      !stylesCss.includes('.mobile-h5-app #panel-box,\n.mobile-h5-app #panel-news,\n.mobile-h5-app .sidebar-scrollable-content'),
+      '#panel-box and other tab panels must not be listed in the GPU translateZ transform selector'
+    );
+
+    // 2. Verify app/index.html DOM hierarchy: box-fab-container must be outside <main>
+    const mainEndIdx = appIndexHtml.indexOf('</main>');
+    const fabIdx = appIndexHtml.indexOf('id="box-fab-container"');
+    const dockIdx = appIndexHtml.indexOf('id="bottom-dock"');
+    assert(mainEndIdx !== -1 && fabIdx !== -1 && dockIdx !== -1, 'main, box-fab-container, and bottom-dock must exist in app/index.html');
+    assert(fabIdx > mainEndIdx, 'box-fab-container must be placed outside <main> to prevent scrolling with page contents');
+    assert(fabIdx < dockIdx, 'box-fab-container must precede bottom-dock in top-level hierarchy');
+
+    // 3. Verify box-fab-container fixed styling
+    assert(
+      stylesCss.includes('.mobile-h5-app .box-fab-container') &&
+      stylesCss.includes('position: fixed !important;'),
+      'box-fab-container must have position: fixed'
+    );
+
+    // 4. Verify appraisal.js passes cleanseMint to calculatePokedexIngredientFormulas
+    assert(
+      appraisalJs.includes('cleanseMint: isMint') &&
+      appraisalJs.includes('pkmOrBoxItem.rawItem.cleanseMint'),
+      'appraisal.js must extract cleanseMint from rawItem and pass it to calculatePokedexIngredientFormulas'
+    );
+
+    // 5. Verify box.js passes cleanseMint when opening appraisal modal
+    assert(
+      boxJs.includes('cleanseMint: !!(item.cleanseMint || item.mint)'),
+      'box.js must pass cleanseMint in openModal invocations'
+    );
+
+    // 6. Verify box.js loadUserBox compatibility repair
+    assert(
+      boxJs.includes("pName === '阿勃梭魯'") &&
+      boxJs.includes('item.cleanseMint = true') &&
+      boxJs.includes("pName === '沙漠蜻蜓'"),
+      'box.js must auto-repair Absol Lv.52 and Flygon Lv.60 cleanseMint flag on load'
+    );
+
+    // 7. Verify calculatePokedexIngredientFormulas simulation with Cleanse Mint
+    const mockApp = eval(`(() => {
+      const POKEDEX_MODAL_NATURES = [
+        { name: '慎重', name_en: 'Careful', buffType: 'skill', debuffType: 'ingredient' },
+        { name: '爽朗', name_en: 'Jolly', buffType: 'speed', debuffType: 'ingredient' },
+        { name: '坦率', name_en: 'Quirky', buffType: 'none', debuffType: 'none' }
+      ];
+      function parsePokedexIntervalToSec(str) { return 3100; }
+      function getBerryBaseEnergy() { return 25; }
+      function calculateSingleBerryEnergy() { return 100; }
+      function getIngCountFromBase() { return 2; }
+      function getPokedexMainSkillYield() { return { mainSkillExtraDaily: 0 }; }
+      const pokedexModalState = { level: 50, nature: '坦率', subskills: [], ribbon: 0, skillLevel: 1, ingSlots: [0, 0, 0] };
+      const window = {
+        I18N: { getLanguage: () => 'zh-TW', t: (k, d) => d, getBerryName: (n) => n, getIngredientName: (n) => n },
+        AppraisalLab: { getRemainingEvolutions: () => 0, getRibbonBonus: () => ({ speedDiscount: 0, carry: 0 }) }
+      };
+      ${appJs.substring(appJs.indexOf('function calculatePokedexIngredientFormulas'), appJs.indexOf('function formatPokedexIntervalDiff'))}
+      return { calculatePokedexIngredientFormulas };
+    })()`);
+
+    const absolPkm = {
+      id: '359',
+      name_cn: '阿勃梭魯',
+      ingredient_rate: '17.8',
+      skill_rate: '4.0',
+      interval: '00:51:40',
+      carry: '21',
+      ingredients: [{ name: '純晶蘋果' }]
+    };
+
+    // Case Without Mint: Nature 慎重 gives 0.80x multiplier to ingredients
+    const calcWithoutMint = mockApp.calculatePokedexIngredientFormulas({
+      pkm: absolPkm,
+      level: 52,
+      nature: '慎重',
+      subskills: ['食材機率提升M', '幫手獎勵'],
+      ingredients: ['純晶蘋果', '純晶蘋果', '純晶蘋果'],
+      ribbon: 1,
+      skillLevel: 1,
+      cleanseMint: false
+    });
+    assertEquals(calcWithoutMint.natureIngMult, 0.80, 'Without Cleanse Mint, Careful nature must have 0.80 ing mult');
+    assertEquals(calcWithoutMint.cleanseMint, false, 'Without Cleanse Mint, formula must report cleanseMint: false');
+
+    // Case With Mint: Nature 慎重 with Cleanse Mint neutralizes debuff to 1.00x multiplier
+    const calcWithMint = mockApp.calculatePokedexIngredientFormulas({
+      pkm: absolPkm,
+      level: 52,
+      nature: '慎重',
+      subskills: ['食材機率提升M', '幫手獎勵'],
+      ingredients: ['純晶蘋果', '純晶蘋果', '純晶蘋果'],
+      ribbon: 1,
+      skillLevel: 1,
+      cleanseMint: true
+    });
+    assertEquals(calcWithMint.natureIngMult, 1.00, 'With Cleanse Mint, Careful nature ingredient debuff must be eliminated to 1.00');
+    assertEquals(calcWithMint.cleanseMint, true, 'With Cleanse Mint, formula must report cleanseMint: true');
+    assert(calcWithMint.finalIngRate > 24.0, `With Cleanse Mint, final ingredient rate must be > 24% (actual: ${calcWithMint.finalIngRate}%)`);
+  });
+
 
 console.log('                   Test Results Summary');
 console.log('======================================================');

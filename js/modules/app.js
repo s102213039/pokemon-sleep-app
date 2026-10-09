@@ -2491,6 +2491,11 @@ if (typeof document !== 'undefined') {
           if (boxBookmarkHandle) boxBookmarkHandle.style.display = 'none';
           if (boxSidebar) boxSidebar.style.display = 'none';
           if (boxBackdrop) boxBackdrop.classList.remove('active');
+          const boxFab = document.getElementById('box-fab-container');
+          if (boxFab && boxFab.style) {
+            boxFab.style.display = 'none';
+            if (typeof boxFab.style.setProperty === 'function') boxFab.style.setProperty('display', 'none', 'important');
+          }
         }
 
         if (target !== 'wiki') {
@@ -5417,18 +5422,22 @@ function calculatePokedexIngredientFormulas(customState) {
   });
 
   // 3. 性格修正
+  const isCleanseMint = !!(state && (state.cleanseMint || state.mint || (pkm && (pkm.cleanseMint || pkm.mint))));
   const natureObj = POKEDEX_MODAL_NATURES.find(n => n.name === currentNature || n.name_en === currentNature) || { buffType: 'none', debuffType: 'none' };
   let natureIngMult = 1.0;
-  if (natureObj.buffType === 'ingredient') natureIngMult = 1.20;
-  else if (natureObj.debuffType === 'ingredient') natureIngMult = 0.80;
-
   let natureSpeedMult = 1.0;
-  if (natureObj.buffType === 'speed') natureSpeedMult = 0.90;
-  else if (natureObj.debuffType === 'speed') natureSpeedMult = 1.075;
-
   let natureSkillMult = 1.0;
-  if (natureObj.buffType === 'skill') natureSkillMult = 1.20;
-  else if (natureObj.debuffType === 'skill') natureSkillMult = 0.80;
+
+  if (!isCleanseMint) {
+    if (natureObj.buffType === 'ingredient') natureIngMult = 1.20;
+    else if (natureObj.debuffType === 'ingredient') natureIngMult = 0.80;
+
+    if (natureObj.buffType === 'speed') natureSpeedMult = 0.90;
+    else if (natureObj.debuffType === 'speed') natureSpeedMult = 1.075;
+
+    if (natureObj.buffType === 'skill') natureSkillMult = 1.20;
+    else if (natureObj.debuffType === 'skill') natureSkillMult = 0.80;
+  }
 
   // 4. 最終食材發動率
   const finalIngRate = baseIngRate * (1 + subskillIngBonus / 100) * natureIngMult;
@@ -5573,6 +5582,7 @@ function calculatePokedexIngredientFormulas(customState) {
     baseIngRate,
     subskillIngBonus,
     natureIngMult,
+    cleanseMint: isCleanseMint,
     finalIngRate,
     baseIntervalSec,
     effectiveIntervalSec,
@@ -6216,8 +6226,12 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
   const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
   const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
 
-  const natureIngMultStr = f.natureIngMult.toFixed(2);
-  const natureSkillMultStr = f.natureSkillMult.toFixed(2);
+  const natureIngMultStr = f.cleanseMint 
+    ? (isEN ? `${f.natureIngMult.toFixed(2)} (Mint)` : `${f.natureIngMult.toFixed(2)} (薄荷)`)
+    : f.natureIngMult.toFixed(2);
+  const natureSkillMultStr = f.cleanseMint 
+    ? (isEN ? `${f.natureSkillMult.toFixed(2)} (Mint)` : `${f.natureSkillMult.toFixed(2)} (薄荷)`)
+    : f.natureSkillMult.toFixed(2);
   const subskillIngMultStr = (1 + f.subskillIngBonus / 100).toFixed(2);
   const subskillSkillMultStr = (1 + f.subskillSkillBonus / 100).toFixed(2);
 
@@ -6286,7 +6300,7 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             <span class="formula-op">×</span>
             <span class="formula-var" title="${isEN ? 'Subskills' : '副技能加成'}">${subskillIngMultStr}</span>
             <span class="formula-op">×</span>
-            <span class="formula-var" title="${isEN ? 'Nature' : '性格修正'}">${natureIngMultStr}</span>
+            <span class="formula-var" title="${isEN ? (f.cleanseMint ? 'Nature (Cleanse Mint used)' : 'Nature') : (f.cleanseMint ? '性格修正（使用淨白薄荷消除個性效果）' : '性格修正')}">${natureIngMultStr}</span>
             <span class="formula-op">=</span>
             <span class="formula-res font-bold calc-color-ing">${f.finalIngRate.toFixed(2)}%</span>
             <span class="formula-op">➜</span>
@@ -6316,7 +6330,7 @@ function renderPokedexFormulaBreakdownHTML(f, pkm) {
             <span class="formula-op">×</span>
             <span class="formula-var" title="${isEN ? 'Subskills' : '副技能加成'}">${subskillSkillMultStr}</span>
             <span class="formula-op">×</span>
-            <span class="formula-var" title="${isEN ? 'Nature' : '性格修正'}">${natureSkillMultStr}</span>
+            <span class="formula-var" title="${isEN ? (f.cleanseMint ? 'Nature (Cleanse Mint used)' : 'Nature') : (f.cleanseMint ? '性格修正（使用淨白薄荷消除個性效果）' : '性格修正')}">${natureSkillMultStr}</span>
             <span class="formula-op">=</span>
             <span class="formula-res font-bold calc-color-skill">${f.finalSkillRate.toFixed(2)}%</span>
             <span class="formula-op">➜</span>

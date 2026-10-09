@@ -17543,10 +17543,6 @@ body.mobile-h5-app *::-webkit-scrollbar {
 .mobile-h5-app .pokemon-grid,
 .mobile-h5-app .table-container,
 .mobile-h5-app .pokemon-table-container,
-.mobile-h5-app #panel-recipes,
-.mobile-h5-app #panel-wiki,
-.mobile-h5-app #panel-box,
-.mobile-h5-app #panel-news,
 .mobile-h5-app .sidebar-scrollable-content,
 .mobile-h5-app .pokedex-modal-body,
 .mobile-h5-app .box-modal-body,
@@ -17563,6 +17559,20 @@ body.mobile-h5-app *::-webkit-scrollbar {
   touch-action: pan-y !important;
   transform: translateZ(0) !important;
   will-change: scroll-position;
+}
+
+/* 主視圖面板嚴格禁止任何 transform/perspective/filter/contain，防止破壞 position: fixed 包含塊與懸浮按鈕 */
+.mobile-h5-app #panel-pokemon,
+.mobile-h5-app #panel-recipes,
+.mobile-h5-app #panel-wiki,
+.mobile-h5-app #panel-box,
+.mobile-h5-app #panel-news,
+.mobile-h5-app .box-subpanel-view,
+.mobile-h5-app #box-subpanel-list {
+  transform: none !important;
+  perspective: none !important;
+  filter: none !important;
+  contain: none !important;
 }
 
 /* 針對需要雙向滾動的表格容器提供雙向觸控手勢宣告 */
@@ -23878,6 +23888,13 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   gap: 10px !important;
   align-items: flex-end !important;
   pointer-events: none !important;
+}
+
+/* 僅在倉庫 list 分頁時顯示，非倉庫分頁或深度研究室模式時隱藏 */
+.mobile-h5-app:not(:has(#tab-box.active)) #box-fab-container,
+.mobile-h5-app body:not(:has(#tab-box.active)) #box-fab-container,
+.mobile-h5-app body.box-lab-active #box-fab-container {
+  display: none !important;
 }
 
 .mobile-h5-app .box-fab-btn {

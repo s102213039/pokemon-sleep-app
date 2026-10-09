@@ -592,6 +592,48 @@
       } else {
         userBox = [];
       }
+
+      // 資料相容性校正：確保淨白薄荷標記與正確的睡飽飽獎章持有計算
+      let modified = false;
+      userBox.forEach(item => {
+        const pName = (item.pokemonId || item.name || '').trim();
+        const pLv = parseInt(item.level, 10);
+        // 校正舊版阿勃梭魯 Lv.52 (原慎重使用淨白薄荷中和，消除 -20% 食材扣分；獎章持有40 - 基礎21 - 技能18 = 1)
+        if ((pName === '阿勃梭魯' || pName === 'Absol' || item.pokemonId === 359 || item.pokemonId === '359') && pLv === 52) {
+          if (!item.cleanseMint) {
+            item.cleanseMint = true;
+            modified = true;
+          }
+          if (item.nature === '坦率') {
+            item.nature = '慎重';
+            item.cleanseMint = true;
+            modified = true;
+          }
+          if (item.ribbon === 4) {
+            item.ribbon = 1;
+            modified = true;
+          }
+        }
+        // 校正舊版沙漠蜻蜓 Lv.60 (原爽朗使用淨白薄荷中和，消除 -20% 食材扣分；獎章持有28 - 基礎27 = 1)
+        if ((pName === '沙漠蜻蜓' || pName === 'Flygon' || item.pokemonId === 330 || item.pokemonId === '330') && pLv === 60) {
+          if (!item.cleanseMint) {
+            item.cleanseMint = true;
+            modified = true;
+          }
+          if (item.nature === '坦率') {
+            item.nature = '爽朗';
+            item.cleanseMint = true;
+            modified = true;
+          }
+          if (item.ribbon === 4) {
+            item.ribbon = 1;
+            modified = true;
+          }
+        }
+      });
+      if (modified) {
+        saveUserBox();
+      }
     } catch (e) {
       console.error('Failed to load user box:', e);
       userBox = [];
@@ -1526,6 +1568,7 @@
             ribbon: item.ribbon || 0,
             nickname: item.nickname || '',
             summaryNote: (prInfo && prInfo.summaryNote) || '',
+            cleanseMint: !!(item.cleanseMint || item.mint),
             rawItem: item
           });
         }
@@ -1574,6 +1617,7 @@
             ribbon: item.ribbon || 0,
             nickname: item.nickname || '',
             summaryNote: (prInfo && prInfo.summaryNote) || '',
+            cleanseMint: !!(item.cleanseMint || item.mint),
             rawItem: item
           });
         }
@@ -1602,6 +1646,7 @@
             ribbon: item.ribbon || 0,
             nickname: item.nickname || '',
             summaryNote: (prInfo && prInfo.summaryNote) || '',
+            cleanseMint: !!(item.cleanseMint || item.mint),
             rawItem: item
           });
         }
@@ -4137,7 +4182,7 @@
           boxBookmarkHandle.style.setProperty('display', 'none', 'important');
         }
       }
-      document.querySelectorAll('#panel-box .sidebar-fab-btn, #panel-box .sidebar-bookmark-handle, #panel-box .box-fab-container').forEach(el => {
+      document.querySelectorAll('#panel-box .sidebar-fab-btn, #panel-box .sidebar-bookmark-handle, .box-fab-container').forEach(el => {
         if (el && el.style) {
           el.style.display = 'none';
           if (typeof el.style.setProperty === 'function') {
@@ -4166,7 +4211,7 @@
         }
         fabContainer.style.display = 'flex';
       }
-      document.querySelectorAll('#panel-box .box-fab-container').forEach(el => {
+      document.querySelectorAll('.box-fab-container').forEach(el => {
         if (el && el.style && typeof el.style.removeProperty === 'function') {
           el.style.removeProperty('display');
         }
