@@ -7075,6 +7075,54 @@ input[type=range].rf-slider.pot-slider {
   display: none !important;
 }
 
+/* 智能簡評卡片摘要 (直通頂尖料理精選) */
+.box-card-summary {
+  margin-top: 4px;
+  padding: 6px 10px;
+  background: rgba(56, 189, 248, 0.05);
+  border: none;
+  border-radius: 6px;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--text-secondary, #cbd5e1);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.box-card-summary:hover {
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.box-card-summary-label {
+  font-weight: 700;
+  color: var(--accent-blue, #38bdf8);
+  margin-right: 4px;
+}
+
+.box-card-summary-text {
+  color: var(--text-secondary, #cbd5e1);
+}
+
+.mobile-h5-app .box-card-summary {
+  font-size: 11px !important;
+  padding: 5px 8px !important;
+  margin-top: 3px !important;
+  line-height: 1.35 !important;
+}
+
+.mobile-h5-app .box-card-summary-label {
+  font-size: 11px !important;
+}
+
+.mobile-h5-app .box-card-summary-text {
+  font-size: 11px !important;
+}
+
 .box-nature-badge {
   background: var(--bg-card-inner);
   border: 1px solid var(--border-color-subtle);

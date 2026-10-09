@@ -1255,7 +1255,7 @@
           const berryName = berry ? (window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--')) : '';
 
           return `
-            <div class="box-card" data-uid="${p.uid}">
+            <div class="box-card" data-uid="${p.uid}" title="${escapeHtml(prInfo.summaryNote || '')}">
               <div class="box-card-header">
                 <div class="box-card-img-wrap">
                   ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="box-card-icon" onerror="this.style.display='none';">` : ''}
@@ -1357,6 +1357,14 @@
                   ` : '')}
                 </div>
               </div>
+
+              <!-- 智能簡評摘要 (直通頂尖料理精選) -->
+              ${prInfo.summaryNote ? `
+                <div class="box-card-summary" title="${escapeHtml(prInfo.summaryNote)}">
+                  <span class="box-card-summary-label">${isEN ? 'Appraisal Note:' : '智能簡評：'}</span>
+                  <span class="box-card-summary-text">${escapeHtml(prInfo.summaryNote)}</span>
+                </div>
+              ` : ''}
             </div>
           `;
         }).join('')}
@@ -1390,6 +1398,7 @@
             ${list.map(p => {
               const base = findPokemonBase(p.pokemonId || p.name);
               const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
+              const prInfo = calculatePokemonPR(p, base);
               const pkmDisplayName = isEN ? (base ? (base.name_en || base.name_cn) : p.name) : (p.name || (base ? base.name_cn : '未知'));
               const specName = window.I18N ? window.I18N.getSpecialtyName((base && base.specialty) || p.specialty || '--') : ((base && base.specialty) || p.specialty || '--');
               let specClass = 'spec-ingredient';
@@ -1403,7 +1412,7 @@
               const berryName = berry ? (window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--')) : '';
 
               return `
-                <tr data-uid="${p.uid}">
+                <tr data-uid="${p.uid}" title="${escapeHtml(prInfo.summaryNote || '')}">
                   <td class="td-icon" style="text-align:center;">
                     <div class="table-icon-wrapper" style="margin:0 auto;width:34px;height:34px;">
                       ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="table-icon" onerror="this.style.display='none';">` : ''}

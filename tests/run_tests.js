@@ -11473,6 +11473,86 @@ SP 4,316
     assert(calcWithMint.finalIngRate > 24.0, `With Cleanse Mint, final ingredient rate must be > 24% (actual: ${calcWithMint.finalIngRate}%)`);
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Ingredient Selection & Target Recipe Synergy in Intelligent Summary & Pokemon Box', () => {
+    const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+
+    const appCtx = {
+      window: {},
+      document: createMockDocument(),
+      console: console,
+      SUBSKILLS_DATA: [
+        { name: '食材機率提升M', tier: 'gold' },
+        { name: '幫忙速度M', tier: 'silver' },
+        { name: '樹果數量S', tier: 'gold' },
+        { name: '幫手獎勵', tier: 'gold' },
+        { name: '持有上限提升L', tier: 'silver' }
+      ],
+      NATURE_DATA: [
+        { name: '坦率', buffType: 'none', debuffType: 'none', buff: '無增減', debuff: '無增減' },
+        { name: '冷靜', buffType: 'ingredient', debuffType: 'exp', buff: '食材發現率', debuff: 'EXP獲取量' }
+      ]
+    };
+    appCtx.window = appCtx;
+    vm.createContext(appCtx);
+    vm.runInContext(boxCode, appCtx);
+    vm.runInContext(appraisalCode, appCtx);
+
+    // 1. Verify getSignatureRecipeRecommendations method exists and correctly finds top recipes
+    assert(typeof appCtx.AppraisalLab.getSignatureRecipeRecommendations === 'function', 'getSignatureRecipeRecommendations must be exported');
+    
+    // Absol Apple + Cacao -> Chocolate Waffles / Clodsire Eclair
+    const absolRecipe = appCtx.AppraisalLab.getSignatureRecipeRecommendations(['特選蘋果', '放鬆可可', '放鬆可可'], false);
+    assert(absolRecipe.includes('採蜜巧克力格子鬆餅') || absolRecipe.includes('土王閃電泡芙'), 'Absol Apple+Cacao must recommend top Cacao recipes');
+
+    // Flygon Ginger + Herb + Avocado -> Bounce Curry Udon / Bulldoze Guacamole
+    const flygonRecipe = appCtx.AppraisalLab.getSignatureRecipeRecommendations(['暖暖薑', '火辣香草', '嫩亮酪梨'], false);
+    assert(flygonRecipe.includes('彈跳咖哩烏龍麵') || flygonRecipe.includes('重踏酪梨醬脆片'), 'Flygon Ginger+Herb+Avocado must recommend Bounce Udon or Guacamole');
+
+    // Bewear Corn + Sausage -> Chocolate Waffles / Inferno Corn Keema Curry / Bounce Udon
+    const bewearRecipe = appCtx.AppraisalLab.getSignatureRecipeRecommendations(['萌綠玉米', '豆製肉', '萌綠玉米'], false);
+    assert(bewearRecipe.includes('採蜜巧克力格子鬆餅') || bewearRecipe.includes('彈跳咖哩烏龍麵') || bewearRecipe.includes('煉獄玉米乾咖哩'), 'Bewear Corn+Sausage must recommend top dishes');
+
+    // English localization check
+    const englishRecipe = appCtx.AppraisalLab.getSignatureRecipeRecommendations(['soothing cacao', 'moomoo milk'], true);
+    assert(englishRecipe.includes('Target recipes:') || englishRecipe.includes('Target dish:'), 'English mode must produce English recipe header');
+
+    // 2. Verify evaluatePokemon incorporates recipe recommendations into intelligent summary
+    const absolPkm = { id: '359', name_cn: '阿勃梭魯', specialty: '食材', ingredients: [{ name: '特選蘋果' }, { name: '放鬆可可' }, { name: '放鬆可可' }] };
+    const absolEval = appCtx.AppraisalLab.evaluatePokemon(
+      absolPkm, 50, '冷靜',
+      ['食材機率提升M', '幫忙速度M', '持有上限提升L'],
+      ['特選蘋果', '放鬆可可', '放鬆可可'],
+      0, 1
+    );
+    assert(absolEval !== null, 'Evaluation must not be null');
+    assert(absolEval.summaryNote.includes('直通頂尖料理') || absolEval.summaryNote.includes('料理'), 'Ingredient specialist summaryNote must highlight target dishes');
+    assert(absolEval.summaryNote.includes('採蜜巧克力格子鬆餅') || absolEval.summaryNote.includes('土王閃電泡芙'), 'Absol summaryNote must explicitly mention specific recipes');
+
+    // 3. Verify calculatePokemonPR in box.js outputs the recipe-enriched summaryNote
+    const boxAbsol = {
+      uid: 'box-absol-1',
+      pokemonId: '359',
+      name: '阿勃梭魯',
+      level: 50,
+      nature: '冷靜',
+      subskills: ['食材機率提升M', '幫忙速度M', '持有上限提升L'],
+      ing1: '特選蘋果',
+      ing2: '放鬆可可',
+      ing3: '放鬆可可'
+    };
+    const prResult = appCtx.PokemonBoxApp.calculatePokemonPR(boxAbsol, absolPkm);
+    assert(prResult && prResult.summaryNote, 'calculatePokemonPR must produce summaryNote');
+    assert(prResult.summaryNote.includes('直通頂尖料理') || prResult.summaryNote.includes('土王閃電泡芙') || prResult.summaryNote.includes('採蜜巧克力格子鬆餅'), 'PR summaryNote must contain signature dishes');
+
+    // 4. Verify renderBoxGrid renders box-card-summary with target recipes
+    const container = new MiniElement('div', 'box-container');
+    appCtx.PokemonBoxApp.renderBoxGrid([boxAbsol], container);
+    const gridHtml = container.innerHTML;
+    assert(gridHtml.includes('box-card-summary'), 'renderBoxGrid must render box-card-summary element');
+    assert(gridHtml.includes('智能簡評：') || gridHtml.includes('智能簡評'), 'renderBoxGrid must display intelligent summary label');
+    assert(gridHtml.includes('土王閃電泡芙') || gridHtml.includes('採蜜巧克力格子鬆餅') || gridHtml.includes('直通頂尖料理'), 'renderBoxGrid must include target dish names in card');
+  });
 
 console.log('                   Test Results Summary');
 console.log('======================================================');

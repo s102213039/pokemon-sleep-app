@@ -1273,6 +1273,399 @@
     return milestones;
   }
 
+  /* ─── 頂尖料理精選對照庫與食材掛勾引擎 (Target Recipe Synergy Engine) ─── */
+  const TARGET_TOP_RECIPES = [
+    // 咖哩 (Curry)
+    {
+      name_cn: '彈跳咖哩烏龍麵',
+      name_en: 'Bounce Curry Udon',
+      base_energy: 25539,
+      ingredients: [
+        { name: '暖暖薑', count: 39 },
+        { name: '品鮮蘑菇', count: 31 },
+        { name: '火辣香草', count: 22 },
+        { name: '豆製肉', count: 20 }
+      ]
+    },
+    {
+      name_cn: '茂盛焗烤酪梨',
+      name_en: 'Overgrow Avocado Gratin',
+      base_energy: 24802,
+      ingredients: [
+        { name: '哞哞鮮奶', count: 41 },
+        { name: '純粹油', count: 32 },
+        { name: '嫩亮酪梨', count: 22 },
+        { name: '窩心洋芋', count: 20 }
+      ]
+    },
+    {
+      name_cn: '居合斬壽喜燒咖哩',
+      name_en: 'Cut Sukiyaki Curry',
+      base_energy: 20655,
+      ingredients: [
+        { name: '粗枝大蔥', count: 27 },
+        { name: '豆製肉', count: 26 },
+        { name: '甜甜蜜', count: 26 },
+        { name: '特選蛋', count: 22 }
+      ]
+    },
+    {
+      name_cn: '覺醒力量濃湯',
+      name_en: 'Hidden Power Perk-Up Stew',
+      base_energy: 19061,
+      ingredients: [
+        { name: '萌綠大豆', count: 28 },
+        { name: '好眠番茄', count: 25 },
+        { name: '品鮮蘑菇', count: 23 },
+        { name: '醒腦咖啡豆', count: 16 }
+      ]
+    },
+    {
+      name_cn: '扮演南瓜精濃湯',
+      name_en: 'Role Play Pumpkaboo Stew',
+      base_energy: 15621,
+      ingredients: [
+        { name: '品鮮蘑菇', count: 25 },
+        { name: '窩心洋芋', count: 18 },
+        { name: '豆製肉', count: 16 },
+        { name: '沉甸甸南瓜', count: 10 }
+      ]
+    },
+    {
+      name_cn: '煉獄玉米乾咖哩',
+      name_en: 'Inferno Corn Keema Curry',
+      base_energy: 13690,
+      ingredients: [
+        { name: '火辣香草', count: 27 },
+        { name: '豆製肉', count: 24 },
+        { name: '萌綠玉米', count: 14 },
+        { name: '暖暖薑', count: 12 }
+      ]
+    },
+    {
+      name_cn: '萌綠咖哩麵包',
+      name_en: 'Greengrass Curry Bun',
+      base_energy: 10945,
+      ingredients: [
+        { name: '暖暖薑', count: 20 },
+        { name: '火辣香草', count: 20 },
+        { name: '純粹油', count: 15 },
+        { name: '萌綠大豆', count: 8 }
+      ]
+    },
+    {
+      name_cn: '絕對睡眠奶油咖哩',
+      name_en: 'Dream Eater Butter Curry',
+      base_energy: 9010,
+      ingredients: [
+        { name: '窩心洋芋', count: 18 },
+        { name: '好眠番茄', count: 15 },
+        { name: '放鬆可可', count: 12 },
+        { name: '哞哞鮮奶', count: 10 }
+      ]
+    },
+    {
+      name_cn: '忍者咖哩',
+      name_en: 'Ninja Curry',
+      base_energy: 9445,
+      ingredients: [
+        { name: '萌綠大豆', count: 24 },
+        { name: '粗枝大蔥', count: 12 },
+        { name: '豆製肉', count: 9 },
+        { name: '品鮮蘑菇', count: 5 }
+      ]
+    },
+    {
+      name_cn: '炙燒尾肉咖哩',
+      name_en: 'Grilled Tail Curry',
+      base_energy: 7483,
+      ingredients: [
+        { name: '火辣香草', count: 25 },
+        { name: '美味尾巴', count: 8 }
+      ]
+    },
+    {
+      name_cn: '辣味蔥勁十足咖哩',
+      name_en: 'Spicy Leek Curry',
+      base_energy: 5900,
+      ingredients: [
+        { name: '粗枝大蔥', count: 14 },
+        { name: '暖暖薑', count: 10 },
+        { name: '火辣香草', count: 8 }
+      ]
+    },
+
+    // 沙拉 (Salad)
+    {
+      name_cn: '大塊滿滿熱水沙拉',
+      name_en: 'Scald Chunky Salad',
+      base_energy: 25356,
+      ingredients: [
+        { name: '窩心洋芋', count: 30 },
+        { name: '品鮮蘑菇', count: 27 },
+        { name: '沉甸甸南瓜', count: 20 },
+        { name: '萌綠玉米', count: 18 }
+      ]
+    },
+    {
+      name_cn: '重踏酪梨醬脆片',
+      name_en: 'Bulldoze Guacamole and Chips',
+      base_energy: 25162,
+      ingredients: [
+        { name: '火辣香草', count: 30 },
+        { name: '嫩亮酪梨', count: 28 },
+        { name: '萌綠玉米', count: 25 },
+        { name: '萌綠大豆', count: 22 }
+      ]
+    },
+    {
+      name_cn: '不服輸咖啡沙拉',
+      name_en: 'Defiant Coffee-Dressed Salad',
+      base_energy: 20218,
+      ingredients: [
+        { name: '醒腦咖啡豆', count: 28 },
+        { name: '豆製肉', count: 28 },
+        { name: '純粹油', count: 22 },
+        { name: '窩心洋芋', count: 22 }
+      ]
+    },
+    {
+      name_cn: '蘋果酸優格沙拉',
+      name_en: 'Apple Acid Yogurt-Dressed Salad',
+      base_energy: 19293,
+      ingredients: [
+        { name: '特選蛋', count: 35 },
+        { name: '特選蘋果', count: 28 },
+        { name: '好眠番茄', count: 23 },
+        { name: '哞哞鮮奶', count: 18 }
+      ]
+    },
+    {
+      name_cn: '落英繽紛含羞草蛋沙拉',
+      name_en: 'Petal Blizzard Layered Salad',
+      base_energy: 11811,
+      ingredients: [
+        { name: '特選蛋', count: 25 },
+        { name: '純粹油', count: 17 },
+        { name: '窩心洋芋', count: 15 },
+        { name: '豆製肉', count: 12 }
+      ]
+    },
+    {
+      name_cn: '忍者沙拉',
+      name_en: 'Ninja Salad',
+      base_energy: 11659,
+      ingredients: [
+        { name: '萌綠大豆', count: 19 },
+        { name: '粗枝大蔥', count: 15 },
+        { name: '品鮮蘑菇', count: 12 },
+        { name: '暖暖薑', count: 11 }
+      ]
+    },
+    {
+      name_cn: '萌綠沙拉',
+      name_en: 'Greengrass Salad',
+      base_energy: 11393,
+      ingredients: [
+        { name: '純粹油', count: 22 },
+        { name: '萌綠玉米', count: 17 },
+        { name: '好眠番茄', count: 14 },
+        { name: '窩心洋芋', count: 9 }
+      ]
+    },
+    {
+      name_cn: '碎裂酪梨沙拉',
+      name_en: 'Luscious Avocado Salad',
+      base_energy: 8310,
+      ingredients: [
+        { name: '嫩亮酪梨', count: 15 },
+        { name: '哞哞鮮奶', count: 12 },
+        { name: '好眠番茄', count: 10 }
+      ]
+    },
+    {
+      name_cn: '呆呆獸尾巴的胡椒沙拉',
+      name_en: 'Slowpoke Tail Pepper Salad',
+      base_energy: 8169,
+      ingredients: [
+        { name: '美味尾巴', count: 10 },
+        { name: '火辣香草', count: 10 },
+        { name: '純粹油', count: 15 }
+      ]
+    },
+
+    // 甜點 (Dessert)
+    {
+      name_cn: '採蜜巧克力格子鬆餅',
+      name_en: 'Honey Gather Chocolate Waffles',
+      base_energy: 25484,
+      ingredients: [
+        { name: '甜甜蜜', count: 38 },
+        { name: '萌綠玉米', count: 28 },
+        { name: '純粹油', count: 28 },
+        { name: '放鬆可可', count: 21 }
+      ]
+    },
+    {
+      name_cn: '心跳加速鬼面鬆餅',
+      name_en: 'Scary Face Pancakes',
+      base_energy: 24354,
+      ingredients: [
+        { name: '甜甜蜜', count: 32 },
+        { name: '好眠番茄', count: 29 },
+        { name: '特選蛋', count: 24 },
+        { name: '沉甸甸南瓜', count: 18 }
+      ]
+    },
+    {
+      name_cn: '土王閃電泡芙',
+      name_en: 'Clodsire Eclair',
+      base_energy: 20885,
+      ingredients: [
+        { name: '放鬆可可', count: 30 },
+        { name: '哞哞鮮奶', count: 26 },
+        { name: '醒腦咖啡豆', count: 24 },
+        { name: '甜甜蜜', count: 22 }
+      ]
+    },
+    {
+      name_cn: '電光香料可樂',
+      name_en: 'Zing Zap Spiced Cola',
+      base_energy: 17494,
+      ingredients: [
+        { name: '特選蘋果', count: 35 },
+        { name: '暖暖薑', count: 20 },
+        { name: '粗枝大蔥', count: 20 },
+        { name: '醒腦咖啡豆', count: 12 }
+      ]
+    },
+    {
+      name_cn: '花之禮馬卡龍',
+      name_en: 'Flower Gift Macarons',
+      base_energy: 13834,
+      ingredients: [
+        { name: '放鬆可可', count: 25 },
+        { name: '特選蛋', count: 25 },
+        { name: '甜甜蜜', count: 17 },
+        { name: '哞哞鮮奶', count: 10 }
+      ]
+    },
+    {
+      name_cn: '茶會玉米司康',
+      name_en: 'Teatime Corn Scones',
+      base_energy: 10925,
+      ingredients: [
+        { name: '特選蘋果', count: 20 },
+        { name: '暖暖薑', count: 20 },
+        { name: '萌綠玉米', count: 18 },
+        { name: '哞哞鮮奶', count: 9 }
+      ]
+    },
+    {
+      name_cn: '青草攪拌器冰沙',
+      name_en: 'Leaf Tornado Smoothie',
+      base_energy: 8165,
+      ingredients: [
+        { name: '嫩亮酪梨', count: 18 },
+        { name: '好眠番茄', count: 16 },
+        { name: '哞哞鮮奶', count: 14 }
+      ]
+    }
+  ];
+
+  const ING_ALIASES = {
+    '蘋果': '特選蘋果', '特選蘋果': '特選蘋果', 'fancy apple': '特選蘋果', 'apple': '特選蘋果',
+    '牛奶': '哞哞鮮奶', '鮮奶': '哞哞鮮奶', '哞哞鮮奶': '哞哞鮮奶', 'moomoo milk': '哞哞鮮奶', 'milk': '哞哞鮮奶',
+    '大豆': '萌綠大豆', '萌綠大豆': '萌綠大豆', 'greengrass soybeans': '萌綠大豆', 'soybeans': '萌綠大豆', 'soybean': '萌綠大豆',
+    '蜂蜜': '甜甜蜜', '甜甜蜜': '甜甜蜜', 'honey': '甜甜蜜',
+    '香腸': '豆製肉', '豆製肉': '豆製肉', 'bean sausage': '豆製肉', 'sausage': '豆製肉',
+    '生薑': '暖暖薑', '生姜': '暖暖薑', '暖暖薑': '暖暖薑', '暖暖生薑': '暖暖薑', 'warming ginger': '暖暖薑', 'ginger': '暖暖薑',
+    '番茄': '好眠番茄', '好眠番茄': '好眠番茄', 'snoozy tomato': '好眠番茄', 'tomato': '好眠番茄',
+    '蛋': '特選蛋', '特選蛋': '特選蛋', 'fancy egg': '特選蛋', 'egg': '特選蛋',
+    '油': '純粹油', '純粹油': '純粹油', 'pure oil': '純粹油', 'oil': '純粹油',
+    '洋芋': '窩心洋芋', '馬鈴薯': '窩心洋芋', '窩心洋芋': '窩心洋芋', 'soft potato': '窩心洋芋', 'potato': '窩心洋芋',
+    '香草': '火辣香草', '火辣香草': '火辣香草', 'fiery herb': '火辣香草', 'herb': '火辣香草',
+    '玉米': '萌綠玉米', '萌綠玉米': '萌綠玉米', 'greengrass corn': '萌綠玉米', 'corn': '萌綠玉米',
+    '可可': '放鬆可可', '放鬆可可': '放鬆可可', 'soothing cacao': '放鬆可可', 'cacao': '放鬆可可',
+    '咖啡': '醒腦咖啡豆', '咖啡豆': '醒腦咖啡豆', '醒腦咖啡豆': '醒腦咖啡豆', 'rousing coffee': '醒腦咖啡豆', 'coffee': '醒腦咖啡豆',
+    '酪梨': '嫩亮酪梨', '嫩亮酪梨': '嫩亮酪梨', 'glossy avocado': '嫩亮酪梨', 'avocado': '嫩亮酪梨',
+    '蘑菇': '品鮮蘑菇', '品鮮蘑菇': '品鮮蘑菇', 'tasty mushroom': '品鮮蘑菇', 'mushroom': '品鮮蘑菇',
+    '蔥': '粗枝大蔥', '大蔥': '粗枝大蔥', '粗枝大蔥': '粗枝大蔥', '美味大蔥': '粗枝大蔥', 'large leek': '粗枝大蔥', 'leek': '粗枝大蔥',
+    '南瓜': '沉甸甸南瓜', '沉甸甸南瓜': '沉甸甸南瓜', 'plump pumpkin': '沉甸甸南瓜', 'pumpkin': '沉甸甸南瓜',
+    '尾巴': '美味尾巴', '美味尾巴': '美味尾巴', 'slowpoke tail': '美味尾巴', 'tail': '美味尾巴'
+  };
+
+  function normalizeIngName(name) {
+    if (!name) return '';
+    const clean = String(name).toLowerCase().replace(/^[0-9xX+\s]+/, '').trim();
+    for (const k of Object.keys(ING_ALIASES)) {
+      const kl = k.toLowerCase();
+      if (clean === kl || clean.includes(kl) || kl.includes(clean)) return ING_ALIASES[k];
+    }
+    return String(name).trim();
+  }
+
+  function getSignatureRecipeRecommendations(ingredients, isEN) {
+    if (!ingredients || !Array.isArray(ingredients) || ingredients.length === 0) return '';
+    const normIngs = Array.from(new Set(
+      ingredients.map(function(item) {
+        if (!item) return '';
+        const raw = typeof item === 'string' ? item : (item.name || '');
+        return normalizeIngName(raw);
+      }).filter(Boolean)
+    ));
+
+    if (normIngs.length === 0) return '';
+
+    const pool = (typeof window !== 'undefined' && window.ALL_TOP_CATEGORY_RECIPES && window.ALL_TOP_CATEGORY_RECIPES.length > 0)
+      ? window.ALL_TOP_CATEGORY_RECIPES
+      : TARGET_TOP_RECIPES;
+
+    const scored = pool.map(function(recipe) {
+      if (!recipe || !recipe.ingredients) return null;
+      let matchCount = 0;
+      let matchRequired = 0;
+      recipe.ingredients.forEach(function(ing) {
+        const normRecipeIng = normalizeIngName(ing.name || ing);
+        if (normIngs.indexOf(normRecipeIng) !== -1) {
+          matchCount++;
+          matchRequired += (ing.count || 0);
+        }
+      });
+      if (matchCount === 0) return null;
+
+      const hasTail = normIngs.indexOf('美味尾巴') !== -1;
+      const recipeHasTail = recipe.ingredients.some(function(i) { return (i.name || '').includes('尾巴'); });
+      const tailBonus = (hasTail && recipeHasTail) ? 20000 : 0;
+      const multiMatchBonus = (matchCount - 1) * 9000;
+      const score = (recipe.base_energy || 0) + multiMatchBonus + (matchRequired * 40) + tailBonus;
+
+      return {
+        name_cn: recipe.name_cn,
+        name_en: recipe.name_en,
+        matchCount: matchCount,
+        score: score
+      };
+    }).filter(Boolean).sort(function(a, b) {
+      return b.score - a.score;
+    });
+
+    if (scored.length === 0) return '';
+
+    const top1 = scored[0];
+    const top2 = scored.length > 1 ? scored[1] : null;
+
+    if (top2 && top2.name_cn !== top1.name_cn) {
+      return isEN
+        ? `Target recipes: prime pipeline for "${top1.name_en}" & "${top2.name_en}".`
+        : `直通頂尖料理『${top1.name_cn}』與『${top2.name_cn}』關鍵供料。`;
+    } else {
+      return isEN
+        ? `Target recipe: prime pipeline for "${top1.name_en}".`
+        : `直通頂尖料理『${top1.name_cn}』關鍵供料。`;
+    }
+  }
+
   /* ─── 智能深度簡評生成引擎 (Intelligent Appraisal Summary Engine) ─── */
   function generateIntelligentSummary(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, evaluation) {
     if (!pkmData) return '';
@@ -1338,18 +1731,30 @@
     const hasInv_active = activeNames.some(function(s) { return s.indexOf('持有上限') !== -1 || s.indexOf('Inventory Up') !== -1; });
 
     // 食材組合分析
-    const ingArr = (ingredients || []).filter(Boolean);
+    let ingArr = (ingredients || []).map(function(item) {
+      if (!item) return '';
+      return typeof item === 'string' ? item : (item.name || '');
+    }).filter(Boolean);
+    if (ingArr.length === 0 && pkmData && pkmData.ingredients) {
+      ingArr = pkmData.ingredients.map(function(i) {
+        return typeof i === 'string' ? i : (i.name || '');
+      }).filter(Boolean);
+    }
+    if (ingArr.length === 0 && pkmData && (pkmData.ing1 || pkmData.ing2 || pkmData.ing3)) {
+      ingArr = [pkmData.ing1, pkmData.ing2, pkmData.ing3].filter(Boolean);
+    }
+
     const isAAA = ingArr.length >= 3 && ingArr[0] === ingArr[1] && ingArr[1] === ingArr[2];
     const isABB = ingArr.length >= 3 && ingArr[0] !== ingArr[1] && ingArr[1] === ingArr[2];
     const isABC = ingArr.length >= 3 && ingArr[0] !== ingArr[1] && ingArr[1] !== ingArr[2] && ingArr[0] !== ingArr[2];
-    const hasTailLv30 = ingArr.length >= 2 && (ingArr[1] === '美味尾巴' || (ingArr[1] && ingArr[1].indexOf('尾巴') !== -1) || (ingArr[1] && ingArr[1].indexOf('Tail') !== -1));
+    const hasTailLv30 = ingArr.length >= 2 && (ingArr[1] === '美味尾巴' || (ingArr[1] && ingArr[1].indexOf('尾巴') !== -1) || (ingArr[1] && ingArr[1].toLowerCase().indexOf('tail') !== -1));
 
     // 1. 呆呆獸家族 (核心戰略使命：解鎖美味尾巴)
     if (isSlowpoke) {
       if (hasTailLv30) {
         return isEN
-          ? 'Strategic Unlock Specialist: Lv.30 unlocks "Slowpoke Tail", fulfilling the primary strategic mission of unlocking the highest-energy ingredient in Pokémon Sleep!'
-          : '戰略解鎖專門手：Lv.30 精準解鎖「美味尾巴」，圓滿達成全遊戲最高能量食材之戰略開圖使命！解鎖後可常駐作為後備庫存手。';
+          ? 'Strategic Unlock Specialist: Lv.30 unlocks "Slowpoke Tail", fulfilling the primary strategic mission of unlocking the highest-energy ingredient in Pokémon Sleep! Direct pipeline for "Slowpoke Tail Pepper Salad" & "Grilled Tail Curry".'
+          : '戰略解鎖專門手：Lv.30 精準解鎖「美味尾巴」，圓滿達成全遊戲最高能量食材之戰略開圖使命！直通頂尖料理『呆呆獸尾巴的胡椒沙拉』與『炙燒尾肉咖哩』關鍵供料，解鎖後可常駐作為後備庫存手。';
       } else {
         return isEN
           ? 'Fatal Strategic Flaw: Lv.30 fails to roll "Slowpoke Tail", missing the essential strategic unlock value of the Slowpoke family.'
@@ -1583,6 +1988,9 @@
           : '致命短板：性格減少食材發現率（-20%），產出頻繁被樹果稀釋，極難穩定供應主力食譜所需食材，不建議投入過多資源。';
       }
 
+      const recipeSynergy = getSignatureRecipeRecommendations(ingArr, isEN);
+      const recipePhrase = recipeSynergy ? ` ${recipeSynergy}` : '';
+
       let ingSpreadDesc = '';
       if (isAAA) {
         ingSpreadDesc = isEN ? ' Features pure mono-ingredient (AAA) spread for maximum focused output.' : '搭配極品純色 AAA 食材配置，特定食材產量高度集中。';
@@ -1596,39 +2004,39 @@
         if (hasBFS_active) {
           if (hasInv_active) {
             return isEN
-              ? `Top Hybrid Specialist: Active "Ingredient Finder M" backed by BFS and Inventory Up provides exceptional food yields with massive bonus berries.`
-              : `極品雙修食材手！食材機率大幅提升搭配「樹果數量S」與「持有上限提升」，食材爆發力極強且兼顧頂級樹果副產能！`;
+              ? `Top Hybrid Specialist: Active "Ingredient Finder M" backed by BFS and Inventory Up provides exceptional food yields with massive bonus berries.${recipePhrase}`
+              : `極品雙修食材手！食材機率大幅提升搭配「樹果數量S」與「持有上限提升」，食材爆發力極強且兼顧頂級樹果副產能！${recipePhrase}`;
           } else {
             return isEN
-              ? `High-Burst Hybrid: Excellent ingredient rate and BFS provide huge dual yield, but inventory caps fast overnight—collect regularly.`
-              : `高爆發雙修型：食材機率優異並持有「樹果數量S」，但缺乏持有上限容易在睡眠期間提早滿包阻斷產料，建議勤勞收成。`;
+              ? `High-Burst Hybrid: Excellent ingredient rate and BFS provide huge dual yield, but inventory caps fast overnight—collect regularly.${recipePhrase}`
+              : `高爆發雙修型：食材機率優異並持有「樹果數量S」，但缺乏持有上限容易在睡眠期間提早滿包阻斷產料，建議勤勞收成。${recipePhrase}`;
           }
         }
 
         return isEN
-          ? `Premier Kitchen Anchor! High ingredient finding rate ensures abundant cooking supply for top recipes.${ingSpreadDesc}`
-          : `頂級食材供應中樞！高額食材發現率確保了穩定龐大的料理供應，做大菜的最佳後勤基石。${ingSpreadDesc}`;
+          ? `Premier Kitchen Anchor! High ingredient finding rate ensures abundant cooking supply for top recipes.${recipePhrase}${ingSpreadDesc}`
+          : `頂級食材供應中樞！高額食材發現率確保了穩定龐大的料理供應，做大菜的最佳後勤基石。${recipePhrase}${ingSpreadDesc}`;
       }
 
       if (!hasIngM_active && !hasIngS_active && buff !== 'ingredient') {
         if (hasIngM_future) {
           return isEN
-            ? `Future Ingredient Prospect: Core "Ingredient Finder M" unlocks at Lv.${hasIngM_future.level}. Prioritize leveling to establish reliable kitchen supply.`
-            : `潛力食材手：關鍵「食材機率提升M」將於 Lv.${hasIngM_future.level} 解鎖，建議優先培育升級以構築主力供貨能力。`;
+            ? `Future Ingredient Prospect: Core "Ingredient Finder M" unlocks at Lv.${hasIngM_future.level}. Prioritize leveling to establish reliable kitchen supply.${recipePhrase}`
+            : `潛力食材手：關鍵「食材機率提升M」將於 Lv.${hasIngM_future.level} 解鎖，建議優先培育升級以構築主力供貨能力。${recipePhrase}`;
         }
         if (hasSpeedM_active || buff === 'speed' || hasHB_active) {
           return isEN
-            ? 'Speed-Driven Producer: Lacks direct ingredient finder boost, but high helping speed compensates to provide acceptable general output.'
-            : '幫速彌補型：雖缺乏直接食材機率提升，但憑藉優良的幫忙速度維持了合格的基礎供貨，適合作為實用過渡。';
+            ? `Speed-Driven Producer: Lacks direct ingredient finder boost, but high helping speed compensates to provide acceptable general output.${recipePhrase}`
+            : `幫速彌補型：雖缺乏直接食材機率提升，但憑藉優良的幫忙速度維持了合格的基礎供貨，適合作為實用過渡。${recipePhrase}`;
         }
         return isEN
-          ? 'Lacks Ingredient Output: Missing ingredient finder and speed boosts; yields are insufficient to sustain demanding high-tier dishes.'
-          : '缺乏食材爆發力：前中期未持有食材機率加成或顯著幫速，產量難以滿足高階大型料理（如大菜咖哩/沙拉）的消耗需求。';
+          ? `Lacks Ingredient Output: Missing ingredient finder and speed boosts; yields are insufficient to sustain demanding high-tier dishes.${recipePhrase}`
+          : `缺乏食材爆發力：前中期未持有食材機率加成或顯著幫速，產量難以滿足高階大型料理（如大菜咖哩/沙拉）的消耗需求。${recipePhrase}`;
       }
 
       return isEN
-        ? `Solid Ingredient Provider: Steady supply for regular meals, serving reliably in daily cooking rotations.${ingSpreadDesc}`
-        : `穩健食材供應手：供貨節奏穩定，足以勝任日常食譜輪替與食材儲備。${ingSpreadDesc}`;
+        ? `Solid Ingredient Provider: Steady supply for regular meals, serving reliably in daily cooking rotations.${recipePhrase}${ingSpreadDesc}`
+        : `穩健食材供應手：供貨節奏穩定，足以勝任日常食譜輪替與食材儲備。${recipePhrase}${ingSpreadDesc}`;
     }
 
     return isEN
@@ -4929,6 +5337,7 @@
     evaluatePokemon: evaluatePokemon,
     generateSummary: generateIntelligentSummary,
     generateIntelligentSummary: generateIntelligentSummary,
+    getSignatureRecipeRecommendations: getSignatureRecipeRecommendations,
     getRemainingEvolutions: getRemainingEvolutions,
     getRibbonBonus: getRibbonBonus,
     getEffectiveSkillLevel: getEffectiveSkillLevel,
