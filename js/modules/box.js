@@ -3315,7 +3315,8 @@
       }
     }
 
-    // 3. 性格辨識 (名稱膠囊 + 屬性增減雙向演繹對照)
+    // 3. 性格辨識 (名稱膠囊 + 屬性增減雙向演繹對照 + 薄荷中和偵測)
+    const isMintOrNeutral = clean.includes('沒有性格') || clean.includes('没有性格') || clean.includes('特色') || clean.includes('带载') || clean.includes('帶來');
     let nature = '慎重';
     let nameMatched = false;
     for (const n of NATURE_DATA) {
@@ -3326,7 +3327,20 @@
       }
     }
 
-    if (!nameMatched) {
+    if (isMintOrNeutral) {
+      // 檢查是否為原生中性性格；若為被薄荷中和之非中性性格（如慎重、爽朗），統一歸入中性「坦率」
+      const neutralNatures = ['害羞', '認真', '勤奮', '浮躁', '坦率'];
+      let matchedNeutral = neutralNatures.find(n => clean.includes(n));
+      if (!matchedNeutral) {
+        if (clean.includes('害') || clean.includes('羞')) matchedNeutral = '害羞';
+        else if (clean.includes('真')) matchedNeutral = '認真';
+        else if (clean.includes('勤') || clean.includes('奮') || clean.includes('奋')) matchedNeutral = '勤奮';
+        else if (clean.includes('浮') || clean.includes('躁')) matchedNeutral = '浮躁';
+        else if (clean.includes('坦') || clean.includes('率')) matchedNeutral = '坦率';
+      }
+      nature = matchedNeutral || '坦率';
+      nameMatched = true;
+    } else if (!nameMatched) {
       function getStatType(str) {
         if (str.includes('提升') || str.match(/[SML]$/i)) return null;
         if (str.includes('食材發現率') || str.includes('食材發現') || str.includes('僵材') || str.includes('僵堵')) return 'ingredient';
@@ -3355,21 +3369,6 @@
       if (buffStat && debuffStat) {
         const match = NATURE_DATA.find(n => n.buffType === buffStat && n.debuffType === debuffStat);
         if (match) nature = match.name;
-      } else if (clean.includes('沒有性格') || clean.includes('没有性格') || clean.includes('特色')) {
-        for (const n of ['害羞', '認真', '勤奮', '浮躁', '坦率']) {
-          if (clean.includes(n)) {
-            nature = n;
-            break;
-          }
-        }
-        if (!nameMatched || !nature || nature === '慎重') {
-          if (clean.includes('害') || clean.includes('羞')) nature = '害羞';
-          else if (clean.includes('真')) nature = '認真';
-          else if (clean.includes('勤') || clean.includes('奮') || clean.includes('奋')) nature = '勤奮';
-          else if (clean.includes('浮') || clean.includes('躁')) nature = '浮躁';
-          else if (clean.includes('坦') || clean.includes('率')) nature = '坦率';
-          else nature = '坦率';
-        }
       }
     }
 

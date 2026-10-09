@@ -11246,6 +11246,97 @@ SP 4,316
     assert(stylesCss.includes('.mobile-h5-app .appraisal-header-stats-dual .header-stat-v') && stylesCss.includes('font-size: 15.5px !important'), 'styles.css must enlarge mobile appraisal stat val font size to 15.5px');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Cleanse Mint Nature Neutralization & Ribbon Carry Deductions Across Full Pokemon Box', () => {
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
+
+    // Load boxModule in CommonJS
+    const boxModule = require(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'));
+    assert(boxModule && typeof boxModule.deduceRibbonFromCarry === 'function', 'boxModule.deduceRibbonFromCarry must exist');
+
+    // 1. Test Cleanse Mint (淨白薄荷) Neutralization in OCR Parsing
+    assert(boxJs.includes('isMintOrNeutral'), 'box.js must detect mint or neutral traits');
+    assert(boxJs.includes('clean.includes(\'沒有性格\')'), 'box.js must check for 沒有性格 in OCR text');
+
+    // Simulate OCR text parsing for Absol with Cleanse Mint
+    const absolPkm = { id: '359', name_cn: '阿勃梭魯', type: '惡', specialty: '食材', carry: 21, ingredients: [{ name: '放鬆可可' }, { name: '特選蘋果' }, { name: '粗枝大蔥' }] };
+    const absolMintOcr = [
+      'SP 2823',
+      'Lv.52 阿勃梭魯',
+      '持有上限 40個',
+      '===SLOT1:blue=== 食材機率提升M',
+      '===SLOT2:blue=== 持有上限提升L',
+      '===SLOT3:white=== 食材機率提升S',
+      '===SLOT4:gold=== 技能等級提升M',
+      '===SLOT5:white=== 幫忙速度S',
+      '性格 慎重 沒有性格帶來的特色'
+    ].join('\n');
+
+    const parsedAbsol = boxModule.parsePokemonFromOcr(absolMintOcr, null, [absolPkm]);
+    assertEquals(parsedAbsol.nature, '坦率', 'Absol with Cleanse Mint (慎重 + 沒有性格帶來的特色) must be resolved to 坦率');
+    assertEquals(parsedAbsol.ribbon, 1, 'Absol Lv.52 (carry 40, base 21, subskill L +18) must have Ribbon Tier 1 (+1 carry, not Tier 4)');
+
+    // Simulate Flygon with Cleanse Mint
+    const flygonPkm = { id: '330', name_cn: '沙漠蜻蜓', type: '地面', specialty: '食材', carry: 27, ingredients: [{ name: '嫩亮酪梨' }] };
+    const flygonMintOcr = [
+      'SP 2950',
+      'Lv.60 沙漠蜻蜓',
+      '持有上限 28個',
+      '===SLOT1:gold=== 睡眠EXP獎勵',
+      '===SLOT2:blue=== 食材機率提升M',
+      '===SLOT3:gold=== 幫手獎勵',
+      '===SLOT4:white=== 技能機率提升S',
+      '===SLOT5:gold=== 活力回復獎勵',
+      '性格 爽朗 沒有性格帶來的特色'
+    ].join('\n');
+
+    const parsedFlygon = boxModule.parsePokemonFromOcr(flygonMintOcr, null, [flygonPkm]);
+    assertEquals(parsedFlygon.nature, '坦率', 'Flygon with Cleanse Mint (爽朗 + 沒有性格帶來的特色) must be resolved to 坦率');
+    assertEquals(parsedFlygon.ribbon, 1, 'Flygon Lv.60 (carry 28, base 27, no carry subskills) must have Ribbon Tier 1');
+
+    // Simulate Natural Neutral Nature (Bashful / 害羞)
+    const darkraiPkm = { id: '491', name_cn: '達克萊伊', type: '惡', specialty: '技能', carry: 28, ingredients: [{ name: '純晶蘋果' }] };
+    const darkraiNeutralOcr = [
+      'Lv.30 達克萊伊',
+      '持有上限 46個',
+      '===SLOT1:blue=== 持有上限提升L',
+      '===SLOT2:white=== 技能機率提升S',
+      '性格 害羞 没有性格帶來的特色'
+    ].join('\n');
+    const parsedDarkrai = boxModule.parsePokemonFromOcr(darkraiNeutralOcr, null, [darkraiPkm]);
+    assertEquals(parsedDarkrai.nature, '害羞', 'Natural neutral nature (害羞) must be preserved');
+    assertEquals(parsedDarkrai.ribbon, 0, 'Darkrai Lv.30 (carry 46, base 28, subskill L +18) diff is 0, so ribbon must be 0 (not Tier 4)');
+
+    // 2. Test Good-Night Ribbon Carry Deduction Math
+    // Case A: Butterfree with Inventory M (carry 43, base 31, subskill M +12 -> diff 0 -> Ribbon 0)
+    const butterfreePkm = { id: '12', name_cn: '巴大蝶', carry: 31 };
+    const butterfreeRibbon = boxModule.deduceRibbonFromCarry(butterfreePkm, 30, ['樹果數量S', '持有上限提升M'], 43);
+    assertEquals(butterfreeRibbon, 0, 'Butterfree with Inventory M (+12) must be Ribbon 0, not Tier 4');
+
+    // Case B: Blastoise Lv.64 with Inventory L (carry 53, base 27, subskill L +18 -> diff 8 -> Ribbon 4)
+    const blastoisePkm = { id: '9', name_cn: '水箭龜', carry: 27 };
+    const blastoiseRibbon = boxModule.deduceRibbonFromCarry(blastoisePkm, 64, ['持有上限提升L', '食材機率提升M', '幫忙速度M'], 53);
+    assertEquals(blastoiseRibbon, 4, 'Blastoise Lv.64 with carry 53 has diff 8, must be Ribbon 4');
+
+    // Case C: Charizard Lv.59 without inventory subskills (carry 37, base 29, subBonus 0 -> diff 8 -> Ribbon 4)
+    const charizardPkm = { id: '6', name_cn: '噴火龍', carry: 29 };
+    const charizardRibbon = boxModule.deduceRibbonFromCarry(charizardPkm, 59, ['幫手獎勵', '食材機率提升M', '幫忙速度S'], 37);
+    assertEquals(charizardRibbon, 4, 'Charizard Lv.59 with carry 37 has diff 8, must be Ribbon 4');
+
+    // 3. Verify Live DB data integrity
+    const liveDbPath = path.join(WORKSPACE_ROOT, 'scratch/z87569650_db_live.json');
+    if (fs.existsSync(liveDbPath)) {
+      const db = JSON.parse(fs.readFileSync(liveDbPath, 'utf8'));
+      const liveAbsol = db.find(p => p.name === '阿勃梭魯' && p.level === 52);
+      assert(liveAbsol, 'Absol Lv.52 must exist in db_live');
+      assertEquals(liveAbsol.nature, '坦率', 'Absol in db_live must have neutralized nature 坦率');
+      assertEquals(liveAbsol.ribbon, 1, 'Absol in db_live must have ribbon 1');
+
+      const tier4List = db.filter(p => (p.ribbon || 0) === 4);
+      assertEquals(tier4List.length, 4, 'Only the 4 true 2000hr veterans must have ribbon 4 in db_live');
+    }
+  });
+
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {
