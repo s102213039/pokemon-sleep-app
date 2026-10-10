@@ -17794,7 +17794,7 @@ body.mobile-h5-app.pokemon-active {
   max-height: 100% !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
-  padding: 0 12px calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+  padding: 0 12px 12px !important;
   box-sizing: border-box !important;
 }
 
@@ -17808,7 +17808,7 @@ body.mobile-h5-app.pokemon-active {
   max-width: 100% !important;
   margin: 0 !important;
   margin-bottom: 0 !important;
-  padding: 0 0 calc(96px + env(safe-area-inset-bottom, 0px)) 0 !important;
+  padding: 0 !important;
   border-radius: 0 !important;
   border-left: none !important;
   border-right: none !important;
@@ -17823,7 +17823,7 @@ body.mobile-h5-app.pokemon-active {
   box-sizing: border-box !important;
 }
 
-/* 圖鑑表格與網格底部安全防禦墊片：確保最末列寶可夢（如浩大鯨、巨鍛匠）能完全滑出至視野內，絕不被底部導航 Dock 遮蔽 */
+/* 圖鑑與倉庫表格底部安全防禦墊片：預留恰到好處的 24px 輕量留白，不產生大片空白且確保最末列完全可見 */
 .table-bottom-spacer {
   height: 0;
   display: none;
@@ -17832,8 +17832,8 @@ body.mobile-h5-app.pokemon-active {
 @media (max-width: 768px) {
   .table-bottom-spacer {
     display: block !important;
-    height: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
-    min-height: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+    height: 24px !important;
+    min-height: 24px !important;
     width: 100% !important;
     grid-column: 1 / -1 !important;
     pointer-events: none !important;
@@ -17843,8 +17843,8 @@ body.mobile-h5-app.pokemon-active {
 
 .mobile-h5-app .table-bottom-spacer {
   display: block !important;
-  height: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
-  min-height: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+  height: 24px !important;
+  min-height: 24px !important;
   width: 100% !important;
   grid-column: 1 / -1 !important;
   pointer-events: none !important;
@@ -17914,13 +17914,24 @@ body.mobile-h5-app.pokemon-active {
   box-sizing: border-box !important;
 }
 
-.mobile-h5-app #panel-recipes,
-.mobile-h5-app #panel-box {
+.mobile-h5-app #panel-recipes {
   overflow-y: auto !important;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch !important;
   overscroll-behavior-y: contain !important;
   padding-bottom: 84px !important;
+}
+
+.mobile-h5-app #panel-box {
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app #panel-news {
@@ -23598,7 +23609,34 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   box-sizing: border-box !important;
 }
 
+.mobile-h5-app #panel-box .box-content-container {
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app #panel-box #box-content-area {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 .mobile-h5-app #panel-box .table-container {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 !important;
@@ -23607,9 +23645,14 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   border-left: none !important;
   border-right: none !important;
   border-bottom: none !important;
+  border-top: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08)) !important;
   box-shadow: none !important;
   overflow-x: auto !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
   background: transparent !important;
+  box-sizing: border-box !important;
+  position: relative !important;
 }
 
 .mobile-h5-app #panel-box .pokemon-table.box-table {
@@ -23620,11 +23663,43 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   border: none !important;
 }
 
-.mobile-h5-app #panel-box .pokemon-table.box-table thead th {
+/* 倉庫表格表頭頂部置頂 (Sticky Table Header - 圖鑑與倉庫全面統一) */
+.mobile-h5-app #panel-box .pokemon-table.box-table thead th,
+.pokemon-table.box-table thead th {
   position: sticky !important;
   top: 0 !important;
-  z-index: 10 !important;
+  z-index: 20 !important;
   background-color: var(--table-th-solid, #0a0f1d) !important;
+}
+
+.mobile-h5-app #panel-box .pokemon-table.box-table thead .th-icon,
+.pokemon-table.box-table thead .th-icon {
+  position: sticky !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 35 !important;
+  background-color: var(--table-th-solid, #0a0f1d) !important;
+}
+
+.mobile-h5-app #panel-box .pokemon-table.box-table tbody .td-icon,
+.pokemon-table.box-table tbody .td-icon {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 15 !important;
+  background-color: inherit !important;
+}
+
+.pokemon-table.box-table tbody tr:nth-child(odd) td.td-icon {
+  background-color: var(--table-row-odd-solid, #0d1527) !important;
+}
+
+.pokemon-table.box-table tbody tr:nth-child(even) td.td-icon {
+  background-color: var(--table-row-even-solid, #131f38) !important;
+}
+
+.pokemon-table.box-table tbody tr:hover td.td-icon,
+.pokemon-table.box-table tbody tr:active td.td-icon {
+  background-color: var(--table-row-hover-solid, #1c2e52) !important;
 }
 
 /* 篩選器獨立排序選單 (Dropdown Inset Arrow Rule) */
@@ -23649,6 +23724,38 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
 
 .mobile-h5-app #box-subpanel-list {
   padding-bottom: 84px !important;
+}
+
+.mobile-h5-app #panel-box #box-subpanel-list {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app #box-subpanel-lab {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding-bottom: 84px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app #panel-box .box-cards-grid:not(:has(.table-container)),
+.mobile-h5-app #panel-box .box-grid {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 8px 10px 84px !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .box-cards-grid,

@@ -1467,6 +1467,7 @@
             }).join('')}
           </tbody>
         </table>
+        <div class="table-bottom-spacer" aria-hidden="true"></div>
       </div>
     `;
 

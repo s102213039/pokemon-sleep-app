@@ -11635,13 +11635,22 @@ SP 4,316
     assert(appCode.includes('hasAnyFloatingTooltipOpen'),
            'app.js must maintain hasAnyFloatingTooltipOpen guard flag to prevent forced reflow on scroll');
 
-    // 7. Pokedex last row bottom clearance spacer and safe-area buffer (guarantee Cetitan visibility)
+    // 7. Pokedex & Box snug bottom clearance spacer (24px minimal breathing room)
     assert(stylesCode.includes('.table-bottom-spacer') &&
            stylesCode.includes('.mobile-h5-app .table-bottom-spacer') &&
-           stylesCode.includes('height: calc(96px + env(safe-area-inset-bottom, 0px)) !important;'),
-           'styles.css must provide table-bottom-spacer with safe-area bottom clearance');
+           stylesCode.includes('height: 24px !important;'),
+           'styles.css must provide table-bottom-spacer with snug 24px bottom clearance');
     assert(appCode.includes('<div class="table-bottom-spacer" aria-hidden="true"></div>'),
-           'app.js must inject table-bottom-spacer to guarantee last row visibility (Cetitan)');
+           'app.js must inject table-bottom-spacer to guarantee last row visibility');
+    assert(boxCode.includes('<div class="table-bottom-spacer" aria-hidden="true"></div>'),
+           'box.js must inject table-bottom-spacer for Box table bottom clearance');
+
+    // 8. Box Tab mobile H5 sticky table header (unified with Pokedex tab)
+    assert(stylesCode.includes('.mobile-h5-app #panel-box .pokemon-table.box-table thead th') &&
+           stylesCode.includes('position: sticky !important;') &&
+           stylesCode.includes('.mobile-h5-app #panel-box .table-container') &&
+           stylesCode.includes('overflow-y: auto !important;'),
+           'styles.css must configure Box Tab table with independent vertical scroll and sticky header');
   });
 
 console.log('                   Test Results Summary');
