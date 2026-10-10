@@ -79,8 +79,7 @@
           '<div class="custom-select-item-content">' +
             (optIcon ? '<img src="' + optIcon + '" class="custom-select-icon" alt="" />' : '') +
             '<span class="custom-select-item-text">' + opt.text + '</span>' +
-          '</div>' +
-          (opt.value === selectElement.value ? '<span class="custom-select-check">✓</span>' : '');
+          '</div>';
 
         item.addEventListener('click', function (e) {
           e.stopPropagation();

@@ -11554,6 +11554,21 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 .tooltip-dish-title {
   font-size: 10px;
   color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.tooltip-dish-icon {
+  width: 15px;
+  height: 15px;
+  object-fit: contain;
+  vertical-align: middle;
+  border-radius: 3px;
+  flex-shrink: 0;
+  display: inline-block;
+  margin-right: 2px;
 }
 
 .tooltip-dish-badge {
@@ -23126,6 +23141,10 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   font-size: 11px;
   color: var(--text-muted);
   margin-top: 1px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
 }
 
 .ing-rank-close-btn {

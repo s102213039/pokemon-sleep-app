@@ -11760,6 +11760,35 @@ SP 4,316
     assert(appIndexHtml.includes('js/components/popoverCoordinator.js'), 'app/index.html must include popoverCoordinator.js');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Dropdown Checkmark Removal, Modal Scroll Reset, and Ladder Key Dish Icon Presentation Verification', () => {
+    // 1. Verify customSelect.js does not render checkmarks
+    const customSelectCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'components', 'customSelect.js'), 'utf8');
+    assert(!customSelectCode.includes('custom-select-check'), 'customSelect.js must not render custom-select-check span');
+    assert(!customSelectCode.includes('✓'), 'customSelect.js must not contain checkmark symbol');
+
+    // 2. Verify recipes.js does not render checkmarks in custom selects
+    const recipesCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'recipes.js'), 'utf8');
+    assert(!recipesCode.includes('custom-select-check'), 'recipes.js must not render custom-select-check span');
+
+    // 3. Verify box.js does not render checkmarks in box-pkm-dropdown-item
+    const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+    assert(!boxCode.includes('box-pkm-dropdown-item active') || !boxCode.includes('✓</span>'), 'box.js must not render checkmark in box-pkm-dropdown-item');
+
+    // 4. Verify box.js resets modalBody.scrollTop = 0 on open
+    assert(boxCode.includes('modalBody.scrollTop = 0'), 'box.js openBoxEditModal must reset modalBody.scrollTop to 0');
+
+    // 5. Verify wiki.js defines dish icons and renders tooltip-dish-icon in ladder-node-tooltip and ranking modal
+    const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+    assert(wikiCode.includes('tooltip-dish-icon'), 'wiki.js must render tooltip-dish-icon');
+    assert(wikiCode.includes('appleacidyogurt-dressedsalad.png'), 'wiki.js TOP_RECIPES_FOR_INGREDIENTS must include dish icons');
+    assert(wikiCode.includes('getLadderDishIcon'), 'wiki.js must define getLadderDishIcon helper');
+
+    // 6. Verify styles.css defines .tooltip-dish-icon and flexible .tooltip-dish-title
+    const stylesCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+    assert(stylesCode.includes('.tooltip-dish-icon'), 'styles.css must style .tooltip-dish-icon');
+    assert(stylesCode.includes('.tooltip-dish-title') && stylesCode.includes('inline-flex'), 'styles.css must align .tooltip-dish-title with inline-flex');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

@@ -450,7 +450,6 @@
             ${optIcon ? `<img src="${optIcon}" class="custom-select-icon" alt="" />` : ''}
             <span class="custom-select-item-text">${opt.text}</span>
           </div>
-          ${opt.value === selectElement.value ? '<span class="custom-select-check">✓</span>' : ''}
         `;
 
         item.addEventListener('click', (e) => {

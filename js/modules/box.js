@@ -2037,7 +2037,6 @@
                 <span>No.${p.formatted_no} ${escapeHtml(pkmDisplayName)}</span>
               </div>
             </div>
-            ${isSelected ? '<span style="color:var(--accent-blue);font-weight:bold;font-size:12px;">✓</span>' : ''}
           </div>
         `;
       }).join('');
@@ -2494,6 +2493,9 @@
         dialog.classList.remove('has-screenshot');
       }
     }
+
+    const modalBody = modal.querySelector ? modal.querySelector('.box-modal-body') : null;
+    if (modalBody) modalBody.scrollTop = 0;
 
     if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
     modal.style.display = 'flex';
