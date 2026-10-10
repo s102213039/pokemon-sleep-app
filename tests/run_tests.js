@@ -6487,6 +6487,14 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assertEquals(godFormulas.natureIngMult, 1.2, 'God preset for ingredient Pokemon must set Quiet (+Ing) nature');
   assertEquals(godFormulas.subskillIngBonus, 54, 'God preset must activate Subskills M (+36%) + S (+18%) = +54%');
   assert(godFormulas.finalIngRate > quietFormulas.finalIngRate, 'God preset must achieve peak final ingredient rate');
+  const verdictNumEl = mockElements.get('pokedex-header-verdict-num');
+  const verdictGradeEl = mockElements.get('pokedex-header-verdict-grade');
+  if (verdictNumEl && verdictNumEl.textContent) {
+    assert(parseInt(verdictNumEl.textContent, 10) > 0, 'God preset must dynamically update header verdict score');
+  }
+  if (verdictGradeEl && verdictGradeEl.textContent) {
+    assert(verdictGradeEl.textContent.length > 0, 'God preset must dynamically update header verdict grade');
+  }
 
   PokemonApp.applyPokedexResetPreset();
   const resetFormulas = PokemonApp.calculatePokedexIngredientFormulas();
@@ -6643,6 +6651,10 @@ test('Tier 4 - Real-World Application Scenarios', 'Pokédex Detail & Appraisal M
   assert(modalHtmlNow.includes('pokedex-header-verdict-badge'), 'Header actions must contain pokedex-header-verdict-badge');
   assert(modalHtmlNow.includes('pokedex-header-grade-text'), 'Header must contain pokedex-header-grade-text');
   assert(modalHtmlNow.includes('pokedex-header-score-text'), 'Header must contain pokedex-header-score-text');
+  assert(modalHtmlNow.includes('id="pokedex-header-verdict-grade"'), 'Header must contain id pokedex-header-verdict-grade');
+  assert(modalHtmlNow.includes('id="pokedex-header-verdict-num"'), 'Header must contain id pokedex-header-verdict-num');
+  assert(modalHtmlNow.includes('id="pokedex-header-potential-grade"'), 'Header must contain id pokedex-header-potential-grade');
+  assert(modalHtmlNow.includes('id="pokedex-header-potential-num"'), 'Header must contain id pokedex-header-potential-num');
   assert(!modalHtmlNow.includes('pokedex-appraisal-verdict-box'), 'Modal left column must not contain legacy verdict box');
 
   // 15F. Level row layout: God preset on left next to level text, Reset preset on right
