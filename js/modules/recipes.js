@@ -387,6 +387,9 @@
 
   /* ─── 自訂下拉選單系統（嚴格向下展開對齊） ────────── */
   function setupCustomSelect(selectElement) {
+    if (typeof window !== 'undefined' && window.CustomSelect && typeof window.CustomSelect.setup === 'function') {
+      return window.CustomSelect.setup(selectElement);
+    }
     if (!selectElement || selectElement._customized || !selectElement.parentNode) return;
     selectElement._customized = true;
 

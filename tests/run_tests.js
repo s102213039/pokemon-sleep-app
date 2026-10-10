@@ -11720,6 +11720,46 @@ SP 4,316
     assert(wikiCode.includes("ladderSidebar = document.getElementById('ladder-filter-sidebar')"), 'wiki.js boost and nature buttons must scope to ladder-filter-sidebar');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Standalone Component Architecture: DOMUtils, CustomSelect, and PopoverCoordinator Modules Verification', () => {
+    // 1. DOMUtils verification
+    const domUtilsPath = path.join(WORKSPACE_ROOT, 'js', 'core', 'domUtils.js');
+    assert(fs.existsSync(domUtilsPath), 'domUtils.js must exist in js/core/');
+    const domUtils = require(domUtilsPath);
+    assert(typeof domUtils.find === 'function', 'domUtils.find must be a function');
+    assert(typeof domUtils.findAll === 'function', 'domUtils.findAll must be a function');
+    assert(typeof domUtils.byId === 'function', 'domUtils.byId must be a function');
+    assert(typeof domUtils.toggleClass === 'function', 'domUtils.toggleClass must be a function');
+    assertEquals(domUtils.find(null, ''), null, 'domUtils.find with null parent must return null');
+    assertEquals(domUtils.findAll(null, '').length, 0, 'domUtils.findAll with null parent must return empty array');
+
+    // 2. CustomSelect component verification
+    const customSelectPath = path.join(WORKSPACE_ROOT, 'js', 'components', 'customSelect.js');
+    assert(fs.existsSync(customSelectPath), 'customSelect.js must exist in js/components/');
+    const customSelect = require(customSelectPath);
+    assert(typeof customSelect.setup === 'function', 'CustomSelect.setup must be a function');
+    assert(typeof customSelect.closeAll === 'function', 'CustomSelect.closeAll must be a function');
+    const customSelectCode = fs.readFileSync(customSelectPath, 'utf8');
+    assert(customSelectCode.includes('custom-select-container'), 'customSelect.js must manage custom-select-container');
+    assert(customSelectCode.includes('aria-expanded'), 'customSelect.js must manage aria-expanded');
+
+    // 3. PopoverCoordinator component verification
+    const popoverCoordPath = path.join(WORKSPACE_ROOT, 'js', 'components', 'popoverCoordinator.js');
+    assert(fs.existsSync(popoverCoordPath), 'popoverCoordinator.js must exist in js/components/');
+    const popoverCoord = require(popoverCoordPath);
+    assert(typeof popoverCoord.hasAnyOpen === 'function', 'PopoverCoordinator.hasAnyOpen must be a function');
+    assert(typeof popoverCoord.dismissAll === 'function', 'PopoverCoordinator.dismissAll must be a function');
+
+    // 4. HTML script tag verification in index.html & app/index.html
+    const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+    assert(indexHtml.includes('js/core/domUtils.js'), 'index.html must include domUtils.js');
+    assert(indexHtml.includes('js/components/customSelect.js'), 'index.html must include customSelect.js');
+    assert(indexHtml.includes('js/components/popoverCoordinator.js'), 'index.html must include popoverCoordinator.js');
+    assert(appIndexHtml.includes('js/core/domUtils.js'), 'app/index.html must include domUtils.js');
+    assert(appIndexHtml.includes('js/components/customSelect.js'), 'app/index.html must include customSelect.js');
+    assert(appIndexHtml.includes('js/components/popoverCoordinator.js'), 'app/index.html must include popoverCoordinator.js');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

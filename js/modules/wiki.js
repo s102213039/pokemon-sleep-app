@@ -11842,7 +11842,9 @@
       if (typeof event.stopPropagation === 'function') event.stopPropagation();
       if (typeof event.preventDefault === 'function') event.preventDefault();
     }
-    const btn = (event && (event.currentTarget || event.target)) || document.querySelector('.ladder-formula-help-btn');
+    const ladderPanel = document.getElementById('wiki-subpanel-ladder') || document.getElementById('panel-wiki') || document;
+    const btn = (event && (event.currentTarget || event.target))
+      || (ladderPanel && typeof ladderPanel.querySelector === 'function' ? ladderPanel.querySelector('.ladder-formula-help-btn') : (typeof document.querySelector === 'function' ? document.querySelector('.ladder-formula-help-btn') : null));
     const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : 'zh-TW';
     const isEN = lang === 'en-US';
     const isCN = lang === 'zh-CN';
@@ -12722,7 +12724,9 @@
       e.stopPropagation();
       e.preventDefault();
     }
-    const btn = (e && (e.currentTarget || e.target)) || document.querySelector('.ladder-help-icon-btn');
+    const ladderPanel = document.getElementById('wiki-subpanel-ladder') || document.getElementById('panel-wiki') || document;
+    const btn = (e && (e.currentTarget || e.target))
+      || (ladderPanel && typeof ladderPanel.querySelector === 'function' ? ladderPanel.querySelector('.ladder-help-icon-btn') : (typeof document.querySelector === 'function' ? document.querySelector('.ladder-help-icon-btn') : null));
     const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : 'zh-TW';
     const isEN = lang === 'en-US';
     const isCN = lang === 'zh-CN';

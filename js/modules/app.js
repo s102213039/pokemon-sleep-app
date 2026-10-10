@@ -1648,6 +1648,10 @@ function isAnyFloatingTooltipVisible() {
 function dismissAllFloatingTooltips() {
   hasAnyFloatingTooltipOpen = false;
   if (typeof window !== 'undefined') window._hasAnyFloatingTooltipOpen = false;
+  if (typeof window !== 'undefined' && window.PopoverCoordinator && typeof window.PopoverCoordinator.dismissAll === 'function') {
+    window.PopoverCoordinator.dismissAll();
+    return;
+  }
   hideGlobalTooltip();
   if (typeof closePokedexEnergyHelp === 'function') {
     closePokedexEnergyHelp();
