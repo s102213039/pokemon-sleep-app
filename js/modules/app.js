@@ -1450,6 +1450,7 @@ let currentGlobalTooltipAnchor = null;
 let lastGlobalTooltipShownTime = 0;
 let isTooltipPinned = false;
 let isTouchInteraction = false;
+let hasAnyFloatingTooltipOpen = false;
 
 function getHelpButtonData(btn) {
   if (!btn || !btn.classList) return null;
@@ -1576,6 +1577,8 @@ function showGlobalTooltip(anchorEl, title, body, tag) {
     tooltipEl.style.left = `${Math.max(14, left)}px`;
   }
   tooltipEl.classList.add('visible');
+  hasAnyFloatingTooltipOpen = true;
+  if (typeof window !== 'undefined') window._hasAnyFloatingTooltipOpen = true;
 }
 
 function hideGlobalTooltip() {
@@ -1603,6 +1606,8 @@ function hideGlobalTooltip() {
       tooltipEl.style.display = 'none';
     }
   }
+  hasAnyFloatingTooltipOpen = false;
+  if (typeof window !== 'undefined') window._hasAnyFloatingTooltipOpen = false;
 }
 
 function toggleGlobalTooltip(anchorEl, title, body, tag) {
@@ -1625,7 +1630,7 @@ function toggleGlobalTooltip(anchorEl, title, body, tag) {
 }
 
 function isAnyFloatingTooltipVisible() {
-  if (currentGlobalTooltipAnchor) return true;
+  if (currentGlobalTooltipAnchor || hasAnyFloatingTooltipOpen || (typeof window !== 'undefined' && window._hasAnyFloatingTooltipOpen)) return true;
   if (typeof document === 'undefined') return false;
   const gTip = document.getElementById('global-skill-tooltip');
   if (gTip && (gTip.classList.contains('visible') || (gTip.style.display !== 'none' && gTip.style.display !== ''))) return true;
@@ -1641,6 +1646,8 @@ function isAnyFloatingTooltipVisible() {
 }
 
 function dismissAllFloatingTooltips() {
+  hasAnyFloatingTooltipOpen = false;
+  if (typeof window !== 'undefined') window._hasAnyFloatingTooltipOpen = false;
   hideGlobalTooltip();
   if (typeof closePokedexEnergyHelp === 'function') {
     closePokedexEnergyHelp();
@@ -2102,10 +2109,10 @@ function toggleSidebar(forceState) {
       bookmarkHandle.classList.remove('drawer-open');
       bookmarkHandle.setAttribute('aria-expanded', 'false');
       bookmarkHandle.title = '展開篩選側邊欄';
-      bookmarkHandle.style.opacity = '1';
-      bookmarkHandle.style.pointerEvents = 'auto';
-      bookmarkHandle.style.display = 'flex';
-      bookmarkHandle.style.visibility = 'visible';
+      bookmarkHandle.style.removeProperty('display');
+      bookmarkHandle.style.removeProperty('opacity');
+      bookmarkHandle.style.removeProperty('visibility');
+      bookmarkHandle.style.removeProperty('pointer-events');
     }
     if (typeof setSidebarSavedState === 'function') {
       setSidebarSavedState('pksleep_dex_sidebar_open', false);
@@ -2120,10 +2127,10 @@ function toggleSidebar(forceState) {
       bookmarkHandle.classList.add('drawer-open');
       bookmarkHandle.setAttribute('aria-expanded', 'true');
       bookmarkHandle.title = '收合篩選側邊欄';
-      bookmarkHandle.style.opacity = '0';
-      bookmarkHandle.style.pointerEvents = 'none';
-      bookmarkHandle.style.display = 'none';
-      bookmarkHandle.style.visibility = 'hidden';
+      bookmarkHandle.style.removeProperty('display');
+      bookmarkHandle.style.removeProperty('opacity');
+      bookmarkHandle.style.removeProperty('visibility');
+      bookmarkHandle.style.removeProperty('pointer-events');
     }
     if (typeof setSidebarSavedState === 'function') {
       setSidebarSavedState('pksleep_dex_sidebar_open', true);
@@ -3943,10 +3950,10 @@ if (typeof document !== 'undefined') {
         dismissAllFloatingTooltips();
       });
 
-      // 5. 頁面或任何容器滾動時即時關閉所有浮窗 (若當前無開啟中的浮窗則快速跳過，避免滾動開銷)
+      // 5. 頁面或任何容器滾動時即時關閉所有浮窗 (若當前無開啟中的浮窗則極速跳過，避免滾動開銷與 Forced Reflow)
       const onScrollDismiss = () => {
         if (!currentGlobalTooltipAnchor) {
-          if (!isAnyFloatingTooltipVisible()) return;
+          if (!hasAnyFloatingTooltipOpen && !(typeof window !== 'undefined' && window._hasAnyFloatingTooltipOpen) && !isAnyFloatingTooltipVisible()) return;
         }
         dismissAllFloatingTooltips();
       };
@@ -3958,7 +3965,7 @@ if (typeof document !== 'undefined') {
       // 6. 手指滑動位移時關閉所有浮窗 (H5 App 移動超過 3px 即判定為滑動瀏覽，立即關閉浮窗)
       const onTouchMove = (e) => {
         if (!currentGlobalTooltipAnchor) {
-          if (!isAnyFloatingTooltipVisible()) return;
+          if (!hasAnyFloatingTooltipOpen && !(typeof window !== 'undefined' && window._hasAnyFloatingTooltipOpen) && !isAnyFloatingTooltipVisible()) return;
         }
         if (e.touches && e.touches[0]) {
           const dx = Math.abs(e.touches[0].clientX - touchStartX);
@@ -4056,8 +4063,22 @@ if (typeof document !== 'undefined') {
         }
       });
 
-      window.addEventListener('scroll', updateBackToTopVisibility, { passive: true });
-      window.addEventListener('resize', updateBackToTopVisibility, { passive: true });
+      let backToTopRafId = null;
+      function requestUpdateBackToTopVisibility() {
+        if (backToTopRafId) return;
+        backToTopRafId = (typeof requestAnimationFrame === 'function')
+          ? requestAnimationFrame(() => {
+              backToTopRafId = null;
+              updateBackToTopVisibility();
+            })
+          : setTimeout(() => {
+              backToTopRafId = null;
+              updateBackToTopVisibility();
+            }, 16);
+      }
+
+      window.addEventListener('scroll', requestUpdateBackToTopVisibility, { passive: true });
+      window.addEventListener('resize', requestUpdateBackToTopVisibility, { passive: true });
 
       window.updateBackToTopVisibility = updateBackToTopVisibility;
       PokemonApp.updateBackToTopVisibility = updateBackToTopVisibility;

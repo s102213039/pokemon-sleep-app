@@ -11592,6 +11592,50 @@ SP 4,316
       'appraisal.js must render embedded summary label without colon');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Full UI Polish: Mobile Pokedex Non-Truncation, Smooth Drawer & FAB Transitions, and Stutter Elimination', () => {
+    const stylesCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+    const appCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/app.js'), 'utf8');
+    const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
+
+    // 1. Pokedex content-area flex calculation & table GPU texture safety
+    assert(stylesCode.includes('.mobile-h5-app.pokemon-active .pokemon-main-content #content-area') &&
+           stylesCode.includes('flex: 1 1 0% !important;') &&
+           stylesCode.includes('height: auto !important;'),
+           'styles.css must configure #content-area with flex: 1 1 0% and height: auto to prevent bottom clipping');
+    assert(stylesCode.includes('.mobile-h5-app .table-container') &&
+           stylesCode.includes('transform: none !important;') &&
+           stylesCode.includes('will-change: auto !important;'),
+           'styles.css must avoid translateZ(0) on table-container to prevent GPU texture limits from truncating long tables');
+
+    // 2. Smooth Drawer Backdrop & Floating Action Button (FAB) Animations
+    assert(stylesCode.includes('.mobile-h5-app .sidebar-backdrop') &&
+           stylesCode.includes('transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s ease !important;'),
+           'styles.css must define smooth fade transition for mobile sidebar backdrop');
+    assert(stylesCode.includes('.mobile-h5-app .sidebar-fab-btn.drawer-open') &&
+           stylesCode.includes('transform: scale(0.65) !important;') &&
+           stylesCode.includes('opacity: 0 !important;'),
+           'styles.css must smoothly scale and fade FAB without abrupt display: none snapping');
+
+    // 3. News accordion expansion micro-animation
+    assert(stylesCode.includes('@keyframes newsAccordionFadeIn') &&
+           stylesCode.includes('animation: newsAccordionFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;'),
+           'styles.css must provide newsAccordionFadeIn animation for expanded news accordion cards');
+
+    // 4. Box subpanel list clearance
+    assert(stylesCode.includes('.mobile-h5-app #box-subpanel-list {\n  padding-bottom: 84px !important;\n}'),
+           'styles.css must ensure 84px bottom padding for #box-subpanel-list to avoid FAB overlap');
+
+    // 5. Delete confirmation dialog animation wiring
+    assert(boxCode.includes('prepareOverlayOpen(modal)') && boxCode.includes('animateOverlayClose(modal, cleanup)'),
+           'box.js must integrate prepareOverlayOpen and animateOverlayClose for delete confirmation modal');
+
+    // 6. Scroll performance and requestAnimationFrame throttle
+    assert(appCode.includes('requestUpdateBackToTopVisibility') && appCode.includes('requestAnimationFrame'),
+           'app.js must throttle back-to-top scroll checks via requestAnimationFrame');
+    assert(appCode.includes('hasAnyFloatingTooltipOpen'),
+           'app.js must maintain hasAnyFloatingTooltipOpen guard flag to prevent forced reflow on scroll');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

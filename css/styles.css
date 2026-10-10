@@ -17584,10 +17584,8 @@ body.mobile-h5-app *::-webkit-scrollbar {
   background: transparent !important;
 }
 
-/* H5 App 全域高效流暢觸控滾動優化 (High-Performance Smooth Touch Scrolling & GPU Compositing) */
+/* H5 App 全域高效流暢觸控滾動優化 (High-Performance Smooth Touch Scrolling & Safe Compositing) */
 .mobile-h5-app .pokemon-grid,
-.mobile-h5-app .table-container,
-.mobile-h5-app .pokemon-table-container,
 .mobile-h5-app .sidebar-scrollable-content,
 .mobile-h5-app .pokedex-modal-body,
 .mobile-h5-app .box-modal-body,
@@ -17597,13 +17595,22 @@ body.mobile-h5-app *::-webkit-scrollbar {
 .mobile-h5-app .appraisal-modal-sheet,
 .mobile-h5-app .subskill-sheet-body,
 .mobile-h5-app .box-guide-lightbox-body,
-.mobile-h5-app .island-spawns-table-wrapper,
 .mobile-h5-app .ingredient-ladder-container,
 .mobile-h5-app .content-error-stack {
   -webkit-overflow-scrolling: touch !important;
   touch-action: pan-y !important;
   transform: translateZ(0) !important;
   will-change: scroll-position;
+}
+
+/* 長表格容器嚴禁 translateZ(0) 與 will-change，避免全圖鑑 11000px 超過部分手機 GPU 最大紋理上限 (4096px) 導致下半部裁切或白屏 */
+.mobile-h5-app .table-container,
+.mobile-h5-app .pokemon-table-container,
+.mobile-h5-app .island-spawns-table-wrapper {
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-x pan-y !important;
+  transform: none !important;
+  will-change: auto !important;
 }
 
 /* 主視圖面板嚴格禁止任何 transform/perspective/filter/contain，防止破壞 position: fixed 包含塊與懸浮按鈕 */
@@ -17618,13 +17625,6 @@ body.mobile-h5-app *::-webkit-scrollbar {
   perspective: none !important;
   filter: none !important;
   contain: none !important;
-}
-
-/* 針對需要雙向滾動的表格容器提供雙向觸控手勢宣告 */
-.mobile-h5-app .table-container,
-.mobile-h5-app .pokemon-table-container,
-.mobile-h5-app .island-spawns-table-wrapper {
-  touch-action: pan-x pan-y !important;
 }
 
 /* 頂部 App Header (完全填滿、零左右邊距) */
@@ -17737,7 +17737,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 /* ───  H5 App 圖鑑 Tab 專屬：精準適配螢幕視窗（非無限延伸），表頭吸頂置頂，底部直接在螢幕內呈現 ─── */
 body.mobile-h5-app.pokemon-active,
-.mobile-h5-app.pokemon-active body {
+html.mobile-h5-app body.pokemon-active {
   overflow: hidden !important;
   height: 100dvh !important;
   max-height: 100dvh !important;
@@ -17773,9 +17773,10 @@ body.mobile-h5-app.pokemon-active,
 
 .mobile-h5-app.pokemon-active .pokemon-main-content #content-area,
 .mobile-h5-app.pokemon-active .pokemon-main-content .content-area {
-  flex: 1 1 auto !important;
+  flex: 1 1 0% !important;
   min-height: 0 !important;
-  height: 100% !important;
+  height: auto !important;
+  max-height: 100% !important;
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
@@ -17785,18 +17786,18 @@ body.mobile-h5-app.pokemon-active,
 }
 
 .mobile-h5-app.pokemon-active .pokemon-grid {
-  flex: 1 1 auto !important;
+  flex: 1 1 0% !important;
   min-height: 0 !important;
   max-height: 100% !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
-  padding: 0 12px 16px !important;
+  padding: 0 12px 40px !important;
   box-sizing: border-box !important;
 }
 
 .mobile-h5-app.pokemon-active .table-container,
 .mobile-h5-app.pokemon-active .pokemon-table-container {
-  flex: 1 1 auto !important;
+  flex: 1 1 0% !important;
   height: 100% !important;
   min-height: 0 !important;
   max-height: 100% !important;
@@ -17883,13 +17884,20 @@ body.mobile-h5-app.pokemon-active,
 }
 
 .mobile-h5-app #panel-recipes,
-.mobile-h5-app #panel-box,
+.mobile-h5-app #panel-box {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+  padding-bottom: 84px !important;
+}
+
 .mobile-h5-app #panel-news {
   overflow-y: auto !important;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch !important;
   overscroll-behavior-y: contain !important;
-  padding-bottom: 28px !important;
+  padding-bottom: 40px !important;
 }
 
 .mobile-h5-app .recipe-main-content {
@@ -18112,20 +18120,20 @@ html[lang="en"] .mobile-h5-app .pokemon-table .th-ing {
   user-select: none !important;
   -webkit-user-select: none !important;
   -webkit-tap-highlight-color: transparent !important;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease, visibility 0.24s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
-/*  Mobile H5 側邊欄抽屜展開時，FAB 按鈕必須強制徹底隱藏（防遮擋、防誤觸） */
+/* Mobile H5 側邊欄抽屜展開時，FAB 按鈕平滑縮放淡出（防遮擋、防誤觸） */
 .mobile-h5-app .sidebar-fab-btn.drawer-open,
 .mobile-h5-app .sidebar-bookmark-handle.drawer-open,
 .mobile-h5-app #panel-pokemon:has(#pokemon-filter-sidebar:not(.collapsed)) #sidebar-bookmark-handle,
 .mobile-h5-app #panel-recipes:has(#recipe-filter-sidebar:not(.collapsed)) #recipe-sidebar-bookmark-handle,
 .mobile-h5-app #panel-box:has(#box-filter-sidebar:not(.collapsed)) #box-sidebar-bookmark-handle,
 .mobile-h5-app #panel-wiki:has(#ladder-filter-sidebar:not(.collapsed)) #ladder-sidebar-bookmark-handle {
-  display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
+  transform: scale(0.65) !important;
 }
 
 /* Mobile H5 側邊欄抽屜收合且面板為活躍狀態時，FAB 按鈕明確展示 (排除深度評測室) */
@@ -18347,6 +18355,7 @@ body.box-lab-active .box-fab-container,
 }
 
 .mobile-h5-app .sidebar-backdrop {
+  display: block !important;
   position: fixed !important;
   top: 0 !important;
   bottom: 0 !important;
@@ -18358,11 +18367,16 @@ body.box-lab-active .box-fab-container,
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
   z-index: 10040 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s ease !important;
 }
 
 .mobile-h5-app .sidebar-backdrop.active {
   display: block !important;
   opacity: 1 !important;
+  visibility: visible !important;
   pointer-events: auto !important;
 }
 
@@ -22679,8 +22693,20 @@ html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-sc
   background: transparent !important;
 }
 
+@keyframes newsAccordionFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .mobile-h5-app .news-accordion-card.expanded .news-accordion-body {
   display: flex !important;
+  animation: newsAccordionFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .mobile-h5-app .news-ai-dashboard,
@@ -23588,6 +23614,10 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   background-position: right 18px center !important;
   background-size: 8px 5px !important;
   cursor: pointer !important;
+}
+
+.mobile-h5-app #box-subpanel-list {
+  padding-bottom: 84px !important;
 }
 
 .mobile-h5-app .box-cards-grid,

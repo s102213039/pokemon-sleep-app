@@ -287,10 +287,10 @@
         bookmarkHandle.classList.remove('drawer-open');
         bookmarkHandle.setAttribute('aria-expanded', 'false');
         bookmarkHandle.title = '展開篩選側邊欄';
-        bookmarkHandle.style.opacity = '1';
-        bookmarkHandle.style.pointerEvents = 'auto';
-        bookmarkHandle.style.display = 'flex';
-        bookmarkHandle.style.visibility = 'visible';
+        bookmarkHandle.style.removeProperty('display');
+        bookmarkHandle.style.removeProperty('opacity');
+        bookmarkHandle.style.removeProperty('visibility');
+        bookmarkHandle.style.removeProperty('pointer-events');
       }
       if (typeof window !== 'undefined' && typeof window.setSidebarSavedState === 'function') {
         window.setSidebarSavedState('pksleep_box_sidebar_open', false);
@@ -309,10 +309,10 @@
         bookmarkHandle.classList.add('drawer-open');
         bookmarkHandle.setAttribute('aria-expanded', 'true');
         bookmarkHandle.title = '收合篩選側邊欄';
-        bookmarkHandle.style.opacity = '0';
-        bookmarkHandle.style.pointerEvents = 'none';
-        bookmarkHandle.style.display = 'none';
-        bookmarkHandle.style.visibility = 'hidden';
+        bookmarkHandle.style.removeProperty('display');
+        bookmarkHandle.style.removeProperty('opacity');
+        bookmarkHandle.style.removeProperty('visibility');
+        bookmarkHandle.style.removeProperty('pointer-events');
       }
       if (typeof window !== 'undefined' && typeof window.setSidebarSavedState === 'function') {
         window.setSidebarSavedState('pksleep_box_sidebar_open', true);
@@ -1527,12 +1527,25 @@
       </div>
     `;
 
+    if (typeof window !== 'undefined' && typeof window.prepareOverlayOpen === 'function') {
+      window.prepareOverlayOpen(modal);
+    }
     modal.style.display = 'flex';
     document.body.classList.add('modal-open');
 
     function closeModal() {
-      modal.style.display = 'none';
-      document.body.classList.remove('modal-open');
+      const cleanup = () => {
+        document.body.classList.remove('modal-open');
+        if (typeof window !== 'undefined' && typeof window.syncOverlayOpenState === 'function') {
+          window.syncOverlayOpenState();
+        }
+      };
+      if (typeof window !== 'undefined' && typeof window.animateOverlayClose === 'function') {
+        window.animateOverlayClose(modal, cleanup);
+      } else {
+        modal.style.display = 'none';
+        cleanup();
+      }
     }
 
     const cancelBtn = modal.querySelector('#box-delete-cancel-btn');
