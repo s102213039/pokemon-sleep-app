@@ -11634,6 +11634,14 @@ SP 4,316
            'app.js must throttle back-to-top scroll checks via requestAnimationFrame');
     assert(appCode.includes('hasAnyFloatingTooltipOpen'),
            'app.js must maintain hasAnyFloatingTooltipOpen guard flag to prevent forced reflow on scroll');
+
+    // 7. Pokedex last row bottom clearance spacer and safe-area buffer (guarantee Cetitan visibility)
+    assert(stylesCode.includes('.table-bottom-spacer') &&
+           stylesCode.includes('.mobile-h5-app .table-bottom-spacer') &&
+           stylesCode.includes('height: calc(96px + env(safe-area-inset-bottom, 0px)) !important;'),
+           'styles.css must provide table-bottom-spacer with safe-area bottom clearance');
+    assert(appCode.includes('<div class="table-bottom-spacer" aria-hidden="true"></div>'),
+           'app.js must inject table-bottom-spacer to guarantee last row visibility (Cetitan)');
   });
 
 console.log('                   Test Results Summary');

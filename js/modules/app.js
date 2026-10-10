@@ -3709,6 +3709,7 @@ if (typeof document !== 'undefined') {
               </div>
             </div>
           `}).join('')}
+          <div class="table-bottom-spacer" aria-hidden="true"></div>
         </div>
       `;
     }
@@ -3779,6 +3780,7 @@ if (typeof document !== 'undefined') {
               `}).join('')}
             </tbody>
           </table>
+          <div class="table-bottom-spacer" aria-hidden="true"></div>
         </div>
       `;
     }

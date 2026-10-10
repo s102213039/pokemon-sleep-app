@@ -17737,7 +17737,8 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 /* ───  H5 App 圖鑑 Tab 專屬：精準適配螢幕視窗（非無限延伸），表頭吸頂置頂，底部直接在螢幕內呈現 ─── */
 body.mobile-h5-app.pokemon-active,
-html.mobile-h5-app body.pokemon-active {
+html.mobile-h5-html body.pokemon-active,
+body.mobile-h5-app.pokemon-active {
   overflow: hidden !important;
   height: 100dvh !important;
   max-height: 100dvh !important;
@@ -17746,6 +17747,7 @@ html.mobile-h5-app body.pokemon-active {
 .mobile-h5-app.pokemon-active #panel-pokemon {
   height: 100% !important;
   max-height: 100% !important;
+  min-height: 0 !important;
   overflow: hidden !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -17758,6 +17760,7 @@ html.mobile-h5-app body.pokemon-active {
   flex-direction: column !important;
   height: 100% !important;
   max-height: 100% !important;
+  min-height: 0 !important;
   overflow: hidden !important;
 }
 
@@ -17791,7 +17794,7 @@ html.mobile-h5-app body.pokemon-active {
   max-height: 100% !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
-  padding: 0 12px 40px !important;
+  padding: 0 12px calc(96px + env(safe-area-inset-bottom, 0px)) !important;
   box-sizing: border-box !important;
 }
 
@@ -17805,7 +17808,7 @@ html.mobile-h5-app body.pokemon-active {
   max-width: 100% !important;
   margin: 0 !important;
   margin-bottom: 0 !important;
-  padding: 0 !important;
+  padding: 0 0 calc(96px + env(safe-area-inset-bottom, 0px)) 0 !important;
   border-radius: 0 !important;
   border-left: none !important;
   border-right: none !important;
@@ -17818,6 +17821,34 @@ html.mobile-h5-app body.pokemon-active {
   -webkit-overflow-scrolling: touch;
   position: relative;
   box-sizing: border-box !important;
+}
+
+/* 圖鑑表格與網格底部安全防禦墊片：確保最末列寶可夢（如浩大鯨、巨鍛匠）能完全滑出至視野內，絕不被底部導航 Dock 遮蔽 */
+.table-bottom-spacer {
+  height: 0;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .table-bottom-spacer {
+    display: block !important;
+    height: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+    min-height: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+    width: 100% !important;
+    grid-column: 1 / -1 !important;
+    pointer-events: none !important;
+    background: transparent !important;
+  }
+}
+
+.mobile-h5-app .table-bottom-spacer {
+  display: block !important;
+  height: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+  min-height: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+  width: 100% !important;
+  grid-column: 1 / -1 !important;
+  pointer-events: none !important;
+  background: transparent !important;
 }
 
 .mobile-h5-app #panel-pokemon .pokemon-table {
