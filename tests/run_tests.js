@@ -11653,6 +11653,37 @@ SP 4,316
            'styles.css must configure Box Tab table with independent vertical scroll and sticky header');
   });
 
+  // ----------------------------------------------------
+  // Test 210: Mobile H5 Island Spawns Smooth Scrolling, Ladder Tooltip Restoration, Zero [★] Policy & Integrated Strategy Card Title
+  // ----------------------------------------------------
+  test('Tier 4 - Real-World Application Scenarios', 'Mobile H5 Island Spawns Smooth Scrolling, Ladder Tooltip Restoration, Zero [★] Policy & Integrated Strategy Card Title', () => {
+    const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+    const appCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+    const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const stylesCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+
+    // 1. Verify island spawns coordinator enables native smooth inertial scrolling
+    assert(wikiCode.includes('function onIslandSpawnsCardTouchMove'), 'wiki.js must implement onIslandSpawnsCardTouchMove');
+    assert(wikiCode.includes('els.wrap.scrollTop <= 0 && dy < 0'), 'wiki.js must only intercept downward drag at top boundary to unpin');
+    assert(!wikiCode.includes('scroller.scrollTop -= overshoot'), 'wiki.js must NOT forcefully jitter scroller.scrollTop with overshoot');
+
+    // 2. Verify ladder-node floating tooltip toggle on mobile touch & click
+    assert(appCode.includes('.ladder-node') && appCode.includes('isTriggerBtn'), 'app.js must include .ladder-node in isTriggerBtn to prevent premature dismissal');
+    assert(appCode.includes("e.target.closest('.ladder-node')"), 'app.js must intercept tap/click on .ladder-node');
+    assert(appCode.includes("ladderNode.classList.contains('tooltip-active')"), 'app.js must toggle tooltip-active on .ladder-node');
+    assert(stylesCode.includes('.ladder-node.tooltip-active'), 'styles.css must style .ladder-node.tooltip-active');
+    assert(stylesCode.includes('z-index: 100000 !important;'), 'styles.css must elevate .ladder-node.tooltip-active z-index');
+
+    // 3. Verify zero [★] across application runtime scripts
+    assert(!appCode.includes('[★]'), 'app.js must contain zero occurrences of [★]');
+    assert(!appraisalCode.includes('[★]'), 'appraisal.js must contain zero occurrences of [★]');
+
+    // 4. Verify strategy card title embedded into top-left of outer border
+    assert(stylesCode.includes('.strategy-card-title'), 'styles.css must define .strategy-card-title');
+    assert(stylesCode.includes('top: -8.5px !important;'), 'styles.css must position strategy-card-title straddling outer top border');
+    assert(stylesCode.includes('.pokedex-strategy-card') && stylesCode.includes('position: relative !important;'), 'styles.css must set position: relative on .pokedex-strategy-card');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

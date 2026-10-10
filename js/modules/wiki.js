@@ -15724,10 +15724,6 @@
       els.wrap.scrollTop = 0;
       return;
     }
-    const overshoot = pinTop - hostTop;
-    if (overshoot > 1) {
-      els.scroller.scrollTop -= overshoot;
-    }
     if (!els.host.style.height) {
       els.host.style.height = pinH + 'px';
     }
@@ -15746,17 +15742,10 @@
       applyIslandSpawnsCoordinator();
       return;
     }
-    if (dy > 0) {
-      const max = els.wrap.scrollHeight - els.wrap.clientHeight;
-      els.wrap.scrollTop = Math.min(max, els.wrap.scrollTop + dy);
-      return;
+    if (els.wrap.scrollTop <= 0 && dy < 0) {
+      els.scroller.scrollTop += dy;
+      applyIslandSpawnsCoordinator();
     }
-    if (els.wrap.scrollTop > 0) {
-      els.wrap.scrollTop = Math.max(0, els.wrap.scrollTop + dy);
-      return;
-    }
-    els.scroller.scrollTop += dy;
-    applyIslandSpawnsCoordinator();
   }
 
   function onIslandSpawnsCardTouchStart(e) {
@@ -15771,15 +15760,19 @@
     const dy = islandSpawnsTouchY - y;
     islandSpawnsTouchY = y;
     if (!dy) return;
-    e.preventDefault();
-    consumeIslandSpawnsNestedDy(dy);
+    if (els.wrap && els.wrap.scrollTop <= 0 && dy < 0) {
+      if (e.cancelable) e.preventDefault();
+      consumeIslandSpawnsNestedDy(dy);
+    }
   }
 
   function onIslandSpawnsCardWheel(e) {
     const els = getIslandSpawnsCoordinatorEls();
     if (!els.card || !els.card.classList.contains('is-spawns-pinned')) return;
-    e.preventDefault();
-    consumeIslandSpawnsNestedDy(e.deltaY);
+    if (e.deltaY < 0 && els.wrap && els.wrap.scrollTop <= 0) {
+      if (e.cancelable) e.preventDefault();
+      consumeIslandSpawnsNestedDy(e.deltaY);
+    }
   }
 
   function bindIslandSpawnsCoordinator() {

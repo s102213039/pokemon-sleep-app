@@ -3820,7 +3820,7 @@ if (typeof document !== 'undefined') {
             '.global-skill-tooltip, .pokedex-energy-help-bubble, .ladder-energy-help-bubble, .ladder-skill-tooltip-bubble, .island-sleep-hover-tooltip, .ladder-node-tooltip'
           );
           const isTriggerBtn = target && target.closest && target.closest(
-            '.pot-expansion-help-btn, .pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .special-skill-badge'
+            '.pot-expansion-help-btn, .pokedex-formula-help-btn, .ladder-formula-help-btn, .ladder-help-icon-btn, .special-skill-badge, .ladder-node'
           );
           // 若點選的是其他任何非浮窗且非觸發按鈕的區域，立即關閉浮窗
           if (!isInsideTooltip && !isTriggerBtn) {
@@ -3846,6 +3846,23 @@ if (typeof document !== 'undefined') {
 
           // 輕觸手勢判定 (位移極小且釋放迅速，代表點選觸發)
           if (dx < 10 && dy < 10 && dt < 450) {
+            const ladderNode = e.target.closest('.ladder-node');
+            if (ladderNode) {
+              if (e.target.closest('.ladder-node-tooltip')) {
+                return;
+              }
+              didHandleTouchTap = true;
+              if (e.cancelable) e.preventDefault();
+              const wasActive = ladderNode.classList.contains('tooltip-active');
+              dismissAllFloatingTooltips();
+              if (!wasActive) {
+                ladderNode.classList.add('tooltip-active');
+                hasAnyFloatingTooltipOpen = true;
+                if (typeof window !== 'undefined') window._hasAnyFloatingTooltipOpen = true;
+              }
+              return;
+            }
+
             const badge = e.target.closest('.special-skill-badge');
             if (badge) {
               didHandleTouchTap = true;
@@ -3915,6 +3932,22 @@ if (typeof document !== 'undefined') {
       document.addEventListener('click', (e) => {
         if (didHandleTouchTap) {
           didHandleTouchTap = false;
+          return;
+        }
+
+        const ladderNode = e.target.closest('.ladder-node');
+        if (ladderNode) {
+          if (e.target.closest('.ladder-node-tooltip')) {
+            return;
+          }
+          e.stopPropagation();
+          const wasActive = ladderNode.classList.contains('tooltip-active');
+          dismissAllFloatingTooltips();
+          if (!wasActive) {
+            ladderNode.classList.add('tooltip-active');
+            hasAnyFloatingTooltipOpen = true;
+            if (typeof window !== 'undefined') window._hasAnyFloatingTooltipOpen = true;
+          }
           return;
         }
 
@@ -5933,10 +5966,10 @@ function renderPokedexStrategyCardHTML(pkm) {
 
   return `
     <div class="pokedex-strategy-card">
-      <div class="strategy-card-title pokedex-formula-badge font-bold">[★] ${roleTitle}</div>
+      <div class="strategy-card-title pokedex-formula-badge font-bold">${roleTitle}</div>
       <div class="strategy-details-grid">
         <div class="strategy-item strategy-item-core">
-          <span class="strategy-k strategy-core-k">[★] ${isEN ? 'Core Skill' : '核心神技'}：</span>
+          <span class="strategy-k strategy-core-k">${isEN ? 'Core Skill' : '核心神技'}：</span>
           ${coreChipsHtml}
         </div>
         <div class="strategy-item">
@@ -6091,7 +6124,7 @@ function renderPokedexDetailModalContent() {
               <div class="pokedex-level-header-row">
                 <div class="pokedex-level-header-left">
                   <label class="box-form-label" for="pokedex-level-slider" style="margin-bottom:0;">${t('pokedex.level_slider', '等級設定')} (<span class="pokedex-val-badge font-bold" id="pokedex-level-val-badge">Lv. <span id="pokedex-level-val-text">${pokedexModalState.level}</span><span id="pokedex-level-unreleased-tag" class="pokedex-unreleased-pill ${pokedexModalState.level > 60 ? '' : 'hidden'}">${t('pokedex.unreleased', '尚未開放')}</span></span>)</label>
-                  <button type="button" class="pokedex-btn-preset preset-god" onclick="window.PokemonApp.applyPokedexGodPreset()" title="${t('pokedex.preset_god', '畢業神配置')}">[★] ${t('pokedex.preset_god', '畢業神配置')}</button>
+                  <button type="button" class="pokedex-btn-preset preset-god" onclick="window.PokemonApp.applyPokedexGodPreset()" title="${t('pokedex.preset_god', '畢業神配置')}">${t('pokedex.preset_god', '畢業神配置')}</button>
                 </div>
                 <div class="pokedex-level-header-right">
                   <button type="button" class="pokedex-header-reset-btn pokedex-btn-preset preset-reset" onclick="window.PokemonApp.applyPokedexResetPreset()" title="${t('pokedex.preset_reset', '重置預設')}">[↺] ${t('pokedex.preset_reset', '重置預設')}</button>

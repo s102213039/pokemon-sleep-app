@@ -846,15 +846,15 @@
     let gradeColor = '#10b981';
     if (compositeScore >= 98) {
       grade = 'SSS';
-      gradeTitle = isEN ? '[★] Apex God' : '[★] 神級天花板 (Apex God)';
+      gradeTitle = isEN ? 'Apex God' : '神級天花板 (Apex God)';
       gradeColor = '#f43f5e';
     } else if (compositeScore >= 95) {
       grade = 'SS';
-      gradeTitle = isEN ? '[★] Mythic Tier' : '[★] 極品畢業 (Mythic Tier)';
+      gradeTitle = isEN ? 'Mythic Tier' : '極品畢業 (Mythic Tier)';
       gradeColor = '#8b5cf6';
     } else if (compositeScore >= 90) {
       grade = 'S';
-      gradeTitle = isEN ? '[★] Top Tier' : '[★] 頂級戰力 (Top Tier)';
+      gradeTitle = isEN ? 'Top Tier' : '頂級戰力 (Top Tier)';
       gradeColor = '#f59e0b';
     } else if (compositeScore >= 80) {
       grade = 'A';
@@ -883,8 +883,8 @@
     if (hasBFSInTotal) {
       if (isBerryBurst) {
         pros.push(isEN
-          ? '[★] Perfectly synergizes with "Berry Burst"! "Berry Finding S" increases base helps by +1 berry while main skill unleashes massive team berry bursts, forming an elite island pusher (maximize yields via regular collection).'
-          : '[★] 完美契合「樹果遽增」機制！具備「樹果數量S」能在常態幫忙中額外產出樹果，同時透過主技能引爆全隊樹果能量，為島嶼衝分第一梯隊打手！（勤勞清包收益最大化）');
+          ? 'Perfectly synergizes with "Berry Burst"! "Berry Finding S" increases base helps by +1 berry while main skill unleashes massive team berry bursts, forming an elite island pusher (maximize yields via regular collection).'
+          : '完美契合「樹果遽增」機制！具備「樹果數量S」能在常態幫忙中額外產出樹果，同時透過主技能引爆全隊樹果能量，為島嶼衝分第一梯隊打手！（勤勞清包收益最大化）');
       } else if (isHelper) {
         cons.push(isEN
           ? '[!] Helper Boost base proc rate is extremely low (~2%); "Berry Finding S" causes rapid bag overflow and blocks main skill checks, crowding out trigger subskills.'
@@ -895,8 +895,8 @@
           : '[!] 活力療癒補師首重全隊活力維持，「樹果數量S」會大幅加速滿包並阻斷主技能判定（尤其睡眠過夜期間），需高頻清包。');
       } else if (isCharge || isSlaking) {
         pros.push(isEN
-          ? '[★] Equipped with "Berry Finding S" for high-strength hybrid berry output (ensure frequent collection to avoid bag overflow blocking skill procs).'
-          : '[★] 具備「樹果數量S」解鎖高額樹果副輸出，兼顧單兵直傷與產果（需留意及時清包避免阻斷主技能判定）。');
+          ? 'Equipped with "Berry Finding S" for high-strength hybrid berry output (ensure frequent collection to avoid bag overflow blocking skill procs).'
+          : '具備「樹果數量S」解鎖高額樹果副輸出，兼顧單兵直傷與產果（需留意及時清包避免阻斷主技能判定）。');
       } else if (isExtraTasty || isPotExpander || isDreamShard || pkmName.includes('咚咚鼠') || pkmName.includes('Dedenne') || pkmName.includes('磁怪') || pkmName.includes('Magne') || pkmName.includes('喵喵') || pkmName.includes('Meowth')) {
         cons.push(isEN
           ? '[!] Tactical skill specialist; "Berry Finding S" causes early bag overflow and blocks main skill checks.'
@@ -914,8 +914,8 @@
         }
       } else {
         pros.push(isEN
-          ? '[★] Equipped with active God-tier sub-skill "Berry Finding S", +1 berry per help.'
-          : '[★] 擁有已解鎖神技「樹果數量S」，樹果產能躍升 +1 個。');
+          ? 'Equipped with active God-tier sub-skill "Berry Finding S", +1 berry per help.'
+          : '擁有已解鎖神技「樹果數量S」，樹果產能躍升 +1 個。');
       }
     } else if (specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') {
       const hasHB = activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1;
@@ -935,8 +935,8 @@
       const hasTailLv30 = ingredients.length >= 2 && (ingredients[1] === '美味尾巴' || (ingredients[1] && ingredients[1].includes('尾巴')) || (ingredients[1] && ingredients[1].includes('Tail')));
       if (hasTailLv30) {
         pros.push(isEN
-          ? '[★] Lv.30 unlocks the most valuable ingredient "Slowpoke Tail", fulfilling primary strategic unlock mission!'
-          : '[★] Lv.30 解鎖遊戲最頂級食材「美味尾巴」，達成呆呆獸家族首要戰略解鎖使命！');
+          ? 'Lv.30 unlocks the most valuable ingredient "Slowpoke Tail", fulfilling primary strategic unlock mission!'
+          : 'Lv.30 解鎖遊戲最頂級食材「美味尾巴」，達成呆呆獸家族首要戰略解鎖使命！');
       } else {
         cons.push(isEN
           ? '[-] Lv.30 does NOT yield "Slowpoke Tail", failing its core strategic unlock role.'
@@ -980,8 +980,8 @@
 
     if (activeSubskills.indexOf('幫手獎勵') !== -1 || activeSubskills.indexOf('Helping Bonus') !== -1) {
       pros.push(isEN
-        ? '[★] Features active top-tier team aura "Helping Bonus", reducing team helping time by 5%.'
-        : '[★] 具備已解鎖全隊頂級光環「幫手獎勵」，全員幫忙時間縮短 5%（相當於全隊淨產能大幅提升）。');
+        ? 'Features active top-tier team aura "Helping Bonus", reducing team helping time by 5%.'
+        : '具備已解鎖全隊頂級光環「幫手獎勵」，全員幫忙時間縮短 5%（相當於全隊淨產能大幅提升）。');
     }
 
     if (activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1) {
@@ -992,15 +992,15 @@
 
     if (skillLevel >= 6 && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
       pros.push(isEN
-        ? `[★] High Main Skill Level (Lv.${skillLevel}), maximizing main skill trigger output.`
-        : `[★] 主技能等級達到 Lv.${skillLevel}，技能單次發動效益已達極限。`);
+        ? `High Main Skill Level (Lv.${skillLevel}), maximizing main skill trigger output.`
+        : `主技能等級達到 Lv.${skillLevel}，技能單次發動效益已達極限。`);
     }
 
     if (nature.buffType === 'speed') {
       if ((specialty === '樹果' || specialty.indexOf('樹果') !== -1 || specialty === 'Berries') && natureName === '固執') {
         pros.push(isEN
-          ? '[★] Nature "Adamant" is the #1 God nature for Berry specialists (Speed of Help ▲ +10%, Ingredient Finding ▼ converts help cycles directly into berry output).'
-          : '[★] 性格「固執」為樹果型第一神性格（幫忙速度▲ +10%，食材發現率▼ 進一步轉化樹果產量）。');
+          ? 'Nature "Adamant" is the #1 God nature for Berry specialists (Speed of Help ▲ +10%, Ingredient Finding ▼ converts help cycles directly into berry output).'
+          : '性格「固執」為樹果型第一神性格（幫忙速度▲ +10%，食材發現率▼ 進一步轉化樹果產量）。');
       } else {
         pros.push(isEN
           ? `Nature "${natDisplayName}" provides Speed of Help ▲ (+10%), boosting all production.`
@@ -1059,8 +1059,8 @@
         if (i0 && i1 && i2) {
           if (i0 === i1 && i1 === i2) {
             pros.push(isEN
-              ? '[★] Pure mono-ingredient (AAA) configuration, maximizing targeted ingredient yield for top recipes.'
-              : '[★] 具備極品純色 AAA 食材配置，特定食材產量高度集中，為頂級食材專精配置。');
+              ? 'Pure mono-ingredient (AAA) configuration, maximizing targeted ingredient yield for top recipes.'
+              : '具備極品純色 AAA 食材配置，特定食材產量高度集中，為頂級食材專精配置。');
           } else if (i0 !== i1 && i1 === i2) {
             pros.push(isEN
               ? 'Dual-ingredient (ABB) configuration, excellent mid-to-late game specialized output.'
@@ -1084,8 +1084,8 @@
     // 樹果遽增型特殊診斷 (未帶 BFS 時)
     if (isBerryBurst && !hasBFSInTotal) {
       pros.push(isEN
-        ? '[★] Berry Burst Specialist: Main skill detonates instant berry energy for Snorlax (and copies teammate berries); 1.4x boosted during Buncha Berries events.'
-        : '[★] 樹果遽增戰略型：主技能發動直接為卡比獸爆發樹果能量（並隨機獲取隊友樹果）；果實纍纍樹果週享有 1.4 倍加成！');
+        ? 'Berry Burst Specialist: Main skill detonates instant berry energy for Snorlax (and copies teammate berries); 1.4x boosted during Buncha Berries events.'
+        : '樹果遽增戰略型：主技能發動直接為卡比獸爆發樹果能量（並隨機獲取隊友樹果）；果實纍纍樹果週享有 1.4 倍加成！');
     }
 
     // 充能直傷型特殊診斷 (未帶 BFS 時)
@@ -1098,8 +1098,8 @@
     // 傳說神獸特殊診斷
     if (isLegendary) {
       pros.push(isEN
-        ? '[★] Legendary / Mythical Pokemon with signature mechanics, high base helping output and indispensable mono-type or domain tactical value.'
-        : '[★] 傳說/幻之寶可夢專屬機制：素質基礎高，在特定同屬性純色隊或領域戰術中具備無可替代的戰略地位。');
+        ? 'Legendary / Mythical Pokemon with signature mechanics, high base helping output and indispensable mono-type or domain tactical value.'
+        : '傳說/幻之寶可夢專屬機制：素質基礎高，在特定同屬性純色隊或領域戰術中具備無可替代的戰略地位。');
     }
 
     // 料理大成功 (咚咚鼠)
@@ -2591,7 +2591,7 @@
           <!-- 頂部標題列 (高度加寬，垂直置中，整合雙軌評級與極簡關閉鈕) -->
           <div class="appraisal-modal-header">
             <div class="appraisal-header-title-group">
-              <span class="appraisal-modal-badge">${isEN ? '[★] Diagnostic Report' : '[★] 深度能力診斷報告'}</span>
+              <span class="appraisal-modal-badge">${isEN ? 'Diagnostic Report' : '深度能力診斷報告'}</span>
               <h2 class="appraisal-pokemon-title">
                 ${nickname ? `<span class="appraisal-pokemon-nickname">${escapeHtml(nickname)}</span> <span class="appraisal-pokemon-base-name" style="font-size:0.85em;color:var(--text-secondary);font-weight:normal;">(${displayName})</span>` : displayName}
               </h2>
