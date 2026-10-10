@@ -63,7 +63,7 @@ def clean_html_text(html_content):
 
 def extract_news_links(max_pages=5):
     news_urls = []
-    print(f"[*] Fetching news list (up to {max_pages} pages)...")
+    print(f"Fetching news list (up to {max_pages} pages)...")
     for page in range(1, max_pages + 1):
         url = f"{NEWS_LIST_URL}{page}/" if page > 1 else f"{BASE_URL}/zh/news/"
         html = fetch_url(url)
@@ -73,7 +73,7 @@ def extract_news_links(max_pages=5):
         for link in links:
             if link not in news_urls and link != f"{BASE_URL}/zh/news/":
                 news_urls.append(link)
-    print(f"  [+] Found {len(news_urls)} unique news articles.")
+    print(f"  Found {len(news_urls)} unique news articles.")
     return news_urls
 
 def deep_ai_extract_sections(category, title, clean_text):
@@ -309,8 +309,8 @@ def deep_ai_extract_sections(category, title, clean_text):
                 flat_highlights.append(it)
 
     if not flat_highlights:
-        fallback_item = f"[*] {title}"
-        flat_highlights = [fallback_item, "[*] 詳情請參閱官方公告內容與說明"]
+        fallback_item = f"{title}"
+        flat_highlights = [fallback_item, "詳情請參閱官方公告內容與說明"]
         if not sections:
             sections.append({
                 "key": "general",
@@ -718,12 +718,12 @@ def main():
 
     articles.sort(key=lambda x: x.get('date', ''), reverse=True)
 
-    print(f"\n[+] Successfully parsed and generated deep summaries for {len(articles)} news items.")
+    print(f"\nSuccessfully parsed and generated deep summaries for {len(articles)} news items.")
 
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         json.dump(articles, f, ensure_ascii=False, indent=2)
 
-    print(f"[+] Written to {OUTPUT_FILE} ({os.path.getsize(OUTPUT_FILE)} bytes)")
+    print(f"Written to {OUTPUT_FILE} ({os.path.getsize(OUTPUT_FILE)} bytes)")
     print("=" * 60)
 
 if __name__ == '__main__':

@@ -5940,13 +5940,13 @@ function renderPokedexStrategyCardHTML(pkm) {
           ${coreChipsHtml}
         </div>
         <div class="strategy-item">
-          <span class="strategy-k">[+] ${isEN ? 'Recommended' : '推薦副技'}：</span>
+          <span class="strategy-k">${isEN ? 'Recommended' : '推薦副技'}：</span>
           <div class="strategy-chips-wrap">
             ${recommendedSubs.map(s => `<span class="strategy-chip subskill-${getSubskillTier(s)}">${escapeHtml(s)}</span>`).join('')}
           </div>
         </div>
         <div class="strategy-item">
-          <span class="strategy-k">[*] ${isEN ? 'Best Nature' : '契合性格'}：</span>
+          <span class="strategy-k">${isEN ? 'Best Nature' : '契合性格'}：</span>
           <span class="strategy-v text-accent">${recommendedNatures}</span>
         </div>
       </div>

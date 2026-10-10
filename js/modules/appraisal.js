@@ -858,7 +858,7 @@
       gradeColor = '#f59e0b';
     } else if (compositeScore >= 80) {
       grade = 'A';
-      gradeTitle = isEN ? '[+] Strong Pick' : '[+] 強力主力 (Strong Pick)';
+      gradeTitle = isEN ? 'Strong Pick' : '強力主力 (Strong Pick)';
       gradeColor = '#3b82f6';
     } else if (compositeScore >= 70) {
       grade = 'B';
@@ -905,8 +905,8 @@
         const hasCarryBuff = activeSubskills.some(s => s.includes('持有上限') || s.includes('Inventory Up'));
         if (hasCarryBuff) {
           pros.push(isEN
-            ? '[+] Features "Berry Finding S" backed by Inventory Up, providing bonus berry value without hurting ingredient capacity.'
-            : '[+] 具備「樹果數量S」並搭配「持有上限提升」，兼顧穩定副產能且不易過早滿包。');
+            ? 'Features "Berry Finding S" backed by Inventory Up, providing bonus berry value without hurting ingredient capacity.'
+            : '具備「樹果數量S」並搭配「持有上限提升」，兼顧穩定副產能且不易過早滿包。');
         } else {
           cons.push(isEN
             ? '[-] "Berry Finding S" on ingredient specialist without Inventory Up causes rapid overflow, blocking ingredient drops during sleep.'
@@ -922,8 +922,8 @@
       const hasSpeedM = activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1;
       if (hasHB && hasSpeedM && nature.buffType === 'speed') {
         pros.push(isEN
-          ? '[+] Features extreme speed kit (Helping Bonus + Helping Speed M + Speed Up Nature), qualifying as a viable core support.'
-          : '[+] 具備「幫手獎勵 + 幫忙速度M + 加幫速性格」之極限幫速配置，成功特例躋身主力行列！');
+          ? 'Features extreme speed kit (Helping Bonus + Helping Speed M + Speed Up Nature), qualifying as a viable core support.'
+          : '具備「幫手獎勵 + 幫忙速度M + 加幫速性格」之極限幫速配置，成功特例躋身主力行列！');
       } else {
         cons.push(isEN
           ? '[-] Berry specialist without active "Berry Finding S", production ceiling is capped below top tier.'
@@ -959,21 +959,21 @@
     const hasIngMInTotal = activeSubskills.indexOf('食材機率提升M') !== -1 || activeSubskills.indexOf('Ingredient Finder M') !== -1;
     if (hasIngMInTotal && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
       pros.push(isEN
-        ? '[+] Features active "Ingredient Finder M", greatly stabilizing ingredient supply.'
-        : '[+] 具備已解鎖「食材機率提升M」，大幅提升料理食材供貨穩定度。');
+        ? 'Features active "Ingredient Finder M", greatly stabilizing ingredient supply.'
+        : '具備已解鎖「食材機率提升M」，大幅提升料理食材供貨穩定度。');
     }
 
     const hasSkillMInTotal = activeSubskills.indexOf('技能機率提升M') !== -1 || activeSubskills.indexOf('Skill Trigger M') !== -1;
     if (hasSkillMInTotal) {
       if (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills') {
         pros.push(isEN
-          ? '[+] Features active "Skill Trigger M", significantly raising main skill activation frequency.'
-          : '[+] 擁有已解鎖「技能機率提升M」，主技能發動頻率顯著提高。');
+          ? 'Features active "Skill Trigger M", significantly raising main skill activation frequency.'
+          : '擁有已解鎖「技能機率提升M」，主技能發動頻率顯著提高。');
       } else if (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients') {
         if (pkmData.main_skill && (pkmData.main_skill.includes('食材') || pkmData.main_skill.includes('Ingredient'))) {
           pros.push(isEN
-            ? '[+] Unlocked "Skill Trigger M" synergizes with ingredient-fetching main skill for bonus food supplies.'
-            : '[+] 具備已解鎖「技能機率提升M」，輔助觸發食材獲取主技能，提供額外料理補給。');
+            ? 'Unlocked "Skill Trigger M" synergizes with ingredient-fetching main skill for bonus food supplies.'
+            : '具備已解鎖「技能機率提升M」，輔助觸發食材獲取主技能，提供額外料理補給。');
         }
       }
     }
@@ -986,8 +986,8 @@
 
     if (activeSubskills.indexOf('幫忙速度M') !== -1 || activeSubskills.indexOf('Helping Speed M') !== -1) {
       pros.push(isEN
-        ? '[+] Features active "Helping Speed M", shortening self helping interval by 14%.'
-        : '[+] 擁有已解鎖「幫忙速度M」，自身幫忙間隔縮短 14%。');
+        ? 'Features active "Helping Speed M", shortening self helping interval by 14%.'
+        : '擁有已解鎖「幫忙速度M」，自身幫忙間隔縮短 14%。');
     }
 
     if (skillLevel >= 6 && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
@@ -1003,8 +1003,8 @@
           : '[★] 性格「固執」為樹果型第一神性格（幫忙速度▲ +10%，食材發現率▼ 進一步轉化樹果產量）。');
       } else {
         pros.push(isEN
-          ? `[+] Nature "${natDisplayName}" provides Speed of Help ▲ (+10%), boosting all production.`
-          : '[+] 性格「' + natureName + '」帶來幫忙速度▲ (+10%)，強化所有產出判定。');
+          ? `Nature "${natDisplayName}" provides Speed of Help ▲ (+10%), boosting all production.`
+          : '性格「' + natureName + '」帶來幫忙速度▲ (+10%)，強化所有產出判定。');
       }
     } else if (nature.debuffType === 'speed') {
       cons.push(isEN
@@ -1014,8 +1014,8 @@
 
     if (nature.buffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
       pros.push(isEN
-        ? `[+] Nature "${natDisplayName}" perfectly synergizes with Ingredient specialty (Ingredient Finder ▲ +20%).`
-        : '[+] 性格「' + natureName + '」完美契合食材型專長 (食材發現率▲ +20%)。');
+        ? `Nature "${natDisplayName}" perfectly synergizes with Ingredient specialty (Ingredient Finder ▲ +20%).`
+        : '性格「' + natureName + '」完美契合食材型專長 (食材發現率▲ +20%)。');
     } else if (nature.debuffType === 'ingredient' && (specialty === '食材' || specialty.indexOf('食材') !== -1 || specialty === 'Ingredients')) {
       cons.push(isEN
         ? `[-] Nature "${natDisplayName}" reduces Ingredient Finding ▼ (-20%), severely weakening specialty advantage (disqualification flaw).`
@@ -1024,8 +1024,8 @@
 
     if (nature.buffType === 'skill' && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
       pros.push(isEN
-        ? `[+] Nature "${natDisplayName}" perfectly matches Skill specialty (Main Skill Trigger ▲ +20%).`
-        : '[+] 性格「' + natureName + '」完美契合技能型專長 (主技能發動率▲ +20%)。');
+        ? `Nature "${natDisplayName}" perfectly matches Skill specialty (Main Skill Trigger ▲ +20%).`
+        : '性格「' + natureName + '」完美契合技能型專長 (主技能發動率▲ +20%)。');
     } else if (nature.debuffType === 'skill' && (specialty === '技能' || specialty.indexOf('技能') !== -1 || specialty === 'Skills')) {
       cons.push(isEN
         ? `[-] Nature "${natDisplayName}" reduces Main Skill Trigger ▼ (-20%), severely crippling skill output.`
@@ -1034,8 +1034,8 @@
 
     if (isMint) {
       pros.push(isEN
-        ? `[*] Cleanse Mint used: original nature "${natDisplayName}" neutralized to standard baseline.`
-        : `[*] 已使用淨白薄荷：原性格「${natDisplayName}」個性效果已被中和消除。`);
+        ? `Cleanse Mint used: original nature "${natDisplayName}" neutralized to standard baseline.`
+        : `已使用淨白薄荷：原性格「${natDisplayName}」個性效果已被中和消除。`);
     }
 
     if (ribbonBonus.level > 0) {
@@ -1063,8 +1063,8 @@
               : '[★] 具備極品純色 AAA 食材配置，特定食材產量高度集中，為頂級食材專精配置。');
           } else if (i0 !== i1 && i1 === i2) {
             pros.push(isEN
-              ? '[+] Dual-ingredient (ABB) configuration, excellent mid-to-late game specialized output.'
-              : '[+] 具備強勢 ABB 雙色食材配置，二階與三階食材量產能力卓越。');
+              ? 'Dual-ingredient (ABB) configuration, excellent mid-to-late game specialized output.'
+              : '具備強勢 ABB 雙色食材配置，二階與三階食材量產能力卓越。');
           } else if (i0 !== i1 && i1 !== i2 && i0 !== i2) {
             cons.push(isEN
               ? '[-] Split-ingredient (ABC) configuration, recipe ingredient dilution caps overall potential.'
@@ -1077,8 +1077,8 @@
     // 持有上限防溢滿診斷
     if (activeSubskills.indexOf('持有上限提升L') !== -1 || activeSubskills.indexOf('持有上限提升M') !== -1) {
       pros.push(isEN
-        ? '[+] Active Inventory Up subskill prevents overnight inventory capping, sustaining ingredient and skill production.'
-        : '[+] 具備已解鎖「持有上限提升」，大幅延長離線/睡眠產出時間，避免背包溢滿阻斷食材與技能。');
+        ? 'Active Inventory Up subskill prevents overnight inventory capping, sustaining ingredient and skill production.'
+        : '具備已解鎖「持有上限提升」，大幅延長離線/睡眠產出時間，避免背包溢滿阻斷食材與技能。');
     }
 
     // 樹果遽增型特殊診斷 (未帶 BFS 時)
@@ -1091,8 +1091,8 @@
     // 充能直傷型特殊診斷 (未帶 BFS 時)
     if (isCharge && !hasBFSInTotal) {
       pros.push(isEN
-        ? '[+] High-Frequency Direct Charge: Pure skill build consistently fires Charge Strength throughout the day without inventory overflow risks.'
-        : '[+] 高頻單兵充能直傷：正統純技能流派，全天穩定發動能量填充，無背包過早滿包阻斷技能之顧慮。');
+        ? 'High-Frequency Direct Charge: Pure skill build consistently fires Charge Strength throughout the day without inventory overflow risks.'
+        : '高頻單兵充能直傷：正統純技能流派，全天穩定發動能量填充，無背包過早滿包阻斷技能之顧慮。');
     }
 
     // 傳說神獸特殊診斷
@@ -1105,42 +1105,42 @@
     // 料理大成功 (咚咚鼠)
     if (isExtraTasty) {
       pros.push(isEN
-        ? '[+] Extra Tasty Specialist: Stacks dish critical success chance, tailor-made for exploding weekend master recipes.'
-        : '[+] 料理大成功戰術手：疊加料理美味機率，專為週末大餐爆擊（數十萬能量突破）而生的高階戰略組件。');
+        ? 'Extra Tasty Specialist: Stacks dish critical success chance, tailor-made for exploding weekend master recipes.'
+        : '料理大成功戰術手：疊加料理美味機率，專為週末大餐爆擊（數十萬能量突破）而生的高階戰略組件。');
     }
 
     // 料理擴鍋 (自爆磁怪)
     if (isPotExpander) {
       pros.push(isEN
-        ? '[+] Cooking Power Up Specialist: Expands pot capacity to cook limit-breaking high-tier recipes.'
-        : '[+] 料理擴鍋戰術手：突破鍋子容量上限，烹調極限大菜（如煉獄咖哩/太妃糖豆漿）不可或缺的擴容手。');
+        ? 'Cooking Power Up Specialist: Expands pot capacity to cook limit-breaking high-tier recipes.'
+        : '料理擴鍋戰術手：突破鍋子容量上限，烹調極限大菜（如煉獄咖哩/太妃糖豆漿）不可或缺的擴容手。');
     }
 
     // 夢之碎片 (路卡利歐)
     if (isDreamShard) {
       pros.push(isEN
-        ? '[+] Dream Shard Farmer: High shard acquisition yield, essential for Candy Boost weeks and late-game leveling.'
-        : '[+] 夢之碎片收割手：高效獲取夢之碎片，為糖果強化週與後期高昂養成成本提供源源不絕的資金。');
+        ? 'Dream Shard Farmer: High shard acquisition yield, essential for Candy Boost weeks and late-game leveling.'
+        : '夢之碎片收割手：高效獲取夢之碎片，為糖果強化週與後期高昂養成成本提供源源不絕的資金。');
     }
 
     // 食材獲取 (水伊布)
     if (isIngSkill) {
       pros.push(isEN
-        ? '[+] Ingredient Stockpile Specialist: Rapidly restocks ingredient inventory to resolve cooking shortages.'
-        : '[+] 應急食材庫存手：能高頻補充隨機食材庫存，化解大菜料理缺料危機。');
+        ? 'Ingredient Stockpile Specialist: Rapidly restocks ingredient inventory to resolve cooking shortages.'
+        : '應急食材庫存手：能高頻補充隨機食材庫存，化解大菜料理缺料危機。');
     }
 
     // 揮指隨機戰術 (波克基斯)
     if (isMetronome) {
       pros.push(isEN
-        ? '[+] Metronome Specialist: Triggers unpredictable random skills with unmatched fun and high lucky ceilings.'
-        : '[+] 隨機揮指戰術手：能隨機發動全遊戲主技能，具備極高趣味性與驚喜爆發上限。');
+        ? 'Metronome Specialist: Triggers unpredictable random skills with unmatched fun and high lucky ceilings.'
+        : '隨機揮指戰術手：能隨機發動全遊戲主技能，具備極高趣味性與驚喜爆發上限。');
     }
 
     if (pros.length === 0) {
       pros.push(isEN
-        ? '[*] Basic stats, suitable as a temporary placeholder.'
-        : '[*] 數值平庸，適合作為過渡期日常隊伍替補成員。');
+        ? 'Basic stats, suitable as a temporary placeholder.'
+        : '數值平庸，適合作為過渡期日常隊伍替補成員。');
     }
 
     // 升級消耗計算
@@ -2565,7 +2565,7 @@
 
             <!-- 專長深度點評與優缺點 -->
             <div class="appraisal-analysis-card" style="margin-top:6px;">
-              <h4 class="appraisal-section-heading">${isEN ? '[*] Specialty, Nature & Sub-Skill Synergy Analysis' : '[*] 專長與性格副技能協同點評'}</h4>
+              <h4 class="appraisal-section-heading">${isEN ? 'Specialty, Nature & Sub-Skill Synergy Analysis' : '專長與性格副技能協同點評'}</h4>
               <div class="appraisal-pros-list">
                 ${evaluation.pros.map(function(p) { return `<div class="appraisal-pro-item">${p}</div>`; }).join('')}
               </div>
@@ -2758,7 +2758,7 @@
 
               <!-- 下方：專長深度點評與優缺點 (在智能簡評下方，同樣長度) -->
               <div class="appraisal-analysis-card">
-                <h4 class="appraisal-section-heading">${isEN ? '[*] Specialty & Synergy Analysis' : '[*] 專長與性格副技能協同點評'}</h4>
+                <h4 class="appraisal-section-heading">${isEN ? 'Specialty & Synergy Analysis' : '專長與性格副技能協同點評'}</h4>
                 <div class="appraisal-pros-list">
                   ${evaluation.pros.map(function(p) { return `<div class="appraisal-pro-item">${p}</div>`; }).join('')}
                 </div>
@@ -4145,10 +4145,7 @@
     modal.innerHTML = `
       <div class="lab-picker-container">
         <div class="lab-picker-header">
-          <div style="font-size:15px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:6px;">
-            <span>[+]</span>
-            <span>${title}</span>
-          </div>
+          <div style="font-size:15px;font-weight:700;color:var(--text-primary);">${title}</div>
           <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closePicker()" aria-label="Close">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -4311,7 +4308,7 @@
       if (!item) {
         return `
           <div class="lab-team-slot-card lab-team-slot-empty" onclick="window.AppraisalLab.openPicker({ type: 'team', slotIndex: ${idx} })" title="${isEN ? 'Click to select team member' : '點擊挑選隊員'}">
-            <div style="font-size:22px;font-weight:700;color:var(--text-muted);margin-bottom:4px;">[+]</div>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);margin-bottom:4px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             <div style="font-size:13px;font-weight:700;color:var(--text-primary);">${isEN ? `Slot ${idx + 1}` : `隊員 ${idx + 1}`}</div>
             <div style="font-size:11px;color:var(--text-secondary);margin-top:2px;">${isEN ? 'Empty Slot' : '空缺位 · 點擊挑選'}</div>
           </div>
@@ -4451,10 +4448,7 @@
 
         <div class="lab-team-metrics-grid">
           <div class="lab-metric-card">
-            <div style="font-size:12px;font-weight:700;color:var(--text-muted);display:flex;align-items:center;gap:4px;">
-              <span>[*]</span>
-              <span>${isEN ? 'Estimated Daily Total Energy' : '預估每日能量總產出'}</span>
-            </div>
+            <div style="font-size:12px;font-weight:700;color:var(--text-muted);">${isEN ? 'Estimated Daily Total Energy' : '預估每日能量總產出'}</div>
             <div class="lab-metric-value">${simulation.totalDailyBerryEnergy.toLocaleString()} <span style="font-size:13px;font-weight:600;color:var(--text-muted);">${isEN ? 'pts/day' : '能量/日'}</span></div>
             <div class="lab-metric-sub">
               ${isEN ? `Calculated based on ${island.name_en || island.name} 2x berry energy bonus, helping speed, and subskill multipliers.` : `依據【${island.name}】喜愛樹果 2 倍能量加成、幫手速度與副技能協同倍率精確計算。`}
@@ -4462,10 +4456,7 @@
           </div>
 
           <div class="lab-metric-card">
-            <div style="font-size:12px;font-weight:700;color:var(--text-muted);display:flex;align-items:center;gap:4px;">
-              <span>[#]</span>
-              <span>${isEN ? 'Daily Ingredients Harvest' : '預估每日食材總產量'}</span>
-            </div>
+            <div style="font-size:12px;font-weight:700;color:var(--text-muted);">${isEN ? 'Daily Ingredients Harvest' : '預估每日食材總產量'}</div>
             <div class="lab-metric-value" style="color:#22c55e;">${simulation.totalDailyIngredientsCount} <span style="font-size:13px;font-weight:600;color:var(--text-muted);">${isEN ? 'items/day' : '個/日'}</span></div>
             <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px;">
               ${topIngsHtml || `<span style="font-size:11px;color:var(--text-muted);">${isEN ? 'No ingredients yet' : '尚無食材產出'}</span>`}
@@ -4473,10 +4464,7 @@
           </div>
 
           <div class="lab-metric-card">
-            <div style="font-size:12px;font-weight:700;color:var(--text-muted);display:flex;align-items:center;gap:4px;">
-              <span>[+]</span>
-              <span>${isEN ? 'Skills & Team Auras' : '主技能與隊伍光環協同'}</span>
-            </div>
+            <div style="font-size:12px;font-weight:700;color:var(--text-muted);">${isEN ? 'Skills & Team Auras' : '主技能與隊伍光環協同'}</div>
             <div style="font-size:13px;color:var(--text-primary);display:flex;flex-direction:column;gap:4px;margin-top:2px;">
               <div>${isEN ? 'Main Skill Procs:' : '主技能總發動預估:'} <strong style="color:var(--accent-color,#38bdf8);">${simulation.totalDailySkillProcs} ${isEN ? 'times/day' : '次/日'}</strong></div>
               <div>${isEN ? 'Helping Bonus:' : '幫手獎勵光環:'} <strong style="color:#facc15;">${simulation.helpingBonusCount} ${isEN ? 'layers' : '層'} (+${simulation.helpingBonusCount * 5}% ${isEN ? 'Speed' : '全隊幫速'})</strong></div>
@@ -4785,7 +4773,7 @@
         ${slotCardHtml(2)}
       </div>
       <div class="lab-compare-pick-hint" style="margin-bottom:12px;font-size:12px;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
-        <span>[*] ${isEN ? `Selected ${N}/${COMPARE_MAX}. Tap a slot to pick Pokémon (max 3, no duplicates).` : `已選 ${N}/${COMPARE_MAX} 位選手，點選上方槽位自選寶可夢（最多3位，不可重複選擇同一隻）`}</span>
+        <span>${isEN ? `Selected ${N}/${COMPARE_MAX}. Tap a slot to pick Pokémon (max 3, no duplicates).` : `已選 ${N}/${COMPARE_MAX} 位選手，點選上方槽位自選寶可夢（最多3位，不可重複選擇同一隻）`}</span>
         ${N > 0 ? `<button type="button" class="box-btn box-btn-secondary" style="font-size:11px;padding:2px 8px;" onclick="[0,1,2].forEach(i=>window.AppraisalLab.clearCompareSlot(i));">${isEN ? 'Clear All' : '清空對比'}</button>` : ''}
       </div>
     `;
@@ -4798,7 +4786,6 @@
           <div class="lab-compare-kpi-card" id="lab-compare-energy">
             <div class="lab-compare-kpi-head">
               <div class="lab-compare-kpi-title">
-                <span>[*]</span>
                 <span>${isEN ? 'Daily Total Energy Output' : '每日預估總能量比較'}</span>
               </div>
             </div>
@@ -4810,7 +4797,6 @@
           <div class="lab-compare-kpi-card" id="lab-compare-ingredients">
             <div class="lab-compare-kpi-head">
               <div class="lab-compare-kpi-title">
-                <span>[*]</span>
                 <span>${isEN ? 'Daily Ingredient Yield Comparison' : '每日食材產量比較'}</span>
               </div>
             </div>
@@ -4822,7 +4808,6 @@
           <div class="lab-compare-kpi-card" id="lab-compare-skills">
             <div class="lab-compare-kpi-head">
               <div class="lab-compare-kpi-title">
-                <span>[#]</span>
                 <span>${isEN ? 'Skill Procs, Speed & Specs' : '技能發動與幫手效能對照'}</span>
               </div>
             </div>
@@ -4885,7 +4870,7 @@
     const energyHtml = `
       <div class="lab-compare-kpi-card" id="lab-compare-energy">
         <div class="lab-compare-kpi-head">
-          <div class="lab-compare-kpi-title"><span>[*]</span><span>${isEN ? 'Daily Total Energy Output' : '每日預估總能量比較'}</span></div>
+          <div class="lab-compare-kpi-title"><span>${isEN ? 'Daily Total Energy Output' : '每日預估總能量比較'}</span></div>
           ${leadBadge(energyVals, d => fmt(d))}
         </div>
         ${barRowsHtml(energyVals, energyVals.map(v => `${fmt(v)}`))}
@@ -4947,7 +4932,7 @@
     const ingredientsHtml = `
       <div class="lab-compare-kpi-card" id="lab-compare-ingredients">
         <div class="lab-compare-kpi-head">
-          <div class="lab-compare-kpi-title"><span>[*]</span><span>${isEN ? 'Daily Ingredient Yield Comparison' : '每日食材產量比較'}</span></div>
+          <div class="lab-compare-kpi-title"><span>${isEN ? 'Daily Ingredient Yield Comparison' : '每日食材產量比較'}</span></div>
           ${leadBadge(ingVals, d => `${Math.round(d * 10) / 10} ${unitIng}`)}
         </div>
         ${barRowsHtml(ingVals, ingVals.map(v => `${v} ${unitIng}`))}
@@ -4983,7 +4968,7 @@
     const specHtml = `
       <div class="lab-compare-kpi-card lab-compare-matchup-table" id="lab-compare-skills">
         <div class="lab-compare-kpi-head">
-          <div class="lab-compare-kpi-title"><span>[#]</span><span>${isEN ? 'Skill Procs, Speed & Specs' : '技能發動與幫手效能對照'}</span></div>
+          <div class="lab-compare-kpi-title"><span>${isEN ? 'Skill Procs, Speed & Specs' : '技能發動與幫手效能對照'}</span></div>
         </div>
         ${tableHtml(specRows)}
       </div>`;
@@ -5014,9 +4999,8 @@
         ${ingredientsHtml}
         ${specHtml}
         <div class="lab-compare-verdict-card" style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.25);border-radius:10px;padding:14px;">
-          <div style="font-size:12.5px;font-weight:800;color:var(--accent-color,#38bdf8);margin-bottom:6px;display:flex;align-items:center;gap:4px;">
-            <span>[*]</span>
-            <span>${isEN ? 'Research Lab Comparative Verdict & Advice' : '深度研究室對比結論與培育建議'}</span>
+          <div style="font-size:12.5px;font-weight:800;color:var(--accent-color,#38bdf8);margin-bottom:6px;">
+            ${isEN ? 'Research Lab Comparative Verdict & Advice' : '深度研究室對比結論與培育建議'}
           </div>
           <div style="font-size:12px;color:#e2e8f0;line-height:1.6;">${verdictSummary}</div>
         </div>
