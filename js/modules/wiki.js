@@ -11891,7 +11891,8 @@
       }
     } catch (e) {}
 
-    const allPills = document.querySelectorAll('[data-skill-cat]');
+    const skillsPanel = document.getElementById('wiki-subpanel-skills') || document.getElementById('panel-wiki') || document;
+    const allPills = (typeof skillsPanel.querySelectorAll === 'function') ? skillsPanel.querySelectorAll('[data-skill-cat]') : document.querySelectorAll('[data-skill-cat]');
     allPills.forEach(b => {
       if (b.getAttribute('data-skill-cat') === category) {
         b.classList.add('active');
@@ -11900,7 +11901,7 @@
       }
     });
 
-    const allCards = document.querySelectorAll('.wiki-skill-card');
+    const allCards = (typeof skillsPanel.querySelectorAll === 'function') ? skillsPanel.querySelectorAll('.wiki-skill-card') : document.querySelectorAll('.wiki-skill-card');
     allCards.forEach(card => {
       const cardCat = card.getAttribute('data-category');
       if (category === 'all' || cardCat === category) {
@@ -11915,7 +11916,9 @@
   function filterWikiIngredients(ingId) {
     if (!ingId) return;
 
-    const allPills = document.querySelectorAll('[data-ing-filter]');
+    const ladderPanel = document.getElementById('wiki-subpanel-ladder') || document.getElementById('panel-wiki') || document;
+    const ladderSidebar = document.getElementById('ladder-filter-sidebar') || ladderPanel;
+    const allPills = (typeof ladderSidebar.querySelectorAll === 'function') ? ladderSidebar.querySelectorAll('[data-ing-filter]') : document.querySelectorAll('[data-ing-filter]');
     allPills.forEach(b => {
       if (b.getAttribute('data-ing-filter') === ingId) {
         b.classList.add('active');
@@ -11924,7 +11927,7 @@
       }
     });
 
-    const allLadderCards = document.querySelectorAll('.ladder-card, .ladder-track-row');
+    const allLadderCards = (typeof ladderPanel.querySelectorAll === 'function') ? ladderPanel.querySelectorAll('.ladder-card, .ladder-track-row') : document.querySelectorAll('.ladder-card, .ladder-track-row');
     allLadderCards.forEach(card => {
       const cardIng = card.getAttribute('data-ladder-ing');
       if (ingId === 'all' || cardIng === ingId) {
@@ -12934,7 +12937,9 @@
       SKILL_M: isLadderSkillM,
       SKILL_S: isLadderSkillS
     };
-    document.querySelectorAll('[data-subskill-boost]').forEach(btn => {
+    const ladderSidebar = document.getElementById('ladder-filter-sidebar') || document;
+    const boostBtns = (typeof ladderSidebar.querySelectorAll === 'function') ? ladderSidebar.querySelectorAll('[data-subskill-boost]') : document.querySelectorAll('[data-subskill-boost]');
+    boostBtns.forEach(btn => {
       const key = btn.getAttribute('data-subskill-boost');
       btn.classList.toggle('active', !!flags[key]);
     });
@@ -12952,7 +12957,9 @@
 
   function syncLadderNatureButtons() {
     ladderNature = getLadderNature();
-    document.querySelectorAll('[data-nature-filter]').forEach(btn => {
+    const ladderSidebar = document.getElementById('ladder-filter-sidebar') || document;
+    const natureBtns = (typeof ladderSidebar.querySelectorAll === 'function') ? ladderSidebar.querySelectorAll('[data-nature-filter]') : document.querySelectorAll('[data-nature-filter]');
+    natureBtns.forEach(btn => {
       const key = btn.getAttribute('data-nature-filter');
       const on = (key === 'ING' && ladderNatureIng) || (key === 'SPEED' && ladderNatureSpeed) || (key === 'SKILL' && ladderNatureSkill);
       btn.classList.toggle('active', on);
@@ -13171,8 +13178,9 @@
 
   function applyLadderFiltersInPlace() {
     const q = ladderSearchQuery.toLowerCase();
-    const nodes = document.querySelectorAll('.ladder-node');
-    const spans = document.querySelectorAll('.ladder-pkm-span-line');
+    const ladderPanel = document.getElementById('wiki-subpanel-ladder') || document.getElementById('panel-wiki') || document;
+    const nodes = (typeof ladderPanel.querySelectorAll === 'function') ? ladderPanel.querySelectorAll('.ladder-node') : document.querySelectorAll('.ladder-node');
+    const spans = (typeof ladderPanel.querySelectorAll === 'function') ? ladderPanel.querySelectorAll('.ladder-pkm-span-line') : document.querySelectorAll('.ladder-pkm-span-line');
 
     if (!q) {
       nodes.forEach(n => {

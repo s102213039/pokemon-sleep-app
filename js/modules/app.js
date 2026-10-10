@@ -2462,6 +2462,10 @@ if (typeof document !== 'undefined') {
           window.scrollTo(0, 0);
         }
 
+        if (typeof dismissAllFloatingTooltips === 'function') {
+          dismissAllFloatingTooltips();
+        }
+
         // 移除所有 tab active 狀態
         [tabPokemon, tabRecipes, tabWiki, tabBox, tabNews].forEach(t => t && t.classList.remove('active'));
         // 隱藏所有 panels
@@ -3527,18 +3531,49 @@ if (typeof document !== 'undefined') {
             sb.classList.add('collapsed');
           });
           document.querySelectorAll('.sidebar-backdrop').forEach(bd => bd.classList.remove('active'));
+          const curMainTab = (typeof window !== 'undefined' && window.location && window.location.hash)
+            ? window.location.hash.replace(/^#/, '').split(/[/_?]/)[0]
+            : (typeof localStorage !== 'undefined' ? localStorage.getItem('pksleep_active_main_tab') || 'pokemon' : 'pokemon');
+          const isPoke = curMainTab === 'pokemon' || curMainTab === '';
+          const isRecipe = curMainTab === 'recipes';
+          const isWiki = curMainTab === 'wiki';
+          const isBox = curMainTab === 'box';
+
           const f1 = document.getElementById('sidebar-bookmark-handle');
           const f2 = document.getElementById('recipe-sidebar-bookmark-handle');
           const f3 = document.getElementById('ladder-sidebar-bookmark-handle');
           const f4 = document.getElementById('box-sidebar-bookmark-handle');
-          [f1, f2, f3, f4].forEach(f => {
-            if (f) {
-              f.style.opacity = '1';
-              f.style.pointerEvents = 'auto';
-              f.style.display = 'flex';
-              f.style.visibility = 'visible';
-            }
-          });
+
+          if (f1) {
+            f1.style.opacity = isPoke ? '1' : '0';
+            f1.style.pointerEvents = isPoke ? 'auto' : 'none';
+            f1.style.display = isPoke ? 'flex' : 'none';
+            f1.style.visibility = isPoke ? 'visible' : 'hidden';
+          }
+          if (f2) {
+            f2.style.opacity = isRecipe ? '1' : '0';
+            f2.style.pointerEvents = isRecipe ? 'auto' : 'none';
+            f2.style.display = isRecipe ? 'flex' : 'none';
+            f2.style.visibility = isRecipe ? 'visible' : 'hidden';
+          }
+          if (f3) {
+            const rawHash = (typeof window !== 'undefined' && window.location && window.location.hash) || '';
+            const isIngSubtab = rawHash.includes('/ingredients') || (typeof localStorage !== 'undefined' && localStorage.getItem('pksleep_active_wiki_subtab') === 'ingredients');
+            const showF3 = isWiki && isIngSubtab;
+            f3.style.opacity = showF3 ? '1' : '0';
+            f3.style.pointerEvents = showF3 ? 'auto' : 'none';
+            f3.style.display = showF3 ? 'flex' : 'none';
+            f3.style.visibility = showF3 ? 'visible' : 'hidden';
+          }
+          if (f4) {
+            const rawHash = (typeof window !== 'undefined' && window.location && window.location.hash) || '';
+            const isLabSubtab = rawHash.includes('/lab') || (typeof localStorage !== 'undefined' && localStorage.getItem('pksleep_active_box_subtab') === 'lab');
+            const showF4 = isBox && !isLabSubtab;
+            f4.style.opacity = showF4 ? '1' : '0';
+            f4.style.pointerEvents = showF4 ? 'auto' : 'none';
+            f4.style.display = showF4 ? 'flex' : 'none';
+            f4.style.visibility = showF4 ? 'visible' : 'hidden';
+          }
         }
       }, { passive: false });
 
@@ -6420,7 +6455,8 @@ function togglePokedexEnergyHelp(event) {
   }
   const popover = document.getElementById('pokedex-energy-help-popover');
   if (popover) popover.style.display = 'none';
-  const btn = (event && (event.currentTarget || event.target)) || document.querySelector('.pokedex-formula-help-btn');
+  const modalEl = document.getElementById('pokedex-detail-modal');
+  const btn = (event && (event.currentTarget || event.target)) || (modalEl ? modalEl.querySelector('.pokedex-formula-help-btn') : (typeof document.querySelector === 'function' ? document.querySelector('.pokedex-formula-help-btn') : null));
   const lang = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : 'zh-TW';
   const isEN = lang === 'en-US';
   const isCN = lang === 'zh-CN';
@@ -6546,11 +6582,14 @@ function updatePokedexModalAppraisalLive() {
   }
 
   // 5. 更新等級數值標籤與重點圖釘狀態
+  const pokedexModalEl = document.getElementById('pokedex-detail-modal');
   const valText = document.getElementById('pokedex-level-val-text');
   if (valText) {
     valText.textContent = pokedexModalState.level;
   } else {
-    const levelBadge = document.querySelector('.pokedex-val-badge');
+    const levelBadge = (pokedexModalEl && typeof pokedexModalEl.querySelector === 'function')
+      ? pokedexModalEl.querySelector('.pokedex-val-badge')
+      : (typeof document.querySelector === 'function' ? document.querySelector('.pokedex-val-badge') : null);
     if (levelBadge) levelBadge.textContent = `Lv. ${pokedexModalState.level}`;
   }
   const unreleasedTag = document.getElementById('pokedex-level-unreleased-tag');
@@ -6567,17 +6606,25 @@ function updatePokedexModalAppraisalLive() {
     evoGuardContainer.innerHTML = '';
   }
 
-  const levelCtrlGroup = document.querySelector('.pokedex-level-ctrl-group');
+  const levelCtrlGroup = (pokedexModalEl && typeof pokedexModalEl.querySelector === 'function')
+    ? pokedexModalEl.querySelector('.pokedex-level-ctrl-group')
+    : (typeof document.querySelector === 'function' ? document.querySelector('.pokedex-level-ctrl-group') : null);
   if (levelCtrlGroup) {
     levelCtrlGroup.classList.remove('has-evo-warning');
   }
 
-  document.querySelectorAll('.pokedex-track-pin-btn').forEach(btn => {
+  const trackPinBtns = (pokedexModalEl && typeof pokedexModalEl.querySelectorAll === 'function')
+    ? pokedexModalEl.querySelectorAll('.pokedex-track-pin-btn')
+    : (typeof document.querySelectorAll === 'function' ? document.querySelectorAll('.pokedex-track-pin-btn') : []);
+  trackPinBtns.forEach(btn => {
     const titleVal = btn.getAttribute('title') || '';
     const pinLv = parseInt(btn.getAttribute('data-pin-lv') || titleVal.replace(/[^0-9]/g, ''), 10);
     btn.classList.toggle('active', pinLv === pokedexModalState.level);
   });
-  document.querySelectorAll('.pokedex-level-pin-btn').forEach(btn => {
+  const levelPinBtns = (pokedexModalEl && typeof pokedexModalEl.querySelectorAll === 'function')
+    ? pokedexModalEl.querySelectorAll('.pokedex-level-pin-btn')
+    : (typeof document.querySelectorAll === 'function' ? document.querySelectorAll('.pokedex-level-pin-btn') : []);
+  levelPinBtns.forEach(btn => {
     const pinLv = parseInt(btn.textContent, 10);
     btn.classList.toggle('active', pinLv === pokedexModalState.level);
   });
@@ -6586,7 +6633,10 @@ function updatePokedexModalAppraisalLive() {
   updatePokedexSubskillUI();
 
   // 更新食材插槽解鎖標籤
-  document.querySelectorAll('.pokedex-ing-slot-box').forEach((boxEl, sIdx) => {
+  const ingSlotBoxes = (pokedexModalEl && typeof pokedexModalEl.querySelectorAll === 'function')
+    ? pokedexModalEl.querySelectorAll('.pokedex-ing-slot-box')
+    : (typeof document.querySelectorAll === 'function' ? document.querySelectorAll('.pokedex-ing-slot-box') : []);
+  ingSlotBoxes.forEach((boxEl, sIdx) => {
     const reqLv = sIdx === 0 ? 1 : (sIdx === 1 ? 30 : 60);
     const isUnlocked = pokedexModalState.level >= reqLv;
     boxEl.classList.toggle('slot-active', isUnlocked);

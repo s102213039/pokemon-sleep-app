@@ -11696,6 +11696,30 @@ SP 4,316
     assert(stylesCode.includes('.pokedex-strategy-card') && stylesCode.includes('position: relative !important;'), 'styles.css must set position: relative on .pokedex-strategy-card');
   });
 
+  test('Tier 4 - Real-World Application Scenarios', 'Cross-Component Isolation, Scoped DOM Manipulation, and Zero Cross-Tab Side-Effects Verification', () => {
+    const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+    const appCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+    const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+
+    // 1. Box module scoping verification
+    assert(boxCode.includes("boxPanel = (typeof document.getElementById === 'function') ? (document.getElementById('panel-box') || document.getElementById('view-box')) : null"), 'box.js must scope search filter row to boxPanel');
+    assert(boxCode.includes("#box-edit-modal .box-subskill-slot-btn"), 'box.js must scope subskill slot buttons to #box-edit-modal');
+    assert(boxCode.includes('_boxComboboxClickListener'), 'box.js must clean up _boxComboboxClickListener to prevent listener accumulation');
+
+    // 2. App module scoping & tab switching isolation verification
+    assert(appCode.includes('dismissAllFloatingTooltips();'), 'app.js switchMainTab must call dismissAllFloatingTooltips');
+    assert(appCode.includes("isPoke ? 'flex' : 'none'"), 'app.js sidebar-backdrop must only restore active tab bookmark handle');
+    assert(appCode.includes("pokedexModalEl = document.getElementById('pokedex-detail-modal')"), 'app.js updatePokedexModalAppraisalLive must resolve pokedexModalEl');
+    assert(appCode.includes("pokedexModalEl.querySelector('.pokedex-val-badge')"), 'app.js must scope pokedex-val-badge query to pokedexModalEl');
+    assert(appCode.includes("pokedexModalEl.querySelectorAll('.pokedex-track-pin-btn')"), 'app.js must scope pokedex-track-pin-btn query to pokedexModalEl');
+    assert(appCode.includes("pokedexModalEl.querySelectorAll('.pokedex-ing-slot-box')"), 'app.js must scope pokedex-ing-slot-box query to pokedexModalEl');
+
+    // 3. Wiki module subpanel scoping verification
+    assert(wikiCode.includes("skillsPanel = document.getElementById('wiki-subpanel-skills')"), 'wiki.js filterWikiSkills must scope to wiki-subpanel-skills');
+    assert(wikiCode.includes("ladderPanel = document.getElementById('wiki-subpanel-ladder')"), 'wiki.js filterWikiIngredients must scope to wiki-subpanel-ladder');
+    assert(wikiCode.includes("ladderSidebar = document.getElementById('ladder-filter-sidebar')"), 'wiki.js boost and nature buttons must scope to ladder-filter-sidebar');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

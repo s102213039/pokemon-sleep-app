@@ -1059,8 +1059,16 @@
     const hasItems = userBox && userBox.length > 0;
     const dropzone = document.getElementById('box-dropzone');
     const guideCard = document.getElementById('box-screenshot-guide-card');
-    const searchFilterRow = typeof document.querySelector === 'function' ? document.querySelector('.search-filter-row') : null;
-    const toolbarControlRow = typeof document.querySelector === 'function' ? document.querySelector('.box-toolbar-control-row') : null;
+    const boxPanel = (typeof document.getElementById === 'function') ? (document.getElementById('panel-box') || document.getElementById('view-box')) : null;
+    let searchFilterRow = null;
+    let toolbarControlRow = null;
+    if (boxPanel && typeof boxPanel.querySelector === 'function') {
+      searchFilterRow = boxPanel.querySelector('.search-filter-row');
+      toolbarControlRow = boxPanel.querySelector('.box-toolbar-control-row');
+    } else if (typeof document.querySelector === 'function') {
+      searchFilterRow = document.querySelector('#panel-box .search-filter-row, #view-box .search-filter-row') || document.querySelector('.search-filter-row');
+      toolbarControlRow = document.querySelector('#panel-box .box-toolbar-control-row, #view-box .box-toolbar-control-row') || document.querySelector('.box-toolbar-control-row');
+    }
     const toggleGuideBtn = document.getElementById('box-toggle-guide-btn');
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
 
@@ -2141,11 +2149,15 @@
     }
 
     // 點擊外面關閉下拉選單
-    document.addEventListener('click', (e) => {
+    if (document._boxComboboxClickListener) {
+      document.removeEventListener('click', document._boxComboboxClickListener);
+    }
+    document._boxComboboxClickListener = (e) => {
       if (!e.target.closest('#box-pkm-combobox')) {
         dropdown.style.display = 'none';
       }
-    });
+    };
+    document.addEventListener('click', document._boxComboboxClickListener);
   }
 
   /* ─── 解鎖食材組合平鋪選擇器 (符合官方解鎖規則：Lv.1=A, Lv.30=A/B, Lv.60=A/B/C) ── */
@@ -2253,7 +2265,10 @@
 
     function updateSubskillUI() {
       // 1. 更新 5 個插槽按鈕
-      const slotBtns = document.querySelectorAll('.box-subskill-slot-btn');
+      const boxModal = document.getElementById('box-edit-modal');
+      const slotBtns = (boxModal && typeof boxModal.querySelectorAll === 'function')
+        ? boxModal.querySelectorAll('.box-subskill-slot-btn')
+        : document.querySelectorAll('#box-edit-modal .box-subskill-slot-btn');
       slotBtns.forEach(btn => {
         const slot = parseInt(btn.getAttribute('data-slot'), 10);
         const hiddenInput = document.getElementById(`modal-subskill-${slot}`);
@@ -2336,7 +2351,11 @@
     }
 
     // 綁定插槽按鈕點擊
-    document.querySelectorAll('.box-subskill-slot-btn').forEach(btn => {
+    const boxModalDialog = document.getElementById('box-edit-modal');
+    const targetSlotBtns = (boxModalDialog && typeof boxModalDialog.querySelectorAll === 'function')
+      ? boxModalDialog.querySelectorAll('.box-subskill-slot-btn')
+      : document.querySelectorAll('#box-edit-modal .box-subskill-slot-btn');
+    targetSlotBtns.forEach(btn => {
       btn.onclick = (e) => {
         e.preventDefault();
         const slot = parseInt(btn.getAttribute('data-slot'), 10);
