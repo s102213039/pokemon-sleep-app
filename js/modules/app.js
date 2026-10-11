@@ -1705,6 +1705,8 @@ function dismissAllFloatingTooltips() {
       });
       const activeNodes = document.querySelectorAll('.ladder-node.tooltip-active');
       activeNodes.forEach(node => node.classList.remove('tooltip-active'));
+      const activeTrackRows = document.querySelectorAll('.ladder-track-row.has-active-tooltip, .ladder-tail-track-row.has-active-tooltip');
+      activeTrackRows.forEach(row => row.classList.remove('has-active-tooltip'));
     }
 
     if (document.activeElement && typeof document.activeElement.blur === 'function' && document.activeElement !== document.body) {
@@ -3896,6 +3898,8 @@ if (typeof document !== 'undefined') {
               dismissAllFloatingTooltips();
               if (!wasActive) {
                 ladderNode.classList.add('tooltip-active');
+                const trackRow = ladderNode.closest('.ladder-track-row, .ladder-tail-track-row');
+                if (trackRow) trackRow.classList.add('has-active-tooltip');
                 hasAnyFloatingTooltipOpen = true;
                 if (typeof window !== 'undefined') window._hasAnyFloatingTooltipOpen = true;
               }
@@ -3984,6 +3988,8 @@ if (typeof document !== 'undefined') {
           dismissAllFloatingTooltips();
           if (!wasActive) {
             ladderNode.classList.add('tooltip-active');
+            const trackRow = ladderNode.closest('.ladder-track-row, .ladder-tail-track-row');
+            if (trackRow) trackRow.classList.add('has-active-tooltip');
             hasAnyFloatingTooltipOpen = true;
             if (typeof window !== 'undefined') window._hasAnyFloatingTooltipOpen = true;
           }

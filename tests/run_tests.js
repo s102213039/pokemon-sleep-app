@@ -11782,11 +11782,19 @@ SP 4,316
     assert(wikiCode.includes('tooltip-dish-icon'), 'wiki.js must render tooltip-dish-icon');
     assert(wikiCode.includes('appleacidyogurt-dressedsalad.png'), 'wiki.js TOP_RECIPES_FOR_INGREDIENTS must include dish icons');
     assert(wikiCode.includes('getLadderDishIcon'), 'wiki.js must define getLadderDishIcon helper');
+    assert(wikiCode.includes('${targetDishIcon ? `<img src="${targetDishIcon}" class="tooltip-dish-icon"'), 'wiki.js must substitute dish name with dish icon in tooltip-dish-title when targetDishIcon exists');
 
     // 6. Verify styles.css defines .tooltip-dish-icon and flexible .tooltip-dish-title
     const stylesCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
     assert(stylesCode.includes('.tooltip-dish-icon'), 'styles.css must style .tooltip-dish-icon');
     assert(stylesCode.includes('.tooltip-dish-title') && stylesCode.includes('inline-flex'), 'styles.css must align .tooltip-dish-title with inline-flex');
+
+    // 7. Verify styles.css eliminates transparency in all ingredient ladder tooltips and elevates active track row
+    assert(stylesCode.includes('.ladder-node-tooltip') && stylesCode.includes('background: #0d1527 !important;'), 'styles.css must set 100% solid background on ladder-node-tooltip');
+    assert(stylesCode.includes('.tooltip-yield-breakdown') && stylesCode.includes('background: #0a0f1d !important;'), 'styles.css must set 100% solid background on tooltip-yield-breakdown');
+    assert(stylesCode.includes('.tooltip-dish-box') && stylesCode.includes('background: #0a0f1d !important;'), 'styles.css must set 100% solid background on tooltip-dish-box');
+    assert(stylesCode.includes('.ladder-track-row.has-active-tooltip') && stylesCode.includes('z-index: 100000 !important;'), 'styles.css must elevate active track row z-index to 100000');
+    assert(stylesCode.includes('.ladder-energy-help-bubble') && stylesCode.includes('backdrop-filter: none !important;'), 'styles.css must disable blur and set solid background on ladder energy help bubble');
   });
 
 console.log('                   Test Results Summary');

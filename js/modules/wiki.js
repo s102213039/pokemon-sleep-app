@@ -8,6 +8,16 @@
 (function () {
   'use strict';
 
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   // --- 0. 食材精選S 專屬寶可夢與食材池對照表 (Ingredient Draw Specific Pools) ---
   const INGREDIENT_DRAW_POKEMONS = [
     {
@@ -16971,9 +16981,9 @@
                               </div>
                             ` : ''}
 
-                            <!-- 料理供貨能力指標 (動態對應選定料理) -->
+                            <!-- 料理供貨能力指標 (動態對應選定料理，以料理圖示代替名稱) -->
                             <div class="tooltip-dish-box">
-                              <div class="tooltip-dish-title">${dishLabel}${targetDishIcon ? `<img src="${targetDishIcon}" class="tooltip-dish-icon" alt="" loading="lazy">` : ''}<span class="text-white font-bold">${targetDishName}</span> (${targetDishNeed}${isEN ? '/meal' : '顆/餐'})</div>
+                              <div class="tooltip-dish-title">${dishLabel}${targetDishIcon ? `<img src="${targetDishIcon}" class="tooltip-dish-icon" alt="${escapeHtml(targetDishName)}" title="${escapeHtml(targetDishName)}" loading="lazy">` : `<span class="text-white font-bold">${targetDishName}</span>`} (${targetDishNeed}${isEN ? '/meal' : '顆/餐'})</div>
                               <div class="tooltip-dish-badge ${dishBadgeClass}">${dishTag}</div>
                             </div>
 

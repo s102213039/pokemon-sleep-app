@@ -81,6 +81,10 @@
           activeNodes.forEach(function (node) {
             node.classList.remove('tooltip-active');
           });
+          const activeTrackRows = global.document.querySelectorAll('.ladder-track-row.has-active-tooltip, .ladder-tail-track-row.has-active-tooltip');
+          activeTrackRows.forEach(function (row) {
+            row.classList.remove('has-active-tooltip');
+          });
         }
 
         if (global.document.activeElement && typeof global.document.activeElement.blur === 'function' && global.document.activeElement !== global.document.body) {
