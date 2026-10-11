@@ -1136,25 +1136,26 @@
               </div>
             </div>
 
-            <!-- 第 2 行：自訂暱稱 (45%) + 性格 (55%) -->
-            <div class="box-form-row-2col box-full-width">
-              <div class="box-form-group flex-nickname">
-                <label class="box-form-label" for="modal-poke-nickname" data-i18n="box.modal_poke_nickname">自訂暱稱</label>
-                <input type="text" id="modal-poke-nickname" class="box-form-input" placeholder="例如：首隻樹果S神坦...">
-              </div>
+            <!-- 第 2 行：自訂暱稱 (全寬度，完整展示提示文字) -->
+            <div class="box-form-group box-full-width">
+              <label class="box-form-label" for="modal-poke-nickname" data-i18n="box.modal_poke_nickname">自訂暱稱</label>
+              <input type="text" id="modal-poke-nickname" class="box-form-input" placeholder="例如：首隻樹果S神坦、食材型噴火龍..." data-i18n-placeholder="box.modal_nickname_placeholder">
+            </div>
 
-              <div class="box-form-group flex-nature">
+            <!-- 第 3 行：性格 + 淨白薄荷 -->
+            <div class="box-form-group box-full-width box-nature-group">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
                 <label class="box-form-label" for="modal-poke-nature" data-i18n="box.modal_poke_nature">性格 <span style="color:#ef4444;">*</span></label>
-                <select id="modal-poke-nature" class="box-form-select" required></select>
-                <label class="mint-checkbox-label" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);cursor:pointer;margin-top:4px;user-select:none;">
-                  <input type="checkbox" id="modal-poke-mint" style="cursor:pointer;" />
+                <label class="mint-checkbox-label">
+                  <input type="checkbox" id="modal-poke-mint" />
                   <span>使用淨白薄荷消除個性效果</span>
                 </label>
               </div>
+              <select id="modal-poke-nature" class="box-form-select" required></select>
             </div>
 
             <!-- 睡飽飽獎章 -->
-            <div class="box-form-group box-full-width box-form-row-inline" style="margin-bottom:12px;">
+            <div class="box-form-group box-full-width box-form-row-inline">
               <label class="box-form-label box-form-inline-label" for="modal-poke-ribbon" data-i18n="box.modal_poke_ribbon">睡飽飽獎章</label>
               <div class="box-form-inline-control" style="flex:1;">
                 <select id="modal-poke-ribbon" class="box-form-select">
@@ -1168,7 +1169,7 @@
             </div>
 
             <!-- 主技能資訊：展示技能名稱與等級調整選單 -->
-            <div class="box-form-group box-full-width box-form-row-inline box-mainskill-row" style="margin-bottom:12px;">
+            <div class="box-form-group box-full-width box-form-row-inline box-mainskill-row">
               <label class="box-form-label box-form-inline-label" for="modal-poke-skill-level" data-i18n="box.modal_main_skill">主技能資訊</label>
               <div class="box-form-inline-control box-mainskill-control" style="flex:1;">
                 <span id="modal-poke-main-skill-name" class="box-mainskill-name-badge">--</span>

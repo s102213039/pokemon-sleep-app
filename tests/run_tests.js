@@ -11792,9 +11792,37 @@ SP 4,316
     // 7. Verify styles.css eliminates transparency in all ingredient ladder tooltips and elevates active track row
     assert(stylesCode.includes('.ladder-node-tooltip') && stylesCode.includes('background: #0d1527 !important;'), 'styles.css must set 100% solid background on ladder-node-tooltip');
     assert(stylesCode.includes('.tooltip-yield-breakdown') && stylesCode.includes('background: #0a0f1d !important;'), 'styles.css must set 100% solid background on tooltip-yield-breakdown');
-    assert(stylesCode.includes('.tooltip-dish-box') && stylesCode.includes('background: #0a0f1d !important;'), 'styles.css must set 100% solid background on tooltip-dish-box');
+    assert(stylesCode.includes('.tooltip-dish-box') && stylesCode.includes('background: transparent !important;'), 'styles.css must set transparent borderless background on tooltip-dish-box');
     assert(stylesCode.includes('.ladder-track-row.has-active-tooltip') && stylesCode.includes('z-index: 100000 !important;'), 'styles.css must elevate active track row z-index to 100000');
     assert(stylesCode.includes('.ladder-energy-help-bubble') && stylesCode.includes('backdrop-filter: none !important;'), 'styles.css must disable blur and set solid background on ladder energy help bubble');
+  });
+
+  test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder Single-Line Dish Badge & Mobile H5 Box Edit Modal Ergonomic Layout', () => {
+    const stylesCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+    const h5Html = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+
+    // 1. Verify .tooltip-dish-box is single-line, borderless, transparent
+    assert(stylesCode.includes('.tooltip-dish-box'), 'styles.css must style .tooltip-dish-box');
+    assert(stylesCode.includes('flex-direction: row !important;') && stylesCode.includes('white-space: nowrap !important;'), 'styles.css must layout .tooltip-dish-box on a single row');
+    assert(stylesCode.includes('border: none !important;') && stylesCode.includes('padding: 0 !important;'), 'styles.css must eliminate outer borders on .tooltip-dish-box');
+
+    // 2. Verify only .tooltip-dish-badge retains badge borders
+    assert(stylesCode.includes('.tooltip-dish-badge'), 'styles.css must style .tooltip-dish-badge');
+    assert(stylesCode.includes('.dish-badge-full') && stylesCode.includes('.dish-badge-high'), 'styles.css must retain badge borders on dish status badges');
+
+    // 3. Verify ladder-node-tooltip max-width is expanded to 350px
+    assert(stylesCode.includes('max-width: 350px;'), 'styles.css must expand ladder-node-tooltip max-width to 350px');
+
+    // 4. Verify no 350px vertical flex-basis on nature custom-select
+    assert(!stylesCode.includes('#modal-poke-nature + .custom-select-container {\n  width: 350px !important;\n  max-width: 100% !important;\n  flex: 0 0 350px;'), 'styles.css must not apply 350px flex basis on modal-poke-nature custom-select');
+    assert(stylesCode.includes('.mobile-h5-app .mobile-box-sheet #modal-poke-nature + .custom-select-container') || stylesCode.includes('flex: 0 0 auto;'), 'styles.css must constrain mobile nature dropdown height to auto');
+
+    // 5. Verify mobile-box-sheet box-form-grid uses flex column to eliminate gap stretching
+    assert(stylesCode.includes('.mobile-h5-app .mobile-box-sheet .box-form-grid') && stylesCode.includes('display: flex !important;'), 'styles.css mobile-box-sheet box-form-grid must use flex column');
+
+    // 6. Verify app/index.html box-edit-modal has full-width nickname and grouped nature/mint layout
+    assert(h5Html.includes('id="modal-poke-nickname"') && h5Html.includes('class="box-form-group box-full-width"'), 'app/index.html must allocate full-width row for nickname');
+    assert(h5Html.includes('id="modal-poke-mint"') && h5Html.includes('class="box-form-group box-full-width box-nature-group"'), 'app/index.html must cleanly group nature and mint checkbox');
   });
 
 console.log('                   Test Results Summary');

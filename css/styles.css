@@ -7513,7 +7513,7 @@ input[type="number"] {
 #box-edit-modal #modal-poke-nature + .custom-select-container {
   width: 350px !important;
   max-width: 100% !important;
-  flex: 0 0 350px;
+  flex: 0 0 auto;
 }
 
 .box-nature-row select.box-form-select {
@@ -11413,7 +11413,8 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  visibility: hidden;
+  transition: none !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -11422,7 +11423,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   flex-direction: column;
   gap: 2.5px;
   color: var(--text-primary);
-  max-width: 280px;
+  max-width: 350px;
 }
 
 /* 智能水平對齊 (左、中、右) */
@@ -11485,7 +11486,9 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 @media (hover: hover) and (pointer: fine) {
   .ladder-node:hover .ladder-node-tooltip,
   .ladder-node:active .ladder-node-tooltip {
-    opacity: 1;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
   }
 }
 
@@ -11502,6 +11505,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 
 .mobile-h5-app .ladder-node:not(.tooltip-active) .ladder-node-tooltip {
   opacity: 0 !important;
+  visibility: hidden !important;
   pointer-events: none !important;
 }
 
@@ -11554,13 +11558,16 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 
 .tooltip-dish-box {
   margin-top: 3px;
-  padding: 4px 6px;
-  background: #0a0f1d !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-  gap: 2.5px;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  white-space: nowrap !important;
 }
 
 .tooltip-dish-title {
@@ -11568,8 +11575,9 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   color: var(--text-secondary);
   display: inline-flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 4px;
+  flex-shrink: 0;
+  gap: 3px;
+  white-space: nowrap;
 }
 
 .tooltip-dish-icon {
@@ -11594,6 +11602,8 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   display: inline-flex;
   align-items: center;
   width: fit-content;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .tooltip-note {
@@ -12549,8 +12559,9 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 
 [data-theme="dawn"] .tooltip-dish-box,
 [data-theme="emerald"] .tooltip-dish-box {
-  background: #f8fafc !important;
-  border: 1px solid #cbd5e1 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 [data-theme="dawn"] .tooltip-dish-icon,
@@ -12616,8 +12627,9 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 }
 
 [data-theme="onyx"] .tooltip-dish-box {
-  background: #121214 !important;
-  border: 1px solid #27272a !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 [data-theme="onyx"] .tooltip-dish-icon {
@@ -24742,13 +24754,77 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   flex: 1 1 auto !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
-  padding: 6px 14px 10px !important;
+  padding: 6px 14px 16px !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 8px !important;
 }
 
-/* 雙欄並排表單組 (Row 1: 寶可夢名稱 + 等級, Row 2: 暱稱 + 性格) */
+.mobile-h5-app .mobile-box-sheet .box-modal-form {
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  height: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-form-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  height: auto !important;
+}
+
+.mobile-h5-app .mobile-box-sheet #modal-poke-nature + .custom-select-container,
+.mobile-h5-app .mobile-box-sheet .custom-select-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 36px !important;
+  flex: 0 0 auto !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .custom-select-trigger {
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 10px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  font-size: 12px !important;
+  padding: 0 36px 0 10px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-nature-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .mint-checkbox-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 11.5px !important;
+  color: var(--text-secondary) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .mint-checkbox-label input[type="checkbox"] {
+  width: 14px !important;
+  height: 14px !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+}
+
+/* 雙欄並排表單組 (Row 1: 寶可夢名稱 + 等級) */
 .mobile-h5-app .mobile-box-sheet .box-form-row-2col {
   display: grid !important;
   grid-template-columns: 1fr 1.2fr !important;
