@@ -1,105 +1,91 @@
-# Project: Pokémon Sleep Dedicated Mobile H5 Web App (`/app/`)
+# Project: Pokémon Sleep Items & Incense Encyclopedia
 
 ## Architecture
-- **Dual-Surface Web Architecture**:
-  - Desktop Surface: `index.html` (Full SPA with multi-column desktop layout).
-  - Mobile Surface: `app/index.html` (Dedicated Mobile H5 SPA with 2-char Dock, segmented controls, bottom sheets).
-- **Shared Core Data Layer**:
-  - Data Files: `data/data.json`, `data/recipes.json`, `data/news.json`, `data/special_icons.json`.
-  - Core Modules: `js/core/i18n.js`, `js/modules/app.js`, `js/modules/recipes.js`, `js/modules/wiki.js`, `js/modules/box.js`, `js/modules/news.js`, `js/modules/appraisal.js`.
-  - Shared CSS & Assets: `css/styles.css` (with dedicated mobile H5 CSS extensions/sections).
-- **Smart Routing & Anti-Loop Engine**:
-  - Device/Screen detection: `index.html` checks `innerWidth <= 768` or mobile UA.
-  - User Preference Persistence: `localStorage.getItem('pksleep_view_pref')` (`'desktop'` or `'mobile'`).
-  - Query Override: `?view=desktop` or `?view=mobile`.
-  - Seamless navigation between mobile H5 and desktop version without infinite loops.
+The Items & Incense Encyclopedia is structured into four core layers:
+1. **Master Data Engine Layer**:
+   - `data/items.json` and in-memory cache `window.ITEMS_DATA` (embedded in `js/data/items.js` / `js/modules/wiki.js`).
+   - Standard schema: `id`, `category`, `name` (zh-TW, zh-CN, en-US), `icon_url`, `description`, `effects`, `sleep_points` (regular, premium, monthly limits), `diamonds`, `acquisition`, and `pokemon_ids`.
+   - Comprehensive collection: 118 items (17 evolution stones/items, 6 functional incenses, 9 training & skill items, 10 catching & camping supplies, and 76 verified Pokemon species incenses).
+2. **Wiki Subpanel UI & Search/Filter Layer**:
+   - Navigation subtab `items` added to `VALID_WIKI_SUBTABS` in `js/modules/app.js` and `js/modules/wiki.js`.
+   - Subpanel container `#wiki-subpanel-items` inside `.wiki-main-container`.
+   - Search bar (`#wiki-items-search-input`) supporting multilingual keywords and Pokemon names.
+   - Horizontal category filter pills (`all`, `evolution`, `pokemon_incense`, `functional_incense`, `training`, `biscuit`, `supply`).
+   - Single Frame Rule compliant item cards grid (`.wiki-item-card-grid`).
+   - Theme styling supporting all 4 themes (Midnight, Onyx, Dawn, Emerald) plus high-contrast modes.
+3. **Modal & Bidirectional Dex Linkage Layer**:
+   - Item Detail Modal (`#wiki-item-detail-modal`) registered in `MOBILE_OVERLAY_IDS` and managed via `prepareOverlayOpen` / `animateOverlayClose`.
+   - Displays full item specs, sleep point shop pricing, and associated Pokemon avatars.
+   - Clicking Pokemon avatars opens `#pokedex-detail-modal` via `window.PokemonApp.openPokemonDetailModal(pkm)`.
+   - In `#pokedex-detail-modal`, Pokemon requiring evolution items render interactive item chips that call `window.WikiDB.openItemDetailModal(itemId)`.
+4. **Automated Verification & E2E Testing Layer**:
+   - Test 217 added to `tests/run_tests.js` in Tier 4, validating dataset integrity, UI rendering, category filtering, multilingual search, bidirectional linkage, Zero Emoji compliance, and Single Frame styling.
+   - Target: 217 / 217 tests passing (0 failures).
+
+## Code Layout
+- `data/items.json`: Canonical static item master dataset (118 items).
+- `js/data/items.js` (or inline in `js/modules/wiki.js`): In-memory item data definitions for offline & VM test support.
+- `js/modules/wiki.js`: Wiki subpanel rendering, subtab switching, category filtering, search mechanics, item modal lifecycle.
+- `js/modules/app.js`: Subtab registration in main router, overlay registry, Pokédex modal evolution chip rendering.
+- `js/core/i18n.js`: Localized item names and UI strings.
+- `css/styles.css`: Subpanel, cards, filter pills, modal, and responsive H5 styles across all 4 themes.
+- `index.html` & `app/index.html`: Desktop and mobile HTML containers for modals and subpanels.
+- `tests/run_tests.js`: Test runner with integration Test 217.
 
 ## Feature Inventory
 | # | Feature | Description | Milestone | Source |
 |---|---------|-------------|-----------|--------|
-| 1 | **Dedicated App Entry & Safe Area** | `app/index.html` standalone document, viewport fit-cover, zero 404 resource links | M1 | Survey (DONE) |
-| 2 | **2-Character Minimal Bottom Dock** | 5 fixed tabs: 【圖鑑】, 【料理】, 【百科】, 【盒子】, 【最新】 with active states & safe area padding | M1 | Survey (DONE) |
-| 3 | **Smart Routing & Anti-Loop Guard** | Mobile auto-detection in `index.html`, remember choice toggle, switch to desktop link in `/app/` | M1 | Survey (DONE) |
-| 4 | **Pokedex Mobile View (圖鑑)** | App search bar with 1-tap clear, horizontal type & specialty filter chips, 2-column compact card grid | M2 | Survey (DONE) |
-| 5 | **Recipes Mobile View (料理)** | Horizontal category segmented control (全部/咖哩/沙拉/甜點), pot capacity stepper (-/+), tasty multiplier toggle, 1-col recipe cards | M2 | Survey (DONE) |
-| 6 | **Wiki Mobile View (百科)** | 5 top sub-tabs (主技能, 副技能/性格, 評級, 食材天梯, 能量), sticky first-column scrolling data tables, sleep EXP calculator | M2 | Survey (DONE) |
-| 7 | **Box & OCR Mobile View (盒子)** | Photo/screenshot OCR card, batch deduplication, box management, RaenonX PR calculations | M3 | Survey (DONE) |
-| 8 | **News & Gantt Mobile View (最新)** | Touch horizontal scrolling event Gantt timeline, AI highlight summaries | M3 | Survey (DONE) |
-| 9 | **Bottom Sheet Drawer & Modal System** | Pokedex advanced filter sheet, Box add/edit sheet (anti-duplicate subskill palette, locked height ing slots), Appraisal 6D modal | M3 | Survey (DONE) |
-| 10 | **Full Feature Parity & Lab Appraisal** | Six-dimension appraisal engine, responsive SVG radar charts, evolution calculator, milestone cost calculations | M3 | Survey (DONE) |
-| 11 | **Bilingual Engine & 4 Themes Support** | Complete zh-TW & en-US i18n support for mobile components; 4 themes (Midnight, Onyx, Dawn, Emerald) synchronized via localStorage | M4 | Survey (DONE) |
-| 12 | **Dropdown & UI Safety Polish** | User rules compliance: dropdown arrow inset (padding-right 36px, arrow position 18px), downward options alignment | M4 | Survey (DONE) |
-| 13 | **E2E Test Suite (Tiers 1-4)** | Comprehensive opaque-box test suite for desktop + mobile, 100% test pass (85/85 tests passed) | M-TEST / M5 | Survey (DONE) |
-| 14 | **Adversarial Hardening (Tier 5)** | Redirection matrix (27,216 permutations passed, 0 loops, 0 errors) & static forensic audit CLEAN | M5 | Survey (DONE) |
+| 1 | Items Master JSON Schema | Canonical dataset for all 118 items | M1 | ORIGINAL_REQUEST R1, Spec Miner |
+| 2 | Multilingual Localization | zh-TW, zh-CN, and en-US strings for all items | M1 | ORIGINAL_REQUEST R1, Spec Miner |
+| 3 | Serebii CDN Sprite URLs | High-resolution validated sprite assets for items & incenses | M1 | Spec Miner |
+| 4 | Shop Pricing & Acquisition | Sleep points (regular/premium limits) and sources | M1 | ORIGINAL_REQUEST R1, Spec Miner |
+| 5 | Evolution Target Mapping | Mapping evolution items to evolved Pokemon IDs | M1 | ORIGINAL_REQUEST R1, Spec Miner |
+| 6 | Wiki Subtab Registration | Subtab 'items' added to router and navigation | M2 | ORIGINAL_REQUEST R2, Explorer 1 |
+| 7 | Wiki Subpanel Container | #wiki-subpanel-items container and layout | M2 | ORIGINAL_REQUEST R2, Explorer 1 |
+| 8 | Horizontal Category Filter | Filter pills for 7 item categories | M2 | ORIGINAL_REQUEST R2, Explorer 1 |
+| 9 | Multilingual Search Bar | Real-time search by name, effect, or Pokemon name | M2 | ORIGINAL_REQUEST R2, Explorer 1 |
+| 10 | Item Cards Grid Layout | Clean single-frame responsive cards grid | M2 | ORIGINAL_REQUEST R2, Explorer 1 |
+| 11 | Multi-Theme & Mobile CSS | Styling for 4 themes, mobile drawer/bottom sheet | M2 | ORIGINAL_REQUEST R4, Explorer 1 |
+| 12 | Item Detail Modal | #wiki-item-detail-modal popup with full stats & pricing | M3 | ORIGINAL_REQUEST R3, Explorer 1 |
+| 13 | Item -> Dex Navigation | Clicking associated Pokemon opens Pokedex modal | M3 | ORIGINAL_REQUEST R3, Spec Miner |
+| 14 | Dex -> Item Navigation | Clickable evolution item chips in Pokedex modal | M3 | ORIGINAL_REQUEST R3, Spec Miner |
+| 15 | Overlay Lifecycle Hooks | Registration in MOBILE_OVERLAY_IDS and smooth animation | M3 | Explorer 1 |
+| 16 | E2E Test 217 Suite | Integration test in tests/run_tests.js | M4 (E2E) | ORIGINAL_REQUEST AC, Explorer 2 |
+| 17 | Adversarial Hardening | Negative tests, edge cases, regression check | M4 | Project Pattern |
+| 18 | Final Verification & Deploy | 217/217 pass, git commit, push, update shared docs | M4 | System Prompt |
 
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
-| M-TEST | **E2E Testing Track** | Design E2E test infra, write Tiers 1-4 tests covering all 14 features in `tests/run_tests.js`, publish `TEST_READY.md` | Survey | DONE (85/85 tests) |
-| M1 | **App Shell, Dock & Routing Engine** | Create `app/index.html` structure, 2-char Dock, safe area, and smart redirection in `index.html` with anti-loop protection | Survey | DONE (Gate PASSED) |
-| M2 | **Mobile Core Tab Views (Dex, Cook, Wiki)** | Pokedex search/chips/2-col cards, Recipes segmented bar/stepper/1-col cards, Wiki 5 sub-tabs & sticky tables | M1 | DONE |
-| M3 | **Interactive Systems (Box, OCR, News, Sheets)** | Box Bottom Sheet with anti-duplicate palette, OCR batch card, News touch Gantt, 6D Appraisal SVG radar modal | M2 | DONE |
-| M4 | **i18n Bilingual, 4 Themes & UI Polish** | Complete mobile translations (zh-TW 2-char / en-US), 4 themes, dropdown arrow padding-right 36px rules | M3 | DONE |
-| M5 | **E2E Test Verification & Coverage Hardening** | Pass 100% of E2E test suite (85/85), 27,216 redirection permutations, forensic integrity audit CLEAN | M4, M-TEST | DONE |
+| M1 | Master Data Engine | `data/items.json`, data fallback, i18n entries, evolution mappings | none | DONE |
+| M2 | Wiki Subpanel & Search | Wiki subtab, #wiki-subpanel-items, search, filter pills, card grid, CSS themes | M1 | DONE |
+| M3 | Detail Modal & Dex Linkage | #wiki-item-detail-modal, bidirectional navigation between Dex and Items | M1, M2 | DONE |
+| M4 | E2E Test Suite & Hardening | Test 217 implementation, 217/217 tests pass, adversarial audit, push & shared docs | M1, M2, M3 | DONE |
 
 ## Interface Contracts
-### Data & Path Contract (`window.__DATA_BASE_PATH__`)
-- `app/index.html` defines `window.__DATA_BASE_PATH__ = '../'` prior to loading module scripts.
-- All fetch methods (`app.js`, `recipes.js`, `news.js`) use multi-fallback path resolution:
-  - `(window.__DATA_BASE_PATH__ || '') + 'data/data.json'`
-  - `'data/data.json'`, `'../data/data.json'`, `'data.json'`
-- Zero 404 network errors regardless of base URL (`/`, `/app/`, `file:///`, or subpath).
+### Master Data -> Wiki & App
+- `window.ITEMS_DATA`: Array of 118 item objects conforming to `ItemMasterRecord`.
+- Item schema:
+  - `id`: string (e.g. `thunder_stone`, `incense_bulbasaur`, `poke_biscuit`)
+  - `category`: `"evolution" | "pokemon_incense" | "functional_incense" | "training" | "biscuit" | "supply"`
+  - `name`: `{ "zh-TW": string, "zh-CN": string, "en-US": string }`
+  - `icon_url`: string
+  - `description`: `{ "zh-TW": string, "zh-CN": string, "en-US": string }`
+  - `sleep_points`: `{ regular: number | null, premium: number | null, limit_regular?: string, limit_premium?: string }`
+  - `acquisition`: `{ "zh-TW": string[], "zh-CN": string[], "en-US": string[] }`
+  - `pokemon_ids`: string[]
 
-### Routing & Preference Contract (`pksleep_view_pref`)
-- `localStorage` key: `'pksleep_view_pref'`
-- Values: `'desktop'` | `'mobile'`
-- Query param override: `?view=desktop` | `?view=mobile`
-- Logic:
-  - `index.html`: If query `view=desktop` -> set pref='desktop' and stay. If pref==='desktop' -> stay. If mobile screen (`<= 768px` or mobile UA) and pref!=='desktop' -> redirect to `app/index.html` (retaining URL hash).
-  - `app/index.html`: Header button "💻 桌面完整版" -> sets pref='desktop' and navigates to `../index.html?view=desktop`.
+### Wiki Subpanel -> Item Modal
+- `window.WikiDB.openItemDetailModal(itemId)`: Opens `#wiki-item-detail-modal` populated with data for `itemId`.
+- `window.WikiDB.closeItemDetailModal()`: Dismisses modal with smooth exit animation.
 
-### Dock & View Navigation Contract
-- Active tab switching: `switchMainTab(tabId)`
-- Tab IDs: `tab-pokemon`, `tab-recipes`, `tab-wiki`, `tab-box`, `tab-news`.
-- Panel IDs: `panel-pokemon`, `panel-recipes`, `panel-wiki`, `panel-box`, `panel-news`.
-- Dock Labels (zh-TW): `圖鑑`, `料理`, `百科`, `盒子`, `最新` (strictly 2 characters).
-- Dock Labels (en-US): `Dex`, `Cook`, `Wiki`, `Box`, `News` (compact).
+### Bidirectional Linkage: Items <-> Pokédex
+- Item Modal -> Dex: Inside `#wiki-item-detail-modal`, clicking an associated Pokemon card calls:
+  `window.PokemonApp.openPokemonDetailModal(targetPokemonObject)`.
+- Dex -> Item Modal: Inside `#pokedex-detail-modal`, when a Pokemon requires an evolution item, rendering an interactive chip `<button class="pokedex-evo-item-btn" onclick="window.WikiDB.openItemDetailModal('${matchedItemId}')">${itemName}</button>`.
 
-### Subskill Anti-Duplicate Contract
-- In Box editor, subskill dropdowns / palette must enforce uniqueness: a selected subskill in slot $i$ is disabled/unavailable for selection in slot $j \neq i$.
-
-### Dropdown Arrow & Layout Contract (Global Rule)
-- Select elements: `padding-right: 36px`, `background-position: right 18px center`.
-- Options menu: opens strictly downwards aligned with the bottom of the trigger, unless touching screen bottom.
-
-### 🛡️ Mandatory Pre-Flight & Component Delivery Contract (全域開發最高準則)
-1. **📱 跨端環境確認 (H5 Mobile vs Desktop Surface)**：每次開發前確認目標是 H5 App (`/app/`) 還是 桌面網頁版 (`index.html`)，樣式必須精確隔離於 `.mobile-h5-app`，嚴禁跨端相互干擾。
-2. **🌐 雙語系切換與簡短翻譯確認 (Bilingual i18n Adaptation)**：新增任何組件或文字，**必須**第一時間對一遍繁中 (`zh-TW`) 與 英文 (`en-US`) 字典。英文翻譯必須正確且簡短精煉，確保長度適配不破版、不溢出。
-3. **🎨 4 大主題亮/暗色雙向適配與雙向檢核 (4-Theme Light/Dark Adaptation - 詳見 [docs/THEME_COLOR_SPEC.md](docs/THEME_COLOR_SPEC.md))**：
-   - 每次執行任務**前後**，均**必須**強制依據 [docs/THEME_COLOR_SPEC.md](docs/THEME_COLOR_SPEC.md) 執行雙向色彩檢核。
-   - 只要新增或修改任何組件，**必須**同時核對深色主題（`midnight` 深邃夜空、`onyx` 曜石暗影）與亮色主題（`dawn` 晨曦暖陽、`emerald` 萌綠森林）及反色衍生模式。
-   - **嚴禁硬編碼 `#ffffff`、`#0f172a` 或固定暗色/亮色值**：背景一律使用語意化變數（`var(--bg-card)`、`var(--bg-card-inner)`、`var(--border-color)`）或提供專屬主題覆蓋。
-   - **深色主題文字與高亮色**：必須具備足夠高飽和度、螢光高對比度（如 `#fbbf24`、`#38bdf8`、`#f472b6`），嚴禁使用暗褐色或黯淡顏色导致在黑底上無法辨識。
-   - **亮色主題文字與高亮色**：自動適配為高飽和深色調（如 `#b45309`、`#0284c7`、`#b91c1c`），確保在白底上對比鮮明，嚴禁淺粉/淡天藍等發虛文字。
-
-
-## Code Layout
-- `app/index.html` — Mobile H5 App HTML Entry & Shell
-- `index.html` — Desktop SPA Entry with smart mobile redirection guard
-- `css/styles.css` — Global styles, themes, and mobile H5 dedicated styling (`.mobile-app-...`, `.bottom-dock`, `.segmented-control`, `.bottom-sheet`, `.sticky-col`)
-- `js/core/i18n.js` — Shared bilingual dictionary & mobile translations
-- `js/modules/app.js` — Pokedex core, search, filter chips, mobile grid rendering
-- `js/modules/recipes.js` — Recipes core, segmented bar, pot stepper, tasty multiplier
-- `js/modules/wiki.js` — Wiki database, 5 sub-tabs, sticky table rendering
-- `js/modules/box.js` — Box database, OCR processing, bottom sheet editor, PR engine
-- `js/modules/news.js` — News feed, touch Gantt chart, AI summary cards
-- `js/modules/appraisal.js` — 6D appraisal lab, SVG radar chart modal
-- `tests/run_tests.js` — Unified 4-tier automated test suite (151 tests)
-
-## Documentation & Meta Specifications
-- `docs/SKILL_SPECIALISTS_AND_BFS_META_ANALYSIS.md` — 技能型寶可夢與樹果數量S（BFS）適配深度研究與戰術定位技術規範（含底層滿包機制、神獸/補師/充能/純戰術四大定位與數值模型精算）
-- `docs/OPTIMAL_BUILDS_AND_META_LOGIC.md` — 寶可夢畢業神配置、樹果性格與技能型樹果數量S適配機制技術規範
-- `docs/THEME_COLOR_SPEC.md` — 主題顏色適配規範與色彩變數標準
-- `docs/SIDEBAR_HANDLE_RULE.md` — 側邊欄展開與書籤把手防覆蓋規範
-- `docs/SPECIAL_ICONS_RULES.md` — 特殊圖示與向量繪製規範
-
+## Design & UI Constraints
+- Zero Emoji Policy: Absolutely NO EMOJIS in code, comments, UI text, or markdown. Use SVG or ASCII tokens (e.g. `[✓]`, `[!]`, `✕`).
+- Single Frame Rule: Outer containers (`#wiki-subpanel-items`, modal containers) have `border: none; background: transparent; padding: 0;`.
+- Dropdown arrow styling: `padding-right: 36px !important; background-position: right 18px center !important;` with downward menu opening.
+- Themes: Midnight, Onyx, Dawn, Emerald styling using CSS custom properties.

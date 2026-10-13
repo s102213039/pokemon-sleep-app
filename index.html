@@ -1444,6 +1444,53 @@
     </div>
   </div>
 
+  <!-- 數據百科：道具與薰香詳細資訊彈窗 (Item Detail Modal) -->
+  <div id="wiki-item-detail-modal" class="wiki-item-modal-backdrop" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="wiki-item-modal-title">
+    <div class="wiki-item-modal-backdrop-dismiss" onclick="window.WikiDB.closeItemDetailModal()"></div>
+    <div class="box-modal-dialog wiki-item-modal-dialog" role="document">
+      <div class="box-modal-header wiki-item-modal-header">
+        <div class="wiki-item-modal-title-group">
+          <div class="wiki-item-modal-icon-wrap" id="wiki-item-modal-icon-wrap">
+            <img id="wiki-item-modal-icon" class="wiki-item-modal-icon" src="" alt="Item" loading="lazy">
+          </div>
+          <div class="wiki-item-modal-heading">
+            <div class="wiki-item-modal-title-row">
+              <h3 id="wiki-item-modal-title" class="wiki-item-modal-title">--</h3>
+              <span id="wiki-item-modal-cat-badge" class="wiki-item-category-badge wiki-item-modal-cat-badge">--</span>
+            </div>
+            <p id="wiki-item-modal-subtitle" class="wiki-item-modal-subtitle">--</p>
+          </div>
+        </div>
+        <button type="button" id="wiki-item-modal-close-btn" class="box-modal-close wiki-item-modal-close-btn" onclick="window.WikiDB.closeItemDetailModal()" aria-label="關閉" data-i18n-aria="common.close">&times;</button>
+      </div>
+
+      <div class="box-modal-body wiki-item-modal-body" id="wiki-item-modal-body">
+        <!-- 效果詳細說明 -->
+        <section class="wiki-item-modal-section wiki-item-desc-section">
+          <h4 class="wiki-item-section-title" data-i18n="wiki.item_effect_title">效果與說明</h4>
+          <p id="wiki-item-modal-effects" class="wiki-item-modal-effects font-bold">--</p>
+          <p id="wiki-item-modal-desc" class="wiki-item-modal-desc">--</p>
+        </section>
+
+        <!-- 獲取管道與睡點兌換 -->
+        <section class="wiki-item-modal-section wiki-item-shop-section">
+          <h4 class="wiki-item-section-title" data-i18n="wiki.item_acquisition_title">獲取管道與睡點兌換</h4>
+          <div class="wiki-item-pricing-grid" id="wiki-item-modal-pricing"></div>
+          <ul class="wiki-item-acq-list" id="wiki-item-modal-acq-list"></ul>
+        </section>
+
+        <!-- 對應寶可夢 / 進化對象 (雙向圖鑑跳轉) -->
+        <section class="wiki-item-modal-section wiki-item-pokemon-section" id="wiki-item-modal-pokemon-section">
+          <div class="wiki-item-section-header">
+            <h4 class="wiki-item-section-title" id="wiki-item-pokemon-section-title" data-i18n="wiki.item_related_pokemon">對應寶可夢</h4>
+            <span class="wiki-item-pkm-count-badge" id="wiki-item-modal-pkm-count">0</span>
+          </div>
+          <div class="wiki-item-pokemon-grid" id="wiki-item-modal-pokemon-grid"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
   <footer style="display: none;">
     <p data-i18n-html="footer.copyright">
       Pokémon Sleep 寶可夢資料庫 &copy; 2026 ·
@@ -1473,6 +1520,7 @@
   <script src="js/components/popoverCoordinator.js?v=20261010_01"></script>
   <script src="js/modules/app.js?v=20261009_01"></script>
   <script src="js/modules/recipes.js?v=20261009_01"></script>
+  <script src="js/data/items.js"></script>
   <script src="js/modules/wiki.js?v=20261014_02"></script>
   <script src="js/modules/box.js?v=20261014_02"></script>
   <script src="js/modules/news.js?v=20261009_01"></script>

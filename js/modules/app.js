@@ -1786,7 +1786,8 @@ const MOBILE_OVERLAY_IDS = [
   'box-filter-sidebar', 'box-sidebar-backdrop',
   'ladder-filter-sidebar', 'ladder-sidebar-backdrop',
   'pokedex-detail-modal', 'box-edit-modal', 'box-guide-lightbox-modal',
-  'settings-modal', 'ladder-recipe-modal', 'modal-appraisal-report'
+  'settings-modal', 'ladder-recipe-modal', 'modal-appraisal-report',
+  'wiki-item-detail-modal'
 ];
 
 function isMobileH5Surface() {
@@ -2451,7 +2452,7 @@ if (typeof document !== 'undefined') {
 
       const STORAGE_KEY_MAIN_TAB = 'pksleep_active_main_tab';
       const VALID_MAIN_TABS = ['pokemon', 'recipes', 'wiki', 'box', 'news'];
-      const VALID_WIKI_SUBTABS = ['skills', 'subskills', 'ingredients', 'values', 'ratings', 'islands'];
+      const VALID_WIKI_SUBTABS = ['skills', 'subskills', 'ingredients', 'values', 'ratings', 'islands', 'items'];
       const VALID_BOX_SUBTABS = ['list', 'lab'];
 
       function switchMainTab(target) {
@@ -4481,9 +4482,15 @@ function formatPokedexIntervalSec(totalSec) {
   return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 }
 
-function openPokemonDetailModal(pokemonId) {
+function openPokemonDetailModal(pokemonIdOrObject) {
   const pokemons = PokemonApp.allPokemons || window.allPokemons || [];
-  const pkm = pokemons.find(p => String(p.id) === String(pokemonId) || p.formatted_no === pokemonId || p.name_cn === pokemonId || p.name_en === pokemonId);
+  let pkm = null;
+  if (pokemonIdOrObject && typeof pokemonIdOrObject === 'object') {
+    pkm = pokemonIdOrObject.id ? pokemonIdOrObject : null;
+  }
+  if (!pkm) {
+    pkm = pokemons.find(p => String(p.id) === String(pokemonIdOrObject) || p.formatted_no === pokemonIdOrObject || p.name_cn === pokemonIdOrObject || p.name_en === pokemonIdOrObject);
+  }
   if (!pkm) return;
 
   const minEvoLvl = getPokedexMinEvolutionLevel(pkm);
@@ -5836,6 +5843,73 @@ function getPokedexMinEvolutionLevel(pkm) {
   return 1;
 }
 
+// Canonical evolution items definitions for Pokedex modal linkage
+const POKEDEX_EVO_ITEM_DEFINITIONS = [
+  { id: 'thunder_stone', name_tw: '雷之石', name_cn: '雷之石', name_en: 'Thunder Stone', icon: 'https://www.serebii.net/pokemonsleep/items/thunderstone.png' },
+  { id: 'fire_stone',    name_tw: '火之石', name_cn: '火之石', name_en: 'Fire Stone',    icon: 'https://www.serebii.net/pokemonsleep/items/firestone.png' },
+  { id: 'water_stone',   name_tw: '水之石', name_cn: '水之石', name_en: 'Water Stone',   icon: 'https://www.serebii.net/pokemonsleep/items/waterstone.png' },
+  { id: 'leaf_stone',    name_tw: '葉之石', name_cn: '叶之石', name_en: 'Leaf Stone',    icon: 'https://www.serebii.net/pokemonsleep/items/leafstone.png' },
+  { id: 'moon_stone',    name_tw: '月之石', name_cn: '月之石', name_en: 'Moon Stone',    icon: 'https://www.serebii.net/pokemonsleep/items/moonstone.png' },
+  { id: 'sun_stone',     name_tw: '太陽之石', name_cn: '太阳之石', name_en: 'Sun Stone', icon: 'https://www.serebii.net/itemdex/sprites/sunstone.png' },
+  { id: 'ice_stone',     name_tw: '冰之石', name_cn: '冰之石', name_en: 'Ice Stone',     icon: 'https://www.serebii.net/pokemonsleep/items/icestone.png' },
+  { id: 'shiny_stone',   name_tw: '光之石', name_cn: '光之石', name_en: 'Shiny Stone',   icon: 'https://www.serebii.net/pokemonsleep/items/shinystone.png' },
+  { id: 'dusk_stone',    name_tw: '暗之石', name_cn: '暗之石', name_en: 'Dusk Stone',    icon: 'https://www.serebii.net/pokemonsleep/items/duskstone.png' },
+  { id: 'dawn_stone',    name_tw: '覺醒之石', name_cn: '觉醒之石', name_en: 'Dawn Stone', icon: 'https://www.serebii.net/pokemonsleep/items/dawnstone.png' },
+  { id: 'oval_stone',    name_tw: '渾圓之石', name_cn: '浑圆之石', name_en: 'Oval Stone', icon: 'https://www.serebii.net/pokemonsleep/items/ovalstone.png' },
+  { id: 'linking_cord',  name_tw: '聯繫繩', name_cn: '联系绳', name_en: 'Linking Cord',  icon: 'https://www.serebii.net/pokemonsleep/items/linkingcord.png' },
+  { id: 'metal_coat',    name_tw: '金屬膜', name_cn: '金属膜', name_en: 'Metal Coat',    icon: 'https://www.serebii.net/pokemonsleep/items/metalcoat.png' },
+  { id: 'kings_rock',    name_tw: '王者之證', name_cn: '王者之证', name_en: "King's Rock", icon: "https://www.serebii.net/pokemonsleep/items/king'srock.png" },
+  { id: 'up_grade',      name_tw: '升級資料', name_cn: '升级数据', name_en: 'Upgrade',   icon: 'https://www.serebii.net/itemdex/sprites/upgrade.png' },
+  { id: 'razor_claw',    name_tw: '銳利之爪', name_cn: '锐利之爪', name_en: 'Razor Claw', icon: 'https://www.serebii.net/pokemonsleep/items/razorclaw.png' },
+  { id: 'dragon_scale',  name_tw: '龍之鱗片', name_cn: '龙之鳞片', name_en: 'Dragon Scale', icon: 'https://www.serebii.net/itemdex/sprites/dragonscale.png' }
+];
+
+function getPokemonEvolutionItems(pkm) {
+  if (!pkm || !pkm.evo_req || typeof pkm.evo_req !== 'string') return [];
+  const req = pkm.evo_req;
+  const matched = [];
+
+  for (let i = 0; i < POKEDEX_EVO_ITEM_DEFINITIONS.length; i++) {
+    const def = POKEDEX_EVO_ITEM_DEFINITIONS[i];
+    if (
+      req.includes(def.name_tw) ||
+      req.includes(def.name_cn) ||
+      req.toLowerCase().includes(def.name_en.toLowerCase())
+    ) {
+      let displayName = def.name_tw;
+      if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getItemName === 'function') {
+        displayName = window.I18N.getItemName(def.id) || def.name_tw;
+      }
+      let iconUrl = def.icon;
+      if (typeof window !== 'undefined' && Array.isArray(window.ITEMS_DATA)) {
+        const itemRecord = window.ITEMS_DATA.find(x => x.id === def.id);
+        if (itemRecord && itemRecord.icon_url) {
+          iconUrl = itemRecord.icon_url;
+        }
+      }
+      matched.push({
+        id: def.id,
+        name: displayName,
+        icon_url: iconUrl
+      });
+    }
+  }
+  return matched;
+}
+
+function renderPokedexEvoItemChipsHTML(pkm) {
+  const items = getPokemonEvolutionItems(pkm);
+  if (!items || items.length === 0) return '';
+  const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage && window.I18N.getLanguage() === 'en-US';
+
+  return items.map(item => {
+    const tip = isEN
+      ? `Evolution Item: ${item.name} (Click for encyclopedia details)`
+      : `進化道具：${item.name}（點擊查看百科詳情）`;
+    return `<button type="button" class="pokedex-evo-item-btn" data-evo-item-id="${item.id}" onclick="window.WikiDB && typeof window.WikiDB.openItemDetailModal === 'function' ? window.WikiDB.openItemDetailModal('${item.id}') : (window.openItemDetailModal && window.openItemDetailModal('${item.id}'))" title="${escapeHtml(tip)}" aria-label="${escapeHtml(tip)}">${item.icon_url ? `<img src="${item.icon_url}" class="pokedex-evo-item-icon" alt="${escapeHtml(item.name)}" loading="lazy">` : ''}<span class="pokedex-evo-item-name font-bold">${escapeHtml(item.name)}</span></button>`;
+  }).join('');
+}
+
 function renderPokedexEvoGuardBadgeHTML(pkm, level) {
   const minLv = getPokedexMinEvolutionLevel(pkm);
   if (minLv <= 1) return '';
@@ -6097,6 +6171,7 @@ function renderPokedexDetailModalContent() {
               <div class="pokedex-header-no">No.${pkm.formatted_no || ''}</div>
               <div class="pokedex-header-name-row">
                 <span class="pokedex-header-pkm-name font-bold">${escapeHtml(pkmName)}</span>
+                ${renderPokedexEvoItemChipsHTML(pkm)}
               </div>
             </div>
             <div class="pokedex-header-tags pokedex-header-berry-spec-group">
@@ -6719,12 +6794,16 @@ Object.defineProperty(PokemonApp, 'pokedexModalState', {
 PokemonApp.getPokedexMainSkillYield = getPokedexMainSkillYield;
 PokemonApp.getSkillDescription = getSkillDescription;
 PokemonApp.BASE_SKILL_DETAILS = BASE_SKILL_DETAILS;
+PokemonApp.getPokemonEvolutionItems = getPokemonEvolutionItems;
+PokemonApp.renderPokedexEvoItemChipsHTML = renderPokedexEvoItemChipsHTML;
 
 if (typeof window !== 'undefined') {
   window.openPokemonDetailModal = openPokemonDetailModal;
   window.closePokemonDetailModal = closePokemonDetailModal;
   window.getPokedexMinEvolutionLevel = getPokedexMinEvolutionLevel;
   window.renderPokedexEvoGuardBadgeHTML = renderPokedexEvoGuardBadgeHTML;
+  window.getPokemonEvolutionItems = getPokemonEvolutionItems;
+  window.renderPokedexEvoItemChipsHTML = renderPokedexEvoItemChipsHTML;
   window.renderPokedexRibbonOptionsHTML = renderPokedexRibbonOptionsHTML;
   window.renderPokedexStrategyCardHTML = renderPokedexStrategyCardHTML;
   window.isBerryBurstSkillSpecialist = isBerryBurstSkillSpecialist;
@@ -6770,6 +6849,8 @@ if (typeof module !== 'undefined' && module.exports) {
     PokemonApp,
     getPokedexMinEvolutionLevel,
     renderPokedexEvoGuardBadgeHTML,
+    getPokemonEvolutionItems,
+    renderPokedexEvoItemChipsHTML,
     BASE_SKILLS,
     COMPOSITE_SKILL_MAP,
     SPECIAL_SKILL_DETAILS,
