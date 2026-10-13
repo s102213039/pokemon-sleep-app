@@ -11025,7 +11025,7 @@ SP 4,316
     assert(stylesCss.includes('body:not(.mobile-h5-app) #box-edit-modal .box-subskill-slots-row .box-subskill-slot-btn') && stylesCss.includes('border: none !important'), 'styles.css must remove outer border from box subskill slots on desktop');
   });
 
-  test('Tier 4 - Real-World Application Scenarios', 'Pot Expansion Slider UI, Range (0-650), and Default 100 Energy Recipe Calculations', () => {
+  test('Tier 4 - Real-World Application Scenarios', 'Pot Expansion Slider UI, Range (0-700), and Default 100 Energy Recipe Calculations', () => {
     const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
     const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app/index.html'), 'utf8');
     const recipesJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/recipes.js'), 'utf8');
@@ -11035,11 +11035,11 @@ SP 4,316
     // 1. Slider presence in HTML files
     assert(indexHtml.includes('id="pot-expansion-slider"'), 'index.html must contain pot-expansion-slider');
     assert(indexHtml.includes('id="pot-expansion-badge"'), 'index.html must contain pot-expansion-badge');
-    assert(indexHtml.includes('min="0"') && indexHtml.includes('max="650"') && indexHtml.includes('class="rf-slider pot-slider"'), 'index.html slider must be min 0, max 650 with pot-slider class');
+    assert(indexHtml.includes('min="0"') && indexHtml.includes('max="700"') && indexHtml.includes('class="rf-slider pot-slider"'), 'index.html slider must be min 0, max 700 with pot-slider class');
 
     assert(appIndexHtml.includes('id="pot-expansion-slider"'), 'app/index.html must contain pot-expansion-slider');
     assert(appIndexHtml.includes('id="pot-expansion-badge"'), 'app/index.html must contain pot-expansion-badge');
-    assert(appIndexHtml.includes('min="0"') && appIndexHtml.includes('max="650"'), 'app/index.html slider must be min 0, max 650');
+    assert(appIndexHtml.includes('min="0"') && appIndexHtml.includes('max="700"'), 'app/index.html slider must be min 0, max 700');
 
     // 2. i18n keys
     assert(i18nJs.includes("'recipe.slider_pot_expansion': '擴鍋預測'"), 'i18n.js must have zh-TW translation for pot expansion');
@@ -11826,27 +11826,28 @@ SP 4,316
     assert(h5Html.includes('id="modal-poke-mint"') && h5Html.includes('class="box-form-group box-full-width box-nature-group"'), 'app/index.html must cleanly group nature and mint checkbox');
   });
 
-  test('Tier 4 - Real-World Application Scenarios', 'Cooking Week Pot Limit (Up to 650) & Mobile Box Modal Main Skill Visible Single-Line Layout', () => {
+  test('Tier 4 - Real-World Application Scenarios', 'Cooking Week Pot Limit (Up to 700) & Mobile Box Modal Main Skill Visible Layout', () => {
     const stylesCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
     const h5Html = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
     const recipesJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'recipes.js'), 'utf8');
     const i18nJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
 
-    // 1. Verify pot expansion upper bound up to 650
-    assert(recipesJs.includes('updateSliderFill(potExpansionSlider, 0, 650);'), 'recipes.js must scale slider fill up to 650');
-    assert(recipesJs.includes('potExpansion = Math.min(650,'), 'recipes.js setPotExpansion must clamp up to 650');
-    assert(i18nJs.includes('414') && i18nJs.includes('650'), 'i18n.js must document Cooking Week Sunday 414 capacity and total 650 cap');
+    // 1. Verify pot expansion upper bound up to 700
+    assert(recipesJs.includes('updateSliderFill(potExpansionSlider, 0, 700);'), 'recipes.js must scale slider fill up to 700');
+    assert(recipesJs.includes('potExpansion = Math.min(700,'), 'recipes.js setPotExpansion must clamp up to 700');
+    assert(i18nJs.includes('486') && i18nJs.includes('686'), 'i18n.js must document Cooking Week Sunday 486 capacity and total 686 cap');
+    assert(i18nJs.includes('700'), 'i18n.js must document slider maximum 700');
 
-    // 2. Verify single-line row classes in mobile box edit modal
-    assert(h5Html.includes('class="box-form-group box-full-width box-form-row-inline box-nickname-row"'), 'app/index.html must use inline row for nickname');
-    assert(h5Html.includes('class="box-form-group box-full-width box-form-row-inline box-ribbon-row"'), 'app/index.html must use inline row for ribbon');
-    assert(h5Html.includes('class="box-form-group box-full-width box-form-row-inline box-mainskill-row"'), 'app/index.html must use inline row for main skill');
-    assert(h5Html.includes('class="box-form-group box-full-width box-form-row-inline box-ing-row"'), 'app/index.html must use inline row for ingredients');
+    // 2. Verify clean full-width vertical layout in mobile box edit modal
+    assert(h5Html.includes('id="modal-poke-nickname"') && h5Html.includes('class="box-form-group box-full-width"'), 'app/index.html must allocate full-width row for nickname');
+    assert(h5Html.includes('id="modal-poke-ribbon"') && h5Html.includes('class="box-form-group box-full-width"'), 'app/index.html must allocate full-width row for ribbon');
+    assert(h5Html.includes('id="modal-poke-main-skill-name"') && h5Html.includes('class="box-form-group box-full-width box-mainskill-group"'), 'app/index.html must cleanly group main skill');
+    assert(h5Html.includes('id="modal-poke-mint"') && h5Html.includes('class="box-form-group box-full-width box-nature-group"'), 'app/index.html must cleanly group nature and mint checkbox');
 
     // 3. Verify CSS prevents main skill badge crushing on mobile
     assert(stylesCode.includes('.mobile-h5-app .mobile-box-sheet .box-mainskill-name-badge') && stylesCode.includes('flex: 1 1 auto !important;'), 'styles.css must allow main skill badge to flexibly fill remaining space');
     assert(stylesCode.includes('.mobile-h5-app .mobile-box-sheet .box-mainskill-control .custom-select-container') && stylesCode.includes('width: 76px !important;'), 'styles.css must constrain mobile skill level select to 76px');
-    assert(stylesCode.includes('.mobile-h5-app .mobile-box-sheet .box-form-row-inline') && stylesCode.includes('flex-direction: row !important;'), 'styles.css must enforce single-line row layout on mobile box sheet');
+    assert(stylesCode.includes('.mobile-h5-app .mobile-box-sheet .box-mainskill-control') && stylesCode.includes('flex-direction: row !important;'), 'styles.css must enforce flex row on box-mainskill-control');
   });
 
 console.log('                   Test Results Summary');

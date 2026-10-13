@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/styles.css?v=20261009_01">
+  <link rel="stylesheet" href="../css/styles.css?v=20261014_01">
 
   <!-- 全域路徑基準與錯誤診斷攔截器 -->
   <script>
@@ -673,8 +673,8 @@
               </div>
               <div class="slider-row">
                 <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">0</span>
-                <input type="range" id="pot-expansion-slider" class="rf-slider pot-slider" min="0" max="650" step="1" value="0" aria-label="擴鍋預測">
-                <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">650</span>
+                <input type="range" id="pot-expansion-slider" class="rf-slider pot-slider" min="0" max="700" step="1" value="0" aria-label="擴鍋預測">
+                <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">700</span>
               </div>
             </div>
           </div>
@@ -1136,12 +1136,10 @@
               </div>
             </div>
 
-            <!-- 第 2 行：自訂暱稱 (單行展示) -->
-            <div class="box-form-group box-full-width box-form-row-inline box-nickname-row">
-              <label class="box-form-label box-form-inline-label" for="modal-poke-nickname" data-i18n="box.modal_poke_nickname">自訂暱稱</label>
-              <div class="box-form-inline-control" style="flex:1;">
-                <input type="text" id="modal-poke-nickname" class="box-form-input" placeholder="例如：首隻樹果S神坦、食材型噴火龍..." data-i18n-placeholder="box.modal_nickname_placeholder">
-              </div>
+            <!-- 第 2 行：自訂暱稱 (全寬度) -->
+            <div class="box-form-group box-full-width">
+              <label class="box-form-label" for="modal-poke-nickname" data-i18n="box.modal_poke_nickname">自訂暱稱</label>
+              <input type="text" id="modal-poke-nickname" class="box-form-input" placeholder="例如：首隻樹果S神坦、食材型噴火龍..." data-i18n-placeholder="box.modal_nickname_placeholder">
             </div>
 
             <!-- 第 3 行：性格 + 淨白薄荷 -->
@@ -1156,24 +1154,22 @@
               <select id="modal-poke-nature" class="box-form-select" required></select>
             </div>
 
-            <!-- 第 4 行：睡飽飽獎章 (單行展示) -->
-            <div class="box-form-group box-full-width box-form-row-inline box-ribbon-row">
-              <label class="box-form-label box-form-inline-label" for="modal-poke-ribbon" data-i18n="box.modal_poke_ribbon">睡飽飽獎章</label>
-              <div class="box-form-inline-control box-ribbon-control" style="flex:1;">
-                <select id="modal-poke-ribbon" class="box-form-select">
-                  <option value="0" data-i18n="box.ribbon_none">未佩戴 (0h)</option>
-                  <option value="1" data-icon="../assets/ribbons/ribbon_lv1.png" data-i18n="box.ribbon_lv1">200 小時 (+1 持有上限)</option>
-                  <option value="2" data-icon="../assets/ribbons/ribbon_lv2.png" data-i18n="box.ribbon_lv2">500 小時 (+3 持有上限 · 幫速加成)</option>
-                  <option value="3" data-icon="../assets/ribbons/ribbon_lv3.png" data-i18n="box.ribbon_lv3">1000 小時 (+6 持有上限)</option>
-                  <option value="4" data-icon="../assets/ribbons/ribbon_lv4.png" data-i18n="box.ribbon_lv4">2000 小時 (+8 持有上限 · 幫速最大加成)</option>
-                </select>
-              </div>
+            <!-- 第 4 行：睡飽飽獎章 (全寬度) -->
+            <div class="box-form-group box-full-width">
+              <label class="box-form-label" for="modal-poke-ribbon" data-i18n="box.modal_poke_ribbon">睡飽飽獎章</label>
+              <select id="modal-poke-ribbon" class="box-form-select">
+                <option value="0" data-i18n="box.ribbon_none">未佩戴 (0h)</option>
+                <option value="1" data-icon="../assets/ribbons/ribbon_lv1.png" data-i18n="box.ribbon_lv1">200 小時 (+1 持有上限)</option>
+                <option value="2" data-icon="../assets/ribbons/ribbon_lv2.png" data-i18n="box.ribbon_lv2">500 小時 (+3 持有上限 · 幫速加成)</option>
+                <option value="3" data-icon="../assets/ribbons/ribbon_lv3.png" data-i18n="box.ribbon_lv3">1000 小時 (+6 持有上限)</option>
+                <option value="4" data-icon="../assets/ribbons/ribbon_lv4.png" data-i18n="box.ribbon_lv4">2000 小時 (+8 持有上限 · 幫速最大加成)</option>
+              </select>
             </div>
 
-            <!-- 第 5 行：主技能資訊 (單行展示：技能名稱徽章與等級調整選單) -->
-            <div class="box-form-group box-full-width box-form-row-inline box-mainskill-row">
-              <label class="box-form-label box-form-inline-label" for="modal-poke-skill-level" data-i18n="box.modal_main_skill">主技能資訊</label>
-              <div class="box-form-inline-control box-mainskill-control" style="flex:1;">
+            <!-- 第 5 行：主技能資訊 (全寬度：技能名稱徽章 + 等級調整選單) -->
+            <div class="box-form-group box-full-width box-mainskill-group">
+              <label class="box-form-label" for="modal-poke-skill-level" data-i18n="box.modal_main_skill">主技能資訊</label>
+              <div class="box-mainskill-control">
                 <span id="modal-poke-main-skill-name" class="box-mainskill-name-badge">--</span>
                 <select id="modal-poke-skill-level" class="box-form-select box-mainskill-select">
                   <option value="1">Lv. 1</option>
@@ -1187,26 +1183,24 @@
               </div>
             </div>
 
-            <!-- 第 6 行：食材組合 (單行展示) -->
-            <div class="box-form-group box-full-width box-form-row-inline box-ing-row">
-              <label class="box-form-label box-form-inline-label" data-i18n="box.modal_poke_ing">食材組合</label>
-              <div class="box-form-inline-control box-ing-control" style="flex:1;">
-                <input type="hidden" id="modal-ing1" value="">
-                <input type="hidden" id="modal-ing2" value="">
-                <input type="hidden" id="modal-ing3" value="">
-                <div class="box-ing-strip">
-                  <div class="box-ing-slot-group">
-                    <span class="box-ing-lvl-tag" data-i18n="box.modal_ing_lv1">Lv.1</span>
-                    <div id="modal-ing-options-1" class="box-ing-options-list"></div>
-                  </div>
-                  <div class="box-ing-slot-group">
-                    <span class="box-ing-lvl-tag" data-i18n="box.modal_ing_lv30">Lv.30</span>
-                    <div id="modal-ing-options-2" class="box-ing-options-list"></div>
-                  </div>
-                  <div class="box-ing-slot-group">
-                    <span class="box-ing-lvl-tag" data-i18n="box.modal_ing_lv60">Lv.60</span>
-                    <div id="modal-ing-options-3" class="box-ing-options-list"></div>
-                  </div>
+            <!-- 第 6 行：食材組合 (全寬度) -->
+            <div class="box-form-group box-full-width box-ing-group">
+              <label class="box-form-label" data-i18n="box.modal_poke_ing">食材組合</label>
+              <input type="hidden" id="modal-ing1" value="">
+              <input type="hidden" id="modal-ing2" value="">
+              <input type="hidden" id="modal-ing3" value="">
+              <div class="box-ing-strip">
+                <div class="box-ing-slot-group">
+                  <span class="box-ing-lvl-tag" data-i18n="box.modal_ing_lv1">Lv.1</span>
+                  <div id="modal-ing-options-1" class="box-ing-options-list"></div>
+                </div>
+                <div class="box-ing-slot-group">
+                  <span class="box-ing-lvl-tag" data-i18n="box.modal_ing_lv30">Lv.30</span>
+                  <div id="modal-ing-options-2" class="box-ing-options-list"></div>
+                </div>
+                <div class="box-ing-slot-group">
+                  <span class="box-ing-lvl-tag" data-i18n="box.modal_ing_lv60">Lv.60</span>
+                  <div id="modal-ing-options-3" class="box-ing-options-list"></div>
                 </div>
               </div>
             </div>

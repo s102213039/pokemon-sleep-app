@@ -21,7 +21,7 @@
   let recipeLevel         = 1;       // 1-70
   let islandBonus         = 0;       // 0-85 (%)
   let eventBonus          = 1.0;     // 1.00 - 1.50 (step 0.25)
-  let potExpansion        = 0;       // 0 - 650 (多餘食材追加個數)
+  let potExpansion        = 0;       // 0 - 700 (多餘食材追加個數)
   let showTasty           = false;   // 漂亮成功 (2x / 3x) 開關
 
   /* ─── 食譜等級加成倉率表（Lv.1-70）
@@ -153,7 +153,7 @@
     } else {
       potExpansionBadge.textContent = `+${potExpansion} (+${(potExpansion * 100).toLocaleString()})`;
     }
-    updateSliderFill(potExpansionSlider, 0, 650);
+    updateSliderFill(potExpansionSlider, 0, 700);
   }
 
   function syncTastyUI() {
@@ -1335,7 +1335,7 @@
       getLevelBonus: getLevelBonus,
       getPotExpansion: function() { return potExpansion; },
       setPotExpansion: function(val) {
-        potExpansion = Math.min(650, Math.max(0, Number(val) || 0));
+        potExpansion = Math.min(700, Math.max(0, Number(val) || 0));
         syncPotExpansionUI();
         savePrefs();
         render();

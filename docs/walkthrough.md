@@ -1377,17 +1377,24 @@
    - 天梯浮窗核心大菜展示改用料理圖示代替純文字名稱，顯示格式為 `核心大菜：[DishIcon] (Need/餐)`。
    - 去除 `.tooltip-dish-box` 的任何次級嵌套邊框與背景底色，嚴格遵守單一外框原則（Rule IX），僅保留狀態徽章（`.tooltip-dish-badge`）本身的彩色框線。
    - 核心大菜與供貨能力徽章採用單行水平排列（`flex-direction: row; white-space: nowrap;`），擴大浮窗最大寬度至 350px，杜絕折行。
-10. **行動端 H5 寶可夢編輯彈窗 (Box Edit Modal) 佈局重構與垂直空白斷層修復** (`app/index.html`, `css/styles.css`):
-    - **根治 350px 異常空白 BUG**：全域 CSS 中性格下拉選單原本設有 `flex: 0 0 350px;`（桌面橫向寬度），在行動端垂直 Flex 容器中被渲染為高度 350px，產生巨大空隙並將後續欄位推擠出螢幕。現已修正為 `flex: 0 0 auto;` 與標準 36px 高度。
-    - **自訂暱稱獨立全寬展示**：不再與性格擠在狹窄雙欄（避免提示文字被截斷為「例如」），提供完整提示文字「例如：首隻樹果S神坦、食材型噴火龍...」。
-    - **性格與淨白薄荷緊密同組排列**：性格標題列右側直接放置「[ ] 使用淨白薄荷消除個性效果」，下方緊接性格下拉框，完全消除多餘垂直留白。
-    - **表單容器高度自動收束**：`.box-form-grid` 在行動端改為純垂直彈性盒（`display: flex; flex-direction: column; gap: 8px; flex: 0 0 auto;`），副技能配置插槽與選擇盤皆完整平鋪於視窗內，操作流暢無斷層。
+10. **行動端 H5 寶可夢編輯彈窗 (Box Edit Modal) 完整人體工學排版修復** (`app/index.html`, `css/styles.css`):
+    - **全寬垂直佈局與左對齊標籤**：移除先前衝突的 `.box-form-row-inline` 單行併排與置中排列，表單組（`.box-form-group`）採用標準全寬垂直結構（`flex-direction: column !important; align-items: stretch !important; width: 100% !important;`）。標籤（`.box-form-label`）統一置頂靠左對齊，輸入框與下拉選單 100% 寬度延展。
+    - **主技能資訊欄位自適應延展**：主技能列（`.box-mainskill-control`）採用專屬 Flexbox，名稱徽章（`.box-mainskill-name-badge`）設為 `flex: 1 1 auto; min-width: 0; width: 0;`，自適應填滿扣除等級選單後的剩餘空間（約 280px），杜絕文字擠壓變形；等級選單固定 76px 緊湊寬度。
+    - **食材組合與副技能插槽無多餘邊框**：食材組合（`.box-ing-strip`）維持單行無邊框展示，副技能插槽（`.box-subskill-slots-row`）5 欄整齊排列，嚴格遵守單一外框規範。
+11. **鍋子容量機制精準校正（常規上限 81 格、料理週日好露營券 486 格、單次極限 686 格、滑桿支援 700 格）** (`index.html`, `app/index.html`, `js/modules/recipes.js`, `js/core/i18n.js`):
+    - **最新鍋容量機制公式**：
+      - 常規夢之碎片升級上限最新為 **81 格**。
+      - 好露營券加成（×1.5 倍）：平日 81 × 1.5 = 121.5 -> **122 格**；週日 162 × 1.5 = **243 格**。
+      - 週日料理加成（×2 倍）：81 × 2 = **162 格**。
+      - 料理週活動週日加成（×4 倍）：81 × 4 = 324 格；搭配好露營券（×1.5 倍）高達 **486 格**！
+      - 疊加自爆磁怪等寶可夢之「料理強化S」技能（最高堆疊 +200 個食材），單次極限鍋容量高達 **486 + 200 = 686 格**！
+    - **擴鍋滑塊與多語言說明**：滑塊上限全面擴充至 `0~700`，`recipes.js` 計算邏輯 clamp 至 700，i18n 多語言說明同步詳列完整公式與 486/686 格極限機制。
 
 ### 自動化測試與工程品質保證
-- **測試總數升級至 214 項**：
+- **測試總數升級至 215 項**：
   - Tier 1 (Feature Coverage): 64 Passed, 0 Failed
   - Tier 2 (Boundary & Corner Cases): 43 Passed, 0 Failed
   - Tier 3 (Cross-Feature Combinations): 8 Passed, 0 Failed
-  - Tier 4 (Real-World Application Scenarios): 99 Passed, 0 Failed
-  - **總計：214 / 214 Passed (0 Failed, 100% 通過)**
+  - Tier 4 (Real-World Application Scenarios): 100 Passed, 0 Failed
+  - **總計：215 / 215 Passed (0 Failed, 100% 通過)**
 - 全面遵守全域安全規範、無 Emoji 政策、單一外框規範、下拉箭頭排版規範與 `rtk` 指令調用。
