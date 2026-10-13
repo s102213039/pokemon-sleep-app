@@ -24778,11 +24778,11 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
 }
 
 .mobile-h5-app .mobile-box-sheet #modal-poke-nature + .custom-select-container,
-.mobile-h5-app .mobile-box-sheet .custom-select-container {
+.mobile-h5-app .mobile-box-sheet #modal-poke-ribbon + .custom-select-container {
   width: 100% !important;
   max-width: 100% !important;
   height: 36px !important;
-  flex: 0 0 auto !important;
+  flex: 1 1 auto !important;
 }
 
 .mobile-h5-app .mobile-box-sheet .custom-select-trigger {
@@ -24796,6 +24796,118 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   padding: 0 36px 0 10px !important;
   box-sizing: border-box !important;
   width: 100% !important;
+}
+
+/* 行動端單行表單列 (Inline Rows: 暱稱、獎章、主技能、食材組合) 嚴格單行展示 */
+.mobile-h5-app .mobile-box-sheet .box-form-row-inline {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  min-height: 36px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-form-inline-label {
+  width: 72px !important;
+  min-width: 72px !important;
+  max-width: 72px !important;
+  flex: 0 0 72px !important;
+  margin: 0 !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-secondary) !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-form-inline-control {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  width: auto !important;
+}
+
+/* 主技能列：徽章彈性填滿，等級下拉固定 76px，杜絕擠壓 */
+.mobile-h5-app .mobile-box-sheet .box-mainskill-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-height: 36px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-mainskill-control {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  width: auto !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-mainskill-name-badge {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  width: auto !important;
+  height: 36px !important;
+  line-height: 34px !important;
+  padding: 0 10px !important;
+  border-radius: 10px !important;
+  background: rgba(56, 189, 248, 0.12) !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  color: var(--accent-blue, #38bdf8) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .mobile-box-sheet #modal-poke-skill-level + .custom-select-container,
+.mobile-h5-app .mobile-box-sheet .box-mainskill-control .custom-select-container {
+  width: 76px !important;
+  min-width: 76px !important;
+  max-width: 76px !important;
+  flex: 0 0 76px !important;
+  height: 36px !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-mainskill-control .custom-select-trigger {
+  width: 76px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 0 24px 0 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-mainskill-control .custom-select-arrow {
+  right: 8px !important;
+}
+
+.mobile-h5-app .mobile-box-sheet select.box-mainskill-select {
+  width: 76px !important;
+  min-width: 76px !important;
+  max-width: 76px !important;
+  flex: 0 0 76px !important;
+  height: 36px !important;
+  padding: 0 24px 0 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
 }
 
 .mobile-h5-app .mobile-box-sheet .box-nature-group {
