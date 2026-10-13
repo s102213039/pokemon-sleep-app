@@ -300,7 +300,7 @@
         window.portalMobileOverlays(sidebar);
       }
       sidebar.classList.remove('collapsed');
-      const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+      const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList && typeof document.body.classList.contains === 'function' && document.body.classList.contains('mobile-h5-app');
       const isSmallScreen = typeof window !== 'undefined' && window.innerWidth <= 1024;
       if ((isMobileH5 || isSmallScreen) && backdrop) {
         backdrop.classList.add('active');
@@ -412,7 +412,7 @@
     const clearBerriesBtn = document.getElementById('box-clear-berries-btn');
     const clearIngredientsBtn = document.getElementById('box-clear-ingredients-pkm-btn');
     const clearSkillsBtn = document.getElementById('box-clear-skills-btn');
-    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList && typeof document.body.classList.contains === 'function' && document.body.classList.contains('mobile-h5-app');
 
     if (finalEvoToggle) {
       finalEvoToggle.addEventListener('change', (e) => {
@@ -1108,6 +1108,7 @@
   }
 
   function renderBox() {
+    if (typeof document === 'undefined') return;
     syncBoxVisibility();
     updateBoxActiveFilterBadge();
     const container = document.getElementById('box-content-area');
@@ -1136,7 +1137,7 @@
         return;
       }
 
-      const isMobileH5 = typeof document !== 'undefined' && (!!document.querySelector('.mobile-h5-app') || (document.body && document.body.classList.contains('mobile-h5-app')));
+      const isMobileH5 = typeof document !== 'undefined' && (!!document.querySelector('.mobile-h5-app') || (document.body && document.body.classList && typeof document.body.classList.contains === 'function' && document.body.classList.contains('mobile-h5-app')));
       if (isMobileH5 || boxViewMode === 'table') {
         renderBoxTable(filtered, container);
       } else {
@@ -1384,7 +1385,7 @@
   function renderBoxTable(list, container) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
-    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList.contains('mobile-h5-app');
+    const isMobileH5 = typeof document !== 'undefined' && document.body && document.body.classList && typeof document.body.classList.contains === 'function' && document.body.classList.contains('mobile-h5-app');
 
     container.innerHTML = `
       <div class="table-container">
@@ -1582,6 +1583,7 @@
   }
 
   function bindCardActions(container) {
+    if (!container || typeof container.querySelectorAll !== 'function') return;
     container.querySelectorAll('.btn-appraise').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -2601,6 +2603,346 @@
     renderBox();
   }
 
+  /* ─── 截圖辨識相似寶可夢比對與覆蓋確認彈窗 ───────────────────────── */
+  function findSimilarPokemonInBox(parsed) {
+    if (!parsed || !parsed.name || !userBox || userBox.length === 0) return null;
+    const pkmName = parsed.name.trim();
+
+    // 1. 同一寶可夢品種候選池 (Same Species Candidates)
+    const candidates = userBox.filter(p => {
+      if (!p) return false;
+      if (p.name && p.name.trim() === pkmName) return true;
+      if (p.pokemonId && parsed.pokemonId && p.pokemonId === parsed.pokemonId) return true;
+      return false;
+    });
+
+    if (candidates.length === 0) return null;
+
+    // 2. 計算相似度權重分數 (Similarity Score)
+    let bestCandidate = null;
+    let maxScore = -1;
+
+    candidates.forEach(cand => {
+      let score = 20; // 同品種基準分
+
+      // (a) 性格一致 (性格是先天固定屬性)
+      if (parsed.nature && cand.nature && parsed.nature === cand.nature) {
+        score += 35;
+      }
+
+      // (b) 食材組合一致性 (比對 Lv.1, Lv.30, Lv.60)
+      let ingMatchCount = 0;
+      if (parsed.ing1 && cand.ing1 && parsed.ing1 === cand.ing1) ingMatchCount++;
+      if (parsed.ing2 && cand.ing2 && parsed.ing2 === cand.ing2) ingMatchCount++;
+      if (parsed.ing3 && cand.ing3 && parsed.ing3 === cand.ing3) ingMatchCount++;
+      score += ingMatchCount * 12; // 最高 +36
+
+      // (c) 副技能交集 (副技能是先天固定的)
+      const candSks = new Set(cand.subskills || []);
+      const parsedSks = parsed.subskills || [];
+      let skMatchCount = 0;
+      parsedSks.forEach(sk => {
+        if (sk && candSks.has(sk)) skMatchCount++;
+      });
+      score += skMatchCount * 10; // 最高 +50
+
+      // (d) 暱稱相符加分
+      if (parsed.nickname && cand.nickname && parsed.nickname === cand.nickname) {
+        score += 20;
+      }
+
+      // (e) 等級合理性 (新等級 >= 舊等級，或等級相差不超過 10)
+      const oldLvl = Number(cand.level) || 1;
+      const newLvl = Number(parsed.level) || 1;
+      if (newLvl >= oldLvl) {
+        score += 10;
+      } else if (Math.abs(newLvl - oldLvl) <= 10) {
+        score += 5;
+      }
+
+      if (score > maxScore) {
+        maxScore = score;
+        bestCandidate = cand;
+      }
+    });
+
+    const threshold = (candidates.length === 1) ? 35 : 45;
+    if (bestCandidate && maxScore >= threshold) {
+      return bestCandidate;
+    }
+    return null;
+  }
+
+  function comparePokemonDetails(existing, parsed) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const comparisons = [];
+
+    // 1. 等級
+    const oldLevel = Number(existing.level) || 1;
+    const newLevel = Number(parsed.level) || oldLevel;
+    comparisons.push({
+      field: 'level',
+      label: isEN ? 'Level' : '等級',
+      isSame: oldLevel === newLevel,
+      oldHtml: `Lv.${oldLevel}`,
+      newHtml: `Lv.${newLevel}`
+    });
+
+    // 2. 暱稱
+    const oldNick = existing.nickname ? existing.nickname.trim() : '';
+    const newNick = parsed.nickname ? parsed.nickname.trim() : '';
+    const isNickSame = !newNick || (oldNick === newNick);
+    comparisons.push({
+      field: 'nickname',
+      label: isEN ? 'Nickname' : '自訂暱稱',
+      isSame: isNickSame,
+      oldHtml: oldNick ? escapeHtml(oldNick) : `<span style="color:var(--text-muted);">${isEN ? 'None' : '未設定'}</span>`,
+      newHtml: newNick ? escapeHtml(newNick) : (oldNick ? `<span style="color:var(--text-muted);">${isEN ? '(Retain: ' + escapeHtml(oldNick) + ')' : '(維持原暱稱：' + escapeHtml(oldNick) + ')'}</span>` : `<span style="color:var(--text-muted);">${isEN ? 'None' : '未設定'}</span>`)
+    });
+
+    // 3. 主技能等級
+    const oldSkillLvl = Number(existing.skillLevel || existing.mainSkillLevel) || 1;
+    const newSkillLvl = Number(parsed.skillLevel || parsed.mainSkillLevel) || oldSkillLvl;
+    comparisons.push({
+      field: 'skillLevel',
+      label: isEN ? 'Main Skill Level' : '主技能等級',
+      isSame: oldSkillLvl === newSkillLvl,
+      oldHtml: `Lv.${oldSkillLvl}`,
+      newHtml: `Lv.${newSkillLvl}`
+    });
+
+    // 4. 性格
+    const oldNat = existing.nature || '坦率';
+    const newNat = parsed.nature || oldNat;
+    const oldNatName = (window.I18N && typeof window.I18N.getNatureName === 'function') ? window.I18N.getNatureName(oldNat) : oldNat;
+    const newNatName = (window.I18N && typeof window.I18N.getNatureName === 'function') ? window.I18N.getNatureName(newNat) : newNat;
+    comparisons.push({
+      field: 'nature',
+      label: isEN ? 'Nature' : '性格',
+      isSame: oldNat === newNat,
+      oldHtml: escapeHtml(oldNatName),
+      newHtml: escapeHtml(newNatName)
+    });
+
+    // 5. 淨白薄荷
+    const oldMint = !!(existing.cleanseMint || existing.mint);
+    const newMint = !!(parsed.cleanseMint || parsed.useMint);
+    comparisons.push({
+      field: 'cleanseMint',
+      label: isEN ? 'Cleanse Mint' : '淨白薄荷',
+      isSame: oldMint === newMint,
+      oldHtml: oldMint ? (isEN ? 'Used' : '已消除效果') : (isEN ? 'None' : '未消除'),
+      newHtml: newMint ? (isEN ? 'Used' : '已消除效果') : (isEN ? 'None' : '未消除')
+    });
+
+    // 6. 睡飽飽獎章
+    const oldRibbon = Number(existing.ribbon) || 0;
+    const newRibbon = (parsed.ribbon !== undefined) ? (Number(parsed.ribbon) || 0) : oldRibbon;
+    const getRibbonLabel = (val) => {
+      if (val === 1) return isEN ? '200h (+1 Carry)' : '200 小時 (+1 上限)';
+      if (val === 2) return isEN ? '500h (+3 Carry · Speed)' : '500 小時 (+3 上限 · 幫速)';
+      if (val === 3) return isEN ? '1000h (+6 Carry)' : '1000 小時 (+6 上限)';
+      if (val === 4) return isEN ? '2000h (+8 Carry · Max)' : '2000 小時 (+8 上限 · 最大幫速)';
+      return isEN ? 'None (0h)' : '未佩戴 (0h)';
+    };
+    comparisons.push({
+      field: 'ribbon',
+      label: isEN ? 'Good-Night Ribbon' : '睡飽飽獎章',
+      isSame: oldRibbon === newRibbon,
+      oldHtml: getRibbonLabel(oldRibbon),
+      newHtml: getRibbonLabel(newRibbon)
+    });
+
+    // 7. 食材組合
+    const formatIngCombo = (item) => {
+      const p1 = item.ing1 || '-';
+      const p2 = item.ing2 || '-';
+      const p3 = item.ing3 || '-';
+      return `${p1} / ${p2} / ${p3}`;
+    };
+    const oldIngs = formatIngCombo(existing);
+    const newIngs = formatIngCombo(parsed);
+    comparisons.push({
+      field: 'ingredients',
+      label: isEN ? 'Ingredients (Lv1/30/60)' : '食材組合 (Lv1/30/60)',
+      isSame: (existing.ing1 === parsed.ing1 && existing.ing2 === parsed.ing2 && existing.ing3 === parsed.ing3),
+      oldHtml: escapeHtml(oldIngs),
+      newHtml: escapeHtml(newIngs)
+    });
+
+    // 8. 副技能組合
+    const oldSks = (existing.subskills || []).slice(0, 5);
+    const newSks = (parsed.subskills || []).slice(0, 5);
+    const isSksSame = (oldSks.length === newSks.length) && oldSks.every((sk, i) => sk === newSks[i]);
+    const formatSks = (sks) => {
+      if (!sks || sks.length === 0) return isEN ? 'None' : '無';
+      return sks.map(s => {
+        const sName = (window.I18N && typeof window.I18N.getSubskillName === 'function') ? window.I18N.getSubskillName(s) : s;
+        return escapeHtml(sName);
+      }).join('、');
+    };
+    comparisons.push({
+      field: 'subskills',
+      label: isEN ? 'Sub-Skills' : '副技能組合',
+      isSame: isSksSame,
+      oldHtml: formatSks(oldSks),
+      newHtml: formatSks(newSks)
+    });
+
+    return comparisons;
+  }
+
+  function openPokemonConflictModal(parsedData, existingCandidate, imgSrc) {
+    if (typeof document === 'undefined') return;
+    let modal = document.getElementById('box-conflict-modal');
+    if (!modal) return;
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+
+    const base = findPokemonBase(existingCandidate.pokemonId || existingCandidate.name);
+    const pkmDisplayName = isEN ? ((base && base.name_en) || existingCandidate.name) : (existingCandidate.name || (base ? base.name_cn : ''));
+    const candidateDisplayName = existingCandidate.nickname ? `${pkmDisplayName} (${existingCandidate.nickname})` : pkmDisplayName;
+    const iconUrl = (base && window.getItemIcon) ? window.getItemIcon(base) : (base ? base.icon : '');
+
+    const comparisons = comparePokemonDetails(existingCandidate, parsedData);
+    const diffItems = comparisons.filter(c => !c.isSame);
+    const sameItems = comparisons.filter(c => c.isSame);
+
+    // Summary banner
+    const summaryEl = document.getElementById('box-conflict-summary');
+    if (summaryEl) {
+      summaryEl.innerHTML = `
+        <div class="box-conflict-summary-pkm">
+          ${iconUrl ? `<img src="${iconUrl}" class="box-conflict-pkm-icon" alt="" loading="lazy">` : ''}
+          <div class="box-conflict-pkm-names">
+            <div class="box-conflict-pkm-main">${escapeHtml(candidateDisplayName)}</div>
+            <div class="box-conflict-pkm-sub">UID: ${existingCandidate.uid ? existingCandidate.uid.slice(-8) : ''} · ${isEN ? 'Lv.' + (existingCandidate.level || 1) : '現有 Lv.' + (existingCandidate.level || 1)}</div>
+          </div>
+        </div>
+        <div class="box-conflict-pills">
+          <span class="conflict-badge-diff">${diffItems.length} ${isEN ? 'Updates' : '項更新'}</span>
+          <span class="conflict-badge-same">${sameItems.length} ${isEN ? 'Same' : '項相同'}</span>
+        </div>
+      `;
+    }
+
+    // Comparison rows list
+    const listEl = document.getElementById('box-conflict-list');
+    if (listEl) {
+      listEl.innerHTML = comparisons.map(item => `
+        <div class="box-conflict-row ${item.isSame ? 'is-same' : 'is-diff'}">
+          <div class="conflict-row-field">
+            <span class="conflict-field-name">${item.label}</span>
+            <span class="conflict-status-tag ${item.isSame ? 'tag-same' : 'tag-diff'}">${item.isSame ? (isEN ? 'Same' : '相同') : (isEN ? 'Updated' : '已更新')}</span>
+          </div>
+          <div class="conflict-values-grid">
+            <div class="conflict-val-col col-existing">
+              <span class="conflict-val-label">${isEN ? 'In Box' : '倉庫現有'}</span>
+              <div class="conflict-val-content">${item.oldHtml}</div>
+            </div>
+            <div class="conflict-val-arrow">→</div>
+            <div class="conflict-val-col col-parsed">
+              <span class="conflict-val-label">${isEN ? 'New Screenshot' : '截圖新值'}</span>
+              <div class="conflict-val-content">${item.newHtml}</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Bind action buttons
+    const overwriteBtn = document.getElementById('box-conflict-overwrite-btn');
+    if (overwriteBtn) {
+      overwriteBtn.onclick = () => {
+        executePokemonOverwrite(parsedData, existingCandidate);
+      };
+    }
+
+    const saveNewBtn = document.getElementById('box-conflict-savenew-btn');
+    if (saveNewBtn) {
+      saveNewBtn.onclick = () => {
+        closePokemonConflictModal();
+        openBoxEditModal(parsedData, imgSrc);
+      };
+    }
+
+    const cancelBtn = document.getElementById('box-conflict-cancel-btn');
+    if (cancelBtn) {
+      cancelBtn.onclick = () => {
+        closePokemonConflictModal();
+      };
+    }
+
+    modal.onclick = (e) => {
+      if (e.target === modal) closePokemonConflictModal();
+    };
+
+    if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
+    modal.style.display = 'flex';
+    if (document.body && document.body.classList && typeof document.body.classList.add === 'function') {
+      document.body.classList.add('modal-open');
+    }
+    if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(modal);
+  }
+
+  function closePokemonConflictModal() {
+    if (typeof document === 'undefined') return;
+    const modal = document.getElementById('box-conflict-modal');
+    if (!modal) return;
+    const done = () => {
+      if (document.body && document.body.classList && typeof document.body.classList.remove === 'function') {
+        document.body.classList.remove('modal-open');
+      }
+      if (typeof window.syncOverlayOpenState === 'function') window.syncOverlayOpenState();
+    };
+    if (typeof window.animateOverlayClose === 'function') {
+      window.animateOverlayClose(modal, done);
+    } else {
+      modal.style.display = 'none';
+      done();
+    }
+  }
+
+  function executePokemonOverwrite(parsedData, existingCandidate) {
+    const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const idx = userBox.findIndex(p => p.uid === existingCandidate.uid);
+    if (idx === -1) {
+      closePokemonConflictModal();
+      return;
+    }
+
+    // 更新各項數值
+    if (parsedData.level != null) userBox[idx].level = Number(parsedData.level) || userBox[idx].level;
+    if (parsedData.nature) userBox[idx].nature = parsedData.nature;
+    if (parsedData.cleanseMint !== undefined) userBox[idx].cleanseMint = !!parsedData.cleanseMint;
+    if (parsedData.useMint !== undefined) userBox[idx].cleanseMint = !!parsedData.useMint;
+    if (parsedData.ribbon !== undefined) userBox[idx].ribbon = Number(parsedData.ribbon) || 0;
+    if (parsedData.skillLevel !== undefined) userBox[idx].skillLevel = Number(parsedData.skillLevel) || userBox[idx].skillLevel;
+    if (parsedData.mainSkillLevel !== undefined) userBox[idx].skillLevel = Number(parsedData.mainSkillLevel) || userBox[idx].skillLevel;
+    if (parsedData.ing1) userBox[idx].ing1 = parsedData.ing1;
+    if (parsedData.ing2) userBox[idx].ing2 = parsedData.ing2;
+    if (parsedData.ing3) userBox[idx].ing3 = parsedData.ing3;
+    if (parsedData.subskills && parsedData.subskills.length > 0) {
+      userBox[idx].subskills = parsedData.subskills.slice();
+    }
+    // 只有在截圖確實有辨識出自訂暱稱時才覆蓋，否則保留原有暱稱
+    if (parsedData.nickname && parsedData.nickname.trim()) {
+      userBox[idx].nickname = parsedData.nickname.trim();
+    }
+    userBox[idx].updatedAt = Date.now();
+
+    saveUserBox();
+    renderBox();
+    closePokemonConflictModal();
+
+    const pkmName = isEN ? ((existingCandidate.name_en || existingCandidate.name) || 'Pokémon') : (existingCandidate.name || '寶可夢');
+    const displayName = userBox[idx].nickname ? `${pkmName} (${userBox[idx].nickname})` : pkmName;
+    showBoxToast(
+      isEN ? 'Pokémon Overwritten & Updated' : '寶可夢覆蓋更新成功！',
+      isEN ? `Successfully updated "${displayName}" with latest screenshot data.` : `已成功將「${displayName}」覆蓋更新為最新截圖數據！`,
+      'success'
+    );
+  }
+
   /* ─── 截圖智能分析與 OCR 引擎 (支援單圖與多圖連續批次辨識) ───────────────────────── */
   function makePokemonFingerprint(p) {
     if (!p) return '';
@@ -2619,7 +2961,7 @@
 
     const scannerStatus = document.getElementById('box-scanner-status');
 
-    // 1. 單張截圖流程 (保留單張確認彈窗)
+    // 1. 單張截圖流程 (智能相似寶可夢比對與確認)
     if (imageFiles.length === 1) {
       const file = imageFiles[0];
       if (scannerStatus) {
@@ -2633,7 +2975,13 @@
         try {
           const parsedData = await parsePokemonScreenshot(imgSrc);
           if (scannerStatus) scannerStatus.style.display = 'none';
-          openBoxEditModal(parsedData, imgSrc);
+
+          const similarExisting = findSimilarPokemonInBox(parsedData);
+          if (similarExisting) {
+            openPokemonConflictModal(parsedData, similarExisting, imgSrc);
+          } else {
+            openBoxEditModal(parsedData, imgSrc);
+          }
         } catch (err) {
           console.error('Screenshot parse failed:', err);
           if (scannerStatus) scannerStatus.style.display = 'none';
@@ -3766,6 +4114,7 @@
     if (typeof window !== 'undefined' && typeof window.showToast === 'function') {
       return window.showToast(title, message, type);
     }
+    if (typeof document === 'undefined') return;
     let container = document.getElementById('box-toast-container');
     if (!container) {
       container = document.createElement('div');
@@ -4344,7 +4693,12 @@
       toggleBoxSidebar,
       resetBoxFilters,
       getBoxFilterState,
-      setBoxFilterState
+      setBoxFilterState,
+      findSimilarPokemonInBox,
+      comparePokemonDetails,
+      openPokemonConflictModal,
+      closePokemonConflictModal,
+      executePokemonOverwrite
     };
     window.UserBox = window.PokemonBoxApp;
   }
@@ -4383,7 +4737,12 @@
         toggleBoxSidebar,
         resetBoxFilters,
         getBoxFilterState,
-        setBoxFilterState
+        setBoxFilterState,
+        findSimilarPokemonInBox,
+        comparePokemonDetails,
+        openPokemonConflictModal,
+        closePokemonConflictModal,
+        executePokemonOverwrite
       },
       getUserBox: () => userBox,
       setUserBox: (box) => { userBox = Array.isArray(box) ? box : []; },
@@ -4414,7 +4773,12 @@
       toggleBoxSidebar,
       resetBoxFilters,
       getBoxFilterState,
-      setBoxFilterState
+      setBoxFilterState,
+      findSimilarPokemonInBox,
+      comparePokemonDetails,
+      openPokemonConflictModal,
+      closePokemonConflictModal,
+      executePokemonOverwrite
     };
   }
 })();

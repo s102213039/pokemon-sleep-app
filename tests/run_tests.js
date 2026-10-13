@@ -11798,21 +11798,22 @@ SP 4,316
     assert(stylesCode.includes('.ladder-energy-help-bubble') && stylesCode.includes('backdrop-filter: none !important;'), 'styles.css must disable blur and set solid background on ladder energy help bubble');
   });
 
-  test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder Single-Line Dish Badge & Mobile H5 Box Edit Modal Ergonomic Layout', () => {
+  test('Tier 4 - Real-World Application Scenarios', 'Ingredient Ladder Independent Dish Badge & Mobile H5 Box Edit Modal Ergonomic Layout', () => {
     const stylesCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
     const h5Html = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
 
-    // 1. Verify .tooltip-dish-box is single-line, borderless, transparent
+    // 1. Verify .tooltip-dish-box uses column layout to display badge independently on next line
     assert(stylesCode.includes('.tooltip-dish-box'), 'styles.css must style .tooltip-dish-box');
-    assert(stylesCode.includes('flex-direction: row !important;') && stylesCode.includes('white-space: nowrap !important;'), 'styles.css must layout .tooltip-dish-box on a single row');
+    assert(stylesCode.includes('flex-direction: column !important;'), 'styles.css must display .tooltip-dish-box in column to place badge on next line');
     assert(stylesCode.includes('border: none !important;') && stylesCode.includes('padding: 0 !important;'), 'styles.css must eliminate outer borders on .tooltip-dish-box');
 
-    // 2. Verify only .tooltip-dish-badge retains badge borders
+    // 2. Verify only .tooltip-dish-badge retains badge borders, and dish icon is borderless and enlarged
     assert(stylesCode.includes('.tooltip-dish-badge'), 'styles.css must style .tooltip-dish-badge');
     assert(stylesCode.includes('.dish-badge-full') && stylesCode.includes('.dish-badge-high'), 'styles.css must retain badge borders on dish status badges');
+    assert(stylesCode.includes('.tooltip-dish-icon') && stylesCode.includes('width: 24px !important;'), 'styles.css must enlarge tooltip-dish-icon to 24px without outer border');
 
-    // 3. Verify ladder-node-tooltip max-width is expanded to 350px
-    assert(stylesCode.includes('max-width: 350px;'), 'styles.css must expand ladder-node-tooltip max-width to 350px');
+    // 3. Verify ladder-node-tooltip max-width is constrained to prevent mobile clipping
+    assert(stylesCode.includes('.ladder-node-tooltip') && stylesCode.includes('max-width: min(280px, calc(100vw - 32px)) !important;'), 'styles.css must constrain ladder-node-tooltip to prevent clipping');
 
     // 4. Verify no 350px vertical flex-basis on nature custom-select
     assert(!stylesCode.includes('#modal-poke-nature + .custom-select-container {\n  width: 350px !important;\n  max-width: 100% !important;\n  flex: 0 0 350px;'), 'styles.css must not apply 350px flex basis on modal-poke-nature custom-select');
@@ -11848,6 +11849,117 @@ SP 4,316
     assert(stylesCode.includes('.mobile-h5-app .mobile-box-sheet .box-mainskill-name-badge') && stylesCode.includes('flex: 1 1 auto !important;'), 'styles.css must allow main skill badge to flexibly fill remaining space');
     assert(stylesCode.includes('.mobile-h5-app .mobile-box-sheet .box-mainskill-control .custom-select-container') && stylesCode.includes('width: 76px !important;'), 'styles.css must constrain mobile skill level select to 76px');
     assert(stylesCode.includes('.mobile-h5-app .mobile-box-sheet .box-mainskill-control') && stylesCode.includes('flex-direction: row !important;'), 'styles.css must enforce flex row on box-mainskill-control');
+  });
+
+  test('Tier 4 - Real-World Application Scenarios', 'Box Screenshot Smart Comparison & Overwrite Modal Verification', () => {
+    const desktopHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const h5Html = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
+    const stylesCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+    const boxModule = require(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'));
+
+    // 1. Modal DOM presence in index.html and app/index.html
+    assert(desktopHtml.includes('id="box-conflict-modal"'), 'index.html must have box-conflict-modal');
+    assert(desktopHtml.includes('id="box-conflict-summary"'), 'index.html must have box-conflict-summary');
+    assert(desktopHtml.includes('id="box-conflict-list"'), 'index.html must have box-conflict-list');
+    assert(desktopHtml.includes('id="box-conflict-overwrite-btn"'), 'index.html must have box-conflict-overwrite-btn');
+    assert(desktopHtml.includes('id="box-conflict-savenew-btn"'), 'index.html must have box-conflict-savenew-btn');
+    assert(desktopHtml.includes('id="box-conflict-cancel-btn"'), 'index.html must have box-conflict-cancel-btn');
+
+    assert(h5Html.includes('id="box-conflict-modal"'), 'app/index.html must have box-conflict-modal');
+    assert(h5Html.includes('id="box-conflict-summary"'), 'app/index.html must have box-conflict-summary');
+    assert(h5Html.includes('id="box-conflict-list"'), 'app/index.html must have box-conflict-list');
+    assert(h5Html.includes('id="box-conflict-overwrite-btn"'), 'app/index.html must have box-conflict-overwrite-btn');
+    assert(h5Html.includes('id="box-conflict-savenew-btn"'), 'app/index.html must have box-conflict-savenew-btn');
+    assert(h5Html.includes('id="box-conflict-cancel-btn"'), 'app/index.html must have box-conflict-cancel-btn');
+
+    // 2. CSS styles integrity
+    assert(stylesCode.includes('.box-conflict-dialog'), 'styles.css must style .box-conflict-dialog');
+    assert(stylesCode.includes('.box-conflict-summary'), 'styles.css must style .box-conflict-summary');
+    assert(stylesCode.includes('.box-conflict-row'), 'styles.css must style .box-conflict-row');
+    assert(stylesCode.includes('.conflict-values-grid'), 'styles.css must style .conflict-values-grid');
+    assert(stylesCode.includes('.conflict-badge-diff'), 'styles.css must style .conflict-badge-diff');
+    assert(stylesCode.includes('.conflict-badge-same'), 'styles.css must style .conflict-badge-same');
+
+    // 3. Functional exports
+    assertEquals(typeof boxModule.findSimilarPokemonInBox, 'function', 'findSimilarPokemonInBox must be exported');
+    assertEquals(typeof boxModule.comparePokemonDetails, 'function', 'comparePokemonDetails must be exported');
+    assertEquals(typeof boxModule.executePokemonOverwrite, 'function', 'executePokemonOverwrite must be exported');
+
+    // 4. Similarity Matching Logic
+    const mockBox = [
+      {
+        uid: 'test_pkm_venusaur_001',
+        pokemonId: '3',
+        name: '妙蛙花',
+        level: 30,
+        nickname: '青蛙王',
+        nature: '固執',
+        skillLevel: 2,
+        ing1: '特選蘋果',
+        ing2: '特選蘋果',
+        ing3: '特選蘋果',
+        subskills: ['樹果數量S', '幫手獎勵', '幫忙速度M']
+      },
+      {
+        uid: 'test_pkm_pikachu_002',
+        pokemonId: '25',
+        name: '皮卡丘',
+        level: 25,
+        nature: '爽朗',
+        skillLevel: 1,
+        ing1: '特選蘋果',
+        ing2: '特選蘋果',
+        subskills: ['樹果數量S']
+      }
+    ];
+
+    boxModule.setUserBox(mockBox);
+
+    const parsedNewVenusaur = {
+      pokemonId: '3',
+      name: '妙蛙花',
+      level: 35,
+      nature: '固執',
+      skillLevel: 3,
+      ing1: '特選蘋果',
+      ing2: '特選蘋果',
+      ing3: '特選蘋果',
+      subskills: ['樹果數量S', '幫手獎勵', '幫忙速度M', '技能等級提升M']
+    };
+
+    const match = boxModule.findSimilarPokemonInBox(parsedNewVenusaur);
+    assert(match !== null, 'findSimilarPokemonInBox should find matching existing Venusaur');
+    assertEquals(match.uid, 'test_pkm_venusaur_001', 'Match must have matching UID');
+
+    const parsedBlastoise = {
+      pokemonId: '9',
+      name: '水箭龜',
+      level: 30,
+      nature: '內斂'
+    };
+    assertEquals(boxModule.findSimilarPokemonInBox(parsedBlastoise), null, 'Unknown species should return null');
+
+    // 5. Difference Comparison Logic
+    const diffs = boxModule.comparePokemonDetails(match, parsedNewVenusaur);
+    assert(Array.isArray(diffs), 'comparePokemonDetails must return an array');
+
+    const levelDiff = diffs.find(d => d.field === 'level');
+    assert(levelDiff && levelDiff.isSame === false, 'Level diff must be detected (Lv.30 vs Lv.35)');
+
+    const natureDiff = diffs.find(d => d.field === 'nature');
+    assert(natureDiff && natureDiff.isSame === true, 'Nature should be marked as same (固執)');
+
+    const skillDiff = diffs.find(d => d.field === 'skillLevel');
+    assert(skillDiff && skillDiff.isSame === false, 'Skill level diff must be detected (Lv.2 vs Lv.3)');
+
+    // 6. Overwrite Execution Logic
+    boxModule.executePokemonOverwrite(parsedNewVenusaur, match);
+    const updatedBox = boxModule.getUserBox();
+    const updatedVenusaur = updatedBox.find(p => p.uid === 'test_pkm_venusaur_001');
+    assert(updatedVenusaur !== undefined, 'Updated Venusaur must exist in userBox');
+    assertEquals(updatedVenusaur.level, 35, 'Level must be updated to 35');
+    assertEquals(updatedVenusaur.skillLevel, 3, 'Skill level must be updated to 3');
+    assertEquals(updatedVenusaur.nickname, '青蛙王', 'Original nickname should be preserved when parsed has none');
   });
 
 console.log('                   Test Results Summary');

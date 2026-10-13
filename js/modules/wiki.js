@@ -16945,7 +16945,7 @@
                       }
 
                       const basePosPct = parseFloat(getPosPct(node.scaledCount));
-                      const alignClass = basePosPct > 55 ? 'align-right' : (basePosPct < 22 ? 'align-left' : 'align-center');
+                      const alignClass = basePosPct > 60 ? 'align-right' : (basePosPct < 40 ? 'align-left' : 'align-center');
                       const leftStyle = offsetPx === 0 ? `${basePosPct}%` : `calc(${basePosPct}% + ${offsetPx}px)`;
                       const hasSkillDraw = node.skillBonus > 0;
                       const dishLabel = isHighlighted ? (isEN ? 'Selected Dish: ' : '選定料理: ') : (isEN ? 'Key Dish: ' : '核心大菜: ');
