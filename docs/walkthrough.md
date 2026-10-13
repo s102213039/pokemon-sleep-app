@@ -1325,3 +1325,69 @@
 4. **自動化回歸測試**:
    - `rtk node tests/run_tests.js` 196 / 196 項測試全部 PASS（0 Failed）。
    - 遵守全域 Zero Emoji 規範、Single Frame 原則與指令 `rtk` 前綴規範。
+
+---
+
+## 2026-10-08 至 2026-10-13: 全域零表情符號、淨白薄荷全鏈路中和、獨立架構解耦、天梯單行無邊框與行動端 H5 彈窗極致排版 (Tests 197 - 214)
+
+### 背景與目標
+1. 全面落實全域零表情符號規範（Zero Emoji Policy）與單一外框原則（Single Frame Rule）。
+2. 支援淨白薄荷（Cleanse Mint）中和個性效果，保留原始性格名稱並在中立基準（1.0x）下重構診斷、公式拆解與背包計算。
+3. 支援食譜擴鍋預測滑塊（0~200）與官方 100 點能量計算標準，整合簡體中文（zh-CN）全域多語系。
+4. 重構前端架構，獨立抽取 `DOMUtils`、`CustomSelect` 與 `PopoverCoordinator`，確保多分頁與多彈窗作用域完全隔離。
+5. 修復食材天梯浮窗透明度與核心大菜單行展示，去除多餘巢狀外框。
+6. 根治行動端 H5 寶可夢手動新增/編輯彈窗（`box-edit-modal`）350px 異常空白斷層、自訂暱稱提示字截斷及表單擠壓變形問題。
+
+### 核心變動與成果
+1. **食譜擴鍋預測滑塊與全域說明浮窗** (`js/modules/recipes.js`, `css/styles.css`):
+   - 新增 0~200 額外食材擴鍋滑塊，即時聯動食譜額外食材填充評估。
+   - 額外食材嚴格採用官方 100 點基礎能量基準公式計算。
+   - 新增擴鍋說明浮窗（`.pot-expansion-help-bubble`），支援全頁面點擊與滑動自動收起（Auto-dismiss），適配 Midnight/Dawn/Emerald/Onyx 四種主題。
+2. **多語系簡體中文 (zh-CN) 與活動加成限制** (`js/core/i18n.js`):
+   - 全面補齊 zh-CN 字典鍵，涵蓋所有寶可夢名稱、主副技能、食材、性格與 UI 文本。
+   - 食譜活動加成倍率上限鎖定為 1.5x（Scheme A: 1.0x ~ 1.5x 步長 0.05）。
+3. **全域零表情符號與下拉選單排版規範** (`css/styles.css`, `js/components/customSelect.js`):
+   - 徹底清除所有 UI 元件、按鈕、選單、標籤中的 Emoji 裝飾，改採純向量 SVG 或文字。
+   - 嚴格遵守下拉選單向下箭頭規範：保留寬鬆內縮留白（`padding-right: 36px`，`right: 18px`），防止選單文字覆蓋箭頭；正對選擇框下方展開。
+   - 移除自訂下拉選項中冗餘的打勾符號（✓），改採純背景高亮（`selected` / `active`）呈現。
+4. **淨白薄荷全鏈路效果中和引擎** (`js/modules/box.js`, `js/modules/appraisal.js`):
+   - 支援「使用淨白薄荷消除個性效果」核取方塊：
+     - 保留原始性格名稱以利玩家辨識。
+     - 底層計算將幫忙速度、活力回復、食材發現率、技能機率與 EXP 增減全數中和為 1.0x（中性性格）。
+     - 深度診斷公式拆解（`formula-breakdown`）、雷達圖評分與盒子卡片即時同步薄荷中和狀態。
+     - 診斷彈窗性格膠囊移除多餘葉子標籤，保持原生純淨視覺。
+5. **睡飽飽獎章持有上限即時扣減** (`js/modules/box.js`, `js/modules/appraisal.js`):
+   - 支援 4 階睡飽飽獎章（200h +1, 500h +3, 1000h +6, 2000h +8）。
+   - 寶可夢佩戴獎章時，智能診斷與背包容量計算自動減去獎章加成的持有上限，反映原始天然背包容量。
+6. **目標食譜與食材天梯深度連動** (`js/modules/box.js`, `js/modules/wiki.js`):
+   - 盒子卡片與能力診斷智能簡評自動識別目前選取的目標大菜（Target Recipe）。
+   - 即時計算該寶可夢產出的核心食材在每餐/每日大菜中的供貨佔比與自給餐數。
+7. **行動端 H5 視覺極致排版與邊界優化** (`css/styles.css`):
+   - **圖鑑列表非截斷與底部安全區**：底部預留 24px 呼吸空間與 safe-area 邊界，徹底解決浩大鯨（Cetitan）等尾端寶可夢被導航遮蔽問題。
+   - **盒子浮動操作按鈕 (FAB) 視窗固定釘選**：`box-fab-container` 與 `filter-fab` 固定於視窗右下角，避免滾動偏移。
+   - **診斷報告彈窗行動端排版調換**：數值狀態列（Stats Row）移至副技能上方，擴大卡片可用寬度並微調字級，大幅增強閱讀性。
+   - **診斷報告智能簡評外框嵌入標籤**：簡評標籤嵌入左上角邊框，最大化六維雷達圖展示面積。
+   - **純文字裝飾符號徹底清除**：移除殘留的 `[★]`, `[*]`, `[+]` 等老舊文字標籤裝飾。
+8. **獨立模組化架構重構與作用域隔離** (`js/components/`):
+   - 獨立抽取 `DOMUtils`（DOM 操作與輔助函數）、`CustomSelect`（自訂下拉選單系統）與 `PopoverCoordinator`（浮窗與彈窗單一活動協調器）。
+   - 嚴格落實作用域隔離（Scoped QuerySelector），杜絕跨 Tab 或跨 Modal 互相污染。
+   - 彈窗開啟時重設滾動位置（`modalBody.scrollTop = 0`），避免繼承上次檢視滾動偏移。
+9. **食材天梯浮窗徹底不透明與單行無邊框重構** (`js/modules/wiki.js`, `css/styles.css`):
+   - 食材天梯所有浮窗（`.ladder-node-tooltip`, `.ladder-energy-help-bubble`, `.ladder-skill-tooltip-bubble`）徹底去除任何透明度與半透明過渡動畫（`transition: none !important; opacity: 1 !important; backdrop-filter: none !important;`）。
+   - 天梯浮窗核心大菜展示改用料理圖示代替純文字名稱，顯示格式為 `核心大菜：[DishIcon] (Need/餐)`。
+   - 去除 `.tooltip-dish-box` 的任何次級嵌套邊框與背景底色，嚴格遵守單一外框原則（Rule IX），僅保留狀態徽章（`.tooltip-dish-badge`）本身的彩色框線。
+   - 核心大菜與供貨能力徽章採用單行水平排列（`flex-direction: row; white-space: nowrap;`），擴大浮窗最大寬度至 350px，杜絕折行。
+10. **行動端 H5 寶可夢編輯彈窗 (Box Edit Modal) 佈局重構與垂直空白斷層修復** (`app/index.html`, `css/styles.css`):
+    - **根治 350px 異常空白 BUG**：全域 CSS 中性格下拉選單原本設有 `flex: 0 0 350px;`（桌面橫向寬度），在行動端垂直 Flex 容器中被渲染為高度 350px，產生巨大空隙並將後續欄位推擠出螢幕。現已修正為 `flex: 0 0 auto;` 與標準 36px 高度。
+    - **自訂暱稱獨立全寬展示**：不再與性格擠在狹窄雙欄（避免提示文字被截斷為「例如」），提供完整提示文字「例如：首隻樹果S神坦、食材型噴火龍...」。
+    - **性格與淨白薄荷緊密同組排列**：性格標題列右側直接放置「[ ] 使用淨白薄荷消除個性效果」，下方緊接性格下拉框，完全消除多餘垂直留白。
+    - **表單容器高度自動收束**：`.box-form-grid` 在行動端改為純垂直彈性盒（`display: flex; flex-direction: column; gap: 8px; flex: 0 0 auto;`），副技能配置插槽與選擇盤皆完整平鋪於視窗內，操作流暢無斷層。
+
+### 自動化測試與工程品質保證
+- **測試總數升級至 214 項**：
+  - Tier 1 (Feature Coverage): 64 Passed, 0 Failed
+  - Tier 2 (Boundary & Corner Cases): 43 Passed, 0 Failed
+  - Tier 3 (Cross-Feature Combinations): 8 Passed, 0 Failed
+  - Tier 4 (Real-World Application Scenarios): 99 Passed, 0 Failed
+  - **總計：214 / 214 Passed (0 Failed, 100% 通過)**
+- 全面遵守全域安全規範、無 Emoji 政策、單一外框規範、下拉箭頭排版規範與 `rtk` 指令調用。
