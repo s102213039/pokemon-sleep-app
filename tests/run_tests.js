@@ -12118,13 +12118,14 @@ SP 4,316
     assert(wikiCode.includes('filterItemsByCategory') || wikiCode.includes('wiki-pill-btn'),
       'wiki.js must render category filter pills');
 
-    // 12.1. Item cards prominently highlight numerical stats and display pure borderless evolution targets without name labels
+    // 12.1. Item cards prominently highlight numerical stats and display compact borderless evolution targets without name labels or description
     assert(wikiCode.includes('wiki-item-card-stat-row'), 'wiki.js must render .wiki-item-card-stat-row for numerical stat highlights');
-    assert(wikiCode.includes('wiki-item-evo-avatar'), 'wiki.js must render .wiki-item-evo-avatar for enlarged evolution targets');
+    assert(wikiCode.includes('wiki-item-evo-avatar'), 'wiki.js must render .wiki-item-evo-avatar for evolution targets');
     assert(!wikiCode.includes('wiki-item-card-pokemon-count'), 'wiki.js must not display pokemon count text in item cards');
     assert(!wikiCode.includes('wiki-item-evo-name'), 'wiki.js must remove pokemon name labels in item cards');
-    assert(stylesCode.includes('.wiki-item-evo-avatar') && stylesCode.includes('42px'), 'styles.css must style .wiki-item-evo-avatar at 42px');
-    assert(stylesCode.includes('.wiki-item-pkm-avatar') && stylesCode.includes('54px'), 'styles.css must style modal .wiki-item-pkm-avatar at 54px');
+    assert(!wikiCode.includes('wiki-item-card-desc'), 'wiki.js must remove description paragraph in item cards');
+    assert(stylesCode.includes('.wiki-item-evo-avatar') && stylesCode.includes('28px'), 'styles.css must style .wiki-item-evo-avatar at compact 28px');
+    assert(stylesCode.includes('.wiki-item-pkm-avatar') && stylesCode.includes('40px'), 'styles.css must style modal .wiki-item-pkm-avatar at 40px');
     assert(stylesCode.includes('.wiki-item-evo-chip') && stylesCode.includes('border: none'), 'styles.css must style .wiki-item-evo-chip without outer borders');
 
     // 12.2. Mobile H5 app adaptation is configured with dock clearance and touch styles

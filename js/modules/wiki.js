@@ -18061,7 +18061,6 @@
           </div>
         </div>
         ${statRowHTML}
-        <p class="wiki-item-card-desc" title="${desc}">${desc}</p>
         ${evoSectionHTML}
       </div>
     `;
