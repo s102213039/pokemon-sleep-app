@@ -1,5 +1,138 @@
 [
   {
+    "id": "343433383634343334323138313036383834",
+    "url": "https://www.pokemonsleep.net/zh/news/343433383634343334323138313036383834/",
+    "date": "2026-10-14",
+    "category": "活動",
+    "badge_key": "event",
+    "badge_label": "活動企劃",
+    "badge_color": "#f59e0b",
+    "title": "【活動】萬聖節2026：糖果倍增研究",
+    "title_en": "[Event] 萬聖節2026：糖果倍增研究",
+    "overview_en": "Official announcement and news update for Pokemon Sleep.",
+    "debut_pokemon": [
+      "皮卡丘（萬聖節）",
+      "夢妖",
+      "夢妖魔"
+    ],
+    "mid_rateup_pokemon": [
+      "皮卡丘（萬聖節）"
+    ],
+    "featured_pokemon": [
+      "伊布（萬聖節）"
+    ],
+    "overview": "在為期1週的活動中，能比平時更常遇見 幽靈屬性的寶可夢 ，是配合萬聖節推出的特別期間！",
+    "highlights": [
+      "舉辦期間：10/26 (週一) 4:00 ～ 11/2 (週一) 3:59",
+      "任務期間：10/26 (週一) 4:00 ～ 11/2 (週一) 3:59",
+      "【活動】萬聖節2026：糖果倍增研究",
+      "【機率大幅提升】伊布（萬聖節）、夢妖、夢妖魔",
+      "【機率中幅提升】皮卡丘（萬聖節）"
+    ],
+    "sections": [
+      {
+        "key": "schedule",
+        "title": "活動時間與營地",
+        "icon": "[Time]",
+        "items": [
+          "舉辦期間：10/26 (週一) 4:00 ～ 11/2 (週一) 3:59",
+          "任務期間：10/26 (週一) 4:00 ～ 11/2 (週一) 3:59",
+          "其他日子（ 10/26 ～ 10/30 ）】",
+          "【適用營地】・萌綠之島、 萌綠之島EX"
+        ],
+        "title_en": "Event Schedule & Areas",
+        "items_en": [
+          "Event Period: 10/26 (Mon) 4:00 ～ 11/2 (Mon) 3:59",
+          "Mission Period: 10/26 (Mon) 4:00 ～ 11/2 (Mon) 3:59",
+          "其他日子（ 10/26 ～ 10/30 ）】",
+          "[Areas] - Greengrass Isle, Greengrass IsleEX"
+        ]
+      },
+      {
+        "key": "bonus",
+        "title": "核心獎勵與倍率加成",
+        "icon": "[Bonus]",
+        "items": [
+          "【活動】萬聖節2026：糖果倍增研究"
+        ],
+        "title_en": "Core Bonuses & Multipliers",
+        "items_en": [
+          "【活動】萬聖節2026：糖果倍增研究"
+        ]
+      },
+      {
+        "key": "rateup",
+        "title": "機率提升寶可夢",
+        "icon": "[RateUp]",
+        "items": [
+          "【機率大幅提升】伊布（萬聖節）、夢妖、夢妖魔",
+          "【機率中幅提升】皮卡丘（萬聖節）",
+          "【機率小幅提升】鬼斯、鬼斯通、耿鬼、怨影娃娃、詛咒娃娃、飄飄球、隨風球、南瓜精、南瓜怪人、謎擬Ｑ、骨紋巨聲鱷"
+        ],
+        "title_en": "Featured Rate-Up Pokemon",
+        "items_en": [
+          "[Major Rate Up] Eevee（萬聖節）, 夢妖, 夢妖魔",
+          "[Medium Rate Up] Pikachu（萬聖節）",
+          "[Minor Rate Up] 鬼斯, 鬼斯通, 耿鬼, 怨影娃娃, 詛咒娃娃, 飄飄球, 隨風球, 南瓜精, 南瓜怪人, 謎擬Ｑ, 骨紋巨聲鱷"
+        ]
+      }
+    ],
+    "content_preview": "NEW\n\n活動\n\n2026/10/14\n2026/10/14 -->\n\n【活動】萬聖節2026：糖果倍增研究\n\n概要\n\n不給糖就搗蛋！\n\n在為期1週的活動中，能比平時更常遇見 幽靈屬性的寶可夢 ，是配合萬聖節推出的特別期間！\n\n活動期間，也許還能遇見新登場的 夢妖、 夢妖魔，或戴著萬聖節帽子的「伊布」 。\n\n不僅如此，睡眠研究後 可獲得的寶可夢的糖果會是平常的2倍以上 。\n\n歡迎把握機會，在活動期間獲得許多的糖果吧！\n\n此外，活動期間將能在萌綠之島、萌綠之島EX遇見 耿鬼 等平時無法在這些營地遇見的幽靈屬性寶可夢！\n\n除此之外，還會有各種獎勵生效。\n\n敬請期待！\n\n【舉辦期間】\n\n・ 10/26 (週一) 4:00 ～ 11/2 (週一) 3:59\n\n【活動營地】\n\n・萌綠之島、 萌綠之島EX\n\n【任務期間】..."
+  },
+  {
+    "id": "343532353938363734303738333032323133",
+    "url": "https://www.pokemonsleep.net/zh/news/343532353938363734303738333032323133/",
+    "date": "2026-10-14",
+    "category": "通知",
+    "badge_key": "notice",
+    "badge_label": "重要通知",
+    "badge_color": "#8b5cf6",
+    "title": "【新登場】夢妖、 夢妖魔",
+    "title_en": "[New Debut] 夢妖, 夢妖魔",
+    "overview_en": "Official announcement and news update for Pokemon Sleep.",
+    "debut_pokemon": [
+      "夢妖",
+      "夢妖魔"
+    ],
+    "mid_rateup_pokemon": [],
+    "featured_pokemon": [],
+    "overview": "或許是受到各位研究者持續進行睡眠研究的影響，有目擊報告指出在特定的營地附近發現了至今尚未遇見過的寶可夢的蹤影。",
+    "highlights": [
+      "開始出現的時間 2026/10/26 15:00",
+      "【適用營地】萌綠之島、 白花雪原、 黃金舊發電廠、 萌綠之島EX",
+      "登場寶可夢：夢妖（幽靈屬性）、夢妖魔（幽靈屬性）"
+    ],
+    "sections": [
+      {
+        "key": "schedule",
+        "title": "活動時間與營地",
+        "icon": "[Time]",
+        "items": [
+          "開始出現的時間 2026/10/26 15:00",
+          "【適用營地】萌綠之島、 白花雪原、 黃金舊發電廠、 萌綠之島EX"
+        ],
+        "title_en": "Event Schedule & Areas",
+        "items_en": [
+          "開始出現的時間 2026/10/26 15:00",
+          "[Areas] Greengrass Isle, Snowdrop Tundra, Old Gold Power Plant, Greengrass IsleEX"
+        ]
+      },
+      {
+        "key": "debut",
+        "title": "新登場寶可夢情報",
+        "icon": "[Pokemon]",
+        "items": [
+          "登場寶可夢：夢妖（幽靈屬性）、夢妖魔（幽靈屬性）"
+        ],
+        "title_en": "New Pokemon Debut",
+        "items_en": [
+          "登場寶可夢：夢妖（幽靈屬性）, 夢妖魔（幽靈屬性）"
+        ]
+      }
+    ],
+    "content_preview": "NEW\n\n通知\n\n2026/10/14\n2026/10/14 -->\n\n【新登場】夢妖、 夢妖魔\n\n或許是受到各位研究者持續進行睡眠研究的影響，有目擊報告指出在特定的營地附近發現了至今尚未遇見過的寶可夢的蹤影。\n\n說不定很快也就能在睡眠研究時相遇了呢。\n\n能新遇見的寶可夢\n\n・夢妖（幽靈屬性）\n\n・夢妖魔（幽靈屬性）\n\n敬請期待！\n\n能新遇見的寶可夢的資訊\n\n開始出現的時間\n\n2026/10/26 15:00\n\n※自上述時間起可以使用該寶可夢的薰香。\n\n出現的營地\n\n萌綠之島、 白花雪原、 黃金舊發電廠、 萌綠之島EX\n\n可遇見的睡眠類型\n\n夢妖：淺淺入夢\n\n夢妖魔：淺淺入夢\n\n主技能\n\n魔法火焰（料理躍進S）\n\n增加下一次料理時的鍋子容量。\n\n不僅如此，料理漂亮成功的機率還會稍微提升。\n\n※已提升的機率在料理..."
+  },
+  {
     "id": "343532323837353838353737383337303538",
     "url": "https://www.pokemonsleep.net/zh/news/343532323837353838353737383337303538/",
     "date": "2026-10-08",
@@ -1115,106 +1248,5 @@
       }
     ],
     "content_preview": "NEW\n\n通知\n\n2026/9/10\n2026/9/10 -->\n\n【來獲得沙布蕾＆超夢的基因吧！】「超夢研究包vol.1」＆「超夢衝刺包vol.1」\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n《Pokémon Sleep》將配合「秘境研究！追尋超夢吧」活動推出「超夢研究包vol.1」（S、M、L）和「超夢衝刺包vol.1」（S、M、L）！\n\n自活動第1週起推出的「超夢研究包vol.1」（S、M、L）裡，裝有可以在「秘境研究！追尋超夢吧」活動中 迎接超夢成為夥伴並且培育牠的道具 。\n\n此外，自活動第2週起將推出「超夢衝刺包vol.1」（S、M、L）。\n\n歡迎選購，讓它幫助您在活動的倒數1週作最後的衝刺！\n\n商品詳情\n\n超夢研究包\n\n銷售期間： 2026/9/14 4:00 ～ 2026/9/29..."
-  },
-  {
-    "id": "343430323132353238383439343835383336",
-    "url": "https://www.pokemonsleep.net/zh/news/343430323132353238383439343835383336/",
-    "date": "2026-09-10",
-    "category": "通知",
-    "badge_key": "notice",
-    "badge_label": "重要通知",
-    "badge_color": "#8b5cf6",
-    "title": "【來獲得主技能種子（超夢）吧！】寶可夢培育包（超夢）vol.1",
-    "title_en": "[Special Pack] Get Main Skill Seed (Mewtwo)! Pokemon Growth Pack (Mewtwo) Vol. 1",
-    "overview_en": "Team up with researchers worldwide to explore the uncharted areas of Greengrass Isle and discover Mewtwo!",
-    "debut_pokemon": [],
-    "mid_rateup_pokemon": [],
-    "featured_pokemon": [
-      "超夢"
-    ],
-    "overview": "商品裡裝有「 超級沙布蕾 」、「 超夢的糖果 」，以及「 主技能種子（超夢） 」等 能夠培育超夢的道具 。",
-    "highlights": [
-      "銷售期間： 2026/9/14 4:00 ～ 2026/9/29 3:59",
-      "商品裡裝有「 超級沙布蕾 」、「 超夢的糖果 」，以及「 主技能種子（超夢） 」等 能夠培育超夢的道具 。",
-      "「寶可夢培育包（超夢）vol.1」（1,200鑽石） ：超級沙布蕾×4、成長薰香×2、主技能種子（超夢）×1、超夢的糖果×70"
-    ],
-    "sections": [
-      {
-        "key": "schedule",
-        "title": "活動時間與營地",
-        "icon": "[Time]",
-        "items": [
-          "銷售期間： 2026/9/14 4:00 ～ 2026/9/29 3:59"
-        ],
-        "title_en": "Event Schedule & Areas",
-        "items_en": [
-          "Sales Period: 2026/9/14 4:00 ～ 2026/9/29 3:59"
-        ]
-      },
-      {
-        "key": "bonus",
-        "title": "核心獎勵與倍率加成",
-        "icon": "[Bonus]",
-        "items": [
-          "商品裡裝有「 超級沙布蕾 」、「 超夢的糖果 」，以及「 主技能種子（超夢） 」等 能夠培育超夢的道具 。"
-        ],
-        "title_en": "Core Bonuses & Multipliers",
-        "items_en": [
-          "商品裡裝有\" Great Biscuit \", \" Mewtwo的糖果 \"，以及\" Main Skill Seed（Mewtwo） \"等 能夠培育Mewtwo的道具 。"
-        ]
-      },
-      {
-        "key": "shop",
-        "title": "禮包與商城道具包一覽",
-        "icon": "[Shop]",
-        "items": [
-          "「寶可夢培育包（超夢）vol.1」（1,200鑽石） ：超級沙布蕾×4、成長薰香×2、主技能種子（超夢）×1、超夢的糖果×70"
-        ],
-        "title_en": "Bundles & Shop Items",
-        "items_en": [
-          "\"Pokemon Growth Pack（Mewtwo）vol.1\" (1,200 Diamonds) ：Great Biscuit×4, Growth Incense×2, Main Skill Seed（Mewtwo）×1, Mewtwo的糖果×70"
-        ]
-      }
-    ],
-    "content_preview": "NEW\n\n通知\n\n2026/9/10\n2026/9/10 -->\n\n【來獲得主技能種子（超夢）吧！】寶可夢培育包（超夢）vol.1\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n《Pokémon Sleep》將配合 超夢 新登場，推出「寶可夢培育包（超夢）vol.1」！\n\n商品裡裝有「 超級沙布蕾 」、「 超夢的糖果 」，以及「 主技能種子（超夢） 」等 能夠培育超夢的道具 。\n\n※主技能種子（超夢）是一種可以對以下寶可夢使用的道具，使用後主技能等級會提升1級。您也可以選擇不使用，並在道具詳情畫面將此道具轉換成「超夢的糖果×70」。\n\n・超夢\n\n商品詳情\n\n銷售期間： 2026/9/14 4:00 ～ 2026/9/29 3:59\n\n商品一覽：\n\n「寶可夢培育包（超夢）vol.1」（1,200鑽石）..."
-  },
-  {
-    "id": "343431343030363832353337323837363832",
-    "url": "https://www.pokemonsleep.net/zh/news/343431343030363832353337323837363832/",
-    "date": "2026-09-09",
-    "category": "更新通知",
-    "badge_key": "update",
-    "badge_label": "版本更新",
-    "badge_color": "#3b82f6",
-    "title": "關於Ver.3.8.0的更新內容",
-    "title_en": "Ver. 3.8.0 Update Details",
-    "overview_en": "New game version update with quality-of-life enhancements and bug fixes.",
-    "debut_pokemon": [],
-    "mid_rateup_pokemon": [],
-    "featured_pokemon": [
-      "超夢"
-    ],
-    "overview": "關於Ver.3.8.0的更新內容",
-    "highlights": [
-      "新增功能：準備新活動、新企畫；「秘境研究！追尋超夢吧」",
-      "平衡調整與技能變更：調整寶可夢吃飽的機率；稍微調降傳說的寶可夢以外的寶可夢吃飽的機率。"
-    ],
-    "sections": [
-      {
-        "key": "updates",
-        "title": "更新與平衡調整內容",
-        "icon": "[Update]",
-        "items": [
-          "新增功能：準備新活動、新企畫；「秘境研究！追尋超夢吧」",
-          "平衡調整與技能變更：調整寶可夢吃飽的機率；稍微調降傳說的寶可夢以外的寶可夢吃飽的機率。"
-        ],
-        "title_en": "Updates & Balancing",
-        "items_en": [
-          "新增功能：準備新活動, 新企畫；\"秘境研究！追尋Mewtwo吧\"",
-          "平衡調整與技能變更：調整寶可夢吃飽的機率；稍微調降傳說的寶可夢以外的寶可夢吃飽的機率。"
-        ]
-      }
-    ],
-    "content_preview": "NEW\n\n更新通知\n\n2026/9/9\n2026/9/9 -->\n\n關於Ver.3.8.0的更新內容\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n本次更新已針對以下的內容進行改善。\n必須由商店將應用程式更新至最新版本。\n\n更新內容\n\n新功能\n\n準備新活動、新企畫\n\n「秘境研究！追尋超夢吧」\n\n※詳情請查看活動、企畫的通知。\n\n平衡調整\n\n調整寶可夢吃飽的機率\n\n稍微調降傳說的寶可夢以外的寶可夢吃飽的機率。\n\n※關於傳說的寶可夢，至今為止在新月日生效的獎勵「在當天第1次的點心時間時會變得不容易吃飽」，今後會在傳說的寶可夢各自的登場活動期間生效（自「秘境研究！追尋超夢吧」活動起開始生效）。\n\n其他\n\n調整綜合商店的品項\n\n・高級沙布蕾的購買上限：3個→ 5 個\n\n增加可設置的薰香數量\n\n・薰香的設置上..."
   }
 ]
