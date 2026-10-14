@@ -33331,16 +33331,111 @@ body.mobile-h5-app *::-webkit-scrollbar {
   line-height: 1.2;
 }
 
+/* Stat Row & Value Highlight */
+.wiki-item-card-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  margin: 1px 0 2px 0;
+  flex-wrap: wrap;
+}
+
+.wiki-item-stat-badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.2;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.wiki-item-stat-number {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  line-height: 1;
+}
+
+.wiki-item-stat-unit {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.wiki-item-stat-divider {
+  opacity: 0.35;
+  font-size: 11px;
+  margin: 0 1px;
+}
+
+.wiki-item-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+.wiki-item-stat-spacer {
+  flex: 1;
+}
+
+/* Stat Badge Color Variants */
+.stat-type-biscuit {
+  background: rgba(245, 158, 11, 0.16);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.stat-type-biscuit-max {
+  background: rgba(244, 114, 182, 0.18);
+  color: #f472b6;
+  border: 1px solid rgba(244, 114, 182, 0.45);
+}
+
+.stat-type-seed,
+.stat-type-mint {
+  background: rgba(16, 185, 129, 0.16);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.stat-type-candy,
+.stat-type-shard {
+  background: rgba(56, 189, 248, 0.16);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.stat-type-energy,
+.stat-type-whistle,
+.stat-type-camp,
+.stat-type-ticket {
+  background: rgba(168, 85, 247, 0.16);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.stat-type-evolution {
+  background: rgba(251, 146, 60, 0.16);
+  color: #fb923c;
+  border: 1px solid rgba(251, 146, 60, 0.4);
+}
+
 /* Sleep Point Chip */
 .wiki-item-price-chip {
   font-size: 10px;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 4px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 6px;
   background: var(--bg-card-inner);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color-subtle);
+  color: var(--accent-blue, #38bdf8);
+  border: 1px solid var(--border-color);
   white-space: nowrap;
+  letter-spacing: 0.2px;
 }
 
 /* Card Description Preview */
@@ -33357,44 +33452,70 @@ body.mobile-h5-app *::-webkit-scrollbar {
   margin: 0;
 }
 
-/* Card Footer: Associated Pokemon Preview */
-.wiki-item-card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  padding-top: 6px;
-  border-top: 1px solid var(--border-color-subtle);
+/* Evolution Targets Section (Enlarged 42px Avatars, No Count Text) */
+.wiki-item-card-evosection {
+  width: 100%;
   margin-top: auto;
-}
-
-.wiki-item-card-pokemon-count {
-  font-size: 11px;
-  color: var(--accent-blue);
-  font-weight: 600;
-}
-
-.wiki-item-card-pokemon-avatars {
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color-subtle);
   display: flex;
+  flex-direction: column;
+}
+
+.wiki-item-evo-chips {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 2px 2px 4px 2px;
+}
+
+.wiki-item-evo-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.wiki-item-evo-chip {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 3px;
-}
-
-.wiki-item-pkm-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 1px solid var(--border-color);
+  flex-shrink: 0;
+  padding: 4px 6px;
+  border-radius: 8px;
   background: var(--bg-card-inner);
-  object-fit: cover;
-  display: block;
+  border: 1px solid var(--border-color-subtle);
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  min-width: 48px;
+  box-sizing: border-box;
 }
 
-.wiki-item-pkm-more {
-  font-size: 9.5px;
+.wiki-item-evo-chip:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-blue);
+  background: var(--bg-card-hover);
+}
+
+.wiki-item-evo-avatar {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
+
+.wiki-item-evo-name {
+  font-size: 10.5px;
   font-weight: 700;
-  color: var(--text-muted);
-  margin-left: 2px;
+  color: var(--text-title);
+  max-width: 54px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  line-height: 1.2;
 }
 
 /* Empty Search Results State */
@@ -33685,13 +33806,23 @@ body.mobile-h5-app *::-webkit-scrollbar {
   min-height: 28px !important;
 }
 
-.mobile-h5-app .wiki-item-card-footer {
-  padding-top: 4px !important;
+.mobile-h5-app .wiki-item-card-evosection {
+  padding-top: 6px !important;
 }
 
-.mobile-h5-app .wiki-item-pkm-thumb {
-  width: 18px !important;
-  height: 18px !important;
+.mobile-h5-app .wiki-item-evo-avatar {
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.mobile-h5-app .wiki-item-evo-name {
+  font-size: 10px !important;
+  max-width: 48px !important;
+}
+
+.mobile-h5-app .wiki-item-pkm-avatar {
+  width: 44px !important;
+  height: 44px !important;
 }
 
 /* ==========================================================================
@@ -33951,6 +34082,62 @@ body.mobile-h5-app *::-webkit-scrollbar {
   color: var(--text-main);
 }
 
+/* Modal Stat Hero Banner */
+.wiki-item-modal-stat-hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+.wiki-item-modal-stat-hero .stat-hero-badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.wiki-item-modal-stat-hero .stat-hero-val {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.wiki-item-modal-stat-hero .stat-hero-unit {
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.wiki-item-modal-stat-hero .stat-hero-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.wiki-item-modal-stat-hero .stat-hero-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-title);
+  line-height: 1.25;
+}
+
+.wiki-item-modal-stat-hero .stat-hero-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
 /* Associated Pokemon Section & Grid (Single Frame Rule compliant) */
 .wiki-item-section-header {
   display: flex;
@@ -33959,33 +34146,23 @@ body.mobile-h5-app *::-webkit-scrollbar {
   gap: 8px;
 }
 
-.wiki-item-pkm-count-badge {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 1px 7px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-muted);
-  border: 1px solid var(--border-color);
-}
-
 .wiki-item-pokemon-grid {
   border: none !important;
   background: transparent !important;
   padding: 0 !important;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 10px;
 }
 
 .wiki-item-pkm-card {
   background: var(--bg-card-inner);
   border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 8px 10px;
+  border-radius: 12px;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
   transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
   text-align: left;
@@ -34006,10 +34183,11 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .wiki-item-pkm-avatar {
-  width: 32px;
-  height: 32px;
+  width: 54px;
+  height: 54px;
   object-fit: contain;
   flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
 }
 
 .wiki-item-pkm-info {
@@ -34018,24 +34196,27 @@ body.mobile-h5-app *::-webkit-scrollbar {
   overflow: hidden;
   min-width: 0;
   flex: 1 1 auto;
+  gap: 2px;
 }
 
 .wiki-item-pkm-no {
-  font-size: 10px;
-  color: var(--text-muted, #94a3b8);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-blue, #38bdf8);
 }
 
 .wiki-item-pkm-name {
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--text-title);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.25;
 }
 
 .wiki-item-pkm-arrow {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
   margin-left: auto;
   flex-shrink: 0;

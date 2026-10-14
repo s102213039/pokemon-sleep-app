@@ -1,15 +1,16 @@
 /**
- * Standalone Test Probe for Test 217: Pokémon Sleep Items & Incense Encyclopedia
+ * Standalone Test Probe for Test 217: Pokémon Sleep Items Encyclopedia
  *
  * Validates:
- * 1. Master Data Engine & Canonical Schema (118 items across 6 categories)
+ * 1. Master Data Engine & Canonical Schema (36 items across 4 categories, no incenses)
  * 2. Multilingual Localization & Asset URLs (zh-TW, zh-CN, en-US)
  * 3. Evolution Target & Pokémon ID Mappings
  * 4. Wiki Subpanel Navigation & Layout Markup
- * 5. Search & Filter Mechanics (Category filters, multilingual search, edge cases)
- * 6. Item Detail Modal & Overlay Lifecycle
- * 7. Bidirectional Pokédex Linkage (Item Modal <-> Pokédex Modal)
- * 8. UI Standards & Compliance (Zero Emoji, Single Frame Rule, Dropdowns, Themes)
+ * 5. Numerical Stat Highlights & Enlarged Evolution Targets (No count text)
+ * 6. Search & Filter Mechanics (Category filters, multilingual search, edge cases)
+ * 7. Item Detail Modal & Overlay Lifecycle
+ * 8. Bidirectional Pokédex Linkage (Item Modal <-> Pokédex Modal)
+ * 9. UI Standards & Compliance (Zero Emoji, Single Frame Rule, Dropdowns, Themes)
  *
  * Execution:
  *   rtk node tests/test_217_items_encyclopedia.js
@@ -139,14 +140,14 @@ function runProbe(options = {}) {
     assert(Array.isArray(itemsData), 'Items dataset must be an array of item records');
   });
 
-  check('Master Data Engine', 'Items dataset contains all 118 canonical items', () => {
+  check('Master Data Engine', 'Items dataset contains canonical non-incense items (36 items)', () => {
     assert(itemsData !== null, 'Items data not available');
-    assert(itemsData.length >= 118, `Expected at least 118 items, received ${itemsData.length}`);
+    assertEquals(itemsData.length, 36, `Expected exactly 36 items, received ${itemsData.length}`);
   });
 
   check('Master Data Engine', 'Item records adhere to standard canonical schema', () => {
     assert(itemsData !== null, 'Items data not available');
-    const validCategories = ['evolution', 'pokemon_incense', 'functional_incense', 'training', 'biscuit', 'supply'];
+    const validCategories = ['evolution', 'training', 'biscuit', 'supply'];
 
     itemsData.forEach((item, idx) => {
       assert(typeof item.id === 'string' && item.id.length > 0, `Item at index ${idx} missing valid id`);
@@ -177,16 +178,10 @@ function runProbe(options = {}) {
     });
   });
 
-  check('Master Data Engine', 'Functional incense coverage (6 core incenses)', () => {
+  check('Master Data Engine', 'Incenses are completely removed from items dataset', () => {
     assert(itemsData !== null, 'Items data not available');
-    const requiredFunctional = [
-      'growth_incense', 'luck_incense', 'focus_incense',
-      'friend_incense', 'recovery_incense', 'pure_incense'
-    ];
-    const existingIds = new Set(itemsData.map(i => i.id));
-    requiredFunctional.forEach(id => {
-      assert(existingIds.has(id), `Missing required functional incense: ${id}`);
-    });
+    const incenseItems = itemsData.filter(i => i.category.includes('incense') || i.id.includes('incense'));
+    assertEquals(incenseItems.length, 0, `No incense items allowed in dataset, found ${incenseItems.length}`);
   });
 
   check('Master Data Engine', 'Training items and seed coverage (Handy Candy, Seeds, Mint)', () => {
@@ -251,10 +246,18 @@ function runProbe(options = {}) {
       'wiki.js must render .wiki-item-card-grid container for item cards');
   });
 
+  check('Wiki Subpanel UI', 'Item cards prominently highlight numerical stats and enlarge evolution target Pokémon without count text', () => {
+    assert(wikiCode.includes('wiki-item-card-stat-row'), 'wiki.js must render .wiki-item-card-stat-row for numerical stat highlights');
+    assert(wikiCode.includes('wiki-item-evo-avatar'), 'wiki.js must render .wiki-item-evo-avatar for enlarged evolution targets');
+    assert(!wikiCode.includes('wiki-item-card-pokemon-count'), 'wiki.js must not display pokemon count text in item cards');
+    assert(stylesCode.includes('.wiki-item-evo-avatar') && stylesCode.includes('42px'), 'styles.css must style .wiki-item-evo-avatar at 42px');
+    assert(stylesCode.includes('.wiki-item-pkm-avatar') && stylesCode.includes('54px'), 'styles.css must style modal .wiki-item-pkm-avatar at 54px');
+  });
+
   // ---------------------------------------------------------------------------
   // Part 3: Search and Filter Mechanics
   // ---------------------------------------------------------------------------
-  check('Search & Filter', 'Category filter logic handles all 7 standard categories', () => {
+  check('Search & Filter', 'Category filter logic handles standard categories', () => {
     assert(wikiCode.includes('filterItemsByCategory') || wikiCode.includes('renderItemsSubpanel') || wikiCode.includes('filterItems'),
       'wiki.js must provide items filtering mechanism');
   });

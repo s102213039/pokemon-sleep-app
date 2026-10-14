@@ -11592,7 +11592,7 @@
   const VALID_SKILLS_CATEGORIES = ['all', 'energy', 'energy_heal', 'ingredient', 'special', 'shards'];
 
   const STORAGE_KEY_ITEMS_CATEGORY = 'pksleep_wiki_items_category';
-  const VALID_ITEMS_CATEGORIES = ['all', 'evolution', 'pokemon_incense', 'functional_incense', 'training', 'biscuit', 'supply'];
+  const VALID_ITEMS_CATEGORIES = ['all', 'evolution', 'training', 'biscuit', 'supply'];
 
   function getSavedWikiSubTab() {
     try {
@@ -17655,50 +17655,44 @@
     }).join('');
   }
 
-  // --- 道具與薰香百科模組 (Items & Incense Encyclopedia) ---
+  // --- 道具百科模組 (Items Encyclopedia) ---
 
   const ITEM_CATEGORIES = [
     { key: 'all', label: '全部道具', labelEn: 'All Items', labelCn: '全部道具' },
     { key: 'evolution', label: '進化道具', labelEn: 'Evolution', labelCn: '进化道具' },
-    { key: 'pokemon_incense', label: '寶可夢薰香', labelEn: 'Pokemon Incense', labelCn: '宝可梦熏香' },
-    { key: 'functional_incense', label: '功能薰香', labelEn: 'Functional Incense', labelCn: '功能熏香' },
-    { key: 'training', label: '培育種子', labelEn: 'Training', labelCn: '培育种子' },
+    { key: 'training', label: '培育與種子', labelEn: 'Training & Seeds', labelCn: '培育与种子' },
     { key: 'biscuit', label: '捕捉沙布蕾', labelEn: 'Biscuits', labelCn: '捕捉沙布蕾' },
-    { key: 'supply', label: '探索補給', labelEn: 'Supplies', labelCn: '探索补给' }
+    { key: 'supply', label: '探索與補給', labelEn: 'Supplies', labelCn: '探索与补给' }
   ];
 
   const ITEM_POKEMON_FAMILY_MAP = {
     'thunder_stone': ['25', '26', '133', '135', '82', '462', '737', '738'],
-    'fire_stone': ['133', '136'],
-    'water_stone': ['133', '134'],
+    'fire_stone': ['133', '136', '37', '38', '58', '59'],
+    'water_stone': ['133', '134', '60', '61', '62'],
     'leaf_stone': ['44', '45', '70', '71', '133', '470'],
-    'moon_stone': ['35', '36', '39', '40'],
+    'moon_stone': ['35', '36', '39', '40', '517', '518'],
     'sun_stone': ['44', '182', '546', '547'],
-    'ice_stone': ['37', '38', '133', '471'],
+    'ice_stone': ['37', '38', '133', '471', '974', '975', '7007'],
     'shiny_stone': ['176', '468'],
-    'dusk_stone': ['200', '429'],
+    'dusk_stone': ['200', '429', '198', '430'],
     'dawn_stone': ['281', '475', '361', '478'],
     'oval_stone': ['440', '113'],
-    'linking_cord': ['64', '65', '67', '68', '75', '76', '93', '94', '95', '208', '79', '199', '137', '233'],
+    'linking_cord': ['64', '65', '67', '68', '75', '76', '93', '94', '95', '208', '79', '199', '137', '233', '710', '711'],
     'metal_coat': ['95', '208', '123', '212'],
-    'kings_rock': ['79', '199'],
+    'kings_rock': ['79', '199', '61', '186'],
     'up_grade': ['137', '233'],
-    'magmarizer': ['126', '467'],
-    'electirizer': ['125', '466'],
-    'incense_pichu': ['172', '25', '26'],
-    'incense_happiny': ['440', '113', '242'],
-    'incense_mimejr': ['439', '122'],
-    'incense_wynaut': ['360', '202']
+    'razor_claw': ['215', '461'],
+    'dragon_scale': ['116', '117', '230']
   };
 
   function getMasterItemsData() {
+    let list = [];
     if (typeof window !== 'undefined' && Array.isArray(window.ITEMS_DATA)) {
-      return window.ITEMS_DATA;
+      list = window.ITEMS_DATA;
+    } else if (typeof ITEMS_DATA !== 'undefined' && Array.isArray(ITEMS_DATA)) {
+      list = ITEMS_DATA;
     }
-    if (typeof ITEMS_DATA !== 'undefined' && Array.isArray(ITEMS_DATA)) {
-      return ITEMS_DATA;
-    }
-    return [];
+    return list.filter(item => item && !String(item.category || '').includes('incense') && !String(item.id || '').includes('incense'));
   }
 
   function escapeRegExp(str) {
@@ -17874,19 +17868,95 @@
     switch (category) {
       case 'evolution':
         return isEN ? 'Evolution' : (isCN ? '进化道具' : '進化道具');
-      case 'pokemon_incense':
-        return isEN ? 'Pokemon Incense' : (isCN ? '宝可梦熏香' : '寶可夢薰香');
-      case 'functional_incense':
-        return isEN ? 'Functional Incense' : (isCN ? '功能熏香' : '功能薰香');
       case 'training':
-        return isEN ? 'Training' : (isCN ? '培育种子' : '培育種子');
+        return isEN ? 'Training & Seeds' : (isCN ? '培育与种子' : '培育與種子');
       case 'biscuit':
         return isEN ? 'Biscuits' : (isCN ? '捕捉沙布蕾' : '捕捉沙布蕾');
       case 'supply':
-        return isEN ? 'Supplies' : (isCN ? '探索补给' : '探索補給');
+        return isEN ? 'Supplies' : (isCN ? '探索与补给' : '探索與補給');
       default:
         return isEN ? 'Item' : (isCN ? '道具' : '道具');
     }
+  }
+
+  function getItemHighlightStat(item, isEN, isCN) {
+    if (!item) return null;
+    const id = item.id;
+
+    // Biscuits
+    if (id === 'poke_biscuit') {
+      return { val: '+1', unit: isEN ? 'pt' : '格', lbl: isEN ? 'Friendship' : (isCN ? '友好度' : '友好度'), type: 'biscuit' };
+    }
+    if (id === 'great_biscuit') {
+      return { val: '+3', unit: isEN ? 'pt' : '格', lbl: isEN ? 'Friendship' : (isCN ? '友好度' : '友好度'), type: 'biscuit' };
+    }
+    if (id === 'ultra_biscuit') {
+      return { val: '+5', unit: isEN ? 'pt' : '格', lbl: isEN ? 'Friendship' : (isCN ? '友好度' : '友好度'), type: 'biscuit' };
+    }
+    if (id === 'master_biscuit') {
+      return { val: 'MAX', unit: '', lbl: isEN ? 'Max Catch' : (isCN ? '友好度满格' : '友好度滿格'), type: 'biscuit-max' };
+    }
+
+    // Seeds & Mint
+    if (id === 'main_skill_seed') {
+      return { val: '+1', unit: 'Lv', lbl: isEN ? 'Main Skill' : (isCN ? '主技能提升' : '主技能提升'), type: 'seed' };
+    }
+    if (id === 'sub_skill_seed') {
+      return { val: '+1', unit: isEN ? 'Tier' : '階', lbl: isEN ? 'Sub Skill' : (isCN ? '副技能升级' : '副技能升級'), type: 'seed' };
+    }
+    if (id === 'cleanse_mint') {
+      return { val: '1.00x', unit: '', lbl: isEN ? 'Neutral Nature' : (isCN ? '性格中性化' : '性格中性化'), type: 'mint' };
+    }
+
+    // Candies & Shards
+    if (id === 'handy_candy_s') {
+      return { val: '+3', unit: isEN ? 'candies' : '顆', lbl: isEN ? 'Universal Candy' : (isCN ? '万能糖果' : '萬能糖果'), type: 'candy' };
+    }
+    if (id === 'handy_candy_m') {
+      return { val: '+20', unit: isEN ? 'candies' : '顆', lbl: isEN ? 'Universal Candy' : (isCN ? '万能糖果' : '萬能糖果'), type: 'candy' };
+    }
+    if (id === 'handy_candy_l') {
+      return { val: '+100', unit: isEN ? 'candies' : '顆', lbl: isEN ? 'Universal Candy' : (isCN ? '万能糖果' : '萬能糖果'), type: 'candy' };
+    }
+    if (id === 'dream_cluster_s') {
+      return { val: 'S', unit: isEN ? 'Cluster' : '塊', lbl: isEN ? 'Dream Shards' : (isCN ? '梦之碎片' : '夢之碎片'), type: 'shard' };
+    }
+    if (id === 'dream_cluster_m') {
+      return { val: 'M', unit: isEN ? 'Cluster' : '塊', lbl: isEN ? 'Dream Shards' : (isCN ? '梦之碎片' : '夢之碎片'), type: 'shard' };
+    }
+    if (id === 'dream_cluster_l') {
+      return { val: 'L', unit: isEN ? 'Cluster' : '塊', lbl: isEN ? 'Dream Shards' : (isCN ? '梦之碎片' : '夢之碎片'), type: 'shard' };
+    }
+
+    // Supplies
+    if (id === 'energy_pillow') {
+      return { val: '+50', unit: isEN ? 'Energy' : '活力', lbl: isEN ? 'Energy Restore' : (isCN ? '活力恢复' : '活力恢復'), type: 'energy' };
+    }
+    if (id === 'helper_whistle') {
+      return { val: '3 hrs', unit: '', lbl: isEN ? 'Help Yield' : (isCN ? '帮手即时产出' : '幫手即時產出'), type: 'whistle' };
+    }
+    if (id === 'good_camp_ticket') {
+      return { val: '+50%', unit: 'Pot', lbl: isEN ? 'Pot & Help Speed' : (isCN ? '锅容量与帮手速度' : '鍋容量與幫手速度'), type: 'camp' };
+    }
+    if (id === 'ingredient_ticket_s') {
+      return { val: '+10', unit: isEN ? 'Ings' : '個', lbl: isEN ? 'Random Ings' : (isCN ? '随机食材' : '隨機食材'), type: 'ticket' };
+    }
+    if (id === 'ingredient_ticket_m') {
+      return { val: '+30', unit: isEN ? 'Ings' : '個', lbl: isEN ? 'Random Ings' : (isCN ? '随机食材' : '隨機食材'), type: 'ticket' };
+    }
+    if (id === 'e_zzz_travel_ticket') {
+      return { val: isEN ? 'MOVE' : '轉移', unit: '', lbl: isEN ? 'Relocate Camp' : (isCN ? '重新选点' : '重新選點'), type: 'ticket' };
+    }
+
+    // Evolution
+    if (item.category === 'evolution') {
+      if (id === 'linking_cord') {
+        return { val: isEN ? 'CORD' : '連繫', unit: '', lbl: isEN ? 'Trade Evolution' : (isCN ? '通信进阶' : '通信進階'), type: 'evolution' };
+      }
+      return { val: isEN ? 'EVO' : '進化', unit: '', lbl: isEN ? 'Evolution Item' : (isCN ? '进化指定条件' : '進化指定條件'), type: 'evolution' };
+    }
+
+    return null;
   }
 
   function getItemLocalizedName(item, isEN, isCN) {
@@ -17921,28 +17991,52 @@
       }
     }
 
-    let footerHTML = '';
+    // Prominent numerical stat highlight
+    const stat = getItemHighlightStat(item, isEN, isCN);
+    let statRowHTML = '';
+    if (stat) {
+      statRowHTML = `
+        <div class="wiki-item-card-stat-row">
+          <div class="wiki-item-stat-badge stat-type-${stat.type}">
+            <span class="wiki-item-stat-number font-mono">${escapeHtml(stat.val)}</span>
+            ${stat.unit ? `<span class="wiki-item-stat-unit font-mono">${escapeHtml(stat.unit)}</span>` : ''}
+            <span class="wiki-item-stat-divider">|</span>
+            <span class="wiki-item-stat-label">${escapeHtml(stat.lbl)}</span>
+          </div>
+          ${priceChipHTML}
+        </div>
+      `;
+    } else if (priceChipHTML) {
+      statRowHTML = `
+        <div class="wiki-item-card-stat-row">
+          <div class="wiki-item-stat-spacer"></div>
+          ${priceChipHTML}
+        </div>
+      `;
+    }
+
+    // Evolution target Pokemon: NO COUNT TEXT! Direct prominent display with enlarged avatars (42px) and names
+    let evoSectionHTML = '';
     if (Array.isArray(item.pokemon_ids) && item.pokemon_ids.length > 0) {
       const allPkm = (typeof window !== 'undefined' && Array.isArray(window.allPokemons)) ? window.allPokemons : [];
-      const maxPreview = 4;
-      const previewIds = item.pokemon_ids.slice(0, maxPreview);
-      const remainingCount = item.pokemon_ids.length - maxPreview;
 
-      const avatarsHTML = previewIds.map(pkmId => {
+      const chipsHTML = item.pokemon_ids.map(pkmId => {
         const p = allPkm.find(x => String(x.id) === String(pkmId) || x.formatted_no === String(pkmId).padStart(3, '0'));
         const pkmName = p ? (isEN ? (p.name_en || p.name_cn) : (isCN ? (p.name_cn || p.name) : (p.name_cn || p.name))) : `Pokemon #${pkmId}`;
-        const iconUrl = p && p.icon_url ? p.icon_url : `https://www.serebii.net/pokemonsleep/pokemon/icon/${String(pkmId).padStart(3, '0')}.png`;
-        return `<img src="${iconUrl}" class="wiki-item-pkm-thumb" alt="${escapeHtml(pkmName)}" title="${escapeHtml(pkmName)}" loading="lazy" />`;
+        const pkmNo = p ? (p.formatted_no || String(p.id).padStart(3, '0')) : String(pkmId).padStart(3, '0');
+        const iconUrl = p && p.icon_url ? p.icon_url : `https://www.serebii.net/pokemonsleep/pokemon/icon/${pkmNo}.png`;
+        return `
+          <div class="wiki-item-evo-chip" title="${escapeHtml(pkmName)}">
+            <img src="${iconUrl}" class="wiki-item-evo-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="this.style.opacity='0.3'" />
+            <span class="wiki-item-evo-name">${escapeHtml(pkmName)}</span>
+          </div>
+        `;
       }).join('');
 
-      const moreHTML = remainingCount > 0 ? `<span class="wiki-item-pkm-more">+${remainingCount}</span>` : '';
-
-      footerHTML = `
-        <div class="wiki-item-card-footer">
-          <span class="wiki-item-card-pokemon-count">${item.pokemon_ids.length} ${isEN ? 'Pokemon' : (isCN ? '只宝可梦' : '隻寶可夢')}</span>
-          <div class="wiki-item-card-pokemon-avatars">
-            ${avatarsHTML}
-            ${moreHTML}
+      evoSectionHTML = `
+        <div class="wiki-item-card-evosection">
+          <div class="wiki-item-evo-chips">
+            ${chipsHTML}
           </div>
         </div>
       `;
@@ -17960,12 +18054,12 @@
             <h4 class="wiki-item-card-name" title="${name}">${name}</h4>
             <div class="wiki-item-card-badge-row">
               <span class="wiki-item-cat-badge wiki-item-cat-${item.category}">${catBadgeText}</span>
-              ${priceChipHTML}
             </div>
           </div>
         </div>
+        ${statRowHTML}
         <p class="wiki-item-card-desc" title="${desc}">${desc}</p>
-        ${footerHTML}
+        ${evoSectionHTML}
       </div>
     `;
   }
@@ -18147,6 +18241,7 @@
           <div class="box-modal-body wiki-item-modal-body" id="wiki-item-modal-body">
             <section class="wiki-item-modal-section wiki-item-desc-section">
               <h4 class="wiki-item-section-title" data-i18n="wiki.item_effect_title">效果與說明</h4>
+              <div id="wiki-item-modal-stat-hero" class="wiki-item-modal-stat-hero" style="display:none;"></div>
               <p id="wiki-item-modal-effects" class="wiki-item-modal-effects font-bold">--</p>
               <p id="wiki-item-modal-desc" class="wiki-item-modal-desc">--</p>
             </section>
@@ -18160,7 +18255,6 @@
             <section class="wiki-item-modal-section wiki-item-pokemon-section" id="wiki-item-modal-pokemon-section">
               <div class="wiki-item-section-header">
                 <h4 class="wiki-item-section-title" id="wiki-item-pokemon-section-title" data-i18n="wiki.item_related_pokemon">對應寶可夢</h4>
-                <span class="wiki-item-pkm-count-badge" id="wiki-item-modal-pkm-count">0</span>
               </div>
               <div class="wiki-item-pokemon-grid" id="wiki-item-modal-pokemon-grid"></div>
             </section>
@@ -18195,10 +18289,38 @@
       subtitleEl.style.display = subName ? '' : 'none';
     }
 
-    // 2. Effects & Description
+    // 2. Effects & Description with Stat Hero
     const effectsEl = modal.querySelector('#wiki-item-modal-effects');
     if (effectsEl) {
       effectsEl.textContent = effectsText;
+    }
+
+    let statHeroEl = modal.querySelector('#wiki-item-modal-stat-hero');
+    const stat = getItemHighlightStat(item, isEN, isCN);
+    if (!statHeroEl && effectsEl && effectsEl.parentNode) {
+      statHeroEl = document.createElement('div');
+      statHeroEl.id = 'wiki-item-modal-stat-hero';
+      statHeroEl.className = 'wiki-item-modal-stat-hero';
+      effectsEl.parentNode.insertBefore(statHeroEl, effectsEl);
+    }
+    if (statHeroEl) {
+      if (stat) {
+        statHeroEl.className = `wiki-item-modal-stat-hero stat-type-${stat.type}`;
+        statHeroEl.innerHTML = `
+          <div class="stat-hero-badge">
+            <span class="stat-hero-val font-mono">${escapeHtml(stat.val)}</span>
+            ${stat.unit ? `<span class="stat-hero-unit font-mono">${escapeHtml(stat.unit)}</span>` : ''}
+          </div>
+          <div class="stat-hero-meta">
+            <span class="stat-hero-title">${escapeHtml(stat.lbl)}</span>
+            <span class="stat-hero-sub">${escapeHtml(effectsText)}</span>
+          </div>
+        `;
+        statHeroEl.style.display = 'flex';
+      } else {
+        statHeroEl.innerHTML = '';
+        statHeroEl.style.display = 'none';
+      }
     }
 
     const descEl = modal.querySelector('#wiki-item-modal-desc');
@@ -18264,9 +18386,11 @@
     const pkmSectionEl = modal.querySelector('#wiki-item-modal-pokemon-section');
     const pkmGridEl = modal.querySelector('#wiki-item-modal-pokemon-grid');
     const pkmCountEl = modal.querySelector('#wiki-item-modal-pkm-count');
+    if (pkmCountEl) pkmCountEl.remove();
+
     const pkmSectionTitleEl = modal.querySelector('#wiki-item-pokemon-section-title');
 
-    const shouldShowPokemon = item.category === 'evolution' || item.category === 'pokemon_incense' || (Array.isArray(item.pokemon_ids) && item.pokemon_ids.length > 0);
+    const shouldShowPokemon = item.category === 'evolution' || (Array.isArray(item.pokemon_ids) && item.pokemon_ids.length > 0);
 
     if (pkmSectionEl) {
       if (!shouldShowPokemon) {
@@ -18275,16 +18399,10 @@
         pkmSectionEl.style.display = 'block';
         const pkmIds = item.pokemon_ids || [];
 
-        if (pkmCountEl) {
-          pkmCountEl.textContent = String(pkmIds.length);
-        }
-
         if (pkmSectionTitleEl) {
           const sectionTitle = item.category === 'evolution'
             ? (isEN ? 'Evolvable Pokémon' : (isCN ? '对应可进化宝可梦' : '對應可進化寶可夢'))
-            : (item.category === 'pokemon_incense'
-              ? (isEN ? 'Attracted Pokémon' : (isCN ? '专属吸引宝可梦' : '專屬吸引寶可夢'))
-              : (isEN ? 'Associated Pokémon' : (isCN ? '对应宝可梦' : '對應寶可夢')));
+            : (isEN ? 'Associated Pokémon' : (isCN ? '对应宝可梦' : '對應寶可夢'));
           pkmSectionTitleEl.textContent = sectionTitle;
         }
 
@@ -18752,7 +18870,7 @@
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'values' ? 'active' : ''}" data-subtab="values" onclick="window.WikiDB.switchSubTab('values')">${isMobileH5 ? (isEN ? 'Values' : (isCN ? '能量速查' : '能量速查')) : (isEN ? 'Berry & Ings' : (isCN ? '树果与食材能量' : '樹果與食材能量'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'ratings' ? 'active' : ''}" data-subtab="ratings" onclick="window.WikiDB.switchSubTab('ratings')">${isMobileH5 ? (isEN ? 'Growth' : (isCN ? '培育指南' : '培育指南')) : (isEN ? 'Tier Guide' : (isCN ? '培育与评级指南' : '培育與評級指南'))}</button>
             <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'islands' ? 'active' : ''}" data-subtab="islands" onclick="window.WikiDB.switchSubTab('islands')">${isMobileH5 ? (isEN ? 'Islands' : (isCN ? '岛屿营地' : '島嶼營地')) : (isEN ? 'Camps & EX' : (isCN ? '岛屿营地与EX模式' : '島嶼營地與EX模式'))}</button>
-            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'items' ? 'active' : ''}" data-subtab="items" onclick="window.WikiDB.switchSubTab('items')">${isMobileH5 ? (isEN ? 'Items' : (isCN ? '道具熏香' : '道具薰香')) : (isEN ? 'Items & Incense' : (isCN ? '全道具与熏香百科' : '道具與薰香百科'))}</button>
+            <button type="button" class="wiki-subtab-btn ${currentWikiSubTab === 'items' ? 'active' : ''}" data-subtab="items" onclick="window.WikiDB.switchSubTab('items')">${isMobileH5 ? (isEN ? 'Items' : (isCN ? '道具百科' : '道具百科')) : (isEN ? 'Items' : (isCN ? '道具百科' : '道具百科'))}</button>
           </div>
         </div>
 
@@ -19194,7 +19312,7 @@
           ${renderIslandsSubpanel()}
         </div>
 
-        <!-- 子分頁 7: 道具與薰香百科 (Items & Incense Encyclopedia) -->
+        <!-- 子分頁 7: 道具百科 (Items Encyclopedia) -->
         <div id="wiki-subpanel-items" class="wiki-subpanel ${currentWikiSubTab === 'items' ? 'active' : ''}" style="${currentWikiSubTab === 'items' ? '' : 'display:none;'}">
           ${renderItemsSubpanel()}
         </div>

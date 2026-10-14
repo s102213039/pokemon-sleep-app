@@ -11962,7 +11962,7 @@ SP 4,316
     assertEquals(updatedVenusaur.nickname, '青蛙王', 'Original nickname should be preserved when parsed has none');
   });
 
-  test('Tier 4 - Real-World Application Scenarios', 'Items & Incense Encyclopedia: Master Data Engine, Wiki Subpanel, Bidirectional Dex Linkage & UI Standards Verification', () => {
+  test('Tier 4 - Real-World Application Scenarios', 'Items Encyclopedia: Master Data Engine, Wiki Subpanel, Stat Highlights, Enlarged Evolution Targets, Bidirectional Dex Linkage & UI Standards Verification', () => {
     // ---------------------------------------------------------------------------
     // Helper: Load Master Items Data
     // ---------------------------------------------------------------------------
@@ -12028,11 +12028,11 @@ SP 4,316
     assert(itemsData !== null, 'Items dataset must be present in data/items.json or embedded in js/modules/wiki.js');
     assert(Array.isArray(itemsData), 'Items dataset must be an array of item records');
 
-    // 2. Canonical item count >= 118
-    assert(itemsData.length >= 118, `Expected at least 118 items, received ${itemsData.length}`);
+    // 2. Canonical item count === 36 (non-incense)
+    assertEquals(itemsData.length, 36, `Expected exactly 36 items, received ${itemsData.length}`);
 
     // 3. Item records adhere to standard canonical schema
-    const validCategories = ['evolution', 'pokemon_incense', 'functional_incense', 'training', 'biscuit', 'supply'];
+    const validCategories = ['evolution', 'training', 'biscuit', 'supply'];
     itemsData.forEach((item, idx) => {
       assert(typeof item.id === 'string' && item.id.length > 0, `Item at index ${idx} missing valid id`);
       assert(validCategories.includes(item.category), `Item ${item.id} has invalid category: ${item.category}`);
@@ -12059,14 +12059,9 @@ SP 4,316
       assert(existingIds.has(id), `Missing required evolution item: ${id}`);
     });
 
-    // 5. Functional incense coverage (6 core incenses)
-    const requiredFunctional = [
-      'growth_incense', 'luck_incense', 'focus_incense',
-      'friend_incense', 'recovery_incense', 'pure_incense'
-    ];
-    requiredFunctional.forEach(id => {
-      assert(existingIds.has(id), `Missing required functional incense: ${id}`);
-    });
+    // 5. Incenses completely removed from dataset
+    const incenseItems = itemsData.filter(i => i.category.includes('incense') || i.id.includes('incense'));
+    assertEquals(incenseItems.length, 0, `No incense items allowed in dataset, found ${incenseItems.length}`);
 
     // 6. Training items and seed coverage (Handy Candy, Seeds, Mint)
     const requiredTraining = ['main_skill_seed', 'sub_skill_seed', 'cleanse_mint'];
@@ -12122,6 +12117,13 @@ SP 4,316
       'wiki.js must render .wiki-item-card-grid container for item cards');
     assert(wikiCode.includes('filterItemsByCategory') || wikiCode.includes('wiki-pill-btn'),
       'wiki.js must render category filter pills');
+
+    // 12.1. Item cards prominently highlight numerical stats and enlarge evolution targets without count text
+    assert(wikiCode.includes('wiki-item-card-stat-row'), 'wiki.js must render .wiki-item-card-stat-row for numerical stat highlights');
+    assert(wikiCode.includes('wiki-item-evo-avatar'), 'wiki.js must render .wiki-item-evo-avatar for enlarged evolution targets');
+    assert(!wikiCode.includes('wiki-item-card-pokemon-count'), 'wiki.js must not display pokemon count text in item cards');
+    assert(stylesCode.includes('.wiki-item-evo-avatar') && stylesCode.includes('42px'), 'styles.css must style .wiki-item-evo-avatar at 42px');
+    assert(stylesCode.includes('.wiki-item-pkm-avatar') && stylesCode.includes('54px'), 'styles.css must style modal .wiki-item-pkm-avatar at 54px');
 
     // ---------------------------------------------------------------------------
     // Part 3: Search and Filter Mechanics
