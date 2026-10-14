@@ -33275,14 +33275,15 @@ body.mobile-h5-app *::-webkit-scrollbar {
   width: 44px;
   height: 44px;
   flex-shrink: 0;
-  border-radius: 8px;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color-subtle);
+  border-radius: 0;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  padding: 3px;
+  overflow: visible;
+  padding: 0 !important;
   box-sizing: border-box;
 }
 
@@ -33319,7 +33320,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   flex-wrap: wrap;
 }
 
-/* Category Badges (Base) */
+/* Category Badges (Base - Borderless) */
 .wiki-item-cat-badge {
   font-size: 10.5px;
   font-weight: 600;
@@ -33329,6 +33330,8 @@ body.mobile-h5-app *::-webkit-scrollbar {
   align-items: center;
   white-space: nowrap;
   line-height: 1.2;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* Stat Row & Value Highlight */
@@ -33352,6 +33355,8 @@ body.mobile-h5-app *::-webkit-scrollbar {
   line-height: 1.2;
   box-sizing: border-box;
   flex-shrink: 0;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .wiki-item-stat-number {
@@ -33383,31 +33388,35 @@ body.mobile-h5-app *::-webkit-scrollbar {
   flex: 1;
 }
 
-/* Stat Badge Color Variants */
+/* Stat Badge Color Variants (Borderless) */
 .stat-type-biscuit {
   background: rgba(245, 158, 11, 0.16);
   color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.4);
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .stat-type-biscuit-max {
   background: rgba(244, 114, 182, 0.18);
   color: #f472b6;
-  border: 1px solid rgba(244, 114, 182, 0.45);
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .stat-type-seed,
 .stat-type-mint {
   background: rgba(16, 185, 129, 0.16);
   color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.4);
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .stat-type-candy,
 .stat-type-shard {
   background: rgba(56, 189, 248, 0.16);
   color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.4);
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .stat-type-energy,
@@ -33416,24 +33425,27 @@ body.mobile-h5-app *::-webkit-scrollbar {
 .stat-type-ticket {
   background: rgba(168, 85, 247, 0.16);
   color: #c084fc;
-  border: 1px solid rgba(168, 85, 247, 0.4);
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .stat-type-evolution {
   background: rgba(251, 146, 60, 0.16);
   color: #fb923c;
-  border: 1px solid rgba(251, 146, 60, 0.4);
+  border: none !important;
+  box-shadow: none !important;
 }
 
-/* Sleep Point Chip */
+/* Sleep Point Chip (Borderless, Transparent Background) */
 .wiki-item-price-chip {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 3px 7px;
-  border-radius: 6px;
-  background: var(--bg-card-inner);
+  padding: 0;
+  border-radius: 0;
+  background: transparent !important;
   color: var(--accent-blue, #38bdf8);
-  border: 1px solid var(--border-color);
+  border: none !important;
+  box-shadow: none !important;
   white-space: nowrap;
   letter-spacing: 0.2px;
 }
@@ -33443,12 +33455,12 @@ body.mobile-h5-app *::-webkit-scrollbar {
   display: none !important;
 }
 
-/* Evolution Targets Section (Compact 28px Avatars, No Outer Border, No Name Label) */
+/* Evolution Targets Section (Compact 28px Avatars, No Outer Border, No Dividing Line, No Name Label) */
 .wiki-item-card-evosection {
   width: 100%;
   margin-top: auto;
-  padding-top: 6px;
-  border-top: 1px solid var(--border-color-subtle);
+  padding-top: 4px;
+  border-top: none !important;
   display: flex;
   flex-direction: column;
 }
@@ -33530,133 +33542,157 @@ body.mobile-h5-app *::-webkit-scrollbar {
 [data-theme="midnight"] .wiki-item-cat-evolution {
   background: rgba(245, 158, 11, 0.2);
   color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.4);
+  border: none !important;
+  box-shadow: none !important;
 }
 :root .wiki-item-cat-pokemon_incense,
 [data-theme="midnight"] .wiki-item-cat-pokemon_incense {
   background: rgba(168, 85, 247, 0.2);
   color: #c084fc;
-  border: 1px solid rgba(168, 85, 247, 0.4);
+  border: none !important;
+  box-shadow: none !important;
 }
 :root .wiki-item-cat-functional_incense,
 [data-theme="midnight"] .wiki-item-cat-functional_incense {
   background: rgba(56, 189, 248, 0.2);
   color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.4);
+  border: none !important;
+  box-shadow: none !important;
 }
 :root .wiki-item-cat-training,
 [data-theme="midnight"] .wiki-item-cat-training {
   background: rgba(16, 185, 129, 0.2);
   color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.4);
+  border: none !important;
+  box-shadow: none !important;
 }
 :root .wiki-item-cat-biscuit,
 [data-theme="midnight"] .wiki-item-cat-biscuit {
   background: rgba(244, 114, 182, 0.2);
   color: #f472b6;
-  border: 1px solid rgba(244, 114, 182, 0.4);
+  border: none !important;
+  box-shadow: none !important;
 }
 :root .wiki-item-cat-supply,
 [data-theme="midnight"] .wiki-item-cat-supply {
   background: rgba(20, 184, 166, 0.2);
   color: #2dd4bf;
-  border: 1px solid rgba(20, 184, 166, 0.4);
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* 2. Onyx Theme (Pure Black OLED) */
 [data-theme="onyx"] .wiki-item-cat-evolution {
   background: rgba(245, 158, 11, 0.22);
   color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.45);
+  border: none !important;
+  box-shadow: none !important;
 }
 [data-theme="onyx"] .wiki-item-cat-pokemon_incense {
   background: rgba(168, 85, 247, 0.22);
   color: #c084fc;
-  border: 1px solid rgba(168, 85, 247, 0.45);
+  border: none !important;
+  box-shadow: none !important;
 }
 [data-theme="onyx"] .wiki-item-cat-functional_incense {
   background: rgba(203, 213, 225, 0.15);
   color: #e2e8f0;
-  border: 1px solid rgba(203, 213, 225, 0.4);
+  border: none !important;
+  box-shadow: none !important;
 }
 [data-theme="onyx"] .wiki-item-cat-training {
   background: rgba(16, 185, 129, 0.22);
   color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.45);
+  border: none !important;
+  box-shadow: none !important;
 }
 [data-theme="onyx"] .wiki-item-cat-biscuit {
   background: rgba(244, 114, 182, 0.22);
   color: #f472b6;
-  border: 1px solid rgba(244, 114, 182, 0.45);
+  border: none !important;
+  box-shadow: none !important;
 }
 [data-theme="onyx"] .wiki-item-cat-supply {
   background: rgba(20, 184, 166, 0.22);
   color: #2dd4bf;
-  border: 1px solid rgba(20, 184, 166, 0.45);
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* 3. Dawn Theme (Bright Warm Light) */
 [data-theme="dawn"] .wiki-item-cat-evolution {
   background: #fef3c7;
   color: #92400e;
-  border: 1px solid #fcd34d;
+  border: none !important;
+  box-shadow: none !important;
 }
 [data-theme="dawn"] .wiki-item-cat-pokemon_incense {
   background: #f3e8ff;
   color: #6b21a8;
-  border: 1px solid #d8b4fe;
+  border: none !important;
+  box-shadow: none !important;
 }
 [data-theme="dawn"] .wiki-item-cat-functional_incense {
   background: #e0f2fe;
   color: #0369a1;
-  border: 1px solid #bae6fd;
+  border: none !important;
+  box-shadow: none !important;
 }
 [data-theme="dawn"] .wiki-item-cat-training {
   background: #dcfce7;
   color: #166534;
-  border: 1px solid #86efac;
+  border: none !important;
+  box-shadow: none !important;
 }
 [data-theme="dawn"] .wiki-item-cat-biscuit {
   background: #fce7f3;
   color: #9d174d;
-  border: 1px solid #f472b6;
+  border: none !important;
+  box-shadow: none !important;
 }
 [data-theme="dawn"] .wiki-item-cat-supply {
   background: #ccfbf1;
   color: #0f766e;
-  border: 1px solid #99f6e4;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* 4. Emerald Theme (Subtle Grey Stone Light) */
 [data-theme="emerald"] .wiki-item-cat-evolution {
   background: #fef9c3;
   color: #854d0e;
-  border: 1px solid #fde047;
+  border: none !important;
+  box-shadow: none !important;
 }
 [data-theme="emerald"] .wiki-item-cat-pokemon_incense {
   background: #ede9fe;
   color: #5b21b6;
-  border: 1px solid #ddd6fe;
+  border: none !important;
+  box-shadow: none !important;
 }
 [data-theme="emerald"] .wiki-item-cat-functional_incense {
   background: #e0f2fe;
   color: #075985;
-  border: 1px solid #bae6fd;
+  border: none !important;
+  box-shadow: none !important;
 }
 [data-theme="emerald"] .wiki-item-cat-training {
   background: #dcfce7;
   color: #15803d;
-  border: 1px solid #86efac;
+  border: none !important;
+  box-shadow: none !important;
 }
 [data-theme="emerald"] .wiki-item-cat-biscuit {
   background: #fce7f3;
   color: #9d174d;
-  border: 1px solid #fbcfe8;
+  border: none !important;
+  box-shadow: none !important;
 }
 [data-theme="emerald"] .wiki-item-cat-supply {
   background: #ccfbf1;
   color: #115e59;
-  border: 1px solid #99f6e4;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* ==========================================================================
@@ -33808,8 +33844,11 @@ body.mobile-h5-app *::-webkit-scrollbar {
 .mobile-h5-app .wiki-item-card-icon-wrap {
   width: 38px !important;
   height: 38px !important;
-  border-radius: 8px !important;
-  padding: 2px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
   flex-shrink: 0 !important;
 }
 
@@ -33841,6 +33880,8 @@ body.mobile-h5-app *::-webkit-scrollbar {
   font-size: 9px !important;
   padding: 1px 5px !important;
   line-height: 1.2 !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* Stat Row & Highlight in Mobile H5 */
@@ -33866,6 +33907,8 @@ body.mobile-h5-app *::-webkit-scrollbar {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .mobile-h5-app .wiki-item-stat-number {
@@ -33890,10 +33933,13 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .mobile-h5-app .wiki-item-price-chip {
-  font-size: 9.5px !important;
+  font-size: 10.5px !important;
   font-weight: 700 !important;
-  padding: 2px 6px !important;
-  border-radius: 5px !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   flex-shrink: 0 !important;
   white-space: nowrap !important;
 }
@@ -33903,12 +33949,12 @@ body.mobile-h5-app *::-webkit-scrollbar {
   display: none !important;
 }
 
-/* Evolution Targets Section in Mobile H5 (Borderless, No Name, 24px) */
+/* Evolution Targets Section in Mobile H5 (Borderless, No Dividing Line, No Name, 24px) */
 .mobile-h5-app .wiki-item-card-evosection {
   width: 100% !important;
   margin-top: auto !important;
-  padding-top: 5px !important;
-  border-top: 1px solid var(--border-color-subtle) !important;
+  padding-top: 4px !important;
+  border-top: none !important;
 }
 
 .mobile-h5-app .wiki-item-evo-chips {

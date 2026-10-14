@@ -17948,12 +17948,9 @@
       return { val: isEN ? 'MOVE' : '轉移', unit: '', lbl: isEN ? 'Relocate Camp' : (isCN ? '重新选点' : '重新選點'), type: 'ticket' };
     }
 
-    // Evolution
+    // Evolution items already have category badge and prominent target avatars; omit redundant static badge
     if (item.category === 'evolution') {
-      if (id === 'linking_cord') {
-        return { val: isEN ? 'CORD' : '連繫', unit: '', lbl: isEN ? 'Trade Evolution' : (isCN ? '通信进阶' : '通信進階'), type: 'evolution' };
-      }
-      return { val: isEN ? 'EVO' : '進化', unit: '', lbl: isEN ? 'Evolution Item' : (isCN ? '进化指定条件' : '進化指定條件'), type: 'evolution' };
+      return null;
     }
 
     return null;
