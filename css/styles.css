@@ -33452,7 +33452,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   margin: 0;
 }
 
-/* Evolution Targets Section (Enlarged 42px Avatars, No Count Text) */
+/* Evolution Targets Section (Enlarged 42px Avatars, No Outer Border, No Name Label) */
 .wiki-item-card-evosection {
   width: 100%;
   margin-top: auto;
@@ -33464,12 +33464,12 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 .wiki-item-evo-chips {
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding: 2px 2px 4px 2px;
+  padding: 2px 0 3px 0;
 }
 
 .wiki-item-evo-chips::-webkit-scrollbar {
@@ -33477,24 +33477,25 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .wiki-item-evo-chip {
-  display: flex;
-  flex-direction: column;
+  display: inline-flex;
   align-items: center;
-  gap: 3px;
+  justify-content: center;
   flex-shrink: 0;
-  padding: 4px 6px;
-  border-radius: 8px;
-  background: var(--bg-card-inner);
-  border: 1px solid var(--border-color-subtle);
-  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-  min-width: 48px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  transition: transform 0.16s ease;
+  min-width: 0;
   box-sizing: border-box;
+  cursor: pointer;
 }
 
 .wiki-item-evo-chip:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent-blue);
-  background: var(--bg-card-hover);
+  transform: scale(1.12);
+  border: none;
+  background: transparent;
 }
 
 .wiki-item-evo-avatar {
@@ -33503,19 +33504,16 @@ body.mobile-h5-app *::-webkit-scrollbar {
   object-fit: contain;
   display: block;
   flex-shrink: 0;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
+  transition: transform 0.16s ease, filter 0.16s ease;
+}
+
+.wiki-item-evo-avatar:hover {
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.45));
 }
 
 .wiki-item-evo-name {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--text-title);
-  max-width: 54px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
-  line-height: 1.2;
+  display: none !important;
 }
 
 /* Empty Search Results State */
@@ -33675,42 +33673,69 @@ body.mobile-h5-app *::-webkit-scrollbar {
    ========================================================================== */
 
 .mobile-h5-app #wiki-subpanel-items {
-  padding: 0 !important;
+  padding: 10px 12px calc(80px + env(safe-area-inset-bottom, 0px)) 12px !important;
   margin: 0 !important;
   width: 100% !important;
   border: none !important;
   background: transparent !important;
   box-shadow: none !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .wiki-items-control-bar {
-  margin-bottom: 8px !important;
+  margin-bottom: 10px !important;
   padding: 0 !important;
   background: transparent !important;
   border: none !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 8px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .wiki-items-search-row {
   display: flex !important;
-  gap: 6px !important;
+  align-items: center !important;
+  gap: 8px !important;
   width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .wiki-items-search-box {
+  flex: 1 !important;
+  min-width: 0 !important;
 }
 
 .mobile-h5-app .wiki-items-search-input {
-  height: 36px !important;
-  line-height: 36px !important;
+  height: 38px !important;
+  line-height: 38px !important;
   font-size: 13px !important;
   padding: 0 32px 0 32px !important;
-  border-radius: 8px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .wiki-items-search-icon {
-  left: 9px !important;
+  left: 10px !important;
   width: 14px !important;
   height: 14px !important;
+}
+
+.mobile-h5-app .wiki-items-count-badge-wrapper {
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .wiki-items-count-badge {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  height: 38px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 10px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
 }
 
 /* Mobile H5 Horizontal Scrollable Filter Pills (Zero Scrollbar) */
@@ -33720,7 +33745,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   -webkit-overflow-scrolling: touch !important;
   scrollbar-width: none !important;
   gap: 6px !important;
-  padding: 2px 2px 6px 2px !important;
+  padding: 2px 0 4px 0 !important;
   align-items: center !important;
   width: 100% !important;
   box-sizing: border-box !important;
@@ -33733,7 +33758,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 }
 
 .mobile-h5-app .wiki-items-filter-pills .wiki-pill-btn {
-  padding: 5px 11px !important;
+  padding: 5px 12px !important;
   font-size: 12px !important;
   font-weight: 600 !important;
   border-radius: 18px !important;
@@ -33750,13 +33775,13 @@ body.mobile-h5-app *::-webkit-scrollbar {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
   gap: 8px !important;
-  padding: 0 0 16px 0 !important;
+  padding: 0 0 8px 0 !important;
   margin: 0 !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
 
-@media (max-width: 340px) {
+@media (max-width: 320px) {
   .mobile-h5-app .wiki-item-card-grid {
     grid-template-columns: 1fr !important;
   }
@@ -33764,12 +33789,17 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 /* Mobile H5 Touch Card Styling */
 .mobile-h5-app .wiki-item-card {
-  padding: 9px 10px !important;
-  border-radius: 10px !important;
+  padding: 10px !important;
+  border-radius: 12px !important;
   gap: 6px !important;
-  min-height: 84px !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
   -webkit-tap-highlight-color: transparent !important;
   user-select: none !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-h5-app .wiki-item-card:active {
@@ -33777,52 +33807,185 @@ body.mobile-h5-app *::-webkit-scrollbar {
   background-color: var(--bg-card-hover) !important;
 }
 
+.mobile-h5-app .wiki-item-card-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
 .mobile-h5-app .wiki-item-card-icon-wrap {
-  width: 36px !important;
-  height: 36px !important;
-  border-radius: 6px !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 8px !important;
   padding: 2px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .wiki-item-card-title-group {
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
 }
 
 .mobile-h5-app .wiki-item-card-name {
   font-size: 13px !important;
   font-weight: 700 !important;
+  line-height: 1.25 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.mobile-h5-app .wiki-item-card-badge-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  flex-wrap: nowrap !important;
 }
 
 .mobile-h5-app .wiki-item-cat-badge {
-  font-size: 9.5px !important;
+  font-size: 9px !important;
   padding: 1px 5px !important;
+  line-height: 1.2 !important;
+}
+
+/* Stat Row & Highlight in Mobile H5 */
+.mobile-h5-app .wiki-item-card-stat-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 4px !important;
+  width: 100% !important;
+  margin: 2px 0 !important;
+  flex-wrap: nowrap !important;
+}
+
+.mobile-h5-app .wiki-item-stat-badge {
+  display: inline-flex !important;
+  align-items: baseline !important;
+  gap: 3px !important;
+  padding: 2px 6px !important;
+  border-radius: 5px !important;
+  font-size: 10px !important;
+  flex-shrink: 1 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .wiki-item-stat-number {
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+.mobile-h5-app .wiki-item-stat-unit {
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+}
+
+.mobile-h5-app .wiki-item-stat-divider {
+  font-size: 9.5px !important;
+  margin: 0 1px !important;
+}
+
+.mobile-h5-app .wiki-item-stat-label {
+  font-size: 9.5px !important;
+  white-space: nowrap !important;
 }
 
 .mobile-h5-app .wiki-item-price-chip {
   font-size: 9.5px !important;
-  padding: 1px 5px !important;
+  font-weight: 700 !important;
+  padding: 2px 6px !important;
+  border-radius: 5px !important;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
 }
 
+/* Card Description in Mobile H5 */
 .mobile-h5-app .wiki-item-card-desc {
   font-size: 11px !important;
+  color: var(--text-secondary) !important;
   line-height: 1.35 !important;
   -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  display: -webkit-box !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
   min-height: 28px !important;
+  margin: 0 !important;
 }
 
+/* Evolution Targets Section in Mobile H5 (Borderless, No Name) */
 .mobile-h5-app .wiki-item-card-evosection {
+  width: 100% !important;
+  margin-top: auto !important;
   padding-top: 6px !important;
+  border-top: 1px solid var(--border-color-subtle) !important;
+}
+
+.mobile-h5-app .wiki-item-evo-chips {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  padding: 2px 0 !important;
+}
+
+.mobile-h5-app .wiki-item-evo-chip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-width: 0 !important;
+  border-radius: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .mobile-h5-app .wiki-item-evo-avatar {
-  width: 36px !important;
-  height: 36px !important;
+  width: 38px !important;
+  height: 38px !important;
+  object-fit: contain !important;
+  display: block !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35)) !important;
 }
 
 .mobile-h5-app .wiki-item-evo-name {
-  font-size: 10px !important;
-  max-width: 48px !important;
+  display: none !important;
+}
+
+/* Detail Modal Associated Pokemon in Mobile H5 */
+.mobile-h5-app .wiki-item-pokemon-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .wiki-item-pkm-card {
+  padding: 6px 8px !important;
+  gap: 6px !important;
+  border-radius: 8px !important;
 }
 
 .mobile-h5-app .wiki-item-pkm-avatar {
-  width: 44px !important;
-  height: 44px !important;
+  width: 38px !important;
+  height: 38px !important;
+}
+
+.mobile-h5-app .wiki-item-pkm-no {
+  font-size: 10px !important;
+}
+
+.mobile-h5-app .wiki-item-pkm-name {
+  font-size: 12px !important;
 }
 
 /* ==========================================================================

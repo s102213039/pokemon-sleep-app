@@ -18015,10 +18015,14 @@
       `;
     }
 
-    // Evolution target Pokemon: NO COUNT TEXT! Direct prominent display with enlarged avatars (42px) and names
+    // Evolution target Pokemon: NO COUNT TEXT! Direct prominent display with enlarged borderless avatars without names
     let evoSectionHTML = '';
     if (Array.isArray(item.pokemon_ids) && item.pokemon_ids.length > 0) {
-      const allPkm = (typeof window !== 'undefined' && Array.isArray(window.allPokemons)) ? window.allPokemons : [];
+      const allPkm = (typeof window !== 'undefined' && (
+        (window.PokemonApp && Array.isArray(window.PokemonApp.allPokemons) && window.PokemonApp.allPokemons.length > 0)
+          ? window.PokemonApp.allPokemons
+          : (Array.isArray(window.allPokemons) ? window.allPokemons : [])
+      )) || [];
 
       const chipsHTML = item.pokemon_ids.map(pkmId => {
         const p = allPkm.find(x => String(x.id) === String(pkmId) || x.formatted_no === String(pkmId).padStart(3, '0'));
@@ -18028,7 +18032,6 @@
         return `
           <div class="wiki-item-evo-chip" title="${escapeHtml(pkmName)}">
             <img src="${iconUrl}" class="wiki-item-evo-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="this.style.opacity='0.3'" />
-            <span class="wiki-item-evo-name">${escapeHtml(pkmName)}</span>
           </div>
         `;
       }).join('');

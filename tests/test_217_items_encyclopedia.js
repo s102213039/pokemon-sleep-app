@@ -246,12 +246,21 @@ function runProbe(options = {}) {
       'wiki.js must render .wiki-item-card-grid container for item cards');
   });
 
-  check('Wiki Subpanel UI', 'Item cards prominently highlight numerical stats and enlarge evolution target Pokémon without count text', () => {
+  check('Wiki Subpanel UI', 'Item cards prominently highlight numerical stats and display pure borderless evolution targets without name labels', () => {
     assert(wikiCode.includes('wiki-item-card-stat-row'), 'wiki.js must render .wiki-item-card-stat-row for numerical stat highlights');
     assert(wikiCode.includes('wiki-item-evo-avatar'), 'wiki.js must render .wiki-item-evo-avatar for enlarged evolution targets');
     assert(!wikiCode.includes('wiki-item-card-pokemon-count'), 'wiki.js must not display pokemon count text in item cards');
+    assert(!wikiCode.includes('wiki-item-evo-name'), 'wiki.js must remove pokemon name labels in item cards');
     assert(stylesCode.includes('.wiki-item-evo-avatar') && stylesCode.includes('42px'), 'styles.css must style .wiki-item-evo-avatar at 42px');
     assert(stylesCode.includes('.wiki-item-pkm-avatar') && stylesCode.includes('54px'), 'styles.css must style modal .wiki-item-pkm-avatar at 54px');
+    assert(stylesCode.includes('.wiki-item-evo-chip') && stylesCode.includes('border: none'), 'styles.css must style .wiki-item-evo-chip without outer borders');
+  });
+
+  check('Wiki Subpanel UI', 'Mobile H5 app adaptation is configured with dock clearance and touch styles', () => {
+    assert(stylesCode.includes('.mobile-h5-app #wiki-subpanel-items'), 'styles.css must adapt #wiki-subpanel-items for mobile H5');
+    assert(stylesCode.includes('.mobile-h5-app .wiki-item-card-grid'), 'styles.css must adapt .wiki-item-card-grid for mobile H5');
+    assert(stylesCode.includes('.mobile-h5-app .wiki-item-evo-avatar'), 'styles.css must adapt .wiki-item-evo-avatar for mobile H5');
+    assert(stylesCode.includes('.mobile-h5-app .wiki-item-card-stat-row'), 'styles.css must adapt .wiki-item-card-stat-row for mobile H5');
   });
 
   // ---------------------------------------------------------------------------
