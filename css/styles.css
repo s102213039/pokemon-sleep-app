@@ -20786,6 +20786,14 @@ body.box-lab-active .box-fab-container,
   width: 100% !important;
 }
 
+.mobile-h5-app .calc-form-row-boosts {
+  flex-wrap: wrap !important;
+}
+
+.mobile-h5-app .calc-field-group.calc-field-exptype {
+  flex-basis: 100% !important;
+}
+
 .mobile-h5-app .calc-field-group {
   flex: 1 1 0% !important;
   min-width: 0 !important;

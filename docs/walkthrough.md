@@ -1,5 +1,67 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
+## 交接：2026-10-15 已完成（睡眠升級天數計算器新增「經驗值類型」選單：一般/準神/神獸/幻之寶可夢、v=20261015_01）
+
+- **靜態快取標籤**：`wiki.js` 與 `styles.css` 皆為 `v=20261015_01`（`index.html`、`app/index.html` 同步）
+- **測試狀態**：217/217 通過（升級計算器測試新增經驗值類型選單渲染、custom select 初始化、Lv.1→60 三種類型 EXP 斷言）
+- **需求**：準神與神獸升級所需 EXP 比一般寶可夢多，計算器要能切換。
+- **查證後的真實數據**（WikiWiki 経験値タイプ、Pokebip niveau-experience 兩份表交叉比對）：
+  - 600 型（一般）1.0 倍：絕大多數寶可夢
+  - 900 型（準神）1.5 倍：迷你龍、幼基拉斯、寶貝龍家族
+  - 1080 型（神獸 / 準傳說）1.8 倍：雷公、炎帝、水君、拉帝亞斯、拉帝歐斯、克雷色利亞
+  - 1320 型（幻之寶可夢）2.2 倍：夢幻、達克萊伊
+  - 遊戲實表不是精確乘積（各級有 ±1 誤差，兩份來源也互有 ±1 差異）；Reddit 的 77,213 / 92,645 / 113,220 與兩份表都不符，判定為舊資料，不採用。
+- **實作**（`js/modules/wiki.js`）：
+  - UI：`calc-form-row-boosts` 內、性格選單後新增 `<select id="calc-sleep-exp-type" class="calc-select">`（值 1.0 / 1.5 / 1.8 / 2.2），由 `initCalcCustomSelects()` 套 custom select。因為有 4 種類型，用選單而非單一 switch。
+  - 計算：`recalcSleepDays()` 以 `round(cumulativeExp[lv] * 倍率)` 計算起訖累計 EXP 後相減；天數與糖果數沿用原邏輯（糖果每顆 25 EXP 不受類型影響）。與實表誤差最多 1 EXP（已加 ponytail 註解；若要逐點精準需內嵌三張實表）。
+  - Lv.1→60 驗證值：900 型 77,240、1080 型 92,687（Pokebip 92,688）、1320 型 113,285。
+  - 里程碑表 `SLEEP_DAYS_BASELINE` 未改，仍為一般 600 型基準。
+- **CSS**（`css/styles.css`）：H5 `.calc-form-row-boosts` 允許換行，`.calc-field-exptype` 獨佔一行，避免三欄擠壓；桌面維持同列。
+
+## 交接：2026-10-15 已完成（道具百科卡片徹底去除非必要內層外框與分割線、純淨無框圖標與文字排版、僅保留最外層卡片大框、v=20261014_07）
+
+- **靜態快取標籤**：`v=20261014_07`
+- **測試狀態**：217/217 自動化測試全數通過（含道具百科卡片單一外框、去除非必要文字與圖片內框、移除進化道具重複數值膠囊、價格純字展示、DOM與多主題樣式斷言）
+- **主要修復與重構細節**：
+  1. **道具百科卡片徹底去除非必要內層邊框（Strict Single Frame Rule Applied to Item Cards）**：
+     - **最外層大框保留**：保留 `.wiki-item-card` 卡片本體邊框（`border: 1px solid var(--border-color); border-radius: 10px;`，移動端 `border-radius: 12px;`）。
+     - **圖片外框徹底去除**：`.wiki-item-card-icon-wrap`（含桌面版與 `.mobile-h5-app`）設為 `border: none !important; background: transparent !important; padding: 0 !important; box-shadow: none !important;`，道具圖片直接純淨透明展示。
+     - **文字標籤外框徹底去除**：
+       - 分類標籤（`.wiki-item-cat-badge` 及 Midnight, Onyx, Dawn, Emerald 四大主題的 `.wiki-item-cat-*`）全數設為 `border: none !important; box-shadow: none !important;`。
+       - 數值膠囊（`.wiki-item-stat-badge` 及所有 `.stat-type-*`）全數設為 `border: none !important; box-shadow: none !important;`。
+       - 價格晶片（`.wiki-item-price-chip`，含桌面版與 `.mobile-h5-app`）設為 `border: none !important; background: transparent !important; padding: 0 !important; box-shadow: none !important;`，轉為純淨文字排版（如 `1,400 pt`）。
+     - **內部分割線徹底去除**：進化寶可夢區塊（`.wiki-item-card-evosection`）移除頂部邊框分隔線（`border-top: none !important; padding-top: 4px !important;`）。
+  2. **進化石數值標籤冗餘優化**：
+     - `getItemHighlightStat` 針對進化石（`category === 'evolution'`）返回 `null`，移除重複贅餘的 `[進化 | 進化指定條件]` 標籤（標題下方已具備 `進化道具` 分類），卡片僅保留醒目價格與純淨對應寶可夢圖示。
+  3. **全域安全與設計規範合規確認**：
+     - 嚴格遵守全域 Zero Emoji 規範，無任何表情符號。
+     - 嚴格遵守 Single Frame Rule，無任何冗餘雙層巢狀外框。
+     - 嚴格遵守下拉選單向下箭頭排版規範。
+
+## 交接：2026-10-14 已完成（全道具百科精簡移除薰香、重點數值凸顯橫幅與膠囊、進化石影響寶可夢42px大圖示凸顯與不標註數量、雙向圖鑑聯動、v=20261014_04）
+
+- **靜態快取標籤**：`v=20261014_04`
+- **測試狀態**：217/217 自動化測試全數通過（含36項核心實用道具收錄、完全移除82項薰香、高對比數值凸顯橫幅、進化石影響寶可夢42px/54px大圖示且不標註數量、道具與圖鑑雙向交互跳轉、DOM與多主題樣式斷言）
+- **主要修復與重構細節**：
+  1. **徹底移除全遊戲薰香資訊（Remove All Incense）**：
+     - 從道具資料庫（`data/items.json`, `js/data/items.js`）、過濾分類標籤（`ITEM_CATEGORIES`）、搜尋演算法及 UI 中徹底移除寶可夢專屬薰香（76 項）與功能性薰香（6 項），道具總數精簡至 36 項核心實用道具（進化道具 17 項、培育與種子 9 項、捕捉沙布蕾 4 項、探索與補給 6 項）。
+     - 數據百科子分頁導覽按鈕更名為「道具百科 (Items)」，搜尋框預設提示改為「搜尋道具名稱、效果或對應寶可夢...」，過濾標籤只保留實用 4 大類別。
+     - `getMasterItemsData()` 增加自動安全過濾機制，確保不載入任何薰香殘留資料。
+  2. **重點凸顯效果數值與價格標籤（Prominent Stat & Value Highlights）**：
+     - 卡片新增高對比數值橫幅（`.wiki-item-card-stat-row`）與效果膠囊徽章（`.wiki-item-stat-badge`），將關鍵數值放大凸顯（如沙布蕾友好度 `+1` / `+3` / `+5` / `MAX`；萬能糖果 `+3` / `+20` / `+100`；主/副技能種子 `+1 Lv` / `+1 階`；活力枕頭 `+50 活力`；幫手哨子 `3 hrs`；好露營券 `+50%`；食材券 `+10` / `+30`；性格薄荷 `1.00x`；進化道具 `進化指定條件` 等）。
+     - 針對不同效果類型設計高對比主題配色（友好度金黃/櫻粉、種子翠綠、糖果電青、補給紫色、進化暖橙）。
+     - 詳細彈窗頂部效果區域新增大型數值展示橫幅（`.wiki-item-modal-stat-hero`，22px/24px 粗體數值與文字標籤）。
+  3. **進化石影響寶可夢放大凸顯且不標註數量（Enlarged Evolution Pokémon, No Count Text）**：
+     - 道具卡片與詳細彈窗中**徹底刪除所有「共 X 隻寶可夢」或數量文字**（移除 `.wiki-item-card-pokemon-count` 與 `#wiki-item-modal-pkm-count`）。
+     - 進化道具卡片底部直接展示醒目的寶可夢清單：頭像尺寸放大至 **42px x 42px**（`.wiki-item-evo-avatar`），並在下方展示清晰的寶可夢名稱（`.wiki-item-evo-name`），支援平滑橫向捲動（`.wiki-item-evo-chips`）。
+     - 詳細彈窗內的對應寶可夢頭像放大至 **54px x 54px**（`.wiki-item-pkm-avatar`），卡片字體放大至 13.5px 粗體，No. 編號清晰展示。
+     - 移動端 H5 頭像亦適配放大（卡片 36px，彈窗 44px），兼顧緊湊排版與視覺識別度。
+  4. **全域安全與設計規範合規確認**：
+     - 嚴格遵守全域 Zero Emoji 規範，無任何表情符號。
+     - 嚴格遵守 Single Frame Rule，無任何冗餘雙層巢狀外框。
+     - 嚴格遵守下拉選單向下箭頭排版規範。
+     - 完整支援 Midnight、Onyx、Dawn、Emerald 四大主題。
+
 ## 交接：2026-10-14 已完成（食材天梯浮窗料理標籤獨立行與無邊框大圖示、手機端視口裁切修復、倉庫截圖智能相似寶可夢比對與覆蓋彈窗、料理週擴鍋上限700格、v=20261014_02）
 
 - **靜態快取標籤**：`v=20261014_02`
@@ -1416,11 +1478,24 @@
       - 疊加自爆磁怪等寶可夢之「料理強化S」技能（最高堆疊 +200 個食材），單次極限鍋容量高達 **486 + 200 = 686 格**！
     - **擴鍋滑塊與多語言說明**：滑塊上限全面擴充至 `0~700`，`recipes.js` 計算邏輯 clamp 至 700，i18n 多語言說明同步詳列完整公式與 486/686 格極限機制。
 
+12. **全道具資料庫百科模組（Items Encyclopedia - Test 217）** (`js/modules/wiki.js`, `css/styles.css`, `index.html`, `app/index.html`):
+    - **核心實用道具結構化收錄**：精準收錄 36 項實用核心道具（17 種進化道具、9 種成長培育與薄荷道具、4 種捕捉沙布蕾、6 種補給消耗品），徹底移除無用之 82 款專屬與功能薰香。
+    - **數值核心凸顯列 (`.wiki-item-card-stat-row`)**：將沙布蕾友好度點數（如 `+1` / `+3` / `MAX`）、種子升級數值、糖果碎片數量與活力恢復量以高對比大字號彩色徽章展示於卡片頂部，視覺層次分明。
+    - **雙向圖鑑跳轉與互聯**：道具卡片點擊彈出詳細資訊彈窗（`#wiki-item-detail-modal`），展示價格、獲取途徑與對應寶可夢；點擊寶可夢可直接無縫切換開啟寶可夢圖鑑評測彈窗。
+13. **H5 行動端道具百科深度適配、卡片移除冗餘描述與寶可夢圖示縮小優化** (`js/modules/wiki.js`, `css/styles.css`, `index.html`, `app/index.html`):
+    - **道具卡片移除冗餘描述文字**：在 `renderItemCardHTML` 中徹底移除 `<p class="wiki-item-card-desc">`，使卡片只展示道具名稱、分類、數值亮點及對應寶可夢，大幅減少卡片高度與視覺噪音，使排版更加緊湊乾淨。完整說明與獲取途徑保留於詳細資訊彈窗。
+    - **寶可夢圖示縮小與無外框純圖示展示**：
+      - 卡片內進化寶可夢頭像徹底移除外層卡片邊框與深色底色，徹底移除名稱文字標籤（`.wiki-item-evo-name`）。
+      - 縮小頭像尺寸：桌面端卡片圖示縮至精巧的 **28px x 28px**；移動端 H5 縮至 **24px x 24px**，使 5~6 隻寶可夢能在雙欄窄卡片中自然並排，無需滾動。
+      - 詳細彈窗寶可夢頭像同步微縮優化（桌面端 40px，移動端 30px）。
+    - **H5 行動端網格與底部 Dock 避讓**：`#wiki-subpanel-items` 增加 `padding: 10px 12px calc(80px + env(safe-area-inset-bottom, 0px)) 12px !important;`，確保底部卡片不被 62px 底部導覽列遮蔽。
+    - **雙欄卡片數值列非折行緊湊佈局**：移動端 `.wiki-item-card-stat-row` 設為 `flex-wrap: nowrap`，微調字級（13.5px 數值、9.5px 單位與標籤），防止在 ~170px 卡片寬度中文字換行溢出或擠壓。
+
 ### 自動化測試與工程品質保證
-- **測試總數升級至 215 項**：
+- **測試總數升級至 217 項**：
   - Tier 1 (Feature Coverage): 64 Passed, 0 Failed
   - Tier 2 (Boundary & Corner Cases): 43 Passed, 0 Failed
   - Tier 3 (Cross-Feature Combinations): 8 Passed, 0 Failed
-  - Tier 4 (Real-World Application Scenarios): 100 Passed, 0 Failed
-  - **總計：215 / 215 Passed (0 Failed, 100% 通過)**
+  - Tier 4 (Real-World Application Scenarios): 102 Passed, 0 Failed
+  - **總計：217 / 217 Passed (0 Failed, 100% 通過)**
 - 全面遵守全域安全規範、無 Emoji 政策、單一外框規範、下拉箭頭排版規範與 `rtk` 指令調用。

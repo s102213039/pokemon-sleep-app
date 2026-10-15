@@ -13795,8 +13795,12 @@
     if (target < 2) target = 30;
     if (target > 80) target = 80;
 
-    const curExp = cumulativeExp[cur] !== undefined ? cumulativeExp[cur] : 0;
-    const targetExp = cumulativeExp[target] !== undefined ? cumulativeExp[target] : cumulativeExp[80];
+    // 經驗值類型: 600型 1.0 / 900型(準神) 1.5 / 1080型(神獸) 1.8 / 1320型(幻) 2.2
+    // ponytail: 累計值乘倍率四捨五入, 與 Pokebip/WikiWiki 實表誤差 <=1 EXP; 要逐點精準需內嵌三張實表
+    const expTypeSelect = document.getElementById('calc-sleep-exp-type');
+    const expTypeMult = parseFloat(expTypeSelect ? expTypeSelect.value : 1.0) || 1.0;
+    const curExp = Math.round(cumulativeExp[cur] * expTypeMult);
+    const targetExp = Math.round(cumulativeExp[target] * expTypeMult);
     const baseExpNeeded = Math.max(0, targetExp - curExp);
 
     let dailyExp = 100;
@@ -13841,6 +13845,10 @@
     }
     if (natureSelect && !natureSelect._customized) {
       window.setupCustomSelect(natureSelect);
+    }
+    const expTypeSelect = document.getElementById('calc-sleep-exp-type');
+    if (expTypeSelect && !expTypeSelect._customized) {
+      window.setupCustomSelect(expTypeSelect);
     }
   }
 
@@ -19256,6 +19264,15 @@
                       <option value="1.0">${isEN ? 'Neutral EXP' : '性格無EXP修正'}</option>
                       <option value="1.18">${isEN ? 'EXP Up ▲ (+18%)' : '性格EXP▲ (+18%)'}</option>
                       <option value="0.82">${isEN ? 'EXP Down ▼ (-18%)' : '性格EXP▼ (-18%)'}</option>
+                    </select>
+                  </div>
+
+                  <div class="calc-field-group calc-field-exptype">
+                    <select id="calc-sleep-exp-type" class="calc-select" onchange="window.WikiDB.recalcSleepDays()">
+                      <option value="1.0">${isEN ? 'Normal EXP (1.0x)' : '一般 (1.0倍)'}</option>
+                      <option value="1.5">${isEN ? 'Pseudo-Legendary (1.5x)' : '準神 (1.5倍)'}</option>
+                      <option value="1.8">${isEN ? 'Legendary (1.8x)' : '神獸 (1.8倍)'}</option>
+                      <option value="2.2">${isEN ? 'Mythical (2.2x)' : '幻之寶可夢 (2.2倍)'}</option>
                     </select>
                   </div>
                 </div>

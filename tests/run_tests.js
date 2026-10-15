@@ -5278,6 +5278,18 @@ test('Tier 4 - Real-World Application Scenarios', 'Sleep EXP Calculator Accurate
   assert(expRes.textContent.includes('29,993'), `Lv.1 to 50 must be 29,993 EXP, got: ${expRes.textContent}`);
   assert(candiesRes.textContent.includes('1,200'), `Lv.1 to 50 must be 1,200 candies, got: ${candiesRes.textContent}`);
 
+  // Case EXP type: Lv.1 -> 60 cumulative for 900 / 1080 / 1320 types (Pokebip table: 77,240 / 92,688 / 113,285; <=1 EXP drift allowed)
+  assert(html.includes('id="calc-sleep-exp-type" class="calc-select"'), 'EXP type select must render');
+  assert(getEl('calc-sleep-exp-type')._customized === true, 'EXP type select must be customized');
+  const expTypeSel = getEl('calc-sleep-exp-type');
+  targetLv.value = '60';
+  [['1.5', '77,240'], ['1.8', '92,687'], ['2.2', '113,285']].forEach(([mult, exp]) => {
+    expTypeSel.value = mult;
+    ctx.window.WikiDB.recalcSleepDays();
+    assert(expRes.textContent.includes(exp), `EXP type x${mult} Lv.1-60 must be ${exp}, got: ${expRes.textContent}`);
+  });
+  expTypeSel.value = '1.0';
+
   // Case C: Level 50 to 60 steep surge -> 51,493 - 29,993 = 21,500 EXP, 215 Days, 860 Candies
   curLv.value = '50';
   targetLv.value = '60';
