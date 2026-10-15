@@ -8,7 +8,7 @@
     "badge_label": "活動企劃",
     "badge_color": "#f59e0b",
     "title": "【活動】萬聖節2026：糖果倍增研究",
-    "title_en": "[Event] Halloween 2026: Double Candy Research",
+    "title_en": "[Event] 萬聖節2026：糖果倍增研究",
     "overview_en": "Official announcement and news update for Pokemon Sleep.",
     "debut_pokemon": [
       "皮卡丘（萬聖節）",
@@ -44,7 +44,7 @@
         "items_en": [
           "Event Period: 10/26 (Mon) 4:00 ～ 11/2 (Mon) 3:59",
           "Mission Period: 10/26 (Mon) 4:00 ～ 11/2 (Mon) 3:59",
-          "Other Days: 10/26 ～ 10/30",
+          "其他日子（ 10/26 ～ 10/30 ）】",
           "[Areas] - Greengrass Isle, Greengrass IsleEX"
         ]
       },
@@ -57,7 +57,7 @@
         ],
         "title_en": "Core Bonuses & Multipliers",
         "items_en": [
-          "[Event] Halloween 2026: Double Candy Research"
+          "【活動】萬聖節2026：糖果倍增研究"
         ]
       },
       {
@@ -71,9 +71,9 @@
         ],
         "title_en": "Featured Rate-Up Pokemon",
         "items_en": [
-          "[Major Rate Up] Eevee (Halloween), Misdreavus, Mismagius",
-          "[Medium Rate Up] Pikachu (Halloween)",
-          "[Minor Rate Up] Gastly, Haunter, Gengar, Shuppet, Banette, Drifloon, Drifblim, Pumpkaboo, Gourgeist, Mimikyu, Skeledirge"
+          "[Major Rate Up] Eevee（萬聖節）, 夢妖, 夢妖魔",
+          "[Medium Rate Up] Pikachu（萬聖節）",
+          "[Minor Rate Up] 鬼斯, 鬼斯通, 耿鬼, 怨影娃娃, 詛咒娃娃, 飄飄球, 隨風球, 南瓜精, 南瓜怪人, 謎擬Ｑ, 骨紋巨聲鱷"
         ]
       }
     ],
@@ -88,7 +88,7 @@
     "badge_label": "重要通知",
     "badge_color": "#8b5cf6",
     "title": "【新登場】夢妖、 夢妖魔",
-    "title_en": "[New Debut] Misdreavus, Mismagius",
+    "title_en": "[New Debut] 夢妖, 夢妖魔",
     "overview_en": "Official announcement and news update for Pokemon Sleep.",
     "debut_pokemon": [
       "夢妖",
@@ -113,7 +113,7 @@
         ],
         "title_en": "Event Schedule & Areas",
         "items_en": [
-          "Starts: 2026/10/26 15:00",
+          "開始出現的時間 2026/10/26 15:00",
           "[Areas] Greengrass Isle, Snowdrop Tundra, Old Gold Power Plant, Greengrass IsleEX"
         ]
       },
@@ -126,7 +126,7 @@
         ],
         "title_en": "New Pokemon Debut",
         "items_en": [
-          "New Pokemon: Misdreavus (Ghost), Mismagius (Ghost)"
+          "登場寶可夢：夢妖（幽靈屬性）, 夢妖魔（幽靈屬性）"
         ]
       }
     ],
