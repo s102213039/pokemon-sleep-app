@@ -4,6 +4,7 @@
 
 - **需求**：評級卡片中「標籤 : 說明」要一行顯示，只保留關鍵字。
 - **實作**：`js/modules/wiki.js` 的 `RATINGS_GUIDE_DATA` 中 berry / ingredient / skill 的 `subskills[].detail` 與 `natures[].detail` 全部縮為 4–9 字（例：`樹果+1,能量翻倍`、`+36%食材機率`、`技能等級+2`、`影響不大`），移除括號補充（銀種子升階、5隻疊加等）與句尾句號。結構與渲染邏輯未動，`.rating-item` 仍保留 `flex-wrap` 作窄螢幕的後備。
+- **追加（styles.css v=20261015_02）間距收緊**：`.wiki-rating-card .wiki-card-desc` 外距歸零（H5 為 `4px 0 8px`）；桌面 subgrid 卡片 `row-gap: 6px`（原繼承 12px）；`.rating-col-title` 改 `margin: 4px 0 2px`（H5 `0 0 2px`）；`.rating-list` gap 0；`.rating-item` padding `2px 0`、line-height 1.4（H5 padding `1px 0`、margin 0）；`.rating-subsections` gap 10px / margin-top 8px。三欄性格標題對齊（subgrid 第 4 列 1fr）保留。
 - **已知未處理**：這些項目沒有 `detail_en`，英文模式仍顯示中文說明（既有問題）。
 - **測試**：216/217，唯一失敗是自動同步新聞「[New Debut] 夢妖, 夢妖魔」的 `title_en` 含中文，與本次無關。
 

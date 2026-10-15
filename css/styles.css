@@ -10552,6 +10552,11 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   display: grid;
   grid-template-rows: subgrid;
   grid-row: span 6;
+  row-gap: 6px;
+}
+
+.wiki-rating-card .wiki-card-desc {
+  margin: 0 !important;
 }
 
 .wiki-ratings-container .rating-subsections,
@@ -10580,21 +10585,21 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 .rating-subsections {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 20px;
-  margin-top: 14px;
+  gap: 10px;
+  margin-top: 8px;
 }
 
 .rating-col-title {
   font-size: 14px;
   font-weight: 700;
   color: var(--accent-blue);
-  margin-bottom: 10px;
+  margin: 4px 0 2px;
 }
 
 .rating-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0;
 }
 
 .rating-item {
@@ -10604,9 +10609,9 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   background: transparent;
   border: none;
   border-radius: 0;
-  padding: 4px 0;
+  padding: 2px 0;
   font-size: 13.5px;
-  line-height: 1.5;
+  line-height: 1.4;
   flex-wrap: wrap;
 }
 
@@ -20721,16 +20726,20 @@ body.box-lab-active .box-fab-container,
 .mobile-h5-app .rating-col-title {
   font-size: 13.5px !important;
   font-weight: 700 !important;
-  margin-bottom: 6px !important;
+  margin: 0 0 2px !important;
+}
+
+.mobile-h5-app .wiki-rating-card .wiki-card-desc {
+  margin: 4px 0 8px !important;
 }
 
 .mobile-h5-app .rating-item {
-  padding: 3px 0 !important;
+  padding: 1px 0 !important;
   gap: 4px !important;
   background: transparent !important;
   border: none !important;
   border-radius: 0 !important;
-  margin-bottom: 2px !important;
+  margin-bottom: 0 !important;
   font-size: 13px !important;
 }
 
