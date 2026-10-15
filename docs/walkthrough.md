@@ -1,5 +1,17 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
+## 交接：2026-10-15 已完成（食材天梯點選節點時同寶可夢同食材列一起選中、v=20261015_04）
+
+- **需求**：點選天梯上的寶可夢時，同一食材列中同一隻寶可夢的其他節點（AAA / AAX / ABA... 不同食材組合）要一起被選中，方便比較產量。
+- **原因**：同組高亮原本只靠 `wiki-coordinate-ladder` 的 `onmouseover` → `handleLadderGroupHover` 加 `group-hover-active`，H5 觸控沒有 hover，點選只開單一節點浮窗；且只找 `.ladder-track-row`，尾段 `.ladder-tail-track-row` 不生效。
+- **實作**：
+  - `js/modules/app.js`：新增 `markLadderGroupSelected(node)`，在觸控 tap 與桌面 click 兩處 `tooltip-active` 開啟時，對同列 `[data-pkm-group]` 相同者（節點與 `.ladder-pkm-span-line`）加 `group-selected`；非 Coordinator 的 dismiss 後備路徑一併清除。
+  - `js/components/popoverCoordinator.js`：`dismissAll()` 清除所有 `.group-selected`。
+  - `js/modules/wiki.js`：`handleLadderGroupHover/Out` 改找 `.ladder-track-row, .ladder-tail-track-row`。
+  - `css/styles.css`：`.group-selected` 併入既有 `group-hover-active` 樣式（節點放大 1.22 + 藍色光暈、連線加粗發光）。
+- **快取**：`styles.css`、`wiki.js`、`app.js`、`popoverCoordinator.js` 皆 `v=20261015_04`。
+- **測試**：新增斷言（app.js 兩處呼叫 `markLadderGroupSelected`、CSS 有 `.ladder-node.group-selected`、Coordinator 清除）。216/217，唯一失敗為自動同步新聞 `title_en` 含中文。
+
 ## 交接：2026-10-15 已完成（道具百科卡片移除睡眠點數價格標籤、卡片更緊湊、v=20261015_03）
 
 - **需求**：道具百科列表卡片的 `wiki-item-price-chip`（如 `1,400 pt`）用處不大，移除並讓卡片更緊湊。

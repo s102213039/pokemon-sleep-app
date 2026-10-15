@@ -1645,6 +1645,15 @@ function isAnyFloatingTooltipVisible() {
   return false;
 }
 
+function markLadderGroupSelected(node) {
+  const row = node.closest('.ladder-track-row, .ladder-tail-track-row');
+  const group = node.getAttribute('data-pkm-group');
+  if (!row || !group) return;
+  row.querySelectorAll('[data-pkm-group]').forEach(el => {
+    if (el.getAttribute('data-pkm-group') === group) el.classList.add('group-selected');
+  });
+}
+
 function dismissAllFloatingTooltips() {
   hasAnyFloatingTooltipOpen = false;
   if (typeof window !== 'undefined') window._hasAnyFloatingTooltipOpen = false;
@@ -1705,6 +1714,7 @@ function dismissAllFloatingTooltips() {
       });
       const activeNodes = document.querySelectorAll('.ladder-node.tooltip-active');
       activeNodes.forEach(node => node.classList.remove('tooltip-active'));
+      document.querySelectorAll('.group-selected').forEach(el => el.classList.remove('group-selected'));
       const activeTrackRows = document.querySelectorAll('.ladder-track-row.has-active-tooltip, .ladder-tail-track-row.has-active-tooltip');
       activeTrackRows.forEach(row => row.classList.remove('has-active-tooltip'));
     }
@@ -3899,6 +3909,7 @@ if (typeof document !== 'undefined') {
               dismissAllFloatingTooltips();
               if (!wasActive) {
                 ladderNode.classList.add('tooltip-active');
+                markLadderGroupSelected(ladderNode);
                 const trackRow = ladderNode.closest('.ladder-track-row, .ladder-tail-track-row');
                 if (trackRow) trackRow.classList.add('has-active-tooltip');
                 hasAnyFloatingTooltipOpen = true;
@@ -3989,6 +4000,7 @@ if (typeof document !== 'undefined') {
           dismissAllFloatingTooltips();
           if (!wasActive) {
             ladderNode.classList.add('tooltip-active');
+            markLadderGroupSelected(ladderNode);
             const trackRow = ladderNode.closest('.ladder-track-row, .ladder-tail-track-row');
             if (trackRow) trackRow.classList.add('has-active-tooltip');
             hasAnyFloatingTooltipOpen = true;

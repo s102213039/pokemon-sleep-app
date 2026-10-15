@@ -11698,6 +11698,11 @@ SP 4,316
     assert(appCode.includes("ladderNode.classList.contains('tooltip-active')"), 'app.js must toggle tooltip-active on .ladder-node');
     assert(stylesCode.includes('.ladder-node.tooltip-active'), 'styles.css must style .ladder-node.tooltip-active');
     assert(stylesCode.includes('z-index: 100000 !important;'), 'styles.css must elevate .ladder-node.tooltip-active z-index');
+    // Tapping a node also selects same-Pokemon siblings in the same ingredient row (AAA vs AAX yield comparison)
+    assert((appCode.match(/markLadderGroupSelected\(ladderNode\)/g) || []).length === 2, 'app.js must mark same-group ladder siblings on both touch and click activation');
+    assert(stylesCode.includes('.ladder-node.group-selected {'), 'styles.css must style .ladder-node.group-selected');
+    const pcCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'components', 'popoverCoordinator.js'), 'utf8');
+    assert(pcCode.includes("classList.remove('group-selected')"), 'PopoverCoordinator.dismissAll must clear group-selected');
 
     // 3. Verify zero [★] across application runtime scripts
     assert(!appCode.includes('[★]'), 'app.js must contain zero occurrences of [★]');

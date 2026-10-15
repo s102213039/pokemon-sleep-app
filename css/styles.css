@@ -11128,7 +11128,8 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 }
 
 .ladder-pkm-span-line:hover,
-.ladder-pkm-span-line.group-hover-active {
+.ladder-pkm-span-line.group-hover-active,
+.ladder-pkm-span-line.group-selected {
   height: 3.5px;
   background: var(--color-primary, #3b82f6);
   opacity: 1;
@@ -11361,7 +11362,8 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 }
 
 .ladder-pkm-span-line:hover,
-.ladder-pkm-span-line.group-hover-active {
+.ladder-pkm-span-line.group-hover-active,
+.ladder-pkm-span-line.group-selected {
   height: 3px;
   background: var(--accent-blue);
   opacity: 0.95;
@@ -11391,7 +11393,8 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 }
 
 .ladder-node:hover,
-.ladder-node.group-hover-active {
+.ladder-node.group-hover-active,
+.ladder-node.group-selected {
   transform: translate(-50%, -55%) scale(1.22);
   z-index: 10000 !important;
 }
@@ -11776,7 +11779,8 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   z-index: 50 !important;
 }
 
-.ladder-node.group-hover-active .node-avatar-img {
+.ladder-node.group-hover-active .node-avatar-img,
+.ladder-node.group-selected .node-avatar-img {
   border-color: #38bdf8;
   box-shadow: 0 0 10px rgba(56, 189, 248, 0.9);
 }

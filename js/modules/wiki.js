@@ -19342,7 +19342,7 @@
     if (!target) return;
     const groupName = target.getAttribute('data-pkm-group');
     if (!groupName) return;
-    const row = target.closest('.ladder-track-row');
+    const row = target.closest('.ladder-track-row, .ladder-tail-track-row');
     if (!row) return;
     const siblings = row.querySelectorAll(`[data-pkm-group="${groupName}"]`);
     siblings.forEach(el => el.classList.add('group-hover-active'));
@@ -19353,7 +19353,7 @@
     if (!target) return;
     const groupName = target.getAttribute('data-pkm-group');
     if (!groupName) return;
-    const row = target.closest('.ladder-track-row');
+    const row = target.closest('.ladder-track-row, .ladder-tail-track-row');
     if (!row) return;
     const siblings = row.querySelectorAll(`[data-pkm-group="${groupName}"]`);
     siblings.forEach(el => el.classList.remove('group-hover-active'));

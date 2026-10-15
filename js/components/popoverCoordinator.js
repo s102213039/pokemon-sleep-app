@@ -81,6 +81,9 @@
           activeNodes.forEach(function (node) {
             node.classList.remove('tooltip-active');
           });
+          global.document.querySelectorAll('.group-selected').forEach(function (el) {
+            el.classList.remove('group-selected');
+          });
           const activeTrackRows = global.document.querySelectorAll('.ladder-track-row.has-active-tooltip, .ladder-tail-track-row.has-active-tooltip');
           activeTrackRows.forEach(function (row) {
             row.classList.remove('has-active-tooltip');
