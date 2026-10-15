@@ -1154,15 +1154,15 @@
       desc: "以高頻率產出大量樹果累積卡比獸能量為最高目標.",
       desc_en: "Maximizes Snorlax Strength via massive, high-speed berry output.",
       subskills: [
-        { name: "樹果數量S", name_en: "Berry Finding S", detail: "樹果數量+1,能量直接翻倍(容易滿包需常收取)." },
-        { name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊-5%幫忙時間(5隻疊加25%)." },
-        { name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己-14%幫忙時間." },
-        { name: "幫忙速度S", name_en: "Helping Speed S", detail: "自己-7%幫忙時間(可用銀種子升階為M)." }
+        { name: "樹果數量S", name_en: "Berry Finding S", detail: "樹果+1,能量翻倍" },
+        { name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊-5%幫忙時間" },
+        { name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己-14%幫忙時間" },
+        { name: "幫忙速度S", name_en: "Helping Speed S", detail: "自己-7%幫忙時間" }
       ],
       natures: [
-        { name: "幫忙速度▲", name_en: "Speed of Help ▲", detail: "全方位提升樹果產出速度." },
-        { name: "食材發現率▼", name_en: "Ingredient Finding ▼", detail: "食材率降低,變相提高樹果產出機率(加分項)." },
-        { name: "主技能機率▲/▼", name_en: "Main Skill Chance ▲ / ▼", detail: "技能對樹果寵非首要,發動機率高低影響不大." }
+        { name: "幫忙速度▲", name_en: "Speed of Help ▲", detail: "樹果產速提升" },
+        { name: "食材發現率▼", name_en: "Ingredient Finding ▼", detail: "變相提高樹果率" },
+        { name: "主技能機率▲/▼", name_en: "Main Skill Chance ▲ / ▼", detail: "影響不大" }
       ]
     },
     ingredient: {
@@ -1176,18 +1176,18 @@
       desc: "以穩定供給高階食譜所需的高價值食材為核心職責.",
       desc_en: "Provides consistent supply of high-tier ingredients for powerful dishes.",
       subskills: [
-        { name: "食材機率提升M", name_en: "Ingredient Finder M", detail: "+36%食材機率,食材寵畢業核心." },
-        { name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊-5%幫忙時間." },
-        { name: "食材機率提升S", name_en: "Ingredient Finder S", detail: "+18%食材機率(可用銀種子升階為M)." },
-        { name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己-14%幫忙時間." },
-        { name: "幫忙速度S", name_en: "Helping Speed S", detail: "自己-7%幫忙時間." },
-        { name: "持有上限提升 M/L", name_en: "Inventory Up M/L", detail: "防止睡覺滿包停止產出食材." },
-        { name: "樹果數量S + 持有上限", name_en: "Berry Finding S + Inventory", detail: "需搭配持有上限擴充,並保持頻繁收取." }
+        { name: "食材機率提升M", name_en: "Ingredient Finder M", detail: "+36%食材機率" },
+        { name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊-5%幫忙時間" },
+        { name: "食材機率提升S", name_en: "Ingredient Finder S", detail: "+18%食材機率" },
+        { name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己-14%幫忙時間" },
+        { name: "幫忙速度S", name_en: "Helping Speed S", detail: "自己-7%幫忙時間" },
+        { name: "持有上限提升 M/L", name_en: "Inventory Up M/L", detail: "防滿包停產" },
+        { name: "樹果數量S + 持有上限", name_en: "Berry Finding S + Inventory", detail: "需常收取" }
       ],
       natures: [
-        { name: "食材發現率▲", name_en: "Ingredient Finding ▲", detail: "食材產出量大幅提升." },
-        { name: "幫忙速度▲", name_en: "Speed of Help ▲", detail: "提高整體幫忙與食材判定頻率." },
-        { name: "主技能機率▲/▼", name_en: "Main Skill Chance ▲ / ▼", detail: "若有自補/料理強化可加分,其餘技能影響不大." }
+        { name: "食材發現率▲", name_en: "Ingredient Finding ▲", detail: "食材量大增" },
+        { name: "幫忙速度▲", name_en: "Speed of Help ▲", detail: "提高判定頻率" },
+        { name: "主技能機率▲/▼", name_en: "Main Skill Chance ▲ / ▼", detail: "視技能而定" }
       ]
     },
     skill: {
@@ -1201,18 +1201,18 @@
       desc: "以高頻率觸發核心主技能(全體補血,神獸加速,高額能量,料理擴鍋)為核心職責.",
       desc_en: "Triggers crucial main skills (E4E heal, Legend boost, pot expand, energy burst) frequently.",
       subskills: [
-        { name: "技能機率提升M", name_en: "Skill Trigger M", detail: "+36%技能發動機率,技能寵畢業核心." },
-        { name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊-5%幫忙時間." },
-        { name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己-14%幫忙時間." },
-        { name: "技能機率提升S", name_en: "Skill Trigger S", detail: "+18%技能發動機率(可用銀種子升階為M)." },
-        { name: "樹果數量S + 持有上限", name_en: "Berry Finding S + Inventory", detail: "補足基本能量產出,需常收取." },
-        { name: "技能等級提升M", name_en: "Skill Level Up M", detail: "主技能等級+2,節省金種子珍貴資源." },
-        { name: "技能等級提升S", name_en: "Skill Level Up S", detail: "主技能等級+1(可用銀種子升階)." }
+        { name: "技能機率提升M", name_en: "Skill Trigger M", detail: "+36%技能機率" },
+        { name: "幫手獎勵", name_en: "Helping Bonus", detail: "全隊-5%幫忙時間" },
+        { name: "幫忙速度M", name_en: "Helping Speed M", detail: "自己-14%幫忙時間" },
+        { name: "技能機率提升S", name_en: "Skill Trigger S", detail: "+18%技能機率" },
+        { name: "樹果數量S + 持有上限", name_en: "Berry Finding S + Inventory", detail: "補基本能量" },
+        { name: "技能等級提升M", name_en: "Skill Level Up M", detail: "技能等級+2" },
+        { name: "技能等級提升S", name_en: "Skill Level Up S", detail: "技能等級+1" }
       ],
       natures: [
-        { name: "主技能發動機率▲", name_en: "Main Skill Chance ▲", detail: "技能寵靈魂性格,觸發次數最大化." },
-        { name: "幫忙速度▲", name_en: "Speed of Help ▲", detail: "提高幫忙判定頻率." },
-        { name: "食材發現率▼", name_en: "Ingredient Finding ▼", detail: "降低食材掉落,無副作用(技能寵只看技能與速度)." }
+        { name: "主技能發動機率▲", name_en: "Main Skill Chance ▲", detail: "觸發次數最大化" },
+        { name: "幫忙速度▲", name_en: "Speed of Help ▲", detail: "提高判定頻率" },
+        { name: "食材發現率▼", name_en: "Ingredient Finding ▼", detail: "無副作用" }
       ]
     }
   };
