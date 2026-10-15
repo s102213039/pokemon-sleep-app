@@ -33258,10 +33258,10 @@ body.mobile-h5-app *::-webkit-scrollbar {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
   position: relative;
   transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
@@ -33358,7 +33358,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   justify-content: space-between;
   gap: 8px;
   width: 100%;
-  margin: 1px 0 2px 0;
+  margin: 0;
   flex-wrap: wrap;
 }
 
@@ -33399,10 +33399,6 @@ body.mobile-h5-app *::-webkit-scrollbar {
   font-size: 11px;
   font-weight: 600;
   opacity: 0.95;
-}
-
-.wiki-item-stat-spacer {
-  flex: 1;
 }
 
 /* Stat Badge Color Variants (Borderless) */
@@ -33453,20 +33449,6 @@ body.mobile-h5-app *::-webkit-scrollbar {
   box-shadow: none !important;
 }
 
-/* Sleep Point Chip (Borderless, Transparent Background) */
-.wiki-item-price-chip {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 0;
-  border-radius: 0;
-  background: transparent !important;
-  color: var(--accent-blue, #38bdf8);
-  border: none !important;
-  box-shadow: none !important;
-  white-space: nowrap;
-  letter-spacing: 0.2px;
-}
-
 /* Card Description Preview (Hidden on Cards) */
 .wiki-item-card-desc {
   display: none !important;
@@ -33476,7 +33458,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 .wiki-item-card-evosection {
   width: 100%;
   margin-top: auto;
-  padding-top: 4px;
+  padding-top: 0;
   border-top: none !important;
   display: flex;
   flex-direction: column;
@@ -33833,9 +33815,9 @@ body.mobile-h5-app *::-webkit-scrollbar {
 
 /* Mobile H5 Touch Card Styling */
 .mobile-h5-app .wiki-item-card {
-  padding: 10px !important;
+  padding: 8px 10px !important;
   border-radius: 12px !important;
-  gap: 6px !important;
+  gap: 4px !important;
   min-height: 0 !important;
   display: flex !important;
   flex-direction: column !important;
@@ -33908,7 +33890,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
   justify-content: space-between !important;
   gap: 4px !important;
   width: 100% !important;
-  margin: 2px 0 !important;
+  margin: 0 !important;
   flex-wrap: nowrap !important;
 }
 
@@ -33949,18 +33931,6 @@ body.mobile-h5-app *::-webkit-scrollbar {
   white-space: nowrap !important;
 }
 
-.mobile-h5-app .wiki-item-price-chip {
-  font-size: 10.5px !important;
-  font-weight: 700 !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  flex-shrink: 0 !important;
-  white-space: nowrap !important;
-}
-
 /* Card Description in Mobile H5 (Hidden on Cards) */
 .mobile-h5-app .wiki-item-card-desc {
   display: none !important;
@@ -33970,7 +33940,7 @@ body.mobile-h5-app *::-webkit-scrollbar {
 .mobile-h5-app .wiki-item-card-evosection {
   width: 100% !important;
   margin-top: auto !important;
-  padding-top: 4px !important;
+  padding-top: 0 !important;
   border-top: none !important;
 }
 

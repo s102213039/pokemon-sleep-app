@@ -1,5 +1,12 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
+## 交接：2026-10-15 已完成（道具百科卡片移除睡眠點數價格標籤、卡片更緊湊、v=20261015_03）
+
+- **需求**：道具百科列表卡片的 `wiki-item-price-chip`（如 `1,400 pt`）用處不大，移除並讓卡片更緊湊。
+- **JS**（`renderItemCardHTML`）：刪除 `priceChipHTML` 產生邏輯；數值列 `wiki-item-card-stat-row` 只在 `getItemHighlightStat` 有值時渲染（原本無數值但有價格時會產生一個只含 spacer 與價格的列，已一併移除）。`sleep_points` 資料保留未動（資料完整性測試仍檢查）。
+- **CSS**：刪除 `.wiki-item-price-chip`（桌面與 H5）與 `.wiki-item-stat-spacer`；`.wiki-item-card` padding `10px 12px`、gap 6px（H5 `8px 10px`、gap 4px）；`.wiki-item-card-stat-row` margin 0；`.wiki-item-card-evosection` padding-top 0。
+- **快取**：`styles.css` 與 `wiki.js` 皆 `v=20261015_03`。
+
 ## 交接：2026-10-15 已完成（三大專長畢業評級指南：副技能/性格說明精簡為單行、wiki.js v=20261015_02）
 
 - **需求**：評級卡片中「標籤 : 說明」要一行顯示，只保留關鍵字。

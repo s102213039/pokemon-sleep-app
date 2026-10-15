@@ -17987,15 +17987,6 @@
     const desc = escapeHtml(getItemLocalizedDescription(item, isEN, isCN));
     const catBadgeText = escapeHtml(getItemCategoryBadgeName(item.category, isEN, isCN));
 
-    let priceChipHTML = '';
-    if (item.sleep_points) {
-      if (item.sleep_points.regular !== null && item.sleep_points.regular !== undefined) {
-        priceChipHTML = `<span class="wiki-item-price-chip" title="${isEN ? 'Regular Sleep Points' : (isCN ? '睡眠点数' : '睡眠點數')}">${Number(item.sleep_points.regular).toLocaleString()} pt</span>`;
-      } else if (item.sleep_points.premium !== null && item.sleep_points.premium !== undefined) {
-        priceChipHTML = `<span class="wiki-item-price-chip" title="${isEN ? 'Premium Sleep Points' : (isCN ? '高级睡眠点数' : '高級睡眠點數')}">${Number(item.sleep_points.premium).toLocaleString()} pt</span>`;
-      }
-    }
-
     // Prominent numerical stat highlight
     const stat = getItemHighlightStat(item, isEN, isCN);
     let statRowHTML = '';
@@ -18008,14 +17999,6 @@
             <span class="wiki-item-stat-divider">|</span>
             <span class="wiki-item-stat-label">${escapeHtml(stat.lbl)}</span>
           </div>
-          ${priceChipHTML}
-        </div>
-      `;
-    } else if (priceChipHTML) {
-      statRowHTML = `
-        <div class="wiki-item-card-stat-row">
-          <div class="wiki-item-stat-spacer"></div>
-          ${priceChipHTML}
         </div>
       `;
     }
