@@ -12306,6 +12306,72 @@ SP 4,316
       'build_webapp_data.py must load special_icons.json once before the rows_ref loop');
   });
 
+  // ─── Test 219: Desktop Unified Content Layout, Width Constraints, Horizontal Alignment & Elegant Border Radius ────
+  test('Tier 1 - Feature Coverage', 'Desktop Unified Content Layout, Width Constraints, Horizontal Alignment & Elegant Border Radius Across Panels', () => {
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+    const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+
+    // 1. Pokédex Tab Desktop Alignment & Container Width
+    assert(
+      stylesCss.includes('body:not(.mobile-h5-app) .pokemon-main-content #content-area {') &&
+      stylesCss.includes('max-width: 1200px;') &&
+      stylesCss.includes('padding: 0 16px;'),
+      'Pokédex #content-area must have 1200px max-width and 16px side padding on desktop'
+    );
+    assert(
+      stylesCss.includes('body:not(.mobile-h5-app) .pokemon-main-content #content-area .table-container') &&
+      stylesCss.includes('width: 100%;'),
+      'Pokédex desktop table container must fill 100% of #content-area to align with search bar and cards'
+    );
+    assert(
+      stylesCss.includes('body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-grid') &&
+      stylesCss.includes('width: 100%;'),
+      'Pokédex desktop card grid must fill 100% of #content-area to align with search bar'
+    );
+
+    // 2. Recipes Tab Desktop Alignment & Container Width
+    assert(
+      stylesCss.includes('body:not(.mobile-h5-app) .recipe-main-content #recipe-content-area {') &&
+      stylesCss.includes('max-width: 1200px;') &&
+      stylesCss.includes('padding: 0 16px;'),
+      'Recipe #recipe-content-area must have 1200px max-width and 16px side padding on desktop'
+    );
+    assert(
+      stylesCss.includes('body:not(.mobile-h5-app) .recipe-main-content #recipe-content-area .table-container') &&
+      stylesCss.includes('width: 100%;'),
+      'Recipe desktop table container must fill 100% of #recipe-content-area to align with controls'
+    );
+
+    // 3. Box Tab Desktop Alignment & Container Width (fixes image 1 indentation)
+    assert(
+      stylesCss.includes('body:not(.mobile-h5-app) .box-content-container .table-container') &&
+      stylesCss.includes('width: 100% !important;'),
+      'Box desktop table container must have 100% width to align with top banner, search bar, and card grid'
+    );
+    assert(
+      stylesCss.includes('body:not(.mobile-h5-app) .box-subnav-bar {') &&
+      stylesCss.includes('max-width: 1200px;') &&
+      stylesCss.includes('margin: 20px auto 0 !important;'),
+      'Box desktop subnav bar must align with the 1200px content layout track'
+    );
+    assert(
+      !indexHtml.includes('<section class="box-lab-content-container controls-container" style="max-width:1200px;width:100%;">'),
+      'index.html box-lab-content-container must not have inline width override'
+    );
+
+    // 4. Consistent Border Radius across Desktop Panels while Preserving Mobile H5 Square Full-Bleed
+    assert(
+      stylesCss.includes('border-radius: var(--radius-lg, 16px);') &&
+      stylesCss.includes('.pokemon-table thead th:first-child,\n.pokemon-table thead th:last-child {\n  border-radius: 0 !important;'),
+      'Desktop tables must have consistent rounded corners matching cards while table header corner rule is preserved'
+    );
+    assert(
+      stylesCss.includes('.mobile-h5-app.pokemon-active .table-container') &&
+      stylesCss.includes('border-radius: 0 !important;'),
+      'Mobile H5 app must strictly maintain edge-to-edge square table styling'
+    );
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

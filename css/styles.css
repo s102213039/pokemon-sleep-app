@@ -2321,22 +2321,40 @@ html[data-lang="en"] .subfilter-skill-btn,
   width: 92%;
   margin: 24px auto 16px;
   padding: 0 16px;
+  box-sizing: border-box;
 }
 
-.pokemon-main-content .stats-bar,
-.pokemon-main-content .pokemon-grid {
+.pokemon-main-content .stats-bar {
   max-width: 1200px;
   width: 92%;
   margin: 0 auto 16px;
   padding: 0 16px;
+  box-sizing: border-box;
 }
 
-.pokemon-main-content .table-container,
-.pokemon-main-content .pokemon-table-container {
+body:not(.mobile-h5-app) .pokemon-main-content #content-area {
   max-width: 1200px;
   width: 92%;
+  margin: 0 auto 40px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-grid {
+  max-width: 100%;
+  width: 100%;
   margin: 0 auto 16px;
   padding: 0;
+}
+
+body:not(.mobile-h5-app) .pokemon-main-content #content-area .table-container,
+body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-table-container {
+  max-width: 100%;
+  width: 100%;
+  margin: 0 0 16px 0;
+  padding: 0;
+  border-radius: var(--radius-lg, 16px);
+  overflow-x: auto !important;
 }
 
 /* 響應式佈局 (Mobile & Tablet Displays) */
@@ -2666,7 +2684,7 @@ html[data-lang="en"] .subfilter-skill-btn,
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none; /* Firefox: 隱藏橫向滾動條 */
   -ms-overflow-style: none; /* IE/Edge */
-  border-radius: 0 !important;
+  border-radius: var(--radius-lg, 16px);
   border: 1px solid var(--border-color);
   background: var(--bg-card);
   position: relative;
@@ -3724,22 +3742,41 @@ html[lang="en"] .recipe-name-wrapper,
   width: 92%;
   margin: 24px auto 16px;
   padding: 0 16px;
+  box-sizing: border-box;
 }
 
-.recipe-main-content .stats-bar,
-.recipe-main-content .pokemon-grid {
+.recipe-main-content .stats-bar {
   max-width: 1200px;
   width: 92%;
   margin: 0 auto 16px;
   padding: 0 16px;
+  box-sizing: border-box;
 }
 
-.recipe-main-content .table-container,
-.recipe-main-content .pokemon-table-container {
+body:not(.mobile-h5-app) .recipe-main-content #recipe-content-area {
   max-width: 1200px;
   width: 92%;
+  margin: 0 auto 40px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+body:not(.mobile-h5-app) .recipe-main-content #recipe-content-area .pokemon-grid,
+body:not(.mobile-h5-app) .recipe-main-content #recipe-content-area .recipe-cards-grid {
+  max-width: 100%;
+  width: 100%;
   margin: 0 auto 16px;
   padding: 0;
+}
+
+body:not(.mobile-h5-app) .recipe-main-content #recipe-content-area .table-container,
+body:not(.mobile-h5-app) .recipe-main-content #recipe-content-area .pokemon-table-container {
+  max-width: 100%;
+  width: 100%;
+  margin: 0 0 16px 0;
+  padding: 0;
+  border-radius: var(--radius-lg, 16px);
+  overflow-x: auto !important;
 }
 
 #recipe-content-area {
@@ -6520,6 +6557,24 @@ input[type=range].rf-slider.pot-slider {
   width: 92%;
   margin: 0 auto 40px;
   padding: 0 16px;
+  box-sizing: border-box;
+}
+
+body:not(.mobile-h5-app) .box-content-container .box-grid {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body:not(.mobile-h5-app) .box-content-container .table-container,
+body:not(.mobile-h5-app) .box-content-container .pokemon-table-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 0 16px 0 !important;
+  padding: 0 !important;
+  border-radius: var(--radius-lg, 16px) !important;
+  overflow-x: auto !important;
 }
 
 .box-grid {
@@ -10207,7 +10262,7 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
 /* 數據表格共通樣式 */
 .wiki-table-wrapper {
   overflow-x: auto;
-  border-radius: 8px;
+  border-radius: var(--radius-lg, 16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -23461,10 +23516,21 @@ body:not(.mobile-h5-app) .box-subnav-bar {
   display: flex !important;
   align-items: center !important;
   gap: 4px !important;
-  margin: 0 0 16px 0 !important;
-  padding: 0 0 2px 0 !important;
+  max-width: 1200px;
+  width: 92%;
+  margin: 20px auto 0 !important;
+  padding: 0 16px 2px !important;
   border-bottom: 2px solid var(--border-color, rgba(255, 255, 255, 0.08)) !important;
   background: transparent !important;
+  box-sizing: border-box !important;
+}
+
+body:not(.mobile-h5-app) .box-lab-content-container {
+  max-width: 1200px !important;
+  width: 92% !important;
+  margin: 20px auto 40px !important;
+  padding: 0 16px !important;
+  box-sizing: border-box !important;
 }
 
 body:not(.mobile-h5-app) .box-subnav-item {
