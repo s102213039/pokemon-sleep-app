@@ -10101,9 +10101,161 @@
         "shards": 19381,
         "candy": 14
       }
+    },
+    "夢妖": {
+      "1": {
+        "star": 1,
+        "name": "漂浮睡",
+        "name_en": "Floating Sleep",
+        "name_jp": "ふゆう寝",
+        "exp": 41,
+        "shards": 84,
+        "candy": 5
+      },
+      "2": {
+        "star": 2,
+        "name": "惡作劇睡",
+        "name_en": "Prankster Sleep",
+        "name_jp": "いたずら寝",
+        "exp": 168,
+        "shards": 342,
+        "candy": 7
+      },
+      "3": {
+        "star": 3,
+        "name": "驚嚇睡",
+        "name_en": "Astonishing Sleep",
+        "name_jp": "おどろかし寝",
+        "exp": 612,
+        "shards": 1245,
+        "candy": 10
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 920,
+        "shards": 1872,
+        "candy": 11
+      }
+    },
+    "夢妖魔": {
+      "1": {
+        "star": 1,
+        "name": "漂浮睡",
+        "name_en": "Floating Sleep",
+        "name_jp": "ふゆう寝",
+        "exp": 215,
+        "shards": 448,
+        "candy": 7
+      },
+      "2": {
+        "star": 2,
+        "name": "吟唱咒語睡",
+        "name_en": "Incantation Sleep",
+        "name_jp": "じゅもん寝",
+        "exp": 840,
+        "shards": 1752,
+        "candy": 9
+      },
+      "3": {
+        "star": 3,
+        "name": "魔法火焰睡",
+        "name_en": "Mystical-Fire Sleep",
+        "name_jp": "マジカルフレイム寝",
+        "exp": 2860,
+        "shards": 5960,
+        "candy": 12
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 4120,
+        "shards": 8580,
+        "candy": 13
+      }
     }
   },
   "byNo": {
+    "200": {
+      "1": {
+        "star": 1,
+        "name": "漂浮睡",
+        "name_en": "Floating Sleep",
+        "name_jp": "ふゆう寝",
+        "exp": 41,
+        "shards": 84,
+        "candy": 5
+      },
+      "2": {
+        "star": 2,
+        "name": "惡作劇睡",
+        "name_en": "Prankster Sleep",
+        "name_jp": "いたずら寝",
+        "exp": 168,
+        "shards": 342,
+        "candy": 7
+      },
+      "3": {
+        "star": 3,
+        "name": "驚嚇睡",
+        "name_en": "Astonishing Sleep",
+        "name_jp": "おどろかし寝",
+        "exp": 612,
+        "shards": 1245,
+        "candy": 10
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 920,
+        "shards": 1872,
+        "candy": 11
+      }
+    },
+    "429": {
+      "1": {
+        "star": 1,
+        "name": "漂浮睡",
+        "name_en": "Floating Sleep",
+        "name_jp": "ふゆう寝",
+        "exp": 215,
+        "shards": 448,
+        "candy": 7
+      },
+      "2": {
+        "star": 2,
+        "name": "吟唱咒語睡",
+        "name_en": "Incantation Sleep",
+        "name_jp": "じゅもん寝",
+        "exp": 840,
+        "shards": 1752,
+        "candy": 9
+      },
+      "3": {
+        "star": 3,
+        "name": "魔法火焰睡",
+        "name_en": "Mystical-Fire Sleep",
+        "name_jp": "マジカルフレイム寝",
+        "exp": 2860,
+        "shards": 5960,
+        "candy": 12
+      },
+      "4": {
+        "star": 4,
+        "name": "肚子上睡",
+        "name_en": "Atop-Belly Sleep",
+        "name_jp": "おなかのうえ寝",
+        "exp": 4120,
+        "shards": 8580,
+        "candy": 13
+      }
+    },
     "104": {
       "1": {
         "star": 1,
