@@ -1330,23 +1330,29 @@ function toPinyin(str) {
 
 function levenshteinDistance(s1, s2) {
   if (s1 === s2) return 0;
-  if (!s1) return s2.length;
+  if (!s1) return s2 ? s2.length : 0;
   if (!s2) return s1.length;
+  if (s1.length > s2.length) {
+    const tmp = s1; s1 = s2; s2 = tmp;
+  }
   const m = s1.length, n = s2.length;
-  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
-  for (let i = 0; i <= m; i++) dp[i][0] = i;
-  for (let j = 0; j <= n; j++) dp[0][j] = j;
-  for (let i = 1; i <= m; i++) {
-    for (let j = 1; j <= n; j++) {
-      const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
-      dp[i][j] = Math.min(
-        dp[i - 1][j] + 1,
-        dp[i][j - 1] + 1,
-        dp[i - 1][j - 1] + cost
-      );
+  const row = new Int32Array(m + 1);
+  for (let i = 0; i <= m; i++) row[i] = i;
+  for (let j = 1; j <= n; j++) {
+    let prev = row[0];
+    row[0] = j;
+    const c2 = s2.charCodeAt(j - 1);
+    for (let i = 1; i <= m; i++) {
+      const temp = row[i];
+      const cost = s1.charCodeAt(i - 1) === c2 ? 0 : 1;
+      const del = row[i] + 1;
+      const ins = row[i - 1] + 1;
+      const sub = prev + cost;
+      row[i] = del < ins ? (del < sub ? del : sub) : (ins < sub ? ins : sub);
+      prev = temp;
     }
   }
-  return dp[m][n];
+  return row[m];
 }
 
 function isSubsequence(sub, str) {
@@ -1359,17 +1365,34 @@ function isSubsequence(sub, str) {
   return i === sub.length;
 }
 
+let _lastPokemonSearchRaw = null;
+let _lastPokemonSearchParsed = null;
+
 function matchesPokemonSearch(p, query) {
   if (!query) return true;
-  const q = String(query).trim().toLowerCase();
+  let qInfo = _lastPokemonSearchParsed;
+  if (query !== _lastPokemonSearchRaw || !qInfo) {
+    const q = String(query).trim().toLowerCase();
+    if (!q) return true;
+    const qClean = q.replace(/[\s\-_（）\(\)\.\'’]/g, '');
+    const isNumeric = /^#?\d+$/.test(qClean);
+    qInfo = {
+      q,
+      qClean,
+      isNumeric,
+      qNum: isNumeric ? qClean.replace(/^#/, '').replace(/^0+/, '') : '',
+      qPinyin: isNumeric ? '' : toPinyin(qClean),
+      isAsciiAlpha: isNumeric ? false : /^[a-z\s\-_'\.]+$/i.test(q)
+    };
+    _lastPokemonSearchRaw = query;
+    _lastPokemonSearchParsed = qInfo;
+  }
+
+  const { q, qClean, isNumeric, qNum, qPinyin, isAsciiAlpha } = qInfo;
   if (!q) return true;
 
-  const qClean = q.replace(/[\s\-_（）\(\)\.\'’]/g, '');
-
   // 1. 純數字編號邏輯 (完全精確比對編號，嚴禁寬鬆模糊匹配)
-  const isNumeric = /^#?\d+$/.test(qClean);
   if (isNumeric) {
-    const qNum = qClean.replace(/^#/, '').replace(/^0+/, '');
     const idStr = String(p.id || '');
     const fNo = String(p.formatted_no || '');
     const fNoNum = fNo.replace(/^0+/, '');
@@ -1381,13 +1404,31 @@ function matchesPokemonSearch(p, query) {
     );
   }
 
-  // 2. 文字精確比對
-  const nameCN = String((p.name && p.name.cn) || p.name_cn || '').toLowerCase();
-  const nameEN = String((p.name && p.name.en) || p.name_en || '').toLowerCase();
-  const nameJP = String((p.name && p.name.jp) || p.name_jp || '').toLowerCase();
-  const nameCNClean = nameCN.replace(/[\s\-_（）\(\)\.\'’]/g, '');
-  const nameENClean = nameEN.replace(/[\s\-_（）\(\)\.\'’]/g, '');
-  const nameJPClean = nameJP.replace(/[\s\-_（）\(\)\.\'’]/g, '');
+  // 2. 文字精確比對 (快取寶可夢名稱正規化與拼音)
+  const rawCN = String((p.name && p.name.cn) || p.name_cn || '');
+  const rawEN = String((p.name && p.name.en) || p.name_en || '');
+  const rawJP = String((p.name && p.name.jp) || p.name_jp || '');
+  let meta = p._searchMeta;
+  if (!meta || meta.rawCN !== rawCN || meta.rawEN !== rawEN || meta.rawJP !== rawJP) {
+    const nameCN = rawCN.toLowerCase();
+    const nameEN = rawEN.toLowerCase();
+    const nameJP = rawJP.toLowerCase();
+    const nameCNClean = nameCN.replace(/[\s\-_（）\(\)\.\'’]/g, '');
+    const nameENClean = nameEN.replace(/[\s\-_（）\(\)\.\'’]/g, '');
+    const nameJPClean = nameJP.replace(/[\s\-_（）\(\)\.\'’]/g, '');
+    const pinyin = p._pinyin || toPinyin(nameCNClean);
+    p._pinyin = pinyin;
+    meta = {
+      rawCN, rawEN, rawJP,
+      nameCN, nameEN, nameJP,
+      nameCNClean, nameENClean, nameJPClean,
+      pinyin,
+      enWords: nameEN ? nameEN.split(/[\s\-_（）\(\)\.\'’]+/).filter(Boolean) : []
+    };
+    p._searchMeta = meta;
+  }
+
+  const { nameCN, nameEN, nameJP, nameCNClean, nameENClean, nameJPClean, pinyin, enWords } = meta;
 
   if (
     nameCN.includes(q) || nameEN.includes(q) || nameJP.includes(q) ||
@@ -1397,11 +1438,7 @@ function matchesPokemonSearch(p, query) {
   }
 
   // 3. 中文拼音 / 同音字寬鬆比對 (解決「一步」、「依布」、「皮卡秋」免選字輸入)
-  if (!p._pinyin) {
-    p._pinyin = toPinyin(nameCNClean);
-  }
-  const qPinyin = toPinyin(qClean);
-  if (qPinyin && p._pinyin && p._pinyin.includes(qPinyin)) {
+  if (qPinyin && pinyin && pinyin.includes(qPinyin)) {
     return true;
   }
 
@@ -1424,7 +1461,7 @@ function matchesPokemonSearch(p, query) {
   }
 
   // 6. 英文拼字錯誤 / 模糊比對 (例如 eeve, pikachuu, blastose, charzard)
-  if (/^[a-z\s\-_'\.]+$/i.test(q)) {
+  if (isAsciiAlpha) {
     if (qClean.length >= 4 && isSubsequence(qClean, nameENClean)) {
       return true;
     }
@@ -1433,7 +1470,6 @@ function matchesPokemonSearch(p, query) {
       if (Math.abs(qClean.length - nameENClean.length) <= maxDist) {
         if (levenshteinDistance(qClean, nameENClean) <= maxDist) return true;
       }
-      const enWords = nameEN.split(/[\s\-_（）\(\)\.\'’]+/).filter(Boolean);
       for (let w = 0; w < enWords.length; w++) {
         const word = enWords[w];
         if (Math.abs(qClean.length - word.length) <= maxDist) {
@@ -3111,17 +3147,15 @@ if (typeof document !== 'undefined') {
       PokemonApp.uniqueIngredients = uniqueIngredients;
       if (typeof window !== 'undefined') window.uniqueIngredients = uniqueIngredients;
 
-      // 計算 15 種基礎主技能對應的寶可夢數量（含複合技能與專屬變體技能）
-      BASE_SKILLS.forEach(b => {
-        baseSkillCounts[b.key] = allPokemons.filter(p => matchesSkill(p.main_skill, b.key)).length;
-      });
-
       renderTypeButtons();
       renderSpecialtyButtons();
       renderBerryButtons();
       renderIngredientButtons();
       renderSkillButtons();
       updateSubfilterVisibility();
+
+      if (PokemonApp._filtersEventsBound) return;
+      PokemonApp._filtersEventsBound = true;
 
       if (typeFilterContainer) {
         typeFilterContainer.addEventListener('click', (e) => {
@@ -3881,8 +3915,15 @@ if (typeof document !== 'undefined') {
         }
       };
 
+      let _lastTouchStartEvt = null;
+      const origOnTouchStart = onTouchStart;
+      const dedupTouchStart = (e) => {
+        if (e && e === _lastTouchStartEvt) return;
+        _lastTouchStartEvt = e;
+        origOnTouchStart(e);
+      };
       document.addEventListener('touchstart', onTouchStart, { capture: true, passive: true });
-      window.addEventListener('touchstart', onTouchStart, { capture: true, passive: true });
+      window.addEventListener('touchstart', dedupTouchStart, { capture: true, passive: true });
 
       // 2. 觸控釋放 (輕觸手勢開關浮窗)
       document.addEventListener('touchend', (e) => {
@@ -4044,7 +4085,10 @@ if (typeof document !== 'undefined') {
       });
 
       // 5. 頁面或任何容器滾動時即時關閉所有浮窗 (若當前無開啟中的浮窗則極速跳過，避免滾動開銷與 Forced Reflow)
-      const onScrollDismiss = () => {
+      let _lastScrollEvt = null;
+      const onScrollDismiss = (e) => {
+        if (e && e === _lastScrollEvt) return;
+        _lastScrollEvt = e;
         if (!currentGlobalTooltipAnchor) {
           if (!hasAnyFloatingTooltipOpen && !(typeof window !== 'undefined' && window._hasAnyFloatingTooltipOpen) && !isAnyFloatingTooltipVisible()) return;
         }
@@ -4056,7 +4100,10 @@ if (typeof document !== 'undefined') {
       window.addEventListener('wheel', onScrollDismiss, { capture: true, passive: true });
 
       // 6. 手指滑動位移時關閉所有浮窗 (H5 App 移動超過 3px 即判定為滑動瀏覽，立即關閉浮窗)
+      let _lastTouchMoveEvt = null;
       const onTouchMove = (e) => {
+        if (e && e === _lastTouchMoveEvt) return;
+        _lastTouchMoveEvt = e;
         if (!currentGlobalTooltipAnchor) {
           if (!hasAnyFloatingTooltipOpen && !(typeof window !== 'undefined' && window._hasAnyFloatingTooltipOpen) && !isAnyFloatingTooltipVisible()) return;
         }
@@ -4885,7 +4932,6 @@ function setPokedexModalLevel(val) {
     if (pinLv === pokedexModalState.level) pin.classList.add('active');
     else pin.classList.remove('active');
   });
-  updatePokedexSubskillUI();
   renderPokedexIngredientStrip();
   updatePokedexModalAppraisalLive();
 }
@@ -6160,10 +6206,6 @@ function renderPokedexDetailModalContent() {
       scores: { berry: 60, ingredient: 70, skill: 65, speed: 65, growth: 60, roi: 65 }
     };
   }
-
-  const radarSVG = (window.AppraisalLab && typeof window.AppraisalLab.renderRadarChartSVG === 'function')
-    ? window.AppraisalLab.renderRadarChartSVG(evaluation.scores, 210, 185)
-    : '';
 
   const formulaData = calculatePokedexIngredientFormulas();
   const maxSkillLvl = getPokedexMainSkillMaxLvl(pkm.main_skill);

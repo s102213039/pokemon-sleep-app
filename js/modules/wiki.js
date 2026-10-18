@@ -12188,19 +12188,72 @@
     "哎呀球菇": "食材", "敗露球菇": "食材"
   };
 
+  let _wikiPkmIdxArr = null;
+  let _wikiPkmIdxLen = -1;
+  let _wikiPkmIdxMap = null;
+  let _ladderSpecCache = Object.create(null);
+  let _ladderSpecCachePkmLen = -1;
+
+  function _getWikiPkmIndex(overrideArr) {
+    const arr = overrideArr || (typeof window !== 'undefined' && (
+      (window.PokemonApp && Array.isArray(window.PokemonApp.allPokemons) && window.PokemonApp.allPokemons.length > 0)
+        ? window.PokemonApp.allPokemons
+        : (Array.isArray(window.allPokemons) && window.allPokemons.length > 0
+          ? window.allPokemons
+          : (Array.isArray(window.POKEMON_DATA) ? window.POKEMON_DATA : []))
+    )) || [];
+    if (_wikiPkmIdxMap && _wikiPkmIdxArr === arr && _wikiPkmIdxLen === arr.length) {
+      return _wikiPkmIdxMap;
+    }
+    const map = Object.create(null);
+    for (let i = 0; i < arr.length; i++) {
+      const p = arr[i];
+      if (!p) continue;
+      if (p.id != null) {
+        map['id:' + p.id] = p;
+        map['no:' + String(p.id).padStart(3, '0')] = p;
+      }
+      if (p.formatted_no) {
+        map['no:' + p.formatted_no] = p;
+        map['id:' + p.formatted_no] = p;
+      }
+      if (p.name_cn) map['cn:' + p.name_cn] = p;
+      if (p.name && typeof p.name === 'string') map['cn:' + p.name] = p;
+      if (p.name_en) map['en:' + p.name_en] = p;
+    }
+    _wikiPkmIdxArr = arr;
+    _wikiPkmIdxLen = arr.length;
+    _wikiPkmIdxMap = map;
+    return map;
+  }
+
   function getPokemonLadderSpecialty(pkmName) {
     if (!pkmName) return '食材';
+    const pkmDataLen = (typeof window !== 'undefined' && Array.isArray(window.POKEMON_DATA)) ? window.POKEMON_DATA.length : 0;
+    if (pkmDataLen !== _ladderSpecCachePkmLen) {
+      _ladderSpecCache = Object.create(null);
+      _ladderSpecCachePkmLen = pkmDataLen;
+    }
+    const cached = _ladderSpecCache[pkmName];
+    if (cached !== undefined) return cached;
+
     const clean = pkmName.replace(/（.*）|\(.*\)/g, '').trim();
+    let res = '食材';
     // 1. 若全域寶可夢資料庫（window.POKEMON_DATA）已載入，優先使用官方資料集
-    if (typeof window !== 'undefined' && Array.isArray(window.POKEMON_DATA) && window.POKEMON_DATA.length > 0) {
-      const match = window.POKEMON_DATA.find(p => p.name_cn === pkmName || p.name_cn === clean || p.name_cn === pkmName.replace('大綱蛇', '大鋼蛇') || p.name_cn === pkmName.replace('大鋼蛇', '大綱蛇') || p.name_en === pkmName);
-      if (match && match.specialty) return match.specialty;
+    if (pkmDataLen > 0) {
+      const idx = _getWikiPkmIndex(window.POKEMON_DATA);
+      const match = idx['cn:' + pkmName] || idx['cn:' + clean] || idx['cn:' + pkmName.replace('大綱蛇', '大鋼蛇')] || idx['cn:' + pkmName.replace('大鋼蛇', '大綱蛇')] || idx['en:' + pkmName];
+      if (match && match.specialty) {
+        _ladderSpecCache[pkmName] = match.specialty;
+        return match.specialty;
+      }
     }
     // 2. 本地字典速查
-    if (POKEMON_SPECIALTY_MAP[pkmName]) return POKEMON_SPECIALTY_MAP[pkmName];
-    if (POKEMON_SPECIALTY_MAP[clean]) return POKEMON_SPECIALTY_MAP[clean];
-    if (clean === '大綱蛇' || clean === '大鋼蛇') return '樹果';
-    return '食材';
+    if (POKEMON_SPECIALTY_MAP[pkmName]) res = POKEMON_SPECIALTY_MAP[pkmName];
+    else if (POKEMON_SPECIALTY_MAP[clean]) res = POKEMON_SPECIALTY_MAP[clean];
+    else if (clean === '大綱蛇' || clean === '大鋼蛇') res = '樹果';
+    _ladderSpecCache[pkmName] = res;
+    return res;
   }
 
   const TOP_RECIPES_FOR_INGREDIENTS = {
@@ -13324,6 +13377,16 @@
 
     // 依當前篩選條件收集並計算所有寶可夢產量排名
     let rankingList = [];
+    let modalTop5Threshold = 0;
+    if (ladderSupplyFilter === 'TOP') {
+      const allMaxCounts = ingData.pokemon.map(pkm => {
+        const pkmBonus = getPokemonSkillDrawBonus(pkm.name, ingData.id, ingData.name);
+        return Math.max(...(pkm.variants || [{ count: pkm.count }]).map(v => Math.round(v.count * mult) + pkmBonus));
+      });
+      const distinctCounts = [...new Set(allMaxCounts)].sort((a, b) => b - a);
+      modalTop5Threshold = distinctCounts[Math.min(4, distinctCounts.length - 1)] || 0;
+    }
+
     ingData.pokemon.forEach((p, pIdx) => {
       const pkmSpec = getPokemonLadderSpecialty(p.name);
       if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return;
@@ -13335,14 +13398,8 @@
       let variants = (p.variants || [{ recipe: p.recipe, count: p.count, note: p.note, isTop: p.isTop }]).filter(v => matchesLadderRecipeFilter(v, ladderRecipeFilter));
 
       if (ladderSupplyFilter === 'TOP') {
-        const allMaxCounts = ingData.pokemon.map(pkm => {
-          const pkmBonus = getPokemonSkillDrawBonus(pkm.name, ingData.id, ingData.name);
-          return Math.max(...(pkm.variants || [{count: pkm.count}]).map(v => Math.round(v.count * mult) + pkmBonus));
-        });
-        const distinctCounts = [...new Set(allMaxCounts)].sort((a,b) => b - a);
-        const top5Threshold = distinctCounts[Math.min(4, distinctCounts.length - 1)] || 0;
-        const pkmMaxCount = Math.max(...(p.variants || [{count: p.count}]).map(v => Math.round(v.count * mult) + skillBonus));
-        if (pkmMaxCount < top5Threshold) return;
+        const pkmMaxCount = Math.max(...(p.variants || [{ count: p.count }]).map(v => Math.round(v.count * mult) + skillBonus));
+        if (pkmMaxCount < modalTop5Threshold) return;
         variants = variants.slice(0, 1);
       } else if (ladderSupplyFilter === 'MEALS_3') {
         variants = variants.filter(v => Math.round(v.count * mult) + skillBonus >= dishInfo.need * 3);
@@ -14111,8 +14168,20 @@
   }
   loadDynamicSleepStyles();
 
+  const _sleepStyleCache = Object.create(null);
+  let _sleepStyleCacheHasDyn = false;
+
   function getSleepStyleData(pkmName, star) {
     if (!pkmName || !star) return null;
+    const hasDyn = !!dynamicSleepStyles;
+    if (hasDyn !== _sleepStyleCacheHasDyn) {
+      for (const k in _sleepStyleCache) delete _sleepStyleCache[k];
+      _sleepStyleCacheHasDyn = hasDyn;
+    }
+    const cacheKey = pkmName + ':' + star;
+    const cached = _sleepStyleCache[cacheKey];
+    if (cached !== undefined) return cached;
+
     const nameStr = String(pkmName);
     const cleanName = nameStr.replace(/（/g, '(').replace(/）/g, ')').trim();
     const fullWidthName = nameStr.replace(/\(/g, '（').replace(/\)/g, '）').trim();
@@ -14126,10 +14195,11 @@
       const base = cleanName.split('(')[0].trim();
       entry = db[base] || SLEEP_STYLES_DATA[base];
     }
+    let res = null;
     if (entry && entry[star]) {
       const raw = entry[star];
       if (Array.isArray(raw)) {
-        return {
+        res = {
           star: Number(star),
           name: raw[0],
           name_en: raw[1],
@@ -14139,7 +14209,7 @@
           name_jp: raw[5] || ''
         };
       } else if (typeof raw === 'object') {
-        return {
+        res = {
           star: Number(star),
           name: raw.name || '',
           name_en: raw.name_en || '',
@@ -14150,15 +14220,24 @@
         };
       }
     }
-    return null;
+    _sleepStyleCache[cacheKey] = res;
+    return res;
   }
+
+  const _rankBadgeCache = Object.create(null);
 
   function formatSnorlaxRankBadge(rankStr, isEN) {
     if (typeof isEN === 'undefined') {
-      isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+      isEN = !!(window.I18N && window.I18N.getLanguage() === 'en-US');
     }
+    const cacheKey = (isEN ? '1:' : '0:') + (rankStr || '-');
+    const cached = _rankBadgeCache[cacheKey];
+    if (cached !== undefined) return cached;
+
     if (!rankStr || rankStr === '-') {
-      return `<span class="rank-badge rank-dash" title="${isEN ? 'Unavailable' : '未出現'}">-</span>`;
+      const dashHtml = `<span class="rank-badge rank-dash" title="${isEN ? 'Unavailable' : '未出現'}">-</span>`;
+      _rankBadgeCache[cacheKey] = dashHtml;
+      return dashHtml;
     }
     const parts = rankStr.trim().split(/\s+/);
     const tier = (parts[0] || '').toLowerCase();
@@ -14180,15 +14259,19 @@
     } else if (tier === 'master') {
       ballSvg = `<svg class="pokeball-svg ball-master" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#4c1d95" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#7e22ce"/><circle cx="4.5" cy="4.5" r="1.6" fill="#ec4899"/><circle cx="11.5" cy="4.5" r="1.6" fill="#ec4899"/><path d="M 6.8,3.2 L 7.2,4.8 L 8,4 L 8.8,4.8 L 9.2,3.2" fill="none" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="8" x2="15" y2="8" stroke="#4c1d95" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#4c1d95" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#4c1d95"/></svg>`;
     } else {
-      return `<span class="rank-badge">${rankStr}</span>`;
+      const rawHtml = `<span class="rank-badge">${rankStr}</span>`;
+      _rankBadgeCache[cacheKey] = rawHtml;
+      return rawHtml;
     }
 
-    return `
+    const html = `
       <span class="rank-badge rank-${tier}" title="${tierTitle}">
         ${ballSvg}
         <span class="rank-num">${num}</span>
       </span>
     `;
+    _rankBadgeCache[cacheKey] = html;
+    return html;
   }
 
   function closeSleepStylePopover() {
@@ -15579,8 +15662,9 @@
   };
 
   function getPokemonAvatarUrl(name, name_en) {
-    if (typeof window !== 'undefined' && Array.isArray(window.allPokemons)) {
-      const p = window.allPokemons.find(x => x.name_cn === name || x.name === name || x.name_en === name_en);
+    if (typeof window !== 'undefined' && Array.isArray(window.allPokemons) && window.allPokemons.length > 0) {
+      const idx = _getWikiPkmIndex(window.allPokemons);
+      const p = (name && idx['cn:' + name]) || (name_en && idx['en:' + name_en]);
       if (p) {
         if (p.icon && typeof p.icon === 'string' && p.icon.trim() !== '') return p.icon;
         if (p.icon_url && typeof p.icon_url === 'string' && p.icon_url.trim() !== '') return p.icon_url;
@@ -15596,8 +15680,9 @@
 
   function getIslandPokemonDexCode(p) {
     if (!p) return '001';
-    if (typeof window !== 'undefined' && Array.isArray(window.allPokemons)) {
-      const found = window.allPokemons.find(x => x.name_cn === p.name || x.name === p.name || x.name_en === p.name_en);
+    if (typeof window !== 'undefined' && Array.isArray(window.allPokemons) && window.allPokemons.length > 0) {
+      const idx = _getWikiPkmIndex(window.allPokemons);
+      const found = (p.name && idx['cn:' + p.name]) || (p.name_en && idx['en:' + p.name_en]);
       if (found && found.formatted_no) return String(found.formatted_no);
     }
     return POKEMON_SPRITE_FALLBACK[p.name] || POKEMON_SPRITE_FALLBACK[p.name_en] || '001';
@@ -15624,16 +15709,22 @@
     refreshIslandsSubpanel();
   }
 
+  const _rankScoreCache = Object.create(null);
+
   function getSnorlaxRankScore(rankStr) {
     if (!rankStr || rankStr === '-' || rankStr.trim() === '') return -1;
+    const cached = _rankScoreCache[rankStr];
+    if (cached !== undefined) return cached;
     const parts = rankStr.trim().split(/\s+/);
     const tier = (parts[0] || '').toLowerCase();
     const num = parseInt(parts[1], 10) || 0;
-    if (tier === 'basic') return 100 + num;
-    if (tier === 'great') return 200 + num;
-    if (tier === 'ultra') return 300 + num;
-    if (tier === 'master') return 400 + num;
-    return 0;
+    let score = 0;
+    if (tier === 'basic') score = 100 + num;
+    else if (tier === 'great') score = 200 + num;
+    else if (tier === 'ultra') score = 300 + num;
+    else if (tier === 'master') score = 400 + num;
+    _rankScoreCache[rankStr] = score;
+    return score;
   }
 
   function sortIslandSpawns(col) {
@@ -15775,12 +15866,14 @@
     }
     const els = getIslandSpawnsCoordinatorEls();
     if (!els.scroller || !els.host || !els.card || !els.wrap) return;
+    // 批次執行所有 Layout 讀取，避免讀寫交錯觸發 Forced Synchronous Layout
     const sRect = els.scroller.getBoundingClientRect();
     const pinTop = els.subnav ? els.subnav.getBoundingClientRect().bottom : sRect.top;
+    const hostRect = els.host.getBoundingClientRect();
     const pinH = Math.max(160, Math.round(sRect.bottom - pinTop));
+    const shouldPin = hostRect.top <= pinTop + 0.5;
+    // 批次執行所有 DOM Style 寫入
     els.card.style.setProperty('--spawns-pin-h', pinH + 'px');
-    const hostTop = els.host.getBoundingClientRect().top;
-    const shouldPin = hostTop <= pinTop + 0.5;
     if (!shouldPin) {
       els.card.classList.remove('is-spawns-pinned');
       els.card.style.left = '';
@@ -15793,7 +15886,6 @@
     if (!els.host.style.height) {
       els.host.style.height = pinH + 'px';
     }
-    const hostRect = els.host.getBoundingClientRect();
     els.card.classList.add('is-spawns-pinned');
     els.card.style.setProperty('--spawns-pin-top', pinTop + 'px');
     els.card.style.left = hostRect.left + 'px';
@@ -15935,48 +16027,11 @@
       `;
     }
 
-
-
-    function formatSnorlaxRankBadge(rankStr) {
-      if (!rankStr || rankStr === '-') {
-        return `<span class="rank-badge rank-dash" title="${isEN ? 'Unavailable' : '未出現'}">-</span>`;
-      }
-      const parts = rankStr.trim().split(/\s+/);
-      const tier = (parts[0] || '').toLowerCase();
-      const num = parts[1] || '';
-      const tierTitle = isEN ? rankStr : (
-        tier === 'basic' ? `普通 (Basic) ${num}` :
-        tier === 'great' ? `超級 (Great) ${num}` :
-        tier === 'ultra' ? `高級 (Ultra) ${num}` :
-        tier === 'master' ? `大師 (Master) ${num}` : rankStr
-      );
-
-      let ballSvg = '';
-      if (tier === 'basic') {
-        ballSvg = `<svg class="pokeball-svg ball-basic" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#334155" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#ef4444"/><line x1="1" y1="8" x2="15" y2="8" stroke="#334155" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#334155" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#334155"/></svg>`;
-      } else if (tier === 'great') {
-        ballSvg = `<svg class="pokeball-svg ball-great" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#2563eb"/><path d="M 2.6,5.2 A 7,7 0 0,1 5.2,2.6 L 5.8,5.8 Z" fill="#ef4444"/><path d="M 13.4,5.2 A 7,7 0 0,0 10.8,2.6 L 10.2,5.8 Z" fill="#ef4444"/><line x1="1" y1="8" x2="15" y2="8" stroke="#1e3a8a" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#1e3a8a"/></svg>`;
-      } else if (tier === 'ultra') {
-        ballSvg = `<svg class="pokeball-svg ball-ultra" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#0f172a" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#1e293b"/><path d="M 3.2,7.5 L 4.4,2.2 L 5.8,2.4 L 4.8,7.5 Z" fill="#facc15"/><path d="M 12.8,7.5 L 11.6,2.2 L 10.2,2.4 L 11.2,7.5 Z" fill="#facc15"/><line x1="1" y1="8" x2="15" y2="8" stroke="#0f172a" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#0f172a" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#0f172a"/></svg>`;
-      } else if (tier === 'master') {
-        ballSvg = `<svg class="pokeball-svg ball-master" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#4c1d95" stroke-width="1.2"/><path d="M 1,8 A 7,7 0 0,1 15,8 Z" fill="#7e22ce"/><circle cx="4.5" cy="4.5" r="1.6" fill="#ec4899"/><circle cx="11.5" cy="4.5" r="1.6" fill="#ec4899"/><path d="M 6.8,3.2 L 7.2,4.8 L 8,4 L 8.8,4.8 L 9.2,3.2" fill="none" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="8" x2="15" y2="8" stroke="#4c1d95" stroke-width="1.2"/><circle cx="8" cy="8" r="2.2" fill="#ffffff" stroke="#4c1d95" stroke-width="1.2"/><circle cx="8" cy="8" r="0.8" fill="#4c1d95"/></svg>`;
-      } else {
-        return `<span class="rank-badge">${rankStr}</span>`;
-      }
-
-      return `
-        <span class="rank-badge rank-${tier}" title="${tierTitle}">
-          ${ballSvg}
-          <span class="rank-num">${num}</span>
-        </span>
-      `;
-    }
-
     function renderIslandSleepCell(p, star, rankStr) {
       if (!rankStr || rankStr === '-') {
         return `<span class="rank-badge rank-dash" title="${isEN ? 'Unavailable' : '未出現'}">-</span>`;
       }
-      const badgeHtml = formatSnorlaxRankBadge(rankStr);
+      const badgeHtml = formatSnorlaxRankBadge(rankStr, isEN);
       const style = getSleepStyleData(p.name, star);
       if (!style) {
         return `<div class="island-sleep-cell-wrap">${badgeHtml}</div>`;
@@ -16386,8 +16441,14 @@
     } catch (e) {}
     try { recalcTriggerChance(); } catch (e) {}
     try { recalcSleepDays(); } catch (e) {}
-    try { refreshCoordinateLadder(); } catch (e) {}
-    try { refreshBerryNodes(); } catch (e) {}
+    try {
+      const ladderCanvas = document.getElementById('ladder-coordinate-canvas');
+      if (!ladderCanvas || !ladderCanvas.innerHTML) refreshCoordinateLadder();
+    } catch (e) {}
+    try {
+      const berryCanvas = document.getElementById('berry-ladder-canvas');
+      if (!berryCanvas || !berryCanvas.innerHTML) refreshBerryNodes();
+    } catch (e) {}
   }
 
   // 渲染副技能標籤
@@ -16515,23 +16576,31 @@
     `;
   }
 
+  const LADDER_NOTE_ING_LIST = [
+    '特選蘋果', 'Fancy Apple', '哞哞鮮奶', 'Moomoo Milk', '萌綠大豆', 'Greengrass Soybeans',
+    '甜甜蜜', 'Honey', '豆製肉', 'Bean Sausage', '暖暖薑', 'Warming Ginger',
+    '好眠番茄', '熟透番茄', 'Snoozy Tomato', '特選蛋', 'Fancy Egg', '純粹油', 'Pure Oil',
+    '窩心洋芋', 'Soft Potato', '火辣香草', 'Fiery Herb', '萌綠玉米', 'Greengrass Corn',
+    '放鬆可可', 'Soothing Cacao', '醒腦咖啡豆', 'Rousing Coffee', '嫩亮酪梨', 'Glossy Avocado',
+    '品鮮蘑菇', 'Tasty Mushroom', '粗枝大蔥', 'Large Leek', '沉甸甸南瓜', 'Plump Pumpkin',
+    '美味尾巴', 'Slowpoke Tail'
+  ];
+  const _ladderNoteCache = Object.create(null);
+
   function formatLadderNote(note, isEN) {
     if (!note) return '';
+    const langKey = (window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : (isEN ? 'en-US' : 'zh-TW');
+    const cacheKey = langKey + ':' + note;
+    const cached = _ladderNoteCache[cacheKey];
+    if (cached !== undefined) return cached;
+
     let translated = (window.I18N && typeof window.I18N.translateDynamicText === 'function') 
       ? window.I18N.translateDynamicText(note) 
       : note;
 
     if (window.I18N && typeof window.I18N.getIngredientIcon === 'function') {
-      const ingList = [
-        '特選蘋果', 'Fancy Apple', '哞哞鮮奶', 'Moomoo Milk', '萌綠大豆', 'Greengrass Soybeans',
-        '甜甜蜜', 'Honey', '豆製肉', 'Bean Sausage', '暖暖薑', 'Warming Ginger',
-        '好眠番茄', '熟透番茄', 'Snoozy Tomato', '特選蛋', 'Fancy Egg', '純粹油', 'Pure Oil',
-        '窩心洋芋', 'Soft Potato', '火辣香草', 'Fiery Herb', '萌綠玉米', 'Greengrass Corn',
-        '放鬆可可', 'Soothing Cacao', '醒腦咖啡豆', 'Rousing Coffee', '嫩亮酪梨', 'Glossy Avocado',
-        '品鮮蘑菇', 'Tasty Mushroom', '粗枝大蔥', 'Large Leek', '沉甸甸南瓜', 'Plump Pumpkin',
-        '美味尾巴', 'Slowpoke Tail'
-      ];
-      ingList.forEach(ingName => {
+      for (let i = 0; i < LADDER_NOTE_ING_LIST.length; i++) {
+        const ingName = LADDER_NOTE_ING_LIST[i];
         if (translated.includes(ingName)) {
           const icon = window.I18N.getIngredientIcon(ingName);
           if (icon) {
@@ -16540,8 +16609,9 @@
             translated = translated.split(ingName).join(tag);
           }
         }
-      });
+      }
     }
+    _ladderNoteCache[cacheKey] = translated;
     return translated;
   }
 
@@ -16609,6 +16679,17 @@
           : (activeHighlightRecipe ? (activeHighlightRecipe.icon || getLadderDishIcon(activeHighlightRecipe.name_cn)) : ''))
         : (dishInfo.icon || getLadderDishIcon(dishInfo.name));
 
+      // 若為 TOP 篩選，於軌道外層一次性預先計算 top5Threshold，消除 O(P^2) 重複掃描
+      let trackTop5Threshold = 0;
+      if (ladderSupplyFilter === 'TOP') {
+        const allMaxCounts = ing.pokemon.map(pkm => {
+          const pkmBonus = getPokemonSkillDrawBonus(pkm.name, ing.id, ing.name);
+          return Math.max(...(pkm.variants || [{ count: pkm.count }]).map(v => Math.round(v.count * mult) + pkmBonus));
+        });
+        const distinctCounts = [...new Set(allMaxCounts)].sort((a, b) => b - a);
+        trackTop5Threshold = distinctCounts[Math.min(4, distinctCounts.length - 1)] || 0;
+      }
+
       // 取得該軌道符合篩選之寶可夢與型態變體
       const filteredPokemonList = ing.pokemon.map((p, pIdx) => {
         const pkmSpec = getPokemonLadderSpecialty(p.name);
@@ -16632,14 +16713,8 @@
 
         if (ladderSupplyFilter === 'TOP') {
           // 前五名：保留該軌道排名前 5 (Top 1 ~ Top 5) 的寶可夢梯隊，且只展示其最高產量變體
-          const allMaxCounts = ing.pokemon.map(pkm => {
-            const pkmBonus = getPokemonSkillDrawBonus(pkm.name, ing.id, ing.name);
-            return Math.max(...(pkm.variants || [{count: pkm.count}]).map(v => Math.round(v.count * mult) + pkmBonus));
-          });
-          const distinctCounts = [...new Set(allMaxCounts)].sort((a,b) => b - a);
-          const top5Threshold = distinctCounts[Math.min(4, distinctCounts.length - 1)] || 0;
-          const pkmMaxCount = Math.max(...(p.variants || [{count: p.count}]).map(v => Math.round(v.count * mult) + skillBonus));
-          if (pkmMaxCount < top5Threshold) return null;
+          const pkmMaxCount = Math.max(...(p.variants || [{ count: p.count }]).map(v => Math.round(v.count * mult) + skillBonus));
+          if (pkmMaxCount < trackTop5Threshold) return null;
           variants = variants.slice(0, 1);
         } else if (ladderSupplyFilter === 'MEALS_3') {
           // 滿載 3 餐：日產量 >= 當前料理 3 餐所需總量 (選定料理時以選定料理需求計算)
@@ -17067,6 +17142,12 @@
               return ((clamped / tailMax) * 100).toFixed(2);
             }
             const tailDishInfo = TOP_RECIPES_FOR_INGREDIENTS.tail || { need: 10 };
+            let tailTop5Threshold = 0;
+            if (ladderSupplyFilter === 'TOP') {
+              const allMaxCounts = tailIng.pokemon.map(pkm => Math.max(...(pkm.variants || [{ count: pkm.count }]).map(v => v.count)));
+              const distinctCounts = [...new Set(allMaxCounts)].sort((a, b) => b - a);
+              tailTop5Threshold = distinctCounts[Math.min(4, distinctCounts.length - 1)] || 0;
+            }
             const filteredTailPkm = tailIng.pokemon.map((p, pIdx) => {
               const pkmSpec = getPokemonLadderSpecialty(p.name);
               if (ladderSpecialtyFilter === 'INGREDIENT' && pkmSpec !== '食材' && pkmSpec !== '全部') return null;
@@ -17081,11 +17162,8 @@
               variants = variants.filter(v => matchesLadderRecipeFilter(v, ladderRecipeFilter));
 
               if (ladderSupplyFilter === 'TOP') {
-                const allMaxCounts = tailIng.pokemon.map(pkm => Math.max(...(pkm.variants || [{count: pkm.count}]).map(v => v.count)));
-                const distinctCounts = [...new Set(allMaxCounts)].sort((a,b) => b - a);
-                const top5Threshold = distinctCounts[Math.min(4, distinctCounts.length - 1)] || 0;
-                const pkmMaxCount = Math.max(...(p.variants || [{count: p.count}]).map(v => v.count));
-                if (pkmMaxCount < top5Threshold) return null;
+                const pkmMaxCount = Math.max(...(p.variants || [{ count: p.count }]).map(v => v.count));
+                if (pkmMaxCount < tailTop5Threshold) return null;
                 variants = variants.slice(0, 1);
               } else if (ladderSupplyFilter === 'MEALS_3') {
                 variants = variants.filter(v => Math.round(v.count * mult) >= tailDishInfo.need * 3);
@@ -17709,18 +17787,23 @@
   }
 
   function getAssociatedPokemonStrings(item) {
+    const allPkm = (typeof window !== 'undefined' && Array.isArray(window.allPokemons))
+      ? window.allPokemons
+      : [];
+    if (item._assocPkmStr !== undefined && item._assocPkmLen === allPkm.length) {
+      return item._assocPkmStr;
+    }
     const ids = new Set([
       ...(item.pokemon_ids || []),
       ...(ITEM_POKEMON_FAMILY_MAP[item.id] || [])
     ]);
     const pkmStrings = [];
-    const allPkm = (typeof window !== 'undefined' && Array.isArray(window.allPokemons))
-      ? window.allPokemons
-      : [];
+    const idx = _getWikiPkmIndex(allPkm);
 
     ids.forEach(id => {
-      pkmStrings.push(String(id));
-      const p = allPkm.find(x => String(x.id) === String(id) || x.formatted_no === String(id).padStart(3, '0'));
+      const idStr = String(id);
+      pkmStrings.push(idStr);
+      const p = idx['id:' + idStr] || idx['no:' + idStr.padStart(3, '0')];
       if (p) {
         if (p.name_cn) pkmStrings.push(p.name_cn.toLowerCase());
         if (p.name_en) pkmStrings.push(p.name_en.toLowerCase());
@@ -17728,7 +17811,10 @@
       }
     });
 
-    return pkmStrings.join(' ');
+    const joined = pkmStrings.join(' ');
+    item._assocPkmStr = joined;
+    item._assocPkmLen = allPkm.length;
+    return joined;
   }
 
   function itemMatchesToken(item, token) {
@@ -18006,16 +18092,14 @@
     // Evolution target Pokemon: NO COUNT TEXT! Direct prominent display with enlarged borderless avatars without names
     let evoSectionHTML = '';
     if (Array.isArray(item.pokemon_ids) && item.pokemon_ids.length > 0) {
-      const allPkm = (typeof window !== 'undefined' && (
-        (window.PokemonApp && Array.isArray(window.PokemonApp.allPokemons) && window.PokemonApp.allPokemons.length > 0)
-          ? window.PokemonApp.allPokemons
-          : (Array.isArray(window.allPokemons) ? window.allPokemons : [])
-      )) || [];
+      const idx = _getWikiPkmIndex();
 
       const chipsHTML = item.pokemon_ids.map(pkmId => {
-        const p = allPkm.find(x => String(x.id) === String(pkmId) || x.formatted_no === String(pkmId).padStart(3, '0'));
+        const idStr = String(pkmId);
+        const padId = idStr.padStart(3, '0');
+        const p = idx['id:' + idStr] || idx['no:' + padId];
         const pkmName = p ? (isEN ? (p.name_en || p.name_cn) : (isCN ? (p.name_cn || p.name) : (p.name_cn || p.name))) : `Pokemon #${pkmId}`;
-        const pkmNo = p ? (p.formatted_no || String(p.id).padStart(3, '0')) : String(pkmId).padStart(3, '0');
+        const pkmNo = p ? (p.formatted_no || String(p.id).padStart(3, '0')) : padId;
         const iconUrl = p && p.icon_url ? p.icon_url : `https://www.serebii.net/pokemonsleep/pokemon/icon/${pkmNo}.png`;
         return `
           <div class="wiki-item-evo-chip" title="${escapeHtml(pkmName)}">
@@ -18404,16 +18488,14 @@
               </div>
             `;
           } else {
-            const allPkm = (typeof window !== 'undefined' && (
-              (window.PokemonApp && Array.isArray(window.PokemonApp.allPokemons) && window.PokemonApp.allPokemons.length > 0)
-                ? window.PokemonApp.allPokemons
-                : (Array.isArray(window.allPokemons) ? window.allPokemons : [])
-            )) || [];
+            const idx = _getWikiPkmIndex();
 
             pkmGridEl.innerHTML = pkmIds.map(pkmId => {
-              const p = allPkm.find(x => String(x.id) === String(pkmId) || x.formatted_no === String(pkmId).padStart(3, '0'));
+              const idStr = String(pkmId);
+              const padId = idStr.padStart(3, '0');
+              const p = idx['id:' + idStr] || idx['no:' + padId];
               const pkmName = p ? (isEN ? (p.name_en || p.name_cn) : (isCN ? (p.name_cn || p.name) : (p.name_cn || p.name))) : `Pokemon #${pkmId}`;
-              const pkmNo = p ? (p.formatted_no || String(p.id).padStart(3, '0')) : String(pkmId).padStart(3, '0');
+              const pkmNo = p ? (p.formatted_no || String(p.id).padStart(3, '0')) : padId;
               const pkmIcon = p && p.icon_url ? p.icon_url : `https://www.serebii.net/pokemonsleep/pokemon/icon/${pkmNo}.png`;
               const targetId = p ? p.id : pkmId;
 

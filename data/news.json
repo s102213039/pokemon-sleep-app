@@ -8,7 +8,7 @@
     "badge_label": "重要通知",
     "badge_color": "#8b5cf6",
     "title": "【新登場】夢妖、 夢妖魔",
-    "title_en": "[New Debut] 夢妖, 夢妖魔",
+    "title_en": "[New Debut] Misdreavus, Mismagius",
     "overview_en": "Official announcement and news update for Pokemon Sleep.",
     "debut_pokemon": [
       "夢妖",
@@ -33,7 +33,7 @@
         ],
         "title_en": "Event Schedule & Areas",
         "items_en": [
-          "開始出現的時間 2026/10/26 15:00",
+          "Debut Time: 2026/10/26 15:00",
           "[Areas] Greengrass Isle, Snowdrop Tundra, Old Gold Power Plant, Greengrass IsleEX"
         ]
       },
@@ -46,7 +46,7 @@
         ],
         "title_en": "New Pokemon Debut",
         "items_en": [
-          "登場寶可夢：夢妖（幽靈屬性）, 夢妖魔（幽靈屬性）"
+          "Debut Pokemon: Misdreavus (Ghost), Mismagius (Ghost)"
         ]
       }
     ],
@@ -61,7 +61,7 @@
     "badge_label": "活動企劃",
     "badge_color": "#f59e0b",
     "title": "【活動】萬聖節2026：糖果倍增研究",
-    "title_en": "[Event] 萬聖節2026：糖果倍增研究",
+    "title_en": "[Event] Halloween 2026: Double Candy Research",
     "overview_en": "Official announcement and news update for Pokemon Sleep.",
     "debut_pokemon": [
       "皮卡丘（萬聖節）",

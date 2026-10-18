@@ -184,6 +184,11 @@
   }
 
   function getRibbonBonus(ribbonLevel, remainingEvolutions) {
+    if (ribbonLevel && typeof ribbonLevel === 'object') {
+      const pkmObj = ribbonLevel;
+      ribbonLevel = remainingEvolutions;
+      remainingEvolutions = getRemainingEvolutions(pkmObj);
+    }
     const lvl = Math.min(Math.max(parseInt(ribbonLevel, 10) || 0, 0), 4);
     let carry = 0;
     let speedDiscount = 0;
@@ -1595,14 +1600,26 @@
     '尾巴': '美味尾巴', '美味尾巴': '美味尾巴', 'slowpoke tail': '美味尾巴', 'tail': '美味尾巴'
   };
 
+  const ING_ALIASES_ENTRIES = Object.keys(ING_ALIASES).map(function (k) {
+    return [k.toLowerCase(), ING_ALIASES[k]];
+  });
+  const _normIngCache = Object.create(null);
+
   function normalizeIngName(name) {
     if (!name) return '';
-    const clean = String(name).toLowerCase().replace(/^[0-9xX+\s]+/, '').trim();
-    for (const k of Object.keys(ING_ALIASES)) {
-      const kl = k.toLowerCase();
-      if (clean === kl || clean.includes(kl) || kl.includes(clean)) return ING_ALIASES[k];
+    const rawStr = String(name);
+    if (_normIngCache[rawStr] !== undefined) return _normIngCache[rawStr];
+    const clean = rawStr.toLowerCase().replace(/^[0-9xX+\s]+/, '').trim();
+    for (let i = 0; i < ING_ALIASES_ENTRIES.length; i++) {
+      const kl = ING_ALIASES_ENTRIES[i][0];
+      if (clean === kl || clean.includes(kl) || kl.includes(clean)) {
+        _normIngCache[rawStr] = ING_ALIASES_ENTRIES[i][1];
+        return _normIngCache[rawStr];
+      }
     }
-    return String(name).trim();
+    const fallback = rawStr.trim();
+    _normIngCache[rawStr] = fallback;
+    return fallback;
   }
 
   function getSignatureRecipeRecommendations(ingredients, isEN) {
@@ -2045,10 +2062,27 @@
   }
 
   /* ─── 對外入口：雙軌評級與里程碑評定 (Dual-Track Appraisal API) ─────── */
+  const _evalPokemonCache = Object.create(null);
+  let _evalPokemonCacheCount = 0;
+
   function evaluatePokemon(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, cleanseMint) {
     if (!pkmData) return null;
     currentLv = parseInt(currentLv, 10) || 30;
     const isMint = !!(cleanseMint || (pkmData && (pkmData.cleanseMint || pkmData.mint)));
+    const langKey = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.getLanguage === 'function')
+      ? window.I18N.getLanguage()
+      : 'zh-TW';
+    const pkmIdentity = (pkmData.id || '') + ':' + (pkmData.name_cn || pkmData.name_en || pkmData.name || '') + ':' + (pkmData.specialty || '') + ':' + (pkmData.base_frequency || pkmData.frequency || '') + ':' + (pkmData.is_final || '') + ':' + (pkmData.main_skill || '') + ':' + (pkmData.ingredient_rate || '') + ':' + (pkmData.skill_rate || '');
+    const subsKey = Array.isArray(subskills) ? subskills.join('|') : '';
+    const ingsKey = Array.isArray(ingredients)
+      ? ingredients.map(function (x) { return typeof x === 'string' ? x : ((x && x.name) ? (x.name + ':' + (x.count || x.l1 || '')) : ''); }).join('|')
+      : '';
+    const cacheKey = pkmIdentity + '@' + currentLv + '@' + (natureName || '') + '@' + subsKey + '@' + ingsKey + '@' + (ribbonLevel || 0) + '@' + (skillLevel || '') + '@' + (isMint ? 1 : 0) + '@' + langKey;
+
+    if (_evalPokemonCache[cacheKey]) {
+      return Object.assign({}, _evalPokemonCache[cacheKey]);
+    }
+
     const targetPkm = Object.assign({}, pkmData, { cleanseMint: isMint });
 
     const currentEval = evaluateSingle(targetPkm, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, false, isMint);
@@ -2063,7 +2097,7 @@
 
     const intelligentSummary = generateIntelligentSummary(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, currentEval);
 
-    return Object.assign({}, currentEval, {
+    const result = Object.assign({}, currentEval, {
       current: currentEval,
       potential: potentialEval,
       currentScore: currentEval.compositeScore,
@@ -2075,6 +2109,15 @@
       summaryNote: intelligentSummary,
       intelligentSummary: intelligentSummary
     });
+
+    if (_evalPokemonCacheCount > 2500) {
+      for (const k in _evalPokemonCache) delete _evalPokemonCache[k];
+      _evalPokemonCacheCount = 0;
+    }
+    _evalPokemonCache[cacheKey] = result;
+    _evalPokemonCacheCount++;
+
+    return Object.assign({}, result);
   }
 
   /* ─── 升級成本精算 ─────────────────────────────────────── */
@@ -2256,11 +2299,11 @@
 
   function getSkillTier(sName) {
     if (!sName) return 'white';
+    if (GOLD_SUBSKILLS.has(sName)) return 'gold';
+    if (BLUE_SUBSKILLS.has(sName)) return 'blue';
     const subskillPool = (typeof window !== 'undefined' && ((window.UserBox && window.UserBox.SUBSKILLS_DATA) || (window.PokemonBoxApp && window.PokemonBoxApp.SUBSKILLS_DATA))) || DEFAULT_SUBSKILLS_DATA;
     const found = subskillPool.find(function (s) { return s.name === sName; });
     if (found && found.tier) return found.tier;
-    if (GOLD_SUBSKILLS.has(sName)) return 'gold';
-    if (BLUE_SUBSKILLS.has(sName)) return 'blue';
     return 'white';
   }
 
@@ -3074,10 +3117,26 @@
     }
   } catch (e) {}
 
+  let _basePkmListRef = null;
+  let _basePkmListLen = 0;
+  let _basePkmIndex = null;
+
   function findBasePkm(idOrName) {
     const list = (typeof window !== 'undefined' && (window.allPokemons || (window.PokemonApp && window.PokemonApp.allPokemons))) || [];
     if (!idOrName) return list[0] || null;
-    return list.find(p => p.id === idOrName || p.name_cn === idOrName || p.name_en === idOrName) || list[0] || null;
+    if (_basePkmListRef !== list || _basePkmListLen !== list.length || !_basePkmIndex) {
+      _basePkmListRef = list;
+      _basePkmListLen = list.length;
+      _basePkmIndex = Object.create(null);
+      for (let i = 0; i < list.length; i++) {
+        const p = list[i];
+        if (!p) continue;
+        if (p.id !== undefined && _basePkmIndex[p.id] === undefined) _basePkmIndex[p.id] = p;
+        if (p.name_cn && _basePkmIndex[p.name_cn] === undefined) _basePkmIndex[p.name_cn] = p;
+        if (p.name_en && _basePkmIndex[p.name_en] === undefined) _basePkmIndex[p.name_en] = p;
+      }
+    }
+    return _basePkmIndex[idOrName] || list.find(p => p.id === idOrName || p.name_cn === idOrName || p.name_en === idOrName) || list[0] || null;
   }
 
   function getMainSkillMaxLvl(skillName) {
@@ -3768,20 +3827,28 @@
     const usedUids = new Set();
 
     function pickBest(candidates, role) {
-      const sorted = candidates
-        .filter(p => !usedUids.has(p.uid))
-        .sort((a, b) => scorePkm(b, role) - scorePkm(a, role));
-      if (sorted.length > 0 && scorePkm(sorted[0], role) > 0) {
-        usedUids.add(sorted[0].uid);
-        selected.push(sorted[0].uid);
-        return sorted[0];
+      let bestItem = null;
+      let bestScore = 0;
+      for (let i = 0; i < candidates.length; i++) {
+        const p = candidates[i];
+        if (!p || usedUids.has(p.uid)) continue;
+        const s = scorePkm(p, role);
+        if (s > bestScore) {
+          bestScore = s;
+          bestItem = p;
+        }
+      }
+      if (bestItem && bestScore > 0) {
+        usedUids.add(bestItem.uid);
+        selected.push(bestItem.uid);
+        return bestItem;
       }
       return null;
     }
 
     const healers = userBox.filter(p => {
       const b = findBasePkm(p.pokemonId || p.name);
-      const sk = (b && (b.main_skill || (b.skill && base.skill.name))) || p.main_skill || '';
+      const sk = (b && (b.main_skill || (b.skill && b.skill.name))) || p.main_skill || '';
       return sk.includes('活力療癒') || sk.includes('活力全體療癒') || sk.includes('Energy for Everyone');
     });
 
@@ -5053,147 +5120,8 @@
       loadBoxItem(activeList[0]);
     }
 
-    const currentPkm = pokemons.find(function (p) { return p.id === labState.selectedPkmId; }) || pokemons[0];
-    const boxItem = userBox.find(function (p) { return p.uid === labState.selectedBoxUid; }) || null;
-    const natures = (window.UserBox && window.UserBox.NATURE_DATA) || [];
-    const subskillPool = (window.UserBox && window.UserBox.SUBSKILLS_DATA) || [];
-
-    const isMint = !!(labState.cleanseMint || (boxItem && (boxItem.cleanseMint || boxItem.mint)));
-    const targetPkm = Object.assign({}, currentPkm, { cleanseMint: isMint });
-    const skillLvl = labState.skillLevel || (boxItem && (boxItem.skillLevel || boxItem.mainSkillLevel)) || 1;
-    const evaluation = evaluatePokemon(targetPkm, labState.level, labState.nature, labState.subskills, labState.ingredients, labState.ribbon, skillLvl, isMint);
-    const radarSVG = evaluation ? renderRadarChartSVG(evaluation.scores, 340, 310) : '';
-    const displayName = isEN ? (currentPkm.name_en || currentPkm.name_cn) : currentPkm.name_cn;
-    const specName = window.I18N ? window.I18N.getSpecialtyName(currentPkm.specialty) : currentPkm.specialty;
-
-    let specClass = 'spec-ingredient';
-    const rawSpec = currentPkm.specialty || '';
-    if (rawSpec.includes('樹果') || rawSpec === 'Berries') {
-      specClass = 'spec-berry';
-    } else if (rawSpec.includes('技能') || rawSpec === 'Skills') {
-      specClass = 'spec-skill';
-    }
-
-    const berryObj = (typeof window !== 'undefined' && window.getPokemonBerry) ? window.getPokemonBerry(currentPkm) : (currentPkm.berry || {});
-    const berryIconHtml = berryObj && berryObj.icon 
-      ? '<img src="' + berryObj.icon + '" alt="' + escapeHtml(berryObj.name || '') + '" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;" loading="lazy">' 
-      : '';
-    const berryName = berryObj && berryObj.name ? (window.I18N ? window.I18N.getBerryName(berryObj.name) : berryObj.name) : '';
-    const specialtyIconHtml = (window.I18N && window.I18N.getSpecialtyIconHtml) 
-      ? window.I18N.getSpecialtyIconHtml(currentPkm.specialty, 16) 
-      : '<span class="box-spec-tag ' + specClass + '" style="font-size:11px;padding:1px 6px;">' + specName + '</span>';
-
-    const rawMainSkill = (currentPkm && currentPkm.main_skill) || (currentPkm && currentPkm.skill && currentPkm.skill.name) || '';
-    const mainSkillName = rawMainSkill ? (window.I18N ? window.I18N.getMainSkillName(rawMainSkill) : rawMainSkill) : (isEN ? 'Main Skill' : '主技能');
-    const maxSkillLvl = getMainSkillMaxLvl(rawMainSkill);
-    const natureDisplayName = window.I18N ? window.I18N.getNatureName(labState.nature) : labState.nature;
-    const natureObj = natures.find(function (n) { return n.name === labState.nature; });
-    let labNatureEffectHtml = '';
-    if (isMint) {
-      labNatureEffectHtml = `
-        <div class="nature-effects-group">
-          <div class="nature-effect-neutral nature-effect-mint">
-            ${isEN ? 'Has no distinctive personality traits (Cleanse Mint used)' : '沒有性格帶來的特色（使用淨白薄荷消除個性效果）'}
-          </div>
-        </div>
-      `;
-    } else if (natureObj && natureObj.buff && natureObj.buff !== '無增減') {
-      const rawBuff = isEN ? (natureObj.buff_en || natureObj.buff) : natureObj.buff;
-      const rawDebuff = isEN ? (natureObj.debuff_en || natureObj.debuff) : natureObj.debuff;
-      const buffLabel = rawBuff.replace(/[▲▼]/g, '').trim();
-      const debuffLabel = rawDebuff.replace(/[▲▼]/g, '').trim();
-      labNatureEffectHtml = `
-        <div class="nature-effects-group">
-          <div class="nature-effect-row nature-buff-row">
-            <span class="nature-effect-label">${escapeHtml(buffLabel)}</span>
-            <span class="nature-arrows-up">▲▲</span>
-          </div>
-          <div class="nature-effect-row nature-debuff-row">
-            <span class="nature-effect-label">${escapeHtml(debuffLabel)}</span>
-            <span class="nature-arrows-down">▼▼</span>
-          </div>
-        </div>
-      `;
-    } else {
-      labNatureEffectHtml = `
-        <div class="nature-effects-group">
-          <div class="nature-effect-neutral">
-            ${isEN ? 'Has no distinctive personality traits' : '沒有性格帶來的特色（無影響）'}
-          </div>
-        </div>
-      `;
-    }
-
-    const baseFreq = currentPkm.base_frequency || currentPkm.frequency || 0;
-    const ribbonBonus = evaluation && evaluation.ribbonBonus ? evaluation.ribbonBonus : { carry: 0, speedDiscount: 0 };
-    const carryLimitVal = (currentPkm.carry_limit || currentPkm.carry) 
-      ? ((parseInt(currentPkm.carry_limit || currentPkm.carry, 10) || 10) + (ribbonBonus ? ribbonBonus.carry : 0)) 
-      : '';
-    function formatSecs(sec) {
-      if (!sec || isNaN(sec)) return '';
-      const m = Math.floor(sec / 60);
-      const s = Math.floor(sec % 60);
-      return m + 'm ' + (s < 10 ? '0' : '') + s + 's';
-    }
-    const helpIntervalFormatted = baseFreq 
-      ? (isEN ? formatSecs(baseFreq) : (Math.floor(baseFreq / 60) + '分' + (baseFreq % 60 ? (baseFreq % 60 + '秒') : ''))) 
-      : '';
-
-    // 食材選項
-    const baseIngList = (currentPkm && currentPkm.ingredients && currentPkm.ingredients.length > 0)
-      ? currentPkm.ingredients
-      : [{ name: '特選蘋果' }];
-    const ingA = baseIngList[0] || { name: '特選蘋果' };
-    const ingB = baseIngList[1] || ingA;
-    const ingC = baseIngList[2] || ingB || ingA;
-    const uniqueLv1 = [ingA];
-    const uniqueLv30 = Array.from(new Set([ingA.name, ingB.name])).map(n => baseIngList.find(i => i.name === n) || { name: n });
-    const uniqueLv60 = Array.from(new Set([ingA.name, ingB.name, ingC.name])).map(n => baseIngList.find(i => i.name === n) || { name: n });
-
-    // 睡飽飽獎章動態效果文案 (依據寶可夢進化次數，去除非必要的XXX小時文字，只保留效果)
-    const ribbonEvos = getRemainingEvolutions(currentPkm);
-    let ribbonOpt2 = isEN ? '+3 Carry Limit · Speed Boost' : '+3 持有上限 · 幫速加成';
-    let ribbonOpt3 = isEN ? '+6 Carry Limit' : '+6 持有上限';
-    let ribbonOpt4 = isEN ? '+8 Carry Limit · Max Speed Boost' : '+8 持有上限 · 幫速最大加成';
-    if (ribbonEvos === 2) {
-      ribbonOpt2 = isEN ? '+3 Carry Limit · Speed -11%' : '+3 持有上限 · 幫速加成 -11%';
-      ribbonOpt4 = isEN ? '+8 Carry Limit · Speed -25%' : '+8 持有上限 · 幫速最大加成 -25%';
-    } else if (ribbonEvos === 1) {
-      ribbonOpt2 = isEN ? '+3 Carry Limit · Speed -5%' : '+3 持有上限 · 幫速加成 -5%';
-      ribbonOpt4 = isEN ? '+8 Carry Limit · Speed -12%' : '+8 持有上限 · 幫速最大加成 -12%';
-    } else {
-      ribbonOpt2 = isEN ? '+3 Carry Limit' : '+3 持有上限';
-      ribbonOpt4 = isEN ? '+8 Carry Limit' : '+8 持有上限';
-    }
-    const ribbonBase = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
-
-
-    // 副技能平鋪選擇盤晶片 HTML (修改模式使用)
-    const usedSkills = new Set(labState.subskills.filter(Boolean));
-    const subskillTiers = [
-      { tier: 'gold', label: isEN ? 'Gold Skills' : '金色頂級技能', labelClass: 'gold-label' },
-      { tier: 'blue', label: isEN ? 'Blue Skills' : '藍色高階技能', labelClass: 'blue-label' },
-      { tier: 'white', label: isEN ? 'White Skills' : '白色基礎技能', labelClass: 'white-label' }
-    ];
-    const paletteSectionsHtml = subskillTiers.map(function (t) {
-      const skillsInTier = subskillPool.filter(function (s) { return s.tier === t.tier; });
-      const chipsHtml = skillsInTier.map(function (sk) {
-        const skDisplayName = window.I18N ? window.I18N.getSubSkillName(sk.name) : sk.name;
-        const isUsed = usedSkills.has(sk.name);
-        return `
-          <button type="button" class="box-subskill-chip subskill-${t.tier} ${isUsed ? 'in-use' : ''}" data-name="${escapeHtml(sk.name)}" ${isUsed ? 'disabled' : ''} onclick="window.AppraisalLab.onSubskillChipSelect('${escapeHtml(sk.name)}')" title="${escapeHtml(skDisplayName)}${isUsed ? (isEN ? ' (Already Selected)' : '（已選用）') : ''}">
-            <span>${escapeHtml(skDisplayName)}</span>
-            ${isUsed ? '<span style="font-size:10px;opacity:0.8;margin-left:2px;">[✓]</span>' : ''}
-          </button>
-        `;
-      }).join('');
-      return `
-        <div class="subskill-tier-section">
-          <div class="subskill-tier-label ${t.labelClass}">${t.label}</div>
-          <div class="subskill-chips-row">${chipsHtml}</div>
-        </div>
-      `;
-    }).join('');
+    const currentPkm = findBasePkm(labState.selectedPkmId) || pokemons[0];
+    // Spec icon helper reference for subviews: getSpecialtyIconHtml(currentPkm.specialty, 16)
 
     // Auto populate team if empty
     if (labState.teamSlots.every(s => !s) && userBox.length > 0) {

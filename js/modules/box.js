@@ -652,12 +652,37 @@
     }
   }
 
-  /* ─── 獲取寶可夢基礎資訊 ─────────────────────────────────── */
+  /* ─── 獲取寶可夢基礎資訊 (O(1) 預索引快取) ─────────────────── */
+  let _boxPkmRefObj = null;
+  let _boxPkmRefLen = 0;
+  let _boxPkmIndexMap = null;
+
   function findPokemonBase(idOrName) {
     if (!allPokemonsRef || allPokemonsRef.length === 0) return null;
+    if (idOrName === undefined || idOrName === null || idOrName === '') return null;
+    if (_boxPkmRefObj !== allPokemonsRef || _boxPkmRefLen !== allPokemonsRef.length || !_boxPkmIndexMap) {
+      _boxPkmRefObj = allPokemonsRef;
+      _boxPkmRefLen = allPokemonsRef.length;
+      _boxPkmIndexMap = Object.create(null);
+      for (let i = 0; i < allPokemonsRef.length; i++) {
+        const p = allPokemonsRef[i];
+        if (!p) continue;
+        if (p.id !== undefined) _boxPkmIndexMap[String(p.id)] = p;
+        if (p.formatted_no) _boxPkmIndexMap[String(p.formatted_no)] = p;
+        if (p.name_cn) _boxPkmIndexMap[p.name_cn] = p;
+        if (p.name_en) _boxPkmIndexMap[p.name_en] = p;
+        if (p.name && typeof p.name === 'object') {
+          if (p.name.cn) _boxPkmIndexMap[p.name.cn] = p;
+          if (p.name.en) _boxPkmIndexMap[p.name.en] = p;
+          if (p.name.jp) _boxPkmIndexMap[p.name.jp] = p;
+        }
+      }
+    }
+    const key = String(idOrName);
+    if (_boxPkmIndexMap[key]) return _boxPkmIndexMap[key];
     return allPokemonsRef.find(p => 
-      String(p.id) === String(idOrName) ||
-      p.formatted_no === String(idOrName) ||
+      String(p.id) === key ||
+      p.formatted_no === key ||
       (p.name && (p.name.cn === idOrName || p.name.en === idOrName || p.name.jp === idOrName)) ||
       p.name_cn === idOrName ||
       p.name_en === idOrName
@@ -665,17 +690,40 @@
   }
 
   /* ─── RaenonX 級潛力 PR 評分演算法 (含核心及格線快速檢驗與 Lv.70/80 覆蓋) ─── */
+  const _boxPrCache = Object.create(null);
+  let _boxPrCacheCount = 0;
+
   function calculatePokemonPR(pkm, baseData = null) {
+    if (!pkm) return { pr: 0, tier: 'C', tierBadgeClass: 'pr-tier-c', summaryNote: '', score: 0 };
     const base = baseData || findPokemonBase(pkm.pokemonId || pkm.name);
     const specialty = (base && base.specialty) || pkm.specialty || '樹果';
     const nature = pkm.nature || '坦率';
     const subskills = pkm.subskills || [];
 
     const isMint = !!(pkm && (pkm.cleanseMint || pkm.mint));
-    const natureObj = NATURE_DATA.find(n => n.name === nature) || { buffType: 'none', debuffType: 'none' };
+    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+    const lab = (typeof window !== 'undefined' && window.AppraisalLab) || (typeof AppraisalLab !== 'undefined' ? AppraisalLab : null);
+    const hasLab = !!(lab && typeof lab.evaluatePokemon === 'function' && base);
+
+    const prCacheKey = ((base && (base.id || base.name_cn)) || pkm.pokemonId || pkm.name || '') +
+      ':' + specialty +
+      ':' + (pkm.level || 30) +
+      ':' + nature +
+      ':' + (Array.isArray(subskills) ? subskills.join('|') : '') +
+      ':' + (pkm.ing1 || '') + ',' + (pkm.ing2 || '') + ',' + (pkm.ing3 || '') +
+      ':' + (pkm.ribbon || 0) +
+      ':' + (pkm.skillLevel || pkm.mainSkillLevel || '') +
+      ':' + (isMint ? 1 : 0) +
+      ':' + (isEN ? 'en' : 'zh') +
+      ':' + (hasLab ? 1 : 0);
+
+    if (_boxPrCache[prCacheKey]) {
+      return _boxPrCache[prCacheKey];
+    }
+
+    const natureObj = (typeof NATURE_DICT !== 'undefined' && NATURE_DICT[nature]) || NATURE_DATA.find(n => n.name === nature) || { buffType: 'none', debuffType: 'none' };
     const buff = isMint ? 'none' : natureObj.buffType;
     const debuff = isMint ? 'none' : natureObj.debuffType;
-    const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
 
     // 前三格核心技能 (Lv.10, Lv.25, Lv.50)
     const earlySubskills = subskills.slice(0, 3);
@@ -734,13 +782,20 @@
       let failScore = 15;
       if (earlySubskills.length > 0) failScore += 10;
       let pr = Math.min(42, Math.max(12, failScore));
-      return {
+      const failRes = {
         pr,
         tier: pr >= 30 ? 'B' : 'C',
         tierBadgeClass: pr >= 30 ? 'pr-tier-b' : 'pr-tier-c',
         summaryNote: `[!] ${baselineFailReason}`,
         score: failScore
       };
+      if (_boxPrCacheCount > 2500) {
+        for (const k in _boxPrCache) delete _boxPrCache[k];
+        _boxPrCacheCount = 0;
+      }
+      _boxPrCache[prCacheKey] = failRes;
+      _boxPrCacheCount++;
+      return failRes;
     }
 
     // ─── 階段 2：及格線以上的高階精確評分 (覆蓋 Lv.10, 25, 50, 70, 80) ───
@@ -857,7 +912,6 @@
     }
 
     // 4. AppraisalLab 雙軌評分與升級里程碑整合 (Dual-Track Rating & Milestone Projection)
-    const lab = (typeof window !== 'undefined' && window.AppraisalLab) || (typeof AppraisalLab !== 'undefined' ? AppraisalLab : null);
     let currentGrade = tier;
     let currentScore = pr;
     let potentialGrade = tier;
@@ -878,13 +932,13 @@
     };
 
     let appResult = null;
-    if (lab && typeof lab.evaluatePokemon === 'function' && base) {
+    if (hasLab) {
       const currentLv = parseInt(pkm.level, 10) || 30;
       const subArr = pkm.subskills || [];
       const ingArr = [pkm.ing1, pkm.ing2, pkm.ing3].filter(Boolean);
       const ribLvl = parseInt(pkm.ribbon, 10) || 0;
       const skLvl = getEffectiveSkillLevel(pkm, base);
-      appResult = lab.evaluatePokemon(base, currentLv, pkm.nature, subArr, ingArr, ribLvl, skLvl);
+      appResult = lab.evaluatePokemon(base, currentLv, pkm.nature, subArr, ingArr, ribLvl, skLvl, isMint);
       if (appResult) {
         currentGrade = (appResult.current && appResult.current.grade) || appResult.grade;
         currentScore = (appResult.current && appResult.current.compositeScore) || appResult.compositeScore;
@@ -910,7 +964,7 @@
       summaryNote = isEN ? 'Solid baseline starter' : '及格主力，基礎能力扎實';
     }
 
-    return {
+    const finalRes = {
       pr,
       tier,
       tierBadgeClass,
@@ -926,11 +980,19 @@
       highlights,
       score: Math.round(score * 10) / 10
     };
+    if (_boxPrCacheCount > 2500) {
+      for (const k in _boxPrCache) delete _boxPrCache[k];
+      _boxPrCacheCount = 0;
+    }
+    _boxPrCache[prCacheKey] = finalRes;
+    _boxPrCacheCount++;
+    return finalRes;
   }
 
   /* ─── 渲染倉庫清單 ─────────────────────────────────────── */
   function getFilteredBox() {
     const typeToBerry = getTypeToBerry();
+    const q = currentSearch ? currentSearch.toLowerCase().trim() : '';
 
     return userBox.filter(p => {
       const base = findPokemonBase(p.pokemonId || p.name);
@@ -1002,8 +1064,7 @@
       }
 
       // 6. 搜尋文字 (中/英/暱稱/性格/副技能/圖鑑編號)
-      if (currentSearch) {
-        const q = currentSearch.toLowerCase().trim();
+      if (q) {
         const nameCN = (p.name || (base && base.name_cn) || '').toLowerCase();
         const nameEN = ((base && base.name_en) || '').toLowerCase();
         const nickname = (p.nickname || '').toLowerCase();
@@ -3169,21 +3230,30 @@
       sampleCanvas = document.createElement('canvas');
       sampleCanvas.width = w;
       sampleCanvas.height = h;
-      sCtx = sampleCanvas.getContext('2d');
+      sCtx = sampleCanvas.getContext('2d', { willReadFrequently: true }) || sampleCanvas.getContext('2d');
       sCtx.drawImage(img, 0, 0, w, h);
 
-      // 動態偵測白色卡片頂部邊界 (cardTop)
+      // 動態偵測白色卡片頂部邊界 (cardTop) - 單次批次讀取像素區塊取代逐列 getImageData
       let cardTop = Math.round(h * 0.05);
       try {
-        for (let y = Math.round(h * 0.02); y < Math.round(h * 0.16); y++) {
-          const rowData = sCtx.getImageData(Math.round(w * 0.3), y, Math.round(w * 0.4), 1).data;
+        const topScanStartY = Math.round(h * 0.02);
+        const topScanEndY = Math.round(h * 0.16);
+        const topScanH = Math.max(1, topScanEndY - topScanStartY);
+        const topScanX = Math.round(w * 0.3);
+        const topScanW = Math.max(1, Math.round(w * 0.4));
+        const topBulkData = sCtx.getImageData(topScanX, topScanStartY, topScanW, topScanH).data;
+        const topRowStride = topScanW * 4;
+        for (let row = 0; row < topScanH; row++) {
+          const rowOffset = row * topRowStride;
+          const rowEnd = Math.min(rowOffset + topRowStride, topBulkData.length);
+          if (rowEnd <= rowOffset) break;
           let whiteCount = 0;
-          const total = rowData.length / 4;
-          for (let i = 0; i < rowData.length; i += 4) {
-            if (rowData[i] > 230 && rowData[i + 1] > 230 && rowData[i + 2] > 220) whiteCount++;
+          const total = (rowEnd - rowOffset) >> 2;
+          for (let i = rowOffset; i < rowEnd; i += 4) {
+            if (topBulkData[i] > 230 && topBulkData[i + 1] > 230 && topBulkData[i + 2] > 220) whiteCount++;
           }
-          if (whiteCount / total > 0.70) {
-            cardTop = y;
+          if (total > 0 && whiteCount / total > 0.70) {
+            cardTop = topScanStartY + row;
             break;
           }
         }
@@ -3217,25 +3287,30 @@
         }
       });
 
-      // 動態黃色邊界偵測 (動態適應主技能說明長度導致之卡片高度拉伸)
+      // 動態黃色邊界偵測 (單次批次讀取像素區塊取代逐列 getImageData)
       const scanStartY = Math.round(h * 0.49);
       const scanEndY = Math.round(h * 0.58);
+      const scanH = Math.max(1, scanEndY - scanStartY);
       const scanStartX = Math.round(w * 0.34);
       const scanEndX = Math.round(w * 0.51);
-      const scanW = scanEndX - scanStartX;
+      const scanW = Math.max(1, scanEndX - scanStartX);
 
-      for (let y = scanStartY; y < scanEndY; y++) {
-        const rowData = sCtx.getImageData(scanStartX, y, scanW, 1).data;
+      const botBulkData = sCtx.getImageData(scanStartX, scanStartY, scanW, scanH).data;
+      const botRowStride = scanW * 4;
+      for (let row = 0; row < scanH; row++) {
+        const rowOffset = row * botRowStride;
+        const rowEnd = Math.min(rowOffset + botRowStride, botBulkData.length);
+        if (rowEnd <= rowOffset) break;
         let yellowCount = 0;
-        const total = rowData.length / 4;
-        for (let i = 0; i < rowData.length; i += 4) {
-          const r = rowData[i], g = rowData[i + 1], b = rowData[i + 2];
+        const total = (rowEnd - rowOffset) >> 2;
+        for (let i = rowOffset; i < rowEnd; i += 4) {
+          const r = botBulkData[i], g = botBulkData[i + 1], b = botBulkData[i + 2];
           if (r > 180 && g > 130 && g < 220 && b < 120 && (r - b > 70)) {
             yellowCount++;
           }
         }
-        if (yellowCount / total > 0.50) {
-          meta.cardBotY = y;
+        if (total > 0 && yellowCount / total > 0.50) {
+          meta.cardBotY = scanStartY + row;
           break;
         }
       }
@@ -3300,7 +3375,7 @@
       const dh = Math.max(10, Math.round(sh * scale));
       c.width = dw;
       c.height = dh;
-      const ctx = c.getContext('2d');
+      const ctx = c.getContext('2d', { willReadFrequently: true }) || c.getContext('2d');
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(img, sx, sy, sw, sh, 0, 0, dw, dh);
@@ -3432,6 +3507,12 @@
       curY += headerHeight;
       compCtx.drawImage(part.canvas, 20, curY);
       curY += part.canvas.height + padding;
+      part.canvas.width = 0;
+      part.canvas.height = 0;
+    }
+    if (sampleCanvas) {
+      sampleCanvas.width = 0;
+      sampleCanvas.height = 0;
     }
 
     return { compositeCanvas: compCanvas, rgbSlots, meta };
@@ -3488,7 +3569,7 @@
 
     for (const [bad, good] of OCR_CONFUSION_MAP) {
       if (str.includes(bad)) {
-        str = str.replace(new RegExp(bad, 'g'), good);
+        str = str.replaceAll(bad, good);
       }
     }
     return str;
@@ -4465,7 +4546,7 @@
         userBox = Array.isArray(remoteBox) ? remoteBox : [];
         try {
           if (typeof localStorage !== 'undefined') {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(userBox));
+            localStorage.setItem(STORAGE_KEY, newHash);
           }
         } catch (e) {}
         renderBox();

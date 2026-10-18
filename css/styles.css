@@ -33270,6 +33270,8 @@ body.mobile-h5-app *::-webkit-scrollbar {
   position: relative;
   transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
   box-sizing: border-box;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 110px;
 }
 
 .wiki-item-card:hover {

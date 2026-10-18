@@ -1932,8 +1932,14 @@
     ['點擊', '点击']
   ];
 
+  const _t2sCache = Object.create(null);
+  let _t2sCacheCount = 0;
+
   function toSimplifiedChinese(str) {
     if (!str || typeof str !== 'string') return str;
+    if (str.length <= 400 && _t2sCache[str] !== undefined) {
+      return _t2sCache[str];
+    }
     let res = str;
     for (let i = 0; i < T2S_PHRASES.length; i++) {
       const pair = T2S_PHRASES[i];
@@ -1945,6 +1951,14 @@
     for (let i = 0; i < res.length; i++) {
       const ch = res[i];
       out += T2S_INDEX[ch] || ch;
+    }
+    if (str.length <= 400) {
+      if (_t2sCacheCount > 4000) {
+        for (const k in _t2sCache) delete _t2sCache[k];
+        _t2sCacheCount = 0;
+      }
+      _t2sCache[str] = out;
+      _t2sCacheCount++;
     }
     return out;
   }
@@ -2006,10 +2020,9 @@
         const wikiPanel = document.getElementById('panel-wiki');
         if (wikiPanel) {
           window.WikiDB.renderWikiLayout(wikiPanel);
-          // 重新渲染後執行必要的計算
+          // 重新渲染後執行必要的計算（renderWikiLayout 已包含座標天梯渲染，無須重複 refreshCoordinateLadder）
           if (typeof window.WikiDB.recalcTriggerChance === 'function') window.WikiDB.recalcTriggerChance();
           if (typeof window.WikiDB.recalcSleepDays === 'function') window.WikiDB.recalcSleepDays();
-          if (typeof window.WikiDB.refreshCoordinateLadder === 'function') window.WikiDB.refreshCoordinateLadder();
         }
       } else if (window.WikiDB && typeof window.WikiDB.init === 'function') {
         window.WikiDB.init();
@@ -2049,6 +2062,29 @@
       .replace(/\s+/g, ' ');
   }
 
+  function compactSearchKey(str) {
+    if (!str || typeof str !== 'string') return '';
+    return str.replace(/\s+/g, '').replace(/（/g, '(').replace(/）/g, ')').replace(/恢/g, '回');
+  }
+
+  function ensureDictIndex(dict) {
+    if (dict.__normIndex && dict.__compactIndex) return;
+    const normIdx = Object.create(null);
+    const compactIdx = Object.create(null);
+    for (const key in dict) {
+      if (!Object.prototype.hasOwnProperty.call(dict, key)) continue;
+      const val = dict[key];
+      const nKey = normalizeSearchKey(key);
+      if (nKey && normIdx[nKey] === undefined) normIdx[nKey] = val;
+      const cKey = compactSearchKey(key);
+      if (cKey && compactIdx[cKey] === undefined) compactIdx[cKey] = val;
+    }
+    try {
+      Object.defineProperty(dict, '__normIndex', { value: normIdx, enumerable: false, configurable: true });
+      Object.defineProperty(dict, '__compactIndex', { value: compactIdx, enumerable: false, configurable: true });
+    } catch (e) {}
+  }
+
   function lookupBilingualDict(dict, query, lang = currentLang) {
     if (!query || !dict) return null;
     const str = String(query).trim();
@@ -2065,25 +2101,23 @@
     }
 
     // Level 1: 直接精確命中 (Direct Fast Match)
-    if (dict[str]) {
+    if (dict[str] !== undefined) {
       return getResultFromVal(dict[str]);
     }
 
-    // Level 2: 標點符號與括號正規化比對 (Normalized Match)
+    // 建立或讀取 O(1) 預索引表 (Pre-indexed O(1) Lookup Maps)
+    ensureDictIndex(dict);
+
+    // Level 2: 標點符號與括號正規化比對 (O(1) Normalized Match)
     const normTarget = normalizeSearchKey(str);
-    for (const key in dict) {
-      if (normalizeSearchKey(key) === normTarget) {
-        return getResultFromVal(dict[key]);
-      }
+    if (dict.__normIndex && dict.__normIndex[normTarget] !== undefined) {
+      return getResultFromVal(dict.__normIndex[normTarget]);
     }
 
-    // Level 3: 緊湊無視空格比對 (Compact Match without Whitespace)
-    const compactTarget = str.replace(/\s+/g, '').replace(/（/g, '(').replace(/）/g, ')').replace(/恢/g, '回');
-    for (const key in dict) {
-      const compactKey = key.replace(/\s+/g, '').replace(/（/g, '(').replace(/）/g, ')').replace(/恢/g, '回');
-      if (compactKey === compactTarget) {
-        return getResultFromVal(dict[key]);
-      }
+    // Level 3: 緊湊無視空格比對 (O(1) Compact Match without Whitespace)
+    const compactTarget = compactSearchKey(str);
+    if (dict.__compactIndex && dict.__compactIndex[compactTarget] !== undefined) {
+      return getResultFromVal(dict.__compactIndex[compactTarget]);
     }
 
     if (lang === 'zh-CN') {
@@ -2313,7 +2347,17 @@
     return trimmed;
   }
 
-  const POKEMON_NAMES = {"妙蛙種子":"Bulbasaur","妙蛙草":"Ivysaur","妙蛙花":"Venusaur","小火龍":"Charmander","火恐龍":"Charmeleon","噴火龍":"Charizard","傑尼龜":"Squirtle","卡咪龜":"Wartortle","水箭龜":"Blastoise","綠毛蟲":"Caterpie","鐵甲蛹":"Metapod","巴大蝶":"Butterfree","小拉達":"Rattata","拉達":"Raticate","阿柏蛇":"Ekans","阿柏怪":"Arbok","皮丘":"Pichu","皮卡丘":"Pikachu","皮卡丘（萬聖節）":"Pikachu (Halloween)","皮卡丘（佳節）":"Pikachu (Holiday)","皮卡丘（船長）":"Pikachu (Captain)","雷丘":"Raichu","穿山鼠":"Sandshrew","穿山王":"Sandslash","皮寶寶":"Cleffa","皮皮":"Clefairy","皮可西":"Clefable","六尾":"Vulpix","六尾（阿羅拉的樣子）":"Vulpix (Alolan Form)","九尾":"Ninetales","九尾（阿羅拉的樣子）":"Ninetales (Alolan Form)","寶寶丁":"Igglybuff","胖丁":"Jigglypuff","胖可丁":"Wigglytuff","地鼠":"Diglett","三地鼠":"Dugtrio","喵喵":"Meowth","貓老大":"Persian","可達鴨":"Psyduck","哥達鴨":"Golduck","猴怪":"Mankey","火爆猴":"Primeape","卡蒂狗":"Growlithe","風速狗":"Arcanine","喇叭芽":"Bellsprout","口呆花":"Weepinbell","大食花":"Victreebel","小拳石":"Geodude","隆隆石":"Graveler","隆隆岩":"Golem","呆呆獸":"Slowpoke","呆殼獸":"Slowbro","呆呆王":"Slowking","小磁怪":"Magnemite","三合一磁怪":"Magneton","自爆磁怪":"Magnezone","大蔥鴨":"Farfetch'd","嘟嘟":"Doduo","嘟嘟利":"Dodrio","鬼斯":"Gastly","鬼斯通":"Haunter","耿鬼":"Gengar","大岩蛇":"Onix","大鋼蛇":"Steelix","大綱蛇":"Steelix","卡拉卡拉":"Cubone","嘎啦嘎啦":"Marowak","小福蛋":"Happiny","吉利蛋":"Chansey","幸福蛋":"Blissey","袋獸":"Kangaskhan","魔尼尼":"Mime Jr.","魔牆人偶":"Mr. Mime","凱羅斯":"Pinsir","百變怪":"Ditto","伊布":"Eevee","伊布（佳節）":"Eevee (Holiday)","伊布（萬聖節）":"Eevee (Halloween)","伊布家族（8種進化）":"Eevee Evolutions (8 Forms)","伊布家族":"Eevee Evolutions","水伊布":"Vaporeon","雷伊布":"Jolteon","火伊布":"Flareon","太陽伊布":"Espeon","月亮伊布":"Umbreon","葉伊布":"Leafeon","冰伊布":"Glaceon","仙子伊布":"Sylveon","迷你龍":"Dratini","哈克龍":"Dragonair","快龍":"Dragonite","超夢":"Mewtwo","夢幻":"Mew","菊草葉":"Chikorita","月桂葉":"Bayleef","大竺葵":"Meganium","火球鼠":"Cyndaquil","火岩鼠":"Quilava","火爆獸":"Typhlosion","小鋸鱷":"Totodile","藍鱷":"Croconaw","大力鱷":"Feraligatr","波克比":"Togepi","波克基古":"Togetic","波克基斯":"Togekiss","天然雀":"Natu","天然鳥":"Xatu","咩利羊":"Mareep","茸茸羊":"Flaaffy","電龍":"Ampharos","盆才怪":"Bonsly","樹才怪":"Sudowoodo","烏波":"Wooper","烏波（阿羅拉的樣子）":"Wooper (Paldea Form)","烏波（帕底亞的樣子）":"Wooper (Paldea Form)","沼王":"Quagsire","土王":"Clodsire","黑暗鴉":"Murkrow","烏鴉頭頭":"Honchkrow","小果然":"Wynaut","果然翁":"Wobbuffet","壺壺":"Shuckle","赫拉克羅斯":"Heracross","狃拉":"Sneasel","瑪狃拉":"Weavile","信使鳥":"Delibird","戴魯比":"Houndour","黑魯加":"Houndoom","雷公":"Raikou","炎帝":"Entei","水君":"Suicune","幼基拉斯":"Larvitar","沙基拉斯":"Pupitar","班基拉斯":"Tyranitar","木守宮":"Treecko","森林蜥蜴":"Grovyle","蜥蜴王":"Sceptile","火稚雞":"Torchic","力壯雞":"Combusken","火焰雞":"Blaziken","水躍魚":"Mudkip","沼躍魚":"Marshtomp","巨沼怪":"Swampert","拉魯拉絲":"Ralts","奇鲁莉安":"Kirlia","沙奈朵":"Gardevoir","艾路雷朵":"Gallade","懶人獺":"Slakoth","過動猿":"Vigoroth","請假王":"Slaking","勾魂眼":"Sableye","大嘴娃":"Mawile","可可多拉":"Aron","可多拉":"Lairon","波士可多拉":"Aggron","正電拍拍":"Plusle","負電拍拍":"Minun","溶食獸":"Gulpin","吞食獸":"Swalot","大顎蟻":"Trapinch","超音波幼蟲":"Vibrava","沙漠蜻蜓":"Flygon","青綿鳥":"Swablu","七夕青鳥":"Altaria","怨影娃娃":"Shuppet","詛咒娃娃":"Banette","阿勃梭魯":"Absol","海豹球":"Spheal","海豹球（佳節）":"Spheal (Holiday)","海魔獅":"Sealeo","帝牙海獅":"Walrein","寶貝龍":"Bagon","甲殼龍":"Shelgon","暴飛龍":"Salamence","拉帝亞斯":"Latias","拉帝歐斯":"Latios","草苗龜":"Turtwig","樹林龜":"Grotle","土台龜":"Torterra","小火焰猴":"Chimchar","猛火猴":"Monferno","烈焰猴":"Infernape","波加曼":"Piplup","波皇子":"Prinplup","帝王拿波":"Empoleon","小貓怪":"Shinx","勒克貓":"Luxio","倫琴貓":"Luxray","飄飄球":"Drifloon","隨風球":"Drifblim","花岩怪":"Spiritomb","利歐路":"Riolu","路卡利歐":"Lucario","不良蛙":"Croagunk","毒骷蛙":"Toxicroak","雪笠怪":"Snover","暴雪王":"Abomasnow","克雷色利亞":"Cresselia","達克萊伊":"Darkrai","食夢夢":"Munna","夢夢蝕":"Musharna","石居蟹":"Dwebble","岩殿居蟹":"Crustle","毛頭小鷹":"Rufflet","勇士雄鷹":"Braviary","寶寶暴龍":"Tyrunt","怪顎龍":"Tyrantrum","摔角鷹人":"Hawlucha","咚咚鼠":"Dedenne","南瓜精":"Pumpkaboo","南瓜怪人":"Gourgeist","南瓜精 (小顆種)":"Pumpkaboo (Small Variety)","南瓜精 (中顆種)":"Pumpkaboo (Medium Variety)","南瓜精 (大顆種)":"Pumpkaboo (Large Variety)","南瓜精 (巨顆種)":"Pumpkaboo (Jumbo Variety)","南瓜怪人 (小顆種)":"Gourgeist (Small Variety)","南瓜怪人 (中顆種)":"Gourgeist (Medium Variety)","南瓜怪人 (大顆種)":"Gourgeist (Large Variety)","南瓜怪人 (巨顆種)":"Gourgeist (Jumbo Variety)","嗡蝠":"Noibat","音波龍":"Noivern","強顎雞母蟲":"Grubbin","蟲電寶":"Charjabug","鍬農炮蟲":"Vikavolt","萌虻":"Cutiefly","蝶結萌虻":"Ribombee","童偶熊":"Stufful","穿著熊":"Bewear","花療環環":"Comfey","托戈德瑪爾":"Togedemaru","謎擬Q":"Mimikyu","老翁龍":"Drampa","古月鳥":"Cramorant","毒電嬰":"Toxel","顫弦蠑螈（高調的樣子）":"Toxtricity (Amped Form)","顫弦蠑螈（低調的樣子）":"Toxtricity (Low Key Form)","新葉喵":"Sprigatito","蒂蕾喵":"Floragato","魔幻假面喵":"Meowscarada","呆火鱷":"Fuecoco","炙燙鱷":"Crocalor","骨紋巨聲鱷":"Skeledirge","潤水鴨":"Quaxly","湧躍鴨":"Quaxwell","狂歡浪舞鴨":"Quaquaval","布撥":"Pawmi","布土撥":"Pawmo","巴布土撥":"Pawmot","小鍛匠":"Tinkatink","巧鍛匠":"Tinkatuff","巨鍛匠":"Tinkaton","哎呀球菇":"Foongus","敗露球菇":"Amoonguss","走鯨":"Cetoddle","浩大鯨":"Cetitan"};
+  const POKEMON_NAMES = {"妙蛙種子":"Bulbasaur","妙蛙草":"Ivysaur","妙蛙花":"Venusaur","小火龍":"Charmander","火恐龍":"Charmeleon","噴火龍":"Charizard","傑尼龜":"Squirtle","卡咪龜":"Wartortle","水箭龜":"Blastoise","綠毛蟲":"Caterpie","鐵甲蛹":"Metapod","巴大蝶":"Butterfree","小拉達":"Rattata","拉達":"Raticate","阿柏蛇":"Ekans","阿柏怪":"Arbok","皮丘":"Pichu","皮卡丘":"Pikachu","皮卡丘（萬聖節）":"Pikachu (Halloween)","皮卡丘（佳節）":"Pikachu (Holiday)","皮卡丘（船長）":"Pikachu (Captain)","雷丘":"Raichu","穿山鼠":"Sandshrew","穿山王":"Sandslash","皮寶寶":"Cleffa","皮皮":"Clefairy","皮可西":"Clefable","六尾":"Vulpix","六尾（阿羅拉的樣子）":"Vulpix (Alolan Form)","九尾":"Ninetales","九尾（阿羅拉的樣子）":"Ninetales (Alolan Form)","寶寶丁":"Igglybuff","胖丁":"Jigglypuff","胖可丁":"Wigglytuff","地鼠":"Diglett","三地鼠":"Dugtrio","喵喵":"Meowth","貓老大":"Persian","可達鴨":"Psyduck","哥達鴨":"Golduck","猴怪":"Mankey","火爆猴":"Primeape","卡蒂狗":"Growlithe","風速狗":"Arcanine","喇叭芽":"Bellsprout","口呆花":"Weepinbell","大食花":"Victreebel","小拳石":"Geodude","隆隆石":"Graveler","隆隆岩":"Golem","呆呆獸":"Slowpoke","呆殼獸":"Slowbro","呆呆王":"Slowking","小磁怪":"Magnemite","三合一磁怪":"Magneton","自爆磁怪":"Magnezone","大蔥鴨":"Farfetch'd","嘟嘟":"Doduo","嘟嘟利":"Dodrio","鬼斯":"Gastly","鬼斯通":"Haunter","耿鬼":"Gengar","大岩蛇":"Onix","大鋼蛇":"Steelix","大綱蛇":"Steelix","卡拉卡拉":"Cubone","嘎啦嘎啦":"Marowak","小福蛋":"Happiny","吉利蛋":"Chansey","幸福蛋":"Blissey","袋獸":"Kangaskhan","魔尼尼":"Mime Jr.","魔牆人偶":"Mr. Mime","凱羅斯":"Pinsir","百變怪":"Ditto","伊布":"Eevee","伊布（佳節）":"Eevee (Holiday)","伊布（萬聖節）":"Eevee (Halloween)","伊布家族（8種進化）":"Eevee Evolutions (8 Forms)","伊布家族":"Eevee Evolutions","水伊布":"Vaporeon","雷伊布":"Jolteon","火伊布":"Flareon","太陽伊布":"Espeon","月亮伊布":"Umbreon","葉伊布":"Leafeon","冰伊布":"Glaceon","仙子伊布":"Sylveon","迷你龍":"Dratini","哈克龍":"Dragonair","快龍":"Dragonite","超夢":"Mewtwo","夢幻":"Mew","菊草葉":"Chikorita","月桂葉":"Bayleef","大竺葵":"Meganium","火球鼠":"Cyndaquil","火岩鼠":"Quilava","火爆獸":"Typhlosion","小鋸鱷":"Totodile","藍鱷":"Croconaw","大力鱷":"Feraligatr","波克比":"Togepi","波克基古":"Togetic","波克基斯":"Togekiss","天然雀":"Natu","天然鳥":"Xatu","咩利羊":"Mareep","茸茸羊":"Flaaffy","電龍":"Ampharos","盆才怪":"Bonsly","樹才怪":"Sudowoodo","烏波":"Wooper","烏波（阿羅拉的樣子）":"Wooper (Paldea Form)","烏波（帕底亞的樣子）":"Wooper (Paldea Form)","沼王":"Quagsire","土王":"Clodsire","黑暗鴉":"Murkrow","烏鴉頭頭":"Honchkrow","夢妖":"Misdreavus","夢妖魔":"Mismagius","小果然":"Wynaut","果然翁":"Wobbuffet","壺壺":"Shuckle","赫拉克羅斯":"Heracross","狃拉":"Sneasel","瑪狃拉":"Weavile","信使鳥":"Delibird","戴魯比":"Houndour","黑魯加":"Houndoom","雷公":"Raikou","炎帝":"Entei","水君":"Suicune","幼基拉斯":"Larvitar","沙基拉斯":"Pupitar","班基拉斯":"Tyranitar","木守宮":"Treecko","森林蜥蜴":"Grovyle","蜥蜴王":"Sceptile","火稚雞":"Torchic","力壯雞":"Combusken","火焰雞":"Blaziken","水躍魚":"Mudkip","沼躍魚":"Marshtomp","巨沼怪":"Swampert","拉魯拉絲":"Ralts","奇鲁莉安":"Kirlia","沙奈朵":"Gardevoir","艾路雷朵":"Gallade","懶人獺":"Slakoth","過動猿":"Vigoroth","請假王":"Slaking","勾魂眼":"Sableye","大嘴娃":"Mawile","可可多拉":"Aron","可多拉":"Lairon","波士可多拉":"Aggron","正電拍拍":"Plusle","負電拍拍":"Minun","溶食獸":"Gulpin","吞食獸":"Swalot","大顎蟻":"Trapinch","超音波幼蟲":"Vibrava","沙漠蜻蜓":"Flygon","青綿鳥":"Swablu","七夕青鳥":"Altaria","怨影娃娃":"Shuppet","詛咒娃娃":"Banette","阿勃梭魯":"Absol","海豹球":"Spheal","海豹球（佳節）":"Spheal (Holiday)","海魔獅":"Sealeo","帝牙海獅":"Walrein","寶貝龍":"Bagon","甲殼龍":"Shelgon","暴飛龍":"Salamence","拉帝亞斯":"Latias","拉帝歐斯":"Latios","草苗龜":"Turtwig","樹林龜":"Grotle","土台龜":"Torterra","小火焰猴":"Chimchar","猛火猴":"Monferno","烈焰猴":"Infernape","波加曼":"Piplup","波皇子":"Prinplup","帝王拿波":"Empoleon","小貓怪":"Shinx","勒克貓":"Luxio","倫琴貓":"Luxray","飄飄球":"Drifloon","隨風球":"Drifblim","花岩怪":"Spiritomb","利歐路":"Riolu","路卡利歐":"Lucario","不良蛙":"Croagunk","毒骷蛙":"Toxicroak","雪笠怪":"Snover","暴雪王":"Abomasnow","克雷色利亞":"Cresselia","達克萊伊":"Darkrai","食夢夢":"Munna","夢夢蝕":"Musharna","石居蟹":"Dwebble","岩殿居蟹":"Crustle","毛頭小鷹":"Rufflet","勇士雄鷹":"Braviary","寶寶暴龍":"Tyrunt","怪顎龍":"Tyrantrum","摔角鷹人":"Hawlucha","咚咚鼠":"Dedenne","南瓜精":"Pumpkaboo","南瓜怪人":"Gourgeist","南瓜精 (小顆種)":"Pumpkaboo (Small Variety)","南瓜精 (中顆種)":"Pumpkaboo (Medium Variety)","南瓜精 (大顆種)":"Pumpkaboo (Large Variety)","南瓜精 (巨顆種)":"Pumpkaboo (Jumbo Variety)","南瓜怪人 (小顆種)":"Gourgeist (Small Variety)","南瓜怪人 (中顆種)":"Gourgeist (Medium Variety)","南瓜怪人 (大顆種)":"Gourgeist (Large Variety)","南瓜怪人 (巨顆種)":"Gourgeist (Jumbo Variety)","嗡蝠":"Noibat","音波龍":"Noivern","強顎雞母蟲":"Grubbin","蟲電寶":"Charjabug","鍬農炮蟲":"Vikavolt","萌虻":"Cutiefly","蝶結萌虻":"Ribombee","童偶熊":"Stufful","穿著熊":"Bewear","花療環環":"Comfey","托戈德瑪爾":"Togedemaru","謎擬Q":"Mimikyu","老翁龍":"Drampa","古月鳥":"Cramorant","毒電嬰":"Toxel","顫弦蠑螈（高調的樣子）":"Toxtricity (Amped Form)","顫弦蠑螈（低調的樣子）":"Toxtricity (Low Key Form)","新葉喵":"Sprigatito","蒂蕾喵":"Floragato","魔幻假面喵":"Meowscarada","呆火鱷":"Fuecoco","炙燙鱷":"Crocalor","骨紋巨聲鱷":"Skeledirge","潤水鴨":"Quaxly","湧躍鴨":"Quaxwell","狂歡浪舞鴨":"Quaquaval","布撥":"Pawmi","布土撥":"Pawmo","巴布土撥":"Pawmot","小鍛匠":"Tinkatink","巧鍛匠":"Tinkatuff","巨鍛匠":"Tinkaton","哎呀球菇":"Foongus","敗露球菇":"Amoonguss","走鯨":"Cetoddle","浩大鯨":"Cetitan"};
+
+  // 預排序與預建立英文對照快取，避免於每次呼叫時重複排序與建構陣列
+  const SORTED_POKEMON_NAMES_KEYS = Object.keys(POKEMON_NAMES).sort((a, b) => b.length - a.length);
+  const ITEM_NAMES_EN_ENTRIES = Object.entries(ITEM_NAMES).filter(([, item]) => item && item['en-US']);
+  const INGREDIENT_NAMES_EN_ENTRIES = Object.entries(INGREDIENT_NAMES).filter(([, item]) => item && item['en-US']);
+  const ISLAND_NAMES_EN_ENTRIES = Object.entries(ISLAND_NAMES).filter(([, item]) => item && item['en-US']);
+  const TYPE_NAMES_EN_ENTRIES = Object.entries(TYPE_NAMES).filter(([, item]) => item && item['en-US']);
+  let _allPkmEnMapRef = null;
+  let _allPkmEnMapLen = 0;
+  let _allPkmEnMap = null;
 
   function getPokemonName(name) {
     if (!name) return '';
@@ -2326,7 +2370,7 @@
     if (currentLang === 'zh-CN') return toSimplifiedChinese(str);
     if (currentLang !== 'en-US') return str;
 
-    // Level 1 & 2 & 3 字典比對
+    // Level 1 & 2 & 3 字典比對 (O(1))
     const direct = lookupBilingualDict(POKEMON_NAMES, str, 'en-US');
     if (direct) return direct;
 
@@ -2338,10 +2382,26 @@
       return `${baseName} ${suffix}`;
     }
 
-    // Level 5: 搜尋全域陣列備援
+    // Level 5: 搜尋全域陣列備援 (O(1) 預索引快取)
     if (typeof window !== 'undefined' && Array.isArray(window.allPokemons)) {
-      const found = window.allPokemons.find(p => p.name_cn === str || p.name === str || normalizeSearchKey(p.name_cn) === normalizeSearchKey(str));
-      if (found && found.name_en) return found.name_en;
+      if (_allPkmEnMapRef !== window.allPokemons || _allPkmEnMapLen !== window.allPokemons.length || !_allPkmEnMap) {
+        _allPkmEnMapRef = window.allPokemons;
+        _allPkmEnMapLen = window.allPokemons.length;
+        _allPkmEnMap = Object.create(null);
+        for (let i = 0; i < window.allPokemons.length; i++) {
+          const p = window.allPokemons[i];
+          if (!p || !p.name_en) continue;
+          if (p.name_cn) {
+            _allPkmEnMap[p.name_cn] = p.name_en;
+            _allPkmEnMap[normalizeSearchKey(p.name_cn)] = p.name_en;
+          }
+          if (p.name && typeof p.name === 'string') {
+            _allPkmEnMap[p.name] = p.name_en;
+          }
+        }
+      }
+      const mapped = _allPkmEnMap[str] || _allPkmEnMap[normalizeSearchKey(str)];
+      if (mapped) return mapped;
     }
 
     return str;
@@ -2353,10 +2413,16 @@
     return res || String(subskill).trim();
   }
 
+  const _dynTextEnCache = Object.create(null);
+  let _dynTextEnCacheCount = 0;
+
   function translateDynamicText(text) {
     if (!text || typeof text !== 'string') return text;
     if (currentLang === 'zh-CN') return toSimplifiedChinese(text);
     if (currentLang !== 'en-US') return text;
+    if (text.length <= 500 && _dynTextEnCache[text] !== undefined) {
+      return _dynTextEnCache[text];
+    }
 
     let res = text;
 
@@ -2494,30 +2560,32 @@
       .replace(/夢之碎片獲取/g, 'Dream Shard Magnet ');
 
     // 8. 替換道具名稱 (糖果, 薰香, 夢之塊, 沙布蕾)
-    for (const [cn, item] of Object.entries(ITEM_NAMES)) {
-      if (item['en-US']) {
+    for (let i = 0; i < ITEM_NAMES_EN_ENTRIES.length; i++) {
+      const [cn, item] = ITEM_NAMES_EN_ENTRIES[i];
+      if (res.includes(cn)) {
         res = res.replaceAll(cn, item['en-US']);
       }
     }
 
     // 9. 替換食材與島嶼名稱
-    for (const [cn, item] of Object.entries(INGREDIENT_NAMES)) {
-      if (item['en-US']) {
+    for (let i = 0; i < INGREDIENT_NAMES_EN_ENTRIES.length; i++) {
+      const [cn, item] = INGREDIENT_NAMES_EN_ENTRIES[i];
+      if (res.includes(cn)) {
         res = res.replaceAll(cn, item['en-US']);
       }
     }
-    for (const [cn, item] of Object.entries(ISLAND_NAMES)) {
-      if (item['en-US']) {
+    for (let i = 0; i < ISLAND_NAMES_EN_ENTRIES.length; i++) {
+      const [cn, item] = ISLAND_NAMES_EN_ENTRIES[i];
+      if (res.includes(cn)) {
         res = res.replaceAll(cn, item['en-US']);
       }
     }
 
-    // 10. 替換 247 隻寶可夢名稱 (由長至短依序取代，避免前綴衝突)
-    const sortedPkmNames = Object.keys(POKEMON_NAMES).sort((a, b) => b.length - a.length);
-    for (const cn of sortedPkmNames) {
-      const en = POKEMON_NAMES[cn];
-      if (en) {
-        res = res.replaceAll(cn, en);
+    // 10. 替換寶可夢名稱 (由長至短依序取代，避免前綴衝突)
+    for (let i = 0; i < SORTED_POKEMON_NAMES_KEYS.length; i++) {
+      const cn = SORTED_POKEMON_NAMES_KEYS[i];
+      if (res.includes(cn)) {
+        res = res.replaceAll(cn, POKEMON_NAMES[cn]);
       }
     }
 
@@ -2527,8 +2595,9 @@
       .replace(/（(.+?)屬性）/g, ' ($1 Type)')
       .replace(/\((.+?)屬性\)/g, ' ($1 Type)');
 
-    for (const [cn, item] of Object.entries(TYPE_NAMES)) {
-      if (item['en-US']) {
+    for (let i = 0; i < TYPE_NAMES_EN_ENTRIES.length; i++) {
+      const [cn, item] = TYPE_NAMES_EN_ENTRIES[i];
+      if (res.includes(cn)) {
         res = res.replaceAll(cn + ' Type', item['en-US'] + ' Type');
         res = res.replaceAll(cn + '屬性', item['en-US'] + ' Type');
         res = res.replaceAll(cn + '屬性的幫手寶可夢', item['en-US'] + '-type Helper Pokémon');
@@ -2571,7 +2640,16 @@
       .replace(/「\s*/g, '"')
       .replace(/\s*」/g, '"');
 
-    return res.trim();
+    const out = res.trim();
+    if (text.length <= 500) {
+      if (_dynTextEnCacheCount > 3000) {
+        for (const k in _dynTextEnCache) delete _dynTextEnCache[k];
+        _dynTextEnCacheCount = 0;
+      }
+      _dynTextEnCache[text] = out;
+      _dynTextEnCacheCount++;
+    }
+    return out;
   }
 
   function updatePageTranslations() {
@@ -2637,6 +2715,9 @@
     return currentLang === 'en-US' ? shortenSkillName(full) : full;
   }
 
+  let _itemsDataRef = null;
+  let _itemsDataIndex = null;
+
   function getItemName(item) {
     if (!item) return '';
     if (typeof item === 'object') {
@@ -2645,7 +2726,21 @@
       }
     }
     if (typeof window !== 'undefined' && Array.isArray(window.ITEMS_DATA)) {
-      const match = window.ITEMS_DATA.find(x => x.id === item || (x.name && (x.name['zh-TW'] === item || x.name['zh-CN'] === item || x.name['en-US'] === item)));
+      if (_itemsDataRef !== window.ITEMS_DATA || !_itemsDataIndex) {
+        _itemsDataRef = window.ITEMS_DATA;
+        _itemsDataIndex = Object.create(null);
+        for (let i = 0; i < window.ITEMS_DATA.length; i++) {
+          const x = window.ITEMS_DATA[i];
+          if (!x) continue;
+          if (x.id) _itemsDataIndex[x.id] = x;
+          if (x.name) {
+            if (x.name['zh-TW']) _itemsDataIndex[x.name['zh-TW']] = x;
+            if (x.name['zh-CN']) _itemsDataIndex[x.name['zh-CN']] = x;
+            if (x.name['en-US']) _itemsDataIndex[x.name['en-US']] = x;
+          }
+        }
+      }
+      const match = _itemsDataIndex[item];
       if (match && match.name) {
         return match.name[currentLang] || match.name['zh-TW'] || match.name['en-US'] || '';
       }

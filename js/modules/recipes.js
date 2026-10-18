@@ -357,10 +357,11 @@
       '沙拉': isEN ? 'Salads' : '沙拉',
       '甜點': isEN ? 'Desserts' : (isCN ? '甜点' : '甜點')
     };
-    const catCounts  = {};
-    categories.slice(1).forEach(cat => {
-      catCounts[cat] = allRecipes.filter(r => r.category === cat).length;
-    });
+    const catCounts  = { '咖哩': 0, '沙拉': 0, '甜點': 0 };
+    for (let i = 0; i < allRecipes.length; i++) {
+      const c = allRecipes[i].category;
+      if (catCounts[c] !== undefined) catCounts[c]++;
+    }
 
     categoryContainer.innerHTML = categories.map(cat => {
       const count = cat === 'ALL' ? allRecipes.length : (catCounts[cat] || 0);
@@ -798,42 +799,56 @@
 
   /* ─── 篩選 + 排序 ───────────────────────────────────── */
   function getFilteredRecipes() {
-    return allRecipes
-      .filter(recipe => {
-        if (selectedCategory !== 'ALL' && recipe.category !== selectedCategory) return false;
-        if (minBonus > 0 && (recipe.bonus_pct || 0) < minBonus) return false;
-        if (minPot   > 0 && (recipe.pot_size   || 0) < minPot)  return false;
-        if (currentSearch) {
-          const nameCN   = (recipe.name_cn || '').toLowerCase();
-          const nameEN   = (recipe.name_en || '').toLowerCase();
-          const ingMatch = recipe.ingredients.some(ing => ing.name.toLowerCase().includes(currentSearch));
-          if (!nameCN.includes(currentSearch) && !nameEN.includes(currentSearch) && !ingMatch) return false;
-        }
-        if (selectedIngredients.size > 0) {
-          const recipeIngNames = recipe.ingredients.map(i => i.name);
-          if (matchMode === 'all') {
-            if (![...selectedIngredients].every(name => recipeIngNames.includes(name))) return false;
-          } else {
-            if (!recipeIngNames.some(name => selectedIngredients.has(name))) return false;
+    const hasSelectedIngs = selectedIngredients.size > 0;
+    const hasExcludedIngs = excludedIngredients.size > 0;
+    const selectedIngArr  = hasSelectedIngs ? [...selectedIngredients] : null;
+
+    const filtered = allRecipes.filter(recipe => {
+      if (selectedCategory !== 'ALL' && recipe.category !== selectedCategory) return false;
+      if (minBonus > 0 && (recipe.bonus_pct || 0) < minBonus) return false;
+      if (minPot   > 0 && (recipe.pot_size   || 0) < minPot)  return false;
+      if (!recipe._ingNameSet) {
+        recipe._ingNameSet = new Set(recipe.ingredients.map(i => i.name));
+        recipe._searchStr = ((recipe.name_cn || '') + ' ' + (recipe.name_en || '') + ' ' + recipe.ingredients.map(i => i.name).join(' ')).toLowerCase();
+      }
+      if (currentSearch && !recipe._searchStr.includes(currentSearch)) return false;
+      if (hasSelectedIngs) {
+        if (matchMode === 'all') {
+          for (let i = 0; i < selectedIngArr.length; i++) {
+            if (!recipe._ingNameSet.has(selectedIngArr[i])) return false;
           }
+        } else {
+          let anyMatch = false;
+          for (let i = 0; i < selectedIngArr.length; i++) {
+            if (recipe._ingNameSet.has(selectedIngArr[i])) { anyMatch = true; break; }
+          }
+          if (!anyMatch) return false;
         }
-        if (excludedIngredients.size > 0) {
-          const recipeIngNames = recipe.ingredients.map(i => i.name);
-          if (recipeIngNames.some(name => excludedIngredients.has(name))) return false;
+      }
+      if (hasExcludedIngs) {
+        for (const exName of excludedIngredients) {
+          if (recipe._ingNameSet.has(exName)) return false;
         }
-        return true;
-      })
-      .sort((a, b) => {
-        const eA = calcEnergy(a.base_energy, recipeLevel, islandBonus, eventBonus);
-        const eB = calcEnergy(b.base_energy, recipeLevel, islandBonus, eventBonus);
-        if (sortOption === 'energy-desc')  return eB - eA;
-        if (sortOption === 'energy-asc')   return eA - eB;
-        if (sortOption === 'pot-asc')      return a.pot_size - b.pot_size;
-        if (sortOption === 'pot-desc')     return b.pot_size - a.pot_size;
-        if (sortOption === 'bonus-desc')   return (b.bonus_pct || 0) - (a.bonus_pct || 0);
-        if (sortOption === 'name-asc')     return a.name_cn.localeCompare(b.name_cn, 'zh-TW');
-        return 0;
-      });
+      }
+      return true;
+    });
+
+    if (sortOption === 'energy-desc' || sortOption === 'energy-asc') {
+      for (let i = 0; i < filtered.length; i++) {
+        const r = filtered[i];
+        r._cachedEnergy = calcEnergy(r.base_energy, recipeLevel, islandBonus, eventBonus);
+      }
+    }
+
+    return filtered.sort((a, b) => {
+      if (sortOption === 'energy-desc')  return b._cachedEnergy - a._cachedEnergy;
+      if (sortOption === 'energy-asc')   return a._cachedEnergy - b._cachedEnergy;
+      if (sortOption === 'pot-asc')      return a.pot_size - b.pot_size;
+      if (sortOption === 'pot-desc')     return b.pot_size - a.pot_size;
+      if (sortOption === 'bonus-desc')   return (b.bonus_pct || 0) - (a.bonus_pct || 0);
+      if (sortOption === 'name-asc')     return a.name_cn.localeCompare(b.name_cn, 'zh-TW');
+      return 0;
+    });
   }
 
   /* ─── Badge 輔助 ────────────────────────────────────── */

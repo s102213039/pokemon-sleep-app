@@ -386,6 +386,7 @@
     if (!Array.isArray(remoteList) || remoteList.length === 0) return localList.slice();
 
     const merged = [];
+    const uidToIndex = new Map();
     const seenUids = new Set();
     const seenFingerprints = new Set();
 
@@ -393,6 +394,7 @@
     remoteList.forEach(item => {
       if (item && item.uid) {
         seenUids.add(item.uid);
+        uidToIndex.set(item.uid, merged.length);
       }
       const fp = getPokemonFingerprint(item);
       if (fp) seenFingerprints.add(fp);
@@ -405,8 +407,8 @@
       const fp = getPokemonFingerprint(item);
       if (item.uid && seenUids.has(item.uid)) {
         // UID 重複：比對時間戳記，若本機較新則替換
-        const existingIdx = merged.findIndex(m => m.uid === item.uid);
-        if (existingIdx !== -1) {
+        const existingIdx = uidToIndex.get(item.uid);
+        if (existingIdx !== undefined) {
           const remoteTime = merged[existingIdx].updatedAt || merged[existingIdx].createdAt || 0;
           const localTime = item.updatedAt || item.createdAt || 0;
           if (localTime > remoteTime) {
@@ -420,6 +422,7 @@
         if (!item.uid) {
           item.uid = 'pkm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
         }
+        uidToIndex.set(item.uid, merged.length);
         merged.push(item);
         seenUids.add(item.uid);
         if (fp) seenFingerprints.add(fp);

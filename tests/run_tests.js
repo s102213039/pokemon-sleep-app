@@ -9345,8 +9345,8 @@ test('Tier 4 - Real-World Application Scenarios', 'Fast Floating Tooltips, Pull-
     assert(appraisalJs.includes('function getSkillTier(sName)'), 'appraisal.js must define getSkillTier');
 
     // 2. Cache busters bumped to 20261002_07 or newer
-    assert(indexHtml.match(/js\/modules\/appraisal\.js\?v=202610(?:02_(?:0[7-9]|\d{2})|0[3-9]_\d{2})/), 'index.html must use v=20261002_07 or newer');
-    assert(appIndexHtml.match(/js\/modules\/appraisal\.js\?v=202610(?:02_(?:0[7-9]|\d{2})|0[3-9]_\d{2})/), 'app/index.html must use v=20261002_07 or newer');
+    assert(indexHtml.match(/js\/modules\/appraisal\.js\?v=202610(?:02_(?:0[7-9]|\d{2})|(?:0[3-9]|[1-3]\d)_\d{2})/), 'index.html must use v=20261002_07 or newer');
+    assert(appIndexHtml.match(/js\/modules\/appraisal\.js\?v=202610(?:02_(?:0[7-9]|\d{2})|(?:0[3-9]|[1-3]\d)_\d{2})/), 'app/index.html must use v=20261002_07 or newer');
 
     // 3. Execution in VM context
     const ctx = {
@@ -12248,6 +12248,62 @@ SP 4,316
       'styles.css must support Dawn theme');
     assert(stylesCode.includes('[data-theme="emerald"]') || stylesCode.includes('.theme-emerald'),
       'styles.css must support Emerald theme');
+  });
+
+  test('Tier 4 - Real-World Application Scenarios', 'Full-Stack Performance Optimization: O(1) Indices, Memoization, Bulk OCR ImageData & Zero Layout Thrashing', () => {
+    const i18nCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'i18n.js'), 'utf8');
+    const appraisalCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    const boxCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'box.js'), 'utf8');
+    const appCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'app.js'), 'utf8');
+    const wikiCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'wiki.js'), 'utf8');
+    const recipesCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'recipes.js'), 'utf8');
+    const newsCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'news.js'), 'utf8');
+    const cloudSyncCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'core', 'cloudSync.js'), 'utf8');
+    const buildWebappPy = fs.readFileSync(path.join(WORKSPACE_ROOT, 'scripts', 'build_webapp_data.py'), 'utf8');
+
+    // 1. i18n.js: Memoization & pre-indexed O(1) dictionary lookups
+    assert(i18nCode.includes('_t2sCache') && i18nCode.includes('SORTED_POKEMON_NAMES_KEYS'),
+      'i18n.js must memoize Traditional-to-Simplified conversion and pre-sort Pokemon keys once');
+    assert(i18nCode.includes('__normIndex') && i18nCode.includes('__compactIndex'),
+      'i18n.js lookupBilingualDict must lazily build O(1) normalized and compact Map indices');
+    assert(i18nCode.includes('_dynTextEnCache'),
+      'i18n.js translateDynamicText must cache translated English strings');
+
+    // 2. appraisal.js: Memoized evaluatePokemon, O(1) findBasePkm index, O(N) pickBest scan
+    assert(appraisalCode.includes('_evalPokemonCache') && appraisalCode.includes('_basePkmIndex'),
+      'appraisal.js must memoize evaluatePokemon and index base Pokemon in O(1) Map');
+    assert(appraisalCode.includes('_normIngCache') && appraisalCode.includes('ING_ALIASES_ENTRIES'),
+      'appraisal.js must pre-compute ingredient alias entries and memoize normalizeIngName');
+
+    // 3. box.js: Memoized calculatePokemonPR, O(1) findPokemonBase, bulk OCR getImageData
+    assert(boxCode.includes('_boxPrCache') && boxCode.includes('_boxPkmIndexMap'),
+      'box.js must memoize calculatePokemonPR and index base Pokemon in O(1) Map');
+    assert(boxCode.includes('willReadFrequently: true') && boxCode.includes('topScanStartY') && boxCode.includes('topScanH'),
+      'box.js buildOcrCompositeCanvas must use bulk getImageData reads with willReadFrequently hint');
+
+    // 4. app.js: 1D Int32Array Levenshtein, cached search metadata, deduplicated capture events
+    assert(appCode.includes('new Int32Array(m + 1)') && appCode.includes('_searchMeta'),
+      'app.js must use 1D Int32Array rolling buffer in levenshteinDistance and cache Pokemon _searchMeta');
+    assert(appCode.includes('_lastTouchStartEvt') && appCode.includes('_lastScrollEvt'),
+      'app.js initSkillTooltips must deduplicate dual window/document capture event handlers');
+
+    // 5. wiki.js: O(1) _getWikiPkmIndex, hoisted top5Threshold, batched getBoundingClientRect
+    assert(wikiCode.includes('_getWikiPkmIndex') && wikiCode.includes('_sleepStyleCache') && wikiCode.includes('_ladderNoteCache'),
+      'wiki.js must use O(1) Pokemon index Map and memoize sleep style & ladder note lookups');
+    assert(wikiCode.includes('const hostRect = els.host.getBoundingClientRect()') && wikiCode.includes('const shouldPin = hostRect.top <= pinTop + 0.5'),
+      'wiki.js applyIslandSpawnsCoordinator must batch DOM geometry reads before style writes');
+
+    // 6. recipes.js, news.js, cloudSync.js, build_webapp_data.py
+    assert(recipesCode.includes('_ingNameSet') && recipesCode.includes('_cachedEnergy'),
+      'recipes.js getFilteredRecipes must cache ingredient Sets and pre-compute energy before sorting');
+    assert(newsCode.includes('_cachedSchedule') && newsCode.includes('ISLAND_MAP_ENTRIES'),
+      'news.js must cache extractEventSchedule results on items and pre-compute translation entries');
+    assert(cloudSyncCode.includes('uidToIndex = new Map()'),
+      'cloudSync.js mergePokemonBoxes must use O(1) uidToIndex Map instead of O(N^2) findIndex');
+    const loopIdx = buildWebappPy.indexOf('for idx, r in enumerate(rows_ref):');
+    const specialIconsLoadIdx = buildWebappPy.indexOf("special_icons.json");
+    assert(specialIconsLoadIdx > 0 && specialIconsLoadIdx < loopIdx,
+      'build_webapp_data.py must load special_icons.json once before the rows_ref loop');
   });
 
 console.log('                   Test Results Summary');

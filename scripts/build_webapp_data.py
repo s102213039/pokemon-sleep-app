@@ -82,6 +82,15 @@ def format_pct_fixed(val):
     except ValueError:
         return val
 
+special_icons_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'special_icons.json')
+special_map = {}
+if os.path.exists(special_icons_file):
+    try:
+        with open(special_icons_file, 'r', encoding='utf-8') as sf:
+            special_map = json.load(sf)
+    except Exception:
+        pass
+
 for idx, r in enumerate(rows_ref):
     if idx < 3 or not r or len(r) < 8:
         continue
@@ -132,16 +141,6 @@ for idx, r in enumerate(rows_ref):
     is_final = sync.clean_val(r[sync.REF_MAPPING['最終']])
 
     icon_no = sync.format_no(no)
-    
-    # Check special icon mappings first
-    special_icons_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'special_icons.json')
-    special_map = {}
-    if os.path.exists(special_icons_file):
-        try:
-            with open(special_icons_file, 'r', encoding='utf-8') as sf:
-                special_map = json.load(sf)
-        except Exception:
-            pass
 
     pid_str = str(no)
     if pid_str in special_map:

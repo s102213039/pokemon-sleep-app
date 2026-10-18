@@ -154,6 +154,8 @@
 
   /* ─── 官方活動與禮包甘特圖時程 (Gantt Schedule Timeline) ─── */
   function extractEventSchedule(item) {
+    if (!item) return null;
+    if (item._cachedSchedule !== undefined) return item._cachedSchedule;
     let texts = [];
     if (item.sections) {
       item.sections.forEach(sec => {
@@ -197,13 +199,15 @@
     }
 
     if (earliestStart && latestEnd) {
-      return {
+      item._cachedSchedule = {
         startStr,
         endStr,
         startDate: earliestStart,
         endDate: latestEnd
       };
+      return item._cachedSchedule;
     }
+    item._cachedSchedule = null;
     return null;
   }
 
@@ -682,11 +686,12 @@
       notice: isEN ? 'Notices' : (isCN ? '重要通知' : '重要通知')
     };
 
-    // 計算各分類數量
-    const counts = { ALL: allNews.length };
-    CATEGORY_MAP.slice(1).forEach(cat => {
-      counts[cat.key] = allNews.filter(n => n.badge_key === cat.key).length;
-    });
+    // 計算各分類數量 (單次遍歷 O(N))
+    const counts = { ALL: allNews.length, event: 0, update: 0, maintenance: 0, notice: 0 };
+    for (let i = 0; i < allNews.length; i++) {
+      const bk = allNews[i].badge_key;
+      if (bk && counts[bk] !== undefined) counts[bk]++;
+    }
 
     newsCategoryContainer.innerHTML = CATEGORY_MAP.map(cat => {
       const active = cat.key === currentCategory ? 'active' : '';
@@ -1011,6 +1016,10 @@
     '料理效果': 'Cooking Bonus'
   };
 
+  const ISLAND_MAP_ENTRIES = Object.entries(ISLAND_MAP);
+  const GAME_ITEM_ENTRIES = Object.entries(GAME_ITEM_TRANSLATIONS);
+  let _sortedNewsPkmNames = null;
+
   const GAME_PHRASE_RULES = [
     // 禮包名稱模式
     [/「(.+?)同樂包([SML])?」/g, '"$1 Celebration Bundle$2"'],
@@ -1074,32 +1083,38 @@
       }
 
       // 1. 執行語句與通用模式替換
-      GAME_PHRASE_RULES.forEach(([regex, repl]) => {
-        processed = processed.replace(regex, repl);
-      });
+      for (let i = 0; i < GAME_PHRASE_RULES.length; i++) {
+        processed = processed.replace(GAME_PHRASE_RULES[i][0], GAME_PHRASE_RULES[i][1]);
+      }
 
       // 2. 翻譯營地 / 島嶼名稱
-      Object.keys(ISLAND_MAP).forEach(cn => {
+      for (let i = 0; i < ISLAND_MAP_ENTRIES.length; i++) {
+        const cn = ISLAND_MAP_ENTRIES[i][0];
         if (processed.includes(cn)) {
-          processed = processed.replaceAll(cn, ISLAND_MAP[cn]);
+          processed = processed.replaceAll(cn, ISLAND_MAP_ENTRIES[i][1]);
         }
-      });
+      }
 
       // 3. 翻譯遊戲道具與單位
-      Object.keys(GAME_ITEM_TRANSLATIONS).forEach(cn => {
+      for (let i = 0; i < GAME_ITEM_ENTRIES.length; i++) {
+        const cn = GAME_ITEM_ENTRIES[i][0];
         if (processed.includes(cn)) {
-          processed = processed.replaceAll(cn, GAME_ITEM_TRANSLATIONS[cn]);
+          processed = processed.replaceAll(cn, GAME_ITEM_ENTRIES[i][1]);
         }
-      });
+      }
 
       // 4. 翻譯寶可夢名稱 (長度由長至短依序取代，避免部分覆蓋)
       if (window.I18N && window.I18N.POKEMON_NAMES) {
-        const pkmNames = Object.keys(window.I18N.POKEMON_NAMES).sort((a, b) => b.length - a.length);
-        pkmNames.forEach(cn => {
+        if (!_sortedNewsPkmNames) {
+          _sortedNewsPkmNames = Object.keys(window.I18N.POKEMON_NAMES).sort((a, b) => b.length - a.length);
+        }
+        const pkmMap = window.I18N.POKEMON_NAMES;
+        for (let i = 0; i < _sortedNewsPkmNames.length; i++) {
+          const cn = _sortedNewsPkmNames[i];
           if (processed.includes(cn)) {
-            processed = processed.replaceAll(cn, window.I18N.POKEMON_NAMES[cn]);
+            processed = processed.replaceAll(cn, pkmMap[cn]);
           }
-        });
+        }
       }
 
       // 5. 標點符號與常見標籤規格化 (無 Emoji)
@@ -1139,8 +1154,9 @@
     debutList.forEach(name => {
       if (!name) return;
       const displayName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(name) : name;
-      const re = new RegExp(escapeRegExp(displayName), 'g');
-      formatted = formatted.replace(re, `<span class="hl-poke-new">${displayName}</span>`);
+      if (formatted.includes(displayName)) {
+        formatted = formatted.replaceAll(displayName, `<span class="hl-poke-new">${displayName}</span>`);
+      }
     });
 
     // 3. 焦點 / 機率提升寶可夢高亮（無 Emoji）
@@ -1148,8 +1164,9 @@
     featList.forEach(name => {
       if (!name || debutList.includes(name)) return;
       const displayName = (isEN && window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(name) : name;
-      const re = new RegExp(escapeRegExp(displayName), 'g');
-      formatted = formatted.replace(re, `<span class="hl-poke-feat">${displayName}</span>`);
+      if (formatted.includes(displayName)) {
+        formatted = formatted.replaceAll(displayName, `<span class="hl-poke-feat">${displayName}</span>`);
+      }
     });
 
     // 4. 關鍵倍率與數值高亮 (如 1.25倍, 2.5x, +1,000pt, 1,200鑽石, 3,000鑽石, 250鑽石, 1,200 Diamonds)
