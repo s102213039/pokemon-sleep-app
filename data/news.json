@@ -1,5 +1,42 @@
 [
   {
+    "id": "343535353533333839333531313431333737",
+    "url": "https://www.pokemonsleep.net/zh/news/343535353533333839333531313431333737/",
+    "date": "2026-10-19",
+    "category": "異常問題",
+    "badge_key": "notice",
+    "badge_label": "重要通知",
+    "badge_color": "#8b5cf6",
+    "title": "異常問題通知",
+    "title_en": "Known Issues Notification",
+    "overview_en": "Notification regarding known issues and recent bug fixes in the app.",
+    "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
+    "featured_pokemon": [],
+    "overview": "目前已確認到遊戲中發生了以下異常問題。",
+    "highlights": [
+      "異常問題通知",
+      "詳情請參閱官方公告內容與說明"
+    ],
+    "sections": [
+      {
+        "key": "general",
+        "title": "核心重點摘要",
+        "icon": "[Info]",
+        "items": [
+          "異常問題通知",
+          "詳情請參閱官方公告內容與說明"
+        ],
+        "title_en": "Core Highlights & Overview",
+        "items_en": [
+          "異常問題通知",
+          "詳情請參閱官方公告內容與說明"
+        ]
+      }
+    ],
+    "content_preview": "NEW\n\n異常問題\n\n2026/10/19\n2026/10/19 -->\n\n異常問題通知\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n目前已確認到遊戲中發生了以下異常問題。\n\n問題位置\n\n功能：\n\n主技能\n\n蹭蹭臉頰（活力療癒S）\n\n問題內容\n\n遊戲運作有誤。\n\n（於特定條件下發生）\n\n修復進度\n\n預定於今後更新時修正。\n\n造成各位玩家的不便，我們深感抱歉。\n\n今後也請繼續支持《Pokémon Sleep》。"
+  },
+  {
     "id": "343532353938363734303738333032323133",
     "url": "https://www.pokemonsleep.net/zh/news/343532353938363734303738333032323133/",
     "date": "2026-10-15",
@@ -1172,81 +1209,5 @@
       }
     ],
     "content_preview": "NEW\n\n通知\n\n2026/9/11\n2026/9/11 -->\n\n「好眠日限定包vol.39」介紹\n\n《Pokémon Sleep》將配合「好眠日」推出「好眠日限定包vol.39」！\n\n商品詳情\n\n銷售期間： 2026/9/25 4:00 ～ 2026/9/30 3:59\n\n商品內容：\n\n「好眠日限定包vol.39」（1,500鑽石）\n\n・超級沙布蕾×9\n\n・幸運薰香×2\n\n・成長薰香×2\n\n・專注薰香×2\n\n※僅限購買 1次 。"
-  },
-  {
-    "id": "343430323132353238383037353432373934",
-    "url": "https://www.pokemonsleep.net/zh/news/343430323132353238383037353432373934/",
-    "date": "2026-09-10",
-    "category": "通知",
-    "badge_key": "notice",
-    "badge_label": "重要通知",
-    "badge_color": "#8b5cf6",
-    "title": "【來獲得沙布蕾＆超夢的基因吧！】「超夢研究包vol.1」＆「超夢衝刺包vol.1」",
-    "title_en": "[Special Pack] Get Biscuits & Mewtwo Gene! Mewtwo Research Bundle Vol. 1 & Mewtwo Rush Bundle Vol. 1",
-    "overview_en": "Team up with researchers worldwide to explore the uncharted areas of Greengrass Isle and discover Mewtwo!",
-    "debut_pokemon": [],
-    "mid_rateup_pokemon": [],
-    "featured_pokemon": [
-      "超夢"
-    ],
-    "overview": "自活動第1週起推出的「超夢研究包vol.1」（S、M、L）裡，裝有可以在「秘境研究！追尋超夢吧」活動中 迎接超夢成為夥伴並且培育牠的道具 。",
-    "highlights": [
-      "銷售期間： 2026/9/14 4:00 ～ 2026/9/29 3:59",
-      "銷售期間： 2026/9/21 4:00 ～ 2026/9/29 3:59",
-      "超夢的糖果×40",
-      "「超夢研究包S vol.1」（250鑽石） ：寶可沙布蕾×4、友好薰香×1、超夢的基因×30",
-      "「超夢研究包M vol.1」（1,200鑽石） ：超級沙布蕾×6、好露營券×1、超夢的糖果×40、超夢的基因×120"
-    ],
-    "sections": [
-      {
-        "key": "schedule",
-        "title": "活動時間與營地",
-        "icon": "[Time]",
-        "items": [
-          "銷售期間： 2026/9/14 4:00 ～ 2026/9/29 3:59",
-          "銷售期間： 2026/9/21 4:00 ～ 2026/9/29 3:59"
-        ],
-        "title_en": "Event Schedule & Areas",
-        "items_en": [
-          "Sales Period: 2026/9/14 4:00 ～ 2026/9/29 3:59",
-          "Sales Period: 2026/9/21 4:00 ～ 2026/9/29 3:59"
-        ]
-      },
-      {
-        "key": "bonus",
-        "title": "核心獎勵與倍率加成",
-        "icon": "[Bonus]",
-        "items": [
-          "超夢的糖果×40"
-        ],
-        "title_en": "Core Bonuses & Multipliers",
-        "items_en": [
-          "Mewtwo的糖果×40"
-        ]
-      },
-      {
-        "key": "shop",
-        "title": "禮包與商城道具包一覽",
-        "icon": "[Shop]",
-        "items": [
-          "「超夢研究包S vol.1」（250鑽石） ：寶可沙布蕾×4、友好薰香×1、超夢的基因×30",
-          "「超夢研究包M vol.1」（1,200鑽石） ：超級沙布蕾×6、好露營券×1、超夢的糖果×40、超夢的基因×120",
-          "「超夢研究包L vol.1」（3,000鑽石） ：高級沙布蕾×3、超級沙布蕾×10、友好薰香×4、夢之塊M×2、超夢的糖果×100、超夢的基因×240",
-          "「超夢衝刺包S vol.1」（250鑽石） ：寶可沙布蕾×5、超夢的基因×50",
-          "「超夢衝刺包M vol.1」（600鑽石） ：超級沙布蕾×4、超夢的基因×125",
-          "「超夢衝刺包L vol.1」（1,500鑽石） ：高級沙布蕾×1、超級沙布蕾×10、超夢的基因×200"
-        ],
-        "title_en": "Bundles & Shop Items",
-        "items_en": [
-          "\"Mewtwo Research BundleS vol.1\" (250 Diamonds) ：Poké Biscuit×4, 友好薰香×1, Mewtwo Gene×30",
-          "\"Mewtwo Research BundleM vol.1\" (1,200 Diamonds) ：Great Biscuit×6, 好露營券×1, Mewtwo的糖果×40, Mewtwo Gene×120",
-          "\"Mewtwo Research BundleL vol.1\" (3,000 Diamonds) ：Ultra Biscuit×3, Great Biscuit×10, 友好薰香×4, Dream Cluster M×2, Mewtwo的糖果×100, Mewtwo Gene×240",
-          "\"Mewtwo Rush BundleS vol.1\" (250 Diamonds) ：Poké Biscuit×5, Mewtwo Gene×50",
-          "\"Mewtwo Rush BundleM vol.1\" (600 Diamonds) ：Great Biscuit×4, Mewtwo Gene×125",
-          "\"Mewtwo Rush BundleL vol.1\" (1,500 Diamonds) ：Ultra Biscuit×1, Great Biscuit×10, Mewtwo Gene×200"
-        ]
-      }
-    ],
-    "content_preview": "NEW\n\n通知\n\n2026/9/10\n2026/9/10 -->\n\n【來獲得沙布蕾＆超夢的基因吧！】「超夢研究包vol.1」＆「超夢衝刺包vol.1」\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n《Pokémon Sleep》將配合「秘境研究！追尋超夢吧」活動推出「超夢研究包vol.1」（S、M、L）和「超夢衝刺包vol.1」（S、M、L）！\n\n自活動第1週起推出的「超夢研究包vol.1」（S、M、L）裡，裝有可以在「秘境研究！追尋超夢吧」活動中 迎接超夢成為夥伴並且培育牠的道具 。\n\n此外，自活動第2週起將推出「超夢衝刺包vol.1」（S、M、L）。\n\n歡迎選購，讓它幫助您在活動的倒數1週作最後的衝刺！\n\n商品詳情\n\n超夢研究包\n\n銷售期間： 2026/9/14 4:00 ～ 2026/9/29..."
   }
 ]
