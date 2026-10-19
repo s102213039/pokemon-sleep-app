@@ -1622,6 +1622,8 @@
     return fallback;
   }
 
+  const _sigRecipeRecCache = Object.create(null);
+
   function getSignatureRecipeRecommendations(ingredients, isEN) {
     if (!ingredients || !Array.isArray(ingredients) || ingredients.length === 0) return '';
     const normIngs = Array.from(new Set(
@@ -1637,6 +1639,10 @@
     const pool = (typeof window !== 'undefined' && window.ALL_TOP_CATEGORY_RECIPES && window.ALL_TOP_CATEGORY_RECIPES.length > 0)
       ? window.ALL_TOP_CATEGORY_RECIPES
       : TARGET_TOP_RECIPES;
+
+    const cacheKey = (isEN ? '1:' : '0:') + pool.length + ':' + normIngs.join('|');
+    const cachedRec = _sigRecipeRecCache[cacheKey];
+    if (cachedRec !== undefined) return cachedRec;
 
     const scored = pool.map(function(recipe) {
       if (!recipe || !recipe.ingredients) return null;
@@ -1667,20 +1673,26 @@
       return b.score - a.score;
     });
 
-    if (scored.length === 0) return '';
+    if (scored.length === 0) {
+      _sigRecipeRecCache[cacheKey] = '';
+      return '';
+    }
 
     const top1 = scored[0];
     const top2 = scored.length > 1 ? scored[1] : null;
 
+    let res = '';
     if (top2 && top2.name_cn !== top1.name_cn) {
-      return isEN
+      res = isEN
         ? `Target recipes: prime pipeline for "${top1.name_en}" & "${top2.name_en}".`
         : `直通頂尖料理『${top1.name_cn}』與『${top2.name_cn}』關鍵供料。`;
     } else {
-      return isEN
+      res = isEN
         ? `Target recipe: prime pipeline for "${top1.name_en}".`
         : `直通頂尖料理『${top1.name_cn}』關鍵供料。`;
     }
+    _sigRecipeRecCache[cacheKey] = res;
+    return res;
   }
 
   /* ─── 智能深度簡評生成引擎 (Intelligent Appraisal Summary Engine) ─── */
@@ -2121,18 +2133,25 @@
   }
 
   /* ─── 升級成本精算 ─────────────────────────────────────── */
+  const _milestoneCostCache = Object.create(null);
+
   function calculateMilestoneCost(fromLv, targetLv, nature) {
     if (fromLv >= targetLv) {
       return { exp: 0, candies: 0, shards: 0, handyCandyS: 0, handyCandyM: 0 };
     }
 
+    const expMod = (nature && nature.buffType === 'exp') ? 'up' : ((nature && nature.debuffType === 'exp') ? 'down' : 'neutral');
+    const costKey = fromLv + ':' + targetLv + ':' + expMod;
+    const cachedCost = _milestoneCostCache[costKey];
+    if (cachedCost) return cachedCost;
+
     const startExp = EXP_MILESTONES[fromLv] || (fromLv * 100);
     const endExp = EXP_MILESTONES[targetLv] || (targetLv * 500);
     let expDiff = Math.max(endExp - startExp, 0);
 
-    if (nature && nature.buffType === 'exp') {
+    if (expMod === 'up') {
       expDiff = Math.round(expDiff * 0.82);
-    } else if (nature && nature.debuffType === 'exp') {
+    } else if (expMod === 'down') {
       expDiff = Math.round(expDiff * 1.18);
     }
 
@@ -2141,13 +2160,15 @@
     const endShards = SHARD_MILESTONES[targetLv] || (targetLv * 1200);
     const shardsNeeded = Math.max(endShards - startShards, 0);
 
-    return {
+    const res = {
       exp: expDiff,
       candies: candiesNeeded,
       shards: shardsNeeded,
       handyCandyS: Math.ceil(candiesNeeded / 3),
       handyCandyM: Math.ceil(candiesNeeded / 20)
     };
+    _milestoneCostCache[costKey] = res;
+    return res;
   }
 
   /* ─── 原生 SVG 六維雷達圖生成器 (完美對稱正規六邊形 + 頂點直接標註分數) ───────────────────────── */

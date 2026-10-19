@@ -15927,17 +15927,31 @@
     els.card.style.width = hostRect.width + 'px';
   }
 
+  let _islandCoordRafId = 0;
+
+  function scheduleIslandSpawnsCoordinator() {
+    if (_islandCoordRafId) return;
+    if (typeof requestAnimationFrame === 'function') {
+      _islandCoordRafId = requestAnimationFrame(function () {
+        _islandCoordRafId = 0;
+        applyIslandSpawnsCoordinator();
+      });
+    } else {
+      applyIslandSpawnsCoordinator();
+    }
+  }
+
   function consumeIslandSpawnsNestedDy(dy) {
     const els = getIslandSpawnsCoordinatorEls();
     if (!els.scroller || !els.wrap || !els.card || !dy) return;
     if (!els.card.classList.contains('is-spawns-pinned')) {
       els.scroller.scrollTop += dy;
-      applyIslandSpawnsCoordinator();
+      scheduleIslandSpawnsCoordinator();
       return;
     }
     if (els.wrap.scrollTop <= 0 && dy < 0) {
       els.scroller.scrollTop += dy;
-      applyIslandSpawnsCoordinator();
+      scheduleIslandSpawnsCoordinator();
     }
   }
 
@@ -15973,8 +15987,8 @@
     const els = getIslandSpawnsCoordinatorEls();
     if (els.scroller && els.scroller.dataset.spawnsCoordinatorBound !== '1') {
       els.scroller.dataset.spawnsCoordinatorBound = '1';
-      els.scroller.addEventListener('scroll', applyIslandSpawnsCoordinator, { passive: true });
-      window.addEventListener('resize', applyIslandSpawnsCoordinator);
+      els.scroller.addEventListener('scroll', scheduleIslandSpawnsCoordinator, { passive: true });
+      window.addEventListener('resize', scheduleIslandSpawnsCoordinator);
     }
     if (els.card && els.card.dataset.spawnsCoordinatorBound !== '1') {
       els.card.dataset.spawnsCoordinatorBound = '1';
@@ -16477,11 +16491,11 @@
     try { recalcTriggerChance(); } catch (e) {}
     try { recalcSleepDays(); } catch (e) {}
     try {
-      const ladderCanvas = document.getElementById('ladder-coordinate-canvas');
+      const ladderCanvas = document.getElementById('wiki-ingredient-ladder-coordinate') || document.getElementById('ladder-coordinate-canvas');
       if (!ladderCanvas || !ladderCanvas.innerHTML) refreshCoordinateLadder();
     } catch (e) {}
     try {
-      const berryCanvas = document.getElementById('berry-ladder-canvas');
+      const berryCanvas = document.getElementById('berry-energy-grid') || document.getElementById('berry-ladder-canvas');
       if (!berryCanvas || !berryCanvas.innerHTML) refreshBerryNodes();
     } catch (e) {}
   }
@@ -16672,11 +16686,36 @@
     tail: 1
   };
 
+  let _coordLadderRenderCache = { key: '', html: '' };
+
   // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、大菜供應能力評定、動態自適應最大刻度、美味尾巴獨立分離)
   function renderCoordinateLadder(ladderData) {
     const data = ladderData || LV60_COORDINATE_LADDER_DATA || [];
     const mult = getLadderMultiplier();
+    const skillTrigMult = getLadderSkillTriggerMultiplier();
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const langKey = (window.I18N && typeof window.I18N.getLanguage === 'function') ? window.I18N.getLanguage() : (isEN ? 'en-US' : 'zh-TW');
+    const isDefaultData = (!ladderData || ladderData === LV60_COORDINATE_LADDER_DATA);
+    const cacheKey = isDefaultData ? [
+      langKey,
+      mult.toFixed(6),
+      skillTrigMult.toFixed(6),
+      isLadderSkillDrawExpected ? 1 : 0,
+      ladderTop15Only ? 1 : 0,
+      ladderSortOrder,
+      ladderSupplyFilter,
+      ladderRecipeFilter,
+      ladderSpecialtyFilter,
+      ladderSearchQuery,
+      ladderRecipeMultiSelect ? 1 : 0,
+      ladderHighlightRecipe || '',
+      Array.isArray(ladderHighlightRecipes) ? ladderHighlightRecipes.join(',') : '',
+      (typeof window !== 'undefined' && window.allPokemon && window.allPokemon.length) || 0
+    ].join('|') : '';
+
+    if (cacheKey && _coordLadderRenderCache.key === cacheKey && _coordLadderRenderCache.html) {
+      return _coordLadderRenderCache.html;
+    }
     
     const highlightState = buildHighlightIngState();
     const activeHighlightRecipes = highlightState.recipes;
@@ -16909,7 +16948,7 @@
       return ((clamped - minVal) / (maxVal - minVal) * 100).toFixed(2);
     }
 
-    return `
+    const renderedHtml = `
       <div class="wiki-coordinate-ladder-wrapper">
         <div class="wiki-coordinate-ladder" onmouseover="window.WikiDB.handleLadderGroupHover(event)" onmouseout="window.WikiDB.handleLadderGroupHoverOut(event)">
           ${activeHighlightRecipes.length ? `
@@ -17343,6 +17382,10 @@
         </div>
       </div>
     `;
+    if (cacheKey) {
+      _coordLadderRenderCache = { key: cacheKey, html: renderedHtml };
+    }
+    return renderedHtml;
   }
 
   // 渲染樹果與食材基礎能量看板 (極簡無名無滾輪 18 格全展開版 + 等級滑桿、島嶼加成與順果 2x 開關)

@@ -3232,6 +3232,7 @@
 
     let sharedWorker = null;
     try {
+      await ensureTesseractLoaded();
       if (window.Tesseract) {
         sharedWorker = await window.Tesseract.createWorker('chi_tra+eng');
       }
@@ -4247,9 +4248,22 @@
     };
   }
 
+  const TESSERACT_CDN_URL = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+
+  async function ensureTesseractLoaded() {
+    if (typeof window !== 'undefined' && window.Tesseract) {
+      return true;
+    }
+    if (typeof window !== 'undefined' && window.DOMUtils && typeof window.DOMUtils.loadScriptOnce === 'function') {
+      await window.DOMUtils.loadScriptOnce(TESSERACT_CDN_URL);
+    }
+    return !!(typeof window !== 'undefined' && window.Tesseract);
+  }
+
   async function parsePokemonScreenshot(imageSrc) {
     let worker = null;
     try {
+      await ensureTesseractLoaded();
       if (window.Tesseract) {
         worker = await window.Tesseract.createWorker('chi_tra+eng');
       }
@@ -5033,6 +5047,8 @@
       buildOcrCompositeCanvas,
       parsePokemonFromOcr,
       parsePokemonScreenshotWithWorker,
+      ensureTesseractLoaded,
+      TESSERACT_CDN_URL,
       NATURE_DATA,
       NATURE_DICT,
       SUBSKILLS_DATA,

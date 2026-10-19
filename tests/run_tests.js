@@ -12521,6 +12521,46 @@ SP 4,316
     assert(boxJs.includes('function saveUserBox(skipCloudPush = false)'), 'box.js saveUserBox must support skipCloudPush parameter');
   });
 
+  // =========================================================================
+  // Test 222: 4-Pillar Deep Performance Optimization (CSS content-visibility, SW Static Caching, On-Demand Tesseract Lazy Loading, rAF & Memoization)
+  // =========================================================================
+  test('Tier 4 - Real-World Application Scenarios', '4-Pillar Deep Performance Optimization: CSS content-visibility, SW Versioned Asset Cache, On-Demand OCR Loader & Hot-Path Memoization', () => {
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+    const swCode = fs.readFileSync(path.join(WORKSPACE_ROOT, 'sw.js'), 'utf8');
+    const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app/index.html'), 'utf8');
+    const domUtils = require(path.join(WORKSPACE_ROOT, 'js/core/domUtils.js'));
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
+    const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/wiki.js'), 'utf8');
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/app.js'), 'utf8');
+
+    // Pillar 1: CSS content-visibility: auto & Service Worker versioned static asset caching
+    assert(stylesCss.includes('content-visibility: auto;'), 'css/styles.css must enable content-visibility: auto for off-screen cards');
+    assert(stylesCss.includes('contain-intrinsic-size: auto 220px;'), 'css/styles.css must define contain-intrinsic-size for virtualized cards');
+    assert(stylesCss.includes('.pokemon-card:hover') && stylesCss.includes('content-visibility: visible;'), 'css/styles.css must restore content-visibility: visible on hover/focus');
+    assert(swCode.includes("url.searchParams.has('v') && (pathname.endsWith('.css') || pathname.endsWith('.js'))"), 'sw.js must cache versioned CSS and JS bundles in pksleep-static-cache-v1');
+    assert(swCode.includes("url.hostname.includes('cdn.jsdelivr.net')"), 'sw.js must cache CDN libraries in pksleep-static-cache-v1');
+
+    // Pillar 2: On-Demand Lazy Loading of Tesseract OCR
+    assertEquals(typeof domUtils.loadScriptOnce, 'function', 'DOMUtils.loadScriptOnce must be a function');
+    assert(boxJs.includes('async function ensureTesseractLoaded()'), 'box.js must define ensureTesseractLoaded()');
+    assert(boxJs.includes('await ensureTesseractLoaded()'), 'box.js must await ensureTesseractLoaded() before creating OCR workers');
+    assert(!indexHtml.includes('tesseract.min.js'), 'index.html must NOT eagerly load tesseract.min.js on initial page boot');
+    assert(!appIndexHtml.includes('tesseract.min.js'), 'app/index.html must NOT eagerly load tesseract.min.js on initial page boot');
+
+    // Pillar 3: Wiki Island Spawns rAF Scroll Coalescing & Coordinate Ladder Memoization
+    assert(wikiJs.includes('function scheduleIslandSpawnsCoordinator()'), 'wiki.js must define scheduleIslandSpawnsCoordinator() using requestAnimationFrame');
+    assert(wikiJs.includes("addEventListener('scroll', scheduleIslandSpawnsCoordinator, { passive: true })"), 'wiki.js must bind scroll listener to scheduleIslandSpawnsCoordinator');
+    assert(wikiJs.includes('_coordLadderRenderCache'), 'wiki.js must memoize renderCoordinateLadder via _coordLadderRenderCache');
+    assert(wikiJs.includes("document.getElementById('wiki-ingredient-ladder-coordinate')"), 'initWikiModule must check #wiki-ingredient-ladder-coordinate to avoid redundant re-render');
+
+    // Pillar 4: Appraisal & Pokédex Slider Memoization
+    assert(appraisalJs.includes('_sigRecipeRecCache'), 'appraisal.js must memoize getSignatureRecipeRecommendations via _sigRecipeRecCache');
+    assert(appraisalJs.includes('_milestoneCostCache'), 'appraisal.js must memoize calculateMilestoneCost via _milestoneCostCache');
+    assert(appJs.includes('_pokedexStatsCache'), 'app.js must memoize calculatePokedexIngredientFormulas via _pokedexStatsCache');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

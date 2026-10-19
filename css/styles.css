@@ -34633,3 +34633,25 @@ body.mobile-h5-app *::-webkit-scrollbar {
   animation: overlaySheetOut 0.32s cubic-bezier(0.4, 0, 1, 1) forwards !important;
 }
 
+/* ─── Viewport Offscreen Rendering Optimization (content-visibility: auto) ─── */
+.pokemon-card,
+.box-card,
+.recipe-desktop-card,
+.news-card,
+.wiki-item-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 220px;
+}
+
+.pokemon-card:hover,
+.pokemon-card:focus-within,
+.box-card:hover,
+.box-card:focus-within,
+.recipe-desktop-card:hover,
+.recipe-desktop-card:focus-within,
+.news-card:hover,
+.news-card:focus-within,
+.wiki-item-card:hover,
+.wiki-item-card:focus-within {
+  content-visibility: visible;
+}

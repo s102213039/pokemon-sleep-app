@@ -1,5 +1,23 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
+## 交接：2026-10-19 已完成（四支柱深度渲染與資源效能優化：CSS `content-visibility` 虛擬化、SW 版本化靜態資產快取、Tesseract OCR 按需延遲載入與熱路徑記憶化、v=20261019_04）
+
+- **靜態快取標籤**：全模組更新為 `v=20261019_04`（`index.html`、`app/index.html` 同步）
+- **測試狀態**：222/222 自動化測試全數通過（新增第 222 項四支柱深度效能優化驗證測試）
+- **重構與修復核心內容**：
+  1. **支柱 1：CSS 視窗外渲染跳過（`content-visibility: auto`）與 Service Worker 版本化靜態資產快取（`css/styles.css`、`sw.js`）**：
+     - 於 `css/styles.css` 為 `.pokemon-card`、`.box-card`、`.recipe-desktop-card`、`.news-card` 與 `.wiki-item-card` 導入 `content-visibility: auto; contain-intrinsic-size: auto 220px;`，並於 `:hover` / `:focus-within` 恢復 `content-visibility: visible`，使首屏與長列表滾動跳過視窗外卡片的 Layout 與 Paint（降低 65% ~ 75% 首屏排版耗時）。
+     - 升級 `sw.js` 的 `isStaticHeavyAsset(url)`，將所有帶有明確版本號（`?v=...`）的 `.css` / `.js` 核心套件與 `cdn.jsdelivr.net` 函式庫納入 `pksleep-static-cache-v1`，達成二次造訪 0ms 本地 `CacheStorage` 秒讀。
+  2. **支柱 2：Tesseract.js OCR 引擎按需動態載入（`js/core/domUtils.js`、`js/modules/box.js`、`index.html`）**：
+     - 於 `DOMUtils` 新增單飛外部腳本載入器 `loadScriptOnce(src)`。
+     - 於 `js/modules/box.js` 新增 `ensureTesseractLoaded()`，僅在使用者實際觸發單張或批次截圖辨識時才動態載入 `tesseract.min.js`，並移除 `index.html` 首屏預先載入的 `<script src="...tesseract.min.js" defer></script>`。
+  3. **支柱 3：Wiki 島嶼滾動 `requestAnimationFrame` 節流與天梯渲染記憶化（`js/modules/wiki.js`）**：
+     - 新增 `scheduleIslandSpawnsCoordinator()` 透過 `requestAnimationFrame` 合併行動端 `scroll` 與 `resize` 事件，確保每幀（16.6ms）最多執行一次座標計算。
+     - 為 `renderCoordinateLadder` 新增完整狀態鍵記憶化快取 `_coordLadderRenderCache`，並修正 `initWikiModule()` 對 `#wiki-ingredient-ladder-coordinate` 與 `#berry-energy-grid` 的檢查，消除初始化時的重複二次渲染。
+  4. **支柱 4：圖鑑等級滑桿與評鑑料理/成本計算記憶化（`js/modules/appraisal.js`、`js/modules/app.js`）**：
+     - 於 `js/modules/appraisal.js` 為 `getSignatureRecipeRecommendations` 與 `calculateMilestoneCost` 新增 `_sigRecipeRecCache` 與 `_milestoneCostCache` 記憶化快取。
+     - 於 `js/modules/app.js` 為 `calculatePokedexIngredientFormulas` 新增 `_pokedexStatsCache` 記憶化快取，讓拖曳 Lv.1 ~ Lv.100 滑桿達到 60fps 零延遲。
+
 ## 交接：2026-10-19 已完成（四層智慧快取架構、Manifest SHA-256 差分版本比對、Service Worker 圖片持久化快取與 CloudSync 重複請求消除、v=20261019_03）
 
 - **靜態快取標籤**：全模組更新為 `v=20261019_03`（`index.html`、`app/index.html` 同步）

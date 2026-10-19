@@ -5638,6 +5638,7 @@ function getIngCountFromBase(basePkm, slotIdx, ingName) {
 }
 
 function calculatePokedexIngredientFormulas(customState) {
+  const _pokedexStatsCache = calculatePokedexIngredientFormulas._cache || (calculatePokedexIngredientFormulas._cache = new Map());
   const state = customState || pokedexModalState;
   const pkm = (state && state.pkm) || pokedexModalState.pkm;
   if (!pkm) return null;
@@ -5652,6 +5653,18 @@ function calculatePokedexIngredientFormulas(customState) {
 
   const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
   const t = (k, def) => window.I18N ? window.I18N.t(k, def) : def;
+  const isCleanseMintFlag = !!(state && (state.cleanseMint || state.mint || (pkm && (pkm.cleanseMint || pkm.mint))));
+  const pkmKey = pkm.id || pkm.formatted_no || pkm.name_cn || (pkm.name && pkm.name.cn) || pkm.name_en || '';
+  const subKey = Array.isArray(subskills) ? subskills.map(s => typeof s === 'string' ? s : (s && s.name ? s.name : '')).join(',') : '';
+  const ingSlotKey = customIngredients
+    ? 'cust:' + customIngredients.map(c => typeof c === 'string' ? c : (c && c.name ? c.name : '')).join(',')
+    : 'slots:' + (Array.isArray(ingSlots) ? ingSlots.join(',') : '');
+  const pkmIngBaseKey = Array.isArray(pkm.ingredients) ? pkm.ingredients.map(i => `${i.name}:${i.l1 || ''}/${i.l30 || ''}/${i.l60 || ''}`).join(';') : '';
+  const statsCacheKey = `${isEN ? 'en' : 'zh'}|${pkmKey}|${pkm.interval || ''}|${pkm.ingredient_rate || ''}|${pkm.skill_rate || ''}|${pkm.carry || pkm.carryCapacity || ''}|${pkm.main_skill || ''}|${pkm.specialty || ''}|${pkm.is_final || ''}|${pkmIngBaseKey}|${currentLevel}|${currentNature}|${isCleanseMintFlag ? 1 : 0}|${ribbon}|${skillLevel}|${subKey}|${ingSlotKey}`;
+
+  if (_pokedexStatsCache.has(statsCacheKey)) {
+    return _pokedexStatsCache.get(statsCacheKey);
+  }
 
   // 1. 基礎數值
   const baseIngRate = parseFloat(pkm.ingredient_rate || '0') || 20.0;
@@ -5830,7 +5843,7 @@ function calculatePokedexIngredientFormulas(customState) {
   const mainSkillSingleText = skillYield.mainSkillSingleText;
   const mainSkillDesc = skillYield.mainSkillDesc;
 
-  return {
+  const resultObj = {
     baseCarry,
     subskillCarryBonus,
     ribbonCarryBonus,
@@ -5883,6 +5896,11 @@ function calculatePokedexIngredientFormulas(customState) {
     natureSpeedMult,
     ribbonDiscount
   };
+  if (_pokedexStatsCache.size > 500) {
+    _pokedexStatsCache.clear();
+  }
+  _pokedexStatsCache.set(statsCacheKey, resultObj);
+  return resultObj;
 }
 
 function formatPokedexIntervalDiff(diffSec) {

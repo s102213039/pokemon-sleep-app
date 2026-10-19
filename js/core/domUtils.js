@@ -86,6 +86,54 @@
     setStyle: function (el, prop, value) {
       if (!el || !el.style) return;
       el.style[prop] = value;
+    },
+
+    _scriptPromises: Object.create(null),
+
+    /**
+     * 按需單次動態載入外部腳本 (On-Demand Single-Flight Script Loader)
+     * @param {string} src - 外部 Script URL
+     * @returns {Promise<boolean>}
+     */
+    loadScriptOnce: function (src) {
+      if (!src) return Promise.resolve(false);
+      if (this._scriptPromises[src]) {
+        return this._scriptPromises[src];
+      }
+      if (typeof global.document === 'undefined' || typeof global.document.createElement !== 'function') {
+        return Promise.resolve(false);
+      }
+      const existing = this.find(global.document, `script[src="${src}"]`);
+      if (existing && existing.getAttribute('data-loaded') === '1') {
+        return Promise.resolve(true);
+      }
+      this._scriptPromises[src] = new Promise((resolve) => {
+        try {
+          const script = existing || global.document.createElement('script');
+          script.src = src;
+          script.async = true;
+          script.onload = () => {
+            if (script.setAttribute) script.setAttribute('data-loaded', '1');
+            resolve(true);
+          };
+          script.onerror = () => {
+            delete DOMUtils._scriptPromises[src];
+            resolve(false);
+          };
+          if (!existing) {
+            const target = global.document.head || global.document.body || global.document.documentElement;
+            if (target && typeof target.appendChild === 'function') {
+              target.appendChild(script);
+            } else {
+              resolve(false);
+            }
+          }
+        } catch (e) {
+          delete DOMUtils._scriptPromises[src];
+          resolve(false);
+        }
+      });
+      return this._scriptPromises[src];
     }
   };
 

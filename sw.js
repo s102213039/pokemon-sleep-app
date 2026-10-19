@@ -49,13 +49,23 @@ function isImageRequest(request, url) {
 
 function isStaticHeavyAsset(url) {
   const pathname = url.pathname.toLowerCase();
-  return (
+  if (
     pathname.endsWith('.traineddata') ||
     pathname.endsWith('.traineddata.gz') ||
     pathname.endsWith('.woff2') ||
     pathname.endsWith('.woff') ||
     pathname.endsWith('.ttf')
-  );
+  ) {
+    return true;
+  }
+  // 針對帶有明確版本號 (?v=...) 的大型 CSS / JS 靜態資源或 CDN 函式庫啟用持久化快取
+  if (url.searchParams && url.searchParams.has('v') && (pathname.endsWith('.css') || pathname.endsWith('.js'))) {
+    return true;
+  }
+  if (url.hostname && url.hostname.includes('cdn.jsdelivr.net') && (pathname.endsWith('.js') || pathname.endsWith('.wasm'))) {
+    return true;
+  }
+  return false;
 }
 
 self.addEventListener('fetch', (event) => {
