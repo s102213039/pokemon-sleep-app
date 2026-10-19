@@ -701,14 +701,14 @@
     }
   }
 
-  function saveUserBox() {
+  function saveUserBox(skipCloudPush = false) {
     try {
       if (typeof localStorage === 'undefined') return;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(userBox));
     } catch (e) {
       console.error('Failed to save user box:', e);
     }
-    if (typeof window !== 'undefined' && window.CloudSync && typeof window.CloudSync.pushCloudBox === 'function') {
+    if (!skipCloudPush && typeof window !== 'undefined' && window.CloudSync && typeof window.CloudSync.pushCloudBox === 'function') {
       window.CloudSync.pushCloudBox(userBox);
     }
   }
@@ -4917,7 +4917,7 @@
 
     window.PokemonBoxApp = {
       getUserBox: () => userBox,
-      setUserBox: (box) => { userBox = box; saveUserBox(); renderBox(); },
+      setUserBox: (box, skipCloudPush = false) => { userBox = box; saveUserBox(skipCloudPush); renderBox(); },
       renderBox: renderBox,
       syncBoxVisibility,
       setBoxUserForcedGuideVisible: (v) => { boxUserForcedGuideVisible = v; },
@@ -4971,7 +4971,7 @@
     module.exports = {
       PokemonBoxApp: typeof window !== 'undefined' ? window.PokemonBoxApp : {
         getUserBox: () => userBox,
-        setUserBox: (box) => { userBox = box; saveUserBox(); renderBox(); },
+        setUserBox: (box, skipCloudPush = false) => { userBox = box; saveUserBox(skipCloudPush); renderBox(); },
         renderBox: renderBox,
         syncBoxVisibility,
         setBoxUserForcedGuideVisible: (v) => { boxUserForcedGuideVisible = v; },

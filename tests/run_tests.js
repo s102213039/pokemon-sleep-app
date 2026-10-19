@@ -12458,6 +12458,69 @@ SP 4,316
     assert(stylesCss.includes('.box-spec-tag.spec-all'), 'css must define .box-spec-tag.spec-all');
   });
 
+  // =========================================================================
+  // Test 221: 4-Layer Cache Architecture, Manifest Differential Sync, Service Worker & CloudSync Deduplication
+  // =========================================================================
+  test('Tier 4 - Real-World Application Scenarios', '4-Layer Cache Architecture: Manifest SHA-256 Version Check, Cache-First LocalStorage, Service Worker & CloudSync Deduplication', () => {
+    const crypto = require('crypto');
+    const manifestPath = path.join(WORKSPACE_ROOT, 'data/manifest.json');
+    const genManifestPath = path.join(WORKSPACE_ROOT, 'scripts/generate_manifest.py');
+    const swPath = path.join(WORKSPACE_ROOT, 'sw.js');
+
+    // 1. Verify data/manifest.json and scripts/generate_manifest.py
+    assert(fs.existsSync(manifestPath), 'data/manifest.json must exist');
+    assert(fs.existsSync(genManifestPath), 'scripts/generate_manifest.py must exist');
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    assertEquals(manifest.version, 1, 'manifest.version must be 1');
+    assert(typeof manifest.manifestHash === 'string' && manifest.manifestHash.length === 16, 'manifest.manifestHash must be a 16-char combined SHA-256 hash');
+    assert(manifest.files && typeof manifest.files === 'object', 'manifest.files must exist');
+
+    const trackedFiles = ['data.json', 'recipes.json', 'news.json', 'sleep_styles.json', 'items.json', 'special_icons.json'];
+    for (const fileName of trackedFiles) {
+      assert(manifest.files[fileName], `manifest.files must track ${fileName}`);
+      const rawBytes = fs.readFileSync(path.join(WORKSPACE_ROOT, 'data', fileName));
+      const expectedHash = crypto.createHash('sha256').update(rawBytes).digest('hex').slice(0, 16);
+      assertEquals(manifest.files[fileName].hash, expectedHash, `manifest hash for ${fileName} must match actual file SHA-256`);
+      assertEquals(manifest.files[fileName].size, rawBytes.length, `manifest size for ${fileName} must match actual byte size`);
+    }
+
+    // 2. Verify Service Worker (sw.js)
+    assert(fs.existsSync(swPath), 'sw.js must exist in root directory');
+    const swCode = fs.readFileSync(swPath, 'utf8');
+    assert(swCode.includes('pksleep-img-cache-v1'), 'sw.js must define pksleep-img-cache-v1 for Pokemon/berry/ingredient images');
+    assert(swCode.includes('pksleep-static-cache-v1'), 'sw.js must define pksleep-static-cache-v1 for OCR/font static assets');
+    assert(swCode.includes('isImageRequest') && swCode.includes('isStaticHeavyAsset'), 'sw.js must classify cacheable image and static heavy requests');
+
+    // 3. Verify DataCacheManager in domUtils.js
+    const domUtils = require(path.join(WORKSPACE_ROOT, 'js/core/domUtils.js'));
+    assert(domUtils.DataCacheManager, 'domUtils must export DataCacheManager');
+    assertEquals(typeof domUtils.DataCacheManager.checkFileNeedsUpdate, 'function', 'DataCacheManager.checkFileNeedsUpdate must be a function');
+    assertEquals(typeof domUtils.DataCacheManager.markFileUpdated, 'function', 'DataCacheManager.markFileUpdated must be a function');
+    assertEquals(typeof domUtils.DataCacheManager.registerServiceWorker, 'function', 'DataCacheManager.registerServiceWorker must be a function');
+
+    // 4. Verify Cache-First + Manifest Differential Sync in app.js, recipes.js, news.js, wiki.js
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/app.js'), 'utf8');
+    const recipesJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/recipes.js'), 'utf8');
+    const newsJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/news.js'), 'utf8');
+    const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/wiki.js'), 'utf8');
+
+    assert(appJs.includes("checkFileNeedsUpdate('data.json'"), 'app.js must check manifest before downloading data.json');
+    assert(appJs.includes("saveCachedJson(CACHE_KEY_DATA_JSON, 'data.json'"), 'app.js must save cached JSON and manifest hash after updating data.json');
+    assert(recipesJs.includes("checkFileNeedsUpdate('recipes.json'"), 'recipes.js must check manifest before downloading recipes.json');
+    assert(recipesJs.includes("saveCachedJson(CACHE_KEY_RECIPES_JSON, 'recipes.json'"), 'recipes.js must save cached JSON and manifest hash after updating recipes.json');
+    assert(newsJs.includes("checkFileNeedsUpdate('news.json'"), 'news.js must check manifest before downloading news.json');
+    assert(wikiJs.includes("checkFileNeedsUpdate('sleep_styles.json'"), 'wiki.js must check manifest before downloading sleep_styles.json');
+    assert(wikiJs.includes("CACHE_KEY_SLEEP_STYLES_JSON = 'pksleep_cache_sleep_styles_json'"), 'wiki.js must cache sleep_styles.json in localStorage');
+
+    // 5. Verify CloudSync & Box echo-push prevention and cooldown deduplication
+    const cloudSyncJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/core/cloudSync.js'), 'utf8');
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
+    assert(cloudSyncJs.includes('INITIAL_SYNC_COOLDOWN_MS'), 'cloudSync.js must define INITIAL_SYNC_COOLDOWN_MS to deduplicate session/tab syncs');
+    assert(cloudSyncJs.includes('window.PokemonBoxApp.setUserBox(finalMerged, true)'), 'cloudSync.js must pass skipCloudPush=true to setUserBox after initial sync');
+    assert(cloudSyncJs.includes('if (serialized === lastPushedBoxHash)'), 'cloudSync.js pushRemoteBox must skip redundant network upserts when payload hash is unchanged');
+    assert(boxJs.includes('function saveUserBox(skipCloudPush = false)'), 'box.js saveUserBox must support skipCloudPush parameter');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

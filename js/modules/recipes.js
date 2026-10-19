@@ -178,6 +178,19 @@
   const CACHE_KEY_RECIPES_JSON_TIME = 'pksleep_cache_recipes_json_time';
 
   const fetchRecipesWithFallback = async (...customUrls) => {
+    // 1. 優先自本機 LocalStorage 瞬間載入快取 (Cache-First 0ms 秒開)，背景再由 manifest 檢查是否需更新
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const cachedText = window.localStorage.getItem(CACHE_KEY_RECIPES_JSON);
+        if (cachedText) {
+          const cachedData = JSON.parse(cachedText);
+          if (Array.isArray(cachedData) && cachedData.length > 0) {
+            return cachedData;
+          }
+        }
+      }
+    } catch (cacheReadErr) {}
+
     const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
     const defaultCandidates = [
       `${base}data/recipes.json`,
@@ -195,12 +208,11 @@
     let lastErr = null;
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      const t = Date.now();
-      const uniqueUrls = cleanUrls.map(u => `${u}?t=${t}`);
+      const uniqueUrls = attempt === 1 ? cleanUrls : cleanUrls.map(u => `${u}?t=${Date.now()}`);
 
       for (const url of uniqueUrls) {
         try {
-          const res = await fetch(url, { cache: 'no-store' });
+          const res = await fetch(url, { cache: attempt === 1 ? 'default' : 'no-store' });
           if (res && res.ok) {
             const text = await res.text();
             const parsed = JSON.parse(text);
@@ -208,6 +220,9 @@
               if (typeof window !== 'undefined' && window.localStorage) {
                 window.localStorage.setItem(CACHE_KEY_RECIPES_JSON, text);
                 window.localStorage.setItem(CACHE_KEY_RECIPES_JSON_TIME, String(Date.now()));
+              }
+              if (typeof window !== 'undefined' && window.DataCacheManager) {
+                window.DataCacheManager.saveCachedJson(CACHE_KEY_RECIPES_JSON, 'recipes.json', text);
               }
             } catch (e) {}
             return parsed;
@@ -231,14 +246,6 @@
           const cachedData = JSON.parse(cachedText);
           if (Array.isArray(cachedData) && cachedData.length > 0) {
             console.warn('[Recipe Engine] 網路請求暫時失敗，已自動自本機離線快取載入 recipes.json (' + cachedData.length + ' 筆料理)');
-            // 背景排程於 6 秒後靜默嘗試重新請求最新資料以刷新快取
-            setTimeout(() => {
-              fetchRecipesWithFallback().then(freshData => {
-                if (Array.isArray(freshData) && freshData.length > 0) {
-                  allRecipes = freshData;
-                }
-              }).catch(() => {});
-            }, 6000);
             return cachedData;
           }
         }
@@ -254,15 +261,39 @@
     if (typeof window === 'undefined' || typeof fetch === 'undefined') return;
     let isSyncing = false;
 
-    async function runSyncCheck() {
+    async function runSyncCheck(forceManifest = false) {
       if (isSyncing) return;
       isSyncing = true;
       try {
-        const liveUrl = `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json?t=${Date.now()}`;
-        const res = await fetch(liveUrl, { cache: 'no-store' });
-        if (!res.ok) return;
-        const freshData = await res.json();
+        let remoteHash = '';
+        if (window.DataCacheManager && typeof window.DataCacheManager.checkFileNeedsUpdate === 'function') {
+          const check = await window.DataCacheManager.checkFileNeedsUpdate('recipes.json', CACHE_KEY_RECIPES_JSON, forceManifest);
+          if (!check.needsUpdate && Array.isArray(allRecipes) && allRecipes.length > 0) {
+            return;
+          }
+          remoteHash = check.remoteHash || '';
+        }
+
+        const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
+        const liveUrl = `${base}data/recipes.json?v=${remoteHash || Date.now()}`;
+        let res = await fetch(liveUrl, { cache: 'no-cache' }).catch(() => null);
+        if (!res || !res.ok) {
+          const fallbackRawUrl = `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json?t=${Date.now()}`;
+          res = await fetch(fallbackRawUrl, { cache: 'no-store' });
+        }
+        if (!res || !res.ok) return;
+        const rawText = await res.text();
+        const freshData = JSON.parse(rawText);
         if (!Array.isArray(freshData) || freshData.length === 0) return;
+
+        if (window.DataCacheManager) {
+          window.DataCacheManager.saveCachedJson(CACHE_KEY_RECIPES_JSON, 'recipes.json', rawText, remoteHash);
+        } else if (window.localStorage) {
+          try {
+            window.localStorage.setItem(CACHE_KEY_RECIPES_JSON, rawText);
+            window.localStorage.setItem(CACHE_KEY_RECIPES_JSON_TIME, String(Date.now()));
+          } catch (e) {}
+        }
 
         const currentLen = Array.isArray(allRecipes) ? allRecipes.length : 0;
         const isDifferent = currentLen !== freshData.length ||
@@ -274,12 +305,6 @@
         if (isDifferent || !currentLen) {
           console.log(`[Recipe Engine] 動態連線取得最新食譜料理 (${freshData.length} 道)，正在原地更新...`);
           allRecipes = freshData;
-          try {
-            if (window.localStorage) {
-              window.localStorage.setItem(CACHE_KEY_RECIPES_JSON, JSON.stringify(freshData));
-              window.localStorage.setItem(CACHE_KEY_RECIPES_JSON_TIME, String(Date.now()));
-            }
-          } catch (e) {}
 
           if (typeof render === 'function') {
             render();
@@ -293,23 +318,23 @@
       }
     }
 
-    setTimeout(runSyncCheck, 2500);
-    setInterval(runSyncCheck, 15 * 60 * 1000);
+    setTimeout(() => runSyncCheck(false), 1800);
+    setInterval(() => runSyncCheck(false), 30 * 60 * 1000);
     if (typeof document !== 'undefined') {
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
-          runSyncCheck();
+          runSyncCheck(false);
         }
       });
     }
   }
 
   fetchRecipesWithFallback(
-    (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/recipes.json?t=${Date.now()}`,
-    `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json?t=${Date.now()}`,
-    `data/recipes.json?t=${Date.now()}`,
-    `../data/recipes.json?t=${Date.now()}`,
-    `recipes.json?t=${Date.now()}`
+    (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/recipes.json`,
+    `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/recipes.json`,
+    `data/recipes.json`,
+    `../data/recipes.json`,
+    `recipes.json`
   )
     .then(data => {
       allRecipes = data;

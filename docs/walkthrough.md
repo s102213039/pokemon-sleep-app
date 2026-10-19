@@ -1,25 +1,40 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
-## 交接：2026-10-19 已完成（圖鑑表格點選圖示依編號上下排序功能回歸、倉庫表格全欄位點選排序與雙向連動、v=20261019_01）
+## 交接：2026-10-19 已完成（四層智慧快取架構、Manifest SHA-256 差分版本比對、Service Worker 圖片持久化快取與 CloudSync 重複請求消除、v=20261019_03）
 
-- **靜態快取標籤**：全模組更新為 `v=20261019_01`（`index.html`、`app/index.html` 同步）
-- **測試狀態**：220/220 自動化測試全數通過（新增第 220 項圖鑑與倉庫表格欄位點選排序與雙向連動驗證測試）
+- **靜態快取標籤**：全模組更新為 `v=20261019_03`（`index.html`、`app/index.html` 同步）
+- **測試狀態**：221/221 自動化測試全數通過（新增第 221 項四層智慧快取架構、Manifest 雜湊校驗、Service Worker 與 CloudSync 去重驗證測試）
 - **重構與修復核心內容**：
-  1. **圖鑑分頁（#panel-pokemon）點選「圖示」欄位名稱依編號上下排序功能回歸**：
-     - 原因分析：先前的表格排序取值器 `SORT_GETTERS` 僅包含持有上限、食材率、技能率與幫忙間隔，未定義 `no` 與 `id` 取值器；且表頭圖示欄位為靜態無排序標籤，使得初始預設 `'no-asc'` 狀態解析為空，且點選圖示表頭無法觸發編號排序切換。
+  1. **後端輕量級版本清單生成器（`scripts/generate_manifest.py` 與 `data/manifest.json`）**：
+     - 建立 `scripts/generate_manifest.py`，對 `data.json`、`recipes.json`、`news.json`、`sleep_styles.json`、`items.json`、`special_icons.json` 計算確定性 16 碼 SHA-256 雜湊值、位元組大小與資料筆數，輸出僅 731 bytes 的 `data/manifest.json`。
+     - 整合至 `.github/workflows/update-data.yml`、`.github/workflows/sync.yml` 與 `scripts/sync_all.py`，每次後端爬蟲更新資料時自動同步更新 `data/manifest.json`。
+  2. **前端 `DataCacheManager` 差分比對與本地優先載入（`js/core/domUtils.js`、`app.js`、`recipes.js`、`news.js`、`wiki.js`）**：
+     - 原因分析：原先 `fetchDataWithFallback`、`fetchRecipesWithFallback` 與 `loadDynamicSleepStyles` 皆以 `fetch(url + '?t=' + Date.now(), { cache: 'no-store' })` 強制繞過瀏覽器快取，且僅在網路失敗 3 次後才退回 `localStorage`；同時 `visibilitychange`（切換視窗/分頁）無冷卻時間，導致每次切換分頁都重新下載數百 KB 的 JSON 檔案。
      - 解決方案：
-       - 於 `js/modules/app.js` 新增 `getItemNo(p)`、`getItemName(p)`、`getItemSpecialty(p)`、`getItemBerry(p)` 提取器，並將 `no`、`id`、`name`、`specialty`、`berry` 納入 `SORT_GETTERS` 與預設排序方向 `SORT_DEFAULT_DIR`。
-       - 更新 `sortPokemonList` 比較器，支援字串欄位 `localeCompare` 與數值編號排序，並在平手時穩定依全國圖鑑編號遞增排序。
-       - 在 `renderTable(data)` 中將圖示欄位表頭替換為 `${sortableTh('no', t('th.icon', '圖示'), 'th-icon')}`（若開啟顯示編號則同時支援 `th-no` 與 `th-icon`），點選即可在由小到大（▲）與由大到小（▼）之間無縫切換。
-  2. **倉庫分頁（#panel-box）用戶寶可夢列表欄位名稱點選排序功能**：
+       - 於 `js/core/domUtils.js` 新增 `DataCacheManager`，提供單飛請求合併（`_inFlightManifestPromise`）、10 分鐘 Manifest 檢查冷卻（`CHECK_COOLDOWN_MS = 10 * 60 * 1000`）與逐檔 SHA-256 雜湊比對（`checkFileNeedsUpdate`）。
+       - 將 `app.js`（`data.json` 258 KB）、`recipes.js`（`recipes.json` 56 KB）、`news.js`（`news.json` 63 KB）與 `wiki.js`（`sleep_styles.json` 497 KB）全面升級為 **Cache-First 瞬時啟動**：進入頁面時 0ms 直接讀取本機 `localStorage` 渲染畫面，背景僅需讀取 731 bytes 的 `manifest.json`，當雜湊值未變更時完全不下載任何大檔案（節省 99.9% 靜態 JSON 流量）。
+  3. **Service Worker 圖片與大型靜態資產持久化快取（`sw.js`）**：
+     - 新增根目錄 `/sw.js` 並由 `DataCacheManager.registerServiceWorker()` 自動註冊。
+     - 採用 Cache-First 策略建立 `pksleep-img-cache-v1`（攔截所有本地 `assets/` 與 `serebii.net` 寶可夢、樹果、食材、料理、道具、島嶼圖片）與 `pksleep-static-cache-v1`（攔截 `.traineddata` OCR 模型與 `.woff2` 字型檔），首次載入後即永久駐留瀏覽器 `CacheStorage`，後續造訪與切換分頁達成零重複圖片下載。
+  4. **Supabase `user_boxes` 雲端同步回環推送與重複拉取消除（`js/core/cloudSync.js`、`js/modules/box.js`）**：
+     - 原因分析：原先 `getSession()` 與 `onAuthStateChange('SIGNED_IN')` 在啟動及每次切換分頁焦點時皆重複觸發 `triggerInitialSyncAndMerge()`；且同步完成後呼叫 `window.PokemonBoxApp.setUserBox(finalMerged)` 會觸發 `saveUserBox()` -> `pushCloudBox()`，導致每次讀取（`GET user_boxes`）800ms 後必定多發一次無意義的寫入（`POST user_boxes?on_conflict=user_id`）。
      - 解決方案：
-       - 於 `js/modules/box.js` 建立 `BOX_SORT_DEFAULT_DIR`、`parseBoxSort(sortKey)`、`nextBoxSort(currentSort, col)` 與 `boxSortableTh(col, label, cls)`。
-       - 在 `renderBoxTable(list, container)` 中將圖示（id）、等級（level）、寶可夢/暱稱（name）、得意（specialty）、樹果（berry）、食1（ing1）、食2（ing2）、食3（ing3）全面套用 `boxSortableTh` 渲染，帶有 `th-sortable` 與 `data-sort` 屬性。
-       - 擴充 `getFilteredBox` 排序比較器，完整支援 `name-asc/desc`、`specialty-asc/desc`、`berry-asc/desc`、`ing1/2/3-asc/desc`、`level-asc/desc`、`id-asc/desc`，平手時一致以圖鑑編號作為基準。
-       - 於 `#box-content-area` 容器掛載事件委託監聽器，點選任何欄位表頭即時透過 `nextBoxSort` 切換排序狀態，並雙向同步更新側邊欄 `box-sort-select` 下拉選單數值與自訂選單觸發文字。
-  3. **樣式細節美化**：
-     - 在 `css/styles.css` 中為 `.pokemon-table th.th-icon .sort-arrow` 提供專屬的緊湊間距樣式（`margin-left: 1px; font-size: 8.5px; display: inline-block; vertical-align: middle;`），確保 34px 固定寬度的圖示表頭文字與排序指示箭頭（▲/▼）完美並排不換行、不溢出。
-     - 保留 Test 176 與 Test 180 所有契約，零破壞性改動。
+       - 於 `box.js` 的 `saveUserBox(skipCloudPush = false)` 與 `setUserBox(box, skipCloudPush = false)` 新增 `skipCloudPush` 參數。
+       - 於 `cloudSync.js` 的 `triggerInitialSyncAndMerge` 傳入 `setUserBox(finalMerged, true)` 阻斷回環推送，並同步記錄 `lastPushedBoxHash = finalSerialized`。
+       - 在 `pushCloudBox` 與 `pushRemoteBox` 中比對 `serialized === lastPushedBoxHash`，若內容與雲端一致則直接略過網路請求；同時加入 5 分鐘會話同步冷卻（`INITIAL_SYNC_COOLDOWN_MS`），徹底消除分頁切換時的重複 `SELECT` 與 `POST` 請求。
+
+## 交接：2026-10-19 已完成（圖鑑與倉庫表格三態排序切換、精簡可點選排序欄位、新增幻之寶可夢夢幻全能型專屬得意圖示、v=20261019_02）
+
+- **靜態快取標籤**：全模組更新為 `v=20261019_02`（`index.html`、`app/index.html` 同步）
+- **測試狀態**：220/220 自動化測試全數通過（更新第 220 項三態排序、精簡欄位與全能型得意圖示驗證測試）
+- **重構與修復核心內容**：
+  1. **三態排序循環切換邏輯（預設態 -> 第一態 -> 第二態 -> 回到預設態）**：
+     - 圖鑑表格（`js/modules/app.js` `nextTableSort`）與倉庫表格（`js/modules/box.js` `nextBoxSort`）全面實作三種狀態循環：點選第 1 次進入該欄位預設排序（編號預設升冪 ▲，等級與數值欄位預設降冪 ▼），點選第 2 次切換為反向排序，點選第 3 次恢復預設編號升冪排序（`no-asc` / `id-asc`）。
+  2. **精簡可點選排序欄位**：
+     - 倉庫表格僅保留「圖示（編號排序）」與「等級」可點選排序，寶可夢名稱、得意、樹果、食材 1/2/3 皆改為純文字表頭不可點選。
+     - 圖鑑表格移除「寶可夢名稱」、「樹果」、「得意」之點選排序，僅保留圖示（編號）、持有上限、食材機率、技能機率、幫忙間隔可點選排序。
+  3. **幻之寶可夢（夢幻 #151）全能型專屬得意圖示**：
+     - 新增 `assets/specialty/all.png` 與 `assets/specialty/all@2x.png` 紫底八芒星專屬圖示，並更新 `js/core/i18n.js`（`getSpecialtyKey('全部') === 'all'`）與 `css/styles.css`（`.spec-all`）。
 
 ## 交接：2026-10-18 已完成（電腦版內容展示區寬度限制、全頁面對齊與圓角一致性重構、分離 H5 App 與網頁版排版、v=20261018_02）
 

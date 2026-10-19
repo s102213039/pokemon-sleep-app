@@ -25,6 +25,7 @@ SYNC_SCRIPT = os.path.join(BASE_DIR, 'pokemon_sleep_sync.py')
 DATA_BUILDER = os.path.join(BASE_DIR, 'build_webapp_data.py')
 RECIPE_SYNC = os.path.join(BASE_DIR, 'sync_data.py')
 NEWS_BUILDER = os.path.join(BASE_DIR, 'build_news.py')
+MANIFEST_BUILDER = os.path.join(BASE_DIR, 'generate_manifest.py')
 
 # Token loaded from environment variable GH_PAT or local config file (never hardcoded)
 GH_TOKEN = os.environ.get('GH_PAT', '')
@@ -53,14 +54,15 @@ def step1_sync_google_sheet():
         log(f"Step 1 Warning: Google Sheet sync exited with code {res.returncode}")
 
 def step2_rebuild_webapp_data():
-    log("Step 2: Rebuilding webapp data.json, recipes.json & news.json...")
+    log("Step 2: Rebuilding webapp data.json, recipes.json, news.json & manifest.json...")
     res1 = subprocess.run([sys.executable, DATA_BUILDER], cwd=BASE_DIR, capture_output=False)
     res2 = subprocess.run([sys.executable, RECIPE_SYNC], cwd=BASE_DIR, capture_output=False)
     res3 = subprocess.run([sys.executable, NEWS_BUILDER], cwd=BASE_DIR, capture_output=False)
-    if res1.returncode == 0 and res2.returncode == 0 and res3.returncode == 0:
-        log("Step 2 Done: data.json, recipes.json & news.json rebuilt!")
+    res4 = subprocess.run([sys.executable, MANIFEST_BUILDER], cwd=BASE_DIR, capture_output=False)
+    if res1.returncode == 0 and res2.returncode == 0 and res3.returncode == 0 and res4.returncode == 0:
+        log("Step 2 Done: data.json, recipes.json, news.json & manifest.json rebuilt!")
     else:
-        log(f"Step 2 Warning: data.json ({res1.returncode}), recipes.json ({res2.returncode}), news.json ({res3.returncode})")
+        log(f"Step 2 Warning: data.json ({res1.returncode}), recipes.json ({res2.returncode}), news.json ({res3.returncode}), manifest.json ({res4.returncode})")
 
 def step3_push_to_github():
     log("Step 3: Pushing updated site to GitHub Pages...")

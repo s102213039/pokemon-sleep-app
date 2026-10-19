@@ -14,6 +14,8 @@
   const STORAGE_KEY_USER_BOX = 'PKMSLEEP_USER_BOX_V1';
   const STORAGE_KEY_CONFIG = 'PKMSLEEP_SUPABASE_CONFIG_V1';
   const STORAGE_KEY_REMEMBER = 'PKMSLEEP_REMEMBER_AUTH_V1';
+  const STORAGE_KEY_BOX_UPDATED_AT = 'PKMSLEEP_USER_BOX_UPDATED_AT_V1';
+  const INITIAL_SYNC_COOLDOWN_MS = 5 * 60 * 1000; // 5 分鐘冷卻，避免分頁切換與重複 Auth 事件頻繁拉取
 
   // 預設全域中央雲端資料庫配置 (Supabase BaaS - 全使用者統一共享)
   const DEFAULT_CONFIG = {
@@ -32,6 +34,8 @@
   let authViewMode = 'signin'; // 'signin' | 'signup'
   let lastPushedBoxHash = '';
   let lastLocalPushTime = 0;
+  let lastSyncedUserId = '';
+  let lastInitialSyncTimestamp = 0;
   let initialSyncPromise = null;
   let isRealtimeSubscribed = false;
   let lastToastSignature = '';
@@ -159,9 +163,12 @@
           syncStatus = 'synced';
           notifyAuthStateChanged();
           subscribeToRealtime();
-          triggerInitialSyncAndMerge();
+          triggerInitialSyncAndMerge(false);
         } else if (event === 'SIGNED_OUT') {
           currentUser = null;
+          lastSyncedUserId = '';
+          lastInitialSyncTimestamp = 0;
+          lastPushedBoxHash = '';
           syncStatus = 'guest';
           unsubscribeRealtime();
           notifyAuthStateChanged();
@@ -279,7 +286,7 @@
         dismissBoxAuthOverlay();
         notifyAuthStateChanged();
         subscribeToRealtime();
-        await triggerInitialSyncAndMerge();
+        await triggerInitialSyncAndMerge(true);
         updateSyncUI();
         return { success: true, user: data.user, session: data.session };
       }
@@ -334,7 +341,7 @@
         dismissBoxAuthOverlay();
         notifyAuthStateChanged();
         subscribeToRealtime();
-        await triggerInitialSyncAndMerge();
+        await triggerInitialSyncAndMerge(true);
         updateSyncUI();
         return { success: true, user: data.user, session: data.session };
       }
@@ -350,6 +357,9 @@
   async function signOut() {
     if (!supabaseClient) {
       currentUser = null;
+      lastSyncedUserId = '';
+      lastInitialSyncTimestamp = 0;
+      lastPushedBoxHash = '';
       syncStatus = 'guest';
       notifyAuthStateChanged();
       updateSyncUI();
@@ -359,6 +369,9 @@
     try {
       await supabaseClient.auth.signOut();
       currentUser = null;
+      lastSyncedUserId = '';
+      lastInitialSyncTimestamp = 0;
+      lastPushedBoxHash = '';
       syncStatus = 'guest';
       unsubscribeRealtime();
       notifyAuthStateChanged();
@@ -367,6 +380,9 @@
     } catch (err) {
       console.error('[CloudSync] Sign out error:', err);
       currentUser = null;
+      lastSyncedUserId = '';
+      lastInitialSyncTimestamp = 0;
+      lastPushedBoxHash = '';
       syncStatus = 'guest';
       notifyAuthStateChanged();
       updateSyncUI();
@@ -448,6 +464,14 @@
         return null;
       }
 
+      if (data && data.updated_at) {
+        try {
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem(STORAGE_KEY_BOX_UPDATED_AT, String(data.updated_at));
+          }
+        } catch (e) {}
+      }
+
       if (data && Array.isArray(data.box_data)) {
         return data.box_data;
       }
@@ -462,17 +486,23 @@
     if (!supabaseClient || !currentUser) return false;
 
     const dataArray = Array.isArray(boxData) ? boxData : [];
-    lastPushedBoxHash = JSON.stringify(dataArray);
+    const serialized = JSON.stringify(dataArray);
+    // 若即將推送的內容與上次成功同步/推送的雲端內容完全一致，直接略過重複寫入請求
+    if (serialized === lastPushedBoxHash) {
+      return true;
+    }
+    lastPushedBoxHash = serialized;
     lastLocalPushTime = Date.now();
 
     try {
       syncStatus = 'syncing';
       updateSyncUI();
 
+      const nowIso = new Date().toISOString();
       const payload = {
         user_id: currentUser.id,
         box_data: dataArray,
-        updated_at: new Date().toISOString()
+        updated_at: nowIso
       };
 
       const { error } = await supabaseClient
@@ -481,11 +511,18 @@
 
       if (error) {
         console.error('[CloudSync] pushRemoteBox failed:', error);
+        lastPushedBoxHash = '';
         syncStatus = 'error';
         lastSyncError = error.message;
         updateSyncUI();
         return false;
       }
+
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(STORAGE_KEY_BOX_UPDATED_AT, nowIso);
+        }
+      } catch (e) {}
 
       syncStatus = 'synced';
       lastSyncError = '';
@@ -493,6 +530,7 @@
       return true;
     } catch (err) {
       console.error('[CloudSync] pushRemoteBox exception:', err);
+      lastPushedBoxHash = '';
       syncStatus = 'error';
       lastSyncError = err.message || '同步推送失敗';
       updateSyncUI();
@@ -501,9 +539,18 @@
   }
 
   /* ─── 首次登入與初始雙軌合併 ───────────────────────────────── */
-  async function triggerInitialSyncAndMerge() {
+  async function triggerInitialSyncAndMerge(force = false) {
     if (!supabaseClient || !currentUser) return;
     if (initialSyncPromise) return initialSyncPromise;
+
+    // 防抖與冷卻檢查：避免 getSession 與 onAuthStateChange('SIGNED_IN') 或分頁切換重複觸發
+    const now = Date.now();
+    if (!force && lastSyncedUserId === currentUser.id && (now - lastInitialSyncTimestamp < INITIAL_SYNC_COOLDOWN_MS)) {
+      return;
+    }
+
+    lastSyncedUserId = currentUser.id;
+    lastInitialSyncTimestamp = now;
 
     initialSyncPromise = (async () => {
       try {
@@ -557,23 +604,29 @@
           }
         }
 
+        const finalSerialized = JSON.stringify(finalMerged);
+
         if (shouldPush) {
           await pushRemoteBox(finalMerged);
+        } else {
+          // 記錄當前雲端與本地已同步之內容雜湊，避免後續重複發送 POST upsert
+          lastPushedBoxHash = finalSerialized;
         }
 
-        // 3. 寫回本機 LocalStorage 並通知 Box 模組更新
+        // 3. 寫回本機 LocalStorage 並通知 Box 模組更新 (傳入 skipCloudPush = true 阻斷回環推送)
         try {
-          localStorage.setItem(STORAGE_KEY_USER_BOX, JSON.stringify(finalMerged));
+          localStorage.setItem(STORAGE_KEY_USER_BOX, finalSerialized);
         } catch (e) {}
 
         if (typeof window !== 'undefined' && window.PokemonBoxApp && typeof window.PokemonBoxApp.setUserBox === 'function') {
-          window.PokemonBoxApp.setUserBox(finalMerged);
+          window.PokemonBoxApp.setUserBox(finalMerged, true);
         }
 
         syncStatus = 'synced';
         updateSyncUI();
       } catch (err) {
         console.error('[CloudSync] Initial sync failed:', err);
+        lastInitialSyncTimestamp = 0;
         syncStatus = 'error';
         lastSyncError = err.message || '首次同步失敗';
         updateSyncUI();
@@ -588,6 +641,11 @@
   /* ─── 帶防抖 (Debounce) 的外部推送介面 ─────────────────────── */
   function pushCloudBox(boxData) {
     if (!supabaseClient || !currentUser) return;
+
+    const dataArray = Array.isArray(boxData) ? boxData : [];
+    if (JSON.stringify(dataArray) === lastPushedBoxHash) {
+      return;
+    }
 
     if (pushDebounceTimer) {
       clearTimeout(pushDebounceTimer);

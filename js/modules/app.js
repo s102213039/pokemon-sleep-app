@@ -2943,6 +2943,19 @@ if (typeof document !== 'undefined') {
     const CACHE_KEY_DATA_JSON_TIME = 'pksleep_cache_data_json_time';
 
     const fetchDataWithFallback = async (...customUrls) => {
+      // 1. 優先自本機 LocalStorage 瞬間載入快取 (Cache-First 0ms 秒開)，背景再由 manifest 檢查是否需更新
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const cachedText = window.localStorage.getItem(CACHE_KEY_DATA_JSON);
+          if (cachedText) {
+            const cachedData = JSON.parse(cachedText);
+            if (Array.isArray(cachedData) && cachedData.length > 0) {
+              return cachedData;
+            }
+          }
+        }
+      } catch (cacheReadErr) {}
+
       const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
       const defaultCandidates = [
         `${base}data/data.json`,
@@ -2960,12 +2973,11 @@ if (typeof document !== 'undefined') {
       let lastErr = null;
 
       for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-        const t = Date.now();
-        const uniqueUrls = cleanUrls.map(u => `${u}?t=${t}`);
+        const uniqueUrls = attempt === 1 ? cleanUrls : cleanUrls.map(u => `${u}?t=${Date.now()}`);
 
         for (const url of uniqueUrls) {
           try {
-            const res = await fetch(url, { cache: 'no-store' });
+            const res = await fetch(url, { cache: attempt === 1 ? 'default' : 'no-store' });
             if (res && res.ok) {
               const text = await res.text();
               const parsed = JSON.parse(text);
@@ -2973,6 +2985,9 @@ if (typeof document !== 'undefined') {
                 if (typeof window !== 'undefined' && window.localStorage) {
                   window.localStorage.setItem(CACHE_KEY_DATA_JSON, text);
                   window.localStorage.setItem(CACHE_KEY_DATA_JSON_TIME, String(Date.now()));
+                }
+                if (typeof window !== 'undefined' && window.DataCacheManager) {
+                  window.DataCacheManager.saveCachedJson(CACHE_KEY_DATA_JSON, 'data.json', text);
                 }
               } catch (e) {}
               return parsed;
@@ -2996,15 +3011,6 @@ if (typeof document !== 'undefined') {
             const cachedData = JSON.parse(cachedText);
             if (Array.isArray(cachedData) && cachedData.length > 0) {
               console.warn('[Data Engine] 網路請求暫時失敗，已自動自本機離線快取載入 data.json (' + cachedData.length + ' 筆資料)');
-              // 背景排程於 6 秒後靜默嘗試重新請求最新資料以刷新快取
-              setTimeout(() => {
-                fetchDataWithFallback().then(freshData => {
-                  if (Array.isArray(freshData) && freshData.length > 0) {
-                    allPokemons = freshData;
-                    window.allPokemons = freshData;
-                  }
-                }).catch(() => {});
-              }, 6000);
               return cachedData;
             }
           }
@@ -3020,15 +3026,39 @@ if (typeof document !== 'undefined') {
       if (typeof window === 'undefined' || typeof fetch === 'undefined') return;
       let isSyncing = false;
 
-      async function runSyncCheck() {
+      async function runSyncCheck(forceManifest = false) {
         if (isSyncing) return;
         isSyncing = true;
         try {
-          const liveUrl = `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json?t=${Date.now()}`;
-          const res = await fetch(liveUrl, { cache: 'no-store' });
-          if (!res.ok) return;
-          const freshData = await res.json();
+          let remoteHash = '';
+          if (window.DataCacheManager && typeof window.DataCacheManager.checkFileNeedsUpdate === 'function') {
+            const check = await window.DataCacheManager.checkFileNeedsUpdate('data.json', CACHE_KEY_DATA_JSON, forceManifest);
+            if (!check.needsUpdate && Array.isArray(allPokemons) && allPokemons.length > 0) {
+              return;
+            }
+            remoteHash = check.remoteHash || '';
+          }
+
+          const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
+          const liveUrl = `${base}data/data.json?v=${remoteHash || Date.now()}`;
+          let res = await fetch(liveUrl, { cache: 'no-cache' }).catch(() => null);
+          if (!res || !res.ok) {
+            const fallbackRawUrl = `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json?t=${Date.now()}`;
+            res = await fetch(fallbackRawUrl, { cache: 'no-store' });
+          }
+          if (!res || !res.ok) return;
+          const rawText = await res.text();
+          const freshData = JSON.parse(rawText);
           if (!Array.isArray(freshData) || freshData.length === 0) return;
+
+          if (window.DataCacheManager) {
+            window.DataCacheManager.saveCachedJson(CACHE_KEY_DATA_JSON, 'data.json', rawText, remoteHash);
+          } else if (window.localStorage) {
+            try {
+              window.localStorage.setItem(CACHE_KEY_DATA_JSON, rawText);
+              window.localStorage.setItem(CACHE_KEY_DATA_JSON_TIME, String(Date.now()));
+            } catch (e) {}
+          }
 
           const currentLen = Array.isArray(allPokemons) ? allPokemons.length : 0;
           const isDifferent = currentLen !== freshData.length ||
@@ -3042,12 +3072,6 @@ if (typeof document !== 'undefined') {
             console.log(`[Data Engine] 動態連線取得最新寶可夢資料庫 (${freshData.length} 筆)，正在原地更新...`);
             allPokemons = freshData;
             window.allPokemons = freshData;
-            try {
-              if (window.localStorage) {
-                window.localStorage.setItem(CACHE_KEY_DATA_JSON, JSON.stringify(freshData));
-                window.localStorage.setItem(CACHE_KEY_DATA_JSON_TIME, String(Date.now()));
-              }
-            } catch (e) {}
 
             if (PokemonApp && typeof PokemonApp.init === 'function') {
               PokemonApp.init(freshData);
@@ -3070,26 +3094,26 @@ if (typeof document !== 'undefined') {
         }
       }
 
-      // 網頁執行後 2 秒進行背景動態比對更新
-      setTimeout(runSyncCheck, 2000);
-      // 每 15 分鐘定期背景動態獲取
-      setInterval(runSyncCheck, 15 * 60 * 1000);
-      // 使用者切回分頁時動態檢查
+      // 網頁執行後透過輕量級 manifest.json 檢查雜湊是否變更 (10分鐘內共享單一請求)
+      setTimeout(() => runSyncCheck(false), 1500);
+      // 每 30 分鐘定期背景檢查 manifest
+      setInterval(() => runSyncCheck(false), 30 * 60 * 1000);
+      // 使用者切回分頁時透過具備 10 分鐘冷卻節流的 manifest 檢查
       if (typeof document !== 'undefined') {
         document.addEventListener('visibilitychange', () => {
           if (document.visibilityState === 'visible') {
-            runSyncCheck();
+            runSyncCheck(false);
           }
         });
       }
     }
 
     fetchDataWithFallback(
-      (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/data.json?t=${Date.now()}`,
-      `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json?t=${Date.now()}`,
-      `data/data.json?t=${Date.now()}`,
-      `../data/data.json?t=${Date.now()}`,
-      `data.json?t=${Date.now()}`
+      (typeof window !== 'undefined' && window.__DATA_BASE_PATH__ ? window.__DATA_BASE_PATH__ : '') + `data/data.json`,
+      `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/data.json`,
+      `data/data.json`,
+      `../data/data.json`,
+      `data.json`
     )
       .then(data => {
         allPokemons = data;
