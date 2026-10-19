@@ -6718,6 +6718,13 @@ body:not(.mobile-h5-app) .box-content-container .pokemon-table-container {
   color: #38bdf8 !important;
 }
 
+.box-spec-tag.spec-all,
+.mobile-h5-app .box-spec-tag.spec-all {
+  background: rgba(168, 85, 247, 0.18) !important;
+  border: 1.5px solid #a855f7 !important;
+  color: #c084fc !important;
+}
+
 /* 圓形專長圖示樣式 (取代文字與外框底色) */
 .specialty-icon-wrap,
 .box-spec-tag.specialty-icon-wrap,
@@ -13336,6 +13343,12 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   color: #38bdf8 !important;
 }
 
+.appraisal-spec-tag.spec-all {
+  background: rgba(168, 85, 247, 0.18) !important;
+  border: 1.5px solid #a855f7 !important;
+  color: #c084fc !important;
+}
+
 [data-theme="light"] .appraisal-spec-tag.spec-berry,
 [data-theme="light"] .box-spec-tag.spec-berry,
 .mobile-h5-app[data-theme="light"] .box-spec-tag.spec-berry {
@@ -13358,6 +13371,14 @@ body:not(.mobile-h5-app) .box-subskill-slots-row .box-subskill-slot-btn.slot-unr
   background: #e0f2fe !important;
   border: 1.5px solid #0284c7 !important;
   color: #0369a1 !important;
+}
+
+[data-theme="light"] .appraisal-spec-tag.spec-all,
+[data-theme="light"] .box-spec-tag.spec-all,
+.mobile-h5-app[data-theme="light"] .box-spec-tag.spec-all {
+  background: #f3e8ff !important;
+  border: 1.5px solid #9333ea !important;
+  color: #7e22ce !important;
 }
 
 /* 主技能展示條目 (Appraisal Main Skill) */

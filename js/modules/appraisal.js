@@ -2403,6 +2403,9 @@
     } else if (pkmData.specialty && (pkmData.specialty.includes('技能') || pkmData.specialty === 'Skills')) {
       specClass = 'spec-skill';
       specTypeLabel = isEN ? 'Skills' : '技能型';
+    } else if (pkmData.specialty && (pkmData.specialty.includes('全能') || pkmData.specialty.includes('全部') || pkmData.specialty === 'All-Rounder' || pkmData.specialty.toLowerCase() === 'all')) {
+      specClass = 'spec-all';
+      specTypeLabel = isEN ? 'All-Rounder' : '全能型';
     }
 
     let summaryNote = pkmOrBoxItem.summaryNote || '';

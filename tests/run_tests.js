@@ -12373,12 +12373,13 @@ SP 4,316
   });
 
   // ─── Test 220: Pokédex & Box Table Column Header Click Sorting Integrity ─────────
-  test('Tier 1 - Feature Coverage', 'Pokédex and Box Table Column Header Click Sorting: Icon/No. Toggle, Unified Attributes and Comparators', () => {
+  test('Tier 1 - Feature Coverage', 'Pokédex and Box Table Column Header Click Sorting: 3-State Sorting, Selective Clickable Columns & All-Rounder Specialty Icon', () => {
     const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/app.js'), 'utf8');
     const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
     const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
     const app = require(path.join(WORKSPACE_ROOT, 'js/modules/app.js'));
     const box = require(path.join(WORKSPACE_ROOT, 'js/modules/box.js'));
+    const i18n = require(path.join(WORKSPACE_ROOT, 'js/core/i18n.js'));
 
     // 1. Pokédex Tab Sorting: getItemNo and sortPokemonList numeric & string support
     assert(typeof app.getItemNo === 'function', 'app.js must export getItemNo helper');
@@ -12392,6 +12393,14 @@ SP 4,316
     assert(app.nextColumnSort('no-asc', 'no') === 'no-desc', 'nextColumnSort must toggle no-asc to no-desc');
     assert(app.nextColumnSort('no-desc', 'no') === 'no-asc', 'nextColumnSort must toggle no-desc to no-asc');
 
+    // 1.1 Pokédex 3-State Sorting (State 1: default dir -> State 2: reverse dir -> State 3: reset to default no-asc)
+    assert(app.nextColumnSort('no-asc', 'carry') === 'carry-desc', 'Pokédex carry click 1 must enter carry-desc');
+    assert(app.nextColumnSort('carry-desc', 'carry') === 'carry-asc', 'Pokédex carry click 2 must enter carry-asc');
+    assert(app.nextColumnSort('carry-asc', 'carry') === 'no-asc', 'Pokédex carry click 3 must reset to no-asc default');
+    assert(app.nextColumnSort('no-asc', 'interval') === 'interval-asc', 'Pokédex interval click 1 must enter interval-asc');
+    assert(app.nextColumnSort('interval-asc', 'interval') === 'interval-desc', 'Pokédex interval click 2 must enter interval-desc');
+    assert(app.nextColumnSort('interval-desc', 'interval') === 'no-asc', 'Pokédex interval click 3 must reset to no-asc default');
+
     const sampleP1 = { id: 25, formatted_no: '025', name_cn: '皮卡丘' };
     const sampleP2 = { id: 1, formatted_no: '001', name_cn: '妙蛙種子' };
     const sortedAsc = app.sortPokemonList([sampleP1, sampleP2], 'no-asc');
@@ -12399,30 +12408,54 @@ SP 4,316
     const sortedDesc = app.sortPokemonList([sampleP1, sampleP2], 'no-desc');
     assert(sortedDesc[0].id === 25, 'sortPokemonList no-desc must place higher Dex number first');
 
-    // 2. Pokédex Table Markup: Icon header is clickable sortableTh('no', ...)
+    // 2. Pokédex Table Markup: Icon header is clickable sortableTh('no', ...), Name/Berry/Specialty are non-clickable plain th
     assert(appJs.includes("sortableTh('no', t('th.icon', '圖示'), 'th-icon')"), 'app.js renderTable must make icon header sortable via sortableTh');
+    assert(!appJs.includes("sortableTh('name'"), 'Pokédex name column must NOT be sortable');
+    assert(!appJs.includes("sortableTh('berry'"), 'Pokédex berry column must NOT be sortable');
+    assert(!appJs.includes("sortableTh('specialty'"), 'Pokédex specialty column must NOT be sortable');
+    assert(appJs.includes('<th class="th-name">'), 'Pokédex name header must be pure th');
+    assert(appJs.includes('<th class="th-berry">'), 'Pokédex berry header must be pure th');
+    assert(appJs.includes('<th class="th-spec">'), 'Pokédex specialty header must be pure th');
     assert(appJs.includes("contentArea.addEventListener('click', (e) => {"), 'app.js must have click listener on contentArea');
     assert(appJs.includes("e.target.closest('th[data-sort]')"), 'app.js must delegate clicks to th[data-sort]');
 
-    // 3. Box Tab Table Sorting: parseBoxSort, nextBoxSort & column directions
+    // 3. Box Tab Table Sorting: parseBoxSort, nextBoxSort & 3-state level cycling
     assert(typeof box.parseBoxSort === 'function', 'box.js must export parseBoxSort helper');
     assert(box.parseBoxSort('id-asc').col === 'id', 'parseBoxSort must parse id');
     assert(box.parseBoxSort('id-asc').dir === 'asc', 'parseBoxSort must parse asc');
     assert(box.nextBoxSort('id-asc', 'id') === 'id-desc', 'nextBoxSort must toggle id-asc to id-desc');
     assert(box.nextBoxSort('id-desc', 'id') === 'id-asc', 'nextBoxSort must toggle id-desc to id-asc');
-    assert(box.nextBoxSort('id-asc', 'level') === 'level-desc', 'nextBoxSort must switch to level-desc');
-    assert(box.nextBoxSort('level-desc', 'level') === 'level-asc', 'nextBoxSort must toggle level-desc to level-asc');
+    assert(box.nextBoxSort('id-asc', 'level') === 'level-desc', 'nextBoxSort must switch to level-desc (state 1)');
+    assert(box.nextBoxSort('level-desc', 'level') === 'level-asc', 'nextBoxSort must toggle level-desc to level-asc (state 2)');
+    assert(box.nextBoxSort('level-asc', 'level') === 'id-asc', 'nextBoxSort must reset level-asc to id-asc default (state 3)');
 
-    // 4. Box Tab Table Markup & Event Delegation
+    // 4. Box Tab Table Markup: Only icon and level are sortable; name, specialty, berry, ings are non-sortable
     assert(boxJs.includes("boxSortableTh('id', t('th.icon', '圖示'), 'th-icon')"), 'box.js renderBoxTable must make icon header sortable via boxSortableTh');
     assert(boxJs.includes("boxSortableTh('level', t('th.level', '等級'))"), 'box.js renderBoxTable must make level header sortable');
+    assert(!boxJs.includes("boxSortableTh('name'"), 'Box name column must NOT be sortable');
+    assert(!boxJs.includes("boxSortableTh('specialty'"), 'Box specialty column must NOT be sortable');
+    assert(!boxJs.includes("boxSortableTh('berry'"), 'Box berry column must NOT be sortable');
+    assert(!boxJs.includes("boxSortableTh('ing1'"), 'Box ing1 column must NOT be sortable');
+    assert(box.nextBoxSort('id-asc', 'name') === 'id-asc', 'Box nextBoxSort must ignore name');
+    assert(box.nextBoxSort('id-asc', 'specialty') === 'id-asc', 'Box nextBoxSort must ignore specialty');
     assert(boxJs.includes("boxContentArea.addEventListener('click', (e) => {"), 'box.js must attach click listener on boxContentArea');
     assert(boxJs.includes("nextBoxSort(sortBy, col)"), 'box.js must update sortBy via nextBoxSort on th click');
 
-    // 5. CSS sort-arrow styling
+    // 5. All-Rounder (全能型) Specialty Icon & Assets Integrity
+    assert(fs.existsSync(path.join(WORKSPACE_ROOT, 'assets/specialty/all.png')), 'all.png must exist');
+    assert(fs.existsSync(path.join(WORKSPACE_ROOT, 'assets/specialty/all@2x.png')), 'all@2x.png must exist');
+    assert(i18n.getSpecialtyKey('全部') === 'all', 'getSpecialtyKey(全部) must return all');
+    assert(i18n.getSpecialtyKey('全能') === 'all', 'getSpecialtyKey(全能) must return all');
+    assert(i18n.getSpecialtyKey('All-Rounder') === 'all', 'getSpecialtyKey(All-Rounder) must return all');
+    const specAllIconHtml = i18n.getSpecialtyIconHtml('全部');
+    assert(specAllIconHtml.includes('assets/specialty/all.png'), 'getSpecialtyIconHtml(全部) must use all.png');
+    assert(specAllIconHtml.includes('spec-all'), 'getSpecialtyIconHtml(全部) must include spec-all');
+
+    // 6. CSS sort-arrow styling
     assert(stylesCss.includes('.pokemon-table th.th-sortable'), 'css must define .pokemon-table th.th-sortable');
     assert(stylesCss.includes('.pokemon-table .sort-arrow'), 'css must define .pokemon-table .sort-arrow');
     assert(stylesCss.includes('.pokemon-table th.th-icon .sort-arrow'), 'css must define .pokemon-table th.th-icon .sort-arrow');
+    assert(stylesCss.includes('.box-spec-tag.spec-all'), 'css must define .box-spec-tag.spec-all');
   });
 
 console.log('                   Test Results Summary');

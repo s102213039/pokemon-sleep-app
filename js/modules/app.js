@@ -165,10 +165,25 @@ function parseTableSort(sortKey) {
 }
 
 function nextColumnSort(currentSort, col) {
-  if (!SORT_DEFAULT_DIR[col]) return currentSort;
+  const targetCol = (col === 'id') ? 'no' : col;
+  if (!SORT_DEFAULT_DIR[targetCol]) return currentSort;
   const parsed = parseTableSort(currentSort);
-  if (parsed.col === col) return `${col}-${parsed.dir === 'desc' ? 'asc' : 'desc'}`;
-  return `${col}-${SORT_DEFAULT_DIR[col]}`;
+
+  if (targetCol === 'no') {
+    if (parsed.col === 'no') {
+      return parsed.dir === 'asc' ? 'no-desc' : 'no-asc';
+    }
+    return 'no-asc';
+  }
+
+  if (parsed.col === targetCol) {
+    const defDir = SORT_DEFAULT_DIR[targetCol];
+    if (parsed.dir === defDir) {
+      return `${targetCol}-${defDir === 'desc' ? 'asc' : 'desc'}`;
+    }
+    return 'no-asc';
+  }
+  return `${targetCol}-${SORT_DEFAULT_DIR[targetCol]}`;
 }
 
 function sortPokemonList(list, sortKey) {
@@ -3787,6 +3802,8 @@ if (typeof document !== 'undefined') {
               specClass = 'spec-berry';
             } else if (rawSpec.includes('技能') || rawSpec === 'Skills') {
               specClass = 'spec-skill';
+            } else if (rawSpec.includes('全能') || rawSpec.includes('全部') || rawSpec === 'All-Rounder' || rawSpec.toLowerCase() === 'all') {
+              specClass = 'spec-all';
             }
             const berry = getPokemonBerry(p);
             const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--');
@@ -3868,9 +3885,9 @@ if (typeof document !== 'undefined') {
               <tr>
                 ${isShowNo ? sortableTh('no', 'No.', 'th-no') : ''}
                 ${sortableTh('no', t('th.icon', '圖示'), 'th-icon')}
-                ${sortableTh('name', t('th.name', '寶可夢'), 'th-name')}
-                ${sortableTh('berry', t('th.berry', '樹果'), 'th-berry')}
-                ${sortableTh('specialty', t('th.specialty', '得意'), 'th-spec')}
+                <th class="th-name">${t('th.name', '寶可夢')}</th>
+                <th class="th-berry">${t('th.berry', '樹果')}</th>
+                <th class="th-spec">${t('th.specialty', '得意')}</th>
                 ${sortableTh('carry', t('th.carry', '持有'), 'th-carry')}
                 <th class="th-ing">${ing1Label}</th>
                 <th class="th-ing">${ing2Label}</th>
@@ -3892,6 +3909,8 @@ if (typeof document !== 'undefined') {
                   specClass = 'spec-berry';
                 } else if (rawSpec.includes('技能') || rawSpec === 'Skills') {
                   specClass = 'spec-skill';
+                } else if (rawSpec.includes('全能') || rawSpec.includes('全部') || rawSpec === 'All-Rounder' || rawSpec.toLowerCase() === 'all') {
+                  specClass = 'spec-all';
                 }
                 const berry = getPokemonBerry(p);
                 const berryName = window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--');
@@ -6235,6 +6254,8 @@ function renderPokedexDetailModalContent() {
     specClass = 'spec-berry';
   } else if (pkm.specialty && (pkm.specialty.includes('技能') || pkm.specialty === 'Skills')) {
     specClass = 'spec-skill';
+  } else if (pkm.specialty && (pkm.specialty.includes('全能') || pkm.specialty.includes('全部') || pkm.specialty === 'All-Rounder' || pkm.specialty.toLowerCase() === 'all')) {
+    specClass = 'spec-all';
   }
 
   // 6D 評估計算

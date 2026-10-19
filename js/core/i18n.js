@@ -1239,7 +1239,8 @@
     '技能': { 'zh-TW': '技能', 'en-US': 'Skills' },
     '技能型': { 'zh-TW': '技能型', 'en-US': 'Skills' },
     '全能': { 'zh-TW': '全能', 'en-US': 'All-Rounder' },
-    '全部': { 'zh-TW': '全部', 'en-US': 'All-Rounder' }
+    '全能型': { 'zh-TW': '全能型', 'en-US': 'All-Rounder' },
+    '全部': { 'zh-TW': '全能', 'en-US': 'All-Rounder' }
   };
 
   // 食材名稱官方英中對照 (19種食材全收錄)
@@ -2234,6 +2235,7 @@
   function getSpecialtyKey(spec) {
     if (!spec) return 'berry';
     const str = String(spec).toLowerCase();
+    if (str.includes('全能') || str.includes('全部') || str.includes('all') || str === 'all-rounder') return 'all';
     if (str.includes('樹果') || str.includes('berry') || str === 'berries') return 'berry';
     if (str.includes('食材') || str.includes('ingredient') || str === 'ingredients') return 'ingredient';
     if (str.includes('技能') || str.includes('skill') || str === 'skills') return 'skill';

@@ -102,12 +102,27 @@
 
   function nextBoxSort(currentSort, col) {
     const targetCol = (col === 'dex' || col === 'no') ? 'id' : col;
-    if (!BOX_SORT_DEFAULT_DIR[targetCol]) return currentSort;
+    if (targetCol !== 'id' && targetCol !== 'level') return currentSort;
     const parsed = parseBoxSort(currentSort);
-    if (parsed.col === targetCol) {
-      return `${targetCol}-${parsed.dir === 'desc' ? 'asc' : 'desc'}`;
+
+    if (targetCol === 'id') {
+      if (parsed.col === 'id') {
+        return parsed.dir === 'asc' ? 'id-desc' : 'id-asc';
+      }
+      return 'id-asc';
     }
-    return `${targetCol}-${BOX_SORT_DEFAULT_DIR[targetCol]}`;
+
+    if (targetCol === 'level') {
+      if (parsed.col === 'level') {
+        if (parsed.dir === 'desc') {
+          return 'level-asc';
+        }
+        return 'id-asc';
+      }
+      return 'level-desc';
+    }
+
+    return currentSort;
   }
 
   // Contract for Test 176: <th class="th-icon"
@@ -1452,6 +1467,8 @@
             specClass = 'spec-berry';
           } else if (rawSpec.includes('技能') || rawSpec === 'Skills') {
             specClass = 'spec-skill';
+          } else if (rawSpec.includes('全能') || rawSpec.includes('全部') || rawSpec === 'All-Rounder' || rawSpec.toLowerCase() === 'all') {
+            specClass = 'spec-all';
           }
           const natureDisplayName = window.I18N ? window.I18N.getNatureName(p.nature) : p.nature;
           const berry = (window.getPokemonBerry && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : null);
@@ -1588,12 +1605,12 @@
             <tr>
               ${boxSortableTh('id', t('th.icon', '圖示'), 'th-icon')}
               ${boxSortableTh('level', t('th.level', '等級'))}
-              ${boxSortableTh('name', isEN ? 'Name / Nickname' : '寶可夢 / 暱稱')}
-              ${boxSortableTh('specialty', t('th.specialty', '得意'), 'th-spec')}
-              ${boxSortableTh('berry', t('th.berry', '樹果'))}
-              ${boxSortableTh('ing1', isEN ? 'Ing 1' : '食1')}
-              ${boxSortableTh('ing2', isEN ? 'Ing 2' : '食2')}
-              ${boxSortableTh('ing3', isEN ? 'Ing 3' : '食3')}
+              <th style="text-align:center;">${isEN ? 'Name / Nickname' : '寶可夢 / 暱稱'}</th>
+              <th class="th-spec" style="text-align:center;">${t('th.specialty', '得意')}</th>
+              <th style="text-align:center;">${t('th.berry', '樹果')}</th>
+              <th style="text-align:center;">${isEN ? 'Ing 1' : '食1'}</th>
+              <th style="text-align:center;">${isEN ? 'Ing 2' : '食2'}</th>
+              <th style="text-align:center;">${isEN ? 'Ing 3' : '食3'}</th>
               <th style="text-align:center;">${t('th.actions', '操作')}</th>
             </tr>
           </thead>
@@ -1610,6 +1627,8 @@
                 specClass = 'spec-berry';
               } else if (rawSpec.includes('技能') || rawSpec === 'Skills') {
                 specClass = 'spec-skill';
+              } else if (rawSpec.includes('全能') || rawSpec.includes('全部') || rawSpec === 'All-Rounder' || rawSpec.toLowerCase() === 'all') {
+                specClass = 'spec-all';
               }
               const berry = (window.getPokemonBerry && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : null);
               const berryName = berry ? (window.I18N ? window.I18N.getBerryName(berry.name) : (berry.name || '--')) : '';

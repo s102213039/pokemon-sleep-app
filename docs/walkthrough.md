@@ -1599,11 +1599,27 @@
     - **H5 行動端網格與底部 Dock 避讓**：`#wiki-subpanel-items` 增加 `padding: 10px 12px calc(80px + env(safe-area-inset-bottom, 0px)) 12px !important;`，確保底部卡片不被 62px 底部導覽列遮蔽。
     - **雙欄卡片數值列非折行緊湊佈局**：移動端 `.wiki-item-card-stat-row` 設為 `flex-wrap: nowrap`，微調字級（13.5px 數值、9.5px 單位與標籤），防止在 ~170px 卡片寬度中文字換行溢出或擠壓。
 
+14. **桌面端各頁面統一寬度約束、邊界對齊與雅緻圓角規範 (Desktop Unified Content Constraints - Test 219)**:
+    - 嚴格區分網頁版 (Desktop Web) 與 H5 App 移動端排版行為。
+    - 網頁版頂部頁面導航列統一寬度約束 (`max-width: 1440px; margin: 0 auto;`)。
+    - 圖鑑（Pokedex）、料理（Recipes）與百科（Wiki）各頁面容器與內層展示區對齊約束，統一 12px 雅緻圓角。
+    - H5 App 移動端保持全屏貼邊無邊距展示。
+15. **圖鑑與倉庫表格欄位三態點選排序與可選欄位精簡 (Pokédex & Box 3-State Column Sorting - Test 220)**:
+    - 點選排序支援三態循環切換：狀態 1（正向）-> 狀態 2（反向）-> 狀態 3（回到預設，排序箭頭隱藏）。
+    - 倉庫 Tab（Box）僅保留圖示（依全國編號）與等級（Lv.）可點選排序，其他欄位（寶可夢/暱稱、得意、樹果、食材 1~3、操作）為純文字表頭不可點選。
+    - 圖鑑 Tab（Pokédex）移除寶可夢名稱、樹果、得意的點選排序功能，改為純文字表頭；保留圖示（全國編號）、持有上限、食材率、技能率、幫忙間隔之排序功能。
+16. **幻之寶可夢專屬「全能型」得意圖示新增 (All-Rounder Specialty Icon & Mew #151 - Test 220)**:
+    - 針對幻之寶可夢（夢幻 Mew #151，`specialty: "全部"`）新增專屬全能型圖示資產 `assets/specialty/all.png` (38x38) 與 `assets/specialty/all@2x.png` (76x76)。
+    - 設計採用高雅深紫底色搭配純白八芒星全能徽記，使用 Lanczos 8x 超採樣平滑抗鋸齒生成。
+    - `i18n.js` 多語系字典新增 `全能型` / `All-Rounder` / `全部` 映射，`getSpecialtyKey` 解析回傳 `'all'`。
+    - `styles.css` 擴充 `.box-spec-tag.spec-all`、`.appraisal-spec-tag.spec-all` 等淺色與深色主題樣式。
+    - 徹底修正夢幻得意誤顯示為「樹果型」圖示之歷史問題。
+
 ### 自動化測試與工程品質保證
-- **測試總數升級至 217 項**：
-  - Tier 1 (Feature Coverage): 64 Passed, 0 Failed
+- **測試總數升級至 220 項**：
+  - Tier 1 (Feature Coverage): 66 Passed, 0 Failed
   - Tier 2 (Boundary & Corner Cases): 43 Passed, 0 Failed
   - Tier 3 (Cross-Feature Combinations): 8 Passed, 0 Failed
-  - Tier 4 (Real-World Application Scenarios): 102 Passed, 0 Failed
-  - **總計：217 / 217 Passed (0 Failed, 100% 通過)**
+  - Tier 4 (Real-World Application Scenarios): 103 Passed, 0 Failed
+  - **總計：220 / 220 Passed (0 Failed, 100% 通過)**
 - 全面遵守全域安全規範、無 Emoji 政策、單一外框規範、下拉箭頭排版規範與 `rtk` 指令調用。
