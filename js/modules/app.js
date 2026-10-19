@@ -107,13 +107,52 @@ function getItemSkillRate(p) {
   return isNaN(parsed) ? 0 : parsed;
 }
 
+function getItemNo(p) {
+  if (!p) return 99999;
+  const val = p.formatted_no || p.id || p.pokedex_id || '99999';
+  const num = parseInt(val, 10);
+  return isNaN(num) ? 99999 : num;
+}
+
+function getItemName(p) {
+  if (!p) return '';
+  const isEN = typeof window !== 'undefined' && window.I18N && window.I18N.getLanguage() === 'en-US';
+  return isEN ? (p.name_en || p.name_cn || '') : (p.name_cn || p.name_en || '');
+}
+
+function getItemSpecialty(p) {
+  if (!p) return '';
+  return p.specialty || '';
+}
+
+function getItemBerry(p) {
+  if (!p) return '';
+  const berry = (typeof getPokemonBerry === 'function') ? getPokemonBerry(p) : (p.berry || null);
+  return (berry && berry.name) || '';
+}
+
 const SORT_GETTERS = {
+  no: getItemNo,
+  id: getItemNo,
+  name: getItemName,
+  specialty: getItemSpecialty,
+  berry: getItemBerry,
   carry: getItemCarry,
   ingredientRate: getItemIngredientRate,
   skillRate: getItemSkillRate,
   interval: getItemHelpInterval
 };
-const SORT_DEFAULT_DIR = { carry: 'desc', ingredientRate: 'desc', skillRate: 'desc', interval: 'asc' };
+const SORT_DEFAULT_DIR = {
+  no: 'asc',
+  id: 'asc',
+  name: 'asc',
+  specialty: 'asc',
+  berry: 'asc',
+  carry: 'desc',
+  ingredientRate: 'desc',
+  skillRate: 'desc',
+  interval: 'asc'
+};
 
 function parseTableSort(sortKey) {
   if (!sortKey) return { col: null, dir: null };
@@ -138,7 +177,19 @@ function sortPokemonList(list, sortKey) {
   const getter = col && SORT_GETTERS[col];
   if (!getter) return out;
   const mul = dir === 'desc' ? -1 : 1;
-  out.sort((a, b) => (getter(a) - getter(b)) * mul);
+  out.sort((a, b) => {
+    const valA = getter(a);
+    const valB = getter(b);
+    if (typeof valA === 'string' && typeof valB === 'string') {
+      const cmp = valA.localeCompare(valB, 'zh-Hant');
+      if (cmp !== 0) return cmp * mul;
+      return getItemNo(a) - getItemNo(b);
+    }
+    const numA = typeof valA === 'number' ? valA : 0;
+    const numB = typeof valB === 'number' ? valB : 0;
+    if (numA !== numB) return (numA - numB) * mul;
+    return getItemNo(a) - getItemNo(b);
+  });
   return out;
 }
 
@@ -3815,11 +3866,11 @@ if (typeof document !== 'undefined') {
           <table class="pokemon-table ${isShowNo ? '' : 'hide-no'}">
             <thead>
               <tr>
-                ${isShowNo ? '<th class="th-no">No.</th>' : ''}
-                <th class="th-icon">${t('th.icon', '圖示')}</th>
-                <th class="th-name">${t('th.name', '寶可夢')}</th>
-                <th class="th-berry">${t('th.berry', '樹果')}</th>
-                <th class="th-spec">${t('th.specialty', '得意')}</th>
+                ${isShowNo ? sortableTh('no', 'No.', 'th-no') : ''}
+                ${sortableTh('no', t('th.icon', '圖示'), 'th-icon')}
+                ${sortableTh('name', t('th.name', '寶可夢'), 'th-name')}
+                ${sortableTh('berry', t('th.berry', '樹果'), 'th-berry')}
+                ${sortableTh('specialty', t('th.specialty', '得意'), 'th-spec')}
                 ${sortableTh('carry', t('th.carry', '持有'), 'th-carry')}
                 <th class="th-ing">${ing1Label}</th>
                 <th class="th-ing">${ing2Label}</th>
@@ -6923,6 +6974,12 @@ if (typeof module !== 'undefined' && module.exports) {
     toggleSidebar,
     isAnyFloatingTooltipVisible,
     getHelpButtonData,
-    dismissAllFloatingTooltips
+    dismissAllFloatingTooltips,
+    getItemNo,
+    sortPokemonList,
+    parseTableSort,
+    nextColumnSort,
+    SORT_GETTERS,
+    SORT_DEFAULT_DIR
   };
 }

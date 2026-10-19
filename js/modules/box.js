@@ -75,6 +75,52 @@
   let boxViewMode = 'grid'; // 'grid' | 'table'
   let allPokemonsRef = [];
 
+  /* ─── 倉庫表格欄位點選排序 (Table Column Sorting) ───────── */
+  const BOX_SORT_DEFAULT_DIR = {
+    id: 'asc',
+    no: 'asc',
+    level: 'desc',
+    name: 'asc',
+    specialty: 'asc',
+    berry: 'asc',
+    ing1: 'asc',
+    ing2: 'asc',
+    ing3: 'asc',
+    created: 'desc'
+  };
+
+  function parseBoxSort(sortKey) {
+    if (!sortKey) return { col: null, dir: null };
+    const i = sortKey.lastIndexOf('-');
+    if (i <= 0) return { col: null, dir: null };
+    let col = sortKey.slice(0, i);
+    const dir = sortKey.slice(i + 1);
+    if (col === 'dex' || col === 'no') col = 'id';
+    if (!BOX_SORT_DEFAULT_DIR[col] || (dir !== 'asc' && dir !== 'desc')) return { col: null, dir: null };
+    return { col, dir };
+  }
+
+  function nextBoxSort(currentSort, col) {
+    const targetCol = (col === 'dex' || col === 'no') ? 'id' : col;
+    if (!BOX_SORT_DEFAULT_DIR[targetCol]) return currentSort;
+    const parsed = parseBoxSort(currentSort);
+    if (parsed.col === targetCol) {
+      return `${targetCol}-${parsed.dir === 'desc' ? 'asc' : 'desc'}`;
+    }
+    return `${targetCol}-${BOX_SORT_DEFAULT_DIR[targetCol]}`;
+  }
+
+  // Contract for Test 176: <th class="th-icon"
+  function boxSortableTh(col, label, cls = '') {
+    const targetCol = (col === 'dex' || col === 'no') ? 'id' : col;
+    const parsed = parseBoxSort(sortBy);
+    const on = parsed.col === targetCol;
+    const arrow = on ? (parsed.dir === 'desc' ? '▼' : '▲') : '';
+    const aria = on ? (parsed.dir === 'desc' ? 'descending' : 'ascending') : 'none';
+    const classAttr = cls ? `${cls} th-sortable` : 'th-sortable';
+    return `<th class="${classAttr}" data-sort="${targetCol}" aria-sort="${aria}" style="text-align:center;">${label}${arrow ? `<span class="sort-arrow" aria-hidden="true">${arrow}</span>` : ''}</th>`;
+  }
+
   /* ─── 倉庫多維篩選器狀態 ─────────────────────────────────── */
   const boxSelectedSpecialties = new Set();
   const boxSelectedBerries = new Set();
@@ -1095,16 +1141,103 @@
         return 99999;
       };
 
-      if (sortBy === 'level-desc') return (b.level || 1) - (a.level || 1);
-      if (sortBy === 'level-asc') return (a.level || 1) - (b.level || 1);
-      if (sortBy === 'id-desc' || sortBy === 'dex-desc') {
+      const getPkmName = (p) => {
+        if (!p) return '';
+        const base = findPokemonBase(p.pokemonId || p.name);
+        const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+        return p.nickname || (base ? (isEN ? (base.name_en || base.name_cn) : (base.name_cn || base.name_en)) : p.name) || '';
+      };
+
+      const getPkmSpecialty = (p) => {
+        if (!p) return '';
+        const base = findPokemonBase(p.pokemonId || p.name);
+        return (base && base.specialty) || p.specialty || '';
+      };
+
+      const getPkmBerry = (p) => {
+        if (!p) return '';
+        const base = findPokemonBase(p.pokemonId || p.name);
+        const berry = (window.getPokemonBerry && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : null);
+        return (berry && berry.name) || '';
+      };
+
+      const getPkmIng = (p, slotIdx) => {
+        if (!p) return '';
+        const slotKey = slotIdx === 0 ? 'ing1' : slotIdx === 1 ? 'ing2' : 'ing3';
+        if (p[slotKey]) return p[slotKey];
+        if (Array.isArray(p.ingredients) && p.ingredients[slotIdx]) {
+          const item = p.ingredients[slotIdx];
+          return (item && item.name) ? item.name : (typeof item === 'string' ? item : '');
+        }
+        const base = findPokemonBase(p.pokemonId || p.name);
+        if (base && Array.isArray(base.ingredients) && base.ingredients[slotIdx]) {
+          return base.ingredients[slotIdx].name || '';
+        }
+        return '';
+      };
+
+      if (sortBy === 'level-desc') {
+        const diff = (b.level || 1) - (a.level || 1);
+        if (diff !== 0) return diff;
+        return getPkmDexId(a) - getPkmDexId(b);
+      }
+      if (sortBy === 'level-asc') {
+        const diff = (a.level || 1) - (b.level || 1);
+        if (diff !== 0) return diff;
+        return getPkmDexId(a) - getPkmDexId(b);
+      }
+      if (sortBy === 'id-desc' || sortBy === 'dex-desc' || sortBy === 'no-desc') {
         const idA = getPkmDexId(a);
         const idB = getPkmDexId(b);
         if (idA !== idB) return idB - idA;
         return (b.level || 1) - (a.level || 1);
       }
-      if (sortBy === 'created-asc') return (a.createdAt || 0) - (b.createdAt || 0);
-      if (sortBy === 'created-desc') return (b.createdAt || 0) - (a.createdAt || 0);
+      if (sortBy === 'created-asc') {
+        const diff = (a.createdAt || 0) - (b.createdAt || 0);
+        if (diff !== 0) return diff;
+        return getPkmDexId(a) - getPkmDexId(b);
+      }
+      if (sortBy === 'created-desc') {
+        const diff = (b.createdAt || 0) - (a.createdAt || 0);
+        if (diff !== 0) return diff;
+        return getPkmDexId(a) - getPkmDexId(b);
+      }
+      if (sortBy === 'name-asc' || sortBy === 'name-desc') {
+        const mul = sortBy === 'name-desc' ? -1 : 1;
+        const cmp = getPkmName(a).localeCompare(getPkmName(b), 'zh-Hant');
+        if (cmp !== 0) return cmp * mul;
+        return getPkmDexId(a) - getPkmDexId(b);
+      }
+      if (sortBy === 'specialty-asc' || sortBy === 'specialty-desc') {
+        const mul = sortBy === 'specialty-desc' ? -1 : 1;
+        const cmp = getPkmSpecialty(a).localeCompare(getPkmSpecialty(b), 'zh-Hant');
+        if (cmp !== 0) return cmp * mul;
+        return getPkmDexId(a) - getPkmDexId(b);
+      }
+      if (sortBy === 'berry-asc' || sortBy === 'berry-desc') {
+        const mul = sortBy === 'berry-desc' ? -1 : 1;
+        const cmp = getPkmBerry(a).localeCompare(getPkmBerry(b), 'zh-Hant');
+        if (cmp !== 0) return cmp * mul;
+        return getPkmDexId(a) - getPkmDexId(b);
+      }
+      if (sortBy === 'ing1-asc' || sortBy === 'ing1-desc') {
+        const mul = sortBy === 'ing1-desc' ? -1 : 1;
+        const cmp = getPkmIng(a, 0).localeCompare(getPkmIng(b, 0), 'zh-Hant');
+        if (cmp !== 0) return cmp * mul;
+        return getPkmDexId(a) - getPkmDexId(b);
+      }
+      if (sortBy === 'ing2-asc' || sortBy === 'ing2-desc') {
+        const mul = sortBy === 'ing2-desc' ? -1 : 1;
+        const cmp = getPkmIng(a, 1).localeCompare(getPkmIng(b, 1), 'zh-Hant');
+        if (cmp !== 0) return cmp * mul;
+        return getPkmDexId(a) - getPkmDexId(b);
+      }
+      if (sortBy === 'ing3-asc' || sortBy === 'ing3-desc') {
+        const mul = sortBy === 'ing3-desc' ? -1 : 1;
+        const cmp = getPkmIng(a, 2).localeCompare(getPkmIng(b, 2), 'zh-Hant');
+        if (cmp !== 0) return cmp * mul;
+        return getPkmDexId(a) - getPkmDexId(b);
+      }
       // Default: 'id-asc' / 'dex-asc' (編號由低到高)
       const idA = getPkmDexId(a);
       const idB = getPkmDexId(b);
@@ -1453,14 +1586,14 @@
         <table class="pokemon-table box-table">
           <thead>
             <tr>
-              <th class="th-icon" style="text-align:center;">${t('th.icon', '圖示')}</th>
-              <th style="text-align:center;">${t('th.level', '等級')}</th>
-              <th style="text-align:center;">${isEN ? 'Name / Nickname' : '寶可夢 / 暱稱'}</th>
-              <th class="th-spec" style="text-align:center;">${t('th.specialty', '得意')}</th>
-              <th style="text-align:center;">${t('th.berry', '樹果')}</th>
-              <th style="text-align:center;">${isEN ? 'Ing 1' : '食1'}</th>
-              <th style="text-align:center;">${isEN ? 'Ing 2' : '食2'}</th>
-              <th style="text-align:center;">${isEN ? 'Ing 3' : '食3'}</th>
+              ${boxSortableTh('id', t('th.icon', '圖示'), 'th-icon')}
+              ${boxSortableTh('level', t('th.level', '等級'))}
+              ${boxSortableTh('name', isEN ? 'Name / Nickname' : '寶可夢 / 暱稱')}
+              ${boxSortableTh('specialty', t('th.specialty', '得意'), 'th-spec')}
+              ${boxSortableTh('berry', t('th.berry', '樹果'))}
+              ${boxSortableTh('ing1', isEN ? 'Ing 1' : '食1')}
+              ${boxSortableTh('ing2', isEN ? 'Ing 2' : '食2')}
+              ${boxSortableTh('ing3', isEN ? 'Ing 3' : '食3')}
               <th style="text-align:center;">${t('th.actions', '操作')}</th>
             </tr>
           </thead>
@@ -4495,6 +4628,29 @@
       });
     }
 
+    const boxContentArea = document.getElementById('box-content-area');
+    if (boxContentArea) {
+      boxContentArea.addEventListener('click', (e) => {
+        const th = e.target.closest('th[data-sort]');
+        if (!th) return;
+        const col = th.dataset.sort || th.getAttribute('data-sort');
+        if (!col) return;
+        sortBy = nextBoxSort(sortBy, col);
+        if (sortSelect) {
+          const hasOpt = Array.from(sortSelect.options || []).some(o => o.value === sortBy);
+          if (hasOpt) {
+            sortSelect.value = sortBy;
+            if (sortSelect.closest && sortSelect.closest('.custom-select-container')) {
+              const trigger = sortSelect.closest('.custom-select-container').querySelector('.custom-select-trigger');
+              const opt = sortSelect.options[sortSelect.selectedIndex];
+              if (trigger && opt) trigger.textContent = opt.textContent;
+            }
+          }
+        }
+        renderBox();
+      });
+    }
+
     // 4. 視圖切換
     const toggleGridBtn = document.getElementById('box-toggle-grid');
     const toggleTableBtn = document.getElementById('box-toggle-table');
@@ -4779,7 +4935,13 @@
       comparePokemonDetails,
       openPokemonConflictModal,
       closePokemonConflictModal,
-      executePokemonOverwrite
+      executePokemonOverwrite,
+      getSortBy: () => sortBy,
+      setSortBy: (s) => { sortBy = s; renderBox(); },
+      toggleColumnSort: (col) => { sortBy = nextBoxSort(sortBy, col); renderBox(); return sortBy; },
+      parseBoxSort,
+      nextBoxSort,
+      BOX_SORT_DEFAULT_DIR
     };
     window.UserBox = window.PokemonBoxApp;
   }
@@ -4823,7 +4985,13 @@
         comparePokemonDetails,
         openPokemonConflictModal,
         closePokemonConflictModal,
-        executePokemonOverwrite
+        executePokemonOverwrite,
+        getSortBy: () => sortBy,
+        setSortBy: (s) => { sortBy = s; renderBox(); },
+        toggleColumnSort: (col) => { sortBy = nextBoxSort(sortBy, col); renderBox(); return sortBy; },
+        parseBoxSort,
+        nextBoxSort,
+        BOX_SORT_DEFAULT_DIR
       },
       getUserBox: () => userBox,
       setUserBox: (box) => { userBox = Array.isArray(box) ? box : []; },
@@ -4859,7 +5027,13 @@
       comparePokemonDetails,
       openPokemonConflictModal,
       closePokemonConflictModal,
-      executePokemonOverwrite
+      executePokemonOverwrite,
+      getSortBy: () => sortBy,
+      setSortBy: (s) => { sortBy = s; if (typeof renderBox === 'function') renderBox(); },
+      toggleColumnSort: (col) => { sortBy = nextBoxSort(sortBy, col); if (typeof renderBox === 'function') renderBox(); return sortBy; },
+      parseBoxSort,
+      nextBoxSort,
+      BOX_SORT_DEFAULT_DIR
     };
   }
 })();

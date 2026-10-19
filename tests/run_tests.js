@@ -12372,6 +12372,59 @@ SP 4,316
     );
   });
 
+  // ─── Test 220: Pokédex & Box Table Column Header Click Sorting Integrity ─────────
+  test('Tier 1 - Feature Coverage', 'Pokédex and Box Table Column Header Click Sorting: Icon/No. Toggle, Unified Attributes and Comparators', () => {
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/app.js'), 'utf8');
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+    const app = require(path.join(WORKSPACE_ROOT, 'js/modules/app.js'));
+    const box = require(path.join(WORKSPACE_ROOT, 'js/modules/box.js'));
+
+    // 1. Pokédex Tab Sorting: getItemNo and sortPokemonList numeric & string support
+    assert(typeof app.getItemNo === 'function', 'app.js must export getItemNo helper');
+    assert(app.getItemNo({ id: 25, formatted_no: '025' }) === 25, 'getItemNo must parse formatted_no correctly');
+    assert(app.getItemNo({ id: '1', formatted_no: '001' }) === 1, 'getItemNo must parse padded numbers correctly');
+    assert(app.getItemNo(null) === 99999, 'getItemNo must fallback to 99999 for null');
+
+    const parsedNoAsc = app.parseTableSort('no-asc');
+    assert(parsedNoAsc.col === 'no', 'parseTableSort must parse no column');
+    assert(parsedNoAsc.dir === 'asc', 'parseTableSort must parse asc direction');
+    assert(app.nextColumnSort('no-asc', 'no') === 'no-desc', 'nextColumnSort must toggle no-asc to no-desc');
+    assert(app.nextColumnSort('no-desc', 'no') === 'no-asc', 'nextColumnSort must toggle no-desc to no-asc');
+
+    const sampleP1 = { id: 25, formatted_no: '025', name_cn: '皮卡丘' };
+    const sampleP2 = { id: 1, formatted_no: '001', name_cn: '妙蛙種子' };
+    const sortedAsc = app.sortPokemonList([sampleP1, sampleP2], 'no-asc');
+    assert(sortedAsc[0].id === 1, 'sortPokemonList no-asc must place lower Dex number first');
+    const sortedDesc = app.sortPokemonList([sampleP1, sampleP2], 'no-desc');
+    assert(sortedDesc[0].id === 25, 'sortPokemonList no-desc must place higher Dex number first');
+
+    // 2. Pokédex Table Markup: Icon header is clickable sortableTh('no', ...)
+    assert(appJs.includes("sortableTh('no', t('th.icon', '圖示'), 'th-icon')"), 'app.js renderTable must make icon header sortable via sortableTh');
+    assert(appJs.includes("contentArea.addEventListener('click', (e) => {"), 'app.js must have click listener on contentArea');
+    assert(appJs.includes("e.target.closest('th[data-sort]')"), 'app.js must delegate clicks to th[data-sort]');
+
+    // 3. Box Tab Table Sorting: parseBoxSort, nextBoxSort & column directions
+    assert(typeof box.parseBoxSort === 'function', 'box.js must export parseBoxSort helper');
+    assert(box.parseBoxSort('id-asc').col === 'id', 'parseBoxSort must parse id');
+    assert(box.parseBoxSort('id-asc').dir === 'asc', 'parseBoxSort must parse asc');
+    assert(box.nextBoxSort('id-asc', 'id') === 'id-desc', 'nextBoxSort must toggle id-asc to id-desc');
+    assert(box.nextBoxSort('id-desc', 'id') === 'id-asc', 'nextBoxSort must toggle id-desc to id-asc');
+    assert(box.nextBoxSort('id-asc', 'level') === 'level-desc', 'nextBoxSort must switch to level-desc');
+    assert(box.nextBoxSort('level-desc', 'level') === 'level-asc', 'nextBoxSort must toggle level-desc to level-asc');
+
+    // 4. Box Tab Table Markup & Event Delegation
+    assert(boxJs.includes("boxSortableTh('id', t('th.icon', '圖示'), 'th-icon')"), 'box.js renderBoxTable must make icon header sortable via boxSortableTh');
+    assert(boxJs.includes("boxSortableTh('level', t('th.level', '等級'))"), 'box.js renderBoxTable must make level header sortable');
+    assert(boxJs.includes("boxContentArea.addEventListener('click', (e) => {"), 'box.js must attach click listener on boxContentArea');
+    assert(boxJs.includes("nextBoxSort(sortBy, col)"), 'box.js must update sortBy via nextBoxSort on th click');
+
+    // 5. CSS sort-arrow styling
+    assert(stylesCss.includes('.pokemon-table th.th-sortable'), 'css must define .pokemon-table th.th-sortable');
+    assert(stylesCss.includes('.pokemon-table .sort-arrow'), 'css must define .pokemon-table .sort-arrow');
+    assert(stylesCss.includes('.pokemon-table th.th-icon .sort-arrow'), 'css must define .pokemon-table th.th-icon .sort-arrow');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

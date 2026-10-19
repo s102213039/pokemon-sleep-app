@@ -1,5 +1,86 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
+## 交接：2026-10-19 已完成（圖鑑表格點選圖示依編號上下排序功能回歸、倉庫表格全欄位點選排序與雙向連動、v=20261019_01）
+
+- **靜態快取標籤**：全模組更新為 `v=20261019_01`（`index.html`、`app/index.html` 同步）
+- **測試狀態**：220/220 自動化測試全數通過（新增第 220 項圖鑑與倉庫表格欄位點選排序與雙向連動驗證測試）
+- **重構與修復核心內容**：
+  1. **圖鑑分頁（#panel-pokemon）點選「圖示」欄位名稱依編號上下排序功能回歸**：
+     - 原因分析：先前的表格排序取值器 `SORT_GETTERS` 僅包含持有上限、食材率、技能率與幫忙間隔，未定義 `no` 與 `id` 取值器；且表頭圖示欄位為靜態無排序標籤，使得初始預設 `'no-asc'` 狀態解析為空，且點選圖示表頭無法觸發編號排序切換。
+     - 解決方案：
+       - 於 `js/modules/app.js` 新增 `getItemNo(p)`、`getItemName(p)`、`getItemSpecialty(p)`、`getItemBerry(p)` 提取器，並將 `no`、`id`、`name`、`specialty`、`berry` 納入 `SORT_GETTERS` 與預設排序方向 `SORT_DEFAULT_DIR`。
+       - 更新 `sortPokemonList` 比較器，支援字串欄位 `localeCompare` 與數值編號排序，並在平手時穩定依全國圖鑑編號遞增排序。
+       - 在 `renderTable(data)` 中將圖示欄位表頭替換為 `${sortableTh('no', t('th.icon', '圖示'), 'th-icon')}`（若開啟顯示編號則同時支援 `th-no` 與 `th-icon`），點選即可在由小到大（▲）與由大到小（▼）之間無縫切換。
+  2. **倉庫分頁（#panel-box）用戶寶可夢列表欄位名稱點選排序功能**：
+     - 解決方案：
+       - 於 `js/modules/box.js` 建立 `BOX_SORT_DEFAULT_DIR`、`parseBoxSort(sortKey)`、`nextBoxSort(currentSort, col)` 與 `boxSortableTh(col, label, cls)`。
+       - 在 `renderBoxTable(list, container)` 中將圖示（id）、等級（level）、寶可夢/暱稱（name）、得意（specialty）、樹果（berry）、食1（ing1）、食2（ing2）、食3（ing3）全面套用 `boxSortableTh` 渲染，帶有 `th-sortable` 與 `data-sort` 屬性。
+       - 擴充 `getFilteredBox` 排序比較器，完整支援 `name-asc/desc`、`specialty-asc/desc`、`berry-asc/desc`、`ing1/2/3-asc/desc`、`level-asc/desc`、`id-asc/desc`，平手時一致以圖鑑編號作為基準。
+       - 於 `#box-content-area` 容器掛載事件委託監聽器，點選任何欄位表頭即時透過 `nextBoxSort` 切換排序狀態，並雙向同步更新側邊欄 `box-sort-select` 下拉選單數值與自訂選單觸發文字。
+  3. **樣式細節美化**：
+     - 在 `css/styles.css` 中為 `.pokemon-table th.th-icon .sort-arrow` 提供專屬的緊湊間距樣式（`margin-left: 1px; font-size: 8.5px; display: inline-block; vertical-align: middle;`），確保 34px 固定寬度的圖示表頭文字與排序指示箭頭（▲/▼）完美並排不換行、不溢出。
+     - 保留 Test 176 與 Test 180 所有契約，零破壞性改動。
+
+## 交接：2026-10-18 已完成（電腦版內容展示區寬度限制、全頁面對齊與圓角一致性重構、分離 H5 App 與網頁版排版、v=20261018_02）
+
+- **靜態快取標籤**：全模組更新為 `v=20261018_02`（`index.html`、`app/index.html` 同步）
+- **測試狀態**：219/219 自動化測試全數通過（新增第 219 項電腦版內容區寬度限制、水平對齊與圓角一致性測試）
+- **重構與修復核心內容**：
+  1. **解決倉庫分頁（#panel-box）表格視圖內縮不對齊問題（原圖一問題）**：
+     - 原因分析：`.box-content-container` 本身已帶有 `max-width: 1200px; width: 92%; padding: 0 16px;`，但內部動態產生的 `.table-container` 又被全域 CSS 設定 `width: 92%; margin: 0 auto;`，導致表格在 92% 容器內再取 92%（約 84.6% 寬度）並置中，造成左右各凹陷約 47px，與上方的頂部 Banner 卡片、拖曳區與搜尋列完全對不齊。
+     - 解決方案：新增 `body:not(.mobile-h5-app) .box-content-container .table-container` 規範其寬度為 `width: 100% !important; max-width: 100% !important; margin: 0 0 16px 0 !important;`，完美與頂部控制列、Banner 與卡片網格（`.box-grid`）左右邊界 100% 齊平。
+     - 次級分頁列對齊：`body:not(.mobile-h5-app) .box-subnav-bar` 與 `.box-lab-content-container` 同步納入 `max-width: 1200px; width: 92%; margin: 20px auto 0; padding: 0 16px;` 統一軌道。
+  2. **圖鑑分頁（#panel-pokemon）與料理分頁（#panel-recipes）表格與卡片對齊標準化**：
+     - 圖鑑與料理的主要內容區容器 `#content-area` 與 `#recipe-content-area` 在電腦版統一套用標準軌道：`max-width: 1200px; width: 92%; margin: 0 auto 40px; padding: 0 16px; box-sizing: border-box;`。
+     - 內部卡片網格（`.pokemon-grid`、`.recipe-cards-grid`）與表格容器（`.table-container`）統一設為 `width: 100%; max-width: 100%; margin: 0; padding: 0;`。
+     - 徹底消除先前表格有外側 16px 突出、卡片與搜尋列縮進 16px 的邊界不齊狀況，在卡片與表格模式間切換時寬度絲毫無跳動。
+  3. **電腦版與行動端 H5 嚴格分開處理**：
+     - 行動端 H5（`app/index.html` 與 `.mobile-h5-app`）維持手機專屬的邊對邊滿版零邊距設計（`border-radius: 0 !important; border-left: none; border-right: none; margin: 0 !important; width: 100% !important;`）與獨立觸控捲動行為。
+     - 電腦版桌面樣式嚴格以 `body:not(.mobile-h5-app)` 或非行動端專屬選擇器隔離，絕不影響行動裝置的視覺與觸控操作體驗。
+  4. **全域電腦版圓角風格一致性（盡量圓角一致）**：
+     - 電腦版桌面展示的表格容器（`.table-container`、`.pokemon-table-container`）統一設定為 `border-radius: var(--radius-lg, 16px)` 並具備橫向平滑滾動，與展示卡片（`.pokemon-card`、`.box-card`、`.recipe-desktop-card`、`.news-card`）、頂部 Banner 及 Wiki 表格包裝層（`.wiki-table-wrapper`）的 16px 大圓角視覺語言完全統一行為，整體頁面美觀大氣。
+     - 保留表頭角部無衝突規範，滿足 Test 176 與測試套件標準。
+
+## 交接：2026-10-18 已完成（全棧效能深度審計與最佳化重構、O(1) 索引與記憶化快取、批量 OCR 像素掃描與零強制同步排版、v=20261018_01）
+
+- **靜態快取標籤**：全模組更新為 `v=20261018_01`（`index.html`、`app/index.html` 同步）
+- **測試狀態**：218/218 自動化測試全數通過（新增第 218 項全棧效能最佳化驗證測試，並修復 `data/news.json` 與 `scripts/build_news.py` 新聞標題英譯規則）
+- **主要效能瓶頸重構與最佳化項目**：
+  1. **`js/core/i18n.js`（多語系核心與雙語字典引擎）**：
+     - `toSimplifiedChinese(str)` 加入容量上限 4,000 筆的記憶化快取（`_t2sCache`），避免每次渲染重複逐字遍歷轉換。
+     - `lookupBilingualDict(dict, query, lang)` 採用惰性預建 `Map` 索引（`dict.__normIndex` 與 `dict.__compactIndex`），將未命中鍵值的模糊查詢由 $O(N \times 16)$ 正則與字串掃描降至 $O(1)$ 雜湊表查詢。
+     - `translateDynamicText(text)` 預先於模組載入時計算一次 `SORTED_POKEMON_NAMES_KEYS` 及各字典 `Object.entries`，並加入 `_dynTextEnCache` 記憶化快取，消除每次呼叫重新排序 247 個寶可夢名稱鍵值的開銷。
+     - `getPokemonName` 與 `getItemName` 新增惰性 $O(1)$ `Map` 索引（`_allPkmEnMap`、`_itemsDataIndex`），取代原本的 `.find()` 線性掃描。
+     - `setLanguage()` 移除重複呼叫的 `window.WikiDB.refreshCoordinateLadder()`（`window.WikiDB.render()` 內部已包含）。
+  2. **`js/modules/appraisal.js`（寶可夢深度評測與隊伍模擬引擎）**：
+     - `evaluatePokemon(...)` 加入基於完整輸入參數簽章的記憶化快取（`_evalPokemonCache`，上限 2,500 筆），消除在卡片列表、里程碑推演（Lv.30/50/60/75/100）與比較視圖中重複運算相同配置的 CPU 消耗。
+     - `normalizeIngName` 預先建立 `ING_ALIASES_ENTRIES` 並加入 `_normIngCache` 記憶化快取。
+     - `findBasePkm` 建立惰性 $O(1)$ `_basePkmIndex` `Map` 索引；`getSkillTier` 優先查詢 $O(1)$ `GOLD_SUBSKILLS` 與 `BLUE_SUBSKILLS` `Set`。
+     - `autoOptimizeTeam` 中的 `pickBest` 由每次複製陣列並執行 $O(N \log N)$ `.sort()` 改寫為 $O(N)$ 單次遍歷取最大值，同時修復潛在的 `base.skill.name` 變數名稱錯誤。
+     - `renderAppraisalLabContainer` 移除約 140 行未插入 DOM 的冗餘計算（重複呼叫 `evaluatePokemon`、產生未使用的 `renderRadarChartSVG` 與 `paletteSectionsHtml`）。
+  3. **`js/modules/box.js`（寶可夢倉庫與截圖 OCR 辨識引擎）**：
+     - `calculatePokemonPR(pkm, baseData)` 加入記憶化快取（`_boxPrCache`），使倉庫篩選、排序與切換視圖時達到 $O(1)$ 即時取回評級與簡評。
+     - `findPokemonBase` 建立惰性 $O(1)$ `_boxPkmIndexMap` 索引；`getFilteredBox` 將搜尋關鍵字小寫與空白正規化外提至 `.filter()` 迴圈外。
+     - `buildOcrCompositeCanvas(img)` 將原本約 295 次逐行呼叫 `sCtx.getImageData(..., y, w, 1)` 重構為僅 2 次大區塊批量 `getImageData` 記憶體陣列掃描，加入 `{ willReadFrequently: true }` 提示，並在合成後釋放暫存 Canvas 像素緩衝區（`width = 0; height = 0`）。
+     - `normalizeOcrText` 以 `str.replaceAll(bad, good)` 取代迴圈內動態 `new RegExp(bad, 'g')`；`onRemoteUpdate` 重複使用 `newHash` 避免二次 `JSON.stringify(userBox)`。
+  4. **`js/modules/app.js`（主圖鑑、模糊搜尋與全域工具提示）**：
+     - `levenshteinDistance(s1, s2)` 由配置 $(m+1)\times(n+1)$ 二維陣列重構為 1D `Int32Array` 滾動陣列並加入空字串快速路徑，大幅降低 GC 壓力。
+     - `matchesPokemonSearch(p, query)` 快取當前查詢字串解析結果（`_lastPokemonSearchParsed`）並在寶可夢物件上惰性快取正規化名稱與拼音（`p._searchMeta`）。
+     - `initFilters()` 移除未使用的 `baseSkillCounts` 迴圈並加入 `PokemonApp._filtersEventsBound` 防重複綁定保護。
+     - `initSkillTooltips()` 對同時註冊於 `document` 與 `window` capture 階段的 `touchstart`、`scroll`、`touchmove` 事件加入事件物件參照去重（`_lastTouchStartEvt` 等），避免單次捲動重複執行兩次處理邏輯。
+     - `setPokedexModalLevel()` 移除重複呼叫的 `updatePokedexSubskillUI()`；`renderPokedexDetailModalContent()` 移除未使用的 `radarSVG` 計算。
+  5. **`js/modules/wiki.js`（數據百科、食材天梯、島嶼棲息與道具百科）**：
+     - 建立共用惰性 $O(1)$ `_getWikiPkmIndex()` 索引，全面替換 `getPokemonLadderSpecialty`、`getPokemonAvatarUrl`、`getIslandPokemonDexCode`、`getAssociatedPokemonStrings`、`renderItemCardHTML`、`renderItemDetailModalContent` 中的 `.find()` 線性掃描。
+     - `openIngredientRankingModal` 與 `renderCoordinateLadder`（含主天梯與呆呆獸尾巴區塊）將 `top5Threshold` 計算外提至 `pokemon.forEach` / `pokemon.map` 迴圈之外，徹底消除開啟「只看前5名」時的 $O(P^2 \times V)$ 巢狀重複計算。
+     - `getSleepStyleData`、`formatSnorlaxRankBadge`、`getSnorlaxRankScore`、`formatLadderNote` 全面加入記憶化快取，並合併 `renderIslandsSubpanel` 內部重複定義的 `formatSnorlaxRankBadge`。
+     - `applyIslandSpawnsCoordinator()` 將所有 `getBoundingClientRect()` 幾何讀取集中於第一階段完成，第二階段再統一寫入 `style.maxHeight`，消除行動端滾動時的強制同步排版（Forced Synchronous Layout）。
+  6. **`js/modules/recipes.js`、`js/modules/news.js`、`js/core/cloudSync.js`、`css/styles.css`、`scripts/build_webapp_data.py`**：
+     - `recipes.js`：於寶可夢食譜物件惰性快取 `_ingNameSet` 與 `_searchStr`，並在依能量排序前預先計算 `_cachedEnergy`，避免在 `.sort()` 比較器內重複執行 $O(N \log N)$ 次 `calcEnergy`。
+     - `news.js`：於新聞物件快取 `_cachedSchedule`，避免在日曆、篩選與列表渲染時重複執行 3 次正則解析；預先提取 `ISLAND_MAP_ENTRIES` 與 `GAME_ITEM_ENTRIES` 並快取排序後寶可夢名稱鍵值。
+     - `cloudSync.js`：`mergePokemonBoxes` 改用 `uidToIndex` `Map` 索引取代 `merged.findIndex(...)`，將雲端與本機合併複雜度由 $O(N^2)$ 降至 $O(N)$。
+     - `styles.css`：為 `.wiki-item-card` 加入 `content-visibility: auto; contain-intrinsic-size: auto 110px;` 加速長列表渲染。
+     - `build_webapp_data.py`：將 `data/special_icons.json` 檔案讀取外提至寶可夢迴圈之外。
+
 ## 交接：2026-10-15 已完成（食材天梯點選節點時同寶可夢同食材列一起選中、v=20261015_04）
 
 - **需求**：點選天梯上的寶可夢時，同一食材列中同一隻寶可夢的其他節點（AAA / AAX / ABA... 不同食材組合）要一起被選中，方便比較產量。

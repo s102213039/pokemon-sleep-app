@@ -2736,6 +2736,13 @@ body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-table-cont
   color: var(--accent-color);
 }
 
+.pokemon-table th.th-icon .sort-arrow {
+  margin-left: 1px;
+  font-size: 8.5px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .pokemon-table td {
   padding: 10px 5px;
   text-align: center;
