@@ -12616,6 +12616,10 @@
     ...TAIL_FEATURED_RECIPES
   ];
 
+  if (typeof window !== 'undefined') {
+    window.ALL_TOP_CATEGORY_RECIPES = ALL_TOP_CATEGORY_RECIPES;
+  }
+
   function getLadderDishIcon(dishName) {
     if (!dishName) return '';
     const found = ALL_TOP_CATEGORY_RECIPES.find(r => r.name_cn === dishName || r.name_en === dishName);

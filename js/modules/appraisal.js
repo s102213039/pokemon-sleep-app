@@ -340,13 +340,60 @@
     return ['請假王', '過動猿', '懶人獺', 'Slaking', 'Vigoroth', 'Slakoth'].some(s => name.includes(s));
   }
 
+  /* ─── 食材名稱官方正規化與別名對照 (Ingredient Normalization Engine) ─── */
+  const ING_ALIASES = {
+    '蘋果': '特選蘋果', '特選蘋果': '特選蘋果', 'fancy apple': '特選蘋果', 'apple': '特選蘋果',
+    '牛奶': '哞哞鮮奶', '鮮奶': '哞哞鮮奶', '哞哞鮮奶': '哞哞鮮奶', 'moomoo milk': '哞哞鮮奶', 'milk': '哞哞鮮奶',
+    '大豆': '萌綠大豆', '萌綠大豆': '萌綠大豆', 'greengrass soybeans': '萌綠大豆', 'soybeans': '萌綠大豆', 'soybean': '萌綠大豆',
+    '蜂蜜': '甜甜蜜', '甜甜蜜': '甜甜蜜', 'honey': '甜甜蜜',
+    '香腸': '豆製肉', '豆製肉': '豆製肉', 'bean sausage': '豆製肉', 'sausage': '豆製肉',
+    '生薑': '暖暖薑', '生姜': '暖暖薑', '暖暖薑': '暖暖薑', '暖暖生薑': '暖暖薑', 'warming ginger': '暖暖薑', 'ginger': '暖暖薑',
+    '番茄': '好眠番茄', '好眠番茄': '好眠番茄', 'snoozy tomato': '好眠番茄', 'tomato': '好眠番茄',
+    '蛋': '特選蛋', '特選蛋': '特選蛋', 'fancy egg': '特選蛋', 'egg': '特選蛋',
+    '油': '純粹油', '純粹油': '純粹油', 'pure oil': '純粹油', 'oil': '純粹油',
+    '洋芋': '窩心洋芋', '馬鈴薯': '窩心洋芋', '窩心洋芋': '窩心洋芋', 'soft potato': '窩心洋芋', 'potato': '窩心洋芋',
+    '香草': '火辣香草', '火辣香草': '火辣香草', 'fiery herb': '火辣香草', 'herb': '火辣香草',
+    '玉米': '萌綠玉米', '萌綠玉米': '萌綠玉米', 'greengrass corn': '萌綠玉米', 'corn': '萌綠玉米',
+    '可可': '放鬆可可', '放鬆可可': '放鬆可可', 'soothing cacao': '放鬆可可', 'cacao': '放鬆可可',
+    '咖啡': '醒腦咖啡豆', '咖啡豆': '醒腦咖啡豆', '醒腦咖啡豆': '醒腦咖啡豆', 'rousing coffee': '醒腦咖啡豆', 'coffee': '醒腦咖啡豆',
+    '酪梨': '嫩亮酪梨', '嫩亮酪梨': '嫩亮酪梨', 'glossy avocado': '嫩亮酪梨', 'avocado': '嫩亮酪梨',
+    '蘑菇': '品鮮蘑菇', '品鮮蘑菇': '品鮮蘑菇', 'tasty mushroom': '品鮮蘑菇', 'mushroom': '品鮮蘑菇',
+    '蔥': '粗枝大蔥', '大蔥': '粗枝大蔥', '粗枝大蔥': '粗枝大蔥', '美味大蔥': '粗枝大蔥', 'large leek': '粗枝大蔥', 'leek': '粗枝大蔥',
+    '南瓜': '沉甸甸南瓜', '沉甸甸南瓜': '沉甸甸南瓜', 'plump pumpkin': '沉甸甸南瓜', 'pumpkin': '沉甸甸南瓜',
+    '尾巴': '美味尾巴', '美味尾巴': '美味尾巴', 'slowpoke tail': '美味尾巴', 'tail': '美味尾巴'
+  };
+
+  const ING_ALIASES_ENTRIES = Object.keys(ING_ALIASES).map(function (k) {
+    return [k.toLowerCase(), ING_ALIASES[k]];
+  });
+  const _normIngCache = Object.create(null);
+
+  function normalizeIngName(name) {
+    if (!name) return '';
+    const raw = typeof name === 'string' ? name : (name.name || name.name_cn || name.name_tw || name.name_en || '');
+    if (!raw) return '';
+    const rawStr = String(raw).trim();
+    if (_normIngCache[rawStr] !== undefined) return _normIngCache[rawStr];
+    const clean = rawStr.toLowerCase().replace(/^[0-9xX+\s]+/, '').trim();
+    for (let i = 0; i < ING_ALIASES_ENTRIES.length; i++) {
+      const kl = ING_ALIASES_ENTRIES[i][0];
+      if (clean === kl || clean.includes(kl) || kl.includes(clean)) {
+        _normIngCache[rawStr] = ING_ALIASES_ENTRIES[i][1];
+        return _normIngCache[rawStr];
+      }
+    }
+    _normIngCache[rawStr] = rawStr;
+    return rawStr;
+  }
+
   /* ─── 核心評估演算法 (單一維度/等級計算核心) ──────────── */
   function evaluateSingle(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, isPotential, cleanseMint) {
     if (!pkmData) return null;
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     natureName = natureName || '坦率';
     subskills = subskills || [];
-    ingredients = ingredients || [];
+    const ingArr = (Array.isArray(ingredients) ? ingredients : []).map(normalizeIngName).filter(Boolean);
+    ingredients = ingArr;
     ribbonLevel = parseInt(ribbonLevel, 10) || 0;
     skillLevel = parseInt(skillLevel, 10) || 1;
 
@@ -1118,7 +1165,7 @@
     if (isPotExpander) {
       pros.push(isEN
         ? 'Cooking Power Up Specialist: Expands pot capacity to cook limit-breaking high-tier recipes.'
-        : '料理擴鍋戰術手：突破鍋子容量上限，烹調極限大菜（如煉獄咖哩/太妃糖豆漿）不可或缺的擴容手。');
+        : '料理擴鍋戰術手：突破鍋子容量上限，烹調極限大菜（如彈跳咖哩烏龍麵、採蜜巧克力格子鬆餅等大型食譜）不可或缺的擴容手。');
     }
 
     // 夢之碎片 (路卡利歐)
@@ -1184,6 +1231,8 @@
   function calculateMilestoneProjections(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, currentEval) {
     if (!pkmData || !currentEval) return [];
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+    const ingArr = (Array.isArray(ingredients) ? ingredients : []).map(normalizeIngName).filter(Boolean);
+    ingredients = ingArr;
     const subskillArr = Array.isArray(subskills) ? subskills.map(function(s) { return typeof s === 'string' ? s : (s ? s.name : ''); }) : [];
     const milestones = [];
     const candidateLevels = [25, 30, 50, 70, 80];
@@ -1203,14 +1252,14 @@
 
       if (targetLv === 30) {
         if (isSlowpoke) {
-          const hasTailLv30 = ingredients.length >= 2 && (ingredients[1] === '美味尾巴' || (ingredients[1] && ingredients[1].includes('尾巴')) || (ingredients[1] && ingredients[1].includes('Tail')));
+          const hasTailLv30 = ingArr.length >= 2 && (ingArr[1] === '美味尾巴' || ingArr[1].includes('尾巴') || ingArr[1].toLowerCase().includes('tail'));
           if (hasTailLv30) {
             targetSkillName = isEN ? 'Slowpoke Tail' : '美味尾巴';
             milestoneType = 'ingredient';
             isKeyMilestone = true;
           }
-        } else if (isIng && ingredients.length >= 2 && ingredients[1]) {
-          targetSkillName = window.I18N ? window.I18N.getIngredientName(ingredients[1]) : ingredients[1];
+        } else if (isIng && ingArr.length >= 2 && ingArr[1]) {
+          targetSkillName = window.I18N ? window.I18N.getIngredientName(ingArr[1]) : ingArr[1];
           milestoneType = 'ingredient';
         }
       }
@@ -1481,11 +1530,11 @@
     {
       name_cn: '碎裂酪梨沙拉',
       name_en: 'Luscious Avocado Salad',
-      base_energy: 8310,
+      base_energy: 7125,
       ingredients: [
-        { name: '嫩亮酪梨', count: 15 },
-        { name: '哞哞鮮奶', count: 12 },
-        { name: '好眠番茄', count: 10 }
+        { name: '萌綠大豆', count: 18 },
+        { name: '嫩亮酪梨', count: 14 },
+        { name: '純粹油', count: 10 }
       ]
     },
     {
@@ -1578,50 +1627,6 @@
     }
   ];
 
-  const ING_ALIASES = {
-    '蘋果': '特選蘋果', '特選蘋果': '特選蘋果', 'fancy apple': '特選蘋果', 'apple': '特選蘋果',
-    '牛奶': '哞哞鮮奶', '鮮奶': '哞哞鮮奶', '哞哞鮮奶': '哞哞鮮奶', 'moomoo milk': '哞哞鮮奶', 'milk': '哞哞鮮奶',
-    '大豆': '萌綠大豆', '萌綠大豆': '萌綠大豆', 'greengrass soybeans': '萌綠大豆', 'soybeans': '萌綠大豆', 'soybean': '萌綠大豆',
-    '蜂蜜': '甜甜蜜', '甜甜蜜': '甜甜蜜', 'honey': '甜甜蜜',
-    '香腸': '豆製肉', '豆製肉': '豆製肉', 'bean sausage': '豆製肉', 'sausage': '豆製肉',
-    '生薑': '暖暖薑', '生姜': '暖暖薑', '暖暖薑': '暖暖薑', '暖暖生薑': '暖暖薑', 'warming ginger': '暖暖薑', 'ginger': '暖暖薑',
-    '番茄': '好眠番茄', '好眠番茄': '好眠番茄', 'snoozy tomato': '好眠番茄', 'tomato': '好眠番茄',
-    '蛋': '特選蛋', '特選蛋': '特選蛋', 'fancy egg': '特選蛋', 'egg': '特選蛋',
-    '油': '純粹油', '純粹油': '純粹油', 'pure oil': '純粹油', 'oil': '純粹油',
-    '洋芋': '窩心洋芋', '馬鈴薯': '窩心洋芋', '窩心洋芋': '窩心洋芋', 'soft potato': '窩心洋芋', 'potato': '窩心洋芋',
-    '香草': '火辣香草', '火辣香草': '火辣香草', 'fiery herb': '火辣香草', 'herb': '火辣香草',
-    '玉米': '萌綠玉米', '萌綠玉米': '萌綠玉米', 'greengrass corn': '萌綠玉米', 'corn': '萌綠玉米',
-    '可可': '放鬆可可', '放鬆可可': '放鬆可可', 'soothing cacao': '放鬆可可', 'cacao': '放鬆可可',
-    '咖啡': '醒腦咖啡豆', '咖啡豆': '醒腦咖啡豆', '醒腦咖啡豆': '醒腦咖啡豆', 'rousing coffee': '醒腦咖啡豆', 'coffee': '醒腦咖啡豆',
-    '酪梨': '嫩亮酪梨', '嫩亮酪梨': '嫩亮酪梨', 'glossy avocado': '嫩亮酪梨', 'avocado': '嫩亮酪梨',
-    '蘑菇': '品鮮蘑菇', '品鮮蘑菇': '品鮮蘑菇', 'tasty mushroom': '品鮮蘑菇', 'mushroom': '品鮮蘑菇',
-    '蔥': '粗枝大蔥', '大蔥': '粗枝大蔥', '粗枝大蔥': '粗枝大蔥', '美味大蔥': '粗枝大蔥', 'large leek': '粗枝大蔥', 'leek': '粗枝大蔥',
-    '南瓜': '沉甸甸南瓜', '沉甸甸南瓜': '沉甸甸南瓜', 'plump pumpkin': '沉甸甸南瓜', 'pumpkin': '沉甸甸南瓜',
-    '尾巴': '美味尾巴', '美味尾巴': '美味尾巴', 'slowpoke tail': '美味尾巴', 'tail': '美味尾巴'
-  };
-
-  const ING_ALIASES_ENTRIES = Object.keys(ING_ALIASES).map(function (k) {
-    return [k.toLowerCase(), ING_ALIASES[k]];
-  });
-  const _normIngCache = Object.create(null);
-
-  function normalizeIngName(name) {
-    if (!name) return '';
-    const rawStr = String(name);
-    if (_normIngCache[rawStr] !== undefined) return _normIngCache[rawStr];
-    const clean = rawStr.toLowerCase().replace(/^[0-9xX+\s]+/, '').trim();
-    for (let i = 0; i < ING_ALIASES_ENTRIES.length; i++) {
-      const kl = ING_ALIASES_ENTRIES[i][0];
-      if (clean === kl || clean.includes(kl) || kl.includes(clean)) {
-        _normIngCache[rawStr] = ING_ALIASES_ENTRIES[i][1];
-        return _normIngCache[rawStr];
-      }
-    }
-    const fallback = rawStr.trim();
-    _normIngCache[rawStr] = fallback;
-    return fallback;
-  }
-
   const _sigRecipeRecCache = Object.create(null);
 
   function getSignatureRecipeRecommendations(ingredients, isEN) {
@@ -1638,7 +1643,9 @@
 
     const pool = (typeof window !== 'undefined' && window.ALL_TOP_CATEGORY_RECIPES && window.ALL_TOP_CATEGORY_RECIPES.length > 0)
       ? window.ALL_TOP_CATEGORY_RECIPES
-      : TARGET_TOP_RECIPES;
+      : (typeof window !== 'undefined' && Array.isArray(window.__RECIPES_CACHE__) && window.__RECIPES_CACHE__.length > 0)
+        ? window.__RECIPES_CACHE__
+        : TARGET_TOP_RECIPES;
 
     const cacheKey = (isEN ? '1:' : '0:') + pool.length + ':' + normIngs.join('|');
     const cachedRec = _sigRecipeRecCache[cacheKey];
@@ -2060,7 +2067,7 @@
         }
         return isEN
           ? `Lacks Ingredient Output: Missing ingredient finder and speed boosts; yields are insufficient to sustain demanding high-tier dishes.${recipePhrase}`
-          : `缺乏食材爆發力：前中期未持有食材機率加成或顯著幫速，產量難以滿足高階大型料理（如大菜咖哩/沙拉）的消耗需求。${recipePhrase}`;
+          : `缺乏食材爆發力：前中期未持有食材機率加成或顯著幫速，產量難以滿足高階大型料理（如彈跳咖哩烏龍麵、大塊滿滿熱水沙拉等頂級大菜）的消耗需求。${recipePhrase}`;
       }
 
       return isEN

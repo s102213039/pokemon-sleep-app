@@ -2320,7 +2320,22 @@
 
   function getIngredientName(ing) {
     if (!ing) return '';
-    return lookupBilingualDict(INGREDIENT_NAMES, ing) || ing;
+    const raw = typeof ing === 'string' ? ing : (ing.name || ing.name_cn || ing.name_tw || ing.name_en || '');
+    if (!raw) return '';
+    return lookupBilingualDict(INGREDIENT_NAMES, raw) || raw;
+  }
+
+  function getRecipeName(rec) {
+    if (!rec) return '';
+    const raw = typeof rec === 'string' ? rec : (rec.name_cn || rec.name_tw || rec.name || rec.name_en || '');
+    if (!raw) return '';
+    if (typeof window !== 'undefined' && Array.isArray(window.__RECIPES_CACHE__)) {
+      const match = window.__RECIPES_CACHE__.find(r => r.name_cn === raw || r.name_tw === raw || r.name_en === raw || (r.name && r.name === raw));
+      if (match) {
+        return currentLang === 'en-US' ? (match.name_en || match.name_cn || raw) : (match.name_cn || match.name_tw || raw);
+      }
+    }
+    return raw;
   }
 
   function getBerryName(berry) {
@@ -2825,6 +2840,7 @@
     getSpecialtyIconHtml,
     getIngredientName,
     getIngredientIcon,
+    getRecipeName,
     getBerryName,
     getNatureName,
     getPokemonName,

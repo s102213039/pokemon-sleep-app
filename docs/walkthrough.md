@@ -1,5 +1,21 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
+## 交接：2026-10-19 已完成（智能簡評與料理推薦名稱官方對照校正、碎裂酪梨沙拉食材與能量修復、物件型食材安全正規化、v=20261019_05）
+
+- **靜態快取標籤**：全模組更新為 `v=20261019_05`（`index.html`、`app/index.html` 同步）
+- **測試狀態**：223/223 自動化測試全數通過（新增第 223 項官方料理與食材名稱一致性校驗、碎裂酪梨沙拉數值與物件安全正規化驗證測試）
+- **重構與修復核心內容**：
+  1. **智能簡評引擎料理與食材名稱全量審計與糾正（`js/modules/appraisal.js`）**：
+     - **移除未定案與非官方俗稱**：原 `appraisal.js` 第 1121 行在自爆磁怪擴鍋建議中出現非官方俗稱「如煉獄咖哩/太妃糖豆漿」，全面更正為官方正式大料理名稱「如彈跳咖哩烏龍麵、採蜜巧克力格子鬆餅等大型食譜」；原第 2063 行「如大菜咖哩/沙拉」更正為精確官方高階食譜「如彈跳咖哩烏龍麵、大塊滿滿熱水沙拉等頂級大菜」。
+     - **校準 `碎裂酪梨沙拉` 官方食材與能量**：`TARGET_TOP_RECIPES` 中 `碎裂酪梨沙拉` 原先誤記為 8310 能量且包含鮮奶與番茄，全面校正為官方正確規格（基礎能量 7125，食材為「萌綠大豆 18、嫩亮酪梨 14、純粹油 10」），徹底消除向鮮奶/番茄寶可夢誤推薦酪梨沙拉之問題。
+     - **前置正規化引擎與 TDZ 安全防護**：將 `ING_ALIASES` 與 `normalizeIngName` 移至 `evaluateSingle` 之前定義，徹底杜絕 Temporal Dead Zone 潛在例外，並在 `evaluateSingle` 與 `calculateMilestoneProjections` 函式入口統一對 `ingredients` 陣列進行正規化。
+  2. **物件型食材安全轉換與 Milestone 標籤防禦（`js/modules/appraisal.js`、`js/core/i18n.js`）**：
+     - 當盒子或圖鑑傳入 `{ name: '特選蘋果', count: 2 }` 等物件型食材時，`normalizeIngName` 與 `I18N.getIngredientName` 自動安全提取 `.name` / `.name_cn` 字串，徹底根除 Lv.30 解鎖里程碑文案中出現 `[object Object]` 或 `.includes` 拋出 TypeError 之隱患。
+     - 於 `js/core/i18n.js` 新增 `getRecipeName(rec)` 函式，支援雙語及快取查詢，並對外匯出至 `window.I18N.getRecipeName`。
+  3. **頂尖料理推薦池與天梯快取打通（`js/modules/wiki.js`、`js/modules/appraisal.js`）**：
+     - 於 `js/modules/wiki.js` 將 `ALL_TOP_CATEGORY_RECIPES` 正式掛載至 `window.ALL_TOP_CATEGORY_RECIPES`，使評測模組能完整獲取三大類前 7 高與尾巴推薦食譜。
+     - 於 `appraisal.js` `getSignatureRecipeRecommendations` 擴充支援 `window.__RECIPES_CACHE__` 作為動態推薦池備援，確保食譜資料即時聯動。
+
 ## 交接：2026-10-19 已完成（四支柱深度渲染與資源效能優化：CSS `content-visibility` 虛擬化、SW 版本化靜態資產快取、Tesseract OCR 按需延遲載入與熱路徑記憶化、v=20261019_04）
 
 - **靜態快取標籤**：全模組更新為 `v=20261019_04`（`index.html`、`app/index.html` 同步）

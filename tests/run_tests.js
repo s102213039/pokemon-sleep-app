@@ -12561,6 +12561,81 @@ SP 4,316
     assert(appJs.includes('_pokedexStatsCache'), 'app.js must memoize calculatePokedexIngredientFormulas via _pokedexStatsCache');
   });
 
+  // =========================================================================
+  // Test 223: Official Recipe & Ingredient Alignment, Discrepancy Prevention & Object-Safe Normalization Verification
+  // =========================================================================
+  test('Tier 4 - Real-World Application Scenarios', 'Official Recipe & Ingredient Alignment, Discrepancy Prevention & Object-Safe Normalization Verification', () => {
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const wikiJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/wiki.js'), 'utf8');
+    const recipesData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/recipes.json'), 'utf8'));
+
+    // 1. Verify absence of fake/unofficial dish names in appraisal.js
+    assert(!appraisalJs.includes('太妃糖豆漿'), 'appraisal.js must NOT contain hallucinated dish name 太妃糖豆漿');
+    assert(!appraisalJs.includes('如煉獄咖哩'), 'appraisal.js must use official dish name 煉獄玉米乾咖哩 instead of 如煉獄咖哩');
+    assert(!appraisalJs.includes('大菜咖哩/沙拉'), 'appraisal.js must use official top dish examples instead of colloquial 大菜咖哩/沙拉');
+
+    // 2. Verify 碎裂酪梨沙拉 official ingredients & energy in appraisal.js
+    assert(appraisalJs.includes("name_cn: '碎裂酪梨沙拉'"), 'appraisal.js must include 碎裂酪梨沙拉');
+    assert(appraisalJs.includes("base_energy: 7125"), '碎裂酪梨沙拉 base energy must be 7125');
+    assert(appraisalJs.includes("{ name: '萌綠大豆', count: 18 }"), '碎裂酪梨沙拉 must require 18 萌綠大豆');
+    assert(appraisalJs.includes("{ name: '嫩亮酪梨', count: 14 }"), '碎裂酪梨沙拉 must require 14 嫩亮酪梨');
+    assert(appraisalJs.includes("{ name: '純粹油', count: 10 }"), '碎裂酪梨沙拉 must require 10 純粹油');
+
+    // 3. Verify wiki.js exports ALL_TOP_CATEGORY_RECIPES on window
+    assert(wikiJs.includes('window.ALL_TOP_CATEGORY_RECIPES = ALL_TOP_CATEGORY_RECIPES'), 'wiki.js must expose ALL_TOP_CATEGORY_RECIPES on window');
+
+    // 4. Verify I18N.getIngredientName and I18N.getRecipeName
+    const i18n = require(path.join(WORKSPACE_ROOT, 'js/core/i18n.js'));
+    assertEquals(typeof i18n.getRecipeName, 'function', 'I18N.getRecipeName must be a function');
+    assertEquals(i18n.getRecipeName('彈跳咖哩烏龍麵'), '彈跳咖哩烏龍麵', 'I18N.getRecipeName should return string');
+    assertEquals(i18n.getIngredientName({ name: '特選蘋果' }), '特選蘋果', 'I18N.getIngredientName should safely handle object input');
+
+    // 5. Verify Milestone Projections with Object-based ingredients
+    const ctx = {
+      window: {
+        I18N: i18n,
+        ALL_TOP_CATEGORY_RECIPES: null
+      },
+      console: console,
+      Math: Math,
+      parseInt: parseInt,
+      Array: Array,
+      Object: Object,
+      Set: Set,
+      Map: Map
+    };
+    vm.createContext(ctx);
+    vm.runInContext(appraisalJs, ctx);
+
+    const lab = ctx.window.AppraisalLab;
+    assert(lab && typeof lab.calculateMilestoneProjections === 'function', 'AppraisalLab must export calculateMilestoneProjections');
+
+    const fakeIngPkm = {
+      name_cn: '耿鬼',
+      specialty: '食材',
+      base_speed: 2600,
+      ing1: '品鮮蘑菇',
+      ing2: '放鬆可可',
+      ing3: '放鬆可可'
+    };
+    const currentEval = { grade: 'B', compositeScore: 65 };
+    const milestones = lab.calculateMilestoneProjections(
+      fakeIngPkm,
+      25,
+      '坦率',
+      ['食材機率提升M', '幫手獎勵', '幫忙速度M'],
+      [{ name: '品鮮蘑菇', count: 1 }, { name: '放鬆可可', count: 2 }, { name: '放鬆可可', count: 3 }],
+      0,
+      1,
+      currentEval
+    );
+
+    assert(Array.isArray(milestones), 'milestones must be an array');
+    milestones.forEach(m => {
+      assert(!m.text.includes('[object Object]'), 'Milestone projection text must never contain [object Object]');
+    });
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {
