@@ -1,6 +1,22 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
-## 交接：2026-10-19 已完成（智能簡評與料理推薦名稱官方對照校正、碎裂酪梨沙拉食材與能量修復、物件型食材安全正規化、v=20261019_05）
+## 交接：2026-10-20 已完成（寶可夢倉庫子分頁與深度研究室切換隔離修復、CSS !important 特異度阻斷排除、manifest.json 基準路徑自動解析、v=20261020_01）
+
+- **靜態快取標籤**：全模組更新為 `v=20261020_01`（`index.html`、`app/index.html` 同步）
+- **測試狀態**：224/224 自動化測試全數通過（新增第 224 項倉庫子分頁切換隔離、雙面板渲染防護與 Manifest 相對路徑自動解析驗證測試）
+- **修復問題與根本原因分析**：
+  1. **倉庫清單與深度研究室雙面板疊加干擾問題**：
+     - **症狀**：在行動端 H5 模式切換至「深度研究」子分頁（`#box/lab`）時，寶可夢倉庫清單（`#box-subpanel-list`）未被隱藏，直接疊加在上方或共同佔用空間，導致畫面混亂。
+     - **根本原因**：`css/styles.css` 中 `.mobile-h5-app #panel-box #box-subpanel-list` 定義了 `display: flex !important;`。在 CSS 特異度規則下，外部樣式表的 `!important` 優先權高於 JavaScript 設定的行內樣式 `style.display = 'none'`（無 `!important`），導致無論 JS 如何切換，倉庫清單一律被強制渲染。
+     - **解決方案**：
+       - 於 `css/styles.css` 明確宣告 `.mobile-h5-app #panel-box.box-lab-active #box-subpanel-list` 與 `body.box-lab-active #box-subpanel-list` 具備 `display: none !important; visibility: hidden !important; height: 0 !important; flex: 0 0 0% !important;`。
+       - 針對非活躍狀態與 Lab 子分頁雙向互斥，宣告 `.mobile-h5-app #panel-box:not(.box-lab-active) #box-subpanel-lab` 嚴格 `display: none !important;`。
+       - 於 `js/modules/box.js` 之 `switchBoxSubtab` 在 Lab 模式時調用 `subpanelList.style.setProperty('display', 'none', 'important')` 與 `subpanelLab.style.setProperty('display', 'block', 'important')`；在 List 模式時調用 `subpanelLab.style.setProperty('display', 'none', 'important')`，達成雙層絕對隔離。
+       - 於 `js/modules/app.js` 之 `switchTab('box')` 依網址 Hash 解析結果，第一時間同步為 `document.body` 與 `panelBox` 增減 `.box-lab-active` 類別，杜絕初始化瞬間的版面閃爍。
+  2. **行動端 `/app/` 路徑下 `manifest.json` 重複 404 重試問題**：
+     - **症狀**：開發者工具 Network 面板頻繁出現 `manifest.json` 404 報錯。
+     - **根本原因**：`js/core/domUtils.js` 中 `fetchManifest` 僅檢測 `global.__DATA_BASE_PATH__`，然而在瀏覽器環境中 `global` 為未定義（`undefined`），導致在 `/app/index.html` 訪問時誤用相對路徑 `data/manifest.json`（即 `.../app/data/manifest.json` 產生 404）。
+     - **解決方案**：於 `domUtils.js` 擴充支援 `window.__DATA_BASE_PATH__` 與 `location.pathname.includes('/app/')` 自動判斷，優先直接請求 `../data/manifest.json`，消除無效的 404 候選重試。
 
 - **靜態快取標籤**：全模組更新為 `v=20261019_05`（`index.html`、`app/index.html` 同步）
 - **測試狀態**：223/223 自動化測試全數通過（新增第 223 項官方料理與食材名稱一致性校驗、碎裂酪梨沙拉數值與物件安全正規化驗證測試）

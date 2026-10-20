@@ -4820,8 +4820,20 @@
       if (panelBox) panelBox.classList.add('box-lab-active');
       if (subtabLab) subtabLab.classList.add('active');
       if (subtabList) subtabList.classList.remove('active');
-      if (subpanelList) subpanelList.style.display = 'none';
-      if (subpanelLab) subpanelLab.style.display = 'block';
+      if (subpanelList && subpanelList.style) {
+        if (typeof subpanelList.style.setProperty === 'function') {
+          subpanelList.style.setProperty('display', 'none', 'important');
+        } else {
+          subpanelList.style.display = 'none';
+        }
+      }
+      if (subpanelLab && subpanelLab.style) {
+        if (typeof subpanelLab.style.setProperty === 'function') {
+          subpanelLab.style.setProperty('display', 'block', 'important');
+        } else {
+          subpanelLab.style.display = 'block';
+        }
+      }
       if (fabContainer && fabContainer.style) {
         fabContainer.style.display = 'none';
         if (typeof fabContainer.style.setProperty === 'function') {
@@ -4866,8 +4878,23 @@
       if (panelBox) panelBox.classList.remove('box-lab-active');
       if (subtabList) subtabList.classList.add('active');
       if (subtabLab) subtabLab.classList.remove('active');
-      if (subpanelList) subpanelList.style.display = 'block';
-      if (subpanelLab) subpanelLab.style.display = 'none';
+      if (subpanelList && subpanelList.style) {
+        if (typeof subpanelList.style.removeProperty === 'function') {
+          subpanelList.style.removeProperty('display');
+        }
+        if (typeof subpanelList.style.setProperty === 'function') {
+          subpanelList.style.setProperty('display', 'flex', 'important');
+        } else {
+          subpanelList.style.display = 'block';
+        }
+      }
+      if (subpanelLab && subpanelLab.style) {
+        if (typeof subpanelLab.style.setProperty === 'function') {
+          subpanelLab.style.setProperty('display', 'none', 'important');
+        } else {
+          subpanelLab.style.display = 'none';
+        }
+      }
       if (fabContainer && fabContainer.style) {
         if (typeof fabContainer.style.removeProperty === 'function') {
           fabContainer.style.removeProperty('display');

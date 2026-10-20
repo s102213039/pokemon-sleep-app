@@ -2673,16 +2673,28 @@ if (typeof document !== 'undefined') {
           let boxSubtab = 'list';
           try {
             const storage = getStorage();
-            if (typeof window !== 'undefined' && window.location && window.location.hash === '#box/lab') {
+            const curHash = (typeof window !== 'undefined' && window.location && window.location.hash) ? window.location.hash.replace(/^#/, '') : '';
+            const hashParts = curHash.split(/[/_?]/);
+            if (hashParts[0] === 'box' && hashParts[1] === 'lab') {
               boxSubtab = 'lab';
-            } else {
+            } else if (hashParts[0] === 'box' && hashParts[1] === 'list') {
               boxSubtab = 'list';
-              if (storage) {
-                storage.setItem('pksleep_active_box_subtab', 'list');
-                storage.setItem('pksleep_box_subtab', 'list');
-              }
+            } else {
+              const savedSub = storage ? (storage.getItem('pksleep_active_box_subtab') || storage.getItem('pksleep_box_subtab')) : null;
+              boxSubtab = (savedSub === 'lab') ? 'lab' : 'list';
+            }
+            if (storage) {
+              storage.setItem('pksleep_active_box_subtab', boxSubtab);
+              storage.setItem('pksleep_box_subtab', boxSubtab);
             }
           } catch (e) {}
+          if (boxSubtab === 'lab') {
+            if (document.body) document.body.classList.add('box-lab-active');
+            if (panelBox) panelBox.classList.add('box-lab-active');
+          } else {
+            if (document.body) document.body.classList.remove('box-lab-active');
+            if (panelBox) panelBox.classList.remove('box-lab-active');
+          }
           if (boxSidebar) {
             if (boxSubtab === 'list') {
               boxSidebar.style.display = 'flex';

@@ -23925,11 +23925,24 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   cursor: pointer !important;
 }
 
-.mobile-h5-app #box-subpanel-list {
-  padding-bottom: 84px !important;
+/* 寶可夢倉庫子分頁與深度研究室子分頁切換控制 (防止雙面板同時渲染干擾) */
+.mobile-h5-app #panel-box.box-lab-active #box-subpanel-list,
+.mobile-h5-app body.box-lab-active #box-subpanel-list,
+.mobile-h5-app #panel-box #box-subpanel-list[style*="display: none"],
+.mobile-h5-app #panel-box #box-subpanel-list[style*="display:none"],
+#panel-box.box-lab-active #box-subpanel-list,
+body.box-lab-active #box-subpanel-list {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  flex: 0 0 0% !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
-.mobile-h5-app #panel-box #box-subpanel-list {
+.mobile-h5-app #panel-box:not(.box-lab-active) #box-subpanel-list:not([style*="display: none"]):not([style*="display:none"]) {
   flex: 1 1 0% !important;
   min-height: 0 !important;
   height: 100% !important;
@@ -23940,7 +23953,32 @@ body:not(.mobile-h5-app) .box-subnav-item.active {
   margin: 0 !important;
 }
 
-.mobile-h5-app #box-subpanel-lab {
+.mobile-h5-app #box-subpanel-list {
+  padding-bottom: 84px !important;
+}
+
+.mobile-h5-app #panel-box:not(.box-lab-active) #box-subpanel-lab,
+.mobile-h5-app body:not(.box-lab-active) #box-subpanel-lab,
+.mobile-h5-app #box-subpanel-lab[style*="display: none"],
+.mobile-h5-app #box-subpanel-lab[style*="display:none"],
+#panel-box:not(.box-lab-active) #box-subpanel-lab,
+body:not(.box-lab-active) #box-subpanel-lab {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  flex: 0 0 0% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app #panel-box.box-lab-active #box-subpanel-lab,
+.mobile-h5-app body.box-lab-active #box-subpanel-lab,
+#panel-box.box-lab-active #box-subpanel-lab,
+body.box-lab-active #box-subpanel-lab {
+  display: block !important;
+  visibility: visible !important;
   flex: 1 1 0% !important;
   min-height: 0 !important;
   height: 100% !important;

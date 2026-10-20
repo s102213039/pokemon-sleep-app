@@ -250,7 +250,9 @@
       }
 
       _inFlightManifestPromise = (async () => {
-        const base = (typeof global !== 'undefined' && global.__DATA_BASE_PATH__) ? global.__DATA_BASE_PATH__ : '';
+        const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ :
+                     (typeof global !== 'undefined' && global.__DATA_BASE_PATH__) ? global.__DATA_BASE_PATH__ :
+                     (typeof location !== 'undefined' && location.pathname && location.pathname.includes('/app/') ? '../' : '');
         const candidates = [
           `${base}data/manifest.json`,
           `data/manifest.json`,

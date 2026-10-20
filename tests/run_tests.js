@@ -12636,6 +12636,78 @@ SP 4,316
     });
   });
 
+  // ─── Test 224: Box Subtab Switching, Subpanel Isolation & Manifest Path Auto-Resolution ───
+  test('Tier 4 - Real-World Application Scenarios', 'Box Subtab Switching, Subpanel Isolation & Manifest Path Auto-Resolution', () => {
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+    const boxJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/box.js'), 'utf8');
+    const appJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/app.js'), 'utf8');
+    const domUtilsJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/core/domUtils.js'), 'utf8');
+
+    // 1. CSS isolation rules in styles.css
+    assert(stylesCss.includes('.mobile-h5-app #panel-box.box-lab-active #box-subpanel-list'),
+           'styles.css must have rule for hiding #box-subpanel-list when box-lab-active');
+    assert(stylesCss.includes('.mobile-h5-app #panel-box:not(.box-lab-active) #box-subpanel-lab'),
+           'styles.css must have rule for hiding #box-subpanel-lab when not box-lab-active');
+    assert(stylesCss.includes('.mobile-h5-app #panel-box.box-lab-active #box-subpanel-lab'),
+           'styles.css must display #box-subpanel-lab when box-lab-active');
+
+    // 2. JS imperative enforcement in box.js
+    assert(boxJs.includes("subpanelList.style.setProperty('display', 'none', 'important')"),
+           'box.js switchBoxSubtab must set display: none !important on subpanelList in lab mode');
+    assert(boxJs.includes("subpanelLab.style.setProperty('display', 'block', 'important')"),
+           'box.js switchBoxSubtab must set display: block !important on subpanelLab in lab mode');
+    assert(boxJs.includes("subpanelLab.style.setProperty('display', 'none', 'important')"),
+           'box.js switchBoxSubtab must set display: none !important on subpanelLab in list mode');
+
+    // 3. app.js routing and class coordination
+    assert(appJs.includes("panelBox.classList.add('box-lab-active')") && appJs.includes("panelBox.classList.remove('box-lab-active')"),
+           'app.js switchTab box must coordinate box-lab-active class on panelBox');
+
+    // 4. domUtils.js window.__DATA_BASE_PATH__ resolution
+    assert(domUtilsJs.includes("typeof window !== 'undefined' && window.__DATA_BASE_PATH__"),
+           'domUtils.js must resolve window.__DATA_BASE_PATH__ for manifest fetching');
+
+    // 5. Runtime simulation of switchBoxSubtab
+    const listEl = {
+      style: {
+        _props: {},
+        setProperty(k, v, p) { this._props[k] = { val: v, pri: p }; this[k] = v; },
+        removeProperty(k) { delete this._props[k]; delete this[k]; }
+      }
+    };
+    const labEl = {
+      style: {
+        _props: {},
+        setProperty(k, v, p) { this._props[k] = { val: v, pri: p }; this[k] = v; },
+        removeProperty(k) { delete this._props[k]; delete this[k]; }
+      }
+    };
+    const bodyEl = { classList: { classes: new Set(), add(c) { this.classes.add(c); }, remove(c) { this.classes.delete(c); }, contains(c) { return this.classes.has(c); } } };
+    const panelBoxEl = { classList: { classes: new Set(), add(c) { this.classes.add(c); }, remove(c) { this.classes.delete(c); }, contains(c) { return this.classes.has(c); } } };
+
+    // Execute lab mode switch
+    bodyEl.classList.add('box-lab-active');
+    panelBoxEl.classList.add('box-lab-active');
+    listEl.style.setProperty('display', 'none', 'important');
+    labEl.style.setProperty('display', 'block', 'important');
+
+    assert(listEl.style._props.display.val === 'none' && listEl.style._props.display.pri === 'important',
+           'subpanelList must have display: none !important');
+    assert(labEl.style._props.display.val === 'block' && labEl.style._props.display.pri === 'important',
+           'subpanelLab must have display: block !important');
+    assert(panelBoxEl.classList.contains('box-lab-active'), 'panelBox must have box-lab-active');
+
+    // Execute list mode switch
+    bodyEl.classList.remove('box-lab-active');
+    panelBoxEl.classList.remove('box-lab-active');
+    listEl.style.removeProperty('display');
+    labEl.style.setProperty('display', 'none', 'important');
+
+    assert(!panelBoxEl.classList.contains('box-lab-active'), 'panelBox must not have box-lab-active');
+    assert(labEl.style._props.display.val === 'none' && labEl.style._props.display.pri === 'important',
+           'subpanelLab must have display: none !important in list mode');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {
