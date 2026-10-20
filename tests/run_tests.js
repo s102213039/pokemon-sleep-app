@@ -12708,6 +12708,144 @@ SP 4,316
            'subpanelLab must have display: none !important in list mode');
   });
 
+  // ─── Test 225: Research Lab Comparison Overhaul: Mobile One-Row Layout, Simplified Tap-to-Change Slots, Level Benchmark Mode & 6-Dimension Matchup ─
+  test('Tier 4 - Real-World Application Scenarios', 'Research Lab Comparison Overhaul: Mobile One-Row Layout, Simplified Tap-to-Change Slots, Level Benchmark Mode & 6-Dimension Matchup', () => {
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+
+    // 1. Static CSS verification
+    assert(stylesCss.includes('.lab-compare-vs-header'), 'styles.css must style .lab-compare-vs-header');
+    assert(stylesCss.includes('flex-direction: row !important'), 'styles.css must enforce flex-direction: row !important for VS header');
+    assert(!appraisalJs.includes('lab-compare-change-btn'), 'appraisal.js must remove clumsy .lab-compare-change-btn button');
+    assert(stylesCss.includes('.lab-compare-benchmark-row'), 'styles.css must style .lab-compare-benchmark-row');
+    assert(stylesCss.includes('.benchmark-chip'), 'styles.css must style .benchmark-chip');
+    assert(stylesCss.includes('.benchmark-chip.active'), 'styles.css must style active benchmark chip');
+    assert(stylesCss.includes('.lab-subskill-pill'), 'styles.css must style .lab-subskill-pill');
+    assert(stylesCss.includes('.lab-subskill-pill.locked'), 'styles.css must style .lab-subskill-pill.locked');
+    assert(stylesCss.includes('.lab-grade-badge'), 'styles.css must style .lab-grade-badge');
+
+    // 2. VM runtime test
+    const mockElements = new Map();
+    const mockDOMElement = (id = '', tagName = 'div') => {
+      const el = {
+        id: id,
+        tagName: tagName.toUpperCase(),
+        innerHTML: '',
+        value: '',
+        style: { display: '' },
+        classList: {
+          classes: new Set(),
+          add(c) { this.classes.add(c); },
+          remove(c) { this.classes.delete(c); },
+          contains(c) { return this.classes.has(c); }
+        },
+        querySelectorAll: () => [],
+        querySelector: () => null,
+        appendChild: (child) => child,
+        addEventListener: () => {}
+      };
+      if (id) mockElements.set(id, el);
+      return el;
+    };
+
+    const mockStorage = new Map();
+    const ctx = {
+      window: {
+        IS_MOBILE_H5: true,
+        localStorage: {
+          getItem: (k) => mockStorage.get(k) || null,
+          setItem: (k, v) => mockStorage.set(k, String(v)),
+          removeItem: (k) => mockStorage.delete(k)
+        },
+        I18N: {
+          getLanguage: () => 'zh-TW',
+          getSubSkillName: (n) => n,
+          getMainSkillName: (n) => n,
+          getIngredientName: (n) => n,
+          getNatureName: (n) => n,
+          getSpecialtyName: (n) => n,
+          getTypeName: (n) => n,
+          getBerryName: (n) => n,
+          getIngredientIcon: () => '',
+          getSpecialtyIconHtml: (spec, size, cls) => `<span class="${cls}">${spec}</span>`
+        },
+        PokemonApp: {
+          getPokemons: () => [
+            { id: 1, name_cn: '妙蛙種子', specialty: '食材', base_frequency: 3300, main_skill: '食材獲取S', ingredients: [{ name: '特選蘋果', count: 2 }, { name: '甜甜蜜', count: 5 }, { name: '特選蘋果', count: 8 }] },
+            { id: 4, name_cn: '小火龍', specialty: '食材', base_frequency: 3200, main_skill: '食材獲取S', ingredients: [{ name: '豆香肉排', count: 2 }, { name: '暖暖薑', count: 4 }, { name: '豆香肉排', count: 7 }] }
+          ]
+        },
+        UserBox: {
+          getUserBox: () => [
+            { uid: 'test-seed-1', pokemonId: 1, name: '妙蛙種子', level: 10, nature: '內斂', subskills: ['食材機率提升M', '幫忙速度M', '持有上限提升L'], ing1: '特選蘋果', ing2: '甜甜蜜' },
+            { uid: 'test-charm-1', pokemonId: 4, name: '小火龍', level: 15, nature: '冷靜', subskills: ['幫忙速度S', '技能機率提升M', '樹果數量S'], ing1: '豆香肉排', ing2: '暖暖薑' }
+          ]
+        },
+        document: {
+          getElementById: (id) => mockElements.get(id) || null,
+          querySelector: (s) => (s && s.startsWith('#') ? (mockElements.get(s.slice(1)) || null) : null),
+          querySelectorAll: () => [],
+          createElement: (tag) => mockDOMElement('', tag),
+          body: { style: {}, classList: { contains: () => true }, appendChild: () => {} }
+        },
+        console: console,
+        getComputedStyle: () => ({ display: 'block' }),
+        setupCustomSelect: () => {}
+      }
+    };
+    ctx.window.allPokemons = ctx.window.PokemonApp.getPokemons();
+    ctx.window.window = ctx.window;
+    ctx.document = ctx.window.document;
+    ctx.localStorage = ctx.window.localStorage;
+    vm.createContext(ctx);
+    vm.runInContext(appraisalJs, ctx);
+
+    // Verify method exists
+    assert(typeof ctx.window.AppraisalLab.setCompareBenchmarkLevel === 'function', 'setCompareBenchmarkLevel must be exported');
+
+    // Render container
+    const mockContainer = mockDOMElement('appraisal-lab-container');
+    ctx.window.AppraisalLab.renderLab(mockContainer);
+    ctx.window.AppraisalLab.switchSubTab('compare');
+
+    // Select Player A and Player B
+    ctx.window.AppraisalLab.setCompareSlot(0, 'test-seed-1');
+    ctx.window.AppraisalLab.setCompareSlot(1, 'test-charm-1');
+
+    // Check benchmark selector rendered
+    assert(mockContainer.innerHTML.includes('lab-compare-benchmark-row'), 'Compare view must include benchmark selector row');
+    assert(mockContainer.innerHTML.includes('Lv.30') && mockContainer.innerHTML.includes('Lv.50'), 'Benchmark row must include Lv.30 and Lv.50');
+    assert(mockContainer.innerHTML.includes('benchmark-chip active'), 'Active benchmark chip must have active class');
+
+    // Check 6-dimension evaluation matrix rendered
+    assert(mockContainer.innerHTML.includes('lab-compare-sixdim'), 'Compare view must include sixdim matrix');
+    assert(mockContainer.innerHTML.includes('六維綜合戰力評定對照'), 'Compare view must title sixdim matrix');
+
+    // Check build matchup table rendered
+    assert(mockContainer.innerHTML.includes('lab-compare-builds'), 'Compare view must include builds matchup table');
+    assert(mockContainer.innerHTML.includes('副技能與性格配置橫向對照'), 'Compare view must title builds table');
+    assert(mockContainer.innerHTML.includes('lab-subskill-pill'), 'Builds table must render subskill pills');
+
+    // Switch benchmark level to Lv. 50
+    ctx.window.AppraisalLab.setCompareBenchmarkLevel('50');
+    assert(mockStorage.get('pksleep_lab_compare_benchmark') === '50', 'localStorage must persist benchmark level 50');
+
+    // Calculate performance under benchmark level 50 vs box level 10
+    const item1 = ctx.window.UserBox.getUserBox()[0];
+    const base1 = ctx.window.allPokemons[0];
+    const perfBox = ctx.window.AppraisalLab.calculatePokemonComparisonPerformance(item1, base1, 'box');
+    const perf50 = ctx.window.AppraisalLab.calculatePokemonComparisonPerformance(item1, base1, '50');
+
+    assert(perfBox.level === 10, 'Box perf must calculate with level 10');
+    assert(perf50.level === 50, 'Benchmark 50 perf must calculate with level 50');
+    assert(perf50.totalDailyEnergy > perfBox.totalDailyEnergy, 'Level 50 energy output must exceed Level 10');
+    assert(perf50.activeSubskills.length >= 3, 'Level 50 must unlock Lv.10, Lv.25, Lv.50 subskills');
+
+    // Reset benchmark level to box
+    ctx.window.AppraisalLab.setCompareBenchmarkLevel('box');
+    assert(mockStorage.get('pksleep_lab_compare_benchmark') === 'box', 'localStorage must persist benchmark level box');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

@@ -3065,6 +3065,7 @@
     cookingType: 'curry',     // 'curry' | 'salad' | 'dessert'
     greengrassBerries: ['桃桃果', '橙橙果', '櫻子果'],
     compareSlots: [null, null, null],
+    compareBenchmarkLevel: 'box', // 'box' | 30 | 50 | 60 | 100
     selectedBoxUid: '',
     selectedPkmId: '1',
     level: 30,
@@ -3144,6 +3145,10 @@
         if (sCompare) {
           labState.compareSlots = [sCompare.a || null, sCompare.b || null, sCompare.c || null];
         }
+      }
+      const sBench = localStorage.getItem('pksleep_lab_compare_benchmark');
+      if (['box', '30', '50', '60', '100'].includes(String(sBench))) {
+        labState.compareBenchmarkLevel = (sBench === 'box' ? 'box' : parseInt(sBench, 10));
       }
     }
   } catch (e) {}
@@ -4117,6 +4122,17 @@
     updateLabUI();
   }
 
+  function setCompareBenchmarkLevel(lvl) {
+    const val = (lvl === 'box' || !lvl) ? 'box' : parseInt(lvl, 10);
+    labState.compareBenchmarkLevel = val;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('pksleep_lab_compare_benchmark', String(val));
+      }
+    } catch (e) {}
+    updateLabUI();
+  }
+
   /* ─── 自訂隊員/選手挑選彈窗 (Custom Pokémon Picker Modal) ────────────── */
   let activePickerState = null;
 
@@ -4577,23 +4593,29 @@
   }
 
   /* ─── 寶可夢對比數據精算器 (Performance Metrics Calculator for Compare) ─ */
-  function calculatePokemonComparisonPerformance(item, base) {
+  function calculatePokemonComparisonPerformance(item, base, overrideLevel) {
     if (!item) return null;
-    const level = parseInt(item.level, 10) || 30;
+    const boxLevel = parseInt(item.level, 10) || 30;
+    const level = (overrideLevel && overrideLevel !== 'box') ? parseInt(overrideLevel, 10) : boxLevel;
     const nature = item.nature || '坦率';
     const subskills = Array.isArray(item.subskills) ? item.subskills : [];
     const ribbon = parseInt(item.ribbon, 10) || 0;
     const ribbonBonus = getRibbonBonus(base, ribbon);
     const skillLevel = parseInt(item.skillLevel || item.skill_level || 1, 10) || 1;
 
+    // 依基準等級判定解鎖的副技能 (解鎖門檻: Lv.10, 25, 50, 75, 100)
+    const unlockTiers = [10, 25, 50, 75, 100];
+    const activeSubskills = subskills.filter((s, idx) => s && level >= (unlockTiers[idx] || 10));
+    const hasSub = name => activeSubskills.includes(name);
+
     // 1. Helping speed & intervals
     const baseFreq = (base && (base.base_frequency || base.frequency)) ? (base.base_frequency || base.frequency) : 3600;
     let freq = baseFreq * (1 - (level - 1) * 0.002);
 
     let subSpeedDiscount = 0;
-    if (subskills.includes('幫忙速度M')) subSpeedDiscount += 0.14;
-    if (subskills.includes('幫忙速度S')) subSpeedDiscount += 0.07;
-    if (subskills.includes('幫手獎勵')) subSpeedDiscount += 0.05;
+    if (hasSub('幫忙速度M')) subSpeedDiscount += 0.14;
+    if (hasSub('幫忙速度S')) subSpeedDiscount += 0.07;
+    if (hasSub('幫手獎勵')) subSpeedDiscount += 0.05;
     freq = freq * (1 - Math.min(0.35, subSpeedDiscount));
 
     if (ribbonBonus && ribbonBonus.speedDiscount > 0) {
@@ -4620,8 +4642,8 @@
     }
 
     let ingRateMultiplier = 1.0;
-    if (subskills.includes('食材機率提升M')) ingRateMultiplier *= 1.36;
-    if (subskills.includes('食材機率提升S')) ingRateMultiplier *= 1.18;
+    if (hasSub('食材機率提升M')) ingRateMultiplier *= 1.36;
+    if (hasSub('食材機率提升S')) ingRateMultiplier *= 1.18;
     if (nat && nat.buff && nat.buff.includes('食材')) ingRateMultiplier *= 1.20;
     if (nat && nat.debuff && nat.debuff.includes('食材')) ingRateMultiplier *= 0.80;
 
@@ -4677,7 +4699,7 @@
     // 3. Berries
     const berry = (typeof window.getPokemonBerry === 'function' && base) ? window.getPokemonBerry(base) : ((base && base.berry) || {});
     let berryCount = (base && base.specialty && (base.specialty.includes('樹果') || base.specialty === 'Berries')) ? 2 : 1;
-    if (subskills.includes('樹果數量S')) berryCount += 1;
+    if (hasSub('樹果數量S')) berryCount += 1;
 
     const bValueObj = (typeof BERRY_VALUES_DATA !== 'undefined' ? BERRY_VALUES_DATA : []).find(b => b.name === (berry.name || ''));
     const baseBerryEnergy = bValueObj ? bValueObj.energy : 28;
@@ -4696,8 +4718,8 @@
     }
 
     let skillMultiplier = 1.0;
-    if (subskills.includes('技能機率提升M')) skillMultiplier *= 1.36;
-    if (subskills.includes('技能機率提升S')) skillMultiplier *= 1.18;
+    if (hasSub('技能機率提升M')) skillMultiplier *= 1.36;
+    if (hasSub('技能機率提升S')) skillMultiplier *= 1.18;
     if (nat && nat.buff && nat.buff.includes('主技能')) skillMultiplier *= 1.20;
     if (nat && nat.debuff && nat.debuff.includes('主技能')) skillMultiplier *= 0.80;
 
@@ -4731,6 +4753,8 @@
 
     return {
       level,
+      boxLevel,
+      overrideLevel: overrideLevel || 'box',
       effectiveInterval,
       dailyHelps,
       effectiveIngRate,
@@ -4747,7 +4771,9 @@
       skillLevel,
       dailySkillProcs,
       dailySkillEnergy,
-      totalDailyEnergy
+      totalDailyEnergy,
+      activeSubskills,
+      allSubskills: subskills
     };
   }
 
@@ -4779,6 +4805,8 @@
     // 清理已在倉庫中不存在的 uid
     labState.compareSlots = labState.compareSlots.map(uid => (uid && userBox.some(p => p.uid === uid) ? uid : null));
 
+    const currentBenchmark = labState.compareBenchmarkLevel || 'box';
+
     // 收集目前已選之選手
     const activePlayers = [];
     [0, 1, 2].forEach(i => {
@@ -4787,13 +4815,19 @@
       const item = userBox.find(p => p.uid === uid);
       if (!item) return;
       const base = findBasePkm(item.pokemonId || item.name);
+      const perf = calculatePokemonComparisonPerformance(item, base, currentBenchmark);
+      const evalItem = (currentBenchmark && currentBenchmark !== 'box')
+        ? Object.assign({}, item, { level: parseInt(currentBenchmark, 10) })
+        : item;
+      const evaluation = (typeof evaluatePokemon === 'function') ? evaluatePokemon(evalItem) : null;
       activePlayers.push({
         slotIndex: i,
         letter: COMPARE_LETTERS[i],
         color: COMPARE_COLORS[i],
         item,
         base,
-        perf: calculatePokemonComparisonPerformance(item, base)
+        perf,
+        evaluation
       });
     });
 
@@ -4803,7 +4837,7 @@
     const unitIng = isEN ? 'items/day' : '顆/日';
     const fallbackAvatar = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
 
-    // ── 頂部：3 個選手槽位 (選手 A vs 選手 B vs 選手 C) ──
+    // ── 頂部：3 個選手槽位 (單行並排展示 + 簡化卡片) ──
     const slotCardHtml = i => {
       const letter = COMPARE_LETTERS[i];
       const color = COMPARE_COLORS[i];
@@ -4813,11 +4847,14 @@
       if (!item) {
         return `
           <button type="button" class="lab-compare-vs-player lab-compare-empty-slot slot-${letter.toLowerCase()}" style="border-top-color:${color};" onclick="window.AppraisalLab.openPicker({ type: 'compare', compareSlot: ${i} })">
-            <span class="lab-compare-slot-letter" style="background:${color};">${isEN ? 'Player' : '選手'} ${letter}</span>
+            <div class="lab-compare-vs-header-top">
+              <span class="lab-compare-slot-letter" style="background:${color};">${letter}</span>
+            </div>
             <div class="lab-compare-empty-content">
               <span class="lab-compare-empty-plus">+</span>
               <span class="lab-compare-empty-text">${isEN ? `Pick Player ${letter}` : `挑選選手 ${letter}`}</span>
             </div>
+            <div class="lab-compare-tap-hint">${isEN ? 'Tap to pick' : '點選挑選'}</div>
           </button>
         `;
       }
@@ -4825,35 +4862,29 @@
       const base = findBasePkm(item.pokemonId || item.name);
       const avatarUrl = (base && (base.icon_url || base.icon)) || (base && base.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${base.formatted_no}.png` : '') || fallbackAvatar;
       const berry = (typeof window.getPokemonBerry === 'function' && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : {});
-      const specHtml = (window.I18N && window.I18N.getSpecialtyIconHtml && base) ? window.I18N.getSpecialtyIconHtml(base.specialty, 18) : '';
+      const specHtml = (window.I18N && window.I18N.getSpecialtyIconHtml && base) ? window.I18N.getSpecialtyIconHtml(base.specialty, 13) : '';
       const natDisplayName = window.I18N ? window.I18N.getNatureName(item.nature) : item.nature;
-      const rawSkill = (base && (base.main_skill || (base.skill && base.skill.name))) || item.main_skill || '';
-      const skillName = rawSkill ? (window.I18N ? window.I18N.getMainSkillName(rawSkill) : rawSkill) : '--';
-      const skillLabel = `${skillName} Lv.${item.skillLevel || 1}`;
+      const pkmDisplayName = (window.I18N && typeof window.I18N.getPokemonName === 'function') ? window.I18N.getPokemonName(item.pokemonId || (base && base.id), item.nickname || item.name) : (item.nickname || item.name);
+      const effLevel = (currentBenchmark && currentBenchmark !== 'box') ? parseInt(currentBenchmark, 10) : (parseInt(item.level, 10) || 1);
 
       return `
-        <div class="lab-compare-vs-player slot-${letter.toLowerCase()}" style="border-top-color:${color};">
+        <div class="lab-compare-vs-player slot-${letter.toLowerCase()}" style="border-top-color:${color}; cursor:pointer;" onclick="window.AppraisalLab.openPicker({ type: 'compare', compareSlot: ${i} })">
           <div class="lab-compare-vs-header-top">
-            <span class="lab-compare-slot-letter" style="background:${color};">${isEN ? 'Player' : '選手'} ${letter}</span>
-            <button type="button" class="lab-compare-remove-btn" aria-label="${isEN ? 'Remove' : '移除'}" title="${isEN ? 'Remove' : '移除'}" onclick="window.AppraisalLab.clearCompareSlot(${i})">
+            <span class="lab-compare-slot-letter" style="background:${color};">${letter}</span>
+            <button type="button" class="lab-compare-remove-btn" aria-label="${isEN ? 'Remove' : '移除'}" title="${isEN ? 'Remove' : '移除'}" onclick="event.stopPropagation(); window.AppraisalLab.clearCompareSlot(${i});">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
           </div>
-          <div class="lab-compare-vs-top">
-            <div class="lab-compare-vs-avatar-wrap">
-              <img src="${avatarUrl}" class="lab-compare-vs-avatar" alt="${isEN ? 'Player' : '選手'} ${letter}" loading="lazy">
-              <span class="lab-compare-vs-lvl">Lv.${item.level || 1}</span>
-            </div>
-            <button type="button" class="box-btn box-btn-secondary lab-compare-change-btn" onclick="window.AppraisalLab.openPicker({ type: 'compare', compareSlot: ${i} })">
-              ${isEN ? 'Change' : '更換選手'}
-            </button>
+          <div class="lab-compare-vs-avatar-wrap">
+            <img src="${avatarUrl}" class="lab-compare-vs-avatar" alt="${isEN ? 'Player' : '選手'} ${letter}" loading="lazy">
+            <span class="lab-compare-vs-lvl">Lv.${effLevel}</span>
           </div>
-          <div class="lab-compare-vs-info">
+          <div class="lab-compare-micro-meta">
             ${specHtml}
-            ${berry.icon ? `<img src="${berry.icon}" class="lab-compare-mini-berry" alt="Berry" title="${escapeHtml(berry.name || '')}">` : ''}
-            <span class="lab-compare-vs-tag nat-tag">${natDisplayName}</span>
-            <span class="lab-compare-vs-tag skill-tag">${skillLabel}</span>
+            ${berry && berry.icon ? `<img src="${berry.icon}" class="lab-compare-mini-berry" alt="Berry" title="${escapeHtml(berry.name || '')}">` : ''}
+            <span class="lab-compare-vs-tag nat-tag">${escapeHtml(natDisplayName)}</span>
           </div>
+          <div class="lab-compare-tap-hint">${isEN ? 'Tap to change' : '點選更換'}</div>
         </div>
       `;
     };
@@ -4870,9 +4901,30 @@
         </div>
         ${slotCardHtml(2)}
       </div>
-      <div class="lab-compare-pick-hint" style="margin-bottom:12px;font-size:12px;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
-        <span>${isEN ? `Selected ${N}/${COMPARE_MAX}. Tap a slot to pick Pokémon (max 3, no duplicates).` : `已選 ${N}/${COMPARE_MAX} 位選手，點選上方槽位自選寶可夢（最多3位，不可重複選擇同一隻）`}</span>
+      <div class="lab-compare-pick-hint" style="margin-bottom:8px;font-size:11.5px;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+        <span>${isEN ? `Selected ${N}/${COMPARE_MAX}. Tap a slot to change Pokémon (max 3, no duplicates).` : `已選 ${N}/${COMPARE_MAX} 位選手，點選卡片可更換寶可夢（最多3位，不可重複選擇同一隻）`}</span>
         ${N > 0 ? `<button type="button" class="box-btn box-btn-secondary" style="font-size:11px;padding:2px 8px;" onclick="[0,1,2].forEach(i=>window.AppraisalLab.clearCompareSlot(i));">${isEN ? 'Clear All' : '清空對比'}</button>` : ''}
+      </div>
+    `;
+
+    // ── 基準等級切換橫列 ──
+    const benchmarkLevels = [
+      { id: 'box', label: isEN ? 'Box Lv' : '各自等級' },
+      { id: '30', label: 'Lv.30' },
+      { id: '50', label: 'Lv.50' },
+      { id: '60', label: 'Lv.60' },
+      { id: '100', label: 'Lv.100' }
+    ];
+    const benchmarkBarHtml = `
+      <div class="lab-compare-benchmark-row">
+        <span class="lab-compare-benchmark-title">${isEN ? 'Benchmark Level:' : '基準等級:'}</span>
+        <div class="lab-compare-benchmark-chips">
+          ${benchmarkLevels.map(b => `
+            <button type="button" class="benchmark-chip${String(currentBenchmark) === String(b.id) ? ' active' : ''}" onclick="window.AppraisalLab.setCompareBenchmarkLevel('${b.id}')">
+              ${b.label}
+            </button>
+          `).join('')}
+        </div>
       </div>
     `;
 
@@ -4881,6 +4933,7 @@
       return `
         <div class="lab-compare-view-container">
           ${headerHtml}
+          ${benchmarkBarHtml}
           <div class="lab-compare-kpi-card" id="lab-compare-energy">
             <div class="lab-compare-kpi-head">
               <div class="lab-compare-kpi-title">
@@ -4963,7 +5016,39 @@
       return { label, vals, higher, texts: vals.map((v, i) => (textFn ? textFn(v, activePlayers[i]) : fmt(v))) };
     };
 
-    // ── 每日能量 ──
+    // ── 1. 六維綜合戰力評定對照 (6-Dimension Evaluation Matrix) ──
+    const sixDimRows = [
+      num(isEN ? 'Est. Total Energy' : '每日總能量產出', x => x.totalDailyEnergy, true),
+      num(isEN ? 'Berry Power' : '樹果強度能量', x => x.dailyBerryEnergy, true),
+      num(isEN ? 'Ingredient Power' : '食材產出能量', x => x.totalDailyIngredientEnergy, true),
+      num(isEN ? 'Skill Procs / Day' : '主技能期望次數', x => x.dailySkillProcs, true, v => `${v} ${isEN ? '/day' : '次/日'}`),
+      num(isEN ? 'Help Interval' : '幫手週期間隔', x => x.effectiveInterval, false, v => formatSecsToMinSec(v, isEN)),
+      {
+        label: isEN ? 'Composite Tier' : '綜合戰力評價',
+        vals: activePlayers.map(p => (p.evaluation ? p.evaluation.compositeScore : 0)),
+        higher: true,
+        texts: activePlayers.map(p => {
+          const ev = p.evaluation;
+          if (!ev) return '--';
+          const grade = ev.grade || 'B';
+          const score = ev.compositeScore || 70;
+          return `<div style="display:flex;align-items:center;justify-content:center;gap:4px;"><span class="lab-grade-badge" style="background:${ev.gradeColor || '#38bdf8'}26;color:${ev.gradeColor || '#38bdf8'};border:1px solid ${ev.gradeColor || '#38bdf8'}59;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:800;">${grade}</span><span style="font-size:11px;color:var(--text-secondary);font-weight:700;">${score}${isEN ? ' pts' : '分'}</span></div>`;
+        })
+      }
+    ];
+
+    const sixDimHtml = `
+      <div class="lab-compare-kpi-card" id="lab-compare-sixdim">
+        <div class="lab-compare-kpi-head">
+          <div class="lab-compare-kpi-title">
+            <span>${isEN ? '6-Dimension Evaluation Matrix' : '六維綜合戰力評定對照'}</span>
+          </div>
+        </div>
+        ${tableHtml(sixDimRows)}
+      </div>
+    `;
+
+    // ── 2. 每日能量 ──
     const energyVals = activePlayers.map(p => p.perf.totalDailyEnergy);
     const energyHtml = `
       <div class="lab-compare-kpi-card" id="lab-compare-energy">
@@ -4979,7 +5064,70 @@
         ])}
       </div>`;
 
-    // ── 每日食材 (跨插槽食材產量總和對照) ──
+    // ── 3. 副技能與性格配置橫向對照 (Subskills & Nature Build Matchup) ──
+    const unlockLevels = [10, 25, 50, 75, 100];
+    const subskillSlotRows = unlockLevels.map((tierLv, slotIdx) => {
+      return {
+        label: `Lv.${tierLv}`,
+        tierLv: tierLv,
+        higher: null,
+        vals: activePlayers.map(() => 0),
+        texts: activePlayers.map(p => {
+          const effLv = p.perf.level;
+          const isUnlocked = effLv >= tierLv;
+          const sName = (p.item.subskills && p.item.subskills[slotIdx]) || '--';
+          const locName = (sName !== '--' && window.I18N) ? window.I18N.getSubSkillName(sName) : sName;
+          const tierColor = (sName !== '--' && typeof getSkillTier === 'function') ? getSkillTier(sName) : null;
+          let badgeStyle = '';
+          if (tierColor === 'gold' || tierColor === 'gold-tier') {
+            badgeStyle = 'background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.4);';
+          } else if (tierColor === 'blue' || tierColor === 'blue-tier') {
+            badgeStyle = 'background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.4);';
+          } else if (sName !== '--') {
+            badgeStyle = 'background:rgba(148,163,184,0.12);color:#cbd5e1;border:1px solid rgba(148,163,184,0.3);';
+          } else {
+            badgeStyle = 'color:var(--text-muted);';
+          }
+
+          if (!isUnlocked && sName !== '--') {
+            badgeStyle += 'opacity:0.42;filter:grayscale(60%);';
+          }
+
+          return `<span class="lab-subskill-pill${isUnlocked ? '' : ' locked'}" style="${badgeStyle}" title="${isUnlocked ? '' : (isEN ? 'Locked at this level' : '當前等級未解鎖')}">${escapeHtml(locName)}${!isUnlocked && sName !== '--' ? ' [鎖]' : ''}</span>`;
+        })
+      };
+    });
+
+    const natureRow = {
+      label: isEN ? 'Nature' : '性格配置',
+      higher: null,
+      vals: activePlayers.map(() => 0),
+      texts: activePlayers.map(p => {
+        const isMint = !!(p.item.cleanseMint || p.item.mint);
+        const nName = window.I18N ? window.I18N.getNatureName(p.item.nature) : p.item.nature;
+        const nat = isMint ? null : NATURE_DATA.find(n => n.name === p.item.nature || n.name_en === p.item.nature);
+        let extra = '';
+        if (isMint) {
+          extra = `<span style="font-size:10px;color:var(--accent-color,#38bdf8);">${isEN ? '(Minted)' : '(薄荷中和)'}</span>`;
+        } else if (nat && nat.buff && nat.buff !== '無增減') {
+          extra = `<span style="font-size:9.5px;color:#10b981;">${nat.buff}</span> <span style="font-size:9.5px;color:#f43f5e;">${nat.debuff}</span>`;
+        }
+        return `<div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-weight:700;">${escapeHtml(nName)}</span>${extra}</div>`;
+      })
+    };
+
+    const buildHtml = `
+      <div class="lab-compare-kpi-card" id="lab-compare-builds">
+        <div class="lab-compare-kpi-head">
+          <div class="lab-compare-kpi-title">
+            <span>${isEN ? 'Subskills & Nature Build Matchup' : '副技能與性格配置橫向對照'}</span>
+          </div>
+        </div>
+        ${tableHtml([ ...subskillSlotRows, natureRow ])}
+      </div>
+    `;
+
+    // ── 4. 每日食材 (跨插槽食材產量總和對照) ──
     const aggs = activePlayers.map(p => {
       const agg = {};
       (p.perf.itemizedIngredients || []).forEach(slot => {
@@ -5040,7 +5188,7 @@
         </div>
       </div>`;
 
-    // ── 技能發動與幫手效能全面對照 ──
+    // ── 5. 技能發動與幫手效能全面對照 ──
     const skillLabel = p => {
       const nm = (p.base && (p.base.main_skill || (p.base.skill && p.base.skill.name))) || p.item.main_skill || '--';
       const locNm = window.I18N ? window.I18N.getMainSkillName(nm) : nm;
@@ -5071,7 +5219,7 @@
         ${tableHtml(specRows)}
       </div>`;
 
-    // ── 結論與培育建議 ──
+    // ── 6. 結論與培育建議 ──
     const topOf = vals => vals.indexOf(Math.max.apply(null, vals));
     const allEqual = vals => vals.every(v => v === vals[0]);
     const skillProcVals = activePlayers.map(p => p.perf.dailySkillProcs);
@@ -5093,7 +5241,10 @@
     return `
       <div class="lab-compare-view-container">
         ${headerHtml}
+        ${benchmarkBarHtml}
         ${energyHtml}
+        ${sixDimHtml}
+        ${buildHtml}
         ${ingredientsHtml}
         ${specHtml}
         <div class="lab-compare-verdict-card" style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.25);border-radius:10px;padding:14px;">
@@ -5321,6 +5472,7 @@
     setCompareSlot: setCompareSlot,
     clearCompareSlot: clearCompareSlot,
     swapCompareSlots: swapCompareSlots,
+    setCompareBenchmarkLevel: setCompareBenchmarkLevel,
     openPicker: openLabPicker,
     closePicker: closeLabPicker,
     onPickerSelect: onPickerSelect,

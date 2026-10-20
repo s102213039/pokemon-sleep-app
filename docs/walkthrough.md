@@ -5,6 +5,32 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-10-21 已完成（深度研究室寶可夢對比重構：行動端 H5 單行並排展示、槽位卡片極簡化與點選更換、對比基準等級動態切換、六維戰力與配置橫向對照矩陣、v=20261021_01）
+
+- **靜態快取標籤**：全模組更新為 `v=20261021_01`（`index.html`、`app/index.html` 同步）
+- **測試狀態**：225/225 自動化測試全數通過（新增第 225 項深度研究室對比重構驗證：H5 單行並排、點選更換、基準等級動態切換與六維橫向對照）
+- **重構與優化核心內容**：
+  1. **行動端 H5 單行並排對比 (Mobile H5 Single-Row Comparison Layout)**：
+     - **問題**：在行動端 H5（`app/index.html#box/lab`）中，對比選手 A、B、C 槽位因 `@media (max-width: 640px) { flex-direction: column; }` 遭到強制垂直堆疊，每張卡片高度高達 140px，三張卡片縱向佔據超過 420px，導致主要對比數據表被嚴重推擠至視窗外。
+     - **解決方案**：
+       - 於 `css/styles.css` 徹底移除行動端 `flex-direction: column;` 堆疊樣式，全局嚴格宣告 `.lab-compare-vs-header { display: flex !important; flex-direction: row !important; gap: 4px !important; }`，使 3 個選手槽位在任何螢幕寬度（含 360px 窄螢幕）均水平單行並排。
+       - 分隔符號 Slender 化：採用 18px 微型圓形 VS 徽章，間距縮減至 10-12px，消除多餘水平浪費。
+  2. **槽位卡片項目極簡化 (Simplified Tap-to-Change Slot Item)**：
+     - 徹底移除笨重佔位的「更換幫手」按鈕，將整張選手卡片轉為點選互動（`onclick="openPicker({ type: 'compare', compareSlot })"`），卡片具備懸浮與點擊回饋。
+     - 頂部保留選手代號與專屬移除「X」按鈕（帶 `event.stopPropagation()`，移除選手時不觸發挑選彈窗）。
+     - 頭像右下角疊加精緻等級徽章（`Lv.`）。
+     - 底層採用單行微型元資料：專長圖示 + 樹果圖示 + 性格標籤，搭配底部細緻「點選更換」引導，卡片高度由 140px 大幅瘦身至 110px 左右，空槽位高度完全對齊。
+  3. **對比基準等級模式 (Level Benchmark Mode)**：
+     - **問題**：玩家從倉庫挑選的寶可夢往往等級不一（如一隻 Lv.15、另一隻 Lv.50），原始數值直接對比無法客觀體現同等級成長潛能。
+     - **解決方案**：
+       - 於對比頂部加入基準等級切換橫列：`[各自等級 (Box Lv)] [Lv.30] [Lv.50] [Lv.60] [Lv.100]`。
+       - 升級 `calculatePokemonComparisonPerformance(item, base, overrideLevel)`：當切換至特定基準等級時，精算器動態以該基準等級重算幫忙週期、樹果能量、第二食材槽（Lv.30 解鎖）與第三食材槽（Lv.60 解鎖），並嚴格動態判定已解鎖的副技能（門檻為 Lv.10, 25, 50, 75, 100）。
+       - 支援 `localStorage` 自動持久化儲存玩家偏好之基準等級（`pksleep_lab_compare_benchmark`）。
+  4. **六維綜合戰力評定橫向矩陣 (6-Dimension Evaluation Matrix)**：
+     - 新增 `#lab-compare-sixdim` 綜合戰力卡片，橫向並排對照各選手之：每日總能量產出、樹果強度能量、食材產出能量、主技能期望次數、幫手週期間隔，以及 SSS/SS/S/A/B/C/D 綜合戰力評價分級。
+  5. **副技能與性格配置橫向對照表 (Subskills & Nature Build Matchup Table)**：
+     - 新增 `#lab-compare-builds` 配置卡片，依階級（Lv.10、Lv.25、Lv.50、Lv.75、Lv.100）橫向並排對照副技能，按金/藍/白品級高對比度上色；未達當前等級門檻之副技能自動半透明並標註 `[鎖]`，性格行明確標示性格增減與薄荷中和狀態。
+
 ## 交接：2026-10-20 已完成（寶可夢倉庫子分頁與深度研究室切換隔離修復、CSS !important 特異度阻斷排除、manifest.json 基準路徑自動解析、v=20261020_01）
 
 - **靜態快取標籤**：全模組更新為 `v=20261020_01`（`index.html`、`app/index.html` 同步）
