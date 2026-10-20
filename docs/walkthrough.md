@@ -1,5 +1,10 @@
 # 專案進度與修復確認紀錄 (Project Progress & Walkthrough)
 
+> [!IMPORTANT]
+> **已驗證良品與防退化基線索引：**
+> 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
+> 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
+
 ## 交接：2026-10-20 已完成（寶可夢倉庫子分頁與深度研究室切換隔離修復、CSS !important 特異度阻斷排除、manifest.json 基準路徑自動解析、v=20261020_01）
 
 - **靜態快取標籤**：全模組更新為 `v=20261020_01`（`index.html`、`app/index.html` 同步）
@@ -18,7 +23,7 @@
      - **根本原因**：`js/core/domUtils.js` 中 `fetchManifest` 僅檢測 `global.__DATA_BASE_PATH__`，然而在瀏覽器環境中 `global` 為未定義（`undefined`），導致在 `/app/index.html` 訪問時誤用相對路徑 `data/manifest.json`（即 `.../app/data/manifest.json` 產生 404）。
      - **解決方案**：於 `domUtils.js` 擴充支援 `window.__DATA_BASE_PATH__` 與 `location.pathname.includes('/app/')` 自動判斷，優先直接請求 `../data/manifest.json`，消除無效的 404 候選重試。
 
-- **靜態快取標籤**：全模組更新為 `v=20261019_05`（`index.html`、`app/index.html` 同步）
+## 交接：2026-10-19 已完成（智能簡評與料理推薦名稱官方對照校正、碎裂酪梨沙拉食材與能量修復、物件型食材安全正規化、v=20261019_05）
 - **測試狀態**：223/223 自動化測試全數通過（新增第 223 項官方料理與食材名稱一致性校驗、碎裂酪梨沙拉數值與物件安全正規化驗證測試）
 - **重構與修復核心內容**：
   1. **智能簡評引擎料理與食材名稱全量審計與糾正（`js/modules/appraisal.js`）**：
