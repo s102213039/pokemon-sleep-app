@@ -8,7 +8,7 @@
     "badge_label": "版本更新",
     "badge_color": "#3b82f6",
     "title": "維護作業＆Ver.3.9.0更新預告",
-    "title_en": "維護作業 & Ver.3.9.0更新預告",
+    "title_en": "Maintenance & Ver. 3.9.0 Update Notice",
     "overview_en": "New game version update with quality-of-life enhancements and bug fixes.",
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
@@ -60,8 +60,8 @@
     "badge_label": "活動企劃",
     "badge_color": "#f59e0b",
     "title": "【預告】新食材、新食譜、睡姿圖鑑目標和新企畫確定登場！",
-    "title_en": "【預告】新食材, 新食譜, 睡姿圖鑑目標和新企畫確定登場！",
-    "overview_en": "Official announcement and news update for Pokemon Sleep.",
+    "title_en": "[Notice] New Ingredients, New Recipes, Sleep Style Dex Goals, and New Events Coming Soon!",
+    "overview_en": "Official announcement regarding upcoming new ingredients, recipes, dex goals, and campaigns in November 2026.",
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
     "featured_pokemon": [],
@@ -83,10 +83,10 @@
         ],
         "title_en": "Core Highlights & Overview",
         "items_en": [
-          "【預告】新食材, 新食譜, 睡姿圖鑑目標和新企畫確定登場！",
-          "新的睡姿圖鑑目標 （570種）",
-          "食材\" 一口堅果 \"",
-          "會用到一口堅果的 3種食譜"
+          "[Notice] New Ingredients, Recipes, Dex Goals & New Campaigns Announced!",
+          "New Sleep Style Dex Goal (570 Styles)",
+          "New Ingredient: Greengrass Nut",
+          "3 New Recipes Featuring Greengrass Nut"
         ]
       }
     ],
@@ -167,7 +167,7 @@
     "badge_label": "版本更新",
     "badge_color": "#3b82f6",
     "title": "關於Ver.3.9.0維護作業期間的睡眠測量",
-    "title_en": "關於Ver.3.9.0維護作業期間的睡眠測量",
+    "title_en": "Regarding Sleep Tracking During Ver. 3.9.0 Maintenance",
     "overview_en": "Official announcement and news update for Pokemon Sleep.",
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
