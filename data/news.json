@@ -1,5 +1,198 @@
 [
   {
+    "id": "343535303736323034333837353030303435",
+    "url": "https://www.pokemonsleep.net/zh/news/343535303736323034333837353030303435/",
+    "date": "2026-10-20",
+    "category": "通知",
+    "badge_key": "update",
+    "badge_label": "版本更新",
+    "badge_color": "#3b82f6",
+    "title": "維護作業＆Ver.3.9.0更新預告",
+    "title_en": "維護作業 & Ver.3.9.0更新預告",
+    "overview_en": "New game version update with quality-of-life enhancements and bug fixes.",
+    "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
+    "featured_pokemon": [
+      "夢幻"
+    ],
+    "overview": "維護作業＆Ver.3.9.0更新預告",
+    "highlights": [
+      "「萬聖節2026：糖果倍增研究」",
+      "新增功能：準備新活動、新企畫；「萬聖節2026：糖果倍增研究」；「備料週vol.1」；「來什麼都吃光光！大餐週vol.1」",
+      "平衡調整與技能變更：調整與幻之寶可夢的相遇方式；關於至今為止在新月日出現的幻之寶可夢，今後玩家將能在不同活動分別遇見特定的幻之寶可夢。；【 自第40次好眠日起 】；【 自第19次新月日起 】"
+    ],
+    "sections": [
+      {
+        "key": "bonus",
+        "title": "核心獎勵與倍率加成",
+        "icon": "[Bonus]",
+        "items": [
+          "「萬聖節2026：糖果倍增研究」"
+        ],
+        "title_en": "Core Bonuses & Multipliers",
+        "items_en": [
+          "\"萬聖節2026：糖果倍增研究\""
+        ]
+      },
+      {
+        "key": "updates",
+        "title": "更新與平衡調整內容",
+        "icon": "[Update]",
+        "items": [
+          "新增功能：準備新活動、新企畫；「萬聖節2026：糖果倍增研究」；「備料週vol.1」；「來什麼都吃光光！大餐週vol.1」",
+          "平衡調整與技能變更：調整與幻之寶可夢的相遇方式；關於至今為止在新月日出現的幻之寶可夢，今後玩家將能在不同活動分別遇見特定的幻之寶可夢。；【 自第40次好眠日起 】；【 自第19次新月日起 】"
+        ],
+        "title_en": "Updates & Balancing",
+        "items_en": [
+          "新增功能：準備新活動, 新企畫；\"萬聖節2026：糖果倍增研究\"；\"備料週vol.1\"；\"來什麼都吃光光！大餐週vol.1\"",
+          "平衡調整與技能變更：調整與幻之寶可夢的相遇方式；關於至今為止在新月日出現的幻之寶可夢，今後玩家將能在不同活動分別遇見特定的幻之寶可夢。；【 自第40 time(s)好眠日起 】；【 自第19 time(s)新月日起 】"
+        ]
+      }
+    ],
+    "content_preview": "NEW\n\n通知\n\n2026/10/20\n2026/10/20 -->\n\n維護作業＆Ver.3.9.0更新預告\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n預定更新的項目\n\n為更新應用程式的版本，我們將在以下時間進行維護作業。\n\n維護作業期間\n\n開始時間： 2026/10/22 4:30\n\n結束時間： 2026/10/22 9:00\n\n新功能\n\n準備新活動、新企畫\n\n「萬聖節2026：糖果倍增研究」\n\n「備料週vol.1」\n\n「來什麼都吃光光！大餐週vol.1」\n\n※詳情請查看活動、企畫的通知。\n\n準備新的食材和食譜\n\n以下要素將於 2026/11/15 19:00 追加。\n\n・食材「 一口堅果 」\n\n・會用到一口堅果的 3種食譜\n\n平衡調整\n\n調整與幻之寶可夢的相遇方式\n\n關於至今為止在新月日出現..."
+  },
+  {
+    "id": "343535303736323034303630333434333236",
+    "url": "https://www.pokemonsleep.net/zh/news/343535303736323034303630333434333236/",
+    "date": "2026-10-20",
+    "category": "通知",
+    "badge_key": "event",
+    "badge_label": "活動企劃",
+    "badge_color": "#f59e0b",
+    "title": "【預告】新食材、新食譜、睡姿圖鑑目標和新企畫確定登場！",
+    "title_en": "【預告】新食材, 新食譜, 睡姿圖鑑目標和新企畫確定登場！",
+    "overview_en": "Official announcement and news update for Pokemon Sleep.",
+    "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
+    "featured_pokemon": [],
+    "overview": "在 2026年11月 將新追加以下要素！",
+    "highlights": [
+      "【預告】新食材、新食譜、睡姿圖鑑目標和新企畫確定登場！",
+      "新的睡姿圖鑑目標 （570種）"
+    ],
+    "sections": [
+      {
+        "key": "general",
+        "title": "核心重點摘要",
+        "icon": "[Info]",
+        "items": [
+          "【預告】新食材、新食譜、睡姿圖鑑目標和新企畫確定登場！",
+          "新的睡姿圖鑑目標 （570種）",
+          "食材「 一口堅果 」",
+          "會用到一口堅果的 3種食譜"
+        ],
+        "title_en": "Core Highlights & Overview",
+        "items_en": [
+          "【預告】新食材, 新食譜, 睡姿圖鑑目標和新企畫確定登場！",
+          "新的睡姿圖鑑目標 （570種）",
+          "食材\" 一口堅果 \"",
+          "會用到一口堅果的 3種食譜"
+        ]
+      }
+    ],
+    "content_preview": "NEW\n\n通知\n\n2026/10/20\n2026/10/20 -->\n\n【預告】新食材、新食譜、睡姿圖鑑目標和新企畫確定登場！\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n在 2026年11月 將新追加以下要素！\n\n2026/11/8 19:00\n\n・ 新的睡姿圖鑑目標 （570種）\n\n※只要達成目標，就能增加鍋子容量。\n\n2026/11/15 19:00\n\n・食材「 一口堅果 」\n\n・會用到一口堅果的 3種食譜\n\n為慶祝這些新要素的登場，《Pokémon Sleep》將連續2週舉辦新企畫！\n\n第1週：備料週vol.1\n\n預定自 11/9 (週一) 起舉辦！\n\n能比平時更容易遇見 會幫忙撿來許多新料理所需食材的幫手寶可夢 。\n\n新的睡姿圖鑑目標（ 570種 ）也會同時追加，達成目標並 擴充鍋子容量..."
+  },
+  {
+    "id": "343532363635313734343730343236363331",
+    "url": "https://www.pokemonsleep.net/zh/news/343532363635313734343730343236363331/",
+    "date": "2026-10-20",
+    "category": "活動",
+    "badge_key": "event",
+    "badge_label": "活動企劃",
+    "badge_color": "#f59e0b",
+    "title": "【活動】第40次「好眠日」",
+    "title_en": "[Event] 40th Good Sleep Day",
+    "overview_en": "Enjoy a restful night's sleep during the Good Sleep Day with multiplied Drowsy Power.",
+    "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
+    "featured_pokemon": [
+      "夢幻",
+      "皮皮",
+      "皮可西",
+      "皮寶寶"
+    ],
+    "overview": "在滿月高掛的夜晚，睡個香甜的好覺吧！",
+    "highlights": [
+      "舉辦期間：10/25 (週日) 4:00 ～ 10/28 (週三) 3:59",
+      "【適用營地】・所有營地",
+      "睡意之力： 4倍",
+      "睡意之力： 1.5倍"
+    ],
+    "sections": [
+      {
+        "key": "schedule",
+        "title": "活動時間與營地",
+        "icon": "[Time]",
+        "items": [
+          "舉辦期間：10/25 (週日) 4:00 ～ 10/28 (週三) 3:59",
+          "【適用營地】・所有營地"
+        ],
+        "title_en": "Event Schedule & Areas",
+        "items_en": [
+          "Event Period: 10/25 (Sun) 4:00 ～ 10/28 (Wed) 3:59",
+          "[Areas] - All Areas"
+        ]
+      },
+      {
+        "key": "bonus",
+        "title": "核心獎勵與倍率加成",
+        "icon": "[Bonus]",
+        "items": [
+          "睡意之力： 4倍",
+          "睡意之力： 1.5倍",
+          "睡意之力的倍率",
+          "在好眠日的「滿月之日」生效的「睡意之力的倍率」，將會根據 滿月之日是週幾而有所變化 。",
+          "■「滿月之日」的「睡意之力」倍率",
+          "※不論滿月前後的日子是週幾，「睡意之力的倍率」皆為1.5倍。"
+        ],
+        "title_en": "Core Bonuses & Multipliers",
+        "items_en": [
+          "睡意之力： 4倍",
+          "睡意之力： 1.5倍",
+          "睡意之力的倍率",
+          "在好眠日的\"滿月之日\"生效的\"睡意之力的倍率\"，將會根據 滿月之日是週幾而有所變化 。",
+          "■\"滿月之日\"的\"睡意之力\"倍率",
+          "※不論滿月前後的日子是週幾，\"睡意之力的倍率\"皆為1.5倍。"
+        ]
+      }
+    ],
+    "content_preview": "NEW\n\n活動\n\n2026/10/20\n2026/10/20 -->\n\n【活動】第40次「好眠日」\n\n概要\n\n在滿月高掛的夜晚，睡個香甜的好覺吧！\n\n本活動會在每個月的「滿月之日」以及其前後各1天舉辦，在這為期3天的特別期間內「睡意之力」將會增強！\n\n歡迎把握活動期間睡飽睡足，多多研究寶可夢的睡姿！\n\n此外，本活動還會有紅利睡眠點數及寶可夢的睡眠EXP上升的獎勵。\n\n不僅如此，自本次的好眠日起，透過特別機率提升也能遇見 夢幻 了。\n\n敬請期待！\n\n【舉辦期間】\n\n・ 10/25 (週日) 4:00 ～ 10/28 (週三) 3:59\n\n※滿月之日： 10/26 (週一)\n\n【活動營地】\n\n・所有營地\n\n獎勵\n\n期間內在活動營地會發生下列效果。\n\n【所有日子】\n\n・幻之寶可夢的 特別機率提升 。\n\n・睡眠研究時，..."
+  },
+  {
+    "id": "343535303739313433353837393731303737",
+    "url": "https://www.pokemonsleep.net/zh/news/343535303739313433353837393731303737/",
+    "date": "2026-10-20",
+    "category": "通知",
+    "badge_key": "update",
+    "badge_label": "版本更新",
+    "badge_color": "#3b82f6",
+    "title": "關於Ver.3.9.0維護作業期間的睡眠測量",
+    "title_en": "關於Ver.3.9.0維護作業期間的睡眠測量",
+    "overview_en": "Official announcement and news update for Pokemon Sleep.",
+    "debut_pokemon": [],
+    "mid_rateup_pokemon": [],
+    "featured_pokemon": [],
+    "overview": "關於Ver.3.9.0維護作業期間的睡眠測量",
+    "highlights": [
+      "2026/10/22 4:30 ～ 2026/10/22 9:00 左右"
+    ],
+    "sections": [
+      {
+        "key": "schedule",
+        "title": "活動時間與營地",
+        "icon": "[Time]",
+        "items": [
+          "2026/10/22 4:30 ～ 2026/10/22 9:00 左右"
+        ],
+        "title_en": "Event Schedule & Areas",
+        "items_en": [
+          "2026/10/22 4:30 ～ 2026/10/22 9:00 左右"
+        ]
+      }
+    ],
+    "content_preview": "NEW\n\n通知\n\n2026/10/20\n2026/10/20 -->\n\n關於Ver.3.9.0維護作業期間的睡眠測量\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n預定於 2026/10/22 4:30 左右進行的Ver.3.9.0維護作業期間，在特定條件下可能無法開始測量睡眠。\n\n本現象的發生條件：\n\n・在維護作業期間更新至Ver.3.9.0，並開始測量睡眠。\n\n維護作業期間\n\n・ 2026/10/22 4:30 ～ 2026/10/22 9:00 左右\n\n致希望在維護作業期間開始測量睡眠的玩家：\n\n請勿將應用程式更新至Ver.3.9.0，直接由維護作業中的畫面開始測量睡眠。"
+  },
+  {
     "id": "343535353533333839333531313431333737",
     "url": "https://www.pokemonsleep.net/zh/news/343535353533333839333531313431333737/",
     "date": "2026-10-19",
@@ -1023,191 +1216,5 @@
       }
     ],
     "content_preview": "NEW\n\n異常問題\n\n2026/9/14\n2026/9/14 -->\n\n異常問題修復通知\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n目前已修復了遊戲中發生的以下異常問題。\n\n問題位置\n\n畫面：\n\n秘境研究！追尋超夢吧\n\n活動級別\n\n功能：\n\n開放條件\n\n問題內容\n\n畫面顯示有誤。\n\n修復進度\n\n已於更新伺服器時修復完畢。\n\n造成各位玩家的不便，我們深感抱歉。\n\n今後也請繼續支持《Pokémon Sleep》。"
-  },
-  {
-    "id": "343432373635313930373635373430303335",
-    "url": "https://www.pokemonsleep.net/zh/news/343432373635313930373635373430303335/",
-    "date": "2026-09-11",
-    "category": "異常問題",
-    "badge_key": "notice",
-    "badge_label": "重要通知",
-    "badge_color": "#8b5cf6",
-    "title": "異常問題修復通知",
-    "title_en": "Bug Fixes Notification",
-    "overview_en": "Notification regarding known issues and recent bug fixes in the app.",
-    "debut_pokemon": [],
-    "mid_rateup_pokemon": [],
-    "featured_pokemon": [],
-    "overview": "目前已修復了遊戲中發生的以下異常問題。",
-    "highlights": [
-      "異常問題修復通知",
-      "詳情請參閱官方公告內容與說明"
-    ],
-    "sections": [
-      {
-        "key": "general",
-        "title": "核心重點摘要",
-        "icon": "[Info]",
-        "items": [
-          "異常問題修復通知",
-          "詳情請參閱官方公告內容與說明"
-        ],
-        "title_en": "Core Highlights & Overview",
-        "items_en": [
-          "異常問題修復通知",
-          "詳情請參閱官方公告內容與說明"
-        ]
-      }
-    ],
-    "content_preview": "NEW\n\n異常問題\n\n2026/9/11\n2026/9/11 -->\n\n異常問題修復通知\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n目前已修復了遊戲中發生的以下異常問題。\n\n問題位置\n\n畫面：\n\n標題畫面\n\n問題內容\n\n會無法進行遊戲。\n\n（於特定條件下發生）\n\n修復進度\n\n已於Ver.3.8.1修復完畢。\n\n造成各位玩家的不便，我們深感抱歉。\n\n今後也請繼續支持《Pokémon Sleep》。"
-  },
-  {
-    "id": "343432373634393638343633343333373330",
-    "url": "https://www.pokemonsleep.net/zh/news/343432373634393638343633343333373330/",
-    "date": "2026-09-11",
-    "category": "更新通知",
-    "badge_key": "update",
-    "badge_label": "版本更新",
-    "badge_color": "#3b82f6",
-    "title": "關於Ver.3.8.1的更新內容",
-    "title_en": "Ver. 3.8.1 Update Details",
-    "overview_en": "New game version update with quality-of-life enhancements and bug fixes.",
-    "debut_pokemon": [],
-    "mid_rateup_pokemon": [],
-    "featured_pokemon": [],
-    "overview": "關於Ver.3.8.1的更新內容",
-    "highlights": [
-      "關於Ver.3.8.1的更新內容",
-      "詳情請參閱官方公告內容與說明"
-    ],
-    "sections": [
-      {
-        "key": "general",
-        "title": "核心重點摘要",
-        "icon": "[Info]",
-        "items": [
-          "關於Ver.3.8.1的更新內容",
-          "詳情請參閱官方公告內容與說明"
-        ],
-        "title_en": "Core Highlights & Overview",
-        "items_en": [
-          "關於Ver.3.8.1的更新內容",
-          "詳情請參閱官方公告內容與說明"
-        ]
-      }
-    ],
-    "content_preview": "NEW\n\n更新通知\n\n2026/9/11\n2026/9/11 -->\n\n關於Ver.3.8.1的更新內容\n\n誠摯感謝各位玩家遊玩《Pokémon Sleep》。\n\n本次更新已針對以下的內容進行改善。\n必須由商店將應用程式更新至最新版本。\n\n更新內容\n\n其他\n\n修正的異常問題"
-  },
-  {
-    "id": "343430323231373034373238333436363337",
-    "url": "https://www.pokemonsleep.net/zh/news/343430323231373034373238333436363337/",
-    "date": "2026-09-11",
-    "category": "活動",
-    "badge_key": "event",
-    "badge_label": "活動企劃",
-    "badge_color": "#f59e0b",
-    "title": "【活動】第39次「好眠日」",
-    "title_en": "[Event] 39th Good Sleep Day",
-    "overview_en": "Enjoy a restful night's sleep during the Good Sleep Day with multiplied Drowsy Power.",
-    "debut_pokemon": [],
-    "mid_rateup_pokemon": [],
-    "featured_pokemon": [
-      "皮皮",
-      "皮可西",
-      "皮寶寶"
-    ],
-    "overview": "這次的活動期間正是中秋明月高掛夜空的時候！",
-    "highlights": [
-      "舉辦期間：9/26 (週六) 4:00 ～ 9/29 (週二) 3:59",
-      "【適用營地】・所有營地",
-      "睡意之力： 2倍",
-      "睡意之力： 1.5倍"
-    ],
-    "sections": [
-      {
-        "key": "schedule",
-        "title": "活動時間與營地",
-        "icon": "[Time]",
-        "items": [
-          "舉辦期間：9/26 (週六) 4:00 ～ 9/29 (週二) 3:59",
-          "【適用營地】・所有營地"
-        ],
-        "title_en": "Event Schedule & Areas",
-        "items_en": [
-          "Event Period: 9/26 (Sat) 4:00 ～ 9/29 (Tue) 3:59",
-          "[Areas] - All Areas"
-        ]
-      },
-      {
-        "key": "bonus",
-        "title": "核心獎勵與倍率加成",
-        "icon": "[Bonus]",
-        "items": [
-          "睡意之力： 2倍",
-          "睡意之力： 1.5倍",
-          "睡意之力的倍率",
-          "在好眠日的「滿月之日」生效的「睡意之力的倍率」，將會根據 滿月之日是週幾而有所變化 。",
-          "■「滿月之日」的「睡意之力」倍率",
-          "※不論滿月前後的日子是週幾，「睡意之力的倍率」皆為1.5倍。"
-        ],
-        "title_en": "Core Bonuses & Multipliers",
-        "items_en": [
-          "睡意之力： 2倍",
-          "睡意之力： 1.5倍",
-          "睡意之力的倍率",
-          "在好眠日的\"滿月之日\"生效的\"睡意之力的倍率\"，將會根據 滿月之日是週幾而有所變化 。",
-          "■\"滿月之日\"的\"睡意之力\"倍率",
-          "※不論滿月前後的日子是週幾，\"睡意之力的倍率\"皆為1.5倍。"
-        ]
-      }
-    ],
-    "content_preview": "NEW\n\n活動\n\n2026/9/11\n2026/9/11 -->\n\n【活動】第39次「好眠日」\n\n這次的活動期間正是中秋明月高掛夜空的時候！\n\n在美麗的月夜，來場命運的邂逅吧！\n\n有報告指出當一年一度的中秋明月升起，不僅是滿月之日以及其前後各1天的「睡意之力」會增強，還會比平時更容易遇見異色的 皮皮、 皮可西、 皮寶寶 。\n\n幸運的話，也許牠們會出現在各位研究者的身邊呢。\n\n此外，本活動還會有紅利睡眠點數及寶可夢的睡眠EXP上升的獎勵。\n\n歡迎把握活動期間睡飽睡足，多多研究寶可夢的睡姿！\n\n【舉辦期間】\n\n・ 9/26 (週六) 4:00 ～ 9/29 (週二) 3:59\n\n※滿月之日： 9/27 (週日)\n\n【活動營地】\n\n・所有營地\n\n獎勵\n\n期間內在活動營地會發生下列效果。\n\n【所有日子】\n\n・睡眠研究時..."
-  },
-  {
-    "id": "343430323231373034343638323939373739",
-    "url": "https://www.pokemonsleep.net/zh/news/343430323231373034343638323939373739/",
-    "date": "2026-09-11",
-    "category": "通知",
-    "badge_key": "event",
-    "badge_label": "活動企劃",
-    "badge_color": "#f59e0b",
-    "title": "「好眠日限定包vol.39」介紹",
-    "title_en": "Good Sleep Day Bundle Vol. 39",
-    "overview_en": "Enjoy a restful night's sleep during the Good Sleep Day with multiplied Drowsy Power.",
-    "debut_pokemon": [],
-    "mid_rateup_pokemon": [],
-    "featured_pokemon": [],
-    "overview": "「好眠日限定包vol.39」介紹",
-    "highlights": [
-      "銷售期間： 2026/9/25 4:00 ～ 2026/9/30 3:59",
-      "「好眠日限定包vol.39」（1,500鑽石） ：超級沙布蕾×9、幸運薰香×2、成長薰香×2、專注薰香×2"
-    ],
-    "sections": [
-      {
-        "key": "schedule",
-        "title": "活動時間與營地",
-        "icon": "[Time]",
-        "items": [
-          "銷售期間： 2026/9/25 4:00 ～ 2026/9/30 3:59"
-        ],
-        "title_en": "Event Schedule & Areas",
-        "items_en": [
-          "Sales Period: 2026/9/25 4:00 ～ 2026/9/30 3:59"
-        ]
-      },
-      {
-        "key": "shop",
-        "title": "禮包與商城道具包一覽",
-        "icon": "[Shop]",
-        "items": [
-          "「好眠日限定包vol.39」（1,500鑽石） ：超級沙布蕾×9、幸運薰香×2、成長薰香×2、專注薰香×2"
-        ],
-        "title_en": "Bundles & Shop Items",
-        "items_en": [
-          "\"Good Sleep Day Bundlevol.39\" (1,500 Diamonds) ：Great Biscuit×9, Luck Incense×2, Growth Incense×2, Focus Incense×2"
-        ]
-      }
-    ],
-    "content_preview": "NEW\n\n通知\n\n2026/9/11\n2026/9/11 -->\n\n「好眠日限定包vol.39」介紹\n\n《Pokémon Sleep》將配合「好眠日」推出「好眠日限定包vol.39」！\n\n商品詳情\n\n銷售期間： 2026/9/25 4:00 ～ 2026/9/30 3:59\n\n商品內容：\n\n「好眠日限定包vol.39」（1,500鑽石）\n\n・超級沙布蕾×9\n\n・幸運薰香×2\n\n・成長薰香×2\n\n・專注薰香×2\n\n※僅限購買 1次 。"
   }
 ]
