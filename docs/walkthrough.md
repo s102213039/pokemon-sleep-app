@@ -1854,3 +1854,33 @@
   - Tier 4 (Real-World Application Scenarios): 109 Passed, 0 Failed
   - **總計：226 / 226 Passed (0 Failed, 100% 通過)**
 - 全面遵守全域安全規範、無 Emoji 政策、單一外框規範、下拉箭頭排版規範與 `rtk` 指令調用。
+
+---
+
+## 2026-10-21: 線上 CSS 樣式崩潰修復、大括號嚴格平衡防護與快取更新 (CSS Crash Hotfix & Integrity Audit)
+
+### 背景與問題成因 (Incident Postmortem)
+1. **線上崩潰現象**：
+   - GitHub Pages 部署後，線上行動版畫面發生全域 CSS 樣式失效：樹果圖標爆開至 200px+、底欄導航釘選失效移至畫面上方、按鈕還原為預設黑底白框、下拉選單失去客製樣式。
+2. **根本原因追溯 (Forensic Root Cause)**：
+   - 先前嘗試拆分 CSS 檔案時，切分腳本依照行數盲目切割，切斷了 CSS 選擇器本體（如 `.ing-picker-btn.active`），導致產生的模組在拼接時於第 1670 行出現孤立的閉合大括號 `}`。
+   - 瀏覽器 CSS 解析器（WebKit / Blink）在遭遇負括號（未開啟即閉合）時，會將後續超過 33,000 行的 CSS 全部捨棄，造成幾乎整份樣式表在瀏覽器中失效。
+   - 先前的測試僅驗證最終 `openBraces === 0`，未檢測中間過程是否有負數深度（`minBraces < 0`），導致該語法錯誤未在 CI 中被攔截。
+
+### 修復方案與工程措施
+1. **完整樣式表校驗與還原 (`css/styles.css`)**：
+   - 還原至無損的 35,307 行主樣式表，經 Node.js 嚴格字元掃描，確認開閉括號數完全為 0，且整個掃描過程中無任何負括號（`minBraces: 0, open: 0, err: null`）。
+   - 強化 `.lab-berry-mini-icon` 的尺寸限制（`width: 20px; height: 20px; max-width: 20px; max-height: 20px; object-fit: contain; flex-shrink: 0; display: inline-block;`），徹底杜絕原生大圖未渲染時造成版面撐開。
+   - 調整 `.lab-berry-select` 的右內縮與箭頭定位，嚴格符合第六條下拉選單規範。
+2. **建構腳本防護升級 (`scripts/build_css.js`)**：
+   - 升級 `buildCss()`：禁止將未經驗證的殘破切片覆蓋回 `css/styles.css`。改為以嚴格字元狀態機對 `css/styles.css` 進行逐字元深度檢驗，一旦出現任何負括號或未閉合，立即終止並拋錯。
+3. **CI 測試強化 (`tests/tiers/tier1_coverage.js`)**：
+   - 在 Tier 1 CSS 測試中加入字串/註解狀態機與 `minBraces` 檢測，確保 `minBraces === 0` 且 `openBraces === 0`，永遠杜絕未配對閉括號漏檢。
+4. **全站快取版本號更新**:
+   - `index.html` 與 `app/index.html` 之 CSS 引用升級為 `css/styles.css?v=20261021_08`，強制所有使用者載入最新修復後的樣式表。
+
+### 驗證成果
+- **227 / 227 項自動化測試全數通過 (100% Pass)**
+- `css/styles.css` 語法嚴格校驗：35,307 行，開閉括號差額 0，負括號次數 0。
+- GitHub Pages 自動發布完成。
+

@@ -261,10 +261,27 @@ test('Tier 1 - Feature Coverage', 'CSS Styling: styles.css exists with dark them
   assert(cssContent.includes('@media'), 'CSS missing responsive @media query rules');
 
   let openBraces = 0;
-  for (let c of cssContent) {
+  let minBraces = 0;
+  let inStr = false, quote = '', inComm = false;
+  for (let i = 0; i < cssContent.length; i++) {
+    const c = cssContent[i], next = cssContent[i + 1];
+    if (inComm) {
+      if (c === '*' && next === '/') { inComm = false; i++; }
+      continue;
+    }
+    if (inStr) {
+      if (c === quote && cssContent[i - 1] !== '\\') inStr = false;
+      continue;
+    }
+    if (c === '/' && next === '*') { inComm = true; i++; continue; }
+    if (c === '"' || c === "'") { inStr = true; quote = c; continue; }
     if (c === '{') openBraces++;
-    if (c === '}') openBraces--;
+    if (c === '}') {
+      openBraces--;
+      if (openBraces < minBraces) minBraces = openBraces;
+    }
   }
+  assertEquals(minBraces, 0, `styles.css encountered negative brace depth (${minBraces}) - premature closing brace`);
   assertEquals(openBraces, 0, `styles.css has unclosed or unmatched braces (diff: ${openBraces})`);
 
   // Verify modular CSS architecture and build integrity
