@@ -1,0 +1,6492 @@
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--text-accent, #38bdf8);
+  margin-bottom: 8px;
+}
+
+.speed-metric-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-top: auto;
+}
+
+/* 3 大詳細機制卡片 */
+.wiki-speed-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.wiki-speed-breakdown-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.breakdown-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.breakdown-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.breakdown-list li {
+  margin-bottom: 4px;
+}
+
+.breakdown-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* 幫忙速度極限與計算機制指南 - 精簡要點展示 (無外框) */
+.wiki-speed-summary-points {
+  margin: 6px 0 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.summary-point-line {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.summary-point-line .point-prefix {
+  font-weight: 700;
+  color: var(--accent-color, #4f46e5);
+}
+
+.summary-point-line .point-title {
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.summary-point-line .point-desc {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .summary-point-line {
+    font-size: 12px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+}
+
+/* 副技能階級與數值總覽 - 緊湊排版 (技能標籤寬度適配單行2個，保留更多空間給詳細效果說明) */
+.wiki-subskills-table th.col-subskills-tags,
+.wiki-subskills-table td.col-subskills-tags {
+  width: 45%;
+  text-align: center;
+  padding: 5px 8px;
+}
+
+.wiki-subskills-table th.col-subskills-effect,
+.wiki-subskills-table td.col-subskills-effect {
+  width: 55%;
+  text-align: left;
+  padding: 5px 8px;
+  font-size: 11.5px;
+  line-height: 1.35;
+}
+
+.wiki-subskills-table .wiki-subskill-tags-col {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 3px 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+.wiki-subskills-table .wiki-skill-badge {
+  font-size: 11.5px;
+  padding: 1.5px 6px;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+}
+
+/* 副技性格tab內的列表 - 表頭與欄位名稱文字大小統一 (13px bold) */
+#wiki-subpanel-subskills .wiki-data-table th,
+.wiki-subskills-table th {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 10px;
+  vertical-align: middle;
+}
+
+/* 副技性格tab內的列表 - 內容文字與詳細說明統一 (13px) */
+#wiki-subpanel-subskills .wiki-data-table td,
+.wiki-subskills-table td {
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+/* 副技性格tab內的列表 - 單行 itemview 高度一致（多行自動擴展） */
+#wiki-subpanel-subskills .wiki-data-table tbody tr,
+.wiki-subskills-table tbody tr {
+  height: 38px;
+}
+
+#wiki-subpanel-subskills .wiki-data-table tbody td,
+.wiki-subskills-table tbody td {
+  height: 38px;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+/* 幫忙速度矩陣速查表桌面版欄寬 - 確保副技能組合充足寬度展示至少2個副技能 */
+.wiki-card-speed-guide .wiki-data-table th:nth-child(1),
+.wiki-card-speed-guide .wiki-data-table td:nth-child(1) {
+  width: 28%;
+  text-align: center;
+}
+.wiki-card-speed-guide .wiki-data-table th:nth-child(2),
+.wiki-card-speed-guide .wiki-data-table td:nth-child(2) {
+  width: 10%;
+  text-align: center;
+}
+.wiki-card-speed-guide .wiki-data-table th:nth-child(3),
+.wiki-card-speed-guide .wiki-data-table td:nth-child(3) {
+  width: 22%;
+  text-align: center;
+}
+.wiki-card-speed-guide .wiki-data-table th:nth-child(4),
+.wiki-card-speed-guide .wiki-data-table td:nth-child(4) {
+  width: 14%;
+  text-align: center;
+}
+.wiki-card-speed-guide .wiki-data-table th:nth-child(5),
+.wiki-card-speed-guide .wiki-data-table td:nth-child(5) {
+  width: 14%;
+  text-align: center;
+}
+.wiki-card-speed-guide .wiki-data-table th:nth-child(6),
+.wiki-card-speed-guide .wiki-data-table td:nth-child(6) {
+  width: 12%;
+  text-align: center;
+}
+
+/* 明亮主題自適應 */
+[data-theme="dawn"] .wiki-speed-metric-card,
+[data-theme="emerald"] .wiki-speed-metric-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+[data-theme="dawn"] .wiki-speed-metric-card.card-highlight-team,
+[data-theme="emerald"] .wiki-speed-metric-card.card-highlight-team {
+  background: #fdf2f8;
+  border-color: #fbcfe8;
+}
+
+[data-theme="dawn"] .wiki-speed-metric-card.card-highlight-solo,
+[data-theme="emerald"] .wiki-speed-metric-card.card-highlight-solo {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+[data-theme="dawn"] .wiki-speed-metric-card.card-highlight-dual,
+[data-theme="emerald"] .wiki-speed-metric-card.card-highlight-dual {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+[data-theme="dawn"] .card-highlight-team .speed-metric-primary-val,
+[data-theme="emerald"] .card-highlight-team .speed-metric-primary-val {
+  color: #db2777;
+}
+
+[data-theme="dawn"] .card-highlight-solo .speed-metric-primary-val,
+[data-theme="emerald"] .card-highlight-solo .speed-metric-primary-val {
+  color: #2563eb;
+}
+
+[data-theme="dawn"] .card-highlight-dual .speed-metric-primary-val,
+[data-theme="emerald"] .card-highlight-dual .speed-metric-primary-val {
+  color: #059669;
+}
+
+[data-theme="dawn"] .speed-metric-calc,
+[data-theme="emerald"] .speed-metric-calc {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #0284c7;
+}
+
+[data-theme="dawn"] .wiki-speed-breakdown-card,
+[data-theme="emerald"] .wiki-speed-breakdown-card {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+/* 計算機區域 (Calculator Inputs) */
+.calc-inputs-row {
+  display: flex;
+  gap: 18px;
+  align-items: stretch;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.calc-form-col {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+}
+
+.calc-form-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.calc-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.calc-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--accent-blue);
+}
+
+.calc-select,
+.calc-input-num {
+  width: 100%;
+  padding: 9px 36px 9px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 8px 5px;
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+}
+
+.calc-input-num {
+  background-image: none;
+  padding-right: 12px;
+  cursor: text;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.calc-select:hover,
+.calc-input-num:hover {
+  border-color: var(--accent-blue, #38bdf8);
+}
+
+.calc-select:focus,
+.calc-select:focus-visible,
+.calc-input-num:focus,
+.calc-input-num:focus-visible {
+  border-color: var(--accent-blue, #38bdf8) !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35) !important;
+  outline: 2px solid var(--accent-blue, #38bdf8) !important;
+  outline-offset: 1px !important;
+}
+
+.calc-select option {
+  background-color: var(--bg-card, #1e293b);
+  color: var(--text-primary, #f8fafc);
+}
+
+[data-theme="dawn"] .calc-select option,
+[data-theme="emerald"] .calc-select option {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+.calc-boost-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.calc-field-switch {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.calc-switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  background: var(--bg-input, var(--bg-card-inner));
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  min-height: 40px;
+  height: 40px;
+  width: 100%;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.calc-switch-label:hover {
+  border-color: var(--accent-blue, #38bdf8);
+  background: var(--bg-card-hover, rgba(255, 255, 255, 0.05));
+}
+
+.calc-nature-select-wrap {
+  flex: 1 1 180px;
+  min-width: 160px;
+}
+
+/* 自訂下拉選單在計算機內的專屬樣式 */
+.custom-select-calc {
+  width: 100%;
+  display: block;
+}
+
+.custom-select-calc .custom-select-trigger {
+  width: 100%;
+  padding: 9px 38px 9px 12px;
+  background: var(--bg-input, var(--bg-card-inner));
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-weight: 500;
+  min-height: 40px;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.custom-select-calc .custom-select-trigger:hover {
+  border-color: var(--accent-blue, #38bdf8);
+}
+
+.custom-select-calc.open .custom-select-trigger {
+  border-color: var(--accent-blue, #38bdf8);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+}
+
+.custom-select-calc .custom-select-arrow {
+  right: 18px;
+}
+
+.custom-select-calc .custom-select-menu {
+  min-width: 100%;
+  width: max-content;
+  max-width: 260px;
+  background: var(--bg-card-solid, #1e293b);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  z-index: 1050;
+}
+
+[data-theme="dawn"] .custom-select-calc .custom-select-menu,
+[data-theme="emerald"] .custom-select-calc .custom-select-menu {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
+.calc-result-box {
+  background: rgba(2, 132, 199, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 220px;
+  min-width: 190px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.calc-result-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.calc-result-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: #38bdf8;
+  letter-spacing: -0.5px;
+}
+
+.calc-result-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-top: 4px;
+}
+
+.calc-result-candies {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #f59e0b;
+  margin-top: 5px;
+  line-height: 1.3;
+}
+
+[data-theme="dawn"] .calc-result-candies,
+[data-theme="emerald"] .calc-result-candies {
+  color: #b45309;
+}
+
+.grade-sss { background: #ec4899; color: #ffffff; box-shadow: 0 0 10px rgba(236, 72, 153, 0.5); }
+.grade-ss  { background: #8b5cf6; color: #ffffff; }
+.grade-s   { background: #0284c7; color: #ffffff; }
+.grade-a   { background: #059669; color: #ffffff; }
+.grade-b   { background: #0891b2; color: #ffffff; }
+.grade-c   { background: #d97706; color: #ffffff; }
+.grade-d   { background: #ea580c; color: #ffffff; }
+.grade-e   { background: #dc2626; color: #ffffff; }
+
+/* 數據表格共通樣式 */
+.wiki-table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-lg, 16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.wiki-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.wiki-data-table th {
+  background: var(--bg-table-th);
+  color: var(--text-th);
+  font-weight: 700;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.wiki-data-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border-color-subtle);
+  color: var(--text-primary);
+}
+
+.wiki-data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.wiki-data-table tr:hover {
+  background: var(--bg-table-row-hover);
+}
+
+.wiki-tier-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 6px;
+  display: inline-block;
+  white-space: nowrap;
+  line-height: 1.25;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  transition: all 0.15s ease;
+}
+
+/* 各階級色彩 (深淺主題自適應) */
+.wiki-tier-badge.tier-sss,
+.wiki-tier-badge.tier-ss,
+.wiki-tier-badge.tier-s {
+  background: rgba(236, 72, 153, 0.18);
+  border: 1px solid rgba(236, 72, 153, 0.45);
+  color: #ec4899;
+}
+
+.wiki-tier-badge.tier-a {
+  background: rgba(59, 130, 246, 0.18);
+  border: 1px solid rgba(59, 130, 246, 0.45);
+  color: #3b82f6;
+}
+
+.wiki-tier-badge.tier-b {
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  color: #10b981;
+}
+
+.wiki-tier-badge.tier-c {
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  color: #f59e0b;
+}
+
+.wiki-tier-badge.tier-baseline,
+.wiki-tier-badge.tier-base,
+.wiki-tier-badge.tier-基 {
+  background: rgba(148, 163, 184, 0.15);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  color: var(--text-secondary, #94a3b8);
+}
+
+.wiki-tier-badge.tier-d,
+.wiki-tier-badge.tier-e,
+.wiki-tier-badge.tier-f {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  color: #ef4444;
+}
+
+/* 亮色主題強化文字對比度 */
+[data-theme="dawn"] .wiki-tier-badge.tier-sss,
+[data-theme="dawn"] .wiki-tier-badge.tier-ss,
+[data-theme="dawn"] .wiki-tier-badge.tier-s,
+[data-theme="emerald"] .wiki-tier-badge.tier-sss,
+[data-theme="emerald"] .wiki-tier-badge.tier-ss,
+[data-theme="emerald"] .wiki-tier-badge.tier-s {
+  background: rgba(236, 72, 153, 0.12);
+  border-color: rgba(236, 72, 153, 0.4);
+  color: #be185d;
+}
+
+[data-theme="dawn"] .wiki-tier-badge.tier-a,
+[data-theme="emerald"] .wiki-tier-badge.tier-a {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #1d4ed8;
+}
+
+[data-theme="dawn"] .wiki-tier-badge.tier-b,
+[data-theme="emerald"] .wiki-tier-badge.tier-b {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #047857;
+}
+
+[data-theme="dawn"] .wiki-tier-badge.tier-c,
+[data-theme="emerald"] .wiki-tier-badge.tier-c {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #b45309;
+}
+
+[data-theme="dawn"] .wiki-tier-badge.tier-baseline,
+[data-theme="dawn"] .wiki-tier-badge.tier-base,
+[data-theme="dawn"] .wiki-tier-badge.tier-基,
+[data-theme="emerald"] .wiki-tier-badge.tier-baseline,
+[data-theme="emerald"] .wiki-tier-badge.tier-base,
+[data-theme="emerald"] .wiki-tier-badge.tier-基 {
+  background: rgba(100, 116, 139, 0.1);
+  border-color: rgba(100, 116, 139, 0.3);
+  color: #475569;
+}
+
+[data-theme="dawn"] .wiki-tier-badge.tier-d,
+[data-theme="dawn"] .wiki-tier-badge.tier-e,
+[data-theme="dawn"] .wiki-tier-badge.tier-f,
+[data-theme="emerald"] .wiki-tier-badge.tier-d,
+[data-theme="emerald"] .wiki-tier-badge.tier-e,
+[data-theme="emerald"] .wiki-tier-badge.tier-f {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #b91c1c;
+}
+
+.wiki-skill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.wiki-skill-badge.skill-badge-white {
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.wiki-skill-badge.skill-badge-blue {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #0284c7;
+}
+
+[data-theme="midnight"] .wiki-skill-badge.skill-badge-blue,
+[data-theme="onyx"] .wiki-skill-badge.skill-badge-blue {
+  color: #7dd3fc;
+}
+
+.wiki-skill-badge.skill-badge-gold {
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  color: #d97706;
+}
+
+[data-theme="midnight"] .wiki-skill-badge.skill-badge-gold,
+[data-theme="onyx"] .wiki-skill-badge.skill-badge-gold {
+  color: #fde047;
+}
+
+.badge-unreleased {
+  font-size: 10px;
+  color: #ef4444;
+}
+
+.skill-badge-val {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/*  專長評級榜樣式 (Ratings Guide) */
+.wiki-strategy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.strategy-item {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 6px 0;
+}
+
+.strategy-item:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.strategy-item.strategy-early,
+.strategy-item.strategy-late,
+.strategy-item.strategy-energy,
+.strategy-item.strategy-seeds {
+  border-top: none;
+}
+
+.strategy-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.strategy-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  line-height: 1.4;
+}
+
+.strategy-badge.badge-early {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.strategy-badge.badge-late {
+  color: #c084fc;
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.strategy-badge.badge-energy {
+  color: #fb7185;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.strategy-badge.badge-seeds {
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.strategy-title {
+  font-size: 14.5px;
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-2col-tags .tag-btn.active {
+  background: var(--accent-gradient, linear-gradient(135deg, #38bdf8, #818cf8)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+/* 2. 最低鍋子容量 */
+.mobile-h5-app .recipe-filter-sidebar .rf-select-wrap {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .rf-select-wrap .custom-select-container {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .rf-select-wrap .custom-select-trigger {
+  padding: 5px 32px 5px 10px !important;
+  font-size: 12px !important;
+  background: var(--bg-sidebar-btn, rgba(30, 41, 59, 0.65)) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* 3. 漂亮成功開關與滑桿 */
+.mobile-h5-app .recipe-filter-sidebar .sidebar-switch-compact {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 4px 8px !important;
+  background: var(--bg-sidebar-btn, rgba(30, 41, 59, 0.65)) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px !important;
+  margin-bottom: 6px !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-switch-compact .sidebar-final-evo-text {
+  font-size: 11.5px !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-slider-item {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  margin-bottom: 6px !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-slider-item:last-child {
+  margin-bottom: 0 !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .slider-label-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+  font-size: 11px !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .slider-value-badge {
+  font-size: 10px !important;
+  padding: 0 5px !important;
+  border-radius: 4px !important;
+  line-height: 16px !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .slider-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .slider-row .rf-slider {
+  flex: 1 !important;
+  width: 100% !important;
+  height: 4px !important;
+  border-radius: 2px !important;
+}
+
+/* 4 & 5. 食材選擇器 (10 欄網格，2 行全部展示完畢不溢出) */
+.mobile-h5-app .recipe-filter-sidebar .compact-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 3px !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-header-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .inline-radios {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .compact-radio-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+  font-size: 10.5px !important;
+  color: var(--text-muted) !important;
+  cursor: pointer !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-section-clear-btn {
+  font-size: 10px !important;
+  padding: 1px 6px !important;
+  border-radius: 4px !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 3px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 4px 3px !important;
+  overflow: visible !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid .ing-picker-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  background: transparent !important;
+  border: 1.5px solid transparent !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid .ing-picker-btn .ing-picker-icon {
+  width: 28px !important;
+  height: 28px !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4)) !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid .ing-picker-btn.active {
+  background: rgba(56, 189, 248, 0.18) !important;
+  border-color: var(--accent-blue, #38bdf8) !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
+  transform: scale(1.08) !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.mobile-h5-app .recipe-filter-sidebar .sidebar-icon-grid .ing-picker-btn.active-exclude {
+  background: rgba(239, 68, 68, 0.2) !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4) !important;
+  transform: scale(1.08) !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/*  H5 App 料理食譜 100% 寬度直列緊湊長方形卡片 (1-Column Rectangular Cards) */
+.mobile-h5-app .recipe-main-content {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.mobile-h5-app .recipe-main-content #recipe-list-container,
+.mobile-h5-app .recipe-main-content .recipe-cards-grid {
+  display: block !important;
+  width: calc(100% - 24px) !important;
+  margin: 0 12px 20px !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  overflow-y: visible !important;
+}
+
+.mobile-h5-app .recipe-main-content #recipe-content-area {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* 搜尋框下方 / 卡片上方的詳細倍率算法與食譜數量 Banner (無外框、無背景極簡展示) */
+.mobile-h5-app .recipe-main-content #recipe-count-badge {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin: 2px 14px 4px !important;
+  width: calc(100% - 28px) !important;
+  padding: 2px 0 !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  font-size: 11px !important;
+  color: var(--text-secondary) !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .recipe-main-content #recipe-count-badge .rc-badge-count {
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .recipe-main-content #recipe-count-badge .rc-badge-formula {
+  font-size: 10.5px !important;
+  color: var(--accent-blue, #38bdf8) !important;
+  font-weight: 600 !important;
+  font-family: monospace, -apple-system !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .h5-recipe-cards-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 2px 0 24px 0 !important;
+  margin: 0 !important;
+}
+
+.h5-recipe-card {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  padding: 8px 10px !important;
+  gap: 8px !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+  transition: transform 0.15s ease, border-color 0.15s ease !important;
+}
+
+.h5-recipe-card:active {
+  transform: scale(0.99) !important;
+}
+
+.h5-recipe-left-col {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  gap: 6px !important;
+}
+
+.h5-recipe-top-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+.h5-recipe-img {
+  width: 38px !important;
+  height: 38px !important;
+  object-fit: contain !important;
+  border-radius: 8px !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04)) !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 2px !important;
+  flex-shrink: 0 !important;
+}
+
+.h5-recipe-title-meta {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  gap: 2px !important;
+}
+
+.h5-recipe-name {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.2 !important;
+}
+
+.h5-recipe-tags-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.h5-recipe-tags-row .recipe-cat-badge {
+  font-size: 10px !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+}
+
+.h5-recipe-pot {
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  color: var(--accent-blue, #38bdf8) !important;
+  background: rgba(56, 189, 248, 0.1) !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+  white-space: nowrap !important;
+}
+
+/*  食材展示 (Enlarged comfortable ingredients row) */
+.h5-recipe-ing-section {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding-top: 2px !important;
+}
+
+.h5-recipe-ing-section::-webkit-scrollbar {
+  display: none !important;
+}
+
+.h5-recipe-ing-section .recipe-ing-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  flex-wrap: nowrap !important;
+}
+
+.h5-recipe-ing-section .recipe-ing-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.05)) !important;
+  border: 1px solid var(--border-color-subtle, var(--border-color)) !important;
+  border-radius: 6px !important;
+  padding: 2px 6px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-secondary) !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.h5-recipe-ing-section .recipe-ing-icon {
+  width: 18px !important;
+  height: 18px !important;
+  object-fit: contain !important;
+}
+
+.h5-recipe-ing-section .recipe-ing-count {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+/*  右側上下等分/置中能量列 (Energy Column spanning full height with dynamic fit-content width) */
+.h5-recipe-energy-col {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  flex-shrink: 0 !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* 3 個分數時：上下等分高度 (Space evenly across full card height) */
+.h5-recipe-energy-col.has-tasty {
+  justify-content: space-between !important;
+  padding: 1px 0 !important;
+}
+
+/* 僅 1 個分數時：垂直置中 (Centered when single score) */
+.h5-recipe-energy-col.single-energy {
+  justify-content: center !important;
+}
+
+.h5-energy-score {
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  gap: 3px !important;
+  line-height: 1.2 !important;
+}
+
+.h5-energy-score .energy-multiplier {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  width: 17px !important;
+  flex-shrink: 0 !important;
+  text-align: left !important;
+  opacity: 0.85 !important;
+  font-family: monospace, -apple-system !important;
+}
+
+.h5-energy-score .energy-number {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  font-family: monospace, -apple-system !important;
+  white-space: nowrap !important;
+  text-align: right !important;
+  flex: 1 !important;
+}
+
+/* 1x: 白/主文字色；2x: 亮藍；3x: 金橘色 (3 階完全獨立區隔色彩) */
+.h5-energy-score.energy-1x {
+  color: var(--text-primary, #f1f5f9) !important;
+}
+
+.h5-energy-score.energy-2x {
+  color: var(--accent-blue, #38bdf8) !important;
+}
+
+.h5-energy-score.energy-3x {
+  color: var(--color-accent-gold, #f59e0b) !important;
+}
+
+.h5-recipe-tasty-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px dashed var(--border-color);
+}
+
+.tasty-mini-badge {
+  font-size: 11px;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace, -apple-system;
+}
+
+.tasty-mini-badge.tasty-3x {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+/*  2 字極簡原生底部 Dock 導覽列 */
+.bottom-dock,
+.mobile-bottom-dock,
+.bottom-dock-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(62px + env(safe-area-inset-bottom, 0px));
+  max-height: calc(62px + env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: var(--bg-header);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border-color);
+  padding-top: 4px;
+  padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.12);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.dock-tab,
+.dock-tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 48px;
+  padding: 4px 0;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+.dock-tab:active,
+.dock-tab-btn:active {
+  transform: scale(0.92);
+}
+
+.dock-tab .dock-icon,
+.dock-tab-btn .dock-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 24px;
+  font-size: 19px;
+  line-height: 1;
+  color: var(--text-muted);
+  transition: transform 0.2s ease, color 0.2s ease, filter 0.2s ease;
+}
+
+.dock-tab .dock-icon svg,
+.dock-tab .dock-svg {
+  width: 22px;
+  height: 22px;
+  stroke: var(--text-muted);
+  transition: stroke 0.2s ease, transform 0.2s ease;
+}
+
+.dock-tab .dock-label,
+.dock-tab-btn .dock-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  line-height: 1.2;
+  transition: color 0.2s ease;
+}
+
+/* Active 狀態發光與頂部指示線 */
+.dock-tab.active,
+.dock-tab-btn.active {
+  color: var(--accent-color);
+}
+
+.dock-tab.active .dock-icon,
+.dock-tab-btn.active .dock-icon {
+  transform: translateY(-1px);
+  color: var(--accent-blue, #38bdf8);
+}
+
+.dock-tab.active .dock-icon svg,
+.dock-tab.active .dock-svg {
+  stroke: var(--accent-blue, #38bdf8);
+  filter: none;
+}
+
+.dock-tab.active .dock-label,
+.dock-tab-btn.active .dock-label {
+  color: var(--accent-color);
+  font-weight: 700;
+  text-shadow: none;
+}
+
+.dock-tab::after,
+.dock-tab-btn::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  width: 0;
+  height: 2.5px;
+  background: var(--accent-color);
+  border-radius: 0 0 3px 3px;
+  box-shadow: none;
+  transition: width 0.2s ease;
+}
+
+.dock-tab.active::after,
+.dock-tab-btn.active::after {
+  width: 32px;
+}
+
+/*  狀態 Badge 徽章支援 */
+.dock-badge {
+  position: absolute;
+  top: 2px;
+  right: calc(50% - 18px);
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(239, 68, 68, 0.5);
+  border: 1.5px solid var(--bg-dark);
+  pointer-events: none;
+}
+
+/*  分段控制器 (Segmented Control / Subtab Pills) */
+.segmented-control,
+.mobile-segmented-bar,
+.subtab-pills {
+  display: flex;
+  align-items: center;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.segmented-control::-webkit-scrollbar,
+.mobile-segmented-bar::-webkit-scrollbar,
+.subtab-pills::-webkit-scrollbar {
+  display: none;
+}
+
+.segmented-item,
+.subtab-pill {
+  flex: 1;
+  min-width: fit-content;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.segmented-item.active,
+.subtab-pill.active {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
+}
+
+/*  滑動抽屜與 Bottom Sheet 通用樣式 */
+.bottom-sheet,
+.mobile-drawer,
+.mobile-modal-sheet,
+.mobile-settings-sheet,
+.mobile-box-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-card-solid);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-top: 1px solid var(--border-color);
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 1100;
+  max-height: 88vh;
+  max-height: 88dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.sheet-drag-handle {
+  width: 40px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  margin: 8px auto 12px auto;
+  flex-shrink: 0;
+}
+
+[data-theme="dawn"] .sheet-drag-handle,
+[data-theme="emerald"] .sheet-drag-handle {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/*  數據百科黏性首列 (Sticky Column) */
+.sticky-col,
+.sticky-col-header {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--bg-card);
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+    MOBILE H5 DEDICATED WIKI TAB & SUB-TABS MODERN APP STYLING
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* 1. 頂部 5 大 Sub-Tabs：平分寬度、單行展示、貼齊頂部無邊距、全主題自適應 */
+.mobile-h5-app #panel-wiki {
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+}
+
+.mobile-h5-app .wiki-main-container {
+  padding: 0 0 24px 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+}
+
+.mobile-h5-app .wiki-subnav-bar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 90 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  background: var(--bg-header, var(--bg-card)) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .wiki-subnav-tabs {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  gap: 3px !important;
+  padding: 4px 6px !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .wiki-subnav-tabs::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.mobile-h5-app .wiki-subtab-btn {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  padding: 4px 7px !important;
+  border-radius: 14px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-muted) !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .wiki-subtab-btn:hover {
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .wiki-subtab-btn.active {
+  background: var(--accent-gradient, linear-gradient(135deg, #38bdf8, #6366f1)) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border-color: transparent !important;
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.35) !important;
+}
+
+.mobile-h5-app .wiki-subtab-btn.active::after {
+  display: none !important;
+}
+
+/* 2. 通用卡片與子面板邊距 (4 主題自適應) */
+.mobile-h5-app .wiki-subpanel {
+  padding: 12px 12px 28px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .wiki-section-heading {
+  margin-bottom: 10px !important;
+  padding: 0 2px !important;
+}
+
+.mobile-h5-app .wiki-section-title {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  color: var(--text-title, #f8fafc) !important;
+  margin: 0 0 3px 0 !important;
+}
+
+.mobile-h5-app .wiki-section-subtitle {
+  font-size: 12.5px !important;
+  line-height: 1.45 !important;
+  color: var(--text-secondary) !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .wiki-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 14px !important;
+  padding: 14px !important;
+  margin-bottom: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .wiki-card-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-top: -4px !important;
+  margin-bottom: 8px !important;
+}
+
+.mobile-h5-app .wiki-card-title {
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-title, #f8fafc) !important;
+  line-height: 1.3 !important;
+}
+
+.mobile-h5-app .wiki-card-desc {
+  font-size: 13px !important;
+  color: var(--text-secondary) !important;
+  line-height: 1.5 !important;
+  margin-bottom: 10px !important;
+}
+
+.mobile-h5-app .wiki-rule-banner {
+  font-size: 13px !important;
+  padding: 8px 2px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  margin-top: 4px !important;
+  margin-bottom: 10px !important;
+  line-height: 1.5 !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+}
+
+[data-theme="midnight"] .mobile-h5-app .wiki-rule-banner,
+[data-theme="onyx"] .mobile-h5-app .wiki-rule-banner {
+  background: transparent !important;
+  border: none !important;
+  color: #fef3c7 !important;
+}
+
+[data-theme="midnight"] .mobile-h5-app .wiki-rule-banner code,
+[data-theme="onyx"] .mobile-h5-app .wiki-rule-banner code {
+  background: rgba(0, 0, 0, 0.35) !important;
+  color: #fbbf24 !important;
+  padding: 1.5px 6px !important;
+  border-radius: 4px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(251, 191, 36, 0.3) !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .wiki-rule-banner {
+  background: transparent !important;
+  border: none !important;
+  color: #92400e !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .wiki-rule-banner code {
+  background: #fef3c7 !important;
+  color: #b45309 !important;
+  padding: 1.5px 6px !important;
+  border-radius: 4px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  border: 1px solid #fcd34d !important;
+}
+
+[data-theme="emerald"] .mobile-h5-app .wiki-rule-banner {
+  background: transparent !important;
+  border: none !important;
+  color: #1e293b !important;
+}
+
+[data-theme="emerald"] .mobile-h5-app .wiki-rule-banner code {
+  background: #e2e8f0 !important;
+  color: #334155 !important;
+  padding: 1.5px 6px !important;
+  border-radius: 4px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+/* 3.  Sub-Tab 1: 主技能數值庫 */
+.mobile-h5-app .wiki-control-bar {
+  margin-bottom: 10px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.mobile-h5-app .wiki-filter-pills {
+  display: flex !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  gap: 6px !important;
+  padding: 2px 0 6px 0 !important;
+  align-items: center !important;
+}
+
+.mobile-h5-app .wiki-filter-pills::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .wiki-pill-label {
+  display: none !important;
+}
+
+.mobile-h5-app .wiki-pill-btn {
+  padding: 5px 11px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  border-radius: 18px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  background: var(--bg-card-inner, var(--bg-card)) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .wiki-pill-btn.active {
+  background: var(--accent-gradient, var(--accent-blue)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+.mobile-h5-app .wiki-skills-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .wiki-skill-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 10px !important;
+  padding: 9px 11px !important;
+  box-sizing: border-box !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .skill-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-bottom: 4px !important;
+}
+
+.mobile-h5-app .skill-icon {
+  width: 32px !important;
+  height: 32px !important;
+  flex-shrink: 0 !important;
+  border-radius: 6px !important;
+}
+
+.mobile-h5-app .skill-title-group {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.mobile-h5-app .skill-name {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .skill-category-badge {
+  font-size: 9.5px !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+}
+
+.mobile-h5-app .skill-desc,
+.mobile-h5-app .skill-desc-text {
+  font-size: 11.5px !important;
+  line-height: 1.35 !important;
+  color: var(--text-secondary) !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .skill-note-inline {
+  color: #fbbf24 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .skill-note-inline,
+[data-theme="emerald"] .mobile-h5-app .skill-note-inline {
+  color: #b45309 !important;
+}
+
+/*  方案 C: 主技能精華單行速查 (手機端極簡適配) */
+.mobile-h5-app .wiki-skill-card.clickable-card {
+  cursor: pointer !important;
+  user-select: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.mobile-h5-app .wiki-skill-card.clickable-card:active {
+  transform: scale(0.99) !important;
+}
+
+.mobile-h5-app .skill-top-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+}
+
+.mobile-h5-app .skill-card-chevron {
+  font-size: 13px !important;
+  color: var(--text-muted) !important;
+  transition: transform 0.25s ease, color 0.2s ease !important;
+  display: inline-block !important;
+}
+
+.mobile-h5-app .wiki-skill-card.is-expanded .skill-card-chevron {
+  transform: rotate(180deg) !important;
+  color: var(--accent-blue) !important;
+}
+
+.mobile-h5-app .skill-hero-summary.single-line {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 2px 0 0 0 !important;
+  gap: 6px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .hero-stat-item {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .hero-lv-label {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: var(--text-secondary) !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  padding: 1px 4px !important;
+  border-radius: 4px !important;
+  line-height: 1.2 !important;
+}
+
+.mobile-h5-app .hero-lv-label.tag-max {
+  color: var(--accent-blue) !important;
+  border-color: rgba(56, 189, 248, 0.3) !important;
+}
+
+.mobile-h5-app .hero-val-text {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  font-family: monospace, -apple-system !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .hero-val-text.val-max {
+  color: var(--accent-blue) !important;
+}
+
+.mobile-h5-app .hero-arrow-icon {
+  font-size: 11px !important;
+  color: var(--text-muted) !important;
+  font-weight: 700 !important;
+  margin: 0 1px !important;
+}
+
+.mobile-h5-app .skill-stepper-list {
+  display: none !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  margin-top: 6px !important;
+  padding: 6px !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .wiki-skill-card.is-expanded .skill-stepper-list {
+  display: flex !important;
+}
+
+.mobile-h5-app .skill-step-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 4.5px 7px !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  border-radius: 5px !important;
+  gap: 6px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .skill-step-item.item-max {
+  border-color: rgba(56, 189, 248, 0.3) !important;
+  background: rgba(56, 189, 248, 0.05) !important;
+}
+
+.mobile-h5-app .step-tag-badge {
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  padding: 1px 4px !important;
+  border-radius: 3px !important;
+  background: var(--bg-card-inner) !important;
+  color: var(--text-secondary) !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .skill-step-item.item-max .step-tag-badge {
+  background: var(--accent-blue) !important;
+  color: #ffffff !important;
+}
+
+.mobile-h5-app .step-val-text {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+  font-family: monospace, -apple-system !important;
+  flex: 1 !important;
+  text-align: right !important;
+  word-break: break-word !important;
+}
+
+.mobile-h5-app .skill-levels-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 4px !important;
+  margin-top: 6px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .skill-levels-grid.grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .skill-levels-grid.grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .skill-levels-grid.grid-cols-4 {
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .skill-level-chip {
+  padding: 5px 3px !important;
+  border-radius: 6px !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .skill-level-chip .level-tag {
+  font-size: 9.5px !important;
+  opacity: 0.85 !important;
+  color: var(--text-secondary) !important;
+  line-height: 1.2 !important;
+}
+
+.mobile-h5-app .skill-level-chip .level-val {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  font-family: monospace, -apple-system !important;
+  white-space: nowrap !important;
+  color: var(--text-primary) !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.mobile-h5-app .skill-levels-grid.grid-cols-3 .skill-level-chip {
+  padding: 6px 4px !important;
+}
+
+.mobile-h5-app .skill-levels-grid.grid-cols-3 .skill-level-chip .level-val {
+  font-size: 11.5px !important;
+}
+
+.mobile-h5-app .stack-selector-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  align-items: flex-start !important;
+  margin-bottom: 6px !important;
+}
+
+.mobile-h5-app .stack-chips-group {
+  display: flex !important;
+  gap: 4px !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  padding: 2px 0 !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .stack-chips-group::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .stack-chip-btn {
+  padding: 4px 9px !important;
+  font-size: 11px !important;
+  border-radius: 6px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .stack-chip-btn.active {
+  background: var(--accent-gradient, var(--accent-blue)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+.mobile-h5-app .wiki-toggle-detail-btn {
+  width: 100% !important;
+  padding: 8px 10px !important;
+  font-size: 11.5px !important;
+  border-radius: 8px !important;
+  text-align: center !important;
+  margin-top: 8px !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--accent-blue) !important;
+}
+
+/* 蓄力與幫手獎勵對照表無滾動條全覽 */
+#charge-matrix-table,
+#helper-boost-table,
+.mobile-h5-app #charge-matrix-table,
+.mobile-h5-app #helper-boost-table {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+}
+
+#charge-matrix-table .wiki-mini-table,
+#helper-boost-table .wiki-mini-table,
+.mobile-h5-app #charge-matrix-table .wiki-mini-table,
+.mobile-h5-app #helper-boost-table .wiki-mini-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+}
+
+#charge-matrix-table th,
+#charge-matrix-table td,
+.mobile-h5-app #charge-matrix-table th,
+.mobile-h5-app #charge-matrix-table td {
+  padding: 3.5px 0.5px !important;
+  font-size: 10px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+#charge-matrix-table th:first-child,
+#charge-matrix-table td:first-child,
+.mobile-h5-app #charge-matrix-table th:first-child,
+.mobile-h5-app #charge-matrix-table td:first-child {
+  width: 14% !important;
+  font-weight: 700 !important;
+}
+
+#charge-matrix-table th:not(:first-child),
+#charge-matrix-table td:not(:first-child),
+.mobile-h5-app #charge-matrix-table th:not(:first-child),
+.mobile-h5-app #charge-matrix-table td:not(:first-child) {
+  width: 12.28% !important;
+}
+
+#helper-boost-table th,
+#helper-boost-table td,
+.mobile-h5-app #helper-boost-table th,
+.mobile-h5-app #helper-boost-table td {
+  padding: 4px 1px !important;
+  font-size: 10px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+#helper-boost-table th:first-child,
+#helper-boost-table td:first-child,
+.mobile-h5-app #helper-boost-table th:first-child,
+.mobile-h5-app #helper-boost-table td:first-child {
+  width: 18% !important;
+}
+
+#helper-boost-table th:not(:first-child),
+#helper-boost-table td:not(:first-child),
+.mobile-h5-app #helper-boost-table th:not(:first-child),
+.mobile-h5-app #helper-boost-table td:not(:first-child) {
+  width: 13.66% !important;
+}
+
+/* 4.  Sub-Tab 2: 副技能與性格指南 */
+.mobile-h5-app .wiki-table-wrapper {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border-color) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: var(--bg-card) !important;
+}
+
+.mobile-h5-app .wiki-table-wrapper::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .wiki-mini-table,
+.mobile-h5-app .wiki-data-table {
+  font-size: 11px !important;
+  width: 100% !important;
+  border-collapse: collapse !important;
+}
+
+.mobile-h5-app .wiki-mini-table th,
+.mobile-h5-app .wiki-mini-table td,
+.mobile-h5-app .wiki-data-table th,
+.mobile-h5-app .wiki-data-table td {
+  padding: 6px 6px !important;
+  text-align: center !important;
+  white-space: normal !important;
+}
+
+.mobile-h5-app .wiki-mini-table th,
+.mobile-h5-app .wiki-data-table th {
+  background: var(--bg-table-th, var(--bg-card-inner)) !important;
+  color: var(--text-th, var(--text-primary)) !important;
+}
+
+.mobile-h5-app .wiki-mini-table td,
+.mobile-h5-app .wiki-data-table td {
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border-color-subtle) !important;
+}
+
+/*  子分頁 2: 副技能與性格指南 (手機端無外框極致放大排版) */
+.wiki-subskill-tags-col {
+  display: flex;
+  gap: 3px 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-h5-app .wiki-subskill-tags-col {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 3px 4px !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.mobile-h5-app .col-hide-mobile {
+  display: none !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin-bottom: 24px !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:last-child {
+  margin-bottom: 0 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-top: -4px !important;
+  margin-bottom: 6px !important;
+  padding-left: 2px !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-icon {
+  font-size: 19px !important;
+  line-height: 1 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-title {
+  font-size: 16.5px !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+  letter-spacing: 0.3px !important;
+}
+
+[data-theme="midnight"] .mobile-h5-app #wiki-subpanel-subskills .wiki-card-title,
+[data-theme="onyx"] .mobile-h5-app #wiki-subpanel-subskills .wiki-card-title {
+  color: #7dd3fc !important; /* 低飽和柔和天藍，在暗黑主題下清晰顯目且柔和 */
+}
+
+[data-theme="dawn"] .mobile-h5-app #wiki-subpanel-subskills .wiki-card-title {
+  color: #0369a1 !important; /* 低飽和深湛藍，在白底極清晰顯目 */
+}
+
+[data-theme="emerald"] .mobile-h5-app #wiki-subpanel-subskills .wiki-card-title {
+  color: #047857 !important; /* 低飽和深森林翡翠綠，在綠色白底主題極清晰顯目 */
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-table-wrapper {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  border-radius: 12px !important;
+  margin-top: 8px !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-data-table {
+  width: 100% !important;
+  min-width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+}
+
+/* 副技性格tab內的列表 (H5) - 單行 itemview 高度一致（多行自動擴展） */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-data-table tbody tr,
+.mobile-h5-app .wiki-subskills-table tbody tr {
+  height: 36px !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-data-table tbody td,
+.mobile-h5-app .wiki-subskills-table tbody td {
+  height: 36px !important;
+  box-sizing: border-box !important;
+  vertical-align: middle !important;
+}
+
+/* 幫忙速度手機版網格與卡片 */
+.mobile-h5-app .wiki-speed-metric-grid {
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .wiki-speed-breakdown-grid {
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .wiki-speed-summary-points {
+  margin: 2px 0 12px 0 !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .summary-point-line {
+  font-size: 12px !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+}
+
+/* 副技性格tab內的列表 (H5) - 所有表頭欄位名稱文字大小統一 (13px bold) */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-data-table th,
+.mobile-h5-app .wiki-subskills-table th {
+  padding: 7px 4px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+}
+
+/* 副技性格tab內的列表 (H5) - 所有內容文字與數值說明大小統一 (13px) */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-data-table td,
+.mobile-h5-app .wiki-subskills-table td {
+  padding: 4px 4px !important;
+  font-size: 13px !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  height: 36px !important;
+  box-sizing: border-box !important;
+}
+
+/* 副技能徽章標籤統一大小與間距 (11px bold) */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-skill-badge,
+.mobile-h5-app .wiki-subskills-table .wiki-skill-badge {
+  font-size: 11px !important;
+  padding: 2px 5px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.2px !important;
+  white-space: nowrap !important;
+  line-height: 1.3 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .matrix-rate-up,
+.mobile-h5-app #wiki-subpanel-subskills .matrix-rate-down {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+/* 表格 1: 主技能發動機率矩陣 */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table td:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table td:nth-child(1) {
+  width: 48% !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table td:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table td:nth-child(2) {
+  width: 24% !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table th:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table td:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table th:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table td:nth-child(4) {
+  width: 28% !important;
+}
+
+/* 表格 2: 幫忙速度矩陣速查表 (副技能組合加寬至48%，確保所有欄位至少2個副技能在一行展示) */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table td:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(1) {
+  width: 48% !important;
+  padding: 4px 2px !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table td:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(2) {
+  width: 14% !important;
+  padding: 4px 2px !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table th:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table td:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(4) {
+  width: 19% !important;
+  padding: 4px 2px !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table th:nth-child(5),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table td:nth-child(5),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(5),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(5) {
+  width: 19% !important;
+  padding: 4px 2px !important;
+}
+
+/* 表格 3: 副技能階級與數值總覽 (技能標籤寬度適配單行2個，留多空間給詳細效果說明) */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table tbody tr,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table tbody tr,
+.mobile-h5-app .wiki-subskills-table tbody tr {
+  min-height: 36px !important;
+  height: auto !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table tbody td,
+.mobile-h5-app .wiki-subskills-table tbody td {
+  min-height: 36px !important;
+  height: auto !important;
+  box-sizing: border-box !important;
+  vertical-align: middle !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table td:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(1),
+.mobile-h5-app .wiki-subskills-table .col-subskills-tags {
+  width: 45% !important;
+  text-align: center !important;
+  padding: 4px 2px !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table td:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(2),
+.mobile-h5-app .wiki-subskills-table .col-subskills-effect {
+  width: 55% !important;
+  font-size: 11.5px !important;
+  line-height: 1.35 !important;
+  text-align: left !important;
+  padding: 4px 6px !important;
+}
+
+.mobile-h5-app .wiki-subskills-table .wiki-subskill-tags-col,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-subskill-tags-col {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 3px 4px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 22px !important;
+}
+
+/* 表格 4: 性格五維屬性倍率表 (三欄均分排版) */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table td:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table td:nth-child(1) {
+  width: 34% !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table td:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table td:nth-child(2) {
+  width: 33% !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table th:nth-child(3),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table td:nth-child(3),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table th:nth-child(3),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table td:nth-child(3) {
+  width: 33% !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+}
+
+
+.mobile-h5-app #ing-draw-matrix-table .wiki-mini-table {
+  min-width: 100% !important;
+  width: 100% !important;
+  table-layout: auto !important;
+}
+
+.mobile-h5-app #ing-draw-matrix-table th,
+.mobile-h5-app #ing-draw-matrix-table td {
+  padding: 5px 3px !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app #ing-draw-matrix-table .wiki-ing-badge {
+  padding: 2px 4px !important;
+  border-radius: 5px !important;
+}
+
+.mobile-h5-app #lunar-prayer-table {
+  overflow-x: hidden !important;
+}
+
+.mobile-h5-app #lunar-prayer-table .wiki-mini-table {
+  width: 100% !important;
+  min-width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+}
+
+.mobile-h5-app #lunar-prayer-table th,
+.mobile-h5-app #lunar-prayer-table td {
+  padding: 4px 1px !important;
+  font-size: 9.5px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  letter-spacing: -0.3px !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", monospace !important;
+}
+
+.mobile-h5-app #lunar-prayer-table th:first-child,
+.mobile-h5-app #lunar-prayer-table td:first-child {
+  width: 13% !important;
+  font-weight: 700 !important;
+  padding: 4px 1px !important;
+}
+
+.mobile-h5-app #lunar-prayer-table th:not(:first-child),
+.mobile-h5-app #lunar-prayer-table td:not(:first-child) {
+  width: 14.5% !important;
+}
+
+.mobile-h5-app .wiki-skill-badge {
+  font-size: 10.5px !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+}
+
+.mobile-h5-app .matrix-rate-up,
+.mobile-h5-app .matrix-rate-down {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+.mobile-h5-app .matrix-calc-code {
+  font-size: 10px !important;
+  padding: 1px 4px !important;
+  background: var(--bg-card-inner) !important;
+  color: var(--text-primary) !important;
+}
+
+/* 5.  Sub-Tab 3: 培育與評級指南 */
+.mobile-h5-app .wiki-strategy-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .strategy-item {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 4px 0 !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .strategy-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+  margin-bottom: 3px !important;
+}
+
+.mobile-h5-app .strategy-badge {
+  font-size: 11.5px !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  margin-bottom: 0 !important;
+  display: inline-block !important;
+  line-height: 1.4 !important;
+}
+
+.mobile-h5-app .strategy-title {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--text-title, #f8fafc) !important;
+  margin-bottom: 0 !important;
+  display: inline-block !important;
+}
+
+.mobile-h5-app .strategy-desc {
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .rating-card-header-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+}
+
+.mobile-h5-app .rating-specialty-badge {
+  font-size: 11.5px !important;
+}
+
+.mobile-h5-app .rating-specialty-desc {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-title, #f8fafc) !important;
+}
+
+.mobile-h5-app .wiki-ratings-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  margin-top: 12px !important;
+  grid-template-rows: none !important;
+}
+
+.mobile-h5-app .wiki-ratings-container .wiki-rating-card {
+  display: flex !important;
+  flex-direction: column !important;
+  grid-row: auto !important;
+  height: auto !important;
+}
+
+.mobile-h5-app .wiki-ratings-container .rating-subsections {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .wiki-ratings-container .rating-col {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.mobile-h5-app .wiki-rating-card.rating-card-berry {
+  border-top: 3px solid #f59e0b !important;
+}
+
+.mobile-h5-app .wiki-rating-card.rating-card-ingredient {
+  border-top: 3px solid #06b6d4 !important;
+}
+
+.mobile-h5-app .wiki-rating-card.rating-card-skill {
+  border-top: 3px solid #a855f7 !important;
+}
+
+.mobile-h5-app .rating-col-title {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  margin: 0 0 2px !important;
+}
+
+.mobile-h5-app .wiki-rating-card .wiki-card-desc {
+  margin: 4px 0 8px !important;
+}
+
+.mobile-h5-app .rating-item {
+  padding: 1px 0 !important;
+  gap: 4px !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  margin-bottom: 0 !important;
+  font-size: 13px !important;
+}
+
+.mobile-h5-app .rating-tier-tag {
+  display: none !important;
+}
+
+.mobile-h5-app .rating-item-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  font-size: 12px !important;
+}
+
+.mobile-h5-app .rating-item-colon {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--text-secondary) !important;
+  margin: 0 4px 0 1px !important;
+}
+
+.mobile-h5-app .rating-item-name {
+  font-size: 13px !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .rating-item-detail {
+  font-size: 12.5px !important;
+  line-height: 1.5 !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .calc-inputs-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding: 12px 10px !important;
+  align-items: stretch !important;
+}
+
+.mobile-h5-app .calc-form-col {
+  width: 100% !important;
+  flex: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .calc-form-row {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 8px !important;
+  align-items: flex-end !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .calc-form-row-boosts {
+  flex-wrap: wrap !important;
+}
+
+.mobile-h5-app .calc-field-group.calc-field-exptype {
+  flex-basis: 100% !important;
+}
+
+.mobile-h5-app .calc-field-group {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+.mobile-h5-app .calc-label {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--text-title, #f8fafc) !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
+}
+
+.mobile-h5-app .calc-input-num {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 6px 10px !important;
+  font-size: 13.5px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 8px !important;
+  background-color: var(--bg-input, var(--bg-card-inner)) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  cursor: text !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease !important;
+}
+
+.mobile-h5-app .calc-input-num:focus,
+.mobile-h5-app .calc-input-num:focus-visible {
+  border-color: var(--accent-blue, #38bdf8) !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35) !important;
+  background-color: var(--bg-card-hover, rgba(56, 189, 248, 0.08)) !important;
+  outline: 2px solid var(--accent-blue, #38bdf8) !important;
+  outline-offset: 1px !important;
+}
+
+.mobile-h5-app .calc-select {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 6px 36px 6px 10px !important;
+  background-position: right 16px center !important;
+  background-size: 8px 5px !important;
+  font-size: 12.5px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 8px !important;
+  background-color: var(--bg-input, var(--bg-card-inner)) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .custom-select-calc .custom-select-trigger {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 6px 36px 6px 10px !important;
+  font-size: 12.5px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 8px !important;
+}
+
+.mobile-h5-app .custom-select-calc .custom-select-arrow {
+  right: 10px !important;
+}
+
+.mobile-h5-app .custom-select-calc .custom-select-menu {
+  max-width: 240px !important;
+}
+
+.mobile-h5-app .custom-select-calc .custom-select-item {
+  padding: 8px 10px !important;
+  font-size: 12px !important;
+}
+
+.mobile-h5-app .calc-switch-label {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 6px 8px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 8px !important;
+  gap: 6px !important;
+  justify-content: flex-start !important;
+}
+
+.mobile-h5-app .calc-switch-label .switch-slider {
+  width: 28px !important;
+  height: 16px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .calc-switch-label .switch-slider:before {
+  width: 12px !important;
+  height: 12px !important;
+  left: 2px !important;
+  bottom: 2px !important;
+}
+
+.mobile-h5-app .calc-switch-label .switch-checkbox:checked + .switch-slider:before {
+  transform: translateX(12px) !important;
+}
+
+.mobile-h5-app .calc-switch-label .switch-text {
+  font-size: 11.5px !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .calc-result-box {
+  width: 100% !important;
+  flex: none !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+  padding: 10px 12px !important;
+  margin-top: 2px !important;
+  border-radius: 10px !important;
+  text-align: center !important;
+  justify-content: center !important;
+  background: rgba(2, 132, 199, 0.12) !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+}
+
+.mobile-h5-app .calc-result-label {
+  font-size: 11px !important;
+  color: var(--text-secondary, #94a3b8) !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.5px !important;
+}
+
+.mobile-h5-app .calc-result-val {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  margin: 3px 0 !important;
+  color: var(--accent-blue, #38bdf8) !important;
+}
+
+.mobile-h5-app .calc-result-badge {
+  font-size: 11.5px !important;
+  padding: 3px 10px !important;
+  background: var(--bg-card, #1e293b) !important;
+  color: var(--text-secondary, #94a3b8) !important;
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1)) !important;
+  border-radius: 12px !important;
+  line-height: 1.3 !important;
+  display: inline-block !important;
+}
+
+.mobile-h5-app .calc-result-candies {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: #f59e0b !important;
+  margin-top: 4px !important;
+  line-height: 1.3 !important;
+}
+
+.mobile-h5-app .wiki-calc-card {
+  padding: 10px 8px !important;
+}
+
+.mobile-h5-app .wiki-calc-card .wiki-table-wrapper {
+  margin-top: 10px !important;
+  border-radius: 8px !important;
+}
+
+.mobile-h5-app .milestone-badge {
+  font-size: 10.5px !important;
+  padding: 1.5px 4px !important;
+  border-radius: 4px !important;
+  letter-spacing: -0.3px !important;
+}
+
+.mobile-h5-app .milestone-table {
+  width: 100% !important;
+  table-layout: auto !important;
+}
+
+.mobile-h5-app .milestone-table th {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--text-title, #f8fafc) !important;
+  padding: 6px 3px !important;
+  text-align: center !important;
+}
+
+.mobile-h5-app .milestone-table td {
+  font-size: 11px !important;
+  padding: 6px 3px !important;
+}
+
+.mobile-h5-app .milestone-table th.col-milestone-lv,
+.mobile-h5-app .milestone-table td.col-milestone-lv {
+  white-space: nowrap !important;
+  width: 16% !important;
+  min-width: 46px !important;
+  text-align: center !important;
+  padding: 6px 2px !important;
+}
+
+.mobile-h5-app .milestone-table th.col-milestone-exp,
+.mobile-h5-app .milestone-table td.col-milestone-exp {
+  white-space: nowrap !important;
+  width: 20% !important;
+  min-width: 52px !important;
+  text-align: center !important;
+  padding: 6px 2px !important;
+}
+
+.mobile-h5-app .milestone-table th.col-milestone-days,
+.mobile-h5-app .milestone-table td.col-milestone-days {
+  white-space: nowrap !important;
+  width: 18% !important;
+  min-width: 50px !important;
+  text-align: center !important;
+  padding: 6px 2px !important;
+}
+
+.mobile-h5-app .milestone-table th.col-milestone-note,
+.mobile-h5-app .milestone-table td.col-milestone-note {
+  white-space: nowrap !important;
+  width: 46% !important;
+  min-width: 110px !important;
+  text-align: left !important;
+  padding: 6px 4px !important;
+}
+
+/* 6.  Sub-Tab 4: 食材產量天梯榜 */
+.mobile-h5-app .ladder-view-toggle-bar {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 10px !important;
+  padding-bottom: 8px !important;
+  border-bottom: 1px solid var(--border-color-subtle) !important;
+}
+
+.mobile-h5-app .ladder-mode-btns {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  width: 100% !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .ladder-mode-btn {
+  text-align: center !important;
+  padding: 7px 0 !important;
+  font-size: 12px !important;
+  border-radius: 8px !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .ladder-mode-btn.active {
+  background: var(--accent-gradient, var(--accent-blue)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+.mobile-h5-app #wiki-subpanel-ingredients {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/*  食材天梯與  能量速查專屬：全視窗單屏滿版適配（零滑動，整頁全覽，尾巴置於導覽欄上方） */
+body.mobile-h5-app.ladder-active,
+.mobile-h5-app.ladder-active,
+body.mobile-h5-app.values-active,
+.mobile-h5-app.values-active {
+  overflow: hidden !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+}
+
+.mobile-h5-app.ladder-active #panel-wiki:not([style*="display: none"]):not([style*="display:none"]),
+.mobile-h5-app.ladder-active .wiki-main-container,
+.mobile-h5-app.values-active #panel-wiki:not([style*="display: none"]):not([style*="display:none"]),
+.mobile-h5-app.values-active .wiki-main-container,
+.mobile-h5-app #panel-wiki:has(#wiki-subpanel-ingredients.active),
+.mobile-h5-app .wiki-main-container:has(#wiki-subpanel-ingredients.active) {
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.mobile-h5-app.ladder-active .wiki-subnav-bar,
+.mobile-h5-app.values-active .wiki-subnav-bar,
+.mobile-h5-app .wiki-main-container:has(#wiki-subpanel-ingredients.active) .wiki-subnav-bar {
+  position: relative !important;
+  top: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-ingredients.active {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  box-sizing: border-box !important;
+  padding: 1px 4px 2px 4px !important;
+  margin: 0 !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+.mobile-h5-app #wiki-ingredient-ladder-coordinate {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .wiki-coordinate-ladder-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .wiki-coordinate-ladder-wrapper::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .wiki-coordinate-ladder {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  justify-content: flex-start !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .ladder-ruler-header {
+  flex: 0 0 16px !important;
+  height: 16px !important;
+  margin-bottom: 1px !important;
+}
+
+.mobile-h5-app .ladder-track-row {
+  flex: 1 1 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: 38px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.mobile-h5-app .ladder-track-header {
+  width: 22px !important;
+  min-width: 22px !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border-right: none !important;
+  height: 100% !important;
+}
+
+.mobile-h5-app .ladder-ruler-spacer {
+  width: 22px !important;
+  min-width: 22px !important;
+  justify-content: center !important;
+}
+
+.mobile-h5-app .ladder-ing-icon {
+  width: 19px !important;
+  height: 19px !important;
+}
+
+.mobile-h5-app .ladder-ruler-scale {
+  margin: 0 14px 0 4px !important;
+}
+
+.mobile-h5-app .ladder-track-canvas {
+  margin: 0 14px 0 4px !important;
+}
+
+.mobile-h5-app .ladder-ruler-tick:first-child {
+  transform: translateX(-15%) !important;
+}
+
+.mobile-h5-app .ladder-ruler-tick:last-child {
+  transform: translateX(-85%) !important;
+}
+
+.mobile-h5-app .ladder-tail-standalone-container {
+  flex: 0 0 auto !important;
+  margin-top: auto !important;
+  margin-bottom: 2px !important;
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .ladder-tail-standalone-box {
+  width: 230px !important;
+  max-width: 100% !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.08)) !important;
+  margin-left: 0 !important;
+  padding: 2px 5px 3px !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .ladder-tail-ruler {
+  height: 13px !important;
+}
+
+.mobile-h5-app .ladder-tail-track-row {
+  height: 23px !important;
+  min-height: 23px !important;
+}
+
+.mobile-h5-app .ladder-tail-ruler-spacer {
+  width: 22px !important;
+  min-width: 22px !important;
+}
+
+.mobile-h5-app .ladder-tail-ruler-scale {
+  margin: 0 14px 0 4px !important;
+}
+
+.mobile-h5-app .ladder-tail-canvas {
+  margin: 0 14px 0 4px !important;
+}
+
+.mobile-h5-app .node-avatar-wrapper {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.mobile-h5-app .tick-label {
+  font-size: 10px !important;
+}
+
+.mobile-h5-app .ladder-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  margin-bottom: 8px !important;
+  box-sizing: border-box !important;
+  color: var(--text-primary) !important;
+}
+
+/* 7.  Sub-Tab 4: 樹果與食材能量 */
+.mobile-h5-app #wiki-subpanel-values.active {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+  padding: 6px 10px 10px 10px !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app.values-active .values-horizontal-container {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .values-horizontal-section {
+  padding: 0 !important;
+  border-radius: 0 !important;
+  margin-bottom: 4px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .values-section-header {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 6px !important;
+  margin-bottom: 6px !important;
+  padding-bottom: 0 !important;
+  border-bottom: none !important;
+}
+
+.mobile-h5-app .berry-calc-controls {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .berry-control-group {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.mobile-h5-app .berry-control-label {
+  color: var(--text-secondary) !important;
+  font-size: 11.5px !important;
+}
+
+.mobile-h5-app .berry-slider {
+  flex: 1 !important;
+  margin-left: 10px !important;
+}
+
+.mobile-h5-app .values-compact-grid {
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  gap: 5px 3px !important;
+  padding: 2px 0 !important;
+}
+
+.mobile-h5-app .value-compact-node {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2px 1px !important;
+  gap: 1.5px !important;
+}
+
+.mobile-h5-app .value-compact-node:hover {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .value-compact-icon {
+  width: 30px !important;
+  height: 30px !important;
+  border: none !important;
+  outline: none !important;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35)) !important;
+}
+
+.mobile-h5-app .value-compact-energy {
+  font-size: 11.5px !important;
+  font-weight: 800 !important;
+  border-radius: 4px !important;
+  padding: 1px 3px !important;
+  min-width: 26px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .value-compact-energy.berry-val {
+  color: #7dd3fc !important;
+  background: rgba(125, 211, 252, 0.12) !important;
+}
+
+.mobile-h5-app .value-compact-energy.berry-val-fav {
+  color: #fde047 !important;
+  background: rgba(253, 224, 71, 0.12) !important;
+}
+
+.mobile-h5-app .value-compact-energy.ing-val {
+  color: #fde047 !important;
+  background: rgba(253, 224, 71, 0.12) !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .value-compact-energy.berry-val,
+[data-theme="emerald"] .mobile-h5-app .value-compact-energy.berry-val {
+  color: #0369a1 !important;
+  background: rgba(3, 105, 161, 0.08) !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .value-compact-energy.berry-val-fav,
+[data-theme="emerald"] .mobile-h5-app .value-compact-energy.berry-val-fav,
+[data-theme="dawn"] .mobile-h5-app .value-compact-energy.ing-val,
+[data-theme="emerald"] .mobile-h5-app .value-compact-energy.ing-val {
+  color: #b45309 !important;
+  background: rgba(180, 83, 9, 0.08) !important;
+}
+
+/* 全域保證：隱藏的 panel 絕不覆蓋顯示 */
+.view-panel[style*="display: none"],
+.view-panel[style*="display:none"],
+.mobile-h5-app .view-panel[style*="display: none"],
+.mobile-h5-app .view-panel[style*="display:none"],
+.mobile-h5-app #panel-pokemon[style*="display: none"],
+.mobile-h5-app #panel-recipes[style*="display: none"],
+.mobile-h5-app #panel-wiki[style*="display: none"],
+.mobile-h5-app #panel-box[style*="display: none"],
+.mobile-h5-app #panel-news[style*="display: none"],
+.mobile-h5-app #panel-pokemon[style*="display:none"],
+.mobile-h5-app #panel-recipes[style*="display:none"],
+.mobile-h5-app #panel-wiki[style*="display:none"],
+.mobile-h5-app #panel-box[style*="display:none"],
+.mobile-h5-app #panel-news[style*="display:none"] {
+  display: none !important;
+}
+
+/* 8. Sub-Tab 6: 7大研究營地與EX專家模式 (Research Camps & EX Mode Mobile App Layout) */
+.mobile-h5-app #wiki-subpanel-islands.active {
+  display: block !important;
+  padding: 0 10px 32px 10px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  position: relative !important;
+}
+
+.mobile-h5-app #wiki-subpanel-islands.has-island-scene > .island-scene-layer,
+.mobile-h5-app #wiki-subpanel-islands.active > .island-scene-layer {
+  position: absolute !important;
+  top: 0 !important;
+  left: -10px !important;
+  right: -10px !important;
+  bottom: auto !important;
+  width: calc(100% + 20px) !important;
+  height: auto !important;
+  max-height: none !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .island-scene-photo {
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 2560 / 1372 !important;
+  object-fit: contain !important;
+  object-position: center top !important;
+  opacity: 0.32 !important;
+  display: block !important;
+}
+
+.mobile-h5-app .island-scene-fade {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.04) 0%,
+    transparent 20%,
+    transparent 50%,
+    color-mix(in srgb, var(--bg-dark) 45%, transparent) 75%,
+    var(--bg-dark) 100%
+  ) !important;
+}
+
+html[data-theme="midnight"]:not([data-theme-inverted="true"]) .mobile-h5-app .island-scene-photo,
+html[data-theme="onyx"]:not([data-theme-inverted="true"]) .mobile-h5-app .island-scene-photo,
+html[data-theme="dawn"][data-theme-inverted="true"] .mobile-h5-app .island-scene-photo,
+html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-scene-photo {
+  opacity: 0.18 !important;
+}
+
+.mobile-h5-app .island-nav-strip {
+  display: flex !important;
+  overflow-x: auto !important;
+  flex-wrap: nowrap !important;
+  gap: 8px !important;
+  padding: 4px 2px 8px 2px !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  width: 100% !important;
+  align-items: center !important;
+  margin-bottom: 0 !important;
+}
+
+.mobile-h5-app .island-nav-strip::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .island-tab-btn {
+  flex: 0 0 auto !important;
+  padding: 3px !important;
+  border-radius: 12px !important;
+}
+
+.mobile-h5-app .island-tab-thumb {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 9px !important;
+}
+
+.mobile-h5-app .island-tab-indicator {
+  bottom: -5px !important;
+  width: 14px !important;
+  height: 2.5px !important;
+}
+
+.mobile-h5-app .island-tab-ex-inner {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 9px !important;
+}
+
+.mobile-h5-app .island-ex-tab-badge {
+  font-size: 13px !important;
+}
+
+.mobile-h5-app .island-overview-card {
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0 -10px 12px !important;
+  width: calc(100% + 20px) !important;
+}
+
+.mobile-h5-app .island-hero-banner {
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: none !important;
+}
+
+.mobile-h5-app .island-hero-body {
+  padding: 8px 10px 12px !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .island-hero-content {
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex-wrap: wrap !important;
+  gap: 10px 16px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .island-hero-title {
+  font-size: 19px !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85) !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .island-title-en {
+  font-size: 12px !important;
+  color: rgba(226, 232, 240, 0.85) !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85) !important;
+}
+
+.mobile-h5-app .island-nav-divider {
+  width: 1px !important;
+  height: 26px !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  margin: 0 4px !important;
+  flex-shrink: 0 !important;
+  align-self: center !important;
+}
+
+.mobile-h5-app .island-tab-thumb-wrapper {
+  position: relative !important;
+  display: inline-block !important;
+}
+
+.mobile-h5-app .island-tab-ex-tag {
+  position: absolute !important;
+  top: -2px !important;
+  right: -2px !important;
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  color: #ffffff !important;
+  font-size: 8.5px !important;
+  font-weight: 800 !important;
+  padding: 0.5px 3px !important;
+  border-radius: 3px !important;
+  line-height: 1 !important;
+}
+
+.mobile-h5-app .island-tab-ex-item.active {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.45) !important;
+}
+
+.mobile-h5-app .island-tab-ex-item.active .island-tab-indicator {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24) !important;
+}
+
+.mobile-h5-app .island-berries-section {
+  padding-top: 0 !important;
+  gap: 8px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  border-top: none !important;
+  margin-top: 0 !important;
+  margin-left: 4px !important;
+}
+
+.mobile-h5-app .island-berries-label {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  width: auto !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .island-hero-banner .island-berries-label {
+  color: #f1f5f9 !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85) !important;
+}
+
+.mobile-h5-app .island-berries-list {
+  display: inline-flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  gap: 6px !important;
+}
+
+
+.mobile-h5-app .island-berry-chip {
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .island-berry-icon {
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.mobile-h5-app .island-table-card,
+.mobile-h5-app .island-spawns-card,
+.mobile-h5-app .island-ex-card,
+.mobile-h5-app #wiki-subpanel-islands .wiki-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.mobile-h5-app .island-sleep-filters {
+  width: 100% !important;
+  display: flex !important;
+  gap: 4px !important;
+  padding: 4px !important;
+  border-radius: 10px !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.05)) !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.mobile-h5-app .island-sleep-btn {
+  flex: 1 1 0 !important;
+  justify-content: center !important;
+  padding: 6px 8px !important;
+  font-size: 12.5px !important;
+  border-radius: 7px !important;
+}
+
+.mobile-h5-app .island-sleep-count {
+  font-size: 11px !important;
+  padding: 1px 5px !important;
+}
+
+.mobile-h5-app .island-spawns-compact-table {
+  width: 100% !important;
+}
+
+.mobile-h5-app .island-spawns-compact-table th {
+  padding: 5px 2px !important;
+  font-size: 12px !important;
+  text-align: center !important;
+}
+
+.mobile-h5-app .sleep-style-star-icon {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.mobile-h5-app .island-th-content {
+  gap: 2px !important;
+}
+
+.mobile-h5-app .island-sort-arrow-wrap {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+.mobile-h5-app .island-spawns-compact-table td {
+  padding: 2.5px 2px !important;
+  font-size: 11.5px !important;
+  text-align: center !important;
+}
+
+.mobile-h5-app .island-pkm-icon-only .island-pkm-avatar {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.mobile-h5-app .rank-badge {
+  padding: 2px 4.5px !important;
+  font-size: 11px !important;
+  gap: 3px !important;
+  border-radius: 9px !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .rank-num {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .pokeball-svg {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.mobile-h5-app .rank-dash {
+  font-size: 12px !important;
+  padding: 1px 3px !important;
+}
+
+.mobile-h5-app .wiki-two-col-grid .wiki-data-table th,
+.mobile-h5-app .wiki-two-col-grid .wiki-data-table td {
+  font-size: 13px !important;
+  padding: 8px 8px !important;
+}
+
+/* H5 App 最新公告專屬原生排版 (Mobile News & Updates Layout) */
+.mobile-h5-app #panel-news {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+  padding: 0 0 28px 0 !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app #panel-news .controls-container {
+  position: relative !important;
+  top: auto !important;
+  z-index: 10 !important;
+  margin: 10px 12px 6px !important;
+  padding: 0 !important;
+  width: calc(100% - 24px) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+/*  1. 頂部搜尋列 App 風格 (與所有 Tab 保持 100% 統一元件規範) */
+.mobile-h5-app .search-box,
+.mobile-h5-app .news-search-box {
+  position: relative !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 0 6px 0 !important;
+  box-sizing: border-box !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .search-input,
+.mobile-h5-app .news-search-input {
+  width: 100% !important;
+  height: 40px !important;
+  line-height: 40px !important;
+  padding: 0 32px 0 36px !important;
+  background: var(--bg-card-inner, #1e293b) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 10px !important;
+  color: var(--text-primary) !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  font-family: inherit !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;
+}
+
+.mobile-h5-app .search-input:focus,
+.mobile-h5-app .news-search-input:focus {
+  border-color: var(--color-primary, #6366f1) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+}
+
+.mobile-h5-app .search-input::placeholder,
+.mobile-h5-app .news-search-input::placeholder {
+  color: var(--text-muted, #94a3b8) !important;
+  opacity: 0.85 !important;
+  font-size: 13.5px !important;
+  font-weight: 400 !important;
+}
+
+.mobile-h5-app .search-icon,
+.mobile-h5-app .news-search-box .search-icon {
+  position: absolute !important;
+  left: 11px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 16px !important;
+  height: 16px !important;
+  color: var(--text-muted, #94a3b8) !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+}
+
+.mobile-h5-app .search-icon svg,
+.mobile-h5-app .news-search-box .search-icon svg {
+  display: block !important;
+  width: 15px !important;
+  height: 15px !important;
+}
+
+/*  2. 單行橫向滑動分類標籤 (Segmented Pill Chips - 1 Line) */
+.mobile-h5-app .news-category-tags {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  gap: 6px !important;
+  padding: 1px 0 2px 0 !important;
+  scrollbar-width: none !important;
+  width: 100% !important;
+}
+.mobile-h5-app .news-category-tags::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .news-tag-btn {
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 5px 11px !important;
+  border-radius: 18px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-muted) !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .news-tag-btn.active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #fff !important;
+  border-color: var(--color-primary, #6366f1) !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35) !important;
+}
+
+.mobile-h5-app .news-tag-count {
+  font-size: 10px !important;
+  opacity: 0.85 !important;
+  background: rgba(0, 0, 0, 0.25) !important;
+  padding: 1px 4px !important;
+  border-radius: 8px !important;
+}
+
+/*  3. 壓縮無框版活動日曆 (Borderless Ultra-Compact Activity Calendar) ─── */
+/* 網頁桌面版：日曆與進行中活動左右並行 (Side-by-Side Parallel Layout) */
+.news-calendar-wrapper {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 2px 0 4px 0 !important;
+  box-shadow: none !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 16px !important;
+  align-items: stretch !important;
+  margin: 0 !important;
+}
+
+.news-calendar-cal-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+}
+
+@media (max-width: 880px) {
+  .news-calendar-wrapper {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+/* 行動版 H5 專屬：嚴格維持原樣上下垂直堆疊 (Mobile Keeps Vertical Stacking Unchanged) */
+.mobile-h5-app .news-calendar-wrapper {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 2px 0 4px 0 !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  margin: 0 !important;
+  grid-template-columns: none !important;
+}
+
+.mobile-h5-app .news-calendar-cal-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  width: 100% !important;
+}
+
+/* 行動端 H5 專屬：精確鎖定原本緊湊規格 (Mobile H5 Exact Compact Preservations) */
+.mobile-h5-app .news-calendar-top-bar {
+  height: 22px !important;
+}
+
+.mobile-h5-app .news-calendar-title-group {
+  gap: 4px !important;
+  font-size: 12.5px !important;
+}
+
+.mobile-h5-app .news-calendar-month-text {
+  font-size: 11.5px !important;
+}
+
+.mobile-h5-app .news-calendar-nav-btn {
+  padding: 2px 6px !important;
+  font-size: 10.5px !important;
+}
+
+.mobile-h5-app .news-calendar-weekdays {
+  font-size: 10.5px !important;
+  padding-bottom: 2px !important;
+}
+
+.mobile-h5-app .news-cal-day-cell {
+  height: 28px !important;
+}
+
+.mobile-h5-app .news-cal-day-num {
+  font-size: 11px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8), 0 0 4px rgba(0, 0, 0, 0.6) !important;
+}
+
+.mobile-h5-app .news-cal-day-cell.is-today .news-cal-day-num,
+.mobile-h5-app .news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num {
+  color: #d4a338 !important;
+  font-size: 12px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  line-height: 18px !important;
+  text-shadow: none !important;
+}
+
+.mobile-h5-app .news-cal-day-cell.is-today::after {
+  bottom: 2px !important;
+  width: 4px !important;
+  height: 4px !important;
+  background: #d4a338 !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .news-cal-day-cell.is-selected:not(.is-today) .news-cal-day-num {
+  font-size: 11.5px !important;
+}
+
+.news-calendar-top-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  height: 26px !important;
+}
+
+.news-calendar-title-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+}
+
+.news-calendar-month-text {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--text-muted) !important;
+}
+
+.news-calendar-nav-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.news-calendar-nav-btn {
+  background: var(--bg-card, rgba(255, 255, 255, 0.08)) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  border-radius: 6px !important;
+  padding: 3px 8px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.news-calendar-nav-btn:hover,
+.news-calendar-nav-btn:active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #fff !important;
+  border-color: var(--color-primary, #6366f1) !important;
+}
+
+/* 7 欄日曆星期標題 */
+.news-calendar-weekdays {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 1px !important;
+  text-align: center !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+  padding-bottom: 4px !important;
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08)) !important;
+}
+
+.news-calendar-weekday.sun,
+.news-calendar-weekday.sat {
+  color: var(--text-muted) !important;
+  opacity: 0.75 !important;
+}
+
+/* 7 欄日曆網格 (貫穿日期的全格背景色塊 + 高對比色塊反色) */
+.news-calendar-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 2px 0 !important;
+}
+
+.news-cal-day-cell {
+  aspect-ratio: auto !important;
+  height: 34px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  user-select: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.news-cal-day-cell.empty {
+  cursor: default !important;
+  background: transparent !important;
+}
+
+.news-cal-day-cell:not(.empty):not(.has-events):hover {
+  background: rgba(99, 102, 241, 0.08) !important;
+}
+
+/*  貫穿整格的背景多層色塊 (Continuous Full-Cell Background Bands per Event) */
+.news-cal-bg-bands {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 1.5px !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  padding: 1.5px 0 !important;
+  box-sizing: border-box !important;
+}
+
+.news-cal-bg-band {
+  width: 100% !important;
+  flex: 1 1 0 !important;
+  min-height: 4px !important;
+  opacity: 0.85 !important;
+  transition: opacity 0.15s ease !important;
+  box-sizing: border-box !important;
+}
+
+.news-cal-day-cell:hover .news-cal-bg-band {
+  opacity: 1 !important;
+}
+
+/* 邊界圓角與直角填滿規則：
+   head (左上左下圓角、右側直角 100% 填滿)
+   body (全部直角、左右兩側 100% 填滿)
+   foot (右上右下圓角、左側直角 100% 填滿)
+   single (單日活動：四角圓角)
+*/
+.news-cal-bg-band.band-head,
+.news-cal-bg-band.band-cap-start {
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  margin-left: 2px !important;
+  margin-right: 0 !important;
+  width: calc(100% - 2px) !important;
+}
+
+.news-cal-bg-band.band-body,
+.news-cal-bg-band.band-mid {
+  border-radius: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+
+.news-cal-bg-band.band-foot,
+.news-cal-bg-band.band-cap-end {
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 2px !important;
+  width: calc(100% - 2px) !important;
+}
+
+.news-cal-bg-band.band-single,
+.news-cal-bg-band.band-cap-both {
+  border-radius: 4px !important;
+  margin: 0 2px !important;
+  width: calc(100% - 4px) !important;
+}
+
+.news-cal-bg-band.band-empty {
+  opacity: 0 !important;
+  background: transparent !important;
+  pointer-events: none !important;
+}
+
+/*  日期數字：浮在背景色塊之上，字型放大至 13.5px，柔和陰影確保清晰 */
+.news-cal-day-num {
+  position: relative !important;
+  z-index: 5 !important;
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  color: #ffffff !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 22px !important;
+  height: 22px !important;
+  border-radius: 4px !important;
+  transition: all 0.15s ease !important;
+  pointer-events: none !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45) !important;
+}
+
+.news-cal-day-cell:not(.has-events) .news-cal-day-num {
+  color: var(--text-primary) !important;
+  text-shadow: none !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell:not(.has-events) .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell:not(.has-events) .news-cal-day-num {
+  color: #1e293b !important;
+}
+
+/*  今日日期黃色圓點心跳動態 (Today Dot Heartbeat Pulse Animation) */
+@keyframes todayHeartbeat {
+  0% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 0 0 3px rgba(250, 204, 21, 0.7);
+  }
+  14% {
+    transform: translateX(-50%) scale(1.45);
+    box-shadow: 0 0 8px rgba(250, 204, 21, 0.95), 0 0 0 2px rgba(250, 204, 21, 0.4);
+  }
+  28% {
+    transform: translateX(-50%) scale(1.1);
+    box-shadow: 0 0 4px rgba(250, 204, 21, 0.7);
+  }
+  42% {
+    transform: translateX(-50%) scale(1.5);
+    box-shadow: 0 0 10px rgba(250, 204, 21, 1), 0 0 0 3px rgba(250, 204, 21, 0.25);
+  }
+  70% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 0 0 3px rgba(250, 204, 21, 0.7);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 0 0 3px rgba(250, 204, 21, 0.7);
+  }
+}
+
+/*  今日（非選取狀態）：文字白色，下方保留黃色圓點心跳動態 (White Text with Heartbeat Yellow Dot) */
+.news-cal-day-cell.is-today {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  z-index: 8 !important;
+}
+
+.news-cal-day-cell.is-today .news-cal-day-num,
+.news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num {
+  background: transparent !important;
+  color: #ffffff !important; /* 今日文字使用白色 */
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  min-width: 22px !important;
+  height: 22px !important;
+  line-height: 22px !important;
+  padding: 0 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
+  transition: all 0.15s ease !important;
+}
+
+.news-cal-day-cell.is-today:hover .news-cal-day-num {
+  transform: scale(1.08) !important;
+}
+
+/* 今日底端黃色圓點：帶心跳效果 (Heartbeat Pulse) */
+.news-cal-day-cell.is-today::after {
+  content: '' !important;
+  display: block !important;
+  position: absolute !important;
+  bottom: 2.5px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  transform-origin: center center !important;
+  width: 4.5px !important;
+  height: 4.5px !important;
+  border-radius: 50% !important;
+  background: #facc15 !important;
+  box-shadow: 0 0 4px rgba(250, 204, 21, 0.8) !important;
+  z-index: 6 !important;
+  animation: todayHeartbeat 1.6s ease-in-out infinite !important;
+}
+
+/* 明亮主題今日文字與心跳黃點 */
+[data-theme="dawn"] .news-cal-day-cell.is-today .news-cal-day-num,
+[data-theme="dawn"] .news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.is-today .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num {
+  background: transparent !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65) !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.is-today:not(.has-events) .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.is-today:not(.has-events) .news-cal-day-num {
+  color: #1e293b !important;
+  text-shadow: none !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.is-today::after,
+[data-theme="emerald"] .news-cal-day-cell.is-today::after {
+  display: block !important;
+  background: #f59e0b !important;
+  animation: todayHeartbeat 1.6s ease-in-out infinite !important;
+}
+
+/*  選取日期：半透明灰色背景，無光暈，不遮擋活動進度條 (Selected Cell Translucent Gray - No Glow) */
+.news-cal-day-cell.is-selected {
+  outline: none !important;
+  border: none !important;
+  background: rgba(148, 163, 184, 0.22) !important; /* 半透明灰色 */
+  border-radius: 6px !important;
+  box-shadow: none !important; /* 無光暈 */
+  z-index: 10 !important;
+}
+
+/* 確保活動進度條在選中時完全正常展示，絕不遮擋 */
+.news-cal-day-cell.is-selected .news-cal-bg-bands {
+  display: flex !important;
+  z-index: 2 !important;
+  opacity: 1 !important;
+}
+
+.news-cal-day-cell.is-selected:not(.is-today) .news-cal-day-num {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 13.5px !important;
+  text-shadow: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.is-selected,
+[data-theme="emerald"] .news-cal-day-cell.is-selected {
+  background: rgba(100, 116, 139, 0.16) !important; /* 明亮主題半透明灰色 */
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dawn"] .news-cal-day-cell.is-selected:not(.is-today) .news-cal-day-num,
+[data-theme="emerald"] .news-cal-day-cell.is-selected:not(.is-today) .news-cal-day-num {
+  color: #0f172a !important;
+}
+
+/* 當日活動列表 (Selected Day Event List) */
+.news-calendar-events-box {
+  background: var(--bg-card, #18181b) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 10px !important;
+  padding: 10px 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  max-height: 280px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .news-calendar-events-box {
+  padding: 6px 8px !important;
+  gap: 4px !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+.news-cal-box-title-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  padding-bottom: 6px !important;
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.06)) !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .news-cal-box-title-row {
+  font-size: 11px !important;
+  padding-bottom: 3px !important;
+  gap: 6px !important;
+}
+
+.news-cal-box-title-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  flex: 1 !important;
+}
+
+.news-cal-box-heading {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+.mobile-h5-app .news-cal-box-heading {
+  font-size: 11px !important;
+}
+
+.news-cal-box-count {
+  font-size: 12px !important;
+  opacity: 0.8 !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .news-cal-box-count {
+  font-size: 10.5px !important;
+}
+
+.news-cal-filter-ongoing-btn {
+  background: var(--bg-card-inner, rgba(99, 102, 241, 0.08)) !important;
+  border: 1px solid var(--border-color, rgba(99, 102, 241, 0.25)) !important;
+  color: var(--color-primary, #6366f1) !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  padding: 3px 10px !important;
+  border-radius: 9999px !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: all 0.15s ease !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .news-cal-filter-ongoing-btn {
+  font-size: 10.5px !important;
+  padding: 2px 8px !important;
+}
+
+.news-cal-filter-ongoing-btn:hover,
+.news-cal-filter-ongoing-btn.active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #ffffff !important;
+  border-color: var(--color-primary, #6366f1) !important;
+}
+
+.news-cal-events-scroll-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+  max-height: 230px !important;
+  overflow-y: auto !important;
+  padding-right: 3px !important;
+  scrollbar-width: thin !important;
+}
+
+.mobile-h5-app .news-cal-events-scroll-list {
+  flex: none !important;
+  max-height: none !important;
+  overflow-y: visible !important;
+  padding-right: 0 !important;
+  gap: 4px !important;
+}
+
+.news-cal-event-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  padding: 6px 10px !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04)) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.mobile-h5-app .news-cal-event-item {
+  gap: 6px !important;
+  padding: 4px 7px !important;
+  border-radius: 6px !important;
+}
+
+.news-cal-event-item:hover,
+.news-cal-event-item:active {
+  background: rgba(99, 102, 241, 0.12) !important;
+  border-color: rgba(99, 102, 241, 0.45) !important;
+  transform: translateY(-1px);
+}
+
+.news-cal-event-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  flex: 1 !important;
+}
+
+.news-cal-event-badge {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 2px 7px !important;
+  border-radius: 5px !important;
+  white-space: nowrap !important;
+  line-height: 1.15 !important;
+}
+
+.mobile-h5-app .news-cal-event-badge {
+  font-size: 9.5px !important;
+  padding: 1.5px 5px !important;
+  border-radius: 4px !important;
+  line-height: 1.1 !important;
+}
+
+/*  活動列表 Badge 多彩標籤 (Dark Theme Default - 螢光高對比清晰配色) */
+.news-cal-event-badge.badge-good-sleep {
+  background: rgba(245, 158, 11, 0.25) !important;
+  color: #fbbf24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.5) !important;
+}
+
+.news-cal-event-badge.badge-festival {
+  background: rgba(249, 115, 22, 0.25) !important;
+  color: #fb923c !important;
+  border: 1px solid rgba(249, 115, 22, 0.5) !important;
+}
+
+.news-cal-event-badge.badge-new-moon {
+  background: rgba(99, 102, 241, 0.25) !important;
+  color: #818cf8 !important;
+  border: 1px solid rgba(99, 102, 241, 0.5) !important;
+}
+
+.news-cal-event-badge.badge-collab {
+  background: rgba(236, 72, 153, 0.25) !important;
+  color: #f472b6 !important;
+  border: 1px solid rgba(236, 72, 153, 0.5) !important;
+}
+
+.news-cal-event-badge.badge-pack-growth {
+  background: rgba(16, 185, 129, 0.25) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.5) !important;
+}
+
+.news-cal-event-badge.badge-pack-bundle {
+  background: rgba(6, 182, 212, 0.25) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(6, 182, 212, 0.5) !important;
+}
+
+.news-cal-event-badge.badge-event {
+  background: rgba(168, 85, 247, 0.25) !important;
+  color: #c084fc !important;
+  border: 1px solid rgba(168, 85, 247, 0.5) !important;
+}
+
+.news-cal-event-badge.badge-update {
+  background: rgba(244, 63, 94, 0.25) !important;
+  color: #fb7185 !important;
+  border: 1px solid rgba(244, 63, 94, 0.5) !important;
+}
+
+/*  亮色主題下的 Badge 自適應 (深色高飽和字體) */
+[data-theme="dawn"] .news-cal-event-badge.badge-good-sleep,
+[data-theme="emerald"] .news-cal-event-badge.badge-good-sleep {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #b45309 !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+}
+
+[data-theme="dawn"] .news-cal-event-badge.badge-festival,
+[data-theme="emerald"] .news-cal-event-badge.badge-festival {
+  background: rgba(234, 88, 12, 0.15) !important;
+  color: #c2410c !important;
+  border: 1px solid rgba(234, 88, 12, 0.35) !important;
+}
+
+[data-theme="dawn"] .news-cal-event-badge.badge-new-moon,
+[data-theme="emerald"] .news-cal-event-badge.badge-new-moon {
+  background: rgba(79, 70, 229, 0.15) !important;
+  color: #4338ca !important;
+  border: 1px solid rgba(79, 70, 229, 0.35) !important;
+}
+
+[data-theme="dawn"] .news-cal-event-badge.badge-collab,
+[data-theme="emerald"] .news-cal-event-badge.badge-collab {
+  background: rgba(192, 38, 211, 0.15) !important;
+  color: #86198f !important;
+  border: 1px solid rgba(192, 38, 211, 0.35) !important;
+}
+
+[data-theme="dawn"] .news-cal-event-badge.badge-pack-growth,
+[data-theme="emerald"] .news-cal-event-badge.badge-pack-growth {
+  background: rgba(5, 150, 105, 0.15) !important;
+  color: #065f46 !important;
+  border: 1px solid rgba(5, 150, 105, 0.35) !important;
+}
+
+[data-theme="dawn"] .news-cal-event-badge.badge-pack-bundle,
+[data-theme="emerald"] .news-cal-event-badge.badge-pack-bundle {
+  background: rgba(8, 145, 178, 0.15) !important;
+  color: #0e7490 !important;
+  border: 1px solid rgba(8, 145, 178, 0.35) !important;
+}
+
+[data-theme="dawn"] .news-cal-event-badge.badge-event,
+[data-theme="emerald"] .news-cal-event-badge.badge-event {
+  background: rgba(109, 40, 217, 0.15) !important;
+  color: #5b21b6 !important;
+  border: 1px solid rgba(109, 40, 217, 0.35) !important;
+}
+
+[data-theme="dawn"] .news-cal-event-badge.badge-update,
+[data-theme="emerald"] .news-cal-event-badge.badge-update {
+  background: rgba(225, 29, 72, 0.15) !important;
+  color: #9f1239 !important;
+  border: 1px solid rgba(225, 29, 72, 0.35) !important;
+}
+
+.news-cal-event-name {
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.mobile-h5-app .news-cal-event-name {
+  font-size: 11.5px !important;
+}
+
+.news-cal-event-time {
+  font-size: 11px !important;
+  color: var(--text-muted) !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .news-cal-event-time {
+  font-size: 10px !important;
+}
+
+.news-cal-empty-hint {
+  font-size: 12px !important;
+  color: var(--text-muted) !important;
+  text-align: center !important;
+  padding: 8px 4px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 1 !important;
+  min-height: 80px !important;
+}
+
+.mobile-h5-app .news-cal-empty-hint {
+  font-size: 11px !important;
+  min-height: unset !important;
+  flex: none !important;
+  padding: 4px 2px !important;
+}
+
+.mobile-h5-app .news-info-bar {
+  display: none !important;
+}
+
+/*  4. 新聞列表容器與折疊式 Accordion 卡片 (全主題自適應) */
+.mobile-h5-app .news-content-container {
+  padding: 0 12px 24px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .news-list-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .news-accordion-card {
+  background: var(--bg-card, #18181b) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 10px 12px !important;
+  gap: 5px !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.mobile-h5-app .news-accordion-card:active {
+  background: var(--bg-card-hover, rgba(255, 255, 255, 0.04)) !important;
+}
+
+.mobile-h5-app .news-accordion-card.expanded {
+  border-color: rgba(99, 102, 241, 0.4) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+}
+
+.mobile-h5-app .news-card-header-meta {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .news-meta-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  flex-wrap: wrap !important;
+}
+
+.mobile-h5-app .news-date-badge {
+  font-size: 10.5px !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.06)) !important;
+  color: var(--text-muted) !important;
+}
+
+.mobile-h5-app .news-badge {
+  font-size: 10.5px !important;
+  padding: 1px 6px !important;
+  border-radius: 4px !important;
+  font-weight: 700 !important;
+}
+
+/* 官方原文右上角按鈕 (Top-Right Official Link Button) */
+.mobile-h5-app .news-official-link-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  color: var(--color-primary, #818cf8) !important;
+  background: rgba(99, 102, 241, 0.1) !important;
+  border: 1px solid rgba(99, 102, 241, 0.25) !important;
+  padding: 2px 7px !important;
+  border-radius: 12px !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  transition: all 0.15s ease !important;
+}
+
+.mobile-h5-app .news-official-link-btn:active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #ffffff !important;
+}
+
+.mobile-h5-app .news-card-title {
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  margin: 0 !important;
+}
+
+/*  新登場 / 焦點寶可夢頂部橫條 (無外框、極簡純淨排版) */
+.mobile-h5-app .news-debut-banner,
+.mobile-h5-app .news-featured-banner {
+  padding: 2px 0 !important;
+  border-radius: 0 !important;
+  font-size: 11.5px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .news-overview-text {
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+  color: var(--text-muted) !important;
+  margin: 0 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .news-accordion-card.expanded .news-overview-text {
+  -webkit-line-clamp: none !important;
+}
+
+/*  5. 展開後的 AI 深度重點區塊 (極簡純淨無框無背景排版) */
+.mobile-h5-app .news-accordion-body {
+  padding: 4px 0 2px 0 !important;
+  display: none !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  border-top: none !important;
+  background: transparent !important;
+}
+
+@keyframes newsAccordionFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-h5-app .news-accordion-card.expanded .news-accordion-body {
+  display: flex !important;
+  animation: newsAccordionFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.mobile-h5-app .news-ai-dashboard,
+.mobile-h5-app .news-ai-highlights {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+.mobile-h5-app .news-ai-sections-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .news-ai-section-box {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 2px 0 4px 0 !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .news-ai-section-title {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  margin-bottom: 2px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .news-ai-section-list,
+.mobile-h5-app .news-ai-list {
+  font-size: 11.5px !important;
+  line-height: 1.5 !important;
+  padding-left: 16px !important;
+  margin: 0 !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .news-ai-section-list li,
+.mobile-h5-app .news-ai-list li {
+  margin-bottom: 2px !important;
+}
+
+/*  深色主題配色 (Dark / Obsidian) 僅文字標題高亮，無底色無邊框 */
+.news-sec-schedule,
+.news-sec-features,
+.news-sec-debut,
+.news-sec-bonus,
+.news-sec-rewards,
+.news-sec-shop,
+.news-sec-fixes,
+.news-sec-balance,
+.news-sec-general {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.news-sec-schedule .news-ai-section-title {
+  color: #38bdf8 !important;
+}
+
+.news-sec-features .news-ai-section-title,
+.news-sec-debut .news-ai-section-title {
+  color: #c084fc !important;
+}
+
+.news-sec-bonus .news-ai-section-title,
+.news-sec-rewards .news-ai-section-title {
+  color: #fbbf24 !important;
+}
+
+.news-sec-shop .news-ai-section-title {
+  color: #facc15 !important;
+}
+
+.news-sec-fixes .news-ai-section-title,
+.news-sec-balance .news-ai-section-title,
+.news-sec-general .news-ai-section-title {
+  color: #34d399 !important;
+}
+
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .search-input,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .news-search-input,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .search-input,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .news-search-input,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .search-input,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-search-input,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .search-input,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-search-input {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .search-input:focus,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .news-search-input:focus,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .search-input:focus,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .news-search-input:focus,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .search-input:focus,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-search-input:focus,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .search-input:focus,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-search-input:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-tag-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-tag-btn {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-tag-btn.active,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-tag-btn.active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #ffffff !important;
+  border-color: var(--color-primary, #6366f1) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .news-calendar-events-box,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .news-calendar-events-box,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-calendar-events-box,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-calendar-events-box {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .news-cal-box-title-row,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .news-cal-box-title-row,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-cal-box-title-row,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-cal-box-title-row {
+  color: #0f172a !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .news-cal-event-item,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .news-cal-event-item,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-cal-event-item,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-cal-event-item {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-accordion-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-accordion-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-official-link-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .news-official-link-btn {
+  background: #eff6ff !important;
+  border: 1px solid #bfdbfe !important;
+  color: #2563eb !important;
+}
+
+/*  反色模式下各搜尋框專屬外觀 (Inverted Search Inputs) */
+[data-theme="midnight"][data-theme-inverted="true"] .search-input,
+[data-theme="midnight"][data-theme-inverted="true"] .news-search-input,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .search-input,
+[data-theme="midnight"][data-theme-inverted="true"] .mobile-h5-app .news-search-input {
+  background: #ffffff !important;
+  border: 1px solid #bae6fd !important;
+  color: #0c4a6e !important;
+  box-shadow: 0 1px 3px rgba(2, 132, 199, 0.08) !important;
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .search-input,
+[data-theme="onyx"][data-theme-inverted="true"] .news-search-input,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .search-input,
+[data-theme="onyx"][data-theme-inverted="true"] .mobile-h5-app .news-search-input {
+  background: #ffffff !important;
+  border: 1px solid #d4d4d8 !important;
+  color: #09090b !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme="dawn"][data-theme-inverted="true"] .search-input,
+[data-theme="dawn"][data-theme-inverted="true"] .news-search-input,
+[data-theme="dawn"][data-theme-inverted="true"] .mobile-h5-app .search-input,
+[data-theme="dawn"][data-theme-inverted="true"] .mobile-h5-app .news-search-input {
+  background: #141211 !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  color: #e7e5e4 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-theme="emerald"][data-theme-inverted="true"] .search-input,
+[data-theme="emerald"][data-theme-inverted="true"] .news-search-input,
+[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .search-input,
+[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .news-search-input {
+  background: #0b1120 !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  color: #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .news-ai-section-box,
+[data-theme="emerald"] .mobile-h5-app .news-ai-section-box {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dawn"] .news-sec-schedule .news-ai-section-title,
+[data-theme="emerald"] .news-sec-schedule .news-ai-section-title {
+  color: #0284c7 !important;
+}
+
+[data-theme="dawn"] .news-sec-features .news-ai-section-title,
+[data-theme="dawn"] .news-sec-debut .news-ai-section-title,
+[data-theme="emerald"] .news-sec-features .news-ai-section-title,
+[data-theme="emerald"] .news-sec-debut .news-ai-section-title {
+  color: #7e22ce !important;
+}
+
+[data-theme="dawn"] .news-sec-bonus .news-ai-section-title,
+[data-theme="dawn"] .news-sec-rewards .news-ai-section-title,
+[data-theme="emerald"] .news-sec-bonus .news-ai-section-title,
+[data-theme="emerald"] .news-sec-rewards .news-ai-section-title {
+  color: #b45309 !important;
+}
+
+[data-theme="dawn"] .news-sec-shop .news-ai-section-title,
+[data-theme="emerald"] .news-sec-shop .news-ai-section-title {
+  color: #a16207 !important;
+}
+
+[data-theme="dawn"] .news-sec-fixes .news-ai-section-title,
+[data-theme="dawn"] .news-sec-balance .news-ai-section-title,
+[data-theme="dawn"] .news-sec-general .news-ai-section-title,
+[data-theme="emerald"] .news-sec-fixes .news-ai-section-title,
+[data-theme="emerald"] .news-sec-balance .news-ai-section-title,
+[data-theme="emerald"] .news-sec-general .news-ai-section-title {
+  color: #15803d !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .news-ai-section-list,
+[data-theme="emerald"] .mobile-h5-app .news-ai-section-list {
+  color: #334155 !important;
+}
+
+/* 點擊日曆項目的跳轉高亮閃爍動畫 */
+@keyframes newsCardFlash {
+  0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.8); }
+  50% { box-shadow: 0 0 20px 4px rgba(99, 102, 241, 0.9); }
+  100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+}
+
+.news-card-highlight-flash {
+  animation: newsCardFlash 1.5s ease !important;
+}
+
+.mobile-h5-app .news-card-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  padding-top: 4px !important;
+}
+
+.mobile-h5-app .news-read-more-btn {
+  font-size: 11.5px !important;
+  padding: 4px 10px !important;
+  background: var(--color-primary, #6366f1) !important;
+  color: #fff !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+}
+
+/* ───  食材天梯單一食材排名浮窗 (Ingredient Output Ranking Modal) ─── */
+.clickable-ing-header {
+  cursor: pointer !important;
+  transition: transform 0.15s ease, filter 0.15s ease !important;
+}
+
+.clickable-ing-header:hover {
+  transform: scale(1.08) !important;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.4)) !important;
+}
+
+.ing-rank-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.ing-rank-dialog {
+  width: 100%;
+  max-width: 360px;
+  max-height: 80vh;
+  background: var(--bg-card-solid, var(--bg-dark, #0f172a));
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 20px rgba(56, 189, 248, 0.15);
+  overflow: hidden;
+  animation: ingRankModalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes ingRankModalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.ing-rank-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-card-inner, rgba(15, 23, 42, 0.8));
+}
+
+.ing-rank-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ing-rank-header-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.ing-rank-header-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ing-rank-header-energy {
+  font-size: 11px;
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.ing-rank-header-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.ing-rank-close-btn {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-card, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+
+.ing-rank-close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.ing-rank-body {
+  padding: 8px 10px 12px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ing-rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ing-rank-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 10px;
+  min-height: 42px;
+  border-radius: 8px;
+  background: var(--bg-card-inner, rgba(15, 23, 42, 0.6));
+  border: 1px solid var(--border-color);
+  box-sizing: border-box;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.ing-rank-card:hover {
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+.ing-rank-card.rank-1 {
+  background: linear-gradient(90deg, rgba(234, 179, 8, 0.14), var(--bg-card-inner, rgba(15, 23, 42, 0.6))) !important;
+  border-color: rgba(234, 179, 8, 0.45) !important;
+}
+
+.ing-rank-card.rank-2 {
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.12), var(--bg-card-inner, rgba(15, 23, 42, 0.6))) !important;
+  border-color: rgba(148, 163, 184, 0.35) !important;
+}
+
+.ing-rank-card.rank-3 {
+  background: linear-gradient(90deg, rgba(217, 119, 6, 0.12), var(--bg-card-inner, rgba(15, 23, 42, 0.6))) !important;
+  border-color: rgba(217, 119, 6, 0.35) !important;
+}
+
+.ing-rank-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ing-rank-num {
+  font-size: 13px;
+  font-weight: 800;
+  width: 24px;
+  text-align: center;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ing-rank-num.rank-1 {
+  color: #f59e0b !important;
+  font-size: 15px;
+}
+
+.ing-rank-num.rank-2 {
+  color: #cbd5e1 !important;
+  font-size: 14.5px;
+}
+
+.ing-rank-num.rank-3 {
+  color: #fb923c !important;
+  font-size: 14.5px;
+}
+
+.ing-rank-avatar-box {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  border-radius: 50% !important;
+  padding: 1.5px !important;
+  box-sizing: border-box !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.22) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  overflow: hidden !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
+}
+
+.ing-rank-avatar-box.rank-1 {
+  border: 2px solid #fbbf24 !important;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.6) !important;
+}
+
+.ing-rank-avatar-box.rank-2 {
+  border: 2px solid #cbd5e1 !important;
+  box-shadow: 0 0 8px rgba(203, 213, 225, 0.45) !important;
+}
+
+.ing-rank-avatar-box.rank-3 {
+  border: 2px solid #fb923c !important;
+  box-shadow: 0 0 8px rgba(251, 146, 60, 0.45) !important;
+}
+
+.ing-rank-avatar-box.rank-other {
+  border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.ing-rank-avatar-img {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+[data-theme="dawn"] .ing-rank-avatar-box,
+[data-theme="emerald"] .ing-rank-avatar-box {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+[data-theme="dawn"] .ing-rank-avatar-box.rank-1,
+[data-theme="emerald"] .ing-rank-avatar-box.rank-1 {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.45) !important;
+}
+
+[data-theme="dawn"] .ing-rank-avatar-box.rank-2,
+[data-theme="emerald"] .ing-rank-avatar-box.rank-2 {
+  border-color: #94a3b8 !important;
+  box-shadow: 0 0 6px rgba(148, 163, 184, 0.35) !important;
+}
+
+[data-theme="dawn"] .ing-rank-avatar-box.rank-3,
+[data-theme="emerald"] .ing-rank-avatar-box.rank-3 {
+  border-color: #ea580c !important;
+  box-shadow: 0 0 6px rgba(234, 88, 12, 0.35) !important;
+}
+
+.ing-rank-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.ing-rank-yield-line {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+.ing-rank-yield-num {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #10b981;
+  line-height: 1;
+}
+
+.ing-rank-yield-unit {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.ing-rank-split-line {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+  font-feature-settings: 'tnum';
+  margin-top: 1px;
+}
+
+.ing-rank-split-line .split-drop {
+  color: var(--text-secondary);
+}
+
+.ing-rank-split-line .split-skill {
+  color: #c084fc;
+  font-weight: 700;
+}
+
+.ing-rank-empty {
+  text-align: center;
+  padding: 24px 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+    MOBILE H5 DEDICATED POKÉMON BOX MODERN APP STYLING (SUBTABS & FAB)
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.mobile-h5-app #panel-box {
+  padding: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* 電腦版 寶可夢倉庫次級分頁切換列 (倉庫 vs 深度研究室) */
+body:not(.mobile-h5-app) .box-subnav-bar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  max-width: 1200px;
+  width: 92%;
+  margin: 20px auto 0 !important;
+  padding: 0 16px 2px !important;
+  border-bottom: 2px solid var(--border-color, rgba(255, 255, 255, 0.08)) !important;
+  background: transparent !important;
+  box-sizing: border-box !important;
+}
+
+body:not(.mobile-h5-app) .box-lab-content-container {
+  max-width: 1200px !important;
+  width: 92% !important;
+  margin: 20px auto 40px !important;
+  padding: 0 16px !important;
+  box-sizing: border-box !important;
+}
+
+body:not(.mobile-h5-app) .box-subnav-item {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 18px !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 3px solid transparent !important;
+  margin-bottom: -4px !important;
+  color: var(--text-muted, #94a3b8) !important;
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  border-radius: 6px 6px 0 0 !important;
+}
+
+body:not(.mobile-h5-app) .box-subnav-item:hover {
+  color: var(--text-primary, #f8fafc) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+body:not(.mobile-h5-app) .box-subnav-item.active {
+  color: var(--color-primary, #6366f1) !important;
+  border-bottom-color: var(--color-primary, #6366f1) !important;
+  background: transparent !important;
+}
+
+/* 1. 頂部 Segmented 子分頁切換列 (寶可夢倉庫 vs 深度研究室) */
+.mobile-h5-app .box-subnav-bar {
+  display: flex !important;
+  width: 100% !important;
+  background: var(--bg-header, var(--bg-card)) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 90 !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.mobile-h5-app .box-subnav-item {
+  flex: 1 1 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 11px 8px !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  position: relative !important;
+  transition: all 0.2s ease !important;
+  user-select: none !important;
+}
+
+.mobile-h5-app .box-subnav-item .subnav-icon {
+  font-size: 15px !important;
+  line-height: 1 !important;
+}
+
+.mobile-h5-app .box-subnav-item.active {
+  color: var(--color-primary, #6366f1) !important;
+}
+
+.mobile-h5-app .box-subnav-item.active::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 20% !important;
+  right: 20% !important;
+  height: 3px !important;
+  background: var(--color-primary, #6366f1) !important;
+  border-radius: 3px 3px 0 0 !important;
+}
+
+.mobile-h5-app .box-subpanel-view {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* 2. 單行精緻工具控制列 (佔 100% 寬度，左側排序選單，右側展示方式切換) */
+.mobile-h5-app .box-toolbar-control-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .box-toolbar-control-row select {
+  display: none !important;
+}
+
+.mobile-h5-app .box-toolbar-control-row .custom-select-container {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  display: block !important;
+  position: relative !important;
+}
+
+.mobile-h5-app .box-toolbar-control-row .custom-select-trigger {
+  height: 36px !important;
+  border-radius: 18px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  padding: 0 18px 0 14px !important;
+  cursor: pointer !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.mobile-h5-app .box-toolbar-control-row .custom-select-label {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  flex: 1 1 auto !important;
+  text-align: left !important;
+}
+
+.mobile-h5-app .box-toolbar-control-row .custom-select-arrow {
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-left: 8px !important;
+  color: var(--text-muted) !important;
+}
+
+.mobile-h5-app .box-toolbar-control-row .custom-select-menu {
+  position: absolute !important;
+  top: calc(100% + 4px) !important;
+  left: 0 !important;
+  width: 100% !important;
+  min-width: 180px !important;
+  background: var(--bg-card, #131b2e) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+  z-index: 100 !important;
+  max-height: 260px !important;
+  overflow-y: auto !important;
+}
+
+.mobile-h5-app .box-view-toggle-chips {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  gap: 2px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  padding: 3px !important;
+  border-radius: 10px !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.mobile-h5-app .view-chip-btn {
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  padding: 4px 9px !important;
+  height: 28px !important;
+  border-radius: 7px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  user-select: none !important;
+}
+
+.mobile-h5-app .view-chip-btn svg {
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .view-chip-btn.active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 4. 掃描進度指示條 (OCR Scanner Status) */
+.mobile-h5-app .box-scanner-status {
+  padding: 8px 10px !important;
+  border-radius: 10px !important;
+  background: rgba(99, 102, 241, 0.12) !important;
+  border: 1px solid rgba(99, 102, 241, 0.3) !important;
+  font-size: 11.5px !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .batch-ocr-progress-card {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .batch-ocr-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+}
+
+.mobile-h5-app .batch-ocr-bar-bg {
+  width: 100% !important;
+  height: 6px !important;
+  border-radius: 3px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .batch-ocr-bar-fill {
+  height: 100% !important;
+  background: var(--accent-gradient, #38bdf8) !important;
+  border-radius: 3px !important;
+  transition: width 0.2s ease !important;
+}
+
+.mobile-h5-app .batch-ocr-status-text {
+  font-size: 10.5px !important;
+  color: var(--text-muted) !important;
+}
+
+/* 5. 倉庫內容容器與列表完全鋪滿 (Edge-to-Edge List - 零左右下邊距完全延展) */
+.mobile-h5-app .box-content-container {
+  padding: 0 0 90px 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app #panel-box .box-content-container {
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app #panel-box #box-content-area {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app #panel-box .table-container {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-top: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08)) !important;
+  box-shadow: none !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  background: transparent !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+}
+
+.mobile-h5-app #panel-box .pokemon-table.box-table {
+  width: max-content !important;
+  min-width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border: none !important;
+}
+
+/* 倉庫表格表頭頂部置頂 (Sticky Table Header - 圖鑑與倉庫全面統一) */
+.mobile-h5-app #panel-box .pokemon-table.box-table thead th,
+.pokemon-table.box-table thead th {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
+  background-color: var(--table-th-solid, #0a0f1d) !important;
+}
+
+.mobile-h5-app #panel-box .pokemon-table.box-table thead .th-icon,
+.pokemon-table.box-table thead .th-icon {
+  position: sticky !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 35 !important;
+  background-color: var(--table-th-solid, #0a0f1d) !important;
+}
+
+.mobile-h5-app #panel-box .pokemon-table.box-table tbody .td-icon,
+.pokemon-table.box-table tbody .td-icon {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 15 !important;
+  background-color: inherit !important;
+}
+
+.pokemon-table.box-table tbody tr:nth-child(odd) td.td-icon {
+  background-color: var(--table-row-odd-solid, #0d1527) !important;
+}
+
+.pokemon-table.box-table tbody tr:nth-child(even) td.td-icon {
+  background-color: var(--table-row-even-solid, #131f38) !important;
+}
+
+.pokemon-table.box-table tbody tr:hover td.td-icon,
+.pokemon-table.box-table tbody tr:active td.td-icon {
+  background-color: var(--table-row-hover-solid, #1c2e52) !important;
+}
+
+/* 篩選器獨立排序選單 (Dropdown Inset Arrow Rule) */
+.box-sort-select {
+  width: 100% !important;
+  height: 38px !important;
+  border-radius: 10px !important;
+  background-color: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  padding: 0 38px 0 14px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 18px center !important;
+  background-size: 8px 5px !important;
+  cursor: pointer !important;
+}
+
+/* 寶可夢倉庫子分頁與深度研究室子分頁切換控制 (防止雙面板同時渲染干擾) */
+.mobile-h5-app #panel-box.box-lab-active #box-subpanel-list,
+.mobile-h5-app body.box-lab-active #box-subpanel-list,
+.mobile-h5-app #panel-box #box-subpanel-list[style*="display: none"],
+.mobile-h5-app #panel-box #box-subpanel-list[style*="display:none"],
+#panel-box.box-lab-active #box-subpanel-list,
+body.box-lab-active #box-subpanel-list {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  flex: 0 0 0% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app #panel-box:not(.box-lab-active) #box-subpanel-list:not([style*="display: none"]):not([style*="display:none"]) {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app #box-subpanel-list {
+  padding-bottom: 84px !important;
+}
+
+.mobile-h5-app #panel-box:not(.box-lab-active) #box-subpanel-lab,
+.mobile-h5-app body:not(.box-lab-active) #box-subpanel-lab,
+.mobile-h5-app #box-subpanel-lab[style*="display: none"],
+.mobile-h5-app #box-subpanel-lab[style*="display:none"],
+#panel-box:not(.box-lab-active) #box-subpanel-lab,
+body:not(.box-lab-active) #box-subpanel-lab {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  flex: 0 0 0% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app #panel-box.box-lab-active #box-subpanel-lab,
+.mobile-h5-app body.box-lab-active #box-subpanel-lab,
+#panel-box.box-lab-active #box-subpanel-lab,
+body.box-lab-active #box-subpanel-lab {
+  display: block !important;
+  visibility: visible !important;
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding-bottom: 84px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app #panel-box .box-cards-grid:not(:has(.table-container)),
+.mobile-h5-app #panel-box .box-grid {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 8px 10px 84px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .box-cards-grid,
+.mobile-h5-app .box-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+/* 6. 原生 App 寶可夢卡片 (App Box Card) */
+.mobile-h5-app .box-card {
+  background: var(--bg-card, #131b2e) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 14px !important;
+  padding: 10px 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 7px !important;
+  transition: all 0.2s ease !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .box-card-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .box-card-img-wrap {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  border-radius: 10px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-card-icon {
+  width: 38px !important;
+  height: 38px !important;
+  object-fit: contain !important;
+}
+
+.mobile-h5-app .box-card-info {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+
+.mobile-h5-app .box-card-name-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: nowrap !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .box-card-name {
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.mobile-h5-app .box-card-level {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: var(--color-primary, #818cf8) !important;
+  background: rgba(99, 102, 241, 0.15) !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-pr-badge {
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  padding: 1px 6px !important;
+  border-radius: 6px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-pr-badge-potential {
+  font-size: 8.5px !important;
+  font-weight: 500 !important;
+  padding: 0px 4px !important;
+  border-radius: 3px !important;
+  line-height: 1.1 !important;
+  background: rgba(148, 163, 184, 0.12) !important;
+  color: #94a3b8 !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-card-nickname {
+  font-size: 11px !important;
+  color: var(--text-muted) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.mobile-h5-app .box-card-tags {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin-top: 1px !important;
+}
+
+.mobile-h5-app .box-spec-tag {
+  font-size: 10px !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+}
+
+.mobile-h5-app .box-card-actions {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+}
+  font-weight: 700 !important;
+  box-sizing: border-box !important;
+}
+
+/* 食材組合橫向條：嚴格單行展示，去除多餘外框與留白 */
+.mobile-h5-app .mobile-box-sheet .box-ing-strip {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2px 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-ing-slot-group {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 3px !important;
+  flex: 0 0 auto !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-ing-lvl-tag {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  padding: 1px 4px !important;
+  border-radius: 4px !important;
+  line-height: 16px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-ing-options-list {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 3px !important;
+  flex: 0 0 auto !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-ing-opt-btn {
+  width: 27px !important;
+  height: 27px !important;
+  min-width: 27px !important;
+  min-height: 27px !important;
+  padding: 2px !important;
+  border-radius: 6px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1.5px solid var(--border-color) !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  transition: all 0.15s ease !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-ing-opt-btn.active {
+  border-color: var(--color-primary, #6366f1) !important;
+  background: rgba(99, 102, 241, 0.15) !important;
+  box-shadow: 0 0 0 1px var(--color-primary, #6366f1) !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-ing-opt-icon {
+  width: 20px !important;
+  height: 20px !important;
+  object-fit: contain !important;
+}
+
+/* 副技能插槽 5 格 */
+.mobile-h5-app .mobile-box-sheet .box-subskill-slots-row {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 4px !important;
+  width: 100% !important;
+  margin: 2px 0 6px 0 !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-subskill-slot-btn {
+  padding: 4px 2px !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 2px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1.5px solid var(--border-color) !important;
+  cursor: pointer !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-subskill-slot-btn.active {
+  border-color: var(--color-primary, #6366f1) !important;
+  box-shadow: 0 0 0 1px var(--color-primary, #6366f1) !important;
+  background: rgba(99, 102, 241, 0.1) !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .slot-lvl-header {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+  line-height: 1 !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .slot-val-badge {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  padding: 1px 2px !important;
+}
+
+/*  副技能選擇盤：4 個一行，無多餘外框 */
+.mobile-h5-app .mobile-box-sheet .box-subskill-palette {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .subskill-tier-section {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .subskill-tier-label {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  padding-left: 2px !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .subskill-chips-row {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 4px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-subskill-chip {
+  padding: 6px 2px !important;
+  border-radius: 6px !important;
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  cursor: pointer !important;
+  line-height: 1.2 !important;
+}
+
+/* 彈窗底部固定儲存欄：徹底去除灰色外框與邊界線 */
+.mobile-h5-app .mobile-box-sheet .box-modal-footer,
+#box-edit-modal .box-modal-footer {
+  display: none !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-btn {
+  height: 40px !important;
+  border-radius: 10px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  border: none !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-btn-secondary {
+  background: rgba(148, 163, 184, 0.15) !important;
+  border: none !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .box-btn-primary {
+  background: var(--accent-gradient, linear-gradient(135deg, #6366f1, #38bdf8)) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4) !important;
+}
+
+/*  亮色主題自適應 (Dawn & Emerald) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet {
+  background: #ffffff !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-form-input,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-form-select,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-subskill-slot-btn,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-ing-opt-btn,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-close,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-form-input,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-form-select,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-subskill-slot-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-ing-opt-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-close {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-btn-secondary,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-btn-secondary {
+  background: #f1f5f9 !important;
+  border: none !important;
+  color: #475569 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-footer,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .mobile-box-sheet .box-modal-footer {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* ==========================================================================
+   Mobile H5 App Adaptation (.mobile-h5-app)
+   ========================================================================== */
+
+.mobile-h5-app #wiki-subpanel-items {
+  padding: 10px 12px calc(80px + env(safe-area-inset-bottom, 0px)) 12px !important;
+  margin: 0 !important;
+  width: 100% !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .wiki-items-control-bar {
+  margin-bottom: 10px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .wiki-items-search-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .wiki-items-search-box {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.mobile-h5-app .wiki-items-search-input {
+  height: 38px !important;
+  line-height: 38px !important;
+  font-size: 13px !important;
+  padding: 0 32px 0 32px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .wiki-items-search-icon {
+  left: 10px !important;
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.mobile-h5-app .wiki-items-count-badge-wrapper {
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .wiki-items-count-badge {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  height: 38px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 10px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+}
+
+/* Mobile H5 Horizontal Scrollable Filter Pills (Zero Scrollbar) */
+.mobile-h5-app .wiki-items-filter-pills {
+  display: flex !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  gap: 6px !important;
+  padding: 2px 0 4px 0 !important;
+  align-items: center !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .wiki-items-filter-pills::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.mobile-h5-app .wiki-items-filter-pills .wiki-pill-btn {
+  padding: 5px 12px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  border-radius: 18px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  min-height: 30px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Mobile H5 2-Column Responsive Card Grid */
+.mobile-h5-app .wiki-item-card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 8px !important;
+  padding: 0 0 8px 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 320px) {
+  .mobile-h5-app .wiki-item-card-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Mobile H5 Touch Card Styling */
+.mobile-h5-app .wiki-item-card {
+  padding: 8px 10px !important;
+  border-radius: 12px !important;
+  gap: 4px !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  -webkit-tap-highlight-color: transparent !important;
+  user-select: none !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .wiki-item-card:active {
+  transform: scale(0.98) !important;
+  background-color: var(--bg-card-hover) !important;
+}
+
+.mobile-h5-app .wiki-item-card-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .wiki-item-card-icon-wrap {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .wiki-item-card-title-group {
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+
+.mobile-h5-app .wiki-item-card-name {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.mobile-h5-app .wiki-item-card-badge-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  flex-wrap: nowrap !important;
+}
+
+.mobile-h5-app .wiki-item-cat-badge {
+  font-size: 9px !important;
+  padding: 1px 5px !important;
+  line-height: 1.2 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Stat Row & Highlight in Mobile H5 */
+.mobile-h5-app .wiki-item-card-stat-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 4px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  flex-wrap: nowrap !important;
+}
+
+.mobile-h5-app .wiki-item-stat-badge {
+  display: inline-flex !important;
+  align-items: baseline !important;
+  gap: 3px !important;
+  padding: 2px 6px !important;
+  border-radius: 5px !important;
+  font-size: 10px !important;
+  flex-shrink: 1 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .wiki-item-stat-number {
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+.mobile-h5-app .wiki-item-stat-unit {
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+}
+
+.mobile-h5-app .wiki-item-stat-divider {
+  font-size: 9.5px !important;
+  margin: 0 1px !important;
+}
+
+.mobile-h5-app .wiki-item-stat-label {
+  font-size: 9.5px !important;
+  white-space: nowrap !important;
+}
+
+/* Card Description in Mobile H5 (Hidden on Cards) */
+.mobile-h5-app .wiki-item-card-desc {
+  display: none !important;
+}
+
+/* Evolution Targets Section in Mobile H5 (Borderless, No Dividing Line, No Name, 24px) */
+.mobile-h5-app .wiki-item-card-evosection {
+  width: 100% !important;
+  margin-top: auto !important;
+  padding-top: 0 !important;
+  border-top: none !important;
+}
+
+.mobile-h5-app .wiki-item-evo-chips {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  padding: 1px 0 !important;
+}
+
+.mobile-h5-app .wiki-item-evo-chip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-width: 0 !important;
+  border-radius: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.mobile-h5-app .wiki-item-evo-avatar {
+  width: 24px !important;
+  height: 24px !important;
+  object-fit: contain !important;
+  display: block !important;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.35)) !important;
+}
+
+.mobile-h5-app .wiki-item-evo-name {
+  display: none !important;
+}
+
+/* Detail Modal Associated Pokemon in Mobile H5 */
+.mobile-h5-app .wiki-item-pokemon-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .wiki-item-pkm-card {
+  padding: 6px 8px !important;
+  gap: 6px !important;
+  border-radius: 8px !important;
+}
+
+.mobile-h5-app .wiki-item-pkm-avatar {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.mobile-h5-app .wiki-item-pkm-no {
+  font-size: 10px !important;
+}
+
+.mobile-h5-app .wiki-item-pkm-name {
+  font-size: 12px !important;
+}

@@ -1,0 +1,3095 @@
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.pokedex-slider:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+}
+
+.pokedex-track-pins-bar {
+  position: relative;
+  width: 100%;
+  height: 18px;
+  margin-top: 5px;
+}
+
+.pokedex-track-pin-btn {
+  position: absolute;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  color: var(--text-muted, #94a3b8);
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.pokedex-track-pin-btn[data-pin-lv="100"] {
+  transform: translateX(-100%);
+}
+
+.track-pin-tick {
+  width: 2px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.25);
+  margin-bottom: 3px;
+  border-radius: 1px;
+  transition: all 0.15s ease;
+}
+
+.track-pin-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  font-family: monospace, system-ui, -apple-system;
+}
+
+.pokedex-track-pin-btn.pin-milestone .track-pin-tick {
+  height: 5px;
+  background: rgba(56, 189, 248, 0.5);
+}
+
+.pokedex-track-pin-btn.pin-milestone .track-pin-label {
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.pokedex-track-pin-btn.active .track-pin-tick {
+  background: #38bdf8;
+  height: 6px;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.7);
+}
+
+.pokedex-track-pin-btn.active .track-pin-label {
+  color: #ffffff;
+  font-weight: 900;
+  text-shadow: 0 0 6px rgba(56, 189, 248, 0.8);
+}
+
+.pokedex-track-pin-btn:hover .track-pin-label {
+  color: #ffffff;
+}
+
+.pokedex-track-pin-btn.pin-cap .track-pin-tick {
+  height: 6px;
+  background: #38bdf8;
+  box-shadow: 0 0 5px rgba(56, 189, 248, 0.6);
+}
+
+.pokedex-track-pin-btn.pin-cap .track-pin-label {
+  color: #38bdf8;
+  font-weight: 800;
+}
+
+/* 尚未開放等級之圖釘效果 (Lv.70, Lv.80, Lv.100) - 全數統一文字顏色與外觀樣式 */
+.pokedex-track-pin-btn.pin-unreleased .track-pin-tick {
+  width: 2px;
+  height: 5px;
+  background: rgba(56, 189, 248, 0.5);
+  margin-bottom: 3px;
+  border-radius: 1px;
+  border: none;
+}
+
+.pokedex-track-pin-btn.pin-unreleased .track-pin-label {
+  color: #38bdf8;
+  font-weight: 700;
+  border-bottom: none;
+  line-height: 1;
+}
+
+.pokedex-track-pin-btn.pin-unreleased:hover .track-pin-label {
+  color: #ffffff;
+}
+
+.pokedex-track-pin-btn.pin-unreleased.active .track-pin-tick {
+  background: #38bdf8;
+  height: 6px;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.7);
+  border: none;
+}
+
+.pokedex-track-pin-btn.pin-unreleased.active .track-pin-label {
+  color: #ffffff;
+  font-weight: 900;
+  text-shadow: 0 0 6px rgba(56, 189, 248, 0.8);
+  border-bottom: none;
+}
+
+/* 等級提示標籤 - 尚未開放 Pill */
+.pokedex-unreleased-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9.5px;
+  font-weight: 600;
+  padding: 0 5px;
+  height: 17px;
+  line-height: 15px;
+  border-radius: 4px;
+  background: rgba(245, 158, 11, 0.16);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  margin-left: 5px;
+  vertical-align: middle;
+  letter-spacing: 0.3px;
+}
+
+.pokedex-unreleased-pill.hidden {
+  display: none !important;
+}
+
+/* 副技能插槽外框樣式統一 (所有插槽均使用一致的實線邊框與背景) */
+#pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased,
+.box-subskill-slot-btn.slot-unreleased {
+  border-style: solid !important;
+  border-color: var(--border-color, rgba(255, 255, 255, 0.12)) !important;
+  background: var(--bg-card-inner, #1e293b) !important;
+}
+
+#pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased.slot-under-lvl,
+.box-subskill-slot-btn.slot-unreleased.slot-under-lvl {
+  opacity: 0.85;
+}
+
+#pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased:hover,
+.box-subskill-slot-btn.slot-unreleased:hover {
+  border-color: rgba(148, 163, 184, 0.5) !important;
+  opacity: 1;
+}
+
+#pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased.active,
+.box-subskill-slot-btn.slot-unreleased.active {
+  border-style: solid !important;
+  border-color: #38bdf8 !important;
+  opacity: 1 !important;
+}
+
+.slot-unreleased-tag {
+  display: inline-block;
+  font-size: 8.5px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(148, 163, 184, 0.16);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.32);
+  margin-left: 3px;
+  vertical-align: middle;
+}
+
+/* 等級不足與效果尚未生效之專用標籤 (紅色調、飽和度契合主題不刺眼) */
+.slot-unreleased-tag.slot-tag-under-lvl,
+.slot-unreleased-tag.slot-tag-inactive,
+.slot-unreleased-tag.slot-tag-unreleased {
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.32);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.box-subskill-pill.pill-inactive {
+  opacity: 0.55;
+  filter: grayscale(35%);
+  text-decoration: line-through;
+  text-decoration-color: rgba(239, 68, 68, 0.85);
+  text-decoration-thickness: 1.5px;
+}
+
+.box-subskill-slot-btn.slot-effect-inactive {
+  opacity: 0.9;
+}
+
+.slot-val-badge.slot-val-unreleased {
+  color: #94a3b8 !important;
+  font-style: italic;
+  letter-spacing: 0.2px;
+}
+
+/* 紅色鎖定圖釘效果 (低於最低進化等級區間) */
+.pokedex-track-pin-btn.pin-locked {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.pokedex-track-pin-btn.pin-locked .track-pin-tick {
+  background: #ef4444 !important;
+  height: 5px;
+  box-shadow: 0 0 4px rgba(239, 68, 68, 0.5);
+}
+
+.pokedex-track-pin-btn.pin-locked .track-pin-label {
+  color: #ef4444 !important;
+  text-decoration: line-through;
+  font-weight: 600;
+}
+
+/* 最低進化等級門檻圖釘效果 */
+.pokedex-track-pin-btn.pin-threshold .track-pin-tick {
+  background: #ef4444;
+  height: 6px;
+  box-shadow: 0 0 5px rgba(239, 68, 68, 0.7);
+}
+
+.pokedex-track-pin-btn.pin-threshold .track-pin-label {
+  color: #f87171;
+  font-weight: 800;
+}
+
+.box-mainskill-select-wrap {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.box-mainskill-select-wrap .custom-select-container {
+  width: 90px !important;
+  min-width: 90px !important;
+}
+
+.pokedex-level-num-input {
+  width: 52px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: var(--bg-card-inner, rgba(0, 0, 0, 0.2));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  color: var(--text-primary, #f8fafc);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.pokedex-level-num-input:focus {
+  border-color: var(--accent-blue, #38bdf8);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+}
+
+.pokedex-ctrl-grid-3 {
+  display: grid;
+  grid-template-columns: 1.3fr 0.9fr 1.4fr;
+  gap: 10px;
+}
+
+.pokedex-ctrl-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* 下拉選單向下箭頭規範 (Rule VI: 右側內縮 36px, 向下正對展開) */
+.pokedex-custom-select {
+  background-color: var(--bg-input, var(--bg-card-inner, #1e293b));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  border-radius: 7px;
+  padding: 6px 36px 6px 10px !important;
+  color: var(--text-primary, #f8fafc);
+  font-size: 12px;
+  outline: none;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+  height: 32px;
+  padding-right: 36px !important;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 18px center !important;
+  background-size: 8px 5px !important;
+  cursor: pointer;
+}
+
+.pokedex-custom-select:focus {
+  border-color: var(--accent-blue, #38bdf8);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+}
+
+/* 食材組合網格 */
+.pokedex-ing-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.pokedex-ing-slot-box {
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.06));
+  border-radius: 8px;
+  padding: 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition: opacity 0.2s ease;
+  min-width: 0;
+}
+
+.pokedex-ing-slot-box.slot-locked {
+  opacity: 0.55;
+}
+
+.pokedex-ing-slot-box .slot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pokedex-ing-slot-box .slot-lv-tag {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--accent-blue, #38bdf8);
+}
+
+.pokedex-ing-slot-box .slot-lock-text {
+  font-size: 9.5px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.pokedex-ing-select {
+  font-size: 11.5px;
+  height: 30px;
+  padding-right: 32px !important;
+  background-position: right 14px center !important;
+  background-size: 8px 5px !important;
+}
+
+/* 副技能五插槽網格 */
+.pokedex-subskills-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.pokedex-subskill-slot {
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.06));
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  transition: opacity 0.2s ease;
+}
+
+.pokedex-subskill-slot.subskill-locked {
+  opacity: 0.55;
+}
+
+.subskill-slot-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.subskill-lv-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.subskill-status-locked {
+  font-size: 9px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.pokedex-subskill-select {
+  font-size: 11px;
+  height: 28px;
+  padding: 3px 28px 3px 6px !important;
+  background-position: right 13px center !important;
+  background-size: 8px 5px !important;
+}
+
+/* 食材產能算法拆解卡片 (Rule IX: 全域單層外框規範 - 移除最外框與內距) */
+.pokedex-calc-formula-card {
+  grid-column: 1 / -1;
+  width: 100%;
+  box-sizing: border-box;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin-top: 4px;
+}
+
+.pokedex-formula-inner {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pokedex-formula-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0 !important;
+  border-bottom: none !important;
+}
+
+.pokedex-formula-badge {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--accent-blue, #0284c7);
+  letter-spacing: 0.3px;
+}
+
+.pokedex-formula-subdesc {
+  display: none !important;
+}
+
+.pokedex-formula-total-badge {
+  font-size: 12.5px;
+  color: var(--text-secondary, #64748b);
+}
+
+.pokedex-formula-total-badge strong {
+  font-size: 15.5px;
+  color: #10b981;
+  font-family: monospace, system-ui, -apple-system;
+}
+
+/* 網頁版副技能展開按鈕維持隱藏，預設直接展示三大方框 */
+.pokedex-subskill-toggle-btn {
+  display: none !important;
+}
+
+/* ─── 活力 0.45x 係數與擴鍋預測說明按鈕與浮窗 (Help Button & Popover) ─── */
+.slider-label-with-help {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pokedex-formula-help-btn,
+.ladder-formula-help-btn,
+.pot-expansion-help-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  flex-shrink: 0;
+}
+
+.pokedex-formula-help-btn:focus,
+.ladder-formula-help-btn:focus,
+.pot-expansion-help-btn:focus,
+.pokedex-formula-help-btn:focus-visible,
+.ladder-formula-help-btn:focus-visible,
+.pot-expansion-help-btn:focus-visible {
+  outline: none !important;
+  box-shadow: none;
+}
+
+.pokedex-formula-help-btn.active,
+.ladder-formula-help-btn.active,
+.pot-expansion-help-btn.active {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5) !important;
+  transform: scale(1.08);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pokedex-formula-help-btn:hover,
+  .ladder-formula-help-btn:hover,
+  .pot-expansion-help-btn:hover {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #0284c7;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+    transform: scale(1.08);
+  }
+}
+
+.pokedex-formula-help-btn:active,
+.ladder-formula-help-btn:active,
+.pot-expansion-help-btn:active {
+  transform: scale(0.95);
+}
+
+/* 圖鑑彈窗內之說明浮窗：與標題列正對下展開，寬度隨卡片自適應且絕不被切掉 */
+.pokedex-energy-help-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-width: 420px;
+  width: auto;
+  z-index: 999;
+}
+
+/* 天梯篩選器側邊欄頂部之說明浮窗：嚴格位於標題列下方，寬度限制在側邊欄內 */
+.ladder-energy-help-popover {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 8px;
+  right: 8px;
+  z-index: 100000 !important;
+}
+
+.pokedex-energy-help-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: transparent;
+}
+
+.pokedex-energy-help-bubble {
+  position: relative;
+  z-index: 2;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: #e2e8f0;
+  word-break: break-word;
+  box-sizing: border-box;
+}
+
+.ladder-energy-help-bubble {
+  padding: 8px 10px;
+  font-size: 11px;
+  line-height: 1.5;
+  background: #0d1527 !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8) !important;
+}
+
+.ladder-skill-tooltip-bubble {
+  padding: 8px 10px;
+  font-size: 11px;
+  line-height: 1.5;
+  border-radius: 6px;
+  background: #0d1527 !important;
+  border: 1px solid rgba(168, 85, 247, 0.4) !important;
+  color: #f1f5f9 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8) !important;
+}
+
+[data-theme="onyx"] .ladder-skill-tooltip-bubble {
+  background: #09090b !important;
+  border: 1px solid rgba(168, 85, 247, 0.4) !important;
+}
+
+[data-theme="dawn"] .ladder-skill-tooltip-bubble,
+[data-theme="emerald"] .ladder-skill-tooltip-bubble {
+  background: #ffffff !important;
+  border: 1px solid #a855f7 !important;
+  color: #1e293b !important;
+}
+
+.energy-help-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #38bdf8;
+  margin-bottom: 5px;
+}
+
+.energy-help-body {
+  font-size: 11.5px;
+  color: #cbd5e1;
+}
+
+.ladder-energy-help-bubble .energy-help-body {
+  font-size: 11px;
+}
+
+/* 淺色模式與反轉模式的浮窗配色 (Dawn, Emerald, Inverted) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-energy-help-bubble,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-energy-help-bubble,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-energy-help-bubble,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-energy-help-bubble {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  color: #1e293b !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .energy-help-title,
+[data-theme="midnight"][data-theme-inverted="true"] .energy-help-title {
+  color: #0284c7 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .energy-help-body,
+[data-theme="midnight"][data-theme-inverted="true"] .energy-help-body {
+  color: #475569 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .energy-help-body .text-accent,
+[data-theme="midnight"][data-theme-inverted="true"] .energy-help-body .text-accent {
+  color: #0284c7 !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-energy-help-bubble,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-energy-help-bubble {
+  background: #ffffff !important;
+  border: 1px solid #a7f3d0 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+  color: #064e3b !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .energy-help-title {
+  color: #059669 !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .energy-help-body {
+  color: #374151 !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .energy-help-body .text-accent {
+  color: #059669 !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-energy-help-bubble,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .ladder-energy-help-bubble {
+  background: #141417 !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7) !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .energy-help-title {
+  color: #f1f5f9 !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .energy-help-body {
+  color: #a1a1aa !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .energy-help-body .text-accent {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-energy-help-bubble,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-energy-help-bubble {
+  background: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+  color: #18181b !important;
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .energy-help-title {
+  color: #09090b !important;
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .energy-help-body {
+  color: #52525b !important;
+}
+
+/* 按鈕各主題配色適配 */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-formula-help-btn,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pot-expansion-help-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-formula-help-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-formula-help-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .pot-expansion-help-btn {
+  border-color: rgba(2, 132, 199, 0.4);
+  background: rgba(2, 132, 199, 0.08);
+  color: #0284c7;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn.active,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-formula-help-btn.active,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pot-expansion-help-btn.active,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-formula-help-btn.active,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-formula-help-btn.active,
+[data-theme="midnight"][data-theme-inverted="true"] .pot-expansion-help-btn.active {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 8px rgba(2, 132, 199, 0.35) !important;
+  transform: scale(1.08);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn:hover,
+  [data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-formula-help-btn:hover,
+  [data-theme="dawn"]:not([data-theme-inverted="true"]) .pot-expansion-help-btn:hover,
+  [data-theme="midnight"][data-theme-inverted="true"] .pokedex-formula-help-btn:hover,
+  [data-theme="midnight"][data-theme-inverted="true"] .ladder-formula-help-btn:hover,
+  [data-theme="midnight"][data-theme-inverted="true"] .pot-expansion-help-btn:hover {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #0284c7;
+    box-shadow: 0 0 8px rgba(2, 132, 199, 0.35);
+  }
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-formula-help-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pot-expansion-help-btn {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn.active,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-formula-help-btn.active,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pot-expansion-help-btn.active {
+  background: #059669 !important;
+  color: #ffffff !important;
+  border-color: #059669 !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.35) !important;
+  transform: scale(1.08);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-formula-help-btn:hover,
+  [data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-formula-help-btn:hover,
+  [data-theme="emerald"]:not([data-theme-inverted="true"]) .pot-expansion-help-btn:hover {
+    background: #059669;
+    color: #ffffff;
+    border-color: #059669;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.35);
+  }
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-formula-help-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-formula-help-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .pot-expansion-help-btn {
+  border-color: rgba(24, 24, 27, 0.35);
+  background: rgba(24, 24, 27, 0.08);
+  color: #18181b;
+}
+
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-formula-help-btn.active,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-formula-help-btn.active,
+[data-theme="onyx"][data-theme-inverted="true"] .pot-expansion-help-btn.active {
+  background: #18181b !important;
+  color: #ffffff !important;
+  border-color: #18181b !important;
+  box-shadow: 0 0 8px rgba(24, 24, 27, 0.35) !important;
+  transform: scale(1.08);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="onyx"][data-theme-inverted="true"] .pokedex-formula-help-btn:hover,
+  [data-theme="onyx"][data-theme-inverted="true"] .ladder-formula-help-btn:hover,
+  [data-theme="onyx"][data-theme-inverted="true"] .pot-expansion-help-btn:hover {
+    background: #18181b;
+    color: #ffffff;
+    border-color: #18181b;
+    box-shadow: 0 0 8px rgba(24, 24, 27, 0.35);
+  }
+}
+
+/* 算法拆解跨步驟數值色彩連動系統 (Cross-Step Value Lineage) */
+#pokedex-detail-modal .calc-color-helps,
+.pokedex-calc-unified-box .calc-color-helps,
+.calc-color-helps {
+  color: #0284c7 !important;
+}
+#pokedex-detail-modal .calc-color-ing,
+.pokedex-calc-unified-box .calc-color-ing,
+.calc-color-ing {
+  color: #059669 !important;
+}
+#pokedex-detail-modal .calc-color-skill,
+.pokedex-calc-unified-box .calc-color-skill,
+.calc-color-skill {
+  color: #7c3aed !important;
+}
+#pokedex-detail-modal .calc-color-yield,
+.pokedex-calc-unified-box .calc-color-yield,
+.calc-color-yield {
+  color: #d97706 !important;
+}
+#pokedex-detail-modal .calc-color-triggers,
+.pokedex-calc-unified-box .calc-color-triggers,
+.calc-color-triggers {
+  color: #db2777 !important;
+}
+#pokedex-detail-modal .calc-color-berry,
+.pokedex-calc-unified-box .calc-color-berry,
+.calc-color-berry {
+  color: #d97706 !important;
+}
+#pokedex-detail-modal .calc-color-berry-fav,
+.pokedex-calc-unified-box .calc-color-berry-fav,
+.calc-color-berry-fav {
+  color: #b45309 !important;
+}
+
+[data-theme="midnight"] #pokedex-detail-modal .calc-color-helps,
+[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-helps,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-helps,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-helps,
+[data-theme="midnight"] .calc-color-helps {
+  color: #38bdf8 !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-color-helps,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box .calc-color-helps,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .calc-color-helps {
+  color: #e2e8f0 !important;
+}
+[data-theme="midnight"] #pokedex-detail-modal .calc-color-ing,
+[data-theme="onyx"] #pokedex-detail-modal .calc-color-ing,
+[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-ing,
+[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-ing,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-ing,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-ing,
+[data-theme="midnight"] .calc-color-ing,
+[data-theme="onyx"] .calc-color-ing {
+  color: #34d399 !important;
+}
+[data-theme="midnight"] #pokedex-detail-modal .calc-color-skill,
+[data-theme="onyx"] #pokedex-detail-modal .calc-color-skill,
+[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-skill,
+[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-skill,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-skill,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-skill,
+[data-theme="midnight"] .calc-color-skill,
+[data-theme="onyx"] .calc-color-skill {
+  color: #c084fc !important;
+}
+[data-theme="midnight"] #pokedex-detail-modal .calc-color-yield,
+[data-theme="onyx"] #pokedex-detail-modal .calc-color-yield,
+[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-yield,
+[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-yield,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-yield,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-yield,
+[data-theme="midnight"] .calc-color-yield,
+[data-theme="onyx"] .calc-color-yield {
+  color: #fbbf24 !important;
+}
+[data-theme="midnight"] #pokedex-detail-modal .calc-color-triggers,
+[data-theme="onyx"] #pokedex-detail-modal .calc-color-triggers,
+[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-triggers,
+[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-triggers,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-triggers,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-triggers,
+[data-theme="midnight"] .calc-color-triggers,
+[data-theme="onyx"] .calc-color-triggers {
+  color: #f472b6 !important;
+}
+[data-theme="midnight"] #pokedex-detail-modal .calc-color-berry,
+[data-theme="onyx"] #pokedex-detail-modal .calc-color-berry,
+[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-berry,
+[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-berry,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-berry,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-berry,
+[data-theme="midnight"] .calc-color-berry,
+[data-theme="onyx"] .calc-color-berry {
+  color: #fbbf24 !important;
+}
+[data-theme="midnight"] #pokedex-detail-modal .calc-color-berry-fav,
+[data-theme="onyx"] #pokedex-detail-modal .calc-color-berry-fav,
+[data-theme="midnight"] .pokedex-calc-unified-box .calc-color-berry-fav,
+[data-theme="onyx"] .pokedex-calc-unified-box .calc-color-berry-fav,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-berry-fav,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-color-berry-fav,
+[data-theme="midnight"] .calc-color-berry-fav,
+[data-theme="onyx"] .calc-color-berry-fav {
+  color: #f59e0b !important;
+}
+
+/* 單一整合計算卡片 (白底、單層外框、大字體、高清晰度) */
+.pokedex-calc-unified-box {
+  background: #ffffff;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.unified-calc-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-bottom: 2px;
+  border-bottom: none !important;
+}
+
+.unified-calc-row:last-child {
+  padding-bottom: 0;
+  border-bottom: none !important;
+}
+
+.calc-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.calc-row-label {
+  font-size: 13.5px;
+  color: var(--text-primary, #1e293b);
+  font-weight: 700;
+}
+
+.calc-row-result {
+  font-size: 14px;
+  font-family: monospace, system-ui, -apple-system;
+}
+
+.calc-row-formula {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  font-size: 12.5px;
+  font-family: monospace, -apple-system, system-ui;
+  color: var(--text-secondary, #475569);
+  background: #ffffff;
+  padding: 2px 0;
+  line-height: 1.4;
+}
+
+.calc-row-stats-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-secondary, #475569);
+}
+
+.calc-row-header-values {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: monospace, system-ui, -apple-system;
+}
+
+.calc-val-main {
+  font-size: 14.5px;
+  font-weight: 700;
+}
+
+.calc-val-sep {
+  font-size: 12px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.calc-val-sub {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.formula-derive {
+  font-size: 12px;
+  color: var(--text-muted, #64748b);
+  margin-left: 2px;
+}
+
+.formula-derive strong:not([class*="calc-color-"]) {
+  color: var(--text-primary, #1e293b);
+}
+
+.calc-row-subskill-extra {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.badge-skill-extra {
+  background: var(--bg-muted, #f1f5f9);
+  color: var(--text-secondary, #475569);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.text-skill-extra {
+  font-size: 12px;
+}
+
+.text-skill-single {
+  font-size: 11px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.calc-stat-sub {
+  font-size: 12.5px;
+}
+
+.calc-stat-base {
+  font-size: 11.5px;
+  color: var(--text-muted, #94a3b8);
+}
+
+/* 兼容歷史測試之橫向排列容器 */
+.pokedex-formula-steps-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.pokedex-calc-step {
+  background: #ffffff;
+  border: 1px solid var(--border-color-subtle, #e2e8f0);
+  border-radius: 6px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.step-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.step-index {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: var(--accent-blue, #38bdf8);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-index-skill {
+  background: #a855f7 !important;
+}
+
+.step-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary, #f8fafc);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.step-result-badge {
+  font-size: 12px;
+  font-family: monospace, system-ui, -apple-system;
+  flex-shrink: 0;
+}
+
+.step-formula-code {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3.5px;
+  font-size: 11px;
+  font-family: monospace, -apple-system, system-ui;
+  color: var(--text-secondary, #94a3b8);
+  background: #ffffff;
+  padding: 4px 7px;
+  border-radius: 5px;
+  line-height: 1.35;
+}
+
+.formula-var {
+  color: var(--text-primary, #f8fafc);
+  font-weight: 600;
+}
+
+.formula-op {
+  color: var(--text-muted, #64748b);
+  font-weight: 700;
+}
+
+.formula-bracket {
+  color: var(--text-muted, #64748b);
+}
+
+.formula-res {
+  font-weight: 700;
+}
+
+.text-accent {
+  color: var(--accent-blue, #38bdf8) !important;
+}
+
+.text-success {
+  color: #10b981 !important;
+}
+
+.text-gold {
+  color: #f59e0b !important;
+}
+
+.pokedex-yield-items-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 1px;
+}
+
+.pokedex-yield-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #ffffff;
+  border: 1px solid var(--border-color-subtle, #e2e8f0);
+  border-radius: 5px;
+  padding: 2px 6px;
+  min-width: 0;
+}
+
+.yield-pill-img {
+  width: 17px;
+  height: 17px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.yield-pill-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary, #1e293b);
+  max-width: 65px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.yield-pill-count {
+  font-size: 11.5px;
+  font-family: monospace, system-ui, -apple-system;
+}
+
+.pokedex-berry-yield-pill .yield-pill-name {
+  max-width: 100px;
+}
+
+.pokedex-berry-yield-pill .yield-pill-sub {
+  font-size: 11px;
+  color: var(--text-muted, #64748b);
+  margin-left: 2px;
+}
+
+.berry-row-detail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 1px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-secondary, #475569);
+}
+
+.berry-detail-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.pokedex-skill-extra-yield-compact {
+  margin-top: 2px;
+  padding: 3px 8px;
+  background: rgba(56, 189, 248, 0.06);
+  border: 1px dashed rgba(56, 189, 248, 0.3);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 10px;
+}
+
+.extra-skill-tag {
+  color: var(--accent-blue, #38bdf8);
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.extra-skill-desc {
+  color: var(--text-secondary, #94a3b8);
+  font-size: 10px;
+}
+
+/* 寶可夢特性定位與最佳適配副技能指南卡片 (外框左上結合標題膠囊) */
+.strategy-card-title {
+  position: absolute !important;
+  top: -8.5px !important;
+  left: 12px !important;
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  padding: 1px 8px !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+  letter-spacing: 0.4px !important;
+  white-space: nowrap !important;
+  z-index: 2 !important;
+  margin: 0 !important;
+}
+
+.strategy-card-title.pokedex-formula-badge {
+  font-size: 10.5px !important;
+  color: #ffffff !important;
+}
+
+.pokedex-strategy-card {
+  position: relative !important;
+  margin-top: 13px !important;
+  margin-bottom: 2px !important;
+  background: rgba(56, 189, 248, 0.05) !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  border-radius: 8px !important;
+  padding: 10px 10px 8px 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  box-shadow: none !important;
+}
+
+.pokedex-calc-unified-box .pokedex-strategy-card,
+#pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+#modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
+  position: relative !important;
+  margin-top: 13px !important;
+  margin-bottom: 2px !important;
+  background: rgba(56, 189, 248, 0.05) !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  border-radius: 8px !important;
+  padding: 10px 10px 8px 10px !important;
+  box-shadow: none !important;
+  gap: 4px !important;
+}
+
+[data-theme="emerald"] .strategy-card-title,
+[data-theme="emerald"] .strategy-card-title.pokedex-formula-badge {
+  background: #059669 !important;
+}
+
+[data-theme="emerald"] .pokedex-strategy-card,
+[data-theme="emerald"] .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="emerald"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="emerald"] #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  background: rgba(16, 185, 129, 0.05) !important;
+}
+
+[data-theme="onyx"] .pokedex-strategy-card,
+[data-theme="onyx"] .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="onyx"] #pokedex-detail-modal .pokedex-calc-unified-box .pokedex-strategy-card,
+[data-theme="onyx"] #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.strategy-card-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.strategy-card-desc {
+  font-size: 13px;
+  color: var(--text-secondary, #475569);
+  line-height: 1.5;
+}
+
+.strategy-details-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 0px;
+}
+
+.strategy-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  flex-wrap: wrap;
+  line-height: 1.35;
+}
+
+.strategy-k {
+  font-weight: 700;
+  color: var(--text-muted, #64748b);
+  flex-shrink: 0;
+  font-size: 12.5px;
+}
+
+.strategy-v {
+  font-weight: 600;
+  font-size: 12.5px;
+}
+
+.strategy-hint {
+  font-weight: 400;
+  font-size: 11.5px;
+  color: var(--text-muted, #64748b);
+}
+
+/* 核心神技：保持標準大小，不特意加大 */
+.strategy-item.strategy-item-core {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.strategy-core-k {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  white-space: nowrap;
+}
+
+.strategy-core-chip {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 2px 8px !important;
+  white-space: nowrap;
+}
+
+.strategy-chips-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.strategy-chip {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+/* 推薦副技顏色分類：金色、藍色、白色 (深色模式) */
+.strategy-chip.subskill-gold {
+  background: rgba(245, 158, 11, 0.16) !important;
+  color: #fbbf24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+}
+
+.strategy-chip.subskill-blue {
+  background: rgba(56, 189, 248, 0.14) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.38) !important;
+}
+
+.strategy-chip.subskill-white {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #cbd5e1 !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 副技能選擇盤：徹底移除最外層外框、底色與內距 (Single Frame Rule - 空間最大化) */
+#pokedex-detail-modal .box-subskill-palette {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  gap: 10px;
+}
+
+#pokedex-detail-modal .subskill-tier-section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#pokedex-detail-modal .subskill-tier-label {
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.2px;
+  margin-bottom: 2px;
+}
+
+#pokedex-detail-modal .box-subskill-chip {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  padding: 6px 4px !important;
+  min-height: 32px !important;
+  border-radius: 6px !important;
+}
+
+#pokedex-detail-modal .box-subskill-slots-row {
+  margin-bottom: 12px;
+}
+
+#pokedex-detail-modal .box-subskill-slot-btn {
+  padding: 6px 4px !important;
+  border-radius: 8px !important;
+  min-height: 56px !important;
+}
+
+#pokedex-detail-modal .slot-lvl-header {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+}
+
+#pokedex-detail-modal .slot-val-badge {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+}
+
+#pokedex-detail-modal .slot-val-empty {
+  font-size: 11.5px !important;
+}
+
+#pokedex-detail-modal .box-form-label {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+}
+
+/* 圖鑑詳情彈窗專屬：主技能無外框、選單貼近標題、睡飽飽獎章與主技能並列行 */
+#pokedex-detail-modal .box-form-row-inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+}
+
+#pokedex-detail-modal .pokedex-mainskill-ribbon-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 16px !important;
+  flex-wrap: wrap !important;
+  min-height: 32px;
+}
+
+#pokedex-detail-modal .pokedex-inline-unit {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-shrink: 0 !important;
+  min-width: 0;
+}
+
+/* 標籤更靠近下拉選單 (取消固定寬度，緊湊排列釋放右側空間) */
+#pokedex-detail-modal .box-form-inline-label {
+  width: auto !important;
+  min-width: 0 !important;
+  flex-shrink: 0 !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  margin-bottom: 0 !important;
+  margin-right: 2px !important;
+}
+
+#pokedex-detail-modal .box-form-inline-control {
+  flex: 0 1 auto;
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+}
+
+/* 主技能名稱純文字展示，徹底去除外框、陰影與背景底色 */
+#pokedex-detail-modal .box-mainskill-name-badge {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 4px 0 0 !important;
+  height: auto !important;
+  line-height: normal !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.2px;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-mainskill-name-badge,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-mainskill-name-badge,
+[data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .box-mainskill-name-badge,
+[data-theme="onyx"][data-theme-inverted="true"] #pokedex-detail-modal .box-mainskill-name-badge {
+  color: #0284c7 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-mainskill-name-badge,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-mainskill-name-badge,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .box-mainskill-name-badge,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .box-mainskill-name-badge {
+  color: #38bdf8 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* 主技能等級選框：70px 俐落寬度 */
+#pokedex-detail-modal .box-mainskill-select-wrap .custom-select-container,
+#pokedex-detail-modal .box-mainskill-select-wrap .pokedex-custom-select {
+  width: 70px !important;
+  min-width: 70px !important;
+  flex: 0 0 70px !important;
+}
+
+#pokedex-detail-modal .box-mainskill-control .custom-select-trigger,
+#pokedex-detail-modal .box-mainskill-select-wrap .custom-select-trigger {
+  height: 30px !important;
+  min-height: 30px !important;
+  line-height: 28px !important;
+  padding: 0 22px 0 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+/* 睡飽飽獎章選框：235px 最適長度，位在主技能右側 */
+#pokedex-detail-modal .pokedex-ribbon-unit .custom-select-container,
+#pokedex-detail-modal .pokedex-ribbon-unit .pokedex-custom-select {
+  width: 235px !important;
+  max-width: 100% !important;
+}
+
+/* 性格選框：260px 最適長度 */
+#pokedex-detail-modal .pokedex-nature-row .custom-select-container,
+#pokedex-detail-modal .pokedex-nature-row .pokedex-custom-select {
+  width: 260px !important;
+  max-width: 100% !important;
+}
+
+/* 觸發按鈕尺寸精緻化：高度縮小至 30px、字級 12px、精準內距 (Rule VI 兼容且靠後) */
+#pokedex-detail-modal .custom-select-trigger {
+  height: 30px !important;
+  min-height: 30px !important;
+  line-height: 28px !important;
+  padding: 0 24px 0 8px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  background-image: none !important;
+  box-sizing: border-box !important;
+}
+
+/* 下拉選單箭頭微調，縮小並靠後定位，釋放水平空間 (符合 Rule VI: right: 16px !important; 兼容) */
+#pokedex-detail-modal .custom-select-arrow {
+  right: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: none !important;
+}
+
+#pokedex-detail-modal .custom-select-arrow svg {
+  width: 7px !important;
+  height: 4.5px !important;
+}
+
+/* 下拉選單選項清單微調 */
+#pokedex-detail-modal .custom-select-menu {
+  top: calc(100% + 2px) !important;
+  border-radius: 8px !important;
+  padding: 3px !important;
+  max-height: 220px !important;
+  z-index: 1050 !important;
+}
+
+#pokedex-detail-modal .custom-select-item {
+  padding: 6px 10px !important;
+  font-size: 12px !important;
+}
+
+@media (max-width: 480px) {
+  #pokedex-detail-modal .pokedex-controls-container {
+    gap: 8px !important;
+  }
+  #pokedex-detail-modal .pokedex-anchored-slider-wrap {
+    padding-bottom: 12px !important;
+  }
+  #pokedex-detail-modal .pokedex-mainskill-ribbon-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+  }
+  #pokedex-detail-modal .pokedex-inline-unit {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+  }
+  #pokedex-detail-modal .pokedex-mainskill-unit {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+  #pokedex-detail-modal .pokedex-ribbon-unit {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+  #pokedex-detail-modal .pokedex-ribbon-unit .box-form-inline-control,
+  #pokedex-detail-modal .pokedex-nature-row .box-form-inline-control {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: auto !important;
+    max-width: 100% !important;
+  }
+  #pokedex-detail-modal .pokedex-ribbon-unit .custom-select-container,
+  #pokedex-detail-modal .pokedex-nature-row .custom-select-container,
+  #pokedex-detail-modal .box-form-inline-control,
+  #pokedex-detail-modal .box-form-inline-control .custom-select-container,
+  #pokedex-detail-modal .box-form-inline-control .pokedex-custom-select {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .pokedex-formula-steps-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 主題適配：明亮主題 (Dawn / Emerald / Inverted Dark) - 右欄及彈窗全白底去灰 */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-modal-dialog,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-modal-dialog,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-modal-dialog,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-modal-dialog {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-modal-header,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-modal-header,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-modal-header,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-modal-header {
+  background: #ffffff !important;
+  border-bottom-color: #e2e8f0 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-header-avatar,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-header-avatar,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-header-avatar,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-header-avatar {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-header-pkm-name,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-header-pkm-name,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-header-pkm-name,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-header-pkm-name {
+  color: #0f172a !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-header-no,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-header-no,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-header-no,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-header-no {
+  color: #64748b !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-header-stats-row .header-stat-k,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-header-stats-row .header-stat-k,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-header-stats-row .header-stat-k,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-header-stats-row .header-stat-k {
+  color: #64748b !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-header-stats-row .header-stat-v,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-header-stats-row .header-stat-v,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-header-stats-row .header-stat-v,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-header-stats-row .header-stat-v {
+  color: #0f172a !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-header-stats-row.pokedex-header-stats-dual,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-header-stats-row.pokedex-header-stats-dual,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-header-stats-row.pokedex-header-stats-dual,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-header-stats-row.pokedex-header-stats-dual {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-appraisal-verdict-box,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-appraisal-verdict-box {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .verdict-title,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .verdict-title {
+  color: #0f172a;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .verdict-score-text,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .verdict-score-text {
+  color: #475569;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .verdict-num,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .verdict-num {
+  color: #0f172a;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .verdict-grade,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .verdict-grade {
+  text-shadow: none;
+}
+
+/* 淺色卡片統一純白 (#ffffff) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-calc-unified-box,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-calc-unified-box,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-calc-unified-box,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-calc-step,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-calc-step,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-yield-pill,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-yield-pill,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-yield-pill,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-yield-pill,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-header-verdict-badge,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-header-verdict-badge,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-header-verdict-badge,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-header-verdict-badge {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .step-name,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .step-name,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .yield-pill-name,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .yield-pill-name,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .calc-row-label,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .calc-row-label {
+  color: #1e293b !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .calc-row-formula,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .calc-row-formula,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .step-formula-code,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .step-formula-code {
+  background: #ffffff !important;
+  color: #334155 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .formula-var,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .formula-var {
+  color: #0f172a !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .formula-op,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .formula-bracket,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .formula-op,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .formula-bracket {
+  color: #64748b !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-strategy-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-strategy-card,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-strategy-card,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-strategy-card {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .strategy-card-desc,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .strategy-card-desc {
+  color: #475569 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .strategy-k,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .strategy-k {
+  color: #64748b !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .strategy-hint,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .strategy-hint {
+  color: #64748b !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .strategy-chip,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .strategy-chip {
+  background: #e0f2fe !important;
+  color: #0284c7 !important;
+  border-color: #bae6fd !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .strategy-chip.subskill-gold,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .strategy-chip.subskill-gold {
+  background: #fef3c7 !important;
+  color: #b45309 !important;
+  border-color: #fde68a !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .strategy-chip.subskill-blue,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .strategy-chip.subskill-blue {
+  background: #e0f2fe !important;
+  color: #0284c7 !important;
+  border-color: #bae6fd !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .strategy-chip.subskill-white,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .strategy-chip.subskill-white {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* 淺色主題：右欄所有控件灰底全面移除改純白 (#ffffff) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-ing-slot-box,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-ing-slot-box,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-ing-opt-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-ing-opt-btn,
+[data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .box-ing-opt-btn,
+[data-theme="onyx"][data-theme-inverted="true"] #pokedex-detail-modal .box-ing-opt-btn,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-subskill-slot-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-subskill-slot-btn,
+[data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .box-subskill-slot-btn,
+[data-theme="onyx"][data-theme-inverted="true"] #pokedex-detail-modal .box-subskill-slot-btn,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .slot-val-empty,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .slot-val-empty,
+[data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .slot-val-empty,
+[data-theme="onyx"][data-theme-inverted="true"] #pokedex-detail-modal .slot-val-empty,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-val-badge,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-val-badge,
+[data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-val-badge,
+[data-theme="onyx"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-val-badge,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-btn-preset.preset-reset,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-btn-preset.preset-reset,
+[data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-btn-preset.preset-reset,
+[data-theme="onyx"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-btn-preset.preset-reset,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-subskill-clear-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-subskill-clear-btn,
+[data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .box-subskill-clear-btn,
+[data-theme="onyx"][data-theme-inverted="true"] #pokedex-detail-modal .box-subskill-clear-btn,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .subskill-white,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .subskill-white,
+[data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .subskill-white,
+[data-theme="onyx"][data-theme-inverted="true"] #pokedex-detail-modal .subskill-white {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-subskill-slot-btn.active,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-subskill-slot-btn.active,
+[data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .box-subskill-slot-btn.active,
+[data-theme="onyx"][data-theme-inverted="true"] #pokedex-detail-modal .box-subskill-slot-btn.active {
+  background: #ffffff !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.25) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .track-pin-tick,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .track-pin-tick {
+  background: rgba(15, 23, 42, 0.25);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .track-pin-label,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .track-pin-label {
+  color: #64748b;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-track-pin-btn.pin-milestone .track-pin-label,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-track-pin-btn.pin-milestone .track-pin-label,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-track-pin-btn.pin-milestone .track-pin-label,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-track-pin-btn.pin-milestone .track-pin-label {
+  color: #0284c7;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-track-pin-btn.pin-milestone .track-pin-tick,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-track-pin-btn.pin-milestone .track-pin-tick,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-track-pin-btn.pin-milestone .track-pin-tick,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-track-pin-btn.pin-milestone .track-pin-tick {
+  background: rgba(2, 132, 199, 0.5);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-unreleased-pill,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-unreleased-pill {
+  background: #fef3c7;
+  color: #b45309;
+  border-color: #fde68a;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased,
+[data-theme="midnight"][data-theme-inverted="true"] #pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased,
+[data-theme="onyx"][data-theme-inverted="true"] #pokedex-detail-modal .box-subskill-slot-btn.slot-unreleased {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .slot-unreleased-tag,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .slot-unreleased-tag {
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #cbd5e1;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-under-lvl,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-inactive,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-unreleased,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-under-lvl,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-inactive,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .slot-unreleased-tag.slot-tag-unreleased {
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #b91c1c !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-slider-track-bar,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-slider-track-bar,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-slider-track-bar,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-slider-track-bar {
+  background: rgba(15, 23, 42, 0.14);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-track-pin-btn.pin-threshold .track-pin-label,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-track-pin-btn.pin-threshold .track-pin-label,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-track-pin-btn.pin-threshold .track-pin-label,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-track-pin-btn.pin-threshold .track-pin-label {
+  color: #dc2626;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-track-pin-btn.active .track-pin-label,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-track-pin-btn.active .track-pin-label {
+  color: #0284c7;
+  text-shadow: none;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-btn-preset.preset-god,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-btn-preset.preset-god {
+  background: rgba(2, 132, 199, 0.08) !important;
+  border-color: rgba(2, 132, 199, 0.25) !important;
+  color: #0284c7 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-btn-preset.preset-god:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-btn-preset.preset-god:hover {
+  background: rgba(2, 132, 199, 0.16) !important;
+  border-color: #0284c7 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .pokedex-custom-select,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .pokedex-custom-select,
+[data-theme="midnight"][data-theme-inverted="true"] .pokedex-custom-select,
+[data-theme="onyx"][data-theme-inverted="true"] .pokedex-custom-select {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230284c7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 18px center !important;
+  background-size: 8px 5px !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .custom-select-trigger,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .custom-select-trigger,
+[data-theme="midnight"][data-theme-inverted="true"] .custom-select-trigger,
+[data-theme="onyx"][data-theme-inverted="true"] .custom-select-trigger {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  background-image: none !important;
+}
+
+/* 深色主題適配：(Midnight / Inverted Light) - 沉穩暗色、高對比清晰呈現 */
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-modal-dialog,
+[data-theme="dawn"][data-theme-inverted="true"] .pokedex-modal-dialog,
+[data-theme="emerald"][data-theme-inverted="true"] .pokedex-modal-dialog {
+  background: #111827 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) .pokedex-modal-header,
+[data-theme="dawn"][data-theme-inverted="true"] .pokedex-modal-header,
+[data-theme="emerald"][data-theme-inverted="true"] .pokedex-modal-header {
+  background: #1e293b !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .pokedex-calc-unified-box,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-calc-unified-box,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .pokedex-calc-unified-box {
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box,
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .pokedex-calc-unified-box,
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .pokedex-calc-unified-box {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-row-label,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .calc-row-label,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-row-label,
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .calc-row-label,
+[data-theme="emerald"][data-theme-inverted="true"] #pokedex-detail-modal .calc-row-label,
+[data-theme="emerald"][data-theme-inverted="true"] #modal-appraisal-report .calc-row-label {
+  color: #f8fafc !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #pokedex-detail-modal .calc-row-formula,
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .calc-row-formula,
+[data-theme="dawn"][data-theme-inverted="true"] #pokedex-detail-modal .calc-row-formula,
+[data-theme="dawn"][data-theme-inverted="true"] #modal-appraisal-report .calc-row-formula,
+}
+
+.box-auth-prompt-card {
+  position: sticky;
+  top: 140px;
+  max-width: 440px;
+  width: 100%;
+  background: var(--bg-card-solid, var(--bg-card, #1e293b));
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 32px 26px 24px;
+  text-align: center;
+  box-shadow: var(--shadow-lg, 0 20px 45px rgba(0, 0, 0, 0.45));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.box-auth-prompt-card:hover {
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.55);
+}
+
+.box-auth-prompt-icon-wrap {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  background: var(--badge-special-bg, rgba(56, 189, 248, 0.12));
+  color: var(--color-accent-blue, #38bdf8);
+  border: 1px solid var(--badge-special-border, rgba(56, 189, 248, 0.35));
+}
+
+.box-auth-prompt-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 10px 0;
+  letter-spacing: 0.3px;
+}
+
+.box-auth-prompt-desc {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin: 0 0 22px 0;
+  max-width: 360px;
+}
+
+.box-auth-prompt-btn {
+  width: 100%;
+  max-width: 280px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.box-auth-prompt-guest-row {
+  margin-top: 14px;
+}
+
+.box-auth-guest-link {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px 8px;
+  transition: color 0.15s ease;
+}
+
+.box-auth-guest-link:hover {
+  color: var(--text-primary);
+}
+
+/* 主題適配 - 遮罩背景色 */
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .box-auth-overlay {
+  background: rgba(10, 10, 12, 0.72);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .box-auth-overlay,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .box-auth-overlay,
+[data-theme="midnight"][data-theme-inverted="true"] .box-auth-overlay,
+[data-theme="onyx"][data-theme-inverted="true"] .box-auth-overlay {
+  background: rgba(248, 250, 252, 0.72);
+}
+
+[data-theme="dawn"][data-theme-inverted="true"] .box-auth-overlay {
+  background: rgba(28, 25, 23, 0.72);
+}
+
+[data-theme="emerald"][data-theme-inverted="true"] .box-auth-overlay {
+  background: rgba(15, 23, 42, 0.72);
+}
+
+/* 行動端適配 */
+@media (max-width: 600px) {
+  .box-auth-overlay {
+    padding: 32px 14px 28px;
+  }
+  .box-auth-prompt-card {
+    top: 70px;
+    padding: 24px 18px 20px;
+  }
+  .box-auth-prompt-title {
+    font-size: 16px;
+  }
+  .box-auth-prompt-desc {
+    font-size: 12.5px;
+    margin-bottom: 18px;
+  }
+}
+
+/* =========================================================
+    數據百科與攻略知識庫 (Wiki & Strategy Database Styles)
+   ========================================================= */
+
+.wiki-main-container {
+  max-width: 1200px;
+  width: 92%;
+  margin: 14px auto 24px;
+  padding: 0 16px;
+  box-sizing: border-box;
+  min-height: calc(100vh - 90px);
+  display: flex;
+  flex-direction: column;
+}
+
+#wiki-subpanel-ingredients {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#wiki-ingredient-ladder-coordinate {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.wiki-header-card,
+.wiki-subnav-bar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 8px 12px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 14px;
+  backdrop-filter: blur(8px);
+}
+
+.wiki-main-title,
+.wiki-subtitle {
+  display: none !important;
+}
+
+/* 二級子分頁切換按鈕 */
+.wiki-subnav-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  border-top: none;
+  padding-top: 0;
+  align-items: center;
+}
+
+.wiki-subtab-btn {
+  padding: 5px 11px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.wiki-subtab-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--accent-blue);
+}
+
+.wiki-subtab-btn.active {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 2px 10px rgba(56, 189, 248, 0.35);
+  font-weight: 700;
+}
+
+/* 子面板顯示切換 */
+.wiki-subpanel {
+  display: none;
+}
+
+.wiki-subpanel.active {
+  display: block !important;
+  animation: fadeIn 0.25s ease forwards;
+}
+
+/* 篩選按鈕列 */
+.wiki-control-bar {
+  margin-bottom: 20px;
+}
+
+.wiki-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.wiki-pill-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-blue);
+}
+
+.wiki-pill-btn {
+  padding: 5px 14px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.wiki-pill-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--accent-blue);
+}
+
+.wiki-pill-btn.active {
+  background: #0284c7;
+  border-color: #38bdf8;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/*  主技能卡片網格 */
+.wiki-skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+}
+
+.wiki-skill-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.wiki-skill-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.skill-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.skill-title-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.skill-name-text {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.skill-cat-tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.skill-cat-tag.cat-energy { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+.skill-cat-tag.cat-energy_heal { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
+.skill-cat-tag.cat-ingredient { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+.skill-cat-tag.cat-special { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+.skill-cat-tag.cat-shards { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
+
+[data-theme="dawn"] .skill-cat-tag.cat-energy { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+[data-theme="dawn"] .skill-cat-tag.cat-energy_heal { background: #fce7f3; color: #be185d; border: 1px solid #fbcfe8; }
+[data-theme="dawn"] .skill-cat-tag.cat-ingredient { background: #d1fae5; color: #047857; border: 1px solid #a7f3d0; }
+[data-theme="dawn"] .skill-cat-tag.cat-special { background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe; }
+[data-theme="dawn"] .skill-cat-tag.cat-shards { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+
+[data-theme="emerald"] .skill-cat-tag.cat-energy { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
+[data-theme="emerald"] .skill-cat-tag.cat-energy_heal { background: #fce7f3; color: #9d174d; border: 1px solid #fbcfe8; }
+[data-theme="emerald"] .skill-cat-tag.cat-ingredient { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+[data-theme="emerald"] .skill-cat-tag.cat-special { background: #ede9fe; color: #5b21b6; border: 1px solid #ddd6fe; }
+[data-theme="emerald"] .skill-cat-tag.cat-shards { background: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
+
+.skill-max-lv-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  padding: 2px 7px;
+  border-radius: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+[data-theme="dawn"] .skill-max-lv-badge,
+[data-theme="emerald"] .skill-max-lv-badge {
+  background: var(--bg-card-inner-subtle);
+  border: 1px solid var(--border-color-subtle);
+}
+
+.skill-desc-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.skill-note-inline {
+  color: #fbbf24;
+  font-weight: 600;
+  display: inline;
+  margin-left: 2px;
+}
+
+[data-theme="dawn"] .skill-note-inline,
+[data-theme="emerald"] .skill-note-inline {
+  color: #b45309;
+}
+
+.skill-penalty-inline {
+  color: #f87171;
+  font-weight: 600;
+  display: inline;
+  margin-left: 2px;
+}
+
+.skill-levels-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+  width: 100%;
+}
+
+.skill-level-chip {
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 5px;
+  padding: 4px 7px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 11px;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+  min-height: 25px;
+}
+
+.skill-level-chip:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-blue);
+}
+
+.skill-level-chip .level-tag {
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--accent-blue);
+  font-weight: 700;
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  letter-spacing: 0.2px;
+}
+
+.skill-level-chip .level-val {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 11px;
+  text-align: right;
+  white-space: nowrap;
+  font-feature-settings: 'tnum';
+}
+
+/*  方案 C: 主技能精華單行速查 (Lv.1 ➔ Lv.Max) */
+.wiki-skill-card.clickable-card {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.wiki-skill-card.clickable-card:hover {
+  border-color: var(--accent-blue);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.skill-top-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.skill-card-chevron {
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: transform 0.25s ease, color 0.2s ease;
+  display: inline-block;
+}
+
+.wiki-skill-card.is-expanded .skill-card-chevron {
+  transform: rotate(180deg);
+  color: var(--accent-blue);
+}
+
+.skill-hero-summary.single-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 4px 0 0 0;
+  box-sizing: border-box;
+}
+
+.hero-stat-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.hero-lv-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  padding: 1px 5px;
+  border-radius: 4px;
+  line-height: 1.2;
+}
+
+.hero-lv-label.tag-max {
+  color: var(--accent-blue);
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.hero-val-text {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: monospace, -apple-system;
+  white-space: nowrap;
+}
+
+.hero-val-text.val-max {
+  color: var(--accent-blue);
+}
+
+.hero-arrow-icon {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin: 0 1px;
+}
+
+/* 展開後的縱向階梯清單 (隨卡片 .is-expanded 展開) */
+.skill-stepper-list {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 8px;
+  padding: 8px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.wiki-skill-card.is-expanded .skill-stepper-list {
+  display: flex;
+}
+
+.skill-step-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 6px;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.skill-step-item.item-max {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.step-tag-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--bg-card-inner);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.skill-step-item.item-max .step-tag-badge {
+  background: var(--color-accent-gold, #f59e0b);
+  color: #ffffff;
+}
+
+.step-val-text {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: monospace, -apple-system;
+  flex: 1;
+  text-align: right;
+  word-break: break-word;
+}
+
+.skill-interactive-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stack-selector-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+
+.stack-selector-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  white-space: nowrap;
+}
+
+.stack-chips-group {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.stack-chip-btn {
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.stack-chip-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.stack-chip-btn.active {
+  background: #0284c7;
+  border-color: #38bdf8;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.4);
+}
+
+.skill-level-chip.highlight-gold {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+.skill-level-chip.highlight-gold .level-tag {
+  background: rgba(245, 158, 11, 0.25);
+  color: #d97706;
+}
+
+.skill-level-chip.highlight-gold .level-val {
+  color: #b45309;
+  font-weight: 700;
+}
+
+[data-theme="midnight"] .skill-level-chip.highlight-gold .level-tag,
+[data-theme="onyx"] .skill-level-chip.highlight-gold .level-tag {
+  color: #fde047;
+}
+
+[data-theme="midnight"] .skill-level-chip.highlight-gold .level-val,
+[data-theme="onyx"] .skill-level-chip.highlight-gold .level-val {
+  color: #fef08a;
+}
+
+.skill-level-chip.highlight-blue {
+  background: rgba(2, 132, 199, 0.15);
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+.skill-level-chip.highlight-blue .level-tag {
+  background: rgba(56, 189, 248, 0.25);
+  color: var(--accent-blue);
+}
+
+.wiki-toggle-detail-btn {
+  background: transparent;
+  border: 1px dashed var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.wiki-toggle-detail-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--accent-blue);
+  border-color: var(--accent-blue);
+}
+
+.row-highlight {
+  background: rgba(245, 158, 11, 0.12);
+  font-weight: 700;
+}
+
+.skill-matrix-section {
+  width: 100%;
+}
+
+.skill-matrix-header {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  margin-bottom: 6px;
+}
+
+.wiki-mini-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+}
+
+.wiki-mini-table th,
+.wiki-mini-table td {
+  padding: 5px 6px;
+  border: 1px solid var(--border-color-subtle);
+  text-align: center;
+}
+
+.wiki-mini-table th {
+  background: var(--bg-table-th);
+  color: var(--text-th);
+}
+
+/* 複合雙向效果等級矩陣迷你表格 (工整對齊) */
+.skill-level-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-card-inner);
+  -webkit-overflow-scrolling: touch;
+}
+
+.wiki-level-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  text-align: center;
+}
+
+.wiki-level-table th,
+.wiki-level-table td {
+  padding: 6px 8px;
+  border: 1px solid var(--border-color-subtle);
+  white-space: nowrap;
+  font-feature-settings: 'tnum';
+}
+
+.wiki-level-table th {
+  background: var(--bg-table-th);
+  color: var(--text-th);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.wiki-level-table td.row-label {
+  text-align: left;
+  font-weight: 700;
+  background: var(--bg-card-inner-subtle);
+  padding-left: 10px;
+}
+
+.skill-special-note {
+  font-size: 11px;
+  color: var(--accent-color);
+  font-weight: 600;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 6px;
+  padding: 5px 9px;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+/*  百科全書外層主題標題與副標題 (Section Heading outside Card) */
+.wiki-section-heading {
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.wiki-section-title {
+  font-size: 16.5px;
+  font-weight: 800;
+  color: var(--text-title, #f8fafc);
+  margin: 0 0 4px 0;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wiki-section-subtitle {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/*  副技能 & 計算機卡片樣式 */
+.wiki-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  box-shadow: var(--shadow-sm);
+}
+
+.wiki-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.wiki-card-icon {
+  font-size: 20px;
+}
+
+.wiki-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-title, #f8fafc);
+}
+
+.wiki-card-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.wiki-rule-banner {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #d97706;
+  margin-bottom: 16px;
+}
+
+/* 技能矩陣性格修正與數值高對比度適配 (Matrix Table High-Contrast Styles) */
+.matrix-rate-up {
+  color: #34d399;
+  font-weight: 700;
+  font-size: 12.5px;
+}
+
+.matrix-rate-down {
+  color: #f87171;
+  font-weight: 700;
+  font-size: 12.5px;
+}
+
+.matrix-calc-code {
+  background: rgba(255, 255, 255, 0.08);
+  color: #93c5fd;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 2.5px 7px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.matrix-pct-up {
+  color: #34d399;
+}
+
+.matrix-pct-down {
+  color: #f87171;
+}
+
+/*  明亮主題高清晰深色化適配 (Light Themes Rich High-Contrast Overrides) */
+[data-theme="dawn"] .matrix-rate-up,
+[data-theme="emerald"] .matrix-rate-up {
+  color: #15803d; /* 深森林綠，在白底極清晰 */
+}
+
+[data-theme="dawn"] .matrix-rate-down,
+[data-theme="emerald"] .matrix-rate-down {
+  color: #b91c1c; /* 深磚紅，在白底極清晰 */
+}
+
+[data-theme="dawn"] .matrix-calc-code {
+  background: #e0f2fe;
+  color: #0369a1; /* 深天藍 */
+  border: 1px solid #bae6fd;
+}
+
+[data-theme="emerald"] .matrix-calc-code {
+  background: #ccfbf1;
+  color: #0f766e; /* 深松石綠 */
+  border: 1px solid #99f6e4;
+}
+
+[data-theme="dawn"] .matrix-pct-up,
+[data-theme="emerald"] .matrix-pct-up {
+  color: #15803d;
+}
+
+[data-theme="dawn"] .matrix-pct-down,
+[data-theme="emerald"] .matrix-pct-down {
+  color: #b91c1c;
+}
+
+[data-theme="midnight"] .wiki-rule-banner,
+[data-theme="onyx"] .wiki-rule-banner {
+  color: #fde68a;
+}
+
+/* 幫忙速度極限與計算機制卡片樣式 (Helping Speed Metrics & Breakdown) */
+.wiki-speed-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+  margin-bottom: 18px;
+}
+
+.wiki-speed-metric-card {
+  background: var(--bg-card, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.wiki-speed-metric-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.wiki-speed-metric-card.card-highlight-team {
+  border-color: rgba(236, 72, 153, 0.35);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.08) 0%, rgba(30, 41, 59, 0.4) 100%);
+}
+
+.wiki-speed-metric-card.card-highlight-solo {
+  border-color: rgba(59, 130, 246, 0.35);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(30, 41, 59, 0.4) 100%);
+}
+
+.wiki-speed-metric-card.card-highlight-dual {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(30, 41, 59, 0.4) 100%);
+}
+
+.speed-metric-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.speed-metric-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.3px;
+}
+
+.card-highlight-team .speed-metric-tag {
+  background: rgba(236, 72, 153, 0.18);
+  color: #f472b6;
+  border: 1px solid rgba(236, 72, 153, 0.35);
+}
+
+.card-highlight-solo .speed-metric-tag {
+  background: rgba(59, 130, 246, 0.18);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.card-highlight-dual .speed-metric-tag {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.speed-metric-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.speed-metric-stats-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 6px 0 10px 0;
+}
+
+.speed-metric-primary-val {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.card-highlight-team .speed-metric-primary-val {
+  color: #f472b6;
+}
+
+.card-highlight-solo .speed-metric-primary-val {
+  color: #60a5fa;
+}
+
+.card-highlight-dual .speed-metric-primary-val {
+  color: #34d399;
+}
+
+.speed-metric-secondary-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.speed-metric-calc {
+  font-family: monospace;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.05);

@@ -266,6 +266,13 @@ test('Tier 1 - Feature Coverage', 'CSS Styling: styles.css exists with dark them
     if (c === '}') openBraces--;
   }
   assertEquals(openBraces, 0, `styles.css has unclosed or unmatched braces (diff: ${openBraces})`);
+
+  // Verify modular CSS architecture and build integrity
+  const { CSS_MODULES, buildCss } = require('../../scripts/build_css');
+  assert(Array.isArray(CSS_MODULES) && CSS_MODULES.length >= 10, 'CSS_MODULES must define modular components and views');
+  for (const mod of CSS_MODULES) {
+    assert(fs.existsSync(path.join(WORKSPACE_ROOT, 'css', mod)), `Modular CSS file missing: css/${mod}`);
+  }
 });
 
 
@@ -346,6 +353,13 @@ test('Tier 1 - Feature Coverage', 'Appraisal Lab & Six-Dimension Engine: Evaluat
   assert(costs.candies > 0, 'Cost to Lv.30 should require candies');
   assert(costs.shards > 0, 'Cost to Lv.30 should require dream shards');
   assert(costs.handyCandyS > 0, 'Cost should calculate Handy Candy S equivalents');
+
+  // Verify modular Lab JS architecture and build integrity
+  const { LAB_MODULES, buildAppraisal } = require('../../scripts/build_appraisal');
+  assert(Array.isArray(LAB_MODULES) && LAB_MODULES.length >= 4, 'LAB_MODULES must define modular lab files');
+  for (const mod of LAB_MODULES) {
+    assert(fs.existsSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'lab', mod)), `Modular Lab file missing: js/modules/lab/${mod}`);
+  }
 });
 
 

@@ -1,0 +1,661 @@
+/* =========================================================
+    全域無邊界極簡滾動條隱藏系統 (Universal Scrollbar Hiding)
+   隱藏所有列表、卡片、表格與容器的滾動條，同時保留絲滑滾動操作體驗
+   ========================================================= */
+
+/* 1. 全域容器與列表滾動條隱藏 (Firefox & IE/Edge) */
+html,
+body,
+.pokemon-table-container,
+.table-container,
+.box-table-container,
+.wiki-table-container,
+.compact-table-wrap,
+.wiki-table-scroll,
+.energy-table-container,
+.milestone-table-container,
+.ladder-table-container,
+.content-area,
+#content-area,
+.recipe-main-content #recipe-list-container,
+.recipe-cards-grid,
+#recipe-content-area,
+.h5-recipe-cards-list,
+.pokemon-grid,
+.box-cards-grid,
+.box-content-container,
+.wiki-main-content,
+.wiki-content-area,
+.wiki-panel-content,
+.sidebar-scrollable-content,
+.pokemon-filter-sidebar,
+.recipe-filter-sidebar,
+.news-timeline-container,
+.news-event-timeline,
+.gantt-scroll-container,
+.modal-body,
+.modal-content,
+.modal-scroll-content,
+.box-modal-body,
+.appraisal-modal-body,
+.settings-modal-body,
+.bottom-sheet-content,
+.bottom-sheet-scroll,
+.segmented-control,
+.mobile-segmented-bar,
+.subtab-pills,
+.chips-scroll-container,
+.filter-chips-scroll,
+.rf-cat-buttons,
+.news-category-tags,
+.compact-4-row,
+.h5-recipe-ing-section,
+.mobile-touch-scroll,
+.hide-scrollbar,
+.no-scrollbar,
+.view-panel,
+#panel-pokemon,
+#panel-recipes,
+#panel-wiki,
+#panel-box,
+#panel-news {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE 10+ and Edge */
+}
+
+/* 2. Webkit (Chrome, Safari, iOS Safari, Android Chrome, Edge Chromium, Opera) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.view-panel::-webkit-scrollbar,
+#panel-pokemon::-webkit-scrollbar,
+#panel-recipes::-webkit-scrollbar,
+#panel-wiki::-webkit-scrollbar,
+#panel-box::-webkit-scrollbar,
+#panel-news::-webkit-scrollbar,
+.pokemon-table-container::-webkit-scrollbar,
+.table-container::-webkit-scrollbar,
+.box-table-container::-webkit-scrollbar,
+.wiki-table-container::-webkit-scrollbar,
+.compact-table-wrap::-webkit-scrollbar,
+.wiki-table-scroll::-webkit-scrollbar,
+.energy-table-container::-webkit-scrollbar,
+.milestone-table-container::-webkit-scrollbar,
+.ladder-table-container::-webkit-scrollbar,
+.content-area::-webkit-scrollbar,
+#content-area::-webkit-scrollbar,
+.recipe-main-content #recipe-list-container::-webkit-scrollbar,
+.recipe-cards-grid::-webkit-scrollbar,
+#recipe-content-area::-webkit-scrollbar,
+.h5-recipe-cards-list::-webkit-scrollbar,
+.pokemon-grid::-webkit-scrollbar,
+.box-cards-grid::-webkit-scrollbar,
+.box-content-container::-webkit-scrollbar,
+.wiki-main-content::-webkit-scrollbar,
+.wiki-content-area::-webkit-scrollbar,
+.wiki-panel-content::-webkit-scrollbar,
+.sidebar-scrollable-content::-webkit-scrollbar,
+.pokemon-filter-sidebar::-webkit-scrollbar,
+.recipe-filter-sidebar::-webkit-scrollbar,
+.news-timeline-container::-webkit-scrollbar,
+.news-event-timeline::-webkit-scrollbar,
+.gantt-scroll-container::-webkit-scrollbar,
+.modal-body::-webkit-scrollbar,
+.modal-content::-webkit-scrollbar,
+.modal-scroll-content::-webkit-scrollbar,
+.box-modal-body::-webkit-scrollbar,
+.appraisal-modal-body::-webkit-scrollbar,
+.settings-modal-body::-webkit-scrollbar,
+.bottom-sheet-content::-webkit-scrollbar,
+.bottom-sheet-scroll::-webkit-scrollbar,
+.segmented-control::-webkit-scrollbar,
+.mobile-segmented-bar::-webkit-scrollbar,
+.subtab-pills::-webkit-scrollbar,
+.chips-scroll-container::-webkit-scrollbar,
+.filter-chips-scroll::-webkit-scrollbar,
+.rf-cat-buttons::-webkit-scrollbar,
+.news-category-tags::-webkit-scrollbar,
+.compact-4-row::-webkit-scrollbar,
+.h5-recipe-ing-section::-webkit-scrollbar,
+.mobile-touch-scroll::-webkit-scrollbar,
+.hide-scrollbar::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* Controls Container */
+.controls-container {
+  max-width: 1200px;
+  width: 92%;
+  margin: 24px auto 16px;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.search-filter-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+}
+
+.search-box,
+.news-search-box {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+
+.search-input,
+.news-search-input {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 32px 0 36px;
+  background: var(--bg-card-inner, #1e293b);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-weight: 500;
+  font-family: inherit;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.search-input:focus,
+.news-search-input:focus {
+  border-color: var(--color-primary, #6366f1);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+/*  搜尋框有輸入文字時的醒目提示、發光呼吸動態與過濾中標籤 (Prominent Active Search & Pulsing Glow) */
+@keyframes searchActivePulseGlow {
+  0% {
+    box-shadow: 0 0 0 2.5px rgba(129, 140, 248, 0.35), 0 2px 8px rgba(99, 102, 241, 0.2);
+    border-color: #818cf8;
+  }
+  50% {
+    box-shadow: 0 0 0 4.5px rgba(129, 140, 248, 0.65), 0 0 16px rgba(99, 102, 241, 0.5);
+    border-color: #a5b4fc;
+  }
+  100% {
+    box-shadow: 0 0 0 2.5px rgba(129, 140, 248, 0.35), 0 2px 8px rgba(99, 102, 241, 0.2);
+    border-color: #818cf8;
+  }
+}
+
+@keyframes searchActivePulseGlowLight {
+  0% {
+    box-shadow: 0 0 0 2.5px rgba(79, 70, 229, 0.3), 0 2px 8px rgba(79, 70, 229, 0.15);
+    border-color: #4f46e5;
+  }
+  50% {
+    box-shadow: 0 0 0 4.5px rgba(79, 70, 229, 0.55), 0 0 16px rgba(79, 70, 229, 0.35);
+    border-color: #4338ca;
+  }
+  100% {
+    box-shadow: 0 0 0 2.5px rgba(79, 70, 229, 0.3), 0 2px 8px rgba(79, 70, 229, 0.15);
+    border-color: #4f46e5;
+  }
+}
+
+.search-input.has-value,
+.news-search-input.has-value,
+.sidebar-search-input.has-value {
+  border-color: var(--color-primary, #6366f1) !important;
+  background: rgba(99, 102, 241, 0.06) !important;
+  padding-right: 92px !important;
+  font-weight: 600 !important;
+  animation: searchActivePulseGlow 2s ease-in-out infinite !important;
+}
+
+/* 深色模式下的醒目外觀 */
+html[data-theme="midnight"]:not([data-theme-inverted="true"]) .search-input.has-value,
+.search-input.has-value {
+  border-color: #818cf8 !important;
+  color: #e2e8f0 !important;
+  animation: searchActivePulseGlow 2s ease-in-out infinite !important;
+}
+
+html[data-theme="onyx"]:not([data-theme-inverted="true"]) .search-input.has-value {
+  border-color: #94a3b8 !important;
+  background: rgba(148, 163, 184, 0.08) !important;
+  color: #e4e4e7 !important;
+  animation: searchActivePulseGlowOnyx 2s ease-in-out infinite !important;
+}
+
+/* 亮色模式下的醒目外觀 */
+html[data-theme="dawn"]:not([data-theme-inverted="true"]) .search-input.has-value {
+  border-color: #0284c7 !important;
+  background: rgba(2, 132, 199, 0.06) !important;
+  color: #0c4a6e !important;
+  animation: searchActivePulseGlowLight 2s ease-in-out infinite !important;
+}
+
+html[data-theme="emerald"]:not([data-theme-inverted="true"]) .search-input.has-value {
+  border-color: #64748b !important;
+  background: rgba(71, 85, 105, 0.05) !important;
+  color: #1e293b !important;
+  animation: searchActivePulseGlowEmerald 2s ease-in-out infinite !important;
+}
+
+/*  反色模式下的醒目搜尋框 (Inverted Active Search Glows) */
+html[data-theme="midnight"][data-theme-inverted="true"] .search-input.has-value {
+  border-color: #0284c7 !important;
+  background: rgba(2, 132, 199, 0.08) !important;
+  color: #0c4a6e !important;
+  animation: searchActivePulseGlowLight 2s ease-in-out infinite !important;
+}
+
+html[data-theme="onyx"][data-theme-inverted="true"] .search-input.has-value {
+  border-color: #18181b !important;
+  background: rgba(24, 24, 27, 0.06) !important;
+  color: #09090b !important;
+  animation: searchActivePulseGlowEmerald 2s ease-in-out infinite !important;
+}
+
+html[data-theme="dawn"][data-theme-inverted="true"] .search-input.has-value {
+  border-color: #fbbf24 !important;
+  background: rgba(251, 191, 36, 0.1) !important;
+  color: #e7e5e4 !important;
+  animation: searchActivePulseGlowDawnInvert 2s ease-in-out infinite !important;
+}
+
+html[data-theme="emerald"][data-theme-inverted="true"] .search-input.has-value {
+  border-color: #94a3b8 !important;
+  background: rgba(148, 163, 184, 0.1) !important;
+  color: #e2e8f0 !important;
+  animation: searchActivePulseGlowOnyx 2s ease-in-out infinite !important;
+}
+
+@keyframes searchActivePulseGlowOnyx {
+  0% { box-shadow: 0 0 0 0 rgba(148, 163, 184, 0.35); }
+  50% { box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.15); }
+  100% { box-shadow: 0 0 0 0 rgba(148, 163, 184, 0.35); }
+}
+
+@keyframes searchActivePulseGlowEmerald {
+  0% { box-shadow: 0 0 0 0 rgba(71, 85, 105, 0.25); }
+  50% { box-shadow: 0 0 0 4px rgba(71, 85, 105, 0.1); }
+  100% { box-shadow: 0 0 0 0 rgba(71, 85, 105, 0.25); }
+}
+
+@keyframes searchActivePulseGlowDawnInvert {
+  0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.35); }
+  50% { box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.15); }
+  100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.35); }
+}
+
+.search-input::placeholder,
+.news-search-input::placeholder {
+  color: var(--text-muted, #94a3b8);
+  opacity: 0.85;
+  font-size: 13.5px;
+  font-weight: 400;
+}
+
+.search-icon,
+.news-search-box .search-icon,
+.sidebar-search-box .sidebar-search-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted, #94a3b8);
+  pointer-events: none;
+  z-index: 2;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+/* 搜尋圖示高亮變色與微放大 */
+.search-box.has-value .search-icon,
+.news-search-box.has-value .search-icon,
+.sidebar-search-box.has-value .sidebar-search-icon {
+  color: var(--accent-color, #6366f1) !important;
+  transform: translateY(-50%) scale(1.15) !important;
+  filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.5)) !important;
+}
+
+.search-icon svg,
+.news-search-box .search-icon svg,
+.sidebar-search-box .sidebar-search-icon svg {
+  display: block;
+  width: 15px;
+  height: 15px;
+}
+
+/*  搜尋框內「條件篩選中」醒目標籤 (Active Filtering Pill Badge) */
+.search-filtering-badge {
+  position: absolute !important;
+  right: 32px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  background: rgba(99, 102, 241, 0.18) !important;
+  border: 1px solid rgba(99, 102, 241, 0.45) !important;
+  color: var(--color-primary, #818cf8) !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  padding: 2px 7px !important;
+  border-radius: 9999px !important;
+  pointer-events: none !important;
+  z-index: 3 !important;
+  white-space: nowrap !important;
+  animation: searchFilterPulse 2s ease-in-out infinite alternate !important;
+}
+
+html[data-theme="onyx"]:not([data-theme-inverted="true"]) .search-filtering-badge {
+  background: rgba(203, 213, 225, 0.15) !important;
+  border-color: rgba(203, 213, 225, 0.45) !important;
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dawn"]:not([data-theme-inverted="true"]) .search-filtering-badge {
+  background: rgba(2, 132, 199, 0.14) !important;
+  border-color: rgba(2, 132, 199, 0.4) !important;
+  color: #0369a1 !important;
+}
+
+html[data-theme="emerald"]:not([data-theme-inverted="true"]) .search-filtering-badge {
+  background: #475569 !important;
+  border-color: #334155 !important;
+  color: #ffffff !important;
+}
+
+/*  反色模式下的過濾中徽章 */
+html[data-theme="midnight"][data-theme-inverted="true"] .search-filtering-badge {
+  background: rgba(2, 132, 199, 0.14) !important;
+  border-color: rgba(2, 132, 199, 0.4) !important;
+  color: #0369a1 !important;
+}
+
+html[data-theme="onyx"][data-theme-inverted="true"] .search-filtering-badge {
+  background: #18181b !important;
+  border-color: #18181b !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dawn"][data-theme-inverted="true"] .search-filtering-badge {
+  background: rgba(251, 191, 36, 0.2) !important;
+  border-color: rgba(251, 191, 36, 0.5) !important;
+  color: #fbbf24 !important;
+}
+
+html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
+  background: rgba(148, 163, 184, 0.2) !important;
+  border-color: rgba(148, 163, 184, 0.5) !important;
+  color: #e2e8f0 !important;
+}
+
+/* 閃爍呼吸小圓點 */
+.search-pulse-dot {
+  width: 5px !important;
+  height: 5px !important;
+  border-radius: 50% !important;
+  background: var(--color-primary, #6366f1) !important;
+  box-shadow: 0 0 6px var(--color-primary, #6366f1) !important;
+  display: inline-block !important;
+}
+
+@keyframes searchFilterPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 6px 1px rgba(99, 102, 241, 0.2);
+  }
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: var(--bg-card, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  z-index: 3;
+  padding: 0;
+  line-height: 1;
+}
+
+.search-box.has-value .search-clear-btn,
+.news-search-box.has-value .search-clear-btn {
+  background: rgba(99, 102, 241, 0.15) !important;
+  border-color: rgba(99, 102, 241, 0.35) !important;
+  color: var(--color-primary, #818cf8) !important;
+}
+
+.search-clear-btn:hover,
+.search-clear-btn:active {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  border-color: #dc2626 !important;
+  transform: translateY(-50%) scale(1.1) !important;
+}
+
+/*  最終進化切換開關 (Final Evolution Switch Button) */
+.final-evo-switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 7px 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.final-evo-switch-label:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.switch-checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.switch-slider {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 18px;
+  background-color: var(--border-color);
+  border-radius: 20px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.switch-slider::before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.switch-checkbox:checked + .switch-slider {
+  background: var(--accent-gradient, linear-gradient(135deg, #0284c7, #38bdf8));
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+}
+
+[data-theme="onyx"] .switch-checkbox:checked + .switch-slider {
+  background: linear-gradient(135deg, #475569, #94a3b8);
+  box-shadow: 0 0 8px rgba(148, 163, 184, 0.4);
+}
+
+[data-theme="dawn"] .switch-checkbox:checked + .switch-slider {
+  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  box-shadow: 0 0 8px rgba(2, 132, 199, 0.35);
+}
+
+[data-theme="emerald"] .switch-checkbox:checked + .switch-slider {
+  background: linear-gradient(135deg, #334155, #475569);
+  box-shadow: 0 0 8px rgba(71, 85, 105, 0.35);
+}
+
+.switch-checkbox:checked + .switch-slider::before {
+  transform: translateX(16px);
+  background-color: #ffffff;
+}
+
+/* 微型 switch 按鈕 (.switch-sm) */
+.switch-sm .switch-slider {
+  width: 28px !important;
+  height: 16px !important;
+}
+
+.switch-sm .switch-slider::before {
+  height: 10px !important;
+  width: 10px !important;
+  left: 3px !important;
+  bottom: 3px !important;
+}
+
+.switch-sm .switch-checkbox:checked + .switch-slider::before {
+  transform: translateX(12px) !important;
+}
+
+.switch-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.switch-checkbox:checked ~ .switch-text {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.sort-box {
+  min-width: 200px;
+}
+
+.sort-select {
+  width: 100%;
+}
+
+/* Filter Sections */
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+}
+
+.filter-tags-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-label {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  letter-spacing: 0.3px;
+}
+
+.tag-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.tag-btn {
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.tag-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.tag-btn.active {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.35);
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.type-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}

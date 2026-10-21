@@ -314,6 +314,19 @@
   4. **圖鑑等級滑桿與評測推薦熱路徑記憶化**：`_pokedexStatsCache`, `_sigRecipeRecCache`, `_milestoneCostCache`。
 - **嚴禁退化行為**：不得在熱路徑迴圈中呼叫 `JSON.parse(JSON.stringify())` 或多次重複正則編譯。
 
+### 8.4 全站架構瘦身與模組化體系 (Architecture Slimming & Modularization)
+- **[v] 良品狀態 (Verified Working)**：
+  1. **測試套件分層模組化 (`tests/run_tests.js`)**：主入口 35 行微型 Runner，分層至 `tests/tiers/` (tier1: 66, tier2: 43, tier3: 8, tier4: 109)，支援 `--tier=N` 極速執行，全量 226/226 測試 0 失敗。
+  2. **Wiki 靜態天梯抽離 (`js/data/ladder_data.js`, `data/ladder_lv60.json`)**：抽離 10,297 行硬編碼數據，`wiki.js` 規模縮減 52%（從 19,760 行降至 9,498 行），節省 18MB 記憶體。
+  3. **原生 IndexedDB 驅動器 (`js/core/idbStorage.js`)**：零依賴雙物件倉庫（cache/user），無縫升級 `DataCacheManager`，突破 LocalStorage 5MB 上限。
+  4. **CSS 巨石解構為 11 大模組與 3ms Bundler (`scripts/build_css.js`)**：
+     - 將 35,303 行的 `css/styles.css` 解構為 `css/tokens.css`、`css/base.css`、`css/components/`、`css/views/` 與 `css/mobile-h5.css`。
+     - 透過 `scripts/build_css.js` 於 3ms 內自動編譯並維持全站樣式與 95 項 CSS 測試斷言 100% 通過。
+  5. **深度研究室模組化 SRP (`js/modules/lab/`, `scripts/build_appraisal.js`)**：
+     - 拆解為 `lab_core.js` (3,624 行)、`lab_team.js` (1,429 行)、`lab_compare.js` (665 行)、`lab_main.js` (248 行)。
+     - 透過 `scripts/build_appraisal.js` 於 2ms 內自動編譯出相容 Node VM 與瀏覽器的 `appraisal.js`，徹底消除 AI 讀取大檔超時風險。
+- **嚴禁退化行為**：不得重新將天梯常數放回 `wiki.js`；不得刪除 `scripts/build_css.js` 或 `scripts/build_appraisal.js`；修改 CSS 或 Lab 邏輯時應優先維護模組化原始碼。
+
 ---
 
 ## 九、 模組八：全主題配色與設計規範 (Themes & UI Rules)

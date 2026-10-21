@@ -9,6 +9,16 @@ const { registerTier2Tests } = require('./tiers/tier2_boundaries');
 const { registerTier3Tests } = require('./tiers/tier3_combos');
 const { registerTier4Tests } = require('./tiers/tier4_scenarios');
 
+// Ensure CSS and JS modules are synchronized
+try {
+  const { buildCss } = require('../scripts/build_css');
+  buildCss();
+  const { buildAppraisal } = require('../scripts/build_appraisal');
+  buildAppraisal();
+} catch (e) {
+  // Silent fallback if running in custom environments
+}
+
 // CLI option parsing: e.g. --tier=1 or -t=4
 const args = process.argv.slice(2);
 let targetTier = null;

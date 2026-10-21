@@ -1,0 +1,352 @@
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+}
+
+/* 排除食材：紅色高亮 */
+.ing-picker-btn.active-exclude {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: #ef4444;
+  color: #f87171;
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+  position: relative;
+}
+
+.ing-picker-btn.active-exclude::after {
+  content: '✕';
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 14px;
+  height: 14px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 900;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.ing-picker-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* ─── Raenonx-style filter bar ──────────────────────── */
+.raenonx-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px 20px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.recipe-layout-view,
+.box-layout-view {
+  position: relative;
+  width: 100%;
+}
+
+.recipe-main-content,
+.box-main-content {
+  width: 100%;
+  margin: 0 auto;
+  min-height: calc(100vh - 120px);
+}
+
+.recipe-main-content .controls-container,
+.box-main-content .controls-container {
+  max-width: 1200px;
+  width: 92%;
+  margin: 24px auto 16px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.recipe-main-content .stats-bar {
+  max-width: 1200px;
+  width: 92%;
+  margin: 0 auto 16px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+body:not(.mobile-h5-app) .recipe-main-content #recipe-content-area {
+  max-width: 1200px;
+  width: 92%;
+  margin: 0 auto 40px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+body:not(.mobile-h5-app) .recipe-main-content #recipe-content-area .pokemon-grid,
+body:not(.mobile-h5-app) .recipe-main-content #recipe-content-area .recipe-cards-grid {
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto 16px;
+  padding: 0;
+}
+
+body:not(.mobile-h5-app) .recipe-main-content #recipe-content-area .table-container,
+body:not(.mobile-h5-app) .recipe-main-content #recipe-content-area .pokemon-table-container {
+  max-width: 100%;
+  width: 100%;
+  margin: 0 0 16px 0;
+  padding: 0;
+  border-radius: var(--radius-lg, 16px);
+  overflow-x: auto !important;
+}
+
+#recipe-content-area {
+  width: 100%;
+}
+
+/*  桌面版料理卡片緊湊排版 (Desktop Recipe Cards) */
+.recipe-desktop-card {
+  padding: 10px 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.recipe-desktop-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle, var(--border-color));
+  border-radius: var(--radius-md, 8px);
+  padding: 6px 10px;
+}
+
+.recipe-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 12.5px;
+}
+
+.recipe-stat-row .stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.recipe-stat-row .stat-value.pot-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  font-family: monospace, -apple-system;
+}
+
+.recipe-stat-row .stat-value.energy-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-accent-gold, #f59e0b);
+  font-family: monospace, -apple-system;
+}
+
+/* 桌面版食譜預估能量 3 階垂直排列 (Desktop 3-Stack Energy Rows: 1x / 2x / 3x) */
+.recipe-table th[data-sort="energy"],
+.recipe-table th.th-energy {
+  font-size: 14px !important;
+  padding-right: 32px !important;
+}
+
+.recipe-table th.th-energy .table-sub-header {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.recipe-table td.recipe-energy-cell {
+  padding-right: 32px !important;
+}
+
+.desktop-energy-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  min-width: 110px;
+}
+
+.desktop-energy-stack.has-tasty {
+  padding: 1px 0;
+}
+
+.desktop-energy-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 5px;
+  width: 100%;
+  line-height: 1.25;
+}
+
+.desktop-energy-row .energy-multiplier {
+  font-size: 12px;
+  font-weight: 700;
+  font-family: monospace, -apple-system, sans-serif;
+  opacity: 0.85;
+  width: 18px;
+  text-align: left;
+  flex-shrink: 0;
+}
+
+.desktop-energy-row .energy-number {
+  font-size: 15.5px;
+  font-weight: 700;
+  font-family: monospace, -apple-system, sans-serif;
+  white-space: nowrap;
+  text-align: right;
+  flex: 1;
+}
+
+.desktop-energy-stack.single-energy .desktop-energy-row .energy-number {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.desktop-energy-stack.has-tasty .desktop-energy-row .energy-number {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* 1x: 主文字色 (柔和白/灰/黑) */
+.desktop-energy-row.energy-1x {
+  color: var(--text-primary);
+}
+
+/* 2x: 蔚藍/天藍色高亮 */
+.desktop-energy-row.energy-2x {
+  color: #38bdf8;
+}
+
+[data-theme="dawn"] .desktop-energy-row.energy-2x,
+[data-theme="emerald"] .desktop-energy-row.energy-2x {
+  color: #0284c7;
+}
+
+/* 3x: 琥珀金橘色高亮 */
+.desktop-energy-row.energy-3x {
+  color: #fbbf24;
+}
+
+[data-theme="dawn"] .desktop-energy-row.energy-3x,
+[data-theme="emerald"] .desktop-energy-row.energy-3x {
+  color: #d97706;
+}
+
+.tasty-stats-row {
+  padding-top: 4px;
+  border-top: 1px dashed var(--border-color);
+  margin-top: 2px;
+  gap: 6px;
+}
+
+.tasty-desktop-badge {
+  font-size: 11px;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace, -apple-system;
+}
+
+.tasty-desktop-badge.tasty-3x {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.recipe-desktop-ings {
+  width: 100%;
+  margin-top: 2px;
+}
+
+.compact-4-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 4px !important;
+  width: 100% !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.compact-4-row::-webkit-scrollbar {
+  display: none !important;
+}
+
+.compact-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 2.5px !important;
+  padding: 2px 5px !important;
+  border-radius: 6px !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--text-secondary) !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.compact-chip .recipe-ing-icon {
+  width: 16px !important;
+  height: 16px !important;
+  object-fit: contain !important;
+}
+
+/* 料理種類 2 欄網格 */
+.sidebar-2col-tags {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  width: 100%;
+}
+
+/* 食譜側邊欄食材圖標按鈕（7 列自適應網格，對齊圖鑑樣式） */
+.sidebar-icon-grid .ing-picker-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  height: auto !important;
+  background: var(--bg-sidebar-btn) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  padding: 2px !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.15s ease, background-color 0.15s ease !important;
+}
+
+.sidebar-icon-grid .ing-picker-btn:hover {
+  background: var(--bg-sidebar-btn-hover) !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+}
+
+.sidebar-icon-grid .ing-picker-btn.active {
+  background: #0284c7 !important;
+  border-color: #38bdf8 !important;
+}
+
+.sidebar-icon-grid .ing-picker-btn.active-exclude {

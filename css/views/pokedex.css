@@ -1,0 +1,1006 @@
+/* =========================================================
+   Table Layout (Roomy, Legible, Proper Row Height & Full Name)
+   ========================================================= */
+.pokemon-table-container,
+.table-container {
+  max-width: 1200px;
+  width: 92%;
+  margin: 0 auto 16px;
+  padding: 0;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox: 隱藏橫向滾動條 */
+  -ms-overflow-style: none; /* IE/Edge */
+  border-radius: var(--radius-lg, 16px);
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  position: relative;
+}
+
+.pokemon-table-container::-webkit-scrollbar,
+.table-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera: 隱藏滾動條 */
+  width: 0;
+  height: 0;
+}
+
+.pokemon-table {
+  width: 100%;
+  min-width: 660px;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  background: transparent;
+  font-size: 13px;
+}
+
+.pokemon-table thead th,
+.mobile-h5-app .pokemon-table thead th {
+  position: sticky !important;
+  top: 0 !important;
+  background: var(--table-th-solid, #0f172a) !important;
+  color: var(--text-th) !important;
+  font-weight: 700;
+  padding: 11px 5px;
+  border-bottom: 2px solid var(--border-color);
+  font-size: 12.5px;
+  white-space: nowrap;
+  text-align: center;
+  z-index: 10 !important;
+}
+
+.pokemon-table th.th-sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.pokemon-table th.th-sortable:hover {
+  color: var(--text-primary);
+}
+
+.pokemon-table .sort-arrow {
+  margin-left: 3px;
+  font-size: 10px;
+  color: var(--accent-color);
+}
+
+.pokemon-table th.th-icon .sort-arrow {
+  margin-left: 1px;
+  font-size: 8.5px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.pokemon-table td {
+  padding: 10px 5px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 13px;
+  vertical-align: middle;
+  position: relative;
+  z-index: 1;
+}
+
+/*  確保整列所有儲存格（含 No. 與 圖示）背景顏色 100% 相同且完全實色 */
+.pokemon-table tbody tr:nth-child(odd) td {
+  background-color: var(--table-row-odd-solid, #0d1527) !important;
+}
+
+.pokemon-table tbody tr:nth-child(even) td {
+  background-color: var(--table-row-even-solid, #131f38) !important;
+}
+
+.pokemon-table tbody tr:hover td,
+.pokemon-table tbody tr:active td {
+  background-color: var(--table-row-hover-solid, #1c2e52) !important;
+}
+
+/* ───  關鍵置前：第 1 欄 No. (Top-Left 交叉處 z-index: 35，Body 左側 z-index: 20) ─── */
+.pokemon-table .th-no,
+.mobile-h5-app .pokemon-table .th-no {
+  position: sticky !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 35 !important;
+  background-color: var(--table-th-solid, #0a0f1d) !important;
+  color: var(--text-th) !important;
+  font-weight: 700 !important;
+  min-width: 44px !important;
+  max-width: 44px !important;
+  width: 44px !important;
+  padding: 11px 4px !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+}
+
+.pokemon-table .td-no,
+.mobile-h5-app .pokemon-table .td-no {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 20 !important;
+  min-width: 44px !important;
+  max-width: 44px !important;
+  width: 44px !important;
+  padding: 10px 4px !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  font-weight: 700;
+  color: var(--accent-color);
+  font-family: monospace;
+  font-size: 12.5px;
+}
+
+/* ───  關鍵置前：第 2 欄 圖示 (Top-Left 交叉處 z-index: 35，Body 左側 z-index: 20) ─── */
+.pokemon-table .th-icon,
+.mobile-h5-app .pokemon-table .th-icon {
+  position: sticky !important;
+  top: 0 !important;
+  left: 44px !important;
+  z-index: 35 !important;
+  background-color: var(--table-th-solid, #0a0f1d) !important;
+  color: var(--text-th) !important;
+  font-weight: 700 !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  width: 34px !important;
+  padding: 8px 0 !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  border-right: 1px solid var(--border-color) !important;
+  box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
+  font-size: 11px !important;
+}
+
+.pokemon-table .td-icon,
+.mobile-h5-app .pokemon-table .td-icon {
+  position: sticky !important;
+  left: 44px !important;
+  z-index: 20 !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  width: 34px !important;
+  padding: 3px 0 !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  border-right: 1px solid var(--border-color) !important;
+  box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* ───  關鍵置前：隱藏 No. 欄位或 Box 列表時，圖示 (th-icon, td-icon) 自動貼齊 left: 0 ─── */
+.pokemon-table.hide-no .th-icon,
+.pokemon-table.hide-no .td-icon,
+.pokemon-table.hide-no thead .th-icon,
+.pokemon-table.box-table .th-icon,
+.pokemon-table.box-table .td-icon,
+.mobile-h5-app #panel-box .pokemon-table.box-table .th-icon,
+.mobile-h5-app #panel-box .pokemon-table.box-table .td-icon {
+  left: 0 !important;
+}
+
+.pokemon-table.hide-no thead th:first-child,
+.pokemon-table thead th:first-child,
+.pokemon-table thead th:last-child {
+  border-radius: 0 !important;
+}
+
+.pokemon-table.hide-no tbody tr:last-child td:first-child,
+.pokemon-table tbody tr:last-child td:first-child,
+.pokemon-table tbody tr:last-child td:last-child {
+  border-radius: 0 !important;
+}
+
+.table-icon {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  border-radius: 6px;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  display: block !important;
+  margin: 0 auto !important;
+  vertical-align: middle;
+}
+
+.th-name, .td-name {
+  min-width: 85px;
+  text-align: left;
+  padding-left: 6px !important;
+}
+
+.pokemon-name-cell {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  line-height: 1.35;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.mobile-h5-app .pokemon-table .th-name,
+.mobile-h5-app .pokemon-table .td-name,
+.mobile-h5-app .pokemon-table .pokemon-name-cell {
+  display: none !important;
+}
+
+.mobile-h5-app .pokemon-table .th-spec,
+.mobile-h5-app .pokemon-table .td-spec,
+.mobile-h5-app .box-table .th-spec,
+.mobile-h5-app .box-table .td-spec {
+  min-width: 32px !important;
+  width: 32px !important;
+  max-width: 34px !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+  padding: 4px 1px !important;
+}
+
+.mobile-h5-app .pokemon-table .ing-cell .ing-qty-group,
+.mobile-h5-app .pokemon-table .ing-qty-group {
+  display: none !important;
+}
+
+.mobile-h5-app .pokemon-table .th-ing,
+.mobile-h5-app .pokemon-table .td-ing {
+  min-width: 36px !important;
+  width: 36px !important;
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+  text-align: center;
+}
+
+.th-type, .td-type,
+.th-berry, .td-berry {
+  width: 40px;
+  min-width: 40px;
+  text-align: center;
+  padding: 6px 2px !important;
+}
+
+.table-berry-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.th-spec, .td-spec {
+  min-width: 38px;
+  width: 38px;
+  text-align: center;
+  font-size: 12px;
+  padding: 4px 2px !important;
+  white-space: nowrap !important;
+}
+
+.box-table .th-spec,
+.box-table .td-spec {
+  min-width: 38px;
+  width: 38px;
+  text-align: center;
+  padding: 4px 2px !important;
+}
+
+.th-carry, .td-carry {
+  width: 36px;
+  min-width: 36px;
+  text-align: center;
+  font-family: monospace;
+  font-size: 12px;
+  padding: 6px 2px !important;
+}
+
+.th-ing, .td-ing {
+  min-width: 84px;
+  text-align: center;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+
+.th-rate, .td-rate {
+  width: 62px;
+  text-align: center;
+  font-size: 12.5px;
+}
+
+.th-interval, .td-interval {
+  width: 72px;
+  text-align: center;
+  font-size: 12.5px;
+  font-family: monospace;
+}
+
+.th-skill, .td-skill {
+  min-width: 148px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.3;
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+  vertical-align: middle;
+}
+
+.main-skill-text {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  line-height: 1.25;
+  text-align: center;
+  width: 100%;
+}
+
+.main-skill-text .skill-line-1 {
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.main-skill-text .skill-line-2 {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.main-skill-text .skill-single-line {
+  white-space: nowrap;
+}
+
+/* =========================================================
+    特殊主技能詳細說明提示 (Skill Tooltips & Special Badges)
+   ========================================================= */
+.special-skill-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--badge-special-bg);
+  border: 1px dashed var(--badge-special-border);
+  border-radius: 5px;
+  padding: 1.5px 6px;
+  color: var(--badge-special-text);
+  font-weight: 500;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+  margin: 0 auto;
+}
+
+[data-theme="dawn"] .special-skill-badge {
+  background-color: #e0f2fe !important;
+  border: 1px solid #0284c7 !important;
+  color: #0c4a6e !important;
+  box-shadow: 0 1px 3px rgba(2, 132, 199, 0.12);
+}
+
+[data-theme="dawn"] .special-skill-badge .skill-name-text,
+[data-theme="dawn"] .special-skill-badge .skill-line-1,
+[data-theme="dawn"] .special-skill-badge .skill-line-2,
+[data-theme="dawn"] .special-skill-badge .skill-single-line {
+  color: #0c4a6e !important;
+  opacity: 1;
+}
+
+[data-theme="emerald"] .special-skill-badge {
+  background-color: #e2e8f0 !important;
+  border: 1px solid #64748b !important;
+  color: #334155 !important;
+  box-shadow: 0 1px 3px rgba(51, 65, 85, 0.08);
+}
+
+[data-theme="emerald"] .special-skill-badge .skill-name-text,
+[data-theme="emerald"] .special-skill-badge .skill-line-1,
+[data-theme="emerald"] .special-skill-badge .skill-line-2,
+[data-theme="emerald"] .special-skill-badge .skill-single-line {
+  color: #334155 !important;
+  opacity: 1;
+}
+
+.special-skill-badge:hover {
+  background: var(--badge-special-bg);
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.35);
+  transform: translateY(-1px);
+}
+
+.special-skill-badge .skill-name-text {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.25;
+  gap: 1px;
+  text-align: center;
+  color: inherit;
+  font-size: 12px;
+}
+
+.special-skill-badge .skill-line-1 {
+  white-space: nowrap;
+  font-weight: 500;
+  color: inherit;
+  font-size: 12px;
+}
+
+.special-skill-badge .skill-line-2 {
+  font-size: 10.5px;
+  opacity: 0.9;
+  white-space: nowrap;
+  font-weight: 400;
+  color: inherit;
+}
+
+.special-skill-badge .skill-single-line {
+  white-space: nowrap;
+  font-weight: 500;
+  color: inherit;
+  font-size: 12px;
+}
+
+.skill-stat-val {
+  font-size: 11.5px !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 全域懸停詳細說明浮動框 (Prominent, High-contrast, Legible Tooltip with Frosted Dark Glass) */
+/* 全域懸停詳細說明浮動框 (Prominent, High-contrast, Legible Tooltip with Frosted Glass) */
+.global-skill-tooltip {
+  position: fixed;
+  z-index: 10000000 !important;
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #f8fafc;
+  font-size: 13px;
+  line-height: 1.55;
+  max-width: 330px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity 0.08s ease, transform 0.08s ease;
+}
+
+.global-skill-tooltip.visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  pointer-events: auto;
+}
+
+.global-skill-tooltip .tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding-bottom: 5px;
+}
+
+.global-skill-tooltip .tooltip-sparkle {
+  font-size: 13px;
+}
+
+.global-skill-tooltip .tooltip-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.global-skill-tooltip .tooltip-tag {
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 600;
+  background: rgba(56, 189, 248, 0.16);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+.global-skill-tooltip .tooltip-body {
+  font-size: 12.5px;
+  color: #e2e8f0;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  line-height: 1.5;
+}
+
+/* 淺色主題適配 (Dawn, Inverted) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip,
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  color: #334155 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-header,
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-title,
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-title {
+  color: #0284c7 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-body,
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-body {
+  color: #475569 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-tag,
+[data-theme="midnight"][data-theme-inverted="true"] .global-skill-tooltip .tooltip-tag {
+  background: rgba(2, 132, 199, 0.1) !important;
+  color: #0284c7 !important;
+  border: 1px solid rgba(2, 132, 199, 0.25) !important;
+}
+
+/* 翡翠淺色主題 (Emerald) */
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .global-skill-tooltip {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid #a7f3d0 !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+  color: #1e293b !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-title {
+  color: #059669 !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-body {
+  color: #374151 !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-tag {
+  background: rgba(5, 150, 105, 0.1) !important;
+  color: #059669 !important;
+  border: 1px solid rgba(5, 150, 105, 0.25) !important;
+}
+
+/* 曜石黑主題 (Onyx) */
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .global-skill-tooltip {
+  background: rgba(18, 18, 20, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7) !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-title {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-body {
+  color: #a1a1aa !important;
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .global-skill-tooltip .tooltip-tag {
+  background: rgba(203, 213, 225, 0.14) !important;
+  color: #cbd5e1 !important;
+  border: 1px solid rgba(203, 213, 225, 0.3) !important;
+}
+
+/* Ingredients layout */
+.ing-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.ing-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.ing-qty-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.ing-qty {
+  display: inline-block;
+  background: var(--badge-special-bg);
+  color: var(--badge-special-text);
+  border: 1px solid var(--badge-special-border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: monospace;
+  line-height: 1.4;
+}
+
+.ing-arrow {
+  color: var(--text-muted);
+  font-size: 9px;
+  margin: 0 1px;
+}
+
+.skill-tooltip-inline-wrap {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  line-height: 1.5;
+  font-size: 13.5px;
+}
+
+.skill-tooltip-icons-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  vertical-align: middle;
+}
+
+.skill-tooltip-inline-ing {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  vertical-align: -5px;
+  display: inline-block;
+  cursor: help;
+  transition: transform 0.15s ease;
+}
+
+.skill-tooltip-inline-ing:hover {
+  transform: scale(1.2);
+}
+
+.skill-tooltip-sep {
+  color: var(--text-muted);
+  font-size: 13.5px;
+  font-weight: 600;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.ladder-note-ing-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  vertical-align: -3px;
+  margin: 0 2px;
+  display: inline-block;
+}
+
+.wiki-ing-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card-inner);
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color-subtle);
+  cursor: help;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.wiki-ing-badge:hover {
+  transform: scale(1.1);
+  border-color: var(--color-accent-gold);
+}
+
+/* Empty state */
+.empty-state-banner {
+  max-width: 500px;
+  margin: 60px auto;
+  padding: 40px 20px;
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.empty-state-banner h3 {
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.empty-state-banner p {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 360px;
+}
+
+.reset-filters-btn {
+  margin-top: 12px;
+  padding: 8px 20px;
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reset-filters-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+}
+
+.loading-state {
+  text-align: center;
+  padding: 60px;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* ───  App 風格全域中央載入元件 (App Loading View & Spinner) ─── */
+.app-loading-view,
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 240px;
+  width: 100%;
+  padding: 40px 20px;
+  gap: 14px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.app-loading-spinner,
+.loading-spinner {
+  width: 38px;
+  height: 38px;
+  border: 3.5px solid rgba(56, 189, 248, 0.18);
+  border-top-color: var(--accent-blue, #38bdf8);
+  border-right-color: var(--accent-blue, #38bdf8);
+  border-radius: 50%;
+  animation: app-spin 0.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  box-shadow: 0 0 16px var(--accent-glow, rgba(56, 189, 248, 0.25));
+}
+
+@keyframes app-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.app-loading-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.3px;
+  animation: app-pulse-text 1.5s ease-in-out infinite;
+}
+
+@keyframes app-pulse-text {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 1; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Footer */
+footer {
+  display: none !important;
+  max-width: 1200px;
+  width: 92%;
+  margin: 40px auto 0;
+  padding: 28px 16px;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* Recipe Badge & Category Styles */
+.recipe-cat-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.recipe-cat-badge.cat-咖哩 {
+  background: var(--badge-cat-curry-bg);
+  color: var(--badge-cat-curry-text);
+  border: 1px solid var(--badge-cat-curry-border);
+}
+
+.recipe-cat-badge.cat-沙拉 {
+  background: var(--badge-cat-salad-bg);
+  color: var(--badge-cat-salad-text);
+  border: 1px solid var(--badge-cat-salad-border);
+}
+
+.recipe-cat-badge.cat-甜點 {
+  background: var(--badge-cat-dessert-bg);
+  color: var(--badge-cat-dessert-text);
+  border: 1px solid var(--badge-cat-dessert-border);
+}
+
+.pot-badge {
+  background: var(--badge-pot-bg);
+  color: var(--badge-pot-text);
+  border: 1px solid var(--badge-pot-border);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: monospace;
+  white-space: nowrap;
+}
+
+/* Bonus badge */
+.bonus-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: var(--badge-bonus-default-bg);
+  color: var(--badge-bonus-default-text);
+  border: 1px solid var(--badge-bonus-default-border);
+}
+
+.bonus-badge.bonus-badge-78 {
+  background: var(--badge-bonus-78-bg);
+  color: var(--badge-bonus-78-text);
+  border: 1px solid var(--badge-bonus-78-border);
+}
+
+.bonus-badge.bonus-badge-61 {
+  background: var(--badge-bonus-61-bg);
+  color: var(--badge-bonus-61-text);
+  border: 1px solid var(--badge-bonus-61-border);
+}
+
+.bonus-badge.bonus-badge-48 {
+  background: var(--badge-bonus-48-bg);
+  color: var(--badge-bonus-48-text);
+  border: 1px solid var(--badge-bonus-48-border);
+}
+
+.bonus-badge.bonus-badge-35 {
+  background: var(--badge-bonus-35-bg);
+  color: var(--badge-bonus-35-text);
+  border: 1px solid var(--badge-bonus-35-border);
+}
+
+.bonus-badge.bonus-badge-25 {
+  background: var(--badge-bonus-25-bg);
+  color: var(--badge-bonus-25-text);
+  border: 1px solid var(--badge-bonus-25-border);
+}
+
+.bonus-badge.bonus-badge-default {
+  background: var(--badge-bonus-default-bg);
+  color: var(--badge-bonus-default-text);
+  border: 1px solid var(--badge-bonus-default-border);
+}
+
+.recipe-name-cell {
+  vertical-align: middle !important;
+}
+
+.recipe-name-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 52px;
+}
+
+html[lang="en"] .recipe-name-wrapper,
+[data-lang="en"] .recipe-name-wrapper {
+  justify-content: center;
+}
+
+/* Bonus filter active states */
+.bonus-filter-btn.active {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.35);
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.ing-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  padding: 6px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-color);
+  min-width: 48px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.ing-badge:hover {
+  border-color: var(--accent-color);
+}
+
+.ing-badge-icon {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  flex-shrink: 0;
+  image-rendering: auto;
+}
+
+/* Ingredient Picker Buttons */
+.ing-picker-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  width: 40px;
+  height: 40px;
+}
+
+.ing-picker-btn:hover {
+  border-color: rgba(99,102,241,0.5);
+  background: var(--bg-card-hover);
+}
+
+.ing-picker-btn.active {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: #38bdf8;
+  color: #38bdf8;

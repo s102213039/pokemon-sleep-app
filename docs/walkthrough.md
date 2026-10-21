@@ -5,6 +5,34 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-10-21 已完成（全站架構瘦身工程第三與第四階段：CSS 巨石解構為 11 大模組與 3ms Bundler、深度研究室與評測模組職責分離 SRP、v=20261021_04）
+
+- **測試狀態**：226/226 自動化測試全數通過（支援 `--tier=N` 分層極速執行，全量回歸維持 0 失敗）
+- **瘦身與模組化核心成果**：
+  1. **CSS 巨石解構為 11 大模組與 3ms Bundler (`scripts/build_css.js`)**：
+     - 將 35,303 行 (887.3 KB) 的巨大樣式表 `css/styles.css` 解構為清晰的目錄式結構：
+       - `css/tokens.css` (1,005 行)：主題色票、CSS 變數、4 款反色衍生主題
+       - `css/base.css` (662 行)：跨瀏覽器重置、全域無邊界極簡滾動條、主導航欄
+       - `css/components/tables.css` (352 行)：表格排版、單一外框容器規範
+       - `css/components/buttons_badges.css` (2,749 行)：按鈕、主技能與潛力評級徽章、回頂部按鈕
+       - `css/components/modals.css` (6,493 行)：通用設定彈窗、圖鑑評測懸浮窗、道具詳細視窗
+       - `css/views/pokedex.css` (1,006 行)：圖鑑左側懸浮固定篩選欄與卡片格線
+       - `css/views/news.css` (1,313 行)：最新更新、活動與禮包甘特圖時程表
+       - `css/views/box.css` (3,095 行)：寶可夢倉庫卡片、OCR 指引、多圖批次進度條
+       - `css/views/wiki.css` (6,907 行)：數據百科、7大營地、食材天梯與道具子分頁
+       - `css/views/lab.css` (3,772 行)：深度研究室、雷達圖、組隊模擬與橫向對比
+       - `css/mobile-h5.css` (7,949 行)：行動端 H5 底欄、抽屜、觸控與安全區適配
+     - 建立零依賴極速打包器 `scripts/build_css.js`（3ms 完成編譯），測試執行時自動保持 `styles.css` 同步，保證 95 項 CSS 斷言 100% 通過。
+  2. **深度研究室模組化職責分離 (SRP Modularization)**：
+     - 將 5,966 行的 `js/modules/appraisal.js` 解構為單一職責子模組：
+       - `js/modules/lab/lab_core.js` (3,624 行)：性格修正、六維評估、公式計算與雷達圖
+       - `js/modules/lab/lab_team.js` (1,429 行)：組隊模擬、貪婪食材最大化、目標料理看板
+       - `js/modules/lab/lab_compare.js` (665 行)：選手槽位、基準等級模式、6向橫向對照表
+       - `js/modules/lab/lab_main.js` (248 行)：研究室容器渲染與 `AppraisalLab` 統一導出
+     - 建立 `scripts/build_appraisal.js`（2ms 完成編譯），相容 Node.js VM 沙盒環境與瀏覽器，杜絕超大檔案讀取逾時風險。
+  3. **npm scripts 工程化整合**：
+     - `package.json` 新增 `"build:css"`、`"build:js"`、`"build"` 與 `"test"`，一鍵自動化建構。
+
 ## 交接：2026-10-21 已完成（全站架構瘦身工程第一與第二階段：測試套件分層模組化、Wiki 10,297 行天梯抽離減重 52%、IndexedDB 儲存驅動器 idbStorage.js、v=20261021_03）
 
 - **測試狀態**：226/226 自動化測試全數通過（支援 `--tier=N` 分層極速執行，全量回歸維持 0 失敗）

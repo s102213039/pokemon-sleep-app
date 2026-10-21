@@ -1,0 +1,1004 @@
+/* =========================================================
+   Pokémon Sleep Database - Stylesheet
+   Multi-Theme Engine (2 Dark + 2 Light) & Glassmorphic UI
+   ========================================================= */
+
+:root, [data-theme="midnight"] {
+  --bg-dark: #0a0f1d;
+  --bg-header: rgba(10, 15, 29, 0.92);
+  --bg-card: rgba(30, 41, 59, 0.75);
+  --card-bg: rgba(30, 41, 59, 0.75);
+  --bg-card-solid: #1e293b;
+  --bg-card-hover: rgba(51, 65, 85, 0.85);
+  --card-bg-hover: rgba(51, 65, 85, 0.85);
+  --bg-card-inner: rgba(15, 23, 42, 0.65);
+  --bg-card-inner-subtle: rgba(15, 23, 42, 0.4);
+  --bg-table-th: #0f172a;
+  --table-th-solid: #0f172a;
+  --text-th: #94a3b8;
+  --bg-table-row-even: rgba(255, 255, 255, 0.02);
+  --bg-table-row-hover: rgba(51, 65, 85, 0.4);
+  --table-row-odd-solid: #0d1527;
+  --table-row-even-solid: #131f38;
+  --table-row-hover-solid: #1c2e52;
+  --bg-input: #0f172a;
+  --bg-dropdown: #0f172a;
+  --bg-sidebar: #0f172a;
+  --bg-sidebar-header: rgba(15, 23, 42, 0.9);
+  --bg-sidebar-btn: rgba(30, 41, 59, 0.65);
+  --bg-sidebar-btn-hover: rgba(30, 41, 59, 0.95);
+  --border-color: rgba(255, 255, 255, 0.12);
+  --border-color-subtle: rgba(255, 255, 255, 0.06);
+  --text-main: #cbd5e1;
+  --text-title: #f8fafc;
+  --text-primary: #cbd5e1;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-blue: #38bdf8;
+  --accent-purple: #818cf8;
+  --accent-color: #38bdf8;
+  --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+  --color-accent-blue: #38bdf8;
+  --color-accent-gold: #fbbf24;
+  --color-accent-green: #34d399;
+  --color-accent-rose: #f472b6;
+  --color-accent-purple: #c084fc;
+  --badge-special-bg: rgba(56, 189, 248, 0.12);
+  --badge-special-border: rgba(56, 189, 248, 0.5);
+  --badge-special-text: #7dd3fc;
+
+  /* Recipe Badges Tokens (Midnight Dark) */
+  --badge-cat-curry-bg: rgba(245, 158, 11, 0.2);
+  --badge-cat-curry-text: #fbbf24;
+  --badge-cat-curry-border: rgba(245, 158, 11, 0.4);
+
+  --badge-cat-salad-bg: rgba(34, 197, 94, 0.2);
+  --badge-cat-salad-text: #4ade80;
+  --badge-cat-salad-border: rgba(34, 197, 94, 0.4);
+
+  --badge-cat-dessert-bg: rgba(236, 72, 153, 0.2);
+  --badge-cat-dessert-text: #f472b6;
+  --badge-cat-dessert-border: rgba(236, 72, 153, 0.4);
+
+  --badge-pot-bg: rgba(56, 189, 248, 0.15);
+  --badge-pot-text: #38bdf8;
+  --badge-pot-border: rgba(56, 189, 248, 0.35);
+
+  --badge-bonus-78-bg: rgba(251, 191, 36, 0.25);
+  --badge-bonus-78-text: #fbbf24;
+  --badge-bonus-78-border: rgba(251, 191, 36, 0.7);
+
+  --badge-bonus-61-bg: rgba(239, 68, 68, 0.2);
+  --badge-bonus-61-text: #f87171;
+  --badge-bonus-61-border: rgba(239, 68, 68, 0.5);
+
+  --badge-bonus-48-bg: rgba(168, 85, 247, 0.2);
+  --badge-bonus-48-text: #c084fc;
+  --badge-bonus-48-border: rgba(168, 85, 247, 0.5);
+
+  --badge-bonus-35-bg: rgba(59, 130, 246, 0.2);
+  --badge-bonus-35-text: #60a5fa;
+  --badge-bonus-35-border: rgba(59, 130, 246, 0.5);
+
+  --badge-bonus-25-bg: rgba(16, 185, 129, 0.2);
+  --badge-bonus-25-text: #34d399;
+  --badge-bonus-25-border: rgba(16, 185, 129, 0.5);
+
+  --badge-bonus-default-bg: rgba(255, 255, 255, 0.08);
+  --badge-bonus-default-text: var(--text-main);
+  --badge-bonus-default-border: rgba(255, 255, 255, 0.15);
+
+  /* Ladder 3-Meal Passing Line Tokens (Midnight Dark) */
+  --ladder-passing-line-color: #f59e0b;
+  --ladder-passing-line-glow: rgba(245, 158, 11, 0.55);
+  --ladder-passing-badge-bg: rgba(26, 21, 12, 0.94);
+  --ladder-passing-badge-border: rgba(245, 158, 11, 0.85);
+  --ladder-passing-badge-text: #fbbf24;
+  --ladder-passing-badge-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+
+  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 20px 35px -5px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 189, 248, 0.2);
+  --bg-radial-1: rgba(56, 189, 248, 0.15);
+  --bg-radial-2: rgba(129, 140, 248, 0.15);
+  --bg-radial-3: rgba(10, 15, 29, 0.95);
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+
+  /* Type Colors */
+  --type-草: #4ad071;
+  --type-火: #fb6c6c;
+  --type-水: #76befe;
+  --type-蟲: #92dc3d;
+  --type-一般: #a8a878;
+  --type-毒: #aa45a0;
+  --type-電: #ffd833;
+  --type-妖: #f49ba8;
+  --type-妖精: #f49ba8;
+  --type-冰: #7cd8c1;
+  --type-地: #e0c068;
+  --type-地面: #e0c068;
+  --type-鬥: #c03028;
+  --type-格鬥: #c03028;
+  --type-岩: #b8a038;
+  --type-岩石: #b8a038;
+  --type-惡: #705848;
+  --type-鋼: #b8b8d0;
+  --type-飛: #a890f0;
+  --type-飛行: #a890f0;
+  --type-鬼: #70559b;
+  --type-幽靈: #70559b;
+  --type-超: #f85888;
+  --type-超能力: #f85888;
+  --type-龍: #7038f8;
+}
+
+[data-theme="onyx"] {
+  --bg-dark: #050505;
+  --bg-header: rgba(10, 10, 10, 0.94);
+  --bg-card: rgba(24, 24, 27, 0.85);
+  --card-bg: rgba(24, 24, 27, 0.85);
+  --bg-card-solid: #18181b;
+  --bg-card-hover: rgba(39, 39, 42, 0.95);
+  --card-bg-hover: rgba(39, 39, 42, 0.95);
+  --bg-card-inner: rgba(10, 10, 10, 0.7);
+  --bg-card-inner-subtle: rgba(10, 10, 10, 0.4);
+  --bg-table-th: #121212;
+  --table-th-solid: #121212;
+  --text-th: #a1a1aa;
+  --bg-table-row-even: rgba(255, 255, 255, 0.02);
+  --bg-table-row-hover: rgba(39, 39, 42, 0.5);
+  --table-row-odd-solid: #101013;
+  --table-row-even-solid: #18181d;
+  --table-row-hover-solid: #22222a;
+  --bg-input: #09090b;
+  --bg-dropdown: #121212;
+  --bg-sidebar: #09090b;
+  --bg-sidebar-header: rgba(18, 18, 18, 0.9);
+  --bg-sidebar-btn: rgba(39, 39, 42, 0.75);
+  --bg-sidebar-btn-hover: rgba(63, 63, 70, 0.95);
+  --border-color: rgba(255, 255, 255, 0.16);
+  --border-color-subtle: rgba(255, 255, 255, 0.08);
+  --text-main: #d4d4d8;
+  --text-title: #ffffff;
+  --text-primary: #d4d4d8;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --accent-blue: #cbd5e1;
+  --accent-purple: #94a3b8;
+  --accent-color: #cbd5e1;
+  --accent-gradient: linear-gradient(135deg, #475569 0%, #64748b 50%, #94a3b8 100%);
+  --color-accent-blue: #cbd5e1;
+  --color-accent-gold: #fbbf24;
+  --color-accent-green: #34d399;
+  --color-accent-rose: #f472b6;
+  --color-accent-purple: #c084fc;
+  --badge-special-bg: rgba(203, 213, 225, 0.12);
+  --badge-special-border: rgba(203, 213, 225, 0.45);
+  --badge-special-text: #e2e8f0;
+
+  /* Recipe Badges Tokens (Onyx Dark - Muted Cool Silver) */
+  --badge-cat-curry-bg: rgba(245, 158, 11, 0.22);
+  --badge-cat-curry-text: #fbbf24;
+  --badge-cat-curry-border: rgba(245, 158, 11, 0.45);
+
+  --badge-cat-salad-bg: rgba(34, 197, 94, 0.22);
+  --badge-cat-salad-text: #4ade80;
+  --badge-cat-salad-border: rgba(34, 197, 94, 0.45);
+
+  --badge-cat-dessert-bg: rgba(236, 72, 153, 0.22);
+  --badge-cat-dessert-text: #f472b6;
+  --badge-cat-dessert-border: rgba(236, 72, 153, 0.45);
+
+  --badge-pot-bg: rgba(203, 213, 225, 0.12);
+  --badge-pot-text: #e2e8f0;
+  --badge-pot-border: rgba(203, 213, 225, 0.35);
+
+  --badge-bonus-78-bg: rgba(251, 191, 36, 0.25);
+  --badge-bonus-78-text: #fbbf24;
+  --badge-bonus-78-border: rgba(251, 191, 36, 0.7);
+
+  --badge-bonus-61-bg: rgba(239, 68, 68, 0.22);
+  --badge-bonus-61-text: #f87171;
+  --badge-bonus-61-border: rgba(239, 68, 68, 0.55);
+
+  --badge-bonus-48-bg: rgba(168, 85, 247, 0.22);
+  --badge-bonus-48-text: #c084fc;
+  --badge-bonus-48-border: rgba(168, 85, 247, 0.55);
+
+  --badge-bonus-35-bg: rgba(59, 130, 246, 0.22);
+  --badge-bonus-35-text: #60a5fa;
+  --badge-bonus-35-border: rgba(59, 130, 246, 0.55);
+
+  --badge-bonus-25-bg: rgba(16, 185, 129, 0.22);
+  --badge-bonus-25-text: #34d399;
+  --badge-bonus-25-border: rgba(16, 185, 129, 0.55);
+
+  --badge-bonus-default-bg: rgba(255, 255, 255, 0.08);
+  --badge-bonus-default-text: var(--text-main);
+  --badge-bonus-default-border: rgba(255, 255, 255, 0.15);
+
+  /* Ladder 3-Meal Passing Line Tokens (Onyx Dark) */
+  --ladder-passing-line-color: #f59e0b;
+  --ladder-passing-line-glow: rgba(245, 158, 11, 0.55);
+  --ladder-passing-badge-bg: rgba(18, 16, 12, 0.94);
+  --ladder-passing-badge-border: rgba(245, 158, 11, 0.85);
+  --ladder-passing-badge-text: #fbbf24;
+  --ladder-passing-badge-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+
+  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.8), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 20px 35px -5px rgba(0, 0, 0, 0.9), 0 0 15px rgba(203, 213, 225, 0.15);
+  --bg-radial-1: rgba(203, 213, 225, 0.08);
+  --bg-radial-2: rgba(148, 163, 184, 0.06);
+  --bg-radial-3: rgba(5, 5, 5, 0.98);
+}
+
+[data-theme="dawn"] {
+  --bg-dark: #f8fafc;
+  --bg-header: rgba(248, 250, 252, 0.94);
+  --bg-card: #ffffff;
+  --card-bg: #ffffff;
+  --bg-card-solid: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --card-bg-hover: #f1f5f9;
+  --bg-card-inner: #f1f5f9;
+  --bg-card-inner-subtle: #f8fafc;
+  --bg-table-th: #e2e8f0;
+  --table-th-solid: #e2e8f0;
+  --text-th: #1e293b;
+  --bg-table-row-even: #f8fafc;
+  --bg-table-row-hover: #e2e8f0;
+  --table-row-odd-solid: #ffffff;
+  --table-row-even-solid: #f8fafc;
+  --table-row-hover-solid: #e2e8f0;
+  --bg-input: #ffffff;
+  --bg-dropdown: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-sidebar-header: #f8fafc;
+  --bg-sidebar-btn: #f1f5f9;
+  --bg-sidebar-btn-hover: #e2e8f0;
+  --border-color: rgba(15, 23, 42, 0.12);
+  --border-color-subtle: rgba(15, 23, 42, 0.06);
+  --text-main: #0f172a;
+  --text-title: #0f172a;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --accent-blue: #0284c7;
+  --accent-purple: #6366f1;
+  --accent-color: #0284c7;
+  --accent-gradient: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+  --color-accent-blue: #0284c7;
+  --color-accent-gold: #b45309;
+  --color-accent-green: #15803d;
+  --color-accent-rose: #be185d;
+  --badge-special-bg: #e0f2fe;
+  --badge-special-border: #0284c7;
+  --badge-special-text: #0c4a6e;
+
+  /* Low-saturation, soft & readable badge palette for Dawn (Light Theme) */
+  --badge-cat-curry-bg: #fef3c7;
+  --badge-cat-curry-text: #92400e;
+  --badge-cat-curry-border: #fcd34d;
+
+  --badge-cat-salad-bg: #dcfce7;
+  --badge-cat-salad-text: #166534;
+  --badge-cat-salad-border: #86efac;
+
+  --badge-cat-dessert-bg: #fce7f3;
+  --badge-cat-dessert-text: #9d174d;
+  --badge-cat-dessert-border: #f472b6;
+
+  --badge-pot-bg: #e0f2fe;
+  --badge-pot-text: #0369a1;
+  --badge-pot-border: #7dd3fc;
+
+  --badge-bonus-78-bg: #fef3c7;
+  --badge-bonus-78-text: #92400e;
+  --badge-bonus-78-border: #fcd34d;
+
+  --badge-bonus-61-bg: #fee2e2;
+  --badge-bonus-61-text: #991b1b;
+  --badge-bonus-61-border: #fca5a5;
+
+  --badge-bonus-48-bg: #f3e8ff;
+  --badge-bonus-48-text: #6b21a8;
+  --badge-bonus-48-border: #d8b4fe;
+
+  --badge-bonus-35-bg: #dbeafe;
+  --badge-bonus-35-text: #1e40af;
+  --badge-bonus-35-border: #93c5fd;
+
+  --badge-bonus-25-bg: #d1fae5;
+  --badge-bonus-25-text: #065f46;
+  --badge-bonus-25-border: #6ee7b7;
+
+  --badge-bonus-default-bg: #f1f5f9;
+  --badge-bonus-default-text: #475569;
+  --badge-bonus-default-border: #cbd5e1;
+
+  /* Ladder 3-Meal Passing Line Tokens (Dawn Light) */
+  --ladder-passing-line-color: #d97706;
+  --ladder-passing-line-glow: rgba(217, 119, 6, 0.35);
+  --ladder-passing-badge-bg: #fffbeb;
+  --ladder-passing-badge-border: #d97706;
+  --ladder-passing-badge-text: #92400e;
+  --ladder-passing-badge-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+
+  --shadow-lg: 0 4px 20px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --shadow-hover: 0 10px 25px -4px rgba(15, 23, 42, 0.12), 0 0 15px rgba(2, 132, 199, 0.15);
+  --bg-radial-1: rgba(2, 132, 199, 0.06);
+  --bg-radial-2: rgba(99, 102, 241, 0.06);
+  --bg-radial-3: rgba(248, 250, 252, 0.98);
+}
+
+[data-theme="emerald"] {
+  --bg-dark: #f1f5f9;
+  --bg-header: rgba(241, 245, 249, 0.94);
+  --bg-card: #ffffff;
+  --card-bg: #ffffff;
+  --bg-card-solid: #ffffff;
+  --bg-card-hover: #e2e8f0;
+  --card-bg-hover: #e2e8f0;
+  --bg-card-inner: #e2e8f0;
+  --bg-card-inner-subtle: #f1f5f9;
+  --bg-table-th: #e2e8f0;
+  --table-th-solid: #e2e8f0;
+  --text-th: #334155;
+  --bg-table-row-even: #f8fafc;
+  --bg-table-row-hover: #e2e8f0;
+  --table-row-odd-solid: #ffffff;
+  --table-row-even-solid: #f8fafc;
+  --table-row-hover-solid: #e2e8f0;
+  --bg-input: #ffffff;
+  --bg-dropdown: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-sidebar-header: #f1f5f9;
+  --bg-sidebar-btn: #e2e8f0;
+  --bg-sidebar-btn-hover: #cbd5e1;
+  --border-color: rgba(71, 85, 105, 0.16);
+  --border-color-subtle: rgba(71, 85, 105, 0.08);
+  --text-main: #1e293b;
+  --text-title: #0f172a;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --accent-blue: #475569;
+  --accent-purple: #64748b;
+  --accent-color: #475569;
+  --accent-gradient: linear-gradient(135deg, #334155 0%, #475569 50%, #64748b 100%);
+  --color-accent-blue: #475569;
+  --color-accent-gold: #b45309;
+  --color-accent-green: #15803d;
+  --color-accent-rose: #be185d;
+  --color-accent-purple: #7e22ce;
+  --badge-special-bg: rgba(71, 85, 105, 0.08);
+  --badge-special-border: #64748b;
+  --badge-special-text: #334155;
+
+  /* Low-saturation, soft & readable badge palette for Emerald (Light Theme) */
+  --badge-cat-curry-bg: #fef9c3;
+  --badge-cat-curry-text: #854d0e;
+  --badge-cat-curry-border: #fde047;
+
+  --badge-cat-salad-bg: #e2e8f0;
+  --badge-cat-salad-text: #334155;
+  --badge-cat-salad-border: #cbd5e1;
+
+  --badge-cat-dessert-bg: #fce7f3;
+  --badge-cat-dessert-text: #831843;
+  --badge-cat-dessert-border: #fbcfe8;
+
+  --badge-pot-bg: rgba(71, 85, 105, 0.08);
+  --badge-pot-text: #334155;
+  --badge-pot-border: rgba(71, 85, 105, 0.3);
+
+  --badge-bonus-78-bg: #fef9c3;
+  --badge-bonus-78-text: #854d0e;
+  --badge-bonus-78-border: #fde047;
+
+  --badge-bonus-61-bg: #fee2e2;
+  --badge-bonus-61-text: #991b1b;
+  --badge-bonus-61-border: #fca5a5;
+
+  --badge-bonus-48-bg: #ede9fe;
+  --badge-bonus-48-text: #5b21b6;
+  --badge-bonus-48-border: #c4b5fd;
+
+  --badge-bonus-35-bg: #e0f2fe;
+  --badge-bonus-35-text: #075985;
+  --badge-bonus-35-border: #7dd3fc;
+
+  --badge-bonus-25-bg: #e2e8f0;
+  --badge-bonus-25-text: #334155;
+  --badge-bonus-25-border: #cbd5e1;
+
+  --badge-bonus-default-bg: #f1f5f9;
+  --badge-bonus-default-text: #475569;
+  --badge-bonus-default-border: #cbd5e1;
+
+  /* Ladder 3-Meal Passing Line Tokens (Emerald Light) */
+  --ladder-passing-line-color: #b45309;
+  --ladder-passing-line-glow: rgba(180, 83, 9, 0.3);
+  --ladder-passing-badge-bg: #fef3c7;
+  --ladder-passing-badge-border: #b45309;
+  --ladder-passing-badge-text: #78350f;
+  --ladder-passing-badge-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+
+  --shadow-lg: 0 4px 20px -2px rgba(51, 65, 85, 0.08), 0 2px 6px -1px rgba(51, 65, 85, 0.04);
+  --shadow-hover: 0 10px 25px -4px rgba(51, 65, 85, 0.12), 0 0 15px rgba(71, 85, 105, 0.15);
+  --bg-radial-1: rgba(71, 85, 105, 0.04);
+  --bg-radial-3: rgba(241, 245, 249, 0.98);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+    4 款明暗反色衍生主題 (4 Inverted Theme Variants)
+   ══════════════════════════════════════════════════════════════════ */
+
+/* 1.  深邃夜空 (Midnight) 反色版 ➔ 澄澈晴空 (Light Ice Sky & Royal Cyan) */
+[data-theme="midnight"][data-theme-inverted="true"] {
+  --bg-dark: #f0f9ff;
+  --bg-header: rgba(240, 249, 255, 0.94);
+  --bg-card: #ffffff;
+  --card-bg: #ffffff;
+  --bg-card-solid: #ffffff;
+  --bg-card-hover: #e0f2fe;
+  --card-bg-hover: #e0f2fe;
+  --bg-card-inner: #e0f2fe;
+  --bg-card-inner-subtle: #f0f9ff;
+  --bg-table-th: #bae6fd;
+  --table-th-solid: #bae6fd;
+  --text-th: #0369a1;
+  --bg-table-row-even: #f0f9ff;
+  --bg-table-row-hover: #e0f2fe;
+  --table-row-odd-solid: #ffffff;
+  --table-row-even-solid: #f0f9ff;
+  --table-row-hover-solid: #e0f2fe;
+  --bg-input: #ffffff;
+  --bg-dropdown: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-sidebar-header: #f0f9ff;
+  --bg-sidebar-btn: #e0f2fe;
+  --bg-sidebar-btn-hover: #bae6fd;
+  --border-color: rgba(2, 132, 199, 0.16);
+  --border-color-subtle: rgba(2, 132, 199, 0.08);
+  --text-main: #0c4a6e;
+  --text-title: #082f49;
+  --text-primary: #0c4a6e;
+  --text-secondary: #0369a1;
+  --text-muted: #0284c7;
+  --accent-blue: #0284c7;
+  --accent-purple: #6366f1;
+  --accent-color: #0284c7;
+  --accent-gradient: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+  --color-accent-blue: #0284c7;
+  --badge-special-bg: #e0f2fe;
+  --badge-special-border: #0284c7;
+  --badge-special-text: #0c4a6e;
+  --badge-pot-bg: #e0f2fe;
+  --badge-pot-text: #0369a1;
+  --badge-pot-border: #7dd3fc;
+  --shadow-lg: 0 4px 20px -2px rgba(2, 132, 199, 0.08), 0 2px 6px -1px rgba(2, 132, 199, 0.04);
+  --shadow-hover: 0 10px 25px -4px rgba(2, 132, 199, 0.12), 0 0 15px rgba(2, 132, 199, 0.15);
+  --bg-radial-1: rgba(2, 132, 199, 0.06);
+  --bg-radial-2: rgba(99, 102, 241, 0.06);
+  --bg-radial-3: rgba(240, 249, 255, 0.98);
+}
+
+/* 2.  曜石暗影 (Onyx) 反色版 ➔ 純粹白金 (Pure Clean White & Titanium Slate) */
+[data-theme="onyx"][data-theme-inverted="true"] {
+  --bg-dark: #fafafa;
+  --bg-header: rgba(250, 250, 250, 0.94);
+  --bg-card: #ffffff;
+  --card-bg: #ffffff;
+  --bg-card-solid: #ffffff;
+  --bg-card-hover: #f4f4f5;
+  --card-bg-hover: #f4f4f5;
+  --bg-card-inner: #f4f4f5;
+  --bg-card-inner-subtle: #fafafa;
+  --bg-table-th: #e4e4e7;
+  --table-th-solid: #e4e4e7;
+  --text-th: #18181b;
+  --bg-table-row-even: #fafafa;
+  --bg-table-row-hover: #e4e4e7;
+  --table-row-odd-solid: #ffffff;
+  --table-row-even-solid: #fafafa;
+  --table-row-hover-solid: #e4e4e7;
+  --bg-input: #ffffff;
+  --bg-dropdown: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-sidebar-header: #f4f4f5;
+  --bg-sidebar-btn: #f4f4f5;
+  --bg-sidebar-btn-hover: #e4e4e7;
+  --border-color: rgba(24, 24, 27, 0.14);
+  --border-color-subtle: rgba(24, 24, 27, 0.08);
+  --text-main: #09090b;
+  --text-title: #09090b;
+  --text-primary: #09090b;
+  --text-secondary: #52525b;
+  --text-muted: #71717a;
+  --accent-blue: #18181b;
+  --accent-purple: #3f3f46;
+  --accent-color: #18181b;
+  --accent-gradient: linear-gradient(135deg, #18181b 0%, #3f3f46 100%);
+  --color-accent-blue: #18181b;
+  --badge-special-bg: rgba(24, 24, 27, 0.06);
+  --badge-special-border: #18181b;
+  --badge-special-text: #09090b;
+  --badge-pot-bg: rgba(24, 24, 27, 0.06);
+  --badge-pot-text: #09090b;
+  --badge-pot-border: rgba(24, 24, 27, 0.3);
+  --shadow-lg: 0 4px 20px -2px rgba(0, 0, 0, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 10px 25px -4px rgba(0, 0, 0, 0.12), 0 0 15px rgba(24, 24, 27, 0.12);
+  --bg-radial-1: rgba(24, 24, 27, 0.04);
+  --bg-radial-2: rgba(148, 163, 184, 0.04);
+  --bg-radial-3: rgba(250, 250, 250, 0.98);
+}
+
+/* 3.  晨曦暖陽 (Dawn) 反色版 ➔ 琥珀夜宴 (Warm Amber Night & Cream Accents) */
+[data-theme="dawn"][data-theme-inverted="true"] {
+  --bg-dark: #1c1917;
+  --bg-header: rgba(28, 25, 23, 0.94);
+  --bg-card: rgba(41, 37, 36, 0.85);
+  --card-bg: rgba(41, 37, 36, 0.85);
+  --bg-card-solid: #292524;
+  --bg-card-hover: rgba(68, 64, 60, 0.95);
+  --card-bg-hover: rgba(68, 64, 60, 0.95);
+  --bg-card-inner: rgba(28, 25, 23, 0.7);
+  --bg-card-inner-subtle: rgba(28, 25, 23, 0.4);
+  --bg-table-th: #1c1917;
+  --table-th-solid: #1c1917;
+  --text-th: #a8a29e;
+  --bg-table-row-even: rgba(255, 255, 255, 0.02);
+  --bg-table-row-hover: rgba(68, 64, 60, 0.5);
+  --table-row-odd-solid: #1f1c1a;
+  --table-row-even-solid: #292524;
+  --table-row-hover-solid: #342f2c;
+  --bg-input: #141211;
+  --bg-dropdown: #1c1917;
+  --bg-sidebar: #141211;
+  --bg-sidebar-header: rgba(28, 25, 23, 0.9);
+  --bg-sidebar-btn: rgba(41, 37, 36, 0.75);
+  --bg-sidebar-btn-hover: rgba(68, 64, 60, 0.95);
+  --border-color: rgba(255, 255, 255, 0.12);
+  --border-color-subtle: rgba(255, 255, 255, 0.06);
+  --text-main: #e7e5e4;
+  --text-title: #fafaf9;
+  --text-primary: #e7e5e4;
+  --text-secondary: #a8a29e;
+  --text-muted: #78716c;
+  --accent-blue: #fbbf24;
+  --accent-purple: #f59e0b;
+  --accent-color: #fbbf24;
+  --accent-gradient: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  --color-accent-blue: #fbbf24;
+  --badge-special-bg: rgba(251, 191, 36, 0.15);
+  --badge-special-border: rgba(251, 191, 36, 0.5);
+  --badge-special-text: #fbbf24;
+  --badge-pot-bg: rgba(251, 191, 36, 0.15);
+  --badge-pot-text: #fbbf24;
+  --badge-pot-border: rgba(251, 191, 36, 0.35);
+  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 20px 35px -5px rgba(0, 0, 0, 0.8), 0 0 15px rgba(251, 191, 36, 0.2);
+  --bg-radial-1: rgba(245, 158, 11, 0.1);
+  --bg-radial-2: rgba(251, 191, 36, 0.08);
+  --bg-radial-3: rgba(28, 25, 23, 0.98);
+}
+
+/* 4.  雅緻灰石 (Emerald/Slate) 反色版 ➔ 曜岩冷夜 (Deep Slate Navy Night & Cold Titanium) */
+[data-theme="emerald"][data-theme-inverted="true"] {
+  --bg-dark: #0f172a;
+  --bg-header: rgba(15, 23, 42, 0.94);
+  --bg-card: rgba(30, 41, 59, 0.85);
+  --card-bg: rgba(30, 41, 59, 0.85);
+  --bg-card-solid: #1e293b;
+  --bg-card-hover: rgba(51, 65, 85, 0.95);
+  --card-bg-hover: rgba(51, 65, 85, 0.95);
+  --bg-card-inner: rgba(15, 23, 42, 0.7);
+  --bg-card-inner-subtle: rgba(15, 23, 42, 0.4);
+  --bg-table-th: #0b1120;
+  --table-th-solid: #0b1120;
+  --text-th: #94a3b8;
+  --bg-table-row-even: rgba(255, 255, 255, 0.02);
+  --bg-table-row-hover: rgba(51, 65, 85, 0.5);
+  --table-row-odd-solid: #111827;
+  --table-row-even-solid: #1e293b;
+  --table-row-hover-solid: #334155;
+  --bg-input: #0b1120;
+  --bg-dropdown: #0f172a;
+  --bg-sidebar: #0b1120;
+  --bg-sidebar-header: rgba(15, 23, 42, 0.9);
+  --bg-sidebar-btn: rgba(30, 41, 59, 0.75);
+  --bg-sidebar-btn-hover: rgba(51, 65, 85, 0.95);
+  --border-color: rgba(255, 255, 255, 0.14);
+  --border-color-subtle: rgba(255, 255, 255, 0.07);
+  --text-main: #e2e8f0;
+  --text-title: #f8fafc;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-blue: #94a3b8;
+  --accent-purple: #cbd5e1;
+  --accent-color: #94a3b8;
+  --accent-gradient: linear-gradient(135deg, #475569 0%, #64748b 50%, #94a3b8 100%);
+  --color-accent-blue: #94a3b8;
+  --badge-special-bg: rgba(148, 163, 184, 0.15);
+  --badge-special-border: rgba(148, 163, 184, 0.45);
+  --badge-special-text: #e2e8f0;
+  --badge-pot-bg: rgba(148, 163, 184, 0.15);
+  --badge-pot-text: #e2e8f0;
+  --badge-pot-border: rgba(148, 163, 184, 0.35);
+  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 20px 35px -5px rgba(0, 0, 0, 0.8), 0 0 15px rgba(148, 163, 184, 0.2);
+  --bg-radial-1: rgba(148, 163, 184, 0.08);
+  --bg-radial-2: rgba(71, 85, 105, 0.06);
+  --bg-radial-3: rgba(15, 23, 42, 0.98);
+}
+
+/*  主題反色切換控制 (Theme Inversion Header Control - Minimalist) */
+.theme-invert-control-row,
+.app-theme-invert-control-row {
+  margin: 0 0 0 auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 4px !important;
+  cursor: pointer;
+  flex-shrink: 0 !important;
+}
+
+.theme-invert-title,
+.app-theme-invert-title {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  color: var(--text-secondary) !important;
+  user-select: none;
+  cursor: pointer;
+  letter-spacing: 0.1px;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  transition: color 0.2s ease;
+}
+
+.theme-invert-control-row:hover .theme-invert-title,
+.app-theme-invert-control-row:hover .app-theme-invert-title {
+  color: var(--text-main) !important;
+}
+
+.theme-invert-control-row .switch,
+.app-theme-invert-control-row .switch {
+  display: inline-flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  height: 16px !important;
+  flex-shrink: 0 !important;
+}
+
+.theme-invert-info,
+.app-theme-invert-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.theme-invert-icon,
+.app-theme-invert-icon,
+.theme-invert-desc,
+.app-theme-invert-desc {
+  display: none !important;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background-color: var(--bg-dark);
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--bg-dark);
+  background-image: 
+    radial-gradient(at 0% 0%, var(--bg-radial-1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, var(--bg-radial-2) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, var(--bg-radial-3) 0px, transparent 50%);
+  background-attachment: fixed;
+  color: var(--text-main);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+header {
+  background: var(--bg-header);
+  border-bottom: 1px solid var(--border-color);
+  height: 70px;
+  padding: 0;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-sizing: border-box;
+}
+
+.header-container {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0 28px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-self: start;
+}
+
+.brand-logo {
+  width: 40px;
+  height: 40px;
+  background: var(--accent-gradient);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+}
+
+.brand-title {
+  font-size: 19px;
+  font-weight: 700;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.3px;
+}
+
+.brand-subtitle {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* 英文模式下隱藏 subtitle 並確保標題上下垂直置中 (English Mode Subtitle Hiding & Centering) */
+html[lang="en"] .brand-subtitle,
+[data-lang="en"] .brand-subtitle,
+html[lang="en"] .pokemon-name-en,
+[data-lang="en"] .pokemon-name-en,
+html[lang="en"] .recipe-name-sub,
+[data-lang="en"] .recipe-name-sub,
+html[lang="en"] .appraisal-pokemon-en,
+[data-lang="en"] .appraisal-pokemon-en {
+  display: none !important;
+}
+
+html[lang="en"] .brand,
+[data-lang="en"] .brand {
+  align-items: center;
+}
+
+html[lang="en"] .card-title-group,
+[data-lang="en"] .card-title-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+html[lang="en"] .pokemon-name-cell,
+[data-lang="en"] .pokemon-name-cell {
+  vertical-align: middle !important;
+}
+
+html[lang="en"] .appraisal-pokemon-title,
+[data-lang="en"] .appraisal-pokemon-title {
+  display: flex;
+  align-items: center;
+}
+
+/* 英文模式彈窗標籤與文字排版適配 (English Mode Modal Layout Adaptation) */
+html[data-lang="en"] .box-modal-dialog,
+[data-lang="en"] .box-modal-dialog {
+  max-width: 560px;
+}
+
+html[data-lang="en"] .box-form-row-3col .flex-name,
+[data-lang="en"] .box-form-row-3col .flex-name {
+  width: 170px;
+}
+
+html[data-lang="en"] .box-form-row-3col .flex-level,
+[data-lang="en"] .box-form-row-3col .flex-level {
+  width: 54px;
+}
+
+html[data-lang="en"] .box-subskill-chip,
+[data-lang="en"] .box-subskill-chip {
+  font-size: 9px;
+  padding: 4px 1px;
+  letter-spacing: -0.3px;
+}
+
+html[data-lang="en"] .slot-val-badge,
+[data-lang="en"] .slot-val-badge {
+  font-size: 9.5px;
+  letter-spacing: -0.2px;
+}
+
+html[data-lang="en"] .box-form-inline-label,
+[data-lang="en"] .box-form-inline-label {
+  width: 90px;
+}
+
+/* SPA Main Navigation Tabs */
+.main-tab-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
+  box-shadow: var(--shadow-sm, 0 4px 16px rgba(0, 0, 0, 0.15));
+}
+
+.main-tab-toggle .toggle-btn {
+  padding: 7px 18px;
+  border-radius: 8px; /* 12px (outer) - 4px (padding) = 8px (inner) concentric alignment */
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+
+.main-tab-toggle .toggle-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-card-hover);
+}
+
+.main-tab-toggle .toggle-btn.active {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(56, 189, 248, 0.35);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-self: end;
+}
+
+.sync-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.sync-btn {
+  padding: 7px 14px;
+  background: var(--accent-gradient);
+  border: none;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+}
+
+.sync-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(74, 222, 128, 0.4);
+}
+
+.sync-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.sync-status {
+  font-size: 12px;
+  color: var(--text-secondary);
+  max-width: 300px;
+  text-align: right;
+}
+
+/* Toggle Buttons (View Mode: Grid / Table) */
+.view-mode-toggle {
+  display: flex;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.view-mode-toggle .toggle-btn {
+  padding: 6px 14px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 7px; /* 10px - 3px = 7px concentric */
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.view-mode-toggle .toggle-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-card-hover);
+}
+
+.view-mode-toggle .toggle-btn.active {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border-radius: 7px;
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.toggle-btn {
+  padding: 7px 14px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.toggle-btn:hover {
+  color: var(--text-primary);
+}
+
+.toggle-btn.active {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
