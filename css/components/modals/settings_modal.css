@@ -1,0 +1,754 @@
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--text-accent, #38bdf8);
+  margin-bottom: 8px;
+}
+
+.speed-metric-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-top: auto;
+}
+
+/* 3 大詳細機制卡片 */
+.wiki-speed-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.wiki-speed-breakdown-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.breakdown-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.breakdown-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.breakdown-list li {
+  margin-bottom: 4px;
+}
+
+.breakdown-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* 幫忙速度極限與計算機制指南 - 精簡要點展示 (無外框) */
+.wiki-speed-summary-points {
+  margin: 6px 0 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.summary-point-line {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.summary-point-line .point-prefix {
+  font-weight: 700;
+  color: var(--accent-color, #4f46e5);
+}
+
+.summary-point-line .point-title {
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.summary-point-line .point-desc {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .summary-point-line {
+    font-size: 12px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+}
+
+/* 副技能階級與數值總覽 - 緊湊排版 (技能標籤寬度適配單行2個，保留更多空間給詳細效果說明) */
+.wiki-subskills-table th.col-subskills-tags,
+.wiki-subskills-table td.col-subskills-tags {
+  width: 45%;
+  text-align: center;
+  padding: 5px 8px;
+}
+
+.wiki-subskills-table th.col-subskills-effect,
+.wiki-subskills-table td.col-subskills-effect {
+  width: 55%;
+  text-align: left;
+  padding: 5px 8px;
+  font-size: 11.5px;
+  line-height: 1.35;
+}
+
+.wiki-subskills-table .wiki-subskill-tags-col {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 3px 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+.wiki-subskills-table .wiki-skill-badge {
+  font-size: 11.5px;
+  padding: 1.5px 6px;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+}
+
+/* 副技性格tab內的列表 - 表頭與欄位名稱文字大小統一 (13px bold) */
+#wiki-subpanel-subskills .wiki-data-table th,
+.wiki-subskills-table th {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 10px;
+  vertical-align: middle;
+}
+
+/* 副技性格tab內的列表 - 內容文字與詳細說明統一 (13px) */
+#wiki-subpanel-subskills .wiki-data-table td,
+.wiki-subskills-table td {
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+/* 副技性格tab內的列表 - 單行 itemview 高度一致（多行自動擴展） */
+#wiki-subpanel-subskills .wiki-data-table tbody tr,
+.wiki-subskills-table tbody tr {
+  height: 38px;
+}
+
+#wiki-subpanel-subskills .wiki-data-table tbody td,
+.wiki-subskills-table tbody td {
+  height: 38px;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+/* 幫忙速度矩陣速查表桌面版欄寬 - 確保副技能組合充足寬度展示至少2個副技能 */
+.wiki-card-speed-guide .wiki-data-table th:nth-child(1),
+.wiki-card-speed-guide .wiki-data-table td:nth-child(1) {
+  width: 28%;
+  text-align: center;
+}
+.wiki-card-speed-guide .wiki-data-table th:nth-child(2),
+.wiki-card-speed-guide .wiki-data-table td:nth-child(2) {
+  width: 10%;
+  text-align: center;
+}
+.wiki-card-speed-guide .wiki-data-table th:nth-child(3),
+.wiki-card-speed-guide .wiki-data-table td:nth-child(3) {
+  width: 22%;
+  text-align: center;
+}
+.wiki-card-speed-guide .wiki-data-table th:nth-child(4),
+.wiki-card-speed-guide .wiki-data-table td:nth-child(4) {
+  width: 14%;
+  text-align: center;
+}
+.wiki-card-speed-guide .wiki-data-table th:nth-child(5),
+.wiki-card-speed-guide .wiki-data-table td:nth-child(5) {
+  width: 14%;
+  text-align: center;
+}
+.wiki-card-speed-guide .wiki-data-table th:nth-child(6),
+.wiki-card-speed-guide .wiki-data-table td:nth-child(6) {
+  width: 12%;
+  text-align: center;
+}
+
+/* 明亮主題自適應 */
+[data-theme="dawn"] .wiki-speed-metric-card,
+[data-theme="emerald"] .wiki-speed-metric-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+[data-theme="dawn"] .wiki-speed-metric-card.card-highlight-team,
+[data-theme="emerald"] .wiki-speed-metric-card.card-highlight-team {
+  background: #fdf2f8;
+  border-color: #fbcfe8;
+}
+
+[data-theme="dawn"] .wiki-speed-metric-card.card-highlight-solo,
+[data-theme="emerald"] .wiki-speed-metric-card.card-highlight-solo {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+[data-theme="dawn"] .wiki-speed-metric-card.card-highlight-dual,
+[data-theme="emerald"] .wiki-speed-metric-card.card-highlight-dual {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+[data-theme="dawn"] .card-highlight-team .speed-metric-primary-val,
+[data-theme="emerald"] .card-highlight-team .speed-metric-primary-val {
+  color: #db2777;
+}
+
+[data-theme="dawn"] .card-highlight-solo .speed-metric-primary-val,
+[data-theme="emerald"] .card-highlight-solo .speed-metric-primary-val {
+  color: #2563eb;
+}
+
+[data-theme="dawn"] .card-highlight-dual .speed-metric-primary-val,
+[data-theme="emerald"] .card-highlight-dual .speed-metric-primary-val {
+  color: #059669;
+}
+
+[data-theme="dawn"] .speed-metric-calc,
+[data-theme="emerald"] .speed-metric-calc {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #0284c7;
+}
+
+[data-theme="dawn"] .wiki-speed-breakdown-card,
+[data-theme="emerald"] .wiki-speed-breakdown-card {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+/* 計算機區域 (Calculator Inputs) */
+.calc-inputs-row {
+  display: flex;
+  gap: 18px;
+  align-items: stretch;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.calc-form-col {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+}
+
+.calc-form-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.calc-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.calc-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--accent-blue);
+}
+
+.calc-select,
+.calc-input-num {
+  width: 100%;
+  padding: 9px 36px 9px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 8px 5px;
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+}
+
+.calc-input-num {
+  background-image: none;
+  padding-right: 12px;
+  cursor: text;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.calc-select:hover,
+.calc-input-num:hover {
+  border-color: var(--accent-blue, #38bdf8);
+}
+
+.calc-select:focus,
+.calc-select:focus-visible,
+.calc-input-num:focus,
+.calc-input-num:focus-visible {
+  border-color: var(--accent-blue, #38bdf8) !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35) !important;
+  outline: 2px solid var(--accent-blue, #38bdf8) !important;
+  outline-offset: 1px !important;
+}
+
+.calc-select option {
+  background-color: var(--bg-card, #1e293b);
+  color: var(--text-primary, #f8fafc);
+}
+
+[data-theme="dawn"] .calc-select option,
+[data-theme="emerald"] .calc-select option {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+.calc-boost-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.calc-field-switch {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.calc-switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  background: var(--bg-input, var(--bg-card-inner));
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  min-height: 40px;
+  height: 40px;
+  width: 100%;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.calc-switch-label:hover {
+  border-color: var(--accent-blue, #38bdf8);
+  background: var(--bg-card-hover, rgba(255, 255, 255, 0.05));
+}
+
+.calc-nature-select-wrap {
+  flex: 1 1 180px;
+  min-width: 160px;
+}
+
+/* 自訂下拉選單在計算機內的專屬樣式 */
+.custom-select-calc {
+  width: 100%;
+  display: block;
+}
+
+.custom-select-calc .custom-select-trigger {
+  width: 100%;
+  padding: 9px 38px 9px 12px;
+  background: var(--bg-input, var(--bg-card-inner));
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-weight: 500;
+  min-height: 40px;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.custom-select-calc .custom-select-trigger:hover {
+  border-color: var(--accent-blue, #38bdf8);
+}
+
+.custom-select-calc.open .custom-select-trigger {
+  border-color: var(--accent-blue, #38bdf8);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+}
+
+.custom-select-calc .custom-select-arrow {
+  right: 18px;
+}
+
+.custom-select-calc .custom-select-menu {
+  min-width: 100%;
+  width: max-content;
+  max-width: 260px;
+  background: var(--bg-card-solid, #1e293b);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  z-index: 1050;
+}
+
+[data-theme="dawn"] .custom-select-calc .custom-select-menu,
+[data-theme="emerald"] .custom-select-calc .custom-select-menu {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
+.calc-result-box {
+  background: rgba(2, 132, 199, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 220px;
+  min-width: 190px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.calc-result-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.calc-result-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: #38bdf8;
+  letter-spacing: -0.5px;
+}
+
+.calc-result-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-top: 4px;
+}
+
+.calc-result-candies {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #f59e0b;
+  margin-top: 5px;
+  line-height: 1.3;
+}
+
+[data-theme="dawn"] .calc-result-candies,
+[data-theme="emerald"] .calc-result-candies {
+  color: #b45309;
+}
+
+.grade-sss { background: #ec4899; color: #ffffff; box-shadow: 0 0 10px rgba(236, 72, 153, 0.5); }
+.grade-ss  { background: #8b5cf6; color: #ffffff; }
+.grade-s   { background: #0284c7; color: #ffffff; }
+.grade-a   { background: #059669; color: #ffffff; }
+.grade-b   { background: #0891b2; color: #ffffff; }
+.grade-c   { background: #d97706; color: #ffffff; }
+.grade-d   { background: #ea580c; color: #ffffff; }
+.grade-e   { background: #dc2626; color: #ffffff; }
+
+/* 數據表格共通樣式 */
+.wiki-table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-lg, 16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.wiki-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.wiki-data-table th {
+  background: var(--bg-table-th);
+  color: var(--text-th);
+  font-weight: 700;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.wiki-data-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border-color-subtle);
+  color: var(--text-primary);
+}
+
+.wiki-data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.wiki-data-table tr:hover {
+  background: var(--bg-table-row-hover);
+}
+
+.wiki-tier-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 6px;
+  display: inline-block;
+  white-space: nowrap;
+  line-height: 1.25;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  transition: all 0.15s ease;
+}
+
+/* 各階級色彩 (深淺主題自適應) */
+.wiki-tier-badge.tier-sss,
+.wiki-tier-badge.tier-ss,
+.wiki-tier-badge.tier-s {
+  background: rgba(236, 72, 153, 0.18);
+  border: 1px solid rgba(236, 72, 153, 0.45);
+  color: #ec4899;
+}
+
+.wiki-tier-badge.tier-a {
+  background: rgba(59, 130, 246, 0.18);
+  border: 1px solid rgba(59, 130, 246, 0.45);
+  color: #3b82f6;
+}
+
+.wiki-tier-badge.tier-b {
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  color: #10b981;
+}
+
+.wiki-tier-badge.tier-c {
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  color: #f59e0b;
+}
+
+.wiki-tier-badge.tier-baseline,
+.wiki-tier-badge.tier-base,
+.wiki-tier-badge.tier-基 {
+  background: rgba(148, 163, 184, 0.15);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  color: var(--text-secondary, #94a3b8);
+}
+
+.wiki-tier-badge.tier-d,
+.wiki-tier-badge.tier-e,
+.wiki-tier-badge.tier-f {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  color: #ef4444;
+}
+
+/* 亮色主題強化文字對比度 */
+[data-theme="dawn"] .wiki-tier-badge.tier-sss,
+[data-theme="dawn"] .wiki-tier-badge.tier-ss,
+[data-theme="dawn"] .wiki-tier-badge.tier-s,
+[data-theme="emerald"] .wiki-tier-badge.tier-sss,
+[data-theme="emerald"] .wiki-tier-badge.tier-ss,
+[data-theme="emerald"] .wiki-tier-badge.tier-s {
+  background: rgba(236, 72, 153, 0.12);
+  border-color: rgba(236, 72, 153, 0.4);
+  color: #be185d;
+}
+
+[data-theme="dawn"] .wiki-tier-badge.tier-a,
+[data-theme="emerald"] .wiki-tier-badge.tier-a {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #1d4ed8;
+}
+
+[data-theme="dawn"] .wiki-tier-badge.tier-b,
+[data-theme="emerald"] .wiki-tier-badge.tier-b {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #047857;
+}
+
+[data-theme="dawn"] .wiki-tier-badge.tier-c,
+[data-theme="emerald"] .wiki-tier-badge.tier-c {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #b45309;
+}
+
+[data-theme="dawn"] .wiki-tier-badge.tier-baseline,
+[data-theme="dawn"] .wiki-tier-badge.tier-base,
+[data-theme="dawn"] .wiki-tier-badge.tier-基,
+[data-theme="emerald"] .wiki-tier-badge.tier-baseline,
+[data-theme="emerald"] .wiki-tier-badge.tier-base,
+[data-theme="emerald"] .wiki-tier-badge.tier-基 {
+  background: rgba(100, 116, 139, 0.1);
+  border-color: rgba(100, 116, 139, 0.3);
+  color: #475569;
+}
+
+[data-theme="dawn"] .wiki-tier-badge.tier-d,
+[data-theme="dawn"] .wiki-tier-badge.tier-e,
+[data-theme="dawn"] .wiki-tier-badge.tier-f,
+[data-theme="emerald"] .wiki-tier-badge.tier-d,
+[data-theme="emerald"] .wiki-tier-badge.tier-e,
+[data-theme="emerald"] .wiki-tier-badge.tier-f {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #b91c1c;
+}
+
+.wiki-skill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.wiki-skill-badge.skill-badge-white {
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.wiki-skill-badge.skill-badge-blue {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #0284c7;
+}
+
+[data-theme="midnight"] .wiki-skill-badge.skill-badge-blue,
+[data-theme="onyx"] .wiki-skill-badge.skill-badge-blue {
+  color: #7dd3fc;
+}
+
+.wiki-skill-badge.skill-badge-gold {
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  color: #d97706;
+}
+
+[data-theme="midnight"] .wiki-skill-badge.skill-badge-gold,
+[data-theme="onyx"] .wiki-skill-badge.skill-badge-gold {
+  color: #fde047;
+}
+
+.badge-unreleased {
+  font-size: 10px;
+  color: #ef4444;
+}
+
+.skill-badge-val {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/*  專長評級榜樣式 (Ratings Guide) */
+.wiki-strategy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.strategy-item {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 6px 0;
+}
+
+.strategy-item:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.strategy-item.strategy-early,
+.strategy-item.strategy-late,
+.strategy-item.strategy-energy,
+.strategy-item.strategy-seeds {
+  border-top: none;
+}
+
+.strategy-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.strategy-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  line-height: 1.4;
+}
+
+.strategy-badge.badge-early {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.strategy-badge.badge-late {
+  color: #c084fc;
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.strategy-badge.badge-energy {
+  color: #fb7185;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.strategy-badge.badge-seeds {
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.strategy-title {
+  font-size: 14.5px;

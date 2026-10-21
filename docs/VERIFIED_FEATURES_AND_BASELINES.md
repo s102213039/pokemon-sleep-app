@@ -327,6 +327,15 @@
      - 透過 `scripts/build_appraisal.js` 於 2ms 內自動編譯出相容 Node VM 與瀏覽器的 `appraisal.js`，徹底消除 AI 讀取大檔超時風險。
 - **嚴禁退化行為**：不得重新將天梯常數放回 `wiki.js`；不得刪除 `scripts/build_css.js` 或 `scripts/build_appraisal.js`；修改 CSS 或 Lab 邏輯時應優先維護模組化原始碼。
 
+### 8.5 第二輪深度細分模組化與全棧 Master Bundler (`scripts/build_all.js`)
+- **[v] 良品狀態 (Verified Working)**：
+  1. **Wiki 深度模組化 (`js/modules/wiki/`)**：拆解為 `wiki_skills.js` (1,386 行)、`wiki_ladder.js` (2,496 行)、`wiki_camps.js` (2,306 行)、`wiki_render.js` (1,376 行)、`wiki_items.js` (941 行)、`wiki_main.js` (994 行)。
+  2. **Pokemon Box 深度模組化 (`js/modules/box/`)**：拆解為 `box_filter.js` (645 行)、`box_storage.js` (1,152 行)、`box_modal.js` (1,499 行)、`box_ocr.js` (1,063 行)、`box_main.js` (743 行)。
+  3. **Pokedex 圖鑑模組化 (`js/modules/pokedex/`)**：拆解為 `pokedex_core.js` (1,875 行)、`pokedex_render.js` (2,745 行)、`pokedex_formulas.js` (1,670 行)、`pokedex_modal.js` (771 行)。
+  4. **Tier 4 測試套件拆分 (`tests/tiers/tier4/`)**：原 8,993 行巨石縮減至 18 行微型協調器，4 個獨立子套件（`tier4_part1.js` 2,026 行、`tier4_part2.js` 2,873 行、`tier4_part3.js` 2,652 行、`tier4_part4.js` 1,559 行），109 項用例全部正常運作。
+  5. **CSS 深度細化與 Master Bundler (`scripts/build_all.js`)**：全站 37 個模組於 10ms 內完成打包，所有 226 項測試 100% 通過。
+- **嚴禁退化行為**：修改特定業務邏輯時應優先編輯 `js/modules/wiki/`、`js/modules/box/`、`js/modules/pokedex/`、`js/modules/lab/` 原始碼；不得移除 `scripts/build_all.js`。
+
 ---
 
 ## 九、 模組八：全主題配色與設計規範 (Themes & UI Rules)

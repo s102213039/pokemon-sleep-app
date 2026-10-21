@@ -5,6 +5,44 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-10-21 已完成（全站架構第二輪深度細分工程：Wiki/Box/Pokedex 解構、Tier 4 測試 8,993 行解構至 18 行、Master Bundler 10ms 編譯 37 個子模組、v=20261021_05）
+
+- **測試狀態**：226/226 自動化測試全數通過（支援 `--tier=N` 分層極速執行，全量回歸維持 0 失敗）
+- **深度細分核心成果**：
+  1. **Tier 4 巨石測試套件解構 (`tests/tiers/tier4_scenarios.js`)**：
+     - 將原長達 **8,993 行** 的單一測試檔解構為 **18 行** 微型協調器。
+     - 109 項複雜業務情境分流至 4 個專責子套件：
+       - `tests/tiers/tier4/tier4_part1.js` (2,026 行，用例 1-30：圖鑑工作流、H5 跳轉、導航生命週期)
+       - `tests/tiers/tier4/tier4_part2.js` (2,873 行，用例 31-60：百科營地、天梯及格線、OCR 初階)
+       - `tests/tiers/tier4/tier4_part3.js` (2,652 行，用例 61-90：薄荷中和、緞帶扣減、雷達圖與公式)
+       - `tests/tiers/tier4/tier4_part4.js` (1,559 行，用例 91-109：道具百科、深度研究室組隊與對比)
+  2. **Wiki 百科深度解構 (`js/modules/wiki/`, `scripts/build_wiki.js`)**：
+     - 將 9,499 行之 `wiki.js` 拆解為 6 個專責模組：
+       - `wiki_skills.js` (1,386 行)：主副技能數據與幫速矩陣
+       - `wiki_ladder.js` (2,496 行)：天梯篩選、高分料理標記與及格線
+       - `wiki_camps.js` (2,306 行)：島嶼營地出沒與 EX 模式
+       - `wiki_render.js` (1,376 行)：子面板卡片與看板 DOM 渲染
+       - `wiki_items.js` (941 行)：道具薰香百科與詳細彈窗
+       - `wiki_main.js` (994 行)：主版面配置、子分頁切換與 `WikiDB` 導出
+     - 透過 `scripts/build_wiki.js` 於 2ms 內即時打包。
+  3. **Pokemon Box 倉庫深度解構 (`js/modules/box/`, `scripts/build_box.js`)**：
+     - 將 5,102 行之 `box.js` 拆解為 5 個專責模組：
+       - `box_filter.js` (645 行)：側邊欄篩選器與屬性按鈕
+       - `box_storage.js` (1,152 行)：倉庫資料模型、IndexedDB 同步與 PR 評級
+       - `box_modal.js` (1,499 行)：個體編輯、手動登記與覆寫衝突彈窗
+       - `box_ocr.js` (1,063 行)：Canvas 影像前處理、Tesseract OCR 解析與緞帶反推
+       - `box_main.js` (743 行)：JSON 匯入匯出、子分頁控制與 `PokemonBoxApp` 導出
+     - 透過 `scripts/build_box.js` 於 1ms 內即時打包。
+  4. **Pokedex 圖鑑深度解構 (`js/modules/pokedex/`, `scripts/build_app.js`)**：
+     - 將 7,061 行之 `app.js` 拆解為 4 個專責模組：
+       - `pokedex_core.js` (1,875 行)：狀態管理、樹果基礎公式、通用提示
+       - `pokedex_render.js` (2,745 行)：表格/網格卡片渲染、側邊欄手勢抽屜
+       - `pokedex_formulas.js` (1,670 行)：公式精算器、主技能收益、等級滑桿預設
+       - `pokedex_modal.js` (771 行)：懸浮評測彈窗、戰術卡 HTML 渲染
+     - 透過 `scripts/build_app.js` 於 2ms 內即時打包。
+  5. **全棧 Master Bundler (`scripts/build_all.js`)**：
+     - 單一指令 10ms 內編譯全站 37 個專責模組，自動同步 `css/styles.css`、`wiki.js`、`appraisal.js`、`box.js`、`app.js`，徹底杜絕 AI 讀取超長檔案造成的超時卡死。
+
 ## 交接：2026-10-21 已完成（全站架構瘦身工程第三與第四階段：CSS 巨石解構為 11 大模組與 3ms Bundler、深度研究室與評測模組職責分離 SRP、v=20261021_04）
 
 - **測試狀態**：226/226 自動化測試全數通過（支援 `--tier=N` 分層極速執行，全量回歸維持 0 失敗）

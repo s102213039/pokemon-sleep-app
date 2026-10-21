@@ -1,0 +1,498 @@
+
+.mobile-h5-app .box-action-btn {
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 4px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 13px !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  padding: 0 !important;
+}
+
+.mobile-h5-app .box-action-btn:active {
+  transform: scale(0.9) !important;
+}
+
+.mobile-h5-app .box-pr-summary-bar {
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.06)) !important;
+  border-radius: 6px !important;
+  padding: 4px 8px !important;
+  font-size: 11px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .box-pr-summary-label {
+  font-weight: 700 !important;
+  color: #fbbf24 !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-pr-summary-text {
+  color: var(--text-secondary) !important;
+  line-height: 1.25 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .box-card-section {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+.mobile-h5-app .box-section-title {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+  letter-spacing: 0.2px !important;
+}
+
+.mobile-h5-app .box-ing-slots {
+  display: flex !important;
+  gap: 5px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .box-ing-slot {
+  flex: 1 1 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px !important;
+  padding: 3px 6px !important;
+  min-width: 0 !important;
+}
+
+.mobile-h5-app .box-slot-tag {
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-slot-val {
+  display: flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  min-width: 0 !important;
+}
+
+.mobile-h5-app .box-slot-val .ing-icon {
+  width: 16px !important;
+  height: 16px !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-slot-val .ing-qty {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .box-subskills-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 5px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .box-subskills-grid .box-subskill-pill:nth-child(5) {
+  grid-column: 1 / 2 !important;
+}
+
+.mobile-h5-app .box-subskill-pill {
+  padding: 4px 6px !important;
+  border-radius: 6px !important;
+  text-align: center !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .box-subskill-pill .subskill-name {
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  width: 100% !important;
+  font-size: 12px !important;
+}
+
+.mobile-h5-app .box-card-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  border-top: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.06)) !important;
+  padding-top: 5px !important;
+  margin-top: 1px !important;
+}
+
+.mobile-h5-app .box-nature-info {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .box-nature-label {
+  font-size: 10.5px !important;
+  color: var(--text-muted) !important;
+  font-weight: 600 !important;
+}
+
+.mobile-h5-app .box-nature-badge {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .box-nature-effects {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .nature-buff {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: #f43f5e !important;
+  background: rgba(244, 63, 94, 0.15) !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+}
+
+.mobile-h5-app .nature-debuff {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: #38bdf8 !important;
+  background: rgba(56, 189, 248, 0.15) !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+}
+
+.mobile-h5-app .nature-neutral {
+  font-size: 10px !important;
+  color: var(--text-muted) !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+}
+
+/* 7. 原生 App 浮動操作按鈕 (Floating Action Buttons - FAB) */
+.mobile-h5-app .box-fab-container {
+  position: fixed !important;
+  bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+  right: 16px !important;
+  z-index: 95 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  align-items: flex-end !important;
+  pointer-events: none !important;
+}
+
+/* 僅在倉庫 list 分頁時顯示，非倉庫分頁或深度研究室模式時隱藏 */
+.mobile-h5-app:not(:has(#tab-box.active)) #box-fab-container,
+.mobile-h5-app body:not(:has(#tab-box.active)) #box-fab-container,
+.mobile-h5-app body.box-lab-active #box-fab-container {
+  display: none !important;
+}
+
+.mobile-h5-app .box-fab-btn {
+  pointer-events: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  height: 42px !important;
+  padding: 0 16px 0 12px !important;
+  border-radius: 21px !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  border: none !important;
+}
+
+.mobile-h5-app .box-fab-btn:active {
+  transform: scale(0.92) !important;
+}
+
+.mobile-h5-app .box-fab-scan {
+  background: linear-gradient(135deg, #6366f1, #38bdf8) !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45), 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+}
+
+.mobile-h5-app .box-fab-add {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+}
+
+.mobile-h5-app .box-fab-btn svg {
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-fab-btn .fab-label {
+  line-height: 1 !important;
+}
+
+/* 8. 原生 App 倉庫輕量空狀態 (Simple Clean Empty State) */
+.mobile-h5-app .box-simple-empty-state {
+  padding: 56px 20px 30px !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .box-simple-empty-title {
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-secondary) !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .box-simple-empty-hint {
+  font-size: 12px !important;
+  color: var(--text-muted) !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+  max-width: 280px !important;
+}
+
+/* 9. 深度評測室獨立子面板 */
+.mobile-h5-app .box-lab-content-container {
+  padding: 6px 10px 24px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .appraisal-lab-standalone-panel {
+  display: block !important;
+  width: 100% !important;
+}
+
+/* H5 App: hide box linkage selector (navigate via table row click instead) */
+.mobile-h5-app .lab-box-linkage-group {
+  display: none !important;
+}
+
+/* 10. 設定彈窗內的備份與還原卡片 */
+.app-backup-card {
+  padding: 10px 12px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.app-backup-desc {
+  font-size: 11.5px !important;
+  color: var(--text-muted) !important;
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
+
+.app-backup-btn-row {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+.app-backup-action-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 9px 8px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  border: none !important;
+  cursor: pointer !important;
+  text-align: center !important;
+  transition: all 0.15s ease !important;
+}
+
+.app-backup-action-btn:active {
+  transform: scale(0.97) !important;
+}
+
+.app-backup-action-btn.export-btn {
+  background: var(--accent-gradient, linear-gradient(135deg, #6366f1, #38bdf8)) !important;
+  color: #ffffff !important;
+}
+
+.app-backup-action-btn.import-btn {
+  background: var(--bg-card, #131b2e) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+/*  11. 亮色主題自適應 (Dawn & Emerald) */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-subnav-bar,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-subnav-bar {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row select,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row select,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-trigger,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-trigger,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-view-toggle-chips,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-view-toggle-chips,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-card-img-wrap,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-card-img-wrap,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-action-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-action-btn,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-pr-summary-bar,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-pr-summary-bar,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-ing-slot,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-ing-slot,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .app-backup-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .app-backup-card {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-menu,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-menu {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item:hover,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item.selected,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-toolbar-control-row .custom-select-item.selected {
+  background: #f1f5f9 !important;
+  color: #6366f1 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-card {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-fab-add,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .mobile-h5-app .box-fab-add,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .app-backup-action-btn.import-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .app-backup-action-btn.import-btn {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1) !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .box-pr-summary-label,
+[data-theme="emerald"] .mobile-h5-app .box-pr-summary-label {
+  color: #b45309 !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .nature-buff,
+[data-theme="emerald"] .mobile-h5-app .nature-buff {
+  color: #be123c !important;
+  background: #ffe4e6 !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .nature-debuff,
+[data-theme="emerald"] .mobile-h5-app .nature-debuff {
+  color: #0369a1 !important;
+  background: #e0f2fe !important;
+}
+
+/* ────────────────────────────────────────────────────────────
+    12. 原生 App 寶可夢手動新增/編輯彈窗 (Mobile Box Modal Sheet)
+   ──────────────────────────────────────────────────────────── */
+.mobile-h5-app .mobile-box-sheet {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  max-height: 92vh !important;
+  max-height: 92dvh !important;
+  height: auto !important;
+  background: var(--bg-card, #131b2e) !important;
+  border-top-left-radius: 20px !important;
+  border-top-right-radius: 20px !important;
+  border: none !important;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5) !important;
+  z-index: 1100 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.mobile-h5-app .mobile-box-sheet .sheet-drag-handle {
+  width: 40px !important;
+  height: 4px !important;
+  background: rgba(255, 255, 255, 0.25) !important;
+  border-radius: 999px !important;
+  margin: 8px auto 4px auto !important;
+  flex-shrink: 0 !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle,
+[data-theme="emerald"] .mobile-h5-app .mobile-box-sheet .sheet-drag-handle {
+  background: rgba(0, 0, 0, 0.2) !important;
+}
+
+.mobile-h5-app #box-edit-modal .mobile-box-sheet .box-modal-header {
+  display: grid !important;
+  grid-template-columns: 60px 1fr 60px !important;
+  align-items: center !important;
+  padding: 4px 16px 10px 16px !important;
+  border: none !important;
+  background: transparent !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app #modal-appraisal-report .mobile-box-sheet .box-modal-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 2px 14px 4px 14px !important;
+  border: none !important;
+  background: transparent !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app #modal-appraisal-report .box-modal-header .appraisal-dual-verdict-column {
+  display: flex !important;
