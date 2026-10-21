@@ -10,6 +10,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cdn.jsdelivr.net https://raw.githubusercontent.com https://api.github.com https://tessdata.projectnaptha.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; base-uri 'self';">
   <title>Pokémon Sleep 專屬手機版 App</title>
   <meta name="description" content="Pokémon Sleep 專屬手機版 App — 寶可夢機率、料理食譜、數據百科與倉庫 OCR 全功能。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1362,7 +1363,7 @@
     </svg>
   </button>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" crossorigin="anonymous"></script>
   <script src="../js/core/idbStorage.js?v=20261021_01"></script>
   <script src="../js/core/domUtils.js?v=20261021_01"></script>
   <script src="../js/core/cloudSync.js?v=20261020_01"></script>

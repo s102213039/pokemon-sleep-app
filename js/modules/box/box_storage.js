@@ -833,7 +833,7 @@
             <div class="box-card" data-uid="${p.uid}" title="${escapeHtml(prInfo.summaryNote || '')}">
               <div class="box-card-header">
                 <div class="box-card-img-wrap">
-                  ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="box-card-icon" onerror="this.style.display='none';">` : ''}
+                  ${iconUrl ? `<img src="${iconUrl}" alt="${escapeHtml(pkmDisplayName)}" class="box-card-icon" onerror="this.style.display='none';">` : ''}
                 </div>
                 <div class="box-card-info">
                   <div class="box-card-name-row">

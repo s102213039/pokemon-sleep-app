@@ -1478,7 +1478,7 @@
             <div class="box-card" data-uid="${p.uid}" title="${escapeHtml(prInfo.summaryNote || '')}">
               <div class="box-card-header">
                 <div class="box-card-img-wrap">
-                  ${iconUrl ? `<img src="${iconUrl}" alt="${pkmDisplayName}" class="box-card-icon" onerror="this.style.display='none';">` : ''}
+                  ${iconUrl ? `<img src="${iconUrl}" alt="${escapeHtml(pkmDisplayName)}" class="box-card-icon" onerror="this.style.display='none';">` : ''}
                 </div>
                 <div class="box-card-info">
                   <div class="box-card-name-row">
@@ -4411,6 +4411,60 @@
     downloadAnchor.remove();
   }
 
+  const MAX_IMPORT_COUNT = 500;
+  const DANGEROUS_PROTO_KEYS = ['__proto__', 'constructor', 'prototype'];
+
+  function sanitizeImportedPokemon(raw) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+    for (const key of DANGEROUS_PROTO_KEYS) {
+      if (Object.prototype.hasOwnProperty.call(raw, key)) return null;
+    }
+
+    const clean = {};
+    if (typeof raw.uid === 'string' && /^[a-zA-Z0-9_-]{1,64}$/.test(raw.uid)) {
+      clean.uid = raw.uid;
+    } else {
+      clean.uid = 'pkm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+    }
+
+    clean.name = typeof raw.name === 'string' ? raw.name.trim().slice(0, 30) : '未知寶可夢';
+    if (typeof raw.nickname === 'string' && raw.nickname.trim()) {
+      clean.nickname = raw.nickname.trim().slice(0, 30);
+    }
+
+    clean.level = Math.max(1, Math.min(100, parseInt(raw.level, 10) || 1));
+    clean.main_skill_level = Math.max(1, Math.min(7, parseInt(raw.main_skill_level, 10) || 1));
+    if (raw.pokemonId != null) clean.pokemonId = String(raw.pokemonId).slice(0, 20);
+
+    clean.nature = typeof raw.nature === 'string' ? raw.nature.trim().slice(0, 20) : '認真';
+    clean.cleanseMint = Boolean(raw.cleanseMint);
+    clean.ribbon = Math.max(0, Math.min(4, parseInt(raw.ribbon, 10) || 0));
+
+    if (Array.isArray(raw.subskills)) {
+      clean.subskills = raw.subskills
+        .filter(s => typeof s === 'string')
+        .map(s => s.trim().slice(0, 30))
+        .slice(0, 5);
+    } else {
+      clean.subskills = [];
+    }
+
+    if (Array.isArray(raw.ingredients)) {
+      clean.ingredients = raw.ingredients
+        .filter(i => typeof i === 'string')
+        .map(i => i.trim().slice(0, 30))
+        .slice(0, 3);
+    } else {
+      clean.ingredients = [];
+    }
+
+    if (typeof raw.specialty === 'string') clean.specialty = raw.specialty.slice(0, 20);
+    if (typeof raw.type === 'string') clean.type = raw.type.slice(0, 20);
+    if (typeof raw.main_skill === 'string') clean.main_skill = raw.main_skill.slice(0, 40);
+
+    return clean;
+  }
+
   function importBoxJSON(file) {
     if (!file) return;
     const reader = new FileReader();
@@ -4418,9 +4472,18 @@
       try {
         const imported = JSON.parse(e.target.result);
         if (Array.isArray(imported)) {
-          if (confirm(`確定要匯入 ${imported.length} 隻寶可夢嗎？（將合併至現有倉庫）`)) {
+          if (imported.length > MAX_IMPORT_COUNT) {
+            showBoxToast('匯入超限', `單次匯入不可超過 ${MAX_IMPORT_COUNT} 隻寶可夢！`, 'warning');
+            return;
+          }
+          const validItems = imported.map(sanitizeImportedPokemon).filter(Boolean);
+          if (validItems.length === 0) {
+            showBoxToast('匯入失敗', '無有效的寶可夢資料可匯入！', 'warning');
+            return;
+          }
+          if (confirm(`確定要匯入 ${validItems.length} 隻寶可夢嗎？（將合併至現有倉庫）`)) {
             const existingUids = new Set(userBox.map(p => p.uid));
-            imported.forEach(item => {
+            validItems.forEach(item => {
               if (!item.uid || existingUids.has(item.uid)) {
                 item.uid = 'pkm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
               }
@@ -4428,7 +4491,7 @@
             });
             saveUserBox();
             renderBox();
-            showBoxToast('匯入成功', `成功匯入 ${imported.length} 隻寶可夢！`, 'success');
+            showBoxToast('匯入成功', `成功匯入 ${validItems.length} 隻寶可夢！`, 'success');
           }
         } else {
           showBoxToast('匯入失敗', '匯入檔案格式錯誤，請確認為正確的 JSON 備份檔！', 'warning');
