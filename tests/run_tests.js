@@ -12846,6 +12846,179 @@ SP 4,316
     assert(mockStorage.get('pksleep_lab_compare_benchmark') === 'box', 'localStorage must persist benchmark level box');
   });
 
+  // ─── Test 226: Research Lab Target Recipe Strategy, Greedy Ingredient Maximization, Supply-Demand Dashboard & Greengrass Reroll ─
+  test('Tier 4 - Real-World Application Scenarios', 'Research Lab Target Recipe Strategy, Greedy Ingredient Maximization, Supply-Demand Dashboard & Greengrass Reroll', () => {
+    const appraisalJs = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/modules/appraisal.js'), 'utf8');
+    const stylesCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css/styles.css'), 'utf8');
+    const recipesData = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'data/recipes.json'), 'utf8'));
+
+    // 1. Static CSS verification
+    assert(stylesCss.includes('.lab-target-recipe-chip'), 'styles.css must style .lab-target-recipe-chip');
+    assert(stylesCss.includes('.lab-recipe-supply-board'), 'styles.css must style .lab-recipe-supply-board');
+    assert(stylesCss.includes('.lab-supply-row'), 'styles.css must style .lab-supply-row');
+    assert(stylesCss.includes('.lab-supply-diff-badge'), 'styles.css must style .lab-supply-diff-badge');
+    assert(stylesCss.includes('.lab-recipe-picker-container'), 'styles.css must style .lab-recipe-picker-container');
+    assert(stylesCss.includes('.lab-greengrass-actions'), 'styles.css must style .lab-greengrass-actions');
+
+    // Single Frame Rule verification: ensure supply board has border and inner wrapper is borderless transparent
+    assert(stylesCss.includes('.lab-supply-table-wrapper {\n  border: none;\n  background: transparent;'),
+      'styles.css must enforce single frame rule for supply table wrapper without double borders');
+
+    // 2. VM runtime test
+    const mockElements = new Map();
+    const mockDOMElement = (id = '', tagName = 'div') => {
+      const el = {
+        id: id,
+        tagName: tagName.toUpperCase(),
+        innerHTML: '',
+        value: '',
+        style: { display: '' },
+        classList: {
+          classes: new Set(),
+          add(c) { this.classes.add(c); },
+          remove(c) { this.classes.delete(c); },
+          contains(c) { return this.classes.has(c); }
+        },
+        querySelectorAll: () => [],
+        querySelector: () => null,
+        appendChild: (child) => child,
+        addEventListener: () => {}
+      };
+      if (id) mockElements.set(id, el);
+      return el;
+    };
+
+    const mockStorage = new Map();
+    const testBox = [
+      // Producer A: Warming Ginger (暖暖薑)
+      { uid: 'pkm-ginger', pokemonId: 6, name: '噴火龍', level: 30, nature: '坦率', specialty: '食材', subskills: ['食材機率提升M'], ing1: '暖暖薑', ing2: '暖暖薑' },
+      // Producer B: Tasty Mushroom (品鮮蘑菇)
+      { uid: 'pkm-shroom', pokemonId: 94, name: '耿鬼', level: 30, nature: '坦率', specialty: '食材', subskills: ['食材機率提升M'], ing1: '品鮮蘑菇', ing2: '品鮮蘑菇' },
+      // Producer C: Fiery Herb (火辣香草)
+      { uid: 'pkm-herb', pokemonId: 229, name: '黑魯加', level: 30, nature: '坦率', specialty: '食材', subskills: ['食材機率提升M'], ing1: '火辣香草', ing2: '火辣香草' },
+      // Producer D: Bean Sausage (豆製肉)
+      { uid: 'pkm-sausage', pokemonId: 157, name: '火爆獸', level: 30, nature: '坦率', specialty: '食材', subskills: ['食材機率提升M'], ing1: '豆製肉', ing2: '豆製肉' },
+      // Producer E: Fancy Apple (特選蘋果 - Irrelevant to Bounce Curry Udon)
+      { uid: 'pkm-apple', pokemonId: 25, name: '皮卡丘', level: 30, nature: '坦率', specialty: '樹果', subskills: ['樹果數量S'], ing1: '特選蘋果', ing2: '特選蘋果' }
+    ];
+
+    const ctx = {
+      window: {
+        IS_MOBILE_H5: false,
+        __RECIPES_CACHE__: recipesData,
+        allRecipes: recipesData,
+        localStorage: {
+          getItem: (k) => mockStorage.get(k) || null,
+          setItem: (k, v) => mockStorage.set(k, String(v)),
+          removeItem: (k) => mockStorage.delete(k)
+        },
+        I18N: {
+          getLanguage: () => 'zh-TW',
+          getSubSkillName: (n) => n,
+          getMainSkillName: (n) => n,
+          getIngredientName: (n) => n,
+          getNatureName: (n) => n,
+          getSpecialtyName: (n) => n,
+          getTypeName: (n) => n,
+          getBerryName: (n) => n,
+          getIngredientIcon: () => '',
+          getSpecialtyIconHtml: (spec, size, cls) => `<span class="${cls}">${spec}</span>`
+        },
+        PokemonApp: {
+          getPokemons: () => [
+            { id: 6, name_cn: '噴火龍', specialty: '食材', base_frequency: 2600, ingredients: [{ name: '暖暖薑', count: 2 }, { name: '暖暖薑', count: 5 }] },
+            { id: 94, name_cn: '耿鬼', specialty: '食材', base_frequency: 2200, ingredients: [{ name: '品鮮蘑菇', count: 2 }, { name: '品鮮蘑菇', count: 5 }] },
+            { id: 229, name_cn: '黑魯加', specialty: '食材', base_frequency: 2900, ingredients: [{ name: '火辣香草', count: 2 }, { name: '火辣香草', count: 5 }] },
+            { id: 157, name_cn: '火爆獸', specialty: '食材', base_frequency: 2400, ingredients: [{ name: '豆製肉', count: 2 }, { name: '豆製肉', count: 5 }] },
+            { id: 25, name_cn: '皮卡丘', specialty: '樹果', base_frequency: 2700, ingredients: [{ name: '特選蘋果', count: 2 }, { name: '特選蘋果', count: 5 }] }
+          ]
+        },
+        UserBox: {
+          getUserBox: () => testBox
+        },
+        document: {
+          getElementById: (id) => mockElements.get(id) || null,
+          querySelector: (s) => (s && s.startsWith('#') ? (mockElements.get(s.slice(1)) || null) : null),
+          querySelectorAll: () => [],
+          createElement: (tag) => mockDOMElement('', tag),
+          body: { style: {}, classList: { contains: () => true }, appendChild: () => {} }
+        },
+        console: console,
+        getComputedStyle: () => ({ display: 'block' }),
+        setupCustomSelect: () => {},
+        showToast: () => {}
+      }
+    };
+    ctx.window.allPokemons = ctx.window.PokemonApp.getPokemons();
+    ctx.window.window = ctx.window;
+    ctx.document = ctx.window.document;
+    ctx.localStorage = ctx.window.localStorage;
+    vm.createContext(ctx);
+    vm.runInContext(appraisalJs, ctx);
+
+    const Lab = ctx.window.AppraisalLab;
+    assert(typeof Lab.setTargetRecipe === 'function', 'setTargetRecipe must be exported');
+    assert(typeof Lab.rerollGreengrassBerries === 'function', 'rerollGreengrassBerries must be exported');
+    assert(typeof Lab.getAllTargetRecipes === 'function', 'getAllTargetRecipes must be exported');
+    assert(typeof Lab.findTargetRecipe === 'function', 'findTargetRecipe must be exported');
+
+    // 3. Test recipe helpers
+    const allRecipes = Lab.getAllTargetRecipes();
+    assert(Array.isArray(allRecipes) && allRecipes.length >= 78, 'getAllTargetRecipes must return at least 78 official recipes');
+    const udon = Lab.findTargetRecipe('彈跳咖哩烏龍麵');
+    assert(udon && udon.name_cn === '彈跳咖哩烏龍麵', 'findTargetRecipe must locate 彈跳咖哩烏龍麵');
+    assert(Array.isArray(udon.ingredients) && udon.ingredients.length === 4, 'Bounce Curry Udon must have 4 required ingredients');
+
+    // 4. Test target recipe state and persistence
+    Lab.setTargetRecipe('彈跳咖哩烏龍麵');
+    assert(mockStorage.get('pksleep_lab_target_recipe') === '彈跳咖哩烏龍麵', 'localStorage must persist pksleep_lab_target_recipe');
+    Lab.setTeamStrategy('recipe');
+    assert(mockStorage.get('pksleep_lab_team_strategy') === 'recipe', 'localStorage must persist pksleep_lab_team_strategy as recipe');
+
+    // 5. Test autoOptimizeTeam in Target Recipe mode (食材最大化模式)
+    Lab.autoOptimizeTeam(false);
+    const slots = JSON.parse(mockStorage.get('pksleep_lab_team_slots') || '[]');
+    assert(Array.isArray(slots) && slots.length === 5, 'autoOptimizeTeam must allocate 5 slots');
+    // Ensure the 4 target ingredient producers are all picked before the irrelevant apple producer
+    assert(slots.includes('pkm-ginger'), 'Team must include Ginger producer for 彈跳咖哩烏龍麵');
+    assert(slots.includes('pkm-shroom'), 'Team must include Mushroom producer for 彈跳咖哩烏龍麵');
+    assert(slots.includes('pkm-herb'), 'Team must include Herb producer for 彈跳咖哩烏龍麵');
+    assert(slots.includes('pkm-sausage'), 'Team must include Sausage producer for 彈跳咖哩烏龍麵');
+
+    // 6. Test simulateTeamPerformance supply-demand analysis
+    const teamItems = slots.map(uid => testBox.find(p => p.uid === uid)).filter(Boolean);
+    const sim = Lab.simulateTeamPerformance(teamItems, 'greengrass');
+    assert(sim.targetRecipeAnalysis !== null, 'simulateTeamPerformance must return targetRecipeAnalysis');
+    assert(sim.targetRecipeAnalysis.recipe.name_cn === '彈跳咖哩烏龍麵', 'targetRecipeAnalysis must analyze 彈跳咖哩烏龍麵');
+    assert(Array.isArray(sim.targetRecipeAnalysis.items) && sim.targetRecipeAnalysis.items.length === 4, 'targetRecipeAnalysis must have 4 items');
+    sim.targetRecipeAnalysis.items.forEach(item => {
+      assert(item.dailyDemand === item.perMeal * 3, 'dailyDemand must be exactly perMeal * 3');
+      assert(item.diff === item.teamYield - item.dailyDemand, 'diff must be teamYield minus dailyDemand');
+      assert(typeof item.fulfillmentPct === 'number', 'fulfillmentPct must be numeric');
+    });
+
+    // 7. Test Greengrass random reroll
+    Lab.rerollGreengrassBerries(false);
+    const gg1 = JSON.parse(mockStorage.get('pksleep_lab_greengrass_berries') || '[]');
+    assert(Array.isArray(gg1) && gg1.length === 3, 'rerollGreengrassBerries must roll exactly 3 berries');
+    const distinct = new Set(gg1);
+    assert(distinct.size === 3, 'rerollGreengrassBerries must roll 3 distinct berries');
+
+    // 8. Test Greengrass Roll & Build
+    Lab.rerollGreengrassBerries(true);
+    const gg2 = JSON.parse(mockStorage.get('pksleep_lab_greengrass_berries') || '[]');
+    assert(Array.isArray(gg2) && gg2.length === 3, 'Roll & Build must roll 3 berries');
+
+    // 9. Test UI rendering: Render Lab Container and verify markup
+    const mockContainer = mockDOMElement('appraisal-lab-container');
+    Lab.renderLab(mockContainer);
+    assert(mockContainer.innerHTML.includes('id="lab-team-recipe-supply-demand"'), 'Rendered lab must contain #lab-team-recipe-supply-demand');
+    assert(mockContainer.innerHTML.includes('lab-target-recipe-chip'), 'Rendered lab must contain .lab-target-recipe-chip');
+    assert(mockContainer.innerHTML.includes('Random Reroll') || mockContainer.innerHTML.includes('隨機擲骰'), 'Rendered lab must contain Random Reroll button');
+    assert(mockContainer.innerHTML.includes('Roll & Build') || mockContainer.innerHTML.includes('擲骰並自動配隊'), 'Rendered lab must contain Roll & Build button');
+    assert(mockContainer.innerHTML.includes('lab-supply-row'), 'Supply-demand board must render .lab-supply-row');
+  });
+
 console.log('                   Test Results Summary');
 console.log('======================================================');
 Object.keys(resultsByTier).forEach(tier => {

@@ -1627,6 +1627,24 @@
     }
   ];
 
+  function getAllTargetRecipes() {
+    if (typeof window !== 'undefined' && Array.isArray(window.__RECIPES_CACHE__) && window.__RECIPES_CACHE__.length > 0) {
+      return window.__RECIPES_CACHE__;
+    }
+    if (typeof window !== 'undefined' && Array.isArray(window.allRecipes) && window.allRecipes.length > 0) {
+      return window.allRecipes;
+    }
+    return TARGET_TOP_RECIPES;
+  }
+
+  function findTargetRecipe(name) {
+    if (!name) return TARGET_TOP_RECIPES[0];
+    const list = getAllTargetRecipes();
+    return list.find(r => (r.name_cn === name || r.name === name || r.name_en === name)) ||
+           TARGET_TOP_RECIPES.find(r => (r.name_cn === name || r.name === name || r.name_en === name)) ||
+           list[0] || TARGET_TOP_RECIPES[0];
+  }
+
   const _sigRecipeRecCache = Object.create(null);
 
   function getSignatureRecipeRecommendations(ingredients, isEN) {
@@ -3061,8 +3079,9 @@
     currentSubTab: 'team',
     teamIslandId: 'greengrass',
     teamSlots: [null, null, null, null, null],
-    teamStrategy: 'balanced', // 'balanced' | 'berries' | 'ingredients' | 'skills'
+    teamStrategy: 'balanced', // 'balanced' | 'berries' | 'ingredients' | 'skills' | 'recipe'
     cookingType: 'curry',     // 'curry' | 'salad' | 'dessert'
+    targetRecipeName: '彈跳咖哩烏龍麵',
     greengrassBerries: ['桃桃果', '橙橙果', '櫻子果'],
     compareSlots: [null, null, null],
     compareBenchmarkLevel: 'box', // 'box' | 30 | 50 | 60 | 100
@@ -3132,9 +3151,11 @@
       const sSlots = JSON.parse(localStorage.getItem('pksleep_lab_team_slots') || 'null');
       if (Array.isArray(sSlots) && sSlots.length === 5) labState.teamSlots = sSlots;
       const sStrategy = localStorage.getItem('pksleep_lab_team_strategy');
-      if (['balanced', 'berries', 'ingredients', 'skills'].includes(sStrategy)) labState.teamStrategy = sStrategy;
+      if (['balanced', 'berries', 'ingredients', 'skills', 'recipe'].includes(sStrategy)) labState.teamStrategy = sStrategy;
       const sCooking = localStorage.getItem('pksleep_lab_cooking_type');
       if (['curry', 'salad', 'dessert'].includes(sCooking)) labState.cookingType = sCooking;
+      const sTargetRecipe = localStorage.getItem('pksleep_lab_target_recipe');
+      if (sTargetRecipe) labState.targetRecipeName = sTargetRecipe;
       const sGgBerries = JSON.parse(localStorage.getItem('pksleep_lab_greengrass_berries') || 'null');
       if (Array.isArray(sGgBerries) && sGgBerries.length === 3) labState.greengrassBerries = sGgBerries;
       const sCompareSlots = JSON.parse(localStorage.getItem('pksleep_lab_compare_slots') || 'null');
@@ -3740,6 +3761,35 @@
       };
     });
 
+    let targetRecipeAnalysis = null;
+    const targetRecipe = findTargetRecipe(labState.targetRecipeName);
+    if (targetRecipe && Array.isArray(targetRecipe.ingredients) && targetRecipe.ingredients.length > 0) {
+      const items = targetRecipe.ingredients.map(ing => {
+        const perMeal = ing.count || 0;
+        const dailyDemand = perMeal * 3;
+        const teamYield = ingredientsMap[ing.name] || 0;
+        const fulfillmentPct = dailyDemand > 0 ? Math.min(999, Math.round((teamYield / dailyDemand) * 100)) : 100;
+        const diff = teamYield - dailyDemand;
+        const iconUrl = ing.icon || (window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(ing.name) : '');
+        return {
+          name: ing.name,
+          icon: iconUrl,
+          perMeal,
+          dailyDemand,
+          teamYield,
+          fulfillmentPct,
+          diff
+        };
+      });
+      const overallFulfillmentPct = items.length > 0 ? Math.min(...items.map(i => i.fulfillmentPct)) : 0;
+      targetRecipeAnalysis = {
+        recipe: targetRecipe,
+        items,
+        overallFulfillmentPct,
+        isFullySatisfied: items.every(i => i.teamYield >= i.dailyDemand)
+      };
+    }
+
     return {
       island,
       totalDailyBerryEnergy,
@@ -3750,7 +3800,8 @@
       sleepExpBonusCount,
       energyRecoveryBonusCount,
       hasHealer,
-      slotResults
+      slotResults,
+      targetRecipeAnalysis
     };
   }
 
@@ -3912,6 +3963,106 @@
         const picked = pickBest(userBox, 'skill');
         if (!picked) break;
       }
+    } else if (strategy === 'recipe') {
+      const targetRecipe = findTargetRecipe(labState.targetRecipeName);
+      const reqIngredients = (targetRecipe && Array.isArray(targetRecipe.ingredients)) ? targetRecipe.ingredients : [];
+      const remainingDeficits = {};
+      reqIngredients.forEach(ing => {
+        remainingDeficits[ing.name] = (ing.count || 0) * 3;
+      });
+
+      function estimatePkmIngDailyYield(p, ingName) {
+        const base = findBasePkm(p.pokemonId || p.name);
+        if (!base) return 0;
+        const level = parseInt(p.level, 10) || 30;
+        const unlockedIngs = [];
+        unlockedIngs.push(p.ing1 || (base.ingredients && base.ingredients[0] ? base.ingredients[0].name : ''));
+        if (level >= 30) unlockedIngs.push(p.ing2 || (base.ingredients && base.ingredients[1] ? base.ingredients[1].name : unlockedIngs[0]));
+        if (level >= 60) unlockedIngs.push(p.ing3 || (base.ingredients && base.ingredients[2] ? base.ingredients[2].name : unlockedIngs[0]));
+        const validUnlocked = unlockedIngs.filter(Boolean);
+        const matches = validUnlocked.filter(i => i === ingName).length;
+        if (matches === 0) return 0;
+
+        const baseFreq = base.base_frequency || base.frequency || 3600;
+        let freq = baseFreq * (1 - (level - 1) * 0.002);
+        const subs = Array.isArray(p.subskills) ? p.subskills : [];
+        let subSpeedDiscount = 0;
+        if (subs.includes('幫忙速度M')) subSpeedDiscount += 0.14;
+        if (subs.includes('幫忙速度S')) subSpeedDiscount += 0.07;
+        if (subs.includes('幫手獎勵')) subSpeedDiscount += 0.05;
+        freq = freq * (1 - Math.min(0.35, subSpeedDiscount));
+
+        const isMint = !!(p.cleanseMint || p.mint);
+        const nat = isMint ? null : NATURE_DATA.find(n => n.name === p.nature);
+        if (nat) {
+          if (nat.buff && nat.buff.includes('幫忙速度')) freq *= 0.90;
+          if (nat.debuff && nat.debuff.includes('幫忙速度')) freq *= 1.075;
+        }
+
+        const effectiveInterval = Math.max(300, freq / 1.8);
+        const dailyHelps = Math.floor(86400 / effectiveInterval);
+
+        let ingRate = 0.20;
+        if (base.specialty && (base.specialty.includes('食材') || base.specialty === 'Ingredients')) ingRate = 0.28;
+        if (subs.includes('食材機率提升M')) ingRate *= 1.36;
+        if (subs.includes('食材機率提升S')) ingRate *= 1.18;
+        if (nat && nat.buff && nat.buff.includes('食材')) ingRate *= 1.20;
+        if (nat && nat.debuff && nat.debuff.includes('食材')) ingRate *= 0.80;
+        ingRate = Math.min(0.65, ingRate);
+
+        const ingHelps = dailyHelps * ingRate;
+        const ratio = matches / Math.max(1, validUnlocked.length);
+        return Math.round(ingHelps * ratio * 2);
+      }
+
+      while (selected.length < 5) {
+        let bestCandidate = null;
+        let bestScore = -1;
+
+        for (let i = 0; i < userBox.length; i++) {
+          const p = userBox[i];
+          if (!p || usedUids.has(p.uid)) continue;
+          const base = findBasePkm(p.pokemonId || p.name);
+          if (!base) continue;
+
+          let marginalScore = 0;
+          let anyYield = false;
+
+          reqIngredients.forEach(ing => {
+            const y = estimatePkmIngDailyYield(p, ing.name);
+            if (y > 0) {
+              anyYield = true;
+              const def = remainingDeficits[ing.name] || 0;
+              marginalScore += Math.min(y, def) * 3.0 + Math.max(0, y - def) * 0.4;
+            }
+          });
+
+          if (anyYield) {
+            const spec = base.specialty || '';
+            if (spec.includes('食材') || spec === 'Ingredients') marginalScore *= 1.30;
+            const berry = (typeof window.getPokemonBerry === 'function') ? window.getPokemonBerry(base) : (base.berry || {});
+            const isFav = favBerries.includes(berry.name || '') || favTypes.includes(berry.type || base.type || '');
+            if (isFav) marginalScore *= 1.15;
+
+            if (marginalScore > bestScore) {
+              bestScore = marginalScore;
+              bestCandidate = p;
+            }
+          }
+        }
+
+        if (bestCandidate && bestScore > 0) {
+          usedUids.add(bestCandidate.uid);
+          selected.push(bestCandidate.uid);
+          reqIngredients.forEach(ing => {
+            const y = estimatePkmIngDailyYield(bestCandidate, ing.name);
+            remainingDeficits[ing.name] = Math.max(0, (remainingDeficits[ing.name] || 0) - y);
+          });
+        } else {
+          const fallback = pickBest(userBox, 'ingredient') || pickBest(userBox, 'general');
+          if (!fallback) break;
+        }
+      }
     } else {
       // Balanced
       if (healers.length > 0) {
@@ -3943,19 +4094,28 @@
     updateLabUI();
     if (showToastNotification && typeof window.showToast === 'function') {
       const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-      const stratNames = { balanced: isEN ? 'Balanced' : '綜合隊', berries: isEN ? 'Berry-Focused' : '樹果隊', ingredients: isEN ? 'Ingredient-Focused' : '食材隊', skills: isEN ? 'Skill-Focused' : '技能隊' };
-      const cookNames = { curry: isEN ? 'Curry' : '咖哩/濃湯', salad: isEN ? 'Salad' : '沙拉', dessert: isEN ? 'Dessert' : '點心/飲料' };
-      const sName = stratNames[strategy] || strategy;
-      const cName = cookNames[cookingType] || cookingType;
-      window.showToast(isEN
-        ? `Team optimized: ${sName} on ${island.name_en || island.name} (${cName})!`
-        : `已自動為【${island.name}】推薦【${sName}】（料理目標：${cName}）！`
-      );
+      if (strategy === 'recipe') {
+        const targetRecipe = findTargetRecipe(labState.targetRecipeName);
+        const rName = isEN ? (targetRecipe.name_en || targetRecipe.name_cn) : (targetRecipe.name_cn || targetRecipe.name);
+        window.showToast(isEN
+          ? `Team optimized for target recipe: ${rName} on ${island.name_en || island.name} (Ingredient Maximization)!`
+          : `已自動為【${island.name}】推薦【${rName}】食材最大化最佳陣容！`
+        );
+      } else {
+        const stratNames = { balanced: isEN ? 'Balanced' : '綜合隊', berries: isEN ? 'Berry-Focused' : '樹果隊', ingredients: isEN ? 'Ingredient-Focused' : '食材隊', skills: isEN ? 'Skill-Focused' : '技能隊' };
+        const cookNames = { curry: isEN ? 'Curry' : '咖哩/濃湯', salad: isEN ? 'Salad' : '沙拉', dessert: isEN ? 'Dessert' : '點心/飲料' };
+        const sName = stratNames[strategy] || strategy;
+        const cName = cookNames[cookingType] || cookingType;
+        window.showToast(isEN
+          ? `Team optimized: ${sName} on ${island.name_en || island.name} (${cName})!`
+          : `已自動為【${island.name}】推薦【${sName}】（料理目標：${cName}）！`
+        );
+      }
     }
   }
 
   function setTeamStrategy(strategy) {
-    if (['balanced', 'berries', 'ingredients', 'skills'].includes(strategy)) {
+    if (['balanced', 'berries', 'ingredients', 'skills', 'recipe'].includes(strategy)) {
       labState.teamStrategy = strategy;
       try {
         if (typeof localStorage !== 'undefined') {
@@ -3963,6 +4123,51 @@
         }
       } catch (e) {}
       updateLabUI();
+    }
+  }
+
+  function setTargetRecipe(recipeName) {
+    if (!recipeName) return;
+    labState.targetRecipeName = recipeName;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('pksleep_lab_target_recipe', recipeName);
+      }
+    } catch (e) {}
+    updateLabUI();
+  }
+
+  const ALL_BERRY_NAMES = [
+    '桃桃果', '橙橙果', '櫻子果', '零餘果', '木子果', '蘋野果',
+    '藍橘果', '墨莓果', '文柚果', '利歐果', '金枕果', '勿忘果',
+    '柿仔果', '椰木果', '異奇果', '番荔果', '芭亞果', '芒芒果'
+  ];
+
+  function rerollGreengrassBerries(autoBuild = false) {
+    const pool = ALL_BERRY_NAMES.slice();
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = pool[i];
+      pool[i] = pool[j];
+      pool[j] = temp;
+    }
+    const rolled = pool.slice(0, 3);
+    labState.greengrassBerries = rolled;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('pksleep_lab_greengrass_berries', JSON.stringify(rolled));
+      }
+    } catch (e) {}
+
+    if (autoBuild) {
+      autoOptimizeTeam(true);
+    } else {
+      updateLabUI();
+      if (typeof window !== 'undefined' && typeof window.showToast === 'function') {
+        const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+        const berryDisplay = rolled.map(b => (isEN && window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b) : b)).join(', ');
+        window.showToast(isEN ? `Greengrass favored berries rerolled: ${berryDisplay}` : `萌綠之島喜愛樹果已隨機刷新：${rolled.join('、')}！`);
+      }
     }
   }
 
@@ -4149,6 +4354,138 @@
       document.body.appendChild(modal);
     }
 
+    if (opts.type === 'recipe') {
+      const allRecipesList = getAllTargetRecipes();
+      const currentTargetName = labState.targetRecipeName || '彈跳咖哩烏龍麵';
+
+      function generateRecipeItemsHtml(query = '', categoryFilter = 'all') {
+        const q = (query || '').trim().toLowerCase();
+        const filtered = allRecipesList.filter(r => {
+          const nameCn = (r.name_cn || r.name || '').toLowerCase();
+          const nameEn = (r.name_en || '').toLowerCase();
+          const cat = (r.category || '').toLowerCase();
+
+          if (categoryFilter === 'curry' && !cat.includes('咖哩') && !cat.includes('curry') && !cat.includes('濃湯') && !cat.includes('stew')) return false;
+          if (categoryFilter === 'salad' && !cat.includes('沙拉') && !cat.includes('salad')) return false;
+          if (categoryFilter === 'dessert' && !cat.includes('點心') && !cat.includes('dessert') && !cat.includes('飲料') && !cat.includes('drink')) return false;
+
+          if (!q) return true;
+          if (nameCn.includes(q) || nameEn.includes(q) || cat.includes(q)) return true;
+          if (Array.isArray(r.ingredients)) {
+            return r.ingredients.some(ing => (ing.name || '').toLowerCase().includes(q));
+          }
+          return false;
+        });
+
+        if (filtered.length === 0) {
+          return `<div style="padding:30px;text-align:center;color:var(--text-muted);font-size:13px;grid-column:1/-1;">${isEN ? 'No matching recipes found' : '未找到符合條件的料理'}</div>`;
+        }
+
+        return filtered.map(r => {
+          const rNameCn = r.name_cn || r.name || '';
+          const rDisplayName = isEN ? (r.name_en || rNameCn) : rNameCn;
+          const isSelected = (rNameCn === currentTargetName || r.name === currentTargetName);
+          const ings = Array.isArray(r.ingredients) ? r.ingredients : [];
+
+          const ingsHtml = ings.map(ing => {
+            const iDisp = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
+            const iconUrl = ing.icon || (window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(ing.name) : '');
+            return `
+              <span class="lab-recipe-ing-chip" title="${escapeHtml(iDisp)} x${ing.count}">
+                ${iconUrl ? `<img src="${iconUrl}" class="lab-recipe-ing-icon" alt="${escapeHtml(iDisp)}">` : ''}
+                <span class="lab-recipe-ing-count">x${ing.count}</span>
+              </span>
+            `;
+          }).join('');
+
+          return `
+            <div class="lab-recipe-card ${isSelected ? 'selected' : ''}" onclick="window.AppraisalLab.onRecipePickerSelect('${escapeHtml(rNameCn)}')">
+              ${isSelected ? `<span class="lab-recipe-active-badge">${isEN ? 'Current' : '當前目標'}</span>` : ''}
+              <div class="lab-recipe-card-header">
+                ${r.icon ? `<img src="${r.icon}" class="lab-recipe-card-icon" alt="${escapeHtml(rDisplayName)}" loading="lazy">` : ''}
+                <div class="lab-recipe-card-meta">
+                  <div class="lab-recipe-card-name">${escapeHtml(rDisplayName)}</div>
+                  <div class="lab-recipe-card-sub">
+                    <span class="lab-recipe-card-cat">${escapeHtml(r.category || '')}</span>
+                    ${r.pot_size ? `<span class="lab-recipe-card-pot">${r.pot_size} ${isEN ? 'Pots' : '格'}</span>` : ''}
+                    ${r.base_energy ? `<span class="lab-recipe-card-energy">${r.base_energy.toLocaleString()} ${isEN ? 'Energy' : '能量'}</span>` : ''}
+                  </div>
+                </div>
+              </div>
+              <div class="lab-recipe-card-ingredients">
+                ${ingsHtml}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderRecipeItems(query = '', filter = 'all') {
+        const listEl = (modal && typeof modal.querySelector === 'function' ? modal.querySelector('#lab-picker-recipe-list') : null) || document.getElementById('lab-picker-recipe-list');
+        if (listEl) {
+          listEl.innerHTML = generateRecipeItemsHtml(query, filter);
+        }
+      }
+
+      modal.innerHTML = `
+        <div class="lab-picker-container lab-recipe-picker-container">
+          <div class="lab-picker-header">
+            <div style="font-size:15px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:6px;">
+              <span>${isEN ? 'Select Target Recipe' : '挑選目標料理 (深度研究室)'}</span>
+              <span style="font-size:11px;color:var(--accent-color,#38bdf8);background:rgba(56,189,248,0.12);padding:1px 6px;border-radius:4px;">${allRecipesList.length} ${isEN ? 'Dishes' : '道料理'}</span>
+            </div>
+            <button type="button" class="appraisal-close-btn" onclick="window.AppraisalLab.closePicker()" aria-label="Close">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <div class="lab-picker-search-bar">
+            <input type="text" id="lab-picker-recipe-search" class="box-form-input" placeholder="${isEN ? 'Search recipe name or ingredient...' : '搜尋料理名稱或所需食材...'}" style="flex:1;min-width:180px;height:34px;font-size:12px;">
+            <div class="lab-picker-filter-chips" style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 10px;font-size:11px;">${isEN ? 'All' : '全部'} (${allRecipesList.length})</button>
+              <button type="button" class="box-btn box-btn-secondary" data-filter="curry" style="padding:3px 10px;font-size:11px;">${isEN ? 'Curry' : '咖哩/濃湯'}</button>
+              <button type="button" class="box-btn box-btn-secondary" data-filter="salad" style="padding:3px 10px;font-size:11px;">${isEN ? 'Salad' : '沙拉'}</button>
+              <button type="button" class="box-btn box-btn-secondary" data-filter="dessert" style="padding:3px 10px;font-size:11px;">${isEN ? 'Dessert' : '點心/飲料'}</button>
+            </div>
+          </div>
+
+          <div class="lab-picker-list lab-recipe-picker-list" id="lab-picker-recipe-list">
+            ${generateRecipeItemsHtml('', 'all')}
+          </div>
+        </div>
+      `;
+
+      const searchInput = modal.querySelector('#lab-picker-recipe-search');
+      let currentFilter = 'all';
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          renderRecipeItems(searchInput.value, currentFilter);
+        });
+      }
+
+      modal.querySelectorAll('.lab-picker-filter-chips button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          modal.querySelectorAll('.lab-picker-filter-chips button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.getAttribute('data-filter') || 'all';
+          renderRecipeItems(searchInput ? searchInput.value : '', currentFilter);
+        });
+      });
+
+      modal.style.display = 'flex';
+      if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
+      if (typeof window.portalMobileOverlays === 'function') window.portalMobileOverlays(modal);
+      document.body.style.overflow = 'hidden';
+
+      modal.onclick = (e) => {
+        if (e.target === modal) closeLabPicker();
+      };
+      return;
+    }
+
     const currentIsland = LAB_ISLANDS.find(i => i.id === labState.teamIslandId) || LAB_ISLANDS[0];
     const favBerries = getIslandFavoredBerries(labState.teamIslandId);
     const favTypes = getIslandFavoredTypes(labState.teamIslandId);
@@ -4324,7 +4661,14 @@
     } else if (activePickerState.type === 'compare') {
       const slot = activePickerState.compareSlot !== undefined ? activePickerState.compareSlot : (activePickerState.slotIndex || 0);
       setCompareSlot(slot, uid);
+    } else if (activePickerState.type === 'recipe') {
+      setTargetRecipe(uid);
     }
+    closeLabPicker();
+  }
+
+  function onRecipePickerSelect(recipeName) {
+    setTargetRecipe(recipeName);
     closeLabPicker();
   }
 
@@ -4385,14 +4729,33 @@
     const greengrassConfigHtml = isGreengrass ? `
       <div class="lab-greengrass-berries-config">
         <div class="lab-greengrass-berries-head">
-          <span style="font-size:12px;font-weight:700;color:#22c55e;">[#] ${isEN ? 'Greengrass Favored Berries (Customizable):' : '萌綠之島本週喜愛樹果 (可自由自選):'}</span>
-          <span style="font-size:11px;color:var(--text-muted);">${isEN ? 'Select 3 favored berries for this week (2x energy boost)' : '自選本週 3 種喜愛樹果，產能與推薦即時享有 2x 能量加成'}</span>
+          <div style="display:flex;flex-direction:column;gap:2px;">
+            <span style="font-size:12px;font-weight:700;color:#22c55e;">[#] ${isEN ? 'Greengrass Favored Berries (Customizable):' : '萌綠之島本週喜愛樹果 (可自由自選):'}</span>
+            <span style="font-size:11px;color:var(--text-muted);">${isEN ? 'Select 3 favored berries for this week (2x energy boost)' : '自選本週 3 種喜愛樹果，產能與推薦即時享有 2x 能量加成'}</span>
+          </div>
+          <div class="lab-greengrass-actions" style="display:flex;gap:6px;align-items:center;">
+            <button type="button" class="box-btn box-btn-secondary" onclick="window.AppraisalLab.rerollGreengrassBerries(false)" style="font-size:11px;padding:3px 8px;display:inline-flex;align-items:center;gap:3px;" title="${isEN ? 'Reroll 3 random berries from 18' : '從 18 種樹果隨機刷新 3 種'}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              <span>${isEN ? 'Random Reroll' : '隨機擲骰'}</span>
+            </button>
+            <button type="button" class="box-btn box-btn-primary" onclick="window.AppraisalLab.rerollGreengrassBerries(true)" style="font-size:11px;padding:3px 8px;display:inline-flex;align-items:center;gap:3px;" title="${isEN ? 'Reroll 3 random berries and immediately auto-optimize team' : '隨機抽出 3 種樹果並立即自動推薦最佳陣容'}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              <span>${isEN ? 'Roll & Build' : '擲骰並自動配隊'}</span>
+            </button>
+          </div>
         </div>
         <div class="lab-greengrass-selects-row">
           ${[0, 1, 2].map(idx => renderGreengrassBerrySelect(idx, (labState.greengrassBerries && labState.greengrassBerries[idx]) || ['桃桃果', '橙橙果', '櫻子果'][idx], isEN)).join('')}
         </div>
       </div>
     ` : '';
+
+    const targetRecipe = findTargetRecipe(labState.targetRecipeName);
+    const targetRecipeDisplayName = isEN ? (targetRecipe.name_en || targetRecipe.name_cn) : (targetRecipe.name_cn || targetRecipe.name);
+    const targetRecipeCategory = isEN
+      ? (targetRecipe.category || 'Curry')
+      : (targetRecipe.category || '咖哩');
+    const isTargetRecipeStrategy = labState.teamStrategy === 'recipe';
 
     const teamVariablesBarHtml = `
       <div class="lab-team-config-panel">
@@ -4403,17 +4766,30 @@
             <button type="button" class="lab-team-pill ${labState.teamStrategy === 'berries' ? 'active' : ''}" onclick="window.AppraisalLab.setTeamStrategy('berries')">${isEN ? 'Berries' : '樹果隊'}</button>
             <button type="button" class="lab-team-pill ${labState.teamStrategy === 'ingredients' ? 'active' : ''}" onclick="window.AppraisalLab.setTeamStrategy('ingredients')">${isEN ? 'Ingredients' : '食材隊'}</button>
             <button type="button" class="lab-team-pill ${labState.teamStrategy === 'skills' ? 'active' : ''}" onclick="window.AppraisalLab.setTeamStrategy('skills')">${isEN ? 'Skills' : '技能隊'}</button>
+            <button type="button" class="lab-team-pill ${labState.teamStrategy === 'recipe' ? 'active' : ''}" onclick="window.AppraisalLab.setTeamStrategy('recipe')">${isEN ? 'Target Recipe' : '目標料理'}</button>
           </div>
         </div>
 
-        <div class="lab-team-config-group">
-          <span class="lab-team-config-label">${isEN ? 'Cooking Goal:' : '料理種類:'}</span>
-          <div class="lab-team-pills">
-            <button type="button" class="lab-team-pill ${labState.cookingType === 'curry' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('curry')">${isEN ? 'Curry/Stew' : '咖哩/濃湯'}</button>
-            <button type="button" class="lab-team-pill ${labState.cookingType === 'salad' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('salad')">${isEN ? 'Salad' : '沙拉'}</button>
-            <button type="button" class="lab-team-pill ${labState.cookingType === 'dessert' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('dessert')">${isEN ? 'Dessert/Drinks' : '點心/飲料'}</button>
+        ${isTargetRecipeStrategy ? `
+          <div class="lab-team-config-group lab-target-recipe-config-group">
+            <span class="lab-team-config-label">${isEN ? 'Target Dish:' : '目標料理:'}</span>
+            <div class="lab-target-recipe-chip" onclick="window.AppraisalLab.openPicker({ type: 'recipe' })" title="${isEN ? 'Click to change target recipe' : '點擊切換目標料理'}">
+              ${targetRecipe.icon ? `<img src="${targetRecipe.icon}" class="lab-target-recipe-chip-icon" alt="${escapeHtml(targetRecipeDisplayName)}">` : ''}
+              <span class="lab-target-recipe-chip-name">${escapeHtml(targetRecipeDisplayName)}</span>
+              <span class="lab-target-recipe-chip-badge">${escapeHtml(targetRecipeCategory)}</span>
+              <span class="lab-target-recipe-chip-btn">${isEN ? 'Change' : '切換'}</span>
+            </div>
           </div>
-        </div>
+        ` : `
+          <div class="lab-team-config-group">
+            <span class="lab-team-config-label">${isEN ? 'Cooking Goal:' : '料理種類:'}</span>
+            <div class="lab-team-pills">
+              <button type="button" class="lab-team-pill ${labState.cookingType === 'curry' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('curry')">${isEN ? 'Curry/Stew' : '咖哩/濃湯'}</button>
+              <button type="button" class="lab-team-pill ${labState.cookingType === 'salad' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('salad')">${isEN ? 'Salad' : '沙拉'}</button>
+              <button type="button" class="lab-team-pill ${labState.cookingType === 'dessert' ? 'active' : ''}" onclick="window.AppraisalLab.setCookingType('dessert')">${isEN ? 'Dessert/Drinks' : '點心/飲料'}</button>
+            </div>
+          </div>
+        `}
       </div>
     `;
 
@@ -4528,6 +4904,87 @@
       `;
     }).join('');
 
+    const targetAnalysis = simulation.targetRecipeAnalysis;
+    let supplyDemandBoardHtml = '';
+    if (targetAnalysis && Array.isArray(targetAnalysis.items)) {
+      const itemsHtml = targetAnalysis.items.map(item => {
+        const iDisplayName = window.I18N ? window.I18N.getIngredientName(item.name) : item.name;
+        const iconUrl = item.icon || (window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(item.name) : '');
+        const isSurplus = item.diff >= 0;
+        const diffText = isSurplus ? `+${item.diff} ${isEN ? 'Surplus' : '充裕'}` : `${item.diff} ${isEN ? 'Deficit' : '缺口'}`;
+        const diffClass = isSurplus ? 'lab-supply-surplus' : 'lab-supply-deficit';
+        const barPct = Math.min(100, Math.max(0, item.fulfillmentPct));
+        const barColor = item.fulfillmentPct >= 100 ? '#22c55e' : (item.fulfillmentPct >= 60 ? 'var(--accent-color, #38bdf8)' : '#f59e0b');
+
+        return `
+          <div class="lab-supply-row">
+            <div class="lab-supply-col-ing">
+              ${iconUrl ? `<img src="${iconUrl}" class="lab-supply-ing-icon" alt="${escapeHtml(iDisplayName)}">` : ''}
+              <span class="lab-supply-ing-name">${escapeHtml(iDisplayName)}</span>
+            </div>
+            <div class="lab-supply-col-demand" title="${isEN ? 'Single meal requirement' : '單餐需求'}">
+              <span class="lab-supply-label">${isEN ? 'Per Meal:' : '每餐:'}</span>
+              <strong style="color:var(--text-primary);">x${item.perMeal}</strong>
+            </div>
+            <div class="lab-supply-col-daily" title="${isEN ? 'Daily 3-meal total demand' : '每日 3 餐總需求'}">
+              <span class="lab-supply-label">${isEN ? 'Daily Demand:' : '日需(3餐):'}</span>
+              <strong style="color:var(--text-secondary);">x${item.dailyDemand}</strong>
+            </div>
+            <div class="lab-supply-col-yield" title="${isEN ? 'Team estimated daily harvest' : '隊伍每日預估產出'}">
+              <span class="lab-supply-label">${isEN ? 'Team Yield:' : '隊伍日產:'}</span>
+              <strong style="color:#22c55e;">x${item.teamYield}</strong>
+            </div>
+            <div class="lab-supply-col-diff">
+              <span class="lab-supply-diff-badge ${diffClass}">${diffText}</span>
+            </div>
+            <div class="lab-supply-col-progress">
+              <div class="lab-supply-progress-bar-bg">
+                <div class="lab-supply-progress-bar-fill" style="width:${barPct}%;background:${barColor};"></div>
+              </div>
+              <span class="lab-supply-progress-pct" style="color:${barColor};">${item.fulfillmentPct}%</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const overallStatusBadge = targetAnalysis.isFullySatisfied
+        ? `<span class="lab-supply-overall-badge satisfied">[✓] ${isEN ? '100% Self-Sufficient' : '100% 達成 · 可完全自給自足'}</span>`
+        : `<span class="lab-supply-overall-badge pending">${isEN ? `Overall: ${targetAnalysis.overallFulfillmentPct}%` : `全體達成率: ${targetAnalysis.overallFulfillmentPct}%`}</span>`;
+
+      supplyDemandBoardHtml = `
+        <div class="lab-recipe-supply-board" id="lab-team-recipe-supply-demand">
+          <div class="lab-supply-board-header">
+            <div class="lab-supply-board-title-group">
+              ${targetRecipe.icon ? `<img src="${targetRecipe.icon}" class="lab-supply-dish-icon" alt="${escapeHtml(targetRecipeDisplayName)}">` : ''}
+              <div>
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                  <span class="lab-supply-dish-name">${escapeHtml(targetRecipeDisplayName)}</span>
+                  <span class="lab-supply-dish-badge">${escapeHtml(targetRecipeCategory)}</span>
+                  ${targetRecipe.pot_size ? `<span class="lab-supply-dish-meta">${targetRecipe.pot_size} ${isEN ? 'Pots' : '格鍋容量'}</span>` : ''}
+                  ${targetRecipe.base_energy ? `<span class="lab-supply-dish-meta">${targetRecipe.base_energy.toLocaleString()} ${isEN ? 'Base Energy' : '基礎能量'}</span>` : ''}
+                </div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">
+                  ${isEN ? 'Target Recipe Ingredient Supply vs Daily Demand Dashboard (3 Meals/Day)' : '目標料理食材供需看板 · 精算每日 3 餐食材缺口與隊伍自給自足率'}
+                </div>
+              </div>
+            </div>
+            <div class="lab-supply-board-actions">
+              ${overallStatusBadge}
+              <button type="button" class="box-btn box-btn-secondary" onclick="window.AppraisalLab.openPicker({ type: 'recipe' })" style="font-size:11px;padding:4px 10px;display:inline-flex;align-items:center;gap:4px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                <span>${isEN ? 'Change Recipe' : '更換目標料理'}</span>
+              </button>
+            </div>
+          </div>
+          <div class="lab-supply-table-wrapper">
+            <div class="lab-supply-items-list">
+              ${itemsHtml}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     return `
       <div class="lab-team-view-container">
         <div class="lab-island-selector">
@@ -4559,6 +5016,8 @@
         <div class="lab-team-grid">
           ${slotsHtml}
         </div>
+
+        ${supplyDemandBoardHtml}
 
         <div class="lab-team-metrics-grid">
           <div class="lab-metric-card">
@@ -5468,6 +5927,10 @@
     autoOptimizeTeam: autoOptimizeTeam,
     setTeamStrategy: setTeamStrategy,
     setCookingType: setCookingType,
+    setTargetRecipe: setTargetRecipe,
+    rerollGreengrassBerries: rerollGreengrassBerries,
+    getAllTargetRecipes: getAllTargetRecipes,
+    findTargetRecipe: findTargetRecipe,
     setGreengrassBerry: setGreengrassBerry,
     setCompareSlot: setCompareSlot,
     clearCompareSlot: clearCompareSlot,
@@ -5476,6 +5939,7 @@
     openPicker: openLabPicker,
     closePicker: closeLabPicker,
     onPickerSelect: onPickerSelect,
+    onRecipePickerSelect: onRecipePickerSelect,
     simulateTeamPerformance: simulateTeamPerformance,
     toggleLab: function () {
       const container = document.getElementById('appraisal-lab-container');

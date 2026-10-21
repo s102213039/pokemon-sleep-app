@@ -305,6 +305,10 @@
         if (isDifferent || !currentLen) {
           console.log(`[Recipe Engine] 動態連線取得最新食譜料理 (${freshData.length} 道)，正在原地更新...`);
           allRecipes = freshData;
+          if (typeof window !== 'undefined') {
+            window.allRecipes = freshData;
+            window.__RECIPES_CACHE__ = freshData;
+          }
 
           if (typeof render === 'function') {
             render();
@@ -338,6 +342,10 @@
   )
     .then(data => {
       allRecipes = data;
+      if (typeof window !== 'undefined') {
+        window.allRecipes = data;
+        window.__RECIPES_CACHE__ = data;
+      }
       initCategoryFilters();
       initSelectFilters();
       initSliders();

@@ -14934,6 +14934,399 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   background-size: 8px 5px;
 }
 
+/* 目標料理設定與切換徽章 (Target Recipe Setting & Chip) */
+.lab-target-recipe-config-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lab-target-recipe-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 8px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lab-target-recipe-chip:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: var(--accent-color, #38bdf8);
+}
+
+.lab-target-recipe-chip-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.lab-target-recipe-chip-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.lab-target-recipe-chip-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+}
+
+.lab-target-recipe-chip-btn {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent-color, #38bdf8);
+  padding-left: 4px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.lab-greengrass-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* 目標料理食材供需看板 (Ingredient Supply vs Demand Board - Single Frame) */
+.lab-recipe-supply-board {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.lab-supply-board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 12px;
+}
+
+.lab-supply-board-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lab-supply-dish-icon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.lab-supply-dish-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.lab-supply-dish-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--accent-color, #38bdf8);
+}
+
+.lab-supply-dish-meta {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.lab-supply-board-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lab-supply-overall-badge {
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lab-supply-overall-badge.satisfied {
+  background: rgba(34, 197, 94, 0.16);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #22c55e;
+}
+
+.lab-supply-overall-badge.pending {
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #f59e0b;
+}
+
+.lab-supply-table-wrapper {
+  border: none;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+}
+
+.lab-supply-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lab-supply-row {
+  display: grid;
+  grid-template-columns: 160px 80px 100px 90px 110px 1fr;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 8px 12px;
+  transition: background 0.15s ease;
+}
+
+.lab-supply-row:hover {
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.lab-supply-col-ing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.lab-supply-ing-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.lab-supply-ing-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lab-supply-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-right: 3px;
+}
+
+.lab-supply-col-demand,
+.lab-supply-col-daily,
+.lab-supply-col-yield {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.lab-supply-diff-badge {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.lab-supply-diff-badge.lab-supply-surplus {
+  background: rgba(34, 197, 94, 0.14);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.28);
+}
+
+.lab-supply-diff-badge.lab-supply-deficit {
+  background: rgba(244, 63, 94, 0.14);
+  color: #f43f5e;
+  border: 1px solid rgba(244, 63, 94, 0.28);
+}
+
+.lab-supply-col-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 100px;
+}
+
+.lab-supply-progress-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.lab-supply-progress-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.lab-supply-progress-pct {
+  font-size: 11px;
+  font-weight: 800;
+  min-width: 38px;
+  text-align: right;
+}
+
+/* 目標料理挑選器彈窗 (Recipe Picker Modal) */
+.lab-recipe-picker-container {
+  max-width: 820px;
+}
+
+.lab-recipe-picker-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+  padding: 14px 18px;
+}
+
+.lab-recipe-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lab-recipe-card:hover {
+  border-color: var(--accent-color, #38bdf8);
+  background: var(--bg-card-hover, rgba(56, 189, 248, 0.06));
+  transform: translateY(-1px);
+}
+
+.lab-recipe-card.selected {
+  border-color: var(--accent-color, #38bdf8);
+  box-shadow: 0 0 0 1px var(--accent-color, #38bdf8);
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.lab-recipe-active-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: var(--accent-color, #38bdf8);
+  color: #0f172a;
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.lab-recipe-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lab-recipe-card-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.lab-recipe-card-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.lab-recipe-card-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lab-recipe-card-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.lab-recipe-card-cat {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.lab-recipe-card-ingredients {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: auto;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.lab-recipe-ing-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  padding: 2px 5px;
+  font-size: 10px;
+}
+
+.lab-recipe-ing-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+
+.lab-recipe-ing-count {
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .lab-supply-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 10px;
+  }
+  .lab-supply-col-ing {
+    grid-column: 1 / -1;
+  }
+  .lab-supply-col-progress {
+    grid-column: 1 / -1;
+  }
+}
+
 /* 選手 A vs 選手 B 橫向對決列 (Player A vs Player B VS Header) */
 .lab-compare-vs-header {
   display: grid;

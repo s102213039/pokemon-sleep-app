@@ -2,7 +2,7 @@
 
 > **工作區路徑:** `/Users/yanli/AndroidStudioProjects/pokemon-sleep-app`  
 > **類型:** web | **群組:** android-studio  
-> **最後更新:** 2026-10-20（寶可夢倉庫子分頁與深度研究室切換隔離修復、CSS !important 特異度阻斷排除、manifest.json 基準路徑自動解析，224/224 測試全數通過，v=20261020_01）
+> **最後更新:** 2026-10-21（深度研究室對比優化：H5 橫向單行緊湊展示、等級基準模式切換、目標料理導向組隊與貪婪食材最大化配隊、目標料理食材供需看板、萌綠之島隨機樹果模擬，226/226 測試全數通過，v=20261021_02）
 
 ---
 
@@ -17,8 +17,14 @@
 
 ## 簡介
 
-Pokémon Sleep 資料庫與策略分析工具箱（**224/224 項自動化端到端測試全數通過**）：
-- **今日重大修復良品**：倉庫清單與深度研究室（Research Lab）子分頁雙向隔離防護，透過 `.box-lab-active` 與 CSS `display: none !important;` 徹底阻斷雙面板同時渲染干擾；修正 `domUtils.js` 自動解析 `window.__DATA_BASE_PATH__`，消除 `/app/` 下 `manifest.json` 404 報錯。
+Pokémon Sleep 資料庫與策略分析工具箱（**226/226 項自動化端到端測試全數通過**）：
+- **今日深度研究室升級良品**：
+  1. 深度研究室對比槽位（Compare Slots）在 H5 行動端採用橫向單行展示，去除冗餘長標籤，點擊直接呼叫挑選彈窗替換寶可夢。
+  2. 支援「目前實機等級」與「基準等級 (Lv. 30 / 50 / 60)」雙模式即時對比切換，並提供 6 向對決雷達圖與數值對比看板。
+  3. 新增「目標料理導向組隊 (Target-Recipe Strategy)」與貪婪食材最大化配隊演算法，自動依指定料理的食材需求與缺口進行最優槽位配置。
+  4. 新增目標料理食材供需看板（每餐需求、全天 3 餐缺口/充裕差額徽章、達成度進度條），嚴格符合 Single Frame Rule。
+  5. 新增萌綠之島隨機樹果擲骰模擬與「擲骰並自動配隊」一鍵優化。
+- **倉庫清單與深度研究室子分頁雙向隔離防護**：透過 `.box-lab-active` 與 CSS `display: none !important;` 徹底阻斷雙面板同時渲染干擾；修正 `domUtils.js` 自動解析 `window.__DATA_BASE_PATH__`，消除 `/app/` 下 `manifest.json` 404 報錯。
 - **四大效能支柱優化**：CSS `content-visibility: auto` 視窗外渲染跳過、Service Worker 版本化快取、Tesseract.js OCR 按需動態延遲載入、Wiki 天梯/島嶼滾動 rAF 節流與圖鑑滑桿熱路徑記憶化。
 - **四層智慧快取架構**：後端 `manifest.json` 731B 確定性 SHA-256 差分版本清單、前端 `DataCacheManager` LocalStorage 本地優先瞬時載入與 10 分鐘冷卻比對、Service Worker `sw.js` 圖片持久化快取、Supabase `user_boxes` 雲端同步回環推送阻斷與 5 分鐘冷卻去重。
 - **全站規範合規**：Single Frame Rule（嚴禁巢狀多重外框）與 Zero Emoji Policy（全域嚴格零表情符號）全面合規。
