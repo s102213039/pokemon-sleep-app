@@ -2,7 +2,7 @@
 
 > **工作區路徑:** `/Users/yanli/AndroidStudioProjects/pokemon-sleep-app`  
 > **類型:** web | **群組:** android-studio  
-> **最後更新:** 2026-10-21（深度研究室對比優化：H5 橫向單行緊湊展示、等級基準模式切換、目標料理導向組隊與貪婪食材最大化配隊、目標料理食材供需看板、萌綠之島隨機樹果模擬，226/226 測試全數通過，v=20261021_02）
+> **最後更新:** 2026-10-21（全站架構模組化、生產環境資料壓縮減重 35%、IndexedDB 原生結構化二進位快取接管、雙模式維護工具、全套 227/227 測試全數通過，v=20261021_06）
 
 ---
 
@@ -12,12 +12,22 @@
 > **接續開發的 AI Agent 必讀：**  
 > 所有已驗證為良品的功能、演算法與歷史重大缺陷修復，已完整收錄於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。  
 > 進行任何重構或新功能開發時，**絕對禁止將標記為 `[v] 良品狀態` 的項目改回錯誤版本！**
+> 新增資料、修訂代碼或擴充模組之具體規範，請參閱 **[MAINTENANCE_AND_DEVELOPMENT_GUIDE.md](MAINTENANCE_AND_DEVELOPMENT_GUIDE.md)**。
 
 ---
 
 ## 簡介
 
-Pokémon Sleep 資料庫與策略分析工具箱（**226/226 項自動化端到端測試全數通過**）：
+Pokémon Sleep 資料庫與策略分析工具箱（**227/227 項自動化端到端測試全數通過**）：
+- **全站架構模組化解構與編譯體系**：
+  1. 徹底消除全站所有超大檔案巨石（無任何檔案超過 2,750 行），Wiki (6 模組)、Box (5 模組)、Pokedex (4 模組)、Appraisal (4 模組)、CSS (18 模組) 全面落實領域驅動模組化。
+  2. 內建極速建構器 `scripts/build_all.js`（10ms 內打包合併 37 個子模組），相容瀏覽器與 Node.js VM 沙盒環境。
+- **生產環境資料極致壓縮 (Production Minification)**：
+  1. 建構時移除 `data/*.json` 所有空白與換行，7 大靜態資料庫自 1,173.9 KB 驟降至 762.6 KB，首屏冷下載減重 **411.3 KB (-35.0%)**。
+  2. 提供 `npm run data:format`（2 格縮排好讀模式）與 `npm run data:minify`（生產壓縮並自動更新 SHA-256 雜湊至 `manifest.json`）雙模式維護工具。
+- **原生 IndexedDB 二進位結構化物件接管**：
+  1. 實作純原生、零依賴之 `js/core/idbStorage.js`，具備 `cache` 與 `user` 雙對象倉庫，徹底解除 LocalStorage 5MB 容量配額限制。
+  2. 圖鑑、食譜、消息、百科全數支援熱啟動快取優先載入（Warm Start 0ms 秒開、0 位元組網路請求、0.3ms 本地反序列化）。
 - **今日深度研究室升級良品**：
   1. 深度研究室對比槽位（Compare Slots）在 H5 行動端採用橫向單行展示，去除冗餘長標籤，點擊直接呼叫挑選彈窗替換寶可夢。
   2. 支援「目前實機等級」與「基準等級 (Lv. 30 / 50 / 60)」雙模式即時對比切換，並提供 6 向對決雷達圖與數值對比看板。
@@ -26,7 +36,7 @@ Pokémon Sleep 資料庫與策略分析工具箱（**226/226 項自動化端到�
   5. 新增萌綠之島隨機樹果擲骰模擬與「擲骰並自動配隊」一鍵優化。
 - **倉庫清單與深度研究室子分頁雙向隔離防護**：透過 `.box-lab-active` 與 CSS `display: none !important;` 徹底阻斷雙面板同時渲染干擾；修正 `domUtils.js` 自動解析 `window.__DATA_BASE_PATH__`，消除 `/app/` 下 `manifest.json` 404 報錯。
 - **四大效能支柱優化**：CSS `content-visibility: auto` 視窗外渲染跳過、Service Worker 版本化快取、Tesseract.js OCR 按需動態延遲載入、Wiki 天梯/島嶼滾動 rAF 節流與圖鑑滑桿熱路徑記憶化。
-- **四層智慧快取架構**：後端 `manifest.json` 731B 確定性 SHA-256 差分版本清單、前端 `DataCacheManager` LocalStorage 本地優先瞬時載入與 10 分鐘冷卻比對、Service Worker `sw.js` 圖片持久化快取、Supabase `user_boxes` 雲端同步回環推送阻斷與 5 分鐘冷卻去重。
+- **四層智慧快取架構**：後端 `manifest.json` 確定性 SHA-256 差分版本清單、前端 `DataCacheManager` IndexedDB/LocalStorage 本地優先瞬時載入與 10 分鐘冷卻比對、Service Worker `sw.js` 圖片持久化快取、Supabase `user_boxes` 雲端同步回環推送阻斷與 5 分鐘冷卻去重。
 - **全站規範合規**：Single Frame Rule（嚴禁巢狀多重外框）與 Zero Emoji Policy（全域嚴格零表情符號）全面合規。
 
 ---
@@ -78,8 +88,31 @@ npx serve .
 
 ---
 
+## 開發與維護常用命令 (Development & Maintenance Commands)
+
+```bash
+# 1. 執行全量 227 項 E2E 自動化測試
+npm test
+
+# 2. 僅快速執行特定測試層 (Tier 4 約 0.8 秒)
+node tests/run_tests.js --tier=4
+
+# 3. 一鍵打包編譯所有 37 個 CSS 與 JS 子模組 (耗時約 10ms)
+npm run build:all
+
+# 4. 資料庫維護雙模式切換
+npm run data:format   # 展開為好讀 2 格縮排（編輯資料或審查 git diff 時使用）
+npm run data:minify   # 壓回生產極致壓縮格式並自動更新 manifest.json 雜湊
+
+# 5. 執行效能與快取基準量測報告
+node scripts/benchmark_cache.js
+```
+
+---
+
 ## 相關文件
 
+- [MAINTENANCE_AND_DEVELOPMENT_GUIDE.md](MAINTENANCE_AND_DEVELOPMENT_GUIDE.md) — **專案模組化架構、資料庫新增與日常維護作業完整指南（接續開發必讀）**
 - [VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md) — **已驗證良品功能與防退化基線註冊表（全功能清單、歷史缺陷良品標準與嚴禁退化紅線）**
 - [walkthrough.md](walkthrough.md) — 專案完整功能歷史演進與 75+ 歷程紀錄。
 - [SKILL_SPECIALISTS_AND_BFS_META_ANALYSIS.md](SKILL_SPECIALISTS_AND_BFS_META_ANALYSIS.md) — 技能型寶可夢與樹果數量S（BFS）適配深度研究與戰術定位技術規範。

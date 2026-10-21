@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue?style=for-the-badge&logo=github)](https://s102213039.github.io/pokemon-sleep-app/)
-[![Tests](https://img.shields.io/badge/Tests-171%2F171%20PASS-brightgreen?style=for-the-badge&logo=node.js)](https://github.com/s102213039/pokemon-sleep-app)
+[![Tests](https://img.shields.io/badge/Tests-227%2F227%20PASS-brightgreen?style=for-the-badge&logo=node.js)](https://github.com/s102213039/pokemon-sleep-app)
 [![Bilingual](https://img.shields.io/badge/Language-繁體中文%20%7C%20English-orange?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
 [![Themes](https://img.shields.io/badge/Themes-4%20Themes%20(Dark%2FLight)-purple?style=for-the-badge)](https://s102213039.github.io/pokemon-sleep-app/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
@@ -123,62 +123,63 @@
 graph TD
     User["使用者 (Browser / Mobile)"] --> SPA["SPA 單頁核心 (index.html / app/index.html)"]
     
-    subgraph CoreModules ["核心前端模組 (Vanilla JS & CSS3)"]
-        I18N["i18n 雙語引擎 (i18n.js)"]
-        Theme["多主題樣式引擎 (styles.css)"]
-        Dex["寶可夢圖鑑 (app.js)"]
-        Recipes["料理食譜 (recipes.js)"]
-        Wiki["數據百科 (wiki.js)"]
-        Box["寶可夢倉庫 (box.js - 開發中)"]
-        Appraisal["評測實驗室 (appraisal.js)"]
-        News["最新公告 (news.js)"]
+    subgraph ModularSource ["領域模組化原始碼 (Sub-25ms Bundler)"]
+        DexSrc["圖鑑模組 (js/modules/pokedex/)"] --> Dex["app.js"]
+        BoxSrc["倉庫模組 (js/modules/box/)"] --> Box["box.js"]
+        WikiSrc["百科模組 (js/modules/wiki/)"] --> Wiki["wiki.js"]
+        LabSrc["研究室模組 (js/modules/lab/)"] --> Lab["appraisal.js"]
+        CssSrc["樣式模組 (css/)"] --> Css["styles.css"]
     end
     
-    subgraph DataServices ["資料層與周邊服務"]
-        DataJSON[("data.json (247+ 寶可夢)")]
-        RecipesJSON[("recipes.json (78 道料理)")]
-        NewsJSON[("news.json (官方活動公告)")]
-        OCR["Tesseract.js (本地端 OCR)"]
-        LocalStorage[("LocalStorage (本機資料存儲)")]
-        GHActions["GitHub Actions (線上定時爬蟲)"]
+    subgraph CoreEngine ["核心引擎與驅動器"]
+        I18N["i18n 雙語引擎 (i18n.js)"]
+        IDB["原生 IndexedDB 驅動器 (idbStorage.js)"]
+        DCM["快取與版本管理器 (domUtils.js)"]
+        Cloud["Supabase 雲端備份 (cloudSync.js)"]
+    end
+    
+    subgraph DataServices ["二進位快取與生產資料層"]
+        Manifest[("manifest.json (SHA-256 差分清單)")]
+        MinifiedData[("壓縮靜態資料 (data/*.json -35% 瘦身)")]
+        IDBCache[("IndexedDB 本地物件快取 (0ms 秒開)")]
+        SW["Service Worker (sw.js 圖片與字體快取)"]
     end
 
-    SPA --> I18N
-    SPA --> Theme
-    SPA --> Dex
-    SPA --> Recipes
-    SPA --> Wiki
-    SPA --> Box
-    SPA --> Appraisal
-    SPA --> News
-
-    Dex --> DataJSON
-    Recipes --> RecipesJSON
-    News --> NewsJSON
-    Box --> OCR
-    Box --> LocalStorage
-    Appraisal --> Dex
-    GHActions -.-> DataJSON
-    GHActions -.-> NewsJSON
+    SPA --> ModularSource
+    SPA --> CoreEngine
+    CoreEngine --> DataServices
 ```
 
 ---
 
 ## 本地開發與自動化測試 (Testing)
 
-本專案內建一套獨立的 **171 項全自動化測試套件**，涵蓋資料庫完整性、公式精確度、OCR 多錨點辨識、i18n 雙語翻譯、雙端路徑跳轉、評測演算法、樹果遽增 BFS 協同與全戰略定位檢驗。
+本專案內建一套獨立的 **227 項全自動化測試套件**，涵蓋資料庫完整性、公式精確度、OCR 多錨點辨識、i18n 雙語翻譯、雙端路徑跳轉、評測演算法、樹果遽增 BFS 協同、生產環境資料壓縮與原生 IndexedDB 快取驗證。
 
-### 執行測試
+### 常用命令 (Commands)
 ```bash
 # 確保已安裝 Node.js (v18+)
-rtk node tests/run_tests.js
+# 1. 執行全量 227 項自動化測試
+npm test
+
+# 2. 僅快速測試 Tier 4 (約 0.8 秒)
+node tests/run_tests.js --tier=4
+
+# 3. 一鍵打包所有 37 個 CSS 與 JS 子模組 (約 10ms)
+npm run build:all
+
+# 4. 資料庫維護雙模式
+npm run data:format   # 展開為 2 格縮排（編輯資料或審查 git diff）
+npm run data:minify   # 壓回生產極致壓縮格式並自動更新 manifest.json
 ```
 
 ### 測試覆蓋階層
-- **Tier 1 - Feature Coverage (56 項)**：資料集結構、公式計算、食譜加成、主技能矩陣、主題色系、H5 入口完整性、回到頂部按鈕結構。
-- **Tier 2 - Boundary Cases (41 項)**：空搜尋、大小寫不敏感、多選交集、等級邊界 (Lv.1~80)、鍋子容量上下限、副技能防重複選擇、進化等級防禦。
+- **Tier 1 - Feature Coverage (66 項)**：資料集結構、公式計算、食譜加成、主技能矩陣、主題色系、H5 入口完整性、回到頂部按鈕結構。
+- **Tier 2 - Boundary Cases (43 項)**：空搜尋、大小寫不敏感、多選交集、等級邊界 (Lv.1~80)、鍋子容量上下限、副技能防重複選擇、進化等級防禦。
 - **Tier 3 - Cross-Feature (8 項)**：多維度複合篩選、主題語言聯動切換、Dock 導航持久化、睡飽飽獎章抵扣結算。
-- **Tier 4 - Real-World Scenarios (66 項)**：雙端真實工作流、OCR 全量解析校準、嚴格評測雙軌定級、樹果遽增 BFS 爆發、傳說神獸團隊協同。
+- **Tier 4 - Real-World Scenarios (110 項)**：雙端真實工作流、OCR 全量解析校準、嚴格評測雙軌定級、樹果遽增 BFS 爆發、傳說神獸團隊協同、目標料理導向組隊、生產資料壓縮與原生 IndexedDB 0ms 秒開驗證。
+
+> 完整開發、擴充資料庫與模組化建構流程，請參閱 **[docs/MAINTENANCE_AND_DEVELOPMENT_GUIDE.md](docs/MAINTENANCE_AND_DEVELOPMENT_GUIDE.md)**。
 
 ---
 
