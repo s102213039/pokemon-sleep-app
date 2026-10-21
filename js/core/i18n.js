@@ -1430,7 +1430,6 @@
     '樹果汁 (活力全體療癒S)': { 'zh-TW': '樹果汁 (活力全體療癒S)', 'en-US': 'Berry Juice (Energy for Everyone S)' },
     '禮物（食材獲取S）': { 'zh-TW': '禮物（食材獲取S）', 'en-US': 'Present (Ingredient Magnet S)' },
     '禮物 (食材獲取S)': { 'zh-TW': '禮物 (食材獲取S)', 'en-US': 'Present (Ingredient Magnet S)' },
-    '食材精選S': { 'zh-TW': '食材精選S', 'en-US': 'Ingr. Select S' },
     '怪力鉗（食材精選S）': { 'zh-TW': '怪力鉗（食材精選S）', 'en-US': 'Hyper Cutter (Ingr. Select S)' },
     '怪力鉗 (食材精選S)': { 'zh-TW': '怪力鉗 (食材精選S)', 'en-US': 'Hyper Cutter (Ingr. Select S)' },
     '怪力钳（食材精選S）': { 'zh-TW': '怪力鉗（食材精選S）', 'en-US': 'Hyper Cutter (Ingr. Select S)' },

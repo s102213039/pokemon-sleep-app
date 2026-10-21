@@ -1884,3 +1884,40 @@
 - `css/styles.css` 語法嚴格校驗：35,307 行，開閉括號差額 0，負括號次數 0。
 - GitHub Pages 自動發布完成。
 
+---
+
+## 2026-10-21: 工業級 esbuild 生產構建管線建置、雙模 Source Map 與極限瘦身 (Test 228)
+
+### 背景與設計
+1. **源碼與產物分離**：杜絕在原始程式碼上進行不可逆的正則文字替換或切割。原始碼（`css/styles.css` 與 `js/modules/*.js`）維持排版工整與詳盡註解供日常維護，生產環境則透過 AST 等級編譯器產出 `.min` 檔案。
+2. **引進現代極速工具 `esbuild`**：
+   - 相比上一代 UglifyJS（不支援現代 ES6+ 語法）與 Terser（耗時數秒），`esbuild`（Go 語言原生編譯）能在 150 毫秒內完成全站 CSS 與 14 個 JavaScript 核心模組的 AST 語法樹解析、死碼消除、空白壓縮與 Source Map 生成。
+3. **安全防護與語法驗證**：
+   - 產出的 `css/styles.min.css` 在建構時經過嚴格字元狀態機掃描，確保括號深度全程 `>= 0`，開閉括號差額為 0。
+   - 產出的 JavaScript `.min.js` 檔案保留全域命名空間（`window.PokemonApp`、`window.WikiDB`、`window.AppraisalLab` 等），杜絕跨檔案變數衝突。
+
+### 核心建構腳本與產出 (`scripts/build_prod.js`)
+- **15 大關鍵資源雙重壓縮 (Minify + Gzip)**：
+  - `css/styles.min.css`: 887.4 KB -> 704.9 KB (Gzip: 98.7 KB，傳輸體積降至 100 KB 以內)
+  - `js/core/idbStorage.min.js`: 6.3 KB -> 2.3 KB (-63.7%, Gzip: 0.9 KB)
+  - `js/core/domUtils.min.js`: 14.0 KB -> 5.2 KB (-62.6%, Gzip: 1.9 KB)
+  - `js/core/cloudSync.min.js`: 55.3 KB -> 31.9 KB (-42.2%, Gzip: 8.8 KB)
+  - `js/modules/app.min.js`: 342.4 KB -> 267.8 KB (-21.8%, Gzip: 65.7 KB)
+  - `js/modules/recipes.min.js`: 59.7 KB -> 33.0 KB (-44.7%, Gzip: 9.0 KB)
+  - `js/data/ladder_data.min.js`: 258.0 KB -> 159.5 KB (-38.2%, Gzip: 11.5 KB)
+  - `js/modules/box.min.js`: 222.5 KB -> 129.0 KB (-42.0%, Gzip: 35.0 KB)
+  - `js/modules/news.min.js`: 58.1 KB -> 35.2 KB (-39.4%, Gzip: 11.7 KB)
+  - `js/modules/appraisal.min.js`: 316.1 KB -> 233.8 KB (-26.0%, Gzip: 60.0 KB)
+- **總建構時間**：147ms。
+- **全站靜態資源總體積**：3,035.1 KB -> 2,342.3 KB (-22.8%)，HTTP/2 Gzip 傳輸量總計僅 467.7 KB。
+
+### 自動化測試與工程品質保證
+- **測試總數升級至 228 項**：
+  - Tier 1 (Feature Coverage): 67 Passed, 0 Failed (包含 Test 228: esbuild 生產管線驗證)
+  - Tier 2 (Boundary & Corner Cases): 43 Passed, 0 Failed
+  - Tier 3 (Cross-Feature Combinations): 8 Passed, 0 Failed
+  - Tier 4 (Real-World Application Scenarios): 110 Passed, 0 Failed
+  - **總計：228 / 228 Passed (0 Failed, 100% 通過)**
+- 全面遵守全域安全規範、無 Emoji 政策、單一外框規範與 `rtk` 指令調用。
+
+

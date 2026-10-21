@@ -826,9 +826,9 @@ test('Tier 4 - Real-World Application Scenarios', 'Wiki Ratings Guide Colors and
   assert(wikiJs.includes('milestone-badge ${milestoneColor}'), 'Milestone table must use milestone-badge');
 
   // 5. Verify cache busters
-  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+|202609[23]\d_\d+|202610\d{2}_\d+)/.test(indexHtml), 'index.html styles.css must have current cache buster');
+  assert(/css\/styles(\.min)?\.css\?v=(20260917_[345678]|2026091[89]_\d+|202609[23]\d_\d+|202610\d{2}_\d+)/.test(indexHtml), 'index.html styles.css must have current cache buster');
   assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+|202609[23]\d_\d+|202610\d{2}_\d+)/.test(indexHtml), 'index.html wiki.js must have valid cache buster');
-  assert(/css\/styles\.css\?v=(20260917_[345678]|2026091[89]_\d+|202609[23]\d_\d+|202610\d{2}_\d+)/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
+  assert(/css\/styles(\.min)?\.css\?v=(20260917_[345678]|2026091[89]_\d+|202609[23]\d_\d+|202610\d{2}_\d+)/.test(appIndexHtml), 'app/index.html styles.css must have current cache buster');
   assert(/js\/modules\/wiki\.js\?v=(20260907_8|2026091[89]_\d+|202609[23]\d_\d+|202610\d{2}_\d+)/.test(appIndexHtml), 'app/index.html wiki.js must have valid cache buster');
 });
 

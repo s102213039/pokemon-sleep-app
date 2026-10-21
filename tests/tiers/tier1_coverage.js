@@ -2369,8 +2369,47 @@ test('Tier 1 - Feature Coverage', '7 Research Camps & EX Mode Data Coverage & i1
   });
 
   // =========================================================================
-  // Test 221: 4-Layer Cache Architecture, Manifest Differential Sync, Service Worker & CloudSync Deduplication
+  // Test 228: Production Minification & esbuild Asset Pipeline Integrity
   // =========================================================================
+  test('Tier 1 - Feature Coverage', 'Production Minification & esbuild Pipeline: Generates valid styles.min.css and *.min.js with Source Maps', async () => {
+    const { buildProd, PROD_FILES } = require('../../scripts/build_prod');
+    assert(typeof buildProd === 'function', 'buildProd must be a function');
+    assert(Array.isArray(PROD_FILES) && PROD_FILES.length >= 10, 'PROD_FILES must register >= 10 assets');
+
+    const summary = await buildProd();
+    assert(summary.filesCount >= 10, 'Must build >= 10 minified files');
+    assert(parseFloat(summary.totalMinKB) < parseFloat(summary.totalRawKB), 'Minified total size must be strictly smaller than raw');
+    
+    // Check styles.min.css exists and has source map
+    const minCssPath = path.join(WORKSPACE_ROOT, 'css', 'styles.min.css');
+    const minMapPath = path.join(WORKSPACE_ROOT, 'css', 'styles.min.css.map');
+    assert(fs.existsSync(minCssPath), 'styles.min.css must exist');
+    assert(fs.existsSync(minMapPath), 'styles.min.css.map must exist');
+
+    // Strict negative brace check on styles.min.css
+    const minCssContent = fs.readFileSync(minCssPath, 'utf8');
+    let openBraces = 0, minBraces = 0, inStr = false, quote = '', inComm = false;
+    for (let i = 0; i < minCssContent.length; i++) {
+      const c = minCssContent[i], next = minCssContent[i + 1];
+      if (inComm) {
+        if (c === '*' && next === '/') { inComm = false; i++; }
+        continue;
+      }
+      if (inStr) {
+        if (c === quote && minCssContent[i - 1] !== '\\') inStr = false;
+        continue;
+      }
+      if (c === '/' && next === '*') { inComm = true; i++; continue; }
+      if (c === '"' || c === "'") { inStr = true; quote = c; continue; }
+      if (c === '{') openBraces++;
+      if (c === '}') {
+        openBraces--;
+        if (openBraces < minBraces) minBraces = openBraces;
+      }
+    }
+    assertEquals(minBraces, 0, `styles.min.css must have zero negative braces`);
+    assertEquals(openBraces, 0, `styles.min.css must have balanced braces`);
+  });
 }
 
 module.exports = { registerTier1Tests };
