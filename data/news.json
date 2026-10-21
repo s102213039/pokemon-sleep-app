@@ -61,7 +61,7 @@
     "badge_color": "#f59e0b",
     "title": "【預告】新食材、新食譜、睡姿圖鑑目標和新企畫確定登場！",
     "title_en": "[Notice] New Ingredients, New Recipes, Sleep Style Dex Goals, and New Events Coming Soon!",
-    "overview_en": "Official announcement regarding upcoming new ingredients, recipes, dex goals, and campaigns in November 2026.",
+    "overview_en": "Official announcement and news update for Pokemon Sleep.",
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
     "featured_pokemon": [],
@@ -83,10 +83,10 @@
         ],
         "title_en": "Core Highlights & Overview",
         "items_en": [
-          "[Notice] New Ingredients, Recipes, Dex Goals & New Campaigns Announced!",
-          "New Sleep Style Dex Goal (570 Styles)",
-          "New Ingredient: Greengrass Nut",
-          "3 New Recipes Featuring Greengrass Nut"
+          "【預告】新食材, 新食譜, 睡姿圖鑑目標和新企畫確定登場！",
+          "新的睡姿圖鑑目標 （570種）",
+          "食材\" 一口堅果 \"",
+          "會用到一口堅果的 3種食譜"
         ]
       }
     ],
