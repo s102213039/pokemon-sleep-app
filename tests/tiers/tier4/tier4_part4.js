@@ -1620,6 +1620,89 @@ function registerTier4Part4() {
     assert(typeof minifyData === 'function', 'scripts/minify_data.js must export minifyData function');
     assert(typeof formatData === 'function', 'scripts/format_data.js must export formatData function');
   });
+
+  test('Tier 4 - Real-World Application Scenarios', 'Unified Pokemon Icon Source Across Pokedex, Box, and Island Camps: Zero Redundant Downloads Verification', () => {
+    const appModule = require(path.resolve(__dirname, '../../../js/modules/app.js'));
+    const getItemIcon = appModule.getItemIcon;
+    assert(typeof getItemIcon === 'function', 'getItemIcon must be exported from app.js');
+
+    const dataset = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../../data/data.json'), 'utf8'));
+
+    // 1. Canonical Serebii icon consistency between Pokedex and Island spawn models
+    const bulbasaurPokedex = dataset.find(p => p.id === '1');
+    const bulbasaurIsland = { name: '妙蛙種子', name_en: 'Bulbasaur', type: '草' };
+    const bulbasaurString = '妙蛙種子';
+
+    const iconPokedex = getItemIcon(bulbasaurPokedex);
+    const iconIsland = getItemIcon(bulbasaurIsland);
+    const iconString = getItemIcon(bulbasaurString);
+
+    assertEquals(iconPokedex, 'https://www.serebii.net/pokemonsleep/pokemon/icon/001.png', 'Pokedex Bulbasaur icon must be canonical');
+    assertEquals(iconIsland, iconPokedex, 'Island Bulbasaur icon must match Pokedex icon character-for-character');
+    assertEquals(iconString, iconPokedex, 'String Bulbasaur icon must match Pokedex icon character-for-character');
+
+    // 2. Special form consistency (Alolan, Paldean, Halloween, Holiday, Varieties)
+    const specialTestCases = [
+      {
+        islandObj: { name: '六尾 (阿羅拉的樣子)', name_en: 'Alolan Vulpix' },
+        expected: 'https://www.serebii.net/pokemonsleep/pokemon/icon/037-alolanvulpix.png',
+        label: 'Alolan Vulpix'
+      },
+      {
+        islandObj: { name: '九尾 (阿羅拉的樣子)', name_en: 'Alolan Ninetales' },
+        expected: 'https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png',
+        label: 'Alolan Ninetales'
+      },
+      {
+        islandObj: { name: '烏波 (帕底亞的樣子)', name_en: 'Paldean Wooper' },
+        expected: 'https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png',
+        label: 'Paldean Wooper'
+      },
+      {
+        islandObj: { name: '南瓜精', name_en: 'Pumpkaboo' },
+        expected: 'https://www.serebii.net/pokemonsleep/pokemon/icon/710.png',
+        label: 'Pumpkaboo'
+      },
+      {
+        islandObj: { name: '南瓜怪人', name_en: 'Gourgeist' },
+        expected: 'https://www.serebii.net/pokemonsleep/pokemon/icon/711.png',
+        label: 'Gourgeist'
+      },
+      {
+        islandObj: { name: '顫弦蠑螈 (低調的樣子)', name_en: 'Toxtricity Low Key Form' },
+        expected: 'https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png',
+        label: 'Toxtricity Low Key Form'
+      },
+      {
+        islandObj: { name: '顫弦蠑螈 (高調的樣子)', name_en: 'Toxtricity Amped Form' },
+        expected: 'https://www.serebii.net/pokemonsleep/pokemon/icon/849.png',
+        label: 'Toxtricity Amped Form'
+      }
+    ];
+
+    specialTestCases.forEach(({ islandObj, expected, label }) => {
+      const actual = getItemIcon(islandObj);
+      assertEquals(actual, expected, `Island entity for ${label} must resolve to canonical Serebii pokemonsleep icon`);
+    });
+
+    // 3. Verify elimination of alien pokedex-sv domain fallback in wiki_camps
+    const wikiCampsJs = fs.readFileSync(path.resolve(__dirname, '../../../js/modules/wiki/wiki_camps.js'), 'utf8');
+    assert(!wikiCampsJs.includes('pokedex-sv/icon'), 'wiki_camps.js must not contain alien pokedex-sv/icon fallback');
+
+    // 4. Verify all island spawn entries in wiki_camps resolve to official pokemonsleep icon URLs
+    const regex = /\{\s*name:\s*"([^"]+)",\s*name_en:\s*"([^"]+)"/g;
+    let m;
+    let testedCount = 0;
+    while ((m = regex.exec(wikiCampsJs)) !== null) {
+      const name = m[1];
+      const name_en = m[2];
+      if (name.includes('EX模式')) continue;
+      const url = getItemIcon({ name, name_en });
+      assert(url && url.startsWith('https://www.serebii.net/pokemonsleep/pokemon/icon/'), `Island spawn entry [${name}] must resolve to official Serebii pokemonsleep icon, got: ${url}`);
+      testedCount++;
+    }
+    assert(testedCount >= 400, `Must test >= 400 island spawn entries (actual: ${testedCount})`);
+  });
 }
 
 module.exports = { registerTier4Part4 };

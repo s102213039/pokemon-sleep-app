@@ -1564,17 +1564,25 @@
     "Amoonguss": "591"
   };
 
-  function getPokemonAvatarUrl(name, name_en) {
+  function getPokemonAvatarUrl(pOrName, name_en) {
+    if (typeof window !== 'undefined' && typeof window.getItemIcon === 'function') {
+      const arg = (pOrName && typeof pOrName === 'object') ? pOrName : { name: pOrName, name_en: name_en };
+      const url = window.getItemIcon(arg);
+      if (url && !url.startsWith('data:image/svg+xml')) return url;
+    }
+    const name = (pOrName && typeof pOrName === 'object') ? (pOrName.name_cn || pOrName.name) : pOrName;
+    const nEn = (pOrName && typeof pOrName === 'object') ? pOrName.name_en : name_en;
     if (typeof window !== 'undefined' && Array.isArray(window.allPokemons) && window.allPokemons.length > 0) {
       const idx = _getWikiPkmIndex(window.allPokemons);
-      const p = (name && idx['cn:' + name]) || (name_en && idx['en:' + name_en]);
+      const normName = name ? String(name).replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）') : '';
+      const p = (name && idx['cn:' + name]) || (normName && idx['cn:' + normName]) || (nEn && (idx['en:' + nEn] || idx['en:' + String(nEn).toLowerCase()]));
       if (p) {
         if (p.icon && typeof p.icon === 'string' && p.icon.trim() !== '') return p.icon;
         if (p.icon_url && typeof p.icon_url === 'string' && p.icon_url.trim() !== '') return p.icon_url;
         if (p.formatted_no) return `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png`;
       }
     }
-    const dex = POKEMON_SPRITE_FALLBACK[name] || POKEMON_SPRITE_FALLBACK[name_en];
+    const dex = POKEMON_SPRITE_FALLBACK[name] || POKEMON_SPRITE_FALLBACK[nEn];
     if (dex) {
       return `https://www.serebii.net/pokemonsleep/pokemon/icon/${dex}.png`;
     }
@@ -1585,10 +1593,12 @@
     if (!p) return '001';
     if (typeof window !== 'undefined' && Array.isArray(window.allPokemons) && window.allPokemons.length > 0) {
       const idx = _getWikiPkmIndex(window.allPokemons);
-      const found = (p.name && idx['cn:' + p.name]) || (p.name_en && idx['en:' + p.name_en]);
+      const normName = p.name ? String(p.name).replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）') : '';
+      const found = (p.name && idx['cn:' + p.name]) || (normName && idx['cn:' + normName]) || (p.name_en && (idx['en:' + p.name_en] || idx['en:' + String(p.name_en).toLowerCase()]));
       if (found && found.formatted_no) return String(found.formatted_no);
     }
-    return POKEMON_SPRITE_FALLBACK[p.name] || POKEMON_SPRITE_FALLBACK[p.name_en] || '001';
+    const normFallback = p.name ? String(p.name).replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）') : '';
+    return POKEMON_SPRITE_FALLBACK[p.name] || POKEMON_SPRITE_FALLBACK[normFallback] || POKEMON_SPRITE_FALLBACK[p.name_en] || '001';
   }
 
   function getIslandPokemonDexOrder(p) {
@@ -2142,7 +2152,7 @@
     } else {
       spawnsRows = spawnList.map(p => {
         const pName = isEN ? p.name_en : p.name;
-        const pkmAvatar = getPokemonAvatarUrl(p.name, p.name_en);
+        const pkmAvatar = getPokemonAvatarUrl(p, p.name_en);
         const pkmDex = getIslandPokemonDexCode(p);
         const dexNum = parseInt(pkmDex, 10);
         const dexPrefix = isNaN(dexNum) ? '' : `#${String(dexNum).padStart(3, '0')} `;
@@ -2152,7 +2162,7 @@
           <tr data-sleep-type="${p.sleepType || ''}">
             <td style="vertical-align:middle; text-align:center; padding:3px 4px;">
               <div class="island-pkm-item island-pkm-icon-only" title="${tooltipText}">
-                <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${tooltipText}" loading="lazy" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokedex-sv/icon/${pkmDex}.png';}">
+                <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${tooltipText}" loading="lazy" onerror="this.style.opacity='0.3';">
               </div>
             </td>
             <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${renderIslandSleepCell(p, 1, p.s1)}</td>
@@ -2309,4 +2319,15 @@
       </div>
       </div>
     `;
+  }
+
+  // 監聽寶可夢資料庫載入與更新事件，確保非同步載入完成後島嶼分頁若為活動狀態能無縫重刷圖示
+  if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+    window.addEventListener('pokemon-data-updated', function() {
+      try {
+        if (typeof getCurrentSubTab === 'function' && getCurrentSubTab() === 'islands') {
+          refreshIslandsSubpanel();
+        }
+      } catch (e) {}
+    });
   }

@@ -570,9 +570,32 @@
         map['no:' + p.formatted_no] = p;
         map['id:' + p.formatted_no] = p;
       }
-      if (p.name_cn) map['cn:' + p.name_cn] = p;
-      if (p.name && typeof p.name === 'string') map['cn:' + p.name] = p;
-      if (p.name_en) map['en:' + p.name_en] = p;
+      if (p.name_cn) {
+        map['cn:' + p.name_cn] = p;
+        const normCn = p.name_cn.replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）');
+        map['cn:' + normCn] = p;
+        const halfCn = p.name_cn.replace(/（/g, ' (').replace(/）/g, ')');
+        map['cn:' + halfCn] = p;
+      }
+      if (p.name && typeof p.name === 'string') {
+        map['cn:' + p.name] = p;
+        const normName = p.name.replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）');
+        map['cn:' + normName] = p;
+      }
+      if (p.name_en) {
+        map['en:' + p.name_en] = p;
+        map['en:' + p.name_en.toLowerCase()] = p;
+      }
+    }
+    const p710 = map['id:710'];
+    if (p710) {
+      map['cn:南瓜精'] = p710;
+      map['en:pumpkaboo'] = p710;
+    }
+    const p711 = map['id:711'];
+    if (p711) {
+      map['cn:南瓜怪人'] = p711;
+      map['en:gourgeist'] = p711;
     }
     _wikiPkmIdxArr = arr;
     _wikiPkmIdxLen = arr.length;

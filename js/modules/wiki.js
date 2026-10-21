@@ -1956,9 +1956,32 @@
         map['no:' + p.formatted_no] = p;
         map['id:' + p.formatted_no] = p;
       }
-      if (p.name_cn) map['cn:' + p.name_cn] = p;
-      if (p.name && typeof p.name === 'string') map['cn:' + p.name] = p;
-      if (p.name_en) map['en:' + p.name_en] = p;
+      if (p.name_cn) {
+        map['cn:' + p.name_cn] = p;
+        const normCn = p.name_cn.replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）');
+        map['cn:' + normCn] = p;
+        const halfCn = p.name_cn.replace(/（/g, ' (').replace(/）/g, ')');
+        map['cn:' + halfCn] = p;
+      }
+      if (p.name && typeof p.name === 'string') {
+        map['cn:' + p.name] = p;
+        const normName = p.name.replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）');
+        map['cn:' + normName] = p;
+      }
+      if (p.name_en) {
+        map['en:' + p.name_en] = p;
+        map['en:' + p.name_en.toLowerCase()] = p;
+      }
+    }
+    const p710 = map['id:710'];
+    if (p710) {
+      map['cn:南瓜精'] = p710;
+      map['en:pumpkaboo'] = p710;
+    }
+    const p711 = map['id:711'];
+    if (p711) {
+      map['cn:南瓜怪人'] = p711;
+      map['en:gourgeist'] = p711;
     }
     _wikiPkmIdxArr = arr;
     _wikiPkmIdxLen = arr.length;
@@ -5446,17 +5469,25 @@
     "Amoonguss": "591"
   };
 
-  function getPokemonAvatarUrl(name, name_en) {
+  function getPokemonAvatarUrl(pOrName, name_en) {
+    if (typeof window !== 'undefined' && typeof window.getItemIcon === 'function') {
+      const arg = (pOrName && typeof pOrName === 'object') ? pOrName : { name: pOrName, name_en: name_en };
+      const url = window.getItemIcon(arg);
+      if (url && !url.startsWith('data:image/svg+xml')) return url;
+    }
+    const name = (pOrName && typeof pOrName === 'object') ? (pOrName.name_cn || pOrName.name) : pOrName;
+    const nEn = (pOrName && typeof pOrName === 'object') ? pOrName.name_en : name_en;
     if (typeof window !== 'undefined' && Array.isArray(window.allPokemons) && window.allPokemons.length > 0) {
       const idx = _getWikiPkmIndex(window.allPokemons);
-      const p = (name && idx['cn:' + name]) || (name_en && idx['en:' + name_en]);
+      const normName = name ? String(name).replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）') : '';
+      const p = (name && idx['cn:' + name]) || (normName && idx['cn:' + normName]) || (nEn && (idx['en:' + nEn] || idx['en:' + String(nEn).toLowerCase()]));
       if (p) {
         if (p.icon && typeof p.icon === 'string' && p.icon.trim() !== '') return p.icon;
         if (p.icon_url && typeof p.icon_url === 'string' && p.icon_url.trim() !== '') return p.icon_url;
         if (p.formatted_no) return `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png`;
       }
     }
-    const dex = POKEMON_SPRITE_FALLBACK[name] || POKEMON_SPRITE_FALLBACK[name_en];
+    const dex = POKEMON_SPRITE_FALLBACK[name] || POKEMON_SPRITE_FALLBACK[nEn];
     if (dex) {
       return `https://www.serebii.net/pokemonsleep/pokemon/icon/${dex}.png`;
     }
@@ -5467,10 +5498,12 @@
     if (!p) return '001';
     if (typeof window !== 'undefined' && Array.isArray(window.allPokemons) && window.allPokemons.length > 0) {
       const idx = _getWikiPkmIndex(window.allPokemons);
-      const found = (p.name && idx['cn:' + p.name]) || (p.name_en && idx['en:' + p.name_en]);
+      const normName = p.name ? String(p.name).replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）') : '';
+      const found = (p.name && idx['cn:' + p.name]) || (normName && idx['cn:' + normName]) || (p.name_en && (idx['en:' + p.name_en] || idx['en:' + String(p.name_en).toLowerCase()]));
       if (found && found.formatted_no) return String(found.formatted_no);
     }
-    return POKEMON_SPRITE_FALLBACK[p.name] || POKEMON_SPRITE_FALLBACK[p.name_en] || '001';
+    const normFallback = p.name ? String(p.name).replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）') : '';
+    return POKEMON_SPRITE_FALLBACK[p.name] || POKEMON_SPRITE_FALLBACK[normFallback] || POKEMON_SPRITE_FALLBACK[p.name_en] || '001';
   }
 
   function getIslandPokemonDexOrder(p) {
@@ -6024,7 +6057,7 @@
     } else {
       spawnsRows = spawnList.map(p => {
         const pName = isEN ? p.name_en : p.name;
-        const pkmAvatar = getPokemonAvatarUrl(p.name, p.name_en);
+        const pkmAvatar = getPokemonAvatarUrl(p, p.name_en);
         const pkmDex = getIslandPokemonDexCode(p);
         const dexNum = parseInt(pkmDex, 10);
         const dexPrefix = isNaN(dexNum) ? '' : `#${String(dexNum).padStart(3, '0')} `;
@@ -6034,7 +6067,7 @@
           <tr data-sleep-type="${p.sleepType || ''}">
             <td style="vertical-align:middle; text-align:center; padding:3px 4px;">
               <div class="island-pkm-item island-pkm-icon-only" title="${tooltipText}">
-                <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${tooltipText}" loading="lazy" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.serebii.net/pokedex-sv/icon/${pkmDex}.png';}">
+                <img src="${pkmAvatar}" class="island-pkm-avatar" alt="${pName}" title="${tooltipText}" loading="lazy" onerror="this.style.opacity='0.3';">
               </div>
             </td>
             <td style="vertical-align:middle; text-align:center; padding:3px 4px;">${renderIslandSleepCell(p, 1, p.s1)}</td>
@@ -6191,6 +6224,17 @@
       </div>
       </div>
     `;
+  }
+
+  // 監聽寶可夢資料庫載入與更新事件，確保非同步載入完成後島嶼分頁若為活動狀態能無縫重刷圖示
+  if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+    window.addEventListener('pokemon-data-updated', function() {
+      try {
+        if (typeof getCurrentSubTab === 'function' && getCurrentSubTab() === 'islands') {
+          refreshIslandsSubpanel();
+        }
+      } catch (e) {}
+    });
   }
 
   // --- 初始化 Wiki 模組 ---
@@ -7928,7 +7972,9 @@
         const p = idx['id:' + idStr] || idx['no:' + padId];
         const pkmName = p ? (isEN ? (p.name_en || p.name_cn) : (isCN ? (p.name_cn || p.name) : (p.name_cn || p.name))) : `Pokemon #${pkmId}`;
         const pkmNo = p ? (p.formatted_no || String(p.id).padStart(3, '0')) : padId;
-        const iconUrl = p && p.icon_url ? p.icon_url : `https://www.serebii.net/pokemonsleep/pokemon/icon/${pkmNo}.png`;
+        const iconUrl = (p && typeof window !== 'undefined' && typeof window.getItemIcon === 'function')
+          ? window.getItemIcon(p)
+          : (p && p.icon_url ? p.icon_url : `https://www.serebii.net/pokemonsleep/pokemon/icon/${pkmNo}.png`);
         return `
           <div class="wiki-item-evo-chip" title="${escapeHtml(pkmName)}">
             <img src="${iconUrl}" class="wiki-item-evo-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="this.style.opacity='0.3'" />
@@ -8324,7 +8370,9 @@
               const p = idx['id:' + idStr] || idx['no:' + padId];
               const pkmName = p ? (isEN ? (p.name_en || p.name_cn) : (isCN ? (p.name_cn || p.name) : (p.name_cn || p.name))) : `Pokemon #${pkmId}`;
               const pkmNo = p ? (p.formatted_no || String(p.id).padStart(3, '0')) : padId;
-              const pkmIcon = p && p.icon_url ? p.icon_url : `https://www.serebii.net/pokemonsleep/pokemon/icon/${pkmNo}.png`;
+              const pkmIcon = (p && typeof window !== 'undefined' && typeof window.getItemIcon === 'function')
+                ? window.getItemIcon(p)
+                : (p && p.icon_url ? p.icon_url : `https://www.serebii.net/pokemonsleep/pokemon/icon/${pkmNo}.png`);
               const targetId = p ? p.id : pkmId;
 
               return `

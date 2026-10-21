@@ -31,18 +31,112 @@ const SPECIAL_ICON_MAP = {
   '烏波（帕底亞）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png',
   '海豹球（佳節）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png',
   '顫弦蠑螈（低調的樣子）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png',
-  '顫弦蠑螈（低調）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png'
+  '顫弦蠑螈（低調）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png',
+  '皮卡丘 (萬聖節)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-halloween.png',
+  '皮卡丘 (佳節)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-holiday.png',
+  '皮卡丘 (船長)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/025-captain.png',
+  '六尾 (阿羅拉的樣子)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/037-alolanvulpix.png',
+  '六尾 (阿羅拉)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/037-alolanvulpix.png',
+  '九尾 (阿羅拉的樣子)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png',
+  '九尾 (阿羅拉)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/038-alolanninetales.png',
+  '伊布 (佳節)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/133-holiday.png',
+  '伊布 (萬聖節)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/133-halloween.png',
+  '烏波 (阿羅拉的樣子)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png',
+  '烏波 (帕底亞的樣子)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png',
+  '烏波 (帕底亞)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/194-paldeanwooper.png',
+  '海豹球 (佳節)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/363-holiday.png',
+  '顫弦蠑螈 (低調的樣子)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png',
+  '顫弦蠑螈 (低調)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849-toxtricitylowkeyform.png',
+  '顫弦蠑螈（高調的樣子）': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849.png',
+  '顫弦蠑螈 (高調的樣子)': 'https://www.serebii.net/pokemonsleep/pokemon/icon/849.png',
+  '南瓜精': 'https://www.serebii.net/pokemonsleep/pokemon/icon/710.png',
+  '南瓜怪人': 'https://www.serebii.net/pokemonsleep/pokemon/icon/711.png'
 };
 
 function getIconUrl(p) {
   if (!p) return DEFAULT_SVG_ICON;
-  const idStr = String(p.id || p.formatted_no || '');
-  if (SPECIAL_ICON_MAP[idStr]) return SPECIAL_ICON_MAP[idStr];
-  if (p.name_cn && SPECIAL_ICON_MAP[p.name_cn]) return SPECIAL_ICON_MAP[p.name_cn];
-  if (p.icon && typeof p.icon === 'string' && p.icon.trim() !== '') return p.icon;
-  if (p.icon_url && typeof p.icon_url === 'string' && p.icon_url.trim() !== '') return p.icon_url;
-  if (p.formatted_no) return `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png`;
+
+  // 1. 若傳入直接為字串 (寶可夢名稱、編號或直接圖片網址)
+  if (typeof p === 'string') {
+    const trimmed = p.trim();
+    if (!trimmed) return DEFAULT_SVG_ICON;
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('data:')) {
+      return trimmed;
+    }
+    if (SPECIAL_ICON_MAP[trimmed]) return SPECIAL_ICON_MAP[trimmed];
+    const norm = trimmed.replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）');
+    if (SPECIAL_ICON_MAP[norm]) return SPECIAL_ICON_MAP[norm];
+    const half = trimmed.replace(/（/g, ' (').replace(/）/g, ')');
+    if (SPECIAL_ICON_MAP[half]) return SPECIAL_ICON_MAP[half];
+
+    const allPkm = (typeof window !== 'undefined' && Array.isArray(window.allPokemons) && window.allPokemons.length > 0)
+      ? window.allPokemons
+      : ((typeof PokemonApp !== 'undefined' && Array.isArray(PokemonApp.allPokemons)) ? PokemonApp.allPokemons : []);
+    if (allPkm.length > 0) {
+      const lower = trimmed.toLowerCase();
+      const match = allPkm.find(x => x && (
+        x.name_cn === trimmed ||
+        x.name_cn === norm ||
+        x.name_cn === half ||
+        (x.name_en && x.name_en.toLowerCase() === lower) ||
+        (x.formatted_no && x.formatted_no === trimmed) ||
+        (x.id && String(x.id) === trimmed)
+      ));
+      if (match) return getIconUrl(match);
+    }
+    return DEFAULT_SVG_ICON;
+  }
+
+  // 2. 若傳入為物件 (寶可夢資料、倉庫物件或島嶼棲息資料)
+  if (typeof p === 'object') {
+    const idStr = String(p.id || p.pokemonId || p.formatted_no || '');
+    if (idStr && SPECIAL_ICON_MAP[idStr]) return SPECIAL_ICON_MAP[idStr];
+
+    const nameCn = p.name_cn || (typeof p.name === 'string' ? p.name : (p.name && p.name.cn ? p.name.cn : ''));
+    if (nameCn) {
+      if (SPECIAL_ICON_MAP[nameCn]) return SPECIAL_ICON_MAP[nameCn];
+      const normCn = String(nameCn).replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）');
+      if (SPECIAL_ICON_MAP[normCn]) return SPECIAL_ICON_MAP[normCn];
+      const halfCn = String(nameCn).replace(/（/g, ' (').replace(/）/g, ')');
+      if (SPECIAL_ICON_MAP[halfCn]) return SPECIAL_ICON_MAP[halfCn];
+    }
+
+    const nameEn = p.name_en || (p.name && p.name.en ? p.name.en : '');
+    if (nameEn && SPECIAL_ICON_MAP[nameEn]) return SPECIAL_ICON_MAP[nameEn];
+
+    if (p.icon && typeof p.icon === 'string' && p.icon.trim() !== '') return p.icon;
+    if (p.icon_url && typeof p.icon_url === 'string' && p.icon_url.trim() !== '') return p.icon_url;
+
+    if (p.formatted_no) {
+      return `https://www.serebii.net/pokemonsleep/pokemon/icon/${p.formatted_no}.png`;
+    }
+
+    // 若為島嶼棲息資料 (只有 name, name_en) 且無 formatted_no，在全域資料庫中尋找其本體資料
+    if (nameCn || nameEn) {
+      const allPkm = (typeof window !== 'undefined' && Array.isArray(window.allPokemons) && window.allPokemons.length > 0)
+        ? window.allPokemons
+        : ((typeof PokemonApp !== 'undefined' && Array.isArray(PokemonApp.allPokemons)) ? PokemonApp.allPokemons : []);
+      if (allPkm.length > 0) {
+        const lowerEn = (nameEn || '').toLowerCase();
+        const normCn = String(nameCn).replace(/\s*\(\s*/g, '（').replace(/\s*\)\s*/g, '）');
+        const match = allPkm.find(x => x && (
+          (nameCn && x.name_cn === nameCn) ||
+          (normCn && x.name_cn === normCn) ||
+          (lowerEn && x.name_en && x.name_en.toLowerCase() === lowerEn)
+        ));
+        if (match && match !== p) return getIconUrl(match);
+      }
+    }
+  }
+
   return DEFAULT_SVG_ICON;
+}
+
+// 全站統一掛載 window.getItemIcon 作為各分頁（圖鑑、倉庫、島嶼、深度研究室、道具百科）唯一寶可夢圖示來源
+if (typeof window !== 'undefined') {
+  window.getItemIcon = getIconUrl;
+  if (!window.PokemonApp) window.PokemonApp = {};
+  window.PokemonApp.getItemIcon = getIconUrl;
 }
 
 function getItemHelpInterval(p) {

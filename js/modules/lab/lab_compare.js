@@ -266,7 +266,9 @@
       }
 
       const base = findBasePkm(item.pokemonId || item.name);
-      const avatarUrl = (base && (base.icon_url || base.icon)) || (base && base.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${base.formatted_no}.png` : '') || fallbackAvatar;
+      const avatarUrl = (base && typeof window !== 'undefined' && typeof window.getItemIcon === 'function')
+        ? window.getItemIcon(base)
+        : ((base && (base.icon_url || base.icon)) || (base && base.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${base.formatted_no}.png` : '') || fallbackAvatar);
       const berry = (typeof window.getPokemonBerry === 'function' && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : {});
       const specHtml = (window.I18N && window.I18N.getSpecialtyIconHtml && base) ? window.I18N.getSpecialtyIconHtml(base.specialty, 13) : '';
       const natDisplayName = window.I18N ? window.I18N.getNatureName(item.nature) : item.nature;

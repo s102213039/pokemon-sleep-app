@@ -357,7 +357,9 @@
         const p = idx['id:' + idStr] || idx['no:' + padId];
         const pkmName = p ? (isEN ? (p.name_en || p.name_cn) : (isCN ? (p.name_cn || p.name) : (p.name_cn || p.name))) : `Pokemon #${pkmId}`;
         const pkmNo = p ? (p.formatted_no || String(p.id).padStart(3, '0')) : padId;
-        const iconUrl = p && p.icon_url ? p.icon_url : `https://www.serebii.net/pokemonsleep/pokemon/icon/${pkmNo}.png`;
+        const iconUrl = (p && typeof window !== 'undefined' && typeof window.getItemIcon === 'function')
+          ? window.getItemIcon(p)
+          : (p && p.icon_url ? p.icon_url : `https://www.serebii.net/pokemonsleep/pokemon/icon/${pkmNo}.png`);
         return `
           <div class="wiki-item-evo-chip" title="${escapeHtml(pkmName)}">
             <img src="${iconUrl}" class="wiki-item-evo-avatar" alt="${escapeHtml(pkmName)}" loading="lazy" onerror="this.style.opacity='0.3'" />
@@ -753,7 +755,9 @@
               const p = idx['id:' + idStr] || idx['no:' + padId];
               const pkmName = p ? (isEN ? (p.name_en || p.name_cn) : (isCN ? (p.name_cn || p.name) : (p.name_cn || p.name))) : `Pokemon #${pkmId}`;
               const pkmNo = p ? (p.formatted_no || String(p.id).padStart(3, '0')) : padId;
-              const pkmIcon = p && p.icon_url ? p.icon_url : `https://www.serebii.net/pokemonsleep/pokemon/icon/${pkmNo}.png`;
+              const pkmIcon = (p && typeof window !== 'undefined' && typeof window.getItemIcon === 'function')
+                ? window.getItemIcon(p)
+                : (p && p.icon_url ? p.icon_url : `https://www.serebii.net/pokemonsleep/pokemon/icon/${pkmNo}.png`);
               const targetId = p ? p.id : pkmId;
 
               return `
