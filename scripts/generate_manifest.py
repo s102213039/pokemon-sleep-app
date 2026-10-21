@@ -23,7 +23,8 @@ TARGET_FILES = [
     'news.json',
     'sleep_styles.json',
     'items.json',
-    'special_icons.json'
+    'special_icons.json',
+    'ladder_lv60.json'
 ]
 
 

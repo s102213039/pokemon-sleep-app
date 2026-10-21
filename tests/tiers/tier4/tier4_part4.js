@@ -1544,6 +1544,82 @@ function registerTier4Part4() {
     assert(mockContainer.innerHTML.includes('Roll & Build') || mockContainer.innerHTML.includes('擲骰並自動配隊'), 'Rendered lab must contain Roll & Build button');
     assert(mockContainer.innerHTML.includes('lab-supply-row'), 'Supply-demand board must render .lab-supply-row');
   });
+
+  test('Tier 4 - Real-World Application Scenarios', 'Data Minification, Manifest Tracking & Native IndexedDB Warm Start Verification', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const crypto = require('crypto');
+    const IDBStorage = require('../../../js/core/idbStorage');
+    const DOMUtils = require('../../../js/core/domUtils');
+    const { minifyData, TARGET_FILES } = require('../../../scripts/minify_data');
+    const { formatData } = require('../../../scripts/format_data');
+
+    // 1. Verify manifest.json integrity & tracking
+    const manifestPath = path.resolve(__dirname, '../../../data/manifest.json');
+    assert(fs.existsSync(manifestPath), 'data/manifest.json must exist');
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    assert(manifest.version === 1, 'Manifest version must be 1');
+    assert(typeof manifest.manifestHash === 'string' && manifest.manifestHash.length > 0, 'manifestHash must be valid');
+    assert(manifest.files && typeof manifest.files === 'object', 'manifest must contain files object');
+
+    // 2. Verify all 7 target files are tracked and match their SHA-256 hashes
+    let totalMinifiedBytes = 0;
+    let totalFormattedBytes = 0;
+
+    TARGET_FILES.forEach(filename => {
+      const fpath = path.resolve(__dirname, '../../../data', filename);
+      assert(fs.existsSync(fpath), `data/${filename} must exist`);
+      assert(manifest.files[filename], `Manifest must track ${filename}`);
+
+      const rawBytes = fs.readFileSync(fpath);
+      const computedHash = crypto.createHash('sha256').update(rawBytes).digest('hex').slice(0, 16);
+      assert(manifest.files[filename].hash === computedHash, `Hash for ${filename} must match manifest`);
+      assert(manifest.files[filename].size === rawBytes.length, `Size for ${filename} must match file length`);
+
+      // Verify parse identity
+      const parsed = JSON.parse(rawBytes.toString('utf8'));
+      const minified = JSON.stringify(parsed);
+      const formatted = JSON.stringify(parsed, null, 2);
+
+      assert(JSON.parse(minified) !== null, `${filename} must parse from minified string`);
+      assert(JSON.parse(formatted) !== null, `${filename} must parse from formatted string`);
+
+      totalMinifiedBytes += Buffer.byteLength(minified, 'utf8');
+      totalFormattedBytes += Buffer.byteLength(formatted, 'utf8');
+    });
+
+    // 3. Verify minification savings > 400 KB (> 30% reduction)
+    const savedBytes = totalFormattedBytes - totalMinifiedBytes;
+    assert(savedBytes > 400 * 1024, `Minification savings must exceed 400 KB (actual: ${(savedBytes / 1024).toFixed(1)} KB)`);
+
+    // 4. Verify IDBStorage interface & methods
+    assert(typeof IDBStorage.isSupported === 'function', 'IDBStorage must export isSupported');
+    assert(typeof IDBStorage.get === 'function', 'IDBStorage must export get');
+    assert(typeof IDBStorage.set === 'function', 'IDBStorage must export set');
+    assert(typeof IDBStorage.delete === 'function', 'IDBStorage must export delete');
+    assert(typeof IDBStorage.clear === 'function', 'IDBStorage must export clear');
+
+    // 5. Verify DataCacheManager integrates with IDBStorage for warm start
+    const DCM = DOMUtils.DataCacheManager;
+    assert(typeof DCM.getCachedJsonAsync === 'function', 'DataCacheManager must have getCachedJsonAsync');
+    assert(typeof DCM.saveCachedJson === 'function', 'DataCacheManager must have saveCachedJson');
+    assert(typeof DCM.checkFileNeedsUpdate === 'function', 'DataCacheManager must have checkFileNeedsUpdate');
+
+    // 6. Verify warm start wiring in compiled modules
+    const appJs = fs.readFileSync(path.resolve(__dirname, '../../../js/modules/app.js'), 'utf8');
+    const recipesJs = fs.readFileSync(path.resolve(__dirname, '../../../js/modules/recipes.js'), 'utf8');
+    const newsJs = fs.readFileSync(path.resolve(__dirname, '../../../js/modules/news.js'), 'utf8');
+    const wikiJs = fs.readFileSync(path.resolve(__dirname, '../../../js/modules/wiki.js'), 'utf8');
+
+    assert(appJs.includes('getCachedJsonAsync(CACHE_KEY_DATA_JSON)'), 'app.js must call getCachedJsonAsync for 0ms warm start');
+    assert(recipesJs.includes('getCachedJsonAsync(CACHE_KEY_RECIPES_JSON)'), 'recipes.js must call getCachedJsonAsync for 0ms warm start');
+    assert(newsJs.includes('getCachedJsonAsync(CACHE_KEY_NEWS_JSON)'), 'news.js must call getCachedJsonAsync for 0ms warm start');
+    assert(wikiJs.includes('getCachedJsonAsync(CACHE_KEY_SLEEP_STYLES_JSON)'), 'wiki.js must call getCachedJsonAsync for 0ms warm start');
+
+    // 7. Verify scripts export functions
+    assert(typeof minifyData === 'function', 'scripts/minify_data.js must export minifyData function');
+    assert(typeof formatData === 'function', 'scripts/format_data.js must export formatData function');
+  });
 }
 
 module.exports = { registerTier4Part4 };

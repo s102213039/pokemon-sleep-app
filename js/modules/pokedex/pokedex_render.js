@@ -1080,14 +1080,21 @@ if (typeof document !== 'undefined') {
     const CACHE_KEY_DATA_JSON_TIME = 'pksleep_cache_data_json_time';
 
     const fetchDataWithFallback = async (...customUrls) => {
-      // 1. 優先自本機 LocalStorage 瞬間載入快取 (Cache-First 0ms 秒開)，背景再由 manifest 檢查是否需更新
+      // 1. 優先自本機快取瞬間載入 (Cache-First 0ms 秒開：IndexedDB / LocalStorage)，背景再由 manifest 檢查是否需更新
       try {
-        if (typeof window !== 'undefined' && window.localStorage) {
-          const cachedText = window.localStorage.getItem(CACHE_KEY_DATA_JSON);
-          if (cachedText) {
-            const cachedData = JSON.parse(cachedText);
+        if (typeof window !== 'undefined') {
+          if (window.DataCacheManager && typeof window.DataCacheManager.getCachedJsonAsync === 'function') {
+            const cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_DATA_JSON);
             if (Array.isArray(cachedData) && cachedData.length > 0) {
               return cachedData;
+            }
+          } else if (window.localStorage) {
+            const cachedText = window.localStorage.getItem(CACHE_KEY_DATA_JSON);
+            if (cachedText) {
+              const cachedData = JSON.parse(cachedText);
+              if (Array.isArray(cachedData) && cachedData.length > 0) {
+                return cachedData;
+              }
             }
           }
         }
@@ -1120,11 +1127,13 @@ if (typeof document !== 'undefined') {
               const parsed = JSON.parse(text);
               try {
                 if (typeof window !== 'undefined' && window.localStorage) {
-                  window.localStorage.setItem(CACHE_KEY_DATA_JSON, text);
-                  window.localStorage.setItem(CACHE_KEY_DATA_JSON_TIME, String(Date.now()));
+                  try {
+                    window.localStorage.setItem(CACHE_KEY_DATA_JSON, text);
+                    window.localStorage.setItem(CACHE_KEY_DATA_JSON_TIME, String(Date.now()));
+                  } catch (e) {}
                 }
                 if (typeof window !== 'undefined' && window.DataCacheManager) {
-                  window.DataCacheManager.saveCachedJson(CACHE_KEY_DATA_JSON, 'data.json', text);
+                  window.DataCacheManager.saveCachedJson(CACHE_KEY_DATA_JSON, 'data.json', parsed);
                 }
               } catch (e) {}
               return parsed;
@@ -1140,15 +1149,23 @@ if (typeof document !== 'undefined') {
         }
       }
 
-      // 若所有網路請求重試皆失敗，嘗試自 LocalStorage 離線快取載入
+      // 若所有網路請求重試皆失敗，嘗試自本機快取 (IndexedDB / LocalStorage) 離線載入
       try {
-        if (typeof window !== 'undefined' && window.localStorage) {
-          const cachedText = window.localStorage.getItem(CACHE_KEY_DATA_JSON);
-          if (cachedText) {
-            const cachedData = JSON.parse(cachedText);
+        if (typeof window !== 'undefined') {
+          if (window.DataCacheManager && typeof window.DataCacheManager.getCachedJsonAsync === 'function') {
+            const cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_DATA_JSON);
             if (Array.isArray(cachedData) && cachedData.length > 0) {
               console.warn('[Data Engine] 網路請求暫時失敗，已自動自本機離線快取載入 data.json (' + cachedData.length + ' 筆資料)');
               return cachedData;
+            }
+          } else if (window.localStorage) {
+            const cachedText = window.localStorage.getItem(CACHE_KEY_DATA_JSON);
+            if (cachedText) {
+              const cachedData = JSON.parse(cachedText);
+              if (Array.isArray(cachedData) && cachedData.length > 0) {
+                console.warn('[Data Engine] 網路請求暫時失敗，已自動自本機離線快取載入 data.json (' + cachedData.length + ' 筆資料)');
+                return cachedData;
+              }
             }
           }
         }

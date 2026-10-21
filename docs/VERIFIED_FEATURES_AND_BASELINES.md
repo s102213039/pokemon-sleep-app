@@ -332,9 +332,25 @@
   1. **Wiki 深度模組化 (`js/modules/wiki/`)**：拆解為 `wiki_skills.js` (1,386 行)、`wiki_ladder.js` (2,496 行)、`wiki_camps.js` (2,306 行)、`wiki_render.js` (1,376 行)、`wiki_items.js` (941 行)、`wiki_main.js` (994 行)。
   2. **Pokemon Box 深度模組化 (`js/modules/box/`)**：拆解為 `box_filter.js` (645 行)、`box_storage.js` (1,152 行)、`box_modal.js` (1,499 行)、`box_ocr.js` (1,063 行)、`box_main.js` (743 行)。
   3. **Pokedex 圖鑑模組化 (`js/modules/pokedex/`)**：拆解為 `pokedex_core.js` (1,875 行)、`pokedex_render.js` (2,745 行)、`pokedex_formulas.js` (1,670 行)、`pokedex_modal.js` (771 行)。
-  4. **Tier 4 測試套件拆分 (`tests/tiers/tier4/`)**：原 8,993 行巨石縮減至 18 行微型協調器，4 個獨立子套件（`tier4_part1.js` 2,026 行、`tier4_part2.js` 2,873 行、`tier4_part3.js` 2,652 行、`tier4_part4.js` 1,559 行），109 項用例全部正常運作。
-  5. **CSS 深度細化與 Master Bundler (`scripts/build_all.js`)**：全站 37 個模組於 10ms 內完成打包，所有 226 項測試 100% 通過。
+  4. **Tier 4 測試套件拆分 (`tests/tiers/tier4/`)**：原 8,993 行巨石縮減至 18 行微型協調器，4 個獨立子套件（`tier4_part1.js` 2,026 行、`tier4_part2.js` 2,873 行、`tier4_part3.js` 2,652 行、`tier4_part4.js` 1,600 行），110 項用例全部正常運作。
+  5. **CSS 深度細化與 Master Bundler (`scripts/build_all.js`)**：全站 37 個模組於 10ms 內完成打包，所有 227 項測試 100% 通過。
 - **嚴禁退化行為**：修改特定業務邏輯時應優先編輯 `js/modules/wiki/`、`js/modules/box/`、`js/modules/pokedex/`、`js/modules/lab/` 原始碼；不得移除 `scripts/build_all.js`。
+
+### 8.6 生產環境資料壓縮 (Production Minification) 與 IndexedDB 0ms 本地瞬時快取實裝
+- **[v] 良品狀態 (Verified Working)**：
+  1. **靜態 JSON 資料生產壓縮 (`scripts/minify_data.js`, `npm run data:minify`)**：
+     - 在建構時移除 `data.json`、`recipes.json`、`news.json`、`sleep_styles.json`、`items.json`、`special_icons.json`、`ladder_lv60.json` 之空格與換行。
+     - 總 Payload 自 1,173.9 KB 驟降至 762.6 KB，冷啟動下載直接瘦身 411.3 KB (-35.0%)。
+     - 自動計算新 SHA-256 雜湊並即時寫入 `data/manifest.json`，全站版本清單比對維持 100% 確定性。
+  2. **開發維護友善格式化 (`scripts/format_data.js`, `npm run data:format`)**：
+     - 提供雙模式維護工具，開發者或 AI 需編輯或審查 git diff 時，執行 `npm run data:format` 即自動格式化為 2 格縮排；編輯完成後再執行 `npm run data:minify` 即無縫壓回生產體積，後期維護與擴充 0 負擔。
+  3. **原生 IndexedDB 二進位結構化物件接管 (`js/core/idbStorage.js`, `js/core/domUtils.js`)**：
+     - `DataCacheManager.saveCachedJson` 在儲存時，將資料解析為原生 JavaScript 物件後寫入 IndexedDB `cache` 對象倉庫。
+     - `checkFileNeedsUpdate` 支援在 LocalStorage 無快取或容量超出時，非同步檢查 IndexedDB 快取 (`getCachedJsonAsync`)。
+     - 包含 `pokedex_render.js` (data.json)、`recipes.js` (recipes.json)、`news.js` (news.json)、`wiki_camps.js` (sleep_styles.json) 全面支援首屏優先自 IndexedDB 秒開（Warm Cache 0ms 載入、0 位元組網路傳輸、0.3ms 本地反序列化耗時）。
+  4. **全套自動化測試與基準驗證 (`tests/run_tests.js`, `scripts/benchmark_cache.js`)**：
+     - 實作 Scenario 110，全站 227/227 項 E2E 測試 100% 通過。
+- **嚴禁退化行為**：修改 `data/*.json` 後務必執行 `npm run data:minify` 或 `python3 scripts/generate_manifest.py` 更新 `manifest.json`；不得在 `checkFileNeedsUpdate` 或資料讀取層移除 `getCachedJsonAsync` 呼叫。
 
 ---
 

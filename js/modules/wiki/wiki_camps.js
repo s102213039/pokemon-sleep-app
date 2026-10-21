@@ -5,28 +5,33 @@
   const CACHE_KEY_SLEEP_STYLES_JSON = 'pksleep_cache_sleep_styles_json';
 
   function loadDynamicSleepStyles() {
-    // 1. 優先讀取本機 LocalStorage 快取，達成 0ms 瞬時載入與零額外下載
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        const cachedRaw = window.localStorage.getItem(CACHE_KEY_SLEEP_STYLES_JSON);
-        if (cachedRaw) {
-          const parsed = JSON.parse(cachedRaw);
+    // 1. 優先讀取本機快取 (IndexedDB / LocalStorage)，達成 0ms 瞬時載入與零額外下載
+    (async () => {
+      try {
+        if (typeof window !== 'undefined') {
+          let parsed = null;
+          if (window.DataCacheManager && typeof window.DataCacheManager.getCachedJsonAsync === 'function') {
+            parsed = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_SLEEP_STYLES_JSON);
+          } else if (window.localStorage) {
+            const cachedRaw = window.localStorage.getItem(CACHE_KEY_SLEEP_STYLES_JSON);
+            if (cachedRaw) parsed = JSON.parse(cachedRaw);
+          }
           if (parsed && parsed.byName) {
             dynamicSleepStyles = parsed.byName;
+            _sleepStyleCacheHasDyn = false;
           }
         }
-      }
-    } catch (e) {}
+      } catch (e) {}
 
-    if (typeof fetch === 'undefined') return;
-    const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
-    const candidates = [
-      `${base}data/sleep_styles.json`,
-      `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/sleep_styles.json`,
-      `data/sleep_styles.json`,
-      `../data/sleep_styles.json`
-    ];
-    (async () => {
+      if (typeof fetch === 'undefined') return;
+      const base = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) ? window.__DATA_BASE_PATH__ : '';
+      const candidates = [
+        `${base}data/sleep_styles.json`,
+        `https://raw.githubusercontent.com/s102213039/pokemon-sleep-app/main/data/sleep_styles.json`,
+        `data/sleep_styles.json`,
+        `../data/sleep_styles.json`
+      ];
+
       let remoteHash = '';
       if (typeof window !== 'undefined' && window.DataCacheManager && typeof window.DataCacheManager.checkFileNeedsUpdate === 'function') {
         try {
@@ -48,7 +53,9 @@
               dynamicSleepStyles = data.byName;
               _sleepStyleCacheHasDyn = false;
               try {
-                if (typeof window !== 'undefined' && window.localStorage) {
+                if (typeof window !== 'undefined' && window.DataCacheManager && typeof window.DataCacheManager.saveCachedJson === 'function') {
+                  window.DataCacheManager.saveCachedJson(CACHE_KEY_SLEEP_STYLES_JSON, 'sleep_styles.json', data, remoteHash);
+                } else if (typeof window !== 'undefined' && window.localStorage) {
                   window.localStorage.setItem(CACHE_KEY_SLEEP_STYLES_JSON, rawText);
                 }
                 if (typeof window !== 'undefined' && window.DataCacheManager && typeof window.DataCacheManager.markFileUpdated === 'function') {

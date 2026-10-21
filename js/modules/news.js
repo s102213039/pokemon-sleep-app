@@ -78,21 +78,24 @@
 
   async function loadNews() {
     try {
-      // 1. 優先自本機 LocalStorage 瞬間載入快取 (Cache-First 0ms 秒開)
+      // 1. 優先自本機快取瞬間載入 (Cache-First 0ms 秒開：IndexedDB / LocalStorage)
       try {
-        if (typeof window !== 'undefined' && window.localStorage) {
-          const cachedText = window.localStorage.getItem(CACHE_KEY_NEWS_JSON);
-          if (cachedText) {
-            const cachedData = JSON.parse(cachedText);
-            if (Array.isArray(cachedData) && cachedData.length > 0) {
-              allNews = cachedData;
-              renderEventTimeline();
-              initCategoryTags();
-              initSearch();
-              renderNews();
-              scheduleDynamicNewsSync();
-              return;
-            }
+        if (typeof window !== 'undefined') {
+          let cachedData = null;
+          if (window.DataCacheManager && typeof window.DataCacheManager.getCachedJsonAsync === 'function') {
+            cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_NEWS_JSON);
+          } else if (window.localStorage) {
+            const cachedText = window.localStorage.getItem(CACHE_KEY_NEWS_JSON);
+            if (cachedText) cachedData = JSON.parse(cachedText);
+          }
+          if (Array.isArray(cachedData) && cachedData.length > 0) {
+            allNews = cachedData;
+            renderEventTimeline();
+            initCategoryTags();
+            initSearch();
+            renderNews();
+            scheduleDynamicNewsSync();
+            return;
           }
         }
       } catch (cacheReadErr) {}
@@ -136,22 +139,25 @@
       }
 
       if (!res || !res.ok) {
-        // 若網路請求失敗，嘗試自 LocalStorage 離線快取載入
+        // 若網路請求失敗，嘗試自本機快取 (IndexedDB / LocalStorage) 離線載入
         try {
-          if (typeof window !== 'undefined' && window.localStorage) {
-            const cachedText = window.localStorage.getItem(CACHE_KEY_NEWS_JSON);
-            if (cachedText) {
-              const cachedData = JSON.parse(cachedText);
-              if (Array.isArray(cachedData) && cachedData.length > 0) {
-                console.warn('[News Engine] 網路請求暫時失敗，已自動自本機離線快取載入 news.json (' + cachedData.length + ' 筆公告)');
-                allNews = cachedData;
-                renderEventTimeline();
-                initCategoryTags();
-                initSearch();
-                renderNews();
-                scheduleDynamicNewsSync();
-                return;
-              }
+          if (typeof window !== 'undefined') {
+            let cachedData = null;
+            if (window.DataCacheManager && typeof window.DataCacheManager.getCachedJsonAsync === 'function') {
+              cachedData = await window.DataCacheManager.getCachedJsonAsync(CACHE_KEY_NEWS_JSON);
+            } else if (window.localStorage) {
+              const cachedText = window.localStorage.getItem(CACHE_KEY_NEWS_JSON);
+              if (cachedText) cachedData = JSON.parse(cachedText);
+            }
+            if (Array.isArray(cachedData) && cachedData.length > 0) {
+              console.warn('[News Engine] 網路請求暫時失敗，已自動自本機離線快取載入 news.json (' + cachedData.length + ' 筆公告)');
+              allNews = cachedData;
+              renderEventTimeline();
+              initCategoryTags();
+              initSearch();
+              renderNews();
+              scheduleDynamicNewsSync();
+              return;
             }
           }
         } catch (cacheErr) {
@@ -164,10 +170,12 @@
       allNews = JSON.parse(text);
       try {
         if (typeof window !== 'undefined' && window.localStorage) {
-          window.localStorage.setItem(CACHE_KEY_NEWS_JSON, text);
+          try {
+            window.localStorage.setItem(CACHE_KEY_NEWS_JSON, text);
+          } catch (e) {}
         }
         if (typeof window !== 'undefined' && window.DataCacheManager) {
-          window.DataCacheManager.saveCachedJson(CACHE_KEY_NEWS_JSON, 'news.json', text);
+          window.DataCacheManager.saveCachedJson(CACHE_KEY_NEWS_JSON, 'news.json', allNews);
         }
       } catch (e) {}
       renderEventTimeline();

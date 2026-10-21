@@ -29,12 +29,18 @@
     }
   }
 
+  const _memoryStore = new Map();
   function getFallbackStorage() {
     try {
       if (typeof global !== 'undefined' && global.localStorage) return global.localStorage;
       if (typeof localStorage !== 'undefined') return localStorage;
     } catch (e) {}
-    return null;
+    return {
+      getItem: (k) => _memoryStore.has(k) ? _memoryStore.get(k) : null,
+      setItem: (k, v) => _memoryStore.set(k, String(v)),
+      removeItem: (k) => _memoryStore.delete(k),
+      keys: () => Array.from(_memoryStore.keys())
+    };
   }
 
   function openDatabase() {
@@ -187,7 +193,8 @@
         if (!store) return false;
         try {
           const prefix = 'idb_' + storeName + '_';
-          Object.keys(store).forEach((k) => {
+          const keys = typeof store.keys === 'function' ? store.keys() : Object.keys(store);
+          keys.forEach((k) => {
             if (k.startsWith(prefix)) store.removeItem(k);
           });
           return true;

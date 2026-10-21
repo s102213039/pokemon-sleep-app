@@ -225,18 +225,34 @@
       if (!store || !cacheKey) return;
       try {
         const text = typeof rawTextOrObj === 'string' ? rawTextOrObj : JSON.stringify(rawTextOrObj);
-        store.setItem(cacheKey, text);
-        store.setItem(cacheKey + '_time', String(Date.now()));
+        try {
+          store.setItem(cacheKey, text);
+        } catch (quotaErr) {
+          // LocalStorage 5MB quota protection: when exceeded, safe ignore as IDBStorage takes over
+        }
+        try {
+          store.setItem(cacheKey + '_time', String(Date.now()));
+        } catch (e) {}
         const hashToSave = explicitHash ||
           (_memoryManifest && _memoryManifest.files && _memoryManifest.files[fileName] && _memoryManifest.files[fileName].hash) ||
           '';
         if (fileName && hashToSave) {
-          store.setItem(FILE_HASH_PREFIX + fileName, String(hashToSave));
+          try {
+            store.setItem(FILE_HASH_PREFIX + fileName, String(hashToSave));
+          } catch (e) {}
         }
 
         const idb = (typeof global !== 'undefined' && global.IDBStorage) || (typeof window !== 'undefined' && window.IDBStorage);
         if (idb && typeof idb.set === 'function') {
-          idb.set(cacheKey, rawTextOrObj, 'cache').catch(() => {});
+          let objectToStore = rawTextOrObj;
+          if (typeof rawTextOrObj === 'string') {
+            try {
+              objectToStore = JSON.parse(rawTextOrObj);
+            } catch (e) {
+              objectToStore = rawTextOrObj;
+            }
+          }
+          idb.set(cacheKey, objectToStore, 'cache').catch(() => {});
         }
       } catch (e) {}
     },
@@ -322,7 +338,10 @@
      * @param {boolean} [force=false] - 是否強制忽略冷卻時間檢查 manifest
      */
     checkFileNeedsUpdate: async function (fileName, cacheKey, force) {
-      const cachedData = this.getCachedJson(cacheKey);
+      let cachedData = this.getCachedJson(cacheKey);
+      if (!cachedData) {
+        cachedData = await this.getCachedJsonAsync(cacheKey);
+      }
       const hasValidCache = cachedData && getRecordCount(cachedData) > 0;
       const localHash = this.getFileHash(fileName);
 
