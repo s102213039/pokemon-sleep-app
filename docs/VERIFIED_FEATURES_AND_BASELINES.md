@@ -249,6 +249,14 @@
     - 支援「全部 (78)」、「咖哩/濃湯」、「沙拉」、「點心/飲料」四分類快速切換。
 - **嚴禁退化行為**：不得在目標料理供需看板上使用多重巢狀邊框（違背 Single Frame Rule），不得在任何按鈕或提示中使用 Emoji。
 
+### 6.7 測試套件模組化分層與輕量本機 IndexedDB 儲存驅動器 (Test Suite Tier Modularization & Native IDBStorage Driver)
+- **[v] 良品狀態 (Verified Working)**：
+  - **測試套件分層瘦身**：原 13,036 行之單一巨大測試腳本 [tests/run_tests.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/tests/run_tests.js) 成功瘦身至 **35 行** 主入口，共用測試夾具移至 [tests/test_harness.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/tests/test_harness.js)，226 項測試依 Tier 完整隔離至 `tests/tiers/`（Tier 1: 66 項、Tier 2: 43 項、Tier 3: 8 項、Tier 4: 109 項）。
+  - **分級測試極速執行**：支援 CLI 參數 `rtk node tests/run_tests.js --tier=1`（0.8 秒完成）或特定 Tier 獨立呼叫，全量回歸依舊維持 226 / 226 項全數通過（0 失敗）。
+  - **原生 IndexedDB 儲存驅動器**：建立 [js/core/idbStorage.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/js/core/idbStorage.js)，純原生零外部相依，內建 `cache`（大數據快取）與 `user`（用戶倉庫/隊伍）雙對象倉庫，具備 LocalStorage 降級備份與全非同步 Promise API，徹底解除瀏覽器 5MB 容量上限警報。
+  - **靜態食材天梯資料集抽離**：成功將 `wiki.js` 內嵌之 10,297 行常數提取至獨立結構化檔案 [data/ladder_lv60.json](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/data/ladder_lv60.json)（263 KB），涵蓋全部 19 款食材座標與評分。
+- **嚴禁退化行為**：不得將測試腳本重新混編為單一萬行大檔；不得在未提供 LocalStorage 降級保護的情況下強行使用 IndexedDB。
+
 ---
 
 ## 七、 模組六：行動端 H5 與電腦版響應式架構 (Mobile H5 vs Desktop)

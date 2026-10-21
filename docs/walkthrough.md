@@ -5,6 +5,20 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-10-21 已完成（全站架構瘦身工程第一階段：測試套件分層模組化、輕量本機 IndexedDB 儲存驅動器 idbStorage.js、Lv.60 食材天梯靜態數據抽離、v=20261021_03）
+
+- **測試狀態**：226/226 自動化測試全數通過（支援 `--tier=N` 分層極速執行，全量回歸維持 0 失敗）
+- **瘦身與模組化核心成果**：
+  1. **測試套件分層解構 (`tests/run_tests.js`)**：
+     - 將原 13,036 行之單一測試腳本拆解為微型主入口（35 行）與 4 個獨立分層測試檔（`tests/tiers/tier1_coverage.js` 66 項、`tier2_boundaries.js` 43 項、`tier3_combos.js` 8 項、`tier4_scenarios.js` 109 項）。
+     - 共用 MiniElement、Mock DOM 與斷言邏輯獨立至 `tests/test_harness.js`（355 行）。
+     - 支援 CLI 參數 `--tier=1..4`，單一 Tier 執行僅需 0.8 秒，大幅提升開發與除錯回饋循環速度。
+  2. **原生 IndexedDB 儲存驅動器 (`js/core/idbStorage.js`)**：
+     - 純原生零依賴非同步 IndexedDB 封裝，提供 `cache` 與 `user` 雙對象倉庫。
+     - 內建 LocalStorage 自動降級備份與全非同步 Promise API，為大數據（睡姿出沒、天梯資料、倉庫備份）提供無容量限制的毫秒級離線存儲。
+  3. **靜態食材天梯資料集抽離 (`data/ladder_lv60.json`)**：
+     - 成功自 `wiki.js` 內嵌的 10,297 行硬編碼常數中提取出純淨 JSON（263 KB），涵蓋全部 19 款食材之座標評分與產出階級。
+
 ## 交接：2026-10-21 已完成（深度研究室寶可夢對比重構：行動端 H5 單行並排展示、槽位卡片極簡化與點選更換、對比基準等級動態切換、六維戰力與配置橫向對照矩陣、v=20261021_01）
 
 - **靜態快取標籤**：全模組更新為 `v=20261021_01`（`index.html`、`app/index.html` 同步）
