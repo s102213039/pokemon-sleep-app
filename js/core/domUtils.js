@@ -207,6 +207,19 @@
       }
     },
 
+    getCachedJsonAsync: async function (cacheKey) {
+      const idb = (typeof global !== 'undefined' && global.IDBStorage) || (typeof window !== 'undefined' && window.IDBStorage);
+      if (idb && typeof idb.get === 'function') {
+        try {
+          const val = await idb.get(cacheKey, 'cache');
+          if (val) {
+            return typeof val === 'string' ? JSON.parse(val) : val;
+          }
+        } catch (e) {}
+      }
+      return this.getCachedJson(cacheKey);
+    },
+
     saveCachedJson: function (cacheKey, fileName, rawTextOrObj, explicitHash) {
       const store = getStorage();
       if (!store || !cacheKey) return;
@@ -219,6 +232,11 @@
           '';
         if (fileName && hashToSave) {
           store.setItem(FILE_HASH_PREFIX + fileName, String(hashToSave));
+        }
+
+        const idb = (typeof global !== 'undefined' && global.IDBStorage) || (typeof window !== 'undefined' && window.IDBStorage);
+        if (idb && typeof idb.set === 'function') {
+          idb.set(cacheKey, rawTextOrObj, 'cache').catch(() => {});
         }
       } catch (e) {}
     },

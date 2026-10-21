@@ -184,7 +184,10 @@ test('Tier 1 - Feature Coverage', 'Ingredient & Berry Base Energy: wiki.js match
     assertEquals(energy, SEREbii_BERRY_LV1[name], `Berry ${name} Lv.1 base energy mismatch`);
   });
 
-  const ladderBlock = wikiContent.match(/const LV60_COORDINATE_LADDER_DATA = \[([\s\S]*?)\];\s*\n\s*\/\/ 舊版清單資料/);
+  const ladderFileContent = fs.existsSync(path.join(WORKSPACE_ROOT, 'js/data/ladder_data.js'))
+    ? fs.readFileSync(path.join(WORKSPACE_ROOT, 'js/data/ladder_data.js'), 'utf8')
+    : wikiContent;
+  const ladderBlock = ladderFileContent.match(/const LV60_COORDINATE_LADDER_DATA = \[([\s\S]*?)\];\s*\n\s*\/\/ 舊版清單資料/);
   assert(ladderBlock, 'LV60_COORDINATE_LADDER_DATA not found');
   const ladderEnergies = [...ladderBlock[1].matchAll(/"energy": (\d+)/g)].map(m => +m[1]).sort((a,b)=>a-b);
   const ingEnergies = Object.values(SEREbii_ING).sort((a,b)=>a-b);
