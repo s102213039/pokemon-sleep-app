@@ -1175,8 +1175,8 @@ test('Tier 2 - Boundary & Corner Cases', '18 Berry Types Coverage & EX Rules Iso
     assert(appraisalJs.includes('function getSkillTier(sName)'), 'appraisal.js must define getSkillTier');
 
     // 2. Cache busters bumped to 20261002_07 or newer
-    assert(indexHtml.match(/js\/modules\/appraisal\.js\?v=202610(?:02_(?:0[7-9]|\d{2})|(?:0[3-9]|[1-3]\d)_\d{2})/), 'index.html must use v=20261002_07 or newer');
-    assert(appIndexHtml.match(/js\/modules\/appraisal\.js\?v=202610(?:02_(?:0[7-9]|\d{2})|(?:0[3-9]|[1-3]\d)_\d{2})/), 'app/index.html must use v=20261002_07 or newer');
+    assert(indexHtml.match(/js\/modules\/appraisal(\.min)?\.js\?v=202610(?:02_(?:0[7-9]|\d{2})|(?:0[3-9]|[1-3]\d)_\d{2})/), 'index.html must use v=20261002_07 or newer');
+    assert(appIndexHtml.match(/js\/modules\/appraisal(\.min)?\.js\?v=202610(?:02_(?:0[7-9]|\d{2})|(?:0[3-9]|[1-3]\d)_\d{2})/), 'app/index.html must use v=20261002_07 or newer');
 
     // 3. Execution in VM context
     const ctx = {

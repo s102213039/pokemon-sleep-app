@@ -57,6 +57,9 @@
       'settings.box_backup_desc': '將個人倉庫寶可夢匯出為 JSON 備份檔，或從本機檔案匯入還原。',
       'settings.box_export_btn': '匯出備份 JSON',
       'settings.box_import_btn': '匯入還原 JSON',
+      'settings.telemetry_section': '系統健康與診斷',
+      'settings.telemetry_desc': '監控首屏載入耗時、Web Vitals 與本地快取健康狀態。若遇到功能異常，可一鍵複製診斷報告排查問題。',
+      'settings.copy_diag_btn': '複製系統診斷日誌報告',
       'settings.save': '儲存設定',
       'settings.close': '關閉',
 
@@ -456,6 +459,9 @@
       'settings.box_backup_desc': '将个人仓库宝可梦导出为 JSON 备份文件，或从本机文件导入还原。',
       'settings.box_export_btn': '导出备份 JSON',
       'settings.box_import_btn': '导入还原 JSON',
+      'settings.telemetry_section': '系统健康与诊断',
+      'settings.telemetry_desc': '监控首屏加载耗时、Web Vitals 与本地缓存健康状态。若遇到功能异常，可一键复制诊断报告排查问题。',
+      'settings.copy_diag_btn': '复制系统诊断日志报告',
       'settings.save': '保存设置',
       'settings.close': '关闭',
 
@@ -857,6 +863,9 @@
       'settings.box_backup_desc': 'Export your Pokémon box to JSON backup or import from file.',
       'settings.box_export_btn': 'Export JSON',
       'settings.box_import_btn': 'Import JSON',
+      'settings.telemetry_section': 'System Diagnostics',
+      'settings.telemetry_desc': 'Monitor Web Vitals and local cache health. Copy diagnostic logs with one click for support.',
+      'settings.copy_diag_btn': 'Copy Diagnostic Report',
       'settings.save': 'Save',
       'settings.close': 'Close',
 

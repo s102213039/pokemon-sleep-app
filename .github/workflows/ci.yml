@@ -1,0 +1,56 @@
+name: Continuous Integration & Test Suite
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-test:
+    name: Build Verification & Automated Regression Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Production Asset Build
+        run: npm run build
+
+      - name: Verify Git Working Tree Cleanliness After Build
+        run: |
+          if [ -n "$(git status --porcelain js/ css/)" ]; then
+            echo "[!] Uncommitted build artifacts detected. Please run 'npm run build' before pushing."
+            git status --porcelain js/ css/
+            exit 1
+          fi
+
+      - name: Verify Minified Data Integrity & Manifest Hashes
+        run: npm run data:minify
+
+      - name: Execute Full Automated Test Suite (All Tiers)
+        run: npm test
+
+      - name: Generate Workflow Step Summary
+        if: always()
+        run: |
+          echo "### Pokemon Sleep App CI Execution Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Runner: Ubuntu Latest (${{ runner.os }})" >> $GITHUB_STEP_SUMMARY
+          echo "- Node Version: Node.js 20.x" >> $GITHUB_STEP_SUMMARY
+          echo "- Commit: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Trigger: \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Status: **${{ job.status }}**" >> $GITHUB_STEP_SUMMARY

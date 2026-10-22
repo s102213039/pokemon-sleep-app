@@ -438,12 +438,12 @@ function registerTier4Part4() {
     // 4. HTML script tag verification in index.html & app/index.html
     const indexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'index.html'), 'utf8');
     const appIndexHtml = fs.readFileSync(path.join(WORKSPACE_ROOT, 'app', 'index.html'), 'utf8');
-    assert(indexHtml.includes('js/core/domUtils.js'), 'index.html must include domUtils.js');
-    assert(indexHtml.includes('js/components/customSelect.js'), 'index.html must include customSelect.js');
-    assert(indexHtml.includes('js/components/popoverCoordinator.js'), 'index.html must include popoverCoordinator.js');
-    assert(appIndexHtml.includes('js/core/domUtils.js'), 'app/index.html must include domUtils.js');
-    assert(appIndexHtml.includes('js/components/customSelect.js'), 'app/index.html must include customSelect.js');
-    assert(appIndexHtml.includes('js/components/popoverCoordinator.js'), 'app/index.html must include popoverCoordinator.js');
+    assert(indexHtml.includes('js/core/domUtils.min.js') || indexHtml.includes('js/core/domUtils.js'), 'index.html must include domUtils.js');
+    assert(indexHtml.includes('js/components/customSelect.min.js') || indexHtml.includes('js/components/customSelect.js'), 'index.html must include customSelect.js');
+    assert(indexHtml.includes('js/components/popoverCoordinator.min.js') || indexHtml.includes('js/components/popoverCoordinator.js'), 'index.html must include popoverCoordinator.js');
+    assert(appIndexHtml.includes('js/core/domUtils.min.js') || appIndexHtml.includes('js/core/domUtils.js'), 'app/index.html must include domUtils.js');
+    assert(appIndexHtml.includes('js/components/customSelect.min.js') || appIndexHtml.includes('js/components/customSelect.js'), 'app/index.html must include customSelect.js');
+    assert(appIndexHtml.includes('js/components/popoverCoordinator.min.js') || appIndexHtml.includes('js/components/popoverCoordinator.js'), 'app/index.html must include popoverCoordinator.js');
   });
 
 
@@ -1702,6 +1702,79 @@ function registerTier4Part4() {
       testedCount++;
     }
     assert(testedCount >= 400, `Must test >= 400 island spawn entries (actual: ${testedCount})`);
+  });
+
+  // ─── Test 112: Production Web Standards: PWA Manifest, Minified JS, SRI Integrity, Telemetry & CI ────
+
+  test('Tier 4 - Real-World Application Scenarios', 'Production Web Standards: PWA Manifest, Minified JS, SRI Integrity, Telemetry Engine & GitHub Actions CI', () => {
+    // 1. Verify manifest.webmanifest and PWA installability specification
+    const manifestPath = path.resolve(WORKSPACE_ROOT, 'manifest.webmanifest');
+    assert(fs.existsSync(manifestPath), 'manifest.webmanifest must exist in project root');
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    assert(manifest.name && manifest.name.includes('Pokémon Sleep'), 'manifest.webmanifest must define valid app name');
+    assert(manifest.short_name, 'manifest.webmanifest must define short_name');
+    assertEquals(manifest.display, 'standalone', 'PWA display mode must be standalone');
+    assert(manifest.start_url, 'manifest.webmanifest must define start_url');
+    assert(Array.isArray(manifest.icons) && manifest.icons.length >= 4, 'manifest.webmanifest must specify at least 4 icon configurations');
+    assert(manifest.icons.some(i => i.purpose === 'maskable'), 'manifest.webmanifest must include maskable icon');
+
+    // 2. Verify icon files exist on disk
+    assert(fs.existsSync(path.resolve(WORKSPACE_ROOT, 'favicon.ico')), 'favicon.ico must exist in root');
+    assert(fs.existsSync(path.resolve(WORKSPACE_ROOT, 'assets/icons/favicon.svg')), 'assets/icons/favicon.svg must exist');
+    assert(fs.existsSync(path.resolve(WORKSPACE_ROOT, 'assets/icons/icon-192.png')), 'assets/icons/icon-192.png must exist');
+    assert(fs.existsSync(path.resolve(WORKSPACE_ROOT, 'assets/icons/icon-512.png')), 'assets/icons/icon-512.png must exist');
+    assert(fs.existsSync(path.resolve(WORKSPACE_ROOT, 'assets/icons/icon-maskable.png')), 'assets/icons/icon-maskable.png must exist');
+    assert(fs.existsSync(path.resolve(WORKSPACE_ROOT, 'assets/icons/apple-touch-icon.png')), 'assets/icons/apple-touch-icon.png must exist');
+
+    // 3. Verify HTML markup in index.html & app/index.html
+    const indexHtml = fs.readFileSync(path.resolve(WORKSPACE_ROOT, 'index.html'), 'utf8');
+    const appIndexHtml = fs.readFileSync(path.resolve(WORKSPACE_ROOT, 'app/index.html'), 'utf8');
+
+    // PWA & Favicon links
+    assert(indexHtml.includes('rel="manifest" href="manifest.webmanifest"'), 'index.html must link manifest.webmanifest');
+    assert(appIndexHtml.includes('rel="manifest" href="../manifest.webmanifest"'), 'app/index.html must link ../manifest.webmanifest');
+    assert(indexHtml.includes('rel="icon"') && indexHtml.includes('assets/icons/favicon.svg'), 'index.html must link favicon.svg');
+    assert(indexHtml.includes('rel="apple-touch-icon"'), 'index.html must link apple-touch-icon');
+    assert(appIndexHtml.includes('rel="apple-touch-icon"'), 'app/index.html must link apple-touch-icon');
+
+    // Subresource Integrity (SRI) on external Supabase CDN
+    assert(indexHtml.includes('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0'), 'index.html must pin Supabase CDN version');
+    assert(indexHtml.includes('integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp"'), 'index.html must specify valid SRI integrity attribute for Supabase');
+    assert(appIndexHtml.includes('integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp"'), 'app/index.html must specify valid SRI integrity attribute for Supabase');
+
+    // Production minified JS scripts referenced
+    assert(indexHtml.includes('app.min.js'), 'index.html must reference app.min.js');
+    assert(indexHtml.includes('recipes.min.js'), 'index.html must reference recipes.min.js');
+    assert(indexHtml.includes('wiki.min.js'), 'index.html must reference wiki.min.js');
+    assert(indexHtml.includes('box.min.js'), 'index.html must reference box.min.js');
+    assert(indexHtml.includes('appraisal.min.js'), 'index.html must reference appraisal.min.js');
+    assert(indexHtml.includes('telemetry.min.js'), 'index.html must reference telemetry.min.js');
+
+    assert(appIndexHtml.includes('app.min.js'), 'app/index.html must reference app.min.js');
+    assert(appIndexHtml.includes('telemetry.min.js'), 'app/index.html must reference telemetry.min.js');
+
+    // 4. Verify Telemetry & Observability Engine
+    const telemetryPath = path.resolve(WORKSPACE_ROOT, 'js/core/telemetry.js');
+    assert(fs.existsSync(telemetryPath), 'js/core/telemetry.js must exist');
+    const telemetryMinPath = path.resolve(WORKSPACE_ROOT, 'js/core/telemetry.min.js');
+    assert(fs.existsSync(telemetryMinPath), 'js/core/telemetry.min.js must exist');
+    const TelemetryManager = require(telemetryPath);
+    assert(typeof TelemetryManager.init === 'function', 'TelemetryManager.init must be a function');
+    assert(typeof TelemetryManager.getHealthReport === 'function', 'TelemetryManager.getHealthReport must be a function');
+    assert(typeof TelemetryManager.generateDiagnosticMarkdown === 'function', 'TelemetryManager.generateDiagnosticMarkdown must be a function');
+    assert(typeof TelemetryManager.copyDiagnosticReport === 'function', 'TelemetryManager.copyDiagnosticReport must be a function');
+    const report = TelemetryManager.getHealthReport();
+    assert(report.status === 'HEALTHY' || report.status === 'WARNING', 'Telemetry health status must be valid');
+    assert(report.webVitals, 'Telemetry report must include webVitals');
+
+    // 5. Verify GitHub Actions CI Workflow
+    const ciPath = path.resolve(WORKSPACE_ROOT, '.github/workflows/ci.yml');
+    assert(fs.existsSync(ciPath), '.github/workflows/ci.yml must exist');
+    const ciYaml = fs.readFileSync(ciPath, 'utf8');
+    assert(ciYaml.includes('npm ci'), 'ci.yml must execute npm ci');
+    assert(ciYaml.includes('npm run build'), 'ci.yml must execute npm run build');
+    assert(ciYaml.includes('npm test'), 'ci.yml must execute npm test');
+    assert(ciYaml.includes('push:') && ciYaml.includes('pull_request:'), 'ci.yml must trigger on push and pull_request');
   });
 }
 

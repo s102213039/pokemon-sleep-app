@@ -20,6 +20,7 @@ const PROD_FILES = [
   { src: 'js/core/domUtils.js', dest: 'js/core/domUtils.min.js', type: 'js' },
   { src: 'js/core/cloudSync.js', dest: 'js/core/cloudSync.min.js', type: 'js' },
   { src: 'js/core/i18n.js', dest: 'js/core/i18n.min.js', type: 'js' },
+  { src: 'js/core/telemetry.js', dest: 'js/core/telemetry.min.js', type: 'js' },
   { src: 'js/components/customSelect.js', dest: 'js/components/customSelect.min.js', type: 'js' },
   { src: 'js/components/popoverCoordinator.js', dest: 'js/components/popoverCoordinator.min.js', type: 'js' },
   { src: 'js/modules/app.js', dest: 'js/modules/app.min.js', type: 'js' },

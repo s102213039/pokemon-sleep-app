@@ -931,11 +931,15 @@ test('Tier 1 - Feature Coverage', 'Mobile Base Path & Script Load Order: __DATA_
   assert(html.includes('__DATA_BASE_PATH__'), 'app/index.html must configure window.__DATA_BASE_PATH__');
   assert(html.includes("'../'") || html.includes('"../"'), '__DATA_BASE_PATH__ in app/index.html must point to "../"');
 
-  const i18nIdx = html.indexOf('i18n.js');
-  const appIdx = html.indexOf('app.js');
-  const recipesIdx = html.indexOf('recipes.js');
-  const boxIdx = html.indexOf('box.js');
-  const appraisalIdx = html.indexOf('appraisal.js');
+  const getScriptIdx = (name) => {
+    const minIdx = html.indexOf(name.replace('.js', '.min.js'));
+    return minIdx !== -1 ? minIdx : html.indexOf(name);
+  };
+  const i18nIdx = getScriptIdx('i18n.js');
+  const appIdx = getScriptIdx('app.js');
+  const recipesIdx = getScriptIdx('recipes.js');
+  const boxIdx = getScriptIdx('box.js');
+  const appraisalIdx = getScriptIdx('appraisal.js');
 
   assert(i18nIdx !== -1, 'i18n.js script tag missing in app/index.html');
   assert(appIdx !== -1, 'app.js script tag missing in app/index.html');
