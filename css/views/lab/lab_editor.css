@@ -447,10 +447,10 @@ input[type="number"] {
 .box-mainskill-select {
   width: 80px;
   height: 32px;
-  padding: 4px 28px 4px 8px;
+  padding: 4px 36px 4px 8px;
   font-size: 12px;
   font-weight: 700;
-  background-position: right 14px center;
+  background-position: right 18px center;
   background-size: 8px 5px;
   flex-shrink: 0;
 }

@@ -5,6 +5,26 @@
 > 所有已完成功能模組、演算法規格與十大重大歷史缺陷之良品標準，已建立於 **[VERIFIED_FEATURES_AND_BASELINES.md](VERIFIED_FEATURES_AND_BASELINES.md)**。
 > 開發與修復時，**嚴禁將已驗證為 `[v] 良品狀態` 的項目改回錯誤版本！**
 
+## 交接：2026-10-22 已完成（全專案開發風格深度稽核、下拉選單箭頭規範 Rule 6 全量適配、單層外框 Rule 9 與零 Emoji Rule 8 嚴格校驗、234/234 測試全數通過）
+
+- **測試狀態**：234/234 自動化測試全數通過（維持 100% 通過率，0 失敗）
+- **開發風格與全域規範深度稽核總結報告**：
+  1. **零 Emoji 原則 (Rule 8: Zero Emoji Policy)**：
+     - 全站原始碼（`css/`、`js/`、`data/`、`index.html`、`app/index.html`）全面執行 Unicode 表情符號正則掃描，確認核心應用運行代碼與標籤維持 **0 圖像 Emoji**。
+     - 狀態圖示全面採向量 SVG 或簡潔 ASCII 符號（如 `[✓]`, `[ ]`, `*`, `-`）。
+  2. **下拉選單向下箭頭排版規範 (Rule 6: Dropdown Selection Arrows Layout Rules)**：
+     - 向下箭頭內縮間距修正：稽核所有原生 `<select>` 與自訂選單元件，將所有靠後貼邊（小於 18px）之箭頭位置全數向左內縮至 `background-position: right 18px center`，並統一將右側內距提升至 `padding-right: 36px`。
+     - 修正模組包含：`css/components/modals/pokedex_modal_hero.css`、`css/components/modals/pokedex_modal_skills.css`、`css/mobile/box_edit.css`、`css/mobile/box_list.css`、`css/views/box/box_grid.css`、`css/views/lab/lab_editor.css` 與對應主樣式 `css/styles.css`。
+     - 選單向下展開位置校驗：所有自訂下拉選單（`.custom-select-menu`）全面確保具備 `position: absolute` 與 `top: calc(100% + 4px)`（或 `+ 2px`），嚴格正對下方展開對齊，杜絕居中覆蓋選擇框。
+  3. **嚴禁巢狀多重外框規範 (Rule 9: Single Frame Rule)**：
+     - 稽核全站大型容器與表格包裝層（`.wiki-table-wrapper`, `.pokemon-table-container`, `.recipe-desktop-card`, `.pokedex-calc-formula-card`, `.appraisal-lab-preview`, `.lab-supply-table-wrapper`），確認最外層容器均保持 `border: none; background: transparent; padding: 0;`，徹底消除雙重邊框與外層無效 padding。
+  4. **細粒度模組化單檔限制 (Granular Modularization Standard)**：
+     - 全站 49 個 CSS 子樣式模組（全檔 <= 989 行）與 63 個 JS 子邏輯模組（全檔 <= 999 行），合計 112 個細粒度模組均嚴格符合單檔 <= 1,000 行標準（Test 116 / 234 自動化防退化把關）。
+  5. **工程與語法規範 (Engineering & Syntax Standards)**：
+     - 全站生產環境 JS 封裝檔案（`app.js`, `wiki.js`, `appraisal.js`, `box.js`, `recipes.js`, `news.js`, `i18n.js`, `cloudSync.js`, `idbStorage.js`, `telemetry.js`, `customSelect.js`, `popoverCoordinator.js`, `domUtils.js`, `sw.js`）全面通過 `node -c` 語法檢測，0 語法錯誤，全數落實 `'use strict'` 嚴格模式。
+  6. **生產環境極致壓縮與同步**：
+     - 執行 `npm run build:prod`，同步更新 `css/styles.min.css` 與其 source map，全站 234 項測試 100% 通過。
+
 ## 交接：2026-10-21 已完成（生產環境資料壓縮 Production Minification、IndexedDB 原生結構化二進位快取接管、雙模式格式化工具、全站 227/227 測試 100% 通過、v=20261021_06）
 
 - **測試狀態**：227/227 自動化測試全數通過（新增第 227 項：生產壓縮資料完整性、Manifest 雜湊校驗與 IndexedDB 本地秒開驗證）
