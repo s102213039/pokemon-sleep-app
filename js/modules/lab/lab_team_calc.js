@@ -11,16 +11,25 @@
     let helpingBonusCount = 0;
     let sleepExpBonusCount = 0;
     let energyRecoveryBonusCount = 0;
+    let researchExpBonusCount = 0;
+    let dreamShardBonusCount = 0;
     let hasHealer = false;
 
     const validItems = (teamPokemonItems || []).filter(Boolean);
 
     validItems.forEach(item => {
       const subs = Array.isArray(item.subskills) ? item.subskills : [];
-      subs.forEach(s => {
-        if (s === '幫手獎勵') helpingBonusCount++;
-        if (s === '睡眠EXP獎勵') sleepExpBonusCount++;
-        if (s === '活力回復獎勵') energyRecoveryBonusCount++;
+      const itemLv = item.level || 1;
+      const lvReqs = [10, 25, 50, 70, 80];
+      subs.forEach((s, sIdx) => {
+        const req = lvReqs[sIdx] || 10;
+        if (itemLv >= req) {
+          if (s === '幫手獎勵' || s === 'Helping Bonus') helpingBonusCount++;
+          if (s === '睡眠EXP獎勵' || s === 'Sleep EXP Bonus') sleepExpBonusCount++;
+          if (s === '活力回復獎勵' || s === '能量回復獎勵' || s === 'Energy Recovery Bonus') energyRecoveryBonusCount++;
+          if (s === '研究EXP獎勵' || s === 'Research EXP Bonus') researchExpBonusCount++;
+          if (s === '夢之碎片獎勵' || s === 'Dream Shard Bonus') dreamShardBonusCount++;
+        }
       });
       const base = findBasePkm(item.pokemonId || item.name);
       const skill = (base && (base.main_skill || (base.skill && base.skill.name))) || item.main_skill || '';
@@ -175,6 +184,8 @@
       helpingBonusCount,
       sleepExpBonusCount,
       energyRecoveryBonusCount,
+      researchExpBonusCount,
+      dreamShardBonusCount,
       hasHealer,
       slotResults,
       targetRecipeAnalysis
