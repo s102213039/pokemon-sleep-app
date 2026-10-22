@@ -1,16 +1,16 @@
 {
   "version": 1,
-  "manifestHash": "ee3a773e483ec593",
-  "updatedAt": "2026-10-21T13:54:13.809Z",
+  "manifestHash": "2bacd27e7e906025",
+  "updatedAt": "2026-10-22T02:21:22Z",
   "files": {
     "data.json": {
-      "hash": "ba7833c021193497",
-      "size": 189628,
+      "hash": "9b551fff579ba624",
+      "size": 257986,
       "count": 251
     },
     "recipes.json": {
-      "hash": "2021e0c4bac6b436",
-      "size": 41936,
+      "hash": "d3b189efa1d6ff79",
+      "size": 56439,
       "count": 78
     },
     "news.json": {
