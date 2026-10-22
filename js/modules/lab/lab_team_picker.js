@@ -140,6 +140,13 @@
   /* ─── 自訂隊員/選手挑選彈窗 (Custom Pokémon Picker Modal) ────────────── */
   let activePickerState = null;
 
+  const CANONICAL_INGREDIENTS = [
+    '特選蘋果', '哞哞鮮奶', '萌綠大豆', '甜甜蜜', '豆製肉',
+    '暖暖薑', '好眠番茄', '特選蛋', '純粹油', '窩心洋芋',
+    '火辣香草', '萌綠玉米', '放鬆可可', '醒腦咖啡豆', '嫩亮酪梨',
+    '品鮮蘑菇', '粗枝大蔥', '沉甸甸南瓜', '美味尾巴'
+  ];
+
   function openLabPicker(opts) {
     activePickerState = opts || {};
     const userBox = (window.UserBox && typeof window.UserBox.getUserBox === 'function') ? window.UserBox.getUserBox() : [];
@@ -156,17 +163,25 @@
     if (opts.type === 'recipe') {
       const allRecipesList = getAllTargetRecipes();
       const currentTargetName = labState.targetRecipeName || '彈跳咖哩烏龍麵';
+      let currentRecipeCategoryFilter = 'all';
+      let currentRecipeIngFilter = 'all';
 
-      function generateRecipeItemsHtml(query = '', categoryFilter = 'all') {
+      function generateRecipeItemsHtml(query = '') {
         const q = (query || '').trim().toLowerCase();
         const filtered = allRecipesList.filter(r => {
           const nameCn = (r.name_cn || r.name || '').toLowerCase();
           const nameEn = (r.name_en || '').toLowerCase();
           const cat = (r.category || '').toLowerCase();
 
-          if (categoryFilter === 'curry' && !cat.includes('咖哩') && !cat.includes('curry') && !cat.includes('濃湯') && !cat.includes('stew')) return false;
-          if (categoryFilter === 'salad' && !cat.includes('沙拉') && !cat.includes('salad')) return false;
-          if (categoryFilter === 'dessert' && !cat.includes('點心') && !cat.includes('dessert') && !cat.includes('飲料') && !cat.includes('drink')) return false;
+          if (currentRecipeCategoryFilter === 'curry' && !cat.includes('咖哩') && !cat.includes('curry') && !cat.includes('濃湯') && !cat.includes('stew')) return false;
+          if (currentRecipeCategoryFilter === 'salad' && !cat.includes('沙拉') && !cat.includes('salad')) return false;
+          if (currentRecipeCategoryFilter === 'dessert' && !cat.includes('甜') && !cat.includes('點心') && !cat.includes('dessert') && !cat.includes('飲料') && !cat.includes('drink')) return false;
+
+          if (currentRecipeIngFilter !== 'all') {
+            if (!Array.isArray(r.ingredients) || !r.ingredients.some(ing => ing.name === currentRecipeIngFilter)) {
+              return false;
+            }
+          }
 
           if (!q) return true;
           if (nameCn.includes(q) || nameEn.includes(q) || cat.includes(q)) return true;
@@ -187,7 +202,7 @@
           const cat = (r.category || '').toLowerCase();
           let catClass = 'lab-recipe-cat-curry';
           if (cat.includes('沙拉') || cat.includes('salad')) catClass = 'lab-recipe-cat-salad';
-          else if (cat.includes('點心') || cat.includes('dessert') || cat.includes('飲料') || cat.includes('drink')) catClass = 'lab-recipe-cat-dessert';
+          else if (cat.includes('甜') || cat.includes('點心') || cat.includes('dessert') || cat.includes('飲料') || cat.includes('drink')) catClass = 'lab-recipe-cat-dessert';
 
           const ingsHtml = ings.map(ing => {
             const iDisp = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
@@ -221,12 +236,25 @@
         }).join('');
       }
 
-      function renderRecipeItems(query = '', filter = 'all') {
+      function renderRecipeItems(query = '') {
         const listEl = (modal && typeof modal.querySelector === 'function' ? modal.querySelector('#lab-picker-recipe-list') : null) || document.getElementById('lab-picker-recipe-list');
         if (listEl) {
-          listEl.innerHTML = generateRecipeItemsHtml(query, filter);
+          listEl.innerHTML = generateRecipeItemsHtml(query);
         }
       }
+
+      const recipeIngChipsHtml = [
+        `<button type="button" class="lab-picker-ing-chip-btn ${currentRecipeIngFilter === 'all' ? 'active' : ''}" data-recipe-ing="all" title="${isEN ? 'All Ingredients' : '全部食材'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
+        ...CANONICAL_INGREDIENTS.map(iName => {
+          const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : iName;
+          const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
+          return `
+            <button type="button" class="lab-picker-ing-chip-btn ${currentRecipeIngFilter === iName ? 'active' : ''}" data-recipe-ing="${escapeHtml(iName)}" title="${escapeHtml(iDisp)}">
+              ${icon ? `<img src="${icon}" class="lab-picker-filter-ing-img" alt="${escapeHtml(iDisp)}">` : `<span>${escapeHtml(iDisp)}</span>`}
+            </button>
+          `;
+        })
+      ].join('');
 
       modal.innerHTML = `
         <div class="lab-picker-container lab-recipe-picker-container">
@@ -243,27 +271,37 @@
             </button>
           </div>
 
-          <div class="lab-picker-search-bar">
-            <input type="text" id="lab-picker-recipe-search" class="box-form-input" placeholder="${isEN ? 'Search recipe name or ingredient...' : '搜尋料理名稱或所需食材...'}" style="flex:1;min-width:180px;height:34px;font-size:12px;">
-            <div class="lab-picker-filter-chips" style="display:flex;gap:6px;flex-wrap:wrap;">
-              <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 10px;font-size:11px;">${isEN ? 'All' : '全部'} (${allRecipesList.length})</button>
-              <button type="button" class="box-btn box-btn-secondary" data-filter="curry" style="padding:3px 10px;font-size:11px;">${isEN ? 'Curry' : '咖哩/濃湯'}</button>
-              <button type="button" class="box-btn box-btn-secondary" data-filter="salad" style="padding:3px 10px;font-size:11px;">${isEN ? 'Salad' : '沙拉'}</button>
-              <button type="button" class="box-btn box-btn-secondary" data-filter="dessert" style="padding:3px 10px;font-size:11px;">${isEN ? 'Dessert' : '點心/飲料'}</button>
+          <div class="lab-picker-controls-section">
+            <div class="lab-picker-search-bar">
+              <input type="text" id="lab-picker-recipe-search" class="box-form-input" placeholder="${isEN ? 'Search recipe name or ingredient...' : '搜尋料理名稱或所需食材...'}" style="flex:1;min-width:180px;height:34px;font-size:12px;">
+              <div class="lab-picker-filter-chips" style="display:flex;gap:6px;flex-wrap:wrap;">
+                <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 10px;font-size:11px;">${isEN ? 'All' : '全部'} (${allRecipesList.length})</button>
+                <button type="button" class="box-btn box-btn-secondary" data-filter="curry" style="padding:3px 10px;font-size:11px;">${isEN ? 'Curry' : '咖哩/濃湯'}</button>
+                <button type="button" class="box-btn box-btn-secondary" data-filter="salad" style="padding:3px 10px;font-size:11px;">${isEN ? 'Salad' : '沙拉'}</button>
+                <button type="button" class="box-btn box-btn-secondary" data-filter="dessert" style="padding:3px 10px;font-size:11px;">${isEN ? 'Dessert' : '點心/飲料'}</button>
+              </div>
+            </div>
+
+            <div class="lab-picker-secondary-filters" style="margin-top:6px;">
+              <div class="lab-picker-ing-filter-group" style="width:100%;">
+                <span class="lab-picker-filter-label">${isEN ? 'Ingr:' : '食材:'}</span>
+                <div class="lab-picker-ing-chips-scroll" id="lab-recipe-picker-ing-scroll">
+                  ${recipeIngChipsHtml}
+                </div>
+              </div>
             </div>
           </div>
 
           <div class="lab-picker-list lab-recipe-picker-list" id="lab-picker-recipe-list">
-            ${generateRecipeItemsHtml('', 'all')}
+            ${generateRecipeItemsHtml('')}
           </div>
         </div>
       `;
 
       const searchInput = modal.querySelector('#lab-picker-recipe-search');
-      let currentFilter = 'all';
       if (searchInput) {
         searchInput.addEventListener('input', () => {
-          renderRecipeItems(searchInput.value, currentFilter);
+          renderRecipeItems(searchInput.value);
         });
       }
 
@@ -271,10 +309,28 @@
         btn.addEventListener('click', () => {
           modal.querySelectorAll('.lab-picker-filter-chips button').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
-          currentFilter = btn.getAttribute('data-filter') || 'all';
-          renderRecipeItems(searchInput ? searchInput.value : '', currentFilter);
+          currentRecipeCategoryFilter = btn.getAttribute('data-filter') || 'all';
+          renderRecipeItems(searchInput ? searchInput.value : '');
         });
       });
+
+      const recipeIngScroll = modal.querySelector('#lab-recipe-picker-ing-scroll');
+      if (recipeIngScroll) {
+        recipeIngScroll.querySelectorAll('.lab-picker-ing-chip-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const targetIng = btn.getAttribute('data-recipe-ing') || 'all';
+            if (currentRecipeIngFilter === targetIng && targetIng !== 'all') {
+              currentRecipeIngFilter = 'all';
+            } else {
+              currentRecipeIngFilter = targetIng;
+            }
+            recipeIngScroll.querySelectorAll('.lab-picker-ing-chip-btn').forEach(b => {
+              b.classList.toggle('active', (b.getAttribute('data-recipe-ing') === currentRecipeIngFilter));
+            });
+            renderRecipeItems(searchInput ? searchInput.value : '');
+          });
+        });
+      }
 
       modal.style.display = 'flex';
       if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
@@ -304,12 +360,6 @@
       ? (isEN ? `Select Member for Slot ${opts.slotIndex + 1}` : `挑選隊員 (隊員槽位 ${opts.slotIndex + 1})`)
       : (isEN ? `Select Pokémon for Player ${compareLetter}` : `挑選選手 ${compareLetter}`);
 
-    const CANONICAL_INGREDIENTS = [
-      '特選蘋果', '哞哞鮮奶', '萌綠大豆', '甜甜蜜', '豆製肉',
-      '暖暖薑', '好眠番茄', '特選蛋', '純粹油', '窩心洋芋',
-      '火辣香草', '萌綠玉米', '放鬆可可', '醒腦咖啡豆', '嫩亮酪梨',
-      '品鮮蘑菇', '粗枝大蔥', '沉甸甸南瓜', '美味尾巴'
-    ];
     const berriesList = (typeof BERRY_VALUES_DATA !== 'undefined' ? BERRY_VALUES_DATA : []);
 
     let currentFilter = 'all';
@@ -421,12 +471,12 @@
             </div>
             <div class="lab-picker-meta">
               <div class="lab-picker-nick">${escapeHtml(item.nickname || pDisplayName)}</div>
-              <div class="lab-picker-ings">
-                ${pIngsHtml}
-              </div>
               <div class="lab-picker-sub">
                 ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry" title="${escapeHtml(berry.name || '')}">` : ''}
                 ${specHtml}
+              </div>
+              <div class="lab-picker-ings">
+                ${pIngsHtml}
               </div>
             </div>
           </div>
@@ -441,12 +491,17 @@
       }
     }
 
-    const berryOptionsHtml = [
-      `<option value="all">${isEN ? 'All Berries' : '全部樹果 (18種)'}</option>`,
+    const berryChipsHtml = [
+      `<button type="button" class="lab-picker-berry-chip-btn ${currentBerryFilter === 'all' ? 'active' : ''}" data-berry="all" title="${isEN ? 'All Berries' : '全部樹果'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
       ...berriesList.map(b => {
         const bDisp = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b.name) : b.name) : b.name;
         const tDisp = window.I18N ? window.I18N.getTypeName(b.type) : b.type;
-        return `<option value="${escapeHtml(b.name)}">${escapeHtml(bDisp)} (${tDisp})</option>`;
+        const bIcon = b.icon || '';
+        return `
+          <button type="button" class="lab-picker-berry-chip-btn ${currentBerryFilter === b.name ? 'active' : ''}" data-berry="${escapeHtml(b.name)}" title="${escapeHtml(bDisp)} (${escapeHtml(tDisp)})">
+            ${bIcon ? `<img src="${bIcon}" class="lab-picker-filter-berry-img" alt="${escapeHtml(bDisp)}">` : `<span>${escapeHtml(bDisp)}</span>`}
+          </button>
+        `;
       })
     ].join('');
 
@@ -488,13 +543,13 @@
           </div>
 
           <div class="lab-picker-secondary-filters">
-            <div class="lab-picker-berry-filter-group">
+            <div class="lab-picker-berry-filter-group" style="width:100%;">
               <span class="lab-picker-filter-label">${isEN ? 'Berry:' : '樹果:'}</span>
-              <select id="lab-picker-berry-select" class="lab-select lab-picker-berry-select">
-                ${berryOptionsHtml}
-              </select>
+              <div class="lab-picker-berry-chips-scroll" id="lab-picker-berry-scroll">
+                ${berryChipsHtml}
+              </div>
             </div>
-            <div class="lab-picker-ing-filter-group">
+            <div class="lab-picker-ing-filter-group" style="width:100%;">
               <span class="lab-picker-filter-label">${isEN ? 'Ingr:' : '食材:'}</span>
               <div class="lab-picker-ing-chips-scroll" id="lab-picker-ing-scroll">
                 ${ingChipsHtml}
@@ -524,11 +579,21 @@
       });
     });
 
-    const berrySelect = modal.querySelector('#lab-picker-berry-select');
-    if (berrySelect) {
-      berrySelect.addEventListener('change', () => {
-        currentBerryFilter = berrySelect.value || 'all';
-        renderPickerItems();
+    const berryScroll = modal.querySelector('#lab-picker-berry-scroll');
+    if (berryScroll) {
+      berryScroll.querySelectorAll('.lab-picker-berry-chip-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetBerry = btn.getAttribute('data-berry') || 'all';
+          if (currentBerryFilter === targetBerry && targetBerry !== 'all') {
+            currentBerryFilter = 'all';
+          } else {
+            currentBerryFilter = targetBerry;
+          }
+          berryScroll.querySelectorAll('.lab-picker-berry-chip-btn').forEach(b => {
+            b.classList.toggle('active', (b.getAttribute('data-berry') === currentBerryFilter));
+          });
+          renderPickerItems();
+        });
       });
     }
 

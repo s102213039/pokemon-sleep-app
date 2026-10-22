@@ -109,17 +109,24 @@
       const dailyBerryEnergy = Math.round(berryHelps * berryCount * singleBerryEnergy * favoriteMultiplier);
       totalDailyBerryEnergy += dailyBerryEnergy;
 
-      const unlockedIngs = [];
-      unlockedIngs.push(item.ing1 || (base.ingredients && base.ingredients[0] ? base.ingredients[0].name : ''));
-      if (level >= 30) unlockedIngs.push(item.ing2 || (base.ingredients && base.ingredients[1] ? base.ingredients[1].name : unlockedIngs[0]));
-      if (level >= 60) unlockedIngs.push(item.ing3 || (base.ingredients && base.ingredients[2] ? base.ingredients[2].name : unlockedIngs[0]));
-      const validIngs = unlockedIngs.filter(Boolean);
+      const unlockedSlots = [
+        { idx: 0, name: item.ing1 || (base.ingredients && base.ingredients[0] ? base.ingredients[0].name : '') }
+      ];
+      if (level >= 30) {
+        unlockedSlots.push({ idx: 1, name: item.ing2 || (base.ingredients && base.ingredients[1] ? base.ingredients[1].name : unlockedSlots[0].name) });
+      }
+      if (level >= 60) {
+        unlockedSlots.push({ idx: 2, name: item.ing3 || (base.ingredients && base.ingredients[2] ? base.ingredients[2].name : unlockedSlots[0].name) });
+      }
+      const validSlots = unlockedSlots.filter(s => s.name);
+      const helpsPerSlot = ingHelps / Math.max(1, validSlots.length);
 
-      const helpsPerIng = ingHelps / Math.max(1, validIngs.length);
-      validIngs.forEach(iName => {
-        const yieldPerHelp = 2;
-        const totalIngAmount = Math.round(helpsPerIng * yieldPerHelp);
-        ingredientsMap[iName] = (ingredientsMap[iName] || 0) + totalIngAmount;
+      validSlots.forEach(s => {
+        const dropCount = (typeof getIngCountFromBase === 'function')
+          ? getIngCountFromBase(base, s.idx, s.name)
+          : (s.idx === 0 ? 1 : (s.idx === 1 ? 2 : 4));
+        const totalIngAmount = Math.round(helpsPerSlot * dropCount);
+        ingredientsMap[s.name] = (ingredientsMap[s.name] || 0) + totalIngAmount;
         totalDailyIngredientsCount += totalIngAmount;
       });
 
@@ -367,13 +374,21 @@
         const base = findBasePkm(p.pokemonId || p.name);
         if (!base) return 0;
         const level = parseInt(p.level, 10) || 30;
-        const unlockedIngs = [];
-        unlockedIngs.push(p.ing1 || (base.ingredients && base.ingredients[0] ? base.ingredients[0].name : ''));
-        if (level >= 30) unlockedIngs.push(p.ing2 || (base.ingredients && base.ingredients[1] ? base.ingredients[1].name : unlockedIngs[0]));
-        if (level >= 60) unlockedIngs.push(p.ing3 || (base.ingredients && base.ingredients[2] ? base.ingredients[2].name : unlockedIngs[0]));
-        const validUnlocked = unlockedIngs.filter(Boolean);
-        const matches = validUnlocked.filter(i => i === ingName).length;
-        if (matches === 0) return 0;
+
+        const slots = [
+          { idx: 0, name: p.ing1 || (base.ingredients && base.ingredients[0] ? base.ingredients[0].name : ''), unlocked: true }
+        ];
+        if (level >= 30) {
+          slots.push({ idx: 1, name: p.ing2 || (base.ingredients && base.ingredients[1] ? base.ingredients[1].name : slots[0].name), unlocked: true });
+        }
+        if (level >= 60) {
+          slots.push({ idx: 2, name: p.ing3 || (base.ingredients && base.ingredients[2] ? base.ingredients[2].name : slots[0].name), unlocked: true });
+        }
+        const validSlots = slots.filter(s => s.unlocked && s.name);
+        if (validSlots.length === 0) return 0;
+
+        const matchingSlots = validSlots.filter(s => s.name === ingName);
+        if (matchingSlots.length === 0) return 0;
 
         const baseFreq = base.base_frequency || base.frequency || 3600;
         let freq = baseFreq * (1 - (level - 1) * 0.002);
@@ -403,9 +418,20 @@
         ingRate = Math.min(0.65, ingRate);
 
         const ingHelps = dailyHelps * ingRate;
-        const ratio = matches / Math.max(1, validUnlocked.length);
-        return Math.round(ingHelps * ratio * 2);
+        const slotHelpCount = ingHelps / validSlots.length;
+
+        let totalYield = 0;
+        matchingSlots.forEach(s => {
+          const dropCount = (typeof getIngCountFromBase === 'function')
+            ? getIngCountFromBase(base, s.idx, s.name)
+            : (s.idx === 0 ? 1 : (s.idx === 1 ? 2 : 4));
+          totalYield += slotHelpCount * dropCount;
+        });
+
+        return Math.round(totalYield);
       }
+
+      const teamSpeciesMap = {};
 
       while (selected.length < 5) {
         let bestCandidate = null;
@@ -418,29 +444,17 @@
           if (!base) continue;
 
           const pLv = parseInt(p.level, 10) || 30;
-          const unlockedIngs = [
-            p.ing1 || (base.ingredients && base.ingredients[0] ? base.ingredients[0].name : '')
-          ];
-          if (pLv >= 30) unlockedIngs.push(p.ing2 || (base.ingredients && base.ingredients[1] ? base.ingredients[1].name : unlockedIngs[0]));
-          if (pLv >= 60) unlockedIngs.push(p.ing3 || (base.ingredients && base.ingredients[2] ? base.ingredients[2].name : unlockedIngs[0]));
-          const validUnlocked = unlockedIngs.filter(Boolean);
+          const speciesKey = base.id || base.name_cn || base.name || p.name;
+          const alreadyInTeam = teamSpeciesMap[speciesKey] || 0;
 
-          // 統計該寶可夢解鎖之食材與目標料理所需食材的重疊種數 (雙食材/多食材契合評估)
-          const matchedReqIngs = [...new Set(validUnlocked.filter(ing => reqIngredientNames.has(ing)))];
-          const matchCount = matchedReqIngs.length;
+          // 同物種重複怪懲罰：若非極高等級 (Lv>=50)，大幅施加懲罰係數 0.42，杜絕選入 Lv.32 等重複弱怪
+          const duplicatePenalty = alreadyInTeam > 0 ? (pLv >= 50 ? 0.65 : 0.42) : 1.0;
 
-          // 雙食材或多食材重疊契合時，賦予強大綜效加乘 (2 種 2.4x，3 種 3.2x)
-          let synergyMultiplier = 1.0;
-          if (matchCount >= 3) synergyMultiplier = 3.2;
-          else if (matchCount === 2) synergyMultiplier = 2.4;
-          else if (matchCount === 1) synergyMultiplier = 1.0;
-          else synergyMultiplier = 0.25;
-
-          // 寶可夢自身戰力與等級權重 (等級高、副技能頂、食材特化者大幅領先)
-          const levelWeight = Math.pow(Math.max(1, pLv) / 30, 1.35);
+          // 寶可夢自身戰力與等級權重 (等級權重深化至 1.45 次方，滿等神寵全面領先)
+          const levelWeight = Math.pow(Math.max(1, pLv) / 30, 1.45);
           const spec = base.specialty || '';
           const isIngSpec = spec.includes('食材') || spec === 'Ingredients';
-          const specMultiplier = isIngSpec ? 1.75 : 1.0;
+          const specMultiplier = isIngSpec ? 1.80 : 1.0;
 
           const berry = (typeof window.getPokemonBerry === 'function') ? window.getPokemonBerry(base) : (base.berry || {});
           const isFav = favBerries.includes(berry.name || '') || favTypes.includes(berry.type || base.type || '');
@@ -461,24 +475,35 @@
           if (nat && nat.debuff && nat.debuff.includes('食材')) natMultiplier *= 0.80;
           if (nat && nat.buff && nat.buff.includes('幫忙速度')) natMultiplier *= 1.10;
 
-          // 計算對目標料理目前殘留缺口的邊際貢獻
+          // 統計該寶可夢在當前「仍有缺口」之目標食材中的實質日產能 (>=8 個視為具實質規模)
+          let effectiveMatchCount = 0;
           let deficitCoveredScore = 0;
           let totalYieldAmount = 0;
 
           reqIngredients.forEach(ing => {
+            const def = remainingDeficits[ing.name] || 0;
             const y = estimatePkmIngDailyYield(p, ing.name);
             if (y > 0) {
-              const def = remainingDeficits[ing.name] || 0;
+              if (def > 0 && y >= 8) {
+                effectiveMatchCount++;
+              }
               const covered = Math.min(y, def);
               const surplus = Math.max(0, y - def);
-              deficitCoveredScore += covered * 4.0;
-              totalYieldAmount += surplus * 0.4;
+              deficitCoveredScore += covered * 4.5;
+              totalYieldAmount += surplus * 0.25;
             }
           });
 
+          // 雙食材或多食材重疊契合度加權：必須高等級 (Lv>=30) 且對不同缺口均有實質規模產出
+          let synergyMultiplier = 1.0;
+          if (pLv >= 30 && effectiveMatchCount >= 3) synergyMultiplier = 2.5;
+          else if (pLv >= 30 && effectiveMatchCount === 2) synergyMultiplier = 1.85;
+          else if (effectiveMatchCount === 1) synergyMultiplier = 1.0;
+          else synergyMultiplier = 0.35;
+
           const rawYieldScore = deficitCoveredScore + totalYieldAmount;
           if (rawYieldScore > 0) {
-            const finalScore = rawYieldScore * synergyMultiplier * levelWeight * specMultiplier * subMultiplier * natMultiplier * favMultiplier;
+            const finalScore = rawYieldScore * synergyMultiplier * levelWeight * specMultiplier * subMultiplier * natMultiplier * favMultiplier * duplicatePenalty;
             if (finalScore > bestScore) {
               bestScore = finalScore;
               bestCandidate = p;
@@ -489,6 +514,10 @@
         if (bestCandidate && bestScore > 0) {
           usedUids.add(bestCandidate.uid);
           selected.push(bestCandidate.uid);
+          const cBase = findBasePkm(bestCandidate.pokemonId || bestCandidate.name);
+          const cKey = (cBase && (cBase.id || cBase.name_cn || cBase.name)) || bestCandidate.name;
+          teamSpeciesMap[cKey] = (teamSpeciesMap[cKey] || 0) + 1;
+
           reqIngredients.forEach(ing => {
             const y = estimatePkmIngDailyYield(bestCandidate, ing.name);
             remainingDeficits[ing.name] = Math.max(0, (remainingDeficits[ing.name] || 0) - y);
@@ -497,6 +526,9 @@
           // 當所有缺口已滿足或無食材契合怪時，挑選全隊中最強的食材型或高戰力綜合怪
           const fallback = pickBest(userBox, 'ingredient') || pickBest(userBox, 'general');
           if (!fallback) break;
+          const fbBase = findBasePkm(fallback.pokemonId || fallback.name);
+          const fbKey = (fbBase && (fbBase.id || fbBase.name_cn || fbBase.name)) || fallback.name;
+          teamSpeciesMap[fbKey] = (teamSpeciesMap[fbKey] || 0) + 1;
         }
       }
     } else {

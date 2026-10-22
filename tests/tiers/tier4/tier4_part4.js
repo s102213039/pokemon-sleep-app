@@ -2029,6 +2029,48 @@ function registerTier4Part4() {
     assert(res.box && res.box.modulesCount >= 6, 'Box build must compile at least 6 modules');
     assert(res.app && res.app.modulesCount >= 8, 'App build must compile at least 8 modules');
   });
+
+
+  test('Tier 4 - Real-World Application Scenarios', 'Research Lab Multi-Ingredient Yield Accuracy, Dessert Filter Fix & Berry Icon Controls Verification', () => {
+    // 1. Dessert category filter & class verification in lab_team_picker.js
+    const pickerPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'lab', 'lab_team_picker.js');
+    assert(fs.existsSync(pickerPath), 'lab_team_picker.js must exist');
+    const pickerCode = fs.readFileSync(pickerPath, 'utf8');
+    assert(pickerCode.includes("!cat.includes('甜')"), 'lab_team_picker.js must include dessert category character [甜] match');
+    assert(pickerCode.includes("cat.includes('甜')"), 'lab_recipe-cat-dessert class condition must include character [甜]');
+
+    // 2. Recipe ingredient filter controls verification
+    assert(pickerCode.includes('currentRecipeIngFilter'), 'lab_team_picker.js must define currentRecipeIngFilter state');
+    assert(pickerCode.includes('lab-recipe-picker-ing-scroll'), 'lab_team_picker.js must render lab-recipe-picker-ing-scroll');
+    assert(pickerCode.includes('data-recipe-ing'), 'lab_team_picker.js must attach data-recipe-ing attribute to chips');
+
+    // 3. Berry icon scroll controls & inverted card rows verification
+    assert(pickerCode.includes('lab-picker-berry-scroll'), 'lab_team_picker.js must render lab-picker-berry-scroll');
+    assert(pickerCode.includes('lab-picker-berry-chip-btn'), 'lab_team_picker.js must render lab-picker-berry-chip-btn');
+    assert(!pickerCode.includes('lab-picker-berry-select'), 'lab_team_picker.js must completely eliminate lab-picker-berry-select dropdown');
+    
+    // Inverted card rows: sub (Row 2) before ings (Row 3)
+    const subIdx = pickerCode.indexOf('class="lab-picker-sub"');
+    const ingsIdx = pickerCode.indexOf('class="lab-picker-ings"');
+    assert(subIdx !== -1 && ingsIdx !== -1 && subIdx < ingsIdx, 'lab_picker_card must invert rows: lab-picker-sub before lab-picker-ings');
+
+    // 4. Algorithm yield calculation & duplicate prevention in lab_team_calc.js
+    const calcPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'lab', 'lab_team_calc.js');
+    assert(fs.existsSync(calcPath), 'lab_team_calc.js must exist');
+    const calcCode = fs.readFileSync(calcPath, 'utf8');
+    assert(calcCode.includes('getIngCountFromBase'), 'lab_team_calc.js must invoke getIngCountFromBase for accurate drop yield');
+    assert(calcCode.includes('duplicatePenalty'), 'lab_team_calc.js must define duplicatePenalty to prevent duplicate low-level species');
+    assert(calcCode.includes('effectiveMatchCount'), 'lab_team_calc.js must check effectiveMatchCount against threshold');
+
+    // 5. CSS enlargement & berry chips styling
+    const ladderCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'views', 'wiki', 'wiki_ladder.css'), 'utf8');
+    assert(ladderCss.includes('width: 26px') && ladderCss.includes('height: 26px'), 'wiki_ladder.css must enlarge .lab-picker-ing-chip to 26px');
+    assert(ladderCss.includes('width: 20px') && ladderCss.includes('height: 20px'), 'wiki_ladder.css must enlarge .lab-picker-ing-icon to 20px');
+
+    const recipeModalCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'components', 'modals', 'recipe_picker.css'), 'utf8');
+    assert(recipeModalCss.includes('.lab-picker-berry-chips-scroll'), 'recipe_picker.css must define .lab-picker-berry-chips-scroll');
+    assert(recipeModalCss.includes('.lab-picker-berry-chip-btn'), 'recipe_picker.css must define .lab-picker-berry-chip-btn');
+  });
 }
 
 module.exports = { registerTier4Part4 };

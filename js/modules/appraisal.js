@@ -3744,17 +3744,24 @@
       const dailyBerryEnergy = Math.round(berryHelps * berryCount * singleBerryEnergy * favoriteMultiplier);
       totalDailyBerryEnergy += dailyBerryEnergy;
 
-      const unlockedIngs = [];
-      unlockedIngs.push(item.ing1 || (base.ingredients && base.ingredients[0] ? base.ingredients[0].name : ''));
-      if (level >= 30) unlockedIngs.push(item.ing2 || (base.ingredients && base.ingredients[1] ? base.ingredients[1].name : unlockedIngs[0]));
-      if (level >= 60) unlockedIngs.push(item.ing3 || (base.ingredients && base.ingredients[2] ? base.ingredients[2].name : unlockedIngs[0]));
-      const validIngs = unlockedIngs.filter(Boolean);
+      const unlockedSlots = [
+        { idx: 0, name: item.ing1 || (base.ingredients && base.ingredients[0] ? base.ingredients[0].name : '') }
+      ];
+      if (level >= 30) {
+        unlockedSlots.push({ idx: 1, name: item.ing2 || (base.ingredients && base.ingredients[1] ? base.ingredients[1].name : unlockedSlots[0].name) });
+      }
+      if (level >= 60) {
+        unlockedSlots.push({ idx: 2, name: item.ing3 || (base.ingredients && base.ingredients[2] ? base.ingredients[2].name : unlockedSlots[0].name) });
+      }
+      const validSlots = unlockedSlots.filter(s => s.name);
+      const helpsPerSlot = ingHelps / Math.max(1, validSlots.length);
 
-      const helpsPerIng = ingHelps / Math.max(1, validIngs.length);
-      validIngs.forEach(iName => {
-        const yieldPerHelp = 2;
-        const totalIngAmount = Math.round(helpsPerIng * yieldPerHelp);
-        ingredientsMap[iName] = (ingredientsMap[iName] || 0) + totalIngAmount;
+      validSlots.forEach(s => {
+        const dropCount = (typeof getIngCountFromBase === 'function')
+          ? getIngCountFromBase(base, s.idx, s.name)
+          : (s.idx === 0 ? 1 : (s.idx === 1 ? 2 : 4));
+        const totalIngAmount = Math.round(helpsPerSlot * dropCount);
+        ingredientsMap[s.name] = (ingredientsMap[s.name] || 0) + totalIngAmount;
         totalDailyIngredientsCount += totalIngAmount;
       });
 
@@ -4002,13 +4009,21 @@
         const base = findBasePkm(p.pokemonId || p.name);
         if (!base) return 0;
         const level = parseInt(p.level, 10) || 30;
-        const unlockedIngs = [];
-        unlockedIngs.push(p.ing1 || (base.ingredients && base.ingredients[0] ? base.ingredients[0].name : ''));
-        if (level >= 30) unlockedIngs.push(p.ing2 || (base.ingredients && base.ingredients[1] ? base.ingredients[1].name : unlockedIngs[0]));
-        if (level >= 60) unlockedIngs.push(p.ing3 || (base.ingredients && base.ingredients[2] ? base.ingredients[2].name : unlockedIngs[0]));
-        const validUnlocked = unlockedIngs.filter(Boolean);
-        const matches = validUnlocked.filter(i => i === ingName).length;
-        if (matches === 0) return 0;
+
+        const slots = [
+          { idx: 0, name: p.ing1 || (base.ingredients && base.ingredients[0] ? base.ingredients[0].name : ''), unlocked: true }
+        ];
+        if (level >= 30) {
+          slots.push({ idx: 1, name: p.ing2 || (base.ingredients && base.ingredients[1] ? base.ingredients[1].name : slots[0].name), unlocked: true });
+        }
+        if (level >= 60) {
+          slots.push({ idx: 2, name: p.ing3 || (base.ingredients && base.ingredients[2] ? base.ingredients[2].name : slots[0].name), unlocked: true });
+        }
+        const validSlots = slots.filter(s => s.unlocked && s.name);
+        if (validSlots.length === 0) return 0;
+
+        const matchingSlots = validSlots.filter(s => s.name === ingName);
+        if (matchingSlots.length === 0) return 0;
 
         const baseFreq = base.base_frequency || base.frequency || 3600;
         let freq = baseFreq * (1 - (level - 1) * 0.002);
@@ -4038,9 +4053,20 @@
         ingRate = Math.min(0.65, ingRate);
 
         const ingHelps = dailyHelps * ingRate;
-        const ratio = matches / Math.max(1, validUnlocked.length);
-        return Math.round(ingHelps * ratio * 2);
+        const slotHelpCount = ingHelps / validSlots.length;
+
+        let totalYield = 0;
+        matchingSlots.forEach(s => {
+          const dropCount = (typeof getIngCountFromBase === 'function')
+            ? getIngCountFromBase(base, s.idx, s.name)
+            : (s.idx === 0 ? 1 : (s.idx === 1 ? 2 : 4));
+          totalYield += slotHelpCount * dropCount;
+        });
+
+        return Math.round(totalYield);
       }
+
+      const teamSpeciesMap = {};
 
       while (selected.length < 5) {
         let bestCandidate = null;
@@ -4053,29 +4079,17 @@
           if (!base) continue;
 
           const pLv = parseInt(p.level, 10) || 30;
-          const unlockedIngs = [
-            p.ing1 || (base.ingredients && base.ingredients[0] ? base.ingredients[0].name : '')
-          ];
-          if (pLv >= 30) unlockedIngs.push(p.ing2 || (base.ingredients && base.ingredients[1] ? base.ingredients[1].name : unlockedIngs[0]));
-          if (pLv >= 60) unlockedIngs.push(p.ing3 || (base.ingredients && base.ingredients[2] ? base.ingredients[2].name : unlockedIngs[0]));
-          const validUnlocked = unlockedIngs.filter(Boolean);
+          const speciesKey = base.id || base.name_cn || base.name || p.name;
+          const alreadyInTeam = teamSpeciesMap[speciesKey] || 0;
 
-          // 統計該寶可夢解鎖之食材與目標料理所需食材的重疊種數 (雙食材/多食材契合評估)
-          const matchedReqIngs = [...new Set(validUnlocked.filter(ing => reqIngredientNames.has(ing)))];
-          const matchCount = matchedReqIngs.length;
+          // 同物種重複怪懲罰：若非極高等級 (Lv>=50)，大幅施加懲罰係數 0.42，杜絕選入 Lv.32 等重複弱怪
+          const duplicatePenalty = alreadyInTeam > 0 ? (pLv >= 50 ? 0.65 : 0.42) : 1.0;
 
-          // 雙食材或多食材重疊契合時，賦予強大綜效加乘 (2 種 2.4x，3 種 3.2x)
-          let synergyMultiplier = 1.0;
-          if (matchCount >= 3) synergyMultiplier = 3.2;
-          else if (matchCount === 2) synergyMultiplier = 2.4;
-          else if (matchCount === 1) synergyMultiplier = 1.0;
-          else synergyMultiplier = 0.25;
-
-          // 寶可夢自身戰力與等級權重 (等級高、副技能頂、食材特化者大幅領先)
-          const levelWeight = Math.pow(Math.max(1, pLv) / 30, 1.35);
+          // 寶可夢自身戰力與等級權重 (等級權重深化至 1.45 次方，滿等神寵全面領先)
+          const levelWeight = Math.pow(Math.max(1, pLv) / 30, 1.45);
           const spec = base.specialty || '';
           const isIngSpec = spec.includes('食材') || spec === 'Ingredients';
-          const specMultiplier = isIngSpec ? 1.75 : 1.0;
+          const specMultiplier = isIngSpec ? 1.80 : 1.0;
 
           const berry = (typeof window.getPokemonBerry === 'function') ? window.getPokemonBerry(base) : (base.berry || {});
           const isFav = favBerries.includes(berry.name || '') || favTypes.includes(berry.type || base.type || '');
@@ -4096,24 +4110,35 @@
           if (nat && nat.debuff && nat.debuff.includes('食材')) natMultiplier *= 0.80;
           if (nat && nat.buff && nat.buff.includes('幫忙速度')) natMultiplier *= 1.10;
 
-          // 計算對目標料理目前殘留缺口的邊際貢獻
+          // 統計該寶可夢在當前「仍有缺口」之目標食材中的實質日產能 (>=8 個視為具實質規模)
+          let effectiveMatchCount = 0;
           let deficitCoveredScore = 0;
           let totalYieldAmount = 0;
 
           reqIngredients.forEach(ing => {
+            const def = remainingDeficits[ing.name] || 0;
             const y = estimatePkmIngDailyYield(p, ing.name);
             if (y > 0) {
-              const def = remainingDeficits[ing.name] || 0;
+              if (def > 0 && y >= 8) {
+                effectiveMatchCount++;
+              }
               const covered = Math.min(y, def);
               const surplus = Math.max(0, y - def);
-              deficitCoveredScore += covered * 4.0;
-              totalYieldAmount += surplus * 0.4;
+              deficitCoveredScore += covered * 4.5;
+              totalYieldAmount += surplus * 0.25;
             }
           });
 
+          // 雙食材或多食材重疊契合度加權：必須高等級 (Lv>=30) 且對不同缺口均有實質規模產出
+          let synergyMultiplier = 1.0;
+          if (pLv >= 30 && effectiveMatchCount >= 3) synergyMultiplier = 2.5;
+          else if (pLv >= 30 && effectiveMatchCount === 2) synergyMultiplier = 1.85;
+          else if (effectiveMatchCount === 1) synergyMultiplier = 1.0;
+          else synergyMultiplier = 0.35;
+
           const rawYieldScore = deficitCoveredScore + totalYieldAmount;
           if (rawYieldScore > 0) {
-            const finalScore = rawYieldScore * synergyMultiplier * levelWeight * specMultiplier * subMultiplier * natMultiplier * favMultiplier;
+            const finalScore = rawYieldScore * synergyMultiplier * levelWeight * specMultiplier * subMultiplier * natMultiplier * favMultiplier * duplicatePenalty;
             if (finalScore > bestScore) {
               bestScore = finalScore;
               bestCandidate = p;
@@ -4124,6 +4149,10 @@
         if (bestCandidate && bestScore > 0) {
           usedUids.add(bestCandidate.uid);
           selected.push(bestCandidate.uid);
+          const cBase = findBasePkm(bestCandidate.pokemonId || bestCandidate.name);
+          const cKey = (cBase && (cBase.id || cBase.name_cn || cBase.name)) || bestCandidate.name;
+          teamSpeciesMap[cKey] = (teamSpeciesMap[cKey] || 0) + 1;
+
           reqIngredients.forEach(ing => {
             const y = estimatePkmIngDailyYield(bestCandidate, ing.name);
             remainingDeficits[ing.name] = Math.max(0, (remainingDeficits[ing.name] || 0) - y);
@@ -4132,6 +4161,9 @@
           // 當所有缺口已滿足或無食材契合怪時，挑選全隊中最強的食材型或高戰力綜合怪
           const fallback = pickBest(userBox, 'ingredient') || pickBest(userBox, 'general');
           if (!fallback) break;
+          const fbBase = findBasePkm(fallback.pokemonId || fallback.name);
+          const fbKey = (fbBase && (fbBase.id || fbBase.name_cn || fbBase.name)) || fallback.name;
+          teamSpeciesMap[fbKey] = (teamSpeciesMap[fbKey] || 0) + 1;
         }
       }
     } else {
@@ -4409,6 +4441,13 @@
   /* ─── 自訂隊員/選手挑選彈窗 (Custom Pokémon Picker Modal) ────────────── */
   let activePickerState = null;
 
+  const CANONICAL_INGREDIENTS = [
+    '特選蘋果', '哞哞鮮奶', '萌綠大豆', '甜甜蜜', '豆製肉',
+    '暖暖薑', '好眠番茄', '特選蛋', '純粹油', '窩心洋芋',
+    '火辣香草', '萌綠玉米', '放鬆可可', '醒腦咖啡豆', '嫩亮酪梨',
+    '品鮮蘑菇', '粗枝大蔥', '沉甸甸南瓜', '美味尾巴'
+  ];
+
   function openLabPicker(opts) {
     activePickerState = opts || {};
     const userBox = (window.UserBox && typeof window.UserBox.getUserBox === 'function') ? window.UserBox.getUserBox() : [];
@@ -4425,17 +4464,25 @@
     if (opts.type === 'recipe') {
       const allRecipesList = getAllTargetRecipes();
       const currentTargetName = labState.targetRecipeName || '彈跳咖哩烏龍麵';
+      let currentRecipeCategoryFilter = 'all';
+      let currentRecipeIngFilter = 'all';
 
-      function generateRecipeItemsHtml(query = '', categoryFilter = 'all') {
+      function generateRecipeItemsHtml(query = '') {
         const q = (query || '').trim().toLowerCase();
         const filtered = allRecipesList.filter(r => {
           const nameCn = (r.name_cn || r.name || '').toLowerCase();
           const nameEn = (r.name_en || '').toLowerCase();
           const cat = (r.category || '').toLowerCase();
 
-          if (categoryFilter === 'curry' && !cat.includes('咖哩') && !cat.includes('curry') && !cat.includes('濃湯') && !cat.includes('stew')) return false;
-          if (categoryFilter === 'salad' && !cat.includes('沙拉') && !cat.includes('salad')) return false;
-          if (categoryFilter === 'dessert' && !cat.includes('點心') && !cat.includes('dessert') && !cat.includes('飲料') && !cat.includes('drink')) return false;
+          if (currentRecipeCategoryFilter === 'curry' && !cat.includes('咖哩') && !cat.includes('curry') && !cat.includes('濃湯') && !cat.includes('stew')) return false;
+          if (currentRecipeCategoryFilter === 'salad' && !cat.includes('沙拉') && !cat.includes('salad')) return false;
+          if (currentRecipeCategoryFilter === 'dessert' && !cat.includes('甜') && !cat.includes('點心') && !cat.includes('dessert') && !cat.includes('飲料') && !cat.includes('drink')) return false;
+
+          if (currentRecipeIngFilter !== 'all') {
+            if (!Array.isArray(r.ingredients) || !r.ingredients.some(ing => ing.name === currentRecipeIngFilter)) {
+              return false;
+            }
+          }
 
           if (!q) return true;
           if (nameCn.includes(q) || nameEn.includes(q) || cat.includes(q)) return true;
@@ -4456,7 +4503,7 @@
           const cat = (r.category || '').toLowerCase();
           let catClass = 'lab-recipe-cat-curry';
           if (cat.includes('沙拉') || cat.includes('salad')) catClass = 'lab-recipe-cat-salad';
-          else if (cat.includes('點心') || cat.includes('dessert') || cat.includes('飲料') || cat.includes('drink')) catClass = 'lab-recipe-cat-dessert';
+          else if (cat.includes('甜') || cat.includes('點心') || cat.includes('dessert') || cat.includes('飲料') || cat.includes('drink')) catClass = 'lab-recipe-cat-dessert';
 
           const ingsHtml = ings.map(ing => {
             const iDisp = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
@@ -4490,12 +4537,25 @@
         }).join('');
       }
 
-      function renderRecipeItems(query = '', filter = 'all') {
+      function renderRecipeItems(query = '') {
         const listEl = (modal && typeof modal.querySelector === 'function' ? modal.querySelector('#lab-picker-recipe-list') : null) || document.getElementById('lab-picker-recipe-list');
         if (listEl) {
-          listEl.innerHTML = generateRecipeItemsHtml(query, filter);
+          listEl.innerHTML = generateRecipeItemsHtml(query);
         }
       }
+
+      const recipeIngChipsHtml = [
+        `<button type="button" class="lab-picker-ing-chip-btn ${currentRecipeIngFilter === 'all' ? 'active' : ''}" data-recipe-ing="all" title="${isEN ? 'All Ingredients' : '全部食材'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
+        ...CANONICAL_INGREDIENTS.map(iName => {
+          const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : iName;
+          const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
+          return `
+            <button type="button" class="lab-picker-ing-chip-btn ${currentRecipeIngFilter === iName ? 'active' : ''}" data-recipe-ing="${escapeHtml(iName)}" title="${escapeHtml(iDisp)}">
+              ${icon ? `<img src="${icon}" class="lab-picker-filter-ing-img" alt="${escapeHtml(iDisp)}">` : `<span>${escapeHtml(iDisp)}</span>`}
+            </button>
+          `;
+        })
+      ].join('');
 
       modal.innerHTML = `
         <div class="lab-picker-container lab-recipe-picker-container">
@@ -4512,27 +4572,37 @@
             </button>
           </div>
 
-          <div class="lab-picker-search-bar">
-            <input type="text" id="lab-picker-recipe-search" class="box-form-input" placeholder="${isEN ? 'Search recipe name or ingredient...' : '搜尋料理名稱或所需食材...'}" style="flex:1;min-width:180px;height:34px;font-size:12px;">
-            <div class="lab-picker-filter-chips" style="display:flex;gap:6px;flex-wrap:wrap;">
-              <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 10px;font-size:11px;">${isEN ? 'All' : '全部'} (${allRecipesList.length})</button>
-              <button type="button" class="box-btn box-btn-secondary" data-filter="curry" style="padding:3px 10px;font-size:11px;">${isEN ? 'Curry' : '咖哩/濃湯'}</button>
-              <button type="button" class="box-btn box-btn-secondary" data-filter="salad" style="padding:3px 10px;font-size:11px;">${isEN ? 'Salad' : '沙拉'}</button>
-              <button type="button" class="box-btn box-btn-secondary" data-filter="dessert" style="padding:3px 10px;font-size:11px;">${isEN ? 'Dessert' : '點心/飲料'}</button>
+          <div class="lab-picker-controls-section">
+            <div class="lab-picker-search-bar">
+              <input type="text" id="lab-picker-recipe-search" class="box-form-input" placeholder="${isEN ? 'Search recipe name or ingredient...' : '搜尋料理名稱或所需食材...'}" style="flex:1;min-width:180px;height:34px;font-size:12px;">
+              <div class="lab-picker-filter-chips" style="display:flex;gap:6px;flex-wrap:wrap;">
+                <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 10px;font-size:11px;">${isEN ? 'All' : '全部'} (${allRecipesList.length})</button>
+                <button type="button" class="box-btn box-btn-secondary" data-filter="curry" style="padding:3px 10px;font-size:11px;">${isEN ? 'Curry' : '咖哩/濃湯'}</button>
+                <button type="button" class="box-btn box-btn-secondary" data-filter="salad" style="padding:3px 10px;font-size:11px;">${isEN ? 'Salad' : '沙拉'}</button>
+                <button type="button" class="box-btn box-btn-secondary" data-filter="dessert" style="padding:3px 10px;font-size:11px;">${isEN ? 'Dessert' : '點心/飲料'}</button>
+              </div>
+            </div>
+
+            <div class="lab-picker-secondary-filters" style="margin-top:6px;">
+              <div class="lab-picker-ing-filter-group" style="width:100%;">
+                <span class="lab-picker-filter-label">${isEN ? 'Ingr:' : '食材:'}</span>
+                <div class="lab-picker-ing-chips-scroll" id="lab-recipe-picker-ing-scroll">
+                  ${recipeIngChipsHtml}
+                </div>
+              </div>
             </div>
           </div>
 
           <div class="lab-picker-list lab-recipe-picker-list" id="lab-picker-recipe-list">
-            ${generateRecipeItemsHtml('', 'all')}
+            ${generateRecipeItemsHtml('')}
           </div>
         </div>
       `;
 
       const searchInput = modal.querySelector('#lab-picker-recipe-search');
-      let currentFilter = 'all';
       if (searchInput) {
         searchInput.addEventListener('input', () => {
-          renderRecipeItems(searchInput.value, currentFilter);
+          renderRecipeItems(searchInput.value);
         });
       }
 
@@ -4540,10 +4610,28 @@
         btn.addEventListener('click', () => {
           modal.querySelectorAll('.lab-picker-filter-chips button').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
-          currentFilter = btn.getAttribute('data-filter') || 'all';
-          renderRecipeItems(searchInput ? searchInput.value : '', currentFilter);
+          currentRecipeCategoryFilter = btn.getAttribute('data-filter') || 'all';
+          renderRecipeItems(searchInput ? searchInput.value : '');
         });
       });
+
+      const recipeIngScroll = modal.querySelector('#lab-recipe-picker-ing-scroll');
+      if (recipeIngScroll) {
+        recipeIngScroll.querySelectorAll('.lab-picker-ing-chip-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const targetIng = btn.getAttribute('data-recipe-ing') || 'all';
+            if (currentRecipeIngFilter === targetIng && targetIng !== 'all') {
+              currentRecipeIngFilter = 'all';
+            } else {
+              currentRecipeIngFilter = targetIng;
+            }
+            recipeIngScroll.querySelectorAll('.lab-picker-ing-chip-btn').forEach(b => {
+              b.classList.toggle('active', (b.getAttribute('data-recipe-ing') === currentRecipeIngFilter));
+            });
+            renderRecipeItems(searchInput ? searchInput.value : '');
+          });
+        });
+      }
 
       modal.style.display = 'flex';
       if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);
@@ -4573,12 +4661,6 @@
       ? (isEN ? `Select Member for Slot ${opts.slotIndex + 1}` : `挑選隊員 (隊員槽位 ${opts.slotIndex + 1})`)
       : (isEN ? `Select Pokémon for Player ${compareLetter}` : `挑選選手 ${compareLetter}`);
 
-    const CANONICAL_INGREDIENTS = [
-      '特選蘋果', '哞哞鮮奶', '萌綠大豆', '甜甜蜜', '豆製肉',
-      '暖暖薑', '好眠番茄', '特選蛋', '純粹油', '窩心洋芋',
-      '火辣香草', '萌綠玉米', '放鬆可可', '醒腦咖啡豆', '嫩亮酪梨',
-      '品鮮蘑菇', '粗枝大蔥', '沉甸甸南瓜', '美味尾巴'
-    ];
     const berriesList = (typeof BERRY_VALUES_DATA !== 'undefined' ? BERRY_VALUES_DATA : []);
 
     let currentFilter = 'all';
@@ -4690,12 +4772,12 @@
             </div>
             <div class="lab-picker-meta">
               <div class="lab-picker-nick">${escapeHtml(item.nickname || pDisplayName)}</div>
-              <div class="lab-picker-ings">
-                ${pIngsHtml}
-              </div>
               <div class="lab-picker-sub">
                 ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry" title="${escapeHtml(berry.name || '')}">` : ''}
                 ${specHtml}
+              </div>
+              <div class="lab-picker-ings">
+                ${pIngsHtml}
               </div>
             </div>
           </div>
@@ -4710,12 +4792,17 @@
       }
     }
 
-    const berryOptionsHtml = [
-      `<option value="all">${isEN ? 'All Berries' : '全部樹果 (18種)'}</option>`,
+    const berryChipsHtml = [
+      `<button type="button" class="lab-picker-berry-chip-btn ${currentBerryFilter === 'all' ? 'active' : ''}" data-berry="all" title="${isEN ? 'All Berries' : '全部樹果'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
       ...berriesList.map(b => {
         const bDisp = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b.name) : b.name) : b.name;
         const tDisp = window.I18N ? window.I18N.getTypeName(b.type) : b.type;
-        return `<option value="${escapeHtml(b.name)}">${escapeHtml(bDisp)} (${tDisp})</option>`;
+        const bIcon = b.icon || '';
+        return `
+          <button type="button" class="lab-picker-berry-chip-btn ${currentBerryFilter === b.name ? 'active' : ''}" data-berry="${escapeHtml(b.name)}" title="${escapeHtml(bDisp)} (${escapeHtml(tDisp)})">
+            ${bIcon ? `<img src="${bIcon}" class="lab-picker-filter-berry-img" alt="${escapeHtml(bDisp)}">` : `<span>${escapeHtml(bDisp)}</span>`}
+          </button>
+        `;
       })
     ].join('');
 
@@ -4757,13 +4844,13 @@
           </div>
 
           <div class="lab-picker-secondary-filters">
-            <div class="lab-picker-berry-filter-group">
+            <div class="lab-picker-berry-filter-group" style="width:100%;">
               <span class="lab-picker-filter-label">${isEN ? 'Berry:' : '樹果:'}</span>
-              <select id="lab-picker-berry-select" class="lab-select lab-picker-berry-select">
-                ${berryOptionsHtml}
-              </select>
+              <div class="lab-picker-berry-chips-scroll" id="lab-picker-berry-scroll">
+                ${berryChipsHtml}
+              </div>
             </div>
-            <div class="lab-picker-ing-filter-group">
+            <div class="lab-picker-ing-filter-group" style="width:100%;">
               <span class="lab-picker-filter-label">${isEN ? 'Ingr:' : '食材:'}</span>
               <div class="lab-picker-ing-chips-scroll" id="lab-picker-ing-scroll">
                 ${ingChipsHtml}
@@ -4793,11 +4880,21 @@
       });
     });
 
-    const berrySelect = modal.querySelector('#lab-picker-berry-select');
-    if (berrySelect) {
-      berrySelect.addEventListener('change', () => {
-        currentBerryFilter = berrySelect.value || 'all';
-        renderPickerItems();
+    const berryScroll = modal.querySelector('#lab-picker-berry-scroll');
+    if (berryScroll) {
+      berryScroll.querySelectorAll('.lab-picker-berry-chip-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetBerry = btn.getAttribute('data-berry') || 'all';
+          if (currentBerryFilter === targetBerry && targetBerry !== 'all') {
+            currentBerryFilter = 'all';
+          } else {
+            currentBerryFilter = targetBerry;
+          }
+          berryScroll.querySelectorAll('.lab-picker-berry-chip-btn').forEach(b => {
+            b.classList.toggle('active', (b.getAttribute('data-berry') === currentBerryFilter));
+          });
+          renderPickerItems();
+        });
       });
     }
 

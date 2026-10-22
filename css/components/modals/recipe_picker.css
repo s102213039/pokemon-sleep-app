@@ -548,3 +548,52 @@
   color: #ffffff !important;
   border: none;
   border-radius: 6px !important;
+}
+
+/* ─── 挑選彈窗樹果與食材圖示篩選器 (Lab Picker Berry & Ingredient Chips) ─── */
+.lab-picker-berry-chips-scroll {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  white-space: nowrap;
+  max-width: 100%;
+  padding-bottom: 2px;
+}
+
+.lab-picker-berry-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  min-width: 26px;
+  padding: 2px 5px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.lab-picker-berry-chip-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.lab-picker-berry-chip-btn.active {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: var(--accent-color, #38bdf8);
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.35);
+  color: var(--accent-color, #38bdf8);
+  font-weight: 700;
+}
+
+.lab-picker-filter-berry-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}

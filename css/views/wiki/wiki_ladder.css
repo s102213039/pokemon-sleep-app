@@ -479,11 +479,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 26px;
+  height: 26px;
   background: rgba(0, 0, 0, 0.22);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
+  border-radius: 5px;
   padding: 1px;
 }
 
@@ -493,8 +493,8 @@
 }
 
 .lab-picker-ing-icon {
-  width: 15px;
-  height: 15px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
 }
 
