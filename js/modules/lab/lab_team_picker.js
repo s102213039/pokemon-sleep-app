@@ -182,9 +182,12 @@
 
         return filtered.map(r => {
           const rNameCn = r.name_cn || r.name || '';
-          const rDisplayName = isEN ? (r.name_en || rNameCn) : rNameCn;
           const isSelected = (rNameCn === currentTargetName || r.name === currentTargetName);
           const ings = Array.isArray(r.ingredients) ? r.ingredients : [];
+          const cat = (r.category || '').toLowerCase();
+          let catClass = 'lab-recipe-cat-curry';
+          if (cat.includes('沙拉') || cat.includes('salad')) catClass = 'lab-recipe-cat-salad';
+          else if (cat.includes('點心') || cat.includes('dessert') || cat.includes('飲料') || cat.includes('drink')) catClass = 'lab-recipe-cat-dessert';
 
           const ingsHtml = ings.map(ing => {
             const iDisp = window.I18N ? window.I18N.getIngredientName(ing.name) : ing.name;
@@ -198,14 +201,13 @@
           }).join('');
 
           return `
-            <div class="lab-recipe-card ${isSelected ? 'selected' : ''}" onclick="window.AppraisalLab.onRecipePickerSelect('${escapeHtml(rNameCn)}')">
+            <div class="lab-recipe-card ${catClass} ${isSelected ? 'selected' : ''}" onclick="window.AppraisalLab.onRecipePickerSelect('${escapeHtml(rNameCn)}')">
               ${isSelected ? `<span class="lab-recipe-active-badge">${isEN ? 'Current' : '當前目標'}</span>` : ''}
               <div class="lab-recipe-card-header">
-                ${r.icon ? `<img src="${r.icon}" class="lab-recipe-card-icon" alt="${escapeHtml(rDisplayName)}" loading="lazy">` : ''}
+                ${r.icon ? `<img src="${r.icon}" class="lab-recipe-card-icon" alt="" loading="lazy">` : ''}
                 <div class="lab-recipe-card-meta">
-                  <div class="lab-recipe-card-name">${escapeHtml(rDisplayName)}</div>
                   <div class="lab-recipe-card-sub">
-                    <span class="lab-recipe-card-cat">${escapeHtml(r.category || '')}</span>
+                    <span class="lab-recipe-card-cat ${catClass}">${escapeHtml(r.category || '')}</span>
                     ${r.pot_size ? `<span class="lab-recipe-card-pot">${r.pot_size} ${isEN ? 'Pots' : '格'}</span>` : ''}
                     ${r.base_energy ? `<span class="lab-recipe-card-energy">${r.base_energy.toLocaleString()} ${isEN ? 'Energy' : '能量'}</span>` : ''}
                   </div>
@@ -302,8 +304,21 @@
       ? (isEN ? `Select Member for Slot ${opts.slotIndex + 1}` : `挑選隊員 (隊員槽位 ${opts.slotIndex + 1})`)
       : (isEN ? `Select Pokémon for Player ${compareLetter}` : `挑選選手 ${compareLetter}`);
 
-    function generatePickerItemsHtml(query = '', filter = 'all') {
-      const q = (query || '').trim().toLowerCase();
+    const CANONICAL_INGREDIENTS = [
+      '特選蘋果', '哞哞鮮奶', '萌綠大豆', '甜甜蜜', '豆製肉',
+      '暖暖薑', '好眠番茄', '特選蛋', '純粹油', '窩心洋芋',
+      '火辣香草', '萌綠玉米', '放鬆可可', '醒腦咖啡豆', '嫩亮酪梨',
+      '品鮮蘑菇', '粗枝大蔥', '沉甸甸南瓜', '美味尾巴'
+    ];
+    const berriesList = (typeof BERRY_VALUES_DATA !== 'undefined' ? BERRY_VALUES_DATA : []);
+
+    let currentFilter = 'all';
+    let currentBerryFilter = 'all';
+    let currentIngFilter = 'all';
+    let currentQuery = '';
+
+    function generatePickerItemsHtml() {
+      const q = (currentQuery || '').trim().toLowerCase();
       const filtered = userBox.filter(item => {
         const base = findBasePkm(item.pokemonId || item.name);
         const nameCn = (item.name || (base ? base.name_cn : '')).toLowerCase();
@@ -321,10 +336,22 @@
         const isFav = favBerries.includes(bName) || favTypes.includes(bType);
 
         const spec = (base && base.specialty) || '';
-        if (filter === 'fav' && !isFav) return false;
-        if (filter === 'berry' && !spec.includes('樹果') && spec !== 'Berries') return false;
-        if (filter === 'ingredient' && !spec.includes('食材') && spec !== 'Ingredients') return false;
-        if (filter === 'skill' && !spec.includes('技能') && spec !== 'Skills') return false;
+        if (currentFilter === 'fav' && !isFav) return false;
+        if (currentFilter === 'berry' && !spec.includes('樹果') && spec !== 'Berries') return false;
+        if (currentFilter === 'ingredient' && !spec.includes('食材') && spec !== 'Ingredients') return false;
+        if (currentFilter === 'skill' && !spec.includes('技能') && spec !== 'Skills') return false;
+
+        if (currentBerryFilter !== 'all' && bName !== currentBerryFilter) return false;
+
+        if (currentIngFilter !== 'all') {
+          const pLv = item.level || 1;
+          const unlocked = [item.ing1 || (base && base.ingredients && base.ingredients[0] ? base.ingredients[0].name : '')];
+          if (pLv >= 30) unlocked.push(item.ing2 || (base && base.ingredients && base.ingredients[1] ? base.ingredients[1].name : ''));
+          if (pLv >= 60) unlocked.push(item.ing3 || (base && base.ingredients && base.ingredients[2] ? base.ingredients[2].name : ''));
+          const validUnlocked = unlocked.filter(Boolean);
+          if (!validUnlocked.includes(currentIngFilter)) return false;
+        }
+
         return true;
       });
 
@@ -350,8 +377,7 @@
         const avatarUrl = (base && (base.icon_url || base.icon)) || (base && base.formatted_no ? `https://www.serebii.net/pokemonsleep/pokemon/icon/${base.formatted_no}.png` : '') || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23334155"/></svg>';
         const berry = (typeof window.getPokemonBerry === 'function' && base) ? window.getPokemonBerry(base) : (base && base.berry ? base.berry : {});
         const isFav = favBerries.includes(berry.name || '') || favTypes.includes(berry.type || (base ? base.type : '') || '');
-        const specHtml = (window.I18N && window.I18N.getSpecialtyIconHtml && base) ? window.I18N.getSpecialtyIconHtml(base.specialty, 16) : '';
-        const natDisplayName = window.I18N ? window.I18N.getNatureName(item.nature) : item.nature;
+        const specHtml = (window.I18N && window.I18N.getSpecialtyIconHtml && base) ? window.I18N.getSpecialtyIconHtml(base.specialty, 15) : '';
 
         const isOccupied = occupiedInOtherSlot.has(item.uid);
         const isSel = (item.uid === currentSelectedUid);
@@ -364,20 +390,43 @@
           clickAttr = `onclick="window.AppraisalLab.onPickerSelect('${item.uid}')"`;
         }
 
+        // 3 食材槽呈現 (純圖示、清晰展示解鎖狀態)
+        const pLv = item.level || 1;
+        const pIng1 = item.ing1 || (base && base.ingredients && base.ingredients[0] ? base.ingredients[0].name : '');
+        const pIng2 = item.ing2 || (base && base.ingredients && base.ingredients[1] ? base.ingredients[1].name : '');
+        const pIng3 = item.ing3 || (base && base.ingredients && base.ingredients[2] ? base.ingredients[2].name : '');
+        const pIngSlots = [
+          { name: pIng1, req: 1, unlocked: true },
+          { name: pIng2, req: 30, unlocked: pLv >= 30 },
+          { name: pIng3, req: 60, unlocked: pLv >= 60 }
+        ];
+
+        const pIngsHtml = pIngSlots.map(s => {
+          const iName = s.name || '';
+          const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : iName;
+          const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
+          return `
+            <span class="lab-picker-ing-chip ${!s.unlocked ? 'is-locked' : ''}" title="Lv.${s.req}: ${escapeHtml(iDisp)}${!s.unlocked ? (isEN ? ' (Locked)' : ' (未解鎖)') : ''}">
+              ${icon ? `<img src="${icon}" class="lab-picker-ing-icon" alt="${escapeHtml(iDisp)}">` : `<span style="font-size:9px;color:var(--text-muted);">-</span>`}
+            </span>
+          `;
+        }).join('');
+
         return `
-          <div class="lab-picker-card ${isSel ? 'selected' : ''} ${isOccupied ? 'occupied disabled' : ''} ${isFav ? 'fav' : ''}" data-uid="${item.uid}" ${clickAttr} title="${isOccupied ? (isEN ? 'Already in comparison' : '已在對比選手中') : ''}">
+          <div class="lab-picker-card ${isSel ? 'selected' : ''} ${isOccupied ? 'occupied disabled' : ''} ${isFav ? 'fav' : ''}" data-uid="${item.uid}" ${clickAttr} title="${isOccupied ? (isEN ? 'Already in comparison' : '已在對比選手中') : escapeHtml(pDisplayName)}">
             ${isOccupied ? `<span class="lab-picker-occupied-badge">${isEN ? 'In Comparison' : '已在對比中'}</span>` : ''}
             <div class="lab-picker-avatar">
               <img src="${avatarUrl}" alt="${escapeHtml(pDisplayName)}" loading="lazy">
               <span class="lab-picker-lv">Lv.${item.level || 1}</span>
             </div>
             <div class="lab-picker-meta">
-              <div class="lab-picker-name">${escapeHtml(pDisplayName)}</div>
-              ${item.nickname ? `<div class="lab-picker-nick">${escapeHtml(item.nickname)}</div>` : ''}
+              <div class="lab-picker-nick">${escapeHtml(item.nickname || pDisplayName)}</div>
+              <div class="lab-picker-ings">
+                ${pIngsHtml}
+              </div>
               <div class="lab-picker-sub">
-                ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry">` : ''}
+                ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry" title="${escapeHtml(berry.name || '')}">` : ''}
                 ${specHtml}
-                <span class="lab-picker-nature">${natDisplayName || ''}${(item.cleanseMint || item.mint) ? (isEN ? ' (Mint)' : ' (薄荷)') : ''}</span>
               </div>
             </div>
           </div>
@@ -385,12 +434,34 @@
       }).join('');
     }
 
-    function renderPickerItems(query = '', filter = 'all') {
+    function renderPickerItems() {
       const listEl = (modal && typeof modal.querySelector === 'function' ? modal.querySelector('#lab-picker-items-list') : null) || document.getElementById('lab-picker-items-list');
       if (listEl) {
-        listEl.innerHTML = generatePickerItemsHtml(query, filter);
+        listEl.innerHTML = generatePickerItemsHtml();
       }
     }
+
+    const berryOptionsHtml = [
+      `<option value="all">${isEN ? 'All Berries' : '全部樹果 (18種)'}</option>`,
+      ...berriesList.map(b => {
+        const bDisp = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b.name) : b.name) : b.name;
+        const tDisp = window.I18N ? window.I18N.getTypeName(b.type) : b.type;
+        return `<option value="${escapeHtml(b.name)}">${escapeHtml(bDisp)} (${tDisp})</option>`;
+      })
+    ].join('');
+
+    const ingChipsHtml = [
+      `<button type="button" class="lab-picker-ing-chip-btn ${currentIngFilter === 'all' ? 'active' : ''}" data-ing="all" title="${isEN ? 'All Ingredients' : '全部食材'}"><span>${isEN ? 'All' : '全部'}</span></button>`,
+      ...CANONICAL_INGREDIENTS.map(iName => {
+        const iDisp = window.I18N ? window.I18N.getIngredientName(iName) : iName;
+        const icon = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
+        return `
+          <button type="button" class="lab-picker-ing-chip-btn ${currentIngFilter === iName ? 'active' : ''}" data-ing="${escapeHtml(iName)}" title="${escapeHtml(iDisp)}">
+            ${icon ? `<img src="${icon}" class="lab-picker-filter-ing-img" alt="${escapeHtml(iDisp)}">` : `<span>${escapeHtml(iDisp)}</span>`}
+          </button>
+        `;
+      })
+    ].join('');
 
     modal.innerHTML = `
       <div class="lab-picker-container">
@@ -404,26 +475,43 @@
           </button>
         </div>
 
-        <div class="lab-picker-search-bar">
-          <input type="text" id="lab-picker-search-input" class="box-form-input" placeholder="${isEN ? 'Search name, nickname or Dex No...' : '搜尋寶可夢名稱、暱稱或編號...'}" style="flex:1;min-width:180px;height:34px;font-size:12px;">
-          <div class="lab-picker-filter-chips" style="display:flex;gap:6px;flex-wrap:wrap;">
-            <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 10px;font-size:11px;">${isEN ? 'All' : '全部'} (${userBox.length})</button>
-            <button type="button" class="box-btn box-btn-secondary" data-filter="fav" style="padding:3px 10px;font-size:11px;">${isEN ? 'Favored' : '喜愛樹果'}</button>
-            <button type="button" class="box-btn box-btn-secondary" data-filter="berry" style="padding:3px 10px;font-size:11px;">${isEN ? 'Berries' : '樹果型'}</button>
-            <button type="button" class="box-btn box-btn-secondary" data-filter="ingredient" style="padding:3px 10px;font-size:11px;">${isEN ? 'Ingredients' : '食材型'}</button>
-            <button type="button" class="box-btn box-btn-secondary" data-filter="skill" style="padding:3px 10px;font-size:11px;">${isEN ? 'Skills' : '技能型'}</button>
+        <div class="lab-picker-controls-section">
+          <div class="lab-picker-search-bar">
+            <input type="text" id="lab-picker-search-input" class="box-form-input" placeholder="${isEN ? 'Search nickname or Dex No...' : '搜尋寶可夢暱稱或編號...'}" style="flex:1;min-width:180px;height:34px;font-size:12px;">
+            <div class="lab-picker-filter-chips" style="display:flex;gap:5px;flex-wrap:wrap;">
+              <button type="button" class="box-btn box-btn-secondary active" data-filter="all" style="padding:3px 8px;font-size:11px;">${isEN ? 'All' : '全部'} (${userBox.length})</button>
+              <button type="button" class="box-btn box-btn-secondary" data-filter="fav" style="padding:3px 8px;font-size:11px;">${isEN ? 'Favored' : '喜愛樹果'}</button>
+              <button type="button" class="box-btn box-btn-secondary" data-filter="berry" style="padding:3px 8px;font-size:11px;">${isEN ? 'Berries' : '樹果型'}</button>
+              <button type="button" class="box-btn box-btn-secondary" data-filter="ingredient" style="padding:3px 8px;font-size:11px;">${isEN ? 'Ingredients' : '食材型'}</button>
+              <button type="button" class="box-btn box-btn-secondary" data-filter="skill" style="padding:3px 8px;font-size:11px;">${isEN ? 'Skills' : '技能型'}</button>
+            </div>
+          </div>
+
+          <div class="lab-picker-secondary-filters">
+            <div class="lab-picker-berry-filter-group">
+              <span class="lab-picker-filter-label">${isEN ? 'Berry:' : '樹果:'}</span>
+              <select id="lab-picker-berry-select" class="lab-select lab-picker-berry-select">
+                ${berryOptionsHtml}
+              </select>
+            </div>
+            <div class="lab-picker-ing-filter-group">
+              <span class="lab-picker-filter-label">${isEN ? 'Ingr:' : '食材:'}</span>
+              <div class="lab-picker-ing-chips-scroll" id="lab-picker-ing-scroll">
+                ${ingChipsHtml}
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="lab-picker-list" id="lab-picker-items-list">${generatePickerItemsHtml('', 'all')}</div>
+        <div class="lab-picker-list" id="lab-picker-items-list">${generatePickerItemsHtml()}</div>
       </div>
     `;
 
     const searchInput = modal.querySelector('#lab-picker-search-input');
-    let currentFilter = 'all';
     if (searchInput) {
       searchInput.addEventListener('input', () => {
-        renderPickerItems(searchInput.value, currentFilter);
+        currentQuery = searchInput.value;
+        renderPickerItems();
       });
     }
 
@@ -432,9 +520,35 @@
         modal.querySelectorAll('.lab-picker-filter-chips button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentFilter = btn.getAttribute('data-filter') || 'all';
-        renderPickerItems(searchInput ? searchInput.value : '', currentFilter);
+        renderPickerItems();
       });
     });
+
+    const berrySelect = modal.querySelector('#lab-picker-berry-select');
+    if (berrySelect) {
+      berrySelect.addEventListener('change', () => {
+        currentBerryFilter = berrySelect.value || 'all';
+        renderPickerItems();
+      });
+    }
+
+    const ingScroll = modal.querySelector('#lab-picker-ing-scroll');
+    if (ingScroll) {
+      ingScroll.querySelectorAll('.lab-picker-ing-chip-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetIng = btn.getAttribute('data-ing') || 'all';
+          if (currentIngFilter === targetIng && targetIng !== 'all') {
+            currentIngFilter = 'all';
+          } else {
+            currentIngFilter = targetIng;
+          }
+          ingScroll.querySelectorAll('.lab-picker-ing-chip-btn').forEach(b => {
+            b.classList.toggle('active', (b.getAttribute('data-ing') === currentIngFilter));
+          });
+          renderPickerItems();
+        });
+      });
+    }
 
     modal.style.display = 'flex';
     if (typeof window.prepareOverlayOpen === 'function') window.prepareOverlayOpen(modal);

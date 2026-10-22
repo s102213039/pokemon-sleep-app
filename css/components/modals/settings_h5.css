@@ -272,13 +272,13 @@
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: 10px;
+  padding: 8px 10px;
   cursor: pointer;
   transition: all 0.18s ease;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .lab-recipe-card:hover {
@@ -289,8 +289,45 @@
 
 .lab-recipe-card.selected {
   border-color: var(--accent-color, #38bdf8);
-  box-shadow: 0 0 0 1px var(--accent-color, #38bdf8);
+  box-shadow: 0 0 0 1.5px var(--accent-color, #38bdf8);
   background: rgba(56, 189, 248, 0.08);
+}
+
+/* 料理三大分類主題色彩系統 (Curry, Salad, Dessert Color System) */
+.lab-recipe-card.lab-recipe-cat-curry {
+  border-color: rgba(245, 158, 11, 0.35);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(30, 41, 59, 0.75) 100%);
+}
+.lab-recipe-card.lab-recipe-cat-curry:hover {
+  border-color: rgba(245, 158, 11, 0.75);
+}
+.lab-recipe-card.lab-recipe-cat-curry.selected {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 1.5px #f59e0b;
+}
+
+.lab-recipe-card.lab-recipe-cat-salad {
+  border-color: rgba(34, 197, 94, 0.35);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(30, 41, 59, 0.75) 100%);
+}
+.lab-recipe-card.lab-recipe-cat-salad:hover {
+  border-color: rgba(34, 197, 94, 0.75);
+}
+.lab-recipe-card.lab-recipe-cat-salad.selected {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 1.5px #22c55e;
+}
+
+.lab-recipe-card.lab-recipe-cat-dessert {
+  border-color: rgba(236, 72, 153, 0.35);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.08) 0%, rgba(30, 41, 59, 0.75) 100%);
+}
+.lab-recipe-card.lab-recipe-cat-dessert:hover {
+  border-color: rgba(236, 72, 153, 0.75);
+}
+.lab-recipe-card.lab-recipe-cat-dessert.selected {
+  border-color: #ec4899;
+  box-shadow: 0 0 0 1.5px #ec4899;
 }
 
 .lab-recipe-active-badge {
@@ -308,12 +345,12 @@
 .lab-recipe-card-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .lab-recipe-card-icon {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -323,23 +360,77 @@
   min-width: 0;
 }
 
-.lab-recipe-card-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .lab-recipe-card-sub {
   display: flex;
   align-items: center;
+  flex-direction: row;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.lab-recipe-card-cat {
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.lab-recipe-card-cat.lab-recipe-cat-curry {
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+}
+.lab-recipe-card-cat.lab-recipe-cat-salad {
+  background: rgba(34, 197, 94, 0.18);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #4ade80;
+}
+.lab-recipe-card-cat.lab-recipe-cat-dessert {
+  background: rgba(236, 72, 153, 0.18);
+  border: 1px solid rgba(236, 72, 153, 0.35);
+  color: #f472b6;
+}
+
+.lab-recipe-card-pot,
+.lab-recipe-card-energy {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* 食材單行緊湊展示 (無外框、保證單行一列排滿) */
+.lab-recipe-card-ingredients {
+  display: flex !important;
   flex-direction: row !important;
+  flex-wrap: nowrap !important;
   align-items: center !important;
-  justify-content: center !important;
   gap: 6px !important;
-  margin: 0 auto !important;
+  overflow-x: auto !important;
+  white-space: nowrap !important;
+  width: 100% !important;
+  padding: 2px 0 !important;
+}
+
+.lab-recipe-ing-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  flex-shrink: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.lab-recipe-ing-icon {
+  width: 18px !important;
+  height: 18px !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+}
+
+.lab-recipe-ing-count {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
 }
 
 .mobile-h5-app #box-edit-modal .box-modal-header-cancel {

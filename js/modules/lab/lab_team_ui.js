@@ -428,7 +428,6 @@
     return `
       <div class="lab-team-view-container">
         <div class="lab-island-selector">
-          <div style="font-size:11.5px;font-weight:700;color:var(--text-muted);margin-right:4px;">${isEN ? 'Camp:' : '研究營地:'}</div>
           <div class="lab-island-circles-row">
             ${islandPillsHtml}
           </div>

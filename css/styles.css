@@ -1666,6 +1666,21 @@ html[data-theme="emerald"][data-theme-inverted="true"] .search-filtering-badge {
 }
 
 /* =========================================================
+   Screen Reader Only utility for accessibility & pure-icon containers
+   ========================================================= */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* =========================================================
     寶可夢圖鑑左側懸浮固定篩選器 (Pokédex Left Fixed Floating Filter Sidebar)
    ========================================================= */
 
@@ -14781,6 +14796,9 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   padding: 0;
   overflow: hidden;
   flex-shrink: 0;
+  color: transparent !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
 }
 
 .lab-island-circle-btn:hover {
@@ -15743,13 +15761,13 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: 10px;
+  padding: 8px 10px;
   cursor: pointer;
   transition: all 0.18s ease;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .lab-recipe-card:hover {
@@ -15760,8 +15778,45 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
 
 .lab-recipe-card.selected {
   border-color: var(--accent-color, #38bdf8);
-  box-shadow: 0 0 0 1px var(--accent-color, #38bdf8);
+  box-shadow: 0 0 0 1.5px var(--accent-color, #38bdf8);
   background: rgba(56, 189, 248, 0.08);
+}
+
+/* 料理三大分類主題色彩系統 (Curry, Salad, Dessert Color System) */
+.lab-recipe-card.lab-recipe-cat-curry {
+  border-color: rgba(245, 158, 11, 0.35);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(30, 41, 59, 0.75) 100%);
+}
+.lab-recipe-card.lab-recipe-cat-curry:hover {
+  border-color: rgba(245, 158, 11, 0.75);
+}
+.lab-recipe-card.lab-recipe-cat-curry.selected {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 1.5px #f59e0b;
+}
+
+.lab-recipe-card.lab-recipe-cat-salad {
+  border-color: rgba(34, 197, 94, 0.35);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(30, 41, 59, 0.75) 100%);
+}
+.lab-recipe-card.lab-recipe-cat-salad:hover {
+  border-color: rgba(34, 197, 94, 0.75);
+}
+.lab-recipe-card.lab-recipe-cat-salad.selected {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 1.5px #22c55e;
+}
+
+.lab-recipe-card.lab-recipe-cat-dessert {
+  border-color: rgba(236, 72, 153, 0.35);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.08) 0%, rgba(30, 41, 59, 0.75) 100%);
+}
+.lab-recipe-card.lab-recipe-cat-dessert:hover {
+  border-color: rgba(236, 72, 153, 0.75);
+}
+.lab-recipe-card.lab-recipe-cat-dessert.selected {
+  border-color: #ec4899;
+  box-shadow: 0 0 0 1.5px #ec4899;
 }
 
 .lab-recipe-active-badge {
@@ -15779,12 +15834,12 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
 .lab-recipe-card-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .lab-recipe-card-icon {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -15794,49 +15849,77 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   min-width: 0;
 }
 
-.lab-recipe-card-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .lab-recipe-card-sub {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 3px;
-  font-size: 10.5px;
-  color: var(--text-muted);
+  flex-direction: row;
+  gap: 5px;
+  flex-wrap: wrap;
 }
 
 .lab-recipe-card-cat {
-  background: rgba(255, 255, 255, 0.08);
-  padding: 1px 4px;
-  border-radius: 3px;
-  font-weight: 600;
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.lab-recipe-card-cat.lab-recipe-cat-curry {
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+}
+.lab-recipe-card-cat.lab-recipe-cat-salad {
+  background: rgba(34, 197, 94, 0.18);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #4ade80;
+}
+.lab-recipe-card-cat.lab-recipe-cat-dessert {
+  background: rgba(236, 72, 153, 0.18);
+  border: 1px solid rgba(236, 72, 153, 0.35);
+  color: #f472b6;
 }
 
+.lab-recipe-card-pot,
+.lab-recipe-card-energy {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* 食材單行緊湊展示 (無外框、保證單行一列排滿) */
 .lab-recipe-card-ingredients {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-top: auto;
-  padding-top: 6px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 6px !important;
+  overflow-x: auto !important;
+  white-space: nowrap !important;
+  width: 100% !important;
+  padding: 2px 0 !important;
 }
 
 .lab-recipe-ing-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 4px;
-  padding: 2px 5px;
-  font-size: 10px;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  flex-shrink: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.lab-recipe-ing-icon {
+  width: 18px !important;
+  height: 18px !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+}
+
+.lab-recipe-ing-count {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
 }
 
 .lab-recipe-ing-icon {
@@ -16920,11 +17003,20 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
 /* ═══ 選手/隊員挑選視窗：多欄卡片格線 ═══ */
 .lab-picker-container { max-width: 880px; }
 
+.lab-picker-controls-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
 .lab-picker-search-bar {
+  display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  padding: 10px 18px 4px;
 }
 
 .lab-picker-filter-chips button.active {
@@ -16934,12 +17026,99 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   font-weight: 700;
 }
 
+/* 樹果與食材次級快速篩選器 (Berry & Ingredient Secondary Filters) */
+.lab-picker-secondary-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 2px 18px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lab-picker-berry-filter-group,
+.lab-picker-ing-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lab-picker-filter-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.lab-picker-berry-select {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 11px;
+  padding: 3px 36px 3px 8px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 8px 5px;
+  max-width: 160px;
+}
+
+.lab-picker-ing-chips-scroll {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  white-space: nowrap;
+  max-width: 100%;
+  padding-bottom: 2px;
+}
+
+.lab-picker-ing-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  min-width: 26px;
+  padding: 2px 5px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.lab-picker-ing-chip-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.lab-picker-ing-chip-btn.active {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: var(--accent-color, #38bdf8);
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.35);
+  color: var(--accent-color, #38bdf8);
+  font-weight: 700;
+}
+
+.lab-picker-filter-ing-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
 .lab-picker-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   align-content: start;
-  gap: 10px;
-  padding: 14px 18px 18px;
+  gap: 8px;
+  padding: 12px 18px 18px;
 }
 
 .lab-picker-card {
@@ -16947,8 +17126,8 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 12px 8px 10px;
+  gap: 5px;
+  padding: 10px 6px 8px;
   border-radius: 10px;
   border: 1px solid var(--border-color);
   background: var(--bg-card);
@@ -16971,7 +17150,7 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
 }
 
 .lab-picker-avatar { position: relative; flex-shrink: 0; }
-.lab-picker-avatar img { width: 52px; height: 52px; object-fit: contain; display: block; }
+.lab-picker-avatar img { width: 48px; height: 48px; object-fit: contain; display: block; }
 
 .lab-picker-lv {
   position: absolute;
@@ -16981,7 +17160,7 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   border: 1px solid #334155;
   border-radius: 4px;
   padding: 0 4px;
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 800;
   color: #94a3b8;
 }
@@ -17010,28 +17189,60 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   border: 1px solid rgba(239, 68, 68, 0.4);
   border-radius: 4px;
   padding: 1px 5px;
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 800;
   white-space: nowrap;
 }
 
-.lab-picker-meta { width: 100%; min-width: 0; }
-
-.lab-picker-name {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.lab-picker-meta {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
 }
 
 .lab-picker-nick {
-  font-size: 10.5px;
+  font-size: 11px;
+  font-weight: 700;
   color: var(--accent-color, #38bdf8);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* 3 食材槽微型展示 (Pokémon Ingredients Mini Row) */
+.lab-picker-ings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  margin: 1px 0;
+}
+
+.lab-picker-ing-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 1px;
+}
+
+.lab-picker-ing-chip.is-locked {
+  opacity: 0.35;
+  filter: grayscale(0.8);
+}
+
+.lab-picker-ing-icon {
+  width: 15px;
+  height: 15px;
+  object-fit: contain;
 }
 
 .lab-picker-sub {
@@ -17039,9 +17250,7 @@ body:not(.mobile-h5-app) .appraisal-radar-block {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  margin-top: 3px;
-  font-size: 11px;
-  color: var(--text-muted);
+  margin-top: 1px;
 }
 
 .lab-picker-berry { width: 15px; height: 15px; object-fit: contain; }

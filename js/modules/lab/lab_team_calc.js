@@ -210,6 +210,8 @@
       const level = parseInt(item.level, 10) || 30;
       const baseFreq = base.base_frequency || base.frequency || 3600;
       const speedFactor = (3600 / Math.max(1200, baseFreq)) * 50 * (1 + level * 0.015);
+      // 強度指數：等級權重指數化，確保高等級真正強勢怪優先入隊
+      const levelWeight = Math.pow(Math.max(1, level) / 30, 1.35);
 
       const berry = (typeof window.getPokemonBerry === 'function') ? window.getPokemonBerry(base) : (base.berry || {});
       const berryName = berry.name || '';
@@ -238,62 +240,63 @@
 
       if (role === 'healer') {
         if (!isHealer) return 0;
-        let healScore = 1000 + speedFactor;
-        if (subs.includes('技能機率提升M')) healScore *= 1.36;
-        if (subs.includes('技能機率提升S')) healScore *= 1.18;
-        if (subs.includes('技能等級提升M')) healScore *= 1.15;
+        let healScore = (1000 + speedFactor) * levelWeight;
+        if (subs.includes('技能機率提升M')) healScore *= 1.45;
+        if (subs.includes('技能機率提升S')) healScore *= 1.22;
+        if (subs.includes('技能等級提升M')) healScore *= 1.18;
+        if (subs.includes('幫手獎勵')) healScore *= 1.25;
         if (nat && nat.buff && nat.buff.includes('主技能')) healScore *= 1.20;
         if (isFavored) healScore *= 1.15;
         return healScore;
       }
 
       if (role === 'berry' || strategy === 'berries') {
-        let bScore = speedFactor;
-        if (isBerrySpec) bScore *= 1.6;
-        if (isFavored) bScore *= 2.4;
-        if (subs.includes('樹果數量S')) bScore *= 1.6;
-        if (subs.includes('幫手獎勵')) bScore *= 1.25;
-        if (subs.includes('幫忙速度M')) bScore *= 1.15;
-        if (subs.includes('幫忙速度S')) bScore *= 1.08;
-        if (nat && nat.buff && nat.buff.includes('幫忙速度')) bScore *= 1.10;
+        let bScore = speedFactor * levelWeight;
+        if (isBerrySpec) bScore *= 1.85;
+        if (isFavored) bScore *= 2.60;
+        if (subs.includes('樹果數量S')) bScore *= 1.80;
+        if (subs.includes('幫手獎勵')) bScore *= 1.30;
+        if (subs.includes('幫忙速度M')) bScore *= 1.18;
+        if (subs.includes('幫忙速度S')) bScore *= 1.09;
+        if (nat && nat.buff && nat.buff.includes('幫忙速度')) bScore *= 1.12;
         return bScore;
       }
 
       if (role === 'ingredient' || strategy === 'ingredients') {
-        let iScore = speedFactor;
-        if (isIngSpec) iScore *= 1.6;
-        if (matchCount === 1) iScore *= 1.35;
-        else if (matchCount === 2) iScore *= 1.70;
-        else if (matchCount >= 3) iScore *= 2.10;
-        if (subs.includes('食材機率提升M')) iScore *= 1.36;
-        if (subs.includes('食材機率提升S')) iScore *= 1.18;
-        if (subs.includes('幫手獎勵')) iScore *= 1.25;
-        if (subs.includes('幫忙速度M')) iScore *= 1.12;
+        let iScore = speedFactor * levelWeight;
+        if (isIngSpec) iScore *= 1.85;
+        if (matchCount === 1) iScore *= 1.40;
+        else if (matchCount === 2) iScore *= 1.95;
+        else if (matchCount >= 3) iScore *= 2.50;
+        if (subs.includes('食材機率提升M')) iScore *= 1.45;
+        if (subs.includes('食材機率提升S')) iScore *= 1.22;
+        if (subs.includes('幫手獎勵')) iScore *= 1.30;
+        if (subs.includes('幫忙速度M')) iScore *= 1.15;
         if (nat && nat.buff && nat.buff.includes('食材')) iScore *= 1.20;
         if (isFavored) iScore *= 1.25;
         return iScore;
       }
 
       if (role === 'skill' || strategy === 'skills') {
-        let sScore = speedFactor;
-        if (isSkillSpec) sScore *= 1.6;
-        if (isHealer) sScore *= 1.5;
-        if (subs.includes('技能機率提升M')) sScore *= 1.36;
-        if (subs.includes('技能機率提升S')) sScore *= 1.18;
-        if (subs.includes('幫手獎勵')) sScore *= 1.25;
+        let sScore = speedFactor * levelWeight;
+        if (isSkillSpec) sScore *= 1.85;
+        if (isHealer) sScore *= 1.55;
+        if (subs.includes('技能機率提升M')) sScore *= 1.45;
+        if (subs.includes('技能機率提升S')) sScore *= 1.22;
+        if (subs.includes('幫手獎勵')) sScore *= 1.30;
         if (nat && nat.buff && nat.buff.includes('主技能')) sScore *= 1.20;
         if (isFavored) sScore *= 1.25;
         return sScore;
       }
 
       // General / Balanced
-      let gScore = speedFactor;
-      if (isFavored) gScore *= 2.0;
-      if (subs.includes('樹果數量S')) gScore *= 1.45;
-      if (subs.includes('幫手獎勵')) gScore *= 1.25;
+      let gScore = speedFactor * levelWeight;
+      if (isFavored) gScore *= 2.20;
+      if (subs.includes('樹果數量S')) gScore *= 1.60;
+      if (subs.includes('幫手獎勵')) gScore *= 1.30;
       if (subs.includes('幫忙速度M')) gScore *= 1.15;
-      if (subs.includes('食材機率提升M')) gScore *= 1.15;
-      if (matchCount > 0) gScore *= (1 + matchCount * 0.15);
+      if (subs.includes('食材機率提升M')) gScore *= 1.20;
+      if (matchCount > 0) gScore *= (1 + matchCount * 0.20);
       return gScore;
     }
 
@@ -354,8 +357,10 @@
       const targetRecipe = findTargetRecipe(labState.targetRecipeName);
       const reqIngredients = (targetRecipe && Array.isArray(targetRecipe.ingredients)) ? targetRecipe.ingredients : [];
       const remainingDeficits = {};
+      const reqIngredientNames = new Set();
       reqIngredients.forEach(ing => {
         remainingDeficits[ing.name] = (ing.count || 0) * 3;
+        reqIngredientNames.add(ing.name);
       });
 
       function estimatePkmIngDailyYield(p, ingName) {
@@ -412,27 +417,70 @@
           const base = findBasePkm(p.pokemonId || p.name);
           if (!base) continue;
 
-          let marginalScore = 0;
-          let anyYield = false;
+          const pLv = parseInt(p.level, 10) || 30;
+          const unlockedIngs = [
+            p.ing1 || (base.ingredients && base.ingredients[0] ? base.ingredients[0].name : '')
+          ];
+          if (pLv >= 30) unlockedIngs.push(p.ing2 || (base.ingredients && base.ingredients[1] ? base.ingredients[1].name : unlockedIngs[0]));
+          if (pLv >= 60) unlockedIngs.push(p.ing3 || (base.ingredients && base.ingredients[2] ? base.ingredients[2].name : unlockedIngs[0]));
+          const validUnlocked = unlockedIngs.filter(Boolean);
+
+          // 統計該寶可夢解鎖之食材與目標料理所需食材的重疊種數 (雙食材/多食材契合評估)
+          const matchedReqIngs = [...new Set(validUnlocked.filter(ing => reqIngredientNames.has(ing)))];
+          const matchCount = matchedReqIngs.length;
+
+          // 雙食材或多食材重疊契合時，賦予強大綜效加乘 (2 種 2.4x，3 種 3.2x)
+          let synergyMultiplier = 1.0;
+          if (matchCount >= 3) synergyMultiplier = 3.2;
+          else if (matchCount === 2) synergyMultiplier = 2.4;
+          else if (matchCount === 1) synergyMultiplier = 1.0;
+          else synergyMultiplier = 0.25;
+
+          // 寶可夢自身戰力與等級權重 (等級高、副技能頂、食材特化者大幅領先)
+          const levelWeight = Math.pow(Math.max(1, pLv) / 30, 1.35);
+          const spec = base.specialty || '';
+          const isIngSpec = spec.includes('食材') || spec === 'Ingredients';
+          const specMultiplier = isIngSpec ? 1.75 : 1.0;
+
+          const berry = (typeof window.getPokemonBerry === 'function') ? window.getPokemonBerry(base) : (base.berry || {});
+          const isFav = favBerries.includes(berry.name || '') || favTypes.includes(berry.type || base.type || '');
+          const favMultiplier = isFav ? 1.25 : 1.0;
+
+          const subs = Array.isArray(p.subskills) ? p.subskills : [];
+          let subMultiplier = 1.0;
+          if (subs.includes('食材機率提升M')) subMultiplier *= 1.36;
+          if (subs.includes('食材機率提升S')) subMultiplier *= 1.18;
+          if (subs.includes('幫手獎勵')) subMultiplier *= 1.25;
+          if (subs.includes('幫忙速度M')) subMultiplier *= 1.15;
+          if (subs.includes('幫忙速度S')) subMultiplier *= 1.08;
+
+          const isMint = !!(p.cleanseMint || p.mint);
+          const nat = isMint ? null : NATURE_DATA.find(n => n.name === p.nature);
+          let natMultiplier = 1.0;
+          if (nat && nat.buff && nat.buff.includes('食材')) natMultiplier *= 1.20;
+          if (nat && nat.debuff && nat.debuff.includes('食材')) natMultiplier *= 0.80;
+          if (nat && nat.buff && nat.buff.includes('幫忙速度')) natMultiplier *= 1.10;
+
+          // 計算對目標料理目前殘留缺口的邊際貢獻
+          let deficitCoveredScore = 0;
+          let totalYieldAmount = 0;
 
           reqIngredients.forEach(ing => {
             const y = estimatePkmIngDailyYield(p, ing.name);
             if (y > 0) {
-              anyYield = true;
               const def = remainingDeficits[ing.name] || 0;
-              marginalScore += Math.min(y, def) * 3.0 + Math.max(0, y - def) * 0.4;
+              const covered = Math.min(y, def);
+              const surplus = Math.max(0, y - def);
+              deficitCoveredScore += covered * 4.0;
+              totalYieldAmount += surplus * 0.4;
             }
           });
 
-          if (anyYield) {
-            const spec = base.specialty || '';
-            if (spec.includes('食材') || spec === 'Ingredients') marginalScore *= 1.30;
-            const berry = (typeof window.getPokemonBerry === 'function') ? window.getPokemonBerry(base) : (base.berry || {});
-            const isFav = favBerries.includes(berry.name || '') || favTypes.includes(berry.type || base.type || '');
-            if (isFav) marginalScore *= 1.15;
-
-            if (marginalScore > bestScore) {
-              bestScore = marginalScore;
+          const rawYieldScore = deficitCoveredScore + totalYieldAmount;
+          if (rawYieldScore > 0) {
+            const finalScore = rawYieldScore * synergyMultiplier * levelWeight * specMultiplier * subMultiplier * natMultiplier * favMultiplier;
+            if (finalScore > bestScore) {
+              bestScore = finalScore;
               bestCandidate = p;
             }
           }
@@ -446,6 +494,7 @@
             remainingDeficits[ing.name] = Math.max(0, (remainingDeficits[ing.name] || 0) - y);
           });
         } else {
+          // 當所有缺口已滿足或無食材契合怪時，挑選全隊中最強的食材型或高戰力綜合怪
           const fallback = pickBest(userBox, 'ingredient') || pickBest(userBox, 'general');
           if (!fallback) break;
         }
