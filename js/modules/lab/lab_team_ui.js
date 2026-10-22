@@ -31,12 +31,14 @@
     const teamItems = labState.teamSlots.map(uid => uid ? userBox.find(p => p.uid === uid) : null);
     const simulation = simulateTeamPerformance(teamItems, labState.teamIslandId);
 
+    const basePath = (typeof window !== 'undefined' && window.__DATA_BASE_PATH__) || '';
     const islandPillsHtml = LAB_ISLANDS.map(isl => {
       const isActive = labState.teamIslandId === isl.id;
+      const islImgUrl = isl.image ? (basePath + isl.image) : '';
+      const islName = isEN ? (isl.name_en || isl.name) : isl.name;
       return `
-        <button type="button" class="lab-island-pill ${isActive ? 'active' : ''}" style="${isActive ? `border-color:${isl.color};color:${isl.color};` : ''}" onclick="window.AppraisalLab.setTeamIsland('${isl.id}')">
-          <span class="lab-island-dot" style="width:7px;height:7px;border-radius:50%;background:${isl.color};display:inline-block;"></span>
-          <span>${isEN ? (isl.name_en || isl.name) : isl.name}</span>
+        <button type="button" class="lab-island-circle-btn ${isActive ? 'active' : ''}" style="${islImgUrl ? `background-image:url('${islImgUrl}');` : `background-color:${isl.color};`}${isActive ? `border-color:${isl.color};box-shadow:0 0 10px ${isl.color}99;` : ''}" onclick="window.AppraisalLab.setTeamIsland('${isl.id}')" title="${escapeHtml(islName)}">
+          <span class="sr-only">${escapeHtml(islName)}</span>
         </button>
       `;
     }).join('');
@@ -45,9 +47,8 @@
       const bObj = BERRY_VALUES_DATA.find(b => b.name === bName) || {};
       const bDisplayName = isEN ? (window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(bName) : bName) : bName;
       return `
-        <span class="lab-island-berry-tag" title="${escapeHtml(bDisplayName)}">
-          ${bObj.icon ? `<img src="${bObj.icon}" style="width:14px;height:14px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(bDisplayName)}">` : ''}
-          <span>${escapeHtml(bDisplayName)}</span>
+        <span class="lab-favored-berry-icon-wrap" title="${escapeHtml(bDisplayName)}">
+          ${bObj.icon ? `<img src="${bObj.icon}" class="lab-favored-berry-img" alt="${escapeHtml(bDisplayName)}">` : ''}
         </span>
       `;
     }).join('');
@@ -174,15 +175,16 @@
       </div>
     `;
 
-    // ─── 隊伍 5 個隊員卡片 (Pokémon Sleep App Style Compact Cards) ───────
+    // ─── 隊伍 5 個隊員卡片 (Pokémon Sleep App Style Compact 100% Width Rows) ─
     const slotsHtml = [0, 1, 2, 3, 4].map(idx => {
       const item = teamItems[idx];
       if (!item) {
         return `
           <div class="lab-team-slot-card lab-team-slot-empty" onclick="window.AppraisalLab.openPicker({ type: 'team', slotIndex: ${idx} })" title="${isEN ? 'Click to select team member' : '點擊挑選隊員'}">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);margin-bottom:2px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            <div style="font-size:12px;font-weight:700;color:var(--text-primary);">${isEN ? `Slot ${idx + 1}` : `隊員 ${idx + 1}`}</div>
-            <div style="font-size:10.5px;color:var(--text-secondary);margin-top:1px;">${isEN ? 'Empty Slot' : '空缺位 · 點擊挑選'}</div>
+            <div class="lab-slot-empty-row">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <span class="lab-slot-empty-text">${isEN ? 'Select Team Member' : '點擊挑選隊員'}</span>
+            </div>
           </div>
         `;
       }
@@ -200,7 +202,7 @@
       const simSlot = simulation.slotResults[idx];
       const itemLv = item.level || 1;
 
-      // 3 食材槽呈現 (Lv.1, Lv.30, Lv.60)
+      // 3 食材槽呈現 (無等級標籤、無外框、靠右展示)
       const ing1 = item.ing1 || (base && base.ingredients && base.ingredients[0] ? base.ingredients[0].name : '');
       const ing2 = item.ing2 || (base && base.ingredients && base.ingredients[1] ? base.ingredients[1].name : '');
       const ing3 = item.ing3 || (base && base.ingredients && base.ingredients[2] ? base.ingredients[2].name : '');
@@ -219,7 +221,6 @@
             return `
               <div class="lab-slot-ing-chip ${!s.unlocked ? 'is-locked' : ''}" title="Lv.${s.req}: ${escapeHtml(iDisp)}${!s.unlocked ? (isEN ? ' (Locked)' : ' (未解鎖)') : ''}">
                 ${icon ? `<img src="${icon}" class="lab-slot-ing-icon" alt="${escapeHtml(iDisp)}">` : `<span style="font-size:9px;color:var(--text-muted);">-</span>`}
-                <span class="lab-slot-ing-lv">Lv.${s.req}</span>
               </div>
             `;
           }).join('')}
@@ -285,61 +286,46 @@
 
       return `
         <div class="lab-team-slot-card">
-          <div class="lab-slot-header">
-            <span class="lab-slot-index">${isEN ? `SLOT ${idx + 1}` : `隊員 ${idx + 1}`}</span>
-            <button type="button" class="lab-slot-remove-btn" onclick="window.AppraisalLab.clearTeamSlot(${idx})" title="${isEN ? 'Remove from team' : '從隊伍移除'}">
-              [X]
+          <div class="lab-slot-main-row">
+            <div class="lab-slot-identity-group">
+              <div class="lab-slot-avatar-wrap">
+                <img src="${avatarUrl}" class="lab-slot-avatar-img" alt="${escapeHtml(displayName)}" loading="lazy">
+                <span class="lab-slot-lv-badge">Lv.${item.level || 1}</span>
+              </div>
+              <div class="lab-slot-name-col">
+                <span class="lab-slot-name">${escapeHtml(displayName)}</span>
+                ${item.nickname ? `<span class="lab-slot-nickname">(${escapeHtml(item.nickname)})</span>` : ''}
+              </div>
+            </div>
+            <button type="button" class="box-btn box-btn-secondary lab-slot-replace-top-btn" onclick="window.AppraisalLab.openPicker({ type: 'team', slotIndex: ${idx} })">
+              ${isEN ? 'Replace' : '更換'}
             </button>
           </div>
 
-          <div class="lab-slot-main-row">
-            <div class="lab-slot-avatar-wrap">
-              <img src="${avatarUrl}" class="lab-slot-avatar-img" alt="${escapeHtml(displayName)}" loading="lazy">
-              <span class="lab-slot-lv-badge">Lv.${item.level || 1}</span>
-            </div>
-            <div class="lab-slot-meta-col">
-              <div class="lab-slot-name">${escapeHtml(displayName)}</div>
-              ${item.nickname ? `<div class="lab-slot-nickname">(${escapeHtml(item.nickname)})</div>` : ''}
-              <div class="lab-slot-tags-row">
-                ${specialtyIconHtml}
+          <div class="lab-slot-spec-row">
+            <div class="lab-slot-spec-left">
+              ${specialtyIconHtml}
+              <div class="lab-slot-berry-wrap ${isFav ? 'favored' : ''}" title="${escapeHtml(berry.name || '')}${isFav ? ' (2x)' : ''}">
                 ${berry.icon ? `<img src="${berry.icon}" class="lab-slot-berry-icon" alt="Berry">` : ''}
-                ${isFav ? `<span class="lab-slot-fav-tag">2x 喜愛</span>` : ''}
+                ${isFav ? `<span class="lab-slot-fav-badge">2x</span>` : ''}
               </div>
             </div>
-          </div>
-
-          ${ingStripHtml}
-
-          <div class="lab-slot-info-row">
-            <div class="lab-slot-info-item">
-              <span class="lab-slot-info-lbl">${isEN ? 'Skill:' : '技能:'}</span>
-              <span class="lab-slot-info-val">${escapeHtml(skillName)}</span>
-              <span class="lab-slot-skill-lv">Lv.${skillLv}</span>
-            </div>
-            <div class="lab-slot-info-item">
-              <span class="lab-slot-info-lbl">${isEN ? 'Nat:' : '性格:'}</span>
-              <span class="lab-slot-info-val">${escapeHtml(natureDisplayName)}${(item.cleanseMint || item.mint) ? ' <span class="nature-mint-tag">' + (isEN ? 'Mint' : '薄荷') + '</span>' : ''}</span>
+            <div class="lab-slot-ings-right">
+              ${ingStripHtml}
             </div>
           </div>
 
-          <div class="lab-slot-auras-row">
-            ${aurasHtml}
+          <div class="lab-slot-bottom-row">
+            <div class="lab-slot-bottom-left">
+              <span class="lab-slot-skill-name">${escapeHtml(skillName)} <strong class="lab-slot-skill-lv">Lv.${skillLv}</strong></span>
+              <span class="lab-slot-mid-sep">·</span>
+              <span class="lab-slot-nature-name">${escapeHtml(natureDisplayName)}${(item.cleanseMint || item.mint) ? ' (' + (isEN ? 'Mint' : '薄荷') + ')' : ''}</span>
+            </div>
+            <div class="lab-slot-bottom-right">
+              ${aurasHtml}
+              ${simSlot ? `<span class="lab-slot-berry-pts" title="${isEN ? 'Daily berry energy' : '每日樹果能量'}">${simSlot.dailyBerryEnergy.toLocaleString()} <span style="font-size:9px;color:var(--text-muted);">${isEN ? 'pts' : '能量'}</span></span>` : ''}
+            </div>
           </div>
-
-          ${simSlot ? `
-            <div class="lab-slot-footer">
-              <span class="lab-slot-berry-pts">${isEN ? 'Daily Berry:' : '每日樹果:'} <strong style="color:#facc15;">${simSlot.dailyBerryEnergy.toLocaleString()}</strong></span>
-              <button type="button" class="box-btn box-btn-secondary lab-slot-replace-btn" onclick="window.AppraisalLab.openPicker({ type: 'team', slotIndex: ${idx} })">
-                ${isEN ? 'Replace' : '更換'}
-              </button>
-            </div>
-          ` : `
-            <div class="lab-slot-footer">
-              <button type="button" class="box-btn box-btn-secondary lab-slot-replace-btn" style="width:100%;" onclick="window.AppraisalLab.openPicker({ type: 'team', slotIndex: ${idx} })">
-                ${isEN ? 'Replace' : '更換'}
-              </button>
-            </div>
-          `}
         </div>
       `;
     }).join('');
@@ -385,20 +371,11 @@
               </div>
             </div>
             <div class="lab-supply-row-mid">
-              <div class="lab-supply-col-demand" title="${isEN ? 'Single meal requirement' : '單餐需求'}">
-                <span class="lab-supply-label">${isEN ? 'Per Meal:' : '每餐:'}</span>
-                <strong style="color:var(--text-primary);">x${item.perMeal}</strong>
-              </div>
+              <span title="${isEN ? 'Single meal requirement' : '單餐需求'}">${isEN ? 'Meal:' : '每餐:'} <strong>x${item.perMeal}</strong></span>
               <span class="lab-supply-mid-sep">·</span>
-              <div class="lab-supply-col-daily" title="${isEN ? 'Daily 3-meal total demand' : '每日 3 餐總需求'}">
-                <span class="lab-supply-label">${isEN ? 'Daily Demand:' : '日需(3餐):'}</span>
-                <strong style="color:var(--text-secondary);">x${item.dailyDemand}</strong>
-              </div>
+              <span title="${isEN ? 'Daily 3-meal total demand' : '每日 3 餐總需求'}">${isEN ? 'Daily:' : '日需:'} <strong>x${item.dailyDemand}</strong></span>
               <span class="lab-supply-mid-sep">·</span>
-              <div class="lab-supply-col-yield" title="${isEN ? 'Team estimated daily harvest' : '隊伍每日預估產出'}">
-                <span class="lab-supply-label">${isEN ? 'Team Yield:' : '隊伍日產:'}</span>
-                <strong style="color:#22c55e;">x${item.teamYield}</strong>
-              </div>
+              <span title="${isEN ? 'Team estimated daily harvest' : '隊伍每日預估產出'}">${isEN ? 'Yield:' : '日產:'} <strong style="color:#22c55e;">x${item.teamYield}</strong></span>
             </div>
             <div class="lab-supply-col-progress">
               <div class="lab-supply-progress-bar-bg">
@@ -418,15 +395,15 @@
         <div class="lab-recipe-supply-board" id="lab-team-recipe-supply-demand">
           <div class="lab-supply-board-header">
             <div class="lab-supply-board-title-group">
-              ${targetRecipe.icon ? `<img src="${targetRecipe.icon}" class="lab-supply-dish-icon" alt="${escapeHtml(targetRecipeDisplayName)}">` : ''}
+              ${targetRecipe.icon ? `<img src="${targetRecipe.icon}" class="lab-supply-dish-icon" alt="${escapeHtml(targetRecipeDisplayName)}" title="${escapeHtml(targetRecipeDisplayName)}">` : ''}
               <div>
                 <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
-                  <span class="lab-supply-dish-name">${escapeHtml(targetRecipeDisplayName)}</span>
+                  <span class="sr-only">${escapeHtml(targetRecipeDisplayName)}</span>
                   <span class="lab-supply-dish-badge">${escapeHtml(targetRecipeCategory)}</span>
                   ${targetRecipe.pot_size ? `<span class="lab-supply-dish-meta">${targetRecipe.pot_size} ${isEN ? 'Pots' : '格鍋容量'}</span>` : ''}
                   ${targetRecipe.base_energy ? `<span class="lab-supply-dish-meta">${targetRecipe.base_energy.toLocaleString()} ${isEN ? 'Base Energy' : '基礎能量'}</span>` : ''}
                 </div>
-                <div style="font-size:10.5px;color:var(--text-muted);margin-top:1px;">
+                <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">
                   ${isEN ? 'Target Recipe Ingredient Supply vs Daily Demand Dashboard (3 Meals/Day)' : '目標料理食材供需看板 · 精算每日 3 餐食材缺口與隊伍自給自足率'}
                 </div>
               </div>
@@ -452,27 +429,19 @@
       <div class="lab-team-view-container">
         <div class="lab-island-selector">
           <div style="font-size:11.5px;font-weight:700;color:var(--text-muted);margin-right:4px;">${isEN ? 'Camp:' : '研究營地:'}</div>
-          ${islandPillsHtml}
+          <div class="lab-island-circles-row">
+            ${islandPillsHtml}
+          </div>
         </div>
 
         ${teamVariablesBarHtml}
 
         ${greengrassConfigHtml}
 
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
-          <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
-            <span style="font-size:11.5px;font-weight:700;color:var(--text-secondary);">${isEN ? 'Favored Berries (2x Power):' : '喜愛樹果 (2x 能量):'}</span>
+        <div class="lab-team-favored-bar">
+          <span class="lab-favored-label">${isEN ? 'Favored Berries (2x Power):' : '喜愛樹果 (2x 能量):'}</span>
+          <div class="lab-favored-berries-list">
             ${favoredBerriesHtml}
-          </div>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <button type="button" class="box-btn box-btn-primary" onclick="window.AppraisalLab.autoOptimizeTeam(true)" style="font-size:11px;padding:4px 10px;display:inline-flex;align-items:center;gap:4px;">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-              <span>${isEN ? 'Auto-Optimize Team' : '一鍵推薦最佳陣容'}</span>
-            </button>
-            <button type="button" class="box-btn box-btn-secondary" onclick="window.AppraisalLab.clearAllTeamSlots()" style="font-size:11px;padding:4px 10px;display:inline-flex;align-items:center;gap:4px;">
-              <span>[X]</span>
-              <span>${isEN ? 'Clear Team' : '清空隊伍'}</span>
-            </button>
           </div>
         </div>
 
@@ -498,17 +467,6 @@
             <div class="lab-metric-value" style="color:#22c55e;">${simulation.totalDailyIngredientsCount} <span style="font-size:12px;font-weight:600;color:var(--text-muted);">${isEN ? 'items/day' : '個/日'}</span></div>
             <div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:2px;">
               ${topIngsHtml || `<span style="font-size:10.5px;color:var(--text-muted);">${isEN ? 'No ingredients yet' : '尚無食材產出'}</span>`}
-            </div>
-          </div>
-
-          <div class="lab-metric-card">
-            <div style="font-size:11.5px;font-weight:700;color:var(--text-muted);">${isEN ? 'Skills & Team Auras' : '主技能與隊伍光環協同'}</div>
-            <div style="font-size:11.5px;color:var(--text-primary);display:flex;flex-direction:column;gap:3px;margin-top:2px;">
-              <div>${isEN ? 'Main Skill Procs:' : '主技能總發動預估:'} <strong style="color:var(--accent-color,#38bdf8);">${simulation.totalDailySkillProcs} ${isEN ? 'times/day' : '次/日'}</strong></div>
-              <div>${isEN ? 'Helping Bonus:' : '幫手獎勵光環:'} <strong style="color:#facc15;">${simulation.helpingBonusCount} ${isEN ? 'layers' : '層'} (+${simulation.helpingBonusCount * 5}% ${isEN ? 'Speed' : '全隊幫速'})</strong></div>
-              <div style="font-size:10.5px;color:var(--text-secondary);line-height:1.3;">
-                ${simulation.hasHealer ? `<span style="color:#22c55e;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:2px;"><polyline points="20 6 9 17 4 12"></polyline></svg>${isEN ? 'Dedicated healer: High energy (>80%) grants 2.2x speed boost!' : '隊內具備常駐補師：常駐高活力 (>80%) 享 2.2x 最大幫速！'}</span>` : `<span style="color:#94a3b8;">[!] ${isEN ? 'No healer in team: Daytime energy decay applies (~1.6x baseline).' : '隊內無常駐補師：預估日間活力衰減 (約 1.6x 基準幫速)。'}</span>`}
-              </div>
             </div>
           </div>
         </div>

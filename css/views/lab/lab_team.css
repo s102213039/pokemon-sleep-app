@@ -2,6 +2,92 @@
    views/lab/lab_team.css — 幫手組隊與目標料理供需看板樣式 (Team Builder & Supply Board)
    ========================================================================== */
 
+/* 研究營地島嶼圓形背景按鈕 (Circular Island Scene Buttons) */
+.lab-island-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.lab-island-circles-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lab-island-circle-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  padding: 0;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.lab-island-circle-btn:hover {
+  transform: scale(1.08);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.lab-island-circle-btn.active {
+  transform: scale(1.12);
+  border-width: 2.5px;
+}
+
+/* 喜愛樹果純圖示列 (Favored Berries Clean Icons Bar) */
+.lab-team-favored-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.lab-favored-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.lab-favored-berries-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lab-favored-berry-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+.lab-favored-berry-img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  vertical-align: middle;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  transition: transform 0.15s ease;
+}
+
+.lab-favored-berry-img:hover {
+  transform: scale(1.15);
+}
+
 /* 隊伍全體光環彙總列 (Team Shared Bonuses Summary Bar) */
 .lab-team-auras-bar {
   display: flex;
@@ -77,59 +163,47 @@
   font-size: 10.5px;
 }
 
-/* 隊伍卡片矩陣 (5 Slots Grid) */
+/* 隊伍卡片矩陣 (5 Slots 100% Width Full Rows) */
 .lab-team-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 8px;
   margin-bottom: 12px;
+  width: 100%;
 }
 
 .lab-team-slot-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: 8px 10px;
+  padding: 8px 12px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   position: relative;
   transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .lab-team-slot-card:hover {
   border-color: var(--accent-color, #38bdf8);
 }
 
-.lab-slot-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.lab-slot-index {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--text-muted);
-}
-
-.lab-slot-remove-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 11px;
-  padding: 0 2px;
-}
-
-.lab-slot-remove-btn:hover {
-  color: #f43f5e;
-}
-
 .lab-slot-main-row {
   display: flex;
   align-items: center;
-  gap: 7px;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+.lab-slot-identity-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
 }
 
 .lab-slot-avatar-wrap {
@@ -138,8 +212,8 @@
 }
 
 .lab-slot-avatar-img {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   object-fit: contain;
 }
 
@@ -151,18 +225,21 @@
   border: 1px solid #334155;
   border-radius: 4px;
   padding: 0 3px;
-  font-size: 9px;
+  font-size: 8.5px;
   font-weight: 800;
   color: #94a3b8;
 }
 
-.lab-slot-meta-col {
+.lab-slot-name-col {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   min-width: 0;
-  flex: 1;
+  flex-wrap: wrap;
 }
 
 .lab-slot-name {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--text-primary);
   overflow: hidden;
@@ -171,122 +248,166 @@
 }
 
 .lab-slot-nickname {
-  font-size: 10px;
+  font-size: 10.5px;
   color: var(--accent-color, #38bdf8);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.lab-slot-tags-row {
+.lab-slot-replace-top-btn {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* 類型、樹果與食材排版 (左側類型+樹果，右側3食材槽) */
+.lab-slot-spec-row {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-top: 1px;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  margin: 2px 0;
+}
+
+.lab-slot-spec-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lab-slot-berry-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .lab-slot-berry-icon {
-  width: 13px;
-  height: 13px;
+  width: 16px;
+  height: 16px;
   object-fit: contain;
   vertical-align: middle;
 }
 
-.lab-slot-fav-tag {
-  background: rgba(234, 179, 8, 0.2);
-  color: #facc15;
-  padding: 0 3px;
-  border-radius: 3px;
-  font-weight: 800;
-  font-size: 9px;
+.lab-slot-berry-wrap.favored .lab-slot-berry-icon {
+  border: 1.5px solid #eab308;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(234, 179, 8, 0.5);
+  background: rgba(234, 179, 8, 0.12);
 }
 
-/* 3 食材槽呈現 (Lv.1, Lv.30, Lv.60) */
+.lab-slot-fav-badge {
+  position: absolute;
+  bottom: -3px;
+  right: -4px;
+  font-size: 8px;
+  font-weight: 800;
+  color: #1e293b;
+  background: #facc15;
+  padding: 0 3px;
+  border-radius: 4px;
+  line-height: 1.1;
+}
+
+.lab-slot-ings-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
 .lab-slot-ing-strip {
   display: flex;
   align-items: center;
-  gap: 4px;
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 5px;
-  padding: 3px 5px;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
 .lab-slot-ing-chip {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
-  padding: 1px 4px;
-  flex: 1;
   justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
 }
 
 .lab-slot-ing-chip.is-locked {
-  opacity: 0.45;
-  border-style: dashed;
+  opacity: 0.35;
+  filter: grayscale(1);
 }
 
 .lab-slot-ing-icon {
-  width: 13px;
-  height: 13px;
+  width: 22px;
+  height: 22px;
   object-fit: contain;
+  vertical-align: middle;
 }
 
-.lab-slot-ing-lv {
-  font-size: 8.5px;
-  color: var(--text-muted);
-  font-weight: 700;
-}
-
-/* 技能與個性資訊列 */
-.lab-slot-info-row {
-  font-size: 10.5px;
-  color: var(--text-secondary);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.lab-slot-info-item {
+/* 技能、個性與加成光環底部資訊列 */
+.lab-slot-bottom-row {
   display: flex;
   align-items: center;
-  gap: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 4px;
+  margin-top: 2px;
+  flex-wrap: wrap;
 }
 
-.lab-slot-info-lbl {
-  color: var(--text-muted);
-  font-weight: 700;
-  font-size: 10px;
+.lab-slot-bottom-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
-.lab-slot-info-val {
+.lab-slot-skill-name {
   font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: var(--text-primary);
 }
 
 .lab-slot-skill-lv {
-  background: rgba(56, 189, 248, 0.15);
   color: var(--accent-color, #38bdf8);
-  padding: 0 3px;
-  border-radius: 3px;
-  font-size: 9px;
+}
+
+.lab-slot-mid-sep {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.lab-slot-nature-name {
+  color: var(--text-secondary);
+}
+
+.lab-slot-bottom-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.lab-slot-berry-pts {
+  font-size: 11px;
+  color: #facc15;
   font-weight: 700;
 }
 
-/* 僅展示全體隊伍加成副技能 */
-.lab-slot-auras-row {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-height: 18px;
-}
-
+/* 全隊加成副技能標籤 */
 .lab-slot-aura-badge {
   display: inline-flex;
   align-items: center;
@@ -324,35 +445,12 @@
   margin-left: auto;
 }
 
-.lab-slot-footer {
-  margin-top: auto;
-  padding-top: 4px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 4px;
-}
-
-.lab-slot-berry-pts {
-  font-size: 10px;
-  color: var(--text-muted);
-}
-
-.lab-slot-replace-btn {
-  font-size: 10px;
-  padding: 2px 6px;
-}
-
+/* 空缺位槽位卡片 */
 .lab-team-slot-empty {
-  min-height: 140px;
+  min-height: auto;
+  padding: 12px 14px;
   border: 1.5px dashed var(--border-color);
   background: rgba(255, 255, 255, 0.02);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -362,10 +460,24 @@
   background: rgba(56, 189, 248, 0.05);
 }
 
-/* 隊伍整體成效指標卡片 */
+.lab-slot-empty-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.lab-slot-empty-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+/* 隊伍整體成效指標卡片 (2 Columns) */
 .lab-team-metrics-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   margin-top: 10px;
 }
@@ -665,18 +777,18 @@
 
 .lab-supply-items-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 6px;
 }
 
 .lab-supply-row {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   background: rgba(0, 0, 0, 0.18);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 8px 10px;
+  border-radius: 6px;
+  padding: 5px 8px;
   transition: all 0.15s ease;
 }
 

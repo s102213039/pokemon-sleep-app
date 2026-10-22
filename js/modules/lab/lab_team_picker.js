@@ -12,7 +12,7 @@
         localStorage.setItem('pksleep_lab_team_island', islandId);
       }
     } catch (e) {}
-    updateLabUI();
+    autoOptimizeTeam(false);
   }
 
   function setTeamSlot(slotIndex, uid) {

@@ -509,7 +509,7 @@
           localStorage.setItem('pksleep_lab_team_strategy', strategy);
         }
       } catch (e) {}
-      updateLabUI();
+      autoOptimizeTeam(false);
     }
   }
 
@@ -521,7 +521,7 @@
         localStorage.setItem('pksleep_lab_target_recipe', recipeName);
       }
     } catch (e) {}
-    updateLabUI();
+    autoOptimizeTeam(false);
   }
 
   const ALL_BERRY_NAMES = [
@@ -546,15 +546,11 @@
       }
     } catch (e) {}
 
-    if (autoBuild) {
-      autoOptimizeTeam(true);
-    } else {
-      updateLabUI();
-      if (typeof window !== 'undefined' && typeof window.showToast === 'function') {
-        const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
-        const berryDisplay = rolled.map(b => (isEN && window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b) : b)).join(', ');
-        window.showToast(isEN ? `Greengrass favored berries rerolled: ${berryDisplay}` : `萌綠之島喜愛樹果已隨機刷新：${rolled.join('、')}！`);
-      }
+    autoOptimizeTeam(autoBuild);
+    if (!autoBuild && typeof window !== 'undefined' && typeof window.showToast === 'function') {
+      const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
+      const berryDisplay = rolled.map(b => (isEN && window.I18N && window.I18N.getBerryName ? window.I18N.getBerryName(b) : b)).join(', ');
+      window.showToast(isEN ? `Greengrass favored berries rerolled: ${berryDisplay}` : `萌綠之島喜愛樹果已隨機刷新：${rolled.join('、')}！`);
     }
   }
 
@@ -566,7 +562,7 @@
           localStorage.setItem('pksleep_lab_cooking_type', cookingType);
         }
       } catch (e) {}
-      updateLabUI();
+      autoOptimizeTeam(false);
     }
   }
 
@@ -581,7 +577,7 @@
           localStorage.setItem('pksleep_lab_greengrass_berries', JSON.stringify(labState.greengrassBerries));
         }
       } catch (e) {}
-      updateLabUI();
+      autoOptimizeTeam(false);
     }
   }
 

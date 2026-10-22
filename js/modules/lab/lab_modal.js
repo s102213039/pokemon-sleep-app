@@ -725,6 +725,7 @@
       name: '萌綠之島',
       name_en: 'Greengrass Isle',
       color: '#22c55e',
+      image: 'assets/islands/hd/greengrass.jpg',
       berries: ['桃桃果', '橙橙果', '櫻子果'],
       types: ['妖精', '水', '格鬥'],
       desc: '初始營地 · 自由全屬性'
@@ -734,6 +735,7 @@
       name: '天青沙灘',
       name_en: 'Cyan Beach',
       color: '#06b6d4',
+      image: 'assets/islands/hd/cyan.jpg',
       berries: ['橙橙果', '椰木果', '桃桃果'],
       types: ['水', '飛行', '妖精'],
       desc: '喜愛樹果：水、飛行、妖精 (2x 能量)'
@@ -743,6 +745,7 @@
       name: '灰褐洞窟',
       name_en: 'Taupe Hollow',
       color: '#f97316',
+      image: 'assets/islands/hd/taupe.jpg',
       berries: ['蘋野果', '勿花果', '文柚果'],
       types: ['火', '地面', '岩石'],
       desc: '喜愛樹果：火、地面、岩石 (2x 能量)'
@@ -752,6 +755,7 @@
       name: '白林原野',
       name_en: 'Snowdrop Tundra',
       color: '#38bdf8',
+      image: 'assets/islands/hd/snowdrop.jpg',
       berries: ['柿仔果', '生薑果', '芭拉果'],
       types: ['一般', '冰', '惡'],
       desc: '喜愛樹果：一般、冰、惡 (2x 能量)'
@@ -761,6 +765,7 @@
       name: '拉碧絲湖畔',
       name_en: 'Lapis Lakeside',
       color: '#a855f7',
+      image: 'assets/islands/hd/lapis.jpg',
       berries: ['榴石果', '芒念果', '櫻子果'],
       types: ['草', '超能', '格鬥'],
       desc: '喜愛樹果：草、超能、格鬥 (2x 能量)'
@@ -770,6 +775,7 @@
       name: '發電廠',
       name_en: 'Old Gold Power Plant',
       color: '#eab308',
+      image: 'assets/islands/hd/oldgold.jpg',
       berries: ['異奇果', '靛莓果', '檬果'],
       types: ['電', '鋼', '幽靈'],
       desc: '喜愛樹果：電、鋼、幽靈 (2x 能量)'

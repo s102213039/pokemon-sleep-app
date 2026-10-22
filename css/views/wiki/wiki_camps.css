@@ -578,7 +578,10 @@
 
 @media (max-width: 900px) {
   .lab-team-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
   .lab-team-metrics-grid {
     grid-template-columns: 1fr;
@@ -590,7 +593,10 @@
 
 @media (max-width: 640px) {
   .lab-team-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
   .lab-compare-grid {
     grid-template-columns: 1fr;
