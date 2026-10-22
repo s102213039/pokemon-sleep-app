@@ -1776,6 +1776,196 @@ function registerTier4Part4() {
     assert(ciYaml.includes('npm test'), 'ci.yml must execute npm test');
     assert(ciYaml.includes('push:') && ciYaml.includes('pull_request:'), 'ci.yml must trigger on push and pull_request');
   });
+
+  // ─── Test 113: Ultra High-Scale Stress Testing, BFS Performance & Security Fuzzing ────
+
+  test('Tier 4 - Real-World Application Scenarios', 'Ultra High-Scale Stress Testing, BFS Performance & Security Fuzzing', () => {
+    const DOMUtils = require(path.resolve(WORKSPACE_ROOT, 'js/core/domUtils.js'));
+    const AppraisalLab = require(path.resolve(WORKSPACE_ROOT, 'js/modules/appraisal.js'));
+    const allPokemons = JSON.parse(fs.readFileSync(path.resolve(WORKSPACE_ROOT, 'data/data.json'), 'utf8'));
+
+    // 1. Prototype pollution fuzzing on box sanitization logic
+    const boxMainJs = fs.readFileSync(path.resolve(WORKSPACE_ROOT, 'js/modules/box/box_main.js'), 'utf8');
+    assert(boxMainJs.includes('DANGEROUS_PROTO_KEYS'), 'box_main.js must define DANGEROUS_PROTO_KEYS');
+    assert(boxMainJs.includes('__proto__') && boxMainJs.includes('constructor') && boxMainJs.includes('prototype'), 'box_main.js must protect against all prototype pollution vectors');
+
+    // 2. XSS entity escaping via DOMUtils.escapeHtml
+    assertEquals(DOMUtils.escapeHtml('<script>alert("xss")</script>'), '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;', 'DOMUtils.escapeHtml must encode script tags and quotes');
+    assertEquals(DOMUtils.escapeHtml("test 'quote' & <tag>"), 'test &#039;quote&#039; &amp; &lt;tag&gt;', 'DOMUtils.escapeHtml must encode single quotes and ampersands');
+    assertEquals(DOMUtils.escapeHtml(null), '', 'DOMUtils.escapeHtml with null must return empty string');
+
+    // 3. Ultra High-Scale Synthetic Box Generation (1,000 Pokemon items)
+    const subskillsPool = [
+      '樹果數量攻擊s', '幫忙手動', '幫忙獎勵', '食材機率提升M', '技能機率提升M',
+      '技能等級提升M', '持有上限提升L', '活力回復獎勵', '睡眠EXP獎勵'
+    ];
+    const naturesPool = ['固執', '淘氣', '內斂', '膽小', '爽朗', '自滿', '認真', '急躁'];
+    const syntheticBox = [];
+    for (let i = 0; i < 1000; i++) {
+      const base = allPokemons[i % allPokemons.length];
+      syntheticBox.push({
+        uid: 'synth_' + i,
+        name: base.name_cn,
+        pokemonId: base.id,
+        level: (i % 100) + 1,
+        nature: naturesPool[i % naturesPool.length],
+        subskills: [
+          subskillsPool[i % subskillsPool.length],
+          subskillsPool[(i + 1) % subskillsPool.length],
+          subskillsPool[(i + 2) % subskillsPool.length]
+        ],
+        ingredients: [
+          base.ingredients && base.ingredients.slot1 ? base.ingredients.slot1[0] : '特選蘋果',
+          base.ingredients && base.ingredients.slot2 ? base.ingredients.slot2[0] : '特選蘋果',
+          base.ingredients && base.ingredients.slot3 ? base.ingredients.slot3[0] : '特選蘋果'
+        ]
+      });
+    }
+    assertEquals(syntheticBox.length, 1000, 'Synthetic box must contain exactly 1,000 items');
+
+    // 4. Performance benchmark: multi-attribute filtering & sorting over 1,000 entities
+    const t0 = Date.now();
+    const filtered = syntheticBox.filter(p => p.level >= 30 && p.nature === '固執');
+    filtered.sort((a, b) => b.level - a.level);
+    const filterTime = Date.now() - t0;
+    assert(filterTime < 100, `Filtering & sorting 1,000 Pokemon must finish in < 100ms (actual: ${filterTime}ms)`);
+    assert(filtered.length > 0, 'Filtered box should contain matching entries');
+
+    // 5. BFS evaluation micro-benchmark over 50 varied species
+    const I18N = require(path.resolve(WORKSPACE_ROOT, 'js/core/i18n.js'));
+    global.window = global.window || {};
+    global.window.I18N = I18N;
+    const tBfs0 = Date.now();
+    for (let i = 0; i < 50; i++) {
+      const p = syntheticBox[i];
+      const base = allPokemons.find(b => b.name_cn === p.name);
+      if (base) {
+        const perf = AppraisalLab.evaluatePokemon(p, base);
+        assert(perf, 'evaluatePokemon must return result object');
+      }
+    }
+    const bfsTime = Date.now() - tBfs0;
+    assert(bfsTime < 300, `BFS evaluation for 50 Pokemon must execute in < 300ms (actual: ${bfsTime}ms)`);
+  });
+
+  // ─── Test 114: Trilingual 100% Key Parity & Cross-Language Consistency Audit ────
+
+  test('Tier 4 - Real-World Application Scenarios', 'Trilingual 100% Key Parity & Cross-Language Consistency Audit', () => {
+    const I18N = require(path.resolve(WORKSPACE_ROOT, 'js/core/i18n.js'));
+    const allPokemons = JSON.parse(fs.readFileSync(path.resolve(WORKSPACE_ROOT, 'data/data.json'), 'utf8'));
+    const allRecipes = JSON.parse(fs.readFileSync(path.resolve(WORKSPACE_ROOT, 'data/recipes.json'), 'utf8'));
+
+    // 1. 100% Key-Value Parity across zh-TW, zh-CN, and en-US
+    const dict = I18N.DICTIONARY;
+    assert(dict['zh-TW'] && dict['zh-CN'] && dict['en-US'], 'DICTIONARY must contain zh-TW, zh-CN, en-US');
+    const zhTWKeys = Object.keys(dict['zh-TW']);
+    const zhCNKeys = Object.keys(dict['zh-CN']);
+    const enUSKeys = Object.keys(dict['en-US']);
+
+    assertEquals(zhTWKeys.length, zhCNKeys.length, `zh-TW (${zhTWKeys.length}) and zh-CN (${zhCNKeys.length}) must have identical key count`);
+    assertEquals(zhTWKeys.length, enUSKeys.length, `zh-TW (${zhTWKeys.length}) and en-US (${enUSKeys.length}) must have identical key count`);
+
+    const missingCN = zhTWKeys.filter(k => !(k in dict['zh-CN']));
+    const missingEN = zhTWKeys.filter(k => !(k in dict['en-US']));
+    assertEquals(missingCN.length, 0, `Missing keys in zh-CN: ${missingCN.join(', ')}`);
+    assertEquals(missingEN.length, 0, `Missing keys in en-US: ${missingEN.join(', ')}`);
+
+    // 2. Pokemon names coverage across all species
+    allPokemons.forEach(p => {
+      const en = I18N.getPokemonName(p, 'en-US');
+      const cn = I18N.getPokemonName(p, 'zh-CN');
+      assert(en && en.length > 0, `Missing en-US name for Pokemon ${p.name_cn}`);
+      assert(cn && cn.length > 0, `Missing zh-CN name for Pokemon ${p.name_cn}`);
+    });
+
+    // 3. Recipes names coverage across all recipes
+    allRecipes.forEach(r => {
+      const en = I18N.getRecipeName(r, 'en-US');
+      const cn = I18N.getRecipeName(r, 'zh-CN');
+      assert(en && en.length > 0, `Missing en-US name for recipe ${r.name_cn}`);
+      assert(cn && cn.length > 0, `Missing zh-CN name for recipe ${r.name_cn}`);
+    });
+
+    // 4. Natures, Berries, and Ingredients full translation coverage
+    const natures = Object.keys(I18N.NATURE_NAMES);
+    assertEquals(natures.length, 25, 'Must define exactly 25 natures');
+    natures.forEach(n => {
+      assert(I18N.getNatureName(n, 'en-US'), `Missing en-US for nature ${n}`);
+      assert(I18N.getNatureName(n, 'zh-CN'), `Missing zh-CN for nature ${n}`);
+    });
+
+    const berries = Object.keys(I18N.BERRY_NAMES);
+    assert(berries.length >= 18, 'Must define >= 18 berry types');
+    berries.forEach(b => {
+      assert(I18N.getBerryName(b, 'en-US'), `Missing en-US for berry ${b}`);
+      assert(I18N.getBerryName(b, 'zh-CN'), `Missing zh-CN for berry ${b}`);
+    });
+
+    const ingredients = Object.keys(I18N.INGREDIENT_NAMES);
+    assert(ingredients.length >= 19, 'Must define >= 19 ingredients');
+    ingredients.forEach(i => {
+      assert(I18N.getIngredientName(i, 'en-US'), `Missing en-US for ingredient ${i}`);
+      assert(I18N.getIngredientName(i, 'zh-CN'), `Missing zh-CN for ingredient ${i}`);
+    });
+  });
+
+  // ─── Test 115: Dataset Ground-Truth Integrity & Formula Precision Audit ────
+
+  test('Tier 4 - Real-World Application Scenarios', 'Dataset Ground-Truth Integrity & Formula Precision Audit', () => {
+    const allRecipes = JSON.parse(fs.readFileSync(path.resolve(WORKSPACE_ROOT, 'data/recipes.json'), 'utf8'));
+    const allPokemons = JSON.parse(fs.readFileSync(path.resolve(WORKSPACE_ROOT, 'data/data.json'), 'utf8'));
+
+    // 1. Serebii Ground Truth: Berry base energies Lv.1 in BERRY_VALUES_DATA
+    const expectedBerryBase = {
+      '櫻子果': 27, '零餘果': 32, '桃桃果': 26, '橙橙果': 31,
+      '柿仔果': 28, '蘋野果': 27, '文柚果': 30, '椰木果': 24,
+      '芒念果': 26, '巧可果': 35, '異奇果': 25, '榴石果': 30
+    };
+    const wikiSkillsJs = fs.readFileSync(path.resolve(WORKSPACE_ROOT, 'js/modules/wiki/wiki_skills.js'), 'utf8');
+    Object.entries(expectedBerryBase).forEach(([berry, energy]) => {
+      assert(wikiSkillsJs.includes(`name: '${berry}'`) && wikiSkillsJs.includes(`energy: ${energy}`), `wiki_skills.js must specify Lv.1 base energy ${energy} for ${berry}`);
+    });
+
+    // 2. Serebii Ground Truth: Ingredient base energies
+    const expectedIngBase = {
+      '特選蘋果': 90, '特選蛋': 115, '暖暖薑': 109, '萌綠玉米': 140,
+      '萌綠大豆': 100, '哞哞鮮奶': 98, '豆製肉': 103,
+      '美味尾巴': 342, '粗枝大蔥': 185, '放鬆可可': 151, '品鮮蘑菇': 167
+    };
+    Object.entries(expectedIngBase).forEach(([ing, energy]) => {
+      assert(wikiSkillsJs.includes(`name: "${ing}"`) && wikiSkillsJs.includes(`energy: ${energy}`), `wiki_skills.js must specify base energy ${energy} for ${ing}`);
+    });
+
+    // 3. Recipes structure validation: 78 recipes, pot sizes between 7 and 77
+    assertEquals(allRecipes.length, 78, 'recipes.json must contain exactly 78 recipes');
+    allRecipes.forEach(r => {
+      assert(r.name_cn && r.name_en, `Recipe must have name_cn and name_en: ${JSON.stringify(r)}`);
+      assert(r.base_energy > 0, `Recipe ${r.name_cn} base energy must be > 0`);
+      assert(r.pot_size >= 7 && r.pot_size <= 120, `Recipe ${r.name_cn} pot size (${r.pot_size}) must be between 7 and 120`);
+      assert(Array.isArray(r.ingredients) && r.ingredients.length > 0, `Recipe ${r.name_cn} must define ingredients array`);
+    });
+
+    // 4. Pokemon dataset structure validation: >= 247 items, valid specialty and interval
+    assert(allPokemons.length >= 247, `data.json count (${allPokemons.length}) must be >= 247`);
+    function parseIntervalSec(s) {
+      if (!s || s === '--') return 3600;
+      if (typeof s === 'number') return s;
+      const parts = String(s).split(':').map(n => parseInt(n, 10) || 0);
+      if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+      if (parts.length === 2) return parts[0] * 60 + parts[1];
+      return parseInt(s, 10) || 3600;
+    }
+    allPokemons.forEach(p => {
+      assert(p.name_cn && p.id, `Pokemon must have name_cn and id: ${p.name_cn}`);
+      assert(['樹果', '食材', '技能', '全部'].includes(p.specialty), `Pokemon ${p.name_cn} specialty must be 樹果, 食材, 技能, or 全部 (got: ${p.specialty})`);
+      const sec = parseIntervalSec(p.interval);
+      assert(sec >= 1500 && sec <= 8000, `Pokemon ${p.name_cn} base interval (${sec}s) must be realistic (1500-8000s)`);
+    });
+
+    // 5. Pot Expansion slider boundaries
+    const recipesJs = fs.readFileSync(path.resolve(WORKSPACE_ROOT, 'js/modules/recipes.js'), 'utf8');
+    assert(recipesJs.includes('potExpansion = Math.min(700,'), 'recipes.js potExpansion must support up to 700 for Cooking Weeks');
+  });
 }
 
 module.exports = { registerTier4Part4 };

@@ -5868,7 +5868,7 @@
   }
 
   /* ─── 全域導出 ─────────────────────────────────────────── */
-  window.AppraisalLab = {
+  const AppraisalLab = {
     isBerryBurstSkillSpecialist: isBerryBurstSkillSpecialist,
     isBfsSkillSpecialist: isBfsSkillSpecialist,
     isHealerSkillSpecialist: isHealerSkillSpecialist,
@@ -5944,11 +5944,12 @@
     onRecipePickerSelect: onRecipePickerSelect,
     simulateTeamPerformance: simulateTeamPerformance,
     toggleLab: function () {
+      if (typeof document === 'undefined') return;
       const container = document.getElementById('appraisal-lab-container');
       if (container) {
         const isHidden = container.style.display === 'none' || getComputedStyle(container).display === 'none';
         const willOpen = isHidden;
-        if (typeof window.switchBoxSubtab === 'function') {
+        if (typeof window !== 'undefined' && typeof window.switchBoxSubtab === 'function') {
           window.switchBoxSubtab(willOpen ? 'lab' : 'list');
         } else {
           container.style.display = willOpen ? 'block' : 'none';
@@ -5960,9 +5961,14 @@
     }
   };
 
-  // 全域別名
-  window.openAppraisalModal = openAppraisalModal;
-  window.closeAppraisalModal = closeAppraisalModal;
-  window.openCurrentEditModal = openCurrentEditModal;
+  if (typeof window !== 'undefined') {
+    window.AppraisalLab = AppraisalLab;
+    window.openAppraisalModal = openAppraisalModal;
+    window.closeAppraisalModal = closeAppraisalModal;
+    window.openCurrentEditModal = openCurrentEditModal;
+  }
 
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = AppraisalLab;
+  }
 })();

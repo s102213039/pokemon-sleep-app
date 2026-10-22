@@ -88,6 +88,21 @@
       el.style[prop] = value;
     },
 
+    /**
+     * HTML 特殊字元跳脫 (XSS 防護)
+     * @param {string|any} str
+     * @returns {string}
+     */
+    escapeHtml: function (str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    },
+
     _scriptPromises: Object.create(null),
 
     /**
