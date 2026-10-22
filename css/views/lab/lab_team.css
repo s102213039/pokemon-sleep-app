@@ -163,10 +163,10 @@
   font-size: 10.5px;
 }
 
-/* 隊伍卡片矩陣 (5 Slots 100% Width Full Rows) */
+/* 隊伍卡片矩陣 (Desktop: 一行5隻全部展示 / Mobile: 縱向單欄堆疊) */
 .lab-team-grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 8px;
   margin-bottom: 12px;
   width: 100%;
@@ -176,7 +176,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: 8px 12px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -194,14 +194,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
 }
 
 .lab-slot-identity-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   min-width: 0;
   flex: 1;
 }
@@ -233,13 +233,13 @@
 .lab-slot-name-col {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
   flex-wrap: wrap;
 }
 
 .lab-slot-name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-primary);
   overflow: hidden;
@@ -248,7 +248,7 @@
 }
 
 .lab-slot-nickname {
-  font-size: 10.5px;
+  font-size: 10px;
   color: var(--accent-color, #38bdf8);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -256,11 +256,11 @@
 }
 
 .lab-slot-replace-top-btn {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
-  padding: 3px 10px;
+  padding: 2px 7px;
   flex-shrink: 0;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
 }
 
@@ -269,7 +269,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
   margin: 2px 0;
 }
@@ -277,7 +277,7 @@
 .lab-slot-spec-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .lab-slot-berry-wrap {
@@ -288,8 +288,8 @@
 }
 
 .lab-slot-berry-icon {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   object-fit: contain;
   vertical-align: middle;
 }
@@ -317,14 +317,14 @@
 .lab-slot-ings-right {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   margin-left: auto;
 }
 
 .lab-slot-ing-strip {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   background: transparent;
   border: none;
   padding: 0;
@@ -346,8 +346,8 @@
 }
 
 .lab-slot-ing-icon {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
   vertical-align: middle;
 }
@@ -355,29 +355,33 @@
 /* 技能、個性與加成光環底部資訊列 */
 .lab-slot-bottom-row {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  flex-direction: column;
+  gap: 3px;
   font-size: 11px;
   color: var(--text-secondary);
   width: 100%;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   padding-top: 4px;
   margin-top: 2px;
-  flex-wrap: wrap;
 }
 
 .lab-slot-bottom-left {
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  gap: 4px;
   min-width: 0;
+  font-size: 10.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .lab-slot-skill-name {
   font-weight: 600;
   color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .lab-slot-skill-lv {
@@ -391,20 +395,23 @@
 
 .lab-slot-nature-name {
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .lab-slot-bottom-right {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-left: auto;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
 }
 
 .lab-slot-berry-pts {
-  font-size: 11px;
+  font-size: 10.5px;
   color: #facc15;
   font-weight: 700;
+  white-space: nowrap;
+  margin-left: auto;
 }
 
 /* 全隊加成副技能標籤 */
@@ -445,14 +452,20 @@
   margin-left: auto;
 }
 
-/* 空缺位槽位卡片 */
+/* 空缺位槽位卡片 (Desktop: 垂直居中展示 / Mobile: 單行橫列) */
 .lab-team-slot-empty {
-  min-height: auto;
-  padding: 12px 14px;
+  min-height: 110px;
+  padding: 12px 8px;
   border: 1.5px dashed var(--border-color);
   background: rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .lab-team-slot-empty:hover {
@@ -462,16 +475,78 @@
 
 .lab-slot-empty-row {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
 }
 
 .lab-slot-empty-text {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   color: var(--text-secondary);
+}
+
+/* 響應式：手機與小螢幕垂直堆疊單卡展示 */
+@media (max-width: 900px) {
+  .lab-team-grid {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .lab-team-slot-card {
+    padding: 8px 12px;
+  }
+
+  .lab-team-slot-empty {
+    min-height: auto;
+    padding: 12px 14px;
+  }
+
+  .lab-slot-empty-row {
+    flex-direction: row;
+  }
+
+  .lab-slot-bottom-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .lab-slot-bottom-right {
+    width: auto;
+  }
+}
+
+.mobile-h5-app .lab-team-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .lab-team-slot-card {
+  padding: 8px 12px !important;
+}
+
+.mobile-h5-app .lab-team-slot-empty {
+  min-height: auto !important;
+  padding: 12px 14px !important;
+}
+
+.mobile-h5-app .lab-slot-empty-row {
+  flex-direction: row !important;
+}
+
+.mobile-h5-app .lab-slot-bottom-row {
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.mobile-h5-app .lab-slot-bottom-right {
+  width: auto !important;
 }
 
 /* 隊伍整體成效指標卡片 (2 Columns) */
