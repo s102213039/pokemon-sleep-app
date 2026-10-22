@@ -1,0 +1,682 @@
+  box-shadow: none !important;
+}
+
+.stat-type-biscuit-max {
+  background: rgba(244, 114, 182, 0.18);
+  color: #f472b6;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.stat-type-seed,
+.stat-type-mint {
+  background: rgba(16, 185, 129, 0.16);
+  color: #34d399;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.stat-type-candy,
+.stat-type-shard {
+  background: rgba(56, 189, 248, 0.16);
+  color: #38bdf8;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.stat-type-energy,
+.stat-type-whistle,
+.stat-type-camp,
+.stat-type-ticket {
+  background: rgba(168, 85, 247, 0.16);
+  color: #c084fc;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.stat-type-evolution {
+  background: rgba(251, 146, 60, 0.16);
+  color: #fb923c;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Card Description Preview (Hidden on Cards) */
+.wiki-item-card-desc {
+  display: none !important;
+}
+
+/* Evolution Targets Section (Compact 28px Avatars, No Outer Border, No Dividing Line, No Name Label) */
+.wiki-item-card-evosection {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 0;
+  border-top: none !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.wiki-item-evo-chips {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 1px 0 2px 0;
+}
+
+.wiki-item-evo-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.wiki-item-evo-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  transition: transform 0.16s ease;
+  min-width: 0;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.wiki-item-evo-chip:hover {
+  transform: scale(1.15);
+  border: none;
+  background: transparent;
+}
+
+.wiki-item-evo-avatar {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
+  transition: transform 0.16s ease, filter 0.16s ease;
+}
+
+.wiki-item-evo-avatar:hover {
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+}
+
+.wiki-item-evo-name {
+  display: none !important;
+}
+
+/* Empty Search Results State */
+.wiki-items-empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--bg-card-inner);
+  border: 1px dashed var(--border-color);
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+    寶可夢深度診斷評測室與六維雷達圖 (Appraisal Lab & Radar Chart)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* 診斷報告彈窗 Backdrop */
+.appraisal-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(4, 7, 15, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* 診斷報告主卡片容器 */
+.appraisal-modal-container {
+  background: var(--bg-card-solid);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 1240px;
+  max-height: 92vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  animation: appraisalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes appraisalFadeIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.appraisal-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 22px;
+  min-height: 64px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-card);
+  gap: 16px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.appraisal-header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.appraisal-modal-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(168, 85, 247, 0.2);
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  color: #c084fc;
+  line-height: 1.2;
+}
+
+.appraisal-pokemon-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  line-height: 1.2;
+}
+
+.appraisal-pokemon-en {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.appraisal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.appraisal-dual-verdict-column {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.appraisal-dual-verdict-column .pokedex-header-verdict-badge.current-track {
+  background: var(--bg-card-inner, #1e293b);
+}
+
+.appraisal-dual-verdict-column .pokedex-header-score-text {
+  color: var(--text-primary, #f8fafc);
+}
+
+.appraisal-dual-verdict-column .pokedex-header-score-text .verdict-num {
+  color: var(--text-primary, #f8fafc);
+}
+
+.appraisal-dual-verdict-column .pokedex-header-verdict-badge.potential-track {
+  background: rgba(148, 163, 184, 0.1) !important;
+  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+}
+
+.appraisal-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted, #94a3b8);
+  font-size: 18px;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.appraisal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary, #ffffff);
+}
+
+.appraisal-modal-body {
+  display: grid;
+  grid-template-columns: 275px minmax(390px, 430px) 1fr;
+  gap: 18px;
+  padding: 16px 20px;
+  align-items: start;
+}
+
+@media (max-width: 1180px) {
+  .appraisal-modal-body {
+    grid-template-columns: 275px 1fr;
+    gap: 16px;
+  }
+  .appraisal-calc-col {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .appraisal-modal-body {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 12px;
+  }
+}
+
+/* 中欄：食材與技能產能算法精算拆解 (純淨無外框、區塊直線分隔、寬度緊湊、文字清晰大方) */
+.appraisal-calc-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+}
+
+.appraisal-calc-col .pokedex-calc-formula-card,
+#modal-appraisal-report .pokedex-calc-formula-card {
+  margin-top: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.appraisal-calc-col .pokedex-formula-inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.appraisal-calc-col .pokedex-formula-header {
+  margin-bottom: 6px !important;
+  padding: 0 !important;
+}
+
+.appraisal-calc-col .pokedex-formula-badge {
+  font-size: 14px !important;
+  letter-spacing: 0.2px;
+}
+
+.appraisal-calc-col .pokedex-calc-unified-box,
+#modal-appraisal-report .pokedex-calc-unified-box {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+#modal-appraisal-report .unified-calc-row {
+  border-bottom: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08)) !important;
+  padding: 8px 0 !important;
+  margin: 0 !important;
+  gap: 3px !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #modal-appraisal-report .unified-calc-row,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #modal-appraisal-report .unified-calc-row {
+  border-bottom-color: rgba(0, 0, 0, 0.07) !important;
+}
+
+[data-theme="midnight"]:not([data-theme-inverted="true"]) #modal-appraisal-report .unified-calc-row,
+[data-theme="onyx"]:not([data-theme-inverted="true"]) #modal-appraisal-report .unified-calc-row {
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+#modal-appraisal-report .calc-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+#modal-appraisal-report .calc-row-label {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+}
+
+#modal-appraisal-report .calc-val-main {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+}
+
+#modal-appraisal-report .calc-row-formula {
+  font-size: 12.5px !important;
+  gap: 4px !important;
+  background: transparent !important;
+  padding: 2px 0 !important;
+  line-height: 1.4 !important;
+  flex-wrap: wrap;
+}
+
+#modal-appraisal-report .formula-derive {
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+#modal-appraisal-report .berry-row-detail {
+  font-size: 12px !important;
+  gap: 8px !important;
+  margin-top: 2px !important;
+}
+
+#modal-appraisal-report .pokedex-yield-items-grid {
+  gap: 6px !important;
+  margin-top: 3px !important;
+}
+
+#modal-appraisal-report .pokedex-yield-pill {
+  padding: 2px 8px !important;
+  font-size: 12px !important;
+  border-radius: 5px !important;
+}
+
+#modal-appraisal-report .yield-pill-img {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+#modal-appraisal-report .yield-pill-name {
+  font-size: 12px !important;
+}
+
+#modal-appraisal-report .yield-pill-count {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+#modal-appraisal-report .calc-row-subskill-extra {
+  font-size: 12px !important;
+  margin-top: 3px !important;
+  gap: 6px !important;
+}
+
+#modal-appraisal-report .badge-skill-extra {
+  font-size: 11px !important;
+  padding: 1.5px 6px !important;
+}
+
+#modal-appraisal-report .calc-row-skill-desc {
+  font-size: 11.5px !important;
+  line-height: 1.4 !important;
+  margin-top: 2px !important;
+}
+
+#modal-appraisal-report .pokedex-strategy-desktop-wrap {
+  margin-top: 0 !important;
+  padding-top: 2px !important;
+}
+
+#modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
+  position: relative !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  background: rgba(56, 189, 248, 0.05) !important;
+  border-radius: 8px !important;
+  padding: 10px 10px 8px 10px !important;
+  margin-top: 13px !important;
+  margin-bottom: 2px !important;
+  gap: 4px !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
+  border-color: rgba(2, 132, 199, 0.35) !important;
+  background: rgba(2, 132, 199, 0.04) !important;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) #modal-appraisal-report .pokedex-calc-unified-box .pokedex-strategy-card {
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  background: rgba(16, 185, 129, 0.05) !important;
+}
+
+#modal-appraisal-report .strategy-item {
+  font-size: 12px !important;
+  gap: 6px !important;
+  line-height: 1.35 !important;
+}
+
+#modal-appraisal-report .strategy-k {
+  font-size: 12px !important;
+}
+
+#modal-appraisal-report .strategy-v {
+  font-size: 12px !important;
+}
+
+#modal-appraisal-report .strategy-card-badge {
+  font-size: 11px !important;
+  padding: 1.5px 6px !important;
+}
+
+#modal-appraisal-report .subskill-chip {
+  font-size: 11px !important;
+  padding: 2px 6px !important;
+}
+
+.appraisal-calc-mobile-wrap {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.appraisal-calc-mobile-wrap .pokedex-calc-formula-card {
+  margin-top: 0 !important;
+}
+
+/* 左欄底部：基礎數值雙欄縱向列 (幫忙間隔/持有/食材率/技能率) */
+.appraisal-left-col .appraisal-stats-section,
+.appraisal-stats-section {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.pokedex-header-stats-row.pokedex-header-stats-dual.appraisal-header-stats-dual,
+.appraisal-left-col .appraisal-header-stats-dual {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 8px 12px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  border-top: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08)) !important;
+  padding: 10px 0 0 0 !important;
+  margin-top: 2px !important;
+  box-sizing: border-box !important;
+}
+
+.appraisal-left-col .appraisal-header-stats-dual .pokedex-header-stat-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.appraisal-left-col .appraisal-header-stats-dual .pokedex-header-stat-item {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  line-height: 1.25 !important;
+  white-space: nowrap !important;
+}
+
+.appraisal-left-col .appraisal-header-stats-dual .header-stat-k {
+  font-size: 12px !important;
+  color: var(--text-muted, #94a3b8) !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  min-width: auto !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.appraisal-left-col .appraisal-header-stats-dual .header-stat-v {
+  font-size: 15px !important;
+  color: var(--text-primary, #f8fafc) !important;
+  font-weight: 800 !important;
+  font-family: monospace, system-ui, -apple-system !important;
+  font-variant-numeric: tabular-nums !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
+  overflow: visible !important;
+}
+
+.appraisal-left-col .appraisal-header-stats-dual .header-stat-diff {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  margin-left: 3px !important;
+  white-space: nowrap !important;
+  display: inline !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .appraisal-left-col .appraisal-header-stats-dual,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .appraisal-left-col .appraisal-header-stats-dual {
+  border-top-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .appraisal-left-col .appraisal-header-stats-dual .header-stat-v,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .appraisal-left-col .appraisal-header-stats-dual .header-stat-v {
+  color: #0f172a !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .appraisal-left-col .appraisal-header-stats-dual .header-stat-k,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .appraisal-left-col .appraisal-header-stats-dual .header-stat-k {
+  color: #64748b !important;
+}
+
+/* 左欄：基本卡片與配置 (純淨無外框) */
+.appraisal-left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.appraisal-profile-card {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.appraisal-avatar-wrapper {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  margin-bottom: 12px;
+}
+
+.appraisal-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+}
+
+.appraisal-level-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: #0284c7;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.appraisal-specialty-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.appraisal-berry-tag {
+  display: inline-flex;
+  align-items: center;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.appraisal-spec-tag {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2.5px 10px;
+  border-radius: 9999px;
+  line-height: 1.2;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.appraisal-spec-tag.spec-berry {
+  background: rgba(34, 197, 94, 0.18) !important;
+  border: 1.5px solid #22c55e !important;
+  color: #4ade80 !important;
+}
+
+.appraisal-spec-tag.spec-ingredient {
+  background: rgba(234, 179, 8, 0.18) !important;
+  border: 1.5px solid #eab308 !important;
+  color: #facc15 !important;
+}
+
+.appraisal-spec-tag.spec-skill {

@@ -386,6 +386,7 @@
     return rawStr;
   }
 
+
   /* ─── 核心評估演算法 (單一維度/等級計算核心) ──────────── */
   function evaluateSingle(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, isPotential, cleanseMint) {
     if (!pkmData) return null;
@@ -1227,6 +1228,7 @@
     };
   }
 
+
   /* ─── 升級里程碑質變預測 (Specialty-Aware Milestone Leap Projections) ─── */
   function calculateMilestoneProjections(pkmData, currentLv, natureName, subskills, ingredients, ribbonLevel, skillLevel, currentEval) {
     if (!pkmData || !currentEval) return [];
@@ -1626,6 +1628,7 @@
       ]
     }
   ];
+
 
   function getAllTargetRecipes() {
     if (typeof window !== 'undefined' && Array.isArray(window.__RECIPES_CACHE__) && window.__RECIPES_CACHE__.length > 0) {
@@ -2296,6 +2299,7 @@
            labelsAndDots +
            '</svg>';
   }
+
 
   function getIngCountFromBase(basePkm, slotIdx, ingName) {
     if (!basePkm || !basePkm.ingredients) {
@@ -3124,6 +3128,7 @@
     salad: ['純粹油', '好眠番茄', '特選蘋果', '放鬆可可', '窩心洋芋', '萌綠大豆', '萌綠玉米', '嫩亮酪梨', '粗枝大蔥', 'Pure Oil', 'Snoozy Tomato', 'Fancy Apple', 'Soothing Cacao', 'Soft Potato', 'Greengrass Soybeans', 'Greengrass Corn', 'Glossy Avocado', 'Large Leek'],
     dessert: ['甜甜蜜', '特選蘋果', '哞哞鮮奶', '放鬆可可', '特選蛋', '醒腦咖啡豆', '暖暖薑', '沉甸甸南瓜', 'Honey', 'Fancy Apple', 'Moomoo Milk', 'Soothing Cacao', 'Fancy Egg', 'Rousing Coffee', 'Warming Ginger', 'Plump Pumpkin']
   };
+
 
   function getIslandFavoredBerries(islandId) {
     const island = LAB_ISLANDS.find(i => i.id === islandId) || LAB_ISLANDS[0];
@@ -4199,6 +4204,7 @@
   }
 
   /* ─── 子分頁與營地/槽位切換控制 (Tab & Slot Actions) ───────────────── */
+
   function switchSubTab(tab) {
     if (!['team', 'compare'].includes(tab)) tab = 'team';
     labState.currentSubTab = tab;
@@ -4671,6 +4677,7 @@
     setTargetRecipe(recipeName);
     closeLabPicker();
   }
+
 
   function renderGreengrassBerrySelect(idx, currentBerryName, isEN) {
     const optionsHtml = BERRY_VALUES_DATA.map(b => {

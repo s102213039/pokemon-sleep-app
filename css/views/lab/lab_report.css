@@ -1,0 +1,800 @@
+.box-top-banner {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  box-shadow: var(--shadow-lg);
+}
+
+.box-banner-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.box-banner-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.box-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.box-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  text-decoration: none;
+  user-select: none;
+}
+
+.box-btn-primary {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.box-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(56, 189, 248, 0.45);
+}
+
+.box-btn-secondary {
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.box-btn-secondary:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--accent-color);
+}
+
+/* 截圖拖曳與掃描區 (Dropzone) */
+.box-dropzone {
+  border: 2px dashed var(--accent-color);
+  background: var(--bg-card-inner);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.box-dropzone:hover,
+.box-dropzone.dragover {
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.08);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+  transform: scale(1.005);
+}
+
+.box-dropzone-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.box-dropzone-icon {
+  font-size: 32px;
+  background: rgba(56, 189, 248, 0.15);
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.box-dropzone-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.box-dropzone-title kbd {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-family: inherit;
+}
+
+.box-dropzone-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.box-scanner-status {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 8px;
+  color: #38bdf8;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 倉庫內容清單區 */
+.box-content-container {
+  max-width: 1200px;
+  width: 92%;
+  margin: 0 auto 40px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+body:not(.mobile-h5-app) .box-content-container .box-grid {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body:not(.mobile-h5-app) .box-content-container .table-container,
+body:not(.mobile-h5-app) .box-content-container .pokemon-table-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 0 16px 0 !important;
+  padding: 0 !important;
+  border-radius: var(--radius-lg, 16px) !important;
+  overflow-x: auto !important;
+}
+
+.box-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.box-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.box-card:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.box-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
+}
+
+.box-card-img-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.box-card-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.box-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.box-card-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.box-card-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 0 1 auto;
+}
+
+.box-card-level {
+  font-size: 12px;
+  font-weight: 800;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  flex-shrink: 0;
+}
+
+.box-card-nickname {
+  font-size: 11.5px;
+  color: var(--accent-purple);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.box-card-tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.box-spec-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  line-height: 1.2;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.box-spec-tag.spec-berry,
+.mobile-h5-app .box-spec-tag.spec-berry {
+  background: rgba(34, 197, 94, 0.18) !important;
+  border: 1.5px solid #22c55e !important;
+  color: #4ade80 !important;
+}
+
+.box-spec-tag.spec-ingredient,
+.mobile-h5-app .box-spec-tag.spec-ingredient {
+  background: rgba(234, 179, 8, 0.18) !important;
+  border: 1.5px solid #eab308 !important;
+  color: #facc15 !important;
+}
+
+.box-spec-tag.spec-skill,
+.mobile-h5-app .box-spec-tag.spec-skill {
+  background: rgba(14, 165, 233, 0.18) !important;
+  border: 1.5px solid #38bdf8 !important;
+  color: #38bdf8 !important;
+}
+
+.box-spec-tag.spec-all,
+.mobile-h5-app .box-spec-tag.spec-all {
+  background: rgba(168, 85, 247, 0.18) !important;
+  border: 1.5px solid #a855f7 !important;
+  color: #c084fc !important;
+}
+
+/* 圓形專長圖示樣式 (取代文字與外框底色) */
+.specialty-icon-wrap,
+.box-spec-tag.specialty-icon-wrap,
+.mobile-h5-app .box-spec-tag.specialty-icon-wrap,
+[data-theme="light"] .box-spec-tag.specialty-icon-wrap,
+.appraisal-spec-icon-wrap {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
+}
+
+.specialty-icon {
+  object-fit: contain;
+  vertical-align: middle;
+  display: inline-block;
+  pointer-events: none;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.specialty-icon-wrap:active .specialty-icon {
+  transform: scale(0.92);
+}
+
+/* 列表表格：得意圖示大小與樹果圖示 (20px) 保持一致 */
+.pokemon-table .td-spec .specialty-icon,
+.box-table .td-spec .specialty-icon {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.mobile-h5-app .pokemon-table .td-spec .specialty-icon,
+.mobile-h5-app .box-table .td-spec .specialty-icon {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* 卡片與標籤空間：根據展示空間微調大小 */
+.stat-item .specialty-icon {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.box-card-tags .specialty-icon {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.appraisal-specialty-row .specialty-icon {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.lab-preview-spec .specialty-icon {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.pokedex-header-berry-spec-group .specialty-icon {
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 768px) {
+  .pokedex-header-berry-spec-group .specialty-icon {
+    width: 16px !important;
+    height: 16px !important;
+  }
+}
+
+
+/* 食材尚未開放透明樣式 (外側卡片與內側彈窗通用) */
+.box-ing-chip.ing-locked,
+.appraisal-ing-chip.ing-locked,
+.ing-cell.ing-locked {
+  opacity: 0.32 !important;
+  filter: grayscale(65%) !important;
+  cursor: not-allowed;
+}
+
+.box-card-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.box-action-btn {
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  padding: 0;
+}
+
+.box-action-btn.btn-appraise {
+  color: #38bdf8;
+}
+.box-action-btn.btn-appraise:hover {
+  background: rgba(56, 189, 248, 0.15);
+  color: #7dd3fc;
+  transform: scale(1.15);
+}
+
+.box-action-btn.btn-edit {
+  color: #fbbf24;
+}
+.box-action-btn.btn-edit:hover {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fde047;
+  transform: scale(1.15);
+}
+
+.box-action-btn.btn-delete {
+  color: #f87171;
+}
+.box-action-btn.btn-delete:hover {
+  background: rgba(248, 113, 113, 0.15);
+  color: #fca5a5;
+  transform: scale(1.15);
+}
+
+.box-card-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* 食材組合 - 精簡單行3個食材並行展示 (Single-line Compact Parallel Ingredients) */
+.box-card-section-ing {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.box-ing-parallel-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.box-ing-row-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.box-ing-chips-grid {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.box-ing-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.box-ing-chip-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.box-ing-chip-count,
+.ing-count,
+.appraisal-ing-chip-count {
+  display: none !important;
+}
+
+.box-ing-chip.is-empty .box-ing-chip-empty {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.box-section-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+}
+
+.box-ing-slots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.box-ing-slot {
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 8px;
+  padding: 4px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.box-ing-lvl,
+.box-slot-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.box-slot-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 24px;
+}
+
+.box-slot-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.box-slot-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--badge-special-text);
+  background: var(--badge-special-bg);
+  border: 1px solid var(--badge-special-border);
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-family: monospace;
+}
+
+.box-ing-val,
+.box-slot-val {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 副技能網格 2+2+1 排列 (In-game 2+2+1 layout) */
+.box-subskills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+.box-subskills-grid .box-subskill-pill:nth-child(5) {
+  grid-column: 1 / 2;
+}
+
+.box-subskill-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.box-subskill-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  user-select: none;
+  text-align: center;
+  min-width: 0;
+  box-sizing: border-box;
+  transition: opacity 0.2s ease;
+}
+
+.box-subskill-pill .subskill-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.box-subskill-pill.subskill-locked {
+  opacity: 0.45;
+  border-style: dashed;
+  filter: grayscale(0.35);
+}
+
+.subskill-lvl {
+  font-size: 9.5px;
+  opacity: 0.8;
+  font-weight: 600;
+}
+
+.subskill-gold {
+  background: rgba(234, 179, 8, 0.18);
+  color: #ca8a04;
+  border: 1px solid rgba(234, 179, 8, 0.45);
+}
+
+[data-theme="midnight"] .subskill-gold,
+[data-theme="onyx"] .subskill-gold {
+  color: #fef08a;
+}
+
+.subskill-blue {
+  background: rgba(56, 189, 248, 0.16);
+  color: #0284c7;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+[data-theme="midnight"] .subskill-blue,
+[data-theme="onyx"] .subskill-blue {
+  color: #bae6fd;
+}
+
+.subskill-white {
+  background: var(--bg-card-inner);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+/* 性格展示 (單行無外框) */
+.box-nature-single-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  font-size: 12.5px;
+  flex-wrap: nowrap;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.box-nature-name {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.box-nature-effects {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 2px;
+}
+
+.nature-neutral {
+  color: var(--text-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+/* 淨白薄荷消除個性效果標籤與說明樣式 */
+.nature-mint-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  white-space: nowrap;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .nature-mint-tag,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-mint-tag {
+  color: #047857;
+  background: rgba(5, 150, 105, 0.12);
+  border-color: rgba(5, 150, 105, 0.3);
+}
+
+.nature-effect-mint {
+  color: #10b981 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .nature-effect-mint,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .nature-effect-mint {
+  color: #047857 !important;
+}
+
+.nature-capsule-mint-leaf {
+  display: none !important;
+}
+
+/* 智能簡評卡片摘要 (直通頂尖料理精選) */
+.box-card-summary {
+  margin-top: 4px;
+  padding: 6px 10px;
+  background: rgba(56, 189, 248, 0.05);
+  border: none;
+  border-radius: 6px;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--text-secondary, #cbd5e1);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.box-card-summary:hover {
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.box-card-summary-label {
+  font-weight: 700;
+  color: var(--accent-blue, #38bdf8);
+  margin-right: 4px;
+}
+
+.box-card-summary-text {
+  color: var(--text-secondary, #cbd5e1);
+}
+
+.mobile-h5-app .box-card-summary {
+  font-size: 11px !important;
+  padding: 5px 8px !important;
+  margin-top: 3px !important;
+  line-height: 1.35 !important;
+}
+
+.mobile-h5-app .box-card-summary-label {
+  font-size: 11px !important;
+}
+
+.mobile-h5-app .box-card-summary-text {
+  font-size: 11px !important;
+}
+
+.box-nature-badge {
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 8px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  flex-wrap: wrap;
+}
+
+.nature-buff {
+  color: #ef4444;
+  font-size: 11.5px;

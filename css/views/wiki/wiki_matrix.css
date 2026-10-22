@@ -1,0 +1,800 @@
+.ladder-filter-sidebar:not(.collapsed) .sidebar-bookmark-handle {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+.pokemon-filter-sidebar.collapsed .sidebar-bookmark-handle,
+.recipe-filter-sidebar.collapsed .sidebar-bookmark-handle,
+.box-filter-sidebar.collapsed .sidebar-bookmark-handle,
+.ladder-fixed-sidebar.collapsed .sidebar-bookmark-handle,
+.ladder-filter-sidebar.collapsed .sidebar-bookmark-handle {
+  display: flex !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  visibility: visible !important;
+}
+
+.sidebar-bookmark-handle:hover {
+  background: var(--bg-sidebar-btn-hover);
+  border-color: rgba(56, 189, 248, 0.5);
+  color: var(--accent-blue);
+}
+
+.bookmark-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.bookmark-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  writing-mode: vertical-lr;
+  letter-spacing: 2px;
+  line-height: 1;
+  margin: 2px 0;
+}
+
+.sidebar-bookmark-handle:hover .bookmark-text {
+  color: var(--accent-blue);
+}
+
+.bookmark-arrow {
+  font-size: 9px;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.pokemon-filter-sidebar.collapsed .bookmark-arrow {
+  transform: rotate(180deg);
+}
+
+.sidebar-bookmark-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: #0284c7;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*  左側抽屜式滑動側邊欄 (Left Sliding Sidebar - 完美對齊頂部 Header 與頁面背景) */
+.pokemon-filter-sidebar {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  bottom: 0;
+  width: 240px;
+  height: calc(100vh - 70px);
+  background-color: var(--bg-sidebar);
+  background-image: 
+    radial-gradient(at 0% 0%, var(--bg-radial-1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, var(--bg-radial-2) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, var(--bg-radial-3) 0px, transparent 50%);
+  background-attachment: fixed;
+  border-right: 1px solid var(--border-color);
+  border-top: none;
+  border-left: none;
+  border-bottom: none;
+  border-radius: 0;
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 95;
+  transform: translateX(0);
+  transition: transform 0.25s ease;
+  box-sizing: border-box;
+}
+
+.pokemon-filter-sidebar.collapsed {
+  transform: translateX(-100%);
+  box-shadow: none;
+}
+
+/* 側邊欄頂部 Header：在頂部導航列下方 */
+.sidebar-header {
+  height: 52px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-sidebar-header);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  flex-shrink: 0;
+  box-sizing: border-box;
+  gap: 6px;
+}
+
+/* 最左側收合箭頭按鈕 */
+.sidebar-close-btn {
+  background: var(--bg-sidebar-btn);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.sidebar-close-btn:hover {
+  background: var(--bg-sidebar-btn-hover);
+  color: var(--text-primary);
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+.sidebar-title-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.sidebar-title {
+  white-space: nowrap;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.sidebar-reset-btn {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.sidebar-reset-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
+/* 側邊欄內容：向下對齊到頁面主內容搜尋列起始位置 (padding-top: 32px 對齊 controls-container 的 margin-top: 32px) */
+.sidebar-scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 32px 10px 40px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: transparent;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+/*  側邊欄開關卡片 (Sidebar Switch Cards) */
+.sidebar-final-evo-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--bg-sidebar-btn);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 4.5px 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  box-sizing: border-box;
+}
+
+.sidebar-final-evo-label:hover {
+  background: var(--bg-sidebar-btn-hover);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.sidebar-final-evo-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.sidebar-switches-grid,
+.sidebar-section.sidebar-switches-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 4px !important;
+  width: 100% !important;
+  margin-bottom: 4px !important;
+  flex-direction: row !important;
+  box-sizing: border-box !important;
+}
+
+.sidebar-switch-compact {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 4px 4px 4px 6px !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.03)) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  min-height: 28px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  gap: 2px !important;
+  transition: all 0.15s ease !important;
+}
+
+.sidebar-switch-compact:hover {
+  background: var(--bg-sidebar-btn-hover) !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+}
+
+.sidebar-switch-compact .sidebar-final-evo-text {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  white-space: nowrap !important;
+  letter-spacing: -0.2px !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  flex-shrink: 1 !important;
+  min-width: 0 !important;
+}
+
+.sidebar-switch-compact .sidebar-switch-wrapper {
+  transform: scale(0.68) !important;
+  transform-origin: right center !important;
+  margin: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.sidebar-switch-wrapper {
+  display: inline-flex;
+  align-items: center;
+}
+
+.sidebar-switch-wrapper .switch-slider {
+  width: 28px;
+  height: 15px;
+}
+
+.sidebar-switch-wrapper .switch-slider::before {
+  height: 11px;
+  width: 11px;
+  left: 2px;
+  bottom: 2px;
+}
+
+.sidebar-switch-wrapper .switch-checkbox:checked + .switch-slider::before {
+  transform: translateX(13px);
+}
+
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sidebar-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1px;
+}
+
+.sidebar-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.sidebar-section-clear-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0 2px;
+  transition: color 0.15s ease;
+}
+
+.sidebar-section-clear-btn:hover {
+  color: #ef4444;
+}
+
+/* 類型標籤（一行 3 等分鋪滿整行） */
+.sidebar-specialty-tags {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  width: 100%;
+}
+
+.sidebar-specialty-tags .tag-btn,
+.sidebar-skills-list .tag-btn,
+.sidebar-2col-tags .tag-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 4.5px 0;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  background: var(--bg-sidebar-btn);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  text-align: center;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+  line-height: 1.25;
+  min-height: 28px;
+  cursor: pointer;
+}
+
+.sidebar-specialty-tags .tag-btn:hover,
+.sidebar-skills-list .tag-btn:hover,
+.sidebar-2col-tags .tag-btn:hover {
+  background: var(--bg-sidebar-btn-hover);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: var(--text-primary);
+}
+
+.sidebar-specialty-tags .tag-btn.active,
+.sidebar-skills-list .tag-btn.active,
+.sidebar-2col-tags .tag-btn.active {
+  background: var(--accent-gradient, #0284c7);
+  border-color: var(--accent-blue, #38bdf8);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+[data-theme="onyx"] .sidebar-specialty-tags .tag-btn.active,
+[data-theme="onyx"] .sidebar-skills-list .tag-btn.active,
+[data-theme="onyx"] .sidebar-2col-tags .tag-btn.active {
+  background: linear-gradient(135deg, #475569 0%, #64748b 50%, #94a3b8 100%);
+  border-color: #cbd5e1;
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(148, 163, 184, 0.35);
+}
+
+[data-theme="dawn"] .sidebar-specialty-tags .tag-btn.active,
+[data-theme="dawn"] .sidebar-skills-list .tag-btn.active,
+[data-theme="dawn"] .sidebar-2col-tags .tag-btn.active {
+  background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+  border-color: #0284c7;
+  color: #ffffff;
+}
+
+[data-theme="emerald"] .sidebar-specialty-tags .tag-btn.active,
+[data-theme="emerald"] .sidebar-skills-list .tag-btn.active,
+[data-theme="emerald"] .sidebar-2col-tags .tag-btn.active {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  border-color: #334155;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(51, 65, 85, 0.25);
+}
+
+/*  電腦版側邊欄圖標網格 (Desktop 7-Columns 嚴格自適應分配寬度，絕不溢出) */
+.sidebar-icon-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 3px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 4px 3px !important;
+  overflow: visible !important;
+}
+
+.subfilter-icon-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  height: auto !important;
+  background: var(--bg-sidebar-btn) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  padding: 2px !important;
+  margin: 0 !important;
+  transition: all 0.15s ease !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+}
+
+.subfilter-icon-btn:hover {
+  background: var(--bg-sidebar-btn-hover) !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+}
+
+.subfilter-icon-btn.active {
+  background: rgba(56, 189, 248, 0.18) !important;
+  border-color: var(--accent-blue, #38bdf8) !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+[data-theme="onyx"] .subfilter-icon-btn.active {
+  background: rgba(203, 213, 225, 0.18) !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 0 8px rgba(203, 213, 225, 0.35) !important;
+}
+
+[data-theme="dawn"] .subfilter-icon-btn.active {
+  background: rgba(2, 132, 199, 0.15) !important;
+  border-color: var(--accent-blue, #0284c7) !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25) !important;
+}
+
+[data-theme="emerald"] .subfilter-icon-btn.active {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%) !important;
+  border-color: #334155 !important;
+  box-shadow: 0 2px 8px rgba(51, 65, 85, 0.3) !important;
+}
+
+.subfilter-icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 22px !important;
+  max-height: 22px !important;
+  object-fit: contain !important;
+  pointer-events: none !important;
+  transition: transform 0.15s ease !important;
+  flex-shrink: 1 !important;
+}
+
+/*  手機 H5 App 版專用側邊欄圖標網格 (7-Column Enlarged Borderless) */
+.mobile-h5-app .sidebar-icon-grid {
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 3px !important;
+  padding: 4px 3px !important;
+  overflow: visible !important;
+}
+
+.mobile-h5-app .subfilter-icon-btn {
+  background: transparent !important;
+  border: 1.5px solid transparent !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+}
+
+.mobile-h5-app .subfilter-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  transform: scale(1.08) !important;
+}
+
+.mobile-h5-app .subfilter-icon-btn.active {
+  background: rgba(56, 189, 248, 0.18) !important;
+  border-color: var(--accent-blue, #38bdf8) !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
+  transform: scale(1.08) !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.mobile-h5-app .subfilter-icon-img {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+/*  主技能清單（雙列等寬，與類型按鈕完全一致的配置） */
+.sidebar-skills-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  width: 100%;
+}
+
+.subfilter-skill-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 4.5px 4px;
+  background: var(--bg-sidebar-btn);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  text-align: center;
+  line-height: 1.25;
+  box-sizing: border-box;
+  min-height: 28px;
+}
+
+.subfilter-skill-btn:hover {
+  background: var(--bg-sidebar-btn-hover);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: var(--text-primary);
+}
+
+.subfilter-skill-btn.active {
+  background: #0284c7;
+  border-color: #38bdf8;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.subfilter-skill-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html[data-lang="en"] .subfilter-skill-btn,
+[data-lang="en"] .subfilter-skill-btn {
+  font-size: 11.5px;
+  letter-spacing: -0.2px;
+  padding: 4.5px 2px;
+}
+
+/* 側邊欄遮罩：透明無模糊，保證側邊欄與中間內容無障礙同時互動 */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(100vh - 70px);
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  z-index: 94;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 1024px) {
+  .sidebar-backdrop.active {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+@media (min-width: 1025px) {
+  .sidebar-backdrop,
+  .sidebar-backdrop.active {
+    display: none !important;
+    pointer-events: none !important;
+  }
+}
+
+/*  主要內容區：維持原本居中對齊與標準邊距 (Maintain Original Centered Margins) */
+.pokemon-main-content {
+  width: 100%;
+  margin: 0 auto;
+  min-height: calc(100vh - 120px);
+  transition: padding-left 0.3s ease;
+}
+
+.pokemon-main-content .controls-container {
+  max-width: 1200px;
+  width: 92%;
+  margin: 24px auto 16px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.pokemon-main-content .stats-bar {
+  max-width: 1200px;
+  width: 92%;
+  margin: 0 auto 16px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+body:not(.mobile-h5-app) .pokemon-main-content #content-area {
+  max-width: 1200px;
+  width: 92%;
+  margin: 0 auto 40px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-grid {
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto 16px;
+  padding: 0;
+}
+
+body:not(.mobile-h5-app) .pokemon-main-content #content-area .table-container,
+body:not(.mobile-h5-app) .pokemon-main-content #content-area .pokemon-table-container {
+  max-width: 100%;
+  width: 100%;
+  margin: 0 0 16px 0;
+  padding: 0;
+  border-radius: var(--radius-lg, 16px);
+  overflow-x: auto !important;
+}
+
+/* 響應式佈局 (Mobile & Tablet Displays) */
+@media (max-width: 1024px) {
+  .pokemon-filter-sidebar {
+    width: 280px;
+    box-shadow: 6px 0 28px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Stats Bar */
+.stats-bar {
+  max-width: 1200px;
+  width: 92%;
+  margin: 0 auto 16px;
+  padding: 0 16px;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.count-badge {
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--accent-blue);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 13.5px;
+}
+
+.stats-source {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* Grid View Layout */
+.pokemon-grid {
+  max-width: 1240px;
+  width: 92%;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.pokemon-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 12px 14px;
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-lg);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.pokemon-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: var(--shadow-hover);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.pokemon-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: var(--bg-card-inner);
+  padding: 2px;
+  object-fit: contain;
+  border: 1px solid var(--border-color-subtle);
+  flex-shrink: 0;
+}
+
+.card-title-group {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.pokemon-no {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-color);
+  font-family: monospace;
+  line-height: 1.2;
+}
+
+.pokemon-name-en {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.pokemon-name {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.card-header-ingredients {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5px;
+  align-items: flex-end;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.card-header-ing-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--bg-card-inner-subtle);
+  padding: 1.5px 4px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color-subtle);
+}
+
+.card-header-ing-icon {
+  width: 15px;
+  height: 15px;
+  object-fit: contain;
+  flex-shrink: 0;
+}

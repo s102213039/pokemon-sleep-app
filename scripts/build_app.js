@@ -16,9 +16,15 @@ const POKEDEX_DIR = path.join(ROOT_DIR, 'js', 'modules', 'pokedex');
 const OUTPUT_FILE = path.join(ROOT_DIR, 'js', 'modules', 'app.js');
 
 const POKEDEX_MODULES = [
-  'pokedex_core.js',
-  'pokedex_render.js',
-  'pokedex_formulas.js',
+  'pokedex_base.js',
+  'pokedex_skills.js',
+  'pokedex_search.js',
+  'pokedex_overlay.js',
+  'pokedex_nav.js',
+  'pokedex_filters.js',
+  'pokedex_ui.js',
+  'pokedex_detail_ctrl.js',
+  'pokedex_calc.js',
   'pokedex_modal.js'
 ];
 

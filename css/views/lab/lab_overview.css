@@ -1,0 +1,800 @@
+.news-cal-status-tag.status-upcoming {
+  background: rgba(56, 189, 248, 0.18);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+[data-theme="dawn"] .news-cal-status-tag.status-expired,
+[data-theme="emerald"] .news-cal-status-tag.status-expired {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
+[data-theme="dawn"] .news-cal-status-tag.status-ongoing,
+[data-theme="emerald"] .news-cal-status-tag.status-ongoing {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+[data-theme="dawn"] .news-cal-status-tag.status-upcoming,
+[data-theme="emerald"] .news-cal-status-tag.status-upcoming {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-color: #7dd3fc;
+}
+
+.news-cal-event-item.is-expired {
+  opacity: 0.75;
+}
+
+.news-cal-event-item.is-expired:hover {
+  opacity: 1;
+}
+
+.news-source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.news-source-link:hover {
+  color: #38bdf8;
+}
+
+.news-card-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.news-card-title a {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.news-card-title a:hover {
+  color: #38bdf8;
+}
+
+/*  新登場 / 焦點寶可夢頂部橫條 (無外框、極簡純淨排版) */
+.news-debut-banner,
+.news-featured-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 2px 0;
+  background: transparent;
+  border: none;
+}
+
+.news-debut-banner {
+  background: transparent;
+  border: none;
+}
+
+.news-featured-banner {
+  background: transparent;
+  border: none;
+}
+
+.news-banner-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.news-featured-banner .news-banner-title {
+  color: var(--text-muted);
+}
+
+.news-poke-pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.news-poke-pill-new {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(236, 72, 153, 0.22);
+  color: #f472b6;
+  border: 1px solid rgba(236, 72, 153, 0.45);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 1.5px 7px;
+  border-radius: 4px;
+  line-height: 1.25;
+}
+
+.news-poke-pill-featured {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(245, 158, 11, 0.22);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 1.5px 7px;
+  border-radius: 4px;
+  line-height: 1.25;
+}
+
+[data-theme="dawn"] .news-poke-pill-new,
+[data-theme="emerald"] .news-poke-pill-new {
+  background: rgba(236, 72, 153, 0.12);
+  color: #be185d;
+  border: 1px solid rgba(236, 72, 153, 0.3);
+}
+
+[data-theme="dawn"] .news-poke-pill-featured,
+[data-theme="emerald"] .news-poke-pill-featured {
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* 內文醒目高亮標籤 (Inline Highlights - 深色主題螢光高對比 & 亮色主題自適應) */
+.hl-rateup-mid {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(236, 72, 153, 0.25);
+  color: #f472b6;
+  border: 1px solid rgba(244, 114, 182, 0.6);
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin: 0 2px;
+}
+
+.hl-rateup-large {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(245, 158, 11, 0.25);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.6);
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin: 0 2px;
+}
+
+.hl-rateup-small {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin: 0 2px;
+}
+
+.hl-poke-new {
+  display: inline-block;
+  background: rgba(236, 72, 153, 0.25);
+  color: #f472b6;
+  border: 1px solid rgba(236, 72, 153, 0.5);
+  font-weight: 700;
+  padding: 0 6px;
+  border-radius: 4px;
+  margin: 0 2px;
+}
+
+.hl-poke-feat {
+  display: inline-block;
+  background: rgba(245, 158, 11, 0.25);
+  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  font-weight: 700;
+  padding: 0 6px;
+  border-radius: 4px;
+  margin: 0 2px;
+}
+
+.hl-mult {
+  display: inline-block;
+  background: rgba(245, 158, 11, 0.25);
+  color: #fde047;
+  border: 1px solid rgba(245, 158, 11, 0.6);
+  font-weight: 800;
+  padding: 0 5px;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  margin: 0 2px;
+}
+
+.hl-island {
+  display: inline-block;
+  background: rgba(16, 185, 129, 0.25);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.6);
+  font-weight: 700;
+  padding: 0 5px;
+  border-radius: 4px;
+  margin: 0 2px;
+}
+
+[data-theme="dawn"] .hl-rateup-mid,
+[data-theme="emerald"] .hl-rateup-mid {
+  background: rgba(236, 72, 153, 0.15);
+  color: #be185d;
+  border-color: rgba(236, 72, 153, 0.4);
+}
+[data-theme="dawn"] .hl-rateup-large,
+[data-theme="emerald"] .hl-rateup-large {
+  background: rgba(245, 158, 11, 0.15);
+  color: #b45309;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+[data-theme="dawn"] .hl-rateup-small,
+[data-theme="emerald"] .hl-rateup-small {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #cbd5e1;
+}
+[data-theme="dawn"] .hl-poke-new,
+[data-theme="emerald"] .hl-poke-new {
+  background: rgba(236, 72, 153, 0.15);
+  color: #be185d;
+  border-color: rgba(236, 72, 153, 0.4);
+}
+[data-theme="dawn"] .hl-poke-feat,
+[data-theme="emerald"] .hl-poke-feat {
+  background: rgba(245, 158, 11, 0.15);
+  color: #b45309;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+[data-theme="dawn"] .hl-mult,
+[data-theme="emerald"] .hl-mult {
+  background: rgba(245, 158, 11, 0.15);
+  color: #b45309;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+[data-theme="dawn"] .hl-island,
+[data-theme="emerald"] .hl-island {
+  background: rgba(16, 185, 129, 0.15);
+  color: #047857;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+/*  AI 智能深度重點儀表板 (網頁版無灰底無外框純淨排版) */
+.news-ai-dashboard {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.news-ai-highlights {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+.news-ai-dashboard-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+.news-ai-dashboard-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--accent-color);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.news-ai-sections-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.news-ai-section-box {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 2px 0 !important;
+  box-shadow: none !important;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* 各主題專屬配色微光 (深色主題螢光高對比 & 亮色主題自適應) */
+.news-sec-schedule {
+  border-left: 3px solid #38bdf8;
+  background: var(--bg-card-inner-subtle);
+}
+.news-sec-schedule .news-ai-section-title { color: #38bdf8; }
+
+.news-sec-bonus {
+  border-left: 3px solid #f59e0b;
+  background: var(--bg-card-inner-subtle);
+}
+.news-sec-bonus .news-ai-section-title { color: #fbbf24; }
+
+.news-sec-rateup {
+  border-left: 3px solid #f43f5e;
+  background: var(--bg-card-inner-subtle);
+}
+.news-sec-rateup .news-ai-section-title { color: #fb7185; }
+
+.news-sec-islands {
+  border-left: 3px solid #10b981;
+  background: var(--bg-card-inner-subtle);
+}
+.news-sec-islands .news-ai-section-title { color: #34d399; }
+
+.news-sec-shop {
+  border-left: 3px solid #eab308;
+  background: var(--bg-card-inner-subtle);
+}
+.news-sec-shop .news-ai-section-title { color: #facc15; }
+
+.news-sec-updates {
+  border-left: 3px solid #6366f1;
+  background: var(--bg-card-inner-subtle);
+}
+.news-sec-updates .news-ai-section-title { color: #a5b4fc; }
+
+.news-sec-debut {
+  border-left: 3px solid #d946ef;
+  background: var(--bg-card-inner-subtle);
+}
+.news-sec-debut .news-ai-section-title { color: #f472b6; }
+
+.news-sec-features .news-ai-section-title { color: #a5b4fc; }
+.news-sec-rewards .news-ai-section-title { color: #fbbf24; }
+.news-sec-fixes .news-ai-section-title,
+.news-sec-balance .news-ai-section-title,
+.news-sec-general .news-ai-section-title { color: #4ade80; }
+
+[data-theme="dawn"] .news-sec-schedule .news-ai-section-title,
+[data-theme="emerald"] .news-sec-schedule .news-ai-section-title { color: #0284c7; }
+
+[data-theme="dawn"] .news-sec-bonus .news-ai-section-title,
+[data-theme="dawn"] .news-sec-rewards .news-ai-section-title,
+[data-theme="emerald"] .news-sec-bonus .news-ai-section-title,
+[data-theme="emerald"] .news-sec-rewards .news-ai-section-title { color: #b45309; }
+
+[data-theme="dawn"] .news-sec-rateup .news-ai-section-title,
+[data-theme="emerald"] .news-sec-rateup .news-ai-section-title { color: #be123c; }
+
+[data-theme="dawn"] .news-sec-islands .news-ai-section-title,
+[data-theme="emerald"] .news-sec-islands .news-ai-section-title { color: #047857; }
+
+[data-theme="dawn"] .news-sec-shop .news-ai-section-title,
+[data-theme="emerald"] .news-sec-shop .news-ai-section-title { color: #a16207; }
+
+[data-theme="dawn"] .news-sec-updates .news-ai-section-title,
+[data-theme="dawn"] .news-sec-features .news-ai-section-title,
+[data-theme="emerald"] .news-sec-updates .news-ai-section-title,
+[data-theme="emerald"] .news-sec-features .news-ai-section-title { color: #4338ca; }
+
+[data-theme="dawn"] .news-sec-debut .news-ai-section-title,
+[data-theme="emerald"] .news-sec-debut .news-ai-section-title { color: #a21caf; }
+
+[data-theme="dawn"] .news-sec-fixes .news-ai-section-title,
+[data-theme="dawn"] .news-sec-balance .news-ai-section-title,
+[data-theme="dawn"] .news-sec-general .news-ai-section-title,
+[data-theme="emerald"] .news-sec-fixes .news-ai-section-title,
+[data-theme="emerald"] .news-sec-balance .news-ai-section-title,
+[data-theme="emerald"] .news-sec-general .news-ai-section-title { color: #15803d; }
+
+.news-ai-section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.news-ai-section-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.news-ai-section-list li {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-primary);
+}
+
+/* 展開內文預覽折疊區塊 */
+.news-preview-collapse {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.35s ease, opacity 0.3s ease, padding 0.3s ease;
+  background: var(--bg-card-inner);
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.news-preview-collapse.expanded {
+  max-height: 500px;
+  opacity: 1;
+  padding: 14px 16px;
+  border: 1px solid var(--border-color);
+  overflow-y: auto;
+}
+
+.news-preview-content {
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.news-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color-subtle);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.news-expand-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.news-expand-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.news-read-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #38bdf8;
+  text-decoration: none;
+  padding: 5px 12px;
+  border-radius: 6px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  transition: all 0.2s ease;
+}
+
+.news-read-more-btn:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+/* =========================================================
+    官方活動與禮包時程甘特圖 (Gantt Schedule Timeline)
+   ========================================================= */
+
+.news-timeline-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px 12px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-lg);
+}
+
+.gantt-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gantt-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.gantt-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.gantt-icon {
+  font-size: 18px;
+}
+
+.gantt-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.gantt-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 6px;
+}
+
+.gantt-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.gantt-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-event {
+  background: #38bdf8;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
+}
+
+.dot-pack {
+  background: #a855f7;
+  box-shadow: 0 0 6px rgba(168, 85, 247, 0.6);
+}
+
+.gantt-hint {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+/* 滾動軌道 */
+.gantt-scroll-container {
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.gantt-scroll-container::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* 甘特主網格 */
+.gantt-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(27, minmax(42px, 1fr));
+  gap: 2px;
+  position: relative;
+  min-width: 1134px;
+}
+
+/* 月份標題列 */
+.gantt-month-row {
+  grid-column: 1 / span 27;
+  display: grid;
+  grid-template-columns: repeat(27, minmax(42px, 1fr));
+  gap: 2px;
+  margin-bottom: 2px;
+}
+
+.gantt-month-label {
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
+/* 日期刻度列 */
+.gantt-days-row {
+  grid-column: 1 / span 27;
+  display: grid;
+  grid-template-columns: repeat(27, minmax(42px, 1fr));
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.gantt-day-cell {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 4px;
+  padding: 4px 0;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: monospace;
+  color: #94a3b8;
+  user-select: none;
+}
+
+.gantt-day-sat {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.gantt-day-sun {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.08);
+}
+
+.gantt-day-today {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  font-weight: 800;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+/* 今日垂直指南線 */
+.gantt-today-line {
+  position: absolute;
+  top: 48px;
+  bottom: 0;
+  width: 100%;
+  pointer-events: none;
+  background: rgba(56, 189, 248, 0.07);
+  border-left: 2px dashed rgba(56, 189, 248, 0.7);
+  border-right: 2px dashed rgba(56, 189, 248, 0.7);
+  z-index: 1;
+}
+
+/* 時程條容器 */
+.gantt-bars-container {
+  grid-column: 1 / span 27;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: relative;
+  z-index: 2;
+}
+
+.gantt-bar-row {
+  display: grid;
+  grid-template-columns: repeat(27, minmax(42px, 1fr));
+  gap: 2px;
+}
+
+.gantt-bar {
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.gantt-bar:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* 活動列表 (Cyan / Blue) - 預設深色主題 */
+.gantt-bar-event {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.45), rgba(6, 182, 212, 0.5));
+  border: 1px solid rgba(56, 189, 248, 0.6);
+}
+
+.gantt-bar-event .gantt-bar-time {
+  color: #38bdf8;
+}
+
+/* 活動禮包 / 培育包 (Purple / Indigo) - 預設深色主題 */
+.gantt-bar-pack {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.45), rgba(99, 102, 241, 0.5));
+  border: 1px solid rgba(167, 139, 250, 0.6);
+}
+
+.gantt-bar-pack .gantt-bar-time {
+  color: #c084fc;
+}
+
+/*  明亮主題甘特圖條目適配：深色飽和度底色 + 高清白字 (Light Theme Rich Saturated Bars) */
+[data-theme="dawn"] .gantt-bar-event,
+[data-theme="emerald"] .gantt-bar-event {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border: 1px solid #0284c7;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+}
+
+[data-theme="dawn"] .gantt-bar-event .gantt-bar-time,
+[data-theme="emerald"] .gantt-bar-event .gantt-bar-time {
+  color: #e0f2fe;
+}
+
+[data-theme="dawn"] .gantt-bar-pack,
+[data-theme="emerald"] .gantt-bar-pack {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  border: 1px solid #7c3aed;
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.25);
+}
+
+[data-theme="dawn"] .gantt-bar-pack .gantt-bar-time,
+[data-theme="emerald"] .gantt-bar-pack .gantt-bar-time {
+  color: #f3e8ff;
+}
+
+[data-theme="dawn"] .gantt-badge,
+[data-theme="emerald"] .gantt-badge {
+  background: rgba(0, 0, 0, 0.32);
+  color: #ffffff;
+}
+
+[data-theme="dawn"] .gantt-bar-name,
+[data-theme="emerald"] .gantt-bar-name {
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.gantt-bar-time {
+  font-size: 10px;
+  font-weight: 700;
+  font-family: monospace;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.gantt-badge {
+  font-size: 9.5px;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.gantt-bar-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+/* =========================================================
+    我的寶可夢倉庫 (My Pokémon Box & Screenshot Scanner)
+   ========================================================= */
+

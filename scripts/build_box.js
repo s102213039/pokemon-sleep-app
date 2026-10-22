@@ -17,9 +17,12 @@ const OUTPUT_FILE = path.join(ROOT_DIR, 'js', 'modules', 'box.js');
 
 const BOX_MODULES = [
   'box_filter.js',
-  'box_storage.js',
-  'box_modal.js',
-  'box_ocr.js',
+  'box_storage_crud.js',
+  'box_render.js',
+  'box_modal_form.js',
+  'box_modal_conflict.js',
+  'box_ocr_canvas.js',
+  'box_ocr_parse.js',
   'box_main.js'
 ];
 

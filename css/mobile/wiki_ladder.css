@@ -1,0 +1,800 @@
+.island-ex-rule-desc {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* 移除島嶼分頁大區塊的外層多餘外框 (No redundant outer borders) */
+.island-table-card,
+.island-spawns-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  width: 100%;
+}
+
+#wiki-subpanel-islands .wiki-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+#wiki-subpanel-islands .wiki-table-wrapper {
+  margin-top: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
+}
+
+body:not(.mobile-h5-app) #wiki-subpanel-islands .wiki-table-wrapper {
+  background: var(--bg-card-solid, var(--bg-dark));
+}
+
+body:not(.mobile-h5-app) #wiki-subpanel-islands .wiki-data-table tbody td {
+  background: var(--table-row-odd-solid, var(--bg-card-solid, var(--bg-dark)));
+}
+
+body:not(.mobile-h5-app) #wiki-subpanel-islands .wiki-data-table tbody tr:nth-child(even) td {
+  background: var(--table-row-even-solid, var(--bg-card-inner, #131f38));
+}
+
+body:not(.mobile-h5-app) #wiki-subpanel-islands .island-sleep-filters {
+  background: var(--bg-card-solid, var(--bg-dark));
+}
+
+.island-dual-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: 10px;
+  align-items: stretch;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.island-dual-grid .island-table-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.island-dual-grid .wiki-card-header {
+  margin-bottom: 4px;
+  gap: 6px;
+}
+
+.island-dual-grid .wiki-card-title {
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.island-dual-grid .wiki-table-wrapper {
+  margin-top: 4px !important;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--bg-card-solid, var(--bg-dark));
+}
+
+.island-dual-grid .wiki-data-table {
+  width: 100%;
+  height: 100%;
+  flex: 1 1 auto;
+  border-collapse: collapse;
+}
+
+.island-dual-grid .wiki-data-table tbody tr {
+  height: 1%;
+}
+
+.island-dual-grid .wiki-data-table th,
+.island-dual-grid .wiki-data-table td {
+  padding: 5px 6px;
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.mobile-h5-app .island-dual-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .island-dual-grid .wiki-card-header {
+  margin-top: -3px !important;
+  margin-bottom: 4px !important;
+}
+
+.mobile-h5-app .island-dual-grid .wiki-card-title {
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+}
+
+.mobile-h5-app .island-dual-grid .wiki-data-table th,
+.mobile-h5-app .island-dual-grid .wiki-data-table td {
+  padding: 4px 3px !important;
+  font-size: 10.5px !important;
+}
+
+/* Island Habitats Header & Legendary Switch */
+.island-spawns-title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.island-legendary-switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  margin: 0;
+  flex-shrink: 0;
+  padding: 3px 8px 3px 6px;
+  border-radius: 14px;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.12));
+  transition: all 0.2s ease;
+}
+
+.island-legendary-switch-label:hover {
+  background: var(--bg-card-hover, rgba(255, 255, 255, 0.08));
+  border-color: var(--accent-blue, rgba(56, 189, 248, 0.4));
+}
+
+/* Sleep Filters Segmented Bar */
+.island-sleep-filters {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08));
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.island-sleep-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.island-sleep-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: 7px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.island-sleep-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.island-sleep-btn.active {
+  background: var(--accent-gradient, linear-gradient(135deg, #38bdf8, #6366f1));
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
+}
+
+.island-sleep-count {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  color: inherit;
+}
+
+.island-sleep-btn.active .island-sleep-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* Compact Spawns Table & Sortable Headers */
+.island-spawns-compact-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.island-spawns-compact-table th {
+  padding: 6px 6px;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.island-spawns-compact-table th.island-sort-th {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.island-spawns-compact-table th.island-sort-th:hover {
+  background: var(--bg-card-hover, rgba(255, 255, 255, 0.06));
+  color: var(--accent-blue, #38bdf8);
+}
+
+.island-spawns-compact-table th.island-sort-th.active-sort {
+  color: var(--accent-blue, #38bdf8);
+}
+
+.island-th-content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  vertical-align: middle;
+}
+
+.sleep-star-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.sleep-style-star-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  display: inline-block;
+  vertical-align: middle;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+
+.island-sort-arrow-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 10px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.island-sort-arrow-svg.active {
+  color: var(--accent-blue, #38bdf8);
+}
+
+.island-sort-arrow-svg.inactive {
+  opacity: 0.3;
+  color: var(--text-secondary, #94a3b8);
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.island-sort-th:hover .island-sort-arrow-svg.inactive {
+  opacity: 0.8;
+  color: var(--text-primary, #f8fafc);
+}
+
+.island-spawns-compact-table td {
+  padding: 3px 4px;
+  font-size: 13px;
+}
+
+.island-pkm-icon-only {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.island-pkm-icon-only .island-pkm-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid var(--border-color-subtle, rgba(255, 255, 255, 0.15));
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  cursor: pointer;
+}
+
+.island-pkm-icon-only .island-pkm-avatar:hover {
+  transform: scale(1.18);
+  border-color: var(--accent-blue, #38bdf8);
+}
+
+/* Snorlax Rank Pokéball Badges */
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 2.5px 7px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: transform 0.15s ease;
+  color: var(--text-primary);
+}
+
+.rank-badge:hover {
+  transform: scale(1.08);
+}
+
+/* Snorlax Rank Pokéball Badges (深色主題：高飽和度、鮮明亮麗、告別混濁暗沉) */
+.rank-basic {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.55) 0%, rgba(225, 29, 72, 0.45) 100%);
+  border: 1px solid rgba(248, 113, 113, 0.85);
+  box-shadow: 0 1px 4px rgba(239, 68, 68, 0.3);
+  color: var(--text-primary);
+}
+
+.rank-great {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.55) 0%, rgba(37, 99, 235, 0.45) 100%);
+  border: 1px solid rgba(96, 165, 250, 0.85);
+  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.3);
+  color: var(--text-primary);
+}
+
+.rank-ultra {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.58) 0%, rgba(245, 158, 11, 0.48) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.9);
+  box-shadow: 0 1px 4px rgba(245, 158, 11, 0.3);
+  color: var(--text-primary);
+}
+
+.rank-master {
+  background: linear-gradient(135deg, rgba(192, 132, 252, 0.58) 0%, rgba(147, 51, 234, 0.48) 100%);
+  border: 1px solid rgba(192, 132, 252, 0.9);
+  box-shadow: 0 1px 4px rgba(168, 85, 247, 0.3);
+  color: var(--text-primary);
+}
+
+/* Onyx 純黑主題：高飽和度強化對比 */
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .rank-basic {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.65) 0%, rgba(225, 29, 72, 0.55) 100%);
+  border-color: rgba(248, 113, 113, 0.95);
+  box-shadow: 0 1px 5px rgba(239, 68, 68, 0.4);
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .rank-great {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.65) 0%, rgba(37, 99, 235, 0.55) 100%);
+  border-color: rgba(96, 165, 250, 0.95);
+  box-shadow: 0 1px 5px rgba(37, 99, 235, 0.4);
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .rank-ultra {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.68) 0%, rgba(245, 158, 11, 0.58) 100%);
+  border-color: rgba(251, 191, 36, 1);
+  box-shadow: 0 1px 5px rgba(245, 158, 11, 0.4);
+}
+
+[data-theme="onyx"]:not([data-theme-inverted="true"]) .rank-master {
+  background: linear-gradient(135deg, rgba(192, 132, 252, 0.68) 0%, rgba(147, 51, 234, 0.58) 100%);
+  border-color: rgba(192, 132, 252, 1);
+  box-shadow: 0 1px 5px rgba(168, 85, 247, 0.4);
+}
+
+/* 淺色主題 (Dawn / Emerald / 反轉主題)：採用低飽和度、清爽柔和之粉彩底色，避免刺眼且層次分明 */
+[data-theme="dawn"] .rank-basic,
+[data-theme="emerald"] .rank-basic,
+[data-theme-inverted="true"] .rank-basic {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  box-shadow: none;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dawn"] .rank-great,
+[data-theme="emerald"] .rank-great,
+[data-theme-inverted="true"] .rank-great {
+  background: #dbeafe;
+  border: 1px solid #93c5fd;
+  box-shadow: none;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dawn"] .rank-ultra,
+[data-theme="emerald"] .rank-ultra,
+[data-theme-inverted="true"] .rank-ultra {
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  box-shadow: none;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dawn"] .rank-master,
+[data-theme="emerald"] .rank-master,
+[data-theme-inverted="true"] .rank-master {
+  background: #f3e8ff;
+  border: 1px solid #d8b4fe;
+  box-shadow: none;
+  color: var(--text-primary) !important;
+}
+
+.rank-dash {
+  color: var(--text-muted, #64748b);
+  opacity: 0.7;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 2px 6px;
+}
+
+.pokeball-svg {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.rank-num {
+  line-height: 1;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--text-primary) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
+}
+
+[data-theme="dawn"] .rank-num,
+[data-theme="emerald"] .rank-num,
+[data-theme-inverted="true"] .rank-num {
+  text-shadow: none !important;
+}
+
+.wiki-two-col-grid .wiki-data-table th {
+  font-size: 13.5px;
+  padding: 9px 12px;
+}
+
+.wiki-two-col-grid .wiki-data-table td {
+  font-size: 13.5px;
+  padding: 8px 12px;
+}
+
+/* --- Sleep Style Interactive Trigger in Habitats Table --- */
+.island-sleep-cell-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.12s ease, filter 0.15s ease;
+  user-select: none;
+}
+
+body:not(.mobile-h5-app) .island-sleep-cell-wrap:hover {
+  background: var(--bg-card-hover, rgba(255, 255, 255, 0.08));
+  transform: translateY(-1px);
+  filter: brightness(1.12);
+}
+
+.mobile-h5-app .island-sleep-cell-wrap {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+/* Desktop Web toggle off mode */
+.hide-sleep-rewards .island-sleep-inline-name,
+.hide-sleep-rewards .island-sleep-inline-rewards {
+  display: none !important;
+}
+
+/* Sleep Style Hover Floating Tooltip (Solid Opaque, No Transparency, Pure Text) */
+.island-sleep-hover-tooltip {
+  position: fixed;
+  z-index: 10500;
+  background: #1e293b !important;
+  opacity: 1 !important;
+  border: 1px solid #475569 !important;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  padding: 8px 12px;
+  color: #f8fafc !important;
+  font-size: 12.5px;
+  line-height: 1.6;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  animation: sleepTooltipIn 0.12s ease-out;
+}
+
+[data-theme="light"] .island-sleep-hover-tooltip {
+  background: #ffffff !important;
+  opacity: 1 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.island-sleep-tip-line {
+  color: inherit;
+  font-size: 12.5px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+@keyframes sleepTooltipIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.island-sleep-popover-backdrop {
+  display: none !important;
+}
+
+/* Star Chips (Legacy & Fallback) */
+.island-star-chip {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.star-s1 {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.star-s2 {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.star-s3 {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.star-s4 {
+  background: rgba(234, 179, 8, 0.18);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  font-weight: 700;
+}
+
+/* Pokemon List Item with Avatar */
+.island-pkm-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.island-pkm-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.12));
+  flex-shrink: 0;
+}
+
+/* Good-Night Ribbon Ultra Compact Quick Guide */
+.ribbon-compact-tiers {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.ribbon-compact-chip {
+  flex: 1 1 calc(25% - 8px);
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1));
+}
+
+.ribbon-compact-chip.chip-bronze {
+  border-color: rgba(205, 127, 50, 0.35);
+  background: rgba(205, 127, 50, 0.08);
+}
+
+.ribbon-compact-chip.chip-silver {
+  border-color: rgba(148, 163, 184, 0.35);
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.ribbon-compact-chip.chip-gold {
+  border-color: rgba(234, 179, 8, 0.4);
+  background: rgba(234, 179, 8, 0.08);
+}
+
+.ribbon-compact-chip.chip-platinum {
+  border-color: rgba(56, 189, 248, 0.45);
+  background: rgba(56, 189, 248, 0.09);
+}
+
+.chip-tier-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-blue, #38bdf8);
+}
+
+.chip-bronze .chip-tier-tag { color: #f97316; }
+.chip-silver .chip-tier-tag { color: #cbd5e1; }
+.chip-gold .chip-tier-tag { color: #facc15; }
+.chip-platinum .chip-tier-tag { color: #38bdf8; }
+
+.chip-effect-text {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ribbon-compact-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.06));
+}
+
+.compact-note-line {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.compact-note-label {
+  font-weight: 700;
+  color: var(--accent-blue, #38bdf8);
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   Ingredient Ladder Top 7 High-Score Recipe Highlight Feature
+   ========================================================= */
+
+/* Recipe Highlight FAB (Floating Action Button) */
+.ladder-recipe-highlight-fab {
+  position: fixed;
+  bottom: 64px;
+  right: 32px;
+  z-index: 9990;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+}
+
+.ladder-recipe-highlight-fab:hover {
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.45);
+  transform: translateY(-1px);
+}
+
+.ladder-recipe-highlight-fab:active {
+  transform: scale(0.92);
+}
+
+.ladder-recipe-highlight-fab.has-active {
+  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.4);
+}
+
+.ladder-recipe-fab-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #10b981;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--bg-card, #0f172a);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Mobile H5: Positioned on the right, directly ABOVE the filter FAB (bottom: 76px + 50px + 12px) */
+.mobile-h5-app .ladder-recipe-highlight-fab {
+  right: 16px !important;
+  left: auto !important;
+  bottom: calc(138px + env(safe-area-inset-bottom, 0px)) !important;
+  width: 50px !important;
+  height: 50px !important;
+}
+
+.mobile-h5-app .ladder-recipe-highlight-fab.drawer-open,
+.mobile-h5-app #panel-wiki:has(#ladder-filter-sidebar:not(.collapsed)) #ladder-recipe-highlight-fab {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Modal Dialog */
+.ladder-recipe-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.ladder-recipe-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.ladder-recipe-modal-dialog {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  max-height: min(580px, 86dvh);
+  background: var(--bg-card, #0f172a);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  border-radius: 18px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: ladderModalIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes ladderModalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(10px);

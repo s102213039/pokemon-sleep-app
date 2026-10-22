@@ -1317,6 +1317,7 @@
   }
 
   function renderBox() {
+
     if (typeof document === 'undefined') return;
     syncBoxVisibility();
     updateBoxActiveFilterBadge();
@@ -2599,6 +2600,7 @@
 
   /* ─── 開啟編輯/新增彈窗 ─────────────────────────────────── */
   function openBoxEditModal(existingItem = null, screenshotSrc = null) {
+
     const modal = document.getElementById('box-edit-modal');
     if (!modal) return;
 
@@ -3766,6 +3768,7 @@
   }
 
   function parsePokemonFromOcr(text, rgbSlots, allPokemons, meta) {
+
     const clean = normalizeOcrText(text);
 
 

@@ -1686,8 +1686,10 @@ function registerTier4Part4() {
     });
 
     // 3. Verify elimination of alien pokedex-sv domain fallback in wiki_camps
-    const wikiCampsJs = fs.readFileSync(path.resolve(__dirname, '../../../js/modules/wiki/wiki_camps.js'), 'utf8');
-    assert(!wikiCampsJs.includes('pokedex-sv/icon'), 'wiki_camps.js must not contain alien pokedex-sv/icon fallback');
+    const wikiCampsJs = fs.readFileSync(path.resolve(__dirname, '../../../js/modules/wiki/wiki_camps_data.js'), 'utf8') +
+      fs.readFileSync(path.resolve(__dirname, '../../../js/modules/wiki/wiki_camps_island.js'), 'utf8') +
+      fs.readFileSync(path.resolve(__dirname, '../../../js/modules/wiki/wiki_camps_render.js'), 'utf8');
+    assert(!wikiCampsJs.includes('pokedex-sv/icon'), 'wiki_camps must not contain alien pokedex-sv/icon fallback');
 
     // 4. Verify all island spawn entries in wiki_camps resolve to official pokemonsleep icon URLs
     const regex = /\{\s*name:\s*"([^"]+)",\s*name_en:\s*"([^"]+)"/g;
@@ -1921,9 +1923,9 @@ function registerTier4Part4() {
       '柿仔果': 28, '蘋野果': 27, '文柚果': 30, '椰木果': 24,
       '芒念果': 26, '巧可果': 35, '異奇果': 25, '榴石果': 30
     };
-    const wikiSkillsJs = fs.readFileSync(path.resolve(WORKSPACE_ROOT, 'js/modules/wiki/wiki_skills.js'), 'utf8');
+    const wikiSkillsJs = fs.readFileSync(path.resolve(WORKSPACE_ROOT, 'js/modules/wiki/wiki_skills_matrix.js'), 'utf8');
     Object.entries(expectedBerryBase).forEach(([berry, energy]) => {
-      assert(wikiSkillsJs.includes(`name: '${berry}'`) && wikiSkillsJs.includes(`energy: ${energy}`), `wiki_skills.js must specify Lv.1 base energy ${energy} for ${berry}`);
+      assert(wikiSkillsJs.includes(`name: '${berry}'`) && wikiSkillsJs.includes(`energy: ${energy}`), `wiki_skills_matrix.js must specify Lv.1 base energy ${energy} for ${berry}`);
     });
 
     // 2. Serebii Ground Truth: Ingredient base energies
@@ -1933,7 +1935,7 @@ function registerTier4Part4() {
       '美味尾巴': 342, '粗枝大蔥': 185, '放鬆可可': 151, '品鮮蘑菇': 167
     };
     Object.entries(expectedIngBase).forEach(([ing, energy]) => {
-      assert(wikiSkillsJs.includes(`name: "${ing}"`) && wikiSkillsJs.includes(`energy: ${energy}`), `wiki_skills.js must specify base energy ${energy} for ${ing}`);
+      assert(wikiSkillsJs.includes(`name: "${ing}"`) && wikiSkillsJs.includes(`energy: ${energy}`), `wiki_skills_matrix.js must specify base energy ${energy} for ${ing}`);
     });
 
     // 3. Recipes structure validation: 78 recipes, pot sizes between 7 and 77
@@ -1965,6 +1967,67 @@ function registerTier4Part4() {
     // 5. Pot Expansion slider boundaries
     const recipesJs = fs.readFileSync(path.resolve(WORKSPACE_ROOT, 'js/modules/recipes.js'), 'utf8');
     assert(recipesJs.includes('potExpansion = Math.min(700,'), 'recipes.js potExpansion must support up to 700 for Cooking Weeks');
+  });
+
+  // ─── Test 116: Granular Modularization & Strict Under-1000-Lines Quality Gate ────
+
+  test('Tier 4 - Real-World Application Scenarios', 'Granular Modularization & Strict Under-1000-Lines Quality Gate', () => {
+    function walk(dir) {
+      let files = [];
+      fs.readdirSync(dir).forEach(f => {
+        const full = path.join(dir, f);
+        if (fs.statSync(full).isDirectory()) files = files.concat(walk(full));
+        else files.push(full);
+      });
+      return files;
+    }
+
+    // 1. Verify all modular JavaScript source files are strictly <= 1000 lines
+    const jsFiles = walk(path.join(WORKSPACE_ROOT, 'js')).filter(p => p.endsWith('.js') && !p.endsWith('.min.js'));
+    const masterBundles = [
+      'js/modules/app.js', 'js/modules/wiki.js', 'js/modules/appraisal.js', 'js/modules/box.js',
+      'js/core/i18n.js', 'js/core/cloudSync.js', 'js/modules/recipes.js', 'js/modules/news.js',
+      'js/data/ladder_data.js', 'js/data/items.js'
+    ];
+    const oversizedJs = [];
+    let modularJsCount = 0;
+    jsFiles.forEach(p => {
+      const rel = path.relative(WORKSPACE_ROOT, p);
+      if (masterBundles.includes(rel)) return;
+      modularJsCount++;
+      const lines = fs.readFileSync(p, 'utf8').split('\n').length;
+      if (lines > 1000) {
+        oversizedJs.push({ file: rel, lines });
+      }
+    });
+    assertEquals(oversizedJs.length, 0, `All modular JS source files must be <= 1000 lines. Found oversized: ${JSON.stringify(oversizedJs)}`);
+    assert(modularJsCount >= 50, `Must have at least 50 granular modular JS files (got ${modularJsCount})`);
+
+    // 2. Verify all modular CSS files are strictly <= 1000 lines
+    const cssFiles = walk(path.join(WORKSPACE_ROOT, 'css')).filter(p => p.endsWith('.css') && !p.endsWith('.min.css') && !p.endsWith('styles.css'));
+    const oversizedCss = [];
+    cssFiles.forEach(p => {
+      const rel = path.relative(WORKSPACE_ROOT, p);
+      const lines = fs.readFileSync(p, 'utf8').split('\n').length;
+      if (lines > 1000) {
+        oversizedCss.push({ file: rel, lines });
+      }
+    });
+    assertEquals(oversizedCss.length, 0, `All modular CSS source files must be <= 1000 lines. Found oversized: ${JSON.stringify(oversizedCss)}`);
+    assert(cssFiles.length >= 40, `Must have at least 40 granular modular CSS files (got ${cssFiles.length})`);
+
+    // 3. Verify all 9 modular bundlers compile without errors
+    const { buildAll } = require(path.resolve(WORKSPACE_ROOT, 'scripts/build_all'));
+    const res = buildAll();
+    assert(res.css && res.css.modulesCount >= 40, 'CSS build must compile at least 40 modules');
+    assert(res.i18n && res.i18n.modulesCount >= 5, 'I18N build must compile at least 5 modules');
+    assert(res.cloudSync && res.cloudSync.modulesCount >= 2, 'CloudSync build must compile at least 2 modules');
+    assert(res.recipes && res.recipes.modulesCount >= 2, 'Recipes build must compile at least 2 modules');
+    assert(res.news && res.news.modulesCount >= 2, 'News build must compile at least 2 modules');
+    assert(res.wiki && res.wiki.modulesCount >= 10, 'Wiki build must compile at least 10 modules');
+    assert(res.appraisal && res.appraisal.modulesCount >= 8, 'Appraisal build must compile at least 8 modules');
+    assert(res.box && res.box.modulesCount >= 6, 'Box build must compile at least 6 modules');
+    assert(res.app && res.app.modulesCount >= 8, 'App build must compile at least 8 modules');
   });
 }
 

@@ -1,0 +1,586 @@
+  background: transparent !important;
+  box-sizing: border-box !important;
+}
+
+body:not(.mobile-h5-app) .box-lab-content-container {
+  max-width: 1200px !important;
+  width: 92% !important;
+  margin: 20px auto 40px !important;
+  padding: 0 16px !important;
+  box-sizing: border-box !important;
+}
+
+body:not(.mobile-h5-app) .box-subnav-item {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 18px !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 3px solid transparent !important;
+  margin-bottom: -4px !important;
+  color: var(--text-muted, #94a3b8) !important;
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  border-radius: 6px 6px 0 0 !important;
+}
+
+body:not(.mobile-h5-app) .box-subnav-item:hover {
+  color: var(--text-primary, #f8fafc) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+body:not(.mobile-h5-app) .box-subnav-item.active {
+  color: var(--color-primary, #6366f1) !important;
+  border-bottom-color: var(--color-primary, #6366f1) !important;
+  background: transparent !important;
+}
+
+/* 1. 頂部 Segmented 子分頁切換列 (寶可夢倉庫 vs 深度研究室) */
+.mobile-h5-app .box-subnav-bar {
+  display: flex !important;
+  width: 100% !important;
+  background: var(--bg-header, var(--bg-card)) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 90 !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.mobile-h5-app .box-subnav-item {
+  flex: 1 1 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 11px 8px !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  position: relative !important;
+  transition: all 0.2s ease !important;
+  user-select: none !important;
+}
+
+.mobile-h5-app .box-subnav-item .subnav-icon {
+  font-size: 15px !important;
+  line-height: 1 !important;
+}
+
+.mobile-h5-app .box-subnav-item.active {
+  color: var(--color-primary, #6366f1) !important;
+}
+
+.mobile-h5-app .box-subnav-item.active::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 20% !important;
+  right: 20% !important;
+  height: 3px !important;
+  background: var(--color-primary, #6366f1) !important;
+  border-radius: 3px 3px 0 0 !important;
+}
+
+.mobile-h5-app .box-subpanel-view {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* 2. 單行精緻工具控制列 (佔 100% 寬度，左側排序選單，右側展示方式切換) */
+.mobile-h5-app .box-toolbar-control-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .box-toolbar-control-row select {
+  display: none !important;
+}
+
+.mobile-h5-app .box-toolbar-control-row .custom-select-container {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  display: block !important;
+  position: relative !important;
+}
+
+.mobile-h5-app .box-toolbar-control-row .custom-select-trigger {
+  height: 36px !important;
+  border-radius: 18px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  padding: 0 18px 0 14px !important;
+  cursor: pointer !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.mobile-h5-app .box-toolbar-control-row .custom-select-label {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  flex: 1 1 auto !important;
+  text-align: left !important;
+}
+
+.mobile-h5-app .box-toolbar-control-row .custom-select-arrow {
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-left: 8px !important;
+  color: var(--text-muted) !important;
+}
+
+.mobile-h5-app .box-toolbar-control-row .custom-select-menu {
+  position: absolute !important;
+  top: calc(100% + 4px) !important;
+  left: 0 !important;
+  width: 100% !important;
+  min-width: 180px !important;
+  background: var(--bg-card, #131b2e) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+  z-index: 100 !important;
+  max-height: 260px !important;
+  overflow-y: auto !important;
+}
+
+.mobile-h5-app .box-view-toggle-chips {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  gap: 2px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  padding: 3px !important;
+  border-radius: 10px !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.mobile-h5-app .view-chip-btn {
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  padding: 4px 9px !important;
+  height: 28px !important;
+  border-radius: 7px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  user-select: none !important;
+}
+
+.mobile-h5-app .view-chip-btn svg {
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .view-chip-btn.active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 4. 掃描進度指示條 (OCR Scanner Status) */
+.mobile-h5-app .box-scanner-status {
+  padding: 8px 10px !important;
+  border-radius: 10px !important;
+  background: rgba(99, 102, 241, 0.12) !important;
+  border: 1px solid rgba(99, 102, 241, 0.3) !important;
+  font-size: 11.5px !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .batch-ocr-progress-card {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .batch-ocr-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+}
+
+.mobile-h5-app .batch-ocr-bar-bg {
+  width: 100% !important;
+  height: 6px !important;
+  border-radius: 3px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .batch-ocr-bar-fill {
+  height: 100% !important;
+  background: var(--accent-gradient, #38bdf8) !important;
+  border-radius: 3px !important;
+  transition: width 0.2s ease !important;
+}
+
+.mobile-h5-app .batch-ocr-status-text {
+  font-size: 10.5px !important;
+  color: var(--text-muted) !important;
+}
+
+/* 5. 倉庫內容容器與列表完全鋪滿 (Edge-to-Edge List - 零左右下邊距完全延展) */
+.mobile-h5-app .box-content-container {
+  padding: 0 0 90px 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app #panel-box .box-content-container {
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app #panel-box #box-content-area {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app #panel-box .table-container {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-top: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.08)) !important;
+  box-shadow: none !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  background: transparent !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+}
+
+.mobile-h5-app #panel-box .pokemon-table.box-table {
+  width: max-content !important;
+  min-width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border: none !important;
+}
+
+/* 倉庫表格表頭頂部置頂 (Sticky Table Header - 圖鑑與倉庫全面統一) */
+.mobile-h5-app #panel-box .pokemon-table.box-table thead th,
+.pokemon-table.box-table thead th {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
+  background-color: var(--table-th-solid, #0a0f1d) !important;
+}
+
+.mobile-h5-app #panel-box .pokemon-table.box-table thead .th-icon,
+.pokemon-table.box-table thead .th-icon {
+  position: sticky !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 35 !important;
+  background-color: var(--table-th-solid, #0a0f1d) !important;
+}
+
+.mobile-h5-app #panel-box .pokemon-table.box-table tbody .td-icon,
+.pokemon-table.box-table tbody .td-icon {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 15 !important;
+  background-color: inherit !important;
+}
+
+.pokemon-table.box-table tbody tr:nth-child(odd) td.td-icon {
+  background-color: var(--table-row-odd-solid, #0d1527) !important;
+}
+
+.pokemon-table.box-table tbody tr:nth-child(even) td.td-icon {
+  background-color: var(--table-row-even-solid, #131f38) !important;
+}
+
+.pokemon-table.box-table tbody tr:hover td.td-icon,
+.pokemon-table.box-table tbody tr:active td.td-icon {
+  background-color: var(--table-row-hover-solid, #1c2e52) !important;
+}
+
+/* 篩選器獨立排序選單 (Dropdown Inset Arrow Rule) */
+.box-sort-select {
+  width: 100% !important;
+  height: 38px !important;
+  border-radius: 10px !important;
+  background-color: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  padding: 0 38px 0 14px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 18px center !important;
+  background-size: 8px 5px !important;
+  cursor: pointer !important;
+}
+
+/* 寶可夢倉庫子分頁與深度研究室子分頁切換控制 (防止雙面板同時渲染干擾) */
+.mobile-h5-app #panel-box.box-lab-active #box-subpanel-list,
+.mobile-h5-app body.box-lab-active #box-subpanel-list,
+.mobile-h5-app #panel-box #box-subpanel-list[style*="display: none"],
+.mobile-h5-app #panel-box #box-subpanel-list[style*="display:none"],
+#panel-box.box-lab-active #box-subpanel-list,
+body.box-lab-active #box-subpanel-list {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  flex: 0 0 0% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app #panel-box:not(.box-lab-active) #box-subpanel-list:not([style*="display: none"]):not([style*="display:none"]) {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app #box-subpanel-list {
+  padding-bottom: 84px !important;
+}
+
+.mobile-h5-app #panel-box:not(.box-lab-active) #box-subpanel-lab,
+.mobile-h5-app body:not(.box-lab-active) #box-subpanel-lab,
+.mobile-h5-app #box-subpanel-lab[style*="display: none"],
+.mobile-h5-app #box-subpanel-lab[style*="display:none"],
+#panel-box:not(.box-lab-active) #box-subpanel-lab,
+body:not(.box-lab-active) #box-subpanel-lab {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  flex: 0 0 0% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app #panel-box.box-lab-active #box-subpanel-lab,
+.mobile-h5-app body.box-lab-active #box-subpanel-lab,
+#panel-box.box-lab-active #box-subpanel-lab,
+body.box-lab-active #box-subpanel-lab {
+  display: block !important;
+  visibility: visible !important;
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding-bottom: 84px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app #panel-box .box-cards-grid:not(:has(.table-container)),
+.mobile-h5-app #panel-box .box-grid {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 8px 10px 84px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .box-cards-grid,
+.mobile-h5-app .box-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+/* 6. 原生 App 寶可夢卡片 (App Box Card) */
+.mobile-h5-app .box-card {
+  background: var(--bg-card, #131b2e) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 14px !important;
+  padding: 10px 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 7px !important;
+  transition: all 0.2s ease !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .box-card-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .box-card-img-wrap {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  border-radius: 10px !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-card-icon {
+  width: 38px !important;
+  height: 38px !important;
+  object-fit: contain !important;
+}
+
+.mobile-h5-app .box-card-info {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+
+.mobile-h5-app .box-card-name-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: nowrap !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .box-card-name {
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.mobile-h5-app .box-card-level {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: var(--color-primary, #818cf8) !important;
+  background: rgba(99, 102, 241, 0.15) !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-pr-badge {
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  padding: 1px 6px !important;
+  border-radius: 6px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-pr-badge-potential {
+  font-size: 8.5px !important;
+  font-weight: 500 !important;
+  padding: 0px 4px !important;
+  border-radius: 3px !important;
+  line-height: 1.1 !important;
+  background: rgba(148, 163, 184, 0.12) !important;
+  color: #94a3b8 !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .box-card-nickname {
+  font-size: 11px !important;
+  color: var(--text-muted) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.mobile-h5-app .box-card-tags {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin-top: 1px !important;
+}
+
+.mobile-h5-app .box-spec-tag {
+  font-size: 10px !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+}
+
+.mobile-h5-app .box-card-actions {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+}

@@ -1,0 +1,900 @@
+    max-width: calc(100% - 24px) !important;
+    width: calc(100% - 24px) !important;
+    margin: 0 12px 24px 12px !important;
+    padding: 0 !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 14px !important;
+    background: var(--table-row-odd-solid, #0d1527) !important;
+    box-shadow: none !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mobile-h5-app .pokemon-table th:last-child,
+  .mobile-h5-app .pokemon-table td:last-child,
+  .pokemon-table th:last-child,
+  .pokemon-table td:last-child {
+    padding-right: 18px !important;
+  }
+
+  .pokemon-main-content .pokemon-grid {
+    max-width: calc(100% - 16px);
+    width: calc(100% - 16px);
+    padding: 0;
+    margin: 0 auto 12px;
+  }
+
+  .search-filter-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .search-box {
+    width: 100%;
+    height: 40px;
+  }
+
+  .view-mode-toggle {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .view-mode-toggle .toggle-btn {
+    justify-content: center;
+    padding: 7px 0;
+    font-size: 12.5px;
+  }
+
+  .stats-bar {
+    padding: 0 10px 4px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .pokemon-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 0 8px;
+  }
+
+  .pokemon-card {
+    padding: 9px 10px;
+    border-radius: 10px;
+  }
+
+  .pokemon-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .pokemon-name {
+    font-size: 13.5px;
+  }
+
+  .card-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 4px 0;
+  }
+
+  .stat-val {
+    font-size: 11px;
+  }
+
+  .stat-lbl {
+    font-size: 9.5px;
+  }
+
+  /* 手機端與 H5 App 隱藏寶可夢名稱文字欄位，No. 與 圖示 吸附最左側 */
+  .pokemon-table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+  }
+
+  .pokemon-table tbody tr:nth-child(odd) td {
+    background-color: var(--table-row-odd-solid, #0d1527) !important;
+  }
+
+  .pokemon-table tbody tr:nth-child(even) td {
+    background-color: var(--table-row-even-solid, #131f38) !important;
+  }
+
+  .pokemon-table tbody tr:hover td,
+  .pokemon-table tbody tr:active td {
+    background-color: var(--table-row-hover-solid, #1c2e52) !important;
+  }
+
+  .pokemon-table .th-no,
+  .pokemon-table .td-no {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 20 !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    width: 44px !important;
+  }
+
+  .pokemon-table thead .th-no {
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 35 !important;
+    background-color: var(--table-th-solid, #0a0f1d) !important;
+  }
+
+  .pokemon-table .th-icon,
+  .pokemon-table .td-icon {
+    position: sticky !important;
+    left: 44px !important;
+    z-index: 20 !important;
+    min-width: 34px !important;
+    max-width: 34px !important;
+    width: 34px !important;
+    padding: 3px 0 !important;
+    border-right: 1px solid var(--border-color) !important;
+    box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .pokemon-table thead .th-icon {
+    top: 0 !important;
+    left: 44px !important;
+    z-index: 35 !important;
+    background-color: var(--table-th-solid, #0a0f1d) !important;
+    border-right: 1px solid var(--border-color) !important;
+    box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .pokemon-table.hide-no .th-icon,
+  .pokemon-table.hide-no .td-icon,
+  .pokemon-table.hide-no thead .th-icon,
+  .pokemon-table.box-table .th-icon,
+  .pokemon-table.box-table .td-icon {
+    left: 0 !important;
+  }
+
+  .pokemon-table .th-name,
+  .pokemon-table .td-name,
+  .pokemon-table .pokemon-name-cell {
+    display: none !important;
+  }
+
+  .pokemon-table .th-spec,
+  .pokemon-table .td-spec {
+    min-width: 32px !important;
+    width: 32px !important;
+    white-space: nowrap !important;
+    text-align: center;
+  }
+
+  .pokemon-table .td-type .pkm-type-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .pokemon-table .ing-cell .ing-qty-group,
+  .pokemon-table .ing-qty-group {
+    display: none !important;
+  }
+
+  .pokemon-table .th-ing,
+  .pokemon-table .td-ing {
+    min-width: 36px !important;
+    width: 36px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+    text-align: center;
+  }
+
+  .pokemon-filter-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 85vw;
+    max-width: 320px;
+    z-index: 10000;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.7);
+  }
+
+  /* ───  2. 料理食譜手機適配 ─── */
+  .recipes-main-content .controls-container,
+  .recipes-main-content .stats-bar,
+  .recipes-main-content .recipe-grid,
+  .recipes-main-content .recipe-table-container {
+    max-width: 100%;
+    width: 100%;
+    padding: 0 10px;
+    margin: 0 auto 12px;
+  }
+
+  .rf-cat-buttons {
+    display: flex;
+    overflow-x: auto;
+    gap: 6px;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    width: 100%;
+  }
+
+  .rf-cat-buttons::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rf-cat-btn {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .pot-slider-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .tasty-multipliers {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .tasty-switch-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 6px 8px;
+    font-size: 11.5px;
+  }
+
+  .recipe-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 0 8px;
+  }
+
+  .recipe-card {
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+
+  /* ───  3. 數據百科手機適配 ─── */
+  .wiki-main-container {
+    width: 100%;
+    padding: 6px 8px;
+    margin: 0;
+  }
+
+  .wiki-subnav-bar {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+  }
+
+  .wiki-subnav-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .wiki-subnav-tabs {
+    display: flex;
+    gap: 3px;
+    width: max-content;
+    padding: 0 4px;
+  }
+
+  .wiki-subtab-btn {
+    padding: 4px 7px;
+    font-size: 11px;
+    white-space: nowrap;
+    border-radius: 14px;
+  }
+
+  .wiki-control-bar {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 6px;
+  }
+
+  .wiki-control-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .wiki-filter-pills {
+    display: flex;
+    gap: 6px;
+    width: max-content;
+  }
+
+  .wiki-pill-btn {
+    padding: 5px 10px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .wiki-skills-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .wiki-card {
+    padding: 14px 16px;
+    border-radius: 12px;
+  }
+
+  .wiki-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+
+  /* ───  4. 寶可夢倉庫手機適配 ─── */
+  .box-container {
+    width: 100%;
+    padding: 6px 8px;
+  }
+
+  .box-dropzone {
+    padding: 16px 12px;
+    border-radius: 12px;
+  }
+
+  .box-dropzone-title {
+    font-size: 13.5px;
+  }
+
+  .box-dropzone-subtitle {
+    font-size: 11px;
+  }
+
+  .box-top-actions {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .box-top-actions .box-btn-primary {
+    width: 100%;
+    justify-content: center;
+    height: 40px;
+    font-size: 13px;
+  }
+
+  .box-content-container {
+    max-width: 100%;
+    width: 100%;
+    padding: 0 10px;
+    margin: 0 auto 20px;
+  }
+
+  .box-grid,
+  .box-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* 手機端編輯彈窗自適應為 Bottom Sheet */
+  .box-modal-backdrop {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .box-modal-dialog {
+    max-height: 92vh;
+    border-radius: 16px 16px 0 0;
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    width: 100%;
+    margin: 0;
+  }
+
+  .box-modal-body {
+    flex-direction: column;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .box-modal-preview-col {
+    width: 100%;
+  }
+
+  .box-form-row-3col {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+  }
+
+  .box-form-row-3col .flex-name {
+    flex: 2;
+    min-width: 0;
+    width: auto;
+  }
+
+  .box-form-row-3col .flex-level {
+    flex: 1;
+    min-width: 48px;
+    width: auto;
+  }
+
+  .box-form-row-3col .flex-nickname {
+    flex: 2;
+    min-width: 0;
+    width: auto;
+  }
+
+  .box-subskill-slots-row {
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .box-subskill-slot-btn {
+    min-height: 46px;
+    padding: 4px 1px;
+    gap: 2px;
+  }
+
+  .slot-lvl-header {
+    font-size: 9.5px;
+  }
+
+  .slot-val-badge {
+    font-size: 9.5px;
+    padding: 1px 2px;
+  }
+
+  .subskill-chips-row {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+  }
+
+  .box-subskill-chip {
+    font-size: 9.5px;
+    padding: 5px 1px;
+    border-radius: 4px;
+  }
+
+  /* ───  5. 最新消息手機適配 ─── */
+  .news-container {
+    width: 100%;
+    padding: 6px 8px;
+  }
+
+  .news-filter-card {
+    padding: 12px 14px;
+  }
+
+  .news-category-tags {
+    display: flex;
+    overflow-x: auto;
+    gap: 6px;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    width: 100%;
+  }
+
+  .news-category-tags::-webkit-scrollbar {
+    display: none;
+  }
+
+  .news-tag-btn {
+    flex-shrink: 0;
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .news-gantt-scroll-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+
+  .news-card {
+    padding: 14px 16px;
+    border-radius: 12px;
+  }
+
+  /* ───  全域彈窗手機適配 (Bottom Sheet 模式) ─── */
+  .appraisal-modal-backdrop {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .appraisal-modal-container {
+    max-height: 94vh;
+    border-radius: 16px 16px 0 0;
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    width: 100%;
+    margin: 0;
+  }
+
+  .appraisal-modal-body {
+    padding: 12px;
+    gap: 12px;
+    grid-template-columns: 1fr;
+  }
+
+  .settings-modal-overlay {
+    padding: 16px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .settings-modal-container {
+    max-height: 85vh;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    width: calc(100% - 16px);
+    max-width: 520px;
+    margin: auto;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.75);
+  }
+
+  .settings-modal-body {
+    padding: 16px;
+    gap: 16px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(85vh - 65px);
+  }
+
+  .theme-picker-grid,
+  .lang-switcher-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+/* =========================================================
+   PR 潛力評級徽章 (RaenonX Percentile Ranking Badges)
+   ========================================================= */
+
+.box-pr-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.pr-tier-sss {
+  background: linear-gradient(135deg, #f43f5e, #fb7185);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(244, 63, 94, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.pr-tier-ss {
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.pr-tier-splus {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.pr-tier-s {
+  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.pr-tier-a {
+  background: linear-gradient(135deg, #22c55e, #10b981);
+  color: #ffffff;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.35);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.pr-tier-b {
+  background: rgba(148, 163, 184, 0.2);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.pr-tier-c {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.pr-tier-d {
+  background: rgba(220, 38, 38, 0.25);
+  color: #ef4444;
+  border: 1px solid rgba(220, 38, 38, 0.5);
+}
+
+/* 滿級潛力副徽章 (小尺寸、一般較不明顯顏色、無高亮) */
+.box-pr-badge-potential {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.1 !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+  background: rgba(148, 163, 184, 0.12) !important;
+  color: #94a3b8 !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  letter-spacing: 0.2px;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.box-pr-summary-bar {
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+}
+
+.box-pr-summary-label {
+  font-weight: 700;
+  color: var(--accent-blue);
+  flex-shrink: 0;
+}
+
+.box-pr-summary-text {
+  color: var(--text-secondary);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   回到頂部浮動按鈕 (Back to Top Floating Button)
+   通用於桌面網頁版與行動端 H5 App，具備絲滑淡入淡出與避讓邏輯
+   ========================================================= */
+.back-to-top-btn {
+  position: fixed;
+  right: 28px;
+  bottom: 32px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--bg-card, #1e293b);
+  color: var(--text-primary, #ffffff);
+  border: 1.5px solid var(--border-color, rgba(255, 255, 255, 0.18));
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 990;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(12px) scale(0.92);
+  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 0.25s,
+              background-color 0.2s ease,
+              border-color 0.2s ease,
+              bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.back-to-top-btn.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.back-to-top-btn:hover {
+  background: var(--bg-sidebar-btn-hover, #334155);
+  border-color: var(--accent-blue, #38bdf8);
+  color: var(--accent-blue, #38bdf8);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  transform: translateY(-2px) scale(1.04);
+}
+
+.back-to-top-btn:active {
+  transform: translateY(0) scale(0.94);
+}
+
+.back-to-top-icon {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  display: block;
+  transition: transform 0.2s ease;
+}
+
+.back-to-top-btn:hover .back-to-top-icon {
+  transform: translateY(-2px);
+}
+
+/* 主題適配 (Theme Adaptations) */
+[data-theme="onyx"] .back-to-top-btn {
+  background: rgba(18, 18, 18, 0.92);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #f8fafc;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .back-to-top-btn {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #1e293b;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .back-to-top-btn {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(16, 185, 129, 0.25);
+  color: #064e3b;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* 行動端 H5 App 避讓與定位邏輯 */
+.mobile-h5-app .back-to-top-btn {
+  right: 18px;
+  /* 預設無懸浮篩選按鈕時：位於底部 Dock 導覽列正上方 */
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  width: 44px;
+  height: 44px;
+  z-index: 9990; /* 略低於篩選按鈕 (9995) 與抽屜 Drawer (10000) */
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+}
+
+/* 當頁面右下具有懸浮篩選按鈕 (FAB 50x50 at bottom 76px) 時，自動向上堆疊避讓 */
+.mobile-h5-app .back-to-top-btn.has-filter-fab {
+  bottom: calc(138px + env(safe-area-inset-bottom, 0px));
+}
+
+.mobile-h5-app .back-to-top-btn:hover {
+  transform: translateY(0) scale(1);
+}
+
+.mobile-h5-app .back-to-top-btn:active {
+  transform: scale(0.92) !important;
+}
+
+/* ==========================================================================
+   Multi-Theme Category Badges Styling
+   ========================================================================== */
+
+/* 1. Midnight Theme (Default Dark Slate) */
+:root .wiki-item-cat-evolution,
+[data-theme="midnight"] .wiki-item-cat-evolution {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: none !important;
+  box-shadow: none !important;
+}
+:root .wiki-item-cat-pokemon_incense,
+[data-theme="midnight"] .wiki-item-cat-pokemon_incense {
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+  border: none !important;
+  box-shadow: none !important;
+}
+:root .wiki-item-cat-functional_incense,
+[data-theme="midnight"] .wiki-item-cat-functional_incense {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  border: none !important;
+  box-shadow: none !important;
+}
+:root .wiki-item-cat-training,
+[data-theme="midnight"] .wiki-item-cat-training {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: none !important;
+  box-shadow: none !important;
+}
+:root .wiki-item-cat-biscuit,
+[data-theme="midnight"] .wiki-item-cat-biscuit {
+  background: rgba(244, 114, 182, 0.2);
+  color: #f472b6;
+  border: none !important;
+  box-shadow: none !important;
+}
+:root .wiki-item-cat-supply,
+[data-theme="midnight"] .wiki-item-cat-supply {
+  background: rgba(20, 184, 166, 0.2);
+  color: #2dd4bf;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 2. Onyx Theme (Pure Black OLED) */
+[data-theme="onyx"] .wiki-item-cat-evolution {
+  background: rgba(245, 158, 11, 0.22);
+  color: #fbbf24;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="onyx"] .wiki-item-cat-pokemon_incense {
+  background: rgba(168, 85, 247, 0.22);
+  color: #c084fc;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="onyx"] .wiki-item-cat-functional_incense {
+  background: rgba(203, 213, 225, 0.15);
+  color: #e2e8f0;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="onyx"] .wiki-item-cat-training {
+  background: rgba(16, 185, 129, 0.22);
+  color: #34d399;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="onyx"] .wiki-item-cat-biscuit {
+  background: rgba(244, 114, 182, 0.22);
+  color: #f472b6;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="onyx"] .wiki-item-cat-supply {
+  background: rgba(20, 184, 166, 0.22);
+  color: #2dd4bf;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 3. Dawn Theme (Bright Warm Light) */
+[data-theme="dawn"] .wiki-item-cat-evolution {
+  background: #fef3c7;
+  color: #92400e;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="dawn"] .wiki-item-cat-pokemon_incense {
+  background: #f3e8ff;
+  color: #6b21a8;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="dawn"] .wiki-item-cat-functional_incense {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="dawn"] .wiki-item-cat-training {
+  background: #dcfce7;
+  color: #166534;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="dawn"] .wiki-item-cat-biscuit {
+  background: #fce7f3;
+  color: #9d174d;
+  border: none !important;
+  box-shadow: none !important;
+}
+[data-theme="dawn"] .wiki-item-cat-supply {
+  background: #ccfbf1;

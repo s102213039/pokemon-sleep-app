@@ -1,0 +1,800 @@
+  width: 22px !important;
+  min-width: 22px !important;
+}
+
+.mobile-h5-app .ladder-tail-ruler-scale {
+  margin: 0 14px 0 4px !important;
+}
+
+.mobile-h5-app .ladder-tail-canvas {
+  margin: 0 14px 0 4px !important;
+}
+
+.mobile-h5-app .node-avatar-wrapper {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.mobile-h5-app .tick-label {
+  font-size: 10px !important;
+}
+
+.mobile-h5-app .ladder-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  margin-bottom: 8px !important;
+  box-sizing: border-box !important;
+  color: var(--text-primary) !important;
+}
+
+/* 7.  Sub-Tab 4: 樹果與食材能量 */
+.mobile-h5-app #wiki-subpanel-values.active {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+  padding: 6px 10px 10px 10px !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app.values-active .values-horizontal-container {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .values-horizontal-section {
+  padding: 0 !important;
+  border-radius: 0 !important;
+  margin-bottom: 4px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .values-section-header {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 6px !important;
+  margin-bottom: 6px !important;
+  padding-bottom: 0 !important;
+  border-bottom: none !important;
+}
+
+.mobile-h5-app .berry-calc-controls {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .berry-control-group {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.mobile-h5-app .berry-control-label {
+  color: var(--text-secondary) !important;
+  font-size: 11.5px !important;
+}
+
+.mobile-h5-app .berry-slider {
+  flex: 1 !important;
+  margin-left: 10px !important;
+}
+
+.mobile-h5-app .values-compact-grid {
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  gap: 5px 3px !important;
+  padding: 2px 0 !important;
+}
+
+.mobile-h5-app .value-compact-node {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2px 1px !important;
+  gap: 1.5px !important;
+}
+
+.mobile-h5-app .value-compact-node:hover {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .value-compact-icon {
+  width: 30px !important;
+  height: 30px !important;
+  border: none !important;
+  outline: none !important;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35)) !important;
+}
+
+.mobile-h5-app .value-compact-energy {
+  font-size: 11.5px !important;
+  font-weight: 800 !important;
+  border-radius: 4px !important;
+  padding: 1px 3px !important;
+  min-width: 26px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .value-compact-energy.berry-val {
+  color: #7dd3fc !important;
+  background: rgba(125, 211, 252, 0.12) !important;
+}
+
+.mobile-h5-app .value-compact-energy.berry-val-fav {
+  color: #fde047 !important;
+  background: rgba(253, 224, 71, 0.12) !important;
+}
+
+.mobile-h5-app .value-compact-energy.ing-val {
+  color: #fde047 !important;
+  background: rgba(253, 224, 71, 0.12) !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .value-compact-energy.berry-val,
+[data-theme="emerald"] .mobile-h5-app .value-compact-energy.berry-val {
+  color: #0369a1 !important;
+  background: rgba(3, 105, 161, 0.08) !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .value-compact-energy.berry-val-fav,
+[data-theme="emerald"] .mobile-h5-app .value-compact-energy.berry-val-fav,
+[data-theme="dawn"] .mobile-h5-app .value-compact-energy.ing-val,
+[data-theme="emerald"] .mobile-h5-app .value-compact-energy.ing-val {
+  color: #b45309 !important;
+  background: rgba(180, 83, 9, 0.08) !important;
+}
+
+/* 全域保證：隱藏的 panel 絕不覆蓋顯示 */
+.view-panel[style*="display: none"],
+.view-panel[style*="display:none"],
+.mobile-h5-app .view-panel[style*="display: none"],
+.mobile-h5-app .view-panel[style*="display:none"],
+.mobile-h5-app #panel-pokemon[style*="display: none"],
+.mobile-h5-app #panel-recipes[style*="display: none"],
+.mobile-h5-app #panel-wiki[style*="display: none"],
+.mobile-h5-app #panel-box[style*="display: none"],
+.mobile-h5-app #panel-news[style*="display: none"],
+.mobile-h5-app #panel-pokemon[style*="display:none"],
+.mobile-h5-app #panel-recipes[style*="display:none"],
+.mobile-h5-app #panel-wiki[style*="display:none"],
+.mobile-h5-app #panel-box[style*="display:none"],
+.mobile-h5-app #panel-news[style*="display:none"] {
+  display: none !important;
+}
+
+/* 8. Sub-Tab 6: 7大研究營地與EX專家模式 (Research Camps & EX Mode Mobile App Layout) */
+.mobile-h5-app #wiki-subpanel-islands.active {
+  display: block !important;
+  padding: 0 10px 32px 10px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  position: relative !important;
+}
+
+.mobile-h5-app #wiki-subpanel-islands.has-island-scene > .island-scene-layer,
+.mobile-h5-app #wiki-subpanel-islands.active > .island-scene-layer {
+  position: absolute !important;
+  top: 0 !important;
+  left: -10px !important;
+  right: -10px !important;
+  bottom: auto !important;
+  width: calc(100% + 20px) !important;
+  height: auto !important;
+  max-height: none !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .island-scene-photo {
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 2560 / 1372 !important;
+  object-fit: contain !important;
+  object-position: center top !important;
+  opacity: 0.32 !important;
+  display: block !important;
+}
+
+.mobile-h5-app .island-scene-fade {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.04) 0%,
+    transparent 20%,
+    transparent 50%,
+    color-mix(in srgb, var(--bg-dark) 45%, transparent) 75%,
+    var(--bg-dark) 100%
+  ) !important;
+}
+
+html[data-theme="midnight"]:not([data-theme-inverted="true"]) .mobile-h5-app .island-scene-photo,
+html[data-theme="onyx"]:not([data-theme-inverted="true"]) .mobile-h5-app .island-scene-photo,
+html[data-theme="dawn"][data-theme-inverted="true"] .mobile-h5-app .island-scene-photo,
+html[data-theme="emerald"][data-theme-inverted="true"] .mobile-h5-app .island-scene-photo {
+  opacity: 0.18 !important;
+}
+
+.mobile-h5-app .island-nav-strip {
+  display: flex !important;
+  overflow-x: auto !important;
+  flex-wrap: nowrap !important;
+  gap: 8px !important;
+  padding: 4px 2px 8px 2px !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  width: 100% !important;
+  align-items: center !important;
+  margin-bottom: 0 !important;
+}
+
+.mobile-h5-app .island-nav-strip::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .island-tab-btn {
+  flex: 0 0 auto !important;
+  padding: 3px !important;
+  border-radius: 12px !important;
+}
+
+.mobile-h5-app .island-tab-thumb {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 9px !important;
+}
+
+.mobile-h5-app .island-tab-indicator {
+  bottom: -5px !important;
+  width: 14px !important;
+  height: 2.5px !important;
+}
+
+.mobile-h5-app .island-tab-ex-inner {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 9px !important;
+}
+
+.mobile-h5-app .island-ex-tab-badge {
+  font-size: 13px !important;
+}
+
+.mobile-h5-app .island-overview-card {
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0 -10px 12px !important;
+  width: calc(100% + 20px) !important;
+}
+
+.mobile-h5-app .island-hero-banner {
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: none !important;
+}
+
+.mobile-h5-app .island-hero-body {
+  padding: 8px 10px 12px !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .island-hero-content {
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex-wrap: wrap !important;
+  gap: 10px 16px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .island-hero-title {
+  font-size: 19px !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85) !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .island-title-en {
+  font-size: 12px !important;
+  color: rgba(226, 232, 240, 0.85) !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85) !important;
+}
+
+.mobile-h5-app .island-nav-divider {
+  width: 1px !important;
+  height: 26px !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  margin: 0 4px !important;
+  flex-shrink: 0 !important;
+  align-self: center !important;
+}
+
+.mobile-h5-app .island-tab-thumb-wrapper {
+  position: relative !important;
+  display: inline-block !important;
+}
+
+.mobile-h5-app .island-tab-ex-tag {
+  position: absolute !important;
+  top: -2px !important;
+  right: -2px !important;
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  color: #ffffff !important;
+  font-size: 8.5px !important;
+  font-weight: 800 !important;
+  padding: 0.5px 3px !important;
+  border-radius: 3px !important;
+  line-height: 1 !important;
+}
+
+.mobile-h5-app .island-tab-ex-item.active {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.45) !important;
+}
+
+.mobile-h5-app .island-tab-ex-item.active .island-tab-indicator {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24) !important;
+}
+
+.mobile-h5-app .island-berries-section {
+  padding-top: 0 !important;
+  gap: 8px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  border-top: none !important;
+  margin-top: 0 !important;
+  margin-left: 4px !important;
+}
+
+.mobile-h5-app .island-berries-label {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  width: auto !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .island-hero-banner .island-berries-label {
+  color: #f1f5f9 !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85) !important;
+}
+
+.mobile-h5-app .island-berries-list {
+  display: inline-flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  gap: 6px !important;
+}
+
+
+.mobile-h5-app .island-berry-chip {
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .island-berry-icon {
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.mobile-h5-app .island-table-card,
+.mobile-h5-app .island-spawns-card,
+.mobile-h5-app .island-ex-card,
+.mobile-h5-app #wiki-subpanel-islands .wiki-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.mobile-h5-app .island-sleep-filters {
+  width: 100% !important;
+  display: flex !important;
+  gap: 4px !important;
+  padding: 4px !important;
+  border-radius: 10px !important;
+  background: var(--bg-card-inner, rgba(255, 255, 255, 0.05)) !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.mobile-h5-app .island-sleep-btn {
+  flex: 1 1 0 !important;
+  justify-content: center !important;
+  padding: 6px 8px !important;
+  font-size: 12.5px !important;
+  border-radius: 7px !important;
+}
+
+.mobile-h5-app .island-sleep-count {
+  font-size: 11px !important;
+  padding: 1px 5px !important;
+}
+
+.mobile-h5-app .island-spawns-compact-table {
+  width: 100% !important;
+}
+
+.mobile-h5-app .island-spawns-compact-table th {
+  padding: 5px 2px !important;
+  font-size: 12px !important;
+  text-align: center !important;
+}
+
+.mobile-h5-app .sleep-style-star-icon {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.mobile-h5-app .island-th-content {
+  gap: 2px !important;
+}
+
+.mobile-h5-app .island-sort-arrow-wrap {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+.mobile-h5-app .island-spawns-compact-table td {
+  padding: 2.5px 2px !important;
+  font-size: 11.5px !important;
+  text-align: center !important;
+}
+
+.mobile-h5-app .island-pkm-icon-only .island-pkm-avatar {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.mobile-h5-app .rank-badge {
+  padding: 2px 4.5px !important;
+  font-size: 11px !important;
+  gap: 3px !important;
+  border-radius: 9px !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .rank-num {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .pokeball-svg {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.mobile-h5-app .rank-dash {
+  font-size: 12px !important;
+  padding: 1px 3px !important;
+}
+
+.mobile-h5-app .wiki-two-col-grid .wiki-data-table th,
+.mobile-h5-app .wiki-two-col-grid .wiki-data-table td {
+  font-size: 13px !important;
+  padding: 8px 8px !important;
+}
+
+/* H5 App 最新公告專屬原生排版 (Mobile News & Updates Layout) */
+.mobile-h5-app #panel-news {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+  padding: 0 0 28px 0 !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app #panel-news .controls-container {
+  position: relative !important;
+  top: auto !important;
+  z-index: 10 !important;
+  margin: 10px 12px 6px !important;
+  padding: 0 !important;
+  width: calc(100% - 24px) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+/*  1. 頂部搜尋列 App 風格 (與所有 Tab 保持 100% 統一元件規範) */
+.mobile-h5-app .search-box,
+.mobile-h5-app .news-search-box {
+  position: relative !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 0 6px 0 !important;
+  box-sizing: border-box !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .search-input,
+.mobile-h5-app .news-search-input {
+  width: 100% !important;
+  height: 40px !important;
+  line-height: 40px !important;
+  padding: 0 32px 0 36px !important;
+  background: var(--bg-card-inner, #1e293b) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 10px !important;
+  color: var(--text-primary) !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  font-family: inherit !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;
+}
+
+.mobile-h5-app .search-input:focus,
+.mobile-h5-app .news-search-input:focus {
+  border-color: var(--color-primary, #6366f1) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+}
+
+.mobile-h5-app .search-input::placeholder,
+.mobile-h5-app .news-search-input::placeholder {
+  color: var(--text-muted, #94a3b8) !important;
+  opacity: 0.85 !important;
+  font-size: 13.5px !important;
+  font-weight: 400 !important;
+}
+
+.mobile-h5-app .search-icon,
+.mobile-h5-app .news-search-box .search-icon {
+  position: absolute !important;
+  left: 11px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 16px !important;
+  height: 16px !important;
+  color: var(--text-muted, #94a3b8) !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+}
+
+.mobile-h5-app .search-icon svg,
+.mobile-h5-app .news-search-box .search-icon svg {
+  display: block !important;
+  width: 15px !important;
+  height: 15px !important;
+}
+
+/*  2. 單行橫向滑動分類標籤 (Segmented Pill Chips - 1 Line) */
+.mobile-h5-app .news-category-tags {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  gap: 6px !important;
+  padding: 1px 0 2px 0 !important;
+  scrollbar-width: none !important;
+  width: 100% !important;
+}
+.mobile-h5-app .news-category-tags::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .news-tag-btn {
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 5px 11px !important;
+  border-radius: 18px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  background: var(--table-row-odd-solid, #0d1527) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-muted) !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .news-tag-btn.active {
+  background: var(--color-primary, #6366f1) !important;
+  color: #fff !important;
+  border-color: var(--color-primary, #6366f1) !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35) !important;
+}
+
+.mobile-h5-app .news-tag-count {
+  font-size: 10px !important;
+  opacity: 0.85 !important;
+  background: rgba(0, 0, 0, 0.25) !important;
+  padding: 1px 4px !important;
+  border-radius: 8px !important;
+}
+
+/*  3. 壓縮無框版活動日曆 (Borderless Ultra-Compact Activity Calendar) ─── */
+/* 網頁桌面版：日曆與進行中活動左右並行 (Side-by-Side Parallel Layout) */
+.news-calendar-wrapper {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 2px 0 4px 0 !important;
+  box-shadow: none !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 16px !important;
+  align-items: stretch !important;
+  margin: 0 !important;
+}
+
+.news-calendar-cal-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+}
+
+@media (max-width: 880px) {
+  .news-calendar-wrapper {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+/* 行動版 H5 專屬：嚴格維持原樣上下垂直堆疊 (Mobile Keeps Vertical Stacking Unchanged) */
+.mobile-h5-app .news-calendar-wrapper {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 2px 0 4px 0 !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  margin: 0 !important;
+  grid-template-columns: none !important;
+}
+
+.mobile-h5-app .news-calendar-cal-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  width: 100% !important;
+}
+
+/* 行動端 H5 專屬：精確鎖定原本緊湊規格 (Mobile H5 Exact Compact Preservations) */
+.mobile-h5-app .news-calendar-top-bar {
+  height: 22px !important;
+}
+
+.mobile-h5-app .news-calendar-title-group {
+  gap: 4px !important;
+  font-size: 12.5px !important;
+}
+
+.mobile-h5-app .news-calendar-month-text {
+  font-size: 11.5px !important;
+}
+
+.mobile-h5-app .news-calendar-nav-btn {
+  padding: 2px 6px !important;
+  font-size: 10.5px !important;
+}
+
+.mobile-h5-app .news-calendar-weekdays {
+  font-size: 10.5px !important;
+  padding-bottom: 2px !important;
+}
+
+.mobile-h5-app .news-cal-day-cell {
+  height: 28px !important;
+}
+
+.mobile-h5-app .news-cal-day-num {
+  font-size: 11px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8), 0 0 4px rgba(0, 0, 0, 0.6) !important;
+}
+
+.mobile-h5-app .news-cal-day-cell.is-today .news-cal-day-num,
+.mobile-h5-app .news-cal-day-cell.is-today:not(.is-selected) .news-cal-day-num {
+  color: #d4a338 !important;
+  font-size: 12px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  line-height: 18px !important;
+  text-shadow: none !important;
+}
+
+.mobile-h5-app .news-cal-day-cell.is-today::after {
+  bottom: 2px !important;
+  width: 4px !important;
+  height: 4px !important;
+  background: #d4a338 !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .news-cal-day-cell.is-selected:not(.is-today) .news-cal-day-num {
+  font-size: 11.5px !important;
+}
+
+.news-calendar-top-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  height: 26px !important;
+}
+
+.news-calendar-title-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+}
+
+.news-calendar-month-text {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--text-muted) !important;
+}
+
+.news-calendar-nav-group {
+  display: flex !important;
+  align-items: center !important;

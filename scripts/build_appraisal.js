@@ -16,8 +16,15 @@ const LAB_DIR = path.join(ROOT_DIR, 'js', 'modules', 'lab');
 const OUTPUT_FILE = path.join(ROOT_DIR, 'js', 'modules', 'appraisal.js');
 
 const LAB_MODULES = [
-  'lab_core.js',
-  'lab_team.js',
+  'lab_specialists.js',
+  'lab_engine.js',
+  'lab_milestone.js',
+  'lab_summary.js',
+  'lab_modal.js',
+  'lab_editor.js',
+  'lab_team_calc.js',
+  'lab_team_picker.js',
+  'lab_team_ui.js',
   'lab_compare.js',
   'lab_main.js'
 ];

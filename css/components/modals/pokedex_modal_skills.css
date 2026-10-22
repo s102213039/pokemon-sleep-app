@@ -1,0 +1,800 @@
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(4) {
+  width: 19% !important;
+  padding: 4px 2px !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table th:nth-child(5),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table td:nth-child(5),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(5),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(5) {
+  width: 19% !important;
+  padding: 4px 2px !important;
+}
+
+/* 表格 3: 副技能階級與數值總覽 (技能標籤寬度適配單行2個，留多空間給詳細效果說明) */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table tbody tr,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table tbody tr,
+.mobile-h5-app .wiki-subskills-table tbody tr {
+  min-height: 36px !important;
+  height: auto !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table tbody td,
+.mobile-h5-app .wiki-subskills-table tbody td {
+  min-height: 36px !important;
+  height: auto !important;
+  box-sizing: border-box !important;
+  vertical-align: middle !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table td:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(1),
+.mobile-h5-app .wiki-subskills-table .col-subskills-tags {
+  width: 45% !important;
+  text-align: center !important;
+  padding: 4px 2px !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-data-table td:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(3) .wiki-data-table td:nth-child(2),
+.mobile-h5-app .wiki-subskills-table .col-subskills-effect {
+  width: 55% !important;
+  font-size: 11.5px !important;
+  line-height: 1.35 !important;
+  text-align: left !important;
+  padding: 4px 6px !important;
+}
+
+.mobile-h5-app .wiki-subskills-table .wiki-subskill-tags-col,
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-subskills-overview .wiki-subskill-tags-col {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 3px 4px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 22px !important;
+}
+
+/* 表格 4: 性格五維屬性倍率表 (三欄均分排版) */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table td:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table td:nth-child(1) {
+  width: 34% !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table td:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table td:nth-child(2) {
+  width: 33% !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table th:nth-child(3),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-natures-table .wiki-data-table td:nth-child(3),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table th:nth-child(3),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(4) .wiki-data-table td:nth-child(3) {
+  width: 33% !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+}
+
+
+.mobile-h5-app #ing-draw-matrix-table .wiki-mini-table {
+  min-width: 100% !important;
+  width: 100% !important;
+  table-layout: auto !important;
+}
+
+.mobile-h5-app #ing-draw-matrix-table th,
+.mobile-h5-app #ing-draw-matrix-table td {
+  padding: 5px 3px !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app #ing-draw-matrix-table .wiki-ing-badge {
+  padding: 2px 4px !important;
+  border-radius: 5px !important;
+}
+
+.mobile-h5-app #lunar-prayer-table {
+  overflow-x: hidden !important;
+}
+
+.mobile-h5-app #lunar-prayer-table .wiki-mini-table {
+  width: 100% !important;
+  min-width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+}
+
+.mobile-h5-app #lunar-prayer-table th,
+.mobile-h5-app #lunar-prayer-table td {
+  padding: 4px 1px !important;
+  font-size: 9.5px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  letter-spacing: -0.3px !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", monospace !important;
+}
+
+.mobile-h5-app #lunar-prayer-table th:first-child,
+.mobile-h5-app #lunar-prayer-table td:first-child {
+  width: 13% !important;
+  font-weight: 700 !important;
+  padding: 4px 1px !important;
+}
+
+.mobile-h5-app #lunar-prayer-table th:not(:first-child),
+.mobile-h5-app #lunar-prayer-table td:not(:first-child) {
+  width: 14.5% !important;
+}
+
+.mobile-h5-app .wiki-skill-badge {
+  font-size: 10.5px !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+}
+
+.mobile-h5-app .matrix-rate-up,
+.mobile-h5-app .matrix-rate-down {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+.mobile-h5-app .matrix-calc-code {
+  font-size: 10px !important;
+  padding: 1px 4px !important;
+  background: var(--bg-card-inner) !important;
+  color: var(--text-primary) !important;
+}
+
+/* 5.  Sub-Tab 3: 培育與評級指南 */
+.mobile-h5-app .wiki-strategy-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .strategy-item {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 4px 0 !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app .strategy-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+  margin-bottom: 3px !important;
+}
+
+.mobile-h5-app .strategy-badge {
+  font-size: 11.5px !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  margin-bottom: 0 !important;
+  display: inline-block !important;
+  line-height: 1.4 !important;
+}
+
+.mobile-h5-app .strategy-title {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--text-title, #f8fafc) !important;
+  margin-bottom: 0 !important;
+  display: inline-block !important;
+}
+
+.mobile-h5-app .strategy-desc {
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .rating-card-header-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+}
+
+.mobile-h5-app .rating-specialty-badge {
+  font-size: 11.5px !important;
+}
+
+.mobile-h5-app .rating-specialty-desc {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-title, #f8fafc) !important;
+}
+
+.mobile-h5-app .wiki-ratings-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  margin-top: 12px !important;
+  grid-template-rows: none !important;
+}
+
+.mobile-h5-app .wiki-ratings-container .wiki-rating-card {
+  display: flex !important;
+  flex-direction: column !important;
+  grid-row: auto !important;
+  height: auto !important;
+}
+
+.mobile-h5-app .wiki-ratings-container .rating-subsections {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .wiki-ratings-container .rating-col {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.mobile-h5-app .wiki-rating-card.rating-card-berry {
+  border-top: 3px solid #f59e0b !important;
+}
+
+.mobile-h5-app .wiki-rating-card.rating-card-ingredient {
+  border-top: 3px solid #06b6d4 !important;
+}
+
+.mobile-h5-app .wiki-rating-card.rating-card-skill {
+  border-top: 3px solid #a855f7 !important;
+}
+
+.mobile-h5-app .rating-col-title {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  margin: 0 0 2px !important;
+}
+
+.mobile-h5-app .wiki-rating-card .wiki-card-desc {
+  margin: 4px 0 8px !important;
+}
+
+.mobile-h5-app .rating-item {
+  padding: 1px 0 !important;
+  gap: 4px !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  margin-bottom: 0 !important;
+  font-size: 13px !important;
+}
+
+.mobile-h5-app .rating-tier-tag {
+  display: none !important;
+}
+
+.mobile-h5-app .rating-item-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  font-size: 12px !important;
+}
+
+.mobile-h5-app .rating-item-colon {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--text-secondary) !important;
+  margin: 0 4px 0 1px !important;
+}
+
+.mobile-h5-app .rating-item-name {
+  font-size: 13px !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .rating-item-detail {
+  font-size: 12.5px !important;
+  line-height: 1.5 !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .calc-inputs-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding: 12px 10px !important;
+  align-items: stretch !important;
+}
+
+.mobile-h5-app .calc-form-col {
+  width: 100% !important;
+  flex: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.mobile-h5-app .calc-form-row {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 8px !important;
+  align-items: flex-end !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .calc-form-row-boosts {
+  flex-wrap: wrap !important;
+}
+
+.mobile-h5-app .calc-field-group.calc-field-exptype {
+  flex-basis: 100% !important;
+}
+
+.mobile-h5-app .calc-field-group {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+.mobile-h5-app .calc-label {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--text-title, #f8fafc) !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
+}
+
+.mobile-h5-app .calc-input-num {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 6px 10px !important;
+  font-size: 13.5px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 8px !important;
+  background-color: var(--bg-input, var(--bg-card-inner)) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  cursor: text !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease !important;
+}
+
+.mobile-h5-app .calc-input-num:focus,
+.mobile-h5-app .calc-input-num:focus-visible {
+  border-color: var(--accent-blue, #38bdf8) !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35) !important;
+  background-color: var(--bg-card-hover, rgba(56, 189, 248, 0.08)) !important;
+  outline: 2px solid var(--accent-blue, #38bdf8) !important;
+  outline-offset: 1px !important;
+}
+
+.mobile-h5-app .calc-select {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 6px 36px 6px 10px !important;
+  background-position: right 16px center !important;
+  background-size: 8px 5px !important;
+  font-size: 12.5px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 8px !important;
+  background-color: var(--bg-input, var(--bg-card-inner)) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .custom-select-calc .custom-select-trigger {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 6px 36px 6px 10px !important;
+  font-size: 12.5px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 8px !important;
+}
+
+.mobile-h5-app .custom-select-calc .custom-select-arrow {
+  right: 10px !important;
+}
+
+.mobile-h5-app .custom-select-calc .custom-select-menu {
+  max-width: 240px !important;
+}
+
+.mobile-h5-app .custom-select-calc .custom-select-item {
+  padding: 8px 10px !important;
+  font-size: 12px !important;
+}
+
+.mobile-h5-app .calc-switch-label {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 6px 8px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  border-radius: 8px !important;
+  gap: 6px !important;
+  justify-content: flex-start !important;
+}
+
+.mobile-h5-app .calc-switch-label .switch-slider {
+  width: 28px !important;
+  height: 16px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .calc-switch-label .switch-slider:before {
+  width: 12px !important;
+  height: 12px !important;
+  left: 2px !important;
+  bottom: 2px !important;
+}
+
+.mobile-h5-app .calc-switch-label .switch-checkbox:checked + .switch-slider:before {
+  transform: translateX(12px) !important;
+}
+
+.mobile-h5-app .calc-switch-label .switch-text {
+  font-size: 11.5px !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .calc-result-box {
+  width: 100% !important;
+  flex: none !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+  padding: 10px 12px !important;
+  margin-top: 2px !important;
+  border-radius: 10px !important;
+  text-align: center !important;
+  justify-content: center !important;
+  background: rgba(2, 132, 199, 0.12) !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+}
+
+.mobile-h5-app .calc-result-label {
+  font-size: 11px !important;
+  color: var(--text-secondary, #94a3b8) !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.5px !important;
+}
+
+.mobile-h5-app .calc-result-val {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  margin: 3px 0 !important;
+  color: var(--accent-blue, #38bdf8) !important;
+}
+
+.mobile-h5-app .calc-result-badge {
+  font-size: 11.5px !important;
+  padding: 3px 10px !important;
+  background: var(--bg-card, #1e293b) !important;
+  color: var(--text-secondary, #94a3b8) !important;
+  border: 1px solid var(--border-color-subtle, rgba(255, 255, 255, 0.1)) !important;
+  border-radius: 12px !important;
+  line-height: 1.3 !important;
+  display: inline-block !important;
+}
+
+.mobile-h5-app .calc-result-candies {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: #f59e0b !important;
+  margin-top: 4px !important;
+  line-height: 1.3 !important;
+}
+
+.mobile-h5-app .wiki-calc-card {
+  padding: 10px 8px !important;
+}
+
+.mobile-h5-app .wiki-calc-card .wiki-table-wrapper {
+  margin-top: 10px !important;
+  border-radius: 8px !important;
+}
+
+.mobile-h5-app .milestone-badge {
+  font-size: 10.5px !important;
+  padding: 1.5px 4px !important;
+  border-radius: 4px !important;
+  letter-spacing: -0.3px !important;
+}
+
+.mobile-h5-app .milestone-table {
+  width: 100% !important;
+  table-layout: auto !important;
+}
+
+.mobile-h5-app .milestone-table th {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--text-title, #f8fafc) !important;
+  padding: 6px 3px !important;
+  text-align: center !important;
+}
+
+.mobile-h5-app .milestone-table td {
+  font-size: 11px !important;
+  padding: 6px 3px !important;
+}
+
+.mobile-h5-app .milestone-table th.col-milestone-lv,
+.mobile-h5-app .milestone-table td.col-milestone-lv {
+  white-space: nowrap !important;
+  width: 16% !important;
+  min-width: 46px !important;
+  text-align: center !important;
+  padding: 6px 2px !important;
+}
+
+.mobile-h5-app .milestone-table th.col-milestone-exp,
+.mobile-h5-app .milestone-table td.col-milestone-exp {
+  white-space: nowrap !important;
+  width: 20% !important;
+  min-width: 52px !important;
+  text-align: center !important;
+  padding: 6px 2px !important;
+}
+
+.mobile-h5-app .milestone-table th.col-milestone-days,
+.mobile-h5-app .milestone-table td.col-milestone-days {
+  white-space: nowrap !important;
+  width: 18% !important;
+  min-width: 50px !important;
+  text-align: center !important;
+  padding: 6px 2px !important;
+}
+
+.mobile-h5-app .milestone-table th.col-milestone-note,
+.mobile-h5-app .milestone-table td.col-milestone-note {
+  white-space: nowrap !important;
+  width: 46% !important;
+  min-width: 110px !important;
+  text-align: left !important;
+  padding: 6px 4px !important;
+}
+
+/* 6.  Sub-Tab 4: 食材產量天梯榜 */
+.mobile-h5-app .ladder-view-toggle-bar {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 10px !important;
+  padding-bottom: 8px !important;
+  border-bottom: 1px solid var(--border-color-subtle) !important;
+}
+
+.mobile-h5-app .ladder-mode-btns {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  width: 100% !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .ladder-mode-btn {
+  text-align: center !important;
+  padding: 7px 0 !important;
+  font-size: 12px !important;
+  border-radius: 8px !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .ladder-mode-btn.active {
+  background: var(--accent-gradient, var(--accent-blue)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+.mobile-h5-app #wiki-subpanel-ingredients {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/*  食材天梯與  能量速查專屬：全視窗單屏滿版適配（零滑動，整頁全覽，尾巴置於導覽欄上方） */
+body.mobile-h5-app.ladder-active,
+.mobile-h5-app.ladder-active,
+body.mobile-h5-app.values-active,
+.mobile-h5-app.values-active {
+  overflow: hidden !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+}
+
+.mobile-h5-app.ladder-active #panel-wiki:not([style*="display: none"]):not([style*="display:none"]),
+.mobile-h5-app.ladder-active .wiki-main-container,
+.mobile-h5-app.values-active #panel-wiki:not([style*="display: none"]):not([style*="display:none"]),
+.mobile-h5-app.values-active .wiki-main-container,
+.mobile-h5-app #panel-wiki:has(#wiki-subpanel-ingredients.active),
+.mobile-h5-app .wiki-main-container:has(#wiki-subpanel-ingredients.active) {
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.mobile-h5-app.ladder-active .wiki-subnav-bar,
+.mobile-h5-app.values-active .wiki-subnav-bar,
+.mobile-h5-app .wiki-main-container:has(#wiki-subpanel-ingredients.active) .wiki-subnav-bar {
+  position: relative !important;
+  top: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-ingredients.active {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  box-sizing: border-box !important;
+  padding: 1px 4px 2px 4px !important;
+  margin: 0 !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+.mobile-h5-app #wiki-ingredient-ladder-coordinate {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .wiki-coordinate-ladder-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .wiki-coordinate-ladder-wrapper::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .wiki-coordinate-ladder {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  justify-content: flex-start !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.mobile-h5-app .ladder-ruler-header {
+  flex: 0 0 16px !important;
+  height: 16px !important;
+  margin-bottom: 1px !important;
+}
+
+.mobile-h5-app .ladder-track-row {
+  flex: 1 1 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: 38px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.mobile-h5-app .ladder-track-header {
+  width: 22px !important;
+  min-width: 22px !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border-right: none !important;
+  height: 100% !important;
+}
+
+.mobile-h5-app .ladder-ruler-spacer {
+  width: 22px !important;
+  min-width: 22px !important;
+  justify-content: center !important;
+}
+
+.mobile-h5-app .ladder-ing-icon {
+  width: 19px !important;
+  height: 19px !important;
+}
+
+.mobile-h5-app .ladder-ruler-scale {
+  margin: 0 14px 0 4px !important;
+}
+
+.mobile-h5-app .ladder-track-canvas {
+  margin: 0 14px 0 4px !important;
+}
+
+.mobile-h5-app .ladder-ruler-tick:first-child {
+  transform: translateX(-15%) !important;
+}
+
+.mobile-h5-app .ladder-ruler-tick:last-child {
+  transform: translateX(-85%) !important;
+}
+
+.mobile-h5-app .ladder-tail-standalone-container {
+  flex: 0 0 auto !important;
+  margin-top: auto !important;
+  margin-bottom: 2px !important;
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .ladder-tail-standalone-box {
+  width: 230px !important;
+  max-width: 100% !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.08)) !important;
+  margin-left: 0 !important;
+  padding: 2px 5px 3px !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .ladder-tail-ruler {
+  height: 13px !important;
+}
+
+.mobile-h5-app .ladder-tail-track-row {
+  height: 23px !important;
+  min-height: 23px !important;
+}
+
+.mobile-h5-app .ladder-tail-ruler-spacer {

@@ -776,6 +776,7 @@
     }
   ];
 
+
   // 主技能機率矩陣速查表 (副技能 × 性格全排列)
   const TRIGGER_CHANCE_MATRIX = [
     {
@@ -2382,6 +2383,7 @@
     window.ALL_TOP_CATEGORY_RECIPES = ALL_TOP_CATEGORY_RECIPES;
   }
 
+
   function getLadderDishIcon(dishName) {
     if (!dishName) return '';
     const found = ALL_TOP_CATEGORY_RECIPES.find(r => r.name_cn === dishName || r.name_en === dishName);
@@ -2715,6 +2717,7 @@
     }
     return false;
   }
+
 
   function getLadderMultiplier() {
     let mult = 1.0;
@@ -3123,6 +3126,7 @@
   }
 
   // 3.2 點選食材圖示開啟單一食材產量排名浮窗 (Ingredient Output Ranking Modal)
+
   function openIngredientRankingModal(ingId) {
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const mult = getLadderMultiplier();
@@ -4102,6 +4106,7 @@
       event = anchorEl;
       anchorEl = event.target.closest('.island-sleep-cell-wrap') || event.target;
     }
+
 
     const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
     const shardsLabel = isEN ? 'Dream Shards: ' : '夢之碎片：';
@@ -5098,6 +5103,7 @@
   const STORAGE_KEY_ISLAND_EXPERT = 'pksleep_active_island_expert';
   const STORAGE_KEY_ISLAND_SLEEP_TYPE = 'pksleep_active_island_sleep_type';
 
+
   function getSavedIslandId() {
     try {
       const storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
@@ -5647,6 +5653,7 @@
   }
 
   let islandSpawnsTouchY = 0;
+
 
   function getIslandSpawnsCoordinatorEls() {
     const scroller = document.getElementById('panel-wiki');
@@ -6482,6 +6489,7 @@
 
   let _coordLadderRenderCache = { key: '', html: '' };
 
+
   // 渲染橫向視覺座標天梯圖 (支援多型態並列節點、同組跨度連接線、大菜供應能力評定、動態自適應最大刻度、美味尾巴獨立分離)
   function renderCoordinateLadder(ladderData) {
     const data = ladderData || LV60_COORDINATE_LADDER_DATA || [];
@@ -7181,6 +7189,7 @@
     }
     return renderedHtml;
   }
+
 
   // 渲染樹果與食材基礎能量看板 (極簡無名無滾輪 18 格全展開版 + 等級滑桿、島嶼加成與順果 2x 開關)
   function renderValuesBoard() {

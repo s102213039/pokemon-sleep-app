@@ -1,0 +1,800 @@
+/* 2. 通用卡片與子面板邊距 (4 主題自適應) */
+.mobile-h5-app .wiki-subpanel {
+  padding: 12px 12px 28px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .wiki-section-heading {
+  margin-bottom: 10px !important;
+  padding: 0 2px !important;
+}
+
+.mobile-h5-app .wiki-section-title {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  color: var(--text-title, #f8fafc) !important;
+  margin: 0 0 3px 0 !important;
+}
+
+.mobile-h5-app .wiki-section-subtitle {
+  font-size: 12.5px !important;
+  line-height: 1.45 !important;
+  color: var(--text-secondary) !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .wiki-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 14px !important;
+  padding: 14px !important;
+  margin-bottom: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .wiki-card-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-top: -4px !important;
+  margin-bottom: 8px !important;
+}
+
+.mobile-h5-app .wiki-card-title {
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  color: var(--text-title, #f8fafc) !important;
+  line-height: 1.3 !important;
+}
+
+.mobile-h5-app .wiki-card-desc {
+  font-size: 13px !important;
+  color: var(--text-secondary) !important;
+  line-height: 1.5 !important;
+  margin-bottom: 10px !important;
+}
+
+.mobile-h5-app .wiki-rule-banner {
+  font-size: 13px !important;
+  padding: 8px 2px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  margin-top: 4px !important;
+  margin-bottom: 10px !important;
+  line-height: 1.5 !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+}
+
+[data-theme="midnight"] .mobile-h5-app .wiki-rule-banner,
+[data-theme="onyx"] .mobile-h5-app .wiki-rule-banner {
+  background: transparent !important;
+  border: none !important;
+  color: #fef3c7 !important;
+}
+
+[data-theme="midnight"] .mobile-h5-app .wiki-rule-banner code,
+[data-theme="onyx"] .mobile-h5-app .wiki-rule-banner code {
+  background: rgba(0, 0, 0, 0.35) !important;
+  color: #fbbf24 !important;
+  padding: 1.5px 6px !important;
+  border-radius: 4px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(251, 191, 36, 0.3) !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .wiki-rule-banner {
+  background: transparent !important;
+  border: none !important;
+  color: #92400e !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .wiki-rule-banner code {
+  background: #fef3c7 !important;
+  color: #b45309 !important;
+  padding: 1.5px 6px !important;
+  border-radius: 4px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  border: 1px solid #fcd34d !important;
+}
+
+[data-theme="emerald"] .mobile-h5-app .wiki-rule-banner {
+  background: transparent !important;
+  border: none !important;
+  color: #1e293b !important;
+}
+
+[data-theme="emerald"] .mobile-h5-app .wiki-rule-banner code {
+  background: #e2e8f0 !important;
+  color: #334155 !important;
+  padding: 1.5px 6px !important;
+  border-radius: 4px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+/* 3.  Sub-Tab 1: 主技能數值庫 */
+.mobile-h5-app .wiki-control-bar {
+  margin-bottom: 10px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.mobile-h5-app .wiki-filter-pills {
+  display: flex !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  gap: 6px !important;
+  padding: 2px 0 6px 0 !important;
+  align-items: center !important;
+}
+
+.mobile-h5-app .wiki-filter-pills::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .wiki-pill-label {
+  display: none !important;
+}
+
+.mobile-h5-app .wiki-pill-btn {
+  padding: 5px 11px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  border-radius: 18px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  background: var(--bg-card-inner, var(--bg-card)) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .wiki-pill-btn.active {
+  background: var(--accent-gradient, var(--accent-blue)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+.mobile-h5-app .wiki-skills-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .wiki-skill-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 10px !important;
+  padding: 9px 11px !important;
+  box-sizing: border-box !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .skill-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-bottom: 4px !important;
+}
+
+.mobile-h5-app .skill-icon {
+  width: 32px !important;
+  height: 32px !important;
+  flex-shrink: 0 !important;
+  border-radius: 6px !important;
+}
+
+.mobile-h5-app .skill-title-group {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.mobile-h5-app .skill-name {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-h5-app .skill-category-badge {
+  font-size: 9.5px !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+}
+
+.mobile-h5-app .skill-desc,
+.mobile-h5-app .skill-desc-text {
+  font-size: 11.5px !important;
+  line-height: 1.35 !important;
+  color: var(--text-secondary) !important;
+  margin: 0 !important;
+}
+
+.mobile-h5-app .skill-note-inline {
+  color: #fbbf24 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="dawn"] .mobile-h5-app .skill-note-inline,
+[data-theme="emerald"] .mobile-h5-app .skill-note-inline {
+  color: #b45309 !important;
+}
+
+/*  方案 C: 主技能精華單行速查 (手機端極簡適配) */
+.mobile-h5-app .wiki-skill-card.clickable-card {
+  cursor: pointer !important;
+  user-select: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.mobile-h5-app .wiki-skill-card.clickable-card:active {
+  transform: scale(0.99) !important;
+}
+
+.mobile-h5-app .skill-top-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+}
+
+.mobile-h5-app .skill-card-chevron {
+  font-size: 13px !important;
+  color: var(--text-muted) !important;
+  transition: transform 0.25s ease, color 0.2s ease !important;
+  display: inline-block !important;
+}
+
+.mobile-h5-app .wiki-skill-card.is-expanded .skill-card-chevron {
+  transform: rotate(180deg) !important;
+  color: var(--accent-blue) !important;
+}
+
+.mobile-h5-app .skill-hero-summary.single-line {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 2px 0 0 0 !important;
+  gap: 6px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .hero-stat-item {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .hero-lv-label {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: var(--text-secondary) !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  padding: 1px 4px !important;
+  border-radius: 4px !important;
+  line-height: 1.2 !important;
+}
+
+.mobile-h5-app .hero-lv-label.tag-max {
+  color: var(--accent-blue) !important;
+  border-color: rgba(56, 189, 248, 0.3) !important;
+}
+
+.mobile-h5-app .hero-val-text {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  font-family: monospace, -apple-system !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
+
+.mobile-h5-app .hero-val-text.val-max {
+  color: var(--accent-blue) !important;
+}
+
+.mobile-h5-app .hero-arrow-icon {
+  font-size: 11px !important;
+  color: var(--text-muted) !important;
+  font-weight: 700 !important;
+  margin: 0 1px !important;
+}
+
+.mobile-h5-app .skill-stepper-list {
+  display: none !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  margin-top: 6px !important;
+  padding: 6px !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .wiki-skill-card.is-expanded .skill-stepper-list {
+  display: flex !important;
+}
+
+.mobile-h5-app .skill-step-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 4.5px 7px !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  border-radius: 5px !important;
+  gap: 6px !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .skill-step-item.item-max {
+  border-color: rgba(56, 189, 248, 0.3) !important;
+  background: rgba(56, 189, 248, 0.05) !important;
+}
+
+.mobile-h5-app .step-tag-badge {
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  padding: 1px 4px !important;
+  border-radius: 3px !important;
+  background: var(--bg-card-inner) !important;
+  color: var(--text-secondary) !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .skill-step-item.item-max .step-tag-badge {
+  background: var(--accent-blue) !important;
+  color: #ffffff !important;
+}
+
+.mobile-h5-app .step-val-text {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+  font-family: monospace, -apple-system !important;
+  flex: 1 !important;
+  text-align: right !important;
+  word-break: break-word !important;
+}
+
+.mobile-h5-app .skill-levels-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 4px !important;
+  margin-top: 6px !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .skill-levels-grid.grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .skill-levels-grid.grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .skill-levels-grid.grid-cols-4 {
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 4px !important;
+}
+
+.mobile-h5-app .skill-level-chip {
+  padding: 5px 3px !important;
+  border-radius: 6px !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-h5-app .skill-level-chip .level-tag {
+  font-size: 9.5px !important;
+  opacity: 0.85 !important;
+  color: var(--text-secondary) !important;
+  line-height: 1.2 !important;
+}
+
+.mobile-h5-app .skill-level-chip .level-val {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  font-family: monospace, -apple-system !important;
+  white-space: nowrap !important;
+  color: var(--text-primary) !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.mobile-h5-app .skill-levels-grid.grid-cols-3 .skill-level-chip {
+  padding: 6px 4px !important;
+}
+
+.mobile-h5-app .skill-levels-grid.grid-cols-3 .skill-level-chip .level-val {
+  font-size: 11.5px !important;
+}
+
+.mobile-h5-app .stack-selector-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  align-items: flex-start !important;
+  margin-bottom: 6px !important;
+}
+
+.mobile-h5-app .stack-chips-group {
+  display: flex !important;
+  gap: 4px !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  padding: 2px 0 !important;
+  width: 100% !important;
+}
+
+.mobile-h5-app .stack-chips-group::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .stack-chip-btn {
+  padding: 4px 9px !important;
+  font-size: 11px !important;
+  border-radius: 6px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
+
+.mobile-h5-app .stack-chip-btn.active {
+  background: var(--accent-gradient, var(--accent-blue)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+.mobile-h5-app .wiki-toggle-detail-btn {
+  width: 100% !important;
+  padding: 8px 10px !important;
+  font-size: 11.5px !important;
+  border-radius: 8px !important;
+  text-align: center !important;
+  margin-top: 8px !important;
+  background: var(--bg-card-inner) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--accent-blue) !important;
+}
+
+/* 蓄力與幫手獎勵對照表無滾動條全覽 */
+#charge-matrix-table,
+#helper-boost-table,
+.mobile-h5-app #charge-matrix-table,
+.mobile-h5-app #helper-boost-table {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+}
+
+#charge-matrix-table .wiki-mini-table,
+#helper-boost-table .wiki-mini-table,
+.mobile-h5-app #charge-matrix-table .wiki-mini-table,
+.mobile-h5-app #helper-boost-table .wiki-mini-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+}
+
+#charge-matrix-table th,
+#charge-matrix-table td,
+.mobile-h5-app #charge-matrix-table th,
+.mobile-h5-app #charge-matrix-table td {
+  padding: 3.5px 0.5px !important;
+  font-size: 10px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+#charge-matrix-table th:first-child,
+#charge-matrix-table td:first-child,
+.mobile-h5-app #charge-matrix-table th:first-child,
+.mobile-h5-app #charge-matrix-table td:first-child {
+  width: 14% !important;
+  font-weight: 700 !important;
+}
+
+#charge-matrix-table th:not(:first-child),
+#charge-matrix-table td:not(:first-child),
+.mobile-h5-app #charge-matrix-table th:not(:first-child),
+.mobile-h5-app #charge-matrix-table td:not(:first-child) {
+  width: 12.28% !important;
+}
+
+#helper-boost-table th,
+#helper-boost-table td,
+.mobile-h5-app #helper-boost-table th,
+.mobile-h5-app #helper-boost-table td {
+  padding: 4px 1px !important;
+  font-size: 10px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+#helper-boost-table th:first-child,
+#helper-boost-table td:first-child,
+.mobile-h5-app #helper-boost-table th:first-child,
+.mobile-h5-app #helper-boost-table td:first-child {
+  width: 18% !important;
+}
+
+#helper-boost-table th:not(:first-child),
+#helper-boost-table td:not(:first-child),
+.mobile-h5-app #helper-boost-table th:not(:first-child),
+.mobile-h5-app #helper-boost-table td:not(:first-child) {
+  width: 13.66% !important;
+}
+
+/* 4.  Sub-Tab 2: 副技能與性格指南 */
+.mobile-h5-app .wiki-table-wrapper {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border-color) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: var(--bg-card) !important;
+}
+
+.mobile-h5-app .wiki-table-wrapper::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .wiki-mini-table,
+.mobile-h5-app .wiki-data-table {
+  font-size: 11px !important;
+  width: 100% !important;
+  border-collapse: collapse !important;
+}
+
+.mobile-h5-app .wiki-mini-table th,
+.mobile-h5-app .wiki-mini-table td,
+.mobile-h5-app .wiki-data-table th,
+.mobile-h5-app .wiki-data-table td {
+  padding: 6px 6px !important;
+  text-align: center !important;
+  white-space: normal !important;
+}
+
+.mobile-h5-app .wiki-mini-table th,
+.mobile-h5-app .wiki-data-table th {
+  background: var(--bg-table-th, var(--bg-card-inner)) !important;
+  color: var(--text-th, var(--text-primary)) !important;
+}
+
+.mobile-h5-app .wiki-mini-table td,
+.mobile-h5-app .wiki-data-table td {
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border-color-subtle) !important;
+}
+
+/*  子分頁 2: 副技能與性格指南 (手機端無外框極致放大排版) */
+.wiki-subskill-tags-col {
+  display: flex;
+  gap: 3px 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-h5-app .wiki-subskill-tags-col {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 3px 4px !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.mobile-h5-app .col-hide-mobile {
+  display: none !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin-bottom: 24px !important;
+  box-shadow: none !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:last-child {
+  margin-bottom: 0 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-top: -4px !important;
+  margin-bottom: 6px !important;
+  padding-left: 2px !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-icon {
+  font-size: 19px !important;
+  line-height: 1 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-title {
+  font-size: 16.5px !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+  letter-spacing: 0.3px !important;
+}
+
+[data-theme="midnight"] .mobile-h5-app #wiki-subpanel-subskills .wiki-card-title,
+[data-theme="onyx"] .mobile-h5-app #wiki-subpanel-subskills .wiki-card-title {
+  color: #7dd3fc !important; /* 低飽和柔和天藍，在暗黑主題下清晰顯目且柔和 */
+}
+
+[data-theme="dawn"] .mobile-h5-app #wiki-subpanel-subskills .wiki-card-title {
+  color: #0369a1 !important; /* 低飽和深湛藍，在白底極清晰顯目 */
+}
+
+[data-theme="emerald"] .mobile-h5-app #wiki-subpanel-subskills .wiki-card-title {
+  color: #047857 !important; /* 低飽和深森林翡翠綠，在綠色白底主題極清晰顯目 */
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-table-wrapper {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color-subtle) !important;
+  border-radius: 12px !important;
+  margin-top: 8px !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-data-table {
+  width: 100% !important;
+  min-width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+}
+
+/* 副技性格tab內的列表 (H5) - 單行 itemview 高度一致（多行自動擴展） */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-data-table tbody tr,
+.mobile-h5-app .wiki-subskills-table tbody tr {
+  height: 36px !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-data-table tbody td,
+.mobile-h5-app .wiki-subskills-table tbody td {
+  height: 36px !important;
+  box-sizing: border-box !important;
+  vertical-align: middle !important;
+}
+
+/* 幫忙速度手機版網格與卡片 */
+.mobile-h5-app .wiki-speed-metric-grid {
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .wiki-speed-breakdown-grid {
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+}
+
+.mobile-h5-app .wiki-speed-summary-points {
+  margin: 2px 0 12px 0 !important;
+  gap: 6px !important;
+}
+
+.mobile-h5-app .summary-point-line {
+  font-size: 12px !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+}
+
+/* 副技性格tab內的列表 (H5) - 所有表頭欄位名稱文字大小統一 (13px bold) */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-data-table th,
+.mobile-h5-app .wiki-subskills-table th {
+  padding: 7px 4px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+}
+
+/* 副技性格tab內的列表 (H5) - 所有內容文字與數值說明大小統一 (13px) */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-data-table td,
+.mobile-h5-app .wiki-subskills-table td {
+  padding: 4px 4px !important;
+  font-size: 13px !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  height: 36px !important;
+  box-sizing: border-box !important;
+}
+
+/* 副技能徽章標籤統一大小與間距 (11px bold) */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-skill-badge,
+.mobile-h5-app .wiki-subskills-table .wiki-skill-badge {
+  font-size: 11px !important;
+  padding: 2px 5px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.2px !important;
+  white-space: nowrap !important;
+  line-height: 1.3 !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .matrix-rate-up,
+.mobile-h5-app #wiki-subpanel-subskills .matrix-rate-down {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+/* 表格 1: 主技能發動機率矩陣 */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table td:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table td:nth-child(1) {
+  width: 48% !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table td:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table td:nth-child(2) {
+  width: 24% !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table th:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-trigger-matrix .wiki-data-table td:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table th:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(1) .wiki-data-table td:nth-child(4) {
+  width: 28% !important;
+}
+
+/* 表格 2: 幫忙速度矩陣速查表 (副技能組合加寬至48%，確保所有欄位至少2個副技能在一行展示) */
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table td:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(1),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(1) {
+  width: 48% !important;
+  padding: 4px 2px !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table td:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(2),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table td:nth-child(2) {
+  width: 14% !important;
+  padding: 4px 2px !important;
+}
+
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table th:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card-speed-guide .wiki-data-table td:nth-child(4),
+.mobile-h5-app #wiki-subpanel-subskills .wiki-card:nth-child(2) .wiki-data-table th:nth-child(4),

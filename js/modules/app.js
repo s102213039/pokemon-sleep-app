@@ -510,6 +510,7 @@ if (typeof window !== 'undefined') {
   window.getPokemonBerry = getPokemonBerry;
 }
 
+
 /* --- 樹果基礎能量對照表與單顆能量成長公式 --- */
 const BERRY_BASE_ENERGY_MAP = {
   // 飛行: 椰木果 / Pamtre (24)
@@ -1478,6 +1479,7 @@ for (let i = 0; i < PINYIN_TABLE.length; i++) {
     CHAR_TO_PINYIN[chars[j]] = py;
   }
 }
+
 
 function toPinyin(str) {
   if (!str) return '';
@@ -2606,6 +2608,7 @@ if (typeof document !== 'undefined') {
 
     window.getItemIcon = getIconUrl;
 
+
     function initSpaTabs() {
       const tabPokemon = document.getElementById('tab-pokemon');
       const tabRecipes = document.getElementById('tab-recipes');
@@ -3263,6 +3266,7 @@ if (typeof document !== 'undefined') {
     let uniqueIngredients = [];
     let baseSkillCounts = {};
 
+
     function renderTypeButtons() {
       if (!typeFilterContainer) return;
       const isEN = window.I18N && window.I18N.getLanguage() === 'en-US';
@@ -3843,6 +3847,7 @@ if (typeof document !== 'undefined') {
 
       window.updateActiveFilterBadge = updateActiveFilterBadge;
     }
+
 
     function filterData() {
       return allPokemons.filter(p => {
@@ -5425,6 +5430,7 @@ function updatePokedexSubskillUI() {
     }
   }
 }
+
 
 function getPokedexMainSkillYield(mainSkillName, skillLevel, dailyTriggers, isEN) {
   const s = mainSkillName || '';

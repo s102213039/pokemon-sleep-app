@@ -1,0 +1,800 @@
+  color: #1e293b;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-sub,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-sub,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-sub,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-sub {
+  color: #475569;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-clear-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-clear-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-clear-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-clear-btn {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+  border-radius: 50%;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-clear-btn:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-clear-btn:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-clear-btn:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-clear-btn:hover {
+  background: #fecaca;
+  color: #991b1b;
+  border-color: #f87171;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ings,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-ings,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-ings,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ings {
+  border-top: none;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ing-chip,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ing-chip,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-banner-ing-chip,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-banner-ing-chip {
+  border-color: #bae6fd;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-banner-ing-count,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-banner-ing-count,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-banner-ing-count {
+  color: #0284c7;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-banner-ing-count {
+  color: #334155;
+}
+
+/* 2. Highlighted Track Row in Light Theme */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-track-row.ladder-track-highlighted,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-track-row.ladder-track-highlighted,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-track-row.ladder-track-highlighted,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-track-row.ladder-track-highlighted,
+.ladder-tail-track-row.ladder-track-highlighted {
+  background: transparent !important;
+  border-left: none !important;
+  box-shadow: none !important;
+}
+
+/* 3. Modal Components in Light Theme */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-cat-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-cat-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-cat-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-cat-btn {
+  background: #f1f5f9;
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #475569;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-cat-btn:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-cat-btn:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-cat-btn:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-cat-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-card,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-card,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-card,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-card {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-card:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-card:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-card:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-card:hover {
+  background: #f8fafc;
+  border-color: #0284c7;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-card.selected,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-card.selected,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-card.selected {
+  background: #f0f9ff;
+  border-color: #0284c7;
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.18);
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-card.selected {
+  background: #f1f5f9;
+  border-color: #475569;
+  box-shadow: 0 0 12px rgba(71, 85, 105, 0.18);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-icon,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-icon,
+[data-theme="midnight"][data-theme-inverted="true"] .recipe-card-icon,
+[data-theme="onyx"][data-theme-inverted="true"] .recipe-card-icon {
+  background: #f1f5f9;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-active-pill,
+[data-theme="midnight"][data-theme-inverted="true"] .recipe-card-active-pill,
+[data-theme="onyx"][data-theme-inverted="true"] .recipe-card-active-pill {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #7dd3fc;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-active-pill {
+  background: #e2e8f0;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-energy-num,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-energy-num,
+[data-theme="midnight"][data-theme-inverted="true"] .recipe-card-energy-num,
+[data-theme="onyx"][data-theme-inverted="true"] .recipe-card-energy-num {
+  color: #b45309;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-ing-chip,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-ing-chip,
+[data-theme="midnight"][data-theme-inverted="true"] .recipe-card-ing-chip,
+[data-theme="onyx"][data-theme-inverted="true"] .recipe-card-ing-chip {
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  color: #334155;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .recipe-card-ing-chip .ing-chip-count,
+[data-theme="midnight"][data-theme-inverted="true"] .recipe-card-ing-chip .ing-chip-count,
+[data-theme="onyx"][data-theme-inverted="true"] .recipe-card-ing-chip .ing-chip-count {
+  color: #0284c7;
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .recipe-card-ing-chip .ing-chip-count {
+  color: #334155;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-modal-footer,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-modal-footer,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-modal-footer,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-modal-footer {
+  background: #f8fafc;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-btn-clear,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-clear,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-header-clear-btn,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-header-clear-btn,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-header-clear-btn,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-header-clear-btn {
+  background: #fee2e2 !important;
+  border: 1px solid #fca5a5 !important;
+  color: #b91c1c !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-clear:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-btn-clear:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-clear:hover,
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-header-clear-btn:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-header-clear-btn:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-header-clear-btn:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-header-clear-btn:hover {
+  background: #fecaca !important;
+  color: #991b1b !important;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-cancel,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-cancel,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-btn-cancel,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-cancel {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  color: #0f172a;
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-cancel:hover,
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-recipe-btn-cancel:hover,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-recipe-btn-cancel:hover,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-recipe-btn-cancel:hover {
+  background: #f1f5f9;
+}
+
+/* 4. 3-Meal Passing Line in Light Theme */
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-passing-line,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-passing-line,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-passing-line {
+  background: #d97706;
+  box-shadow: 0 0 4px rgba(217, 119, 6, 0.35);
+}
+
+[data-theme="dawn"]:not([data-theme-inverted="true"]) .ladder-passing-badge,
+[data-theme="midnight"][data-theme-inverted="true"] .ladder-passing-badge,
+[data-theme="onyx"][data-theme-inverted="true"] .ladder-passing-badge {
+  background: #fffbeb;
+  border-color: #d97706;
+  color: #92400e;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-passing-line {
+  background: #b45309;
+  box-shadow: 0 0 4px rgba(180, 83, 9, 0.3);
+}
+
+[data-theme="emerald"]:not([data-theme-inverted="true"]) .ladder-passing-badge {
+  background: #fef3c7;
+  border-color: #b45309;
+  color: #78350f;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.mobile-h5-app .ladder-passing-badge {
+  font-size: 8.5px !important;
+  padding: 0 3px !important;
+  top: 1px !important;
+}
+
+/* Mobile H5 Condensed Single-Row Recipe Banner */
+.mobile-h5-app .ladder-recipe-banner,
+.mobile-h5-html .ladder-recipe-banner {
+  padding: 4px 10px;
+  gap: 8px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  min-height: 42px;
+  height: auto;
+}
+
+.mobile-h5-app .ladder-recipe-banner-left,
+.mobile-h5-html .ladder-recipe-banner-left {
+  flex-shrink: 0;
+}
+
+.mobile-h5-app .ladder-recipe-banner-icon,
+.mobile-h5-html .ladder-recipe-banner-icon {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 8px;
+}
+
+.mobile-h5-app .ladder-recipe-banner-recipe-chip,
+.mobile-h5-html .ladder-recipe-banner-recipe-chip {
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 旁邊的料理名稱與類型還有基礎能量都不要了 */
+.mobile-h5-app .ladder-recipe-banner-text,
+.mobile-h5-html .ladder-recipe-banner-text {
+  display: none !important;
+}
+
+/* 直接把下方的食材圖示以及數量拿上來，做好排版 */
+.mobile-h5-app .ladder-recipe-banner-ings,
+.mobile-h5-html .ladder-recipe-banner-ings {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 5px !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  overflow-x: auto !important;
+  flex-wrap: nowrap !important;
+  border-top: none !important;
+  padding-top: 0 !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.mobile-h5-app .ladder-recipe-banner-ings::-webkit-scrollbar,
+.mobile-h5-html .ladder-recipe-banner-ings::-webkit-scrollbar {
+  display: none !important;
+}
+
+.mobile-h5-app .ladder-recipe-banner-ing-chip,
+.mobile-h5-html .ladder-recipe-banner-ing-chip {
+  padding: 2px 6px !important;
+  gap: 3px !important;
+  border-radius: 5px !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-h5-app .ladder-banner-ing-icon,
+.mobile-h5-html .ladder-banner-ing-icon {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.mobile-h5-app .ladder-banner-ing-count,
+.mobile-h5-html .ladder-banner-ing-count {
+  font-size: 11.5px !important;
+}
+
+.mobile-h5-app .ladder-recipe-banner-clear-btn,
+.mobile-h5-html .ladder-recipe-banner-clear-btn {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+@media (max-width: 768px) {
+  .ladder-recipe-banner {
+    padding: 4px 10px;
+    gap: 8px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    min-height: 42px;
+    height: auto;
+  }
+
+  .ladder-recipe-banner-left {
+    flex-shrink: 0;
+  }
+
+  .ladder-recipe-banner-icon {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 8px;
+  }
+
+  .ladder-recipe-banner-recipe-chip {
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .ladder-recipe-banner-text {
+    display: none !important;
+  }
+
+  .ladder-recipe-banner-ings {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 5px !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    border-top: none !important;
+    padding-top: 0 !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .ladder-recipe-banner-ings::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .ladder-recipe-banner-ing-chip {
+    padding: 2px 6px !important;
+    gap: 3px !important;
+    border-radius: 5px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .ladder-banner-ing-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .ladder-banner-ing-count {
+    font-size: 11.5px !important;
+  }
+
+  .ladder-recipe-banner-clear-btn {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* ==========================================================================
+   Wiki Subpanel: Items & Incense Encyclopedia (#wiki-subpanel-items)
+   Complies with Single Frame Rule, Multi-Theme Tokens, Zero Emoji Policy,
+   and Mobile H5 Touch & Zero-Scrollbar Requirements.
+   ========================================================================== */
+
+/* 1. Subpanel Host Container (Single Frame Rule Compliant) */
+#wiki-subpanel-items {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#wiki-subpanel-items.active {
+  display: block !important;
+  animation: fadeIn 0.25s ease forwards;
+}
+
+/* 2. Control Bar (Search Input & Filter Pills) */
+.wiki-items-control-bar {
+  margin-bottom: 16px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wiki-items-search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.wiki-items-search-box {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.wiki-items-search-input {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 36px 0 38px;
+  background: var(--bg-card-inner, #1e293b);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-weight: 500;
+  font-family: inherit;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.wiki-items-search-input:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+}
+
+.wiki-items-search-input.has-value {
+  border-color: var(--accent-blue);
+}
+
+.wiki-items-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wiki-items-search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--border-color);
+  color: var(--text-secondary);
+  border: none;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.wiki-items-search-clear:hover {
+  background: var(--accent-blue);
+  color: #ffffff;
+}
+
+.wiki-items-search-input.has-value + .wiki-items-search-clear,
+.wiki-items-search-box.has-query .wiki-items-search-clear {
+  display: flex;
+}
+
+.wiki-items-count-badge-wrapper {
+  flex-shrink: 0;
+}
+
+.wiki-items-count-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  white-space: nowrap;
+}
+
+/* Dropdown Sort Select (User Rule VI: padding-right 36px, right 18px center) */
+.wiki-items-select,
+.wiki-item-sort-select {
+  height: 40px;
+  padding: 0 36px 0 14px !important;
+  background-color: var(--bg-card-inner);
+  background-position: right 18px center !important;
+  background-repeat: no-repeat;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.wiki-items-select:focus,
+.wiki-item-sort-select:focus {
+  border-color: var(--accent-blue);
+}
+
+/* 3. Horizontal Filter Pills */
+.wiki-items-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.wiki-items-filter-pills .wiki-pill-btn {
+  padding: 6px 14px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  user-select: none;
+}
+
+.wiki-items-filter-pills .wiki-pill-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-title);
+  border-color: var(--accent-blue);
+}
+
+.wiki-items-filter-pills .wiki-pill-btn.active {
+  background: var(--accent-gradient, #0284c7);
+  border-color: transparent;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
+}
+
+.wiki-items-filter-pills .wiki-pill-count {
+  font-size: 10.5px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  color: inherit;
+}
+
+/* 4. Item Cards Grid (.wiki-item-card-grid) */
+.wiki-item-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 14px;
+  margin-bottom: 24px;
+}
+
+/* 5. Individual Item Card (.wiki-item-card) */
+.wiki-item-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+  box-sizing: border-box;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 110px;
+}
+
+.wiki-item-card:hover {
+  border-color: var(--accent-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  background-color: var(--bg-card-hover);
+}
+
+.wiki-item-card:active {
+  transform: translateY(0) scale(0.985);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Card Header */
+.wiki-item-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.wiki-item-card-icon-wrap {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 0;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+.wiki-item-card-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.wiki-item-card-title-group {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.wiki-item-card-name {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-title);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.wiki-item-card-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Category Badges (Base - Borderless) */
+.wiki-item-cat-badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  line-height: 1.2;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Stat Row & Value Highlight */
+.wiki-item-card-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.wiki-item-stat-badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.2;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.wiki-item-stat-number {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  line-height: 1;
+}
+
+.wiki-item-stat-unit {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.wiki-item-stat-divider {
+  opacity: 0.35;
+  font-size: 11px;
+  margin: 0 1px;
+}
+
+.wiki-item-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+/* Stat Badge Color Variants (Borderless) */
+.stat-type-biscuit {
+  background: rgba(245, 158, 11, 0.16);
+  color: #fbbf24;
+  border: none !important;

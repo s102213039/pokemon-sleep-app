@@ -1,0 +1,695 @@
+.skill-cat-tag.cat-energy { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+.skill-cat-tag.cat-energy_heal { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
+.skill-cat-tag.cat-ingredient { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+.skill-cat-tag.cat-special { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+.skill-cat-tag.cat-shards { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
+
+[data-theme="dawn"] .skill-cat-tag.cat-energy { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+[data-theme="dawn"] .skill-cat-tag.cat-energy_heal { background: #fce7f3; color: #be185d; border: 1px solid #fbcfe8; }
+[data-theme="dawn"] .skill-cat-tag.cat-ingredient { background: #d1fae5; color: #047857; border: 1px solid #a7f3d0; }
+[data-theme="dawn"] .skill-cat-tag.cat-special { background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe; }
+[data-theme="dawn"] .skill-cat-tag.cat-shards { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+
+[data-theme="emerald"] .skill-cat-tag.cat-energy { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
+[data-theme="emerald"] .skill-cat-tag.cat-energy_heal { background: #fce7f3; color: #9d174d; border: 1px solid #fbcfe8; }
+[data-theme="emerald"] .skill-cat-tag.cat-ingredient { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+[data-theme="emerald"] .skill-cat-tag.cat-special { background: #ede9fe; color: #5b21b6; border: 1px solid #ddd6fe; }
+[data-theme="emerald"] .skill-cat-tag.cat-shards { background: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
+
+.skill-max-lv-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  padding: 2px 7px;
+  border-radius: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+[data-theme="dawn"] .skill-max-lv-badge,
+[data-theme="emerald"] .skill-max-lv-badge {
+  background: var(--bg-card-inner-subtle);
+  border: 1px solid var(--border-color-subtle);
+}
+
+.skill-desc-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.skill-note-inline {
+  color: #fbbf24;
+  font-weight: 600;
+  display: inline;
+  margin-left: 2px;
+}
+
+[data-theme="dawn"] .skill-note-inline,
+[data-theme="emerald"] .skill-note-inline {
+  color: #b45309;
+}
+
+.skill-penalty-inline {
+  color: #f87171;
+  font-weight: 600;
+  display: inline;
+  margin-left: 2px;
+}
+
+.skill-levels-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+  width: 100%;
+}
+
+.skill-level-chip {
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 5px;
+  padding: 4px 7px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 11px;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+  min-height: 25px;
+}
+
+.skill-level-chip:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-blue);
+}
+
+.skill-level-chip .level-tag {
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--accent-blue);
+  font-weight: 700;
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  letter-spacing: 0.2px;
+}
+
+.skill-level-chip .level-val {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 11px;
+  text-align: right;
+  white-space: nowrap;
+  font-feature-settings: 'tnum';
+}
+
+/*  方案 C: 主技能精華單行速查 (Lv.1 ➔ Lv.Max) */
+.wiki-skill-card.clickable-card {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.wiki-skill-card.clickable-card:hover {
+  border-color: var(--accent-blue);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.skill-top-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.skill-card-chevron {
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: transform 0.25s ease, color 0.2s ease;
+  display: inline-block;
+}
+
+.wiki-skill-card.is-expanded .skill-card-chevron {
+  transform: rotate(180deg);
+  color: var(--accent-blue);
+}
+
+.skill-hero-summary.single-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 4px 0 0 0;
+  box-sizing: border-box;
+}
+
+.hero-stat-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.hero-lv-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  padding: 1px 5px;
+  border-radius: 4px;
+  line-height: 1.2;
+}
+
+.hero-lv-label.tag-max {
+  color: var(--accent-blue);
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.hero-val-text {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: monospace, -apple-system;
+  white-space: nowrap;
+}
+
+.hero-val-text.val-max {
+  color: var(--accent-blue);
+}
+
+.hero-arrow-icon {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin: 0 1px;
+}
+
+/* 展開後的縱向階梯清單 (隨卡片 .is-expanded 展開) */
+.skill-stepper-list {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 8px;
+  padding: 8px;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.wiki-skill-card.is-expanded .skill-stepper-list {
+  display: flex;
+}
+
+.skill-step-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 6px;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.skill-step-item.item-max {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.step-tag-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--bg-card-inner);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.skill-step-item.item-max .step-tag-badge {
+  background: var(--color-accent-gold, #f59e0b);
+  color: #ffffff;
+}
+
+.step-val-text {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: monospace, -apple-system;
+  flex: 1;
+  text-align: right;
+  word-break: break-word;
+}
+
+.skill-interactive-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stack-selector-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+
+.stack-selector-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  white-space: nowrap;
+}
+
+.stack-chips-group {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.stack-chip-btn {
+  background: var(--bg-card-inner);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.stack-chip-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.stack-chip-btn.active {
+  background: #0284c7;
+  border-color: #38bdf8;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.4);
+}
+
+.skill-level-chip.highlight-gold {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+.skill-level-chip.highlight-gold .level-tag {
+  background: rgba(245, 158, 11, 0.25);
+  color: #d97706;
+}
+
+.skill-level-chip.highlight-gold .level-val {
+  color: #b45309;
+  font-weight: 700;
+}
+
+[data-theme="midnight"] .skill-level-chip.highlight-gold .level-tag,
+[data-theme="onyx"] .skill-level-chip.highlight-gold .level-tag {
+  color: #fde047;
+}
+
+[data-theme="midnight"] .skill-level-chip.highlight-gold .level-val,
+[data-theme="onyx"] .skill-level-chip.highlight-gold .level-val {
+  color: #fef08a;
+}
+
+.skill-level-chip.highlight-blue {
+  background: rgba(2, 132, 199, 0.15);
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+.skill-level-chip.highlight-blue .level-tag {
+  background: rgba(56, 189, 248, 0.25);
+  color: var(--accent-blue);
+}
+
+.wiki-toggle-detail-btn {
+  background: transparent;
+  border: 1px dashed var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.wiki-toggle-detail-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--accent-blue);
+  border-color: var(--accent-blue);
+}
+
+.row-highlight {
+  background: rgba(245, 158, 11, 0.12);
+  font-weight: 700;
+}
+
+.skill-matrix-section {
+  width: 100%;
+}
+
+.skill-matrix-header {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  margin-bottom: 6px;
+}
+
+.wiki-mini-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+}
+
+.wiki-mini-table th,
+.wiki-mini-table td {
+  padding: 5px 6px;
+  border: 1px solid var(--border-color-subtle);
+  text-align: center;
+}
+
+.wiki-mini-table th {
+  background: var(--bg-table-th);
+  color: var(--text-th);
+}
+
+/* 複合雙向效果等級矩陣迷你表格 (工整對齊) */
+.skill-level-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-card-inner);
+  -webkit-overflow-scrolling: touch;
+}
+
+.wiki-level-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  text-align: center;
+}
+
+.wiki-level-table th,
+.wiki-level-table td {
+  padding: 6px 8px;
+  border: 1px solid var(--border-color-subtle);
+  white-space: nowrap;
+  font-feature-settings: 'tnum';
+}
+
+.wiki-level-table th {
+  background: var(--bg-table-th);
+  color: var(--text-th);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.wiki-level-table td.row-label {
+  text-align: left;
+  font-weight: 700;
+  background: var(--bg-card-inner-subtle);
+  padding-left: 10px;
+}
+
+.skill-special-note {
+  font-size: 11px;
+  color: var(--accent-color);
+  font-weight: 600;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 6px;
+  padding: 5px 9px;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+/*  百科全書外層主題標題與副標題 (Section Heading outside Card) */
+.wiki-section-heading {
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.wiki-section-title {
+  font-size: 16.5px;
+  font-weight: 800;
+  color: var(--text-title, #f8fafc);
+  margin: 0 0 4px 0;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wiki-section-subtitle {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/*  副技能 & 計算機卡片樣式 */
+.wiki-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  box-shadow: var(--shadow-sm);
+}
+
+.wiki-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.wiki-card-icon {
+  font-size: 20px;
+}
+
+.wiki-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-title, #f8fafc);
+}
+
+.wiki-card-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.wiki-rule-banner {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #d97706;
+  margin-bottom: 16px;
+}
+
+/* 技能矩陣性格修正與數值高對比度適配 (Matrix Table High-Contrast Styles) */
+.matrix-rate-up {
+  color: #34d399;
+  font-weight: 700;
+  font-size: 12.5px;
+}
+
+.matrix-rate-down {
+  color: #f87171;
+  font-weight: 700;
+  font-size: 12.5px;
+}
+
+.matrix-calc-code {
+  background: rgba(255, 255, 255, 0.08);
+  color: #93c5fd;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 2.5px 7px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.matrix-pct-up {
+  color: #34d399;
+}
+
+.matrix-pct-down {
+  color: #f87171;
+}
+
+/*  明亮主題高清晰深色化適配 (Light Themes Rich High-Contrast Overrides) */
+[data-theme="dawn"] .matrix-rate-up,
+[data-theme="emerald"] .matrix-rate-up {
+  color: #15803d; /* 深森林綠，在白底極清晰 */
+}
+
+[data-theme="dawn"] .matrix-rate-down,
+[data-theme="emerald"] .matrix-rate-down {
+  color: #b91c1c; /* 深磚紅，在白底極清晰 */
+}
+
+[data-theme="dawn"] .matrix-calc-code {
+  background: #e0f2fe;
+  color: #0369a1; /* 深天藍 */
+  border: 1px solid #bae6fd;
+}
+
+[data-theme="emerald"] .matrix-calc-code {
+  background: #ccfbf1;
+  color: #0f766e; /* 深松石綠 */
+  border: 1px solid #99f6e4;
+}
+
+[data-theme="dawn"] .matrix-pct-up,
+[data-theme="emerald"] .matrix-pct-up {
+  color: #15803d;
+}
+
+[data-theme="dawn"] .matrix-pct-down,
+[data-theme="emerald"] .matrix-pct-down {
+  color: #b91c1c;
+}
+
+[data-theme="midnight"] .wiki-rule-banner,
+[data-theme="onyx"] .wiki-rule-banner {
+  color: #fde68a;
+}
+
+/* 幫忙速度極限與計算機制卡片樣式 (Helping Speed Metrics & Breakdown) */
+.wiki-speed-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+  margin-bottom: 18px;
+}
+
+.wiki-speed-metric-card {
+  background: var(--bg-card, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.wiki-speed-metric-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.wiki-speed-metric-card.card-highlight-team {
+  border-color: rgba(236, 72, 153, 0.35);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.08) 0%, rgba(30, 41, 59, 0.4) 100%);
+}
+
+.wiki-speed-metric-card.card-highlight-solo {
+  border-color: rgba(59, 130, 246, 0.35);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(30, 41, 59, 0.4) 100%);
+}
+
+.wiki-speed-metric-card.card-highlight-dual {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(30, 41, 59, 0.4) 100%);
+}
+
+.speed-metric-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.speed-metric-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.3px;
+}
+
+.card-highlight-team .speed-metric-tag {
+  background: rgba(236, 72, 153, 0.18);
+  color: #f472b6;
+  border: 1px solid rgba(236, 72, 153, 0.35);
+}
+
+.card-highlight-solo .speed-metric-tag {
+  background: rgba(59, 130, 246, 0.18);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.card-highlight-dual .speed-metric-tag {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.speed-metric-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.speed-metric-stats-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 6px 0 10px 0;
+}
+
+.speed-metric-primary-val {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.card-highlight-team .speed-metric-primary-val {
+  color: #f472b6;
+}
+
+.card-highlight-solo .speed-metric-primary-val {
+  color: #60a5fa;
+}
+
+.card-highlight-dual .speed-metric-primary-val {
+  color: #34d399;
+}
+
+.speed-metric-secondary-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.speed-metric-calc {
+  font-family: monospace;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.05);
