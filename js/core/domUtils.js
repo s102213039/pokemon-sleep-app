@@ -392,7 +392,11 @@
       try {
         const isSubApp = location.pathname && location.pathname.includes('/app/');
         const swUrl = isSubApp ? '../sw.js' : 'sw.js';
-        navigator.serviceWorker.register(swUrl).catch(() => {});
+        navigator.serviceWorker.register(swUrl).then(function (reg) {
+          if (reg && typeof reg.update === 'function') {
+            reg.update();
+          }
+        }).catch(function () {});
       } catch (e) {}
     }
   };

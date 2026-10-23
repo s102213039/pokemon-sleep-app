@@ -2073,124 +2073,80 @@
 - **測試驗證**：新增專屬 Test 236 整合測試，全套 236 / 236 項測試 100% 通過（0 失敗）。
 - **規範遵循**：全域 0 Emoji、無字形裝飾符號、嚴格 RTK 前綴、單一外框排版規範（Rule 9）。
 
+---
 
+## 2026-10-23: 挑選料理/隊員彈窗排版壓縮、快取版本同步、食材契合度修復與幫手槽位佈局優化
 
-
-## 2026-10-22: 研究營地純淨化、目標料理雙食材契合度強算力升級、隊員更換樹果/食材篩選器與料理彈窗三色緊湊排版
-
-### 背景與設計目標
-1. **研究營地純淨圖示化與 `.sr-only` 樣式補齊**：
-   - 移除「研究營地:」文字標籤，營地切換鈕僅展示高解析圓形營地縮圖。
-   - 於 `css/base.css` 與 `css/styles.css` 補齊全站缺失之 `.sr-only` 類別定義，並為 `.lab-island-circle-btn` 加上 `color: transparent; font-size: 0;` 雙重保險，徹底根除營地名稱文字在圓鈕內部透出的問題。
-2. **挑選目標料理視窗（Recipe Picker Modal）視覺重構**：
-   - **去除料理名稱文字**：避免冗餘字串干擾視覺焦點。
-   - **食材單行無外框緊湊排版**：移除晶片邊框與深色底色，採用 `flex-wrap: nowrap !important; overflow-x: auto;` 確保所有食材在同一行緊湊展示完全，徹底解決多行折行擁擠問題。
-   - **料理三大類型色彩系統**：
-     - 咖哩/濃湯（Curry）：琥珀橙金系邊框與漸層（`rgba(245, 158, 11, 0.35)`，徽章 `#fbbf24`）。
-     - 沙拉（Salad）：翡翠嫩綠系邊框與漸層（`rgba(34, 197, 94, 0.35)`，徽章 `#4ade80`）。
-     - 點心/飲料（Dessert）：甜心粉紫系邊框與漸層（`rgba(236, 72, 153, 0.35)`，徽章 `#f472b6`）。
-3. **更換隊員視窗（Team Picker Modal）全方位升級**：
-   - **新增 18 種樹果篩選器**：提供自訂下拉選單，符合 Rule 6 箭頭留白排版標準，可依特定樹果即時過濾倉庫寶可夢。
-   - **新增 19 種食材快速篩選列**：頂部橫向滾動提供 19 種官方標準食材圖示晶片，點擊即可切換單一食材特化篩選，再次點擊即可還原。
-   - **卡片展示內容優化**：
-     - 去除性格（Nature）與預設名稱文字展示。
-     - 若有自訂暱稱（Nickname）則顯著展示暱稱，若無則展示預設名稱。
-     - 新增展示該寶可夢的 3 食材槽圖示（Lv.1, Lv.30, Lv.60，未解鎖顯示半透明灰階狀態）。
-4. **配隊演算法算力升級（`lab_team_calc.js`）**：
-   - **目標料理模式（Target Recipe）**：
-     - 精確比對寶可夢目前已解鎖食材與料理需求食材，若能「同時產出 2 種（或 3 種）所需食材」，給予 2.4x / 3.2x 超強綜效倍率優先入隊。
-     - 引入個體強度指數 `Math.pow(level / 30, 1.35)`，加重副技能（食材機率提升M/S、幫手獎勵、幫忙速度M/S）與性格修正，杜絕挑選到重複或低等級弱怪。
-   - **各隊伍類型模式（Berries, Ingredients, Skills, Balanced）**：
-     - 全面強化高等級與頂級副技能權重，確保挑選到倉庫中各自領域現有之最強實力寶可夢。
-5. **程式碼模組規範與行數守護**：
-   - `css/base.css`: 676 行
-   - `css/views/lab/lab_team.css`: 983 行
-   - `css/components/modals/settings_h5.css`: 589 行
-   - `css/views/wiki/wiki_ladder.css`: 976 行
-   - `js/modules/lab/lab_team_ui.js`: 474 行
-   - `js/modules/lab/lab_team_picker.js`: 587 行
-   - `js/modules/lab/lab_team_calc.js`: 633 行
-   - 所有檔案嚴格守住 <= 1,000 行限制。
-
-### 驗證結果
-- **測試驗證**：全套 234 / 234 項測試 100% 通過（0 失敗）。
-- **規範遵循**：嚴格 0 Emoji、無 `[★]` 字元、單一外框規範（Single Frame Rule）、下拉選單箭頭 Rule 6 合規。
+### 核心變更摘要
+1. **挑選目標料理彈窗排版優化**：
+   - **去除分類文字標籤**：刪除 `.lab-recipe-card-cat` 文字，純以卡片外框色彩（咖哩琥珀金、沙拉翠綠、甜點玫瑰粉）區分三大分類。
+   - **刪除能量文字**：去除 `.lab-recipe-card-energy`，簡化資訊層級。
+   - **料理數量移至圖示下方並放大**：在左側 `.lab-recipe-card-visual` 內將鍋容量（`.lab-recipe-card-pot`）置於料理圖示正下方，以 13px 粗體醒目展示。
+   - **食材 2x2 網格靠右展示**：右側 `.lab-recipe-card-ingredients` 改為 `display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px 10px;`，食材無外框緊湊對齊。
+2. **切換 H5 與網頁版跳回舊版根因排查與修復**：
+   - **根本原因**：`sw.js` 對帶有 `?v=...` 的靜態資源施行快取優先（Cache-First），而 `index.html` 與 `app/index.html` 版本號長期未變更（固定為 `?v=20261022_01` / `?v=20261021_09`），導致 Service Worker 重複回傳舊版代碼。
+   - **修復方案**：
+     - 在 `sw.js` 中將應用程式本機 JS 與 CSS 調整為 **Network-First（網路優先，離線時回退本地快取）**，保留 OCR 模型與字型檔為 Cache-First。
+     - 全面更新 `index.html` 與 `app/index.html` 的所有腳本與樣式版本號至 `?v=20261023_02`。
+3. **料理圖示偶發性消失根因排查與修復**：
+   - **根本原因**：`TARGET_TOP_RECIPES` 兜底食譜清單先前缺少 `icon`、`category` 與 `pot_size` 屬性；當食譜快取尚未非同步完成載入時，回傳的食譜物件為空圖示。
+   - **修復方案**：
+     - 為 `js/modules/lab/lab_milestone.js` 中的 27 道頂尖料理全數補齊高清 Serebii 料理圖示 URL、分類與格數。
+     - 在 `js/modules/lab/lab_summary.js` 的 `findTargetRecipe` 注入安全兜底機制，若圖示缺失自動由名稱推導或全域快取補正。
+4. **挑選隊員彈窗寶可夢卡片排版壓縮**：
+   - **頭像與屬性並列**：頂部建立 `.lab-picker-main`，左側為頭像與等級（`.lab-picker-avatar`），右側並列樹果專長與 3 食材槽（`.lab-picker-meta`）。
+   - **暱稱獨立置中**：將寶可夢名稱/暱稱（`.lab-picker-nick`）抽離至下方獨立居中展示，有效降低卡片垂直高度，實現緊湊版面。
+5. **預估每日食材總產量契合度邏輯修復與去除文字標籤**：
+   - **去除文字標籤**：徹底刪除「FIT / 契合」字樣，僅保留外框與背景色彩高亮辨別。
+   - **契合邏輯修復**：擴充契合判定條件，納入當前目標料理真正所需之食材，以及日產量已滿足三餐需求（自給自足充裕）之食材，並為充裕食材賦予自給綠色外框（`#22c55e`），料理契合食材賦予天藍色外框（`#38bdf8`）。
+6. **幫手組隊槽位資訊流佈局優化**：
+   - **個性移入專長列並整體下移**：將個性標籤（`.lab-slot-nature-name`）整合至 `.lab-slot-spec-left` 內，並將整個專長樹果個性列移至寶可夢名稱下方。
+   - **3 食材槽居右**：`.lab-slot-spec-row` 保留食材槽（`.lab-slot-ings-right`）在右側整齊展示。
+   - **樹果能量垂直置中於右側**：底列 `.lab-slot-bottom-row` 將樹果能量（`.lab-slot-berry-pts`）垂直居中釘於右方，左側技能與光環標籤過長時自動折行，徹底防止擠壓能量分數。
+7. **嚴格單檔品質門檻與規範驗證**：
+   - 所有程式碼與樣式檔案嚴格控制在 1,000 行以內（`lab_team.css`: 982 行、`wiki_ladder.css`: 980 行、`settings_h5.css`: 562 行、`lab_team_ui.js`: 486 行、`lab_milestone.js`: 481 行、`lab_summary.js`: 684 行、`lab_team_picker.js`: 648 行）。
+   - 全套自動化 E2E 測試 236 / 236 通過（0 失敗）。
+   - 全域零 Emoji、零裝飾字形符號規範落實。
 
 ---
 
-## 2026-10-22: 雙食材契合度強度門檻與產量精算、防同種弱怪重複懲罰、料理甜點分類修復、料理食材篩選器與成員樹果圖示列
+## 2026-10-23: 測試執行效能瓶頸排查、Tier 4 OCR 核心解析 102x 提速與測試分級機制
 
-### 背景與設計目標
-1. **雙食材/多食材重疊契合度強度門檻與食材掉落精算（`lab_team_calc.js`）**：
-   - **痛點解決**：過去估算每日食材產量使用寫死 `* 2`，未精準讀取各槽位解鎖狀態（Lv.1 / Lv.30 / Lv.60）及真實掉落量（`getIngCountFromBase`），使得多槽高等個體被平均稀釋，反倒是 Lv.19 弱怪看似高產；且過去對雙食材盲目給予 2.4x 加權，導致低等級弱怪因名義上具備兩種食材而超越滿等神寵。
-   - **掉落量精確計算**：`estimatePkmIngDailyYield` 與 `simulateTeamPerformance` 嚴格調用 `getIngCountFromBase(base, slotIdx, ingName)`，依據等級解鎖槽位（Lv.1, Lv.30, Lv.60）計算每個槽位的真實掉落數量，結合幫忙速度計算每槽隨機命中之真實日產量。
-   - **雙食材綜效門檻化**：只有在寶可夢等級達標（`level >= 30`）且針對當前仍有缺口之目標食材單日各能產出實質規模（`>= 8` 個）時，才給予 1.85x（2 種）/ 2.5x（3 種）綜效；若為低等級或單一食材產量極微，綜效倍率降為 1.0x。
-   - **等級權重深化**：等級權重提升至 `Math.pow(level / 30, 1.45)`，確保滿等神寵（Lv.50~60）在競爭中全面碾壓低階個體。
-   - **防同物種弱怪重複懲罰**：引入隊伍物種計數 `teamSpeciesMap`，若隊中已有同物種個體入隊，除非第二隻也是超高等級（`level >= 50`），否則施加 `0.42x` 嚴厲懲罰，徹底杜絕重複塞入弱怪（如 Lv.32 耿鬼）。
-   - **Fallback 最強填充**：當所有缺口滿足或無合適食材怪時，挑選全倉庫評分最高的高等主力或全隊光環補師入隊。
-2. **料理挑選視窗甜點分類修復與 19 種食材快速篩選器（`lab_team_picker.js`）**：
-   - **甜點分類 Bug 修復**：`data/recipes.json` 中分類名稱為 `'甜點'`，修正過濾比對與卡片主題 class，補上 `cat.includes('甜')`，確保點心/飲料料理完整展示。
-   - **料理食材篩選器**：在搜尋列與分類按鈕下方新增 19 種食材圖示橫向滾動列（`#lab-recipe-picker-ing-scroll`），支援點選特定食材快速過濾包含該食材之料理，再次點擊還原為全部。
-3. **成員挑選彈窗樹果圖示列升級（`lab_team_picker.js`）**：
-   - 徹底移除 `<select>` 下拉選單，改為 18 種樹果的橫向圖示按鈕列（`#lab-picker-berry-scroll`），支援點選即時過濾與再次點擊反選。
-4. **挑選卡片上下行顛倒與食材圖示放大（`lab_team_picker.js` & `wiki_ladder.css`）**：
-   - 卡片順序顛倒：先展示樹果圖示 + 類型得意圖示（Row 2），後展示 3 食材槽解鎖圖示（Row 3）。
-   - 食材圖示擴大：`.lab-picker-ing-chip` 由 20px 擴大至 26px，`.lab-picker-ing-icon` 由 15px 擴大至 20px。
-5. **模組行數品質守護（嚴格 <= 1,000 行）**：
-   - `js/modules/lab/lab_team_calc.js`: 665 行
-   - `js/modules/lab/lab_team_picker.js`: 652 行
-   - `css/components/modals/recipe_picker.css`: 599 行
-   - `css/views/wiki/wiki_ladder.css`: 976 行
+### 核心變更摘要
+1. **測試耗時根因診斷**：
+   - 經對全量 236 項自動化測試進行性能剖析，發現全套測試總耗時約 9.5 秒，其中 Tier 4 佔了 9.22 秒（> 95%）。
+   - 特別是 Tier 4 第 194 號測試（`Universal OCR Text Engine: 100% Species Coverage & Multi-Pattern 99%+ Accuracy Audit`），單項耗時達 **8,241 ms（8.24 秒）**。
+   - 根因在於：該測試針對 247 隻寶可夢 × 7 等級 × 8 排版模式執行了 13,128 次全量文字與模糊 OCR 語法解析。在 `box_ocr_parse.js` 中，每次解析都會對 247 隻寶可夢重複呼叫 `normalizeOcrText` 進行字串清洗，並執行昂貴的子字串排列組合掃描，導致累計超過 680 萬次運算。
+2. **OCR 解析引擎 102x 效能躍升**：
+   - 在 `js/modules/box/box_ocr_parse.js` 引入快取機制（`_cleanName`, `_cleanMainSkill`, `_skillBase`, `_skillSub`），僅在初次載入時正規化一次。
+   - 實作「完全相符快速通道（Exact Match Fast-Path）」：若 OCR 辨識文本已完全包含某寶可夢名稱，直接結算最高分並跳過其餘 246 隻的窮舉子字串搜尋；僅在未命中完全相符時才啟用模糊回退比對。
+   - **實測成果**：千次調用耗時從 722 ms 驟降至 7 ms（提速約 102 倍）。第 194 號測試執行時間從 **8,241 ms 降至 1,206 ms（降幅達 85%）**。
+   - 全量 236 測試套件執行時間由約 10 秒壓縮至 **2.1 秒**。
+3. **測試分級與條件式執行機制（Tier Filtering & Fast Runner）**：
+   - 在 `tests/run_tests.js` 增加命令列參數支援：`--fast`、`--quick`、`--skip-tier4` 與多 Tier 組合（例如 `--tier=1,2,3`）。
+   - 在 `package.json` 配置 `npm run test:fast`，日常純 UI 或快速驗證時僅執行 Tier 1~3，**耗時僅 0.25 秒（250 毫秒）**！全量 236 測試則在 `npm test` 或 CI 時運行（2.1 秒）。
+4. **規範與門檻驗證**：
+   - 全套 236 / 236 項測試 100% 通過（0 失敗）。
+   - 快速測試 118 / 118 項測試 100% 通過（0.25 秒極速反饋）。
+   - `box_ocr_parse.js` 保持 607 行，所有源碼檔案嚴格遵守 <= 1,000 行限制。
+   - 嚴格遵守零 Emoji、零特殊字形裝飾符號規範。
 
-### 驗證結果
-- **測試驗證**：新增專屬真實場景整合測試，全套 235 / 235 項測試 100% 通過（0 失敗）。
-- **規範遵循**：全域 0 Emoji、無萬用字元刪除、嚴格 RTK 前綴、單一外框排版規範。
 
 ---
 
-## 2026-10-23: Headbar Overscroll 禁用、倉庫 Tab 左右分裂修復、組隊島嶼/策略與光環橫向合併無框化、補齊琥褐溪谷、料理名稱去化與全域特殊符號禁用
+## 2026-10-23: Service Worker 快取擊穿根治、靜態資源全面升級 v=20261023_03 與線上舊版本徹底清除
 
-### 背景與設計目標
-1. **Headbar 禁止 Overscroll 效果**：
-   - 頂部導航欄（`header`）在桌面版與行動端隨滑動拉扯會產生彈性位移與橡皮筋回彈（rubber-band overscroll），影響視覺穩定性。
-   - 在 `html, body` 與 `header, .header-container` 加入 `overscroll-behavior: none !important; overscroll-behavior-y: none !important;`，徹底根治過度滾動回彈。
-2. **倉庫 Tab 左右分裂排版 Bug 根治（圖一問題）**：
-   - **根本原因**：`js/modules/box/box_main.js` 在 `switchBoxSubtab('list')` 時設置了 `subpanelList.style.setProperty('display', 'flex', 'important')`，因未設定 `flex-direction: column`，瀏覽器預設為 `row`，導致上方控制區（搜尋列與上傳卡片）與下方卡片列表橫向並排。
-   - **修復方案**：將 `subpanelList.style.setProperty('display', 'block', 'important')` 還原為標準垂直區塊流；並在 `box_grid.css` 與 `pokedex_tooltips.css` 中注入防護規則：`body:not(.mobile-h5-app) #box-subpanel-list { display: block !important; width: 100% !important; }`。
-3. **深度研究室幫手組隊桌面版佈局無框化合併（圖二優化）**：
-   - **Row 1 水平橫向合併（`.lab-island-config-row`）**：
-     - 將島嶼選擇器（`.lab-island-selector-col`）與隊伍設定變數列（`.lab-team-config-col lab-team-config-panel`）合併為單一行。
-     - 徹底移除 `.lab-team-config-panel` 的卡片外框、底色與外距，遵循 Rule 9 單一外框原則。
-   - **補齊第 7 個島嶼「琥褐溪谷」（Amber Canyon）**：
-     - 在 `js/modules/lab/lab_modal.js` 的 `LAB_ISLANDS` 中補上第 7 個島嶼 `amber`（琥褐溪谷），喜愛樹果：零餘果、木子果、巧可果（毒、蟲、龍 2x 能量），背景圖指向 `assets/islands/hd/amber.jpg`。
-   - **Row 2 水平橫向合併（`.lab-favored-auras-row`）**：
-     - 將喜愛樹果列（`.lab-favored-berries-col`）與隊伍全體光環彙總列（`.lab-team-auras-col lab-team-auras-bar`）合併為單一行。
-     - 徹底移除 `.lab-team-auras-bar` 的獨立外框與背景，保持開闊純淨排版。
-4. **全版本料理名稱徹底去除與圖示適度放大**：
-   - 目標料理晶片（`.lab-target-recipe-chip`）與看板中徹底刪除料理名稱文字節點，僅保留料理圖示 + 類別徽章 + 更換按鈕。
-   - 圖示放大：`.lab-target-recipe-chip-icon` 由 18px 放大至 26px，看板 `.lab-supply-dish-icon` 由 32px 放大至 44px。
-5. **隊伍全體光環與副技能符號徹底清除**：
-   - 移除全隊光環彙總標籤前方之 SVG 星號圖標與各光環項目之圖標，回歸簡潔純文字標籤。
-   - 移除寶可夢槽位卡片副技能徽章（`.lab-slot-aura-badge`）中之星號圖標。
-   - 移除萌綠島嶼喜愛樹果標題中之 `[#]` 字符。
-6. **全域特殊字形符號與 Emoji 零容忍規範入規**：
-   - 正式將「全域特殊字形裝飾符號禁用規範（No Decorative Star/Glyph Symbols Policy）」寫入共用文件協議：
-     - `~/.gemini/agent-docs/PROTOCOL.md` (第 9 節)
-     - `~/.gemini/AGENTS.md` (第 10 節)
-     - `~/.cursor/rules/no-emoji.mdc`
-     - `~/.gemini/agent-docs/projects/pokemon-sleep-app/SPECIAL_ICONS_RULES.md`
-     - `docs/VERIFIED_FEATURES_AND_BASELINES.md`
-7. **單檔嚴格 <= 1,000 行品質門檻**：
-   - `css/views/lab/lab_team.css`: 990 行
-   - `js/modules/box/box_main.js`: 805 行
-   - `js/modules/lab/lab_modal.js`: 844 行
-   - `js/modules/lab/lab_team_ui.js`: 468 行
-   - `css/base.css`: 687 行
-   - `css/components/buttons_badges.css`: 802 行
-   - `css/components/modals/pokedex_tooltips.css`: 590 行
-
-### 驗證結果
-- **測試驗證**：新增專屬 Test 236 整合測試，全套 236 / 236 項測試 100% 通過（0 失敗）。
-- **規範遵循**：全域 0 Emoji、無字形裝飾符號、嚴格 RTK 前綴、單一外框排版規範（Rule 9）。
-
-
+### 核心問題排查與根因定位
+1. **線上仍展示舊版之雙重根因**：
+   - **根本原因 1 (Service Worker 舊快取鎖死)**：歷史版本之 `sw.js` 將帶有 `?v=...` 的 JS 與 CSS 歸納為 `isStaticHeavyAsset` 並施行 **Cache-First（快取優先）** 策略，存於 `pksleep-static-cache-v1` 中。由於該快取名稱先前從未變更，即便使用者重新整理網頁，Service Worker 仍優先攔截並回傳舊版 `20261022_01` 的編譯檔案，導致瀏覽器被強制釘死在舊版介面。
+   - **根本原因 2 (遠端 GitHub Pages 尚未推送最新版本)**：前述重構產物僅存在於本機工作區，尚未執行 Git Commit 與 Push 至遠端儲存庫，故 GitHub Pages 仍繼續提供舊版靜態檔案。
+2. **根治方案與快取擊穿架構**：
+   - **更新 Service Worker 快取名稱**：將靜態快取庫提升至 `pksleep-static-v20261023_03`，並在 `activate` 事件中自動遍歷所有歷史 CacheStorage，徹底刪除 `pksleep-static-cache-v1` 等舊版快取庫。
+   - **JS / CSS 程式碼全面改採 Network-First 策略**：在 `sw.js` 中將所有 `.css` 與 `.js` 獨立分流，在有網路時**一律強制向網路發出真實請求獲取最新代碼**（並更新本機快取作為離線備援），僅在完全無網路時才回退快取，徹底杜絕程式碼被快取凍結。
+   - **主動檢查更新機制**：在 `domUtils.js` 的 `registerServiceWorker` 中加入 `reg.update()`，網頁每次載入時自動向伺服器比對更新 `sw.js`，一有變動立刻透過 `self.skipWaiting()` 與 `clients.claim()` 接管當前頁面。
+   - **全站靜態資源版本號全面升級**：將 `index.html` 與 `app/index.html` 所有 JS / CSS 的查詢參數由 `?v=20261022_01` 全面升級至 `?v=20261023_03`。
+3. **驗證與交付**：
+   - 執行 `npm run build`（168ms 完成生產壓縮編譯）。
+   - 執行 `npm run data:minify`（雜湊自動同步更新）。
+   - 執行 `npm test`，全站 236 / 236 項自動化測試 100% 通過（0 失敗）。
+   - 執行 `npm run test:fast`，118 / 118 項測試 0.25 秒極速通過。

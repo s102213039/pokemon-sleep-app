@@ -3792,16 +3792,41 @@
     let bestPkm = null;
     let maxScore = -1;
 
+    // 階段 1：快速路徑 — 優先比對完整名稱符合項 (避免對 247 隻進行昂貴的子字串窮舉)
     for (const p of allPokemons) {
-      let score = 0;
-      const cleanName = normalizeOcrText(p.name_cn || '');
-      const cleanMainSkill = normalizeOcrText(p.main_skill || '');
+      const cleanName = p._cleanName || (p._cleanName = normalizeOcrText(p.name_cn || ''));
+      if (cleanName && clean.includes(cleanName)) {
+        let score = 200 + cleanName.length * 20;
+        const cleanMainSkill = p._cleanMainSkill || (p._cleanMainSkill = normalizeOcrText(p.main_skill || ''));
+        if (cleanMainSkill) {
+          const skillBase = p._skillBase || (p._skillBase = cleanMainSkill.split('(')[0]);
+          const skillSub = p._skillSub || (p._skillSub = cleanMainSkill.includes('(') ? cleanMainSkill.split('(')[1].replace(')', '') : '');
+          if (clean.includes(cleanMainSkill)) {
+            score += 120;
+          } else if (skillBase && skillBase.length >= 2 && clean.includes(skillBase)) {
+            score += 70;
+          }
+          if (skillSub && clean.includes(skillSub)) {
+            score += 50;
+          }
+        }
+        if (p.specialty && clean.includes(p.specialty)) score += 25;
+        if (level >= 25 && p.is_final === '〇') score += 15;
 
-      // 名稱完整符合
-      if (clean.includes(cleanName)) {
-        score += 200 + cleanName.length * 20;
-      } else {
-        // 名稱子字串比對 (>= 2 字)
+        if (score > maxScore) {
+          maxScore = score;
+          bestPkm = p;
+        }
+      }
+    }
+
+    // 階段 2：模糊路徑 — 若全文未完全命中任何寶可夢名稱，才啟動耗時的子字串與字元頻率對齊
+    if (!bestPkm) {
+      for (const p of allPokemons) {
+        let score = 0;
+        const cleanName = p._cleanName || (p._cleanName = normalizeOcrText(p.name_cn || ''));
+        const cleanMainSkill = p._cleanMainSkill || (p._cleanMainSkill = normalizeOcrText(p.main_skill || ''));
+
         for (let len = cleanName.length - 1; len >= 2; len--) {
           for (let i = 0; i <= cleanName.length - len; i++) {
             const sub = cleanName.substr(i, len);
@@ -3816,35 +3841,27 @@
           if (clean.includes(char)) common++;
         }
         if (common >= 1) score += common * 15;
-      }
 
-      // 主技能交叉驗證 (排除同名或誤判，如赫拉克羅斯專屬之「健美（料理輔助S）」)
-      if (cleanMainSkill) {
-        const skillBase = cleanMainSkill.split('(')[0];
-        const skillSub = cleanMainSkill.includes('(') ? cleanMainSkill.split('(')[1].replace(')', '') : '';
-        if (clean.includes(cleanMainSkill)) {
-          score += 120;
-        } else if (skillBase && skillBase.length >= 2 && clean.includes(skillBase)) {
-          score += 70;
+        if (cleanMainSkill) {
+          const skillBase = p._skillBase || (p._skillBase = cleanMainSkill.split('(')[0]);
+          const skillSub = p._skillSub || (p._skillSub = cleanMainSkill.includes('(') ? cleanMainSkill.split('(')[1].replace(')', '') : '');
+          if (clean.includes(cleanMainSkill)) {
+            score += 120;
+          } else if (skillBase && skillBase.length >= 2 && clean.includes(skillBase)) {
+            score += 70;
+          }
+          if (skillSub && clean.includes(skillSub)) {
+            score += 50;
+          }
         }
-        if (skillSub && clean.includes(skillSub)) {
-          score += 50;
+
+        if (p.specialty && clean.includes(p.specialty)) score += 25;
+        if (level >= 25 && p.is_final === '〇') score += 15;
+
+        if (score > maxScore) {
+          maxScore = score;
+          bestPkm = p;
         }
-      }
-
-      // 專長專門比對 (樹果、食材、技能)
-      if (p.specialty) {
-        if (clean.includes(p.specialty)) score += 25;
-      }
-
-      // 進化階段優先權 (當等級 >= 25 且為最終進化，給予適當權重以避免降級為基礎階)
-      if (level >= 25 && p.is_final === '〇') {
-        score += 15;
-      }
-
-      if (score > maxScore) {
-        maxScore = score;
-        bestPkm = p;
       }
     }
 

@@ -285,8 +285,18 @@
                 <span class="lab-slot-lv-badge">Lv.${item.level || 1}</span>
               </div>
               <div class="lab-slot-name-col">
-                <span class="lab-slot-name">${escapeHtml(displayName)}</span>
-                ${item.nickname ? `<span class="lab-slot-nickname">(${escapeHtml(item.nickname)})</span>` : ''}
+                <div class="lab-slot-name-row">
+                  <span class="lab-slot-name">${escapeHtml(displayName)}</span>
+                  ${item.nickname ? `<span class="lab-slot-nickname">(${escapeHtml(item.nickname)})</span>` : ''}
+                </div>
+                <div class="lab-slot-spec-left">
+                  ${specialtyIconHtml}
+                  <div class="lab-slot-berry-wrap ${isFav ? 'favored' : ''}" title="${escapeHtml(berry.name || '')}${isFav ? ' (2x)' : ''}">
+                    ${berry.icon ? `<img src="${berry.icon}" class="lab-slot-berry-icon" alt="Berry">` : ''}
+                    ${isFav ? `<span class="lab-slot-fav-badge">2x</span>` : ''}
+                  </div>
+                  <span class="lab-slot-nature-name">${escapeHtml(natureDisplayName)}${(item.cleanseMint || item.mint) ? ' (' + (isEN ? 'Mint' : '薄荷') + ')' : ''}</span>
+                </div>
               </div>
             </div>
             <button type="button" class="box-btn box-btn-secondary lab-slot-replace-top-btn" onclick="window.AppraisalLab.openPicker({ type: 'team', slotIndex: ${idx} })">
@@ -295,13 +305,6 @@
           </div>
 
           <div class="lab-slot-spec-row">
-            <div class="lab-slot-spec-left">
-              ${specialtyIconHtml}
-              <div class="lab-slot-berry-wrap ${isFav ? 'favored' : ''}" title="${escapeHtml(berry.name || '')}${isFav ? ' (2x)' : ''}">
-                ${berry.icon ? `<img src="${berry.icon}" class="lab-slot-berry-icon" alt="Berry">` : ''}
-                ${isFav ? `<span class="lab-slot-fav-badge">2x</span>` : ''}
-              </div>
-            </div>
             <div class="lab-slot-ings-right">
               ${ingStripHtml}
             </div>
@@ -310,11 +313,9 @@
           <div class="lab-slot-bottom-row">
             <div class="lab-slot-bottom-left">
               <span class="lab-slot-skill-name">${escapeHtml(skillName)} <strong class="lab-slot-skill-lv">Lv.${skillLv}</strong></span>
-              <span class="lab-slot-mid-sep">·</span>
-              <span class="lab-slot-nature-name">${escapeHtml(natureDisplayName)}${(item.cleanseMint || item.mint) ? ' (' + (isEN ? 'Mint' : '薄荷') + ')' : ''}</span>
+              ${aurasHtml}
             </div>
             <div class="lab-slot-bottom-right">
-              ${aurasHtml}
               ${simSlot ? `<span class="lab-slot-berry-pts" title="${isEN ? 'Daily berry energy' : '每日樹果能量'}">${simSlot.dailyBerryEnergy.toLocaleString()} <span style="font-size:9px;color:var(--text-muted);">${isEN ? 'pts' : '能量'}</span></span>` : ''}
             </div>
           </div>
@@ -325,21 +326,38 @@
     const ingEntries = Object.entries(simulation.ingredientsMap);
     ingEntries.sort((a, b) => b[1] - a[1]);
     const keyIngs = COOKING_CATEGORY_KEY_INGREDIENTS[labState.cookingType] || [];
+    const targetAnalysis = simulation.targetRecipeAnalysis;
     const topIngsHtml = ingEntries.slice(0, 8).map(([iName, count]) => {
       const iDisplayName = window.I18N ? window.I18N.getIngredientName(iName) : iName;
       const iconUrl = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
-      const isCookMatch = keyIngs.includes(iName);
+      
+      const targetItem = targetAnalysis && Array.isArray(targetAnalysis.items)
+        ? targetAnalysis.items.find(it => it.name === iName || (window.I18N && window.I18N.getIngredientName(it.name) === iName))
+        : null;
+      const isTargetIng = !!targetItem;
+      const isSurplusDaily = targetItem ? (targetItem.diff >= 0 || targetItem.fulfillmentPct >= 100) : false;
+      const isCategoryKey = keyIngs.includes(iName);
+      const isCookMatch = isTargetIng || isSurplusDaily || isCategoryKey;
+
+      const chipBorder = isSurplusDaily
+        ? '1px solid #22c55e'
+        : (isCookMatch ? '1px solid var(--accent-color, #38bdf8)' : '1px solid rgba(255,255,255,0.08)');
+      const chipBg = isSurplusDaily
+        ? 'rgba(34, 197, 94, 0.12)'
+        : (isCookMatch ? 'rgba(56, 189, 248, 0.12)' : 'rgba(255, 255, 255, 0.04)');
+      const numColor = isSurplusDaily
+        ? '#4ade80'
+        : (isCookMatch ? '#38bdf8' : '#e2e8f0');
+
       return `
-        <div style="display:inline-flex;align-items:center;gap:3px;background:${isCookMatch ? 'rgba(56,189,248,0.12)' : 'rgba(255,255,255,0.04)'};border:1px solid ${isCookMatch ? 'rgba(56,189,248,0.35)' : 'rgba(255,255,255,0.08)'};border-radius:4px;padding:1px 5px;font-size:10.5px;" title="${escapeHtml(iDisplayName)}${isCookMatch ? (isEN ? ' (Cooking Matched)' : ' (料理契合)') : ''}">
+        <div style="display:inline-flex;align-items:center;gap:3px;background:${chipBg};border:${chipBorder};border-radius:4px;padding:1px 5px;font-size:10.5px;" title="${escapeHtml(iDisplayName)}${isSurplusDaily ? (isEN ? ' (Daily Self-Sufficient)' : ' (三餐自給充裕)') : (isCookMatch ? (isEN ? ' (Recipe Synergy)' : ' (料理契合)') : '')}">
           ${iconUrl ? `<img src="${iconUrl}" style="width:13px;height:13px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(iDisplayName)}">` : ''}
-          <span style="color:${isCookMatch ? '#38bdf8' : '#e2e8f0'};font-weight:700;">x${count}</span>
-          ${isCookMatch ? `<span style="font-size:8px;color:#38bdf8;font-weight:800;">${isEN ? 'FIT' : '契合'}</span>` : ''}
+          <span style="color:${numColor};font-weight:700;">x${count}</span>
         </div>
       `;
     }).join('');
 
     // ─── 目標料理食材供需看板 (緊湊多欄 Grid 卡片矩陣) ────────────────────
-    const targetAnalysis = simulation.targetRecipeAnalysis;
     let supplyDemandBoardHtml = '';
     if (targetAnalysis && Array.isArray(targetAnalysis.items)) {
       const itemsHtml = targetAnalysis.items.map(item => {

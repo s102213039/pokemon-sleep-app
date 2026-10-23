@@ -187,44 +187,45 @@ npm test
 
 ---
 
-## 五、 自動化測試維護與擴充指引 (Testing Guide)
+## 五、 自動化測試維護與極速執行策略 (Testing Guide & Fast Execution)
 
+完整測試策略詳見專屬指南：[docs/TESTING_STRATEGY.md](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/docs/TESTING_STRATEGY.md)。
 測試框架位於 [tests/](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/tests/)，採純原生架構，無龐大第三方測試框架負擔：
 
 ### 5.1 測試套件結構
-* `tests/run_tests.js`: 主入口，支援 `--tier=N` 參數。
-* `tests/test_harness.js`: 輕量斷言庫 (`assert`, `assertEquals`, `MiniElement`, Mock DOM)。
-* `tests/tiers/tier1_coverage.js`: 基礎資料庫與元件結構覆蓋測試（66 項）。
+* `tests/run_tests.js`: 主入口，支援 `--fast`, `--skip-tier4`, `--tier=N`, `--grep="pattern"` 等多種彈性參數。
+* `tests/test_harness.js`: 輕量斷言庫 (`assert`, `assertEquals`, `MiniElement`, Mock DOM, `setGrepFilter`)。
+* `tests/tiers/tier1_coverage.js`: 基礎資料庫與元件結構覆蓋測試（67 項）。
 * `tests/tiers/tier2_boundaries.js`: 邊界極限、空值與篩選條件防禦測試（43 項）。
 * `tests/tiers/tier3_combos.js`: 跨模組狀態切換與連動測試（8 項）。
-* `tests/tiers/tier4/`: 真實業務情境與複雜功能驗證測試（110 項）：
+* `tests/tiers/tier4/`: 真實業務情境與複雜功能驗證測試（118 項）：
   - `tier4_part1.js`: 用例 1-30（圖鑑工作流、H5 跳轉、導航生命週期）
   - `tier4_part2.js`: 用例 31-60（百科營地、天梯及格線、OCR 初階）
   - `tier4_part3.js`: 用例 61-90（薄荷中和、緞帶扣減、雷達圖與公式）
-  - `tier4_part4.js`: 用例 91-110（道具百科、深度研究室、資料壓縮與 IndexedDB 快取）
+  - `tier4_part4.js`: 用例 91-118（道具百科、深度研究室、萬次 OCR 壓力、快取與各島嶼營地）
 
-### 5.2 新增測試用例方式
-若實裝新功能，請於 [tests/tiers/tier4/tier4_part4.js](file:///Users/yanli/AndroidStudioProjects/pokemon-sleep-app/tests/tiers/tier4/tier4_part4.js) 末端加入新測試：
-```javascript
-test('Tier 4 - Real-World Application Scenarios', '新功能名稱與驗證標準描述', () => {
-  // 1. 準備輸入資料或 Mock DOM
-  // 2. 呼叫待測函式
-  // 3. 使用 assert 或 assertEquals 驗證輸出
-  assert(true, '說明文字');
-});
-```
-
-### 5.3 執行測試常用命令
+### 5.2 核心命令與使用時機
 ```bash
-# 執行全量測試 (227 項)
+# 日常開發推薦：極速執行 Tier 1~3 (118 項，僅 0.25 秒)
+npm run test:fast
+
+# 完整發布回歸：全量執行 Tier 1~4 (236 項，僅 2.1 秒)
 npm test
 
-# 僅快速測試 Tier 4 (約 0.8 秒)
-node tests/run_tests.js --tier=4
+# 精準單元過濾：僅測試名稱包含特定關鍵字之測試用例 (數毫秒)
+node tests/run_tests.js -g "OCR"
+node tests/run_tests.js -g "Amber"
 
-# 僅測試 Tier 1 (約 0.3 秒)
-node tests/run_tests.js --tier=1
+# 指定單一或組合 Tier
+npm run test:tier1    # 0.08 秒
+npm run test:tier4    # 1.80 秒
+node tests/run_tests.js --tier=2,3
 ```
+
+### 5.3 防止寫死原則 (Anti-Hardcoding)
+1. **路徑解析**：所有測試腳本一律透過 `path.resolve(__dirname, '..')` 或 `WORKSPACE_ROOT` 計算路徑，嚴禁寫死主機路徑或依賴 `process.cwd()`。
+2. **參數適配**：命令列解析支援 `--tier=1,2`, `-t 1,2`, `--skip-tier4`, `--fast`, `-g` 等多種格式，且自動過濾非法輸入，杜絕調用報錯。
+3. **自動編譯**：測試運行前自動調用 `buildAll()`，確保永遠對最新建構產物驗證，無須手動記住打包。
 
 ---
 
@@ -234,8 +235,9 @@ node tests/run_tests.js --tier=1
 
 - [ ] **1. 資料壓縮與雜湊更新**: 修改 `data/*.json` 後，已執行 `npm run data:minify` 並確認 `data/manifest.json` 已更新最新 SHA-256 雜湊。
 - [ ] **2. 前端模組打包編譯**: 修改任何 `js/modules/` 或 `css/` 子模組後，已執行 `npm run build:all`，生成最新 `app.js`, `box.js`, `wiki.js`, `appraisal.js` 與 `styles.css`。
-- [ ] **3. 227/227 自動化測試全過**: 執行 `npm test` 確認通過率 100%，無任何退化報錯。
+- [ ] **3. 236/236 自動化測試全過**: 執行 `npm test` 確認通過率 100%，無任何退化報錯（日常開發時可隨時執行 `npm run test:fast` 極速檢查）。
 - [ ] **4. 零 Emoji 規範 (Rule 8)**: 全站程式碼、註解、UI 文字、文件與 Git Commit 訊息嚴禁包含任何 Emoji。
-- [ ] **5. 嚴禁巢狀雙重外框 (Rule 9)**: UI 容器邊框不重疊，卡片與表格內部自帶邊框時最外層容器保持無框。
-- [ ] **6. 跨工具共用文件同步 (Rule 7)**: 依規範將最新文件同步至 `~/.gemini/agent-docs/projects/pokemon-sleep-app/`。
-- [ ] **7. 推送遠端觸發 Pages 部署**: 執行 `git push origin main`，確保 GitHub Pages 自動化流程順利發布。
+- [ ] **5. 嚴禁特殊裝飾符號 (Rule 10)**: 嚴禁在 UI 或 Markdown 中添加 `[★]`, `★`, `☆` 等裝飾性字形符號。
+- [ ] **6. 嚴禁巢狀雙重外框 (Rule 9)**: UI 容器邊框不重疊，卡片與表格內部自帶邊框時最外層容器保持無框。
+- [ ] **7. 跨工具共用文件同步 (Rule 7)**: 依規範將最新文件同步至 `~/.gemini/agent-docs/projects/pokemon-sleep-app/`。
+- [ ] **8. 推送遠端觸發 Pages 部署**: 執行 `git push origin main`，確保 GitHub Pages 自動化流程順利發布。

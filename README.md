@@ -154,30 +154,40 @@ graph TD
 
 ## 本地開發與自動化測試 (Testing)
 
-本專案內建一套獨立的 **227 項全自動化測試套件**，涵蓋資料庫完整性、公式精確度、OCR 多錨點辨識、i18n 雙語翻譯、雙端路徑跳轉、評測演算法、樹果遽增 BFS 協同、生產環境資料壓縮與原生 IndexedDB 快取驗證。
+本專案內建一套獨立的 **236 項全自動化測試套件**，涵蓋資料庫完整性、公式精確度、OCR 多錨點辨識、i18n 雙語翻譯、雙端路徑跳轉、評測演算法、樹果遽增 BFS 協同、生產環境資料壓縮、原生 IndexedDB 快取驗證與各島嶼營地。詳細測試架構與反饋原則請參考 [docs/TESTING_STRATEGY.md](docs/TESTING_STRATEGY.md)。
 
 ### 常用命令 (Commands)
 ```bash
 # 確保已安裝 Node.js (v18+)
-# 1. 執行全量 227 項自動化測試
+
+# 1. 日常開發推薦：極速執行 Tier 1~3 (118 項，僅 0.25 秒)
+npm run test:fast
+
+# 2. 完整回歸驗證：全量 236 項測試 (約 2.1 秒)
 npm test
 
-# 2. 僅快速測試 Tier 4 (約 0.8 秒)
-node tests/run_tests.js --tier=4
+# 3. 關鍵字過濾單元測試 (數毫秒)
+node tests/run_tests.js -g "OCR"
+node tests/run_tests.js -g "Amber"
 
-# 3. 一鍵打包所有 37 個 CSS 與 JS 子模組 (約 10ms)
+# 4. 指定單一或組合 Tier
+npm run test:tier1    # 0.08 秒
+npm run test:tier4    # 1.80 秒
+node tests/run_tests.js --tier=2,3
+
+# 5. 一鍵打包所有 CSS 與 JS 子模組 (約 16ms)
 npm run build:all
 
-# 4. 資料庫維護雙模式
+# 6. 資料庫維護雙模式
 npm run data:format   # 展開為 2 格縮排（編輯資料或審查 git diff）
 npm run data:minify   # 壓回生產極致壓縮格式並自動更新 manifest.json
 ```
 
 ### 測試覆蓋階層
-- **Tier 1 - Feature Coverage (66 項)**：資料集結構、公式計算、食譜加成、主技能矩陣、主題色系、H5 入口完整性、回到頂部按鈕結構。
+- **Tier 1 - Feature Coverage (67 項)**：資料集結構、公式計算、食譜加成、主技能矩陣、主題色系、H5 入口完整性、回到頂部按鈕結構。
 - **Tier 2 - Boundary Cases (43 項)**：空搜尋、大小寫不敏感、多選交集、等級邊界 (Lv.1~80)、鍋子容量上下限、副技能防重複選擇、進化等級防禦。
 - **Tier 3 - Cross-Feature (8 項)**：多維度複合篩選、主題語言聯動切換、Dock 導航持久化、睡飽飽獎章抵扣結算。
-- **Tier 4 - Real-World Scenarios (110 項)**：雙端真實工作流、OCR 全量解析校準、嚴格評測雙軌定級、樹果遽增 BFS 爆發、傳說神獸團隊協同、目標料理導向組隊、生產資料壓縮與原生 IndexedDB 0ms 秒開驗證。
+- **Tier 4 - Real-World Scenarios (118 項)**：雙端真實工作流、OCR 全量解析校準（102x 提速）、嚴格評測雙軌定級、樹果遽增 BFS 爆發、傳說神獸團隊協同、目標料理導向組隊、生產資料壓縮、原生 IndexedDB 0ms 秒開與琥褐溪谷營地驗證。
 
 > 完整開發、擴充資料庫與模組化建構流程，請參閱 **[docs/MAINTENANCE_AND_DEVELOPMENT_GUIDE.md](docs/MAINTENANCE_AND_DEVELOPMENT_GUIDE.md)**。
 

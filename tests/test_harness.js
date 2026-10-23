@@ -12,6 +12,18 @@ const WORKSPACE_ROOT = path.resolve(__dirname, '..');
 let passedTests = 0;
 let failedTests = 0;
 let totalTests = 0;
+let grepPattern = null;
+
+function setGrepFilter(pattern) {
+  if (!pattern) {
+    grepPattern = null;
+  } else if (pattern instanceof RegExp) {
+    grepPattern = pattern;
+  } else {
+    grepPattern = new RegExp(pattern, 'i');
+  }
+}
+
 const resultsByTier = {
   'Tier 1 - Feature Coverage': { pass: 0, fail: 0 },
   'Tier 2 - Boundary & Corner Cases': { pass: 0, fail: 0 },
@@ -20,6 +32,9 @@ const resultsByTier = {
 };
 
 function test(tier, description, fn) {
+  if (grepPattern && !grepPattern.test(description)) {
+    return;
+  }
   totalTests++;
   try {
     fn();
@@ -347,6 +362,7 @@ module.exports = {
   renderSkillWithTooltip,
   dataPath,
   dataset,
+  setGrepFilter,
   passedTests: () => passedTests,
   failedTests: () => failedTests,
   totalTests: () => totalTests,

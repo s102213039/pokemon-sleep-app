@@ -378,14 +378,13 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  padding: 10px 6px 8px;
+  align-items: stretch;
+  gap: 4px;
+  padding: 8px 8px 6px;
   border-radius: 10px;
   border: 1px solid var(--border-color);
   background: var(--bg-card);
   cursor: pointer;
-  text-align: center;
   min-width: 0;
   transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
 }
@@ -402,18 +401,26 @@
   background: rgba(56, 189, 248, 0.1);
 }
 
+.lab-picker-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
 .lab-picker-avatar { position: relative; flex-shrink: 0; }
-.lab-picker-avatar img { width: 48px; height: 48px; object-fit: contain; display: block; }
+.lab-picker-avatar img { width: 44px; height: 44px; object-fit: contain; display: block; }
 
 .lab-picker-lv {
   position: absolute;
   bottom: -2px;
-  right: -8px;
+  right: -6px;
   background: #0f172a;
   border: 1px solid #334155;
   border-radius: 4px;
   padding: 0 4px;
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 800;
   color: #94a3b8;
 }
@@ -435,44 +442,39 @@
 
 .lab-picker-occupied-badge {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: 4px;
+  right: 4px;
   background: rgba(239, 68, 68, 0.2);
   color: #f87171;
   border: 1px solid rgba(239, 68, 68, 0.4);
   border-radius: 4px;
-  padding: 1px 5px;
-  font-size: 9px;
+  padding: 1px 4px;
+  font-size: 8.5px;
   font-weight: 800;
   white-space: nowrap;
 }
 
 .lab-picker-meta {
-  width: 100%;
+  flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 3px;
+  align-items: flex-start;
+}
+
+.lab-picker-sub {
+  display: flex;
   align-items: center;
+  gap: 4px;
 }
 
-.lab-picker-nick {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--accent-color, #38bdf8);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
+.lab-picker-berry { width: 15px; height: 15px; object-fit: contain; }
 
-/* 3 食材槽微型展示 (Pokémon Ingredients Mini Row) */
 .lab-picker-ings {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 3px;
-  margin: 1px 0;
 }
 
 .lab-picker-ing-chip {
@@ -498,15 +500,17 @@
   object-fit: contain;
 }
 
-.lab-picker-sub {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  margin-top: 1px;
+.lab-picker-nick {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-color, #38bdf8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  width: 100%;
+  line-height: 1.2;
 }
-
-.lab-picker-berry { width: 15px; height: 15px; object-fit: contain; }
 
 @media (max-width: 640px) {
   .mobile-h5-app .lab-picker-modal {

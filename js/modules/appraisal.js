@@ -1334,6 +1334,9 @@
     // 咖哩 (Curry)
     {
       name_cn: '彈跳咖哩烏龍麵',
+      category: '咖哩',
+      pot_size: 112,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/bouncecurryudon.png',
       name_en: 'Bounce Curry Udon',
       base_energy: 25539,
       ingredients: [
@@ -1345,6 +1348,9 @@
     },
     {
       name_cn: '茂盛焗烤酪梨',
+      category: '咖哩',
+      pot_size: 115,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/overgrowavocadogratin.png',
       name_en: 'Overgrow Avocado Gratin',
       base_energy: 24802,
       ingredients: [
@@ -1356,6 +1362,9 @@
     },
     {
       name_cn: '居合斬壽喜燒咖哩',
+      category: '咖哩',
+      pot_size: 101,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/cutsukiyakicurry.png',
       name_en: 'Cut Sukiyaki Curry',
       base_energy: 20655,
       ingredients: [
@@ -1367,6 +1376,9 @@
     },
     {
       name_cn: '覺醒力量濃湯',
+      category: '咖哩',
+      pot_size: 92,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/hiddenpowerperk-upstew.png',
       name_en: 'Hidden Power Perk-Up Stew',
       base_energy: 19061,
       ingredients: [
@@ -1378,6 +1390,9 @@
     },
     {
       name_cn: '扮演南瓜精濃湯',
+      category: '咖哩',
+      pot_size: 69,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/roleplaypumpkaboostew.png',
       name_en: 'Role Play Pumpkaboo Stew',
       base_energy: 15621,
       ingredients: [
@@ -1389,6 +1404,9 @@
     },
     {
       name_cn: '煉獄玉米乾咖哩',
+      category: '咖哩',
+      pot_size: 77,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/infernocornkeemacurry.png',
       name_en: 'Inferno Corn Keema Curry',
       base_energy: 13690,
       ingredients: [
@@ -1400,6 +1418,9 @@
     },
     {
       name_cn: '萌綠咖哩麵包',
+      category: '咖哩',
+      pot_size: 63,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/greengrasscurrybun.png',
       name_en: 'Greengrass Curry Bun',
       base_energy: 10945,
       ingredients: [
@@ -1411,6 +1432,9 @@
     },
     {
       name_cn: '絕對睡眠奶油咖哩',
+      category: '咖哩',
+      pot_size: 55,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/dreameaterbuttercurry.png',
       name_en: 'Dream Eater Butter Curry',
       base_energy: 9010,
       ingredients: [
@@ -1422,6 +1446,9 @@
     },
     {
       name_cn: '忍者咖哩',
+      category: '咖哩',
+      pot_size: 50,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/ninjacurry.png',
       name_en: 'Ninja Curry',
       base_energy: 9445,
       ingredients: [
@@ -1433,6 +1460,9 @@
     },
     {
       name_cn: '炙燒尾肉咖哩',
+      category: '咖哩',
+      pot_size: 33,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/grilledtailcurry.png',
       name_en: 'Grilled Tail Curry',
       base_energy: 7483,
       ingredients: [
@@ -1442,6 +1472,9 @@
     },
     {
       name_cn: '辣味蔥勁十足咖哩',
+      category: '咖哩',
+      pot_size: 32,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/spicyleekcurry.png',
       name_en: 'Spicy Leek Curry',
       base_energy: 5900,
       ingredients: [
@@ -1454,6 +1487,9 @@
     // 沙拉 (Salad)
     {
       name_cn: '大塊滿滿熱水沙拉',
+      category: '沙拉',
+      pot_size: 95,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/scaldchunkysalad.png',
       name_en: 'Scald Chunky Salad',
       base_energy: 25356,
       ingredients: [
@@ -1465,6 +1501,9 @@
     },
     {
       name_cn: '重踏酪梨醬脆片',
+      category: '沙拉',
+      pot_size: 105,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/bulldozeguacamoleandchips.png',
       name_en: 'Bulldoze Guacamole and Chips',
       base_energy: 25162,
       ingredients: [
@@ -1476,6 +1515,9 @@
     },
     {
       name_cn: '不服輸咖啡沙拉',
+      category: '沙拉',
+      pot_size: 100,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/defiantcoffee-dressedsalad.png',
       name_en: 'Defiant Coffee-Dressed Salad',
       base_energy: 20218,
       ingredients: [
@@ -1487,6 +1529,9 @@
     },
     {
       name_cn: '蘋果酸優格沙拉',
+      category: '沙拉',
+      pot_size: 104,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/appleacidyogurt-dressedsalad.png',
       name_en: 'Apple Acid Yogurt-Dressed Salad',
       base_energy: 19293,
       ingredients: [
@@ -1498,6 +1543,9 @@
     },
     {
       name_cn: '落英繽紛含羞草蛋沙拉',
+      category: '沙拉',
+      pot_size: 69,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/petalblizzardlayeredsalad.png',
       name_en: 'Petal Blizzard Layered Salad',
       base_energy: 11811,
       ingredients: [
@@ -1509,6 +1557,9 @@
     },
     {
       name_cn: '忍者沙拉',
+      category: '沙拉',
+      pot_size: 57,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/ninjasalad.png',
       name_en: 'Ninja Salad',
       base_energy: 11659,
       ingredients: [
@@ -1520,6 +1571,9 @@
     },
     {
       name_cn: '萌綠沙拉',
+      category: '沙拉',
+      pot_size: 62,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/greengrasssalad.png',
       name_en: 'Greengrass Salad',
       base_energy: 11393,
       ingredients: [
@@ -1531,6 +1585,9 @@
     },
     {
       name_cn: '碎裂酪梨沙拉',
+      category: '沙拉',
+      pot_size: 42,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/lusciousavocadosalad.png',
       name_en: 'Luscious Avocado Salad',
       base_energy: 7125,
       ingredients: [
@@ -1541,6 +1598,9 @@
     },
     {
       name_cn: '呆呆獸尾巴的胡椒沙拉',
+      category: '沙拉',
+      pot_size: 35,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/slowpoketailpeppersalad.png',
       name_en: 'Slowpoke Tail Pepper Salad',
       base_energy: 8169,
       ingredients: [
@@ -1553,6 +1613,9 @@
     // 甜點 (Dessert)
     {
       name_cn: '採蜜巧克力格子鬆餅',
+      category: '甜點',
+      pot_size: 115,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/honeygatherchocolatewaffles.png',
       name_en: 'Honey Gather Chocolate Waffles',
       base_energy: 25484,
       ingredients: [
@@ -1564,6 +1627,9 @@
     },
     {
       name_cn: '心跳加速鬼面鬆餅',
+      category: '甜點',
+      pot_size: 103,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/scaryfacepancakes.png',
       name_en: 'Scary Face Pancakes',
       base_energy: 24354,
       ingredients: [
@@ -1575,6 +1641,9 @@
     },
     {
       name_cn: '土王閃電泡芙',
+      category: '甜點',
+      pot_size: 102,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/clodsireeclair.png',
       name_en: 'Clodsire Eclair',
       base_energy: 20885,
       ingredients: [
@@ -1586,6 +1655,9 @@
     },
     {
       name_cn: '電光香料可樂',
+      category: '甜點',
+      pot_size: 87,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/zingzapspicedcola.png',
       name_en: 'Zing Zap Spiced Cola',
       base_energy: 17494,
       ingredients: [
@@ -1597,6 +1669,9 @@
     },
     {
       name_cn: '花之禮馬卡龍',
+      category: '甜點',
+      pot_size: 77,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/flowergiftmacarons.png',
       name_en: 'Flower Gift Macarons',
       base_energy: 13834,
       ingredients: [
@@ -1608,6 +1683,9 @@
     },
     {
       name_cn: '茶會玉米司康',
+      category: '甜點',
+      pot_size: 67,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/teatimecornscones.png',
       name_en: 'Teatime Corn Scones',
       base_energy: 10925,
       ingredients: [
@@ -1619,6 +1697,9 @@
     },
     {
       name_cn: '青草攪拌器冰沙',
+      category: '甜點',
+      pot_size: 48,
+      icon: 'https://www.serebii.net/pokemonsleep/meals/leaftornadosmoothie.png',
       name_en: 'Leaf Tornado Smoothie',
       base_energy: 8165,
       ingredients: [
@@ -1643,9 +1724,23 @@
   function findTargetRecipe(name) {
     if (!name) return TARGET_TOP_RECIPES[0];
     const list = getAllTargetRecipes();
-    return list.find(r => (r.name_cn === name || r.name === name || r.name_en === name)) ||
+    const found = list.find(r => (r.name_cn === name || r.name === name || r.name_en === name)) ||
            TARGET_TOP_RECIPES.find(r => (r.name_cn === name || r.name === name || r.name_en === name)) ||
            list[0] || TARGET_TOP_RECIPES[0];
+    if (found && !found.icon) {
+      const topMatch = (typeof window !== 'undefined' && Array.isArray(window.ALL_TOP_CATEGORY_RECIPES))
+        ? window.ALL_TOP_CATEGORY_RECIPES.find(r => r.name_cn === (found.name_cn || found.name) || r.name_en === (found.name_en || found.name))
+        : null;
+      if (topMatch && topMatch.icon) {
+        found.icon = topMatch.icon;
+        if (!found.category) found.category = topMatch.category;
+        if (!found.pot_size) found.pot_size = topMatch.pot_size;
+      } else if (found.name_en) {
+        const slug = found.name_en.toLowerCase().replace(/[^a-z0-9]/g, '');
+        found.icon = 'https://www.serebii.net/pokemonsleep/meals/' + slug + '.png';
+      }
+    }
+    return found;
   }
 
   const _sigRecipeRecCache = Object.create(null);
@@ -4529,15 +4624,9 @@
           return `
             <div class="lab-recipe-card ${catClass} ${isSelected ? 'selected' : ''}" onclick="window.AppraisalLab.onRecipePickerSelect('${escapeHtml(rNameCn)}')">
               ${isSelected ? `<span class="lab-recipe-active-badge">${isEN ? 'Current' : '當前目標'}</span>` : ''}
-              <div class="lab-recipe-card-header">
+              <div class="lab-recipe-card-visual">
                 ${r.icon ? `<img src="${r.icon}" class="lab-recipe-card-icon" alt="" loading="lazy">` : ''}
-                <div class="lab-recipe-card-meta">
-                  <div class="lab-recipe-card-sub">
-                    <span class="lab-recipe-card-cat ${catClass}">${escapeHtml(r.category || '')}</span>
-                    ${r.pot_size ? `<span class="lab-recipe-card-pot">${r.pot_size} ${isEN ? 'Pots' : '格'}</span>` : ''}
-                    ${r.base_energy ? `<span class="lab-recipe-card-energy">${r.base_energy.toLocaleString()} ${isEN ? 'Energy' : '能量'}</span>` : ''}
-                  </div>
-                </div>
+                ${r.pot_size ? `<span class="lab-recipe-card-pot">${r.pot_size}${isEN ? ' Pots' : '格'}</span>` : ''}
               </div>
               <div class="lab-recipe-card-ingredients">
                 ${ingsHtml}
@@ -4776,20 +4865,22 @@
         return `
           <div class="lab-picker-card ${isSel ? 'selected' : ''} ${isOccupied ? 'occupied disabled' : ''} ${isFav ? 'fav' : ''}" data-uid="${item.uid}" ${clickAttr} title="${isOccupied ? (isEN ? 'Already in comparison' : '已在對比選手中') : escapeHtml(pDisplayName)}">
             ${isOccupied ? `<span class="lab-picker-occupied-badge">${isEN ? 'In Comparison' : '已在對比中'}</span>` : ''}
-            <div class="lab-picker-avatar">
-              <img src="${avatarUrl}" alt="${escapeHtml(pDisplayName)}" loading="lazy">
-              <span class="lab-picker-lv">Lv.${item.level || 1}</span>
-            </div>
-            <div class="lab-picker-meta">
-              <div class="lab-picker-nick">${escapeHtml(item.nickname || pDisplayName)}</div>
-              <div class="lab-picker-sub">
-                ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry" title="${escapeHtml(berry.name || '')}">` : ''}
-                ${specHtml}
+            <div class="lab-picker-main">
+              <div class="lab-picker-avatar">
+                <img src="${avatarUrl}" alt="${escapeHtml(pDisplayName)}" loading="lazy">
+                <span class="lab-picker-lv">Lv.${item.level || 1}</span>
               </div>
-              <div class="lab-picker-ings">
-                ${pIngsHtml}
+              <div class="lab-picker-meta">
+                <div class="lab-picker-sub">
+                  ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry" title="${escapeHtml(berry.name || '')}">` : ''}
+                  ${specHtml}
+                </div>
+                <div class="lab-picker-ings">
+                  ${pIngsHtml}
+                </div>
               </div>
             </div>
+            <div class="lab-picker-nick">${escapeHtml(item.nickname || pDisplayName)}</div>
           </div>
         `;
       }).join('');
@@ -5249,8 +5340,18 @@
                 <span class="lab-slot-lv-badge">Lv.${item.level || 1}</span>
               </div>
               <div class="lab-slot-name-col">
-                <span class="lab-slot-name">${escapeHtml(displayName)}</span>
-                ${item.nickname ? `<span class="lab-slot-nickname">(${escapeHtml(item.nickname)})</span>` : ''}
+                <div class="lab-slot-name-row">
+                  <span class="lab-slot-name">${escapeHtml(displayName)}</span>
+                  ${item.nickname ? `<span class="lab-slot-nickname">(${escapeHtml(item.nickname)})</span>` : ''}
+                </div>
+                <div class="lab-slot-spec-left">
+                  ${specialtyIconHtml}
+                  <div class="lab-slot-berry-wrap ${isFav ? 'favored' : ''}" title="${escapeHtml(berry.name || '')}${isFav ? ' (2x)' : ''}">
+                    ${berry.icon ? `<img src="${berry.icon}" class="lab-slot-berry-icon" alt="Berry">` : ''}
+                    ${isFav ? `<span class="lab-slot-fav-badge">2x</span>` : ''}
+                  </div>
+                  <span class="lab-slot-nature-name">${escapeHtml(natureDisplayName)}${(item.cleanseMint || item.mint) ? ' (' + (isEN ? 'Mint' : '薄荷') + ')' : ''}</span>
+                </div>
               </div>
             </div>
             <button type="button" class="box-btn box-btn-secondary lab-slot-replace-top-btn" onclick="window.AppraisalLab.openPicker({ type: 'team', slotIndex: ${idx} })">
@@ -5259,13 +5360,6 @@
           </div>
 
           <div class="lab-slot-spec-row">
-            <div class="lab-slot-spec-left">
-              ${specialtyIconHtml}
-              <div class="lab-slot-berry-wrap ${isFav ? 'favored' : ''}" title="${escapeHtml(berry.name || '')}${isFav ? ' (2x)' : ''}">
-                ${berry.icon ? `<img src="${berry.icon}" class="lab-slot-berry-icon" alt="Berry">` : ''}
-                ${isFav ? `<span class="lab-slot-fav-badge">2x</span>` : ''}
-              </div>
-            </div>
             <div class="lab-slot-ings-right">
               ${ingStripHtml}
             </div>
@@ -5274,11 +5368,9 @@
           <div class="lab-slot-bottom-row">
             <div class="lab-slot-bottom-left">
               <span class="lab-slot-skill-name">${escapeHtml(skillName)} <strong class="lab-slot-skill-lv">Lv.${skillLv}</strong></span>
-              <span class="lab-slot-mid-sep">·</span>
-              <span class="lab-slot-nature-name">${escapeHtml(natureDisplayName)}${(item.cleanseMint || item.mint) ? ' (' + (isEN ? 'Mint' : '薄荷') + ')' : ''}</span>
+              ${aurasHtml}
             </div>
             <div class="lab-slot-bottom-right">
-              ${aurasHtml}
               ${simSlot ? `<span class="lab-slot-berry-pts" title="${isEN ? 'Daily berry energy' : '每日樹果能量'}">${simSlot.dailyBerryEnergy.toLocaleString()} <span style="font-size:9px;color:var(--text-muted);">${isEN ? 'pts' : '能量'}</span></span>` : ''}
             </div>
           </div>
@@ -5289,21 +5381,38 @@
     const ingEntries = Object.entries(simulation.ingredientsMap);
     ingEntries.sort((a, b) => b[1] - a[1]);
     const keyIngs = COOKING_CATEGORY_KEY_INGREDIENTS[labState.cookingType] || [];
+    const targetAnalysis = simulation.targetRecipeAnalysis;
     const topIngsHtml = ingEntries.slice(0, 8).map(([iName, count]) => {
       const iDisplayName = window.I18N ? window.I18N.getIngredientName(iName) : iName;
       const iconUrl = window.I18N && typeof window.I18N.getIngredientIcon === 'function' ? window.I18N.getIngredientIcon(iName) : '';
-      const isCookMatch = keyIngs.includes(iName);
+      
+      const targetItem = targetAnalysis && Array.isArray(targetAnalysis.items)
+        ? targetAnalysis.items.find(it => it.name === iName || (window.I18N && window.I18N.getIngredientName(it.name) === iName))
+        : null;
+      const isTargetIng = !!targetItem;
+      const isSurplusDaily = targetItem ? (targetItem.diff >= 0 || targetItem.fulfillmentPct >= 100) : false;
+      const isCategoryKey = keyIngs.includes(iName);
+      const isCookMatch = isTargetIng || isSurplusDaily || isCategoryKey;
+
+      const chipBorder = isSurplusDaily
+        ? '1px solid #22c55e'
+        : (isCookMatch ? '1px solid var(--accent-color, #38bdf8)' : '1px solid rgba(255,255,255,0.08)');
+      const chipBg = isSurplusDaily
+        ? 'rgba(34, 197, 94, 0.12)'
+        : (isCookMatch ? 'rgba(56, 189, 248, 0.12)' : 'rgba(255, 255, 255, 0.04)');
+      const numColor = isSurplusDaily
+        ? '#4ade80'
+        : (isCookMatch ? '#38bdf8' : '#e2e8f0');
+
       return `
-        <div style="display:inline-flex;align-items:center;gap:3px;background:${isCookMatch ? 'rgba(56,189,248,0.12)' : 'rgba(255,255,255,0.04)'};border:1px solid ${isCookMatch ? 'rgba(56,189,248,0.35)' : 'rgba(255,255,255,0.08)'};border-radius:4px;padding:1px 5px;font-size:10.5px;" title="${escapeHtml(iDisplayName)}${isCookMatch ? (isEN ? ' (Cooking Matched)' : ' (料理契合)') : ''}">
+        <div style="display:inline-flex;align-items:center;gap:3px;background:${chipBg};border:${chipBorder};border-radius:4px;padding:1px 5px;font-size:10.5px;" title="${escapeHtml(iDisplayName)}${isSurplusDaily ? (isEN ? ' (Daily Self-Sufficient)' : ' (三餐自給充裕)') : (isCookMatch ? (isEN ? ' (Recipe Synergy)' : ' (料理契合)') : '')}">
           ${iconUrl ? `<img src="${iconUrl}" style="width:13px;height:13px;object-fit:contain;vertical-align:middle;" alt="${escapeHtml(iDisplayName)}">` : ''}
-          <span style="color:${isCookMatch ? '#38bdf8' : '#e2e8f0'};font-weight:700;">x${count}</span>
-          ${isCookMatch ? `<span style="font-size:8px;color:#38bdf8;font-weight:800;">${isEN ? 'FIT' : '契合'}</span>` : ''}
+          <span style="color:${numColor};font-weight:700;">x${count}</span>
         </div>
       `;
     }).join('');
 
     // ─── 目標料理食材供需看板 (緊湊多欄 Grid 卡片矩陣) ────────────────────
-    const targetAnalysis = simulation.targetRecipeAnalysis;
     let supplyDemandBoardHtml = '';
     if (targetAnalysis && Array.isArray(targetAnalysis.items)) {
       const itemsHtml = targetAnalysis.items.map(item => {

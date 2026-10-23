@@ -11,9 +11,23 @@
   function findTargetRecipe(name) {
     if (!name) return TARGET_TOP_RECIPES[0];
     const list = getAllTargetRecipes();
-    return list.find(r => (r.name_cn === name || r.name === name || r.name_en === name)) ||
+    const found = list.find(r => (r.name_cn === name || r.name === name || r.name_en === name)) ||
            TARGET_TOP_RECIPES.find(r => (r.name_cn === name || r.name === name || r.name_en === name)) ||
            list[0] || TARGET_TOP_RECIPES[0];
+    if (found && !found.icon) {
+      const topMatch = (typeof window !== 'undefined' && Array.isArray(window.ALL_TOP_CATEGORY_RECIPES))
+        ? window.ALL_TOP_CATEGORY_RECIPES.find(r => r.name_cn === (found.name_cn || found.name) || r.name_en === (found.name_en || found.name))
+        : null;
+      if (topMatch && topMatch.icon) {
+        found.icon = topMatch.icon;
+        if (!found.category) found.category = topMatch.category;
+        if (!found.pot_size) found.pot_size = topMatch.pot_size;
+      } else if (found.name_en) {
+        const slug = found.name_en.toLowerCase().replace(/[^a-z0-9]/g, '');
+        found.icon = 'https://www.serebii.net/pokemonsleep/meals/' + slug + '.png';
+      }
+    }
+    return found;
   }
 
   const _sigRecipeRecCache = Object.create(null);

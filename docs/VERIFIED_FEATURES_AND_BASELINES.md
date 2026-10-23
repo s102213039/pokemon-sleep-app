@@ -371,7 +371,7 @@
 
 ---
 
-## 十、 十大歷史修復缺陷與嚴禁退化紅線 (Top 10 Fixed Defects Anti-Regression Checklist)
+## 十、 十一項歷史修復缺陷與嚴禁退化紅線 (Top 11 Fixed Defects Anti-Regression Checklist)
 
 以下為歷來排除之重大系統缺陷。**任何後續開發均必須將此表作為最高防呆標準，嚴禁改回錯誤版本！**
 
@@ -387,6 +387,7 @@
 | **8** | **雲端同步提示洗版與自推回聲** | 每次切換分頁或自身推送後反覆跳出「雲端資料已同步」Toast。 | `CloudSync` 導入 5 分鐘冷卻與回環推送（Echo Loop）阻斷標記。 | **嚴禁**移除雲端同步冷卻機制或回環標記。 |
 | **9** | **Tesseract.js OCR 首屏強制預載** | 首屏直接加載 2MB+ `tesseract.min.js`，拖慢首次載入時間。 | 改為按需延遲載入（`ensureTesseractLoaded`），首屏完全不下載。 | **嚴禁**在 `index.html` 首屏直接寫入 `<script src="...tesseract.min.js">`。 |
 | **10** | **全域表情符號 (Emoji) 混入** | UI 介面、圖標、按鈕或說明文字中使用 Emoji 充當裝飾。 | 嚴格遵守零 Emoji 規範 (Zero Emoji Policy)，採用乾淨向量圖或純文字標籤。 | **嚴禁**在任何 UI、註解或回應中插入 Emoji。 |
+| **11** | **測試執行超時與 OCR 無快取窮舉** | 每次提需求測試跑 5-10 分鐘，Tier 4 萬次 OCR 解析對 247 隻重複清洗字串與窮舉子字串，單項測試耗時 >8.2 秒。 | 1. `box_ocr_parse.js` 預清洗快取 + 完全相符快速通道（Exact Match Fast-Path），提速 102x，Test 194 降至 1.2s，全套降至 2.1s。<br>2. 提供 `npm run test:fast`（0.25s 執行 Tier 1~3）。<br>3. 支援 `-g` 關鍵字過濾。 | **嚴禁**在未快取情況下對全寶可夢執行窮舉搜尋；**嚴禁**寫死調用路徑；日常開發**優先使用 `npm run test:fast`**。 |
 
 ---
 

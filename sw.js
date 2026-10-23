@@ -11,7 +11,9 @@
  */
 
 const IMG_CACHE_NAME = 'pksleep-img-cache-v1';
-const STATIC_CACHE_NAME = 'pksleep-static-cache-v1';
+const STATIC_CACHE_NAME = 'pksleep-static-v20261023_03';
+// 舊版快取標記：用於 activate 事件自動清理歷史舊版快取 pksleep-static-cache-v1
+const LEGACY_STATIC_CACHE = 'pksleep-static-cache-v1';
 const VALID_CACHES = [IMG_CACHE_NAME, STATIC_CACHE_NAME];
 
 self.addEventListener('install', (event) => {
@@ -24,6 +26,7 @@ self.addEventListener('activate', (event) => {
       Promise.all(
         keys.map((key) => {
           if (!VALID_CACHES.includes(key)) {
+            console.log('[SW] Purging outdated cache:', key);
             return caches.delete(key);
           }
           return null;
@@ -112,11 +115,26 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2. OCR 模型與字型檔：Cache-First 本地優先快取策略
+  // 2. OCR 模型、字型檔與版本化資源快取
   if (isStaticHeavyAsset(url)) {
     event.respondWith(
-      caches.open(STATIC_CACHE_NAME).then((cache) =>
-        cache.match(request).then((cachedResponse) => {
+      caches.open(STATIC_CACHE_NAME).then((cache) => {
+        const pathname = url.pathname.toLowerCase();
+        const isCode = pathname.endsWith('.css') || pathname.endsWith('.js');
+        // 對於 JS / CSS 程式碼：Network-First（網路優先確保獲取最新版，離線時回退快取）
+        if (isCode) {
+          return fetch(request, { cache: 'no-cache' })
+            .then((networkResponse) => {
+              if (networkResponse && networkResponse.status === 200) {
+                cache.put(request, networkResponse.clone()).catch(() => {});
+              }
+              return networkResponse;
+            })
+            .catch(() => cache.match(request));
+        }
+
+        // 對於 OCR 模型與字型檔：Cache-First 本地優先快取
+        return cache.match(request).then((cachedResponse) => {
           if (cachedResponse) {
             return cachedResponse;
           }
@@ -126,8 +144,8 @@ self.addEventListener('fetch', (event) => {
             }
             return networkResponse;
           });
-        })
-      )
+        });
+      })
     );
   }
 });

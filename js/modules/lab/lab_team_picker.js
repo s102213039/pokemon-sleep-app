@@ -218,15 +218,9 @@
           return `
             <div class="lab-recipe-card ${catClass} ${isSelected ? 'selected' : ''}" onclick="window.AppraisalLab.onRecipePickerSelect('${escapeHtml(rNameCn)}')">
               ${isSelected ? `<span class="lab-recipe-active-badge">${isEN ? 'Current' : '當前目標'}</span>` : ''}
-              <div class="lab-recipe-card-header">
+              <div class="lab-recipe-card-visual">
                 ${r.icon ? `<img src="${r.icon}" class="lab-recipe-card-icon" alt="" loading="lazy">` : ''}
-                <div class="lab-recipe-card-meta">
-                  <div class="lab-recipe-card-sub">
-                    <span class="lab-recipe-card-cat ${catClass}">${escapeHtml(r.category || '')}</span>
-                    ${r.pot_size ? `<span class="lab-recipe-card-pot">${r.pot_size} ${isEN ? 'Pots' : '格'}</span>` : ''}
-                    ${r.base_energy ? `<span class="lab-recipe-card-energy">${r.base_energy.toLocaleString()} ${isEN ? 'Energy' : '能量'}</span>` : ''}
-                  </div>
-                </div>
+                ${r.pot_size ? `<span class="lab-recipe-card-pot">${r.pot_size}${isEN ? ' Pots' : '格'}</span>` : ''}
               </div>
               <div class="lab-recipe-card-ingredients">
                 ${ingsHtml}
@@ -465,20 +459,22 @@
         return `
           <div class="lab-picker-card ${isSel ? 'selected' : ''} ${isOccupied ? 'occupied disabled' : ''} ${isFav ? 'fav' : ''}" data-uid="${item.uid}" ${clickAttr} title="${isOccupied ? (isEN ? 'Already in comparison' : '已在對比選手中') : escapeHtml(pDisplayName)}">
             ${isOccupied ? `<span class="lab-picker-occupied-badge">${isEN ? 'In Comparison' : '已在對比中'}</span>` : ''}
-            <div class="lab-picker-avatar">
-              <img src="${avatarUrl}" alt="${escapeHtml(pDisplayName)}" loading="lazy">
-              <span class="lab-picker-lv">Lv.${item.level || 1}</span>
-            </div>
-            <div class="lab-picker-meta">
-              <div class="lab-picker-nick">${escapeHtml(item.nickname || pDisplayName)}</div>
-              <div class="lab-picker-sub">
-                ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry" title="${escapeHtml(berry.name || '')}">` : ''}
-                ${specHtml}
+            <div class="lab-picker-main">
+              <div class="lab-picker-avatar">
+                <img src="${avatarUrl}" alt="${escapeHtml(pDisplayName)}" loading="lazy">
+                <span class="lab-picker-lv">Lv.${item.level || 1}</span>
               </div>
-              <div class="lab-picker-ings">
-                ${pIngsHtml}
+              <div class="lab-picker-meta">
+                <div class="lab-picker-sub">
+                  ${berry.icon ? `<img src="${berry.icon}" class="lab-picker-berry" alt="Berry" title="${escapeHtml(berry.name || '')}">` : ''}
+                  ${specHtml}
+                </div>
+                <div class="lab-picker-ings">
+                  ${pIngsHtml}
+                </div>
               </div>
             </div>
+            <div class="lab-picker-nick">${escapeHtml(item.nickname || pDisplayName)}</div>
           </div>
         `;
       }).join('');
