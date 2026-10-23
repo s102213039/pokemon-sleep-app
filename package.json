@@ -1,0 +1,45 @@
+{
+  "name": "pokemon-sleep-app",
+  "version": "1.0.0",
+  "description": "<div align=\"center\">",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "node tests/run_tests.js",
+    "test:fast": "node tests/run_tests.js --fast",
+    "test:tier1": "node tests/run_tests.js --tier=1",
+    "test:tier2": "node tests/run_tests.js --tier=2",
+    "test:tier3": "node tests/run_tests.js --tier=3",
+    "test:tier4": "node tests/run_tests.js --tier=4",
+    "build:css": "node scripts/build_css.js",
+    "build:appraisal": "node scripts/build_appraisal.js",
+    "build:wiki": "node scripts/build_wiki.js",
+    "build:box": "node scripts/build_box.js",
+    "build:app": "node scripts/build_app.js",
+    "build:all": "node scripts/build_all.js",
+    "build:prod": "node scripts/build_prod.js",
+    "build": "node scripts/build_all.js && node scripts/build_prod.js",
+    "data:minify": "node scripts/minify_data.js",
+    "data:format": "node scripts/format_data.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/s102213039/pokemon-sleep-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/s102213039/pokemon-sleep-app/issues"
+  },
+  "homepage": "https://github.com/s102213039/pokemon-sleep-app#readme",
+  "dependencies": {
+    "tesseract.js": "^7.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}

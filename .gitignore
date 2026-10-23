@@ -21,8 +21,6 @@ deploy_gh_pages*/
 # Node & OCR dependencies
 node_modules/
 *.traineddata
-package.json
-package-lock.json
 scratch/
 # Local agent scratch (upscalers, tmp)
 .agent-tmp/
