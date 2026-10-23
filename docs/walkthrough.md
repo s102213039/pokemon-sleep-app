@@ -2026,6 +2026,54 @@
 - **測試驗證**：新增專屬真實場景整合測試，全套 235 / 235 項測試 100% 通過（0 失敗）。
 - **規範遵循**：全域 0 Emoji、無萬用字元刪除、嚴格 RTK 前綴、單一外框排版規範。
 
+---
+
+## 2026-10-23: Headbar Overscroll 禁用、倉庫 Tab 左右分裂修復、組隊島嶼/策略與光環橫向合併無框化、補齊琥褐溪谷、料理名稱去化與全域特殊符號禁用
+
+### 背景與設計目標
+1. **Headbar 禁止 Overscroll 效果**：
+   - 頂部導航欄（`header`）在桌面版與行動端隨滑動拉扯會產生彈性位移與橡皮筋回彈（rubber-band overscroll），影響視覺穩定性。
+   - 在 `html, body` 與 `header, .header-container` 加入 `overscroll-behavior: none !important; overscroll-behavior-y: none !important;`，徹底根治過度滾動回彈。
+2. **倉庫 Tab 左右分裂排版 Bug 根治（圖一問題）**：
+   - **根本原因**：`js/modules/box/box_main.js` 在 `switchBoxSubtab('list')` 時設置了 `subpanelList.style.setProperty('display', 'flex', 'important')`，因未設定 `flex-direction: column`，瀏覽器預設為 `row`，導致上方控制區（搜尋列與上傳卡片）與下方卡片列表橫向並排。
+   - **修復方案**：將 `subpanelList.style.setProperty('display', 'block', 'important')` 還原為標準垂直區塊流；並在 `box_grid.css` 與 `pokedex_tooltips.css` 中注入防護規則：`body:not(.mobile-h5-app) #box-subpanel-list { display: block !important; width: 100% !important; }`。
+3. **深度研究室幫手組隊桌面版佈局無框化合併（圖二優化）**：
+   - **Row 1 水平橫向合併（`.lab-island-config-row`）**：
+     - 將島嶼選擇器（`.lab-island-selector-col`）與隊伍設定變數列（`.lab-team-config-col lab-team-config-panel`）合併為單一行。
+     - 徹底移除 `.lab-team-config-panel` 的卡片外框、底色與外距，遵循 Rule 9 單一外框原則。
+   - **補齊第 7 個島嶼「琥褐溪谷」（Amber Canyon）**：
+     - 在 `js/modules/lab/lab_modal.js` 的 `LAB_ISLANDS` 中補上第 7 個島嶼 `amber`（琥褐溪谷），喜愛樹果：零餘果、木子果、巧可果（毒、蟲、龍 2x 能量），背景圖指向 `assets/islands/hd/amber.jpg`。
+   - **Row 2 水平橫向合併（`.lab-favored-auras-row`）**：
+     - 將喜愛樹果列（`.lab-favored-berries-col`）與隊伍全體光環彙總列（`.lab-team-auras-col lab-team-auras-bar`）合併為單一行。
+     - 徹底移除 `.lab-team-auras-bar` 的獨立外框與背景，保持開闊純淨排版。
+4. **全版本料理名稱徹底去除與圖示適度放大**：
+   - 目標料理晶片（`.lab-target-recipe-chip`）與看板中徹底刪除料理名稱文字節點，僅保留料理圖示 + 類別徽章 + 更換按鈕。
+   - 圖示放大：`.lab-target-recipe-chip-icon` 由 18px 放大至 26px，看板 `.lab-supply-dish-icon` 由 32px 放大至 44px。
+5. **隊伍全體光環與副技能符號徹底清除**：
+   - 移除全隊光環彙總標籤前方之 SVG 星號圖標與各光環項目之圖標，回歸簡潔純文字標籤。
+   - 移除寶可夢槽位卡片副技能徽章（`.lab-slot-aura-badge`）中之星號圖標。
+   - 移除萌綠島嶼喜愛樹果標題中之 `[#]` 字符。
+6. **全域特殊字形符號與 Emoji 零容忍規範入規**：
+   - 正式將「全域特殊字形裝飾符號禁用規範（No Decorative Star/Glyph Symbols Policy）」寫入共用文件協議：
+     - `~/.gemini/agent-docs/PROTOCOL.md` (第 9 節)
+     - `~/.gemini/AGENTS.md` (第 10 節)
+     - `~/.cursor/rules/no-emoji.mdc`
+     - `~/.gemini/agent-docs/projects/pokemon-sleep-app/SPECIAL_ICONS_RULES.md`
+     - `docs/VERIFIED_FEATURES_AND_BASELINES.md`
+7. **單檔嚴格 <= 1,000 行品質門檻**：
+   - `css/views/lab/lab_team.css`: 990 行
+   - `js/modules/box/box_main.js`: 805 行
+   - `js/modules/lab/lab_modal.js`: 844 行
+   - `js/modules/lab/lab_team_ui.js`: 468 行
+   - `css/base.css`: 687 行
+   - `css/components/buttons_badges.css`: 802 行
+   - `css/components/modals/pokedex_tooltips.css`: 590 行
+
+### 驗證結果
+- **測試驗證**：新增專屬 Test 236 整合測試，全套 236 / 236 項測試 100% 通過（0 失敗）。
+- **規範遵循**：全域 0 Emoji、無字形裝飾符號、嚴格 RTK 前綴、單一外框排版規範（Rule 9）。
+
+
 
 
 ## 2026-10-22: 研究營地純淨化、目標料理雙食材契合度強算力升級、隊員更換樹果/食材篩選器與料理彈窗三色緊湊排版
@@ -2097,4 +2145,52 @@
 ### 驗證結果
 - **測試驗證**：新增專屬真實場景整合測試，全套 235 / 235 項測試 100% 通過（0 失敗）。
 - **規範遵循**：全域 0 Emoji、無萬用字元刪除、嚴格 RTK 前綴、單一外框排版規範。
+
+---
+
+## 2026-10-23: Headbar Overscroll 禁用、倉庫 Tab 左右分裂修復、組隊島嶼/策略與光環橫向合併無框化、補齊琥褐溪谷、料理名稱去化與全域特殊符號禁用
+
+### 背景與設計目標
+1. **Headbar 禁止 Overscroll 效果**：
+   - 頂部導航欄（`header`）在桌面版與行動端隨滑動拉扯會產生彈性位移與橡皮筋回彈（rubber-band overscroll），影響視覺穩定性。
+   - 在 `html, body` 與 `header, .header-container` 加入 `overscroll-behavior: none !important; overscroll-behavior-y: none !important;`，徹底根治過度滾動回彈。
+2. **倉庫 Tab 左右分裂排版 Bug 根治（圖一問題）**：
+   - **根本原因**：`js/modules/box/box_main.js` 在 `switchBoxSubtab('list')` 時設置了 `subpanelList.style.setProperty('display', 'flex', 'important')`，因未設定 `flex-direction: column`，瀏覽器預設為 `row`，導致上方控制區（搜尋列與上傳卡片）與下方卡片列表橫向並排。
+   - **修復方案**：將 `subpanelList.style.setProperty('display', 'block', 'important')` 還原為標準垂直區塊流；並在 `box_grid.css` 與 `pokedex_tooltips.css` 中注入防護規則：`body:not(.mobile-h5-app) #box-subpanel-list { display: block !important; width: 100% !important; }`。
+3. **深度研究室幫手組隊桌面版佈局無框化合併（圖二優化）**：
+   - **Row 1 水平橫向合併（`.lab-island-config-row`）**：
+     - 將島嶼選擇器（`.lab-island-selector-col`）與隊伍設定變數列（`.lab-team-config-col lab-team-config-panel`）合併為單一行。
+     - 徹底移除 `.lab-team-config-panel` 的卡片外框、底色與外距，遵循 Rule 9 單一外框原則。
+   - **補齊第 7 個島嶼「琥褐溪谷」（Amber Canyon）**：
+     - 在 `js/modules/lab/lab_modal.js` 的 `LAB_ISLANDS` 中補上第 7 個島嶼 `amber`（琥褐溪谷），喜愛樹果：零餘果、木子果、巧可果（毒、蟲、龍 2x 能量），背景圖指向 `assets/islands/hd/amber.jpg`。
+   - **Row 2 水平橫向合併（`.lab-favored-auras-row`）**：
+     - 將喜愛樹果列（`.lab-favored-berries-col`）與隊伍全體光環彙總列（`.lab-team-auras-col lab-team-auras-bar`）合併為單一行。
+     - 徹底移除 `.lab-team-auras-bar` 的獨立外框與背景，保持開闊純淨排版。
+4. **全版本料理名稱徹底去除與圖示適度放大**：
+   - 目標料理晶片（`.lab-target-recipe-chip`）與看板中徹底刪除料理名稱文字節點，僅保留料理圖示 + 類別徽章 + 更換按鈕。
+   - 圖示放大：`.lab-target-recipe-chip-icon` 由 18px 放大至 26px，看板 `.lab-supply-dish-icon` 由 32px 放大至 44px。
+5. **隊伍全體光環與副技能符號徹底清除**：
+   - 移除全隊光環彙總標籤前方之 SVG 星號圖標與各光環項目之圖標，回歸簡潔純文字標籤。
+   - 移除寶可夢槽位卡片副技能徽章（`.lab-slot-aura-badge`）中之星號圖標。
+   - 移除萌綠島嶼喜愛樹果標題中之 `[#]` 字符。
+6. **全域特殊字形符號與 Emoji 零容忍規範入規**：
+   - 正式將「全域特殊字形裝飾符號禁用規範（No Decorative Star/Glyph Symbols Policy）」寫入共用文件協議：
+     - `~/.gemini/agent-docs/PROTOCOL.md` (第 9 節)
+     - `~/.gemini/AGENTS.md` (第 10 節)
+     - `~/.cursor/rules/no-emoji.mdc`
+     - `~/.gemini/agent-docs/projects/pokemon-sleep-app/SPECIAL_ICONS_RULES.md`
+     - `docs/VERIFIED_FEATURES_AND_BASELINES.md`
+7. **單檔嚴格 <= 1,000 行品質門檻**：
+   - `css/views/lab/lab_team.css`: 990 行
+   - `js/modules/box/box_main.js`: 805 行
+   - `js/modules/lab/lab_modal.js`: 844 行
+   - `js/modules/lab/lab_team_ui.js`: 468 行
+   - `css/base.css`: 687 行
+   - `css/components/buttons_badges.css`: 802 行
+   - `css/components/modals/pokedex_tooltips.css`: 590 行
+
+### 驗證結果
+- **測試驗證**：新增專屬 Test 236 整合測試，全套 236 / 236 項測試 100% 通過（0 失敗）。
+- **規範遵循**：全域 0 Emoji、無字形裝飾符號、嚴格 RTK 前綴、單一外框排版規範（Rule 9）。
+
 

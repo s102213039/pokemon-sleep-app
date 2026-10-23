@@ -587,7 +587,7 @@
           subpanelList.style.removeProperty('display');
         }
         if (typeof subpanelList.style.setProperty === 'function') {
-          subpanelList.style.setProperty('display', 'flex', 'important');
+          subpanelList.style.setProperty('display', 'block', 'important');
         } else {
           subpanelList.style.display = 'block';
         }

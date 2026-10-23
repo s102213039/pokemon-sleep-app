@@ -2071,6 +2071,48 @@ function registerTier4Part4() {
     assert(recipeModalCss.includes('.lab-picker-berry-chips-scroll'), 'recipe_picker.css must define .lab-picker-berry-chips-scroll');
     assert(recipeModalCss.includes('.lab-picker-berry-chip-btn'), 'recipe_picker.css must define .lab-picker-berry-chip-btn');
   });
+
+  // Test 236: Amber Canyon 7th Island, Box Desktop Block Flow, Recipe Name Elimination, Merged Rows Layout & Zero Leading Glyphs
+  test('Tier 4 - Real-World Application Scenarios', 'Amber Canyon 7th Island, Box Desktop Block Flow, Recipe Name Elimination, Merged Rows Layout & Zero Leading Glyphs', () => {
+    // 1. Amber Canyon in LAB_ISLANDS
+    const labModalPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'lab', 'lab_modal.js');
+    assert(fs.existsSync(labModalPath), 'lab_modal.js must exist');
+    const labModalCode = fs.readFileSync(labModalPath, 'utf8');
+    assert(labModalCode.includes("id: 'amber'"), 'lab_modal.js must define amber island');
+    assert(labModalCode.includes("name: '琥褐溪谷'"), 'lab_modal.js must define 琥褐溪谷 in LAB_ISLANDS');
+    assert(labModalCode.includes('assets/islands/hd/amber.jpg'), 'lab_modal.js must reference assets/islands/hd/amber.jpg');
+
+    // 2. Box desktop display block
+    const boxMainPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'box', 'box_main.js');
+    assert(fs.existsSync(boxMainPath), 'box_main.js must exist');
+    const boxMainCode = fs.readFileSync(boxMainPath, 'utf8');
+    assert(boxMainCode.includes("subpanelList.style.setProperty('display', 'block', 'important')"), 'box_main.js must set subpanelList display to block !important on desktop');
+    assert(!boxMainCode.includes("subpanelList.style.setProperty('display', 'flex', 'important')"), 'box_main.js must not set subpanelList display to flex !important');
+
+    // 3. Lab team UI: merged rows, no recipe names, zero leading glyphs
+    const labTeamUiPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'lab', 'lab_team_ui.js');
+    assert(fs.existsSync(labTeamUiPath), 'lab_team_ui.js must exist');
+    const labTeamUiCode = fs.readFileSync(labTeamUiPath, 'utf8');
+    assert(labTeamUiCode.includes('lab-island-config-row'), 'lab_team_ui.js must render lab-island-config-row');
+    assert(labTeamUiCode.includes('lab-favored-auras-row'), 'lab_team_ui.js must render lab-favored-auras-row');
+    assert(!labTeamUiCode.includes('lab-target-recipe-chip-name'), 'lab_team_ui.js must eliminate lab-target-recipe-chip-name');
+    assert(!labTeamUiCode.includes('[#]'), 'lab_team_ui.js must eliminate [#] symbol');
+
+    // Check zero star SVGs in team aura chips & badges
+    const chipHelpingIdx = labTeamUiCode.indexOf('chip-helping');
+    assert(chipHelpingIdx !== -1, 'chip-helping must exist');
+    const helpingBlock = labTeamUiCode.slice(chipHelpingIdx - 80, chipHelpingIdx + 160);
+    assert(!helpingBlock.includes('<polygon points="12 2'), 'Helping bonus aura chip must not contain star polygon');
+
+    const auraBadgeIdx = labTeamUiCode.indexOf('lab-slot-aura-badge aura-active');
+    assert(auraBadgeIdx !== -1, 'lab-slot-aura-badge aura-active must exist');
+    const badgeBlock = labTeamUiCode.slice(auraBadgeIdx, auraBadgeIdx + 250);
+    assert(!badgeBlock.includes('<polygon points="12 2'), 'Slot aura badge must not contain star polygon');
+
+    // 4. CSS overscroll prevention on header
+    const baseCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'base.css'), 'utf8');
+    assert(baseCss.includes('overscroll-behavior: none !important') && baseCss.includes('header'), 'base.css must prevent overscroll on header');
+  });
 }
 
 module.exports = { registerTier4Part4 };

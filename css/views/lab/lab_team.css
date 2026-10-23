@@ -2,13 +2,32 @@
    views/lab/lab_team.css — 幫手組隊與目標料理供需看板樣式 (Team Builder & Supply Board)
    ========================================================================== */
 
-/* 研究營地島嶼圓形背景按鈕 (Circular Island Scene Buttons) */
+/* ─── Row 1: 研究營地島嶼選擇與隊伍變數列 (無外框、水平橫向合併) ─── */
+.lab-island-config-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  width: 100%;
+}
+
+.lab-island-selector-col {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 .lab-island-selector {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
 }
 
 .lab-island-circles-row {
@@ -48,12 +67,42 @@
   border-width: 2.5px;
 }
 
-/* 喜愛樹果純圖示列 (Favored Berries Clean Icons Bar) */
+.lab-team-config-col {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* ─── Row 2: 喜愛樹果純圖示列與隊伍全體光環彙總列 (無外框、水平橫向合併) ─── */
+.lab-favored-auras-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  width: 100%;
+}
+
+.lab-favored-berries-col {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 .lab-team-favored-bar {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
   flex-wrap: wrap;
 }
 
@@ -91,17 +140,16 @@
   transform: scale(1.15);
 }
 
-/* 隊伍全體光環彙總列 (Team Shared Bonuses Summary Bar) */
+.lab-team-auras-col,
 .lab-team-auras-bar {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  background: rgba(0, 0, 0, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-  padding: 5px 10px;
-  margin-bottom: 8px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
 }
 
 .lab-team-auras-label {
@@ -131,40 +179,12 @@
   font-weight: 600;
 }
 
-.lab-team-aura-chip.chip-helping {
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  color: #facc15;
-}
-
-.lab-team-aura-chip.chip-energy {
-  background: rgba(34, 197, 94, 0.15);
-  border: 1px solid rgba(34, 197, 94, 0.35);
-  color: #4ade80;
-}
-
-.lab-team-aura-chip.chip-sleepexp {
-  background: rgba(56, 189, 248, 0.15);
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  color: #38bdf8;
-}
-
-.lab-team-aura-chip.chip-researchexp {
-  background: rgba(168, 85, 247, 0.15);
-  border: 1px solid rgba(168, 85, 247, 0.35);
-  color: #c084fc;
-}
-
-.lab-team-aura-chip.chip-dreamshard {
-  background: rgba(236, 72, 153, 0.15);
-  border: 1px solid rgba(236, 72, 153, 0.35);
-  color: #f472b6;
-}
-
-.lab-team-aura-chip.empty {
-  color: var(--text-muted);
-  font-size: 10.5px;
-}
+.lab-team-aura-chip.chip-helping { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); color: #facc15; }
+.lab-team-aura-chip.chip-energy { background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.35); color: #4ade80; }
+.lab-team-aura-chip.chip-sleepexp { background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); color: #38bdf8; }
+.lab-team-aura-chip.chip-researchexp { background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.35); color: #c084fc; }
+.lab-team-aura-chip.chip-dreamshard { background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.35); color: #f472b6; }
+.lab-team-aura-chip.empty { color: var(--text-muted); font-size: 10.5px; }
 
 /* 隊伍卡片矩陣 (Desktop: 一行5隻全部展示 / Mobile: 縱向單欄堆疊) */
 .lab-team-grid {
@@ -429,25 +449,9 @@
   line-height: 1.2;
 }
 
-.lab-slot-aura-badge.aura-active {
-  background: rgba(245, 158, 11, 0.16);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  color: #facc15;
-}
-
-.lab-slot-aura-badge.aura-locked {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px dashed rgba(255, 255, 255, 0.1);
-  color: var(--text-muted);
-}
-
-.lab-slot-aura-badge.aura-none {
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 9.5px;
-  font-weight: 500;
-  padding: 0;
-}
+.lab-slot-aura-badge.aura-active { background: rgba(245, 158, 11, 0.16); border: 1px solid rgba(245, 158, 11, 0.35); color: #facc15; }
+.lab-slot-aura-badge.aura-locked { background: rgba(255, 255, 255, 0.03); border: 1px dashed rgba(255, 255, 255, 0.1); color: var(--text-muted); }
+.lab-slot-aura-badge.aura-none { background: transparent; color: var(--text-muted); font-size: 9.5px; font-weight: 500; padding: 0; }
 
 .lab-slot-aura-badge .aura-tag {
   font-size: 8.5px;
@@ -493,6 +497,13 @@
 
 /* 響應式：手機與小螢幕垂直堆疊單卡展示 */
 @media (max-width: 900px) {
+  .lab-island-config-row,
+  .lab-favored-auras-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
   .lab-team-grid {
     display: flex;
     flex-direction: column;
@@ -521,6 +532,13 @@
   .lab-slot-bottom-right {
     width: auto;
   }
+}
+
+.mobile-h5-app .lab-island-config-row,
+.mobile-h5-app .lab-favored-auras-row {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
 }
 
 .mobile-h5-app .lab-team-grid {
@@ -583,17 +601,16 @@
   line-height: 1.35;
 }
 
-/* 隊伍可調變數面板 (Team Variables Control Panel) */
+/* 隊伍可調變數面板 (Team Variables Control Panel - 無外框純淨排版) */
 .lab-team-config-panel {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 14px;
   align-items: center;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 6px 12px;
-  margin-bottom: 8px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
 }
 
 .lab-team-config-group {
@@ -729,15 +746,10 @@
 }
 
 .lab-target-recipe-chip-icon {
-  width: 18px;
-  height: 18px;
+  width: 26px;
+  height: 26px;
   object-fit: contain;
-}
-
-.lab-target-recipe-chip-name {
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--text-primary);
+  flex-shrink: 0;
 }
 
 .lab-target-recipe-chip-badge {
@@ -790,16 +802,11 @@
 }
 
 .lab-supply-dish-icon {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-}
-
-.lab-supply-dish-name {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--text-primary);
+  flex-shrink: 0;
 }
 
 .lab-supply-dish-badge {

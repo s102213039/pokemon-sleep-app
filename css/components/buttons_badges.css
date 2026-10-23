@@ -659,6 +659,8 @@ input[type=range].rf-slider.pot-slider {
     align-items: center;
     background: var(--bg-card-solid);
     border-bottom: 1px solid var(--border-color);
+    overscroll-behavior: none !important;
+    overscroll-behavior-y: none !important;
   }
 
   .header-container {

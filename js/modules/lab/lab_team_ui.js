@@ -57,7 +57,7 @@
       <div class="lab-greengrass-berries-config">
         <div class="lab-greengrass-berries-head">
           <div style="display:flex;flex-direction:column;gap:1px;">
-            <span style="font-size:11.5px;font-weight:700;color:#22c55e;">[#] ${isEN ? 'Greengrass Favored Berries (Customizable):' : '萌綠之島本週喜愛樹果 (可自由自選):'}</span>
+            <span style="font-size:11.5px;font-weight:700;color:#22c55e;">${isEN ? 'Greengrass Favored Berries (Customizable):' : '萌綠之島本週喜愛樹果 (可自由自選):'}</span>
             <span style="font-size:10.5px;color:var(--text-muted);">${isEN ? 'Select 3 favored berries for this week (2x energy boost)' : '自選本週 3 種喜愛樹果，產能與推薦即時享有 2x 能量加成'}</span>
           </div>
           <div class="lab-greengrass-actions" style="display:flex;gap:5px;align-items:center;">
@@ -85,7 +85,7 @@
     const isTargetRecipeStrategy = labState.teamStrategy === 'recipe';
 
     const teamVariablesBarHtml = `
-      <div class="lab-team-config-panel">
+      <div class="lab-team-config-col lab-team-config-panel">
         <div class="lab-team-config-group">
           <span class="lab-team-config-label">${isEN ? 'Team Focus:' : '隊伍類型:'}</span>
           <div class="lab-team-pills">
@@ -100,11 +100,10 @@
         ${isTargetRecipeStrategy ? `
           <div class="lab-team-config-group lab-target-recipe-config-group">
             <span class="lab-team-config-label">${isEN ? 'Target Dish:' : '目標料理:'}</span>
-            <div class="lab-target-recipe-chip" onclick="window.AppraisalLab.openPicker({ type: 'recipe' })" title="${isEN ? 'Click to change target recipe' : '點擊切換目標料理'}">
+            <div class="lab-target-recipe-chip" onclick="window.AppraisalLab.openPicker({ type: 'recipe' })" title="${escapeHtml(targetRecipeDisplayName)} (${isEN ? 'Click to change' : '點擊更換'})">
               ${targetRecipe.icon ? `<img src="${targetRecipe.icon}" class="lab-target-recipe-chip-icon" alt="${escapeHtml(targetRecipeDisplayName)}">` : ''}
-              <span class="lab-target-recipe-chip-name">${escapeHtml(targetRecipeDisplayName)}</span>
               <span class="lab-target-recipe-chip-badge">${escapeHtml(targetRecipeCategory)}</span>
-              <span class="lab-target-recipe-chip-btn">${isEN ? 'Change' : '切換'}</span>
+              <span class="lab-target-recipe-chip-btn">${isEN ? 'Change' : '更換'}</span>
             </div>
           </div>
         ` : `
@@ -120,12 +119,11 @@
       </div>
     `;
 
-    // ─── 全隊生效光環彙總列 (Team Shared Bonuses Summary Bar) ─────────────
+    // ─── 全隊生效光環彙總列 (Team Shared Bonuses Summary Bar - Zero Glyphs/Icons) ─────────────
     const activeAuraChips = [];
     if (simulation.helpingBonusCount > 0) {
       activeAuraChips.push(`
         <span class="lab-team-aura-chip chip-helping" title="${isEN ? 'Team Helping Speed +' + (simulation.helpingBonusCount * 5) + '%' : '全體幫手速度 +' + (simulation.helpingBonusCount * 5) + '%'}">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
           <strong>${isEN ? 'Helping Bonus' : '幫手獎勵'}</strong> x${simulation.helpingBonusCount} (+${simulation.helpingBonusCount * 5}%)
         </span>
       `);
@@ -133,7 +131,6 @@
     if (simulation.energyRecoveryBonusCount > 0) {
       activeAuraChips.push(`
         <span class="lab-team-aura-chip chip-energy" title="${isEN ? 'Team Energy Recovery +' + (simulation.energyRecoveryBonusCount * 14) + '%' : '全體睡眠活力回復 +' + (simulation.energyRecoveryBonusCount * 14) + '%'}">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
           <strong>${isEN ? 'Energy Recovery' : '活力回復獎勵'}</strong> x${simulation.energyRecoveryBonusCount} (+${simulation.energyRecoveryBonusCount * 14}%)
         </span>
       `);
@@ -141,7 +138,6 @@
     if (simulation.sleepExpBonusCount > 0) {
       activeAuraChips.push(`
         <span class="lab-team-aura-chip chip-sleepexp" title="${isEN ? 'Team Sleep EXP +' + (simulation.sleepExpBonusCount * 14) + '%' : '全體睡眠EXP +' + (simulation.sleepExpBonusCount * 14) + '%'}">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
           <strong>${isEN ? 'Sleep EXP' : '睡眠EXP獎勵'}</strong> x${simulation.sleepExpBonusCount} (+${simulation.sleepExpBonusCount * 14}%)
         </span>
       `);
@@ -149,7 +145,6 @@
     if (simulation.researchExpBonusCount > 0) {
       activeAuraChips.push(`
         <span class="lab-team-aura-chip chip-researchexp" title="${isEN ? 'Research EXP +' + (simulation.researchExpBonusCount * 6) + '%' : '研究EXP +' + (simulation.researchExpBonusCount * 6) + '%'}">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
           <strong>${isEN ? 'Research EXP' : '研究EXP獎勵'}</strong> x${simulation.researchExpBonusCount} (+${simulation.researchExpBonusCount * 6}%)
         </span>
       `);
@@ -157,16 +152,14 @@
     if (simulation.dreamShardBonusCount > 0) {
       activeAuraChips.push(`
         <span class="lab-team-aura-chip chip-dreamshard" title="${isEN ? 'Dream Shards +' + (simulation.dreamShardBonusCount * 6) + '%' : '夢之碎片 +' + (simulation.dreamShardBonusCount * 6) + '%'}">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
           <strong>${isEN ? 'Dream Shard' : '夢之碎片獎勵'}</strong> x${simulation.dreamShardBonusCount} (+${simulation.dreamShardBonusCount * 6}%)
         </span>
       `);
     }
 
     const teamAurasBarHtml = `
-      <div class="lab-team-auras-bar">
+      <div class="lab-team-auras-col lab-team-auras-bar">
         <div class="lab-team-auras-label">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#facc15;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
           <span>${isEN ? 'Team Shared Bonuses:' : '隊伍全體光環彙總:'}</span>
         </div>
         <div class="lab-team-auras-chips">
@@ -261,7 +254,6 @@
           const sDisp = window.I18N ? window.I18N.getSubSkillName(a.name) : a.name;
           return `
             <div class="lab-slot-aura-badge aura-active" title="Lv.${a.req} ${escapeHtml(sDisp)} · ${isEN ? 'Team Shared Bonus' : '全體隊伍加成'}">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
               <span class="aura-name">${escapeHtml(sDisp)}</span>
             </div>
           `;
@@ -427,24 +419,26 @@
 
     return `
       <div class="lab-team-view-container">
-        <div class="lab-island-selector">
-          <div class="lab-island-circles-row">
-            ${islandPillsHtml}
+        <div class="lab-island-config-row">
+          <div class="lab-island-selector-col">
+            <div class="lab-island-circles-row">
+              ${islandPillsHtml}
+            </div>
           </div>
+          ${teamVariablesBarHtml}
         </div>
-
-        ${teamVariablesBarHtml}
 
         ${greengrassConfigHtml}
 
-        <div class="lab-team-favored-bar">
-          <span class="lab-favored-label">${isEN ? 'Favored Berries (2x Power):' : '喜愛樹果 (2x 能量):'}</span>
-          <div class="lab-favored-berries-list">
-            ${favoredBerriesHtml}
+        <div class="lab-favored-auras-row">
+          <div class="lab-favored-berries-col">
+            <span class="lab-favored-label">${isEN ? 'Favored Berries (2x Power):' : '喜愛樹果 (2x 能量):'}</span>
+            <div class="lab-favored-berries-list">
+              ${favoredBerriesHtml}
+            </div>
           </div>
+          ${teamAurasBarHtml}
         </div>
-
-        ${teamAurasBarHtml}
 
         <div class="lab-team-grid">
           ${slotsHtml}

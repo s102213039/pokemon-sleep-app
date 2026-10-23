@@ -5,6 +5,17 @@
 
 /* 1. 全域容器與列表滾動條隱藏 (Firefox & IE/Edge) */
 html,
+body {
+  overscroll-behavior-y: none;
+}
+
+header,
+.header-container {
+  overscroll-behavior: none !important;
+  overscroll-behavior-y: none !important;
+}
+
+html,
 body,
 .pokemon-table-container,
 .table-container,

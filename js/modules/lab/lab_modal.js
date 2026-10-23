@@ -779,6 +779,16 @@
       berries: ['異奇果', '靛莓果', '檬果'],
       types: ['電', '鋼', '幽靈'],
       desc: '喜愛樹果：電、鋼、幽靈 (2x 能量)'
+    },
+    {
+      id: 'amber',
+      name: '琥褐溪谷',
+      name_en: 'Amber Canyon',
+      color: '#d97706',
+      image: 'assets/islands/hd/amber.jpg',
+      berries: ['零餘果', '木子果', '巧可果'],
+      types: ['毒', '蟲', '龍'],
+      desc: '喜愛樹果：毒、蟲、龍 (2x 能量)'
     }
   ];
 

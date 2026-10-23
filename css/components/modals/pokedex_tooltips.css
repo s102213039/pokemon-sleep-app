@@ -406,6 +406,11 @@ body.box-lab-active #box-subpanel-list {
   padding-bottom: 84px !important;
 }
 
+body:not(.mobile-h5-app) #box-subpanel-list {
+  display: block !important;
+  width: 100% !important;
+}
+
 .mobile-h5-app #panel-box:not(.box-lab-active) #box-subpanel-lab,
 .mobile-h5-app body:not(.box-lab-active) #box-subpanel-lab,
 .mobile-h5-app #box-subpanel-lab[style*="display: none"],
