@@ -168,7 +168,7 @@
     "badge_label": "維護公告",
     "badge_color": "#ef4444",
     "title": "維護作業結束通知",
-    "title_en": "Maintenance結束通知",
+    "title_en": "Maintenance Complete Notice",
     "overview_en": "Notification regarding known issues and recent bug fixes in the app.",
     "debut_pokemon": [],
     "mid_rateup_pokemon": [],
