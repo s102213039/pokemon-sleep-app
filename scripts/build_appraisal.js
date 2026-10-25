@@ -26,6 +26,7 @@ const LAB_MODULES = [
   'lab_team_picker.js',
   'lab_team_ui.js',
   'lab_compare.js',
+  'lab_growth.js',
   'lab_main.js'
 ];
 

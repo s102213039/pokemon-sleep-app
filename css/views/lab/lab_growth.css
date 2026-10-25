@@ -1,0 +1,427 @@
+/* ==========================================================================
+   lab_growth.css — 培育與種子精算實驗室專屬樣式 (Nurture & Seed ROI Lab)
+   ==========================================================================
+   遵守 Rule 8 (Zero Emojis), Rule 9 (Single Frame Rule), Rule 10 (Zero Glyphs).
+   外層容器純淨無框 (border: none; background: transparent; padding: 0;)。
+   ========================================================================== */
+
+.lab-growth-container {
+  border: none;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 頂部選中個體橫幅 */
+.lab-growth-header-card {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.lab-growth-target-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.lab-growth-avatar-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.lab-growth-avatar-img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.lab-growth-target-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.lab-growth-target-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lab-growth-target-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary, #f8fafc);
+}
+
+.lab-growth-target-badge {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  font-weight: 600;
+}
+
+.lab-growth-target-specs {
+  font-size: 12px;
+  color: var(--text-secondary, #94a3b8);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lab-growth-change-btn {
+  background: rgba(51, 65, 85, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  color: var(--text-primary, #f8fafc);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lab-growth-change-btn:hover {
+  background: rgba(56, 189, 248, 0.25);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+/* 主面板網格 (桌面 2 欄並列) */
+.lab-growth-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .lab-growth-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 培育卡片本體 */
+.lab-growth-card {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 12px;
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+.lab-growth-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary, #f8fafc);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  padding-bottom: 8px;
+}
+
+/* 等級滑桿與區間控制 */
+.lab-growth-level-control {
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.lab-growth-range-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.lab-growth-range-label {
+  font-size: 13px;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.lab-growth-range-val {
+  font-size: 15px;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.lab-growth-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(51, 65, 85, 0.6);
+  outline: none;
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+.lab-growth-milestones-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.lab-growth-milestone-chip {
+  flex: 1;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  color: var(--text-secondary, #94a3b8);
+  font-size: 12px;
+  padding: 4px 0;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lab-growth-milestone-chip:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+.lab-growth-milestone-chip.active {
+  background: rgba(56, 189, 248, 0.25);
+  border-color: #38bdf8;
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+/* 消耗總結看板 */
+.lab-growth-cost-board {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.lab-growth-cost-cell {
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.lab-growth-cost-label {
+  font-size: 11px;
+  color: var(--text-secondary, #94a3b8);
+  margin-bottom: 4px;
+}
+
+.lab-growth-cost-val {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary, #f8fafc);
+}
+
+.lab-growth-cost-candies {
+  color: #fbbf24;
+}
+
+.lab-growth-cost-shards {
+  color: #34d399;
+}
+
+.lab-growth-cost-exp {
+  color: #60a5fa;
+}
+
+/* 萬能糖果換算列 */
+.lab-growth-handy-bar {
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  text-align: center;
+}
+
+.lab-growth-handy-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lab-growth-handy-name {
+  font-size: 11px;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.lab-growth-handy-count {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f59e0b;
+}
+
+/* 種子效益區塊 */
+.lab-growth-seed-section {
+  margin-bottom: 16px;
+}
+
+.lab-growth-seed-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.lab-growth-seed-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.lab-growth-seed-badge-silver {
+  background: rgba(148, 163, 184, 0.15);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  color: #cbd5e1;
+}
+
+.lab-growth-seed-badge-gold {
+  background: rgba(251, 191, 36, 0.15);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #fbbf24;
+}
+
+/* 銀種升級列表 */
+.lab-growth-subskill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lab-growth-subskill-row {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.lab-growth-subskill-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lab-growth-subskill-from {
+  color: var(--text-secondary, #94a3b8);
+}
+
+.lab-growth-arrow {
+  color: rgba(148, 163, 184, 0.4);
+  font-size: 10px;
+}
+
+.lab-growth-subskill-to {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.lab-growth-pr-delta {
+  font-weight: 700;
+  color: #34d399;
+}
+
+.lab-growth-no-subskills {
+  padding: 12px;
+  text-align: center;
+  color: var(--text-secondary, #94a3b8);
+  font-size: 12px;
+  background: rgba(15, 23, 42, 0.3);
+  border-radius: 8px;
+}
+
+/* 金種模擬與 ROI 評級 */
+.lab-growth-mainskill-box {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lab-growth-mainskill-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lab-growth-mainskill-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary, #f8fafc);
+}
+
+.lab-growth-roi-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.lab-growth-roi-s {
+  background: rgba(236, 72, 153, 0.2);
+  border: 1px solid #ec4899;
+  color: #f472b6;
+}
+
+.lab-growth-roi-a {
+  background: rgba(56, 189, 248, 0.2);
+  border: 1px solid #38bdf8;
+  color: #38bdf8;
+}
+
+.lab-growth-roi-b {
+  background: rgba(52, 211, 153, 0.2);
+  border: 1px solid #34d399;
+  color: #34d399;
+}
+
+.lab-growth-roi-c {
+  background: rgba(148, 163, 184, 0.15);
+  border: 1px solid #94a3b8;
+  color: #94a3b8;
+}
+
+.lab-growth-mainskill-detail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.lab-growth-mainskill-val {
+  color: #fbbf24;
+  font-weight: 700;
+}

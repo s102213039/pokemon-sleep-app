@@ -1,5 +1,5 @@
   function switchSubTab(tab) {
-    if (!['team', 'compare'].includes(tab)) tab = 'team';
+    if (!['team', 'compare', 'growth'].includes(tab)) tab = 'team';
     labState.currentSubTab = tab;
     labState.editMode = false;
     updateLabUI();
@@ -352,7 +352,9 @@
 
     const title = opts.type === 'team'
       ? (isEN ? `Select Member for Slot ${opts.slotIndex + 1}` : `挑選隊員 (隊員槽位 ${opts.slotIndex + 1})`)
-      : (isEN ? `Select Pokémon for Player ${compareLetter}` : `挑選選手 ${compareLetter}`);
+      : (opts.type === 'growth'
+        ? (isEN ? 'Select Pokémon for Growth & Seeds Calculation' : '挑選培育精算對象')
+        : (isEN ? `Select Pokémon for Player ${compareLetter}` : `挑選選手 ${compareLetter}`));
 
     const berriesList = (typeof BERRY_VALUES_DATA !== 'undefined' ? BERRY_VALUES_DATA : []);
 
@@ -413,6 +415,8 @@
         });
       } else if (opts.type === 'team' && Array.isArray(labState.teamSlots)) {
         currentSelectedUid = labState.teamSlots[opts.slotIndex] || null;
+      } else if (opts.type === 'growth') {
+        currentSelectedUid = growthState.selectedUid || null;
       }
 
       return filtered.map(item => {
@@ -637,6 +641,8 @@
       setCompareSlot(slot, uid);
     } else if (activePickerState.type === 'recipe') {
       setTargetRecipe(uid);
+    } else if (activePickerState.type === 'growth') {
+      setGrowthTarget(uid);
     }
     closeLabPicker();
   }

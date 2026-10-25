@@ -62,6 +62,9 @@
           <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'compare' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('compare')">
             <span class="lab-subtab-title">${isEN ? 'Pokémon Comparison' : '寶可夢對比'}</span>
           </button>
+          <button type="button" class="lab-subtab-btn ${labState.currentSubTab === 'growth' ? 'active' : ''}" onclick="window.AppraisalLab.switchSubTab('growth')">
+            <span class="lab-subtab-title">${isEN ? 'Growth & Seeds' : '培育精算'}</span>
+          </button>
         </div>
         ` : ''}
 
@@ -73,6 +76,11 @@
         <!-- 2. 寶可夢對比子面板 (Side-by-Side Comparison) -->
         <div id="lab-subpanel-compare" class="lab-subpanel" style="${labState.currentSubTab === 'compare' ? '' : 'display:none;'}">
           ${renderComparisonView(userBox, pokemons, isEN, isMobileH5)}
+        </div>
+
+        <!-- 3. 培育精算子面板 (Growth & Seeds Calculator) -->
+        <div id="lab-subpanel-growth" class="lab-subpanel" style="${labState.currentSubTab === 'growth' ? '' : 'display:none;'}">
+          ${renderGrowthView(userBox, pokemons, isEN, isMobileH5)}
         </div>
       </div>
     `;
@@ -222,6 +230,15 @@
     closePicker: closeLabPicker,
     onPickerSelect: onPickerSelect,
     onRecipePickerSelect: onRecipePickerSelect,
+    renderGrowthView: renderGrowthView,
+    setGrowthTarget: setGrowthTarget,
+    setGrowthFromLevel: setGrowthFromLevel,
+    setGrowthTargetLevel: setGrowthTargetLevel,
+    setGrowthMilestone: setGrowthMilestone,
+    openGrowthPicker: openGrowthPicker,
+    calculateGrowthCost: calculateGrowthCost,
+    evaluateSubskillSeedUpgrades: evaluateSubskillSeedUpgrades,
+    evaluateMainSkillSeedROI: evaluateMainSkillSeedROI,
     simulateTeamPerformance: simulateTeamPerformance,
     toggleLab: function () {
       if (typeof document === 'undefined') return;

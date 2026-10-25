@@ -2113,6 +2113,124 @@ function registerTier4Part4() {
     const baseCss = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'base.css'), 'utf8');
     assert(baseCss.includes('overscroll-behavior: none !important') && baseCss.includes('header'), 'base.css must prevent overscroll on header');
   });
+
+  // Test 237: Growth and Seed ROI Lab: Subtab Navigation, Precise EXP & Shard Milestones, Silver Seed Upgrades & Gold Seed ROI
+  test('Tier 4 - Real-World Application Scenarios', 'Growth and Seed ROI Lab: Subtab Navigation, Precise EXP & Shard Milestones, Silver Seed Upgrades & Gold Seed ROI', () => {
+    // 1. Module & Stylesheet presence and compilation
+    const growthJsPath = path.join(WORKSPACE_ROOT, 'js', 'modules', 'lab', 'lab_growth.js');
+    assert(fs.existsSync(growthJsPath), 'lab_growth.js must exist');
+    const growthCssPath = path.join(WORKSPACE_ROOT, 'css', 'views', 'lab', 'lab_growth.css');
+    assert(fs.existsSync(growthCssPath), 'lab_growth.css must exist');
+
+    const appraisalBundled = fs.readFileSync(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'), 'utf8');
+    assert(appraisalBundled.includes('GROWTH_CUMULATIVE_EXP'), 'appraisal.js must bundle GROWTH_CUMULATIVE_EXP');
+    assert(appraisalBundled.includes('evaluateSubskillSeedUpgrades'), 'appraisal.js must bundle evaluateSubskillSeedUpgrades');
+    assert(appraisalBundled.includes('evaluateMainSkillSeedROI'), 'appraisal.js must bundle evaluateMainSkillSeedROI');
+
+    const stylesBundled = fs.readFileSync(path.join(WORKSPACE_ROOT, 'css', 'styles.css'), 'utf8');
+    assert(stylesBundled.includes('.lab-growth-container'), 'styles.css must include .lab-growth-container');
+    assert(stylesBundled.includes('.lab-growth-cost-board'), 'styles.css must include .lab-growth-cost-board');
+
+    // 2. Functional Calculation Verification
+    const AppraisalLab = require(path.join(WORKSPACE_ROOT, 'js', 'modules', 'appraisal.js'));
+    assertEquals(typeof AppraisalLab.calculateGrowthCost, 'function', 'calculateGrowthCost must be exported');
+    assertEquals(typeof AppraisalLab.evaluateSubskillSeedUpgrades, 'function', 'evaluateSubskillSeedUpgrades must be exported');
+    assertEquals(typeof AppraisalLab.evaluateMainSkillSeedROI, 'function', 'evaluateMainSkillSeedROI must be exported');
+
+    // Level 1 to 30, 1.0x curve, neutral nature
+    const costStd = AppraisalLab.calculateGrowthCost(1, 30, 1.0, 'normal');
+    assertEquals(costStd.expNeeded, 11992, 'Lv.1 to Lv.30 standard EXP must be 11,992');
+    assertEquals(costStd.candiesNeeded, 480, 'Lv.1 to Lv.30 standard candies must be 480');
+    assertEquals(costStd.shardsNeeded, 14500, 'Lv.1 to Lv.30 standard shards must be 14,500');
+    assertEquals(costStd.handyCandyS, 160, 'Handy Candy S must be 160 pcs');
+    assertEquals(costStd.handyCandyM, 24, 'Handy Candy M must be 24 pcs');
+    assertEquals(costStd.handyCandyL, 5, 'Handy Candy L must be 5 pcs');
+
+    // Pseudo-legendary (1.5x curve)
+    const costPseudo = AppraisalLab.calculateGrowthCost(1, 30, 1.5, 'normal');
+    assertEquals(costPseudo.expNeeded, 17988, 'Lv.1 to Lv.30 pseudo-legendary EXP must be 17,988');
+    assertEquals(costPseudo.candiesNeeded, 720, 'Lv.1 to Lv.30 pseudo-legendary candies must be 720');
+
+    // Nature EXP modifiers
+    const costExpUp = AppraisalLab.calculateGrowthCost(1, 30, 1.0, 'up');
+    assertEquals(costExpUp.expPerCandy, 30, 'EXP Up nature gives 30 EXP per candy');
+    assertEquals(costExpUp.candiesNeeded, 400, 'EXP Up requires 400 candies to Lv.30');
+
+    const costExpDown = AppraisalLab.calculateGrowthCost(1, 30, 1.0, 'down');
+    assertEquals(costExpDown.expPerCandy, 21, 'EXP Down nature gives 21 EXP per candy');
+    assertEquals(costExpDown.candiesNeeded, 572, 'EXP Down requires 572 candies to Lv.30');
+
+    // 3. Silver Seed Evaluation & Duplicate Prevention
+    const mockBasePkm = {
+      name: '皮卡丘',
+      name_cn: '皮卡丘',
+      name_en: 'Pikachu',
+      specialty: '樹果',
+      skill: '能量填充S'
+    };
+
+    const mockPkmEligible = {
+      name: '皮卡丘',
+      level: 30,
+      nature: '固執',
+      subskills: ['幫忙速度S', '持有上限提升S', '技能機率提升S']
+    };
+
+    const eligibleUpgrades = AppraisalLab.evaluateSubskillSeedUpgrades(mockPkmEligible, mockBasePkm, false);
+    assert(eligibleUpgrades.length >= 2, 'Should identify multiple upgradable subskills');
+    const speedUpgrade = eligibleUpgrades.find(u => u.fromSkill === '幫忙速度S');
+    assert(speedUpgrade && speedUpgrade.toSkill === '幫忙速度M', 'Helping Speed S must upgrade to M');
+    assert(speedUpgrade.deltaPR > 0, 'Helping Speed S -> M must yield positive deltaPR');
+
+    // Duplicate Prevention: already has 幫忙速度M, so 幫忙速度S cannot upgrade
+    const mockPkmDuplicate = {
+      name: '皮卡丘',
+      level: 30,
+      nature: '固執',
+      subskills: ['幫忙速度S', '幫忙速度M', '持有上限提升S']
+    };
+    const dupUpgrades = AppraisalLab.evaluateSubskillSeedUpgrades(mockPkmDuplicate, mockBasePkm, false);
+    const dupSpeed = dupUpgrades.find(u => u.fromSkill === '幫忙速度S');
+    assertEquals(dupSpeed, undefined, 'Duplicate upgrade target must be rejected per official rules');
+
+    // 4. Gold Seed ROI Evaluation
+    const mockHealerBase = {
+      name: '沙奈朵',
+      name_cn: '沙奈朵',
+      name_en: 'Gardevoir',
+      specialty: '技能',
+      skill: '能量療癒S'
+    };
+    const mockHealerGood = {
+      name: '沙奈朵',
+      level: 50,
+      nature: '溫和',
+      skillLevel: 2,
+      subskills: ['技能機率提升M', '幫手獎勵']
+    };
+    const healerROI = AppraisalLab.evaluateMainSkillSeedROI(mockHealerGood, mockHealerBase, false);
+    assertEquals(healerROI.roiGrade, 'S', 'Elite healer with skill buff must receive ROI grade S');
+    assertEquals(healerROI.seedsNeeded, 4, 'Lv.2 healer with max Lv.6 requires 4 seeds');
+
+    const mockSkillDebuff = {
+      name: '沙奈朵',
+      level: 50,
+      nature: '頑皮', // debuff: 主技能發動機率▼
+      skillLevel: 2,
+      subskills: ['技能機率提升S']
+    };
+    const debuffROI = AppraisalLab.evaluateMainSkillSeedROI(mockSkillDebuff, mockHealerBase, false);
+    assertEquals(debuffROI.roiGrade, 'C', 'Skill Trigger Down nature must receive ROI grade C');
+
+    // 5. Zero Emojis and Zero Decorative Glyphs Integrity
+    const growthJsCode = fs.readFileSync(growthJsPath, 'utf8');
+    const growthCssCode = fs.readFileSync(growthCssPath, 'utf8');
+    const emojiRegex = /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u;
+    assert(!emojiRegex.test(growthJsCode), 'lab_growth.js must contain zero emojis per Rule 8');
+    assert(!emojiRegex.test(growthCssCode), 'lab_growth.css must contain zero emojis per Rule 8');
+    assert(!growthJsCode.includes('★') && !growthJsCode.includes('☆'), 'lab_growth.js must contain zero star glyphs per Rule 10');
+    assert(!growthCssCode.includes('★') && !growthCssCode.includes('☆'), 'lab_growth.css must contain zero star glyphs per Rule 10');
+  });
 }
 
 module.exports = { registerTier4Part4 };

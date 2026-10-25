@@ -57,6 +57,7 @@ const CSS_MODULES = [
   'views/lab/lab_editor.css',
   'views/lab/lab_lightbox.css',
   'views/lab/lab_auth.css',
+  'views/lab/lab_growth.css',
   'mobile/dock_nav.css',
   'mobile/dock_sheets.css',
   'mobile/wiki_nav.css',
